@@ -1,0 +1,63 @@
+<html>
+<head>
+<script src="../../resources/ui-helper.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+<script src="../editing.js"></script>
+<script>
+Markup.description("To manually test, add an automatic text replacement mapping from the string '**' to 'stars'. Then, on the second line (this is imporatant, it must not be the first line) of a contenteditable, type the string '**'. It should not be immediately corrected to 'stars'. Type any other character, which should then change '**' to 'stars'.");
+Markup.waitUntilDone();
+
+async function runTest()
+{
+    if (window.internals) {
+        internals.settings.setUnifiedTextCheckerEnabled(true);
+        internals.settings.setAsynchronousSpellCheckingEnabled(false);
+        internals.setAutomaticTextReplacementEnabled(true);
+        internals.setAutomaticSpellingCorrectionEnabled(true);
+        await UIHelper.setSpellCheckerResults({
+            "**": [
+                {
+                    "replacement": "stars",
+                    "type": "replacement",
+                    "from": 0,
+                    "to": 2
+                }
+            ],
+            "**\n": [
+                {
+                    "replacement": "stars",
+                    "type": "replacement",
+                    "from": 0,
+                    "to": 2
+                }
+            ]
+        });
+    }
+
+    const editor = document.getElementById("editor");
+    editor.focus();
+    insertParagraphCommand();
+
+    for (const character of "**")
+        typeCharacterCommand(character);
+    await UIHelper.delayFor(0);
+
+    Markup.dump(editor, "After typing possible replacment");
+
+    insertParagraphCommand();
+    await UIHelper.delayFor(0);
+
+    Markup.dump(editor, "After pressing enter");
+    Markup.notifyDone();
+}
+</script>
+</head>
+
+<body onload="runTest()">
+    <div id="description"></div>
+    <div contenteditable style="margin-bottom: 1em; border: 1px orange dashed;" id="editor">
+        <div><br></div>
+        <div><br></div>
+    </div>
+</body>
+</html>

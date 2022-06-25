@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<style type="text/css" media="all">
+   /* These rules intentionally use 'incorrect' fallback families
+      So that if the font-face defined font can't be found the test fails. */
+  #csstest {
+    font: 2.3cm "csstest", cursive;
+  }
+  #svgtest {
+    font: 2.3cm "svgtest", fantasy;
+  }
+  @font-face {
+    font-family: "csstest";
+    src: local("Courier"), local("Courier New");
+  }
+</style>
+<defs>
+  <font-face id="test" font-family="svgtest">
+    <font-face-src>
+      <font-face-name name="Courier" />
+    </font-face-src>
+  </font-face>
+</defs>
+<text id="csstest" x="10" y="3cm">CSS font-face</text>
+<text id="svgtest" x="10" y="6cm">SVG font-face</text>
+<text x="40" y="7cm">The fonts used above should be identical</text>
+</svg>

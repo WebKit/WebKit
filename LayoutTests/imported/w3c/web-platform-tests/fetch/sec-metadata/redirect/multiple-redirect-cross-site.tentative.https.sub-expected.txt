@@ -1,0 +1,7 @@
+Blocked access to external URL https://www.not-web-platform.test:9443/xhr/resources/redirect.py?location=https://localhost:9443/fetch/sec-metadata/resources/record-header.py?file=redirect-multiple-cross-site
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Same-Origin -> Cross-Site -> Same-Origin redirect Test timed out
+

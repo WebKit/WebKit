@@ -1,0 +1,89 @@
+/*
+ * Copyright (C) 2021 Apple Inc.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+div#image-overlay {
+    display: inline-block;
+    pointer-events: none;
+    position: relative;
+    overflow: hidden;
+    color: transparent;
+    text-shadow: none;
+    text-indent: 0;
+    text-align: center;
+    font-family: system-ui;
+}
+
+:host(:not(img)) div#image-overlay:-webkit-full-screen-document {
+    display: none;
+}
+
+div.image-overlay-line {
+    white-space: nowrap;
+    line-height: 100%;
+    font-size: 1024px; /* This large font size is chosen to minimize gaps when painting selection quads. */
+}
+
+div.image-overlay-line, div.image-overlay-block {
+    pointer-events: auto;
+}
+
+div.image-overlay-block {
+    background-color: rgba(255, 255, 255, 0.75);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.1);
+    color: rgb(90, 90, 90);
+    font-weight: 400;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    flex-direction: column;
+    -webkit-backdrop-filter: blur(40px);
+    -webkit-hyphens: auto;
+    line-height: 1.2em;
+    box-sizing: border-box;
+    white-space: normal;
+    word-break: break-word;
+    letter-spacing: normal;
+}
+
+div.image-overlay-line, .image-overlay-text, div.image-overlay-block {
+    position: absolute;
+}
+
+div.image-overlay-line, .image-overlay-text {
+    overflow: hidden;
+}
+
+.image-overlay-block {
+    overflow-x: hidden;
+}
+
+.image-overlay-text::selection {
+    color: transparent;
+    background-color: highlight;
+}
+
+div.image-overlay-data-detector-result {
+    position: absolute;
+    user-select: none;
+}

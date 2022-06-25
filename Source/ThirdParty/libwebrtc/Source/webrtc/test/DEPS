@@ -1,0 +1,83 @@
+include_rules = [
+  "+third_party/libjpeg",
+  "+third_party/libjpeg_turbo",
+  "+call",
+  "+common_audio",
+  "+common_video",
+  "+logging/rtc_event_log",
+  "+media/base",
+  "+media/sctp",
+  "+media/engine",
+  "+modules/audio_coding",
+  "+modules/congestion_controller",
+  "+modules/audio_device",
+  "+modules/audio_mixer",
+  "+modules/audio_processing",
+  "+modules/congestion_controller/bbr",
+  "+modules/rtp_rtcp",
+  "+modules/utility",
+  "+modules/video_capture",
+  "+modules/video_coding",
+  "+sdk",
+  "+system_wrappers",
+  "+third_party/libyuv",
+]
+
+specific_include_rules = {
+  "gmock\.h": [
+    "+testing/gmock/include/gmock",
+  ],
+  "gtest\.h": [
+    "+testing/gtest/include/gtest",
+  ],
+  ".*congestion_controller_feedback_fuzzer\.cc": [
+    "+modules/congestion_controller/include/receive_side_congestion_controller.h",
+    "+modules/pacing/packet_router.h",
+    "+modules/remote_bitrate_estimator/include/remote_bitrate_estimator.h",
+  ],
+  ".*mdns_parser_fuzzer\.cc": [
+    "+p2p/base/mdns_message.h",
+  ],
+  ".*pseudotcp_parser_fuzzer\.cc": [
+    "+p2p/base/pseudo_tcp.h",
+  ],
+  ".*stun_parser_fuzzer\.cc": [
+    "+p2p/base/stun.h",
+  ],
+  ".*stun_validator_fuzzer\.cc": [
+    "+p2p/base/stun.h",
+  ],
+  ".*test_main\.cc": [
+    "+absl/debugging/failure_signal_handler.h",
+    "+absl/debugging/symbolize.h",
+  ],
+  ".*test_peer\.(h|cc)": [
+    "+pc",
+    "+p2p",
+  ],
+  ".*test_peer_factory\.(h|cc)": [
+    "+pc",
+    "+p2p",
+  ],
+  ".*network_emulation_pc_unittest\.cc": [
+    "+pc/peer_connection_wrapper.h",
+    "+pc/test/mock_peer_connection_observers.h",
+    "+p2p/client/basic_port_allocator.h",
+  ],
+  ".*peer_connection_quality_test\.(h|cc)": [
+    "+pc",
+  ],
+  ".*sdp_changer\.(h|cc)": [
+    "+pc",
+    "+p2p",
+  ],
+  ".*test_video_capturer_video_track_source.h": [
+    "+pc",
+  ],
+  "benchmark_main\.cc": [
+    "+benchmark",
+  ],
+  "emulated_turn_server\.h": [
+     "+p2p/base/turn_server.h",
+  ]
+}

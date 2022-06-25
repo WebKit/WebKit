@@ -1,0 +1,61 @@
+<!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<title>This tests the case when mousemove triggers a 0ms transition with delay.</title>
+<script src="../../../../../resources/basic-gestures.js"></script>
+<style>
+#tapthis {
+    width: 400px;
+    height: 400px;
+    border: 1px solid green;
+}
+
+#becomesVisible {
+	position: absolute;
+	top: 100px;
+	left: -1000px;
+	width: 100px;
+	height: 100px;
+	background-color: green;
+	transition: left 0ms ease-in-out 10ms;
+}
+</style>
+<script>
+async function test() {
+    if (!window.testRunner || !testRunner.runUIScript)
+        return;
+    if (window.internals)
+        internals.settings.setContentChangeObserverEnabled(true);
+
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+
+    let rect = tapthis.getBoundingClientRect();
+    let x = rect.left + rect.width / 2;
+    let y = rect.top + rect.height / 2;
+
+    await tapAtPoint(x, y);
+}
+</script>
+</head>
+<body onload="test()">
+<div id=tapthis>PASS if 'clicked' text is not shown below.</div>
+<div id=becomesVisible></div>
+<pre id=result></pre>
+<script>
+tapthis.addEventListener("mousemove", function( event ) {
+    becomesVisible.style.left = "10px";
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, false);
+
+becomesVisible.addEventListener("click", function( event ) {   
+    result.innerHTML = "clicked hidden";
+}, false);
+
+tapthis.addEventListener("click", function( event ) {   
+    result.innerHTML = "clicked";
+}, false);
+</script>
+</body>
+</html>

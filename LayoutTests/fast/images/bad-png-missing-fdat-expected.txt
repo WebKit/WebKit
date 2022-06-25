@@ -1,0 +1,4 @@
+The following PNG is buggy and reports a wrong number of frames. If the test succeeds this should not crash.
+
+
+PASS

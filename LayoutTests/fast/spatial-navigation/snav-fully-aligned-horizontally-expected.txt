@@ -1,0 +1,46 @@
+test
+H                               ow Now Brown Cow
+Ho                                w Now Brown Cow
+How                                 Now Brown Cow
+How N                                ow Brown Cow
+How No                                w Brown Cow
+How Now                                 Brown Cow
+How Now B                                rown Cow
+How Now Br                                own Cow
+How Now Bro                                wn Cow
+How Now Brow                                n Cow
+How Now Brown                                 Cow
+How Now Brown C                                ow
+How Now Brown Co                                w
+How Now Brown Cow
+
+test
+ PASS gFocusedDocument.activeElement.getAttribute("id") is "1"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "2"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "4"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "3"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "5"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "6"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "8"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "7"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "9"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "10"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "12"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "11"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "13"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "14"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "16"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "15"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "17"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "18"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "20"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "19"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "21"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "22"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "24"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "23"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "25"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "26"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "27"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "end"
+

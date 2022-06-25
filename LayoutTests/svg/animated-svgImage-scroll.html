@@ -1,0 +1,41 @@
+<style>
+    #container {
+        overflow: scroll;
+        width: 300px;
+        height: 200px;
+    }
+    #expander {
+        background-color: blue;
+        height: 500px;
+    }
+</style>
+<p>Before text</p>
+<div id="container">
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+    <img src="resources/animated.svg" width="200" height="100"></img>
+    <p id="expander"></p>
+</div>
+<p>After text</p>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function run() {
+    let container = document.getElementById("container");
+    container.scrollTo(0, 1000);
+    setTimeout(function () {
+        let expander = document.getElementById("expander");
+        expander.style.height = "1px";
+        if (window.testRunner) {
+            setTimeout(function () {
+                testRunner.notifyDone();
+            }, 0);
+        }
+    }, 0);
+}
+
+window.addEventListener("load", run, false);
+</script>

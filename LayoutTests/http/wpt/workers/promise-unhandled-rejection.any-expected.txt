@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: Reject
+
+Harness Error (FAIL), message = Unhandled rejection
+
+PASS UnhandledRejection event occurs if a rejected promise is not handled.
+

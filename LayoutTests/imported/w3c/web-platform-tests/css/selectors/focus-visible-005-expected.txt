@@ -1,0 +1,10 @@
+This test checks that programmatically focusing an element after a click does not cause :focus-visible matching to trigger.
+If the user-agent does not claim to support the :focus-visible pseudo-class then SKIP this test.
+Click the button below that says "Click me."
+If the element that says "I will be focused programmatically." has a red outline, then the test result is FAILURE. If the element has a green background, then the test result is SUCCESS.
+
+Click me.
+I will be focused programmatically.
+
+PASS Programmatic focus after click should not match :focus-visible
+

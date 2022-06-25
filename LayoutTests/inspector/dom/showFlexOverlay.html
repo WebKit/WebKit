@@ -1,0 +1,174 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("DOM.showFlexOverlay");
+
+    async function getFlexContainerNode() {
+        let doc = await WI.domManager.requestDocument();
+        let nodeId = await doc.querySelector(".flex-container");
+        return WI.domManager.nodeForId(nodeId);
+    }
+
+    async function getAllFlexContainerNodes() {
+        let doc = await WI.domManager.requestDocument();
+        let nodeIds = await doc.querySelectorAll(".flex-container");
+        return nodeIds.map((nodeId) => WI.domManager.nodeForId(nodeId));
+    }
+
+    async function FlexOverlayCount() {
+        return InspectorTest.evaluateInPage("window.internals.inspectorFlexOverlayCount()");
+    }
+
+    async function checkFlexOverlayCount(expected) {
+        let actual = await FlexOverlayCount();
+        let message;
+        switch (expected) {
+        case 1:
+            message = "Should have 1 flex overlay displayed.";
+            break;
+        default:
+            message = `Should have ${expected} flex overlays displayed.`;
+            break;
+        }
+
+        InspectorTest.expectEqual(actual, expected, message);
+    }
+
+    suite.addTestCase({
+        name: "DOM.showFlexOverlay.ShowOneOverlay",
+        description: "No error occurs when requesting to show a flex overlay.",
+        async test() {
+            await checkFlexOverlayCount(0);
+            let container = await getFlexContainerNode();
+
+            InspectorTest.log("Requesting to show flex overlay for first .flex-container");
+            await container.showLayoutOverlay({color: WI.Color.fromString("magenta")});
+            await checkFlexOverlayCount(1);
+
+            // No error should occur if showing flex overlay for a node that already has one.
+            InspectorTest.log("Requesting to show a different flex overlay for first .flex-container");
+            await container.showLayoutOverlay({color: WI.Color.fromString("green")});
+            await checkFlexOverlayCount(1);
+
+            // No error should occur when hiding the flex overlay.
+            InspectorTest.log("Requesting to hide flex overlay");
+            await container.hideLayoutOverlay();
+            await checkFlexOverlayCount(0);
+        }
+    });
+
+    suite.addTestCase({
+        name: "DOM.showFlexOverlay.ShowTwoOverlays",
+        description: "No error occurs when requesting to show multiple flex overlays.",
+        async test() {
+            await checkFlexOverlayCount(0);
+            let [first, second] = await getAllFlexContainerNodes();
+
+            InspectorTest.log("Requesting to show first flex overlay");
+            await first.showLayoutOverlay({color: WI.Color.fromString("magenta")});
+            await checkFlexOverlayCount(1);
+
+            InspectorTest.log("Requesting to show second flex overlay");
+            await second.showLayoutOverlay({color: WI.Color.fromString("green")});
+            await checkFlexOverlayCount(2);
+
+            // No error should occur when hiding the first flex overlay.
+            InspectorTest.log("Requesting to hide first flex overlay");
+            await first.hideLayoutOverlay();
+            await checkFlexOverlayCount(1);
+
+            // No error should occur when hiding the second flex overlay.
+            InspectorTest.log("Requesting to hide second flex overlay");
+            await second.hideLayoutOverlay();
+            await checkFlexOverlayCount(0);
+        }
+    });
+
+    suite.addTestCase({
+        name: "DOM.showFlexOverlay.HideAllOverlays",
+        description: "No error occurs when repeatedly requesting to hide all flex overlays.",
+        async test() {
+            await checkFlexOverlayCount(0);
+            let [first, second] = await getAllFlexContainerNodes();
+
+            InspectorTest.log("Requesting to show first flex overlay");
+            await first.showLayoutOverlay({color: WI.Color.fromString("magenta")});
+            await checkFlexOverlayCount(1);
+
+            InspectorTest.log("Requesting to show second flex overlay");
+            await second.showLayoutOverlay({color: WI.Color.fromString("green")});
+            await checkFlexOverlayCount(2);
+
+            // No error should occur when hiding all flex overlays.
+            InspectorTest.log("Requesting to hide all flex overlays.");
+            await DOMAgent.hideFlexOverlay();
+            await checkFlexOverlayCount(0);
+
+            // No error should occur when hiding all flex overlays.
+            InspectorTest.log("Requesting to hide all flex overlays again, expecting none to be cleared. Hiding all flex overlays is idempotent and should not throw an error.");
+            await DOMAgent.hideFlexOverlay();
+            await checkFlexOverlayCount(0);
+        }
+    });
+
+    suite.addTestCase({
+        name: "DOM.showFlexOverlay.HideBeforeShowShouldError",
+        description: "Return an error when requesting to hide a flex overlay when none is active for the node.",
+        async test() {
+            let container = await getFlexContainerNode();
+
+            await checkFlexOverlayCount(0);
+
+            InspectorTest.log("Requesting to hide flex overlay for .flex-container");
+            await InspectorTest.expectException(async () => {
+                await DOMAgent.hideFlexOverlay(container.id);
+            });
+
+            InspectorTest.log("Requesting to hide all flex overlays. Hiding all flex overlays is idempotent and should not throw an error.");
+            await DOMAgent.hideFlexOverlay();
+            await checkFlexOverlayCount(0);
+        }
+    });
+
+    suite.addTestCase({
+        name: "DOM.showFlexOverlay.ForNonexistentNodeShouldError",
+        description: "Return an error when requesting to show a flex overlay for a nonexistent node.",
+        async test() {
+            await checkFlexOverlayCount(0);
+
+            InspectorTest.log("Requesting to show flex overlay for invalid nodeId -1");
+            await InspectorTest.expectException(async () => {
+                await DOMAgent.showFlexOverlay(-1, WI.Color.fromString("magenta").toProtocol());
+            });
+
+        await checkFlexOverlayCount(0);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <style>
+        body {
+            margin: 100px;
+        }
+        .flex-container {
+            display: flex;
+            padding: 10px;
+            background-color: lightgray;
+        }
+
+    </style>
+
+    <p>Tests for the DOM.showFlexOverlay command.</p>
+    <div class="flex-container"></div>
+    <br />
+    <div class="flex-container"></div>
+</body>
+</html>

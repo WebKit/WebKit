@@ -1,0 +1,57 @@
+<!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            overflow: hidden;
+        }
+
+        .contents {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script>
+        jsTestIsAsync = true;
+
+        async function runTest() {
+            if (!window.testRunner)
+                return;
+
+            await UIHelper.immediateZoomToScale(1.5);
+            
+            shouldBe('window.pageXOffset', '53');
+            shouldBe('window.pageYOffset', '91');
+
+            shouldBe('window.visualViewport.pageLeft', '53');
+            shouldBe('window.visualViewport.pageTop', '91');
+
+            await Promise.all([UIHelper.ensureVisibleContentRectUpdate(), UIHelper.ensureStablePresentationUpdate()]);
+
+            debug('');
+            debug('scrolling to 0,0');
+            window.scrollTo(0, 0);
+
+            await Promise.all([UIHelper.ensureVisibleContentRectUpdate(), UIHelper.ensureStablePresentationUpdate()]);
+
+            shouldBe('window.pageXOffset', '53');
+            shouldBe('window.pageYOffset', '91');
+
+            shouldBe('window.visualViewport.pageLeft', '53');
+            shouldBe('window.visualViewport.pageTop', '91');
+
+            finishJSTest();
+        }
+
+        window.addEventListener('load', runTest, false);
+    </script>
+</head>
+<body>
+    <div class="contents">
+    </div>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

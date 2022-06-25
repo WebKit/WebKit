@@ -1,0 +1,117 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="grid" role="grid" aria-colcount="16" aria-rowcount="30">
+  <div role="rowgroup">
+    <div role="row" aria-rowindex="7">
+      <span id="cell1" role="columnheader" aria-colindex="2">First Name</span>
+      <span role="columnheader" aria-colindex="3">Last Name</span>
+      <span role="columnheader" aria-colindex="4">Company</span>
+      <span role="columnheader" aria-colindex="5">Address</span>
+    </div>
+  </div>
+  <div role="rowgroup">
+    <div role="row" aria-rowindex="8">
+      <span role="gridcell" aria-colindex="2" aria-rowindex="8">Fred</span>
+      <span role="gridcell" aria-colindex="3" aria-rowindex="8">Jackson</span>
+      <span id="cell2" role="gridcell" aria-colindex="4" aria-rowindex="8" aria-rowspan="2">Acme, Inc.</span>
+      <span id="cell3" role="gridcell" aria-colindex="5" aria-rowindex="8" aria-rowspan="0">123 Broad St.</span>
+    </div>
+    <div role="row" aria-rowindex="9">
+      <span role="gridcell" aria-colindex="2">Sara</span>
+      <span role="gridcell" aria-colindex="3">James</span>
+    </div>
+  </div>
+  <div role="rowgroup">
+    <div role="row" aria-rowindex="15">
+      <span role="gridcell" aria-colindex="2">Footer 1</span>
+      <span role="gridcell" aria-colindex="3">Footer 2</span>
+      <span role="gridcell" aria-colindex="4" aria-colspan="2">Footer 3</span>
+    </div>
+  </div>
+</div>
+
+<div id="grid2" role="grid" aria-colcount="16">
+  <div role="rowgroup">
+    <div role="row" aria-colindex="2">
+      <span role="columnheader">Name</span>
+      <span id="cell4" role="columnheader">Company</span>
+      <span id="cell5" role="columnheader" aria-colspan="3">Address</span>
+    </div>
+  </div>
+</div>
+
+<div id="grid3" role="grid">
+  <div role="row">
+    <span role="gridcell">Cell</span>
+    <span id="cell6" role="gridcell" aria-rowspan="0">Span Cell</span>
+  </div>
+  <div role="row">
+    <span role="gridcell">Cell</span>
+  </div>
+</div>
+
+<table role="grid">
+  <tr>
+    <td>January</td>
+    <td id="cell7" rowspan="2" aria-rowspan="3">$100</td>
+  </tr>
+  <tr><td>February</td></tr>
+</table>
+
+<script>
+    var testOutput = "This tests that attributes related to aria table/grid are working correctly.\n\n";
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        var grid = accessibilityController.accessibleElementById("grid");
+        var cell1 = accessibilityController.accessibleElementById("cell1");
+        var cell2 = accessibilityController.accessibleElementById("cell2");
+        var cell3 = accessibilityController.accessibleElementById("cell3");
+        var cell4 = accessibilityController.accessibleElementById("cell4");
+        var cell5 = accessibilityController.accessibleElementById("cell5");
+        var cell6 = accessibilityController.accessibleElementById("cell6");
+        var cell7 = accessibilityController.accessibleElementById("cell7");
+
+        // aria-colcount and aria-rowcount
+        testOutput += expect("grid.numberAttributeValue('AXARIAColumnCount')", "16");
+        testOutput += expect("grid.numberAttributeValue('AXARIARowCount')", "30");
+        testOutput += expect("grid.rowCount", "4");
+        testOutput += expect("grid.columnCount", "4");
+
+        // aria-colindex and aria-rowindex
+        testOutput += expect("cell1.numberAttributeValue('AXARIAColumnIndex')", "2");
+        testOutput += expect("cell1.numberAttributeValue('AXARIARowIndex')", "7");
+        testOutput += expect("cell2.numberAttributeValue('AXARIAColumnIndex')", "4");
+        testOutput += expect("cell2.numberAttributeValue('AXARIARowIndex')", "8");
+        // aria-colindex from parent row
+        testOutput += expect("cell4.numberAttributeValue('AXARIAColumnIndex')", "3");
+
+        // aria-colspan and aria-rowspan, including aria-rowspan="0"
+        testOutput += expect("cell2.rowIndexRange()", "'{1, 2}'");
+        testOutput += expect("cell5.columnIndexRange()", "'{2, 3}'");
+        testOutput += expect("cell3.rowIndexRange()", "'{1, 2}'");
+
+        testOutput += expect("cell6.rowIndexRange()", "'{0, 2}'");
+        // use rowspan for native table
+        testOutput += expect("cell7.rowIndexRange()", "'{0, 2}'");
+
+        document.getElementById("grid").setAttribute("aria-rowcount", "60");
+        setTimeout(async function() {
+            await waitFor(() => { return grid.numberAttributeValue('AXARIARowCount') === 60 });
+            testOutput += "PASS: #grid AXARIARowCount dynamically changed to 60.\n";
+
+            debug(testOutput);
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>
+

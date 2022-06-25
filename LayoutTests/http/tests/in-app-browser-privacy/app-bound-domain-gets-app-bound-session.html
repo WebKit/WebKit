@@ -1,0 +1,30 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableInAppBrowserPrivacy=true applicationBundleIdentifier=inAppBrowserPrivacyTestIdentifier isAppBoundWebView=true ] -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="/resourceLoadStatistics/resources/util.js"></script>
+</head>
+<body onload="runTest()">
+<script>
+    description("Tests that an app-bound domain has an app-bound session.");
+    jsTestIsAsync = true;
+    
+    function runTest() {
+        if (document.location.hash == "") {
+            // Load this test again with a random dummy value to avoid caching.
+            document.location.href = "http://127.0.0.1:8000/in-app-browser-privacy/app-bound-domain-gets-app-bound-session.html?dummyParam=" + Math.random() + "#step1";
+        } else {
+            if (!testRunner.hasAppBoundSession()) {
+                testFailed("Origin does not have app-bound session.");
+                finishJSTest();
+            } else {
+                testPassed("Origin has app-bound session.");
+                finishJSTest();
+            }
+        }
+    }
+
+</script>
+</body>
+</html>

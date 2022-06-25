@@ -1,0 +1,73 @@
+<!DOCTYPE html><!-- webkit-test-runner [ isAppInitiated=true ] -->
+<script src="/js-test-resources/js-test-pre.js"></script>
+<script>
+description("Tests speculative revalidation of authenticated resources.");
+jsTestIsAsync = true;
+
+testRunner.setHandlesAuthenticationChallenges(true);
+testRunner.setAuthenticationUsername("testUsername");
+testRunner.setAuthenticationPassword("testPassword");
+
+state = "warmup";
+
+function clearCredentialStorage()
+{
+    xhr = new XMLHttpRequest();
+    xhr.open("GET", "resources/resource-with-auth.py?other", false, "badUsername", "badPassword");
+    xhr.send();
+    shouldBe("xhr.status", "401");
+}
+
+function log(message)
+{
+    document.getElementById('console').appendChild(document.createTextNode(message + '\n'));
+}
+
+function frameLoaded()
+{
+    if (state == "warmup") {
+        // Navigate frame to 'about:blank' to flush to subresource loads metadata to disk.
+        state = "flushingMetadata";
+        testRunner.setHandlesAuthenticationChallenges(false);
+        document.getElementById("testFrame").src = "about:blank";
+        return;
+    }
+    if (state == "flushingMetadata") {
+        clearCredentialStorage();
+
+        internals.clearMemoryCache();
+        testRunner.setHandlesAuthenticationChallenges(false);
+
+        // Navigate frame to its original location again. This time it should speculatively
+        // validate subresources as we have subresource loads metadata in the disk cache.
+        state = "speculativeRevalidation";
+        document.getElementById("testFrame").src = "resources/frame-with-authenticated-resource.py";
+        return;
+    }
+    if (state == "speculativeRevalidation") {
+        testPassed("Successfuly loaded.");
+        var didLoadAppInitiatedRequest = testRunner.didLoadAppInitiatedRequest();
+        var didLoadNonAppInitiatedRequest = testRunner.didLoadNonAppInitiatedRequest();
+
+        if (didLoadNonAppInitiatedRequest) {
+            log("FAIL did load non app initiated request");
+            finishJSTest();
+            return;
+        }
+
+        if (!didLoadAppInitiatedRequest) {
+            log("FAIL did not load app initiated request");
+            finishJSTest();
+            return;
+        }
+
+        log("PASS successfully loaded only app initiated requests");
+
+        finishJSTest();
+        return;
+    }
+}
+
+</script>
+<iframe id="testFrame" src="resources/frame-with-authenticated-resource.py" onload="frameLoaded()"></iframe>
+<script src="/js-test-resources/js-test-post.js"></script>

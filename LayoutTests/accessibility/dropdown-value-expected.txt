@@ -1,0 +1,7 @@
+select default value: AXValue: dog
+PASS axSelect.stringValue === 'AXValue: cat'
+PASS axSelect.stringValue === 'AXValue: dog'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

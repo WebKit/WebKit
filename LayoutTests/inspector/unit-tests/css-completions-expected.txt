@@ -1,0 +1,41 @@
+Testing CSS completion.
+
+
+== Running test suite: CSSCompletions
+-- Running test case: CSSCompletions.completeUnbalancedValue
+url(|)
+url()|
+rgb(1|)
+rgb(1,2,3)|
+calc(var(--foo|))
+'|'
+''|
+'foo|'
+'foo'|
+"|"
+""|
+"bar|"
+"bar"|
+/*|*/
+/**/|
+/* "foo */|
+/* 'foo */|
+/* (foo */|
+('foo"|')
+('foo")|')
+("bar"')|')
+("bar")|
+'(|'
+'(foo|'
+"(|"
+"(bar|"
+\|\
+\\|
+\\\|\
+"\"|"
+'\'|'
+(\)|)
+/*\*/|*/
+radial-gradient(ellipse closest-corner at var(--v) var(--h), hsl(198, 100%, 20%) 0%, hsla(204, 100%, 20%, 0) 100%)|
+"Helvetica Neue", 'Source Code Pro', "Comic Sans", 'PT Mono'|
+

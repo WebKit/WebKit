@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<div id="test">a    <span>    </span>    <span>    </span>    b</div>
+<div id="console"></div>
+<script>
+
+if (!window.internals)
+    testFailed("This test requires internals object");
+
+debug("");
+
+let container = document.getElementById("test");
+
+function test(description, rangeToSelect) {
+    let selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(rangeToSelect);
+
+    debug(description);
+
+    [
+        [ ],
+        [ "IgnoresWhiteSpaceAtEndOfRun" ],
+    ].forEach((behaviors) => {
+        debug("  " + (behaviors.join("|") || "Default behavior"));
+        for (let {text, range} of internals.statesOfTextIterator(rangeToSelect, behaviors))
+            debug(`    '${text.replace("\n", "\\n")}' (location ${internals.locationFromRange(container, range, behaviors)} length ${internals.lengthFromRange(container, range, behaviors)})`);
+    });
+
+    debug("");
+}
+
+let rangeOfFirstLetter = document.createRange();
+rangeOfFirstLetter.setStart(container.firstChild, 0);
+rangeOfFirstLetter.setEnd(container.firstChild, 1);
+
+container.style.width = "1ch";
+test("Testing first letter with narrow width...", rangeOfFirstLetter);
+
+container.style.width = "";
+test("Testing first letter with wide width...", rangeOfFirstLetter);
+
+let rangeUntilLastLetter = document.createRange();
+rangeUntilLastLetter.setStart(container.firstChild, 0);
+rangeUntilLastLetter.setEnd(container.lastChild, 4);
+
+container.style.width = "1ch";
+test("Testing everything except last letter with narrow width...", rangeUntilLastLetter);
+
+container.style.width = "";
+test("Testing everything except last letter with wide width...", rangeUntilLastLetter);
+
+let rangeOfNode = document.createRange();
+rangeOfNode.selectNode(container);
+
+container.style.width = "1ch";
+test("Testing everything with narrow width...", rangeOfNode);
+
+container.style.width = "";
+test("Testing everything with wide width...", rangeOfNode);
+
+</script>
+</body>
+</html>

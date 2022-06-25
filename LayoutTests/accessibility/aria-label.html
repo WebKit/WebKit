@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body id="body">
+<div id="content">
+<input aria-label="aria label" type="text" size=20>
+<a href="#" aria-label="aria link">test</a>
+</div>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that the aria-label attribute works on both an input and an anchor.");
+
+    if (window.accessibilityController) {
+
+          var body = document.getElementById("body");
+          body.focus();
+
+          var axInput = accessibilityController.focusedElement.childAtIndex(0).childAtIndex(0);
+          shouldBeEqualToString("platformValueForW3CName(axInput)", "aria label");
+
+          var axLink = accessibilityController.focusedElement.childAtIndex(0).childAtIndex(1);
+          shouldBeEqualToString("platformValueForW3CName(axLink)", "aria link");
+
+          document.getElementById("content").style.visibility = "hidden";
+    }
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

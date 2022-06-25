@@ -1,0 +1,14 @@
+
+EXPECTED (source.readyState == 'closed') OK
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock"))
+RUN(sourceBuffer.appendBuffer(initSegment))
+EVENT(updateend)
+RUN(sourceBuffer.appendBuffer(samples))
+EVENT(updateend)
+RUN(source.duration = 11)
+RUN(source.endOfStream())
+RUN(video.currentTime = 10)
+EVENT(seeked)
+END OF TEST
+

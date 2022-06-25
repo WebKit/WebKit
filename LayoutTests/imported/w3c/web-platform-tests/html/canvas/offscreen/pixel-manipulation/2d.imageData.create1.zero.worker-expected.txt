@@ -1,0 +1,3 @@
+
+PASS createImageData(null) throws TypeError
+

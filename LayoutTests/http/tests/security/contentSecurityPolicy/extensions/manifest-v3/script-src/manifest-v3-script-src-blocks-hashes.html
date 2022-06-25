@@ -1,0 +1,18 @@
+<!DOCTYPE html><!-- webkit-test-runner [ contentSecurityPolicyExtensionMode=v3 ] -->
+<html>
+    <head>
+        <meta http-equiv="Content-Security-Policy" content="script-src 'self'  'sha256-0WwzeJrO6lcDUe7o6BR3lx0b8uiBvXBX5MNFFKF7iYE'">
+        <script src="../../../resources/dump-as-text.js"></script>
+        <script>
+            if (window.testRunner)
+                testRunner.dumpAsText();
+            alert('PASS (1/1)');
+        </script>
+    </head>
+    <body>
+        <p>
+            Tests CSP for manifest v3 extensions does not permit hash sources. Passes if we don't alert.
+        </p>
+    </body>
+</html>
+

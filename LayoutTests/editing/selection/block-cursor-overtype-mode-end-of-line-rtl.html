@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner)
+    internals.toggleOverwriteModeEnabled(document);
+
+function run() {
+    var element = (document.getElementById("editableContent")).firstChild;
+    getSelection().collapse(element, element.length);
+}
+</script>
+</head>
+<body style = "font: 30px;" onload="run();"">
+    <!-- We want to test block cursor appearance at the end of lines that aren't the end of the editable element. -->
+    <div id="editableContent" style="direction: rtl;" contenteditable="true">&#x05e9;&#x05d3;&#x05df;ABC<br>ABC</div>
+</body>
+</html>

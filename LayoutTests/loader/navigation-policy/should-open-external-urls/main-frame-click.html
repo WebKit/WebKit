@@ -1,0 +1,19 @@
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpPolicyDelegateCallbacks();
+    testRunner.waitUntilDone();
+}
+
+function runTest()
+{
+    window.location.href = "resources/click-notify-done-in-main.html";
+}
+
+</script>
+<body onload="runTest();">
+This main frame load starts with the should-open-external-urls flag set to false.<br>
+It loads a new page programmatically, leaving the flag false.<br>
+That new page clicks a link, which should set the flag to true.
+</body>

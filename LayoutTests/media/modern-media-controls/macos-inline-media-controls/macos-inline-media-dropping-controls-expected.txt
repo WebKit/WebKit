@@ -1,0 +1,19 @@
+Testing MacOSInlineMediaControls and dropping controls.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS ready() became true
+
+TracksButton was dropped at 482.
+PiPButton was dropped at 482.
+SkipForwardButton was dropped at 447.
+SkipBackButton was dropped at 418.
+MuteButton was dropped at 389.
+AirplayButton was dropped at 351.
+FullscreenButton was dropped at 319.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,6 @@
+
+PASS Creating a webgl context with no device
+PASS Creating a webgl2 context with no device
+FAIL An XR-compatible webgl context can be created promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
+FAIL An XR-compatible webgl2 context can be created promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
+

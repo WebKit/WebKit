@@ -1,0 +1,7 @@
+2d.transformation.combined.3d.transforms
+
+perspective and rotate3d work together
+
+
+FAIL perspective and rotate3d work together ctx.perspective is not a function. (In 'ctx.perspective(100)', 'ctx.perspective' is undefined)
+

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<script>
+var element;
+
+function test(type)
+{
+    element = document.createElement(type);
+    var relList = element.relList;
+    element.relList.life = 42;
+    shouldEvaluateTo('element.relList.life', 42);
+    relList = null;
+    gc();
+    shouldEvaluateTo('element.relList.life', 42);
+}
+
+debug('Tests relList gc for anchor element');
+test('a');
+debug('Tests relList gc for area element');
+test('area');
+debug('Tests relList gc for link element');
+test('link');
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

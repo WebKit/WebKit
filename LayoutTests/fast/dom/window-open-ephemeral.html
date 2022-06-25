@@ -1,0 +1,17 @@
+<!-- webkit-test-runner [ useEphemeralSession=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Tests that window.open() is working in ephemeral sessions");
+jsTestIsAsync = true;
+
+onload = () => {
+    w = open("about:blank");
+    shouldBeTrue("!!w");
+    finishJSTest();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,288 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# The url to the installation is going to be displayed many times.
+  # So we cache it here for better performance.
+ %]
+[% escaped_urlbase = BLOCK %][% urlbase FILTER xml %][% END %]
+<?xml version="1.0"[% IF Param('utf8') %] encoding="UTF-8"[% END %]?>
+<!-- Note: this interface is experimental and under development.
+   - We may and probably will make breaking changes to it in the future. -->
+
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:bz="http://www.bugzilla.org/rdf#">
+
+<bz:installation rdf:about="[% escaped_urlbase %]">
+  <bz:install_version>[% constants.BUGZILLA_VERSION FILTER html %]</bz:install_version>
+  <bz:maintainer>[% Param('maintainer') FILTER html %]</bz:maintainer>
+
+  <bz:status>
+    <Seq>
+      [% FOREACH item = status %]
+        <li>[% item FILTER html %]</li>
+      [% END %]
+    </Seq>
+  </bz:status>
+
+  <bz:status_open>
+    <Seq>
+      [% FOREACH item = open_status %]
+        <li>[% item FILTER html %]</li>
+      [% END %]
+    </Seq>
+  </bz:status_open>
+
+  <bz:status_closed>
+    <Seq>
+      [% FOREACH item = closed_status %]
+        <li>[% item FILTER html %]</li>
+      [% END %]
+    </Seq>
+  </bz:status_closed>
+
+  <bz:resolution>
+    <Seq>
+      [% FOREACH item = resolution %]
+        <li>[% item FILTER html %]</li>
+      [% END %]
+    </Seq>
+  </bz:resolution>
+
+  <bz:keywords>
+    <Seq>
+      [% FOREACH keyword = keywords %]
+        <li>
+          <bz:keyword rdf:about="[% escaped_urlbase %]keyword.cgi?name=[% keyword.name FILTER uri %]">
+            <bz:name>[% keyword.name FILTER html %]</bz:name>
+            <bz:description>[% keyword.description FILTER html %]</bz:description>
+          </bz:keyword>
+        </li>
+      [% END %]
+    </Seq>
+  </bz:keywords>
+
+  <bz:platform>
+    <Seq>
+      [% FOREACH item = platform %]
+        <li>[% item FILTER html %]</li>
+      [% END %]
+    </Seq>
+  </bz:platform>
+
+  <bz:op_sys>
+    <Seq>
+      [% FOREACH item = op_sys %]
+        <li>[% item FILTER html %]</li>
+      [% END %]
+    </Seq>
+  </bz:op_sys>
+
+  <bz:priority>
+    <Seq>
+      [% FOREACH item = priority %]
+        <li>[% item FILTER html %]</li>
+      [% END %]
+    </Seq>
+  </bz:priority>
+
+  <bz:severity>
+    <Seq>
+      [% FOREACH item = severity %]
+        <li>[% item FILTER html %]</li>
+      [% END %]
+    </Seq>
+  </bz:severity>
+
+[% FOREACH cf = custom_fields %]
+  <bz:[% cf.name FILTER html %]>
+    <Seq>
+      [% FOREACH item = cf.legal_values %]
+        <li>[% item.name FILTER html %]</li>
+      [% END %]
+    </Seq>
+  </bz:[% cf.name FILTER html %]>
+
+[% END %]
+
+[% IF Param('useclassification') %]
+  <bz:classifications>
+    <Seq>
+      [% FOREACH classification = classifications %]
+      <li>
+        <bz:classification rdf:about="[% escaped_urlbase %]classification.cgi?name=
+          [% classification.name FILTER uri %]">
+          <bz:name>[% classification.name FILTER html %]</bz:name>
+          <bz:description>[% classification.description FILTER html %]</bz:description>
+          <bz:sortkey>[% classification.sortkey FILTER html %]</bz:sortkey>
+        </bz:classification>
+      </li>
+      [% END %]
+    </Seq>
+  </bz:classifications>
+[% END %]
+
+  <bz:products>
+    <Seq>
+      [% FOREACH product = products %]
+        <li>
+          <bz:product rdf:about="[% escaped_urlbase %]product.cgi?name=[% product.name FILTER uri %]">
+            <bz:name>[% product.name FILTER html %]</bz:name>
+            <bz:allows_unconfirmed>[% product.allows_unconfirmed FILTER html %]</bz:allows_unconfirmed>
+            [% IF Param('useclassification') %]
+              <bz:classification>[% class_names.${product.classification_id}.name FILTER html %]</bz:classification>
+            [% END %]
+            <bz:components>
+              <Seq>
+                [% FOREACH comp = product.components %]
+                  <li resource="[% escaped_urlbase %]component.cgi?name=[% comp.name FILTER uri
+                      %]&amp;product=[% product.name FILTER uri %]"/>
+                [% END %]
+              </Seq>
+            </bz:components>
+
+            <bz:versions>
+              <Seq>
+                [% FOREACH version = product.versions %]
+                  <li resource="[% escaped_urlbase %]version.cgi?name=[% version.name FILTER uri
+                      %]&amp;product=[% product.name FILTER uri %]"/>
+                [% END %]
+              </Seq>
+            </bz:versions>
+
+            [% IF Param('usetargetmilestone') %]
+              <bz:target_milestones>
+                <Seq>
+                  [% FOREACH milestone = product.milestones %]
+                    <li resource="[% escaped_urlbase %]milestone.cgi?name=[% milestone.name FILTER uri
+                        %]&amp;product=[% product.name FILTER uri %]"/>
+                  [% END %]
+                </Seq>
+              </bz:target_milestones>
+            [% END %]
+
+          </bz:product>
+        </li>
+      [% END %]
+    </Seq>
+  </bz:products>
+
+  [% all_visible_flag_types = {} %]
+  <bz:components>
+    <Seq>
+      [% FOREACH product = products %]
+        [% FOREACH comp = product.components %]
+          <li>
+            <bz:component rdf:about="[% escaped_urlbase %]component.cgi?name=[% comp.name FILTER uri
+                          %]&amp;product=[% product.name FILTER uri %]">
+              <bz:name>[% comp.name FILTER html %]</bz:name>
+              <bz:is_active>[% comp.is_active FILTER html %]</bz:is_active>
+              [% IF show_flags %]
+                <bz:flag_types>
+                  <Seq>
+                    [% flag_types = comp.flag_types.bug.merge(comp.flag_types.attachment) %]
+                    [% FOREACH flag_type = flag_types %]
+                      [% NEXT UNLESS flag_type.is_active %]
+                      [% all_visible_flag_types.${flag_type.id} = flag_type %]
+                      <li resource="[% escaped_urlbase %]flag.cgi?id=[% flag_type.id FILTER uri
+                          %]&amp;name=[% flag_type.name FILTER uri %]" />
+                    [% END %]
+                  </Seq>
+                </bz:flag_types>
+              [% END %]
+            </bz:component>
+          </li>
+        [% END %]
+      [% END %]
+    </Seq>
+  </bz:components>
+
+  <bz:versions>
+    <Seq>
+      [% FOREACH product = products %]
+        [% FOREACH version = product.versions %]
+          <li>
+            <bz:version rdf:about="[% escaped_urlbase %]version.cgi?name=[% version.name FILTER uri
+                        %]&amp;product=[% product.name FILTER uri %]">
+              <bz:name>[% version.name FILTER html %]</bz:name>
+              <bz:is_active>[% version.is_active FILTER html %]</bz:is_active>
+            </bz:version>
+          </li>
+        [% END %]
+      [% END %]
+    </Seq>
+  </bz:versions>
+
+  [% IF Param('usetargetmilestone') %]
+    <bz:target_milestones>
+      <Seq>
+        [% FOREACH product = products %]
+          [% FOREACH milestone = product.milestones %]
+            <li>
+              <bz:target_milestone rdf:about="[% escaped_urlbase %]milestone.cgi?name=[% milestone.name FILTER uri
+                                   %]&amp;product=[% product.name FILTER uri %]">
+                <bz:name>[% milestone.name FILTER html %]</bz:name>
+                <bz:is_active>[% milestone.is_active FILTER html %]</bz:is_active>
+              </bz:target_milestone>
+            </li>
+          [% END %]
+        [% END %]
+      </Seq>
+    </bz:target_milestones>
+  [% END %]
+
+  [% IF show_flags %]
+    <bz:flag_types>
+      <Seq>
+        [% FOREACH flag_type = all_visible_flag_types.values.sort('name') %]
+          <li>
+            <bz:flag_type rdf:about="[% escaped_urlbase %]flag.cgi?id=[% flag_type.id FILTER uri
+                          %]&amp;name=[% flag_type.name FILTER uri %]">
+              <bz:id>[% flag_type.id FILTER html %]</bz:id>
+              <bz:name>[% flag_type.name FILTER html %]</bz:name>
+              <bz:description>[% flag_type.description FILTER html %]</bz:description>
+              <bz:type>[% flag_type.target_type FILTER html %]</bz:type>
+              <bz:requestable>[% flag_type.is_requestable FILTER html %]</bz:requestable>
+              <bz:specifically_requestable>[% flag_type.is_requesteeble FILTER html %]</bz:specifically_requestable>
+              <bz:multiplicable>[% flag_type.is_multiplicable FILTER html %]</bz:multiplicable>
+              [% IF user.in_group("editcomponents") %]
+                <bz:grant_group>[% flag_type.grant_group.name FILTER html %]</bz:grant_group>
+                <bz:request_group>[% flag_type.request_group.name FILTER html %]</bz:request_group>
+              [% END %]
+            </bz:flag_type>
+          </li>
+        [% END %]
+      </Seq>
+    </bz:flag_types>
+  [% END %]
+
+  <bz:fields>
+    <Seq>
+      [% PROCESS "global/field-descs.none.tmpl" %]
+      [% FOREACH item = field %]
+        <li>
+          <bz:field rdf:about="[% escaped_urlbase %]field.cgi?name=[% item.name FILTER uri %]">
+            <bz:name>[% item.name FILTER html %]</bz:name>
+            <bz:description>[% (field_descs.${item.name} OR item.description) FILTER html %]</bz:description>
+            [%-# These values are meaningful for custom fields only. %]
+            [% IF item.custom %]
+              <bz:type>[% item.type FILTER html %]</bz:type>
+              <bz:type_desc>[% field_types.${item.type} FILTER html %]</bz:type_desc>
+              <bz:enter_bug>[% item.enter_bug FILTER html %]</bz:enter_bug>
+            [% END %]
+            [% IF item.is_active.defined %]
+              <bz:is_active>[% item.is_active FILTER html %]</bz:is_active>
+            [% END %]
+          </bz:field>
+        </li>
+      [% END %]
+    </Seq>
+  </bz:fields>
+</bz:installation>
+
+</RDF>

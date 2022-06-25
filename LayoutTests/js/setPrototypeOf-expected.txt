@@ -1,0 +1,567 @@
+Test Object.setPrototypeOf.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Basics
+PASS Object.setPrototypeOf.name is 'setPrototypeOf'
+PASS Object.setPrototypeOf.length is 2
+
+Coercible value
+value = 0
+PASS Object.getPrototypeOf(value) did not throw exception.
+PASS Object.setPrototypeOf(value, {}) is value
+PASS Object.getPrototypeOf(value) is (value).__proto__
+value = true
+PASS Object.getPrototypeOf(value) did not throw exception.
+PASS Object.setPrototypeOf(value, {}) is value
+PASS Object.getPrototypeOf(value) is (value).__proto__
+value = false
+PASS Object.getPrototypeOf(value) did not throw exception.
+PASS Object.setPrototypeOf(value, {}) is value
+PASS Object.getPrototypeOf(value) is (value).__proto__
+value = 'string'
+PASS Object.getPrototypeOf(value) did not throw exception.
+PASS Object.setPrototypeOf(value, {}) is value
+PASS Object.getPrototypeOf(value) is (value).__proto__
+value = Symbol()
+PASS Object.getPrototypeOf(value) did not throw exception.
+PASS Object.setPrototypeOf(value, {}) is value
+PASS Object.getPrototypeOf(value) is (value).__proto__
+
+Non-Coercible value
+PASS Object.setPrototypeOf(undefined, {}) threw exception TypeError: Cannot set prototype of undefined or null.
+PASS Object.setPrototypeOf(null, {}) threw exception TypeError: Cannot set prototype of undefined or null.
+
+Non-Object/Null proto
+object (Function)
+PASS Object.setPrototypeOf(object, 0) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, true) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, false) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, 'string') threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, Symbol()) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, undefined) threw exception TypeError: Prototype value can only be an object or null.
+object (Function2)
+PASS Object.setPrototypeOf(object, 0) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, true) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, false) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, 'string') threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, Symbol()) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, undefined) threw exception TypeError: Prototype value can only be an object or null.
+object (Object)
+PASS Object.setPrototypeOf(object, 0) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, true) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, false) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, 'string') threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, Symbol()) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, undefined) threw exception TypeError: Prototype value can only be an object or null.
+object (Object2)
+PASS Object.setPrototypeOf(object, 0) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, true) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, false) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, 'string') threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, Symbol()) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, undefined) threw exception TypeError: Prototype value can only be an object or null.
+object (RegExp)
+PASS Object.setPrototypeOf(object, 0) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, true) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, false) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, 'string') threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, Symbol()) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, undefined) threw exception TypeError: Prototype value can only be an object or null.
+object (Array)
+PASS Object.setPrototypeOf(object, 0) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, true) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, false) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, 'string') threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, Symbol()) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, undefined) threw exception TypeError: Prototype value can only be an object or null.
+object (Error)
+PASS Object.setPrototypeOf(object, 0) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, true) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, false) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, 'string') threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, Symbol()) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, undefined) threw exception TypeError: Prototype value can only be an object or null.
+object (Date)
+PASS Object.setPrototypeOf(object, 0) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, true) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, false) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, 'string') threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, Symbol()) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, undefined) threw exception TypeError: Prototype value can only be an object or null.
+object (Number)
+PASS Object.setPrototypeOf(object, 0) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, true) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, false) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, 'string') threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, Symbol()) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, undefined) threw exception TypeError: Prototype value can only be an object or null.
+object (Boolean)
+PASS Object.setPrototypeOf(object, 0) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, true) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, false) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, 'string') threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, Symbol()) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, undefined) threw exception TypeError: Prototype value can only be an object or null.
+object (String)
+PASS Object.setPrototypeOf(object, 0) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, true) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, false) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, 'string') threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, Symbol()) threw exception TypeError: Prototype value can only be an object or null.
+PASS Object.setPrototypeOf(object, undefined) threw exception TypeError: Prototype value can only be an object or null.
+
+Object and object proto
+object (Function) proto (Function)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Function) proto (Function2)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Function) proto (Object)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Function) proto (Object2)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Function) proto (RegExp)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Function) proto (Array)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Function) proto (Error)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Function) proto (Date)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Function) proto (Number)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Function) proto (Boolean)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Function) proto (String)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Function2) proto (Function)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Function2) proto (Function2)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Function2) proto (Object)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Function2) proto (Object2)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Function2) proto (RegExp)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Function2) proto (Array)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Function2) proto (Error)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Function2) proto (Date)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Function2) proto (Number)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Function2) proto (Boolean)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Function2) proto (String)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Object) proto (Function)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Object) proto (Function2)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Object) proto (Object)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Object) proto (Object2)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Object) proto (RegExp)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Object) proto (Array)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Object) proto (Error)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Object) proto (Date)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Object) proto (Number)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Object) proto (Boolean)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Object) proto (String)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Object2) proto (Function)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Object2) proto (Function2)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Object2) proto (Object)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Object2) proto (Object2)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Object2) proto (RegExp)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Object2) proto (Array)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Object2) proto (Error)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Object2) proto (Date)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Object2) proto (Number)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Object2) proto (Boolean)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Object2) proto (String)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (RegExp) proto (Function)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (RegExp) proto (Function2)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (RegExp) proto (Object)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (RegExp) proto (Object2)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (RegExp) proto (RegExp)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (RegExp) proto (Array)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (RegExp) proto (Error)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (RegExp) proto (Date)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (RegExp) proto (Number)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (RegExp) proto (Boolean)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (RegExp) proto (String)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Array) proto (Function)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Array) proto (Function2)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Array) proto (Object)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Array) proto (Object2)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Array) proto (RegExp)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Array) proto (Array)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Array) proto (Error)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Array) proto (Date)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Array) proto (Number)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Array) proto (Boolean)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Array) proto (String)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Error) proto (Function)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Error) proto (Function2)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Error) proto (Object)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Error) proto (Object2)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Error) proto (RegExp)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Error) proto (Array)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Error) proto (Error)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Error) proto (Date)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Error) proto (Number)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Error) proto (Boolean)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Error) proto (String)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Date) proto (Function)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Date) proto (Function2)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Date) proto (Object)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Date) proto (Object2)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Date) proto (RegExp)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Date) proto (Array)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Date) proto (Error)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Date) proto (Date)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Date) proto (Number)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Date) proto (Boolean)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Date) proto (String)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Number) proto (Function)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Number) proto (Function2)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Number) proto (Object)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Number) proto (Object2)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Number) proto (RegExp)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Number) proto (Array)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Number) proto (Error)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Number) proto (Date)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Number) proto (Number)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Number) proto (Boolean)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Number) proto (String)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Boolean) proto (Function)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Boolean) proto (Function2)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Boolean) proto (Object)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Boolean) proto (Object2)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Boolean) proto (RegExp)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Boolean) proto (Array)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Boolean) proto (Error)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Boolean) proto (Date)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Boolean) proto (Number)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Boolean) proto (Boolean)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (Boolean) proto (String)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (String) proto (Function)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (String) proto (Function2)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (String) proto (Object)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (String) proto (Object2)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (String) proto (RegExp)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (String) proto (Array)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (String) proto (Error)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (String) proto (Date)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (String) proto (Number)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (String) proto (Boolean)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+object (String) proto (String)
+PASS Object.setPrototypeOf(object, proto) is object
+PASS Object.getPrototypeOf(object) is proto
+
+Object and null proto
+object (Function)
+PASS Object.setPrototypeOf(object, null) is object
+PASS Object.getPrototypeOf(object) is null
+object (Function2)
+PASS Object.setPrototypeOf(object, null) is object
+PASS Object.getPrototypeOf(object) is null
+object (Object)
+PASS Object.setPrototypeOf(object, null) is object
+PASS Object.getPrototypeOf(object) is null
+object (Object2)
+PASS Object.setPrototypeOf(object, null) is object
+PASS Object.getPrototypeOf(object) is null
+object (RegExp)
+PASS Object.setPrototypeOf(object, null) is object
+PASS Object.getPrototypeOf(object) is null
+object (Array)
+PASS Object.setPrototypeOf(object, null) is object
+PASS Object.getPrototypeOf(object) is null
+object (Error)
+PASS Object.setPrototypeOf(object, null) is object
+PASS Object.getPrototypeOf(object) is null
+object (Date)
+PASS Object.setPrototypeOf(object, null) is object
+PASS Object.getPrototypeOf(object) is null
+object (Number)
+PASS Object.setPrototypeOf(object, null) is object
+PASS Object.getPrototypeOf(object) is null
+object (Boolean)
+PASS Object.setPrototypeOf(object, null) is object
+PASS Object.getPrototypeOf(object) is null
+object (String)
+PASS Object.setPrototypeOf(object, null) is object
+PASS Object.getPrototypeOf(object) is null
+
+Non-extensible object
+object (Function) with extensions prevented
+PASS Object.setPrototypeOf(object, {}) threw exception TypeError: Attempted to assign to readonly property..
+PASS Object.getPrototypeOf(object) is oldProto
+object (Function2) with extensions prevented
+PASS Object.setPrototypeOf(object, {}) threw exception TypeError: Attempted to assign to readonly property..
+PASS Object.getPrototypeOf(object) is oldProto
+object (Object) with extensions prevented
+PASS Object.setPrototypeOf(object, {}) threw exception TypeError: Attempted to assign to readonly property..
+PASS Object.getPrototypeOf(object) is oldProto
+object (Object2) with extensions prevented
+PASS Object.setPrototypeOf(object, {}) threw exception TypeError: Attempted to assign to readonly property..
+PASS Object.getPrototypeOf(object) is oldProto
+object (RegExp) with extensions prevented
+PASS Object.setPrototypeOf(object, {}) threw exception TypeError: Attempted to assign to readonly property..
+PASS Object.getPrototypeOf(object) is oldProto
+object (Array) with extensions prevented
+PASS Object.setPrototypeOf(object, {}) threw exception TypeError: Attempted to assign to readonly property..
+PASS Object.getPrototypeOf(object) is oldProto
+object (Error) with extensions prevented
+PASS Object.setPrototypeOf(object, {}) threw exception TypeError: Attempted to assign to readonly property..
+PASS Object.getPrototypeOf(object) is oldProto
+object (Date) with extensions prevented
+PASS Object.setPrototypeOf(object, {}) threw exception TypeError: Attempted to assign to readonly property..
+PASS Object.getPrototypeOf(object) is oldProto
+object (Number) with extensions prevented
+PASS Object.setPrototypeOf(object, {}) threw exception TypeError: Attempted to assign to readonly property..
+PASS Object.getPrototypeOf(object) is oldProto
+object (Boolean) with extensions prevented
+PASS Object.setPrototypeOf(object, {}) threw exception TypeError: Attempted to assign to readonly property..
+PASS Object.getPrototypeOf(object) is oldProto
+object (String) with extensions prevented
+PASS Object.setPrototypeOf(object, {}) threw exception TypeError: Attempted to assign to readonly property..
+PASS Object.getPrototypeOf(object) is oldProto
+
+Test prototype lookup
+PASS 'x' in object is false
+PASS 'y' in object is false
+PASS Object.setPrototypeOf(object, oldProto) is object
+PASS object.x is 'old x'
+PASS object.y is 'old y'
+PASS Object.setPrototypeOf(object, newProto) is object
+PASS object.x is 'new x'
+PASS 'y' in object is false
+
+Test other behavior
+PASS object = {}; Object.setPrototypeOf(object, Array.prototype); object instanceof Array is true
+PASS object = {}; Object.setPrototypeOf(object, Array.prototype); object.__proto__ === Array.prototype is true
+PASS object = {}; Object.setPrototypeOf(object, Array.prototype); Array.prototype.isPrototypeOf(object) is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

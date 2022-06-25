@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<script src="helpers.js"></script>
+<body>
+  <script>
+    window.addEventListener("message", (event) => {
+      const { action } = event.data;
+      switch (action) {
+        case "create-payment-request":
+          let result = "";
+          let exceptionMessage;
+          let exceptionName = "";
+          try {
+            new PaymentRequest(validMethods, validDetails);
+            result = "payment request created";
+          } catch (e) {
+            result = "threw";
+            exceptionMessage = e.message;
+            exceptionName = e.name;
+          }
+          event.source.postMessage(
+            { action, result, exceptionMessage, exceptionName },
+            "*"
+          );
+          break;
+        default:
+          event.source.postMessage(
+            {
+              action,
+              exceptionMessage: "Unknown action",
+            },
+            "*"
+          );
+          throw new Error(`Unknown action: ${action}`);
+      }
+    });
+  </script>
+</body>

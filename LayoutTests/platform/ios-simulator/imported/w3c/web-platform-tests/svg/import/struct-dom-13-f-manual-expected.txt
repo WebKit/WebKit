@@ -1,0 +1,110 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (0,0) size 727x450
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGContainer {g} at (0,0) size 150x101
+        RenderSVGEllipse {circle} at (49,49) size 36x36 [stroke={[type=SOLID] [color=#00FF00]}] [fill={[type=SOLID] [color=#0000FF]}] [cx=40.00] [cy=40.00] [r=10.00]
+        RenderSVGEllipse {circle} at (0,65) size 35x36 [stroke={[type=SOLID] [color=#00FF00]}] [fill={[type=SOLID] [color=#FF0000]}] [cx=10.00] [cy=50.00] [r=10.00]
+        RenderSVGEllipse {circle} at (0,0) size 68x68 [stroke={[type=SOLID] [color=#00FF00]}] [fill={[type=SOLID] [color=#008000]}] [cx=20.00] [cy=20.00] [r=20.00]
+        RenderSVGPath {line} at (8,7) size 59x28 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x1=5.00] [y1=5.00] [x2=40.00] [y2=20.00]
+        RenderSVGPath {line} at (32,32) size 36x19 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=20.00] [y1=20.00] [x2=40.00] [y2=30.00]
+        RenderSVGRect {rect} at (15,15) size 86x86 [stroke={[type=SOLID] [color=#FF0000]}] [x=10.00] [y=10.00] [width=50.00] [height=50.00]
+        RenderSVGEllipse {circle} at (116,66) size 34x34 [fill={[type=SOLID] [color=#FFFF00]}] [cx=80.00] [cy=50.00] [r=10.00]
+      RenderSVGContainer {g} at (466,166) size 243x17 [transform={m=((1.00,0.00)(0.00,1.00)) t=(280.00,100.00)}]
+        RenderSVGRect {rect} at (466,168) size 9x9 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGText {text} at (10,0) size 136x10 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 136x10
+            chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 25 width 135.02: "checkIntersection: PASSED"
+      RenderSVGContainer {g} at (466,183) size 108x17 [transform={m=((1.00,0.00)(0.00,1.00)) t=(280.00,110.00)}]
+        RenderSVGRect {rect} at (466,185) size 9x9 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGText {text} at (10,0) size 55x10 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 55x10
+            chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 10 width 54.01: "c1: PASSED"
+      RenderSVGContainer {g} at (466,200) size 108x16 [transform={m=((1.00,0.00)(0.00,1.00)) t=(280.00,120.00)}]
+        RenderSVGRect {rect} at (466,201) size 9x9 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGText {text} at (10,0) size 55x10 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 55x10
+            chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 10 width 54.01: "c2: FAILED"
+      RenderSVGContainer {g} at (466,216) size 108x17 [transform={m=((1.00,0.00)(0.00,1.00)) t=(280.00,130.00)}]
+        RenderSVGRect {rect} at (466,218) size 9x9 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGText {text} at (10,0) size 55x10 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 55x10
+            chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 10 width 54.01: "c3: PASSED"
+      RenderSVGContainer {g} at (466,233) size 108x17 [transform={m=((1.00,0.00)(0.00,1.00)) t=(280.00,140.00)}]
+        RenderSVGRect {rect} at (466,235) size 9x9 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGText {text} at (10,0) size 55x10 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 55x10
+            chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 10 width 54.01: "l1: PASSED"
+      RenderSVGContainer {g} at (466,250) size 108x16 [transform={m=((1.00,0.00)(0.00,1.00)) t=(280.00,150.00)}]
+        RenderSVGRect {rect} at (466,251) size 9x9 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGText {text} at (10,0) size 55x10 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 55x10
+            chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 10 width 54.01: "l2: PASSED"
+      RenderSVGContainer {g} at (466,266) size 108x17 [transform={m=((1.00,0.00)(0.00,1.00)) t=(280.00,160.00)}]
+        RenderSVGRect {rect} at (466,268) size 9x9 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGText {text} at (10,0) size 55x10 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 55x10
+            chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 10 width 54.01: "r1: PASSED"
+      RenderSVGContainer {g} at (466,283) size 108x17 [transform={m=((1.00,0.00)(0.00,1.00)) t=(280.00,170.00)}]
+        RenderSVGRect {rect} at (466,285) size 9x9 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGText {text} at (10,0) size 55x10 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 55x10
+            chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 10 width 54.01: "c4: PASSED"
+      RenderSVGContainer {g} at (466,300) size 261x16 [transform={m=((1.00,0.00)(0.00,1.00)) t=(280.00,180.00)}]
+        RenderSVGRect {rect} at (466,301) size 9x9 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGText {text} at (10,0) size 146x10 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 146x10
+            chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 27 width 145.82: "getIntersectionList: PASSED"
+      RenderSVGContainer {g} at (466,316) size 126x17 [transform={m=((1.00,0.00)(0.00,1.00)) t=(280.00,190.00)}]
+        RenderSVGRect {rect} at (466,318) size 9x9 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGText {text} at (10,0) size 65x10 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 65x10
+            chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 12 width 64.81: "call: PASSED"
+      RenderSVGContainer {g} at (466,333) size 144x17 [transform={m=((1.00,0.00)(0.00,1.00)) t=(280.00,200.00)}]
+        RenderSVGRect {rect} at (466,335) size 9x9 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGText {text} at (10,0) size 76x10 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 76x10
+            chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 14 width 75.61: "length: FAILED"
+      RenderSVGContainer {g} at (466,350) size 144x16 [transform={m=((1.00,0.00)(0.00,1.00)) t=(280.00,210.00)}]
+        RenderSVGRect {rect} at (466,351) size 9x9 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGText {text} at (10,0) size 76x10 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 76x10
+            chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 14 width 75.61: "has c1: PASSED"
+      RenderSVGContainer {g} at (466,366) size 144x17 [transform={m=((1.00,0.00)(0.00,1.00)) t=(280.00,220.00)}]
+        RenderSVGRect {rect} at (466,368) size 9x9 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGText {text} at (10,0) size 76x10 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 76x10
+            chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 14 width 75.61: "has c2: FAILED"
+      RenderSVGContainer {g} at (466,383) size 144x17 [transform={m=((1.00,0.00)(0.00,1.00)) t=(280.00,230.00)}]
+        RenderSVGRect {rect} at (466,385) size 9x9 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGText {text} at (10,0) size 76x10 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 76x10
+            chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 14 width 75.61: "has c3: FAILED"
+      RenderSVGContainer {g} at (466,400) size 144x16 [transform={m=((1.00,0.00)(0.00,1.00)) t=(280.00,240.00)}]
+        RenderSVGRect {rect} at (466,401) size 9x9 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGText {text} at (10,0) size 76x10 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 76x10
+            chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 14 width 75.61: "has l1: FAILED"
+      RenderSVGContainer {g} at (466,416) size 144x17 [transform={m=((1.00,0.00)(0.00,1.00)) t=(280.00,250.00)}]
+        RenderSVGRect {rect} at (466,418) size 9x9 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGText {text} at (10,0) size 76x10 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 76x10
+            chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 14 width 75.61: "has l2: FAILED"
+      RenderSVGContainer {g} at (466,433) size 144x17 [transform={m=((1.00,0.00)(0.00,1.00)) t=(280.00,260.00)}]
+        RenderSVGRect {rect} at (466,435) size 9x9 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGText {text} at (10,0) size 76x10 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 76x10
+            chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 14 width 75.61: "has r1: FAILED"
+    RenderSVGContainer {g} at (16,516) size 385x64
+      RenderSVGText {text} at (10,310) size 231x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 231x38
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 230.19: "$Revision: 1.4 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGContainer {g} at (0,0) size 800x39
+      RenderSVGRect {rect} at (0,0) size 800x36 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [x=1.00] [y=1.00] [width=478.00] [height=20.00]
+      RenderSVGText {text} at (205,-1) size 70x24 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 69x24
+          chunk 1 (middle anchor) text run 1 at (205.95,18.00) startOffset 0 endOffset 5 width 68.10: "DRAFT"

@@ -1,0 +1,4 @@
+This test checks to see if the browser survives the attempted creation of an excessively large canvas.
+
+Survived canvas creation attempt. Width = 134217728
+

@@ -1,0 +1,21 @@
+<script>
+
+var request = window.indexedDB.deleteDatabase("ProcessCloseIDBCleanup");
+
+request.onsuccess = function(event)
+{
+    window.webkit.messageHandlers.testHandler.postMessage('Deleted!');
+}
+
+request.onerror = function()
+{
+    // Unexpected error
+    window.webkit.messageHandlers.testHandler.postMessage('Unexpected error opening database');
+}
+
+request.onblocked = function(event)
+{
+    window.webkit.messageHandlers.testHandler.postMessage('Blocked!');
+}
+
+</script>

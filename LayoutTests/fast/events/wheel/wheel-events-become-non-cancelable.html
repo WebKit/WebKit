@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            height: 5000px;
+        }
+        
+        #target {
+            width: 200px;
+            height: 1000px;
+            background-color: silver;
+            margin: 20px;
+        }
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        var jsTestIsAsync = true;
+
+        let wheelEventCount = 0;
+
+        let firstWasCancelable;
+        let becameNonCancelable;
+
+        async function testScroll()
+        {
+            if (!eventSender) {
+                finishJSTest();
+                return;
+            }
+            eventSender.monitorWheelEvents();
+            eventSender.mouseMoveTo(100, 100);
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "began", "none");
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -5, "changed", "none");
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -5, "changed", "none");
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -5, "changed", "none");
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -5, "changed", "none");
+            await UIHelper.renderingUpdate();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
+            
+            await UIHelper.waitForScrollCompletion();
+
+            shouldBeTrue('firstWasCancelable');
+            shouldBeTrue('becameNonCancelable');
+
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+            description('Tests that events in the gesture are non-cancelable if preventDefault was not called on the first event');
+            let target = document.getElementById('target');
+
+            target.addEventListener('wheel', (event) => {
+                if (wheelEventCount == 0) {
+                    firstWasCancelable = event.cancelable;
+                } else {
+                    // Wait for the first non-cancelable event and check that all subsequent events are non-cancelable.
+                    if (becameNonCancelable && event.cancelable)
+                        testFailed('Should not see cancelable event after non-cancelable event')
+
+                    if (!event.cancelable)
+                        becameNonCancelable = true;
+                }
+                ++wheelEventCount;
+            });
+
+            setTimeout(testScroll, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <div id="target"></div>
+    <div id="console"></div>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

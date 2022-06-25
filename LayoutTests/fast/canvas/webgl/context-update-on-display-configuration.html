@@ -1,0 +1,39 @@
+<html>
+<head>
+<style>
+#example {
+  width: 100%;
+  height: 100%;
+}
+</style>
+<script src="../../../resources/js-test.js"></script>
+<script src="resources/webgl-test-utils.js"> </script>
+<script>
+description('Tests that context is updated when display configuration changes.');
+
+function start()
+{
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+    
+    var canvas = document.getElementById('example');
+    var gl = WebGLTestUtils.create3DContext(canvas);
+
+    canvas.addEventListener('webglcontextchanged', function(e) {
+                            if (window.testRunner)
+                                testRunner.notifyDone();
+                            }, false);
+    
+    if (window.testRunner)
+        testRunner.sendDisplayConfigurationChangedMessageForTesting();
+}
+</script>
+</head>
+
+<body onload="start()">
+    <canvas id="example"></canvas>
+</body>
+</html>
+

@@ -1,0 +1,1 @@
+PASS: Malformed table counters do not cause crash

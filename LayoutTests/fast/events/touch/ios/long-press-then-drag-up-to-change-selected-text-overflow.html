@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../../../resources/basic-gestures.js"></script>
+    <script src="../../../../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function rectToString(rect)
+        {
+            return `(left = ${Math.round(rect.left)}, top = ${Math.round(rect.top)}, width = ${Math.round(rect.width)}, height = ${Math.round(rect.height)})`;
+        }
+
+        async function runTest()
+        {
+            var fontHeight = 30;
+
+            if (!testRunner.runUIScript)
+                return;
+
+            window.scrollBy(0, window.innerHeight);
+
+            var output = '';
+            var targetRect = document.getElementById('target').getBoundingClientRect();
+
+            var pressPointX = window.screen.width / 2;
+            var pressPointY = fontHeight + window.innerHeight;
+            
+            var selectionChangedCount = 0;
+            document.addEventListener("selectionchange", () => {
+                selectionChangedCount++;
+            });
+
+            await longPressAtPoint(pressPointX, pressPointY);
+
+            await UIHelper.waitForSelectionToAppear();
+
+            if (document.getSelection().toString() != "")
+                output += 'PASS: Has Selection';
+            else
+                output += 'FAIL: failed to select a word as a result of a long press.';
+            output += '<br>';
+
+            lastSelectionChangeCount = selectionChangedCount;
+            var grabberMidpoint = UIHelper.midPointOfRect(await UIHelper.getSelectionEndGrabberViewRect());
+            await touchAndDragFromPointToPoint(grabberMidpoint.x, grabberMidpoint.y , grabberMidpoint.x, grabberMidpoint.y - (fontHeight * 2));
+
+            if ((await UIHelper.getUISelectionRects()).length > 2)
+                output += 'FAIL: Selected outside of visible area.';
+            else
+                output += 'PASS: Selection properly bounded';
+
+            document.getElementById('target').innerHTML = output;
+            testRunner.notifyDone();
+        }
+
+        window.addEventListener('load', runTest, false);
+    </script>
+    <style>
+        #target {
+            height: 50px;
+            width: 300px;
+            background-color: silver;
+            font-family: monospace;
+            font-size: 18px;
+        }
+        body {
+            overflow: hidden;
+        }
+    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <div id="target">
+        <p>Here's to the crazy ones. The misfits. The rebels. The troublemakers. The round pegs in the square holes. The ones who see things differently. They're not fond of rules. And they have no respect for the status quo. You can quote them, disagree with them, glorify or vilify them. About the only thing you can't do is ignore them. Because they change things. They push the human race forward. And while some may see them as the crazy ones, we see genius. Because the people who are crazy enough to think they can change the world, are the ones who do.</p>
+        <p>Here's to the crazy ones. The misfits. The rebels. The troublemakers. The round pegs in the square holes. The ones who see things differently. They're not fond of rules. And they have no respect for the status quo. You can quote them, disagree with them, glorify or vilify them. About the only thing you can't do is ignore them. Because they change things. They push the human race forward. And while some may see them as the crazy ones, we see genius. Because the people who are crazy enough to think they can change the world, are the ones who do.</p>
+        <p>Here's to the crazy ones. The misfits. The rebels. The troublemakers. The round pegs in the square holes. The ones who see things differently. They're not fond of rules. And they have no respect for the status quo. You can quote them, disagree with them, glorify or vilify them. About the only thing you can't do is ignore them. Because they change things. They push the human race forward. And while some may see them as the crazy ones, we see genius. Because the people who are crazy enough to think they can change the world, are the ones who do.</p>
+        <p>This test requires UIScriptController to run.</p>
+    </div>
+</body>
+</html>
+

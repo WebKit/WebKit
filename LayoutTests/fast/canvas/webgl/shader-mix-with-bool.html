@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="../../../resources/js-test.js" type="text/javascript"></script>
+	<script src="resources/webgl-test.js" type="text/javascript"></script>
+    <script src="resources/webgl-test-utils.js"> </script>
+    <script>
+    var wtu = WebGLTestUtils;
+    function runTest()
+    {
+    	description("Tests that program compiling/linking with a bool mix function works correctly.");
+        var canvas = document.getElementById('webgl-canvas');
+        var gl = canvas.getContext("webgl2");
+        var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+        var program = gl.createProgram();
+        var vertexShader = gl.createShader(gl.VERTEX_SHADER);
+        gl.shaderSource(vertexShader, '#version 300 es\n in vec2 pos;\nvoid main() { bvec2 mixVec = bvec2(true, false); gl_Position = vec4(mix(pos, vec2(1,1), mixVec), 0, 1); }');
+        gl.compileShader(vertexShader);
+        gl.shaderSource(fragmentShader, '#version 300 es\n precision mediump float; out vec4 color; void main() { color = vec4(0,0.8,0,1); }');
+        gl.compileShader(fragmentShader);
+        gl.attachShader(program, vertexShader);
+        gl.attachShader(program, fragmentShader);
+        gl.linkProgram(program);
+        gl.useProgram(program);
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
+		wtu.glErrorShouldBe(gl,0,"no error from using mix function");
+
+        if (window.testRunner)
+          testRunner.notifyDone();
+    }
+
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
+    }
+
+    window.onpageshow = runTest;
+    </script>
+</head>
+<body>
+    <canvas id="webgl-canvas" width="100px" height="100px"></canvas>
+</body>
+</html>

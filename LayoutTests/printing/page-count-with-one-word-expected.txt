@@ -1,0 +1,2 @@
+A page with only one line should be printed in one page.
+PASS

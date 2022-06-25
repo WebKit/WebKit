@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <video id="audio" autoplay playsInline></video>
+        <script src ="routines.js"></script>
+        <script>
+promise_test(async (test) => {
+    let sender, receiver;
+    const localStream = await navigator.mediaDevices.getUserMedia({audio: true});
+    const key = await crypto.subtle.importKey("raw", new Uint8Array([143, 77, 43, 10, 72, 19, 37, 67, 236, 219, 24, 93, 26, 165, 91, 178]), "HKDF", false, ["deriveBits", "deriveKey"]);
+    const stream = await new Promise((resolve, reject) => {
+        createConnections((firstConnection) => {
+            sender = firstConnection.addTrack(localStream.getAudioTracks()[0], localStream);
+            let transform = new SFrameTransform;
+            transform.setEncryptionKey(key);
+            sender.transform = transform;
+        }, (secondConnection) => {
+            secondConnection.ontrack = (trackEvent) => {
+                let transform = new SFrameTransform;
+                transform.setEncryptionKey(key);
+                receiver = trackEvent.receiver;
+                receiver.transform = transform;
+                resolve(trackEvent.streams[0]);
+            };
+        });
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+
+    audio.srcObject = stream;
+    await audio.play();
+
+    if (window.internals) {
+        const senderCounter = internals.sframeCounter(sender.transform);
+        const receiverCounter = internals.sframeCounter(receiver.transform);
+
+        let counter = 0;
+        while (receiverCounter === internals.sframeCounter(receiver.transform) && ++counter < 100)
+            await new Promise(resolve => setTimeout(resolve, 50));
+        assert_not_equals(internals.sframeCounter(receiver.transform), receiverCounter, "receiver");
+        assert_not_equals(internals.sframeCounter(sender.transform), senderCounter, "sender");
+    }
+}, "Audio exchange with SFrame");
+        </script>
+    </body>
+</html>

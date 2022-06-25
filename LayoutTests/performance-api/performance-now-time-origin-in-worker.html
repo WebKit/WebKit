@@ -1,0 +1,18 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Ensure time origin in Worker starts from the moment of Worker Creation");
+self.jsTestIsAsync = true;
+
+while (performance.now() < 200)
+    continue;
+
+let worker = startWorker("resources/time-origin-in-worker.js");
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

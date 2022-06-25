@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    #box {
+        position: absolute;
+        left: 100px;
+        top: 200px;
+        height: 100px;
+        width: 100px;
+        background-color: red;
+        -webkit-animation: anim 1s linear infinite;
+    }
+    #boxShorthand {
+        position: absolute;
+        left: 100px;
+        top: 300px;
+        height: 100px;
+        width: 100px;
+        background-color: red;
+        -webkit-animation: animShorthand 1s linear infinite;
+    }
+    #boxStatic {
+        position: absolute;
+        left: 100px;
+        top: 400px;
+        height: 100px;
+        width: 100px;
+        background-color: red;
+        background-image: -webkit-cross-fade(url(resources/blue-100.png), url(resources/green-100.png), 50%);
+    }
+    #boxAnim1 {
+        position: absolute;
+        left: 200px;
+        top: 200px;
+        height: 100px;
+        width: 100px;
+        background-color: red;
+        -webkit-animation: animCross1 1s linear infinite;
+    }
+    #boxAnim2 {
+        position: absolute;
+        left: 200px;
+        top: 300px;
+        height: 100px;
+        width: 100px;
+        background-color: red;
+        -webkit-animation: animCross2 1s linear infinite;
+    }
+    #boxAnim3 {
+        position: absolute;
+        left: 200px;
+        top: 400px;
+        height: 100px;
+        width: 100px;
+        background-color: red;
+        -webkit-animation: animCross3 1s linear infinite;
+    }
+    @-webkit-keyframes anim {
+        from { background-image: url(resources/blue-100.png); }
+        to   { background-image: url(resources/green-100.png); }
+    }
+    @-webkit-keyframes animShorthand {
+        from { background: url(resources/blue-100.png); }
+        to   { background: url(resources/green-100.png); }
+    }
+    @-webkit-keyframes animCross1 {
+        from { background-image: -webkit-cross-fade(url(resources/blue-100.png), url(resources/green-100.png), 20%); }
+        to   { background-image: -webkit-cross-fade(url(resources/blue-100.png), url(resources/green-100.png), 0.8); }
+    }
+    @-webkit-keyframes animCross2 {
+        /* Image inputs are not identical - no animation.*/
+        from { background-image: -webkit-cross-fade(url(resources/blue-100.png), url(resources/green-100.png), 20%); }
+        to   { background-image: cross-fade(url(resources/green-100.png), url(resources/blue-100.png), 50%); }
+    }
+    @-webkit-keyframes animCross3 {
+        /* Direct image inputs are not identical - no animation.*/
+        from { background-image: -webkit-cross-fade(-webkit-filter(url(resources/blue-100.png), contrast(0.5)), url(resources/green-100.png), 20%); }
+        to   { background-image: -webkit-cross-fade(url(resources/blue-100.png), url(resources/green-100.png), 50%); }
+    }
+  </style>
+  <script src="resources/animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript" charset="utf-8">
+    const expectedValues = [
+      // [animation-name, time, element-id, property, expected-value, tolerance]
+      ["anim", 2.5, "box", "backgroundImage", "cross-fade(url(blue-100.png), url(green-100.png), 50%)", 0.05],
+      ["anim", 2.5, ["box", "static:boxStatic"], "backgroundImage", "cross-fade(url(blue-100.png), url(green-100.png), 50%)", 0.05],
+      ["animShorthand", 2.5, ["boxShorthand", "static:boxStatic"], "backgroundImage", "cross-fade(url(blue-100.png), url(green-100.png), 50%)", 0.05],
+      ["animCross1", 2.5, "boxAnim1", "backgroundImage", "cross-fade(url(resources/blue-100.png), url(resources/green-100.png), 0.5)", 0.05],
+      ["animCross2", 2.5, "boxAnim2", "backgroundImage", "cross-fade(url(resources/green-100.png), url(resources/blue-100.png), 50%)", 0],
+      ["animCross3", 2.5, "boxAnim3", "backgroundImage", "cross-fade(url(resources/blue-100.png), url(resources/green-100.png), 50%)", 0],
+    ];
+
+    var doPixelTest = true;
+    var disablePauseAPI = false;
+    runAnimationTest(expectedValues, null, undefined, disablePauseAPI, doPixelTest);
+  </script>
+</head>
+<body>
+<div id="box"></div>
+<div id="boxStatic"></div>
+<div id="boxShorthand"></div>
+<div id="boxAnim1"></div>
+<div id="boxAnim2"></div>
+<div id="boxAnim3"></div>
+<div id="result"></div>
+</body>
+</html>

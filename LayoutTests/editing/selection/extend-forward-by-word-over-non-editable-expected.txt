@@ -1,0 +1,8 @@
+PASS for LTR
+PASS for RTL
+PASS for LTR-multi
+PASS for RTL-multi
+foo bar baz qux quux
+שוּרה שוּרה שוּרה שוּרה שוּרה
+foo bar baz baz baz qux quux
+שוּרה שוּרה שוּרה שוּרה שוּרה שוּרה שוּרה

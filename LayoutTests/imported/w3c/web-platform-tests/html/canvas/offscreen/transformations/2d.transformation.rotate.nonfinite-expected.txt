@@ -1,0 +1,7 @@
+2d.transformation.rotate.nonfinite
+
+rotate() with Infinity/NaN is ignored
+
+
+PASS rotate() with Infinity/NaN is ignored
+

@@ -1,0 +1,17 @@
+<style>
+  head, script {
+    display: table;
+  }
+</style>
+<script>
+  if (window.testRunner)
+      testRunner.dumpAsText();
+  onload = () => {
+    console.log("This test passes if it does not crash.");
+    document.execCommand('SelectAll');
+    document.execCommand('Copy');
+    document.execCommand('SelectAll');
+    document.designMode = 'on';
+    document.execCommand('PasteAndMatchStyle');
+  };
+</script>

@@ -1,0 +1,60 @@
+# Copyright (c) 2015 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("//build/dotfile_settings.gni")
+
+# The location of the build configuration file.
+buildconfig = "//build/config/BUILDCONFIG.gn"
+
+# The python interpreter to use by default. On Windows, this will look
+# for python3.exe and python3.bat.
+script_executable = "python3"
+
+# The secondary source root is a parallel directory tree where
+# GN build files are placed when they can not be placed directly
+# in the source tree, e.g. for third party source trees.
+secondary_source = "//build/secondary/"
+
+# These are the targets to skip header checking by default. The files in targets
+# matching these patterns (see "gn help label_pattern" for format) will not have
+# their includes checked for proper dependencies when you run either
+# "gn check" or "gn gen --check".
+no_check_targets = [ "//third_party/icu/*" ]
+
+# These are the list of GN files that run exec_script. This whitelist exists
+# to force additional review for new uses of exec_script, which is strongly
+# discouraged except for gypi_to_gn calls.
+exec_script_whitelist = build_dotfile_settings.exec_script_whitelist +
+                        [ "//build_overrides/build.gni" ]
+
+default_args = {
+  # Webrtc does not support component builds because we are not using the
+  # template "component" but we rely directly on "rtc_static_library" and
+  # "rtc_shared_library". This means that we cannot use the chromium default
+  # value for this argument.
+  # This also means that the user can override this value using --args or
+  # the args.gn file but this setting will be ignored because we don't support
+  # component builds.
+  is_component_build = false
+
+  mac_sdk_min = "10.12"
+
+  ios_deployment_target = "12.0"
+
+  # The SDK API level, in contrast, is set by build/android/AndroidManifest.xml.
+  android32_ndk_api_level = 16
+  android64_ndk_api_level = 21
+
+  # WebRTC does not provide the gflags dependency. Because libyuv uses it only
+  # for unittests, it can be disabled (see third_party/libyuv/BUILD.gn)
+  libyuv_use_gflags = false
+
+  enable_libaom = true
+
+  gtest_enable_absl_printers = true
+}

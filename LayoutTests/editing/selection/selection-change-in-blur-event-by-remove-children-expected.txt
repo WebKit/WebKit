@@ -1,0 +1,6 @@
+PASS selection.anchorOffset is 0
+PASS selection.focusOffset is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

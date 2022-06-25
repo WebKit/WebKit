@@ -1,0 +1,398 @@
+# Copyright (c) 2014 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../webrtc.gni")
+
+visibility = [ ":*" ]
+
+rtc_library("common_audio") {
+  visibility += [ "*" ]
+  sources = [
+    "audio_converter.cc",
+    "audio_converter.h",
+    "audio_util.cc",
+    "channel_buffer.cc",
+    "channel_buffer.h",
+    "include/audio_util.h",
+    "real_fourier.cc",
+    "real_fourier.h",
+    "real_fourier_ooura.cc",
+    "real_fourier_ooura.h",
+    "resampler/include/push_resampler.h",
+    "resampler/include/resampler.h",
+    "resampler/push_resampler.cc",
+    "resampler/push_sinc_resampler.cc",
+    "resampler/push_sinc_resampler.h",
+    "resampler/resampler.cc",
+    "resampler/sinc_resampler.cc",
+    "smoothing_filter.cc",
+    "smoothing_filter.h",
+    "vad/include/vad.h",
+    "vad/vad.cc",
+    "wav_file.cc",
+    "wav_file.h",
+    "wav_header.cc",
+    "wav_header.h",
+    "window_generator.cc",
+    "window_generator.h",
+  ]
+
+  deps = [
+    ":common_audio_c",
+    ":sinc_resampler",
+    "../api:array_view",
+    "../rtc_base:checks",
+    "../rtc_base:gtest_prod",
+    "../rtc_base:rtc_base_approved",
+    "../rtc_base:sanitizer",
+    "../rtc_base/memory:aligned_malloc",
+    "../rtc_base/system:arch",
+    "../rtc_base/system:file_wrapper",
+    "../system_wrappers",
+    "third_party/ooura:fft_size_256",
+  ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+
+  defines = []
+
+  if (rtc_build_with_neon) {
+    deps += [ ":common_audio_neon" ]
+  }
+
+  if (current_cpu == "x86" || current_cpu == "x64") {
+    deps += [ ":common_audio_sse2" ]
+    deps += [ ":common_audio_avx2" ]
+  }
+}
+
+rtc_source_set("mock_common_audio") {
+  visibility += webrtc_default_visibility
+  testonly = true
+  sources = [
+    "mocks/mock_smoothing_filter.h",
+    "vad/mock/mock_vad.h",
+  ]
+  deps = [
+    ":common_audio",
+    "../test:test_support",
+  ]
+}
+
+rtc_source_set("common_audio_c_arm_asm") {
+  sources = []
+  deps = []
+  if (current_cpu == "arm") {
+    sources += [ "signal_processing/complex_bit_reverse_arm.S" ]
+
+    if (arm_version >= 7) {
+      sources += [ "signal_processing/filter_ar_fast_q12_armv7.S" ]
+    } else {
+      sources += [ "signal_processing/filter_ar_fast_q12.c" ]
+    }
+    deps += [ "../rtc_base/system:asm_defines" ]
+  }
+}
+
+rtc_library("common_audio_c") {
+  visibility += webrtc_default_visibility
+  sources = [
+    "ring_buffer.c",
+    "ring_buffer.h",
+    "signal_processing/auto_corr_to_refl_coef.c",
+    "signal_processing/auto_correlation.c",
+    "signal_processing/complex_fft_tables.h",
+    "signal_processing/copy_set_operations.c",
+    "signal_processing/cross_correlation.c",
+    "signal_processing/division_operations.c",
+    "signal_processing/downsample_fast.c",
+    "signal_processing/energy.c",
+    "signal_processing/filter_ar.c",
+    "signal_processing/filter_ma_fast_q12.c",
+    "signal_processing/get_hanning_window.c",
+    "signal_processing/get_scaling_square.c",
+    "signal_processing/ilbc_specific_functions.c",
+    "signal_processing/include/real_fft.h",
+    "signal_processing/include/signal_processing_library.h",
+    "signal_processing/include/spl_inl.h",
+    "signal_processing/include/spl_inl_armv7.h",
+    "signal_processing/levinson_durbin.c",
+    "signal_processing/lpc_to_refl_coef.c",
+    "signal_processing/min_max_operations.c",
+    "signal_processing/randomization_functions.c",
+    "signal_processing/real_fft.c",
+    "signal_processing/refl_coef_to_lpc.c",
+    "signal_processing/resample.c",
+    "signal_processing/resample_48khz.c",
+    "signal_processing/resample_by_2.c",
+    "signal_processing/resample_by_2_internal.c",
+    "signal_processing/resample_by_2_internal.h",
+    "signal_processing/resample_fractional.c",
+    "signal_processing/spl_init.c",
+    "signal_processing/spl_inl.c",
+    "signal_processing/spl_sqrt.c",
+    "signal_processing/splitting_filter.c",
+    "signal_processing/sqrt_of_one_minus_x_squared.c",
+    "signal_processing/vector_scaling_operations.c",
+    "vad/include/webrtc_vad.h",
+    "vad/vad_core.c",
+    "vad/vad_core.h",
+    "vad/vad_filterbank.c",
+    "vad/vad_filterbank.h",
+    "vad/vad_gmm.c",
+    "vad/vad_gmm.h",
+    "vad/vad_sp.c",
+    "vad/vad_sp.h",
+    "vad/webrtc_vad.c",
+  ]
+
+  if (current_cpu == "mipsel") {
+    sources += [
+      "signal_processing/complex_bit_reverse_mips.c",
+      "signal_processing/complex_fft_mips.c",
+      "signal_processing/cross_correlation_mips.c",
+      "signal_processing/downsample_fast_mips.c",
+      "signal_processing/filter_ar_fast_q12_mips.c",
+      "signal_processing/include/spl_inl_mips.h",
+      "signal_processing/min_max_operations_mips.c",
+      "signal_processing/resample_by_2_mips.c",
+    ]
+    if (mips_dsp_rev > 0) {
+      sources += [ "signal_processing/vector_scaling_operations_mips.c" ]
+    }
+  } else {
+    sources += [ "signal_processing/complex_fft.c" ]
+  }
+
+  if (current_cpu != "arm" && current_cpu != "mipsel") {
+    sources += [
+      "signal_processing/complex_bit_reverse.c",
+      "signal_processing/filter_ar_fast_q12.c",
+    ]
+  }
+
+  deps = [
+    ":common_audio_c_arm_asm",
+    ":common_audio_cc",
+    "../rtc_base:checks",
+    "../rtc_base:compile_assert_c",
+    "../rtc_base:rtc_base_approved",
+    "../rtc_base:sanitizer",
+    "../rtc_base/system:arch",
+    "../system_wrappers",
+    "third_party/ooura:fft_size_256",
+    "third_party/spl_sqrt_floor",
+  ]
+}
+
+rtc_library("common_audio_cc") {
+  sources = [
+    "signal_processing/dot_product_with_scale.cc",
+    "signal_processing/dot_product_with_scale.h",
+  ]
+
+  deps = [
+    "../rtc_base:rtc_base_approved",
+    "../system_wrappers",
+  ]
+}
+
+rtc_source_set("sinc_resampler") {
+  sources = [ "resampler/sinc_resampler.h" ]
+  deps = [
+    "../rtc_base:gtest_prod",
+    "../rtc_base:rtc_base_approved",
+    "../rtc_base/memory:aligned_malloc",
+    "../rtc_base/system:arch",
+    "../system_wrappers",
+  ]
+}
+
+rtc_source_set("fir_filter") {
+  visibility += webrtc_default_visibility
+  sources = [ "fir_filter.h" ]
+}
+
+rtc_library("fir_filter_factory") {
+  visibility += webrtc_default_visibility
+  sources = [
+    "fir_filter_c.cc",
+    "fir_filter_c.h",
+    "fir_filter_factory.cc",
+    "fir_filter_factory.h",
+  ]
+  deps = [
+    ":fir_filter",
+    "../rtc_base:checks",
+    "../rtc_base:rtc_base_approved",
+    "../rtc_base/system:arch",
+    "../system_wrappers",
+  ]
+  if (current_cpu == "x86" || current_cpu == "x64") {
+    deps += [ ":common_audio_sse2" ]
+    deps += [ ":common_audio_avx2" ]
+  }
+  if (rtc_build_with_neon) {
+    deps += [ ":common_audio_neon" ]
+  }
+}
+
+if (current_cpu == "x86" || current_cpu == "x64") {
+  rtc_library("common_audio_sse2") {
+    sources = [
+      "fir_filter_sse.cc",
+      "fir_filter_sse.h",
+      "resampler/sinc_resampler_sse.cc",
+    ]
+
+    if (is_posix || is_fuchsia) {
+      cflags = [ "-msse2" ]
+    }
+
+    deps = [
+      ":fir_filter",
+      ":sinc_resampler",
+      "../rtc_base:checks",
+      "../rtc_base:rtc_base_approved",
+      "../rtc_base/memory:aligned_malloc",
+    ]
+  }
+
+  rtc_library("common_audio_avx2") {
+    sources = [
+      "fir_filter_avx2.cc",
+      "fir_filter_avx2.h",
+      "resampler/sinc_resampler_avx2.cc",
+    ]
+
+    if (is_win) {
+      cflags = [ "/arch:AVX2" ]
+    } else {
+      cflags = [
+        "-mavx2",
+        "-mfma",
+      ]
+    }
+
+    deps = [
+      ":fir_filter",
+      ":sinc_resampler",
+      "../rtc_base:checks",
+      "../rtc_base:rtc_base_approved",
+      "../rtc_base/memory:aligned_malloc",
+    ]
+  }
+}
+
+if (rtc_build_with_neon) {
+  rtc_library("common_audio_neon") {
+    sources = [
+      "fir_filter_neon.cc",
+      "fir_filter_neon.h",
+      "resampler/sinc_resampler_neon.cc",
+    ]
+
+    if (current_cpu != "arm64") {
+      # Enable compilation for the NEON instruction set.
+      suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
+      cflags = [ "-mfpu=neon" ]
+    }
+
+    deps = [
+      ":common_audio_neon_c",
+      ":fir_filter",
+      ":sinc_resampler",
+      "../rtc_base:checks",
+      "../rtc_base:rtc_base_approved",
+      "../rtc_base/memory:aligned_malloc",
+    ]
+  }
+
+  rtc_library("common_audio_neon_c") {
+    visibility += webrtc_default_visibility
+    sources = [
+      "signal_processing/cross_correlation_neon.c",
+      "signal_processing/downsample_fast_neon.c",
+      "signal_processing/min_max_operations_neon.c",
+    ]
+
+    if (current_cpu != "arm64") {
+      # Enable compilation for the NEON instruction set.
+      suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
+      cflags = [ "-mfpu=neon" ]
+    }
+
+    deps = [
+      ":common_audio_c",
+      "../rtc_base:checks",
+      "../rtc_base:rtc_base_approved",
+      "../rtc_base/system:arch",
+    ]
+  }
+}
+
+if (rtc_include_tests && !build_with_chromium) {
+  rtc_test("common_audio_unittests") {
+    visibility += webrtc_default_visibility
+    testonly = true
+
+    sources = [
+      "audio_converter_unittest.cc",
+      "audio_util_unittest.cc",
+      "channel_buffer_unittest.cc",
+      "fir_filter_unittest.cc",
+      "real_fourier_unittest.cc",
+      "resampler/push_resampler_unittest.cc",
+      "resampler/push_sinc_resampler_unittest.cc",
+      "resampler/resampler_unittest.cc",
+      "resampler/sinusoidal_linear_chirp_source.cc",
+      "resampler/sinusoidal_linear_chirp_source.h",
+      "ring_buffer_unittest.cc",
+      "signal_processing/real_fft_unittest.cc",
+      "signal_processing/signal_processing_unittest.cc",
+      "smoothing_filter_unittest.cc",
+      "vad/vad_core_unittest.cc",
+      "vad/vad_filterbank_unittest.cc",
+      "vad/vad_gmm_unittest.cc",
+      "vad/vad_sp_unittest.cc",
+      "vad/vad_unittest.cc",
+      "vad/vad_unittest.h",
+      "wav_file_unittest.cc",
+      "wav_header_unittest.cc",
+      "window_generator_unittest.cc",
+    ]
+
+    # Does not compile on iOS for arm: webrtc:5544.
+    if (!is_ios || target_cpu != "arm") {
+      sources += [ "resampler/sinc_resampler_unittest.cc" ]
+    }
+
+    deps = [
+      ":common_audio",
+      ":common_audio_c",
+      ":fir_filter",
+      ":fir_filter_factory",
+      ":sinc_resampler",
+      "../rtc_base:checks",
+      "../rtc_base:rtc_base_approved",
+      "../rtc_base:rtc_base_tests_utils",
+      "../rtc_base/system:arch",
+      "../system_wrappers",
+      "../test:fileutils",
+      "../test:rtc_expect_death",
+      "../test:test_main",
+      "../test:test_support",
+      "//testing/gtest",
+    ]
+
+    if (is_android) {
+      deps += [ "//testing/android/native_test:native_test_support" ]
+
+      shard_timeout = 900
+    }
+  }
+}

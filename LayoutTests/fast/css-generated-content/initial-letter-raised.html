@@ -1,0 +1,23 @@
+<html>
+<head>
+<style>
+div { width:400px; margin:1em }
+div::first-letter { -webkit-initial-letter: 3 2; margin-right:2px; margin-left:2px }
+span.rtl { direction:rtl; display:block }
+</style>
+</head>
+<div>
+An example of first-letter. This letter should span 3 lines of text, and
+so it should align itself cleanly with the cap-height of the A lining up with
+the cap-height of the first line, and the baseline of the A lining up with the
+baseline of the third line.
+</div>
+<span class="rtl" >
+<div>An RTL example of first-letter. This letter should span 3 lines of text, and
+so it should align itself cleanly with the cap-height of the A lining up with
+the cap-height of the first line, and the baseline of the A lining up with the
+baseline of the third line.
+</div>
+</span>
+
+

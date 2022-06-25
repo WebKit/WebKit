@@ -1,0 +1,2 @@
+ALERT: PASS: load was not blocked
+This test opens a HTTPS window that loads insecure data via the Fetch API. We should upgrade this request and thereby avoid a mixed content resource load.

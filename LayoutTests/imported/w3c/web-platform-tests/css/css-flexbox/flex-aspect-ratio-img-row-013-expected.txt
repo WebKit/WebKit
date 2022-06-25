@@ -1,0 +1,26 @@
+Pass condition is 4 green 100x100 squares and 1 0x0 square.
+
+Firefox 84a1 passes. Chrome 87 fails them all by making the green rectangles be 200x100.
+
+Transferred size suggestion is the stretched 100px:
+
+
+Have to subtract the margin from the stretched height to get the transferred size suggestion:
+
+
+Have to subtract a margin larger than the stretched height to get 0px transferred size suggestion:
+
+
+Have to subtract the margin from the stretched height (ignoring the presence of a border) to get the transferred size suggestion:
+
+
+Stretched transferred size suggestion has to obey min-height:
+
+
+
+PASS img 1
+PASS img 2
+PASS img 3
+PASS img 4
+PASS img 5
+

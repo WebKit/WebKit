@@ -1,0 +1,5 @@
+
+PASS loading=auto for disconnected image
+PASS loading=eager for disconnected image
+PASS loading=lazy for disconnected image
+

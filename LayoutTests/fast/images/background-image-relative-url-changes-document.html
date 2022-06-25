@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Makes sure background-images with relative URLs are properly loaded when moved to a new document.</p>
+<script>
+const htmlDocument = document.implementation.createHTMLDocument('template');
+htmlDocument.documentElement.innerHTML = '<div style="background-image: url(resources/green-256x256.jpg); width: 256px; height: 256px;"></div>';
+const data = htmlDocument.body.children;
+for (var i = 0; i < data.length; i++)
+    document.body.appendChild(data[i]);
+</script>
+</body>
+</html>

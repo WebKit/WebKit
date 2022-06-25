@@ -1,0 +1,96 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        body {
+            height: 2000px;
+        }
+        select {
+            display: block;
+            font-size: 11pt;
+            margin: 10px;
+            border: 1px solid black;
+        }
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        jsTestIsAsync = true;
+
+        let select;
+        async function scrollTest()
+        {
+            select = document.getElementsByTagName('select')[0];
+
+            select.scrollTop = 90;
+            shouldBe('select.scrollTop', '90');
+            shouldBe('window.pageYOffset', '0');
+
+            if (!window.eventSender) {
+                finishJSTest();
+                return;
+            }
+
+            const selectBounds = select.getBoundingClientRect();
+            const x = selectBounds.left + 10;
+            const y = selectBounds.top + 10;
+
+            eventSender.monitorWheelEvents();
+            eventSender.mouseMoveTo(x, y);
+
+            debug('Scrolling up then down in the select');
+            // Scroll to the top of the select.
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 1, "began", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 20, "changed", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
+
+            await UIHelper.waitForScrollCompletion();
+
+            // Scroll up again to trigger a document bounce.
+            eventSender.monitorWheelEvents({ resetLatching: false });
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 1, "began", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 20, "changed", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
+
+            await UIHelper.waitForScrollCompletion();
+
+            // Scroll down. This should scroll the select, not the document.
+            eventSender.monitorWheelEvents({ resetLatching: false });
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -2, "began", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -20, "changed", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -20, "changed", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
+
+            await UIHelper.waitForScrollCompletion();
+
+            shouldBeTrue('select.scrollTop > 0');
+            shouldBe('window.pageYOffset', '0');
+
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+            description("Tests that scrolling over a &lt;select&gt; doesn't latch on the document");
+            setTimeout(scrollTest, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <select size="5">
+        <option>January</option>
+        <option>February</option>
+        <option>March</option>
+        <option>April</option>
+        <option>May</option>
+        <option>June</option>
+        <option>July</option>
+        <option>August</option>
+        <option>September</option>
+        <option>October</option>
+        <option>November</option>
+        <option>December</option>
+    </select>
+<div id="console"></div>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

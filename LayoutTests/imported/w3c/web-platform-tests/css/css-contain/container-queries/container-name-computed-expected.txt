@@ -1,0 +1,12 @@
+
+PASS Property container-name value 'initial'
+PASS Property container-name value 'unset'
+PASS Property container-name value 'foo'
+PASS Property container-name value 'FoO'
+PASS Property container-name value 'foo bar'
+PASS Property container-name value 'bar foo'
+PASS Property container-name value 'foo foo bar'
+PASS Property container-name value 'foo bar foo'
+PASS Property container-name value 'bar foo foo'
+PASS Property container-name value '\!escaped'
+

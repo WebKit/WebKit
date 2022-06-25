@@ -1,0 +1,6 @@
+2d.path.roundrect.radius.toomany
+Check that roundRect throws an IndeSizeError if radii has more than four items.
+Actual output:
+
+PASS Check that roundRect throws an IndeSizeError if radii has more than four items.
+

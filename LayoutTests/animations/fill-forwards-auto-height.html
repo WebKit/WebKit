@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+    @keyframes reveal {
+        0%, 50% {
+            height: 0;
+        }
+
+        100% {
+            height: auto;
+        }
+    }
+
+    .landing {
+        width: 300px;
+        overflow: hidden;
+        border: 1px solid black;
+        animation: reveal 0.01s forwards;
+    }
+    
+    .contents {
+        height: 300px;
+        background-color: gray;
+    }
+    </style>
+</head>
+<body>
+<div id="animated" class="landing">
+    <div class="contents"></div>
+</div>
+<script>
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    document.getElementById('animated').addEventListener('animationend', function() {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    })
+</script>
+</body>
+</html>

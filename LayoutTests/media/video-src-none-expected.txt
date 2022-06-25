@@ -1,0 +1,15 @@
+
+
+Network state should remain in NETWORK_EMPTY with missing 'src' attribute.
+** <video> with no src attribute**
+EXPECTED (videos[0].error == 'null') OK
+EXPECTED (videos[0].networkState == '0') OK
+EXPECTED (videos[0].src == '') OK
+
+Calling load() with no 'src' should NOT fire 'error' event, set network state to NETWORK_EMPTY.
+EXPECTED (state == 'load() with missing 'src'') OK
+EXPECTED (videos[0].error == 'null') OK
+EXPECTED (videos[0].networkState == '0') OK
+EXPECTED (videos[0].src == '') OK
+END OF TEST
+

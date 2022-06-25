@@ -1,0 +1,17 @@
+Test that the IDL extensions for CanvasRenderingContext2D work correctly.
+
+
+== Running test suite: IDLExtensions.CanvasRenderingContext2D
+-- Running test case: IDLExtensions.CanvasRenderingContext2D.get currentY
+PASS: Should match at start.
+PASS: Should match after moveTo.
+PASS: Should match after lineTo.
+PASS: Should match after quadraticCurveTo.
+PASS: Should match after bezierCurveTo.
+PASS: Should match after arcTo.
+PASS: Should match after closePath.
+PASS: Should match after rect.
+PASS: Should match after arc.
+PASS: Should match after ellipse.
+PASS: Should match after beginPath.
+

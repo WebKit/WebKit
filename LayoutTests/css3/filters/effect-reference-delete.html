@@ -1,0 +1,21 @@
+<html>
+  <head>
+    <script type="application/x-javascript">
+      function remove() {
+          svg = document.getElementById("svg");
+          svg.parentNode.removeChild(svg);
+      }
+    </script>
+  </head>
+  <body onload="remove();">
+    <svg id="svg" xmlns="http://www.w3.org/2000/svg" width="0" height="0" version="1.1">
+      <defs>
+        <filter id="MyFilter">
+          <feColorMatrix type="hueRotate" values="180"/>
+        </filter>
+      </defs>
+    </svg>
+    <img style="-webkit-filter: url(#MyFilter); filter: url(#MyFilter);" src="resources/reference.png">
+  </body>
+</html>
+

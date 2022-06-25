@@ -1,0 +1,13 @@
+Test
+Cell 1	Cell 2
+This tests that if a table's initial section has fewer columns than the rest of the table, we'll still detect the total column count correctly
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL table.columnCount should be 2. Was -1.
+PASS cell.isEqual(accessibilityController.accessibleElementById('cell2')) is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

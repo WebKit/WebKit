@@ -1,0 +1,8 @@
+
+PASS wait for active service worker
+PASS create subscriptions
+PASS PushSubscriptionChangeEvent without subscriptions
+PASS PushSubscriptionChangeEvent with new subscription
+PASS PushSubscriptionChangeEvent with old subscription
+PASS PushSubscriptionChangeEvent with new and old subscription
+

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8>
+<style>
+
+.target {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100px;
+    height: 100px;
+}
+
+</style>
+</head>
+<body>
+<div class="target" id="second"></div>
+<div class="target" id="first"></div>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../utils.js"></script>
+<script>
+
+'use strict';
+
+test(() => {
+
+    let numberOfPointerDownEvents = 0;
+    document.body.addEventListener("pointerdown", event => {
+        numberOfPointerDownEvents++;
+        if (numberOfPointerDownEvents == 1) {
+            event.target.setPointerCapture(event.pointerId);
+            assert_equals(event.target.id, "first");
+        } else if (numberOfPointerDownEvents == 2)
+            assert_equals(event.target.id, "second");
+        else
+            assert_unreached("There were more than two pointerdown events dispatched.");
+    });
+
+    document.body.addEventListener("pointerup", event => event.target.remove(), { once: true });
+
+    // Move the mouse pointer over both of the stacked targets.
+    eventSender.mouseMoveTo(50, 50);
+
+    // Click once, this will set pointer capture on "first" and then remove it when the pointer is released.
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+
+    // Click a second time, this should target "second".
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+
+    assert_equals(numberOfPointerDownEvents, 2, "There were two pointerdown events dispatched.");
+}, `Testing that removing the capture element from the DOM doesn't prevent future pointer events to be dispatched.`);
+
+</script>
+</body>
+</html>

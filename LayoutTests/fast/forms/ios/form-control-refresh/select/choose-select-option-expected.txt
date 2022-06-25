@@ -1,0 +1,13 @@
+This test verifies that tapping on a select element and choosing an option via the presented context menu updates the element's value.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS select.value is "January"
+PASS select.value is "April"
+PASS grouped.value is "January"
+PASS grouped.value is "October"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

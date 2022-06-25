@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: speculative case incorrectly fetched expected "" but got "param-encodingcheck: %C4%9E\r\nAccept: */*\r\nReferer: http://localhost:8800/html/syntax/speculative-parsing/generated/p...
+
+
+FAIL Speculative parsing, page load: script-src-unsupported-type Unhandled rejection: assert_equals: speculative case incorrectly fetched expected "" but got "param-encodingcheck: %C4%9E\r\nAccept: */*\r\nReferer: http://localhost:8800/html/syntax/speculative-parsing/generated/page-load/resources/script-src-unsupported-type-framed.sub.html?uuid=d89906dd-47e0-49a7-bd96-513d2f5c6071"
+

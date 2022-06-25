@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: NotSupportedError: The operation is not supported.
+
+FAIL Check if audio.loop is set to true that expecting the seeking event is fired more than once assert_unreached: Reached unreachable code
+

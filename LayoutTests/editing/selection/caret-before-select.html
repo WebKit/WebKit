@@ -1,0 +1,6 @@
+<div contenteditable style="padding:2em; border:5px solid red"><select id=edit><option>One</option></select>blaa</div>
+<script>
+    var start = document.getElementById("edit");    
+    var s = window.getSelection();
+    s.setPosition(start, 0);
+</script>

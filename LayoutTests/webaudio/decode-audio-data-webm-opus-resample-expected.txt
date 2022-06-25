@@ -1,0 +1,11 @@
+Test that decoding an opus webm file with resampling succeeds
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Successfully decoded content
+PASS Decoding returned the right number of frames.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

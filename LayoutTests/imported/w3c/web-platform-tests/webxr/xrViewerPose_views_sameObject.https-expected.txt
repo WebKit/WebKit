@@ -1,0 +1,4 @@
+
+PASS XRViewerPose.views meets [SameObject] requirement - webgl
+PASS XRViewerPose.views meets [SameObject] requirement - webgl2
+

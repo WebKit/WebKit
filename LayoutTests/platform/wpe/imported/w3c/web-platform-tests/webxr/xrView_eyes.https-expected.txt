@@ -1,0 +1,6 @@
+
+PASS XRView.eye is correct for immersive sessions - webgl
+FAIL XRView.eye is correct for immersive sessions - webgl2 assert_implements: webgl2 not supported. undefined
+PASS XRView.eye is correct for non-immersive sessions - webgl
+FAIL XRView.eye is correct for non-immersive sessions - webgl2 assert_implements: webgl2 not supported. undefined
+

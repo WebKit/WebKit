@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+    body { margin: 0; padding: 0;}
+    #resizable {
+        background: yellow;
+        box-sizing: border-box;
+        resize: both;
+        overflow: auto;
+    }
+    </style>
+</head>
+<body>
+
+<div style="width:800px; height:800px">
+    <div id="resizable"></div>
+</div>
+
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../imported/w3c/web-platform-tests/resources/testdriver.js"></script>
+<script src="../../imported/w3c/web-platform-tests/resources/testdriver-actions.js"></script>
+<script src="../../imported/w3c/web-platform-tests/resources/testdriver-vendor.js"></script>
+<script>
+function drag(startX, startY, destX, destY) {
+    const actions = new test_driver.Actions()
+        .pointerMove(startX - 1, startY - 1)
+        .pointerDown()
+        .pointerMove(destX - 1, destY - 1)
+        .pointerUp();
+    return actions.send();
+}
+
+async function testDragAndMove(box) {
+    const startX = box.getBoundingClientRect().right;
+    const startY = box.getBoundingClientRect().bottom;
+    await drag(startX, startY, startX - 150, startY - 150);
+    assert_equals(box.style.width, "250px");
+    assert_equals(box.style.height, "250px");
+}
+
+promise_test(async () => {
+    const box = document.getElementById("resizable");
+    box.style.width = "400px";
+    box.style.height = "400px";
+    box.style.minWidth = "200px";
+    box.style.minHeight = "200px";
+    await testDragAndMove(box);
+    box.style.width = "400px";
+    box.style.height = "400px";
+    box.style.minWidth = "15vw";
+    box.style.minHeight = "15vh";
+    testDragAndMove(box);
+    box.style.width = "400px";
+    box.style.height = "400px";
+    box.style.minWidth = "10%";
+    box.style.minHeight = "10%";
+    testDragAndMove(box);
+}, "Test for resizing box above minimum size set and below its initial size.");
+</script>
+</body>
+</html>

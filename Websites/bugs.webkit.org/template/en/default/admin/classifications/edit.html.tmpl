@@ -1,0 +1,50 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% PROCESS global/header.html.tmpl
+  title = "Edit classification"
+  style_urls = ['skins/standard/admin.css']
+%]
+
+<form method=post action="editclassifications.cgi">
+  <table id="admin_table_edit">
+
+    [% PROCESS "admin/classifications/edit-common.html.tmpl" %]
+
+    <tr>
+      <th>
+        <a href="editproducts.cgi?classification=[% classification.name FILTER uri %]">
+        Edit Products</a>:
+      </th>
+      <td>
+        [% IF classification.products.size > 0 %]
+          <table>
+            [% FOREACH product = classification.products %]
+              <tr>
+                <th>[% product.name FILTER html %]</th>
+                <td>[% product.description FILTER html_light %]</td>
+              </tr>
+            [% END %]
+          </table>
+        [% ELSE %]
+          <span class="warning">none</span>
+        [% END %]
+      </td>
+    </tr>
+  </table>
+
+  <input type=hidden name="classificationold" 
+         value="[% classification.name FILTER html %]">
+  <input type=hidden name="action" value="update">
+  <input type="hidden" name="token" value="[% token FILTER html %]">
+  <input type=submit value="Update">
+</form>
+
+[% PROCESS admin/classifications/footer.html.tmpl %] 
+
+[% PROCESS global/footer.html.tmpl %] 

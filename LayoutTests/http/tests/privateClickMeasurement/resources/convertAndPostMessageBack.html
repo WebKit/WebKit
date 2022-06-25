@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script>
+        function fireConversionPixel() {
+            let imageElement = document.createElement("img");
+            imageElement.src = "https://127.0.0.1:8443/privateClickMeasurement/resources/redirectToConversion.py?conversionData=12&priority=03";
+            imageElement.id = "pixel";
+            imageElement.onerror = function() {
+                document.body.removeChild(document.getElementById("pixel"));
+                postMessageBack();
+            };
+            document.body.appendChild(imageElement);
+        }
+
+        function postMessageBack() {
+            if (window.opener) {
+                window.opener.postMessage("Done", "http://127.0.0.1:8000");
+                window.close();
+            }
+        }
+    </script>
+</head>
+<body onload="setTimeout(fireConversionPixel, 0)">
+</body>
+</html>

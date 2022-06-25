@@ -1,0 +1,509 @@
+<!--
+ Copyright (C) 2020 Apple Inc. All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions
+ are met:
+ 1. Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+
+ THIS SOFTWARE IS PROVIDED BY APPLE INC. "AS IS" AND ANY
+ EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+-->
+
+{% extends "base.html" %}
+{% block head %}
+<link rel="stylesheet" type="text/css" href="assets/css/timeline.css">
+
+<script type="module">
+import {ArchiveRouter} from '/assets/js/archiveRouter.js';
+import {CommitBank} from '/assets/js/commit.js';
+import {ErrorDisplay, QueryModifier, paramsToQuery, queryToParams, percentage, elapsedTime, escapeHTML} from '/assets/js/common.js';
+import {Configuration} from '/assets/js/configuration.js';
+import {Expectations} from '/assets/js/expectations.js';
+import {Drawer, BranchSelector, ConfigurationSelectors} from '/assets/js/drawer.js';
+import {Legend} from '/assets/js/timeline.js';
+import {ToolTip} from '/assets/js/tooltip.js';
+import {Failures} from '/assets/js/failures.js';
+import {DOM, REF, EventStream} from '/library/js/Ref.js';
+
+const DEFAULT_LIMIT = 100;
+const SUITES = JSON.parse('{{ suites|safe }}');
+
+const views = [];
+let agregateConnfiguration = Configuration.fromQuery();
+let rangeParams = {};
+
+const unexpectedQuery = new QueryModifier('unexpected');
+function willFilterExpected() {
+    const current = unexpectedQuery.current();
+    if (!current.length)
+        return true;
+    if (['true', 'TRUE', 'yes', 'YES', '1'].includes(current[current.length - 1]))
+        return true;
+    return false;
+}
+
+
+class SuiteFailuresView {
+    constructor(suite) {
+        this.suite = suite;
+        this.dataForConfig = {};
+
+        this.ref = REF.createRef({
+            state: {displayed: true},
+            onStateUpdate: (element, diff, state) => {
+                element.style.display = diff.displayed ? null : 'none';
+            }
+        });
+        this.selectConfigurations = REF.createRef({
+            onElementMount: (element) => {
+                element.parentElement.parentElement.style.display = 'none';
+                element.onchange = () => {
+                    this.selected = parseInt(element.value);
+                    this.select(this.selected);
+                }
+            },
+            onStateUpdate: (element, state) => {
+                if (!state || state.length <= 1) {
+                    element.parentElement.parentElement.style.display = 'none';
+                    return;
+                }
+
+                element.parentElement.parentElement.style.display = null;
+                const configurations = [...state];
+                configurations.sort((a, b) => {
+                    return a.toKey().localeCompare(b.toKey());
+                });
+                configurations.unshift(Configuration.combine(...state));
+
+                let index = 0;
+                element.innerHTML = configurations.map(configuration => {
+                    return `<option value="${index}"${index == this.selected ? ' selected' : ''}>${configuration}${index++ ? '' : ' (Agregated)'}</option>`;
+                }).join('');
+            },
+        });
+
+        this.resultView = REF.createRef({
+            state: {configuration: null, results: [], failures: []},
+            onStateUpdate: (element, diff, state) => {
+                if (!diff.configuration || !diff.results || !diff.failures) {
+                    DOM.inject(element, '<div class="loader"><div class="spinner"></div></div>');
+                    return;
+                }
+
+                const agregatedStats = {
+                    tests_run: diff.results.map(result => result.stats.tests_run).reduce((a, b) => a + b, 0),
+                    tests_skipped: diff.results.map(result => result.stats.tests_skipped).reduce((a, b) => a + b, 0),
+                };
+
+                let lastValue = 0;
+                const willFilterExpectedValue = willFilterExpected();
+                for (let i = Expectations.failureTypes.length - 1; i > 0; --i) {
+                    const key = willFilterExpectedValue ? `tests_unexpected_${Expectations.failureTypes[i]}` : `tests_${Expectations.failureTypes[i]}`;
+                    const combined = diff.results.map(result => result.stats[key] ? result.stats[key] : 0).reduce((a, b) => a + b, 0);
+                    agregatedStats[`tests_${Expectations.failureTypes[i]}`] = Math.max(combined - lastValue, 0);
+                    lastValue = combined;
+                }
+                agregatedStats.tests_success = Math.max(agregatedStats.tests_run - lastValue, 0);
+
+                DOM.inject(element, `<div class="row">
+                        <div class="col-s-${diff.results.length === 1 ? '12' : '6'} list">
+                            <div class="item">
+                                <b>Configuration</b>
+                                <div class="text block" style="width: 100%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
+                                    ${diff.configuration}
+                                </div>
+                            </div>
+                            <div class="item">
+                                <b>Composition</b>
+                                <div>
+                                    Comprised of ${diff.results.length} run${diff.results.length === 1 ? '' : 's'} using
+                                    ${(() => {
+                                        let minUuid = Math.round(new Date().getTime() / 10);
+                                        let maxUuid = 0;
+                                        diff.results.forEach(result => {
+                                            minUuid = Math.min(minUuid, result.uuid);
+                                            maxUuid = Math.max(maxUuid, result.uuid);
+                                        });
+                                        if (minUuid > maxUuid)
+                                            return 'invalid commit range';
+
+                                        const commits = CommitBank.commitsDuring(minUuid, maxUuid);
+                                        if (!commits.length)
+                                            return 'unknown commits';
+
+                                        const branches = new Set(commits.map(commit => commit.branch));
+                                        branches.delete('trunk');
+                                        branches.delete('master');
+                                        branches.delete('main');
+
+                                        const repositories = new Set(commits.map(commit => commit.repository_id));
+
+                                        const commitParams = {};
+                                        if (branches.size)
+                                            commitParams['branch'] = [...branches];
+                                        commitParams.after_uuid = [minUuid];
+                                        commitParams.before_uuid = [maxUuid];
+
+                                        return `<a href="/commits?${paramsToQuery(commitParams)}">${
+                                            commits.length == repositories.size ?
+                                                commits.reverse().map(commit => commit.label()).join(', ') :
+                                                `${commits.length} commits`
+                                        }</a>`;
+                                    })()}
+                                </div>
+                            </div>
+                            <div class="item">
+                                <b>Results</b>
+                                <div>
+                                    Ran ${agregatedStats.tests_run} of ${agregatedStats.tests_skipped + agregatedStats.tests_run} tests
+                                    (${percentage(agregatedStats.tests_run, agregatedStats.tests_skipped + agregatedStats.tests_run)})
+                                    <br>
+                                    ${Object.keys(Expectations.colorMap()).map(type => {
+                                        if (!agregatedStats[`tests_${type}`])
+                                            return '';
+                                        return `<div class="dot ${type} small">
+                                                <div class="tiny text" style="font-weight: normal;margin-top: 0px">${Expectations.symbolMap[type]}</div>
+                                            </div> ${diff.results.length === 1 ? agregatedStats[`tests_${type}`] : percentage(agregatedStats[`tests_${type}`], agregatedStats.tests_run)} ${type === 'success' ? 'passed' : type}<br>`;
+                                    }).join('')}
+                                </div>
+                            </div>
+                            ${diff.results.length === 1 ? `<div class="item">
+                                <b>Test Run</b>
+                                <div>
+                                    ${diff.results[0].start_time ? (() => {
+                                        const branch = queryToParams(document.URL.split('?')[1]).branch;
+                                        const buildParams = diff.configuration.toParams();
+                                        buildParams['suite'] = [this.suite];
+                                        buildParams['uuid'] = [diff.results[0].uuid];
+                                        buildParams['after_time'] = [diff.results[0].start_time];
+                                        buildParams['before_time'] = [diff.results[0].start_time];
+                                        if (branch)
+                                            buildParams['branch'] = branch;
+                                        const query = paramsToQuery(buildParams);
+                                        let result = `<a href="/urls/build?${query}" target="_blank">Test run</a> @ ${new Date(diff.results[0].start_time * 1000).toLocaleString()}<br>`;
+                                        if (!ArchiveRouter.hasArchive(suite))
+                                            return result;
+                                        result += `<a href="/archive/${ArchiveRouter.pathFor(suite)}?${query}" target="_blank">${ArchiveRouter.labelFor(suite)}</a><br>`;
+                                        return result;
+                                    })() : ''}
+                                    ${diff.results[0].stats.start_time && diff.results[0].stats.end_time ?
+                                        `Suite took ${elapsedTime(diff.results[0].stats.start_time, diff.results[0].stats.end_time)}` : ''}
+                                </div>
+                            </div>` : ''}
+                        </div>
+                        ${diff.results.length === 1 || !diff.failures.length ? '' : `<div class="divider mobile-control"></div>
+                            <div class="col-s-6 list">
+                                <b>Test Runs</b>
+                                ${diff.failures.slice(0, 8).map(failure => {
+                                    let worst = 'success';
+                                    Expectations.failureTypes.forEach(type => {
+                                        if (Object.keys(failure[type]).length)
+                                            worst = type;
+                                    });
+
+                                    const commits = CommitBank.commitsDuring(failure.uuid_range[0], failure.uuid_range[1]);
+                                    return `<div class="item">
+                                            <div class="dot ${worst} small">
+                                                <div class="tiny text" style="font-weight: normal;margin-top: 0px">${Expectations.symbolMap[worst]}</div>
+                                            </div>
+                                            <a class="text block" style="width: calc(100% - var(--mediumSize) - 16px); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; "href="/investigate?${paramsToQuery(failure.toParams())}">
+                                                ${commits.length ?
+                                                    `${commits[0].label()} ${commits.length > 1 ? commits[commits.length - 1].label() : ''}` :
+                                                    '?'} on ${failure.configuration}
+                                            </a>
+                                        </div>`;
+                                }).join('')}
+                                ${diff.results.length > 8 ? '<div class="item content">Too many runs to display...<div>' : ''}
+                            </div>
+                        </div>`}
+                    </div>
+                </div>`);
+            },
+        });
+        this.failureView = REF.createRef({
+            state: {configuration: null, results: [], failures: []},
+            onStateUpdate: (element, diff, state) => {
+                if (!diff.configuration || !diff.results || !diff.failures) {
+                    DOM.inject(element, '<div class="loader"><div class="spinner"></div></div>');
+                    return;
+                }
+                if (!diff.failures.length) {
+                    DOM.inject(element, '<div class="content" style="margin-bottom: var(--smallSize);">No failures</div>');
+                    return;
+                }
+                const failures = Failures.combine(...diff.failures);
+                const reversedTypes = [...Expectations.failureTypes].reverse();
+
+                DOM.inject(element, `<b>Failures</b>
+                    <div class="list">
+                        ${reversedTypes.map(type => {
+                            return Object.keys(failures[type]).sort((a, b) => {
+                                const numberDifference = failures[type][a] - failures[type][b];
+                                if (numberDifference)
+                                    return numberDifference;
+                                return a.localeCompare(b);
+                            }).map(test => {
+                                return `<div class="item">
+                                    <div class="dot ${type} small">
+                                        <div class="tiny text" style="font-weight: normal;margin-top: 0px">${Expectations.symbolMap[type]}</div>
+                                    </div>
+                                    <a class="text block" style="width: calc(100% - var(--mediumSize) - 16px); overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" href="/?suite=${this.suite}&test=${test}" target="_blank">
+                                        ${escapeHTML(test)}
+                                    </a>
+                                </div>`;
+                            }).join('');
+                        }).join('')}
+                    </div>`);
+            },
+        });
+        CommitBank.callbacks.push(() => {this.select(this.selected)});
+        this.reload();
+    }
+    reload() {
+        if (!Object.keys(rangeParams).length)
+            return;
+
+        this.dataForConfig = {};
+        this.select(0);
+
+        let resultsDispatched = agregateConnfiguration.length;
+        this.resultView.setState({configuration: null, results: [], failures: []});
+
+        let failuresDispatched = agregateConnfiguration.length;
+        this.failureView.setState({configuration: null, results: [], failures: []});
+
+        agregateConnfiguration.forEach(configToSearch => {
+            const resultParams = Object.assign(configToSearch.toParams(), rangeParams);
+            fetch(`/api/results/${this.suite}?${paramsToQuery(resultParams)}`).then(response => {
+                response.json().then(json => {
+                    let minUuid = Math.round(new Date().getTime()/10);
+                    let maxUuid = 0;
+
+                    json.forEach(result => {
+                        const completeConfig = new Configuration(result.configuration);
+                        if (!this.dataForConfig[completeConfig.toKey()])
+                            this.dataForConfig[completeConfig.toKey()] = {
+                                configuration: completeConfig,
+                                results: [],
+                                failures: [],
+                            };
+                        else
+                            this.dataForConfig[completeConfig.toKey()].configuration = Configuration.combine(this.dataForConfig[completeConfig.toKey()].configuration, completeConfig);
+                        this.dataForConfig[completeConfig.toKey()].results = this.dataForConfig[completeConfig.toKey()].results.concat(result.results);
+
+                        result.results.forEach(result => {
+                            minUuid = Math.min(minUuid, result.uuid);
+                            maxUuid = Math.max(maxUuid, result.uuid);
+                        });
+                    });
+
+                    if (maxUuid => minUuid)
+                        CommitBank.add(minUuid, maxUuid);
+
+                    --resultsDispatched;
+                    if (!resultsDispatched) {
+                        this.ref.setState({displayed: Object.keys(this.dataForConfig).length});
+                        this.selectConfigurations.setState(Object.values(this.dataForConfig).map(data => data.configuration));
+                        this.select(this.selected);
+                    }
+                });
+            }).catch(error => {
+                // If the load fails, log the error and continue
+                console.error(JSON.stringify(error, null, 4));
+            });
+
+            Failures.fromEndpoint(this.suite, configToSearch, Object.assign({unexpected: [willFilterExpected()]}, rangeParams)).then(failures => {
+                let minUuid = Math.round(new Date().getTime()/10);
+                let maxUuid = 0;
+
+                failures.forEach(failure => {
+                    if (!this.dataForConfig[failure.configuration.toKey()])
+                        this.dataForConfig[failure.configuration.toKey()] = {
+                            configuration: failure.configuration,
+                            results: [],
+                            failures: [],
+                        };
+                    else
+                        this.dataForConfig[failure.configuration.toKey()].configuration = Configuration.combine(this.dataForConfig[failure.configuration.toKey()].configuration, failure.configuration);
+                    this.dataForConfig[failure.configuration.toKey()].failures.push(failure);
+                    minUuid = Math.min(minUuid, failure.uuid_range[0]);
+                    maxUuid = Math.max(maxUuid, failure.uuid_range[1]);
+                });
+
+                if (maxUuid => minUuid)
+                    CommitBank.add(minUuid, maxUuid);
+
+                --failuresDispatched;
+                if (!failuresDispatched) {
+                    this.selectConfigurations.setState(Object.values(this.dataForConfig).map(data => data.configuration));
+                    this.select(this.selected);
+                }
+            }).catch(error => {
+                // A load failure probably just means no failures found, in that case, ignore the error
+                if (!Object.keys(error))
+                    return;
+                console.error(JSON.stringify(error, null, 4));
+            });
+        });
+    }
+    select(selected) {
+        const configurationKeys = Object.keys(this.dataForConfig);
+        configurationKeys.sort();
+        this.selected = Math.min(selected, configurationKeys.length);
+
+        if (!configurationKeys.length) {
+            this.resultView.setState({configuration: null, results: [], failures: []});
+            this.failureView.setState({configuration: null, results: [], failures: []});
+        } else if (configurationKeys.length == 1) {
+            this.resultView.setState(this.dataForConfig[configurationKeys[0]]);
+            this.failureView.setState(this.dataForConfig[configurationKeys[0]]);
+        } else if (this.selected == 0) {
+            const combined = {
+                configuration: Configuration.combine(...configurationKeys.map(key => this.dataForConfig[key].configuration)),
+                results: [],
+                failures: [],
+            };
+            configurationKeys.forEach(key => {
+                combined.results = combined.results.concat(this.dataForConfig[key].results);
+                combined.failures = combined.failures.concat(this.dataForConfig[key].failures);
+            });
+
+            this.resultView.setState(combined);
+            this.failureView.setState(combined);
+        } else {
+            this.resultView.setState(this.dataForConfig[configurationKeys[this.selected - 1]]);
+            this.failureView.setState(this.dataForConfig[configurationKeys[this.selected - 1]]);
+        }
+    }
+    toString() {
+        return `<div class="section" ref="${this.ref}">
+                <div class="header row">
+                    <div class="col-s-4 title">${escapeHTML(this.suite)}</div>
+                    <div class="col-s-8">
+                        <div class="input">
+                            <select required ref="${this.selectConfigurations}"></select>
+                            <label>Configuration</label>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div class="content" ref="${this.resultView}"></div>
+                    <div class="divider"></div>
+                    <div class="content" ref="${this.failureView}"></div>
+                </div>
+            </div><br>`;
+    }
+}
+
+
+function populateRanges()
+{
+    let definedRange = false;
+    let commitParams = {};
+    let timeParams = {};
+
+    ['id', 'uuid', 'timestamp', 'branch', 'repository_id'].forEach(param => {
+        ['', 'before_', 'after_'].forEach(partial => {
+            const values = (new QueryModifier(`${partial}${param}`)).current();
+            if (!values.length)
+                return;
+            if (['id', 'uuid', 'timestamp'].indexOf(param) >= 0)
+                definedRange = true;
+            commitParams[`${partial}${param}`] = values;
+        });
+    });
+
+    ['time', 'before_time', 'after_time'].forEach(param => {
+        const values = (new QueryModifier(param)).current();
+        if (!values.length)
+            return;
+        definedRange = true;
+        timeParams[param] = values;
+    });
+
+    rangeParams = Object.assign(commitParams, timeParams);
+    const branch = queryToParams(document.URL.split('?')[1]).branch;
+    if (branch)
+        rangeParams.branch = [branch];
+
+    if (!Object.keys(rangeParams).length && !definedRange) {
+        rangeParams = {};
+        const params = Object.assign({}, commitParams);
+        if (!definedRange)
+            params.limit = [1];
+        CommitBank.latest(params).then(() => {
+            rangeParams = Object.assign(commitParams, timeParams);
+            rangeParams.after_uuid = [CommitBank.commits[0].uuid];
+            rangeParams.before_uuid = [CommitBank.commits[CommitBank.commits.length - 1].uuid];
+            views.forEach(view => view.reload());
+        });
+    }   
+}
+
+
+function reload()
+{
+    agregateConnfiguration = Configuration.fromQuery();
+    populateRanges();
+    views.forEach(view => view.reload());
+}
+
+
+populateRanges();
+SUITES.forEach(suite => {
+    views.push(new SuiteFailuresView(suite));
+})
+
+window.onpopstate = event => {
+    reload();
+};
+window.onpushstate = event => {
+    reload();
+};
+
+let viewport = null;
+DOM.inject(
+    document.getElementById('app'),
+    `${Drawer([
+        Legend((filterFlag) => {
+            if (filterFlag)
+                unexpectedQuery.remove();
+            else
+                unexpectedQuery.replace(false);
+            reload();
+        }, true, willFilterExpected()),
+        BranchSelector(reload),
+        ConfigurationSelectors(reload),
+    ])}
+
+    <div class="main right-sidebar under-topbar-with-actions">
+        <br>
+        <div class="content">
+            ${views.join('')}
+        </div>
+    </div>`
+);
+
+</script>
+
+{% endblock %}
+{% block content %}
+
+<div id="app">
+</div>
+
+{% endblock %}

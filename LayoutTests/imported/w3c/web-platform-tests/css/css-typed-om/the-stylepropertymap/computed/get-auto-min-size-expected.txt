@@ -1,0 +1,8 @@
+
+FAIL An inflow flex-item computed StylePropertyMap.get reports the auto minimum size correctly. assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
+FAIL An absolute flex-child computed StylePropertyMap.get reports the auto minimum size correctly. assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
+FAIL An inflow grid-item computed StylePropertyMap.get reports the auto minimum size correctly. assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
+FAIL An absolute grid-child computed StylePropertyMap.get reports the auto minimum size correctly. assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
+FAIL An inflow block computed StylePropertyMap.get reports the auto minimum size correctly. assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
+FAIL An absolute block computed StylePropertyMap.get reports the auto minimum size correctly. assert_equals: expected "CSSKeywordValue" but got "CSSUnitValue"
+

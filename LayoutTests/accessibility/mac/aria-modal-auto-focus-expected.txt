@@ -1,0 +1,23 @@
+This tests that focus will automatically move to aria-modal dialogs
+
+PASS: Background is initially accessible.
+
+Opening dialog1.
+PASS: #new button is focused.
+
+Opening dialog2.
+PASS: #close button is focused.
+
+Closing dialog2 and making dialog1 `ariaModal = true`.
+PASS: #ok button is focused.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Other page content with a dummy focusable element
+
+Display a dialog
+
+Dialog1 heading
+
+OK  New

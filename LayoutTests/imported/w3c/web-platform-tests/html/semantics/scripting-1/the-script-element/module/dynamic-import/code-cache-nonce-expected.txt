@@ -1,0 +1,5 @@
+
+PASS First dynamic import should use nonce=abc
+PASS Second dynamic import should use nonce=def
+PASS Third dynamic import should use nonce=ghi
+

@@ -1,0 +1,15 @@
+<style>
+span {
+  -webkit-text-emphasis: open;
+  display: contents;
+}
+svg { 
+  border-left: 1px solid red; 
+}
+</style><svg><text>This test passes if it doesn't crash</text></svg><span>content</span><script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+document.body.offsetHeight;
+document.execCommand("selectAll", false);
+document.linkColor = "red";
+</script>

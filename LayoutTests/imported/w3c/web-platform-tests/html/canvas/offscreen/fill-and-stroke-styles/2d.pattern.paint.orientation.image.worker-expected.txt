@@ -1,0 +1,3 @@
+
+PASS Image patterns do not get flipped when painted
+

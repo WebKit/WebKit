@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<div id="rootDiv">
+<div id="div1">1</div><div id="div2">2</div><div id="div3">3-begin <div id="div4">4</div><div id="div5">5</div> 3-end</div><div id="div6">6</div><div id="div7">7</div>
+<div id="description">Test various cases of Range.insertNode with nodes in the same container as the Range.</div>
+</div>
+<script>
+var range = document.createRange();
+
+var containerElement = document.getElementById("rootDiv");
+
+evalAndLog('insertedElement = document.getElementById("div1");');
+evalAndLog('range.setStart(containerElement, 3); range.setEnd(containerElement, 3); range.insertNode(insertedElement);');
+shouldBe('range.startContainer', 'containerElement');
+shouldBe('range.endContainer', 'containerElement');
+shouldBe('range.startOffset', '2');
+shouldBe('range.endOffset', '3');
+shouldBe('range.toString()', '"1"');
+
+evalAndLog('range.setStart(containerElement, 3); range.setEnd(containerElement, 3); range.insertNode(insertedElement);');
+shouldBe('range.startContainer', 'containerElement');
+shouldBe('range.endContainer', 'containerElement');
+shouldBe('range.startOffset', '2');
+shouldBe('range.endOffset', '3');
+shouldBe('range.toString()', '"1"');
+
+evalAndLog('insertedElement = document.getElementById("div3");');
+evalAndLog('range.setStart(containerElement, 5); range.setEnd(containerElement, 5); range.insertNode(insertedElement);');
+shouldBe('range.startContainer', 'containerElement');
+shouldBe('range.endContainer', 'containerElement');
+shouldBe('range.startOffset', '4');
+shouldBe('range.endOffset', '5');
+shouldBe('range.toString()', '"3-begin 45 3-end"');
+
+evalAndLog('range.setStart(containerElement, 5); range.setEnd(containerElement, 5); range.insertNode(insertedElement);');
+shouldBe('range.startContainer', 'containerElement');
+shouldBe('range.endContainer', 'containerElement');
+shouldBe('range.startOffset', '4');
+shouldBe('range.endOffset', '5');
+shouldBe('range.toString()', '"3-begin 45 3-end"');
+
+evalAndLog('insertedElement = document.getElementById("div6");');
+evalAndLog('range.setStart(containerElement, 1); range.setEnd(containerElement, 1); range.insertNode(insertedElement);');
+shouldBe('range.startContainer', 'containerElement');
+shouldBe('range.endContainer', 'containerElement');
+shouldBe('range.startOffset', '1');
+shouldBe('range.endOffset', '2');
+shouldBe('range.toString()', '"6"');
+
+evalAndLog('insertedElement = document.getElementById("div3");');
+evalAndLog('range.setStart(containerElement, 4); range.setEnd(containerElement, 4); range.insertNode(insertedElement);');
+shouldBe('range.startContainer', 'containerElement');
+shouldBe('range.endContainer', 'containerElement');
+shouldBe('range.startOffset', '4');
+shouldBe('range.endOffset', '5');
+shouldBe('range.toString()', '"3-begin 45 3-end"');
+
+shouldBe('documentFragment = range.extractContents(); range.startContainer', 'containerElement');
+shouldBe('range.startOffset', '4');
+shouldBe('range.endContainer', 'containerElement');
+shouldBe('range.endOffset', '4');
+shouldBe('range.insertNode(documentFragment); range.toString()', '"3-begin 45 3-end"');
+
+containerElement.style.display = 'none';
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+# Copyright 2018 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//third_party/abseil-cpp/absl.gni")
+
+absl_source_set("bits") {
+  public = [
+    "bits.h",
+    "internal/bits.h",
+  ]
+  deps = [
+    "//third_party/abseil-cpp/absl/base:config",
+    "//third_party/abseil-cpp/absl/base:core_headers",
+  ]
+}
+
+absl_source_set("int128") {
+  sources = [
+    "int128.cc",
+    "int128_have_intrinsic.inc",
+    "int128_no_intrinsic.inc",
+  ]
+  public = [ "int128.h" ]
+  deps = [
+    ":bits",
+    "//third_party/abseil-cpp/absl/base:config",
+    "//third_party/abseil-cpp/absl/base:core_headers",
+  ]
+}
+
+absl_source_set("representation") {
+  public = [ "internal/representation.h" ]
+  deps = [ "//third_party/abseil-cpp/absl/base:config" ]
+}

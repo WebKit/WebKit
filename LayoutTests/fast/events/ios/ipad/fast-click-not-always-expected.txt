@@ -1,0 +1,2 @@
+PASS: Double tap caused zoom.
+This document doesn't have fast clicks because it sets a viewport width. It has a significant zoom since the viewport width is significantly bigger than the body width. However, it sets fast click everywhere to false, so double tapping on the rectangle above should zoom.

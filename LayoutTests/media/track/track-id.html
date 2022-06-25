@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>
+
+            var textTrack;
+
+            function start()
+            {
+                findMediaElement();
+                consoleWrite("");
+
+                textTrack = document.getElementById("LoremIpsum").track;
+
+                consoleWrite("<b>++ Test default attribute value</b>");
+                testExpected("textTrack.id", "LoremIpsum");
+                testExpected("video.textTracks[0].id", "LoremIpsum");
+                consoleWrite("");
+
+                consoleWrite("<b>++ Make sure we can look tracks up by id</b>");
+                testExpected("video.textTracks.getTrackById('LoremIpsum')", textTrack);
+                consoleWrite("");
+
+                consoleWrite("<b>++ Test that it's readonly</b>");
+                run("textTrack.id = 'newvalue';");
+                testExpected("textTrack.id", "LoremIpsum");
+
+                endTest();
+            }
+
+        </script>
+    </head>
+    <body onload="start()">
+        <p>Tests that the TextTrack "id" attribute is appropriately set.</p>
+        <video>
+            <track id="LoremIpsum" src="captions-webvtt/captions-fast.vtt">
+        </video>
+    </body>
+</html>

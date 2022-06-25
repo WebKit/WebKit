@@ -1,0 +1,17 @@
+Tests sending of private click measurement requests after an attribution happens immediately for reports which have expired when a session is closed.
+
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+Attribution received.
+HTTP_HOST: 127.0.0.1:8000
+Content type: application/json
+REQUEST_URI: /privateClickMeasurement/resources/conversionReport.py
+No cookies in attribution request.
+Request body:
+{"source_engagement_type":"click","source_site":"127.0.0.1","source_id":3,"attributed_on_site":"localhost","trigger_data":12,"version":3}
+
+
+No stored Private Click Measurement data.

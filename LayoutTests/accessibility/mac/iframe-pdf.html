@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<script>
+    if (window.accessibilityController)
+        window.jsTestIsAsync = true;
+</script>
+</head>
+<body>
+
+<script>
+    var testOutput = "This test ensures PDFs loaded in iframes are exposed in the accessibility tree.\n\n";
+
+    function traverseChildrenWithPath(startObject, traversalPath) {
+        if (!startObject)
+            return [];
+
+        let traversalString = "";
+        let currentObject = startObject;
+        for (let index of traversalPath) {
+            currentObject = currentObject.childAtIndex(index);
+            if (!currentObject)
+                return [];
+            traversalString += `At index ${index}, got ${currentObject.role}\n`;
+        }
+        return [traversalString, currentObject];
+    }
+
+    if (window.accessibilityController) {
+        var textNode, traversalString;
+        setTimeout(async function() {
+            // This test is async because we may need to try the traversal a few times before the iframe
+            // and the PDF inside the iframe are fully loaded.
+            await waitFor(() => {
+                let container = accessibilityController.accessibleElementById("container");
+                [traversalString, textNode] = traverseChildrenWithPath(container, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]);
+                return textNode;
+            });
+            testOutput += "Traversal path to text node inside PDF:\n\n";
+            testOutput += traversalString;
+
+            testOutput += "\nFound object:\n";
+            testOutput += `${textNode.role}\n`;
+            testOutput += `${textNode.stringValue}\n`;
+
+            debug(testOutput);
+            finishJSTest();
+        }, 0)
+    }
+</script>
+
+<div id="container" role="group">
+    <iframe src="../resources/simple-webkit-pages.pdf">
+</div>
+
+</body>
+</html>
+

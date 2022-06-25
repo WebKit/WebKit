@@ -1,0 +1,13 @@
+Test that CanvasAgent tracks changes in the client nodes of a CSS canvas.
+
+
+== Running test suite: Canvas.requestClientNodes.CSS
+-- Running test case: Canvas.requestClientNodes.CSS.Create
+PASS: Canvas with created client should have CSS name "css-canvas".
+PASS: There should be one client node.
+PASS: Client node "div" is valid.
+
+-- Running test case: Canvas.requestClientNodes.CSS.Destroy
+PASS: Canvas with destroyed client should have CSS name "css-canvas".
+PASS: There should be no client nodes.
+

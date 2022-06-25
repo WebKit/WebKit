@@ -1,0 +1,5 @@
+The test passes if the odd numbered DIVs are green.
+
+DIV1
+DIV2
+Pass

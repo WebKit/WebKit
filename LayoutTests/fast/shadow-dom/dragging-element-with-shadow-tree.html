@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests starting a drag inside a shadow tree when the shadow host is draggable.<br>
+To manually test, drag and drop the blue box below into a green box.</p>
+<div id="target" class="box" draggable="true"></div>
+<div id="destination" class="box green">here</div>
+<pre id="log"></pre>
+<style>
+.box { margin: 10px 0; }
+.green { width: 100px; height: 100px; padding: 10px; border: solid 5px green; }
+</style>
+<script>
+
+target.addEventListener('dragstart', (event) => log.textContent += `dragstart event fired on target for: ${event.target.id}\n`);
+target.addEventListener('dragend', (event) => log.textContent += `dragend event fired on target for: ${event.target.id}\n`);
+destination.addEventListener('dragenter', (event) => log.textContent += `dragenter event fired on destination for: ${event.target.id}\n`);
+destination.addEventListener('dragover', (event) => {
+    event.dataTransfer.effectAllowed = "copyMove";
+    event.preventDefault();
+});
+destination.addEventListener('drop', (event) => log.textContent += `drop event fired on destination for: ${event.target.id}\n`);
+
+const shadowRoot = target.attachShadow({mode: 'closed'});
+shadowRoot.innerHTML = `
+<style>
+.box { width: 100px; height: 100px; padding: 10px; background: #36f; }
+</style>
+<div class="box">Drag this</div>`;
+
+if (window.eventSender) {
+    testRunner.dumpAsText();
+    eventSender.mouseMoveTo(target.offsetLeft + 10, target.offsetTop + 10);
+    eventSender.mouseDown();
+    eventSender.leapForward(300);
+    eventSender.mouseMoveTo(destination.offsetLeft + 10, destination.offsetTop + 10);
+    eventSender.mouseUp();
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% INCLUDE global/header.html.tmpl title = "sudo: User Impersonation" %]
+
+<p>
+  Bugzilla includes the ability to have one user impersonate
+another, in something called a <i>sudo session</i>, so long as the person 
+doing the impersonating has the appropriate privileges.
+</p>
+
+<p>
+  While a session is in progress, Bugzilla will act as if the
+  impersonated user is doing everything.  This is especially useful for testing,
+  and for doing critical work when the impersonated user is unavailable.  The 
+  impersonated user will receive an email from [% terms.Bugzilla %] when the 
+  session begins; they will not be told anything else.
+</p>
+
+<p>
+  To use this feature, you must be a member of the appropriate group.  The group 
+  includes all administrators by default.  Other users, and members of other 
+  groups, can be given access to this feature on a case-by-case basis.  To 
+  request access, contact the maintainer of this installation: 
+  <a href="mailto:[% Param("maintainer") %]">
+  [%- Param("maintainer") %]</a>.
+</p>
+
+<p>
+  If you would like to be protected from impersonation, you should contact the 
+  maintainer of this installation to see if that is possible.  People with 
+  access to this feature are protected automatically.
+</p>
+
+<p id="message">
+  [% IF user.in_group('bz_sudoers') %]
+    You are a member of the <b>bz_sudoers</b> group.  You may use this 
+    feature to impersonate others.
+  [% ELSE %]
+    You are not a member of an appropriate group.  You may not use this 
+    feature.
+  [% END %]
+  [% IF user.in_group('bz_sudo_protect') %]
+    <br>
+    You are a member of the <b>bz_sudo_protect</b> group.  Other people will 
+    not be able to use this feature to impersonate you.
+  [% END %]
+</p>
+
+[% INCLUDE global/footer.html.tmpl %]

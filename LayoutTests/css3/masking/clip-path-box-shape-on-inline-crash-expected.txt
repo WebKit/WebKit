@@ -1,0 +1,3 @@
+This test checks that a box shape clip path on an inline is properly ignored. This test passes if it doesn't crash on a debug build.
+
+

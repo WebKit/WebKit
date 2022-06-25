@@ -1,0 +1,84 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+    font-size: 24px; 
+}
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function typeWord(n) {
+    for (i = 0; i < n; i++)
+        typeCharacterCommand();
+    typeCharacterCommand(' ');
+}
+
+function editingTest() {
+    typeWord(4);
+    typeWord(1);
+    typeWord(2);
+    typeWord(4);
+    typeWord(6);
+    typeWord(5);
+    typeWord(6);
+    typeWord(3);
+    typeWord(2);
+    typeWord(4);
+    typeWord(3);
+    typeWord(3);
+    typeWord(2);
+    typeWord(1);
+    typeWord(5);
+    typeWord(12);
+    typeWord(8);
+    typeWord(3);
+    typeWord(4);
+    typeWord(5);
+    typeWord(2);
+    typeWord(3);
+    typeWord(4);
+    typeWord(4);
+    typeWord(5);
+    typeWord(6);
+    typeWord(3);
+    typeWord(2);
+    typeWord(4);
+    typeWord(3);
+    typeWord(3);
+    typeWord(2);
+    typeWord(6);
+    typeWord(5);
+    typeWord(6);
+    typeWord(3);
+    typeWord(2);
+    typeWord(4);
+    typeWord(3);
+    typeWord(3);
+    typeWord(2);
+    typeWord(1);
+    typeWord(5);
+    typeWord(12);
+    typeWord(8);
+    typeWord(3);
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body>
+<div contenteditable id="root" class="editing">
+<span id="test"></span>
+</div>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

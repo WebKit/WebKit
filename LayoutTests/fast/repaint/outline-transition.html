@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+div {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    width: 100px;
+    height: 100px;
+    outline: 0px solid green;
+}
+
+.animated {
+    transition: outline 100ms;
+    outline: 20px solid green;
+}
+
+</style>
+</head>
+<body>
+<div></div>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+
+jsTestIsAsync = true;
+
+description("Test that using a CSS Transition to animate the 'outline' property causes repaints.");
+
+(async function () {
+    await new Promise(setTimeout);
+    window.internals?.startTrackingRepaints();
+    const target = document.querySelector("div");
+    target.classList.add("animated");
+
+    await new Promise(resolve => target.addEventListener("transitionend", resolve)); 
+
+    shouldBeTrue("window.internals?.repaintRectsAsText().indexOf('(rect 0 0 140 140)') > -1");
+    window.internals.stopTrackingRepaints();
+
+    finishJSTest();
+})();
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

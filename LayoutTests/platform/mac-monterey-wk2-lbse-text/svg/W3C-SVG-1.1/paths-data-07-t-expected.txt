@@ -1,0 +1,62 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+layer at (238,169) size 204x113
+  RenderSVGContainer {g} at (20,0) size 368x204
+layer at (238,169) size 204x113
+  RenderSVGContainer {g} at (-170,-135) size 368x204
+layer at (288,169) size 49x13
+  RenderSVGText {text} at (50,0) size 50x14 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 50x14
+      chunk 1 text run 1 at (288.00,180.00) startOffset 0 endOffset 10 width 49.35: "m, h, v, h"
+layer at (288,183) size 45x13
+  RenderSVGText {text} at (50,14) size 46x14 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 46x14
+      chunk 1 text run 1 at (288.00,194.00) startOffset 0 endOffset 10 width 45.35: "v, h, v, h"
+layer at (304,197) size 19x13
+  RenderSVGText {text} at (66,28) size 19x14 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 19x14
+      chunk 1 text run 1 at (304.00,208.00) startOffset 0 endOffset 4 width 18.67: "v, z"
+layer at (240,190) size 90x91
+  RenderSVGPath {path} at (-171,-136) size 165x165 [stroke={[type=SOLID] [color=#000000]}] [data="M 240 190 L 270 190 L 270 220 L 300 220 L 300 250 L 330 250 L 330 280 L 240 280 L 240 190 Z"]
+layer at (238,188) size 4x5
+  RenderSVGRect {rect} at (-170,-135) size 8x8 [fill={[type=SOLID] [color=#0000FF]}] [x=238.00] [y=188.00] [width=4.00] [height=4.00]
+layer at (268,188) size 4x5
+  RenderSVGRect {rect} at (-170,-135) size 8x8 [fill={[type=SOLID] [color=#0000FF]}] [x=268.00] [y=188.00] [width=4.00] [height=4.00]
+layer at (268,218) size 4x5
+  RenderSVGRect {rect} at (-170,-135) size 8x8 [fill={[type=SOLID] [color=#0000FF]}] [x=268.00] [y=218.00] [width=4.00] [height=4.00]
+layer at (298,218) size 4x5
+  RenderSVGRect {rect} at (-170,-135) size 8x8 [fill={[type=SOLID] [color=#0000FF]}] [x=298.00] [y=218.00] [width=4.00] [height=4.00]
+layer at (298,248) size 4x5
+  RenderSVGRect {rect} at (-170,-135) size 8x8 [fill={[type=SOLID] [color=#0000FF]}] [x=298.00] [y=248.00] [width=4.00] [height=4.00]
+layer at (328,248) size 4x5
+  RenderSVGRect {rect} at (-170,-135) size 8x8 [fill={[type=SOLID] [color=#0000FF]}] [x=328.00] [y=248.00] [width=4.00] [height=4.00]
+layer at (328,278) size 4x5
+  RenderSVGRect {rect} at (-170,-135) size 8x8 [fill={[type=SOLID] [color=#0000FF]}] [x=328.00] [y=278.00] [width=4.00] [height=4.00]
+layer at (238,278) size 4x5
+  RenderSVGRect {rect} at (-170,-135) size 8x8 [fill={[type=SOLID] [color=#0000FF]}] [x=238.00] [y=278.00] [width=4.00] [height=4.00]
+layer at (350,190) size 90x91
+  RenderSVGPath {path} at (-170,-135) size 163x163 [fill={[type=SOLID] [color=#FFFF00]}] [data="M 350 190 L 380 190 L 380 220 L 410 220 L 410 250 L 440 250 L 440 280 L 350 280 L 350 190 Z"]
+layer at (348,188) size 4x5
+  RenderSVGRect {rect} at (-170,-135) size 8x8 [fill={[type=SOLID] [color=#0000FF]}] [x=348.00] [y=188.00] [width=4.00] [height=4.00]
+layer at (378,188) size 4x5
+  RenderSVGRect {rect} at (-170,-135) size 8x8 [fill={[type=SOLID] [color=#0000FF]}] [x=378.00] [y=188.00] [width=4.00] [height=4.00]
+layer at (378,218) size 4x5
+  RenderSVGRect {rect} at (-170,-135) size 8x8 [fill={[type=SOLID] [color=#0000FF]}] [x=378.00] [y=218.00] [width=4.00] [height=4.00]
+layer at (408,218) size 4x5
+  RenderSVGRect {rect} at (-170,-135) size 8x8 [fill={[type=SOLID] [color=#0000FF]}] [x=408.00] [y=218.00] [width=4.00] [height=4.00]
+layer at (408,248) size 4x5
+  RenderSVGRect {rect} at (-170,-135) size 8x8 [fill={[type=SOLID] [color=#0000FF]}] [x=408.00] [y=248.00] [width=4.00] [height=4.00]
+layer at (438,248) size 4x5
+  RenderSVGRect {rect} at (-170,-135) size 8x8 [fill={[type=SOLID] [color=#0000FF]}] [x=438.00] [y=248.00] [width=4.00] [height=4.00]
+layer at (438,278) size 4x5
+  RenderSVGRect {rect} at (-170,-135) size 8x8 [fill={[type=SOLID] [color=#0000FF]}] [x=438.00] [y=278.00] [width=4.00] [height=4.00]
+layer at (348,278) size 4x5
+  RenderSVGRect {rect} at (-170,-135) size 8x8 [fill={[type=SOLID] [color=#0000FF]}] [x=348.00] [y=278.00] [width=4.00] [height=4.00]
+layer at (10,304) size 263x46
+  RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 264x46
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.8 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (-1,-1) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

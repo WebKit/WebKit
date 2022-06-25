@@ -1,0 +1,20 @@
+<!DOCTYPE html><!-- webkit-test-runner [ LayoutFormattingContextEnabled=true InlineFormattingContextIntegrationEnabled=false ] -->
+<style>
+td {
+  height: 50px;
+  padding: 0px;
+}
+
+table {
+  border-spacing: 0px;
+  background-color: green;
+}
+</style>
+<table><tr><td style="width: 50px"></td><td style="width: 50px"></td></tr></table>
+<table><tr><td style="width: 90px"></td><td style="width: 10px"></td></tr></table>
+<table><tr><td style="width: 80px"></td><td style="width: 10px"></td><td style="width: 10px"></td></tr></table>
+
+<table style="width: 100px;"><tr><td style="width: 90px"></td><td style="width: 10px"></td></tr></table>
+<table style="width: 100px;"><tr><td style="width: 50px"></td><td style="width: 10px"></td></tr></table>
+<table style="width: 100px;"><tr><td style="width: 900px"></td><td style="width: 100px"></td></tr></table>
+<table style="width: 100px;"><tr><td style="width: 900px"></td><td style="width: 900px"></td></tr></table>

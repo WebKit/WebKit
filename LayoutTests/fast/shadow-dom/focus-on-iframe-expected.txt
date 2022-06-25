@@ -1,0 +1,21 @@
+Tests for setting a negative tabindex on shadow host. Elements inside such a shadow tree should not be in the sequential navigation order.
+To manually test, press tab key four times. It should traverse focusable elements in the increasing numerical order.
+
+1. First sequentially focusable element
+2. An iframe without a focusable element
+3. First focusable element inside an iframe
+4. Second focusable element inside an iframe
+5. An iframe without a focusable shadow host or shadow content
+6. Focusable content inside a shadow tree
+7. A focusable element with a high tabindex
+8. Focusable content inside the first shadow tree
+9. Focusable content inside the second shadow tree
+8. Focusable content inside the first shadow tree
+7. A focusable element with a high tabindex
+6. Focusable content inside a shadow tree
+5. An iframe without a focusable shadow host or shadow content
+4. Second focusable element inside an iframe
+3. First focusable element inside an iframe
+2. An iframe without a focusable element
+1. First sequentially focusable element
+

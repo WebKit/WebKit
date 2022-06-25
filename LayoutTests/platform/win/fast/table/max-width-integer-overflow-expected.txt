@@ -1,0 +1,21 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 780x24 [bgcolor=#FF0000]
+        RenderTableSection {TBODY} at (0,0) size 780x24
+          RenderTableRow {TR} at (0,0) size 780x24
+            RenderTableCell {TD} at (0,0) size 770x24 [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (0,0) size 770x24
+                RenderTableSection {TBODY} at (0,0) size 770x24
+                  RenderTableRow {TR} at (0,0) size 770x24
+                    RenderTableCell {TD} at (0,0) size 770x24 [r=0 c=0 rs=1 cs=1]
+                      RenderBlock {DIV} at (0,0) size 770x24
+                        RenderTable {TABLE} at (0,0) size 770x24 [bgcolor=#008000]
+                          RenderTableSection {TBODY} at (0,0) size 770x24
+                            RenderTableRow {TR} at (0,2) size 770x20
+                              RenderTableCell {TD} at (2,11) size 762x2 [r=0 c=0 rs=1 cs=1]
+                              RenderTableCell {TD} at (766,11) size 2x2 [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (770,0) size 10x24 [r=0 c=1 rs=1 cs=1]
+              RenderBlock {DIV} at (0,0) size 10x24 [bgcolor=#008000]

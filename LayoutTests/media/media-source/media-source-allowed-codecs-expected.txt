@@ -1,0 +1,32 @@
+RUN(internals.settings.setAllowedMediaVideoCodecIDs(null))
+EXPECTED (MediaSource.isTypeSupported("video/mp4; codecs=avc1") == 'true') OK
+EXPECTED (MediaSource.isTypeSupported("video/mp4; codecs=mp4v") == 'true') OK
+RUN(internals.settings.setAllowedMediaVideoCodecIDs("avc1"))
+RUN(internals.settings.setAllowedMediaAudioCodecIDs("aac "))
+RUN(internals.settings.setAllowedMediaCodecTypes("avc1,mp4a.40"))
+EXPECTED (MediaSource.isTypeSupported("video/mp4; codecs=avc1") == 'true') OK
+EXPECTED (MediaSource.isTypeSupported("video/mp4; codecs=mp4v") == 'false') OK
+EVENT(sourceopen)
+RUN(sourceBuffer = mediaSource.addSourceBuffer("video/mp4; codecs=avc1"))
+TEST(sourceBuffer.changeType("video/mp4; codecs=mp4v")) THROWS("NotSupportedError: The operation is not supported.") OK
+RUN(internals.settings.setAllowedMediaVideoCodecIDs("vp09"))
+RUN(internals.settings.setAllowedMediaAudioCodecIDs("opus"))
+RUN(internals.settings.setAllowedMediaCodecTypes("vp09,opus"))
+EXPECTED (MediaSource.isTypeSupported("video/mp4; codecs=avc1") == 'false') OK
+TEST(mediaSource.addSourceBuffer("video/mp4; codecs=avc1")) THROWS("NotSupportedError: The operation is not supported.") OK
+RUN(internals.settings.setAllowedMediaVideoCodecIDs("avc1"))
+RUN(internals.settings.setAllowedMediaAudioCodecIDs("aac "))
+RUN(internals.settings.setAllowedMediaCodecTypes("avc1,mp4a.40"))
+RUN(mediaSource.removeSourceBuffer(sourceBuffer))
+RUN(mediaSource.duration = loader.duration())
+RUN(sourceBuffer = mediaSource.addSourceBuffer(loader.type()))
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(update)
+Append a media segment.
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+RUN(video.playbackRate = 0.01)
+RUN(video.play())
+EVENT(playing)
+END OF TEST
+

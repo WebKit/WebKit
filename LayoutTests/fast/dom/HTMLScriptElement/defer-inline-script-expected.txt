@@ -1,0 +1,4 @@
+Checks that inline scripts are not deferred.
+1
+2
+

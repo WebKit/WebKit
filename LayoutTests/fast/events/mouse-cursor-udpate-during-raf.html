@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style type="text/css">
+</style>
+</head>
+<body>
+<p id="description"></p>
+<div id="target" style="position: absolute; top: 0; left: 0; width: 100px; height: 100px;"></div>
+<br/>
+<div id="console"></div>
+<script>
+
+description("Test that changing the 'cursor' property during a requestAnimationFrame callback is applied by the next run loop.");
+
+if (!window.eventSender) {
+    testFailed('This test requires DumpRenderTree');
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    window.jsTestIsAsync = true;
+}
+
+(async function()
+{
+    // Can't do anything useful here without eventSender
+    if (!window.eventSender)
+        return;
+
+    const target = document.getElementById("target");
+    eventSender.mouseMoveTo(target.offsetLeft + 3, target.offsetTop + 3);
+    debug("Moved pointer over the target, cursor should be Pointer.");
+    debug(`Cursor info: ${window.internals.getCurrentCursorInfo()}`);
+
+    await new Promise(requestAnimationFrame);
+    debug("");
+    debug("Setting cursor via CSS during next animation frame, cursor should be Pointer still.");
+    debug(`Cursor info: ${window.internals.getCurrentCursorInfo()}`);
+    target.style.cursor = 'help';
+
+    await new Promise(setTimeout);
+    debug("");
+    debug("Waited until next run loop, cursor should be Help.");
+    debug(`Cursor info: ${window.internals.getCurrentCursorInfo()}`);
+
+    debug("");
+    target.remove();
+    finishJSTest();
+})();
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

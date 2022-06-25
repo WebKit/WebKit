@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div id="btn" role="button" aria-roledescription="Super Button">text</div>
+
+<script>
+    description("This tests that aria-roledescription works.");
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        var domButton = document.getElementById("btn");
+        var axButton = accessibilityController.accessibleElementById("btn");
+
+        async function waitForDefaultRoleDescription(element) {
+            await waitFor(() => {
+                let roleDescription = element.roleDescription;
+                // The default role description differs per-platform, so wait for the lack of "Super Button".
+                return roleDescription && !roleDescription.includes("Super Button");
+            });
+            debug(`PASS Got default role description: ${element.roleDescription}`)
+        }
+
+        setTimeout(async function() {
+            // Confirm we can override our role description.
+            shouldBe("axButton.roleDescription", "'AXRoleDescription: Super Button'");
+
+            // Confirm our role description returns to default when set to zero length.
+            domButton.setAttribute("aria-roledescription", "");
+            await waitForDefaultRoleDescription(axButton);
+
+            // Confirm our role description strips extraneous whitespace characters.
+            domButton.setAttribute("aria-roledescription", "          Super Button          ");
+            await expectAsyncExpression("axButton.roleDescription", "'AXRoleDescription: Super Button'")
+
+            // Confirm our role description returns to default when set to whitespace only.
+            domButton.setAttribute("aria-roledescription", "     ");
+            await waitForDefaultRoleDescription(axButton);
+
+            // Confirm our role description strips extraneous whitespace (including new line) characters.
+            domButton.setAttribute("aria-roledescription", `          Super Button          
+
+
+
+            `);
+            await expectAsyncExpression("axButton.roleDescription", "'AXRoleDescription: Super Button'")
+
+            // Confirm our role description returns to default when removed.
+            domButton.removeAttribute("aria-roledescription");
+            await waitForDefaultRoleDescription(axButton);
+
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>

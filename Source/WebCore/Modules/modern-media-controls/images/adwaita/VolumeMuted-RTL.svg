@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="16"
+   height="16"
+   version="1.1"
+   id="svg12"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+   id="defs16" />
+<g
+   fill="%23FFFFFF"
+   id="g10"
+   transform="matrix(-1,0,0,1,16,0)"> \
+            <path
+   d="m 11,11 h 1.375 L 13.5,12.094 14.594,11 H 16 v 1.469 L 14.906,13.531 16,14.594 V 16 H 14.562 L 13.5,14.937 12.437,16 H 11 V 14.594 L 12.062,13.531 11,12.47 Z M 0,5 H 2.484 L 5.454,2 H 6 V 14 H 5.525 L 2.485,11 H 0 Z"
+   style="marker:none"
+   color="%23bebebe"
+   overflow="visible"
+   id="path2" />
+ \
+            <path
+   d="M 11,1 V 2.48 C 12.265,4 13,5.7 13,8 c 0,0.723 -0.085,1.382 -0.229,2 h 2.034 C 14.929,9.355 15,8.686 15,8 15,5.186 14,2.828 12.414,1 Z"
+   style="marker:none"
+   color="%23000"
+   overflow="visible"
+   opacity="0.35"
+   id="path4" />
+ \
+            <path
+   d="m 9,3 v 2 c 0.607,0.789 1,1.759 1,3 0,1.241 -0.393,2.22 -1,3 v 2 h 1 v -3 h 1.75 C 11.908,9.374 12,8.703 12,8 12,5.833 11.261,3.98 10,3 Z"
+   style="marker:none"
+   color="%23000"
+   overflow="visible"
+   opacity="0.35"
+   id="path6" />
+ \
+            <path
+   d="M 9,8 C 9,6.743 8.688,5.784 8,5 H 7 v 6 H 8 C 8.672,10.163 9,9.258 9,8 Z"
+   style="line-height:normal;-inkscape-font-specification:Sans;text-indent:0;text-align:start;text-decoration-line:none;text-transform:none;marker:none"
+   color="%23000"
+   font-weight="400"
+   font-family="Sans"
+   overflow="visible"
+   opacity="0.35"
+   id="path8" />
+ \
+          </g>
+ \
+        </svg>

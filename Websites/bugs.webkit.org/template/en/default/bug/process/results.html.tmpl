@@ -1,0 +1,44 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # id: number; the ID of the bug that was changed/checked.
+  #
+  # type: string; the type of change/check that was made: "bug" when a bug
+  #   is changed, "dupe" when a duplication notation is added to a bug,
+  #   and "dep" when a bug is checked for changes to its dependencies.
+  #%]
+
+[% UNLESS header_done %]
+  [% PROCESS bug/process/header.html.tmpl %]
+[% END %]
+
+[% DEFAULT type="bug" %]
+
+[% link = BLOCK %][% terms.bug %] [%+ id FILTER bug_link(id) FILTER none %][% END %]
+
+[%
+  title = {
+    'bug' => "Changes submitted for $link" ,
+    'dupe' => "Duplicate notation added to $link" ,
+    'dep' => "Checking for dependency changes on $link" ,
+    'created' => "$link has been successfully created" ,
+    'move' => "$link has been moved to another database" ,
+  }
+%]
+
+[% Hook.process('title') %]
+
+<dl>
+  <dt>[% title.$type.ucfirst %]</dt>
+  <dd>
+    [% PROCESS "bug/process/bugmail.html.tmpl" mailing_bugid = id %]
+    [%# Links to more information about the changed bug. %]
+    [% Hook.process("links") %]
+  </dd>
+</dl>

@@ -1,0 +1,3 @@
+
+FAIL HTTP basic authentication should work with WebSockets assert_unreached: open should succeed Reached unreachable code
+

@@ -1,0 +1,4 @@
+XXX
+
+PASS document.body.offsetTop
+

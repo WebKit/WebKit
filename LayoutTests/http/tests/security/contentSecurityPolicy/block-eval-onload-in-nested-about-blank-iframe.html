@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<head>
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'">
+</head>
+<p>Tests that nested about:blank iframes that try to eval on load inherit the parent's CSP</p>
+<body>
+    <iframe id=x src=about:blank></iframe>
+    <script>
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+
+        x.onload=_=> {
+            x.contentDocument.body.innerHTML= "<iframe onload='eval(`alert(1)`)'><\/iframe>";
+            testRunner.notifyDone();
+        }
+        x.contentWindow.location.reload();
+    </script>
+</body>
+

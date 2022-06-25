@@ -1,0 +1,60 @@
+# Copyright 2020 The ANGLE Project Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+#
+# This file houses the build configuration for the ANGLE NULL back-end.
+
+import("../../../../gni/angle.gni")
+
+assert(angle_enable_null)
+
+_null_backend_sources = [
+  "BufferNULL.cpp",
+  "BufferNULL.h",
+  "CompilerNULL.cpp",
+  "CompilerNULL.h",
+  "ContextNULL.cpp",
+  "ContextNULL.h",
+  "DeviceNULL.cpp",
+  "DeviceNULL.h",
+  "DisplayNULL.cpp",
+  "DisplayNULL.h",
+  "FenceNVNULL.cpp",
+  "FenceNVNULL.h",
+  "FramebufferNULL.cpp",
+  "FramebufferNULL.h",
+  "ImageNULL.cpp",
+  "ImageNULL.h",
+  "ProgramNULL.cpp",
+  "ProgramNULL.h",
+  "ProgramPipelineNULL.cpp",
+  "ProgramPipelineNULL.h",
+  "QueryNULL.cpp",
+  "QueryNULL.h",
+  "RenderbufferNULL.cpp",
+  "RenderbufferNULL.h",
+  "SamplerNULL.cpp",
+  "SamplerNULL.h",
+  "ShaderNULL.cpp",
+  "ShaderNULL.h",
+  "SurfaceNULL.cpp",
+  "SurfaceNULL.h",
+  "SyncNULL.cpp",
+  "SyncNULL.h",
+  "TextureNULL.cpp",
+  "TextureNULL.h",
+  "TransformFeedbackNULL.cpp",
+  "TransformFeedbackNULL.h",
+  "VertexArrayNULL.cpp",
+  "VertexArrayNULL.h",
+]
+
+config("angle_null_backend_config") {
+  defines = [ "ANGLE_ENABLE_NULL" ]
+}
+
+angle_source_set("angle_null_backend") {
+  sources = _null_backend_sources
+
+  public_deps = [ "$angle_root:libANGLE_headers" ]
+}

@@ -1,0 +1,118 @@
+/*
+ * THIS FILE WAS AUTOMATICALLY GENERATED, DO NOT EDIT.
+ *
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include "SettingsBase.h"
+#include <wtf/RefCounted.h>
+
+namespace WebCore {
+
+class Page;
+
+class Settings : public SettingsBase, public RefCounted<Settings> {
+    WTF_MAKE_NONCOPYABLE(Settings); WTF_MAKE_FAST_ALLOCATED;
+public:
+    WEBCORE_EXPORT static Ref<Settings> create(Page*);
+    WEBCORE_EXPORT virtual ~Settings();
+
+<%- for @condition in @allSettingsSet.conditions do -%>
+<%- if @condition.condition -%>
+#if <%= @condition.condition %>
+<%- end -%>
+<%- for @setting in @condition.settingsNeedingImplementation do -%>
+    <%- if @setting.hasComplexGetter? -%>
+    WEBCORE_EXPORT <%= @setting.parameterType %> <%= @setting.getterFunctionName %>() const;
+    <%- else -%>
+    <%= @setting.parameterType %> <%= @setting.getterFunctionName %>() const { return m_values.<%= @setting.name %>; }
+    <%- end -%>
+    <%- if @setting.hasComplexSetter? -%>
+    WEBCORE_EXPORT void <%= @setting.setterFunctionName %>(<%= @setting.parameterType %>);
+    <%- else -%>
+    void <%= @setting.setterFunctionName %>(<%= @setting.parameterType %> <%= @setting.name %>) { m_values.<%= @setting.name %> = <%= @setting.name %>; }
+    <%- end -%>
+<%- end -%>
+<%- if @condition.condition -%>
+#endif
+<%- end -%>
+<%- end -%>
+
+<%- for @setting in @allSettingsSet.inspectorOverrideSettings do -%>
+    <%- if @setting.hasComplexSetter? -%>
+    WEBCORE_EXPORT void <%= @setting.setterFunctionName %>InspectorOverride(std::optional<<%= @setting.parameterType %>>);
+    <%- else -%>
+    void <%= @setting.setterFunctionName %>InspectorOverride(std::optional<<%= @setting.parameterType %>> <%= @setting.name %>InspectorOverride) { m_values.<%= @setting.name %>InspectorOverride = <%= @setting.name %>InspectorOverride; }
+    <%- end -%>
+<%- end -%>
+    FontGenericFamilies& fontGenericFamilies() final { return m_values.fontGenericFamilies; }
+    const FontGenericFamilies& fontGenericFamilies() const final { return m_values.fontGenericFamilies; }
+
+    struct Values {
+        void initialize();
+        Values isolatedCopy() const;
+
+<%- for @setting in @allSettingsSet.inspectorOverrideSettings do -%>
+        std::optional<<%= @setting.type %>> <%= @setting.name %>InspectorOverride;
+<%- end -%>
+
+        FontGenericFamilies fontGenericFamilies;
+<%- for @condition in @allSettingsSet.conditions do -%>
+<%- if @condition.nonBoolSettingsNeedingImplementation.length != 0 -%>
+<%- if @condition.condition -%>
+#if <%= @condition.condition %>
+<%- end -%>
+<%- for @setting in @condition.nonBoolSettingsNeedingImplementation -%>
+        <%= @setting.type %> <%= @setting.name %>;
+<%- end -%>
+<%- if @condition.condition -%>
+#endif
+<%- end -%>
+<%- end -%>
+<%- end -%>
+<%- for @condition in @allSettingsSet.conditions do -%>
+    <%- if @condition.settingsNeedingImplementation.length != 0 -%>
+        <%- if @condition.condition -%>
+#if <%= @condition.condition %>
+        <%- end -%>
+        <%- for @setting in @condition.boolSettingsNeedingImplementation -%>
+        <%= @setting.type %> <%= @setting.name %> : 1;
+        <%- end -%>
+        <%- if @condition.condition -%>
+#endif
+        <%- end -%>
+    <%- end -%>
+<%- end -%>
+    };
+    const Values& values() const { return m_values; }
+
+private:
+    WEBCORE_EXPORT explicit Settings(Page*);
+
+    Values m_values;
+};
+
+}

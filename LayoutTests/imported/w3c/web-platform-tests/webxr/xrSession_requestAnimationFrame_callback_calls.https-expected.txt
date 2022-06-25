@@ -1,0 +1,6 @@
+
+PASS XRSession requestAnimationFrame calls the provided callback for an immersive session - webgl
+PASS XRSession requestAnimationFrame calls the provided callback for an immersive session - webgl2
+PASS XRSession requestAnimationFrame calls the provided callback a non-immersive session - webgl
+PASS XRSession requestAnimationFrame calls the provided callback a non-immersive session - webgl2
+

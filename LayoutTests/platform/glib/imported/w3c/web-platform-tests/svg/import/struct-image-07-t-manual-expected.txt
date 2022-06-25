@@ -1,0 +1,36 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (83,80) size 634x287
+      RenderSVGContainer {g} at (83,80) size 634x287 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,0.00)}]
+        RenderSVGContainer {g} at (83,80) size 167x287 [transform={m=((1.00,0.00)(0.00,1.00)) t=(40.00,100.00)}]
+          RenderSVGText {text} at (36,-52) size 28x28 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 27x27
+              chunk 1 (middle anchor) text run 1 at (36.80,-30.00) startOffset 0 endOffset 2 width 26.40: "no"
+          RenderSVGText {text} at (2,-22) size 96x28 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 96x27
+              chunk 1 (middle anchor) text run 1 at (2.30,0.00) startOffset 0 endOffset 8 width 95.40: "xml:base"
+          RenderSVGImage {image} at (83,200) size 167x167
+        RenderSVGContainer {g} at (316,80) size 168x287 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,100.00)}]
+          RenderSVGText {text} at (2,-52) size 96x28 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 96x27
+              chunk 1 (middle anchor) text run 1 at (2.30,-30.00) startOffset 0 endOffset 8 width 95.40: "xml:base"
+          RenderSVGText {text} at (1,-22) size 98x28 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 98x27
+              chunk 1 (middle anchor) text run 1 at (1.10,0.00) startOffset 0 endOffset 8 width 97.80: "on image"
+          RenderSVGImage {image} at (316,200) size 168x167
+        RenderSVGContainer {g} at (549,80) size 168x287 [transform={m=((1.00,0.00)(0.00,1.00)) t=(320.00,100.00)}]
+          RenderSVGText {text} at (2,-52) size 96x28 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 96x27
+              chunk 1 (middle anchor) text run 1 at (2.30,-30.00) startOffset 0 endOffset 8 width 95.40: "xml:base"
+          RenderSVGText {text} at (-1,-22) size 102x28 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 101x27
+              chunk 1 (middle anchor) text run 1 at (-0.10,0.00) startOffset 0 endOffset 9 width 100.20: "on parent"
+          RenderSVGImage {image} at (550,200) size 167x167
+    RenderSVGContainer {g} at (16,518) size 380x60
+      RenderSVGText {text} at (10,311) size 228x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 228x36
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 227.40: "$Revision: 1.5 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

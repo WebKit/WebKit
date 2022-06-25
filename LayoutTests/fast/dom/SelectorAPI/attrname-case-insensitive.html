@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <!-- Check that in HTML documents CSS selectors use case-insensitive attribute name matching for HTML elements, case-sensitive otherwise. -->
+    <div id="content">
+        <div style="display: none">
+            <div baR="10" id="bar"></div>
+
+            <svg xmlns="http://www.w3.org/2000/svg">
+                <path id="pa" pathLength="200"/>
+            </svg>
+        </div>
+    </div>
+    <script>
+        var content = document.getElementById("content");
+        function checkMatchingSelector(selector, elementId) {
+            shouldBe("document.querySelector('" + selector + "')", "document.getElementById('" + elementId + "')");
+            shouldBeTrue("document.getElementById('" + elementId + "').matches('" + selector + "')");
+            shouldBeTrue("document.getElementById('" + elementId + "').webkitMatchesSelector('" + selector + "')");
+        }
+
+        function checkNonMatchingSelector(selector) {
+            shouldBeNull("content.querySelector('" + selector + "')");
+        }
+
+        // HTML should be matched case-insensitive
+        checkMatchingSelector('div[baR]', "bar");
+        checkMatchingSelector('div[bar]', "bar");
+        checkMatchingSelector('div[BAR]', "bar");
+        checkMatchingSelector('div[bAR]', "bar");
+        checkMatchingSelector('div[baR="10"]', "bar");
+        checkMatchingSelector('div[bar="10"]', "bar");
+        checkMatchingSelector('div[BAR="10"]', "bar");
+        checkMatchingSelector('div[bAR="10"]', "bar");
+
+        // non HTML should be matched case-sensitive
+        checkMatchingSelector('path[pathLength]', "pa");
+        checkNonMatchingSelector('path[pathlength]');
+        checkNonMatchingSelector('path[pathLengTh]');
+        checkMatchingSelector('path[pathLength="200"]', "pa");
+        checkNonMatchingSelector('path[pathlength="200"]');
+        checkNonMatchingSelector('path[pathLengTh="200"]');
+    </script>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

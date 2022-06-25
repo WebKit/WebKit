@@ -1,0 +1,151 @@
+#!/usr/bin/env perl
+
+# Copyright (C) 2014-2015 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer. 
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution. 
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+use strict;
+use FindBin;
+use Getopt::Long qw(:config pass_through);
+use POSIX;
+
+# First we run the test once to determine what the number of static OSR exits is. Then
+# we run it for each static OSR exit index, and for each index, we force exit on the
+# first dynamic time that exit is taken, the last, and something in the middle.
+
+my $verbose = 0;
+
+# We allow flags to be passed via environment variables, which is rather useful for
+# running with the run-jsc-stress-tests harness.
+if (defined($ENV{JS_OSRFUZZ_VERBOSE})) {
+    $verbose = $ENV{JS_OSRFUZZ_VERBOSE};
+}
+
+GetOptions(
+    'verbose' => \$verbose
+);
+
+my $commandString = shift @ARGV;
+
+my $staticCheckCount;
+
+sub fail {
+    my $context = shift;
+    select((select(STDOUT), $ |= 1)[0]); # This is a perlism for flush. We need to do it this way to support older perls.
+    select((select(STDERR), $ |= 1)[0]);
+    die "Failure for command $commandString: $context";
+}
+
+if (shift @ARGV) {
+    die "Ignoring garbage arguments; only the first non-option argument is used as the command string.";
+}
+
+open (my $testInput, "$commandString |") or fail("Cannot execute initial command when getting static OSR exit count");
+while (my $inputLine = <$testInput>) {
+    chomp($inputLine);
+    my $handled = 0;
+    if ($inputLine =~ /^JSC OSR EXIT FUZZ:/) {
+        if ($' =~ /encountered ([0-9]+) static checks\./) {
+            $staticCheckCount = $1;
+        }
+        $handled = 1;
+    }
+    if (!$handled || $verbose) {
+        print "staticCheckCount: $inputLine\n";
+    }
+}
+close($testInput);
+
+if ($verbose) {
+    print "Static check count: $staticCheckCount\n";
+}
+
+if (!$staticCheckCount) {
+    print "OSR exit fuzz testing not supported by jsc binary.\n";
+    exit 0;
+}
+
+for (my $staticCheckIndex = 1; $staticCheckIndex <= $staticCheckCount; ++$staticCheckIndex) {
+    if ($verbose) {
+        print "Detecting number of dynamic checks for static check at index $staticCheckIndex.\n";
+    }
+    open (my $testInput, "$commandString --fireOSRExitFuzzAtStatic=$staticCheckIndex |") or fail("Cannot execute command for static check index $staticCheckIndex");
+    my $dynamicCheckCount;
+    while (my $inputLine = <$testInput>) {
+        chomp($inputLine);
+        my $handled = 0;
+        if ($inputLine =~ /^JSC OSR EXIT FUZZ:/) {
+            if ($' =~ /encountered ([0-9]+) dynamic checks\./) {
+                $dynamicCheckCount = $1;
+            }
+            $handled = 1;
+        }
+        if (!$handled || $verbose) {
+            print "dynamicCheckCount: $inputLine\n";
+        }
+    }
+    close($testInput);
+    
+    if ($verbose) {
+        print "Dynamic check count: $dynamicCheckCount\n";
+    }
+    
+    # Now test triggering the exit at three points: always, immediately, at the last possible
+    # moment, and somewhere in between. We use "0" to mean always.
+    my @triggers = (0, 1, int((1 + $dynamicCheckCount) / 2), $dynamicCheckCount);
+    for (my $triggerIndex = 0; $triggerIndex < scalar @triggers; ++$triggerIndex) {
+        my $dynamicCheckIndex = $triggers[$triggerIndex];
+        if ($verbose) {
+            if ($dynamicCheckIndex == 0) {
+                print "Running with static check index = $staticCheckIndex and all dynamic check indices.\n";
+            } else {
+                print "Running with static check index = $staticCheckIndex and dynamic check index = $dynamicCheckIndex.\n";
+            }
+        }
+        my $optionToUse;
+        if ($dynamicCheckIndex == 0) {
+            $optionToUse = "--fireOSRExitFuzzAtOrAfter=1";
+        } else {
+            $optionToUse = "--fireOSRExitFuzzAt=$dynamicCheckIndex";
+        }
+        open ($testInput, "$commandString --fireOSRExitFuzzAtStatic=$staticCheckIndex $optionToUse |") or fail("Cannot execute command for static check index $staticCheckIndex and dynamic check index $dynamicCheckIndex");
+        while (my $inputLine = <$testInput>) {
+            chomp($inputLine);
+            my $handled = 0;
+            if ($inputLine =~ /^JSC OSR EXIT FUZZ:/) {
+                $handled = 1;
+            }
+            if (!$handled || $verbose) {
+                print "testRun: $inputLine\n";
+            }
+        }
+        close($testInput);
+    }
+    if ($verbose) {
+        print "\n";
+    }
+}
+
+if ($verbose) {
+    print "Success!\n";
+}
+

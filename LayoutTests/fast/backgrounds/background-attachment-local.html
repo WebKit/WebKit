@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .container {
+        	height: 150px;
+        	width: 500px;
+        	margin: 10px;
+        	border: 1px solid silver;
+        	overflow: hidden;
+        	background-image: url('data:image/svg+xml, <svg width="500" height="500" xmlns="http://www.w3.org/2000/svg"><path id="path" fill="green" d="M0 250 L250 499 L499 250 L250 0 Z"/></svg>');
+        	background-repeat: no-repeat;
+        }
+    
+        .inner {
+            height: 500px;
+        }
+
+        .local {
+            background-attachment: local;
+        }
+
+        .scroll {
+            background-attachment: scroll;
+        }
+    </style>
+    <script>
+        function doTest()
+        {
+            var containers = document.querySelectorAll('.container');
+            for (var i = 0; i < containers.length; ++i) {
+                containers[i].scrollTop = 200;
+            }
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+<div class="local container">
+    <div class="inner">
+    </div>
+</div>
+
+<div class="scroll container">
+    <div class="inner">
+    </div>
+</div>
+</body>
+</html>

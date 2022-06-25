@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head>
+        <title> HTML Timed Media Elements and CSS Open Issues </title> 
+
+        <link href="./mediaelement.css" rel="stylesheet" type="text/css">
+
+        <style type="text/css">
+                h4 + .element { margin-top: -2.5em; padding-top: 2em; }
+                h4 + p + .element { margin-top: -5em; padding-top: 4em; }
+                .element { background: #EFE; color: #000; margin: 0 0 1em -1em; padding: 0 1em 0.25em 0.75em; border-left: solid #9F9 0.25em; -padding: 0; /* that last decl is for IE6. Try removing it, it's hilarious! */ }
+                .proposal { border: blue solid; padding: 1em; }
+                table.matrix, table.matrix td { border: none; text-align: right; }
+                table.matrix { margin-left: 2em; }
+
+                .history table { width: 100%; }
+                .history, .history td, .history th { border: solid thin; font-size: x-small }
+                td.hauthor, td.hdate { width: 10%; }
+                td.hversion { width: 5%; text-align: center; }
+                td.hchange { width: 100%; }
+                
+                /* needed to override wiki CSS */
+                a, a:link { text-decoration: underline;}
+                th { color: #000; }
+        </style>
+
+</head>
+
+<body class="draft">
+
+        <div class="head">
+                <h1> Timed Media Elements - Open Issues </h1> <h2 class="no-num no-toc" id="working"> 19 March 2007 </h2> 
+                <p class="copyright">&copy; Copyright 2007 Apple Inc. All rights reserved.</p>
+
+        </div>
+
+        <h2 class=no-num id=issues>HTML Open Issues</h2>
+
+        <ul>
+                <li>Should there be advisory markup attributes in order to describe
+                content even more precisely, e.g. dataRate?
+                It would be an optional attribute that, if present, would specify the minimum network connection 
+                speed (in bits per second) required to use the media resource. The mechanism used to measure
+                bandwidth could determined by the user agent; so some implementations might wish to use a static setting 
+                controlled by the user, and some might wish to use the average network throughput to the server hosting the media 
+                resource. It would only be used for static fallback.
+
+
+                <li class=no-num>Retrieving a HTMLImageElement for the frame at a specific time from a 
+                video would be very useful. Would this be API, e.g.
+                
+<pre>HTMLImageElement getFrameImage(DOMString time)?</pre>
+
+
+                or a special URI scheme?
+
+
+                <li class=no-num>It may be desirable to sync multiple video and audio elements, and have 
+                them keep time with each other.
+
+                <li class=no-num>Wherever times appear in APIs or CSS properties, it may be convenient to get and set
+                times in other time formats. Formats that may be of particular interest include:
+                <ul>
+                        <li>SMIL <a href="http://www.w3.org/TR/2005/REC-SMIL2-20050107/smil-timing.html#Timing-ClockValueSyntax">&lt;clock-value&gt;</a>
+                        <li>"HH:MM:SS.fraction" with hours and the fractional seconds optional 
+                        <li>frame count index relative to start chapter name and/or index
+                </ul>
+
+                <li class=no-num>In CSS, time formats could have their own function syntax (such as 
+                clock("HH:MM:SS.fraction"), etc. In APIs, it would be possible to just accept strings, but
+                that doesn't let you get times in your format of choice. A possible solution is a MediaTime
+                interface which can convert to or from various time formats, and which is passed to and
+                returned from API methods that deal in times.
+
+                <li class=no-num>What does playbackRate do for audio? Should it be pitch-preserving? Should it
+                skip sections if you are going fast enough?
+
+                <li class=no-num>A movie is just a description of the multimedia presentation, the actual media sample
+                data is in tracks (or streams). Each track represents a sequence of renderable elements of a
+                uniform type, e.g. audio, video, text, etc. We should expose track information via the API
+                so developers can determine exactly what a media file contains and so they can enable and
+                disable individual tracks to control which take part in the presentation. Tracks contain
+                both metadata (eg. sample rate, sample size, bit depth, etc) and annotations (see notes on
+                media annotations below). We haven't designed an API for this yet. Perhaps track info and
+                metadata should be specified separately.
+
+                <li class=no-num>API to provide access to embedded metadata. In addition to metadata about media
+                characteristic (frame rate, data size, bit rate, etc), we should provide access to
+                annotation metadata. Annotations in MPEG-4 files can be in several different formats (eg.
+                3GPP, iTunes, QuickTime, ID3v2, etc), need not have unique names, and can be tagged with
+                language, so an API must allow all of them to be specified. Another form of interesting
+                metadata is chapter names and time ranges.
+
+                <li class=no-num>Should there be policies expressed on how to deal with graceful degradation if an
+                implementation is unable to support some aspect of a feature (e.g., negative playback
+                rates)? This might be a characteristic of the implementation as a whole or the
+                characteristic only when dealing with a particular media format (e.g., negative playback on
+                a RTP stream doesn't work even though for a .mov it could). Or should this (in)ability be
+                discoverable? Some clients that implement video decoding in hardware may not be able to
+                scale for instance.
+
+                <li class=no-num>How can a client discover the capabilities of the user agent (e.g., what codecs and
+                profiles/levels are supported)?
+
+                <li class=no-num>It might be useful in the API to get the current frame index, or go to a specific frame
+                (see time format discussion).
+
+        </ul>
+
+        <h2 id="open-issues"><span class="secno"></span>CSS Open Issues</h2> 
+
+        <ul>
+                <li><a href="http://www.w3.org/TR/REC-CSS2/syndata.html#value-def-time">
+                &lt;time&gt;</a> values only have second and millisecond unit identifiers. This will
+                make it inconvenient to represent time values in long duration media files because all
+                times must be converted to seconds. It may make more sense to use a time value
+                with a syntax like the SMIL 
+                <a href="http://www.w3.org/TR/2005/REC-SMIL2-20051213/smil-timing.html#Timing-ClockValueSyntax">
+                &lt;clock-value&gt;</a> type, which allows units of hours, minutes, seconds, and milliseconds,
+                so longer times can be expressed without conversion.</p>
+
+                <li>It would be useful to extend CSS <a href="http://www.w3.org/TR/css3-mediaqueries/">Media
+                Queries</a> with a new media query feature to make
+                rules that are matched based on bandwidth. This will allow a content author to build
+                pages that select different CSS files based on the user's bandwidth as well as existing
+                media query features like screen size.
+                
+        </ul>
+
+</body>
+</html>
+

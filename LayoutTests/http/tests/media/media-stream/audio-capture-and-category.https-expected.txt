@@ -1,0 +1,4 @@
+
+
+PASS Validate audio session category is set to PlayAndRecord after frame stopped capturing but continued playing audio
+

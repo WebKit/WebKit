@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that bitmap background images sized and positioned properly on subpixels when background-origin is present.</title>
+<style>
+  div {
+    background: red;
+    position: fixed;
+    height: 150px;
+    width: 25px;
+    top: 0px;
+  }
+  .box {
+    background: black;
+    height: 25px;
+    width: 25px;
+  }
+
+</style>
+</head>
+<body>
+<p id="container"></p>
+<script>
+  var container = document.getElementById("container");
+  w = 0;
+  for (i = 0; i < 10; ++i) {
+    var e = document.createElement("div");
+    e.style.left = ((50 + w) * i) + "px";
+    e.style.height = (150 + w) + "px";
+    container.appendChild(e);
+    w+=0.1;
+  }
+
+  w = 0;
+  for (i = 0; i < 10; ++i) {
+    var e = document.createElement("div");
+    e.className = "box";
+    e.style.top = "50px";
+    e.style.left = 25 + ((50 + w ) * i) + "px";
+    container.appendChild(e);
+    w+=0.1;
+  }
+
+  w = 0;
+  for (i = 0; i < 10; ++i) {
+    var e = document.createElement("div");
+    e.className = "box";
+    e.style.top = "100px";
+    e.style.left = 25 + ((50 + w + 0.1) * i) + "px";
+    container.appendChild(e);
+    w+=0.1;
+  }
+</script>
+</body>
+</html>

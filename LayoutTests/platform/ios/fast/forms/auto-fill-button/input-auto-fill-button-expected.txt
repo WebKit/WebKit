@@ -1,0 +1,41 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600 isolatesBlending
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 503x19
+          text run at (0,0) width 503: "This tests that the AutoFill button renders. It can only be tested in the test tool."
+      RenderBlock {DIV} at (0,36) size 784x25
+        RenderTextControl {INPUT} at (2,2) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+          RenderFlexibleBox {DIV} at (6,-1) size 143x22
+            RenderBlock {DIV} at (0,3) size 115x15
+        RenderText {#text} at (158,0) size 5x19
+          text run at (158,0) width 5: " "
+        RenderTextControl {INPUT} at (164,2) size 156x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+          RenderFlexibleBox {DIV} at (6,-1) size 143x22
+            RenderBlock {DIV} at (0,3) size 115x15
+        RenderText {#text} at (321,0) size 5x19
+          text run at (321,0) width 5: " "
+        RenderTextControl {INPUT} at (327,2) size 156x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+          RenderFlexibleBox {DIV} at (6,-1) size 143x22
+            RenderBlock {DIV} at (0,3) size 115x15
+        RenderTextControl {INPUT} at (486,2) size 156x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+          RenderFlexibleBox {DIV} at (6,-1) size 143x22
+            RenderBlock {DIV} at (0,3) size 115x15
+layer at (17,49) size 115x14 backgroundClip at (17,49) size 114x14 clip at (17,49) size 114x14
+  RenderBlock {DIV} at (0,0) size 115x14
+layer at (179,49) size 115x14
+  RenderBlock {DIV} at (0,0) size 115x14
+layer at (342,49) size 115x14
+  RenderBlock {DIV} at (0,0) size 115x14
+layer at (501,49) size 115x14
+  RenderBlock {DIV} at (0,0) size 115x14
+layer at (133,44) size 24x24 blendMode: luminosity
+  RenderBlock {DIV} at (116,-2) size 25x25
+layer at (296,44) size 24x24 blendMode: luminosity
+  RenderBlock {DIV} at (116,-2) size 25x25
+layer at (459,44) size 24x24 blendMode: luminosity
+  RenderBlock {DIV} at (116,-2) size 25x25
+layer at (618,44) size 24x24 blendMode: luminosity
+  RenderBlock {DIV} at (116,-2) size 25x25

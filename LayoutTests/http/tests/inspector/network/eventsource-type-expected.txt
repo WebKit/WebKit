@@ -1,0 +1,20 @@
+Tests for Resource.Type.EventSource.
+
+
+== Running test suite: Resource.Type.EventSource
+-- Running test case: Resource.Type.EventSource.1.Event
+PASS: Resource should be EventSource type.
+PASS: Resource should be a GET request.
+EventSource events: onmessage: the end.
+PASS: Resource should have a 200 response.
+PASS: Resource should receive 'Success' in the response.
+PASS: Response should not be base64 encoded.
+
+-- Running test case: Resource.Type.EventSource.3.Events
+PASS: Resource should be EventSource type.
+PASS: Resource should be a GET request.
+EventSource events: user: alice,user: bill,onmessage: the end.
+PASS: Resource should have a 200 response.
+PASS: Resource should receive 'Success' in the response.
+PASS: Response should not be base64 encoded.
+

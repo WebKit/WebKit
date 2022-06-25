@@ -1,0 +1,13 @@
+This test checks detaching the SVG pair properties from the owner element.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS angle.baseVal.value = 100 is 100
+PASS type.baseVal = SVGMarkerElement.SVG_MARKER_ORIENT_AUTO is SVGMarkerElement.SVG_MARKER_ORIENT_AUTO
+PASS radiusX.baseVal = 100 is 100
+PASS orderX.baseVal = 100 is 100
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

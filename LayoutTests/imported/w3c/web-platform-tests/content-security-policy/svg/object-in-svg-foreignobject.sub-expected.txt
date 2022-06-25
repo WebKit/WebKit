@@ -1,0 +1,4 @@
+
+
+PASS Should throw a securitypolicyviolation
+

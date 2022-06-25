@@ -1,0 +1,20 @@
+
+Harness Error (FAIL), message = ReferenceError: Can't find variable: document
+
+PASS File interface object exists
+PASS Required arguments
+PASS empty fileBits
+PASS DOMString fileBits
+PASS Unicode DOMString fileBits
+PASS String object fileBits
+PASS Empty Blob fileBits
+PASS Blob fileBits
+PASS Empty File fileBits
+PASS File fileBits
+PASS ArrayBuffer fileBits
+PASS Typed array fileBits
+PASS Various fileBits
+PASS Number in fileBits
+PASS Array in fileBits
+PASS Object in fileBits
+

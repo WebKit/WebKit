@@ -1,0 +1,42 @@
+Test the parsing of the -webkit-image-set function.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Too many url parameters : url(#a #b)
+PASS cssRule is null
+
+No x : url('#a') 1
+PASS cssRule is null
+
+No raw string URLs with prefixed image-set : 'image.png' 1x
+PASS cssRule is null
+
+Combination of valid and invalid with prefixed image-set : 'image.png' 1x, url(image.png) 2x
+PASS cssRule is null
+
+Combination of valid and invalid with unprefixed image-set : '' 1x, url(image.png) 2x
+FAIL cssRule should be null. Was [object CSSValueList].
+
+No gradients with prefixed image-set : linear-gradient(black, white) 1x
+PASS cssRule is null
+
+No comma : url('#a') 1x url('#b') 2x
+PASS cssRule is null
+
+Too many scale factor parameters : url('#a') 1x 2x
+PASS cssRule is null
+
+Scale factor is 0 : url('#a') 0x
+PASS cssRule is null
+
+Generated image for cursor : linear-gradient(black, white) 1x
+PASS cssRule is null
+
+Image-set inside image-set : image-set(image-set(url('#a') 1x) 1x)
+PASS cssRule is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

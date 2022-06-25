@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    .w {
+        font-size: 36px;
+        font-family: times;
+        border-right: solid black;
+        display: inline-block;
+    }   
+</style>
+</head>
+<body>
+This test makes sure that spaces drawn with the complex text codepath
+and the fast text codepath are the same width.
+<div>
+    <div class="w">
+        Wo&#xe8; Woe Woe Woe Woe Woe Woe Woe Woe Woe Woe Woe Woe Woe
+    </div>
+</div>
+</body>
+</html>

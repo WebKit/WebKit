@@ -1,0 +1,24 @@
+<style>
+    canvas {
+        width: 100px;
+        height: 100px;
+        background-color: red;
+    }
+</style>
+<body>
+    <p>This tests resolving the decode() promise when loading and decoding a static image succeeds.</p>
+    <canvas></canvas>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+        var image = new Image;
+        image.src = "resources/green-400x400.png";
+        image.decode().then(() => {
+            let canvas = document.querySelector("canvas");
+            let context = canvas.getContext("2d");
+            context.drawImage(image, 0, 0, canvas.width, canvas.height);
+            if (window.testRunner)
+                testRunner.notifyDone();
+        });
+    </script>
+</body>

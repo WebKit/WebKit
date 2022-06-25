@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 480x19
+          text run at (0,0) width 480: "Here is an attempt to extract the string \"Hello, Webkit!\" from the file findme.xml:"
+      RenderBlock {P} at (0,36) size 784x20
+        RenderText {#text} at (0,0) size 259x19
+          text run at (0,0) width 259: "using document('file:resources/findme.xml'):"
+      RenderBlock {P} at (0,72) size 784x20
+        RenderText {#text} at (0,0) size 239x19
+          text run at (0,0) width 239: "using document('resources/findme.xml'):"

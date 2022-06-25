@@ -1,0 +1,19 @@
+<html>
+<head>
+    <script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+    <script>
+        description("Test setting custom properties on detached styles");
+        var element = document.createElementNS("http://www.w3.org/2000/svg", "style");
+        var inlineStyle = element.style;
+        inlineStyle.setProperty("word-break", "inherit");
+
+        shouldBeEqualToString("element.attributes[0].name", "style");
+        element.removeAttribute("style");
+        
+        inlineStyle.setProperty("--cssvarc", "inherit");
+        shouldBeEqualToString('inlineStyle.getPropertyValue("--cssvarc")', "inherit");
+    </script>
+</body>
+</html>

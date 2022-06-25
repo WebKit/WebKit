@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that XMLSerializer.serializeToString() properly encodes entities in attribute values when the Element's associated document is an HTMLDocument.");
+const node = document.createElement("test");
+node.setAttribute("a", "<potato/>");
+shouldBeEqualToString('(new XMLSerializer()).serializeToString(node)', '<test xmlns="http://www.w3.org/1999/xhtml" a="&lt;potato/&gt;"></test>');
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

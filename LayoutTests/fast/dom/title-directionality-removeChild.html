@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>page title</title>
+</head>
+<body>
+<iframe id=iframe></iframe>
+<script>
+var iframe = document.getElementById('iframe');
+
+function assertDirection(label, expectedDirection, html)
+{
+    var doc = iframe.contentDocument;
+    doc.removeChild(doc.documentElement);
+    doc.open();
+    doc.write(html);
+    doc.close();
+
+    var dir = window.testRunner ? testRunner.titleTextDirection : 'testRunner unavailable';
+    var status = html + ' should have title direction "' + expectedDirection + '". ';
+    if (dir == expectedDirection) {
+        status += 'PASS';
+    } else {
+        status += 'FAIL (got: "' + dir + '")';
+    }
+    var div = document.createElement('div');
+    div.innerText = status;
+    document.body.appendChild(div);
+}
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+assertDirection('normal doc', 'ltr',
+                '<html><title>foo</title></html>');
+assertDirection('title dir=rtl', 'rtl',
+                '<html><title dir=rtl>foo</title></html>');
+assertDirection('html dir=rtl', 'rtl',
+                '<html dir=rtl><title>foo</title></html>');
+assertDirection('html dir=rtl, title dir=ltr', 'ltr',
+                '<html dir=rtl><title dir=ltr>foo</title></html>');
+</script>
+</body>
+</html>

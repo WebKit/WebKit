@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("List NodeFilter's properties to detect changes made to it.");
+
+function logPropertyDescriptor(descriptor) {
+    debug("[Configurable: " + descriptor.configurable + ", enumerable: " + descriptor.enumerable + ", writable: " + descriptor.writable + ", value: " + descriptor.value + "]");
+}
+
+var properties = Object.getOwnPropertyNames(NodeFilter).sort();
+for (var i = 0; i < properties.length; i++) {
+    debug("* " + properties[i]);
+    logPropertyDescriptor(Object.getOwnPropertyDescriptor(NodeFilter, properties[i]));
+}
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This frame should have a blue background.</p>
+<iframe></iframe>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+var html = `
+<style>
+body { 
+    background: blue; 
+}
+</style>
+`;
+var blob = new Blob([html], {type: 'text/html; charset=UTF-8'});
+var iframe = document.querySelector("iframe");
+iframe.onload = () => {
+    if (window.testRunner)
+        testRunner.notifyDone();
+};
+iframe.src = URL.createObjectURL(blob);
+</script>
+</body>
+</html>

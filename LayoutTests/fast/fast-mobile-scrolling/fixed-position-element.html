@@ -1,0 +1,25 @@
+<html>
+<head>
+<style>
+#square
+{
+    height: 64px;
+    width: 64px;
+    margin-top: 3em;
+    background: green url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAIAAAAlC+aJAAAAAXNSR0IArs4c6QAAAE1JREFUaN7tz0ENAAAIBKDT/p21gX83aEBl8lonAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgK3BVGGAX99FLDRAAAAAElFTkSuQmCC') no-repeat fixed
+}
+#fixed-position-element
+{
+    position: fixed;
+    top: 100px;
+    height: 64px;
+    width: 64px;
+}
+</style>
+</head>
+<body>
+<p>This tests that fixed background images are honored on a page with at least one fixed position element. If the square (below) is green, then the test PASSED.</p>
+<div id="square">&nbsp;</div>
+<div id="fixed-position-element">&nbsp;</div>
+</body>
+</html>

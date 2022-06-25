@@ -1,0 +1,17 @@
+<html>
+<head>
+<title>This tests that we paint borders on empty table cells even in quirks mode.</title>
+<style>
+td {
+    border: 1px solid green;
+    height: 50px;
+    width: 50px;
+}
+</style>
+</head>
+<body>
+    <table style="empty-cells: show"><tr><td></td></tr><tr><td>&nbsp</td></tr></table>
+    <table style="empty-cells: hide"><tr><td></td></tr><tr><td>&nbsp</td></tr></table>
+    <table><tr><td></td></tr><tr><td>&nbsp</td></tr></table>
+</body>
+</html>

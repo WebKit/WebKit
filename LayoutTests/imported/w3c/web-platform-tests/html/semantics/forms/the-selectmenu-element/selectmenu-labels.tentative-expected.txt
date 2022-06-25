@@ -1,0 +1,4 @@
+Label 1 Label 2 Label 3
+
+FAIL Validate selectmenu.labels assert_true: expected true got false
+

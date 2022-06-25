@@ -1,0 +1,35 @@
+CONSOLE MESSAGE: There are too many active WebGL contexts on this page, the oldest context will be lost.
+CONSOLE MESSAGE: There are too many active WebGL contexts on this page, the oldest context will be lost.
+CONSOLE MESSAGE: There are too many active WebGL contexts on this page, the oldest context will be lost.
+CONSOLE MESSAGE: There are too many active WebGL contexts on this page, the oldest context will be lost.
+CONSOLE MESSAGE: There are too many active WebGL contexts on this page, the oldest context will be lost.
+CONSOLE MESSAGE: There are too many active WebGL contexts on this page, the oldest context will be lost.
+CONSOLE MESSAGE: There are too many active WebGL contexts on this page, the oldest context will be lost.
+CONSOLE MESSAGE: There are too many active WebGL contexts on this page, the oldest context will be lost.
+CONSOLE MESSAGE: There are too many active WebGL contexts on this page, the oldest context will be lost.
+
+PASS Non-immersive session supports viewer space by default - webgl
+PASS Non-immersive session supports viewer space by default - webgl2
+PASS Immersive session supports viewer space by default - webgl
+PASS Immersive session supports viewer space by default - webgl2
+PASS Immersive session supports local space by default - webgl
+PASS Immersive session supports local space by default - webgl2
+PASS Non-immersive session supports local space when required - webgl
+PASS Non-immersive session supports local space when required - webgl2
+PASS Non-immersive session supports local space when optional - webgl
+PASS Non-immersive session supports local space when optional - webgl2
+PASS Non-immersive session supports local-floor space when required - webgl
+PASS Non-immersive session supports local-floor space when required - webgl2
+PASS Immersive session supports local-floor space when required - webgl
+PASS Immersive session supports local-floor space when required - webgl2
+PASS Immersive session supports local-floor space when optional - webgl
+PASS Immersive session supports local-floor space when optional - webgl2
+PASS Non-immersive session rejects bounded-floor space even when requested - webgl
+PASS Non-immersive session rejects bounded-floor space even when requested - webgl2
+PASS Non-immersive session rejects unbounded space even when requested - webgl
+PASS Non-immersive session rejects unbounded space even when requested - webgl2
+PASS Non-immersive session rejects local space if not requested - webgl
+PASS Non-immersive session rejects local space if not requested - webgl2
+PASS Immersive session rejects local-floor space if not requested - webgl
+PASS Immersive session rejects local-floor space if not requested - webgl2
+

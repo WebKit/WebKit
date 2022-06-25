@@ -1,0 +1,42 @@
+<style>
+  :last-of-type {
+    height: 1px;
+    display: block;
+  }
+@font-face {
+    font-family: "Ahem";
+    src: url("../../resources/Ahem.ttf");
+}
+</style>
+<script>
+  if (window.testRunner) {
+    window.testRunner.dumpAsText();
+    window.testRunner.waitUntilDone();
+  }
+  onload = async () => {
+    document.designMode = 'on';
+    let img0 = document.createElement('img');
+    img0.onerror = () => {
+      document.execCommand('ForwardDelete');
+    };
+    let datalist0 = document.createElement('datalist');
+    document.head.appendChild(datalist0);
+    document.head.appendChild(document.createElement('datalist'));
+    img0.src = 'data:';
+    let embed0 = document.createElement('embed');
+    embed0.src = '#';
+    datalist0.appendChild(embed0);
+    if (navigator.platform.indexOf('Mac') == 0 && window.caches)
+      await caches.has('a');
+    else
+      await document.fonts.load("80px Ahem");
+    img0.src = 'data:';
+    getSelection().selectAllChildren(datalist0);
+    if (navigator.platform.indexOf('Mac') == 0 && window.caches)
+      await caches.has('a');
+    else
+      await document.fonts.load("80px Ahem");
+    document.execCommand('Delete');
+    setTimeout(function() { document.write("Test passes if it does not crash."); window.testRunner.notifyDone(); }, 0);
+  };
+</script>

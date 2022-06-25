@@ -1,0 +1,158 @@
+# Copyright (c) 2014 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+if (is_android) {
+  import("//build/config/android/config.gni")
+  import("//build/config/android/rules.gni")
+}
+import("../webrtc.gni")
+
+rtc_library("system_wrappers") {
+  visibility = [ "*" ]
+  sources = [
+    "include/clock.h",
+    "include/cpu_features_wrapper.h",
+    "include/cpu_info.h",
+    "include/ntp_time.h",
+    "include/rtp_to_ntp_estimator.h",
+    "include/sleep.h",
+    "source/clock.cc",
+    "source/cpu_features.cc",
+    "source/cpu_info.cc",
+    "source/rtp_to_ntp_estimator.cc",
+    "source/sleep.cc",
+  ]
+
+  defines = []
+  libs = []
+  deps = [
+    ":field_trial",
+    "../api:array_view",
+    "../api/units:timestamp",
+    "../modules:module_api_public",
+    "../rtc_base:checks",
+    "../rtc_base/synchronization:mutex",
+    "../rtc_base/system:arch",
+    "../rtc_base/system:rtc_export",
+  ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+
+  if (is_android) {
+    if (build_with_mozilla) {
+      include_dirs = [
+        "/config/external/nspr",
+        "/nsprpub/lib/ds",
+        "/nsprpub/pr/include",
+      ]
+    } else {
+      sources += [ "source/cpu_features_android.cc" ]
+      deps += [ "//third_party/android_sdk:cpu_features" ]
+    }
+
+    libs += [ "log" ]
+  }
+
+  if (is_linux || is_chromeos) {
+    if (!build_with_chromium) {
+      sources += [ "source/cpu_features_linux.cc" ]
+    }
+
+    libs += [ "rt" ]
+  }
+
+  if (is_win) {
+    libs += [ "winmm.lib" ]
+
+    # Windows needs ../rtc_base due to include of
+    # webrtc/rtc_base/win32.h in source/clock.cc.
+    deps += [ "../rtc_base:win32" ]
+  }
+
+  deps += [
+    "../rtc_base:rtc_base_approved",
+    "../rtc_base:rtc_numerics",
+  ]
+}
+
+rtc_library("field_trial") {
+  visibility = [ "*" ]
+  public = [ "include/field_trial.h" ]
+  sources = [ "source/field_trial.cc" ]
+  if (rtc_exclude_field_trial_default) {
+    defines = [ "WEBRTC_EXCLUDE_FIELD_TRIAL_DEFAULT" ]
+  }
+  deps = [
+    "../rtc_base:checks",
+    "../rtc_base:logging",
+    "../rtc_base:stringutils",
+  ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
+}
+
+rtc_library("metrics") {
+  visibility = [ "*" ]
+  public = [ "include/metrics.h" ]
+  sources = [ "source/metrics.cc" ]
+  if (rtc_exclude_metrics_default) {
+    defines = [ "WEBRTC_EXCLUDE_METRICS_DEFAULT" ]
+  }
+  deps = [
+    "../rtc_base:checks",
+    "../rtc_base:rtc_base_approved",
+    "../rtc_base/synchronization:mutex",
+  ]
+}
+
+rtc_library("denormal_disabler") {
+  visibility = [ "*" ]
+  public = [ "include/denormal_disabler.h" ]
+  sources = [ "source/denormal_disabler.cc" ]
+  deps = [
+    "../rtc_base:checks",
+    "../rtc_base/system:arch",
+  ]
+  if (is_clang) {
+    cflags_cc = [ "-Wno-unused-private-field" ]
+  }
+}
+
+if (rtc_include_tests && !build_with_chromium) {
+  rtc_test("system_wrappers_unittests") {
+    testonly = true
+    sources = [
+      "source/clock_unittest.cc",
+      "source/denormal_disabler_unittest.cc",
+      "source/field_trial_unittest.cc",
+      "source/metrics_default_unittest.cc",
+      "source/metrics_unittest.cc",
+      "source/ntp_time_unittest.cc",
+      "source/rtp_to_ntp_estimator_unittest.cc",
+    ]
+
+    deps = [
+      ":denormal_disabler",
+      ":field_trial",
+      ":metrics",
+      ":system_wrappers",
+      "../rtc_base:checks",
+      "../rtc_base:rtc_base_approved",
+      "../test:rtc_expect_death",
+      "../test:test_main",
+      "../test:test_support",
+      "//testing/gtest",
+    ]
+
+    absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
+
+    if (is_android) {
+      deps += [ "//testing/android/native_test:native_test_support" ]
+
+      shard_timeout = 900
+    }
+  }
+}

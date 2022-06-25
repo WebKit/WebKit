@@ -1,0 +1,3 @@
+
+PASS drawImage with zero-sized source rectangle from image draws nothing without exception
+

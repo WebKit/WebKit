@@ -1,0 +1,7 @@
+
+FAIL setTimeout should successfully import promise_test: Unhandled rejection with value: object "TypeError: Importing a module script failed."
+FAIL eval should successfully import promise_test: Unhandled rejection with value: object "TypeError: Importing a module script failed."
+FAIL the Function constructor should successfully import promise_test: Unhandled rejection with value: object "TypeError: Importing a module script failed."
+FAIL reflected inline event handlers should successfully import promise_test: Unhandled rejection with value: object "TypeError: Importing a module script failed."
+FAIL inline event handlers triggered via UA code should successfully import promise_test: Unhandled rejection with value: object "TypeError: Importing a module script failed."
+

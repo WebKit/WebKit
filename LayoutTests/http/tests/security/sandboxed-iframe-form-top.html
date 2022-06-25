@@ -1,0 +1,15 @@
+<html>
+<head>
+<script>
+if (window.testRunner)
+    window.testRunner.dumpAsText();
+</script>
+</head>
+<body>
+<p>This tests passes if the sandboxed frame cannot navigate the top frame.</p>
+<p>PASS</p>
+<iframe sandbox="allow-forms allow-scripts"
+        src="resources/sandboxed-iframe-form-top.html">
+</iframe>
+</body>
+</html>

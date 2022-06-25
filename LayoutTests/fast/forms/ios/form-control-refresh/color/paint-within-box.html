@@ -1,0 +1,28 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ IOSFormControlRefreshEnabled=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+    #overlay {
+        position: absolute;
+        background-color: red;
+    }
+</style>
+</head>
+<body>
+<input id="input" type="color">
+<div id="overlay"></div>
+</body>
+<script>
+
+let input = document.getElementById("input");
+let overlay = document.getElementById("overlay");
+
+let rect = input.getBoundingClientRect();
+overlay.style.width = rect.width + "px";
+overlay.style.height = rect.height + "px";
+overlay.style.top = rect.top + "px";
+overlay.style.left = rect.left + "px";
+
+</script>
+</html>

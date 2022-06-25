@@ -1,0 +1,29 @@
+hello world test
+This tests that selected text ranges can be set on a contenteditable element.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Initial selected range: {1, 0}
+
+Set range: {3, 0}
+PASS content.selectedTextRange became '{3, 0}'
+
+Set range: {100, 0}
+PASS content.selectedTextRange became '{16, 0}'
+
+Set range: {0, 0}
+PASS content.selectedTextRange became '{0, 0}'
+
+Set range: {1, 12}
+PASS content.selectedTextRange became '{1, 12}'
+
+Set range: {-1, 0}
+PASS content.selectedTextRange became '{0, 0}'
+
+Set range: {7, 3}
+PASS content.selectedTextRange became '{7, 3}'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

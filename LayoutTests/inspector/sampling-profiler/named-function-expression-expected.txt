@@ -1,0 +1,16 @@
+
+== Running test suite: ScriptProfiler.Samples.NamedFunctionExpression
+-- Running test case: Sampling Profiler basic
+PASS: Should have seen stacktrace:
+[
+  {
+    "name": "bar"
+  },
+  {
+    "name": "foo"
+  },
+  {
+    "name": "runFor"
+  }
+]
+

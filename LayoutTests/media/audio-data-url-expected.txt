@@ -1,0 +1,11 @@
+Test that audio element can use a data: url
+
+EVENT(loadstart)
+EVENT(durationchange)
+EVENT(loadedmetadata)
+EVENT(loadeddata)
+EVENT(canplay)
+EVENT(canplaythrough)
+EXPECTED (mediaElement.duration.toFixed(2) == '0.25') OK
+END OF TEST
+

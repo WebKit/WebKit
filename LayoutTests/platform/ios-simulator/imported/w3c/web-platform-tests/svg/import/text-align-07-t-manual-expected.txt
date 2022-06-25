@@ -1,0 +1,40 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (83,89) size 584x104
+      RenderSVGContainer {g} at (83,89) size 584x104
+        RenderSVGText {text} at (50,53) size 192x59 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 114x58
+            chunk 1 text run 1 at (50.00,100.00) startOffset 0 endOffset 3 width 113.22: "a\x{729C}\x{923}"
+          RenderSVGTSpan {tspan} at (0,0) size 57x29
+            RenderSVGInlineText {#text} at (113,23) size 57x29
+              chunk 1 text run 1 at (163.22,100.00) startOffset 0 endOffset 3 width 56.27: "a\x{729C}\x{923}"
+          RenderSVGTSpan {tspan} at (0,0) size 23x13
+            RenderSVGInlineText {#text} at (169,36) size 23x12
+              chunk 1 text run 1 at (219.49,100.00) startOffset 0 endOffset 3 width 22.37: "a\x{729C}\x{923}"
+          RenderSVGInlineText {#text} at (0,0) size 0x0
+        RenderSVGPath {line} at (83,115) size 584x3 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=50.00] [y1=70.00] [x2=400.00] [y2=70.00]
+        RenderSVGText {text} at (320,70) size 77x13 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 77x12
+            chunk 1 text run 1 at (320.00,80.00) startOffset 0 endOffset 17 width 76.17: "hanging base line"
+        RenderSVGPath {line} at (83,165) size 584x3 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=50.00] [y1=100.00] [x2=400.00] [y2=100.00]
+        RenderSVGText {text} at (310,100) size 87x13 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 87x12
+            chunk 1 text run 1 at (310.00,110.00) startOffset 0 endOffset 11 width 47.76: "alphabetic "
+            chunk 1 text run 1 at (357.76,110.00) startOffset 0 endOffset 9 width 38.35: "base line"
+        RenderSVGPath {line} at (83,170) size 334x3 [stroke={[type=SOLID] [color=#FF00FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=50.00] [y1=103.00] [x2=250.00] [y2=103.00]
+        RenderSVGText {text} at (155,103) size 93x13 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 93x12
+            chunk 1 text run 1 at (155.00,113.00) startOffset 0 endOffset 21 width 92.35: "ideographic base line"
+    RenderSVGContainer {g} at (16,516) size 385x64
+      RenderSVGText {text} at (10,310) size 231x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 231x38
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 230.19: "$Revision: 1.9 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGContainer {g} at (0,0) size 800x39
+      RenderSVGRect {rect} at (0,0) size 800x36 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [x=1.00] [y=1.00] [width=478.00] [height=20.00]
+      RenderSVGText {text} at (205,-1) size 70x24 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 69x24
+          chunk 1 (middle anchor) text run 1 at (205.95,18.00) startOffset 0 endOffset 5 width 68.10: "DRAFT"

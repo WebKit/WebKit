@@ -1,0 +1,25 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > LI > UL > DIV > BODY > HTML > #document to 3 of #text > LI > UL > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 639x19
+          text run at (0,0) width 639: "This test makes sure that content inside a list in an incoming fragment isn't pulled out of the list during paste."
+      RenderBlock {P} at (0,36) size 784x20
+        RenderInline {B} at (0,0) size 250x19
+          RenderText {#text} at (0,0) size 250x19
+            text run at (0,0) width 250: "You should see 'bar' inside a list item."
+      RenderBlock {DIV} at (0,72) size 784x20
+        RenderBlock {UL} at (0,0) size 784x20
+          RenderListItem {LI} at (40,0) size 744x20
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 20x19
+              text run at (0,0) width 20: "bar"
+caret: position 3 of child 0 {#text} of child 0 {LI} of child 0 {UL} of child 4 {DIV} of body

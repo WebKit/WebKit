@@ -1,0 +1,54 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+    font-size: 24px; 
+}
+.explanation { 
+    border: 2px solid blue; 
+    padding: 12px; 
+    font-size: 24px; 
+    margin-bottom: 24px;
+}
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    extendSelectionForwardByLineCommand();
+    extendSelectionForwardByCharacterCommand();
+    justifyCenterCommand();
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body contenteditable>
+
+<div class="explanation">
+Should see "foo" and "bar" centered in their own red boxes. The "baz" line should be in its own red box, but not centered.
+</div>
+
+<div id="root" style="word-wrap: break-word; -khtml-nbsp-mode: space; -khtml-line-break: after-white-space;">
+<div id="test" class="editing">
+foo
+</div>
+<div class="editing">
+bar
+</div>
+<div class="editing">
+baz
+</div>
+</div>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

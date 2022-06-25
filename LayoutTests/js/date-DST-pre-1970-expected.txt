@@ -1,0 +1,12 @@
+This tests the DST status in dates earlier than 1970-01-01 00:00 UTC. Regardless of your time zone, it should not fail. This tests time zones: US/Pacific, US/Central, US/Mountain, US/Eastern, CET, Asia/Jerusalem and NZ.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS (new Date(1970, 0, 1)).getHours() is 0
+PASS (new Date(1969, 8, 1)).getHours() is 0
+PASS (new Date(1969, 9, 28)).getHours() is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

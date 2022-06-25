@@ -1,0 +1,13 @@
+This tests programming scrolling via element.focus to an element position well above the viewport top
+WebKit should clamp the scroll top to 0px.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.documentElement.scrollTop is 0
+PASS visualViewport.pageTop is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+hi
+

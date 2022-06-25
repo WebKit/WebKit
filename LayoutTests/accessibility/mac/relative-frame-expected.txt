@@ -1,0 +1,11 @@
+focusable link
+This tests the relative frame attribute returns accurate data.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+relative frame: NSRect: {{8, 8}, {90, 18}}
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

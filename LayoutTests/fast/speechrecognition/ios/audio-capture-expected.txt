@@ -1,0 +1,14 @@
+Verify that audio capture on iOS happens in web process.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS recognition = new webkitSpeechRecognition(); did not throw exception.
+PASS recognition.start() did not throw exception.
+Received start event
+Received audiostart event
+PASS internals.audioSessionCategory() is "PlayAndRecord"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

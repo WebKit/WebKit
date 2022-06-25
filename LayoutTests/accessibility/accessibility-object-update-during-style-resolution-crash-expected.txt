@@ -1,0 +1,4 @@
+This tests invoking updateLayout durign a live region update from the style recalc.
+WebKit should not hit a release assertion.
+
+PASS. WebKit did not crash.

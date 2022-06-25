@@ -1,0 +1,57 @@
+<html>
+<head>
+<script src="resources/push-api-test-pre.js"></script>
+<script src="resources/subscribe-tests.js"></script>
+</head>
+<body>
+<script>
+if (window.testRunner)
+    testRunner.denyWebNotificationPermissionOnPrompt(window.origin);
+
+navigator.serviceWorker.register("resources/subscribe-worker.js", { }).then(async (registration) => {
+    try {
+        await waitForState(registration.installing, "activated");
+        await testServiceWorkerPermissionState(registration, 'prompt');
+        await testDocumentPermissionState(registration, 'prompt');
+        await testServiceWorkerSubscribe(registration, 'NotAllowedError');
+        await testDocumentSubscribeWithoutUserGesture(registration, 'NotAllowedError');
+
+        let promise = new Promise((resolve, reject) => {
+            if (!window.internals) {
+                reject('Test requires internals.');
+                return;
+            }
+
+            internals.withUserGesture(() => {
+                let request1 = registration.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: VALID_SERVER_KEY
+                });
+                let request2 = registration.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: VALID_SERVER_KEY
+                });
+                Promise.allSettled([request1, request2]).then(resolve);
+            });
+        });
+        let [result1, result2] = await(promise);
+        
+        if (result1.reason && result1.reason.name == 'NotAllowedError')
+            log('PASS: document subscribe with user gesture was error: NotAllowedError')
+        else
+            log(`FAIL: first subscribe failed with unexpected result ${result1.value || result1.reason}`);
+
+        if (result2.reason && result2.reason.name == 'NotAllowedError' && result2.reason.message.includes('user gesture'))
+            log('PASS: document subscribe with consumed user gesture failed with user gesture error')
+        else
+            log(`FAIL: second subscribe failed with unexpected result ${result2.value || result2.reason}`)
+    } catch (e) {
+        log(`FAIL: unexpected exception ${e}`);
+    } finally {
+        await registration.unregister();
+        finishPushAPITest();
+    }
+});
+</script>
+</body>
+</html>

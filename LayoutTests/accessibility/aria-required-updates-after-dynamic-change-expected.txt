@@ -1,0 +1,12 @@
+This tests that changing the aria-required attribute is properly reflected in an AX object's required status.
+
+#textbox is required: false
+Setting aria-required to true on #textbox.
+#textbox is required: true
+Setting aria-required to false on #textbox.
+#textbox is required: false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

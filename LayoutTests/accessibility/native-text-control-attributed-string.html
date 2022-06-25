@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<input type="text" id="textfield" value="some word"></input>
+<input type="password" id="passwordfield" value="pwd"></input>
+
+<script>
+    description("Tests that attributedStringForRange works properly for native text and password fields, including for ranges out of bound.");
+
+    if (window.accessibilityController) {
+        let output = "";
+        let textField = accessibilityController.accessibleElementById("textfield");
+        // Entire text.
+        output = `Attributed string for range (0, 9): ${textField.attributedStringForRange(0, 9)}\n`;
+        // Text at the start.
+        output += `Attributed string for range (0, 3): ${textField.attributedStringForRange(0, 3)}\n`;
+        // Text at the end.
+        output += `Attributed string for range (5, 4): ${textField.attributedStringForRange(5, 4)}\n`;
+        // Range out of bounds.
+        output += `Attributed string for range (5, 10): ${textField.attributedStringForRange(5, 10)}\n`;
+        output += `Attributed string for range (10, 1): ${textField.attributedStringForRange(10, 1)}\n`;
+        output += `Attributed string for range (-1, 1): ${textField.attributedStringForRange(-1, 1)}\n`;
+        debug(output);
+
+        let passwordField = accessibilityController.accessibleElementById("passwordfield");
+        // Entire text.
+        output = `Attributed string for range (0, 3): ${passwordField.attributedStringForRange(0, 3)}\n`;
+        // Text at the start.
+        output += `Attributed string for range (0, 2): ${passwordField.attributedStringForRange(0, 2)}\n`;
+        // Text at the end.
+        output += `Attributed string for range (1, 2): ${passwordField.attributedStringForRange(1, 2)}\n`;
+        // Range out of bounds.
+        output += `Attributed string for range (1, 10): ${passwordField.attributedStringForRange(1, 10)}\n`;
+        output += `Attributed string for range (10, 1): ${passwordField.attributedStringForRange(10, 1)}\n`;
+        output += `Attributed string for range (-1, 1): ${passwordField.attributedStringForRange(-1, 1)}\n`;
+        debug(output);
+    }
+</script>
+</body>
+</html>

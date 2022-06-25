@@ -1,0 +1,39 @@
+This tests the exposure of aria-current
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+test1 active: false
+AXPlatformAttributes: tag:div
+
+test2 active: false
+AXPlatformAttributes: computed-role:listitem, current:false, tag:div, xml-roles:listitem
+
+test3 active: true
+AXPlatformAttributes: computed-role:listitem, current:true, tag:div, xml-roles:listitem
+
+test4 active: true
+AXPlatformAttributes: computed-role:listitem, current:page, tag:div, xml-roles:listitem
+
+test5 active: true
+AXPlatformAttributes: computed-role:listitem, current:step, tag:div, xml-roles:listitem
+
+test6 active: true
+AXPlatformAttributes: computed-role:listitem, current:location, tag:div, xml-roles:listitem
+
+test7 active: true
+AXPlatformAttributes: computed-role:listitem, current:date, tag:div, xml-roles:listitem
+
+test8 active: true
+AXPlatformAttributes: computed-role:listitem, current:time, tag:div, xml-roles:listitem
+
+test9 active: false
+AXPlatformAttributes: computed-role:listitem, current:false, tag:div, xml-roles:listitem
+
+test10 active: true
+AXPlatformAttributes: computed-role:listitem, current:true, tag:div, xml-roles:listitem
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

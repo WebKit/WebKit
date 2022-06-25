@@ -1,0 +1,164 @@
+#!/usr/bin/env python3
+
+import argparse
+import glob
+import math
+import subprocess
+import os
+
+PROFILED_DYLIBS = ["JavaScriptCore", "WebCore", "WebKit"]
+BENCHMARK_GROUP_WEIGHTS = [("speedometer", 0.6), ("jetstream", 0.2), ("motionmark", 0.2)]
+
+def pad(string, max_length):
+    if len(string) > max_length:
+        return string[:max_length - 1] + u"…"
+    return string.ljust(max_length)
+
+
+def shell(command):
+    return subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT).strip()
+
+
+def shortened(name):
+    return name if len(name) < 200 else name[0:99] + u"…" + name[-98:]
+
+
+def assert_directory(directory_path):
+    assert os.path.isdir(directory_path), f"No directory at {directory_path}"
+    return directory_path
+
+
+def assert_file(file_path):
+    assert os.path.isfile(file_path), f"No file at {file_path}"
+    return file_path
+
+
+def summarize_parser(subparsers):
+    parser = subparsers.add_parser("summarize", help="Dumps function names in a given .profraw file, sorted in descending order by function count")
+    parser.add_argument("file", help="Path to the .profraw file")
+    parser.set_defaults(func=summarize)
+    return parser
+
+
+def summarize(args):
+    file = assert_file(args.file)
+
+    lines = shell(f"xcrun -sdk macosx llvm-profdata show --all-functions --value-cutoff=10 \"{file}\" | c++filt -n").decode("utf-8").splitlines()
+
+    counts_and_functions = []
+
+    for line_number in range(len(lines)):
+        line = lines[line_number].strip()
+        if line.startswith("Function count: "):
+            count = int(line.split()[-1])
+            symbol = lines[line_number - 3].strip()[:-1]
+            counts_and_functions.append((count, symbol))
+
+    counts_and_functions.sort(reverse=True)
+    for count, name in counts_and_functions:
+        print(pad(str(count), 15), shortened(name))
+
+
+def merge_parser(subparsers):
+    parser = subparsers.add_parser("merge", help="Merge a pile of *.profraw files into the *.profdata files we can build with.")
+    parser.add_argument("directory", help="Path to the directory containing the *.profraw files")
+    parser.set_defaults(func=merge)
+    return parser
+
+
+def merge(args):
+    path = assert_directory(args.directory)
+
+    for lib in PROFILED_DYLIBS:
+        print("Merging", lib)
+        inputs = glob.glob(os.path.join(path, lib) + "*.profraw")
+        inputs = [f"\"{i}\"" for i in inputs]
+        inputs = " ".join(inputs)
+        output_file = os.path.join(path, lib + '.profdata')
+        print(shell(f"xcrun -sdk macosx.internal llvm-profdata merge --sparse {inputs} -output=\"{output_file}\""))
+
+
+def combine_parser(subparsers):
+    parser = subparsers.add_parser("combine", help="Combine directories containing *.profdata files from different platforms together.")
+    for i in range(0, len(BENCHMARK_GROUP_WEIGHTS)):
+        group, _ = BENCHMARK_GROUP_WEIGHTS[i]
+        parser.add_argument(f"--{group}", default=None, help=f"Path to the directory containing the *.profdata files from a {group} run.")
+    parser.add_argument("--output", help="Path to the directory where the output will be placed.")
+    parser.set_defaults(func=combine)
+    return parser
+
+
+def combine(args):
+    assert args.output, "Must specify output directory."
+    out = assert_directory(args.output)
+    args = vars(args)
+    group_paths = []
+
+    for i in range(0, len(BENCHMARK_GROUP_WEIGHTS)):
+        group, weight = BENCHMARK_GROUP_WEIGHTS[i]
+        if args[group]:
+            path = assert_directory(args[group])
+            group_paths.append((path, weight))
+    
+    assert len(group_paths) > 0, "Must specify at least one group."
+    
+    sum = 0
+    max = 0
+    # We need to turn percentages into weights > 1, but we don't want crazy high multipliers.
+    # For example, if we have weights 0.35 and 0.65, we don't need a 7:13 ratio when 5:9 is good enough.
+    max_multiplier = 15
+    for group, weight in group_paths:
+        sum = sum + weight
+        if weight > max:
+            max = weight
+
+    gcd = int(max * max_multiplier)
+    for group, weight in group_paths:
+        gcd = math.gcd(gcd, int((weight / sum) * max_multiplier))
+    for i in range(0, len(group_paths)):
+        group, weight = group_paths[i]
+        group_paths[i] = (group, int((weight / sum) * max_multiplier) // gcd)
+    
+    print("Simplified group weights: ", group_paths)
+
+    for lib in PROFILED_DYLIBS:
+        print("Merging", lib)
+        group_input = ["--weighted-input={},\"{}\"".format(weight, os.path.join(path, lib + ".profdata")) for path, weight in group_paths]
+        group_input = " ".join(group_input)
+        output_file = os.path.join(out, lib + '.profdata')
+        print(shell(f"xcrun -sdk macosx.internal llvm-profdata merge --sparse {group_input} -output=\"{output_file}\""))
+
+
+def compress_parser(subparsers):
+    parser = subparsers.add_parser("compress", help="Compress *.profdata files so that they can be checked in.")
+    parser.add_argument("--input", help="Path to the directory containing the input *.profdata files.")
+    parser.add_argument("--output", help="Path to the directory where the output will be placed.")
+    parser.set_defaults(func=compress)
+    return parser
+
+
+def compress(args):
+    out = assert_directory(args.output)
+    input_directory = assert_directory(args.input)
+
+    for lib in PROFILED_DYLIBS:
+        print("Compressing", lib)
+        input_file = os.path.join(input_directory, lib + ".profdata")
+        output_file = os.path.join(out, lib + ".profdata.compressed")
+        print(shell(f"compression_tool -encode -i \"{input_file}\" -o \"{output_file}\" -a lzfse"))
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(prog='pgo-profile')
+    subparsers = parser.add_subparsers(help='valid sub-commands', required=True, dest='sub command')
+    merge_parser(subparsers)
+    summarize_parser(subparsers)
+    combine_parser(subparsers)
+    compress_parser(subparsers)
+
+    args = parser.parse_args()
+    try:
+        args.func(args)
+    except subprocess.CalledProcessError as e:
+        print(e.stdout)
+        raise e

@@ -1,0 +1,61 @@
+<html>
+<body>
+    <pre id="console"></pre>
+    <embed id="plg" type="application/x-webkit-test-netscape"></embed>
+    <script>
+        function log(message)
+        {
+            document.getElementById("console").appendChild(document.createTextNode(message + "\n"));
+        }
+
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        var plugin = document.getElementById("plg");
+
+        var pass = true;
+
+        var firstOneID = plugin.testGetIntIdentifier(1);
+        var firstZeroID = plugin.testGetIntIdentifier(0);
+        var firstMinusOneID = plugin.testGetIntIdentifier(-1);
+
+        if (firstOneID == firstZeroID) {
+            log ("FAIL: getIntIdentifier(1) and getIntIdentifier(0) returned the same identifier: " + firstOneID);
+            pass = false;
+        }
+
+        if (firstOneID == firstMinusOneID) {
+            log ("FAIL: getIntIdentifier(1) and getIntIdentifier(-1) returned the same identifier: " + firstOneID);
+            pass = false;
+        }
+
+        if (firstMinusOneID == firstZeroID) {
+            log ("FAIL: getIntIdentifier(0) and getIntIdentifier(-1) returned the same identifier: " + firstZeroID);
+            pass = false;
+        }
+
+        var secondOneID = plugin.testGetIntIdentifier(1);
+        var secondZeroID = plugin.testGetIntIdentifier(0);
+        var secondMinusOneID = plugin.testGetIntIdentifier(-1);
+
+        if (firstOneID != secondOneID) {
+            log("FAIL: getIntIdentifier(1) returned " + firstOneID + " the first time and " + secondOneID + " the second time.");
+            pass = false;
+        }
+
+        if (firstZeroID != secondZeroID) {
+            log("FAIL: getIntIdentifier(0) returned " + firstZeroID + " the first time and " + secondZeroID + " the second time.");
+            pass = false;
+        }
+
+        if (firstMinusOneID != secondMinusOneID) {
+            log("FAIL: getIntIdentifier(-1) returned " + firstMinusOneID + " the first time and " + secondMinusOneID + " the second time.");
+            pass = false;
+        }
+
+        if (pass)
+            log("PASS: getIntIdentifier(n) returned consistent identifiers for n = 1, 0 and -1.");
+
+    </script>
+</body>
+</html>

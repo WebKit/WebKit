@@ -1,0 +1,430 @@
+THEAD, TFOOT table
+AXRole: AXColumnHeader
+AXParent: AXRow
+AXChildren: 0
+AXPosition:  { 362.000, 63.0000 }
+AXSize: { 21.0000, 30.0000 }
+AXTitle:
+AXDescription:
+AXValue: 1
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:columnheader, tag:th
+------------
+AXRole: AXColumnHeader
+AXParent: AXRow
+AXChildren: 0
+AXPosition:  { 382.000, 63.0000 }
+AXSize: { 28.0000, 30.0000 }
+AXTitle:
+AXDescription:
+AXValue: a
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:columnheader, tag:th
+------------
+AXRole: AXCell
+AXParent: AXRow
+AXChildren: 0
+AXPosition:  { 409.000, 63.0000 }
+AXSize: { 29.0000, 30.0000 }
+AXTitle:
+AXDescription:
+AXValue: b
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:cell, tag:td
+------------
+
+AXRole: AXColumnHeader
+AXParent: AXRow
+AXChildren: 0
+AXPosition:  { 362.000, 63.0000 }
+AXSize: { 21.0000, 30.0000 }
+AXTitle:
+AXDescription:
+AXValue: 1
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:columnheader, tag:th
+------------
+AXRole: AXRowHeader
+AXParent: AXRow
+AXChildren: 0
+AXPosition:  { 362.000, 93.0000 }
+AXSize: { 21.0000, 30.0000 }
+AXTitle:
+AXDescription:
+AXValue: 1
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:rowheader, tag:th
+------------
+AXRole: AXRowHeader
+AXParent: AXRow
+AXChildren: 0
+AXPosition:  { 362.000, 123.000 }
+AXSize: { 21.0000, 30.0000 }
+AXTitle:
+AXDescription:
+AXValue: 1
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:rowheader, tag:th
+------------
+
+
+AXRole: AXRow
+AXParent: AXTable: Example #1: Nested Stubs
+AXChildren: 3
+AXPosition:  { 362.000, 63.0000 }
+AXSize: { 76.0000, 30.0000 }
+AXTitle:
+AXDescription:
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:row, tag:tr
+------------
+AXRole: AXRow
+AXParent: AXTable: Example #1: Nested Stubs
+AXChildren: 3
+AXPosition:  { 362.000, 93.0000 }
+AXSize: { 76.0000, 30.0000 }
+AXTitle:
+AXDescription:
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:row, tag:tr
+------------
+AXRole: AXRow
+AXParent: AXTable: Example #1: Nested Stubs
+AXChildren: 3
+AXPosition:  { 362.000, 123.000 }
+AXSize: { 76.0000, 30.0000 }
+AXTitle:
+AXDescription:
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:row, tag:tr
+------------
+AXRole: AXRow
+AXParent: AXTable: Example #1: Nested Stubs
+AXChildren: 3
+AXPosition:  { 362.000, 153.000 }
+AXSize: { 76.0000, 30.0000 }
+AXTitle:
+AXDescription:
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:row, tag:tr
+------------
+
+AXRole: AXColumnHeader
+AXParent: AXRow
+AXChildren: 0
+AXPosition:  { 362.000, 63.0000 }
+AXSize: { 21.0000, 30.0000 }
+AXTitle:
+AXDescription:
+AXValue: 1
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:columnheader, tag:th
+------------
+AXRole: AXColumnHeader
+AXParent: AXRow
+AXChildren: 0
+AXPosition:  { 382.000, 63.0000 }
+AXSize: { 28.0000, 30.0000 }
+AXTitle:
+AXDescription:
+AXValue: a
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:columnheader, tag:th
+------------
+AXRole: AXCell
+AXParent: AXRow
+AXChildren: 0
+AXPosition:  { 409.000, 63.0000 }
+AXSize: { 29.0000, 30.0000 }
+AXTitle:
+AXDescription:
+AXValue: b
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:cell, tag:td
+------------
+AXRole: AXRowHeader
+AXParent: AXRow
+AXChildren: 0
+AXPosition:  { 362.000, 93.0000 }
+AXSize: { 21.0000, 30.0000 }
+AXTitle:
+AXDescription:
+AXValue: 1
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:rowheader, tag:th
+------------
+AXRole: AXCell
+AXParent: AXRow
+AXChildren: 0
+AXPosition:  { 382.000, 93.0000 }
+AXSize: { 28.0000, 30.0000 }
+AXTitle:
+AXDescription:
+AXValue: c
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:cell, tag:td
+------------
+AXRole: AXCell
+AXParent: AXRow
+AXChildren: 0
+AXPosition:  { 409.000, 93.0000 }
+AXSize: { 29.0000, 30.0000 }
+AXTitle:
+AXDescription:
+AXValue: d
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:cell, tag:td
+------------
+AXRole: AXRowHeader
+AXParent: AXRow
+AXChildren: 0
+AXPosition:  { 362.000, 123.000 }
+AXSize: { 21.0000, 30.0000 }
+AXTitle:
+AXDescription:
+AXValue: 1
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:rowheader, tag:th
+------------
+AXRole: AXCell
+AXParent: AXRow
+AXChildren: 0
+AXPosition:  { 382.000, 123.000 }
+AXSize: { 28.0000, 30.0000 }
+AXTitle:
+AXDescription:
+AXValue: c1
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:cell, tag:td
+------------
+AXRole: AXCell
+AXParent: AXRow
+AXChildren: 0
+AXPosition:  { 409.000, 123.000 }
+AXSize: { 29.0000, 30.0000 }
+AXTitle:
+AXDescription:
+AXValue: d1
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:cell, tag:td
+------------
+AXRole: AXCell
+AXParent: AXRow
+AXChildren: 0
+AXPosition:  { 362.000, 153.000 }
+AXSize: { 21.0000, 30.0000 }
+AXTitle:
+AXDescription:
+AXValue: 1
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:cell, tag:td
+------------
+AXRole: AXCell
+AXParent: AXRow
+AXChildren: 0
+AXPosition:  { 382.000, 153.000 }
+AXSize: { 28.0000, 30.0000 }
+AXTitle:
+AXDescription:
+AXValue: e
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:cell, tag:td
+------------
+AXRole: AXCell
+AXParent: AXRow
+AXChildren: 0
+AXPosition:  { 409.000, 153.000 }
+AXSize: { 29.0000, 30.0000 }
+AXTitle:
+AXDescription:
+AXValue: f
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:cell, tag:td
+------------
+
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Example #1: Nested Stubs
+1	a	b
+1	e	f
+1	c	d
+1	c1	d1

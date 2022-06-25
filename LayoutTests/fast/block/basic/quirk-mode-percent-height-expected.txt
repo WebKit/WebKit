@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+layer at (8,8) size 202x296 clip at (9,9) size 200x294 scrollWidth 300
+  RenderBlock {DIV} at (0,0) size 202x296 [border: (1px solid #008000)]
+    RenderBlock {DIV} at (1,1) size 300x294
+      RenderBlock {DIV} at (0,0) size 202x294 [border: (1px solid #FF0000)]
+        RenderText {#text} at (1,1) size 182x72
+          text run at (1,1) width 175: "This nested div has percent"
+          text run at (1,19) width 177: "height value and the closest"
+          text run at (1,37) width 182: "block level containing block"
+          text run at (1,55) width 97: "box is the ICB."
+layer at (8,304) size 202x202 clip at (9,305) size 200x200 scrollWidth 300
+  RenderBlock {DIV} at (0,296) size 202x202 [border: (1px solid #008000)]
+    RenderBlock {DIV} at (1,1) size 300x102
+      RenderBlock {DIV} at (0,0) size 202x102 [border: (1px solid #FF0000)]
+        RenderText {#text} at (1,1) size 182x90
+          text run at (1,1) width 175: "This nested div has percent"
+          text run at (1,19) width 177: "height value and the closest"
+          text run at (1,37) width 182: "block level containing block"
+          text run at (1,55) width 168: "box is 2 containing blocks"
+          text run at (1,73) width 37: "away."

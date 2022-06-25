@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>A recorded muted audio track should produce silence</title>
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+    <video id="video1" controls></video>
+    <script>
+function waitFor(duration)
+{
+    return new Promise((resolve) => setTimeout(resolve, duration));
+}
+
+promise_test(async (test) => {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+
+    const recorder = new MediaRecorder(stream);
+    const dataPromise = new Promise(resolve => recorder.ondataavailable = (e) => resolve(e.data));
+
+    const startPromise = new Promise(resolve => recorder.onstart = resolve);
+    recorder.start();
+    await startPromise;
+
+    setTimeout(() => recorder.pause(), 50);
+    setTimeout(() => recorder.resume(), 950);
+
+    await waitFor(2000);
+    recorder.stop();
+    const blob = await dataPromise;
+
+    const url = URL.createObjectURL(blob);
+    video1.src = url;
+    await video1.play();
+
+    assert_less_than(video1.duration, 1.5);
+
+    URL.revokeObjectURL(url);
+}, "Pausing and resuming the recording should impact the video duration");
+
+promise_test(async (test) => {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+
+    const recorder = new MediaRecorder(stream);
+    const dataPromise = new Promise(resolve => recorder.ondataavailable = (e) => resolve(e.data));
+
+    const startPromise = new Promise(resolve => recorder.onstart = resolve);
+    recorder.start();
+    await startPromise;
+
+    await waitFor(1000);
+
+    const pausePromise = new Promise(resolve => recorder.onpause = resolve);
+    recorder.pause();
+    await pausePromise;
+
+    recorder.requestData();
+
+    const blob = await dataPromise;
+    assert_greater_than(blob.size, 1400);
+}, "Calling requestData once after pausing should lead to more than header data");
+
+
+    </script>
+</body>
+</html>

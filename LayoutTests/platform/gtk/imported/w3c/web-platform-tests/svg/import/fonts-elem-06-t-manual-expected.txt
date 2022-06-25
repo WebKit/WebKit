@@ -1,0 +1,64 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (33,38) size 701x302
+      RenderSVGText {text} at (118,22) size 244x35 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 243x34
+          chunk 1 (middle anchor) text run 1 at (118.50,50.00) startOffset 0 endOffset 18 width 243.00: "<font> horiz-adv-x"
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGContainer {g} at (0,0) size 7x7
+          RenderSVGPath {line} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-20.00]
+          RenderSVGRect {rect} at (0,0) size 7x7 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
+      RenderSVGContainer {g} at (33,150) size 701x190 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,120.00)}]
+        RenderSVGContainer {g} at (33,150) size 501x57
+          RenderSVGText {text} at (0,-13) size 110x16 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 110x16
+              chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 16 width 109.20: "horiz-adv-x=1000"
+          RenderSVGContainer {use} at (426,166) size 14x41 [transform={m=((1.00,0.00)(0.00,1.00)) t=(240.00,0.00)}]
+            RenderSVGContainer {g} at (426,166) size 14x41
+              RenderSVGPath {line} at (432,166) size 3x34 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-20.00]
+              RenderSVGRect {rect} at (426,193) size 14x14 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
+          RenderSVGContainer {use} at (476,166) size 14x41 [transform={m=((1.00,0.00)(0.00,1.00)) t=(270.00,0.00)}]
+            RenderSVGContainer {g} at (476,166) size 14x41
+              RenderSVGPath {line} at (482,166) size 3x34 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-20.00]
+              RenderSVGRect {rect} at (476,193) size 14x14 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
+          RenderSVGText {text} at (240,-30) size 60x31 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 60x31
+              chunk 1 text run 1 at (240.00,0.00) startOffset 0 endOffset 2 width 60.00: "12"
+        RenderSVGContainer {g} at (33,216) size 601x58 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,40.00)}]
+          RenderSVGText {text} at (0,-13) size 110x16 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 110x16
+              chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 16 width 109.20: "horiz-adv-x=2000"
+          RenderSVGContainer {use} at (426,233) size 14x41 [transform={m=((1.00,0.00)(0.00,1.00)) t=(240.00,0.00)}]
+            RenderSVGContainer {g} at (426,233) size 14x41
+              RenderSVGPath {line} at (432,233) size 3x34 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-20.00]
+              RenderSVGRect {rect} at (426,260) size 14x14 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
+          RenderSVGContainer {use} at (526,233) size 14x41 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,0.00)}]
+            RenderSVGContainer {g} at (526,233) size 14x41
+              RenderSVGPath {line} at (532,233) size 3x34 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-20.00]
+              RenderSVGRect {rect} at (526,260) size 14x14 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
+          RenderSVGText {text} at (240,-30) size 120x31 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 120x31
+              chunk 1 text run 1 at (240.00,0.00) startOffset 0 endOffset 2 width 120.00: "12"
+        RenderSVGContainer {g} at (33,283) size 701x57 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,80.00)}]
+          RenderSVGText {text} at (0,-13) size 183x16 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 183x16
+              chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 28 width 182.40: "horiz-adv-x=1000 but ignored"
+          RenderSVGContainer {use} at (426,300) size 14x40 [transform={m=((1.00,0.00)(0.00,1.00)) t=(240.00,0.00)}]
+            RenderSVGContainer {g} at (426,300) size 14x40
+              RenderSVGPath {line} at (432,300) size 3x34 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-20.00]
+              RenderSVGRect {rect} at (426,326) size 14x14 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
+          RenderSVGContainer {use} at (576,300) size 14x40 [transform={m=((1.00,0.00)(0.00,1.00)) t=(330.00,0.00)}]
+            RenderSVGContainer {g} at (576,300) size 14x40
+              RenderSVGPath {line} at (582,300) size 3x34 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-20.00]
+              RenderSVGRect {rect} at (576,326) size 14x14 [fill={[type=SOLID] [color=#8888FF]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
+          RenderSVGText {text} at (240,-30) size 180x31 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 180x31
+              chunk 1 text run 1 at (240.00,0.00) startOffset 0 endOffset 2 width 180.00: "12"
+    RenderSVGContainer {g} at (16,518) size 380x60
+      RenderSVGText {text} at (10,311) size 228x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 228x36
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 227.40: "$Revision: 1.6 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

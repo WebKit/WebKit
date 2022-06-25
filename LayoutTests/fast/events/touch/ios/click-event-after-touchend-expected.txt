@@ -1,0 +1,14 @@
+This test verifies that calling preventDefault() on touchend event prevents the click event when tapping. To manually test, tap the top square once, and then tap the bottom square once.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS touchstart on target1
+PASS touchend on target1
+PASS touchstart on target2
+PASS touchend on target2
+PASS click on target2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

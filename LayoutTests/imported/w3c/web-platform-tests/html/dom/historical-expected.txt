@@ -1,0 +1,10 @@
+
+PASS document.applets is always empty
+PASS HTMLAppletElement is no more
+PASS document.all cannot find applet
+PASS document cannot find applet
+PASS window cannot find applet
+PASS applet is not styled
+PASS HTMLTableDataCellElement interface is removed
+PASS HTMLTableHeaderCellElement interface is removed
+

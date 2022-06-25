@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="./resources/paint-api-utils.js"></script>
+</head>
+<body>
+<script>
+description("Paint API should not be available in worker contexts.");
+window.jsTestIsAsync = true;
+const worker = new Worker("./resources/worker.html");
+worker.onmessage = event => {
+    window.workerSupportedEntryTypes = JSON.parse(event.data);
+    shouldBeTrue('PerformanceObserver.supportedEntryTypes.includes("paint")');
+    shouldBeFalse('workerSupportedEntryTypes.includes("paint")');
+    shouldBeTrue('workerSupportedEntryTypes.includes("mark")');
+    testPassed("PerformanceObserver.supportedEntryTypes did not include 'paint' for workers");
+    finishJSTest();
+};
+
+worker.postMessage("start");
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <my-element-outer></my-element-outer>
+  <script>
+    class MyElementInner extends HTMLElement {
+      connectedCallback() {
+        const sr = this.attachShadow({mode: 'open'})
+        sr.innerHTML = `
+          <slot name="named"></slot>
+          <div>
+            <slot></slot>
+          </div>
+          `;
+      }
+    }
+
+    customElements.define('my-element-inner', MyElementInner);
+
+    class MyElementOuter extends HTMLElement {
+      connectedCallback() {
+        const sr = this.attachShadow({mode: 'open'})
+        sr.innerHTML = `
+          <my-element-inner>
+            <slot>default</slot>
+            <div slot="named">named slot<div>
+          </my-element-inner>
+        `;
+      }
+    }
+
+    customElements.define('my-element-outer', MyElementOuter);
+  </script>
+</body>
+</html>

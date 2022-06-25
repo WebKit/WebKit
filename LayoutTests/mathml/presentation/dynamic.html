@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+
+<math>
+    <mfrac id="mfrac"><mn>1</mn><mn>2</mn></mfrac>
+    
+    <msqrt id="msqrt"><mi>a</mi><mi>b</mi><mi>c</mi></msqrt>
+    
+    <mn id="mn4">4</mn>
+    <mn id="mn5">5</mn>
+    <mn id="mn6">6</mn>
+    <mn id="mn7">7</mn>
+</math>
+
+<script>
+    document.body.offsetTop;
+    
+    var mfrac = document.getElementById("mfrac");
+    mfrac.replaceChild(document.getElementById("mn4"), mfrac.lastChild);
+    mfrac.replaceChild(document.getElementById("mn5"), mfrac.firstChild);
+    
+    var msqrt = document.getElementById("msqrt");
+    msqrt.replaceChild(document.getElementById("mn6"), msqrt.firstChild);
+    msqrt.replaceChild(document.getElementById("mn7"), msqrt.lastChild);
+</script>

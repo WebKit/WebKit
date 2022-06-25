@@ -1,0 +1,28 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/encoding/streams/backpressure.any.js
+/LayoutTests/imported/w3c/web-platform-tests/encoding/streams/decode-attributes.any.js
+/LayoutTests/imported/w3c/web-platform-tests/encoding/streams/decode-bad-chunks.any.js
+/LayoutTests/imported/w3c/web-platform-tests/encoding/streams/decode-ignore-bom.any.js
+/LayoutTests/imported/w3c/web-platform-tests/encoding/streams/decode-incomplete-input.any.js
+/LayoutTests/imported/w3c/web-platform-tests/encoding/streams/decode-non-utf8.any.js
+/LayoutTests/imported/w3c/web-platform-tests/encoding/streams/decode-split-character.any.js
+/LayoutTests/imported/w3c/web-platform-tests/encoding/streams/decode-utf8.any.js
+/LayoutTests/imported/w3c/web-platform-tests/encoding/streams/encode-bad-chunks.any.js
+/LayoutTests/imported/w3c/web-platform-tests/encoding/streams/encode-utf8.any.js
+/LayoutTests/imported/w3c/web-platform-tests/encoding/streams/readable-writable-properties.any.js
+/LayoutTests/imported/w3c/web-platform-tests/encoding/streams/realms.window.js

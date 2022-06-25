@@ -1,0 +1,5 @@
+
+PASS Blob URLs work on importScripts
+PASS A revoked blob URL will fail
+PASS Revoking a blob URL in an earlier script will not fail
+

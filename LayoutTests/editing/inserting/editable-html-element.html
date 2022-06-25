@@ -1,0 +1,22 @@
+<html contenteditable="true">
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+</script>
+
+<script>
+function runTest() {
+    var s = window.getSelection();
+    var e = document.getElementById("test");
+    
+    s.setPosition(e, 0);
+    document.execCommand("InsertText", false, "This tests to make sure that when the enclosing block is the body element, and when the html element is editable,  inserting a paragraph separator doesn't split the body (inserting a paragraph separator usually splits/clones the enclosing block flow element).");
+    s.setPosition(e, 0);
+    s.modify("move", "forward", "line");
+    s.modify("move", "forward", "line");
+    s.modify("move", "forward", "line");
+    document.execCommand("InsertParagraph"); 
+}
+</script>
+<body id="test" onLoad="runTest();"></body>
+</html>

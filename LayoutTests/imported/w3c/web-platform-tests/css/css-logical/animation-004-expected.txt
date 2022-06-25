@@ -1,0 +1,18 @@
+
+PASS Logical properties can be transitioned
+PASS Logical properties in transitions respect the writing-mode
+PASS Logical properties in transitions respect the direction
+PASS Declaration order is respected within declaration blocks
+PASS Logical properties are able to override physical properties in declaration blocks
+PASS Declaration order is respected amongst logical properties within declaration blocks
+PASS Physical properties and logical properties can be mixed
+PASS Declaration order is respected on each keyframe individually
+PASS Transitions update when the writing-mode is changed
+PASS Filling transitions update when the writing-mode is changed
+PASS The number of interpolating properties can be increased when the writing-mode is changed
+PASS The number of interpolating properties can be decreased when the writing-mode is changed
+PASS Transitions update when the writing-mode is changed through a CSS variable
+PASS Transitions update when the direction is changed
+PASS Transitions from logical to physical update when the direction is changed
+PASS Transitions from physical to logical update when the direction is changed
+

@@ -1,0 +1,4 @@
+This tests observing an element with an IntersectionObserver and removing the element from the document.
+The element should become eligible for GC at some point.
+
+PASS

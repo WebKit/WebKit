@@ -1,0 +1,18 @@
+<style>
+    div#test { position: absolute; top: 0; left: 0; color: green; border: 50px solid; width: 0; -webkit-transition-duration: 1ms; }
+    div#test.orange { border-color: orange; }
+</style>
+<div style="position: relative; background-color: red; width: 100px; height: 100px;">
+    <div id="test" class="orange"></div>
+</div>
+<script>
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    document.getElementById("test").addEventListener('webkitTransitionEnd', function() {
+        if (window.testRunner)
+            setTimeout("testRunner.notifyDone()", 0);
+    }, false);
+
+    setTimeout(function() { document.getElementById("test").className = "" }, 0);
+</script>

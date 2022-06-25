@@ -1,0 +1,95 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <style>
+            html {
+                scroll-snap-type: y mandatory;
+            }
+            .verticalGallery {
+                width: 100vw;
+                height: 600vh;
+                margin: 0;
+                padding: 0;
+            }
+            .colorBox {
+                height: 100vh;
+                width: 100vw;
+                float: left;
+                scroll-snap-align: start;
+            }
+            #item0 { background-color: red; }
+            #item1 { background-color: green; }
+            #item2 { background-color: blue; }
+            #item3 { background-color: aqua; }
+            #item4 { background-color: yellow; }
+            #item5 { background-color: fuchsia; }
+        </style>
+        <script src="../../../resources/js-test.js"></script>
+        <script src="../../../resources/ui-helper.js"></script>
+        <script>
+        window.jsTestIsAsync = true;
+
+        async function runTests()
+        {
+            if (window.internals)
+                internals.settings.setScrollAnimatorEnabled(false);
+            try {
+                await UIHelper.delayFor(0);
+
+                let scale = 2.0;
+                eventSender.scalePageBy(scale, 0, 0);
+
+                let windowHeight = window.innerHeight * scale;
+                let initialScrollPosition = document.scrollingElement.scrollTop;
+                let results = [];
+
+                eventSender.keyDown("downArrow");
+                results.push([document.scrollingElement.scrollTop == windowHeight, "arrow key scrolled to second div."]);
+
+                eventSender.keyDown("downArrow");
+                results.push([document.scrollingElement.scrollTop == (windowHeight * 2), "arrow key scrolled to third div."]);
+
+                eventSender.keyDown("upArrow");
+                eventSender.keyDown("upArrow");
+                results.push([document.scrollingElement.scrollTop == 0, "arrow key div scrolled back to first div."]);
+
+                eventSender.keyDown("pageDown");
+                results.push([document.scrollingElement.scrollTop == windowHeight, "page down scrolled to second div."]);
+
+                eventSender.keyDown("pageUp");
+                results.push([document.scrollingElement.scrollTop == 0, "page up div scrolled back to first div."]);
+
+                // We avoid modifying the DOM until the test is over, because sometimes
+                // DOM modifications can reset the main frame scroll position.
+                results.forEach((result) => {
+                    expectTrue(result[0], result[1]);
+                });
+            } catch (e) {
+                console.log(e);
+            } finally {
+                finishJSTest();
+            }
+        }
+
+        function onLoad()
+        {
+            if (window.eventSender) {
+                runTests();
+            } else {
+                var messageLocation = document.getElementById('item0');
+                var message = document.createElement('div');
+                message.innerHTML = "<p>To run this test manually, scroll the page vertically with the keyboard.</p>";
+                messageLocation.appendChild(message);
+            }
+        }
+        </script>
+    </head>
+    <body onload="onLoad();" class="verticalGallery">
+        <div id="item0" class="colorBox"><div id="console"></div></div>
+        <div id="item1" class="colorBox"></div>
+        <div id="item2" class="colorBox"></div>
+        <div id="item3" class="colorBox"></div>
+        <div id="item4" class="colorBox"></div>
+        <div id="item5" class="colorBox"></div>
+    </body>
+</html>

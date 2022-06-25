@@ -1,0 +1,52 @@
+This tests to see if floating elements cause a clearing element to be inserted upon copy/paste
+
+first test - before:
+| <html>
+|   <head>
+|     "\n"
+|     <meta>
+|       content="text/html; charset=utf-8"
+|       http-equiv="Content-type"
+|     "\n"
+|     <script>
+|       src="../../resources/dump-as-markup.js"
+|       type="text/javascript"
+|     "\n"
+|   "\n"
+|   <body>
+|     "\nBefore\n"
+|     <div>
+|       style="position: absolute; top: 0px; right: 0px; width: 100px; height: 100px; background: yellow;"
+|     "\n"
+|     <div>
+|       style="float: right; width: 200px; height: 200px; background: blue;"
+|     "\nAfter\n\n"
+|     <script>
+|       "\n\nMarkup.description('This tests to see if floating elements cause a clearing element to be inserted upon copy/paste');\n\ndocument.designMode = 'on';\n\nif (window.internals)\n    window.internals.settings.setShouldConvertPositionStyleOnCopy(true);\n\nvar s = window.getSelection();\n\nMarkup.dump('test1', 'first test - before');\ndocument.execCommand("SelectAll");\ndocument.execCommand("Cut");\ndocument.execCommand("Paste");\nMarkup.dump('test1', 'first test - after');\n\n"
+
+first test - after:
+| <html>
+|   <head>
+|     "\n"
+|     <meta>
+|       content="text/html; charset=utf-8"
+|       http-equiv="Content-type"
+|     "\n"
+|     <script>
+|       src="../../resources/dump-as-markup.js"
+|       type="text/javascript"
+|     "\n"
+|   "\n"
+|   <body>
+|     <div>
+|       style="position: relative;"
+|       "Before "
+|       <div>
+|         style="position: absolute; top: 0px; right: 0px; width: 100px; height: 100px; background-color: yellow;"
+|       <div>
+|         style="float: right; width: 200px; height: 200px; background-color: blue;"
+|       "After<#selection-caret>"
+|       <div>
+|         style="clear: both;"
+|     <script>
+|       "\n\nMarkup.description('This tests to see if floating elements cause a clearing element to be inserted upon copy/paste');\n\ndocument.designMode = 'on';\n\nif (window.internals)\n    window.internals.settings.setShouldConvertPositionStyleOnCopy(true);\n\nvar s = window.getSelection();\n\nMarkup.dump('test1', 'first test - before');\ndocument.execCommand("SelectAll");\ndocument.execCommand("Cut");\ndocument.execCommand("Paste");\nMarkup.dump('test1', 'first test - after');\n\n"

@@ -1,0 +1,12 @@
+Apple
+
+This tests that the title of a heading will include links if available.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Heading title: AXTitle: Apple
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

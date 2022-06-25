@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<script src=/resources/WebIDLParser.js></script>
+<script src=/resources/idlharness.js></script>
+<script type="text/plain" id="untested">
+    dictionary CredentialData {
+        USVString id;
+    };
+
+    [Exposed=Window, SecureContext]
+    interface Credential {
+        readonly attribute USVString id;
+        readonly attribute DOMString type;
+    };
+
+    dictionary CredentialCreationOptions {
+        AbortSignal signal;
+    };
+
+    enum CredentialMediationRequirement {
+        "silent",
+        "optional",
+        "required"
+    };
+
+    dictionary CredentialRequestOptions {
+        CredentialMediationRequirement mediation = "optional";
+        AbortSignal signal;
+    };
+</script>
+<script type="text/plain" id="tested">
+    [Exposed=Window, SecureContext]
+    interface CredentialsContainer {
+        Promise<Credential?> get(optional CredentialRequestOptions options);
+        Promise<Credential> store(Credential credential);
+        Promise<Credential?> create(optional CredentialCreationOptions options);
+        Promise<void> preventSilentAccess();
+    };
+</script>
+<script>
+    "use strict";
+    var idl_array = new IdlArray();
+    idl_array.add_untested_idls(document.querySelector('#untested').textContent);
+    idl_array.add_idls(document.querySelector('#tested').textContent);
+    idl_array.add_objects({
+        CredentialsContainer: ['navigator.credentials'],
+    });
+    idl_array.test();
+</script>

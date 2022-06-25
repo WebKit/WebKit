@@ -1,0 +1,44 @@
+Test various cases when we constrain a selector matching to a subtree selected by #ID
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Missing id.
+PASS document.body.querySelectorAll("#notThere *").length is 0
+
+Trivial filtering.
+PASS document.body.querySelectorAll("#simple li").length is 1
+PASS document.body.querySelectorAll("#simple li")[0].id is "simpleTarget"
+
+ID is adjacent of target.
+PASS document.body.querySelectorAll("#directAdjacentRoot+div li").length is 1
+PASS document.body.querySelectorAll("#directAdjacentRoot+div li")[0].id is "directAdjacentTarget"
+PASS document.body.querySelectorAll("#indirectAdjacentRoot~div li").length is 1
+PASS document.body.querySelectorAll("#indirectAdjacentRoot~div li")[0].id is "indirectAdjacentTarget"
+
+Duplicated IDs.
+PASS document.body.querySelectorAll("#duplicated li").length is 3
+PASS document.body.querySelectorAll("#duplicated li")[0].id is "duplicatedTarget1"
+PASS document.body.querySelectorAll("#duplicated li")[1].id is "duplicatedTarget2"
+PASS document.body.querySelectorAll("#duplicated li")[2].id is "duplicatedTarget3"
+PASS document.body.querySelectorAll("#duplicated+div li").length is 2
+PASS document.body.querySelectorAll("#duplicated+div li")[0].id is "siblingOfDuplicated1"
+PASS document.body.querySelectorAll("#duplicated+div li")[1].id is "siblingOfDuplicated2"
+
+Duplicated IDs with a non-duplicated ancestor.
+PASS document.body.querySelectorAll("#nonDuplicatedParentOfDuplicate #deduplicated li").length is 3
+PASS document.body.querySelectorAll("#nonDuplicatedParentOfDuplicate #deduplicated li")[0].id is "deduplicatedTarget1"
+PASS document.body.querySelectorAll("#nonDuplicatedParentOfDuplicate #deduplicated li")[1].id is "deduplicatedTarget2"
+PASS document.body.querySelectorAll("#nonDuplicatedParentOfDuplicate #deduplicated li")[2].id is "deduplicatedTarget3"
+PASS document.body.querySelectorAll("#nonDuplicatedParentOfDuplicate #deduplicated+div li").length is 2
+PASS document.body.querySelectorAll("#nonDuplicatedParentOfDuplicate #deduplicated+div li")[0].id is "siblingOfDeduplicated1"
+PASS document.body.querySelectorAll("#nonDuplicatedParentOfDuplicate #deduplicated+div li")[1].id is "siblingOfDeduplicated2"
+PASS document.body.querySelectorAll("#nonDuplicatedParentOfDuplicate+div li").length is 1
+PASS document.body.querySelectorAll("#nonDuplicatedParentOfDuplicate+div li")[0].id is "siblingOfNonDuplicatedParentOfDuplicate"
+
+Sibling of HTML document.
+PASS document.body.querySelectorAll("#htmlDocument~* *").length is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

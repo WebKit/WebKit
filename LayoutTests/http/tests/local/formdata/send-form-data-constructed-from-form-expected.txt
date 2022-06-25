@@ -1,0 +1,5 @@
+
+Test that FormData constructor takes a HTML Form element.
+Response: checkbox=value2&radio=value3&submitted=true&text=value4&file=test.txt:text/plain:Hello
+DONE
+

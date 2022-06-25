@@ -1,0 +1,433 @@
+/*
+ * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+interface TestRunner {
+    readonly attribute boolean isWebKit2;
+    readonly attribute boolean isIOSFamily;
+
+    // The basics.
+    undefined dumpAsText(boolean dumpPixels);
+    undefined dumpChildFramesAsText();
+    undefined waitForPolicyDelegate();
+    undefined waitUntilDone();
+    undefined notifyDone();
+    double preciseTime(); // seconds since the epoch
+    readonly attribute double timeout; // milliseconds
+
+    // Downloads.
+    undefined waitUntilDownloadFinished();
+    undefined setShouldLogDownloadCallbacks(boolean value);
+    undefined setShouldLogDownloadSize(boolean value);
+
+    const unsigned short RENDER_TREE_SHOW_ALL_LAYERS            = 1;
+    const unsigned short RENDER_TREE_SHOW_LAYER_NESTING         = 2;
+    const unsigned short RENDER_TREE_SHOW_COMPOSITED_LAYERS     = 4;
+    const unsigned short RENDER_TREE_SHOW_OVERFLOW              = 8;
+    const unsigned short RENDER_TREE_SHOW_SVG_GEOMETRY          = 16;
+    const unsigned short RENDER_TREE_SHOW_LAYER_FRAGMENTS       = 32;
+    undefined setRenderTreeDumpOptions(unsigned short options);
+
+    // Other dumping.
+    undefined dumpBackForwardList();
+    undefined dumpChildFrameScrollPositions();
+    undefined dumpEditingCallbacks();
+    undefined dumpSelectionRect();
+    undefined dumpStatusCallbacks();
+    undefined dumpTitleChanges();
+    undefined dumpFullScreenCallbacks();
+    undefined dumpFrameLoadCallbacks();
+    undefined dumpProgressFinishedCallback();
+    undefined dumpResourceLoadCallbacks();
+    undefined dumpResourceResponseMIMETypes();
+    undefined dumpWillCacheResponse();
+    undefined dumpApplicationCacheDelegateCallbacks();
+    undefined dumpDatabaseCallbacks();
+    undefined dumpDOMAsWebArchive();
+    undefined dumpPolicyDelegateCallbacks();
+    undefined dumpResourceLoadStatistics();
+    undefined dumpPrivateClickMeasurement();
+
+    undefined clearDOMCaches();
+    undefined clearDOMCache(DOMString origin);
+    boolean hasDOMCache(DOMString origin);
+    unsigned long domCacheSize(DOMString origin);
+    undefined setAllowStorageQuotaIncrease(boolean value);
+
+    // Special options.
+    undefined keepWebHistory();
+    undefined setAcceptsEditing(boolean value);
+    undefined preventPopupWindows();
+    undefined setCustomPolicyDelegate(boolean enabled, boolean permissive);
+    undefined addOriginAccessAllowListEntry(DOMString sourceOrigin, DOMString destinationProtocol, DOMString destinationHost, boolean allowDestinationSubdomains);
+    undefined removeOriginAccessAllowListEntry(DOMString sourceOrigin, DOMString destinationProtocol, DOMString destinationHost, boolean allowDestinationSubdomains);
+    undefined setUserStyleSheetEnabled(boolean value);
+    undefined setUserStyleSheetLocation(DOMString location);
+    undefined setTabKeyCyclesThroughElements(boolean enabled);
+    undefined setSerializeHTTPLoads();
+    undefined dispatchPendingLoadRequests();
+    undefined setCacheModel(long model);
+    undefined setAsynchronousSpellCheckingEnabled(boolean value);
+    undefined setPrinting();
+    undefined setShouldDecideNavigationPolicyAfterDelay(boolean value);
+    undefined setShouldDecideResponsePolicyAfterDelay(boolean value);
+    undefined setNavigationGesturesEnabled(boolean value);
+    undefined setIgnoresViewportScaleLimits(boolean value);
+    undefined setShouldDownloadUndisplayableMIMETypes(boolean value);
+    undefined stopLoading();
+
+    // Special DOM functions.
+    undefined clearBackForwardList();
+    undefined execCommand(DOMString name, DOMString showUI, DOMString value);
+    boolean isCommandEnabled(DOMString name);
+    unsigned long windowCount();
+
+    // Device Orientation Motion.
+    undefined setShouldAllowDeviceOrientationAndMotionAccess(boolean value);
+
+    // Special DOM variables.
+    attribute boolean globalFlag;
+
+    // Repaint testing.
+    undefined testRepaint();
+    undefined repaintSweepHorizontally();
+    undefined display();
+    undefined displayAndTrackRepaints();
+    undefined displayOnLoadFinish();
+
+    // Failed load condition testing
+    undefined forceImmediateCompletion();
+
+    // Printing
+    boolean isPageBoxVisible(long pageIndex);
+
+    undefined dumpAllHTTPRedirectedResponseHeaders();
+
+    [PassContext] undefined setValueForUser(object element, DOMString value);
+
+    // UserContent testing.
+    undefined addUserScript(DOMString source, boolean runAtStart, boolean allFrames);
+    undefined addUserStyleSheet(DOMString source, boolean allFrames);
+
+    // Local storage API
+    undefined clearAllDatabases();
+    undefined setDatabaseQuota(unsigned long long quota);
+    DOMString pathToLocalResource(DOMString url);
+    undefined syncLocalStorage();
+
+    attribute double databaseDefaultQuota;
+    attribute double databaseMaxQuota;
+
+    // Application Cache API
+    undefined clearAllApplicationCaches();
+    undefined setAppCacheMaximumSize(unsigned long long size);
+    long long applicationCacheDiskUsageForOrigin(DOMString origin);
+    undefined clearApplicationCacheForOrigin(DOMString name);
+    undefined disallowIncreaseForApplicationCacheQuota();
+    object originsWithApplicationCache();
+
+    // Text search testing.
+    boolean findString(DOMString target, object optionsArray);
+    undefined findStringMatchesInPage(DOMString target, object optionsArray);
+    undefined replaceFindMatchesAtIndices(object matchIndicesArray, DOMString replacementText, boolean selectionOnly);
+
+    // Evaluating script in a special context.
+    [PassContext] undefined evaluateScriptInIsolatedWorld(unsigned long worldID, DOMString script);
+
+    // For Web Inspector tests
+    undefined showWebInspector();
+    undefined closeWebInspector();
+    undefined evaluateInWebInspector(DOMString script);
+    readonly attribute DOMString inspectorTestStubURL;
+
+    undefined setPOSIXLocale(DOMString locale);
+
+    undefined setTextDirection(DOMString direction);
+
+    undefined setWillSendRequestReturnsNull(boolean flag);
+    undefined setWillSendRequestReturnsNullOnRedirect(boolean flag);
+    undefined setWillSendRequestAddsHTTPBody(DOMString body);
+    
+    undefined setShouldStayOnPageAfterHandlingBeforeUnload(boolean flag);
+
+    undefined setStopProvisionalFrameLoads();
+
+    readonly attribute boolean didReceiveServerRedirectForProvisionalNavigation;
+    undefined clearDidReceiveServerRedirectForProvisionalNavigation();
+
+    // Focus testing.
+    undefined addChromeInputField(object callback);
+    undefined removeChromeInputField(object callback);
+    undefined focusWebView(object callback);
+    undefined setTextInChromeInputField(DOMString text, object callback);
+    undefined getSelectedTextInChromeInputField(object callback);
+    undefined selectChromeInputField(object callback);
+
+    // Window/view state
+    undefined setBackingScaleFactor(double backingScaleFactor, object callback);
+
+    undefined setWindowIsKey(boolean isKey);
+    undefined setViewSize(double width, double height);
+
+    // Cookies testing
+    undefined setAlwaysAcceptCookies(boolean accept);
+    undefined setOnlyAcceptFirstPartyCookies(boolean accept);
+
+    // Page Visibility API
+    undefined setPageVisibility(DOMString state);
+    undefined resetPageVisibility();
+
+    // Control full screen behavior.
+    undefined setHasCustomFullScreenBehavior(boolean value);
+    undefined setEnterFullscreenForElementCallback(object callback);
+    undefined setExitFullscreenForElementCallback(object callback);
+
+    // Web notifications support
+    undefined grantWebNotificationPermission(DOMString origin);
+    undefined denyWebNotificationPermission(DOMString origin);
+    undefined denyWebNotificationPermissionOnPrompt(DOMString origin);
+    undefined removeAllWebNotificationPermissions();
+    undefined simulateWebNotificationClick(object notification);
+    undefined simulateWebNotificationClickForServiceWorkerNotifications();
+
+    // Geolocation
+    undefined setGeolocationPermission(boolean value);
+    undefined setMockGeolocationPosition(double latitude, double longitude, double accuracy, optional double? altitude, optional double? altitudeAccuracy, optional double? heading, optional double? speed, optional double? floorLevel);
+    undefined setMockGeolocationPositionUnavailableError(DOMString errorMessage);
+    boolean isGeolocationProviderActive();
+
+    // MediaStream
+    undefined setUserMediaPermission(boolean value);
+    undefined resetUserMediaPermission();
+    undefined setUserMediaPersistentPermissionForOrigin(boolean permission, DOMString origin, DOMString parentOrigin);
+    unsigned long userMediaPermissionRequestCountForOrigin(DOMString origin, DOMString parentOrigin);
+    undefined resetUserMediaPermissionRequestCountForOrigin(DOMString origin, DOMString parentOrigin);
+    readonly attribute boolean isDoingMediaCapture;
+
+    // Audio testing.
+    [PassContext] undefined setAudioResult(object data);
+
+    boolean callShouldCloseOnWebView();
+
+    // Work queue.
+    undefined queueBackNavigation(unsigned long howFarBackward);
+    undefined queueForwardNavigation(unsigned long howFarForward);
+    undefined queueLoad(DOMString url, DOMString target, optional boolean shouldOpenExternalURLs);
+    undefined queueLoadHTMLString(DOMString content, optional DOMString baseURL, optional DOMString unreachableURL);
+    undefined queueReload();
+    undefined queueLoadingScript(DOMString script);
+    undefined queueNonLoadingScript(DOMString script);
+
+    // Authentication
+    undefined setRejectsProtectionSpaceAndContinueForAuthenticationChallenges(boolean value);
+    undefined setHandlesAuthenticationChallenges(boolean value);
+    undefined setShouldLogCanAuthenticateAgainstProtectionSpace(boolean value);
+    undefined setAuthenticationUsername(DOMString username);
+    undefined setAuthenticationPassword(DOMString password);
+
+    undefined setAllowsAnySSLCertificate(boolean value);
+
+    undefined setShouldSwapToEphemeralSessionOnNextNavigation(boolean value);
+    undefined setShouldSwapToDefaultSessionOnNextNavigation(boolean value);
+
+    // Secure text input mode (Mac only)
+    readonly attribute boolean secureEventInputIsEnabled;
+    
+    // Override plugin load policy.
+    undefined setBlockAllPlugins(boolean shouldBlock);
+    undefined setPluginSupportedMode(DOMString mode);
+
+    // Hooks to the JSC compiler.
+    object failNextNewCodeBlock();
+    object numberOfDFGCompiles(object function);
+    object neverInlineFunction(object function);
+
+    // Swipe gestures
+    undefined installDidBeginSwipeCallback(object callback);
+    undefined installWillEndSwipeCallback(object callback);
+    undefined installDidEndSwipeCallback(object callback);
+    undefined installDidRemoveSwipeSnapshotCallback(object callback);
+
+    unsigned long imageCountInGeneralPasteboard();
+
+    // UI Process Testing
+    undefined runUIScript(DOMString script, object callback);
+    undefined runUIScriptImmediately(DOMString script, object callback);
+
+    undefined clearTestRunnerCallbacks();
+
+    undefined accummulateLogsForChannel(DOMString channel);
+
+    // Contextual menu actions
+    undefined setAllowedMenuActions(object actions);
+
+    // Gamepad
+    undefined setMockGamepadDetails(unsigned long index, DOMString id, DOMString mapping, unsigned long axisCount, unsigned long buttonCount);
+    undefined setMockGamepadAxisValue(unsigned long index, unsigned long axisIndex, double value);
+    undefined setMockGamepadButtonValue(unsigned long index, unsigned long buttonIndex, double value);
+    undefined connectMockGamepad(unsigned long index);
+    undefined disconnectMockGamepad(unsigned long index);
+
+    // Resource Load Statistics
+    undefined clearStatisticsDataForDomain(DOMString domain);
+    boolean doesStatisticsDomainIDExistInDatabase(unsigned long domainID);
+    undefined setStatisticsEnabled(boolean value);
+    boolean isStatisticsEphemeral();
+    undefined installStatisticsDidModifyDataRecordsCallback(object callback);
+    undefined installStatisticsDidScanDataRecordsCallback(object callback);
+    undefined setStatisticsDebugMode(boolean value, object completionHandler);
+    undefined setStatisticsPrevalentResourceForDebugMode(DOMString hostName, object completionHandler);
+    undefined setStatisticsLastSeen(DOMString hostName, double seconds, object completionHandler);
+    undefined setStatisticsMergeStatistic(DOMString hostName, DOMString topFrameDomain1, DOMString topFrameDomain2, double lastSeen, boolean hadUserInteraction, double mostRecentUserInteraction, boolean isGrandfathered, boolean isPrevalent, boolean isVeryPrevalent, unsigned long dataRecordsRemoved, object completionHandler);
+    undefined setStatisticsExpiredStatistic(DOMString hostName, unsigned long numberOfOperatingDaysPassed, boolean hadUserInteraction, boolean isScheduledForAllButCookieDataRemoval, boolean isPrevalent, object completionHandler);
+    undefined setStatisticsPrevalentResource(DOMString hostName, boolean value, object completionHandler);
+    undefined setStatisticsVeryPrevalentResource(DOMString hostName, boolean value, object completionHandler);
+    boolean isStatisticsPrevalentResource(DOMString hostName);
+    boolean isStatisticsVeryPrevalentResource(DOMString hostName);
+    boolean isStatisticsRegisteredAsSubresourceUnder(DOMString subresourceHost, DOMString topFrameHost);
+    boolean isStatisticsRegisteredAsSubFrameUnder(DOMString subFrameHost, DOMString topFrameHost);
+    boolean isStatisticsRegisteredAsRedirectingTo(DOMString hostRedirectedFrom, DOMString hostRedirectedTo);
+    undefined setStatisticsHasHadUserInteraction(DOMString hostName, boolean value, object completionHandler);
+    boolean isStatisticsHasHadUserInteraction(DOMString hostName);
+    boolean isStatisticsOnlyInDatabaseOnce(DOMString subHost, DOMString topHost);
+    undefined setStatisticsGrandfathered(DOMString hostName, boolean value);
+    boolean isStatisticsGrandfathered(DOMString hostName);
+    undefined setStatisticsSubframeUnderTopFrameOrigin(DOMString hostName, DOMString topFrameHostName);
+    undefined setStatisticsSubresourceUnderTopFrameOrigin(DOMString hostName, DOMString topFrameHostName);
+    undefined setStatisticsSubresourceUniqueRedirectTo(DOMString hostName, DOMString hostNameRedirectedTo);
+    undefined setStatisticsSubresourceUniqueRedirectFrom(DOMString hostName, DOMString hostNameRedirectedTo);
+    undefined setStatisticsTopFrameUniqueRedirectTo(DOMString hostName, DOMString hostNameRedirectedTo);
+    undefined setStatisticsTopFrameUniqueRedirectFrom(DOMString hostName, DOMString hostNameRedirectedTo);
+    undefined setStatisticsCrossSiteLoadWithLinkDecoration(DOMString fromHost, DOMString toHost);
+    undefined setStatisticsTimeToLiveUserInteraction(double seconds);
+    boolean statisticsNotifyObserver();
+    undefined statisticsProcessStatisticsAndDataRecords();
+    undefined statisticsUpdateCookieBlocking(object completionHandler);
+    undefined setStatisticsIsRunningTest(boolean value);
+    undefined setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(boolean value);
+    undefined setStatisticsMinimumTimeBetweenDataRecordsRemoval(double seconds);
+    undefined setStatisticsGrandfatheringTime(double seconds);
+    undefined setStatisticsMaxStatisticsEntries(unsigned long entries);
+    undefined setStatisticsPruneEntriesDownTo(unsigned long entries);
+    undefined statisticsClearInMemoryAndPersistentStore(object callback);
+    undefined statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(unsigned long hours, object callback);
+    undefined statisticsClearThroughWebsiteDataRemoval(object callback);
+    undefined statisticsDeleteCookiesForHost(DOMString hostName, boolean includeHttpOnlyCookies);
+    boolean isStatisticsHasLocalStorage(DOMString hostName);
+    undefined setStatisticsCacheMaxAgeCap(double seconds);
+    undefined statisticsResetToConsistentState(object completionHandler);
+    boolean hasStatisticsIsolatedSession(DOMString hostName);
+    undefined setStatisticsShouldDowngradeReferrer(boolean value, object callback);
+    undefined setStatisticsShouldBlockThirdPartyCookies(boolean value, object callback, optional boolean onlyOnSitesWithoutUserInteraction);
+    undefined setStatisticsFirstPartyWebsiteDataRemovalMode(boolean value, object callback);
+    undefined statisticsSetToSameSiteStrictCookies(DOMString hostName, object callback);
+    undefined statisticsSetFirstPartyHostCNAMEDomain(DOMString firstPartyURLString, DOMString cnameURLString, object callback);
+    undefined statisticsSetThirdPartyCNAMEDomain(DOMString cnameURLString, object callback);
+    undefined loadedSubresourceDomains(object callback);
+
+    // Injected bundle form client.
+    undefined installTextDidChangeInTextFieldCallback(object callback);
+    undefined installTextFieldDidBeginEditingCallback(object callback);
+    undefined installTextFieldDidEndEditingCallback(object callback);
+
+    // Storage Access API
+    undefined getAllStorageAccessEntries(object callback);
+
+    // Open panel
+    undefined setOpenPanelFiles(object filesArray);
+    undefined setOpenPanelFilesMediaIcon(object mediaIcon);
+
+    // Modal alerts
+    undefined setShouldDismissJavaScriptAlertsAsynchronously(boolean value);
+    undefined abortModal();
+
+    undefined setCustomUserAgent(DOMString userAgent);
+
+    undefined terminateGPUProcess();
+    undefined terminateNetworkProcess();
+    undefined terminateServiceWorkers();
+    undefined setUseSeparateServiceWorkerProcess(boolean value);
+
+    readonly attribute unsigned long serverTrustEvaluationCallbackCallsCount;
+
+    readonly attribute boolean didCancelClientRedirect;
+
+    undefined removeAllSessionCredentials(object callback);
+
+    undefined getApplicationManifestThen(object callback);
+
+    undefined installFakeHelvetica(DOMString configuration);
+
+    undefined addMockCameraDevice(DOMString persistentId, DOMString label);
+    undefined addMockMicrophoneDevice(DOMString persistentId, DOMString label);
+    undefined addMockScreenDevice(DOMString persistentId, DOMString label);
+    undefined clearMockMediaDevices();
+    undefined removeMockMediaDevice(DOMString persistentId);
+    undefined resetMockMediaDevices();
+    undefined setMockCameraOrientation(unsigned long orientation);
+    boolean isMockRealtimeMediaSourceCenterEnabled();
+    undefined setMockCaptureDevicesInterrupted(boolean isCameraInterrupted, boolean isMicrophoneInterrupted);
+
+    boolean hasAppBoundSession();
+    undefined clearAppBoundSession();
+    undefined setAppBoundDomains(object originsArray, object callback);
+    boolean didLoadAppInitiatedRequest();
+    boolean didLoadNonAppInitiatedRequest();
+
+    undefined injectUserScript(DOMString string);
+    readonly attribute unsigned long userScriptInjectedCount;
+
+    undefined sendDisplayConfigurationChangedMessageForTesting();
+
+    undefined setServiceWorkerFetchTimeout(double seconds);
+
+    // WebAuthn
+    undefined addTestKeyToKeychain(DOMString privateKeyBase64, DOMString attrLabel, DOMString applicationTagBase64);
+    undefined cleanUpKeychain(DOMString attrLabel, optional DOMString applicationLabelBase64);
+    boolean keyExistsInKeychain(DOMString attrLabel, DOMString applicationLabelBase64);
+
+    undefined clearMemoryCache();
+
+    // Private Click Measurement
+    undefined clearPrivateClickMeasurement();
+    undefined clearPrivateClickMeasurementsThroughWebsiteDataRemoval();
+    undefined setPrivateClickMeasurementOverrideTimerForTesting(boolean value);
+    undefined markAttributedPrivateClickMeasurementsAsExpiredForTesting();
+    undefined setPrivateClickMeasurementEphemeralMeasurementForTesting(boolean value);
+    undefined simulatePrivateClickMeasurementSessionRestart();
+    undefined setPrivateClickMeasurementTokenPublicKeyURLForTesting(DOMString url);
+    undefined setPrivateClickMeasurementTokenSignatureURLForTesting(DOMString url);
+    undefined setPrivateClickMeasurementAttributionReportURLsForTesting(DOMString sourceURLString, DOMString destinationURLString);
+    undefined markPrivateClickMeasurementsAsExpiredForTesting();
+    undefined setPrivateClickMeasurementFraudPreventionValuesForTesting(DOMString unlinkableToken, DOMString secretToken, DOMString signature, DOMString keyID);
+    undefined setPrivateClickMeasurementAppBundleIDForTesting(DOMString appBundleID);
+
+    // SpeechRecognition
+    undefined setIsSpeechRecognitionPermissionGranted(boolean value);
+
+    // MediaKeySystem
+    undefined setIsMediaKeySystemPermissionGranted(boolean value);
+
+    undefined takeViewPortSnapshot(object callback);
+};

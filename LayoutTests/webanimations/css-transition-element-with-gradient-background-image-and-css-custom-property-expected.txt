@@ -1,0 +1,3 @@
+
+PASS An element with a background-image set to a CSS gradient with a stop color set by a custom property does not yield a background-image transition when another CSS property changes.
+

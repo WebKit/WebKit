@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<head>
+    <style type="text/css" media="screen">
+        body {
+            height: 5000px;
+        }
+    </style>
+    <script>
+        function scrollTest()
+        {
+            eventSender.mouseMoveTo(window.innerWidth - 4, window.innerHeight - 20);
+            eventSender.mouseDown();
+            eventSender.mouseUp();
+
+            setTimeout('checkOffset();', 100);
+        }
+
+        function checkOffset()
+        {
+            var scroller = document.scrollingElement;
+            if (scroller.scrollTop != 0)
+                document.getElementById('result').textContent = "PASS: scrollbar click could scroll document.";
+            else
+                document.getElementById('result').textContent = "FAIL: scrollbar click could not scroll document.";
+            testRunner.notifyDone();
+        }
+
+        function startTest()
+        {
+            if (window.eventSender) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+
+                setTimeout(scrollTest, 0);
+            }
+        }
+
+        window.addEventListener('load', startTest, false);
+        document.addEventListener('mousedown', function (e) { e.preventDefault(); });
+    </script>
+</head>
+<body style="min-height: 5000px">
+    <p>This is a test for <a href="https://bugs.webkit.org/show_bug.cgi?id=19033">https://bugs.webkit.org/show_bug.cgi?id=19033</a></p>
+    <div id="result"></div>
+</body>

@@ -1,0 +1,18 @@
+<html>
+<head>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.dumpResourceLoadCallbacks();
+        if (testRunner.setSerializeHTTPLoads)
+            testRunner.setSerializeHTTPLoads();
+    } else {
+        document.write ('This test must be run through DumpRenderTree.')
+    }
+</script>
+<link rel=stylesheet href="resources/stylesheet.css#a">
+<link rel=stylesheet href="resources/stylesheet.css#b">
+<body>
+This tests that file: URL are loaded separately even if they differ by the fragment only.
+</div>
+</html>

@@ -1,0 +1,3 @@
+
+PASS arc() with negative radius throws INDEX_SIZE_ERR
+

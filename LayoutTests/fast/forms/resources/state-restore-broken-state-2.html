@@ -1,0 +1,12 @@
+<script>
+setTimeout(function() {
+    var stateArray = internals.formControlStateOfPreviousHistoryItem();
+    // Omit the signature string because it is volatile.
+    console.log('Generated state: [' + stateArray.slice(1) + ']');
+
+    stateArray.push('***broken***');
+    internals.setFormControlStateOfPreviousHistoryItem(stateArray);
+    parent.didLoadAnotherDocument();
+}, 0);
+</script>
+

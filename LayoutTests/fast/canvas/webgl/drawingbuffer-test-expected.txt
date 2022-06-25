@@ -1,0 +1,68 @@
+This test ensures WebGL implementations correctly implement drawingbufferWidth/Height.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS context exists
+PASS gl.drawingBufferWidth is gl.canvas.width
+PASS gl.drawingBufferHeight is gl.canvas.height
+PASS maxSize[0] > 0 is true
+PASS maxSize[1] > 0 is true
+
+Checking drawingBufferWidth/drawingBufferHeight
+PASS context exists
+PASS gl.getParameter(gl.MAX_VIEWPORT_DIMS)[0] is maxSize[0]
+PASS gl.getParameter(gl.MAX_VIEWPORT_DIMS)[1] is maxSize[1]
+PASS gl.getParameter(gl.VIEWPORT)[0] is 0
+PASS gl.getParameter(gl.VIEWPORT)[1] is 0
+PASS gl.getParameter(gl.VIEWPORT)[2] is gl.drawingBufferWidth
+PASS gl.getParameter(gl.VIEWPORT)[3] is gl.drawingBufferHeight
+PASS gl.getError() is gl.NO_ERROR
+PASS grid rendered correctly
+PASS should be green
+PASS should be black
+PASS should be black
+PASS gl.getError() is gl.NO_ERROR
+
+Testing resizing canvas
+PASS gl.getParameter(gl.VIEWPORT)[0] is oldViewport[0]
+PASS gl.getParameter(gl.VIEWPORT)[1] is oldViewport[1]
+PASS gl.getParameter(gl.VIEWPORT)[2] is oldViewport[2]
+PASS gl.getParameter(gl.VIEWPORT)[3] is oldViewport[3]
+PASS gl.getError() is gl.NO_ERROR
+PASS grid rendered correctly
+PASS should be green
+PASS should be black
+PASS should be black
+PASS gl.getError() is gl.NO_ERROR
+
+Checking drawingBufferWidth/drawingBufferHeight
+PASS context exists
+PASS gl.getParameter(gl.MAX_VIEWPORT_DIMS)[0] is maxSize[0]
+PASS gl.getParameter(gl.MAX_VIEWPORT_DIMS)[1] is maxSize[1]
+PASS gl.getParameter(gl.VIEWPORT)[0] is 0
+PASS gl.getParameter(gl.VIEWPORT)[1] is 0
+PASS gl.getParameter(gl.VIEWPORT)[2] is gl.drawingBufferWidth
+PASS gl.getParameter(gl.VIEWPORT)[3] is gl.drawingBufferHeight
+PASS gl.getError() is gl.NO_ERROR
+PASS grid rendered correctly
+PASS should be green
+PASS should be black
+PASS should be black
+PASS gl.getError() is gl.NO_ERROR
+
+Testing resizing canvas
+PASS gl.getParameter(gl.VIEWPORT)[0] is oldViewport[0]
+PASS gl.getParameter(gl.VIEWPORT)[1] is oldViewport[1]
+PASS gl.getParameter(gl.VIEWPORT)[2] is oldViewport[2]
+PASS gl.getParameter(gl.VIEWPORT)[3] is oldViewport[3]
+PASS gl.getError() is gl.NO_ERROR
+PASS grid rendered correctly
+PASS should be green
+PASS should be black
+PASS should be black
+PASS gl.getError() is gl.NO_ERROR
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

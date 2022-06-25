@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.setShouldStayOnPageAfterHandlingBeforeUnload(true);
+    if (testRunner.setShouldDecideNavigationPolicyAfterDelay)
+        testRunner.setShouldDecideNavigationPolicyAfterDelay(true);
+}
+
+function test(_iframe) {
+    iframe = _iframe;
+    iframe.contentWindow.onbeforeunload = function(event) {
+    if (iframe.done) {
+        finishJSTest();
+        return;
+    }
+    iframe.done = true;
+    testEvent = event;
+    shouldBe("testEvent.__proto__", "iframe.contentWindow.BeforeUnloadEvent.prototype");
+    shouldBeEqualToString("testEvent.returnValue", "");
+    event.returnValue = "This is beforeunload from the top level frame.";
+    shouldBeEqualToString("testEvent.returnValue", "This is beforeunload from the top level frame.");
+
+    setTimeout(function() {
+        if (window.testRunner)
+            testRunner.setShouldStayOnPageAfterHandlingBeforeUnload(false);
+        iframe.contentWindow.location.href = "resources/does-not-exist.html";
+    }, 0);
+    }
+
+    iframe.contentWindow.location.href = "resources/does-not-exist.html";
+}
+
+</script>
+</head>
+<body>
+<iframe id="iframe" onload="test(this)" src="resources/onclick.html"></iframe>
+<script>
+description("Tests the returnValue attribute of the BeforeUnloadEvent.");
+self.jsTestIsAsync = true;
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
+

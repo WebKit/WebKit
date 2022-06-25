@@ -1,0 +1,114 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<head>
+<style>
+.outer {
+    position: relative;
+    margin: 100px;
+    height: 400px;
+    width: 200px;
+    border: 1px solid blue;
+}
+
+#inner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    overflow-x: hidden;
+    overflow-y: auto;    
+}
+
+.big {
+    height: 2000px;
+}
+</style>
+
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+
+function decreaseContentSize()
+{
+    var content = document.getElementById('content');
+    content.classList.remove("big");
+    internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
+
+    var divTarget = document.getElementById('inner');
+    var divScrollPos = divTarget.scrollTop;
+    if (divScrollPos == 0)
+        testPassed("Re-sizing the content of the scrolled div correctly set a new scroll position.");
+    else
+        testFailed("Re-sizing the content of the scrolled div failed to correctly set a new scroll position. ");
+
+    testRunner.notifyDone();
+}
+
+async function scrollTest()
+{
+    const startPosX = 150;
+    const startPosY = 150;
+
+    const events = [
+        {
+            type : "wheel",
+            viewX : startPosX,
+            viewY : startPosY,
+            deltaY : -10,
+            phase : "began"
+        },
+        {
+            type : "wheel",
+            deltaY : -10,
+            phase : "changed"
+        },
+        {
+            type : "wheel",
+            deltaY : -10,
+            phase : "changed"
+        },
+        {
+            type : "wheel",
+            phase : "ended"
+        },
+        {
+            type : "wheel",
+            deltaY : -10,
+            momentumPhase : "began"
+        },
+        {
+            type : "wheel",
+            deltaY : -10,
+            momentumPhase : "changed"
+        },
+        {
+            type : "wheel",
+            momentumPhase : "ended"
+        }
+    ];
+
+    await UIHelper.mouseWheelSequence({ events: events });
+    decreaseContentSize();
+}
+
+function setUp() {
+    if (window.eventSender) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+        setTimeout(scrollTest, 0);
+    }
+}
+</script>
+</head>
+
+<body onload="setUp();">
+
+<div class="outer">
+    <div id="inner">
+        <div id="content" class="big">This test should be run in the test harness.</div>
+    </div>
+</div>
+</body>
+</html>
+

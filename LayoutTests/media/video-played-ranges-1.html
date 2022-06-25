@@ -1,0 +1,99 @@
+<html>
+    <head>
+        <title>Test of 'played' attribute</title>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script src=video-played.js></script>
+        <script>
+    
+            var testFunctions = 
+            [ 
+                PlayWithNoRanges,
+                JumpAndPlayFwd,
+                JumpBackAndPlayToNewRange,
+                JumpAndExtendRangeStart,
+                JumpAndExtendRangeEnd,
+            ];
+    
+            // NOTE: Detailed results are not printed for this test because time values are different from machine
+            // to machine and run to run. Commenting out the following line turns on detailed logging back on, which
+            // can be useful for debugging test failure.
+            disableFullTestDetailsPrinting(); 
+
+            function PlayWithNoRanges()
+            {
+                consoleWrite("<br><b><em>Test playing when there are no ranges</em></b>");
+
+                timeRangeCount = currentTimeRange = 0;
+                willPauseInExistingRange = false;
+                willExtendAnExistingRange = false;
+
+                startPlayingInNewRange();
+            }
+    
+            function JumpAndPlayFwd()
+            {
+                consoleWrite("<br><b><em>Test jumping forward into a new range and play</em></b>");
+
+                var newTime = video.duration - 1.0;
+                runSilently("video.currentTime = " + (newTime.toFixed(2)));
+
+                currentTimeRange = 1;
+                willPauseInExistingRange = false;
+                willExtendAnExistingRange = false;
+
+                startPlayingInNewRange();
+            }
+    
+            function JumpBackAndPlayToNewRange()
+            {
+                consoleWrite("<br><b><em>Test jumping backwards into a new range and play, should insert new range</em></b>");
+    
+                var newTime = 3.00;
+                runSilently("video.currentTime = " + newTime);
+    
+                currentTimeRange = 1;
+                willPauseInExistingRange = false;
+                willExtendAnExistingRange = false;
+
+                startPlayingInNewRange();
+            }
+                        
+            function JumpAndExtendRangeStart()
+            {
+                consoleWrite("<br><b><em>Test playing into an existing range, should extend range start</em></b>");
+    
+                currentTimeRange = 1;
+                var newTime = (video.played.start(currentTimeRange) - 0.05).toFixed(2);
+                runSilently("video.currentTime = " + newTime);
+    
+                expectedStartTimes[currentTimeRange] = newTime;
+                willPauseInExistingRange = true;
+                willExtendAnExistingRange = true;
+                startPlaying();
+            }
+    
+            function JumpAndExtendRangeEnd()
+            {
+                consoleWrite("<br><b><em>Test jumping into an existing range and play beyond end, should extend range end</em></b>");
+    
+                currentTimeRange = 1;
+    
+                var newTime = (video.played.end(currentTimeRange) - 0.05).toFixed(2);
+                runSilently("video.currentTime = " + newTime);
+    
+                willPauseInExistingRange = false;
+                willExtendAnExistingRange = true;
+                playForMillisecs(30);
+            }
+
+        </script>
+     </head>
+
+<body onload="videoPlayedMain()">
+
+    <video controls></video>
+    <p>Test of the media element 'played' attribute, ranges part 1.</p>
+
+</body>
+</html>

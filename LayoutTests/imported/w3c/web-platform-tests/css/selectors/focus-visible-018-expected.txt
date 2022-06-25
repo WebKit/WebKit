@@ -1,0 +1,9 @@
+This test checks that by default, using the mouse to focus a generic element does not show a focus ring (because it does not trigger :focus-visible matching).
+
+Click on the element below that says "Click me."
+If the element does not have a focus ring, then the test result is SUCCESS.
+Click me.
+
+PASS ":focus-visible" should be a valid selector
+PASS Mouse focus does not show a focus ring by default
+

@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>worklet.addModule and CORS</title>
+        <script src="/resources/testharness.js"></script>
+        <script src="/resources/testharnessreport.js"></script>
+    </head>
+    <body>
+<script>
+
+promise_test(() => {
+    const context = new OfflineAudioContext(2, 100, 44100);
+    return context.audioWorklet.addModule("https://{{host}}:{{ports[https][0]}}/WebKit/webaudio/resources/dummy-worklet.py");
+}, "same origin works");
+
+promise_test((t) => {
+    const context = new OfflineAudioContext(2, 100, 44100);
+    return promise_rejects_dom(t, "AbortError", context.audioWorklet.addModule("https://{{hosts[alt][]}}:{{ports[https][0]}}/WebKit/webaudio/resources/dummy-worklet.py"));
+}, "cross origin fails without CORS headers");
+
+promise_test((t) => {
+    const context = new OfflineAudioContext(2, 100, 44100);
+    return context.audioWorklet.addModule("https://{{hosts[alt][]}}:{{ports[https][0]}}/WebKit/webaudio/resources/dummy-worklet.py?useCORS");
+}, "cross origin passes with CORS headers");
+
+</script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<html>
+    <head>
+        <title>Bug 133678: TextCodecICU::encode turns the whole string as yen signs if there is any backslash in it</title>
+    </head>
+    <body>
+        <p>Bug 133678: TextCodecICU::encode turns the whole string as yen signs if there is any backslash in it</p>
+        <form id="form" method="GET" target="iframe">
+            <input type="text" id="text" name="text"></input>
+        </form>
+        <iframe id="iframe" name="iframe"></iframe>
+        <script>
+            var toBeEncoded = "abcde\\abcde";
+            var expectedEncoded = "abcde%5Cabcde";
+            var charset = "EUC-JP";
+
+            if (window.testRunner) {
+                testRunner.waitUntilDone();
+                testRunner.dumpAsText();
+            }
+
+            function log(msg) {
+                document.getElementById("log").innerHTML += msg + "<br>";
+            }
+
+            var form = document.getElementById('form');
+            var iframe = document.getElementById('iframe');
+
+            function processEncodedString() {
+                var url = iframe.contentWindow.location.search;
+                encoded = url.substr(url.indexOf('=') + 1);
+
+                log(encoded == expectedEncoded ? "PASS": "FAILED: encoded string was '" + encoded + "' while expecting '" + expectedEncoded + "'");
+
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }
+
+            form.acceptCharset = charset;
+            form.action = "resources/dummy.html";
+
+            document.getElementById('text').value = toBeEncoded;
+            iframe.onload = processEncodedString;
+
+            form.submit();
+        </script>
+        <div id="log"></div>
+    </body>
+</html>

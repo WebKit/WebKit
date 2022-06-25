@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="around" style="width:600px; height:600px; top:0px; left:0px; background-color:blue; position:absolute"></div>
+<div id="target" style="width:200px; height:200px; top:200px; left:200px; background-color:red; position:absolute"></div>
+
+<script src="../../resources/js-test.js"></script>
+<script>
+jsTestIsAsync = true;
+
+var mouseenterCount = 0;
+var mouseleaveCount = 0;
+var mousemoveDetected = false;
+
+var target = document.getElementById("target");
+var around = document.getElementById("around");
+target.addEventListener('mouseenter',() => {
+    document.getElementById("target").style.backgroundColor = "yellow";
+
+    debug("Mouse enters target.");
+	mouseenterCount++;
+});
+target.addEventListener('mouseleave',() => {
+    document.getElementById("target").style.backgroundColor = "red";
+
+    debug("Mouse leaves target.");
+    mouseleaveCount++;
+});
+around.addEventListener('mousemove',() => {
+
+    shouldBeFalse("mousemoveDetected");
+    shouldBe("mouseenterCount", "0");
+    shouldBe("mouseleaveCount", "0");
+
+    mousemoveDetected = true;
+
+    finishJSTest();
+});
+
+description("This test verifies no mouseenter, mouseleave or mousemove event sent to web page when window is inactive.<br>\
+    To manually test, open another app to make window visible but inactive, then move mouse to red box area. On success, you should not see color change.");
+
+if (window.internals)
+    window.internals.setPageIsFocusedAndActive(false);
+
+if (window.eventSender) {
+    left = target.offsetLeft;
+    top = target.offsetTop;
+
+    eventSender.mouseMoveTo(around.offsetLeft, around.offsetTop);
+    eventSender.mouseMoveTo(target.offsetLeft, target.offsetTop);
+    eventSender.mouseMoveTo(around.offsetLeft, around.offsetTop);
+}
+
+setTimeout(() => {
+    if (window.internals)
+        window.internals.setPageIsFocusedAndActive(true);
+
+    if (window.eventSender) 
+        eventSender.mouseMoveTo(around.offsetLeft + 1, around.offsetTop + 1);
+}, 200);
+
+</script>
+</body>
+</html>

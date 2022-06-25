@@ -1,0 +1,92 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="/resources/testharness.js"></script>
+        <script src="/resources/testharnessreport.js"></script>
+        <script src="/webrtc-encoded-transform/routines.js"></script>
+    </head>
+    <body>
+        <video id='video' controls autoplay playsinline></video>
+        <script>
+promise_test(async (test) => {
+    const key1 = await crypto.subtle.importKey("raw", new Uint8Array([143, 77, 43, 10, 72, 19, 37, 67, 236, 219, 24, 93, 26, 165, 91, 178]), "HKDF", false, ["deriveBits", "deriveKey"]);
+    const key2 = await crypto.subtle.importKey("raw", new Uint8Array([144, 77, 43, 10, 72, 19, 37, 67, 236, 219, 24, 93, 26, 165, 91, 178]), "HKDF", false, ["deriveBits", "deriveKey"]);
+    const key3 = await crypto.subtle.importKey("raw", new Uint8Array([145, 77, 43, 10, 72, 19, 37, 67, 236, 219, 24, 93, 26, 165, 91, 178]), "HKDF", false, ["deriveBits", "deriveKey"]);
+    const key4 = await crypto.subtle.importKey("raw", new Uint8Array([146, 77, 43, 10, 72, 19, 37, 67, 236, 219, 24, 93, 26, 165, 91, 178]), "HKDF", false, ["deriveBits", "deriveKey"]);
+
+    const localStream = await navigator.mediaDevices.getUserMedia({audio: true});
+    let receiver;
+    const stream = await new Promise((resolve, reject) => {
+        const connections = createConnections(test, (firstConnection) => {
+            const sender = firstConnection.addTrack(localStream.getAudioTracks()[0], localStream);
+            const transform = new SFrameTransform;
+            transform.setEncryptionKey(key1, 1);
+            sender.transform = transform;
+        }, (secondConnection) => {
+            secondConnection.ontrack = (trackEvent) => {
+                const transform = new SFrameTransform;
+                transform.setEncryptionKey(key1, 0);
+                receiver = trackEvent.receiver;
+                receiver.transform = transform;
+                resolve(trackEvent.streams[0]);
+            };
+        });
+        test.step_timeout(() => reject("Test timed out"), 5000);
+    });
+
+    let error = await new Promise(resolve => receiver.transform.onerror = resolve);
+    assert_equals(error.errorType, "keyID");
+    receiver.transform.setEncryptionKey(key1, 1);
+
+    await new Promise((resolve, reject) => {
+        receiver.transform.onerror = () => reject('sframe still has errors');
+        test.step_timeout(resolve, 100);
+    });
+}, "Missing key triggers an error that can be corrected by adding a key");
+
+promise_test(async (test) => {
+    worker = new Worker('sframe-transform-error-worker.js');
+    const data = await new Promise(resolve => worker.onmessage = (event) => resolve(event.data));
+    assert_equals(data, "registered");
+    const localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+    let sender, receiver;
+
+    const receiverTransform = new SFrameTransform();
+    const key = await crypto.subtle.importKey("raw", new Uint8Array([143, 77, 43, 10, 72, 19, 37, 67, 236, 219, 24, 93, 26, 165, 91, 178]), "HKDF", false, ["deriveBits", "deriveKey"]);
+    receiverTransform.setEncryptionKey(key, 1);
+
+    const senderTransform = new RTCRtpScriptTransform(worker, "SFrameRTCRtpTransform");
+
+    const startedPromise = new Promise(resolve => worker.onmessage = (event) => resolve(event.data));
+
+    const remoteStream = await new Promise((resolve, reject) => {
+        createConnections(test, (firstConnection) => {
+            pc1 = firstConnection;
+            sender = firstConnection.addTrack(localStream.getTracks()[0], localStream);
+            sender.transform = senderTransform;
+        }, (secondConnection) => {
+            pc2 = secondConnection;
+            secondConnection.ontrack = (trackEvent) => {
+                receiver = trackEvent.receiver;
+                receiver.transform = receiverTransform;
+                resolve(trackEvent.streams[0]);
+            };
+        });
+        test.step_timeout(() => reject("Test timed out"), 5000);
+    });
+
+    video.srcObject = remoteStream;
+
+    worker.postMessage({action:"authenticationError"});
+    let error = await new Promise(resolve => receiver.transform.onerror = resolve);
+    assert_equals(error.errorType, "authentication");
+
+    worker.postMessage({action:"syntaxError"});
+    error = await new Promise(resolve => receiver.transform.onerror = resolve);
+    assert_equals(error.errorType, "syntax");
+}, "Tampered data should trigger SFrameTransform errors");
+        </script>
+    </body>
+</html>

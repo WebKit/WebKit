@@ -1,0 +1,7 @@
+This test requires user interaction.
+Please click here to allow Open a URL with a text fragment directive.This test requires user interaction.
+Please click here to allow Open a URL with a text fragment directive.
+
+FAIL Fragment navigation with content-visibility; single text promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: fetchResults"
+FAIL Fragment navigation with content-visibility; range across blocks promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: fetchResults"
+

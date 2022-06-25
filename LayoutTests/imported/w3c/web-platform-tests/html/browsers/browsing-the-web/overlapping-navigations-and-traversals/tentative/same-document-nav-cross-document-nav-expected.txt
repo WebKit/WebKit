@@ -1,0 +1,4 @@
+
+PASS fragment navigation then cross-document navigation
+PASS pushState() then cross-document navigation
+

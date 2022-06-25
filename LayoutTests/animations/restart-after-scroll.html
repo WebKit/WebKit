@@ -1,0 +1,61 @@
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<style>
+@-webkit-keyframes bounce {
+    from {
+        -webkit-transform: translate3d(0,0,0);
+    }
+    to {
+        -webkit-transform: translate3d(200px,0,0);
+    }
+}
+
+#animator {
+    position: relative;
+    top: 0px;
+    width: 100px;
+    height: 100px;
+    background-color: blue;
+    -webkit-animation-name: bounce;
+    -webkit-animation-duration: 100ms;
+    -webkit-animation-iteration-count: infinite;
+}
+</style>
+<script>
+var hasScrolled = false;
+
+function sawIteration(event) {
+    if (hasScrolled) {
+        document.getElementById("results").innerText = "PASS: Saw iteration after scrolling";
+        testRunner.notifyDone();
+    }
+}
+
+function startScroll() {
+    if (window.eventSender) {
+        eventSender.mouseMoveTo(200, 200);
+        eventSender.mouseDown();
+        eventSender.mouseMoveTo(200, 300);
+        setTimeout(endScroll, 100);
+    }
+}
+
+function endScroll() {
+    eventSender.mouseUp();
+    hasScrolled = true;
+}
+
+function startTest() {
+    var animator = document.getElementById("animator");
+    animator.addEventListener("webkitAnimationIteration", sawIteration, false);
+    setTimeout(startScroll, 100);
+}
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+window.addEventListener("load", startTest, false);
+</script>
+<div id="animator"></div>
+<div id="results"></div>

@@ -1,0 +1,3 @@
+
+PASS Test that currentColor is not affected by -webkit-text-fill-color
+

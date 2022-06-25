@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<body>
+<script src="apple-pay.js"></script>
+<script>
+    internals.mockPaymentCoordinator.setCanMakePayments(window.location.search === "?false" ? false : true);
+
+    const paymentRequest = new PaymentRequest([applePayMethod()], applePayDetails);
+    paymentRequest.canMakePayment().then(() => {
+        window.webkit.messageHandlers.testApplePay.postMessage("done");
+    });
+</script>

@@ -1,0 +1,33 @@
+Tests find going both forward and backwards in small and large documents.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS testFind('abc', 'a', forward) is '0, 1'
+PASS testFind('abc', 'b', forward) is '1, 2'
+PASS testFind('abc', 'c', forward) is '2, 3'
+PASS testFind('abc', 'a', backward) is '0, 1'
+PASS testFind('abc', 'b', backward) is '1, 2'
+PASS testFind('abc', 'c', backward) is '2, 3'
+PASS testFind(tenThousandCharacters + 'abc' + tenThousandCharacters, 'a', forward) is '10000, 10001'
+PASS testFind(tenThousandCharacters + 'abc' + tenThousandCharacters, 'b', forward) is '10001, 10002'
+PASS testFind(tenThousandCharacters + 'abc' + tenThousandCharacters, 'c', forward) is '10002, 10003'
+PASS testFind(tenThousandCharacters + 'abc' + tenThousandCharacters, 'a', backward) is '10000, 10001'
+PASS testFind(tenThousandCharacters + 'abc' + tenThousandCharacters, 'b', backward) is '10001, 10002'
+PASS testFind(tenThousandCharacters + 'abc' + tenThousandCharacters, 'c', backward) is '10002, 10003'
+PASS testFind('abcabc', 'a', forward) is '0, 1'
+PASS testFind('abcabc', 'b', forward) is '1, 2'
+PASS testFind('abcabc', 'c', forward) is '2, 3'
+PASS testFind('abcabc', 'a', backward) is '3, 4'
+PASS testFind('abcabc', 'b', backward) is '4, 5'
+PASS testFind('abcabc', 'c', backward) is '5, 6'
+PASS testFind(tenThousandCharacters + 'abcabc' + tenThousandCharacters, 'a', forward) is '10000, 10001'
+PASS testFind(tenThousandCharacters + 'abcabc' + tenThousandCharacters, 'b', forward) is '10001, 10002'
+PASS testFind(tenThousandCharacters + 'abcabc' + tenThousandCharacters, 'c', forward) is '10002, 10003'
+PASS testFind(tenThousandCharacters + 'abcabc' + tenThousandCharacters, 'a', backward) is '10003, 10004'
+PASS testFind(tenThousandCharacters + 'abcabc' + tenThousandCharacters, 'b', backward) is '10004, 10005'
+PASS testFind(tenThousandCharacters + 'abcabc' + tenThousandCharacters, 'c', backward) is '10005, 10006'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

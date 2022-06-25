@@ -1,0 +1,68 @@
+<html>
+<head>
+<title>Service Worker Fetch Event</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+var scope = "resources/";
+var registration;
+const channel = new MessageChannel;
+
+function withFrame(url)
+{
+    return new Promise((resolve) => {
+        let frame = document.createElement('iframe');
+        frame.src = url;
+        frame.onload = function() { resolve(frame); };
+        document.body.appendChild(frame);
+    });
+}
+
+async function registerServiceWorker(scope)
+{
+    var registration = await navigator.serviceWorker.register("navigation-iframe-site-worker.js", { scope : scope });
+    var activeWorker = registration.active;
+    if (activeWorker) {
+        activeWorker.postMessage({ port: channel.port1 }, [channel.port1]);
+        return;
+    }
+    activeWorker = registration.installing;
+    activeWorker.postMessage({ port: channel.port1 }, [channel.port1]);
+    return new Promise(resolve => {
+        activeWorker.addEventListener('statechange', () => {
+            if (activeWorker.state === "activated")
+                resolve(registration);
+        });
+    });
+}
+
+promise_test(async (test) => {
+    registration = await registerServiceWorker(scope);
+}, "Setup worker");
+
+promise_test(async (test) => {
+    const resultPromise = new Promise(resolve => channel.port2.onmessage = (event) => resolve(event.data));
+
+    // Cross-origin iframe that will redirect to iframe that will be controlled by registered service worker.
+    const framePromise = withFrame("https://127.0.0.1:9443/WebKit/service-workers/resources/navigation-iframe-site-frame.html");
+
+    assert_equals(await resultPromise, "PASS");
+    const frame = await framePromise;
+    frame.remove();
+}, "Validate worker gets right request after navigation");
+
+promise_test(async (test) => {
+    const resultPromise = new Promise(resolve => channel.port2.onmessage = (event) => resolve(event.data));
+
+    // Cross-origin iframe that will redirect to iframe that will be controlled by registered service worker through POST.
+    const framePromise = withFrame("https://127.0.0.1:9443/WebKit/service-workers/resources/navigation-iframe-site-frame.html?post");
+
+    assert_equals(await resultPromise, "PASS");
+    const frame = await framePromise;
+    frame.remove();
+}, "Validate worker gets right request after post navigation");
+</script>
+</body>
+</html>

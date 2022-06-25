@@ -1,0 +1,15 @@
+include_rules = [
+  "+base/third_party/libevent",
+  "+json",
+  "+system_wrappers",
+  "+third_party/jsoncpp",
+]
+
+specific_include_rules = {
+  "protobuf_utils.h": [
+    "+third_party/protobuf",
+  ],
+  "gunit\.h": [
+    "+testing/base/public/gunit.h"
+  ],
+}

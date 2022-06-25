@@ -1,0 +1,19 @@
+<script src="../resources/magnitude-perf.js"></script>
+<script>
+var key = 'counter';
+
+function setupFunction(magnitude)
+{
+    element = document.createElement('div');
+    counter = 0;
+}
+
+function test(magnitude)
+{
+    element.setAttribute(key, counter ? counter-- : counter++);
+}
+
+Magnitude.description("Tests that setAttribute is constant time.");
+Magnitude.run(setupFunction, test, Magnitude.CONSTANT);
+</script>
+</body>

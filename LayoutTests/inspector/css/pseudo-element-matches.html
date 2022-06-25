@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test() {
+    var nodeStyles;
+
+    function validateMatchedSelectors()
+    {
+        var found = false;
+
+        for (var i = 0; i < nodeStyles.matchedRules.length; ++i) {
+            var rule = nodeStyles.matchedRules[i];
+            if (rule.type !== WI.CSSStyleSheet.Type.UserAgent)
+                continue;
+            if (rule.selectorText.indexOf("::placeholder") === -1)
+                continue;
+
+            found = true;
+            var index = 0;
+            for (var selector of rule.selectors) {
+                var matches = rule.matchedSelectorIndices.includes(index);
+                InspectorTest.log(selector.text + (matches ? " MATCHES" : ""));
+                index++;
+            }
+            break;
+        }
+
+        if (!found)
+            InspectorTest.log("Failed to find a ::placeholder UserAgent style. Test may need to change.");
+
+        InspectorTest.completeTest();
+    }
+
+    function onStylesRefreshed()
+    {
+        nodeStyles.removeEventListener(WI.DOMNodeStyles.Event.Refreshed, onStylesRefreshed, this);
+        validateMatchedSelectors();
+    }
+
+    WI.domManager.requestDocument(function(documentNode) {
+        documentNode.querySelector("#node1", function(contentNodeId) {
+            try { 
+                if (contentNodeId) {
+                    var domNode = WI.domManager.nodeForId(contentNodeId);
+                    domNode.getSubtree(1, function() {
+                        var shadowRoot = domNode.children[0];
+                        shadowRoot.getSubtree(2, function() {
+                            for (var i = 0; i < shadowRoot.children.length; ++i) {
+                                var shadowNode = shadowRoot.children[i];
+                                if (shadowNode.getAttribute("pseudo") === "placeholder") {
+                                    nodeStyles = WI.cssManager.stylesForNode(shadowNode);
+                                    if (nodeStyles.needsRefresh)
+                                        nodeStyles.addEventListener(WI.DOMNodeStyles.Event.Refreshed, onStylesRefreshed, this);
+                                    else
+                                        validateMatchedSelectors();
+                                    return;
+                                }
+                            }
+                            InspectorTest.log("node with pseudo 'placeholder' not found.");
+                            InspectorTest.completeTest();
+                        });
+                    });
+                } else {
+                    InspectorTest.log("DOM node not found.");
+                    InspectorTest.completeTest();
+                }
+            } catch (e) {
+                InspectorTest.log("Exception: " + e.message);
+                InspectorTest.log("Failed to find a ::placeholder shadow element under an <audio>. Test may need to change.");
+                InspectorTest.completeTest();
+            }
+        });
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing that pseudo element selectors correctly show matching selector information.</p>
+    <input id="node1" placeholder="placeholder">
+</body>
+</html>

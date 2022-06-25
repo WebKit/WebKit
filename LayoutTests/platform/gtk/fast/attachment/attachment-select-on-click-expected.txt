@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x52
+  RenderBlock {HTML} at (0,0) size 800x52
+    RenderBody {BODY} at (8,8) size 784x36
+      RenderBlock {DIV} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 71x17
+          text run at (0,0) width 71: "text before "
+        RenderInline {ATTACHMENT} at (0,0) size 0x0
+        RenderText {#text} at (71,0) size 55x17
+          text run at (71,0) width 55: "text after"
+      RenderBlock {DIV} at (0,18) size 784x18
+        RenderText {#text} at (0,0) size 161x17
+          text run at (0,0) width 161: "Start offset 2 End offset 2"
+caret: position 2 of child 0 {#text} of child 1 {DIV} of body

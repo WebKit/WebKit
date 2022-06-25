@@ -1,0 +1,20 @@
+Horizontal grid and verticalLR item with fixed width
+É É ÉÉ
+Horizontal grid and verticalRL item with fixed width do not share a baseline context
+É É ÉÉ
+VerticalLR grid and item with fixed height
+É É ÉÉ
+VerticalRL grid and item with fixed width
+É É ÉÉ
+
+PASS .grid 1
+FAIL .grid 2 assert_equals:
+<div class="grid width300 justifyItemsBaseline">
+  <div class="firstRowFirstColumn fixedWidth" data-offset-x="0" data-offset-y="0" data-expected-width="125" data-expected-height="100"></div>
+  <div class="secondRowFirstColumn bigFont paddingRight verticalRL" data-offset-x="0" data-offset-y="100" data-expected-width="120" data-expected-height="200">É É ÉÉ</div>
+  <div class="autoRowSpanning2AutoColumn width25"></div>
+</div>
+offsetLeft expected 0 but got 60
+PASS .grid 3
+PASS .grid 4
+

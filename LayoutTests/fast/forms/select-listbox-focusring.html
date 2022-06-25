@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<p>This test checks that focusing a SELECT element via mouse click, after focusing a previous element via mouse click, the SELECT element shows a focus ring.</p>
+<p id="instructions"></p>
+<input id="input">
+<select id="select">
+    <option>a</option>
+    <option>b</option>
+</select>
+
+<script>
+    function clickElement(element) {
+        if (window.eventSender) {
+            eventSender.mouseMoveTo(element.offsetLeft + 5, element.offsetTop + 5);
+            eventSender.mouseDown();
+            eventSender.mouseUp();
+        else {
+            instructions.innerHTML = "Click on the element " + element.tagName;
+        }
+    }
+
+    target.addEventListener("focus", () => {
+        clickElement(select);
+    });
+    clickElement(target);
+</script>

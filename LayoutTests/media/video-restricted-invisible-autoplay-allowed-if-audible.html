@@ -1,0 +1,58 @@
+<html>
+    <head>
+        <script src="media-file.js"></script>
+        <script src="video-test.js"></script>
+        <script>
+            if (window.internals)
+                internals.settings.setInvisibleAutoplayNotPermitted(true);
+
+            function start()
+            {
+                findMediaElement();
+                consoleWrite('** setting video.src');
+                video.src = findMediaFile('video', 'content/test');
+                video.volume = 1;
+
+                waitForEventOnce('play', play1);
+                consoleWrite('');
+            }
+
+            function play1()
+            {
+                waitForEventAndFail('pause');
+
+                testExpected('video.paused', false);
+                run('video.style.display = "none"');
+                setTimeout(play2, 10);
+            }
+
+            function play2()
+            {
+                testExpected('video.paused', false);
+                run('video.style.removeProperty("display")');
+                run('video.style.visibility = "hidden"');
+                setTimeout(play3, 10);
+            }
+
+            function play3()
+            {
+                testExpected('video.paused', false);
+                run('video.style.removeProperty("visibility")');
+                run('document.documentElement.style.height = window.innerHeight + 20 + video.offsetHeight');
+                run('window.scrollBy(0, 20 + video.offsetHeight)');
+                setTimeout(play4, 10);
+            }
+
+            function play4()
+            {
+                testExpected('video.paused', false);
+                endTest();
+            }
+        </script>
+    </head>
+
+    <body onload="start()">
+        <video controls autoplay></video>
+        <p>Test that "invisible autoplay not allowed restriction" does not pause audible media when scrolled out of view.</p>
+    </body>
+</html>

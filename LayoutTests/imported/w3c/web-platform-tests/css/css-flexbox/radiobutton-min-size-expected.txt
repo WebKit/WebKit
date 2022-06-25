@@ -1,0 +1,8 @@
+You should see two identical-looking lines, both with a radio button at the beginning.
+
+
+Text
+Text
+
+PASS two radio button widths are identical
+

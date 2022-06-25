@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x88
+  RenderBlock {HTML} at (0,0) size 800x88
+    RenderBody {BODY} at (8,16) size 784x56
+      RenderBlock {DIV} at (0,0) size 784x56
+        RenderBlock {P} at (0,0) size 784x20
+          RenderText {#text} at (0,0) size 233x19
+            text run at (0,0) width 233: "there should be more text below this"
+        RenderBlock {P} at (0,36) size 784x20
+          RenderText {#text} at (0,0) size 167x19
+            text run at (0,0) width 167: "PASS if this text is visible"

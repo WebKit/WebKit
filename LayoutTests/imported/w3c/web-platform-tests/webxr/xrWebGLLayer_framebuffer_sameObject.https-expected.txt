@@ -1,0 +1,4 @@
+
+PASS XRWebGLLayer.framebuffer meets [SameObject] requirement - webgl
+PASS XRWebGLLayer.framebuffer meets [SameObject] requirement - webgl2
+

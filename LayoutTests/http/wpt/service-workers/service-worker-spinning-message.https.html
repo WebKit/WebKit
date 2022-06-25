@@ -1,0 +1,29 @@
+<!doctype html><!-- webkit-test-runner [ ShouldUseServiceWorkerShortTimeout=true ] -->
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/routines.js"></script>
+</head>
+<body>
+<script>
+promise_test(async (test) => {
+    const registration = await navigator.serviceWorker.register("service-worker-spinning-worker.js", { scope : "spin-message" });
+    const worker = registration.installing;
+
+    await waitForState(registration.installing, "activated");
+
+    return waitForServiceWorkerNoLongerRunning(worker);
+}, "Spin in message");
+
+promise_test(async (test) => {
+    const registration = await navigator.serviceWorker.register("service-worker-spinning-worker.js", { scope : "spin-after-message" });
+    const worker = registration.installing;
+
+    await waitForState(registration.installing, "activated");
+
+    return waitForServiceWorkerNoLongerRunning(worker);
+}, "Spin after message");
+</script>
+</body>
+</html>

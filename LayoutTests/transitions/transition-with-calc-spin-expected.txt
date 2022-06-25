@@ -1,0 +1,3 @@
+Test that calc values in transitions don't lead to a style resolution spin.
+PASS
+

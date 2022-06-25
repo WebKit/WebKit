@@ -1,0 +1,5 @@
+
+PASS Setup worker
+PASS Test self.clients.matchAll create new client object every time
+PASS Test self.clients.matchAll
+

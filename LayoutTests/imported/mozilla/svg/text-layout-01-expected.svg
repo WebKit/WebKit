@@ -1,0 +1,42 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     font-family="monospace" font-size="20" xml:space="preserve">
+
+  <title>Reference to check that dx, dy works for text</title>
+
+  <!-- From https://bugzilla.mozilla.org/show_bug.cgi?id=388547 -->
+
+  <text x="30" y="30">TEST1</text>
+
+  <text x="30" y="60">T</text>
+  <text x="30" y="70"> E</text>
+  <text x="40" y="80">  ST2</text>
+
+  <text x="30" y="100">T</text>
+  <text x="30" y="110"> E</text>
+  <text x="40" y="120">  ST3</text>
+
+  <text x="30" y="160">T</text>
+  <text x="30" y="150"> EST4</text>
+
+  <text x="40" y="200">TEST5</text>
+
+  <text x="220" y="30">T</text>
+  <text x="240" y="30">E</text>
+  <text x="260" y="30">S</text>
+  <text x="280" y="30">T6</text>
+
+  <text x="220" y="70">T</text>
+  <text x="220" y="90">E</text>
+  <text x="220" y="110">S</text>
+  <text x="220" y="130">T</text>
+  <text x="220" y="150">7</text>
+  
+  <text x="220" y="200">T ST8</text>
+
+  <g transform="translate(150,100)rotate(45)"><text>A</text></g>
+</svg>

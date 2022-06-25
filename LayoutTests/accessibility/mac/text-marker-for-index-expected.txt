@@ -1,0 +1,25 @@
+text
+
+text
+audio file.
+This verifies that textMarkerForIndex and indexForTextMarker are working correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Original marker string: x
+Index is: 3
+New marker string: x
+
+Original marker string: 'line break'
+Index is: 6
+New marker string: 'line break'
+
+Original marker string: f
+Index is: 18
+New marker string: f
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

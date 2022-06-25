@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+#target {
+    width: 100px;
+    height: 100px;
+    background-color: black;
+    animation-name: animation;
+}
+
+#other {
+    width: 100px;
+    height: 100px;
+    background-color: black;
+    animation: animation 0.2s infinite;
+}
+
+#target.animated {
+    animation-duration: 0.2s;
+	animation-iteration-count: infinite;
+}
+
+@keyframes animation {
+    to { margin-left: "100px" };
+}
+
+</style>
+</head>
+<body>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<div id="target"></div>
+<div id="other"></div>
+
+<script>
+
+    async_test(t => {
+
+    const once = { once: true };
+    const target = document.getElementById("target");
+
+    // Start the animation.
+    target.classList.add("animated");
+    target.addEventListener("animationstart", event => {
+        // Now we can cancel this animation.
+        target.classList.remove("animated");
+        target.addEventListener("animationend", event => {
+            // We wait a frame, resume the animation and check it's the same animation.
+            requestAnimationFrame(() => {
+                target.classList.add("animated");
+                target.addEventListener("animationstart", event => t.done(), once);
+            });
+        }, once);
+    }, once);
+
+}, "A CSS Animation can be canceled and resumed by modifying its animation-duration.");
+
+</script>
+</body>
+</html>

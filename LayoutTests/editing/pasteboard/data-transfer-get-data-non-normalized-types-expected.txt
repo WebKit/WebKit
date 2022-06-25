@@ -1,0 +1,14 @@
+Rich text
+{
+    " text/plain; ": "",
+    "text/uri-list; ": "http://www.apple.com/",
+    "text/html; ": "<b style='color: green'></b>",
+    "\fcustom type\r": "custom data"
+}
+{
+    "\tText": "",
+    "\r\nURL": "http://www.apple.com/",
+    "    text/html;charset=utf-8 ": "<b style='color: green'></b>",
+    " custom type\t\n": "custom data"
+}
+

@@ -1,0 +1,10 @@
+This test checks that using the keyboard in a way that does not move focus still causes :focus-visible matching to trigger.
+If the user-agent does not claim to support the :focus-visible pseudo-class then SKIP this test.
+Use the mouse to focus the element below that says "Click me."
+If the element has a red outline, then the test result is FAILURE.
+Press the ENTER key.
+If the element now has a green outline and not red background, then the test result is SUCCESS.
+Click me.
+
+PASS Using keyboard while element is focused should trigger :focus-visible; using mouse without moving focus should not cancel it; moving focus using mouse should cancel it.
+

@@ -1,0 +1,15 @@
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(loadedmetadata)
+Samples with presentation times after currentTime should not cause loadedData.
+EXPECTED (video.readyState == '1') OK
+Samples with presentation times very close to currentTime should cause loadedData.
+EVENT(loadeddata)
+EXPECTED (video.readyState == '2') OK
+Samples with presentation end times very close to currentTime should not cause canPlay.
+EXPECTED (video.readyState == '2') OK
+Continuous samples with presentation end times after currentTime should cause canPlay.
+EVENT(canplay)
+EXPECTED (video.readyState >= '3') OK
+END OF TEST
+

@@ -1,0 +1,47 @@
+<html>
+<head>
+<script>
+
+function init()
+{
+	if (window.testRunner)
+		window.testRunner.dumpAsText();
+
+    var imgCanvas = document.getElementById("c1");
+    var imgCanvas2 = document.getElementById("c2");
+
+    var imgCtx = imgCanvas.getContext("2d");
+    var imgCtx2 = imgCanvas2.getContext("2d");
+	imgCtx.fillStyle = '#0f0';
+    imgCtx.fillRect(0,0,32,32);
+
+    var newImage =  new Image();
+    newImage.src = imgCanvas.toDataURL();
+
+	imgCtx2.fillStyle = '#0f0';
+	imgCtx2.fillRect(0,0,32,32);
+	imgCtx2.drawImageFromRect(newImage, 
+		0, 1, 1, 1,
+		0, 0, 32, 32, 'source-over');
+
+	var result = document.getElementById("result");
+	var data = imgCtx2.getImageData(0,0,1,1).data;
+	var red = data[0];
+	var green = data[1];
+	var blue = data[2];
+	var alpha = data[3];
+	if (red != 0 || green != 255 || blue != 0 || alpha != 255)
+		result.innerHTML = "FAILED";
+	else
+		result.innerHTML = "PASSED";
+}
+
+</script>
+</head>
+<body onload="init()">
+<canvas id="c1" width="32px" height="32px"></canvas>
+<canvas id="c2" width="32px" height="32px"></canvas>
+<a>This test exercises a webkit specific canvas routine drawImageFromRect. This test should pass and never crash. <rdar://problem/9125032> </a>
+<a id="result"></a>
+</body>
+</html>

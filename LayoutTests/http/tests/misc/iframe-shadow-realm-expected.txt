@@ -1,0 +1,10 @@
+Test that shadow realms can load modules from different-origin iframe contexts
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS event.data is 42
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

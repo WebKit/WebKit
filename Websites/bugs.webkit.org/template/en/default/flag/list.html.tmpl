@@ -1,0 +1,193 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% IF user.id && (!bug || bug.check_can_change_field('flagtypes.name', 0, 1)) %]
+
+[%# We list flags by looping twice over the flag types relevant for the bug.
+  # In the first loop, we display existing flags and then, for active types,
+  # we display UI for adding new flags.  In the second loop, we display UI 
+  # for adding additional new flags for those types for which a flag already
+  # exists but which are multiplicable (can have multiple flags of the type
+  # on a single bug/attachment).
+  #%]
+
+[% DEFAULT flag_table_id = "flags" %]
+
+<script src="[% 'js/flag.js' FILTER mtime %]" type="text/javascript"></script>
+
+<table id="[% flag_table_id FILTER html %]">
+  [% UNLESS flag_no_header %]
+    <tr>
+      <th colspan="3">Flags:</th>
+      [% IF any_flags_requesteeble %]
+        <th>Requestee:</th>
+      [% END %]
+      [% IF edit_multiple_bugs %]
+        <th>&nbsp;</th>
+      [% END %]
+    </tr>
+  [% END %]
+
+  [%# Step 1: Display every flag type (except inactive types with no flags). %]
+  [% FOREACH type = flag_types -%]
+
+    [%-# Step 1a: Display existing flag(s). %]
+    [% FOREACH flag = type.flags %]
+      [% PROCESS flag_row flag = flag type = type %]
+    [% END -%]
+
+    [% SET flag = "" %]
+    [% NEXT IF read_only_flags %]
+
+    [%-# Step 1b: Display UI for setting flag. %]
+    [% IF (!type.flags || type.flags.size == 0) && type.is_active %]
+      [% PROCESS flag_row type = type %]
+    [% END %]
+  [% END %]
+
+  [% IF !read_only_flags %]
+    [%# Step 2: Display flag type again (if type is multiplicable). %]
+    [% FOREACH type = flag_types %]
+      [% NEXT UNLESS type.flags && type.flags.size > 0 && type.is_multiplicable && type.is_active %]
+      [% IF !separator_displayed %]
+        <tbody class="bz_flag_type">
+          [% sep_length = 3 + (any_flags_requesteeble ? 1 : 0) + (edit_multiple_bugs ? 1 : 0) %]
+          <tr>
+            <td colspan="[% sep_length FILTER html %]"><hr></td>
+          </tr>
+        </tbody>
+        [% separator_displayed = 1 %]
+      [% END %]
+      [% PROCESS flag_row type = type addl_text = "addl." %]
+    [% END %]
+  [% END %]
+</table>
+
+[% ELSE %]
+  [%# The user is logged out. Display flags as read-only. %]
+  [% header_displayed = 0 %]
+  [% FOREACH type = flag_types %]
+    [% FOREACH flag = type.flags %]
+      [% IF !flag_no_header AND !header_displayed %]
+        <p><b>Flags:</b></p>
+        [% header_displayed = 1 %]
+      [% END %]
+      [% IF flag.setter.name %]
+        <span title="[% flag.setter.name FILTER html %]">[% flag.setter.nick FILTER html %]</span>:
+      [% ELSE %]
+        [% flag.setter.nick FILTER html %]:
+      [% END %]
+      <span class="nowrap">[%+ type.name FILTER html %][% flag.status %]</span>
+      [% IF flag.requestee %]
+        [% IF flag.requestee.name %]
+          (<span title="[% flag.requestee.name FILTER html %]">[% flag.requestee.nick FILTER html %]</span>)
+        [% ELSE %]
+          ([% flag.requestee.nick FILTER html %])
+        [% END %]
+      [% END %]<br>
+    [% END %]
+  [% END %]
+[% END %]
+
+[%# Display a table row for flags %]
+
+[% BLOCK flag_row %]
+  [% RETURN IF !flag && !((type.is_requestable && user.can_request_flag(type)) || user.can_set_flag(type)) %]
+  [% SET fid = flag ? "flag-$flag.id" : "flag_type-$type.id" %]
+  [% can_edit_flag = (!read_only_flags || (flag && (flag.setter_id == user.id || (flag.requestee_id && flag.requestee_id == user.id)))) ? 1 : 0 %]
+  <tbody[% ' class="bz_flag_type"' IF !flag %]>
+    <tr>
+      <td>
+        [% IF flag %]
+          <span title="[% flag.setter.identity FILTER html %]">[% flag.setter.nick FILTER html %]</span>:
+        [% ELSE %]
+          [% addl_text FILTER html %]
+        [% END %]
+      </td>
+      <td class="nowrap">
+        <label title="[% type.description FILTER html %]" for="[% fid FILTER html %]">
+          [%- type.name FILTER html %]</label>
+      </td>
+      <td>
+        <input type="hidden" id="[% fid FILTER html %]_dirty">
+        <select id="[% fid FILTER html %]" name="[% fid FILTER html %]"
+                title="[% type.description FILTER html %]"
+                onchange="toggleRequesteeField(this);"
+                class="flag_select flag_type-[% type.id %]"
+                [% IF !can_edit_flag %] disabled="disabled"[% END %]>
+        [%# Only display statuses the user is allowed to set. %]
+        [% IF edit_multiple_bugs && dontchange %]
+          <option value="[% dontchange FILTER html %]">[% dontchange FILTER html %]</option>
+        [% END %]
+        [% IF !flag || (can_edit_flag && user.can_request_flag(type)) || flag.setter_id == user.id %]
+[%# if WEBKIT_CHANGES %]
+          <option value="X" label=" "></option>
+[%# endif WEBKIT_CHANGES %]
+        [% END %]
+        [% IF type.is_active && can_edit_flag %]
+          [% IF (type.is_requestable && user.can_request_flag(type)) || (flag && flag.status == "?") %]
+            <option value="?" [% "selected" IF flag && flag.status == "?" %]>?</option>
+          [% END %]
+          [% IF user.can_set_flag(type) || (flag && flag.status == "+") %]
+            <option value="+" [% "selected" IF flag && flag.status == "+" %]>+</option>
+          [% END %]
+          [% IF user.can_set_flag(type) || (flag && flag.status == "-") %]
+            <option value="-" [% "selected" IF flag && flag.status == "-" %]>-</option>
+          [% END %]
+        [% ELSE %]
+          <option value="[% flag.status %]" selected="selected">[% flag.status %]</option>
+        [% END %]
+        </select>
+      </td>
+      [% IF any_flags_requesteeble %]
+        <td class="bz_flags">
+          [% IF (type.is_active && type.is_requestable && type.is_requesteeble) || (flag && flag.requestee) %]
+              [% SET grant_list = [] %]
+              [% IF Param('usemenuforusers') %]
+                [% IF !can_edit_flag || (flag && !(type.is_active && type.is_requestable && type.is_requesteeble)) %]
+                  [%# We are here only because there was already a requestee. In this case,
+                      the only valid action is to remove the requestee or leave it alone;
+                      nothing else. %]
+                  [% grant_list = [flag.requestee] %]
+                [% ELSE %]
+                  [% grant_list = type.grant_list %]
+                [% END %]
+              [% END %]
+              [% SET flag_name = flag ? "requestee-$flag.id" : "requestee_type-$type.id" %]
+              [% SET flag_requestee = (flag && flag.requestee) ? flag.requestee.login : '' %]
+              [% SET flag_multiple = flag ? 0 : type.is_multiplicable * 3 %]
+              [% SET flag_empty_ok = flag ? 1 : !type.is_multiplicable %]
+              [% INCLUDE global/userselect.html.tmpl
+                         name     => flag_name
+                         id       => flag_name
+                         value    => flag_requestee
+                         multiple => flag_multiple
+                         emptyok  => flag_empty_ok
+                         classes  => ["requestee"]
+                         custom_userlist => grant_list
+                         disabled => !can_edit_flag
+              %]
+          [% END %]
+        </td>
+      [% END %]
+      [% IF edit_multiple_bugs %]
+        <td>
+        [% IF type.is_multiplicable %]
+          <input type="checkbox" name="flags_add-[% type.id %]"
+                 id="flags_add-[% type.id %]" value="1">
+          <label for="flags_add-[% type.id %]"
+                 title="If ticked, always create a new flag. Leaving it unchecked will
+                        update existing flag(s) and add a new flag if it does not exist">
+            Always add
+          </label>
+        [% END %]
+        </td>
+      [% END %]
+    </tr>
+  </tbody>
+[% END %]

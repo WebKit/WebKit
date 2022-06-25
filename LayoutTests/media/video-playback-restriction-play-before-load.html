@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>video-playback-restriction-play-before-load</title>
+    <script src=media-file.js></script>
+    <script src=video-test.js></script>
+
+    <script>
+    function runTest()
+    {
+        video = document.getElementsByTagName('video')[0];
+
+        if (window.internals)
+            run('internals.setMediaElementRestrictions(video, "RequireUserGestureForAudioRateChange")');
+
+        waitForEventAndFail('error');
+        run("video.src = findMediaFile('video', 'content/test')");
+        run('video.play().then(resolvePromise, rejectPromise)');
+    }    
+
+    function resolvePromise()
+    {
+        failTest("Promise incorrectly resolved.");
+    }
+
+    function rejectPromise()
+    {
+        consoleWrite("Promise correctly rejected.");
+        endTest();
+    }
+    </script>
+</head>
+
+<body onload="runTest()">
+    <p>Test that, when RequireUserGestureForAudioRateChange is set, starting playback of an audio file requires a user gesture.</p>
+    <video controls autoplay></audio>
+</body>
+</html>
+

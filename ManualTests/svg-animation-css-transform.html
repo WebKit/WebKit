@@ -1,0 +1,20 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>SVG Animation of elements transformed using -webkit-transform</title>
+</head>
+<body>
+  <h1>SVG Animation of SVG element rotated using '-webkit-transform'</h1>
+
+  <p>The rotated rect should from 0,0 to 100,0 over 3 seconds.</p>
+
+  <svg xmlns='http://www.w3.org/2000/svg'>
+    <rect id="target" width='100' height='100' stroke="blue" fill="none" style="-webkit-transform: rotate(45deg)">
+      <animateMotion to='100,0' dur='3s' />
+    </rect>
+  </svg>
+</body>
+</html>

@@ -1,0 +1,441 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<!-- ==================================================================================================== -->
+<!-- HTML elements in alphabetical order, excepting the need for nesting (e.g. <li> is with its <ol> and <ul> parents) -->
+<!-- ==================================================================================================== -->
+<a data-platform="atspi,mac" href="#" data-note="[href]" class="ex">X</a>
+<a data-platform="atspi,mac" data-note=":not([href])" class="ex">X</a>
+<abbr data-platform="atspi,mac" data-note=":not([title])" class="ex">X</abbr>
+<abbr data-platform="atspi,mac" title="Times" data-note="[title]" class="ex">X</abbr>
+<!-- http://webkit.org/b/83989 --><address data-platform="atspi,mac" class="ex">X</address>
+<!-- skipped <area> -->
+<article data-platform="atspi,mac" class="ex">X</article>
+<aside data-platform="atspi,mac" class="ex">X</aside>
+<audio data-platform="atspi,mac" class="ex">X</audio>
+<b data-platform="atspi,mac" class="ex">X</b>
+<bdo data-platform="atspi,mac" class="ex">X</bdo>
+<blockquote data-platform="atspi,mac" class="ex">X</blockquote>
+<button data-platform="atspi,mac" class="ex">X</button>
+<canvas data-platform="atspi,mac" class="ex">X</canvas>
+<cite data-platform="atspi,mac" class="ex">X</cite>
+<code data-platform="atspi,mac" class="ex">X</code>
+<!-- skipped <command> -->
+<!-- skipped <datalist> -->
+<del data-platform="atspi,mac" data-note=":not([datetime])" class="ex">X</del>
+<del data-platform="atspi,mac" datetime="2014-10-31 00:00" data-note="[datetime]" class="ex">X</del>
+<!-- skipped <details/summary> http://webkit.org/b/108979 -->
+<dfn data-platform="atspi,mac" class="ex">X</dfn>
+<dl data-platform="atspi,mac" class="ex">
+    <dt data-platform="atspi,mac" class="ex">X</dt>
+    <dd data-platform="atspi,mac" class="ex">X</dd>
+</dl>
+<div data-platform="atspi,mac" class="ex">X</div>
+<em data-platform="atspi,mac" class="ex">X</em>
+<!-- skipped <embed> -->
+<fieldset data-platform="atspi,mac" class="ex">
+    <legend data-platform="atspi,mac" class="ex">X</legend>
+</fieldset>
+<figure data-platform="atspi,mac" class="ex">X</figure>
+<footer data-platform="atspi,mac" class="ex">X</footer>
+<form data-platform="atspi,mac" class="ex">X</form>
+<!-- skipped <frame> -->
+<!-- skipped <frameset> -->
+<!-- skipped <head> -->
+<!-- http://webkit.org/b/109013 --><header data-platform="atspi,mac" class="ex">X</header>
+<hgroup data-platform="atspi,mac" class="ex">X</hgroup>
+<h1 data-platform="atspi,mac" class="ex">X</h1>
+<h2 data-platform="atspi,mac" class="ex">X</h2>
+<h3 data-platform="atspi,mac" class="ex">X</h3>
+<h4 data-platform="atspi,mac" class="ex">X</h4>
+<h5 data-platform="atspi,mac" class="ex">X</h5>
+<h6 data-platform="atspi,mac" class="ex">X</h6>
+<hr data-platform="atspi,mac" class="ex">
+<!-- skipped <html> -->
+<i data-platform="atspi,mac" class="ex">X</i>
+<!-- skipped <iframe> -->
+<img data-platform="atspi,mac" class="ex" data-note=":not([src]):not([alt])">
+<img data-platform="atspi,mac" class="ex" alt="" data-note="[alt='']">
+<img data-platform="atspi,mac" class="ex" src="foo.png" data-note="[src]:not([alt])">
+<img data-platform="atspi,mac" class="ex" alt="X" data-note="[alt='X']">
+<img data-platform="atspi,mac" class="ex" alt="X" usemap="imagemap" data-note="[usemap][alt='X']">
+<img data-platform="atspi,mac" class="ex" usemap="imagemap" data-note="[usemap]:not([alt])">
+<input data-platform="atspi,mac" type="button" value="X" class="ex" data-note="[type='button']">
+<!-- skipped <menu><input type="button"></menu> -->
+<!-- http://webkit.org/b/109017 --><input data-platform="atspi,mac" type="color" value="X" class="ex" data-note="[type='color']">
+<input data-platform="atspi,mac" type="checkbox" class="ex" data-note="[type='checkbox']">
+<!-- skipped <menu><input type="checkbox"></menu> -->
+<!-- http://webkit.org/b/109017 --><input data-platform="atspi,mac" type="date" value="X" class="ex" data-note="[type='date']">
+<!-- http://webkit.org/b/109017 --><input data-platform="atspi,mac" type="datetime" value="X" class="ex" data-note="[type='datetime']">
+<!-- http://webkit.org/b/109017 --><input data-platform="atspi,mac" type="datetime-local" value="X" class="ex" data-note="[type='datetime-local']">
+<!-- http://webkit.org/b/109017 --><input data-platform="atspi,mac" type="email" value="X" class="ex" data-note="[type='email']">
+<input data-platform="atspi,mac" type="file" class="ex" data-note="[type='file']">
+<input data-platform="atspi,mac" type="hidden" class="ex" data-note="[type='hidden']">
+<input data-platform="atspi,mac" type="image" class="ex" data-note="[type='image']">
+<!-- http://webkit.org/b/109017 --><input data-platform="atspi,mac" type="month" value="X" class="ex" data-note="[type='month']">
+<!-- http://webkit.org/b/109017 --><input data-platform="atspi,mac" type="number" value="X" class="ex" data-note="[type='number']">
+<input data-platform="atspi,mac" type="password" value="X" class="ex" data-note="[type='password']">
+<input data-platform="atspi,mac" type="radio" class="ex" data-note="[type='radio']">
+<!-- skipped <menu><input type="radio"></menu> -->
+<input data-platform="atspi,mac" type="range" class="ex" data-note="[type='range']">
+<input data-platform="atspi,mac" type="reset" class="ex" data-note="[type='reset']">
+<input data-platform="atspi,mac" type="search" value="X" class="ex" data-note="[type='search']">
+<input data-platform="atspi,mac" type="submit" class="ex" data-note="[type='submit']">
+<!-- http://webkit.org/b/109017 --><input data-platform="atspi,mac" type="tel" value="X" class="ex" data-note="[type='tel']">
+<input data-platform="atspi,mac" type="text" value="X" class="ex" data-note="[type='text']">
+<!-- skipped <input type="text"> with suggestions source element: http://www.w3.org/html/wg/drafts/html/master/forms.html#concept-input-list -->
+<!-- http://webkit.org/b/109017 --><input data-platform="atspi,mac" type="time" value="X" class="ex" data-note="[type='time']">
+<!-- http://webkit.org/b/109017 --><input data-platform="atspi,mac" type="url" value="X" class="ex" data-note="[type='url']">
+<!-- http://webkit.org/b/109017 --><input data-platform="atspi,mac" type="week" value="X" class="ex" data-note="[type='week']">
+<ins data-platform="atspi,mac" data-note=":not([datetime])" class="ex">X</ins>
+<ins data-platform="atspi,mac" datetime="2014-10-31 00:00" data-note="[datetime]" class="ex">X</ins>
+<!-- skipped <link> -->
+<map data-platform="atspi,mac" class="ex" name="imagemap">
+  <area data-platform="atspi,mac" class="ex" shape="rect" coords="0,0,10,10" href="#" title="x" />
+</map>
+<!-- http://webkit.org/b/109018 --><mark data-platform="atspi,mac" class="ex">X</mark>
+<!-- Some MathML elements do not become hidden by display: none, so hide them after the test via a parent element. http://webkit.org/b/139403 --><div class="ex">
+<math data-platform="atspi,mac" class="ex"><mi>X</mi></math>
+<math><merror data-platform="atspi,mac" class="ex"><mtext>Syntax error</mtext></merror></math>
+<math><mfenced data-platform="atspi,mac" class="ex"><mi class="ex">X</mi></mfenced></math>
+<math><mfrac data-platform="atspi,mac" class="ex"><mi class="ex">X</mi><mn class="ex">Y</mn></mfrac></math>
+<math><mi data-platform="atspi,mac" class="ex">X</mi></math>
+<math><mn data-platform="atspi,mac" class="ex">X</mn></math>
+<math><mo data-platform="atspi,mac" class="ex">X</mo></math>
+<math><mroot data-platform="atspi,mac" class="ex"><mi>X</mi></mroot></math>
+<math><msqrt data-platform="atspi,mac" class="ex"><mi>X</mi></msqrt></math>
+<math><mrow data-platform="atspi,mac" class="ex"><mi class="ex">X</mi></mrow></math>
+<math><ms data-platform="atspi,mac" class="ex">X</ms></math>
+<math>
+  <msub data-platform="atspi,mac" class="ex">
+    <mi data-platform="atspi,mac" class="ex">X</mi>
+    <mi data-platform="atspi,mac" class="ex">X</mi>
+  </msub>
+  <msup data-platform="atspi,mac" class="ex">
+    <mi data-platform="atspi,mac" class="ex">X</mi>
+    <mi data-platform="atspi,mac" class="ex">X</mi>
+  </msup>
+  <msubsup data-platform="atspi,mac" class="ex">
+    <mi data-platform="atspi,mac" class="ex">X</mi>
+    <mi data-platform="atspi,mac" class="ex">X</mi>
+    <mi data-platform="atspi,mac" class="ex">x</mi>
+  </msubsup>
+  <mmultiscripts data-platform="atspi,mac" class="ex">
+    <mi data-platform="atspi,mac" class="ex">X</mi>
+    <mi data-platform="atspi,mac" class="ex">X</mi>
+    <mi data-platform="atspi,mac" class="ex">x</mi>
+    <mprescripts data-platform="atspi,mac" class="ex" />
+    <mi data-platform="atspi,mac" class="ex">X</mi>
+    <mi data-platform="atspi,mac" class="ex">x</mi>
+  </mmultiscripts>
+</math>
+</math>
+<math><mtext data-platform="atspi,mac" class="ex">X</mtext></math>
+<math>
+  <mtable data-platform="atspi,mac" class="ex">
+    <mlabeledtr data-platform="atspi,mac" class="ex"><mtd data-platform="atspi,mac" class="ex"><mi>X</mi></mtd></mlabeledtr>
+    <mtr data-platform="atspi,mac" class="ex"><mtd data-platform="atspi,mac" class="ex"><mi>X</mi></mtd></mtr>
+  </mtable>
+</math>
+</div>
+<!-- skipped <menu> -->
+<!-- skipped <meta> -->
+<!-- reenable for atspi after http://webkit.org/b/163383 fixed --><meter data-platform="mac" class="ex" value="0.75">X</meter>
+<nav data-platform="atspi,mac" class="ex">X</nav>
+<!-- skipped <noscript> -->
+<!-- skipped <object> -->
+<ol data-platform="atspi,mac" class="ex">
+    <li data-platform="atspi,mac" class="ex">X</li>
+</ol>
+<!-- skipped <optgroup> -->
+<!-- skipped <option> -->
+<!-- skipped <output> -->
+<p data-platform="atspi,mac" class="ex">X</p>
+<!-- skipped <param> -->
+<pre data-platform="atspi,mac" class="ex">X</pre>
+<progress data-platform="atspi,mac" class="ex" value="0.75">X</progress>
+<q data-platform="atspi,mac" class="ex">X</q>
+<!-- skipped <ruby/rp/rt> -->
+<s data-platform="atspi,mac" class="ex">X</s>
+<samp data-platform="atspi,mac" class="ex">X</samp>
+<!-- skipped <script> -->
+<!-- http://webkit.org/b/109024 --><section data-platform="atspi,mac" data-note=":not([aria-label]:not([aria-labelledby])" class="ex">X</section>
+<section data-platform="atspi,mac" class="ex" aria-label="x" data-note="[aria-label]">X</section>
+<section data-platform="atspi,mac" class="ex" aria-labelledby="section-label" data-note="[aria-labelledby]">
+    <h2 id="section-label">X</h2>
+</section>
+<select data-platform="atspi,mac" class="ex" data-note=":not([multiple])">
+    <option data-platform="atspi,mac" class="ex">X</option>
+    <optgroup data-platform="atspi,mac" class="ex" label="more">
+        <option data-platform="atspi,mac">X</option>
+    </optgroup>
+</select>
+<select data-platform="atspi,mac" class="ex" multiple data-note="[multiple]">
+    <option data-platform="atspi,mac" class="ex">X</option>
+    <optgroup data-platform="atspi,mac" class="ex" label="more">
+        <option>Y</option>
+        <option>Z</option>
+    </optgroup>
+</select>
+<small data-platform="atspi,mac" class="ex">X</small>
+<!-- skipped <source> -->
+<span data-platform="atspi,mac" data-note=":not([onclick])" class="ex">X</span>
+<span data-platform="atspi,mac" onclick="return;" data-note="[onclick]" class="ex">X</span>
+<strong data-platform="atspi,mac" class="ex">X</strong>
+<!-- skipped <style> -->
+<sub data-platform="atspi,mac" class="ex">X</sub>
+<sup data-platform="atspi,mac" class="ex">X</sup>
+<svg data-platform="atspi,mac" class="ex">X</svg>
+
+<table data-platform="atspi,mac" class="ex">
+    <caption data-platform="atspi,mac" class="ex">X</caption>
+    <thead data-platform="atspi,mac" class="ex">
+        <!-- [ATSPI] Object not exposed (webkit.org/b/139005) --><tr data-platform="atspi,mac" class="ex">
+            <!-- Need separate test to verify colheader/rowheader -->
+            <th data-platform="atspi,mac" class="ex">X</th>
+        </tr>
+    </thead>
+    <tbody data-platform="atspi,mac" class="ex">
+        <!-- [ATSPI] Object not exposed (webkit.org/b/139005) --><tr data-platform="atspi,mac" class="ex">
+            <td data-platform="atspi,mac" class="ex">X</td>
+        </tr>
+    </tbody>
+    <tfoot data-platform="atspi,mac" class="ex">
+        <!-- [ATSPI] Object not exposed (webkit.org/b/139005) --><tr data-platform="atspi,mac" class="ex">
+            <!-- Need separate test to verify colheader/rowheader -->
+            <th data-platform="atspi,mac" class="ex">X</th>
+        </tr>
+    </tfoot>
+</table>
+<textarea data-platform="atspi,mac" class="ex">X</textarea>
+<time data-platform="atspi,mac" data-note=":not([datetime])" class="ex">X</time>
+<time data-platform="atspi,mac" datetime="2014-10-31 00:00" data-note="[datetime]" class="ex">X</time>
+<!-- skipped <title> -->
+<ul data-platform="atspi,mac" class="ex">
+    <li data-platform="atspi,mac" class="ex">X</li>
+</ul>
+<var data-platform="atspi,mac" class="ex">X</var>
+<!-- skipped <video> -->
+<wbr data-platform="atspi,mac" class="ex">X</wbr>
+<!-- Todo: I left off adding HTML5 elements here at previous element: https://dvcs.w3.org/hg/html-api-map/raw-file/default/Overview.html -->
+
+
+
+<!-- ==================================================================================================== -->
+<!-- Abstract ARIA roles in alphabetical order; only generic AXGroup role should be exposed on abstract roles -->
+<!-- ==================================================================================================== -->
+<div role="command"     data-platform="atspi,mac" class="ex">X</div>
+<div role="composite"   data-platform="atspi,mac" class="ex">X</div>
+<div role="input"       data-platform="atspi,mac" class="ex">X</div>
+<div role="landmark"    data-platform="atspi,mac" class="ex">X</div>
+<div role="range"       data-platform="atspi,mac" class="ex">X</div>
+<div role="roletype"    data-platform="atspi,mac" class="ex">X</div>
+<div role="section"     data-platform="atspi,mac" class="ex">X</div>
+<div role="sectionhead" data-platform="atspi,mac" class="ex">X</div>
+<div role="select"      data-platform="atspi,mac" class="ex">X</div>
+<div role="structure"   data-platform="atspi,mac" class="ex">X</div>
+<div role="widget"      data-platform="atspi,mac" class="ex">X</div>
+<div role="window"      data-platform="atspi,mac" class="ex">X</div>
+
+
+<!-- ==================================================================================================== -->
+<!-- Non-abstract ARIA roles in alphabetical order, excepting the need for nesting (e.g. row is with its grid parent) -->
+<!-- ==================================================================================================== -->
+<div role="alert"                    data-platform="atspi,mac" class="ex">X</div>
+<div role="alertdialog"              data-platform="atspi,mac" class="ex">X</div>
+<div role="application"              data-platform="atspi,mac" class="ex">X</div>
+<div role="article"                  data-platform="atspi,mac" class="ex">X</div>
+<div role="banner"                   data-platform="atspi,mac" class="ex">X</div>
+<div role="blockquote"               data-platform="atspi,mac" class="ex">X</div>
+<div role="button"                   data-platform="atspi,mac" class="ex">X</div>
+<div role="caption"                  data-platform="atspi,mac" class="ex">X</div>
+<div role="checkbox"                 data-platform="atspi,mac" class="ex">X</div>
+<div role="combobox"                 data-platform="atspi,mac" class="ex">X</div>
+<div role="complementary"            data-platform="atspi,mac" class="ex">X</div>
+<div role="contentinfo"              data-platform="atspi,mac" class="ex">X</div>
+<div role="definition"               data-platform="atspi,mac" class="ex">X</div>
+<div role="deletion"                 data-platform="atspi,mac" class="ex">X</div>
+<div role="dialog"                   data-platform="atspi,mac" class="ex">X</div>
+<div role="directory"                data-platform="atspi,mac" class="ex">X</div>
+<!-- The 'doc-*' roles are defined the ARIA DPUB mobile: https://www.w3.org/TR/dpub-aam-1.0/ -->
+<!-- Editor's draft is currently at https://rawgit.com/w3c/aria/master/dpub-aam/dpub-aam.html -->
+<div role="doc-abstract"             data-platform="atspi,mac" class="ex">X</div>
+<div role="doc-acknowledgments"      data-platform="atspi,mac" class="ex">X</div>
+<div role="doc-afterword"            data-platform="atspi,mac" class="ex">X</div>
+<div role="doc-appendix"             data-platform="atspi,mac" class="ex">X</div>
+<div role="doc-backlink"             data-platform="atspi,mac" class="ex">X</div>
+<div role="doc-biblioentry"          data-platform="atspi,mac" class="ex">X</div>
+<div role="doc-bibliography"         data-platform="atspi,mac" class="ex">X</div>
+<div role="doc-biblioref"            data-platform="atspi,mac" class="ex">X</div>
+<div role="doc-chapter"              data-platform="atspi,mac" class="ex">X</div>
+<div role="doc-colophon"             data-platform="atspi,mac" class="ex">X</div>
+<div role="doc-conclusion"           data-platform="atspi,mac" class="ex">X</div>
+<div role="doc-cover"                data-platform="atspi,mac" class="ex">X</div>
+<div role="doc-credit"               data-platform="atspi,mac" class="ex">X</div>
+<div role="doc-credits"              data-platform="atspi,mac" class="ex">X</div>
+<div role="doc-dedication"           data-platform="atspi,mac" class="ex">X</div>
+<div role="doc-endnote"              data-platform="atspi,mac" class="ex">X</div>
+<div role="doc-endnotes"             data-platform="atspi,mac" class="ex">X</div>
+<div role="doc-epigraph"             data-platform="atspi,mac" class="ex">X</div>
+<div role="doc-epilogue"             data-platform="atspi,mac" class="ex">X</div>
+<div role="doc-errata"               data-platform="atspi,mac" class="ex">X</div>
+<div role="doc-example"              data-platform="atspi,mac" class="ex">X</div>
+<div role="doc-footnote"             data-platform="atspi,mac" class="ex">X</div>
+<div role="doc-foreword"             data-platform="atspi,mac" class="ex">X</div>
+<div role="doc-glossary"             data-platform="atspi,mac" class="ex">X</div>
+<div role="doc-glossref"             data-platform="atspi,mac" class="ex">X</div>
+<div role="doc-index"                data-platform="atspi,mac" class="ex">X</div>
+<div role="doc-introduction"         data-platform="atspi,mac" class="ex">X</div>
+<div role="doc-noteref"              data-platform="atspi,mac" class="ex">X</div>
+<div role="doc-notice"               data-platform="atspi,mac" class="ex">X</div>
+<div role="doc-pagebreak"            data-platform="atspi,mac" class="ex">X</div>
+<div role="doc-pagelist"             data-platform="atspi,mac" class="ex">X</div>
+<div role="doc-part"                 data-platform="atspi,mac" class="ex">X</div>
+<div role="doc-preface"              data-platform="atspi,mac" class="ex">X</div>
+<div role="doc-prologue"             data-platform="atspi,mac" class="ex">X</div>
+<div role="doc-pullquote"            data-platform="atspi,mac" class="ex">X</div>
+<div role="doc-qna"                  data-platform="atspi,mac" class="ex">X</div>
+<div role="doc-subtitle"             data-platform="atspi,mac" class="ex">X</div>
+<div role="doc-tip"                  data-platform="atspi,mac" class="ex">X</div>
+<div role="doc-toc"                  data-platform="atspi,mac" class="ex">X</div>
+<div role="document"                 data-platform="atspi,mac" class="ex">X</div>
+<div role="figure"                   data-platform="atspi,mac" class="ex">X</div>
+<div role="form"                     data-platform="atspi,mac" class="ex">X</div>
+<div role="graphics-document"        data-platform="atspi,mac" class="ex">X</div>
+<div role="graphics-object"          data-platform="atspi,mac" class="ex">X</div>
+<div role="graphics-symbol"          data-platform="atspi,mac" class="ex">X</div>
+<div role="grid"                     data-platform="atspi,mac" class="ex">
+    <div role="rowgroup"             data-platform="atspi,mac" class="ex">
+        <div role="row"              data-platform="atspi,mac" class="ex">
+            <!-- Note: diff between rowheader, columnheader, and gridcell is in cross-reference from grid; need additional non-role verification in another test. -->
+            <div role="rowheader"    data-platform="atspi,mac" class="ex">X</div>
+            <div role="columnheader" data-platform="atspi,mac" class="ex">X</div>
+            <div role="gridcell"     data-platform="atspi,mac" class="ex">X</div>
+        </div>
+    </div>
+</div>
+<div role="feed"                     data-platform="atspi,mac" class="ex">X</div>
+<div role="group"                    data-platform="atspi,mac" class="ex">X</div>
+<div role="heading"                  data-platform="atspi,mac" class="ex">X</div>
+<div role="img"                      data-platform="atspi,mac" class="ex">X</div>
+<div role="insertion"                data-platform="atspi,mac" class="ex">X</div>
+<div role="link"                     data-platform="atspi,mac" class="ex">X</div>
+<div role="list"                     data-platform="atspi,mac" class="ex">
+    <div role="listitem"             data-platform="atspi,mac" class="ex">X</div>
+</div>
+<div role="listbox"                  data-platform="atspi,mac" class="ex">
+    <div role="option"               data-platform="atspi,mac" class="ex">X</div>
+</div>
+<div role="log"                      data-platform="atspi,mac" class="ex">X</div>
+<div role="main"                     data-platform="atspi,mac" class="ex">X</div>
+<div role="marquee"                  data-platform="atspi,mac" class="ex">X</div>
+<div role="math"                     data-platform="atspi,mac" class="ex">X</div>
+<div role="menu"                     data-platform="atspi,mac" class="ex">
+    <!-- Note: diff between menuitem types is an attribute; need additional non-role verification in another test. -->
+    <div role="menuitem"             data-platform="atspi,mac" class="ex">X</div>
+    <div role="menuitemcheckbox"     data-platform="atspi,mac" class="ex">X</div>
+    <div role="menuitemradio"        data-platform="atspi,mac" class="ex">X</div>
+</div>
+<div role="menubar"                  data-platform="atspi,mac" class="ex">
+    <!-- Note: diff between menuitem types is an attribute; need additional non-role verification in another test. -->
+    <div role="menuitem"             data-platform="atspi,mac" class="ex">X</div>
+    <div role="menuitemcheckbox"     data-platform="atspi,mac" class="ex">X</div>
+    <div role="menuitemradio"        data-platform="atspi,mac" class="ex">X</div>
+</div>
+<div role="meter"                    data-platform="atspi,mac" class="ex">X</div>
+<div role="navigation"               data-platform="atspi,mac" class="ex">X</div>
+<div role="note"                     data-platform="atspi,mac" class="ex">X</div>
+<div role="paragraph"                data-platform="atspi,mac" class="ex">X</div>
+<div role="presentation"             data-platform="atspi,mac" class="ex">X</div>
+<div role="progressbar"              data-platform="atspi,mac" class="ex">X</div>
+<div role="radiogroup"               data-platform="atspi,mac" class="ex">
+    <div role="radio"                data-platform="atspi,mac" class="ex">X</div>
+</div>
+<div role="region"                   data-platform="atspi,mac" class="ex" data-note=":not([aria-label]:not([aria-labelledby])">X</div>
+<div role="region"                   data-platform="atspi,mac" class="ex" aria-label="x" data-note="[aria-label]">X</div>
+<div role="region"                   data-platform="atspi,mac" class="ex" aria-labelledby="region-label" data-note="[aria-labelledby]">
+    <h2 id="region-label">X</h2>
+</div>
+<div role="scrollbar"                data-platform="atspi,mac" class="ex">X</div>
+<div role="search"                   data-platform="atspi,mac" class="ex">X</div>
+<div role="searchbox"                data-platform="atspi,mac" class="ex">X</div>
+<div role="separator"                data-platform="atspi,mac" class="ex">X</div>
+<div role="slider"                   data-platform="atspi,mac" class="ex">X</div>
+<div role="spinbutton"               data-platform="atspi,mac" class="ex">X</div>
+<div role="status"                   data-platform="atspi,mac" class="ex">X</div>
+<div role="subscript"                data-platform="atspi,mac" class="ex">X</div>
+<div role="superscript"              data-platform="atspi,mac" class="ex">X</div>
+<div role="switch"                   data-platform="atspi,mac" class="ex">X</div>
+<div role="tablist"                  data-platform="atspi,mac" class="ex">
+    <div role="tab"                  data-platform="atspi,mac" class="ex">X</div>
+</div>
+<div role="tabpanel"                 data-platform="atspi,mac" class="ex">X</div>
+<div role="term"                     data-platform="atspi,mac" class="ex">X</div>
+<div role="textbox"                  data-platform="atspi,mac" class="ex">X</div>
+<div role="time"                     data-platform="atspi,mac" class="ex">X</div>
+<div role="timer"                    data-platform="atspi,mac" class="ex">X</div>
+<div role="toolbar"                  data-platform="atspi,mac" class="ex">X</div>
+<div role="tooltip"                  data-platform="atspi,mac" class="ex">X</div>
+<div role="tree"                     data-platform="atspi,mac" class="ex">
+    <div role="treeitem"             data-platform="atspi,mac" class="ex">X</div>
+    <div role="group"                data-platform="atspi,mac" class="ex">
+        <div role="treeitem"         data-platform="atspi,mac" class="ex">X</div>
+    </div>
+</div>
+<div role="treegrid"                 data-platform="atspi,mac" class="ex">
+    <div role="rowgroup"             data-platform="atspi,mac" class="ex">
+        <div role="row"              data-platform="atspi,mac" class="ex">
+            <!-- Note: diff between rowheader, columnheader, and gridcell is in cross-reference from grid; need additional non-role verification in another test. -->
+            <div role="rowheader"    data-platform="atspi,mac" class="ex">X</div>
+            <div role="columnheader" data-platform="atspi,mac" class="ex">X</div>
+            <div role="gridcell"     data-platform="atspi,mac" class="ex">X</div>
+        </div>
+    </div>
+</div>
+
+<script>
+if (window.testRunner && window.accessibilityController) {
+    description("This tests that native elements and ARIA overrides result in the expected role, subrole and role description.")
+
+    var currentPlatform = accessibilityController.platformName;
+    var examples = document.querySelectorAll('.ex');
+    var indent = "      "; // six spaces
+    var output = "";
+    for (let i = 0; i < examples.length; ++i) {
+        el = examples[i];
+
+        let supportedPlatforms = el.getAttribute('data-platform');
+        if (!supportedPlatforms || supportedPlatforms.indexOf(currentPlatform) == -1)
+            continue;
+
+        let ariaRole = el.getAttribute('role');
+        el.id = `ex${i}`;
+        output += el.tagName.toLowerCase() + (ariaRole ? ("[role=" + ariaRole + "]") : '');
+        if (el.getAttribute('data-note'))
+            output += el.getAttribute('data-note');
+        output += "\n";
+
+        let axElement = accessibilityController.accessibleElementById(el.id);
+        if (axElement) {
+            output += `${indent}${axElement.role}\n`;
+            if (currentPlatform == "mac")
+                output += `${indent}${axElement.subrole}\n${indent}${axElement.roleDescription}\n`;
+        } else
+            output += `${indent}Could not get AX element.\n`;
+        output += "\n";
+    }
+    debug(output);
+
+    // Once tests are complete, hide all the example markup.
+    examples.forEach((el) => {
+        if (el.style)
+            el.style.display = 'none';
+    });
+}
+</script>
+</body>
+</html>

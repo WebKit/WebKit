@@ -1,0 +1,16 @@
+2 different module tag will attempt to load the same module from a dynamically generated tag
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Currently, this is not defined in the spec. This issue should be fixed in the future.
+Module is not executed yet.
+PASS window.moduleExecutedCount is 0
+Executing module-load-same-module-from-different-entry-point.js.
+Executing the module.
+PASS window.moduleExecutedCount is 1
+PASS window.moduleExecutedCount is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script>
+
+let context;
+let oscillator;
+let stream;
+let gain;
+
+function sendMessage(message)
+{
+    try {
+        if (window.webkit)
+            window.webkit.messageHandlers.testHandler.postMessage(message);
+        else
+            console.log(`MESSAGE - ${message}`);
+    } catch(err) {
+        console.log(`failed to send message ${message}: ${err}`);
+    }
+}
+
+function createWebAudioNode()
+{
+    context = new AudioContext();
+
+    gain = new GainNode(context, {gain: 0.05});
+    gain.connect(context.destination);
+
+    oscillator = new OscillatorNode(context);
+    oscillator.connect(gain);
+    oscillator.start();
+}
+
+function disconnectWebAudioNode()
+{
+    oscillator.stop();
+    oscillator.disconnect();
+    gain.disconnect();
+    context.close();
+}
+
+async function startCapture()
+{
+    stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: { volume: 0.05 } });
+}
+
+function stopCapture()
+{
+    stream.getTracks().forEach(track => track.stop());
+}
+
+async function playVideo() 
+{
+    let video = document.getElementsByTagName('video')[0];
+    video.src = 'test-mse.mp4';
+    video.volume = 0.05;
+    await video.play();
+    sendMessage('playing');
+}
+
+function pauseVideo() 
+{
+    video = document.getElementsByTagName('video')[0].pause();
+}
+        </script>
+    <head>
+
+    <body>
+        <video controls></video>
+        <br>
+        <button onclick="createWebAudioNode()">Create Audio Node</button>
+        <button onclick="disconnectWebAudioNode()">Disconnect Audio Node</button>
+        <br>
+        <button onclick="startCapture()">Start Capture</button>
+        <button onclick="stopCapture()">Stop Capture</button>
+        <br>
+        <button onclick="playVideo()">Play &lt;video&gt;</button>
+        <button onclick="pauseVideo()">Pause &lt;video&gt;</button>
+    </body>
+</html>

@@ -1,0 +1,14 @@
+Tests that DFG inlining does not brak function.arguments.caller.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS resultArray.length is 4
+PASS resultArray[3] is "g"
+PASS resultArray[2] is "makeInlinableCall"
+PASS resultArray[1] is "inlineable"
+PASS resultArray[0] is "nonInlineable"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

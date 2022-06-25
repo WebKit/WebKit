@@ -1,0 +1,30 @@
+
+PASS idl_test setup
+PASS idl_test validation
+FAIL ReportBody interface: existence and properties of interface object assert_own_property: self does not have own property "ReportBody" expected property "ReportBody" missing
+FAIL ReportBody interface object length assert_own_property: self does not have own property "ReportBody" expected property "ReportBody" missing
+FAIL ReportBody interface object name assert_own_property: self does not have own property "ReportBody" expected property "ReportBody" missing
+FAIL ReportBody interface: existence and properties of interface prototype object assert_own_property: self does not have own property "ReportBody" expected property "ReportBody" missing
+FAIL ReportBody interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "ReportBody" expected property "ReportBody" missing
+FAIL ReportBody interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "ReportBody" expected property "ReportBody" missing
+FAIL ReportBody interface: operation toJSON() assert_own_property: self does not have own property "ReportBody" expected property "ReportBody" missing
+FAIL Report interface: existence and properties of interface object assert_own_property: self does not have own property "Report" expected property "Report" missing
+FAIL Report interface object length assert_own_property: self does not have own property "Report" expected property "Report" missing
+FAIL Report interface object name assert_own_property: self does not have own property "Report" expected property "Report" missing
+FAIL Report interface: existence and properties of interface prototype object assert_own_property: self does not have own property "Report" expected property "Report" missing
+FAIL Report interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "Report" expected property "Report" missing
+FAIL Report interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "Report" expected property "Report" missing
+FAIL Report interface: operation toJSON() assert_own_property: self does not have own property "Report" expected property "Report" missing
+FAIL Report interface: attribute type assert_own_property: self does not have own property "Report" expected property "Report" missing
+FAIL Report interface: attribute url assert_own_property: self does not have own property "Report" expected property "Report" missing
+FAIL Report interface: attribute body assert_own_property: self does not have own property "Report" expected property "Report" missing
+FAIL ReportingObserver interface: existence and properties of interface object assert_own_property: self does not have own property "ReportingObserver" expected property "ReportingObserver" missing
+FAIL ReportingObserver interface object length assert_own_property: self does not have own property "ReportingObserver" expected property "ReportingObserver" missing
+FAIL ReportingObserver interface object name assert_own_property: self does not have own property "ReportingObserver" expected property "ReportingObserver" missing
+FAIL ReportingObserver interface: existence and properties of interface prototype object assert_own_property: self does not have own property "ReportingObserver" expected property "ReportingObserver" missing
+FAIL ReportingObserver interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "ReportingObserver" expected property "ReportingObserver" missing
+FAIL ReportingObserver interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "ReportingObserver" expected property "ReportingObserver" missing
+FAIL ReportingObserver interface: operation observe() assert_own_property: self does not have own property "ReportingObserver" expected property "ReportingObserver" missing
+FAIL ReportingObserver interface: operation disconnect() assert_own_property: self does not have own property "ReportingObserver" expected property "ReportingObserver" missing
+FAIL ReportingObserver interface: operation takeRecords() assert_own_property: self does not have own property "ReportingObserver" expected property "ReportingObserver" missing
+

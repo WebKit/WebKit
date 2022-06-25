@@ -1,0 +1,16 @@
+[pull]
+        rebase = true
+[webkitscmpy]
+        pull-request = append
+        history = disabled
+        update-fork = true
+        auto-check = true
+[webkitscmpy "remotes"]
+        origin = git@github.com:WebKit/WebKit.git
+        apple = git@github.com:apple/WebKit.git
+        security = git@github.com:WebKit/WebKit-security.git
+[webkitscmpy "access"]
+        apple = apple/teams/WebKit
+        security = WebKit/teams/security
+[webkitscmpy "pre-pr"]
+        style-checker = python3 Tools/Scripts/check-webkit-style

@@ -1,0 +1,403 @@
+{
+    "domain": "Debugger",
+    "description": "Debugger domain exposes JavaScript debugging capabilities. It allows setting and removing breakpoints, stepping through execution, exploring stack traces, etc.",
+    "debuggableTypes": ["itml", "javascript", "page", "service-worker", "web-page"],
+    "targetTypes": ["itml", "javascript", "page", "service-worker", "worker"],
+    "types": [
+        {
+            "id": "BreakpointId",
+            "type": "string",
+            "description": "Breakpoint identifier."
+        },
+        {
+            "id": "BreakpointActionIdentifier",
+            "type": "integer",
+            "description": "Breakpoint action identifier."
+        },
+        {
+            "id": "ScriptId",
+            "type": "string",
+            "description": "Unique script identifier."
+        },
+        {
+            "id": "CallFrameId",
+            "type": "string",
+            "description": "Call frame identifier."
+        },
+        {
+            "id": "Location",
+            "type": "object",
+            "description": "Location in the source code.",
+            "properties": [
+                { "name": "scriptId", "$ref": "ScriptId", "description": "Script identifier as reported in the <code>Debugger.scriptParsed</code>." },
+                { "name": "lineNumber", "type": "integer", "description": "Line number in the script (0-based)." },
+                { "name": "columnNumber", "type": "integer", "optional": true, "description": "Column number in the script (0-based)." }
+            ]
+        },
+        {
+            "id": "BreakpointAction",
+            "type": "object",
+            "description": "Action to perform when a breakpoint is triggered.",
+            "properties": [
+                { "name": "type", "type": "string", "enum": ["log", "evaluate", "sound", "probe"], "description": "Different kinds of breakpoint actions." },
+                { "name": "data", "type": "string", "optional": true, "description": "Data associated with this breakpoint type (e.g. for type \"eval\" this is the JavaScript string to evaluate)." },
+                { "name": "id", "$ref": "BreakpointActionIdentifier", "optional": true, "description": "A frontend-assigned identifier for this breakpoint action." },
+                { "name": "emulateUserGesture", "type": "boolean", "optional": true, "description": "Indicates whether this action should be executed with a user gesture or not. Defaults to <code>false<code>." }
+            ]
+        },
+        {
+            "id": "BreakpointOptions",
+            "type": "object",
+            "description": "Extra options that modify breakpoint behavior.",
+            "properties": [
+                { "name": "condition", "type": "string", "optional": true, "description": "Expression to use as a breakpoint condition. When specified, debugger will only stop on the breakpoint if this expression evaluates to true." },
+                { "name": "actions", "type": "array", "optional": true, "items": { "$ref": "BreakpointAction" }, "description": "Actions to perform automatically when the breakpoint is triggered." },
+                { "name": "autoContinue", "type": "boolean", "optional": true, "description": "Automatically continue after hitting this breakpoint and running actions." },
+                { "name": "ignoreCount", "type": "integer", "optional": true, "description": "Number of times to ignore this breakpoint, before stopping on the breakpoint and running actions." }
+            ]
+        },
+        {
+            "id": "FunctionDetails",
+            "type": "object",
+            "description": "Information about the function.",
+            "properties": [
+                { "name": "location", "$ref": "Location", "description": "Location of the function." },
+                { "name": "name", "type": "string", "optional": true, "description": "Name of the function. Not present for anonymous functions." },
+                { "name": "displayName", "type": "string", "optional": true, "description": "Display name of the function(specified in 'displayName' property on the function object)." },
+                { "name": "scopeChain", "type": "array", "optional": true, "items": { "$ref": "Scope" }, "description": "Scope chain for this closure." }
+            ]
+        },
+        {
+            "id": "CallFrame",
+            "type": "object",
+            "description": "JavaScript call frame. Array of call frames form the call stack.",
+            "properties": [
+                { "name": "callFrameId", "$ref": "CallFrameId", "description": "Call frame identifier. This identifier is only valid while the virtual machine is paused." },
+                { "name": "functionName", "type": "string", "description": "Name of the JavaScript function called on this call frame." },
+                { "name": "location", "$ref": "Location", "description": "Location in the source code." },
+                { "name": "scopeChain", "type": "array", "items": { "$ref": "Scope" }, "description": "Scope chain for this call frame." },
+                { "name": "this", "$ref": "Runtime.RemoteObject", "description": "<code>this</code> object for this call frame." },
+                { "name": "isTailDeleted", "type": "boolean", "description": "Is the current frame tail deleted from a tail call." }
+            ]
+        },
+        {
+            "id": "Scope",
+            "type": "object",
+            "description": "Scope description.",
+            "properties": [
+                { "name": "object", "$ref": "Runtime.RemoteObject", "description": "Object representing the scope. For <code>global</code> and <code>with</code> scopes it represents the actual object; for the rest of the scopes, it is artificial transient object enumerating scope variables as its properties." },
+                { "name": "type", "type": "string", "enum": ["global", "with", "closure", "catch", "functionName", "globalLexicalEnvironment", "nestedLexical"], "description": "Scope type." },
+                { "name": "name", "type": "string", "optional": true, "description": "Name associated with the scope." },
+                { "name": "location", "$ref": "Location", "optional": true, "description": "Location if available of the scope definition." },
+                { "name": "empty", "type": "boolean", "optional": true, "description": "Whether the scope has any variables." }
+            ]
+        },
+        {
+            "id": "ProbeSample",
+            "description": "A sample collected by evaluating a probe breakpoint action.",
+            "type": "object",
+            "properties": [
+                { "name": "probeId", "$ref": "BreakpointActionIdentifier", "description": "Identifier of the probe breakpoint action that created the sample." },
+                { "name": "sampleId", "type": "integer", "description": "Unique identifier for this sample." },
+                { "name": "batchId", "type": "integer", "description": "A batch identifier which is the same for all samples taken at the same breakpoint hit." },
+                { "name": "timestamp", "type": "number", "description": "Timestamp of when the sample was taken." },
+                { "name": "payload", "$ref": "Runtime.RemoteObject", "description": "Contents of the sample." }
+            ]
+        },
+        {
+            "id": "AssertPauseReason",
+            "type": "object",
+            "description": "The pause reason auxiliary data when paused because of an assertion.",
+            "properties": [
+                { "name": "message", "type": "string", "optional": true, "description": "The console.assert message string if provided." }
+            ]
+        },
+        {
+            "id": "BreakpointPauseReason",
+            "type": "object",
+            "description": "The pause reason auxiliary data when paused because of hitting a breakpoint.",
+            "properties": [
+                { "name": "breakpointId", "type": "string", "description": "The identifier of the breakpoint causing the pause." }
+            ]
+        },
+        {
+            "id": "CSPViolationPauseReason",
+            "type": "object",
+            "description": "The pause reason auxiliary data when paused because of a Content Security Policy directive.",
+            "properties": [
+                { "name": "directive", "type": "string", "description": "The CSP directive that blocked script execution." }
+            ]
+        }
+    ],
+    "commands": [
+        {
+            "name": "enable",
+            "description": "Enables debugger for the given page. Clients should not assume that the debugging has been enabled until the result for this command is received."
+        },
+        {
+            "name": "disable",
+            "description": "Disables debugger for given page."
+        },
+        {
+            "name": "setAsyncStackTraceDepth",
+            "description": "Set the async stack trace depth for the page. A value of zero disables recording of async stack traces.",
+            "parameters": [
+                { "name": "depth", "type": "integer", "description": "Async stack trace depth." }
+            ]
+        },
+        {
+            "name": "setBreakpointsActive",
+            "description": "Activates / deactivates all breakpoints on the page.",
+            "parameters": [
+                { "name": "active", "type": "boolean", "description": "New value for breakpoints active state." }
+            ]
+        },
+        {
+            "name": "setBreakpointByUrl",
+            "description": "Sets JavaScript breakpoint at given location specified either by URL or URL regex. Once this command is issued, all existing parsed scripts will have breakpoints resolved and returned in <code>locations</code> property. Further matching script parsing will result in subsequent <code>breakpointResolved</code> events issued. This logical breakpoint will survive page reloads.",
+            "parameters": [
+                { "name": "lineNumber", "type": "integer", "description": "Line number to set breakpoint at." },
+                { "name": "url", "type": "string", "optional": true, "description": "URL of the resources to set breakpoint on." },
+                { "name": "urlRegex", "type": "string", "optional": true, "description": "Regex pattern for the URLs of the resources to set breakpoints on. Either <code>url</code> or <code>urlRegex</code> must be specified." },
+                { "name": "columnNumber", "type": "integer", "optional": true, "description": "Offset in the line to set breakpoint at." },
+                { "name": "options", "$ref": "BreakpointOptions", "optional": true, "description": "Options to apply to this breakpoint to modify its behavior." }
+            ],
+            "returns": [
+                { "name": "breakpointId", "$ref": "BreakpointId", "description": "Id of the created breakpoint for further reference." },
+                { "name": "locations", "type": "array", "items": { "$ref": "Location"}, "description": "List of the locations this breakpoint resolved into upon addition." }
+            ]
+        },
+        {
+            "name": "setBreakpoint",
+            "description": "Sets JavaScript breakpoint at a given location.",
+            "parameters": [
+                { "name": "location", "$ref": "Location", "description": "Location to set breakpoint in." },
+                { "name": "options", "$ref": "BreakpointOptions", "optional": true, "description": "Options to apply to this breakpoint to modify its behavior." }
+            ],
+            "returns": [
+                { "name": "breakpointId", "$ref": "BreakpointId", "description": "Id of the created breakpoint for further reference." },
+                { "name": "actualLocation", "$ref": "Location", "description": "Location this breakpoint resolved into." }
+            ]
+        },
+        {
+            "name": "removeBreakpoint",
+            "description": "Removes JavaScript breakpoint.",
+            "parameters": [
+                { "name": "breakpointId", "$ref": "BreakpointId" }
+            ]
+        },
+        {
+            "name": "continueUntilNextRunLoop",
+            "description": "Continues execution until the current evaluation completes. This will trigger either a Debugger.paused or Debugger.resumed event."
+        },
+        {
+            "name": "continueToLocation",
+            "description": "Continues execution until specific location is reached. This will trigger either a Debugger.paused or Debugger.resumed event.",
+            "parameters": [
+                { "name": "location", "$ref": "Location", "description": "Location to continue to." }
+            ]
+        },
+        {
+            "name": "stepNext",
+            "description": "Steps over the expression. This will trigger either a Debugger.paused or Debugger.resumed event."
+        },
+        {
+            "name": "stepOver",
+            "description": "Steps over the statement. This will trigger either a Debugger.paused or Debugger.resumed event."
+        },
+        {
+            "name": "stepInto",
+            "description": "Steps into the function call. This will trigger either a Debugger.paused or Debugger.resumed event."
+        },
+        {
+            "name": "stepOut",
+            "description": "Steps out of the function call. This will trigger either a Debugger.paused or Debugger.resumed event."
+        },
+        {
+            "name": "pause",
+            "description": "Stops on the next JavaScript statement."
+        },
+        {
+            "name": "resume",
+            "description": "Resumes JavaScript execution. This will trigger a Debugger.resumed event."
+        },
+        {
+            "name": "searchInContent",
+            "description": "Searches for given string in script content.",
+            "parameters": [
+                { "name": "scriptId", "$ref": "ScriptId", "description": "Id of the script to search in." },
+                { "name": "query", "type": "string", "description": "String to search for." },
+                { "name": "caseSensitive", "type": "boolean", "optional": true, "description": "If true, search is case sensitive." },
+                { "name": "isRegex", "type": "boolean", "optional": true, "description": "If true, treats string parameter as regex." }
+            ],
+            "returns": [
+                { "name": "result", "type": "array", "items": { "$ref": "GenericTypes.SearchMatch" }, "description": "List of search matches." }
+            ]
+        },
+        {
+            "name": "getScriptSource",
+            "description": "Returns source for the script with given id.",
+            "parameters": [
+                { "name": "scriptId", "$ref": "ScriptId", "description": "Id of the script to get source for." }
+            ],
+            "returns": [
+                { "name": "scriptSource", "type": "string", "description": "Script source." }
+            ]
+        },
+        {
+            "name": "getFunctionDetails",
+            "description": "Returns detailed information on given function.",
+            "parameters": [
+                { "name": "functionId", "$ref": "Runtime.RemoteObjectId", "description": "Id of the function to get location for." }
+            ],
+            "returns": [
+                { "name": "details", "$ref": "FunctionDetails", "description": "Information about the function." }
+            ]
+        },
+        {
+            "name": "setPauseOnDebuggerStatements",
+            "description": "Control whether the debugger pauses execution before `debugger` statements.",
+            "parameters": [
+                { "name": "enabled", "type": "boolean" },
+                { "name": "options", "$ref": "BreakpointOptions", "optional": true, "description": "Options to apply to this breakpoint to modify its behavior." }
+            ]
+        },
+        {
+            "name": "setPauseOnExceptions",
+            "description": "Defines pause on exceptions state. Can be set to stop on all exceptions, uncaught exceptions or no exceptions. Initial pause on exceptions state is <code>none</code>.",
+            "parameters": [
+                { "name": "state", "type": "string", "enum": ["none", "uncaught", "all"], "description": "Pause on exceptions mode." },
+                { "name": "options", "$ref": "BreakpointOptions", "optional": true, "description": "Options to apply to this breakpoint to modify its behavior." }
+            ]
+        },
+        {
+            "name": "setPauseOnAssertions",
+            "description": "Set pause on assertions state. Assertions are console.assert assertions.",
+            "parameters": [
+                { "name": "enabled", "type": "boolean" },
+                { "name": "options", "$ref": "BreakpointOptions", "optional": true, "description": "Options to apply to this breakpoint to modify its behavior." }
+            ]
+        },
+        {
+            "name": "setPauseOnMicrotasks",
+            "description": "Pause when running the next JavaScript microtask.",
+            "parameters": [
+                { "name": "enabled", "type": "boolean" },
+                { "name": "options", "$ref": "BreakpointOptions", "optional": true, "description": "Options to apply to this breakpoint to modify its behavior." }
+            ]
+        },
+        {
+            "name": "setPauseForInternalScripts",
+            "description": "Change whether to pause in the debugger for internal scripts. The default value is false.",
+            "parameters": [
+                { "name": "shouldPause", "type": "boolean" }
+            ]
+        },
+        {
+            "name": "evaluateOnCallFrame",
+            "description": "Evaluates expression on a given call frame.",
+            "parameters": [
+                { "name": "callFrameId", "$ref": "CallFrameId", "description": "Call frame identifier to evaluate on." },
+                { "name": "expression", "type": "string", "description": "Expression to evaluate." },
+                { "name": "objectGroup", "type": "string", "optional": true, "description": "String object group name to put result into (allows rapid releasing resulting object handles using <code>releaseObjectGroup</code>)." },
+                { "name": "includeCommandLineAPI", "type": "boolean", "optional": true, "description": "Specifies whether command line API should be available to the evaluated expression, defaults to false." },
+                { "name": "doNotPauseOnExceptionsAndMuteConsole", "type": "boolean", "optional": true, "description": "Specifies whether evaluation should stop on exceptions and mute console. Overrides setPauseOnException state." },
+                { "name": "returnByValue", "type": "boolean", "optional": true, "description": "Whether the result is expected to be a JSON object that should be sent by value." },
+                { "name": "generatePreview", "type": "boolean", "optional": true, "description": "Whether preview should be generated for the result." },
+                { "name": "saveResult", "type": "boolean", "optional": true, "description": "Whether the resulting value should be considered for saving in the $n history." },
+                { "name": "emulateUserGesture", "type": "boolean", "optional": true, "description": "Whether the expression should be considered to be in a user gesture or not." }
+            ],
+            "returns": [
+                { "name": "result", "$ref": "Runtime.RemoteObject", "description": "Object wrapper for the evaluation result." },
+                { "name": "wasThrown", "type": "boolean", "optional": true, "description": "True if the result was thrown during the evaluation." },
+                { "name": "savedResultIndex", "type": "integer", "optional": true, "description": "If the result was saved, this is the $n index that can be used to access the value." }
+            ]
+        },
+        {
+            "name": "setShouldBlackboxURL",
+            "description": "Sets whether the given URL should be in the list of blackboxed scripts, which are ignored when pausing/stepping/debugging.",
+            "parameters": [
+                { "name": "url", "type": "string" },
+                { "name": "shouldBlackbox", "type": "boolean" },
+                { "name": "caseSensitive", "type": "boolean", "optional": true, "description": "If true, <code>url</code> is case sensitive." },
+                { "name": "isRegex", "type": "boolean", "optional": true, "description": "If true, treat <code>url</code> as regular expression." }
+            ]
+        },
+        {
+            "name": "setBlackboxBreakpointEvaluations",
+            "description": "Sets whether evaluation of breakpoint conditions, ignore counts, and actions happen at the location of the breakpoint or are deferred due to blackboxing.",
+            "parameters": [
+                { "name": "blackboxBreakpointEvaluations", "type": "boolean" }
+            ]
+        }
+    ],
+    "events": [
+        {
+            "name": "globalObjectCleared",
+            "description": "Called when global has been cleared and debugger client should reset its state. Happens upon navigation or reload."
+        },
+        {
+            "name": "scriptParsed",
+            "description": "Fired when virtual machine parses script. This event is also fired for all known and uncollected scripts upon enabling debugger.",
+            "parameters": [
+                { "name": "scriptId", "$ref": "ScriptId", "description": "Identifier of the script parsed." },
+                { "name": "url", "type": "string", "description": "URL of the script parsed (if any)." },
+                { "name": "startLine", "type": "integer", "description": "Line offset of the script within the resource with given URL (for script tags)." },
+                { "name": "startColumn", "type": "integer", "description": "Column offset of the script within the resource with given URL." },
+                { "name": "endLine", "type": "integer", "description": "Last line of the script." },
+                { "name": "endColumn", "type": "integer", "description": "Length of the last line of the script." },
+                { "name": "isContentScript", "type": "boolean", "optional": true, "description": "Determines whether this script is a user extension script." },
+                { "name": "sourceURL", "type": "string", "optional": true, "description": "sourceURL name of the script (if any)." },
+                { "name": "sourceMapURL", "type": "string", "optional": true, "description": "URL of source map associated with script (if any)." },
+                { "name": "module", "type": "boolean", "optional": true, "description": "True if this script was parsed as a module." }
+            ]
+        },
+        {
+            "name": "scriptFailedToParse",
+            "description": "Fired when virtual machine fails to parse the script.",
+            "parameters": [
+                { "name": "url", "type": "string", "description": "URL of the script that failed to parse." },
+                { "name": "scriptSource", "type": "string", "description": "Source text of the script that failed to parse." },
+                { "name": "startLine", "type": "integer", "description": "Line offset of the script within the resource." },
+                { "name": "errorLine", "type": "integer", "description": "Line with error." },
+                { "name": "errorMessage", "type": "string", "description": "Parse error message." }
+            ]
+        },
+        {
+            "name": "breakpointResolved",
+            "description": "Fired when breakpoint is resolved to an actual script and location.",
+            "parameters": [
+                { "name": "breakpointId", "$ref": "BreakpointId", "description": "Breakpoint unique identifier." },
+                { "name": "location", "$ref": "Location", "description": "Actual breakpoint location." }
+            ]
+        },
+        {
+            "name": "paused",
+            "description": "Fired when the virtual machine stopped on breakpoint or exception or any other stop criteria.",
+            "parameters": [
+                { "name": "callFrames", "type": "array", "items": { "$ref": "CallFrame" }, "description": "Call stack the virtual machine stopped on." },
+                { "name": "reason", "type": "string", "enum": ["XHR", "Fetch", "DOM", "AnimationFrame", "Interval", "Listener", "Timeout", "exception", "assert", "CSPViolation", "DebuggerStatement", "Breakpoint", "PauseOnNextStatement", "Microtask", "BlackboxedScript", "other"], "description": "Pause reason." },
+                { "name": "data", "type": "object", "optional": true, "description": "Object containing break-specific auxiliary properties." },
+                { "name": "asyncStackTrace", "$ref": "Console.StackTrace", "optional": true, "description": "Linked list of asynchronous StackTraces." }
+            ]
+        },
+        {
+            "name": "resumed",
+            "description": "Fired when the virtual machine resumed execution."
+        },
+        {
+            "name": "didSampleProbe",
+            "description": "Fires when a new probe sample is collected.",
+            "parameters": [
+                { "name": "sample", "$ref": "ProbeSample", "description": "A collected probe sample." }
+            ]
+        },
+        {
+            "name": "playBreakpointActionSound",
+            "description": "Fired when a \"sound\" breakpoint action is triggered on a breakpoint.",
+            "parameters": [
+                { "name": "breakpointActionId", "$ref": "BreakpointActionIdentifier", "description": "Breakpoint action identifier." }
+            ]
+        }
+    ]
+}

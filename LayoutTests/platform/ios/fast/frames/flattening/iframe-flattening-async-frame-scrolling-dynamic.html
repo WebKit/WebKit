@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>This tests frame flattening when async frame scrolling and frame flattenning settings are changed dynamically</title>
+    <meta charset="utf-8"/>
+    <script src="../../../../../resources/testharness.js"></script>
+    <script src="../../../../../resources/testharnessreport.js"></script>
+    <script>
+      if (window.internals)
+        window.internals.settings.setFrameFlattening("FullyEnabled");
+
+      setup({explicit_done: true});
+      function isUnflatten(id) {
+        var iframe = document.getElementById(id);
+        var iframeBox = iframe.getBoundingClientRect();
+        var innerDivBox = iframe.contentDocument.body.firstElementChild.getBoundingClientRect();
+        return iframeBox.width < innerDivBox.width && iframeBox.height < innerDivBox.height;
+      }
+
+      function frameRelayoutDelay() {
+        return new Promise(resolve => {
+          setTimeout(resolve, 0);
+        });
+      }
+
+      async function runTest() {
+        test(() => { assert_false(isUnflatten("iframe")); },
+             "Frame flattening fully enabled, async frame scrolling disabled");
+
+        window.internals.settings.setAsyncFrameScrollingEnabled(true);
+        await frameRelayoutDelay();
+        test(() => { assert_true(isUnflatten("iframe")); },
+             "Enabling async frame scrolling");
+
+        window.internals.settings.setAsyncFrameScrollingEnabled(false);
+        await frameRelayoutDelay();
+        test(() => { assert_false(isUnflatten("iframe")); },
+             "Disabling async frame scrolling");
+
+        window.internals.settings.setFrameFlattening("Disabled");
+        await frameRelayoutDelay();
+        test(() => { assert_true(isUnflatten("iframe")); },
+             "Disabling frame flattening");
+
+        window.internals.settings.setFrameFlattening("FullyEnabled");
+        await frameRelayoutDelay();
+        test(() => { assert_false(isUnflatten("iframe")); },
+             "Enabling frame flattening");
+
+        done();
+      }
+    </script>
+  </head>
+  <body>
+    <iframe onload="runTest()" id="iframe" style="background: blue; width: 50px; height: 50px;" scrolling="yes" srcdoc="&lt;div style='width: 1000px; height: 1000px;'&gt;&lt;/div&gt;"></iframe>
+  </body>
+</html>

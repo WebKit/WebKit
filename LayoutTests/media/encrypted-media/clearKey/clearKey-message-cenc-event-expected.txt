@@ -1,0 +1,8 @@
+
+EME API is supported OK
+EVENT(encrypted)
+MediaKeys is created OK
+EVENT(message)
+Expected Kid OK
+END OF TEST
+

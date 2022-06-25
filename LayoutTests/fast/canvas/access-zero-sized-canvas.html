@@ -1,0 +1,10 @@
+This test ensures that accessing the context of a zero sized canvas does not crash.
+<canvas id="canvas" width="0" height="0"></canvas><br />
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+var context = document.getElementById("canvas").getContext("2d");
+context.fillStyle = "green";
+
+</script>

@@ -1,0 +1,45 @@
+<!-- webkit-test-runner [ useEphemeralSession=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="/resourceLoadStatistics/resources/util.js"></script>
+    <script>
+        description("Tests document.hasStorageAccess() for a 3rd-party without cookies under general third-party cookie blocking (ephemeral).");
+        jsTestIsAsync = true;
+
+        const firstPartyUrl = "http://127.0.0.1:8000";
+        const thirdPartyUrl = "http://localhost:8000";
+
+        window.addEventListener("message", receiveMessage, false);
+
+        function receiveMessage(event) {
+            if (event.origin === thirdPartyUrl) {
+                if (event.data.indexOf("PASS") !== -1)
+                    testPassed(event.data.replace("PASS ", ""));
+                else
+                    testFailed(event.data.replace("FAIL ", ""));
+            } else
+                testFailed("Received a message from an unexpected origin: " + event.origin);
+
+            testRunner.setStatisticsShouldBlockThirdPartyCookies(false, function () {
+                setEnableFeature(false, finishJSTest);
+            });
+        }
+
+        function runTest() {
+            setEnableFeature(true, function () {
+                testRunner.setStatisticsShouldBlockThirdPartyCookies(true, function () {
+                    testRunner.setStatisticsHasHadUserInteraction(thirdPartyUrl, true, function () {
+                        let iframeElement = document.createElement("iframe");
+                        iframeElement.src = thirdPartyUrl + "/storageAccess/resources/has-storage-access-iframe.html?dummy=" + Math.random() + "#policyShouldNotGrantAccess";
+                        document.body.appendChild(iframeElement);
+                    });
+                });
+            });
+        }
+    </script>
+</head>
+<body onload="runTest()">
+</body>
+</html>

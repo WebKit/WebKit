@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+        <script src="./resources/sdp-utils.js"></script>
+    </head>
+    <body>
+        <script>
+            if (window.internals)
+                internals.useMockRTCPeerConnectionFactory("");
+
+            let remoteStream;
+            let remotePcAudioTrack;
+            let remotePcVideoTrack;
+            const mediaDescriptionVariables = [];
+
+            description("Test RTCPeerConnection.setRemoteDescription called with an RTCSessionDescription of type 'offer'");
+
+            if (window.testRunner)
+                testRunner.setUserMediaPermission(true);
+            else {
+                debug("This test can not be run without the testRunner");
+                finishJSTest();
+            }
+
+            const pc = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
+            const remotePc = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
+
+            navigator.mediaDevices.getUserMedia({ "audio": true, "video": true })
+            .then(function (s) {
+                remoteStream = s;
+
+                remotePcAudioTrack = remoteStream.getAudioTracks()[0];
+                remotePcVideoTrack = remoteStream.getVideoTracks()[0];
+
+                remotePc.addTrack(remotePcAudioTrack, remoteStream);
+                return remotePc.createOffer();
+            })
+            .then(function (remoteOffer) {
+                return pc.setRemoteDescription(remoteOffer);
+            })
+            .then(function () {
+                return pc.createAnswer();
+            })
+            .then(function (answer) {
+                testPassed("Answer with audio created");
+
+                mediaDescriptionVariables.push({
+                    "trackId": remotePcAudioTrack.id,
+                    "streamId": remoteStream.id
+                });
+                printComparableSessionDescription(answer, mediaDescriptionVariables);
+
+                remotePc.addTrack(remotePcVideoTrack, remoteStream);
+                return remotePc.createOffer();
+            })
+            .then(function (remoteOffer) {
+                return pc.setRemoteDescription(remoteOffer);
+            })
+            .then(function () {
+                return pc.createAnswer();
+            })
+            .then(function (answer) {
+                testPassed("Answer with audio and video created");
+
+                mediaDescriptionVariables.push({
+                    "trackId": remotePcVideoTrack.id,
+                    "streamId": remoteStream.id
+                });
+                printComparableSessionDescription(answer, mediaDescriptionVariables);
+
+                finishJSTest();
+            })
+            .catch(function (error) {
+                testFailed("Error in promise chain: " + error);
+                finishJSTest();
+            });
+
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

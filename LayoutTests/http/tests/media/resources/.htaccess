@@ -1,0 +1,4 @@
+# macOS ports currently require webm files to be served with a .webm extension, so
+# add a rewrite rule for the purposes of serving .webm files through serve_video.py.
+RewriteEngine on
+RewriteRule ^serve_video.py.webm serve_video.py [L,NS]

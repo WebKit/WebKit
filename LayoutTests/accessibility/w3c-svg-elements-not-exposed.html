@@ -1,0 +1,323 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<div id="content">
+<svg>
+  <rect x="5" y="5" width="20" height="15">
+    <animate id="test1" attributeName="opacity" from="1" to="0" dur="5s" repeatCount="indefinite"/>
+  </rect>
+</svg>
+<svg>
+  <path id="path2" d="M100,250 C 100,50 400,50 400,222" fill="none" stroke="blue" stroke-width="7.06" />
+  <path d="M-25,-12.5 L25,-12.5 L 0,-87.5 z" fill="yellow" stroke="red" stroke-width="7.06">
+    <animateMotion id="test2" dur="6s" repeatCount="indefinite" rotate="auto">
+      <mpath href="#path2"/>
+    </animateMotion>
+  </path>
+</svg>
+<svg>
+  <rect width="100" height="100">
+    <animateTransform id="test3" attributeName="transform" type="scale" from="2" to="3" repeatCount="3" dur="4s" fill="freeze"/>
+  </rect>
+</svg>
+<svg>
+  <defs>
+    <clipPath id="test4">
+      <rect x="0" y="0" width="200" height="100"/>
+    </clipPath>
+  </defs>
+  <circle cx="100" cy="100" r="100" clip-path="url(#test4)" />
+</svg>
+<svg>
+  <cursor id="test5" xlink:href="cursor.png" x="4" y="0"/>
+</svg>
+<svg>
+  <defs id="test6">
+    <solidColor id="MyLightPurple" solid-color="#a080ff" solid-opacity="0.5"/>
+  </defs>
+</svg>
+<svg>
+  <ellipse cx="98.5" cy="17.5" rx="20.5" ry="17.5" fill="blue" stroke="black" transform="translate(9 252) translate(3 -296)">
+    <animateTransform attributeName="transform" begin="0s" dur="2s" fill="remove" calcMode="linear" type="translate" additive="sum" from="0 0" to="-18 305"/>
+    <discard id="test7" begin="2s"/>
+  </ellipse>
+</svg>
+<svg>
+  <hatch id="test8" hatchUnits="userSpaceOnUse" pitch="5" rotate="17">
+    <hatchpath stroke="#a080ff" stroke-width="2"/>
+  </hatch>
+</svg>
+<svg>
+  <hatch hatchUnits="userSpaceOnUse" pitch="5" rotate="17">
+    <hatchpath id="test9" stroke="#a080ff" stroke-width="2"/>
+  </hatch>
+</svg>
+<svg>
+  <defs>
+    <linearGradient id="test10">
+      <stop offset="5%" stop-color="#A8F"/>
+      <stop offset="95%" stop-color="#FDC"/>
+    </linearGradient>
+  </defs>
+</svg>
+<svg>
+  <marker id="test11" orient="auto" overflow="visible">
+    <rect x="-1" y="-0.5" width="1" height="1" fill="green"/>
+  </marker>
+</svg>
+<svg>
+  <defs>
+    <linearGradient id="Gradient12">
+      <stop offset="0" stop-color="white" stop-opacity="0"/>
+      <stop offset="1" stop-color="white" stop-opacity="1"/>
+    </linearGradient>
+    <mask id="test12">
+      <rect x="0" y="0" width="200" height="200" fill="url(#Gradient12)"/>
+    </mask>
+  </defs>
+  <rect x="0" y="0" width="200" height="200" fill="red" mask="url(#test12)"/>
+</svg>
+<svg>
+  <mesh x="22" y="22" id="example13">
+    <meshrow>
+      <meshpatch id="test13">
+        <stop path="c 25,-25 75, 25 100,0" stop-color="lightblue"/>
+        <stop path="c 25, 25 -25, 75 0,100" stop-color="purple"/>
+        <stop path="c -25, 25 -75,-25 -100,0" stop-color="red"/>
+        <stop path="c -25,-25, 25,-75" stop-color="purple"/>
+      </meshpatch>
+      <meshpatch>
+        <stop path="c 25,-25 75, 25 100,0"/>
+        <stop path="c 25, 25 -25, 75 0,100" stop-color="lightblue"/>
+        <stop path="c -25, 25 -75,-25" stop-color="purple"/>
+      </meshpatch>
+    </meshrow>
+    <meshrow>
+      <meshpatch>
+        <stop path="c 25, 25 -25, 75 0,100"/>
+        <stop path="c -25, 25 -75,-25 -100,0" stop-color="purple"/>
+        <stop path="c -25,-25, 25,-75" stop-color="lightblue"/>
+      </meshpatch>
+      <meshpatch>
+        <stop path="c 25, 25 -25, 75 0,100"/>
+        <stop path="c -25, 25 -75,-25" stop-color="lightblue"/>
+      </meshpatch>
+    </meshrow>
+  </mesh>
+</svg>
+<svg>
+  <mesh x="22" y="22" id="example14">
+    <meshrow id="test14">
+      <meshpatch>
+        <stop path="c 25,-25 75, 25 100,0" stop-color="lightblue"/>
+        <stop path="c 25, 25 -25, 75 0,100" stop-color="purple"/>
+        <stop path="c -25, 25 -75,-25 -100,0" stop-color="red"/>
+        <stop path="c -25,-25, 25,-75" stop-color="purple"/>
+      </meshpatch>
+      <meshpatch>
+        <stop path="c 25,-25 75, 25 100,0"/>
+        <stop path="c 25, 25 -25, 75 0,100" stop-color="lightblue"/>
+        <stop path="c -25, 25 -75,-25" stop-color="purple"/>
+      </meshpatch>
+    </meshrow>
+    <meshrow>
+      <meshpatch>
+        <stop path="c 25, 25 -25, 75 0,100"/>
+        <stop path="c -25, 25 -75,-25 -100,0" stop-color="purple"/>
+        <stop path="c -25,-25, 25,-75" stop-color="lightblue"/>
+      </meshpatch>
+      <meshpatch>
+        <stop path="c 25, 25 -25, 75 0,100"/>
+        <stop path="c -25, 25 -75,-25" stop-color="lightblue"/>
+      </meshpatch>
+    </meshrow>
+  </mesh>
+</svg>
+<svg>
+  <metadata id="test15">
+    <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:dc="http://purl.org/dc/elements/1.1/">
+      <rdf:Description about="http://example.org/myfoo" dc:title="MyFoo Financial Report" dc:language="en"></rdf:Description>
+    </rdf:RDF>
+  </metadata>
+</svg>
+<svg>
+  <path id="path16" d="M100,250 C 100,50 400,50 400,222" fill="none" stroke="blue" stroke-width="7.06"/>
+  <path d="M-25,-12.5 L25,-12.5 L 0,-87.5 z" fill="yellow" stroke="red" stroke-width="7.06">
+    <animateMotion dur="6s" repeatCount="indefinite" rotate="auto">
+      <mpath id="test16" xlink:href="#path16"/>
+    </animateMotion>
+  </path>
+</svg>
+<svg>
+  <pattern id="test17" x="10" y="10" width="20" height="20">
+    <rect x="5" y="5" width="10" height="10"/>
+  </pattern>
+</svg>
+<svg>
+  <radialGradient id="test18" gradientUnits="userSpaceOnUse" cx="122" cy="100" r="100">
+    <stop offset="0%" stop-color="#A8F"/>
+    <stop offset="50%" stop-color="#FDC"/>
+    <stop offset="100%" stop-color="#A8F"/>
+  </radialGradient>
+</svg>
+<svg>
+  <defs>
+    <solidColor id="test19" solid-color="#a080ff" solid-opacity="0.5"/>
+  </defs>
+</svg>
+<svg>
+  <defs>
+    <linearGradient id="lg20">
+      <stop id="test20" offset="5%" stop-color="#A8F"/>
+      <stop offset="95%" stop-color="#FDC"/>
+    </linearGradient>
+  </defs>
+</svg>
+<svg>
+  <style id="test21">@import url(mystyles.css);</style>
+</svg>
+<svg>
+  <symbol id="test22" viewBox="0 0 20 20">
+    <desc>MySymbol - four rectangles in a grid</desc>
+    <rect x="1" y="1" width="8" height="8"/>
+    <rect x="11" y="1" width="8" height="8"/>
+    <rect x="1" y="11" width="8" height="8"/>
+    <rect x="11" y="11" width="8" height="8"/>
+  </symbol>
+</svg>
+<svg>
+  <title id="test23">abc</title>
+</svg>
+<svg>
+  <path id="test24" d="M 100 100 L 300 100 L 200 300 z" fill="red" stroke="blue" stroke-width="3"/>
+</svg>
+<svg>
+  <rect id="test25" x="10" y="10" width="50" height="30"/>
+</svg>
+<svg>
+  <circle id="test26" cx="10" cy="10" r="5"/>
+</svg>
+<svg>
+  <ellipse id="test27" cx="10" cy="100" rx="25" ry="15"/>
+</svg>
+<svg>
+  <line id="test28" x1="10" y1="10" x2="50" y2="10"/>
+</svg>
+<svg>
+  <polyline id="test29" fill="none" stroke="blue" stroke-width="10" points="50,375 150,375 150,325 250,325 250,375 350,375 350,250 450,250 450,375 550,375 550,175 650,175 650,375 750,375 750,100 850,100 850,375 950,375 950,25 1050,25 1050,375 1150,375"/>
+</svg>
+<svg>
+  <polygon id="test30" fill="magenta" points="850,75 958,137.5 958,262.5 850,325 742,262.6 742,137.5"/>
+</svg>
+<svg>
+  <defs>
+    <filter id="test31" filterUnits="userSpaceOnUse" x="0" y="0" width="200" height="120">
+      <feGaussianBlur id="test32" in="SourceAlpha" stdDeviation="4" result="blur"/>
+      <feOffset id="test33" in="blur" dx="4" dy="4" result="offsetBlur"/>
+      <feSpecularLighting id="test34" in="blur" surfaceScale="5" specularConstant=".75" 
+                          specularExponent="20" lighting-color="#bbbbbb"  
+                          result="specOut">
+        <fePointLight id="test35" x="-5000" y="-10000" z="20000"/>
+     </feSpecularLighting>
+     <feComposite id="test36" in="specOut" in2="SourceAlpha" operator="in" result="specOut"/>
+     <feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litPaint"/>
+     <feMerge id="test37">
+       <feMergeNode id="test38" in="offsetBlur"/>
+       <feMergeNode in="litPaint"/>
+     </feMerge>
+   </filter>
+ </defs>
+ <rect x="1" y="1" width="198" height="118" fill="#888888" stroke="blue"/>
+ <g filter="url(#test31)" >
+   <g>
+     <path fill="none" stroke="#D90000" stroke-width="10" d="M50,90 C0,90 0,30 50,30 L150,30 C200,30 200,90 150,90 z"/>
+     <path fill="#D90000" d="M60,80 C30,80 30,40 60,40 L140,40 C170,40 170,80 140,80 z"/>
+     <g fill="#FFFFFF" stroke="black" font-size="45" font-family="Verdana">
+       <text x="52" y="76">SVG</text>
+     </g>
+   </g>
+ </g>
+</svg>
+<svg>
+  <g aria-hidden="true">
+    <rect id="test39" aria-label="hello" x="10" y="10" width="50" height="30"/>
+  </g>
+</svg>
+<svg>
+  <g aria-hidden="true">
+    <ellipse id="test40" cx="10" cy="100" rx="25" ry="15">
+      <title>abc</title>
+   </ellipse>
+  </g>
+</svg>
+<svg>
+  <g aria-hidden="true">
+    <line id="test41" aria-label="hello" x1="10" y1="10" x2="50" y2="10"/>
+  </g>
+</svg>
+<svg>
+  <g aria-hidden="true">
+    <polyline id="test42" aria-label="hello" fill="none" stroke="blue" stroke-width="10" points="50,375 150,375 150,325 250,325 250,375 350,375 350,250 450,250 450,375 550,375 550,175 650,175 650,375 750,375 750,100 850,100 850,375 950,375 950,25 1050,25 1050,375 1150,375"/>
+  </g>
+</svg>
+<svg>
+  <g aria-hidden="true">
+    <polygon id="test43" fill="magenta" points="850,75 958,137.5 958,262.5 850,325 742,262.6 742,137.5">
+      <desc>built up area</desc>
+    </polygon>
+  </g>
+</svg>
+<svg>
+  <rect id="test44" aria-label="hello" x="10" y="10" width="50" height="30" aria-hidden="true"/>
+</svg>
+<svg>
+  <ellipse id="test45" cx="10" cy="100" rx="25" ry="15" aria-hidden="true">
+    <title>abc</title>
+  </ellipse>
+</svg>
+<svg>
+  <line id="test46" aria-label="hello" x1="10" y1="10" x2="50" y2="10" aria-hidden="true"/>
+</svg>
+<svg>
+  <polyline id="test47" aria-label="hello" fill="none" stroke="blue" stroke-width="10" points="50,375 150,375 150,325 250,325 250,375 350,375 350,250 450,250 450,375 550,375 550,175 650,175 650,375 750,375 750,100 850,100 850,375 950,375 950,25 1050,25 1050,375 1150,375" aria-hidden="true"/>
+</svg>
+<svg>
+  <polygon id="test48" fill="magenta" points="850,75 958,137.5 958,262.5 850,325 742,262.6 742,137.5" aria-hidden="true">
+    <desc>built up area</desc>
+  </polygon>
+</svg>
+<svg>
+  <circle cx="50" cy="50" r="40" id="test49" style="display: none;">
+    <title>Mars</title>
+  </circle>
+</svg>
+<svg>
+  <style>
+   /* <![CDATA[ */
+   circle {display: none; }
+   /* ]]> */
+  </style>
+  <circle cx="50" cy="50" r="40" id="test50">
+    <title>Mars</title>
+  </circle>
+</svg>
+</div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("This tests that SVG elements which should not be exposed are not exposed.");
+    if (window.accessibilityController) {
+        for (var i = 1; i <= 50; i++) {
+            var element = document.getElementById("test" + i);
+            var axElement = accessibilityController.accessibleElementById("test" + i);
+            debug("test" + i + ": " + (axElement ? axElement.role : "Element not exposed"));
+        }
+        document.getElementById("content").style.visibility = "hidden";
+    }
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

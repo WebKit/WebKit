@@ -1,0 +1,6 @@
+PASS rotatedImage.offsetWidth is 50
+PASS nonRotatedImage.offsetWidth is 100
+The test should display two images, one rotated and one not.
+
+
+

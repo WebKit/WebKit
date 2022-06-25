@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-monitor-playing-event</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var initSegment;
+    var sample;
+    var handleVideoEvents = [
+        "loadstart",
+        "waiting",
+        "loadedmetadata",
+        "loadeddata",
+        "canplay",
+        "canplaythrough",
+        "pause",
+        "ended",
+    ];
+    var readyStateString = [
+        "HAVE_NOTHING",
+        "HAVE_METADATA",
+        "HAVE_CURRENT_DATA",
+        "HAVE_FUTURE_DATA",
+        "HAVE_ENOUGH_DATA"
+    ];
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    window.addEventListener('load', async() => {
+        findMediaElement();
+
+        for (var i = 0; i < handleVideoEvents.length ; i++)
+            waitForEvent(handleVideoEvents[i]);
+
+        source = new MediaSource();
+        testExpected('source.readyState', 'closed');
+
+        const videoSource = document.createElement('source');
+        videoSource.type = 'video/mock; codecs=mock';
+        videoSource.src = URL.createObjectURL(source);
+        video.appendChild(videoSource);
+        await waitFor(source, 'sourceopen');
+
+        sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock");
+        initSegment = makeAInit(100, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]);
+        run('sourceBuffer.appendBuffer(initSegment)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        consoleWrite('video.readyState : ' + readyStateString[video.readyState]);
+        sample = makeASample(0, 0, 1, 1, 1, SAMPLE_FLAG.SYNC, 1);
+        // This append changes ready state to HAVE_FUTURE_DATA.
+        run('sourceBuffer.appendBuffer(sample)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        consoleWrite('video.readyState : ' + readyStateString[video.readyState]);
+        sample = makeASample(1, 1, 9, 1, 1, SAMPLE_FLAG.SYNC, 1);
+        // This append changes the ready state to HAVE_ENOUGH_DATA and fires the playing event.
+        run('sourceBuffer.appendBuffer(sample)');
+        await Promise.all([waitFor(mediaElement, 'playing'), waitFor(sourceBuffer, 'updateend')]);
+
+        consoleWrite('video.readyState : ' + readyStateString[video.readyState]);
+        // This remove changes ready state to HAVE_METADATA.
+        run('sourceBuffer.remove(0,10)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        await sleepFor(1000);
+
+        consoleWrite('video.readyState : ' + readyStateString[video.readyState]);
+        sample = makeASample(0, 0, 1, 1, 1, SAMPLE_FLAG.SYNC, 1);
+        run('sourceBuffer.appendBuffer(sample)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        consoleWrite('video.readyState : ' + readyStateString[video.readyState]);
+        sample = makeASample(1, 1, 9, 1, 1, SAMPLE_FLAG.SYNC, 1);
+        // This append changes the ready state to HAVE_ENOUGH_DATA and fires the playing event.
+        run('sourceBuffer.appendBuffer(sample)');
+        await Promise.all([waitFor(mediaElement, 'playing'), waitFor(sourceBuffer, 'updateend')]);
+
+        consoleWrite('video.readyState : ' + readyStateString[video.readyState]);
+        endTest();
+    });
+    </script>
+</head>
+<body>
+    <div>This test checks if the playing event fires when the ready state changes from HAVE_METADATA to HAVE_FUTURE_DATA or higher.</div>
+    <video autoplay></video>
+</body>
+</html>

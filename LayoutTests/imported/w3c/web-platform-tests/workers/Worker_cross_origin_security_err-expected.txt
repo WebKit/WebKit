@@ -1,0 +1,4 @@
+
+PASS Cross-origin classic workers should fail to fetch
+PASS Cross-origin module workers should fail to fetch
+

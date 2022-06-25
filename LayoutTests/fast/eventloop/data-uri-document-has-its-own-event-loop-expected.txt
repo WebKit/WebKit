@@ -1,0 +1,11 @@
+This tests that each data URI document has its own unique event loop
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internals.hasSameEventLoopAs(childFrame.contentWindow) is false
+PASS nestedFrameWithDataURLHasSameEventLoopAsParent is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

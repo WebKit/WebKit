@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src=../../../resources/js-test-pre.js></script>
+    <script src=../../../resources/ui-helper.js></script>
+    <script src=resources/file-icon-bytes.js></script>
+</head>
+<body>
+    <input type=file>
+    <script>
+        jsTestIsAsync = true;
+        description("Changing an input element's type attribute in the change event should not cause a crash. To test manually, activate the file input and choose a file.");
+
+        const fileInput = document.querySelector('input[type=file]');
+        fileInput.addEventListener('change', () => {
+            fileInput.type = '';
+            setTimeout(() => {
+                testPassed('Did not crash.');
+                finishJSTest();
+            }, 0);
+        });
+
+        if (window.testRunner) {
+            testRunner.setOpenPanelFiles(['foo.txt']);
+            testRunner.setOpenPanelFilesMediaIcon(testIconBytes);
+            UIHelper.activateElement(fileInput);
+        }
+    </script>
+    <script src=../../../resources/js-test-post.js></script>
+</body>
+</html>

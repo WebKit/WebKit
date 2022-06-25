@@ -1,0 +1,15 @@
+PASS getError was expected value: NO_ERROR : Should be no errors from setup.
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS pixel 0, 149 was 0, 0, 0, 255
+PASS pixel 150, 149 was 0, 0, 255, 255
+PASS pixel 299, 149 was 255, 0, 0, 255
+PASS pixel 0, 75 was 255, 0, 255, 255
+PASS pixel 150, 75 was 255, 0, 0, 255
+PASS pixel 299, 75 was 0, 255, 0, 255
+PASS pixel 0, 0 was 255, 0, 0, 255
+PASS pixel 150, 0 was 255, 255, 0, 255
+PASS pixel 299, 0 was 255, 0, 0, 255
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

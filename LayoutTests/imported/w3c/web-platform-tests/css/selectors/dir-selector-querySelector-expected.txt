@@ -1,0 +1,6 @@
+
+PASS :dir() allows any ident value but strings other than ltr/rtl don't match
+PASS :dir() requires exactly an ident argument
+FAIL :dir() works in compound selectors assert_equals: expected Element node <div id="div2_3" dir="rtl"></div> but got null
+FAIL :dir() works in complex selectors assert_equals: expected Element node <div id="div2_1"></div> but got null
+

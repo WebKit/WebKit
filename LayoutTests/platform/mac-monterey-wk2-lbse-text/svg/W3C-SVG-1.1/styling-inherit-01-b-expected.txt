@@ -1,0 +1,22 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+layer at (40,20) size 380x260
+  RenderSVGContainer {g} at (0,0) size 381x260
+layer at (240,80) size 180x120
+  RenderSVGContainer {g} at (-1,-1) size 182x122
+layer at (240,80) size 180x120
+  RenderSVGContainer {g} at (-1,-1) size 182x122
+layer at (240,80) size 180x120
+  RenderSVGEllipse {ellipse} at (-1,-1) size 182x122 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#FFFF00]}] [cx=330.00] [cy=140.00] [rx=90.00] [ry=60.00]
+layer at (40,20) size 180x120
+  RenderSVGRect {rect} at (0,0) size 180x120 [fill={[type=SOLID] [color=#000000]}] [x=40.00] [y=20.00] [width=180.00] [height=120.00]
+layer at (40,160) size 180x120
+  RenderSVGRect {rect} at (0,0) size 180x120 [fill={[type=SOLID] [color=#000000]}] [x=40.00] [y=160.00] [width=180.00] [height=120.00]
+layer at (10,304) size 263x46
+  RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 264x46
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.2 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (-1,-1) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

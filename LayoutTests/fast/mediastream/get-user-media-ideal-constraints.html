@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Test passing constraints to getUserMedia</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<video autoplay playsinline id="localVideo"></video>
+<script>
+promise_test(async (test) => {
+    localVideo.srcObject = await navigator.mediaDevices.getUserMedia({video: {width: 2000, height: 1200, frameRate: 30 }});
+
+    const settings = localVideo.srcObject.getVideoTracks()[0].getSettings();
+    assert_equals(settings.width, 2000, "settings width");
+    assert_equals(settings.height, 1200, "settings width");
+    assert_equals(settings.frameRate, 10, "settings frameRate");
+
+    await localVideo.play();
+
+    assert_equals(localVideo.videoWidth, 2000, "video width");
+    assert_equals(localVideo.videoHeight, 1200, "video height");
+}, "Ideal constraints");
+</script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true, contentInset.top=150 ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<script src="../../../resources/basic-gestures.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+async function run()
+{
+    await UIHelper.setHardwareKeyboardAttached(false);
+    await UIHelper.activateAndWaitForInputSessionAt(10, 10);
+
+    for (let i = 0; i < 150; i++)
+        document.execCommand('insertParagraph');
+
+    window.scrollTo(0, 0);
+    await UIHelper.ensurePresentationUpdate();
+    await UIHelper.enterText('hello');
+    await UIHelper.ensurePresentationUpdate();
+
+    const keyboardRect = await UIHelper.inputViewBounds();
+    const scrollTop = document.scrollingElement.scrollTop;
+    const viewportHeight = visualViewport.height;
+    const caretRect = getSelection().getRangeAt(0).getBoundingClientRect();
+
+    document.body.textContent = caretRect.y + caretRect.height <= visualViewport.height
+        ? 'PASS - caret appeared within the visual viewport'
+        : 'FAIL - caret appeared below the visual viewport';
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+</head>
+<body contenteditable onload="run()"></body>
+</html>

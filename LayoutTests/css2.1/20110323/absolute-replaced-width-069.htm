@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>CSS Test: Absolute replaced elements with 'direction' as left-to-right, percentage intrinsic width and over-constrained situation</title>
+        <link rel="author" title="Microsoft" href="http://www.microsoft.com/">
+        <link rel="help" href="http://www.w3.org/TR/CSS21/visudet.html#abs-replaced-width">
+        <meta name="flags" content="image">
+        <meta name="assert" content="Percentage intrinsic widths are evaluated against the containing block's width.">
+        <style type="text/css">
+            div
+            {
+                line-height: 0;
+            }
+            #div1
+            {
+                border: solid black;
+                direction: ltr;
+                height: 3in;
+                position: relative;
+                width: 2in;
+            }
+            img
+            {
+                left: 0.25in;
+                margin-left: 0.25in;
+                margin-right: 0.5in;
+                position: absolute;
+                right: 0.5in;
+            }
+            div div
+            {
+                background: orange;
+                height: 1in;
+                margin-left: 0.5in;
+                margin-right: 0.5in;
+                margin-top: 1in;
+                width: 1in;
+            }
+        </style>
+    </head>
+    <body>
+        <p>Test passes if the blue and orange boxes below are the same width, and the boxes are horizontally centered inside the black box.</p>
+        <div id="div1">
+            <img alt="blue 15x15" src="resources/blue15x15.png" width="50%">
+            <div></div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,25 @@
+This tests expectations with renaming existing object stores.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+Initial upgrade needed: Old version - 0 New version - 1
+Initial objectStore name: TestObjectStore
+Caught exception renaming object store to the name of another existing object store: ConstraintError: Failed set property 'name' on 'IDBObjectStore': The database already has an object store named 'ExistingObjectStore'.
+Renamed objectStore name: RenamedObjectStore
+Current objectStore name in a new transaction: RenamedObjectStore
+Caught exception renaming object store outside of a version change transaction: InvalidStateError: Failed set property 'name' on 'IDBObjectStore': The object store's transaction is not a version change transaction.
+Current objectStoreNames during second upgrade transaction includes 'ExistingObjectStore': true
+Current objectStoreNames during second upgrade transaction includes 'RenamedObjectStore': true
+Renamed objectstore again to: YetAnotherName
+Aborting version change transaction...
+Current objectStoreNames during final transaction includes 'ExistingObjectStore': true
+Current objectStoreNames during final transaction includes 'RenamedObjectStore': true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

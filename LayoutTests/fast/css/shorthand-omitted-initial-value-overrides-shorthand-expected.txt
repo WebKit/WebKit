@@ -1,0 +1,37 @@
+Test that initial values implicitly set via a shorthand property override previously defined shorthand properties.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Transition properties
+PASS transition-property
+PASS transition-duration
+PASS transition-timing-function
+PASS transition-delay
+
+Prefixed transition properties
+PASS transition-property
+PASS transition-property
+PASS transition-property
+PASS transition-property
+
+Animation properties
+PASS animation-name
+PASS animation-duration
+PASS animation-timing-function
+PASS animation-iteration-count
+PASS animation-direction
+PASS animation-play-state
+PASS animation-delay
+PASS animation-fill-mode
+
+Prefixed animation properties
+PASS -webkit-animation-name
+PASS animation-name
+PASS -webkit-animation-name
+PASS animation-name
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

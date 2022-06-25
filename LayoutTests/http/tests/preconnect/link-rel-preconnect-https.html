@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests that Link's rel=preconnect works as expected over HTTPS.");
+jsTestIsAsync = true;
+
+internals.setConsoleMessageListener(function() {
+    finishJSTest();
+});
+
+const testLink = document.createElement("link");
+testLink.rel = "preconnect";
+testLink.href = "https://localhost:8443";
+document.head.appendChild(testLink);
+</script>
+</body>
+</html>

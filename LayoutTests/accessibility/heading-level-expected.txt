@@ -1,0 +1,38 @@
+This tests that headings have a level matching the implicit default value or explicitly defined aria-level value.
+
+PASS: axElement.intValue === parseInt(el.getAttribute('data-expected'))
+PASS: axElement.intValue === parseInt(el.getAttribute('data-expected'))
+PASS: axElement.intValue === parseInt(el.getAttribute('data-expected'))
+PASS: axElement.intValue === parseInt(el.getAttribute('data-expected'))
+PASS: axElement.intValue === parseInt(el.getAttribute('data-expected'))
+PASS: axElement.intValue === parseInt(el.getAttribute('data-expected'))
+PASS: axElement.intValue === parseInt(el.getAttribute('data-expected'))
+PASS: axElement.intValue === parseInt(el.getAttribute('data-expected'))
+PASS: axElement.intValue === parseInt(el.getAttribute('data-expected'))
+PASS: axElement.intValue === parseInt(el.getAttribute('data-expected'))
+PASS: axElement.intValue === parseInt(el.getAttribute('data-expected'))
+PASS: axElement.intValue === parseInt(el.getAttribute('data-expected'))
+PASS: axElement.intValue === parseInt(el.getAttribute('data-expected'))
+PASS: axElement.intValue === parseInt(el.getAttribute('data-expected'))
+PASS: axElement.intValue === parseInt(el.getAttribute('data-expected'))
+PASS: axElement.intValue === parseInt(el.getAttribute('data-expected'))
+PASS: axElement.intValue === parseInt(el.getAttribute('data-expected'))
+PASS: axElement.intValue === parseInt(el.getAttribute('data-expected'))
+PASS: axElement.intValue === parseInt(el.getAttribute('data-expected'))
+PASS: axElement.intValue === parseInt(el.getAttribute('data-expected'))
+PASS: axElement.intValue === parseInt(el.getAttribute('data-expected'))
+PASS: axElement.intValue === parseInt(el.getAttribute('data-expected'))
+PASS: axElement.intValue === parseInt(el.getAttribute('data-expected'))
+PASS: axElement.intValue === parseInt(el.getAttribute('data-expected'))
+PASS: axElement.intValue === parseInt(el.getAttribute('data-expected'))
+
+Verifying initial heading level of #dynamic-aria-heading.
+PASS: axElement.intValue === 1
+
+Updating the aria-level of #dynamic-aria-heading to 2.
+PASS: axElement.intValue === 2
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+X

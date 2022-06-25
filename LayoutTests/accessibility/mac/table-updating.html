@@ -1,0 +1,47 @@
+<html>
+
+<head>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+</script>
+<script type="text/javascript">
+
+function removeTable()
+{
+    var table = document.getElementById('table1');
+    var container = document.getElementById('tablecontainer');
+ 
+    container.removeChild(table);  
+}
+
+</script>
+</head>
+
+<body id="body">
+
+<div id='tablecontainer'>
+<table id='table1' border='1' width=100><tr id="row"><td>A</td><td>B</td><td>C</td></tr></table>
+</div>
+
+<script>
+        if (window.accessibilityController) {
+
+            var body = document.getElementById("body");
+            body.focus();
+            var divContainer = accessibilityController.focusedElement.childAtIndex(0);
+
+            var results = document.getElementById("results");
+
+            divContainer.allAttributes();
+
+            removeTable();
+
+            divContainer.allAttributes();
+        }
+</script>
+
+Test passes if no crash.
+
+</body>
+</html>

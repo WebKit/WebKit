@@ -1,0 +1,39 @@
+Tests that the accept attribute for file inputs is mapped to the correct set of type identifiers on iOS.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+* accept =
+PASS areArraysEqual(items, []) is true
+
+* accept = */*
+PASS areArraysEqual(items, []) is true
+
+* accept = image/*
+PASS areArraysEqual(items, ["public.image"]) is true
+
+* accept = video/*
+PASS areArraysEqual(items, ["public.movie"]) is true
+
+* accept = image/*, video/*
+PASS areArraysEqual(items, ["public.image", "public.movie"]) is true
+
+* accept = .PNG, .GIF
+PASS areArraysEqual(items, ["com.compuserve.gif", "public.png"]) is true
+
+* accept = .PNG, .GIF, .MOV
+PASS areArraysEqual(items, ["com.apple.quicktime-movie", "com.compuserve.gif", "public.png"]) is true
+
+* accept = .TXT
+PASS areArraysEqual(items, ["public.plain-text"]) is true
+
+* accept = .PDF
+PASS areArraysEqual(items, ["com.adobe.pdf"]) is true
+
+* accept = .PDF, .TXT
+PASS areArraysEqual(items, ["com.adobe.pdf", "public.plain-text"]) is true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

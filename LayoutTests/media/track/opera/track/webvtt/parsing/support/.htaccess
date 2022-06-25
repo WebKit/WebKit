@@ -1,0 +1,4 @@
+<FilesMatch "\.(vtt|json)$">
+  Header set Cache-Control: "no-cache"
+</FilesMatch>
+

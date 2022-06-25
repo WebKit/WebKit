@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("TimelineRecording");
+
+    let exportData = null;
+
+    suite.addTestCase({
+        name: "TimelineRecording.Basic",
+        description: "Make a basic Timeline recording.",
+        async test() {
+            async function awaitCapturingState(capturingState) {
+                return new Promise((resolve, reject) => {
+                    let listener = WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStateChanged, (event) => {
+                        if (WI.timelineManager.capturingState !== capturingState)
+                            return;
+
+                        WI.timelineManager.removeEventListener(WI.TimelineManager.Event.CapturingStateChanged, listener);
+                        resolve();
+                    });
+                });
+            }
+
+            let recording = WI.timelineManager.activeRecording;
+
+            InspectorTest.log("Loaded");
+            InspectorTest.expectFalse(WI.timelineManager.isCapturing(), "TimelineManager should not be capturing.");
+            InspectorTest.expectFalse(recording.capturing, "TimelineRecording should not be capturing.");
+            InspectorTest.expectFalse(recording.readonly, "TimelineRecording should not be readonly.");
+            InspectorTest.expectFalse(recording.imported, "TimelineRecording should not be imported.");
+            InspectorTest.expectThat(isNaN(recording.startTime), "TimelineRecording should not have a startTime.");
+            InspectorTest.expectThat(isNaN(recording.endTime), "TimelineRecording should not have a endTime.");
+
+            InspectorTest.log("Start");
+            WI.timelineManager.startCapturing();
+
+            await awaitCapturingState(WI.TimelineManager.CapturingState.Active);
+
+            InspectorTest.expectTrue(WI.timelineManager.isCapturing(), "TimelineManager should be capturing.");
+            InspectorTest.expectEqual(WI.timelineManager.activeRecording, recording, "TimelineManager active recording should not have changed.");
+            InspectorTest.expectTrue(recording.capturing, "TimelineRecording should be capturing.");
+            InspectorTest.expectFalse(recording.readonly, "TimelineRecording should not be readonly.");
+
+            InspectorTest.log("Reload");
+            await Promise.all([
+                InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad),
+                InspectorTest.reloadPage(),
+            ]);
+
+            InspectorTest.log("Stop");
+            WI.timelineManager.stopCapturing();
+
+            await awaitCapturingState(WI.TimelineManager.CapturingState.Inactive);
+
+            InspectorTest.expectFalse(WI.timelineManager.isCapturing(), "TimelineManager should not be capturing.");
+            InspectorTest.expectFalse(recording.capturing, "TimelineRecording should not be capturing.");
+            InspectorTest.expectFalse(recording.readonly, "TimelineRecording should not be readonly.");
+            InspectorTest.expectFalse(recording.imported, "TimelineRecording should not be imported.");
+            InspectorTest.expectThat(!isNaN(recording.startTime), "TimelineRecording should have a startTime.");
+            InspectorTest.expectThat(!isNaN(recording.endTime), "TimelineRecording should have a endTime.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "TimelineRecording.prototype.exportData",
+        description: "Test for a recording export.",
+        async test() {
+            let recording = WI.timelineManager.activeRecording;
+            InspectorTest.assert(!isNaN(recording.startTime), "FAIL: Previous test loading a recording failed.");
+            InspectorTest.assert(!isNaN(recording.endTime), "FAIL: Previous test loading a recording failed.");
+
+            InspectorTest.expectTrue(recording.canExport(), "TimelineRecording should be able to export.");
+
+            exportData = recording.exportData();
+            InspectorTest.expectThat(exportData, "TimelineRecording should be able to produce export data.");
+            InspectorTest.expectThat(exportData.records.length > 10, "TimelineRecording should have at least 10 Timeline Records.");
+
+            InspectorTest.log("Export Data:");
+            let filterValue = new Set(["startTime", "endTime", "time", "displayName"]);
+            let filterArray = new Set(["records", "markers", "sampleStackTraces", "sampleDurations"]);
+            InspectorTest.json(exportData, (key, value) => {
+                if (filterValue.has(key))
+                    return "<filtered>";
+                if (filterArray.has(key))
+                    return ["<filtered>"];
+                return value;
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "TimelineRecording.import",
+        description: "Test for a recording import.",
+        async test() {
+            InspectorTest.assert(exportData, "FAIL: Previous test exporting a recording failed.");
+
+            // NOTE: This runs the toJSON handlers on the timeline records and other model objects,
+            // which is important because importing expects the serialized form of the objects, not
+            // actual model objects.
+            let jsonData = JSON.parse(JSON.stringify(exportData));
+
+            const identifier = 999;
+            let recording = await WI.TimelineRecording.import(identifier, jsonData, "TEST");
+            InspectorTest.expectNotEqual(WI.timelineManager.activeRecording, recording, "TimelineManager active recording is not this imported recording.");
+            InspectorTest.expectFalse(recording.capturing, "TimelineRecording should not be capturing.");
+            InspectorTest.expectTrue(recording.readonly, "TimelineRecording should be readonly.");
+            InspectorTest.expectTrue(recording.imported, "TimelineRecording should be imported.");
+            InspectorTest.expectThat(!isNaN(recording.startTime), "TimelineRecording should have a startTime.");
+            InspectorTest.expectThat(!isNaN(recording.endTime), "TimelineRecording should have a endTime.");
+            InspectorTest.expectEqual(recording.identifier, identifier, `TimelineRecording identifier should be ${identifier}.`);
+
+            InspectorTest.log("Display Name:");
+            InspectorTest.log(recording.displayName);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for timeline recording.</p>
+</body>
+</html>

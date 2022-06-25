@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+
+:root {
+  --focus-ring-size: 3px;
+  --input-width: 160px;
+  --input-height: 20px;
+  --border-width: 1px;
+}
+
+input {
+    caret-color: transparent;
+
+    position: absolute;
+    top: calc(2 * var(--focus-ring-size));
+    left: calc(2 * var(--focus-ring-size));
+    border: var(--border-width) solid black;
+    padding: 0;
+    width: var(--input-width);
+    height: var(--input-height);
+}
+
+#overlay {
+    position: absolute;
+    top: var(--focus-ring-size);
+    left: var(--focus-ring-size);
+    background-color: red;
+    border: var(--border-width) solid red;
+    width: calc(var(--input-width) + 2 * var(--focus-ring-size));
+    height: calc(var(--input-height) + 2 * var(--focus-ring-size));
+}
+
+</style>
+</head>
+<body>
+<input id="test" type="text">
+<div id="overlay"></div>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    let testElement = document.getElementById("test");
+    testElement.addEventListener("focus", () => testRunner.notifyDone(), { once: true });
+    UIHelper.keyDown("\t", ["altKey"]);
+}
+</script>
+</body>
+</html>

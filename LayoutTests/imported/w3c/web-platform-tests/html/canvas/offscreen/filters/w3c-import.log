@@ -1,0 +1,34 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.blur.exceptions.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.blur.exceptions.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.colorMatrix.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.colorMatrix.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.componentTransfer.discrete.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.componentTransfer.discrete.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.componentTransfer.gamma.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.componentTransfer.gamma.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.componentTransfer.identity.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.componentTransfer.identity.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.componentTransfer.linear.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.componentTransfer.linear.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.componentTransfer.table.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.componentTransfer.table.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.convolveMatrix.exceptions.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.convolveMatrix.exceptions.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/filters/2d.filter.canvasFilterObject.worker.js

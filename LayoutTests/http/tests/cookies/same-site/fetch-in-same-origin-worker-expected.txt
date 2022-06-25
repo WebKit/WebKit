@@ -1,0 +1,14 @@
+Tests that Same-Site cookies for 127.0.0.1 are sent with a Web Worker initiated XHR.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Starting worker: resources/fetch-in-same-origin-worker.js
+PASS [Worker] Has cookie "strict" with value 12.
+PASS [Worker] Has cookie "implicit-strict" with value 12.
+PASS [Worker] Has cookie "strict-because-invalid-SameSite-value" with value 12.
+PASS [Worker] Has cookie "lax" with value 12.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

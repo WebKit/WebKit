@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=../../media-resources/video-test.js></script>
+        <script>
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+            }
+
+            let previousCurrentTime = 0;
+
+            function checkCurrentTime(event)
+            {
+                if (event.type != 'timeupdate')
+                    consoleWrite(`EVENT(${event.type})`);
+
+                let now = video.currentTime;
+                if (previousCurrentTime && now === 0)
+                    failTest(`video.currentTime is 0, was previously ${previousCurrentTime}`);
+                previousCurrentTime = now;
+            }
+
+            window.addEventListener('load', event => {
+                video = document.getElementById('video');
+
+                let events = ['timeupdate', 'durationchange', 'loadedmetadata', 'canplay', 'canplaythrough', 'loadeddata', 'playing', 'error'];
+                events.forEach(eventName => {
+                    video.addEventListener(eventName, ev => {
+                        checkCurrentTime(ev)
+                        if (ev.type == 'playing')
+                            endTest();
+                    });
+                });
+
+                video.textTracks.addEventListener('addtrack', ev => checkCurrentTime(ev));
+
+                video.src = "../resources/hls/bip-bop-live.m3u8";
+
+                failTestIn(15000);
+            });
+
+        </script>
+    </head>
+    <body>
+        <video id="video" controls muted autoplay></video>
+    </body>
+</html>

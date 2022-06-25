@@ -1,0 +1,28 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/support/empty.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/support/iframe-do.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/support/javascript-url-srcdoc-cross-origin-iframe-inheritance-helper.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/support/message-opener-and-navigate-back.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/support/message-top-and-navigate-back.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/support/navigate-parent-to-blob.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/support/navigate-self-to-blob.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/support/navigate-self-to-blob.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/support/navigate-self-to-javascript.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/support/postmessage-opener.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/support/postmessage-top.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/support/srcdoc-child-frame.html

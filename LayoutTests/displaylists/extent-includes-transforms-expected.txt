@@ -1,0 +1,22 @@
+
+(translate
+  (x 0.00)
+  (y 22.00))
+(concatenate-ctm
+  (ctm {m=((0.87,0.50)(-0.50,0.87)) t=(81.70,-18.30)}))
+(save)
+(set-state
+  (change-flags [drop-shadow])
+  (drop-shadow
+    (shadow-offset width=10 height=20)
+    (shadow-blur 12.00)
+    (shadow-color #000000)
+    (shadows-use-legacy-radius 0)))
+(fill-composited-rect
+  (rect at (0,0) size 100x100)
+  (color #0000FF)
+  (composite-operation source-over)
+  (blend-mode normal) extent at (7.14,0.20) size 184.55x185.65)
+(restore)
+(set-ctm
+  (set-ctm {m=((1.00,0.00)(0.00,1.00)) t=(0.00,22.00)}))

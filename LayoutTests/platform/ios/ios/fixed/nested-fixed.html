@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style type="text/css" media="screen">
+        body {
+            margin: 0;
+            height: 2200px;
+        }
+
+        .box {
+          height: 100px;
+          width: 100px;
+        }
+
+        .outer {
+            position: fixed;
+            top: 0px;
+            z-index: 1; /* makes this a stacking context */
+            background: blue;
+        }
+
+        .inner {
+            position: fixed;
+            top: 120px;
+            left: 120px;
+            background: green;
+        }
+    </style>
+    <script type="text/javascript" charset="utf-8">
+      if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+      }
+
+      function doScroll()
+      {
+        window.setTimeout(function() {
+          window.scrollTo(0, 200);
+          if (window.testRunner) {
+            document.getElementById('results').innerText = window.internals.layerTreeAsText(document);
+            testRunner.notifyDone();
+          }
+        }, 10);
+      }
+      
+      window.addEventListener('load', doScroll, false);
+    </script>
+</head>
+<body>
+    <pre id="results"></pre>
+    <div class="outer box">
+        <div class="inner box"></div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,3 @@
+This test makes sure that drawing a variety of different kinds of fonts into canvas doesn't cause a crash. The test passes if there is no crash.
+
+

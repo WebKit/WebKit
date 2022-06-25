@@ -1,0 +1,26 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (1,1) size 668x334
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGResourcePattern {pattern} [id="pattern1"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
+          RenderSVGEllipse {circle} at (5,5) size 7x7 [fill={[type=SOLID] [color=#FF0000]}] [cx=5.00] [cy=5.00] [r=1.70]
+        RenderSVGResourcePattern {pattern} [id="pattern2"] [patternUnits=objectBoundingBox] [patternContentUnits=userSpaceOnUse]
+          RenderSVGEllipse {circle} at (50,50) size 67x67 [fill={[type=SOLID] [color=#FF0000]}] [cx=50.00] [cy=50.00] [r=20.00]
+        RenderSVGResourcePattern {pattern} [id="pattern3"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
+          RenderSVGEllipse {circle} at (5,5) size 7x7 [fill={[type=SOLID] [color=#FF0000]}] [cx=5.00] [cy=5.00] [r=1.70]
+      RenderSVGRect {rect} at (1,1) size 334x334 [fill={[type=PATTERN] [id="pattern1"]}] [x=1.00] [y=1.00] [width=200.00] [height=200.00]
+      RenderSVGRect {rect} at (1,1) size 334x334 [fill={[type=PATTERN] [id="pattern2"]}] [x=1.00] [y=1.00] [width=200.00] [height=200.00]
+      RenderSVGRect {rect} at (335,1) size 334x334 [fill={[type=PATTERN] [id="pattern3"]}] [x=201.00] [y=1.00] [width=200.00] [height=200.00]
+    RenderSVGContainer {g} at (16,517) size 381x62
+      RenderSVGText {text} at (10,310) size 229x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 229x37
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 228.03: "$Revision: 1.1 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGContainer {g} at (0,0) size 800x39
+      RenderSVGRect {rect} at (0,0) size 800x36 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [x=1.00] [y=1.00] [width=478.00] [height=20.00]
+      RenderSVGText {text} at (206,-1) size 68x24 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 68x23
+          chunk 1 (middle anchor) text run 1 at (206.46,18.00) startOffset 0 endOffset 5 width 67.09: "DRAFT"

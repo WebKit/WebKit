@@ -1,0 +1,66 @@
+RUN(internals.enableMockMediaCapabilities())
+
+Smooth and power efficient 720P MP4 decoding
+RUN(promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', video: { contentType: 'video/mp4; codecs="avc1"', height: 720, bitrate: 1000, width: 1280, framerate: 24.5 } });)
+Promise resolved OK
+info.supported == true OK
+info.smooth == true OK
+info.powerEfficient == true OK
+
+Not smooth (too high framerate) but power efficient 720P MP4 decoding
+RUN(promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', video: { contentType: 'video/mp4; codecs="avc1"', height: 720, bitrate: 1000, width: 1280, framerate: 60.4/2 } });)
+Promise resolved OK
+info.supported == true OK
+info.smooth == false OK
+info.powerEfficient == true OK
+
+Unsupported protocol: MSE
+RUN(promise = navigator.mediaCapabilities.decodingInfo({ type: 'media-source', video: { contentType: 'video/mp4; codecs="avc1"', height: 720, bitrate: 1000, width: 1280, framerate: 24 } });)
+Promise resolved OK
+info.supported == false OK
+info.smooth == false OK
+info.powerEfficient == false OK
+
+Unsupported video resolution: 1080P
+RUN(promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', video: { contentType: 'video/mp4; codecs="avc1"', height: 1080, bitrate: 1000, width: 1920, framerate: 24 } });)
+Promise resolved OK
+info.supported == false OK
+info.smooth == false OK
+info.powerEfficient == false OK
+
+Smooth and power efficient audio MP4 decoding
+RUN(promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', audio: { contentType: 'audio/mp4; codecs="mp4a.40.2"', channels: '2', bitrate: 1000, samplerate: 44100 } });)
+Promise resolved OK
+info.supported == true OK
+info.smooth == true OK
+info.powerEfficient == true OK
+
+Smooth but power inefficient audio MP4 decoding
+RUN(promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', audio: { contentType: 'audio/mp4; codecs="mp4a.40.2"', channels: '2', bitrate: 2000, samplerate: 44100 } });)
+Promise resolved OK
+info.supported == true OK
+info.smooth == true OK
+info.powerEfficient == false OK
+
+Not smooth but power efficient audio MP4 decoding
+RUN(promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', audio: { contentType: 'audio/mp4; codecs="mp4a.40.2"', channels: '5.1', bitrate: 1000, samplerate: 44100 } });)
+Promise resolved OK
+info.supported == true OK
+info.smooth == false OK
+info.powerEfficient == true OK
+
+Not smooth and power inefficient audio MP4 decoding
+RUN(promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', audio: { contentType: 'audio/mp4; codecs="mp4a.40.2"', channels: '5.1', bitrate: 2000, samplerate: 44100 } });)
+Promise resolved OK
+info.supported == true OK
+info.smooth == false OK
+info.powerEfficient == false OK
+
+Unsupported audio codec: ogg vorbis
+RUN(promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', audio: { contentType: 'audio/ogg; codecs="vorbis"', channels: '2' } });)
+Promise resolved OK
+info.supported == false OK
+info.smooth == false OK
+info.powerEfficient == false OK
+END OF TEST
+

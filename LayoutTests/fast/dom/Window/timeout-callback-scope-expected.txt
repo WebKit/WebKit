@@ -1,0 +1,4 @@
+Test verifies that a timeout callback is run in the proper execution context. 2 timeouts are set on a child iframe's window. 'Closure' callback should execute in the main page, 'string' callback should execute in the iframe. Test passes if you see 2 lines 'PASS' below.
+
+PASS
+PASS

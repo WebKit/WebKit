@@ -1,0 +1,65 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x344
+  RenderBlock {HTML} at (0,0) size 800x344
+    RenderBody {BODY} at (8,16) size 784x312
+      RenderBlock {P} at (0,0) size 784x25
+        RenderTextControl {INPUT} at (629,2) size 153x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,41) size 784x25
+        RenderTextControl {INPUT} at (629,2) size 153x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,82) size 784x25
+        RenderTextControl {INPUT} at (2,2) size 153x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,123) size 784x25
+        RenderTextControl {INPUT} at (2,2) size 153x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,164) size 784x25
+        RenderTextControl {INPUT} at (2,2) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,205) size 784x25
+        RenderTextControl {INPUT} at (2,2) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,246) size 784x25
+        RenderTextControl {INPUT} at (2,2) size 153x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,287) size 784x25
+        RenderTextControl {INPUT} at (2,2) size 153x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+layer at (644,21) size 139x14
+  RenderBlock {DIV} at (6,3) size 141x15
+    RenderText {#text} at (134,0) size 6x14
+      text run at (134,0) width 6: "1"
+layer at (644,62) size 139x14
+  RenderBlock {DIV} at (6,3) size 141x15
+    RenderText {#text} at (133,0) size 7x14
+      text run at (133,0) width 7: "2"
+layer at (17,103) size 139x14
+  RenderBlock {DIV} at (6,3) size 141x15
+    RenderText {#text} at (132,0) size 8x14
+      text run at (132,0) width 8: "3"
+layer at (17,144) size 139x14
+  RenderBlock {DIV} at (6,3) size 141x15
+    RenderText {#text} at (113,0) size 27x14
+      text run at (113,0) width 27: "1234"
+layer at (17,185) size 141x14
+  RenderBlock {DIV} at (6,3) size 143x15
+    RenderText {#text} at (0,0) size 7x14
+      text run at (0,0) width 7: "5"
+layer at (17,226) size 141x14
+  RenderBlock {DIV} at (6,3) size 143x15
+    RenderText {#text} at (0,0) size 8x14
+      text run at (0,0) width 8: "6"
+layer at (17,267) size 139x14
+  RenderBlock {DIV} at (6,3) size 141x15
+    RenderText {#text} at (133,0) size 7x14
+      text run at (133,0) width 7: "7"
+layer at (17,308) size 139x14
+  RenderBlock {DIV} at (6,3) size 141x15
+    RenderText {#text} at (132,0) size 8x14
+      text run at (132,0) width 8: "8"
+caret: position 4 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 0 {INPUT} of child 6 {P} of body

@@ -1,0 +1,17 @@
+<html>
+<script>
+window.onload = function () {
+    if (window.testRunner && window.internals) {
+        testRunner.dumpAsText(true);
+        internals.installMockPageOverlay("document");
+        internals.installMockPageOverlay("view");
+
+        var layersResult = document.getElementById('layers');
+        layersResult.innerText = window.internals.pageOverlayLayerTreeAsText();
+    }
+}
+</script>
+<body>
+    <pre id="layers" style="position: absolute; height: 1px; width: 1px; overflow: hidden;"></pre>
+</body>
+</html>

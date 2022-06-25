@@ -1,0 +1,4 @@
+Tests hit testing on generated content
+
+ 
+elementFromPoint found target: PASS

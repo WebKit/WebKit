@@ -1,0 +1,154 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" onload="doTest()">
+  <style>
+    .background { fill: lime }
+    .workspace  { fill: red  }
+    .test       { fill: lime }
+  </style>
+  <defs>
+    <!-- 'Dummy' path -->
+    <path id="moveFarAway"      d="M300,300 h0"/>
+
+    <path id="moveToUpperLeft"  d="M100,100 h0"/>
+
+    <path id="pathWhoseDAttrChanges" d="M360,360 h0"/>
+
+    <!-- The first of these two elems w/ same ID should be used. -->
+    <path id="moveToMiddleLeft"  d="M100,150 h0"/>
+    <path id="moveToMiddleLeft"  d="M350,350 h0"/>
+
+    <!-- The first of these two elems w/ same ID initially wins, but then
+         it gets removed via script. -->
+    <path id="moveToMiddleCenter" d="M340,340 h0"/>
+    <path id="moveToMiddleCenter" d="M150,150 h0"/>
+
+    <!-- This elem doesn't do what its id would suggest, but we'll use JS to
+         add an earlier elem with the same ID that *does* do what it says. -->
+    <path id="moveToMiddleRight" d="M330,330 h0"/>
+
+    <path id="moveToLowerLeft"   d="M100,200 h0"/>
+    <path id="moveToLowerCenter" d="M150,200 h0"/>
+
+  </defs>
+
+  <script type="text/javascript">
+    const SVGNS   = "http://www.w3.org/2000/svg";
+    const XLINKNS = "http://www.w3.org/1999/xlink";
+
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    function insertPathElem(aPathId, aPathSpec) {
+      var newPath = document.createElementNS(SVGNS, "path");
+      newPath.setAttribute("id", aPathId);
+      newPath.setAttribute("d",  aPathSpec);
+
+      // Insert new path into defs
+      var defsElem = document.getElementsByTagName("defs")[0];
+      defsElem.insertBefore(newPath, defsElem.firstChild);
+    }
+
+    function doTest() {
+      // Seek already, so we'll have sampled the initial 'stale' state
+      document.documentElement.setCurrentTime(1);
+
+      // Make tweaks
+      var mpathToModify = document.getElementById("modifyMyTarget");
+      mpathToModify.setAttributeNS(XLINKNS, "href", "#moveToUpperLeft");
+
+      var mpathWhoseHrefNeedsClearing = document.getElementById("unsetMyTarget");
+      mpathWhoseHrefNeedsClearing.removeAttributeNS(XLINKNS, "href");
+
+      var pathToTweak = document.getElementById("pathWhoseDAttrChanges");
+      pathToTweak.setAttribute("d", "M200 100 h0");
+
+      var mpathToDelete = document.getElementById("removeMe");
+      mpathToDelete.parentNode.removeChild(mpathToDelete);
+
+      var pathToDelete = document.getElementById("moveToMiddleCenter");
+      pathToDelete.parentNode.removeChild(pathToDelete);
+
+      insertPathElem("moveToMiddleRight", "M200,150 h0");
+      insertPathElem("moveToLowerRight", "M200,200 h0");
+
+      setTimeout(function() {
+        document.documentElement.setCurrentTime(1);
+        document.documentElement.pauseAnimations();
+        if (window.testRunner)
+          testRunner.notifyDone();
+      }, 0);
+    }
+  </script>
+
+  <!-- Big green background to match lime.svg -->
+  <rect class="background" width="100%" height="100%" />
+  <!-- Red "workspace" (should be covered up, if tests pass) -->
+  <rect class="workspace" x="100" y="100" width="150" height="150"/>
+
+  <!-- FIRST ROW: Test behavior... -->
+  <!-- ...when mpath's 'xlink:href' attr is modified. -->
+  <rect class="test" x="0" y="0" width="50" height="50">
+    <animateMotion begin="1" dur="1" fill="freeze">
+      <mpath id="modifyMyTarget" xlink:href="#moveFarAway"/>
+    </animateMotion>
+  </rect>
+
+  <!-- ...when mpath's 'xlink:href' is unset.  -->
+  <rect class="test" x="150" y="100" width="50" height="50">
+    <animateMotion begin="1" dur="1" fill="freeze">
+      <mpath id="unsetMyTarget" xlink:href="#moveFarAway"/>
+    </animateMotion>
+  </rect>
+
+  <!-- ...when the target-path's "d" attr is modified. -->
+  <rect class="test" x="0" y="0" width="50" height="50">
+    <animateMotion begin="1" dur="1" fill="freeze">
+      <mpath xlink:href="#pathWhoseDAttrChanges"/>
+    </animateMotion>
+  </rect>
+
+  <!-- SECOND ROW: Test behavior... -->
+  <!--  ...when there are two paths with same ID (first should win) -->
+  <rect class="test" x="0" y="0" width="50" height="50">
+    <animateMotion begin="1" dur="1" fill="freeze">
+      <mpath xlink:href="#moveToMiddleLeft"/>
+    </animateMotion>
+  </rect>
+
+  <!--  ...when there are two paths with same ID, and the first is removed. -->
+  <rect class="test" x="0" y="0" width="50" height="50">
+    <animateMotion begin="1" dur="1" fill="freeze">
+      <mpath xlink:href="#moveToMiddleCenter"/>
+    </animateMotion>
+  </rect>
+
+  <!--  ...when an earlier path is added with our target ID. -->
+  <rect class="test" x="0" y="0" width="50" height="50">
+    <animateMotion begin="1" dur="1" fill="freeze">
+      <mpath xlink:href="#moveToMiddleRight"/>
+    </animateMotion>
+  </rect>
+
+  <!-- THIRD ROW: Test behavior... -->
+  <!--  ...when there are two mpath children (first should win). -->
+  <rect class="test" x="0" y="0" width="50" height="50">
+    <animateMotion begin="1" dur="1" fill="freeze">
+      <mpath xlink:href="#moveToLowerLeft"/>
+      <mpath xlink:href="#moveFarAway"/>
+    </animateMotion>
+  </rect>
+
+  <!--  ...when there are two mpath children, and the first is removed. -->
+  <rect class="test" x="0" y="0" width="50" height="50">
+    <animateMotion begin="1" dur="1" fill="freeze">
+      <mpath id="removeMe" xlink:href="#moveFarAway"/>
+      <mpath xlink:href="#moveToLowerCenter"/>
+    </animateMotion>
+  </rect>
+  <!--  ...when there's an mpath child that initially matches nothing, until
+        a node with the right ID is inserted into the DOM. -->
+  <rect class="test" x="0" y="0" width="50" height="50">
+    <animateMotion begin="1" dur="1" fill="freeze">
+      <mpath xlink:href="#moveToLowerRight"/>
+    </animateMotion>
+  </rect>
+</svg>

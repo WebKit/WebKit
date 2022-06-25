@@ -1,0 +1,12 @@
+Tests hit-testing of layers over scrollers with odd transforms
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS scrollTopWithScale0Overlay is 100
+PASS scrollTopWithScaledOverlayHitOverlay is 0
+PASS scrollTopWithScaledOverlayHitScroller is 100
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

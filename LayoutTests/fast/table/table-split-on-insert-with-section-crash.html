@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<style>
+  body {
+    border-collapse: collapse;
+  }
+
+  :read-write::after {
+    content: '';
+  }
+  :first-child::first-letter {
+    background: grey;
+  }
+</style>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+
+onload = () => {
+  document.documentElement.appendChild(document.createElement('input'));
+  document.execCommand('SelectAll');
+  document.execCommand('Copy');
+  let aElement = document.createElement('a');
+  document.body.appendChild(aElement);
+  let row = document.createElement('tr');
+  aElement.appendChild(row);
+  row.appendChild(document.createElement('input'));
+  row.appendChild(document.createElement('td'));
+  getSelection().modify('move', 'left', 'sentenceboundary');
+  document.designMode = 'on';
+  document.execCommand('PasteAsQuotation');
+  document.styleSheets[0].insertRule(`#nnn {}`);
+};
+</script>
+<!-- Pass if no crash or assert. -->

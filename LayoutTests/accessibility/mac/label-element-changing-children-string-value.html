@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<input type="radio" id="input" />
+<label for="input" id="label">
+    <span id="first">first</span>
+    <span>choice</span>
+</label>
+
+<script>
+    description("This tests that if a label element's children change, the string value updates");
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        var label = accessibilityController.accessibleElementById("label");
+        shouldBe("label.role", "'AXRole: AXStaticText'");
+        shouldBe("label.stringValue", "'AXValue: first choice'");
+
+        let first = document.getElementById("first")
+        let span = document.createElement("span");
+        let textNode = document.createTextNode("foo");
+        span.appendChild(textNode);
+        first.appendChild(textNode);
+
+        setTimeout(async function() {
+            await expectAsyncExpression("label.stringValue", "'AXValue: first foo choice'");
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>

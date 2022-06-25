@@ -1,0 +1,13 @@
+<pre id="results"></pre>
+<div id="target" style="width: 100px; height: 100px; background-color: black;"></div>
+<script>
+
+target.animate([
+    { opacity: 1, width: "100px" },
+    { opacity: 0, width: "200px" }
+], 1000);
+
+testRunner.dumpAsText();
+document.getElementById("results").innerText = internals.layerTreeAsText(document);
+
+</script>

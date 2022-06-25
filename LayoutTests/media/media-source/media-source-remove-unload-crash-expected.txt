@@ -1,0 +1,18 @@
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(source.duration = loader.duration())
+RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(update)
+Append a media segment.
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+Remove the SourceBuffer from its MediaSource, then unload the video element. Should not crash.
+RUN(source.removeSourceBuffer(sourceBuffer))
+RUN(sourceBuffer = null)
+RUN(gc())
+RUN(video.src = "")
+RUN(video.load())
+END OF TEST
+

@@ -1,0 +1,78 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <style>
+        .quote {
+            padding-top: 5px;
+            padding-right: 5px;
+            padding-bottom: 5px;
+            padding-left: 12px;
+            border-left: 5px lightblue solid;
+            color: gray;
+            background-color: #EFFEFE;
+        }
+
+        #editor {
+            width: 480px;
+            height: 320px;
+            border: 1px solid #DFDFDF;
+            border-radius: 4px;
+            padding: 10px;
+            outline: none;
+            overflow: scroll;
+            font-family: -apple-system;
+        }
+
+        #editor > p:first-child {
+            margin-top: 0;
+        }
+
+        #editor > p:last-child {
+            margin-bottom: 0;
+        }
+
+        #editor > p,
+        .quote > p {
+            margin: 8px auto;
+        }
+    </style>
+    <script>
+        function setup() {
+            editor.addEventListener("beforeinput", event => {
+                if (event.inputType.match(/^format/))
+                    return;
+
+                for (let staticRange of event.getTargetRanges()) {
+                    if (nodeIsInsideQuote(staticRange.startContainer)
+                        || nodeIsInsideQuote(staticRange.endContainer)) {
+                        event.preventDefault();
+                        return;
+                    }
+                }
+            });
+
+            function nodeIsInsideQuote(node) {
+                let currentElement = node.nodeType == Node.ELEMENT_NODE ? node : node.parentElement;
+                while (currentElement) {
+                    if (currentElement.classList.contains("quote"))
+                        return true;
+                    currentElement = currentElement.parentElement;
+                }
+                return false;
+            }
+        }
+    </script>
+</head>
+<body onload="setup()">
+    <div id="editor" contenteditable>
+        <p>This is some regular content.</p>
+        <p>This text is fully editable.</p>
+        <div class="quote">
+            <p>This is some quoted content.</p>
+            <p>You can only change the format of this text.</p>
+        </div>
+        <p>This is some more regular content.</p>
+        <p>This text is also fully editable.</p>
+    </div>
+</body>
+</html>

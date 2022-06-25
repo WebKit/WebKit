@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<style>
+a {
+    font-size: 20px;
+    text-decoration: none;
+    color: green;
+}
+
+div {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    width: 200px;
+}
+</style><div><a href="" id=clamp>pass if this text content is visible</a></div>
+<div style="position: relative; top: -20px; left: 179px; width: 100px; height: 100px; background-color: white;"></div><script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+setTimeout(function() {
+    clamp.style.color = "green";
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, 0);
+</script>

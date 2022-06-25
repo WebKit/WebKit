@@ -1,0 +1,46 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/FormDataEvent.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/SubmitEvent.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/constructing-form-data-set.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/enctypes-helper.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-data-set-empty-file.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-data-set-usv-form.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-data-set-usv.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-double-submit-2.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-double-submit-3.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-double-submit-multiple-targets.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-double-submit-to-different-origin-frame.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-double-submit.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-echo.py
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-submission-algorithm.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/form-submit-iframe-then-location-navigate.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/getactionurl.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/historical.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/implicit-submission.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/jsurl-form-submit.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/jsurl-navigation-then-form-submit.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/multipart-formdata.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/newline-normalization.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/reparent-form-during-planned-navigation-task.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/request-submit-activation.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/submission-checks.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/submit-entity-body.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/submit-file.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/text-plain.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/url-encoded.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/urlencoded2.window.js

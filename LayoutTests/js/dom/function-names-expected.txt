@@ -1,0 +1,26 @@
+This test checks the names of all sorts of different functions.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS new Function(' return 1; ').toString().replace(/[ \n]+/g, ' ') is 'function anonymous() { return 1; }'
+PASS document.documentElement.onclick.toString().replace(/[ \n]+/g, ' ') is 'function onclick(event) { return 2; }'
+PASS ''.constructor is String
+PASS Boolean.toString() is 'function Boolean() {\n    [native code]\n}'
+PASS Date.toString() is 'function Date() {\n    [native code]\n}'
+PASS Error.toString() is 'function Error() {\n    [native code]\n}'
+PASS EvalError.toString() is 'function EvalError() {\n    [native code]\n}'
+PASS Function.toString() is 'function Function() {\n    [native code]\n}'
+PASS Number.toString() is 'function Number() {\n    [native code]\n}'
+PASS Object.toString() is 'function Object() {\n    [native code]\n}'
+PASS RangeError.toString() is 'function RangeError() {\n    [native code]\n}'
+PASS ReferenceError.toString() is 'function ReferenceError() {\n    [native code]\n}'
+PASS RegExp.toString() is 'function RegExp() {\n    [native code]\n}'
+PASS String.toString() is 'function String() {\n    [native code]\n}'
+PASS SyntaxError.toString() is 'function SyntaxError() {\n    [native code]\n}'
+PASS TypeError.toString() is 'function TypeError() {\n    [native code]\n}'
+PASS URIError.toString() is 'function URIError() {\n    [native code]\n}'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

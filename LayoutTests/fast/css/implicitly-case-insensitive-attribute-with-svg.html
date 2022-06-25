@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Case Insensitive and Case Sensitive Attribute matching</title>
+<style>
+[link=foobar], [lang=foobar] {
+    display: none;
+}
+</style>
+</head>
+<body>
+    <p>On success, there should be a large green surface visible and no red anywhere.</p>
+    <!-- None of these rects should appear, lang and link attribute matching is case insensitive for HTML documents. -->
+    <div style="background-color: red; position: absolute; left:0; width:50px; height:50px"  lang="FooBar"></div>
+    <div style="background-color: red; position: absolute; left:50px; width:50px; height:50px" link="FooBar"></div>
+    <div style="background-color: red; position: absolute; left:100px; width:50px; height:50px" lang="foobar"></div>
+    <div style="background-color: red; position: absolute; left:150px; width:50px; height:50px" link="foobar"></div>
+
+    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 100 100" style="margin-top:50px">
+        <!-- The first green rects should be visible, attribute matching is always case sensitive for XML or SVG documents. -->
+        <rect x="50" y="0" width="50" height="50" lang="FooBar" style="fill:green" />
+        <rect x="0" y="0" width="50" height="50" link="FooBar" style="fill:green" />
+        <!-- These are regular match and should not appear. -->
+        <rect x="0" y="50" width="50" height="50" lang="foobar" style="fill:red" />
+        <rect x="50" y="50" width="50" height="50" link="foobar" style="fill:red" />
+    </svg>
+</body>
+</html>

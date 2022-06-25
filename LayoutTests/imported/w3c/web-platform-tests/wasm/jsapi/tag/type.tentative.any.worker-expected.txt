@@ -1,0 +1,5 @@
+
+PASS []
+PASS [i32 i64]
+PASS [i32 i64 f32 f64]
+

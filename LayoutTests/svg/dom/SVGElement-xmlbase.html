@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Check that SVGElement.xmlbase does not exist.");
+
+var svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+shouldBeUndefined("svgElement.xmlbase");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

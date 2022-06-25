@@ -1,0 +1,9 @@
+<script>
+setTimeout(() => {
+    window.close();
+    if (window.testRunner) {
+        testRunner.notifyDone();
+        testRunner.abortModal();
+    }
+}, 1000);
+</script>

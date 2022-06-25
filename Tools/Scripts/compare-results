@@ -1,0 +1,604 @@
+#!/usr/bin/env python -u
+
+# Copyright (C) 2019 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer. 
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution. 
+# 3.  Neither the name of Apple Inc. ("Apple") nor the names of
+#     its contributors may be used to endorse or promote products derived
+#     from this software without specific prior written permission. 
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import collections
+import sys
+import argparse
+import json
+import itertools
+from webkitpy.benchmark_runner.benchmark_results import BenchmarkResults
+from webkitpy.benchmark_runner.benchmark_json_merge import mergeJSONs
+
+try:
+    from scipy import stats
+except:
+    print("ERROR: scipy package is not installed. Run `pip install scipy`")
+    sys.exit(1)
+
+try:
+    import numpy
+except:
+    print("ERROR: numpy package is not installed. Run `pip install numpy`")
+    sys.exit(1)
+
+def readJSONFile(path):
+    with open(path, 'r') as contents:
+        result = json.loads(contents.read())
+        if 'debugOutput' in result:
+            del result['debugOutput']
+        return result
+
+Speedometer2 = "Speedometer2"
+JetStream2 = "JetStream2"
+PLT5 = "PLT5"
+CompetitivePLT = "CompetitivePLT"
+PLUM3 = "PLUM3"
+MotionMark = "MotionMark"
+MotionMark1_1 = "MotionMark-1.1"
+MotionMark1_1_1 = "MotionMark-1.1.1"
+
+unitMarker = "__unit__"
+
+def speedometer2Breakdown(jsonObject):
+    breakdown = BenchmarkResults(jsonObject)
+    result = {}
+    result[unitMarker] = "ms"
+    for test in breakdown._results["Speedometer-2"]["tests"].keys():
+        result[test] = breakdown._results["Speedometer-2"]["tests"][test]["metrics"]["Time"]["Total"]["current"]
+    return result
+
+def speedometer2BreakdownSyncAsync(jsonObject):
+    breakdown = BenchmarkResults(jsonObject)
+    result = {}
+    result[unitMarker] = "ms"
+    for test in breakdown._results["Speedometer-2"]["tests"].keys():
+        syncTime = None
+        asyncTime = None
+        for value in breakdown._results["Speedometer-2"]["tests"][test]["tests"].values():
+            syncArray = value["tests"]["Sync"]["metrics"]["Time"][None]["current"]
+            asyncArray = value["tests"]["Async"]["metrics"]["Time"][None]["current"]
+            if not syncTime:
+                syncTime = syncArray
+                asyncTime = asyncArray
+            else:
+                syncTime = [x + y for x, y in zip(syncTime, syncArray)]
+                asyncTime = [x + y for x, y in zip(asyncTime, asyncArray)]
+        result[test + "-sync"] = syncTime
+        result[test + "-async"] = asyncTime
+    return result
+
+def jetStream2Breakdown(jsonObject):
+    breakdown = BenchmarkResults(jsonObject)
+    result = {}
+    result[unitMarker] = "pts"
+    for test in breakdown._results["JetStream2.0"]["tests"].keys():
+        result[test] = breakdown._results["JetStream2.0"]["tests"][test]["metrics"]["Score"][None]["current"]
+    return result
+
+def motionMarkBreakdown(jsonObject):
+    breakdown = BenchmarkResults(jsonObject)
+
+    result = {}
+    result[unitMarker] = "pts"
+
+    if detectMotionMark(jsonObject):
+        name = "MotionMark"
+    elif detectMotionMark1_1(jsonObject):
+        name = "MotionMark-1.1"
+    else:
+        name = "MotionMark-1.1.1"
+
+    for test in breakdown._results[name]["tests"].keys():
+        result[test] = breakdown._results[name]["tests"][test]["metrics"]["Score"][None]["current"]
+
+    return result
+
+def plt5Breakdown(jsonObject):
+    nameMapping = {}
+
+    for mappings in  jsonObject["urls"]:
+        for key in mappings.keys():
+            nameMapping[key] = mappings[key]
+
+    result = {}
+    result[unitMarker] = "ms"
+    for test in jsonObject["iterations"][0]["warm"].keys():
+        if test == "Geometric":
+            continue
+        result["warm--" + nameMapping[test]] = []
+        result["cold--" + nameMapping[test]] = []
+
+    for payload in jsonObject["iterations"]:
+        warmTests = payload["warm"]
+        coldTests = payload["cold"]
+        for test in warmTests.keys():
+            if test == "Geometric":
+                continue
+            result["warm--" + nameMapping[test]].append(warmTests[test]["Geometric"])
+            result["cold--" + nameMapping[test]].append(coldTests[test]["Geometric"])
+
+    return result
+
+def competitivePLTBreakdown(jsonObject):
+    result = collections.defaultdict(list)
+    result[unitMarker] = "sec"
+
+    safari_results = jsonObject.get('Safari', {})
+
+    cold_results = safari_results.get('cold', {})
+    warm_results = safari_results.get('warm', {})
+
+    cold_link_results = cold_results.get('add-and-click-link', {})
+    warm_link_results = warm_results.get('add-and-click-link', {})
+
+    for site_to_times in cold_link_results.values():
+        for site, times in site_to_times.items():
+            result["cold--fmp--" + site].append(times['first_meaningful_paint'])
+            result["cold--load-end--" + site].append(times['load_end'])
+
+    for site_to_times in warm_link_results.values():
+        for site, times in site_to_times.items():
+            result["warm--fmp--" + site].append(times['first_meaningful_paint'])
+            result["warm--load-end--" + site].append(times['load_end'])
+
+    return result
+
+def plum3Breakdown(jsonObject):
+    breakdown = BenchmarkResults(jsonObject)
+    result = {}
+    result[unitMarker] = "B"
+    for test in breakdown._results["PLUM3-PhysFootprint"]["tests"].keys():
+        result[test] = breakdown._results["PLUM3-PhysFootprint"]["tests"][test]["metrics"]["Allocations"]["Geometric"]["current"]
+    return result
+
+def displayStr(value):
+    return "{:.6f}".format(float(value))
+
+def computeMultipleHypothesesSignificance(a, b):
+    # This is using the Benjamini-Hochberg procedure based on False Discovery Rate
+    # for computing signifcance in multiple hypothesis testing 
+    # Read more here:
+    # - https://en.wikipedia.org/wiki/False_discovery_rate
+    # - https://www.stat.berkeley.edu/~mgoldman/Section0402.pdf
+    # This is best used for independent variables. We know subtests aren't
+    # fully independent, this it's a reasonable approximation.
+    # We use this instead of Bonferroni because we control for almost the same
+    # false positive error rate (marking as signficant when it's not), but with a much
+    # lower false negative error rate (not marking something as signficant when it is).
+
+    sortedPValues = []
+    reversePValueMap = {}
+
+    for key in a.keys():
+        if key == unitMarker:
+            continue
+
+        (tStatistic, pValue) = stats.ttest_ind(a[key], b[key], equal_var=False)
+
+        sortedPValues.append(pValue)
+        if pValue not in reversePValueMap:
+            reversePValueMap[pValue] = []
+        reversePValueMap[pValue].append(key)
+
+    sortedPValues.sort()
+    assert sortedPValues[0] <= sortedPValues[-1]
+
+    isSignificant = False
+    result = {}
+    rank = float(len(sortedPValues))
+    for pValue in reversed(sortedPValues):
+        assert rank >= 1.0
+        threshold = (rank * .05) / float(len(sortedPValues))
+        if pValue <= threshold:
+            isSignificant = True
+        
+        assert len(reversePValueMap[pValue]) > 0
+        for test in reversePValueMap[pValue]:
+            result[test] = isSignificant
+
+        rank = rank - 1.0
+
+    return result
+
+
+def dumpBreakdowns(a, b):
+    nameLength = len("subtest")
+    aLength = len(a[unitMarker])
+    bLength = len(a[unitMarker])
+    ratioLength = len("b / a")
+
+    pValueHeader = "pValue (significance using False Discovery Rate)"
+    pLength = len(pValueHeader)
+
+    isSignificant = computeMultipleHypothesesSignificance(a, b)
+
+    for key in a.keys():
+        if key == unitMarker:
+            continue
+        nameLength = max(nameLength, len(key))
+        aLength = max(aLength, len(displayStr(numpy.mean(a[key]))))
+        bLength = max(bLength, len(displayStr(numpy.mean(b[key]))))
+        ratioLength = max(ratioLength, len(displayStr(numpy.mean(b[key]) / numpy.mean(a[key]))))
+
+        (tStatistic, pValue) = stats.ttest_ind(a[key], b[key], equal_var=False)
+        significantStr = ""
+        if isSignificant[key]:
+            significantStr = " (significant)"
+        pLength = max(pLength, len(displayStr(pValue)) + len(significantStr))
+
+    aLength += 2
+    bLength += 2
+    nameLength += 2
+    ratioLength += 2
+    pLength += 2
+
+    strings = []
+    strings.append("|{key:^{nameLength}}|{aScore:^{aLength}} |{bScore:^{bLength}} |{compare:^{ratioLength}}|{pMarker:^{pLength}}|".format(key="subtest", aScore=a[unitMarker], bScore=b[unitMarker], nameLength=nameLength, aLength=aLength, bLength=bLength , compare="b / a", ratioLength=ratioLength, pMarker=pValueHeader, pLength=pLength))
+    for key in sorted(a.keys()):
+        if key == unitMarker:
+            continue
+
+        aScore = numpy.mean(a[key])
+        bScore = numpy.mean(b[key])
+
+        (tStatistic, pValue) = stats.ttest_ind(a[key], b[key], equal_var=False)
+
+        significantStr = ""
+        if isSignificant[key]:
+            significantStr = " (significant)"
+
+        strings.append("| {key:{nameLength}}|{aScore:{aLength}} |{bScore:{bLength}} |{compare:{ratioLength}}| {pValue:<{pLength}}|".format(key=key, aScore=displayStr(aScore), bScore=displayStr(bScore), nameLength=nameLength - 1, aLength=aLength, bLength=bLength, ratioLength=ratioLength, compare=displayStr(bScore / aScore), pValue = displayStr(pValue) + significantStr, pLength=pLength - 1))
+
+    maxLen = 0
+    for s in strings:
+        maxLen = max(maxLen, len(s))
+
+    verticalSeparator = "-" * maxLen
+    strings.insert(0, verticalSeparator)
+    strings.insert(2, verticalSeparator)
+    strings.append(verticalSeparator)
+
+    print("\n")
+    for s in strings:
+        print(s)
+    print("\n")
+
+def writeCSV(a, b, fileName):
+    strings = []
+    result = ""
+    result += "test_name, {}, {}, b_divided_by_a, pValue, is_significant_using_False_Discovery_Rate\n".format("a_in_" + a[unitMarker], "b_in_" + b[unitMarker])
+
+    isSignificant = computeMultipleHypothesesSignificance(a, b)
+
+    for key in a.keys():
+        if key == unitMarker:
+            continue
+
+        aScore = numpy.mean(a[key])
+        bScore = numpy.mean(b[key])
+
+        (tStatistic, pValue) = stats.ttest_ind(a[key], b[key], equal_var=False)
+        significantStr = "No"
+        if isSignificant[key]:
+            significantStr = "Yes"
+        result += "{},{},{},{},{},{}\n".format(key, displayStr(aScore), displayStr(bScore), displayStr(bScore / aScore), displayStr(pValue), significantStr)
+
+    f = open(fileName, "w")
+    f.write(result)
+    f.close()
+
+
+def detectJetStream2(payload):
+    return "JetStream2.0" in payload
+
+def JetStream2Results(payload):
+    assert detectJetStream2(payload)
+
+    js = payload["JetStream2.0"]
+    iterations = len(js["tests"]["gaussian-blur"]["metrics"]["Score"]["current"])
+    results = []
+    for i in range(iterations):
+        scores = []
+        for test in js["tests"].keys():
+            scores.append(js["tests"][test]["metrics"]["Score"]["current"][i])
+        geomean = stats.gmean(scores)
+        
+        results.append(geomean)
+
+    return results
+
+def detectSpeedometer2(payload):
+    return "Speedometer-2" in payload
+
+def Speedometer2Results(payload):
+    assert detectSpeedometer2(payload)
+    results = []
+    for arr in payload["Speedometer-2"]["metrics"]["Score"]["current"]:
+        results.append(numpy.mean(arr))
+    return results
+
+def detectPLT5(payload):
+    if "iterations" not in payload:
+        return False
+    iterations = payload["iterations"]
+    if not isinstance(iterations, list):
+        return False
+    if not len(iterations):
+        return False
+    if "cold" not in iterations[0]:
+        return False
+    if "warm" not in iterations[0]:
+        return False
+    if "Geometric" not in iterations[0]:
+        return False
+    return True
+
+def PLT5Results(payload):
+    assert detectPLT5(payload)
+    results = []
+    for obj in payload["iterations"]:
+        results.append(obj["Geometric"])
+    return results
+
+def detectCompetitivePLT(payload):
+    return 'add-and-click-link' in payload.get('Safari', {}).get('cold', {})
+
+def CompetitivePLTResults(payload):
+    def calculate_time_for_run(run):
+        # We geomean all FMP and load_end times together to produce a result for the run.
+        fmp_vals = [obj['first_meaningful_paint'] for obj in run.values()]
+        load_end_vals = [obj['load_end'] for obj in run.values()]
+        return stats.gmean(fmp_vals + load_end_vals)
+
+    safari_results = payload.get('Safari', {})
+
+    cold_results = safari_results.get('cold', {})
+    warm_results = safari_results.get('warm', {})
+
+    cold_link_results = cold_results.get('add-and-click-link', {})
+    warm_link_results = warm_results.get('add-and-click-link', {})
+
+    cold_times = [calculate_time_for_run(run) for run in cold_link_results.values()]
+    warm_times = [calculate_time_for_run(run) for run in warm_link_results.values()]
+
+    return [stats.gmean((cold_time, warm_time)) for cold_time, warm_time in zip(cold_times, warm_times)]
+
+def detectPLUM3(payload):
+    return "PLUM3-PhysFootprint" in payload
+
+def PLUM3Results(payload):
+    assert detectPLUM3(payload)
+    breakdown = BenchmarkResults(payload)
+    return breakdown._results["PLUM3-PhysFootprint"]["metrics"]["Allocations"]["Arithmetic"]["current"]
+
+def detectMotionMark(payload):
+    return "MotionMark" in payload
+
+def detectMotionMark1_1(payload):
+    return "MotionMark-1.1" in payload
+
+def detectMotionMark1_1_1(payload):
+    return "MotionMark-1.1.1" in payload
+
+def motionMarkResults(payload):
+    assert detectMotionMark(payload) or detectMotionMark1_1(payload) or detectMotionMark1_1_1(payload)
+    if detectMotionMark(payload):
+        payload = payload["MotionMark"]
+    elif detectMotionMark1_1(payload):
+        payload = payload["MotionMark-1.1"]
+    else:
+        payload = payload["MotionMark-1.1.1"]
+    testNames = list(payload["tests"].keys())
+    numTests = len(payload["tests"][testNames[0]]["metrics"]["Score"]["current"])
+    results = []
+    for i in range(numTests):
+        scores = []
+        for test in testNames:
+            scores.append(payload["tests"][test]["metrics"]["Score"]["current"][i])
+        results.append(stats.gmean(scores))
+
+    return results
+
+def detectBenchmark(payload):
+    if detectJetStream2(payload):
+        return JetStream2
+    if detectSpeedometer2(payload):
+        return Speedometer2
+    if detectPLT5(payload):
+        return PLT5
+    if detectCompetitivePLT(payload):
+        return CompetitivePLT
+    if detectPLUM3(payload):
+        return PLUM3
+    if detectMotionMark(payload):
+        return MotionMark
+    if detectMotionMark1_1(payload):
+        return MotionMark1_1
+    if detectMotionMark1_1_1(payload):
+        return MotionMark1_1
+    return None
+
+def biggerIsBetter(benchmarkType):
+    if benchmarkType == JetStream2:
+        return True
+    if benchmarkType == Speedometer2:
+        return True
+    if benchmarkType == MotionMark:
+        return True
+    if benchmarkType == MotionMark1_1:
+        return True
+    if benchmarkType == PLT5:
+        return False
+    if benchmarkType == CompetitivePLT:
+        return False
+    if benchmarkType == PLUM3:
+        return False
+
+    print("Should not be reached.")
+    assert False
+
+def ttest(benchmarkType, a, b):
+    # We use two-tailed Welch's
+    (tStatistic, pValue) = stats.ttest_ind(a, b, equal_var=False)
+    aMean = numpy.mean(a)
+    bMean = numpy.mean(b)
+    print("a mean = {:.5f}".format(aMean))
+    print("b mean = {:.5f}".format(bMean))
+
+    print("pValue = {:.10f}".format(pValue))
+
+    if biggerIsBetter(benchmarkType):
+        print("(Bigger means are better.)")
+        if aMean > bMean:
+            print("{:.3f} times worse".format((aMean / bMean)))
+        else:
+            print("{:.3f} times better".format((bMean / aMean)))
+    else:
+        print("(Smaller means are better.)")
+        if aMean > bMean:
+            print("{:.3f} times better".format((aMean / bMean)))
+        else:
+            print("{:.3f} times worse".format((bMean / aMean)))
+
+    if pValue <= 0.05:
+        print("Results ARE significant")
+    else:
+        print("Results ARE NOT significant")
+
+def getOptions():
+    parser = argparse.ArgumentParser(description="Compare two WebKit benchmark results. Pass in at least two JSON result files to compare them. This script prints the pValue along with the magnitude of the change. If more than one JSON is passed as a/b they will be merged when computing the breakdown.")
+
+    parser.add_argument("-a",
+        type=str,
+        required=True,
+        nargs='+',
+        action="append",
+        help="a JSONs of a/b. Path to JSON results file. Takes multiple values and can be passed multiple times.")
+
+    parser.add_argument("-b",
+        type=str,
+        required=True,
+        nargs='+',
+        action="append",
+        help="b JSONs of a/b. Path to JSON results file. Takes multiple values and can be passed multiple times.")
+
+    parser.add_argument("--csv",
+        type=str,
+        required=False,
+        help="Path to write a csv file containing subtest breakdown.")
+
+    parser.add_argument("--breakdown", action="store_true",
+        default=False, help="Print a per subtest breakdown.")
+
+    parser.add_argument("--sync-vs-async", action="store_true",
+        default=False, help="Print a per subtest breakdown in Speedometer2 by sync and async time.")
+
+    return parser.parse_known_args()[0]
+
+
+def main():
+    args = getOptions()
+
+    # Flatten the list of lists of JSON files.
+    a = itertools.chain.from_iterable(args.a)
+    b = itertools.chain.from_iterable(args.b)
+
+    a = mergeJSONs(list(map(readJSONFile, a)))
+    b = mergeJSONs(list(map(readJSONFile, b)))
+
+    typeA = detectBenchmark(a)
+    typeB = detectBenchmark(b)
+
+    if typeA != typeB:
+        print("-a and -b are not the same benchmark. a={} b={}".format(typeA, typeB))
+        sys.exit(1)
+
+    if not (typeA and typeB):
+        print("Unknown benchmark type. a={} b={}".format(typeA, typeB))
+        sys.exit(1)
+    
+    if typeA == JetStream2:
+        if args.breakdown:
+            dumpBreakdowns(jetStream2Breakdown(a), jetStream2Breakdown(b))
+
+        ttest(typeA, JetStream2Results(a), JetStream2Results(b))
+
+        if args.csv:
+            writeCSV(jetStream2Breakdown(a), jetStream2Breakdown(b), args.csv)
+    elif typeA == Speedometer2:
+        if args.breakdown:
+            if args.sync_vs_async:
+                dumpBreakdowns(speedometer2BreakdownSyncAsync(a), speedometer2BreakdownSyncAsync(b))
+            else:
+                dumpBreakdowns(speedometer2Breakdown(a), speedometer2Breakdown(b))
+
+        ttest(typeA, Speedometer2Results(a), Speedometer2Results(b))
+
+        if args.csv:
+            writeCSV(speedometer2Breakdown(a), speedometer2Breakdown(b), args.csv)
+
+    elif typeA == MotionMark or typeA == MotionMark1_1 or typeA == MotionMark1_1_1:
+        if args.breakdown:
+            dumpBreakdowns(motionMarkBreakdown(a), motionMarkBreakdown(b))
+
+        ttest(typeA, motionMarkResults(a), motionMarkResults(b))
+
+        if args.csv:
+            writeCSV(motionMarkBreakdown(a), motionMarkBreakdown(b), args.csv)
+    elif typeA == PLT5:
+        if args.breakdown:
+            dumpBreakdowns(plt5Breakdown(a), plt5Breakdown(b))
+
+        ttest(typeA, PLT5Results(a), PLT5Results(b))
+
+        if args.csv:
+            writeCSV(plt5Breakdown(a), plt5Breakdown(b), args.csv)
+    elif typeA == CompetitivePLT:
+        if args.breakdown:
+            dumpBreakdowns(competitivePLTBreakdown(a), competitivePLTBreakdown(b))
+
+        ttest(typeA, CompetitivePLTResults(a), CompetitivePLTResults(b))
+
+        if args.csv:
+            writeCSV(competitivePLTBreakdown(a), competitivePLTBreakdown(b), args.csv)
+    elif typeA == PLUM3:
+        if args.breakdown:
+            dumpBreakdowns(plum3Breakdown(a), plum3Breakdown(b))
+
+        ttest(typeA, PLUM3Results(a), PLUM3Results(b))
+
+        if args.csv:
+            writeCSV(plum3Breakdown(a), plum3Breakdown(b), args.csv)
+    else:
+        print("Unknown benchmark type")
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()
+

@@ -1,0 +1,10 @@
+
+RUN(video.src = 'http://127.0.0.1:8000/media/resources/serve_video.py.webm?type=video/webm&name=../media-source/webm/test.webm&stallDuration=99999&stallOffset=13')
+EVENT(stalled)
+RUN(video.src = '')
+RUN(video.load())
+EVENT(emptied)
+RUN(video.src = 'http://127.0.0.1:8000/media/resources/serve_video.py.webm?type=video/webm&name=../media-source/webm/test.webm')
+EVENT(canplay)
+END OF TEST
+

@@ -1,0 +1,61 @@
+<html>
+<head>
+<script src="../../../../resources/ui-helper.js"></script>
+<script src="../../../../resources/js-test.js"></script>
+<meta name=viewport content="width=device-width">
+<style>
+    body, html {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+    }
+
+    #target {
+        font-size: 150px;
+    }
+</style>
+</head>
+
+<body>
+<p id="target">WK</p>
+<p id="description"></p>
+<p id="console"></p>
+<script>
+jsTestIsAsync = true;
+observedTouchEnd = false;
+
+document.addEventListener("touchend", async () => {
+    selectionRects = await UIHelper.getUISelectionRects();
+    shouldBe("selectionRects.length", "1");
+    shouldBe("Math.round(selectionRects[0].left)", "0");
+    shouldBe("Math.round(selectionRects[0].top)", "3");
+    shouldBe("Math.round(selectionRects[0].width)", "250");
+    shouldBe("Math.round(selectionRects[0].height)", "167");
+
+    startGrabberRect = await UIHelper.getSelectionStartGrabberViewRect();
+    shouldBe("Math.round(startGrabberRect.left)", "0");
+    shouldBe("Math.round(startGrabberRect.top)", "3");
+    shouldBe("Math.round(startGrabberRect.width)", "2");
+    shouldBe("Math.round(startGrabberRect.height)", "167");
+
+    endGrabberRect = await UIHelper.getSelectionEndGrabberViewRect();
+    shouldBe("Math.round(endGrabberRect.left)", "249");
+    shouldBe("Math.round(endGrabberRect.top)", "3");
+    shouldBe("Math.round(endGrabberRect.width)", "2");
+    shouldBe("Math.round(endGrabberRect.height)", "167");
+
+    observedTouchEnd = true;
+});
+
+description("This test verifies that selection handles are present after selecting a word via long press. To manually test, long press the word 'WK' until a selection highlight is shown, and verify that selection handles are present after ending the touch.");
+
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    await UIHelper.longPressElement(target);
+    shouldBecomeEqual("observedTouchEnd", "true", finishJSTest);
+});
+</script>
+</body>
+</html>

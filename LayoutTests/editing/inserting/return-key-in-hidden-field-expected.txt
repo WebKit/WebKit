@@ -1,0 +1,6 @@
+This tests to make sure that inserting a line break in a hidden textarea doesn't crash. To repro manually, press enter or return in the textarea. We pass if we don't crash.
+
+
+
+
+

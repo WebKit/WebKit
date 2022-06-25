@@ -1,0 +1,5 @@
+
+PASS e.style['clip'] = "auto" should set the property value
+PASS e.style['clip'] = "rect(10px, 20px, -30px, 40px)" should set the property value
+PASS e.style['clip'] = "rect(10px, -20px, auto, auto)" should set the property value
+

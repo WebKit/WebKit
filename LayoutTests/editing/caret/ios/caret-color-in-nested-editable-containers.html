@@ -1,0 +1,53 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+body, html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+#editor {
+    width: 250px;
+    font-size: 20px;
+    padding: 10px;
+    display: block;
+    border: 1px solid tomato;
+    caret-color: red;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    // FIXME: Once caret color follows the selection container's caret-color (bug #229809), this test should be
+    // rebaselined to verify that the caret background color is blue.
+    description("This test verifies exercises the behavior of <code>caret-color</code> in nested editable containers. To manually run the test, focus the red box and verify that the caret color is red.");
+
+    if (!window.testRunner)
+        return;
+
+    let editor = document.getElementById("editor");
+    await UIHelper.activateElementAndWaitForInputSession(editor);
+    await UIHelper.ensurePresentationUpdate();
+    caretColor = await UIHelper.selectionCaretBackgroundColor();
+
+    shouldBeEqualToString("caretColor", "rgb(255, 0, 0)");
+
+    editor.blur();
+    await UIHelper.waitForKeyboardToHide();
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+<div contenteditable id="editor">
+    <div><br style="caret-color: blue;"></div>
+</div>
+<pre id="console"></pre>
+</body>
+</html>

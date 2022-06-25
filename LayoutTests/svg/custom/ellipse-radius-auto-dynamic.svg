@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <ellipse id="ellipse-1" cx="40" cy="60" rx="20" ry="0" fill="green"/>
+    <ellipse id="ellipse-2" cx="90" cy="60" ry="30" rx="0" fill="green"/>
+
+    <ellipse id="ellipse-3" cx="160" cy="60" rx="20" ry="0" fill="green">
+        <animate attributeType="XML" attributeName="rx" from="20" to="40" dur="1s" fill="freeze"/>
+    </ellipse>
+
+    <ellipse id="ellipse-4" cx="250" cy="60" ry="20" rx="0" fill="green">
+        <animate attributeType="XML" attributeName="ry" from="20" to="50" dur="1s" fill="freeze"/>
+    </ellipse>
+
+    <use y="100" href="#ellipse-1"/>
+    <use y="100" href="#ellipse-2"/>
+    <use y="100" href="#ellipse-3"/>
+    <use y="100" href="#ellipse-4"/>
+
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        window.addEventListener('load', (event) => {
+            let ellipse1 = document.getElementById('ellipse-1');
+            let ellipse2 = document.getElementById('ellipse-2');
+            let ellipse3 = document.getElementById('ellipse-3');
+            let ellipse4 = document.getElementById('ellipse-4');
+
+            ellipse1.style['ry'] = 'auto';
+            ellipse2.style['rx'] = 'auto';
+            ellipse3.style['ry'] = 'auto';
+            ellipse4.style['rx'] = 'auto';
+
+            document.documentElement.setCurrentTime(5);
+            if (window.testRunner)
+                testRunner.notifyDone();
+        });
+    </script>
+</svg>

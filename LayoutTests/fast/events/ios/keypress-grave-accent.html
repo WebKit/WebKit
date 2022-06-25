@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width">
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+</head>
+<body>
+<p>Tests that we dispatch DOM key events with the correct details when the grave accent key (`) is pressed on the keyboard.</p>
+<input type="text" id="input" onkeydown="logKeyEvent(event)" onkeyup="logKeyEvent(event)" onkeypress="logKeyEvent(event)">
+<hr>
+<pre id="console"></pre>
+<script>
+var numberOfFiredKeyEvents = 0;
+var numberOfFiredKeyEventsForTestComplete = 3;
+
+function log(message)
+{
+    document.getElementById("console").appendChild(document.createTextNode(message + "\n"));
+}
+
+function logKeyEvent(event)
+{
+    let pieces = [];
+    for (let propertyName of ["type", "key", "code", "keyIdentifier", "keyCode", "charCode", "keyCode", "which"])
+        pieces.push(`${propertyName}: ${event[propertyName]}`);
+    log(pieces.join(", "));
+    if (++numberOfFiredKeyEvents >= numberOfFiredKeyEventsForTestComplete && window.testRunner)
+        testRunner.notifyDone();
+}
+
+async function runTest()
+{
+    if (!window.testRunner)
+        return;
+    await UIHelper.activateFormControl(document.getElementById("input"));
+    await UIHelper.typeCharacter("`");
+}
+
+runTest();
+</script>
+</body>
+</html>

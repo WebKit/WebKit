@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+    description("Tests that we do not crash when trying to suspend an OfflineAudioContext with a bad buffer.");
+    jsTestIsAsync = true;
+
+    async function test() {
+        context = new OfflineAudioContext({ length: -1, sampleRate: 8000 });
+        context.suspend(0);
+        shouldBe("context.sampleRate", "8000");
+        shouldBe("context.length", "4294967295");
+        shouldBeEqualToString("context.state", "suspended");
+        await shouldRejectWithErrorName("context.startRendering()", "NotSupportedError", "startRendering() promise should get rejected.");
+        shouldBeEqualToString("context.state", "suspended");
+        finishJSTest();
+    }
+
+    onload = test;
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+This test makes sure that a canvas with and without fallback content each has the right role and description.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS axContainer.childrenCount is 2
+PASS platformValueForW3CName(axCanvas1) is "Canvas label"
+Canvas 1 role: AXRole: AXCanvas
+PASS platformValueForW3CName(axCanvas2) is ""
+Canvas 2 role: AXRole: AXCanvas
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

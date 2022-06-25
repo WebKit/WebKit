@@ -1,0 +1,92 @@
+# Copyright (c) 2020 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("//webrtc.gni")
+
+if (is_android) {
+  rtc_android_apk("androidvoip") {
+    testonly = true
+    apk_name = "androidvoip"
+    android_manifest = "AndroidManifest.xml"
+    min_sdk_version = 21
+    target_sdk_version = 27
+
+    sources = [
+      "java/org/webrtc/examples/androidvoip/MainActivity.java",
+      "java/org/webrtc/examples/androidvoip/OnVoipClientTaskCompleted.java",
+      "java/org/webrtc/examples/androidvoip/VoipClient.java",
+    ]
+
+    deps = [
+      ":resources",
+      "//modules/audio_device:audio_device_java",
+      "//rtc_base:base_java",
+      "//sdk/android:base_java",
+      "//sdk/android:java_audio_device_module_java",
+      "//sdk/android:video_java",
+      "//third_party/androidx:androidx_core_core_java",
+      "//third_party/androidx:androidx_legacy_legacy_support_v4_java",
+    ]
+
+    shared_libraries = [ ":examples_androidvoip_jni" ]
+  }
+
+  generate_jni("generated_jni") {
+    testonly = true
+    sources = [ "java/org/webrtc/examples/androidvoip/VoipClient.java" ]
+    namespace = "webrtc_examples"
+    jni_generator_include = "//sdk/android/src/jni/jni_generator_helper.h"
+  }
+
+  rtc_shared_library("examples_androidvoip_jni") {
+    testonly = true
+    sources = [
+      "jni/android_voip_client.cc",
+      "jni/android_voip_client.h",
+      "jni/onload.cc",
+    ]
+
+    suppressed_configs += [ "//build/config/android:hide_all_but_jni_onload" ]
+    configs += [ "//build/config/android:hide_all_but_jni" ]
+
+    deps = [
+      ":generated_jni",
+      "../../rtc_base:socket_address",
+      "../../rtc_base:socket_server",
+      "../../rtc_base:threading",
+      "//api:transport_api",
+      "//api/audio_codecs:audio_codecs_api",
+      "//api/audio_codecs:builtin_audio_decoder_factory",
+      "//api/audio_codecs:builtin_audio_encoder_factory",
+      "//api/task_queue:default_task_queue_factory",
+      "//api/voip:voip_api",
+      "//api/voip:voip_engine_factory",
+      "//modules/utility:utility",
+      "//rtc_base",
+      "//rtc_base/third_party/sigslot:sigslot",
+      "//sdk/android:native_api_audio_device_module",
+      "//sdk/android:native_api_base",
+      "//sdk/android:native_api_jni",
+      "//third_party/abseil-cpp/absl/memory:memory",
+    ]
+  }
+
+  android_resources("resources") {
+    testonly = true
+    custom_package = "org.webrtc.examples.androidvoip"
+    sources = [
+      "res/layout/activity_main.xml",
+      "res/values/colors.xml",
+      "res/values/strings.xml",
+    ]
+
+    # Needed for Bazel converter.
+    resource_dirs = [ "res" ]
+    assert(resource_dirs != [])  # Mark as used.
+  }
+}

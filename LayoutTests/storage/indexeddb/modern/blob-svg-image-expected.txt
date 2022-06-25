@@ -1,0 +1,7 @@
+Now let's retrieve the svg image blob.
+  Result is [object Blob]
+Image loaded successfully
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

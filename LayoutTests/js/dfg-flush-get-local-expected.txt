@@ -1,0 +1,10 @@
+Tests that if we emit a Flush of a GetLocal, we flush the source of the GetLocal.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS result is 500000
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

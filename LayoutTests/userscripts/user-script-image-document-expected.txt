@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: End Script: user-script-image-document.html
+CONSOLE MESSAGE: Start Script: abe.png
+CONSOLE MESSAGE: End Script: abe.png
+

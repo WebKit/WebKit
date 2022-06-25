@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../../media/video-test.js"></script>
+        <script>
+            function start() {
+                video = mediaElement = document.getElementsByTagName('video')[0];
+
+                testExpected("video.canPlayType('application/dash+xml')", "maybe");
+
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload="start()">
+        <video controls></video>
+        <p>Test HTMLMediaElement <em>canPlayType()</em> method for DASH.</p>
+        <p>These tests may be expected to fail if the WebKit port does not support the format.</p>
+    </body>
+</html>

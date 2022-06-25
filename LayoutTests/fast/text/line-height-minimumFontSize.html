@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.internals)
+    internals.settings.setMinimumFontSize(64);
+</script>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+.test {
+    display: inline-block;
+    width: 1px;
+    border: 3px solid black;
+}
+</style>
+</head>
+<body>
+<div><div id="comparison" class="test" style="display: inline-block; font-size: 64px; line-height: normal;">1: Hello World</div></div>
+
+<div><div id="test1" class="test" style="font-size: 16px; line-height: normal;">1: Hello World</div></div>
+<div><div id="test2" class="test" style="font-size: x-small; line-height: normal;">2: Hello World</div></div>
+<div><div id="test3" class="test" style="font-size: 16px; line-height: 20px;">3: Hello World</div></div>
+<div><div id="test4" class="test" style="font-size: x-small; line-height: 20px;">4: Hello World</div></div>
+<div><div id="test5" class="test" style="font-size: 16px; line-height: 150%;">5: Hello World</div></div>
+<div><div id="test6" class="test" style="font-size: x-small; line-height: 150%;">6: Hello World</div></div>
+<div><div id="test7" class="test" style="font-size: 16px; line-height: 1.5;">7: Hello World</div></div>
+<div><div id="test8" class="test" style="font-size: x-small; line-height: 1.5;">8: Hello World</div></div>
+<div><div id="test9" class="test" style="font-size: 128px; line-height: 192px;">9: Hello World</div></div>
+<script>
+description("This test makes sure that minimumFontSize affects line-height.");
+
+var comparisonLineHeight = Math.round(parseFloat(window.getComputedStyle(document.getElementById('comparison')).getPropertyValue('line-height')));
+shouldBe("Math.round(parseFloat(window.getComputedStyle(document.getElementById('test1')).getPropertyValue('line-height')))", "comparisonLineHeight");
+shouldBe("Math.round(parseFloat(window.getComputedStyle(document.getElementById('test2')).getPropertyValue('line-height')))", "comparisonLineHeight");
+shouldBe("Math.round(parseFloat(window.getComputedStyle(document.getElementById('test3')).getPropertyValue('line-height')))", "20 / 16 * 64");
+shouldBe("Math.round(parseFloat(window.getComputedStyle(document.getElementById('test4')).getPropertyValue('line-height')))", "20 / 10 * 64");
+shouldBe("Math.round(parseFloat(window.getComputedStyle(document.getElementById('test5')).getPropertyValue('line-height')))", "1.5 * 64");
+shouldBe("Math.round(parseFloat(window.getComputedStyle(document.getElementById('test6')).getPropertyValue('line-height')))", "1.5 * 64");
+shouldBe("Math.round(parseFloat(window.getComputedStyle(document.getElementById('test7')).getPropertyValue('line-height')))", "1.5 * 64");
+shouldBe("Math.round(parseFloat(window.getComputedStyle(document.getElementById('test8')).getPropertyValue('line-height')))", "1.5 * 64");
+shouldBe("Math.round(parseFloat(window.getComputedStyle(document.getElementById('test9')).getPropertyValue('line-height')))", "192");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

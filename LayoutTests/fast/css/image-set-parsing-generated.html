@@ -1,0 +1,109 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("Test the parsing of the image-set function.");
+
+function jsWrapperClass(node)
+{
+    if (!node)
+        return "[null]";
+    var string = Object.prototype.toString.apply(node);
+    return string.substr(8, string.length - 9);
+}
+
+function shouldBeType(expression, className)
+{
+    shouldBe("jsWrapperClass(" + expression + ")", "'" + className + "'");
+    shouldBe("jsWrapperClass(" + expression + ".__proto__)", "'" + className + "'");
+    shouldBe("jsWrapperClass(" + expression + ".constructor)", "'Function'");
+}
+
+// These have to be global for the test helpers to see them.
+var imageSetRule, subRule;
+
+function testImageSetRule(description, property, rule, expectedLength, expectedTexts)
+{
+    debug("");
+    debug(description + " : " + rule);
+
+    var div = document.createElement("div");
+    div.setAttribute("style", property + ": image-set(" + rule + ")");
+    document.body.appendChild(div);
+
+    imageSetRule = div.style.getPropertyCSSValue(property);
+    shouldBeType("imageSetRule", "CSSValueList");
+
+    if (imageSetRule) {
+        if (jsWrapperClass(imageSetRule[0]) == "CSSValueList") {
+            // The content property returns a CSSValueList anyway, so to get to the 
+            // imageSet CSS value list, we have to look at the first entry in the 
+            // content value list.
+            imageSetRule = imageSetRule[0];
+        }
+    }
+
+    shouldBe("imageSetRule.length", function() { return expectedLength; });
+
+    if (imageSetRule) {
+        for (var i = 0; i < expectedLength; i++) {
+            string = imageSetRule[i];
+            if (i % 2 == 0 && string.cssText.includes('#')) {
+                subRule = string.cssText.split('#')[1].replace('"', "");
+                subRule = subRule.split(')')[0];
+                shouldBe("subRule", "'" + expectedTexts[i] + "'");
+            } else {
+                subRule = string;
+                shouldBe("subRule.cssText", "'" + expectedTexts[i] + "'");
+            }
+        }
+    }
+
+    document.body.removeChild(div);
+}
+
+testImageSetRule("Single value for background-image with gradient",
+                "background-image", 
+                "linear-gradient(green, white) 1x", 2,
+                ["linear-gradient(green, white)", "1x"]);
+testImageSetRule("Single value for content with gradient",
+                "background-image",
+                "linear-gradient(green, white) 1x", 2,
+                ["linear-gradient(green, white)", "1x"]);
+
+testImageSetRule("Single value for background-image with gradients",
+                "background-image",
+                "linear-gradient(green, white) 1x, radial-gradient(blue, white) 2x", 4,
+                ["linear-gradient(green, white)", "1x", "radial-gradient(blue, white)", "2x"]);
+
+testImageSetRule("Combined gradient and URL",
+                "background-image",
+                "url('#a') 1x, linear-gradient(green, white) 2x", 4,
+                ["a", "1x", "linear-gradient(green, white)", "2x"]);
+
+testImageSetRule("Combined gradient and URL in content",
+                "content",
+                "url('#a') 1x, linear-gradient(green, white) 2x", 4,
+                ["a", "1x", "linear-gradient(green, white)", "2x"]);
+
+testImageSetRule("Combined gradient and cross-fade",
+                "background-image",
+                "-webkit-cross-fade(url('#a'), url('#b'), 70%) 1x, linear-gradient(green, white) 2x", 4,
+                ["a", "1x", "linear-gradient(green, white)", "2x"]);
+
+testImageSetRule("Single value for background-image with gradient and dpi",
+                "background-image",
+                "linear-gradient(green, white) 192dpi", 2,
+                ["linear-gradient(green, white)", "192dpi"]);
+
+
+successfullyParsed = true;
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

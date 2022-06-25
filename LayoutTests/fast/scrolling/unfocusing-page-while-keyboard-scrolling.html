@@ -1,0 +1,62 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ EventHandlerDrivenSmoothKeyboardScrollingEnabled=true ] -->
+<html>
+<head>
+    <script src="../../resources/ui-helper.js"></script>
+    <script src="../../resources/js-test.js"></script>
+    <meta name="viewport" content="initial-scale=1.5, user-scalable=no">
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function scrollRed()
+        {
+            let redOffset = document.getElementById('red-frame').contentDocument.defaultView.scrollY;
+            let blueOffset = document.getElementById('blue-frame').contentDocument.defaultView.scrollY;
+            if (redOffset > 1900) {
+                if (blueOffset > 1900)
+                    debug("FAIL: Blue frame scrolled as far as the red frame.");
+                else
+                    debug("SUCCESS: Blue frame stopped scolling before red frame");
+                testRunner.notifyDone();
+            }
+        }
+
+        async function runTest()
+        {
+            if (!window.testRunner || !testRunner.runUIScript)
+                return;
+
+            let blueFrame = document.getElementById('blue-frame');
+            let redFrame = document.getElementById('red-frame');
+            let redDocument = redFrame.contentDocument;
+
+            redDocument.addEventListener("scroll", function () {
+                scrollRed();
+            });
+
+            blueFrame.focus();
+            await UIHelper.rawKeyDown("downArrow");
+            redFrame.focus();
+            await UIHelper.rawKeyDown("downArrow");
+        }
+    </script>
+    <style>
+    #placeholder {
+        width: 100px;
+        height: 5000px;
+    }
+    iframe {
+        width: 100px;
+        height: 100px;
+    }
+    </style>
+</head>
+<body style="margin: 0;" onload="runTest()">
+    <iframe id="blue-frame" srcdoc="<div style='width: 100px; height: 2000px; background-color: blue;'></div>"></iframe>
+    <iframe id="red-frame" srcdoc="<div style='width: 100px; height: 2000px; background-color: red;'></div>"></iframe>
+    <div id="placeholder">
+    <div id="console"></div>
+</body>
+</html>

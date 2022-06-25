@@ -1,0 +1,25 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<meter id="meter" value="83.5"></meter>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests the subrole for meter elements.");
+
+    if (window.accessibilityController) {
+
+          var meter = accessibilityController.accessibleElementById("meter");
+          shouldBe("meter.subrole", "'AXSubrole: AXMeter'");
+    }
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

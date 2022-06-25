@@ -1,0 +1,58 @@
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="resources/model-utils.js"></script>
+<script>
+
+const expectedCamera = { pitch: 10, yaw: 40, scale: 2 };
+
+test(() => {
+    const model = document.createElement("model");
+    assert_idl_attribute(model, "getCamera", "getCamera() is defined");
+    assert_idl_attribute(model, "setCamera", "setCamera() is defined");
+}, "<model> has getCamera() and setCamera() methods");
+
+promise_test(async test => {
+    // Right now, a <model> won't be ready until it's added to the document
+    // since it requires a renderer to create the supporting ModelPlayer.
+    // But this means an initial camera can't be set, we should think about
+    // whether this is what we want. But since this is the current behavior,
+    // let's make sure to test it.
+    const model = makeModel();
+
+    const getCameraPromise = model.getCamera();
+    await promise_rejects_dom(test, "AbortError", getCameraPromise,
+                              "The promise returned by getCamera() should be rejected if the model element is not ready.");
+
+    const setCameraPromise = model.setCamera(expectedCamera);
+    await promise_rejects_dom(test, "AbortError", setCameraPromise,
+                            "The promise returned by setCamera() should be rejected if the model element is not ready.");
+}, "<model> cannot get or set the camera until it's ready");
+
+promise_test(async test => {
+    const model = await readyModel(test);
+    await model.setCamera(expectedCamera);
+    const actualCamera = await model.getCamera();
+    assert_cameras_are_equal(actualCamera, expectedCamera);
+}, "<model> can set the camera and read it back");
+
+promise_test(async test => {
+    const model = await readyModel(test);
+
+    const expectCameraFailure = async (camera, description) => {
+        return model.setCamera(camera).then(test.unreached_func("Should have rejected: " + description)).catch(error => {
+            assert_true(error.toString().includes("TypeError"), description);
+        });
+    };
+
+    await expectCameraFailure(undefined, "The camera should be rejected if it's undefined");
+    await expectCameraFailure(null, "The camera should be rejected if it's null");
+    await expectCameraFailure("", "The camera should be rejected if it's a string");
+    await expectCameraFailure(1, "The camera should be rejected if it's a number");
+    await expectCameraFailure({}, "The camera should be rejected if the camera is the empty object");
+    await expectCameraFailure({ pitch: "pitch", yaw: "yaw", scale: "scale" }, "The camera should be rejected if the properties don't have the expected type");
+    await expectCameraFailure({ pitch: 10, yaw: 10 }, "The camera should be rejected if all properties aren't set");
+}, "<model> cannot set the camera if it's not a valid HTMLModelElementCamera");
+
+</script>
+</body>
+</html>

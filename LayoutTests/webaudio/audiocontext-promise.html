@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+</head>
+
+<body>
+
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description("Tests that AudioContext suspend method resolve promises immediately when already suspended.");
+
+function runTest() {
+    window.jsTestIsAsync = true;
+
+    context = new AudioContext();
+
+    shouldBeEqualToString("context.state", "suspended");
+    context.suspend().then(function() {
+        testPassed('context resolve callback called');
+        shouldBeEqualToString("context.state", "suspended");
+        finishJSTest();
+    }, function() {
+        testFailed('context reject callback called');
+        finishJSTest();
+    });
+    shouldBeEqualToString("context.state", "suspended");
+}
+
+runTest();
+
+</script>
+</body>
+</html>

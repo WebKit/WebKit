@@ -1,0 +1,53 @@
+// Copyright (C) 2021 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+// EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+// PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+// OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#include "BaseTarget.xcconfig"
+
+PRODUCT_NAME = adattributiond;
+
+PROFILE_GENERATE_OR_USE_CFLAGS_ENABLE_LLVM_PROFILE_GENERATION = ; // Disable PGO profile generation
+OTHER_LDFLAGS = -framework WebKit $(SOURCE_VERSION_LDFLAGS);
+FRAMEWORK_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR);
+
+WK_PROCESSED_XCENT_FILE=$(TEMP_FILE_DIR)/$(FULL_PRODUCT_NAME).entitlements
+
+WK_CODE_SIGN_FLAGS = $(WK_CODE_SIGN_FLAGS_$(WK_PLATFORM_NAME));
+WK_CODE_SIGN_FLAGS_iphoneos = --entitlements $(WK_PROCESSED_XCENT_FILE);
+OTHER_CODE_SIGN_FLAGS = $(WK_CODE_SIGN_FLAGS);
+
+WK_QUOTED_OVERRIDE_FRAMEWORKS_DIR = $(WK_QUOTED_OVERRIDE_FRAMEWORKS_DIR_$(WK_USE_OVERRIDE_FRAMEWORKS_DIR));
+WK_QUOTED_OVERRIDE_FRAMEWORKS_DIR_YES = "$(WK_OVERRIDE_FRAMEWORKS_DIR)";
+
+FRAMEWORK_SEARCH_PATHS = $(inherited) $(WK_QUOTED_OVERRIDE_FRAMEWORKS_DIR)
+
+INSTALL_PATH = $(INSTALL_PATH_PREFIX)$(WEBKIT_FRAMEWORKS_DIR)/WebKit.framework/$(WK_FRAMEWORK_VERSION_PREFIX)Daemons;
+
+SKIP_INSTALL = NO;
+SKIP_INSTALL[sdk=macos*] = YES;
+
+LAUNCHD_PLIST_FILE_NAME = com.apple.webkit.adattributiond.plist
+
+LAUNCHD_PLIST_INPUT_FILE = Shared/EntryPointUtilities/Cocoa/Daemon/com.apple.webkit.adattributiond.plist
+LAUNCHD_PLIST_INPUT_FILE[sdk=macos*] = ;
+
+LAUNCHD_PLIST_INSTALL_PATH = /System/Library/LaunchDaemons

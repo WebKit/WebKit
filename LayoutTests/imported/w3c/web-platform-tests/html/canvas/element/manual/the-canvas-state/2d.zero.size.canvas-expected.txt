@@ -1,0 +1,3 @@
+
+PASS This test ensures that accessing the context of a zero sized canvas does not crash.
+

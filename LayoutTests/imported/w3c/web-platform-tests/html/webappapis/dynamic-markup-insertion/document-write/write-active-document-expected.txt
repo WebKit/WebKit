@@ -1,0 +1,3 @@
+
+FAIL document.write only writes to active documents assert_equals: expected (string) "IFRAME" but got (undefined) undefined
+

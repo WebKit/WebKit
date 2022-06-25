@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<title>Scroll to text fragment - highlight simple start text</title>
+<link rel="help" href="https://wicg.github.io/scroll-to-text-fragment/">
+<meta name="assert" content="This test checks that a fragment directive with start text is correctly highlighted.">
+<link rel="match" href="scroll-to-text-fragment-start-expected.html">
+
+<p>The test passes if the following word has a yellow background.</p>
+<div><span>&#128522</span></div>
+
+<script>
+  location.href = "#:~:text=%F0%9F%98%8A";
+</script>
+</html>

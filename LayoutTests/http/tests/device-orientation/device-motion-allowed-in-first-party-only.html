@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Tests that giving device motion permission in the main frame does not give access to third-party iframes.");
+jsTestIsAsync = true;
+
+// If prompted, allow.
+if (window.testRunner)
+    testRunner.setShouldAllowDeviceOrientationAndMotionAccess(true);
+
+onmessage = (_e) => {
+    e = _e;
+    shouldBeEqualToString("e.data", "denied");
+    finishJSTest();    
+};
+
+internals.withUserGesture(() => {
+    DeviceMotionEvent.requestPermission().then((_result) => {
+        result = _result;
+        shouldBeEqualToString("result", "granted");
+        // If prompted, deny.
+        if (window.testRunner)
+            testRunner.setShouldAllowDeviceOrientationAndMotionAccess(false);
+
+        // Create third-party iframe that requests permission for itself, but this time should be rejected.
+        let testFrame = document.createElement("iframe");
+        testFrame.src = "http://localhost:8000/device-orientation/resources/request-motion-events.html";
+        testFrame.allow = "accelerometer;gyroscope";
+        document.body.append(testFrame);
+    });
+});
+
+</script>
+</body>
+</html>

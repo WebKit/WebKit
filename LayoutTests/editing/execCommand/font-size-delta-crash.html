@@ -1,0 +1,23 @@
+<style>
+head, script, span {
+    display: block;
+}
+head {
+    -webkit-user-modify: read-write-plaintext-only;
+}
+script::first-letter {
+    --font-size-ch: 0;
+}
+</style>
+<script>
+    // <-- magic whitespace
+onload = () => {
+  document.querySelector('script').appendChild(document.createElement('span'));
+  document.execCommand('FindString', false, 'a');
+  document.execCommand('FontSizeDelta', false, '1');
+};
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<p>The test PASS if it does not CRASH.</p>
+

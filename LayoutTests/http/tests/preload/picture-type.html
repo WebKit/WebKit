@@ -1,0 +1,132 @@
+<html>
+<head>
+    <script>
+        if (window.testRunner && window.internals) {
+            testRunner.dumpAsText();
+            internals.clearMemoryCache();
+        }
+    </script>
+
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="http://127.0.0.1:8000/resources/slow-script.pl?delay=101&test=picture-type"></script>
+</head>
+<body>
+<script>
+    if (window.testRunner && window.internals) {
+        shouldBeTrue("internals.isPreloaded('/resources/square20.jpg?0&preload');");
+        shouldBeFalse("internals.isPreloaded('/resources/square20.jpg?0');");
+        shouldBeTrue("internals.isPreloaded('/resources/square20.jpg?1&preload');");
+        shouldBeFalse("internals.isPreloaded('/resources/square20.jpg?1');");
+        shouldBeTrue("internals.isPreloaded('/resources/square20.jpg?2&preload');");
+        shouldBeFalse("internals.isPreloaded('/resources/square20.jpg?2');");
+        shouldBeTrue("internals.isPreloaded('/resources/square20.jpg?3&preload');");
+        shouldBeFalse("internals.isPreloaded('/resources/square20.jpg?3');");
+
+        shouldBeTrue("internals.isPreloaded('/resources/square20.jpg?4&preload');");
+        shouldBeFalse("internals.isPreloaded('/resources/square20.jpg?4&100w');");
+        shouldBeFalse("internals.isPreloaded('/resources/square20.jpg?4&1000w');");
+        shouldBeFalse("internals.isPreloaded('/resources/square20.jpg?4');");
+
+        shouldBeTrue("internals.isPreloaded('/resources/square20.jpg?5&preload');");
+        shouldBeFalse("internals.isPreloaded('/resources/square20.jpg?5&100w');");
+        shouldBeFalse("internals.isPreloaded('/resources/square20.jpg?5&800w');");
+        shouldBeFalse("internals.isPreloaded('/resources/square20.jpg?5&1000w');");
+
+        shouldBeTrue("internals.isPreloaded('/resources/square20.jpg?6&preload');");
+        shouldBeFalse("internals.isPreloaded('/resources/square20.jpg?6');");
+
+        shouldBeTrue("internals.isPreloaded('/resources/square20.jpg?7&preload');");
+        shouldBeFalse("internals.isPreloaded('/resources/square20.jpg?7');");
+
+        shouldBeTrue("internals.isPreloaded('/resources/square20.jpg?8&preload');");
+        shouldBeFalse("internals.isPreloaded('/resources/square20.jpg?8');");
+
+        shouldBeTrue("internals.isPreloaded('/resources/square20.jpg?9&preload');");
+        shouldBeFalse("internals.isPreloaded('/resources/square20.jpg?9');");
+
+        shouldBeTrue("internals.isPreloaded('/resources/square20.jpg?10&preload');");
+        shouldBeFalse("internals.isPreloaded('/resources/square20.jpg?10&dup');");
+        shouldBeFalse("internals.isPreloaded('/resources/square20.jpg?10');");
+
+        shouldBeTrue("internals.isPreloaded('/resources/square20.jpg?11&preload');");
+        shouldBeFalse("internals.isPreloaded('/resources/square20.jpg?11&bad');");
+        shouldBeFalse("internals.isPreloaded('/resources/square20.jpg?11');");
+
+        shouldBeTrue("internals.isPreloaded('/resources/square20.jpg?12&preload');");
+        shouldBeFalse("internals.isPreloaded('/resources/square20.jpg?12&bad');");
+        shouldBeFalse("internals.isPreloaded('/resources/square20.jpg?12');");
+
+        shouldBeTrue("internals.isPreloaded('/resources/square20.jpg?13&preload');");
+        shouldBeFalse("internals.isPreloaded('/resources/square20.jpg?13&bad');");
+        shouldBeFalse("internals.isPreloaded('/resources/square20.jpg?13&invalid');");
+    }
+</script>
+<!-- Control group -->
+<picture>
+    <source srcset="/resources/square20.jpg?0&preload">
+    <img src="/resources/square20.jpg?0">
+</picture>
+<!-- All permutations of type, media, srcset and sizes -->
+
+<picture>
+    <source type="image/jpeg" srcset="/resources/square20.jpg?1&preload">
+    <img src="/resources/square20.jpg?1">
+</picture>
+<picture>
+    <source srcset="/resources/square20.jpg?2&preload" type="image/jpeg">
+    <img src="/resources/square20.jpg?2">
+</picture>
+<picture>
+    <source type="image/bad" srcset="/resources/square20.jpg?3">
+    <img src="/resources/square20.jpg?3&preload">
+</picture>
+<picture>
+    <source type="image/jpeg" sizes="200px" srcset="/resources/square20.jpg?4&100w 100w, /resources/square20.jpg?4&preload 800w, /resources/square20.jpg?4&1000w 1000w">
+    <img src="/resources/image1.jpg?4">
+</picture>
+<picture>
+    <source type="image/bad" sizes="200px" srcset="/resources/square20.jpg?5&100w 100w, /resources/image3.jpg?5&800w 800w, /resources/square20.jpg?5&1000w 1000w" >
+    <img src="/resources/square20.jpg?5&preload">
+</picture>
+<picture>
+    <source type="image/jpeg" media="(min-width: 1px)" srcset="/resources/square20.jpg?6&preload">
+    <img src="/resources/square20.jpg?6">
+</picture>
+<picture>
+    <source type="image/bad" media="(min-width: 1px)" srcset="/resources/square20.jpg?7">
+    <img src="/resources/square20.jpg?7&preload">
+</picture>
+
+<!-- Duplicate attributes -->
+<picture>
+    <source type="image/jpeg" type="image/bad" srcset="/resources/square20.jpg?8&preload">
+    <img src="/resources/square20.jpg?8">
+</picture>
+<picture>
+    <source type="image/bad" type="image/jpeg" srcset="/resources/square20.jpg?9">
+    <img src="/resources/square20.jpg?9&preload">
+</picture>
+<!-- Multiple sources -->
+<picture>
+    <source type="image/jpeg" media="(min-width: 1px)" srcset="/resources/square20.jpg?10&preload">
+    <source type="image/jpeg" media="(min-width: 1px)" srcset="/resources/square20.jpg?10&dup">
+    <img src="/resources/square20.jpg?10">
+</picture>
+<picture>
+    <source type="image/bad" media="(min-width: 1px)" srcset="/resources/square20.jpg?11&bad">
+    <source type="image/jpeg" srcset="/resources/square20.jpg?11&preload">
+    <img src="/resources/square20.jpg?11">
+</picture>
+<picture>
+    <source type="image/jpeg" media="(min-width: 1px)" srcset="/resources/square20.jpg?12&preload">
+    <source type="image/bad" media="(min-width: 1px)" srcset="/resources/square20.jpg?12&bad">
+    <img src="/resources/square20.jpg?12">
+</picture>
+<picture>
+    <source type="image/bad" media="(min-width: 1px)" srcset="/resources/square20.jpg?13&bad">
+    <source type="image/invalid" media="(min-width: 1px)" srcset="/resources/square20.jpg?13&invalid">
+    <img src="/resources/square20.jpg?13&preload">
+</picture>
+
+</body>
+</html>

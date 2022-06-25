@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body id="body" role="group">
+
+<script>
+    description("This tests that a scroll area will return scroll bars when asked.");
+
+    // Cause the web page to gain scrollbars.
+    for (var k = 0; k < 100; k++) {
+       document.getElementById("body").innerHTML += "<br><br><br>";
+    }
+
+    var scrollArea;
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        setTimeout(async function() {
+            // Iterate up from the body AX element to the scrollarea AX element.
+            let maybeScrollArea = scrollArea = accessibilityController.accessibleElementById("body");
+            while (maybeScrollArea) {
+                if (maybeScrollArea.role === "AXRole: AXScrollArea") {
+                    scrollArea = maybeScrollArea;
+                    break;
+                }
+                maybeScrollArea = maybeScrollArea.parentElement();
+            }
+
+            // Wait for scrollbar to be created.
+            await waitFor(() => {
+                return scrollArea.verticalScrollbar;
+            });
+
+            shouldBe("scrollArea.role", "'AXRole: AXScrollArea'");
+            shouldBe("scrollArea.verticalScrollbar.role", "'AXRole: AXScrollBar'");
+
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>
+

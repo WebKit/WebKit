@@ -1,0 +1,34 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/parsing/box-decoration-break-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/parsing/box-decoration-break-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/parsing/box-decoration-break-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/parsing/break-after-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/parsing/break-after-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/parsing/break-after-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/parsing/break-before-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/parsing/break-before-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/parsing/break-before-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/parsing/break-inside-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/parsing/break-inside-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/parsing/break-inside-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/parsing/orphans-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/parsing/orphans-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/parsing/orphans-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/parsing/widows-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/parsing/widows-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/parsing/widows-valid.html

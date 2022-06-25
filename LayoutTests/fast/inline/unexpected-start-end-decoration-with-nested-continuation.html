@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<style>
+div {
+  font-size: 20px;
+  font-family: Ahem;
+  color: green;
+}
+.inner {
+  background-color: green;
+  border-inline-start: 50px solid green;
+  border-inline-end: 50px solid green;
+  padding-inline-start: 50px;
+  padding-inline-end: 50px;
+}
+</style>
+<!-- pre/post continuation blocks should only retain start/end decorations -->
+<div><span><span class=inner>XXXXX<div></div></span></span></div>
+<div><span><span class=inner><div></div>XXXXX</span></span></div>

@@ -1,0 +1,15 @@
+<script>
+  if (window.testRunner)
+      testRunner.dumpAsText();
+
+  let cdata = new Document().createCDATASection('');
+  if (window.GCController) {
+      GCController.collect();
+  } else {
+      for (let i = 0; i < 25; i++) {
+          new ArrayBuffer(2 ** i);
+      }
+  }
+  cdata.splitText(0).ownerDocument.fonts;
+</script>
+PASS

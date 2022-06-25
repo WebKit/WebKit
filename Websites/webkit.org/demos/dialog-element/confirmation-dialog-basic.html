@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<link rel="stylesheet" href="./dark-theme.css">
+
+<dialog id="confirmation-dialog">
+    <h1>Do you want to delete everything?</h1>
+    <p>You will lose all your data.</p>
+    <button id="cancel-delete">Cancel</button>
+    <button id="confirm-delete">Delete!</button>
+</dialog>
+<button id="delete">Delete everything</button>
+<p id="result"></p>
+<script>
+let dialog = document.getElementById("confirmation-dialog");
+let result = document.getElementById("result");
+
+document.getElementById("delete").addEventListener("click", function() {
+    dialog.showModal();
+});
+
+document.getElementById("cancel-delete").addEventListener("click", function() {
+    dialog.close();
+    result.textContent = "Canceled!";
+});
+document.getElementById("confirm-delete").addEventListener("click", function() {
+    dialog.close();
+    result.textContent = "Deleted!";
+});
+</script>

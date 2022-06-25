@@ -1,0 +1,20 @@
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+</script>
+<style>
+table, td {
+    border: 1px solid #999;
+}
+</style>
+
+<p>This tests the caret position for the caret before a block table.</p>
+
+<div contenteditable="true">foo<table id="test"><tr><td>this</td></tr><tr><td>is</td></tr><tr><td>a table</td></tr></table>baz</div>
+
+<script>
+var s = window.getSelection();
+var e = document.getElementById("test");
+
+s.setPosition(e, 0);
+</script>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Test passes if you see a single 100px by 100px green box below.</p> 
+<style>
+
+#test {
+    width: 100px;
+    height: 100px;
+    background: red;
+}
+
+div[slot=green] {
+    width: 100px;
+    height: 100px;
+    background: green;
+    color: green;
+}
+
+</style>
+<div id="test"><div slot="green">PASS</div></div>
+<script>
+var rootElement = document.getElementById('test'); 
+var root = rootElement.attachShadow({mode:'open'});
+root.innerHTML = `
+<style>
+    #container { display: none; }
+    #container.visible { display: block; }
+</style>
+<div><div id="container"><slot name="green">FAIL</slot></div></div>
+`;
+
+rootElement.getBoundingClientRect();
+root.getElementById('container').classList.toggle('visible');
+
+</script>
+</body>
+</html>

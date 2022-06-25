@@ -1,0 +1,29 @@
+This tests that aria-invalid causes the right attribute to be returned and it ensures a notification is sent when it changes.
+
+PASS: AXInvalid is false.
+PASS: AXInvalid is false.
+PASS: AXInvalid is false.
+PASS: AXInvalid is false.
+PASS: AXInvalid is false.
+PASS: AXInvalid is false.
+PASS: AXInvalid is false.
+PASS: AXInvalid is false.
+PASS: AXInvalid is grammar.
+PASS: AXInvalid is grammar.
+PASS: AXInvalid is spelling.
+PASS: AXInvalid is spelling.
+PASS: AXInvalid is true.
+PASS: AXInvalid is true.
+PASS: AXInvalid is true.
+PASS: AXInvalid is true.
+PASS: AXInvalid is true.
+PASS: AXInvalid is true.
+PASS: AXInvalid is true.
+PASS: didAddNotification === true
+Notification received successfully.
+PASS: AXInvalid is spelling.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

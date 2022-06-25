@@ -1,0 +1,5 @@
+test test
+test test
+
+PASS CSSOM View - GetClientRects().length is the same regardless source new lines
+

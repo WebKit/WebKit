@@ -1,0 +1,26 @@
+<html>
+<head>
+  <script src="../../fast/repaint/resources/repaint.js" type="text/javascript"></script>
+  <script type="text/javascript">
+  function repaintTest() {
+    if (!window.testRunner)
+      return;
+
+    // The animation lasts 100ms. Wait 200ms for the repaint.
+    testRunner.waitUntilDone();
+    setTimeout(function() {
+      testRunner.notifyDone();
+    }, 200);
+  }
+  </script>
+  <style type="text/css" media="screen">
+    img {
+      margin: 10px;
+    }
+  </style>
+</head>
+<body onload="runRepaintTest()">
+  <p>Images should redraw correctly when SVG animation runs</p>
+  <img src="resources/animated-rect-fixed-size.svg">
+</body>
+</html>

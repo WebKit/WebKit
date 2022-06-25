@@ -1,0 +1,15 @@
+
+PASS setRemoteDescription with valid offer should succeed
+PASS setRemoteDescription multiple times should succeed
+PASS setRemoteDescription multiple times with different offer should succeed
+FAIL setRemoteDescription(offer) with invalid SDP should reject with RTCError assert_equals: Expect error detail field to set to sdp-syntax-error expected (string) "sdp-syntax-error" but got (undefined) undefined
+PASS setRemoteDescription(offer) from have-local-offer should roll back and succeed
+PASS setRemoteDescription(offer) from have-local-offer fires signalingstatechange twice
+PASS setRemoteDescription(offer) in stable should update internal state with a queued task, in the right order
+PASS setRemoteDescription(offer) in have-local-offer should update internal state with a queued task, in the right order
+FAIL Naive rollback approach is not glare-proof (control) assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS setRemoteDescription(offer) from have-local-offer is glare-proof
+FAIL setRemoteDescription(invalidOffer) from have-local-offer does not undo rollback Test bug: unrecognized DOMException code name or name "RTCError" passed to assert_throws_dom()
+PASS repeated sRD(offer) works
+PASS sRD(reoffer) with candidates and without trickle works
+

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+
+        <script>
+            var endedCount = 0;
+            var audio;
+
+            function start()
+            {
+                consoleWrite("");
+                audio = document.querySelector("audio");
+                waitForEvent("ended", ended);
+                waitForEvent("canplaythrough", canplaythrough);
+
+                audio.src = findMediaFile("audio", "content/silence")
+            }
+
+            function canplaythrough()
+            {
+                run("audio.currentTime = 1.0");
+                run("audio.play()");
+                consoleWrite("");
+            }
+
+            function ended()
+            {
+                switch (++endedCount)
+                {
+                    case 1:
+                        testExpected("audio.ended", true);
+
+                        run("audio.currentTime = 0");
+                        setTimeout(endTest, 200);
+
+                        consoleWrite("");
+                        break;
+                    default:
+                        consoleWrite("");
+                        failTest("'ended' event fired again");
+                        break;
+                }
+            }
+        </script>
+    </head>
+    <body onload="start()">
+        <audio controls></audio>
+        <p><b>Test 'ended' event by:</b>
+            <ol>
+                <li>Playing to the end.</li>
+                <li>When 'ended' event fires, seek to 0.</li>
+                <li>Verify that 'ended' event is not fired again.</li>
+            </ol>
+        </p>
+    </body>
+</html>

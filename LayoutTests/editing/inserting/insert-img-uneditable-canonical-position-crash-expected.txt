@@ -1,0 +1,1 @@
+Tests inserting paragraph separator when an editable canonical position is not found. The test passes if WebKit doesn't crash or hit an ssertion.

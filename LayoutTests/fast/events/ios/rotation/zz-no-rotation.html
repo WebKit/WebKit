@@ -1,0 +1,20 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0">
+    <script src="../../../../resources/js-test-pre.js"></script>
+    <script>
+        function doTest()
+        {
+            shouldBe("window.innerWidth", "320");
+            shouldBe("window.innerHeight", "548");
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    This test checks that the view is not left in a rotated state after the previous tests.
+    <script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

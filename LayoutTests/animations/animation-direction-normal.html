@@ -1,0 +1,62 @@
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Test of animation-play-state</title>
+  <style type="text/css" media="screen">
+    body {
+      margin: 0;
+    }
+
+    #box {
+      position: absolute;
+      left: 0px;
+      top: 100px;
+      height: 100px;
+      width: 100px;
+      background-color: red;
+      margin: 0;
+      animation-duration: 500ms;
+      animation-direction: normal;
+      animation-iteration-count: infinite;
+      animation-timing-function: linear;
+      animation-name: "move1";
+    }
+
+    @keyframes move1 {
+      from { margin-left: 0px; }
+      to   { margin-left: 200px; }
+    }
+  </style>
+  <script src="../resources/testharness.js"></script>
+  <script src="../resources/testharnessreport.js"></script>
+  <script src="resources/animation-test.js"></script>
+</head>
+<body>
+<div id="box"></div>
+<script>
+    promise_test(async t => {
+        const delay = 100;
+
+        const test = new AnimationTest({
+            target: document.getElementById("box"),
+            styleExtractor: style => parseFloat(style.marginLeft)
+        });
+
+        // Record two computed values after the specified delay each.
+        await test.recordValueAfterRunningFor(delay);
+        await test.recordValueAfterRunningFor(delay);
+
+        // We'll now pause the animation using the CSS property "animation-play-state".
+        box.style.animationPlayState = "paused";
+
+        // And now we'll record values after the specified delay each and check that those are the same.
+        const initialPausedValue = await test.valueAfterWaitingFor(delay);
+        const currentPausedValue = await test.valueAfterWaitingFor(delay);
+        assert_equals(initialPausedValue, currentPausedValue, "Values recorded while paused are the same.");
+
+        // Finally, check the values recorded earlier in the test.
+        test.checkRecordedValues();
+    }, `Pausing an animation using the animation-play-state property stops animating styles.`);
+</script>
+</body>
+</html>

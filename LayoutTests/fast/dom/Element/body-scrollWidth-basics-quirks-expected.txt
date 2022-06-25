@@ -1,0 +1,29 @@
+Test the "scrollWidth" properties on the body element in quirks mode.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Initial values
+PASS document.body.scrollWidth is document.documentElement.scrollWidth
+
+Now we create a body element, it should not have a scrollWidth since it is not the first body element of the document.
+PASS document.body.scrollWidth is document.documentElement.scrollWidth
+PASS floatingBody.scrollWidth is 0
+
+We add a new body element after the first body element, this should have no impact on the state.
+PASS document.body.scrollWidth is document.documentElement.scrollWidth
+PASS secondSiblingBody.scrollWidth is secondSiblingBody.clientWidth
+PASS document.body.scrollWidth is not secondSiblingBody.scrollWidth
+
+We add a new body element inside the first body element, this should have no impact on the state.
+PASS document.body.scrollWidth is document.documentElement.scrollWidth
+PASS bodyChildOfMainBody.scrollWidth is bodyChildOfMainBody.clientWidth
+PASS document.body.scrollWidth is not bodyChildOfMainBody.scrollWidth
+
+Getting the scrollWidth should not require a renderer.
+PASS document.body.style.display = 'none' is 'none'
+PASS document.body.scrollWidth is document.documentElement.scrollWidth
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

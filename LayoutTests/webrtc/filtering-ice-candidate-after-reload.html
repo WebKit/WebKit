@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+async function isFilteringEnabled()
+{
+    let resolve, reject;
+    const promise = new Promise((res, rej) => { resolve = res; reject = rej; });
+    setTimeout(() => { reject("Test timed out"); }, 5000);
+
+    var pc = new RTCPeerConnection();
+    pc.createDataChannel("");
+
+    var candidates = [];
+    pc.onicecandidate = (event) => {
+        if (event.candidate === null) {
+            resolve(!candidates.length);
+            return;
+        }
+        if (event.candidate.candidate.indexOf('.local') === -1)
+            candidates.push(event.candidate.candidate);
+    };
+
+    const offer = await pc.createOffer();
+    await pc.setLocalDescription(offer);
+    return promise;
+}
+
+function endTest(message)
+{
+    result.innerHTML = message;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function test() {
+    if (window.localStorage.getItem("after-reload") == null) {
+        window.localStorage.setItem("after-reload", "true")
+        isFilteringEnabled().then((filtering) => {
+            if (!filtering) {
+                endTest("FAIL, initial ice candidate filtering is off");
+                return;
+            }
+            navigator.mediaDevices.getUserMedia({audio:true, video:true}).then(() => { return isFilteringEnabled(); }).then((filtering) => {
+                if (filtering) {
+                    endTest("FAIL, initial ice candidate filtering after getUserMedia is on");
+                    return;
+                }
+                internals.forceReload(true);
+            });
+        });
+    } else {
+        window.localStorage.clear();
+        isFilteringEnabled().then((filtering) => { endTest(filtering ? "PASS" : "FAIL"); });
+    }
+}
+</script>
+</head>
+<body onload="setTimeout(test, 0);">
+  <div>This test requires internals. It checks that after reload, we are back to filtering ice candidate.</div>
+  <div id="result"></div>
+</body>
+</html>
+
+

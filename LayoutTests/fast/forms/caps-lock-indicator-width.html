@@ -1,0 +1,56 @@
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<style>
+
+#small {
+    height: 15px;
+}
+
+#large {
+    height: 100px;
+}
+
+</style>
+</head>
+<body>
+<input type="password" id="small">
+<br>
+<input type="password" id="normal">
+<br>
+<input type="password" id="large">
+</body>
+<script>
+jsTestIsAsync = true;
+
+async function runTest(name, input, expectedWidth)
+{
+    debug(name);
+
+    shadowRoot = window.internals.shadowRoot(input);
+
+    await UIHelper.activateElement(input);
+    await UIHelper.renderingUpdate();
+
+    capsLockIndicator = shadowRoot.querySelector("[pseudo='-webkit-caps-lock-indicator']");
+    capsLockIndicatorWidth = capsLockIndicator.getBoundingClientRect().width;
+
+    shouldBeEqualToNumber("capsLockIndicatorWidth", expectedWidth);
+
+    debug("");
+}
+
+addEventListener("load", async () => {
+    description("This test verifies that the width of the caps lock indicator in password fields adapts to the height of the field, but does not exceed a maximum value.");
+
+    await UIHelper.toggleCapsLock();
+
+    await runTest("Small height", small, 15);
+    await runTest("Default height", normal, 17);
+    await runTest("Large height", large, 17);
+
+    finishJSTest();
+});
+</script>
+</html>

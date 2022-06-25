@@ -1,0 +1,10 @@
+WebView navigated to url "http://127.0.0.1:8000/globalhistory/history-delegate-replacestate.html" with title "" with HTTP equivalent method "GET".  The navigation was successful and was not a client redirect.
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+WebView navigated to url "http://127.0.0.1:8000/globalhistory/history-delegate-replacestate.html?1" with title "" with HTTP equivalent method "GET".  The navigation was successful and was not a client redirect.
+WebView navigated to url "http://127.0.0.1:8000/globalhistory/history-delegate-replacestate.html?2" with title "" with HTTP equivalent method "GET".  The navigation was successful and was not a client redirect.
+WebView navigated to url "http://127.0.0.1:8000/globalhistory/history-delegate-replacestate.html?3" with title "" with HTTP equivalent method "GET".  The navigation was successful and was not a client redirect.
+WebView navigated to url "http://127.0.0.1:8000/globalhistory/history-delegate-replacestate.html?4" with title "" with HTTP equivalent method "GET".  The navigation was successful and was not a client redirect.
+WebView navigated to url "http://127.0.0.1:8000/globalhistory/history-delegate-replacestate.html?5" with title "" with HTTP equivalent method "GET".  The navigation was successful and was not a client redirect.
+This tests functionality of the history delegate related to history.replaceState.

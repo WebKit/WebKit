@@ -1,0 +1,3 @@
+
+PASS Check that roundRect throws an IndeSizeError if radii has more than four items.
+

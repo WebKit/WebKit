@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.setHandlesAuthenticationChallenges(true);
+    testRunner.setAuthenticationUsername("webkit");
+    testRunner.setAuthenticationPassword("rocks");
+    testRunner.waitUntilDone();
+}
+
+function done()
+{
+    setTimeout(function() {
+        document.body.removeChild(document.getElementById("frame"));
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 500);
+}
+
+function notifyFrameDidLoad(frame)
+{
+    frame.onload = done;
+    frame.src = "http://127.0.0.1:8000/a//b/non-existent-file.html";
+}
+</script>
+</head>
+<body onload="notifyFrameDidLoad(frame)">
+<iframe id="frame" src="resources/basic-auth-testing.py?username=webkit&password=rocks"></iframe>
+<p>PASS did not cause assertion failure.</p>
+</body>
+</html>

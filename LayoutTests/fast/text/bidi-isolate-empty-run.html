@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.foo {
+	unicode-bidi: -webkit-isolate;
+}
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</head>
+<body>
+This test passes if there is no ASSERT().
+<div style="width: 30px;" contenteditable="true"><span>f </span><span class=foo>
+foo</span></div>
+</body>
+</html>
+

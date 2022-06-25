@@ -1,0 +1,73 @@
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(msg) {
+    document.getElementById("logger").innerHTML += msg + "<br>";
+}
+
+var object = "aaaaaaaaaa";
+for (var i = 0; i < 16; ++i)
+    object += object;
+
+function click()
+{
+    if (!eventSender)
+        return;
+
+    var button = document.getElementById("button");
+    eventSender.mouseMoveTo(button.offsetLeft + 5, button.offsetTop + 5);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+window.onload = click;
+
+var count = 1;
+
+function clicked()
+{
+    try {
+        history.pushState(object, object, object);
+    } catch (e) {
+        log("Unexpected exception: " + e);
+        if (window.testRunner)
+            testRunner.notifyDone();    
+    }
+
+    log("Parent frame successfully added item: " + count + " times");
+    ++count;
+
+    if (count > 10) {
+        openFrame();
+        return;
+    }
+
+    setTimeout(click, 0);
+}
+
+function iframeLoaded()
+{
+    document.getElementById("button").onclick = window.frames[0].iframeClicked;
+    click();
+}
+
+function openFrame()
+{
+    var iframe = document.createElement('iframe');
+    iframe.src = 'resources/pushstate-iframe.html'
+    iframe.onload = iframeLoaded;
+    document.body.appendChild(iframe);
+}
+
+</script>
+<body>
+Test should not crash.<br>
+Test does pushState both from the main frame and from an iframe and makes sure they both count against the main frame document's size limit.<br>
+<button id="button" onclick="clicked();">Click to test pushState through a user gesture</button>
+<div id="logger"></div>
+</body>

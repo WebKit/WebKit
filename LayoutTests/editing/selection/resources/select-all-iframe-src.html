@@ -1,0 +1,27 @@
+<script src="../../editing.js" language="JavaScript" type="text/JavaScript"></script>
+<script>
+function editingTest() {
+    if (!window.testRunner)
+        return;
+    
+    window.testRunner.waitUntilDone();
+    
+    // Give focus to the subframe so that Select All will operate on it, and not the main frame.
+    eventSender.mouseMoveTo(100, 50);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    
+    selectAllCommand();
+    deleteCommand();
+    
+    window.testRunner.notifyDone();
+}
+</script>
+<body bgcolor="lightyellow" contenteditable="true">
+<div id="test">hello world</div>
+
+<script>
+runEditingTest();
+</script>
+
+</body>

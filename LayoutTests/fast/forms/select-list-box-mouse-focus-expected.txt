@@ -1,0 +1,5 @@
+The select below should be focused because we dispatched a mouse down event to it.
+
+PASS
+
+

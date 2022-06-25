@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Spacing of non-BMP operators</title>
+    <meta charset="utf-8"/>
+    <style type="text/css">
+      @font-face {
+        font-family: non-bmp-operators;
+        src: url("non-bmp-operators.woff");
+      }
+      math {
+        font-family: non-bmp-operators;
+      }
+    </style>
+  </head>
+  <body>
+
+    <p>
+      This test verifies the spacing of some non-BMP operators. It is assumed
+      that U+1EEF0 and U+1EEF1 only have a prefix form with zero lspace/rspace
+      and that U+1D400 is not in the operator dictionary. Hence the operator
+      spacing use zero for prefix U+1EEF0/U+1EEF1 and will use the default
+      thickmathspace value otherwise. Note that for implicit form, WebKit has a
+      workaround for bad markup and will fallback to the form of a dictionary
+      entry if one is found.
+    </p>
+
+    <p>Prefix:</p>
+    U+1EEF0:<math><mo form="prefix">&#x1EEF0;</mo></math>_
+    U+1EEF1:<math><mo form="prefix">&#x1EEF1;</mo></math>_
+    U+1D400:<math><mo form="prefix">&#x1D400;</mo></math>_
+
+    <p>Postfix:</p>
+    U+1EEF0:<math><mo form="postfix">&#x1EEF0;</mo></math>_
+    U+1EEF1:<math><mo form="postfix">&#x1EEF1;</mo></math>_
+    U+1D400:<math><mo form="postfix">&#x1D400;</mo></math>_
+
+    <p>Infix:</p>
+    U+1EEF0:<math><mo form="infix">&#x1EEF0;</mo></math>_
+    U+1EEF1:<math><mo form="infix">&#x1EEF1;</mo></math>_
+    U+1D400:<math><mo form="infix">&#x1D400;</mo></math>_
+
+    <p>Prefix (implicit):</p>
+    U+1EEF0:<math><mo>&#x1EEF0;</mo><mn></mn></math>_
+    U+1EEF1:<math><mo>&#x1EEF1;</mo><mn></mn></math>_
+    U+1D400:<math><mo>&#x1D400;</mo><mn></mn></math>_
+
+    <p>Infix (implicit):</p>
+    U+1EEF0:<math><mn></mn><mo>&#x1EEF0;</mo><mn></mn></math>_
+    U+1EEF1:<math><mn></mn><mo>&#x1EEF1;</mo><mn></mn></math>_
+    U+1D400:<math><mn></mn><mo>&#x1D400;</mo><mn></mn></math>_
+
+    <p>Postfix (implicit):</p>
+    U+1EEF0:<math><mn></mn><mo>&#x1EEF0;</mo></math>_
+    U+1EEF1:<math><mn></mn><mo>&#x1EEF1;</mo></math>_
+    U+1D400:<math><mn></mn><mo>&#x1D400;</mo></math>_
+
+  </body>
+</html>

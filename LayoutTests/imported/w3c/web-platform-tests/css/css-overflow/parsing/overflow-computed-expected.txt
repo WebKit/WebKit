@@ -1,0 +1,36 @@
+
+PASS Property overflow value 'visible'
+PASS Property overflow value 'hidden'
+PASS Property overflow value 'clip'
+PASS Property overflow value 'scroll'
+PASS Property overflow value 'auto'
+PASS Property overflow value 'auto auto'
+PASS Property overflow value 'auto clip'
+PASS Property overflow value 'auto visible'
+PASS Property overflow value 'clip auto'
+PASS Property overflow value 'clip clip'
+PASS Property overflow value 'clip hidden'
+PASS Property overflow value 'clip scroll'
+PASS Property overflow value 'clip visible'
+PASS Property overflow value 'hidden clip'
+PASS Property overflow value 'hidden visible'
+PASS Property overflow value 'scroll auto'
+PASS Property overflow value 'scroll clip'
+PASS Property overflow value 'scroll visible'
+PASS Property overflow value 'visible auto'
+PASS Property overflow value 'visible hidden'
+PASS Property overflow value 'visible scroll'
+PASS Property overflow value 'visible clip'
+PASS Property overflow value 'visible visible'
+PASS Property overflow-x value 'scroll'
+PASS Property overflow-x value 'hidden'
+PASS Property overflow-x value 'visible'
+PASS Property overflow-y value 'clip'
+PASS Property overflow-y value 'auto'
+PASS Property overflow-y value 'visible'
+FAIL Property overflow-block value 'hidden' assert_true: overflow-block doesn't seem to be supported in the computed style expected true got false
+FAIL Property overflow-block value 'clip' assert_true: overflow-block doesn't seem to be supported in the computed style expected true got false
+FAIL Property overflow-block value 'visible' assert_true: overflow-block doesn't seem to be supported in the computed style expected true got false
+FAIL Property overflow-inline value 'scroll' assert_true: overflow-inline doesn't seem to be supported in the computed style expected true got false
+FAIL Property overflow-inline value 'visible' assert_true: overflow-inline doesn't seem to be supported in the computed style expected true got false
+

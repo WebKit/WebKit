@@ -1,0 +1,9 @@
+Construct a WebSocket in a detached frame. The test passes if there is no crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

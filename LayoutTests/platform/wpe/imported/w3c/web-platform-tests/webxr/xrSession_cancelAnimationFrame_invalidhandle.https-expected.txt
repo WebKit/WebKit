@@ -1,0 +1,6 @@
+
+PASS XRSession cancelAnimationFrame does not have unexpected behavior when given invalid handles on immersive testSession - webgl
+FAIL XRSession cancelAnimationFrame does not have unexpected behavior when given invalid handles on immersive testSession - webgl2 assert_implements: webgl2 not supported. undefined
+PASS XRSession cancelAnimationFrame does not have unexpected behavior when given invalid handles on non-immersive testSession - webgl
+FAIL XRSession cancelAnimationFrame does not have unexpected behavior when given invalid handles on non-immersive testSession - webgl2 assert_implements: webgl2 not supported. undefined
+

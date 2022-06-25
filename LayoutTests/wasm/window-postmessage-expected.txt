@@ -1,0 +1,10 @@
+Test that expected Wasm Module can be sent over window.postMessage.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS () => value is 7002
+

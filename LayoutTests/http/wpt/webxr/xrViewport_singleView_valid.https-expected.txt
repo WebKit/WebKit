@@ -1,0 +1,4 @@
+
+PASS XRViewport attributes are valid even when there is only one view - webgl
+PASS XRViewport attributes are valid even when there is only one view - webgl2
+

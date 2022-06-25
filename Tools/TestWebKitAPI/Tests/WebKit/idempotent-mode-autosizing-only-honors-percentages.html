@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+function run1() {
+    let target = document.getElementById("target");
+    target.offsetWidth;
+    let result = Number.parseInt(window.getComputedStyle(target).getPropertyValue("font-size"));
+    return result;
+}
+function run2() {
+    let target = document.getElementById("target2");
+    target.offsetWidth;
+    let result = Number.parseInt(window.getComputedStyle(target).getPropertyValue("font-size"));
+    return result;
+}
+function run3() {
+    let target = document.getElementById("target3");
+    target.offsetWidth;
+    let result = Number.parseInt(window.getComputedStyle(target).getPropertyValue("font-size"));
+    return result;
+}
+function run4() {
+    let target = document.getElementById("target4");
+    target.offsetWidth;
+    let result = Number.parseInt(window.getComputedStyle(target).getPropertyValue("font-size"));
+    return result;
+}
+</script>
+</head>
+<body>
+<div style="background: green;"><span id="target" style="font-size: 12px;">Test</span></div>
+<div style="background: green;"><span style="font-size: 12px;">Test</span></div>
+<div style="background: green;"><span id="target2" style="font-size: 6px;">Test</span></div>
+<div style="background: green;"><span style="font-size: 6px;">Test</span></div>
+<div style="background: green;"><span id="target3" style="-webkit-text-size-adjust: none; font-size: 6px;">Test</span></div>
+<div style="background: green;"><span style="font-size: 6px;">Test</span></div>
+<div style="background: green;"><span id="target4" style="-webkit-text-size-adjust: 200%; font-size: 6px;">Test</span></div>
+<div style="background: green;"><span style="font-size: 6px;">Test</span></div>
+</body>
+</html>

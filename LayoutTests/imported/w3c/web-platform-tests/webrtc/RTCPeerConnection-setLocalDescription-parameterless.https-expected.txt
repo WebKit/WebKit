@@ -1,0 +1,15 @@
+
+PASS Parameterless SLD() in 'stable' goes to 'have-local-offer'
+PASS Parameterless SLD() in 'stable' sets pendingLocalDescription
+PASS Parameterless SLD() in 'stable' assigns transceiver.mid
+PASS Parameterless SLD() in 'have-remote-offer' goes to 'stable'
+PASS Parameterless SLD() in 'have-remote-offer' sets currentLocalDescription
+PASS Parameterless SLD() in 'have-remote-offer' sets transceiver.currentDirection
+PASS Parameterless SLD() uses [[LastCreatedOffer]] if it is still valid
+PASS Parameterless SLD() uses [[LastCreatedAnswer]] if it is still valid
+PASS Parameterless SLD() rejects with InvalidStateError if already closed
+PASS Parameterless SLD() never settles if closed while pending
+PASS Parameterless SLD() in a full O/A exchange succeeds
+PASS Parameterless SRD() rejects with TypeError.
+PASS RTCSessionDescription constructed without type throws TypeError
+

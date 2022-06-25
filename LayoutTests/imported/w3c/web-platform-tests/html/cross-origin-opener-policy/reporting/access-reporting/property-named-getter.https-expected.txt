@@ -1,0 +1,10 @@
+
+FAIL same-site > w => w["iframeName"] promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ReportingObserver"
+FAIL cross-origin > w => w["iframeName"] promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ReportingObserver"
+FAIL same-site > w => w["divID"] promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ReportingObserver"
+FAIL cross-origin > w => w["divID"] promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ReportingObserver"
+FAIL same-site > w => w["existingGlobal"] promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ReportingObserver"
+FAIL cross-origin > w => w["existingGlobal"] promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ReportingObserver"
+FAIL same-site > w => w["missingGlobal"] promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ReportingObserver"
+FAIL cross-origin > w => w["missingGlobal"] promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ReportingObserver"
+

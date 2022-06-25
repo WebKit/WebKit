@@ -1,0 +1,3 @@
+
+PASS Test evaluation order of modules
+

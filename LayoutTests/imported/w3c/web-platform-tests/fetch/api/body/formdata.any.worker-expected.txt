@@ -1,0 +1,4 @@
+
+FAIL Consume empty response.formData() as FormData promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Consume empty request.formData() as FormData promise_test: Unhandled rejection with value: object "TypeError: Type error"
+

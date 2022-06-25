@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.layerized {
+    transform: translateZ(0);
+    width: 600px;
+    height: 600px;
+}
+.vspace {
+    height: 1000px;
+}
+</style>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.onload = function() {
+    if (!window.testRunner)
+        return;
+
+    document.getElementById('repainting').style.color = 'blue';
+    setTimeout(function() {
+        var out = document.getElementById('out');
+        out.innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_BACKING_STORE_ATTACHED);
+        testRunner.notifyDone();
+    }, 0);
+};
+</script>
+</head>
+<body>
+<pre id="out"></pre>
+<div class="layerized">I'm attached.</div>
+<div class="vspace"></div>
+<div class="layerized">I'm detached.</div>
+<div class="vspace"></div>
+<div class="layerized">I'm detached. <span id="repainting">Triggers repaint</span></div>
+</body>
+</html>

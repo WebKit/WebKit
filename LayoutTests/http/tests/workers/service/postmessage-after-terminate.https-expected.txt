@@ -1,0 +1,5 @@
+PASS: Client received message from service worker, origin: https://127.0.0.1:8443
+PASS: Service worker received message 'Message 1' from origin 'https://127.0.0.1:8443'
+PASS: Client received message from service worker, origin: https://127.0.0.1:8443
+PASS: Service worker received message 'Message 2' from origin 'https://127.0.0.1:8443'
+

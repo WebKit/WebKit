@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+  <head>
+    <title>table simple</title>
+    <meta charset="utf-8"/>
+  </head>
+  <style>
+    mtd {
+    padding: 0;
+    }
+  </style>
+  <body>
+
+    <!-- Testing columnalign="left" -->
+    <math>
+      <mtable style="position: absolute; left: 0; top: 0;" columnalign="left">
+        <mtr>
+          <mtd><mspace width="2em" height="2em" mathbackground="red"/></mtd>
+          <mtd><mspace width="2em" height="2em" mathbackground="green"/></mtd>
+          <mtd><mspace width="2em" height="2em" mathbackground="blue"/></mtd>
+        </mtr>
+        <mtr>
+          <mtd><mspace width="4em" height="2em" mathbackground="yellow"/></mtd> 
+          <mtd><mspace width="4em" height="2em" mathbackground="magenta"/></mtd>
+          <mtd><mspace width="4em" height="2em" mathbackground="cyan"/></mtd>
+        </mtr>
+        <mtr> 
+          <mtd><mspace width="6em" height="2em" mathbackground="#eee"/></mtd> 
+          <mtd><mspace width="6em" height="2em" mathbackground="grey"/></mtd>
+          <mtd><mspace width="6em" height="2em" mathbackground="black"/></mtd>
+        </mtr>
+      </mtable>
+    </math>
+
+    <!-- Testing columnalign="center" (default) -->
+    <math>
+      <mtable style="position: absolute; left: 0; top: 10em;">
+        <mtr>
+          <mtd><mspace width="2em" height="2em" mathbackground="red"/></mtd>
+          <mtd><mspace width="2em" height="2em" mathbackground="green"/></mtd>
+          <mtd><mspace width="2em" height="2em" mathbackground="blue"/></mtd>
+        </mtr>
+        <mtr>
+          <mtd><mspace width="4em" height="2em" mathbackground="yellow"/></mtd> 
+          <mtd><mspace width="4em" height="2em" mathbackground="magenta"/></mtd>
+          <mtd><mspace width="4em" height="2em" mathbackground="cyan"/></mtd>
+        </mtr>
+        <mtr> 
+          <mtd><mspace width="6em" height="2em" mathbackground="#eee"/></mtd> 
+          <mtd><mspace width="6em" height="2em" mathbackground="grey"/></mtd>
+          <mtd><mspace width="6em" height="2em" mathbackground="black"/></mtd>
+        </mtr>
+      </mtable>
+    </math>
+
+    <!-- Testing columnalign="right" -->
+    <math>
+      <mtable style="position: absolute; left: 0; top: 20em;" columnalign="right">
+        <mtr>
+          <mtd><mspace width="2em" height="2em" mathbackground="red"/></mtd>
+          <mtd><mspace width="2em" height="2em" mathbackground="green"/></mtd>
+          <mtd><mspace width="2em" height="2em" mathbackground="blue"/></mtd>
+        </mtr>
+        <mtr>
+          <mtd><mspace width="4em" height="2em" mathbackground="yellow"/></mtd> 
+          <mtd><mspace width="4em" height="2em" mathbackground="magenta"/></mtd>
+          <mtd><mspace width="4em" height="2em" mathbackground="cyan"/></mtd>
+        </mtr>
+        <mtr> 
+          <mtd><mspace width="6em" height="2em" mathbackground="#eee"/></mtd> 
+          <mtd><mspace width="6em" height="2em" mathbackground="grey"/></mtd>
+          <mtd><mspace width="6em" height="2em" mathbackground="black"/></mtd>
+        </mtr>
+      </mtable>
+    </math>
+
+  </body>
+</html>

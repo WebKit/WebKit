@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        body {
+            height: 1000px;
+        }
+        .box {
+            position: absolute;
+            top: 200px;
+            left: 10px;
+            width: 100px;
+            height: 100px;
+            background-image: linear-gradient(green, green 200px, red 200px, red 1000px);
+            background-attachment: fixed;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        function logRepaints() {
+            if (!window.internals)
+                return;
+
+            document.getElementById('repaints').textContent = window.internals.repaintRectsAsText();
+            window.internals.stopTrackingRepaints();
+        }
+
+        function doTest()
+        {
+            if (window.eventSender)
+                eventSender.scalePageBy(2, 0, 0);
+
+            window.internals.startTrackingRepaints();
+            window.scrollTo(0, 200);
+            logRepaints();
+        }
+        
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+<div class="box"></div>
+<div id="repaints"></div>
+</body>
+</html>

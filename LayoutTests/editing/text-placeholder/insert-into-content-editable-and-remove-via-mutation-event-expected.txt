@@ -1,0 +1,20 @@
+This tests that a text placeholder that is removed from the page via a mutation event callback after being inserted does not cause a crash. This test can only be run in WebKitTestRunner or DumpRenderTree.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Before inserting placeholder:
+PASS document.getElementById("test").childNodes.length is 1
+
+After inserting placeholder:
+PASS document.getElementById("test").childNodes.length is 3
+PASS placeholderElement.parentNode is non-null.
+
+After removing placeholder:
+PASS document.getElementById("test").childNodes.length became different from 3
+PASS document.getElementById("test").childNodes.length is <= 2
+PASS placeholderElement.parentNode became null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

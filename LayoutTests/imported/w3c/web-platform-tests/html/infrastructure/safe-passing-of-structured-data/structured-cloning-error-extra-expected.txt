@@ -1,0 +1,17 @@
+CONSOLE MESSAGE: DataCloneError: The object can not be cloned.
+
+
+Harness Error (FAIL), message = DataCloneError: The object can not be cloned.
+
+FAIL Throwing name getter fails serialization assert_throws_exactly: function "() => {
+    worker.postMessage(badError);
+  }" threw object "DataCloneError: The object can not be cloned." but we expected it to throw object "Error: throw me!"
+TIMEOUT Errors sent across realms should preserve their type Test timed out
+
+Harness Error (FAIL), message = DataCloneError: The object can not be cloned.
+
+FAIL Throwing name getter fails serialization assert_throws_exactly: function "() => {
+    worker.postMessage(badError);
+  }" threw object "DataCloneError: The object can not be cloned." but we expected it to throw object "Error: throw me!"
+TIMEOUT Errors sent across realms should preserve their type Test timed out
+

@@ -1,0 +1,50 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Test for bug 51344: move left/right by character should not hang.</title>
+</head>
+<body>
+<p>Test for bug 51344: move left/right by character should not hang.
+<div id="test" dir="ltr" contenteditable>١١123مارس</div>
+<div id="test_rtl" dir="rtl" contenteditable>&#1494;&#1495; &#x202a;&#1491;&#1492;&#x202a;car &#1493;&#x202c;&#x202c;  </div> 
+
+<ul id="console"></ul>
+
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function log(str) {
+    var li = document.createElement("li");
+    li.appendChild(document.createTextNode(str));
+    var console = document.getElementById("console");
+    console.appendChild(li);
+}
+
+function assert(bool) {
+    if (!bool)
+        log("Failure");
+    else
+        log("Success");
+}
+
+var test = document.getElementById('test');
+var selection = window.getSelection();
+selection.setPosition(test.firstChild, 6);
+selection.modify('move', 'right', 'character');
+var offset = selection.anchorOffset;
+assert(offset == 1);
+test.style.display = "none";
+
+test = document.getElementById('test_rtl');
+selection = window.getSelection();
+selection.setPosition(test.firstChild, 3);
+selection.modify('move', 'left', 'character');
+offset = selection.anchorOffset;
+assert(offset == 4);
+test.style.display = "none";
+
+</script>
+</body>
+</html>

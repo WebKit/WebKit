@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+        .content {
+            height: 200px;
+            overflow: scroll;
+            background-image: linear-gradient(white, gray)
+        }
+  </style>
+  <script>
+       if (window.testRunner) {
+           testRunner.dumpAsText();
+           testRunner.waitUntilDone();
+        }
+
+        function logResult(s)
+        {
+            document.getElementById('result').textContent += s + "\n";
+        }
+
+        function scrolled()
+        {
+            var divId = event.target.id;
+            if (divId == "divBottom")
+                logResult('PASS: scrolled happened in the bottom div');
+            else
+                logResult('FAIL: scrolled happened in the top div');
+
+            testRunner.notifyDone();
+        }
+
+        function scrollTest()
+        {
+            var externalScrollableArea = document.getElementById('externalScrollableArea');
+            var externalScrollableAreaBounds = externalScrollableArea.getBoundingClientRect();
+
+            logResult('Sending mouse events');
+            eventSender.mouseMoveTo(externalScrollableAreaBounds.left + 60, externalScrollableAreaBounds.bottom - 60);
+            eventSender.mouseScrollBy(0, -10);
+        }
+
+        function startTest()
+        {
+            var externalScrollableArea = document.getElementById('externalScrollableArea');
+            externalScrollableArea.scrollTop = externalScrollableArea.scrollHeight;
+
+            setTimeout(scrollTest, 0);
+        }
+
+        window.addEventListener('load', startTest, false);
+    </script>
+</head>
+<body>
+<div id="externalScrollableArea" style="overflow: scroll; width: 200px; height: 200px;">
+  <div class="content" id="divTop" onscroll="scrolled()">
+    <pre>
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+    </pre>
+  </div>
+  <div class="content" id="divBottom" onscroll="scrolled()">
+    <pre>
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+    </pre>
+  </div>
+</div>
+<pre id="result"></pre>
+</body>
+</html>

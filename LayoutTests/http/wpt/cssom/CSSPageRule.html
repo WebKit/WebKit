@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>CSSPageRule interface</title>
+<link href="mailto:cdumez@apple.com" rel="author" title="Chris Dumez">
+<link href="https://drafts.csswg.org/cssom/#the-csspagerule-interface" rel="help">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style id="styleElement">
+    @page :left {
+        margin-left: 3cm;
+        margin-right: 4cm;
+    }
+</style>
+</head>
+<body>
+<script>
+    var rule;
+    setup(function() {
+        var styleSheet = document.getElementById("styleElement").sheet;
+        var ruleList = styleSheet.cssRules;
+        rule = ruleList[0];
+    });
+
+    test(function() {
+        assert_true(rule instanceof CSSRule);
+        assert_true(rule instanceof CSSPageRule);
+    }, "CSSRule and CSSPageRule types");
+
+    test(function() {
+        assert_true(rule instanceof CSSRule);
+        assert_idl_attribute(rule, "cssText");
+        assert_idl_attribute(rule, "parentRule");
+        assert_idl_attribute(rule, "parentStyleSheet");
+    }, "Existence of CSSRule attributes");
+
+    test(function() {
+        assert_readonly(rule, "type");
+        assert_readonly(rule, "parentRule");
+        assert_readonly(rule, "parentStyleSheet");
+    }, "Writability of CSSRule attributes");
+
+    test(function() {
+        assert_equals(rule.type, rule.PAGE_RULE);
+        assert_equals(typeof rule.cssText, "string");
+        assert_equals(rule.cssText, "@page :left { margin-left: 3cm; margin-right: 4cm; }");
+        assert_equals(rule.parentRule, null);
+        assert_true(rule.parentStyleSheet instanceof CSSStyleSheet);
+    }, "Values of CSSRule attributes");
+
+    test(function() {
+        assert_idl_attribute(rule, "selectorText");
+        assert_equals(typeof rule.selectorText, "string");
+        assert_idl_attribute(rule, "style");
+    }, "Existence and type of CSSPageRule attributes");
+
+    test(function() {
+        assert_equals(rule.selectorText, "@page :left");
+        assert_true(rule.style instanceof CSSStyleDeclaration);
+    }, "Values of CSSPageRule attributes");
+
+    test(function() {
+        assert_equals(rule.style.marginLeft, "3cm", "marginLeft");
+        assert_equals(rule.style.marginRight, "4cm", "marginRight");
+
+        rule.style.marginLeft = "5px";
+        rule.style.marginRight = "6px";
+
+        assert_equals(rule.style.marginLeft, "5px");
+        assert_equals(rule.style.marginRight, "6px");
+    }, "Mutability of CSSPageRule's style attribute");
+
+    test(function() {
+        rule.style = "margin-left: 6cm; margin-right: 8cm;";
+
+        assert_equals(rule.style.marginLeft, "6cm", "marginLeft");
+        assert_equals(rule.style.marginRight, "8cm", "marginRight");
+    }, "CSSPageRule's style has [PutForwards]");
+</script>
+</body>
+</html>

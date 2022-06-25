@@ -1,0 +1,24 @@
+Tests that we get the correct number of images when copying under different display resolutions.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS Found all 4 images at 1x Resolution.
+PASS Found all 4 images at 2x Resolution.
+PASS Found all 4 images at 3x Resolution.
+Image 1
+
+
+Image 2
+
+
+Image 3
+
+
+Image 4
+
+
+

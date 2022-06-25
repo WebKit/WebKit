@@ -1,0 +1,34 @@
+<style>
+[myAttr] { background: white; }
+[myAttr="test"] { background: rgb(1,0,0); }
+[myAttr~="test"] { background: rgb(2,0,0); }
+[myAttr|="test"] { background: rgb(3,0,0); }
+[myAttr^="test"] { background: rgb(4,0,0); }
+[myAttr$="test"] { background: rgb(5,0,0); }
+[myAttr*="test"] { background: rgb(6,0,0); }
+[myAttr="test" i] { background: rgb(7,0,0); }
+[myAttr~="test" i] { background: rgb(8,0,0); }
+[myAttr|="test" i] { background: rgb(9,0,0); }
+[myAttr^="test" i] { background: rgb(10,0,0); }
+[myAttr$="test" i] { background: rgb(11,0,0); }
+[myAttr*="test" i] { background: rgb(12,0,0); }
+[color] { background: white; }
+[color="test"] { background: rgb(1,0,0); }
+[color~="test"] { background: rgb(2,0,0); }
+[color|="test"] { background: rgb(3,0,0); }
+[color^="test"] { background: rgb(4,0,0); }
+[color$="test"] { background: rgb(5,0,0); }
+[color*="test"] { background: rgb(6,0,0); }
+[color="test" i] { background: rgb(7,0,0); }
+[color~="test" i] { background: rgb(8,0,0); }
+[color|="test" i] { background: rgb(9,0,0); }
+[color^="test" i] { background: rgb(10,0,0); }
+[color$="test" i] { background: rgb(11,0,0); }
+[color*="test" i] { background: rgb(12,0,0); }
+</style>
+<div myAttr="" color="" id="test">This test passes if it doesn't crash.</div>
+<script>
+document.querySelector("#test").attributes.myAttr.value = null;
+// 'color' attribute is HTML legacy case sensitive.
+document.querySelector("#test").attributes.color.value = null;
+</script>

@@ -1,0 +1,64 @@
+
+FAIL Rule for --valid has expected cssText assert_true: expected true got false
+FAIL Rule for --valid-reverse has expected cssText assert_true: expected true got false
+FAIL Rule for --valid-universal has expected cssText assert_true: expected true got false
+FAIL Rule for --valid-whitespace has expected cssText assert_true: expected true got false
+FAIL Rule for --vALId has expected cssText assert_true: expected true got false
+FAIL Rule for --no-descriptors has expected cssText assert_true: expected true got false
+FAIL Rule for --no-syntax has expected cssText assert_true: expected true got false
+FAIL Rule for --no-inherits has expected cssText assert_true: expected true got false
+FAIL Rule for --no-initial-value has expected cssText assert_true: expected true got false
+FAIL Rule for --syntax-only has expected cssText assert_true: expected true got false
+FAIL Rule for --inherits-only has expected cssText assert_true: expected true got false
+FAIL Rule for --initial-value-only has expected cssText assert_true: expected true got false
+FAIL Rule for --tab	tab has expected cssText assert_true: expected true got false
+FAIL CSSRule.type returns 0 null is not an object (evaluating 'rule.type')
+FAIL Rule for --valid returns expected value for CSSPropertyRule.name assert_true: expected true got false
+FAIL Rule for --valid-reverse returns expected value for CSSPropertyRule.name assert_true: expected true got false
+FAIL Rule for --valid-universal returns expected value for CSSPropertyRule.name assert_true: expected true got false
+FAIL Rule for --valid-whitespace returns expected value for CSSPropertyRule.name assert_true: expected true got false
+FAIL Rule for --vALId returns expected value for CSSPropertyRule.name assert_true: expected true got false
+FAIL Rule for --no-descriptors returns expected value for CSSPropertyRule.name assert_true: expected true got false
+FAIL Rule for --no-syntax returns expected value for CSSPropertyRule.name assert_true: expected true got false
+FAIL Rule for --no-inherits returns expected value for CSSPropertyRule.name assert_true: expected true got false
+FAIL Rule for --no-initial-value returns expected value for CSSPropertyRule.name assert_true: expected true got false
+FAIL Rule for --syntax-only returns expected value for CSSPropertyRule.name assert_true: expected true got false
+FAIL Rule for --inherits-only returns expected value for CSSPropertyRule.name assert_true: expected true got false
+FAIL Rule for --initial-value-only returns expected value for CSSPropertyRule.name assert_true: expected true got false
+FAIL Rule for --valid returns expected value for CSSPropertyRule.syntax assert_true: expected true got false
+FAIL Rule for --valid-reverse returns expected value for CSSPropertyRule.syntax assert_true: expected true got false
+FAIL Rule for --valid-universal returns expected value for CSSPropertyRule.syntax assert_true: expected true got false
+FAIL Rule for --valid-whitespace returns expected value for CSSPropertyRule.syntax assert_true: expected true got false
+FAIL Rule for --vALId returns expected value for CSSPropertyRule.syntax assert_true: expected true got false
+FAIL Rule for --no-descriptors returns expected value for CSSPropertyRule.syntax assert_true: expected true got false
+FAIL Rule for --no-syntax returns expected value for CSSPropertyRule.syntax assert_true: expected true got false
+FAIL Rule for --no-inherits returns expected value for CSSPropertyRule.syntax assert_true: expected true got false
+FAIL Rule for --no-initial-value returns expected value for CSSPropertyRule.syntax assert_true: expected true got false
+FAIL Rule for --syntax-only returns expected value for CSSPropertyRule.syntax assert_true: expected true got false
+FAIL Rule for --inherits-only returns expected value for CSSPropertyRule.syntax assert_true: expected true got false
+FAIL Rule for --initial-value-only returns expected value for CSSPropertyRule.syntax assert_true: expected true got false
+FAIL Rule for --valid returns expected value for CSSPropertyRule.inherits assert_true: expected true got false
+FAIL Rule for --valid-reverse returns expected value for CSSPropertyRule.inherits assert_true: expected true got false
+FAIL Rule for --valid-universal returns expected value for CSSPropertyRule.inherits assert_true: expected true got false
+FAIL Rule for --valid-whitespace returns expected value for CSSPropertyRule.inherits assert_true: expected true got false
+FAIL Rule for --vALId returns expected value for CSSPropertyRule.inherits assert_true: expected true got false
+FAIL Rule for --no-descriptors returns expected value for CSSPropertyRule.inherits assert_true: expected true got false
+FAIL Rule for --no-syntax returns expected value for CSSPropertyRule.inherits assert_true: expected true got false
+FAIL Rule for --no-inherits returns expected value for CSSPropertyRule.inherits assert_true: expected true got false
+FAIL Rule for --no-initial-value returns expected value for CSSPropertyRule.inherits assert_true: expected true got false
+FAIL Rule for --syntax-only returns expected value for CSSPropertyRule.inherits assert_true: expected true got false
+FAIL Rule for --inherits-only returns expected value for CSSPropertyRule.inherits assert_true: expected true got false
+FAIL Rule for --initial-value-only returns expected value for CSSPropertyRule.inherits assert_true: expected true got false
+FAIL Rule for --valid returns expected value for CSSPropertyRule.initialValue assert_true: expected true got false
+FAIL Rule for --valid-reverse returns expected value for CSSPropertyRule.initialValue assert_true: expected true got false
+FAIL Rule for --valid-universal returns expected value for CSSPropertyRule.initialValue assert_true: expected true got false
+FAIL Rule for --valid-whitespace returns expected value for CSSPropertyRule.initialValue assert_true: expected true got false
+FAIL Rule for --vALId returns expected value for CSSPropertyRule.initialValue assert_true: expected true got false
+FAIL Rule for --no-descriptors returns expected value for CSSPropertyRule.initialValue assert_true: expected true got false
+FAIL Rule for --no-syntax returns expected value for CSSPropertyRule.initialValue assert_true: expected true got false
+FAIL Rule for --no-inherits returns expected value for CSSPropertyRule.initialValue assert_true: expected true got false
+FAIL Rule for --no-initial-value returns expected value for CSSPropertyRule.initialValue assert_true: expected true got false
+FAIL Rule for --syntax-only returns expected value for CSSPropertyRule.initialValue assert_true: expected true got false
+FAIL Rule for --inherits-only returns expected value for CSSPropertyRule.initialValue assert_true: expected true got false
+FAIL Rule for --initial-value-only returns expected value for CSSPropertyRule.initialValue assert_true: expected true got false
+

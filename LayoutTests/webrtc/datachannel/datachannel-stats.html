@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Testing basic data channel from offerer to receiver</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+  </head>
+  <body>
+    <script src ="../routines.js"></script>
+    <script>
+var localChannel;
+var remoteChannel;
+
+function receiveMessages(event) {
+    if (++counter === 1)
+        assert_equals(event.data, "one");
+    else if (counter === 2)
+        assert_equals(event.data, "two");
+    else if (counter === 3)
+        assert_equals(event.data, "three");
+    else if (counter === 4) {
+        assert_equals(event.data, "four");
+        finishTest();
+    } else
+        assert_unreached();
+}
+
+function sendMessages(channel)
+{
+    channel.send("one");
+    channel.send("two");
+    channel.send("three");
+    channel.send("four");
+}
+
+function getDataChannelStats(connection)
+{
+    return connection.getStats().then((report) => {
+        var stats;
+        report.forEach((statItem) => {
+            if (statItem.type === "data-channel") {
+                stats = statItem;
+            }
+        });
+        return stats;
+    });
+}
+
+var finishTest;
+promise_test((test) => {
+    counter = 0;
+    return new Promise((resolve, reject) => {
+        var localConnection, remoteConnection;
+        finishTest = () => {
+            getDataChannelStats(localConnection).then((stats) => {
+                stats.id = "id";
+                stats.timestamp = 1;
+                assert_equals(JSON.stringify(stats), '{"id":"id","timestamp":1,"type":"data-channel","bytesReceived":0,"bytesSent":15,"datachannelid":1,"label":"sendDataChannel","messagesReceived":0,"messagesSent":4,"protocol":"","state":"open"}');
+                return getDataChannelStats(remoteConnection);
+            }).then((stats) => {
+                stats.id = "id";
+                stats.timestamp = 1;
+                assert_equals(JSON.stringify(stats), '{"id":"id","timestamp":1,"type":"data-channel","bytesReceived":15,"bytesSent":0,"datachannelid":1,"label":"sendDataChannel","messagesReceived":4,"messagesSent":0,"protocol":"","state":"open"}');
+                 resolve();
+            });
+        };
+
+        createConnections((connection) => {
+            localConnection = connection;
+            localChannel = localConnection.createDataChannel('sendDataChannel');
+            localChannel.onopen = () => { sendMessages(localChannel) };
+        }, (connection) => {
+            remoteConnection = connection;
+            remoteConnection.ondatachannel = (event) => {
+                remoteChannel = event.channel;
+                remoteChannel.onmessage = receiveMessages;
+            };
+        });
+    });
+}, "Basic data channel exchange with stats");
+    </script>
+  </body>
+</html>

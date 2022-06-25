@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<select size=10 id="deg1" lang="en-US" tabindex=0>
+   <option lang="ar">بث</option>
+   <option>Celsius</option>
+</select>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that the lang attribute is returned appropriately for option elements.");
+
+    if (window.accessibilityController) {
+
+        // Test the values in a multi-select list box.
+        document.getElementById("deg1").focus();
+        var selectbox = accessibilityController.focusedElement;
+        shouldBe("selectbox.childAtIndex(0).language", "'AXLanguage: ar'");
+        shouldBe("selectbox.childAtIndex(1).language", "'AXLanguage: en-US'");
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

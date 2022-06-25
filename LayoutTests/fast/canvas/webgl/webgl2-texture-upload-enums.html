@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<canvas id="canvas" width="40" height="40"></canvas>
+<script>
+description("Test that glTexImage2D and glTexSubImage2D accept new WebGL 2 enum values");
+
+if (window.internals)
+	internals.settings.setWebGL2Enabled(true);
+
+var canvas = document.getElementById("canvas");
+var width = canvas.width;
+var height = canvas.height;
+var gl = canvas.getContext("webgl2");
+shouldBe("gl.getError()", "gl.NO_ERROR");
+
+var texture = gl.createTexture();
+shouldBe("gl.getError()", "gl.NO_ERROR");
+gl.bindTexture(gl.TEXTURE_2D, texture);
+shouldBe("gl.getError()", "gl.NO_ERROR");
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+shouldBe("gl.getError()", "gl.NO_ERROR");
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+shouldBe("gl.getError()", "gl.NO_ERROR");
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+shouldBe("gl.getError()", "gl.NO_ERROR");
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+shouldBe("gl.getError()", "gl.NO_ERROR");
+
+var arrayBuffer = new Uint8Array(width * height * 1);
+var count = 0;
+for (var i = 0; i < height; ++i) {
+	for (var j = 0; j < width; ++j) {
+		arrayBuffer[(width * i + j) * 1 + 0] = count++;
+	}
+}
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.R8, width, height, 0, gl.RED, gl.UNSIGNED_BYTE, arrayBuffer);
+shouldBe("gl.getError()", "gl.NO_ERROR");
+
+var framebuffer = gl.createFramebuffer();
+shouldBe("gl.getError()", "gl.NO_ERROR");
+gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+shouldBe("gl.getError()", "gl.NO_ERROR");
+gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+shouldBe("gl.getError()", "gl.NO_ERROR");
+shouldBe("gl.checkFramebufferStatus(gl.FRAMEBUFFER)", "gl.FRAMEBUFFER_COMPLETE");
+
+
+var count;
+var offset = 0;
+var index;
+var expected;
+function test(uploadArrayFunction, downloadArrayFunction, components, internalFormat, format, uploadType, downloadType) {
+	var width = 4;
+	var height = 4;
+	arrayBuffer = new uploadArrayFunction(2 * width * height * components);
+	var count = 0;
+	for (var i = 0; i < height; ++i) {
+		for (var j = 0; j < width; ++j) {
+			for (var k = 0; k < components; ++k) {
+				arrayBuffer[(width * i + j) * components + k] = offset + count++;
+			}
+		}
+	}
+	gl.texImage2D(gl.TEXTURE_2D, 0, internalFormat, width, height, 0, format, uploadType, arrayBuffer);
+	shouldBe("gl.getError()", "gl.NO_ERROR");
+	gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, width, height, format, uploadType, arrayBuffer);
+	shouldBe("gl.getError()", "gl.NO_ERROR");
+	receiver = new downloadArrayFunction(2 * width * height * components);
+	gl.readPixels(0, 0, width, height, format, downloadType, receiver);
+	shouldBe("gl.getError()", "gl.NO_ERROR");
+	count = 0;
+	for (var i = 0; i < height; ++i) {
+		for (var j = 0; j < width; ++j) {
+			for (var k = 0; k < components; ++k) {
+				expected = offset + count++;
+				index = (width * i + j) * components + k;
+				shouldBe("receiver[index]", "expected");
+			}
+		}
+	}
+
+	if (offset == 0)
+		offset = 50;
+	else
+		offset = 0;
+}
+
+// FIXME: Read from the textures in shaders
+
+test(Uint8Array, Uint8Array, 3, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, gl.UNSIGNED_BYTE);
+test(Uint8Array, Uint8Array, 4, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, gl.UNSIGNED_BYTE);
+//test(Uint8Array, Uint8Array, 2, gl.LUMINANCE_ALPHA, gl.LUMINANCE_ALPHA, gl.UNSIGNED_BYTE, gl.UNSIGNED_BYTE);
+//test(Uint8Array, Uint8Array, 1, gl.LUMINANCE, gl.LUMINANCE, gl.UNSIGNED_BYTE, gl.UNSIGNED_BYTE);
+//test(Uint8Array, Uint8Array, 1, gl.ALPHA, gl.ALPHA, gl.UNSIGNED_BYTE, gl.UNSIGNED_BYTE);
+
+test(Uint8Array, Uint8Array, 1, gl.R8, gl.RED, gl.UNSIGNED_BYTE, gl.UNSIGNED_BYTE);
+test(Int8Array, Int8Array, 1, gl.R8_SNORM, gl.RED, gl.BYTE, gl.BYTE);
+test(Float32Array, Float32Array, 1, gl.R16F, gl.RED, gl.FLOAT, gl.FLOAT);
+test(Float32Array, Float32Array, 1, gl.R32F, gl.RED, gl.FLOAT, gl.FLOAT);
+test(Uint8Array, Uint32Array, 1, gl.R8UI, gl.RED_INTEGER, gl.UNSIGNED_BYTE, gl.UNSIGNED_INT);
+test(Int8Array, Int32Array, 1, gl.R8I, gl.RED_INTEGER, gl.BYTE, gl.INT);
+test(Uint16Array, Uint32Array, 1, gl.R16UI, gl.RED_INTEGER, gl.UNSIGNED_SHORT, gl.UNSIGNED_INT);
+test(Int16Array, Int32Array, 1, gl.R16I, gl.RED_INTEGER, gl.SHORT, gl.INT);
+test(Uint32Array, Uint32Array, 1, gl.R32UI, gl.RED_INTEGER, gl.UNSIGNED_INT, gl.UNSIGNED_INT);
+test(Int32Array, Int32Array, 1, gl.R32I, gl.RED_INTEGER, gl.INT, gl.INT);
+
+test(Uint8Array, Uint8Array, 2, gl.RG8, gl.RG, gl.UNSIGNED_BYTE, gl.UNSIGNED_BYTE);
+test(Int8Array, Int8Array, 2, gl.RG8_SNORM, gl.RG, gl.BYTE, gl.BYTE);
+test(Float32Array, Float32Array, 2, gl.RG16F, gl.RG, gl.FLOAT, gl.FLOAT);
+test(Float32Array, Float32Array, 2, gl.RG32F, gl.RG, gl.FLOAT, gl.FLOAT);
+test(Uint8Array, Uint32Array, 2, gl.RG8UI, gl.RG_INTEGER, gl.UNSIGNED_BYTE, gl.UNSIGNED_INT);
+test(Int8Array, Int32Array, 2, gl.RG8I, gl.RG_INTEGER, gl.BYTE, gl.INT);
+test(Uint16Array, Uint32Array, 2, gl.RG16UI, gl.RG_INTEGER, gl.UNSIGNED_SHORT, gl.UNSIGNED_INT);
+test(Int16Array, Int32Array, 2, gl.RG16I, gl.RG_INTEGER, gl.SHORT, gl.INT);
+test(Uint32Array, Uint32Array, 2, gl.RG32UI, gl.RG_INTEGER, gl.UNSIGNED_INT, gl.UNSIGNED_INT);
+test(Int32Array, Int32Array, 2, gl.RG32I, gl.RG_INTEGER, gl.INT, gl.INT);
+
+test(Uint8Array, Uint8Array, 3, gl.RGB8, gl.RGB, gl.UNSIGNED_BYTE, gl.UNSIGNED_BYTE);
+test(Uint8Array, Uint8Array, 3, gl.SRGB8, gl.RGB, gl.UNSIGNED_BYTE, gl.UNSIGNED_BYTE);
+test(Int8Array, Int8Array, 3, gl.RGB8_SNORM, gl.RGB, gl.BYTE, gl.BYTE);
+test(Float32Array, Float32Array, 3, gl.RGB16F, gl.RGB, gl.FLOAT, gl.FLOAT);
+test(Float32Array, Float32Array, 3, gl.RGB32F, gl.RGB, gl.FLOAT, gl.FLOAT);
+test(Uint8Array, Uint32Array, 3, gl.RGB8UI, gl.RGB_INTEGER, gl.UNSIGNED_BYTE, gl.UNSIGNED_INT);
+test(Int8Array, Int32Array, 3, gl.RGB8I, gl.RGB_INTEGER, gl.BYTE, gl.INT);
+test(Uint16Array, Uint32Array, 3, gl.RGB16UI, gl.RGB_INTEGER, gl.UNSIGNED_SHORT, gl.UNSIGNED_INT);
+test(Int16Array, Int32Array, 3, gl.RGB16I, gl.RGB_INTEGER, gl.SHORT, gl.INT);
+test(Uint32Array, Uint32Array, 3, gl.RGB32UI, gl.RGB_INTEGER, gl.UNSIGNED_INT, gl.UNSIGNED_INT);
+test(Int32Array, Int32Array, 3, gl.RGB32I, gl.RGB_INTEGER, gl.INT, gl.INT);
+
+test(Uint8Array, Uint8Array, 4, gl.RGBA8, gl.RGBA, gl.UNSIGNED_BYTE, gl.UNSIGNED_BYTE);
+test(Uint8Array, Uint8Array, 3, gl.SRGB8_ALPHA8, gl.RGBA, gl.UNSIGNED_BYTE, gl.UNSIGNED_BYTE);
+test(Int8Array, Int8Array, 4, gl.RGBA8_SNORM, gl.RGBA, gl.BYTE, gl.BYTE);
+test(Float32Array, Float32Array, 4, gl.RGBA16F, gl.RGBA, gl.FLOAT, gl.FLOAT);
+test(Float32Array, Float32Array, 4, gl.RGBA32F, gl.RGBA, gl.FLOAT, gl.FLOAT);
+test(Uint8Array, Uint32Array, 4, gl.RGBA8UI, gl.RGBA_INTEGER, gl.UNSIGNED_BYTE, gl.UNSIGNED_INT);
+test(Int8Array, Int32Array, 4, gl.RGBA8I, gl.RGBA_INTEGER, gl.BYTE, gl.INT);
+test(Uint16Array, Uint32Array, 4, gl.RGBA16UI, gl.RGBA_INTEGER, gl.UNSIGNED_SHORT, gl.UNSIGNED_INT);
+test(Int16Array, Int32Array, 4, gl.RGBA16I, gl.RGBA_INTEGER, gl.SHORT, gl.INT);
+test(Uint32Array, Uint32Array, 4, gl.RGBA32UI, gl.RGBA_INTEGER, gl.UNSIGNED_INT, gl.UNSIGNED_INT);
+test(Int32Array, Int32Array, 4, gl.RGBA32I, gl.RGBA_INTEGER, gl.INT, gl.INT);
+
+var i;
+function test565() {
+	var width = 4;
+	var height = 4;
+	arrayBuffer = new Uint16Array(width * height);
+	for (var i = 0; i < height; ++i) {
+		for (var j = 0; j < width; ++j) {
+			arrayBuffer[width * i + j] = (i << 11) | ((i + j) << 5) | j;
+		}
+	}
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB565, width, height, 0, gl.RGB, gl.UNSIGNED_SHORT_5_6_5, arrayBuffer);
+	shouldBe("gl.getError()", "gl.NO_ERROR");
+	receiver = new Uint16Array(width * height);
+	gl.readPixels(0, 0, width, height, gl.RGB, gl.UNSIGNED_SHORT_5_6_5, receiver);
+	shouldBe("gl.getError()", "gl.NO_ERROR");
+
+	for (i = 0; i < width * height; ++i) {
+		shouldBe("arrayBuffer[i]", "receiver[i]");
+	}
+}
+
+function test5551() {
+	var width = 4;
+	var height = 4;
+	arrayBuffer = new Uint16Array(width * height);
+	for (var i = 0; i < height; ++i) {
+		for (var j = 0; j < width; ++j) {
+			arrayBuffer[width * i + j] = (i << 11) | ((i + j) << 6) | (j << 1);
+		}
+	}
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB5_A1, width, height, 0, gl.RGBA, gl.UNSIGNED_SHORT_5_5_5_1, arrayBuffer);
+	shouldBe("gl.getError()", "gl.NO_ERROR");
+	receiver = new Uint16Array(width * height);
+	gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_SHORT_5_5_5_1, receiver);
+	shouldBe("gl.getError()", "gl.NO_ERROR");
+
+	for (i = 0; i < width * height; ++i) {
+		shouldBe("arrayBuffer[i]", "receiver[i]");
+	}
+}
+
+function test4444() {
+	var width = 4;
+	var height = 4;
+	arrayBuffer = new Uint16Array(width * height);
+	for (var i = 0; i < height; ++i) {
+		for (var j = 0; j < width; ++j) {
+			arrayBuffer[width * i + j] = (i << 12) | ((i + j) << 8) | (j << 4);
+		}
+	}
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA4, width, height, 0, gl.RGBA, gl.UNSIGNED_SHORT_4_4_4_4, arrayBuffer);
+	shouldBe("gl.getError()", "gl.NO_ERROR");
+	receiver = new Uint16Array(width * height);
+	gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_SHORT_4_4_4_4, receiver);
+	shouldBe("gl.getError()", "gl.NO_ERROR");
+
+	for (i = 0; i < width * height; ++i) {
+		shouldBe("arrayBuffer[i]", "receiver[i]");
+	}
+}
+
+function test9995() {
+	var width = 4;
+	var height = 4;
+	arrayBuffer = new Uint32Array(width * height);
+	for (var i = 0; i < height; ++i) {
+		for (var j = 0; j < width; ++j) {
+			arrayBuffer[width * i + j] = (i << 23) | ((i + j) << 14) | (j << 5);
+		}
+	}
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB9_E5, width, height, 0, gl.RGB, gl.UNSIGNED_INT_5_9_9_9_REV, arrayBuffer);
+	shouldBe("gl.getError()", "gl.NO_ERROR");
+}
+
+function test1010102() {
+	var width = 4;
+	var height = 4;
+	arrayBuffer = new Uint32Array(width * height);
+	for (var i = 0; i < height; ++i) {
+		for (var j = 0; j < width; ++j) {
+			arrayBuffer[width * i + j] = (i << 22) | ((i + j) << 12) | (j << 2);
+		}
+	}
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB10_A2, width, height, 0, gl.RGBA, gl.UNSIGNED_INT_2_10_10_10_REV, arrayBuffer);
+	shouldBe("gl.getError()", "gl.NO_ERROR");
+	receiver = new Uint32Array(width * height);
+	gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_INT_2_10_10_10_REV, receiver);
+	shouldBe("gl.getError()", "gl.NO_ERROR");
+
+	for (i = 0; i < width * height; ++i) {
+		shouldBe("arrayBuffer[i]", "receiver[i]");
+	}
+}
+
+function test111110() {
+	var width = 4;
+	var height = 4;
+	arrayBuffer = new Uint32Array(width * height);
+	for (var i = 0; i < height; ++i) {
+		for (var j = 0; j < width; ++j) {
+			arrayBuffer[width * i + j] = (i << 21) | ((i + j) << 10) | j;
+		}
+	}
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.R11F_G11F_B10F, width, height, 0, gl.RGB, gl.UNSIGNED_INT_10F_11F_11F_REV, arrayBuffer);
+	shouldBe("gl.getError()", "gl.NO_ERROR");
+	receiver = new Uint32Array(width * height);
+	gl.readPixels(0, 0, width, height, gl.RGB, gl.UNSIGNED_INT_10F_11F_11F_REV, receiver);
+	shouldBe("gl.getError()", "gl.NO_ERROR");
+
+	for (i = 0; i < width * height; ++i) {
+		shouldBe("arrayBuffer[i]", "receiver[i]");
+	}
+}
+
+function test1010102UI() {
+	var width = 4;
+	var height = 4;
+	arrayBuffer = new Uint32Array(width * height);
+	for (var i = 0; i < height; ++i) {
+		for (var j = 0; j < width; ++j) {
+			arrayBuffer[width * i + j] = (i << 22) | ((i + j) << 12) | (j << 2);
+		}
+	}
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB10_A2UI, width, height, 0, gl.RGBA_INTEGER, gl.UNSIGNED_INT_2_10_10_10_REV, arrayBuffer);
+	shouldBe("gl.getError()", "gl.NO_ERROR");
+	receiver = new Uint32Array(width * height);
+	gl.readPixels(0, 0, width, height, gl.RGBA_INTEGER, gl.UNSIGNED_INT_2_10_10_10_REV, receiver);
+	shouldBe("gl.getError()", "gl.NO_ERROR");
+
+	for (i = 0; i < width * height; ++i) {
+		shouldBe("arrayBuffer[i]", "receiver[i]");
+	}
+}
+
+test565();
+test5551();
+test4444();
+test9995();
+test1010102();
+test111110();
+test1010102UI()
+
+gl.deleteFramebuffer(framebuffer);
+shouldBe("gl.getError()", "gl.NO_ERROR");
+
+gl.deleteTexture(texture);
+shouldBe("gl.getError()", "gl.NO_ERROR");
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 197x19
+          text run at (0,0) width 197: "This tests for regressions against "
+        RenderInline {I} at (0,0) size 547x19
+          RenderInline {A} at (0,0) size 350x19 [color=#0000EE]
+            RenderText {#text} at (197,0) size 350x19
+              text run at (197,0) width 350: "http://bugzilla.opendarwin.org/show_bug.cgi?id=7943"
+          RenderText {#text} at (547,0) size 197x19
+            text run at (547,0) width 197: " Layer outline does not repaint"
+        RenderText {#text} at (744,0) size 4x19
+          text run at (744,0) width 4: "."
+      RenderBlock {HR} at (0,36) size 784x2 [border: (1px inset #000000)]
+layer at (18,194) size 100x100 clip at (19,195) size 98x98
+  RenderBlock {DIV} at (10,186) size 100x100 [bgcolor=#EEEEEE] [border: (1px solid #000000)]
+layer at (8,54) size 784x130
+  RenderBlock (relative positioned) {DIV} at (0,46) size 784x130
+layer at (18,64) size 100x100
+  RenderBlock (positioned) {DIV} at (10,10) size 100x100 [bgcolor=#EEEEEE] [border: (1px solid #000000)]
+layer at (148,64) size 100x100 backgroundClip at (138,54) size 100x100 clip at (138,54) size 100x100
+  RenderBlock (positioned) {DIV} at (140,10) size 100x100 [bgcolor=#EEEEEE] [border: (1px solid #000000)]
+layer at (278,64) size 100x100 backgroundClip at (268,54) size 5x5 clip at (268,54) size 5x5
+  RenderBlock (positioned) {DIV} at (270,10) size 100x100 [bgcolor=#EEEEEE] [border: (1px solid #000000)]
+layer at (408,64) size 100x100
+  RenderBlock (positioned) {DIV} at (400,10) size 100x100 [bgcolor=#EEEEEE] [border: (1px solid #000000)]
+layer at (538,64) size 100x100 backgroundClip at (548,74) size 100x100 clip at (548,74) size 100x100
+  RenderBlock (positioned) {DIV} at (530,10) size 100x100 [bgcolor=#EEEEEE] [border: (1px solid #000000)]
+layer at (668,64) size 100x100 backgroundClip at (773,169) size 5x5 clip at (773,169) size 5x5
+  RenderBlock (positioned) {DIV} at (660,10) size 100x100 [bgcolor=#EEEEEE] [border: (1px solid #000000)]
+layer at (18,324) size 100x100
+  RenderBlock (relative positioned) {DIV} at (0,296) size 100x100 [bgcolor=#EEEEEE] [border: (1px solid #000000)]

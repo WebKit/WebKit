@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style>
+    .container {
+        height: 240px;
+        width: 300px;
+        border: 1px solid black;
+        -webkit-box-reflect: below 10px;
+    }
+    .box {
+        margin: 10px;
+        height: 100px;
+        width: 200px;
+        -webkit-filter: sepia(1);
+        -webkit-transform: translateZ(1px); /* Use composited filters */
+        -webkit-box-reflect: below 10px;
+    }
+    
+  </style>
+  <script type="text/javascript">
+    if (window.testRunner) {
+        testRunner.dumpAsText(true);
+    }
+  </script>
+</head>
+<body>
+
+<div class="container">
+    <div class="sepia box">
+        <img src="resources/reference.png">
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,304 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+        <script src="./resources/promise-utils.js"></script>
+    </head>
+    <body>
+        <script>
+            var pc;
+            var desc;
+            var candidate;
+            var selector;
+            var reason;
+            var detailedErrors;
+
+            description("Test various arguments to RTCPeerConnection overloaded functions");
+
+            shouldNotThrow("pc = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});");
+
+            function testCreateOfferOrAnswer(functionName) {
+                return new Promise(function (resolve) {
+                    debug(`*** Test ${functionName}`);
+
+                    promiseShouldNotRejectWithTypeError(`pc.${functionName}()`)
+                    .then(function () {
+                        return promiseShouldNotRejectWithTypeError(`pc.${functionName}(emptyFunc, emptyFunc)`);
+                    })
+                    .then(function () {
+                        return promiseShouldNotRejectWithTypeError(`pc.${functionName}(null)`);
+                    })
+                    .then(function () {
+                        return promiseShouldNotRejectWithTypeError(`pc.${functionName}(undefined)`);
+                    })
+                    .then(function () {
+                        return promiseShouldNotRejectWithTypeError(`pc.${functionName}({})`);
+                    })
+                    .then(function () {
+                        return promiseShouldNotRejectWithTypeError(`pc.${functionName}(emptyFunc, emptyFunc, null)`);
+                    })
+                    .then(function () {
+                        return promiseShouldNotRejectWithTypeError(`pc.${functionName}(emptyFunc, emptyFunc, undefined)`);
+                    })
+                    .then(function () {
+                        return promiseShouldNotRejectWithTypeError(`pc.${functionName}(emptyFunc, emptyFunc, {})`);
+                    })
+                    .then(function () {
+                        debug("*** Options object must be last")
+                        reason = `TypeError: Argument 1 ('successCallback') to RTCPeerConnection.${functionName} must be a function`;
+                        return promiseShouldReject(`pc.${functionName}({}, emptyFunc, emptyFunc)`, "reason");
+                    })
+                    .then(function () {
+                        debug("*** Callbacks are not nullable");
+                        reason = `TypeError: Argument 2 ('errorCallback') to RTCPeerConnection.${functionName} must be a function`;
+                        return promiseShouldReject(`pc.${functionName}(emptyFunc, null)`, "reason");
+                    })
+                    .then(function () {
+                        reason = `TypeError: Argument 1 ('successCallback') to RTCPeerConnection.${functionName} must be a function`;
+                        return promiseShouldReject(`pc.${functionName}(null, emptyFunc)`, "reason");
+                    })
+                    .then(function () {
+                        reason = `TypeError: Argument 1 ('successCallback') to RTCPeerConnection.${functionName} must be a function`;
+                        return promiseShouldReject(`pc.${functionName}(null, null)`, "reason");
+                    })
+                    .then(function () {
+                        debug("*** Bad input");
+                        reason = `TypeError: Argument 1 ('successCallback') to RTCPeerConnection.${functionName} must be a function`;
+                        return promiseShouldReject(`pc.${functionName}({}, emptyFunc)`, "reason");
+                    })
+                    .then(function () {
+                        reason = `TypeError: Argument 2 ('errorCallback') to RTCPeerConnection.${functionName} must be a function`;
+                        return promiseShouldReject(`pc.${functionName}(emptyFunc, {})`, "reason");
+                    })
+                    .then(function () {
+                        reason = `TypeError: Argument 1 ('options') to RTCPeerConnection.${functionName} must be a dictionary`;
+                        return promiseShouldReject(`pc.${functionName}(1)`, "reason");
+                    })
+                    .then(function () {
+                        reason = `TypeError: Argument 3 ('options') to RTCPeerConnection.${functionName} must be a dictionary`;
+                        return promiseShouldReject(`pc.${functionName}(emptyFunc, emptyFunc, 1)`, "reason");
+                    })
+                    .then(function () {
+                        debug("");
+                        resolve();
+                    })
+                    .catch(function (error) {
+                        testFailed(`Unexpected error in ${functionName} promise chain: ${error}`);
+                        resolve();
+                    });
+                });
+            }
+
+            function testSetLocalOrRemoteDescription(functionName) {
+                return new Promise(function (resolve) {
+                    debug(`*** Test ${functionName}`);
+
+                    desc = new RTCSessionDescription({type:'offer', sdp:'x'});
+
+                    promiseShouldNotRejectWithTypeError(`pc.${functionName}(desc)`)
+                    .then(function () {
+                        return promiseShouldNotRejectWithTypeError(`pc.${functionName}(desc, emptyFunc, emptyFunc)`);
+                    })
+                    .then(function () {
+                        return badInputFull(functionName, "desc", {
+                            "arg1": `TypeError: Argument 1 ('description') to RTCPeerConnection.${functionName} must be an instance of RTCSessionDescription`,
+                            "arg2": `TypeError: Argument 2 ('successCallback') to RTCPeerConnection.${functionName} must be a function`,
+                            "arg3": `TypeError: Argument 3 ('errorCallback') to RTCPeerConnection.${functionName} must be a function`
+                        });
+                    })
+                    .then(function () {
+                        debug("");
+                        resolve();
+                    })
+                    .catch(function (error) {
+                        testFailed(`Unexpected error in ${functionName} promise chain: ${error}`);
+                        resolve();
+                    });
+                });
+            }
+
+            // badInputFull checks for void, null, and badInput()
+            function badInputFull(functionName, firstArg, detailedErrorsArg) {
+                detailedErrors = detailedErrorsArg;
+
+                return new Promise(function (resolve) {
+                    debug(`*** ${firstArg} is not optional`);
+                    promiseShouldReject(`pc.${functionName}()`, "'TypeError: Not enough arguments'")
+                    .then(function () {
+                        debug(`*** ${firstArg} is not nullable`);
+                        return promiseShouldReject(`pc.${functionName}(null)`, "detailedErrors.arg1");
+                    })
+                    .then(function () {
+                        return promiseShouldReject(`pc.${functionName}(null, emptyFunc, emptyFunc)`, "detailedErrors.arg1");
+                    })
+                    .then(function () {
+                        return badInput(functionName, firstArg, detailedErrorsArg);
+                    })
+                    .then(function () {
+                        resolve();
+                    })
+                    .catch(function (error) {
+                        testFailed(`Unexpected error in promise chain: ${error}`);
+                        resolve();
+                    });
+                });
+            }
+
+            // badInputVoid checks for void, and badInput()
+            function badInputVoid(functionName, firstArg, detailedErrorsArg) {
+            detailedErrors = detailedErrorsArg;
+
+                return new Promise(function (resolve) {
+                    debug(`*** ${firstArg} is not optional`);
+                    promiseShouldReject(`pc.${functionName}()`, "'TypeError: Not enough arguments'")
+                    .then(function () {
+                        return badInput(functionName, firstArg, detailedErrorsArg);
+                    })
+                    .then(function () {
+                        resolve();
+                    })
+                    .catch(function (error) {
+                        testFailed(`Unexpected error in promise chain: ${error}`);
+                        resolve();
+                    });
+                });
+            }
+
+            function badInput(functionName, firstArg, detailedErrorsArg) {
+                detailedErrors = detailedErrorsArg;
+
+                return promiseShouldReject(`pc.${functionName}(1)`, "detailedErrors.arg1")
+                    .then(function () {
+                        debug(`*** Bad input as ${firstArg}`);
+                        return promiseShouldReject(`pc.${functionName}('foo')`, "detailedErrors.arg1");
+                    })
+                    .then(function () {
+                        return promiseShouldReject(`pc.${functionName}('foo', emptyFunc, emptyFunc)`, "detailedErrors.arg1");
+                    })
+                    .then(function () {
+                        return promiseShouldReject(`pc.${functionName}(1)`, "detailedErrors.arg1");
+                    })
+                    .then(function () {
+                        return promiseShouldReject(`pc.${functionName}(1, emptyFunc, emptyFunc)`, "detailedErrors.arg1");
+                    })
+                    .catch(function (error) {
+                        testFailed(`Unexpected error in promise chain: ${error}`);
+                    });
+            }
+
+            function testAddIceCandidate() {
+                return new Promise(function (resolve) {
+                    debug("*** Test addIceCandidate");
+
+                    candidate = new RTCIceCandidate({ "candidate": "foo", "sdpMid": "bar" });
+
+                    promiseShouldNotRejectWithTypeError("pc.addIceCandidate(candidate)")
+                    .then(function () {
+                        return promiseShouldNotRejectWithTypeError("pc.addIceCandidate(candidate, emptyFunc, emptyFunc)");
+                    })
+                    .then(function () {
+                        return promiseShouldNotRejectWithTypeError("pc.addIceCandidate(null)");
+                    })
+                    .then(function () {
+                        return promiseShouldNotRejectWithTypeError("pc.addIceCandidate(null, emptyFunc, emptyFunc)");
+                    })
+                    .then(function () {
+                        return badInputVoid("addIceCandidate", "candidate", {
+                            "arg1": "TypeError: Argument 1 ('candidate') to RTCPeerConnection.addIceCandidate must be an instance of RTCIceCandidate",
+                            "arg2": "TypeError: Argument 2 ('successCallback') to RTCPeerConnection.addIceCandidate must be a function",
+                            "arg3": "TypeError: Argument 3 ('errorCallback') to RTCPeerConnection.addIceCandidate must be a function"
+                        });
+                    })
+                    .then(function () {
+                        debug("");
+                        resolve();
+                    })
+                    .catch(function (error) {
+                        testFailed(`Unexpected error in testAddIceCandidate promise chain: ${error}`);
+                        resolve();
+                    });
+                });
+            }
+
+            function testGetStats() {
+                return new Promise(function (resolve) {
+                    debug("*** Test getStats");
+
+                    navigator.mediaDevices.getUserMedia({ "video": true })
+                    .then(function (stream) {
+                        selector = stream.getTracks()[0];
+
+                        return Promise.resolve();
+                    })
+                    .then(function () {
+                        return promiseShouldNotRejectWithTypeError("pc.getStats()");
+                    })
+                    .then(function () {
+                        return promiseShouldNotRejectWithTypeError("pc.getStats(null)");
+                    })
+                    .then(function () {
+                        return promiseShouldNotRejectWithTypeError("pc.getStats(selector)");
+                    })
+                    .then(function () {
+                        return promiseShouldNotRejectWithTypeError("pc.getStats(null, emptyFunc, emptyFunc)");
+                    })
+                    .then(function () {
+                        return promiseShouldNotRejectWithTypeError("pc.getStats(selector, emptyFunc, emptyFunc)");
+                    })
+                    .then(function () {
+                        return badInput("getStats", "selector", {
+                            "arg1": "TypeError: Argument 1 ('selector') to RTCPeerConnection.getStats must be an instance of MediaStreamTrack",
+                            "arg2": "TypeError: Argument 2 ('successCallback') to RTCPeerConnection.getStats must be a function",
+                            "arg3": "TypeError: Argument 3 ('errorCallback') to RTCPeerConnection.getStats must be a function"
+                        });
+                    })
+                    .then(function () {
+                        debug("");
+                        resolve();
+                    })
+                    .catch(function (error) {
+                        testFailed(`Unexpected error in testGetStats promise chain: ${error}`);
+                        resolve();
+                    });
+                })
+            }
+
+            function emptyFunc() { }
+
+            if (window.testRunner)
+                testRunner.setUserMediaPermission(true);
+            else {
+                debug("This test can not be run without the testRunner");
+                finishJSTest();
+            }
+
+            testCreateOfferOrAnswer("createOffer")
+            .then(function () {
+                return testCreateOfferOrAnswer("createAnswer");
+            })
+            .then(function () {
+                return testSetLocalOrRemoteDescription("setLocalDescription");
+            })
+            .then(function () {
+                return testSetLocalOrRemoteDescription("setRemoteDescription");
+            })
+            .then(function () {
+                return testAddIceCandidate();
+            })
+            .then(function () {
+                return testGetStats();
+            })
+            .then(function () {
+                finishJSTest();
+            })
+            .catch(function () {
+                finishJSTest();
+            });
+
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

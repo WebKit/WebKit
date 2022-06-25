@@ -1,0 +1,6 @@
+2d.path.roundrect.3.radii.1.double
+Verify that when three radii are given to roundRect(), the first radius, specified as a double, applies to the top-left corner.
+Actual output:
+
+PASS Verify that when three radii are given to roundRect(), the first radius, specified as a double, applies to the top-left corner.
+

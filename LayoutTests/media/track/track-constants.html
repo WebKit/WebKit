@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src=../video-test.js></script>
+    <script type="text/javascript">
+        function doTest () 
+        {
+            testExpected("HTMLTrackElement.NONE", 0);
+            testExpected("HTMLTrackElement.LOADING", 1);
+            testExpected("HTMLTrackElement.LOADED", 2);
+            testExpected("HTMLTrackElement.ERROR", 3);
+        
+            endTest();
+        }
+    </script>
+</head>
+<body onload="doTest()">
+    <p>Test TextTrack constants.</p>
+</body>
+</html>

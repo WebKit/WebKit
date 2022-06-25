@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script>
+            var timeupdateEventCount = 0;
+
+            function doSetup()
+            {
+                findMediaElement();
+                waitForEvent('canplaythrough', canPlayThrough);
+                video.src = findMediaFile('video', 'content/test');
+            }
+            window.addEventListener('load', doSetup, false);
+
+            function canPlayThrough()
+            {
+                testExpected("video.paused", true);
+                testExpected("video.ended", false);
+                video.addEventListener('timeupdate', timeUpdate);
+                run("video.play()");
+            }
+  
+            function timeUpdate()
+            {
+                ++timeupdateEventCount;
+
+                // Wait 2 timeupdate events so we are sure the media engine is
+                // playing the media.
+                if (timeupdateEventCount == 2) {
+                    consoleWrite("");
+                    video.removeEventListener('timeupdate', timeUpdate);
+                    // Make sure time is advancing.
+                    testExpected("video.paused", false);
+                    testExpected("mediaElement.currentTime", 0, '>');
+                    video.addEventListener('pause', paused);
+                    video.pause();
+                }
+            }
+
+            function paused() {
+                consoleWrite("");
+                testExpected("video.paused", true);
+                video.addEventListener('seeked', seeked);
+                // Seek past end.
+                video.currentTime = 500;
+            };
+
+            function seeked()
+            {
+                consoleWrite("");
+
+                testExpected("video.paused", true);
+                // Don't use "testExpected()" so we won't log the actual duration to the
+                // results file, as the floating point result may differ with different engines.
+                reportExpected(mediaElement.currentTime == mediaElement.duration, "mediaElement.currentTime", "==", "mediaElement.duration", mediaElement.currentTime);
+
+                testExpected("video.ended", true);
+                consoleWrite("");
+                timeupdateEventCount = 0;
+                endTest();
+            }
+        </script>
+    </head>
+    <body>
+        <video controls></video>
+        <p>Test that seeking a paused video past its end sets currentTime to duration and leaves the video paused.</p>
+    </body>
+</html>

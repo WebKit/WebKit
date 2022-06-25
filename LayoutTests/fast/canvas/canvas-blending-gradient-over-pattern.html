@@ -1,0 +1,74 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <script type="text/javascript">
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+    </script>
+</head>
+<body>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script type="text/javascript" src="canvas-blending-helpers.js"></script>
+    <script type="text/javascript">
+
+        description("Series of tests to ensure correct results on applying different blend modes when drawing a gradient on top of an pattern.");
+
+        var context;
+        var hardwareAcceleratedTestsDone = false;
+        function actualColor(x, y) {
+            return context.getImageData(x, y, 1, 1).data;
+        }
+
+        function checkBlendModeResult(i, context, sigma) {
+            var expectedColor = blendColors([129 / 255, 1, 129 / 255, 1], [1, 129 / 255, 129 / 255, 1], i);
+            var ac = "actualColor(0, 0)";
+            shouldBeCloseTo(ac + "[0]", expectedColor[0], sigma);
+            shouldBeCloseTo(ac + "[1]", expectedColor[1], sigma);
+            shouldBeCloseTo(ac + "[2]", expectedColor[2], sigma);
+            shouldBeCloseTo(ac + "[3]", expectedColor[3], sigma);
+        }
+
+        function drawElement(context, i) {
+            if (i >= blendModes.length) {
+                if (hardwareAcceleratedTestsDone) {
+                    var scriptElement = document.createElement("script");
+                    scriptElement.src = "../../resources/js-test-post-async.js";
+                    document.body.appendChild(scriptElement);
+                    return;
+                }
+                hardwareAcceleratedTestsDone = true;
+                debug('Running test in hardware accelerated mode\n');
+                runTest(100, 100);
+                return;
+            }
+            debug("Testing blend mode " + blendModes[i]);
+
+            context.clearRect(0, 0, 10, 10);
+            context.save();
+            drawBackdropColorPatternInContext(context,
+                function() {
+                    context.globalCompositeOperation = blendModes[i];
+                    drawSourceColorGradientInContext(context);
+                    checkBlendModeResult(i, context, 5);
+                    context.restore();
+                    debug('');
+                    drawElement(context, ++i);
+                });
+        }
+
+        function runTest(width, height) {
+            var canvas = document.createElement("canvas");
+            var sigma = 5;
+            canvas.width = width;
+            canvas.height = height;
+            context = canvas.getContext("2d");
+            document.body.appendChild(canvas);
+            drawElement(context, 0);
+        }
+
+        debug('Running test in non accelerated mode\n');
+        runTest(10, 10);
+
+    </script>
+</body>
+</html>

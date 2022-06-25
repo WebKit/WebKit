@@ -1,0 +1,60 @@
+Test IDBTransaction.error cases.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+store = db.createObjectStore('storeName')
+store.add('value', 'key')
+
+trans = db.transaction('storeName')
+
+IDBTransaction.error should be null if transaction is not finished:
+PASS trans.error is null
+
+transaction() should throw if one of the DOMStringList items cannot be converted to a String:
+PASS db.transaction(['storeName', nonConvertibleToString]) threw exception Exception in toString().
+
+If IDBTransaction.abort() is explicitly called, IDBTransaction.error should be null:
+trans.abort()
+PASS trans.error is null
+
+If the transaction is aborted due to a request error that is not prevented, IDBTransaction.error should match:
+trans = db.transaction('storeName', 'readwrite')
+request = trans.objectStore('storeName').add('value2', 'key')
+PASS request.error.name is 'ConstraintError'
+request_error = request.error
+Transaction received abort event.
+PASS trans.error is non-null.
+PASS trans.error is request_error
+
+If the transaction is aborted due to an exception thrown from event callback, IDBTransaction.error should be AbortError:
+trans = db.transaction('storeName', 'readwrite')
+request = trans.objectStore('storeName').add('value2', 'key')
+PASS request.error.name is 'ConstraintError'
+Throwing exception...
+Transaction received abort event.
+PASS trans.error is non-null.
+PASS trans.error.name is 'AbortError'
+
+If the transaction is aborted due to an error during commit, IDBTransaction.error should reflect that error:
+trans = db.transaction('storeName', 'readwrite')
+request = trans.objectStore('storeName').add({id: 1}, 'record1')
+request = trans.objectStore('storeName').add({id: 1}, 'record2')
+request = indexedDB.open(dbname, 2)
+trans = request.transaction
+This should fail due to the unique constraint:
+indexName = 'Also test utf8: 漢'
+trans.objectStore('storeName').createIndex(indexName, 'id', {unique: true})
+Transaction received abort event.
+PASS trans.error is non-null.
+PASS trans.error.name is 'ConstraintError'
+Note: This fails because of http://wkb.ug/37327
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

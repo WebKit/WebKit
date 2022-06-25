@@ -1,0 +1,24 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/cookies/attributes/domain.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/cookies/attributes/expires.html
+/LayoutTests/imported/w3c/web-platform-tests/cookies/attributes/invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/cookies/attributes/max-age.html
+/LayoutTests/imported/w3c/web-platform-tests/cookies/attributes/path-redirect.html
+/LayoutTests/imported/w3c/web-platform-tests/cookies/attributes/path.html
+/LayoutTests/imported/w3c/web-platform-tests/cookies/attributes/secure-non-secure.html
+/LayoutTests/imported/w3c/web-platform-tests/cookies/attributes/secure.https.html

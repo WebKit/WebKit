@@ -1,0 +1,100 @@
+# Copyright (c) 2014 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+config("bwe_test_logging") {
+  if (rtc_enable_bwe_test_logging) {
+    defines = [ "BWE_TEST_LOGGING_COMPILE_TIME_ENABLE=1" ]
+  } else {
+    defines = [ "BWE_TEST_LOGGING_COMPILE_TIME_ENABLE=0" ]
+  }
+}
+
+rtc_library("control_handler") {
+  visibility = [ "*" ]
+  sources = [
+    "control_handler.cc",
+    "control_handler.h",
+  ]
+
+  deps = [
+    "../../../api:sequence_checker",
+    "../../../api/transport:network_control",
+    "../../../api/units:data_rate",
+    "../../../api/units:data_size",
+    "../../../api/units:time_delta",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:safe_minmax",
+    "../../../rtc_base/system:no_unique_address",
+    "../../../system_wrappers:field_trial",
+    "../../pacing",
+  ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+
+  if (!build_with_mozilla) {
+    deps += [ "../../../rtc_base" ]
+  }
+}
+rtc_library("transport_feedback") {
+  visibility = [ "*" ]
+  sources = [
+    "transport_feedback_adapter.cc",
+    "transport_feedback_adapter.h",
+    "transport_feedback_demuxer.cc",
+    "transport_feedback_demuxer.h",
+  ]
+
+  deps = [
+    "../..:module_api_public",
+    "../../../api:sequence_checker",
+    "../../../api/transport:network_control",
+    "../../../api/units:data_size",
+    "../../../api/units:timestamp",
+    "../../../rtc_base",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base/network:sent_packet",
+    "../../../rtc_base/synchronization:mutex",
+    "../../../system_wrappers",
+    "../../../system_wrappers:field_trial",
+    "../../rtp_rtcp:rtp_rtcp_format",
+  ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/algorithm:container",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_library("congestion_controller_unittests") {
+    testonly = true
+
+    sources = [
+      "transport_feedback_adapter_unittest.cc",
+      "transport_feedback_demuxer_unittest.cc",
+    ]
+    deps = [
+      ":transport_feedback",
+      "../:congestion_controller",
+      "../../../api/transport:network_control",
+      "../../../logging:mocks",
+      "../../../rtc_base",
+      "../../../rtc_base:checks",
+      "../../../rtc_base:rtc_base_approved",
+      "../../../rtc_base/network:sent_packet",
+      "../../../system_wrappers",
+      "../../../test:field_trial",
+      "../../../test:test_support",
+      "../../pacing",
+      "../../remote_bitrate_estimator",
+      "../../rtp_rtcp:rtp_rtcp_format",
+      "//testing/gmock",
+    ]
+  }
+}

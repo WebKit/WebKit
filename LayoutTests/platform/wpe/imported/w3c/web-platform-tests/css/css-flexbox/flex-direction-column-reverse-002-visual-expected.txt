@@ -1,0 +1,28 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x98
+  RenderBlock {HTML} at (0,0) size 800x98
+    RenderBody {BODY} at (8,16) size 784x18
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 351x17
+          text run at (0,0) width 351: "Test passes if both the two columns below are identical."
+      RenderFlexibleBox {DIV} at (0,34) size 12x48
+        RenderBlock {SPAN} at (0,0) size 12x16
+          RenderText {#text} at (0,0) size 12x17
+            text run at (0,0) width 12: "A"
+        RenderBlock {SPAN} at (0,16) size 12x16
+          RenderText {#text} at (0,0) size 11x17
+            text run at (0,0) width 11: "B"
+        RenderBlock {SPAN} at (0,32) size 12x16
+          RenderText {#text} at (0,0) size 11x17
+            text run at (0,0) width 11: "C"
+      RenderFlexibleBox {DIV} at (12,34) size 12x48
+        RenderBlock {SPAN} at (0,32) size 12x16
+          RenderText {#text} at (0,0) size 11x17
+            text run at (0,0) width 11: "C"
+        RenderBlock {SPAN} at (0,16) size 12x16
+          RenderText {#text} at (0,0) size 11x17
+            text run at (0,0) width 11: "B"
+        RenderBlock {SPAN} at (0,0) size 12x16
+          RenderText {#text} at (0,0) size 12x17
+            text run at (0,0) width 12: "A"

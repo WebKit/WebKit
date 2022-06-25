@@ -1,0 +1,4 @@
+
+PASS XMLHttpRequest: User-Agent header is preserved on redirect
+PASS XMLHttpRequest: User-Agent header is preserved on redirect 1
+

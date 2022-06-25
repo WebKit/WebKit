@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test wrapKey/unwrapKey with AES-KW using a generated key");
+
+jsTestIsAsync = true;
+
+var extractable = true;
+var rawKeyASCII = "jnOw99oOZFLIEPMr";
+var rawKey = asciiToUint8Array(rawKeyASCII);
+var wrappedKey = hexStringToUint8Array("d64787ab3e048dbdc30bb62781c9f18e58ad7dbfc64aab16");
+
+debug("Generating...");
+crypto.subtle.generateKey({ name: "aes-kw", length: 256 }, extractable, ["wrapKey", "unwrapKey"]).then(function(result) {
+    wrapKey = result;
+    return crypto.subtle.importKey("raw", rawKey, "aes-cbc", extractable, ["encrypt", "decrypt"]);
+}).then(function(key) {
+    debug("Wrapping...");
+    return crypto.subtle.wrapKey("raw", key, wrapKey, "AES-KW");
+}).then(function(result) {
+    wrappedKey = result;
+
+    shouldNotBeEqualToString("bytesToASCIIString(wrappedKey)", rawKeyASCII);
+
+    debug("Unwrapping...");
+    return crypto.subtle.unwrapKey("raw", wrappedKey, wrapKey, "AES-KW", "AES-CBC", extractable, ["encrypt", "decrypt"]);
+}).then(function(cryptoKey) {
+    return crypto.subtle.exportKey("raw", cryptoKey);
+}).then(function(result) {
+    unwrappedKey = result;
+
+    shouldBe("bytesToASCIIString(unwrappedKey)", "rawKeyASCII");
+
+    finishJSTest();
+});
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

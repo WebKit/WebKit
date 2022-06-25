@@ -1,0 +1,3 @@
+Tests that a cross-origin SVG image loaded via a redirect is allowed by the Content Security Policy. This test PASSED if there are no console warning messages.
+
+

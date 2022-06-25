@@ -1,0 +1,29 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFFFF]
+      RenderBlock {DIV} at (0,0) size 784x132
+        RenderTable {TABLE} at (3,0) size 778x40
+          RenderTableSection {TBODY} at (0,0) size 777x40
+            RenderTableRow {TR} at (0,0) size 777x22 [color=#FFFFFF] [bgcolor=#455166]
+              RenderTableCell {TD} at (0,0) size 777x22 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (510,1) size 255x19
+                  text run at (510,1) width 255: "This column seems to finish early"
+            RenderTableRow {TR} at (0,22) size 777x18
+              RenderTableCell {TD} at (0,22) size 777x18 [bgcolor=#C0C0C0] [r=1 c=0 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 4x16
+                  text run at (1,1) width 4: " "
+        RenderBlock {P} at (0,56) size 784x20
+          RenderText {#text} at (390,0) size 4x19
+            text run at (390,0) width 4: " "
+        RenderTable {TABLE} at (3,92) size 778x40
+          RenderTableSection {TBODY} at (0,0) size 777x40
+            RenderTableRow {TR} at (0,0) size 777x22
+              RenderTableCell {TD} at (0,0) size 777x22 [color=#FFFFFF] [bgcolor=#455166] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (653,1) size 112x19
+                  text run at (653,1) width 112: "This one is OK"
+            RenderTableRow {TR} at (0,22) size 777x18
+              RenderTableCell {TD} at (0,22) size 777x18 [bgcolor=#C0C0C0] [r=1 c=0 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 4x16
+                  text run at (1,1) width 4: " "

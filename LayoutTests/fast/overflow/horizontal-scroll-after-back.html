@@ -1,0 +1,68 @@
+<!-- webkit-test-runner [ UsesBackForwardCache=true ] -->
+<html>
+<script>
+
+// Navigation steps
+// 1. loads this page and it has a horizontal scrollbar
+// 2. Navigates to a data URL and navigates back
+function verifyPage()
+{
+    var result = (innerHeight === document.documentElement.offsetHeight)
+        ? "FAIL: Scrollbar did not appear"
+        : "PASS";
+    document.body.innerHTML = result;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function navigateAwayAndBack() 
+{
+    sessionStorage.horizontal_scroll_after_back_test_started = true;
+    document.getElementById('anchor').click();
+}
+
+function runTestStep() 
+{
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+    setTimeout("navigateAwayAndBack()", 0);
+}
+
+function onVerifyPage(evt)
+{
+    if (!sessionStorage.horizontal_scroll_after_back_test_started)
+        return;
+    delete sessionStorage.horizontal_scroll_after_back_test_started;
+
+    // If pageshow is happening as result of navigation back then we proceed.
+    if (evt.persisted)
+        setTimeout("verifyPage()", 0);
+    else {
+        document.body.innerHTML = "FAIL: Page did not go into the back/forward cache";
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+}
+
+onpageshow = onVerifyPage;
+</script>
+<head>
+<style type="text/css">
+<!--
+#content {
+  background: #fff;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 1500px;
+  height: 1500px;
+}
+-->
+</style>
+</head>
+<body onload='runTestStep()'>
+<div id="content"> <a id='anchor' href='../history/resources/page-cache-helper.html'>Where is the scrollbar?</a></div>
+</body>
+</html>

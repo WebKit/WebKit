@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<base href="http://www.example.com/">
+<svg>
+  <pattern id="pattern" width="100" height="100" patternUnits="userSpaceOnUse">
+    <rect width="100" height="100" fill="green"/>
+  </pattern>
+  <pattern id="inheritedPattern" href="#pattern"/>
+  <rect width="100" height="100" fill="url(#inheritedPattern) red"/>
+</svg>

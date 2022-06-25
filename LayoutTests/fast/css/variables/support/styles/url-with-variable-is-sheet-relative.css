@@ -1,0 +1,20 @@
+:root {
+    --red: red;
+    --red-gradient: linear-gradient(red, red);
+    --square: url('../images/600x600-green-square.png');
+}
+
+section { height: 20px; width: 600px; margin: 10px; }
+
+.test-0 { background: url('../images/600x600-green-square.png'); }
+.test-1 { background: url('../images/600x600-green-square.png') red; }
+.test-2 { background: url('../images/600x600-green-square.png') var(--red); }
+.test-3 { background: var(--square); }
+.test-4 { background: var(--square) red; }
+.test-5 { background: var(--square) var(--red); }
+.test-6 { background-image: url('../images/600x600-green-square.png'); }
+.test-7 { background-image: url('../images/600x600-green-square.png'), linear-gradient(red, red); }
+.test-8 { background-image: url('../images/600x600-green-square.png'), var(--red-gradient); }
+.test-9 { background-image: var(--square); }
+.test-10 { background-image: var(--square), linear-gradient(red, red); }
+.test-11 { background-image: var(--square), var(--red-gradient); }

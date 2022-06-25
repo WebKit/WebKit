@@ -1,0 +1,22 @@
+<img style="background-color: blue" >
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+}
+
+function testDone()
+{
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function runTest()
+{
+    // This test checks that GIF loading doesn't fail when the first chunk of data decoded
+    // contains the metadata, but not a complete frame. See webkit.org/b/170432.
+    document.querySelector("img").src = "http://127.0.0.1:8000/permissionclient/resources/boston.gif";
+    setTimeout(testDone, 1000);
+}
+
+setTimeout(runTest, 0);
+</script>

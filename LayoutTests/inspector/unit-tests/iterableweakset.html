@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../../resources/gc.js"></script>
+<script>
+async function checkDoesNotKeepObjectsAlive()
+{
+    let one = [{value: 1}];
+    let two = [{value: 2}];
+    let three = [{value: 3}];
+
+    let iterableWeakSet = new IterableWeakSet([one[0], two[0], three[0], two[0]]);
+
+    function check(description, itemOrValue, present) {
+        if (typeof itemOrValue === "object")
+            TestPage.dispatchEventToFrontend("TestPage-checkDoesNotKeepObjectsAlive-log", {message: `${iterableWeakSet.has(itemOrValue) === present ? "PASS" : "FAIL"}: 'has' should return ${present ? "true" : "false"} for '${JSON.stringify(itemOrValue)}' after ${description}.`});
+
+        if (typeof itemOrValue === "number") {
+            let found = false;
+            for (let item of iterableWeakSet) {
+                if (item.value !== itemOrValue)
+                    continue;
+
+                if (found) {
+                    TestPage.dispatchEventToFrontend("TestPage-checkDoesNotKeepObjectsAlive-log", {message: `FAIL: Should not find '${JSON.stringify(itemOrValue)}' more than once after ${description}.`});
+                    continue;
+                }
+
+                found = true;
+            }
+
+            TestPage.dispatchEventToFrontend("TestPage-checkDoesNotKeepObjectsAlive-log", {message: `${found === present ? "PASS" : "FAIL"}: Should ${present ? "" : "not"} contain '{"value": ${itemOrValue}}' after ${description}.`});
+        }
+    }
+
+    TestPage.dispatchEventToFrontend("TestPage-checkDoesNotKeepObjectsAlive-log", {message: JSON.stringify(iterableWeakSet)});
+    check("construction", one[0], true);
+    check("construction", two[0], true);
+    check("construction", three[0], true);
+
+    nukeArray(one);
+    await new Promise(setTimeout);
+    gc();
+    await new Promise(setTimeout);
+
+    TestPage.dispatchEventToFrontend("TestPage-checkDoesNotKeepObjectsAlive-log", {message: JSON.stringify(iterableWeakSet)});
+    check("`one = null`", 1, false);
+    check("`one = null`", two[0], true);
+    check("`one = null`", three[0], true);
+
+    nukeArray(two);
+    await new Promise(setTimeout);
+    gc();
+    await new Promise(setTimeout);
+
+    TestPage.dispatchEventToFrontend("TestPage-checkDoesNotKeepObjectsAlive-log", {message: JSON.stringify(iterableWeakSet)});
+    check("`two = null`", 1, false);
+    check("`two = null`", 2, false);
+    check("`two = null`", three[0], true);
+
+    nukeArray(three);
+    await new Promise(setTimeout);
+    gc();
+    await new Promise(setTimeout);
+
+    TestPage.dispatchEventToFrontend("TestPage-checkDoesNotKeepObjectsAlive-log", {message: JSON.stringify(iterableWeakSet)});
+    check("`three = null`", 1, false);
+    check("`three = null`", 2, false);
+    check("`three = null`", 3, false);
+
+    TestPage.dispatchEventToFrontend("TestPage-checkDoesNotKeepObjectsAlive-done");
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("IterableWeakSet");
+
+    suite.addTestCase({
+        name: "IterableWeakSet.prototype.constructor.Empty",
+        async test() {
+            let iterableWeakSet = new IterableWeakSet;
+            InspectorTest.log(iterableWeakSet);
+        },
+    });
+
+    suite.addTestCase({
+        name: "IterableWeakSet.prototype.constructor.NonEmpty",
+        async test() {
+            let one = {value: 1};
+            let two = {value: 2};
+            let three = {value: 3};
+
+            let iterableWeakSet = new IterableWeakSet([one, two, three, two]);
+            InspectorTest.log(iterableWeakSet);
+        },
+    });
+
+    suite.addTestCase({
+        name: "IterableWeakSet.prototype.has",
+        async test() {
+            let one = {value: 1};
+            let two = {value: 2};
+            let three = {value: 3};
+            let four = {value: 4};
+
+            let iterableWeakSet = new IterableWeakSet([one, two, three, two]);
+            InspectorTest.log(iterableWeakSet);
+            InspectorTest.expectTrue(iterableWeakSet.has(one), "'has' should return true if a key exists.");
+            InspectorTest.expectTrue(iterableWeakSet.has(two), "'has' should return true if a key exists (more than once).");
+            InspectorTest.expectTrue(iterableWeakSet.has(three), "'has' should return true if a key exists.");
+            InspectorTest.expectFalse(iterableWeakSet.has(four), "'has' should return false if a key doesn't exist.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "IterableWeakSet.prototype.add",
+        async test() {
+            let one = {value: 1};
+            let two = {value: 2};
+            let three = {value: 3};
+
+            let iterableWeakSet = new IterableWeakSet;
+            InspectorTest.log(iterableWeakSet);
+
+            iterableWeakSet.add(one);
+            InspectorTest.log(iterableWeakSet);
+
+            iterableWeakSet.add(two);
+            InspectorTest.log(iterableWeakSet);
+
+            iterableWeakSet.add(three);
+            InspectorTest.log(iterableWeakSet);
+
+            iterableWeakSet.add(two);
+            InspectorTest.log(iterableWeakSet);
+        },
+    });
+
+    suite.addTestCase({
+        name: "IterableWeakSet.prototype.delete",
+        async test() {
+            let one = {value: 1};
+            let two = {value: 2};
+            let three = {value: 3};
+            let four = {value: 4};
+
+            let iterableWeakSet = new IterableWeakSet([one, two, three, two]);
+            InspectorTest.log(iterableWeakSet);
+
+            InspectorTest.expectTrue(iterableWeakSet.delete(one), "'delete' should return true for a known key.");
+            InspectorTest.log(iterableWeakSet);
+
+            InspectorTest.expectTrue(iterableWeakSet.delete(two), "'delete' should return true for a known key.");
+            InspectorTest.log(iterableWeakSet);
+
+            InspectorTest.expectFalse(iterableWeakSet.delete(two), "'delete' should return false for an already deleted key.");
+            InspectorTest.log(iterableWeakSet);
+
+            InspectorTest.expectTrue(iterableWeakSet.delete(three), "'delete' should return true for a known key.");
+            InspectorTest.log(iterableWeakSet);
+
+            InspectorTest.expectFalse(iterableWeakSet.delete(four), "'delete' should return false for an unknown key.");
+            InspectorTest.log(iterableWeakSet);
+        },
+    });
+
+    suite.addTestCase({
+        name: "IterableWeakSet.prototype.take",
+        async test() {
+            let one = {value: 1};
+            let two = {value: 2};
+            let three = {value: 3};
+            let four = {value: 4};
+
+            let iterableWeakSet = new IterableWeakSet([one, two, three, two]);
+            InspectorTest.log(iterableWeakSet);
+
+            InspectorTest.expectEqual(iterableWeakSet.take(one)?.value, 1, "'take' should return the key for a known key.");
+            InspectorTest.log(iterableWeakSet);
+
+            InspectorTest.expectEqual(iterableWeakSet.take(two)?.value, 2, "'take' should return the key for a known key.");
+            InspectorTest.log(iterableWeakSet);
+
+            InspectorTest.expectEqual(iterableWeakSet.take(two), undefined, "'take' should return undefined for an already deleted key.");
+            InspectorTest.log(iterableWeakSet);
+
+            InspectorTest.expectEqual(iterableWeakSet.take(three)?.value, 3, "'take' should return the key for a known key.");
+            InspectorTest.log(iterableWeakSet);
+
+            InspectorTest.expectEqual(iterableWeakSet.take(four), undefined, "'take' should return undefined for an unknown key.");
+            InspectorTest.log(iterableWeakSet);
+        },
+    });
+
+    suite.addTestCase({
+        name: "IterableWeakSet.prototype.clear",
+        async test() {
+            let one = {value: 1};
+            let two = {value: 2};
+            let three = {value: 3};
+
+            let iterableWeakSet = new IterableWeakSet([one, two, three, two]);
+            InspectorTest.log(iterableWeakSet);
+
+            iterableWeakSet.clear();
+            InspectorTest.log(iterableWeakSet);
+        },
+    });
+
+    suite.addTestCase({
+        name: "IterableWeakSet.prototype.keys",
+        async test() {
+            let one = {value: 1};
+            let two = {value: 2};
+            let three = {value: 3};
+
+            let iterableWeakSet = new IterableWeakSet([one, two, three, two]);
+            InspectorTest.log(Array.from(iterableWeakSet.keys()));
+        },
+    });
+
+    suite.addTestCase({
+        name: "IterableWeakSet.prototype.values",
+        async test() {
+            let one = {value: 1};
+            let two = {value: 2};
+            let three = {value: 3};
+
+            let iterableWeakSet = new IterableWeakSet([one, two, three, two]);
+            InspectorTest.log(Array.from(iterableWeakSet.values()));
+        },
+    });
+
+    suite.addTestCase({
+        name: "IterableWeakSet.prototype.copy",
+        async test() {
+            let one = {value: 1};
+            let two = {value: 2};
+            let three = {value: 3};
+            let four = {value: 4};
+
+            let iterableWeakSet = new IterableWeakSet([one, two, three, two]);
+            InspectorTest.log(iterableWeakSet);
+
+            let copy = iterableWeakSet.copy();
+            InspectorTest.expectNotEqual(iterableWeakSet, copy, "Copy should not return the same object.")
+            InspectorTest.expectEqual(JSON.stringify(iterableWeakSet), JSON.stringify(copy), "Copy should return a deep copy.");
+
+            iterableWeakSet.add(four);
+            InspectorTest.expectNotEqual(JSON.stringify(iterableWeakSet), JSON.stringify(copy), "Modifying the original should not modify the copy.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "IterableWeakSet.DoesNotKeepObjectsAlive",
+        async test() {
+            // Send `IterableWeakSet` to the page so that `GCController` can be used.
+            InspectorTest.log("Evaluating `IterableWeakSet` source in the inspected page...");
+            await InspectorTest.evaluateInPage(String(IterableWeakSet));
+
+            InspectorTest.addEventListener("TestPage-checkDoesNotKeepObjectsAlive-log", (event) => {
+                InspectorTest.log(event.data.message);
+            });
+
+            InspectorTest.log("Testing `IterableWeakSet` in the inspected page...");
+            await Promise.all([
+                InspectorTest.awaitEvent("TestPage-checkDoesNotKeepObjectsAlive-done"),
+                InspectorTest.evaluateInPage(`checkDoesNotKeepObjectsAlive()`),
+            ]);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing all methods of IterableWeakSet.</p>
+</body>
+</html>

@@ -1,0 +1,2 @@
+This tests that overflowchanged events are fired correctly. If the test is successful, the text "SUCCESS" should be shown below.
+SUCCESS

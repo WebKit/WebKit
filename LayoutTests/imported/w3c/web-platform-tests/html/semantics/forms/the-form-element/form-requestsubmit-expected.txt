@@ -1,0 +1,23 @@
+
+
+
+
+
+
+
+
+
+
+
+
+PASS Passing an element which is not a submit button should throw
+PASS Passing a submit button not owned by the context object should throw
+PASS requestSubmit() should accept button[type=submit], input[type=submit], and input[type=image]
+PASS requestSubmit() should trigger interactive form validation
+PASS requestSubmit() doesn't run form submission reentrantly
+PASS requestSubmit() doesn't run interactive validation reentrantly
+PASS requestSubmit() for a disconnected form should not submit the form
+PASS The value of the submitter should be appended, and form* attributes of the submitter should be handled.
+PASS The constructed FormData object should not contain an entry for the submit button that was used to submit the form.
+PASS Using requestSubmit on a disabled button (via disabled attribute) should trigger submit but not be visible in FormData
+

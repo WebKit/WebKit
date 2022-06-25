@@ -1,0 +1,22 @@
+
+RUN(video.src = findMediaFile("video", "../content/test"))
+EVENT(loadeddata)
+Test that playback will resume following a seek through media session.
+RUN(video.play())
+RUN(internals.sendMediaSessionAction(navigator.mediaSession, {action: "seekto", seekTime: 1}))
+EXPECTED (video.currentTime == '1') OK
+EVENT(seeked)
+EXPECTED (video.paused == 'false') OK
+Test that playback will stay paused if pause() got called before seek completed.
+RUN(internals.sendMediaSessionAction(navigator.mediaSession, {action: "seekto", seekTime: 1}))
+EXPECTED (video.currentTime == '1') OK
+RUN(video.pause())
+EVENT(seeked)
+EXPECTED (video.paused == 'true') OK
+Test that playback will stay paused after a seek.
+RUN(internals.sendMediaSessionAction(navigator.mediaSession, {action: "seekto", seekTime: 1}))
+EXPECTED (video.currentTime == '1') OK
+EVENT(seeked)
+EXPECTED (video.paused == 'true') OK
+END OF TEST
+

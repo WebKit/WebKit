@@ -1,0 +1,38 @@
+This test ensures we can traverse through basic webpages with multiple display: contents elements via search.
+
+StaticText
+AXLabel: Content before main.
+
+StaticText
+AXLabel: No style changes
+
+Button
+
+StaticText
+AXLabel: display: contents; on the toolbar
+
+Button
+
+StaticText
+AXLabel: display: contents; on the generic div
+
+Button
+
+StaticText
+AXLabel: display: contents; on the button
+
+Button
+
+StaticText
+AXLabel: Content after main.
+
+Traversed 10 elements.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+
+
+
+

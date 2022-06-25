@@ -1,0 +1,51 @@
+<html>
+<head>
+<script>jsTestIsAsync = true;</script>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+    description("Test that animated gif on layer that is scrolled to view starts animating.");
+    function startTrackingRepaints()
+    {
+        window.internals.startTrackingRepaints();
+        document.getElementById('scroller').scrollTop = 800;
+        testRunner.displayAndTrackRepaints();
+
+        setTimeout(logRepaints, 200);
+    }
+
+    function logRepaints()
+    {
+        layerTreeAsText =  window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_REPAINT_RECTS);
+        window.internals.stopTrackingRepaints();
+
+        shouldBeTrue("layerTreeAsText.indexOf('repaint rect') > -1");
+
+        finishJSTest();
+    }
+
+    function test()
+    {
+        testRunner.displayAndTrackRepaints();
+        setTimeout(startTrackingRepaints, 200);
+    }
+
+    function start() {
+        if (!window.testRunner || !window.internals)
+            return;
+
+        var img = new Image();
+        img.onload = test;
+        img.src = "resources/animated.gif";
+    }
+</script>
+</head>
+<body onload="start()">
+<div style="overflow:scroll; height:200px; width:200px; border: 2px solid blue" id=scroller>
+<div style="-webkit-transform: translateZ(0);">
+<div style="height:800px"></div>
+<img src="resources/animated.gif" id=anim>
+<div style="height:800px"></div>
+</div>
+</div>
+<script src="../../resources/js-test-post.js"></script>
+</html>

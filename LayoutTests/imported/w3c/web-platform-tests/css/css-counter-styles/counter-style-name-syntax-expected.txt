@@ -1,0 +1,10 @@
+
+PASS @counter-style name foo is valid
+PASS @counter-style name  is invalid
+PASS @counter-style name none is invalid
+PASS @counter-style name initial is invalid
+PASS @counter-style name inherit is invalid
+PASS @counter-style name unset is invalid
+PASS @counter-style name decimal is invalid
+PASS @counter-style name disc is invalid
+

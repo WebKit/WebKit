@@ -1,0 +1,47 @@
+This test verifies that interacting with a multi-select picker correctly updates the element's value.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Testing ungrouped select:
+
+Element initially has no selected values.
+PASS selectValues is ""
+
+Select one item.
+PASS selectValues is "April"
+
+Select multiple items.
+PASS selectValues is "April,May,June"
+
+Select disabled item.
+PASS selectValues is "April,May,June"
+
+Deselect one item.
+PASS selectValues is "May,June"
+
+Deselect multiple items.
+PASS selectValues is ""
+
+
+Testing grouped select:
+
+Select one item.
+PASS groupedSelectValues is "July"
+
+Select multiple items.
+PASS groupedSelectValues is "July,October,November,December"
+
+Select disabled item.
+PASS groupedSelectValues is "July,October,November,December"
+
+Deselect one item.
+PASS groupedSelectValues is "July,November,December"
+
+Deselect multiple items.
+PASS groupedSelectValues is "December"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

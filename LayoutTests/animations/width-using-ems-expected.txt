@@ -1,0 +1,3 @@
+This test performs an animation of the width property using 'em' units. It tests whether or not we are properly getting the default font-size. Here is some text. Here is some text. Here is some text. Here is some text. Here is some text. Here is some text.
+PASS - "width" property for "box" element at 0.333s saw something close to: 133
+

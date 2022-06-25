@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <img>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script>
+        window.jsTestIsAsync = true;
+
+        function loadImage(src) {
+            return new Promise(resolve => {
+                const image = document.querySelector('img');
+                image.src = src;
+                return image.decode().then(() => { resolve(image); });
+            });
+        }
+
+        function endTest() {
+            finishJSTest();
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        description('Test that a malformed mp4 media file loaded as an image should not crash.')
+
+        loadImage("resources/two-samples-with-same-pts.mp4").then(image => {
+            setTimeout(endTest, 100);
+        });
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

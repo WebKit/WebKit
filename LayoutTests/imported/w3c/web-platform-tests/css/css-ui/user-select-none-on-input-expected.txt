@@ -1,0 +1,5 @@
+
+
+PASS Test <input> with user-select: none
+PASS Test <textarea> with user-select: none
+

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <pattern id="pattern" height="100" width="100" patternUnits="userSpaceOnUse" xlink:href="#filter">
+        <rect width="100" height="100" fill="green"/>
+    </pattern>
+    <filter id="filter" filterUnits="userSpaceOnUse" xlink:href="#pattern">
+      <feFlood x="120" y="10" width="100" height="100" flood-color="green"/>
+    </filter>
+    <rect fill="url(#pattern)" x="10" y="10" width="100" height="100"/>
+</svg>

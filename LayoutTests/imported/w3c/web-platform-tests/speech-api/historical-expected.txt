@@ -1,0 +1,11 @@
+
+PASS SpeechRecognitionError interface should not exist
+PASS webkitSpeechGrammar interface should not exist
+PASS webkitSpeechGrammarList interface should not exist
+FAIL webkitSpeechRecognition interface should not exist assert_false: expected false got true
+PASS webkitSpeechRecognitionError interface should not exist
+PASS webkitSpeechRecognitionEvent interface should not exist
+FAIL SpeechRecognition's serviceURI attribute should not exist assert_implements: SpeechRecognition exposed undefined
+PASS SpeechRecognitionEvent's interpretation attribute should not exist
+PASS SpeechRecognitionEvent's emma attribute should not exist
+

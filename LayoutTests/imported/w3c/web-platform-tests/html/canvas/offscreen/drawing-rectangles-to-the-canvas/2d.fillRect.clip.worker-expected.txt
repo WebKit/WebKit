@@ -1,0 +1,3 @@
+
+PASS fillRect is affected by clipping regions
+

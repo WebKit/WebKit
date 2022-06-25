@@ -1,0 +1,3 @@
+
+FAIL Meta color-scheme in body does not apply. assert_equals: expected "normal" but got "auto"
+

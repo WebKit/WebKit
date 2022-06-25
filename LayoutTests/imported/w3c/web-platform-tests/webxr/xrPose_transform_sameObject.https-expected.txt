@@ -1,0 +1,4 @@
+
+PASS XRPose.transform meets [SameObject] requirement - webgl
+PASS XRPose.transform meets [SameObject] requirement - webgl2
+

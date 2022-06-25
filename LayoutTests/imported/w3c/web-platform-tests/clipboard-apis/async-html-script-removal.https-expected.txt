@@ -1,0 +1,3 @@
+
+FAIL Verify write and read clipboard with scripts removed given text/html: <title>Title of the document</title> <script>const a = 5;</script> <p>Hello World</p> promise_test: Unhandled rejection with value: object "Error: unimplemented"
+

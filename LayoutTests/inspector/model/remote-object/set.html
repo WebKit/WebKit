@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/remote-object-utilities.js"></script>
+<script>
+function test()
+{
+    let steps = [
+        {expression: `new Set`},
+        {expression: `set = new Set; set.add(1); set.add(2); set.add("key"); set`},
+        {expression: `set = new Set; set.add({a:1}); set.add(document.body); set.add([1,2]); set`},
+        {expression: `set = new Set; for (var i = 0; i <= 100; i++) set.add(i); set`},
+        {expression: `set = new Set; set.add(set); set`},
+        {expression: `set = new WeakSet; strongKey = {id:1}; set.add(strongKey); set`},
+    ];
+
+    if (!window.WI) {
+        window.steps = steps;
+        return;
+    }
+
+    runSteps(steps);
+}
+</script>
+</head>
+<body onload="runTest(); runInBrowserTest();"></body>
+</html>

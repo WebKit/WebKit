@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src=../video-test.js></script>
+    <script type="text/javascript">
+    var promise;
+    var info;
+
+    async function doTest()
+    {
+        if (!window.internals) {
+            failTest("Internals is required for this test.")
+            return;
+        }
+
+        run('internals.enableMockMediaCapabilities()');
+        run('internals.settings.setMediaCapabilitiesExtensionsEnabled(true)');
+
+        run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', audio: { contentType: 'audio/mp4; codecs=\"mp4a.40.2\"', channels: '5.1', bitrate: 1000, samplerate: 44100 } });");
+
+        info = await shouldResolve(promise);
+        testExpected('info.supported', true);
+        testExpected('typeof info.supportedConfiguration.audio.spatialRendering', 'undefined');
+
+        run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', audio: { contentType: 'audio/mp4; codecs=\"mp4a.40.2\"', channels: '5.1', bitrate: 1000, samplerate: 44100, spatialRendering: true } });");
+
+        info = await shouldResolve(promise);
+        testExpected('info.supported', true);
+        testExpected('info.supportedConfiguration.audio.spatialRendering', true);
+
+        run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', audio: { contentType: 'audio/mp4; codecs=\"mp4a.40.2\"', channels: '2', bitrate: 1000, samplerate: 44100, spatialRendering: true } });");
+
+        info = await shouldResolve(promise);
+        testExpected('info.supported', false);
+        testExpected('info.supportedConfiguration.audio.spatialRendering', true);
+
+        run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', audio: { contentType: 'audio/mp4; codecs=\"mp4a.40.2\"', channels: '2', bitrate: 1000, samplerate: 44100, spatialRendering: false } });");
+
+        info = await shouldResolve(promise);
+        testExpected('info.supported', true);
+        testExpected('info.supportedConfiguration.audio.spatialRendering', false);
+
+        endTest();
+    }
+    </script>
+</head>
+<body onload="doTest()" />
+</html>

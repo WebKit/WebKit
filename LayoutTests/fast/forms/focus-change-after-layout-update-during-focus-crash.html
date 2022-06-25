@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/js-test.js"></script>
+    <script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+    <input id="input">
+    <input id="hidden" style="display: none" autofocus>
+</body>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async function() {
+    description("This test verifies that we don't crash when focusing an element that triggers a layout change, resulting in a change of focus.");
+    if (!window.testRunner)
+        return;
+
+    input.addEventListener("click", () => {
+        hidden.style.display = "block";
+        input.focus();
+
+        testPassed("Did not crash.");
+        finishJSTest();
+    });
+
+    UIHelper.activateElement(input);
+});
+
+</script>
+</html>

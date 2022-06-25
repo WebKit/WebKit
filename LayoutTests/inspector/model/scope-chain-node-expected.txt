@@ -1,0 +1,139 @@
+CONSOLE MESSAGE: Variables
+CONSOLE MESSAGE: normal
+CONSOLE MESSAGE: if
+CONSOLE MESSAGE: else
+CONSOLE MESSAGE: while
+CONSOLE MESSAGE: do
+CONSOLE MESSAGE: for
+CONSOLE MESSAGE: for-in
+CONSOLE MESSAGE: for-of
+CONSOLE MESSAGE: case
+CONSOLE MESSAGE: default
+CONSOLE MESSAGE: try
+CONSOLE MESSAGE: catch
+CONSOLE MESSAGE: finally
+CONSOLE MESSAGE: block
+CONSOLE MESSAGE: with
+CONSOLE MESSAGE: nested blocks
+CONSOLE MESSAGE: class (method)
+CONSOLE MESSAGE: class (static)
+CONSOLE MESSAGE: normal
+Tests for the WI.ScopeChainNode model object.
+
+
+== Running test suite: WI.ScopeChainNode
+-- Running test case: WI.ScopeChainNode.AllTypes
+PASS: ScopeChain should have 13 scopes.
+SCOPE CHAIN:
+    Closure
+      - localVariable2: 12
+    Closure
+      - localVariable1: 11
+    FunctionName
+      - functionName: function functionName() {
+    Block
+      - catchBlockVariable: 10
+    Catch
+      - exceptionVariable: 9
+    Block
+      - withBlockVariable: 8
+    With
+      - withObjectProperty: 7
+    Closure
+      - innerClosureVariable2: 6
+    Closure
+      - innerClosureVariable1: 5
+    Closure
+      - closureVariable2: 4
+    Closure
+      - closureVariable1: 3
+      - innerScope: function innerScope() {
+    GlobalLexicalEnvironment
+      - lexicalGlobalVariable: 2
+    Global
+
+-- Running test case: WI.ScopeChainNode.FunctionNameInFunctionExpression
+SCOPE CHAIN:
+    Closure
+      (empty)
+    FunctionName
+      - functionName: function functionName() {
+    Closure
+      (empty)
+    GlobalLexicalEnvironment
+      - lexicalGlobalVariable: 2
+    Global
+
+-- Running test case: WI.ScopeChainNode.FunctionNameInClassMethod
+SCOPE CHAIN:
+    Closure
+      (empty)
+    Block
+      - MyClass: class MyClass
+    Closure
+      (empty)
+    GlobalLexicalEnvironment
+      - lexicalGlobalVariable: 2
+    Global
+
+-- Running test case: WI.ScopeChainNode.BlockScopes
+PASS: Pause #1 - Top scope should be normal function Closure/Local scope.
+PASS: Pause #2 - Top scope should be Block scope.
+PASS: Pause #3 - Top scope should be Block scope.
+PASS: Pause #4 - Top scope should be Block scope.
+PASS: Pause #5 - Top scope should be Block scope.
+PASS: Pause #6 - Top scope should be Block scope.
+PASS: Pause #7 - Top scope should be Block scope.
+PASS: Pause #8 - Top scope should be Block scope.
+PASS: Pause #9 - Top scope should be Block scope.
+PASS: Pause #10 - Top scope should be Block scope.
+PASS: Pause #11 - Top scope should be Block scope.
+PASS: Pause #12 - Top scope should be Block scope.
+PASS: Pause #13 - Top scope should be Block scope.
+PASS: Pause #14 - Top scope should be Block scope.
+PASS: Pause #15 - Top scope should be Block scope.
+PASS: Pause #16 - Contains a Block scope.
+SCOPE CHAIN:
+    Block
+      - a: 1006
+    Block
+      - a: 1005
+    Block
+      - a: 1004
+    Block
+      - a: 1003
+    Closure
+      - a: 1
+    Closure
+      (empty)
+    GlobalLexicalEnvironment
+      - lexicalGlobalVariable: 2
+    Global
+PASS: Pause #17 - Contains a Block scope.
+SCOPE CHAIN:
+    Closure
+      (empty)
+    Block
+      - MyClass: class MyClass
+    Closure
+      - a: 1
+    Closure
+      (empty)
+    GlobalLexicalEnvironment
+      - lexicalGlobalVariable: 2
+    Global
+PASS: Pause #18 - Contains a Block scope.
+SCOPE CHAIN:
+    Closure
+      (empty)
+    Block
+      - MyClassWithStaticMethod: class MyClassWithStaticMethod
+    Closure
+      - a: 1
+    Closure
+      (empty)
+    GlobalLexicalEnvironment
+      - lexicalGlobalVariable: 2
+    Global
+PASS: Pause #19 - Top scope should be normal function Closure/Local scope.
+

@@ -1,0 +1,70 @@
+<html>
+<head>
+  <title>Destroy and Hide Element in Animation End Event</title>
+  <style type="text/css" media="screen">
+    .box {
+      height: 100px;
+      width: 100px;
+      margin: 10px;
+      background-color: blue;
+      -webkit-animation-duration: 0.2s;
+      -webkit-animation-iteration-count: 2;
+    }
+    
+    @-webkit-keyframes move {
+      from { -webkit-transform: translate(0px, 0px); }
+      to { -webkit-transform: translate(100px, 0px); }
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    var numDone = 0;
+    function animationIterated()
+    {
+      ++numDone;
+      if (numDone == 2) {
+        if (window.GCController)
+          GCController.collect();
+
+        document.getElementById('results').innerHTML = 'Did not crash, so PASSED';
+
+        if (window.testRunner)
+          testRunner.notifyDone();
+      }
+    }
+
+    function startTest()
+    {
+      var box1 = document.getElementById('box1');
+      box1.addEventListener('webkitAnimationIteration', function() {
+        box1.parentNode.removeChild(box1);
+        animationIterated();
+      }, false);
+      box1.style.webkitAnimationName = 'move';
+
+      var box2 = document.getElementById('box2');
+      box2.addEventListener('webkitAnimationIteration', function() {
+        box2.style.display = 'none';
+        animationIterated();
+      }, false);
+      box2.style.webkitAnimationName = 'move';
+    }
+    
+    window.addEventListener('load', startTest, false);
+  </script>
+</head>
+<body>
+
+<p>Tests element removal and hiding within the webkitAnimationIteration event handler. Should not crash.</p>
+
+<div id="container">
+  <div id="box1" class="box"></div>
+  <div id="box2" class="box"></div>
+</div>
+<div id="results"></div>
+</body>
+</html>

@@ -1,0 +1,3 @@
+
+FAIL The "persistent-storage" permission is recognized promise_test: Unhandled rejection with value: object "TypeError: Type error"
+

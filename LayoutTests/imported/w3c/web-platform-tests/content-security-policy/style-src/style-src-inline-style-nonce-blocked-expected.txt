@@ -1,0 +1,4 @@
+
+PASS Should not load inline style element with invalid nonce
+PASS Should fire a securitypolicyviolation event
+Lorem ipsum

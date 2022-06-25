@@ -1,0 +1,24 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+layer at (500,100) size 200x200 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (-728,-12) size 351x49
+layer at (5,200) size 405x32
+  RenderSVGText {text} at (5,200) size 406x32 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 406x32
+      chunk 1 text run 1 at (5.00,225.00) startOffset 0 endOffset 39 width 405.13: "Animation on: 'points' and 'fill-rule'."
+layer at (5,239) size 321x21
+  RenderSVGText {text} at (5,238) size 322x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 322x21
+      chunk 1 text run 1 at (5.00,255.00) startOffset 0 endOffset 45 width 321.43: "Digit should match outline at indicated time."
+layer at (5,259) size 388x21
+  RenderSVGText {text} at (5,258) size 389x22 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 389x21
+      chunk 1 text run 1 at (5.00,275.00) startOffset 0 endOffset 54 width 388.45: "Filled square should follow morphing digit discretely."
+layer at (10,304) size 263x46
+  RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 264x46
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.7 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (-1,-1) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

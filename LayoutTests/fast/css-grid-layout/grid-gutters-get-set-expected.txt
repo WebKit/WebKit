@@ -1,0 +1,52 @@
+Test that setting and getting grid-column-gap and grid-row-gap works as expected
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test getting grid-column-gap and grid-row-gap set through CSS
+PASS window.getComputedStyle(defaultGrid, '').getPropertyValue('grid-row-gap') is "0px"
+PASS window.getComputedStyle(defaultGrid, '').getPropertyValue('grid-column-gap') is "0px"
+PASS window.getComputedStyle(gridGap, '').getPropertyValue('grid-row-gap') is "20px"
+PASS window.getComputedStyle(gridGap, '').getPropertyValue('grid-column-gap') is "15px"
+PASS window.getComputedStyle(gridPercentGap, '').getPropertyValue('grid-row-gap') is "10%"
+PASS window.getComputedStyle(gridPercentGap, '').getPropertyValue('grid-column-gap') is "15%"
+PASS window.getComputedStyle(gridSimpleGap, '').getPropertyValue('grid-row-gap') is "25px"
+PASS window.getComputedStyle(gridSimpleGap, '').getPropertyValue('grid-column-gap') is "25px"
+PASS window.getComputedStyle(gridSimplePercentGap, '').getPropertyValue('grid-row-gap') is "10%"
+PASS window.getComputedStyle(gridSimplePercentGap, '').getPropertyValue('grid-column-gap') is "10%"
+PASS window.getComputedStyle(gridColumnGap, '').getPropertyValue('grid-row-gap') is "0px"
+PASS window.getComputedStyle(gridColumnGap, '').getPropertyValue('grid-column-gap') is "16px"
+PASS window.getComputedStyle(gridRowGap, '').getPropertyValue('grid-row-gap') is "32px"
+PASS window.getComputedStyle(gridRowGap, '').getPropertyValue('grid-column-gap') is "0px"
+PASS window.getComputedStyle(gridCalcGaps, '').getPropertyValue('grid-row-gap') is "13px"
+PASS window.getComputedStyle(gridCalcGaps, '').getPropertyValue('grid-column-gap') is "10px"
+PASS window.getComputedStyle(gridRowColumnGaps, '').getPropertyValue('grid-row-gap') is "12px"
+PASS window.getComputedStyle(gridRowColumnGaps, '').getPropertyValue('grid-column-gap') is "16px"
+PASS window.getComputedStyle(gridRowColumnGaps, '').getPropertyValue('grid-row-gap') is "12px"
+PASS window.getComputedStyle(gridRowColumnGaps, '').getPropertyValue('grid-column-gap') is "16px"
+PASS window.getComputedStyle(gridRowColumnPercentGaps, '').getPropertyValue('grid-row-gap') is "10%"
+PASS window.getComputedStyle(gridRowColumnPercentGaps, '').getPropertyValue('grid-column-gap') is "15%"
+PASS window.getComputedStyle(gridRowColumnInheritGaps, '').getPropertyValue('grid-row-gap') is "25px"
+PASS window.getComputedStyle(gridRowColumnInheritGaps, '').getPropertyValue('grid-column-gap') is "25px"
+PASS window.getComputedStyle(gridRowColumnInitialGaps, '').getPropertyValue('grid-row-gap') is "0px"
+PASS window.getComputedStyle(gridRowColumnInitialGaps, '').getPropertyValue('grid-column-gap') is "0px"
+
+Test getting wrong values for grid-column-gap and grid-row-gap set through CSS
+PASS window.getComputedStyle(gridInvalidRowGap, '').getPropertyValue('grid-row-gap') is "0px"
+PASS window.getComputedStyle(gridInvalidRowGap, '').getPropertyValue('grid-column-gap') is "0px"
+PASS window.getComputedStyle(gridInvalidColumnGap, '').getPropertyValue('grid-row-gap') is "0px"
+PASS window.getComputedStyle(gridInvalidColumnGap, '').getPropertyValue('grid-column-gap') is "0px"
+PASS window.getComputedStyle(gridInvalidMultipleRowColumnGaps, '').getPropertyValue('grid-row-gap') is "0px"
+PASS window.getComputedStyle(gridInvalidMultipleRowColumnGaps, '').getPropertyValue('grid-column-gap') is "0px"
+PASS window.getComputedStyle(gridInvalidGridGap, '').getPropertyValue('grid-row-gap') is "0px"
+PASS window.getComputedStyle(gridInvalidGridGap, '').getPropertyValue('grid-column-gap') is "0px"
+PASS window.getComputedStyle(gridInvalidNoneGap, '').getPropertyValue('grid-row-gap') is "0px"
+PASS window.getComputedStyle(gridInvalidNoneGap, '').getPropertyValue('grid-column-gap') is "0px"
+PASS window.getComputedStyle(gridInvalidImplicitGridGap, '').getPropertyValue('grid-row-gap') is "0px"
+PASS window.getComputedStyle(gridInvalidImplicitGridGap, '').getPropertyValue('grid-column-gap') is "0px"
+PASS window.getComputedStyle(gridInvalidLengthRowColumnGaps, '').getPropertyValue('grid-row-gap') is "0px"
+PASS window.getComputedStyle(gridInvalidLengthRowColumnGaps, '').getPropertyValue('grid-column-gap') is "0px"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

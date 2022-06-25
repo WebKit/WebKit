@@ -1,0 +1,68 @@
+<!DOCTYPE html><!-- webkit-test-runner [ isAppInitiated=true ] -->
+<html>
+<head>
+    <script src="../resources/js-test-pre.js"></script>
+</head>
+<body onload="runTest()">
+<script>
+description('Ensure beacons are attributed correctly.');
+
+window.jsTestIsAsync = true;
+
+function askForAttribution() {
+    var didLoadAppInitiatedRequest = testRunner.didLoadAppInitiatedRequest();
+    var didLoadNonAppInitiatedRequest = testRunner.didLoadNonAppInitiatedRequest();
+
+    if (didLoadNonAppInitiatedRequest) {
+        testFailed("Did load non-app initiated request");
+        finishJSTest();
+        return;
+    }
+
+    if (!didLoadAppInitiatedRequest) {
+        testFailed("Did not load app initiated request");
+        finishJSTest();
+        return;
+    }
+
+    testPassed("Successfully loaded only app-initiated beacon requests");
+
+    finishJSTest();
+}
+
+function runTest()
+{
+    try {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "../cookies/resources/setCookies.cgi", false);
+        xhr.setRequestHeader("SET-COOKIE", "hello=world;path=/");
+        xhr.send(null);
+        if (xhr.status != 200) {
+            testFailed("cookie not set");
+            finishJSTest();
+        }
+    } catch (e) {
+        testFailed("cookie not set");
+        finishJSTest();
+    }
+
+    shouldBeTrue('navigator.sendBeacon("../blink/sendbeacon/resources/save-beacon.py?name=cookie", "Blip");');
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "../blink/sendbeacon/resources/check-beacon.py?name=cookie");
+    xhr.onload = function () {
+        var lines = xhr.responseText.split("\n");
+        for (var i in lines)
+            testPassed(lines[i]);
+        askForAttribution();
+    };
+    xhr.onerror = function () {
+        testFailed("Unable to fetch beacon status");
+        finishJSTest();
+    };
+
+    xhr.send();
+}
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

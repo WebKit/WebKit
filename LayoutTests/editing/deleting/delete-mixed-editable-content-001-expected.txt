@@ -1,0 +1,15 @@
+Confirm no crash when selecting all text with mixed editability.
+| "\n"
+| <span>
+|   "\n   "
+|   <span>
+|     <span>
+|       contenteditable="true"
+|       "12345"
+|   "\n   "
+|   <span>
+|     contenteditable="true"
+|     id="test"
+|     <#selection-caret>
+|   "\n"
+| "\n"

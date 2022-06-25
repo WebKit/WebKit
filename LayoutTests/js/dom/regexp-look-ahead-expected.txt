@@ -1,0 +1,11 @@
+Test for regression against Yarr Interpreter is crashing in some cases of look-ahead regex patterns
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS "ab".match(/a(?=b|c)/) is ["a"]
+PASS "abd".match(/a(?=c|b)|d/) is ["a"]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,13 @@
+Tests relList gc for anchor element
+PASS element.relList.life is 42
+PASS element.relList.life is 42
+Tests relList gc for area element
+PASS element.relList.life is 42
+PASS element.relList.life is 42
+Tests relList gc for link element
+PASS element.relList.life is 42
+PASS element.relList.life is 42
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

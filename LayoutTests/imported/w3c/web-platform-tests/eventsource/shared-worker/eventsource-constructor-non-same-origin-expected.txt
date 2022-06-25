@@ -1,0 +1,6 @@
+
+PASS shared worker - EventSource: constructor (act as if there is a network error) (ftp://example.not)
+PASS shared worker - EventSource: constructor (act as if there is a network error) (about:blank)
+PASS shared worker - EventSource: constructor (act as if there is a network error) (mailto:whatwg@awesome.example)
+PASS shared worker - EventSource: constructor (act as if there is a network error) (javascript:alert('FAIL'))
+

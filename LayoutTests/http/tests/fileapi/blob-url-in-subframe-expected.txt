@@ -1,0 +1,9 @@
+Verify that a blob URL can be used as subframe source.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

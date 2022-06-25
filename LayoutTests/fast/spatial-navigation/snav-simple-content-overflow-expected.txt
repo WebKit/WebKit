@@ -1,0 +1,24 @@
+It has a visible link_1.
+
+
+
+
+
+
+
+
+
+
+... and an overflowed link like this.
+
+
+
+
+
+
+
+
+This link should NOT get focused.
+
+PASS gFocusedDocument.activeElement.getAttribute("id") is "start"
+

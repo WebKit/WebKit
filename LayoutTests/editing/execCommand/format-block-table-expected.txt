@@ -1,0 +1,110 @@
+
+Formatting:
+| "\n"
+| <#selection-anchor>
+| <table>
+|   <tbody>
+|     <tr>
+|       <td>
+|         "hello"
+|       <td>
+|         "world"
+| <#selection-focus>
+| "\n"
+
+by p yields:
+| "\n"
+| <p>
+|   <#selection-anchor>
+|   <table>
+|     <tbody>
+|       <tr>
+|         <td>
+|           "hello"
+|         <td>
+|           "world"
+|   <#selection-focus>
+| "\n"
+
+Formatting:
+| "\n"
+| <table>
+|   <tbody>
+|     <tr>
+|       <td>
+|         "<#selection-anchor>hello<#selection-focus>"
+|       <td>
+|         "world"
+| "\n"
+
+by blockquote yields:
+| "\n"
+| <table>
+|   <tbody>
+|     <tr>
+|       <td>
+|         <blockquote>
+|           "<#selection-anchor>hello<#selection-focus>"
+|       <td>
+|         "world"
+| "\n"
+
+Formatting:
+| "\n"
+| <table>
+|   <tbody>
+|     <tr>
+|       <td>
+|         <p>
+|           "<#selection-anchor>hello"
+|         <div>
+|           "world<#selection-focus>"
+|       <td>
+|         "WebKit"
+| "\n"
+
+by h3 yields:
+| "\n"
+| <table>
+|   <tbody>
+|     <tr>
+|       <td>
+|         <h3>
+|           "<#selection-anchor>hello"
+|           <br>
+|           "world<#selection-focus>"
+|       <td>
+|         "WebKit"
+| "\n"
+
+Formatting:
+| "\n"
+| <table>
+|   <tbody>
+|     <tr>
+|       <td>
+|         <ul>
+|           <li>
+|             "<#selection-anchor>hello"
+|           <li>
+|             "world<#selection-focus>"
+|       <td>
+|         "WebKit"
+| "\n"
+
+by address yields:
+| "\n"
+| <table>
+|   <tbody>
+|     <tr>
+|       <td>
+|         <address>
+|           <ul>
+|             <li>
+|               "<#selection-anchor>hello"
+|           <ul>
+|             <li>
+|               "world<#selection-focus>"
+|       <td>
+|         "WebKit"
+| "\n"

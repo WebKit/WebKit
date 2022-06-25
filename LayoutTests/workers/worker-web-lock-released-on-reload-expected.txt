@@ -1,0 +1,11 @@
+Makes sure that web locks acquired by web workers are released on page reload.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Lock was acquired by the worker
+PASS Lock was acquired by the worker
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

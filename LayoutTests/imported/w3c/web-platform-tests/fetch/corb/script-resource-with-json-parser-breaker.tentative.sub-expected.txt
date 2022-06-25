@@ -1,0 +1,58 @@
+Blocked access to external URL http://www1.localhost:8800/fetch/corb/resources/sniffable-resource.py?type=text/html&body=)%5D%7D%27
+Blocked access to external URL http://www1.localhost:8800/fetch/corb/resources/sniffable-resource.py?type=text/html&body=%7B%7D%26%26
+Blocked access to external URL http://www1.localhost:8800/fetch/corb/resources/sniffable-resource.py?type=text/html&body=%7B%7D%20%26%26
+Blocked access to external URL http://www1.localhost:8800/fetch/corb/resources/sniffable-resource.py?type=text/xml&body=)%5D%7D%27
+Blocked access to external URL http://www1.localhost:8800/fetch/corb/resources/sniffable-resource.py?type=text/xml&body=%7B%7D%26%26
+Blocked access to external URL http://www1.localhost:8800/fetch/corb/resources/sniffable-resource.py?type=text/xml&body=%7B%7D%20%26%26
+Blocked access to external URL http://www1.localhost:8800/fetch/corb/resources/sniffable-resource.py?type=text/json&body=)%5D%7D%27
+Blocked access to external URL http://www1.localhost:8800/fetch/corb/resources/sniffable-resource.py?type=text/json&body=%7B%7D%26%26
+Blocked access to external URL http://www1.localhost:8800/fetch/corb/resources/sniffable-resource.py?type=text/json&body=%7B%7D%20%26%26
+Blocked access to external URL http://www1.localhost:8800/fetch/corb/resources/sniffable-resource.py?type=text/plain&body=)%5D%7D%27
+Blocked access to external URL http://www1.localhost:8800/fetch/corb/resources/sniffable-resource.py?type=text/plain&body=%7B%7D%26%26
+Blocked access to external URL http://www1.localhost:8800/fetch/corb/resources/sniffable-resource.py?type=text/plain&body=%7B%7D%20%26%26
+Blocked access to external URL http://www1.localhost:8800/fetch/corb/resources/sniffable-resource.py?type=application/javascript&body=)%5D%7D%27
+Blocked access to external URL http://www1.localhost:8800/fetch/corb/resources/sniffable-resource.py?type=application/javascript&body=%7B%7D%26%26
+Blocked access to external URL http://www1.localhost:8800/fetch/corb/resources/sniffable-resource.py?type=application/javascript&body=%7B%7D%20%26%26
+Blocked access to external URL http://www1.localhost:8800/fetch/corb/resources/sniffable-resource.py?type=image/png&body=)%5D%7D%27
+Blocked access to external URL http://www1.localhost:8800/fetch/corb/resources/sniffable-resource.py?type=image/png&body=%7B%7D%26%26
+Blocked access to external URL http://www1.localhost:8800/fetch/corb/resources/sniffable-resource.py?type=image/png&body=%7B%7D%20%26%26
+Blocked access to external URL http://www1.localhost:8800/fetch/corb/resources/sniffable-resource.py?type=image/svg+xml&body=)%5D%7D%27
+Blocked access to external URL http://www1.localhost:8800/fetch/corb/resources/sniffable-resource.py?type=image/svg+xml&body=%7B%7D%26%26
+Blocked access to external URL http://www1.localhost:8800/fetch/corb/resources/sniffable-resource.py?type=image/svg+xml&body=%7B%7D%20%26%26
+Blocked access to external URL http://www1.localhost:8800/fetch/corb/resources/sniffable-resource.py?type=application/pdf&body=)%5D%7D%27
+Blocked access to external URL http://www1.localhost:8800/fetch/corb/resources/sniffable-resource.py?type=application/pdf&body=%7B%7D%26%26
+Blocked access to external URL http://www1.localhost:8800/fetch/corb/resources/sniffable-resource.py?type=application/pdf&body=%7B%7D%20%26%26
+Blocked access to external URL http://www1.localhost:8800/fetch/corb/resources/sniffable-resource.py?type=application/zip&body=)%5D%7D%27
+Blocked access to external URL http://www1.localhost:8800/fetch/corb/resources/sniffable-resource.py?type=application/zip&body=%7B%7D%26%26
+Blocked access to external URL http://www1.localhost:8800/fetch/corb/resources/sniffable-resource.py?type=application/zip&body=%7B%7D%20%26%26
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT CORB-blocks 'text/html' that starts with the following JSON parser breaker: )]}' Test timed out
+TIMEOUT CORB-blocks 'text/html' that starts with the following JSON parser breaker: {}&& Test timed out
+TIMEOUT CORB-blocks 'text/html' that starts with the following JSON parser breaker: {} && Test timed out
+TIMEOUT CORB-blocks 'text/xml' that starts with the following JSON parser breaker: )]}' Test timed out
+TIMEOUT CORB-blocks 'text/xml' that starts with the following JSON parser breaker: {}&& Test timed out
+TIMEOUT CORB-blocks 'text/xml' that starts with the following JSON parser breaker: {} && Test timed out
+TIMEOUT CORB-blocks 'text/json' that starts with the following JSON parser breaker: )]}' Test timed out
+TIMEOUT CORB-blocks 'text/json' that starts with the following JSON parser breaker: {}&& Test timed out
+TIMEOUT CORB-blocks 'text/json' that starts with the following JSON parser breaker: {} && Test timed out
+TIMEOUT CORB-blocks 'text/plain' that starts with the following JSON parser breaker: )]}' Test timed out
+TIMEOUT CORB-blocks 'text/plain' that starts with the following JSON parser breaker: {}&& Test timed out
+TIMEOUT CORB-blocks 'text/plain' that starts with the following JSON parser breaker: {} && Test timed out
+TIMEOUT CORB-blocks 'application/javascript' that starts with the following JSON parser breaker: )]}' Test timed out
+TIMEOUT CORB-blocks 'application/javascript' that starts with the following JSON parser breaker: {}&& Test timed out
+TIMEOUT CORB-blocks 'application/javascript' that starts with the following JSON parser breaker: {} && Test timed out
+TIMEOUT CORB-blocks 'image/png' that starts with the following JSON parser breaker: )]}' Test timed out
+TIMEOUT CORB-blocks 'image/png' that starts with the following JSON parser breaker: {}&& Test timed out
+TIMEOUT CORB-blocks 'image/png' that starts with the following JSON parser breaker: {} && Test timed out
+TIMEOUT CORB-blocks 'image/svg+xml' that starts with the following JSON parser breaker: )]}' Test timed out
+TIMEOUT CORB-blocks 'image/svg+xml' that starts with the following JSON parser breaker: {}&& Test timed out
+TIMEOUT CORB-blocks 'image/svg+xml' that starts with the following JSON parser breaker: {} && Test timed out
+TIMEOUT CORB-blocks 'application/pdf' that starts with the following JSON parser breaker: )]}' Test timed out
+TIMEOUT CORB-blocks 'application/pdf' that starts with the following JSON parser breaker: {}&& Test timed out
+TIMEOUT CORB-blocks 'application/pdf' that starts with the following JSON parser breaker: {} && Test timed out
+TIMEOUT CORB-blocks 'application/zip' that starts with the following JSON parser breaker: )]}' Test timed out
+TIMEOUT CORB-blocks 'application/zip' that starts with the following JSON parser breaker: {}&& Test timed out
+TIMEOUT CORB-blocks 'application/zip' that starts with the following JSON parser breaker: {} && Test timed out
+

@@ -1,0 +1,5 @@
+This is a dialog This is a dialog This is a dialog
+
+PASS <dialog> color and background match default
+FAIL <dialog> colors react to dark mode assert_not_equals: Dialog color should react to color-scheme got disallowed value "rgb(0, 0, 0)"
+

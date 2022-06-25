@@ -1,0 +1,136 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true IOSFormControlRefreshEnabled=true ] -->
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <script src="../../../../../resources/js-test.js"></script>
+        <script src="../../../../../resources/ui-helper.js"></script>
+    </head>
+<body>
+<select multiple id="select">
+    <option>January</option>
+    <option disabled>February</option>
+    <option>March</option>
+    <option>April</option>
+    <option>May</option>
+    <option>June</option>
+    <option>July</option>
+    <option>August</option>
+    <option>September</option>
+    <option>October</option>
+    <option>November</option>
+    <option>December</option>
+</select>
+
+<select multiple id="grouped">
+    <optgroup label="Winter">
+        <option>January</option>
+        <option>February</option>
+        <option>March</option>
+    </optgroup>
+    <optgroup label="Spring">
+        <option>April</option>
+        <option>May</option>
+        <option>June</option>
+    </optgroup>
+    <optgroup label="Summer">
+        <option>July</option>
+        <option disabled>August</option>
+        <option>September</option>
+    </optgroup>
+    <optgroup label="Fall">
+        <option>October</option>
+        <option>November</option>
+        <option>December</option>
+    </optgroup>
+</select>
+</body>
+<script>
+jsTestIsAsync = true;
+
+function valuesForSelectElement(element) {
+    return Array.from(element.selectedOptions).map(o => o.value).toString();
+}
+
+addEventListener("load", async () => {
+    description("This test verifies that interacting with a multi-select picker correctly updates the element's value.");
+
+    debug("Testing ungrouped select:");
+
+    debug("\nElement initially has no selected values.");
+    selectValues = valuesForSelectElement(select);
+    shouldBeEqualToString("selectValues", "");
+
+    debug("\nSelect one item.");
+    await UIHelper.activateElement(select);
+    await UIHelper.ensurePresentationUpdate();
+    await UIHelper.selectFormAccessoryPickerRow(3);
+    await UIHelper.ensurePresentationUpdate();
+    selectValues = valuesForSelectElement(select);
+    shouldBeEqualToString("selectValues", "April");
+
+    debug("\nSelect multiple items.")
+    await UIHelper.selectFormAccessoryPickerRow(4);
+    await UIHelper.selectFormAccessoryPickerRow(5);
+    await UIHelper.ensurePresentationUpdate();
+    selectValues = valuesForSelectElement(select);
+    shouldBeEqualToString("selectValues", "April,May,June");
+
+    debug("\nSelect disabled item.");
+    await UIHelper.selectFormAccessoryPickerRow(1);
+    await UIHelper.ensurePresentationUpdate();
+    selectValues = valuesForSelectElement(select);
+    shouldBeEqualToString("selectValues", "April,May,June");
+
+    debug("\nDeselect one item.")
+    await UIHelper.selectFormAccessoryPickerRow(3);
+    selectValues = valuesForSelectElement(select);
+    shouldBeEqualToString("selectValues", "May,June");
+
+    debug("\nDeselect multiple items.")
+    await UIHelper.selectFormAccessoryPickerRow(4);
+    await UIHelper.selectFormAccessoryPickerRow(5);
+    selectValues = valuesForSelectElement(select);
+    shouldBeEqualToString("selectValues", "");
+
+    debug("\n\nTesting grouped select:");
+    await UIHelper.deactivateFormControl(select);
+    await UIHelper.activateElement(grouped);
+
+    debug("\nSelect one item.");
+    await UIHelper.selectFormAccessoryPickerRow(6);
+    await UIHelper.ensurePresentationUpdate();
+    groupedSelectValues = valuesForSelectElement(grouped);
+    shouldBeEqualToString("groupedSelectValues", "July");
+
+    debug("\nSelect multiple items.");
+    await UIHelper.selectFormAccessoryPickerRow(9);
+    await UIHelper.selectFormAccessoryPickerRow(10);
+    await UIHelper.selectFormAccessoryPickerRow(11);
+    await UIHelper.ensurePresentationUpdate();
+    groupedSelectValues = valuesForSelectElement(grouped);
+    shouldBeEqualToString("groupedSelectValues", "July,October,November,December");
+
+    debug("\nSelect disabled item.");
+    await UIHelper.selectFormAccessoryPickerRow(7);
+    await UIHelper.ensurePresentationUpdate();
+    groupedSelectValues = valuesForSelectElement(grouped);
+    shouldBeEqualToString("groupedSelectValues", "July,October,November,December");
+
+    debug("\nDeselect one item.");
+    await UIHelper.selectFormAccessoryPickerRow(9);
+    await UIHelper.ensurePresentationUpdate();
+    groupedSelectValues = valuesForSelectElement(grouped);
+    shouldBeEqualToString("groupedSelectValues", "July,November,December");
+
+    debug("\nDeselect multiple items.");
+    await UIHelper.selectFormAccessoryPickerRow(6);
+    await UIHelper.selectFormAccessoryPickerRow(10);
+    await UIHelper.ensurePresentationUpdate();
+    groupedSelectValues = valuesForSelectElement(grouped);
+    shouldBeEqualToString("groupedSelectValues", "December");
+
+    debug("");
+    finishJSTest();
+});
+</script>
+</html>

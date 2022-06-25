@@ -1,0 +1,59 @@
+<style>
+
+body {
+    background-color: green;
+}
+
+div {
+    position: absolute;
+    top: 0;
+    height: 100px;
+}
+
+#test {
+    left: 0;
+    width: 100px;
+    background-color: red;
+}
+
+#reference {
+    left: -1px;
+    width: 102px;
+    background-color: green;
+}
+
+</style>
+
+<div id="test"></div>
+<div id="reference"></div>
+
+<script src="../resources/ui-helper.js"></script>
+<script>
+
+(async () => {
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    const keyframes = { "transform": "translateX(600px)" };
+    const easing = "cubic-bezier(1,0,1,0)";
+    const duration = 10000;
+
+    // Create two animations, a test which will change easing and direction during playback and a reference
+    // which will use the test animation's changed playback throughout its entire duration. The two animations
+    // should be in sync and the animated elements overlap, ensuring no red is visible after the update.
+    const test = document.getElementById("test").animate(keyframes, { easing: "linear", duration });
+    document.getElementById("reference").animate(keyframes, { easing, duration }).reverse();
+
+    // Wait for the animations to be ready and to have updated once before the easing and the direction on the
+    // test animation to match the reference animation.
+    await Promise.all(document.getAnimations().map(animation => animation.ready));
+    await UIHelper.renderingUpdate();
+    test.effect.updateTiming({ easing, direction: "reverse" });
+
+    // Wait another frame and compare the rendering.
+    await UIHelper.renderingUpdate();
+    if (window.testRunner)
+        testRunner.notifyDone();
+})();
+
+</script>

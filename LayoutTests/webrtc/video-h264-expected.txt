@@ -1,0 +1,7 @@
+
+
+PASS Baseline H264
+PASS High H264
+PASS H264 in RTCRtpSender.getCapabilities
+PASS H264 in RTCRtpReceiver.getCapabilities
+

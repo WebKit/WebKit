@@ -1,0 +1,6 @@
+
+PASS Identity reference space provides correct poses for inline sessions - webgl
+FAIL Identity reference space provides correct poses for inline sessions - webgl2 assert_implements: webgl2 not supported. undefined
+PASS Identity reference space provides correct poses for immersive sessions - webgl
+FAIL Identity reference space provides correct poses for immersive sessions - webgl2 assert_implements: webgl2 not supported. undefined
+

@@ -1,0 +1,7 @@
+* Tests that serviceWorker.register() inside service workers
+
+PASS: Registration succeeded
+PASS: registration object's scope is valid
+PASS: registration object's updateViaCache is valid
+PASS: service worker is now active
+

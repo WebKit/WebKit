@@ -1,0 +1,4 @@
+
+
+PASS Resources with data: URIs must not be surfaced in Resource Timing
+

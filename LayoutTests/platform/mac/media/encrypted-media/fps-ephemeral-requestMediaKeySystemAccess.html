@@ -1,0 +1,28 @@
+<!-- webkit-test-runner [ useEphemeralSession=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>fps-ephemeral-requestMediaKeySystemAccess</title>
+    <script src="../../../../media/video-test.js"></script>
+    <script>
+    var capabilities = [{
+        initDataTypes: ['sinf'],
+        videoCapabilities: [{ contentType: 'video/mp4', robustness: '' }],
+        distinctiveIdentifier: 'not-allowed',
+        sessionTypes: ['persistent-usage-record'],
+    }];
+    var promise;
+    var access;
+
+    window.addEventListener('load', event => {
+        if (!window.internals)
+            consoleWrite('This test must be run in private browsing mode.')
+
+        run('promise = navigator.requestMediaKeySystemAccess("com.apple.fps", capabilities)');
+        shouldReject(promise).then(endTest, endTest);
+    });
+    </script>
+</head>
+<body>
+</body>
+</html>

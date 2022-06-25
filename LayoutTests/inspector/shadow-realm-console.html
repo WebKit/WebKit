@@ -1,0 +1,60 @@
+<!DOCTYPE html>  <!-- webkit-test-runner [ jscOptions=--useShadowRealm=1 ] -->
+<html>
+<head>
+    <script src="../http/tests/inspector/resources/inspector-test.js"></script>
+    <script>
+    const realm = new ShadowRealm;
+
+    function realmEvaluate(src) {
+        realm.evaluate(src);
+    }
+
+    function evaluateInNestedRealm(src) {
+        realm.evaluate(`(() => {
+            const r = new ShadowRealm;
+            r.evaluate("${src}");
+          })()`);
+    }
+
+    function test()
+    {
+        const suite = InspectorTest.createAsyncSuite("ShadowRealm.Console.basic");
+
+        suite.addTestCase({
+            name: "ShadowRealm.Console.basic.log",
+            description: "console.log in shadow realms should send to the incubating realm's console",
+            async test() {
+                let [messageAddedEvent] = await Promise.all([
+                    WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded),
+                    InspectorTest.evaluateInPage(`realmEvaluate("console.log('hello')")`),
+                ]);
+                let {message} = messageAddedEvent.data;
+                InspectorTest.expectEqual(message.messageText, "hello", "message text should be 'hello'");
+                InspectorTest.expectEqual(message.target, WI.mainTarget, "message target should be the main page");
+            }
+        });
+
+        suite.addTestCase({
+            name: "ShadowRealm.Console.nested.log",
+            description: "console.log in shadow realms should send to the incubating realm's console",
+            async test() {
+                let [messageAddedEvent] = await Promise.all([
+                    WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded),
+                    InspectorTest.evaluateInPage(`evaluateInNestedRealm("console.log('hello')")`),
+                ]);
+                let {message} = messageAddedEvent.data;
+                InspectorTest.expectEqual(message.messageText, "hello", "message text should be 'hello'");
+                InspectorTest.expectEqual(message.target, WI.mainTarget, "message target should be the main page");
+            }
+        });
+
+        suite.runTestCasesAndFinish();
+    }
+    </script>
+</head>
+<body onLoad="runTest()">
+    We really just want to test that the shadow realm's console output gets
+    redirected to the appropriate page console and not sent to the default
+    (possibly blackhole) destination
+</body>
+</html>

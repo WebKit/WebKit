@@ -1,0 +1,3 @@
+Success
+This tests that deleting backward by word in an empty div doesn't hang, and that it deletes exactly one word. You should see 'Success' above.
+

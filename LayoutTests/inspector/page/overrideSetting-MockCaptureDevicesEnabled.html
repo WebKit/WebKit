@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+
+function checkMockUsage(expectToUseMock)
+{
+    if (window.testRunner && testRunner.isMockRealtimeMediaSourceCenterEnabled && testRunner.isMockRealtimeMediaSourceCenterEnabled() !== expectToUseMock)
+        return "FAIL: testRunner mismatch";
+    if (window.internals && internals.isMockRealtimeMediaSourceCenterEnabled && internals.isMockRealtimeMediaSourceCenterEnabled() !== expectToUseMock)
+        return "FAIL: internals mismatch";
+    return "PASS";
+}
+
+function validateMockUsage(expectToUseMock)
+{
+    TestPage.dispatchEventToFrontend("ValidateMock", checkMockUsage(expectToUseMock));
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Page.overrideSetting");
+
+    suite.addTestCase({
+        name: "Page.overrideSetting.MockCaptureDevicesEnabled",
+        description: "Test that changing whether mock capture devices are enabled has an effect.",
+        async test() {
+            InspectorTest.log("Overriding MockCaptureDevicesEnabled to false...");
+            await PageAgent.overrideSetting(InspectorBackend.Enum.Page.Setting.MockCaptureDevicesEnabled, false);
+
+            InspectorTest.evaluateInPage(`validateMockUsage(false)`);
+            result = await InspectorTest.awaitEvent("ValidateMock");
+            InspectorTest.log("Mock use check: " + result.data);
+
+
+            InspectorTest.log("Overriding MockCaptureDevicesEnabled to true...");
+            await PageAgent.overrideSetting(InspectorBackend.Enum.Page.Setting.MockCaptureDevicesEnabled, true);
+
+            InspectorTest.evaluateInPage(`validateMockUsage(true)`);
+            result = await InspectorTest.awaitEvent("ValidateMock");
+            InspectorTest.log("Mock use check: " + result.data);
+
+
+            InspectorTest.log("Removing MockCaptureDevicesEnabled override...");
+            await PageAgent.overrideSetting(InspectorBackend.Enum.Page.Setting.MockCaptureDevicesEnabled);
+
+            InspectorTest.evaluateInPage(`validateMockUsage(true)`);
+            result = await InspectorTest.awaitEvent("ValidateMock");
+            InspectorTest.log("Mock use check: " + result.data);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests for the Page.overrideSetting command.</p>
+</body>
+</html>

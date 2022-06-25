@@ -1,0 +1,22 @@
+This tests Symbol object behaviors.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS new Symbol threw exception TypeError: function is not a constructor (evaluating 'new Symbol').
+PASS new Symbol('Cappuccino') threw exception TypeError: function is not a constructor (evaluating 'new Symbol('Cappuccino')').
+PASS symbolObject instanceof Symbol is true
+PASS String(symbolObject) threw exception TypeError: Cannot convert a symbol to a string.
+PASS symbolObject.toString() is "Symbol(Symbol.iterator)"
+PASS object[symbolObject] is 42
+PASS object['Symbol(Symbol.iterator)'] is undefined
+PASS object[Symbol.iterator] is 42
+PASS object[symbol] is "Cocoa"
+PASS object[symbol.valueOf()] is "Cocoa"
+PASS object[Object(symbol)] is "Cocoa"
+PASS object['Matcha'] is undefined
+PASS Symbol.iterator.hello is undefined
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

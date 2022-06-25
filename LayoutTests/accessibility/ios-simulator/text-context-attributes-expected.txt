@@ -1,0 +1,17 @@
+code
+This test ensures that ios simulator exposes textual context attributes for elements correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+context value: UIAccessibilityTextualContextSourceCode
+Attributed string: code{
+    UIAccessibilityTextAttributeContext = UIAccessibilityTextualContextSourceCode;
+    UIAccessibilityTokenFontFamily = Courier;
+    UIAccessibilityTokenFontName = Courier;
+    UIAccessibilityTokenFontSize = 13;
+}
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <div id="container" contenteditable="true"><table><tr><td><ol><li>a</li><li id="li">|b</li></ol></td></tr></table></div>
+    <script src="../../resources/dump-as-markup.js"></script>
+    <script>
+        Markup.description('When deleting the second ordered list items in a table cell its content is merged with the first list item:');
+
+        getSelection().collapse(document.getElementById("li"), 0);
+        Markup.dump('container', 'Before');
+
+        document.execCommand("Delete");
+        Markup.dump('container', 'After');
+    </script>
+</body>
+</html>

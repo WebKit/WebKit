@@ -1,0 +1,108 @@
+html { height: 100%; }
+
+body {
+    background-color: black;
+    background-image: url(Horsehead.png);
+    -webkit-background-size: 100% 100%;
+    font-family: "Lucida Grande" "Arial";
+}
+
+h1 {
+    background-color: #400030;
+    color: white;
+    display: block;
+    margin: 10px;
+    padding: 10px;
+    border: 3px solid white;
+    -webkit-border-radius: 9px;
+    -moz-border-radius: 9px;
+    font-size: 40px;
+    font-weight: bold;
+    opacity: 0.9;
+    text-align: center;
+}
+
+#features {
+    position: relative;
+    width: 400px;
+    list-style: none;
+}
+
+#features > li > .name {
+    -webkit-transition-duration: 250ms;
+    -webkit-transition-function: ease-out;
+    background-color: #400030;
+    color: white;
+    display: block;
+    margin: 10px;
+    padding: 10px;
+    border: 3px solid white;
+    -webkit-border-radius: 9px;
+    -moz-border-radius: 9px;
+    font-size: 30px;
+    font-weight: bold;
+    opacity: 0.5;
+    -webkit-user-select: none;
+    cursor: pointer;
+}
+
+#features > li > .name:hover {
+    -webkit-transform: scale(1.2);
+    opacity: 0.9;
+}
+
+#features > li.enabled > .name {
+    background-color: black;
+    opacity: 0.8;
+}
+
+#features > li > .picture {
+    -webkit-transition-duration: 300ms;
+    -webkit-timing-function: ease-in;
+    -webkit-transform: rotate(-5deg);
+    opacity: 0;
+    background-color: white;
+    border: 5px solid white;
+    position: absolute;
+    left: 120%;
+    top: 30px;
+    height: auto;
+}
+
+#features > li > .picture > img {
+    display: block;
+    background-color: white;
+    width: 380px;
+}
+
+#features > li.enabled > .picture {
+    -webkit-timing-function: ease-out;
+    opacity: 1.0;
+}
+
+#features > li > .description {
+    -webkit-transition-duration: 350ms;
+    -webkit-timing-function: ease-in;
+    line-height: 1.4em;
+    position: absolute;
+    background-color: black;
+    color: white;
+    opacity: 0;   
+    margin: 10px;
+    padding: 10px;
+    border: 3px solid white;
+    -webkit-border-radius: 9px;
+    -moz-border-radius: 9px;
+    font-size: 16px;
+    left: 120%;
+    top: 330px;
+    width: 350px;
+}
+
+#features > li > .description > b {
+    font-size: 1.1em;
+}
+
+#features > li.enabled > .description {
+    opacity: 0.8;
+}

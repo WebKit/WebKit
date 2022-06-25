@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    .container {
+        position: relative;
+        width: 30px;
+        height: 30px;
+        margin: 20px;
+        border: 1px solid silver;
+    }
+
+    .box {
+        position: absolute;
+        background-color: gray;
+    }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="box" style="left: 1px; top: 1px; width: 10px; height: 10px; box-shadow: 0 0 0 1px blue;"></div>
+    </div>
+
+    <div class="container">
+        <div class="box" style="left: 1px; top: 1px; width: 10px; height: 10px; box-shadow: 0 0 0 0.5px blue"></div>
+    </div>
+
+    <div class="container">
+        <div class="box" style="left: 1px; top: 1px; width: 10.5px; height: 10.5px; box-shadow: 0 0 0 0.5px blue"></div>
+    </div>
+
+</body>
+</html>

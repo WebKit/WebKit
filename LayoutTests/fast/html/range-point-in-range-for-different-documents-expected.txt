@@ -1,0 +1,2 @@
+PASS range.isPointInRange(testNode, 1) is false
+This tests the behavior of Range::isPointInRange when the point and the range are in different documents.

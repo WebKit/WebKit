@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+/* Only test OpenType fonts for now, because our TrueType font is busted when disabling features. */
+@font-face {
+    /* Opentype. "J" responds to smcp; "K" responds to c2sc */
+    font-family: "testfontotf";
+    src: url("resources/FontWithFeatures.otf") format("opentype");
+}
+@font-face {
+    /* Truetype. "S" responds to smcp; "V" responds to c2sc */
+    font-family: "testfontttf";
+    src: url("resources/FontWithFeatures.ttf") format("truetype");
+}
+@font-face {
+    /* Opentype. "f" responds to smcp; "g" responds to c2sc */
+    font-family: "testfontlowercasesmallcapsotf";
+    src: url("resources/FontWithFeaturesLowercaseSmallCaps.otf") format("opentype");
+}
+@font-face {
+    /* Truetype. "r" responds to smcp; "u" responds to c2sc */
+    font-family: "testfontlowercasesmallcapsttf";
+    src: url("resources/FontWithFeaturesLowercaseSmallCaps.ttf") format("truetype");
+}
+.test {
+    font-size: 20px;
+    display: inline-block;
+}
+</style>
+</head>
+<body>
+This test makes sure that the font-synthesis: none value gets correctly applied. The test passes when a particular pattern of Xs and checks appear below. Also note that the correct size of the character is required.
+<div style="font-family: testfontotf; border: solid green 1px; margin: 5px; font-feature-settings: 'ntrl';">
+<div class="test" style="">J</div>
+<div class="test" style="">a</div>
+<div class="test" style="font-variant: small-caps;">J</div>
+<div class="test" style="font-variant: small-caps;">aJ</div>
+<div class="test" style="font-variant: small-caps;">aJ</div>
+<div class="test" style="">BA</div>
+<div class="test" style="">BA</div>
+</div>
+<div style="font-family: testfontttf; border: solid green 1px; margin: 5px; font-feature-settings: 'ntrl';">
+<div class="test" style="">S</div>
+<div class="test" style="">a</div>
+<div class="test" style="font-variant: small-caps;">S</div>
+<div class="test" style="font-variant: small-caps;">aS</div>
+<div class="test" style="font-variant: small-caps;">aS</div>
+<div class="test" style="">BA</div>
+<div class="test" style="">BA</div>
+</div>
+<div style="font-family: testfontlowercasesmallcapsotf; border: solid black 1px; margin: 5px; font-feature-settings: 'ntrl';">
+<div class="test" style="">f</div>
+<div class="test" style="">a</div>
+<div class="test" style="font-variant: small-caps;">f</div>
+<div class="test" style="font-variant: small-caps;">af</div>
+<div class="test" style="font-variant: small-caps;">af</div>
+<div class="test" style="">BA</div>
+<div class="test" style="">BA</div>
+</div>
+<div style="font-family: testfontlowercasesmallcapsttf; border: solid blue 1px; margin: 5px; font-feature-settings: 'ntrl';">
+<div class="test" style="">r</div>
+<div class="test" style="">a</div>
+<div class="test" style="font-variant: small-caps;">r</div>
+<div class="test" style="font-variant: small-caps;">ar</div>
+<div class="test" style="font-variant: small-caps;">ar</div>
+<div class="test" style="">BA</div>
+<div class="test" style="">BA</div>
+</div>
+<div style="font-family: testfontotf; border: solid green 1px; margin: 5px; font-feature-settings: 'ntrl';">
+<div class="test" style="">K</div>
+<div class="test" style="">a</div>
+<div class="test" style="font-variant: small-caps;">K</div>
+<div class="test" style="font-variant: small-caps;">aK</div>
+<div class="test" style="font-variant: small-caps;">aK</div>
+<div class="test" style="">BB</div>
+<div class="test" style="">BB</div>
+</div>
+<div style="font-family: testfontttf; border: solid green 1px; margin: 5px; font-feature-settings: 'ntrl';">
+<div class="test" style="">V</div>
+<div class="test" style="">a</div>
+<div class="test" style="font-variant: small-caps;">V</div>
+<div class="test" style="font-variant: small-caps;">aV</div>
+<div class="test" style="font-variant: small-caps;">aV</div>
+<div class="test" style="">BB</div>
+<div class="test" style="">BB</div>
+</div>
+<div style="font-family: testfontlowercasesmallcapsotf; border: solid black 1px; margin: 5px; font-feature-settings: 'ntrl';">
+<div class="test" style="">g</div>
+<div class="test" style="">a</div>
+<div class="test" style="font-variant: small-caps;">g</div>
+<div class="test" style="font-variant: small-caps;">ag</div>
+<div class="test" style="font-variant: small-caps;">ag</div>
+<div class="test" style="">BB</div>
+<div class="test" style="">BB</div>
+</div>
+<div style="font-family: testfontlowercasesmallcapsttf; border: solid blue 1px; margin: 5px; font-feature-settings: 'ntrl';">
+<div class="test" style="">u</div>
+<div class="test" style="">a</div>
+<div class="test" style="font-variant: small-caps;">u</div>
+<div class="test" style="font-variant: small-caps;">au</div>
+<div class="test" style="font-variant: small-caps;">au</div>
+<div class="test" style="">BB</div>
+<div class="test" style="">BB</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>fps-muliple-pssh.html</title>
+    <script src="../../../../media/video-test.js"></script>
+	<script>
+    var capabilities = [{
+        initDataTypes: ['cenc'],
+        videoCapabilities: [{ contentType: 'video/mp4', robustness: '' }],
+        distinctiveIdentifier: 'not-allowed',
+        persistentState: 'not-allowed',
+        sessionTypes: ['temporary'],
+    }];
+    var promise;
+    var access;
+    var keys;
+    var session;
+    var initData = Uint8Array.of(0x00, 0x00, 0x00, 0x80, 0x70, 0x73, 0x73, 0x68, 0x00, 0x00, 0x00, 0x00, 0x94, 0xCE, 0x86, 0xFB, 0x07, 0xFF, 0x4F, 0x43, 0xAD, 0xB8, 0x93, 0xD2, 0xFA, 0x96, 0x8C, 0xA2, 0x00, 0x00, 0x00, 0x60, 0x00, 0x00, 0x00, 0x60, 0x66, 0x70, 0x73, 0x64, 0x00, 0x00, 0x00, 0x10, 0x66, 0x70, 0x73, 0x69, 0x00, 0x00, 0x00, 0x00, 0x63, 0x65, 0x6E, 0x63, 0x00, 0x00, 0x00, 0x24, 0x66, 0x70, 0x73, 0x6B, 0x00, 0x00, 0x00, 0x1C, 0x66, 0x6B, 0x72, 0x69, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x24, 0x66, 0x70, 0x73, 0x6B, 0x00, 0x00, 0x00, 0x1C, 0x66, 0x6B, 0x72, 0x69, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02);
+    var serverCertificateURI = "data:application/x-x509-ca-cert;base64,MIIEyDCCA7CgAwIBAgIID0/07cCHH0YwDQYJKoZIhvcNAQEFBQAwfzELMAkGA1UEBhMCVVMxEzARBgNVBAoMCkFwcGxlIEluYy4xJjAkBgNVBAsMHUFwcGxlIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MTMwMQYDVQQDDCpBcHBsZSBLZXkgU2VydmljZXMgQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkwHhcNMTIxMjIwMDAzODQzWhcNMTQxMjIxMDAzODQzWjBIMQswCQYDVQQGEwJVUzESMBAGA1UECgwJQXBwbGUgSW5jMRIwEAYDVQQLDAlBcHBsZSBJbmMxETAPBgNVBAMMCGZwc3Rlc3Q0MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCuHevDlphOM0sD67r3olFkN/2vC0oPl+dJ2CrBkL0tUJov9YbXud6ymJp2TkKkGqnubRaX5mI94+V9Cc/0zSlp+NTCDTcZ7y44E8j85Av/5XqozUf/wUyY+UYPBRD6BHUnH5YD6uuSlLcqE0DaE8ptXiQyN3SRteCFQ4nI9f11uQIDAQABo4ICATCCAf0wHQYDVR0OBBYEFBaVf1g1bfyAW776Sfveqj9N03EMMAwGA1UdEwEB/wQCMAAwHwYDVR0jBBgwFoAUY+RHVMuFcVlGLIOszEQxZGcDLL4wgeIGA1UdIASB2jCB1zCB1AYJKoZIhvdjZAUBMIHGMIHDBggrBgEFBQcCAjCBtgyBs1JlbGlhbmNlIG9uIHRoaXMgY2VydGlmaWNhdGUgYnkgYW55IHBhcnR5IGFzc3VtZXMgYWNjZXB0YW5jZSBvZiB0aGUgdGhlbiBhcHBsaWNhYmxlIHN0YW5kYXJkIHRlcm1zIGFuZCBjb25kaXRpb25zIG9mIHVzZSwgY2VydGlmaWNhdGUgcG9saWN5IGFuZCBjZXJ0aWZpY2F0aW9uIHByYWN0aWNlIHN0YXRlbWVudHMuMDUGA1UdHwQuMCwwKqAooCaGJGh0dHA6Ly9jcmwuYXBwbGUuY29tL2tleXNlcnZpY2VzLmNybDAOBgNVHQ8BAf8EBAMCBSAwNAYLKoZIhvdjZAYNAQMBAf8EIgHGeq0WCxH3oALqbKRDeCl4lqDaHVSQjsQZnyCME2TecUEwSwYLKoZIhvdjZAYNAQQBAf8EOQHlHhdsgB8QPJZFb9aAmvc8kYSTQYbjF6/U2mq46sXWRKWPKGpqLyC5ActNQUuHjynZn6Y0vs0D8jANBgkqhkiG9w0BAQUFAAOCAQEAg8GkEw0gDRn7raA8w+V36NOvKlUx3Wh3pcqI8cRATv9Twp4zfyJ4FwxdT90/zCtUUjTVtau6yESTwX+LUFu/Y0kvaV0htgBIBu7MWYCvfLlSwS4MqbBtNdloDNvU7CNyWXaMpKpYKN6i0SqEnTvF0mSTpBliCT+QxuNIxaWq9h2cCn79kbXJM5+IC37mIWO0jvzQjeSlOXJPZrNHZ6Bjt0AyiCIiZVkPmVm5lV3Ycd0gf4mfhAVJYE/p6/dTk+mqnxDdUUMVFDUfu1OqBim6ldWnAh8PlWaGh5rLYVgGvxEEPDNeueYhxTrDnENbhCZ5n/by0Rp0s67t1924Wk+QUQ==";
+    var serverCertificate;
+
+    window.addEventListener('load', async event => {
+    	try {
+	        run('promise = navigator.requestMediaKeySystemAccess("com.apple.fps", capabilities)');
+	        window.access = await shouldResolve(promise);
+
+	        run('promise = access.createMediaKeys()');
+	        window.keys = await shouldResolve(promise);
+
+	        var response = await fetch(serverCertificateURI);
+            serverCertificate = await response.arrayBuffer();
+
+	        run('keys.setServerCertificate(serverCertificate)');
+	        run('session = keys.createSession()');
+	        testExpected('session', 'null', '!=');
+	        run('promise = session.generateRequest("cenc", initData.buffer)');
+	        await shouldResolve(promise);
+	    } finally {
+	    	endTest();
+	    }
+    });
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

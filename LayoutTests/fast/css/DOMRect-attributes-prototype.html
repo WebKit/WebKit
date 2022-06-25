@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Test that DOMRect's properties are on the prototype.");
+
+var rect = document.body.getBoundingClientRect();
+shouldBe("rect.__proto__", "DOMRect.prototype");
+shouldBe("rect.__proto__.__proto__", "DOMRectReadOnly.prototype");
+shouldBe("Object.getOwnPropertyNames(rect).length", "0");
+shouldBeFalse("Object.hasOwnProperty(rect, 'top')");
+shouldBeFalse("Object.hasOwnProperty(rect, 'right')");
+shouldBeFalse("Object.hasOwnProperty(rect, 'bottom')");
+shouldBeFalse("Object.hasOwnProperty(rect, 'left')");
+shouldBeFalse("Object.hasOwnProperty(rect, 'width')");
+shouldBeFalse("Object.hasOwnProperty(rect, 'height')");
+
+function checkAttributeGetter(prototype, propertyName)
+{
+    descriptor = Object.getOwnPropertyDescriptor(prototype, propertyName);
+    shouldBeType("descriptor.get", "Function");
+    shouldBeTrue("descriptor.enumerable");
+    shouldBeTrue("descriptor.configurable");
+}
+
+for (var propertyName of ['x', 'y', 'width', 'height']) {
+    debug("");
+    debug("* rect.__proto__." + propertyName);
+    checkAttributeGetter(rect.__proto__, propertyName);
+
+    debug("");
+    debug("* DOMRect.prototype." + propertyName);
+    checkAttributeGetter(DOMRect.prototype, propertyName);
+}
+
+for (var propertyName of ['x', 'y', 'width', 'height', 'top', 'right', 'bottom', 'left']) {
+    debug("");
+    debug("* rect.__proto__.__proto__." + propertyName);
+    checkAttributeGetter(rect.__proto__.__proto__, propertyName);
+
+    debug("");
+    debug("* DOMRectReadonly.prototype." + propertyName);
+    checkAttributeGetter(DOMRectReadOnly.prototype, propertyName);
+}
+
+debug("");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

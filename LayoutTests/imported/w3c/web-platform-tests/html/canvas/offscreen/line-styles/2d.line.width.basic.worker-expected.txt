@@ -1,0 +1,3 @@
+
+PASS lineWidth determines the width of line strokes
+

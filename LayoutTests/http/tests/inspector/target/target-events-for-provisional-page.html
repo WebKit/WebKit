@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Target.PSON");
+
+    suite.addTestCase({
+        name: "ProvisionalPageTarget",
+        description: "Check that a new target will be created for provisional page.",
+        test(resolve, reject) {
+            const mainTargetId = WI.mainTarget.identifier;
+            let newTarget;
+            InspectorTest.assert(mainTargetId);
+            let reloadPromise = InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad);
+
+            WI.targetManager.addEventListener(WI.TargetManager.Event.TargetAdded, (event) => {
+                newTarget = event.data.target;
+                InspectorTest.pass(`Should receive TargetAdded event.`);
+                InspectorTest.expectTrue(newTarget.isProvisional, "Target should be provisional.");
+            });
+
+            WI.targetManager.addEventListener(WI.TargetManager.Event.DidCommitProvisionalTarget, (event) => {
+                let {previousTargetId, target} = event.data;
+                InspectorTest.pass(`Should receive DidCommitProvisionalTarget event.`);
+                InspectorTest.expectEqual(previousTargetId, mainTargetId, "Previous target should be the current one.");
+                InspectorTest.expectEqual(target, newTarget, "Committed target should match provisional target.");
+            });
+
+            WI.targetManager.addEventListener(WI.TargetManager.Event.TargetRemoved, (event) =>{
+                let target = event.data.target;
+                InspectorTest.pass(`Should receive TargetRemoved event.`);
+                InspectorTest.expectEqual(target.identifier, mainTargetId, "Destroyed target should be previous target.");
+
+                // Wait for page reload event to avoid race between test results flushing and the test completion.
+                reloadPromise.then(resolve);
+            });
+
+            WI.mainTarget.RuntimeAgent.evaluate("location.hostname='localhost'");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test that cross domain navigation results in the following sequence of events in Target domain:
+<br>1. Target.targetCreated for provisional page.
+<br>2. Target.didCommitProvisionalTarget when provisional load is committed.
+<br>3. Target.targetDestroyed for the old target after the navigation request is committed.
+</p>
+</body>
+</html>

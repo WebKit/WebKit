@@ -1,0 +1,30 @@
+
+PASS promiseState helper works
+PASS promiseStateFinal helper works
+PASS createOffer must detect InvalidStateError synchronously when chain is empty (prerequisite)
+PASS createAnswer must detect InvalidStateError synchronously when chain is empty (prerequisite)
+FAIL SLD(rollback) must detect InvalidStateError synchronously when chain is empty assert_equals: promise rejected on same task expected "rejected" but got "pending"
+FAIL addIceCandidate must detect InvalidStateError synchronously when chain is empty assert_equals: expected "InvalidStateError" but got "Error"
+PASS replaceTrack must detect InvalidStateError synchronously when chain is empty and transceiver is stopped
+PASS setParameters must detect InvalidStateError synchronously always when transceiver is stopped
+FAIL pc.getStats must detect InvalidAccessError synchronously always assert_equals: expected "InvalidAccessError" but got "Error"
+PASS isOperationsChainEmpty detects empty in stable
+PASS isOperationsChainEmpty detects empty in have-local-offer
+PASS isOperationsChainEmpty detects empty in have-remote-offer
+PASS createOffer uses operations chain
+PASS createAnswer uses operations chain
+PASS setLocalDescription uses operations chain
+PASS setRemoteDescription uses operations chain
+PASS addIceCandidate uses operations chain
+PASS Firing of negotiationneeded does NOT use operations chain
+PASS Negotiationneeded only fires once operations chain is empty
+PASS replaceTrack uses operations chain
+FAIL setParameters does NOT use the operations chain assert_equals: Method is async expected "pending" but got "fulfilled"
+PASS pc.getStats does NOT use the operations chain
+PASS sender.getStats does NOT use the operations chain
+PASS receiver.getStats does NOT use the operations chain
+FAIL addIceCandidate chains onto SRD, fails before assert_equals: expected "InvalidStateError" but got "OperationError"
+PASS Operations queue not vulnerable to recursion by chained negotiationneeded
+PASS Pack operations queue with implicit offer and answer
+PASS Negotiate solely by operations queue and signaling state
+

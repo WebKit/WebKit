@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<style>
+.container {
+  width:100px;
+  height:100px;
+  overflow:hidden;
+  position:absolute;
+  background-color:pink;
+}
+
+.container::-webkit-resizer {
+  background-color: rgba(0, 127, 0, 0.5);
+}
+</style>
+
+<p>Test ensures that a 'resize' property is not inherited by its children. Test passes if the resizer (green square) is not seen at the bottom right.</p>
+<div style="resize:vertical;">
+  <div class="container"></div>
+</div>

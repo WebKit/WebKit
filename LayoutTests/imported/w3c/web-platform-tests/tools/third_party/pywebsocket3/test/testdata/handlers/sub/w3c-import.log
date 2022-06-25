@@ -1,0 +1,22 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pywebsocket3/test/testdata/handlers/sub/exception_in_transfer_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pywebsocket3/test/testdata/handlers/sub/no_wsh_at_the_end.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pywebsocket3/test/testdata/handlers/sub/non_callable_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pywebsocket3/test/testdata/handlers/sub/plain_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pywebsocket3/test/testdata/handlers/sub/wrong_handshake_sig_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pywebsocket3/test/testdata/handlers/sub/wrong_transfer_sig_wsh.py

@@ -1,0 +1,22 @@
+<html>
+    <head>
+        <script>
+        function startTest() {
+            if (window.testRunner) {
+                testRunner.waitUntilDone();
+                testRunner.setBackingScaleFactor(2, finishTest);
+            }
+        }
+
+        function finishTest() {
+            setTimeout(function() { testRunner.notifyDone(); }, 0);
+        }
+        </script>
+    </head>
+    <body onload="startTest();">
+        <div style="-webkit-transform:scale(1.5); -webkit-transform-origin:top left;">
+            <div style="height:300px;width:300px;background-image:-webkit-repeating-linear-gradient(top left, red 10%, blue 30%);border:1px solid">
+            </div>
+        </div>
+    </body>
+</html>

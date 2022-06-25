@@ -1,0 +1,73 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../../../js-test-resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description("Test WebSocket deflate-frame extension.");
+
+window.jsTestIsAsync = true;
+
+var closeEvent;
+var ws;
+var messageIndex;
+
+function randomText(len) {
+    const allCharacters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var randomText = ''
+    for (var i = 0; i < len; i++) {
+        var k = Math.floor(Math.random() * allCharacters.length)
+        randomText += allCharacters.charAt(k);
+    }
+    return randomText
+}
+
+var firstMessage = randomText(10000);
+var secondMessage = randomText(10000);
+var thirdMessage = randomText(10000);
+
+function doTest(queryIndex)
+{
+    var url = "ws://localhost:8880/websocket/tests/hybi/deflate-frame?max_window_bits=15";
+    ws = new WebSocket(url);
+    messageIndex = 0;
+
+    ws.onopen = function(event)
+    {
+        ws.send(firstMessage);
+    };
+
+    ws.onmessage = function(event)
+    {
+        if (messageIndex === 0) {
+            shouldBe("event.data", "firstMessage");
+            messageIndex += 1
+            ws.send(secondMessage);
+        } else if (messageIndex === 1) {
+            shouldBe("event.data", "secondMessage");
+            messageIndex += 1
+            ws.send(thirdMessage);
+        } else {
+            shouldBe("event.data", "thirdMessage");
+            ws.close();
+        }
+    };
+
+    ws.onclose = function(event)
+    {
+        debug("onclose() was called.");
+        closeEvent = event;
+        shouldBeTrue("closeEvent.wasClean");
+        finishJSTest();
+    };
+}
+
+doTest(0);
+
+</script>
+<script src="../../../../js-test-resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+
+PASS Same-scheme subresources can send lax/strict cookies
+FAIL Cross-scheme subresources cannot sent lax/strict cookies assert_not_equals: SameSite=lax cookies cannot be sent to cross-scheme subresources got disallowed value "0.29625763157884466"
+

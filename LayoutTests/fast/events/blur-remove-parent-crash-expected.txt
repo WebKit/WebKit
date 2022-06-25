@@ -1,0 +1,3 @@
+This tests removing an iframe while it is being focused. WebKit should not crash.
+
+PASS

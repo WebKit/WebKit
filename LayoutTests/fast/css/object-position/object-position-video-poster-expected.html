@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <link rel="stylesheet" href="resources/expected.css" type="text/css">
+    <style>
+    .group video {
+        width: 100px;
+        height: 50px;
+    }
+    .group > *:nth-child(1) * { margin-top: 25px; }
+    .group > *:nth-child(2) * { margin-left: 20px; margin-top: 10px; }
+    .group > *:nth-child(3) * { margin-top: 13px; }
+    .group > *:nth-child(4) * { margin-left: -10px; margin-top: 40px; }
+    .group > *:nth-child(5) * { margin-top: 45px; }
+    </style>
+  </head>
+  <body>
+
+    <div class="group">
+      <div><video poster="../resources/circles-landscape.png"></video></div>
+      <div><video poster="../resources/circles-landscape.png"></video></div>
+      <div><video poster="../resources/circles-landscape.png"></video></div>
+      <div><video poster="../resources/circles-landscape.png"></video></div>
+      <div><video poster="../resources/circles-landscape.png"></video></div>
+    </div>
+
+  </body>
+</html>

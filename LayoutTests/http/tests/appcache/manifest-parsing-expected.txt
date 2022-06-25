@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+Test application cache manifest parsing.
+
+SUCCESS
+

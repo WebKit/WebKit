@@ -1,0 +1,5 @@
+RUN(internals.setMediaElementRestrictions(video, "RequireUserGestureForVideoRateChange,OverrideUserGestureRequirementForMainContent"))
+EVENT(canplaythrough)
+EVENT(playing)
+END OF TEST
+

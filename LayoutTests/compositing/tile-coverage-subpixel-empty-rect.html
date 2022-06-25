@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        function dumpLayers()
+        {
+            var layersResult = document.getElementById('layers');
+            if (window.testRunner)
+                layersResult.innerText = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_TILE_CACHES);
+        }
+
+        window.addEventListener('load', dumpLayers, false)
+    </script>
+</head>
+<body style="overflow:hidden">
+<pre id="layers">Layer tree goes here in DRT</pre>
+<div style="position:absolute; left:0.75px; top: 2000.25px; overflow:hidden">
+  <div style="transform: translate(-1px);">
+    <div style="width:3000px; height: 3000px; background-color:blue">Offscreen, but large, content</div>
+    <div style="transform: translateZ(1px); width: 100px; height: 100px"></div>
+  </div>
+</div>
+
+</body>
+</html>

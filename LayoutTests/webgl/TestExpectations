@@ -1,0 +1,35 @@
+# Currently skipped due to fetching external resources.
+webgl/1.0.3/conformance/more/functions [ Skip ]
+webgl/2.0.0/conformance/textures/misc/origin-clean-conformance.html [ Skip ]
+webgl/2.0.0/conformance/more/functions/texImage2DHTML.html [ Skip ]
+webgl/2.0.0/conformance/more/functions/readPixelsBadArgs.html [ Skip ]
+webgl/2.0.0/conformance/more/functions/texSubImage2DHTML.html [ Skip ]
+
+# Run as much of DEQP as possible
+webgl/2.0.0/deqp [ Pass Slow ]
+
+# Timeouts
+webgl/2.0.0/deqp/functional/gles3/builtinprecision/refract.html [ Skip ]
+webgl/2.0.0/deqp/functional/gles3/builtinprecision/smoothstep.html [ Skip ]
+webgl/2.0.0/deqp/functional/gles3/shaderoperator/common_functions.html [ Skip ]
+
+# Flaky time outs
+webgl/2.0.0/deqp/functional/gles3/shaderoperator/binary_operator [ Timeout Pass ]
+webgl/2.0.0/deqp/functional/gles3/vertexarrays/multiple_attributes.stride.html [ Timeout Pass ]
+
+# Incorrect tests
+webgl/2.0.0/deqp/functional/gles3/builtinprecision/ [ Skip ]
+webgl/2.0.0/conformance2/textures/misc/tex-srgb-mipmap.html [ Skip ]
+
+webkit.org/b/228703 webgl/2.0.0/deqp/functional/gles3/fbomultisample.2_samples.html [ Failure ]
+webkit.org/b/228703 webgl/2.0.0/deqp/functional/gles3/fbomultisample.4_samples.html [ Failure ]
+webkit.org/b/228703 webgl/2.0.0/deqp/functional/gles3/fbomultisample.8_samples.html [ Failure ]
+webkit.org/b/228703 webgl/2.0.0/deqp/functional/gles3/shadertexturefunction/texturegrad.html [ Failure ]
+
+# Explicitly enable tests which we have fixed. These expectations will be removed when 1.0.x/2.0.y is enabled.
+webgl/1.0.x/conformance/extensions/webgl-compressed-texture-etc.html [ Pass ]
+webgl/2.0.y/conformance/extensions/webgl-compressed-texture-etc.html [ Pass ]
+webgl/2.0.y/deqp/functional/gles3/negativestateapi.html [ Pass ]
+webgl/2.0.y/deqp/functional/gles3/rbostatequery.html [ Pass ]
+webgl/2.0.y/deqp/functional/gles3/negativetextureapi.html [ Pass ]
+webgl/2.0.y/deqp/functional/gles3/negativeshaderapi.html [ Pass ]

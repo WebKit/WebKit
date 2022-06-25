@@ -1,0 +1,18 @@
+<script src="full-screen-test.js"></script>
+<body>
+    Test that inserting a node before a full-screened element doesn't cause a crash.
+    <span><span id="toBeMadeFullScreen"></span></span>
+</body>
+<script>
+
+// Use window.eventSender to fake a user-action, allowing full-screen.
+document.addEventListener("keypress", function() {
+    toBeMadeFullScreen.webkitRequestFullScreen();
+}, false);
+eventSender.keyDown(" ", []);
+
+document.addEventListener("webkitfullscreenchange", function() {
+    toBeMadeFullScreen.parentNode.insertBefore(document.createElement('div'), toBeMadeFullScreen);
+    setTimeout(endTest(), 0);
+}, false);
+</script>

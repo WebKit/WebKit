@@ -1,0 +1,46 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+layer at (40,3) size 330x127
+  RenderSVGContainer {g} at (0,0) size 330x312
+layer at (40,3) size 184x13
+  RenderSVGText {text} at (0,0) size 185x14 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 185x14
+      chunk 1 text run 1 at (40.00,14.00) startOffset 0 endOffset 33 width 184.13: "Rectangle should be red not green"
+layer at (40,25) size 330x13
+  RenderSVGText {text} at (0,22) size 330x14 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 330x14
+      chunk 1 text run 1 at (40.00,36.00) startOffset 0 endOffset 64 width 329.70: "This tests id selectors: <rect id=\"one\" /> and the selector #one"
+layer at (130,70) size 150x61
+  RenderSVGContainer {g} at (0,0) size 150x60
+layer at (130,70) size 60x60
+  RenderSVGEllipse {circle} at (0,0) size 60x60 [fill={[type=SOLID] [color=#008000]}] [cx=160.00] [cy=100.00] [r=30.00]
+layer at (220,80) size 60x40
+  RenderSVGRect {rect} at (0,0) size 60x40 [fill={[type=SOLID] [color=#FF0000]}] [x=220.00] [y=80.00] [width=60.00] [height=40.00]
+layer at (40,3) size 317x117
+  RenderSVGContainer {g} at (0,150) size 317x162
+layer at (40,3) size 258x13
+  RenderSVGText {text} at (0,0) size 259x14 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 259x14
+      chunk 1 text run 1 at (40.00,14.00) startOffset 0 endOffset 51 width 258.14: "Circle should be red not green; rectangle still red"
+layer at (40,25) size 317x13
+  RenderSVGText {text} at (0,22) size 317x14 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 317x14
+      chunk 1 text run 1 at (40.00,36.00) startOffset 0 endOffset 63 width 316.96: "This tests attribute selectors: <circle transform=\"scale(2)\" />"
+layer at (40,47) size 204x13
+  RenderSVGText {text} at (0,44) size 205x14 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 205x14
+      chunk 1 text run 1 at (40.00,58.00) startOffset 0 endOffset 39 width 204.28: "and the selector [transform=\"scale(2)\"]"
+layer at (65,35) size 215x86
+  RenderSVGContainer {g} at (130,195) size 85x85
+layer at (65,35) size 30x30
+  RenderSVGEllipse {circle} at (65,185) size 60x60 [fill={[type=SOLID] [color=#FF0000]}] [cx=80.00] [cy=50.00] [r=15.00]
+layer at (220,80) size 60x40
+  RenderSVGRect {rect} at (0,150) size 60x40 [fill={[type=SOLID] [color=#FF0000]}] [x=220.00] [y=80.00] [width=60.00] [height=40.00]
+layer at (10,304) size 263x46
+  RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 264x46
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.4 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (-1,-1) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

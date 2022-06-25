@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+function go()
+{
+    var v = document.getElementById("v");
+    o.defaultValue = "x";
+    a.appendChild(v);
+}
+function eventhandler2()
+{
+    var d = document.implementation.createHTMLDocument("doc");
+    var s = d.createElement("script");
+    s.prepend(v);
+    testRunner.notifyDone();
+}
+function eventhandler1()
+{
+    v.appendChild(o);
+    o.addEventListener("DOMNodeRemoved", eventhandler2);
+    setTimeout(() => {
+        go();
+    }, 0);
+}
+</script>
+<body onload=eventhandler1()>
+This test passes if it does not assert or crash.
+<a id="a"></a>
+<output id="o">foo</output>
+<video id="v"></video>
+<svg>
+<text/>
+</body>
+</html>

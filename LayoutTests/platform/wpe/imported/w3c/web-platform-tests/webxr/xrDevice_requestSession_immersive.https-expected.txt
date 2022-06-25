@@ -1,0 +1,8 @@
+
+PASS Tests requestSession resolves when supported - webgl
+FAIL Tests requestSession resolves when supported - webgl2 assert_implements: webgl2 not supported. undefined
+PASS Tests requestSession accepts XRSessionInit dictionary - webgl
+FAIL Tests requestSession accepts XRSessionInit dictionary - webgl2 assert_implements: webgl2 not supported. undefined
+PASS Tests requestSession ignores unknown optionalFeatures - webgl
+FAIL Tests requestSession ignores unknown optionalFeatures - webgl2 assert_implements: webgl2 not supported. undefined
+

@@ -1,0 +1,13 @@
+Regression test for http://webkit.org/b/102283
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.open(dbname, 2)
+indexedDB.open(dbname, 3)
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

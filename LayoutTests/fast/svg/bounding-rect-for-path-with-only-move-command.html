@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<svg><path d="M 100,100"></path></svg>
+<script>
+rect = document.querySelector("path").getBoundingClientRect();
+shouldBe("rect.top", "108");
+shouldBe("rect.left", "108");
+shouldBe("rect.width", "0");
+shouldBe("rect.height", "0");
+</script>
+</body>
+</html>

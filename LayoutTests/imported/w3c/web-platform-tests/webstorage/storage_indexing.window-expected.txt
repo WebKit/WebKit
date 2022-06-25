@@ -1,0 +1,10 @@
+
+PASS Indexed getter on localStorage
+PASS Getting number properties on localStorage
+PASS Getting number-valued string properties on localStorage
+PASS Getting existing number-valued properties on localStorage
+PASS Indexed getter on sessionStorage
+PASS Getting number properties on sessionStorage
+PASS Getting number-valued string properties on sessionStorage
+PASS Getting existing number-valued properties on sessionStorage
+

@@ -1,0 +1,20 @@
+RUN(internals.enableMockMediaCapabilities())
+RUN(internals.settings.setMediaCapabilitiesExtensionsEnabled(true))
+RUN(promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', audio: { contentType: 'audio/mp4; codecs="mp4a.40.2"', channels: '5.1', bitrate: 1000, samplerate: 44100 } });)
+Promise resolved OK
+EXPECTED (info.supported == 'true') OK
+EXPECTED (typeof info.supportedConfiguration.audio.spatialRendering == 'undefined') OK
+RUN(promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', audio: { contentType: 'audio/mp4; codecs="mp4a.40.2"', channels: '5.1', bitrate: 1000, samplerate: 44100, spatialRendering: true } });)
+Promise resolved OK
+EXPECTED (info.supported == 'true') OK
+EXPECTED (info.supportedConfiguration.audio.spatialRendering == 'true') OK
+RUN(promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', audio: { contentType: 'audio/mp4; codecs="mp4a.40.2"', channels: '2', bitrate: 1000, samplerate: 44100, spatialRendering: true } });)
+Promise resolved OK
+EXPECTED (info.supported == 'false') OK
+EXPECTED (info.supportedConfiguration.audio.spatialRendering == 'true') OK
+RUN(promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', audio: { contentType: 'audio/mp4; codecs="mp4a.40.2"', channels: '2', bitrate: 1000, samplerate: 44100, spatialRendering: false } });)
+Promise resolved OK
+EXPECTED (info.supported == 'true') OK
+EXPECTED (info.supportedConfiguration.audio.spatialRendering == 'false') OK
+END OF TEST
+

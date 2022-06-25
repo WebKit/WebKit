@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    video {
+        width: 120px;
+        height: 200px;
+        margin: 5px;
+        border: 2px solid blue;
+        background-color: gray;
+    }
+
+    .group > *:nth-child(1) { object-position: center center; }
+    .group > *:nth-child(2) { object-position: 20px 10px; }
+    .group > *:nth-child(3) { object-position: 50% 25%; }
+    .group > *:nth-child(4) { object-position: bottom 10px right 10px; }
+    .group > *:nth-child(5) { object-position: bottom 10% right 30%; }
+</style>
+<script src="../../media/media-file.js"></script>
+<script>
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    }
+
+    function init()
+    {
+        setSrcByTagName("video", findMediaFile("video", "../../media/content/test"));
+
+        var totalCount = document.getElementsByTagName('video').length;
+        var count = totalCount;
+        document.addEventListener("canplaythrough", function () {
+            if (!--count) {
+                if (window.testRunner)
+                    setTimeout(function() {
+                        if (window.internals)
+                            document.getElementById('results').innerText = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_CONTENT_LAYERS);
+                        testRunner.notifyDone();
+                    }, totalCount * 150);
+            }
+        }, true);
+    }
+</script>
+
+</head>
+<body onload="init();">
+    <div class="group">
+        <video style="object-fit: fill"></video>
+        <video style="object-fit: fill"></video>
+        <video style="object-fit: fill"></video>
+        <video style="object-fit: fill"></video>
+        <video style="object-fit: fill"></video>
+    </div>
+
+    <div class="group">
+        <video style="object-fit: contain"></video>
+        <video style="object-fit: contain"></video>
+        <video style="object-fit: contain"></video>
+        <video style="object-fit: contain"></video>
+        <video style="object-fit: contain"></video>
+    </div>
+<pre id="results"></pre>
+</body>
+</html>

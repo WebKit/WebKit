@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Tests that javascript URL execute in the right context when set as action on a form with a target frame.");
+jsTestIsAsync = true;
+
+function didRunJSURLInContext(_contextName)
+{
+    contextName = _contextName;
+    // Since the form has target="testFrame", the javascript URL should execute in the context of the testFrame, not the top frame.
+    shouldBeEqualToString("contextName", "testFrame");
+    finishJSTest();
+}
+
+onload = () => {
+    window.name = "topWindow";
+    document.getElementById("submitButton").click();
+};
+</script>
+<iframe id="testFrame" name="testFrame"></iframe>
+<form id="testAnchor" target="testFrame" action="javascript:top.didRunJSURLInContext(window.name);">
+<input id="submitButton" type="submit" value="Click me"></input>
+</form>
+</body>
+</html>

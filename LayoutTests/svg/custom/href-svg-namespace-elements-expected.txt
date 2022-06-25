@@ -1,0 +1,90 @@
+Ensures the svg href attribute can work without having to be prefixed by the xlink namespace.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.element.tagName is "a"
+PASS window.element.getAttributeNS('http://www.w3.org/1999/xlink', 'href') is "www.webkit.org"
+PASS window.element.getAttribute('href') is "www.webkit.org"
+PASS window.element.getAttributeNS('http://www.w3.org/1999/xlink', 'href') is null
+PASS window.element.getAttribute('href') is "www.build.webkit.org"
+PASS window.element.getAttributeNS('http://www.w3.org/1999/xlink', 'href') is null
+PASS window.element.getAttributeNS('http://www.w3.org/2000/svg', 'href') is null
+PASS window.element.getAttribute('href') is "www.build.webkit.org"
+PASS window.element.href.baseVal is "www.build.webkit.org"
+PASS window.element.tagName is "feImage"
+PASS window.element.getAttributeNS('http://www.w3.org/1999/xlink', 'href') is "resources/red-checker.png"
+PASS window.element.getAttribute('href') is "resources/red-checker.png"
+PASS window.element.getAttributeNS('http://www.w3.org/1999/xlink', 'href') is null
+PASS window.element.getAttribute('href') is "resources/green-checker.png"
+PASS window.element.getAttributeNS('http://www.w3.org/1999/xlink', 'href') is null
+PASS window.element.getAttributeNS('http://www.w3.org/2000/svg', 'href') is null
+PASS window.element.getAttribute('href') is "resources/green-checker.png"
+PASS window.element.href.baseVal is "resources/green-checker.png"
+PASS window.element.tagName is "filter"
+PASS window.element.getAttributeNS('http://www.w3.org/1999/xlink', 'href') is "base-filter-1"
+PASS window.element.getAttribute('href') is "base-filter-1"
+PASS window.element.getAttributeNS('http://www.w3.org/1999/xlink', 'href') is null
+PASS window.element.getAttribute('href') is "base-filter-2"
+PASS window.element.getAttributeNS('http://www.w3.org/1999/xlink', 'href') is null
+PASS window.element.getAttributeNS('http://www.w3.org/2000/svg', 'href') is null
+PASS window.element.getAttribute('href') is "base-filter-2"
+PASS window.element.href.baseVal is "base-filter-2"
+PASS window.element.tagName is "image"
+PASS window.element.getAttributeNS('http://www.w3.org/1999/xlink', 'href') is "resources/red-checker.png"
+PASS window.element.getAttribute('href') is "resources/red-checker.png"
+PASS window.element.getAttributeNS('http://www.w3.org/1999/xlink', 'href') is null
+PASS window.element.getAttribute('href') is "resources/green-checker.png"
+PASS window.element.getAttributeNS('http://www.w3.org/1999/xlink', 'href') is null
+PASS window.element.getAttributeNS('http://www.w3.org/2000/svg', 'href') is null
+PASS window.element.getAttribute('href') is "resources/green-checker.png"
+PASS window.element.href.baseVal is "resources/green-checker.png"
+PASS window.element.tagName is "linearGradient"
+PASS window.element.getAttributeNS('http://www.w3.org/1999/xlink', 'href') is "#base-linear-gradient-1"
+PASS window.element.getAttribute('href') is "#base-linear-gradient-1"
+PASS window.element.getAttributeNS('http://www.w3.org/1999/xlink', 'href') is null
+PASS window.element.getAttribute('href') is "#base-linear-gradient-2"
+PASS window.element.getAttributeNS('http://www.w3.org/1999/xlink', 'href') is null
+PASS window.element.getAttributeNS('http://www.w3.org/2000/svg', 'href') is null
+PASS window.element.getAttribute('href') is "#base-linear-gradient-2"
+PASS window.element.href.baseVal is "#base-linear-gradient-2"
+PASS window.element.tagName is "pattern"
+PASS window.element.getAttributeNS('http://www.w3.org/1999/xlink', 'href') is "#base-pattern-1"
+PASS window.element.getAttribute('href') is "#base-pattern-1"
+PASS window.element.getAttributeNS('http://www.w3.org/1999/xlink', 'href') is null
+PASS window.element.getAttribute('href') is "#base-pattern-2"
+PASS window.element.getAttributeNS('http://www.w3.org/1999/xlink', 'href') is null
+PASS window.element.getAttributeNS('http://www.w3.org/2000/svg', 'href') is null
+PASS window.element.getAttribute('href') is "#base-pattern-2"
+PASS window.element.href.baseVal is "#base-pattern-2"
+PASS window.element.tagName is "radialGradient"
+PASS window.element.getAttributeNS('http://www.w3.org/1999/xlink', 'href') is "#base-radial-gradient-1"
+PASS window.element.getAttribute('href') is "#base-radial-gradient-1"
+PASS window.element.getAttributeNS('http://www.w3.org/1999/xlink', 'href') is null
+PASS window.element.getAttribute('href') is "#base-radial-gradient-2"
+PASS window.element.getAttributeNS('http://www.w3.org/1999/xlink', 'href') is null
+PASS window.element.getAttributeNS('http://www.w3.org/2000/svg', 'href') is null
+PASS window.element.getAttribute('href') is "#base-radial-gradient-2"
+PASS window.element.href.baseVal is "#base-radial-gradient-2"
+PASS window.element.tagName is "textPath"
+PASS window.element.getAttributeNS('http://www.w3.org/1999/xlink', 'href') is "#text-path-1"
+PASS window.element.getAttribute('href') is "#text-path-1"
+PASS window.element.getAttributeNS('http://www.w3.org/1999/xlink', 'href') is null
+PASS window.element.getAttribute('href') is "#text-path-2"
+PASS window.element.getAttributeNS('http://www.w3.org/1999/xlink', 'href') is null
+PASS window.element.getAttributeNS('http://www.w3.org/2000/svg', 'href') is null
+PASS window.element.getAttribute('href') is "#text-path-2"
+PASS window.element.href.baseVal is "#text-path-2"
+PASS window.element.tagName is "use"
+PASS window.element.getAttributeNS('http://www.w3.org/1999/xlink', 'href') is "#red-rect"
+PASS window.element.getAttribute('href') is "#red-rect"
+PASS window.element.getAttributeNS('http://www.w3.org/1999/xlink', 'href') is null
+PASS window.element.getAttribute('href') is "#green-rect"
+PASS window.element.getAttributeNS('http://www.w3.org/1999/xlink', 'href') is null
+PASS window.element.getAttributeNS('http://www.w3.org/2000/svg', 'href') is null
+PASS window.element.getAttribute('href') is "#green-rect"
+PASS window.element.href.baseVal is "#green-rect"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,11 @@
+Check that strikeThrough command produces an input event of type formatStrikeThrough
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS event.type is "input"
+PASS event.inputType is "formatStrikeThrough"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

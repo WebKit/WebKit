@@ -1,0 +1,13 @@
+Paint API should not be available in worker contexts.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS PerformanceObserver.supportedEntryTypes.includes("paint") is true
+PASS workerSupportedEntryTypes.includes("paint") is false
+PASS workerSupportedEntryTypes.includes("mark") is true
+PASS PerformanceObserver.supportedEntryTypes did not include 'paint' for workers
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

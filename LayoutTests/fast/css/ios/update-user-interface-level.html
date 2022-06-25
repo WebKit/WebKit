@@ -1,0 +1,59 @@
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+
+:root {
+  color-scheme: light dark;
+}
+
+</style>
+</head>
+<body>
+</body>
+<script>
+
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    if (!window.internals)
+        return;
+
+    description("Test that changing the user interface level updates the page's background color.");
+
+    debug("Dark Mode = Off, User Interface Level = Base");
+    pageBackgroundColor = internals.viewBaseBackgroundColor();
+    lightModeBackgroundColor = internals.systemColorForCSSValue('-apple-system-control-background', false, false);
+    shouldBeEqualToString("pageBackgroundColor", lightModeBackgroundColor);
+    debug("");
+
+    debug("Dark Mode = On, User Interface Level = Base");
+    internals.settings.setUseDarkAppearance(true);
+    await UIHelper.renderingUpdate();
+    pageBackgroundColor = internals.viewBaseBackgroundColor();
+    darkModeBackgroundColor = internals.systemColorForCSSValue('-apple-system-control-background', true, false);
+    shouldBeEqualToString("pageBackgroundColor", darkModeBackgroundColor);
+    debug("");
+
+    debug("Dark Mode = On, User Interface Level = Elevated");
+    internals.settings.setUseElevatedUserInterfaceLevel(true);
+    await UIHelper.renderingUpdate();
+    pageBackgroundColor = internals.viewBaseBackgroundColor();
+    darkModeElevatedBackgroundColor = internals.systemColorForCSSValue('-apple-system-control-background', true, true);
+    shouldBeEqualToString("pageBackgroundColor", darkModeElevatedBackgroundColor);
+    debug("");
+
+    debug("Dark Mode = Off, User Interface Level = Elevated");
+    internals.settings.setUseDarkAppearance(false);
+    await UIHelper.renderingUpdate();
+    pageBackgroundColor = internals.viewBaseBackgroundColor();
+    lightModeElevatedBackgroundColor = internals.systemColorForCSSValue('-apple-system-control-background', false, true);
+    shouldBeEqualToString("pageBackgroundColor", lightModeElevatedBackgroundColor);
+    debug("");
+
+    finishJSTest();
+});
+
+</script>
+</html>

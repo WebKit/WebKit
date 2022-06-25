@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+    font-family: "WebFont";
+    src: url("../../resources/Ahem.ttf") format("truetype");
+}
+</style>
+</head>
+<body>
+<div style="font: 32px 'WebFont';">Hello</div>
+
+<iframe id="target" srcdoc="
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<div style='font: 32px WebFont;'>Hello</div>
+</body>
+</html>"></iframe>
+
+</body>
+</html>

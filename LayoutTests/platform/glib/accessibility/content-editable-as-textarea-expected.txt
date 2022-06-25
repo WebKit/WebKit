@@ -1,0 +1,39 @@
+
+This tests that a contenteditable region behaves as a proper AXTextArea.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Role: AXRole: AXTextField
+Value: AXValue: hello<\n>world
+Value (writable): true
+String with range: ello
+worl
+Attributed string with range:
+	Default text attributes:
+		indent:0
+		family-name:-webkit-standard
+		editable:true
+		strikethrough:false
+		direction:ltr
+		style:normal
+		fg-color:0,0,0
+		weight:400
+		size:12pt
+		invisible:false
+		underline:none
+	Range attributes for 'ello<\n>':
+	Range attributes for 'worl':
+		weight:700
+Line for index(0): 0
+Line for index(7): 1
+Range for line(0): {0, 6}
+Range for line(1): {6, 5}
+Bounds for range: {8, 8, 31, 35}
+Selected text range: {0, 3}
+Selected text: hel
+Updated value: AXValue: qlo<\n>world
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

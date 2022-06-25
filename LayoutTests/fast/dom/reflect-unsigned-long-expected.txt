@@ -1,0 +1,65 @@
+This tests covers the behavior of reflecting IDL attributes of type unsigned long
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+* Default value
+PASS video.getAttribute('width') is null
+PASS video.width is 0
+
+* Regular value
+video.setAttribute('width', '123')
+PASS video.getAttribute('width') is "123"
+PASS video.width is 123
+video.width = 123
+PASS video.getAttribute('width') is "123"
+PASS video.width is 123
+
+* Boundary
+video.setAttribute('width', '2147483647')
+PASS video.getAttribute('width') is "2147483647"
+PASS video.width is 2147483647
+video.width = 2147483647
+PASS video.getAttribute('width') is "2147483647"
+PASS video.width is 2147483647
+
+* Out of range value
+video.setAttribute('width', '2147483649')
+PASS video.getAttribute('width') is "2147483649"
+PASS video.width is 0
+video.width = 2147483649
+PASS video.getAttribute('width') is "0"
+PASS video.width is 0
+
+* Default value
+PASS video.getAttribute('height') is null
+PASS video.height is 0
+
+* Regular value
+video.setAttribute('height', '123')
+PASS video.getAttribute('height') is "123"
+PASS video.height is 123
+video.height = 123
+PASS video.getAttribute('height') is "123"
+PASS video.height is 123
+
+* Boundary
+video.setAttribute('height', '2147483647')
+PASS video.getAttribute('height') is "2147483647"
+PASS video.height is 2147483647
+video.height = 2147483647
+PASS video.getAttribute('height') is "2147483647"
+PASS video.height is 2147483647
+
+* Out of range value
+video.setAttribute('height', '2147483649')
+PASS video.getAttribute('height') is "2147483649"
+PASS video.height is 0
+video.height = 2147483649
+PASS video.getAttribute('height') is "0"
+PASS video.height is 0
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

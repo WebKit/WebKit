@@ -1,0 +1,80 @@
+<html>
+<head>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <style type="text/css">
+    #wrapper {
+        height: 400px;
+        width: 600px;
+        overflow: scroll;
+        background-color: #EEE;
+    }
+
+    iframe {
+        background-color: #CCC;
+        width: 400px;
+        height: 100px;
+        margin-bottom: 1000px;
+    }
+
+    body {
+        margin: 0;
+    }
+    </style>
+    <script>
+    jsTestIsAsync = true;
+
+    function checkForScroll() {
+        var iframe = document.getElementById("frame");
+        var wrapper = document.getElementById("wrapper");
+        if (iframe.contentWindow.scrollY && !wrapper.scrollTop)
+            testPassed("The iframe scrolled but the wrapper did not.");
+        else
+            testFailed("The iframe's scroll position is: " + iframe.contentWindow.scrollY + ", and the wrapper's scroll position is: " + wrapper.scrollTop);
+
+        finishJSTest();
+    }
+
+    function scrollTest()
+    {
+        eventSender.monitorWheelEvents();
+        eventSender.mouseMoveTo(200, 50);
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "began", "none");
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "changed", "none");
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "changed", "none");
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "changed", "none");
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "changed", "none");
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "changed", "none");
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "none", "begin");
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "none", "continue");
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "none", "continue");
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "none", "continue");
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "none", "continue");
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "none", "continue");
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "none", "end");
+        eventSender.callAfterScrollingCompletes(checkForScroll);
+    }
+
+    function setup() {
+        if (window.eventSender) {
+            setTimeout(scrollTest, 0);
+            return;
+        }
+        
+        var message = document.createElement("div");
+        message.innerHTML = "<p>To run this test manually, place the mouse pointer "
+            + "inside the iframe, then use a two-finger swipe to scroll the iframe to the bottom (and beyond).</p>"
+            + "<p>The test passes if the overflow container does not scroll but the iframe scrolls to the bottom.</p>";
+        document.body.appendChild(message);
+        finishJSTest();
+    }
+
+    </script>
+</head>
+<body onload="setup()">
+    <div id="wrapper">
+        <iframe id="frame" src="./resources/inner_content.html"></iframe>
+    </div>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

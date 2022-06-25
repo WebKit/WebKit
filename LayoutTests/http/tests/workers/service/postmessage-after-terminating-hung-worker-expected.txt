@@ -1,0 +1,8 @@
+PASS: Service worker received message 'HANG'
+PASS: ServiceWorker received message: PASS: Service worker received message 'HANG'
+Service Worker should now be hung
+Terminating service worker...
+Terminated service worker.
+PASS: Service worker received message 'MessageAfterTerminatingHungServiceWorker'
+PASS: Service worker responded to message after hanging and being terminated
+

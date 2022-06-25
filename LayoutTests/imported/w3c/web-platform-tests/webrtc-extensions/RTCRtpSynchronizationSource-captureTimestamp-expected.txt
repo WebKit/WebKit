@@ -1,0 +1,10 @@
+
+
+PASS [audio] getSynchronizationSources() should not contain captureTimestamp if absolute capture time RTP header extension is not offered
+PASS [audio] getSynchronizationSources() should not contain captureTimestamp if absolute capture time RTP header extension is offered, but not answered
+FAIL [audio] getSynchronizationSources() should contain captureTimestamp if absolute capture time RTP header extension is negotiated step_wait_func: No abs-capture-time capture time header extension. Timed out waiting on condition
+PASS [video] getSynchronizationSources() should not contain captureTimestamp if absolute capture time RTP header extension is not offered
+PASS [video] getSynchronizationSources() should not contain captureTimestamp if absolute capture time RTP header extension is offered, but not answered
+FAIL [video] getSynchronizationSources() should contain captureTimestamp if absolute capture time RTP header extension is negotiated step_wait_func: No abs-capture-time capture time header extension. Timed out waiting on condition
+FAIL Audio and video RTCRtpSynchronizationSource.captureTimestamp are comparable step_wait_func: No abs-capture-time capture time header extension. Timed out waiting on condition
+

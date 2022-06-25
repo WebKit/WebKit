@@ -1,0 +1,19 @@
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="10cqw"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute height="10cqh"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="10cqi"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute height="10cqb"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="10cqmin"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute height="10cqmax"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="calc(10cqmin + 10cqmax)"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute height="calc(10cqw + 3px)"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute width="20cqw"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute height="20cqh"
+
+FAIL unitType with container-relative units assert_equals: expected 0 but got 1
+FAIL cqw,cqh can be resolved assert_equals: expected 20 but got 0
+FAIL cqi,cqb can be resolved assert_equals: expected 20 but got 0
+FAIL cqmin,cqmax can be resolved assert_equals: expected 15 but got 0
+FAIL calc() with container-relative units can be resolved assert_equals: expected 35 but got 0
+FAIL Can modify value with container-relative units assert_equals: expected 40 but got 0
+FAIL CSS Container Queries Test: container-relative units in SVGLength assert_approx_equals: expected 15 +/- 1 but got 0
+

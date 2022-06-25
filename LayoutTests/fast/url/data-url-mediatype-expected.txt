@@ -1,0 +1,8 @@
+ALERT: audio/mpegURL text#fragment
+ALERT: video/mpegURL text#fragment
+ALERT: application/x-mpegurl text#fragment
+ALERT: vnd.apple.mpegurl text#fragment
+ALERT: text/plain text
+CONSOLE MESSAGE: Fetch API cannot load data:te#xt/plain,text#fragment.
+ALERT: caught error with mime type te#xt/plain
+

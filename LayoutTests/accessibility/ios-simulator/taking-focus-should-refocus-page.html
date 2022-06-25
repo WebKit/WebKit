@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<button id="button">Click me</button>
+<input type="text" id="text-input">
+
+<script>
+    description("This test ensures that making an element focused via accessibility (e.g. full keyboard access) re-focuses the page so that a focus ring can be drawn.");
+
+    function takeFocus(id) {
+        debug(`\nTaking focus via accessibilityController for id #${id}`);
+        accessibilityController.accessibleElementById(id).takeFocus();
+    }
+
+    if (window.accessibilityController) {
+        var button = document.getElementById("button");
+        var textInput = document.getElementById("text-input");
+        shouldBe("getComputedStyle(button).getPropertyValue('outline-width')", "'0px'");
+        shouldBe("getComputedStyle(textInput).getPropertyValue('outline-width')", "'0px'");
+
+        takeFocus("button");
+        // Expect focus ring to have been drawn for the button.
+        shouldBe("getComputedStyle(button).getPropertyValue('outline-width')", "'3px'");
+        shouldBe("getComputedStyle(textInput).getPropertyValue('outline-width')", "'0px'");
+
+        takeFocus("text-input");
+        shouldBe("getComputedStyle(button).getPropertyValue('outline-width')", "'0px'");
+        shouldBe("getComputedStyle(textInput).getPropertyValue('outline-width')", "'3px'");
+
+        debug("\nMaking the entire page un-focused");
+        // This simulates situations in which WebKit is embedded in another app and focus is not properly handed
+        // over to WebKit when necessary, i.e. a full-keyboard access user tabbing into the embedded web view.
+        if (window.internals)
+            internals.setPageIsFocused(false);
+        else
+            debug("FAIL: window.internals not available")
+
+        takeFocus("button");
+        // Focusing the button via accessibility should re-focus the page and allow a focus ring to be drawn.
+        // This simulates conditions where embedded WKWebView's are not ever marked as focused via their hosting
+        // app, e.g. via [WKContentViewInteraction becomeFirstResponderForWebView].
+        shouldBe("getComputedStyle(button).getPropertyValue('outline-width')", "'3px'");
+        shouldBe("getComputedStyle(textInput).getPropertyValue('outline-width')", "'0px'");
+    }
+</script>
+</body>
+</html>
+

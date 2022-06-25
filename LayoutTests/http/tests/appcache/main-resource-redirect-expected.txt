@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+Test that application cache is consulted again after a redirect response.
+
+PASS
+

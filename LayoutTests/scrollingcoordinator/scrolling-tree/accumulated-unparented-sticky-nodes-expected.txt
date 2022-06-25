@@ -1,0 +1,23 @@
+7
+8
+8
+9
+9
+10
+10
+11
+11
+12
+12
+13
+13
+14
+14
+15
+15
+16
+ PASS window.internals?.scrollingStateTreeAsText().indexOf('unparented node count') == -1 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

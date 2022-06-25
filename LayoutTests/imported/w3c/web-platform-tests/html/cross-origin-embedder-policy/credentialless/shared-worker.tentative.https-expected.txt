@@ -1,0 +1,9 @@
+
+Harness Error (TIMEOUT), message = null
+
+PASS shared-worker
+TIMEOUT fetch same-origin Test timed out
+TIMEOUT fetch same-origin + credentialless worker Test timed out
+TIMEOUT fetch cross-origin Test timed out
+TIMEOUT fetch cross-origin + credentialless worker Test timed out
+

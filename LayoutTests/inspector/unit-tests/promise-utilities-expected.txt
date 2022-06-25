@@ -1,0 +1,7 @@
+
+== Running test suite: Promise
+-- Running test case: Promise.chain
+PASS: Resolved promise 0 with value 1
+PASS: Resolved promise 1 with value 2
+PASS: Resolved promise 2 with value 4
+

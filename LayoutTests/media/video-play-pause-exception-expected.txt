@@ -1,0 +1,10 @@
+
+Video has no src. Test that the playing event is not dispatched.
+
+RUN(handlePromise(video.play()))
+RUN(video.pause())
+EVENT(waiting)
+EVENT(pause)
+EXPECTED (video.networkState == '0') OK
+END OF TEST
+

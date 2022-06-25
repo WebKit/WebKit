@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="../../../resources/js-test.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <style>
+        input {
+            width: 100px;
+            height: 100px;
+            font-size: 50px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <input autofocus>
+</body>
+<script>
+jsTestIsAsync = true;
+clicked = false;
+
+description("Verifies that tapping near the caret rect of an autofocused text field dispatches a click event and presents a keyboard when there is no hardware keyboard attached. To manually run the test, tap on the center of the input field. The keyboard should appear, and the callout bar should not be visible.");
+
+const input = document.querySelector("input");
+input.addEventListener("click", () => clicked = true);
+
+addEventListener("load", async () => {
+    await UIHelper.setHardwareKeyboardAttached(false);
+
+    const elementRect = input.getBoundingClientRect();
+    const centerX = elementRect.left + elementRect.width / 2;
+    const centerY = elementRect.top + elementRect.height / 2;
+
+    // The bug that inspired this test only reproduces if the touch duration exceeds 30 ms, plus the time needed for UIKit
+    // to schedule a gesture recognizer environment update. To simulate this, delay the end of the touch by 50 ms.
+    await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder()
+        .begin(centerX, centerY)
+        .move(centerX, centerY + 1, 0.05)
+        .end()
+        .takeResult());
+
+    while (!(await UIHelper.isShowingKeyboard()))
+        continue;
+
+    input.blur();
+    shouldBeTrue("clicked");
+
+    showingMenu = await UIHelper.isShowingMenu();
+    shouldBeFalse("showingMenu");
+
+    await UIHelper.waitForKeyboardToHide();
+    finishJSTest();
+});
+</script>
+</html>

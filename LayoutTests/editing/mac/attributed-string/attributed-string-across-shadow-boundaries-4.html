@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="container"><span id="host">world WebKit</span> rocks</div>
+<script src="resources/dump-attributed-string.js"></script>
+<script>
+
+const shadowRoot = host.attachShadow({mode: 'open'});
+shadowRoot.innerHTML = 'hello <slot></slot>';
+
+if (window.testRunner)
+    dumpAttributedString(container, shadowRoot, 0, host.firstChild, host.firstChild.data.indexOf('Kit'));
+
+</script>
+</body>
+</html>

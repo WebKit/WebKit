@@ -1,0 +1,4 @@
+
+FAIL base-relative URL: relative-image-url Type error
+FAIL base-relative URL: relative-image-variable-url Type error
+

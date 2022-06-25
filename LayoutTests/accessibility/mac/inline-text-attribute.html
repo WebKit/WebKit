@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+a <span id="span" role="group"> b </span> c
+<br>
+
+d <div id="div" role="group"> e </span> f
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that objects return whether they are inline or not.");
+
+    if (window.accessibilityController) {
+
+          var span = accessibilityController.accessibleElementById("span");
+          debug("Span is inline: " + span.numberAttributeValue('AXInlineText'));
+
+          var div = accessibilityController.accessibleElementById("div");
+          debug("Div is inline: " + div.numberAttributeValue('AXInlineText'));
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CaptureAudioInGPUProcessEnabled=false ] -->
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<script>
+description("Verify that audio capture on iOS happens in web process.");
+
+if (window.testRunner) {
+    jsTestIsAsync = true;
+}
+
+shouldNotThrow("recognition = new webkitSpeechRecognition();");
+recognition.onstart = (event) => {
+    debug("Received start event");
+}
+
+recognition.onaudiostart = (event) => {
+    debug("Received audiostart event");
+
+    shouldBeEqualToString("internals.audioSessionCategory()", "PlayAndRecord");
+    finishJSTest();
+}
+
+shouldNotThrow("recognition.start()");
+
+</script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+This tests moving caret around a word with a first-letter rule. WebKit should not crash. This test also demonstrates a bug that word position is incorrectly reported.
+
+ hello world'
+white-space: normal;
+FAIL: moving forward by word from offset 4 put caret at offset 10 but expected 6
+PASS: moving backward by word from offset 4 put caret at offset 1
+white-space: pre;
+FAIL: moving forward by word from offset 4 put caret at offset 10 but expected 6
+PASS: moving backward by word from offset 4 put caret at offset 1
+

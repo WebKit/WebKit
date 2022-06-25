@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<style>
+#test {
+    width: 50vw;
+}
+#testfontsize {
+    font-size: 5vh;
+}
+#testcalc {
+    width: calc(50vw * 2);
+}
+#testfontsizecalc {
+    font-size: calc(5vh * 2);
+}
+#testpseudo:after {
+    margin-left: 20vmin;
+    padding-right: 25vmax;
+    content: '';
+}
+#testpseudocalc:after {
+    margin-left: calc(20vmin * 2);
+    padding-right: calc(25vmax * 2);
+    content: '';
+}
+</style>
+<body>
+    <div id="test"></div>
+    <div id="testfontsize"></div>
+    <div id="testcalc"></div>
+    <div id="testfontsizecalc"></div>
+    <div id="testpseudo"></div>
+    <div id="testpseudocalc"></div>
+</body>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="resources/resize-test.js"></script>
+<script>
+description("Test that viewport lengths and font sizes properly resize with the viewport.");
+standardResizeTest(function () {
+    var min = Math.min(innerWidth, innerHeight);
+    var max = Math.max(innerWidth, innerHeight);
+    shouldBeEqualToString("getComputedStyle(test).width", innerWidth / 2 + "px");
+    shouldBeEqualToString("getComputedStyle(testfontsize).fontSize", innerHeight / 20 + "px");
+    shouldBeEqualToString("getComputedStyle(testcalc).width", innerWidth + "px");
+    shouldBeEqualToString("getComputedStyle(testfontsizecalc).fontSize", innerHeight / 10 + "px");
+    shouldBeEqualToString("getComputedStyle(testpseudo, ':after').marginLeft", min / 5 + "px");
+    shouldBeEqualToString("getComputedStyle(testpseudo, ':after').paddingRight", max / 4 + "px");
+    shouldBeEqualToString("getComputedStyle(testpseudocalc, ':after').marginLeft", (min * 2) / 5 + "px");
+    shouldBeEqualToString("getComputedStyle(testpseudocalc, ':after').paddingRight", max / 2 + "px");
+});
+</script>
+<script src="../../resources/js-test-post.js"></script>

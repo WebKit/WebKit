@@ -1,0 +1,9 @@
+
+PASS Adding two types with different non-null percent hints throws TypeError
+PASS Adding two types with the same nonzero values returns same type
+PASS Adding two types with empty maps with returns empty map
+PASS Adding a type with percent returns type with percent hint
+PASS Adding a type with percent 2 returns type with percent hint throws TypeError
+PASS Adding a type with a percent hint returns a type with the percent hint
+PASS Adding two types with the same percent hint returns a type with the percent hint
+

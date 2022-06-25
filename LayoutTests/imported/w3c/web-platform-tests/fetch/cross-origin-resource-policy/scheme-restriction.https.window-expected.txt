@@ -1,0 +1,3 @@
+
+FAIL Cross-Origin-Resource-Policy does not block Mixed Content <img> promise_test: Unhandled rejection with value: object "[object Event]"
+

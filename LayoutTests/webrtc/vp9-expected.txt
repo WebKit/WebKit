@@ -1,0 +1,13 @@
+
+
+PASS VP9 in sender getCapabilities
+PASS VP9 in receiver getCapabilities
+PASS VP9 decoding in navigator.mediaCapabilities
+PASS VP9 encoding in navigator.mediaCapabilities
+PASS Verify VP9 activation
+PASS Setting video exchange
+PASS Ensuring connection state is connected
+PASS Track is enabled, video should not be black
+PASS Track is disabled, video should be black
+PASS Track is enabled, video should not be black 2
+

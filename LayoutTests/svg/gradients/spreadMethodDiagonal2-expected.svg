@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <rect x="10" y="35" width="460" height="13.75" fill="green"/>
+    <rect x="10" y="48.75" width="460" height="41.25" fill="blue"/>
+
+    <rect x="10" y="120" width="460" height="13.75" fill="green"/>
+    <rect x="10" y="133.75" width="460" height="27.5" fill="blue"/>
+    <rect x="10" y="161.25" width="460" height="13.75" fill="green"/>
+
+    <rect x="10" y="205" width="460" height="13.75" fill="green"/>
+    <rect x="10" y="218.75" width="460" height="13.75" fill="blue"/>
+    <rect x="10" y="232.5" width="460" height="13.75" fill="green"/>
+    <rect x="10" y="246.25" width="460" height="13.75" fill="blue"/>
+
+    <rect x="10" y="48" width="460" height="2" fill="grey"/>
+
+    <rect x="10" y="133" width="460" height="2" fill="grey"/>
+    <rect x="10" y="161" width="460" height="2" fill="grey"/>
+
+    <rect x="10" y="218" width="460" height="2" fill="grey"/>
+    <rect x="10" y="232" width="460" height="2" fill="grey"/>
+    <rect x="10" y="246" width="460" height="2" fill="grey"/>
+</svg>

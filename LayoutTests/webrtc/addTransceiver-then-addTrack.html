@@ -1,0 +1,106 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <video id="video" autoplay=""></video>
+        <canvas id="canvas" width="640" height="480"></canvas>
+        <script src ="routines.js"></script>
+        <script>
+function getStatsType(connection)
+{
+    return connection.getStats().then((report) => {
+        var reportTypes = [];
+        report.forEach((statItem) => {
+            if (reportTypes.indexOf(statItem.type) === -1)
+                reportTypes.push(statItem.type);
+        });
+        return reportTypes.sort();
+    });
+}
+
+function getAudioOutboundRTPStats(connection)
+{
+    return connection.getStats().then((report) => {
+        let stats;
+        report.forEach((statItem) => {
+            if (statItem.type === "outbound-rtp" && !("framesSent" in statItem))
+                stats = statItem;
+        });
+        return stats;
+    });
+}
+
+function getVideoOutboundRTPStats(connection)
+{
+    return connection.getStats().then((report) => {
+        let stats;
+        report.forEach((statItem) => {
+            if (statItem.type === "outbound-rtp" && "framesSent" in statItem)
+                stats = statItem;
+        });
+        return stats;
+    });
+}
+
+async function validateVideoIsEncoded(connection)
+{
+    let counter = 0;
+    for (counter = 0; counter < 50; ++counter) {
+        const stats = await getVideoOutboundRTPStats(connection);
+        if (stats.framesSent)
+           return true;
+        await new Promise(resolve => setTimeout(resolve, 50));
+    }
+    return false;
+}
+
+async function validateAudioIsEncoded(connection)
+{
+    let counter = 0;
+    for (counter = 0; counter < 50; ++counter) {
+        const stats = await getAudioOutboundRTPStats(connection);
+        if (stats.bytesSent)
+           return true;
+        await new Promise(resolve => setTimeout(resolve, 50));
+    }
+    return false;
+}
+
+var pc1, pc2;
+promise_test(async (test) => {
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(true);
+
+    const localStream = await navigator.mediaDevices.getUserMedia({video: true, audio: true });
+    const stream = await new Promise((resolve, reject) => {
+        createConnections((firstConnection) => {
+            pc1 = firstConnection;
+            firstConnection.addTransceiver("audio");
+            const senderAudio = firstConnection.addTrack(localStream.getAudioTracks()[0]);
+            senderAudio.setStreams(localStream);
+            firstConnection.addTransceiver("video");
+            const senderVideo = firstConnection.addTrack(localStream.getVideoTracks()[0]);
+            senderVideo.setStreams(localStream);
+        }, (secondConnection) => {
+            pc2 = secondConnection;
+            secondConnection.ontrack = (trackEvent) => {
+                resolve(trackEvent.streams[0]);
+            };
+        });
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+
+    assert_equals(stream.getTracks().length, 2);
+    video.srcObject = stream;
+    await video.play();
+
+    assert_true(await validateAudioIsEncoded(pc1), "audio encoded");
+    assert_true(await validateVideoIsEncoded(pc1), "video encoded");
+}, "Ensure addTrack reuses transceiver as expected");
+        </script>
+    </body>
+</html>

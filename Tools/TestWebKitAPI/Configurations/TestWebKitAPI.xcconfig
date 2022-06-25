@@ -1,0 +1,131 @@
+// Copyright (C) 2010-2016 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+// EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+// PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+// OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+
+#include "WebKitTargetConditionals.xcconfig"
+
+PRODUCT_NAME = TestWebKitAPI;
+PRODUCT_BUNDLE_IDENTIFIER = com.apple.WebKit.TestWebKitAPI;
+GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GTEST_API_=
+
+// Workaround for "WebKit is not available..." error (rdar://91668054)
+DISABLE_SDK_METADATA_PARSING[sdk=appletv*] = YES;
+DISABLE_SDK_METADATA_PARSING[sdk=watch*] = YES;
+
+WK_PRIVATE_FRAMEWORKS_DIR = $(WK_PRIVATE_FRAMEWORKS_DIR_$(USE_INTERNAL_SDK));
+WK_PRIVATE_FRAMEWORKS_DIR_[sdk=macos*] = $(PROJECT_DIR)/../../WebKitLibraries/WebKitPrivateFrameworkStubs/Mac/$(TARGET_MAC_OS_X_VERSION_MAJOR);
+WK_PRIVATE_FRAMEWORKS_DIR_[sdk=iphone*] = $(PROJECT_DIR)/../../WebKitLibraries/WebKitPrivateFrameworkStubs/iOS/$(WK_TARGET_IOS_VERSION_MAJOR);
+WK_PRIVATE_FRAMEWORKS_DIR_[sdk=appletv*] = $(PROJECT_DIR)/../../WebKitLibraries/WebKitPrivateFrameworkStubs/appletvos/$(WK_TARGET_TVOS_VERSION_MAJOR);
+WK_PRIVATE_FRAMEWORKS_DIR_[sdk=watch*] = $(PROJECT_DIR)/../../WebKitLibraries/WebKitPrivateFrameworkStubs/watchos/$(WK_TARGET_WATCHOS_VERSION_MAJOR);
+
+WK_TARGET_IOS_VERSION_MAJOR = $(IPHONEOS_DEPLOYMENT_TARGET:base); // e.g. iOS 9.3 => 9
+WK_PRIVATE_FRAMEWORKS_DIR_[sdk=iphone*] = $(WK_PRIVATE_FRAMEWORKS_DIR_iphone_$(USE_INTERNAL_SDK));
+WK_PRIVATE_FRAMEWORKS_DIR_iphone_ = $(PROJECT_DIR)/../../WebKitLibraries/WebKitPrivateFrameworkStubs/iOS/$(WK_TARGET_IOS_VERSION_MAJOR);
+
+FRAMEWORK_SEARCH_PATHS = $(FRAMEWORK_SEARCH_PATHS_$(WK_COCOA_TOUCH));
+FRAMEWORK_SEARCH_PATHS_ = $(inherited) $(WK_PRIVATE_FRAMEWORKS_DIR) $(SYSTEM_LIBRARY_DIR)/PrivateFrameworks $(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks;
+FRAMEWORK_SEARCH_PATHS_cocoatouch = $(inherited) $(WK_PRIVATE_FRAMEWORKS_DIR);
+
+WK_APPSERVERSUPPORT_LDFLAGS[sdk=iphone*] = -framework AppServerSupport
+
+WK_AUTHKIT_LDFLAGS = $(WK_AUTHKIT_LDFLAGS_$(WK_PLATFORM_NAME));
+WK_AUTHKIT_LDFLAGS_iphoneos = $(WK_AUTHKIT_LDFLAGS$(WK_IOS_13));
+WK_AUTHKIT_LDFLAGS_iphonesimulator = $(WK_AUTHKIT_LDFLAGS$(WK_IOS_13));
+WK_AUTHKIT_LDFLAGS_IOS_SINCE_13 = -framework AuthKit;
+WK_AUTHKIT_LDFLAGS_macosx = $(WK_AUTHKIT_LDFLAGS$(WK_MACOS_1015));
+WK_AUTHKIT_LDFLAGS_MACOS_SINCE_1015 = -framework AuthKit;
+
+WK_HID_LDFLAGS = $(WK_HID_LDFLAGS_$(WK_PLATFORM_NAME));
+WK_HID_LDFLAGS_macosx = $(WK_HID_LDFLAGS$(WK_MACOS_1015));
+WK_HID_LDFLAGS_MACOS_SINCE_1015 = -framework HID;
+
+WK_VISIONKITCORE_LDFLAGS = $(WK_VISIONKITCORE_LDFLAGS_$(WK_PLATFORM_NAME));
+WK_VISIONKITCORE_LDFLAGS_iphoneos = $(WK_VISIONKITCORE_LDFLAGS$(WK_IOS_15));
+WK_VISIONKITCORE_LDFLAGS_iphonesimulator = $(WK_VISIONKITCORE_LDFLAGS$(WK_IOS_15));
+WK_VISIONKITCORE_LDFLAGS_IOS_SINCE_15 = -framework VisionKitCore;
+
+WK_OPENGL_LDFLAGS = $(WK_OPENGL_LDFLAGS_$(WK_PLATFORM_NAME));
+WK_OPENGL_LDFLAGS_iphoneos = -framework OpenGLES;
+WK_OPENGL_LDFLAGS_maccatalyst = -framework OpenGL;
+WK_OPENGL_LDFLAGS_iphonesimulator = -framework OpenGLES;
+WK_OPENGL_LDFLAGS_watchos = $(WK_OPENGL_LDFLAGS_iphoneos);
+WK_OPENGL_LDFLAGS_watchsimulator = $(WK_OPENGL_LDFLAGS_iphonesimulator);
+WK_OPENGL_LDFLAGS_appletvos = $(WK_OPENGL_LDFLAGS_iphoneos);
+WK_OPENGL_LDFLAGS_appletvsimulator = $(WK_OPENGL_LDFLAGS_iphonesimulator);
+WK_OPENGL_LDFLAGS_macosx = -framework OpenGL;
+
+WK_PDFKIT_LDFLAGS = $(WK_PDFKIT_LDFLAGS_$(WK_PLATFORM_NAME));
+WK_PDFKIT_LDFLAGS_macosx = -framework PDFKit;
+WK_PDFKIT_LDFLAGS_maccatalyst = -framework PDFKit;
+WK_PDFKIT_LDFLAGS_iphoneos = -framework PDFKit;
+WK_PDFKIT_LDFLAGS_iphonesimulator = -framework PDFKit;
+
+WK_SYSTEM_LDFLAGS = $(WK_SYSTEM_LDFLAGS_$(WK_PLATFORM_NAME));
+WK_SYSTEM_LDFLAGS_macosx = -framework System;
+WK_SYSTEM_LDFLAGS_iphoneos = $(WK_SYSTEM_LDFLAGS_$(WK_IOS_15));
+WK_SYSTEM_LDFLAGS_iphonesimulator = $(WK_SYSTEM_LDFLAGS_$(WK_IOS_15));
+WK_SYSTEM_LDFLAGS_IOS_SINCE_15 = -framework System;
+
+WK_UIKITMACHELPER_LDFLAGS = $(WK_UIKITMACHELPER_LDFLAGS_$(WK_PLATFORM_NAME));
+WK_UIKITMACHELPER_LDFLAGS_maccatalyst = -framework UIKitMacHelper;
+
+WK_WEBCORE_LDFLAGS = $(WK_WEBCORE_LDFLAGS_$(WK_PLATFORM_NAME));
+WK_WEBCORE_LDFLAGS_iphoneos = -framework WebCore
+WK_WEBCORE_LDFLAGS_iphonesimulator = -framework WebCore
+WK_WEBCORE_LDFLAGS_watchos = -framework WebCore
+WK_WEBCORE_LDFLAGS_watchsimulator = -framework WebCore
+
+OTHER_CPLUSPLUSFLAGS = $(inherited) -isystem $(SDKROOT)/System/Library/Frameworks/System.framework/PrivateHeaders;
+
+OTHER_LDFLAGS = $(inherited) -lgtest -force_load $(BUILT_PRODUCTS_DIR)/libTestWebKitAPI.a -framework JavaScriptCore -framework WebKit -lWebCoreTestSupport -framework Metal -framework IOSurface $(WK_APPSERVERSUPPORT_LDFLAGS) $(WK_AUTHKIT_LDFLAGS) -framework Network $(WK_HID_LDFLAGS) $(WK_OPENGL_LDFLAGS) $(WK_PDFKIT_LDFLAGS) $(WK_SYSTEM_LDFLAGS) $(WK_UIKITMACHELPER_LDFLAGS) $(WK_VISIONKITCORE_LDFLAGS) $(WK_WEBCORE_LDFLAGS) $(OTHER_LDFLAGS_PLATFORM_$(WK_COCOA_TOUCH));
+OTHER_LDFLAGS_PLATFORM_ = -framework Cocoa -framework Carbon;
+
+// FIXME: This should not be built on iOS. Instead we should create and use a TestWebKitAPI application.
+OTHER_LDFLAGS_PLATFORM_cocoatouch = -framework WebCore -framework CoreGraphics -framework UIKit -framework MobileCoreServices;
+
+LD_RUNPATH_SEARCH_PATHS = "@loader_path";
+
+MAC_CODE_SIGN_ENTITLEMENTS = $(MAC_CODE_SIGN_ENTITLEMENTS_$(USE_INTERNAL_SDK));
+MAC_CODE_SIGN_ENTITLEMENTS_ = Configurations/TestWebKitAPI-macOS.entitlements;
+MAC_CODE_SIGN_ENTITLEMENTS_YES = Configurations/TestWebKitAPI-macOS-internal.entitlements;
+
+CODE_SIGN_ENTITLEMENTS[sdk=embedded*] = Configurations/TestWebKitAPI-iOS.entitlements;
+CODE_SIGN_ENTITLEMENTS[sdk=macosx*] = $(MAC_CODE_SIGN_ENTITLEMENTS);
+
+STRIP_STYLE = debugging;
+
+CODE_SIGN_IDENTITY[sdk=macosx*] = $(CODE_SIGN_IDENTITY_$(CONFIGURATION));
+CODE_SIGN_IDENTITY_Debug = $(CODE_SIGN_IDENTITY_$(USE_INTERNAL_SDK));
+CODE_SIGN_IDENTITY_Release = $(CODE_SIGN_IDENTITY_$(USE_INTERNAL_SDK));
+CODE_SIGN_IDENTITY_YES = $(WK_ENGINEERING_CODE_SIGN_IDENTITY);
+CODE_SIGN_IDENTITY_Production = $(CODE_SIGN_IDENTITY_Production_$(USE_INTERNAL_SDK));
+CODE_SIGN_IDENTITY_Production_YES = -;
+
+CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
+INFOPLIST_FILE = $(SRCROOT)/Info.plist;
+
+ENTITLEMENTS_REQUIRED = $(ENTITLEMENTS_REQUIRED_USE_INTERNAL_SDK_$(USE_INTERNAL_SDK))
+ENTITLEMENTS_REQUIRED_USE_INTERNAL_SDK_ = NO;
+ENTITLEMENTS_REQUIRED_USE_INTERNAL_SDK_NO = NO;
+ENTITLEMENTS_REQUIRED_USE_INTERNAL_SDK_YES = $(ENTITLEMENTS_REQUIRED);

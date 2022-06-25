@@ -1,0 +1,10 @@
+Regression test for https://webkit.org/b/150336.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Properly handled OSR exit from a bound function with an inlined tail callee.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Table as spanner</title>
+    </head>
+    <body>
+        <p>Below you should see boxes that are green, blue, yellow, and purple, in that order.</p>
+        <div style="-webkit-columns:6; columns:6; -webkit-column-gap:0; column-gap:0; width:4em; overflow:hidden; font: 40px Ahem;">
+            <div style="background:red;">
+                <table style="-webkit-column-span:all; column-span:all;" cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td><span style="color: green;">P</span><span style="color: blue;">A</span></td>
+                        <td><span style="color: yellow;">S</span><span style="color: purple;">S</span></td>
+                    </tr>
+                </table>
+            </div>
+            <br><br>
+        </div>
+    </body>
+</html>

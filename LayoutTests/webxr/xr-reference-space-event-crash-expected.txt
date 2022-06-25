@@ -1,0 +1,11 @@
+Makes sure that constructing a XRReferenceSpaceEvent without a transform member doesn't crash
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS event.referenceSpace is referenceSpace
+PASS event.transform is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

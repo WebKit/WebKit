@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<head>
+<style>
+#textpath { display: block; }
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</head>
+<body>
+<p>Tests that a &lt;textPath&gt; with display block doesn't cause an assertion failure.</p>
+<svg>
+    <path id="result-path" d="M 0 20 L 100 20" />
+    <text>
+        <textPath id="textpath" xlink:href="#result-path">PASS</textPath>
+    </text>
+</svg>
+</body>
+</html>

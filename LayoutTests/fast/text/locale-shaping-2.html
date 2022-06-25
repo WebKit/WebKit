@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+@font-face {
+    font-family: "CJKLoclTest";
+    src: url("resources/langlocatest_cjk/langlocatest_cjk.ttf") format('truetype');
+}
+
+.locl-test {
+    display: inline-block;
+    font-family: "CJKLoclTest";
+    font-size: 3rem;
+}
+
+.locl-on {
+    font-family: "CJKLoclTest";
+    font-feature-settings: "locl" 1;
+}
+
+.locl-off {
+    font-family: "CJKLoclTest";
+    font-feature-settings: "locl" 0;
+}
+</style>
+</head>
+<body>
+<div>This test makes sure that shaping is locale-specific. The test passes if the big text below doesn't all say ZHS.</div>
+<div class="locl-test locl-on">
+<div lang="zh-Hans">雕</div>
+<div lang="zh-Hant">雕</div>
+<div lang="zh-HK">雕</div>
+<div lang="ja-JP">雕</div>
+<div lang="ko-KR">雕</div>
+</div>
+</body>
+</html>

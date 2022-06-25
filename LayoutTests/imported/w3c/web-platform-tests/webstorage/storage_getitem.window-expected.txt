@@ -1,0 +1,10 @@
+
+PASS Get value by getIten(key) and named access in localStorage.
+PASS All items should be added to localStorage.
+PASS Named access to localStorage should be correct
+PASS localStorage.getItem should be correct
+PASS Get value by getIten(key) and named access in sessionStorage.
+PASS All items should be added to sessionStorage.
+PASS Named access to sessionStorage should be correct
+PASS sessionStorage.getItem should be correct
+

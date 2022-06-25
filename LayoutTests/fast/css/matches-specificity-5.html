@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<head>
+<style>
+    .target::before {
+        content: "Target";
+    }
+
+    .target:matches(*, target, .target, *, target)::before {
+        background-color: green;
+    }
+
+    target:matches(*, target, .target, *, target)::before {
+        color: white;
+    }
+
+    .target:matches(*)::before {
+        background-color: red;
+        color: blue;
+        border: none;
+    }
+    target:matches(*, target, *)::before {
+        border: 25px solid purple;
+    }
+
+    :matches(foo, target)::before {
+        content: "Not Target";
+    }
+</style>
+</head>
+<body>
+    <p>This test checks the specificity of the rules inside :matches() applying to the pseudo element ::before. The test succeed if the text "Target" is displayed in white on a green background.</p>
+    <target class="target"></target>
+</body>
+</html>

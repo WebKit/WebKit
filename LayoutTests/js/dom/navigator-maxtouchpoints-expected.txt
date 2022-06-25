@@ -1,0 +1,10 @@
+Check return value of navigator.maxTouchPoints.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+navigator.maxTouchPoints = 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,34 @@
+<style>
+body {
+    font-family: ahem;
+    -webkit-font-smoothing: none;
+}
+</style>
+<summary>a<span>b<div>c</div>d</span>e</summary>
+<script>
+    if ("webkitRequestFullScreen" in Element.prototype) {
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+        document.body.offsetTop;
+        var span = document.getElementsByTagName('span')[0];
+
+        var fullscreenChangeEvent = function(event) {
+            if (document.webkitIsFullScreen) {
+                setTimeout(function () {
+                    document.webkitCancelFullScreen();
+                }, 0)
+            } else {
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }
+        };
+
+        document.addEventListener('webkitfullscreenchange', fullscreenChangeEvent);
+
+        document.addEventListener('keydown', function () {
+            span.webkitRequestFullScreen();
+        });
+        if (window.eventSender)
+            eventSender.keyDown('a');
+    }
+</script>

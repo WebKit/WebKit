@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Examples of various wide-gamut images</title>
+  <meta name="viewport" content="width=850">
+  
+  <style>
+  body {
+      background-color: #888;
+      text-align: center;
+      font-family: -apple-system;
+      max-width: 800px;
+      margin: 0 auto;
+      font-size: 18px;
+  }
+
+  body.white {
+      background-color: white;
+      color: black;
+  }
+
+  body.light-grey {
+      background-color: #bbb;
+      color: black;
+  }
+
+  body.mid-grey {
+      background-color: #888;
+      color: black;
+  }
+
+  body.dark-grey {
+      background-color: #333;
+      color: white;
+  }
+
+  body.black {
+      background-color: black;
+      color: white;
+  }
+
+  p {
+      text-align: justify;
+      line-height: 1.4;
+  }
+
+  button {
+      -webkit-appearance: none;
+      backgroud-color: #539298;
+      color: black;
+      border: 1px solid #333;
+      box-shadow: 0px 1px 0px #336;
+      border-radius: 5px;
+      font-size: 18px;
+      cursor: pointer;
+  }
+
+  button:hover, button:active {
+      background-color: #4d6997;
+  }
+
+  section.photo {
+      border: 2px solid #622;
+      padding: 1em 3em;
+      margin-bottom: 2em;
+  }
+
+  section.photo p {
+      text-align: center;
+  }
+
+  section.photo > h2 {
+      margin: 0 0 0.7em 0;
+      font-size: 200%;
+  }
+
+  section.photo > img {
+      margin: 0 auto 15px auto;
+      display: block;
+  }
+
+  section.photo.shoes > img,
+  section.photo.iceland > img,
+  section.photo.italy > img,
+  section.photo.yellow > img,
+  section.photo.flowers > img {
+      width: 600px;
+      height: 400px;
+  }
+
+  section.photo.logo > img,
+  section.photo.rose > img {
+      width: 500px;
+      height: 500px;
+  }
+
+  section.photo.sunset > img {
+      width: 397px;
+      height: 600px;
+  }
+
+  section.photo > div > div {
+      display: inline-block;
+      margin: 0 5px;
+  }
+
+  section.photo > div > div > img {
+      margin: 0 auto 10px auto;
+      display: block;
+      cursor: pointer;
+  }
+
+  section.photo > div > div > img:hover {
+      outline: 2px solid #bbf;
+  }
+
+  section.photo.shoes > div > div > img,
+  section.photo.iceland > div > div > img,
+  section.photo.italy > div > div > img,
+  section.photo.yellow > div > div > img,
+  section.photo.flowers > div > div > img {
+      width: 200px;
+      height: 133px;
+  }
+
+  section.photo.logo > div > div > img,
+  section.photo.rose > div > div > img {
+      width: 150px;
+      height: 150px;
+  }
+
+  section.photo.sunset > div > div > img {
+      width: 132px;
+      height: 200px;
+  }
+
+  </style>
+  <script>
+
+  function init() {
+      var buttons = Array.from(document.querySelectorAll(".background button"));
+      buttons.forEach(function (button) {
+          button.addEventListener("click", function (event) {
+              switch (button.textContent) {
+              case "White":
+                  document.body.className = "white";
+                  break;
+              case "Light grey":
+                  document.body.className = "light-grey";
+                  break;
+              case "Middle grey":
+                  document.body.className = "mid-grey";
+                  break;
+              case "Dark grey":
+                  document.body.className = "dark-grey";
+                  break;
+              case "Black":
+                  document.body.className = "black";
+              }
+          });
+      });
+
+      var sections = Array.from(document.querySelectorAll("section.photo"));
+      sections.forEach(function (section) {
+          var images = Array.from(section.querySelectorAll("div > div > img"));
+          images.forEach(function (image) {
+              image.addEventListener("click", function (event) {
+                  var main = section.querySelector("img");
+                  main.src = event.target.src;
+                  var info = section.querySelector("p");
+                  var imageType = "";
+                  var suffix = event.target.src.match(/.*\-(\w+)\.jpg/)[1];
+                  switch (suffix) {
+                  case "AdobeRGB":
+                      imageType = "Adobe RGB";
+                      break;
+                  case "P3":
+                      imageType = "Display P3";
+                      break;
+                  case "oog":
+                      imageType = "Out of sRGB Gamut";
+                      break
+                  default:
+                      imageType = suffix;
+                  }
+                  info.textContent = "Currently showing: " + imageType;
+              }, false);
+          });
+      });
+  }
+
+    window.addEventListener("load", init, false);
+
+  </script>
+</head>
+<body>
+    <h1>Comparison between normal and wide-gamut images</h1>
+
+    <p>
+        Below are example images to demonstrate wide-gamut. There
+        are multiple versions of each image: one in sRGB, then
+        some in other color spaces with a wider gamut, and then a version
+        where the pixels outside sRGB have been highlighted.
+    </p>
+    <p>
+        You can swap between the versions by tapping the buttons below
+        the image. You can also change the background color of this page:
+    </p>
+    <p class="background">
+        Page background color:
+        <button>White</button>
+        <button>Light grey</button>
+        <button>Middle grey</button>
+        <button>Dark grey</button>
+        <button>Black</button>
+    </p>
+    <p>
+        If you're not using a wide-gamut display to view these images,
+        the different versions might be quite similar, although color
+        matching might produce a difference.
+    </p>
+    <p>
+        There is also a <a href="comparison.html">more interactive version</a>
+        of these examples, with a slider to reveal the wide-gamut images.
+    </p>
+
+    <section class="photo shoes">
+        <h2>Shoes</h2>
+        <img src="Shoes-sRGB.jpg" alt="Bright orange shoes">
+        <p>Currently showing: sRGB</p>
+        <p>Tap/click on one of the images below to replace the main image</p>
+        <div>
+            <div>
+                <img src="Shoes-sRGB.jpg" alt="Bright orange shoes in the sRGB color space">
+                <span>sRGB</span>
+            </div>
+            <div>
+                <img src="Shoes-AdobeRGB.jpg" alt="Bright orange shoes in the Adobe RGB color space">
+                <span>Adobe RGB</span>
+            </div>
+            <div>
+                <img src="Shoes-oog.jpg" alt="Bright orange shoes showing which parts are outside of the sRGB gamut">
+                <span>Out of sRGB areas</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="photo logo">
+        <h2>WebKit Logo</h2>
+        <img src="Webkit-logo-sRGB.png" alt="Red image with very faint WebKit logo">
+        <p>Currently showing: sRGB</p>
+        <p>Tap/click on one of the images below to replace the main image</p>
+        <div>
+            <div>
+                <img src="Webkit-logo-sRGB.png" alt="Faint WebKit logo in the sRGB color space">
+                <span>sRGB</span>
+            </div>
+            <div>
+                <img src="Webkit-logo-P3.png" alt="Faint WebKit logo in the Display P3 color space">
+                <span>Display P3</span>
+            </div>
+            <div>
+                <img src="Webkit-logo-oog.png" alt="Faint WebKit logo showing which parts are outside of the sRGB gamut">
+                <span>Out of sRGB areas</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="photo iceland">
+        <h2>Iceland</h2>
+        <img src="Iceland-sRGB.jpg" alt="A river in Iceland with a sunset">
+        <p>Currently showing: sRGB</p>
+        <p>Tap/click on one of the images below to replace the main image</p>
+        <div>
+            <div>
+                <img src="Iceland-sRGB.jpg" alt="A river in Iceland with a sunset in the sRGB color space">
+                <span>sRGB</span>
+            </div>
+            <div>
+                <img src="Iceland-P3.jpg" alt="A river in Iceland with a sunset in the Display P3 color space">
+                <span>Display P3</span>
+            </div>
+            <div>
+                <img src="Iceland-oog.jpg" alt="A river in Iceland with a sunset showing which parts are outside of the sRGB gamut">
+                <span>Out of sRGB areas</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="photo italy">
+        <h2>Italy</h2>
+        <img src="Italy-sRGB.jpg" alt="Umbrellas in Italy">
+        <p>Currently showing: sRGB</p>
+        <p>Tap/click on one of the images below to replace the main image</p>
+        <div>
+            <div>
+                <img src="Italy-sRGB.jpg" alt="Umbrellas in Italy in the sRGB color space">
+                <span>sRGB</span>
+            </div>
+            <div>
+                <img src="Italy-P3.jpg" alt="Umbrellas in Italy in the Display P3 color space">
+                <span>Display P3</span>
+            </div>
+            <div>
+                <img src="Italy-oog.jpg" alt="Umbrellas in Italy showing which parts are outside of the sRGB gamut">
+                <span>Out of sRGB areas</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="photo flowers">
+        <h2>Flowers</h2>
+        <img src="Flowers-sRGB.jpg" alt="Lots of red flowers">
+        <p>Currently showing: sRGB</p>
+        <p>Tap/click on one of the images below to replace the main image</p>
+        <div>
+            <div>
+                <img src="Flowers-sRGB.jpg" alt="Lots of red flowers in the sRGB color space">
+                <span>sRGB</span>
+            </div>
+            <div>
+                <img src="Flowers-ProPhoto.jpg" alt="Lots of red flowers in the ProPhoto color space">
+                <span>ProPhoto</span>
+            </div>
+            <div>
+                <img src="Flowers-oog.jpg" alt="Lots of red flowers showing which parts are outside of the sRGB gamut">
+                <span>Out of sRGB areas</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="photo yellow">
+        <h2>Yellow Flower</h2>
+        <img src="YellowFlower-sRGB.jpg" alt="A yellow flowers">
+        <p>Currently showing: sRGB</p>
+        <p>Tap/click on one of the images below to replace the main image</p>
+        <div>
+            <div>
+                <img src="YellowFlower-sRGB.jpg" alt="A yellow in the sRGB color space">
+                <span>sRGB</span>
+            </div>
+            <div>
+                <img src="YellowFlower-P3.jpg" alt="A yellow in the Display P3 color space">
+                <span>Display P3</span>
+            </div>
+            <div>
+                <img src="YellowFlower-oog.jpg" alt="A yellow showing which parts are outside of the sRGB gamut">
+                <span>Out of sRGB areas</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="photo sunset">
+        <h2>Sunset</h2>
+        <img src="Sunset-sRGB.jpg" alt="A sunset">
+        <p>Currently showing: sRGB</p>
+        <p>Tap/click on one of the images below to replace the main image</p>
+        <div>
+            <div>
+                <img src="Sunset-sRGB.jpg" alt="A sunset in the sRGB color space">
+                <span>sRGB</span>
+            </div>
+            <div>
+                <img src="Sunset-P3.jpg" alt="A sunset in the P3 color space">
+                <span>Display P3</span>
+            </div>
+            <div>
+                <img src="Sunset-oog.jpg" alt="A sunset showing which parts are outside of the sRGB gamut">
+                <span>Out of sRGB areas</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="photo rose">
+        <h2>Rose</h2>
+        <img src="Rose-sRGB.jpg" alt="A red rose">
+        <p>Currently showing: sRGB</p>
+        <p>Tap/click on one of the images below to replace the main image</p>
+        <div>
+            <div>
+                <img src="Rose-sRGB.jpg" alt="A red rose in the sRGB color space">
+                <span>sRGB</span>
+            </div>
+            <div>
+                <img src="Rose-ProPhoto.jpg" alt="A red rose in the ProPhoto color space">
+                <span>ProPhoto</span>
+            </div>
+            <div>
+                <img src="Rose-AdobeRGB.jpg" alt="A red rose in the Adobe RGB color space">
+                <span>Adobe RGB</span>
+            </div>
+            <div>
+                <img src="Rose-oog.jpg" alt="A red rose showing which parts are outside of the sRGB gamut">
+                <span>Out of sRGB areas</span>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>
+

@@ -1,0 +1,22 @@
+This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
+
+Test: ../../resources/webgl_test_files/conformance2/extensions/promoted-extensions-in-shaders.html
+[ 1: PASS ] ESSL 1.00 Fragment shader that requires GL_EXT_draw_buffers should not compile.
+[ 2: PASS ] ESSL 3.00 Fragment shader that requires GL_EXT_draw_buffers should not compile.
+[ 3: FAIL ] should be green at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 4: FAIL ] should be green at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 5: PASS ] ESSL 1.00 Fragment shader that requires GL_EXT_frag_depth should not compile.
+[ 6: PASS ] ESSL 3.00 Fragment shader that requires GL_EXT_frag_depth should not compile.
+[ 7: FAIL ] should be green at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 8: FAIL ] should be green at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 9: FAIL ] [unexpected link status] ESSL 1.00 Fragment shader that requires GL_EXT_shader_texture_lod should not compile.
+[ 10: PASS ] ESSL 3.00 Fragment shader that requires GL_EXT_shader_texture_lod should not compile.
+[ 11: FAIL ] should be green at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 12: FAIL ] should be green at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 13: FAIL ] [unexpected link status] ESSL 1.00 Fragment shader that requires GL_OES_standard_derivatives should not compile.
+[ 14: PASS ] ESSL 3.00 Fragment shader that requires GL_OES_standard_derivatives should not compile.
+[ 15: FAIL ] should be green at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 16: FAIL ] should be green at (0, 0) expected: 0,255,0,255 was 255,0,0,255
+[ 17: PASS ] successfullyParsed is true
+[ FAIL ] 10 failures reported
+

@@ -1,0 +1,5 @@
+The script in this test is executed immediately while parsing is ongoing, and cleaning up after running script involves queueing a task on the DOM manipulation task source to fire the unhandledrejection event. Parsing then completes, immediately transitioning the document's readiness state to "interactive," and queuing another task on the DOM manipulation task source to transition the state to "complete."
+
+
+FAIL Promise rejection during initial parsing of document assert_array_equals: lengths differ, expected array ["readystatechange:interactive", "unhandledrejection", "readystatechange:complete"] length 3, got ["readystatechange:interactive", "readystatechange:complete"] length 2
+

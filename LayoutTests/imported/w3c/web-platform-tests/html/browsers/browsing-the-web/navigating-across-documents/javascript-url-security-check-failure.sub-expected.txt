@@ -1,0 +1,10 @@
+Blocked access to external URL http://www.localhost:8800/common/blank.html
+Blocked access to external URL http://www.localhost:8800/common/blank.html
+CONSOLE MESSAGE: Blocked a frame with origin "http://localhost:8800" from accessing a frame with origin "http://localhost:8800". The frame being accessed set "document.domain" to "localhost", but the frame requesting access did not. Both must set "document.domain" to the same value to allow access.
+CONSOLE MESSAGE: Blocked a frame with origin "http://localhost:8800" from accessing a frame with origin "http://localhost:8800". The frame being accessed set "document.domain" to "localhost", but the frame requesting access did not. Both must set "document.domain" to the same value to allow access.
+
+FAIL cross-origin, setting src assert_unreached: message event fired Reached unreachable code
+FAIL cross-origin, setting location.href assert_unreached: message event fired Reached unreachable code
+PASS cross-origin-domain but same-origin, setting src
+PASS cross-origin-domain but same-origin, setting location.href
+

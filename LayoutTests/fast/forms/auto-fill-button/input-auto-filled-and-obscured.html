@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests that the Obscured AutoFill and viewable visual treatment renders in an auto-filled input. It can only be tested in the test tool.</p>
+<div id="container">
+    <input value="1234567890">
+    <input value="1234567890">
+    <input value="1234567890" style="width: 300px">
+    <input value="1234567890" style="width: 20px">
+    <input value="1234567890" style="height: 100px">
+    <input value="1234567890" style="width: 20px; height: 100px">
+</div>
+<script>
+if (window.internals) {
+    var inputs = document.querySelectorAll("input");
+    for (var i = 0; i < inputs.length; ++i) {
+        window.internals.setAutoFilledAndObscured(inputs[i], true);
+    }
+
+    var dynamicInput = document.createElement("input");
+    window.internals.setAutoFilledAndObscured(dynamicInput, true);
+    document.querySelector("#container").appendChild(dynamicInput);
+}
+</script>
+</body>
+</html>
+

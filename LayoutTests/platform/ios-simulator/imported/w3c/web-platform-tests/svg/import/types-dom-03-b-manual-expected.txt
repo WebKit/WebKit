@@ -1,0 +1,18 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (16,21) size 784x579
+      RenderSVGText {text} at (10,12) size 347x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 347x22
+          chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 40 width 346.17: "Test that getBBox() works before SVGLoad"
+      RenderSVGRect {rect} at (16,66) size 84x84 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=40.00] [width=50.00] [height=50.00]
+      RenderSVGText {text} at (1000,982) size 32x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 32x22
+          chunk 1 text run 1 at (1000.00,1000.00) startOffset 0 endOffset 3 width 31.02: "Abc"
+    RenderSVGContainer {g} at (16,516) size 385x64
+      RenderSVGText {text} at (10,310) size 231x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 231x38
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 230.19: "$Revision: 1.7 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

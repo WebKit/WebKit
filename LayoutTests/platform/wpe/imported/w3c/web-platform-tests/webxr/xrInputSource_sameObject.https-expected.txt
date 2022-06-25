@@ -1,0 +1,4 @@
+
+PASS XRInputSource attributes meet [SameObject] requirement - webgl
+FAIL XRInputSource attributes meet [SameObject] requirement - webgl2 assert_implements: webgl2 not supported. undefined
+

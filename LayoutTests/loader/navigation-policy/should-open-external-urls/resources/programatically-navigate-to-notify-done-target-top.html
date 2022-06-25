@@ -1,0 +1,14 @@
+<script>
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+    
+function loaded()
+{
+    window.top.location.href = "notify-done.html";
+}
+
+</script>
+<body onload="loaded();">
+This page does a javascript client redirect to notify-done.html in the main frame.
+</body>

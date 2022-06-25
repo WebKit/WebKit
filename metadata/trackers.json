@@ -1,0 +1,20 @@
+[
+    {
+        "type" : "bugzilla",
+        "url" : "https://bugs.webkit.org",
+        "res" : [
+            "\\Awebkit.org/b/(?P<id>\\d+)\\Z",
+            "\\Ahttps?://webkit.org/b/(?P<id>\\d+)\\Z"
+        ],
+        "redact" : {
+            "product:Security": true
+        }
+    },
+    {
+        "type" : "radar",
+        "projects" : ["JavaScriptCore", "WebKit"],
+        "redact" : {
+            ".*": true
+        }
+    }
+]

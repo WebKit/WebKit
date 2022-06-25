@@ -1,0 +1,6 @@
+Video should be running, a checker be drawn and colors matching the original.
+
+
+PASS Setting video exchange
+PASS Track is enabled, video should not be black
+

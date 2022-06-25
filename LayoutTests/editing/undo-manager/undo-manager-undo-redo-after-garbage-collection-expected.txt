@@ -1,0 +1,11 @@
+After redo
+Verifies that undo and redo callback handlers survive garbage collection. This test requires WebKitTestRunner.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS text.textContent is "After undo"
+PASS text.textContent is "After redo"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

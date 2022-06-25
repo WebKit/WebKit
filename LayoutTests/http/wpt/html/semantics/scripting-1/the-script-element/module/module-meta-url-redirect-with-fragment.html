@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>import.meta.url should be redirected url with fragment</title>
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+</head>
+<body>
+<script>
+globalThis.metaURLs = [];
+
+function redirectTest(targetURL, expected)
+{
+    return new Promise(function (resolve, reject) {
+        let script = document.createElement('script');
+        script.type = 'module';
+        script.src = targetURL;
+        script.onload = function () {
+            try {
+                assert_equals(globalThis.metaURLs.length, 1);
+                let url = globalThis.metaURLs.shift();
+                assert_equals(url, expected);
+                resolve();
+            } catch (error) {
+                reject(error);
+            }
+        };
+        script.onerror = reject;
+        document.body.appendChild(script);
+    });
+}
+
+const root = `http://${document.location.host}/WebKit`;
+const basename = `http://${document.location.host}/WebKit/html/semantics/scripting-1/the-script-element/module`;
+
+promise_test(() => {
+    return redirectTest('/WebKit/resources/redirect.py?location=' + encodeURIComponent(`${basename}/resources/import-meta-url-expose.js#test1`), `${basename}/resources/import-meta-url-expose.js#test1`);
+}, `import-meta-url-expose.js#test1`);
+
+promise_test(() => {
+    return redirectTest('/WebKit/resources/redirect.py?location=' + encodeURIComponent(`${basename}/resources/import-meta-url-expose.js`) + "#test2", `${basename}/resources/import-meta-url-expose.js#test2`);
+}, `import-meta-url-expose.js#test2`);
+
+promise_test(() => {
+    return redirectTest('/WebKit/resources/redirect.py?location=' + encodeURIComponent(`${basename}/resources/import-meta-url-expose.js#test4`) + "#test3", `${basename}/resources/import-meta-url-expose.js#test4`);
+}, `import-meta-url-expose.js#test4`);
+
+promise_test(() => {
+    return redirectTest('/WebKit/resources/redirect.py?location=' + encodeURIComponent(`${root}/resources/redirect.py?location=` + encodeURIComponent(`${basename}/resources/import-meta-url-expose.js#testA`)), `${basename}/resources/import-meta-url-expose.js#testA`);
+}, `import-meta-url-expose.js#testA`);
+
+// FIXME: This test pass once the following issue is fixed.
+// https://bugs.webkit.org/show_bug.cgi?id=158420
+// promise_test(() => {
+//     return redirectTest('/WebKit/resources/redirect.py?location=' + encodeURIComponent(`${root}/resources/redirect.py?location=` + encodeURIComponent(`${basename}/resources/import-meta-url-expose.js`) + "#testB"), `${basename}/resources/import-meta-url-expose.js#testB`);
+// }, `import-meta-url-expose.js#testB`);
+
+promise_test(() => {
+    return redirectTest('/WebKit/resources/redirect.py?location=' + encodeURIComponent(`${root}/resources/redirect.py?location=` + encodeURIComponent(`${basename}/resources/import-meta-url-expose.js`)), `${basename}/resources/import-meta-url-expose.js`);
+}, `import-meta-url-expose.js`);
+
+promise_test(() => {
+    return redirectTest('/WebKit/resources/redirect.py?location=' + encodeURIComponent(`${root}/resources/redirect.py?location=` + encodeURIComponent(`${basename}/resources/import-meta-url-expose.js`)) + "#testC", `${basename}/resources/import-meta-url-expose.js#testC`);
+}, `import-meta-url-expose.js#testC`);
+
+promise_test(() => {
+    return redirectTest('/WebKit/resources/redirect.py?location=' + encodeURIComponent(`${root}/resources/redirect.py?location=` + encodeURIComponent(`${basename}/resources/import-meta-url-expose.js`)) + "#testD", `${basename}/resources/import-meta-url-expose.js#testD`);
+}, `import-meta-url-expose.js#testD`);
+
+// FIXME: This test pass once the following issue is fixed.
+// https://bugs.webkit.org/show_bug.cgi?id=158420
+// promise_test(() => {
+//     return redirectTest('/WebKit/resources/redirect.py?location=' + encodeURIComponent(`${root}/resources/redirect.py?location=` + encodeURIComponent(`${basename}/resources/import-meta-url-expose.js`) + "#testAA") + "#testBB", `${basename}/resources/import-meta-url-expose.js#testAA`);
+// }, `import-meta-url-expose.js#testAA`);
+
+promise_test(() => {
+    return redirectTest('/WebKit/resources/redirect.py?location=' + encodeURIComponent(`${root}/resources/redirect.py?location=` + encodeURIComponent(`${basename}/resources/import-meta-url-expose.js#testCC`)) + "#testDD", `${basename}/resources/import-meta-url-expose.js#testCC`);
+}, `import-meta-url-expose.js#testCC`);
+
+promise_test(() => {
+    return redirectTest('/WebKit/resources/redirect.py?location=' + encodeURIComponent(`${root}/resources/redirect.py?location=` + encodeURIComponent(`${basename}/resources/import-meta-url-expose.js#testEE`) + "#testFF"), `${basename}/resources/import-meta-url-expose.js#testEE`);
+}, `import-meta-url-expose.js#testEE`);
+
+promise_test(() => {
+    return redirectTest('/WebKit/resources/redirect.py?location=' + encodeURIComponent(`${root}/resources/redirect.py?location=` + encodeURIComponent(`${basename}/resources/import-meta-url-expose.js#testGGG`) + "#testHHH") + "#testIII", `${basename}/resources/import-meta-url-expose.js#testGGG`);
+}, `import-meta-url-expose.js#testGGG`);
+</script>
+</body>
+</html>

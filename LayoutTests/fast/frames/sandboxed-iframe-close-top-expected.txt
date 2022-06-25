@@ -1,0 +1,4 @@
+ALERT: PASS
+This test verifies that a sandboxed IFrame can close a top-level frame with allow-top-navigation.
+
+Start Test

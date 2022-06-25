@@ -1,0 +1,29 @@
+<html> <!-- webkit-test-runner [ MockScrollbarsControllerEnabled=true ] -->
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+    jsTestIsAsync = true;
+    if (window.internals) {
+        window.internals.setUsesOverlayScrollbars(true);
+    }
+
+    function runTest() {
+        if (window.internals)
+            internals.updateLayoutAndStyleForAllFrames();
+        if (window.eventSender) {
+            eventSender.mouseMoveTo(0, 0);
+            // Move to a position that is over the vertical scrollbar and the iframe.
+            eventSender.mouseMoveTo(window.innerWidth - 4, 100);
+            eventSender.mouseDown();
+            eventSender.mouseUp();
+            eventSender.mouseMoveTo(0, 0);
+        }
+        finishJSTest();
+    };
+</script>
+<script src="../../resources/js-test-post.js"></script>
+<body>
+  <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=165056">https://bugs.webkit.org/show_bug.cgi?id=165056</a>.</p>
+  <iframe onload="runTest()" width="1024" height="768" id="frame" src="data:text/html,<html></html>"></iframe>
+  <pre id="console"></pre>
+</body>
+</html>

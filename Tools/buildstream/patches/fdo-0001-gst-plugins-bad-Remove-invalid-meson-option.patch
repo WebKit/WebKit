@@ -1,0 +1,24 @@
+From dad7850992ceb9d7ab4d5582a87011768fa29070 Mon Sep 17 00:00:00 2001
+From: Philippe Normand <philn@igalia.com>
+Date: Sat, 19 Mar 2022 18:03:07 +0000
+Subject: [PATCH] gst-plugins-bad: Remove invalid meson option
+
+---
+ elements/components/gstreamer-plugins-bad.bst | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/elements/components/gstreamer-plugins-bad.bst b/elements/components/gstreamer-plugins-bad.bst
+index 455bfe3bf..41da813d8 100644
+--- a/elements/components/gstreamer-plugins-bad.bst
++++ b/elements/components/gstreamer-plugins-bad.bst
+@@ -48,7 +48,6 @@ variables:
+     -Dpackage-origin="freedesktop-sdk"
+     -Drsvg=enabled
+     -Dsndfile=enabled
+-    -Dvdpau=disabled
+     -Dvulkan=enabled
+     -Dwayland=enabled
+     -Dwebp=enabled
+-- 
+2.35.1
+

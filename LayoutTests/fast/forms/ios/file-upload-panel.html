@@ -1,0 +1,88 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true, shouldHandleRunOpenPanel=false, shouldPresentPopovers=false ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<input id="testInput" type="file">
+<div id="console"></div>
+<script>
+description("Basic testing for the File Upload Panel on iOS.");
+jsTestIsAsync = true;
+
+function getFileUploadPickerMenuItemsScript()
+{ 
+    return `
+    (function() {
+        return JSON.stringify(uiController.contentsOfUserInterfaceItem('fileUploadPanelMenu'));
+    })();`
+}
+
+function getFileUploadPickerMenuItems()
+{
+    return new Promise((resolve) => {
+        testRunner.runUIScript(getFileUploadPickerMenuItemsScript(), function(result) {
+            resolve(JSON.parse(result).fileUploadPanelMenu);
+        });
+    });
+}
+
+async function verifyMenuItems(expectedMenuItems) {
+    await UIHelper.activateElement(testInput);
+    items = await getFileUploadPickerMenuItems();
+    shouldBeTrue("areArraysEqual(items, " + expectedMenuItems + ")");
+
+    debug("");
+    await UIHelper.dismissFilePicker();
+}
+
+async function runAcceptTest(accept, expectedMenuItems)
+{
+    debug("* accept = " + accept);
+    testInput.accept = accept;
+    testInput.multiple = false;
+
+    await verifyMenuItems(expectedMenuItems);
+}
+
+async function runMultipleTest(multiple, expectedMenuItems)
+{
+    debug("* multiple = " + multiple)
+    testInput.accept = "";
+    testInput.multiple = multiple;
+
+    await verifyMenuItems(expectedMenuItems);
+}
+
+async function runTests()
+{
+    document.getElementById("console").style = "display: none";
+
+    await runAcceptTest("", '["Photo Library", "Take Photo or Video", "Choose File"]');
+    await runAcceptTest("*/*", '["Photo Library", "Take Photo or Video", "Choose File"]');
+    await runAcceptTest("image/*", '["Photo Library", "Take Photo", "Choose File"]');
+    await runAcceptTest("video/*", '["Photo Library", "Take Video", "Choose File"]');
+    await runAcceptTest("image/*, video/*", '["Photo Library", "Take Photo or Video", "Choose File"]');
+    await runAcceptTest(".PNG, .GIF", '["Photo Library", "Take Photo", "Choose File"]');
+    await runAcceptTest(".PNG, .GIF, .MOV", '["Photo Library", "Take Photo or Video", "Choose File"]');
+    await runAcceptTest("audio/*", '["Photo Library", "Take Video", "Choose File"]');
+    await runAcceptTest(".TXT", '["Choose File"]');
+    await runAcceptTest(".PDF", '["Choose File"]');
+    await runAcceptTest(".PDF, .TXT", '["Choose File"]');
+
+    await runMultipleTest(false, '["Photo Library", "Take Photo or Video", "Choose File"]');
+    await runMultipleTest(true, '["Photo Library", "Take Photo or Video", "Choose Files"]');
+
+    document.getElementById("console").style = "";
+    finishJSTest();
+}
+
+
+onload = runTests;
+
+</script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/test/testdata/reftest/green-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/test/testdata/reftest/green-ref-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/test/testdata/reftest/green-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/test/testdata/reftest/green.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/test/testdata/reftest/red.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest.https-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest.https.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_and_fail-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_and_fail.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_and_fail_0-ref-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_and_fail_0-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_cycle-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_cycle.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_cycle_0-ref-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_cycle_0-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_cycle_1-ref-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_cycle_1-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_cycle_fail-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_cycle_fail.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_cycle_fail_0-ref-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_cycle_fail_0-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_match-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_match.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_match_fail-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_match_fail.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_mismatch-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_mismatch_fail-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_mismatch_fail.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_or_0-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_or_0.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_ref_timeout-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_ref_timeout.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_timeout-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_timeout.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_wait_0-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/test/testdata/reftest/reftest_wait_0.html

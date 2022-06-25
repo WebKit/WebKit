@@ -1,0 +1,58 @@
+
+(GraphicsLayer
+  (bounds 1508.00 1516.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 1508.00 1516.00)
+      (contentsOpaque 1)
+      (children 2
+        (GraphicsLayer
+          (position 10.00 10.00)
+          (bounds 360.00 210.00)
+          (drawsContent 1)
+          (children 1
+            (GraphicsLayer
+              (position 30.00 30.00)
+              (children 1
+                (GraphicsLayer
+                  (bounds 285.00 135.00)
+                  (children 1
+                    (GraphicsLayer
+                      (children 1
+                        (GraphicsLayer
+                          (bounds 1508.00 1516.00)
+                          (children 1
+                            (GraphicsLayer
+                              (bounds 1508.00 1516.00)
+                              (drawsContent 1)
+                              (children 1
+                                (GraphicsLayer
+                                  (position 8.00 8.00)
+                                  (bounds 100.00 300.00)
+                                  (contentsOpaque 1)
+                                  (drawsContent 1)
+                                  (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 1.00 1.00])
+                                )
+                              )
+                            )
+                          )
+                        )
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 8.00 226.00)
+          (bounds 200.00 200.00)
+          (contentsOpaque 1)
+          (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 1.00 1.00])
+        )
+      )
+    )
+  )
+)
+

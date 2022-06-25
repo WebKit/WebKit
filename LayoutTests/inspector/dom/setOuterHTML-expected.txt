@@ -1,0 +1,35 @@
+Test for DOM.setOuterHTML (Edit as HTML).
+
+
+== Running test suite: DOM.setOuterHTML
+-- Running test case: OuterHTMLBefore
+<div id="x" style="display:none">
+    <h1>Original Title</h1>
+    <p>Original Paragraph</p>
+</div>
+
+-- Running test case: SetOuterHTMLRemovingElements
+-- Running test case: CheckOuterHTMLAfterRemovingElements
+PASS: The outerHTML should be what was just set.
+<div id="x"></div>
+
+-- Running test case: SetOuterHTMLAddingElements
+-- Running test case: CheckOuterHTMLAfterAddingElements
+PASS: The outerHTML should be what was just set.
+<div id="x" style="display:none; color:red">
+    <div class="container">
+        <h1>A Title</h1>
+        <p>A Paragraph</p>
+    </div>
+</div>
+
+-- Running test case: SetOuterHTMLModifyingElements
+-- Running test case: CheckOuterHTMLAfterModifyingElements
+PASS: The outerHTML should be what was just set.
+<div id="x" style="display:none; color:red">
+    <div class="container">
+        <h1>A Different Title</h1>
+        <p>A Paragraph</p>
+    </div>
+</div>
+

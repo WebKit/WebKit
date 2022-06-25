@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style>
+    .box {
+        display: inline-block;
+        height: 200px;
+        width: 200px;
+        margin: 10px;
+        background-color: gray;
+        transition: -webkit-clip-path 2s linear;
+    }
+    
+    #path1 {
+        -webkit-clip-path: path("M 60 40 l 20 0 l 0 60 l 20 0 l 0 -20 l -40 0 l 0 -20 l 80 0 l 0 60 l -60 0 l 0 -80 Z")
+    }
+    
+    body.final #path1 {
+        -webkit-clip-path: path("M 100 40 l 20 0 l 0 60 l 20 0 l 0 -20 l -60 0 l 0 -20 l 80 0 l 0 60 l -60 0 l 0 -80 Z");
+    }
+
+    /* Nonmatched segments, should not animate */
+    #path2 {
+        -webkit-clip-path: path("M 60 40 l 20 0 l 0 60 l 20 0 l 0 -20 l -40 0 l 0 -20 l 80 0 l 0 60 l -60 0 l 0 -80 Z")
+    }
+    
+    body.final #path2 {
+        -webkit-clip-path: path("M 100 40 l 20 0 l 0 60 l 0 -20 l -60 0 l 0 -20 l 80 0 l 0 60 l -60 0 l 0 -80 Z");
+    }
+
+    /* Nonmatched winding rule, should not animate */
+    #path3 {
+        -webkit-clip-path: path("M 60 40 l 20 0 l 0 60 l 20 0 l 0 -20 l -40 0 l 0 -20 l 80 0 l 0 60 l -60 0 l 0 -80 Z")
+    }
+    
+    body.final #path3 {
+        -webkit-clip-path: path(evenodd, "M 100 40 l 20 0 l 0 60 l 20 0 l 0 -20 l -60 0 l 0 -20 l 80 0 l 0 60 l -60 0 l 0 -80 Z");
+    }
+  </style>
+  <script src="resources/transition-test-helpers.js"></script>
+  <script type="text/javascript">
+
+    const expectedValues = [
+      // [time, element-id, property, expected-value, tolerance]
+      [1, 'path1', '-webkit-clip-path', 'path("M 80 40 l 20 0 l 0 60 l 20 0 l 0 -20 l -50 0 l 0 -20 l 80 0 l 0 60 l -60 0 l 0 -80 Z")', 2],
+      [1, 'path2', '-webkit-clip-path', 'path("M 100 40 l 20 0 l 0 60 l 0 -20 l -60 0 l 0 -20 l 80 0 l 0 60 l -60 0 l 0 -80 Z")', 2],
+      [1, 'path3', '-webkit-clip-path', 'path(evenodd, "M 100 40 l 20 0 l 0 60 l 20 0 l 0 -20 l -60 0 l 0 -20 l 80 0 l 0 60 l -60 0 l 0 -80 Z")', 2],
+    ];
+  
+    function setupTest()
+    {
+        document.body.classList.add('final');
+    }
+    
+    runTransitionTest(expectedValues, setupTest, usePauseAPI);
+  </script>
+</head>
+<body>
+  <div id="path1" class="box"></div>
+  <div id="path2" class="box"></div>
+  <div id="path3" class="box"></div>
+
+  <div id="result"></div>
+</body>
+</html>

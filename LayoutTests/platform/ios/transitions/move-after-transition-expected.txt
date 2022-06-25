@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x162
+  RenderBlock {HTML} at (0,0) size 800x162
+    RenderBody {BODY} at (8,16) size 784x138
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 406x19
+          text run at (0,0) width 406: "At the end of the test the green box should obscure the red box."
+      RenderBlock {DIV} at (0,138) size 784x0
+layer at (8,52) size 402x102
+  RenderBlock (relative positioned) {DIV} at (0,36) size 402x102 [border: (1px solid #000000)]
+layer at (159,53) size 100x100
+  RenderBlock (positioned) {DIV} at (151,1) size 100x100 [bgcolor=#FF0000]
+layer at (9,53) size 100x100
+  RenderBlock (positioned) {DIV} at (1,1) size 100x100 [bgcolor=#008000]

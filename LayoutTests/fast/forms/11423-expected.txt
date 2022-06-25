@@ -1,0 +1,4 @@
+This tests to see that a line break inserted in a textarea is serialized as a '\n'.
+
+
+Success

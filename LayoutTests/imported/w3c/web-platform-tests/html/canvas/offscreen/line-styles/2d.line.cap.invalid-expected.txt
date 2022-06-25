@@ -1,0 +1,7 @@
+2d.line.cap.invalid
+
+Setting lineCap to invalid values is ignored
+
+
+PASS Setting lineCap to invalid values is ignored
+

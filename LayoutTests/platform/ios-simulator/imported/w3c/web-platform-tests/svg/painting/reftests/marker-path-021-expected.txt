@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (30,142) size 706x440
+    RenderSVGContainer {g} at (0,0) size 0x0
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGResourceMarker {marker} [id="Start"] [markerUnits=strokeWidth] [ref at (0,5)] [angle=auto]
+        RenderSVGPath {path} at (2,0) size 16x15 [fill={[type=SOLID] [color=#008000]}] [data="M 0 0 L 10 5 L 0 10 Z"]
+      RenderSVGResourceMarker {marker} [id="Mid"] [markerUnits=strokeWidth] [ref at (0,5)] [angle=auto]
+        RenderSVGPath {path} at (2,0) size 16x15 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 0 L 10 5 L 0 10 Z"]
+      RenderSVGResourceMarker {marker} [id="End"] [markerUnits=strokeWidth] [ref at (0,5)] [angle=auto]
+        RenderSVGPath {path} at (2,0) size 16x15 [fill={[type=SOLID] [color=#0000FF]}] [data="M 0 0 L 10 5 L 0 10 Z"]
+    RenderSVGContainer {g} at (30,142) size 706x440
+      RenderSVGPath {path} at (130,156) size 140x147 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [start marker=Start] [data="M 120 100 L 80 140 L 120 180 L 160 140 Z"]
+      RenderSVGPath {path} at (318,164) size 164x151 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [middle marker=Mid] [data="M 240 100 L 200 140 L 240 180 L 280 140 Z"]
+      RenderSVGPath {path} at (530,142) size 140x161 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [end marker=End] [data="M 360 100 L 320 140 L 360 180 L 400 140 Z"]
+      RenderSVGPath {path} at (30,322) size 240x248 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [start marker=Start] [data="M 60 200 L 20 240 L 60 280 L 100 240 Z M 120 260 L 80 300 L 120 340 L 160 300 Z"]
+      RenderSVGPath {path} at (251,301) size 264x281 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [middle marker=Mid] [data="M 200 200 L 160 240 L 200 280 L 240 240 Z M 260 260 L 220 300 L 260 340 L 300 300 Z"]
+      RenderSVGPath {path} at (497,330) size 239x240 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [end marker=End] [data="M 340 200 L 300 240 L 340 280 L 380 240 Z M 400 260 L 360 300 L 400 340 L 440 300 Z"]

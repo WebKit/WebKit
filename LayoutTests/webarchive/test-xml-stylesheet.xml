@@ -1,0 +1,12 @@
+<?xml-stylesheet href="resources/test-xml-stylesheet.css" type="text/css"?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <script>
+    if (window.testRunner)
+        testRunner.dumpDOMAsWebArchive();
+  </script>
+  <style>
+    div { background: red; width: 100px; height: 100px; }
+  </style>
+  <div id="test">
+  </div>
+</html>

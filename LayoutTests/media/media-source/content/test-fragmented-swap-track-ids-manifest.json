@@ -1,0 +1,17 @@
+{
+    "url":"content/test-fragmented-swap-track-ids.mp4",
+    "type":"video/mp4; codecs=\"mp4a.40.2,avc1.4d281e\"",
+    "init":{"offset":0,"size":1378},
+    "media":[
+        {"offset":1378,"size":67458,"timestamp":0,"duration":1},
+        {"offset":68836,"size":72976,"timestamp":0,"duration":1},
+        {"offset":141812,"size":78807,"timestamp":0,"duration":1},
+        {"offset":220619,"size":77773,"timestamp":0,"duration":1},
+        {"offset":298392,"size":80856,"timestamp":0,"duration":1},
+        {"offset":379248,"size":78320,"timestamp":0,"duration":1},
+        {"offset":457568,"size":83104,"timestamp":0,"duration":1},
+        {"offset":540672,"size":78140,"timestamp":0,"duration":1},
+        {"offset":618812,"size":80652,"timestamp":0,"duration":1},
+        {"offset":699464,"size":75164,"timestamp":0,"duration":1}
+    ]
+}

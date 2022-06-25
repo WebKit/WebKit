@@ -1,0 +1,42 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (26,53) size 774x389
+      RenderSVGRect {rect} at (26,53) size 614x14 [fill={[type=SOLID] [color=#33CC33]}] [x=16.00] [y=32.00] [width=368.00] [height=8.00]
+      RenderSVGRect {rect} at (26,80) size 614x14 [fill={[type=SOLID] [color=#99FF99]}] [x=16.00] [y=48.00] [width=368.00] [height=8.00]
+      RenderSVGImage {image} at (26,53) size 54x54
+      RenderSVGImage {image} at (106,53) size 54x54
+      RenderSVGImage {image} at (186,53) size 54x54
+      RenderSVGImage {image} at (266,53) size 54x54
+      RenderSVGImage {image} at (346,53) size 54x54
+      RenderSVGImage {image} at (426,53) size 54x54
+      RenderSVGImage {image} at (506,53) size 54x54
+      RenderSVGImage {image} at (586,53) size 54x54
+      RenderSVGText {text} at (16,85) size 210x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 210x19
+          chunk 1 text run 1 at (16.00,100.00) startOffset 0 endOffset 28 width 209.71: "Background color, with alpha"
+      RenderSVGRect {rect} at (26,220) size 774x14 [fill={[type=SOLID] [color=#99FF99]}] [x=16.00] [y=132.00] [width=464.00] [height=8.00]
+      RenderSVGRect {rect} at (26,246) size 774x14 [fill={[type=SOLID] [color=#33CC33]}] [x=16.00] [y=148.00] [width=464.00] [height=8.00]
+      RenderSVGImage {image} at (26,220) size 54x54
+      RenderSVGImage {image} at (106,220) size 54x54
+      RenderSVGImage {image} at (186,220) size 54x54
+      RenderSVGImage {image} at (266,220) size 54x54
+      RenderSVGImage {image} at (346,220) size 54x54
+      RenderSVGImage {image} at (426,220) size 54x54
+      RenderSVGImage {image} at (506,220) size 54x54
+      RenderSVGImage {image} at (586,220) size 54x54
+      RenderSVGImage {image} at (666,220) size 54x54
+      RenderSVGImage {image} at (746,220) size 54x54
+      RenderSVGText {text} at (16,185) size 265x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 265x19
+          chunk 1 text run 1 at (16.00,200.00) startOffset 0 endOffset 35 width 264.91: "Background color, with transparency"
+      RenderSVGText {text} at (16,238) size 269x28 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 269x27
+          chunk 1 text run 1 at (16.00,260.00) startOffset 0 endOffset 22 width 268.20: "Handling bKGd and tRNs"
+    RenderSVGContainer {g} at (16,518) size 380x60
+      RenderSVGText {text} at (10,311) size 228x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 228x36
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 227.40: "$Revision: 1.2 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

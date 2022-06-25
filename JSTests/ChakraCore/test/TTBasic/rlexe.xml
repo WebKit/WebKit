@@ -1,0 +1,475 @@
+<?xml version="1.0" encoding="utf-8"?>
+<regress-exe>
+  <test>
+    <default>
+      <files>accessor.js</files>
+      <compile-flags>-TTRecord=~accessorTest -TTSnapInterval=0</compile-flags>
+      <baseline>accessorRecord.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>ttdSentinal.js</files>
+      <compile-flags>-TTDebug=~accessorTest -TTDStartEvent=2</compile-flags>
+      <baseline>accessorReplay.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>arguments.js</files>
+      <compile-flags>-TTRecord=~argumentsTest -TTSnapInterval=0</compile-flags>
+      <baseline>argumentsRecord.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>ttdSentinal.js</files>
+      <compile-flags>-TTDebug=~argumentsTest -TTDStartEvent=2</compile-flags>
+      <baseline>argumentsReplay.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>array.js</files>
+      <compile-flags>-TTRecord=~arrayTest -TTSnapInterval=0</compile-flags>
+      <baseline>arrayRecord.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>ttdSentinal.js</files>
+      <compile-flags>-TTDebug=~arrayTest -TTDStartEvent=2</compile-flags>
+      <baseline>arrayReplay.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>boolean.js</files>
+      <compile-flags>-TTRecord=~booleanTest -TTSnapInterval=0</compile-flags>
+      <baseline>booleanRecord.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>ttdSentinal.js</files>
+      <compile-flags>-TTDebug=~booleanTest -TTDStartEvent=2</compile-flags>
+      <baseline>booleanReplay.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>boundFunction.js</files>
+      <compile-flags>-TTRecord=~boundFunctionTest -TTSnapInterval=0</compile-flags>
+      <baseline>boundFunctionRecord.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>ttdSentinal.js</files>
+      <compile-flags>-TTDebug=~boundFunctionTest -TTDStartEvent=2</compile-flags>
+      <baseline>boundFunctionReplay.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>boxedObject.js</files>
+      <compile-flags>-TTRecord=~boxedObjectTest -TTSnapInterval=0</compile-flags>
+      <baseline>boxedObjectRecord.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>ttdSentinal.js</files>
+      <compile-flags>-TTDebug=~boxedObjectTest -TTDStartEvent=2</compile-flags>
+      <baseline>boxedObjectReplay.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>dateBasic.js</files>
+      <compile-flags>-TTRecord=~dateBasicTest -TTSnapInterval=0</compile-flags>
+      <baseline>dateBasicRecord.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>ttdSentinal.js</files>
+      <compile-flags>-TTDebug=~dateBasicTest</compile-flags>
+      <baseline>dateBasicReplay.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>ttdSentinal.js</files>
+      <compile-flags>-TTDebug=~dateBasicTest -TTDStartEvent=2</compile-flags>
+      <baseline>dateBasicReplay.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>es5Array.js</files>
+      <compile-flags>-TTRecord=~es5ArrayTest -TTSnapInterval=0</compile-flags>
+      <baseline>es5ArrayRecord.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>ttdSentinal.js</files>
+      <compile-flags>-TTDebug=~es5ArrayTest -TTDStartEvent=2</compile-flags>
+      <baseline>es5ArrayReplay.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>es5Arguments.js</files>
+      <compile-flags>-TTRecord=~es5ArgumentsTest -TTSnapInterval=0</compile-flags>
+      <baseline>es5ArgumentsRecord.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>ttdSentinal.js</files>
+      <compile-flags>-TTDebug=~es5ArgumentsTest -TTDStartEvent=2</compile-flags>
+      <baseline>es5ArgumentsReplay.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>eval.js</files>
+      <compile-flags>-TTRecord=~evalTest -TTSnapInterval=0</compile-flags>
+      <baseline>evalRecord.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>ttdSentinal.js</files>
+      <compile-flags>-TTDebug=~evalTest -TTDStartEvent=2</compile-flags>
+      <baseline>evalReplay.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>forEach.js</files>
+      <compile-flags>-TTRecord=~forEachTest -TTSnapInterval=0</compile-flags>
+      <baseline>forEachRecord.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>ttdSentinal.js</files>
+      <compile-flags>-TTDebug=~forEachTest -TTDStartEvent=2</compile-flags>
+      <baseline>forEachReplay.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>function.js</files>
+      <compile-flags>-TTRecord=~functionTest -TTSnapInterval=0</compile-flags>
+      <baseline>functionRecord.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>ttdSentinal.js</files>
+      <compile-flags>-TTDebug=~functionTest -TTDStartEvent=2</compile-flags>
+      <baseline>functionReplay.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>loadReEntrant.js</files>
+      <compile-flags>-TTRecord=~loadReEntrantTest -TTSnapInterval=0</compile-flags>
+      <baseline>loadReEntrantRecord.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>ttdSentinal.js</files>
+      <compile-flags>-TTDebug=~loadReEntrantTest</compile-flags>
+      <baseline>loadReEntrantReplay.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>ttdSentinal.js</files>
+      <compile-flags>-TTDebug=~loadReEntrantTest -TTDStartEvent=2</compile-flags>
+      <baseline>loadReEntrantReplay.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>map.js</files>
+      <compile-flags>-TTRecord=~mapTest -TTSnapInterval=0</compile-flags>
+      <baseline>mapRecord.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>ttdSentinal.js</files>
+      <compile-flags>-TTDebug=~mapTest -TTDStartEvent=2</compile-flags>
+      <baseline>mapReplay.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>nativeArray.js</files>
+      <compile-flags>-TTRecord=~nativeArrayTest -TTSnapInterval=0</compile-flags>
+      <baseline>nativeArrayRecord.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>ttdSentinal.js</files>
+      <compile-flags>-TTDebug=~nativeArrayTest -TTDStartEvent=2</compile-flags>
+      <baseline>nativeArrayReplay.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>newFunction.js</files>
+      <compile-flags>-TTRecord=~newFunctionTest -TTSnapInterval=0</compile-flags>
+      <baseline>newFunctionRecord.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>ttdSentinal.js</files>
+      <compile-flags>-TTDebug=~newFunctionTest -TTDStartEvent=2</compile-flags>
+      <baseline>newFunctionReplay.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>number.js</files>
+      <compile-flags>-TTRecord=~numberTest -TTSnapInterval=0</compile-flags>
+      <baseline>numberRecord.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>ttdSentinal.js</files>
+      <compile-flags>-TTDebug=~numberTest -TTDStartEvent=2</compile-flags>
+      <baseline>numberReplay.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>object.js</files>
+      <compile-flags>-TTRecord=~objectTest -TTSnapInterval=0</compile-flags>
+      <baseline>objectRecord.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>ttdSentinal.js</files>
+      <compile-flags>-TTDebug=~objectTest -TTDStartEvent=2</compile-flags>
+      <baseline>objectReplay.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>promise.js</files>
+      <compile-flags>-TTRecord=~promiseTest -TTSnapInterval=0</compile-flags>
+      <baseline>promiseRecord.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>ttdSentinal.js</files>
+      <compile-flags>-TTDebug=~promiseTest</compile-flags>
+      <baseline>promiseReplay.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>ttdSentinal.js</files>
+      <compile-flags>-TTDebug=~promiseTest -TTDStartEvent=2</compile-flags>
+      <baseline>promiseReplay.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>ttdSentinal.js</files>
+      <compile-flags>-TTDebug=~promiseTest -TTDStartEvent=4</compile-flags>
+      <baseline>promiseReplay.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>ttdSentinal.js</files>
+      <compile-flags>-TTDebug=~promiseTest -TTDStartEvent=6</compile-flags>
+      <baseline>promiseReplay.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>ttdSentinal.js</files>
+      <compile-flags>-TTDebug=~promiseTest -TTDStartEvent=7</compile-flags>
+      <baseline>promiseReplay.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>proxy.js</files>
+      <compile-flags>-TTRecord=~proxyTest -TTSnapInterval=0</compile-flags>
+      <baseline>proxyRecord.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>ttdSentinal.js</files>
+      <compile-flags>-TTDebug=~proxyTest -TTDStartEvent=2</compile-flags>
+      <baseline>proxyReplay.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>regex.js</files>
+      <compile-flags>-TTRecord=~regexTest -TTSnapInterval=0</compile-flags>
+      <baseline>regexRecord.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>ttdSentinal.js</files>
+      <compile-flags>-TTDebug=~regexTest -TTDStartEvent=2</compile-flags>
+      <baseline>regexReplay.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>scopeFunction.js</files>
+      <compile-flags>-TTRecord=~scopeFunctionTest -TTSnapInterval=0</compile-flags>
+      <baseline>scopeFunctionRecord.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>ttdSentinal.js</files>
+      <compile-flags>-TTDebug=~scopeFunctionTest -TTDStartEvent=2</compile-flags>
+      <baseline>scopeFunctionReplay.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>set.js</files>
+      <compile-flags>-TTRecord=~setTest -TTSnapInterval=0</compile-flags>
+      <baseline>setRecord.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>ttdSentinal.js</files>
+      <compile-flags>-TTDebug=~setTest -TTDStartEvent=2</compile-flags>
+      <baseline>setReplay.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>string.js</files>
+      <compile-flags>-TTRecord=~stringTest -TTSnapInterval=0</compile-flags>
+      <baseline>stringRecord.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>ttdSentinal.js</files>
+      <compile-flags>-TTDebug=~stringTest -TTDStartEvent=2</compile-flags>
+      <baseline>stringReplay.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>symbol.js</files>
+      <compile-flags>-TTRecord=~symbolTest -TTSnapInterval=0</compile-flags>
+      <baseline>symbolRecord.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>ttdSentinal.js</files>
+      <compile-flags>-TTDebug=~symbolTest</compile-flags>
+      <baseline>symbolReplay.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>ttdSentinal.js</files>
+      <compile-flags>-TTDebug=~symbolTest -TTDStartEvent=2</compile-flags>
+      <baseline>symbolReplay.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>typedArray.js</files>
+      <compile-flags>-TTRecord=~typedArrayTest -TTSnapInterval=0</compile-flags>
+      <baseline>typedArrayRecord.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+  <test>
+    <default>
+      <files>ttdSentinal.js</files>
+      <compile-flags>-TTDebug=~typedArrayTest -TTDStartEvent=2</compile-flags>
+      <baseline>typedArrayReplay.baseline</baseline>
+      <tags>exclude_dynapogo,exclude_jshost,exclude_snap,exclude_serialized</tags>
+    </default>
+  </test>
+</regress-exe>

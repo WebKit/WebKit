@@ -1,0 +1,12 @@
+PROMPT: PASS: This prompt dialog should show, default text:
+CONFIRM: PASS: This confirm dialog should show
+ALERT: PASS: This alert dialog should show
+Tests that JS prompts are allowed in same-origin but different-domain iframes
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

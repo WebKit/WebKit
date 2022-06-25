@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<title>Performance test changing "contain: layout size" box inside a document with complicated and expensive layout</title>
+<style>
+#wrapper {
+    display: flex;
+    flex-direction: column;
+}
+.row {
+    display: flex;
+}
+#target {   
+    contain: layout size;
+}
+
+</style>
+<script src="../resources/runner.js"></script>
+<pre id="log"></pre>
+<div id="wrapper"></div>
+<script>
+    let wrapper = document.getElementById("wrapper");
+    let target = undefined;
+
+    const NUM_ROWS = 10;
+    const DOM_DEPTH = 100;
+    function createCells(depth) {
+        let content = document.createElement("div");
+        if (!target) {
+            target = document.createElement("div");
+            target.id = "target";
+            content.appendChild(target);
+        }
+        content.appendChild(document.createElement("h1"));
+        content.appendChild(document.createElement("paragraph"));
+
+        if (depth > 0)
+            content.appendChild(createCells(depth - 1));
+
+        return content;
+    }
+
+    function generateContent() {
+        for (let i = 0; i < NUM_ROWS; i++) {
+            let row = document.createElement("div");
+            row.classList.add("row");
+            row.appendChild(createCells(DOM_DEPTH));
+            wrapper.appendChild(row);
+        }
+    }
+
+    function addTextToTarget() {
+        for (let i = 0; i < 5; i++) {
+            let textNode = document.createElement("div");
+            textNode.innerHTML = "some text";
+            target.appendChild(textNode);
+        }
+    }
+
+    function removeTextFromTarget() {
+        while (target.firstElementChild)
+            target.removeChild(target.firstElementChild);
+    }
+
+    function runTest() {
+        addTextToTarget();
+        document.body.getBoundingClientRect();
+        removeTextFromTarget();
+        document.body.getBoundingClientRect();
+    }
+
+    function setupTest() {
+        generateContent();
+        document.body.getBoundingClientRect();
+        PerfTestRunner.measureRunsPerSecond({
+            description: 'Measures performance of changing contain: layout size box inside a document with complicated and expensive layout.',
+            run: function () {
+                runTest();
+            },
+            done: function() {
+                wrapper.innerHTML = "";
+            }
+        });
+    }
+    window.requestAnimationFrame(setupTest);
+
+</script>

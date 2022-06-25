@@ -1,0 +1,14 @@
+
+PASS @counter-style 'speak-as: auto' is valid
+PASS @counter-style 'speak-as: bullets' is valid
+PASS @counter-style 'speak-as: numbers' is valid
+PASS @counter-style 'speak-as: words' is valid
+PASS @counter-style 'speak-as: spell-out' is valid
+PASS @counter-style 'speak-as: bar' is valid
+PASS @counter-style 'speak-as: spellout' is valid
+PASS @counter-style 'speak-as: bullets numbers' is invalid
+PASS @counter-style 'speak-as: none' is invalid
+PASS @counter-style 'speak-as: initial' is invalid
+PASS @counter-style 'speak-as: inherit' is invalid
+PASS @counter-style 'speak-as: unset' is invalid
+

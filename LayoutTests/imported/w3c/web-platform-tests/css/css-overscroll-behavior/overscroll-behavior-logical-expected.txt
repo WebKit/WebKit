@@ -1,0 +1,5 @@
+
+PASS Logical overscroll-behavior maps correctly when element has horizontal-tb writing mode
+PASS Logical overscroll-behavior maps correctly when element has vertical-rl writing mode
+PASS Logical overscroll-behavior maps correctly when element has horizontal-tb writing mode and is not affected by rtl direction
+

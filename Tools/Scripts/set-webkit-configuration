@@ -1,0 +1,204 @@
+#!/usr/bin/env perl
+
+# Copyright (C) 2005-2021 Apple Inc.  All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer. 
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution. 
+# 3.  Neither the name of Apple Inc. ("Apple") nor the names of
+#     its contributors may be used to endorse or promote products derived
+#     from this software without specific prior written permission. 
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+use strict;
+use warnings;
+use File::Path qw(make_path);
+use File::Spec;
+use FindBin;
+use lib $FindBin::Bin;
+use webkitdirs;
+
+my $programName = basename($0);
+my $usage = <<EOF;
+Usage: $programName [options]
+  --32-bit                           Set the default architecture to 32-bit
+  --64-bit                           Set the default architecture to 64-bit
+  --[no-]asan                        Enable or disable clang address sanitizer
+  --[no-]tsan                        Enable or disable clang thread sanitizer
+  --[no-]ubsan                       Enable or disable clang undefined behavior sanitizer
+  --[no-]coverage                    Enable or disable LLVM Source-based Code Coverage
+  --force-optimization-level=<level> Optimization level: O3, O2, O1, O0, Os, Ofast, Og, or none
+  --lto-mode=<mode>                  Set LTO mode: full, thin, or none
+  --debug                            Set the default configuration to debug
+  --release                          Set the default configuration to release
+  --reset                            Reset configurations
+  -h, --help                         Show this message and exit
+EOF
+
+sub printCurrentSettings();
+sub printUsage();
+sub updateOrDeleteConfigurationFile($$$);
+
+my $configuration = passedConfiguration();
+my $architecture = passedArchitecture();
+my $enableASAN = checkForArgumentAndRemoveFromARGV("--asan");
+my $disableASAN = checkForArgumentAndRemoveFromARGV("--no-asan");
+my $enableTSAN = checkForArgumentAndRemoveFromARGV("--tsan");
+my $disableTSAN = checkForArgumentAndRemoveFromARGV("--no-tsan");
+my $enableUBSAN = checkForArgumentAndRemoveFromARGV("--ubsan");
+my $disableUBSAN = checkForArgumentAndRemoveFromARGV("--no-ubsan");
+my $enableCoverage = checkForArgumentAndRemoveFromARGV("--coverage");
+my $disableCoverage = checkForArgumentAndRemoveFromARGV("--no-coverage");
+my $ltoMode;
+if (!checkForArgumentAndRemoveFromARGVGettingValue("--lto-mode", \$ltoMode)) {
+    $ltoMode="";
+}
+my $forceOptimizationLevel;
+if (!checkForArgumentAndRemoveFromARGVGettingValue("--force-optimization-level", \$forceOptimizationLevel)
+    && !checkForArgumentAndRemoveFromARGVGettingValue("--force-opt", \$forceOptimizationLevel)) {
+    $forceOptimizationLevel="";
+}
+
+if (checkForArgumentAndRemoveFromARGV("-h") || checkForArgumentAndRemoveFromARGV("--help")) {
+    printUsage();
+    exit 1;
+}
+
+if (!$architecture) {
+    # Handle --64-bit explicitly here, as we don't want our other scripts to accept it
+    for my $i (0 .. $#ARGV) {
+        my $opt = $ARGV[$i];
+        if ($opt =~ /^--64-bit$/i) {
+            splice(@ARGV, $i, 1);
+            $architecture = 'x86_64';
+        }
+    }
+}
+
+my $baseProductDir = baseProductDir();
+if (isAppleCocoaWebKit() && !isCMakeBuild()) {
+    markBaseProductDirectoryAsCreatedByXcodeBuildSystem();
+} else {
+    make_path($baseProductDir);
+}
+
+if (checkForArgumentAndRemoveFromARGV("--reset")) {
+    for my $fileName (qw(Architecture ASan Configuration Coverage ForceOptimizationLevel LTO TSan UBSan)) {
+        unlink File::Spec->catfile($baseProductDir, $fileName);
+    }
+    printCurrentSettings();
+    exit 0;
+}
+
+if ($enableASAN && $enableTSAN) {
+    print STDERR "ERROR: Address Sanitizer and Thread Sanitzer can't be enabled together.\n";
+    printUsage();
+    exit 1;
+}
+
+if ($ltoMode && $ltoMode ne "full" && $ltoMode ne "thin" && $ltoMode ne "none") {
+    printUsage();
+    exit 1;
+}
+
+if ($forceOptimizationLevel
+    && $forceOptimizationLevel ne "none"
+    && $forceOptimizationLevel ne "O0"
+    && $forceOptimizationLevel ne "O1"
+    && $forceOptimizationLevel ne "O2"
+    && $forceOptimizationLevel ne "O3"
+    && $forceOptimizationLevel ne "Os"
+    && $forceOptimizationLevel ne "Ofast"
+    && $forceOptimizationLevel ne "Og") {
+    printUsage();
+    exit 1;
+}
+
+if ($configuration) {
+    open CONFIGURATION, ">", "$baseProductDir/Configuration" or die;
+    print CONFIGURATION $configuration;
+    close CONFIGURATION;
+}
+
+if ($architecture) {
+    if ($architecture ne "x86_64") {
+        open ARCHITECTURE, ">", "$baseProductDir/Architecture" or die;
+        print ARCHITECTURE $architecture;
+        close ARCHITECTURE;
+    } else {
+        unlink "$baseProductDir/Architecture";
+    }
+}
+
+updateOrDeleteConfigurationFile("ASan", $enableASAN, $disableASAN);
+updateOrDeleteConfigurationFile("Coverage", $enableCoverage, $disableCoverage);
+updateOrDeleteConfigurationFile("TSan", $enableTSAN, $disableTSAN);
+updateOrDeleteConfigurationFile("UBSan", $enableUBSAN, $disableUBSAN);
+
+if ($forceOptimizationLevel && $forceOptimizationLevel eq "none") {
+    unlink "$baseProductDir/ForceOptimizationLevel";
+} elsif ($forceOptimizationLevel) {
+    open ForceOptimizationLevel, ">", "$baseProductDir/ForceOptimizationLevel" or die;
+    print ForceOptimizationLevel substr($forceOptimizationLevel, 1) . "\n";
+    close ForceOptimizationLevel;
+}
+
+if ($ltoMode) {
+    open LTO, ">", "$baseProductDir/LTO" or die;
+    print LTO "$ltoMode";
+    close LTO;
+}
+
+printCurrentSettings();
+
+exit 0;
+
+sub printCurrentSettings()
+{
+    my $result = "Current settings:";
+    $result .= " Configuration:" . configuration();
+    $result .= " Arch:" . architecture() if architecture();
+    $result .= " ASan" if asanIsEnabled();
+    $result .= " TSan" if tsanIsEnabled();
+    $result .= " UBSan" if ubsanIsEnabled();
+    $result .= " Coverage" if coverageIsEnabled();
+    $result .= " LTOMode:" . ltoMode() if ltoMode();
+    $result .= " ForceOptimizationLevel:O" . forceOptimizationLevel() if forceOptimizationLevel();
+
+    print STDERR $result, "\n";
+}
+
+sub printUsage()
+{
+    print STDERR $usage, "\n";
+    printCurrentSettings();
+}
+
+sub updateOrDeleteConfigurationFile($$$)
+{
+    my ($fileName, $shouldEnable, $shouldDisable) = @_;
+    my $filePath = File::Spec->catfile($baseProductDir, $fileName);
+    if ($shouldEnable) {
+       open FILE, ">", $filePath or die;
+       print FILE "YES";
+       close FILE;
+    } elsif ($shouldDisable) {
+        unlink $filePath;
+    }
+}

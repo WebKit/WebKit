@@ -1,0 +1,4 @@
+
+PASS Property will-change has initial value auto
+PASS Property will-change does not inherit
+

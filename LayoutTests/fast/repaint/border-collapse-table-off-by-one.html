@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+table {
+    border-collapse: collapse;
+}
+a:link,
+a:visited,
+a:link:hover,
+a:visited:hover {
+    text-decoration: none;
+}
+</style>
+</head>
+<body>
+This next test makes sure that grown repaint rects interact nicely with table border-collapse:collapse.
+<table border="1">
+<tbody>
+<tr>
+<td>C</td>
+<td><a id="l" href="http://www.apple.com/">1</a></td>
+</tr>
+</tbody>
+</table>
+<script>
+function applyUnderline() {
+    document.getElementById('l').style.textDecoration = "underline";
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+window.setTimeout(applyUnderline, 17);
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+Put mouse here and flick downwards
+Scrollable Region
+
+Scrolled content
+Tests that a scrollable div doesn't consume wheel events when scroll is latched to main frame.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Scrollable div did not receive wheel events.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,11 @@
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+
+
+--------
+Frame: '<!--frame2-->'
+--------
+PASS: This should show up as all frame ancestors are same origin with this page.

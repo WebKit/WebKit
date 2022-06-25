@@ -1,0 +1,7 @@
+Test a few floating point operations on Worker threads. Regression test for https://webkit.org/b/132755.
+
+Start test
+Test 1: PASS: 1074
+Test 2: PASS: 807930.891503319
+DONE
+

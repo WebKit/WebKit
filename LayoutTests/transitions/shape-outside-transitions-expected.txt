@@ -1,0 +1,37 @@
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+PASS - "-webkit-shape-outside" property for "circle" element at 0.5s saw something close to: circle(60px at 50px 40px)
+PASS - "-webkit-shape-outside" property for "ellipse" element at 0.5s saw something close to: ellipse(15px 30px at 50px 40px)
+PASS - "-webkit-shape-outside" property for "inset" element at 0.5s saw something close to: inset(15px 22px)
+PASS - "-webkit-shape-outside" property for "polygon" element at 0.5s saw something close to: polygon(15px 0px, 75px 0, 60px 45px, 0 45px)
+

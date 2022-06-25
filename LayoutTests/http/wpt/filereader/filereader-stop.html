@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Events in stopped file readers</title>
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+  </head>
+  <body>
+    <script>
+function with_iframe(url) {
+    return new Promise(function(resolve) {
+        var frame = document.createElement('iframe');
+        frame.className = 'test-iframe';
+        frame.src = url;
+        frame.onload = function() { resolve(frame); };
+        document.body.appendChild(frame);
+    });
+}
+
+promise_test(async t => {
+    const frame = await with_iframe("/");
+    const reader = new frame.contentWindow.FileReader();
+
+    reader.readAsText(new Blob(["123"], {type: "text/plain-specific"}));
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    frame.remove();
+
+    reader.onload = () => assert_unreached("load");
+    reader.onerror = () => assert_unreached("error");
+    try {
+        reader.readAsText(new Blob(["123"], {type: "text/plain-specific"}));
+    } catch (e) {
+    }
+    await new Promise(resolve => setTimeout(resolve, 100));
+}, "Make sure events are not fired for stopped readers");
+    </script>
+  </body>
+</html>

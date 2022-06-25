@@ -1,0 +1,11 @@
+Name: RenderDoc API Header
+URL: https://raw.githubusercontent.com/baldurk/renderdoc/v1.1/renderdoc/api/app/renderdoc_app.h
+License: MIT
+License File: NOT_SHIPPED
+Security Critical: no
+
+Description:
+Header file for RenderDoc's in-app capture API.
+
+Local modifications:
+None

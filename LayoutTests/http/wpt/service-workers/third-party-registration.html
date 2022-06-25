@@ -1,0 +1,54 @@
+<html>
+<head>
+<title>Service Worker third party registration</title>
+<script src="/service-workers/service-worker/resources/test-helpers.sub.js"></script>
+</head>
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+function logAndFinishTest(msg)
+{
+    document.body.innerHTML = msg;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+var shouldTest = !!window.location.hash;
+async function doTest()
+{
+    const iframe = await with_iframe("http://127.0.0.1:8801/WebKit/service-workers/resources/third-party-registration-frame.html");
+
+    if (shouldTest) {
+        iframe.contentWindow.postMessage("ancestorOrigins", '*');
+        const ancestorOriginsData = await new Promise(resolve => window.onmessage = (e) => resolve(e.data));
+        if (ancestorOriginsData.length !== 1) {
+            logAndFinishTest("FAIL ancestorOriginsData length is not 1");
+            return;
+        }
+        if (ancestorOriginsData[0] !== "http://localhost:8801") {
+            logAndFinishTest("FAIL ancestorOriginsData length is not 1");
+            return;
+        }
+    }
+
+    iframe.contentWindow.postMessage(shouldTest ? "read" : "write", '*');
+    const result = await new Promise(resolve => window.onmessage = (e) => resolve(e.data));
+
+    if (shouldTest) {
+        var expected = '{\"cache\":[],\"db\":null}';
+        logAndFinishTest(result === expected ? "PASS" : ("FAIL: got " + result));
+        return;
+    }
+
+    iframe.remove();
+    window.location = "http://localhost:8801/WebKit/service-workers/third-party-registration.html#second";
+}
+doTest();
+
+</script>
+</body>
+</html>

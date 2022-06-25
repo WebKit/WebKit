@@ -1,0 +1,2 @@
+png-with-text-content-type.cgi has MIME type image/png
+

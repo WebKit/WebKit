@@ -1,0 +1,12 @@
+<style>
+div {
+  width: 0px;
+}
+</style>
+<!-- While the whitespace character normally indicates soft wrap opportunities, pre/nowrap white-space property values disable them -->
+<div><span style="white-space: pre">should not </span>wrap</div>
+<div><span style="white-space: nowrap">should not </span>wrap</div>
+<div><span style="white-space: pre">should not </span><span style="white-space: normal">wrap</span></div>
+<div><span style="white-space: nowrap">should not </span><span style="white-space: normal">wrap</span></div>
+<div>should<span style="white-space: pre"> not </span>wrap</div>
+<div>should<span style="white-space: nowrap"> not </span>wrap</div>

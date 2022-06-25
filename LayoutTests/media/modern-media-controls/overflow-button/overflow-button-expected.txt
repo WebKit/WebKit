@@ -1,0 +1,14 @@
+Testing the OverflowButton class.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS overflowButton.element.localName is "button"
+PASS overflowButton.element.classList.contains("overflow") is true
+PASS overflowButton.iconName is Icons.Overflow
+PASS overflowButton.image.element.style.webkitMaskImage.includes("macOS/Overflow.svg") became true
+PASS iOSOverflowButton.image.element.style.webkitMaskImage.includes("iOS/Overflow.svg") became true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

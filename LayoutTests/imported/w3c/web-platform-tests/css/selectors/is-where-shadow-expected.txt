@@ -1,0 +1,11 @@
+::slotted
+
+::slotted
+
+::slotted
+
+
+PASS :is() inside :host()
+FAIL :is() inside :host-context() assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 255)"
+PASS :is() inside ::slotted()
+

@@ -1,0 +1,16 @@
+
+RUN(video.src = findMediaFile("video", "content/test"))
+EVENT(canplay)
+EXPECTED (video.paused == 'true') OK
+EXPECTED (document.querySelector("video:playing") == 'null') OK
+EXPECTED (document.querySelector("video:not(:playing)") == '[object HTMLVideoElement]') OK
+EXPECTED (document.querySelector("video:paused") == '[object HTMLVideoElement]') OK
+EXPECTED (document.querySelector("video:not(:paused)") == 'null') OK
+RUN(video.play())
+EVENT(playing)
+EXPECTED (document.querySelector("video:playing") == '[object HTMLVideoElement]') OK
+EXPECTED (document.querySelector("video:not(:playing)") == 'null') OK
+EXPECTED (document.querySelector("video:paused") == 'null') OK
+EXPECTED (document.querySelector("video:not(:paused)") == '[object HTMLVideoElement]') OK
+END OF TEST
+

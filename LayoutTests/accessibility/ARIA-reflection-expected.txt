@@ -1,0 +1,341 @@
+This tests ARIA IDL Attribute Reflection.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Test role < - > role
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("role", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaActiveDescendantElement < - > aria-activedescendant
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-activedescendant", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaAtomic < - > aria-atomic
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-atomic", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaAutoComplete < - > aria-autocomplete
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-autocomplete", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaBusy < - > aria-busy
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-busy", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaChecked < - > aria-checked
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-checked", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaColCount < - > aria-colcount
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-colcount", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaColIndex < - > aria-colindex
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-colindex", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaColSpan < - > aria-colspan
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-colspan", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaControlsElements < - > aria-controls
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-controls", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaCurrent < - > aria-current
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-current", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaDescribedByElements < - > aria-describedby
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-describedby", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaDetailsElements < - > aria-details
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-details", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaDisabled < - > aria-disabled
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-disabled", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaErrorMessageElement < - > aria-errormessage
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-errormessage", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaExpanded < - > aria-expanded
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-expanded", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaFlowToElements < - > aria-flowto
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-flowto", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaHasPopup < - > aria-haspopup
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-haspopup", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaHidden < - > aria-hidden
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-hidden", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaInvalid < - > aria-invalid
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-invalid", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaKeyShortcuts < - > aria-keyshortcuts
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-keyshortcuts", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaLabel < - > aria-label
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-label", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaLabelledByElements < - > aria-labelledby
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-labelledby", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaLevel < - > aria-level
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-level", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaLive < - > aria-live
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-live", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaModal < - > aria-modal
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-modal", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaMultiLine < - > aria-multiline
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-multiline", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaMultiSelectable < - > aria-multiselectable
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-multiselectable", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaOrientation < - > aria-orientation
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-orientation", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaOwnsElements < - > aria-owns
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-owns", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaPlaceholder < - > aria-placeholder
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-placeholder", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaPosInSet < - > aria-posinset
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-posinset", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaPressed < - > aria-pressed
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-pressed", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaReadOnly < - > aria-readonly
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-readonly", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaRelevant < - > aria-relevant
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-relevant", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaRequired < - > aria-required
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-required", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaRoleDescription < - > aria-roledescription
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-roledescription", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaRowCount < - > aria-rowcount
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-rowcount", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaRowIndex < - > aria-rowindex
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-rowindex", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaRowSpan < - > aria-rowspan
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-rowspan", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaSelected < - > aria-selected
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-selected", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaSetSize < - > aria-setsize
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-setsize", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaSort < - > aria-sort
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-sort", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaValueMax < - > aria-valuemax
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-valuemax", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaValueMin < - > aria-valuemin
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-valuemin", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaValueNow < - > aria-valuenow
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-valuenow", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+Test ariaValueText < - > aria-valuetext
+PASS element[currentProperty] is null
+PASS element.getAttribute(currentAttribute) is null
+PASS element.getAttribute(currentAttribute) is dataAttribute
+element.setAttribute("aria-valuetext", otherData);
+PASS element[currentProperty] is otherDataProperty
+
+
+PASS count is 46
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,2 @@
+This tests unregistering a Blob object after the network process to which it was registered crashed.
+WebKit should not hit a debug assertion in the network process.

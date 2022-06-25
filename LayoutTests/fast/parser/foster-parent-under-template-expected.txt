@@ -1,0 +1,23 @@
+This tests running the foster parent algorithm under a template element. WebKit should not hit any debug assertions.
+| "\n"
+| <template>
+|   content
+|     "\n        hello\n    "
+|   <table>
+|     "\n    "
+|     <script>
+|       "\n        document.querySelector('template').appendChild(document.querySelector('table'));\n    "
+|     <caption>
+|       "hello"
+|     "\n    "
+|     <tbody>
+|       <tr>
+|         "\n        "
+|         <th>
+|           <shadow>
+|             "hello"
+|         "\n    "
+|       "\n    "
+|       <tr>
+|       "\n"
+| "\n\n\n\n"

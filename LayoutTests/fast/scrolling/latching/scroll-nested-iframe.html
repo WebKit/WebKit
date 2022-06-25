@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+    iframe {
+        width: 800px;
+        height: 1000px;
+    }
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script>
+        jsTestIsAsync = true;
+
+        var iframeTarget;
+        var pageScrollPositionBefore;
+        var iframeScrollPositionBefore;
+
+        function checkForScroll()
+        {
+            // The iframe should not have scrolled at all.
+            var pageScrollPositionAfter = document.scrollingElement.scrollTop;
+            var iframeScrollPositionAfter = window.frames['scrollable_iframe'].document.scrollingElement.scrollTop;
+
+            if (iframeScrollPositionBefore != iframeScrollPositionAfter)
+                testPassed("iframe did scroll.");
+            else
+                testFailed("iframe did NOT scroll.");
+
+            finishJSTest();
+        }
+
+        function scrollTest()
+        {
+            pageScrollPositionBefore = document.scrollingElement.scrollTop;
+
+            iframeTarget = document.getElementById('scrollable_iframe');
+
+            var iframeScrollingElement = window.frames['scrollable_iframe'].document.scrollingElement;
+            iframeScrollingElement.scrollTop = iframeScrollingElement.scrollHeight - iframeTarget.clientHeight - 100;
+
+            iframeScrollPositionBefore = iframeScrollingElement.scrollTop;
+
+            // Scroll the #source until we reach the #target.
+            var startPosX = iframeTarget.offsetLeft + 20;
+            debug("IFrame display height = " + iframeTarget.clientHeight);
+            var startPosY = iframeTarget.offsetTop + 60; // One wheel turn before end.
+            eventSender.mouseMoveTo(startPosX, startPosY); // Make sure we are just outside the iFrame
+            debug("Mouse moved to (" + startPosX + ", " + startPosY + ")");
+
+            eventSender.monitorWheelEvents();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none', true);
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none', true);
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none', true);
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none', true);
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'begin', true);
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue', true);
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end', true);
+            eventSender.callAfterScrollingCompletes(checkForScroll);
+        }
+
+        function setupTopLevel()
+        {
+            description("Tests that iframe does scroll when inner iframe is NOT scrollable.");
+            if (window.eventSender) {
+                setTimeout(scrollTest, 0);
+                return;
+            }
+            var messageLocation = document.getElementById('parent');
+            var message = document.createElement('div');
+            message.innerHTML = "<p>To manually run this test, place the mouse pointer "
+                + "inside the iframe, then use the mouse wheel or a two-finger swipe to scroll the iframe to the bottom (and beyond).</p>"
+                + "<p>The test passes if you scroll far enough to see the row of END labels but the main page does not scroll.</p>";
+            messageLocation.appendChild(message);
+            finishJSTest();
+        }        
+    </script>
+</head>
+<body>
+<div id="parent" style="height: 2000px">
+    <div id="source" style="height: 20px">
+        Put mouse inside the iframe (below) and flick downwards
+    </div>
+    <iframe id="scrollable_iframe" name="scrollable_iframe" src="resources/scroll_nested_iframe_test_outer.html" onload="setupTopLevel();">
+    </iframe>
+</div>
+<div id="console"></div>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

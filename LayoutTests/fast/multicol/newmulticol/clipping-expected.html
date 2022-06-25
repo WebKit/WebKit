@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Column clipping</title>
+    <style>
+      body {
+        width: 450px;
+        color: black;
+        background: white;
+      }
+    
+    .mc { border:10px solid green;height:100px; box-sizing:border-box }
+    .rect { float:left; border-right:10px solid green; width:115px; height:80px; box-sizing:border-box; }
+    </style>
+  </head>
+  <body>
+    <p>There should be a rectangle with a solid 10px thick green border below, and no red.</p>
+    <div class="mc">
+         <div class="rect"></div>
+        
+        <div class="rect"></div>
+        
+    </div>
+  </body>
+</html>

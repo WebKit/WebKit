@@ -1,0 +1,31 @@
+<style>
+body {
+  margin: 0px;
+  font-family: Ahem;
+}
+
+div {
+  line-height: 40px; 
+}
+
+img {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: green;
+}
+</style>
+<!-- out-of-flow boxes with static positioning in IFC -->
+<div><img>text</div>
+<div><img><img>text</div>
+<div>text<img></div>
+<div><img>text<img></div>
+<div><span><img></span>text<img></div>
+<div><span><span><img></span></span>text<img></div>
+<div><span>text<img></span>text<img></div>
+<div><span>text</span><img>text<img></div>
+<div><br><img></div>
+<div><br>text<img></div>
+<div><br><br><img></div>
+<div>text<br><img></div>
+<div>text<br><img><img></div>

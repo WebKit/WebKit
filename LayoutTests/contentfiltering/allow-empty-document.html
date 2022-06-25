@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<script>
+    if (window.internals) {
+        var settings = window.internals.mockContentFilterSettings;
+        settings.enabled = true;
+        settings.decisionPoint = "afterFinishedAddingData";
+        settings.decision = "allow";
+    }
+</script>
+<iframe src="resources/empty.html"></iframe>

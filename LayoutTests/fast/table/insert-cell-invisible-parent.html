@@ -1,0 +1,16 @@
+<style>
+    td { visibility: initial; }
+    #row { visibility: collapse; -webkit-backface-visibility: hidden; }
+</style>
+<table rules="none">
+<tr id="row">
+<script>
+document.body.offsetHeight;
+window.scrollBy();
+row.insertCell();
+document.body.offsetWidth;
+if (window.testRunner) {
+    document.body.innerText = "Tests if a newly-inserted cell is properly added when parent element is not visible.  Test passes if WebKit does not crash.  PASS";
+    testRunner.dumpAsText();
+}
+</script>

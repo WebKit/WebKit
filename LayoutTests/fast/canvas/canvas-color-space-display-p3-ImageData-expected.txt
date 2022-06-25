@@ -1,0 +1,159 @@
+Test that pixel access functions work with non-SRGB color spaces.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS imageDataCreatedFromDisplayP3Canvas.colorSpace is "display-p3"
+PASS imageDataCreatedFromDisplayP3CanvasOverridingColorSpaceSRGB.colorSpace is "srgb"
+PASS imageDataCreatedFromDisplayP3CanvasOverridingColorSpaceDisplayP3.colorSpace is "display-p3"
+PASS imageDataCreatedFromSRGBCanvas.colorSpace is "srgb"
+PASS imageDataCreatedFromSRGBCanvasOverridingColorSpaceSRGB.colorSpace is "srgb"
+PASS imageDataCreatedFromSRGBCanvasOverridingColorSpaceDisplayP3.colorSpace is "display-p3"
+PASS imageDataCreatedFromImageDataConstructor.colorSpace is "srgb"
+PASS imageDataCreatedFromImageDataConstructorSettingColorSpaceToSRGB.colorSpace is "srgb"
+PASS imageDataCreatedFromImageDataConstructorSettingColorSpaceToDisplayP3.colorSpace is "display-p3"
+PASS imageDataCreatedFromImageDataConstructorPassingBuffer.colorSpace is "srgb"
+PASS imageDataCreatedFromImageDataConstructorPassingBufferSettingColorSpaceToSRGB.colorSpace is "srgb"
+PASS imageDataCreatedFromImageDataConstructorPassingBufferSettingColorSpaceToDisplayP3.colorSpace is "display-p3"
+
+Testing a display-p3 canvas with color(display-p3 0 1 0) drawn into it
+
+Test getImageData with no specified color space, on a display-p3 canvas (canvas has color(display-p3 0 1 0) drawn in it)
+PASS data.colorSpace is "display-p3"
+PASS data.data[0] is 0
+PASS data.data[1] is 255
+PASS data.data[2] is 0
+PASS data.data[3] is 255
+Test getImageData with srgb specified, on a display-p3 canvas (canvas has color(display-p3 0 1 0) drawn in it)
+PASS data.colorSpace is "srgb"
+PASS data.data[0] is 0
+PASS data.data[1] is 255
+PASS data.data[2] is 0
+PASS data.data[3] is 255
+Test getImageData with display-p3 specified, on a display-p3 canvas (canvas has color(display-p3 0 1 0) drawn in it)
+PASS data.colorSpace is "display-p3"
+PASS data.data[0] is 0
+PASS data.data[1] is 255
+PASS data.data[2] is 0
+PASS data.data[3] is 255
+
+Testing a display-p3 canvas with color(srgb 0 1 0) drawn into it
+
+Test getImageData with no specified color space, on a display-p3 canvas (canvas has color(srgb 0 1 0) drawn in it)
+PASS data.colorSpace is "display-p3"
+PASS data.data[0] is 117
+PASS data.data[1] is 251
+PASS data.data[2] is 76
+PASS data.data[3] is 255
+Test getImageData with srgb specified, on a display-p3 canvas (canvas has color(srgb 0 1 0) drawn in it)
+PASS data.colorSpace is "srgb"
+PASS data.data[0] is 3
+PASS data.data[1] is 255
+PASS data.data[2] is 0
+PASS data.data[3] is 255
+Test getImageData with display-p3 specified, on a display-p3 canvas (canvas has color(srgb 0 1 0) drawn in it)
+PASS data.colorSpace is "display-p3"
+PASS data.data[0] is 117
+PASS data.data[1] is 251
+PASS data.data[2] is 76
+PASS data.data[3] is 255
+
+Testing a srgb canvas with color(display-p3 0 1 0) drawn into it
+
+Test getImageData with no specified color space, on a srgb canvas (canvas has color(display-p3 0 1 0) drawn in it)
+PASS data.colorSpace is "srgb"
+PASS data.data[0] is 0
+PASS data.data[1] is 255
+PASS data.data[2] is 0
+PASS data.data[3] is 255
+Test getImageData with srgb specified, on a srgb canvas (canvas has color(display-p3 0 1 0) drawn in it)
+PASS data.colorSpace is "srgb"
+PASS data.data[0] is 0
+PASS data.data[1] is 255
+PASS data.data[2] is 0
+PASS data.data[3] is 255
+Test getImageData with display-p3 specified, on a srgb canvas (canvas has color(display-p3 0 1 0) drawn in it)
+PASS data.colorSpace is "display-p3"
+PASS data.data[0] is 117
+PASS data.data[1] is 251
+PASS data.data[2] is 76
+PASS data.data[3] is 255
+
+Testing a srgb canvas with color(srgb-p3 0 1 0) drawn into it
+
+Test getImageData with no specified color space, on a srgb canvas (canvas has color(srgb 0 1 0) drawn in it)
+PASS data.colorSpace is "srgb"
+PASS data.data[0] is 0
+PASS data.data[1] is 255
+PASS data.data[2] is 0
+PASS data.data[3] is 255
+Test getImageData with srgb specified, on a srgb canvas (canvas has color(srgb 0 1 0) drawn in it)
+PASS data.colorSpace is "srgb"
+PASS data.data[0] is 0
+PASS data.data[1] is 255
+PASS data.data[2] is 0
+PASS data.data[3] is 255
+Test getImageData with display-p3 specified, on a srgb canvas (canvas has color(srgb 0 1 0) drawn in it)
+PASS data.colorSpace is "display-p3"
+PASS data.data[0] is 117
+PASS data.data[1] is 251
+PASS data.data[2] is 76
+PASS data.data[3] is 255
+
+
+Testing a display-p3 canvas with display-p3 ImageData drawn into it
+
+PASS data.colorSpace is "srgb"
+PASS data.data[0] is 0
+PASS data.data[1] is 255
+PASS data.data[2] is 0
+PASS data.data[3] is 255
+PASS data.colorSpace is "display-p3"
+PASS data.data[0] is 0
+PASS data.data[1] is 255
+PASS data.data[2] is 0
+PASS data.data[3] is 255
+
+Testing a display-p3 canvas with srgb ImageData drawn into it
+
+PASS data.colorSpace is "srgb"
+PASS data.data[0] is 3
+PASS data.data[1] is 255
+PASS data.data[2] is 0
+PASS data.data[3] is 255
+PASS data.colorSpace is "display-p3"
+PASS data.data[0] is 117
+PASS data.data[1] is 251
+PASS data.data[2] is 76
+PASS data.data[3] is 255
+
+Testing a srgb canvas with display-p3 ImageData drawn into it
+
+PASS data.colorSpace is "srgb"
+PASS data.data[0] is 0
+PASS data.data[1] is 255
+PASS data.data[2] is 0
+PASS data.data[3] is 255
+PASS data.colorSpace is "display-p3"
+PASS data.data[0] is 117
+PASS data.data[1] is 251
+PASS data.data[2] is 76
+PASS data.data[3] is 255
+
+Testing a srgb canvas with srgb ImageData drawn into it
+
+PASS data.colorSpace is "srgb"
+PASS data.data[0] is 0
+PASS data.data[1] is 255
+PASS data.data[2] is 0
+PASS data.data[3] is 255
+PASS data.colorSpace is "display-p3"
+PASS data.data[0] is 117
+PASS data.data[1] is 251
+PASS data.data[2] is 76
+PASS data.data[3] is 255
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style>
+    .box {
+        position: relative;
+        height: 100px;
+        width: 100px;
+        margin: 10px;
+        background-color: gray;
+        background-image: url('../fast/backgrounds/repeat/resources/gradient.gif');
+        transition: background-size 2s linear;
+    }
+    
+    #test1 {
+        background-size: 10px 10px;
+    }
+    
+    body.final #test1 {
+        background-size: 100px 10px;
+    }
+
+    #test2 {
+        background-size: auto 10px;
+    }
+    
+    body.final #test2 {
+        background-size: 10px auto;
+    }
+
+    #test3 {
+        background-size: auto auto;
+    }
+    
+    body.final #test3 {
+        background-size: 10px 10px;
+    }
+  </style>
+  <script src="resources/transition-test-helpers.js"></script>
+  <script type="text/javascript">
+
+    const expectedValues = [
+      // [time, element-id, property, expected-value, tolerance]
+      [1, 'test1', 'background-size', [55, 10], 2],
+      [1, 'test2', 'background-size', [10], 2],
+      [1, 'test3', 'background-size', [10,10], 2],
+    ];
+  
+    function setupTest()
+    {
+        document.body.classList.add('final');
+    }
+    
+    runTransitionTest(expectedValues, setupTest, usePauseAPI);
+  </script>
+</head>
+<body>
+  <div id="test1" class="box"></div>
+  <div id="test2" class="box"></div>
+  <div id="test3" class="box"></div>
+
+  <div id="result"></div>
+</body>
+</html>

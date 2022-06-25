@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<style>
+img {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+</style>
+</head>
+<body>
+<img src="../../resources/green-400x400.png"></img>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    let image = document.querySelector("img");
+    internals.installImageOverlay(image, [
+        {
+            topLeft : new DOMPointReadOnly(0.1, 0.25),
+            topRight : new DOMPointReadOnly(0.25, 0.1),
+            bottomRight : new DOMPointReadOnly(0.35, 0.2),
+            bottomLeft : new DOMPointReadOnly(0.2, 0.35),
+            children: [
+                {
+                    text : "one",
+                    topLeft : new DOMPointReadOnly(0.1, 0.25),
+                    topRight : new DOMPointReadOnly(0.25, 0.1),
+                    bottomRight : new DOMPointReadOnly(0.35, 0.2),
+                    bottomLeft : new DOMPointReadOnly(0.2, 0.35),
+                }
+            ],
+        },
+        {
+            topLeft : new DOMPointReadOnly(0.3, 0.45),
+            topRight : new DOMPointReadOnly(0.45, 0.3),
+            bottomRight : new DOMPointReadOnly(0.55, 0.4),
+            bottomLeft : new DOMPointReadOnly(0.4, 0.55),
+            children: [
+                {
+                    text : "two",
+                    topLeft : new DOMPointReadOnly(0.3, 0.45),
+                    topRight : new DOMPointReadOnly(0.45, 0.3),
+                    bottomRight : new DOMPointReadOnly(0.55, 0.4),
+                    bottomLeft : new DOMPointReadOnly(0.4, 0.55),
+                }
+            ],
+        },
+        {
+            topLeft : new DOMPointReadOnly(0.5, 0.65),
+            topRight : new DOMPointReadOnly(0.65, 0.5),
+            bottomRight : new DOMPointReadOnly(0.75, 0.6),
+            bottomLeft : new DOMPointReadOnly(0.6, 0.75),
+            children: [
+                {
+                    text : "three",
+                    topLeft : new DOMPointReadOnly(0.5, 0.65),
+                    topRight : new DOMPointReadOnly(0.65, 0.5),
+                    bottomRight : new DOMPointReadOnly(0.75, 0.6),
+                    bottomLeft : new DOMPointReadOnly(0.6, 0.75),
+                }
+            ],
+        },
+        {
+            topLeft : new DOMPointReadOnly(0.7, 0.85),
+            topRight : new DOMPointReadOnly(0.85, 0.7),
+            bottomRight : new DOMPointReadOnly(0.95, 0.8),
+            bottomLeft : new DOMPointReadOnly(0.8, 0.95),
+            children: [
+                {
+                    text : "four",
+                    topLeft : new DOMPointReadOnly(0.7, 0.85),
+                    topRight : new DOMPointReadOnly(0.85, 0.7),
+                    bottomRight : new DOMPointReadOnly(0.95, 0.8),
+                    bottomLeft : new DOMPointReadOnly(0.8, 0.95),
+                }
+            ],
+        }
+    ]);
+
+    await UIHelper.longPressAtPoint(90, 90);
+    initialSelectionRects = await UIHelper.waitForSelectionToAppear();
+    shouldBe("initialSelectionRects.length", "1");
+
+    testRunner.execCommand("SelectAll");
+    await UIHelper.ensurePresentationUpdate();
+    selectionRectsAfterSelectingAll = await UIHelper.getUISelectionViewRects();
+    shouldBe("selectionRectsAfterSelectingAll.length", "4");
+
+    finishJSTest();
+});
+</script>
+</body>
+</html>

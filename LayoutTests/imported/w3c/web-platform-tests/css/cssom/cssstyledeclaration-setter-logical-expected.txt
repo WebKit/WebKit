@@ -1,0 +1,3 @@
+
+PASS newly set declaration should be after all declarations in the same logical property group but have different logical kind
+

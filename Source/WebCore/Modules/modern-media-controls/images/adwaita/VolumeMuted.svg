@@ -1,0 +1,8 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'> \
+          <g fill='%23FFFFFF'> \
+            <path d='M11 11h1.375l1.125 1.094L14.594 11H16v1.469l-1.094 1.062L16 14.594V16h-1.438L13.5 14.937 12.437 16H11v-1.406l1.062-1.063L11 12.47zM0 5h2.484l2.97-3H6v12h-.475l-3.04-3H0z' style='marker:none' color='%23bebebe' overflow='visible'/> \
+            <path d='M11 1v1.48C12.265 4 13 5.7 13 8c0 .723-.085 1.382-.229 2h2.034c.124-.645.195-1.314.195-2 0-2.814-1-5.172-2.586-7z' style='marker:none' color='%23000' overflow='visible' opacity='.35'/> \
+            <path d='M9 3v2c.607.789 1 1.759 1 3s-.393 2.22-1 3v2h1v-3h1.75c.158-.626.25-1.297.25-2 0-2.167-.739-4.02-2-5z' style='marker:none' color='%23000' overflow='visible' opacity='.35'/> \
+            <path d='M9 8c0-1.257-.312-2.216-1-3H7v6h1c.672-.837 1-1.742 1-3z' style='line-height:normal;-inkscape-font-specification:Sans;text-indent:0;text-align:start;text-decoration-line:none;text-transform:none;marker:none' color='%23000' font-weight='400' font-family='Sans' overflow='visible' opacity='.35'/> \
+          </g> \
+        </svg>

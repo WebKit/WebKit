@@ -1,0 +1,7 @@
+
+PASS sender.getParameters() should return different transaction IDs for each call
+PASS sender.setParameters() with transaction ID different from last getParameters() should reject with InvalidModificationError
+PASS sender.setParameters() with transaction ID unset should reject with TypeError
+PASS setParameters() twice with the same parameters should reject with InvalidStateError
+PASS setParameters() with parameters older than last getParameters() should reject with InvalidModificationError
+

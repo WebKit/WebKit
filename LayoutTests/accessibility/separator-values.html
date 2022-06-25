@@ -1,0 +1,36 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="test1" role="separator" aria-valuemin="25" aria-valuemax="75" aria-valuenow="40" aria-valuetext="40%" tabindex="0"></div>
+<div id="test2" role="separator" aria-valuemin="25" aria-valuemax="75" aria-valuenow="40" aria-valuetext="40%" /></div>
+<div id="test3" role="separator" tabindex="0" aria-valuetext="50%" /></div>
+<div id="test4" role="separator" aria-valuetext="50%" /></div>
+
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("This tests that separators support range value attributes, but only if focusable.");
+if (window.testRunner && window.accessibilityController) {
+
+    for (var i = 1; i <= 4; i++) {
+        var element = document.getElementById("test" + i);
+        var tabindex = element.hasAttribute("tabindex") ? "'" + element.getAttribute("tabindex") + "'" : "(null)";
+        debug("\ntest" + i + " tabindex=" + tabindex);
+
+        var axElement = accessibilityController.accessibleElementById("test" + i);
+        debug("minValue: " + axElement.minValue);
+        debug("intValue: " + axElement.intValue);
+        debug("maxValue: " + axElement.maxValue);
+        debug(axElement.valueDescription);
+    }
+}
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

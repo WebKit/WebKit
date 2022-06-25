@@ -1,0 +1,60 @@
+<html>
+<head>
+  <title>Test offsetX/offsetY on various types of elements</title>
+  <style type="text/css" media="screen">
+  
+    body {
+      height: 2048px;
+      width: 2048px;
+      margin: 0;
+    }
+
+    .box {
+      height: 200px;
+      width: 200px;
+      margin: 20px;
+      background-color: gray;
+    }
+  
+    #fixed-box {
+      position: absolute;
+      top: 20px;
+      left: 0;
+      width: 300px;
+      height: 50px;
+      background-color: #AAA;
+    }
+    
+    #columns {
+      position: absolute;
+      -webkit-column-count: 3;
+      width: 400px;
+      top: 0px;
+      left: 50px;
+      border: 2px solid black;
+    }
+    
+    #in-columns {
+      display: block;
+      height: 40px;
+      width: 60%;
+      margin: 0 auto;
+      text-align: center;
+      background-color: gray;
+    }
+     </style>
+</head>
+<body onclick="clicked(event)">
+
+<div id="filler" style="position: absolute; top: 0; width: 100%; height: 100%"></div>
+
+  <div id="fixed-box">
+    Fixed position
+  </div>
+
+<div id="columns">
+  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. <span id="in-columns">In columns</span> Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+</div>
+
+</body>
+</html>

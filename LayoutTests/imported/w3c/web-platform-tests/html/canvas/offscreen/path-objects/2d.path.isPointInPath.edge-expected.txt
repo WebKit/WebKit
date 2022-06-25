@@ -1,0 +1,7 @@
+2d.path.isPointInPath.edge
+
+isPointInPath() counts points on the path as being inside
+
+
+PASS isPointInPath() counts points on the path as being inside
+

@@ -1,0 +1,27 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/dom/traversal/unfinished/001.xml
+/LayoutTests/imported/w3c/web-platform-tests/dom/traversal/unfinished/002.xml
+/LayoutTests/imported/w3c/web-platform-tests/dom/traversal/unfinished/003.xml
+/LayoutTests/imported/w3c/web-platform-tests/dom/traversal/unfinished/004.xml
+/LayoutTests/imported/w3c/web-platform-tests/dom/traversal/unfinished/005.xml
+/LayoutTests/imported/w3c/web-platform-tests/dom/traversal/unfinished/006.xml
+/LayoutTests/imported/w3c/web-platform-tests/dom/traversal/unfinished/007.xml
+/LayoutTests/imported/w3c/web-platform-tests/dom/traversal/unfinished/008.xml
+/LayoutTests/imported/w3c/web-platform-tests/dom/traversal/unfinished/009.xml
+/LayoutTests/imported/w3c/web-platform-tests/dom/traversal/unfinished/010.xml
+/LayoutTests/imported/w3c/web-platform-tests/dom/traversal/unfinished/TODO

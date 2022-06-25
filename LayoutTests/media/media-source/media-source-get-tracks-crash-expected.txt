@@ -1,0 +1,11 @@
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer('video/mp4; codecs="avc1.4d401f"'))
+RUN(source.removeSourceBuffer(sourceBuffer))
+Get the tracks, after removeSourceBuffer. Should not crash.
+EXPECTED (sourceBuffer.audioTracks.length == '0') OK
+EXPECTED (sourceBuffer.videoTracks.length == '0') OK
+EXPECTED (sourceBuffer.textTracks.length == '0') OK
+END OF TEST
+

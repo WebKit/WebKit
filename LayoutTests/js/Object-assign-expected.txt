@@ -1,0 +1,58 @@
+Test to ensure correct behavior of Object.assign
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Object.assign.length is 2
+PASS Object.assign.name is 'assign'
+check TypeError on null/undefined
+PASS Object.assign() threw exception TypeError: Object.assign requires that input parameter not be null or undefined.
+PASS Object.assign(undefined) threw exception TypeError: Object.assign requires that input parameter not be null or undefined.
+PASS Object.assign(null) threw exception TypeError: Object.assign requires that input parameter not be null or undefined.
+PASS var target = {}, ret = Object.assign(target); target === ret is true
+multiple sources are copied
+PASS var target = {}, ret = Object.assign(target, {a: 1}); target === ret is true
+PASS var target = {}; Object.assign(target, {a: 1}); target.a === 1 is true
+PASS var target = {}; Object.assign(target, {a: 1}, {b: 2}); target.b === 2 is true
+PASS var target = {}; Object.assign(target, {a: 1}, {a: 2}); target.a === 2 is true
+only enumerable properties are copied
+PASS var target = {}, source = {}; Object.defineProperty(source, 'a', { value: 1, enumerable: false }); Object.assign(target, {a: 2}, source); target.a === 2 is true
+PASS var target = {}, source = {}; Object.defineProperty(source, 'a', { value: 1, enumerable: false }); Object.assign(target, source); 'a' in target && target.a === 1 is false
+PASS var target = {}, source = {}; Object.defineProperty(source, 'a', { value: 1, enumerable: false }); Object.assign(target, source, {a: 2}); target.a === 2 is true
+PASS var target = {}, source = {}; Object.defineProperty(source, 'a', { value: 1, enumerable: true }); Object.assign(target, source, {a: 2}); target.a === 2 is true
+PASS var target = {}, source = {}; Object.defineProperty(source, 'a', { value: 1, enumerable: true }); Object.assign(target, {a: 2}, source); target.a === 1 is true
+only own properties are copied
+PASS var target = {}, C = function C() {}; C.prototype.a = 1; Object.assign(target, {a: 2}, new C()); target.a === 2 is true
+Symbols are copied
+PASS var target = {}, source = {}, sym = Symbol('sym'); source[sym] = sym; Object.assign(target, source); target[sym] === sym is true
+PASS var target = {}, source1 = {}, source2 = {}, sym = Symbol('sym'); source1[sym] = 1; source2[sym] = 2; Object.assign(target, source1, source2); target[sym] === 2 is true
+non-enumerable Symbols are not copied
+PASS var target = {}, source = {}, sym = Symbol('sym'); Object.defineProperty(source, sym, { value: 1, enumerable: false }); Object.assign(target, source); target[sym] is undefined.
+only own Symbols are copied
+PASS var target = {}, source1 = {}, sym = Symbol('sym'), C = function C() {}; C.prototype[sym] = 1; source1[sym] = 2; Object.assign(target, source1, new C()); target[sym] === 2 is true
+primitives as sources
+PASS var target = {}; Object.assign(target, true); Object.getOwnPropertyNames(target).length === 0 is true
+PASS var target = {}; Object.assign(target, false); Object.getOwnPropertyNames(target).length === 0 is true
+PASS var target = {}; Object.assign(target, NaN); Object.getOwnPropertyNames(target).length === 0 is true
+PASS var target = {}; Object.assign(target, Infinity); Object.getOwnPropertyNames(target).length === 0 is true
+PASS var target = {}; Object.assign(target, -Infinity); Object.getOwnPropertyNames(target).length === 0 is true
+PASS var target = {}; Object.assign(target, 0); Object.getOwnPropertyNames(target).length === 0 is true
+PASS var target = {}; Object.assign(target, -0); Object.getOwnPropertyNames(target).length === 0 is true
+PASS var target = {}; Object.assign(target, Symbol('sym')); Object.getOwnPropertyNames(target).length === 0 is true
+PASS var target = {}; Object.assign(target, ''); Object.getOwnPropertyNames(target).length === 0 is true
+PASS var target = {}; Object.assign(target, 'abc'); Object.getOwnPropertyNames(target).length === 'abc'.length is true
+primitives as target
+PASS var target = Object.assign(true, { a: 1 }); isBoxedPrimitive(target, Boolean, true) && target.a === 1 is true
+PASS var target = Object.assign(false, { a: 1 }); isBoxedPrimitive(target, Boolean, false) && target.a === 1 is true
+PASS var target = Object.assign(NaN, { a: 1 }); isBoxedPrimitive(target, Number, NaN) && target.a === 1 is true
+PASS var target = Object.assign(Infinity, { a: 1 }); isBoxedPrimitive(target, Number, Infinity) && target.a === 1 is true
+PASS var target = Object.assign(-Infinity, { a: 1 }); isBoxedPrimitive(target, Number, -Infinity) && target.a === 1 is true
+PASS var target = Object.assign(0, { a: 1 }); isBoxedPrimitive(target, Number, 0) && target.a === 1 is true
+PASS var target = Object.assign(-0, { a: 1 }); isBoxedPrimitive(target, Number, -0) && target.a === 1 is true
+PASS var sym = Symbol('sym'); var target = Object.assign(sym, { a: 1 }); isBoxedPrimitive(target, Symbol, sym) && target.a === 1 is true
+PASS var target = Object.assign('', { a: 1 }); isBoxedPrimitive(target, String, '') && target.a === 1 is true
+PASS var target = Object.assign('abc', { a: 1 }); isBoxedPrimitive(target, String, 'abc') && target.a === 1 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

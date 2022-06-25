@@ -1,0 +1,16 @@
+apple	orange
+3	5
+2 4
+This tests the _accessibilityIsInTableCell method, used by VO to describe the element.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS accessibilityController.accessibleElementById('button1').isInCell is true
+PASS accessibilityController.accessibleElementById('button2').isInCell is false
+PASS accessibilityController.accessibleElementById('link1').isInCell is true
+PASS accessibilityController.accessibleElementById('link2').isInCell is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

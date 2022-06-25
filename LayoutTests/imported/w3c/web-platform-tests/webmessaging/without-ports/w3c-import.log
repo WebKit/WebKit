@@ -1,0 +1,47 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/without-ports/001.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/without-ports/002.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/without-ports/003.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/without-ports/004.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/without-ports/005.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/without-ports/006.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/without-ports/007.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/without-ports/008.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/without-ports/009.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/without-ports/010.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/without-ports/011.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/without-ports/012.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/without-ports/013.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/without-ports/014.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/without-ports/015.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/without-ports/016.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/without-ports/017.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/without-ports/018.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/without-ports/019-1.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/without-ports/019.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/without-ports/020-1.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/without-ports/020.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/without-ports/021.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/without-ports/023.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/without-ports/024.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/without-ports/025-1.js
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/without-ports/025.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/without-ports/026.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/without-ports/027.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/without-ports/028.html
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/without-ports/029.html

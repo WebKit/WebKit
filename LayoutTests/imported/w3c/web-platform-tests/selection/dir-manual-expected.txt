@@ -1,0 +1,10 @@
+This is a manual test, since there's no way to synthesize keyboard or mouse input. Click after the letter "c" in the following paragraph and drag backwards so that both the "b" and the "c" are highlighted, then click the "Test" button:
+
+abcd Test
+
+efghi
+
+
+Harness Error (TIMEOUT), message = null
+
+

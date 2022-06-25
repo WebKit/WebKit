@@ -1,0 +1,216 @@
+<!doctype html><!-- webkit-test-runner [ WebRTCRemoteVideoFrameEnabled=true ] -->
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>A recorded muted audio track should produce silence</title>
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+    <video id="video1" controls></video>
+    <video id="video2" controls></video>
+    <video id="video3" controls></video>
+    <canvas id="canvas3" width="320" height="240"></canvas>
+    <script>
+function setupAudioContext(context, streamOrVideo)
+{
+    var sourceNode = streamOrVideo instanceof MediaStream ? context.createMediaStreamSource(streamOrVideo) : context.createMediaElementSource(streamOrVideo);
+
+    var analyser = context.createAnalyser();
+    var gain = context.createGain();
+
+    analyser.fftSize = 2048;
+    analyser.smoothingTimeConstant = 0;
+    analyser.minDecibels = -100;
+    analyser.maxDecibels = 0;
+    gain.gain.value = 0;
+
+    sourceNode.connect(analyser);
+    analyser.connect(gain);
+    gain.connect(context.destination);
+
+    return analyser;
+}
+
+function analyseAudio(analyser, duration, context)
+{
+    return new Promise((resolve, reject) => {
+       var results = { heardHum: false, heardBip: false, heardBop: false, heardNoise: false };
+
+       function analyse() {
+           var freqDomain = new Uint8Array(analyser.frequencyBinCount);
+           analyser.getByteFrequencyData(freqDomain);
+
+           var hasFrequency = expectedFrequency => {
+                var bin = Math.floor(expectedFrequency * analyser.fftSize / context.sampleRate);
+                return bin < freqDomain.length && freqDomain[bin] >= 150;
+           };
+
+           if (!results.heardHum)
+                results.heardHum = hasFrequency(150);
+
+           if (!results.heardBip)
+               results.heardBip = hasFrequency(1500);
+
+           if (!results.heardBop)
+                results.heardBop = hasFrequency(500);
+
+           if (!results.heardNoise)
+                results.heardNoise = hasFrequency(3000);
+
+           if (results.heardHum && results.heardBip && results.heardBop && results.heardNoise)
+                done();
+        };
+
+       function done() {
+            clearTimeout(timeout);
+            clearInterval(interval);
+
+            resolve(results);
+       }
+
+        var timeout = setTimeout(done, 3 * duration);
+        var interval = setInterval(analyse, duration / 30);
+        analyse();
+    });
+}
+
+function waitFor(duration)
+{
+    return new Promise((resolve) => setTimeout(resolve, duration));
+}
+
+async function doHumAnalysis(streamOrVideo, expected)
+{
+    let context = new AudioContext();
+    let analyser = setupAudioContext(context, streamOrVideo);
+    for (var cptr = 0; cptr < 20; cptr++) {
+        const results = await analyseAudio(analyser, 200, context);
+        if (results.heardHum === expected) {
+            await context.close();
+            return true;
+        }
+        await waitFor(50);
+    }
+    await context.close();
+    return false;
+}
+
+function isVideoBlack(canvas, video, startX, startY, grabbedWidth, grabbedHeight)
+{
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    if (!grabbedHeight) {
+        startX = 10;
+        startY = 10;
+        grabbedWidth = canvas.width - 20;
+        grabbedHeight = canvas.height - 20;
+    }
+
+    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    imageData = canvas.getContext('2d').getImageData(startX, startY, grabbedWidth, grabbedHeight);
+    data = imageData.data;
+    for (var cptr = 0; cptr < grabbedWidth * grabbedHeight; ++cptr) {
+        // Approximatively black pixels.
+        if (data[4 * cptr] > 30 || data[4 * cptr + 1] > 30 || data[4 * cptr + 2] > 30)
+            return false;
+    }
+    return true;
+}
+
+async function checkVideoBlack(expected, canvas, video, errorMessage, counter)
+{
+    if (isVideoBlack(canvas, video) === expected)
+        return Promise.resolve();
+
+    if (counter === undefined)
+        counter = 0;
+    if (counter > 100) {
+        if (!errorMessage)
+            errorMessage = "checkVideoBlack timed out expecting " + expected;
+        return Promise.reject(errorMessage);
+    }
+
+    await waitFor(50);
+    return checkVideoBlack(expected, canvas, video, errorMessage, ++counter);
+}
+
+promise_test(async (test) => {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+
+    const localTrack = stream.getAudioTracks()[0];
+    localTrack.enabled = false;
+    setTimeout(() => localTrack.enabled = false, 0);
+    const recorder = new MediaRecorder(stream);
+    const dataPromise = new Promise(resolve => recorder.ondataavailable = (e) => resolve(e.data));
+
+    recorder.start();
+    await waitFor(1000);
+    recorder.stop();
+    const blob = await dataPromise;
+
+    const url = URL.createObjectURL(blob);
+    video1.src = url;
+    await video1.play();
+
+    assert_greater_than(video1.duration, 0.5);
+
+    const results = await doHumAnalysis(video1, false); 
+    assert_true(results, "Should not hear hum");
+
+    URL.revokeObjectURL(url);
+}, "Recording a muted audio track should produce silence");
+
+promise_test(async (test) => {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+
+    const localTrack = stream.getAudioTracks()[0];
+    setTimeout(() => localTrack.enabled = false, 50);
+    const recorder = new MediaRecorder(stream);
+    const dataPromise = new Promise(resolve => recorder.ondataavailable = (e) => resolve(e.data));
+
+    recorder.start();
+    await waitFor(1000);
+    recorder.stop();
+    const blob = await dataPromise;
+
+    const url = URL.createObjectURL(blob);
+    video2.src = url;
+    await video2.play();
+
+    assert_greater_than(video2.duration, 0.5);
+
+    const results = await doHumAnalysis(video2, false); 
+    assert_true(results, "Should not hear hum");
+
+    URL.revokeObjectURL(url);
+}, "Muting an audio track should record silence");
+
+promise_test(async (test) => {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+
+    const localTrack = stream.getVideoTracks()[0];
+    setTimeout(() => localTrack.enabled = false, 50);
+    const recorder = new MediaRecorder(stream);
+    const dataPromise = new Promise(resolve => recorder.ondataavailable = (e) => resolve(e.data));
+
+    recorder.start();
+    await waitFor(1000);
+    recorder.stop();
+    const blob = await dataPromise;
+
+    const url = URL.createObjectURL(blob);
+    video3.src = url;
+    await video3.play();
+
+    assert_greater_than(video3.duration, 0.5);
+
+    const result = await checkVideoBlack(true, canvas3, video3, "muted video should produce black frames");
+
+    URL.revokeObjectURL(url);
+}, "Muting a video track should produce black frames");
+
+    </script>
+</body>
+</html>

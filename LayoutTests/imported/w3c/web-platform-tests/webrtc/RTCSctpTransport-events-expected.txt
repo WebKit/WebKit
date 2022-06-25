@@ -1,0 +1,4 @@
+
+PASS SctpTransport objects are created at appropriate times
+PASS SctpTransport reaches connected and closed state
+

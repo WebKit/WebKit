@@ -1,0 +1,11 @@
+This tests that aria-expanded changes will send notifications.
+Initial expanded status: false
+Received notification: AXExpandedChanged
+Expanded status: true
+Received notification: AXExpandedChanged
+Expanded status: false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

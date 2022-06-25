@@ -1,0 +1,164 @@
+# Copyright (c) 2017 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+if (is_android) {
+  import("//build/config/android/config.gni")
+  import("//build/config/android/rules.gni")
+}
+
+rtc_library("video_codecs_api") {
+  visibility = [ "*" ]
+  sources = [
+    "h264_profile_level_id.cc",
+    "h264_profile_level_id.h",
+    "sdp_video_format.cc",
+    "sdp_video_format.h",
+    "spatial_layer.cc",
+    "spatial_layer.h",
+    "video_codec.cc",
+    "video_codec.h",
+    "video_decoder.cc",
+    "video_decoder.h",
+    "video_decoder_factory.h",
+    "video_encoder.cc",
+    "video_encoder.h",
+    "video_encoder_config.cc",
+    "video_encoder_config.h",
+    "video_encoder_factory.h",
+    "vp8_frame_buffer_controller.h",
+    "vp8_frame_config.cc",
+    "vp8_frame_config.h",
+    "vp8_temporal_layers.cc",
+    "vp8_temporal_layers.h",
+    "vp9_profile.cc",
+    "vp9_profile.h",
+  ]
+
+  deps = [
+    "..:fec_controller_api",
+    "..:scoped_refptr",
+    "../../api:array_view",
+    "../../modules/video_coding:codec_globals_headers",
+    "../../rtc_base:checks",
+    "../../rtc_base:rtc_base_approved",
+    "../../rtc_base/system:rtc_export",
+    "../units:data_rate",
+    "../video:encoded_image",
+    "../video:render_resolution",
+    "../video:video_bitrate_allocation",
+    "../video:video_codec_constants",
+    "../video:video_frame",
+    "../video:video_rtp_headers",
+  ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/algorithm:container",
+    "//third_party/abseil-cpp/absl/container:inlined_vector",
+    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+rtc_source_set("bitstream_parser_api") {
+  visibility = [ "*" ]
+  sources = [ "bitstream_parser.h" ]
+  deps = [ "..:array_view" ]
+}
+
+rtc_library("builtin_video_decoder_factory") {
+  visibility = [ "*" ]
+  allow_poison = [
+    "audio_codecs",  # TODO(bugs.webrtc.org/8396): Remove.
+    "software_video_codecs",
+  ]
+  sources = [
+    "builtin_video_decoder_factory.cc",
+    "builtin_video_decoder_factory.h",
+  ]
+
+  deps = [
+    ":video_codecs_api",
+    "../../api:scoped_refptr",
+    "../../media:rtc_internal_video_codecs",
+    "../../rtc_base/system:rtc_export",
+  ]
+}
+
+rtc_library("builtin_video_encoder_factory") {
+  visibility = [ "*" ]
+  allow_poison = [
+    "audio_codecs",  # TODO(bugs.webrtc.org/8396): Remove.
+    "software_video_codecs",
+  ]
+  sources = [
+    "builtin_video_encoder_factory.cc",
+    "builtin_video_encoder_factory.h",
+  ]
+
+  deps = [
+    ":video_codecs_api",
+    "../../api:scoped_refptr",
+    "../../media:rtc_encoder_simulcast_proxy",
+    "../../media:rtc_internal_video_codecs",
+    "../../media:rtc_media_base",
+    "../../rtc_base:checks",
+    "../../rtc_base/system:rtc_export",
+  ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
+}
+
+rtc_library("vp8_temporal_layers_factory") {
+  visibility = [ "*" ]
+  allow_poison = [ "software_video_codecs" ]
+  sources = [
+    "vp8_temporal_layers_factory.cc",
+    "vp8_temporal_layers_factory.h",
+  ]
+
+  deps = [
+    ":video_codecs_api",
+    "../:fec_controller_api",
+    "../../modules/video_coding:video_coding_utility",
+    "../../modules/video_coding:webrtc_vp8_temporal_layers",
+    "../../rtc_base:checks",
+  ]
+}
+
+rtc_library("rtc_software_fallback_wrappers") {
+  visibility = [ "*" ]
+
+  sources = [
+    "video_decoder_software_fallback_wrapper.cc",
+    "video_decoder_software_fallback_wrapper.h",
+    "video_encoder_software_fallback_wrapper.cc",
+    "video_encoder_software_fallback_wrapper.h",
+  ]
+
+  deps = [
+    ":video_codecs_api",
+    "..:fec_controller_api",
+    "../../api/video:video_frame",
+    "../../media:rtc_media_base",
+    "../../modules/video_coding:video_codec_interface",
+    "../../modules/video_coding:video_coding_utility",
+    "../../rtc_base:checks",
+    "../../rtc_base:rtc_base_approved",
+    "../../rtc_base/system:rtc_export",
+    "../../system_wrappers:field_trial",
+    "../../system_wrappers:metrics",
+    "../video:encoded_image",
+    "../video:video_bitrate_allocation",
+    "../video:video_frame",
+    "../video:video_rtp_headers",
+  ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/base:core_headers",
+    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}

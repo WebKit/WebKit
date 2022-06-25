@@ -1,0 +1,35 @@
+<html>
+<body>
+<embed id="plg" type="application/x-webkit-test-netscape"></embed>
+<p>Test for NPN_RelaodPlugin in which reloadOpenPages is true. You should see two alerts, indicating that the page was loaded twice.</p>
+<div id='res'>FAILURE</div>
+<script>
+    alert("Page was loaded");
+    callReload = true;
+    if (window.sessionStorage) {
+        if (window.sessionStorage.reloadPluginsAndPagesCalled) {
+            callReload = false;
+        } else {
+            window.sessionStorage.reloadPluginsAndPagesCalled = 1;
+        }
+    }
+
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    
+    if (callReload) {
+        try {
+            if (window.testRunner)
+                testRunner.waitUntilDone();
+            document.getElementById('plg').reloadPluginsAndPages();
+        } catch (ex) {
+            alert("Exception: " + ex.description + ". Test plugin was not found");
+        }
+    } else {
+        document.getElementById('res').innerHTML="SUCCESS";
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+</script>
+</body>
+</html>

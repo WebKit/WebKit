@@ -1,0 +1,32 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+layer at (60,6) size 295x174
+  RenderSVGContainer {g} at (0,0) size 295x174
+layer at (140,6) size 187x18
+  RenderSVGText {text} at (80,0) size 187x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 187x18
+      chunk 1 text run 1 at (140.00,20.00) startOffset 0 endOffset 25 width 186.62: "Event and DOM Access Test"
+layer at (60,136) size 295x44
+  RenderSVGContainer {g} at (0,0) size 295x44
+layer at (60,136) size 106x44
+  RenderSVGContainer {g} at (0,0) size 106x44
+layer at (70,136) size 95x18
+  RenderSVGText {text} at (10,0) size 96x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 96x18
+      chunk 1 text run 1 at (70.00,150.00) startOffset 0 endOffset 15 width 95.09: "Click on target"
+layer at (60,160) size 20x20
+  RenderSVGRect {rect} at (0,0) size 20x20 [fill={[type=SOLID] [color=#FFFFFF]}] [x=60.00] [y=160.00] [width=20.00] [height=20.00]
+layer at (70,143) size 285x36
+  RenderSVGContainer {g} at (0,0) size 0x0
+layer at (70,143) size 285x35
+  RenderSVGText {text} at (0,0) size 285x35 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 285x35
+      chunk 1 text run 1 at (70.00,170.00) startOffset 0 endOffset 22 width 285.00: "Scripting Test Passed!"
+layer at (10,304) size 263x46
+  RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 264x46
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.1 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (-1,-1) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

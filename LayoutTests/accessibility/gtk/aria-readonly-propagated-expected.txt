@@ -1,0 +1,21 @@
+This tests the exposure of propagated values of aria-readonly as an object attribute.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+AXPlatformAttributes: computed-role:gridcell, readonly:true, tag:div, xml-roles:gridcell
+AXPlatformAttributes: computed-role:gridcell, readonly:false, tag:div, xml-roles:gridcell
+AXPlatformAttributes: computed-role:gridcell, readonly:false, tag:div, xml-roles:gridcell
+AXPlatformAttributes: computed-role:gridcell, readonly:true, tag:div, xml-roles:gridcell
+AXPlatformAttributes: computed-role:columnheader, readonly:true, tag:div, xml-roles:columnheader
+AXPlatformAttributes: computed-role:columnheader, readonly:false, tag:div, xml-roles:columnheader
+AXPlatformAttributes: computed-role:columnheader, readonly:false, tag:div, xml-roles:columnheader
+AXPlatformAttributes: computed-role:columnheader, readonly:true, tag:div, xml-roles:columnheader
+AXPlatformAttributes: computed-role:rowheader, readonly:true, tag:div, xml-roles:rowheader
+AXPlatformAttributes: computed-role:rowheader, readonly:false, tag:div, xml-roles:rowheader
+AXPlatformAttributes: computed-role:rowheader, readonly:false, tag:div, xml-roles:rowheader
+AXPlatformAttributes: computed-role:rowheader, readonly:true, tag:div, xml-roles:rowheader
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

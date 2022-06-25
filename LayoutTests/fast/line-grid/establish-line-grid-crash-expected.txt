@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: This test passes if it does not crash.
+:first-child { display: inline-block; -webkit-line-grid: b; } div { -webkit-line-grid: a; } div, head { min-height: calc(1px + 0%); }
+

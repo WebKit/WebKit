@@ -1,0 +1,20 @@
+<style>
+  :not(:first-child)::after {
+    content: 'a';
+  }
+</style>
+<!-- PASS if no crash or assert. -->
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+  onload = () => {
+    document.body.appendChild(document.createElement('div'));
+    let n0 = document.createElement('tr');
+    document.body.appendChild(n0);
+    n0.appendChild(document.createElement('tr'));
+    document.body.offsetTop;
+    n0.appendChild(document.createElement('td'));
+    document.body.offsetTop;
+    document.styleSheets[0].insertRule(`:empty { position: absolute; }`);
+  };
+</script>

@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<blockquote>
+    blockquote level 1
+    <blockquote>
+        blockquote level 2
+    </blockquote>
+</blockquote>
+
+<h1>heading level 1</h1>
+<h2>heading level 2</h2>
+
+<!-- Table headings and bodies are included so these tables are identified as accessibility tables. -->
+<table>
+    <thead><tr><td>table heading level 1</td></tr></thead>
+    <tbody><tr><td><table>
+        <thead><tr><td>table heading level 2</td></tr></thead>
+        <tbody><tr><td>table body level 2</td></tr></tbody>
+    </table></td></tr></tbody>
+</table>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests elements' accessibility level value.");
+    
+    if (window.accessibilityController) {
+        document.getElementById("body").focus();
+        var body = accessibilityController.focusedElement;
+        
+        // Blockquote levels.
+        shouldBe("body.childAtIndex(0).childAtIndex(0).numberAttributeValue('AXBlockQuoteLevel')", "1");
+        shouldBe("body.childAtIndex(1).childAtIndex(0).numberAttributeValue('AXBlockQuoteLevel')", "2");
+        // Non-blockquotes should return a blockquote level of 0.
+        shouldBe("body.childAtIndex(2).numberAttributeValue('AXBlockQuoteLevel')", "0");
+        
+        // Heading levels.
+        shouldBe("body.childAtIndex(2).numberAttributeValue('AXValue')", "1");
+        shouldBe("body.childAtIndex(3).numberAttributeValue('AXValue')", "2");
+        // Heading level is explicitly specified using a unique HTML tag and is not simply an attribute any element may have.
+        // Therefore, non-headings do not have a heading level that must be checked.
+        
+        // Table levels.
+        shouldBe("body.childAtIndex(4).numberAttributeValue('AXTableLevel')", "1");
+        shouldBe("body.childAtIndex(4).childAtIndex(1).childAtIndex(0).childAtIndex(0).numberAttributeValue('AXTableLevel')", "2");
+        // Non-tables should return a table level of 0.
+        shouldBe("body.childAtIndex(0).numberAttributeValue('AXTableLevel')", "0");
+    }
+    
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

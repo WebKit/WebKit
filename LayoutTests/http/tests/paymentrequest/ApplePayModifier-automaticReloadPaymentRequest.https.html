@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Tests for providing `automaticReloadPaymentRequest` as part of `ApplePayModifier`.</title>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/payment-request.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<script>
+setup({ explicit_done: true, explicit_timeout: true });
+
+const paymentDescription = "paymentDescription";
+const automaticReloadBilling = { label: "automaticReloadBilling", amount: "5", type: "final", paymentTiming: "automaticReload", automaticReloadPaymentThresholdAmount: "10", recurringPaymentIntervalUnit: "month", recurringPaymentIntervalCount: 1 };
+const billingAgreement = "billingAgreement";
+const managementURL = "http://managementURL.com";
+const tokenNotificationURL = "http://tokenNotificationURL.com";
+
+function modifiersWithData(data) {
+    return [ { supportedMethods: 'https://apple.com/apple-pay', data } ];
+}
+
+function testValidAutomaticReloadPaymentRequest(description, {initialAutomaticReloadPaymentRequest, expectedAutomaticReloadPaymentRequest}) {
+    user_activation_test(async (test) => {
+        let detailsInit = validPaymentDetails();
+        if (initialAutomaticReloadPaymentRequest !== undefined)
+            detailsInit.modifiers = modifiersWithData({ automaticReloadPaymentRequest: initialAutomaticReloadPaymentRequest });
+
+        let request = new PaymentRequest([validPaymentMethod()], detailsInit);
+        request.addEventListener("merchantvalidation", (event) => {
+            event.complete({ });
+        });
+        request.addEventListener("shippingaddresschange", (event) => {
+            event.updateWith({ });
+            internals.mockPaymentCoordinator.acceptPayment();
+        });
+
+        let response = await request.show();
+
+        let actualAutomaticReloadPaymentRequest = internals.mockPaymentCoordinator.automaticReloadPaymentRequest;
+        if (actualAutomaticReloadPaymentRequest)
+            assert_object_equals(actualAutomaticReloadPaymentRequest, expectedAutomaticReloadPaymentRequest, "check that the `automaticReloadPaymentRequest` matches");
+        else
+            assert_equals(actualAutomaticReloadPaymentRequest, expectedAutomaticReloadPaymentRequest, "check that the `automaticReloadPaymentRequest` matches");
+
+        await response.complete("success");
+    }, description + " as part of the request.");
+
+    user_activation_test(async (test) => {
+        let request = new PaymentRequest([validPaymentMethod()], validPaymentDetails());
+        request.addEventListener("merchantvalidation", (event) => {
+            event.complete({ });
+        });
+        request.addEventListener("shippingaddresschange", (event) => {
+            let detailsUpdate = { };
+            if (initialAutomaticReloadPaymentRequest !== undefined)
+                detailsUpdate.modifiers = modifiersWithData({ automaticReloadPaymentRequest: initialAutomaticReloadPaymentRequest });
+            event.updateWith(detailsUpdate);
+            internals.mockPaymentCoordinator.acceptPayment();
+        });
+
+        let response = await request.show();
+
+        let actualAutomaticReloadPaymentRequest = internals.mockPaymentCoordinator.automaticReloadPaymentRequest;
+        if (actualAutomaticReloadPaymentRequest)
+            assert_object_equals(actualAutomaticReloadPaymentRequest, expectedAutomaticReloadPaymentRequest, "check that the `automaticReloadPaymentRequest` matches");
+        else
+            assert_equals(actualAutomaticReloadPaymentRequest, expectedAutomaticReloadPaymentRequest, "check that the `automaticReloadPaymentRequest` matches");
+
+        await response.complete("success");
+    }, description + " as part of an update.");
+}
+
+testValidAutomaticReloadPaymentRequest("The default value of `automaticReloadPaymentRequest` should be `null` if `data` is not provided", {
+    initialAutomaticReloadPaymentRequest: undefined,
+    expectedAutomaticReloadPaymentRequest: null,
+});
+
+testValidAutomaticReloadPaymentRequest("Should not error if optional properties are not provided", {
+    initialAutomaticReloadPaymentRequest: { paymentDescription, automaticReloadBilling, managementURL },
+    expectedAutomaticReloadPaymentRequest: { paymentDescription, automaticReloadBilling, managementURL },
+});
+testValidAutomaticReloadPaymentRequest("Should propagate all data", {
+    initialAutomaticReloadPaymentRequest: { paymentDescription, automaticReloadBilling, billingAgreement, managementURL, tokenNotificationURL },
+    expectedAutomaticReloadPaymentRequest: { paymentDescription, automaticReloadBilling, billingAgreement, managementURL, tokenNotificationURL },
+});
+
+function testInvalidAutomaticReloadPaymentRequest(description, {automaticReloadPaymentRequest, expectedErrorSubstring}) {
+    user_activation_test(async (test) => {
+        let detailsInit = validPaymentDetails();
+        detailsInit.modifiers = modifiersWithData({ automaticReloadPaymentRequest });
+
+        let request = new PaymentRequest([validPaymentMethod()], detailsInit);
+        try {
+            let response = await request.show();
+            internals.mockPaymentCoordinator.cancelPayment();
+            assert_true(false, "should error about " + expectedErrorSubstring);
+        } catch (e) {
+            assert_true(e.message.includes(expectedErrorSubstring), "should error about " + expectedErrorSubstring);
+        }
+    }, description + " as part of the request.");
+
+    user_activation_test(async (test) => {
+        let request = new PaymentRequest([validPaymentMethod()], validPaymentDetails());
+        request.addEventListener("merchantvalidation", (event) => {
+            event.complete({ });
+        });
+        request.addEventListener("shippingaddresschange", (event) => {
+            event.updateWith({ modifiers: modifiersWithData({ automaticReloadPaymentRequest }) });
+        });
+
+        try {
+            let response = await request.show();
+            internals.mockPaymentCoordinator.cancelPayment();
+            assert_true(false, "should error about " + expectedErrorSubstring);
+        } catch (e) {
+            assert_true(e.message.includes(expectedErrorSubstring), "should error about " + expectedErrorSubstring);
+        }
+    }, description + " as part of an update.");
+}
+
+testInvalidAutomaticReloadPaymentRequest("Should error when `automaticReloadBilling` is missing `paymentTiming`", {
+    automaticReloadPaymentRequest: { paymentDescription, automaticReloadBilling: { } , managementURL },
+    expectedErrorSubstring: "'automaticReloadBilling' must be an 'automaticReload' line item",
+});
+testInvalidAutomaticReloadPaymentRequest("Should error when `automaticReloadBilling` has an invalid `paymentTiming`", {
+    automaticReloadPaymentRequest: { paymentDescription, automaticReloadBilling: { paymentTiming: "immediate" } , managementURL },
+    expectedErrorSubstring: "'automaticReloadBilling' must be an 'automaticReload' line item",
+});
+testInvalidAutomaticReloadPaymentRequest("Should error when `automaticReloadBilling` is missing `label`", {
+    automaticReloadPaymentRequest: { paymentDescription, automaticReloadBilling: { paymentTiming: "automaticReload" } , managementURL },
+    expectedErrorSubstring: "Missing label for 'automaticReloadBilling'",
+});
+testInvalidAutomaticReloadPaymentRequest("Should error when `automaticReloadBilling` is missing `amount`", {
+    automaticReloadPaymentRequest: { paymentDescription, automaticReloadBilling: { paymentTiming: "automaticReload", label: "automaticReloadBillingBad" } , managementURL },
+    expectedErrorSubstring: "not a valid amount",
+});
+testInvalidAutomaticReloadPaymentRequest("Should error when `automaticReloadBilling` has an invalid `amount`", {
+    automaticReloadPaymentRequest: { paymentDescription, automaticReloadBilling: { paymentTiming: "automaticReload", label: "automaticReloadBillingBad", amount: "invalid" } , managementURL },
+    expectedErrorSubstring: "not a valid amount",
+});
+testInvalidAutomaticReloadPaymentRequest("Should error when `automaticReloadBilling` is missing `automaticReloadPaymentThresholdAmount`", {
+    automaticReloadPaymentRequest: { paymentDescription, automaticReloadBilling: { paymentTiming: "automaticReload", label: "automaticReloadBillingBad", amount: "42" } , managementURL },
+    expectedErrorSubstring: "not a valid automaticReloadPaymentThresholdAmount",
+});
+testInvalidAutomaticReloadPaymentRequest("Should error when `automaticReloadBilling` has an invalid `automaticReloadPaymentThresholdAmount`", {
+    automaticReloadPaymentRequest: { paymentDescription, automaticReloadBilling: { paymentTiming: "automaticReload", label: "automaticReloadBillingBad", amount: "42", automaticReloadPaymentThresholdAmount: "invalid" } , managementURL },
+    expectedErrorSubstring: "not a valid automaticReloadPaymentThresholdAmount",
+});
+
+testInvalidAutomaticReloadPaymentRequest("Should error when `managementURL` is not a valid URL", {
+    automaticReloadPaymentRequest: { paymentDescription, automaticReloadBilling, managementURL: 42 },
+    expectedErrorSubstring: "not a valid URL",
+});
+
+testInvalidAutomaticReloadPaymentRequest("Should error when `tokenNotificationURL` is not a valid URL", {
+    automaticReloadPaymentRequest: { paymentDescription, automaticReloadBilling, managementURL, tokenNotificationURL: 42 },
+    expectedErrorSubstring: "not a valid URL",
+});
+
+done();
+</script>
+

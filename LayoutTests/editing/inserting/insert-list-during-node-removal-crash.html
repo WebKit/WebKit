@@ -1,0 +1,23 @@
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function DomNodeEventHandler() {
+        document.execCommand("insertOrderedList", false);
+        requestAnimationFrame(function () {
+            document.body.innerHTML = "<p> Tests inserting list during node removal. The test passes if WebKit doesn't crash or hit an assertion.</p>";
+            if (window.testRunner) {
+                testRunner.notifyDone();
+            }
+        });
+    }
+
+    window.onload = () => {
+        TD.addEventListener("DOMNodeRemovedFromDocument", DomNodeEventHandler);
+        getSelection().setBaseAndExtent(document.body, 0, document.body, document.body.childNodes.length);
+        getSelection().deleteFromDocument();
+    }
+</script>
+<body contenteditable="true"><table><td id=TD></td></table><li contenteditable="false"></li><div>a</div>

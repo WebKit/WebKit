@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base href="/">
+  <script src="/js-test-resources/js-test.js"></script>
+  <script>
+  jsTestIsAsync = true;
+  description('Tests that ReplaceState should not change document URL if URL argument is null.');
+
+  function testNullUrl() {
+    debug('Push item one');
+    history.pushState({}, 'page 1', '/one');
+    debug('Replace item one with null url');
+    history.replaceState({}, 'replaced page 1');
+    debug('Push item two');
+    history.pushState({}, 'page 2', '/two');
+    debug('Going back to item one');
+    history.back();
+  }
+
+  function testEmptyUrl() {
+    debug('Replace item one with empty url');
+    history.replaceState('StopEntry', 'replaced page 1 again', '');
+    debug('Push item two');
+    history.pushState({}, 'page 2', '/two');
+    debug('Going back to item one');
+    history.back();
+  }
+  
+  window.onpopstate = function(event) {
+    if (event.state != 'StopEntry') {
+      shouldBeEqualToString('document.location.href', 'http://127.0.0.1:8000/one');
+      setTimeout(testEmptyUrl, 0);
+    } else {
+      shouldBeEqualToString('document.location.href', 'http://127.0.0.1:8000/');
+      finishJSTest();
+    }
+  }
+  </script>
+</head>
+
+<body onload="testNullUrl()">
+</body>
+</html>

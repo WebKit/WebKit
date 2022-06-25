@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test() {
+    let domNode = null;
+
+    let suite = InspectorTest.createAsyncSuite("DOM.getEventListenersForNode");
+
+    suite.addTestCase({
+        name: "DOM.getEventListenersForNode.Basic",
+        description: "Ensure all applicable fields of each event listener is supplied.",
+        test(resolve, reject) {
+            DOMAgent.getEventListenersForNode(domNode.id, (error, eventListeners) => {
+                if (error) {
+                    reject(error);
+                    return;
+                }
+
+                for (let eventListener of eventListeners) {
+                    InspectorTest.log(`Event: ${eventListener.type}`);
+                    if (eventListener.nodeId) {
+                        let node = WI.domManager.nodeForId(eventListener.nodeId);
+                        InspectorTest.log(`Target: ${node.displayName}`);
+                    }
+                    if (eventListener.onWindow)
+                        InspectorTest.log("Target: window");
+                    InspectorTest.log(`Capture: ${eventListener.useCapture}`);
+                    InspectorTest.log(`Attribute: ${eventListener.isAttribute}`);
+
+                    if (eventListener.handlerName)
+                        InspectorTest.log(`Handler Name: ${eventListener.handlerName}`);
+                    if (eventListener.passive)
+                        InspectorTest.log(`Passive: ${eventListener.passive}`);
+                    if (eventListener.once)
+                        InspectorTest.log(`Once: ${eventListener.once}`);
+                    if (eventListener.location)
+                        InspectorTest.log("The Event Listener has a source location.");
+
+                    InspectorTest.log("");
+                }
+
+                resolve();
+            });
+        }
+    });
+
+    WI.domManager.requestDocument((documentNode) => {
+        documentNode.querySelector("div#x", (contentNodeId) => {
+            if (!contentNodeId) {
+                InspectorTest.fail("DOM node not found.");
+                InspectorTest.completeTest();
+                return;
+            }
+
+            domNode = WI.domManager.nodeForId(contentNodeId);
+
+            suite.runTestCasesAndFinish();
+        });
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing DOMAgent.getEventListenersForNode.</p>
+
+    <div id="x" onclick="(function xClick(event) { })()"></div>
+    <script>
+        class ObjectEventHandler {
+            handleEvent(event) { }
+        }
+
+        let element = document.getElementById("x");
+        element.addEventListener("A", function xA(event) { });
+        element.addEventListener("B", function xB(event) { }, {once: true});
+        element.addEventListener("C", (event) => { });
+        element.addEventListener("D", { handleEvent(event) { } });
+        element.addEventListener("E", new ObjectEventHandler);
+
+        document.body.addEventListener("A", function bodyA(event) { }, true);
+        document.body.addEventListener("B", (event) => {}, true);
+
+        document.addEventListener("A", function documentA(event) { }, {passive: true});
+        document.addEventListener("B", (event) => {}, {passive: true});
+    </script>
+</body>
+</html>

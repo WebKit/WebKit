@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+
+description('This tests that Comment is constructable.');
+
+shouldBe('new Comment("one").data', '"one"');
+shouldBe('new Comment().data', '""');
+shouldBe('new Comment("two").ownerDocument', 'document');
+
+shouldBe('typeof new Comment', '"object"');
+shouldBe('Object.prototype.toString.call(new Comment)', '"[object Comment]"');
+shouldBeTrue('new Comment instanceof Comment');
+shouldBe('Object.getPrototypeOf(new Comment)', 'Comment.prototype');
+
+var frame = document.createElement('iframe');
+document.body.appendChild(frame);
+var innerWindow = frame.contentWindow;
+var innerDocument = frame.contentDocument;
+
+shouldBe('new innerWindow.Comment("three").ownerDocument', 'innerDocument')
+shouldBeTrue('new innerWindow.Comment instanceof innerWindow.Comment');
+shouldBe('Object.getPrototypeOf(new innerWindow.Comment)', 'innerWindow.Comment.prototype');
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>

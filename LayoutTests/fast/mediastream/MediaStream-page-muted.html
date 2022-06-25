@@ -1,0 +1,116 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+        <script>
+            let mediaStream;
+            let eventCount = 0;
+            let muteChangedEvent;
+
+            function nextStep()
+            {
+                if (muteChangedEvent.type == "unmute") {
+                    finishJSTest();
+                    return;
+                }
+
+                debug("<br>*** Unmuting capture devices");
+                eventCount = 0;
+                internals.setPageMuted("");
+            }
+
+            function muteChanged(ev)
+            {
+                muteChangedEvent = ev;
+                debug(`EVENT: ${muteChangedEvent.type}`);
+                shouldBe('muteChangedEvent.target.muted', (muteChangedEvent.type == "mute").toString());
+
+                if (++eventCount == 2) {
+                    debug("");
+                    
+                    let activeState = muteChangedEvent.type == "mute" ? "Muted" : "Active";
+                    let inactiveState = muteChangedEvent.type == "mute" ? "Active" : "Muted";
+                    let retryCount = 0;
+                    let retryInterval = 100;
+                    let maximumRetryCount = 20 * 1000 / retryInterval;
+                    let test = () => {
+
+                        if (window.internals.pageMediaState().includes(`Has${activeState}AudioCaptureDevice`) 
+                            && window.internals.pageMediaState().includes(`Has${activeState}VideoCaptureDevice`)
+                            && !window.internals.pageMediaState().includes(`Has${inactiveState}VideoCaptureDevice`)
+                            && !window.internals.pageMediaState().includes(`Has${inactiveState}VideoCaptureDevice`)) {
+
+                            testPassed(`window.internals.pageMediaState().includes(Has${activeState}AudioCaptureDevice) became true`);
+                            testPassed(`window.internals.pageMediaState().includes(Has${activeState}VideoCaptureDevice) became true`);
+                            testPassed(`window.internals.pageMediaState().includes(Has${inactiveState}AudioCaptureDevice) became false`);
+                            testPassed(`window.internals.pageMediaState().includes(Has${inactiveState}VideoCaptureDevice) became false`);
+                            
+                            nextStep()
+                            return;
+                        }
+                        
+                        if (++retryCount > maximumRetryCount) {
+                            testFailed(`Page muted state failed to change after ${maximumRetryCount / 1000} seconds`);
+                            return;
+                        }
+                        
+                        setTimeout(test, retryInterval);
+                    }
+
+                    setTimeout(test, 0);
+                }
+            }
+            
+            function muteCaptureDevices()
+            {
+                debug("<br>*** Muting capture devices");
+                internals.setPageMuted("capturedevices");
+            }
+            
+            function testWhenEnabled()
+            {
+                navigator.mediaDevices
+                    .getUserMedia({audio:{}, video:{}})
+                    .then(stream => {
+                        mediaStream = stream;
+                        shouldBeType("mediaStream", "Object");
+                        shouldBe("mediaStream.getTracks().length", "2");
+
+                        var tracks = mediaStream.getTracks();
+                        for (var i = 0; i < tracks.length; i++) {
+                            tracks[i].onmute = muteChanged;
+                            tracks[i].onunmute = muteChanged;
+                        }
+
+                        shouldBecomeEqual("window.internals.pageMediaState().includes('HasActiveAudioCaptureDevice') && window.internals.pageMediaState().includes('HasActiveVideoCaptureDevice')", "true", muteCaptureDevices);
+                    })
+                    .catch((err) => {
+                        testFailed(`mediaDevices.getUserMedia() failed with ${err.name}`);
+                        finishJSTest();
+                    });
+            }
+
+            function start()
+            {
+                debug(`<br>*** Mock capture devices should be enabled by default`);
+                if (window.testRunner)
+                    testRunner.setUserMediaPermission(true);
+
+                testWhenEnabled();
+            }
+
+        </script>
+    </head>
+
+    <body onload="start()">
+        <p id="description"></p>
+        <div id="console"></div>
+        <script>
+            description("Test enabling/disabling mock media capture devices");
+            window.jsTestIsAsync = true;
+
+            window.successfullyParsed = true;
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

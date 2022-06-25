@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<body id="body">
+<script src="../resources/js-test-pre.js"></script>
+<div id="content">
+
+<div id="test" data="some data">
+  <div id="firstChild"></div>
+  <div id="secondChild"></div>
+  <div id="thirdChild"></div>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests ARIA IDL Attribute Reflection.");
+
+    var element = document.getElementById("test");
+    var data = element.getAttribute("data");
+    var otherData = "other data";
+    var currentProperty;
+    var currentAttribute;
+
+    function isElementReflectionProperty(property) {
+        switch (property) {
+            case "ariaActiveDescendantElement":
+            case "ariaErrorMessageElement":
+                return true;
+        }
+        return false;
+    }
+
+    function isElementsArrayReflectionProperty(property) {
+        switch (property) {
+            case "ariaControlsElements":
+            case "ariaDescribedByElements":
+            case "ariaDetailsElements":
+            case "ariaFlowToElements":
+            case "ariaLabelledByElements":
+            case "ariaOwnsElements":
+                return true;
+        }
+        return false;
+    }
+
+    function convertPropertyToAttribute(property) {
+        if (isElementReflectionProperty(property))
+          property = property.replace("Element", "");
+        else if (isElementsArrayReflectionProperty(property))
+          property = property.replace("Elements", "");
+        return property.replace("aria", "aria-").toLowerCase();
+    }
+
+    function getDataProperty(property) {
+        if (isElementReflectionProperty(property))
+          return firstChild;
+        else if (isElementsArrayReflectionProperty(property))
+          return [firstChild, secondChild];
+        return data;
+    }
+
+    function getDataAttribute(property) {
+        if (isElementReflectionProperty(property))
+          return firstChild.id;
+        else if (isElementsArrayReflectionProperty(property))
+          return firstChild.id + " " + secondChild.id;
+        return data;
+    }
+
+    function getOtherDataProperty(property) {
+        if (isElementReflectionProperty(property))
+          return secondChild;
+        else if (isElementsArrayReflectionProperty(property))
+          return [thirdChild];
+        return otherData;
+    }
+
+    function getOtherDataAttribute(property) {
+        if (isElementReflectionProperty(property))
+          return secondChild.id;
+        else if (isElementsArrayReflectionProperty(property))
+          return thirdChild.id;
+        return otherData;
+    }
+
+    function testElement() {
+        currentAttribute = convertPropertyToAttribute(currentProperty);
+
+        debug("\nTest " + currentProperty + " < - > " + currentAttribute);
+        shouldBeNull("element[currentProperty]");
+        shouldBeNull("element.getAttribute(currentAttribute)");
+
+        // Set the property value
+        dataProperty = getDataProperty(currentProperty);
+        dataAttribute = getDataAttribute(currentProperty);
+        element[currentProperty] = dataProperty;
+        shouldBe("element.getAttribute(currentAttribute)", "dataAttribute");
+
+        // Set the attribute value
+        otherDataProperty = getOtherDataProperty(currentProperty);
+        otherDataAttribute = getOtherDataAttribute(currentProperty);
+        debug("element.setAttribute(\"" + currentAttribute + "\", otherData);");
+        element.setAttribute(currentAttribute, otherDataAttribute);
+        shouldBe("element[currentProperty]", "otherDataProperty");
+    }
+
+    function testRole() {
+        currentProperty = "role";
+        testElement();
+    }
+
+    if (window.accessibilityController) {
+
+        testRole();
+
+        // There are 46 ARIA attributes in total.
+        var count = 0;
+        for (var propertyName in element) {
+          if (propertyName.startsWith("aria")) {
+              currentProperty = propertyName;
+              testElement();
+              count++;
+          }
+        }
+
+        debug("\n");
+        shouldBe("count", "46");
+
+    } else {
+        testFailed("Could not load accessibility controller");
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

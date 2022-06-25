@@ -1,0 +1,21 @@
+
+EXPECTED (source.readyState == 'closed') OK
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock"))
+RUN(sourceBuffer.appendBuffer(initSegment))
+EVENT(updateend)
+EXPECTED (sourceBuffer.buffered.length == '0') OK
+RUN(sourceBuffer.appendBuffer(syncSampleRun(10, 20)))
+EVENT(updateend)
+EXPECTED (formatRanges(sourceBuffer.buffered) == '[10, 20)') OK
+RUN(sourceBuffer.appendBuffer(syncSampleRun(0, 10)))
+EVENT(updateend)
+EXPECTED (formatRanges(sourceBuffer.buffered) == '[0, 20)') OK
+RUN(sourceBuffer.appendBuffer(syncSampleRun(30, 40)))
+EVENT(updateend)
+EXPECTED (formatRanges(sourceBuffer.buffered) == '[0, 20) [30, 40)') OK
+RUN(sourceBuffer.appendBuffer(syncSampleRun(20, 30)))
+EVENT(updateend)
+EXPECTED (formatRanges(sourceBuffer.buffered) == '[0, 40)') OK
+END OF TEST
+

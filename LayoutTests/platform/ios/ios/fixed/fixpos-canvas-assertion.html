@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <script type="text/javascript">
+    var isSecondLoad = window.location.href.indexOf('?second') != -1;
+    
+    if (!isSecondLoad) {
+      if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+      }
+    }
+    
+    function initialize()
+    {
+      var canvas = document.getElementById('canvas');
+      var ctx = canvas.getContext('2d');
+
+      ctx.fillStyle = '#01294d';
+      ctx.fillRect(0, 0, 200, 200);
+      
+      window.setTimeout(function() {
+        if (isSecondLoad) {
+          if (window.testRunner)
+            testRunner.notifyDone();
+          } else
+            window.location.href += "?second";
+      }, 0);
+    }
+  </script>
+  <style type="text/css">
+    
+    canvas {
+      width: 2049px; /* force tiling */
+      height: 2049px;
+      position: fixed;
+      -webkit-transform: translateZ(0);
+    }
+  </style>
+</head>
+<body onload="initialize()">
+
+  <p>This test should not assert on reload.</p>
+  <canvas id="canvas" height="200" width="200"></canvas>
+  
+</body>
+</html>

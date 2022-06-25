@@ -1,0 +1,57 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+input, div[contenteditable] {
+    width: 100px;
+    height: 50px;
+    border: 1px solid black;
+    font-size: 20px;
+}
+
+#console, #description {
+    font-size: small;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+description("This test verifies that typing in editable areas with autocapitalize='words' causes every word to be capitalized. To test manually, type into both elements.");
+
+async function typeStringInElement(element, string)
+{
+    await UIHelper.activateElementAndWaitForInputSession(element);
+    for (const character of [...string])
+        await UIHelper.callFunctionAndWaitForEvent(() => UIHelper.typeCharacter(character), element, "input");
+    element.blur();
+    await UIHelper.waitForKeyboardToHide();
+}
+
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    input = document.querySelector("input");
+    contenteditable = document.querySelector("div[contenteditable]");
+
+    await typeStringInElement(input, "do re");
+    await typeStringInElement(contenteditable, "fa\nso");
+
+    shouldBeEqualToString("input.value", "Do Re");
+    shouldBeEqualToString("contenteditable.innerText", "Mi Fa\nSo");
+
+    input.remove();
+    contenteditable.remove();
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+<div id="console"></div>
+<div id="description"></div>
+<input autocapitalize="words">
+<div contenteditable autocapitalize="words">Mi&nbsp;</div>
+</body>
+</html>

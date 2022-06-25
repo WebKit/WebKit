@@ -1,0 +1,8 @@
+PASS setProperty("alpha, alpha, alpha, alpha") is "alpha, alpha, alpha, alpha"
+PASS setProperty("luminance, alpha") is "luminance, alpha, alpha, alpha"
+PASS setProperty("luminance, luminance, luminance, luminance") is "luminance, luminance, luminance, luminance"
+PASS setProperty("auto, alpha, luminance, luminance") is "alpha, alpha, luminance, luminance"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

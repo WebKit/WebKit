@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/wasm-builder.js"></script>
+<script src="./resources/load_wasm.js"></script>
+<script>
+description("Test that expected Wasm Module can be sent over window.postMessage.");
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+window.addEventListener("message", (answer) => finish(answer.data), false);
+
+function finish(module) {
+    var i = new WebAssembly.Instance(module);
+    var value = i.exports.calc(1);
+    shouldBe(() => value, () => 7002);
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+var run = async function () {
+    try {
+        var mod = await createWasmModule();
+        window.postMessage(mod, '*');
+    } catch (e) {
+        console.log('error:', e);
+    }
+};
+
+setTimeout(run);
+</script>

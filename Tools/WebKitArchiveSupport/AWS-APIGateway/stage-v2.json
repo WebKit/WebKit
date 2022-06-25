@@ -1,0 +1,282 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "2017-09-27T17:03:47Z",
+    "title": "archives.webkit.org"
+  },
+  "host": "q1tzqfy48e.execute-api.us-west-2.amazonaws.com",
+  "basePath": "/v2",
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/archives/{identifier}": {
+      "get": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "identifier",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200 response",
+            "schema": {
+              "$ref": "#/definitions/Empty"
+            }
+          }
+        },
+        "x-amazon-apigateway-integration": {
+          "credentials": "arn:aws:iam::982456631623:role/lambda-s3-execution-role",
+          "responses": {
+            "default": {
+              "statusCode": "200",
+              "responseTemplates": {
+                "application/json": "{\n\"path\" : \"archives\",\n\"identifier\" : \"$input.params('identifier')\",\n\"revisions\" : $input.json('$')\n}"
+              }
+            }
+          },
+          "requestTemplates": {
+            "application/json": "{\n    \"TableName\": \"archives.webkit.org\",\n    \"KeyConditionExpression\": \"identifier = :v1\",\n    \"ExpressionAttributeValues\": {\n        \":v1\": {\n            \"S\": \"$input.params('identifier')\"\n        }\n    },\n    \"ProjectionExpression\": \"revision\"\n}"
+          },
+          "uri": "arn:aws:apigateway:us-west-2:dynamodb:action/Query",
+          "passthroughBehavior": "when_no_templates",
+          "httpMethod": "POST",
+          "type": "aws"
+        }
+      }
+    },
+    "/archives/{identifier}/{revision}": {
+      "get": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "identifier",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "revision",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200 response",
+            "schema": {
+              "$ref": "#/definitions/Empty"
+            }
+          }
+        },
+        "x-amazon-apigateway-integration": {
+          "credentials": "arn:aws:iam::982456631623:role/lambda-s3-execution-role",
+          "responses": {
+            "default": {
+              "statusCode": "200",
+              "responseTemplates": {
+                "application/json": "#set($inputRoot = $input.path('$'))\n{\n    \"archive\": [\n        #foreach($elem in $inputRoot.Items) {\n            \"identifier\": \"$elem.identifier.S\",\n            \"revision\": \"$elem.revision.N\",\n            \"s3_url\": \"$elem.s3_url.S\"\n        }#if($foreach.hasNext),#end\n\t#end\n    ]\n}"
+              }
+            }
+          },
+          "requestTemplates": {
+            "application/json": "{\n    \"TableName\": \"archives.webkit.org\",\n    \"KeyConditionExpression\": \"identifier = :v1 and revision = :v2\",\n    \"ExpressionAttributeValues\": {\n        \":v1\": { \"S\": \"$input.params('identifier')\"},\n        \":v2\": { \"N\": \"$input.params('revision')\"}\n    }\n}"
+          },
+          "uri": "arn:aws:apigateway:us-west-2:dynamodb:action/Query",
+          "passthroughBehavior": "when_no_templates",
+          "httpMethod": "POST",
+          "type": "aws"
+        }
+      }
+    },
+    "/latest/{identifier}": {
+      "get": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "identifier",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200 response",
+            "schema": {
+              "$ref": "#/definitions/Empty"
+            }
+          }
+        },
+        "x-amazon-apigateway-integration": {
+          "credentials": "arn:aws:iam::982456631623:role/lambda-s3-execution-role",
+          "responses": {
+            "default": {
+              "statusCode": "200"
+            }
+          },
+          "requestTemplates": {
+            "application/json": "{\n    \"TableName\": \"minified-archives.webkit.org\",\n    \"KeyConditionExpression\": \"identifier = :v1\",\n    \"ExpressionAttributeValues\": {\n        \":v1\": {\n            \"S\": \"$input.params('identifier')\"\n        }\n    },\n    \"ProjectionExpression\": \"revision, s3_url, creationTime\",\n    \"Limit\": 30,\n    \"ScanIndexForward\": \"False\"\n}"
+          },
+          "uri": "arn:aws:apigateway:us-west-2:dynamodb:action/Query",
+          "passthroughBehavior": "when_no_templates",
+          "httpMethod": "POST",
+          "type": "aws"
+        }
+      }
+    },
+    "/minified-archives": {
+      "get": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "200 response",
+            "schema": {
+              "$ref": "#/definitions/Empty"
+            }
+          }
+        },
+        "x-amazon-apigateway-integration": {
+          "credentials": "arn:aws:iam::982456631623:role/lambda-s3-execution-role",
+          "responses": {
+            "default": {
+              "statusCode": "200"
+            }
+          },
+          "requestTemplates": {
+            "application/json": "{\n    \"TableName\": \"minified-archives.webkit.org\"\n}"
+          },
+          "uri": "arn:aws:apigateway:us-west-2:dynamodb:action/Scan",
+          "passthroughBehavior": "when_no_templates",
+          "httpMethod": "POST",
+          "type": "aws"
+        }
+      }
+    },
+    "/minified-archives/{identifier}": {
+      "get": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "identifier",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200 response",
+            "schema": {
+              "$ref": "#/definitions/Empty"
+            }
+          }
+        },
+        "x-amazon-apigateway-integration": {
+          "credentials": "arn:aws:iam::982456631623:role/lambda-s3-execution-role",
+          "responses": {
+            "default": {
+              "statusCode": "200",
+              "responseTemplates": {
+                "application/json": "{\n\"path\" : \"minified-archives\",\n\"identifier\" : \"$input.params('identifier')\",\n\"revisions\" : $input.json('$')\n}"
+              }
+            }
+          },
+          "requestTemplates": {
+            "application/json": "{\n    \"TableName\": \"minified-archives.webkit.org\",\n    \"KeyConditionExpression\": \"identifier = :v1\",\n    \"ExpressionAttributeValues\": {\n        \":v1\": {\n            \"S\": \"$input.params('identifier')\"\n        }\n    },\n    \"ProjectionExpression\": \"revision\"\n}"
+          },
+          "uri": "arn:aws:apigateway:us-west-2:dynamodb:action/Query",
+          "passthroughBehavior": "when_no_templates",
+          "httpMethod": "POST",
+          "type": "aws"
+        }
+      }
+    },
+    "/minified-archives/{identifier}/{revision}": {
+      "get": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "identifier",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "revision",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200 response",
+            "schema": {
+              "$ref": "#/definitions/Empty"
+            }
+          }
+        },
+        "x-amazon-apigateway-integration": {
+          "credentials": "arn:aws:iam::982456631623:role/lambda-s3-execution-role",
+          "responses": {
+            "default": {
+              "statusCode": "200",
+              "responseTemplates": {
+                "application/json": "#set($inputRoot = $input.path('$'))\n{\n    \"archive\": [\n        #foreach($elem in $inputRoot.Items) {\n            \"identifier\": \"$elem.identifier.S\",\n            \"revision\": \"$elem.revision.N\",\n            \"s3_url\": \"$elem.s3_url.S\"\n        }#if($foreach.hasNext),#end\n\t#end\n    ]\n}"
+              }
+            }
+          },
+          "requestTemplates": {
+            "application/json": "{\n    \"TableName\": \"minified-archives.webkit.org\",\n    \"KeyConditionExpression\": \"identifier = :v1 and revision = :v2\",\n    \"ExpressionAttributeValues\": {\n        \":v1\": { \"S\": \"$input.params('identifier')\"},\n        \":v2\": { \"N\": \"$input.params('revision')\"}\n    }\n}"
+          },
+          "uri": "arn:aws:apigateway:us-west-2:dynamodb:action/Query",
+          "passthroughBehavior": "when_no_templates",
+          "httpMethod": "POST",
+          "type": "aws"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Empty": {
+      "type": "object",
+      "title": "Empty Schema"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+This test makes sure that extra-heavy weights of the system font can be achieved.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS six.offsetWidth is not nine.offsetWidth
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hello, WorldHello, World

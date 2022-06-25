@@ -1,0 +1,1 @@
+This tests that making changes on a node that triggers a callback where we make changes again on the same node does not result in an assert/crash. Test passes if no crash is observed.

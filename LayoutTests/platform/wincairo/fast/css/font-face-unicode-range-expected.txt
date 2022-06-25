@@ -1,0 +1,72 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 257x19
+          text run at (0,0) width 257: "Each box should contain two identical lines"
+      RenderBlock {DIV} at (0,36) size 784x90 [border: (1px solid #000000)]
+        RenderBlock {P} at (9,17) size 766x20
+          RenderText {#text} at (0,0) size 275x19
+            text run at (0,0) width 275: "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        RenderBlock {P} at (9,53) size 766x20
+          RenderInline {SPAN} at (0,0) size 16x16
+            RenderText {#text} at (0,2) size 16x16
+              text run at (0,2) width 16: "A"
+          RenderText {#text} at (16,0) size 259x19
+            text run at (16,0) width 259: "BCDEFGHIJKLMNOPQRSTUVWXYZ"
+      RenderBlock {DIV} at (0,134) size 784x90 [border: (1px solid #000000)]
+        RenderBlock {P} at (9,17) size 766x20
+          RenderText {#text} at (0,0) size 357x19
+            text run at (0,0) width 357: "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        RenderBlock {P} at (9,53) size 766x20
+          RenderInline {SPAN} at (0,0) size 240x16
+            RenderText {#text} at (0,2) size 240x16
+              text run at (0,2) width 240: "ABCDEFGHIJKLMNO"
+          RenderText {#text} at (240,0) size 117x19
+            text run at (240,0) width 117: "PQRSTUVWXYZ"
+      RenderBlock {DIV} at (0,232) size 784x90 [border: (1px solid #000000)]
+        RenderBlock {P} at (9,17) size 766x20
+          RenderText {#text} at (0,0) size 286x19
+            text run at (0,0) width 286: "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        RenderBlock {P} at (9,53) size 766x20
+          RenderText {#text} at (0,0) size 11x19
+            text run at (0,0) width 11: "A"
+          RenderInline {SPAN} at (0,0) size 48x16
+            RenderText {#text} at (11,2) size 48x16
+              text run at (11,2) width 48: "BCD"
+          RenderText {#text} at (59,0) size 227x19
+            text run at (59,0) width 227: "EFGHIJKLMNOPQRSTUVWXYZ"
+      RenderBlock {DIV} at (0,330) size 784x90 [border: (1px solid #000000)]
+        RenderBlock {P} at (9,17) size 766x20
+          RenderText {#text} at (0,0) size 303x19
+            text run at (0,0) width 303: "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        RenderBlock {P} at (9,53) size 766x20
+          RenderText {#text} at (0,0) size 141x19
+            text run at (0,0) width 141: "ABCDEFGHIJKLMN"
+          RenderInline {SPAN} at (0,0) size 30x18
+            RenderText {#text} at (141,1) size 30x18
+              text run at (141,1) width 30: "OPQ"
+          RenderInline {SPAN} at (0,0) size 112x16
+            RenderText {#text} at (171,2) size 112x16
+              text run at (171,2) width 112: "RSTUVWX"
+          RenderText {#text} at (283,0) size 20x19
+            text run at (283,0) width 20: "YZ"
+      RenderBlock {DIV} at (0,428) size 784x90 [border: (1px solid #000000)]
+        RenderBlock {P} at (9,17) size 766x20
+          RenderText {#text} at (0,0) size 293x19
+            text run at (0,0) width 293: "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        RenderBlock {P} at (9,53) size 766x20
+          RenderText {#text} at (0,0) size 153x19
+            text run at (0,0) width 153: "ABCDEFGHIJKLMNO"
+          RenderInline {SPAN} at (0,0) size 120x16
+            RenderText {#text} at (153,2) size 32x16
+              text run at (153,2) width 32: "PQ"
+            RenderInline {SPAN} at (0,0) size 40x18
+              RenderText {#text} at (185,1) size 40x18
+                text run at (185,1) width 40: "RSTU"
+            RenderText {#text} at (225,2) size 48x16
+              text run at (225,2) width 48: "VWX"
+          RenderText {#text} at (273,0) size 20x19
+            text run at (273,0) width 20: "YZ"

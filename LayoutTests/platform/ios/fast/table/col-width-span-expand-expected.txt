@@ -1,0 +1,13 @@
+Two rows of cells should look identical.
+left	middle	right
+left	middle		right
+This tests Bug 14858: <col> width ignored when not tied to a single cell.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS cellWidth is '250px'
+PASS tableWidth is '500px'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

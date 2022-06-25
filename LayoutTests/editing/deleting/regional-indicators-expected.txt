@@ -1,0 +1,5 @@
+This test checks how backspacing works with regional indicator characters.
+
+a
+1. Delete a flag: PASS
+2. Delete a lone regional indicator character: PASS

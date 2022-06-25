@@ -1,0 +1,26 @@
+<!doctype html><!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Blobs in unload event handler</title>
+    </head>
+    <body>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+if (window.location.hash == '') {
+    onunload = () => {
+        new File([], '').stream();
+    };
+    window.location = "?#finish";
+} else {
+    document.body.innerHTML = "PASS";
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+    </body>
+</html>

@@ -1,0 +1,5 @@
+2d.pattern.image.zerowidth
+Actual output:
+
+FAIL Canvas test: 2d.pattern.image.zerowidth assert_equals: ctx.createPattern(img, 'repeat') === null (got [object CanvasPattern][object], expected [object]) expected null but got object "[object CanvasPattern]"
+

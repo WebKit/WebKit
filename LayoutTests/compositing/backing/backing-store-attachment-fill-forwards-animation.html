@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    @keyframes move {
+        from { transform: translate3d(0, 0, 0); }
+        to   { transform: translate3d(100px, 0, 0); }
+    }
+
+    #box {
+        position: absolute;
+        top: 1000px;
+        width: 100px;
+        height: 100px;
+        background-color: silver;
+        margin: 10px;
+    }
+    
+    #box.animating {
+        animation: move linear 0.1s forwards;
+    }
+
+</style>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function dumpLayerTree()
+{
+    if (!window.internals)
+        return;
+
+    var out = document.getElementById('out');
+    out.innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_BACKING_STORE_ATTACHED);
+}
+
+function dumpLayersSoon()
+{
+    setTimeout(function() {
+        dumpLayerTree();
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 0);
+}
+
+function runTest()
+{
+    let box = document.getElementById('box');
+    box.addEventListener('animationend', dumpLayersSoon, false);
+    box.classList.add('animating');
+}
+
+window.addEventListener('load', runTest, false);
+
+</script>
+</head>
+<body>
+<p>An element with a finished fill-forwards animation should not trigger backing store outside the viewport.</p>
+<pre id="out"></pre>
+<div id="box">
+    Some text here to force backing store.
+</div>
+
+</body>
+</html>

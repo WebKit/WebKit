@@ -1,0 +1,370 @@
+# Copyright (c) 2018 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+rtc_library("aec3") {
+  visibility = [ "*" ]
+  configs += [ "..:apm_debug_dump" ]
+  sources = [
+    "adaptive_fir_filter.cc",
+    "adaptive_fir_filter_erl.cc",
+    "aec3_common.cc",
+    "aec3_fft.cc",
+    "aec_state.cc",
+    "aec_state.h",
+    "alignment_mixer.cc",
+    "alignment_mixer.h",
+    "api_call_jitter_metrics.cc",
+    "api_call_jitter_metrics.h",
+    "block_buffer.cc",
+    "block_delay_buffer.cc",
+    "block_delay_buffer.h",
+    "block_framer.cc",
+    "block_framer.h",
+    "block_processor.cc",
+    "block_processor.h",
+    "block_processor_metrics.cc",
+    "block_processor_metrics.h",
+    "clockdrift_detector.cc",
+    "clockdrift_detector.h",
+    "coarse_filter_update_gain.cc",
+    "coarse_filter_update_gain.h",
+    "comfort_noise_generator.cc",
+    "comfort_noise_generator.h",
+    "decimator.cc",
+    "decimator.h",
+    "delay_estimate.h",
+    "dominant_nearend_detector.cc",
+    "dominant_nearend_detector.h",
+    "downsampled_render_buffer.cc",
+    "downsampled_render_buffer.h",
+    "echo_audibility.cc",
+    "echo_audibility.h",
+    "echo_canceller3.cc",
+    "echo_canceller3.h",
+    "echo_path_delay_estimator.cc",
+    "echo_path_delay_estimator.h",
+    "echo_path_variability.cc",
+    "echo_path_variability.h",
+    "echo_remover.cc",
+    "echo_remover.h",
+    "echo_remover_metrics.cc",
+    "echo_remover_metrics.h",
+    "erl_estimator.cc",
+    "erl_estimator.h",
+    "erle_estimator.cc",
+    "erle_estimator.h",
+    "fft_buffer.cc",
+    "filter_analyzer.cc",
+    "filter_analyzer.h",
+    "frame_blocker.cc",
+    "frame_blocker.h",
+    "fullband_erle_estimator.cc",
+    "fullband_erle_estimator.h",
+    "matched_filter.cc",
+    "matched_filter_lag_aggregator.cc",
+    "matched_filter_lag_aggregator.h",
+    "moving_average.cc",
+    "moving_average.h",
+    "nearend_detector.h",
+    "refined_filter_update_gain.cc",
+    "refined_filter_update_gain.h",
+    "render_buffer.cc",
+    "render_delay_buffer.cc",
+    "render_delay_buffer.h",
+    "render_delay_controller.cc",
+    "render_delay_controller.h",
+    "render_delay_controller_metrics.cc",
+    "render_delay_controller_metrics.h",
+    "render_signal_analyzer.cc",
+    "render_signal_analyzer.h",
+    "residual_echo_estimator.cc",
+    "residual_echo_estimator.h",
+    "reverb_decay_estimator.cc",
+    "reverb_decay_estimator.h",
+    "reverb_frequency_response.cc",
+    "reverb_frequency_response.h",
+    "reverb_model.cc",
+    "reverb_model.h",
+    "reverb_model_estimator.cc",
+    "reverb_model_estimator.h",
+    "signal_dependent_erle_estimator.cc",
+    "signal_dependent_erle_estimator.h",
+    "spectrum_buffer.cc",
+    "stationarity_estimator.cc",
+    "stationarity_estimator.h",
+    "subband_erle_estimator.cc",
+    "subband_erle_estimator.h",
+    "subband_nearend_detector.cc",
+    "subband_nearend_detector.h",
+    "subtractor.cc",
+    "subtractor.h",
+    "subtractor_output.cc",
+    "subtractor_output.h",
+    "subtractor_output_analyzer.cc",
+    "subtractor_output_analyzer.h",
+    "suppression_filter.cc",
+    "suppression_filter.h",
+    "suppression_gain.cc",
+    "suppression_gain.h",
+    "transparent_mode.cc",
+    "transparent_mode.h",
+  ]
+
+  defines = []
+  if (rtc_build_with_neon && current_cpu != "arm64") {
+    suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
+    cflags = [ "-mfpu=neon" ]
+  }
+
+  deps = [
+    ":adaptive_fir_filter",
+    ":adaptive_fir_filter_erl",
+    ":aec3_common",
+    ":aec3_fft",
+    ":fft_data",
+    ":matched_filter",
+    ":render_buffer",
+    ":vector_math",
+    "..:apm_logging",
+    "..:audio_buffer",
+    "..:high_pass_filter",
+    "../../../api:array_view",
+    "../../../api/audio:aec3_config",
+    "../../../api/audio:echo_control",
+    "../../../common_audio:common_audio_c",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base:safe_minmax",
+    "../../../rtc_base/experiments:field_trial_parser",
+    "../../../rtc_base/system:arch",
+    "../../../system_wrappers",
+    "../../../system_wrappers:field_trial",
+    "../../../system_wrappers:metrics",
+    "../utility:cascaded_biquad_filter",
+  ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+
+  if (current_cpu == "x86" || current_cpu == "x64") {
+    deps += [ ":aec3_avx2" ]
+  }
+}
+
+rtc_source_set("aec3_common") {
+  sources = [ "aec3_common.h" ]
+}
+
+rtc_source_set("aec3_fft") {
+  sources = [ "aec3_fft.h" ]
+  deps = [
+    ":aec3_common",
+    ":fft_data",
+    "../../../api:array_view",
+    "../../../common_audio/third_party/ooura:fft_size_128",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base/system:arch",
+  ]
+}
+
+rtc_source_set("render_buffer") {
+  sources = [
+    "block_buffer.h",
+    "fft_buffer.h",
+    "render_buffer.h",
+    "spectrum_buffer.h",
+  ]
+  deps = [
+    ":aec3_common",
+    ":fft_data",
+    "../../../api:array_view",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base/system:arch",
+  ]
+}
+
+rtc_source_set("adaptive_fir_filter") {
+  sources = [ "adaptive_fir_filter.h" ]
+  deps = [
+    ":aec3_common",
+    ":aec3_fft",
+    ":fft_data",
+    ":render_buffer",
+    "..:apm_logging",
+    "../../../api:array_view",
+    "../../../rtc_base/system:arch",
+  ]
+}
+
+rtc_source_set("adaptive_fir_filter_erl") {
+  sources = [ "adaptive_fir_filter_erl.h" ]
+  deps = [
+    ":aec3_common",
+    "../../../api:array_view",
+    "../../../rtc_base/system:arch",
+  ]
+}
+
+rtc_source_set("matched_filter") {
+  sources = [ "matched_filter.h" ]
+  deps = [
+    ":aec3_common",
+    "../../../api:array_view",
+    "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base/system:arch",
+  ]
+}
+
+rtc_source_set("vector_math") {
+  sources = [ "vector_math.h" ]
+  deps = [
+    ":aec3_common",
+    "../../../api:array_view",
+    "../../../rtc_base:checks",
+    "../../../rtc_base/system:arch",
+  ]
+}
+
+rtc_source_set("fft_data") {
+  sources = [ "fft_data.h" ]
+  deps = [
+    ":aec3_common",
+    "../../../api:array_view",
+    "../../../rtc_base/system:arch",
+  ]
+}
+
+if (current_cpu == "x86" || current_cpu == "x64") {
+  rtc_library("aec3_avx2") {
+    configs += [ "..:apm_debug_dump" ]
+    sources = [
+      "adaptive_fir_filter_avx2.cc",
+      "adaptive_fir_filter_erl_avx2.cc",
+      "fft_data_avx2.cc",
+      "matched_filter_avx2.cc",
+      "vector_math_avx2.cc",
+    ]
+
+    if (is_win) {
+      cflags = [ "/arch:AVX2" ]
+    } else {
+      cflags = [
+        "-mavx2",
+        "-mfma",
+      ]
+    }
+
+    deps = [
+      ":adaptive_fir_filter",
+      ":adaptive_fir_filter_erl",
+      ":fft_data",
+      ":matched_filter",
+      ":vector_math",
+      "../../../api:array_view",
+      "../../../rtc_base:checks",
+    ]
+  }
+}
+
+if (rtc_include_tests) {
+  rtc_library("aec3_unittests") {
+    testonly = true
+
+    configs += [ "..:apm_debug_dump" ]
+    sources = [
+      "mock/mock_block_processor.cc",
+      "mock/mock_block_processor.h",
+      "mock/mock_echo_remover.cc",
+      "mock/mock_echo_remover.h",
+      "mock/mock_render_delay_buffer.cc",
+      "mock/mock_render_delay_buffer.h",
+      "mock/mock_render_delay_controller.cc",
+      "mock/mock_render_delay_controller.h",
+    ]
+
+    deps = [
+      ":adaptive_fir_filter",
+      ":adaptive_fir_filter_erl",
+      ":aec3",
+      ":aec3_common",
+      ":aec3_fft",
+      ":fft_data",
+      ":matched_filter",
+      ":render_buffer",
+      ":vector_math",
+      "..:apm_logging",
+      "..:audio_buffer",
+      "..:audio_processing",
+      "..:high_pass_filter",
+      "../../../api:array_view",
+      "../../../api/audio:aec3_config",
+      "../../../rtc_base:checks",
+      "../../../rtc_base:rtc_base_approved",
+      "../../../rtc_base:safe_minmax",
+      "../../../rtc_base/system:arch",
+      "../../../system_wrappers",
+      "../../../test:field_trial",
+      "../../../test:test_support",
+      "../utility:cascaded_biquad_filter",
+    ]
+    absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+
+    defines = []
+
+    if (rtc_enable_protobuf) {
+      sources += [
+        "adaptive_fir_filter_erl_unittest.cc",
+        "adaptive_fir_filter_unittest.cc",
+        "aec3_fft_unittest.cc",
+        "aec_state_unittest.cc",
+        "alignment_mixer_unittest.cc",
+        "api_call_jitter_metrics_unittest.cc",
+        "block_delay_buffer_unittest.cc",
+        "block_framer_unittest.cc",
+        "block_processor_metrics_unittest.cc",
+        "block_processor_unittest.cc",
+        "clockdrift_detector_unittest.cc",
+        "coarse_filter_update_gain_unittest.cc",
+        "comfort_noise_generator_unittest.cc",
+        "decimator_unittest.cc",
+        "echo_canceller3_unittest.cc",
+        "echo_path_delay_estimator_unittest.cc",
+        "echo_path_variability_unittest.cc",
+        "echo_remover_metrics_unittest.cc",
+        "echo_remover_unittest.cc",
+        "erl_estimator_unittest.cc",
+        "erle_estimator_unittest.cc",
+        "fft_data_unittest.cc",
+        "filter_analyzer_unittest.cc",
+        "frame_blocker_unittest.cc",
+        "matched_filter_lag_aggregator_unittest.cc",
+        "matched_filter_unittest.cc",
+        "moving_average_unittest.cc",
+        "refined_filter_update_gain_unittest.cc",
+        "render_buffer_unittest.cc",
+        "render_delay_buffer_unittest.cc",
+        "render_delay_controller_metrics_unittest.cc",
+        "render_delay_controller_unittest.cc",
+        "render_signal_analyzer_unittest.cc",
+        "residual_echo_estimator_unittest.cc",
+        "reverb_model_estimator_unittest.cc",
+        "signal_dependent_erle_estimator_unittest.cc",
+        "subtractor_unittest.cc",
+        "suppression_filter_unittest.cc",
+        "suppression_gain_unittest.cc",
+        "vector_math_unittest.cc",
+      ]
+    }
+
+    if (!build_with_chromium) {
+      deps += [ "..:audio_processing_unittests" ]
+    }
+  }
+}

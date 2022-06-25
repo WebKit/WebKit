@@ -1,0 +1,8 @@
+Test to verify that snapping after layout of right-to-left content works properly. All inner boxes should be snug against the edge of their containers.
+
+
+PASS Initial snapping in scroll area with writing-mode: vertical-rl and direction: ltr
+PASS Initial snapping in scroll area with writing-mode: horizontal-tb and direction: rtl
+PASS Initial snapping in scroll area with writing-mode: vertical-lr and direction: rtl
+PASS Initial snapping in scroll area with writing-mode: vertical-rl and direction: rtl
+

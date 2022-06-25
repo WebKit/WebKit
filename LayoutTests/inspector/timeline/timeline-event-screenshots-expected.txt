@@ -1,0 +1,15 @@
+CONSOLE MESSAGE: Viewport
+Tests 'Screenshot' Timeline event records.
+
+
+== Running test suite: TimelineEvent.FireScreenshots
+-- Running test case: TimelineEvent.FireScreenshots.requestScreenshots
+Starting Capture...
+Evaluating...
+Stopping Capture...
+PASS: Should have at least 1 Screenshot record.
+PASS: Screenshot record should contain image data.
+Adding screenshot from console...
+PASS: Should have added another Screenshot record.
+PASS: Screenshot record from console should contain image data.
+

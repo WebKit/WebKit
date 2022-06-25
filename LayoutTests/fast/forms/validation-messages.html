@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script src="form-validation.js"></script>
+<form>
+  Required text input: <input type="text" required><input id="required_text_input_submit" type="submit">
+</form>
+<form>
+  Required checkbox input: <input type="checkbox" required><input id="required_checkbox_submit" type="submit">
+</form>
+<form>
+  Required radio input: <input type="radio" name="myradiogroup1" required><br>
+  Required radio input: <input type="radio" name="myradiogroup1">
+  <input id="required_radio_submit" type="submit">
+</form>
+<form>
+  Required file input: <input type="file" required><input id="required_file_submit" type="submit">
+</form>
+<form>
+  Required email input: <input type="email" value="invalid" required><input id="required_email_submit" type="submit">
+</form>
+<form>
+  Required url input: <input type="url" value="invalid" required><input id="required_url_submit" type="submit">
+</form>
+<form>
+  Required input with pattern: <input type="text" value="1" pattern="[a-z]" required><input id="input_with_pattern_submit" type="submit">
+</form>
+<form>
+  Required input with minlength=100: <input type="text" minlength=100 id="field_with_minlength" required><input id="input_with_minlength_submit" type="submit">
+</form>
+<form>
+  Required range with min=5: <input type="number" value="1" min=5 required><input id="range_with_min_submit" type="submit">
+</form>
+<form>
+  Required range with max=5: <input type="number" value="10" max=5 required><input id="range_with_max_submit" type="submit">
+</form>
+<form>
+  Required range with step=3 / min=0: <input type="number" value="10" min=0 step=3 required><input id="range_with_step_submit" type="submit">
+</form>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description("Tests the HTML form validation messages being shown on UI side.");
+jsTestIsAsync = true;
+
+var tests = [
+    ['required_text_input_submit', 'Fill out this field'],
+    ['required_checkbox_submit', 'Select this checkbox'],
+    ['required_radio_submit', 'Select one of these options'],
+    ['required_file_submit', 'Select a file'],
+    ['required_email_submit', 'Enter an email address'],
+    ['required_url_submit', 'Enter a URL'],
+    ['input_with_pattern_submit', 'Match the requested format'],
+    ['input_with_minlength_submit', 'Use at least 100 characters'],
+    ['range_with_min_submit', 'Value must be greater than or equal to 5'],
+    ['range_with_max_submit', 'Value must be less than or equal to 5'],
+    ['range_with_step_submit', 'Enter a valid value'],
+];
+var currentTestIndex = -1;
+
+function runNextTest()
+{
+    ++currentTestIndex;
+    if (currentTestIndex >= tests.length) {
+        finishJSTest();
+        return;
+    }
+
+    var currentTest = tests[currentTestIndex];
+    var submitButton = document.getElementById(currentTest[0]);
+    expectedMessage = currentTest[1];
+
+    submitButton.click();
+    getValidationMessage().then((_message) => {
+        message = _message;
+        shouldBeEqualToString("message", "" + expectedMessage);
+        runNextTest();
+    });
+}
+
+function setup()
+{
+    var field = document.getElementById("field_with_minlength");
+    field.focus();
+    eventSender.keyDown("Z");
+}
+
+onload = function() {
+    setup();
+    setTimeout(function() {
+        runNextTest();
+    }, 0);
+}
+</script>
+</body>
+<html>

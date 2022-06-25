@@ -1,0 +1,4 @@
+
+
+PASS Default opacity value is '1'
+

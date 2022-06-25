@@ -1,0 +1,46 @@
+{"domains":[
+{
+    "domain": "TypeDomain",
+    "types": [
+        {
+            "id": "Enum",
+            "type": "string",
+            "enum": ["shared", "1", "2"]
+        }
+    ]
+},
+{
+    "domain": "CommandDomain",
+    "commands": [
+        {
+            "name": "command",
+            "parameters": [
+                { "name": "enumRequired", "$ref": "TypeDomain.Enum" },
+                { "name": "enumOptional", "$ref": "TypeDomain.Enum", "optional": true },
+                { "name": "parameterRequired", "type": "string", "enum": ["shared", "sharedRequired", "black"] },
+                { "name": "parameterOptional", "type": "string", "enum": ["shared", "sharedOptional", "red"], "optional": true }
+            ],
+            "returns": [
+                { "name": "enumRequired", "$ref": "TypeDomain.Enum" },
+                { "name": "enumOptional", "$ref": "TypeDomain.Enum", "optional": true },
+                { "name": "returnRequired", "type": "string", "enum": ["shared", "sharedRequired", "white"] },
+                { "name": "returnOptional", "type": "string", "enum": ["shared", "sharedOptional", "blue"], "optional": true }
+            ]
+        }
+    ]
+},
+{
+    "domain": "EventDomain",
+    "events": [
+        {
+            "name": "event",
+            "parameters": [
+                { "name": "enumRequired", "$ref": "TypeDomain.Enum" },
+                { "name": "enumOptional", "$ref": "TypeDomain.Enum", "optional": true },
+                { "name": "parameterRequired", "type": "string", "enum": ["shared", "sharedRequired", "grey"] },
+                { "name": "parameterOptional", "type": "string", "enum": ["shared", "sharedOptional", "green"], "optional": true }
+            ]
+        }
+    ]
+}
+]}

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+This test passes if there is no crash.
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+var parser = new DOMParser();
+var doc = parser.parseFromString("<?xml><!DOCTYPE svg><svg></svg>", "application/xml");
+var style = getComputedStyle(doc.children[0]);
+style.cssText;
+</script>
+</body>
+</html>

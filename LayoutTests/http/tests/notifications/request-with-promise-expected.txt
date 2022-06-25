@@ -1,0 +1,21 @@
+CONSOLE MESSAGE: Notification prompting can only be done from a user gesture.
+This tests Notification.permission's returned Promise
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Requesting permission with default permission without user gesture
+PASS Notification.permission is "default"
+PASS permission is denied
+PASS Notification.permission is "default"
+Requesting permission with default permission with user gesture
+PASS Notification.permission is "default"
+PASS permission is granted
+PASS Notification.permission is "granted"
+Requesting permission with non-default permission
+PASS permission is denied
+PASS Notification.permission is "denied"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

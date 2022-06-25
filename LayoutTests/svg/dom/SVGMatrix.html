@@ -1,0 +1,129 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+var svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+var matrix = svgElement.createSVGMatrix();
+
+function matrixToString(matrix)
+{
+	return "{ a: " + matrix.a + ", b: " + matrix.b + ", c: " + matrix.c + ", d: " + matrix.d + ", e: " + matrix.e + ", f: " + matrix.f + "}";
+}
+
+function checkAttributeSetting(matrix, name) {
+	var value = matrix[name];
+
+	shouldBe("matrix." + name + " = matrix", "matrix");
+	shouldBe("matrix." + name, "NaN");
+	shouldBe("matrix." + name + " = 0", "0");
+	shouldBe("matrix." + name + " = svgElement", "svgElement");
+	shouldBe("matrix." + name, "NaN");
+	shouldBe("matrix." + name + " = 0", "0");
+	shouldBe("matrix." + name + " = 'aString'", "'aString'");
+	shouldBe("matrix." + name, "NaN");
+	//Check assigning null works as expected
+	shouldBeNull("matrix." + name + " = null");
+	shouldBe("matrix." + name, "0");
+	// Reset to previous value.
+	shouldBe("matrix." + name + " = " + value.toString(), value.toString());
+}
+
+function checkMethodCallingOneMatrixArgument(matrix, name) {
+	debug("");
+	debug("Check calling '" + name + "' with invalid arguments");
+	shouldThrow("matrix." + name + "()");
+	shouldThrow("matrix." + name + "(true)");
+	shouldThrow("matrix." + name + "(2)");
+	shouldThrow("matrix." + name + "('aString')");
+	shouldThrow("matrix." + name + "(svgElement)");
+}
+
+function checkMethodCallingOneNumericArgument(matrix, name) {
+	debug("");
+	debug("Check calling '" + name + "' with invalid arguments");
+	shouldThrow("matrix." + name + "()");
+	shouldBeNonNull("matrix." + name + "('aString')");
+	shouldBeNonNull("matrix." + name + "(svgElement)");
+}
+
+function checkMethodCallingTwoNumericArguments(matrix, name) {
+	debug("");
+	debug("Check calling '" + name + "' with invalid arguments");
+	shouldThrow("matrix." + name + "()");
+	shouldThrow("matrix." + name + "(true)");
+	shouldThrow("matrix." + name + "(2)");
+	shouldThrow("matrix." + name + "('aString')");
+	shouldThrow("matrix." + name + "(svgElement)");
+	shouldBeNonNull("matrix." + name + "('aString', 'aString')");
+	shouldBeNonNull("matrix." + name + "(svgElement, svgElement)");
+	shouldBeNonNull("matrix." + name + "(2, 'aString')");
+	shouldBeNonNull("matrix." + name + "(2, svgElement)");
+	shouldBeNonNull("matrix." + name + "('aString', 2)");
+	shouldBeNonNull("matrix." + name + "(svgElement, 2)");
+}
+
+description("This test checks the SVGMatrix API");
+
+debug("");
+debug("Check initial matrix values");
+shouldBeEqualToString("matrixToString(matrix)", "{ a: 1, b: 0, c: 0, d: 1, e: 0, f: 0}");
+
+debug("");
+debug("Check assigning matrices");
+shouldBe("matrix.a = 2", "2");
+shouldBe("matrix.f = 200", "200");
+
+debug("");
+debug("Check assigning invalid matrices");
+checkAttributeSetting(matrix, "a");
+checkAttributeSetting(matrix, "b");
+checkAttributeSetting(matrix, "c");
+checkAttributeSetting(matrix, "d");
+checkAttributeSetting(matrix, "e");
+checkAttributeSetting(matrix, "f");
+
+debug("");
+debug("Check that the matrix is still containing the correct values");
+shouldBeEqualToString("matrixToString(matrix)", "{ a: 2, b: 0, c: 0, d: 1, e: 0, f: 200}");
+
+checkMethodCallingOneMatrixArgument(matrix, "multiply")
+checkMethodCallingTwoNumericArguments(matrix, "translate");
+checkMethodCallingOneNumericArgument(matrix, "scale");
+checkMethodCallingTwoNumericArguments(matrix, "scaleNonUniform");
+checkMethodCallingOneNumericArgument(matrix, "rotate");
+checkMethodCallingTwoNumericArguments(matrix, "rotateFromVector");
+checkMethodCallingOneNumericArgument(matrix, "skewX");
+checkMethodCallingOneNumericArgument(matrix, "skewY");
+
+debug("");
+debug("Check calling SVGMatrix methods with valid arguments");
+shouldBeEqualToString("matrixToString(matrix.translate(10, 20))", "{ a: 2, b: 0, c: 0, d: 1, e: 20, f: 220}");
+shouldBeEqualToString("matrixToString(matrix.scale(5))", "{ a: 10, b: 0, c: 0, d: 5, e: 0, f: 200}");
+shouldBeEqualToString("matrixToString(matrix.scaleNonUniform(2, 3))", "{ a: 4, b: 0, c: 0, d: 3, e: 0, f: 200}");
+shouldBeEqualToString("matrixToString(matrix.skewX(90))", "{ a: 2, b: 0, c: 32662478706390740, d: 1, e: 0, f: 200}");
+shouldBeEqualToString("matrixToString(matrix.skewY(90))", "{ a: 2, b: 16331239353195370, c: 0, d: 1, e: 0, f: 200}");
+
+debug("");
+debug("Check that the matrix is still containing the correct values");
+shouldBeEqualToString("matrixToString(matrix)", "{ a: 2, b: 0, c: 0, d: 1, e: 0, f: 200}");
+
+debug("");
+debug("Calling methods that throw exceptions");
+shouldThrow("matrix.rotateFromVector(0, 4)");
+shouldThrow("matrix.rotateFromVector(4, 0)");
+shouldBe("matrix.a = 0", "0");
+shouldThrow("matrix.inverse()");
+
+debug("");
+successfullyParsed = true;
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

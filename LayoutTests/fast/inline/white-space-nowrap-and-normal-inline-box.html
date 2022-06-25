@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<style>
+div {
+  font: 20px/1 Ahem;
+}
+
+#red {
+  position: absolute;
+  z-index: -1;
+  background: red;
+  color: transparent;
+}
+
+.test {
+  width: 200px;
+  color: green;
+  background-color: green;
+}
+.normal {
+  white-space: normal;
+}
+.nowrap {
+  white-space: nowrap;
+}
+</style>
+<!-- white-space: normal allows wrapping at the overflowing whitespace content -->
+<div id=red>XXXXXXXXXX<br>X</div>
+<div class="test nowrap"><span class="nowrap">XXXXXXXXXX </span><span class="normal"> </span> X</span></div>

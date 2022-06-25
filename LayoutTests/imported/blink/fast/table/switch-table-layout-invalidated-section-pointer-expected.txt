@@ -1,0 +1,2 @@
+This test will trigger an assertion failure in debug build if section pointers are not refreshed prior to iterating table cells during table-layout change.
+

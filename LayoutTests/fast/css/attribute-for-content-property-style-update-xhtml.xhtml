@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<style>
+target::before {
+    content: attr(CamelCase)
+}
+</style>
+</head>
+<body>
+    <p>This test checks the styling and style update of attributes that are only used by the "content" propery of a rule.</p>
+    <div id="initial">
+        <target>No attribute</target>
+
+        <target CamelCase="WebKit!">CamelCase initial attribute</target>
+        <target camelcase="WebKit!">camelcase initial attribute</target>
+        <target CAMELCASE="WebKit!">CAMELCASE initial attribute</target>
+    </div>
+    <div id="dynamic">
+        <target>No attribute</target>
+
+        <target>CamelCase initial attribute</target>
+        <target>camelcase initial attribute</target>
+        <target>CAMELCASE initial attribute</target>
+    </div>
+</body>
+<script><![CDATA[
+window.addEventListener("load", function() {
+    forcedLayout = document.documentElement.offsetTop;
+
+    var allDynamicTargets = document.querySelectorAll("#dynamic>target");
+    allDynamicTargets[1].setAttribute("CamelCase", "WebKit!");
+    allDynamicTargets[2].setAttribute("camelcase", "WebKit!");
+    allDynamicTargets[3].setAttribute("CAMELCASE", "WebKit!");
+});
+]]></script>
+</html>

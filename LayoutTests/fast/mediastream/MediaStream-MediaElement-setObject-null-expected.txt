@@ -1,0 +1,8 @@
+PASS video.srcObject = stream did not throw exception.
+PASS video.duration is Number.POSITIVE_INFINITY
+PASS video.srcObject = null did not throw exception.
+PASS video.duration is Number.NaN
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

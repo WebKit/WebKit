@@ -1,0 +1,10 @@
+This test checks that the layout viewport rect's width is correctly updated when the window is resized.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.internals.layoutViewportRect().width is 585
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

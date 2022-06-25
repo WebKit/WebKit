@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="resources/webgl_test_files/resources/js-test-style.css"/>
+<script src="resources/webgl_test_files/js/js-test-pre.js"></script>
+<script src="resources/webgl_test_files/js/webgl-test-utils.js"></script>
+</head>
+<body onload="test()">
+<div id="description"></div>
+<div id="console"></div>
+<script>
+"use strict";
+description("Test that first losing context, trying to restore it, and then doing something to really lose it does not crash.");
+
+// The test would crash with following sequence:
+// 1. Cause a real context lost. In this test, "gpuStatusFailure".
+// 2. Page would try to restore the context. This would start the restore timer.
+// 3. Before the restore timer fires, really lose the context. In this test, "manyContext".
+// 4. The restore timer would fire, and restore function would use nullptr context.
+
+var wtu = WebGLTestUtils;
+var gl;
+
+async function waitForEvent(element, eventName, timeoutMS)
+{
+    timeoutMS = timeoutMS || 2000;
+    return new Promise((resolve, reject) => {
+        function timeoutHandler() {
+            element.removeEventListener(eventName, handler, { once: true });
+            reject();
+        }
+        const rejectID = setTimeout(timeoutHandler, timeoutMS);
+        function handler(event) {
+            clearTimeout(rejectID);
+            resolve(event);
+        }
+        element.addEventListener(eventName, handler, { once: true });
+    });
+}
+
+async function waitForWebGLContextRestored(canvas, timeoutMS)
+{
+    await waitForEvent(canvas, "webglcontextrestored", timeoutMS);
+}
+
+async function waitForWebGLContextLostAndRestore(canvas, timeoutMS)
+{
+    let event = await waitForEvent(canvas, "webglcontextlost", timeoutMS);
+    event.preventDefault();
+}
+
+function testDescription(subcase) {
+    return Object.keys(subcase).map((k) => `${k}: ${typeof subcase[k] === "function" ? subcase[k].name : subcase[k]}`).join(", ");
+}
+
+async function runTest(subcase)
+{
+    debug(`Running test: ${testDescription(subcase)}`);
+
+    const canvas = document.createElement("canvas");
+    canvas.width = 1;
+    canvas.height = 1;
+    gl = wtu.create3DContext(canvas);
+    const WEBGL_lose_context = wtu.getExtensionWithKnownPrefixes(gl, "WEBGL_lose_context");
+
+    const webglcontextlostandrestore = waitForWebGLContextLostAndRestore(canvas);
+    const webglcontextrestored = waitForWebGLContextRestored(canvas);
+    let expectRestoreIgnored = subcase.loseMethod(gl, WEBGL_lose_context);
+
+    try {
+        await webglcontextlostandrestore;
+        testPassed("Got webglcontextlost and restore was attempted.");
+        wtu.glErrorShouldBe(gl, gl.CONTEXT_LOST_WEBGL);
+    } catch (e) {
+        if (e)
+            throw e;
+        testFailed("Timed out waiting webglcontextlost that would attempt to be restored.");
+    }
+    expectRestoreIgnored = subcase.loseMethod2(gl, WEBGL_lose_context) || expectRestoreIgnored;
+
+    try {
+        await webglcontextrestored;
+        if (expectRestoreIgnored)
+            testFailed("Expected restore be ignored, but it was not.");
+        else
+            shouldBeFalse("gl.isContextLost()");
+    } catch (e) {
+        if (e)
+            throw e;
+        if (!expectRestoreIgnored)
+            testFailed("Did not expect restore be ignored, but it was.");
+        else
+            shouldBeTrue("gl.isContextLost()");
+    }
+
+    wtu.glErrorShouldBe(gl, gl.NO_ERROR);
+}
+
+function loseContext(gl, WEBGL_lose_context)
+{
+    if (!WEBGL_lose_context) {
+        testFailed("Could not find WEBGL_lose_context extension");
+        return;
+    }
+    let wasLost = gl.isContextLost();
+    WEBGL_lose_context.loseContext();
+    if (wasLost)
+        wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION);
+    return true; // Request for restore is ignored.
+}
+
+function manyContexts()
+{
+    // This causes the older contexts to be lost, including the first one we created
+    // for testing.
+    const contexts = []
+    for (let i = 0; i < 50; ++i)
+        contexts.push(document.createElement("canvas").getContext("webgl"));
+    return true; // Request for restore is ignored.
+}
+
+function gpuStatusFailure(gl)
+{
+    internals.simulateEventForWebGLContext("GPUStatusFailure", gl);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    return true; // Request for restore is honored.
+}
+
+function nothing()
+{
+    return false;
+}
+
+const loseMethods = [loseContext, manyContexts];
+if (window.internals)
+    loseMethods.push(gpuStatusFailure);
+
+const subcases = [];
+for (const loseMethod of loseMethods)
+    for (const loseMethod2 of loseMethods.concat(nothing))
+        subcases.push({loseMethod, loseMethod2});
+
+async function test()
+{
+    for (let subcase of subcases)
+        await runTest(subcase);
+    finishTest();
+}
+</script>
+</body>
+</html>

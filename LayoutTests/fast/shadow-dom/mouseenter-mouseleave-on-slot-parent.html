@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests mouseenter and mouseleave event fires when capturing event listeners are only present on the slot element's parent.<br>
+To manually test, move the mouse cursor into the box below and move it out.<br>
+You should see mouseenter events on slotContainer, slot, and target in that order and mouseleave events in the reverse order.</p>
+<div id="hostParent"><div id="host"><span id="target" style="border: solid 1px black; padding: 0.5rem;">content</span></div></div><pre id="log"></pre>
+<script>
+
+const host = document.getElementById('host');
+const shadowRoot = host.attachShadow({mode: 'closed'});
+shadowRoot.innerHTML = `
+    <div id="slotContainer">
+        <slot id="slot"></slot>
+    </div>`;
+const slot = shadowRoot.querySelector('slot');
+
+const target = document.getElementById('target');
+slot.parentNode.addEventListener('mouseenter', logEvent, true);
+slot.parentNode.addEventListener('mouseleave', logEvent, true);
+
+function log(text) {
+    document.getElementById('log').textContent += text + '\n';
+}
+
+function logEvent(event) {
+    log(`${event.type} on ${event.target.id}`);
+}
+
+function logPhase(phase) {
+    log(`\n==${phase}==`);
+}
+
+if (!window.eventSender)
+    document.write('This test requires eventSender');
+else {
+    testRunner.dumpAsText();
+    const targetRect = target.getBoundingClientRect();
+    const x = targetRect.x + 40;
+    logPhase('Entering target');
+    eventSender.mouseMoveTo(x, targetRect.top + 5);
+
+    logPhase('Leaving target');
+    eventSender.mouseMoveTo(x, targetRect.bottom + 5);
+    
+    host.parentNode.style.display = 'none';
+}
+
+</script>
+</body>
+</html>

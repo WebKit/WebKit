@@ -1,0 +1,8 @@
+
+This tests that DOMKeyboardEvents are created correctly in the ObjC API. See bug 9736.
+
+keydown - key: U+000041@0 (keyCode/charCode: 0/0) modifiers: true,false,false,false
+
+keypress - key: U+000045@1 (keyCode/charCode: 0/0) modifiers: false,true,false,false
+
+keyup - key: U+000056@0 (keyCode/charCode: 0/0) modifiers: false,false,false,false

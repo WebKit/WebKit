@@ -1,0 +1,15 @@
+<!doctype html>
+<meta charset=utf-8>
+<title>DocumentTimeline.maximumFrameRate</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<body>
+<script>
+'use strict';
+
+test(t => {
+    assert_greater_than_equal(document.timeline.maximumFrameRate, 60);
+}, "document.timeline.maximumFrameRate is defined and reports an expected frame rate");
+
+</script>
+</body>

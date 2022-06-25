@@ -1,0 +1,14 @@
+<body><label contenteditable="true" style="-webkit-appearance: button" dir="rtl"><q id=q style="-webkit-user-select:none">a</q>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    window.getSelection().selectAllChildren(q);
+    document.execCommand("justifyLeft", false);
+    document.body.innerText = "Test editing a paragraph that is user-select:none and dir:rtl. The test passes if WebKit doesn't crash or hit an assertion.";
+    
+    if (window.testRunner)
+        testRunner.notifyDone();
+</script>

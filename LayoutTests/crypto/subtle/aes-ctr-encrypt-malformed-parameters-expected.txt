@@ -1,0 +1,14 @@
+CONSOLE MESSAGE: AES-CBC and AES-CTR do not provide authentication by default, and implementing it manually can result in minor, but serious mistakes. We recommended using authenticated encryption like AES-GCM to protect against chosen-ciphertext attacks.
+Test encrypting using AES-CTR with malformed parameters
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS crypto.subtle.encrypt({name: "aes-ctr", counter: asciiToUint8Array("jnOw99oOZFLIEPMr"), length: -1}, key, plainText) rejected promise  with TypeError: Value -1 is outside the range [0, 255].
+PASS crypto.subtle.encrypt({name: "aes-ctr", counter: asciiToUint8Array("jnOw99oOZFLIEPMr"), length: 0}, key, plainText) rejected promise  with OperationError: The operation failed for an operation-specific reason.
+PASS crypto.subtle.encrypt({name: "aes-ctr", counter: asciiToUint8Array("jnOw99oOZFLIEPMr"), length: 129}, key, plainText) rejected promise  with OperationError: The operation failed for an operation-specific reason.
+PASS crypto.subtle.encrypt({name: "aes-ctr", counter: asciiToUint8Array("jnOw99oOZFLIEPMr"), length: 1}, key, plainText) rejected promise  with OperationError: The operation failed for an operation-specific reason.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

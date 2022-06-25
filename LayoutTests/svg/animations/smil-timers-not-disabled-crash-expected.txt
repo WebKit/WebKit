@@ -1,0 +1,1 @@
+This test passes if neither it nor the next test crash.

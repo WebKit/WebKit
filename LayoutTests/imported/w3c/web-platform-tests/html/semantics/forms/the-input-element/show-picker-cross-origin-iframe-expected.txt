@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: SecurityError: Attempted to use a non-registrable domain.
+
+
+Harness Error (TIMEOUT), message = null
+
+PASS Test showPicker() called from cross-origin iframe
+PASS Test showPicker() called from cross-origin iframe 1
+PASS Test showPicker() called from cross-origin iframe 2
+TIMEOUT Test showPicker() called from cross-origin iframe 3 Test timed out
+

@@ -1,0 +1,1 @@
+PASS: Animating pruned shadow tree did not cause a crash.

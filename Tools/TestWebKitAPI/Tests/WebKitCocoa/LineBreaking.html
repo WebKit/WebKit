@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+@font-face {
+    font-family: "AllAhem";
+    src: url("AllAhem.svg") format("svg");
+}
+
+#test {
+    font: 20px "AllAhem";
+}
+</style>
+<script>
+function runTest(testContent, localeString, lineBreakValue) {
+    var container = document.getElementById("container");
+    var test = document.getElementById("test");
+
+    test.textContent = testContent;
+    container.lang = localeString;
+    container.style.webkitLineBreak = lineBreakValue;
+
+    var current = 0;
+    var breakpoints = [];
+    var clientRectsLength = 2;
+    for (var i = 1; clientRectsLength > 1; i += 5) {
+        container.style.width = "" + i + "px";
+        var width = test.getClientRects()[0].width;
+        if (current != width) {
+            current = width;
+            breakpoints.push(width / 20);
+        }
+        clientRectsLength = test.getClientRects().length;
+    }
+    return breakpoints;
+}
+</script>
+</head>
+<body>
+<div id="container" style="width: 99999999px;">
+    <span id="test">Hello World</span>
+</div>
+</body>
+</html>

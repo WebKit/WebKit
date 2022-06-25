@@ -1,0 +1,18 @@
+<html>
+<body>
+<script>
+function runTest() {
+    var test = document.getElementById('root').contentDocument;
+    test.firstChild.setAttribute('onunload', "parent.clearUs();");
+    location.reload();
+}
+
+function clearUs() {
+    document.write();
+    parent.done();
+}
+</script>
+<object data="does_not_exist"></object>
+<object data="document-destruction-within-unload.svg" id="root" onload="runTest();"></object>
+</body>
+</html>

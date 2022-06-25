@@ -1,0 +1,5 @@
+PASS result is "importScripts blocked: NetworkError:  A network error occurred."
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

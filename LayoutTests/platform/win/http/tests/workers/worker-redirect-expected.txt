@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: Unsafe attempt to load URL http://localhost:8000/workers/resources/worker-redirect-target.js from origin http://127.0.0.1:8000. Domains, protocols and ports must match.
+
+Test that loading the worker's script does not allow a cross origin redirect (bug 26146)
+
+SUCCESS: threw exception (SecurityError: The operation is insecure.) when attempting to cross origin while loading the worker script.
+SUCCESS: threw error when attempting to redirected cross origin while loading the worker script.
+DONE
+

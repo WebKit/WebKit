@@ -1,0 +1,92 @@
+#!/usr/bin/env bash
+
+source "$(dirname "$0")/../glib/dependencies/apt"
+
+PACKAGES+=(
+    # These are dependencies necessary for building WebKitGTK.
+    geoclue-2.0
+    gnome-common
+    libedit-dev
+    libfaad-dev
+    libffi-dev
+    libgirepository1.0-dev
+    libgl1-mesa-dev
+    libgl1-mesa-glx
+    libgtk-3-dev
+    libgudev-1.0-dev
+    libhyphen-dev
+    libmount-dev
+    libmpg123-dev
+    libnotify-dev
+    libopus-dev
+    libpango1.0-dev
+    libpulse-dev
+    librsvg2-dev
+    libsecret-1-dev
+    libsoup2.4-dev
+    libsrtp2-dev
+    libtheora-dev
+    libupower-glib-dev
+    libvorbis-dev
+    libvpx-dev
+    libxcomposite-dev
+    libxt-dev
+    libxtst-dev
+    nasm
+    xfonts-utils
+    $(aptIfExists libenchant-dev)
+
+    # These are dependencies necessary for running tests.
+    cups-daemon
+    dbus-x11
+    hunspell
+    hunspell-en-gb
+    hunspell-en-us
+    weston
+    xvfb
+    $(aptIfExists python-psutil)
+    $(aptIfExists python-yaml)
+
+    # These are dependencies necessary for building the jhbuild.
+    bison
+    flex
+    gobject-introspection
+    icon-naming-utils
+    libcups2-dev
+    libdrm-dev
+    libevdev-dev
+    libgbm-dev
+    libgnutls28-dev
+    libgpg-error-dev
+    libinput-dev
+    libjson-glib-dev
+    libmtdev-dev
+    libp11-kit-dev
+    libpciaccess-dev
+    libssl-dev
+    libtiff5-dev
+    libudev-dev
+    libunistring-dev
+    libv4l-dev
+    libxcb-composite0-dev
+    libxcb-xfixes0-dev
+    libxfont2
+    libxfont-dev
+    libxkbcommon-x11-dev
+    libxkbfile-dev
+    ragel
+    x11proto-gl-dev
+    x11proto-input-dev
+    x11proto-randr-dev
+    x11proto-scrnsaver-dev
+    x11proto-video-dev
+    x11proto-xf86dri-dev
+    xtrans-dev
+    xutils-dev
+    $(aptIfExists libcroco3-dev)
+    $(aptIfExists python-dev)
+    $(aptIfExists x11proto-bigreqs-dev)
+    $(aptIfExists x11proto-composite-dev)
+    $(aptIfExists x11proto-resource-dev)
+    $(aptIfExists x11proto-xcmisc-dev)
+)

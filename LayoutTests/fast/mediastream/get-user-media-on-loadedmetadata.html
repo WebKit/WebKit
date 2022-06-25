@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>video.videoWidth should be set when video.readyState reaches HAVE_METADATA</title>
+        <script src="../../resources/testharness.js"></script>
+        <script src="../../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <video width=100 height=100></video>
+
+        <script>
+            let video;
+            promise_test((test) => {
+                if (window.testRunner)
+                    testRunner.setUserMediaPermission(true);
+                if (!window.internals)
+                    return Promise.reject("this test needs internals API");
+
+                return navigator.mediaDevices.getUserMedia({ audio: true, video: true }).then((stream) => {
+                    window.internals.delayMediaStreamTrackSamples(stream.getAudioTracks()[0], .5);
+                    window.internals.delayMediaStreamTrackSamples(stream.getVideoTracks()[0], .5);
+
+                    video = document.getElementsByTagName("video")[0];
+                    video.srcObject = stream;
+                })
+                .then(() => new Promise(resolve => video.onloadedmetadata = resolve))
+                .then(() => {
+                    assert_not_equals(video.videoWidth, 0, "videoWidth is non-zero");
+                    assert_not_equals(video.videoHeight, 0, "videoHeight is non-zero");
+                })
+            }, "videoWidth and videoHeight are set on 'loadedmetadata' event");
+        </script>
+    </body>
+</html>

@@ -1,0 +1,22 @@
+<p>This tests to make sure that insertion over a fully selected special element doesn't do expansion.</p>
+<div contenteditable="true">
+<ul id="ul"><li><a id="anchor" href="http://www.google.com/">foo</a></li></ul>
+</div>
+<ul id="console"></ul>
+<script>
+function log(str) {
+    var li = document.createElement("li");
+    var text = document.createTextNode(str);
+    var console = document.getElementById("console");
+    li.appendChild(text);
+    console.appendChild(li);
+}
+
+var sel = window.getSelection();
+var anchor = document.getElementById("anchor");
+sel.setBaseAndExtent(anchor, 0, anchor, anchor.childNodes.length);
+document.execCommand("InsertText", false, "foo");
+anchor = document.getElementById("anchor");
+if (!anchor)
+    log("Failure: a special element was removed during insertion.");
+</script>

@@ -1,0 +1,17 @@
+setViewScale(1.00)
+window size: [980, 2003]
+zoom scale: 0.40
+
+setViewScale(0.50)
+window size: [1960, 4005]
+zoom scale: 0.20
+
+setViewScale(2.00)
+window size: [490, 1001]
+zoom scale: 0.80
+
+setViewScale(1.00)
+window size: [980, 2003]
+zoom scale: 0.40
+
+

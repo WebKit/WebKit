@@ -1,0 +1,4 @@
+
+PASS XRRigidTransform constructor works - webgl
+FAIL XRRigidTransform constructor works - webgl2 assert_implements: webgl2 not supported. undefined
+

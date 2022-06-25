@@ -1,0 +1,126 @@
+#!/usr/bin/env perl
+
+# Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer. 
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution. 
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+use strict;
+use FindBin;
+use Getopt::Long qw(:config pass_through);
+use POSIX;
+
+# We first want to run the test once to determine what the number of encountered
+# checks is. Then we want to run it again some number of times with random check
+# amounts. The test is successful if it doesn't crash.
+
+my $repeat = 20;
+my $seed = time();
+my $verbose = 0;
+
+# We allow flags to be passed via environment variables, which is rather useful for
+# running with the run-jsc-stress-tests harness.
+if (defined($ENV{JS_EAFUZZ_REPEAT})) {
+    $repeat = $ENV{JS_EAFUZZ_REPEAT};
+}
+if (defined($ENV{JS_EAFUZZ_SEED})) {
+    $seed = $ENV{JS_EAFUZZ_SEED};
+}
+if (defined($ENV{JS_EAFUZZ_VERBOSE})) {
+    $verbose = $ENV{JS_EAFUZZ_VERBOSE};
+}
+
+GetOptions(
+    'repeat=s' => \$repeat,
+    'seed=s' => \$seed,
+    'verbose' => \$verbose
+);
+
+my $commandString = shift @ARGV;
+
+my $checkCount;
+
+sub fail {
+    my $context = shift;
+    select((select(STDOUT), $ |= 1)[0]); # This is a perlism for flush. We need to do it this way to support older perls.
+    select((select(STDERR), $ |= 1)[0]);
+    die "Failure for command $commandString with seed $seed, repeat $repeat: $context";
+}
+
+if (shift @ARGV) {
+    die "Ignoring garbage arguments; only the first non-option argument is used as the command string.";
+}
+
+open (my $testInput, "$commandString --useExecutableAllocationFuzz=true |") or fail("Cannot execute initial command when getting check count");
+while (my $inputLine = <$testInput>) {
+    chomp($inputLine);
+    my $handled = 0;
+    if ($inputLine =~ /JSC EXECUTABLE ALLOCATION FUZZ: encountered ([0-9]+) checks\./) {
+        $checkCount = $1;
+        $handled = 1;
+    }
+    if (!$handled || $verbose) {
+        print "checkCount: $inputLine\n";
+    }
+}
+close($testInput);
+
+if ($verbose) {
+    print "Check count: $checkCount\n";
+    print "Seed: $seed\n";
+}
+
+if (!$checkCount) {
+    print "Executable allocation fuzz testing not supported by jsc binary.\n";
+    exit 0;
+}
+
+# First do some tests where we have one-off failures.
+srand($seed);
+
+for (my $iteration = 0; $iteration < $repeat; ++$iteration) {
+    my $target = int(rand() * $checkCount) + 1;
+    if ($verbose) {
+        print "iteration($iteration) target($target) one-shot: Running.\n";
+    }
+    my $result = system("$commandString --useExecutableAllocationFuzz=true --fireExecutableAllocationFuzzAt=$target");
+    if ($result != 0) {
+        fail("Cannot execute command on iteration $iteration, status $? for target $target");
+    }
+}
+
+# Then do some tests where we start failing at a particular point, and then permafail.
+srand($seed);
+
+for (my $iteration = 0; $iteration < $repeat; ++$iteration) {
+    my $target = int(rand() * $checkCount) + 1;
+    if ($verbose) {
+        print "iteration($iteration) target($target) at-or-after: Running.\n";
+    }
+    my $result = system("$commandString --useExecutableAllocationFuzz=true --fireExecutableAllocationFuzzAtOrAfter=$target");
+    if ($result != 0) {
+        fail("Cannot execute command on iteration $iteration, status $? for target $target");
+    }
+}
+
+if ($verbose) {
+    print "Success!\n";
+}

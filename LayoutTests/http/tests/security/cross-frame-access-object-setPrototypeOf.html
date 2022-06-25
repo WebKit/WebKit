@@ -1,0 +1,50 @@
+<html>
+<head>
+    <script src="/js-test-resources/js-test-pre.js"></script>
+    <script src="resources/cross-frame-access.js"></script>
+    <script>
+        description("This tests that you can't set the prototype of the window or location objects cross-origin using Object.setPrototypeOf()");
+        jsTestIsAsync = true;
+
+        // Set up listener for message from iframe
+        addEventListener('message', function(event) {
+            if (event.data == "finishedLoad")
+                doTest();
+        }, false);
+
+        doTest = function()
+        {
+            targetWindow = document.getElementById("target").contentWindow;
+
+            shouldBeFalse("targetWindow instanceof Array");
+            shouldThrowErrorName("Object.setPrototypeOf(targetWindow, Array.prototype)", "TypeError");
+            shouldBeFalse("targetWindow instanceof Array");
+
+            shouldBeFalse("targetWindow.location instanceof Array");
+            shouldThrowErrorName("Object.setPrototypeOf(targetWindow.location, Array.prototype)", "TypeError");
+            shouldBeFalse("targetWindow.location instanceof Array");
+
+            protoSetter = Object.getOwnPropertyDescriptor(Object.prototype, '__proto__').set;
+            shouldBeFalse("targetWindow instanceof Array");
+            shouldThrowErrorName("protoSetter.call(targetWindow, Array.prototype)", "TypeError");
+            shouldBeFalse("targetWindow instanceof Array");
+
+            shouldBeFalse("targetWindow.location instanceof Array");
+            shouldThrowErrorName("protoSetter.call(targetWindow.location, Array.prototype)", "TypeError");
+            shouldBeFalse("targetWindow.location instanceof Array");
+
+            shouldBeNull("Object.getPrototypeOf(targetWindow)");
+            shouldNotThrow("Object.setPrototypeOf(targetWindow, null)");
+            shouldBeNull("Object.getPrototypeOf(targetWindow.location)");
+            shouldNotThrow("Object.setPrototypeOf(targetWindow.location, null)");
+
+            finishJSTest();
+        }
+    </script>
+</head>
+<body>
+    <iframe id="target" src="http://localhost:8000/security/resources/cross-frame-iframe-for-object-setPrototypeOf-test.html"></iframe>
+    <pre id="console"></pre>
+    <script src="/js-test-resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+This tests expectations with renaming existing indexes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+Initial upgrade needed: Old version - 0 New version - 1
+Failed to rename deleted index: InvalidStateError: Failed set property 'name' on 'IDBIndex': The index has been deleted.
+Initial index name: NewIndex
+Caught exception renaming index to the name of another existing index: ConstraintError: Failed set property 'name' on 'IDBIndex': The owning object store already has an index named 'ExistingIndex'.
+Renamed this index to the same name it already has, it's name is now: NewIndex
+Renamed index name: RenamedIndex
+Current index name in a new transaction: RenamedIndex
+Caught exception renaming index outside of a version change transaction: InvalidStateError: Failed set property 'name' on 'IDBIndex': The index's transaction is not a version change transaction.
+Current indexNames during second upgrade transaction includes 'ExistingIndex': true
+Current indexNames during second upgrade transaction includes 'RenamedIndex': true
+Current indexNames during second upgrade transaction includes 'AnotherName': false
+Current indexNames during second upgrade transaction includes 'YetAnotherName': false
+Renamed index to: AnotherName
+Current indexNames during second upgrade transaction includes 'ExistingIndex': true
+Current indexNames during second upgrade transaction includes 'RenamedIndex': false
+Current indexNames during second upgrade transaction includes 'AnotherName': true
+Current indexNames during second upgrade transaction includes 'YetAnotherName': false
+Renamed index again to: YetAnotherName
+Current indexNames during second upgrade transaction includes 'ExistingIndex': true
+Current indexNames during second upgrade transaction includes 'RenamedIndex': false
+Current indexNames during second upgrade transaction includes 'AnotherName': false
+Current indexNames during second upgrade transaction includes 'YetAnotherName': true
+Aborting version change transaction...
+Current indexNames during second upgrade transaction includes 'ExistingIndex': true
+Current indexNames during second upgrade transaction includes 'RenamedIndex': true
+Current indexNames during second upgrade transaction includes 'AnotherName': false
+Current indexNames during second upgrade transaction includes 'YetAnotherName': false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

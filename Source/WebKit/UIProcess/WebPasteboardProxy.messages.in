@@ -1,0 +1,77 @@
+# Copyright (C) 2014 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+messages -> WebPasteboardProxy NotRefCounted {
+#if PLATFORM(IOS_FAMILY)
+    WriteURLToPasteboard(struct WebCore::PasteboardURL url, String pasteboardName, std::optional<WebCore::PageIdentifier> pageID) WantsConnection
+    WriteWebContentToPasteboard(struct WebCore::PasteboardWebContent content, String pasteboardName, std::optional<WebCore::PageIdentifier> pageID) WantsConnection
+    WriteImageToPasteboard(struct WebCore::PasteboardImage pasteboardImage, String pasteboardName, std::optional<WebCore::PageIdentifier> pageID) WantsConnection
+    WriteStringToPasteboard(String pasteboardType, String text, String pasteboardName, std::optional<WebCore::PageIdentifier> pageID) WantsConnection
+    UpdateSupportedTypeIdentifiers(Vector<String> identifiers, String pasteboardName, std::optional<WebCore::PageIdentifier> pageID)
+#endif
+
+    WriteCustomData(Vector<WebCore::PasteboardCustomData> data, String pasteboardName, std::optional<WebCore::PageIdentifier> pageID) -> (int64_t changeCount) Synchronous WantsConnection
+    TypesSafeForDOMToReadAndWrite(String pasteboardName, String origin, std::optional<WebCore::PageIdentifier> pageID) -> (Vector<String> types) Synchronous WantsConnection
+    AllPasteboardItemInfo(String pasteboardName, int64_t changeCount, std::optional<WebCore::PageIdentifier> pageID) -> (std::optional<Vector<WebCore::PasteboardItemInfo>> allInfo) Synchronous WantsConnection
+    InformationForItemAtIndex(uint64_t index, String pasteboardName, int64_t changeCount, std::optional<WebCore::PageIdentifier> pageID) -> (std::optional<WebCore::PasteboardItemInfo> info) Synchronous WantsConnection
+    GetPasteboardItemsCount(String pasteboardName, std::optional<WebCore::PageIdentifier> pageID) -> (uint64_t itemsCount) Synchronous WantsConnection
+    ReadStringFromPasteboard(uint64_t index, String pasteboardType, String pasteboardName, std::optional<WebCore::PageIdentifier> pageID) -> (String string) Synchronous WantsConnection
+    ReadURLFromPasteboard(uint64_t index, String pasteboardName, std::optional<WebCore::PageIdentifier> pageID) -> (String url, String title) Synchronous WantsConnection
+    ReadBufferFromPasteboard(std::optional<uint64_t> index, String pasteboardType, String pasteboardName, std::optional<WebCore::PageIdentifier> pageID) -> (RefPtr<WebCore::SharedBuffer> buffer) Synchronous WantsConnection
+    ContainsStringSafeForDOMToReadForType(String type, String pasteboardName, std::optional<WebCore::PageIdentifier> pageID) -> (bool result) Synchronous WantsConnection
+
+#if PLATFORM(COCOA)
+    # Pasteboard messages.
+    GetNumberOfFiles(String pasteboardName, std::optional<WebCore::PageIdentifier> pageID) -> (uint64_t numberOfFiles) Synchronous WantsConnection
+    GetPasteboardTypes(String pasteboardName, std::optional<WebCore::PageIdentifier> pageID) -> (Vector<String> types) Synchronous WantsConnection
+    GetPasteboardPathnamesForType(String pasteboardName, String pasteboardType, std::optional<WebCore::PageIdentifier> pageID) -> (Vector<String> pathnames, Vector<WebKit::SandboxExtension::Handle> sandboxExtensions) Synchronous WantsConnection
+    GetPasteboardStringForType(String pasteboardName, String pasteboardType, std::optional<WebCore::PageIdentifier> pageID) -> (String string) Synchronous WantsConnection
+    GetPasteboardStringsForType(String pasteboardName, String pasteboardType, std::optional<WebCore::PageIdentifier> pageID) -> (Vector<String> strings) Synchronous WantsConnection
+    GetPasteboardBufferForType(String pasteboardName, String pasteboardType, std::optional<WebCore::PageIdentifier> pageID) -> (RefPtr<WebCore::SharedBuffer> buffer) Synchronous WantsConnection
+    GetPasteboardChangeCount(String pasteboardName, std::optional<WebCore::PageIdentifier> pageID) -> (int64_t changeCount) Synchronous WantsConnection
+    GetPasteboardColor(String pasteboardName, std::optional<WebCore::PageIdentifier> pageID) -> (WebCore::Color color) Synchronous WantsConnection
+    GetPasteboardURL(String pasteboardName, std::optional<WebCore::PageIdentifier> pageID) -> (String urlString) Synchronous WantsConnection
+    AddPasteboardTypes(String pasteboardName, Vector<String> pasteboardTypes, std::optional<WebCore::PageIdentifier> pageID) -> (int64_t changeCount) Synchronous WantsConnection
+    SetPasteboardTypes(String pasteboardName, Vector<String> pasteboardTypes, std::optional<WebCore::PageIdentifier> pageID) -> (int64_t changeCount) Synchronous WantsConnection
+    SetPasteboardURL(struct WebCore::PasteboardURL pasteboardURL, String pasteboardName, std::optional<WebCore::PageIdentifier> pageID) -> (int64_t changeCount) Synchronous WantsConnection
+    SetPasteboardColor(String pasteboardName, WebCore::Color color, std::optional<WebCore::PageIdentifier> pageID) -> (int64_t changeCount) Synchronous WantsConnection
+    SetPasteboardStringForType(String pasteboardName, String pasteboardType, String string, std::optional<WebCore::PageIdentifier> pageID) -> (int64_t changeCount) Synchronous WantsConnection
+    SetPasteboardBufferForType(String pasteboardName, String pasteboardType, RefPtr<WebCore::SharedBuffer> buffer, std::optional<WebCore::PageIdentifier> pageID) -> (int64_t changeCount) Synchronous WantsConnection
+    ContainsURLStringSuitableForLoading(String pasteboardName, std::optional<WebCore::PageIdentifier> pageID) -> (bool result) Synchronous WantsConnection
+    URLStringSuitableForLoading(String pasteboardName, std::optional<WebCore::PageIdentifier> pageID) -> (String url, String title) Synchronous WantsConnection
+#endif
+
+#if PLATFORM(GTK)
+    GetTypes(String pasteboardName) -> (Vector<String> types) Synchronous
+    ReadText(String pasteboardName) -> (String text) Synchronous
+    ReadFilePaths(String pasteboardName) -> (Vector<String> types) Synchronous
+    ReadBuffer(String pasteboardName, String pasteboardType) -> (RefPtr<WebCore::SharedBuffer> buffer) Synchronous
+    WriteToClipboard(String pasteboardName, WebCore::SelectionData pasteboardContent)
+    ClearClipboard(String pasteboardName)
+#endif
+
+#if USE(LIBWPE)
+    GetPasteboardTypes() -> (Vector<String> types) Synchronous
+    WriteWebContentToPasteboard(struct WebCore::PasteboardWebContent content)
+    WriteStringToPasteboard(String pasteboardType, String text)
+#endif
+}

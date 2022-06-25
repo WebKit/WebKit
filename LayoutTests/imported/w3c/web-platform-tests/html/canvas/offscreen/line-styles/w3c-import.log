@@ -1,0 +1,78 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.cap.butt.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.cap.butt.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.cap.closed.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.cap.closed.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.cap.invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.cap.invalid.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.cap.open.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.cap.open.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.cap.round.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.cap.round.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.cap.square.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.cap.square.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.cap.valid.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.cap.valid.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.cross.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.cross.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.defaults.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.defaults.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.join.bevel.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.join.bevel.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.join.closed.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.join.closed.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.join.invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.join.invalid.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.join.miter.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.join.miter.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.join.open.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.join.open.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.join.parallel.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.join.parallel.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.join.round.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.join.round.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.join.valid.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.join.valid.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.miter.acute.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.miter.acute.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.miter.exceeded.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.miter.exceeded.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.miter.invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.miter.invalid.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.miter.lineedge.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.miter.lineedge.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.miter.obtuse.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.miter.obtuse.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.miter.rightangle.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.miter.rightangle.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.miter.valid.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.miter.valid.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.miter.within.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.miter.within.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.union.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.union.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.width.basic.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.width.basic.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.width.invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.width.invalid.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.width.scaledefault.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.width.scaledefault.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.width.transformed.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.width.transformed.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.width.valid.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/line-styles/2d.line.width.valid.worker.js

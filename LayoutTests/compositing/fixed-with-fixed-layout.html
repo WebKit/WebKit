@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        body {
+            height: 2000px;
+            width: 1000px;
+        }
+        
+        .fixed {
+            position: fixed;
+            height: 100px;
+            width: 100px;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        
+        .top, .bottom {
+            left: 0;
+            width: 100%;
+        }
+        
+        .left, .right {
+            top: 200px;
+        }
+        
+        .top {
+            top: 0;
+        }
+        
+        .bottom {
+            bottom: 0;
+        }
+        .left {
+            left: 0;
+        }
+        .right {
+            right: 0;
+        }
+    </style>
+    <script>
+        
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        if (window.internals) {
+            internals.settings.setAcceleratedCompositingForFixedPositionEnabled(true);
+            internals.setUseFixedLayout(true);
+            internals.setFixedLayoutSize(1000, 2000);
+            var scale = 800 / 1000;
+            eventSender.scalePageBy(scale, scale);
+        }
+        
+        function doTest()
+        {
+            window.setTimeout(function() {
+                document.getElementById("layerTree").innerText = window.internals.layerTreeAsText(document);
+                testRunner.notifyDone();
+            }, 0);
+        }
+        
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+
+<div class="top fixed">
+    Top
+</div>
+
+<div class="left fixed">
+    Left
+</div>
+
+<div class="right fixed">
+    Right
+</div>
+
+<div class="bottom fixed">
+    bottom
+</div>
+
+<pre id="layerTree"></pre>
+</body>
+</html>

@@ -1,0 +1,8 @@
+
+PASS CSSKeywordValue.value can be updated to a CSS wide keyword
+PASS CSSKeywordValue.value can be updated to a CSS keyword
+PASS CSSKeywordValue.value can be updated to an unsupported CSS keyword
+PASS CSSKeywordValue.value can be updated to a string containing multiple tokens
+PASS CSSKeywordValue.value can be updated to a unicode string
+PASS Updating CSSKeywordValue.value with an empty string throws a TypeError
+

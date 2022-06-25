@@ -1,0 +1,17 @@
+<html>
+<head>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+        testRunner.setWindowIsKey(false);
+    }
+    
+</script>
+<body>
+<embed style="visibility:hidden" id="testPlugin" type="application/x-webkit-test-netscape" logfirstsetwindow="true" width="200" height="200"></embed>
+<div>
+    This tests that a hidden plug-in gets a correct NPP_SetWindow the first time.
+</div>
+</body>
+</html>

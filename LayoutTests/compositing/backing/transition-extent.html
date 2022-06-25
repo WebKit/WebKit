@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            height: 2000px;
+        }
+
+        .box {
+            position: absolute;
+            left: 20px;
+            top: 20px;
+            width: 100px;
+            height: 100px;
+            background-color: silver;
+            transition: transform 2s;
+            transform: rotate3d(0, 0, 1, 0deg)
+        }
+
+        body.changed .box {
+            transform: rotate3d(0, 0, 1, -180deg);
+        }
+        
+        .invisible {
+            top: 1500px;
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+        window.addEventListener('load', () => {
+            let box = document.querySelector('.box');
+            box.addEventListener('transitionstart', () => {
+                requestAnimationFrame(() => {
+                    var out = document.getElementById('layers');
+                    out.innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_BACKING_STORE_ATTACHED);
+                    testRunner.notifyDone();
+                });
+            }, false);
+
+            requestAnimationFrame(() => {
+                document.body.classList.add('changed');
+            });
+        }, false);
+    </script>
+</head>
+<body>
+    <p>The second box should not have attached backing store.</p>
+<pre id="layers"></pre>
+    <div class="box">visible box</div>
+    <div class="invisible box">hidden box</div>
+</body>
+</html>

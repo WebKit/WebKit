@@ -1,0 +1,79 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <script src="/js-test-resources/ui-helper.js"></script>
+    <script src="resources/util.js"></script>
+</head>
+<body onload="setTimeout(runTest, 0)">
+<div id="description">Tests sending of private click measurement requests after an attribution happens immediately for reports which have expired when a session is closed.</div>
+<a id="targetLink" href="http://localhost:8000/privateClickMeasurement/expired-attribution-report-gets-sent-on-session-start.html?stepTwo" attributionsourceid="3" attributiondestination="http://localhost:8000">Link</a><br>
+<div id="output"></div>
+<script>
+    const currentTimeMillis = (new Date()).getTime();
+    const highEntropyBits = currentTimeMillis - (Math.floor(currentTimeMillis / 1000000) * 1000000);
+    const nonce = highEntropyBits + "" + Math.floor(Math.random() * 100);
+
+    prepareTest();
+
+    if (window.testRunner) {
+        testRunner.setPrivateClickMeasurementAttributionReportURLsForTesting("http://127.0.0.1:8000/privateClickMeasurement/resources/conversionReport.py?nonce=" + nonce, "http://localhost:8000/privateClickMeasurement/resources/conversionReport.py?nonce=" + nonce);
+    }
+
+    function activateElement(elementID) {
+        var element = document.getElementById(elementID);
+        var centerX = element.offsetLeft + element.offsetWidth / 2;
+        var centerY = element.offsetTop + element.offsetHeight / 2;
+        UIHelper.activateAt(centerX, centerY).then(
+            function () {
+            },
+            function () {
+                document.getElementById("output").innerText = "FAIL Promise rejected.";
+                tearDownAndFinish();
+            }
+        );
+    }
+
+    function appendIframe(url, onloadCallback) {
+        let iframeElement = document.createElement("iframe");
+        iframeElement.src = url;
+        if (onloadCallback)
+            iframeElement.onload = onloadCallback;
+        document.body.appendChild(iframeElement);
+    }
+
+    function appendConversionDataIframeAndFinish() {
+        // Mark this attribution as past-due for reporting, and simulate a session restart to
+        // make sure the attribution gets sent immediately.
+        window.testRunner.markAttributedPrivateClickMeasurementsAsExpiredForTesting();
+        testRunner.simulatePrivateClickMeasurementSessionRestart();
+        testRunner.dumpPrivateClickMeasurement();
+        document.body.removeChild(document.getElementById("targetLink"));
+        document.body.removeChild(document.getElementById("pixel"));
+
+        appendIframe("http://127.0.0.1:8000/privateClickMeasurement/resources/getConversionData.py?timeout_ms=2000&nonce=" + nonce, function() {
+            tearDownAndFinish();
+        });
+    }
+
+    function runTest() {
+        if (window.testRunner) {
+            if (window.location.search === "?stepTwo") {
+                let imageElement = document.createElement("img");
+                imageElement.src = "https://127.0.0.1:8443/privateClickMeasurement/resources/redirectToConversion.py?conversionData=12&nonce=" + nonce;
+                imageElement.id = "pixel";
+                imageElement.onerror = function() {
+                    appendConversionDataIframeAndFinish();
+                };
+                document.body.appendChild(imageElement);
+            } else {
+                activateElement("targetLink");
+            }
+        } else {
+            document.getElementById("output").innerText = "FAIL No testRunner.";
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% IF    san_tag == "example_check_au_user" %]
+  <em>EXAMPLE PLUGIN</em> - Checking for non-Australian users.
+[% ELSIF san_tag == "example_check_au_user_alert" %]
+  User &lt;[% login FILTER html %]&gt; isn't Australian.
+  [% IF user.in_group('editusers') %]
+    <a href="editusers.cgi?id=[% userid FILTER none %]">Edit this user</a>.
+  [% END %]
+[% ELSIF san_tag == "example_check_au_user_prompt" %]
+  <a href="sanitycheck.cgi?example_repair_au_user=1&amp;token=
+     [%- issue_hash_token(['sanitycheck']) FILTER uri %]">Fix these users</a>.
+[% ELSIF san_tag == "example_repair_au_user_start" %]
+  <em>EXAMPLE PLUGIN</em> - OK, would now make users Australian.
+[% ELSIF san_tag == "example_repair_au_user_end" %]
+  <em>EXAMPLE PLUGIN</em> - Users would now be Australian.
+[% END %]

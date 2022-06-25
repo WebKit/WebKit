@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: Not executing script because it moved between documents during fetching
+
+
+PASS Sanity check around top-level Window
+PASS Eval: Move fetch-error external module script to iframe move-back
+PASS <script> load: Move fetch-error external module script to iframe move-back
+PASS <script> error: Move fetch-error external module script to iframe move-back
+PASS window error: Move fetch-error external module script to iframe move-back
+

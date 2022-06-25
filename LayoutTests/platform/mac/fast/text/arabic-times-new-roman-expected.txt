@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x179
+  RenderBlock {HTML} at (0,0) size 800x179
+    RenderBody {BODY} at (8,8) size 784x163
+      RenderBlock (anonymous) at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 750x36
+          text run at (0,0) width 750: "This test makes sure that rendering Arabic with Georgia (which doesn't support Arabic) has a sensible result (e.g. not"
+          text run at (0,18) width 92: ".notdef boxes)"
+      RenderBlock {DIV} at (0,36) size 784x69
+        RenderText {#text} at (0,2) size 207x57
+          text run at (0,2) width 207 RTL: "\x{62F}\x{64A}\x{645}\x{648}\x{63A}\x{631}\x{627}\x{641}\x{64A}\x{627}\x{62A}"
+      RenderBlock {DIV} at (0,105) size 784x58
+        RenderText {#text} at (0,1) size 205x56
+          text run at (0,1) width 205 RTL: "\x{62F}\x{64A}\x{645}\x{648}\x{63A}\x{631}\x{627}\x{641}\x{64A}\x{627}\x{62A}"

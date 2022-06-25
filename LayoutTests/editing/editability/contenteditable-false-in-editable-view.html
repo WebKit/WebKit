@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p id="description">This tests that the cursor can be moved inside a non-editable element if the web view is editable. The cursor should end up inside "some text in between". To test manually, ensure this page is opened in an editable web view.</p>
+
+<div id="container">before <span id="inner" contenteditable="false">some text in between</span> after</div>
+
+<script src="../../resources/ui-helper.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+
+Markup.waitUntilDone();
+
+addEventListener("load", async () => {
+    Markup.description(document.getElementById('description').textContent);
+
+    if (window.testRunner && testRunner.runUIScript)
+        await UIHelper.setWebViewEditable(true);
+
+    var selection = window.getSelection();
+    selection.setPosition(container, 0);
+
+    for (var i = 0; i < 12; i++)
+        selection.modify("move", "forward", "character");
+
+    Markup.dump('container');
+    Markup.notifyDone();
+});
+
+</script>
+</body>
+</html>

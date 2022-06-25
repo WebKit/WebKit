@@ -1,0 +1,9 @@
+<body>
+<script>
+// This tests that an <input type="datetime-local"> created in a template document (e.g. one without a frame)
+// is identical to one created in the main document.
+let template = document.createElement('template');
+template.innerHTML = '<input type="datetime-local" value="1999-01-11T19:30">';
+document.body.appendChild(template.content.cloneNode(true));
+</script>
+</body>

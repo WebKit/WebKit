@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<div id="destination" contenteditable="true"></div>
+<iframe id="iframe" src="resources/img-srcset-copy-paste-canonicalization-iframe.html"></iframe>
+<script>
+    window.jsTestIsAsync = true;
+
+    description("The following test does a copy and a paste of an image with the srcset attribute. The test is successful if the value of the srcset attribute has been canonicalized. To run the test manually, copy the green square into the contentediable area above the iframe.");
+    
+    function canonicalize(href, relativeURL) {
+        var hrefSegments = href.split("/");
+
+        // Remove the filename from the href
+        hrefSegments.splice(hrefSegments.length - 1, 1);
+
+        var relativeURLSegments = relativeURL.split("/");
+        while (relativeURLSegments.length > 0 && relativeURLSegments[0] == "..") {
+            hrefSegments.splice(hrefSegments.length - 1, 1);
+            relativeURLSegments.splice(0, 1);
+        }
+        return hrefSegments.concat(relativeURLSegments).join("/");
+    }
+
+    var iframeHref;
+    var sourceImageSegments;
+    var destinationImageSegments;
+
+    var finishTestCount = 0;
+    function maybeFinishTest() {
+        ++finishTestCount;
+        if (finishTestCount == 2)
+            finishJSTest();
+    }
+
+    function runTests(href) {
+        iframeHref = href;
+
+        var iframe = document.getElementById("iframe");
+        var iframeDocument = iframe.contentDocument;
+
+        var source = iframeDocument.getElementById("source");
+        var destination = document.getElementById("destination");
+
+        source.focus();
+        iframeDocument.execCommand("SelectAll");
+        iframeDocument.execCommand("Copy");
+        destination.focus();
+        document.execCommand("SelectAll");
+        document.execCommand("Paste");
+
+        var sourceImage = iframeDocument.getElementById("image");
+        var destinationImage = document.getElementById("image");
+        if (!destinationImage) {
+            testFailed("Image was not pasted");
+            finishJSTest();
+            return;
+        }
+
+        destinationImage.onerror = function() {
+            testFailed("Image should not fail to load");
+            maybeFinishTest();
+        }
+        destinationImage.onload = function() {
+            maybeFinishTest();
+        }
+
+        sourceImageSegments = sourceImage.getAttribute("srcset").split(" ");
+        destinationImageSegments = destinationImage.getAttribute("srcset").split(" ");
+        shouldBe("canonicalize(iframeHref, sourceImageSegments[0])", "destinationImageSegments[0]");
+        shouldBe("canonicalize(iframeHref, sourceImageSegments[2])", "destinationImageSegments[2]");
+        shouldBe("sourceImageSegments.length", "4");
+        shouldBe("destinationImageSegments.length", "4");
+        shouldBe("sourceImageSegments[1]", "\"2x,\"");
+        shouldBe("destinationImageSegments[1]", "\"2x,\"");
+        shouldBe("sourceImageSegments[3]", "\"200w\"");
+        shouldBe("destinationImageSegments[3]", "\"200w\"");
+        maybeFinishTest();
+    }
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

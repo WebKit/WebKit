@@ -1,0 +1,10 @@
+The test to ensure correct sync behaviour with globalAlpha and fillPath() in accelerated-2d-canvas mode.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS false is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

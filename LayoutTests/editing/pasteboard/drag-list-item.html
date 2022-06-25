@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+
+<body>
+<script src="../../resources/dump-as-markup.js"></script>
+<script src="resources/select-and-drag.js"></script>
+<div contenteditable="true">
+<ol id="test">
+<li id="one">one</li><li id="two">two</li><li id="three">three</li><li id="four">four</li>
+</ol>
+</div>
+
+<script>
+Markup.description('This test drags a selection of one <li> and drops them after another <li> in the first list. The same test is repeated in the second list but this time with two selected items instead of one. It verifies that the behavior is independent of how many fully selected items we move, i.e. fully selected <li> are moved as <li> and not just as plain text');
+
+if (window.testRunner) {
+
+    selectListItems("two", "two", 4);
+    Markup.dump("test", "The original list looks like this. 'two' is selected and is going to be dropped after 'four'");
+    dragSelectionToTarget("two", "four");
+    Markup.dump("test", "'two' should appear as a new <li> after 'four'");
+
+    document.getElementById("test").innerHTML = "<li id=\"one\">one</li><li id=\"two\">two</li>"
+        + "<li id=\"three\">three</li><li id=\"four\">four</li>";
+    selectListItems("two", "three", 5);
+    Markup.dump("test", "The original list looks like this. 'two' and 'three' are selected and are going to be dropped after 'four'");
+    dragSelectionToTarget("two", "four");
+    Markup.dump("test", "'two' and 'three' should appear as <li> after 'four'");
+}
+</script>
+</body>
+</html>

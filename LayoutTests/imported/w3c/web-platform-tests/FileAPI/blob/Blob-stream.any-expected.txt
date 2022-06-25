@@ -1,0 +1,6 @@
+
+PASS Blob.stream()
+PASS Blob.stream() empty Blob
+PASS Blob.stream() non-unicode input
+PASS Blob.stream() garbage collection of blob shouldn't break streamconsumption
+

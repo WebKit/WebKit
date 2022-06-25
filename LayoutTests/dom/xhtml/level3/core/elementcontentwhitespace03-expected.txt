@@ -1,0 +1,3 @@
+Test	http://www.w3.org/2001/DOM-Test-Suite/level3/core/elementcontentwhitespace03
+Status	error
+Message	Line 122: TypeError

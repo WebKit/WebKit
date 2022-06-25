@@ -1,0 +1,10 @@
+User activation with 'contextmenu' event
+
+Tests that a 'contextmenu' event is treated like a user activation.
+
+Right-click or long-press on green.
+Click or tap on Done.
+
+
+FAIL 'contextmenu' can call vibrate. assert_true: activation event has fired expected true got false
+

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("This test verifies that encodings that used to be supported by TEC on macOS are not supported.");
+
+debug("The following encodings should not be supported");
+let tecLegacyEncodings = ['cp950', 'cp737', 'ibm737',
+'ISO-2022-JP-3', 'JIS_C6226-1978', 'Shift_JIS_X0213-2000', 'ibm-942_P12A-1999', 'ibm-1399_P110-2003',
+'JIS_X0212-1990', 'x-mac-arabic', 'x-mac-croatian', 'x-mac-hebrew', 'x-mac-icelandic', 'x-mac-romanian', 'x-mac-thai', 'johab', 'x-mac-dingbats', 'x-mac-symbol', 'JIS_X0208-1990', 'JIS_X0208-1983', 'csiso159jisx02121990', 'isoir159', 'x0212', 'jis_x0208-1983', 'csiso87jisx0208', 'isoir87',
+'ibm-953_P100-2000', 'macos-518-10.2', 'macos-36_2-10.2', 'macos-1285-10.2', 'macos-37_5-10.2', 'macos-38_2-10.2', 'macos-21-10.5', 'windows-1361-2000', 'macos-34-10.2', 'macos-33-10.5', 'ibm-952_P110-1997', 'ibm-955_P110-1997',
+'x-mac-chinesesimp', 'xmacsimpchinese', 'x-mac-chinesetrad', 'xmactradchinese', 'x-mac-japanese', 'x-mac-korean', 'x-mac-vt100', 'x-nextstep', 'x-mac-farsi', 'x-mac-roman-latin1', 'x-mac-devanagari', 'x-mac-gujarati', 'x-mac-gurmukhi', 'x-mac-tibetan',
+]; 
+
+for (let encoding of tecLegacyEncodings) {
+    let canonical_name_expr = 'new TextDecoder("' + encoding + '").encoding';
+    shouldThrow(canonical_name_expr);
+}
+
+debug("The following encoding names are supported by WebKit cross-platform, but some may be removed at a later time.");
+let validForNow = [
+    {encoding: 'euc-tw', aliases: ['EUC-TW']},
+];
+
+for (let encoding of validForNow) {
+    for (let alias of encoding.aliases) {
+         let canonical_name_expr = 'new TextDecoder("' + alias + '").encoding';
+         shouldBe(canonical_name_expr, '"' + encoding.encoding + '"');
+    }
+}
+
+
+</script>
+</body>
+</html>

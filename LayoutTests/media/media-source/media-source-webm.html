@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-webm</title>
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var loader;
+    var source;
+    var sourceBuffer;
+    var resizeEventFired = false;
+    var videoWidth = 0;
+    var videoHeight = 0;
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    function resizePromise(video, width, height) {
+        return new Promise(resolve => {
+            video.addEventListener('resize', event => {
+                // First resize can be 0x0
+                resizeEventFired = true;
+                videoWidth = video.videoWidth;
+                videoHeight = video.videoHeight;
+                resolve();
+            });
+        });
+    }
+
+    window.addEventListener('load', async event => {
+        try {
+            findMediaElement();
+            loader = new MediaSourceLoader('content/test-vp9-manifest.json');
+            await loaderPromise(loader);
+
+            source = new MediaSource();
+            run('video.src = URL.createObjectURL(source)');
+            await waitFor(source, 'sourceopen');
+            waitForEventAndFail('error');
+
+            const resized = resizePromise(video);
+
+            run('source.duration = loader.duration()');
+            run('sourceBuffer = source.addSourceBuffer(loader.type())');
+            run('sourceBuffer.appendBuffer(loader.initSegment())');
+            await waitFor(sourceBuffer, 'update');
+
+            await resized;
+            testExpected('resizeEventFired', true);
+            testExpected('(videoWidth == 320 || videoWidth == 0)', true);
+            testExpected('(videoHeight == 240 || videoHeight == 0)', true);
+
+            consoleWrite('Append a media segment.')
+            run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
+            await waitFor(sourceBuffer, 'update');
+
+            endTest();
+        } catch (e) {
+            failTest(`Caught exception: "${e}"`);
+        }
+    });
+    </script>
+</head>
+<body>
+    <div>
+        This tests that a SourceBuffer can accept an initialization segment and a media segment and fire "update" events,
+        and the video element fires a "resize" event after the SourceBuffer appends the initialization segment.
+    </div>
+    <video controls></video>
+</body>
+</html>

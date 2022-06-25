@@ -1,0 +1,6 @@
+
+PASS Interfaces and attributes in ServiceWorkerGlobalScope
+PASS Event constructors
+PASS xhr is not exposed
+PASS URL.createObjectURL is not exposed
+

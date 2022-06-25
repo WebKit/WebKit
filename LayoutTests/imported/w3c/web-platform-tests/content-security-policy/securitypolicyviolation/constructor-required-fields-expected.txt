@@ -1,0 +1,16 @@
+
+PASS SecurityPolicyViolationEvent constructor should throw with no parameters
+PASS SecurityPolicyViolationEvent constructor works with an init dict
+PASS SecurityPolicyViolationEvent constructor requires documentURI
+PASS SecurityPolicyViolationEvent constructor requires violatedDirective
+PASS SecurityPolicyViolationEvent constructor requires effectiveDirective
+PASS SecurityPolicyViolationEvent constructor requires originalPolicy
+PASS SecurityPolicyViolationEvent constructor requires disposition
+PASS SecurityPolicyViolationEvent constructor requires statusCode
+PASS SecurityPolicyViolationEvent constructor does not require referrer
+PASS SecurityPolicyViolationEvent constructor does not require blockedURI
+PASS SecurityPolicyViolationEvent constructor does not require sourceFile
+PASS SecurityPolicyViolationEvent constructor does not require sample
+PASS SecurityPolicyViolationEvent constructor does not require lineNumber
+PASS SecurityPolicyViolationEvent constructor does not require columnNumber
+

@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+description("Test that the first parameter to Window.getComputedStyle() is mandatory and not nullable.");
+
+shouldThrowErrorName("window.getComputedStyle()", "TypeError");
+shouldThrowErrorName("window.getComputedStyle(null)", "TypeError");
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

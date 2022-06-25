@@ -1,0 +1,9 @@
+
+This test verifies that temporarily suppressing the software keyboard while focusing an input field does not crash the UI process. This test requires WebKitTestRunner.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

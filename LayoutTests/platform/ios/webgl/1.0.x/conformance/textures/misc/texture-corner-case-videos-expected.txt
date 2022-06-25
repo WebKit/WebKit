@@ -1,0 +1,21 @@
+This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
+
+Test: ../../../../resources/webgl_test_files/conformance/textures/misc/texture-corner-case-videos.html
+
+[ 1: PASS ] shouldBe 0,255,0
+[ 2: PASS ] shouldBe 255,0,0
+[ 3: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 4: PASS ] shouldBe 255,0,0
+[ 5: PASS ] shouldBe 0,255,0
+[ 6: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 7: PASS ] shouldBe 0,255,0
+[ 8: PASS ] shouldBe 255,0,0
+[ 9: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 10: PASS ] shouldBe 255,0,0
+[ 11: PASS ] shouldBe 0,255,0
+[ 12: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 13: FAIL ] shouldBe 0,255,0 at (4, 24) expected: 0,255,0 was 63,251,0
+[ 14: FAIL ] shouldBe 255,0,0 at (4, 4) expected: 255,0,0 was 247,36,0
+[ 15: PASS ] getError was expected value: NO_ERROR : should be no errors
+[ 16: PASS ] successfullyParsed is true
+[ FAIL ] 2 failures reported

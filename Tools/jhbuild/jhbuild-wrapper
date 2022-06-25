@@ -1,0 +1,125 @@
+#!/usr/bin/env python3
+# Copyright (C) 2011 Igalia S.L.
+# Copyright (C) 2012 Gustavo Noronha Silva <gns@gnome.org>
+# Copyright (C) 2012 Intel Corporation
+# Copyright (C) 2012, 2013 Nokia Corporation and/or its subsidiary(-ies).
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+
+import jhbuildutils
+import os
+import shlex
+import subprocess
+import sys
+
+jhbuild_revision = '93d37507d0fbf550aa3e96b5d632f3772c0189f0'
+
+def determine_platform():
+    if '--gtk' in sys.argv:
+        return "gtk";
+    if '--wpe' in sys.argv:
+        return "wpe"
+    raise ValueError('No platform specified for jhbuild-wrapper.')
+
+try:
+    platform = determine_platform()
+except ValueError as e:
+    sys.exit(e)
+
+dependencies_path = jhbuildutils.get_dependencies_path(platform)
+installation_prefix = os.path.abspath(os.path.join(dependencies_path, 'Root'))
+source_path = os.path.abspath(os.path.join(dependencies_path, 'Source'))
+jhbuild_source_path = os.path.join(source_path, 'jhbuild')
+jhbuild_path = os.path.join(installation_prefix, 'bin', 'jhbuild')
+
+def jhbuild_installed():
+    return os.path.exists(jhbuild_path)
+
+
+def jhbuild_cloned():
+    return os.path.exists(jhbuild_source_path)
+
+
+def jhbuild_at_expected_revision():
+    process = subprocess.Popen(['git', 'rev-list', 'HEAD^..'], cwd=jhbuild_source_path,
+                               stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    output, err = process.communicate()
+    if process.returncode != 0:
+        raise Exception('failed to find jhbuild revision: %s' % err)
+
+    return output.strip().decode('utf-8', 'ignore') == jhbuild_revision
+
+
+def update_jhbuild():
+    process = subprocess.Popen(['git', 'remote', 'update', 'origin'], cwd=jhbuild_source_path)
+    process.wait()
+    if process.returncode != 0:
+        raise Exception('jhbuild remote update origin failed with return code: %i' % process.returncode)
+
+    process = subprocess.Popen(['git', 'checkout', '%s' % jhbuild_revision],
+                               cwd=jhbuild_source_path)
+    process.wait()
+    if process.returncode != 0:
+        raise Exception('failed to checkout treeish %s: %i' % (jhbuild_revision, process.returncode))
+
+
+def clone_jhbuild():
+    if not os.path.exists(source_path):
+        os.makedirs(source_path)
+    if not os.path.exists(installation_prefix):
+        os.makedirs(installation_prefix)
+
+    # Use only 1 thread to workaround a QEMU bug - see http://webkit.org/b/143095 for details.
+    process = subprocess.Popen(['git', 'clone', '--config', 'pack.threads=1', 'https://git.gnome.org/browse/jhbuild'], cwd=source_path)
+    process.wait()
+    if process.returncode != 0:
+        raise Exception('jhbuild git clone failed with return code: %i' % process.returncode)
+
+
+def install_jhbuild():
+    if "GREP_OPTIONS" in os.environ:
+        del os.environ['GREP_OPTIONS']
+    process = subprocess.Popen(['bash', './autogen.sh', '--prefix=%s' % installation_prefix], cwd=jhbuild_source_path)
+    process.wait()
+    if process.returncode != 0:
+        raise Exception('jhbuild configure failed with return code: %i' % process.returncode)
+
+    # This is a hackish approach to make the subprocess.Popen call even when people set
+    # MAKE to 'make -j3' instead of using the MAKEFLAGS environment variable.
+    make = shlex.split(os.environ.get('MAKE', 'make'))
+
+    process = subprocess.Popen(make + ['install'], cwd=jhbuild_source_path)
+    process.wait()
+    if process.returncode != 0:
+        raise Exception('jhbuild configure failed with return code: %i' % process.returncode)
+
+def ensure_jhbuild(platform):
+    if not jhbuild_cloned():
+        clone_jhbuild()
+        update_jhbuild()
+        install_jhbuild()
+    elif not jhbuild_installed() \
+            or not jhbuild_at_expected_revision():
+        update_jhbuild()
+        install_jhbuild()
+
+# Work-around the fact that we may get called from inside the jhbuild environment
+# which will cause problems if we just cleaned the jhbuild install root
+if 'UNDER_JHBUILD' in os.environ and 'ACLOCAL_FLAGS' in os.environ:
+    del os.environ['ACLOCAL_FLAGS']
+
+ensure_jhbuild(platform)
+
+os.execve(jhbuild_path, [jhbuild_path, '--exit-on-error', '--no-interact', '-f', jhbuildutils.get_config_file_for_platform(platform)] + sys.argv[2:], os.environ)

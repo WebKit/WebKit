@@ -1,0 +1,80 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/001.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/002.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/003.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/004.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/005.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/006.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/007.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/008.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/009-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/009.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/010-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/010.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/011.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/012.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/013-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/013.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/014-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/014.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/016.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/017.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/018.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/019.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/020.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/021.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/022.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/023.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/024.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/025.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/026.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/027.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/028.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/029.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/030.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/031.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/032.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/033.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/034.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/035.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/036.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/037.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/038.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/039.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/040.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/041.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/042.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/043.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/044.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/045.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/046.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/047.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/048.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/049.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/050.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/051.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/052.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/053.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/054.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/055.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/056.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/057.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/058.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/datatransfer-constructor-001.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/datatransfer-types.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/datastore/helper-drop-box-here.xhtml

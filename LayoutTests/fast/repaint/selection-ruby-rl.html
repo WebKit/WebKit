@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<head>
+<script src="resources/text-based-repaint.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText(false);
+    testRunner.waitUntilDone();
+}
+
+function runRepaintTest() {
+    if (window.internals)
+        internals.startTrackingRepaints();
+
+    if (eventSender) {
+        eventSender.mouseMoveTo(790, 40);
+        eventSender.mouseDown();
+        eventSender.mouseMoveTo(790, 40);
+        eventSender.mouseMoveTo(790, 120);
+        eventSender.mouseUp();
+    }
+
+    setTimeout(function() {
+        if (window.internals) {
+            document.querySelector('#repaints').innerHTML = window.internals.repaintRectsAsText();
+            internals.stopTrackingRepaints();
+        }
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 0);
+}
+</script>
+
+</head>
+<body style="-webkit-writing-mode:vertical-rl" onload="runRepaintTest()">
+<span>Testing both hit testing</span> and painting of selection.<br>
+Testing both hit testing and painting of selection.<br>
+<ruby>Testing both hit testing and painting of selection.<rt>Some ruby</rt></ruby><br>
+Testing both hit testing and painting of selection.<br>
+Testing both hit testing and painting of selection.<br>
+Testing both hit testing and painting of selection.<br>
+Testing both hit testing and painting of selection.<br>
+Testing both hit testing and painting of selection.<br>
+Testing both hit testing and painting of selection.<br>
+Testing both hit testing and painting of selection.<br>
+<div id="repaints"></div>
+</body>

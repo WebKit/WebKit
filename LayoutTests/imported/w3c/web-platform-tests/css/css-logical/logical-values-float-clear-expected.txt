@@ -1,0 +1,6 @@
+
+PASS Test that 'clear: inline-start' is supported.
+PASS Test that 'clear: inline-end' is supported.
+PASS Test that 'float: inline-start' is supported.
+PASS Test that 'float: inline-end' is supported.
+

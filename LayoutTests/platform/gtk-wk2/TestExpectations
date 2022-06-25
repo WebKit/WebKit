@@ -1,0 +1,2 @@
+# This empty file is needed for flakiness dashboard to work.
+# FIXME: Remove once the flakiness dashboard is updated to not load this file.

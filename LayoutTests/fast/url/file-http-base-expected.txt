@@ -1,0 +1,38 @@
+Canonicalization of file URLs when the base URL is an http URL
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS canonicalize('file:c:\\foo\\bar.html') is 'file:///c:/foo/bar.html'
+PASS canonicalize('  File:c|////foo\\bar.html') is 'file:///c:////foo/bar.html'
+PASS canonicalize('file:') is 'file:///'
+PASS canonicalize('file:UNChost/path') is 'file:///UNChost/path'
+PASS canonicalize('c:\\foo\\bar') is 'c:\\foo\\bar'
+PASS canonicalize('C|/foo/bar') is 'http://example.com/mock/C|/foo/bar'
+PASS canonicalize('/C|\\foo\\bar') is 'http://example.com/C|/foo/bar'
+PASS canonicalize('//C|/foo/bar') is '//C|/foo/bar'
+PASS canonicalize('//server/file') is 'http://server/file'
+PASS canonicalize('\\\\server\\file') is 'http://server/file'
+PASS canonicalize('/\\server/file') is 'http://server/file'
+PASS canonicalize('file:c:foo/bar.html') is 'file:///c:foo/bar.html'
+PASS canonicalize('file:/\\/\\C:\\\\//foo\\bar.html') is 'file:////C:////foo/bar.html'
+PASS canonicalize('file:///foo/bar.txt') is 'file:///foo/bar.txt'
+PASS canonicalize('FILE:/\\/\\7:\\\\//foo\\bar.html') is 'file:////7:////foo/bar.html'
+PASS canonicalize('file:filer/home\\me') is 'file:///filer/home/me'
+PASS canonicalize('file:///C:/foo/../../../bar.html') is 'file:///C:/bar.html'
+PASS canonicalize('file:///C:/asdf#\xc2') is 'file:///C:/asdf#%C3%82'
+PASS canonicalize('file:///C:/asdf#Â') is 'file:///C:/asdf#%C3%82'
+PASS canonicalize('file:///home/me') is 'file:///home/me'
+PASS canonicalize('file:c:\\foo\\bar.html') is 'file:///c:/foo/bar.html'
+PASS canonicalize('file:c|//foo\\bar.html') is 'file:///c://foo/bar.html'
+PASS canonicalize('//') is '//'
+PASS canonicalize('///') is '///'
+PASS canonicalize('///test') is 'http://test/'
+PASS canonicalize('file://test') is 'file://test/'
+PASS canonicalize('file://localhost') is 'file:///'
+PASS canonicalize('file://localhost/') is 'file:///'
+PASS canonicalize('file://localhost/test') is 'file:///test'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

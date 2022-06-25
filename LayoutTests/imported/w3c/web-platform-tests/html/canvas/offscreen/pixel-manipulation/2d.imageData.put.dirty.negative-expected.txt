@@ -1,0 +1,7 @@
+2d.imageData.put.dirty.negative
+
+putImageData() handles negative-sized dirty rectangles correctly
+
+
+PASS putImageData() handles negative-sized dirty rectangles correctly
+

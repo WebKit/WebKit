@@ -1,0 +1,10 @@
+Check that we properly handle nested document loads during unload events. Passes if we do not debug assert.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Load succeeded.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

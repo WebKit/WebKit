@@ -1,0 +1,18 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Test for Bug 15290: REGRESSION (r14184-r14216): Duplicate DOCTYPE definitions when saving files as webarchives</title>
+</head>
+<script>
+    if (window.testRunner)
+        testRunner.dumpSourceAsWebArchive();
+</script>
+<body>
+<div>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=15290">Bug 15290: REGRESSION (r14184-r14216): Duplicate DOCTYPE definitions when saving files as webarchives</a>
+</div>
+<div>
+This test checks that only one &lt;!DOCTYPE&gt; tag is written to a webarchive.
+</div>
+</body>
+</html>

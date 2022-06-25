@@ -1,0 +1,26 @@
+This test verifies that a sandboxed iframe does not have access to any session storage, local storage or database.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Most of the PASS messages appear in frames, presented by DumpRenderTree after the main window.
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+PASS window.localStorage threw exception SecurityError: The operation is insecure..
+PASS window.sessionStorage threw exception SecurityError: The operation is insecure..
+
+
+--------
+Frame: '<!--frame2-->'
+--------
+PASS window.localStorage != null is true
+PASS window.sessionStorage != null is true
+

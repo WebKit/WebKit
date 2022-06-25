@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>audio-session-category</title>
+    <script src='video-test.js'></script>
+    <script src='media-file.js'></script>
+    <script>
+
+        async function waitForCategory(category, duration, message)
+        {
+            consoleWrite(message);
+
+            const maxTries = duration * 1000 / 10;
+            let counter = 0;
+            while (++counter < maxTries) {
+                if (internals.audioSessionCategory() == category)
+                    break;
+                await new Promise(resolve => setTimeout(resolve, 10));
+            }
+
+            testExpected('internals.audioSessionCategory()', category);
+        }
+        
+        async function testAudioElement()
+        {
+            consoleWrite('<br><br>** &lt;audio> element test **');
+            await waitForCategory('None', 10, '<br>** Check category before anything has loaded.');
+
+            consoleWrite('<br>** Check category when a muted, paused, element has loaded.');
+            video.src = findMediaFile('video', 'content/test');
+
+            await waitFor(video, 'canplaythrough');
+            testExpected('internals.audioSessionCategory()', 'None');
+
+            consoleWrite('<br>** Check category when a muted element is playing.');
+            runWithKeyDown(() => { run('video.play()') });
+            await waitFor(video, 'playing');
+            testExpected('internals.audioSessionCategory()', 'None');
+            testExpected('internals.routeSharingPolicy()', 'Default');
+            
+            consoleWrite('<br>** Check category when an unmuted element is playing.');
+            runWithKeyDown(() => { run('video.muted = false') });
+            await waitFor(video, 'volumechange');
+            testExpected('internals.audioSessionCategory()', 'MediaPlayback');
+            testExpected('internals.routeSharingPolicy()', 'LongFormAudio');
+
+            consoleWrite('<br>** Mute the element, check again after 500ms.');
+            run('video.pause()');
+            runWithKeyDown(() => { run('video.muted = true') });
+            await sleepFor(500);
+            testExpected('internals.audioSessionCategory()', 'MediaPlayback');
+            testExpected('internals.routeSharingPolicy()', 'LongFormAudio');
+
+            await waitForCategory('None', 3, '<br>** And check again after 3 seconds.');
+            testExpected('internals.routeSharingPolicy()', 'Default');
+
+            video.src = '';
+            video.load();
+        }
+
+        async function testWebAudio()
+        {
+            consoleWrite('<br><br>** AudioContext test **');
+            await waitForCategory('None', 10, '<br>** Check category before creating AudioContext.');
+
+            consoleWrite('<br>** Check category after AudioContext has been created but not started.');
+            let context = new AudioContext();
+            testExpected('internals.audioSessionCategory()', 'None');
+
+            let oscillator = null;
+            let gainNode = context.createGain();
+            oscillator = context.createOscillator();
+            oscillator.type = 'square';
+            oscillator.frequency.setValueAtTime(440, context.currentTime);
+
+            oscillator.connect(gainNode);
+            gainNode.connect(context.destination);
+            gainNode.gain.value = 0.1
+
+            consoleWrite('<br>** Check category after starting oscillator.');
+            context.resume();
+            oscillator.start(0);
+            await sleepFor(500);
+            testExpected('internals.audioSessionCategory()', 'AmbientSound');
+            testExpected('internals.routeSharingPolicy()', 'Default');
+
+            consoleWrite('<br>** Close the context, check again after 500ms.');
+            await context.close();
+            await sleepFor(500);
+            testExpected('internals.audioSessionCategory()', 'AmbientSound');
+            testExpected('internals.routeSharingPolicy()', 'Default');
+
+            await waitForCategory('None', 3, '<br>** And check again after 3 seconds.');
+            testExpected('internals.routeSharingPolicy()', 'Default');
+        }
+        
+        async function testMediaStream()
+        {
+            consoleWrite('<br><br>** MediaStream test **');
+            await waitForCategory('None', 10, '<br>** Check category before capture begins.');
+
+            consoleWrite('<br>** Check category when capturing.');
+            let stream = await navigator.mediaDevices.getUserMedia({audio : true});
+            testExpected('internals.audioSessionCategory()', 'PlayAndRecord');
+            testExpected('internals.routeSharingPolicy()', 'Default');
+
+            consoleWrite('<br>** Check after MediaStream is attached to audio element.');
+            video.srcObject = stream;
+            runWithKeyDown(() => { run('video.play()') });
+            await waitFor(video, 'playing');
+            testExpected('internals.audioSessionCategory()', 'PlayAndRecord');
+            testExpected('internals.routeSharingPolicy()', 'Default');
+
+            consoleWrite('<br>** Check after MediaStream muting audio track.');
+            const audioTrack = stream.getAudioTracks()[0];
+            audioTrack.enabled = false;
+            await sleepFor(500);
+            testExpected('internals.audioSessionCategory()', 'PlayAndRecord');
+
+            consoleWrite('<br>** Check 500ms after MediaStream stopping capture.');
+            audioTrack.stop();
+            await sleepFor(500);
+            testExpected('internals.audioSessionCategory()', 'PlayAndRecord');
+
+            await waitForCategory('None', 3, '<br>** And check again after 3 seconds.');
+            video.src = '';
+            video.load();
+        }
+
+
+        window.addEventListener('load', async event => {
+            if (!window.internals) {
+                failTest(`<br>This test requires internals!`);
+                return;
+            }
+
+            internals.settings.setShouldManageAudioSessionCategory(true);
+
+            video = document.getElementsByTagName('audio')[0];
+
+            failTestIn(20000);
+            await testAudioElement();
+            await testWebAudio();
+            await testMediaStream();
+
+            endTest();
+        });
+    </script>
+</head>
+<body>
+    <audio muted controls></audio>
+</body>
+</html>

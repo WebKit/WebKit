@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>audio-session-category-track-change</title>
+    <script src="../../../media/video-test.js"></script>
+    <script src="../../../media/media-file.js"></script>
+    <script>
+    window.addEventListener('load', async event => {
+        findMediaElement();
+        run('internals.settings.setShouldManageAudioSessionCategory(true)');
+        run('video.src = findMediaFile("video", "../../../media/content/test")');
+        run('video.play()');
+        await waitFor(video, 'playing');
+        await testExpectedEventually('internals.audioSessionCategory()', 'MediaPlayback');
+
+        run('video.pause()');
+        await waitFor(video, 'pause');
+        await testExpectedEventually('internals.audioSessionCategory()', 'MediaPlayback');
+
+        run('internals.beginMediaSessionInterruption("system")');
+        await testExpectedEventually('internals.audioSessionCategory()', 'None');
+
+        run('video.play()');
+        await waitFor(video, 'playing');
+        await testExpectedEventually('internals.audioSessionCategory()', 'MediaPlayback');
+
+        run('video.src = ""');
+        run('video.load()');
+        await testExpectedEventually('internals.audioSessionCategory()', 'None');
+
+        endTest();
+    });
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>

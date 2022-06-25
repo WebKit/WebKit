@@ -1,0 +1,19 @@
+Verifies that native selection UI is suppressed when focusing a textarea that is completely hidden underneath an empty container with overflow: hidden;. To manually test, tap the top button, and then tap on the bottom button. In both cases, there should be no platform selection shown.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS caretViewRect.top is null
+PASS caretViewRect.left is null
+PASS caretViewRect.width is 0
+PASS caretViewRect.height is 0
+PASS document.activeElement.id is "editor"
+PASS caretViewRect.top is null
+PASS caretViewRect.left is null
+PASS caretViewRect.width is 0
+PASS caretViewRect.height is 0
+PASS document.activeElement.id is "frame"
+PASS frame.contentWindow.document.activeElement.id is "editor"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

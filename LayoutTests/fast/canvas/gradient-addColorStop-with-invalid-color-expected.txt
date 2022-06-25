@@ -1,0 +1,12 @@
+This test checks invalid colors on gradients.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS gradient.addColorStop(0, '') threw exception SyntaxError: The string did not match the expected pattern..
+PASS gradient.addColorStop(0, '#cc') threw exception SyntaxError: The string did not match the expected pattern..
+PASS gradient.addColorStop(0, 'rgb(257, 0)') threw exception SyntaxError: The string did not match the expected pattern..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

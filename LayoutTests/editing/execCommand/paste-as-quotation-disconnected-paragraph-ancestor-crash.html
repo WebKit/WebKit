@@ -1,0 +1,21 @@
+<script>
+  async function loadFrame(url) {
+    await new Promise(resolve => {
+      window.addEventListener('message', resolve, {once: true});
+      let iframe = document.createElement('iframe');
+      iframe.src = url;
+      document.body.appendChild(iframe);
+    });
+  }
+
+  if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    console.log("This test PASS if it does not crash.")
+  }
+
+  onload = () => {
+    loadFrame('resources/paste-as-quotation-disconnected-paragraph-ancestor-crash-iframe.html');
+    testRunner.notifyDone();
+  };
+</script>

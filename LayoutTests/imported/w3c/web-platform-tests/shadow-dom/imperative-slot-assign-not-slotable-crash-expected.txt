@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: TypeError: document.getElementById('slot').assign is not a function. (In 'document.getElementById('slot').assign(nonSlotable)', 'document.getElementById('slot').assign' is undefined)
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x50
+  RenderBlock {HTML} at (0,0) size 800x50
+    RenderBody {BODY} at (8,16) size 784x18
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 226x18
+          text run at (0,0) width 226: "This test passes if it does not crash."
+      RenderBlock (anonymous) at (0,34) size 784x0
+        RenderInline {OBJECT} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0

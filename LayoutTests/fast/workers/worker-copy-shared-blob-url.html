@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<input id="fileinput" type="file" multiple onchange="test()">
+<p>Test result of transferring a file and filename between worker and main page. Should print a series of PASS messages, followed with DONE.</p>
+<pre id="result"></pre>
+<script>
+function log(message)
+{
+    if (window.testRunner)
+        messages += message + "\n";
+    else
+        document.getElementById("result").innerHTML += message + "<br>";
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+var worker = new Worker("resources/worker-copy-shared-blob-url-worker.js")
+var messageCount = 0;
+var messages = "";
+worker.onmessage = function (message) {
+    try {
+        log(message.data.file)
+        log(message.data.file.name)
+        log(message.data[file.name].name)
+        if (!--messageCount && window.testRunner) {
+            document.getElementById("result").innerText += messages
+            testRunner.notifyDone();
+        }
+    } catch (e) {
+        document.getElementById("result").innerText += e
+        testRunner.notifyDone();
+    }
+}
+file = null;
+function test()
+{
+    file = document.getElementById("fileinput").files[0]
+    for (messageCount = 0; messageCount < 500; messageCount++)
+        worker.postMessage({[file.name]: file, file: file})
+}
+</script>
+
+<script>
+
+if (window.testRunner) {
+    eventSender.beginDragWithFiles(["worker-copy-shared-blob-urls.html"]);
+    eventSender.mouseMoveTo(10, 10);
+    eventSender.mouseUp();
+}
+
+</script>

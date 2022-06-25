@@ -1,0 +1,14 @@
+
+PASS idl_test setup
+PASS idl_test validation
+PASS CSSContainerRule interface: existence and properties of interface object
+PASS CSSContainerRule interface object length
+PASS CSSContainerRule interface object name
+PASS CSSContainerRule interface: existence and properties of interface prototype object
+PASS CSSContainerRule interface: existence and properties of interface prototype object's "constructor" property
+PASS CSSContainerRule interface: existence and properties of interface prototype object's @@unscopables property
+PASS CSSContainerRule must be primary interface of sheet.cssRules[0]
+PASS Stringification of sheet.cssRules[0]
+PASS CSSContainerRule must be primary interface of sheet.cssRules[0].cssRules[0]
+PASS Stringification of sheet.cssRules[0].cssRules[0]
+

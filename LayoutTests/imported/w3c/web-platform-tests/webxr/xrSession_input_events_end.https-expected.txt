@@ -1,0 +1,4 @@
+
+FAIL Calling end during an input callback stops processing at the right time - webgl assert_equals: Expected end event, but got selectstart event instead expected "end" but got "selectstart"
+FAIL Calling end during an input callback stops processing at the right time - webgl2 assert_equals: Expected end event, but got selectstart event instead expected "end" but got "selectstart"
+

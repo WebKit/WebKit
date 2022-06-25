@@ -1,0 +1,7 @@
+Target
+
+PASS Check sending Shift key
+PASS Check sending Control key
+PASS Check sending Alt key
+PASS Check sending Meta key
+

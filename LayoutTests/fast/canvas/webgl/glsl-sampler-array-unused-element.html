@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>WebGL GLSL uniform sampler2D array unused element test.</title>
+<script src="../../../resources/js-test.js"></script>
+<script src="resources/webgl-test.js"> </script>
+<script src="resources/webgl-test-utils.js"> </script>
+</head>
+<body>
+<canvas id="example" width="256" height="16" style="width: 256px; height: 48px;"></canvas>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description("Test that GLSL uniform sampler2D arrays work in presence of unused elements.");
+// Test for a bug where unused elements in a sampler array caused the used elements be
+// marked unused and thus the bingins were not consider not part of the rendering state.
+const wtu = WebGLTestUtils;
+const maxTestedArrayLength = 4;
+const setupTextureFragmentWithUnusedSamplerArrayShader = function(gl, usedArrayElement) {
+    const s = [
+        'precision mediump float;',
+        `uniform sampler2D tex[${maxTestedArrayLength}];`,
+        'varying vec2 texCoord;',
+        'void main() {',
+        `     gl_FragData[0] = texture2D(tex[${usedArrayElement}], texCoord);`,   
+        '}'].join('\n');
+     return loadShader(gl, s, gl.FRAGMENT_SHADER);
+};
+const setupTextureProgramWithUnusedSamplerArray = function(
+    gl, usedArrayElement, opt_positionLocation, opt_texcoordLocation) {
+  opt_positionLocation = opt_positionLocation || 0;
+  opt_texcoordLocation = opt_texcoordLocation || 1;
+  const vs = wtu.setupSimpleTextureVertexShader(gl);
+  const fs = setupTextureFragmentWithUnusedSamplerArrayShader(gl, usedArrayElement);
+  if (!vs || !fs) {
+    return null;
+  }
+  const program = wtu.setupProgram(
+      gl,
+      [vs, fs],
+      ['vPosition', 'texCoord0'],
+      [opt_positionLocation, opt_texcoordLocation]);
+  if (!program) {
+    gl.deleteShader(fs);
+    gl.deleteShader(vs);
+  }
+  gl.useProgram(program);
+  return program;
+};
+const checkCanvasPixelSilentPass = function(gl, expectedColor, msg) {
+  const pass = () => {};
+  const fail = () => { testFailed(msg); };
+  wtu.checkCanvasRectColor(gl, 0, 0, 1, 1, expectedColor, 0, pass, fail, debug);
+};
+
+const canvas = document.getElementById("example");
+const gl = wtu.create3DContext(canvas);
+wtu.setupUnitQuad(gl);
+const tex = gl.createTexture();
+gl.bindTexture(gl.TEXTURE_2D, tex);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, 1, 1, 0, gl.RGB, gl.UNSIGNED_BYTE,
+    new Uint8Array([0, 255, 0]));
+gl.bindTexture(gl.TEXTURE_2D, null);
+const maxTextureImageUnits = gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS);
+
+for (let testArrayElement = 0; 
+  testArrayElement < maxTestedArrayLength; ++testArrayElement) {
+  const program = setupTextureProgramWithUnusedSamplerArray(gl, testArrayElement);
+  const loc = gl.getUniformLocation(program, `tex[${testArrayElement}]`);
+  gl.deleteProgram(program);
+  glErrorShouldBe(gl, gl.NO_ERROR, "Should be no errors from setup");
+  for (let ii = 0; ii < maxTextureImageUnits; ++ii) {
+    gl.uniform1i(loc, ii);
+    gl.activeTexture(gl.TEXTURE0 + ii);
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    wtu.drawQuad(gl, [1.0, 0, 0, 1.0]);
+    checkCanvasPixelSilentPass(gl, [0, 255, 0, 255], 
+      'Can draw with the shader that has unused samplers in an array.' +
+      `Used sampler: ${testArrayElement}, texture unit: ${ii}`);
+    gl.bindTexture(gl.TEXTURE_2D, null);
+  }
+}
+</script>
+</body>
+</html>

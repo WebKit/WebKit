@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="resources/sw-test-pre.js"></script>
+<script>
+log("* Add basic testing for ServiceWorkerGlobalScope.registration");
+log("");
+
+navigator.serviceWorker.addEventListener("message", function(event) {
+    if (event.data === "DONE") {
+        finishSWTest();
+        return;
+    }
+    log(event.data);
+});
+
+navigator.serviceWorker.register("resources/self_registration-worker.js", { }).then(function(registration) {
+    worker = registration.installing;
+    waitForState(worker, "activated").then(function() {
+        worker.postMessage("DUMP_RESULTS");
+    });
+});
+</script>
+</body>
+</html>

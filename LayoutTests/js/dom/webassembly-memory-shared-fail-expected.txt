@@ -1,0 +1,10 @@
+Test sending shared WebAssembly.Memory's SharedArrayBuffer via postMessage to a worker with transfer-list and fail.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS worker.postMessage(memory.buffer, [memory.buffer]) threw exception DataCloneError: The object can not be cloned..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

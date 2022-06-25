@@ -1,0 +1,9 @@
+This test checks that :focus-visible always matches on elements with contenteditable=true set.
+If the user-agent does not claim to support the :focus-visible pseudo-class then SKIP this test.
+Click the content editable span below to focus it.
+If the element has a red background, then the test result is FAILURE. If the element has a green outline, then the test result is SUCCESS.
+
+Focus me
+
+FAIL Focus should always match :focus-visible on content editable divs undefined is not an object (evaluating 'actions_promise.then')
+

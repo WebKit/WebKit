@@ -1,0 +1,42 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <script src="../../../resources/js-test.js"></script>
+        <script src="../../../resources/ui-helper.js"></script>
+    </head>
+<body>
+<select id="select">
+    <option>January</option>
+    <option>February</option>
+    <option>March</option>
+    <option>April</option>
+    <option>May</option>
+    <option>June</option>
+    <option>July</option>
+    <option>August</option>
+    <option>September</option>
+    <option>October</option>
+    <option>November</option>
+    <option>December</option>
+</select>
+</body>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("This test verifies that tapping on a select element and then unparenting the webview does not result in a crash.");
+
+    select.addEventListener("touchstart", () => {
+        UIHelper.removeViewFromWindow();
+    });
+
+    select.addEventListener("focus", async () => {
+        await UIHelper.ensurePresentationUpdate();
+        finishJSTest();
+    });
+
+    UIHelper.activateElement(select);
+});
+</script>
+</html>

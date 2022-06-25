@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+<style>
+.pseudo::after {
+  content: url(resources/svg-circle.svg);
+  width: 18px;
+  height: 20px;
+  position: absolute;
+  margin-top: 6px;
+  right: 6px
+}
+
+.pseudo.hidden::after {
+    content: ' ';
+}
+</style>
+</head>
+<body>
+
+<div id="content">
+  <div style="float: left;">
+    <span>Language</span>
+    <input>
+  </div>
+
+  <div id="float" style="display: inline-block;" class="pseudo">
+    <span required="" style="color: rgb(194, 0, 0);">Email</span>
+    <input type="text" required="" aria-required="true" value="" onkeyup="hidePseudo();">
+  </div>
+</div>
+
+<script>
+
+    description("Make sure that we are updating the render block flow element's children correctly.");
+
+    function hidePseudo() {
+        document.getElementById("float").className += "hidden"
+    }
+
+    function showPseudo() {
+        document.getElementById("float").className = "pseudo";
+    }
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        var element;
+        setTimeout(async function() {
+            element = accessibilityController.accessibleElementById("float");
+            if (accessibilityController.platformName != "atspi")
+                shouldBe("element.childrenCount", "3");
+            else
+                shouldBe("element.childrenCount", "2");
+
+            eventSender.keyDown('\t');
+            eventSender.keyDown('\t');
+
+            // Asynchronously wait for and verify the result of the onkeyup hidePseudo() invocation.
+            if (accessibilityController.platformName != "atspi")
+                await expectAsyncExpression("element.childrenCount", "2");
+            else
+                await expectAsyncExpression("element.childrenCount", "1");
+
+            showPseudo();
+
+            // Make sure getting the attributes of its children won't cause crash.
+            element.attributesOfChildren();
+
+            document.getElementById("content").style.visibility = "hidden";
+
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>
+

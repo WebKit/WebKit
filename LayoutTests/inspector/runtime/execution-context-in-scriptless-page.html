@@ -1,0 +1,53 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+
+function createFrame()
+{
+  let iframe = document.createElement("iframe");
+  iframe.src = "data:text/html,<p>No JavaScript.</p>";
+  document.body.appendChild(iframe);
+}
+
+function test()
+{
+    let suite = ProtocolTest.createAsyncSuite("Runtime.executionContextCreated.ContextWithoutScript");
+
+    suite.addTestCase({
+        name: "Runtime.executionContextCreated.ContextWithoutScript.SubFrame",
+        description: "Test that Runtime.executionContextCreated event is fired when a new iframe is added to the page and its document doesn't have any JavaScript.",
+        async test() {
+            await InspectorProtocol.awaitCommand({method: "Page.enable"});
+            await InspectorProtocol.awaitCommand({method: "Runtime.enable"});
+
+            let [executionContextCreatedEvent] = await Promise.all([
+                InspectorProtocol.awaitEvent({event: "Runtime.executionContextCreated"}),
+                InspectorProtocol.awaitCommand({
+                    method: "Runtime.evaluate",
+                    params: {expression: `createFrame()`}
+                })
+            ]);
+
+            ProtocolTest.pass("Should receive Runtime.executionContextCreated notification.");
+
+            let evaluateResult = await InspectorProtocol.awaitCommand({
+                method: "Runtime.evaluate",
+                params: {
+                    contextId: executionContextCreatedEvent.params.context.id,
+                    expression: `document.body.textContent`
+                }
+            });
+
+            ProtocolTest.expectEqual(evaluateResult.result.value, "No JavaScript.", "Should be able to evaluate in subframe.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test that Runtime.executionContextCreated event is fired even for pages without JavaScript.</p>
+</body>
+</html>

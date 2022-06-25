@@ -1,0 +1,3 @@
+
+PASS Send binary data on a WebSocket - ArrayBufferView - Int8Array - Connection should be closed
+

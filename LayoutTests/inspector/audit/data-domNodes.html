@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/audit-utilities.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.Audit.createSuite("Audit.DOMNodes");
+
+    InspectorTest.Audit.addDOMSelectorTest("Audit.DOMNodes.Tag", "div", WI.AuditTestCaseResult.Level.Fail);
+    InspectorTest.Audit.addDOMSelectorTest("Audit.DOMNodes.ID", "#id1", WI.AuditTestCaseResult.Level.Fail);
+    InspectorTest.Audit.addDOMSelectorTest("Audit.DOMNodes.ClassName", ".class1", WI.AuditTestCaseResult.Level.Fail);
+    InspectorTest.Audit.addDOMSelectorTest("Audit.DOMNodes.DoesNotExist", "DoesNotExist", WI.AuditTestCaseResult.Level.Pass);
+
+    InspectorTest.Audit.addObjectTest("Audit.DOMNodes.Undefined", {level: WI.AuditTestCaseResult.Level.Pass, domNodes: undefined}, WI.AuditTestCaseResult.Level.Pass);
+
+    InspectorTest.Audit.addObjectTest("Audit.DOMNodes.Error.Null", {level: WI.AuditTestCaseResult.Level.Pass, domNodes: null}, WI.AuditTestCaseResult.Level.Error);
+    InspectorTest.Audit.addObjectTest("Audit.DOMNodes.Error.Number", {level: WI.AuditTestCaseResult.Level.Pass, domNodes: 42}, WI.AuditTestCaseResult.Level.Error);
+    InspectorTest.Audit.addObjectTest("Audit.DOMNodes.Error.String", {level: WI.AuditTestCaseResult.Level.Pass, domNodes: "foo"}, WI.AuditTestCaseResult.Level.Error);
+    InspectorTest.Audit.addObjectTest("Audit.DOMNodes.Error.Object", {level: WI.AuditTestCaseResult.Level.Pass, domNodes: {}}, WI.AuditTestCaseResult.Level.Error);
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing audits involving DOM nodes.</p>
+    <div id="id1" class="class2 class3"></div>
+    <div id="id2" class="class3 class1"></div>
+    <div id="id3" class="class1 class2"></div>
+</body>
+</html>

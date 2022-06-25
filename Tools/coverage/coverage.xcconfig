@@ -1,0 +1,2 @@
+OTHER_CFLAGS = $(inherited) -fprofile-instr-generate -fcoverage-mapping;
+OTHER_LDFLAGS = $(inherited) -fprofile-instr-generate;

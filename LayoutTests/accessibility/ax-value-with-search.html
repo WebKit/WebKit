@@ -1,0 +1,32 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<input type="search" value="hello" id="searchInput">
+
+<script>
+
+    description("This tests that a search field is returns its accessibilityValue correctly.");
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        var searchInput;
+        setTimeout(async function() {
+            searchInput = accessibilityController.accessibleElementById("searchInput");
+            shouldBe("searchInput.stringValue", "'AXValue: hello'");
+
+            document.getElementById("searchInput").value = "test";
+            await expectAsyncExpression("searchInput.stringValue", "'AXValue: test'");
+
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>
+

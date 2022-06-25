@@ -1,0 +1,5 @@
+
+
+PASS dialog.show(): focusing steps should not change focus when dialog is inert
+PASS dialog.showModal(): focusing steps should apply focus fixup rule when dialog is inert
+

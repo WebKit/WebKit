@@ -1,0 +1,9 @@
+This test ensures that drag-selecting works correctly in scaled pages.
+
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+FAIL firstRange.startOffset should be 79. Was 66.
+FAIL firstRange.endOffset should be 103. Was 90.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

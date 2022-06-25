@@ -1,0 +1,5 @@
+PASS Overlapping animations should not affect scroll destination during wheel events.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

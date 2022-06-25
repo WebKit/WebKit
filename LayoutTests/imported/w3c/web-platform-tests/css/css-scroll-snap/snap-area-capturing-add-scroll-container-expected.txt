@@ -1,0 +1,4 @@
+
+PASS Making an element scrollable should make it capture the correct descendant snap areas' snap points.
+PASS Attaching a new element that is scrollable should assign the correct snap areas to it.
+

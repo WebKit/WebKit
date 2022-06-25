@@ -1,0 +1,12 @@
+
+RUN(video.src = findMediaFile("video", "content/test"))
+EVENT(canplaythrough)
+RUN(video.play())
+EVENT(playing)
+EVENT(timeupdate)
+EXPECTED (internals.elementIsBlockingDisplaySleep(video) == 'true') OK
+RUN(video.currentTime = video.duration - 0.05)
+EVENT(ended)
+EXPECTED (internals.elementIsBlockingDisplaySleep(video) == 'false') OK
+END OF TEST
+

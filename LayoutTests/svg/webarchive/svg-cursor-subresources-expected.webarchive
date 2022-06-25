@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>WebMainResource</key>
+	<dict>
+		<key>WebResourceData</key>
+		<string>&lt;svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"&gt;
+  &lt;cursor id="mycursor" xlink:href="resources/green-checker.png"/&gt;
+  &lt;rect style="cursor: url(#mycursor)" width="100" height="100" fill="white" stroke="blue"/&gt;
+  
+  &lt;text x="10" y="130"&gt;Hover over the rect, you should see a (large) custom cursor&lt;/text&gt;
+  &lt;script&gt;
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+
+        setTimeout(function() {
+            testRunner.dumpDOMAsWebArchive();
+            testRunner.notifyDone();
+        }, 0);
+    }
+ &lt;/script&gt;
+&lt;/svg&gt;</string>
+		<key>WebResourceFrameName</key>
+		<string></string>
+		<key>WebResourceMIMEType</key>
+		<string>image/svg+xml</string>
+		<key>WebResourceTextEncodingName</key>
+		<string>UTF-8</string>
+		<key>WebResourceURL</key>
+		<string>file:///LayoutTests/svg/webarchive/svg-cursor-subresources.svg</string>
+	</dict>
+	<key>WebSubresources</key>
+	<array>
+		<dict>
+			<key>WebResourceData</key>
+			<data>
+			iVBORw0KGgoAAAANSUhEUgAAAE4AAAA5CAIAAAAX74ozAAAKZGlD
+			Q1BJQ0MgUHJvZmlsZQAAeJyVlndQ09kWx88vPSS0kNBL6L1L701A
+			6UUpglIisAQSIBQLDxWx9xVFRVjEigooTUGaioWiNBHpKogsFgRF
+			qXl/hF3fztudN+/8de6ZO/fe7+d878wBIIuHsdlMFADExXMSfZzt
+			6QGBQXR8DyCAAQpQABMWkcS28/Jyg3+M2R5AAAC6tMPYbOY/7/vb
+			EEgMCAwCQLQAgBrFy20BgBrOy/0AgJrKYXMAkGgAoEZEh0UCINsB
+			QCvRz8cBALkKAAJRvPwOAAiE8/InACCQEhHFAUB6AdCU+MiYeADM
+			BwCcdSQjKQKApAUAkZFJEXEApGMAoBMXx4oEIDUAgFoEO5EDQHoP
+			ANoBgUF03pMT9AAc7wEIMn7Wwu4CFOQAqKv9rCl+BJB4DHA252dt
+			xgcQAEBEnydtNjQAAACEbA+AHeJyZ1QA8CcAlo5zuQsXuNylQgD0
+			AEADMyI5MWWFF4K0AfyvNU/zSqARAATQGByBSCILCApTRGhi4pJS
+			0rJy8gpKyqpqGppaOrr6BoZGxqZm5pZW1rZ29o5Ozi6ua9zcPby8
+			ffz81wUEBgVvCN24KSw8grE5Kjrml9i4eBY7ITGJk5yatmXrtu3p
+			/8rYsStzd9aevfv2Hzh46PCRo8eOn/j1ZPap0zlnzp7LPZ+X/1vB
+			hcKLly5fvnL1WtH1GzduFpeU3rp1u6y8orKy6s7d6uqae7W1dfUN
+			DY33Hzx42PTo0eMnT582t7S0tj179ry9vaOzs6u7+0VPz8uXva9e
+			9fX3DwwODg0Nj4y8fvPm7ejo2Lt34+8nJn6fnPzw8dOnz1NfvkzP
+			fP02O/v9x9z8/MLi0vIyF9BYPIGPxC8oRBGhiYpLSsnI0uUVlVRU
+			1TU0tXX09A1XGZmYmllYWtnY2jk4Oq12cV2z1t3D08vH96/6Ixmb
+			o2N+iWXGxbPYCUmc5JSfAHb+PYGfCP7K4ObN4pLSW7dvl5VXVFZV
+			3blbXXPvXm1dfUNj4/0HD5uaVgi0trU9e97e0dHZ1dX9oqfnZW/v
+			q76+/oHBwaHh4T/Vj/PUf/gP9Svy5+YXFnn6UWgMFkcg8pHI/AKC
+			QsIUESpNVExcQlJKWkZWji6voKikrKKqpq6hqaWto6unb2C4ysjI
+			2MTUzNzC0sraxtbO3sHRabWzi+uaNWvd3D08vbx9fP38/NetDwgM
+			Ct4QErJCJ5LnjxVAPIusMPoD0gqlFUwrnHhW4YFaMcvFS5evXL12
+			rej6jZvFxSWlt26XlVdU/GmWuvr6hp+gmlta25497+js6n7xsvdV
+			/+DQyJu3Y+MTkx8+fZn59n1ucZkLwPv7AAA4Y4DDeQDrGQDuagB7
+			7gOoyQNIOgN48QP4mQFqxhBQhS8BKXAGNAKA4v0tQAMBBEAU5EAD
+			jMERfCESkmEvnIMyaIVRWEYkEGPEB2EhR5ASpB2ZQYmjrFEM1HFU
+			DWoMTUHboJnoc+gW9CJGFxOGyca0YNFYW2wGtgb7A2eMS8KV4b7h
+			TfBb8HUELMGNkE0YI5oRs4gv+JT5UviekmRJSaSnZDo5jdzBr8Wf
+			y78kECJQJ0gXzBR8L+QpVCYsI7xXeJoSSmkXsREpoSpSz9IkaedF
+			FUSLxAzEasRdxHslfpFYlDwmpSpVK+0vPSGTJSsvWysXLLdEL5B3
+			lf+qkKNop/hFqUDZRwWjUqEapSanNqB+QsNHk6b5QuuMdpiOus4X
+			3Tq9o/qbDAwN8YYDq+qMso1TTYJMrc0UzHHmHyxeWTZb1VjfsMmz
+			PWl30D7TYadjltP+1Yecj7icda1eM+km6u7vcdCzwWvOx8w30691
+			HW19aEBJEBIcsKEqVG5j1qbfw/0iuhjOm+uibWOaY72Zo/EpbFpC
+			eVJAMialMi1mq9y28fTijPSdbplSuz/u6dx390DuoYNHdh/bdoJ1
+			MvoUJ+fU2YHzZvlHCz5eXH352jXC9ZCbTaVKtw+UT1cF3K28R6tL
+			axh8YNmU83i22aP1+rPFDv+uohcLvc592QPDQzWviW+9x0zHYyZK
+			Jss/tkxRp82+Gsxu+dE4X7CE4XL/7D8OyEABSVACXbAAF1gPUZAK
+			+yEXSqEJBuArIoCoI47IJiQdyUXuIYMoQCmh1qDYqFOoOtR7NBVt
+			h45Hn0e3obkYAwwDcxbTgeXDOmDTsdXYOZwpLhVXgwe8E34/vpMg
+			TYgmVBDRRF/iJeICnyffZT4uKYhUSRYhs8nP+XX5T/IvCEQItAiu
+			EswTIgttEXovHCjcSrGlVInoilyhKlALaMq0IlFD0VoxV7EX4gzx
+			OYmjkkqStVIBUtPSh2U0ZJplY+RIcrfowfJ4+UqFSEURxcdKGcom
+			ylMqRaqRaipqk+pFGimaTlpkrSHtMp1M3SA9Y32q/oxBt2HVqkKj
+			A8ZbTJimG828zR0tTC3NrSysLW2sbO3tXO29HTY6JjntW53rXOLS
+			7Dq/1siN6X7D472XvHe4zwXfGX+rdXvWdwbKBcUHN4XIh+7YOBhm
+			Ep4TSWSwNr+Mdompj9VmXo1XYhUmaCZe4egn16d6pg1t5WwXTi/J
+			8N8xt+vcbtusqb1X9gcdFDzUcSTnWMgJmV8HsitOnzyTce7M+eL8
+			xoL+wk+XaVdXFfnf2Fp8vvTR7dkK9aqNd4/WPKhdbLC+v/PhnUfL
+			T81b9rQ9aad1MrrLehZfOffnD06NuL45P/pl3Hvit8mFT+un6mcU
+			vu3//nF+w2I/l7vSfSKIAB10wR7WAwv2wzXogK+IJGKPxCKnkIfI
+			N5QaKhRVhBpFK6DD0BfQYxhNDBtTjcVjk7CPcJK4eNxjvAI+Hd9P
+			sCTkE7WI2XwIH4tvmORLeky2IpfzG/KPCIQJjApGC34WShNGCx+j
+			0CnlIq4iI9TtNBlag2ismIhYvThLQkmiT/JXKU9pPulHMntkV8sR
+			5J7Tz8nHKlgokhRfK9UoZ6skqDqraasLq3/XeKvZrtWoXalzSbdA
+			L18/zyDfsHBVqVGl8VOTAdMpc4yFuKW5VYj1DpuLtu120w7Kjhuc
+			slc/d152NVkTt/aCW58H1dPTK8O70Rfn5+l/el1fgGYgJ+j+BvGQ
+			pNCuTephmeETkb6Miiip6EMxS7FM5tv4AFZ3gm9iK8cjuTs1OG1k
+			a+y2hfTDGUo7qne5ZQ5nbdkrta/2QNBB7uGbR4OP405cP7nuFP/p
+			6jM+Z6dzD+bZ508VXCoMv6R+efZqbdHxG8xip1LpW5/LHlTkVbHv
+			uteI3xuvq2hIvq/6oKdp32PDJy3Nm1sW2zKezbUndIx2eXfX9lBf
+			Mnor+9D9TgPpg4eHdg3njzS9HntLHBUdnRl78+77e2QC/7vgJDLZ
+			+iHv45lPJz7vnUr6EjCtNj0xU/b19LetswHfjX4I/ng399t80ILC
+			wvRi89L15SouF4A3LwIAAJ8Di8lKpLs5OP6fw+7/ijhm8h93IABA
+			ZsT7+wIABQCkwQFYwAQWJAId3MABHAF4syoAAE4IIFcDAOCOe+J/
+			ncthpHEAABxY7C2JMVHRHLodm81k0B1YcexkDiNRi+4aH6GjRTfQ
+			0zMCAPg373KRKiGxLhMAAAAJcEhZcwAACxMAAAsTAQCanBgAAACK
+			SURBVGiB7dixCsAgDADRRPr/n2y6ChVxrOe9sbSBw6HBrKr4aNEq
+			Js9HPXpGrt/51Zy2/p7EVCJTiUwluig1p3/m49aDnTkXnaqpRKYS
+			mUpkKpGpRM90bzxuv92Zc9GpmkpkKpGpRKYSmUrkPTCRqUSmEplK
+			ZCqRqUTeAxOZSmQqkalEphKZSvQCSxpFa6M+cToAAAAASUVORK5C
+			YII=
+			</data>
+			<key>WebResourceMIMEType</key>
+			<string>image/png</string>
+			<key>WebResourceResponse</key>
+			<dict>
+				<key>MIMEType</key>
+				<string>image/png</string>
+				<key>URL</key>
+				<string>file:///LayoutTests/svg/webarchive/resources/green-checker.png</string>
+				<key>expectedContentLength</key>
+				<integer>2888</integer>
+			</dict>
+			<key>WebResourceURL</key>
+			<string>file:///LayoutTests/svg/webarchive/resources/green-checker.png</string>
+		</dict>
+	</array>
+</dict>
+</plist>

@@ -1,0 +1,10 @@
+Workers should be governed by 'child-src'.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS var w = new Worker('/security/contentSecurityPolicy/resources/alert-pass.js'); did not throw exception.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

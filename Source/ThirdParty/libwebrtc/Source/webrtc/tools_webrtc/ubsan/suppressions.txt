@@ -1,0 +1,24 @@
+#############################################################################
+# UBSan ignorelist.
+#
+# This is a WebRTC-specific replacement of Chromium's ignorelist.txt.
+# Only exceptions for third party libraries go here. WebRTC's code should use
+# the RTC_NO_SANITIZE macro. Please think twice before adding new exceptions.
+
+#############################################################################
+# YASM does some funny things that UBsan doesn't like.
+# https://crbug.com/489901
+src:*/third_party/yasm/*
+
+# OpenH264 triggers some errors that are out of our control.
+src:*/third_party/ffmpeg/libavcodec/*
+src:*/third_party/openh264/*
+
+# TODO(bugs.webrtc.org/11110).
+# Remove those once upstream code has been cleaned.
+src:*/third_party/abseil-cpp/absl/debugging/*
+src:*/third_party/libvpx/source/libvpx/vp8/*
+
+#############################################################################
+# Ignore system libraries.
+src:*/usr/*

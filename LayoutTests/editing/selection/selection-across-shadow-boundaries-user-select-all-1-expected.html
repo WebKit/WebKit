@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests selecting content starting in a shadow tree inside a <code>user-select: all</code> in an editable region in to outside the editable region.<br>
+To manually test, select "hello world WebKit rocks" below by a mouse drag from "h" to "s". WebKit should select "hello".</p>
+<div id="container"><div contenteditable><div id="selected">hello</div>world<br>WebKit</div>rocks</div>
+<script>
+getSelection().selectAllChildren(selected);
+</script>
+</body>
+</html>

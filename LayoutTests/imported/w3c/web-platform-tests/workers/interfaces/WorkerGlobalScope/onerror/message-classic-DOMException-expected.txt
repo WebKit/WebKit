@@ -1,0 +1,12 @@
+
+PASS Throw DOMException-TypeError in toplevel: classic: listener
+PASS Throw DOMException-TypeError in toplevel: classic: handler
+PASS Throw DOMException-TypeError in setTimeout-function: classic: listener
+PASS Throw DOMException-TypeError in setTimeout-function: classic: handler
+PASS Throw DOMException-TypeError in setTimeout-string: classic: listener
+PASS Throw DOMException-TypeError in setTimeout-string: classic: handler
+PASS Throw DOMException-TypeError in onmessage: classic: listener
+PASS Throw DOMException-TypeError in onmessage: classic: handler
+PASS Throw DOMException-TypeError in onerror: classic: listener
+PASS Throw DOMException-TypeError in onerror: classic: handler
+

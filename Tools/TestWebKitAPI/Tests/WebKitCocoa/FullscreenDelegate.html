@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        function load() {
+            window.webkit.messageHandlers.fullscreenChangeHandler.postMessage('load');
+        }
+        document.addEventListener('webkitfullscreenchange', function(event) {
+            window.webkit.messageHandlers.fullscreenChangeHandler.postMessage('fullscreenchange');
+        });
+        document.addEventListener('mousedown', function(event) {
+            // Toggle fullscreen
+            var target = document.getElementById('target');
+            if (document.webkitFullscreenElement == target)
+                document.webkitExitFullscreen();
+            else
+                target.webkitRequestFullScreen();
+        });
+    </script>
+    <style>
+    #target {
+        background-color: red;
+        width: 150px;
+        height: 150px;
+    }
+    </style>
+</head>
+<body onload="load()">
+    <div id="target"></div>
+</body>
+</html>

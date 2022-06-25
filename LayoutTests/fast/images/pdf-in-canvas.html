@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<p>This test passes if you see a green box below (possibly with a green border).</p>
+<img id="image">
+<div style="position: relative;">
+    <canvas id="canvas" width="100" height="100"></canvas>
+    <div style="position: absolute; left: -3px; top: -3px; width: 6px; height: 106px; background: green;"></div>
+    <div style="position: absolute; left: 97px; top: -3px; width: 6px; height: 106px; background: green;"></div>
+    <div style="position: absolute; left: -3px; top: -3px; width: 106px; height: 6px; background: green;"></div>
+    <div style="position: absolute; left: -3px; top: 97px; width: 106px; height: 6px; background: green;"></div
+</div>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+}
+// Emulate a big PDF on iOS (which has the PDFImageCachingPolicy set to BelowMemoryLimit).
+if (window.internals)
+    internals.settings.setPDFImageCachingPolicy("Disabled");
+let canvas = document.getElementById("canvas");
+let context = canvas.getContext("2d");
+let image = document.getElementById("image");
+image.addEventListener("load", function() {
+    var state = 0;
+    function tick() {
+        context.drawImage(image, 0, 0, 100, 100);
+        if (state < 10) {
+            context.fillRect(0, 0, 100, 100);
+            ++state;
+            requestAnimationFrame(tick);
+        } else {
+            image.style.display = "none";
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+    }
+    requestAnimationFrame(tick);
+});
+image.src = "resources/green_rectangle.pdf";
+</script>
+</body>
+</html>

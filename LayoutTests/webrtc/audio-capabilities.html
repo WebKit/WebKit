@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing audio capabilities</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <script>
+test(() => {
+    const codecs = RTCRtpSender.getCapabilities('audio').codecs;
+    for (let i = 0; i < codecs.length; ++i)
+        assert_equals(codecs[i].mimeType.indexOf("ILBC"), -1);
+}, "Check ILBC is not supported as encoder");
+
+test(() => {
+    const codecs = RTCRtpReceiver.getCapabilities('audio').codecs;
+    for (let i = 0; i < codecs.length; ++i)
+        assert_equals(codecs[i].mimeType.indexOf("ILBC"), -1);
+}, "Check ILBC is not supported as decoder");
+        </script>
+    </body>
+</html>
+

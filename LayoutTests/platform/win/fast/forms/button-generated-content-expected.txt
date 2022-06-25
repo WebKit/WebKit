@@ -1,0 +1,143 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x286
+  RenderBlock {HTML} at (0,0) size 800x286
+    RenderBody {BODY} at (8,16) size 784x262
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 314x18
+          text run at (0,0) width 292: "This is a test of generated content in <button> "
+          text run at (292,0) width 22: "for "
+        RenderInline {I} at (0,0) size 767x36
+          RenderInline {A} at (0,0) size 348x18 [color=#0000EE]
+            RenderText {#text} at (314,0) size 348x18
+              text run at (314,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9561"
+          RenderText {#text} at (662,0) size 767x36
+            text run at (662,0) width 4: " "
+            text run at (666,0) width 101: "REGRESSION:"
+            text run at (0,18) width 430: "Content property on :before of button causes hang on click or hover"
+        RenderText {#text} at (430,18) size 4x18
+          text run at (430,18) width 4: "."
+      RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,62) size 784x200
+        RenderButton {BUTTON} at (2,2) size 52x21 [color=#0000FF] [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
+          RenderBlock (anonymous) at (8,3) size 36x15
+            RenderInline (generated) at (0,0) size 36x15
+              RenderText at (0,0) size 36x15
+                text run at (0,0) width 36: "before"
+        RenderText {#text} at (56,3) size 4x18
+          text run at (56,3) width 4: " "
+        RenderButton {BUTTON} at (62,2) size 88x21 [color=#0000FF] [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
+          RenderBlock (anonymous) at (8,3) size 72x15
+            RenderInline (generated) at (0,0) size 36x15
+              RenderText at (0,0) size 36x15
+                text run at (0,0) width 36: "before"
+            RenderText {#text} at (36,0) size 36x15
+              text run at (36,0) width 36: "button"
+        RenderText {#text} at (152,3) size 4x18
+          text run at (152,3) width 4: " "
+        RenderBR {BR} at (0,0) size 0x0
+        RenderButton {BUTTON} at (2,27) size 42x21 [color=#0000FF] [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
+          RenderBlock (anonymous) at (8,3) size 26x15
+            RenderInline (generated) at (0,0) size 26x15
+              RenderText at (0,0) size 26x15
+                text run at (0,0) width 26: "after"
+        RenderText {#text} at (46,28) size 4x18
+          text run at (46,28) width 4: " "
+        RenderButton {BUTTON} at (52,27) size 78x21 [color=#0000FF] [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
+          RenderBlock (anonymous) at (8,3) size 62x15
+            RenderText {#text} at (0,0) size 36x15
+              text run at (0,0) width 36: "button"
+            RenderInline (generated) at (0,0) size 26x15
+              RenderText at (36,0) size 26x15
+                text run at (36,0) width 26: "after"
+        RenderText {#text} at (132,28) size 4x18
+          text run at (132,28) width 4: " "
+        RenderBR {BR} at (0,0) size 0x0
+        RenderButton {BUTTON} at (2,64) size 16x6 [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
+        RenderText {#text} at (20,53) size 4x18
+          text run at (20,53) width 4: " "
+        RenderButton {BUTTON} at (26,52) size 52x21 [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
+          RenderBlock (anonymous) at (8,3) size 36x15
+            RenderText {#text} at (0,0) size 36x15
+              text run at (0,0) width 36: "button"
+        RenderText {#text} at (80,53) size 4x18
+          text run at (80,53) width 4: " "
+        RenderBR {BR} at (0,0) size 0x0
+        RenderButton {BUTTON} at (2,89) size 16x6 [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
+        RenderText {#text} at (20,78) size 4x18
+          text run at (20,78) width 4: " "
+        RenderButton {BUTTON} at (26,77) size 52x21 [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
+          RenderBlock (anonymous) at (8,3) size 36x15
+            RenderText {#text} at (0,0) size 36x15
+              text run at (0,0) width 36: "button"
+        RenderText {#text} at (80,78) size 4x18
+          text run at (80,78) width 4: " "
+        RenderBR {BR} at (0,0) size 0x0
+        RenderButton {BUTTON} at (2,102) size 52x21 [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
+          RenderBlock (anonymous) at (8,3) size 36x15
+            RenderInline (generated) at (0,0) size 36x15
+              RenderText at (0,0) size 36x15
+                text run at (0,0) width 36: "before"
+        RenderText {#text} at (56,103) size 4x18
+          text run at (56,103) width 4: " "
+        RenderButton {BUTTON} at (62,102) size 88x21 [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
+          RenderBlock (anonymous) at (8,3) size 72x15
+            RenderInline (generated) at (0,0) size 36x15
+              RenderText at (0,0) size 36x15
+                text run at (0,0) width 36: "before"
+            RenderText {#text} at (36,0) size 36x15
+              text run at (36,0) width 36: "button"
+        RenderText {#text} at (152,103) size 4x18
+          text run at (152,103) width 4: " "
+        RenderBR {BR} at (0,0) size 0x0
+        RenderButton {BUTTON} at (2,127) size 42x21 [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
+          RenderBlock (anonymous) at (8,3) size 26x15
+            RenderInline (generated) at (0,0) size 26x15
+              RenderText at (0,0) size 26x15
+                text run at (0,0) width 26: "after"
+        RenderText {#text} at (46,128) size 4x18
+          text run at (46,128) width 4: " "
+        RenderButton {BUTTON} at (52,127) size 78x21 [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
+          RenderBlock (anonymous) at (8,3) size 62x15
+            RenderText {#text} at (0,0) size 36x15
+              text run at (0,0) width 36: "button"
+            RenderInline (generated) at (0,0) size 26x15
+              RenderText at (36,0) size 26x15
+                text run at (36,0) width 26: "after"
+        RenderText {#text} at (132,128) size 4x18
+          text run at (132,128) width 4: " "
+        RenderBR {BR} at (0,0) size 0x0
+        RenderButton {BUTTON} at (2,152) size 52x21 [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
+          RenderBlock (anonymous) at (8,3) size 36x15
+            RenderInline (generated) at (0,0) size 36x15
+              RenderText at (0,0) size 36x15
+                text run at (0,0) width 36: "before"
+        RenderText {#text} at (56,153) size 4x18
+          text run at (56,153) width 4: " "
+        RenderButton {BUTTON} at (62,152) size 88x21 [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
+          RenderBlock (anonymous) at (8,3) size 72x15
+            RenderInline (generated) at (0,0) size 36x15
+              RenderText at (0,0) size 36x15
+                text run at (0,0) width 36: "before"
+            RenderText {#text} at (36,0) size 36x15
+              text run at (36,0) width 36: "button"
+        RenderText {#text} at (152,153) size 4x18
+          text run at (152,153) width 4: " "
+        RenderBR {BR} at (0,0) size 0x0
+        RenderButton {BUTTON} at (2,177) size 42x21 [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
+          RenderBlock (anonymous) at (8,3) size 26x15
+            RenderInline (generated) at (0,0) size 26x15
+              RenderText at (0,0) size 26x15
+                text run at (0,0) width 26: "after"
+        RenderText {#text} at (46,178) size 4x18
+          text run at (46,178) width 4: " "
+        RenderButton {BUTTON} at (52,177) size 78x21 [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
+          RenderBlock (anonymous) at (8,3) size 62x15
+            RenderText {#text} at (0,0) size 36x15
+              text run at (0,0) width 36: "button"
+            RenderInline (generated) at (0,0) size 26x15
+              RenderText at (36,0) size 26x15
+                text run at (36,0) width 26: "after"
+        RenderText {#text} at (132,178) size 4x18
+          text run at (132,178) width 4: " "
+        RenderBR {BR} at (0,0) size 0x0

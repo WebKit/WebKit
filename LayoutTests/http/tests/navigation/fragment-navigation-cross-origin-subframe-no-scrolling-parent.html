@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests that a fragment navigation in a cross-origin subframe does not scroll its parent.");
+jsTestIsAsync = true;
+
+onload = () => {
+    setTimeout(function() {
+        shouldBe("window.scrollY", "0");
+        finishJSTest();
+    }, 0);
+}
+</script>
+<iframe src="http://localhost:8000/navigation/resources/clear-fragment.html#test" style="position: relative; top: 800px;"></iframe>
+</body>
+</html>

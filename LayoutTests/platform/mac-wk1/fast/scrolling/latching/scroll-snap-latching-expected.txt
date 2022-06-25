@@ -1,0 +1,11 @@
+Tests that scrolling in an overflow-scroll with scroll-snap doesn't fail to latch and scroll the document
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS overflowScrollEventCount > 0 is true
+FAIL windowScrollEventCount should be 0. Was 7.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

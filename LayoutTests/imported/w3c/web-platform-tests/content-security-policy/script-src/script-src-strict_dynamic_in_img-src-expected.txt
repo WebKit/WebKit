@@ -1,0 +1,5 @@
+`strict-dynamic` does not drop allowed source expressions in `img-src`.
+
+
+PASS `strict-dynamic` does not drop allowed source expressions in `img-src`.
+

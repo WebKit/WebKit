@@ -1,0 +1,43 @@
+This test makes sure that CSSStyleDeclaration enumerates JavaScript properties for defined and non-defined CSS properties, indexed properties, and properties defined on the prototype. See Bug 23946.
+PASS document.body.style.length is 2
+PASS '0' in document.body.style is true
+PASS '1' in document.body.style is true
+PASS 'textDecoration' in document.body.style is true
+PASS 'borderTopColor' in document.body.style is true
+PASS 'border' in document.body.style is true
+PASS 'font' in document.body.style is true
+PASS 'webkitTransform' in document.body.style is true
+PASS 'WebkitTransform' in document.body.style is true
+PASS 'bogus-random-String' in document.body.style is false
+PASS 'cssText' in document.body.style is true
+PASS 'getPropertyCSSValue' in document.body.style is true
+PASS initialIndexOfGroup2 > initialIndexOfGroup1 is true
+PASS initialIndexOfGroup3 > initialIndexOfGroup2 is true
+PASS initialIndexOfGroup4 > initialIndexOfGroup3 is true
+PASS initialIndexOfGroup5 > initialIndexOfGroup4 is true
+PASS initialIndexOfGroup6 > initialIndexOfGroup5 is true
+PASS group1 is ["0", "1", "cssText", "length", "parentRule", "cssFloat"]
+PASS group2 is group2Clone
+PASS group2.some(property => property.startsWith("Webkit")) is true
+PASS group2.some(property => property.startsWith("Epub")) is true
+PASS group2.every(property => !property.includes("-")) is true
+PASS group3 is group3Clone
+PASS group3.every(property => !property.startsWith("Webkit")) is true
+PASS group3.every(property => !property.startsWith("Epub")) is true
+PASS group3.every(property => !property.includes("-")) is true
+PASS group3.every(property => property.startsWith("webkit")) is true
+PASS group4 is group4Clone
+PASS group4.every(property => !property.startsWith("Webkit")) is true
+PASS group4.every(property => !property.startsWith("Epub")) is true
+PASS group4.every(property => !property.startsWith("webkit")) is true
+PASS group4.every(property => property.includes("-")) is true
+PASS group5 is group5Clone
+PASS group5.every(property => !property.startsWith("Webkit")) is true
+PASS group5.every(property => !property.startsWith("Epub")) is true
+PASS group5.every(property => !property.includes("-")) is true
+PASS group5.every(property => property.startsWith("epub")) is true
+PASS group6 is ["item", "getPropertyValue", "getPropertyPriority", "setProperty", "removeProperty", "getPropertyShorthand", "isPropertyImplicit", "getPropertyCSSValue"]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Tests that calling blob() on a cloned Fetch Response does not disturb the original response.");
+jsTestIsAsync = true;
+
+async function runTest() {
+    let originalResponse = await fetch("/resources/testharnessreport.js");
+    let clonedResponse = originalResponse.clone();
+
+    let originalBlob = await originalResponse.blob();
+    let cloneBlob = await clonedResponse.blob();
+
+    originalText = await originalBlob.text();
+    cloneText = await cloneBlob.text();
+
+    shouldBeTrue("originalText == cloneText");
+
+    finishJSTest();
+}
+
+onload = runTest;
+</script>
+</body>
+</html>

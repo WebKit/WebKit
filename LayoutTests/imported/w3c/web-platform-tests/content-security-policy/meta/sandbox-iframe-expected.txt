@@ -1,0 +1,5 @@
+self is derived correctly inside inside a sandboxed iframe.
+
+
+FAIL img-src 'self' works when specified in a meta tag. assert_equals: expected "PASS" but got "FAIL"
+

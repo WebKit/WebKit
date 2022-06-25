@@ -1,0 +1,22 @@
+
+Test the play() function of <video> when fullscreen is required.
+
+
+EVENT(canplaythrough)
+EXPECTED (video.webkitSupportsFullscreen == 'true') OK
+EXPECTED (video.webkitDisplayingFullscreen == 'false') OK
+RUN(video.play())
+EVENT(playing)
+
+** Started playing
+EXPECTED (internals.isChangingPresentationMode(video) == 'false') OK
+EXPECTED (video.webkitDisplayingFullscreen == 'true') OK
+RUN(video.webkitExitFullScreen())
+EVENT(webkitpresentationmodechanged)
+
+** Received webkitpresentationmodechanged event
+EXPECTED (internals.isChangingPresentationMode(video) == 'false') OK
+Exited fullscreen
+EXPECTED (video.webkitDisplayingFullscreen == 'false') OK
+END OF TEST
+

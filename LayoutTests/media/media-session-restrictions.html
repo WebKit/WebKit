@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+    <script src="video-test.js"></script>
+    <body>
+    <script>
+
+    if (!window.internals) {
+        failTest('This test requires window.internals and must be run in DumpRenderTree or WebKitTestRunner.');
+        throw '';
+    }
+
+    ['video','audio','videoaudio','webaudio'].forEach(type => {
+        consoleWrite(`mediaSessionRestrictions["${type}"] = "${ internals.mediaSessionRestrictions(type) }"`);
+    });
+
+    endTest();
+
+    </script>
+    </body>
+</html>

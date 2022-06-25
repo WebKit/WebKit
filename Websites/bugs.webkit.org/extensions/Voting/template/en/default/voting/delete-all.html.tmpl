@@ -1,0 +1,38 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # This template has no interface.
+  #%]
+
+[% PROCESS global/header.html.tmpl
+           title = "Remove your votes?"
+ %]
+
+<p>
+  You are about to remove all of your [% terms.bug %] votes. Are you sure you wish to
+  remove your vote from every [% terms.bug %] you've voted on?
+</p>
+
+<form action="page.cgi?id=voting/user.html" method="post">
+    <input type="hidden" name="action" value="vote">
+    <input type="hidden" name="token" value="[% issue_hash_token(['vote']) FILTER html %]">
+  <p>
+    <input type="radio" name="delete_all_votes" value="1">
+    Yes, delete all my votes
+  </p>
+  <p>
+    <input type="radio" name="delete_all_votes" value="0" checked="checked">
+    No, go back and review my votes
+  </p>
+  <p>
+    <input type="submit" id="vote" value="Submit">
+  </p>
+</form>
+
+[% PROCESS global/footer.html.tmpl %]

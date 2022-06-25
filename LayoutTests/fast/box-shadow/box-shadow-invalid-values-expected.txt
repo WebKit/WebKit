@@ -1,0 +1,23 @@
+
+PASS #target.style["box-shadow"] = "red green -4px 4px" should not set the property value
+PASS #target.style["box-shadow"] = "red -4px 4px green" should not set the property value
+PASS #target.style["box-shadow"] = "red inset -4px 4px red" should not set the property value
+PASS #target.style["box-shadow"] = "-4px 4px red green" should not set the property value
+PASS #target.style["box-shadow"] = "inset inset -4px 4px" should not set the property value
+PASS #target.style["box-shadow"] = "inset inset -4px 4px red" should not set the property value
+PASS #target.style["box-shadow"] = "inset -4px 4px inset" should not set the property value
+PASS #target.style["box-shadow"] = "inset green -4px 4px inset" should not set the property value
+PASS #target.style["box-shadow"] = "-4px 4px inset inset" should not set the property value
+PASS #target.style["box-shadow"] = "-4px 4px inset 8px -8px" should not set the property value
+PASS #target.style["box-shadow"] = "-4px 4px 2px inset 8px -8px" should not set the property value
+PASS #target.style["box-shadow"] = "-4px 4px 2px 2px inset 8px -8px" should not set the property value
+PASS #target.style["box-shadow"] = "-4px 4px 2px 2px inset 8px -8px 2px" should not set the property value
+PASS #target.style["box-shadow"] = "-4px 4px 2px 2px inset 8px -8px 2px 2px" should not set the property value
+PASS #target.style["box-shadow"] = "-4px 4px red 8px -8px" should not set the property value
+PASS #target.style["box-shadow"] = "-4px 4px 2px red 8px -8px" should not set the property value
+PASS #target.style["box-shadow"] = "-4px 4px 2px 2px red 8px -8px" should not set the property value
+PASS #target.style["box-shadow"] = "-4px 4px 2px 2px red 8px -8px 2px" should not set the property value
+PASS #target.style["box-shadow"] = "-4px 4px 2px 2px red 8px -8px 2px 2px" should not set the property value
+PASS #target.style["box-shadow"] = "inset -4px 4px 8px 8px 2px 2px" should not set the property value
+PASS #target.style["box-shadow"] = "red -4px 4px 8px 8px 2px 2px" should not set the property value
+

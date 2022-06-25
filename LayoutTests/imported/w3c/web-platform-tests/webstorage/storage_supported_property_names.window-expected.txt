@@ -1,0 +1,6 @@
+
+PASS Object.getOwnPropertyNames on localStorage Storage
+PASS Object.getOwnPropertyNames on localStorage storage with empty collection
+PASS Object.getOwnPropertyNames on sessionStorage Storage
+PASS Object.getOwnPropertyNames on sessionStorage storage with empty collection
+

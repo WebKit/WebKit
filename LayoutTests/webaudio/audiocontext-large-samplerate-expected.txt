@@ -1,0 +1,11 @@
+Tests that we do not crash when using a very large sample rate
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS context.sampleRate is 384000
+PASS context.state is "running"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

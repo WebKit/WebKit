@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<script>
+description("Tests document.readyState() for documents created by JavaScript");
+
+evalAndLog("htmlDocument = document.implementation.createHTMLDocument()");
+shouldBeEqualToString("htmlDocument.readyState", "loading"); // WebKit and Blink say "loading", Gecko says "complete".
+evalAndLog("htmlDocument.close()");
+shouldBeEqualToString("htmlDocument.readyState", "complete");
+
+evalAndLog("xhtmlDocument = document.implementation.createDocument('http://www.w3.org/1999/xhtml', 'html', null)");
+shouldBeEqualToString("xhtmlDocument.readyState", "complete");
+
+evalAndLog("svgDocument = document.implementation.createDocument('http://www.w3.org/2000/svg', 'svg', null)");
+shouldBeEqualToString("svgDocument.readyState", "complete");
+
+evalAndLog("xmlDocument = (new DOMParser()).parseFromString('<html></html>', 'text/xml')");
+shouldBeEqualToString("xmlDocument.readyState", "complete");
+</script>
+</html>

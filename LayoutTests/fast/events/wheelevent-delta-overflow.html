@@ -1,0 +1,69 @@
+<DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Tests large values for WheelEvent.wheelDeltaX / wheelDeltaY.");
+
+evalAndLog("wheelEvent = new WheelEvent('foo', { wheelDeltaX:-2147483648, wheelDeltaY:-2147483648 })");
+shouldBe("wheelEvent.wheelDeltaX", "-2147483648");
+shouldBe("wheelEvent.wheelDeltaY", "-2147483648");
+shouldBe("wheelEvent.deltaX", "2147483648");
+shouldBe("wheelEvent.deltaY", "2147483648");
+
+debug("");
+evalAndLog("wheelEvent = new WheelEvent('foo', { wheelDeltaX:2147483647, wheelDeltaY:2147483647 })");
+shouldBe("wheelEvent.wheelDeltaX", "2147483647");
+shouldBe("wheelEvent.wheelDeltaY", "2147483647");
+shouldBe("wheelEvent.deltaX", "-2147483647");
+shouldBe("wheelEvent.deltaY", "-2147483647");
+
+debug("");
+evalAndLog("wheelEvent = new WheelEvent('foo', { deltaX:-2147483647, deltaY:-2147483647 })");
+shouldBe("wheelEvent.wheelDeltaX", "2147483647");
+shouldBe("wheelEvent.wheelDeltaY", "2147483647");
+shouldBe("wheelEvent.deltaX", "-2147483647");
+shouldBe("wheelEvent.deltaY", "-2147483647");
+
+debug("");
+evalAndLog("wheelEvent = new WheelEvent('foo', { deltaX:-2147483648, deltaY:-2147483648 })");
+shouldBe("wheelEvent.wheelDeltaX", "2147483647");
+shouldBe("wheelEvent.wheelDeltaY", "2147483647");
+shouldBe("wheelEvent.deltaX", "-2147483648");
+shouldBe("wheelEvent.deltaY", "-2147483648");
+
+debug("");
+evalAndLog("wheelEvent = new WheelEvent('foo', { deltaX:2147483647, deltaY:2147483647 })");
+shouldBe("wheelEvent.wheelDeltaX", "-2147483647");
+shouldBe("wheelEvent.wheelDeltaY", "-2147483647");
+shouldBe("wheelEvent.deltaX", "2147483647");
+shouldBe("wheelEvent.deltaY", "2147483647");
+
+debug("");
+evalAndLog("wheelEvent = new WheelEvent('foo', { deltaX:-2147483649, deltaY:-2147483649 })");
+shouldBe("wheelEvent.wheelDeltaX", "2147483647");
+shouldBe("wheelEvent.wheelDeltaY", "2147483647");
+shouldBe("wheelEvent.deltaX", "-2147483649");
+shouldBe("wheelEvent.deltaY", "-2147483649");
+
+debug("");
+evalAndLog("wheelEvent = new WheelEvent('foo', { deltaX:2147483649, deltaY:2147483649 })");
+shouldBe("wheelEvent.wheelDeltaX", "-2147483648");
+shouldBe("wheelEvent.wheelDeltaY", "-2147483648");
+shouldBe("wheelEvent.deltaX", "2147483649");
+shouldBe("wheelEvent.deltaY", "2147483649");
+
+debug("");
+evalAndLog("wheelEvent = document.createEvent('wheelevent')");
+evalAndLog("wheelEvent.initWebKitWheelEvent(-2147483648, -2147483648)");
+shouldBe("wheelEvent.deltaX", "2147483648");
+shouldBe("wheelEvent.deltaY", "2147483648");
+
+debug("");
+evalAndLog("wheelEvent = document.createEvent('wheelevent')");
+evalAndLog("wheelEvent.initWebKitWheelEvent(2147483647, 2147483647)");
+shouldBe("wheelEvent.deltaX", "-2147483647");
+shouldBe("wheelEvent.deltaY", "-2147483647");
+</script>
+</body>
+</html>

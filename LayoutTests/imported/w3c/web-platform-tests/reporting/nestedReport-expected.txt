@@ -1,0 +1,3 @@
+
+FAIL Nested report Can't find variable: ReportingObserver
+

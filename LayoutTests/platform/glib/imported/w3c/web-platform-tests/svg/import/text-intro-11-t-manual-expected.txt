@@ -1,0 +1,40 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (16,16) size 768x451
+      RenderSVGContainer {g} at (16,16) size 768x451
+        RenderSVGPath {path} at (199,16) size 2x451 [stroke={[type=SOLID] [color=#BBBBBB]}] [fill={[type=SOLID] [color=#000000]}] [data="M 120 10 L 120 280"]
+        RenderSVGPath {path} at (399,16) size 2x451 [stroke={[type=SOLID] [color=#BBBBBB]}] [fill={[type=SOLID] [color=#000000]}] [data="M 240 10 L 240 280"]
+        RenderSVGPath {path} at (599,16) size 2x451 [stroke={[type=SOLID] [color=#BBBBBB]}] [fill={[type=SOLID] [color=#000000]}] [data="M 360 10 L 360 280"]
+        RenderSVGPath {path} at (16,199) size 768x2 [stroke={[type=SOLID] [color=#BBBBBB]}] [fill={[type=SOLID] [color=#000000]}] [data="M 10 120 L 470 120"]
+        RenderSVGPath {path} at (16,399) size 768x2 [stroke={[type=SOLID] [color=#BBBBBB]}] [fill={[type=SOLID] [color=#000000]}] [data="M 10 240 L 470 240"]
+        RenderSVGText {text} at (186,66) size 108x67 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 108x67
+            chunk 1 (middle anchor) text run 1 at (186.30,120.00) startOffset 0 endOffset 4 width 107.40 RTL: "\x{622}\x{644}\x{627}\x{62A}"
+        RenderSVGText {text} at (360,66) size 108x67 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 108x67
+            chunk 1 text run 1 at (360.00,120.00) startOffset 0 endOffset 4 width 107.40 RTL: "\x{622}\x{644}\x{627}\x{62A}"
+        RenderSVGText {text} at (12,66) size 108x67 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 108x67
+            chunk 1 (end anchor) text run 1 at (12.60,120.00) startOffset 0 endOffset 4 width 107.40 RTL: "\x{622}\x{644}\x{627}\x{62A}"
+        RenderSVGText {text} at (189,186) size 102x67 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 102x67
+            chunk 1 (middle anchor) text run 1 at (189.00,240.00) startOffset 0 endOffset 5 width 102.00 RTL: "\x{62B}\x{644}\x{627}\x{62B}\x{629}"
+        RenderSVGText {text} at (360,186) size 102x67 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 102x67
+            chunk 1 text run 1 at (360.00,240.00) startOffset 0 endOffset 5 width 102.00 RTL: "\x{62B}\x{644}\x{627}\x{62B}\x{629}"
+        RenderSVGText {text} at (18,186) size 102x67 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 102x67
+            chunk 1 (end anchor) text run 1 at (18.00,240.00) startOffset 0 endOffset 5 width 102.00 RTL: "\x{62B}\x{644}\x{627}\x{62B}\x{629}"
+    RenderSVGContainer {g} at (16,518) size 380x60
+      RenderSVGText {text} at (10,311) size 228x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 228x36
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 227.40: "$Revision: 1.2 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGContainer {g} at (0,0) size 800x38
+      RenderSVGRect {rect} at (0,0) size 800x36 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [x=1.00] [y=1.00] [width=478.00] [height=20.00]
+      RenderSVGText {text} at (206,0) size 68x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 68x23
+          chunk 1 (middle anchor) text run 1 at (206.40,18.00) startOffset 0 endOffset 5 width 67.20: "DRAFT"

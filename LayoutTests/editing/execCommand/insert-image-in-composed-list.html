@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+</html>
+<html>
+<head>
+<script>
+onload = () => {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    const br = document.querySelector('br');
+    br.innerHTML = '<div style="text-indent: -1em;"><span>foo</span></div>';
+    getSelection().setBaseAndExtent(document.querySelector('span').firstChild, 0, br, 1);
+    document.execCommand("insertImage", "#foo");
+}
+</script>
+</head>
+<body contenteditable>
+Test passes if it does not crash.
+<br style="content: ''"><span style="display: none">
+</body>

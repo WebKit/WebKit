@@ -1,0 +1,50 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/reference/shaping-000-ref-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/reference/shaping-000-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/reference/shaping-001-ref-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/reference/shaping-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/reference/shaping-002-ref-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/reference/shaping-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/reference/shaping-003-ref-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/reference/shaping-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/reference/shaping-008-ref-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/reference/shaping-008-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/reference/shaping-009-ref-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/reference/shaping-009-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/reference/shaping-010-ref-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/reference/shaping-010-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/reference/shaping-011-ref-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/reference/shaping-011-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/reference/shaping-012-ref-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/reference/shaping-012-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/reference/shaping-014-ref-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/reference/shaping-014-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/reference/shaping-016-ref-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/reference/shaping-016-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/reference/shaping-020-ref-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/reference/shaping-020-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/reference/shaping-021-ref-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/reference/shaping-021-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/reference/shaping-022-ref-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/reference/shaping-022-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/reference/shaping-023-ref-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/reference/shaping-023-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/reference/shaping-024-ref-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/reference/shaping-024-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/reference/shaping-025-ref-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/shaping/reference/shaping-025-ref.html

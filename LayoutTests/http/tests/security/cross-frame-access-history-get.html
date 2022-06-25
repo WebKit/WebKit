@@ -1,0 +1,63 @@
+<html>
+<head>
+    <script src="resources/cross-frame-access.js"></script>
+    <script>
+        window.onload = function()
+        {
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+            }
+
+            if (window.testRunner) {
+                setTimeout(pollForTest, 1);
+            } else {
+                log("To run the test, click the button below when the opened window finishes loading.");
+                var button = document.createElement("button");
+                button.appendChild(document.createTextNode("Run Test"));
+                button.onclick = runTest;
+                document.body.appendChild(button);
+            }
+        }
+
+        pollForTest = function()
+        {
+            if (!testRunner.globalFlag) {
+                setTimeout(pollForTest, 1);
+                return;
+            }
+            runTest();
+            testRunner.notifyDone();
+        }
+
+        runTest = function()
+        {
+            window.targetWindow = frames[0];
+
+            log("\n----- tests for getting window.history and its properties -----\n");
+
+            // history object
+            shouldBeFalse("canGet('targetWindow.history.length')");
+
+            shouldBeFalse("canGet('targetWindow.history.back')");
+            shouldBeFalse("canGet('targetWindow.history.forward')");
+            shouldBeFalse("canGet('targetWindow.history.go')");
+
+            shouldBeFalse("canGet('targetWindow.history.toString')");
+
+            shouldBeFalse("canGet('targetWindow.__proto__')");
+            shouldBeFalse("canGet('targetWindow.constructor')");
+
+            // Check custom properties
+            shouldBeFalse("canGet('targetWindow.history.existingCustomProperty')");
+            shouldBeFalse("canGet('targetWindow.history.__proto__.prototypeCustomProperty')");
+            shouldBeFalse("canCall('targetWindow.history.existingCustomFunction')");
+            shouldBeFalse("canCall('targetWindow.history.prototypeCustomFunction')");
+        }
+    </script>
+</head>
+<body>
+<iframe src="http://localhost:8000/security/resources/cross-frame-iframe-for-history-get-test.html"></iframe>
+<pre id="console"></pre>
+</body>
+</html>

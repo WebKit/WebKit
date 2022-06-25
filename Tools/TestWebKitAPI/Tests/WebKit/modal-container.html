@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body, html {
+    margin: 0;
+    background-color: #EFEFEF;
+    font-family: system-ui;
+}
+
+button {
+    padding: 6px;
+    border-radius: 6px;
+    appearance: none;
+    white-space: normal;
+    width: auto;
+    margin: 4px;
+    border: none;
+    font-size: 1em;
+    cursor: pointer;
+}
+
+#neutral {
+    color: rgb(88, 86, 214);
+    background-color: rgba(88, 86, 214, 0.1);
+}
+
+#negative {
+    color: rgb(255, 59, 48);
+    background-color: rgba(255, 59, 48, 0.1);
+}
+
+#positive {
+    color: rgb(76, 217, 100);
+    background-color: rgba(76, 217, 100, 0.1);
+}
+
+#fixed {
+    width: calc(min(300px, 80%));
+    bottom: 10px;
+    left: 10px;
+    position: fixed;
+    background-color: white;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 1px 1px 2px 2px #CCC;
+}
+
+#fixed > p {
+    font-size: 14px;
+}
+
+#fixed > h4 {
+    font-size: 16px;
+    margin-top: 6px;
+}
+
+#fixed-controls {
+    font-size: 16px;
+    margin-bottom: 1em;
+    text-align: center;
+}
+
+#result {
+    font-size: 16px;
+    font-weight: bold;
+    font-family: monospace;
+}
+</style>
+<script>
+if (window.internals)
+    internals.overrideModalContainerSearchTermForTesting("hello world");
+
+addEventListener("DOMContentLoaded", event => {
+    [negative, positive, neutral].forEach(control => {
+        control.addEventListener("click", () => {
+            fixed.remove();
+            result.textContent = `Clicked on "${control.textContent}"`;
+        });
+    });
+});
+</script>
+</head>
+<body>
+<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.</p>
+<div id="fixed">
+    <h4><span>This is a test</span></h4>
+    <p>Hello world</p>
+    <div class="fixed-controls">
+        <button id="positive">Yes</button>
+        <button id="negative">No</button>
+        <button id="neutral">Maybe</button>
+    </div>
+</div>
+<div id="result"><br></div>
+</body>
+</html>

@@ -1,0 +1,9 @@
+
+PASS e.style['grid-auto-flow'] = "row" should set the property value
+PASS e.style['grid-auto-flow'] = "column" should set the property value
+PASS e.style['grid-auto-flow'] = "row dense" should set the property value
+PASS e.style['grid-auto-flow'] = "dense row" should set the property value
+PASS e.style['grid-auto-flow'] = "dense" should set the property value
+PASS e.style['grid-auto-flow'] = "column dense" should set the property value
+PASS e.style['grid-auto-flow'] = "dense column" should set the property value
+

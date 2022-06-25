@@ -1,0 +1,8 @@
+
+PASS Selector '.a :is(.b, .c)" should find the expected elements
+PASS Selector '.a :is(.c#d, .e)" should find the expected elements
+PASS Selector '.a :is(.e+.f, .g>.b, .h)" should find the expected elements
+PASS Selector '.a+:is(.b+.f, :is(.c>.e, .g))" should find the expected elements
+PASS Selector '.a :is(:where(:where(.b ~ .c)))" should find the expected elements
+PASS Selector '.b + :is(.c + .c + .c, .b + .c:not(span), .b + .c + .e) ~ .h" should find the expected elements
+

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests mouseenter and mouseleave events across shadow boundaries.</p>
+<div id="hostParent" style="display: inline-block; border: solid 10px green;">
+<div id="host" style="display: inline-block;">
+    text content
+    <p id="targetParent" style="margin: 0;"><span id="target">element content</span></p>
+</div></div><pre id="log"></pre>
+<script>
+
+const host = document.getElementById('host');
+const shadowRoot = host.attachShadow({mode: 'closed'});
+shadowRoot.innerHTML = `
+    <div id="slotParent" style="width: 200px; margin: 10px; padding: 10px; border: solid 10px blue;">
+        <slot id="slot"></slot>
+    </div>`;
+const slot = shadowRoot.querySelector('slot');
+
+const target = document.getElementById('target');
+for (const element of [host.parentNode, host, target, target.parentNode, slot, slot.parentNode]) {
+    element.addEventListener('mouseenter', logEvent);
+    element.addEventListener('mouseleave', logEvent);
+}
+
+function log(text) {
+    document.getElementById('log').textContent += text + '\n';
+}
+
+function logEvent(event) {
+    log(`${event.type} on ${event.target.id}`);
+}
+
+function logPhase(phase) {
+    log(`\n==${phase}==`);
+}
+
+if (!window.eventSender)
+    document.write('This test requires eventSender');
+else {
+    testRunner.dumpAsText();
+    const hostRect = host.getBoundingClientRect();
+    const targetRect = target.getBoundingClientRect();
+    const xAboveText = hostRect.x + 40;
+    let y = hostRect.top;
+    logPhase('Entering host parent');
+    eventSender.mouseMoveTo(xAboveText, y - 5);
+    logPhase('Entering host');
+    eventSender.mouseMoveTo(xAboveText, y + 5);
+    logPhase('Entering shadow content');
+    eventSender.mouseMoveTo(xAboveText, y + 15);
+
+    logPhase('Entering slotted text');
+    eventSender.mouseMoveTo(xAboveText, targetRect.top - 5);
+    logPhase('Entering slotted element');
+    eventSender.mouseMoveTo(xAboveText, targetRect.top + 5);
+
+    logPhase('Leaving slotted element');
+    eventSender.mouseMoveTo(xAboveText, targetRect.bottom + 5);
+    logPhase('Leaving host');
+    eventSender.mouseMoveTo(xAboveText, hostRect.bottom + 5);
+    
+    host.parentNode.style.display = 'none';
+}
+
+</script>
+</body>
+</html>

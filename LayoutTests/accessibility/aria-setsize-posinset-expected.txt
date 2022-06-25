@@ -1,0 +1,25 @@
+This tests verifies that aria-posinset and aria-setsize are exposed to accessibility correctly.
+
+
+Verify that the first item in the list exposes setsize and posinset attributes.
+PASS: firstListItem.isAttributeSupported('AXARIASetSize') === true
+PASS: firstListItem.isAttributeSupported('AXARIAPosInSet') === true
+
+Verify that the first item in the list returns the correct value for setsize and posinset.
+PASS: firstListItem.numberAttributeValue('AXARIASetSize') === 100
+PASS: firstListItem.numberAttributeValue('AXARIAPosInSet') === 3
+
+Verify that the second item in the list does not support setsize and posinset.
+PASS: secondListItem.isAttributeSupported('AXARIASetSize') === false
+PASS: secondListItem.isAttributeSupported('AXARIAPosInSet') === false
+
+Updating aria-posinset to 4 for element #first-list-item.
+PASS: firstListItem.numberAttributeValue('AXARIAPosInSet') === 4
+
+Updating aria-setsize to 101 for element #first-list-item.
+PASS: firstListItem.numberAttributeValue('AXARIASetSize') === 101
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

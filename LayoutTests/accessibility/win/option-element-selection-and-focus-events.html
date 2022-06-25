@@ -1,0 +1,32 @@
+<html>
+
+<body id="body">
+
+<select id="select" title="select element">
+<option SELECTED>option 1</option>
+<option>option 2</option>
+<option>option 3</option>
+<option>option 4</option>
+</select>
+
+<p>This tests that changing selection in a non-multiple select element fires
+focus and selection events for the selected option element.</p>
+
+<p id="notDRT">This test should only be run inside of DumpRenderTree.</p>
+
+<script>
+    if (window.testRunner && window.accessibilityController) {
+        testRunner.dumpAsText();
+        document.getElementById("select").focus();
+        accessibilityController.logAccessibilityEvents();
+
+        // Test that we send events with the list collapsed.
+        eventSender.keyDown("downArrow");
+        eventSender.keyDown("upArrow");
+
+        // We should test whether we send events when using arrow keys with the
+        // menu expanded, but eventSender cannot send events to the popup menu.
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{
+    "text-align-last": {
+        "syntax": "auto | start | end | left | right | center | justify | match-parent"
+    },
+    "shape-outside": {
+        "description": "Defines a shape around which adjacent inline content should wrap."
+    },
+    "-webkit-appearance": {
+        "description": "Changes the appearance of buttons and other controls to resemble native controls.",
+        "syntax": "none | button | checkbox | listbox | menulist | menulist-button | meter | progress-bar | push-button | radio | searchfield | slider-horizontal | slider-vertical | square-button | textarea | textfield | -apple-pay-button"
+    }
+}

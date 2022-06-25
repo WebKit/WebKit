@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: SyntaxError: Unexpected token '%'
+CONSOLE MESSAGE: SyntaxError: Unexpected token '%'
+CONSOLE MESSAGE: SyntaxError: Unexpected token '%'
+CONSOLE MESSAGE: SyntaxError: Unexpected token '%'
+CONSOLE MESSAGE: SyntaxError: Unexpected token '%'
+
+PASS Test that syntax errors lead to SyntaxError events on window, and that exceptions are remembered.
+

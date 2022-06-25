@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+<head>
+<title>This tests that we bail out of simple line layout when glyph overflows the line</title>
+<style>
+div {
+	-webkit-line-box-contain: block glyphs;
+	font-size: 18px;
+}
+</style>
+</head>
+<body>
+<div style="line-height: 13px">f<br>overflows this line.</div>
+<div style="line-height: 14px">f<br>does not overflow this line.</div>
+<div style="line-height: 15px">f<br>does not overflow this line.</div>
+<div style="line-height: 16px">f<br>does not overflow this line.</div>
+<div style="line-height: 17px">f<br>does not overflow this line.</div>
+<div style="line-height: 18px">f<br>does not overflow this line.</div>
+<div style="line-height: 20px">g<br>does not overflow this line.</div>
+<div style="line-height: 19px">g<br>overflows this line.</div>
+<div style="line-height: 18px">j<br>overflows this line.</div>
+<div style="line-height: 17px">j<br>overflows this line.</div>
+</body>
+</html>

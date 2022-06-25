@@ -1,0 +1,4 @@
+
+PASS Same-origin shared worker blocked by 'none'.
+PASS blob: shared worker blocked by 'none'.
+

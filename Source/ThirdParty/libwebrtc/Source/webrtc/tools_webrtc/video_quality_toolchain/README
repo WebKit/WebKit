@@ -1,0 +1,4 @@
+Use ../download_tools.py to download the files in this directory. Note that
+they are downloaded from gs://chrome-webrtc-resources, which is a
+google-internal bucket. If you're a non-Googler you'll have to download and
+compile these tools manually in order to use them.

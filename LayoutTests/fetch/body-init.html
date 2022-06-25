@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<script src='../resources/testharness.js'></script>
+<script src='../resources/testharnessreport.js'></script>
+<script>
+
+promise_test(() => {
+    return new Response(1).text().then((text) => {
+        assert_equals(text, "1");
+    });
+}, "Testing integer body passed to response");
+
+promise_test(() => {
+    return new Response({}).text().then((text) => {
+        assert_equals(text, "[object Object]");
+    });
+}, "Testing object body passed to response");
+
+promise_test(() => {
+    return new Request("", {method: "POST", body: 1}).text().then((text) => {
+        assert_equals(text, "1");
+    });
+}, "Testing integer body passed to request");
+
+promise_test(() => {
+    return new Request("", {method: "POST", body: {}}).text().then((text) => {
+        assert_equals(text, "[object Object]");
+    });
+}, "Testing object body passed to request");
+
+</script>

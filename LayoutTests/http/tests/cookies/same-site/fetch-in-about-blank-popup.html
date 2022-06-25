@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="../resources/cookie-utilities.js"></script>
+<body>
+<script>
+window.jsTestIsAsync = true;
+
+description("Tests that Same-Site DOM cookies for 127.0.0.1 are visible from about:blank pop-up.");
+
+async function runTest()
+{
+    await resetCookies();
+    await setCookie("strict", "13", {"SameSite": "Strict", "Max-Age": 100, "path": "/"});
+    await setCookie("implicit-strict", "13", {"SameSite": null, "Max-Age": 100, "path": "/"});
+    await setCookie("strict-because-invalid-SameSite-value", "13", {"SameSite": "invalid", "Max-Age": 100, "path": "/"});
+    await setCookie("lax", "13", {"SameSite": "Lax", "Max-Age": 100, "path": "/"});
+
+    let childWindow = window.open("about:blank"); // Loads synchronously.
+    setBaseDocumentWhenFetchingDOMCookies(childWindow.document);
+
+    debug("Cookies visible in DOM:");
+    shouldHaveDOMCookieWithValue("strict", "13");
+    shouldHaveDOMCookieWithValue("implicit-strict", "13");
+    shouldHaveDOMCookieWithValue("strict-because-invalid-SameSite-value", "13");
+    shouldHaveDOMCookieWithValue("lax", "13");
+
+    await resetCookies();
+    finishJSTest();
+}
+runTest();
+</script>
+</body>
+</html>

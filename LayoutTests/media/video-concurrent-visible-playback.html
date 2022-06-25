@@ -1,0 +1,51 @@
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script>
+            var playCount = 0;
+            var playThroughCount = 0;
+            var videos = [];
+
+            if (window.internals) {
+                internals.settings.setInvisibleAutoplayNotPermitted(true); 
+                internals.setMediaSessionRestrictions('videoaudio', 'ConcurrentPlaybackNotPermitted');
+            }
+
+            function playing(evt)
+            {
+                if (++playCount === 1)
+                {
+                    testExpected("videos[0].paused", true);
+                    testExpected("videos[1].paused", false);
+                    testExpected("videos[2].paused", true);
+
+                    consoleWrite("");
+                    endTestLater();
+                } else 
+                    failTest('Too many play events.')
+            }
+
+            function start()
+            {
+                videos = document.getElementsByTagName('video');
+                for (var i = 0; i < videos.length; ++i) {
+                    video = videos[i];
+                    waitForEventOnceOn(video, 'playing', playing);
+                    run('video.src = findMediaFile("video", "content/test")');
+                }
+                consoleWrite("");
+            }
+        </script>
+        <style>
+        #one, #three { visibility: hidden; }
+        </style>
+    </head>
+
+    <body onload="start()">
+        <video controls autoplay id="one"></video>
+        <video controls autoplay id="two"></video>
+        <video controls autoplay id="three"></video>
+        <p>Test autoplay when both invisible playback and concurrent playback are not allowed.</p>
+    </body>
+</html>

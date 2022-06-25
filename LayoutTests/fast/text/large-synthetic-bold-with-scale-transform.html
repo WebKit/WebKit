@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that we don't end up painting large gaps for synthetic bold when tall text gets scaled down.</title>
+<style>
+	body {
+		font-family: 'Hiragino Maru Gothic ProN';
+		font-weight: bold;
+		font-size: 900px;
+		margin: 0px;
+	}
+
+	div {
+		transform: scale(0.01);
+		height: 20px;
+		width: 20px;
+	}
+
+	.cover {
+		transform: none;
+		background-color: white;
+		position: absolute;
+		top: 0px;
+		left: 0px;
+		height: 150px;
+		width: 20px;
+	}
+</style>
+</head>
+<body>
+<div>F</div>
+<div>o</div>
+<div>o</div>
+<div>B</div>
+<div>a</div>
+<div>r</div>
+<div class=cover></div>
+</div>
+</body>
+</html>

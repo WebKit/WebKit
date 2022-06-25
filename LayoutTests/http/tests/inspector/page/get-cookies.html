@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/inspector-test.js"></script>
+<script>
+function loadFrameWithURL(url) {
+    let frame = document.createElement('iframe');
+    frame.src = url;
+    frame.addEventListener("load", (event) => {
+        TestPage.dispatchEventToFrontend("FrameLoad");
+    });
+    document.body.appendChild(frame);
+}
+
+function loadScriptWithURL(url) {
+    let script = document.createElement('script');
+    script.src = url;
+    script.addEventListener("load", (event) => {
+        TestPage.dispatchEventToFrontend("ScriptLoad");
+    });
+    document.body.appendChild(script);
+}
+
+function test()
+{
+    const firstParty = "127.0.0.1";
+    const thirdParty = "localhost";
+
+    let suite = InspectorTest.createAsyncSuite("Page.getCookies");
+
+    suite.addTestCase({
+        name: "Page.getCookies.InitiallyNoCookies",
+        description: "Ensure there are no cookies at the start.",
+        async test() {
+            let {cookies} = await PageAgent.getCookies()
+
+            InspectorTest.expectEqual(cookies.length, 0, "Should be no cookies.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Page.getCookies.FirstParty.MainFrame",
+        description: "Get cookies for a first-party resource in the main frame.",
+        async test() {
+            InspectorTest.log("Getting cookies before first-party resource load...");
+            let cookiesBefore = await PageAgent.getCookies();
+
+            InspectorTest.log("Loading first-party resource...");
+            await Promise.all([
+                InspectorTest.awaitEvent("ScriptLoad"),
+                InspectorTest.evaluateInPage(`loadScriptWithURL("http://${firstParty}:8000/inspector/page/resources/set-cookie.py?name=FirstPartyResource&value=PASS")`),
+            ]);
+
+            InspectorTest.log("Getting cookies after first-party resource load...");
+            let cookiesAfter = await PageAgent.getCookies();
+
+            InspectorTest.expectNotShallowEqual(cookiesBefore, cookiesAfter, "Should have set cookies.");
+
+            let cookies = cookiesAfter.cookies.filter((cookie) => cookie.name === "FirstPartyResource");
+            InspectorTest.assert(cookies.length === 1, "Should only have one cookie with name 'FirstPartyResource'.");
+            InspectorTest.expectNotNull(cookies[0], "New cookie should have name 'FirstPartyResource'.");
+            InspectorTest.expectEqual(cookies[0].value, "PASS", "New cookie should have value 'PASS'.");
+            InspectorTest.expectEqual(cookies[0].domain, firstParty, `New cookie should have domain '${firstParty}'.`);
+        }
+    });
+
+    suite.addTestCase({
+        name: "Page.getCookies.FirstParty.SubFrame",
+        description: "Get cookies for a first-party resource in a sub frame.",
+        async test() {
+            InspectorTest.log("Getting cookies before first-party resource load...");
+            let cookiesBefore = await PageAgent.getCookies();
+
+            InspectorTest.log("Loading first-party resource...");
+            await Promise.all([
+                InspectorTest.awaitEvent("FrameLoad"),
+                InspectorTest.evaluateInPage(`loadFrameWithURL("http://${firstParty}:8000/inspector/page/resources/set-cookie.py?name=FirstPartyFrame&value=PASS")`),
+            ]);
+
+            InspectorTest.log("Getting cookies after first-party resource load...");
+            let cookiesAfter = await PageAgent.getCookies();
+
+            InspectorTest.expectNotShallowEqual(cookiesBefore, cookiesAfter, "Should have set cookies.");
+
+            let cookies = cookiesAfter.cookies.filter((cookie) => cookie.name === "FirstPartyFrame");
+            InspectorTest.assert(cookies.length === 1, "Should only have one cookie with name 'FirstPartyFrame'.");
+            InspectorTest.expectNotNull(cookies[0], "New cookie should have name 'FirstPartyFrame'.");
+            InspectorTest.expectEqual(cookies[0].value, "PASS", "New cookie should have value 'PASS'.");
+            InspectorTest.expectEqual(cookies[0].domain, firstParty, `New cookie should have domain '${firstParty}'.`);
+        }
+    });
+
+    suite.addTestCase({
+        name: "Page.getCookies.ThirdParty.MainFrame.WithITP",
+        description: "Get cookies for a third-party resource in the main frame with ITP enabled.",
+        async test() {
+            InspectorTest.log("Getting cookies before third-party resource load...");
+            let cookiesBefore = await PageAgent.getCookies();
+
+            InspectorTest.log("Loading third-party resource...");
+            await Promise.all([
+                InspectorTest.awaitEvent("ScriptLoad"),
+                InspectorTest.evaluateInPage(`loadScriptWithURL("http://${thirdParty}:8000/inspector/page/resources/set-cookie.py?name=ThirdPartyResourceWithITP&value=FAIL")`),
+            ]);
+
+            InspectorTest.log("Getting cookies after third-party resource load...");
+            let cookiesAfter = await PageAgent.getCookies();
+
+            InspectorTest.expectShallowEqual(cookiesBefore, cookiesAfter, "Should not have set cookies.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Page.getCookies.ThirdParty.SubFrame.WithITP",
+        description: "Get cookies for a third-party resource in a sub frame.",
+        async test() {
+            InspectorTest.log("Getting cookies before third-party resource load...");
+            let cookiesBefore = await PageAgent.getCookies();
+
+            InspectorTest.log("Loading third-party resource...");
+            await Promise.all([
+                InspectorTest.awaitEvent("FrameLoad"),
+                InspectorTest.evaluateInPage(`loadFrameWithURL("http://${thirdParty}:8000/inspector/page/resources/set-cookie.py?name=ThirdPartyFrameWithITP&value=FAIL")`),
+            ]);
+
+            InspectorTest.log("Getting cookies after third-party resource load...");
+            let cookiesAfter = await PageAgent.getCookies();
+
+            InspectorTest.expectShallowEqual(cookiesBefore, cookiesAfter, "Should not have set cookies.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Page.getCookies.DisableITP",
+        async test() {
+            await InspectorTest.evaluateInPage(`if (window.testRunner) testRunner.setAlwaysAcceptCookies(true);`);
+            InspectorTest.log("PASS");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Page.getCookies.ThirdParty.MainFrame.WithoutITP",
+        description: "Get cookies for a third-party resource in the main frame with ITP disabled.",
+        async test() {
+            InspectorTest.log("Getting cookies before third-party resource load...");
+            let cookiesBefore = await PageAgent.getCookies();
+
+            InspectorTest.log("Loading third-party resource...");
+            await Promise.all([
+                InspectorTest.awaitEvent("ScriptLoad"),
+                InspectorTest.evaluateInPage(`loadScriptWithURL("http://${thirdParty}:8000/inspector/page/resources/set-cookie.py?name=ThirdPartyResourceWithoutITP&value=PASS")`),
+            ]);
+
+            InspectorTest.log("Getting cookies after third-party resource load...");
+            let cookiesAfter = await PageAgent.getCookies();
+
+            InspectorTest.expectNotShallowEqual(cookiesBefore, cookiesAfter, "Should have set cookies.");
+
+            let cookies = cookiesAfter.cookies.filter((cookie) => cookie.name === "ThirdPartyResourceWithoutITP");
+            InspectorTest.assert(cookies.length === 1, "Should only have one cookie with name 'ThirdPartyResourceWithoutITP'.");
+            InspectorTest.expectNotNull(cookies[0], "New cookie should have name 'ThirdPartyResourceWithoutITP'.");
+            InspectorTest.expectEqual(cookies[0].value, "PASS", "New cookie should have value 'PASS'.");
+            InspectorTest.expectEqual(cookies[0].domain, thirdParty, `New cookie should have domain '${thirdParty}'.`);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Page.getCookies.ThirdParty.SubFrame.WithoutITP",
+        description: "Get cookies for a third-party resource in a sub frame.",
+        async test() {
+            InspectorTest.log("Getting cookies before third-party resource load...");
+            let cookiesBefore = await PageAgent.getCookies();
+
+            InspectorTest.log("Loading third-party resource...");
+            await Promise.all([
+                InspectorTest.awaitEvent("FrameLoad"),
+                InspectorTest.evaluateInPage(`loadFrameWithURL("http://${thirdParty}:8000/inspector/page/resources/set-cookie.py?name=ThirdPartyFrameWithoutITP&value=PASS")`),
+            ]);
+
+            InspectorTest.log("Getting cookies after third-party resource load...");
+            let cookiesAfter = await PageAgent.getCookies();
+
+            InspectorTest.expectNotShallowEqual(cookiesBefore, cookiesAfter, "Should have set cookies.");
+
+            let cookies = cookiesAfter.cookies.filter((cookie) => cookie.name === "ThirdPartyFrameWithoutITP");
+            InspectorTest.assert(cookies.length === 1, "Should only have one cookie with name 'ThirdPartyFrameWithoutITP'.");
+            InspectorTest.expectNotNull(cookies[0], "New cookie should have name 'ThirdPartyFrameWithoutITP'.");
+            InspectorTest.expectEqual(cookies[0].value, "PASS", "New cookie should have value 'PASS'.");
+            InspectorTest.expectEqual(cookies[0].domain, thirdParty, `New cookie should have domain '${thirdParty}'.`);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Test for the Page.getCookies</p>
+</body>
+</html>

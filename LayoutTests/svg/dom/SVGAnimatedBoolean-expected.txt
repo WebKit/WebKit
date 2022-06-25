@@ -1,0 +1,35 @@
+This test checks the SVGAnimatedBoolean API - utilizing the preserveAlpha property of SVGFEConvolveMatrixElement
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Check initial preserveAlpha value
+PASS feConvolveMatrixElement.preserveAlpha.baseVal is false
+
+Set value to true
+PASS feConvolveMatrixElement.preserveAlpha.baseVal = true is true
+
+Caching baseVal in local variable
+PASS baseVal is true
+
+Modify local baseVal variable to true
+PASS baseVal = false is false
+
+Assure that feConvolveMatrixElement.preserveAlpha has not been changed, but the local baseVal variable
+PASS baseVal is false
+PASS feConvolveMatrixElement.preserveAlpha.baseVal is true
+
+Check assigning values of various types
+PASS feConvolveMatrixElement.preserveAlpha.baseVal = feConvolveMatrixElement.preserveAlpha is feConvolveMatrixElement.preserveAlpha
+PASS feConvolveMatrixElement.preserveAlpha.baseVal is true
+PASS feConvolveMatrixElement.preserveAlpha.baseVal = null is null
+PASS feConvolveMatrixElement.preserveAlpha.baseVal is false
+PASS feConvolveMatrixElement.preserveAlpha.baseVal = 'aString' is 'aString'
+PASS feConvolveMatrixElement.preserveAlpha.baseVal is true
+PASS feConvolveMatrixElement.preserveAlpha.baseVal = feConvolveMatrixElement is feConvolveMatrixElement
+PASS feConvolveMatrixElement.preserveAlpha.baseVal is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 46 777.1905 310.08095" width="777.1905" height="310.08095">
+  <defs>
+    <font-face font-family="Monaco" font-size="12" units-per-em="1000" underline-position="-37.597656" underline-thickness="75.68359" slope="0" x-height="545.41016" cap-height="757.8125" ascent="1e3" descent="-250" font-weight="400">
+      <font-face-src>
+        <font-face-name name="Monaco"/>
+      </font-face-src>
+    </font-face>
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="FilledArrow_Marker" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-1 -4 10 8" markerWidth="10" markerHeight="8" color="black">
+      <g>
+        <path d="M 8 0 L 0 -3 L 0 3 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </marker>
+    <font-face font-family="Helvetica Neue" font-size="14" panose-1="2 0 5 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="951.9958" descent="-212.99744" font-weight="400">
+      <font-face-src>
+        <font-face-name name="HelveticaNeue"/>
+      </font-face-src>
+    </font-face>
+    <font-face font-family="Helvetica Neue" font-size="14" panose-1="2 11 4 3 2 2 2 2 2 4" units-per-em="1000" underline-position="-75" underline-thickness="50" slope="1071.4286" x-height="514" cap-height="714" ascent="966.9952" descent="-212.99744" font-style="italic" font-weight="300">
+      <font-face-src>
+        <font-face-name name="HelveticaNeue-ThinItalic"/>
+      </font-face-src>
+    </font-face>
+    <font-face font-family="Helvetica Neue" font-size="14" panose-1="2 11 4 3 2 2 2 2 2 4" units-per-em="1000" underline-position="-75" underline-thickness="50" slope="0" x-height="514" cap-height="714" ascent="966.9952" descent="-212.99744" font-weight="300">
+      <font-face-src>
+        <font-face-name name="HelveticaNeue-Thin"/>
+      </font-face-src>
+    </font-face>
+  </defs>
+  <metadata> Produced by OmniGraffle 7.15 
+    <dc:date>2020-04-08 01:11:04 +0000</dc:date>
+  </metadata>
+  <g id="Canvas_1" stroke="none" stroke-dasharray="none" fill-opacity="1" stroke-opacity="1" fill="none">
+    <title>Canvas 1</title>
+    <rect fill="white" x="0" y="46" width="777.1905" height="310.08095"/>
+    <g id="Canvas_1: Layer 1">
+      <title>Layer 1</title>
+      <g id="Graphic_2">
+        <rect x="32.5" y="171" width="120" height="129" fill="white"/>
+        <rect x="32.5" y="171" width="120" height="129" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(37.5 211.49805)" fill="black">
+          <tspan font-family="Monaco" font-size="12" font-weight="400" fill="black" x=".9912109" y="12">Check(Int32:@x)</tspan>
+          <tspan font-family="Monaco" font-size="12" font-weight="400" fill="black" x=".9912109" y="44.001953">Check(Int32:@x)</tspan>
+        </text>
+      </g>
+      <g id="Graphic_24">
+        <rect x="286.84524" y="50" width="120" height="97" fill="white"/>
+        <rect x="286.84524" y="50" width="120" height="97" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(291.84524 90.49902)" fill="black">
+          <tspan font-family="Monaco" font-size="12" font-weight="400" fill="black" x=".9912109" y="12">Check(Int32:@x)</tspan>
+        </text>
+      </g>
+      <g id="Graphic_25">
+        <rect x="212.59524" y="203" width="120" height="97" fill="white"/>
+        <rect x="212.59524" y="203" width="120" height="97" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(217.59524 243.49902)" fill="black">
+          <tspan font-family="Monaco" font-size="12" font-weight="400" fill="black" x=".9912109" y="12">Check(Int32:@x)</tspan>
+        </text>
+      </g>
+      <g id="Graphic_26">
+        <rect x="361.59524" y="203" width="120" height="97" fill="white"/>
+        <rect x="361.59524" y="203" width="120" height="97" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(366.59524 243.49902)" fill="black">
+          <tspan font-family="Monaco" font-size="12" font-weight="400" fill="black" x=".9912109" y="12">Check(Int32:@x)</tspan>
+        </text>
+      </g>
+      <g id="Line_30">
+        <line x1="323.30847" y1="147" x2="300.45432" y2="194.0934" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_31">
+        <line x1="370.5405" y1="147" x2="393.55414" y2="194.10485" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_32">
+        <rect x="509.1905" y="50" width="120" height="97" fill="white"/>
+        <rect x="509.1905" y="50" width="120" height="97" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(514.1905 90.49902)" fill="black">
+          <tspan font-family="Monaco" font-size="12" font-weight="400" fill="black" x=".9912109" y="12">Check(Int32:@x)</tspan>
+        </text>
+      </g>
+      <g id="Graphic_33">
+        <rect x="656.6905" y="50" width="120" height="97" fill="white"/>
+        <rect x="656.6905" y="50" width="120" height="97" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(661.6905 90.49902)" fill="black">
+          <tspan font-family="Monaco" font-size="12" font-weight="400" fill="black" x=".9912109" y="12">Check(Int32:@x)</tspan>
+        </text>
+      </g>
+      <g id="Graphic_34">
+        <rect x="583.6905" y="203" width="120" height="97" fill="white"/>
+        <rect x="583.6905" y="203" width="120" height="97" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(588.6905 243.49902)" fill="black">
+          <tspan font-family="Monaco" font-size="12" font-weight="400" fill="black" x=".9912109" y="12">Check(Int32:@x)</tspan>
+        </text>
+      </g>
+      <g id="Line_35">
+        <line x1="592.8065" y1="147" x2="615.7404" y2="194.09912" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_36">
+        <line x1="693.54995" y1="147" x2="671.09414" y2="194.06492" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_37">
+        <line x1="217.84524" y1="251" x2="326.09524" y2="251" stroke="#941100" stroke-opacity=".8" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      </g>
+      <g id="Line_38">
+        <line x1="272.59524" y1="251.5" x2="266.2671" y2="256.5703" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_39">
+        <line x1="262.59524" y1="251" x2="263.59133" y2="250.4453" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Line_40">
+        <line x1="38.75" y1="251" x2="144.25" y2="251" stroke="#941100" stroke-opacity=".8" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      </g>
+      <g id="Line_41">
+        <line x1="368.84524" y1="251" x2="474.34524" y2="251" stroke="#941100" stroke-opacity=".8" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      </g>
+      <g id="Line_42">
+        <line x1="590.9405" y1="251" x2="696.4405" y2="251" stroke="#941100" stroke-opacity=".8" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      </g>
+      <g id="Graphic_43">
+        <text transform="translate(5 318.29695)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" x=".497" y="13">(a) Eliminating checks in the </tspan>
+          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" x="51.45" y="29.392">same block</tspan>
+        </text>
+      </g>
+      <g id="Graphic_44">
+        <text transform="translate(259.34524 318.29695)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" x="11.907" y="13">(b) Eliminating checks in </tspan>
+          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" x="39.375" y="29.392">different blocks</tspan>
+        </text>
+      </g>
+      <g id="Graphic_45">
+        <text transform="translate(517.1905 318.29695)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" x="21.801" y="13">(c) Eliminating checks by merging </tspan>
+          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" x="4.098" y="29.392">information from multiple predecessors</tspan>
+        </text>
+      </g>
+      <g id="Graphic_46">
+        <text transform="translate(37.5 176)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-style="italic" font-weight="300" fill="black" x="0" y="14">BB#1</tspan>
+        </text>
+      </g>
+      <g id="Graphic_47">
+        <text transform="translate(217.59524 208)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-style="italic" font-weight="300" fill="black" x="0" y="14">BB#3</tspan>
+        </text>
+      </g>
+      <g id="Graphic_48">
+        <text transform="translate(366.59524 208)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-style="italic" font-weight="300" fill="black" x="0" y="14">BB#4</tspan>
+        </text>
+      </g>
+      <g id="Graphic_49">
+        <text transform="translate(291.84524 55)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-style="italic" font-weight="300" fill="black" x="0" y="14">BB#2</tspan>
+        </text>
+      </g>
+      <g id="Graphic_50">
+        <text transform="translate(514.1905 55)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-style="italic" font-weight="300" fill="black" x="0" y="14">BB#5</tspan>
+        </text>
+      </g>
+      <g id="Graphic_51">
+        <text transform="translate(661.6905 51)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-style="italic" font-weight="300" fill="black" x="0" y="14">BB#6</tspan>
+        </text>
+      </g>
+      <g id="Graphic_52">
+        <text transform="translate(588.6905 208)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="14" font-style="italic" font-weight="300" fill="black" x="0" y="14">BB#</tspan>
+          <tspan font-family="Helvetica Neue" font-size="14" font-weight="300" fill="black" y="14">7</tspan>
+        </text>
+      </g>
+    </g>
+  </g>
+</svg>

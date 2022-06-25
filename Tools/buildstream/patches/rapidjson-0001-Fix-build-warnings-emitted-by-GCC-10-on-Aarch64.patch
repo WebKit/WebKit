@@ -1,0 +1,48 @@
+From 50355a08a409efe901375292f9aa78fb3215151d Mon Sep 17 00:00:00 2001
+From: Philippe Normand <philn@igalia.com>
+Date: Mon, 7 Sep 2020 11:08:02 +0000
+Subject: [PATCH] Fix build warnings emitted by GCC 10 on Aarch64
+
+---
+ include/rapidjson/reader.h | 4 ++--
+ include/rapidjson/writer.h | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/include/rapidjson/reader.h b/include/rapidjson/reader.h
+index 30e45e1f..0654cc49 100644
+--- a/include/rapidjson/reader.h
++++ b/include/rapidjson/reader.h
+@@ -1011,7 +1011,7 @@ private:
+                 size_t escapeOffset = is.Tell();    // For invalid escaping, report the initial '\\' as error offset
+                 is.Take();
+                 Ch e = is.Peek();
+-                if ((sizeof(Ch) == 1 || unsigned(e) < 256) && RAPIDJSON_LIKELY(escape[static_cast<unsigned char>(e)])) {
++                if ((sizeof(Ch) == 1) && RAPIDJSON_LIKELY(escape[static_cast<unsigned char>(e)])) {
+                     is.Take();
+                     os.Put(static_cast<typename TEncoding::Ch>(escape[static_cast<unsigned char>(e)]));
+                 }
+@@ -1833,7 +1833,7 @@ private:
+ #undef N16
+ //!@endcond
+ 
+-        if (sizeof(Ch) == 1 || static_cast<unsigned>(c) < 256)
++        if (sizeof(Ch) == 1)
+             return static_cast<Token>(tokenMap[static_cast<unsigned char>(c)]);
+         else
+             return NumberToken;
+diff --git a/include/rapidjson/writer.h b/include/rapidjson/writer.h
+index 51dd86d5..1ccd9a5d 100644
+--- a/include/rapidjson/writer.h
++++ b/include/rapidjson/writer.h
+@@ -428,7 +428,7 @@ protected:
+                     PutUnsafe(*os_, hexDigits[(trail      ) & 15]);                    
+                 }
+             }
+-            else if ((sizeof(Ch) == 1 || static_cast<unsigned>(c) < 256) && RAPIDJSON_UNLIKELY(escape[static_cast<unsigned char>(c)]))  {
++            else if ((sizeof(Ch) == 1) && RAPIDJSON_UNLIKELY(escape[static_cast<unsigned char>(c)]))  {
+                 is.Take();
+                 PutUnsafe(*os_, '\\');
+                 PutUnsafe(*os_, static_cast<typename OutputStream::Ch>(escape[static_cast<unsigned char>(c)]));
+-- 
+2.20.1
+

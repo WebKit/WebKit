@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script src="resources/hit-test-utilities.js"></script>
+<style>
+#test-container {
+    height: 100px;
+}
+</style>
+</head>
+<body style="height: 4096px">
+<div id="test-container">
+    <div style="position: fixed; border: 1px solid black; width: 100%; height: 40px" contenteditable="true"></div>
+</div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+window.jsTestIsAsync = true;
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+if (window.internals)
+    internals.settings.setEditableRegionEnabled(true);
+
+async function runTest()
+{
+    if (!window.testRunner) {
+        testFailed("Must be run in WebKitTestRunner.");
+        return;
+    }
+
+    debug("Before scroll:");
+    await shouldHaveEditableElementsInRect(0, 0, 200, 40);
+    await shouldNotHaveEditableElementsInRect(0, 200, 200, 40);
+
+    let newYOffset = 200;
+    window.scrollTo(0, newYOffset);
+
+    debug("<br>After scroll:");
+    await shouldNotHaveEditableElementsInRect(0, 0, 200, 40);
+    await shouldHaveEditableElementsInRect(0, newYOffset, 200, 40);
+
+    let testContainer = document.getElementById("test-container");
+    document.body.removeChild(testContainer);
+    finishJSTest();
+}
+
+description("Hit test fixed positioned editable element.");
+runTest();
+</script>
+</body>
+</html>

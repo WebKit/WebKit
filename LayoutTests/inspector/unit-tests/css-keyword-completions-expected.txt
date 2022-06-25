@@ -1,0 +1,106 @@
+Testing WI.CSSKeywordCompletions.
+
+
+== Running test suite: WI.CSSKeywordCompletions
+-- Running test case: WI.CSSKeywordCompletions.forPartialPropertyName.emptyTextDisallowsEmptyPrefix
+PASS: Expected exactly 0 completion results.
+PASS: All expected completions were present.
+
+-- Running test case: WI.CSSKeywordCompletions.forPartialPropertyName.emptyTextAllowsEmptyPrefix
+PASS: All expected completions were present.
+
+-- Running test case: WI.CSSKeywordCompletions.forPartialPropertyName.singleCharacterMatches
+PASS: All expected completions were present.
+
+-- Running test case: WI.CSSKeywordCompletions.forPartialPropertyName.multipleCharacterMatches
+PASS: All expected completions were present.
+
+-- Running test case: WI.CSSKeywordCompletions.forPartialPropertyName.midTokenNoCompletions
+PASS: Expected exactly 0 completion results.
+PASS: All expected completions were present.
+
+-- Running test case: WI.CSSKeywordCompletions.forPartialPropertyValue.EmptyTop
+PASS: Expected result prefix to be ""
+PASS: All expected completions were present.
+
+-- Running test case: WI.CSSKeywordCompletions.forPartialPropertyValue.EmptyColor
+PASS: Expected result prefix to be ""
+PASS: All expected completions were present.
+
+-- Running test case: WI.CSSKeywordCompletions.forPartialPropertyValue.PartialColor
+PASS: Expected result prefix to be "papaya"
+PASS: All expected completions were present.
+
+-- Running test case: WI.CSSKeywordCompletions.forPartialPropertyValue.EmptyWordSpacing
+PASS: Expected result prefix to be ""
+PASS: All expected completions were present.
+
+-- Running test case: WI.CSSKeywordCompletions.forPartialPropertyValue.MidLineBorder
+PASS: Expected result prefix to be ""
+PASS: All expected completions were present.
+
+-- Running test case: WI.CSSKeywordCompletions.forPartialPropertyValue.EnvironmentFunctionCompletion
+PASS: Expected result prefix to be ""
+PASS: All expected completions were present.
+
+-- Running test case: WI.CSSKeywordCompletions.forPartialPropertyValue.MidLineEnvironmentFunction
+PASS: Expected result prefix to be ""
+PASS: All expected completions were present.
+
+-- Running test case: WI.CSSKeywordCompletions.forPartialPropertyValue.PartialFunctionValue
+PASS: Expected result prefix to be "au"
+PASS: All expected completions were present.
+
+-- Running test case: WI.CSSKeywordCompletions.forPartialPropertyValue.ComplexMultiValueFunction
+PASS: Expected result prefix to be ""
+PASS: All expected completions were present.
+
+-- Running test case: WI.CSSKeywordCompletions.forPartialPropertyValue.AttributeFunction
+PASS: Expected result prefix to be ""
+PASS: All expected completions were present.
+
+-- Running test case: WI.CSSKeywordCompletions.forPartialPropertyValue.MidLineAttributeFunction
+PASS: Expected result prefix to be "c"
+PASS: All expected completions were present.
+
+-- Running test case: WI.CSSKeywordCompletions.forPartialPropertyValue.VariableFunction
+PASS: Expected result prefix to be ""
+PASS: All expected completions were present.
+
+-- Running test case: WI.CSSKeywordCompletions.forPartialPropertyValue.VariableFunctionFiltered
+PASS: Expected result prefix to be "--o"
+PASS: All expected completions were present.
+
+-- Running test case: WI.CSSKeywordCompletions.forPartialPropertyValue.InvalidVariableName
+PASS: Expected result prefix to be "-x"
+PASS: All expected completions were present.
+
+-- Running test case: WI.CSSKeywordCompletions.forPartialPropertyValue.IncompleteVariableName
+PASS: Expected result prefix to be "--"
+PASS: All expected completions were present.
+
+-- Running test case: WI.CSSKeywordCompletions.forPartialPropertyValue.DashedEnvironmentVariableName
+PASS: Expected result prefix to be "--"
+PASS: All expected completions were present.
+
+-- Running test case: WI.CSSKeywordCompletions.forPartialPropertyValue.VendorPrefixedValue
+PASS: Expected result prefix to be "-webkit"
+PASS: All expected completions were present.
+
+-- Running test case: WI.CSSKeywordCompletions.forPartialPropertyValue.SubtractionCalc
+PASS: Expected result prefix to be ""
+PASS: All expected completions were present.
+
+-- Running test case: WI.CSSKeywordCompletions.forPartialPropertyValue.VariableFunctionInCalc
+PASS: Expected result prefix to be ""
+PASS: All expected completions were present.
+
+-- Running test case: WI.CSSKeywordCompletions.forPartialPropertyValue.NoWhitespaceAfterFunction
+PASS: Expected result prefix to be ""
+PASS: Expected exactly 0 completion results.
+PASS: All expected completions were present.
+
+-- Running test case: WI.CSSKeywordCompletions.forPartialPropertyValue.WhitespaceAfterFunction
+PASS: Expected result prefix to be "a"
+PASS: All expected completions were present.
+

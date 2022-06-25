@@ -1,0 +1,53 @@
+<!DOCTYPE HTML>
+<style>
+    .box {
+        width: 100px;
+        height: 100px;
+    }
+    .parent {
+        transform-style: preserve-3d;
+        transform: rotateY(45deg)
+    }
+    .child {
+        transform: rotateY(45deg);
+        background: lightblue
+    }
+</style>
+
+<p>Test that an element with mix-blend-mode other than normal forces the used value of transform-style to flat, but not the computed value..</p>
+
+<div class="parent box">
+    <div id="transform-style-preserve-3d" class="box child"></div>
+</div>
+
+<div class="parent box" style="transform-style: flat">
+    <div id="transform-style-flat" class="box child"></div>
+</div>
+
+<div class="parent box" style="overflow: hidden; transform-style: flat">
+    <div id="overflow-hidden-with-transform-style-flat" class="box child"></div>
+</div>
+
+<div class="parent box" style="overflow: hidden;">
+    <div id="overflow-hidden-with-transform-style-preserve-3d" class="box child"></div>
+</div>
+
+<script src="../resources/js-test.js"></script>
+<script>
+    function parentNodeTransformStyle(id) {
+        return getComputedStyle(document.getElementById(id).parentNode).transformStyle;
+    }
+
+    function getBoundingClientWidth(id) {
+        return document.getElementById(id).getBoundingClientRect().width;
+    }
+
+    shouldBeEqualToString("parentNodeTransformStyle('transform-style-preserve-3d')", "preserve-3d");
+    shouldBeEqualToString("parentNodeTransformStyle('transform-style-flat')", "flat");
+    shouldBeEqualToString("parentNodeTransformStyle('overflow-hidden-with-transform-style-preserve-3d')", "preserve-3d");
+    shouldBeEqualToString("parentNodeTransformStyle('overflow-hidden-with-transform-style-flat')", "flat");
+
+    shouldNotBe("getBoundingClientWidth('transform-style-preserve-3d')", "getBoundingClientWidth('transform-style-flat')");
+    shouldBe("getBoundingClientWidth('overflow-hidden-with-transform-style-flat')", "getBoundingClientWidth('transform-style-flat')");
+    shouldBe("getBoundingClientWidth('overflow-hidden-with-transform-style-preserve-3d')", "getBoundingClientWidth('transform-style-flat')");
+</script>

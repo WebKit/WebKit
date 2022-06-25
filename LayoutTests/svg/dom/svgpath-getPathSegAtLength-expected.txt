@@ -1,0 +1,20 @@
+Test SVG path.getPathSegAtLength().
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS path.getPathSegAtLength(0) is 0
+PASS path.getPathSegAtLength(1) is 1
+PASS path.getPathSegAtLength(5) is 1
+PASS path.getPathSegAtLength(6) is 2
+PASS path.getPathSegAtLength(10) is 2
+PASS path.getPathSegAtLength(11) is 3
+PASS path.getPathSegAtLength(16) is 3
+PASS path.getPathSegAtLength(20) is 3
+PASS path.getPathSegAtLength(24) is 3
+PASS path.getPathSegAtLength(25) is 3
+PASS path.getPathSegAtLength(100) is 3
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

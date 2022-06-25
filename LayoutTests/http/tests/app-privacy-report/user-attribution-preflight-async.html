@@ -1,0 +1,47 @@
+<!DOCTYPE html><!-- webkit-test-runner [ isAppInitiated=false ] -->
+<p>Tests non app initiated requests get marked for async preflights</p>
+
+<pre id="console"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(message)
+{
+    document.getElementById('console').appendChild(document.createTextNode(message + '\n'));
+}
+
+var preflightLinkDomain = "localhost";
+var contextHost = "127.0.0.1";
+var url = "http://localhost:8000/xmlhttprequest/resources/status-404-without-body.py"
+
+function runTest()
+{
+    var req = new XMLHttpRequest();
+    req.open("GET", url, true);
+    req.setRequestHeader("x-webkit", "foo");
+
+    req.onerror = function() {
+        var didLoadAppInitiatedRequest = testRunner.didLoadAppInitiatedRequest();
+        var didLoadNonAppInitiatedRequest = testRunner.didLoadNonAppInitiatedRequest();
+
+        if (didLoadAppInitiatedRequest) {
+            log("FAIL did load app initiated request");
+            testRunner.notifyDone();
+        }
+
+        if (!didLoadNonAppInitiatedRequest) {
+            log("FAIL did not load non app initiated request");
+            testRunner.notifyDone();
+        }
+
+        log("PASS successfully loaded only non app initiated requests");
+        testRunner.notifyDone();
+    }
+    req.send(null);
+}
+
+runTest();
+</script>

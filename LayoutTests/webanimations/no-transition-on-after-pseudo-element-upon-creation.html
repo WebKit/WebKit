@@ -1,0 +1,32 @@
+<body>
+<style>
+
+    div {
+        width: 100px;
+        height: 100px;
+        background-color: green;
+    }
+
+    div.after::after {
+        content: "";
+        display: block;
+        width: 100px;
+        height: 100px;
+        opacity: 0;
+        background-color: red;
+        transition: opacity 60s;
+    }
+
+</style>
+<script>
+
+    // Adding the "after" class on the next frame will yield the ::after pseudo-element.
+    // This should not yield a CSS Transition since there was no previous pseudo-element
+    // style to animate from, although there was a bug in WebKit introduced in r267571
+    // where we would use the host element's current style to consider whether we should
+    // run a CSS Transition here.
+    const element = document.body.appendChild(document.createElement("div"));
+    requestAnimationFrame(() => element.classList.add("after"));
+
+</script>
+</body>

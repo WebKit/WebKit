@@ -1,0 +1,59 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0">
+    <style>
+        body {
+            height: 5000px;
+            margin: 0;
+        }
+        
+        .fixed {
+            position: fixed;
+            top: 0;
+            left: 10px;
+            height: 100%;
+            width: 100px;
+            background-color: blue;
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.dumpAsText();
+        }
+
+        function getUnstableScrollScript(x, y)
+        {
+            return `(function() {
+                uiController.stableStateOverride = false;
+                uiController.immediateZoomToScale(3);
+                uiController.immediateScrollToOffset(0, 3000);
+                
+                uiController.doAfterPresentationUpdate(function() {
+                    uiController.uiScriptComplete();
+                });
+                
+            })();`;
+        }
+
+        function doTest()
+        {
+            if (!testRunner.runUIScript)
+                return
+
+            testRunner.runUIScript(getUnstableScrollScript(), function() {
+                document.getElementById('layers').textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS);
+                testRunner.notifyDone();
+            });
+        }
+        
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+<div class="fixed">fixed</div>
+<pre id="layers"></pre>
+</body>
+</html>

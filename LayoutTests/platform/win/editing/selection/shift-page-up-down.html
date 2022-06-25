@@ -1,0 +1,56 @@
+<p>Test for <a href="rdar://4968855">&lt;rdar://4968855>
+Shift-PageUp/Shift-PageDown only select one line of text</a>. To test, press
+Shift-PageDown and Shift-PageUp to see if more than one line of text is
+selected.</p>
+
+<textarea id="a" rows=30>this is some text
+that spans multiple lines
+
+
+
+
+
+
+
+
+
+
+
+and goes on for quite a while
+</textarea>
+<pre id="log"></pre>
+<script>
+function log(msg) {
+    document.getElementById('log').appendChild(document.createTextNode(msg + "\n"));
+}
+
+function logSelection() {
+    log('Selected text:\n' + window.getSelection());
+}
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+if (window.eventSender) {
+    var area = document.getElementById('a');
+
+    eventSender.mouseMoveTo(area.offsetLeft + 3, area.offsetTop + 3);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+
+    log("Pressing Shift-PageDown with the caret at the top of the textarea");
+    eventSender.keyDown("pageDown", ["shiftKey"]);
+
+    logSelection();
+
+    eventSender.leapForward(3000);
+    eventSender.mouseMoveTo(area.offsetLeft + 3, area.offsetTop + area.offsetHeight - 3);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+
+    log("Pressing Shift-PageUp with the caret at the bottom of the textarea");
+    eventSender.keyDown("pageUp", ["shiftKey"]);
+
+    logSelection();
+}
+</script>

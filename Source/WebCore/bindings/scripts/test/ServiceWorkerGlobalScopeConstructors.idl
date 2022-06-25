@@ -1,0 +1,4 @@
+partial interface ServiceWorkerGlobalScope {
+    attribute ExposedStarConstructor ExposedStar;
+    attribute ServiceWorkerGlobalScopeConstructor ServiceWorkerGlobalScope;
+};

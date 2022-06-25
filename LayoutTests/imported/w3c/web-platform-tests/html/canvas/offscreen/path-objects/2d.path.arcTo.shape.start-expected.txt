@@ -1,0 +1,7 @@
+2d.path.arcTo.shape.start
+
+arcTo() draws a straight line from P0 to P1
+
+
+PASS arcTo() draws a straight line from P0 to P1
+

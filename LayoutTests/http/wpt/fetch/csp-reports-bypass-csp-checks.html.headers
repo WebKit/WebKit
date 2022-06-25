@@ -1,0 +1,1 @@
+Content-Security-Policy: connect-src 'self'; style-src 'self'; script-src 'self' 'unsafe-inline'; default-src 'none'; report-uri http://localhost:8801/WebKit/fetch/resources/store-csp-report.py?file=reports-bypass-csp-checks

@@ -1,0 +1,5 @@
+
+
+PASS Strings from form controls should be converted to Unicode scalar values in form submission
+PASS Strings from form controls should be converted to Unicode scalar values in FormData
+

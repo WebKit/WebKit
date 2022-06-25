@@ -1,0 +1,14 @@
+<html>
+  <body>
+    <script>
+      function statusTest() {
+        var source = new EventSource("does_not_exist");
+        source.onerror = function() {
+          top.finish();
+        }
+      }
+      statusTest();
+    </script>
+  </body>
+</html>
+

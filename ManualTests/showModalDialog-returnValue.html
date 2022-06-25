@@ -1,0 +1,13 @@
+This test makes sure we don't crash when storing the return value from showModalDialog.  Popup blocking needs to be disabled for this test to run.<br>
+<script>
+if (showModalDialog("data:text/html,<script>returnValue={value:'PASS'}; close()</"+"script>").value == "PASS")
+    document.write("<span style='color:green'>Test passed.<br>");
+else
+    document.write("<span style='color:red'>Test failed due to incorrect result.<br>");
+value = showModalDialog("data:text/html,<script>close()</"+"script>");
+if (!value)
+    document.write("<span style='color:green'>Test passed.<br>");
+else
+    document.write("<span style='color:red'>Test failed due to incorrect result.<br>");
+
+</script>

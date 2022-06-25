@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<style>
+body, html {
+    margin: 0;
+}
+</style>
+</head>
+<body>
+<img src="../resources/green-400x400.png"></img>
+<script>
+addEventListener("load", () => {
+    let image = document.querySelector("img");
+    internals.installImageOverlay(image, [], [
+        {
+            topLeft : new DOMPointReadOnly(0.1, 0.1),
+            topRight : new DOMPointReadOnly(0.4, 0.1),
+            bottomRight : new DOMPointReadOnly(0.4, 0.4),
+            bottomLeft : new DOMPointReadOnly(0.1, 0.4),
+            text : "Hello\nworld",
+        }
+    ]);
+    const overlay = internals.shadowRoot(image).getElementById("image-overlay");
+    getSelection().selectAllChildren(overlay);
+    shouldBeEqualToString("getSelection().toString()", "Hello\nworld");
+});
+</script>
+</body>
+</html>

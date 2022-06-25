@@ -1,0 +1,83 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% bugidsummary = bug.bug_id _ ': ' _ bug.short_desc %]
+[% attidsummary = attachment.id _ ': ' _ attachment.description %]
+[% flagtype_name = flag ? flag.type.name : old_flag.type.name %]
+[% statuses = { '+' => "granted" , '-' => 'denied' , 'X' => "canceled" ,
+                '?' => "asked" } %]
+
+[% to_identity = "" %]
+[% on_behalf_of = 0 %]
+[% action = flag.status || 'X' %]
+
+[% IF flag && flag.status == '?' %]
+  [% subject_status = "requested" %]
+  [% IF flag.setter_id == user.id %]
+    [% to_identity = flag.requestee.identity _ " for" %]
+  [% ELSE %]
+    [% on_behalf_of = 1 %]
+    [% IF flag.requestee %][% to_identity = " to " _ flag.requestee.identity %][% END %]
+  [% END %]
+[% ELSE %]
+  [% IF old_flag && old_flag.status == '?' %]
+    [% to_identity = old_flag.setter.identity _ "'s request for" %]
+    [% IF old_flag.requestee.defined %]
+        [% requestee_identity = old_flag.requestee.identity _ "'s" %]
+    [% END %]
+  [% END %]
+  [% subject_status = statuses.$action %]
+[% END %]
+From: [% Param('mailfrom') %]
+To: [% to %]
+Subject: [% flagtype_name %] [%+ subject_status %]: [[% terms.Bug %] [%+ bug.bug_id %]] [% bug.short_desc %]
+[%- IF attachment %] :
+  [Attachment [% attachment.id %]] [% attachment.description FILTER clean_text %][% END %]
+Date: [% date %]
+X-Bugzilla-Type: request
+[%+ INCLUDE "email/header-common.txt.tmpl" %]
+[%+ threadingmarker %]
+
+[%+ USE wrap -%]
+[%- FILTER bullet = wrap(80) -%]
+
+[% IF on_behalf_of %]
+[% user.identity %] has reassigned [% flag.setter.identity %]'s request for [% IF requestee_identity %] [%+ requestee_identity %] [% END %] [% flagtype_name %]
+[% to_identity %]:
+[% ELSE %]
+[% user.identity %] has [% statuses.$action %] [%+ to_identity %] [% IF requestee_identity %] [%+ requestee_identity %] [% END %] [%+ flagtype_name %]:
+[% END %]
+
+[% terms.Bug %] [%+ bugidsummary %]
+[% END %]
+[%+ urlbase %]show_bug.cgi?id=[% bug.bug_id %]
+[% IF attachment %]
+
+[% FILTER bullet = wrap(80) %]
+Attachment [% attidsummary %]
+[%- END %]
+[%# if WEBKIT_CHANGES #%]
+[%+ urlbase %]attachment.cgi?id=[% attachment.id %]&action=review
+[%# endif // WEBKIT_CHANGES #%]
+[%- END %]
+
+[%- Hook.process('after_summary') -%]
+
+[%- FILTER bullet = wrap(80) %]
+
+[% FOREACH comment = new_comments %]
+
+[%- IF comment.count %]
+--- Comment #[% comment.count %] from [% comment.author.identity %] ---
+[% ELSE %]
+--- Description ---
+[% END %]
+[%+ comment.body_full({ is_bugmail => 1, wrap => 1 }) FILTER strip_control_chars %]
+[% END %]
+
+[%- END %]

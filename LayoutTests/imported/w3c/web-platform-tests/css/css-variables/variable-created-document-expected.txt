@@ -1,0 +1,5 @@
+This text should be green.
+
+PASS Variable definition appearing in a created document should work once spliced into the creating document
+PASS Variable reference appearing in a created document should work once spliced into the creating document
+

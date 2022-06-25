@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Test viewBox translating out-of-viewport rect into viewport</title>
+  <!-- From https://bugzilla.mozilla.org/show_bug.cgi?id=773450 -->
+  <style>
+
+div, svg {
+  display: block;
+  position: absolute;
+  width: 100px;
+  height: 100px; 
+}
+
+  </style>
+</head>
+<body bgcolor="lime">
+  <div style="background:red;"/>
+  <svg viewBox="100 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="100" y="0" width="100" height="100" fill="lime"/>
+  </svg>
+</body>
+</html>

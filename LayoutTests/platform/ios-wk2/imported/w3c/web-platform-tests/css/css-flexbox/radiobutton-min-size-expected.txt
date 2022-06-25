@@ -1,0 +1,8 @@
+You should see two identical-looking lines, both with a radio button at the beginning.
+
+
+Text
+Text
+
+FAIL two radio button widths are identical assert_equals: width should be equal expected 0 but got 16
+

@@ -1,0 +1,55 @@
+<html>
+    <head>
+        <script src="../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <p id="description"></p>
+        <div id="console"></div>
+
+        <script>
+            var destroyStreamCalled = false;
+
+            function main() {
+                if (!window.testRunner) {
+                    debug("This test can only run from within DumpRenderTree, because it requires TestNetscapePlugin.\n");
+                    return;
+                }
+                testRunner.waitUntilDone();
+            }
+
+            main();
+
+            function streamStarted() {
+                testFailed("TestNetscapePlugin should have returned an error from NewStream.");
+            }
+
+            function streamDestroyed() { destroyStreamCalled = true; }
+
+            function requestCompleted() {
+                shouldBeFalse("destroyStreamCalled");
+
+                debug('<br><span class="pass">TEST COMPLETE</span>');
+
+                testRunner.notifyDone();
+            }
+        </script>
+
+        <embed
+            type="application/x-webkit-test-netscape"
+            onStreamLoad="streamStarted()"
+            onStreamDestroy="streamDestroyed"
+            onURLNotify="requestCompleted()"
+            id="plugin">
+    </body>
+    <script>
+        description("This tests that NPP_DestroyStream is not called if a plug-in returns an error from its NPP_NewStream callback.");
+
+        var plugin = document.getElementById("plugin");
+
+        plugin.returnErrorFromNewStream = true;
+        shouldBeTrue("plugin.returnErrorFromNewStream");
+
+        plugin.getURLNotify("data:,", null, "callback");
+    </script>
+</html>
+

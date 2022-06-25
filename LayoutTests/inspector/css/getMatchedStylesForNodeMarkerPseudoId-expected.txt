@@ -1,0 +1,14 @@
+Tests for the CSS.getMatchedStyleForNode command and the `::marker` CSS rule selector.
+
+
+== Running test suite: CSS.getMatchedStyleForNode.MarkerPseudoId
+-- Running test case: CSS.getMatchedStyleForNode.MarkerPseudoId.ListItem
+PASS: Expected exactly 2 rules for selector `*::marker`.
+
+-- Running test case: CSS.getMatchedStyleForNode.MarkerPseudoId.NonListItem
+PASS: Expected no rules entry for selector `*::marker`.
+
+-- Running test case: CSS.getMatchedStyleForNode.MarkerPseudoId.NonListItemWithMarkerSpecified
+PASS: Expected no rules entry for selector `*::marker`.
+PASS: Expected 3 rules for selector `*::marker`.
+

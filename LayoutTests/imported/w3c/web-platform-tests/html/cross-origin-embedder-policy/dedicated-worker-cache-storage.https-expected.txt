@@ -1,0 +1,16 @@
+CONSOLE MESSAGE: Refused to load 'https://localhost:9443/html/cross-origin-embedder-policy/resources/universal-worker.js?pipe=' worker because of Cross-Origin-Embedder-Policy.
+CONSOLE MESSAGE: Worker load was blocked by Cross-Origin-Embedder-Policy
+CONSOLE MESSAGE: Cannot load https://localhost:9443/html/cross-origin-embedder-policy/resources/universal-worker.js?pipe= due to access control checks.
+CONSOLE MESSAGE: Refused to load 'https://localhost:9443/html/cross-origin-embedder-policy/resources/universal-worker.js?pipe=' worker because of Cross-Origin-Embedder-Policy.
+CONSOLE MESSAGE: Worker load was blocked by Cross-Origin-Embedder-Policy
+CONSOLE MESSAGE: Cannot load https://localhost:9443/html/cross-origin-embedder-policy/resources/universal-worker.js?pipe= due to access control checks.
+
+PASS coep-none coep-none corp-cross-origin
+PASS coep-none coep-none corp-undefined
+PASS coep-none coep-require-corp corp-cross-origin
+PASS coep-none coep-require-corp corp-undefined
+PASS coep-require-corp coep-none corp-cross-origin
+PASS coep-require-corp coep-none corp-undefined
+PASS coep-require-corp coep-require-corp corp-cross-origin
+PASS coep-require-corp coep-require-corp corp-undefined
+

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    window.testRunner.waitUntilDone();
+    window.testRunner.dumpAsText();
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    var link = document.createElement('link');
+    link.setAttribute('rel', 'import');
+    link.setAttribute('href', 'resources/hello.html');
+    document.head.appendChild(link);
+    window.onload = function() {
+        window.testRunner.notifyDone();
+    };
+});
+
+</script>
+</head>
+<body>PASS unless crash</body>
+</html>

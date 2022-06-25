@@ -1,0 +1,35 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # token: string. The token to be used in this address change.
+  #%]
+  
+[% title = "Confirm Change Email" %]
+[% PROCESS global/header.html.tmpl %]
+
+<p>
+  To change your email address, please enter your current password:
+</p>
+
+<form method="post" action="token.cgi">
+  <input type="hidden" name="t" value="[% token FILTER html %]">
+  <input type="hidden" name="a" value="chgem">
+  <table>
+    <tr>
+      <th>Password:</th>
+      <td><input type="password" name="password" size="36" required></td>
+    </tr>
+    <tr>
+      <th>&nbsp;</th>
+      <td><input type="submit" id="confirm" value="Submit"></td>
+    </tr>
+  </table>
+</form>
+
+[% PROCESS global/footer.html.tmpl %]

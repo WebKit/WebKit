@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Testing basic data channel and garbage collection</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+  </head>
+  <body>
+    <script src ="../routines.js"></script>
+    <script>
+var finishTest;
+promise_test((test) => {
+    counter = 0;
+    return new Promise((resolve, reject) => {
+        createConnections((localConnection) => {
+            localConnection.createDataChannel('sendDataChannel').onclose = resolve;
+        }, (remoteConnection) => {
+            remoteConnection.ondatachannel = (event) => {
+                var remoteChannel = event.channel;
+                remoteChannel.close();
+            };
+        });
+        if (window.GCController)
+            return GCController.collect();
+    }).then(() => {
+        closeConnections();
+    });
+}, "Losing local channel reference and closing it on the other side should still allow emitting the close event");
+    </script>
+  </body>
+</html>

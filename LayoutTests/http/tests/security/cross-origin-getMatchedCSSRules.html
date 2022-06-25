@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet"
+      href="http://localhost:8000/security/resources/cssStyle.css">
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function log(msg)
+{
+    var div = document.createElement("div");
+    div.textContent = msg;
+    document.getElementById("console").appendChild(div);
+}
+
+function parseCSSRules(cssRules)
+{
+    if (!cssRules)
+        log("cssRules: " + cssRules);
+    else
+    {
+        log("cssRules.length: " + cssRules.length);
+        for (var i = 0; i < cssRules.length; ++i)
+            log("cssRules[" + i + "].cssText: " + cssRules[i].cssText);
+    }
+}
+
+window.onload = function() 
+{
+    log("Test begins.");
+    var cssRules = getMatchedCSSRules(document.body, "");
+    parseCSSRules(cssRules);
+    log("Test ends.");
+}
+</script>
+</head>
+<body>
+<p>This test whether a script can read the rules from a cross-origin style
+sheet using getMatchedCSSRules.</p>
+<div id="console"></div>
+</body>
+</html>

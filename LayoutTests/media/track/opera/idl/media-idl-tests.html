@@ -1,0 +1,331 @@
+<!doctype html>
+<title>media IDL tests</title>
+<div id=log></div>
+<script src=../../../../resources/testharness.js></script>
+<script src=../../../../resources/testharnessreport.js></script>
+<script src=../resources/WebIDLParser.js></script>
+<script src=../resources/idlharness.js></script>
+<script type=text/plain>
+interface HTMLVideoElement : HTMLMediaElement {
+           attribute unsigned long width;
+           attribute unsigned long height;
+  readonly attribute unsigned long videoWidth;
+  readonly attribute unsigned long videoHeight;
+           attribute DOMString poster;
+};
+
+[NamedConstructor=Audio(),
+ NamedConstructor=Audio(DOMString src)]
+interface HTMLAudioElement : HTMLMediaElement {};
+
+interface HTMLSourceElement : HTMLElement {
+           attribute DOMString src;
+           attribute DOMString type;
+           attribute DOMString media;
+};
+
+interface HTMLTrackElement : HTMLElement {
+           attribute DOMString kind;
+           attribute DOMString src;
+           attribute DOMString srclang;
+           attribute DOMString label;
+           attribute boolean default;
+
+  const unsigned short NONE = 0;
+  const unsigned short LOADING = 1;
+  const unsigned short LOADED = 2;
+  const unsigned short ERROR = 3;
+  readonly attribute unsigned short readyState;
+
+  readonly attribute TextTrack track;
+};
+
+interface HTMLMediaElement : HTMLElement {
+
+  // error state
+  readonly attribute MediaError? error;
+
+  // network state
+           attribute DOMString src;
+  readonly attribute DOMString currentSrc;
+           attribute DOMString crossOrigin;
+  const unsigned short NETWORK_EMPTY = 0;
+  const unsigned short NETWORK_IDLE = 1;
+  const unsigned short NETWORK_LOADING = 2;
+  const unsigned short NETWORK_NO_SOURCE = 3;
+  readonly attribute unsigned short networkState;
+           attribute DOMString preload;
+  readonly attribute TimeRanges buffered;
+  void load();
+  DOMString canPlayType(DOMString type);
+
+  // ready state
+  const unsigned short HAVE_NOTHING = 0;
+  const unsigned short HAVE_METADATA = 1;
+  const unsigned short HAVE_CURRENT_DATA = 2;
+  const unsigned short HAVE_FUTURE_DATA = 3;
+  const unsigned short HAVE_ENOUGH_DATA = 4;
+  readonly attribute unsigned short readyState;
+  readonly attribute boolean seeking;
+
+  // playback state
+           attribute double currentTime;
+  readonly attribute unrestricted double duration;
+  readonly attribute Date startDate;
+  readonly attribute boolean paused;
+           attribute double defaultPlaybackRate;
+           attribute double playbackRate;
+  readonly attribute TimeRanges played;
+  readonly attribute TimeRanges seekable;
+  readonly attribute boolean ended;
+           attribute boolean autoplay;
+           attribute boolean loop;
+  void play();
+  void pause();
+
+  // media controller
+           attribute DOMString mediaGroup;
+           attribute MediaController? controller;
+
+  // controls
+           attribute boolean controls;
+           attribute double volume;
+           attribute boolean muted;
+           attribute boolean defaultMuted;
+
+  // tracks
+  readonly attribute AudioTrackList audioTracks;
+  readonly attribute VideoTrackList videoTracks;
+  readonly attribute TextTrackList textTracks;
+  TextTrack addTextTrack(DOMString kind, optional DOMString label, optional DOMString language);
+};
+
+interface MediaError {
+  const unsigned short MEDIA_ERR_ABORTED = 1;
+  const unsigned short MEDIA_ERR_NETWORK = 2;
+  const unsigned short MEDIA_ERR_DECODE = 3;
+  const unsigned short MEDIA_ERR_SRC_NOT_SUPPORTED = 4;
+  readonly attribute unsigned short code;
+};
+
+interface AudioTrackList : EventTarget {
+  readonly attribute unsigned long length;
+  getter AudioTrack (unsigned long index);
+  AudioTrack? getTrackById(DOMString id);
+
+           attribute EventHandler onchange;
+           attribute EventHandler onaddtrack;
+           attribute EventHandler onremovetrack;
+};
+
+interface AudioTrack {
+  readonly attribute DOMString id;
+  readonly attribute DOMString kind;
+  readonly attribute DOMString label;
+  readonly attribute DOMString language;
+           attribute boolean enabled;
+};
+
+interface VideoTrackList : EventTarget {
+  readonly attribute unsigned long length;
+  getter VideoTrack (unsigned long index);
+  VideoTrack? getTrackById(DOMString id);
+  readonly attribute long selectedIndex;
+
+           attribute EventHandler onchange;
+           attribute EventHandler onaddtrack;
+           attribute EventHandler onremovetrack;
+};
+
+interface VideoTrack {
+  readonly attribute DOMString id;
+  readonly attribute DOMString kind;
+  readonly attribute DOMString label;
+  readonly attribute DOMString language;
+           attribute boolean selected;
+};
+
+enum MediaControllerPlaybackState { "waiting", "playing", "ended" };
+[Constructor]
+interface MediaController {
+  readonly attribute unsigned short readyState; // uses HTMLMediaElement.readyState's values
+
+  readonly attribute TimeRanges buffered;
+  readonly attribute TimeRanges seekable;
+  readonly attribute unrestricted double duration;
+           attribute double currentTime;
+
+  readonly attribute boolean paused;
+  readonly attribute MediaControllerPlaybackState playbackState;
+  readonly attribute TimeRanges played;
+  void play();
+  void pause();
+
+           attribute double defaultPlaybackRate;
+           attribute double playbackRate;
+
+           attribute double volume;
+           attribute boolean muted;
+
+           attribute EventHandler onemptied;
+           attribute EventHandler onloadedmetadata;
+           attribute EventHandler onloadeddata;
+           attribute EventHandler oncanplay;
+           attribute EventHandler oncanplaythrough;
+           attribute EventHandler onplaying;
+           attribute EventHandler onended;
+           attribute EventHandler onwaiting;
+
+           attribute EventHandler ondurationchange;
+           attribute EventHandler ontimeupdate;
+           attribute EventHandler onplay;
+           attribute EventHandler onpause;
+           attribute EventHandler onratechange;
+           attribute EventHandler onvolumechange;
+};
+
+interface TextTrackList : EventTarget {
+  readonly attribute unsigned long length;
+  getter TextTrack (unsigned long index);
+
+           attribute EventHandler onaddtrack;
+           attribute EventHandler onremovetrack;
+};
+
+enum TextTrackMode { "disabled", "hidden", "showing" };
+interface TextTrack : EventTarget {
+  readonly attribute DOMString kind;
+  readonly attribute DOMString label;
+  readonly attribute DOMString language;
+  readonly attribute DOMString inBandMetadataTrackDispatchType;
+
+           attribute TextTrackMode mode;
+
+  readonly attribute TextTrackCueList? cues;
+  readonly attribute TextTrackCueList? activeCues;
+
+  void addCue(TextTrackCue cue);
+  void removeCue(TextTrackCue cue);
+
+           attribute EventHandler oncuechange;
+};
+
+interface TextTrackCueList {
+  readonly attribute unsigned long length;
+  getter TextTrackCue (unsigned long index);
+  TextTrackCue? getCueById(DOMString id);
+};
+
+[Constructor(double startTime, double endTime, DOMString text)]
+interface TextTrackCue : EventTarget {
+  readonly attribute TextTrack? track;
+
+           attribute DOMString id;
+           attribute double startTime;
+           attribute double endTime;
+           attribute boolean pauseOnExit;
+           attribute DOMString vertical;
+           attribute boolean snapToLines;
+           attribute long line;
+           attribute long position;
+           attribute long size;
+           attribute DOMString align;
+           attribute DOMString text;
+  DocumentFragment getCueAsHTML();
+
+           attribute EventHandler onenter;
+           attribute EventHandler onexit;
+};
+
+interface TimeRanges {
+  readonly attribute unsigned long length;
+  double start(unsigned long index);
+  double end(unsigned long index);
+};
+
+[Constructor(DOMString type, optional TrackEventInit eventInitDict)]
+interface TrackEvent : Event {
+  readonly attribute object? track;
+};
+
+dictionary TrackEventInit : EventInit {
+  object? track;
+};
+
+interface EventTarget {
+  void addEventListener(DOMString type, EventListener? listener, optional boolean capture /*= false*/);
+  void removeEventListener(DOMString type, EventListener? listener, optional boolean capture /*= false*/);
+  boolean dispatchEvent(Event event);
+};
+
+/*callback interface EventListener {
+  void handleEvent(Event event);
+};*/
+</script>
+<script>
+"use strict";
+setup(function(){
+    window.statechangecount = 0;
+
+    window.error_video = document.createElement('video');
+    error_video.src = 'data:video/x-bogus,xyz';
+    error_video.onerror = statechanged;
+
+    window.text_track_video = document.createElement('video');
+    window.text_track = document.createElement('track');
+    text_track.src = 'data:text/vtt,'+encodeURIComponent('WEBVTT\n\n00:00:00.000 --> 00:00:01.000\ntest\n');
+    text_track['default'] = true;
+    text_track.kind = 'subtitles';
+    text_track_video.appendChild(text_track);
+    document.body.appendChild(text_track_video);
+    if (window.HTMLTrackElement)
+        text_track.onload = statechanged;
+    else
+        statechanged();
+
+}, {explicit_done:true});
+
+function statechanged() {
+    statechangecount++;
+    if (statechangecount == 2) {
+        var idlArray = new IdlArray();
+        idlArray.add_idls(document.querySelector("script[type=text\\/plain]").textContent);
+        var objs = {};
+        if (window.HTMLVideoElement)
+            objs.HTMLVideoElement = ['document.createElement("video")'];
+        if (window.HTMLAudioElement)
+            objs.HTMLAudioElement = ['document.createElement("audio")'];
+        if (window.HTMLSourceElement)
+            objs.HTMLSourceElement = ['document.createElement("source")'];
+        if (window.HTMLTrackElement)
+            objs.HTMLTrackElement = ['document.createElement("track")'];
+        //HTMLMediaElement
+        if ('error' in error_video)
+            objs.MediaError = ['error_video.error'];
+        //AudioTrackList
+        //AudioTrack
+        //VideoTrackList
+        //VideoTrack
+        //MediaController
+        if ('textTracks' in text_track_video)
+            objs.TextTrackList = ['text_track_video.textTracks'];
+        if ('track' in text_track) {
+            objs.TextTrack = ['text_track.track'];
+            if ('cues' in text_track.track) {
+                objs.TextTrackCueList = ['text_track.track.cues'];
+                if ('0' in text_track.track.cues) {
+                    objs.TextTrackCue = ['text_track.track.cues[0]'];
+                }
+            }
+        }
+        if ('buffered' in document.createElement("video"))
+            objs.TimeRanges = ['(document.createElement("video")).buffered'];
+        if (window.TrackEvent)
+            objs.TrackEvent = ['new TrackEvent("addtrack"; {track:text_track.track})'];
+        //TrackEventInit
+        idlArray.add_objects(objs);
+        idlArray.test();
+        done();
+    }
+}
+</script>

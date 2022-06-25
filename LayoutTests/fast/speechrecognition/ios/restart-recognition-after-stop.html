@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<script>
+description("Verify that recognition can be restarted after being stopped.");
+
+if (window.testRunner) {
+    jsTestIsAsync = true;
+}
+
+var hasStopped = false;
+shouldNotThrow("recognition = new webkitSpeechRecognition()");
+recognition.continuous = true;
+
+recognition.onstart = (event) => {
+    debug("Received start event");
+}
+
+recognition.onaudiostart = (event) => {
+    debug("Received audiostart event");
+}
+
+recognition.onspeechstart = (event) => {
+    debug("Received speechstart event");
+
+    shouldNotThrow("recognition.stop()");
+}
+
+recognition.onend = (event) => {
+    debug("Received end event");
+
+    if (!hasStopped) {
+        hasStopped = true;
+        debug("(Will restart recognition)");
+        shouldNotThrow("recognition.start()");
+    } else {
+        finishJSTest();
+    }
+}
+
+shouldNotThrow("recognition.start()");
+
+</script>
+</body>
+</html>

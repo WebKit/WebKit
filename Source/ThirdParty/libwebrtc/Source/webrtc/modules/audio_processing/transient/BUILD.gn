@@ -1,0 +1,114 @@
+# Copyright (c) 2020 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+rtc_source_set("transient_suppressor_api") {
+  sources = [ "transient_suppressor.h" ]
+}
+
+rtc_library("transient_suppressor_impl") {
+  visibility = [
+    ":click_annotate",
+    ":transient_suppression_test",
+    ":transient_suppression_unittests",
+    "..:optionally_built_submodule_creators",
+  ]
+  sources = [
+    "common.h",
+    "daubechies_8_wavelet_coeffs.h",
+    "dyadic_decimator.h",
+    "moving_moments.cc",
+    "moving_moments.h",
+    "transient_detector.cc",
+    "transient_detector.h",
+    "transient_suppressor_impl.cc",
+    "transient_suppressor_impl.h",
+    "windows_private.h",
+    "wpd_node.cc",
+    "wpd_node.h",
+    "wpd_tree.cc",
+    "wpd_tree.h",
+  ]
+  deps = [
+    ":transient_suppressor_api",
+    "../../../common_audio:common_audio",
+    "../../../common_audio:common_audio_c",
+    "../../../common_audio:fir_filter",
+    "../../../common_audio:fir_filter_factory",
+    "../../../common_audio/third_party/ooura:fft_size_256",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:gtest_prod",
+    "../../../rtc_base:logging",
+  ]
+}
+
+if (rtc_include_tests) {
+  if (!build_with_chromium) {
+    rtc_executable("click_annotate") {
+      testonly = true
+      sources = [
+        "click_annotate.cc",
+        "file_utils.cc",
+        "file_utils.h",
+      ]
+      deps = [
+        ":transient_suppressor_impl",
+        "..:audio_processing",
+        "../../../rtc_base/system:file_wrapper",
+        "../../../system_wrappers",
+      ]
+    }
+
+    rtc_executable("transient_suppression_test") {
+      testonly = true
+      sources = [
+        "file_utils.cc",
+        "file_utils.h",
+        "transient_suppression_test.cc",
+      ]
+      deps = [
+        ":transient_suppressor_impl",
+        "..:audio_processing",
+        "../../../common_audio",
+        "../../../rtc_base:rtc_base_approved",
+        "../../../rtc_base/system:file_wrapper",
+        "../../../system_wrappers",
+        "../../../test:fileutils",
+        "../../../test:test_support",
+        "../agc:level_estimation",
+        "//testing/gtest",
+        "//third_party/abseil-cpp/absl/flags:flag",
+        "//third_party/abseil-cpp/absl/flags:parse",
+      ]
+    }
+  }
+
+  rtc_library("transient_suppression_unittests") {
+    testonly = true
+    sources = [
+      "dyadic_decimator_unittest.cc",
+      "file_utils.cc",
+      "file_utils.h",
+      "file_utils_unittest.cc",
+      "moving_moments_unittest.cc",
+      "transient_detector_unittest.cc",
+      "transient_suppressor_unittest.cc",
+      "wpd_node_unittest.cc",
+      "wpd_tree_unittest.cc",
+    ]
+    deps = [
+      ":transient_suppressor_impl",
+      "../../../rtc_base:stringutils",
+      "../../../rtc_base/system:file_wrapper",
+      "../../../test:fileutils",
+      "../../../test:test_support",
+      "//testing/gtest",
+    ]
+  }
+}

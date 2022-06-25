@@ -1,0 +1,57 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x110
+  RenderBlock {HTML} at (0,0) size 800x110
+    RenderBody {BODY} at (8,16) size 784x86
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 598x19
+          text run at (0,0) width 598: "This tests that the Address Book AutoFill button renders. It can only be tested in the test tool."
+      RenderBlock {DIV} at (0,36) size 784x50
+        RenderTextControl {INPUT} at (2,2) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+          RenderFlexibleBox {DIV} at (6,3) size 143x15
+            RenderBlock {DIV} at (0,0) size 115x14
+        RenderText {#text} at (158,1) size 5x19
+          text run at (158,1) width 5: " "
+        RenderTextControl {INPUT} at (164,2) size 156x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+          RenderFlexibleBox {DIV} at (6,3) size 143x15
+            RenderBlock {DIV} at (0,0) size 115x14
+        RenderText {#text} at (321,1) size 5x19
+          text run at (321,1) width 5: " "
+        RenderTextControl {INPUT} at (327,2) size 156x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+          RenderFlexibleBox {DIV} at (6,3) size 143x15
+            RenderBlock {DIV} at (0,0) size 115x14
+        RenderText {#text} at (484,1) size 5x19
+          text run at (484,1) width 5: " "
+        RenderTextControl {INPUT} at (490,2) size 156x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+          RenderFlexibleBox {DIV} at (6,3) size 143x15
+            RenderBlock {DIV} at (0,0) size 115x14
+        RenderTextControl {INPUT} at (2,27) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+          RenderFlexibleBox {DIV} at (6,3) size 143x15
+            RenderBlock {DIV} at (0,0) size 115x14
+        RenderTextControl {INPUT} at (160,27) size 156x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+          RenderFlexibleBox {DIV} at (6,3) size 143x15
+            RenderBlock {DIV} at (0,0) size 115x14
+layer at (17,57) size 115x14 backgroundClip at (17,57) size 114x14 clip at (17,57) size 114x14
+  RenderBlock {DIV} at (0,0) size 115x14
+layer at (179,57) size 115x14
+  RenderBlock {DIV} at (0,0) size 115x14
+layer at (342,57) size 115x14
+  RenderBlock {DIV} at (0,0) size 115x14
+layer at (505,57) size 115x14
+  RenderBlock {DIV} at (0,0) size 115x14
+layer at (17,82) size 115x14 backgroundClip at (17,82) size 114x14 clip at (17,82) size 114x14
+  RenderBlock {DIV} at (0,0) size 115x14
+layer at (175,82) size 115x14
+  RenderBlock {DIV} at (0,0) size 115x14
+layer at (134,58) size 22x12
+  RenderBlock {DIV} at (117,1) size 23x12 [bgcolor=#000000]
+layer at (297,58) size 22x12
+  RenderBlock {DIV} at (117,1) size 23x12 [bgcolor=#000000]
+layer at (460,58) size 22x12
+  RenderBlock {DIV} at (117,1) size 23x12 [bgcolor=#000000]
+layer at (623,58) size 22x12
+  RenderBlock {DIV} at (117,1) size 23x12 [bgcolor=#000000]
+layer at (134,83) size 22x12
+  RenderBlock {DIV} at (117,1) size 23x12 [bgcolor=#000000]
+layer at (293,83) size 22x12
+  RenderBlock {DIV} at (117,1) size 23x12 [bgcolor=#000000]

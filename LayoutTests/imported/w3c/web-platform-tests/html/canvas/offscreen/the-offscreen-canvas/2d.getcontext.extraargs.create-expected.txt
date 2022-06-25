@@ -1,0 +1,7 @@
+2d.getcontext.extraargs.create
+
+The 2D context doesn't throw with extra getContext arguments (new context)
+
+
+PASS The 2D context doesn't throw with extra getContext arguments (new context)
+

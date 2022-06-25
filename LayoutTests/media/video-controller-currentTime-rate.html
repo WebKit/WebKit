@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script>
+            function start()
+            {
+                findMediaElement();
+                video.src = findMediaFile("video", "content/test");
+                waitForEventOnce('canplaythrough', canPlayThrough);
+            }
+
+            function canPlayThrough()
+            {
+                video.controller.currentTime = 0;
+                video.controller.playbackRate = 1.01;
+                testExpected(video.controller.currentTime, 0, "==");
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload="start()">
+        <video mediaGroup="group"></video>
+        <p>Test that setting playbackRate on media controller modifies current time</p>
+    </body>
+</html>

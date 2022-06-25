@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Same-origin CSS</title>
+<script>
+// Prune memory cache to make sure we don't use a cached parsed stylesheet, in which case
+// the console warning would not be shown and the test would be flaky.
+internals.pruneMemoryCacheToSize(0);
+</script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<link rel="stylesheet" href="resources/xorigincss3.html"></link>
+
+<script>
+function getBackgroundColorForId(id) {
+    return window.getComputedStyle(document.getElementById(id), null).getPropertyValue('background-color')
+}
+
+var onloadTest = async_test("Testing same-origin and MIME behavior for CSS.");
+
+window.onload = function () {
+    test(function () {
+        assert_equals(getBackgroundColorForId('id4'), 'rgba(0, 0, 0, 0)');
+    }, 'xorigincss3.html should not be loaded, even though it is same-origin');
+
+    onloadTest.done();
+};
+</script>
+</head>
+<body>
+    <div id="id4" class="id4"></div>
+</body>
+</html>

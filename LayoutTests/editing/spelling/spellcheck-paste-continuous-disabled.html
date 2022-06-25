@@ -1,0 +1,52 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="resources/js-test-selection-shared.js"></script>
+</head>
+<body>
+<div>
+<div id="src" contenteditable="true"></div>
+<div id="dst" contenteditable="true"></div>
+</div>
+<script language="javascript">
+description('Test if WebKit does not spellcheck text when pasting text and continuous spellcheck is turned off. ' +
+            'To test manually, copy the text "zz apple", disable continuous spellcheck and paste it to editable element below. ' +
+            'When "zz" is not marked as misspelled, this test succeeds.');
+
+jsTestIsAsync = true;
+
+if (window.internals) {
+    internals.settings.setUnifiedTextCheckerEnabled(true);
+    internals.settings.setAsynchronousSpellCheckingEnabled(true);
+}
+
+var srcNode = document.getElementById('src');
+srcNode.focus();
+evalAndLog('document.execCommand("InsertText", false, "z")');
+evalAndLog('document.execCommand("InsertText", false, "z")');
+evalAndLog('document.execCommand("InsertText", false, " ")');
+evalAndLog('document.execCommand("InsertText", false, "a")');
+evalAndLog('document.execCommand("InsertText", false, "p")');
+evalAndLog('document.execCommand("InsertText", false, "p")');
+evalAndLog('document.execCommand("InsertText", false, "l")');
+evalAndLog('document.execCommand("InsertText", false, "e")');
+
+if (window.internals) {
+    shouldBecomeEqual('internals.hasSpellingMarker(0, 2)', 'true', function() {
+        window.getSelection().selectAllChildren(srcNode);
+        evalAndLog("document.execCommand('Copy')");
+
+        evalAndLog("internals.setContinuousSpellCheckingEnabled(false)");
+
+        var dstNode = document.getElementById('dst');
+        dstNode.focus();
+        evalAndLog("document.execCommand('Paste')");
+        shouldBecomeDifferent('internals.hasSpellingMarker(0, 2)', 'true', finishJSTest);
+     });
+}
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

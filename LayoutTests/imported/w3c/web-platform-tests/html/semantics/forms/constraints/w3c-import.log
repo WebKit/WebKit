@@ -1,0 +1,38 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-checkValidity.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-reportValidity.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validate.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-badInput.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-customError.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-patternMismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-rangeOverflow.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-rangeUnderflow.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-stepMismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-tooLong.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-tooShort.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-typeMismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valueMissing.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-willValidate-datalist.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-willValidate.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/infinite_backtracking.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/input-number-validity-dynamic-value-no-change.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/input-pattern-dynamic-value.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/inputwillvalidate.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/number-input-lang-validationMessage-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/radio-valueMissing.html

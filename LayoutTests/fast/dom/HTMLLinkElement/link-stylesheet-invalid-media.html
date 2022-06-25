@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<link rel=stylesheet href="data:text/css,#test { width: 100px }" media="(width invalid)">
+<div id=result></div>
+<div id=test></div>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    var test = document.getElementById("test");
+    var result = document.getElementById("result");
+    if (test.offsetWidth == 100)
+        result.innerHTML = "FAILURE";
+    else
+        result.innerHTML = "SUCCESS";
+</script>

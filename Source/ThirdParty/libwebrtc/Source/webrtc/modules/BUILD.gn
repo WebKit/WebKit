@@ -1,0 +1,247 @@
+# Copyright (c) 2016 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../webrtc.gni")
+import("audio_coding/audio_coding.gni")
+
+group("modules") {
+  deps = [
+    "audio_coding",
+    "audio_device",
+    "audio_mixer",
+    "audio_processing",
+    "congestion_controller",
+    "pacing",
+    "remote_bitrate_estimator",
+    "rtp_rtcp",
+    "utility",
+    "video_coding",
+    "video_processing",
+  ]
+
+  if (rtc_desktop_capture_supported) {
+    deps += [ "desktop_capture" ]
+  }
+}
+
+rtc_source_set("module_api_public") {
+  sources = [ "include/module_common_types_public.h" ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+}
+
+rtc_source_set("module_api") {
+  visibility = [ "*" ]
+  sources = [
+    "include/module.h",
+    "include/module_common_types.h",
+  ]
+}
+
+rtc_source_set("module_fec_api") {
+  visibility = [ "*" ]
+  sources = [ "include/module_fec_types.h" ]
+}
+
+if (rtc_include_tests && !build_with_chromium) {
+  modules_tests_resources = [
+    "../resources/audio_coding/testfile16kHz.pcm",
+    "../resources/audio_coding/testfile32kHz.pcm",
+    "../resources/audio_coding/teststereo32kHz.pcm",
+    "../resources/foreman_cif.yuv",
+  ]
+
+  if (is_ios) {
+    bundle_data("modules_tests_bundle_data") {
+      testonly = true
+      sources = modules_tests_resources
+      outputs = [ "{{bundle_resources_dir}}/{{source_file_part}}" ]
+    }
+  }
+
+  rtc_test("modules_tests") {
+    testonly = true
+
+    deps = [
+      "../test:test_main",
+      "../test:video_test_common",
+      "audio_coding:audio_coding_modules_tests",
+      "rtp_rtcp:rtp_rtcp_modules_tests",
+      "video_coding:video_coding_modules_tests",
+      "//testing/gtest",
+    ]
+
+    if (rtc_desktop_capture_supported) {
+      deps += [ "desktop_capture:desktop_capture_modules_tests" ]
+    }
+
+    data = modules_tests_resources
+
+    if (is_android) {
+      deps += [
+        # NOTE(brandtr): Including Java classes seems only to be possible from
+        # rtc_test targets. Therefore we include this target here, instead of
+        # in video_coding_modules_tests, where it is actually used.
+        "../sdk/android:libjingle_peerconnection_java",
+        "//testing/android/native_test:native_test_native_code",
+      ]
+      shard_timeout = 900
+    }
+
+    if (is_ios) {
+      deps += [ ":modules_tests_bundle_data" ]
+    }
+  }
+
+  modules_unittests_resources = [
+    "../resources/audio_coding/neteq_opus.rtp",
+    "../resources/audio_coding/neteq_opus_dtx.rtp",
+    "../resources/audio_coding/neteq_universal_new.rtp",
+    "../resources/audio_coding/speech_4_channels_48k_one_second.wav",
+    "../resources/audio_coding/speech_mono_16kHz.pcm",
+    "../resources/audio_coding/speech_mono_32_48kHz.pcm",
+    "../resources/audio_coding/testfile16kHz.pcm",
+    "../resources/audio_coding/testfile32kHz.pcm",
+    "../resources/audio_coding/testfile_fake_stereo_32kHz.pcm",
+    "../resources/audio_coding/teststereo32kHz.pcm",
+    "../resources/audio_device/audio_short16.pcm",
+    "../resources/audio_device/audio_short44.pcm",
+    "../resources/audio_device/audio_short48.pcm",
+    "../resources/audio_processing/agc/agc_audio.pcm",
+    "../resources/audio_processing/agc/agc_no_circular_buffer.dat",
+    "../resources/audio_processing/agc/agc_pitch_gain.dat",
+    "../resources/audio_processing/agc/agc_pitch_lag.dat",
+    "../resources/audio_processing/agc/agc_spectral_peak.dat",
+    "../resources/audio_processing/agc/agc_vad.dat",
+    "../resources/audio_processing/agc/agc_voicing_prob.dat",
+    "../resources/audio_processing/agc/agc_with_circular_buffer.dat",
+    "../resources/audio_processing/output_data_fixed.pb",
+    "../resources/audio_processing/output_data_float.pb",
+    "../resources/audio_processing/output_data_float_avx2.pb",
+    "../resources/audio_processing/output_data_mac.pb",
+    "../resources/audio_processing/transient/ajm-macbook-1-spke16m.pcm",
+    "../resources/audio_processing/transient/audio16kHz.pcm",
+    "../resources/audio_processing/transient/audio32kHz.pcm",
+    "../resources/audio_processing/transient/audio48kHz.pcm",
+    "../resources/audio_processing/transient/audio8kHz.pcm",
+    "../resources/audio_processing/transient/detect16kHz.dat",
+    "../resources/audio_processing/transient/detect32kHz.dat",
+    "../resources/audio_processing/transient/detect48kHz.dat",
+    "../resources/audio_processing/transient/detect8kHz.dat",
+    "../resources/audio_processing/transient/double-utils.dat",
+    "../resources/audio_processing/transient/float-utils.dat",
+    "../resources/audio_processing/transient/suppressed16kHz.pcm",
+    "../resources/audio_processing/transient/suppressed32kHz.pcm",
+    "../resources/audio_processing/transient/suppressed8kHz.pcm",
+    "../resources/audio_processing/transient/wpd0.dat",
+    "../resources/audio_processing/transient/wpd1.dat",
+    "../resources/audio_processing/transient/wpd2.dat",
+    "../resources/audio_processing/transient/wpd3.dat",
+    "../resources/audio_processing/transient/wpd4.dat",
+    "../resources/audio_processing/transient/wpd5.dat",
+    "../resources/audio_processing/transient/wpd6.dat",
+    "../resources/audio_processing/transient/wpd7.dat",
+    "../resources/deflicker_before_cif_short.yuv",
+    "../resources/far16_stereo.pcm",
+    "../resources/far32_stereo.pcm",
+    "../resources/far44_stereo.pcm",
+    "../resources/far48_stereo.pcm",
+    "../resources/far8_stereo.pcm",
+    "../resources/foremanColorEnhanced_cif_short.yuv",
+    "../resources/foreman_cif.yuv",
+    "../resources/foreman_cif_short.yuv",
+    "../resources/near16_stereo.pcm",
+    "../resources/near32_stereo.pcm",
+    "../resources/near44_stereo.pcm",
+    "../resources/near48_stereo.pcm",
+    "../resources/near8_stereo.pcm",
+    "../resources/ref03.aecdump",
+    "../resources/remote_bitrate_estimator/VideoSendersTest_BweTest_IncreasingChoke1_0_AST.bin",
+    "../resources/remote_bitrate_estimator/VideoSendersTest_BweTest_IncreasingChoke1_0_TOF.bin",
+    "../resources/remote_bitrate_estimator/VideoSendersTest_BweTest_IncreasingChoke1_1_AST.bin",
+    "../resources/remote_bitrate_estimator/VideoSendersTest_BweTest_IncreasingChoke1_1_TOF.bin",
+    "../resources/remote_bitrate_estimator/VideoSendersTest_BweTest_IncreasingChoke2_0_AST.bin",
+    "../resources/remote_bitrate_estimator/VideoSendersTest_BweTest_IncreasingChoke2_0_TOF.bin",
+    "../resources/remote_bitrate_estimator/VideoSendersTest_BweTest_IncreasingChoke2_1_AST.bin",
+    "../resources/remote_bitrate_estimator/VideoSendersTest_BweTest_IncreasingChoke2_1_TOF.bin",
+    "../resources/remote_bitrate_estimator/VideoSendersTest_BweTest_IncreasingDelay1_0_AST.bin",
+    "../resources/remote_bitrate_estimator/VideoSendersTest_BweTest_IncreasingDelay1_0_TOF.bin",
+    "../resources/remote_bitrate_estimator/VideoSendersTest_BweTest_IncreasingLoss1_0_AST.bin",
+    "../resources/remote_bitrate_estimator/VideoSendersTest_BweTest_IncreasingLoss1_0_TOF.bin",
+    "../resources/remote_bitrate_estimator/VideoSendersTest_BweTest_Multi1_1_AST.bin",
+    "../resources/remote_bitrate_estimator/VideoSendersTest_BweTest_Multi1_1_TOF.bin",
+    "../resources/remote_bitrate_estimator/VideoSendersTest_BweTest_SteadyChoke_0_AST.bin",
+    "../resources/remote_bitrate_estimator/VideoSendersTest_BweTest_SteadyChoke_0_TOF.bin",
+    "../resources/remote_bitrate_estimator/VideoSendersTest_BweTest_SteadyChoke_1_AST.bin",
+    "../resources/remote_bitrate_estimator/VideoSendersTest_BweTest_SteadyChoke_1_TOF.bin",
+    "../resources/remote_bitrate_estimator/VideoSendersTest_BweTest_SteadyDelay_0_AST.bin",
+    "../resources/remote_bitrate_estimator/VideoSendersTest_BweTest_SteadyDelay_0_TOF.bin",
+    "../resources/remote_bitrate_estimator/VideoSendersTest_BweTest_SteadyLoss_0_AST.bin",
+    "../resources/remote_bitrate_estimator/VideoSendersTest_BweTest_SteadyLoss_0_TOF.bin",
+    "../resources/remote_bitrate_estimator/VideoSendersTest_BweTest_UnlimitedSpeed_0_AST.bin",
+    "../resources/remote_bitrate_estimator/VideoSendersTest_BweTest_UnlimitedSpeed_0_TOF.bin",
+    "../resources/short_mixed_mono_48.dat",
+    "../resources/short_mixed_mono_48.pcm",
+    "../resources/short_mixed_mono_48_arm.dat",
+    "../resources/short_mixed_stereo_48.dat",
+    "../resources/short_mixed_stereo_48.pcm",
+    "../resources/voice_engine/audio_tiny48.wav",
+  ]
+  if (is_ios) {
+    bundle_data("modules_unittests_bundle_data") {
+      testonly = true
+      sources = modules_unittests_resources
+      outputs = [ "{{bundle_resources_dir}}/{{source_file_part}}" ]
+    }
+  }
+
+  rtc_test("modules_unittests") {
+    testonly = true
+    defines = []
+    sources = [ "module_common_types_unittest.cc" ]
+
+    deps = [
+      ":module_api",
+      ":module_api_public",
+      "../test:test_main",
+      "../test:test_support",
+      "audio_coding:audio_coding_unittests",
+      "audio_device:audio_device_unittests",
+      "audio_mixer:audio_mixer_unittests",
+      "audio_processing:audio_processing_unittests",
+      "audio_processing/aec3:aec3_unittests",
+      "audio_processing/ns:ns_unittests",
+      "congestion_controller:congestion_controller_unittests",
+      "pacing:pacing_unittests",
+      "remote_bitrate_estimator:remote_bitrate_estimator_unittests",
+      "rtp_rtcp:rtp_rtcp_unittests",
+      "utility:utility_unittests",
+      "video_coding:video_coding_unittests",
+      "video_processing:video_processing_unittests",
+    ]
+
+    if (rtc_desktop_capture_supported) {
+      deps += [ "desktop_capture:desktop_capture_unittests" ]
+    }
+
+    data = modules_unittests_resources
+
+    if (is_android) {
+      deps += [
+        "../sdk/android:libjingle_peerconnection_java",
+        "//testing/android/native_test:native_test_support",
+      ]
+      shard_timeout = 900
+    }
+    if (is_ios) {
+      info_plist = "../test/ios/Info.plist"
+      deps += [ ":modules_unittests_bundle_data" ]
+      configs += [ "..:common_objc" ]
+      ldflags = [ "-ObjC" ]
+    }
+  }
+}

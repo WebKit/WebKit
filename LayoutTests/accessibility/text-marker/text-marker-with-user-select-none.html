@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="text" style="-webkit-user-select:none">
+
+hello test <b>world</b> test hello<br>
+<a href="#">link</a> to <a href="#">here</a><br>
+test
+
+</div>
+
+
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that accessibility text markers still work even when user-select:none is set.");
+
+    if (window.accessibilityController) {
+
+          var textElement = accessibilityController.accessibleElementById("text");
+          var textMarkerRange = textElement.textMarkerRangeForElement(textElement);
+          shouldBe("textElement.textMarkerRangeLength(textMarkerRange)", "45");
+
+          var startMarker = textElement.startTextMarkerForTextMarkerRange(textMarkerRange);
+          var endMarker = textElement.endTextMarkerForTextMarkerRange(textMarkerRange);
+          textMarkerRange = textElement.textMarkerRangeForMarkers(startMarker, endMarker);
+          var text = textElement.stringForTextMarkerRange(textMarkerRange);
+          shouldBeEqualToString("text", "hello test world test hello\nlink to here\ntest");
+
+          var nextMarker = textElement.nextTextMarker(startMarker);
+          textMarkerRange = textElement.textMarkerRangeForMarkers(startMarker, nextMarker);
+          text = textElement.stringForTextMarkerRange(textMarkerRange);
+          shouldBe("text", "'h'");
+          var element = textElement.accessibilityElementForTextMarker(nextMarker);
+          shouldBeTrue("element.isEqual(textElement.childAtIndex(0))");
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

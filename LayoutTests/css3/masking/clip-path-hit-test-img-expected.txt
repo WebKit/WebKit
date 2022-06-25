@@ -1,0 +1,10 @@
+Test clip-path is accounted for during hit-testing with replaced elements.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.elementFromPoint(50, 50).localName is "body"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

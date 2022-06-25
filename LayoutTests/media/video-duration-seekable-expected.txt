@@ -1,0 +1,8 @@
+
+Tests that the video has a non-empty seekable range when the first "durationchange" event is fired.
+RUN(video.src = findMediaFile("video", "content/test"))
+EVENT(durationchange)
+EXPECTED (video.seekable.length != '0') OK
+EXPECTED (video.seekable.end(0) != '0') OK
+END OF TEST
+

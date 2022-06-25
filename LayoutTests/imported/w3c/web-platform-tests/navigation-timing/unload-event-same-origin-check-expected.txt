@@ -1,0 +1,19 @@
+Description
+
+This test validates that the values of window.performance.getEntriesByType("navigation")[0].(type/unloadEventEnd/unloadEventStart) are only exposed when the same-origin test passes.
+
+
+
+PASS Redirect chain with a partial TAO opt-in
+PASS Redirect chain with full TAO opt-in
+PASS Same-cross-same redirect chain with no TAO opt-in
+PASS cross-cross-same Redirect chain with no TAO opt-in
+PASS Previous document cross origin
+PASS Previous document same origin
+PASS No previous document
+PASS Same origin previous document with same origin redirect
+PASS No previous document with same origin redirect
+PASS No previous document with cross origin redirect
+PASS No previous document with cross origin redirect with partial TAO
+PASS No previous document with cross origin redirect with TAO
+

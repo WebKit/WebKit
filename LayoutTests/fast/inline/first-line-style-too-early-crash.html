@@ -1,0 +1,16 @@
+<style>
+  ::first-line {
+    width: 0;
+  }
+</style>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+  onload = () => {
+    document.designMode = 'on';
+    document.execCommand('SelectAll');
+    document.execCommand('Bold');
+    document.execCommand('InsertOrderedList');
+  };
+</script>
+<div></div>PASS if no crash or assert.

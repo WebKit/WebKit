@@ -1,0 +1,28 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/parsing/parse-attribute.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/parsing/parse-child.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/parsing/parse-class.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/parsing/parse-descendant.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/parsing/parse-focus-visible.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/parsing/parse-has.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/parsing/parse-id.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/parsing/parse-is.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/parsing/parse-not.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/parsing/parse-sibling.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/parsing/parse-universal.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/parsing/parse-where.html

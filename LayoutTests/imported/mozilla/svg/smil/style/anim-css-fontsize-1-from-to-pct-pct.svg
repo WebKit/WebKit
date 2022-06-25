@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     style="font-size: 2px"
+     class="reftest-wait"
+     onload="go()">
+  <script xlink:href="../smil-grid.js" type="text/javascript"/>
+  <script xlink:href="../smil-util.js" type="text/javascript"/>
+  <script>
+    function go() {
+      var animAttrHash = { "attributeName" : "font-size",
+                           "from"          : "500%",
+                           "to"            : "1500%" };
+      testAnimatedTextGrid("animate", [animAttrHash]);
+    }
+  </script>
+</svg>

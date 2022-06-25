@@ -1,0 +1,6 @@
+
+PASS Request through fetch should have 'accept' header with value '*/*'
+PASS Request through fetch should have 'accept' header with value 'custom/*'
+PASS Request through fetch should have a 'accept-language' header
+PASS Request through fetch should have 'accept-language' header with value 'bzh'
+

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>You should see PASS below:</p>
+<div><span></span></div>
+<script>
+
+var host = document.querySelector('div');
+var root = host.attachShadow({mode: 'open'});
+root.appendChild(document.createElement('slot'));
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+setTimeout(function () {
+    var b = document.createElement('b');
+    b.innerHTML = 'PASS';
+    document.querySelector('span').appendChild(b);
+    testRunner.notifyDone();
+}, 0);
+
+</script>
+</body>
+</html>

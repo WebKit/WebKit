@@ -1,0 +1,204 @@
+/*
+ * THIS FILE WAS AUTOMATICALLY GENERATED, DO NOT EDIT.
+ *
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "Settings.h"
+
+#include "InspectorInstrumentation.h"
+#include "Page.h"
+
+// Default values.
+
+<%- for @setting in @allSettingsSet.settings do -%>
+<%-   if @setting.condition -%>
+#if <%= @setting.condition %>
+<%-   end -%>
+<%-   if @setting.defaultValues.size() == 1 -%>
+<%-     if @setting.type == "String" and @setting.defaultValues['default'][-1] == "\"" -%>
+#define SETTING_DEFAULT_VALUE_FOR_<%= @setting.name %> <%= @setting.defaultValues['default'] %>_s
+<%-     else -%>
+#define SETTING_DEFAULT_VALUE_FOR_<%= @setting.name %> <%= @setting.defaultValues['default'] %>
+<%-     end -%>
+<%-   else -%>
+<%-     @setting.defaultValues.each_with_index do |(key, value), index| -%>
+<%-       if index == 0 -%>
+#if <%= key %>
+<%-       elsif index != @setting.defaultValues.size() - 1 -%>
+#elif <%= key %>
+<%-       else -%>
+#else
+<%-       end -%>
+#define SETTING_DEFAULT_VALUE_FOR_<%= @setting.name %> <%= value %>
+<%-     end -%>
+#endif
+<%-   end -%>
+<%-   if @setting.condition -%>
+#endif
+<%-   end -%>
+<%- end -%>
+
+namespace WebCore {
+
+Ref<Settings> Settings::create(Page* page)
+{
+    return adoptRef(*new Settings(page));
+}
+
+Settings::Settings(Page* page)
+    : SettingsBase(page)
+{
+    m_values.initialize();
+
+    m_page = nullptr; // Page is not yet fully initialized when constructing Settings, so keeping m_page null over initializeDefaultFontFamilies() call.
+    initializeDefaultFontFamilies();
+    m_page = page;
+}
+
+void Settings::Values::initialize()
+{
+<%- for @condition in @allSettingsSet.conditions do -%>
+<%- if @condition.nonBoolSettingsNeedingImplementation.length != 0 -%>
+<%- if @condition.condition -%>
+#if <%= @condition.condition %>
+<%- end -%>
+<%- for @setting in @condition.nonBoolSettingsNeedingImplementation -%>
+    <%= @setting.name %> = SETTING_DEFAULT_VALUE_FOR_<%= @setting.name %>;
+<%- end -%>
+<%- if @condition.condition -%>
+#endif
+<%- end -%>
+<%- end -%>
+<%- end -%>
+<%- for @condition in @allSettingsSet.conditions do -%>
+<%- if @condition.boolSettingsNeedingImplementation.length != 0 -%>
+<%- if @condition.condition -%>
+#if <%= @condition.condition %>
+<%- end -%>
+<%- for @setting in @condition.boolSettingsNeedingImplementation -%>
+    <%= @setting.name %> = SETTING_DEFAULT_VALUE_FOR_<%= @setting.name %>;
+<%- end -%>
+<%- if @condition.condition -%>
+#endif
+<%- end -%>
+<%- end -%>
+<%- end -%>
+}
+
+Settings::Values Settings::Values::isolatedCopy() const
+{
+    return {
+<%- for @setting in @allSettingsSet.inspectorOverrideSettings do -%>
+        crossThreadCopy(<%= @setting.name %>InspectorOverride),
+<%- end -%>
+        crossThreadCopy(fontGenericFamilies),
+<%- for @condition in @allSettingsSet.conditions do -%>
+<%- if @condition.nonBoolSettingsNeedingImplementation.length != 0 -%>
+<%- if @condition.condition -%>
+#if <%= @condition.condition %>
+<%- end -%>
+<%- for @setting in @condition.nonBoolSettingsNeedingImplementation -%>
+        crossThreadCopy(<%= @setting.name %>),
+<%- end -%>
+<%- if @condition.condition -%>
+#endif
+<%- end -%>
+<%- end -%>
+<%- end -%>
+<%- for @condition in @allSettingsSet.conditions do -%>
+<%- if @condition.boolSettingsNeedingImplementation.length != 0 -%>
+<%- if @condition.condition -%>
+#if <%= @condition.condition %>
+<%- end -%>
+<%- for @setting in @condition.boolSettingsNeedingImplementation -%>
+        crossThreadCopy(<%= @setting.name %>),
+<%- end -%>
+<%- if @condition.condition -%>
+#endif
+<%- end -%>
+<%- end -%>
+<%- end -%>
+    };
+}
+
+Settings::~Settings()
+{
+}
+
+<%- for @condition in @allSettingsSet.conditions do -%>
+<%- if @condition.settingsWithComplexGettersNeedingImplementation.length != 0 or @condition.settingsWithComplexSettersNeedingImplementation.length != 0 -%>
+<%- if @condition.condition -%>
+#if <%= @condition.condition %>
+<%- end -%>
+<%- for @setting in @condition.settingsWithComplexGettersNeedingImplementation do -%>
+<%= @setting.parameterType %> Settings::<%= @setting.getterFunctionName %>() const
+{
+<%- if @setting.hasInspectorOverride? -%>
+    if (UNLIKELY(m_values.<%= @setting.name %>InspectorOverride)) {
+        ASSERT(InspectorInstrumentation::hasFrontends());
+        return m_values.<%= @setting.name %>InspectorOverride.value();
+    }
+<%- end -%>
+    return m_values.<%= @setting.name %>;
+}
+<%- end -%>
+
+<%- for @setting in @condition.settingsWithComplexSettersNeedingImplementation -%>
+void Settings::<%= @setting.setterFunctionName %>(<%= @setting.parameterType %> <%= @setting.name %>)
+{
+    if (m_values.<%= @setting.name %> == <%= @setting.name %>)
+        return;
+    m_values.<%= @setting.name %> = <%= @setting.name %>;
+    <%= @setting.onChange %>();
+}
+<%- end -%>
+<%- if @condition.condition -%>
+#endif
+<%- end -%>
+<%- end -%>
+<%- end -%>
+
+<%- for @setting in @allSettingsSet.inspectorOverrideSettings do -%>
+<%- if @setting.hasComplexSetter? -%>
+void Settings::<%= @setting.setterFunctionName %>InspectorOverride(std::optional<<%= @setting.parameterType %>> <%= @setting.name %>InspectorOverride)
+{
+    if (m_values.<%= @setting.name %>InspectorOverride == <%= @setting.name %>InspectorOverride)
+        return;
+        m_values.<%= @setting.name %>InspectorOverride = <%= @setting.name %>InspectorOverride;
+<%- if @setting.condition -%>
+#if <%= @setting.condition %>
+<%- end -%>
+    <%= @setting.onChange %>();
+<%- if @setting.condition -%>
+<%- if @condition.condition -%>
+#endif
+<%- end -%>
+<%- end -%>
+}
+
+<%- end -%>
+<%- end -%>
+}

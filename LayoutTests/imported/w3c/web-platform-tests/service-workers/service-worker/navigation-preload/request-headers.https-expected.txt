@@ -1,0 +1,4 @@
+
+
+FAIL Navigation Preload request headers. assert_true: The Navigation Preload request must specify an "Upgrade-Insecure-Requests" header. expected true got false
+

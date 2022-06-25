@@ -1,0 +1,6 @@
+PASS arrow keys didn't scroll to second div.
+PASS left arrow snapped back.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

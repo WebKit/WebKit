@@ -1,0 +1,17 @@
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+</script>
+<p>This testcase used to break InsertLineBreak.  The editable region below should have two empty paragraphs in it, and the caret should be in the second.</p>
+
+<div id="test" contenteditable="true"><div>
+<br></div></div>
+
+<script>
+var s = window.getSelection();
+var e = document.getElementById("test");
+
+s.setPosition(e, 0);
+document.execCommand("InsertLineBreak");
+
+</script>

@@ -1,0 +1,7 @@
+
+PASS subresource CORP
+PASS navigation CORP
+PASS COEP violation on nested frame navigation
+PASS Two COEP headers, split inside report-to value
+FAIL Shared worker fetch assert_unreached: Worker.onerror Reached unreachable code
+

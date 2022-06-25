@@ -1,0 +1,29 @@
+<script></script>
+<!-- This test covers Bug 93641 -->
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+window.onload = () => {
+    setTimeout(function() {
+        var child = document.documentElement;
+        child.parentNode.removeChild(child);
+        if (window.testRunner) {
+            document.appendChild(document.createElement('html')).innerHTML = '<body></body>';
+            testRunner.notifyDone();
+        }
+    }, 36);
+}
+</script>
+<script></script>
+<span></span>
+<div></div>
+<span></span>
+<nobr>
+<span></span>
+<div>
+  <link rel="stylesheet" href="nosuchfile.css">
+  <script>;</script>
+  <nobr>
+</div>

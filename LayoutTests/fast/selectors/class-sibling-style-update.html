@@ -1,0 +1,90 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+* {
+    background-color: white;
+    color: black;
+    fill-opacity: 1;
+    min-width: 0px;
+}
+.webkit+padding+padding+padding+bar {
+    background-color: rgb(1, 2, 3);
+}
+.webkit~bar {
+    fill-opacity: 0.5;
+}
+.webkit+padding+padding+padding+bar baz {
+    color: rgb(4, 5, 6);
+}
+.webkit~bar baz {
+    min-width: 1px;
+}
+</style>
+</head>
+<body>
+    <div>
+        <foo></foo>
+        <padding></padding>
+        <padding></padding>
+        <padding></padding>
+        <bar id="bar-with-renderer">
+            <baz id="baz-with-renderer"></baz>
+        </bar>
+    </div>
+    <div style="display:none;">
+        <foo></foo>
+        <padding></padding>
+        <padding></padding>
+        <padding></padding>
+        <bar id="bar-without-renderer">
+            <baz id="baz-without-renderer"></baz>
+        </bar>
+    </div>
+</body>
+<script>
+description('Test style update caused by class changes on a sibling.');
+
+function testColor(expectMatch) {
+    shouldBeEqualToString('getComputedStyle(document.getElementById("bar-with-renderer")).backgroundColor', expectMatch ? 'rgb(1, 2, 3)' : 'rgb(255, 255, 255)');
+    shouldBeEqualToString('getComputedStyle(document.getElementById("baz-with-renderer")).backgroundColor', 'rgb(255, 255, 255)');
+    shouldBeEqualToString('getComputedStyle(document.getElementById("bar-without-renderer")).backgroundColor', expectMatch ? 'rgb(1, 2, 3)' : 'rgb(255, 255, 255)');
+    shouldBeEqualToString('getComputedStyle(document.getElementById("baz-without-renderer")).backgroundColor', 'rgb(255, 255, 255)');
+
+    shouldBeEqualToString('getComputedStyle(document.getElementById("bar-with-renderer")).fillOpacity', expectMatch ? '0.5' : '1');
+    shouldBeEqualToString('getComputedStyle(document.getElementById("baz-with-renderer")).fillOpacity', '1');
+    shouldBeEqualToString('getComputedStyle(document.getElementById("bar-without-renderer")).fillOpacity', expectMatch ? '0.5' : '1');
+    shouldBeEqualToString('getComputedStyle(document.getElementById("baz-without-renderer")).fillOpacity', '1');
+
+    shouldBeEqualToString('getComputedStyle(document.getElementById("bar-with-renderer")).color', 'rgb(0, 0, 0)');
+    shouldBeEqualToString('getComputedStyle(document.getElementById("baz-with-renderer")).color', expectMatch ? 'rgb(4, 5, 6)' : 'rgb(0, 0, 0)');
+    shouldBeEqualToString('getComputedStyle(document.getElementById("bar-without-renderer")).color', 'rgb(0, 0, 0)');
+    shouldBeEqualToString('getComputedStyle(document.getElementById("baz-without-renderer")).color', expectMatch ? 'rgb(4, 5, 6)' : 'rgb(0, 0, 0)');
+
+    shouldBeEqualToString('getComputedStyle(document.getElementById("bar-with-renderer")).minWidth', '0px');
+    shouldBeEqualToString('getComputedStyle(document.getElementById("baz-with-renderer")).minWidth', expectMatch ? '1px': '0px');
+    shouldBeEqualToString('getComputedStyle(document.getElementById("bar-without-renderer")).minWidth', '0px');
+    shouldBeEqualToString('getComputedStyle(document.getElementById("baz-without-renderer")).minWidth', expectMatch ? '1px': '0px');
+}
+
+function setClass(className) {
+    var allFoos = document.querySelectorAll("foo");
+    for (var i = 0; i < allFoos.length; ++i)
+        allFoos[i].className = className;
+}
+
+debug("Initial state does not match, the class is not there.");
+testColor(false);
+
+debug("Adding the class, the extra rules should match.");
+setClass("webkit")
+testColor(true);
+
+debug("Removing the class, we should be back to the original state.");
+setClass("")
+testColor(false);
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

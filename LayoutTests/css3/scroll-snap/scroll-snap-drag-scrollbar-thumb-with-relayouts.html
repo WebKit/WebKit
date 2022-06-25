@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Dragging the scrollbar thumb while triggering layout should trigger scroll snapping</title>
+        <style type="text/css">
+            /* Use customized scrollbar to avoid platform differences. */
+            ::-webkit-scrollbar {
+                width: 20px;
+                height: 20px;
+            }
+            ::-webkit-scrollbar-button {
+                height: 20px;
+                width: 20px;
+                background-color: blue;
+            }
+
+            ::-webkit-scrollbar-track-piece  {
+                background-color: gray;
+            }
+
+            ::-webkit-scrollbar-thumb {
+                height: 20px;
+                width: 20px;
+                background-color: black;
+            }
+
+            body {
+                margin: 0px;
+            }
+
+            .container {
+                height: 200px;
+                width: 200px;
+                overflow: auto;
+                scroll-snap-type: both mandatory;
+            }
+
+            .horizontal-drawer {
+                height: 100%;
+                width: 500px;
+            }
+
+            .block {
+                height: 100%;
+                width: 250px;
+                scroll-snap-align: start;
+            }
+        </style>
+        <script src="../../resources/js-test.js"></script>
+        <script src="../../resources/ui-helper.js"></script>
+        <script>
+        window.jsTestIsAsync = true;
+
+        async function onLoad()
+        {
+            let sawZero = false;
+            let horizontalContainer = document.getElementById("horizontal-container");
+            horizontalContainer.addEventListener('scroll', () => {
+                document.getElementById('horizontal-block').innerText = horizontalContainer.scrollLeft;
+                sawZero ||= horizontalContainer.scrollLeft == 0;
+            })
+
+            let verticalContainer = document.getElementById("vertical-container");
+            verticalContainer.addEventListener('scroll', () => {
+                document.getElementById('vertical-block').innerText = verticalContainer.scrollTop;
+                sawZero ||= verticalContainer.scrollTop == 0;
+            })
+
+            if (window.eventSender == undefined) {
+                document.getElementById('console').innerText = "Dragging the scrollbar thumb should trigger scroll snapping.";
+                return;
+            }
+            try {
+                eventSender.mouseMoveTo(20, 190);
+                eventSender.mouseDown();
+
+                // Pause and move to trigger relayouts.
+                eventSender.mouseMoveTo(40, 190);
+                await UIHelper.delayFor(1);
+                eventSender.mouseMoveTo(50, 190);
+                await UIHelper.delayFor(1);
+
+                eventSender.mouseMoveTo(80, 190);
+                eventSender.mouseUp();
+
+                await UIHelper.waitForTargetScrollAnimationToSettle(horizontalContainer);
+                expectTrue(horizontalContainer.scrollLeft == 250, "dragging the horizontal scrollbar thumb snapped");
+                expectTrue(sawZero === false, "relayouts should not have snapped back");
+
+                sawZero = false;
+                eventSender.mouseMoveTo(190, 220);
+                eventSender.mouseDown();
+
+                // Pause and move to trigger relayouts.
+                eventSender.mouseMoveTo(190, 250);
+                await UIHelper.delayFor(1);
+                eventSender.mouseMoveTo(190, 255);
+                await UIHelper.delayFor(1);
+
+                eventSender.mouseMoveTo(190, 270);
+                eventSender.mouseUp();
+                await UIHelper.waitForTargetScrollAnimationToSettle(verticalContainer);
+                expectTrue(verticalContainer.scrollTop == 180, "dragging the vertical scrollbar thumb snapped");
+                expectTrue(sawZero === false, "relayouts should not have snapped back");
+            } catch (e) {
+                console.log(e);
+            } finally {
+                finishJSTest();
+            }
+        }
+        </script>
+    </head>
+    <body onload="onLoad();">
+        <div id="horizontal-container" class="container">
+            <div class="horizontal-drawer">
+                <div class="block" id="horizontal-block" style="float: left; background: #80475E"></div>
+                <div class="block" style="float: left; background: #CC5A71"></div>
+            </div>
+        </div>
+        <div id="vertical-container" class="container">
+            <div class="block" id="vertical-block" style="background: #80475E"></div>
+            <div class="block" style="background: #CC5A71"></div>
+        </div>
+        <p id="console"></p>
+    </body>
+</html>

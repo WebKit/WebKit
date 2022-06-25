@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<script src='resources/cookies-test-pre.js'></script>
+
+<script>
+description('Tests that document.cookie returns the right value after a sync XHR');
+
+document.cookie = "testKey=testValue";
+shouldBeEqualToString('normalizeCookie(document.cookie)', 'testKey=testValue');
+var xhr = new XMLHttpRequest();
+xhr.open('GET', 'resources/setCookies.cgi', false);
+var cookie = 'xhrKey=xhrValue; path=/';
+xhr.setRequestHeader('SET-COOKIE', cookie);
+xhr.send();
+
+// This is so the cookie gets removed at the end of the test.
+registerCookieForCleanup(cookie);
+
+shouldBe('xhr.status', '200');
+shouldBeEqualToString('normalizeCookie(document.cookie)', 'testKey=testValue; xhrKey=xhrValue');
+
+</script>
+<script src='resources/cookies-test-post.js'></script>

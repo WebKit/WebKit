@@ -1,0 +1,1383 @@
+/*
+ * The default style sheet used to render HTML.
+ *
+ * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
+ * Copyright (C) 2003-2011, 2014 Apple Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ *
+ */
+
+@namespace "http://www.w3.org/1999/xhtml";
+
+html {
+    display: block;
+#if defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT
+    color: text;
+#endif
+}
+
+/* children of the <head> element all have display:none */
+head, link, meta, script, style, title {
+    display: none;
+}
+
+/* generic block-level elements */
+
+body {
+    display: block;
+    margin: 8px;
+}
+
+p {
+    display: block;
+    margin-block-start: 1__qem;
+    margin-block-end: 1__qem;
+    margin-inline-start: 0;
+    margin-inline-end: 0;
+}
+
+address, article, aside, div, footer, header, hgroup, main, nav, section {
+    display: block;
+}
+
+marquee {
+    display: inline-block;
+}
+
+blockquote {
+    display: block;
+    margin-block-start: 1__qem;
+    margin-block-end: 1em;
+    margin-inline-start: 40px;
+    margin-inline-end: 40px;
+}
+
+figcaption {
+    display: block;
+}
+
+figure {
+    display: block;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 40px;
+    margin-inline-end: 40px;
+}
+
+q {
+    display: inline;
+}
+
+q::before {
+    content: open-quote;
+}
+
+q::after {
+    content: close-quote;
+}
+
+center {
+    display: block;
+    /* special centering to be able to emulate the html4/netscape behaviour */
+    text-align: -webkit-center;
+}
+
+hr {
+    display: block;
+    margin-block-start: 0.5em;
+    margin-block-end: 0.5em;
+    margin-inline-start: auto;
+    margin-inline-end: auto;
+    border-style: inset;
+    border-width: 1px;
+}
+
+/* media elements */
+
+body:-webkit-full-page-media {
+    background-color: rgb(38, 38, 38);
+}
+
+video {
+    object-fit: contain;
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+    -webkit-tap-highlight-color: transparent;
+#endif
+}
+
+audio {
+    width: 200px;
+    height: 25px;
+}
+
+/* heading elements */
+
+h1 {
+    display: block;
+    font-size: 2em;
+    margin-block-start: 0.67__qem;
+    margin-block-end: 0.67em;
+    margin-inline-start: 0;
+    margin-inline-end: 0;
+    font-weight: bold;
+}
+
+:is(article, aside, nav, section) h1 {
+    font-size: 1.5em;
+    margin-block-start: 0.83__qem;
+    margin-block-end: 0.83em;
+}
+
+:is(article, aside, nav, section) :is(article, aside, nav, section) h1 {
+    font-size: 1.17em;
+    margin-block-start: 1__qem;
+    margin-block-end: 1em;
+}
+
+:is(article, aside, nav, section) :is(article, aside, nav, section) :is(article, aside, nav, section) h1 {
+    font-size: 1.00em;
+    margin-block-start: 1.33__qem;
+    margin-block-end: 1.33em;
+}
+
+:is(article, aside, nav, section) :is(article, aside, nav, section) :is(article, aside, nav, section) :is(article, aside, nav, section) h1 {
+    font-size: .83em;
+    margin-block-start: 1.67__qem;
+    margin-block-end: 1.67em;
+}
+
+:is(article, aside, nav, section) :is(article, aside, nav, section) :is(article, aside, nav, section) :is(article, aside, nav, section) :is(article, aside, nav, section) h1 {
+    font-size: .67em;
+    margin-block-start: 2.33__qem;
+    margin-block-end: 2.33em;
+}
+
+h2 {
+    display: block;
+    font-size: 1.5em;
+    margin-block-start: 0.83__qem;
+    margin-block-end: 0.83em;
+    margin-inline-start: 0;
+    margin-inline-end: 0;
+    font-weight: bold;
+}
+
+h3 {
+    display: block;
+    font-size: 1.17em;
+    margin-block-start: 1__qem;
+    margin-block-end: 1em;
+    margin-inline-start: 0;
+    margin-inline-end: 0;
+    font-weight: bold;
+}
+
+h4 {
+    display: block;
+    margin-block-start: 1.33__qem;
+    margin-block-end: 1.33em;
+    margin-inline-start: 0;
+    margin-inline-end: 0;
+    font-weight: bold;
+}
+
+h5 {
+    display: block;
+    font-size: .83em;
+    margin-block-start: 1.67__qem;
+    margin-block-end: 1.67em;
+    margin-inline-start: 0;
+    margin-inline-end: 0;
+    font-weight: bold;
+}
+
+h6 {
+    display: block;
+    font-size: .67em;
+    margin-block-start: 2.33__qem;
+    margin-block-end: 2.33em;
+    margin-inline-start: 0;
+    margin-inline-end: 0;
+    font-weight: bold;
+}
+
+/* tables */
+
+table {
+    display: table;
+    border-collapse: separate;
+    border-spacing: 2px;
+    border-color: gray;
+    text-indent: initial;
+}
+
+thead {
+    display: table-header-group;
+    vertical-align: middle;
+    border-color: inherit;
+}
+
+tbody {
+    display: table-row-group;
+    vertical-align: middle;
+    border-color: inherit;
+}
+
+tfoot {
+    display: table-footer-group;
+    vertical-align: middle;
+    border-color: inherit;
+}
+
+/* for tables without table section elements (can happen with XHTML or dynamically created tables) */
+table > tr {
+    vertical-align: middle;
+}
+
+col {
+    display: table-column;
+}
+
+colgroup {
+    display: table-column-group;
+}
+
+tr {
+    display: table-row;
+    vertical-align: inherit;
+    border-color: inherit;
+}
+
+td, th {
+    display: table-cell;
+    vertical-align: inherit;
+}
+
+th {
+    font-weight: bold;
+    text-align: -internal-th-center;
+}
+
+caption {
+    display: table-caption;
+    text-align: -webkit-center;
+}
+
+/* lists */
+
+ul, menu, dir {
+    display: block;
+    list-style-type: disc;
+    margin-block-start: 1__qem;
+    margin-block-end: 1em;
+    margin-inline-start: 0;
+    margin-inline-end: 0;
+    padding-inline-start: 40px;
+}
+
+ol {
+    display: block;
+    list-style-type: decimal;
+    margin-block-start: 1__qem;
+    margin-block-end: 1em;
+    margin-inline-start: 0;
+    margin-inline-end: 0;
+    padding-inline-start: 40px;
+}
+
+li {
+    display: list-item;
+    text-align: match-parent;
+}
+
+/* FIXME: this should also match ::before::marker and ::after::marker but we don't support
+   this yet. When we do, we can remove the code specific to ::before and ::after in
+   RenderListItem::computeMarkerStyle(), see bugs.webkit.org/b/218897. */
+::marker {
+    unicode-bidi: isolate;
+    font-variant-numeric: tabular-nums;
+    white-space: pre;
+    text-transform: none;
+}
+
+ul ul, ol ul {
+    list-style-type: circle;
+}
+
+ol ol ul, ol ul ul, ul ol ul, ul ul ul {
+    list-style-type: square;
+}
+
+dd {
+    display: block;
+    margin-inline-start: 40px;
+}
+
+dl {
+    display: block;
+    margin-block-start: 1__qem;
+    margin-block-end: 1em;
+    margin-inline-start: 0;
+    margin-inline-end: 0;
+}
+
+dt {
+    display: block;
+}
+
+ol ul, ul ol, ul ul, ol ol {
+    margin-block-start: 0;
+    margin-block-end: 0;
+}
+
+/* form elements */
+
+form {
+    display: block;
+    margin-top: 0__qem;
+}
+
+label {
+    cursor: default;
+}
+
+legend {
+    display: block;
+    padding-inline-start: 2px;
+    padding-inline-end: 2px;
+    border: none;
+}
+
+fieldset {
+    display: block;
+    margin-inline-start: 2px;
+    margin-inline-end: 2px;
+    padding-block-start: 0.35em;
+    padding-inline-start: 0.75em;
+    padding-inline-end: 0.75em;
+    padding-block-end: 0.625em;
+    border: 2px groove ThreeDFace;
+    min-width: min-content;
+}
+
+button {
+    appearance: auto;
+}
+
+/* Form controls don't go vertical. */
+input, textarea, select, button, meter, progress {
+    writing-mode: horizontal-tb !important;
+}
+
+input, textarea, select, button {
+    margin: 0__qem;
+#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
+    font: -webkit-small-control;
+#endif
+    color: initial;
+    letter-spacing: normal;
+    word-spacing: normal;
+    line-height: normal;
+    text-transform: none;
+    text-indent: 0;
+    text-shadow: none;
+    display: inline-block;
+    text-align: start;
+}
+
+input[type="hidden"] {
+    display: none;
+}
+
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+textarea,
+#endif
+input {
+    appearance: auto;
+#if defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT
+    color: text;
+    background-color: -webkit-control-background;
+#else
+    background-color: white;
+#endif
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+    border-radius: 5px;
+    border: 1px solid -apple-system-secondary-label;
+    font: 11px system-ui;
+    padding: 0.2em 0.5em 0.3em 0.5em;
+#else
+    border: 2px inset;
+    padding: 1px;
+#endif
+    -webkit-rtl-ordering: logical;
+    user-select: text;
+    cursor: auto;
+}
+
+#if defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT
+@media (prefers-dark-interface) {
+    input {
+        background-color: transparent;
+    }
+}
+#endif
+
+input[type="search"] {
+    box-sizing: border-box;
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+    border: 1px solid -webkit-control-background;
+    background-color: -apple-system-opaque-tertiary-fill;
+#endif
+}
+
+input::-webkit-textfield-decoration-container {
+    display: flex;
+    align-items: center;
+    content: none !important;
+}
+
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-results-decoration {
+    appearance: auto;
+    display: block;
+    flex: none;
+    align-self: flex-start;
+    margin: auto 0;
+}
+
+input[type="search"]::-webkit-search-results-button {
+    appearance: auto;
+    display: block;
+    flex: none;
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+    align-self: flex-start;
+    margin: auto 0;
+#endif
+}
+
+#if defined(ENABLE_DATE_AND_TIME_INPUT_TYPES) && ENABLE_DATE_AND_TIME_INPUT_TYPES
+input:is([type="date"], [type="time"], [type="datetime-local"], [type="month"], [type="week"]) {
+    align-items: center;
+    display: inline-flex;
+    overflow: hidden;
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+    border: 1px solid -webkit-control-background;
+    background-color: -apple-system-opaque-secondary-fill;
+    font-family: system-ui;
+    color: -apple-system-blue;
+    padding: 0.2em 0.5em;
+#else
+    outline: none;
+    font-variant-numeric: tabular-nums;
+    /* FIXME: Font features should be defined in a @font-feature-values rule, so that the feature setting is only applied to the system font. */
+    /* "ss03" enables the raised colon separator on the system font. */
+    font-feature-settings: "ss03";
+#endif
+}
+
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+input:is([type="date"], [type="time"], [type="datetime-local"], [type="month"], [type="week"]):disabled {
+    background-color: -apple-system-opaque-secondary-fill-disabled;
+    color: -apple-system-tertiary-label;
+    opacity: initial;
+}
+#endif
+
+#endif
+
+input::-webkit-date-and-time-value {
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+    margin: 0px;
+    text-align: center;
+    width: 100%;
+#else
+    margin: 1px 24px 1px 4px;
+    white-space: pre;
+#endif
+}
+
+/* FIXME: Styling inner elements of the date control should be specific to input[type="date"]. */
+
+input::-webkit-datetime-edit {
+    display: inline-block;
+    overflow: hidden;
+    padding: 1px;
+}
+
+input::-webkit-datetime-edit-fields-wrapper {
+    display: inline-block;
+    white-space: pre;
+}
+
+input::-webkit-datetime-edit-year-field,
+input::-webkit-datetime-edit-month-field,
+input::-webkit-datetime-edit-day-field,
+input::-webkit-datetime-edit-hour-field,
+input::-webkit-datetime-edit-minute-field,
+input::-webkit-datetime-edit-second-field,
+input::-webkit-datetime-edit-millisecond-field,
+input::-webkit-datetime-edit-meridiem-field {
+    display: inline-block;
+    font: inherit !important;
+    padding: 1px;
+    text-align: center;
+}
+
+input::-webkit-datetime-edit-year-field:focus,
+input::-webkit-datetime-edit-month-field:focus,
+input::-webkit-datetime-edit-day-field:focus,
+input::-webkit-datetime-edit-hour-field:focus,
+input::-webkit-datetime-edit-minute-field:focus,
+input::-webkit-datetime-edit-second-field:focus,
+input::-webkit-datetime-edit-millisecond-field:focus,
+input::-webkit-datetime-edit-meridiem-field:focus {
+#if defined(WTF_PLATFORM_COCOA) && WTF_PLATFORM_COCOA
+    background-color: -apple-system-control-accent;
+    border-radius: 3px;
+    color: white;
+#else
+    background-color: highlight;
+    color: highlighttext;
+#endif
+    outline: none;
+}
+
+input[disabled]::-webkit-datetime-edit-year-field,
+input[disabled]::-webkit-datetime-edit-month-field,
+input[disabled]::-webkit-datetime-edit-day-field,
+input[disabled]::-webkit-datetime-edit-hour-field,
+input[disabled]::-webkit-datetime-edit-minute-field,
+input[disabled]::-webkit-datetime-edit-second-field,
+input[disabled]::-webkit-datetime-edit-millisecond-field,
+input[disabled]::-webkit-datetime-edit-meridiem-field,
+input[disabled]::-webkit-datetime-edit-text {
+    color: GrayText;
+}
+
+input::-webkit-datetime-edit-text {
+    display: inline;
+}
+
+input::-webkit-inner-spin-button {
+    appearance: auto;
+    display: block;
+    position: relative;
+    cursor: default;
+    /* This height property is ignored for input type "number" and others which
+     * use RenderTextControlSingleLine as renderer which sets height of spin
+     * button in layout(). */
+    height: 1.5em;
+    flex: none;
+    user-select: none;
+}
+
+input::-webkit-strong-password-auto-fill-button {
+    flex-shrink: 1 !important;
+    font-family: -apple-system !important;
+    -webkit-text-security: none !important;
+    user-select: none !important;
+    pointer-events: none !important;
+    text-align: right !important;
+    color: rgba(0, 0, 0, 0.8) !important;
+    padding-left: 6px !important;
+    white-space: nowrap !important;
+}
+
+input::-webkit-credentials-auto-fill-button {
+#if defined(WTF_PLATFORM_COCOA) && WTF_PLATFORM_COCOA
+    background-image: url('data:image/svg+xml,%3Csvg xmlns%3D"http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg" viewBox%3D"0 0 26 26"%3E%3Cpath d%3D"m8.692 1h8.617c2.675 0 3.644.278 4.622.801s1.745 1.29 2.268 2.268.801 1.948.801 4.622v8.617c0 2.675-.278 3.644-.801 4.622s-1.29 1.745-2.268 2.268-1.948.801-4.622.801h-8.617c-2.675 0-3.644-.278-4.622-.801s-1.745-1.29-2.268-2.268-.801-1.948-.801-4.622v-8.616c0-2.675.278-3.644.801-4.622s1.29-1.745 2.268-2.268 1.948-.801 4.622-.801z" fill%3D"%23e5e5e5" opacity%3D".64"%2F%3E%3Cpath d%3D"m9.838 8.318c-.308 0-.57-.108-.787-.325s-.325-.478-.325-.785.108-.57.323-.787.478-.325.789-.325c.303 0 .564.109.782.327s.327.48.327.785c0 .306-.109.568-.327.785s-.479.325-.782.325zm0-3.84c-.59 0-1.139.108-1.648.324s-.956.517-1.341.903-.686.833-.904 1.341-.326 1.055-.326 1.641c0 .571.106 1.112.317 1.622s.51.961.896 1.352.841.698 1.366.918v6.082c0 .101.018.196.054.287s.092.173.167.247l1.122 1.077c.083.078.19.12.32.126s.244-.039.343-.136l1.998-1.998c.104-.105.155-.227.153-.365s-.054-.26-.157-.365l-1.094-1.083 1.555-1.553c.101-.102.151-.223.149-.361-.001-.138-.054-.26-.158-.365l-1.488-1.496c.929-.411 1.644-.964 2.142-1.66.499-.696.748-1.472.748-2.329 0-.581-.109-1.126-.327-1.635s-.52-.956-.905-1.341-.833-.687-1.343-.905-1.057-.327-1.639-.327z" opacity%3D".78"%2F%3E%3Cpath d%3D"m19.091 15.574c.108-.002.207-.023.296-.064.09-.041.179-.105.268-.193l2.462-2.522c.126-.124.189-.278.189-.46 0-.124-.03-.237-.091-.34s-.141-.185-.242-.245c-.101-.061-.212-.091-.334-.091-.187 0-.352.073-.495.22l-2.165 2.249h.232l-2.175-2.249c-.145-.147-.311-.22-.497-.22-.122 0-.234.03-.334.091-.101.061-.182.142-.242.245-.061.103-.091.216-.091.34 0 .09.015.173.046.248s.078.146.14.212l2.467 2.521c.171.171.36.256.565.256z" opacity%3D".75"%2F%3E%3C%2Fsvg%3E');
+    width: 24px;
+    height: 24px;
+    margin-left: 2px;
+    margin-right: 1px;
+    mix-blend-mode: luminosity;
+#else
+    mask-image: url('data:image/svg+xml,<svg viewBox="0 0 44 24" xmlns="http://www.w3.org/2000/svg"><path d="M 30.25 9.25 L 36.5 15.75 L 42.75 9.25" fill="none" stroke="black" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M 16 3.5 C 16 2.672 16.672 2 17.5 2 C 18.3 2 19 2.7 19 3.5 C 19 4.3 18.3 5 17.5 5 C 16.7 5 16 4.3 16 3.5 Z M 11 6.5 C 11 10.1 13.9 13 17.5 13 C 21.1 13 24 10.1 24 6.5 C 24 2.9 21.1 0 17.5 0 C 13.9 0 11 2.9 11 6.5 Z"/><path d="M 20 17.3 L 20 18.6 L 20.9 19.9 C 21 20 21 20 21 20 L 17.7 23.8 C 17.7 23.8 17.7 23.8 17.7 23.8 C 17.5 23.9 17.4 23.9 17.3 23.8 L 15 21 L 15 11 L 20 11 L 20 14.8 L 21 15.9 C 21 16 21 16 20.9 16.1 L 20 17.3 Z M 17 13 L 17 21.3 L 17.5 21.8 L 18 21.3 L 18 13 L 17 13 Z"/></svg>');
+    mask-size: 22px 12px;
+    width: 22px;
+    height: 12px;
+    margin-left: 3px;
+    margin-right: 2px;
+    background-color: black;
+#endif
+    flex: none;
+    user-select: none;
+}
+
+input::-webkit-credentials-auto-fill-button:hover {
+#if defined(WTF_PLATFORM_COCOA) && WTF_PLATFORM_COCOA
+    background-image: url('data:image/svg+xml,%3Csvg xmlns%3D"http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg" viewBox%3D"0 0 26 26"%3E%3Cpath d%3D"M8.692 1h8.617c2.675 0 3.644.278 4.622.801.978.523 1.745 1.29 2.268 2.268.523.978.801 1.948.801 4.622v8.617c0 2.675-.278 3.644-.801 4.622-.523.978-1.29 1.745-2.268 2.268-.978.523-1.948.801-4.622.801H8.692c-2.675 0-3.644-.278-4.622-.801-.978-.523-1.745-1.29-2.268-2.268-.523-.978-.801-1.948-.801-4.622V8.692c0-2.675.278-3.644.801-4.622.523-.978 1.29-1.745 2.268-2.268.978-.523 1.948-.801 4.622-.801V1Z" fill%3D"%23e5e5e5" fill-opacity%3D".7"%2F%3E%3Cpath fill-opacity%3D".15" d%3D"M17.309 1c2.675 0 3.644.278 4.622.801.978.523 1.745 1.29 2.268 2.268.523.978.801 1.948.801 4.622v8.617c0 2.675-.278 3.644-.801 4.622-.523.978-1.29 1.745-2.268 2.268-.978.523-1.948.801-4.622.801H8.692c-2.675 0-3.644-.278-4.622-.801-.978-.523-1.745-1.29-2.268-2.268-.523-.978-.801-1.948-.801-4.622V8.692c0-2.675.278-3.644.801-4.622.523-.978 1.29-1.745 2.268-2.268.978-.523 1.948-.801 4.622-.801L17.309 1ZM9.692 2l-1 .001c-2.28768403 0-3.2042805.17686116-4.15042927.68282824-.80370939.42979551-1.42794698 1.0540331-1.85774249 1.85774249C2.17772202 5.48797969 2.001 6.40369128 2.001 8.692v8.616c0 2.287684.17686116 3.2042805.68282824 4.1504293.42979551.8037094 1.0540331 1.4279469 1.85774249 1.8577425C5.48797969 23.822278 6.40369128 23.999 8.692 23.999h8.617c2.287684 0 3.2042805-.1768612 4.1504293-.6828282.8037094-.4297956 1.4279469-1.0540331 1.8577425-1.8577425C23.823278 20.5120203 24 19.5963087 24 17.308V8.691c0-2.28768403-.1768612-3.2042805-.6828282-4.15042927-.4297956-.80370939-1.0540331-1.42794698-1.8577425-1.85774249C20.5130203 2.17672202 19.5973087 2 17.309 2H9.692Z" fill%3D"%23e6e6e6"%2F%3E%3Cpath d%3D"M9.838 8.318c-.308 0-.57-.108-.787-.325s-.325-.478-.325-.785.108-.57.323-.787.478-.325.789-.325c.303 0 .564.109.782.327s.327.48.327.785c0 .306-.109.568-.327.785s-.479.325-.782.325zm0-3.84c-.59 0-1.139.108-1.648.324s-.956.517-1.341.903-.686.833-.904 1.341-.326 1.055-.326 1.641c0 .571.106 1.112.317 1.622s.51.961.896 1.352.841.698 1.366.918v6.082c0 .101.018.196.054.287s.092.173.167.247l1.122 1.077c.083.078.19.12.32.126s.244-.039.343-.136l1.998-1.998c.104-.105.155-.227.153-.365s-.054-.26-.157-.365l-1.094-1.083 1.555-1.553c.101-.102.151-.223.149-.361-.001-.138-.054-.26-.158-.365l-1.488-1.496c.929-.411 1.644-.964 2.142-1.66.499-.696.748-1.472.748-2.329 0-.581-.109-1.126-.327-1.635s-.52-.956-.905-1.341-.833-.687-1.343-.905-1.057-.327-1.639-.327zm9.253 11.096c.108-.002.207-.023.296-.064.09-.041.179-.105.268-.193l2.462-2.522c.126-.124.189-.278.189-.46 0-.124-.03-.237-.091-.34s-.141-.185-.242-.245c-.101-.061-.212-.091-.334-.091-.187 0-.352.073-.495.22l-2.165 2.249h.232l-2.175-2.249c-.145-.147-.311-.22-.497-.22-.122 0-.234.03-.334.091-.101.061-.182.142-.242.245-.061.103-.091.216-.091.34 0 .09.015.173.046.248s.078.146.14.212l2.467 2.521c.171.171.36.256.565.256z"%2F%3E%3C%2Fsvg%3E');
+#else
+    background-color: rgb(0, 122, 255);
+#endif
+}
+
+input::-webkit-credentials-auto-fill-button:active {
+#if defined(WTF_PLATFORM_COCOA) && WTF_PLATFORM_COCOA
+    background-image: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2026%2026%22%3E%3Cpath%20fill%3D%22%23B2B2B2%22%20fill-opacity%3D%22.6%22%20d%3D%22M8.692%201h8.617c2.675%200%203.644.278%204.622.801.978.523%201.745%201.29%202.268%202.268.523.978.801%201.948.801%204.622v8.617c0%202.675-.278%203.644-.801%204.622-.523.978-1.29%201.745-2.268%202.268-.978.523-1.948.801-4.622.801H8.692c-2.675%200-3.644-.278-4.622-.801-.978-.523-1.745-1.29-2.268-2.268-.523-.978-.801-1.948-.801-4.622V8.692c0-2.675.278-3.644.801-4.622.523-.978%201.29-1.745%202.268-2.268.978-.523%201.948-.801%204.622-.801V1Z%22%2F%3E%3Cpath%20fill%3D%22%23B2B2B2%22%20fill-opacity%3D%22.15%22%20d%3D%22M17.309%201c2.675%200%203.644.278%204.622.801.978.523%201.745%201.29%202.268%202.268.523.978.801%201.948.801%204.622v8.617c0%202.675-.278%203.644-.801%204.622-.523.978-1.29%201.745-2.268%202.268-.978.523-1.948.801-4.622.801H8.692c-2.675%200-3.644-.278-4.622-.801-.978-.523-1.745-1.29-2.268-2.268-.523-.978-.801-1.948-.801-4.622V8.692c0-2.675.278-3.644.801-4.622.523-.978%201.29-1.745%202.268-2.268.978-.523%201.948-.801%204.622-.801L17.309%201ZM9.692%202l-1%20.001c-2.28768403%200-3.2042805.17686116-4.15042927.68282824-.80370939.42979551-1.42794698%201.0540331-1.85774249%201.85774249C2.17772202%205.48797969%202.001%206.40369128%202.001%208.692v8.616c0%202.287684.17686116%203.2042805.68282824%204.1504293.42979551.8037094%201.0540331%201.4279469%201.85774249%201.8577425C5.48797969%2023.822278%206.40369128%2023.999%208.692%2023.999h8.617c2.287684%200%203.2042805-.1768612%204.1504293-.6828282.8037094-.4297956%201.4279469-1.0540331%201.8577425-1.8577425C23.823278%2020.5120203%2024%2019.5963087%2024%2017.308V8.691c0-2.28768403-.1768612-3.2042805-.6828282-4.15042927-.4297956-.80370939-1.0540331-1.42794698-1.8577425-1.85774249C20.5130203%202.17672202%2019.5973087%202%2017.309%202H9.692Z%22%2F%3E%3Cpath%20d%3D%22M9.838%208.318c-.308%200-.57-.108-.787-.325s-.325-.478-.325-.785.108-.57.323-.787.478-.325.789-.325c.303%200%20.564.109.782.327s.327.48.327.785c0%20.306-.109.568-.327.785s-.479.325-.782.325zm0-3.84c-.59%200-1.139.108-1.648.324s-.956.517-1.341.903-.686.833-.904%201.341-.326%201.055-.326%201.641c0%20.571.106%201.112.317%201.622s.51.961.896%201.352.841.698%201.366.918v6.082c0%20.101.018.196.054.287s.092.173.167.247l1.122%201.077c.083.078.19.12.32.126s.244-.039.343-.136l1.998-1.998c.104-.105.155-.227.153-.365s-.054-.26-.157-.365l-1.094-1.083%201.555-1.553c.101-.102.151-.223.149-.361-.001-.138-.054-.26-.158-.365l-1.488-1.496c.929-.411%201.644-.964%202.142-1.66.499-.696.748-1.472.748-2.329%200-.581-.109-1.126-.327-1.635s-.52-.956-.905-1.341-.833-.687-1.343-.905-1.057-.327-1.639-.327zM19.091%2015.574c.108-.002.207-.023.296-.064.09-.041.179-.105.268-.193l2.462-2.522c.126-.124.189-.278.189-.46%200-.124-.03-.237-.091-.34s-.141-.185-.242-.245c-.101-.061-.212-.091-.334-.091-.187%200-.352.073-.495.22l-2.165%202.249h.232l-2.175-2.249c-.145-.147-.311-.22-.497-.22-.122%200-.234.03-.334.091-.101.061-.182.142-.242.245-.061.103-.091.216-.091.34%200%20.09.015.173.046.248s.078.146.14.212l2.467%202.521c.171.171.36.256.565.256z%22%2F%3E%3C%2Fsvg%3E');
+#else
+    background-color: rgb(0, 60, 219);
+#endif
+}
+
+input::-webkit-contacts-auto-fill-button {
+#if (defined(HAVE_ALTERNATE_ICONS) && HAVE_ALTERNATE_ICONS)
+    mask-image: url('data:image/svg+xml,<svg viewBox="0 0 44 24" xmlns="http://www.w3.org/2000/svg"><path d="M 30.25 9.25 L 36.5 15.75 L 42.75 9.25" fill="none" stroke="black" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M 12 24 C 18.5647 24 24 18.5529 24 12 C 24 5.4353 18.553 0 11.9883 0 C 5.4353 0 0 5.4353 0 12 C 0 18.5529 5.4471 24 12 24 Z M 12 16.0118 C 8.4706 16.0118 5.7412 17.2706 4.5529 18.6823 C 2.9647 16.9176 2.0118 14.5765 2.0118 12 C 2.0118 6.447 6.4353 2 11.9883 2 C 17.5412 2 21.9883 6.447 22 12 C 22.0119 14.5765 21.0471 16.9176 19.4589 18.6941 C 18.2706 17.2823 15.5412 16.0118 12 16.0118 Z M 12 14.0118 C 14.2588 14.0353 16.0353 12.1059 16.0353 9.5765 C 16.0353 7.2 14.2588 5.2235 12 5.2235 C 9.7412 5.2235 7.9529 7.2 7.9647 9.5765 C 7.9765 12.1059 9.7412 13.9882 12 14.0118 Z"/></svg>');
+#else
+    mask-image: url('data:image/svg+xml,<svg viewBox="0 0 44 24" xmlns="http://www.w3.org/2000/svg"><path d="M 30.25 9.25 L 36.5 15.75 L 42.75 9.25" fill="none" stroke="black" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="11" fill="none" stroke="black" stroke-width="2"/><path d="M 12 11.5 C 10.3 11.5 9 10.1 9 8.2 C 9 6.5 10.3 5 12 5 C 13.6 5 15 6.5 15 8.2 C 15 10.1 13.6 11.5 12 11.5 Z M 6.6 18 C 6.2 18 6 17.7 6 17.4 C 6 16.2 7.9 13 12 13 C 16.1 13 18 16.2 18 17.4 C 18 17.7 17.8 18 17.4 18 L 6.6 18 Z"/></svg>');
+#endif
+    mask-size: 22px 12px;
+    width: 22px;
+    height: 12px;
+    margin-left: 3px;
+    margin-right: 2px;
+    background-color: black;
+    flex: none;
+    user-select: none;
+}
+
+input::-webkit-contacts-auto-fill-button:hover {
+    background-color: rgb(0, 122, 255);
+}
+
+input::-webkit-contacts-auto-fill-button:active {
+    background-color: rgb(0, 60, 219);
+}
+
+input::-webkit-credit-card-auto-fill-button {
+    mask-image: url('data:image/svg+xml,<svg viewBox="0 0 44 24" xmlns="http://www.w3.org/2000/svg"><path d="M 30.25 9.25 L 36.5 15.75 L 42.75 9.25" fill="none" stroke="black" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="1" y="4" width="22" height="16" rx="2" fill="none" stroke="black" stroke-width="2"/><rect x="2" y="8" width="20" height="3"/><rect x="3" y="12" width="5" height="4" rx="1"/></svg>');
+    mask-size: 22px 12px;
+    width: 22px;
+    height: 12px;
+    margin-left: 3px;
+    margin-right: 2px;
+    background-color: black;
+    flex: none;
+    user-select: none;
+}
+
+input::-webkit-credit-card-auto-fill-button:hover {
+    background-color: rgb(0, 122, 255);
+}
+
+input::-webkit-credit-card-auto-fill-button:active {
+    background-color: rgb(0, 60, 219);
+}
+
+input::-webkit-caps-lock-indicator {
+    appearance: auto;
+    content: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17"><path fill="black" fill-opacity="0.4" d="M12.5 0.5A 4 4 0 0 1 16.5 4.5L 16.5 12.5A 4 4 0 0 1 12.5 16.5L 4.5 16.5A 4 4 0 0 1 0.5 12.5L 0.5 4.5A 4 4 0 0 1 4.5 0.5L 12.5 0.5M 8.5 2L 4 7L 6.25 7L 6.25 10.25L 10.75 10.25L 10.75 7L 13 7L 8.5 2M 10.75 12L 6.25 12L 6.25 14.25L 10.75 14.25L 10.75 12"/></svg>');
+    max-width: 17px;
+    align-self: stretch;
+    flex: none;
+    user-select: none;
+}
+
+#if defined(ENABLE_DATALIST_ELEMENT) && ENABLE_DATALIST_ELEMENT
+input::-webkit-list-button {
+    appearance: auto;
+    display: block;
+    position: relative;
+    cursor: default;
+    align-self: stretch;
+    flex: none;
+    user-select: none;
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+    width: 11px;
+    /* Make it easier to hit the button on iOS */
+    padding: 7px;
+    margin: -7px;
+#else
+    width: 16px;
+    height: 100%;
+#endif
+}
+#endif
+
+select {
+    border-radius: 5px;
+}
+
+textarea {
+    appearance: auto;
+#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
+#if defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT
+    color: text;
+    background-color: -webkit-control-background;
+#else
+    background-color: white;
+#endif
+    border: 1px solid;
+    -webkit-rtl-ordering: logical;
+    user-select: text;
+    padding: 2px;
+#else
+    -webkit-nbsp-mode: space;
+    line-break: after-white-space;
+
+    /* On iOS we want to inherit the left and right padding for consistency with
+     other form controls (e.g. <input type="text">). We want to override the top
+     and bottom padding to ensure we have a symmetric look for text areas. */
+    padding-top: 2px;
+    padding-bottom: 2px;
+#endif
+    flex-direction: column;
+    resize: auto;
+    cursor: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+::placeholder {
+    -webkit-text-security: none;
+    color: darkGray;
+    pointer-events: none !important;
+}
+
+input::placeholder {
+    white-space: pre;
+    word-wrap: normal;
+    overflow: hidden;
+    line-height: initial !important;
+}
+
+input:is([type="hidden"], [type="image"], [type="file"]) {
+    appearance: initial;
+    padding: initial;
+    background-color: initial;
+    border: initial;
+}
+
+input[type="file"] {
+    align-items: baseline;
+    color: inherit;
+    text-align: start !important;
+}
+
+input:-webkit-autofill-and-obscured {
+    -webkit-text-security: disc !important;
+}
+
+input:-webkit-autofill-strong-password {
+    user-select: none !important;
+}
+
+input:-webkit-autofill-strong-password, input:-webkit-autofill-strong-password-viewable {
+    input-security: none !important;
+    cursor: default !important;
+    font-family: monospace;
+}
+
+input:-webkit-autofill, input:-webkit-autofill-strong-password, input:-webkit-autofill-strong-password-viewable, input:-webkit-autofill-and-obscured {
+    background-color: #FAFFBD !important;
+    background-image: none !important;
+    color: #000000 !important;
+}
+
+input:is([type="radio"], [type="checkbox"]) {
+    margin: 3px 2px;
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+    border: initial;
+    box-sizing: border-box;
+#else
+    padding: initial;
+    background-color: initial;
+    border: initial;
+#endif
+}
+
+input:is([type="button"], [type="submit"], [type="reset"]) {
+    white-space: pre;
+}
+
+input[type="file"]::file-selector-button {
+    white-space: nowrap;
+    margin: 0;
+    font-size: inherit;
+}
+
+input:is([type="button"], [type="submit"], [type="reset"]), input[type="file"]::file-selector-button, button {
+    align-items: flex-start;
+    text-align: center;
+    cursor: default;
+#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
+    color: ButtonText;
+    padding: 2px 6px 3px 6px;
+    border: 2px outset ButtonFace;
+    background-color: ButtonFace;
+#else
+    padding: 0 1.0em;
+    border: 1px solid -webkit-control-background;
+    font: 11px system-ui;
+    background-color: -apple-system-opaque-secondary-fill;
+    color: -apple-system-blue;
+#endif
+    box-sizing: border-box;
+}
+
+input:is([type="button"], [type="submit"], [type="reset"]):active, input[type="file"]::file-selector-button:active, button:active {
+#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
+    color: ActiveButtonText;
+#else
+    color: -apple-system-blue;
+#endif
+}
+
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+
+input[type="submit"], input[type="submit"]:active,
+button[type="submit"], button[type="submit"]:active,
+button[type="menu"], button[type="menu"]:active {
+    background-color: -apple-system-blue;
+    color: white;
+    font-weight: bold;
+}
+
+#endif
+
+input[type="range"] {
+    padding: initial;
+    border: initial;
+    margin: 2px;
+    color: #909090;
+}
+
+input[type="range"]::-webkit-slider-container, input[type="range"]::-webkit-media-slider-container {
+    flex: 1;
+    box-sizing: border-box;
+    display: flex;
+    align-contents: center;
+    min-width: 0;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+    flex: 1;
+    align-self: center;
+
+    box-sizing: border-box;
+    display: block;
+}
+
+input[type="range"]::-webkit-slider-thumb, input[type="range"]::-webkit-media-slider-thumb {
+    appearance: auto;
+    box-sizing: border-box;
+    display: block;
+}
+
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+input[type="range"]::-webkit-slider-thumb, input[type="range"]::-webkit-slider-thumb:active {
+    background-color: white;
+    border: initial;
+    box-shadow: 0px 6px 13px rgba(0, 0, 0, 0.2), 0px 0.5px 4px rgba(0, 0, 0, 0.2);
+}
+
+input[type="range"]::-webkit-media-slider-thumb {
+    background-color: white;
+    border: 1px solid rgb(66, 66, 66);
+    padding: 0px;
+}
+
+input:disabled, textarea:disabled {
+    opacity: 0.4;
+}
+
+input[readonly], textarea[readonly] {
+    border-color: rgb(188, 188, 188);
+}
+#endif
+
+#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
+
+input:is([type="button"], [type="submit"], [type="reset"]):disabled,
+input[type="file"]:disabled::file-selector-button, button:disabled,
+select:disabled, optgroup:disabled, option:disabled,
+select[disabled]>option {
+    color: GrayText;
+}
+
+input:is([type="button"], [type="submit"], [type="reset"]):active, input[type="file"]:active::file-selector-button, button:active {
+    border-style: inset;
+}
+
+input:is([type="button"], [type="submit"], [type="reset"]):active:disabled,
+input[type="file"]:active:disabled::file-selector-button, button:active:disabled {
+    border-style: outset;
+}
+
+#else
+
+input[type="file"]:disabled {
+    color: rgba(60, 60, 67, 0.3);
+    opacity: initial;
+}
+
+input:is([type="button"], [type="submit"], [type="reset"]):disabled,
+input[type="file"]:disabled::file-selector-button,
+button:disabled,
+select:disabled {
+    background-color: -apple-system-opaque-secondary-fill-disabled;
+    color: -apple-system-tertiary-label;
+    opacity: initial;
+}
+
+#endif
+
+area, param {
+    display: none;
+}
+
+input[type="checkbox"] {
+#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
+    box-sizing: border-box;
+#else
+    border-radius: 5px;
+    width: 16px;
+    height: 16px;
+    padding: 0px;
+    /* We want to be as close to background:transparent as possible without actually being transparent */
+    background-color: rgba(255, 255, 255, 0.01);
+#endif
+}
+
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+input[type="radio"] {
+    appearance: auto;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    padding: 0px;
+    /* We want to be as close to background:transparent as possible without actually being transparent */
+    background-color: rgba(255, 255, 255, 0.01);
+}
+
+input[type="checkbox"]:indeterminate {
+    background: rgba(0, 0, 0, 0.8);
+}
+
+input[type="checkbox"]:indeterminate:disabled {
+    opacity: initial;
+    background: rgba(0, 0, 0, 0.8);
+}
+
+input:is([type="checkbox"], [type="radio"]):checked {
+    border-color: rgba(255, 255, 255, 0.0);
+}
+
+input:is([type="checkbox"], [type="radio"]):disabled {
+    opacity: initial;
+}
+
+input:is([type="checkbox"], [type="radio"]):checked:disabled {
+    opacity: initial;
+    background: rgba(0, 0, 0, 0.8);
+}
+#endif
+
+#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
+input[type="radio"] {
+    box-sizing: border-box;
+}
+#endif
+
+#if defined(ENABLE_INPUT_TYPE_COLOR) && ENABLE_INPUT_TYPE_COLOR
+
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+input[type="color"] {
+    padding: 3px;
+}
+#endif
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+    display: flex;
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+    border-radius: inherit;
+    padding: 2px;
+#else
+    padding: 4px 2px 5px;
+#endif
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+}
+
+input[type="color"]::-webkit-color-swatch {
+    background-color: #000000;
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+    border-radius: inherit;
+#else
+    border-radius: 2px;
+#endif
+    flex: 1;
+}
+
+#endif // defined(ENABLE_INPUT_TYPE_COLOR) && ENABLE_INPUT_TYPE_COLOR
+
+select {
+    box-sizing: border-box;
+    appearance: auto;
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+    letter-spacing: normal;
+    word-spacing: normal;
+    line-height: normal;
+    padding: 0 0.4em 0 0.4em;
+    color: -apple-system-blue;
+    font: 11px system-ui;
+    border: 1px solid -webkit-control-background;
+    border-radius: initial;
+    background-color: -apple-system-opaque-secondary-fill;
+#else
+    border: 1px solid;
+#if defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT
+    color: text;
+    background-color: -webkit-control-background;
+#else
+    color: black;
+    background-color: white;
+#endif
+#endif
+    align-items: center;
+    white-space: pre;
+    -webkit-rtl-ordering: logical;
+    cursor: default;
+}
+
+#if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
+select:is([size], [multiple]), select[size][multiple] {
+    align-items: flex-start;
+    border: 1px inset gray;
+    border-radius: initial;
+    white-space: initial;
+}
+
+select:is([size=""], [size="0"], [size="1"]) {
+    align-items: center;
+    border: 1px solid;
+    border-radius: 5px;
+    white-space: pre;
+}
+#endif
+
+optgroup {
+    font-weight: bolder;
+}
+
+option {
+    font-weight: normal;
+}
+
+output {
+    display: inline;
+}
+
+/* form validation message bubble */
+
+::-webkit-validation-bubble {
+    display: inline-block;
+    z-index: 2147483647;
+    position: absolute;
+    opacity: 0.95;
+    line-height: 0;
+    margin: 0;
+    -webkit-text-security: none;
+    transition: opacity 05.5s ease;
+}
+
+::-webkit-validation-bubble-message {
+    display: flex;
+    position: relative;
+    top: -4px;
+    font: message-box;
+    color: black;
+    min-width: 50px;
+    max-width: 200px;
+    border: solid 2px #400;
+    background: linear-gradient(#f8ecec, #e8cccc);
+    padding: 8px;
+    border-radius: 8px;
+    box-shadow: 4px 4px 4px rgba(100,100,100,0.6),
+        inset -2px -2px 1px #d0c4c4,
+        inset 2px 2px 1px white;
+    line-height: normal;
+    white-space: normal;
+    z-index: 2147483644;
+}
+
+::-webkit-validation-bubble-text-block {
+    flex: 1;
+}
+
+::-webkit-validation-bubble-heading {
+    font-weight: bold;
+}
+
+::-webkit-validation-bubble-arrow {
+    display: inline-block;
+    position: relative;
+    left: 32px;
+    width: 16px;
+    height: 16px;
+    background-color: #f8ecec;
+    border-width: 2px 0 0 2px;
+    border-style: solid;
+    border-color: #400;
+    box-shadow: inset 2px 2px 1px white;
+    transform-origin: 0 0;
+    transform: rotate(45deg);
+    z-index: 2147483645;
+}
+
+::-webkit-validation-bubble-arrow-clipper {
+    display: block;
+    overflow: hidden;
+    height: 16px;
+}
+
+/* meter */
+
+meter {
+    appearance: auto;
+    box-sizing: border-box;
+    display: inline-block;
+    height: 1em;
+    width: 5em;
+    vertical-align: -0.2em;
+}
+
+/* progress */
+
+progress {
+    appearance: auto;
+    box-sizing: border-box;
+    display: inline-block;
+    height: 1em;
+    width: 10em;
+    vertical-align: -0.2em;
+}
+
+progress::-webkit-progress-inner-element {
+    box-sizing: inherit;
+    height: 100%;
+    width: 100%;
+}
+
+progress::-webkit-progress-bar {
+    background-color: gray;
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+progress::-webkit-progress-value {
+    background-color: green;
+    height: 100%;
+    width: 50%; /* should be removed later */
+    box-sizing: border-box;
+}
+
+/* inline elements */
+
+u, ins {
+    text-decoration: underline;
+}
+
+strong, b {
+    font-weight: bold;
+}
+
+i, cite, em, var, address, dfn {
+    font-style: italic;
+}
+
+tt, code, kbd, samp {
+    font-family: monospace;
+}
+
+pre, xmp, plaintext, listing {
+    display: block;
+    font-family: monospace;
+    white-space: pre;
+    margin: 1__qem 0;
+}
+
+mark {
+    background-color: yellow;
+    color: black;
+}
+
+big {
+    font-size: larger;
+}
+
+small {
+    font-size: smaller;
+}
+
+s, strike, del {
+    text-decoration: line-through;
+}
+
+sub {
+    vertical-align: sub;
+    font-size: smaller;
+}
+
+sup {
+    vertical-align: super;
+    font-size: smaller;
+}
+
+nobr {
+    white-space: nowrap;
+}
+
+/* states */
+
+:focus-visible {
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+    outline: auto 3px -webkit-focus-ring-color;
+#else
+    outline: auto 5px -webkit-focus-ring-color;
+#endif
+}
+
+/* Read-only text fields do not show a focus ring but do still receive focus */
+html:focus, body:focus, input[readonly]:focus, applet:focus, embed:focus, iframe:focus, object:focus {
+    outline: none;
+}
+
+#if !defined(WTF_PLATFORM_IOS_FAMILY) || !WTF_PLATFORM_IOS_FAMILY
+input:focus, textarea:focus, select:focus {
+    outline-offset: -2px;
+}
+#endif
+
+input:is([type="button"], [type="checkbox"], [type="file"], [type="hidden"], [type="image"], [type="radio"], [type="reset"], [type="search"], [type="submit"]):focus,
+input[type="file"]:focus::file-selector-button {
+    outline-offset: 0;
+}
+
+a:any-link {
+    color: -webkit-link;
+    text-decoration: underline;
+    cursor: auto;
+}
+
+a:any-link:active {
+    color: -webkit-activelink;
+}
+
+/* HTML5 ruby elements */
+
+ruby, rt {
+    text-indent: 0; /* blocks used for ruby rendering should not trigger this */
+}
+
+rt {
+    line-height: normal;
+    text-emphasis: none;
+}
+
+ruby > rt {
+    display: block;
+    font-size: -webkit-ruby-text;
+    text-align: start;
+}
+
+ruby > rp {
+    display: none;
+}
+
+/* other elements */
+
+noframes {
+    display: none;
+}
+
+frameset, frame {
+    display: block;
+}
+
+frameset {
+    border-color: inherit;
+}
+
+iframe {
+    border: 2px inset;
+}
+
+details {
+    display: block;
+}
+
+summary {
+    display: block;
+}
+
+summary::-webkit-details-marker {
+    display: inline-block;
+    width: 0.66em;
+    height: 0.66em;
+    margin-right: 0.4em;
+}
+
+template {
+    display: none;
+}
+
+bdi, output {
+    unicode-bidi: isolate;
+}
+
+bdo {
+    unicode-bidi: bidi-override;
+}
+
+slot {
+    display: contents;
+}
+
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+applet, embed, object, img {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+:any-link img {
+    -webkit-tap-highlight-color: inherit;
+}
+#endif
+
+/* page */
+
+@page {
+    /* FIXME: Define the right default values for page properties. */
+    size: auto;
+    margin: auto;
+    padding: 0px;
+    border-width: 0px;
+}
+
+/* noscript is handled internally, as it depends on settings. */
+
+/* Default support for "Smart Invert" where all content color except media is inverted. */ 
+@media (inverted-colors) {
+    img, picture, video { filter: invert(100%); } /* Images and videos double-inverted. */
+}
+
+/* https://drafts.csswg.org/css-text-decor-4/#text-decoration-skipping */
+ins, del {
+    text-decoration-skip: none;
+}

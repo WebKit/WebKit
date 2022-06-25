@@ -1,0 +1,19 @@
+<!DOCTYPE html><!-- webkit-test-runner [ contentSecurityPolicyExtensionMode=v3 ] -->
+<html>
+<head>
+    <meta http-equiv="Content-Security-Policy" content="worker-src *">
+    <script src="../../../resources/dump-as-text.js"></script>
+    <p>Test that CSP for manifest V3 extensions blocks wildcards for the worker-src directive. Test passes if we alert with an error.</p>
+</head>
+<body>
+<script>
+try {
+    var worker = new Worker('http://127.0.0.1:8000/security/contentSecurityPolicy/resources/worker.py?type=post-message-pass&csp=' +
+                             encodeURIComponent("script-src 'self' 'unsafe-inline'"));
+    alert("PASS");
+} catch (e) {
+   alert(e);
+}
+</script>
+</body>
+</html>

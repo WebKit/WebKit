@@ -1,0 +1,35 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% 
+   title = "Required Settings"
+   desc = "Settings that are required for proper operation of Bugzilla"
+%]
+
+[% param_descs = {
+  urlbase => "The URL that is the common initial leading part of all $terms.Bugzilla " _
+             "URLs.",
+
+  sslbase => "The URL that is the common initial leading part of all HTTPS " _
+             "(SSL) $terms.Bugzilla URLs.",
+
+  ssl_redirect => 
+    "When this is enabled, Bugzilla will ensure that every page is"
+    _ " accessed over SSL, by redirecting any plain HTTP requests to HTTPS"
+    _ " using the <var>sslbase</var> parameter. Also, when this is enabled,"
+    _ " Bugzilla will send out links using <var>sslbase</var> in emails"
+    _ " instead of <var>urlbase</var>.",
+
+  cookiepath => "Path, relative to your web document root, to which to restrict " _
+                "Bugzilla cookies. Normally this is the URI portion of your URL " _
+                "base. Begin with a / (single slash mark). For instance, if " _
+                "Bugzilla serves from 'http://www.somedomain.com/bugzilla/', set " _
+                "this parameter to /bugzilla/. Setting it to / will allow " _
+                "all sites served by this web server or virtual host to read " _
+                "Bugzilla cookies.",
+} %]

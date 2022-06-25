@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script src="../resources/audiocontext-leak-test.js"></script>
+<script>
+description("Makes sure that the OfflineAudioContext objects are not leaking.");
+jsTestIsAsync = true;
+
+const instancesToCreate = 100;
+for (let i = 0; i < instancesToCreate; i++)
+    trackContextForLeaks(new OfflineAudioContext(2, 1, 44100));
+
+gcAndCheckForContextLeaks();
+</script>
+</body>
+</html>

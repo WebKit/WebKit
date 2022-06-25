@@ -1,0 +1,3 @@
+
+PASS If forward pruning clobbers the target of a traverse, abort
+

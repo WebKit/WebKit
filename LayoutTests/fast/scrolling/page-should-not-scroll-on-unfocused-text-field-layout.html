@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<style>
+#text {
+    margin-top: 1000px; /* Position outside the viewport so that we would have to scroll to see this element. */
+    width: 256px;
+    height: 256px;
+    background-color: red;
+    color: white;
+}
+</style>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<div id="test-container">
+    <p id="text">If you see this text then the test FAILed.</p>
+    <input type="text" id="text-field" placeholder="placeholder">
+</div>
+<script>
+function handleSelectionChange() {
+    // Trigger a re-layout of the text field.
+    document.getElementById("text-field").style.width = "20px";
+
+    // Use a zero timer to allow for a scroll to happen, if it were to happen. (We do not expect a scroll to happen).
+    window.setTimeout(() => {
+        shouldBeZero("window.scrollY");
+        if (window.testRunner)
+            document.body.removeChild(document.getElementById("test-container"));
+        finishJSTest();
+    }, 0);
+};
+
+window.jsTestIsAsync = true;
+
+description("Tests that the page is not scrolled to the current selection when an unfocused text field is laid out.");
+
+document.addEventListener("selectionchange", handleSelectionChange, { once: true });
+let text = document.getElementById("text");
+window.getSelection().setBaseAndExtent(text.firstChild, 0, text.firstChild, 0);
+</script>
+</body>
+</html>

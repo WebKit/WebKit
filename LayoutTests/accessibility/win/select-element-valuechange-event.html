@@ -1,0 +1,30 @@
+<html>
+<body id="body">
+
+<p>This tests that we broadcast value change events when the selected item changes.</p>
+
+<p id="notDRT">This test should only be run inside of DumpRenderTree.</p>
+
+<select id="selectElement" title="selectElement">
+    <option SELECTED>Option 1</option>
+    <option>Option 2</option>
+    <option>Option 3</option>
+</select>
+
+<script>
+    if (window.testRunner && window.accessibilityController) {
+        document.getElementById("notDRT").style.visibility = "hidden";
+
+        testRunner.dumpAsText();
+    
+        accessibilityController.logValueChangeEvents();
+
+        document.getElementById("selectElement").focus();
+
+        document.getElementById("selectElement").selectedIndex = 1;
+
+        eventSender.keyDown("downArrow");
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="content" role="group">
+<div aria-roledescription="test role">div</div>
+<span aria-roledescription="test role">span</span>
+</div>
+
+<script>
+    description("This tests that generic elements are not allowed to have role descriptions.");
+
+    if (window.accessibilityController) {
+        let output = "";
+
+        // The DIV will show up in the hierarchy, but don't allow it to have a custom role description.
+        let divRole = accessibilityController.accessibleElementById("content").childAtIndex(0);
+        // The span should NOT show up in the hierarchy (even though it has an aria role description).
+        let spanText = accessibilityController.accessibleElementById("content").childAtIndex(1);
+        
+        output += `div role: ${divRole.roleDescription}\n`;
+        output += `span text role: ${spanText.roleDescription}\n`;
+ 
+        debug(output);
+    }
+</script>
+</body>
+</html>

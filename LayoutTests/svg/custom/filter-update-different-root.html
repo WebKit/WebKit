@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .dummy { }
+    .hide-second-path > .second-path { display: none; }
+  </style>
+</head>
+<body>
+    <svg style="background-color: #fff">
+        <g id="parent-group" class="hide-second-path">
+            <path id="id1" d="m 0,0 H 100 V 100 H 0 z" fill="red"/>
+            <path id="id2" d="m 0,0 H 100 V 100 H 0 z" fill="green" class="second-path"/>
+            <g id="child-group" filter="url(#nop-filter)">
+                <path id="id3" d="m 100,0 H 200 V 100 H 100 z" fill="green"/>
+                <path id="id4" d="m 100,0 H 200 V 100 H 100 z" fill="red" class="second-path"/>
+            </g>
+        </g>
+    </svg>
+    <svg>
+        <filter id="nop-filter">
+            <feOffset dx="0" dy="0"/>
+        </filter>
+    </svg>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+        setTimeout(function() {
+            document.styleSheets[0].deleteRule(0);
+            setTimeout(function() {
+                document.getElementById('parent-group').removeAttribute('class');
+                document.getElementById('child-group').setAttribute('class', 'hide-second-path');
+                if (window.testRunner)
+                    testRunner.notifyDone();
+              }, 50);
+          }, 50);
+    </script>
+</body>
+</html>

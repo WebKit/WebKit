@@ -1,0 +1,13 @@
+
+PASS idl_test setup
+PASS idl_test validation
+PASS Partial namespace WebAssembly: original namespace defined
+PASS Partial namespace WebAssembly: valid exposure set
+PASS Partial namespace WebAssembly: member names are unique
+PASS WebAssembly namespace: operation validate(BufferSource)
+PASS WebAssembly namespace: operation compile(BufferSource)
+PASS WebAssembly namespace: operation instantiate(BufferSource, optional object)
+PASS WebAssembly namespace: operation instantiate(Module, optional object)
+PASS WebAssembly namespace: operation compileStreaming(Promise<Response>)
+PASS WebAssembly namespace: operation instantiateStreaming(Promise<Response>, optional object)
+

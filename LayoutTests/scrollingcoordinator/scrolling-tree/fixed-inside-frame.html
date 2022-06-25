@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        iframe {
+            height: 400px;
+            width: 480px;
+            margin: 100px;
+            box-shadow: 0 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+        
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.dumpAsText();
+            window.internals.settings.setScrollingTreeIncludesFrames(true);
+        }
+
+        function frameDidChange()
+        {
+            window.setTimeout(function() {
+                if (window.testRunner) {
+                    var scrollingTree = internals.scrollingStateTreeAsText();
+                    var layerTree = internals.layerTreeAsText(document);
+                    
+                    var resultElement = document.getElementById('result');
+                    resultElement.textContent = scrollingTree + layerTree;
+                    
+                    testRunner.notifyDone();
+                }
+            }, 0);
+        }
+    </script>
+</head>
+<body>
+    <iframe src="resources/autoscrolling-frame-with-fixed.html" height="300" scrolling="yes"></iframe>
+<pre id="result">Results</pre>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+fieldset {
+    overflow: hidden;
+}
+</style>
+</head>
+<body>
+    Check that hit testing works in the legend of a fieldset with overflow:hidden.
+    <fieldset>
+        <legend>
+            <button id=button>Click me</button>
+        </legend>
+        <p id=log>Clicks: 0</p>
+    </fieldset>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+let index = 0;
+function updateCount() {
+    log.innerHTML = `Clicks: ${++index}`;
+}
+button.addEventListener('click', updateCount);
+if (window.eventSender) {
+    eventSender.mouseMoveTo(button.offsetLeft + 5, button.offsetTop + 5)
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+</script>
+

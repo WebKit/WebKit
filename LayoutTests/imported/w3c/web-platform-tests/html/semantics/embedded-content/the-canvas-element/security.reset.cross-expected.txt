@@ -1,0 +1,6 @@
+security.reset.cross
+Resetting the canvas state resets the origin-clean flag
+Actual output:
+
+FAIL Resetting the canvas state resets the origin-clean flag The operation is insecure.
+

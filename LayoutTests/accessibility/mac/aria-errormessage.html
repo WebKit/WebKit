@@ -1,0 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+
+<label for="startTime">Please enter a start time for the meeting: </label>
+<input aria-errormessage="errorMessage1 errorMessage2" id="startTime" type="text" value="" aria-invalid="false">
+<span id="errorMessage1" aria-live="off" style="visibility:hidden">Invalid meeting time!</span>
+<span id="errorMessage2" aria-live="off" style="visibility:hidden">The meeting time must be between 9:00 AM and 5:00 PM.</span>
+<input type="submit" id="submitButton">
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This verifies the exposure of aria-errormessage.");
+
+    if (window.accessibilityController) {
+        axStartTime = accessibilityController.accessibleElementById("startTime");
+        errorMessages = axStartTime.errorMessageElements();
+        shouldBe("errorMessages.length", "2");
+        shouldBe("errorMessages[0].domIdentifier", "'errorMessage1'");
+        shouldBe("errorMessages[1].domIdentifier", "'errorMessage2'");
+    }
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

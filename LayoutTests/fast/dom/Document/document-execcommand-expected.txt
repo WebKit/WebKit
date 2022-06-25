@@ -1,0 +1,33 @@
+Document's execCommand() / queryCommand*() should throw an exception on non-HTML/XHTML documents.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS xmlDocument.execCommand('selectAll') threw exception InvalidStateError: execCommand is only supported on HTML documents..
+PASS xmlDocument.queryCommandEnabled('selectAll') threw exception InvalidStateError: queryCommandEnabled is only supported on HTML documents..
+PASS xmlDocument.queryCommandIndeterm('selectAll') threw exception InvalidStateError: queryCommandIndeterm is only supported on HTML documents..
+PASS xmlDocument.queryCommandState('selectAll') threw exception InvalidStateError: queryCommandState is only supported on HTML documents..
+PASS xmlDocument.queryCommandSupported('selectAll') threw exception InvalidStateError: queryCommandSupported is only supported on HTML documents..
+PASS xmlDocument.queryCommandValue('selectAll') threw exception InvalidStateError: queryCommandValue is only supported on HTML documents..
+PASS svgDocument.execCommand('selectAll') threw exception InvalidStateError: execCommand is only supported on HTML documents..
+PASS svgDocument.queryCommandEnabled('selectAll') threw exception InvalidStateError: queryCommandEnabled is only supported on HTML documents..
+PASS svgDocument.queryCommandIndeterm('selectAll') threw exception InvalidStateError: queryCommandIndeterm is only supported on HTML documents..
+PASS svgDocument.queryCommandState('selectAll') threw exception InvalidStateError: queryCommandState is only supported on HTML documents..
+PASS svgDocument.queryCommandSupported('selectAll') threw exception InvalidStateError: queryCommandSupported is only supported on HTML documents..
+PASS svgDocument.queryCommandValue('selectAll') threw exception InvalidStateError: queryCommandValue is only supported on HTML documents..
+PASS xhtmlDocument.execCommand('selectAll') did not throw exception.
+PASS xhtmlDocument.queryCommandEnabled('selectAll') did not throw exception.
+PASS xhtmlDocument.queryCommandIndeterm('selectAll') did not throw exception.
+PASS xhtmlDocument.queryCommandState('selectAll') did not throw exception.
+PASS xhtmlDocument.queryCommandSupported('selectAll') did not throw exception.
+PASS xhtmlDocument.queryCommandValue('selectAll') did not throw exception.
+PASS htmlDocument.execCommand('selectAll') did not throw exception.
+PASS htmlDocument.queryCommandEnabled('selectAll') did not throw exception.
+PASS htmlDocument.queryCommandIndeterm('selectAll') did not throw exception.
+PASS htmlDocument.queryCommandState('selectAll') did not throw exception.
+PASS htmlDocument.queryCommandSupported('selectAll') did not throw exception.
+PASS htmlDocument.queryCommandValue('selectAll') did not throw exception.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

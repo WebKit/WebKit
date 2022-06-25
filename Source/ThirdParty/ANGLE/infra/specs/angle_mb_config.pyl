@@ -1,0 +1,128 @@
+# Copyright 2021 The ANGLE Project Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# This is a .pyl, or "Python Literal", file. You can treat it just like a
+# .json file, with the following exceptions:
+# * all keys must be quoted (use single quotes, please);
+# * comments are allowed, using '#' syntax; and
+# * trailing commas are allowed.
+
+{
+  # This is a map of builder group names -> builder names -> config names
+  # (where each config name is a key in the 'configs' dict, below). MB uses
+  # this dict to look up which config to use for a given bot.
+  'builder_groups': {
+    'angle': {
+      'android-arm-compile': 'angle_goma_android_arm_release_bot',
+      'android-arm-dbg-compile': 'angle_goma_android_arm_debug_bot',
+      'android-arm64-dbg-compile': 'angle_goma_android_arm64_debug_bot',
+      'android-arm64-exp-test': 'angle_goma_android_arm64_release_bot',
+      'android-arm64-test': 'angle_goma_android_arm64_release_bot',
+      'android-pixel4-perf': 'angle_goma_android_perf_bot',
+      'linux-asan-test': 'angle_asan_bot',
+      'linux-dbg-compile': 'angle_goma_debug_bot',
+      'linux-intel-hd630-perf': 'angle_goma_perf_bot',
+      'linux-nvidia-p400-perf': 'angle_goma_perf_bot',
+      'linux-test': 'angle_goma_release_bot',
+      'linux-tsan-test': 'angle_tsan_bot',
+      'linux-ubsan-test': 'angle_ubsan_bot',
+      'mac-dbg-compile': 'angle_goma_debug_bot',
+      'mac-exp-test': 'angle_goma_release_bot',
+      'mac-test': 'angle_goma_release_bot',
+      'win-asan-test': 'angle_asan_bot',
+      'win-dbg-compile': 'angle_goma_debug_bot',
+      'win-msvc-compile': 'angle_non_clang_release_bot',
+      'win-msvc-dbg-compile': 'angle_non_clang_debug_bot',
+      'win-msvc-x86-compile': 'angle_non_clang_x86_release_bot',
+      'win-msvc-x86-dbg-compile': 'angle_non_clang_x86_debug_bot',
+      'win-test': 'angle_goma_release_bot',
+      'win-x86-dbg-compile': 'angle_goma_x86_debug_bot',
+      'win-x86-test': 'angle_goma_x86_release_bot',
+      'win10-intel-hd630-perf': 'angle_goma_perf_bot',
+      'win10-nvidia-p400-perf': 'angle_goma_perf_bot',
+      'winuwp-compile': 'angle_winuwp_non_clang_release_bot',
+      'winuwp-dbg-compile': 'angle_winuwp_non_clang_debug_bot',
+    },
+  },
+
+  # This is the list of configs that you can pass to mb; each config
+  # represents a particular combination of gn args that
+  # we must support. A given config *may* be platform-specific but
+  # is not necessarily so (i.e., we might have mac, win, and linux
+  # bots all using the 'release_bot' config).
+  'configs': {
+    'angle_asan_bot': ['angle', 'opencl', 'traces', 'goma', 'asan', 'release'],
+    'angle_goma_android_arm64_debug_bot': ['angle', 'opencl', 'traces', 'goma', 'android', 'arm64', 'debug'],
+    'angle_goma_android_arm64_release_bot': ['angle', 'opencl', 'traces', 'goma', 'android', 'arm64', 'release'],
+    'angle_goma_android_arm_debug_bot': ['angle', 'opencl', 'traces', 'goma', 'android', 'arm', 'debug'],
+    'angle_goma_android_arm_release_bot': ['angle', 'opencl', 'traces', 'goma', 'android', 'arm', 'release'],
+    'angle_goma_android_perf_bot': ['angle', 'traces', 'goma', 'android', 'arm64', 'perf'],
+    'angle_goma_debug_bot': ['angle', 'opencl', 'traces', 'goma', 'debug'],
+    'angle_goma_perf_bot': ['angle', 'traces', 'goma', 'perf'],
+    'angle_goma_release_bot': ['angle', 'opencl', 'traces', 'goma', 'release'],
+    'angle_goma_x86_debug_bot': ['angle', 'opencl', 'traces', 'goma', 'x86', 'debug'],
+    'angle_goma_x86_release_bot': ['angle', 'opencl', 'traces', 'goma', 'x86', 'release'],
+    'angle_non_clang_debug_bot': ['angle', 'opencl', 'non_clang', 'debug'],
+    'angle_non_clang_release_bot': ['angle', 'opencl', 'non_clang', 'release'],
+    'angle_non_clang_x86_debug_bot': ['angle', 'opencl', 'non_clang', 'x86', 'debug'],
+    'angle_non_clang_x86_release_bot': ['angle', 'opencl', 'non_clang', 'x86', 'release'],
+    'angle_tsan_bot': ['angle', 'opencl', 'traces', 'goma', 'tsan', 'release'],
+    'angle_ubsan_bot': ['angle', 'opencl', 'traces', 'goma', 'ubsan', 'release'],
+    'angle_winuwp_non_clang_debug_bot': ['angle', 'winuwp', 'non_clang', 'debug'],
+    'angle_winuwp_non_clang_release_bot': ['angle', 'winuwp', 'non_clang', 'release'],
+  },
+
+  # This is a dict mapping a given 'mixin' name to a dict of settings that
+  # mb should use. See //tools/mb/docs/user_guide.md for more information.
+  'mixins': {
+    'android': {
+      'gn_args': 'target_os="android"',
+    },
+    'angle': {
+      'gn_args': 'build_angle_gles1_conform_tests=true is_component_build=true',
+    },
+    'arm': {
+      'gn_args': 'target_cpu="arm"',
+    },
+    'arm64': {
+      'gn_args': 'target_cpu="arm64"',
+    },
+    'asan': {
+      'gn_args': 'is_asan=true',
+    },
+    'debug': {
+      'gn_args': 'is_debug=true',
+    },
+    'goma': {
+      'gn_args': 'use_goma=true',
+    },
+    'non_clang': {
+      'gn_args': 'is_clang=false',
+    },
+    'opencl': {
+      'gn_args': 'angle_enable_cl=true',
+    },
+    'perf': {
+      'gn_args': 'is_debug=false dcheck_always_on=false symbol_level=1',
+    },
+    'release': {
+      'gn_args': 'is_debug=false dcheck_always_on=true symbol_level=1',
+    },
+    'traces': {
+      'gn_args': 'build_angle_trace_perf_tests=true',
+    },
+    'tsan': {
+      'gn_args': 'is_tsan=true',
+    },
+    'ubsan': {
+      'gn_args': 'is_ubsan=true',
+    },
+    'winuwp': {
+      'gn_args': 'target_os="winuwp"',
+    },
+    'x86': {
+      'gn_args': 'target_cpu="x86"',
+    },
+  },
+}

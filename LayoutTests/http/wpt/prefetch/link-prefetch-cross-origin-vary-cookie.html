@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+
+const wait_for_message = () => {
+  return new Promise((resolve, reject) => {
+    window.addEventListener('message', e => {
+      resolve(e);
+    }, { once: true });
+  });
+};
+
+promise_test(async function(t) {
+  let url_from = "resources/navigate-cross-origin-vary-cookie.html";
+  var w = window.open(url_from);
+  let message = await wait_for_message();
+  assert_equals(message.data, 'foo=bar');
+  w.close();
+}, 'Verify that navigating to a prefetched main resource that sets Vary: Cookie does send cookies.');
+</script>

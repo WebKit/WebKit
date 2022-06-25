@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+window.jsTestIsAsync = true;
+
+description("Verify that a blob URL can be used as subframe source.");
+
+req = new XMLHttpRequest;
+req.open("GET", "resources/blob-url-in-subframe-frame.html", true);
+req.responseType = "blob";
+req.onload = didLoad;
+req.send();
+
+function didLoad()
+{
+    var ifr = document.createElement("iframe");
+    ifr.setAttribute("src", URL.createObjectURL(req.response));
+    document.body.appendChild(ifr);
+}
+
+</script>
+<script src="/resources/js-test-post.js"></script>
+</body>
+</html>

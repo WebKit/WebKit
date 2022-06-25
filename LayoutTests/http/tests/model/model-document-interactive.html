@@ -1,0 +1,16 @@
+<!doctype html>
+<html>
+<body>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<script src="resources/model-document.js"></script>
+<script>
+
+model_document_test(async modelDocument => {
+    const model = modelDocument.querySelector("model");
+    assert_true(model.interactive);
+}, "<model> in standalone document is interactive.");
+
+</script>
+</body>
+</html>

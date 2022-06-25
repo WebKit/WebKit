@@ -1,0 +1,34 @@
+<style>
+
+    #target {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100px;
+        height: 100px;
+        background-color: black;
+    }
+
+</style>
+<div id="target"></div>
+<script src="../resources/ui-helper.js"></script>
+<script>
+
+(async () => {
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    // Start an animation that lasts a day.
+    const duration = 24 * 60 * 60 * 1000;
+    const animation = document.getElementById("target").animate({ translate: "200px" }, duration);
+    animation.currentTime = duration / 2;
+
+    // Wait until the animation has been applied.
+    await animation.ready;
+    await UIHelper.ensureStablePresentationUpdate();
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+})();
+
+</script>

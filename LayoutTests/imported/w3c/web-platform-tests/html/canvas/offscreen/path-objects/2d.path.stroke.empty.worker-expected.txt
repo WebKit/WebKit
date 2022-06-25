@@ -1,0 +1,3 @@
+
+PASS Empty subpaths are not stroked
+

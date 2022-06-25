@@ -1,0 +1,43 @@
+<script src="../resources/js-test-pre.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function runWithKeyDown(fn)
+{
+    document.addEventListener('keydown', function() { fn(); }, false);
+    if (window.testRunner) {
+        eventSender.keyDown('a');
+    }
+}
+
+function init() {
+    // Bail out early if the full screen API is not enabled or is missing:
+    if (Element.prototype.webkitRequestFullScreen == undefined) {
+        alert("Fullscreen API not available.");
+    } else {
+        runWithKeyDown(goFullScreen);
+    }
+}
+
+function goFullScreen() {
+    var iframe = document.getElementById('block1');
+    var element = iframe.contentDocument.documentElement;
+    setTimeout(function () {
+        iframe.parentNode.removeChild(iframe);
+        gc();
+        setTimeout(function () {
+            if (window.testRunner) {
+                testRunner.notifyDone();
+            }
+        }, 0);
+    }, 0);
+    element.webkitRequestFullScreen();
+}
+</script>
+<body onload="init()">
+    <iframe webkitallowfullscreen src="resources/inner.html" id="block1"></iframe>
+    PASS
+</body>

@@ -1,0 +1,107 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # donames: boolean. True if we have a multi-select for names as well as
+  #          categories and subcategories. 
+  # category: hash (keyed by category) of hashes (keyed by subcategory) of
+  #           hashes (keyed by name), with value being the series_id of the
+  #           series. Contains details of all series the user can see.
+  #%]
+
+[% subcategory = category.${default.category} %]
+[% name = subcategory.${default.subcategory} %]
+
+<script type="text/javascript">
+[%# This structure holds details of the series the user can select from. %]
+var series = {
+[% FOREACH c = category.keys.sort %]
+  "[%+ c FILTER js %]" : {
+    [% FOREACH s = category.$c.keys.sort %]
+      "[%+ s FILTER js %]" : {
+        [% IF donames %]
+          [% FOREACH n = category.$c.$s.keys.sort %]
+            "[% n FILTER js %]": 
+             [% category.$c.$s.$n FILTER js %][% ", " UNLESS loop.last %]
+          [% END %]
+        [% END %]
+      }[% ", " UNLESS loop.last %]
+    [% END %]
+  }[% ", " UNLESS loop.last %]
+[% END %] 
+};
+
+[%# This function takes necessary action on selection of a category %]
+function catSelected() {
+  var cat = document.chartform.category.value;
+  var subcats = series[cat];
+  
+  var subcatwidget = document.chartform.subcategory;
+  
+  subcatwidget.options.length = 0;
+  var i = 0;
+  
+  for (x in subcats) {
+    subcatwidget.options[i] = new Option(x, x);
+    i++;
+  }
+  
+  [% IF newtext %]
+    subcatwidget.options[i] = new Option("[% newtext FILTER js %]", "");
+  [% END %]  
+
+  subcatwidget.disabled = false;
+  subcatwidget.options[0].selected = true;
+  
+  if (document.chartform.action[1]) {
+    [%# On the query form, select the right radio button. %]
+    document.chartform.action[1].checked = true;
+  }
+  
+  checkNewState();  
+}
+
+[%# This function updates the disabled state of the two "new" textboxes %]
+function checkNewState() {
+  var fm = document.chartform;
+  if (fm.newcategory) {
+    fm.newcategory.disabled = 
+                       (fm.category.value != "" || 
+                        fm.action[1] && fm.action[1].checked == false);
+    fm.newsubcategory.disabled = 
+                    (fm.subcategory.value != "" || 
+                     fm.action[1] && fm.action[1].checked == false);
+  }
+}
+</script>
+
+[%###########################################################################%]
+[%# Block for SELECT fields - pinched from search/form.html.tmpl            #%]
+[%###########################################################################%]
+
+[% BLOCK series_select %]
+  <td>
+    <select name="[% sel.name %]" id="[% sel.name %]"
+            size="[% sel.size %]"
+            [%+ 'multiple="multiple"' IF sel.multiple %]
+            [%+ "disabled=\"disabled\"" UNLESS ${sel.name}.keys.size || newtext %]
+            [%+ "onchange=\"$sel.onchange\"" IF sel.onchange %]>
+      [% FOREACH x = ${sel.name}.keys.sort %]
+        [% value = sel.value_in_hash ? ${sel.name}.$x : x %]
+        <option value="[% value FILTER html %]"
+          [% " selected" IF default.${sel.name} == value %]>
+          [% x FILTER html %]</option>
+      [% END %]
+      [% IF newtext %]
+        <option value="">[% newtext FILTER html %]</option>
+      [% ELSIF NOT ${sel.name}.keys.size %]
+        <option value="" disabled="disabled"></option>
+      [% END %]
+    </select>
+  </td>
+[% END %]

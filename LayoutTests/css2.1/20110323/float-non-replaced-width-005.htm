@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>CSS Test: Floating non-replaced elements with left and right margins as 'auto'</title>
+        <link rel="author" title="Microsoft" href="http://www.microsoft.com/">
+        <link rel="help" href="http://www.w3.org/TR/CSS21/visudet.html#float-width">
+        <meta name="flags" content="">
+        <meta name="assert" content="If both 'margin-left' and margin-right' are computed as 'auto' their used value is as '0'.">
+        <style type="text/css">
+            #div1
+            {
+                border: solid black;
+                height: 2in;
+                width: 2in;
+            }
+            div div
+            {
+                background-color: blue;
+                float: left;
+                margin-left: auto;
+                margin-right: auto;
+                height: 1in;
+                width: 1in;
+            }
+        </style>
+    </head>
+    <body>
+        <p>Test passes if the blue box is in the upper-left corner of the black box.</p>
+        <div id="div1">
+            <div></div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,489 @@
+AXRole: AXColumnHeader
+AXParent: AXRow
+AXChildren: 0
+AXPosition:  { 234.000, 27.0000 }
+AXSize: { 144.000, 66.0000 }
+AXTitle:
+AXDescription:
+AXValue: Ruritanian<\n>Population <\n>Survey
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:columnheader, tag:th
+------------
+AXRole: AXColumnHeader
+AXParent: AXRow
+AXChildren: 0
+AXPosition:  { 234.000, 27.0000 }
+AXSize: { 144.000, 66.0000 }
+AXTitle:
+AXDescription:
+AXValue: Ruritanian<\n>Population <\n>Survey
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:columnheader, tag:th
+------------
+AXRole: AXColumnHeader
+AXParent: AXRow
+AXChildren: 0
+AXPosition:  { 377.000, 27.0000 }
+AXSize: { 70.0000, 66.0000 }
+AXTitle:
+AXDescription:
+AXValue: All<\n>Genders
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:columnheader, tag:th
+------------
+AXRole: AXColumnHeader
+AXParent: AXRow
+AXChildren: 0
+AXPosition:  { 446.000, 27.0000 }
+AXSize: { 120.000, 30.0000 }
+AXTitle:
+AXDescription:
+AXValue: By Gender
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:columnheader, tag:th
+------------
+AXRole: AXColumnHeader
+AXParent: AXRow
+AXChildren: 0
+AXPosition:  { 446.000, 27.0000 }
+AXSize: { 120.000, 30.0000 }
+AXTitle:
+AXDescription:
+AXValue: By Gender
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:columnheader, tag:th
+------------
+
+AXRole: AXRowHeader
+AXParent: AXRow
+AXChildren: 0
+AXPosition:  { 234.000, 93.0000 }
+AXSize: { 91.0000, 60.0000 }
+AXTitle:
+AXDescription:
+AXValue: All Regions
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:rowheader, tag:th
+------------
+AXRole: AXCell
+AXParent: AXRow
+AXChildren: 0
+AXPosition:  { 324.000, 123.000 }
+AXSize: { 54.0000, 30.0000 }
+AXTitle:
+AXDescription:
+AXValue: South
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:cell, tag:th
+------------
+
+
+AXRole: AXRow
+AXParent: AXTable: Example #1: Nested Stubs
+AXChildren: 3
+AXPosition:  { 234.000, 27.0000 }
+AXSize: { 332.000, 30.0000 }
+AXTitle:
+AXDescription:
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:row, tag:tr
+------------
+AXRole: AXRow
+AXParent: AXTable: Example #1: Nested Stubs
+AXChildren: 2
+AXPosition:  { 234.000, 57.0000 }
+AXSize: { 332.000, 36.0000 }
+AXTitle:
+AXDescription:
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:row, tag:tr
+------------
+AXRole: AXRow
+AXParent: AXTable: Example #1: Nested Stubs
+AXChildren: 5
+AXPosition:  { 234.000, 93.0000 }
+AXSize: { 332.000, 30.0000 }
+AXTitle:
+AXDescription:
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:row, tag:tr
+------------
+AXRole: AXRow
+AXParent: AXTable: Example #1: Nested Stubs
+AXChildren: 4
+AXPosition:  { 234.000, 123.000 }
+AXSize: { 332.000, 30.0000 }
+AXTitle:
+AXDescription:
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:row, tag:tr
+------------
+
+AXRole: AXColumnHeader
+AXParent: AXRow
+AXChildren: 0
+AXPosition:  { 234.000, 27.0000 }
+AXSize: { 144.000, 66.0000 }
+AXTitle:
+AXDescription:
+AXValue: Ruritanian<\n>Population <\n>Survey
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:columnheader, tag:th
+------------
+AXRole: AXColumnHeader
+AXParent: AXRow
+AXChildren: 0
+AXPosition:  { 377.000, 27.0000 }
+AXSize: { 70.0000, 66.0000 }
+AXTitle:
+AXDescription:
+AXValue: All<\n>Genders
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:columnheader, tag:th
+------------
+AXRole: AXColumnHeader
+AXParent: AXRow
+AXChildren: 0
+AXPosition:  { 446.000, 27.0000 }
+AXSize: { 120.000, 30.0000 }
+AXTitle:
+AXDescription:
+AXValue: By Gender
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:columnheader, tag:th
+------------
+AXRole: AXCell
+AXParent: AXRow
+AXChildren: 0
+AXPosition:  { 446.000, 57.0000 }
+AXSize: { 53.0000, 36.0000 }
+AXTitle:
+AXDescription:
+AXValue: Males
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:cell, tag:th
+------------
+AXRole: AXCell
+AXParent: AXRow
+AXChildren: 0
+AXPosition:  { 498.000, 57.0000 }
+AXSize: { 68.0000, 36.0000 }
+AXTitle:
+AXDescription:
+AXValue: Females
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:cell, tag:th
+------------
+AXRole: AXRowHeader
+AXParent: AXRow
+AXChildren: 0
+AXPosition:  { 234.000, 93.0000 }
+AXSize: { 91.0000, 60.0000 }
+AXTitle:
+AXDescription:
+AXValue: All Regions
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:rowheader, tag:th
+------------
+AXRole: AXCell
+AXParent: AXRow
+AXChildren: 0
+AXPosition:  { 324.000, 93.0000 }
+AXSize: { 54.0000, 30.0000 }
+AXTitle:
+AXDescription:
+AXValue: North
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:cell, tag:th
+------------
+AXRole: AXCell
+AXParent: AXRow
+AXChildren: 0
+AXPosition:  { 377.000, 93.0000 }
+AXSize: { 70.0000, 30.0000 }
+AXTitle:
+AXDescription:
+AXValue: 3333
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:cell, tag:td
+------------
+AXRole: AXCell
+AXParent: AXRow
+AXChildren: 0
+AXPosition:  { 446.000, 93.0000 }
+AXSize: { 53.0000, 30.0000 }
+AXTitle:
+AXDescription:
+AXValue: 1111
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:cell, tag:td
+------------
+AXRole: AXCell
+AXParent: AXRow
+AXChildren: 0
+AXPosition:  { 498.000, 93.0000 }
+AXSize: { 68.0000, 30.0000 }
+AXTitle:
+AXDescription:
+AXValue: 2222
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:cell, tag:td
+------------
+AXRole: AXCell
+AXParent: AXRow
+AXChildren: 0
+AXPosition:  { 324.000, 123.000 }
+AXSize: { 54.0000, 30.0000 }
+AXTitle:
+AXDescription:
+AXValue: South
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:cell, tag:th
+------------
+AXRole: AXCell
+AXParent: AXRow
+AXChildren: 0
+AXPosition:  { 377.000, 123.000 }
+AXSize: { 70.0000, 30.0000 }
+AXTitle:
+AXDescription:
+AXValue: 3333
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:cell, tag:td
+------------
+AXRole: AXCell
+AXParent: AXRow
+AXChildren: 0
+AXPosition:  { 446.000, 123.000 }
+AXSize: { 53.0000, 30.0000 }
+AXTitle:
+AXDescription:
+AXValue: 1111
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:cell, tag:td
+------------
+AXRole: AXCell
+AXParent: AXRow
+AXChildren: 0
+AXPosition:  { 498.000, 123.000 }
+AXSize: { 68.0000, 30.0000 }
+AXTitle:
+AXDescription:
+AXValue: 2222
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:cell, tag:td
+------------
+
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Example #1: Nested Stubs
+Ruritanian
+Population
+Survey	All
+Genders	By Gender
+Males	Females
+All Regions	North	3333	1111	2222
+South	3333	1111	2222

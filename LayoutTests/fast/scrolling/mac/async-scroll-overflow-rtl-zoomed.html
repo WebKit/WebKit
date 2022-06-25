@@ -1,0 +1,129 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html dir="rtl">
+<head>
+    <style>
+        .wide {
+            width: 2000px;
+            height: 10px;
+            background-color: silver;
+        }
+
+        .scroller {
+            position: absolute;
+            left: 100px;
+            top: 20px;
+            height: 200px;
+            width: 200px;
+            border: 4px solid gray;
+            padding: 5px;
+            margin: 10px;
+            overflow: scroll;
+        }
+        .content {
+            width: 200%;
+            height: 300%;
+        }
+        
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        var jsTestIsAsync = true;
+
+        var scroller;
+        var overflowScrollEventCount = 0;
+        var windowScrollEventCount = 0;
+
+        async function resetScrollPositions()
+        {
+            window.scrollTo(0, 0);
+            scroller.scrollTop = 0;
+            
+            // Wait for scroll events to fire.
+            await UIHelper.renderingUpdate();
+
+            overflowScrollEventCount = 0;
+            windowScrollEventCount = 0;
+        }
+
+        async function testScrollOutsideTopLeft()
+        {
+            debug('');
+            debug('Test scroll outside top left corner');
+            await resetScrollPositions();
+            await UIHelper.mouseWheelScrollAt(170, 40);
+
+            shouldBe('overflowScrollEventCount', '0');
+            shouldBe('windowScrollEventCount > 0', 'true');
+        }
+
+        async function testScrollInsideTopLeft()
+        {
+            debug('');
+            debug('Test scroll inside top left corner');
+            await resetScrollPositions();
+            await UIHelper.mouseWheelScrollAt(215, 60);
+
+            shouldBe('overflowScrollEventCount > 0', 'true');
+            shouldBe('windowScrollEventCount', '0');
+        }
+
+        async function testScrollOutsideBottomRight()
+        {
+            debug('');
+            debug('Test scroll outside bottom right corner');
+            await resetScrollPositions();
+            await UIHelper.mouseWheelScrollAt(515, 380);
+
+            shouldBe('overflowScrollEventCount', '0');
+            shouldBe('windowScrollEventCount > 0', 'true');
+        }
+
+        async function testScrollInsideBottomRight()
+        {
+            debug('');
+            debug('Test scroll inside bottom right corner');
+            await resetScrollPositions();
+            await UIHelper.mouseWheelScrollAt(485, 335);
+
+            shouldBe('overflowScrollEventCount > 0', 'true');
+            shouldBe('windowScrollEventCount', '0');
+        }
+
+        async function scrollTest()
+        {
+            await testScrollOutsideTopLeft();
+            await testScrollInsideTopLeft();
+            await testScrollOutsideBottomRight();
+            await testScrollInsideBottomRight();
+
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+            
+            if (window.internals)
+                internals.setPageScaleFactor(1.5, 0, 0);
+            
+            scroller = document.querySelector('.scroller');
+            scroller.addEventListener('scroll', () => {
+                ++overflowScrollEventCount;
+            }, false);
+
+            window.addEventListener('scroll', () => {
+                ++windowScrollEventCount;
+            }, false);
+
+            setTimeout(scrollTest, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="wide"></div>
+    <div class="scroller">
+        <div class="content"></div>
+    </div>
+    <div id="console"></div>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+
+async function loadFontFace(fontDeclaration, text, eventName)
+{
+    try {
+        await document.fonts.load(fontDeclaration, text);
+        TestPage.log("PASS: Font should be loaded.");
+    } catch {
+        TestPage.log("FAIL: Font should be loaded.");
+    }
+    TestPage.dispatchEventToFrontend(eventName);
+}
+
+function test()
+{
+    let documentNode;
+
+    let suite = InspectorTest.createAsyncSuite("WI.Font");
+
+    function addTestCase({name, description, setup, selector, propertyMapHandlers})
+    {
+        suite.addTestCase({
+            name,
+            description,
+            setup,
+            async test() {
+                let nodeId = await documentNode.querySelector(selector);
+                let domNode = await WI.domManager.nodeForId(nodeId);
+                InspectorTest.assert(domNode, `Should find DOM Node for selector '${selector}'.`);
+
+                let cssStyles = WI.cssManager.stylesForNode(domNode);
+                InspectorTest.assert(cssStyles, `Should find CSS Styles for DOM Node.`);
+
+                await cssStyles.refreshIfNeeded();
+
+                let {propertiesMap, featuresMap, variationsMap} = cssStyles.computedPrimaryFont.calculateFontProperties(cssStyles);
+
+                await propertyMapHandlers(propertiesMap, featuresMap, variationsMap);
+            },
+        });
+    }
+
+    function loadFontFace(fontDeclaration, text, eventName)
+    {
+        return Promise.all([
+        	InspectorTest.awaitEvent(eventName),
+	        InspectorTest.evaluateInPage(`loadFontFace("${fontDeclaration}", "${text}", "${eventName}")`),
+        ]);
+    }
+
+    addTestCase({
+        name: "WI.Font.BasicPropertiesTest",
+        description: "Get the basic font properties for the node '#basic-properties-test'.",
+        selector: "#basic-properties-test",
+        propertyMapHandlers(propertiesMap, featuresMap, variationsMap) {
+            InspectorTest.expectEqual(propertiesMap.get("font-size").value, '2rem', "Font size property value should be '2rem'.");
+            InspectorTest.expectEqual(propertiesMap.get("font-style").value, 'italic', "Font size property value should be 'italic'.");
+            InspectorTest.expectEqual(propertiesMap.get("font-weight").value, '700', "Font size property value should be '700'.");
+            InspectorTest.expectEqual(propertiesMap.get("font-stretch").value, '150%', "Font size property value should be '150%'.");
+        }
+    });
+
+    addTestCase({
+        name: "WI.Font.FeaturePropertyLigaturesTest",
+        description: "Get the font ligature property for the node '#feature-property-ligatures-test'.",
+        selector: "#feature-property-ligatures-test",
+        propertyMapHandlers(propertiesMap, featuresMap, variationsMap) {
+            let property = propertiesMap.get("font-variant-ligatures");
+            InspectorTest.expectEqual(property.value, 'no-common-ligatures', "Property value should be 'no-common-ligatures'.");
+            InspectorTest.expectEqual(property.features.get("calt"), 1, "'calt' feature value should be '1'.");
+            InspectorTest.expectEqual(property.features.get("dlig"), 1, "'dlig' feature value should be '1'.");
+            InspectorTest.expectEqual(property.features.get("hlig"), 1, "'hlig' feature value should be '1'.");
+        }
+    });
+
+    addTestCase({
+        name: "WI.Font.FeaturePropertyPositionTest",
+        description: "Get the font position property for the node '#feature-property-position-test'.",
+        selector: "#feature-property-position-test",
+        propertyMapHandlers(propertiesMap, featuresMap, variationsMap) {
+            let property = propertiesMap.get("font-variant-position");
+            InspectorTest.expectEqual(property.value, 'super', "Property value should be 'super'.");
+            InspectorTest.expectEqual(property.features.get("sups"), 0, "'sups' feature value should be '0'.");
+            InspectorTest.expectEqual(property.features.get("subs"), 1, "'subs' feature value should be '1'.");
+        }
+    });
+
+    addTestCase({
+        name: "WI.Font.FeaturePropertyCapitalsTest",
+        description: "Get the font capitals property for the node '#feature-property-capitals-test'.",
+        selector: "#feature-property-capitals-test",
+        propertyMapHandlers(propertiesMap, featuresMap, variationsMap) {
+            let property = propertiesMap.get("font-variant-caps");
+            InspectorTest.expectEqual(property.value, 'all-small-caps', "Property value should be 'all-small-caps'.");
+            InspectorTest.expectEqual(property.features.get("c2sc"), 1, "'c2sc' feature value should be '1'.");
+            InspectorTest.expectEqual(property.features.get("smcp"), 1, "'smcp' feature value should be '1'.");
+        }
+    });
+
+    addTestCase({
+        name: "WI.Font.FeaturePropertyNumericTest",
+        description: "Get the font numeric property for the node '#feature-property-numeric-test'.",
+        selector: "#feature-property-numeric-test",
+        propertyMapHandlers(propertiesMap, featuresMap, variationsMap) {
+            let property = propertiesMap.get("font-variant-numeric");
+            InspectorTest.expectEqual(property.value, 'lining-nums tabular-nums stacked-fractions', "Property value should be 'lining-nums tabular-nums stacked-fractions'.");
+            InspectorTest.expectEqual(property.features.get("zero"), 1, "'zero' feature value should be '1'.");
+        }
+    });
+
+    addTestCase({
+        name: "WI.Font.FeaturePropertyAlternatesTest",
+        description: "Get the font alternates property for the node '#feature-property-alternates-test'.",
+        selector: "#feature-property-alternates-test",
+        propertyMapHandlers(propertiesMap, featuresMap, variationsMap) {
+            let property = propertiesMap.get("font-variant-alternates");
+            InspectorTest.expectEqual(property.value, 'historical-forms', "Property value should be 'historical-forms'.");
+            InspectorTest.expectEqual(property.features.get("hist"), 0, "'hist' feature value should be '1'.");
+        }
+    });
+
+    addTestCase({
+        name: "WI.Font.FeaturePropertyEastAsianTest",
+        description: "Get the font east asian property for the node '#feature-property-east-asian-test'.",
+        selector: "#feature-property-east-asian-test",
+        propertyMapHandlers(propertiesMap, featuresMap, variationsMap) {
+            let property = propertiesMap.get("font-variant-east-asian");
+            InspectorTest.expectEqual(property.value, 'jis78 full-width', "Property value should be 'jis78 full-width'.");
+            InspectorTest.expectEqual(property.features.get("jp78"), 1, "'jp78' feature value should be '1'.");
+        }
+    });
+
+    addTestCase({
+        name: "WI.Font.UnregisteredFeaturePropertyTest",
+        description: "Get an unregistered feature property for the node '#unregistered-feature-property-test'.",
+        selector: "#unregistered-feature-property-test",
+        propertyMapHandlers(propertiesMap, featuresMap, variationsMap) {
+            InspectorTest.expectEqual(featuresMap.get("appl"), 1, "'appl' feature value should be '1'.");
+        }
+    });
+
+    addTestCase({
+        name: "WI.Font.VariableFontTest",
+        description: "Get the font variations axes for the node '#variable-font-test'.",
+        async setup() {
+            return loadFontFace("normal normal 12px VariableFont", " ", "TestPage-VariableFont1Loaded");
+        },
+        selector: "#variable-font-test",
+        propertyMapHandlers(propertiesMap, featuresMap, variationsMap) {
+            let widthProperty = propertiesMap.get("font-stretch");
+            InspectorTest.expectEqual(widthProperty.value, '50%', "Width property value should be '50%'.");
+            let widthAxis = widthProperty.variations.get("wdth");
+            InspectorTest.expectEqual(widthAxis.name, "Width", "Width axis name should be 'Width'.");
+            InspectorTest.expectEqual(widthAxis.value, 777, "Width axis value should be '777'.");
+            InspectorTest.expectEqual(widthAxis.minimumValue, 0, "Width axis minimum should be '0'.");
+            InspectorTest.expectEqual(widthAxis.maximumValue, 1000, "Width axis maximum should be '1000'.");
+            InspectorTest.expectEqual(widthAxis.defaultValue, 750, "Width axis default should be '750'.");
+
+            let descentAxis = variationsMap.get("desc");
+            InspectorTest.expectEqual(descentAxis.name, "Descent", "Descent axis name should be 'Descent'.");
+            InspectorTest.expectEqual(descentAxis.value, 100, "Descent axis value should be '100'.");
+            InspectorTest.expectEqual(descentAxis.minimumValue, 0, "Descent axis minimum should be '0'.");
+            InspectorTest.expectEqual(descentAxis.maximumValue, 250, "Descent axis maximum should be '250'.");
+            InspectorTest.expectEqual(descentAxis.defaultValue, 0, "Descent axis default should be '0'.");
+
+            let heightAxis = variationsMap.get("hght");
+            InspectorTest.expectEqual(heightAxis.name, "Height", "Height axis name should be 'Height'.");
+            InspectorTest.expectEqual(heightAxis.value, undefined, "Height axis value should be 'undefined'.");
+            InspectorTest.expectEqual(heightAxis.minimumValue, 0, "Height axis minimum should be '0'.");
+            InspectorTest.expectEqual(heightAxis.maximumValue, 1000, "Height axis maximum should be '1000'.");
+            InspectorTest.expectEqual(heightAxis.defaultValue, 750, "Height axis default should be '750'.");
+
+            let trackingAxis = variationsMap.get("trac");
+            InspectorTest.expectEqual(trackingAxis.name, "Tracking", "Tracking axis name should be 'Tracking'.");
+            InspectorTest.expectEqual(trackingAxis.value, 500, "Descent axis value should be '500'.");
+            InspectorTest.expectEqual(trackingAxis.minimumValue, 0, "Tracking axis minimum should be '0'.");
+            InspectorTest.expectEqual(trackingAxis.maximumValue, 1000, "Tracking axis maximum should be '1000'.");
+            InspectorTest.expectEqual(trackingAxis.defaultValue, 0, "Tracking axis default should be '0'.");
+        }
+    });
+
+    WI.domManager.requestDocument((node) => {
+        documentNode = node;
+        suite.runTestCasesAndFinish();
+    });
+}
+</script>
+<style>
+@font-face {
+    font-family: "VariableFont";
+    src: url("../../animations/font-variations/resources/Boxis-VF.ttf");
+}
+
+#basic-properties-test {
+    font-size: 2rem;
+    font-style: italic;
+    font-weight: bold;
+    font-stretch: extra-expanded;
+}
+
+#feature-property-ligatures-test {
+    font-variant-ligatures: no-common-ligatures;
+    font-feature-settings: 'calt', 'dlig' on, 'hlig' 1;
+}
+
+#feature-property-position-test {
+    font-variant-position: super;
+    font-feature-settings: 'sups' off, 'subs';
+}
+
+#feature-property-capitals-test {
+    font-variant-caps: all-small-caps;
+    font-feature-settings: 'c2sc', 'smcp';
+}
+
+#feature-property-numeric-test {
+    font-variant-numeric: lining-nums tabular-nums stacked-fractions;
+    font-feature-settings: 'zero';
+}
+
+#feature-property-alternates-test {
+    font-variant-alternates: historical-forms;
+    font-feature-settings: 'hist' 0;
+}
+
+#feature-property-east-asian-test {
+    font-variant-east-asian: jis78 full-width;
+    font-feature-settings: 'jp78' 1;
+}
+
+#unregistered-feature-property-test {
+    font-feature-settings: 'appl';
+}
+
+#variable-font-test {
+    font-family: VariableFont;
+    font-stretch: 50%;
+    font-variation-settings: 'wdth' 777, "desc" 100, 'trac' 500;
+}
+
+</style>
+</head>
+<body onload="runTest();">
+<p>Test for WI.Font.</p>
+<div>
+    <div id="basic-properties-test">Basic Properties Test</div>
+    <div id="feature-property-ligatures-test">Feature Property Ligatures Test</div>
+    <div id="feature-property-position-test">Feature Property Position Test</div>
+    <div id="feature-property-capitals-test">Feature Property Capitals Test</div>
+    <div id="feature-property-numeric-test">Feature Property Numeric Test</div>
+    <div id="feature-property-alternates-test">Feature Property Alternates Test</div>
+    <div id="feature-property-east-asian-test">Feature Property East Asian Test</div>
+    <div id="unregistered-feature-property-test">Unregisted Feature Property Test</div>
+    <div id="variable-font-test" style="">Variable Font Test</div>
+</div>
+</body>
+</html>

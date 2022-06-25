@@ -1,0 +1,5 @@
+
+PASS Creating a shared worker from a blob URL works.
+PASS Creating a shared worker from a blob URL works immediately before revoking.
+PASS Connecting to a shared worker on a revoked blob URL works.
+

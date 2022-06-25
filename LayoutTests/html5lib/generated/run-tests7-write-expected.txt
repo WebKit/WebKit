@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: SyntaxError: Unexpected token '<'
+../resources/tests7.dat: PASS

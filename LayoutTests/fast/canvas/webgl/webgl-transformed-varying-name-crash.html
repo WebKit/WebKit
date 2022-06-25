@@ -1,0 +1,92 @@
+﻿<!DOCTYPE html>
+<head>
+<meta charset="UTF-8">
+<script id='2d-vertex-shader' type='x-shader/x-vertex'>#version 300 es
+    precision mediump float;
+    in vec4 a_position;
+    struct S
+    {
+        mat3x4 m;
+    };
+    out S matrix;
+    out vec3 vector;
+
+    void main()
+    {
+        matrix.m = mat3x4(1.0);
+        vector = vec3(1.0);
+        gl_Position = a_position;
+    }
+</script>
+<script id='2d-fragment-shader' type='x-shader/x-fragment'>#version 300 es
+    precision mediump float;
+    uniform vec3 uCol;
+    out vec4 col;
+    void main(){
+        col = vec4(uCol,1.);
+    }
+</script>
+<script>
+    function createShader(gl, sourceCode, type, type_str) {
+        var shader = gl.createShader(type);
+        gl.shaderSource(shader, sourceCode);
+        gl.compileShader(shader);
+
+        if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+            var info = gl.getShaderInfoLog(shader);
+            console.log(info);
+        }
+
+        return shader;
+    }
+
+    function createProgram(gl, vertexShader, fragmentShader) {
+        var program = gl.createProgram();
+        gl.attachShader(program, vertexShader);
+        gl.attachShader(program, fragmentShader);
+        transform_outs = ["vector"];
+        transform_feed = gl.createTransformFeedback();
+        gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK,transform_feed);
+        gl.transformFeedbackVaryings(program,transform_outs,gl.INTERLEAVED_ATTRIBS);
+        gl.linkProgram(program);
+        active_info = gl.getTransformFeedbackVarying(program,0);
+        gl.useProgram(program);
+
+        if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+            var info = gl.getProgramInfoLog(program);
+            console.log(info);
+        }
+        return program
+    }
+
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
+    }
+
+    function runTest() {
+        var canvas = document.createElement("canvas");
+        canvas.width = "640";
+        canvas.height = "480"
+        canvas.style.border = "thick solid #00FFFF";
+        var webgl_1 = canvas.getContext("webgl2");
+        document.body.append(canvas)
+
+        var schader_script_3 = document.getElementById('2d-vertex-shader');
+        var shader_source_3 = schader_script_3.text;
+        var schader_script_4 = document.getElementById('2d-fragment-shader');
+        var shader_source_4 = schader_script_4.text;
+
+        var vertexShader = createShader(webgl_1, shader_source_3, webgl_1.VERTEX_SHADER,"VERTEX_SHADER")
+        var fragmentShader = createShader(webgl_1, shader_source_4, webgl_1.FRAGMENT_SHADER,"FRAGMENT_SHADER")
+        createProgram(webgl_1, vertexShader, fragmentShader)
+
+        if (window.testRunner)
+          testRunner.notifyDone();
+    }
+</script>
+</head>
+<body onload="runTest()">
+    <div>PASS. You didn't crash.</div>
+</body>
+</html>

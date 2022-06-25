@@ -1,0 +1,34 @@
+This test verifies that navigator.contacts.select fails if invalid properties or options are specified.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Calling navigator.contacts.select().
+PASS Invalid properties and/or options specified.
+PASS exception.name is "TypeError"
+PASS finishedSubtest became true
+
+Calling navigator.contacts.select().
+PASS Invalid properties and/or options specified.
+PASS exception.name is "TypeError"
+PASS finishedSubtest became true
+
+Calling navigator.contacts.select().
+PASS Invalid properties and/or options specified.
+PASS exception.name is "TypeError"
+PASS finishedSubtest became true
+
+Calling navigator.contacts.select().
+PASS Invalid properties and/or options specified.
+PASS exception.name is "TypeError"
+PASS finishedSubtest became true
+
+Calling navigator.contacts.select().
+PASS Invalid properties and/or options specified.
+PASS exception.name is "TypeError"
+PASS finishedSubtest became true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Show contacts

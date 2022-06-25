@@ -1,0 +1,7 @@
+2d.path.roundrect.2.radii.2.double
+
+Verify that when two radii are given to roundRect(), the second radius, specified as a double, applies to the top-right and bottom-left corners.
+
+
+PASS Verify that when two radii are given to roundRect(), the second radius, specified as a double, applies to the top-right and bottom-left corners.
+

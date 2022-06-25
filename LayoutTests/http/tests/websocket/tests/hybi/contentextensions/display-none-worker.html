@@ -1,0 +1,27 @@
+<div id="should_be_hidden">This should be hidden by a css selector from the content extension.</div>
+<div id="should_not_be_hidden">This should not be hidden.</div>
+<script>
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+function endTest() {
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function startsWith(str, prefix) {
+    return str.indexOf(prefix) == 0;
+}
+
+var worker = new Worker("resources/display-none-worker.js");
+worker.onmessage = function (event)
+{
+    var message = event.data;
+    console.log(message);
+    if (startsWith(message, "PASS") || startsWith(message, "FAIL"))
+		endTest();
+};
+</script>

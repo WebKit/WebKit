@@ -1,0 +1,13 @@
+This test setting various attributes of a CSSOM elements to JavaScript null.
+
+TEST SUCCEEDED: The value was the string '.foo { color: black; }'. [tested CSSRule.cssText]
+
+TEST SUCCEEDED: The value was the string '.foo'. [tested CSSStyleRule.selectorText]
+
+TEST SUCCEEDED: The value was the empty string. [tested CSSStyleDeclaration.cssText]
+
+TEST SUCCEEDED: The value was the string 'black'. [tested CSSValue.cssText]
+
+TEST SUCCEEDED: The value was the empty string. [tested MediaList.mediaText]
+
+

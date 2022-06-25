@@ -1,0 +1,21 @@
+PASS range.setStart(shadowRoot, 0); collapsedRangeNode(range) is shadowRoot
+PASS range.setEnd(shadowRoot, 0); collapsedRangeNode(range) is shadowRoot
+PASS range.setStartBefore(shadowNode); collapsedRangeNode(range) is shadowRoot
+PASS range.setStartAfter(shadowNode); collapsedRangeNode(range) is shadowRoot
+PASS range.setEndBefore(shadowNode); collapsedRangeNode(range) is shadowRoot
+PASS range.setEndAfter(shadowNode); collapsedRangeNode(range) is shadowRoot
+PASS bodyRange().isPointInRange(shadowNode, 0) is false
+PASS bodyRange().comparePoint(shadowNode, 0) threw exception WrongDocumentError: The object is in the wrong document..
+PASS bodyRange().intersectsNode(shadowNode) is false
+PASS bodyRange().compareNode(shadowNode) threw exception WrongDocumentError: The object is in the wrong document..
+PASS document.body.compareDocumentPosition(shadowNode) & Node.DOCUMENT_POSITION_DISCONNECTED is Node.DOCUMENT_POSITION_DISCONNECTED
+PASS (document.body.compareDocumentPosition(shadowNode) & (Node.DOCUMENT_POSITION_PRECEDING | Node.DOCUMENT_POSITION_FOLLOWING)) != 0 is true
+PASS document.body.compareDocumentPosition(shadowNode) & Node.DOCUMENT_POSITION_CONTAINS is 0
+PASS document.body.compareDocumentPosition(shadowNode) & Node.DOCUMENT_POSITION_CONTAINED_BY is 0
+PASS document.body.compareDocumentPosition(shadowNode) & Node.DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC is Node.DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC
+PASS document.body.compareDocumentPosition(shadowNode) & ~(Node.DOCUMENT_POSITION_DISCONNECTED | Node.DOCUMENT_POSITION_PRECEDING | Node.DOCUMENT_POSITION_FOLLOWING | Node.DOCUMENT_POSITION_CONTAINS | Node.DOCUMENT_POSITION_CONTAINED_BY | Node.DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC) is 0
+PASS document.body.contains(shadowNode) is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

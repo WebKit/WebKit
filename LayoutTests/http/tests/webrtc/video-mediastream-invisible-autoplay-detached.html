@@ -1,0 +1,71 @@
+<html>
+    <head>
+    </head>
+        <script>
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+            }
+            if (window.internals)
+                internals.settings.setInvisibleAutoplayNotPermitted(true);
+        </script>
+    <body>
+        <video autoplay width=320px height=240px id=videoElement controls playsInline></video>
+        <p>Test that "invisible autoplay not allowed restriction" pauses realtime media when scrolled out of view and restarts as expected.</p>
+        <div id="log"></div>
+        <iframe wdith=640px height=480px id="testFrame" src="resources/utility-frame.html"></iframe>
+        <script>
+            let myVideo = videoElement;
+
+            function doLog(msg)
+            {
+                log.innerHTML += msg + "<br>";
+            }
+
+            async function start()
+            {
+                doLog('** setting video.srcObject');
+                myVideo.srcObject = await navigator.mediaDevices.getUserMedia({ video: true });
+                doLog('** waiting to play');
+                myVideo.onplay = play1;
+                doLog('');
+            }
+
+            async function play1()
+            {
+                myVideo.onplay = undefined;
+
+                doLog('** element played');
+
+                myVideo.style.display = "none";
+                document.body.removeChild(myVideo);
+                await new Promise(resolve => setTimeout(resolve, 500));
+                if (myVideo.paused) {
+                    pause1();
+                    return;
+                }
+                myVideo.onpause = pause1;
+            }
+
+            async function pause1()
+            {
+                myVideo.onpause = undefined;
+
+                doLog('** element paused');
+                testFrame.contentDocument.body.appendChild(myVideo);
+                myVideo.style.removeProperty("display");
+                myVideo.onplay = finish;
+            }
+
+            function finish()
+            {
+                myVideo.onplay = undefined;
+                doLog('** element played');
+                doLog('** test finished');
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }
+            start();
+        </script>
+    </body>
+</html>

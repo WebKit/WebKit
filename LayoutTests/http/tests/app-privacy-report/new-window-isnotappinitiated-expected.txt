@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: PASS: New window should have an opener
+CONSOLE MESSAGE: PASS: New window should be able to look up opener by name
+CONSOLE MESSAGE: PASS: Successfully loaded only non-app-initiated window content
+Make sure that windows opened via window.open are attributed correctly
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+

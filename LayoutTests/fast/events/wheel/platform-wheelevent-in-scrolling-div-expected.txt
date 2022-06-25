@@ -1,0 +1,9 @@
+PASS event.wheelDeltaY is expectedScrollTop * -120
+PASS event.wheelDeltaX is expectedScrollLeft * -120
+PASS event.wheelDelta is expectedScrollTop * -120
+PASS div.scrollTop is expectedScrollTop * pixelsPerWheelTick
+PASS div.scrollLeft is expectedScrollLeft * pixelsPerWheelTick
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

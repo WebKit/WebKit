@@ -1,0 +1,18 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayoutFormattingContextEnabled=true InlineFormattingContextIntegrationEnabled=false ] -->
+<style>
+table {
+    font-size: 10px;
+    border-spacing: 0px;
+    padding: 30px;
+    border: 10px solid green;
+}
+
+td {
+    border: 10px solid red;
+    padding: 10px;
+}
+</style>
+<table>
+<tr><td rowspan=2 style="width: 40px"></td><td style="width: 40px">fooo fooo fooo</td></tr>
+<tr><td style="width: 40px">foo</td></tr>
+</table>

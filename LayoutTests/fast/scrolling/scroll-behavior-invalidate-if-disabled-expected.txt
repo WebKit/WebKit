@@ -1,0 +1,1 @@
+Pass test scrollBehavior should be invalidate if CSSOMViewSmoothScrollingEnabled is disabled.

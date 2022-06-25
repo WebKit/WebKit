@@ -1,0 +1,54 @@
+<html>
+<head>
+<title>Service Worker and Cache Control requests</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/service-workers/service-worker/resources/test-helpers.sub.js"></script>
+<script src="/common/get-host-info.sub.js"></script>
+<script src="/common/utils.js"></script>
+</head>
+<body>
+<script>
+promise_test(async (test) => {
+    let registration = await navigator.serviceWorker.getRegistration("resources/");
+    if (registration)
+        await registration.unregister();
+    registration = await navigator.serviceWorker.register("cache-control-request-worker.js", { scope : "resources/" });
+    activeWorker = registration.active;
+    if (activeWorker)
+        return;
+    activeWorker = registration.installing;
+    await new Promise(resolve => {
+        activeWorker.addEventListener('statechange', () => {
+            if (activeWorker.state === "activated")
+                resolve();
+        });
+    });
+}, "Setup worker");
+
+promise_test(async (test) => {
+    const iframe = await with_iframe("resources/empty.html");
+
+    const options = { method: "POST", cache: "no-cache", mode: "cors", body: "body" };
+    const response = await iframe.contentWindow.fetch(get_host_info().HTTP_REMOTE_ORIGIN +  "/WebKit/service-workers/resources/cross-origin-allow.py", options);
+    assert_not_equals(await response.text(), "no cache-control header");
+    iframe.remove();
+}, "Ensure cache-control does not break service worker fetch handling");
+
+promise_test(async (test) => {
+    const iframe = await with_iframe("resources/empty.html");
+
+    const id = token();
+    const blob = new Blob(["test"], { type: "application/badabaoo" });
+
+    iframe.contentWindow.navigator.sendBeacon(get_host_info().HTTP_REMOTE_ORIGIN +  "/WebKit/service-workers/resources/cross-origin-allow-for-beacon.py?token=" + id, blob);
+    await new Promise(resolve => setTimeout(resolve, 50));
+
+    const response = await fetch("/WebKit/service-workers/resources/cross-origin-allow-for-beacon.py?token=" + id);
+    assert_equals(await response.text(), "preflight ok");
+
+    iframe.remove();
+}, "Ensure beacon headers are not broken by service worker fetch handling");
+</script>
+</body>
+</html>

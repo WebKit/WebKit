@@ -1,0 +1,16 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+<div class="search_field_row">
+  <span class="field_label ">
+    <label for="votes">Only [% terms.bugs %] with at least</label>:
+  </span>
+  <input name="votes" id="votes" size="3"
+         value="[% default.votes.0 FILTER html %]"> votes
+  <input type="hidden" name="votes_type" value="greaterthaneq">
+</div>

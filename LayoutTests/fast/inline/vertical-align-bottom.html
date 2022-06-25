@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<style>
+.block {
+   background-color: green;
+   width: 120px;
+   margin-bottom: 20px;
+   color: transparent;
+   font-family: Ahem;
+   font-size: 20px;
+}
+
+.aligned-box {
+  display: inline-block;
+  background-color: green;
+  width: 50px;
+  height: 50px;
+}
+
+.non-lineBox-relative {
+   vertical-align: baseline;
+   width: 50px;
+   height: 20px;
+}
+
+.bottom {
+  vertical-align: bottom;
+
+  width: 50px;
+  height: 50px;
+}
+
+.top {
+  vertical-align: top;
+}
+</style>
+<!-- The non-line-box relative inline level boxes should not stick out of their parent block box -->
+<div class=block>X<div class="aligned-box non-lineBox-relative">X</div><div class="aligned-box bottom"></div></div>
+<div class=block>X<div class="aligned-box non-lineBox-relative" style="height: 100px;">X</div><div class="aligned-box bottom"></div></div>
+<div class=block>X<div class="aligned-box non-lineBox-relative" style="padding-bottom: 100px; height: 100px;">X</div><div class="aligned-box bottom"></div></div>
+<div class=block>X<div class="aligned-box non-lineBox-relative">X</div><div class="aligned-box bottom"></div></div>
+<div class=block>X<div class="aligned-box non-lineBox-relative" style="height: 30px; vertical-align: middle">X</div><div class="aligned-box bottom"></div></div>
+<div class=block>X<div class="aligned-box non-lineBox-relative">X</div><div class="aligned-box top"></div></div>

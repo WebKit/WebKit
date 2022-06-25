@@ -1,0 +1,12 @@
+This test checks that array accessing doesn't do the wrong thing for negative indices
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS a.length is 0
+PASS a["-5"] is a[-5]
+PASS a[4] is undefined
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

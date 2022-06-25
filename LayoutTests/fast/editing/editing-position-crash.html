@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+onload = () => {
+  document.designMode = "on";
+  path0 = document.getElementById('path0');
+  path0.focus();
+  if (window.testRunner)
+    testRunner.dumpAsText();
+}
+function insert() {
+  document.execCommand("insertHorizontalRule", false, null);
+  window.addEventListener("beforeinput", delfn, { capture: true, once: true });
+  document.execCommand("createLink", false, "x");
+}
+function delfn() {
+  document.execCommand("delete", false, null);
+}
+</script>
+</head>
+<body>
+<svg onfocusin="insert()">
+<path id="path0" tabindex="2" onfocusin="window.getSelection().setPosition(obj0, 10);" />
+</svg>
+<br />
+<object id="obj0" data="x" type="image/jpeg">
+PASS if this doesn't crash
+</object>
+</body>
+</html>

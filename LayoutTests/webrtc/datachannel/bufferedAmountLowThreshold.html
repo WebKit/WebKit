@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Testing bufferedAmountLowThreashold RTCDataChannel attribute and event</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+  </head>
+  <body>
+    <script src ="../routines.js"></script>
+    <script>
+window.addEventListener("unhandledrejection", event => {
+    event.preventDefault();
+});
+
+var localChannel;
+
+function closeDataChannels() {
+    localChannel.close();
+    closeConnections();
+}
+
+var longString = "abcdefgh";
+for (var cptr = 0; cptr < 14; ++cptr)
+    longString += longString;
+
+function sendLongMessages(channel)
+{
+    channel.send(longString);
+    channel.send(longString);
+    channel.send(longString);
+    channel.send(longString);
+    channel.send(longString);
+    channel.send(longString);
+    channel.send(longString);
+    channel.send(longString);
+}
+
+promise_test(async (test) => {
+    await new Promise((resolve, reject) => {
+        createConnections((localConnection) => {
+            localChannel = localConnection.createDataChannel('sendDataChannel');
+            localChannel.onopen = resolve;
+            localChannel.bufferedAmountLowThreshold = 100000;
+        }, (remoteConnection) => {
+            remoteConnection.ondatachannel = (event) => {
+                event.channel.onmessage = () => { };
+            };
+        });
+        setTimeout(() => reject('timed out 1'), 5000);
+    });
+
+    const promise = new Promise((resolve, reject) => {
+        localChannel.onbufferedamountlow = resolve;
+        setTimeout(() => reject('timed out 2'), 5000);
+    });
+    sendLongMessages(localChannel);
+    await promise;
+    closeDataChannels();
+}, "Large buffer threshold reached");
+    </script>
+  </body>
+</html>

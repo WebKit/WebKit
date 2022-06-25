@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing autoplay with getUserMedia</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+        <script src=../media/media-file.js></script>
+        <script src=../media/video-test.js></script>
+    </head>
+    <body>
+        <video id="video1" loop autoplay playsInline></video>
+        <video id="video2" loop autoplay playsInline></video>
+        <video id="video3" loop autoplay playsInline></video>
+        <video id="video4" loop autoplay playsInline></video>
+        <script>
+promise_test(async (test) => {
+    if (window.internals) {
+        internals.setMediaElementRestrictions(video1, "RequireUserGestureForVideoRateChange");
+        internals.setMediaElementRestrictions(video2, "RequireUserGestureForVideoRateChange");
+        internals.setMediaElementRestrictions(video3, "RequireUserGestureForVideoRateChange");
+        internals.setMediaElementRestrictions(video4, "RequireUserGestureForVideoRateChange");
+    }
+
+    video1.src = findMediaFile("video", "../media/content/audio-tracks");
+    video2.src = findMediaFile("video", "../media/content/audio-tracks");
+    video3.src = findMediaFile("video", "../media/content/audio-tracks");
+
+    await new Promise(resolve => setTimeout(resolve, 50));
+    assert_true(video1.paused, "paused video");
+    assert_true(video2.paused, "paused video");
+    assert_true(video3.paused, "paused video");
+
+    video1.pause();
+    let removedVideo2 = video2;
+    removedVideo2.remove();
+
+    video4.srcObject = await navigator.mediaDevices.getUserMedia({ video : true });
+
+    while (video4.paused)
+        await new Promise(resolve => setTimeout(resolve, 50));
+
+    assert_true(video1.paused, "paused video");
+    assert_true(removedVideo2.paused, "out of DOM video");
+    assert_true(video3.paused, "still not autoplaying video");
+}, "Granting getUserMedia should not start paused media or media that cannot autoplay due to autoplay restrictions");
+
+        </script>
+    </body>
+</html>

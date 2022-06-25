@@ -1,0 +1,54 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-additive-symbols-setter-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-additive-symbols-setter-invalid-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-additive-symbols-setter-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-additive-symbols-setter.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-fallback-setter-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-fallback-setter-invalid-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-fallback-setter-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-fallback-setter.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-name-setter-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-name-setter-invalid-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-name-setter-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-name-setter.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-negative-setter-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-negative-setter-invalid-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-negative-setter-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-negative-setter.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-pad-setter-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-pad-setter-invalid-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-pad-setter-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-pad-setter.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-prefix-suffix-setter-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-prefix-suffix-setter-invalid-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-prefix-suffix-setter-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-prefix-suffix-setter.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-range-setter-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-range-setter-invalid-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-range-setter-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-range-setter.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-symbols-setter-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-symbols-setter-invalid-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-symbols-setter-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-symbols-setter.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-system-setter-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-system-setter-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-system-setter-2-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-system-setter-2.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-system-setter-invalid-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-system-setter-invalid.html

@@ -1,0 +1,384 @@
+
+PASS paras[0].firstChild.insertData(376, "foo"), with unselected range on paras[0].firstChild from 0 to 1
+PASS paras[0].firstChild.insertData(376, "foo"), with selected range on paras[0].firstChild from 0 to 1
+PASS paras[0].firstChild.insertData(0, "foo"), with unselected range collapsed at (paras[0].firstChild, 0)
+PASS paras[0].firstChild.insertData(0, "foo"), with selected range collapsed at (paras[0].firstChild, 0)
+PASS paras[0].firstChild.insertData(1, "foo"), with unselected range collapsed at (paras[0].firstChild, 1)
+PASS paras[0].firstChild.insertData(1, "foo"), with selected range collapsed at (paras[0].firstChild, 1)
+PASS paras[0].firstChild.insertData(paras[0].firstChild.length, "foo"), with unselected range collapsed at (paras[0].firstChild, paras[0].firstChild.length)
+PASS paras[0].firstChild.insertData(paras[0].firstChild.length, "foo"), with selected range collapsed at (paras[0].firstChild, paras[0].firstChild.length)
+PASS paras[0].firstChild.insertData(1, "foo"), with unselected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.insertData(1, "foo"), with selected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.insertData(2, "foo"), with unselected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.insertData(2, "foo"), with selected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.insertData(3, "foo"), with unselected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.insertData(3, "foo"), with selected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.insertData(376, ""), with unselected range on paras[0].firstChild from 0 to 1
+PASS paras[0].firstChild.insertData(376, ""), with selected range on paras[0].firstChild from 0 to 1
+PASS paras[0].firstChild.insertData(0, ""), with unselected range collapsed at (paras[0].firstChild, 0)
+PASS paras[0].firstChild.insertData(0, ""), with selected range collapsed at (paras[0].firstChild, 0)
+PASS paras[0].firstChild.insertData(1, ""), with unselected range collapsed at (paras[0].firstChild, 1)
+PASS paras[0].firstChild.insertData(1, ""), with selected range collapsed at (paras[0].firstChild, 1)
+PASS paras[0].firstChild.insertData(paras[0].firstChild.length, ""), with unselected range collapsed at (paras[0].firstChild, paras[0].firstChild.length)
+PASS paras[0].firstChild.insertData(paras[0].firstChild.length, ""), with selected range collapsed at (paras[0].firstChild, paras[0].firstChild.length)
+PASS paras[0].firstChild.insertData(1, ""), with unselected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.insertData(1, ""), with selected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.insertData(2, ""), with unselected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.insertData(2, ""), with selected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.insertData(3, ""), with unselected range on paras[0].firstChild from 1 to 3
+PASS paras[0].firstChild.insertData(3, ""), with selected range on paras[0].firstChild from 1 to 3
+PASS paras[1].firstChild.insertData(376, "foo"), with unselected range on paras[1].firstChild from 0 to 1
+PASS paras[1].firstChild.insertData(376, "foo"), with selected range on paras[1].firstChild from 0 to 1
+PASS paras[1].firstChild.insertData(0, "foo"), with unselected range collapsed at (paras[1].firstChild, 0)
+PASS paras[1].firstChild.insertData(0, "foo"), with selected range collapsed at (paras[1].firstChild, 0)
+PASS paras[1].firstChild.insertData(1, "foo"), with unselected range collapsed at (paras[1].firstChild, 1)
+PASS paras[1].firstChild.insertData(1, "foo"), with selected range collapsed at (paras[1].firstChild, 1)
+PASS paras[1].firstChild.insertData(paras[1].firstChild.length, "foo"), with unselected range collapsed at (paras[1].firstChild, paras[1].firstChild.length)
+PASS paras[1].firstChild.insertData(paras[1].firstChild.length, "foo"), with selected range collapsed at (paras[1].firstChild, paras[1].firstChild.length)
+PASS paras[1].firstChild.insertData(1, "foo"), with unselected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.insertData(1, "foo"), with selected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.insertData(2, "foo"), with unselected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.insertData(2, "foo"), with selected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.insertData(3, "foo"), with unselected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.insertData(3, "foo"), with selected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.insertData(376, ""), with unselected range on paras[1].firstChild from 0 to 1
+PASS paras[1].firstChild.insertData(376, ""), with selected range on paras[1].firstChild from 0 to 1
+PASS paras[1].firstChild.insertData(0, ""), with unselected range collapsed at (paras[1].firstChild, 0)
+PASS paras[1].firstChild.insertData(0, ""), with selected range collapsed at (paras[1].firstChild, 0)
+PASS paras[1].firstChild.insertData(1, ""), with unselected range collapsed at (paras[1].firstChild, 1)
+PASS paras[1].firstChild.insertData(1, ""), with selected range collapsed at (paras[1].firstChild, 1)
+PASS paras[1].firstChild.insertData(paras[1].firstChild.length, ""), with unselected range collapsed at (paras[1].firstChild, paras[1].firstChild.length)
+PASS paras[1].firstChild.insertData(paras[1].firstChild.length, ""), with selected range collapsed at (paras[1].firstChild, paras[1].firstChild.length)
+PASS paras[1].firstChild.insertData(1, ""), with unselected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.insertData(1, ""), with selected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.insertData(2, ""), with unselected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.insertData(2, ""), with selected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.insertData(3, ""), with unselected range on paras[1].firstChild from 1 to 3
+PASS paras[1].firstChild.insertData(3, ""), with selected range on paras[1].firstChild from 1 to 3
+PASS foreignTextNode.insertData(376, "foo"), with unselected range on foreignTextNode from 0 to 1
+PASS foreignTextNode.insertData(376, "foo"), with selected range on foreignTextNode from 0 to 1
+PASS foreignTextNode.insertData(0, "foo"), with unselected range collapsed at (foreignTextNode, 0)
+PASS foreignTextNode.insertData(0, "foo"), with selected range collapsed at (foreignTextNode, 0)
+PASS foreignTextNode.insertData(1, "foo"), with unselected range collapsed at (foreignTextNode, 1)
+PASS foreignTextNode.insertData(1, "foo"), with selected range collapsed at (foreignTextNode, 1)
+PASS foreignTextNode.insertData(foreignTextNode.length, "foo"), with unselected range collapsed at (foreignTextNode, foreignTextNode.length)
+PASS foreignTextNode.insertData(foreignTextNode.length, "foo"), with selected range collapsed at (foreignTextNode, foreignTextNode.length)
+PASS foreignTextNode.insertData(1, "foo"), with unselected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.insertData(1, "foo"), with selected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.insertData(2, "foo"), with unselected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.insertData(2, "foo"), with selected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.insertData(3, "foo"), with unselected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.insertData(3, "foo"), with selected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.insertData(376, ""), with unselected range on foreignTextNode from 0 to 1
+PASS foreignTextNode.insertData(376, ""), with selected range on foreignTextNode from 0 to 1
+PASS foreignTextNode.insertData(0, ""), with unselected range collapsed at (foreignTextNode, 0)
+PASS foreignTextNode.insertData(0, ""), with selected range collapsed at (foreignTextNode, 0)
+PASS foreignTextNode.insertData(1, ""), with unselected range collapsed at (foreignTextNode, 1)
+PASS foreignTextNode.insertData(1, ""), with selected range collapsed at (foreignTextNode, 1)
+PASS foreignTextNode.insertData(foreignTextNode.length, ""), with unselected range collapsed at (foreignTextNode, foreignTextNode.length)
+PASS foreignTextNode.insertData(foreignTextNode.length, ""), with selected range collapsed at (foreignTextNode, foreignTextNode.length)
+PASS foreignTextNode.insertData(1, ""), with unselected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.insertData(1, ""), with selected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.insertData(2, ""), with unselected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.insertData(2, ""), with selected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.insertData(3, ""), with unselected range on foreignTextNode from 1 to 3
+PASS foreignTextNode.insertData(3, ""), with selected range on foreignTextNode from 1 to 3
+PASS xmlTextNode.insertData(376, "foo"), with unselected range on xmlTextNode from 0 to 1
+PASS xmlTextNode.insertData(376, "foo"), with selected range on xmlTextNode from 0 to 1
+PASS xmlTextNode.insertData(0, "foo"), with unselected range collapsed at (xmlTextNode, 0)
+PASS xmlTextNode.insertData(0, "foo"), with selected range collapsed at (xmlTextNode, 0)
+PASS xmlTextNode.insertData(1, "foo"), with unselected range collapsed at (xmlTextNode, 1)
+PASS xmlTextNode.insertData(1, "foo"), with selected range collapsed at (xmlTextNode, 1)
+PASS xmlTextNode.insertData(xmlTextNode.length, "foo"), with unselected range collapsed at (xmlTextNode, xmlTextNode.length)
+PASS xmlTextNode.insertData(xmlTextNode.length, "foo"), with selected range collapsed at (xmlTextNode, xmlTextNode.length)
+PASS xmlTextNode.insertData(1, "foo"), with unselected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.insertData(1, "foo"), with selected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.insertData(2, "foo"), with unselected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.insertData(2, "foo"), with selected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.insertData(3, "foo"), with unselected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.insertData(3, "foo"), with selected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.insertData(376, ""), with unselected range on xmlTextNode from 0 to 1
+PASS xmlTextNode.insertData(376, ""), with selected range on xmlTextNode from 0 to 1
+PASS xmlTextNode.insertData(0, ""), with unselected range collapsed at (xmlTextNode, 0)
+PASS xmlTextNode.insertData(0, ""), with selected range collapsed at (xmlTextNode, 0)
+PASS xmlTextNode.insertData(1, ""), with unselected range collapsed at (xmlTextNode, 1)
+PASS xmlTextNode.insertData(1, ""), with selected range collapsed at (xmlTextNode, 1)
+PASS xmlTextNode.insertData(xmlTextNode.length, ""), with unselected range collapsed at (xmlTextNode, xmlTextNode.length)
+PASS xmlTextNode.insertData(xmlTextNode.length, ""), with selected range collapsed at (xmlTextNode, xmlTextNode.length)
+PASS xmlTextNode.insertData(1, ""), with unselected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.insertData(1, ""), with selected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.insertData(2, ""), with unselected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.insertData(2, ""), with selected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.insertData(3, ""), with unselected range on xmlTextNode from 1 to 3
+PASS xmlTextNode.insertData(3, ""), with selected range on xmlTextNode from 1 to 3
+PASS detachedTextNode.insertData(376, "foo"), with unselected range on detachedTextNode from 0 to 1
+PASS detachedTextNode.insertData(376, "foo"), with selected range on detachedTextNode from 0 to 1
+PASS detachedTextNode.insertData(0, "foo"), with unselected range collapsed at (detachedTextNode, 0)
+PASS detachedTextNode.insertData(0, "foo"), with selected range collapsed at (detachedTextNode, 0)
+PASS detachedTextNode.insertData(1, "foo"), with unselected range collapsed at (detachedTextNode, 1)
+PASS detachedTextNode.insertData(1, "foo"), with selected range collapsed at (detachedTextNode, 1)
+PASS detachedTextNode.insertData(detachedTextNode.length, "foo"), with unselected range collapsed at (detachedTextNode, detachedTextNode.length)
+PASS detachedTextNode.insertData(detachedTextNode.length, "foo"), with selected range collapsed at (detachedTextNode, detachedTextNode.length)
+PASS detachedTextNode.insertData(1, "foo"), with unselected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.insertData(1, "foo"), with selected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.insertData(2, "foo"), with unselected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.insertData(2, "foo"), with selected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.insertData(3, "foo"), with unselected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.insertData(3, "foo"), with selected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.insertData(376, ""), with unselected range on detachedTextNode from 0 to 1
+PASS detachedTextNode.insertData(376, ""), with selected range on detachedTextNode from 0 to 1
+PASS detachedTextNode.insertData(0, ""), with unselected range collapsed at (detachedTextNode, 0)
+PASS detachedTextNode.insertData(0, ""), with selected range collapsed at (detachedTextNode, 0)
+PASS detachedTextNode.insertData(1, ""), with unselected range collapsed at (detachedTextNode, 1)
+PASS detachedTextNode.insertData(1, ""), with selected range collapsed at (detachedTextNode, 1)
+PASS detachedTextNode.insertData(detachedTextNode.length, ""), with unselected range collapsed at (detachedTextNode, detachedTextNode.length)
+PASS detachedTextNode.insertData(detachedTextNode.length, ""), with selected range collapsed at (detachedTextNode, detachedTextNode.length)
+PASS detachedTextNode.insertData(1, ""), with unselected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.insertData(1, ""), with selected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.insertData(2, ""), with unselected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.insertData(2, ""), with selected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.insertData(3, ""), with unselected range on detachedTextNode from 1 to 3
+PASS detachedTextNode.insertData(3, ""), with selected range on detachedTextNode from 1 to 3
+PASS detachedForeignTextNode.insertData(376, "foo"), with unselected range on detachedForeignTextNode from 0 to 1
+PASS detachedForeignTextNode.insertData(376, "foo"), with selected range on detachedForeignTextNode from 0 to 1
+PASS detachedForeignTextNode.insertData(0, "foo"), with unselected range collapsed at (detachedForeignTextNode, 0)
+PASS detachedForeignTextNode.insertData(0, "foo"), with selected range collapsed at (detachedForeignTextNode, 0)
+PASS detachedForeignTextNode.insertData(1, "foo"), with unselected range collapsed at (detachedForeignTextNode, 1)
+PASS detachedForeignTextNode.insertData(1, "foo"), with selected range collapsed at (detachedForeignTextNode, 1)
+PASS detachedForeignTextNode.insertData(detachedForeignTextNode.length, "foo"), with unselected range collapsed at (detachedForeignTextNode, detachedForeignTextNode.length)
+PASS detachedForeignTextNode.insertData(detachedForeignTextNode.length, "foo"), with selected range collapsed at (detachedForeignTextNode, detachedForeignTextNode.length)
+PASS detachedForeignTextNode.insertData(1, "foo"), with unselected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.insertData(1, "foo"), with selected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.insertData(2, "foo"), with unselected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.insertData(2, "foo"), with selected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.insertData(3, "foo"), with unselected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.insertData(3, "foo"), with selected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.insertData(376, ""), with unselected range on detachedForeignTextNode from 0 to 1
+PASS detachedForeignTextNode.insertData(376, ""), with selected range on detachedForeignTextNode from 0 to 1
+PASS detachedForeignTextNode.insertData(0, ""), with unselected range collapsed at (detachedForeignTextNode, 0)
+PASS detachedForeignTextNode.insertData(0, ""), with selected range collapsed at (detachedForeignTextNode, 0)
+PASS detachedForeignTextNode.insertData(1, ""), with unselected range collapsed at (detachedForeignTextNode, 1)
+PASS detachedForeignTextNode.insertData(1, ""), with selected range collapsed at (detachedForeignTextNode, 1)
+PASS detachedForeignTextNode.insertData(detachedForeignTextNode.length, ""), with unselected range collapsed at (detachedForeignTextNode, detachedForeignTextNode.length)
+PASS detachedForeignTextNode.insertData(detachedForeignTextNode.length, ""), with selected range collapsed at (detachedForeignTextNode, detachedForeignTextNode.length)
+PASS detachedForeignTextNode.insertData(1, ""), with unselected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.insertData(1, ""), with selected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.insertData(2, ""), with unselected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.insertData(2, ""), with selected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.insertData(3, ""), with unselected range on detachedForeignTextNode from 1 to 3
+PASS detachedForeignTextNode.insertData(3, ""), with selected range on detachedForeignTextNode from 1 to 3
+PASS detachedXmlTextNode.insertData(376, "foo"), with unselected range on detachedXmlTextNode from 0 to 1
+PASS detachedXmlTextNode.insertData(376, "foo"), with selected range on detachedXmlTextNode from 0 to 1
+PASS detachedXmlTextNode.insertData(0, "foo"), with unselected range collapsed at (detachedXmlTextNode, 0)
+PASS detachedXmlTextNode.insertData(0, "foo"), with selected range collapsed at (detachedXmlTextNode, 0)
+PASS detachedXmlTextNode.insertData(1, "foo"), with unselected range collapsed at (detachedXmlTextNode, 1)
+PASS detachedXmlTextNode.insertData(1, "foo"), with selected range collapsed at (detachedXmlTextNode, 1)
+PASS detachedXmlTextNode.insertData(detachedXmlTextNode.length, "foo"), with unselected range collapsed at (detachedXmlTextNode, detachedXmlTextNode.length)
+PASS detachedXmlTextNode.insertData(detachedXmlTextNode.length, "foo"), with selected range collapsed at (detachedXmlTextNode, detachedXmlTextNode.length)
+PASS detachedXmlTextNode.insertData(1, "foo"), with unselected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.insertData(1, "foo"), with selected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.insertData(2, "foo"), with unselected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.insertData(2, "foo"), with selected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.insertData(3, "foo"), with unselected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.insertData(3, "foo"), with selected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.insertData(376, ""), with unselected range on detachedXmlTextNode from 0 to 1
+PASS detachedXmlTextNode.insertData(376, ""), with selected range on detachedXmlTextNode from 0 to 1
+PASS detachedXmlTextNode.insertData(0, ""), with unselected range collapsed at (detachedXmlTextNode, 0)
+PASS detachedXmlTextNode.insertData(0, ""), with selected range collapsed at (detachedXmlTextNode, 0)
+PASS detachedXmlTextNode.insertData(1, ""), with unselected range collapsed at (detachedXmlTextNode, 1)
+PASS detachedXmlTextNode.insertData(1, ""), with selected range collapsed at (detachedXmlTextNode, 1)
+PASS detachedXmlTextNode.insertData(detachedXmlTextNode.length, ""), with unselected range collapsed at (detachedXmlTextNode, detachedXmlTextNode.length)
+PASS detachedXmlTextNode.insertData(detachedXmlTextNode.length, ""), with selected range collapsed at (detachedXmlTextNode, detachedXmlTextNode.length)
+PASS detachedXmlTextNode.insertData(1, ""), with unselected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.insertData(1, ""), with selected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.insertData(2, ""), with unselected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.insertData(2, ""), with selected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.insertData(3, ""), with unselected range on detachedXmlTextNode from 1 to 3
+PASS detachedXmlTextNode.insertData(3, ""), with selected range on detachedXmlTextNode from 1 to 3
+PASS comment.insertData(376, "foo"), with unselected range on comment from 0 to 1
+PASS comment.insertData(376, "foo"), with selected range on comment from 0 to 1
+PASS comment.insertData(0, "foo"), with unselected range collapsed at (comment, 0)
+PASS comment.insertData(0, "foo"), with selected range collapsed at (comment, 0)
+PASS comment.insertData(1, "foo"), with unselected range collapsed at (comment, 1)
+PASS comment.insertData(1, "foo"), with selected range collapsed at (comment, 1)
+PASS comment.insertData(comment.length, "foo"), with unselected range collapsed at (comment, comment.length)
+PASS comment.insertData(comment.length, "foo"), with selected range collapsed at (comment, comment.length)
+PASS comment.insertData(1, "foo"), with unselected range on comment from 1 to 3
+PASS comment.insertData(1, "foo"), with selected range on comment from 1 to 3
+PASS comment.insertData(2, "foo"), with unselected range on comment from 1 to 3
+PASS comment.insertData(2, "foo"), with selected range on comment from 1 to 3
+PASS comment.insertData(3, "foo"), with unselected range on comment from 1 to 3
+PASS comment.insertData(3, "foo"), with selected range on comment from 1 to 3
+PASS comment.insertData(376, ""), with unselected range on comment from 0 to 1
+PASS comment.insertData(376, ""), with selected range on comment from 0 to 1
+PASS comment.insertData(0, ""), with unselected range collapsed at (comment, 0)
+PASS comment.insertData(0, ""), with selected range collapsed at (comment, 0)
+PASS comment.insertData(1, ""), with unselected range collapsed at (comment, 1)
+PASS comment.insertData(1, ""), with selected range collapsed at (comment, 1)
+PASS comment.insertData(comment.length, ""), with unselected range collapsed at (comment, comment.length)
+PASS comment.insertData(comment.length, ""), with selected range collapsed at (comment, comment.length)
+PASS comment.insertData(1, ""), with unselected range on comment from 1 to 3
+PASS comment.insertData(1, ""), with selected range on comment from 1 to 3
+PASS comment.insertData(2, ""), with unselected range on comment from 1 to 3
+PASS comment.insertData(2, ""), with selected range on comment from 1 to 3
+PASS comment.insertData(3, ""), with unselected range on comment from 1 to 3
+PASS comment.insertData(3, ""), with selected range on comment from 1 to 3
+PASS foreignComment.insertData(376, "foo"), with unselected range on foreignComment from 0 to 1
+PASS foreignComment.insertData(376, "foo"), with selected range on foreignComment from 0 to 1
+PASS foreignComment.insertData(0, "foo"), with unselected range collapsed at (foreignComment, 0)
+PASS foreignComment.insertData(0, "foo"), with selected range collapsed at (foreignComment, 0)
+PASS foreignComment.insertData(1, "foo"), with unselected range collapsed at (foreignComment, 1)
+PASS foreignComment.insertData(1, "foo"), with selected range collapsed at (foreignComment, 1)
+PASS foreignComment.insertData(foreignComment.length, "foo"), with unselected range collapsed at (foreignComment, foreignComment.length)
+PASS foreignComment.insertData(foreignComment.length, "foo"), with selected range collapsed at (foreignComment, foreignComment.length)
+PASS foreignComment.insertData(1, "foo"), with unselected range on foreignComment from 1 to 3
+PASS foreignComment.insertData(1, "foo"), with selected range on foreignComment from 1 to 3
+PASS foreignComment.insertData(2, "foo"), with unselected range on foreignComment from 1 to 3
+PASS foreignComment.insertData(2, "foo"), with selected range on foreignComment from 1 to 3
+PASS foreignComment.insertData(3, "foo"), with unselected range on foreignComment from 1 to 3
+PASS foreignComment.insertData(3, "foo"), with selected range on foreignComment from 1 to 3
+PASS foreignComment.insertData(376, ""), with unselected range on foreignComment from 0 to 1
+PASS foreignComment.insertData(376, ""), with selected range on foreignComment from 0 to 1
+PASS foreignComment.insertData(0, ""), with unselected range collapsed at (foreignComment, 0)
+PASS foreignComment.insertData(0, ""), with selected range collapsed at (foreignComment, 0)
+PASS foreignComment.insertData(1, ""), with unselected range collapsed at (foreignComment, 1)
+PASS foreignComment.insertData(1, ""), with selected range collapsed at (foreignComment, 1)
+PASS foreignComment.insertData(foreignComment.length, ""), with unselected range collapsed at (foreignComment, foreignComment.length)
+PASS foreignComment.insertData(foreignComment.length, ""), with selected range collapsed at (foreignComment, foreignComment.length)
+PASS foreignComment.insertData(1, ""), with unselected range on foreignComment from 1 to 3
+PASS foreignComment.insertData(1, ""), with selected range on foreignComment from 1 to 3
+PASS foreignComment.insertData(2, ""), with unselected range on foreignComment from 1 to 3
+PASS foreignComment.insertData(2, ""), with selected range on foreignComment from 1 to 3
+PASS foreignComment.insertData(3, ""), with unselected range on foreignComment from 1 to 3
+PASS foreignComment.insertData(3, ""), with selected range on foreignComment from 1 to 3
+PASS xmlComment.insertData(376, "foo"), with unselected range on xmlComment from 0 to 1
+PASS xmlComment.insertData(376, "foo"), with selected range on xmlComment from 0 to 1
+PASS xmlComment.insertData(0, "foo"), with unselected range collapsed at (xmlComment, 0)
+PASS xmlComment.insertData(0, "foo"), with selected range collapsed at (xmlComment, 0)
+PASS xmlComment.insertData(1, "foo"), with unselected range collapsed at (xmlComment, 1)
+PASS xmlComment.insertData(1, "foo"), with selected range collapsed at (xmlComment, 1)
+PASS xmlComment.insertData(xmlComment.length, "foo"), with unselected range collapsed at (xmlComment, xmlComment.length)
+PASS xmlComment.insertData(xmlComment.length, "foo"), with selected range collapsed at (xmlComment, xmlComment.length)
+PASS xmlComment.insertData(1, "foo"), with unselected range on xmlComment from 1 to 3
+PASS xmlComment.insertData(1, "foo"), with selected range on xmlComment from 1 to 3
+PASS xmlComment.insertData(2, "foo"), with unselected range on xmlComment from 1 to 3
+PASS xmlComment.insertData(2, "foo"), with selected range on xmlComment from 1 to 3
+PASS xmlComment.insertData(3, "foo"), with unselected range on xmlComment from 1 to 3
+PASS xmlComment.insertData(3, "foo"), with selected range on xmlComment from 1 to 3
+PASS xmlComment.insertData(376, ""), with unselected range on xmlComment from 0 to 1
+PASS xmlComment.insertData(376, ""), with selected range on xmlComment from 0 to 1
+PASS xmlComment.insertData(0, ""), with unselected range collapsed at (xmlComment, 0)
+PASS xmlComment.insertData(0, ""), with selected range collapsed at (xmlComment, 0)
+PASS xmlComment.insertData(1, ""), with unselected range collapsed at (xmlComment, 1)
+PASS xmlComment.insertData(1, ""), with selected range collapsed at (xmlComment, 1)
+PASS xmlComment.insertData(xmlComment.length, ""), with unselected range collapsed at (xmlComment, xmlComment.length)
+PASS xmlComment.insertData(xmlComment.length, ""), with selected range collapsed at (xmlComment, xmlComment.length)
+PASS xmlComment.insertData(1, ""), with unselected range on xmlComment from 1 to 3
+PASS xmlComment.insertData(1, ""), with selected range on xmlComment from 1 to 3
+PASS xmlComment.insertData(2, ""), with unselected range on xmlComment from 1 to 3
+PASS xmlComment.insertData(2, ""), with selected range on xmlComment from 1 to 3
+PASS xmlComment.insertData(3, ""), with unselected range on xmlComment from 1 to 3
+PASS xmlComment.insertData(3, ""), with selected range on xmlComment from 1 to 3
+PASS detachedComment.insertData(376, "foo"), with unselected range on detachedComment from 0 to 1
+PASS detachedComment.insertData(376, "foo"), with selected range on detachedComment from 0 to 1
+PASS detachedComment.insertData(0, "foo"), with unselected range collapsed at (detachedComment, 0)
+PASS detachedComment.insertData(0, "foo"), with selected range collapsed at (detachedComment, 0)
+PASS detachedComment.insertData(1, "foo"), with unselected range collapsed at (detachedComment, 1)
+PASS detachedComment.insertData(1, "foo"), with selected range collapsed at (detachedComment, 1)
+PASS detachedComment.insertData(detachedComment.length, "foo"), with unselected range collapsed at (detachedComment, detachedComment.length)
+PASS detachedComment.insertData(detachedComment.length, "foo"), with selected range collapsed at (detachedComment, detachedComment.length)
+PASS detachedComment.insertData(1, "foo"), with unselected range on detachedComment from 1 to 3
+PASS detachedComment.insertData(1, "foo"), with selected range on detachedComment from 1 to 3
+PASS detachedComment.insertData(2, "foo"), with unselected range on detachedComment from 1 to 3
+PASS detachedComment.insertData(2, "foo"), with selected range on detachedComment from 1 to 3
+PASS detachedComment.insertData(3, "foo"), with unselected range on detachedComment from 1 to 3
+PASS detachedComment.insertData(3, "foo"), with selected range on detachedComment from 1 to 3
+PASS detachedComment.insertData(376, ""), with unselected range on detachedComment from 0 to 1
+PASS detachedComment.insertData(376, ""), with selected range on detachedComment from 0 to 1
+PASS detachedComment.insertData(0, ""), with unselected range collapsed at (detachedComment, 0)
+PASS detachedComment.insertData(0, ""), with selected range collapsed at (detachedComment, 0)
+PASS detachedComment.insertData(1, ""), with unselected range collapsed at (detachedComment, 1)
+PASS detachedComment.insertData(1, ""), with selected range collapsed at (detachedComment, 1)
+PASS detachedComment.insertData(detachedComment.length, ""), with unselected range collapsed at (detachedComment, detachedComment.length)
+PASS detachedComment.insertData(detachedComment.length, ""), with selected range collapsed at (detachedComment, detachedComment.length)
+PASS detachedComment.insertData(1, ""), with unselected range on detachedComment from 1 to 3
+PASS detachedComment.insertData(1, ""), with selected range on detachedComment from 1 to 3
+PASS detachedComment.insertData(2, ""), with unselected range on detachedComment from 1 to 3
+PASS detachedComment.insertData(2, ""), with selected range on detachedComment from 1 to 3
+PASS detachedComment.insertData(3, ""), with unselected range on detachedComment from 1 to 3
+PASS detachedComment.insertData(3, ""), with selected range on detachedComment from 1 to 3
+PASS detachedForeignComment.insertData(376, "foo"), with unselected range on detachedForeignComment from 0 to 1
+PASS detachedForeignComment.insertData(376, "foo"), with selected range on detachedForeignComment from 0 to 1
+PASS detachedForeignComment.insertData(0, "foo"), with unselected range collapsed at (detachedForeignComment, 0)
+PASS detachedForeignComment.insertData(0, "foo"), with selected range collapsed at (detachedForeignComment, 0)
+PASS detachedForeignComment.insertData(1, "foo"), with unselected range collapsed at (detachedForeignComment, 1)
+PASS detachedForeignComment.insertData(1, "foo"), with selected range collapsed at (detachedForeignComment, 1)
+PASS detachedForeignComment.insertData(detachedForeignComment.length, "foo"), with unselected range collapsed at (detachedForeignComment, detachedForeignComment.length)
+PASS detachedForeignComment.insertData(detachedForeignComment.length, "foo"), with selected range collapsed at (detachedForeignComment, detachedForeignComment.length)
+PASS detachedForeignComment.insertData(1, "foo"), with unselected range on detachedForeignComment from 1 to 3
+PASS detachedForeignComment.insertData(1, "foo"), with selected range on detachedForeignComment from 1 to 3
+PASS detachedForeignComment.insertData(2, "foo"), with unselected range on detachedForeignComment from 1 to 3
+PASS detachedForeignComment.insertData(2, "foo"), with selected range on detachedForeignComment from 1 to 3
+PASS detachedForeignComment.insertData(3, "foo"), with unselected range on detachedForeignComment from 1 to 3
+PASS detachedForeignComment.insertData(3, "foo"), with selected range on detachedForeignComment from 1 to 3
+PASS detachedForeignComment.insertData(376, ""), with unselected range on detachedForeignComment from 0 to 1
+PASS detachedForeignComment.insertData(376, ""), with selected range on detachedForeignComment from 0 to 1
+PASS detachedForeignComment.insertData(0, ""), with unselected range collapsed at (detachedForeignComment, 0)
+PASS detachedForeignComment.insertData(0, ""), with selected range collapsed at (detachedForeignComment, 0)
+PASS detachedForeignComment.insertData(1, ""), with unselected range collapsed at (detachedForeignComment, 1)
+PASS detachedForeignComment.insertData(1, ""), with selected range collapsed at (detachedForeignComment, 1)
+PASS detachedForeignComment.insertData(detachedForeignComment.length, ""), with unselected range collapsed at (detachedForeignComment, detachedForeignComment.length)
+PASS detachedForeignComment.insertData(detachedForeignComment.length, ""), with selected range collapsed at (detachedForeignComment, detachedForeignComment.length)
+PASS detachedForeignComment.insertData(1, ""), with unselected range on detachedForeignComment from 1 to 3
+PASS detachedForeignComment.insertData(1, ""), with selected range on detachedForeignComment from 1 to 3
+PASS detachedForeignComment.insertData(2, ""), with unselected range on detachedForeignComment from 1 to 3
+PASS detachedForeignComment.insertData(2, ""), with selected range on detachedForeignComment from 1 to 3
+PASS detachedForeignComment.insertData(3, ""), with unselected range on detachedForeignComment from 1 to 3
+PASS detachedForeignComment.insertData(3, ""), with selected range on detachedForeignComment from 1 to 3
+PASS detachedXmlComment.insertData(376, "foo"), with unselected range on detachedXmlComment from 0 to 1
+PASS detachedXmlComment.insertData(376, "foo"), with selected range on detachedXmlComment from 0 to 1
+PASS detachedXmlComment.insertData(0, "foo"), with unselected range collapsed at (detachedXmlComment, 0)
+PASS detachedXmlComment.insertData(0, "foo"), with selected range collapsed at (detachedXmlComment, 0)
+PASS detachedXmlComment.insertData(1, "foo"), with unselected range collapsed at (detachedXmlComment, 1)
+PASS detachedXmlComment.insertData(1, "foo"), with selected range collapsed at (detachedXmlComment, 1)
+PASS detachedXmlComment.insertData(detachedXmlComment.length, "foo"), with unselected range collapsed at (detachedXmlComment, detachedXmlComment.length)
+PASS detachedXmlComment.insertData(detachedXmlComment.length, "foo"), with selected range collapsed at (detachedXmlComment, detachedXmlComment.length)
+PASS detachedXmlComment.insertData(1, "foo"), with unselected range on detachedXmlComment from 1 to 3
+PASS detachedXmlComment.insertData(1, "foo"), with selected range on detachedXmlComment from 1 to 3
+PASS detachedXmlComment.insertData(2, "foo"), with unselected range on detachedXmlComment from 1 to 3
+PASS detachedXmlComment.insertData(2, "foo"), with selected range on detachedXmlComment from 1 to 3
+PASS detachedXmlComment.insertData(3, "foo"), with unselected range on detachedXmlComment from 1 to 3
+PASS detachedXmlComment.insertData(3, "foo"), with selected range on detachedXmlComment from 1 to 3
+PASS detachedXmlComment.insertData(376, ""), with unselected range on detachedXmlComment from 0 to 1
+PASS detachedXmlComment.insertData(376, ""), with selected range on detachedXmlComment from 0 to 1
+PASS detachedXmlComment.insertData(0, ""), with unselected range collapsed at (detachedXmlComment, 0)
+PASS detachedXmlComment.insertData(0, ""), with selected range collapsed at (detachedXmlComment, 0)
+PASS detachedXmlComment.insertData(1, ""), with unselected range collapsed at (detachedXmlComment, 1)
+PASS detachedXmlComment.insertData(1, ""), with selected range collapsed at (detachedXmlComment, 1)
+PASS detachedXmlComment.insertData(detachedXmlComment.length, ""), with unselected range collapsed at (detachedXmlComment, detachedXmlComment.length)
+PASS detachedXmlComment.insertData(detachedXmlComment.length, ""), with selected range collapsed at (detachedXmlComment, detachedXmlComment.length)
+PASS detachedXmlComment.insertData(1, ""), with unselected range on detachedXmlComment from 1 to 3
+PASS detachedXmlComment.insertData(1, ""), with selected range on detachedXmlComment from 1 to 3
+PASS detachedXmlComment.insertData(2, ""), with unselected range on detachedXmlComment from 1 to 3
+PASS detachedXmlComment.insertData(2, ""), with selected range on detachedXmlComment from 1 to 3
+PASS detachedXmlComment.insertData(3, ""), with unselected range on detachedXmlComment from 1 to 3
+PASS detachedXmlComment.insertData(3, ""), with selected range on detachedXmlComment from 1 to 3
+PASS paras[0].firstChild.insertData(1, "foo"), with unselected range collapsed at (paras[0], 0)
+PASS paras[0].firstChild.insertData(1, "foo"), with selected range collapsed at (paras[0], 0)
+PASS paras[0].firstChild.insertData(1, "foo"), with unselected range on paras[0] from 0 to 1
+PASS paras[0].firstChild.insertData(1, "foo"), with selected range on paras[0] from 0 to 1
+PASS paras[0].firstChild.insertData(1, "foo"), with unselected range collapsed at (paras[0], 1)
+PASS paras[0].firstChild.insertData(1, "foo"), with selected range collapsed at (paras[0], 1)
+PASS paras[0].firstChild.insertData(1, "foo"), with unselected range from (paras[0].firstChild, 1) to (paras[0], 1)
+PASS paras[0].firstChild.insertData(1, "foo"), with selected range from (paras[0].firstChild, 1) to (paras[0], 1)
+PASS paras[0].firstChild.insertData(2, "foo"), with unselected range from (paras[0].firstChild, 1) to (paras[0], 1)
+PASS paras[0].firstChild.insertData(2, "foo"), with selected range from (paras[0].firstChild, 1) to (paras[0], 1)
+PASS paras[0].firstChild.insertData(3, "foo"), with unselected range from (paras[0].firstChild, 1) to (paras[0], 1)
+PASS paras[0].firstChild.insertData(3, "foo"), with selected range from (paras[0].firstChild, 1) to (paras[0], 1)
+PASS paras[0].firstChild.insertData(1, "foo"), with unselected range from (paras[0], 0) to (paras[0].firstChild, 3)
+PASS paras[0].firstChild.insertData(1, "foo"), with selected range from (paras[0], 0) to (paras[0].firstChild, 3)
+PASS paras[0].firstChild.insertData(2, "foo"), with unselected range from (paras[0], 0) to (paras[0].firstChild, 3)
+PASS paras[0].firstChild.insertData(2, "foo"), with selected range from (paras[0], 0) to (paras[0].firstChild, 3)
+PASS paras[0].firstChild.insertData(3, "foo"), with unselected range from (paras[0], 0) to (paras[0].firstChild, 3)
+PASS paras[0].firstChild.insertData(3, "foo"), with selected range from (paras[0], 0) to (paras[0].firstChild, 3)
+

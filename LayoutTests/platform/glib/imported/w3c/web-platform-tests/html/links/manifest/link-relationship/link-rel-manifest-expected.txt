@@ -1,0 +1,3 @@
+
+FAIL link element supports a rel value of "manifest". assert_true: Expected true if manifest is supported as a link relationship expected true got false
+

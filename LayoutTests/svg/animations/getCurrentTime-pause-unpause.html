@@ -1,0 +1,51 @@
+    <!DOCTYPE html>
+    <!--This tests svg.getCurrentTime() when SVG animation is paused and unpaused.
+    Sequence of steps are,
+    1. Pause the SVG animation at the beginning.
+    2. 10 msec delay
+    3. Test 1,  measure the currentTime which should still be 0.
+    4. Unpause the SVG animation
+    5. 50 msec delay
+    6. Test 2,  measure the currentTime which should be .05 sec.
+    7. Pause the SVG animation
+    8. 50 msec delay
+    9. Test 3, measure the currentTime which should still be .05 sec.
+    -->
+    <html>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script src="resources/SVGAnimationTestCase.js"></script>
+    <script>
+      function load() {
+        if (window.testRunner) {
+          testRunner.dumpAsText();
+          testRunner.waitUntilDone();
+        }
+       
+        svg = document.getElementById("svg");
+        rect = document.getElementById("rect");
+       
+        svg.pauseAnimations();
+        setTimeout(function() {
+          shouldBeCloseEnough("svg.getCurrentTime()", "0", 0.01);
+          svg.unpauseAnimations();
+          setTimeout(function() {
+            shouldBeCloseEnough("svg.getCurrentTime()", "0.05", 0.02);
+            svg.pauseAnimations();
+            setTimeout(function() {
+              shouldBeCloseEnough("svg.getCurrentTime()", "0.05", 0.02);
+              if (window.testRunner)
+                testRunner.notifyDone();
+            }, 50);
+          }, 50);
+        }, 10);
+      }
+    </script>
+    <head><title>svg.getCurrentTime() when SVG animation is paused and unpaused</title></head>
+    <body onload="load()">
+      <svg id="svg" xmlns="http://www.w3.org/2000/svg">
+        <rect id="rect" fill="green" width="20" height="20">
+          <animate attributeName="x" from="0" to="200" begin="0s" dur="3s"></animate>
+        </rect>
+      </svg>
+    </body>
+    </html>

@@ -1,0 +1,3 @@
+
+PASS putImageData() puts non-solid image data correctly
+

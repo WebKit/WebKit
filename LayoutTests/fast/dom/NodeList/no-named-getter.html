@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="testId"></div>
+<div name="testName"></div>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that NodeList does not have a named property getter.");
+
+var nodeList = document.body.childNodes;
+shouldBe("nodeList.__proto__", "NodeList.prototype");
+shouldBeUndefined("nodeList['testId']");
+shouldBeUndefined("nodeList.testId");
+shouldBeUndefined("nodeList['testName']");
+shouldBeUndefined("nodeList.testName");
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

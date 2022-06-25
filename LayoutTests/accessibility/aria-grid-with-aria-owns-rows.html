@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div aria-label="Files" role="grid" tabindex="0" aria-rowcount="2" aria-colcount="2" id="table">
+    <div role="row" aria-owns="row1-cell-1 row1-cell-2" id="row1"></div>
+    <div id="row1-cell-1" aria-rowindex="1" aria-colindex="1" role="gridcell" tabindex="0">Foo</div>
+    <div id="row1-cell-2" aria-rowindex="1" aria-colindex="2" role="gridcell" tabindex="0">Bar</div>
+</div>
+
+<script>
+    let output = "This tests that an ARIA table can use aria-owns for its cells.\n";
+
+    if (window.accessibilityController) {
+        var row1 = accessibilityController.accessibleElementById("row1");
+        var table = accessibilityController.accessibleElementById("table")
+        var cell1 = table.cellForColumnAndRow(0, 0);
+        output += expect("row1.childAtIndex(0).isEqual(table.cellForColumnAndRow(0, 0))", "true");
+        output += expect("row1.childAtIndex(0).isEqual(accessibilityController.accessibleElementById('row1-cell-1'))", "true");
+        output += expect("cell1.parentElement().isEqual(row1)", "true");
+        output += expect("row1.parentElement().isEqual(table)", "true");
+
+        debug(output);
+    }
+</script>
+</body>
+</html>

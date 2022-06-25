@@ -1,0 +1,91 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncFrameScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        body {
+            height: 1000px;
+        }
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        jsTestIsAsync = true;
+
+        var iframeTarget;
+
+        async function scrollTest()
+        {
+            window.scrollTo(0, 200);
+
+            iframeTarget = document.getElementById('target');
+            shouldBe('iframeTarget.contentWindow.pageYOffset', '0');
+            shouldBe('window.pageYOffset', '200');
+
+            if (!window.eventSender) {
+                finishJSTest();
+                return;
+            }
+
+            eventSender.mouseMoveTo(50, 250); // Inside the iframe.
+            eventSender.monitorWheelEvents();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, 'changed', 'none');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, 'none', 'begin');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, 'none', 'begin');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, 'none', 'begin');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
+            await UIHelper.waitForScrollCompletion();
+
+            debug('After scroll');
+            shouldBe('iframeTarget.contentWindow.pageYOffset', '410');
+            shouldBe('window.pageYOffset', '200');
+
+            await UIHelper.animationFrame();
+
+            debug('After wait');
+            shouldBe('iframeTarget.contentWindow.pageYOffset', '410');
+            shouldBe('window.pageYOffset', '200');
+
+            eventSender.monitorWheelEvents({ resetLatching: false });
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 1, 'changed', 'none');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 1, 'changed', 'none');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+
+            await UIHelper.waitForScrollCompletion();
+            shouldBe('iframeTarget.contentWindow.pageYOffset', '400');
+            shouldBe('window.pageYOffset', '200');
+
+            finishJSTest();
+        }
+
+        function setupTopLevel()
+        {
+            description("Tests that a second scroll with small x/y deltas uses latching from an earlier scroll.");
+            setTimeout(scrollTest, 0);
+        }
+        
+    </script>
+
+</head>
+<body>
+<div id="parent" style="height: 2000px">
+    <iframe id="target" name="target" style="border:solid 1px green; height: 500px; width: 500px;" 
+     srcdoc= "
+        <style>
+            body {
+                height: 1000px;
+                margin: 0;
+                background-image: repeating-linear-gradient(silver, white 200px);
+            }
+        </style>
+        <body></body>
+     "
+     onload="setupTopLevel();">
+    </iframe>
+</div>
+<div id="console"></div>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

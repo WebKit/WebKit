@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <body>
+        <script src="../../../resources/testharness.js"></script>
+        <script src="../../../resources/testharnessreport.js"></script>
+        <script>
+
+const IMAGE_SRC = '../../images/resources/test-load.jpg';
+
+promise_test((test) => {
+    if (!window.internals)
+        return Promise.rejects("Test needs internals");
+    return internals.loadArtworkImage(IMAGE_SRC).then((data) => {
+        assert_equals(data.width, 16);
+        assert_equals(data.height, 16);
+    });
+}, "ensure loading artwork image method operates properly");
+
+promise_test(async (test) => {
+    if (!window.internals)
+        return Promise.rejects("Test needs internals");
+
+    return promise_rejects_dom(test, 'InvalidAccessError', internals.loadArtworkImage("bad_image.jpg"));
+}, "ensure loading invalid artwork causes a failure");
+
+promise_test(async (test) => {
+    if (!window.internals)
+        return Promise.rejects("Test needs internals");
+
+    return promise_rejects_dom(test, 'InvalidAccessError', internals.loadArtworkImage(""));
+}, "ensure loading a non-image causes a failure");
+
+        </script>
+    </body>
+</html>

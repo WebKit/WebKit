@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<body>
+<style>
+#container > div { width: 100px; height: 50px; margin: 0px; }
+</style>
+<p id="description"></p>
+<div id="container">
+<div draggable="true" id="source" style="background: #9cf">Drag this</div>
+<div id="passover" style="background: #ff9">Drag over here</div>
+<div id="destination" style="background: #fc9">And drop here</div>
+</div>
+<div id="console"></div>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+
+var jsTestIsAsync = true;
+
+source.addEventListener("dragstart", (event) => {
+    ev = event;
+    shouldBe("ev.__proto__", "DragEvent.prototype");
+    event.dataTransfer.effectAllowed = 'copy';
+    event.dataTransfer.setData('text', 'hello, world');
+    dataTransferMap.clear();
+    testUniquenessAndAdd(event.dataTransfer, 'source', 'dragstart');
+});
+
+const dataTransferMap = new Map;
+function testUniquenessAndAdd(dataTransfer, label, eventType) {
+    const existingEntry = dataTransferMap.get(dataTransfer);
+    if (existingEntry) {
+        testFailed(`${eventType} for ${label} had the same dataTransfer object as ${existingEntry.eventType} for ${existingEntry.label}`);
+        return;
+    }
+    testPassed(`${eventType} for ${label} had an unique dataTransfer object`);
+    dataTransferMap.set(dataTransfer, {label, eventType});
+}
+
+passover.addEventListener("dragenter", (event) => {
+    ev = event;
+    shouldBe("ev.__proto__", "DragEvent.prototype");
+    testUniquenessAndAdd(event.dataTransfer, 'passover', 'dragenter');
+});
+passover.addEventListener("dragleave", (event) => {
+    ev = event;
+    shouldBe("ev.__proto__", "DragEvent.prototype");
+    testUniquenessAndAdd(event.dataTransfer, 'passover', 'dragleave');
+});
+destination.addEventListener("dragenter", (event) => {
+    ev = event;
+    shouldBe("ev.__proto__", "DragEvent.prototype");
+    testUniquenessAndAdd(event.dataTransfer, 'destination', 'dragenter');
+});
+destination.addEventListener("dragleave", (event) => {
+    ev = event;
+    shouldBe("ev.__proto__", "DragEvent.prototype");
+    testUniquenessAndAdd(event.dataTransfer, 'destination', 'dragleave');
+});
+destination.addEventListener("dragover", (event) => {
+    ev = event;
+    shouldBe("ev.__proto__", "DragEvent.prototype");
+    testUniquenessAndAdd(event.dataTransfer, 'destination', 'dragover');
+    event.preventDefault();
+});
+destination.addEventListener("drop", (event) => {
+    ev = event;
+    shouldBe("ev.__proto__", "DragEvent.prototype");
+    testUniquenessAndAdd(event.dataTransfer, 'destination', 'drop');
+    finishJSTest();
+});
+
+if (window.eventSender) {
+    eventSender.mouseMoveTo(source.offsetLeft + 10, source.offsetTop + 10);
+    eventSender.mouseDown();
+    eventSender.leapForward(500);
+    eventSender.mouseMoveTo(passover.offsetLeft + 10, passover.offsetTop + 10);
+    eventSender.leapForward(100);
+    eventSender.mouseMoveTo(destination.offsetLeft + 10, destination.offsetTop + 10);
+    eventSender.mouseUp();
+    document.getElementById('container').remove();
+}
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

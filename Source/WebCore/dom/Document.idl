@@ -1,0 +1,107 @@
+/*
+ * Copyright (C) 2006, 2007, 2011, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007 Samuel Weinig <sam@webkit.org>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+typedef (
+#if defined(ENABLE_WEBGL) && ENABLE_WEBGL
+    WebGLRenderingContext or
+#endif
+#if defined(ENABLE_WEBGL2) && ENABLE_WEBGL2
+    WebGL2RenderingContext or
+#endif
+    ImageBitmapRenderingContext or 
+    CanvasRenderingContext2D) RenderingContext;
+
+typedef (HTMLScriptElement or SVGScriptElement) HTMLOrSVGScriptElement;
+
+[
+    CustomToJSObject,
+    CustomHeapSnapshot,
+    DOMJIT,
+    ExportMacro=WEBCORE_EXPORT,
+    JSCustomHeader,
+    JSCustomMarkFunction,
+    JSGenerateToNativeObject,
+    Exposed=Window
+] interface Document : Node {
+    [CallWith=CurrentDocument] constructor();
+
+    [SameObject] readonly attribute DOMImplementation implementation;
+    [ImplementedAs=urlForBindings] readonly attribute USVString URL;
+    [ImplementedAs=urlForBindings] readonly attribute USVString documentURI;
+    readonly attribute DOMString compatMode;
+    [ImplementedAs=characterSetWithUTF8Fallback] readonly attribute DOMString characterSet;
+    [ImplementedAs=characterSetWithUTF8Fallback] readonly attribute DOMString charset; // Historical alias of .characterSet,
+    [ImplementedAs=characterSetWithUTF8Fallback] readonly attribute DOMString inputEncoding; // Historical alias of .characterSet.
+    readonly attribute DOMString contentType;
+
+    readonly attribute DocumentType? doctype;
+    [DOMJIT=Getter] readonly attribute Element? documentElement;
+
+    HTMLCollection getElementsByTagName([AtomString] DOMString qualifiedName);
+    HTMLCollection getElementsByTagNameNS([AtomString] DOMString? namespaceURI, [AtomString] DOMString localName);
+    HTMLCollection getElementsByClassName([AtomString] DOMString classNames);
+
+    [NewObject, ImplementedAs=createElementForBindings] Element createElement([AtomString] DOMString localName);
+    [NewObject] Element createElementNS([AtomString] DOMString? namespaceURI, [AtomString] DOMString qualifiedName);
+    [NewObject] DocumentFragment createDocumentFragment();
+    [NewObject] Text createTextNode(DOMString data);
+    [NewObject] CDATASection createCDATASection(DOMString data);
+    [NewObject] Comment createComment(DOMString data);
+    [NewObject] ProcessingInstruction createProcessingInstruction(DOMString target, DOMString data);
+
+    [CEReactions, NewObject] Node importNode(Node node, optional boolean deep = false);
+    [CEReactions] Node adoptNode(Node node);
+
+    [NewObject] Attr createAttribute([AtomString] DOMString localName);
+    [NewObject] Attr createAttributeNS([AtomString] DOMString? namespaceURI, [AtomString] DOMString qualifiedName);
+
+    [NewObject] Event createEvent(DOMString type);
+
+    [NewObject] Range createRange();
+
+    // NodeFilter.SHOW_ALL = 0xFFFFFFFF.
+    [NewObject] NodeIterator createNodeIterator(Node root, optional unsigned long whatToShow = 0xFFFFFFFF, optional NodeFilter? filter = null);
+    [NewObject] TreeWalker createTreeWalker(Node root, optional unsigned long whatToShow = 0xFFFFFFFF, optional NodeFilter? filter = null);
+
+    // Removed from standard: Those have been dropped from the DOM specification.
+    readonly attribute DOMString? xmlEncoding;
+    attribute DOMString? xmlVersion;
+    attribute boolean xmlStandalone;
+
+    // Non standard: Blink has already dropped this (https://groups.google.com/a/chromium.org/forum/#!topic/blink-dev/s3ezjTuC8ig).
+    // And it's just a stub that always returns null, so we can probably remove it some time soon.
+    CSSStyleDeclaration? getOverrideStyle(optional Element? element = null, optional DOMString pseudoElement = "undefined");
+
+    // Non standard: It has been superseeded by caretPositionFromPoint which we do not implement yet.
+    Range caretRangeFromPoint(optional long x = 0, optional long y = 0);
+
+    // Non standard: It has been dropped from Blink already.
+    RenderingContext? getCSSCanvasContext(DOMString contextId, DOMString name, long width, long height);
+};
+
+enum DocumentReadyState { "loading", "interactive", "complete" };
+
+Document includes ParentNode;
+Document includes NonElementParentNode;
+Document includes DocumentOrShadowRoot;
+Document includes GlobalEventHandlers;
+Document includes DocumentAndElementEventHandlers;
+Document includes FontFaceSource;
+Document includes XPathEvaluatorBase;

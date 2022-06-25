@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="resources/util.js"></script>
+</head>
+<body>
+<div id="container">
+  <div id="destination" contentEditable></div>
+</div>
+
+<script>
+
+description("Spelling should ignore whitespace. "
+    + "To test manually, type 'hello, wellcome home.', select ' wellcome '. "
+    + "The test succeeds when 'wellcome' has spelling marker.");
+
+initSpellTest("destination", "hello, wellcome home.", function(textNode) {
+    spellingMarkerRange = internals.markerRangeForNode(textNode, "spelling", 0);
+    shouldBeEqualToString("spellingMarkerRange.toString()", "wellcome");
+
+    // Select the text " wellcome " with surrounding whitespace.
+    var rangeWithWhitespace = document.createRange();
+    rangeWithWhitespace.setStart(textNode, 6);
+    rangeWithWhitespace.setEnd(textNode, 16);
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(rangeWithWhitespace);
+
+    shouldBeEqualToString("window.getSelection().toString()", " wellcome ");
+
+    spellingMarkerRange = internals.markerRangeForNode(textNode, "spelling", 0);
+    shouldBecomeEqualToString("spellingMarkerRange.toString()", "wellcome", finishJSTest);
+});
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,150 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script src="resources/property-descriptor-utilities.js"></script>
+<script>
+if (window.internals)
+    window.internals.settings.setUnhandledPromiseRejectionToConsoleEnabled(false);
+
+function test()
+{
+    let suite = ProtocolTest.createAsyncSuite("Runtime.getDisplayableProperties");
+
+    function addTestCase({name, expression, fetchStart, fetchCount}) {
+        suite.addTestCase({
+            name,
+            async test() {
+                ProtocolTest.log(`Evaluating expression...`);
+                let evaluateResponse = await InspectorProtocol.awaitCommand({
+                    method: "Runtime.evaluate",
+                    params: {expression},
+                });
+                ProtocolTest.assert(!evaluateResponse.wasThrown);
+
+                let log = "Getting displayable properties";
+                if (fetchStart)
+                    log += ` with fetchStart ${fetchStart}`;
+                if (fetchCount)
+                    log += ` with fetchCount ${fetchCount}`;
+                ProtocolTest.log(log + "...");
+
+                let getDisplayablePropertiesResponse = await InspectorProtocol.awaitCommand({
+                    method: "Runtime.getDisplayableProperties",
+                    params: {
+                        objectId: evaluateResponse.result.objectId,
+                        fetchStart,
+                        fetchCount,
+                    },
+                });
+
+                let properties = getDisplayablePropertiesResponse.properties;
+                if (properties) {
+                    ProtocolTest.assert(!fetchCount || properties.length <= fetchCount + (fetchStart ? 0 : 1), `Should only get ${fetchCount} properties.`);
+
+                    ProtocolTest.log("Properties:");
+                    properties.forEach(ProtocolTest.PropertyDescriptorUtilities.logForEach);
+                }
+
+                let internalProperties = getDisplayablePropertiesResponse.internalProperties;
+                if (internalProperties) {
+                    ProtocolTest.log("Internal Properties:");
+                    internalProperties.forEach(ProtocolTest.PropertyDescriptorUtilities.logForEach);
+                }
+            },
+        });
+    }
+
+    addTestCase({
+        name: "Runtime.getDisplayableProperties.Object",
+        expression: `(function() { let r = Object(5); r.foo = "cat"; return r; })()`,
+    });
+
+    addTestCase({
+        name: "Runtime.getDisplayableProperties.Array",
+        expression: `['red', 'green', 'blue']`,
+    });
+
+    addTestCase({
+        name: "Runtime.getDisplayableProperties.Constructor",
+        expression: `(class Test { })`,
+    });
+
+    addTestCase({
+        name: "Runtime.getDisplayableProperties.BoundConstructor",
+        expression: `(class Test { }).bind(null)`,
+    });
+
+    addTestCase({
+        name: "Runtime.getDisplayableProperties.BoundConstructorArguments",
+        expression: `(class Test { }).bind(null, 1, 2, 3)`,
+    });
+
+    addTestCase({
+        name: "Runtime.getDisplayableProperties.Function",
+        expression: `(function(a, b, c){})`,
+    });
+
+    addTestCase({
+        name: "Runtime.getDisplayableProperties.FunctionNoParameters",
+        expression: `(function(){})`,
+    });
+
+    addTestCase({
+        name: "Runtime.getDisplayableProperties.BoundFunction",
+        expression: `(function(a, b, c){}).bind(null)`,
+    });
+
+    addTestCase({
+        name: "Runtime.getDisplayableProperties.BoundFunctionWithArguments",
+        expression: `(function(a, b, c){}).bind(null, 1, 2, 3)`,
+    });
+
+    addTestCase({
+        name: "Runtime.getDisplayableProperties.BoundFunctionNoParameters",
+        expression: `(function(){}).bind(null)`,
+    });
+
+    addTestCase({
+        name: "Runtime.getDisplayableProperties.BoundFunctionNoParametersWithArguments",
+        expression: `(function(){}).bind(null, 1, 2, 3)`,
+    });
+
+    addTestCase({
+        name: "Runtime.getDisplayableProperties.Promise.Resolved",
+        expression: `Promise.resolve(123)`,
+    });
+
+    addTestCase({
+        name: "Runtime.getDisplayableProperties.Promise.Rejected",
+        expression: `Promise.reject(123)`,
+    });
+
+    for (let type of ["Object", "Array"]) {
+        addTestCase({
+            name: `Runtime.getDisplayableProperties.fetchStart.${type}`,
+            expression: `make${type}(10)`,
+            fetchStart: 5,
+        });
+
+        addTestCase({
+            name: `Runtime.getDisplayableProperties.fetchCount.${type}`,
+            expression: `make${type}(10)`,
+            fetchCount: 5,
+        });
+
+        addTestCase({
+            name: `Runtime.getDisplayableProperties.fetchStartCount.${type}`,
+            expression: `make${type}(10)`,
+            fetchStart: 3,
+            fetchCount: 4,
+        });
+   }
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onLoad="runTest()">
+<p>Tests for the Runtime.getDisplayableProperties command.</p>
+</body>
+</html>

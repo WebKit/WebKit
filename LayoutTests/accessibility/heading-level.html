@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<!-- implicit level of tag -->
+<h1 class="ex" data-expected="1">X</h1>
+<h2 class="ex" data-expected="2">X</h2>
+<h3 class="ex" data-expected="3">X</h3>
+<h4 class="ex" data-expected="4">X</h4>
+<h5 class="ex" data-expected="5">X</h5>
+<h6 class="ex" data-expected="6">X</h6>
+
+<!-- explicit aria-level overrides on h1-h6 (withOUT explicit heading role declaration) -->
+<h6 class="ex" data-expected="1" aria-level="1">X</h6>
+<h5 class="ex" data-expected="2" aria-level="2">X</h5>
+<h4 class="ex" data-expected="3" aria-level="3">X</h4>
+<h3 class="ex" data-expected="4" aria-level="4">X</h3>
+<h2 class="ex" data-expected="5" aria-level="5">X</h2>
+<h1 class="ex" data-expected="6" aria-level="6">X</h1>
+
+<!-- explicit aria-level overrides on h1-h6 (with explicit heading role declaration) -->
+<h6 class="ex" role="heading" data-expected="1" aria-level="1">X</h6>
+<h5 class="ex" role="heading" data-expected="2" aria-level="2">X</h5>
+<h4 class="ex" role="heading" data-expected="3" aria-level="3">X</h4>
+<h3 class="ex" role="heading" data-expected="4" aria-level="4">X</h3>
+<h2 class="ex" role="heading" data-expected="5" aria-level="5">X</h2>
+<h1 class="ex" role="heading" data-expected="6" aria-level="6">X</h1>
+
+<!-- explicit aria-level set on div with explicit heading role declaration -->
+<div class="ex" role="heading" data-expected="1" aria-level="1">X</div>
+<div class="ex" role="heading" data-expected="2" aria-level="2">X</div>
+<div class="ex" role="heading" data-expected="3" aria-level="3">X</div>
+<div class="ex" role="heading" data-expected="4" aria-level="4">X</div>
+<div class="ex" role="heading" data-expected="5" aria-level="5">X</div>
+<div class="ex" role="heading" data-expected="6" aria-level="6">X</div>
+
+<!-- implicit level for heading role -->
+<div class="ex" role="heading" data-expected="2">X</div>
+
+<div id="dynamic-aria-heading" role="heading" aria-level="1">X</div>
+
+<!-- todo: h1 elements nested in section elements should inherit nested level. -->
+
+<script>
+    var testOutput = "This tests that headings have a level matching the implicit default value or explicitly defined aria-level value.\n\n";
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        var axElement, el;
+        setTimeout(async () => {
+            const examples = document.querySelectorAll('.ex');
+            for (let i = 0; i < examples.length; ++i) {
+                el = examples[i];
+                el.id = `ex${i}`;
+
+                axElement = await waitForElementById(el.id);
+
+                // Test AXLevel.
+                testOutput += expect("axElement.intValue", "parseInt(el.getAttribute('data-expected'))");
+                el.style.display = 'none'; // Hide each example after verification.
+            }
+
+            testOutput += "\nVerifying initial heading level of #dynamic-aria-heading.\n";
+            axElement = await waitForElementById("dynamic-aria-heading");
+            testOutput += expect("axElement.intValue", "1");
+            testOutput += "\nUpdating the aria-level of #dynamic-aria-heading to 2.\n";
+            document.getElementById("dynamic-aria-heading").setAttribute("aria-level", "2");
+            await waitFor(() => axElement.intValue === 2);
+            testOutput += expect("axElement.intValue", "2");
+
+            debug(testOutput);
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>
+

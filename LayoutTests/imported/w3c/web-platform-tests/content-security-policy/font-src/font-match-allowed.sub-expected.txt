@@ -1,0 +1,4 @@
+Blocked access to external URL http://www1.localhost:8800/fonts/Ahem.ttf?font-match-allowed
+
+FAIL Test font loads if it matches font-src. assert_unreached: Should have loaded the font. Reached unreachable code
+

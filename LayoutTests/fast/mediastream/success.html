@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Tests UserMedia success callback using the mock service.");
+window.jsTestIsAsync = true;
+
+if (window.testRunner)
+    testRunner.setUserMediaPermission(true);
+else
+    debug('This test can not be run without the testRunner');
+
+var options = {audio: true, video: true};
+navigator.mediaDevices.getUserMedia(options)
+    .then(stream => {
+        finishJSTest();
+    })
+    .catch(err => {
+        testFailed('Error callback invoked unexpectedly');
+        finishJSTest();
+    });
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

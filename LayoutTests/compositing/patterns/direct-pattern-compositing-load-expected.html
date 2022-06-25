@@ -1,0 +1,42 @@
+<html lang="en">
+<head>
+  <script type="text/javascript" charset="utf-8">
+
+      function onBackgroundImageLoad()
+      {
+        if (window.testRunner)
+          testRunner.notifyDone();
+      }
+      function doTest()
+      {
+          var bg = document.querySelector(".test");
+          if (window.testRunner)
+              testRunner.dumpAsText(true);
+
+          // Change the layer to become background only.
+          if (window.testRunner)
+              window.testRunner.displayAndTrackRepaints();
+
+          var img = new Image;
+          img.onload = onBackgroundImageLoad;
+          img.src = "../resources/simple_image.png";
+      }
+
+      if (window.testRunner)
+          testRunner.waitUntilDone();
+
+      window.addEventListener('DOMContentLoaded', doTest, false);
+    </script>
+    <style>
+    .composited { -webkit-transform: rotate3d(0, 0, 1, 0); }
+    .test {
+      height: 200px;
+      width: 260px;
+      background-image: url(../resources/simple_image.png);
+    }
+   </style>
+</head>
+<body>
+  <div class="test composited"><span style="opacity:0">ABC</span></div>
+</body>
+</html>

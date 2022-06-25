@@ -1,0 +1,8 @@
+
+
+PASS DIV element with tabindex can be focused via accesskey
+PASS DIV element without tabindex can NOT be focused via accesskey
+PASS INPUT element can be focused via accesskey
+PASS SELECT element can be focused via accesskey
+PASS A element can be focused via accesskey
+

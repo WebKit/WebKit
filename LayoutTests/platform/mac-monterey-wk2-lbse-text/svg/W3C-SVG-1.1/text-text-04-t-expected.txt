@@ -1,0 +1,118 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+layer at (-110,-30) size 206x47 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (145,50) size 411x291
+layer at (-95,-20) size 156x26 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (130,40) size 155x26
+layer at (0,-20) size 61x26 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (130,40) size 60x26
+layer at (0,-20) size 60x25 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (0,0) size 60x26 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 60x26
+      chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 4 width 60.00: "1234"
+layer at (-58,-20) size 154x26 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (130,80) size 153x26
+layer at (20,-20) size 75x25 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (78,0) size 75x26 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 75x26
+      chunk 1 text run 1 at (20.00,0.00) startOffset 0 endOffset 1 width 15.00: "1"
+      chunk 1 text run 1 at (40.00,0.00) startOffset 0 endOffset 1 width 15.00: "2"
+      chunk 1 text run 1 at (60.00,0.00) startOffset 0 endOffset 1 width 15.00: "3"
+      chunk 1 text run 1 at (80.00,0.00) startOffset 0 endOffset 1 width 15.00: "4"
+layer at (-75,-20) size 171x26 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (130,120) size 170x26
+layer at (20,-20) size 75x25 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (94,0) size 76x26 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 75x26
+      chunk 1 text run 1 at (20.00,0.00) startOffset 0 endOffset 1 width 15.00: "1"
+      chunk 1 text run 1 at (40.00,0.00) startOffset 0 endOffset 1 width 15.00: "2"
+      chunk 1 text run 1 at (60.00,0.00) startOffset 0 endOffset 1 width 15.00: "3"
+      chunk 1 text run 1 at (80.00,0.00) startOffset 0 endOffset 1 width 15.00: "4"
+layer at (-78,-20) size 170x26 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (130,160) size 169x26
+layer at (20,-20) size 70x25 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (98,0) size 71x26 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 70x26
+      chunk 1 text run 1 at (20.00,0.00) startOffset 0 endOffset 1 width 15.00: "1"
+      chunk 1 text run 1 at (40.00,0.00) startOffset 0 endOffset 1 width 15.00: "2"
+      chunk 1 text run 1 at (60.00,0.00) startOffset 0 endOffset 2 width 30.00: "34"
+layer at (-58,-30) size 119x46 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (130,200) size 118x46
+layer at (0,-30) size 60x45 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (58,0) size 60x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 60x46
+      chunk 1 text run 1 at (0.00,-10.00) startOffset 0 endOffset 1 width 15.00: "1"
+      chunk 1 text run 1 at (15.00,-5.00) startOffset 0 endOffset 1 width 15.00: "2"
+      chunk 1 text run 1 at (30.00,5.00) startOffset 0 endOffset 1 width 15.00: "3"
+      chunk 1 text run 1 at (45.00,10.00) startOffset 0 endOffset 1 width 15.00: "4"
+layer at (-75,-30) size 136x46 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (130,250) size 135x46
+layer at (0,-30) size 60x45 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (74,0) size 61x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 60x46
+      chunk 1 text run 1 at (0.00,-10.00) startOffset 0 endOffset 1 width 15.00: "1"
+      chunk 1 text run 1 at (15.00,-5.00) startOffset 0 endOffset 1 width 15.00: "2"
+      chunk 1 text run 1 at (30.00,5.00) startOffset 0 endOffset 1 width 15.00: "3"
+      chunk 1 text run 1 at (45.00,10.00) startOffset 0 endOffset 1 width 15.00: "4"
+layer at (-78,-30) size 140x41 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (130,300) size 139x41
+layer at (0,-30) size 60x40 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (78,0) size 61x41 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 60x41
+      chunk 1 text run 1 at (0.00,-10.00) startOffset 0 endOffset 1 width 15.00: "1"
+      chunk 1 text run 1 at (15.00,-5.00) startOffset 0 endOffset 1 width 15.00: "2"
+      chunk 1 text run 1 at (30.00,5.00) startOffset 0 endOffset 2 width 30.00: "34"
+layer at (-110,-30) size 206x46 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (350,80) size 206x206
+layer at (-70,-30) size 167x46 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (350,80) size 166x46
+layer at (20,-30) size 75x45 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (90,0) size 76x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 75x46
+      chunk 1 text run 1 at (20.00,-10.00) startOffset 0 endOffset 1 width 15.00: "1"
+      chunk 1 text run 1 at (40.00,-5.00) startOffset 0 endOffset 1 width 15.00: "2"
+      chunk 1 text run 1 at (60.00,5.00) startOffset 0 endOffset 1 width 15.00: "3"
+      chunk 1 text run 1 at (80.00,10.00) startOffset 0 endOffset 1 width 15.00: "4"
+layer at (-87,-30) size 183x46 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (350,120) size 183x46
+layer at (20,-30) size 75x45 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (107,0) size 76x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 75x46
+      chunk 1 text run 1 at (20.00,-10.00) startOffset 0 endOffset 1 width 15.00: "1"
+      chunk 1 text run 1 at (40.00,-5.00) startOffset 0 endOffset 1 width 15.00: "2"
+      chunk 1 text run 1 at (60.00,5.00) startOffset 0 endOffset 1 width 15.00: "3"
+      chunk 1 text run 1 at (80.00,10.00) startOffset 0 endOffset 1 width 15.00: "4"
+layer at (-91,-30) size 182x41 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (350,160) size 181x41
+layer at (20,-30) size 70x40 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (110,0) size 71x41 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 70x41
+      chunk 1 text run 1 at (20.00,-10.00) startOffset 0 endOffset 1 width 15.00: "1"
+      chunk 1 text run 1 at (40.00,-5.00) startOffset 0 endOffset 1 width 15.00: "2"
+      chunk 1 text run 1 at (60.00,5.00) startOffset 0 endOffset 2 width 30.00: "34"
+layer at (-110,-30) size 206x41 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (350,200) size 206x41
+layer at (20,-30) size 75x40 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (130,0) size 76x41 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 75x41
+      chunk 1 text run 1 at (20.00,-10.00) startOffset 0 endOffset 1 width 15.00: "1"
+      chunk 1 text run 1 at (40.00,-5.00) startOffset 0 endOffset 1 width 15.00: "2"
+      chunk 1 text run 1 at (60.00,5.00) startOffset 0 endOffset 1 width 15.00: "3"
+      chunk 1 text run 1 at (80.00,5.00) startOffset 0 endOffset 1 width 15.00: "4"
+layer at (-110,-30) size 201x46 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (350,240) size 201x46
+layer at (20,-30) size 70x45 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (130,0) size 71x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 70x46
+      chunk 1 text run 1 at (20.00,-10.00) startOffset 0 endOffset 1 width 15.00: "1"
+      chunk 1 text run 1 at (40.00,-5.00) startOffset 0 endOffset 1 width 15.00: "2"
+      chunk 1 text run 1 at (60.00,5.00) startOffset 0 endOffset 1 width 15.00: "3"
+      chunk 1 text run 1 at (75.00,10.00) startOffset 0 endOffset 1 width 15.00: "4"
+layer at (10,304) size 283x46
+  RenderSVGText {text} at (10,304) size 284x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 284x46
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 17 width 283.34: "$Revision: 1.13 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (-1,-1) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

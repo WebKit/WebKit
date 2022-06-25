@@ -1,0 +1,17 @@
+
+PASS accumulate onto the base value
+PASS accumulate onto an underlying animation value
+PASS accumulate onto an underlying animation value with implicit from values
+PASS accumulate onto an underlying animation value with implicit to values
+PASS Composite when mixing accumulate and replace
+PASS accumulate specified on a keyframe overrides the composite mode of the effect
+PASS unspecified composite mode on a keyframe is overriden by setting accumulate of the effect
+PASS add onto the base value
+PASS add onto an underlying animation value
+PASS add onto an underlying animation value with implicit from values
+PASS add onto an underlying animation value with implicit to values
+PASS Composite when mixing add and replace
+PASS add specified on a keyframe overrides the composite mode of the effect
+PASS unspecified composite mode on a keyframe is overriden by setting add of the effect
+PASS Composite replace fully replaces the underlying animation value
+

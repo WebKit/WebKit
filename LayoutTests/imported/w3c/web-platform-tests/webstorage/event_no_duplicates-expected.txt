@@ -1,0 +1,11 @@
+
+
+PASS sessionStorage exists
+PASS Setting to same value does not trigger event for sessionStorage
+PASS Deleting non-existent key does not trigger event for sessionStorage
+PASS Clearing empty storage does not trigger event for sessionStorage
+PASS localStorage exists
+PASS Setting to same value does not trigger event for localStorage
+PASS Deleting non-existent key does not trigger event for localStorage
+PASS Clearing empty storage does not trigger event for localStorage
+

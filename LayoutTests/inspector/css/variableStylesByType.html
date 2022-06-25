@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("DOMNodeStyles.variableStylesByType");
+
+    function addTestCase({name, description, selector, expected})
+    {
+        suite.addTestCase({
+            name,
+            description,
+            async test() {
+                let documentNode = await WI.domManager.requestDocument();
+                let nodeId = await documentNode.querySelector(selector);
+                let domNode = await WI.domManager.nodeForId(nodeId);
+                InspectorTest.assert(domNode, `Should find DOM Node for selector '${selector}'.`);
+
+                let cssStyles = WI.cssManager.stylesForNode(domNode);
+                await cssStyles.refreshIfNeeded();
+
+                let styleGroups = cssStyles.variableStylesByType;
+                for (let {groupType, variables} of expected) {
+                    let propertyNames = styleGroups.get(groupType).properties.map(property => property.name);
+                    InspectorTest.expectTrue(styleGroups.has(groupType), `Should have "${groupType}" variables group.`);
+                    InspectorTest.expectShallowEqual(propertyNames.sort(), variables.sort(), "Group should include all expected variables.");
+                }
+            },
+        });
+    }
+
+    addTestCase({
+        name: "DOMNodeStyles.variableStylesByType.Colors",
+        description: "Check that variables with color values are correctly identified.",
+        selector: "#colors",
+        expected: [
+            {
+                groupType: WI.DOMNodeStyles.VariablesGroupType.Colors,
+                variables: ["--colorName", "--colorHEX", "--colorRGB", "--colorRGBA", "--colorHSL", "--colorHSLA"],
+            },
+        ],
+    });
+
+    addTestCase({
+        name: "DOMNodeStyles.variableStylesByType.Dimensions",
+        description: "Check that variables with dimension values are correctly identified.",
+        selector: "#dimensions",
+        expected: [
+            {
+                groupType: WI.DOMNodeStyles.VariablesGroupType.Dimensions,
+                variables: ["--dimensionPX", "--dimensionPercent", "--dimensionFloat", "--dimensionNegative", "--dimensionNegativeFloat"],
+            },
+        ],
+    });
+
+    addTestCase({
+        name: "DOMNodeStyles.variableStylesByType.Numbers",
+        description: "Check that variables with number values are correctly identified.",
+        selector: "#numbers",
+        expected: [
+            {
+                groupType: WI.DOMNodeStyles.VariablesGroupType.Numbers,
+                variables: ["--number", "--numberFloat", "--numberNegative", "--numberNegativeFloat"],
+            },
+        ],
+    });
+
+    addTestCase({
+        name: "DOMNodeStyles.variableStylesByType.Other",
+        description: "Check that variables with values with unmatched types are placed in the fallback group.",
+        selector: "#other",
+        expected: [
+            {
+                groupType: WI.DOMNodeStyles.VariablesGroupType.Other,
+                variables: ["--shadow", "--font-family", "--font-shorthand", "--keyword"],
+            },
+        ],
+    });
+
+    addTestCase({
+        name: "DOMNodeStyles.variableStylesByType.Mixed",
+        description: "Check that all type groups have variables allocated.",
+        selector: "#mixed",
+        expected: [
+            {
+                groupType: WI.DOMNodeStyles.VariablesGroupType.Colors,
+                variables: ["--color"],
+            },
+            {
+                groupType: WI.DOMNodeStyles.VariablesGroupType.Dimensions,
+                variables: ["--dimension"],
+            },
+            {
+                groupType: WI.DOMNodeStyles.VariablesGroupType.Numbers,
+                variables: ["--number"],
+            },
+            {
+                groupType: WI.DOMNodeStyles.VariablesGroupType.Other,
+                variables: ["--font-family"],
+            },
+        ],
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<style>
+
+div#colors {
+    --colorName: black;
+    --colorHEX: #000;
+    --colorRGB: rgb(0, 0, 0);
+    --colorRGBA: rgba(0, 0, 0, 1);
+    --colorHSL: hsl(0, 0%, 0%);
+    --colorHSLA: hsla(0, 0%, 0%, 1);
+
+    /* should not match any below */
+    --shadow: 1px 1px black;
+    --dimensionPX: 100px;
+    --number: 100;
+}
+
+div#dimensions {
+    --dimensionPX: 100px;
+    --dimensionPercent: 100%;
+    --dimensionFloat: 1.0%;
+    --dimensionNegative: -100px;
+    --dimensionNegativeFloat: -1.0%;
+
+    /* should not match any below */
+    --shadow: 1px 1px black;
+    --color: black;
+    --number: 100;
+    --numberFloat: 1.0;
+    --numberNegativeFloat: -1.0;
+}
+
+div#numbers {
+    --number: 100;
+    --numberFloat: 1.0;
+    --numberNegative: -100;
+    --numberNegativeFloat: -1.0;
+
+    /* should not match any below */
+    --shadow: 1px 1px black;
+    --dimensionPX: 100px;
+    --dimensionPercent: 100%;
+    --dimensionNegative: -100px;
+    --dimensionNegativeFloat: -1.0%;
+}
+
+div#other {
+    --shadow: 1px 1px black;
+    --font-family: sans-serif;
+    --font-shorthand: 16px / 1.6 sans-serif;
+    --keyword: inherit;
+}
+
+div#mixed {
+    --color: black;
+    --dimension: 100px;
+    --number: 100;
+    --font-family: sans-serif;
+}
+
+</style>
+</head>
+<body onload="runTest();">
+<p>Test for DOMNodeStyles.variableStylesByType</p>
+<div>
+    <div id="colors"></div>
+    <div id="dimensions"></div>
+    <div id="numbers"></div>
+    <div id="other"></div>
+    <div id="mixed"></div>
+</div>
+</body>
+</html>

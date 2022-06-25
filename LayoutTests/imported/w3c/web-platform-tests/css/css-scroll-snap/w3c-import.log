@@ -1,0 +1,83 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/capturing-snap-positions.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/inheritance.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/nested-scrollIntoView-snaps.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/no-red-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/no-snap-position.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/overflowing-snap-areas.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-margin-visibility-check.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-margin.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-padding-and-margin.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-padding.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-snap-root-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-snap-root-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-snap-root-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-snap-root-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-snap-root-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-snap-root-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-snap-root-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-snap-root-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-snap-stop-change.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-snap-stop.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-snap-type-change.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-snap-type-on-root-element.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-snap-type.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-align-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-align-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-align-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-align-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-align-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-align-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-margin-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-margin-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-margin-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-margin-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-margin-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-margin-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-margin-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-margin-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-margin-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-margin-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-padding-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-padding-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-padding-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-padding-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-padding-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-padding-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-snap-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-snap-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-snap-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-snap-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-snap-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-snap-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scrollTo-scrollBy-snaps.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/selection-target.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-area-capturing-add-scroll-container.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-area-capturing-remove-scroll-container.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-at-user-scroll-end.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-inline-block.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-to-transformed-target.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-to-visible-areas-both.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-to-visible-areas-margin-both.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-to-visible-areas-margin-x-axis.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-to-visible-areas-margin-y-axis.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-to-visible-areas-x-axis.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-to-visible-areas-y-axis.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/unreachable-snap-positions.html

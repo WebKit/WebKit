@@ -1,0 +1,8 @@
+{
+  "src/compiler/translator/emulated_builtin_function_data_hlsl.json":
+    "002ad46d144c51fe98d73478aa554ba7",
+  "src/compiler/translator/emulated_builtin_functions_hlsl_autogen.cpp":
+    "eeb085d4abc08e7dd15a1db8807efed6",
+  "src/compiler/translator/gen_emulated_builtin_function_tables.py":
+    "0150347bc316e7c3772a7c1492c588b8"
+}

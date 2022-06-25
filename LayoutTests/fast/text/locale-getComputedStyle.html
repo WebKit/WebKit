@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<div lang="zh" id="target"></div>
+<script>
+description("This test makes sure that lang='zh' round-trips through getComputedStyle.");
+let target = document.getElementById("target");
+shouldBeEqualToString("window.getComputedStyle(target).getPropertyValue('-webkit-locale')", "zh");
+</script>
+</body>
+</html>

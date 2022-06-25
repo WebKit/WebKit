@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<head>
+<style>
+canvas {
+    width: 200px;
+    height: 200px;
+}
+</style>
+<script src="../../../resources/js-test.js"></script>
+<script src="resources/webgl-test.js"> </script>
+<script src="resources/webgl-test-utils.js"> </script>
+<script>
+
+var wtu = WebGLTestUtils;
+var gl;
+window.jsTestIsAsync = true;
+
+if (window.initNonKhronosFramework)
+    window.initNonKhronosFramework(false);
+
+debug("Checks that a GPU process timeout on a non-result producing WebGL call will lose the context.");
+debug("NOTE: This only passes in the test harness because it requires Internals.");
+debug("");
+
+async function webGLContextLost(canvas) {
+    return new Promise(resolve => canvas.addEventListener("webglcontextlost", resolve));
+}
+
+async function runTest() {
+    let canvas = document.createElement("canvas");
+    canvas.width = 200;
+    canvas.height = 200;
+    gl = wtu.create3DContext(canvas);
+    wtu.setupColorQuad(gl);
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    gl.clearColor(0.0, 1.0, 0.0, 1.0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    shouldBeFalse("gl.isContextLost()");
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+    if (window.internals)
+        window.internals.simulateEventForWebGLContext("Timeout", gl);
+    // We're trying to fill the command buffer with calls after the timeout,
+    // so that we test that asynchronous calls cause timeouts too.
+    // Use a relatively fast call that still fills up the buffer.
+    let callCount = 1000000;
+    for (let i = 0; i < callCount; ++i)
+        gl.clearColor(1.0, 1.0, 0.0 + i/callCount, 1.0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    await webGLContextLost(canvas);
+    shouldBeTrue("gl.isContextLost()");
+    shouldBe("gl.getError()", "gl.CONTEXT_LOST_WEBGL");
+    finishTest();
+}
+
+runTest();
+var successfullyParsed = true;
+
+</script>
+<body>
+</body>

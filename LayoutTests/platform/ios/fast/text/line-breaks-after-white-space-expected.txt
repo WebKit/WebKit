@@ -1,0 +1,21 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x228
+  RenderBlock {HTML} at (0,0) size 800x228
+    RenderBody {BODY} at (8,8) size 784x200
+      RenderBlock (anonymous) at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 84x19
+          text run at (0,0) width 84: "This is good:"
+      RenderBlock {DIV} at (0,40) size 200x50
+        RenderBlock {P} at (0,0) size 200x50 [border: (1px solid #008000)]
+          RenderText {#text} at (1,1) size 190x47
+            text run at (1,1) width 190: "lorem ipsum dolor sit??"
+            text run at (1,25) width 39: "amet"
+      RenderBlock (anonymous) at (0,110) size 784x20
+        RenderText {#text} at (0,0) size 253x19
+          text run at (0,0) width 253: "The following should look like \x{201C}good\x{201D}:"
+      RenderBlock {DIV} at (0,150) size 200x50
+        RenderBlock {P} at (0,0) size 200x50 [border: (1px solid #008000)]
+          RenderText {#text} at (1,1) size 190x47
+            text run at (1,1) width 190: "lorem ipsum dolor sit??"
+            text run at (1,25) width 39: "amet"

@@ -1,0 +1,10 @@
+Make sure that StorageAreaMap objects do no leak.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS StorageAreaMap objects are not leaking
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

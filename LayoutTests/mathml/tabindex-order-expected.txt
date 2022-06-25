@@ -1,0 +1,61 @@
+This page tests that the MathML tabbing order is respected properly.
+
+To test, put focus in "a". Pressing Tab should focus "a" through "y" in order, and pressing Shift-Tab should reverse the order.
+
+ Tabbing forward....
+
+id: a tabindex: 1 mfrac is focused.
+id: b tabindex: 1 mrow is focused.
+id: c tabindex: 1 mpadded is focused.
+id: d tabindex: 1 msqrt is focused.
+id: e tabindex: 1 mroot is focused.
+id: g tabindex: 6 mspace is focused.
+id: h tabindex: 6 mtext is focused.
+id: i tabindex: 0 math is focused.
+id: j tabindex: 0 mover is focused.
+id: k tabindex: 0 munder is focused.
+id: l tabindex: 0 munderover is focused.
+id: m tabindex: 0 msub is focused.
+id: n tabindex: 0 msup is focused.
+id: o tabindex: 0 msubsup is focused.
+id: p tabindex: 0 mmultiscripts is focused.
+id: q tabindex: 0 menclose is focused.
+id: s tabindex: 0 mstyle is focused.
+id: t tabindex: 0 merror is focused.
+id: u tabindex: 0 mtable is focused.
+id: v tabindex: 0 ms is focused.
+id: w tabindex: 0 mi is focused.
+id: x tabindex: 0 mo is focused.
+id: y tabindex: 0 mn is focused.
+id: a tabindex: 1 mfrac is focused.
+
+Tabbing backward....
+
+id: y tabindex: 0 mn is focused.
+id: x tabindex: 0 mo is focused.
+id: w tabindex: 0 mi is focused.
+id: v tabindex: 0 ms is focused.
+id: u tabindex: 0 mtable is focused.
+id: t tabindex: 0 merror is focused.
+id: s tabindex: 0 mstyle is focused.
+id: q tabindex: 0 menclose is focused.
+id: p tabindex: 0 mmultiscripts is focused.
+id: o tabindex: 0 msubsup is focused.
+id: n tabindex: 0 msup is focused.
+id: m tabindex: 0 msub is focused.
+id: l tabindex: 0 munderover is focused.
+id: k tabindex: 0 munder is focused.
+id: j tabindex: 0 mover is focused.
+id: i tabindex: 0 math is focused.
+id: h tabindex: 6 mtext is focused.
+id: g tabindex: 6 mspace is focused.
+id: e tabindex: 1 mroot is focused.
+id: d tabindex: 1 msqrt is focused.
+id: c tabindex: 1 mpadded is focused.
+id: b tabindex: 1 mrow is focused.
+id: a tabindex: 1 mfrac is focused.
+id: y tabindex: 0 mn is focused.
+
+Test finished
+
+

@@ -1,0 +1,27 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+function test()
+{
+    InspectorProtocol.sendCommand("Page.enable", {});
+    InspectorProtocol.sendCommand("Page.archive", {}, function(event) {
+        if (event.error) {
+            ProtocolTest.fail(`Page.archive returned error: '${event.error.message}'.`);
+        } else {
+            let data = event.result.data;
+            if (!data)
+                ProtocolTest.fail("no data");
+            else if (data.length < 1000)
+                ProtocolTest.fail("unexpectedly short data. A serialized archive should be pretty large.");
+            else
+                ProtocolTest.pass("Received archive data.");
+        }
+        ProtocolTest.completeTest();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+</body>
+</html>

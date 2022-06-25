@@ -1,0 +1,7 @@
+link to #fragment link to #fragment2 link to #fragment3 link to #
+1: Must be green when containing :target
+2: Must be green when containing :target
+3: Must be green when containing :target
+
+PASS CSS Selectors Invalidation: :target pseudo-class in :has() argument
+

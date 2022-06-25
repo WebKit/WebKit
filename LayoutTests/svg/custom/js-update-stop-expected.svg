@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<svg width="450" height="450" xmlns="http://www.w3.org/2000/svg">
+<defs>
+    <linearGradient id="Gradient" gradientUnits="userSpaceOnUse" x1="10" y1="10" x2="440" y2="10">
+        <stop stop-color="blue" offset="0.3"/>
+        <stop stop-color="red" offset="1"/>
+    </linearGradient>
+</defs>
+
+<rect x="10" y="10" width="430" height="80" fill="url(#Gradient)" />
+<rect x="10" y="100" width="430" height="80" fill="url(#Gradient)" />
+</svg>

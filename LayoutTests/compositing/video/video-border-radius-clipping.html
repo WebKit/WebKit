@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            margin: 5px;
+            padding: 5px;
+        }
+
+        video {
+            border-radius: 5px;
+            box-shadow: -50px -50px 0px black;
+            background-color: red;
+            margin: 50px;
+            width: 640px;
+            height: 480px;
+        }
+
+        .obscurer {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: gray;
+        }
+
+    </style>
+    <script src="../../media/media-file.js"></script>
+    <script>
+        var requirePixelDump = true;
+        var video;
+
+        function testComplete()
+        {
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        function canplaythrough()
+        {
+            video.currentTime = 1;
+        }
+
+        function doTest()
+        {
+            findMediaElement();
+            waitForEvent('canplaythrough', () => requestAnimationFrame(() => { canplaythrough(); }));
+            waitForEvent('seeked', () => requestAnimationFrame(() => { testComplete(); }));
+            video.src = findMediaFile('video', '../../media/content/pure-color-green');
+        }
+        
+        window.addEventListener('load', doTest, false);
+    </script>
+    <script src="../../media/video-test.js"></script>
+</head>
+<body>
+    <video></video>
+
+    <div class="obscurer" style="left: 5px; top: 5px;"></div>
+    <div class="obscurer" style="left: 5px; top: 485px;"></div>
+    <div class="obscurer" style="left: 645px; top: 5px;"></div>
+
+    <div class="obscurer" style="left: 55px; top: 55px;"></div>
+    <div class="obscurer" style="left: 55px; top: 535px;"></div>
+    <div class="obscurer" style="left: 695px; top: 55px;"></div>
+    <div class="obscurer" style="left: 695px; top: 535px;"></div>
+</body>
+</html>

@@ -1,0 +1,104 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# Copyright (C) 2021 Igalia S.L.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+# ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import logging
+import optparse
+import os
+import sys
+
+from webkitpy.common.checkout.scm.detection import SCMDetector
+from webkitpy.common.checkout.checkout import Checkout
+from webkitpy.common.host import Host
+from webkitpy.common.system.executive import Executive, ScriptError
+from webkitpy.common.system.filesystem import FileSystem
+from webkitpy.common.net.bugzilla import Bugzilla
+from xml.sax.saxutils import unescape
+
+_log = logging.getLogger(__name__)
+
+option_parser = optparse.OptionParser(usage='usage: %prog [options] revision')
+option_parser.add_option('--platform', action='store',
+                         help='Platform to use (e.g., "gtk")')
+option_parser.add_option('--gtk', action='store_const', dest='platform', const='gtk',
+                         help='Alias for --platform=gtk')
+option_parser.add_option('--wpe', action='store_const', dest='platform', const='wpe',
+                         help='Alias for --platform=wpe')
+
+options, args = option_parser.parse_args()
+
+try:
+    port = Host().port_factory.get(options.platform, options)
+except NotImplementedError as e:
+    _log.error(str(e))
+    sys.exit(-1)
+
+scm = SCMDetector(FileSystem(), Executive()).default_scm()
+
+filter_dirs = [ 'gobject', 'glib', 'soup', 'cairo', 'gstreamer', 'atspi', 'adwaita',
+                'unix', 'linux', 'CoordinatedGraphics', 'texmap', 'nicosia',
+                'WebDriver', 'harfbuzz', 'freetype', 'egl', 'buildstream' ]
+if port.name() == 'gtk':
+    filter_dirs.extend([ 'gtk', 'wayland', 'x11', 'glx' ])
+elif port.name() == 'wpe':
+    filter_dirs.extend([ 'wpe', 'libwpe', 'epoxy' ])
+
+log_dirs = []
+for root, dirs, dummy in os.walk(os.path.join(scm.checkout_root, 'Source')):
+    for d in dirs:
+        if d in filter_dirs:
+            log_dirs.append(os.path.join(root, d))
+
+command = ['git', 'log', '--pretty=%H', args[0] + '..', 'master', '--']
+command.extend (log_dirs)
+revisions = Executive().run_command(command).splitlines()
+
+co = Checkout(scm)
+bugs = {}
+for rev in revisions:
+    try:
+        info = co.commit_info_for_revision(scm.svn_revision_from_git_commit(rev))
+    except Exception as e:
+        _log.warn('Error: no commit info found for git revision %s: %s' % (rev, str(e)))
+        continue
+
+    if not info:
+        _log.warn('Error: no commit info found for git revision %s' % rev)
+        continue
+
+    bug_id = info.bug_id()
+    if bug_id:
+        author_name = info.author_name()
+        authors = bugs.setdefault(bug_id, [])
+        if author_name not in authors:
+            authors.append(author_name)
+
+bugzilla = Bugzilla()
+for bug_id in bugs:
+    try:
+        bug_title = bugzilla.fetch_bug_dictionary(bug_id)['title']
+    except:
+        _log.error('Error getting info for bug #%s' % (bug_id))
+        continue
+    bug_title = unescape(bug_title, {"&apos;": "'", "&quot;": '"'})
+    print(u'Bug %s – %s (%s)' % (bug_id, bug_title, u', '.join(bugs[bug_id])))

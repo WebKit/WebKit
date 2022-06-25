@@ -1,0 +1,664 @@
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/bitrate_controller/loss_based_bandwidth_estimation.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/bitrate_controller/loss_based_bandwidth_estimation.cc
+index 5d7f8aa2c36..7a82666e812 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/bitrate_controller/loss_based_bandwidth_estimation.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/bitrate_controller/loss_based_bandwidth_estimation.cc
+@@ -124,7 +124,7 @@ void LossBasedBandwidthEstimation::UpdateLossStatistics(
+     return;
+   }
+   int loss_count = 0;
+-  for (auto pkt : packet_results) {
++  for (const auto& pkt : packet_results) {
+     loss_count += pkt.receive_time.IsInfinite() ? 1 : 0;
+   }
+   last_loss_ratio_ = static_cast<double>(loss_count) / packet_results.size();
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/rtp_rtcp/source/rtcp_receiver.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/rtp_rtcp/source/rtcp_receiver.cc
+index 383f785dfea..08405046528 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/rtp_rtcp/source/rtcp_receiver.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/rtp_rtcp/source/rtcp_receiver.cc
+@@ -437,7 +437,7 @@ void RTCPReceiver::HandleSenderReport(const CommonHeader& rtcp_block,
+     packet_information->packet_type_flags |= kRtcpRr;
+   }
+ 
+-  for (const rtcp::ReportBlock report_block : sender_report.report_blocks())
++  for (const rtcp::ReportBlock& report_block : sender_report.report_blocks())
+     HandleReportBlock(report_block, packet_information, remote_ssrc);
+ }
+ 
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/p2p/base/mdns_message.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/p2p/base/mdns_message.cc
+index f14a0d117e3..321d21d35bd 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/p2p/base/mdns_message.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/p2p/base/mdns_message.cc
+@@ -353,7 +353,7 @@ bool MdnsMessage::Write(rtc::ByteBufferWriter* buf) const {
+   header_.Write(buf);
+ 
+   auto write_rr = [&buf](const std::vector<MdnsResourceRecord>& section) {
+-    for (auto rr : section) {
++    for (const auto& rr : section) {
+       if (!rr.Write(buf)) {
+         return false;
+       }
+@@ -361,7 +361,7 @@ bool MdnsMessage::Write(rtc::ByteBufferWriter* buf) const {
+     return true;
+   };
+ 
+-  for (auto question : question_section_) {
++  for (const auto& question : question_section_) {
+     if (!question.Write(buf)) {
+       return false;
+     }
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/p2p/base/port.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/p2p/base/port.cc
+index bb20a4d5da3..a180180b91d 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/p2p/base/port.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/p2p/base/port.cc
+@@ -948,7 +948,7 @@ void Port::UpdateNetworkCost() {
+   // Network cost change will affect the connection selection criteria.
+   // Signal the connection state change on each connection to force a
+   // re-sort in P2PTransportChannel.
+-  for (auto kv : connections_) {
++  for (const auto& kv : connections_) {
+     Connection* conn = kv.second;
+     conn->SignalStateChange(conn);
+   }
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/p2p/base/stunrequest.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/p2p/base/stunrequest.cc
+index edba4d68e54..dfb27fccb17 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/p2p/base/stunrequest.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/p2p/base/stunrequest.cc
+@@ -69,7 +69,7 @@ void StunRequestManager::SendDelayed(StunRequest* request, int delay) {
+ }
+ 
+ void StunRequestManager::Flush(int msg_type) {
+-  for (const auto kv : requests_) {
++  for (const auto& kv : requests_) {
+     StunRequest* request = kv.second;
+     if (msg_type == kAllRequests || msg_type == request->type()) {
+       thread_->Clear(request, MSG_STUN_SEND);
+@@ -79,7 +79,7 @@ void StunRequestManager::Flush(int msg_type) {
+ }
+ 
+ bool StunRequestManager::HasRequest(int msg_type) {
+-  for (const auto kv : requests_) {
++  for (const auto& kv : requests_) {
+     StunRequest* request = kv.second;
+     if (msg_type == kAllRequests || msg_type == request->type()) {
+       return true;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/pc/jseptransportcontroller.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/pc/jseptransportcontroller.cc
+index 78ecaf31dea..328e3ca42b1 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/pc/jseptransportcontroller.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/pc/jseptransportcontroller.cc
+@@ -629,7 +629,7 @@ RTCError JsepTransportController::ValidateAndMaybeUpdateBundleGroup(
+ 
+   // The BUNDLE group containing a MID that no m= section has is invalid.
+   if (new_bundle_group) {
+-    for (auto content_name : new_bundle_group->content_names()) {
++    for (const auto& content_name : new_bundle_group->content_names()) {
+       if (!description->GetContentByName(content_name)) {
+         return RTCError(RTCErrorType::INVALID_PARAMETER,
+                         "The BUNDLE group contains MID:" + content_name +
+@@ -645,7 +645,7 @@ RTCError JsepTransportController::ValidateAndMaybeUpdateBundleGroup(
+ 
+     if (new_bundle_group) {
+       // The BUNDLE group in answer should be a subset of offered group.
+-      for (auto content_name : new_bundle_group->content_names()) {
++      for (const auto& content_name : new_bundle_group->content_names()) {
+         if (!offered_bundle_group ||
+             !offered_bundle_group->HasContentName(content_name)) {
+           return RTCError(RTCErrorType::INVALID_PARAMETER,
+@@ -656,7 +656,7 @@ RTCError JsepTransportController::ValidateAndMaybeUpdateBundleGroup(
+     }
+ 
+     if (bundle_group_) {
+-      for (auto content_name : bundle_group_->content_names()) {
++      for (const auto& content_name : bundle_group_->content_names()) {
+         // An answer that removes m= sections from pre-negotiated BUNDLE group
+         // without rejecting it, is invalid.
+         if (!new_bundle_group ||
+@@ -704,7 +704,7 @@ RTCError JsepTransportController::ValidateAndMaybeUpdateBundleGroup(
+   // If the |bundled_content| is rejected, other contents in the bundle group
+   // should be rejected.
+   if (bundled_content->rejected) {
+-    for (auto content_name : bundle_group_->content_names()) {
++    for (const auto& content_name : bundle_group_->content_names()) {
+       auto other_content = description->GetContentByName(content_name);
+       if (!other_content->rejected) {
+         return RTCError(
+@@ -739,7 +739,7 @@ void JsepTransportController::HandleRejectedContent(
+   // then destroy the cricket::JsepTransport.
+   RemoveTransportForMid(content_info.name);
+   if (content_info.name == bundled_mid()) {
+-    for (auto content_name : bundle_group_->content_names()) {
++    for (const auto& content_name : bundle_group_->content_names()) {
+       RemoveTransportForMid(content_name);
+     }
+     bundle_group_.reset();
+@@ -845,7 +845,7 @@ std::vector<int> JsepTransportController::GetEncryptedHeaderExtensionIds(
+   }
+ 
+   std::vector<int> encrypted_header_extension_ids;
+-  for (auto extension : content_desc->rtp_header_extensions()) {
++  for (const auto& extension : content_desc->rtp_header_extensions()) {
+     if (!extension.encrypt) {
+       continue;
+     }
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/pc/peerconnection.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/pc/peerconnection.cc
+index 4f0a8ea0112..ee8a909e03e 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/pc/peerconnection.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/pc/peerconnection.cc
+@@ -832,7 +832,7 @@ PeerConnection::~PeerConnection() {
+   // Need to stop transceivers before destroying the stats collector because
+   // AudioRtpSender has a reference to the StatsCollector it will update when
+   // stopping.
+-  for (auto transceiver : transceivers_) {
++  for (const auto& transceiver : transceivers_) {
+     transceiver->Stop();
+   }
+ 
+@@ -868,12 +868,12 @@ PeerConnection::~PeerConnection() {
+ void PeerConnection::DestroyAllChannels() {
+   // Destroy video channels first since they may have a pointer to a voice
+   // channel.
+-  for (auto transceiver : transceivers_) {
++  for (const auto& transceiver : transceivers_) {
+     if (transceiver->media_type() == cricket::MEDIA_TYPE_VIDEO) {
+       DestroyTransceiverChannel(transceiver);
+     }
+   }
+-  for (auto transceiver : transceivers_) {
++  for (const auto& transceiver : transceivers_) {
+     if (transceiver->media_type() == cricket::MEDIA_TYPE_AUDIO) {
+       DestroyTransceiverChannel(transceiver);
+     }
+@@ -1611,7 +1611,7 @@ rtc::scoped_refptr<RtpSenderInterface> PeerConnection::CreateSender(
+ std::vector<rtc::scoped_refptr<RtpSenderInterface>> PeerConnection::GetSenders()
+     const {
+   std::vector<rtc::scoped_refptr<RtpSenderInterface>> ret;
+-  for (auto sender : GetSendersInternal()) {
++  for (const auto& sender : GetSendersInternal()) {
+     ret.push_back(sender);
+   }
+   return ret;
+@@ -1621,7 +1621,7 @@ std::vector<rtc::scoped_refptr<RtpSenderProxyWithInternal<RtpSenderInternal>>>
+ PeerConnection::GetSendersInternal() const {
+   std::vector<rtc::scoped_refptr<RtpSenderProxyWithInternal<RtpSenderInternal>>>
+       all_senders;
+-  for (auto transceiver : transceivers_) {
++  for (const auto& transceiver : transceivers_) {
+     auto senders = transceiver->internal()->senders();
+     all_senders.insert(all_senders.end(), senders.begin(), senders.end());
+   }
+@@ -1643,7 +1643,7 @@ PeerConnection::GetReceiversInternal() const {
+   std::vector<
+       rtc::scoped_refptr<RtpReceiverProxyWithInternal<RtpReceiverInternal>>>
+       all_receivers;
+-  for (auto transceiver : transceivers_) {
++  for (const auto& transceiver : transceivers_) {
+     auto receivers = transceiver->internal()->receivers();
+     all_receivers.insert(all_receivers.end(), receivers.begin(),
+                          receivers.end());
+@@ -1656,7 +1656,7 @@ PeerConnection::GetTransceivers() const {
+   RTC_CHECK(IsUnifiedPlan())
+       << "GetTransceivers is only supported with Unified Plan SdpSemantics.";
+   std::vector<rtc::scoped_refptr<RtpTransceiverInterface>> all_transceivers;
+-  for (auto transceiver : transceivers_) {
++  for (const auto& transceiver : transceivers_) {
+     all_transceivers.push_back(transceiver);
+   }
+   return all_transceivers;
+@@ -1867,7 +1867,7 @@ RTCError PeerConnection::HandleLegacyOfferOptions(
+ 
+ void PeerConnection::RemoveRecvDirectionFromReceivingTransceiversOfType(
+     cricket::MediaType media_type) {
+-  for (auto transceiver : GetReceivingTransceiversOfType(media_type)) {
++  for (const auto& transceiver : GetReceivingTransceiversOfType(media_type)) {
+     RtpTransceiverDirection new_direction =
+         RtpTransceiverDirectionWithRecvSet(transceiver->direction(), false);
+     if (new_direction != transceiver->direction()) {
+@@ -1901,7 +1901,7 @@ PeerConnection::GetReceivingTransceiversOfType(cricket::MediaType media_type) {
+   std::vector<
+       rtc::scoped_refptr<RtpTransceiverProxyWithInternal<RtpTransceiver>>>
+       receiving_transceivers;
+-  for (auto transceiver : transceivers_) {
++  for (const auto& transceiver : transceivers_) {
+     if (!transceiver->stopped() && transceiver->media_type() == media_type &&
+         RtpTransceiverDirectionHasRecv(transceiver->direction())) {
+       receiving_transceivers.push_back(transceiver);
+@@ -2094,7 +2094,7 @@ RTCError PeerConnection::ApplyLocalDescription(
+     }
+     std::vector<rtc::scoped_refptr<RtpTransceiverInterface>> remove_list;
+     std::vector<rtc::scoped_refptr<MediaStreamInterface>> removed_streams;
+-    for (auto transceiver : transceivers_) {
++    for (const auto& transceiver : transceivers_) {
+       const ContentInfo* content =
+           FindMediaSectionForTransceiver(transceiver, local_description());
+       if (!content) {
+@@ -2122,10 +2122,10 @@ RTCError PeerConnection::ApplyLocalDescription(
+       }
+     }
+     auto observer = Observer();
+-    for (auto transceiver : remove_list) {
++    for (const auto& transceiver : remove_list) {
+       observer->OnRemoveTrack(transceiver->receiver());
+     }
+-    for (auto stream : removed_streams) {
++    for (const auto& stream : removed_streams) {
+       observer->OnRemoveStream(stream);
+     }
+   } else {
+@@ -2167,7 +2167,7 @@ RTCError PeerConnection::ApplyLocalDescription(
+   }
+ 
+   if (IsUnifiedPlan()) {
+-    for (auto transceiver : transceivers_) {
++    for (const auto& transceiver : transceivers_) {
+       const ContentInfo* content =
+           FindMediaSectionForTransceiver(transceiver, local_description());
+       if (!content) {
+@@ -2447,7 +2447,7 @@ RTCError PeerConnection::ApplyRemoteDescription(
+     std::vector<rtc::scoped_refptr<RtpTransceiverInterface>> remove_list;
+     std::vector<rtc::scoped_refptr<MediaStreamInterface>> added_streams;
+     std::vector<rtc::scoped_refptr<MediaStreamInterface>> removed_streams;
+-    for (auto transceiver : transceivers_) {
++    for (const auto& transceiver : transceivers_) {
+       const ContentInfo* content =
+           FindMediaSectionForTransceiver(transceiver, remote_description());
+       if (!content) {
+@@ -2541,19 +2541,19 @@ RTCError PeerConnection::ApplyRemoteDescription(
+     }
+     // Once all processing has finished, fire off callbacks.
+     auto observer = Observer();
+-    for (auto transceiver : now_receiving_transceivers) {
++    for (const auto& transceiver : now_receiving_transceivers) {
+       stats_->AddTrack(transceiver->receiver()->track());
+       observer->OnTrack(transceiver);
+       observer->OnAddTrack(transceiver->receiver(),
+                            transceiver->receiver()->streams());
+     }
+-    for (auto stream : added_streams) {
++    for (const auto& stream : added_streams) {
+       observer->OnAddStream(stream);
+     }
+-    for (auto transceiver : remove_list) {
++    for (const auto& transceiver : remove_list) {
+       observer->OnRemoveTrack(transceiver->receiver());
+     }
+-    for (auto stream : removed_streams) {
++    for (const auto& stream : removed_streams) {
+       observer->OnRemoveStream(stream);
+     }
+   }
+@@ -2660,7 +2660,7 @@ void PeerConnection::ProcessRemovalOfRemoteTrack(
+   // TODO(https://crbug.com/webrtc/9480): When we use stream IDs instead
+   // of streams, see if the stream was removed by checking if this was the
+   // last receiver with that stream ID.
+-  for (auto stream : media_streams) {
++  for (const auto& stream : media_streams) {
+     if (stream->GetAudioTracks().empty() && stream->GetVideoTracks().empty()) {
+       remote_streams_->RemoveStream(stream);
+       removed_streams->push_back(stream);
+@@ -3382,7 +3382,7 @@ void PeerConnection::Close() {
+   ChangeSignalingState(PeerConnectionInterface::kClosed);
+   NoteUsageEvent(UsageEvent::CLOSE_CALLED);
+ 
+-  for (auto transceiver : transceivers_) {
++  for (const auto& transceiver : transceivers_) {
+     transceiver->Stop();
+   }
+ 
+@@ -4045,7 +4045,7 @@ void PeerConnection::GetOptionsForUnifiedPlanOffer(
+   // and not associated). Reuse media sections marked as recyclable first,
+   // otherwise append to the end of the offer. New media sections should be
+   // added in the order they were added to the PeerConnection.
+-  for (auto transceiver : transceivers_) {
++  for (const auto& transceiver : transceivers_) {
+     if (transceiver->mid() || transceiver->stopped()) {
+       continue;
+     }
+@@ -4815,7 +4815,7 @@ bool PeerConnection::HasRtpSender(cricket::MediaType type) const {
+ 
+ rtc::scoped_refptr<RtpSenderProxyWithInternal<RtpSenderInternal>>
+ PeerConnection::FindSenderForTrack(MediaStreamTrackInterface* track) const {
+-  for (auto transceiver : transceivers_) {
++  for (const auto& transceiver : transceivers_) {
+     for (auto sender : transceiver->internal()->senders()) {
+       if (sender->track() == track) {
+         return sender;
+@@ -4827,7 +4827,7 @@ PeerConnection::FindSenderForTrack(MediaStreamTrackInterface* track) const {
+ 
+ rtc::scoped_refptr<RtpSenderProxyWithInternal<RtpSenderInternal>>
+ PeerConnection::FindSenderById(const std::string& sender_id) const {
+-  for (auto transceiver : transceivers_) {
++  for (const auto& transceiver : transceivers_) {
+     for (auto sender : transceiver->internal()->senders()) {
+       if (sender->id() == sender_id) {
+         return sender;
+@@ -4839,7 +4839,7 @@ PeerConnection::FindSenderById(const std::string& sender_id) const {
+ 
+ rtc::scoped_refptr<RtpReceiverProxyWithInternal<RtpReceiverInternal>>
+ PeerConnection::FindReceiverById(const std::string& receiver_id) const {
+-  for (auto transceiver : transceivers_) {
++  for (const auto& transceiver : transceivers_) {
+     for (auto receiver : transceiver->internal()->receivers()) {
+       if (receiver->id() == receiver_id) {
+         return receiver;
+@@ -4999,7 +4999,7 @@ void PeerConnection::StopRtcEventLog_w() {
+ 
+ cricket::ChannelInterface* PeerConnection::GetChannel(
+     const std::string& content_name) {
+-  for (auto transceiver : transceivers_) {
++  for (const auto& transceiver : transceivers_) {
+     cricket::ChannelInterface* channel = transceiver->internal()->channel();
+     if (channel && channel->content_name() == content_name) {
+       return channel;
+@@ -5114,7 +5114,7 @@ RTCError PeerConnection::PushdownMediaDescription(
+   RTC_DCHECK(sdesc);
+ 
+   // Push down the new SDP media section for each audio/video transceiver.
+-  for (auto transceiver : transceivers_) {
++  for (const auto& transceiver : transceivers_) {
+     const ContentInfo* content_info =
+         FindMediaSectionForTransceiver(transceiver, sdesc);
+     cricket::ChannelInterface* channel = transceiver->internal()->channel();
+@@ -5463,7 +5463,7 @@ cricket::CandidateStatsList PeerConnection::GetPooledCandidateStats() const {
+ std::map<std::string, std::string> PeerConnection::GetTransportNamesByMid()
+     const {
+   std::map<std::string, std::string> transport_names_by_mid;
+-  for (auto transceiver : transceivers_) {
++  for (const auto& transceiver : transceivers_) {
+     cricket::ChannelInterface* channel = transceiver->internal()->channel();
+     if (channel) {
+       transport_names_by_mid[channel->content_name()] =
+@@ -5640,7 +5640,7 @@ void PeerConnection::OnTransportControllerDtlsHandshakeError(
+ }
+ 
+ void PeerConnection::EnableSending() {
+-  for (auto transceiver : transceivers_) {
++  for (const auto& transceiver : transceivers_) {
+     cricket::ChannelInterface* channel = transceiver->internal()->channel();
+     if (channel && !channel->enabled()) {
+       channel->Enable(true);
+@@ -6377,7 +6377,7 @@ void PeerConnection::OnTransportControllerGatheringState(
+ void PeerConnection::ReportTransportStats() {
+   std::map<std::string, std::set<cricket::MediaType>>
+       media_types_by_transport_name;
+-  for (auto transceiver : transceivers_) {
++  for (const auto& transceiver : transceivers_) {
+     if (transceiver->internal()->channel()) {
+       const std::string& transport_name =
+           transceiver->internal()->channel()->transport_name();
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/pc/rtcstatscollector.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/pc/rtcstatscollector.cc
+index d48ecc01f35..6fc4118d979 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/pc/rtcstatscollector.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/pc/rtcstatscollector.cc
+@@ -534,7 +534,7 @@ void ProduceSenderMediaTrackStats(
+   // TODO(hbos): Return stats of detached tracks. We have to perform stats
+   // gathering at the time of detachment to get accurate stats and timestamps.
+   // https://crbug.com/659137
+-  for (auto sender : senders) {
++  for (const auto& sender : senders) {
+     if (sender->media_type() == cricket::MEDIA_TYPE_AUDIO) {
+       AudioTrackInterface* track =
+           static_cast<AudioTrackInterface*>(sender->track().get());
+@@ -602,7 +602,7 @@ void ProduceReceiverMediaTrackStats(
+     std::vector<rtc::scoped_refptr<RtpReceiverInternal>> receivers,
+     RTCStatsReport* report) {
+   // This function iterates over the receivers to find the remote tracks.
+-  for (auto receiver : receivers) {
++  for (const auto& receiver : receivers) {
+     if (receiver->media_type() == cricket::MEDIA_TYPE_AUDIO) {
+       AudioTrackInterface* track =
+           static_cast<AudioTrackInterface*>(receiver->track().get());
+@@ -1116,7 +1116,7 @@ void RTCStatsCollector::ProduceMediaStreamStats_s(
+   std::map<std::string, std::vector<std::string>> track_ids;
+ 
+   for (const auto& stats : transceiver_stats_infos_) {
+-    for (auto sender : stats.transceiver->senders()) {
++    for (const auto& sender : stats.transceiver->senders()) {
+       std::string track_id =
+           RTCMediaStreamTrackStatsIDFromDirectionAndAttachment(
+               kSender, sender->internal()->AttachmentId());
+@@ -1124,7 +1124,7 @@ void RTCStatsCollector::ProduceMediaStreamStats_s(
+         track_ids[stream_id].push_back(track_id);
+       }
+     }
+-    for (auto receiver : stats.transceiver->receivers()) {
++    for (const auto& receiver : stats.transceiver->receivers()) {
+       std::string track_id =
+           RTCMediaStreamTrackStatsIDFromDirectionAndAttachment(
+               kReceiver, receiver->internal()->AttachmentId());
+@@ -1150,14 +1150,14 @@ void RTCStatsCollector::ProduceMediaStreamTrackStats_s(
+   RTC_DCHECK(signaling_thread_->IsCurrent());
+   for (const RtpTransceiverStatsInfo& stats : transceiver_stats_infos_) {
+     std::vector<rtc::scoped_refptr<RtpSenderInternal>> senders;
+-    for (auto sender : stats.transceiver->senders()) {
++    for (const auto& sender : stats.transceiver->senders()) {
+       senders.push_back(sender->internal());
+     }
+     ProduceSenderMediaTrackStats(timestamp_us, *stats.track_media_info_map,
+                                  senders, report);
+ 
+     std::vector<rtc::scoped_refptr<RtpReceiverInternal>> receivers;
+-    for (auto receiver : stats.transceiver->receivers()) {
++    for (const auto& receiver : stats.transceiver->receivers()) {
+       receivers.push_back(receiver->internal());
+     }
+     ProduceReceiverMediaTrackStats(timestamp_us, *stats.track_media_info_map,
+@@ -1420,7 +1420,7 @@ RTCStatsCollector::PrepareTransceiverStatsInfos_s() const {
+            std::unique_ptr<cricket::VideoMediaInfo>>
+       video_stats;
+ 
+-  for (auto transceiver : pc_->GetTransceiversInternal()) {
++  for (const auto& transceiver : pc_->GetTransceiversInternal()) {
+     cricket::MediaType media_type = transceiver->media_type();
+ 
+     // Prepare stats entry. The TrackMediaInfoMap will be filled in after the
+@@ -1493,11 +1493,11 @@ RTCStatsCollector::PrepareTransceiverStatsInfos_s() const {
+       }
+     }
+     std::vector<rtc::scoped_refptr<RtpSenderInternal>> senders;
+-    for (auto sender : transceiver->senders()) {
++    for (const auto& sender : transceiver->senders()) {
+       senders.push_back(sender->internal());
+     }
+     std::vector<rtc::scoped_refptr<RtpReceiverInternal>> receivers;
+-    for (auto receiver : transceiver->receivers()) {
++    for (const auto& receiver : transceiver->receivers()) {
+       receivers.push_back(receiver->internal());
+     }
+     stats.track_media_info_map = absl::make_unique<TrackMediaInfoMap>(
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/pc/rtpreceiver.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/pc/rtpreceiver.cc
+index 1916a736703..e5a4373294c 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/pc/rtpreceiver.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/pc/rtpreceiver.cc
+@@ -207,9 +207,9 @@ void AudioRtpReceiver::set_stream_ids(std::vector<std::string> stream_ids) {
+ void AudioRtpReceiver::SetStreams(
+     const std::vector<rtc::scoped_refptr<MediaStreamInterface>>& streams) {
+   // Remove remote track from any streams that are going away.
+-  for (auto existing_stream : streams_) {
++  for (const auto& existing_stream : streams_) {
+     bool removed = true;
+-    for (auto stream : streams) {
++    for (const auto& stream : streams) {
+       if (existing_stream->id() == stream->id()) {
+         RTC_DCHECK_EQ(existing_stream.get(), stream.get());
+         removed = false;
+@@ -221,9 +221,9 @@ void AudioRtpReceiver::SetStreams(
+     }
+   }
+   // Add remote track to any streams that are new.
+-  for (auto stream : streams) {
++  for (const auto& stream : streams) {
+     bool added = true;
+-    for (auto existing_stream : streams_) {
++    for (const auto& existing_stream : streams_) {
+       if (stream->id() == existing_stream->id()) {
+         RTC_DCHECK_EQ(stream.get(), existing_stream.get());
+         added = false;
+@@ -406,9 +406,9 @@ void VideoRtpReceiver::set_stream_ids(std::vector<std::string> stream_ids) {
+ void VideoRtpReceiver::SetStreams(
+     const std::vector<rtc::scoped_refptr<MediaStreamInterface>>& streams) {
+   // Remove remote track from any streams that are going away.
+-  for (auto existing_stream : streams_) {
++  for (const auto& existing_stream : streams_) {
+     bool removed = true;
+-    for (auto stream : streams) {
++    for (const auto& stream : streams) {
+       if (existing_stream->id() == stream->id()) {
+         RTC_DCHECK_EQ(existing_stream.get(), stream.get());
+         removed = false;
+@@ -420,9 +420,9 @@ void VideoRtpReceiver::SetStreams(
+     }
+   }
+   // Add remote track to any streams that are new.
+-  for (auto stream : streams) {
++  for (const auto& stream : streams) {
+     bool added = true;
+-    for (auto existing_stream : streams_) {
++    for (const auto& existing_stream : streams_) {
+       if (stream->id() == existing_stream->id()) {
+         RTC_DCHECK_EQ(stream.get(), existing_stream.get());
+         added = false;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/pc/rtptransceiver.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/pc/rtptransceiver.cc
+index 8b56b8b4f10..367a53780c9 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/pc/rtptransceiver.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/pc/rtptransceiver.cc
+@@ -59,12 +59,12 @@ void RtpTransceiver::SetChannel(cricket::ChannelInterface* channel) {
+         this, &RtpTransceiver::OnFirstPacketReceived);
+   }
+ 
+-  for (auto sender : senders_) {
++  for (const auto& sender : senders_) {
+     sender->internal()->SetMediaChannel(channel_ ? channel_->media_channel()
+                                                  : nullptr);
+   }
+ 
+-  for (auto receiver : receivers_) {
++  for (const auto& receiver : receivers_) {
+     if (!channel_) {
+       receiver->internal()->Stop();
+     }
+@@ -147,7 +147,7 @@ absl::optional<std::string> RtpTransceiver::mid() const {
+ }
+ 
+ void RtpTransceiver::OnFirstPacketReceived(cricket::ChannelInterface*) {
+-  for (auto receiver : receivers_) {
++  for (const auto& receiver : receivers_) {
+     receiver->internal()->NotifyFirstPacketReceived();
+   }
+ }
+@@ -212,10 +212,10 @@ absl::optional<RtpTransceiverDirection> RtpTransceiver::fired_direction()
+ }
+ 
+ void RtpTransceiver::Stop() {
+-  for (auto sender : senders_) {
++  for (const auto& sender : senders_) {
+     sender->internal()->Stop();
+   }
+-  for (auto receiver : receivers_) {
++  for (const auto& receiver : receivers_) {
+     receiver->internal()->Stop();
+   }
+   stopped_ = true;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/pc/statscollector.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/pc/statscollector.cc
+index 3cd85e69b23..3fc988b49eb 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/pc/statscollector.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/pc/statscollector.cc
+@@ -871,7 +871,7 @@ void StatsCollector::ExtractBweInfo() {
+ 
+   // Fill in target encoder bitrate, actual encoder bitrate, rtx bitrate, etc.
+   // TODO(holmer): Also fill this in for audio.
+-  for (auto transceiver : pc_->GetTransceiversInternal()) {
++  for (const auto& transceiver : pc_->GetTransceiversInternal()) {
+     if (transceiver->media_type() != cricket::MEDIA_TYPE_VIDEO) {
+       continue;
+     }
+@@ -912,7 +912,7 @@ void StatsCollector::ExtractMediaInfo() {
+ 
+   {
+     rtc::Thread::ScopedDisallowBlockingCalls no_blocking_calls;
+-    for (auto transceiver : pc_->GetTransceiversInternal()) {
++    for (const auto& transceiver : pc_->GetTransceiversInternal()) {
+       if (!transceiver->internal()->channel()) {
+         continue;
+       }
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/pc/trackmediainfomap.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/pc/trackmediainfomap.cc
+index b5abb7e9365..51826df45fc 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/pc/trackmediainfomap.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/pc/trackmediainfomap.cc
+@@ -47,7 +47,7 @@ void GetAudioAndVideoTrackBySsrc(
+   // means one thread jump if on signaling thread and two thread jumps if on any
+   // other threads). Is there a way to avoid thread jump(s) on a per
+   // sender/receiver, per method basis?
+-  for (auto rtp_sender : rtp_senders) {
++  for (const auto& rtp_sender : rtp_senders) {
+     cricket::MediaType media_type = rtp_sender->media_type();
+     MediaStreamTrackInterface* track = rtp_sender->track();
+     if (!track) {
+@@ -72,7 +72,7 @@ void GetAudioAndVideoTrackBySsrc(
+       }
+     }
+   }
+-  for (auto rtp_receiver : rtp_receivers) {
++  for (const auto& rtp_receiver : rtp_receivers) {
+     cricket::MediaType media_type = rtp_receiver->media_type();
+     MediaStreamTrackInterface* track = rtp_receiver->track();
+     RTC_DCHECK(track);
+@@ -126,10 +126,10 @@ TrackMediaInfoMap::TrackMediaInfoMap(
+       &remote_video_track_by_ssrc, &unsignaled_audio_track,
+       &unsignaled_video_track);
+ 
+-  for (auto sender : rtp_senders) {
++  for (const auto& sender : rtp_senders) {
+     attachment_id_by_track_[sender->track()] = sender->AttachmentId();
+   }
+-  for (auto receiver : rtp_receivers) {
++  for (const auto& receiver : rtp_receivers) {
+     attachment_id_by_track_[receiver->track()] = receiver->AttachmentId();
+   }
+ 
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/filerotatingstream.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/filerotatingstream.cc
+index b1dc5ff9981..38d852e53ce 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/filerotatingstream.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/filerotatingstream.cc
+@@ -328,7 +328,7 @@ bool FileRotatingStream::GetSize(size_t* size) const {
+   RTC_DCHECK(size);
+   *size = 0;
+   size_t total_size = 0;
+-  for (auto file_name : file_names_) {
++  for (const auto& file_name : file_names_) {
+     total_size += GetFileSize(file_name).value_or(0);
+   }
+   *size = total_size;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/opensslsessioncache.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/opensslsessioncache.cc
+index 2e37d55deb1..7b82276728b 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/opensslsessioncache.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/opensslsessioncache.cc
+@@ -22,7 +22,7 @@ OpenSSLSessionCache::OpenSSLSessionCache(SSLMode ssl_mode, SSL_CTX* ssl_ctx)
+ }
+ 
+ OpenSSLSessionCache::~OpenSSLSessionCache() {
+-  for (auto it : sessions_) {
++  for (const auto& it : sessions_) {
+     SSL_SESSION_free(it.second);
+   }
+   SSL_CTX_free(ssl_ctx_);
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/video/receive_statistics_proxy.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/video/receive_statistics_proxy.cc
+index e20b7d294fd..e82e967cf4f 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/video/receive_statistics_proxy.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/video/receive_statistics_proxy.cc
+@@ -275,7 +275,7 @@ void ReceiveStatisticsProxy::UpdateHistograms() {
+   // Aggregate content_specific_stats_ by removing experiment or simulcast
+   // information;
+   std::map<VideoContentType, ContentSpecificStats> aggregated_stats;
+-  for (auto it : content_specific_stats_) {
++  for (const auto& it : content_specific_stats_) {
+     // Calculate simulcast specific metrics (".S0" ... ".S2" suffixes).
+     VideoContentType content_type = it.first;
+     if (videocontenttypehelpers::GetSimulcastId(content_type) > 0) {
+@@ -297,7 +297,7 @@ void ReceiveStatisticsProxy::UpdateHistograms() {
+     aggregated_stats[content_type].Add(it.second);
+   }
+ 
+-  for (auto it : aggregated_stats) {
++  for (const auto& it : aggregated_stats) {
+     // For the metric Foo we report the following slices:
+     // WebRTC.Video.Foo,
+     // WebRTC.Video.Screenshare.Foo,

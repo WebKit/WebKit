@@ -1,0 +1,9 @@
+Verifies that after disconnecting a hardware keyboard and showing the software keyboard, we scroll to reveal the caret in the focused text field.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS Scrolled in response to showing software keyboard
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

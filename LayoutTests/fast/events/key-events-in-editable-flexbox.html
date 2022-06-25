@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<style>
+    #target {
+        display: flex;
+        display: -webkit-flex;
+    }
+</style>
+<script>
+    var targetDiv;
+    function test()
+    {
+        targetDiv = document.getElementById('target');
+        targetDiv.focus();
+
+        // Move cursor to the end of line.
+        getSelection().modify('move', 'forward', 'lineboundary');
+
+        document.execCommand("insertText", false, "EST");
+        shouldBeEqualToString("targetDiv.innerText", "TEST");
+
+        document.execCommand("delete");
+        document.execCommand("delete");
+        document.execCommand("delete");
+        document.execCommand("delete");
+        document.execCommand("delete"); // Remove '\n'
+        shouldBeEmptyString("targetDiv.innerText");
+
+        document.execCommand("insertText", false, "TEST");
+        shouldBeEqualToString("targetDiv.innerText", "TEST");
+    }
+</script>
+</head>
+<body onload="test()">
+<div id="target" contentEditable>T</div>
+</body>
+</html>

@@ -1,0 +1,42 @@
+Blocked access to external URL https://www1.localhost:9443/cookies/resources/dropSameSiteMultiAttribute.py
+CONSOLE MESSAGE: Fetch API cannot load https://www1.localhost:9443/cookies/resources/dropSameSiteMultiAttribute.py due to access control checks.
+Blocked access to external URL https://www1.localhost:9443/cookies/resources/redirectWithCORSHeaders.py?status=307&location=https%3A%2F%2Flocalhost%3A9443%2Fcookies%2Fresources%2FimgIfMatch.py%3Fname%3Dsamesite_unsupported_none%26value%3D0.5925441149438584
+Blocked access to external URL https://www1.localhost:9443/cookies/resources/redirectWithCORSHeaders.py?status=307&location=https%3A%2F%2Flocalhost%3A9443%2Fcookies%2Fresources%2FimgIfMatch.py%3Fname%3Dsamesite_lax_none%26value%3D0.5925441149438584
+Blocked access to external URL https://www1.localhost:9443/cookies/resources/redirectWithCORSHeaders.py?status=307&location=https%3A%2F%2Flocalhost%3A9443%2Fcookies%2Fresources%2FimgIfMatch.py%3Fname%3Dsamesite_unsupported_strict%26value%3D0.5925441149438584
+Blocked access to external URL https://www1.localhost:9443/cookies/resources/redirectWithCORSHeaders.py?status=307&location=https%3A%2F%2Flocalhost%3A9443%2Fcookies%2Fresources%2FimgIfMatch.py%3Fname%3Dsamesite_lax_strict%26value%3D0.5925441149438584
+Blocked access to external URL https://www1.localhost:9443/cookies/resources/redirectWithCORSHeaders.py?status=307&location=https%3A%2F%2Flocalhost%3A9443%2Fcookies%2Fresources%2FimgIfMatch.py%3Fname%3Dsamesite_unsupported_lax%26value%3D0.5925441149438584
+Blocked access to external URL https://www1.localhost:9443/cookies/resources/redirectWithCORSHeaders.py?status=307&location=https%3A%2F%2Flocalhost%3A9443%2Fcookies%2Fresources%2FimgIfMatch.py%3Fname%3Dsamesite_strict_lax%26value%3D0.5925441149438584
+Blocked access to external URL https://www1.localhost:9443/cookies/resources/redirectWithCORSHeaders.py?status=307&location=https%3A%2F%2Flocalhost%3A9443%2Fcookies%2Fresources%2FimgIfMatch.py%3Fname%3Dsamesite_none_unsupported%26value%3D0.5925441149438584
+Blocked access to external URL https://www1.localhost:9443/cookies/resources/redirectWithCORSHeaders.py?status=307&location=https%3A%2F%2Flocalhost%3A9443%2Fcookies%2Fresources%2FimgIfMatch.py%3Fname%3Dsamesite_lax_unsupported%26value%3D0.5925441149438584
+Blocked access to external URL https://www1.localhost:9443/cookies/resources/redirectWithCORSHeaders.py?status=307&location=https%3A%2F%2Flocalhost%3A9443%2Fcookies%2Fresources%2FimgIfMatch.py%3Fname%3Dsamesite_strict_unsupported%26value%3D0.5925441149438584
+Blocked access to external URL https://www1.localhost:9443/cookies/resources/redirectWithCORSHeaders.py?status=307&location=https%3A%2F%2Flocalhost%3A9443%2Fcookies%2Fresources%2FimgIfMatch.py%3Fname%3Dsamesite_unsupported%26value%3D0.5925441149438584
+Blocked access to external URL https://www1.localhost:9443/cookies/resources/dropSameSiteMultiAttribute.py
+CONSOLE MESSAGE: Fetch API cannot load https://www1.localhost:9443/cookies/resources/dropSameSiteMultiAttribute.py due to access control checks.
+Blocked access to external URL https://www1.localhost:9443/cookies/resources/dropSameSiteMultiAttribute.py
+CONSOLE MESSAGE: Fetch API cannot load https://www1.localhost:9443/cookies/resources/dropSameSiteMultiAttribute.py due to access control checks.
+Blocked access to external URL https://www1.localhost:9443/cookies/resources/dropSameSiteMultiAttribute.py
+CONSOLE MESSAGE: Fetch API cannot load https://www1.localhost:9443/cookies/resources/dropSameSiteMultiAttribute.py due to access control checks.
+Blocked access to external URL https://www1.localhost:9443/cookies/resources/redirectWithCORSHeaders.py?status=307&location=https%3A%2F%2F127.0.0.1%3A9443%2Fcookies%2Fresources%2FimgIfMatch.py%3Fname%3Dsamesite_unsupported_none%26value%3D0.10277761549984665
+Blocked access to external URL https://www1.localhost:9443/cookies/resources/redirectWithCORSHeaders.py?status=307&location=https%3A%2F%2F127.0.0.1%3A9443%2Fcookies%2Fresources%2FimgIfMatch.py%3Fname%3Dsamesite_lax_none%26value%3D0.10277761549984665
+Blocked access to external URL https://www1.localhost:9443/cookies/resources/redirectWithCORSHeaders.py?status=307&location=https%3A%2F%2F127.0.0.1%3A9443%2Fcookies%2Fresources%2FimgIfMatch.py%3Fname%3Dsamesite_unsupported_strict%26value%3D0.10277761549984665
+Blocked access to external URL https://www1.localhost:9443/cookies/resources/redirectWithCORSHeaders.py?status=307&location=https%3A%2F%2F127.0.0.1%3A9443%2Fcookies%2Fresources%2FimgIfMatch.py%3Fname%3Dsamesite_lax_strict%26value%3D0.10277761549984665
+Blocked access to external URL https://www1.localhost:9443/cookies/resources/redirectWithCORSHeaders.py?status=307&location=https%3A%2F%2F127.0.0.1%3A9443%2Fcookies%2Fresources%2FimgIfMatch.py%3Fname%3Dsamesite_unsupported_lax%26value%3D0.10277761549984665
+Blocked access to external URL https://www1.localhost:9443/cookies/resources/redirectWithCORSHeaders.py?status=307&location=https%3A%2F%2F127.0.0.1%3A9443%2Fcookies%2Fresources%2FimgIfMatch.py%3Fname%3Dsamesite_strict_lax%26value%3D0.10277761549984665
+Blocked access to external URL https://www1.localhost:9443/cookies/resources/redirectWithCORSHeaders.py?status=307&location=https%3A%2F%2F127.0.0.1%3A9443%2Fcookies%2Fresources%2FimgIfMatch.py%3Fname%3Dsamesite_none_unsupported%26value%3D0.10277761549984665
+Blocked access to external URL https://www1.localhost:9443/cookies/resources/redirectWithCORSHeaders.py?status=307&location=https%3A%2F%2F127.0.0.1%3A9443%2Fcookies%2Fresources%2FimgIfMatch.py%3Fname%3Dsamesite_lax_unsupported%26value%3D0.10277761549984665
+Blocked access to external URL https://www1.localhost:9443/cookies/resources/redirectWithCORSHeaders.py?status=307&location=https%3A%2F%2F127.0.0.1%3A9443%2Fcookies%2Fresources%2FimgIfMatch.py%3Fname%3Dsamesite_strict_unsupported%26value%3D0.10277761549984665
+Blocked access to external URL https://www1.localhost:9443/cookies/resources/redirectWithCORSHeaders.py?status=307&location=https%3A%2F%2F127.0.0.1%3A9443%2Fcookies%2Fresources%2FimgIfMatch.py%3Fname%3Dsamesite_unsupported%26value%3D0.10277761549984665
+
+PASS Same-host images are strictly same-site
+FAIL Subdomain images are strictly same-site promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Cross-site images are cross-site promise_test: Unhandled rejection with value: "'samesite_unsupported_none=0.4251158568179104' not present on https://127.0.0.1:9443"
+PASS Same-host redirecting to same-host images are strictly same-site
+FAIL Subdomain redirecting to same-host images are strictly same-site promise_test: Unhandled rejection with value: "'samesite_unsupported_none=0.5925441149438584' not present on https://www1.localhost:9443/cookies/resources/redirectWithCORSHeaders.py?status=307&location=https%3A%2F%2Flocalhost%3A9443"
+FAIL Cross-site redirecting to same-host images are cross-site promise_test: Unhandled rejection with value: "'samesite_unsupported=0.7557209747347237' present on https://127.0.0.1:9443/cookies/resources/redirectWithCORSHeaders.py?status=307&location=https%3A%2F%2Flocalhost%3A9443"
+FAIL Same-host redirecting to subdomain images are strictly same-site promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Subdomain redirecting to subdomain images are strictly same-site promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Cross-site redirecting to subdomain images are cross-site promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Same-host redirecting to cross-site images are cross-site promise_test: Unhandled rejection with value: "'samesite_unsupported_none=0.7620305670628387' not present on https://localhost:9443/cookies/resources/redirectWithCORSHeaders.py?status=307&location=https%3A%2F%2F127.0.0.1%3A9443"
+FAIL Subdomain redirecting to cross-site images are cross-site promise_test: Unhandled rejection with value: "'samesite_unsupported_none=0.10277761549984665' not present on https://www1.localhost:9443/cookies/resources/redirectWithCORSHeaders.py?status=307&location=https%3A%2F%2F127.0.0.1%3A9443"
+FAIL Cross-site redirecting to cross-site images are cross-site promise_test: Unhandled rejection with value: "'samesite_lax_none=0.11262820002415386' not present on https://127.0.0.1:9443/cookies/resources/redirectWithCORSHeaders.py?status=307&location=https%3A%2F%2F127.0.0.1%3A9443"
+

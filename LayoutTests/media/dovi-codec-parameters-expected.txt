@@ -1,0 +1,16 @@
+EXPECTED (internals.parseDoViCodecParameters("bad-parameter") == 'null') OK
+EXPECTED (internals.parseDoViCodecParameters("dvh1") == 'null') OK
+EXPECTED (internals.parseDoViCodecParameters("dvh1.04.09") === '{ hvc1, 4, 9 }') OK
+EXPECTED (internals.parseDoViCodecParameters("dvh1.05.13") === '{ hvc1, 5, 13 }') OK
+EXPECTED (internals.parseDoViCodecParameters("dvhe.07.09") === '{ hev1, 7, 9 }') OK
+EXPECTED (internals.parseDoViCodecParameters("dvhe.dtr.9") === '{ hev1, 4, 9 }') OK
+EXPECTED (internals.parseDoViCodecParameters("dvhe.stn.9") === '{ hev1, 5, 9 }') OK
+EXPECTED (internals.parseDoViCodecParameters("dvhe.dtb.9") === '{ hev1, 7, 9 }') OK
+EXPECTED (internals.parseDoViCodecParameters("dvhe.st.9") === '{ hev1, 8, 9 }') OK
+EXPECTED (internals.parseDoViCodecParameters("dvav.se.5") === '{ avc3, 9, 5 }') OK
+EXPECTED (internals.parseDoViCodecParameters("dvh1.06.01") == 'null') OK
+EXPECTED (internals.parseDoViCodecParameters("dvhe.03.01") == 'null') OK
+EXPECTED (internals.parseDoViCodecParameters("dvh1.09.01") == 'null') OK
+EXPECTED (internals.parseDoViCodecParameters("dvav.04.01") == 'null') OK
+END OF TEST
+

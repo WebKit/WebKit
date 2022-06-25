@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<script>
+
+var db;
+var openErrorFired = false;
+var request = window.indexedDB.open("TestIndexedDB");
+request.onsuccess = (event) => {
+    db = event.target.result;
+    db.onclose = (event) => {
+        if (openErrorFired) {
+            var thirdOpenRequest = window.indexedDB.open("TestIndexedDB");
+            thirdOpenRequest.onsuccess = (event) => {
+                window.webkit.messageHandlers.testHandler.postMessage("First Database Connection Closed, Second Database Connection Not Failed, Third Database Connection Opened");
+            }
+            thirdOpenRequest.onblocked = (event) => {
+                window.webkit.messageHandlers.testHandler.postMessage("Third Database Connection Blocked");
+            }
+            thirdOpenRequest.onerror = (event) => {
+                window.webkit.messageHandlers.testHandler.postMessage("Third Database Connection Failed");
+            }
+        } else {
+            window.webkit.messageHandlers.testHandler.postMessage("Second Database Connection Not Failed");
+        }
+    }
+
+    var secondOpenRequest = window.indexedDB.open("TestIndexedDB", db.version + 1);
+    secondOpenRequest.onerror = (event) => {
+        openErrorFired = true;
+    }
+
+    window.webkit.messageHandlers.testHandler.postMessage("First Database Connection Opened");
+}
+request.onerror = (event) => {
+    window.webkit.messageHandlers.testHandler.postMessage("First Database Connection Failed");
+}
+
+</script>

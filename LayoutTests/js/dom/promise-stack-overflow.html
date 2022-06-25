@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description('Test Promise operation does not crash with stack-overflow.');
+
+var count = 0;
+function checkCount(passed)
+{
+    count++;
+    if (passed === count) {
+        fetch("./promise-stack-overflow.html");
+        return;
+    }
+    checkCount(passed);
+}
+try {
+    checkCount(0);
+} catch {
+}
+count = 0;
+try {
+    checkCount(0);
+} catch {
+}
+var stackOverflowHappens = false;
+var stackOverflowDoesNotHappen = false;
+var target = count;
+for (var i = -100; i < 100; ++i) {
+    try {
+        count = 0;
+        checkCount(target - i);
+        stackOverflowDoesNotHappen = true;
+    } catch {
+        stackOverflowHappens = true;
+    }
+}
+shouldBeTrue('stackOverflowHappens');
+shouldBeTrue('stackOverflowDoesNotHappen');
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

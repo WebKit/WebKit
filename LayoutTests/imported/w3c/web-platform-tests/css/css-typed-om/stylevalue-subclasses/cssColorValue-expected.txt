@@ -1,0 +1,18 @@
+
+FAIL Converting HSL using degrees to RGB works for magenta. hsl_color_degrees.toRGB is not a function. (In 'hsl_color_degrees.toRGB()', 'hsl_color_degrees.toRGB' is undefined)
+FAIL Converting HSL using radians to RGB works for magenta. hsl_color_radians.toRGB is not a function. (In 'hsl_color_radians.toRGB()', 'hsl_color_radians.toRGB' is undefined)
+FAIL Converting HSL using gradiens to RGB works for magenta. hsl_color_gradiens.toRGB is not a function. (In 'hsl_color_gradiens.toRGB()', 'hsl_color_gradiens.toRGB' is undefined)
+FAIL Converting RGB to HSL works for magenta. rgb_color.toHSL is not a function. (In 'rgb_color.toHSL()', 'rgb_color.toHSL' is undefined)
+FAIL Converting HSL using degrees to RGB works for dark cyan. hsl_color_degrees.toRGB is not a function. (In 'hsl_color_degrees.toRGB()', 'hsl_color_degrees.toRGB' is undefined)
+FAIL Converting HSL using radians to RGB works for dark cyan. hsl_color_radians.toRGB is not a function. (In 'hsl_color_radians.toRGB()', 'hsl_color_radians.toRGB' is undefined)
+FAIL Converting HSL using gradiens to RGB works for dark cyan. hsl_color_gradiens.toRGB is not a function. (In 'hsl_color_gradiens.toRGB()', 'hsl_color_gradiens.toRGB' is undefined)
+FAIL Converting RGB to HSL works for dark cyan. rgb_color.toHSL is not a function. (In 'rgb_color.toHSL()', 'rgb_color.toHSL' is undefined)
+FAIL Converting HSL using degrees to RGB works for light goldenrod yellow. hsl_color_degrees.toRGB is not a function. (In 'hsl_color_degrees.toRGB()', 'hsl_color_degrees.toRGB' is undefined)
+FAIL Converting HSL using radians to RGB works for light goldenrod yellow. hsl_color_radians.toRGB is not a function. (In 'hsl_color_radians.toRGB()', 'hsl_color_radians.toRGB' is undefined)
+FAIL Converting HSL using gradiens to RGB works for light goldenrod yellow. hsl_color_gradiens.toRGB is not a function. (In 'hsl_color_gradiens.toRGB()', 'hsl_color_gradiens.toRGB' is undefined)
+FAIL Converting RGB to HSL works for light goldenrod yellow. rgb_color.toHSL is not a function. (In 'rgb_color.toHSL()', 'rgb_color.toHSL' is undefined)
+FAIL Converting HSL using degrees to RGB works for medium purple. hsl_color_degrees.toRGB is not a function. (In 'hsl_color_degrees.toRGB()', 'hsl_color_degrees.toRGB' is undefined)
+FAIL Converting HSL using radians to RGB works for medium purple. hsl_color_radians.toRGB is not a function. (In 'hsl_color_radians.toRGB()', 'hsl_color_radians.toRGB' is undefined)
+FAIL Converting HSL using gradiens to RGB works for medium purple. hsl_color_gradiens.toRGB is not a function. (In 'hsl_color_gradiens.toRGB()', 'hsl_color_gradiens.toRGB' is undefined)
+FAIL Converting RGB to HSL works for medium purple. rgb_color.toHSL is not a function. (In 'rgb_color.toHSL()', 'rgb_color.toHSL' is undefined)
+

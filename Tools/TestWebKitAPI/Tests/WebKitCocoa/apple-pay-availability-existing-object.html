@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<body>
+<script src="apple-pay.js"></script>
+<script>
+    const eventListener = async () => {
+        const applePaySessionAvailable = !!window.ApplePaySession;
+        const paymentRequestAvailable = !!window.PaymentRequest;
+        if (!applePaySessionAvailable || !paymentRequestAvailable) {
+            window.webkit.messageHandlers.testApplePay.postMessage({ applePaySessionAvailable, paymentRequestAvailable });
+            return;
+        }
+
+        const supportsVersion = ApplePaySession.supportsVersion(1);
+        const canMakePayments = ApplePaySession.canMakePayments();
+        const canMakePaymentsWithActiveCard = await ApplePaySession.canMakePaymentsWithActiveCard('');
+
+        window.wkPaymentRequest ??= new PaymentRequest([applePayMethod()], applePayDetails);
+        const canMakePayment = await wkPaymentRequest.canMakePayment();
+
+        window.webkit.messageHandlers.testApplePay.postMessage({
+            applePaySessionAvailable,
+            paymentRequestAvailable,
+            supportsVersion,
+            canMakePayments,
+            canMakePaymentsWithActiveCard,
+            canMakePayment,
+        });
+    };
+
+    window.addEventListener('hashchange', eventListener);
+    window.addEventListener('load', eventListener);
+</script>

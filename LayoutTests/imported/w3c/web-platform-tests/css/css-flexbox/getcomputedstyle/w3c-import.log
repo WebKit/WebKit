@@ -1,0 +1,91 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-content-center.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-content-flex-end.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-content-flex-start.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-content-space-around.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-content-space-between.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-items-baseline.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-items-center.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-items-flex-end.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-items-flex-start.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-items-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-items-stretch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-self-baseline.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-self-center.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-self-flex-end.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-self-flex-start.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-self-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-self-stretch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_display-inline.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_display.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-basis-0.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-basis-0percent.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-basis-auto.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-basis-percent.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-direction-column-reverse.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-direction-column.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-direction-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-direction-row-reverse.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-direction-row.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-column-nowrap.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-column-reverse-nowrap.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-column-reverse-wrap.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-column-reverse.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-column-wrap-reverse.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-column-wrap.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-column.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-nowrap.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-row-nowrap.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-row-reverse-nowrap.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-row-reverse-wrap-reverse.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-row-reverse-wrap.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-row-reverse.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-row-wrap-reverse.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-row-wrap.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-row.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-flow-wrap.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-grow-0.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-grow-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-grow-number.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-shorthand-0-auto.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-shorthand-auto.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-shorthand-initial.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-shorthand-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-shorthand-none.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-shorthand-number.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-shorthand.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-shrink-0.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-shrink-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-shrink-number.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-wrap-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-wrap-nowrap.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-wrap-wrap-reverse.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_flex-wrap-wrap.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_justify-content-center.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_justify-content-flex-end.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_justify-content-flex-start.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_justify-content-space-around.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_justify-content-space-between.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_min-auto-size.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_min-height-auto.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_min-width-auto.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_order-inherit.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_order-integer.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_order-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_order-negative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_order.html

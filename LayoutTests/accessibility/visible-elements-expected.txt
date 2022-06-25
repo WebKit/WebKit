@@ -1,0 +1,16 @@
+This test ensures that document links appropriately respect a link's visibility.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS initialDocumentLinks.includes('#first-link') is true
+PASS initialDocumentLinks.includes('#second-link') is false
+PASS numberOfSubstringOccurences(initialDocumentLinks, 'AXRole: AXLink') is 1
+PASS finalDocumentLinks.includes('#first-link') is true
+PASS finalDocumentLinks.includes('#second-link') is true
+PASS numberOfSubstringOccurences(finalDocumentLinks, 'AXRole: AXLink') is 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+more
+hello

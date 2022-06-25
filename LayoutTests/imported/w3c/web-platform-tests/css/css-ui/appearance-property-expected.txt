@@ -1,0 +1,7 @@
+
+PASS setProperty
+PASS removeProperty
+PASS property assignment
+PASS getPropertyValue
+PASS property access
+

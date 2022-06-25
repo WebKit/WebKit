@@ -1,0 +1,5 @@
+
+PASS KeyboardEvent.initKeyEvent shouldn't be defined (created by createEvent("KeyboardEvent")
+PASS KeyboardEvent.initKeyEvent shouldn't be defined (created by constructor)
+PASS KeyboardEvent.prototype.initKeyEvent shouldn't be defined
+

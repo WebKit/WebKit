@@ -1,0 +1,47 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<meta charset="utf-8">
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1">
+    <script src="../../../../resources/basic-gestures.js"></script>
+    <script src="../../../../resources/ui-helper.js"></script>
+    <script src="../../../../resources/js-test.js"></script>
+    <style>
+    #target {
+        height: 100px;
+        width: 200px;
+        background-color: silver;
+    }
+    </style>
+    <script>
+    jsTestIsAsync = true;
+
+    addEventListener("load", async () => {
+        description("Verifies that long pressing an image presents a context menu that shows the image name. To manually test, long press on the image.");
+
+        if (!window.testRunner || !testRunner.runUIScript)
+            return;
+
+        const targetRect = document.getElementById("target").getBoundingClientRect();
+        const pressPointX = targetRect.x + targetRect.width / 2;
+        const pressPointY = targetRect.y + targetRect.height / 2;
+        results = (await UIHelper.longPressAndGetContextMenuContentAt(pressPointX, pressPointY)).contextMenu;
+        if (results.imageURL.includes("dice.png") && results.isImage && !results.isLink)
+            testPassed("context menu triggered on image");
+        else
+            testFailed("context menu was not triggered on image");
+
+        shouldBeTrue("results.items.includes('Copy')");
+
+        await liftUpAtPoint(pressPointX, pressPointY);
+        await UIHelper.activateAt(0, 0);
+        finishJSTest();
+    });
+    </script>
+</head>
+<body>
+<div id="target">
+    <img src="../../../images/resources/dice.png" width="320" height="240" alt="Dice">
+</div>
+</body>
+</html>

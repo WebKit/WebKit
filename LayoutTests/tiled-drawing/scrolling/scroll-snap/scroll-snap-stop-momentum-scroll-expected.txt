@@ -1,0 +1,6 @@
+PASS did not glide past first scroll snap stop.
+PASS did not glide past second scroll snap stop.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,9 @@
+
+
+PASS Default selectionStart and selectionEnd for [object HTMLTextAreaElement]
+PASS selectionStart and selectionEnd do not change when same value set again for [object HTMLTextAreaElement]
+PASS selectionStart and selectionEnd change when value changed to upper case for [object HTMLTextAreaElement]
+PASS Default selectionStart and selectionEnd for [object HTMLInputElement]
+PASS selectionStart and selectionEnd do not change when same value set again for [object HTMLInputElement]
+PASS selectionStart and selectionEnd change when value changed to upper case for [object HTMLInputElement]
+

@@ -1,0 +1,24 @@
+Tests that our structured clone algorithm properly encodes all JS RegExp flags.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS event.data.toString() is "/(?:)/"
+PASS event.data.toString() is "/abc/"
+PASS event.data.toString() is "/abc/g"
+PASS event.data.toString() is "/abc/i"
+PASS event.data.toString() is "/abc/gi"
+PASS event.data.toString() is "/abc/m"
+PASS event.data.toString() is "/abc/gm"
+PASS event.data.toString() is "/abc/im"
+PASS event.data.toString() is "/abc/gim"
+PASS event.data.toString() is "/abc/s"
+PASS event.data.toString() is "/abc/u"
+PASS event.data.toString() is "/abc/y"
+PASS event.data.toString() is "/abc/d"
+PASS event.data.toString() is "/abc/gimsuy"
+PASS event.data.toString() is "/abc/dgimsuy"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

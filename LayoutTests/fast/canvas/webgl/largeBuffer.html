@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<script src="../../../resources/js-test.js"></script>
+<body>
+<canvas></canvas>
+<script>
+const canvas = document.querySelector("canvas");
+const gl = canvas.getContext("webgl");
+
+const b = gl.createBuffer();
+gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, b);
+gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, 0xf000000000, gl.STREAM_DRAW);
+const size = gl.getBufferParameter(gl.ELEMENT_ARRAY_BUFFER, gl.BUFFER_SIZE);
+shouldBeEqualToNumber("size", 0);
+gl.bufferSubData(gl.ELEMENT_ARRAY_BUFFER, 0x4444444444, new ArrayBuffer(32));
+</script>
+</body>
+</html>
+

@@ -1,0 +1,11 @@
+This tests calling containsNode when the selection is set inside a shadow tree.
+WebKit should not hit a debug assertion
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.querySelector('input').select(); getSelection().containsNode(document.body) is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

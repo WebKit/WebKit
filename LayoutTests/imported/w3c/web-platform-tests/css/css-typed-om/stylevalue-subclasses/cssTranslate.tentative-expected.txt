@@ -1,0 +1,24 @@
+
+PASS Constructing a CSSTranslate with a CSSUnitValue with type other than length or percent for the coordinates throws a TypeError
+PASS Constructing a CSSTranslate with a CSSMathValue that doesn't match <length-percentage> for the coordinates throws a TypeError
+FAIL Constructing a CSSTranslate with a percent for the Z coordinate throws a TypeError assert_throws_js: function "() => new CSSTranslate(CSS.px(0), CSS.px(0), CSS.percent(0))" did not throw
+PASS Updating CSSTranslate.x to a CSSUnitValue with type other than length or percent throws a TypeError
+PASS Updating CSSTranslate.x to a CSSMathValue that doesn't match <length-percentage> throws a TypeError
+PASS Updating CSSTranslate.y to a CSSUnitValue with type other than length or percent throws a TypeError
+PASS Updating CSSTranslate.y to a CSSMathValue that doesn't match <length-percentage> throws a TypeError
+PASS Updating CSSTranslate.z to a CSSUnitValue with type other than length or percent throws a TypeError
+PASS Updating CSSTranslate.z to a CSSMathValue that doesn't match <length-percentage> throws a TypeError
+FAIL Updating CSSTranslate.z to a percent throws a TypeError assert_throws_js: function "() => result.z = CSS.percent(0)" did not throw
+PASS CSSTranslate can be constructed from two length or percent coordinates
+PASS CSSTranslate can be constructed from three length or percent coordinates
+PASS CSSTranslate can be constructed from CSSMathValues
+PASS CSSTranslate.x can be updated to a length
+PASS CSSTranslate.x can be updated to a percent
+PASS CSSTranslate.x can be updated to a CSSMathValue
+PASS CSSTranslate.y can be updated to a length
+PASS CSSTranslate.y can be updated to a percent
+PASS CSSTranslate.y can be updated to a CSSMathValue
+PASS CSSTranslate.z can be updated to a length
+PASS CSSTranslate.z can be updated to a CSSMathValue
+PASS Modifying CSSTranslate.is2D can be updated to true or false
+

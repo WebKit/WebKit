@@ -1,0 +1,10 @@
+main frame - didStartProvisionalLoadForFrame
+main frame - didCommitLoadForFrame
+main frame - willPerformClientRedirectToURL: about:blank?input=
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+Tests that the load event fires if a form submission to a new window happens during the load.
+
+PASS: The load event was fired
+

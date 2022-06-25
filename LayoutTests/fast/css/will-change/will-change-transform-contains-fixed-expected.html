@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style>
+    .container {
+        position: relative;
+        height: 200px;
+        width: 200px;
+        margin: 20px;
+        border: 5px solid blue;
+    }
+    .box {
+        height: 100px;
+        width: 100px;
+    }
+    .absolute {
+        position: absolute;
+        background-color: green;
+        left: 50px;
+        top: 50px;
+    }
+  </style>
+</head>
+<body>
+    <div class="container">
+        <div class="absolute box"></div>
+    </div>
+
+    <div class="container" style="transform: translateZ(0);">
+        <div class="absolute box"></div>
+    </div>
+</body>
+</html>
+

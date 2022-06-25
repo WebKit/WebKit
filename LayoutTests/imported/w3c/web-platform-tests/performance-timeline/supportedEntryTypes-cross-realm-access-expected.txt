@@ -1,0 +1,3 @@
+
+PASS Cross-realm access of supportedEntryTypes returns Array of another realm
+

@@ -1,0 +1,99 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Test WebAudio background playback restriction</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+        <script src="../media/media-file.js"></script>
+    </head>
+    <body>
+        <script>
+
+promise_test(async (test) => {
+    if (!window.internals)
+        return Promise.reject("Test requires internals API");
+
+    if (window.internals)
+        internals.setMediaSessionRestrictions('webaudio', 'BackgroundProcessPlaybackRestricted');
+
+    let context = new AudioContext();
+    let source = context.createBufferSource();
+    let analyser = context.createAnalyser();
+    let processor = context.createScriptProcessor(1024, 1, 1);
+
+    source.connect(context.destination);
+    source.connect(analyser);
+    analyser.connect(processor);
+    processor.connect(context.destination);
+
+    let onProcessCount = 0;
+    processor.onaudioprocess = () => {
+        ++onProcessCount;
+    }
+
+    audioBuffer = await new Promise((resolve, reject) => {
+        let request = new XMLHttpRequest();
+        let url = findMediaFile("audio", "content/silence");
+        request.open('GET', url, true);
+        request.responseType = 'arraybuffer';
+
+        request.onload = () => {
+            if (request.status === 200 || request.status === 0) {
+                context.decodeAudioData(request.response, (buffer) => {
+                    resolve(buffer);
+                }, () => {
+                    reject("Error loading media file");
+                });
+            }
+        }
+
+        request.onerror = (event) => {
+          reject("Error loading media file");
+        }
+
+        request.send();
+    });
+
+    source.buffer = audioBuffer;
+    source.loop = true;
+    source.start(0);
+    
+    let counter = 0;
+    while (!onProcessCount && ++counter < 20)
+        await new Promise(resolve => setTimeout(resolve, 50));
+
+    assert_true(onProcessCount > 0, "audio is playing");
+
+    let oldOnProcessCount = onProcessCount;
+    await new Promise(resolve => setTimeout(resolve, 100));
+    assert_true(onProcessCount > oldOnProcessCount, "audio continues to play");
+
+    if (window.internals)
+        internals.applicationDidEnterBackground();
+
+    counter = 0;
+    while (++counter < 20) {
+        oldOnProcessCount = onProcessCount;
+        await new Promise(resolve => setTimeout(resolve, 50));
+        if (oldOnProcessCount == onProcessCount)
+            break;
+    }
+
+    assert_true(onProcessCount == oldOnProcessCount, "audio playback suspended in background");
+
+    // Context state changes are asynchronous, so delay the test to until the context has restarted + 100 additional milli-seconds.
+    context.onstatechange = () => {
+        setTimeout(() => {
+             assert_true(onProcessCount > oldOnProcessCount, "audio resumed playing in the foreground");
+        }, 100);
+    };
+
+    if (window.internals)
+        internals.applicationWillEnterForeground();
+
+}, "Ensure WebAudio stops playing in the background when the 'BackgroundProcessPlaybackRestricted' restriction is set");
+
+        </script>
+    </body>
+</html>

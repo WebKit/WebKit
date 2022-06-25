@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="../../resources/js-test-pre.js"></script>
+    <script>
+        jsTestIsAsync = true;
+        var iframe;
+        window.addEventListener('load', () => {
+            iframe = document.getElementsByTagName('iframe')[0];
+            shouldBe('iframe.contentWindow.scrollY', '0');
+            iframe.contentWindow.scrollTo(0, 400);
+            shouldBe('iframe.contentWindow.scrollY', '400');
+            finishJSTest();
+        }, false);
+    </script>
+</head>
+<body>
+    <iframe scrolling="no" srcdoc="
+    <style>
+        body {
+            height: 2000px;
+        }
+    </style>
+    text here
+    "></iframe>
+<div id="console"></div>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

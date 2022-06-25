@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+<head>
+    <title>MediaRecorder H264 profile</title>
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+let stream;
+async function record(mimeType)
+{
+    if (!stream)
+        stream = await navigator.mediaDevices.getUserMedia({ video : { width : 640 } });
+
+    const recorder = new MediaRecorder(stream, { mimeType : mimeType });
+    const promise = new Promise((resolve, reject) => {
+        recorder.ondataavailable = (e) => resolve(e.data);
+        setTimeout(() => reject("datavailable event timed out"), 15000);
+    });
+    recorder.start();
+    setTimeout(() => recorder.stop(), 1000);
+    return promise;
+}
+
+function parseAVCCBox(data)
+{
+return data;
+    const lengthAfterAVC1 = 10;
+    for (let i = 0; i < data.length - lengthAfterAVC1 - 4; ++i) {
+        if (data[i] === 97 && data[i + 1] === 118 && data[i + 2] === 99 && data[i + 3] === 67)
+            return data.slice(i + 4, i + 4 + lengthAfterAVC1);
+    }
+    return new Uint8Array();
+}
+
+promise_test(async (t) => {
+    const data = await record("video/mp4");
+    const content = parseAVCCBox(new Uint8Array(await data.arrayBuffer())).join(",");
+    if (content.length)
+        assert_true(content.includes(",66,"));
+}, "Validate H264 baseline as default");
+
+promise_test(async (t) => {
+    const data = await record("video/mp4;codecs=avc1.42E01F");
+    const content = parseAVCCBox(new Uint8Array(await data.arrayBuffer())).join(",");
+    if (content.length)
+         assert_true(content.includes(",66,"));
+}, "Validate H264 baseline support");
+
+promise_test(async (t) => {
+    const data = await record("video/mp4;codecs=avc1.4D001F");
+    const content = parseAVCCBox(new Uint8Array(await data.arrayBuffer())).join(",");
+    if (content.length)
+         assert_true(content.includes(",77,"));
+}, "Validate H264 main support");
+
+promise_test(async (t) => {
+    const data = await record("video/mp4;codecs=avc1.640029");
+    const content = parseAVCCBox(new Uint8Array(await data.arrayBuffer())).join(",");
+    if (content.length)
+         assert_true(content.includes(",100,"));
+}, "Validate H264 high support");
+</script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div id="content">
+<h1 id="heading1">Small heading</h1>
+<h1 id="heading2"><a href="#">A heading that is just a little bit wider</a></h1>
+
+<h1 id="heading3"><a href="#">Small heading</a> <a href="#">Small heading</a></h1>
+</div>
+
+<script>
+    if (window.accessibilityController) {
+        let output = "This tests that the click points for headings should use the only child's clickpoint instead of taking the mid point (which may be on nothing).\n";
+
+        var heading1 = accessibilityController.accessibleElementById("heading1");
+        // Verify that the click point is the same as the child.
+        output += expect("heading1.clickPointX", "heading1.childAtIndex(0).clickPointX");
+        output += expect("heading1.clickPointY", "heading1.childAtIndex(0).clickPointY");
+
+        var heading2 = accessibilityController.accessibleElementById("heading2");
+        output += expect("heading2.clickPointX", "heading2.childAtIndex(0).clickPointX");
+        output += expect("heading2.clickPointY", "heading2.childAtIndex(0).clickPointY");
+
+        var heading3 = accessibilityController.accessibleElementById("heading3");
+        // If there is more than one child, the click point should be the middle again, which means X point will be different.
+        output += expect("heading3.clickPointX == heading3.childAtIndex(0).clickPointX", "false");
+
+        debug(output);
+        document.getElementById("content").style.visibility = "hidden";
+    }
+</script>
+</body>
+</html>

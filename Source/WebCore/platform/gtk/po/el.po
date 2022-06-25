@@ -1,0 +1,2090 @@
+# translation of webkit.HEAD.po to Greek
+# This file is put in the public domain.
+#
+# Jennie Petoumenou <epetoumenou@gmail.com>, 2009.
+msgid ""
+msgstr ""
+"Project-Id-Version: webkit.HEAD\n"
+"Report-Msgid-Bugs-To: https://bugs.webkit.org/\n"
+"POT-Creation-Date: 2016-04-17 14:47+0000\n"
+"PO-Revision-Date: 2016-04-17 21:28+0300\n"
+"Last-Translator: Tom Tryfonidis <tomtryf@gmail.com>\n"
+"Language-Team: Greek <team@gnome.gr>\n"
+"Language: el\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.7.1\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: ../ErrorsGtk.cpp:32
+msgid "Load request cancelled"
+msgstr "Ακυρώθηκε το αίτημα φόρτωσης"
+
+#: ../ErrorsGtk.cpp:37
+msgid "Not allowed to use restricted network port"
+msgstr "Δεν επιτρέπεται η χρήση περιορισμένης θύρας δικτύου"
+
+#: ../ErrorsGtk.cpp:42
+msgid "Blocked by content blocker"
+msgstr "Αποκλείστηκε από τα φίλτρα περιεχομένου"
+
+#: ../ErrorsGtk.cpp:47
+msgid "URL cannot be shown"
+msgstr "Αδυναμία εμφάνισης της διεύθυνσης"
+
+#: ../ErrorsGtk.cpp:52
+msgid "Frame load was interrupted"
+msgstr "Διακόπηκε η φόρτωση του καρέ"
+
+#: ../ErrorsGtk.cpp:57
+msgid "Content with the specified MIME type cannot be shown"
+msgstr "Δεν μπορεί να εμφανιστεί περιεχόμενο με τον καθορισμένο τύπο MIME"
+
+#: ../ErrorsGtk.cpp:62
+msgid "File does not exist"
+msgstr "Το αρχείο δεν υπάρχει"
+
+#: ../ErrorsGtk.cpp:67
+msgid "Plugin will handle load"
+msgstr "Το πρόσθετο θα χειριστεί τη φόρτωση"
+
+#: ../ErrorsGtk.cpp:77
+msgid "User cancelled the download"
+msgstr "Η λήψη ακυρώθηκε από το χρήστη"
+
+#: ../ErrorsGtk.cpp:92
+msgid "Printer not found"
+msgstr "Δεν βρέθηκε εκτυπωτής"
+
+#: ../ErrorsGtk.cpp:97
+msgid "Invalid page range"
+msgstr "Μη έγκυρο εύρος σελίδας"
+
+#: ../LocalizedStringsGtk.cpp:55 ../LocalizedStringsGtk.cpp:60
+msgid "Submit"
+msgstr "Υποβολή"
+
+#: ../LocalizedStringsGtk.cpp:65
+msgid "Reset"
+msgstr "Επαναφορά"
+
+#: ../LocalizedStringsGtk.cpp:70
+msgid "Details"
+msgstr "Λεπτομέρειες"
+
+#: ../LocalizedStringsGtk.cpp:75
+msgid "This is a searchable index. Enter search keywords: "
+msgstr ""
+"Αυτό είναι ένα ευρετήριο με δυνατότητα αναζήτησης. Εισάγετε τις λέξεις "
+"κλειδιά αναζήτησης:"
+
+#: ../LocalizedStringsGtk.cpp:80
+msgid "Choose File"
+msgstr "Επιλογή αρχείου"
+
+#: ../LocalizedStringsGtk.cpp:85
+msgid "Choose Files"
+msgstr "Επιλογή αρχείων"
+
+#: ../LocalizedStringsGtk.cpp:90 ../LocalizedStringsGtk.cpp:95
+msgid "(None)"
+msgstr "(Κανένα)"
+
+#: ../LocalizedStringsGtk.cpp:100
+msgid "Open Link in New _Window"
+msgstr "Άνοιγμα συνδέσμου σε _νέο παράθυρο"
+
+#: ../LocalizedStringsGtk.cpp:105
+msgid "_Download Linked File"
+msgstr "_Λήψη αρχείου συνδέσμου"
+
+#: ../LocalizedStringsGtk.cpp:110
+msgid "Copy Link Loc_ation"
+msgstr "Αντιγραφή _τοποθεσίας συνδέσμου"
+
+#: ../LocalizedStringsGtk.cpp:115
+msgid "Open _Image in New Window"
+msgstr "Άνοιγμα _εικόνας σε νέο παράθυρο"
+
+#: ../LocalizedStringsGtk.cpp:120
+msgid "Sa_ve Image As"
+msgstr "Απο_θήκευση εικόνας"
+
+#: ../LocalizedStringsGtk.cpp:125
+msgid "Cop_y Image"
+msgstr "Αντιγρα_φή εικόνας"
+
+#: ../LocalizedStringsGtk.cpp:130
+msgid "Copy Image _Address"
+msgstr "Αντιγραφή διεύθυνσης εικόνας"
+
+#: ../LocalizedStringsGtk.cpp:135
+msgid "Open _Video in New Window"
+msgstr "Άνοιγμα _βίντεο σε νέο παράθυρο"
+
+#: ../LocalizedStringsGtk.cpp:140
+msgid "Open _Audio in New Window"
+msgstr "Άνοιγμα _ήχου σε νέο παράθυρο"
+
+#: ../LocalizedStringsGtk.cpp:145
+msgid "Download _Video"
+msgstr "Λήψη _βίντεο"
+
+#: ../LocalizedStringsGtk.cpp:150
+msgid "Download _Audio"
+msgstr "Λήψη _ήχου"
+
+#: ../LocalizedStringsGtk.cpp:155
+msgid "Cop_y Video Link Location"
+msgstr "Αντιγραφή τοποθεσίας σ_υνδέσμου βίντεο"
+
+#: ../LocalizedStringsGtk.cpp:160
+msgid "Cop_y Audio Link Location"
+msgstr "Αντιγραφή τοποθεσίας σ_υνδέσμου ήχου"
+
+#: ../LocalizedStringsGtk.cpp:165
+msgid "_Toggle Media Controls"
+msgstr "_Εναλλαγή ελέγχων πολυμέσων"
+
+#: ../LocalizedStringsGtk.cpp:170
+msgid "_Show Media Controls"
+msgstr "Εμφάνι_ση ελέγχων πολυμέσων"
+
+#: ../LocalizedStringsGtk.cpp:175
+msgid "_Hide Media Controls"
+msgstr "Απόκρυψ_η ελέγχων πολυμέσων"
+
+#: ../LocalizedStringsGtk.cpp:180
+msgid "Toggle Media _Loop Playback"
+msgstr "Εναλλαγή βρόγχου αναπαραγωγής πολυμέσων"
+
+#: ../LocalizedStringsGtk.cpp:185
+msgid "Switch Video to _Fullscreen"
+msgstr "Εναλλαγή βίντεο σε πλήρη οθόνη"
+
+#: ../LocalizedStringsGtk.cpp:190
+msgid "_Play"
+msgstr "_Αναπαραγωγή"
+
+#: ../LocalizedStringsGtk.cpp:195
+msgid "_Pause"
+msgstr "_Παύση"
+
+#: ../LocalizedStringsGtk.cpp:200
+msgid "_Mute"
+msgstr "_Σίγαση"
+
+#: ../LocalizedStringsGtk.cpp:205
+msgid "Open _Frame in New Window"
+msgstr "Άνοιγμα _πλαισίου σε νέο παράθυρο"
+
+#: ../LocalizedStringsGtk.cpp:228
+msgid "_Insert Unicode Control Character"
+msgstr "_Εισαγωγή χαρακτήρα ελέγχου Unicode"
+
+#: ../LocalizedStringsGtk.cpp:233
+msgid "Input _Methods"
+msgstr "_Μέθοδοι εισαγωγής"
+
+#: ../LocalizedStringsGtk.cpp:256
+msgid "_Reload"
+msgstr "Α_νανέωση"
+
+#: ../LocalizedStringsGtk.cpp:273
+msgid "No Guesses Found"
+msgstr "Δε βρέθηκαν υποδείξεις"
+
+#: ../LocalizedStringsGtk.cpp:278
+msgid "_Ignore Spelling"
+msgstr "_Αγνόηση ορθογραφίας"
+
+#: ../LocalizedStringsGtk.cpp:283
+msgid "_Learn Spelling"
+msgstr "Εκ_μάθηση ορθογραφίας"
+
+#: ../LocalizedStringsGtk.cpp:288
+msgid "_Search the Web"
+msgstr "Αναζήτηση στον _Ιστό"
+
+#: ../LocalizedStringsGtk.cpp:293
+msgid "_Look Up in Dictionary"
+msgstr "Αναζήτηση στο _λεξικό"
+
+#: ../LocalizedStringsGtk.cpp:298
+msgid "_Open Link"
+msgstr "Άν_οιγμα συνδέσμου"
+
+#: ../LocalizedStringsGtk.cpp:303
+msgid "Ignore _Grammar"
+msgstr "Αγνόηση _γραμματικών λαθών"
+
+#: ../LocalizedStringsGtk.cpp:308
+msgid "Spelling and _Grammar"
+msgstr "Ορθογραφικός και _γραμματικός έλεγχος"
+
+#: ../LocalizedStringsGtk.cpp:313
+msgid "_Show Spelling and Grammar"
+msgstr "_Εμφάνιση ορθογραφικών και γραμματικών λαθών"
+
+#: ../LocalizedStringsGtk.cpp:313
+msgid "_Hide Spelling and Grammar"
+msgstr "_Απόκρυψη ορθογραφικών και γραμματικών λαθών"
+
+#: ../LocalizedStringsGtk.cpp:318
+msgid "_Check Document Now"
+msgstr "Έλεγχος εγγράφου _τώρα"
+
+#: ../LocalizedStringsGtk.cpp:323
+msgid "Check Spelling While _Typing"
+msgstr "Ορθογραφικός έλεγχος κατά την _πληκτρολόγηση"
+
+#: ../LocalizedStringsGtk.cpp:328
+msgid "Check _Grammar With Spelling"
+msgstr "Ταυτόχρονος _γραμματικός και ορθογραφικός έλεγχος"
+
+#: ../LocalizedStringsGtk.cpp:333
+msgid "_Font"
+msgstr "_Γραμματοσειρά"
+
+#: ../LocalizedStringsGtk.cpp:356
+msgid "_Outline"
+msgstr "Επ_ισκόπηση"
+
+#: ../LocalizedStringsGtk.cpp:361
+msgid "Inspect _Element"
+msgstr "Επιθεώρηση στοι_χείου"
+
+#: ../LocalizedStringsGtk.cpp:366
+msgid "LRM _Left-to-right mark"
+msgstr "_LRM Σημείο αριστερά προς δεξιά"
+
+#: ../LocalizedStringsGtk.cpp:371
+msgid "RLM _Right-to-left mark"
+msgstr "_RLM Σημείο δεξιά προς αριστερά"
+
+#: ../LocalizedStringsGtk.cpp:376
+msgid "LRE Left-to-right _embedding"
+msgstr "LRE _Ενσωμάτωση αριστερά προς δεξιά"
+
+#: ../LocalizedStringsGtk.cpp:381
+msgid "RLE Right-to-left e_mbedding"
+msgstr "RLE Ενσω_μάτωση δεξιά προς αριστερά"
+
+#: ../LocalizedStringsGtk.cpp:386
+msgid "LRO Left-to-right _override"
+msgstr "LRO _Αναγκαστικά αριστερά προς δεξιά"
+
+#: ../LocalizedStringsGtk.cpp:391
+msgid "RLO Right-to-left o_verride"
+msgstr "RLO Αναγκαστι_κά δεξιά προς αριστερά"
+
+#: ../LocalizedStringsGtk.cpp:396
+msgid "PDF _Pop directional formatting"
+msgstr "_PDF Αναίρεση τελευταίας ρύθμισης κατεύθυνσης"
+
+#: ../LocalizedStringsGtk.cpp:401
+msgid "ZWS _Zero width space"
+msgstr "_ZWS Διάστημα μηδενικού πλάτους"
+
+#: ../LocalizedStringsGtk.cpp:406
+msgid "ZWJ Zero width _joiner"
+msgstr "ZW_J Συνδετικό μηδενικού πλάτους"
+
+#: ../LocalizedStringsGtk.cpp:411
+msgid "ZWNJ Zero width _non-joiner"
+msgstr "ZW_NJ Μη συνδετικό μηδενικού πλάτους"
+
+#: ../LocalizedStringsGtk.cpp:416
+msgid "No recent searches"
+msgstr "Καμία πρόσφατη αναζήτηση"
+
+#: ../LocalizedStringsGtk.cpp:421
+msgid "Recent searches"
+msgstr "Πρόσφατες αναζητήσεις"
+
+#: ../LocalizedStringsGtk.cpp:426
+msgid "_Clear recent searches"
+msgstr "Εκκα_θάριση πρόσφατων αναζητήσεων"
+
+#: ../LocalizedStringsGtk.cpp:431
+msgid "definition"
+msgstr "ορισμός"
+
+#: ../LocalizedStringsGtk.cpp:436
+msgid "description list"
+msgstr "λίστα περιγραφής"
+
+#: ../LocalizedStringsGtk.cpp:441
+msgid "term"
+msgstr "όρος"
+
+#: ../LocalizedStringsGtk.cpp:446
+msgid "description"
+msgstr "περιγραφή"
+
+#: ../LocalizedStringsGtk.cpp:451
+msgid "footer"
+msgstr "υποσέλιδο"
+
+#: ../LocalizedStringsGtk.cpp:456
+msgid "cancel"
+msgstr "ακύρωση"
+
+#: ../LocalizedStringsGtk.cpp:461
+msgid "password auto fill"
+msgstr "αυτόματη συμπλήρωση κωδικού πρόσβασης"
+
+#: ../LocalizedStringsGtk.cpp:466
+msgid "contact info auto fill"
+msgstr "αυτόματη συμπλήρωση πληροφοριών επικοινωνίας"
+
+#: ../LocalizedStringsGtk.cpp:471
+msgid "press"
+msgstr "πάτημα"
+
+#: ../LocalizedStringsGtk.cpp:476
+msgid "select"
+msgstr "επιλογή"
+
+#: ../LocalizedStringsGtk.cpp:481
+msgid "activate"
+msgstr "ενεργοποίηση"
+
+#: ../LocalizedStringsGtk.cpp:486
+msgid "uncheck"
+msgstr "αποεπιλογή"
+
+#: ../LocalizedStringsGtk.cpp:491
+msgid "check"
+msgstr "επιλογή"
+
+#: ../LocalizedStringsGtk.cpp:496
+msgid "jump"
+msgstr "μετάβαση"
+
+#: ../LocalizedStringsGtk.cpp:516
+msgid "Missing Plug-in"
+msgstr "Λείπει πρόσθετο"
+
+#: ../LocalizedStringsGtk.cpp:522
+msgid "Plug-in Failure"
+msgstr "Αποτυχία προσθέτου"
+
+#. FIXME: If this file gets localized, this should really be localized as one string with a wildcard for the number.
+#: ../LocalizedStringsGtk.cpp:540
+msgid " files"
+msgstr " αρχεία"
+
+#: ../LocalizedStringsGtk.cpp:545
+msgid "Unknown"
+msgstr "Άγνωστο"
+
+#: ../LocalizedStringsGtk.cpp:550
+#, c-format
+msgctxt "Title string for images"
+msgid "%s  (%dx%d pixels)"
+msgstr "%s  (%dx%d εικονοστοιχεία)"
+
+#: ../LocalizedStringsGtk.cpp:561
+msgid "Loading..."
+msgstr "Γίνεται φόρτωση…"
+
+#: ../LocalizedStringsGtk.cpp:566
+msgid "Live Broadcast"
+msgstr "Ζωντανή αναμετάδοση"
+
+#: ../LocalizedStringsGtk.cpp:572
+msgid "audio playback"
+msgstr "αναπαραγωγή ήχου"
+
+#: ../LocalizedStringsGtk.cpp:574
+msgid "video playback"
+msgstr "αναπαραγωγή βίντεο"
+
+#: ../LocalizedStringsGtk.cpp:576
+msgid "mute"
+msgstr "σίγαση"
+
+#: ../LocalizedStringsGtk.cpp:578
+msgid "unmute"
+msgstr "άρση σίγασης"
+
+#: ../LocalizedStringsGtk.cpp:580
+msgid "play"
+msgstr "αναπαραγωγή"
+
+#: ../LocalizedStringsGtk.cpp:582
+msgid "pause"
+msgstr "παύση"
+
+#: ../LocalizedStringsGtk.cpp:584
+msgid "movie time"
+msgstr "χρόνος ταινίας"
+
+#: ../LocalizedStringsGtk.cpp:586
+msgid "timeline slider thumb"
+msgstr "μικρογραφία ολισθητή χρονογραμμής"
+
+#: ../LocalizedStringsGtk.cpp:588
+msgid "back 30 seconds"
+msgstr "πίσω 30 δευτερόλεπτα"
+
+#: ../LocalizedStringsGtk.cpp:590
+msgid "return to realtime"
+msgstr "επιστροφή στον πραγματικό χρόνο"
+
+#: ../LocalizedStringsGtk.cpp:592
+msgid "elapsed time"
+msgstr "χρόνο που έχει παρέλθει"
+
+#: ../LocalizedStringsGtk.cpp:594
+msgid "remaining time"
+msgstr "υπολειπόμενος χρόνος"
+
+#: ../LocalizedStringsGtk.cpp:596
+msgid "status"
+msgstr "κατάσταση"
+
+#: ../LocalizedStringsGtk.cpp:598
+msgid "enter fullscreen"
+msgstr "μετάβαση σε πλήρη οθόνη"
+
+#: ../LocalizedStringsGtk.cpp:600
+msgid "exit fullscreen"
+msgstr "έξοδος από πλήρη οθόνη"
+
+#: ../LocalizedStringsGtk.cpp:602
+msgid "fast forward"
+msgstr "γρήγορη προώθηση"
+
+#: ../LocalizedStringsGtk.cpp:604
+msgid "fast reverse"
+msgstr "γρήγορη επαναφορά"
+
+#: ../LocalizedStringsGtk.cpp:606
+msgid "show closed captions"
+msgstr "εμφάνιση κλειστών λεζάντων"
+
+#: ../LocalizedStringsGtk.cpp:608
+msgid "hide closed captions"
+msgstr "απόκρυψη κλειστών λεζάντων"
+
+#: ../LocalizedStringsGtk.cpp:610
+msgid "media controls"
+msgstr "έλεγχοι πολυμέσων"
+
+#: ../LocalizedStringsGtk.cpp:619
+msgid "audio element playback controls and status display"
+msgstr "έλεγχοι αναπαραγωγής στοιχείων ήχου και εμφάνιση κατάστασης"
+
+#: ../LocalizedStringsGtk.cpp:621
+msgid "video element playback controls and status display"
+msgstr "έλεγχοι αναπαραγωγής στοιχείων βίντεο και εμφάνιση κατάστασης"
+
+#: ../LocalizedStringsGtk.cpp:623
+msgid "mute audio tracks"
+msgstr "σίγαση κομματιών ήχου"
+
+#: ../LocalizedStringsGtk.cpp:625
+msgid "unmute audio tracks"
+msgstr "άρση σίγασης κομματιών ήχου"
+
+#: ../LocalizedStringsGtk.cpp:627
+msgid "begin playback"
+msgstr "έναρξη αναπαραγωγής"
+
+#: ../LocalizedStringsGtk.cpp:629
+msgid "pause playback"
+msgstr "παύση αναπαραγωγής"
+
+#: ../LocalizedStringsGtk.cpp:631
+msgid "movie time scrubber"
+msgstr "επιλογέας χρόνου ταινίας"
+
+#: ../LocalizedStringsGtk.cpp:633
+msgid "movie time scrubber thumb"
+msgstr "μικρογραφία επιλογέα χρόνου ταινίας"
+
+#: ../LocalizedStringsGtk.cpp:635
+msgid "seek movie back 30 seconds"
+msgstr "αναζήτηση ατην ταινία 30 δευτερόλεπτα προς τα πίσω"
+
+#: ../LocalizedStringsGtk.cpp:637
+msgid "return streaming movie to real time"
+msgstr "επιστροφή συνεχούς ροής ταινίας σε πραγματικό χρόνο"
+
+#: ../LocalizedStringsGtk.cpp:639
+msgid "current movie time in seconds"
+msgstr "τρέχον χρόνος ταινίας σε δευτερόλεπτα"
+
+#: ../LocalizedStringsGtk.cpp:641
+msgid "number of seconds of movie remaining"
+msgstr "αριθμός δευτερολέπτων της ταινίας που απομένει"
+
+#: ../LocalizedStringsGtk.cpp:643
+msgid "current movie status"
+msgstr "τρέχουσα κατάσταση ταινίας"
+
+#: ../LocalizedStringsGtk.cpp:645
+msgid "seek quickly back"
+msgstr "γρήγορη αναζήτηση προς τα πίσω"
+
+#: ../LocalizedStringsGtk.cpp:647
+msgid "seek quickly forward"
+msgstr "γρήγορη αναζήτηση προς τα εμπρός"
+
+#: ../LocalizedStringsGtk.cpp:649
+msgid "Play movie in fullscreen mode"
+msgstr "Αναπαραγωγή ταινίας σε λειτουργία πλήρους οθόνης"
+
+#: ../LocalizedStringsGtk.cpp:651
+msgid "Exit fullscreen mode"
+msgstr "Έξοδος από τη λειτουργία πλήρους οθόνης"
+
+#: ../LocalizedStringsGtk.cpp:653
+msgid "start displaying closed captions"
+msgstr "Έναρξη εμφάνισης κλειστών λεζάντων"
+
+#: ../LocalizedStringsGtk.cpp:655
+msgid "stop displaying closed captions"
+msgstr "διακοπή εμφάνισης κλειστών λεζάντων"
+
+#: ../LocalizedStringsGtk.cpp:664
+msgid "indefinite time"
+msgstr "αορίστου χρόνου"
+
+#: ../LocalizedStringsGtk.cpp:694
+msgid "value missing"
+msgstr "λείπει τιμή"
+
+#: ../LocalizedStringsGtk.cpp:730
+msgid "type mismatch"
+msgstr "ασυμφωνία τύπου "
+
+#: ../LocalizedStringsGtk.cpp:753
+msgid "pattern mismatch"
+msgstr "ασυμφωνία μοτίβου"
+
+#: ../LocalizedStringsGtk.cpp:758
+msgid "too long"
+msgstr "πολύ μεγάλο"
+
+#: ../LocalizedStringsGtk.cpp:763
+msgid "range underflow"
+msgstr "υποχείλιση εύρους"
+
+#: ../LocalizedStringsGtk.cpp:768
+msgid "range overflow"
+msgstr "υπερχείλιση εύρους"
+
+#: ../LocalizedStringsGtk.cpp:773
+msgid "step mismatch"
+msgstr "ασυμφωνία βήματος"
+
+#: ../LocalizedStringsGtk.cpp:778
+msgid "Unacceptable TLS certificate"
+msgstr "Μη αποδεκτό πιστοποιητικό TLS"
+
+#: ../LocalizedStringsGtk.cpp:795
+msgctxt "Menu section heading for subtitles"
+msgid "Subtitles"
+msgstr "Υπότιτλοι"
+
+#: ../LocalizedStringsGtk.cpp:800
+msgctxt ""
+"Menu item label for the track that represents disabling closed captions"
+msgid "Off"
+msgstr "Ανενεργό"
+
+#: ../LocalizedStringsGtk.cpp:805
+msgctxt "Menu item label for the automatically chosen track"
+msgid "Auto"
+msgstr "Αυτόματο"
+
+#: ../LocalizedStringsGtk.cpp:810
+msgctxt "Menu item label for a closed captions track that has no other name"
+msgid "No label"
+msgstr "Χωρίς ετικέτα"
+
+#: ../LocalizedStringsGtk.cpp:815
+msgctxt "Menu item label for an audio track that has no other name"
+msgid "No label"
+msgstr "Χωρίς ετικέτα"
+
+#: ../LocalizedStringsGtk.cpp:821
+msgctxt "Snapshotted Plug-In"
+msgid "Title of the label to show on a snapshotted plug-in"
+msgstr "Τίτλος της εμφανιζόμενης ετικέτας σε στιγμιότυπο πρόσθετου "
+
+#: ../LocalizedStringsGtk.cpp:826
+msgctxt "Click to restart"
+msgid "Subtitle of the label to show on a snapshotted plug-in"
+msgstr "Υπότιτλος της εμφανιζόμενης ετικέτας σε στιγμιότυπο πρόσθετου "
+
+#: ../../../../WebKit2/NetworkProcess/Downloads/soup/DownloadSoup.cpp:100
+#, c-format
+msgid ""
+"Cannot determine destination URI for download with suggested filename %s"
+msgstr ""
+"Αδύνατος ο προσδιορισμός προορισμού URI για λήψη με προτεινόμενο όνομα "
+"αρχείου %s"
+
+#. Title of the HTTP authentication dialog.
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:93
+msgid "Authentication Required"
+msgstr "Απαιτείται πιστοποίηση"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:104
+msgid "_Cancel"
+msgstr "_Aκύρωση"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:110
+msgid "_Authenticate"
+msgstr "_Πιστοποίηση"
+
+#. Prompt on the HTTP authentication dialog.
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:122
+#, c-format
+msgid "Authentication required by %s:%i"
+msgstr "Απαιτείται πιστοποίηση από %s:%i"
+
+#. Label on the HTTP authentication dialog. %s is a (probably English) message from the website.
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:131
+#, c-format
+msgid "The site says: “%s”"
+msgstr "Η ιστοσελίδα δηλώνει: “%s”"
+
+#. Check button on the HTTP authentication dialog.
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:138
+msgid "_Remember password"
+msgstr "Απομνη_μόνευση κωδικού πρόσβασης"
+
+#. Entry on the HTTP authentication dialog.
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:147
+msgid "_Username"
+msgstr "Όνομα _χρήστη"
+
+#. Entry on the HTTP authentication dialog.
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:159
+msgid "_Password"
+msgstr "Κω_δικός πρόσβασης"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:164
+msgid "Destination"
+msgstr "Προορισμός"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:165
+msgid "The local URI to where the download will be saved"
+msgstr "Το τοπικό URI όπου η λήψη θα αποθηκευτεί"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:177
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:123
+msgid "Response"
+msgstr "Απόκριση"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:178
+msgid "The response of the download"
+msgstr "Η απόκριση της λήψης"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:195
+msgid "Estimated Progress"
+msgstr "Εκτιμώμενη πρόοδος"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:196
+msgid "Determines the current progress of the download"
+msgstr "Η τρέχουσα πρόοδος της λήψης"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:214
+msgid "Allow Overwrite"
+msgstr "Να επιτρέπεται η αντικατάσταση"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:215
+msgid "Whether the destination may be overwritten"
+msgstr "Αν ο προορισμός μπορεί να αντικατασταθεί"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:142
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:322
+#, c-format
+msgid "Unknown favicon for page %s"
+msgstr "'Αγνωστο εικονίδιο συντομεύσεων για τη σελίδα %s"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:148
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:278
+#, c-format
+msgid "Page %s does not have a favicon"
+msgstr "Η σελίδα %s δεν έχει εικονίδιο συντομεύσεων"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:272
+msgid "Favicons database not initialized yet"
+msgstr "Η βάση δεδομένων εικονιδίων συντομεύσεων δεν αρχικοποιήθηκε ακόμη"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:129
+msgid "MIME types filter"
+msgstr "Φίλτρο τύπων MIME"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:130
+msgid "The filter currently associated with the request"
+msgstr "Το τρέχον φίλτρο που σχετίζεται με την αίτηση"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:143
+msgid "MIME types"
+msgstr "Τύποι MIME"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:144
+msgid "The list of MIME types associated with the request"
+msgstr "Λίστα από τύπους MIME που σχετίζονται με την αίτηση"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:158
+msgid "Select multiple files"
+msgstr "Επιλογή πολλαπλών αρχείων"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:159
+msgid "Whether the file chooser should allow selecting multiple files"
+msgstr "Αν ο επιλογέας αρχείων θα επιτρέπει την επιλογή πολλαπλών αρχείων"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:172
+msgid "Selected files"
+msgstr "Επιλεγμένα αρχεία"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:173
+msgid "The list of selected files associated with the request"
+msgstr "Η λίστα των επιλεγμένων αρχείων που σχετίζονται με την αίτηση"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:190
+msgid "Search text"
+msgstr "Αναζήτηση κειμένου"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:191
+msgid "Text to search for in the view"
+msgstr "Κείμενο προς αναζήτηση στην προβολή"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:203
+msgid "Search Options"
+msgstr "Επιλογές αναζήτησης"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:204
+msgid "Search options to be used in the search operation"
+msgstr "Επιλογές αναζήτησης που θα χρησιμοποιηθούν στη λειτουργία αναζήτησης"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:217
+msgid "Maximum matches count"
+msgstr "Αριθμός μέγιστων ταιριασμάτων"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:218
+msgid "The maximum number of matches in a given text to report"
+msgstr ""
+"Ο μέγιστος αριθμός ταιριασμάτων που θα αναφερθούν σε ένα δεδομένο κείμενο"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:230
+msgid "WebView"
+msgstr "Προβολή ιστού"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:231
+msgid "The WebView associated with this find controller"
+msgstr "Η προβολή ιστού που σχετίζεται με αυτόν τον ελεγκτή αναζήτησης"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:152
+msgid "Context"
+msgstr "Περιεχόμενα"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:153
+msgid "Flags with the context of the WebKitHitTestResult"
+msgstr ""
+"Σημαίες με τα περιεχόμενα του επιλογέα αποτελεσμάτων δοκιμής του WebKit"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:166
+msgid "Link URI"
+msgstr "URI σύνδεσης"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:167
+msgid "The link URI"
+msgstr "Το URI σύνδεσης"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:179
+msgid "Link Title"
+msgstr "Τίτλος σύνδεσης"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:180
+msgid "The link title"
+msgstr "Ο τίτλος σύνδεσης"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:192
+msgid "Link Label"
+msgstr "Ετικέτα σύνδεσης"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:193
+msgid "The link label"
+msgstr "Η ετικέτα σύνδεσης"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:205
+msgid "Image URI"
+msgstr "URI εικόνας"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:206
+msgid "The image URI"
+msgstr "Το URI εικόνας"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:218
+msgid "Media URI"
+msgstr "URI πολυμέσων"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:219
+msgid "The media URI"
+msgstr "Το URI πολυμέσων"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:113
+msgid "Navigation action"
+msgstr "Ενέργεια περιήγησης"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:114
+msgid "The WebKitNavigationAction triggering this decision"
+msgstr "Η ενέργεια περιήγησης του WebKit που ενεργοποιεί αυτή την απόφαση"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:130
+msgid "Navigation type"
+msgstr "Τύπος περιήγησης"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:131
+msgid "The type of navigation triggering this decision"
+msgstr "Ο τύπος περιήγησης που ενεργοποιεί αυτή την απόφαση"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:150
+msgid "Mouse button"
+msgstr "Κουμπί ποντικιού"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:151
+msgid "The mouse button used if this decision was triggered by a mouse event"
+msgstr ""
+"Το κουμπί ποντικιού που χρησιμοποιήθηκε, αν αυτή η απόφαση ενεργοποιήθηκε "
+"από ένα συμβάν του ποντικιού"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:169
+msgid "Mouse event modifiers"
+msgstr "Τροποποιητές συμβάντων ποντικιού"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:170
+msgid "The modifiers active if this decision was triggered by a mouse event"
+msgstr ""
+"Οι ενεργοί τροποποιητές, αν αυτή η απόφαση ενεργοποιήθηκε από ένα συμβάν του "
+"ποντικιού"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:185
+msgid "Navigation URI request"
+msgstr "Αίτηση URI περιήγησης"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:186
+msgid "The URI request that is associated with this navigation"
+msgstr "Η αίτηση URI που σχετίζεται με αυτήν την περιήγηση"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:201
+msgid "Frame name"
+msgstr "Όνομα πλαισίου"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:202
+msgid "The name of the new frame this navigation action targets"
+msgstr "Το όνομα του νέου πλαισίου που στοχεύει αυτή η ενέργεια περιήγησης"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:146
+msgid "Web View"
+msgstr "Προβολή ιστού"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:147
+msgid "The web view that will be printed"
+msgstr "Η προβολή ιστού που θα εκτυπωθεί"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:159
+msgid "Print Settings"
+msgstr "Ρυθμίσεις εκτύπωσης"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:160
+msgid "The initial print settings for the print operation"
+msgstr "Οι αρχικές ρυθμίσεις εκτύπωσης για τη λειτουργία εκτύπωσης"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:171
+msgid "Page Setup"
+msgstr "Διαμόρφωση σελίδας"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:172
+msgid "The initial page setup for the print operation"
+msgstr "Η αρχική διαμόρφωση σελίδας για τη λειτουργία εκτύπωσης"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:91
+msgid "Response URI request"
+msgstr "Απόκριση αίτησης URI"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:92
+msgid "The URI request that is associated with this policy decision"
+msgstr "Η αίτηση URI που σχετίζεται με αυτή την απόφαση πολιτικής"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:105
+msgid "URI response"
+msgstr "Απόκριση URI"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:106
+msgid "The URI response that is associated with this policy decision"
+msgstr "Η απόκριση URI που σχετίζεται με αυτή την απόφαση πολιτικής"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:497
+msgid "Enable JavaScript"
+msgstr "Ενεργοποίηση JavaScript"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:498
+msgid "Enable JavaScript."
+msgstr "Ενεργοποίηση JavaScript."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:512
+msgid "Auto load images"
+msgstr "Αυτόματη φόρτωση εικόνων"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:513
+msgid "Load images automatically."
+msgstr "Αυτόματη φόρτωση εικόνων."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:526
+msgid "Load icons ignoring image load setting"
+msgstr "Φόρτωση εικόνων αγνοώντας ρυθμίσεις φόρτωσης εικόνων"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:527
+msgid "Whether to load site icons ignoring image load setting."
+msgstr ""
+"Αν θα φορτώνονται εικονίδια ιστότοπων αγνοώνταςρυθμίσεις φόρτωσης εικόνων."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:544
+msgid "Enable offline web application cache"
+msgstr "Ενεργοποίηση μνήμης εφαρμογής ιστού εκτός σύνδεσης"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:545
+msgid "Whether to enable offline web application cache."
+msgstr "Αν θα ενεργοποιηθεί η μνήμη εφαρμογής ιστού εκτός σύνδεσης"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:561
+msgid "Enable HTML5 local storage"
+msgstr "Ενεργοποίηση τοπικής αποθήκευσης HTML5"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:562
+msgid "Whether to enable HTML5 Local Storage support."
+msgstr "Αν θα ενεργοποιηθεί η υποστήριξη τοπικής αποθήκευσης HTML5."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:579
+msgid "Enable HTML5 database"
+msgstr "Ενεργοποίηση βάσης δεδομένων HTML5"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:580
+msgid "Whether to enable HTML5 database support."
+msgstr "Αν θα ενεργοποιηθεί η υποστήριξη βάσης δεδομένων HTML5."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:593
+msgid "Enable XSS auditor"
+msgstr "Ενεργοποίηση ελεγκτή XSS"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:594
+msgid "Whether to enable the XSS auditor."
+msgstr "Αν θα ενεργοποιηθεί ο ελεγκτής XSS."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:609
+msgid "Enable frame flattening"
+msgstr "Ενεργοποίηση ομαδοποίησης πλαισίων"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:610
+msgid "Whether to enable frame flattening."
+msgstr "Αν θα ενεργοποιηθεί η ομαδοποίηση πλαισίων"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:622
+msgid "Enable plugins"
+msgstr "Ενεργοποίηση πρόσθετων"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:623
+msgid "Enable embedded plugin objects."
+msgstr "Ενεργοποίηση ενσωματωμένων αντικειμένων προσθέτων."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:635
+msgid "Enable Java"
+msgstr "Ενεργοποίηση Java"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:636
+msgid "Whether Java support should be enabled."
+msgstr "Αν θα πρέπει να είναι ενεργοποιημένη η υποστήριξη Java."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:649
+msgid "JavaScript can open windows automatically"
+msgstr "Η JavaScript μπορεί να ανοίξει τα παράθυρα αυτόματα"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:650
+msgid "Whether JavaScript can open windows automatically."
+msgstr "Αν η JavaScript μπορεί να ανοίγει τα παράθυρα αυτόματα"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:665
+msgid "Enable hyperlink auditing"
+msgstr "Ενεργοποίηση ελέγχου υπερσυνδέσμου"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:666
+msgid "Whether <a ping> should be able to send pings."
+msgstr "Αν <ένα ping> θα μπορεί να στέλνει ping."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:678
+msgid "Default font family"
+msgstr "Προεπιλεγμένη οικογένεια γραμματοσειράς"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:679
+msgid ""
+"The font family to use as the default for content that does not specify a "
+"font."
+msgstr ""
+"Η προεπιλεγμένη οικογένεια γραμματοσειράς για περιεχόμενο που δεν "
+"προσδιορίζει μια γραμματοσειρά."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:692
+msgid "Monospace font family"
+msgstr "Οικογένεια γραμματοσειράς σταθερού πλάτους"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:693
+msgid "The font family used as the default for content using monospace font."
+msgstr ""
+"Η προεπιλεγμένη οικογένεια γραμματοσειράς για περιεχόμενο που χρησιμοποιεί "
+"γραμματοσειρά σταθερού πλάτους"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:705
+msgid "Serif font family"
+msgstr "Οικογένεια γραμματοσειράς Serif "
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:706
+msgid "The font family used as the default for content using serif font."
+msgstr ""
+"Η προεπιλεγμένη οικογένεια γραμματοσειράς για περιεχόμενο που χρησιμοποιεί "
+"γραμματοσειρά serif."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:718
+msgid "Sans-serif font family"
+msgstr "Οικογένεια γραμματοσειράς Sans-serif"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:719
+msgid "The font family used as the default for content using sans-serif font."
+msgstr ""
+"Η προεπιλεγμένη οικογένεια γραμματοσειράς για περιεχόμενο που χρησιμοποιεί "
+"γραμματοσειρά sans-serif."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:731
+msgid "Cursive font family"
+msgstr "Οικογένεια γραμματοσειράς Cursive"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:732
+msgid "The font family used as the default for content using cursive font."
+msgstr ""
+"Η προεπιλεγμένη οικογένεια γραμματοσειράς για περιεχόμενο που χρησιμοποιεί "
+"γραμματοσειρά cursive."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:744
+msgid "Fantasy font family"
+msgstr "Οικογένεια γραμματοσειράς Fantasy"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:745
+msgid "The font family used as the default for content using fantasy font."
+msgstr ""
+"Η προεπιλεγμένη οικογένεια γραμματοσειράς για περιεχόμενο που χρησιμοποιεί "
+"γραμματοσειρά fantasy."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:757
+msgid "Pictograph font family"
+msgstr "Οικογένεια γραμματοσειράς Pictograph"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:758
+msgid "The font family used as the default for content using pictograph font."
+msgstr ""
+"Η προεπιλεγμένη οικογένεια γραμματοσειράς για περιεχόμενο που χρησιμοποιεί "
+"γραμματοσειρά pictograph."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:771
+msgid "Default font size"
+msgstr "Προεπιλεγμένο μέγεθος γραμματοσειράς"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:772
+msgid "The default font size used to display text."
+msgstr ""
+"Το προεπιλεγμένο μέγεθος γραμματοσειράς που χρησιμοποιείται για την εμφάνιση "
+"κειμένου."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:785
+msgid "Default monospace font size"
+msgstr "Προεπιλεγμένο μέγεθος γραμματοσειράς σταθερού πλάτους"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:786
+msgid "The default font size used to display monospace text."
+msgstr ""
+"Το προεπιλεγμένο μέγεθος γραμματοσειράς που χρησιμοποιείται για την εμφάνιση "
+"κειμένου σταθερού πλάτους."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:800
+msgid "Minimum font size"
+msgstr "Ελάχιστο μέγεθος γραμματοσειράς"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:801
+msgid "The minimum font size used to display text."
+msgstr ""
+"Το ελάχιστο μέγεθος γραμματοσειράς που χρησιμοποιείται για την εμφάνιση "
+"κειμένου."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:813
+msgid "Default charset"
+msgstr "Προεπιλεγμένο σύνολο χαρακτήρων"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:814
+msgid ""
+"The default text charset used when interpreting content with unspecified "
+"charset."
+msgstr ""
+"Το προεπιλεγμένο σύνολο χαρακτήρων κειμένου που χρησιμοποιείται κατά την "
+"ερμηνεία περιεχομένου με απροσδιόριστο σύνολο χαρακτήρων."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:827
+msgid "Enable private browsing"
+msgstr "Ενεργοποίηση ιδιωτικής περιήγησης"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:828
+msgid "Whether to enable private browsing"
+msgstr "Αν θα ενεργοποιηθεί η ιδιωτική περιήγηση"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:840
+msgid "Enable developer extras"
+msgstr "Ενεργοποίηση προσθέτων στοιχείων προγραμματισμού"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:841
+msgid "Whether to enable developer extras"
+msgstr "Αν θα ενεργοποιηθούν προσθέτα στοιχεία προγραμματισμού"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:853
+msgid "Enable resizable text areas"
+msgstr "Ενεργοποίηση δυνατότητας αλλαγής μεγέθους σε περιοχές κειμένου"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:854
+msgid "Whether to enable resizable text areas"
+msgstr "Αν θα ενεργοποιηθεί η δυνατότητα αλλαγής μεγέθους σε περιοχές κειμένου"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:869
+msgid "Enable tabs to links"
+msgstr "Ενεργοποίηση καρτελών συνδέσμων"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:870
+msgid "Whether to enable tabs to links"
+msgstr "Αν θα ενεργοποιηθούν καρτέλες σε συνδέσμους"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:883
+msgid "Enable DNS prefetching"
+msgstr "Ενεργοποίηση προανάκτησης DNS"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:884
+msgid "Whether to enable DNS prefetching"
+msgstr "Αν θα ενεργοποιηθεί η προανάκτηση DNS"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:896
+msgid "Enable Caret Browsing"
+msgstr "Ενεργοποίηση περιήγησης με δρομέα"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:897
+msgid "Whether to enable accessibility enhanced keyboard navigation"
+msgstr ""
+"Αν θα ενεργοποιηθεί η προσιτότητα με βελτιωμένη περιήγηση πληκτρολογίου"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:912
+msgid "Enable Fullscreen"
+msgstr "Ενεργοποίηση πλήρους οθόνης"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:913
+msgid "Whether to enable the Javascript Fullscreen API"
+msgstr "Αν θα ενεργοποιηθεί το Javascript API πλήρους οθόνης"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:925
+msgid "Print Backgrounds"
+msgstr "Εκτύπωση παρασκηνίων"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:926
+msgid "Whether background images should be drawn during printing"
+msgstr "Αν θα εμφανίζονται εικόνες φόντου κατά την εκτύπωση"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:944
+msgid "Enable WebAudio"
+msgstr "Ενεργοποίηση WebAudio"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:945
+msgid "Whether WebAudio content should be handled"
+msgstr "Αν θα πρέπει να γίνεται χειρισμός του περιεχομένου WebAudio"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:959
+msgid "Enable WebGL"
+msgstr "Ενεργοποίηση WebGL"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:960
+msgid "Whether WebGL content should be rendered"
+msgstr "Αν θα πρέπει να γίνεται απεικόνιση του περιεχομένου WebGL"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:977
+msgid "Allow modal dialogs"
+msgstr "Να επιτρέπονται σχηματικοί διάλογοι"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:978
+msgid "Whether it is possible to create modal dialogs"
+msgstr "Αν υπάρχει η δυνατότητα δημιουργίας σχηματικών διαλόγων"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:993
+msgid "Zoom Text Only"
+msgstr "Εστίαση μόνο του κειμένου "
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:994
+msgid "Whether zoom level of web view changes only the text size"
+msgstr ""
+"Αν το επίπεδο εστίασης της προβολής ιστού αλλάζει μόνο το μέγεθος κειμένου"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1008
+msgid "JavaScript can access clipboard"
+msgstr "Η JavaScript μπορεί να έχει πρόσβαση πρόχειρο"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1009
+msgid "Whether JavaScript can access Clipboard"
+msgstr "Αν η JavaScript μπορεί να έχει πρόσβαση πρόχειρο"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1025
+msgid "Media playback requires user gesture"
+msgstr "Η αναπαραγωγή πολυμέσων απαιτεί κίνηση χρήστη"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1026
+msgid "Whether media playback requires user gesture"
+msgstr "Αν η αναπαραγωγή πολυμέσων απαιτεί κίνηση από τον χρήστη"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1040
+msgid "Media playback allows inline"
+msgstr "Η αναπαραγωγή πολυμέσων μπορεί να είναι ενσωματωμένη"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1041
+msgid "Whether media playback allows inline"
+msgstr "Αν η αναπαραγωγή πολυμέσων μπορεί να είναι ενσωματωμένη"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1055
+msgid "Draw compositing indicators"
+msgstr "Σχεδίαση δεικτών σύνθεσης "
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1056
+msgid "Whether to draw compositing borders and repaint counters"
+msgstr "Αν θα σχεδιάζονται περιθώρια σύνθεσης και μετρητές ενημέρωσης"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1075
+msgid "Enable Site Specific Quirks"
+msgstr "Ενεργοποίηση ιδιορρυθμιών συγκεκριμένων ιστότοπων"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1076
+msgid "Enables the site-specific compatibility workarounds"
+msgstr ""
+"Ενεργοποιεί τους εναλλακτικούς τρόπους αντιμετώπισης συμβατότητας "
+"συγκεκριμένων ιστότοπων"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1096
+msgid "Enable page cache"
+msgstr "Ενεργοποίηση λανθάνουσας μνήμης σελίδας"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1097
+msgid "Whether the page cache should be used"
+msgstr "Αν θα πρέπει να χρησιμοποιηθεί η λανθάνουσα μνήμη σελίδας"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1116
+msgid "User agent string"
+msgstr "Συμβολοσειρά user agent"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1117
+msgid "The user agent string"
+msgstr "Η συμβολοσειρά του user agent"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1129
+msgid "Enable smooth scrolling"
+msgstr "Ενεργοποίηση ομαλής κύλισης"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1130
+msgid "Whether to enable smooth scrolling"
+msgstr "Αν θα ενεργοποιηθεί η ομαλή κύλιση"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1147
+msgid "Enable accelerated 2D canvas"
+msgstr "Ενεργοποίηση επιταχυνόμενου καμβά 2Δ"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1148
+msgid "Whether to enable accelerated 2D canvas"
+msgstr "Αν θα ενεργοποιηθεί επιταχυνόμενος καμβάς 2Δ"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1163
+msgid "Write console messages on stdout"
+msgstr "Εγγραφή μηνυμάτων κονσόλας σε τυπική έξοδο"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1164
+msgid "Whether to write console messages on stdout"
+msgstr "Αν θα εγγράφονται μηνύματα κονσόλας σε τυπική έξοδο"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1182
+msgid "Enable MediaStream"
+msgstr "Ενεργοποίηση ροής πολυμέσων"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1183
+msgid "Whether MediaStream content should be handled"
+msgstr "Αν θα πρέπει να γίνεται χειρισμός του περιεχομένου ροής πολυμέσων"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1202
+msgid "Enable Spatial Navigation"
+msgstr "Ενεργοποίηση χωρικής περιήγησης"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1203
+msgid "Whether to enable Spatial Navigation support."
+msgstr "Αν θα ενεργοποιηθεί η υποστήριξη χωρικής περιήγησης"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1222
+msgid "Enable MediaSource"
+msgstr "Ενεργοποίηση πηγής πολυμέσων"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1223
+msgid "Whether MediaSource should be enabled."
+msgstr "Αν θα ενεργοποιηθεί η πηγή πολυμέσων."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1241
+msgid "Allow file access from file URLs"
+msgstr "Να επιτρέπεται η πρόσβαση του αρχείου από τη διεύθυνση του"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1242
+msgid "Whether file access is allowed from file URLs."
+msgstr "Αν θα επιτρέπεται η πρόσβαση του αρχείου από τις διευθύνσεις."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIRequest.cpp:96
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:105
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:110
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:917
+msgid "URI"
+msgstr "URI"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIRequest.cpp:97
+msgid "The URI to which the request will be made."
+msgstr "Το URI προς το οποίο θα γίνει η αίτηση."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:106
+msgid "The URI for which the response was made."
+msgstr "Το URI για το οποίο έγινε η απόκριση."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:117
+msgid "Status Code"
+msgstr "Κωδικός κατάστασης"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:118
+msgid "The status code of the response as returned by the server."
+msgstr "Ο κωδικός κατάστασης της απόκρισης όπως επέστρεψε από το διακομιστή."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:130
+msgid "Content Length"
+msgstr "Μήκος περιεχομένου"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:131
+msgid "The expected content length of the response."
+msgstr "Το αναμενόμενο μήκος περιεχομένου της απόκρισης."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:143
+msgid "MIME Type"
+msgstr "Τύπος MIME"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:144
+msgid "The MIME type of the response"
+msgstr "Ο τύπος MIME της απόκρισης"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:156
+msgid "Suggested Filename"
+msgstr "Προτεινόμενο όνομα αρχείου"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:157
+msgid "The suggested filename for the URI response"
+msgstr "Το προτεινόμενο όνομα για την απόκριση URI"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:173
+msgid "HTTP Headers"
+msgstr "Κεφαλίδες HTTP"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:174
+msgid "The The HTTP headers of the response"
+msgstr "Οι κεφαλίδες HTTP της απόκρισης"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:127
+msgid "Inspected URI"
+msgstr "Επιθεωρούμενο URI"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:128
+msgid "The URI that is currently being inspected"
+msgstr "Το URI που αυτή τη στιγμή επιθεωρείται"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:139
+msgid "Attached Height"
+msgstr "Ύψος προσάρτησης"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:140
+msgid "The height that the inspector view should have when it is attached"
+msgstr ""
+"Το ύψος που θα πρέπει να έχει η προβολή του επιθεωρητή, όταν προσαρτάται"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:157
+msgid "Can Attach"
+msgstr "Μπορεί να προσαρτηθεί"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:158
+msgid ""
+"Whether the inspector can be attached to the same window that contains the "
+"inspected view"
+msgstr ""
+"Αν ο ελεγκτής μπορεί να προσαρτηθεί στο ίδιο παράθυρο όπου γίνεται ο έλεγχος"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:111
+msgid "The current active URI of the resource"
+msgstr "Το τρέχον ενεργό URI του πόρου"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:124
+msgid "The response of the resource"
+msgstr "Η απόκριση του πόρου"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebViewBase.cpp:1302
+msgid "Website running in fullscreen mode"
+msgstr "Εμφάνιση σελίδας σε λειτουργία πλήρους οθόνης"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:362
+msgid "Are you sure you want to leave this page?"
+msgstr "Είστε σίγουροι ότι θέλετε να αποχωρήσετε από τη σελίδα;"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:363
+msgid "Stay on Page"
+msgstr "Παραμονή στη σελίδα"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:363
+msgid "Leave Page"
+msgstr "Αποχώρηση από τη σελίδα"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:558
+msgid "Select Files"
+msgstr "Επιλογή αρχείων"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:558
+msgid "Select File"
+msgstr "Επιλογή αρχείου"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:620
+msgid "Acknowledge"
+msgstr ""
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:807
+msgid "Web Context"
+msgstr "Περιεχόμενο Ιστού"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:808
+msgid "The web context for the view"
+msgstr "Το περιεχόμενο ιστού για την προβολή"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:825
+msgid "Related WebView"
+msgstr "Σχετική προβολή ιστού"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:826
+msgid ""
+"The related WebKitWebView used when creating the view to share the same web "
+"process"
+msgstr ""
+"Η σχετική προβολή ιστού του WebKit, που χρησιμοποιείται κατά τη δημιουργία "
+"της προβολής, για κοινή χρήση της ίδιας διεργασίας ιστου "
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:842
+msgid "WebView settings"
+msgstr "Ρυθμίσεις προβολής ιστού"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:843
+msgid "The WebKitSettings of the view"
+msgstr "Οι ρυθμίσεις του WebKit για την προβολή"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:859
+msgid "WebView user content manager"
+msgstr "Διαχειριστής περιεχομένου χρηστών της προβολής ιστού"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:860
+msgid "The WebKitUserContentManager of the view"
+msgstr "Ο διαχειριστής περιεχομένου χρηστών του WebKit για την προβολή"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:873
+msgid "Title"
+msgstr "Τίτλος"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:874
+msgid "Main frame document title"
+msgstr "Τίτλος του κύριου πλαισίου του εγγράφου"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:892
+msgid "Estimated Load Progress"
+msgstr "Εκτιμώμενη πρόοδος φόρτωσης"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:893
+msgid "An estimate of the percent completion for a document load"
+msgstr "Μια εκτίμηση του ποσοστού ολοκλήρωσης μιας φόρτωσης εγγράφου"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:905
+msgid "Favicon"
+msgstr "Εικονίδιο συντομεύσεων"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:906
+msgid "The favicon associated to the view, if any"
+msgstr "Το εικονίδιο συντομεύσεων που σχετίζεται με την προβολή, αν υπάρχει"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:918
+msgid "The current active URI of the view"
+msgstr "Το τρέχον ενεργό URI της προβολής"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:933
+msgid "Zoom level"
+msgstr "Επίπεδο μεγέθυνσης"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:934
+msgid "The zoom level of the view content"
+msgstr "Το επίπεδο εστίασης του περιεχομένου προβολής"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:953
+msgid "Is Loading"
+msgstr "Γίνεται φόρτωση"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:954
+msgid "Whether the view is loading a page"
+msgstr "Αν η προβολή φορτώνει μια σελίδα"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:974
+msgid "Whether the view is playing audio"
+msgstr "Αν η προβολή αναπαράγει ήχο"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:991
+msgid "Editable"
+msgstr "Επεξεργάσιμο"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:992
+msgid "Whether the content can be modified by the user."
+msgstr "Αν το περιεχόμενο μπορεί να τροποποιηθεί από τον χρήστη."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:2955
+msgid "An exception was raised in JavaScript"
+msgstr "Μια εξαίρεση αυξήθηκε στη JavaScript"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:3415
+msgid "There was an error creating the snapshot"
+msgstr "Υπήρξε ένα σφάλμα κατά τη δημιουργία του στιγμιότυπου"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:210
+msgid "Geometry"
+msgstr "Γεωμετρία"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:211
+msgid "The size and position of the window on the screen."
+msgstr "Το μέγεθος και η θέση του παραθύρου στην οθόνη."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:223
+msgid "Toolbar Visible"
+msgstr "Ορατή εργαλειοθήκη"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:224
+msgid "Whether the toolbar should be visible for the window."
+msgstr "Αν η εργαλειοθήκη θα πρέπει να είναι ορατή για το παράθυρο."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:236
+msgid "Statusbar Visible"
+msgstr "Ορατή γραμμή κατάστασης"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:237
+msgid "Whether the statusbar should be visible for the window."
+msgstr "Αν η γραμμή κατάστασης θα πρέπει να είναι ορατή για το παράθυρο."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:249
+msgid "Scrollbars Visible"
+msgstr "Ορετές γραμμές κύλισης"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:250
+msgid "Whether the scrollbars should be visible for the window."
+msgstr "Αν οι γραμμές κύλισης θα πρέπει να είναι ορατές για το παράθυρο."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:262
+msgid "Menubar Visible"
+msgstr "Ορατή γραμμή μενού"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:263
+msgid "Whether the menubar should be visible for the window."
+msgstr "Αν η γραμμή μενού θα πρέπει να είναι ορατή για το παράθυρο."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:275
+msgid "Locationbar Visible"
+msgstr "Ορατή γραμμή τοποθεσίας"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:276
+msgid "Whether the locationbar should be visible for the window."
+msgstr "Αν η γραμμή τοποθεσίας θα πρέπει να είναι ορατή για το παράθυρο."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:287
+msgid "Resizable"
+msgstr "Δυνατότητα αλλαγής μεγέθους"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:288
+msgid "Whether the window can be resized."
+msgstr "Αν το παράθυρο θα μπορεί να αλλάζει μέγεθος."
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:300
+msgid "Fullscreen"
+msgstr "Πλήρης οθόνη"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:301
+msgid "Whether window will be displayed fullscreen."
+msgstr "Αν το παράθυρο θα εμφανίζεται σε πλήρη οθόνη."
+
+#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:178
+#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:183
+#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:186
+msgid "Web Inspector"
+msgstr "Επιθεωρητής Ιστού"
+
+#~ msgctxt "Closed Captions"
+#~ msgid "Menu section heading for closed captions"
+#~ msgstr "Επικεφαλίδα ενότητας μενού για κλειστές λεζάντες"
+
+#~ msgid "The site %s:%i requests a username and password"
+#~ msgstr "Ο ιστότοπος %s:%i ζητά ένα όνομα χρήστη και κωδικό πρόσβασης"
+
+#~ msgid "Server message:"
+#~ msgstr "Μήνυμα διακομιστή:"
+
+#~ msgid "Network Request"
+#~ msgstr "Αίτημα δικτύου"
+
+#~ msgid "The network request for the URI that should be downloaded"
+#~ msgstr "Το αίτημα δικτύου για το URI που πρόκειται να ληφθεί"
+
+#, fuzzy
+#~ msgid "Network Response"
+#~ msgstr "Αίτημα δικτύου"
+
+#, fuzzy
+#~ msgid "The network response for the URI that should be downloaded"
+#~ msgstr "Το αίτημα δικτύου για το URI που πρόκειται να ληφθεί"
+
+#~ msgid "Destination URI"
+#~ msgstr "URI προορισμού"
+
+#~ msgid "The destination URI where to save the file"
+#~ msgstr "Το URI προορισμού όπου θα αποθηκευτεί το αρχείο"
+
+#~ msgid "The filename suggested as default when saving"
+#~ msgstr "Το όνομα αρχείου που προτείνεται αυτόματα κατά την αποθήκευση"
+
+#~ msgid "Progress"
+#~ msgstr "Πρόοδος"
+
+#~ msgid "Status"
+#~ msgstr "Κατάσταση"
+
+#~ msgid "Determines the current status of the download"
+#~ msgstr "Η τρέχουσα κατάσταση της λήψης"
+
+#~ msgid "Current Size"
+#~ msgstr "Τρέχον μέγεθος"
+
+#~ msgid "The length of the data already downloaded"
+#~ msgstr "Το μέγεθος των δεδομένων που έχουν ήδη ληφθεί"
+
+#~ msgid "Total Size"
+#~ msgstr "Συνολικό μέγεθος"
+
+#~ msgid "The total size of the file"
+#~ msgstr "Το συνολικό μέγεθος του αρχείου"
+
+#, fuzzy
+#~ msgid "The absolute path of the icon database folder"
+#~ msgstr "Το μέγεθος των δεδομένων που έχουν ήδη ληφθεί"
+
+#, fuzzy
+#~ msgid "Suggested filename"
+#~ msgstr "Προτεινόμενο όνομα αρχείου"
+
+#, fuzzy
+#~ msgid "The host of the security origin"
+#~ msgstr "Ο τίτλος του αντικειμένου του ιστορικού"
+
+#, fuzzy
+#~ msgid "The port of the security origin"
+#~ msgstr "Ο τίτλος του αντικειμένου του ιστορικού"
+
+#, fuzzy
+#~ msgid "The width of the screen."
+#~ msgstr "Ο τίτλος του αντικειμένου του ιστορικού"
+
+#, fuzzy
+#~ msgid "The height of the screen."
+#~ msgstr "Το όνομα του πλαισίου"
+
+#, fuzzy
+#~ msgid "The width of the visible area."
+#~ msgstr "Ο τίτλος του αντικειμένου του ιστορικού"
+
+#, fuzzy
+#~ msgid "The height of the visible area."
+#~ msgstr "Ο τίτλος του αντικειμένου του ιστορικού"
+
+#, fuzzy
+#~ msgid "The width of the viewport."
+#~ msgstr "Ο τίτλος του αντικειμένου του ιστορικού"
+
+#, fuzzy
+#~ msgid "The height of the viewport."
+#~ msgstr "Ο τίτλος του αντικειμένου του ιστορικού"
+
+#, fuzzy
+#~ msgid "The initial scale of the viewport."
+#~ msgstr "Το συνολικό μέγεθος του αρχείου"
+
+#, fuzzy
+#~ msgid "Minimum Scale Factor"
+#~ msgstr "Ελάχιστο μέγεθος λογικών γραμματοσειρών"
+
+#, fuzzy
+#~ msgid "The minimum scale of the viewport."
+#~ msgstr "Ο τίτλος του αντικειμένου του ιστορικού"
+
+#, fuzzy
+#~ msgid "The maximum scale of the viewport."
+#~ msgstr "Ο τίτλος του αντικειμένου του ιστορικού"
+
+#, fuzzy
+#~ msgid "The security origin of the database"
+#~ msgstr "Η προσαρμοσμένη κωδικοποίηση για την προβολή Ιστού"
+
+#~ msgid "Name"
+#~ msgstr "Όνομα"
+
+#, fuzzy
+#~ msgid "The name of the Web Database database"
+#~ msgstr "Το όνομα του πλαισίου"
+
+#, fuzzy
+#~ msgid "Filename"
+#~ msgstr "Προτεινόμενο όνομα αρχείου"
+
+#~ msgid "The name of the frame"
+#~ msgstr "Το όνομα του πλαισίου"
+
+#~ msgid "The document title of the frame"
+#~ msgstr "Ο τίτλος εγγράφου του πλαισίου"
+
+#~ msgid "The current URI of the contents displayed by the frame"
+#~ msgstr "Το τρέχον URI των περιεχομένων που εμφανίζονται στο πλαίσιο"
+
+#, fuzzy
+#~ msgid ""
+#~ "Determines the current policy for the horizontal scrollbar of the frame."
+#~ msgstr "Η τρέχουσα πρόοδος της λήψης"
+
+#, fuzzy
+#~ msgid ""
+#~ "Determines the current policy for the vertical scrollbar of the frame."
+#~ msgstr "Η τρέχουσα πρόοδος της λήψης"
+
+#~ msgid "The title of the history item"
+#~ msgstr "Ο τίτλος του αντικειμένου του ιστορικού"
+
+#~ msgid "Alternate Title"
+#~ msgstr "Εναλλακτικός τίτλος"
+
+#~ msgid "The alternate title of the history item"
+#~ msgstr "Ο εναλλακτικός τίτλος του αντικειμένου του ιστορικού"
+
+#~ msgid "The URI of the history item"
+#~ msgstr "Το URI του αντικειμένου του ιστορικού"
+
+#~ msgid "Original URI"
+#~ msgstr "Αρχικό URI"
+
+#~ msgid "The original URI of the history item"
+#~ msgstr "Το αρχικό URI του αντικειμένου του ιστορικού"
+
+#~ msgid "Last visited Time"
+#~ msgstr "Χρόνος τελευταίας επίσκεψης"
+
+#~ msgid "The time at which the history item was last visited"
+#~ msgstr ""
+#~ "Η χρονική στιγμή της τελευταίας επίσκεψης στο αντικείμενο του ιστορικού"
+
+#~ msgid "The Web View that renders the Web Inspector itself"
+#~ msgstr "Η Προβολή ιστού που εμφανίζει τον ίδιο τον Επιθεωρητή Ιστού"
+
+#~ msgid "Enable JavaScript profiling"
+#~ msgstr "Ενεργοποίηση προφίλ JavaScript"
+
+#~ msgid "Profile the executed JavaScript."
+#~ msgstr "Δημιουργία προφίλ του εκτελούμενου κώδικα JavaScript."
+
+#, fuzzy
+#~ msgid "Enable Timeline profiling"
+#~ msgstr "Ενεργοποίηση προφίλ JavaScript"
+
+#~ msgid "Reason"
+#~ msgstr "Αιτία"
+
+#~ msgid "The reason why this navigation is occurring"
+#~ msgstr "Η αιτία που προκάλεσε την πλοήγηση"
+
+#~ msgid "The URI that was requested as the target for the navigation"
+#~ msgstr "Το URI που ζητήθηκε ως προορισμός της πλοήγησης"
+
+#~ msgid "Button"
+#~ msgstr "Κουμπί"
+
+#~ msgid "The button used to click"
+#~ msgstr "Το κουμπί που χρησιμοποιείται για τα κλικ"
+
+#~ msgid "Modifier state"
+#~ msgstr "Κατάσταση τροποποιητή"
+
+#~ msgid "A bitmask representing the state of the modifier keys"
+#~ msgstr "Bitmask που αντιστοιχεί στην κατάσταση των πλήκτρων τροποποίησης"
+
+#, fuzzy
+#~ msgid "Target frame"
+#~ msgstr "Το όνομα του πλαισίου"
+
+#, fuzzy
+#~ msgid "The target frame for the navigation"
+#~ msgstr "Το URI που ζητήθηκε ως προορισμός της πλοήγησης"
+
+#, fuzzy
+#~ msgid "Enabled"
+#~ msgstr "Επεξεργάσιμο"
+
+#, fuzzy
+#~ msgid "The URI of the resource"
+#~ msgstr "Το URI του αντικειμένου του ιστορικού"
+
+#, fuzzy
+#~ msgid "The MIME type of the resource"
+#~ msgstr "Ο τίτλος του αντικειμένου του ιστορικού"
+
+#~ msgid "Encoding"
+#~ msgstr "Κωδικοποίηση"
+
+#, fuzzy
+#~ msgid "The text encoding name of the resource"
+#~ msgstr "Η προεπιλεγμένη κωδικοποίηση για την προβολή Ιστού"
+
+#, fuzzy
+#~ msgid "The frame name of the resource"
+#~ msgstr "Το όνομα του πλαισίου"
+
+#~ msgid "Default Encoding"
+#~ msgstr "Προεπιλεγμένη κωδικοποίηση"
+
+#~ msgid "The default encoding used to display text."
+#~ msgstr ""
+#~ "Η προεπιλεγμένη κωδικοποίηση που χρησιμοποιείται για την εμφάνιση "
+#~ "κειμένου."
+
+#~ msgid "Cursive Font Family"
+#~ msgstr "Cursive οικογένεια γραμματοσειρών"
+
+#~ msgid "The default Cursive font family used to display text."
+#~ msgstr ""
+#~ "Η προεπιλεγμένη Cursive οικογένεια γραμματοσειρών για την εμφάνιση "
+#~ "πλάγιου κειμένου."
+
+#~ msgid "Default Font Family"
+#~ msgstr "Προεπιλεγμένη οικογένεια γραμματοσειρών"
+
+#~ msgid "The default font family used to display text."
+#~ msgstr ""
+#~ "Η προεπιλεγμένη οικογένεια γραμματοσειρών για την εμφάνιση κειμένου."
+
+#~ msgid "Fantasy Font Family"
+#~ msgstr "Fantasy οικογένεια γραμματοσειρών"
+
+#~ msgid "The default Fantasy font family used to display text."
+#~ msgstr ""
+#~ "Η προεπιλεγμένη Fantasy οικογένεια γραμματοσειρών για την εμφάνιση "
+#~ "κειμένου."
+
+#~ msgid "Monospace Font Family"
+#~ msgstr "Monospace οικογένεια γραμματοσειρών"
+
+#~ msgid "The default font family used to display monospace text."
+#~ msgstr ""
+#~ "Η προεπιλεγμένη οικογένεια γραμματοσειρών για την εμφάνιση κειμένου."
+#~ "σταθερού πλάτους."
+
+#~ msgid "Sans Serif Font Family"
+#~ msgstr "Sans Serif οικογένεια γραμματοσειρών"
+
+#~ msgid "The default Sans Serif font family used to display text."
+#~ msgstr ""
+#~ "Η προεπιλεγμένη Sans Serif οικογένεια γραμματοσειρών για την εμφάνιση "
+#~ "κειμένου."
+
+#~ msgid "Serif Font Family"
+#~ msgstr "Serif οικογένεια γραμματοσειρών"
+
+#~ msgid "The default Serif font family used to display text."
+#~ msgstr ""
+#~ "Η προεπιλεγμένη Serif οικογένεια γραμματοσειρών για την εμφάνιση κειμένου."
+
+#~ msgid "Default Font Size"
+#~ msgstr "Μέγεθος προεπιλεγμένης γραμματοσειράς"
+
+#~ msgid "Default Monospace Font Size"
+#~ msgstr "Μέγεθος προεπιλεγμένης Monospace γραμματοσειράς"
+
+#~ msgid "Minimum Font Size"
+#~ msgstr "Ελάχιστο μέγεθος γραμματοσειρών"
+
+#~ msgid "Minimum Logical Font Size"
+#~ msgstr "Ελάχιστο μέγεθος λογικών γραμματοσειρών"
+
+#~ msgid "The minimum logical font size used to display text."
+#~ msgstr ""
+#~ "Το ελάχιστο μέγεθος των λογικών γραμματοσειρών που χρησιμοποιούνται για "
+#~ "την εμφάνιση κειμένου."
+
+#~ msgid "Enforce 96 DPI"
+#~ msgstr "Επιβολή 96 DPI"
+
+#~ msgid "Enforce a resolution of 96 DPI"
+#~ msgstr "Επιβολή ανάλυσης 96 DPI"
+
+#~ msgid "Auto Load Images"
+#~ msgstr "Αυτόματη φόρτωση εικόνων"
+
+#~ msgid "Auto Shrink Images"
+#~ msgstr "Αυτόματη σμίκρυνση εικόνων"
+
+#~ msgid "Automatically shrink standalone images to fit."
+#~ msgstr "Αυτόματη σμίκρυνση των αυτοτελών εικόνων ώστε να χωρούν."
+
+#~ msgid "Whether background images should be printed."
+#~ msgstr "Αν θα εκτυπώνονται οι εικόνες παρασκηνίου."
+
+#~ msgid "Enable Scripts"
+#~ msgstr "Ενεργοποίηση σεναρίων"
+
+#~ msgid "Enable embedded scripting languages."
+#~ msgstr "Ενεργοποίηση ενσωματωμένων γλωσσών σεναρίων."
+
+#~ msgid "Enable Plugins"
+#~ msgstr "Ενεργοποίηση πρόσθετων"
+
+#~ msgid "Resizable Text Areas"
+#~ msgstr "Προσαρμόσιμες περιοχές κειμένου"
+
+#~ msgid "Whether text areas are resizable."
+#~ msgstr "Αν θα επιτρέπεται η αλλαγή μεγέθους των περιοχών κειμένου."
+
+#~ msgid "User Stylesheet URI"
+#~ msgstr "URI φύλλου στυλ χρήστη"
+
+#~ msgid "The URI of a stylesheet that is applied to every page."
+#~ msgstr "Το URI του φύλλου στυλ που θα εφαρμόζεται σε όλες τις σελίδες."
+
+#~ msgid "Zoom Stepping Value"
+#~ msgstr "Τιμή βήματος μεγέθυνσης"
+
+#~ msgid "The value by which the zoom level is changed when zooming in or out."
+#~ msgstr ""
+#~ "Το ποσό κατά το οποίο αλλάζει κάθε φορά το επίπεδο μεγέθυνσης/σμίκρυνσης."
+
+#~ msgid "Enable Developer Extras"
+#~ msgstr "Ενεργοποίηση προσθέτων προγραμματισμού"
+
+#~ msgid "Enables special extensions that help developers"
+#~ msgstr "Ενεργοποιεί τις ειδικές επεκτάσεις για προγραμματιστές"
+
+#~ msgid "Enable Private Browsing"
+#~ msgstr "Ενεργοποίηση ιδιωτικής περιήγησης"
+
+#~ msgid "Enables private browsing mode"
+#~ msgstr "Ενεργοποιεί τη λειτουργία ιδιωτικής περιήγησης"
+
+#, fuzzy
+#~ msgid "Enables spell checking while typing"
+#~ msgstr "Ορθογραφικός έλεγχος κατά την _πληκτρολόγηση"
+
+#, fuzzy
+#~ msgid "Enable XSS Auditor"
+#~ msgstr "Ενεργοποίηση σεναρίων"
+
+#, fuzzy
+#~ msgid "Enable Frame Flattening"
+#~ msgstr "Ενεργοποίηση ιδιωτικής περιήγησης"
+
+#, fuzzy
+#~ msgid "Enable Java Applet"
+#~ msgstr "Ενεργοποίηση προφίλ JavaScript"
+
+#, fuzzy
+#~ msgid "Whether accelerated compositing should be enabled"
+#~ msgstr "Αν θα εκτυπώνονται οι εικόνες παρασκηνίου."
+
+#~ msgid "Returns the @web_view's document title"
+#~ msgstr "Επιστρέφει τον τίτλο εγγράφου της @web_view"
+
+#~ msgid "Returns the current URI of the contents displayed by the @web_view"
+#~ msgstr ""
+#~ "Επιστρέφει το τρέχον URI του περιεχομένου που εμφανίζεται στην @web_view"
+
+#~ msgid "Copy target list"
+#~ msgstr "Λίστα προορισμών αντιγραφής"
+
+#~ msgid "The list of targets this web view supports for clipboard copying"
+#~ msgstr ""
+#~ "Η λίστα προορισμών για αντιγραφή στο πρόχειρο που υποστηρίζει αυτή η "
+#~ "προβολή Ιστού"
+
+#~ msgid "Paste target list"
+#~ msgstr "Λίστα προορισμών επικόλλησης"
+
+#~ msgid "The list of targets this web view supports for clipboard pasting"
+#~ msgstr ""
+#~ "Η λίστα προορισμών για επικόλληση στο πρόχειρο που υποστηρίζει αυτή η "
+#~ "προβολή Ιστού"
+
+#~ msgid "Settings"
+#~ msgstr "Ρυθμίσεις"
+
+#~ msgid "An associated WebKitWebSettings instance"
+#~ msgstr "Μια συνδεδεμένη διεργασία WebKitWebSettings"
+
+#~ msgid "The associated WebKitWebInspector instance"
+#~ msgstr "Η συνδεδεμένη διεργασία WebKitWebInspector"
+
+#, fuzzy
+#~ msgid "The associated WebKitViewportAttributes instance"
+#~ msgstr "Η συνδεδεμένη διεργασία WebKitWebInspector"
+
+#~ msgid "Transparent"
+#~ msgstr "Διάφανο"
+
+#~ msgid "Whether content has a transparent background"
+#~ msgstr "Αν το παρασκήνιο του περιεχομένου θα είναι διαφανές"
+
+#~ msgid "The level of zoom of the content"
+#~ msgstr "Το επίπεδο μεγέθυνσης/σμίκρυνσης του περιεχομένου"
+
+#~ msgid "Full content zoom"
+#~ msgstr "Μεγέθυνση πλήρους περιεχομένου"
+
+#~ msgid "Whether the full content is scaled when zooming"
+#~ msgstr "Αν η μεγέθυνση/σμίκρυνση θα εφαρμόζεται σε όλο το περιεχόμενο"
+
+#~ msgid "The default encoding of the web view"
+#~ msgstr "Η προεπιλεγμένη κωδικοποίηση για την προβολή Ιστού"
+
+#~ msgid "Custom Encoding"
+#~ msgstr "Προσαρμοσμένη κωδικοποίηση"
+
+#~ msgid "The custom encoding of the web view"
+#~ msgstr "Η προσαρμοσμένη κωδικοποίηση για την προβολή Ιστού"
+
+#~ msgid "Upload File"
+#~ msgstr "Αποστολή αρχείου"
+
+#~ msgid "A username and password are being requested by the site %s"
+#~ msgstr "Ο ιστότοπος %s απαιτεί όνομα χρήστη και συνθηματικό"
+
+#~ msgid "_Searchable Index"
+#~ msgstr "_Ευρετήριο"

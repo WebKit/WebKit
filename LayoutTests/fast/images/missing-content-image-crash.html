@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests content image painting when image is not available</title>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>      
+<style>
+#missingImage {
+	overflow: hidden;
+}
+</style>
+</head>
+<body>
+PASS if no crash or assert.
+<div style="will-change: transform"><div id=missingImage></div></div>
+<script>
+missingImage.style.content = "url('http://webkit.org/resources/missing.jpg')";
+</script>
+</body>
+</html>

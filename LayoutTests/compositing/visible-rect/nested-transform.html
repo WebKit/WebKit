@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .container {
+            position: relative;
+            height: 300px;
+            width: 300px;
+            border: 2px solid rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            margin: 10px;
+            -webkit-perspective: 400px;
+            -webkit-perspective-origin: 50px 50px;
+        }
+        
+        .intermediate {
+            -webkit-transform-style: preserve-3d;
+        }
+
+        .box {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background-color: blue;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        function dumpLayers()
+        {
+            if (window.internals)
+                document.getElementById('layers').innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS)
+        }
+        window.addEventListener('load', dumpLayers, false);
+    </script>
+</head>
+<body>
+
+    <div class="container">
+        <div class="intermediate" style="-webkit-transform: rotateY(20deg);">
+            <div class="intermediate" style="-webkit-transform: rotateY(20deg);">
+                <div class="box" style="-webkit-transform: rotateX(35deg);"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="intermediate" style="-webkit-transform: rotateY(0);">
+            <div class="intermediate" style="-webkit-transform: rotateY(40deg);">
+                <div class="box" style="-webkit-transform: rotateX(35deg);"></div>
+            </div>
+        </div>
+    </div>
+
+
+<pre id="layers">Layer tree goes here when testing</pre>
+</body>
+</html>

@@ -1,0 +1,91 @@
+#!/usr/bin/env bash
+
+source "$(dirname "$0")/../glib/dependencies/pacman"
+
+PACKAGES+=(
+    # These are dependencies necessary for building WebKitGTK.
+    atk
+    enchant
+    faad2
+    geoclue2
+    gettext
+    gnome-common
+    gobject-introspection
+    gtk3
+    hyphen
+    libedit
+    libffi
+    libgcrypt
+    libnotify
+    libpulse
+    librsvg
+    libsecret
+    libsoup
+    libsrtp
+    libtheora
+    libvorbis
+    libvpx
+    libxcomposite
+    libxt
+    libxtst
+    mesa
+    mesa-libgl
+    mpg123
+    opus
+    pango
+    ruby
+    upower
+    util-linux
+    wayland
+    xorg-font-utils
+
+    # These are dependencies necessary for running tests.
+    # Note: ruby-json and ruby-highline are available in the AUR.
+    cups
+    hunspell
+    hunspell-en
+    hunspell-en_GB
+    libgpg-error
+    python2-yaml
+    python-gobject
+    weston
+    xorg-server-xvfb
+
+    # These are dependencies necessary for building the jhbuild.
+    # Note: Could not find libegl-mesa.
+    bigreqsproto
+    bison
+    compositeproto
+    flex
+    glproto
+    gnutls
+    icon-naming-utils
+    inputproto
+    libcroco
+    libcups
+    libdrm
+    libepoxy
+    libevdev
+    libinput
+    libpciaccess
+    libtiff
+    libunistring-dev
+    libxfixes
+    libxfont2
+    libxkbcommon-x11
+    libxkbfile
+    mtdev
+    p11-kit
+    perl-xml-libxm
+    python2
+    python2-lxml
+    ragel
+    randrproto
+    resourceproto
+    scrnsaverproto
+    videoproto
+    xcmiscproto
+    xf86driproto
+    xorg-util-macros
+    xtrans
+)

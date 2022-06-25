@@ -1,0 +1,11 @@
+Tests that the prototype of objects serialized via postMessage is correct.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS event.data instanceof Object
+PASS event.data.array instanceof Array
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

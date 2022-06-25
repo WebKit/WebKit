@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests if negative coordinate values round to the same position as if they were positive.</title>
+<style>
+  .inner {
+    position: relative;
+    top: 0px;
+    left: 0px;
+    width: 2px;
+    height: 2px;
+    border: solid black 0.5px;
+  }
+
+  .outer {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+  }
+</style>
+</head>
+<body>
+<p id="container"></p>
+<script>
+  var container = document.getElementById("container");
+  for (i = 0; i < 40; ++i) {
+    adjustment = 0;
+    for (j = 0; j < 40; ++j) {
+      var outer = document.createElement("div");
+      outer.style.top = 7 * (i + j * adjustment)  + "px";
+      outer.style.left = 7 * (j + i * adjustment)  + "px";
+      outer.className = "outer";
+
+      var inner = document.createElement("div");
+      inner.style.top = (-adjustment) + "px";
+      inner.style.left = (-adjustment) + "px";
+      inner.className = "inner";
+      adjustment += 0.01;
+      
+      outer.appendChild(inner);
+      container.appendChild(outer);
+    }
+  }
+</script>
+</body>
+</html>

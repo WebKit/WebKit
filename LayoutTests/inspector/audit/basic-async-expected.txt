@@ -1,0 +1,16 @@
+Testing the basic functionality of audits.
+
+
+== Running test suite: Audit.Basic
+-- Running test case: Audit.Basic.Async.Boolean.True
+Testing value `true`...
+PASS: Result should be "pass".
+
+-- Running test case: Audit.Basic.Async.String.Pass
+Testing value `"pass"`...
+PASS: Result should be "pass".
+
+-- Running test case: Audit.Basic.Async.Object.Pass
+Testing value `{"level":"pass"}`...
+PASS: Result should be "pass".
+

@@ -1,0 +1,11 @@
+audioElement.onerror is triggered on bogus source
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS "4" is "4"
+
+TEST COMPLETE
+spec reference
+
+

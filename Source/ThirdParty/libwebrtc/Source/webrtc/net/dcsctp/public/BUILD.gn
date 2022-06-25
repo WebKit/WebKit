@@ -1,0 +1,101 @@
+# Copyright (c) 2021 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+rtc_source_set("types") {
+  deps = [
+    "../../../rtc_base:rtc_base_approved",
+    "../../../api:array_view",
+  ]
+  sources = [
+    "dcsctp_message.h",
+    "dcsctp_options.h",
+    "types.h",
+  ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+}
+
+rtc_source_set("socket") {
+  deps = [
+    "../../../rtc_base:rtc_base_approved",
+    ":types",
+    "../../../api:array_view",
+    "../../../rtc_base",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:rtc_base_approved",
+  ]
+  sources = [
+    "dcsctp_handover_state.cc",
+    "dcsctp_handover_state.h",
+    "dcsctp_socket.h",
+    "packet_observer.h",
+    "timeout.h",
+  ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+rtc_source_set("factory") {
+  deps = [
+    ":socket",
+    ":types",
+    "../socket:dcsctp_socket",
+  ]
+  sources = [
+    "dcsctp_socket_factory.cc",
+    "dcsctp_socket_factory.h",
+  ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
+}
+
+rtc_source_set("mocks") {
+  testonly = true
+  sources = [ "mock_dcsctp_socket.h" ]
+  deps = [
+    ":socket",
+    "../../../test:test_support",
+  ]
+}
+
+rtc_source_set("utils") {
+  deps = [
+    ":socket",
+    ":types",
+    "../../../api:array_view",
+    "../../../rtc_base:logging",
+    "../../../rtc_base:stringutils",
+    "../socket:dcsctp_socket",
+  ]
+  sources = [
+    "text_pcap_packet_observer.cc",
+    "text_pcap_packet_observer.h",
+  ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
+}
+
+if (rtc_include_tests) {
+  rtc_library("dcsctp_public_unittests") {
+    testonly = true
+
+    deps = [
+      ":mocks",
+      ":types",
+      "../../../rtc_base:checks",
+      "../../../rtc_base:gunit_helpers",
+      "../../../rtc_base:rtc_base_approved",
+      "../../../test:test_support",
+    ]
+    sources = [
+      "mock_dcsctp_socket_test.cc",
+      "types_test.cc",
+    ]
+  }
+}

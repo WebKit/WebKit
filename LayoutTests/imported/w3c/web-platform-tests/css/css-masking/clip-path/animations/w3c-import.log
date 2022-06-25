@@ -1,0 +1,40 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-filter-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-filter-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-filter.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-incompatible-shapes1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-incompatible-shapes1-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-incompatible-shapes1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-incompatible-shapes2-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-incompatible-shapes2-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-incompatible-shapes2.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-overflow-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-overflow-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-overflow.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-three-keyframes1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-three-keyframes1-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-three-keyframes1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-three-keyframes2-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-three-keyframes2-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-three-keyframes2.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-transition-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-transition-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-transition.html

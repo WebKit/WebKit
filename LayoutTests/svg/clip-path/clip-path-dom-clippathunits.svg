@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+<clipPath id="clip1" clipPathUnits="objectBoundingBox">
+  <rect width="200" height="200"/>
+</clipPath>
+
+<rect width="400" height="400" fill="red" clip-path="url(#clip1)"/>
+<rect width="200" height="200" fill="green"/>
+
+<script>
+var clip = document.getElementById("clip1");
+var enumeration = clip.clipPathUnits;
+enumeration.baseVal = 1; // Switch to userSpaceOnUse!
+</script>
+</svg>

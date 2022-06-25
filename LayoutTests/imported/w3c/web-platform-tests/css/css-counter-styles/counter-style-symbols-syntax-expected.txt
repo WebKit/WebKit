@@ -1,0 +1,10 @@
+
+PASS @counter-style 'symbols: "X"' is valid
+PASS @counter-style 'symbols: "X" "X"' is valid
+PASS @counter-style 'symbols: ident "X"' is valid
+PASS @counter-style 'symbols: ident "X" url("foo.jpg")' is valid
+PASS @counter-style 'symbols: ' is invalid
+PASS @counter-style 'symbols: initial "X" "X"' is invalid
+PASS @counter-style 'symbols: inherit "X" "X"' is invalid
+PASS @counter-style 'symbols: unset "X" "X"' is invalid
+

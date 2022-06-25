@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<div id="container">
+<button onclick="runTest()">Copy</button>
+<div id="source" contenteditable="true">hello, <b>world</b><br>WebKit</div>
+<div id="destination" onpaste="check(event)" contenteditable="true" style="width: 500px; height: 100px; border: solid red 1px"></div>
+</div>
+</body>
+<script>
+description('Tests that pasting as plain text only exposes "text/plain" in the clipboard. To manually test, press "Copy" below and paste (Command+V on macOS and Control+V elsewhere).');
+jsTestIsAsync = true;
+
+function runTest()
+{
+    if (window.internals)
+        internals.settings.setCustomPasteboardDataEnabled(true);
+
+    document.getElementById("source").focus();
+    document.execCommand("SelectAll");
+    document.execCommand("Copy");
+
+    document.getElementById("destination").focus();
+    if (window.testRunner)
+        document.execCommand("PasteAndMatchStyle");
+}
+
+function check(event)
+{
+    shouldBeEqualToString('JSON.stringify(event.clipboardData.types)', '["text/plain"]');
+    shouldBeEqualToString('event.clipboardData.getData("text/plain")', 'hello, world\nWebKit');
+    shouldBeEqualToString('event.clipboardData.getData("text/html")', '');
+    shouldBe('event.clipboardData.items.length', '1');
+    shouldBeEqualToString('item = event.clipboardData.items[0]; item.kind', 'string');
+    shouldBeEqualToString('item.type', 'text/plain');
+
+    document.getElementById('container').remove();
+
+    finishJSTest();
+}
+
+if (window.testRunner)
+    runTest();
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

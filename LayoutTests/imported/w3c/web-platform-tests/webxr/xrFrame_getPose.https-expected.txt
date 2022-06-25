@@ -1,0 +1,6 @@
+
+PASS XRFrame.getPose works for immersive sessions - webgl
+PASS XRFrame.getPose works for immersive sessions - webgl2
+PASS XRFrame.getPose works for non-immersive sessions - webgl
+PASS XRFrame.getPose works for non-immersive sessions - webgl2
+

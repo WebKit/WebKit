@@ -1,0 +1,35 @@
+Tests that using the different composite modes to fill large rects doesn't crash and works as expected.
+PASS Fill Size 10000, source-over: #0000FF
+PASS Fill Size 10000, source-in: #0000FF
+PASS Fill Size 10000, source-out: #000000
+PASS Fill Size 10000, source-atop: #0000FF
+PASS Fill Size 10000, destination-over: #00FF00
+PASS Fill Size 10000, destination-in: #00FF00
+PASS Fill Size 10000, destination-out: #000000
+PASS Fill Size 10000, destination-atop: #00FF00
+PASS Fill Size 10000, lighter: #00FFFF
+PASS Fill Size 10000, copy: #0000FF
+PASS Fill Size 10000, xor: #000000
+PASS Fill Size 50000, source-over: #0000FF
+PASS Fill Size 50000, source-in: #0000FF
+PASS Fill Size 50000, source-out: #000000
+PASS Fill Size 50000, source-atop: #0000FF
+PASS Fill Size 50000, destination-over: #00FF00
+PASS Fill Size 50000, destination-in: #00FF00
+PASS Fill Size 50000, destination-out: #000000
+PASS Fill Size 50000, destination-atop: #00FF00
+PASS Fill Size 50000, lighter: #00FFFF
+PASS Fill Size 50000, copy: #0000FF
+PASS Fill Size 50000, xor: #000000
+PASS Fill Size 100000, source-over: #0000FF
+PASS Fill Size 100000, source-in: #0000FF
+PASS Fill Size 100000, source-out: #000000
+PASS Fill Size 100000, source-atop: #0000FF
+PASS Fill Size 100000, destination-over: #00FF00
+PASS Fill Size 100000, destination-in: #00FF00
+PASS Fill Size 100000, destination-out: #000000
+PASS Fill Size 100000, destination-atop: #00FF00
+PASS Fill Size 100000, lighter: #00FFFF
+PASS Fill Size 100000, copy: #0000FF
+PASS Fill Size 100000, xor: #000000
+

@@ -1,0 +1,97 @@
+Description
+
+This test verifies that implementations of the Encrypted Media Extensions API match its WebIDL definition.
+
+
+PASS idl_test setup
+PASS idl_test validation
+PASS Partial interface Navigator: original interface defined
+PASS Partial interface Navigator: valid exposure set
+PASS Partial interface Navigator: member names are unique
+PASS Partial interface HTMLMediaElement: original interface defined
+PASS Partial interface HTMLMediaElement: valid exposure set
+PASS Partial interface HTMLMediaElement: member names are unique
+PASS Partial interface mixin NavigatorID: member names are unique
+PASS HTMLElement includes GlobalEventHandlers: member names are unique
+PASS HTMLElement includes DocumentAndElementEventHandlers: member names are unique
+PASS HTMLElement includes ElementContentEditable: member names are unique
+PASS HTMLElement includes HTMLOrSVGElement: member names are unique
+PASS Navigator includes NavigatorID: member names are unique
+PASS Navigator includes NavigatorLanguage: member names are unique
+PASS Navigator includes NavigatorOnLine: member names are unique
+PASS Navigator includes NavigatorContentUtils: member names are unique
+PASS Navigator includes NavigatorCookies: member names are unique
+PASS Navigator includes NavigatorPlugins: member names are unique
+PASS Navigator includes NavigatorConcurrentHardware: member names are unique
+PASS Element includes ParentNode: member names are unique
+PASS Element includes NonDocumentTypeChildNode: member names are unique
+PASS Element includes ChildNode: member names are unique
+PASS Element includes Slottable: member names are unique
+PASS MediaKeySystemAccess interface: existence and properties of interface object
+PASS MediaKeySystemAccess interface object length
+PASS MediaKeySystemAccess interface object name
+PASS MediaKeySystemAccess interface: existence and properties of interface prototype object
+PASS MediaKeySystemAccess interface: existence and properties of interface prototype object's "constructor" property
+PASS MediaKeySystemAccess interface: existence and properties of interface prototype object's @@unscopables property
+PASS MediaKeySystemAccess interface: attribute keySystem
+PASS MediaKeySystemAccess interface: operation getConfiguration()
+PASS MediaKeySystemAccess interface: operation createMediaKeys()
+PASS MediaKeys interface: existence and properties of interface object
+PASS MediaKeys interface object length
+PASS MediaKeys interface object name
+PASS MediaKeys interface: existence and properties of interface prototype object
+PASS MediaKeys interface: existence and properties of interface prototype object's "constructor" property
+PASS MediaKeys interface: existence and properties of interface prototype object's @@unscopables property
+PASS MediaKeys interface: operation createSession(optional MediaKeySessionType)
+PASS MediaKeys interface: operation setServerCertificate(BufferSource)
+PASS MediaKeySession interface: existence and properties of interface object
+PASS MediaKeySession interface object length
+PASS MediaKeySession interface object name
+PASS MediaKeySession interface: existence and properties of interface prototype object
+PASS MediaKeySession interface: existence and properties of interface prototype object's "constructor" property
+PASS MediaKeySession interface: existence and properties of interface prototype object's @@unscopables property
+PASS MediaKeySession interface: attribute sessionId
+PASS MediaKeySession interface: attribute expiration
+PASS MediaKeySession interface: attribute closed
+PASS MediaKeySession interface: attribute keyStatuses
+PASS MediaKeySession interface: attribute onkeystatuseschange
+PASS MediaKeySession interface: attribute onmessage
+PASS MediaKeySession interface: operation generateRequest(DOMString, BufferSource)
+PASS MediaKeySession interface: operation load(DOMString)
+PASS MediaKeySession interface: operation update(BufferSource)
+PASS MediaKeySession interface: operation close()
+PASS MediaKeySession interface: operation remove()
+PASS MediaKeyStatusMap interface: existence and properties of interface object
+PASS MediaKeyStatusMap interface object length
+PASS MediaKeyStatusMap interface object name
+PASS MediaKeyStatusMap interface: existence and properties of interface prototype object
+PASS MediaKeyStatusMap interface: existence and properties of interface prototype object's "constructor" property
+PASS MediaKeyStatusMap interface: existence and properties of interface prototype object's @@unscopables property
+PASS MediaKeyStatusMap interface: iterable<BufferSource, MediaKeyStatus>
+PASS MediaKeyStatusMap interface: attribute size
+PASS MediaKeyStatusMap interface: operation has(BufferSource)
+PASS MediaKeyStatusMap interface: operation get(BufferSource)
+PASS MediaKeyMessageEvent interface: existence and properties of interface object
+PASS MediaKeyMessageEvent interface object length
+PASS MediaKeyMessageEvent interface object name
+PASS MediaKeyMessageEvent interface: existence and properties of interface prototype object
+PASS MediaKeyMessageEvent interface: existence and properties of interface prototype object's "constructor" property
+PASS MediaKeyMessageEvent interface: existence and properties of interface prototype object's @@unscopables property
+PASS MediaKeyMessageEvent interface: attribute messageType
+PASS MediaKeyMessageEvent interface: attribute message
+PASS MediaEncryptedEvent interface: existence and properties of interface object
+PASS MediaEncryptedEvent interface object length
+PASS MediaEncryptedEvent interface object name
+PASS MediaEncryptedEvent interface: existence and properties of interface prototype object
+PASS MediaEncryptedEvent interface: existence and properties of interface prototype object's "constructor" property
+PASS MediaEncryptedEvent interface: existence and properties of interface prototype object's @@unscopables property
+PASS MediaEncryptedEvent interface: attribute initDataType
+PASS MediaEncryptedEvent interface: attribute initData
+PASS HTMLMediaElement interface: attribute mediaKeys
+PASS HTMLMediaElement interface: attribute onencrypted
+PASS HTMLMediaElement interface: attribute onwaitingforkey
+PASS HTMLMediaElement interface: operation setMediaKeys(MediaKeys?)
+PASS Navigator interface: operation requestMediaKeySystemAccess(DOMString, sequence<MediaKeySystemConfiguration>)
+PASS Navigator interface: navigator must inherit property "requestMediaKeySystemAccess(DOMString, sequence<MediaKeySystemConfiguration>)" with the proper type
+PASS Navigator interface: calling requestMediaKeySystemAccess(DOMString, sequence<MediaKeySystemConfiguration>) on navigator with too few arguments must throw TypeError
+

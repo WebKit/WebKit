@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: TypeError: Argument 1 ('space') to XRFrame.getPose must be an instance of WebXRSpace
+
+Harness Error (FAIL), message = TypeError: Argument 1 ('space') to XRFrame.getPose must be an instance of WebXRSpace
+
+TIMEOUT XRInputSources with a target ray mode of 'tracked-pointer' properly communicate their poses - webgl Test timed out
+NOTRUN XRInputSources with a target ray mode of 'tracked-pointer' properly communicate their poses - webgl2
+

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../cookies/resources/cookies-test-pre.js"></script>
+</head>
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText()
+    testRunner.waitUntilDone();
+}
+
+document.cookie = "name=value";
+testCookies("name=value");
+
+window.location.href = "resources/appcache-cookies-test.html";
+</script>
+</body>
+</html>

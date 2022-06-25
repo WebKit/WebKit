@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="resources/create-context-utilities.css">
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/create-context-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.CreateContextUtilities.initializeTestSuite("Canvas.CreateContextWebGL");
+
+    InspectorTest.CreateContextUtilities.addSimpleTestCase({
+        name: "Attached",
+        expression: `createAttachedCanvas("webgl")`,
+        contextType: WI.Canvas.ContextType.WebGL,
+    });
+
+    InspectorTest.CreateContextUtilities.addSimpleTestCase({
+        name: "Detached",
+        expression: `createDetachedCanvas("webgl")`,
+        contextType: WI.Canvas.ContextType.WebGL,
+    });
+
+    InspectorTest.CreateContextUtilities.addCSSCanvasTestCase(WI.Canvas.ContextType.WebGL);
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Test that CanvasManager tracks creation and destruction of WebGL canvases.</p>
+</body>
+</html>

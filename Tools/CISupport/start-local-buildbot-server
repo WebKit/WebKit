@@ -1,0 +1,403 @@
+#!/usr/bin/env python3
+#
+# Copyright (C) 2017, 2021 Igalia S.L.
+# Copyright (C) 2020 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+#
+#     * Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#
+#     * Redistributions in binary form must reproduce the above
+# copyright notice, this list of conditions and the following disclaimer
+# in the documentation and/or other materials provided with the
+# distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+import sys
+import signal
+import os
+import argparse
+import subprocess
+import tempfile
+import shutil
+import socket
+import json
+import traceback
+import multiprocessing
+from time import sleep
+
+buildbot_server_tac = """
+import os
+from twisted.application import service
+from buildbot.master import BuildMaster
+
+basedir = os.path.dirname(os.path.realpath(__file__))
+configfile = r'%(config_file)s'
+
+application = service.Application('buildmaster')
+BuildMaster(basedir, configfile).setServiceParent(application)
+"""
+
+buildbot_worker_tac = """
+import os
+from buildbot_worker.bot import Worker
+from twisted.application import service
+
+basedir = os.path.dirname(os.path.realpath(__file__))
+application = service.Application('buildbot-worker')
+
+buildmaster_host = 'localhost'
+port = %(server_pb_port)s
+workername = '%(worker_name)s'
+passwd = 'password'
+keepalive = 600
+
+s = Worker(buildmaster_host, port, workername, passwd, basedir, keepalive)
+s.setServiceParent(application)
+"""
+
+
+def check_tcp_port_open(address, port):
+    s = socket.socket()
+    try:
+        s.connect((address, port))
+        return True
+    except ConnectionRefusedError:
+        return False
+
+
+def create_tempdir(tmpdir=None):
+    if tmpdir is not None:
+        if not os.path.isdir(tmpdir):
+            raise ValueError('{} is not a directory'.format(tmpdir))
+        return tempfile.mkdtemp(prefix=os.path.join(os.path.abspath(tmpdir), 'tmp'))
+    return tempfile.mkdtemp()
+
+
+def print_if_error_stdout_stderr(cmd, retcode, stdout=None, stderr=None, extramsg=None):
+    if retcode != 0:
+        if type(cmd) is list:
+            cmd = ' '.join(cmd)
+        print('WARNING: "{cmd}" returned {retcode} status code'.format(cmd=cmd, retcode=retcode))
+        if stdout is not None:
+            print('STDOUT:\n' + stdout.decode('utf-8'))
+        if stderr is not None:
+            print('STDERR:\n' + stderr.decode('utf-8'))
+        if extramsg is not None:
+            print(extramsg)
+
+
+def cmd_exists(cmd):
+    return any(os.access(os.path.join(path, cmd), os.X_OK)
+               for path in os.environ['PATH'].split(os.pathsep))
+
+
+class BuildbotTestRunner(object):
+
+    def __init__(self, configdir):
+        self._configdir = os.path.abspath(os.path.realpath(configdir))
+        if not os.path.isdir(self._configdir):
+            raise RuntimeError('The configdir {} is not a directory'.format(self._configdir))
+        if not os.path.isfile(os.path.join(self._configdir, 'config.json')):
+            raise RuntimeError('The configdir {} does not contain a config.json file'.format(self._configdir))
+
+        number_config_files = 0
+        for file in os.listdir(self._configdir):
+            if file.endswith('.cfg'):
+                self._server_config_file_name = file
+                number_config_files += 1
+        if number_config_files == 0:
+            raise RuntimeError('The configdir {} does not contain a .cfg file'.format(self._configdir))
+        if number_config_files != 1:
+            raise RuntimeError('The configdir {} has more than one .cfg file'.format(self._configdir))
+
+        self._server_http_port, self._server_pb_port = self._get_config_tcp_ports()
+
+    def _get_config_tcp_ports(self):
+        pb_port = 17000
+        http_port = 8010
+        try:
+            with open(os.path.join(self._configdir, self._server_config_file_name)) as f:
+                for line in f:
+                    if '=' in line:
+                        if 'protocols' in line and 'pb' in line and 'port' in line:
+                            pb = eval(line.split('=', 1)[1])
+                            pb_port = int((pb['pb']['port']))
+                        if 'www' in line and 'port' in line:
+                            http = eval(line.split('=', 1)[1])
+                            http_port = int((http['port']))
+        except:
+            print("Unable to detect http and pb ports from config. Using defaults")
+        return http_port, pb_port
+
+    def start(self, basetempdir=None, no_clean=False, number_workers=1, use_system_version=False):
+        try:
+            self._base_workdir_temp = os.path.abspath(os.path.realpath(create_tempdir(basetempdir)))
+            if self._base_workdir_temp.startswith(self._configdir):
+                raise ValueError('The temporal working directory {} cant be located inside configdir {}'.format(self._base_workdir_temp, self._configdir))
+            if not use_system_version:
+                self._setup_virtualenv()
+            if not (cmd_exists('twistd') and cmd_exists('buildbot')):
+                raise RuntimeError('Buildbot is not installed.')
+            self._setup_server_workdir()
+            server_runner = multiprocessing.Process(target=self._start_server)
+            server_runner.start()
+            self._wait_for_server_ready()
+            if number_workers == 0:
+                print(' - To manually attach a build worker use this info:\n'
+                      + '     TCP port for the worker-to-server connection: {}\n'.format(self._server_pb_port)
+                      + '     worker-id: the one defined at {}\n'.format(os.path.join(self._server_wordir, 'passwords.json'))
+                      + '     password:  password\n')
+            elif number_workers == 1:
+                worker = 'local-worker'
+                worker_runner = multiprocessing.Process(target=self._start_worker, args=(worker,))
+                worker_runner.start()
+                print(' - Worker started!.\n'
+                      + '     Check the log for at {}/local-worker/worker.log\n'.format(self._base_workdir_temp)
+                      + '     tail -f {}/local-worker/worker.log\n'.format(self._base_workdir_temp))
+                worker_runner.join()
+            else:
+                worker_runners = []
+                for worker in self._get_list_workers():
+                    worker_runner = multiprocessing.Process(target=self._start_worker, args=(worker,))
+                    worker_runner.start()
+                    worker_runners.append(worker_runner)
+                print(' - Workers started!.\n'
+                      + '     Check the log for each one at {}/WORKERNAMEID/worker.log\n'.format(self._base_workdir_temp)
+                      + '     tail -f {}/*/worker.log\n'.format(self._base_workdir_temp))
+                for worker_runner in worker_runners:
+                    worker_runner.join()
+            server_runner.join()
+        except KeyboardInterrupt:
+            pass  # no print the exception
+        except:
+            traceback.print_exc()
+        finally:
+            try:
+                # The children may exit between the check and the kill call.
+                # Ignore any exception raised here.
+                for c in multiprocessing.active_children():
+                    # Send the signal to the whole process group.
+                    # Otherwise some twistd sub-childs can remain alive.
+                    os.killpg(os.getpgid(c.pid), signal.SIGKILL)
+            except:
+                pass
+            if not no_clean:
+                self._clean()
+            sys.exit(0)
+
+    def _wait_for_server_ready(self):
+        server_ready_check_counter = 0
+        while True:
+            if os.path.isfile(self._server_ready_fd):
+                return
+            if server_ready_check_counter > 60:
+                print('ERROR: buildbot server has not started after waiting 60 seconds for it.')
+
+                if os.path.isfile(self._server_log):
+                    print('The server.log file contains the following:')
+                    with open(self._server_log, 'r') as f:
+                        print(f.read())
+                else:
+                    print('There is no server.log on the directory. That means a general failure starting buildbot.')
+
+                raise RuntimeError('buildbot server has not started after waiting 60 seconds for it.')
+            sleep(1)
+            server_ready_check_counter += 1
+
+    def _create_mock_worker_passwords_dict(self):
+        with open(os.path.join(self._server_wordir, 'config.json'), 'r') as config_json:
+            config_dict = json.load(config_json)
+        result = dict([(worker['name'], 'password') for worker in config_dict['workers']])
+        return result
+
+    def _setup_server_workdir(self):
+        self._server_wordir = os.path.join(self._base_workdir_temp, 'buildbot-server')
+        assert(not os.path.exists(self._server_wordir))
+        self._server_log = os.path.join(self._server_wordir, 'server.log')
+        self._server_ready_fd = os.path.join(self._server_wordir, '.server-is-ready')
+        print('Copying files from {} to {} ...'.format(self._configdir, self._server_wordir))
+        shutil.copytree(self._configdir, self._server_wordir)
+        print('Generating buildbot files at {} ...'.format(self._server_wordir))
+        with open(os.path.join(self._server_wordir, 'buildbot.tac'), 'w') as f:
+            f.write(buildbot_server_tac % {'config_file': self._server_config_file_name})
+        with open(os.path.join(self._server_wordir, 'passwords.json'), 'w') as passwords_file:
+            passwords_file.write(json.dumps(self._create_mock_worker_passwords_dict(), indent=4, sort_keys=True))
+
+    def _setup_virtualenv(self):
+        if cmd_exists('virtualenv'):
+            print('Setting up virtualenv at {} ... '.format(self._base_workdir_temp))
+            virtualenv_cmd = ['virtualenv', '-p', 'python3', 'venv']
+            virtualenv_process = subprocess.Popen(virtualenv_cmd, cwd=self._base_workdir_temp,
+                                                  stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            stdout, stderr = virtualenv_process.communicate()
+            print_if_error_stdout_stderr(virtualenv_cmd, virtualenv_process.returncode, stdout, stderr)
+            virtualenv_bindir = os.path.join(self._base_workdir_temp, 'venv', 'bin')
+            virtualenv_pip = os.path.join(virtualenv_bindir, 'pip')
+            if not os.access(virtualenv_pip, os.X_OK):
+                print('Something went wrong setting up virtualenv'
+                      'Trying to continue using the system version of buildbot')
+                return
+            print('Setting up buildbot dependencies on the virtualenv ... ')
+            # The idea is to install the very same version of buildbot and its
+            # dependencies than the ones used for running https://build.webkit.org/about
+            buildbot_version = '2.10.5'
+            pip_cmd = [virtualenv_pip, 'install',
+                       'buildbot=={}'.format(buildbot_version),
+                       'buildbot-console-view=={}'.format(buildbot_version),
+                       'buildbot-grid-view=={}'.format(buildbot_version),
+                       'buildbot-waterfall-view=={}'.format(buildbot_version),
+                       'buildbot-worker=={}'.format(buildbot_version),
+                       'buildbot-www=={}'.format(buildbot_version),
+                       'twisted==21.2.0',
+                       'requests==2.21.0',
+                       'lz4==1.1.0']
+            pip_process = subprocess.Popen(pip_cmd, cwd=self._base_workdir_temp,
+                                           stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            stdout, stderr = pip_process.communicate()
+            print_if_error_stdout_stderr(pip_cmd, pip_process.returncode, stdout, stderr)
+            os.environ['PATH'] = virtualenv_bindir + ':' + os.environ['PATH']
+            return
+        print('WARNING: virtualenv not installed. '
+              'Trying to continue using the system version of buildbot')
+
+    def _upgrade_db_needed(self):
+        with open(self._server_log) as f:
+            for l in f:
+                if 'upgrade the database' in l:
+                    return True
+        return False
+
+    def _start_server(self):
+        # This is started via multiprocessing. We set a new process group here
+        # to be able to reliably kill this subprocess and all of its child on clean.
+        os.setsid()
+        dbupgraded = False
+        retry = True
+        if check_tcp_port_open('localhost', self._server_pb_port):
+            print('ERROR: There is some process already listening in port {}'.format(self._server_pb_port))
+            return 1
+        while retry:
+            retry = False
+            print('Starting the buildbot server process ...')
+            twistd_cmd = ['twistd', '-l', self._server_log, '-noy', 'buildbot.tac']
+            twistd_server_process = subprocess.Popen(twistd_cmd, cwd=self._server_wordir,
+                                                     stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            while twistd_server_process.poll() is None:
+                if check_tcp_port_open('localhost', self._server_pb_port):
+                    print('Test buildbot server ready!\n'
+                          + 'Press CTRL-C to stop\n\n'
+                          + ' - See buildbot server log:\n'
+                          + '     tail -f {}\n\n'.format(self._server_log)
+                          + ' - Open a browser to:\n'
+                          + '     http://localhost:{}\n'.format(self._server_http_port))
+                    with open(self._server_ready_fd, 'w') as f:
+                        f.write('ready')
+                    twistd_server_process.wait()
+                    return 0
+                sleep(1)
+            stdout, stderr = twistd_server_process.communicate()
+            if twistd_server_process.returncode == 0 and self._upgrade_db_needed() and not dbupgraded:
+                retry = True
+                dbupgraded = True
+                print('Upgrading the database ...')
+                upgrade_cmd = ['buildbot', 'upgrade-master', self._server_wordir]
+                upgrade_process = subprocess.Popen(upgrade_cmd, cwd=self._server_wordir,
+                                                   stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+                stdout, stderr = upgrade_process.communicate()
+                print_if_error_stdout_stderr(upgrade_cmd, upgrade_process.returncode, stdout, stderr)
+            else:
+                print_if_error_stdout_stderr(twistd_cmd, twistd_server_process.returncode, stdout, stderr,
+                                             'Check the log at {}'.format(self._server_log))
+        return twistd_server_process.returncode
+
+    def _get_list_workers(self):
+        password_list = os.path.join(self._server_wordir, 'passwords.json')
+        with open(password_list) as f:
+            passwords = json.load(f)
+        list_workers = []
+        for worker in passwords:
+            list_workers.append(str(worker))
+        return list_workers
+
+    def _start_worker(self, worker):
+        # This is started via multiprocessing. We set a new process group here
+        # to be able to reliably kill this subprocess and all of its child on clean.
+        os.setsid()
+        worker_workdir = os.path.join(self._base_workdir_temp, worker)
+        os.mkdir(worker_workdir)
+        with open(os.path.join(worker_workdir, 'buildbot.tac'), 'w') as f:
+            f.write(buildbot_worker_tac % {'worker_name': worker, 'server_pb_port': self._server_pb_port})
+        twistd_cmd = ['twistd', '-l', 'worker.log', '-noy', 'buildbot.tac']
+        twistd_worker_process = subprocess.Popen(twistd_cmd, cwd=worker_workdir,
+                                                 stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        stdout, stderr = twistd_worker_process.communicate()
+        print_if_error_stdout_stderr(twistd_cmd, twistd_worker_process.returncode, stdout, stderr,
+                                     'Check the log at {}'.format(os.path.join(worker_workdir, 'worker.log')))
+        return twistd_worker_process.returncode
+
+    def _clean(self):
+        if os.path.isdir(self._base_workdir_temp):
+            print('\n\nCleaning {} ... \n'.format(self._base_workdir_temp))
+            # shutil.rmtree can fail if we hold an open file descriptor on temp_dir
+            # (which is very likely when cleaning) or if temp_dir is a NFS mount.
+            # Use rm instead that always works.
+            rm = subprocess.Popen(['rm', '-fr', self._base_workdir_temp])
+            rm.wait()
+
+
+if __name__ == '__main__':
+    if sys.version_info < (3, 5):
+        print('ERROR: Please use Python 3. This script is not compatible with Python 2.')
+        sys.exit(1)
+
+    parser = argparse.ArgumentParser()
+    configuration = parser.add_mutually_exclusive_group(required=True)
+    configuration.add_argument('--ews', action='store_const', const='ews', dest='configuration',
+                               help='Simulate the EWS buildbot server (ews-build.webkit.org)')
+    configuration.add_argument('--post-commit', action='store_const', const='post_commit', dest='configuration',
+                               help='Simulate the post-commit buildbot server (build.webkit.org)')
+    configuration.add_argument('--config-dir', default=None, dest='configdir', type=str,
+                               help='Specify the directory that contains the buildbot config files')
+    parser.add_argument('--base-temp-dir', help='Path where the temporal working directory will be created. '
+                        'Note: To trigger test builds with the test workers you need enough free space on that path.',
+                        dest='basetempdir', default=None, type=str)
+    parser.add_argument('--no-clean', help='Do not clean the temporal working dir on exit.',
+                        dest='no_clean', action='store_true')
+    workers = parser.add_mutually_exclusive_group(required=False)
+    workers.add_argument('--no-workers', help='Do not start any workers.',
+                        dest='number_workers', action='store_const', const=0)
+    workers.add_argument('--all-workers', help='Instead of starting only one worker that round-robins between all the queues, '
+                                               'start multiple parallel workers as defined on the server config.',
+                        dest='number_workers', action='store_const', const=float('inf'))
+    parser.add_argument('--use-system-version', help='Instead of setting up a virtualenv with the buildbot version '
+                        'used by build.webkit.org, use the buildbot version installed on this system.',
+                        dest='use_system_version', action='store_true')
+    args = parser.parse_args()
+
+    if args.configuration == "ews":
+        configdir = os.path.join(os.path.dirname(__file__), 'ews-build')
+    elif args.configuration == "post_commit":
+        configdir = os.path.join(os.path.dirname(__file__), 'build-webkit-org')
+    else:
+        configdir = args.configdir
+
+    if args.number_workers is None:
+        args.number_workers = 1
+
+    buildbot_test_runner = BuildbotTestRunner(configdir)
+    buildbot_test_runner.start(args.basetempdir, args.no_clean, args.number_workers, args.use_system_version)

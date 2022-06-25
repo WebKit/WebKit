@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: PASS
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+

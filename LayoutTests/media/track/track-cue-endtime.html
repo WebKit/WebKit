@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+    <head>
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+    
+        <script>
+            let textTrack;
+            let shouldBeActiveCue;
+            let activeCues;
+
+            function setup() 
+            {
+                findMediaElement();
+                video.src = findMediaFile("video", "../content/test");
+
+                run("textTrack = video.addTextTrack('subtitles')");
+                run("textTrack.addCue(new VTTCue(1, 2, 'This should be gone by 2s.'))");
+                run("shouldBeActiveCue = new VTTCue(2, 3, 'This should appear alone at 2s.')");
+                run("textTrack.addCue(shouldBeActiveCue)");
+                consoleWrite("");
+            }
+
+            function canplaythrough()
+            {
+                run("video.currentTime = 2");
+                consoleWrite("");
+            }
+
+            function seeked()
+            {
+                activeCues = textTrack.activeCues;
+
+                testExpected('activeCues.length', 1);
+                testExpected('shouldBeActiveCue', activeCues[0]);
+                consoleWrite("");
+
+                endTest();
+            }
+
+            setCaptionDisplayMode('Automatic');
+
+            waitForEvent('canplaythrough', canplaythrough);
+
+            waitForEvent('seeked', seeked);
+            
+        </script>
+    </head>
+    <body onload="setup()">
+        <video controls></video>
+
+        <p>Test to ensure that a cue with an endtime equal to the current time is not active.</p>
+    </body>
+</html>

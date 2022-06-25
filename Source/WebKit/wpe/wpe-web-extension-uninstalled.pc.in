@@ -1,0 +1,12 @@
+prefix=@CMAKE_BINARY_DIR@
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/DerivedSources/ForwardingHeaders
+
+Name: WPE WebKit Web process extensions
+Description: Embeddable Web content engine - Web process extensions
+URL: https://wpewebkit.org
+Version: @PROJECT_VERSION@
+Requires: glib-2.0 libsoup-@SOUP_API_VERSION@ wpe-1.0
+Libs: -L${libdir} -lWPEWebKit-@WPE_API_VERSION@
+Cflags: -I${includedir}/wpe-extension

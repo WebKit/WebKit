@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Test for WebKit bug 78595: CollectingRules and QueryingRules modes of SelectorChecker miss some complex selectors with pseudo elements</title>
+    <style type="text/css">
+      .parent.secondParent .firstChild:before {
+          color: brown;
+          content: "brown";
+      }
+
+      .topParent.topmost .parent.secondParent .secondChild:before {
+          color: cyan;
+          content: "cyan";
+      }
+
+      .parent.secondParent > .thirdChild:before {
+          color: red;
+          content: "red";
+      }
+
+      .topParent.topmost > .parent.secondParent > .fourthChild:before {
+          color: magenta;
+          content: "magenta";
+      }
+
+      .parent.predecessor + .parent.firstParent:before {
+          color: green;
+          content: "green";
+      }
+
+      .parent.firstParent ~ .secondParent:before {
+          color: lime;
+          content: "lime";
+      }
+
+      .parent.firstParent + .parent.secondParent + .thirdParent:before {
+          color: blue;
+          content: "blue";
+      }
+
+      .parent.predecessor ~ .parent.secondParent ~ .fourthParent:before {
+          color: crimson;
+          content: "crimson";
+      }
+
+      .pass {
+          color: green;
+      }
+
+      .fail {
+          color: red;
+      }
+
+    </style>
+    <script type="text/javascript">
+      if (window.testRunner)
+          testRunner.dumpAsText();
+
+      var tests = [
+        { 'elementId' : 'firstChild', 'expectedValue' : 'brown' },
+        { 'elementId' : 'secondChild', 'expectedValue' : 'cyan' },
+        { 'elementId' : 'thirdChild', 'expectedValue' : 'red' },
+        { 'elementId' : 'fourthChild', 'expectedValue' : 'magenta' },
+        { 'elementId' : 'firstParent', 'expectedValue' : 'green' },
+        { 'elementId' : 'secondParent', 'expectedValue' : 'lime' },
+        { 'elementId' : 'thirdParent', 'expectedValue' : 'blue' },
+        { 'elementId' : 'fourthParent', 'expectedValue' : 'crimson' },
+      ];
+
+      function runTests()
+      {
+        var resultsElement = document.getElementById('results');
+
+        tests.forEach(function(curTest) {
+          var msg = document.createElement('div');
+          var element = document.querySelector("#" + curTest.elementId);
+
+          var mainMessage;
+          var matchedRules;
+          if (!element)
+              mainMessage = "Element with id #" + curTest.elementId + " not found";
+          else {
+              matchedRules = window.getMatchedCSSRules(element, "before");
+              if (!matchedRules || matchedRules.length !== 1)
+                  mainMessage = " Matching rules for #" + curTest.elementId + ":before do not contain a single rule";
+          }
+          if (mainMessage) {
+              msg.innerHTML = "<span class='fail'>FAIL</span>" + mainMessage;
+              resultsElement.appendChild(msg);
+              return;
+          }
+          var value = matchedRules[0].style.color;
+          mainMessage = " Expected '" + curTest.expectedValue + "' for color in the matched CSS rule for element with id " +
+              curTest.elementId + " and pseudo-element :before";
+          if (value == curTest.expectedValue)
+              msg.innerHTML = "<span class='pass'>PASS</span>" + mainMessage + " and got '" + value + "'";
+          else
+              msg.innerHTML = "<span class='fail'>FAIL</span>" + mainMessage + " but instead got '" + value + "'";
+          resultsElement.appendChild(msg);
+        });
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+      }
+    </script>
+  </head>
+  <body onload="runTests();">
+    <h3>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=24021">WebKit bug 78595</a>: CollectingRules and QueryingRules modes of SelectorChecker miss some complex selectors with pseudo elements</h3>
+    <br />
+    <div class="topParent topmost">
+      <div class="parent predecessor"></div>
+      <div class="parent firstParent" id="firstParent"></div>
+      <div class="parent secondParent" id="secondParent">
+        <div class="firstChild" id="firstChild"></div>
+        <div class="secondChild" id="secondChild"></div>
+        <div class="thirdChild" id="thirdChild"></div>
+        <div class="fourthChild" id="fourthChild"></div>
+      </div>
+      <div class="parent thirdParent" id="thirdParent"></div>
+      <div class="parent fourthParent" id="fourthParent"></div>
+    </div>
+    <br />
+    <div id="results"></div>
+  </body>
+</html>

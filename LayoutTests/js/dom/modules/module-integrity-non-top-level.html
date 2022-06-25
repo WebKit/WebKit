@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Non top level module script should work even with integrity</title>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+promise_test(() => {
+    return new Promise(function (resolve, reject) {
+        var script = document.createElement('script');
+        script.type = 'module';
+        script.src = './script-tests/module-integrity-non-top-level.js';
+        script.integrity = 'sha256-XLav4d6mPNJP39uTWTzatQ7c3DqGXT1GyIb+3tnr7kA=';
+        script.onload = function () {
+            assert_equals(window.nonTopLevelModuleIsExecuted, true);
+            resolve();
+        };
+        script.onerror = reject;
+        document.body.appendChild(script);
+    });
+}, 'Non top level module script should work even with integrity');
+</script>
+</body>
+</html>

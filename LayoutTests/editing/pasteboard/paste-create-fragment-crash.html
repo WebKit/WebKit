@@ -1,0 +1,21 @@
+<script>
+  onload = () => {
+    if (!window.testRunner)
+      return;
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+    document.documentElement.prepend('\ud800');
+    getSelection().collapse(document.head, 1);
+    getSelection().extend(document.head);
+    document.designMode = 'on';
+    document.execCommand('InsertParagraph');
+    document.execCommand('SelectAll');
+    document.execCommand('Copy');
+    document.execCommand('Paste');
+    setTimeout(() => {
+        document.documentElement.innerHTML = "Test passes if it does not crash";
+        testRunner.notifyDone();
+    });
+  };
+</script>
+

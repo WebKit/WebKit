@@ -1,0 +1,11 @@
+Tests that document.importNode(null) throws a TypeError
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.importNode(null) threw exception TypeError: Argument 1 ('node') to Document.importNode must be an instance of Node.
+PASS document.importNode() threw exception TypeError: Not enough arguments.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,26 @@
+<style>
+  html {
+    transition-timing-function: cubic-bezier(1, -100, 1, 1);
+  }
+  html, div {
+    transition-duration: 10ms;
+  }
+  div {
+    border-radius: 1%;
+    transition-timing-function: steps(1, jump-start);
+  }
+</style>
+<script>
+  onload = () => {
+    document.documentElement.style.zoom = '2';
+    let div0 = document.createElement('div');
+    document.body.appendChild(div0);
+    document.body.offsetTop;
+    div0.style.borderTopLeftRadius = '1px';
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+    }
+  };
+
+</script>
+PASS

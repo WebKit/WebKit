@@ -1,0 +1,47 @@
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script>
+    jsTestIsAsync = true;
+
+    function runTest() {
+        description("This tests that changing the value of a menu list sends a notification even when it's not popped open.");
+
+        var menulist = document.getElementById("menulist");
+        menulist.focus();
+        var accessibleMenulist = accessibilityController.focusedElement;
+        var eventTarget = accessibilityController.platformName == "atspi" ? accessibleMenulist.childAtIndex(0) : accessibleMenulist;
+
+        function listener(notification) {
+            debug("MenuList received notification: " + notification);
+            eventTarget.removeNotificationListener(listener);
+            finishJSTest();
+        }
+        eventTarget.addNotificationListener(listener);
+
+        // Change the selected index.
+        menulist.selectedIndex = 1;
+    }
+
+    if (window.testRunner && window.accessibilityController) {
+        window.addEventListener('load', function() {
+            debug("Load event notification received.");
+            setTimeout(runTest, 10);
+        }, false);
+    }
+</script>
+</head>
+<body>
+
+<select id="menulist">
+  <option selected>One</option>
+  <option>Two</option>
+  <option>Three</option>
+</select>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

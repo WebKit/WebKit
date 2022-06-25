@@ -1,0 +1,45 @@
+<html>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+</script>
+<body>
+    
+    <div id="result"></div>
+    
+    <!-- Test internally named linked anchors -->
+    <li class="toclevel-2"><a href="#Tourette_syndrome" id="tourette_anchor"><span class="tocnumber">2.2</span> <span class="toctext">Tourette syndrome</span></a></li>
+    <p><a name="Tourette_syndrome" id="Tourette_syndrome"></a></p>
+    <h3><span class="editsection">[<a href="/w/index.php?title=Samuel_Johnson&amp;action=edit&amp;section=11" title="Edit section: Tourette syndrome">edit</a>]</span> <span class="mw-headline">Tourette syndrome</span></h3>
+     
+    <A HREF="#bottom" id="bottom_anchor">Link to anchor</A> <A HREF="#bottom2" id="bottom2_anchor">Link to div</A>
+    <BR><BR><BR><BR><BR><BR><BR><BR><BR><BR>
+    <BR><BR><BR><BR><BR>This is some text in the middle<BR><BR><BR><BR><BR>
+    <BR><BR><BR><BR><BR><BR><BR><BR><BR><BR>
+    This is some text.
+    This is a bottom anchor<a id="bottom"></A>
+    <BR><BR><BR><BR><BR><BR><BR><BR><BR><BR>
+    <DIV ID="bottom2">This is a div</DIV>
+
+
+    <script>
+        if (window.accessibilityController) {
+            var result = document.getElementById("result");
+            result.innerText += "Anchor Tests\n";
+            result.innerText += "----------------------\n";
+
+            var labeledItem = document.getElementById("tourette_anchor");
+            labeledItem.focus();
+            result.innerText += accessibilityController.focusedElement.attributesOfLinkedUIElements() + "\n\n"; 
+
+            labeledItem = document.getElementById("bottom_anchor");
+            labeledItem.focus();
+            result.innerText += accessibilityController.focusedElement.attributesOfLinkedUIElements() + "\n\n"; 
+
+            labeledItem = document.getElementById("bottom2_anchor");
+            labeledItem.focus();
+            result.innerText += accessibilityController.focusedElement.attributesOfLinkedUIElements() + "\n\n"; 
+        }
+    </script>
+</body>
+</html>

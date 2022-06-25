@@ -1,0 +1,71 @@
+Testing the TimeControl class.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS timeControl.element.localName is "div"
+PASS timeControl.element.className is "time-control"
+
+PASS timeControl.elapsedTimeLabel is an instance of TimeLabel
+PASS timeControl.scrubber is an instance of Slider
+PASS timeControl.durationTimeLabel is an instance of TimeLabel
+PASS timeControl.remainingTimeLabel is an instance of TimeLabel
+
+timeControl.width = 500;
+PASS timeControl.children.length is 3
+PASS timeControl.children[0] is timeControl.elapsedTimeLabel
+PASS timeControl.children[1] is timeControl.scrubber
+PASS timeControl.children[2] is timeControl.durationTimeLabel
+PASS timeControl.elapsedTimeLabel.x is 0
+PASS timeControl.elapsedTimeLabel.visible is true
+PASS timeControl.scrubber.x is 32
+PASS timeControl.scrubber.width is 436
+PASS timeControl.durationTimeLabel.x is 473
+
+timeControl.width = 100;
+PASS timeControl.children.length is 3
+PASS timeControl.children[0] is timeControl.elapsedTimeLabel
+PASS timeControl.children[1] is timeControl.scrubber
+PASS timeControl.children[2] is timeControl.remainingTimeLabel
+PASS timeControl.elapsedTimeLabel.visible is false
+PASS timeControl.scrubber.x is 0
+PASS timeControl.scrubber.width is 62
+PASS timeControl.remainingTimeLabel.x is 67
+
+timeControl.width = 200;
+PASS timeControl.children.length is 3
+PASS timeControl.children[0] is timeControl.elapsedTimeLabel
+PASS timeControl.children[1] is timeControl.scrubber
+PASS timeControl.children[2] is timeControl.durationTimeLabel
+PASS timeControl.elapsedTimeLabel.x is 0
+PASS timeControl.elapsedTimeLabel.visible is true
+PASS timeControl.scrubber.x is 32
+PASS timeControl.scrubber.width is 136
+PASS timeControl.durationTimeLabel.x is 173
+
+timeControl.durationTimeLabel.element.click();
+PASS timeControl.children.length is 3
+PASS timeControl.children[0] is timeControl.elapsedTimeLabel
+PASS timeControl.children[1] is timeControl.scrubber
+PASS timeControl.children[2] is timeControl.remainingTimeLabel
+PASS timeControl.elapsedTimeLabel.x is 0
+PASS timeControl.elapsedTimeLabel.visible is true
+PASS timeControl.scrubber.x is 32
+PASS timeControl.scrubber.width is 130
+PASS timeControl.remainingTimeLabel.x is 167
+
+timeControl.remainingTimeLabel.element.click();
+PASS timeControl.children.length is 3
+PASS timeControl.children[0] is timeControl.elapsedTimeLabel
+PASS timeControl.children[1] is timeControl.scrubber
+PASS timeControl.children[2] is timeControl.durationTimeLabel
+PASS timeControl.elapsedTimeLabel.x is 0
+PASS timeControl.elapsedTimeLabel.visible is true
+PASS timeControl.scrubber.x is 32
+PASS timeControl.scrubber.width is 136
+PASS timeControl.durationTimeLabel.x is 173
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

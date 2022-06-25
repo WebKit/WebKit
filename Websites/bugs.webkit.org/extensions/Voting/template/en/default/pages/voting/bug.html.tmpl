@@ -1,0 +1,51 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # bug: Bugzilla::Bug that we are listing the votes for.
+  # users: list of hashes. May be empty. Each hash has two members:
+  #   login_name: string. The login name of the user whose vote is attached
+  #   vote_count: integer. The number of times that user has votes for this bug.
+  #%]
+
+[% subheader = BLOCK %]
+  [% "$terms.Bug $bug.id" FILTER bug_link(bug) FILTER none %] - [% bug.short_desc FILTER html %]
+[% END %]
+
+[% PROCESS global/header.html.tmpl
+           title = "Show Votes"
+           subheader = subheader
+           style_urls = [ "extensions/Voting/web/style.css" ]
+ %]
+
+[% total = 0 %]
+<table id="bug_votes">
+  <tr>
+    <th>Who</th>
+    <th>Number of votes</th>
+  </tr>
+
+  [% FOREACH voter = users %]
+    [% total = total + voter.vote_count %]
+    <tr>
+      <td>
+          <a href="page.cgi?id=voting/user.html&amp;user_id=
+                  [%- voter.id FILTER uri %]">
+          [% voter.login_name FILTER email FILTER html %]
+        </a>
+      </td>
+      <td class="right">
+        [% voter.vote_count FILTER html %]
+      </td>
+    </tr>
+  [% END %]
+</table>
+
+<p>Total votes: [% total FILTER html %]</p>
+
+[% PROCESS global/footer.html.tmpl %]

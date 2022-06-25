@@ -1,0 +1,15 @@
+<title>This tests that simple line layout wraps lines the same way normal line layout does when multiple (text)renderers are present and there's a hyphen on the render boundary.</title>
+<style>
+    body { 
+    	border: 1px solid green; 
+    	width: 50px;
+    }
+</style>
+<body>
+</body>
+<script>
+document.body.appendChild(document.createTextNode("foobar -abc"));
+document.body.appendChild(document.createTextNode("defghijklmnopqrstvw"));
+document.body.appendChild(document.createTextNode(" foobar --"));
+document.body.appendChild(document.createTextNode(" abc"));
+</script>

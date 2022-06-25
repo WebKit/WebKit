@@ -1,0 +1,324 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createSyncSuite("WI.CSSKeywordCompletions");
+
+    function addTestForPartialPropertyName({name, description, text, caretPosition, allowEmptyPrefix, expectedCompletions, expectedCompletionCount}) {
+        suite.addTestCase({
+            name,
+            description,
+            test() {
+                allowEmptyPrefix ??= false;
+                expectedCompletions ??= [];
+                expectedCompletionCount ??= -1;
+
+                // FIXME: <webkit.org/b/227157> Styles: Support completions mid-token.
+                caretPosition ??= text.length;
+                let completionResults = WI.CSSKeywordCompletions.forPartialPropertyName(text, {caretPosition, allowEmptyPrefix});
+
+                if (expectedCompletionCount >= 0)
+                    InspectorTest.expectEqual(completionResults.completions.length, expectedCompletionCount, `Expected exactly ${expectedCompletionCount} completion results.`);
+
+                let completionStrings = completionResults.completions.map((completion) => WI.CSSCompletions.getCompletionText(completion));
+
+                // Because expected completions could be added at any time, just make sure the list contains our expected completions, instead of enforcing an exact match between expectations and reality.
+                let expectedCompletionsPresent = expectedCompletions.every((expectedCompletion) => {
+                    if (!completionStrings.includes(expectedCompletion)) {
+                        InspectorTest.fail(`Expected completion "${expectedCompletion}" in completions.`);
+                        return false;
+                    }
+                    return true;
+                });
+                InspectorTest.expectThat(expectedCompletionsPresent, "All expected completions were present.");
+            }
+        });
+    }
+
+    addTestForPartialPropertyName({
+        name: "WI.CSSKeywordCompletions.forPartialPropertyName.emptyTextDisallowsEmptyPrefix",
+        description: "Test that for empty text, there should be no completions when `allowEmptyPrefix` is `false`.",
+        text: "",
+        allowEmptyPrefix: false,
+        expectedCompletionCount: 0,
+    });
+
+    addTestForPartialPropertyName({
+        name: "WI.CSSKeywordCompletions.forPartialPropertyName.emptyTextAllowsEmptyPrefix",
+        description: "Test that for empty text, there should be completions when `allowEmptyPrefix` is `true`.",
+        text: "",
+        allowEmptyPrefix: true,
+        expectedCompletions: ["border", "color", "margin", "padding"],
+    });
+
+    addTestForPartialPropertyName({
+        name: "WI.CSSKeywordCompletions.forPartialPropertyName.singleCharacterMatches",
+        description: "Test that for a common single character, there will be multiple completions available.",
+        text: "r",
+        expectedCompletions: ["r", "range", "resize", "right", "rotate", "row-gap", "rx", "ry"],
+    });
+
+    addTestForPartialPropertyName({
+        name: "WI.CSSKeywordCompletions.forPartialPropertyName.multipleCharacterMatches",
+        description: "Test that for a more specific set of characters, there will be some number of matches.",
+        text: "rang",
+        expectedCompletions: ["range"],
+    });
+
+    // FIXME: This test will fail after addressing <webkit.org/b/227157> Styles: Support completions mid-token.
+    addTestForPartialPropertyName({
+        name: "WI.CSSKeywordCompletions.forPartialPropertyName.midTokenNoCompletions",
+        description: "Test that completions are not provided when the caret is positioned within the token.",
+        text: "margin",
+        caretPosition: 1,
+        expectedCompletionCount: 0,
+    });
+
+    function addTestForPartialPropertyValue({name, description, propertyName, text, caretPosition, expectedPrefix, expectedCompletions, expectedCompletionCount, additionalFunctionValueCompletionsProvider}) {
+        suite.addTestCase({
+            name,
+            description,
+            test() {
+                caretPosition ??= text.length;
+                expectedPrefix ??= text;
+                expectedCompletions ??= [];
+                expectedCompletionCount ??= -1;
+                additionalFunctionValueCompletionsProvider ??= () => [];
+
+                let completionResults = WI.CSSKeywordCompletions.forPartialPropertyValue(text, propertyName, {caretPosition, additionalFunctionValueCompletionsProvider});
+                InspectorTest.expectEqual(completionResults.prefix, expectedPrefix, `Expected result prefix to be "${expectedPrefix}"`);
+
+                if (expectedCompletionCount >= 0)
+                    InspectorTest.expectEqual(completionResults.completions.length, expectedCompletionCount, `Expected exactly ${expectedCompletionCount} completion results.`);
+
+                let completionStrings = completionResults.completions.map((completion) => WI.CSSCompletions.getCompletionText(completion));
+
+                // Because expected completions could be added at any time, just make sure the list contains our expected completions, instead of enforcing an exact match between expectations and reality.
+                let expectedCompletionsPresent = expectedCompletions.every((expectedCompletion) => {
+                    if (!completionStrings.includes(expectedCompletion)) {
+                        InspectorTest.fail(`Expected completion "${expectedCompletion}" in completions.`);
+                        return false;
+                    }
+                    return true;
+                });
+                InspectorTest.expectThat(expectedCompletionsPresent, "All expected completions were present.");
+            }
+        });
+    }
+
+    addTestForPartialPropertyValue({
+        name: "WI.CSSKeywordCompletions.forPartialPropertyValue.EmptyTop",
+        description: "Test that an empty value provides the expected default completions.",
+        propertyName: "top",
+        text: "",
+        expectedCompletions: ["env()", "initial", "revert", "unset", "var()"],
+    });
+
+    addTestForPartialPropertyValue({
+        name: "WI.CSSKeywordCompletions.forPartialPropertyValue.EmptyColor",
+        description: "Test that color completions provide the color functions as completions.",
+        propertyName: "color",
+        text: "",
+        expectedCompletions: ["black", "blue", "green", "red", "white", "papayawhip", "color()", "color-contrast()", "color-mix()", "env()", "hsl()", "hsla()", "hwb()", "lab()", "lch()", "rgb()", "rgba()", "var()"],
+    });
+
+    addTestForPartialPropertyValue({
+        name: "WI.CSSKeywordCompletions.forPartialPropertyValue.PartialColor",
+        description: "Test that a partial color name that also matches a full color name still provides the other completion.",
+        propertyName: "color",
+        text: "papaya",
+        expectedCompletions: ["papayawhip"],
+    });
+
+    addTestForPartialPropertyValue({
+        name: "WI.CSSKeywordCompletions.forPartialPropertyValue.EmptyWordSpacing",
+        description: "Test that the `word-spacing` property provides its expected completions.",
+        propertyName: "word-spacing",
+        text: "",
+        expectedCompletions: ["normal", "calc()"],
+    });
+
+    // `border: 1px | red`
+    addTestForPartialPropertyValue({
+        name: "WI.CSSKeywordCompletions.forPartialPropertyValue.MidLineBorder",
+        description: "Test that a completion can be performed between two other values.",
+        propertyName: "border",
+        text: "1px  red",
+        caretPosition: 4,
+        expectedPrefix: "",
+        expectedCompletions: ["solid"],
+    });
+
+    // `top: env(|`
+    addTestForPartialPropertyValue({
+        name: "WI.CSSKeywordCompletions.forPartialPropertyValue.EnvironmentFunctionCompletion",
+        description: "Test that a function completion can be performed inside a function without a closing parenthesis.",
+        propertyName: "top",
+        text: "env(",
+        expectedPrefix: "",
+        expectedCompletions: ["safe-area-inset-bottom", "safe-area-inset-left", "safe-area-inset-right", "safe-area-inset-top", "var()"],
+    });
+
+    // `top: env(|)`
+    addTestForPartialPropertyValue({
+        name: "WI.CSSKeywordCompletions.forPartialPropertyValue.MidLineEnvironmentFunction",
+        description: " Test that a function completion can be performed inside a function with a closing parenthesis.",
+        propertyName: "top",
+        text: "env()",
+        caretPosition: 4,
+        expectedPrefix: "",
+        expectedCompletions: ["safe-area-inset-bottom", "safe-area-inset-left", "safe-area-inset-right", "safe-area-inset-top", "var()"],
+    });
+
+    // `grid-template-columns: repeat(au|`
+    addTestForPartialPropertyValue({
+        name: "WI.CSSKeywordCompletions.forPartialPropertyValue.PartialFunctionValue",
+        description: "Test that completing a partial value inside a function produces expected completions.",
+        propertyName: "grid-template-columns",
+        text: "repeat(au",
+        expectedPrefix: "au",
+        expectedCompletions: ["auto-fill", "auto-fit"],
+    });
+
+    // `grid-template-columns: [linename1] 100px repeat(|, [linename2 linename3] 150px) [linename3] 100px [linename4]`
+    addTestForPartialPropertyValue({
+        name: "WI.CSSKeywordCompletions.forPartialPropertyValue.ComplexMultiValueFunction",
+        description: " Test that performing a completion mid-line inside a function right before a separator character, like a comma, produces expected completions.", 
+        propertyName: "grid-template-columns",
+        text: "[linename1] 100px repeat(, [linename2 linename3] 150px) [linename3] 100px [linename4]",
+        caretPosition: 25,
+        expectedPrefix: "",
+        expectedCompletions: ["auto-fill", "auto-fit", "var()"],
+    });
+
+    // `attr(|`
+    addTestForPartialPropertyValue({
+        name: "WI.CSSKeywordCompletions.forPartialPropertyValue.AttributeFunction",
+        description: "Test that attribute function value completions from the custom provider are used.",
+        text: "attr(",
+        expectedPrefix: "",
+        expectedCompletions: ["class", "id", "var()"],
+        additionalFunctionValueCompletionsProvider: () => ["class", "id"],
+    });
+
+    // `attr(c|)`
+    addTestForPartialPropertyValue({
+        name: "WI.CSSKeywordCompletions.forPartialPropertyValue.MidLineAttributeFunction",
+        description: "Test that attribute function value completions is inside a function with a closing parenthesis uses completions from the custom provider",
+        text: "attr(c)",
+        caretPosition: 6,
+        expectedPrefix: "c",
+        expectedCompletions: ["class"],
+        additionalFunctionValueCompletionsProvider: () => ["class", "id"],
+    });
+
+    // `var(|`
+    addTestForPartialPropertyValue({
+        name: "WI.CSSKeywordCompletions.forPartialPropertyValue.VariableFunction",
+        description: "Test that variable function value completions from the custom provider are used.",
+        text: "var(",
+        expectedPrefix: "",
+        expectedCompletions: ["--one", "--two"],
+        additionalFunctionValueCompletionsProvider: () => ["--one", "--two"],
+    });
+
+    // `var(--o|`
+    addTestForPartialPropertyValue({
+        name: "WI.CSSKeywordCompletions.forPartialPropertyValue.VariableFunctionFiltered",
+        description: "Test that variable function value completions from the custom provider are filtered.",
+        text: "var(--o",
+        expectedPrefix: "--o",
+        expectedCompletions: ["--one"],
+        additionalFunctionValueCompletionsProvider: () => ["--one", "--two"],
+    });
+
+    // `var(-x|`
+    addTestForPartialPropertyValue({
+        name: "WI.CSSKeywordCompletions.forPartialPropertyValue.InvalidVariableName",
+        description: "Test that an invalid variable name is still used as a prefix",
+        text: "var(-x",
+        expectedPrefix: "-x",
+        expectedCompletions: [],
+    });
+
+    // `var(--|`
+    addTestForPartialPropertyValue({
+        name: "WI.CSSKeywordCompletions.forPartialPropertyValue.IncompleteVariableName",
+        description: "Test that an incomplete variable name is still used as a prefix",
+        text: "var(--",
+        expectedPrefix: "--",
+        expectedCompletions: [],
+    });
+
+    // `env(--|`
+    addTestForPartialPropertyValue({
+        name: "WI.CSSKeywordCompletions.forPartialPropertyValue.DashedEnvironmentVariableName",
+        description: "Test that a dashed name used within env() is entirely used as a prefix",
+        text: "env(--",
+        expectedPrefix: "--",
+        expectedCompletions: [],
+    });
+
+    // `-webkit|`
+    addTestForPartialPropertyValue({
+        name: "WI.CSSKeywordCompletions.forPartialPropertyValue.VendorPrefixedValue",
+        description: "Test that a value that looks vendor-prefixed is entirely used as a prefix",
+        propertyName: "display",
+        text: "-webkit",
+        expectedPrefix: "-webkit",
+        expectedCompletions: ["-webkit-flex"],
+    });
+
+    // `calc(1 - |`
+    addTestForPartialPropertyValue({
+        name: "WI.CSSKeywordCompletions.forPartialPropertyValue.SubtractionCalc",
+        description: "Test that a whitespace-separated minus sign in calc() isn't included in the prefix",
+        text: "calc(1 - ",
+        expectedPrefix: "",
+        expectedCompletions: [],
+    });
+
+    // `calc(1 + var(|))`
+    addTestForPartialPropertyValue({
+        name: "WI.CSSKeywordCompletions.forPartialPropertyValue.VariableFunctionInCalc",
+        description: "Test that variable function value completions from the custom provider are used when the var() is nested inside a calc()",
+        text: "calc(1 + var())",
+        caretPosition: 13,
+        expectedPrefix: "",
+        expectedCompletions: ["--one", "--two"],
+        additionalFunctionValueCompletionsProvider: () => ["--one", "--two"],
+    });
+
+    // `hsl()a|`
+    addTestForPartialPropertyValue({
+        name: "WI.CSSKeywordCompletions.forPartialPropertyValue.NoWhitespaceAfterFunction",
+        description: "Test that color completions are not offered immediately after a closing parenthesis",
+        propertyName: "background",
+        text: "hsl()a",
+        caretPosition: 6,
+        expectedPrefix: "",
+        expectedCompletionCount: 0
+    });
+
+    // `hsl() a|`
+    addTestForPartialPropertyValue({
+        name: "WI.CSSKeywordCompletions.forPartialPropertyValue.WhitespaceAfterFunction",
+        description: "Test that color completions are offered when a closing parenthesis is followed by whitespace",
+        propertyName: "background",
+        text: "hsl() a",
+        caretPosition: 7,
+        expectedPrefix: "a",
+        expectedCompletions: ["aliceblue", "antiquewhite"],
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing WI.CSSKeywordCompletions.</p>
+</body>
+</html>

@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 256x18
+          text run at (0,0) width 256: "You should see one green square below."
+layer at (20,40) size 100x100
+  RenderBlock (positioned) {DIV} at (20,40) size 100x100 [bgcolor=#FF0000]
+layer at (20,40) size 100x100
+  RenderBlock (positioned) {DIV} at (20,40) size 100x100
+layer at (20,40) size 100x100
+  RenderBlock (relative positioned) {DIV} at (0,0) size 100x100 [bgcolor=#008000]

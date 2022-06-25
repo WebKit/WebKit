@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    :read-only::-webkit-scrollbar {
+      --a: var(--b), var(--c);
+    }
+  </style>
+  <script>
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    }
+    onload = async () => {
+      visualViewport.onresize = () => {
+        document.execCommand('Outdent');
+        setTimeout(function() { document.write("Test passes if it does not crash."); testRunner.notifyDone(); });
+      };
+      let blockquote = document.createElement('blockquote');
+      document.body.append(blockquote);
+      let p = document.createElement('p');
+      blockquote.append(p);
+      document.body.append(document.createElement('object'));
+      blockquote.append(document.createElement('iframe'));
+      let blockquote2 = document.createElement('blockquote');
+      document.documentElement.append(document.createElement('object'));
+      p.append(blockquote2);
+      blockquote2.append(document.createElement('iframe'));
+      document.body.innerHTML += '';
+      document.execCommand('SelectAll');
+      let animation = new Animation();
+      animation.play();
+      await animation.ready;
+      document.designMode = 'on';
+      if (window.caches)
+        await caches.has('d');
+      document.body.replaceChildren();
+    };
+  </script>
+</head>
+<body>
+</body>
+</html>

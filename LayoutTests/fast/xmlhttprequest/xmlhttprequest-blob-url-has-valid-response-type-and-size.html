@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+window.jsTestIsAsync = true;
+
+var xhr;
+var greenSquareBase64Encoded = [
+    "/9j/4AAQSkZJRgABAQEAYABgAAD/4QCARXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUA",
+    "AAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAA",
+    "AGAAAAABAAKgAgAEAAAAAQAAABCgAwAEAAAAAQAAABAAAAAA/9sAQwACAQECAQECAgECAgICAgMF",
+    "AwMDAwMGBAQDBQcGBwcHBgYGBwgLCQcICggGBgkNCQoLCwwMDAcJDQ4NDA4LDAwL/9sAQwECAgID",
+    "AgMFAwMFCwgGCAsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsLCwsL",
+    "CwsL/8AAEQgAEAAQAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//E",
+    "ALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJ",
+    "ChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeI",
+    "iYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq",
+    "8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQH",
+    "BQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJico",
+    "KSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZ",
+    "mqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/a",
+    "AAwDAQACEQMRAD8A90ooor+Kz/D8/9k="
+].join("");
+
+// Derived from <http://stackoverflow.com/questions/14967647/>
+function createBlobWithBase64EncodedData(base64EncodedData, mimeType)
+{
+    var decodedData = atob(base64EncodedData);
+    var length = decodedData.length;
+    var view = new Uint8Array(new ArrayBuffer(length));
+    for (var i = 0; i < length; ++i)
+        view[i] = decodedData.charCodeAt(i);
+    return new Blob([view.buffer], {type: mimeType});
+}
+
+function runTest()
+{
+    xhr = new XMLHttpRequest;
+    xhr.open("GET", URL.createObjectURL(createBlobWithBase64EncodedData(greenSquareBase64Encoded, "image/jpeg")));
+    xhr.responseType = "arraybuffer";
+    xhr.onload = function () {
+        shouldBeEqualToString("xhr.getResponseHeader('Content-Type')", "image/jpeg");
+        shouldBeEqualToString("xhr.getResponseHeader('Content-Length')", "764");
+        finishJSTest();
+    }
+    xhr.onerror = function () {
+        testFailed("Failed to fetch blob URL.");
+        finishJSTest();
+    }
+    xhr.send();
+}
+
+description("Tests that a blob URL fetched via XHR has appropriate Content-Type and Content-Length headers.");
+runTest();
+</script>
+</body>
+</html>

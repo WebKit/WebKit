@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<style>
+.induce-structural-layers div { transform: translateZ(0); transform-style: preserve-3d; }
+div { will-change: transform; }
+</style>
+<body class="induce-structural-layers" onload="run()">
+<script>
+const cMaxLayerTreeDepth = 128; // from GraphicsLayerCA.cpp
+
+function buildDeepLayerTree(text) {
+    let innermostDiv = document.createElement("div");
+    innermostDiv.textContent = text;
+
+    // Set up a layer tree that, if each div has a structural layer, has a depth
+    // that is greater than cMaxLayerTreeDepth, but without any structural layers,
+    // will be within the depth limit.
+    let e = innermostDiv;
+    for (let i = 0; i < cMaxLayerTreeDepth * 0.75; ++i) {
+        let f = document.createElement("div");
+        f.append(e);
+        e = f;
+    }
+    document.body.append(e);
+
+    return innermostDiv;
+}
+
+function removeStructuralLayers() {
+    document.body.className = '';
+}
+
+function nextAnimationFrame() {
+    return new Promise(requestAnimationFrame);
+}
+
+async function run() {
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    let innermostDiv1 = buildDeepLayerTree("First of two lines, at 0.5 opacity.");
+    let innermostDiv2 = buildDeepLayerTree("Second of two lines, in a scrollable element.");
+    await nextAnimationFrame();
+
+    // Change to layers that are too deep.
+    innermostDiv1.style.opacity = 0.5;
+    innermostDiv2.style.overflow = "scroll";
+    await nextAnimationFrame();
+
+    removeStructuralLayers();
+    await nextAnimationFrame();
+
+    document.documentElement.className = '';
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>

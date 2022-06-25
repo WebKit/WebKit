@@ -1,0 +1,17 @@
+This tests text descendants of modal dialog are accessible.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS backgroundAccessible() is false
+PASS text.isIgnored is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Other page content with a dummy focusable element
+
+Display a dialog
+
+Just an example.
+
+text

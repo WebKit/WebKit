@@ -1,0 +1,50 @@
+<html>
+<head>
+<title>Editing Test (Inserting a Thai character after a Thai prepend character)</title>
+<script src="../editing.js" language="javascript" type="text/javascript"></script>
+<script language="javascript" type="text/javascript">
+function log(str) {
+    var li = document.createElement("li");
+    li.appendChild(document.createTextNode(str));
+    var console = document.getElementById("console");
+    console.appendChild(li);
+}
+function editingTest() {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    var testarea = document.getElementById("test");
+    testarea.focus();
+    typeCharacterCommand(String.fromCharCode(0x0E2D));
+    typeCharacterCommand(String.fromCharCode(0x0E22));
+    typeCharacterCommand(String.fromCharCode(0x0E32));
+    typeCharacterCommand(String.fromCharCode(0x0E01));
+    typeCharacterCommand(String.fromCharCode(0x0E0D));
+    typeCharacterCommand(String.fromCharCode(0x0E35));
+    typeCharacterCommand(String.fromCharCode(0x0E48));
+    typeCharacterCommand(String.fromCharCode(0x0E1B));
+    typeCharacterCommand(String.fromCharCode(0x0E38));
+    typeCharacterCommand(String.fromCharCode(0x0E48));
+    typeCharacterCommand(String.fromCharCode(0x0E19));
+    moveSelectionBackwardByCharacterCommand();
+    moveSelectionBackwardByCharacterCommand();
+    moveSelectionBackwardByCharacterCommand();
+    typeCharacterCommand(String.fromCharCode(0x0E44));
+    typeCharacterCommand(String.fromCharCode(0x0E1B));
+    var expected_result = "\u0E2D\u0E22\u0E32\u0E01\u0E44\u0E1B\u0E0D\u0E35\u0E48\u0E1B\u0E38\u0E48\u0E19";
+    if (testarea.textContent == expected_result)
+        log("Succeeded.");
+     else
+        log("Failed. Actual: \"" + testarea.textContent.value + "\", Expected: \"" + expected_result + "\".");
+}
+</script>
+</head>
+<body>
+<p>This test tests whether we can insert a Thai character after a Thai "prepend" character.</p>
+<p>If this test succeeds, you can see a string "succeeded" below.</p>
+<div contenteditable id="test"></div>
+<ul id="console"></ul>
+<script language="javascript" type="text/javascript">
+runEditingTest();
+</script>
+</body>
+</html>

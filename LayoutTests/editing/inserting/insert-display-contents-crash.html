@@ -1,0 +1,27 @@
+<html>
+<head>
+<style>
+h6 {
+    padding-block-end: 1px;
+}
+li {
+    display: contents;
+}
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+onload = () => {
+    document.body.appendChild(document.createElement('h6'));
+    document.execCommand('SelectAll');
+    document.designMode = 'on';
+    document.execCommand('InsertOrderedList');
+    document.body.offsetTop;
+    document.styleSheets[0].insertRule(`br { display: contents; }`);
+    document.execCommand('InsertHTML', false, 'a<h1>');
+    document.execCommand('InsertHTML', false, '<h1>This test passes if WebKit does not crash. PASS');
+};
+</script>
+</head>
+</html>

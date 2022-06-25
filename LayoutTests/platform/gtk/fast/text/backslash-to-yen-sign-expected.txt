@@ -1,0 +1,44 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x250
+  RenderBlock {HTML} at (0,0) size 800x250
+    RenderBody {BODY} at (8,8) size 784x234
+      RenderBlock {DIV} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 313x17
+          text run at (0,0) width 313: "No font is specified. expected: backslash, actual: \\"
+      RenderBlock {DIV} at (0,18) size 784x18
+        RenderText {#text} at (0,0) size 350x17
+          text run at (0,0) width 350: "Using font \"MS PGothic\". expected: yen sign, actual: \x{A5}"
+      RenderBlock {DIV} at (0,36) size 784x18
+        RenderText {#text} at (0,0) size 341x17
+          text run at (0,0) width 341: "Using font \"MS Gothic\". expected: yen sign, actual: \x{A5}"
+      RenderBlock {DIV} at (0,54) size 784x18
+        RenderText {#text} at (0,0) size 356x17
+          text run at (0,0) width 356: "Using font \"MS PMincho\". expected: yen sign, actual: \x{A5}"
+      RenderBlock {DIV} at (0,72) size 784x18
+        RenderText {#text} at (0,0) size 347x17
+          text run at (0,0) width 347: "Using font \"MS Mincho\". expected: yen sign, actual: \x{A5}"
+      RenderBlock {DIV} at (0,90) size 784x18
+        RenderText {#text} at (0,0) size 317x17
+          text run at (0,0) width 317: "Using font \"Meiryo\". expected: yen sign, actual: \x{A5}"
+      RenderBlock {DIV} at (0,108) size 784x18
+        RenderText {#text} at (0,0) size 387x17
+          text run at (0,0) width 387: "Using font \"\x{FF2D}\x{FF33} \x{FF30}\x{30B4}\x{30B7}\x{30C3}\x{30AF}\". expected: yen sign, actual: \x{A5}"
+      RenderBlock {DIV} at (0,126) size 784x18
+        RenderText {#text} at (0,0) size 371x17
+          text run at (0,0) width 371: "Using font \"\x{FF2D}\x{FF33} \x{30B4}\x{30B7}\x{30C3}\x{30AF}\". expected: yen sign, actual: \x{A5}"
+      RenderBlock {DIV} at (0,144) size 784x18
+        RenderText {#text} at (0,0) size 355x17
+          text run at (0,0) width 355: "Using font \"\x{FF2D}\x{FF33} \x{FF30}\x{660E}\x{671D}\". expected: yen sign, actual: \x{A5}"
+      RenderBlock {DIV} at (0,162) size 784x18
+        RenderText {#text} at (0,0) size 339x17
+          text run at (0,0) width 339: "Using font \"\x{FF2D}\x{FF33} \x{660E}\x{671D}\". expected: yen sign, actual: \x{A5}"
+      RenderBlock {DIV} at (0,180) size 784x18
+        RenderText {#text} at (0,0) size 335x17
+          text run at (0,0) width 335: "Using font \"\x{30E1}\x{30A4}\x{30EA}\x{30AA}\". expected: yen sign, actual: \x{A5}"
+      RenderBlock {DIV} at (0,198) size 784x18
+        RenderText {#text} at (0,0) size 314x17
+          text run at (0,0) width 314: "Using font \"Times\". expected: backslash, actual: \\"
+      RenderBlock {DIV} at (0,216) size 784x18
+        RenderText {#text} at (0,0) size 316x17
+          text run at (0,0) width 316: "Using font \"foobar\". expected: backslash, actual: \\"

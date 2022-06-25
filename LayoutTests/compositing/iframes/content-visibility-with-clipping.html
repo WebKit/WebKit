@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        iframe {
+            position: absolute;
+            display: block;
+            left: 12.5px;
+            visibility: hidden;
+            will-change: transform;
+            border: 1px solid black;
+        }
+        
+        body.changed iframe {
+            visibility: visible;
+        }
+    </style>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        async function doTest()
+        {
+            await UIHelper.renderingUpdate();
+            document.body.classList.add('changed');
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+        
+        window.addEventListener('load', () => {
+            doTest();
+        }, false);
+    </script>
+</head>
+<body>
+    <iframe scrolling="no" srcdoc="
+        <style>
+        .box {
+            width: 100px;
+            height: 100px;
+            background-color: green;
+            transform: translateZ(0);
+        }
+        </style>
+        <div class='box'>&nbsp;</div>
+        "></iframe>
+</body>
+</html>

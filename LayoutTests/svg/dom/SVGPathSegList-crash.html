@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        var seg1 = path.createSVGPathSegLinetoAbs(10, 10);
+        var seg2 = path.createSVGPathSegLinetoAbs(100, 100);
+
+        path.pathSegList.initialize(seg1);
+        path.pathSegList.initialize(seg2);
+        path.pathSegList.initialize(seg1);
+        path.pathSegList.replaceItem(seg2, 0);
+        path.pathSegList.initialize(seg1);
+    </script>
+  </body>
+  <div>PASS: Did not crash.</div>
+</html>

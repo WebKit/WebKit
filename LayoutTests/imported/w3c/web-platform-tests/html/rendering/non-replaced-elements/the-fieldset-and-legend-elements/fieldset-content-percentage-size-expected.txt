@@ -1,0 +1,4 @@
+
+
+PASS A percentage height for an element in an auto-height fieldset should be ignored
+

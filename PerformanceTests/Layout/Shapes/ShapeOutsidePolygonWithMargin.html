@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="resources/shapes.css" type="text/css"></link>
+        <script src="../../resources/runner.js"></script>
+        <script src="resources/shapes.js"></script>
+    </head>
+    <body>
+        <pre id="log"></pre>
+        <script>
+            var properties = {
+                width: "200px",
+                height: "200px",
+                webkitShapeOutside: "polygon(0 0, 200px 40px, 0px 40px, 200px 80px, 0px 80px, 200px 120px, 0px 120px, 200px 160px, 0px 160px, 200px 200px)",
+                webkitShapeMargin: "5px"
+            };
+            PerfTestRunner.measureTime(createShapeOutsideTest(properties, 1000));
+        </script>
+    </body>
+</html>

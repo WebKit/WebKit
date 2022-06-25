@@ -1,0 +1,382 @@
+<!-- Based off of https://github.com/austinEng/webgpu-samples/blob/master/compute_boids.html -->
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="viewport" content="width=1200">
+  <title>WebGPU Compute Shader Flocking</title>
+  <script src="scripts/gl-matrix-min.js"></script>
+  <link rel="stylesheet" href="css/style.css"/>
+  <style>
+  body {
+      font-family: system-ui;
+      color: #f7f7ff;
+      background-color: rgb(38, 38, 127);
+      text-align: center;
+  }
+  canvas {
+      margin: 0 auto;
+  }
+  </style>
+</head>
+<body>
+  <div id="contents">
+    <h1>Compute Shader Flocking</h1>
+    <p>
+        This demo uses a compute shader to update the positions of objects in parallel.
+    </p>
+    <canvas></canvas>
+  </div>
+  <div id="error">
+      <h2>WebGPU not available</h2>
+      <p>
+          Make sure you are on a system with WebGPU enabled. In
+          Safari, first make sure the Developer Menu is visible (Preferences >
+          Advanced), then Develop > Experimental Features > WebGPU.
+      </p>
+      <p>
+        In addition, you must be using Safari Technology Preview 92 or above.
+        You can get the latest STP <a href="https://developer.apple.com/safari/download/">here</a>.
+      </p>
+  </div>
+  <script>
+    if (!navigator.gpu || GPUBufferUsage.COPY_SRC === undefined)
+      document.body.className = 'error';
+
+    const numParticles = 1500;
+
+    const renderShadersWHLSL = `
+vertex float4 vertex_main(float2 particlePos : attribute(0), float2 particleVel : attribute(1), float2 position : attribute(2)) : SV_Position
+{
+    float angle = -atan(particleVel.x / particleVel.y);
+    float2 result = float2(position.x * cos(angle) - position.y * sin(angle),
+        position.x * sin(angle) + position.y * cos(angle));
+    return float4(result + particlePos, 0, 1);
+}
+
+fragment float4 fragment_main() : SV_Target 0
+{
+    return float4(1.0, 1.0, 1.0, 1.0);
+}
+`;
+
+    const computeShaderWHLSL = `
+struct Particle {
+    float2 pos;
+    float2 vel;
+}
+
+struct SimParams {
+    float deltaT;
+    float rule1Distance;
+    float rule2Distance;
+    float rule3Distance;
+    float rule1Scale;
+    float rule2Scale;
+    float rule3Scale;
+}
+
+[numthreads(1, 1, 1)]
+compute void compute_main(constant SimParams[] paramsBuffer : register(b0), device Particle[] particlesA : register(u1), device Particle[] particlesB : register(u2), float3 threadID : SV_DispatchThreadID) {
+    uint index = uint(threadID.x);
+
+    SimParams params = paramsBuffer[0];
+
+    if (index >= ${numParticles}) { 
+        return;
+    }
+
+    float2 vPos = particlesA[index].pos;
+    float2 vVel = particlesA[index].vel;
+
+    float2 cMass = float2(0.0, 0.0);
+    float2 cVel = float2(0.0, 0.0);
+    float2 colVel = float2(0.0, 0.0);
+    float cMassCount = 0.0;
+    float cVelCount = 0.0;
+
+    float2 pos;
+    float2 vel;
+    for (uint i = 0; i < ${numParticles}; ++i) {
+        if (i == index) { continue; }
+        pos = particlesA[i].pos.xy;
+        vel = particlesA[i].vel.xy;
+
+        if (distance(pos, vPos) < params.rule1Distance) {
+            cMass += pos;
+            cMassCount++;
+        }
+        if (distance(pos, vPos) < params.rule2Distance) {
+            colVel -= (pos - vPos);
+        }
+        if (distance(pos, vPos) < params.rule3Distance) {
+            cVel += vel;
+            cVelCount++;
+        }
+    }
+    if (cMassCount > 0.0) {
+        cMass = cMass / cMassCount - vPos;
+    }
+    if (cVelCount > 0.0) {
+        cVel = cVel / cVelCount;
+    }
+
+    vVel += cMass * params.rule1Scale + colVel * params.rule2Scale + cVel * params.rule3Scale;
+
+    // clamp velocity for a more pleasing simulation.
+    vVel = normalize(vVel) * clamp(length(vVel), 0.0, 0.1);
+
+    // kinematic update
+    vPos += vVel * params.deltaT;
+
+    // Wrap around boundary
+    if (vPos.x < -1.0) vPos.x = 1.0;
+    if (vPos.x > 1.0) vPos.x = -1.0;
+    if (vPos.y < -1.0) vPos.y = 1.0;
+    if (vPos.y > 1.0) vPos.y = -1.0;
+
+    particlesB[index].pos = vPos;
+    particlesB[index].vel = vVel;
+}
+`;
+
+    async function init() {
+      const adapter = await navigator.gpu.requestAdapter();
+      const device = await adapter.requestDevice();
+
+      const canvas = document.querySelector('canvas');
+      let size = window.innerWidth < window.innerHeight ? window.innerWidth : window.innerHeight;
+      size *= 0.75;
+      canvas.width = size;
+      canvas.height = size;
+      const context = canvas.getContext('gpu');
+
+      const swapChain = context.configureSwapChain({
+        device,
+        format: "bgra8unorm"
+      });
+
+      const computeBindGroupLayout = device.createBindGroupLayout({
+        bindings: [
+          { binding: 0, visibility: GPUShaderStage.COMPUTE, type: "uniform-buffer" },
+          { binding: 1, visibility: GPUShaderStage.COMPUTE, type: "storage-buffer" },
+          { binding: 2, visibility: GPUShaderStage.COMPUTE, type: "storage-buffer" },
+        ],
+      });
+
+      const computePipelineLayout = device.createPipelineLayout({
+        bindGroupLayouts: [computeBindGroupLayout],
+      });
+
+      device.pushErrorScope('validation');
+
+      const renderModule = device.createShaderModule({ code: renderShadersWHLSL, isWHLSL: true });
+
+      const renderPipeline = device.createRenderPipeline({
+        layout: device.createPipelineLayout({ bindGroupLayouts: [] }),
+
+        vertexStage: {
+          module: renderModule,
+          entryPoint: "vertex_main"
+        },
+        fragmentStage: {
+          module: renderModule,
+          entryPoint: "fragment_main"
+        },
+
+        primitiveTopology: "triangle-list",
+
+        depthStencilState: {
+          depthWriteEnabled: true,
+          depthCompare: "less",
+          format: "depth32float-stencil8",
+          stencilFront: {},
+          stencilBack: {},
+        },
+
+        vertexInput: {
+          indexFormat: "uint32",
+          vertexBuffers: [{
+            // instanced particles buffer
+            stride: 4 * 4,
+            stepMode: "instance",
+            attributeSet: [{
+              // instance position
+              shaderLocation: 0,
+              offset: 0,
+              format: "float2"
+            }, {
+              // instance velocity
+              shaderLocation: 1,
+              offset: 2 * 4,
+              format: "float2"
+            }],
+          }, {
+            // vertex buffer
+            stride: 2 * 4,
+            stepMode: "vertex",
+            attributeSet: [{
+              // vertex positions
+              shaderLocation: 2,
+              offset: 0,
+              format: "float2"
+            }],
+          }],
+        },
+
+        rasterizationState: {
+          frontFace: 'ccw',
+          cullMode: 'none',
+        },
+
+        colorStates: [{
+          format: "bgra8unorm",
+          alphaBlend: {},
+          colorBlend: {},
+        }],
+      });
+
+      device.popErrorScope().then(error => {
+        if (error)
+          console.error("Render shaders: " + error.message);
+      });
+
+      device.pushErrorScope('validation');
+
+      const computePipeline = device.createComputePipeline({
+        layout: computePipelineLayout,
+        computeStage: {
+          module: device.createShaderModule({
+            code: computeShaderWHLSL, isWHLSL: true
+          }),
+          entryPoint: "compute_main",
+        }
+      });
+
+      device.popErrorScope().then(error => {
+        if (error)
+          console.error("Compute shader: " + error.message);
+      });
+
+      const depthTexture = device.createTexture({
+        size: { width: canvas.width, height: canvas.height, depth: 1 },
+        arrayLayerCount: 1,
+        mipLevelCount: 1,
+        sampleCount: 1,
+        dimension: "2d",
+        format: "depth32float-stencil8",
+        usage: GPUTextureUsage.OUTPUT_ATTACHMENT
+      });
+
+      const renderPassDescriptor = {
+        colorAttachments: [{
+          loadOp: "clear",
+          clearColor: { r: 0.0, g: 0.0, b: 0.0, a: 1.0 },
+          storeOp: "store",
+        }],
+        depthStencilAttachment: {
+          attachment: depthTexture.createDefaultView(),
+          depthLoadOp: "clear",
+          depthStoreOp: "store",
+          clearDepth: 1.0,
+          stencilLoadValue: 0,
+          stencilStoreOp: "store",
+        }
+      };
+
+      const vertexBufferData = new Float32Array([-0.01, -0.02, 0.01, -0.02, 0.00, 0.02]);
+      const [verticesBuffer, verticesArrayBuffer] = device.createBufferMapped({
+        size: vertexBufferData.byteLength,
+        usage: GPUBufferUsage.VERTEX,
+      });
+      new Float32Array(verticesArrayBuffer).set(vertexBufferData);
+      verticesBuffer.unmap();
+
+      const simParamData = new Float32Array([0.04, 0.1, 0.025, 0.025, 0.02, 0.05, 0.005]);
+      const [simParamBuffer, simParamArrayBuffer] = device.createBufferMapped({
+        size: simParamData.byteLength,
+        usage: GPUBufferUsage.UNIFORM,
+      });
+      new Float32Array(simParamArrayBuffer).set(simParamData);
+      simParamBuffer.unmap();
+
+      const initialParticleData = new Float32Array(numParticles * 4);
+      for (let i = 0; i < numParticles; ++i) {
+        initialParticleData[4 * i + 0] = 2 * (Math.random() - 0.5);
+        initialParticleData[4 * i + 1] = 2 * (Math.random() - 0.5);
+        initialParticleData[4 * i + 2] = 2 * (Math.random() - 0.5) * 0.1;
+        initialParticleData[4 * i + 3] = 2 * (Math.random() - 0.5) * 0.1;
+      }
+
+      const particleBuffers = new Array(2);
+      const particleBindGroups = new Array(2);
+      for (let i = 0; i < 2; ++i) {
+        let particleArrayBuffer;
+        [particleBuffers[i], particleArrayBuffer] = device.createBufferMapped({
+          size: initialParticleData.byteLength,
+          usage: GPUBufferUsage.VERTEX | GPUBufferUsage.STORAGE
+        });
+        new Float32Array(particleArrayBuffer).set(initialParticleData);
+        particleBuffers[i].unmap();
+      }
+      for (let i = 0; i < 2; ++i) {
+        particleBindGroups[i] = device.createBindGroup({
+          layout: computeBindGroupLayout,
+          bindings: [{
+            binding: 0,
+            resource: {
+              buffer: simParamBuffer,
+              offset: 0,
+              size: simParamData.byteLength
+            },
+          }, {
+            binding: 1,
+            resource: {
+              buffer: particleBuffers[i],
+              offset: 0,
+              size: initialParticleData.byteLength,
+            },
+          }, {
+            binding: 2,
+            resource: {
+              buffer: particleBuffers[(i + 1) % 2],
+              offset: 0,
+              size: initialParticleData.byteLength,
+            },
+          }],
+        });
+      }
+
+      let t = 0;
+      function frame() {
+        renderPassDescriptor.colorAttachments[0].attachment = swapChain.getCurrentTexture().createDefaultView();
+
+        const commandEncoder = device.createCommandEncoder({});
+        {
+          const passEncoder = commandEncoder.beginComputePass();
+          passEncoder.setPipeline(computePipeline);
+          passEncoder.setBindGroup(0, particleBindGroups[t % 2]);
+          passEncoder.dispatch(numParticles, 1, 1);
+          passEncoder.endPass();
+        }
+        {
+          const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
+          passEncoder.setPipeline(renderPipeline);
+          passEncoder.setVertexBuffers(0, [particleBuffers[(t + 1) % 2], verticesBuffer], [0, 0]);
+          passEncoder.draw(3, numParticles, 0, 0);
+          passEncoder.endPass();
+        }
+        device.getQueue().submit([commandEncoder.finish()]);
+
+        ++t;
+        requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    }
+
+    init();
+
+  </script>
+</body>
+
+</html>

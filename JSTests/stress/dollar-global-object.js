@@ -1,0 +1,1 @@
+$.globalObjectFor("Hey") + "Hey";

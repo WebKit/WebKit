@@ -1,0 +1,13 @@
+<script>
+function run() {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    obj = document.createElement("object");
+    li.appendChild(obj);
+    svg.currentScale = 0.99;
+    obj.data = String.fromCharCode(89, 82)
+    ff.setAttribute("direction", "rtl");
+}
+</script>
+<body onload=run()><li id=li><svg id=svg><font-face-uri id=ff><tref xlink:href=#ff><span>Tests nested render tree update. The test passes if WebKit doesn't crash or hit an assertion.</span>

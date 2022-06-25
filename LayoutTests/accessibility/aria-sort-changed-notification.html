@@ -1,0 +1,78 @@
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<table id="content" role="grid">
+    <thead>
+        <tr aria-label="Header" role="row">
+            <th id="Account" role="columnheader" onclick="toggleAriaSort()" aria-sort="ascending" aria-label="Acount Name" title="Account Name">Account Name</th>
+        </tr>
+    </thead>
+</table>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests that changing the aria-sort value results in a SortDirectionChanged notification.");
+    window.jsTestIsAsync = true;
+
+    if (window.accessibilityController) {
+        var notificationCount = 0;
+
+        accessibilityController.addNotificationListener(function(element, notification) {
+            if (notification != "AXSortDirectionChanged")
+                return;
+
+            ++notificationCount;
+            debug(notification + " notification for " + element.domIdentifier);
+        });
+
+        function toggleAriaSort(element) {
+            var sortingState = element.getAttribute("aria-sort");
+            if (sortingState == "ascending")
+                element.setAttribute("aria-sort", "descending");
+            else
+                element.setAttribute("aria-sort", "ascending");
+        }
+
+        var columnHeader = document.getElementById("Account");
+        var axColumnHeader = accessibilityController.accessibleElementById("Account");
+        shouldBe("axColumnHeader.sortDirection", "'AXAscendingSortDirection'");
+
+        debug("Toggling aria-sort");
+        toggleAriaSort(columnHeader);
+        setTimeout(async function() {
+            await waitFor(() => {
+                return notificationCount == 1;//axColumnHeader.sortDirection == "AXDescendingSortDirection";
+            });
+            shouldBe("axColumnHeader.sortDirection", "'AXDescendingSortDirection'");
+
+            debug("Setting aria-sort to a random value");
+            columnHeader.setAttribute("aria-sort", "blah blah blah");
+            await waitFor(() => {
+                return notificationCount == 2;//axColumnHeader.sortDirection == "AXUnknownSortDirection";
+            });
+            shouldBe("axColumnHeader.sortDirection", "'AXUnknownSortDirection'");
+
+            debug("Toggling aria-sort");
+            toggleAriaSort(columnHeader);
+            await waitFor(() => {
+                return notificationCount == 3;//axColumnHeader.sortDirection == "AXAscendingSortDirection";
+            });
+            shouldBe("axColumnHeader.sortDirection", "'AXAscendingSortDirection'");
+
+            shouldBe("notificationCount", "3");
+
+            document.getElementById("content").style.visibility = "hidden";
+            accessibilityController.removeNotificationListener();
+            finishJSTest();
+        }, 0);
+    }
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

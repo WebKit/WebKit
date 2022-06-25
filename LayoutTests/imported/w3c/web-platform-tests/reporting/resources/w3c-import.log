@@ -1,0 +1,33 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/reporting/resources/README.md
+/LayoutTests/imported/w3c/web-platform-tests/reporting/resources/csp-error.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/reporting/resources/csp-error.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/reporting/resources/fail.png
+/LayoutTests/imported/w3c/web-platform-tests/reporting/resources/first-csp-report.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/reporting/resources/first-csp-report.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/reporting/resources/generate-csp-report.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/reporting/resources/generate-csp-report.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/reporting/resources/generate-report-once.py
+/LayoutTests/imported/w3c/web-platform-tests/reporting/resources/generate-report.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/reporting/resources/middle-frame.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/reporting/resources/report-helper.js
+/LayoutTests/imported/w3c/web-platform-tests/reporting/resources/report.py
+/LayoutTests/imported/w3c/web-platform-tests/reporting/resources/same-origin-report.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/reporting/resources/same-origin-report.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/reporting/resources/second-csp-report.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/reporting/resources/second-csp-report.https.sub.html.sub.headers

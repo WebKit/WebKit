@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+description("Tests that calling AudioContext.resume() while already running resolves the promise.");
+jsTestIsAsync = true;
+
+function didStartRendering()
+{
+    context.onstatechange = null;
+    testPassed("Did start rendering");
+    shouldBeEqualToString("context.state", "running");
+    context.resume().then(() => {
+        testPassed("Calling resume() while running resolved the promise");
+        shouldBeEqualToString("context.state", "running");
+        context.resume().then(() => {
+            testPassed("Calling resume() while running resolved the promise");
+            shouldBeEqualToString("context.state", "running");
+            finishJSTest();
+        }, (e) => {
+            testFailed("Second call to context.resume() unexpectedly threw an exception: " + e);
+            finishJSTest();
+        });
+    }, (e) => {
+        testFailed("First call to context.resume() unexpectedly threw an exception: " + e);
+        finishJSTest();
+    });
+}
+
+let context = new AudioContext;
+var source = context.createConstantSource();
+source.connect(context.destination);
+
+context.onstatechange = didStartRendering;
+source.start();
+</script>
+</html>

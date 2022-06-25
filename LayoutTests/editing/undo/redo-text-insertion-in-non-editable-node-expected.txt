@@ -1,0 +1,11 @@
+This test verifies that redoing text insertion in a non-editable element is a no-op.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS textNode.data is "Hello"
+PASS textNode.data is ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

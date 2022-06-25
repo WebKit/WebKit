@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>Lots of objects</title>
+<script type="text/javascript">
+  var maxNumberOfFrames = 1000;
+
+  if (window.testRunner)
+    testRunner.dumpAsText();
+
+  var createdObjects = 0;
+  function count() {
+    createdObjects++;
+
+    if (createdObjects == maxNumberOfFrames) {
+      var str = "Created precisely " + maxNumberOfFrames + " objects.<br>PASS";
+      document.getElementById("status").innerHTML = str;
+    } else if (createdObjects > maxNumberOfFrames) {
+      var str = "Created " + createdObjects + " objects (max: " + maxNumberOfFrames + ").<br>FAIL";
+      document.getElementById("status").innerHTML = str;
+    }
+  }
+
+  function createObjects(nbr) {
+    var str = "<div id=\"status\"></div>";
+    for (var i = 0; i < maxNumberOfFrames + 1; i++) {
+      str += "<object onLoad=\"count()\" data=\"data:text/html,object_" + i + "\"></object>";
+    }
+    document.getElementsByTagName("body")[0].innerHTML = str;
+  }
+</script>
+</head>
+<body onLoad="createObjects()">
+</body>
+</html>

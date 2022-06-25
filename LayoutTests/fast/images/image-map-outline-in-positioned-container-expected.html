@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that we paint area outline properly when the image is inside positioned containers.</title>
+<style>
+img {
+    position: absolute;
+    top: 30px;
+    left: 30px;
+}
+
+div {
+    position: absolute;
+    top: 35px;
+    left: 35px;
+    width: 20px;
+    height: 20px;
+	outline: auto;
+}
+</style>
+</head>
+<body>
+<img src="./resources/green.jpg" width=50 height=50>
+<div></div>
+</body>
+</html>

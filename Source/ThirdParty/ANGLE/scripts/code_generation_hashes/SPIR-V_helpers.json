@@ -1,0 +1,14 @@
+{
+  "src/common/spirv/gen_spirv_builder_and_parser.py":
+    "df102ef9f1b53b8ea5dc95c034a869b8",
+  "src/common/spirv/spirv_instruction_builder_autogen.cpp":
+    "bf5cc47686e9dbd00b6229e4ee38a283",
+  "src/common/spirv/spirv_instruction_builder_autogen.h":
+    "2a1f5f5f2067858ca7df00b89895a111",
+  "src/common/spirv/spirv_instruction_parser_autogen.cpp":
+    "388f17f462daa8e091238b4d1fd42ef5",
+  "src/common/spirv/spirv_instruction_parser_autogen.h":
+    "58282734b793c994dbe52c3aa988e40e",
+  "third_party/vulkan-deps/spirv-headers/src/include/spirv/1.0/spirv.core.grammar.json":
+    "a8c4239344b2fc10bfc4ace7ddee1867"
+}

@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<script>
+    description("This tests that we can get synthesizer voices.");
+
+    var speech = window.speechSynthesis;
+    var list = speech.getVoices();
+
+    var foundDefaultVoice = false;
+    var foundEnglishVoice = false;
+    var voiceCount = list.length;
+
+    for (let k = 0; k < list.length; k++) {
+        let voice = list[k];
+        if (voice.lang == "en-US")
+            foundEnglishVoice = true;
+        if (voice.default)
+            foundDefaultVoice = true;
+    }
+
+    shouldBeTrue("voiceCount > 20");
+    shouldBeTrue("foundEnglishVoice");
+    shouldBeTrue("foundDefaultVoice");
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,55 @@
+<html>
+
+<head>
+    <meta name="viewport" content="initial-scale=1.0">
+    <script id="ui-script" type="text/plain">
+        (function() {
+            uiController.didShowKeyboardCallback = function() {
+                uiController.typeCharacterUsingHardwareKeyboard("a", function() {
+                    uiController.uiScriptComplete();
+                });
+            }
+            uiController.singleTapAtPoint(50, 25, function() {});
+        })();
+    </script>
+
+    <script>
+        var uiScriptHasCompleted = false;
+        var oninputHasBeenHandled = false;
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function getUIScript()
+        {
+            return document.getElementById("ui-script").text;
+        }
+
+        function handleValueChanged(value) {
+            document.getElementById("console").textContent = "Successfully handled oninput, value is now \"" + value.toLowerCase() + "\"";
+            oninputHasBeenHandled = true;
+            if (uiScriptHasCompleted)
+                testRunner.notifyDone();
+        }
+
+        function runTest()
+        {
+            if (!window.testRunner || !testRunner.runUIScript)
+                return;
+
+            testRunner.runUIScript(getUIScript(), function() {
+                uiScriptHasCompleted = true;
+                if (oninputHasBeenHandled)
+                    testRunner.notifyDone();
+            });
+        }
+    </script>
+</head>
+
+<body style="margin: 0;" onload="runTest()">
+    <input style="width: 100px; height: 50px;" id="test-input" oninput="handleValueChanged(this.value)">
+<div id="console">Failed to handle oninput<div>
+</body>
+
+</html>

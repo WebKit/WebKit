@@ -1,0 +1,1 @@
+PASS, if DumpRenderTree doesn't crash, and no assertion in a Debug build.

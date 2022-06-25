@@ -1,0 +1,12 @@
+Tests that a page that has called window.open() goes into the page cache.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS page was not restored from the page cache.
+PASS page was saved to the page cache.
+PASS page was restored from the page cache.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

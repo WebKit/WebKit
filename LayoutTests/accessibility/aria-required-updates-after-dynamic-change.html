@@ -1,0 +1,43 @@
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="textbox" role="textbox" tabindex="0"></div>
+
+<script>
+    var testOutput = "This tests that changing the aria-required attribute is properly reflected in an AX object's required status.\n\n";
+
+    var axElement;
+    function verifyRequiredStatus() {
+        testOutput += `#textbox is required: ${axElement.isRequired}\n`;
+    }
+
+    function setAriaRequired(boolValue) {
+        testOutput += `Setting aria-required to ${boolValue} on #textbox.\n`;
+        document.getElementById("textbox").setAttribute("aria-required", `${boolValue}`);
+    }
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+        axElement = accessibilityController.accessibleElementById("textbox");
+        verifyRequiredStatus();
+
+        setAriaRequired(true);
+        setTimeout(async () => {
+            await waitFor(() => { return axElement.isRequired });
+            verifyRequiredStatus();
+
+            setAriaRequired(false);
+            await waitFor(() => { return !axElement.isRequired });
+            verifyRequiredStatus();
+
+            debug(testOutput);
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>

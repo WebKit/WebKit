@@ -1,0 +1,57 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# Copyright (C) 2021 Igalia S.L.
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this program; if not, write to the
+# Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+# Boston, MA 02110-1301, USA.
+
+import flatpakutils
+import os
+import sys
+
+platform = "GTK"
+build_type = "Release"
+if "--wpe" in sys.argv:
+    platform = "WPE"
+    sys.argv.remove("--wpe")
+if "--gtk" in sys.argv:
+    sys.argv.remove("--gtk")
+
+if "--debug" in sys.argv:
+    build_type = "Debug"
+    sys.argv.remove("--debug")
+if "--release" in sys.argv:
+    sys.argv.remove("--release")
+
+build_path = os.environ['WEBKIT_OUTPUTDIR'] if 'WEBKIT_OUTPUTDIR' in os.environ \
+    else flatpakutils.DEFAULT_BUILD_ROOT
+mappings = "--path-mappings=" + ",".join([
+    "{}={}".format(
+        os.path.join(flatpakutils.SANDBOX_SOURCE_ROOT, flatpakutils.BUILD_ROOT_DIR_NAME, "Debug"),
+        os.path.join(build_path, platform, "Debug")),
+    "{}={}".format(
+        os.path.join(flatpakutils.SANDBOX_SOURCE_ROOT, flatpakutils.BUILD_ROOT_DIR_NAME, "Release"),
+        os.path.join(build_path, platform, "Release")),
+    "{}={}".format(
+        os.path.join(flatpakutils.WEBKIT_SOURCE_DIR, "Source"),
+        os.path.join(flatpakutils.SANDBOX_SOURCE_ROOT, "Source")),
+])
+
+build_dir = os.path.join(flatpakutils.SANDBOX_SOURCE_ROOT, flatpakutils.BUILD_ROOT_DIR_NAME, build_type)
+extra_options = [f"--compile-commands-dir={build_dir}"]
+
+command = ["clangd", mappings] + extra_options + sys.argv[1:]
+print(f"Running clangd with arguments: {command}")
+flatpakutils.run_in_sandbox_if_available(command)

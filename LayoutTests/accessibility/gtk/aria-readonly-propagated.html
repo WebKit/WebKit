@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+  <div id="content">
+    <div role="grid" aria-readonly="true">
+      <div role="row">
+	<div role="gridcell" id="test1" tabindex="0"></div>
+	<div role="gridcell" aria-readonly="false" id="test2" tabindex="0"></div>
+      </div>
+    </div>
+    <div role="grid" aria-readonly="false">
+      <div role="row">
+	<div role="gridcell" id="test3" tabindex="0"></div>
+	<div role="gridcell" aria-readonly="true" id="test4" tabindex="0"></div>
+      </div>
+    </div>
+    <div role="grid" aria-readonly="true">
+      <div role="row">
+	<div role="columnheader" id="test5" tabindex="0"></div>
+	<div role="columnheader" aria-readonly="false" id="test6" tabindex="0"></div>
+      </div>
+    </div>
+    <div role="grid" aria-readonly="false">
+      <div role="row">
+	<div role="columnheader" id="test7" tabindex="0"></div>
+	<div role="columnheader" aria-readonly="true" id="test8" tabindex="0"></div>
+      </div>
+    </div>
+    <div role="grid" aria-readonly="true">
+      <div role="row">
+	<div role="rowheader" id="test9" tabindex="0"></div>
+	<div role="rowheader" aria-readonly="false" id="test10" tabindex="0"></div>
+      </div>
+    </div>
+    <div role="grid" aria-readonly="false">
+      <div role="row">
+	<div role="rowheader" id="test11" tabindex="0"></div>
+	<div role="rowheader" aria-readonly="true" id="test12" tabindex="0"></div>
+      </div>
+    </div>
+  </div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    function platformAttributes(axElement) {
+        var allAttributes = axElement.allAttributes().split("\n");
+        var length = allAttributes.length;
+        for (var i = 0; i < length; i++) {
+            var string = allAttributes[i];
+            if (string.startsWith("AXPlatformAttributes"))
+                return string;
+        }
+        return "";
+    }
+
+    description("This tests the exposure of propagated values of aria-readonly as an object attribute.");
+    if (window.accessibilityController) {
+        for (var i = 1; i <= 12; i++) {
+            var axElement = accessibilityController.accessibleElementById("test" + i);
+            debug(platformAttributes(axElement));
+        }
+
+        document.getElementById("content").style.visibility = "hidden";
+    }
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
+

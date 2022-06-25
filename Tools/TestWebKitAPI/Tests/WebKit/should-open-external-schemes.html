@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+function navigateToTelURL()
+{
+     window.location.href = "tel:+1 (408) 996-1010";
+}
+
+function navigateToTelURLInZeroTimer()
+{
+    window.setTimeout(navigateToTelURL, 0);
+}
+
+function navigateToTelURLInNestedZeroTimer()
+{
+    window.setTimeout(navigateToTelURLInZeroTimer, 0);
+}
+</script>
+</head>
+</html>

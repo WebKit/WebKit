@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exceptions for synchronous custom element creation</title>
+  </head>
+  <body>
+    <script>
+      if (testRunner)
+        testRunner.dumpAsText();
+
+      class ObjectCustomElement extends HTMLElement {
+        constructor()
+        {
+          return {foo: 'bar'};
+        }
+      };
+      customElements.define('object-custom-element', ObjectCustomElement);
+      document.createElement('object-custom-element');
+
+      class ElementWithAttribute extends HTMLElement {
+        constructor()
+        {
+          super();
+          this.setAttribute('id', 'foo');
+        }
+      };
+      customElements.define('element-with-attribute', ElementWithAttribute);
+      document.createElement('element-with-attribute');
+
+      class ElementWithChildText extends HTMLElement {
+        constructor()
+        {
+          super();
+          this.appendChild(document.createTextNode('hello'));
+        }
+      };
+      customElements.define('element-with-child-text', ElementWithChildText);
+      document.createElement('element-with-child-text');
+
+      class ElementWithParent extends HTMLElement {
+        constructor()
+        {
+          super();
+          document.createElement('div').appendChild(this);
+        }
+      };
+      customElements.define('element-with-parent', ElementWithParent);
+      document.createElement('element-with-parent');
+
+      var otherDoc = document.implementation.createDocument('http://www.w3.org/1999/xhtml', 'html', null);
+      class ElementWithAdoptCall extends HTMLElement {
+      constructor()
+        {
+          super();
+          otherDoc.adoptNode(this);
+        }
+      };
+      customElements.define('element-with-adopt-call', ElementWithAdoptCall);
+      document.createElement('element-with-adopt-call');
+
+      class DivCustomElement extends HTMLElement {
+        constructor()
+        {
+          super();
+          return document.createElement('div');
+        }
+      };
+      customElements.define('div-custom-element', DivCustomElement);
+      document.createElement('div-custom-element');
+    </script>
+  </body>
+</html>

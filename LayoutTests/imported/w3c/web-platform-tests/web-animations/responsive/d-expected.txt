@@ -1,0 +1,3 @@
+
+FAIL d responsive to inherited d changes assert_equals: expected (string) "path(\"M 0 0 H 300\")" but got (undefined) undefined
+

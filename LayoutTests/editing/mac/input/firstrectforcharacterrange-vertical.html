@@ -1,0 +1,61 @@
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<p>Test that firstRectForCharacterRange result for vertical text is reasonable in a very simple case. To test manually, invoke Dictionary pop-up with Ctrl+Option+D combo.</p>
+<p id="console"></p>
+<div style="-webkit-writing-mode:vertical-lr;" contenteditable id=target>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer pretium quis odio dapibus interdum. Fusce vel consequat arcu, non suscipit leo. In faucibus neque nulla, sodales luctus nulla sodales in. Praesent lobortis enim nec mauris aliquam, et tincidunt nulla gravida. Etiam a sem turpis. Suspendisse odio erat, sodales eget nunc at, adipiscing posuere dolor. Cras sit amet leo pulvinar, condimentum augue eget, mattis lacus. Integer volutpat nulla neque, faucibus varius massa sagittis at. Praesent non mauris vel justo tristique porttitor. Cras et tempus enim. Sed nec condimentum diam. Vivamus bibendum a odio at bibendum. Phasellus iaculis facilisis ante, a sagittis magna sollicitudin non. In pretium eu lacus nec vulputate. Morbi lacinia tortor arcu, quis ultrices risus dictum eu. Suspendisse semper mattis tortor, eget pretium neque accumsan ac. Morbi imperdiet ultricies ante, sit amet dapibus ipsum mollis at. Fusce placerat tortor at est mattis ornare. Aenean tristique est id posuere.</div>
+<script>
+function singleCharacterRectIsReasonable(rect)
+{
+    var width = rect[2];
+    var height = rect[3];
+
+    return width > 5 && width < 20 && height > 5 && height < 20;
+}
+
+function emptyRangeRectIsReasonable(rect)
+{
+    var width = rect[2];
+    var height = rect[3];
+
+    return width > 5 && width < 20 && height == 0;
+}
+
+function multilineRangeRectIsReasonable(rect)
+{
+    var width = rect[2];
+    var height = rect[3];
+
+    return width > 5 && width < 20 && height > 100;
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+
+    var target = document.getElementById("target");
+
+    window.getSelection().setPosition(target, 0);
+    var singleCharacterRect = textInputController.firstRectForCharacterRange(0, 1);
+    if (singleCharacterRectIsReasonable(singleCharacterRect))
+        testPassed("textInputController.firstRectForCharacterRange(0, 1) is reasonable");
+    else
+        testFailed("textInputController.firstRectForCharacterRange(0, 1) is not reasonable: " + singleCharacterRect);
+
+    var emptyRangeRect = textInputController.firstRectForCharacterRange(1, 0);
+    if (emptyRangeRectIsReasonable(emptyRangeRect))
+        testPassed("textInputController.firstRectForCharacterRange(1, 0) is reasonable");
+    else
+        testFailed("textInputController.firstRectForCharacterRange(1, 0) is not reasonable: " + emptyRangeRect);
+
+    var multilineRangeRect = textInputController.firstRectForCharacterRange(1, 200);
+    if (multilineRangeRectIsReasonable(multilineRangeRect))
+        testPassed("textInputController.firstRectForCharacterRange(1, 200) is reasonable");
+    else
+        testFailed("textInputController.firstRectForCharacterRange(1, 200) is not reasonable: " + multilineRangeRect);
+
+    target.style.display = "none";
+}
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

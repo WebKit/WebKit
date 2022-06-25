@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test importing a JWK ECDH public key with P-521");
+
+jsTestIsAsync = true;
+
+var jwkKey = {
+    kty: "EC",
+    use: "enc",
+    ext: true,
+    crv: "P-521",
+    x: "ATyYJNg6KbLelgL09FGKksW7qfIEPf4OPCHB7PuoUq4AyiJQaMqWD7TagGc4gwY5lJ7rDRLKGdxGmf19inAT_X1a",
+    y: "AAF1xys7jFj4QkHBC3uF_Kodak7rOkbmpAPKrqzR_akXaCwNfdsjX12_uVkDhyUqF-C5oUYsKLqET8RMm8kg8cX9",
+};
+var extractable = true;
+
+debug("Importing a key...");
+crypto.subtle.importKey("jwk", jwkKey, { name: "ECDH", namedCurve: "P-521" }, extractable, [ ]).then(function(result) {
+    publicKey = result;
+
+    shouldBe("publicKey.toString()", "'[object CryptoKey]'");
+    shouldBe("publicKey.type", "'public'");
+    shouldBe("publicKey.extractable", "true");
+    shouldBe("publicKey.algorithm.name", "'ECDH'");
+    shouldBe("publicKey.algorithm.namedCurve", "'P-521'");
+    shouldBe("publicKey.usages", "[ ]");
+
+    finishJSTest();
+});
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

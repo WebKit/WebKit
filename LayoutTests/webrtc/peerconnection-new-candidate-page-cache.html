@@ -1,0 +1,50 @@
+<!-- webkit-test-runner [ UsesBackForwardCache=true WebRTCMDNSICECandidatesEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<canvas id="canvas" width=320px height=240px></canvas>
+<script>
+t = async_test();
+
+if (window.internals) {
+    internals.useMockRTCPeerConnectionFactory("MDNSICECandidatesWithDelay");
+    internals.setICECandidateFiltering(true);
+}
+
+window.addEventListener("pageshow", t.step_func(function(event) {
+    if (!event.persisted)
+        return;
+    t.hasPageShow = true;
+    if (t.hasMDNSCandidate)
+        t.done();
+}));
+
+window.addEventListener("pagehide", t.step_func((event) => {
+    if (!event.persisted)
+        assert_uneached("Page failed to enter page cache");
+
+}));
+t.pc = new RTCPeerConnection;
+t.hasMDNSCandidate = false;
+t.hasPageShow = false;
+onload = async () => {
+     t.pc.onicecandidate = t.step_func((event) => {
+         if (!event.candidate || t.pasPageShow) {
+             t.done();
+             return;
+         }
+         if (event.candidate.candidate.includes('.local'))
+             t.hasMDNSCandidate = true;
+     });
+     const stream = canvas.captureStream();
+     t.pc.addTrack(stream.getVideoTracks()[0], stream);
+     const offer = await t.pc.createOffer();
+     window.location = "../fast/history/resources/page-cache-helper-100ms.html";
+
+     t.pc.setLocalDescription(offer); 
+     assert_false(t.hasMDNSCandidate);
+};
+</script>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+    font-family: WebFont;
+    /* Any font which has a smaller ascent than Heiti SC can be used here */
+    src: local("Palatino-Roman");
+}
+
+@font-face {
+    font-family: WebFont;
+    /* This font must not be the default fallback font for U+6c49 */
+    src: local("Heiti SC");
+}
+
+@font-face {
+    font-family: WebFont;
+    src: local("Palatino-Roman");
+}
+</style>
+</head>
+<body>
+This test makes sure we search through all font-face declarations in order to find a working font.
+<div style="font: 200px WebFont; -webkit-line-box-contain: font;">&#x6c49;</div>
+</body>
+</html>

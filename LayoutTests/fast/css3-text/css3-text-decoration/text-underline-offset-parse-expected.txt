@@ -1,0 +1,17 @@
+PASS window.getComputedStyle(document.getElementById('test1')).getPropertyValue('text-underline-offset') is "auto"
+PASS window.getComputedStyle(document.getElementById('test2')).getPropertyValue('text-underline-offset') is "auto"
+PASS window.getComputedStyle(document.getElementById('test3')).getPropertyValue('text-underline-offset') is "auto"
+PASS window.getComputedStyle(document.getElementById('test4')).getPropertyValue('text-underline-offset') is "auto"
+PASS window.getComputedStyle(document.getElementById('test5')).getPropertyValue('text-underline-offset') is "37px"
+PASS window.getComputedStyle(document.getElementById('test6')).getPropertyValue('text-underline-offset') is "200px"
+PASS window.getComputedStyle(document.getElementById('test7')).getPropertyValue('text-underline-offset') is "40px"
+PASS document.getElementById('target').sheet.cssRules[0].style.textUnderlineOffset is ""
+PASS document.getElementById('target').sheet.cssRules[1].style.textUnderlineOffset is "auto"
+PASS document.getElementById('target').sheet.cssRules[2].style.textUnderlineOffset is ""
+PASS document.getElementById('target').sheet.cssRules[3].style.textUnderlineOffset is ""
+PASS document.getElementById('target').sheet.cssRules[4].style.textUnderlineOffset is "37px"
+PASS document.getElementById('target').sheet.cssRules[5].style.textUnderlineOffset is "2em"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

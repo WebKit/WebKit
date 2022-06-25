@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="testDiv"></div>
+<script>
+description("Checks that __lookupGetter__ / __lookupSetter__() works for native bindings.");
+
+var testDiv = document.getElementById("testDiv");
+
+shouldBeType("Element.prototype.__lookupGetter__('tagName')", "Function");
+shouldBeUndefined("Element.prototype.__lookupSetter__('tagName')");
+shouldBe("Element.prototype.__lookupGetter__('tagName')", "Object.getOwnPropertyDescriptor(Element.prototype, 'tagName').get");
+shouldBe("Element.prototype.__lookupSetter__('tagName')", "Object.getOwnPropertyDescriptor(Element.prototype, 'tagName').set");
+shouldBeEqualToString("testDiv.tagName", "DIV");
+shouldBeEqualToString("Element.prototype.__lookupGetter__('tagName').call(testDiv)", "DIV");
+
+debug("");
+shouldBeType("Element.prototype.__lookupGetter__('nodeName')", "Function");
+shouldBeUndefined("Element.prototype.__lookupSetter__('nodeName')");
+shouldBe("Element.prototype.__lookupGetter__('nodeName')", "Object.getOwnPropertyDescriptor(Node.prototype, 'nodeName').get");
+shouldBe("Element.prototype.__lookupSetter__('nodeName')", "Object.getOwnPropertyDescriptor(Node.prototype, 'nodeName').set");
+shouldBeEqualToString("testDiv.nodeName", "DIV");
+shouldBeEqualToString("Element.prototype.__lookupGetter__('nodeName').call(testDiv)", "DIV");
+
+debug("");
+shouldBeType("HTMLElement.prototype.__lookupGetter__('innerText')", "Function");
+shouldBeType("HTMLElement.prototype.__lookupSetter__('innerText')", "Function");
+shouldBeType("HTMLDivElement.prototype.__lookupGetter__('innerText')", "Function");
+shouldBeType("HTMLDivElement.prototype.__lookupSetter__('innerText')", "Function");
+shouldBeType("testDiv.__proto__.__lookupGetter__('innerText')", "Function");
+shouldBeType("testDiv.__proto__.__lookupSetter__('innerText')", "Function");
+shouldBeType("testDiv.__proto__.__proto__.__lookupGetter__('innerText')", "Function");
+shouldBeType("testDiv.__proto__.__proto__.__lookupSetter__('innerText')", "Function");
+shouldBe("HTMLElement.prototype.__lookupGetter__('innerText')", "Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'innerText').get");
+shouldBe("HTMLElement.prototype.__lookupSetter__('innerText')", "Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'innerText').set");
+shouldBeEqualToString("testDiv.innerText", "");
+shouldBeEqualToString("HTMLElement.prototype.__lookupGetter__('innerText').call(testDiv)", "");
+evalAndLog("testDiv.innerText = 'TEST1'");
+shouldBeEqualToString("testDiv.innerText", "TEST1");
+shouldBeEqualToString("HTMLElement.prototype.__lookupGetter__('innerText').call(testDiv)", "TEST1");
+evalAndLog("HTMLElement.prototype.__lookupSetter__('innerText').call(testDiv, '')");
+shouldBeEqualToString("testDiv.innerText", "");
+shouldBeEqualToString("HTMLElement.prototype.__lookupGetter__('innerText').call(testDiv)", "");
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

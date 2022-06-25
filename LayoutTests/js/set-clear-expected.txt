@@ -1,0 +1,30 @@
+Tests basic correctness of ES Set's clear() API
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS stringSet.size is 0
+PASS stringSet.values.length is 0
+PASS stringSet.has('Oliver') is false
+PASS stringSet.has('Benjamin') is false
+PASS valueSet.size is 0
+PASS valueSet.values.length is 0
+PASS valueSet.has(0) is false
+PASS valueSet.has(1) is false
+PASS objectSet.size is 0
+PASS objectSet.values.length is 0
+PASS objectSet.has(anArray) is false
+PASS objectSet.has(anObject) is false
+PASS objectSet.has(otherObject) is false
+PASS mixedTypeSet.size is 0
+PASS mixedTypeSet.values.length is 0
+PASS mixedTypeSet.has(0) is false
+PASS mixedTypeSet.has('Oliver') is false
+PASS mixedTypeSet.has(stringSet) is false
+PASS mixedTypeSet.has(valueSet) is false
+PASS mixedTypeSet.has(objectSet) is false
+PASS mixedTypeSet.has(anObject) is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

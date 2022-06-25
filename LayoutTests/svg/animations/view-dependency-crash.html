@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/gc.js"></script>
+</head>
+<body onload="runTest()">
+This test passes if it does not crash<br/>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+
+function runTest() {
+    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    var view = svg.currentView;
+    svg.pauseAnimations();
+    svg = null;
+    if (window.gc)
+        gc();
+    var rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    var viewBox = view.viewBox;
+}
+</script>
+</body>
+</html>

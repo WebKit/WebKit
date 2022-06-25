@@ -1,0 +1,10 @@
+Makes sure prefixes are properly serialized by Element.outerHTML in an HTML document.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS g.outerHTML is "<g ex:attr=\"1\"></g>"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

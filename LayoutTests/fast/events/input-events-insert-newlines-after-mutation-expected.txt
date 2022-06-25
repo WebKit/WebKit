@@ -1,0 +1,6 @@
+
+
+
+
+
+To manually test this, press enter multiple times in the editable area. Newlines should be inserted.

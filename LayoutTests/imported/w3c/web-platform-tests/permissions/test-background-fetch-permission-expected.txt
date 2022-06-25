@@ -1,0 +1,3 @@
+
+FAIL Test Background Fetch Permission. promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+

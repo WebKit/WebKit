@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<style>
+    #editor1, #editor2 {
+        width: 100%;
+        height: 0;
+    }
+</style>
+</head>
+<body>
+<div contenteditable="true" id="editor1"></div>
+<div contenteditable="true" id="editor2">!</div>
+<script>
+    if (window.testRunner)
+        testRunner.dumpEditingCallbacks();
+
+    description("Verifies the ability to programmatically focus and insert text in an empty editable element.");
+    editor1 = document.getElementById("editor1");
+    editor1.focus();
+    document.execCommand("InsertText", true, "Hello world");
+    shouldBeEqualToString("editor1.textContent", "Hello world");
+
+    editor2 = document.getElementById("editor2");
+    editor2.focus();
+    document.execCommand("InsertText", true, "Hello world");
+    shouldBeEqualToString("editor2.textContent", "Hello world!");
+</script>
+</body>

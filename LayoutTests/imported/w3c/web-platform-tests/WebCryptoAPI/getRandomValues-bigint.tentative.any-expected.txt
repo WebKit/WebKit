@@ -1,0 +1,8 @@
+
+PASS Integer array: BigInt64Array
+PASS Large length: BigInt64Array
+PASS Null arrays: BigInt64Array
+PASS Integer array: BigUint64Array
+PASS Large length: BigUint64Array
+PASS Null arrays: BigUint64Array
+

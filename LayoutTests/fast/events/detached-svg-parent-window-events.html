@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <script src="../../resources/js-test.js"></script>
+        <script>
+            description('This tests creating a disconnected SVG element with resize event handler. The event handler should not get dispatched unless the element is connected');
+            const iframe = document.createElement('iframe');
+            iframe.style.width = '100px';
+            iframe.style.height = '100px';
+            jsTestIsAsync = true;
+            didFireResize = false;
+            didFireOnError = false;
+            iframe.onload = function() {
+                iframe.contentWindow.requestAnimationFrame(() => {
+                    const svg = iframe.contentDocument.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                    svg.setAttribute('onresize', 'top.didFireResize = true');
+                    svg.setAttribute('onerror', 'top.didFireOnError = true');
+                    iframe.style.width = '200px';
+                    iframe.contentWindow.requestAnimationFrame(() => {
+                        shouldBeFalse('didFireResize');
+                        shouldBeFalse('didFireOnError');
+                        finishJSTest();
+                    });
+                    iframe.contentWindow.eval('throw "error"');
+                });
+            };
+            document.body.appendChild(iframe);
+        </script>
+    </body>
+</html>

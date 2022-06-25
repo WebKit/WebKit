@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+    font-family: "Ahem";
+    src: url("../../resources/Ahem.ttf");
+}
+#box {
+    font: 100px "Ahem";
+}
+</style>
+</head>
+<body>
+<pre>This test should not time out, and should say "SUCCESS".</pre>
+<div id="box">Hello</div>
+<div id="result">Waiting...</div>
+<script>
+
+function gc()
+{
+    if (typeof GCController !== "undefined")
+        GCController.collect();
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+var promises = [];
+
+document.fonts.forEach(function(f) {
+    console.log("Font status: " + f.status);
+    promises.push(f.loaded);
+    f.loaded.then(function() { console.log("Font loaded"); });
+    gc();
+});
+
+setInterval(gc, 10);
+
+Promise.all(promises).then(function() {
+    document.getElementById("result").textContent = "SUCCESS";
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+
+</script>
+</body>
+</html>

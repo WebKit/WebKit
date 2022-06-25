@@ -1,0 +1,4 @@
+
+PASS inlineVerticalFieldOfView is set appropriately on immersively sessions - webgl
+FAIL inlineVerticalFieldOfView is set appropriately on immersively sessions - webgl2 assert_implements: webgl2 not supported. undefined
+

@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+  <head>
+    <title>cubic-bezier value overflow: SVG Lengths</title>
+    <style>
+      .box {
+        -webkit-transition: stroke-width 1s linear;
+        stroke-width: 1;
+        stroke: black;
+        fill: blue;
+      }
+      .animating > .box {
+        stroke-width: 50;
+      }
+    </style>
+    <script src="resources/transition-test-helpers.js"></script>
+    <script>
+      const expectedValues = [
+        // [time, element-id, property, expected-value, tolerance]
+        [0.50, "box1", "stroke-width", 61, 4],
+        [0.95, "box1", "stroke-width", 55, 4],
+        [0.10, "box2", "stroke-width", -6, 4],
+        [0.50, "box2", "stroke-width", 19, 4],
+        [0.95, "box2", "stroke-width", 54, 4],
+        [0.10, "box3", "stroke-width", -12, 4],
+        [0.50, "box3", "stroke-width", -53, 4],
+        [0.15, "box4", "stroke-width", 64, 4],
+        [0.50, "box4", "stroke-width", 26, 4],
+        [0.80, "box4", "stroke-width", -11, 4],
+      ];
+
+      function setupTest() {
+        document.getElementById('container').setAttribute('class', 'animating');
+      }
+
+      runTransitionTest(expectedValues, setupTest, usePauseAPI);
+    </script>
+  </head>
+  <body>
+    <svg id="container">
+      <rect class="box" id="box1" width="100" height="100" style="-webkit-transition-timing-function: cubic-bezier(0.3, 1.5, 0.8, 1.5);" />
+      <rect class="box" id="box2" width="100" height="100" y="110" style="-webkit-transition-timing-function: cubic-bezier(0.4, -0.8, 0.7, 1.7);" />
+      <rect class="box" id="box3" width="100" height="100" y="220" style="-webkit-transition-timing-function: cubic-bezier(0.7, -2, 1, -1.5);" />
+      <rect class="box" id="box4" width="100" height="100" y="330" style="-webkit-transition-timing-function: cubic-bezier(0, 4, 1, -3);" />
+    </svg>
+    <div id="result"></div>
+  </body>
+</html>

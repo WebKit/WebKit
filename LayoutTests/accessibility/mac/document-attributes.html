@@ -1,0 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<script>
+    description("This test provides a base snapshot of the root web area's attributes.");
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        setTimeout(async function() {
+            let allAttributes;
+            await waitFor(() => {
+                if (!accessibilityController.focusedElement)
+                    return false;
+                allAttributes = accessibilityController.focusedElement.allAttributes();
+                // Wait for the page to be fully loaded.
+                return allAttributes.includes("AXLoaded: 1");
+            });
+            debugEscaped(allAttributes);
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>

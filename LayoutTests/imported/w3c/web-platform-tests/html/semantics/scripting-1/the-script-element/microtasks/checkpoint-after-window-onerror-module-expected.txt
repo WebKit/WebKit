@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: Error: script 1
+
+PASS Promise resolved during #report-the-error
+PASS Promise resolved during event handlers other than error
+

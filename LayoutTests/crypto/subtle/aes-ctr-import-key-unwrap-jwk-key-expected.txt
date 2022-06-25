@@ -1,0 +1,14 @@
+Test unwrapping a JWK key with AES-CTR using an imported key
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS unwrappedKey.kty is jwkKey.kty
+PASS unwrappedKey.alg is jwkKey.alg
+PASS unwrappedKey.key_ops is jwkKey.key_ops
+PASS unwrappedKey.ext is jwkKey.ext
+PASS unwrappedKey.k is jwkKey.k
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

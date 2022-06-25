@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+var successfullyParsed = false;
+if (window.testRunner)
+   testRunner.dumpAsText();
+</script>
+</head>
+<body>
+
+<input type="color" value="#e66465" id="color">
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This test thats color input types are accessible on iOS.");
+
+    if (window.accessibilityController) {
+
+        var element = accessibilityController.accessibleElementById("color");
+        shouldBeFalse("element.isIgnored");
+        shouldBe("element.stringAttributeValue('AXRoleDescription')", "'color well'");
+        shouldBe("element.stringAttributeValue('AXColorStringDescription')", "'rgb 0.90196 0.39216 0.39608 1'");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+
+</body>
+</html>
+

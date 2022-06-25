@@ -1,0 +1,7 @@
+PASS: window.URL.createObjectURL defined
+PASS: window.URL.revokeObjectURL defined
+PASS: URL.createObjectURL defined
+PASS: URL.revokeObjectURL defined
+PASS: window.URL.createObjectURL defined
+PASS: window.URL.revokeObjectURL defined
+

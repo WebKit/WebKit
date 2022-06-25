@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<style>
+#test {
+    background-color: red;
+    color: white;
+    overflow: hidden;
+}
+
+#test::selection {
+    background-color: green;
+}
+</style>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText(false);
+        testRunner.waitUntilDone();
+    }
+
+    function runRepaintTest() {
+        if (window.internals)
+            internals.startTrackingRepaints();
+
+        getSelection().setBaseAndExtent(test, 0, test, 1);
+
+        setTimeout(function() {
+            if (window.internals) {
+                document.querySelector('#repaints').innerHTML = window.internals.repaintRectsAsText();
+                internals.stopTrackingRepaints();
+            }
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, 0);
+    };
+</script>
+
+<body onload="runRepaintTest()">
+    <p id="test">Should have green background</p>
+    <div id="repaints"></div>
+</body>

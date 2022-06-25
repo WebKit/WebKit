@@ -1,0 +1,91 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # values: array of hashes having the following properties:
+  #   - name: string; The value.
+  #   - sortkey: number; The sortkey used to order the value when 
+  #              displayed to the user in a list.
+  #
+  # field: object; the field we are editing values for.
+  # static: array; list of values which cannot be renamed nor deleted.
+  #%]
+
+[% USE Bugzilla %]
+[% cgi = Bugzilla.cgi %]
+
+[% title = BLOCK %]Select value for the '[% field.description FILTER html %]'
+                   ([% field.name FILTER html %]) field[% END %]
+[% PROCESS global/header.html.tmpl
+  title = title
+  style_urls = ['skins/standard/admin.css']
+%]
+
+[% edit_contentlink = BLOCK %]editvalues.cgi?action=edit&amp;field=
+  [%- field.name FILTER uri %]&amp;value=%%name%%[% END %]
+[% delete_contentlink = BLOCK %]editvalues.cgi?action=del&amp;field=
+  [%- field.name FILTER uri %]&amp;value=%%name%%[% END %]
+
+
+[% columns = [
+     { 
+       name => "name"
+       heading => "Edit field value..."
+       contentlink => edit_contentlink
+     },
+     { 
+       name => "sortkey"
+       heading => "Sortkey"
+     },
+     {
+       name => "isactive"
+       heading => "Enabled for $terms.bugs"
+       yesno_field => 1
+     },
+     {
+       name => "action"
+       heading => "Action"
+       content => "Delete"
+       contentlink => delete_contentlink
+     } ]
+%]
+
+
+[% SET overrides.action = {} %]
+[% FOREACH check_value = values %]
+  [% IF check_value.is_static %]
+    [% overrides.action.name.${check_value.name} = {
+         override_content => 1
+         content => "(Non-deletable value)"
+         override_contentlink => 1
+         contentlink => undef
+       }
+    %]
+  [% ELSIF check_value.is_default %]
+    [% overrides.action.name.${check_value.name} = {
+         override_content => 1
+         content => "(Default value)"
+         override_contentlink => 1
+         contentlink => undef
+       }
+    %]
+  [% END %]
+
+[% END %]
+
+[% PROCESS admin/table.html.tmpl
+     columns = columns
+     data = values
+     overrides = overrides
+%]
+
+[% PROCESS admin/fieldvalues/footer.html.tmpl
+  no_edit_other_link = 1
+ %]
+
+[% PROCESS global/footer.html.tmpl %]

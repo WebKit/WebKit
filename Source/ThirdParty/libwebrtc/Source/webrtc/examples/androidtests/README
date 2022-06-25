@@ -1,0 +1,14 @@
+This directory contains an example unit test for Android AppRTCMobile.
+
+Example of building & using the app:
+
+- Build Android AppRTCMobile and AppRTCMobile unit test:
+cd <path/to/webrtc>/src
+ninja -C out/Debug AppRTCMobile_test_apk
+
+- Install AppRTCMobile and AppRTCMobileTest:
+adb install -r out/Debug/apks/AppRTCMobile.apk
+adb install -r out/Debug/apks/AppRTCMobileTest.apk
+
+- Run unit tests:
+adb shell am instrument -w org.appspot.apprtc.test/android.test.InstrumentationTestRunner

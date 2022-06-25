@@ -1,0 +1,102 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Request consume</title>
+    <meta name="help" href="https://fetch.spec.whatwg.org/#request">
+    <meta name="help" href="https://fetch.spec.whatwg.org/#body-mixin">
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+    <script src="/fetch/api/resources/utils.js"></script>
+  </head>
+  <body>
+    <script>
+async function getStringFromStream(reader, currentValue) {
+    const data = await reader.read();
+    if (!data.done) {
+        let buffer;
+        if (currentValue) {
+            const newBuffer = new ArrayBuffer(data.value.length + currentValue.length);
+            buffer = new Uint8Array(newBuffer);
+            buffer.set(currentValue, 0);
+            buffer.set(data.value, currentValue.length);
+        } else
+            buffer = data.value;
+        return getStringFromStream(reader, buffer);
+    }
+    return (new TextDecoder).decode(currentValue);
+}
+
+function createRequestWithBody(body)
+{
+    return new Request("", {body: body, method: "POST"});
+}
+
+promise_test(function(test) {
+    var body = "";
+    var request = createRequestWithBody("");
+    return validateStreamFromString(request.body.getReader(), "");
+}, "Read empty text request's body as readableStream");
+
+promise_test(function(test) {
+    var request = createRequestWithBody(new Blob([], { "type" : "text/plain" }));
+    return validateStreamFromString(request.body.getReader(), "");
+}, "Read empty blob request's body as readableStream");
+
+var formData = new FormData();
+formData.append("name", "value");
+var textData = JSON.stringify("This is request's body");
+var blob = new Blob([textData], { "type" : "text/plain" });
+var urlSearchParamsData = "name=value";
+var urlSearchParams = new URLSearchParams(urlSearchParamsData);
+
+promise_test(function(test) {
+    var request = createRequestWithBody(blob);
+    return validateStreamFromString(request.body.getReader(), textData);
+}, "Read blob request's body as readableStream");
+
+promise_test(function(test) {
+    var request = createRequestWithBody(textData);
+    return validateStreamFromString(request.body.getReader(), textData);
+}, "Read text request's body as readableStream");
+
+promise_test(function(test) {
+    var request = createRequestWithBody(urlSearchParams);
+    return validateStreamFromString(request.body.getReader(), urlSearchParamsData);
+}, "Read URLSearchParams request's body as readableStream");
+
+promise_test(function(test) {
+    var arrayBuffer = new ArrayBuffer(textData.length);
+    var int8Array = new Int8Array(arrayBuffer);
+    for (var cptr = 0; cptr < textData.length; cptr++)
+        int8Array[cptr] = textData.charCodeAt(cptr);
+
+    return validateStreamFromString(createRequestWithBody(arrayBuffer).body.getReader(), textData);
+}, "Read array buffer request's body as readableStream");
+
+promise_test(async (test) => {
+    var request = createRequestWithBody(formData);
+    const value = await getStringFromStream(request.body.getReader());
+
+    assert_true(value.includes('name="name"'), "name");
+    assert_true(value.includes('value'), "name");
+}, "Read form data request's body as readableStream");
+
+promise_test(async (test) => {
+    const formData = new FormData();
+    const blob = new Blob(["'Hello'"], { "type" : "text/plain" });
+    formData.append("blob", blob, "blob.file");
+    formData.append("name", "value");
+
+    const request = createRequestWithBody(formData);
+    const value = await getStringFromStream(request.body.getReader());
+
+    assert_true(value.includes('name="name"'), "name");
+    assert_true(value.includes('value'), "name");
+
+    assert_true(value.includes('name="blob"'), "blob");
+    assert_true(value.includes('Hello'), "Hello");
+}, "Read form data with blob request's body as readableStream");
+    </script>
+  </body>
+</html>

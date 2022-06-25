@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+  <foreignObject x="0" y="0" width="100px" height="100px">
+    <!-- lime background -->
+    <div xmlns="http://www.w3.org/1999/xhtml"
+         style="background:lime; width:100%; height:100%;">
+
+      <!-- embedded iframe, whose contents shouldn't be shown and whose
+           scripts shouldn't be run, when we're being viewed as an image -->
+      <iframe xmlns="http://www.w3.org/1999/xhtml"
+              style="width:80px; height:80px; border: 0"
+              src="data:text/html,%3Chtml%3E%3Cbody%20style%3D%22background-color%3A%20red%22%3Eiframe%20contents%3Cscript%3Ealert(%22script%20shouldn't%20be%20running!!%22)%3C%2Fscript%3E%3C%2Fbody%3E%3C%2Fhtml%3E"/>
+    </div>
+  </foreignObject>
+</svg>

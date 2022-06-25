@@ -1,0 +1,91 @@
+basic tests for destructuring assignment
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS var [a,b]=['1','2']; var r=a+b; r is '12'
+Function as String: (function([a,b]) { return a+b;})
+PASS (function([a,b]) { return a+b;})(['1','2']) is '12'
+PASS (function ([a,b]) { return a+b;})(['1','2']) is '12'
+PASS ([a,b]=['1','2']); var r=a+b; r is '12'
+PASS [a,b]=['1','2']; var r=a+b; r is '12'
+PASS var {a,b}={a:'1',b:'2'}; var r=a+b; r is '12'
+Function as String: (function({a,b}) { return a+b;})
+PASS (function({a,b}) { return a+b;})({a:'1',b:'2'}) is '12'
+PASS (function ({a,b}) { return a+b;})({a:'1',b:'2'}) is '12'
+PASS ({a,b}={a:'1',b:'2'}); var r=a+b; r is '12'
+PASS var {c:a,d:b}={c:'1',d:'2'}; var r=a+b; r is '12'
+Function as String: (function({c:a,d:b}) { return a+b;})
+PASS (function({c:a,d:b}) { return a+b;})({c:'1',d:'2'}) is '12'
+PASS (function ({c:a,d:b}) { return a+b;})({c:'1',d:'2'}) is '12'
+PASS ({c:a,d:b}={c:'1',d:'2'}); var r=a+b; r is '12'
+PASS var {c:b,d:a}={c:'1',d:'2'}; var r=a+b; r is '21'
+Function as String: (function({c:b,d:a}) { return a+b;})
+PASS (function({c:b,d:a}) { return a+b;})({c:'1',d:'2'}) is '21'
+PASS (function ({c:b,d:a}) { return a+b;})({c:'1',d:'2'}) is '21'
+PASS ({c:b,d:a}={c:'1',d:'2'}); var r=a+b; r is '21'
+PASS var {true:a,false:b,undefined:c,null:d,in:e,for:f,1.5:g,'foo bar':h}={true:'a',false:'b',undefined:'c',null:'d',in:'e',for:'f',1.5:'g','foo bar':'h'}; var r=a+b+c+d+e+f+g+h; r is 'abcdefgh'
+Function as String: (function({true:a,false:b,undefined:c,null:d,in:e,for:f,1.5:g,'foo bar':h}) { return a+b+c+d+e+f+g+h;})
+PASS (function({true:a,false:b,undefined:c,null:d,in:e,for:f,1.5:g,'foo bar':h}) { return a+b+c+d+e+f+g+h;})({true:'a',false:'b',undefined:'c',null:'d',in:'e',for:'f',1.5:'g','foo bar':'h'}) is 'abcdefgh'
+PASS (function ({true:a,false:b,undefined:c,null:d,in:e,for:f,1.5:g,'foo bar':h}) { return a+b+c+d+e+f+g+h;})({true:'a',false:'b',undefined:'c',null:'d',in:'e',for:'f',1.5:'g','foo bar':'h'}) is 'abcdefgh'
+PASS ({true:a,false:b,undefined:c,null:d,in:e,for:f,1.5:g,'foo bar':h}={true:'a',false:'b',undefined:'c',null:'d',in:'e',for:'f',1.5:'g','foo bar':'h'}); var r=a+b+c+d+e+f+g+h; r is 'abcdefgh'
+PASS var [{c:a,d:b}]=[{c:'1',d:'2'}]; var r=a+b; r is '12'
+Function as String: (function([{c:a,d:b}]) { return a+b;})
+PASS (function([{c:a,d:b}]) { return a+b;})([{c:'1',d:'2'}]) is '12'
+PASS (function ([{c:a,d:b}]) { return a+b;})([{c:'1',d:'2'}]) is '12'
+PASS ([{c:a,d:b}]=[{c:'1',d:'2'}]); var r=a+b; r is '12'
+PASS [{c:a,d:b}]=[{c:'1',d:'2'}]; var r=a+b; r is '12'
+PASS var {x:[{c:a,d:b}]}={x:[{c:'1',d:'2'}]}; var r=a+b; r is '12'
+Function as String: (function({x:[{c:a,d:b}]}) { return a+b;})
+PASS (function({x:[{c:a,d:b}]}) { return a+b;})({x:[{c:'1',d:'2'}]}) is '12'
+PASS (function ({x:[{c:a,d:b}]}) { return a+b;})({x:[{c:'1',d:'2'}]}) is '12'
+PASS ({x:[{c:a,d:b}]}={x:[{c:'1',d:'2'}]}); var r=a+b; r is '12'
+PASS var [a,b]=anArray; var r=a+b; r is '12'
+Function as String: (function([a,b]) { return a+b;})
+PASS (function([a,b]) { return a+b;})(anArray) is '12'
+PASS (function ([a,b]) { return a+b;})(anArray) is '12'
+PASS ([a,b]=anArray); var r=a+b; r is '12'
+PASS [a,b]=anArray; var r=a+b; r is '12'
+PASS var {a,b}=anArray; var r=a+b; r is '34'
+Function as String: (function({a,b}) { return a+b;})
+PASS (function({a,b}) { return a+b;})(anArray) is '34'
+PASS (function ({a,b}) { return a+b;})(anArray) is '34'
+PASS ({a,b}=anArray); var r=a+b; r is '34'
+PASS var {a:a,b:b}=anArray; var r=a+b; r is '34'
+Function as String: (function({a:a,b:b}) { return a+b;})
+PASS (function({a:a,b:b}) { return a+b;})(anArray) is '34'
+PASS (function ({a:a,b:b}) { return a+b;})(anArray) is '34'
+PASS ({a:a,b:b}=anArray); var r=a+b; r is '34'
+PASS var {a,b}=anObject; var r=a+b; r is '12'
+Function as String: (function({a,b}) { return a+b;})
+PASS (function({a,b}) { return a+b;})(anObject) is '12'
+PASS (function ({a,b}) { return a+b;})(anObject) is '12'
+PASS ({a,b}=anObject); var r=a+b; r is '12'
+PASS var {a:a,b:b}=anObject; var r=a+b; r is '12'
+Function as String: (function({a:a,b:b}) { return a+b;})
+PASS (function({a:a,b:b}) { return a+b;})(anObject) is '12'
+PASS (function ({a:a,b:b}) { return a+b;})(anObject) is '12'
+PASS ({a:a,b:b}=anObject); var r=a+b; r is '12'
+PASS var {0:a,1:b}=anObject; var r=a+b; r is '34'
+Function as String: (function({0:a,1:b}) { return a+b;})
+PASS (function({0:a,1:b}) { return a+b;})(anObject) is '34'
+PASS (function ({0:a,1:b}) { return a+b;})(anObject) is '34'
+PASS ({0:a,1:b}=anObject); var r=a+b; r is '34'
+PASS var {'a':a,'b':b}=anObject; var r=a+b; r is '12'
+Function as String: (function({'a':a,'b':b}) { return a+b;})
+PASS (function({'a':a,'b':b}) { return a+b;})(anObject) is '12'
+PASS (function ({'a':a,'b':b}) { return a+b;})(anObject) is '12'
+PASS ({'a':a,'b':b}=anObject); var r=a+b; r is '12'
+PASS a+b is '1122'
+PASS a+b is '2211'
+PASS testDestructuredArgs('1', '2') is '12'
+PASS testDestructuredArgLength('1', '2') is 2
+PASS testDestructuredArgs('2') is '2undefined'
+PASS a is 1
+PASS b is 2
+PASS c is 3
+PASS d is 4
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

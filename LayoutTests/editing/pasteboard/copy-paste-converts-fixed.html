@@ -1,0 +1,29 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="../../resources/dump-as-markup.js"></script>
+</head>
+<body>
+abc<div style="position: fixed; left: 0px; top: 0px;">def</div>ghi
+<br/>
+
+<script>
+
+Markup.description('This tests to see if position:fixed gets converted to position:absolute upon copy/paste');
+
+document.designMode = 'on';
+
+if (window.internals)
+    window.internals.settings.setShouldConvertPositionStyleOnCopy(true);
+
+var s = window.getSelection();
+
+Markup.dump('test1', 'first test - before');
+document.execCommand("SelectAll");
+document.execCommand("Cut");
+document.execCommand("Paste");
+Markup.dump('test1', 'first test - after');
+
+</script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=video-test.js></script>
+        <script src=media-file.js></script>
+        <script>
+            var canPlayThroughCount = 0;
+            function onCanPlayThrough() {
+                if (++canPlayThroughCount == document.getElementsByTagName('video').length + document.getElementsByTagName('audio').length) {
+                    endTest();
+                    return;
+                }
+            }
+            function onError(e) {
+                var type = e.target.type;
+                if (!type) {
+                    var src = e.target.src;
+                    var semicolon;
+                    if ((src.substr(0,5) == "data:") && ((semicolon = src.substr(5).indexOf(';')) > 0))
+                        type = src.substr(5).substr(0, semicolon);
+                    if (!type) {
+                        failTest("Couldn't find type");
+                        return;
+                    }
+                }
+
+                if (e.target.tagName == 'SOURCE' && !e.target.parentNode.canPlayType(type)) {
+                    // Expected error; ignore.
+                    return;
+                }
+                var id = (e.target.tagName == 'SOURCE' ? e.target.parentNode.id : e.target.id);
+                failTest("tag: " + e.target.tagName + ", id: " + id + ", src: " + e.target.src);
+            }
+            
+            function createSourceOfType(type)
+            {
+                const source = document.createElement('source');
+                source.type = `video/${type}`;
+                source.src = dataURL(type);
+                return source;
+            }
+
+            function setup()
+            {
+                let video = document.getElementById('v3');
+                video.appendChild(createSourceOfType('mp4'));
+                video.appendChild(createSourceOfType('ogg'));
+
+                video = document.getElementById('v4');
+                video.appendChild(createSourceOfType('mp4'));
+                video.appendChild(createSourceOfType('ogg'));
+            }
+            </script>
+    </head>
+    <body onload="setup()">
+        Test that fallback among codecs is done correctly regardless of their order.
+        <!-- This could be made far more general, testing all permutations of
+             (audio|video)Codecs and so on, but in reality we only have these 4
+             test files, so simply enumerating them manually and testing they
+             all hit canplaythrough is good enough.  Someday when many more
+             files are present, consider generalizing this.
+        -->
+
+        <video id='v1' controls oncanplaythrough='onCanPlayThrough()' onerror='onError(event)'>
+            <source onerror='onError(event)' type="video/mp4" src="content/test.mp4"/>
+            <source onerror='onError(event)' type="video/ogg" src="content/test.ogv"/>
+        </video>
+
+        <video id='v2' controls oncanplaythrough='onCanPlayThrough()' onerror='onError(event)'>
+            <source onerror='onError(event)' type="video/ogg" src="content/test.ogv"/>
+            <source onerror='onError(event)' type="video/mp4" src="content/test.mp4"/>
+        </video>
+
+        <audio id='a1' controls oncanplaythrough='onCanPlayThrough()' onerror='onError(event)'>
+            <source onerror='onError(event)' type="audio/wav" src="content/test.wav"/>
+            <source onerror='onError(event)' type="audio/ogg" src="content/test.oga"/>
+        </audio>
+
+        <audio id='a2' controls oncanplaythrough='onCanPlayThrough()' onerror='onError(event)'>
+            <source onerror='onError(event)' type="audio/ogg" src="content/test.oga"/>
+            <source onerror='onError(event)' type="audio/wav" src="content/test.wav"/>
+        </audio>
+
+        <video id="v3" controls oncanplaythrough='onCanPlayThrough()' onerror='onError(event)'>
+        </video>
+
+        <video id="v4" controls oncanplaythrough='onCanPlayThrough()' onerror='onError(event)'>
+        </video>
+
+    </body>
+</html>

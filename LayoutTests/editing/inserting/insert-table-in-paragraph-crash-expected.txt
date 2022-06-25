@@ -1,0 +1,7 @@
+This tests pasting a table element wrapped in p. WebKit should not crash.
+| <#selection-caret>
+| <table>
+|   <tbody>
+|     <tr>
+|       <td>
+|         "stats"

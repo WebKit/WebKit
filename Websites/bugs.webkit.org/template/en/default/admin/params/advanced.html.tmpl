@@ -1,0 +1,68 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% 
+   title = "Advanced"
+   desc = "Settings for advanced configurations."
+%]
+
+[% sts_desc = BLOCK %]
+  Enables the sending of the 
+  <a href="http://en.wikipedia.org/wiki/Strict_Transport_Security">Strict-Transport-Security</a>
+  header along with HTTP responses on SSL connections. This adds greater
+  security to your SSL connections by forcing the browser to always
+  access your domain over SSL and never accept an invalid certificate. 
+  However, it should only be used if you have the <code>ssl_redirect</code>
+  parameter turned on, Bugzilla is the only thing running
+  on its domain (i.e., your <code>urlbase</code> is something like
+  <code>http://bugzilla.example.com/</code>), and you never plan to disable
+  the <code>ssl_redirect</code> parameter.
+  <ul>
+    <li>
+      off - Don't send the Strict-Transport-Security header with requests.
+    </li>
+    <li>
+      this_domain_only - Send the Strict-Transport-Security header with all
+      requests, but only support it for the current domain.
+    </li>
+    <li>
+      include_subdomains - Send the Strict-Transport-Security header along
+      with the <code>includeSubDomains</code> flag, which will apply the
+      security change to all subdomains. This is especially useful when
+      combined with an <code>attachment_base</code> that exists as (a)
+      subdomain(s) under the main Bugzilla domain.
+    </li>
+  </ul>
+[% END %]
+
+[% param_descs = {
+  cookiedomain => 
+    "If your website is at 'www.foo.com', setting this to"
+    _ " '.foo.com' will also allow 'bar.foo.com' to access"
+    _ " Bugzilla cookies. This is useful if you have more than"
+    _ " one hostname pointing at the same web server, and you"
+    _ " want them to share the Bugzilla cookie.",
+
+  inbound_proxies =>
+    "When inbound traffic to Bugzilla goes through a proxy,"
+    _ " Bugzilla thinks that the IP address of every single"
+    _ " user is the IP address of the proxy. If you enter a comma-separated"
+    _ " list of IPs in this parameter, then Bugzilla will trust any"
+    _ " <code>X-Forwarded-For</code> header sent from those IPs,"
+    _ " and use the value of that header as the end user's IP address.",
+
+  proxy_url => 
+    "Bugzilla may have to access the web to get notifications about"
+    _ " new releases (see the <var>upgrade_notification</var> parameter)."
+    _ " If your Bugzilla server is behind a proxy, it may be"
+    _ " necessary to enter its URL if the web server cannot access the"
+    _ " HTTP_PROXY environment variable. If you have to authenticate,"
+    _ " use the <code>http://user:pass@proxy_url/</code> syntax.",
+
+  strict_transport_security => sts_desc,
+} %]

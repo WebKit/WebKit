@@ -1,0 +1,29 @@
+#!/usr/bin/env python3
+# encoding: utf-8
+
+import argparse
+import sys
+from typing import Any, Dict, Iterable, List, Tuple
+from webkitpy import mach_o
+
+def main(args: List[str]):
+    parser = argparse.ArgumentParser()
+    parser.add_argument("binary")
+    parser.add_argument("variables", nargs="+")
+    options = parser.parse_args(args)
+
+    with open(options.binary, "r+b") as binary_file:
+        mach_o_file = mach_o.MachOFile(binary_file)
+
+        for mach_o_header in mach_o_file.headers:
+            mach_o_header.filter_commands(lambda command: not isinstance(command, mach_o.MachODyldEnvironmentCommand))
+
+            for variable_pair in options.variables:
+                mach_o_header.commands.append(mach_o.MachODyldEnvironmentCommand.build(variable_pair))
+
+            mach_o_header.update_file(binary_file)
+
+    return 0
+
+if __name__ == '__main__':
+    sys.exit(main(sys.argv[1:]))

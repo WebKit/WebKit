@@ -1,0 +1,54 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+    <style>
+        #output {
+            width: 100%;
+            height: 100%;
+            overflow: scroll;
+        }
+
+        #bar {
+            width: 980px;
+            height: 100px;
+            background: linear-gradient(to right, red 0%, green 50%, blue 100%);
+        }
+
+        body {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    async function runTest() {
+        const appendOutput = message => {
+            output.appendChild(document.createTextNode(message));
+            output.appendChild(document.createElement("br"));
+        };
+
+        for (const targetScale of [1, 0.5, 2, 1]) {
+            await UIHelper.setViewScale(targetScale);
+            await UIHelper.ensurePresentationUpdate();
+            appendOutput(`setViewScale(${targetScale.toFixed(2)})`);
+            appendOutput(`window size: [${innerWidth}, ${innerHeight}]`);
+            appendOutput(`zoom scale: ${(await UIHelper.zoomScale()).toFixed(2)}`);
+            appendOutput("");
+        }
+
+        testRunner.notifyDone();
+    }
+    </script>
+</head>
+
+<body onload="runTest()">
+    <div id="bar"></div>
+    <pre id="output"></pre>
+</body>
+</html>

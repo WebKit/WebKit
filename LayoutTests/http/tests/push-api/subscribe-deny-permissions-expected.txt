@@ -1,0 +1,6 @@
+PASS: service worker permissionState was denied
+PASS: document permissionState was denied
+PASS: service worker subscribe was error: NotAllowedError
+PASS: document subscribe without user gesture was error: NotAllowedError: User denied push permission
+PASS: document subscribe with user gesture was error: NotAllowedError
+

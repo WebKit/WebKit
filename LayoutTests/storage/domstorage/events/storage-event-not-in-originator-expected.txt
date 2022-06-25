@@ -1,0 +1,18 @@
+Tests that the storage event gets fired in other frames but not the originating one
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS sessionStorage.getItem(sessionStorageKey) is null
+PASS sessionStorageKey === localStorageKey is false
+PASS localStorage.getItem(localStorageKey) is null
+PASS Child frame received storage event.
+PASS event.newValue === expectedValue is true
+PASS Child frame received storage event.
+PASS event.newValue === expectedValue is true
+PASS topStorageEventCount is 0
+PASS childStorageEventCount is 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

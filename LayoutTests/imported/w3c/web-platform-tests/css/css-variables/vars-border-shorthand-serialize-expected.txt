@@ -1,0 +1,5 @@
+
+PASS border-color should serialize to the empty string when border references a variable
+PASS border-style should serialize to the empty string when border references a variable
+PASS border-width should serialize to the empty string when border references a variable
+

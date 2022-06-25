@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#out {
+    position: absolute;
+}
+
+.fixed {
+    position: fixed;
+    top: 0px;
+    bottom:0px;
+    overflow-x: scroll;
+}
+.scrolled {
+    column-width: 200px;
+    column-fill: auto;
+    height: 200px;
+    width: 600px;
+}
+.filler {
+    width: 200px;
+    height: 200px;
+    background-color:blue;
+}
+</style>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.onload = function() {
+    if (!window.testRunner)
+        return;
+
+    requestAnimationFrame(() => {
+
+        let scroller = document.getElementById('fixed');
+        scroller.scrollTo(400, 0);
+
+        let uiScript = `(function() {
+            uiController.doAfterNextStablePresentationUpdate(function() {
+                uiController.uiScriptComplete();
+            });
+        })()`
+
+        testRunner.runUIScript(uiScript, () => {
+            let afterLayers = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_BACKING_STORE_ATTACHED);
+            let out = document.getElementById('out');
+            out.textContent = `${afterLayers}`
+            testRunner.notifyDone();
+        });
+    });
+};
+</script>
+</head>
+<body>
+<pre id="out"></pre>
+
+<div id="fixed" class="fixed">
+    <div class="scrolled">
+        <div class="filler"></div>
+        <div class="filler"></div>
+        <div class="filler"></div>
+        <div class="filler"></div>
+        <div class="filler"></div>
+    </div>
+</div>
+</body>
+</html>

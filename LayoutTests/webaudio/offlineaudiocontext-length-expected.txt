@@ -1,0 +1,13 @@
+Basic testing for OfflineAudioContext.length
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS context = new OfflineAudioContext({ length: 100, sampleRate: 44100 }) did not throw exception.
+PASS context.length is 100
+PASS context = new OfflineAudioContext({ length: 1000, sampleRate: 44100 }) did not throw exception.
+PASS context.length is 1000
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

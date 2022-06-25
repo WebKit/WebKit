@@ -1,0 +1,11 @@
+This test verifies that a page with a large client-set minimum effective device width, no viewport, and content larger than the actual view width is scaled to fit the client-set minimum effective device width. To test manually, load the page and verify that the bar spans half the width of the page.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS minScale is expectedScale
+PASS innerWidth became 1500
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

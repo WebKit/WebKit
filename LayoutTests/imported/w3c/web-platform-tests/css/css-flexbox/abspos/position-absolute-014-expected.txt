@@ -1,0 +1,4 @@
+aaa bbb aaa bbb aaa bbb
+
+PASS The bottom of each pair of boxes should be the same
+

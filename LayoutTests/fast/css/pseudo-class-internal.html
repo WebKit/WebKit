@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<div id="target"></div>
+<script>
+
+description('This tests that -internal- pseudo classes are not exposed');
+
+function runTest() {
+    const internalPseudoClasses = [
+        ':-internal-direct-focus',
+    ];
+    for (const pseudo of internalPseudoClasses) {
+        shouldThrowErrorName('target.matches("' + pseudo + '")', 'SyntaxError');
+    }
+    finishJSTest();
+}
+
+window.onload = runTest;
+</script>
+</body>
+</html>

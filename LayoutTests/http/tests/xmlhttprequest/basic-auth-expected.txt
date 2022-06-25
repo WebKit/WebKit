@@ -1,0 +1,16 @@
+Tests for XMLHttpRequest authentication.
+
+sync: User: sync, password: 123.
+sync2: User: sync2, password: 123.
+sync3: User: sync3, password: 123.
+sync4: User: sync4, password: 123.
+sync5: User: sync5, password: 123.
+sync6: User: sync6, password: 123.
+sync7: User: sync7, password: 123.
+async: User: async, password: 123.
+async2: User: async2, password: 123.
+async3: User: async3, password: 123.
+async4: User: async4, password: 123.
+async5: User: async5, password: 123.
+async6: User: async6, password: 123.
+async7: User: async7, password: 123.

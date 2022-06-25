@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            div[BAR] {
+                color: green;
+            }
+
+            path {
+                color: red;
+            }
+            *[pathLength] {
+                color: green;
+            }
+            *[pathlength] {
+                color: red;
+            }
+            *[pathLength="100"] {
+                color: green;
+            }
+            *[pathlength="100"] {
+                color: red;
+            }
+        </style>
+        <script src="../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <div id="container">
+            <div id="div1" baR="10"></div>
+
+            <svg xmlns="http://www.w3.org/2000/svg">
+                <path id="path1" pathLength="200"/>
+                <path id="path2" pathLength="100"/>
+            </svg>
+        </div>
+        <script>
+            function checkStyle(prefix, count, property, value) {
+                for (var i = 1; i <= count; ++i)
+                    shouldBe("window.getComputedStyle(document.getElementById(\"" + prefix + i + "\"))." + property, "\"" + value + "\"");
+            }
+            checkStyle("div", 1, "color", "rgb(0, 128, 0)");
+            checkStyle("path", 2, "color", "rgb(0, 128, 0)");
+
+            document.getElementById("container").style.display = "none";
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

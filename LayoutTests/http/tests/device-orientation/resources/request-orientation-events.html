@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+addEventListener("deviceorientation", () => {});
+
+internals.withUserGesture(() => {
+    DeviceOrientationEvent.requestPermission().then((result) => {
+        top.postMessage(result, "*");
+    });
+});
+</script>
+</body>
+</html>

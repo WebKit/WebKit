@@ -1,0 +1,12 @@
+<!DOCTYPE html><!-- webkit-test-runner [ contentSecurityPolicyExtensionMode=v3 ] -->
+<html>
+<head>
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self'; img-src *; style-src 'unsafe-hashes' 'sha256-S0VSqEOmzmyOifPfat2sJ7ELOgkldAEbaXlvi5iMqjc=';">
+<script src="../../../resources/dump-as-text.js"></script>
+<p>Test that CSP for manifest V3 extensions allows keywords for non-restricted directives.</p>
+</head>
+<body class="target">
+<img src='../../../../resources/abe.png' id='test' style='background: green'>
+<script src="../resources/check-style.js"></script>
+</body>
+</html>

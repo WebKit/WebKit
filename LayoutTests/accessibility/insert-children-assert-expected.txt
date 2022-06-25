@@ -1,0 +1,14 @@
+ab
+c
+de
+This tests that we only insert valid children when building ax tree.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS valueOccuranceInElementTree(content, value) is 1
+PASS valueOccuranceInElementTree(content, value) is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

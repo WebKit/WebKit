@@ -1,0 +1,91 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            height: 2000px;
+        }
+
+        .scroller {
+            margin: 10px;
+            width: 500px;
+            height: 400px;
+            overflow: auto;
+            border: 2px solid black;
+        }
+        
+        .horizontal .scroller {
+            width: 400px;
+            height: 400px;
+            margin: 10px;
+        }
+        
+        .filler {
+            height: 200px;
+            width: 100%;
+            margin: 10px;
+            background-color: silver;
+        }
+
+        .horizontal .filler {
+            height: 80%;
+            width: 200%;
+            background-color: silver;
+        }
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script>
+        jsTestIsAsync = true;
+        var outerScroller;
+        var innerScroller;
+        
+        function checkForScroll()
+        {
+            debug('After scrolll');
+            shouldBe('outerScroller.scrollTop', '210');
+            shouldBe('innerScroller.scrollTop', '0');
+
+            finishJSTest();
+        }
+
+        function scrollTest()
+        {
+            outerScroller = document.getElementById('outer');
+            innerScroller = document.getElementById('inner');
+            
+            debug('Initial state');
+            shouldBe('outerScroller.scrollTop', '0');
+            shouldBe('innerScroller.scrollTop', '0');
+
+            if (!window.eventSender) {
+                finishJSTest();
+                return;
+            }
+
+            eventSender.monitorWheelEvents();
+            eventSender.mouseMoveTo(150, 300); // Over the horizontally scrollable overflow.
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "began", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "changed", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, "none", "continue");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "none", "end");
+            eventSender.callAfterScrollingCompletes(checkForScroll);
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(scrollTest, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <div id="outer" class="scroller">
+        <div class="filler">Scrolls vertically</div>
+        <div id="inner" class="horizontal scroller">
+            <div class="filler">Scrolls horizontally</div>
+        </div>
+        <div class="filler"></div>
+    </div>
+    <div id="console"></div>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% IF comment.type == constants.CMT_MOVED_TO %]
+[% comment.body %]
+
+[%+ terms.Bug %] moved to [% Param("move-to-url") %].
+If the move succeeded, [% comment.extra_data FILTER email %] will receive a mail
+containing the number of the new [% terms.bug %] in the other database.
+If all went well, please paste in a link to the new [% terms.bug %]. 
+Otherwise, reopen this [% terms.bug %].
+[% END %]

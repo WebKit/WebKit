@@ -1,0 +1,25 @@
+<html>
+<head>
+<script>
+    window.onload = () => {
+      if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.setBackingScaleFactor(2, () => setTimeout(() => testRunner.notifyDone(), 0));
+      }
+    }
+</script>
+    
+<style>
+    #foo {
+        width:100px;
+        height:100px;
+        background-image: image-set(url('resources/blue-100-px-square.png') 1x, -webkit-cross-fade(url('resources/blue-100-px-square.png'), url('resources/green-200-px-square.png', 50%)) 2x);
+    }
+</style>
+</head>
+
+<body>
+    <div>This test passes if the div below is a blue 100px square when the deviceScaleFactor is 1, and if it is a 100px green/blue cross-fade square when the deviceScaleFactor is 2.</div>
+    <div id=foo></div>
+</body>
+</html>

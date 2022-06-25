@@ -1,0 +1,11 @@
+--- !tapi-tbd-v3
+archs:           [ x86_64, arm64, arm64e ]
+install-name:     '/System/Library/PrivateFrameworks/SafariSafeBrowsing.framework/SafariSafeBrowsing'
+objc-constraint: none
+platform: ios
+exports:
+  -
+    archs:           [ x86_64, arm64, arm64e ]
+    symbols:         [ _SSBProviderTencent, _ZN12SafeBrowsing7Service4mainEv ]
+    objc-classes:    [ SSBLookupContext, SSBLookupResult, SSBServiceLookupResult ]
+...

@@ -1,0 +1,4 @@
+
+FAIL test calling function undefined is not a constructor (evaluating 'new WebAssembly.Function({parameters: ["i32", "i32"], results: ["i32"]}, addxy)')
+FAIL test constructing function undefined is not a constructor (evaluating 'new WebAssembly.Function({parameters: ["i32", "i32"], results: ["i32"]}, addxy)')
+

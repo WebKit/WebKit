@@ -1,0 +1,16 @@
+<script>
+function testSucceeded() {
+    document.getElementById('console').innerText = 'SUCCESS';
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+<body>
+<embed id="plugin" type="application/x-webkit-test-netscape" test="get-url-with-javascript-url" width=100 height=100></embed>
+<p id="description">Test that evaluating a javascript: URL will send a stream with the result of the evaluation.</p>
+<div id="console">FAILURE</div>

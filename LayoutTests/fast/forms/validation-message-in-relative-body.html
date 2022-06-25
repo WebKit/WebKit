@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="resources/common.js"></script>
+<style>
+body {
+    position: relative;
+    width: 192px;
+    top: 128px;
+    margin: 10px auto;
+    background-color: #eee;
+    border: 13px solid yellow;
+    padding: 9px;
+}
+</style>
+</head>
+<body>
+<form action="validation-message-in-relative-body.html">
+<input required id=host>
+<input type=submit id=submit>
+</form>
+
+<div id=console></div>
+<script>
+function check() {
+    hostRect = getAbsoluteRect(host);
+    bubbleRect = getAbsoluteRect(getValidationMessageBubbleNode(host));
+    shouldBe('bubbleRect.top', 'hostRect.bottom');
+    shouldBeTrue('hostRect.left <= bubbleRect.left && bubbleRect.left <= hostRect.right');
+    debug('');
+
+    finishJSTest();
+}
+
+var host = $('host');
+var hostRect;
+var bubbleRect;
+$('submit').click();
+if (window.testRunner) {
+    setTimeout(check, 0);
+} else {
+    debug('Submit the form, and check if the validation bubble is on the text field.');
+}
+
+var jsTestIsAsync = true;
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

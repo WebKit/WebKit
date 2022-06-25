@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-append-tiny-durations</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var initSegment;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    function makeSamples(generation) {
+        return concatenateSamples([
+            //           pts,  dts, dur,  scale
+            makeASample(   0,    0,    1, 10000, 1, SAMPLE_FLAG.SYNC, generation),
+            makeASample(2000,    1,  999, 10000, 1, SAMPLE_FLAG.NONE, generation),
+            makeASample(1000, 1000,    1, 10000, 1, SAMPLE_FLAG.NONE, generation),
+            makeASample(4000, 1001,  999, 10000, 1, SAMPLE_FLAG.NONE, generation),
+            makeASample(3000, 2000, 1000, 10000, 1, SAMPLE_FLAG.NONE, generation),
+        ]);
+    }
+
+    window.addEventListener('load', async event => {
+
+        findMediaElement();
+
+        source = new MediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        await waitFor(source, 'sourceopen');
+
+        run('sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
+        initSegment = makeAInit(4, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]);
+        run('sourceBuffer.appendBuffer(initSegment)');
+
+        await waitFor(sourceBuffer, 'updateend');
+
+        run('sourceBuffer.appendBuffer(makeSamples(1))');
+        await waitFor(sourceBuffer, 'updateend');
+        bufferedSamples = await internals.bufferedSamplesForTrackId(sourceBuffer, 1);
+        testExpected("bufferedSamples.length", 5);
+        bufferedSamples.forEach(consoleWrite);
+
+        consoleWrite("Testing the behavior is consistent when re-appending.")
+        run('sourceBuffer.appendBuffer(makeSamples(2))');
+        await waitFor(sourceBuffer, 'updateend');
+        bufferedSamples = await internals.bufferedSamplesForTrackId(sourceBuffer, 1);
+        testExpected("bufferedSamples.length", 5);
+        bufferedSamples.forEach(consoleWrite);
+
+        endTest();
+
+    }, {once: true});
+    </script>
+</head>
+<body>
+    <div>This tests that an append of non-overlapping samples of varying durations, some of them under a millisecond, don't trigger accidental erasure.
+    <br>This is done in some MP4 files, where decode durations are manipulated to code media containing B-frames while maintaining a start PTS = 0.</div>
+    <video></video>
+</body>
+</html>

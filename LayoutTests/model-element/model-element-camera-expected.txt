@@ -1,0 +1,6 @@
+
+PASS <model> has getCamera() and setCamera() methods
+PASS <model> cannot get or set the camera until it's ready
+PASS <model> can set the camera and read it back
+PASS <model> cannot set the camera if it's not a valid HTMLModelElementCamera
+

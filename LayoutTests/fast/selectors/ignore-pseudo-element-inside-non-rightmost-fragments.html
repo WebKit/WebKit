@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+#suite::after #testcase1,
+#suite::before #testcase1,
+#suite::first-letter #testcase1,
+#suite::first-line #testcase1
+{
+    color: red;
+}
+
+#suite:matches(::after, ::before, ::first-letter, ::first-line) #testcase2 {
+    color: red;
+}
+</style>
+</head>
+<body>
+<div id="suite" style="display:none">
+<p id="testcase1">Cocoa</p>
+<p id="testcase2">Cappuccino</p>
+</div>
+</body>
+<script>
+description('Ignore pseudo elements inside non-rightmost fragments when collecting rules for a node.');
+
+var pseudoIds = [
+    "",
+    "::after",
+    "::before",
+    "::first-letter",
+    "::first-line",
+];
+
+// Should not collect rules that selector has pseudo-element inside non-rightmost fragment,
+// even if executing with CollectingRules & CollectingRulesIgnoringVirtualPseudoElements.
+pseudoIds.forEach(function (pseudoId) {
+    shouldBe("window.getMatchedCSSRules(document.getElementById('testcase1'), '" + pseudoId + "')", "null");
+    shouldBe("window.getMatchedCSSRules(document.getElementById('testcase2'), '" + pseudoId + "')", "null");
+});
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

@@ -1,0 +1,8 @@
+
+
+PASS setup
+PASS video is playing
+PASS video frame type
+PASS key frame requests from sender
+PASS key frame requests from receiver
+

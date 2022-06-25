@@ -1,0 +1,33 @@
+
+PASS initial_color: div#div_subject.color
+PASS initial_color: div#div_child.color
+PASS initial_color: div#div_grandchild.color
+PASS add .child to #div_child: div#div_subject.color
+PASS remove .child from #div_child: div#div_subject.color
+PASS add .child to #div_grandchild: div#div_subject.color
+PASS remove .child from #div_grandchild: div#div_subject.color
+PASS add .descendant to #div_child: div#div_subject.color
+PASS remove .descendant from #div_child: div#div_subject.color
+PASS add .descendant to #div_grandchild: div#div_subject.color
+PASS remove .descendant from #div_grandchild: div#div_subject.color
+PASS set descendant to #div_grandchild[attrname]: div#div_subject.color
+PASS clear #div_grandchild[attrname]: div#div_subject.color
+PASS change #div_grandchild to #div_descendant: div#div_subject.color
+PASS change #div_descendant to #div_grandchild: div#div_subject.color
+PASS add descendant to #div_subject: div#div_subject.color
+PASS remove descendant from #div_subject: div#div_subject.color
+PASS add "div > descendant" to #div_subject: div#div_subject.color
+PASS remove "div > descendant" from #div_subject: div#div_subject.color
+PASS add div.child to #div_subject: div#div_subject.color
+PASS remove div.child from #div_subject: div#div_subject.color
+PASS add "div > div.descendant" to #div_subject: div#div_subject.color
+PASS remove "div > div.descendant" from #div_subject: div#div_subject.color
+PASS add div#div_descendant to #div_subject: div#div_subject.color
+PASS remove div#div_descendant from #div_subject: div#div_subject.color
+PASS add "div#div_descendant" to #div_subject: div#div_subject.color
+PASS remove "div#div_descendant" from #div_subject: div#div_subject.color
+PASS add div[attrname] to #div_subject: div#div_subject.color
+PASS remove div[attrname] from #div_subject: div#div_subject.color
+PASS add "div > div[attrname]" to #div_subject: div#div_subject.color
+PASS remove "div > div[attrname]" from #div_subject: div#div_subject.color
+

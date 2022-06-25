@@ -1,0 +1,12 @@
+Tests for the Animation.resolveAnimation command.
+
+
+== Running test suite: Animation.resolveAnimation
+-- Running test case: Animation.resolveAnimation.ValidIdentifier
+PASS: Payload should have type "object".
+PASS: Payload should have className "Animation".
+
+-- Running test case: Animation.resolveAnimation.InvalidIdentifier
+PASS: Should produce an exception.
+Error: Missing animation for given animationId
+

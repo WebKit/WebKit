@@ -1,0 +1,39 @@
+Tests for LocalResourceOverride being mapped to a file.
+
+
+== Running test suite: LocalResourceOverride
+-- Running test case: LocalResourceOverride.MappedToFile.Valid
+Creating Local Resource Override for: http://127.0.0.1:8000/inspector/network/resources/override.txt
+Linking to file...
+Triggering load...
+PASS: Resource Loaded.
+Resource Content: 'PASS: Should load from file.'
+Local Resource Override Content: 'PASS: Should load from file.'
+
+-- Running test case: LocalResourceOverride.MappedToFile.MappedFileChanged
+Creating Local Resource Override for: http://127.0.0.1:8000/inspector/network/resources/override.txt
+Linking to file...
+Triggering load...
+PASS: Resource Loaded.
+Resource Content: 'PASS: Should load from file.'
+Local Resource Override Content: 'PASS: Should load from file.'
+
+-- Running test case: LocalResourceOverride.MappedToFile.MappedFileDeleted
+Creating Local Resource Override for: http://127.0.0.1:8000/inspector/network/resources/override.txt
+Linking to file...
+Triggering load...
+WARN: Local Override: could not load “DOES NOT EXIST”
+PASS: Resource Loaded.
+Resource Content: 'PASS: Should not load from file.'
+Local Resource Override Content: 'PASS: Should not load from file.'
+
+-- Running test case: LocalResourceOverride.MappedToFile.Invalid
+Creating Local Resource Override for: http://127.0.0.1:8000/inspector/network/resources/override.txt
+Linking to file...
+Triggering load...
+WARN: Local Override: could not load “DOES NOT EXIST”
+WARN: Local Override: could not load “DOES NOT EXIST”
+PASS: Resource Loaded.
+Resource Content: 'PASS: Should not load from file.'
+Local Resource Override Content: 'PASS: Should not load from file.'
+

@@ -1,0 +1,6 @@
+This test requires DRT. It verifies that on Windows only \n's not preceded by \r are translated into \r\n by Pasteboard.
+
+Source:
+\nLine1\rLine2\nLine3\r\nLine4\r\r\nLine5\r\n\r\n\n
+Result:
+\r\nLine1\rLine2\r\nLine3\r\nLine4\r\r\nLine5\r\n\r\n\r\n

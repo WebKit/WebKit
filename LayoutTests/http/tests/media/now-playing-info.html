@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Page Title</title>
+        <script src=../../media-resources/video-test.js></script>
+        <script src=../../media-resources/media-file.js></script>
+        <script>
+
+            let nowPlayingState;
+            let previousNowPlayingState; 
+
+            async function waitForAttributeToChange(attribute, expected) {
+                let start = new Date().getTime();
+                do {
+
+                    if (internals.nowPlayingState[attribute] != expected)
+                        return;
+
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                } while (new Date().getTime() - start < 500);
+
+                failTest(`** Timed out waiting for "${attribute}" to change from "${expected}"`);
+            }
+
+            async function runTest()
+            {
+                findMediaElement();
+
+                consoleWrite('<br>* NowPlaying should not be active before playback has started.');
+                run('video.src = findMediaFile("video", "resources/test")');
+                await waitFor(video, 'canplaythrough');
+
+                run('nowPlayingState = internals.nowPlayingState');
+                testExpected('nowPlayingState.registeredAsNowPlayingApplication', false);
+
+                consoleWrite('<br>* Start to play, NowPlaying should become active.');
+                runWithKeyDown(() => {
+                    run('video.play()');
+                });
+
+                await waitFor(video, 'playing');
+                run('video.pause()');
+                await waitForAttributeToChange('registeredAsNowPlayingApplication', false);
+
+                consoleWrite('<br>* Title should be page title because video has no title.');
+                run('nowPlayingState = internals.nowPlayingState');
+                testExpected('nowPlayingState.registeredAsNowPlayingApplication', true);
+                testExpected('nowPlayingState.title', 'Page Title');
+                testExpected('nowPlayingState.duration', '0', '>');
+                previousNowPlayingState = nowPlayingState;
+
+
+                consoleWrite('<br>* Set video title, it should be used.');
+                run('video.title = "Video Title"');
+                await waitForAttributeToChange('title', 'Page Title');
+
+                run('nowPlayingState = internals.nowPlayingState');
+                testExpected('nowPlayingState.registeredAsNowPlayingApplication', true);
+                testExpected('nowPlayingState.title', 'Video Title');
+                testExpected('nowPlayingState.duration', '0', '>');
+                
+                // Don't use "testExpected" for time and identifier unless we know the test failed
+                // because the values will be different from run to run.
+                if (nowPlayingState.uniqueIdentifier != previousNowPlayingState.uniqueIdentifier)
+                    testExpected('nowPlayingState.uniqueIdentifier', previousNowPlayingState.uniqueIdentifier);
+                previousNowPlayingState = nowPlayingState;
+
+                consoleWrite('<br>* Clear video and page titles, page domain should be used.');
+                run('video.title = ""');
+                run('document.title = ""');
+                await waitForAttributeToChange('title', 'Video Title');
+
+                run('nowPlayingState = internals.nowPlayingState');
+                testExpected('nowPlayingState.registeredAsNowPlayingApplication', true);
+                testExpected('nowPlayingState.title', '127.0.0.1');
+                testExpected('nowPlayingState.duration', '0', '>');
+                if (nowPlayingState.uniqueIdentifier != previousNowPlayingState.uniqueIdentifier)
+                    testExpected('nowPlayingState.uniqueIdentifier', previousNowPlayingState.uniqueIdentifier);
+                previousNowPlayingState = nowPlayingState;
+
+                consoleWrite('<br>* Change currentTime, state should be updated.');
+                run('video.currentTime = video.currentTime + 0.5');
+                await waitForAttributeToChange('elapsedTime', previousNowPlayingState.elapsedTime);
+
+                run('nowPlayingState = internals.nowPlayingState');
+                testExpected('nowPlayingState.registeredAsNowPlayingApplication', true);
+                testExpected('nowPlayingState.title', '127.0.0.1');
+                testExpected('nowPlayingState.duration', '0', '>');
+                if (nowPlayingState.uniqueIdentifier != previousNowPlayingState.uniqueIdentifier)
+                    testExpected('nowPlayingState.uniqueIdentifier', previousNowPlayingState.uniqueIdentifier);
+                if (nowPlayingState.elapsedTime == previousNowPlayingState.elapsedTime)
+                    testExpected('nowPlayingState.elapsedTime', previousNowPlayingState.elapsedTime, '>');
+
+                consoleWrite('');
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload="runTest()">
+        <video controls ></video>
+        <br>
+        Tests that the NowPlaying information is updated correctly as attributes change.
+    </body>
+</html>

@@ -1,0 +1,4 @@
+
+This tests that we don't crash when passing inf as a parameter to arc
+Test passed.
+

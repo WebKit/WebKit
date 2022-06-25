@@ -1,0 +1,3 @@
+
+PASS PerformanceNavigationTiming instance exists with reasonable values.
+

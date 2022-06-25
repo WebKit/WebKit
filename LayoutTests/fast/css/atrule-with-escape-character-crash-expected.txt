@@ -1,0 +1,1 @@
+Test for crash when the identifier of an at-rule contains unicode escapes. The test passes if it does not cause an assertion failure. [https://bugs.webkit.org/show_bug.cgi?id=134632]

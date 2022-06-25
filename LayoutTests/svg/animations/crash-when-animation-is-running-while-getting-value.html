@@ -1,0 +1,16 @@
+PASS if no crash.
+<svg>
+<text x="1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1" id="textElement">
+<set attributeName="x" to="0"/>
+</svg>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+setTimeout(function() {
+    textElement.x.animVal.getItem(0);
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, 0);
+</script>

@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <meta name="fuzzy" content="maxDifference=0-1; totalPixels=0-75" />
+    <defs>
+        <rect id="red-rectangle" x="-100" y="-100" width="200" height="200" fill="red"/>
+        <path id="green-triangle" d="M 0 0 L 150 0 L 150 150 z" fill="green"/>
+        <path id="blue-triangle"  d="M 0 0 L 0 150 L 150 0 z" fill="blue"/>
+
+        <filter id="red-rectangle-filter" x="0" y="0" width="1" height="1">
+            <feImage href="#red-rectangle"/>
+        </filter>
+
+        <filter id="green-triangle-filter" x="0" y="0" width="1" height="1">
+            <feImage href="#green-triangle"/>
+        </filter>
+
+        <filter id="blue-triangle-filter" x="0" y="0" width="1" height="1">
+            <feImage href="#blue-triangle"/>
+        </filter>
+    </defs>
+    <g>
+        <g transform="translate(50, 50)">
+            <rect width="100" height="100" style="filter:url(#red-rectangle-filter)"/>
+        </g>
+
+        <g transform="translate(200, 50)">
+            <rect width="100" height="100" style="filter:url(#green-triangle-filter)"/>
+        </g>
+        <g transform="translate(350, 50)">
+            <rect width="100" height="100" style="filter:url(#blue-triangle-filter)"/>
+        </g>
+    </g>
+</svg>

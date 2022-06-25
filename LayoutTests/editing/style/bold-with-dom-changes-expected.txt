@@ -1,0 +1,2 @@
+This test verifies that deleting DOM elements in a DOMSubtreeModified handler triggered by and execCommand('bold') does not produce a crash.
+PASS

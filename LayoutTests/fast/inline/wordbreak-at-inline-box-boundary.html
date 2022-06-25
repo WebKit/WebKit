@@ -1,0 +1,16 @@
+<style>
+div {
+  font-family: Monospace;
+  font-size: 20px;
+  width: 440px;
+}
+.span_with_content {
+  padding-right: 100px;
+  word-wrap: break-word;
+}
+</style>
+<!-- padding (and border as well) is an unbreakable part of the inline box content and we should not break the text content at the inline box boundary (e.g. between text and </span>) -->
+<div><span class=span_with_content>padding&nbspmakes&nbspthis&nbspcontent&nbspoverflow</span></div>
+<div><span class=span_with_content>padding&nbspmakes&nbspthis&nbspcontent&nbspoverflow<span></span></span></div>
+<div><span class=span_with_content>padding&nbspmakes&nbspthis&nbspcontent&nbspoverflow<span style="word-wrap: break-word;"></span></span></div>
+<div><span class=span_with_content>padding&nbspmakes&nbspthis&nbspcontent&nbspoverflow</span><span></span></div>

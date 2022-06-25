@@ -1,0 +1,26 @@
+<html>
+<head>
+<title>Text does not split on white space when typing to the edge of window</title>
+</head>
+<body>
+<div>This test validates the fix for a bug that occurred when typing a blank at the end of a line when the character doesn't fix by a fraction of a pixel. If the test runs correctly, you should see the word 'you' at the end of the line and the word 'have' at the beginning of the following line.</div>
+<br>
+<div id="test" contenteditable style="font: 12px 'lucida grande'; outline: solid blue; width: 871px; height: 100px;">
+and Anna, you can do your regular weekly report run, and I'll extract the key sections into this. Andrew and Mark, I'd like to include any new bits you
+</div>
+</body>
+<script src="../editing.js"></script>
+<script>
+function editingTest()
+{
+    execMoveSelectionForwardByLineCommand();
+    typeCharacterCommand(' ');
+    typeCharacterCommand('h');
+    typeCharacterCommand('a');
+    typeCharacterCommand('v');
+    typeCharacterCommand('e');
+}
+
+runEditingTest();
+</script>
+</html>

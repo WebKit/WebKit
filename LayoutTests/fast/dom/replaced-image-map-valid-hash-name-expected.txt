@@ -1,0 +1,5 @@
+Tests the usemap attribute on the img element if it has a valid has-name reference. HTML5 specification says we should ignore usemap attributes without #. Click the image to test.
+
+SUCCESS. usemap attribute is ignored.
+
+

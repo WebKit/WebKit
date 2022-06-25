@@ -1,0 +1,18 @@
+Test that an Apple Pencil that changes pressure + angles does not generate a touchmove.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+    touchstart fired.
+PASS event.touches.length is 1
+PASS event.touches[0].touchType is 'stylus'
+PASS event.touches[0].altitudeAngle is within 0.01 of 1
+PASS event.touches[0].azimuthAngle is within 0.01 of 2
+PASS event.touches[0].force is within 0.01 of 0.5
+PASS: Did not see a touchmove.
+touchend fired.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

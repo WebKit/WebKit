@@ -1,0 +1,3 @@
+Should see Hebrew letter Aleph twice: אא
+
+windows-1255

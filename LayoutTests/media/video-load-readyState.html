@@ -1,0 +1,22 @@
+<video controls></video>
+<script src=media-file.js></script>
+<script src=video-test.js></script>
+<script>
+    function testReadyState(expected, endit, op)
+    {
+        testExpected("video.readyState", expected, op);
+        if (endit)
+            endTest();
+    }
+
+    testExpected("video.readyState", HTMLMediaElement.HAVE_NOTHING);
+    waitForEvent("loadstart");
+    waitForEvent("loadedmetadata");
+    waitForEvent("loadeddata");
+    waitForEvent("canplay");
+    waitForEventAndFail("play");
+    waitForEventAndFail("playing");
+    waitForEvent("canplaythrough", function () { testReadyState(HTMLMediaElement.HAVE_ENOUGH_DATA, true ); } );
+
+    video.src = findMediaFile("video", "content/test");
+</script>

@@ -1,0 +1,10 @@
+{
+    "timeout": 300,
+    "count": 5,
+    "svn_source": "https://svn.webkit.org/repository/webkit/trunk/PerformanceTests/SunSpider/@r182170",
+    "webserver_benchmark_patch": "data/patches/webserver/SunSpider.patch",
+    "webdriver_benchmark_patch": "data/patches/webdriver/SunSpider.patch",
+    "create_script": ["perl", "make-hosted"],
+    "entry_point": "hosted/sunspider-1.0.1/driver.html",
+    "output_file": "sunspider.result"
+}

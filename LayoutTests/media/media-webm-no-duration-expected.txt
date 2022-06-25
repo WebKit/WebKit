@@ -1,0 +1,8 @@
+
+RUN(audio.src = "../../../media/content/test-no-duration.webm")
+EVENT(canplay)
+RUN(promise = audio.play())
+Promise resolved OK
+EXPECTED (audio.currentTime > '0') OK
+END OF TEST
+

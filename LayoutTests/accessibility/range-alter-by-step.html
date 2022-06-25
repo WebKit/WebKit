@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<input type="range" min="0" max="100" value="25" step="25" id="rangeInput"/>
+
+<script>
+    description("This test makes sure that if a range type has a step value, that increment and decrement work.");
+
+    var rangeInput;
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        setTimeout(async function() {
+            // ARIA determinate progressbar
+            rangeInput = await waitForElementById("rangeInput");
+            shouldBe("rangeInput.intValue", "25");
+
+            rangeInput.increment();
+            await expectAsyncExpression("rangeInput.intValue", 50);
+
+            rangeInput.increment();
+            await expectAsyncExpression("rangeInput.intValue", 75);
+
+            rangeInput.increment();
+            await expectAsyncExpression("rangeInput.intValue", 100);
+
+            rangeInput.increment();
+            await expectAsyncExpression("rangeInput.intValue", 100);
+
+            rangeInput.decrement();
+            await expectAsyncExpression("rangeInput.intValue", 75);
+
+            rangeInput.decrement();
+            await expectAsyncExpression("rangeInput.intValue", 50);
+
+            rangeInput.decrement();
+            await expectAsyncExpression("rangeInput.intValue", 25);
+
+            rangeInput.decrement();
+            await expectAsyncExpression("rangeInput.intValue", 0);
+
+            rangeInput.decrement();
+            await expectAsyncExpression("rangeInput.intValue", 0);
+
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>
+

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    #clear-left {
+        clear: left;
+        font: 20px/1 Ahem, sans-serif;
+        color: green;
+    }
+
+    #clear-left > div {
+        float: left;
+        height: 20px;
+    }
+
+    /* OK Tests: image resource loading should succeed */
+    #ok-shape-outside-allow-url {
+        width: 100px;
+    }
+
+    #ok-shape-outside-same-origin-redirection-allow-url {
+        width: 100px;
+    }
+
+    #ok-shape-outside-allow-redirection-allow-url {
+        width: 100px;
+    }
+
+    /* Not OK Tests: image resource loading should fail */
+    #notok-shape-outside-same-origin-redirection-disallow-url {
+        width: 200px;
+    }
+
+    #notok-shape-outside-allow-redirection-disallow-url {
+        width: 200px;
+    }
+
+    #notok-shape-outside-disallow-redirection-allow-url {
+        width: 200px;
+    }
+</style>
+</head>
+<body>
+    <p>Verify that images not allowed by CORS don't affect the layout and that images (and any redirection) with a "Access-Control-Allow-Origin: *" header do define the layout.</p>
+    <div id="clear-left"><div id="ok-shape-outside-allow-url"></div>X</div>
+    <div id="clear-left"><div id="ok-shape-outside-same-origin-redirection-allow-url"></div>X</div>
+    <div id="clear-left"><div id="ok-shape-outside-allow-redirection-allow-url"></div>X</div>
+    <div id="clear-left"><div id="notok-shape-outside-same-origin-redirection-disallow-url"></div>X</div>
+    <div id="clear-left"><div id="notok-shape-outside-allow-redirection-disallow-url"></div>X</div>
+    <div id="clear-left"><div id="notok-shape-outside-disallow-redirection-allow-url"></div>X</div>
+</body>
+</html>

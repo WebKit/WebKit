@@ -1,0 +1,264 @@
+{
+  "metadata": {
+    "name": "Bugzilla Task Graph",
+    "description": "A suite of tests to check the quality of the Bugzilla codebase.",
+    "owner": "dlawrence@mozilla.com",
+    "source": "https://raw.githubusercontent.com/bugzilla/bugzilla/5.0/taskgraph.json"
+  },
+  "tasks": [
+    {
+      "reruns": 3,
+      "maxRunTime": 3000,
+      "task": {
+        "expires": "2018-02-18T17:33:38.806Z",
+        "metadata": {
+          "name": "Basic Sanity Tests"
+        },
+        "provisionerId": "aws-provisioner-v1",
+        "workerType": "b2gtest",
+        "payload": {
+          "image": "bugzilla/bugzilla-ci",
+          "command": ["runtests.sh"],
+          "env": {
+            "TEST_SUITE": "sanity"
+          },
+          "artifacts": {
+            "public/runtests_log": {
+              "type": "file",
+              "path": "/runtests.log",
+              "expires": "2018-02-17T17:33:38.806Z"
+            }
+          }
+        },
+        "extra": {
+          "treeherder": {
+            "symbol": "San",
+            "machine": {
+                "platform": "linux64"
+            },
+            "build": {
+                "platform": "linux64"
+            }
+          }
+        }
+      }
+    },
+    {
+      "reruns": 3,
+      "maxRunTime": 3000,
+      "task": {
+        "expires": "2018-02-18T17:33:38.806Z",
+        "metadata": {
+          "name": "Documentation Build Test"
+        },
+        "provisionerId": "aws-provisioner-v1",
+        "workerType": "b2gtest",
+        "payload": {
+          "image": "bugzilla/bugzilla-ci",
+          "command": ["runtests.sh"],
+          "env": {
+            "TEST_SUITE": "docs"
+          },
+          "artifacts": {
+            "public/runtests_log": {
+              "type": "file",
+              "path": "/runtests.log",
+              "expires": "2018-02-17T17:33:38.806Z"
+            }
+          }
+        },
+        "extra": {
+          "treeherder": {
+            "symbol": "Doc",
+            "machine": {
+                "platform": "linux64"
+            },
+            "build": {
+                "platform": "linux64"
+            }
+          }
+        }
+      }
+    },
+    {
+      "reruns": 3,
+      "maxRunTime": 7200,
+      "task": {
+        "expires": "2018-02-18T17:33:38.806Z",
+        "metadata": {
+          "name": "WebService API Tests (MySQL)"
+        },
+        "provisionerId": "aws-provisioner-v1",
+        "workerType": "b2gtest",
+        "payload": {
+          "image": "bugzilla/bugzilla-ci",
+          "command": ["runtests.sh"],
+          "env": {
+            "TEST_SUITE": "webservices"
+          },
+          "artifacts": {
+            "public/runtests_log": {
+              "type": "file",
+              "path": "/runtests.log",
+              "expires": "2018-02-17T17:33:38.806Z"
+            },
+            "public/httpd_error_log": {
+              "type": "file",
+              "path": "/var/log/httpd/error_log",
+              "expires": "2018-02-17T17:33:38.806Z"
+            }
+          }
+        },
+        "extra": {
+          "treeherder": {
+            "symbol": "API",
+            "machine": {
+                "platform": "linux64"
+            },
+            "build": {
+                "platform": "linux64"
+            }
+          }
+        }
+      }
+    },
+    {
+      "reruns": 3,
+      "maxRunTime": 7200,
+      "task": {
+        "expires": "2018-02-18T17:33:38.806Z",
+        "metadata": {
+          "name": "Selenium Tests (MySQL)"
+        },
+        "provisionerId": "aws-provisioner-v1",
+        "workerType": "b2gtest",
+        "payload": {
+          "image": "bugzilla/bugzilla-ci",
+          "command": ["runtests.sh"],
+          "env": {
+            "TEST_SUITE": "selenium"
+          },
+          "artifacts": {
+            "public/runtests_log": {
+              "type": "file",
+              "path": "/tmp/runtests.log",
+              "expires": "2018-02-17T17:33:38.806Z"
+            },
+            "public/httpd_error_log": {
+              "type": "file",
+              "path": "/var/log/httpd/error_log",
+              "expires": "2018-02-17T17:33:38.806Z"
+            },
+            "public/selenium_log": {
+              "type": "file",
+              "path": "/tmp/selenium.log",
+              "expires": "2018-02-17T17:33:38.806Z"
+            }
+          }
+        },
+        "extra": {
+          "treeherder": {
+            "symbol": "Sel",
+            "machine": {
+                "platform": "linux64"
+            },
+            "build": {
+                "platform": "linux64"
+            }
+          }
+        }
+      }
+    },
+    {
+      "reruns": 3,
+      "maxRunTime": 7200,
+      "task": {
+        "expires": "2018-02-18T17:33:38.806Z",
+        "metadata": {
+          "name": "WebService API Tests (Pg)"
+        },
+        "provisionerId": "aws-provisioner-v1",
+        "workerType": "b2gtest",
+        "payload": {
+          "image": "bugzilla/bugzilla-ci",
+          "command": ["runtests.sh"],
+          "env": {
+            "BUGS_DB_DRIVER": "pg",
+            "TEST_SUITE": "webservices"
+          },
+          "artifacts": {
+            "public/runtests_log": {
+              "type": "file",
+              "path": "/tmp/runtests.log",
+              "expires": "2018-02-17T17:33:38.806Z"
+            },
+            "public/httpd_error_log": {
+              "type": "file",
+              "path": "/var/log/httpd/error_log",
+              "expires": "2018-02-17T17:33:38.806Z"
+            }
+          }
+        },
+        "extra": {
+          "treeherder": {
+            "symbol": "API-Pg",
+            "machine": {
+                "platform": "linux64"
+            },
+            "build": {
+                "platform": "linux64"
+            }
+          }
+        }
+      }
+    },
+    {
+      "reruns": 3,
+      "maxRunTime": 7200,
+      "task": {
+        "expires": "2018-02-18T17:33:38.806Z",
+        "metadata": {
+          "name": "Selenium Tests (Pg)"
+        },
+        "provisionerId": "aws-provisioner-v1",
+        "workerType": "b2gtest",
+        "payload": {
+          "image": "bugzilla/bugzilla-ci",
+          "command": ["runtests.sh"],
+          "env": {
+            "BUGS_DB_DRIVER": "pg",
+            "TEST_SUITE": "selenium"
+          },
+          "artifacts": {
+            "public/runtests_log": {
+              "type": "file",
+              "path": "/tmp/runtests.log",
+              "expires": "2018-02-17T17:33:38.806Z"
+            },
+            "public/httpd_error_log": {
+              "type": "file",
+              "path": "/var/log/httpd/error_log",
+              "expires": "2018-02-17T17:33:38.806Z"
+            },
+            "public/selenium_log": {
+              "type": "file",
+              "path": "/tmp/selenium.log",
+              "expires": "2018-02-17T17:33:38.806Z"
+            }
+          }
+        },
+        "extra": {
+          "treeherder": {
+            "symbol": "Sel-Pg",
+            "machine": {
+                "platform": "linux64"
+            },
+            "build": {
+                "platform": "linux64"
+            }
+          }
+        }
+      }
+    }
+  ]
+}

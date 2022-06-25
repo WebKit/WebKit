@@ -1,0 +1,7277 @@
+[
+   {
+      "emails" : [
+         "aakash_jain@apple.com",
+         "aj355@cornell.edu"
+      ],
+      "github" : "aj062",
+      "name" : "Aakash Jain",
+      "nicks" : [
+         "aakash_jain"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "aa@chromium.org"
+      ],
+      "name" : "Aaron Boodman",
+      "nicks" : [
+         "aboodman"
+      ]
+   },
+   {
+      "emails" : [
+         "aaron_chu@apple.com"
+      ],
+      "name" : "Aaron Chu",
+      "nicks" : [
+         "aaron_chu"
+      ]
+   },
+   {
+      "emails" : [
+         "acolwell@chromium.org"
+      ],
+      "name" : "Aaron Colwell",
+      "nicks" : [
+         "acolwell"
+      ]
+   },
+   {
+      "emails" : [
+         "inferno@chromium.org"
+      ],
+      "expertise" : "Security, Layout and Rendering",
+      "name" : "Abhishek Arya",
+      "nicks" : [
+         "inferno-sec"
+      ]
+   },
+   {
+      "emails" : [
+         "adachan@apple.com"
+      ],
+      "expertise" : "WebKit on Windows",
+      "name" : "Ada Chan",
+      "nicks" : [
+         "chanada"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "abarth@webkit.org"
+      ],
+      "expertise" : "Security, HTML parser, webkit-patch, FrameLoader (sadly), V8 Bindings, The Chromium Port",
+      "name" : "Adam Barth",
+      "nicks" : [
+         "abarth"
+      ]
+   },
+   {
+      "emails" : [
+         "adam.bergkvist@ericsson.com"
+      ],
+      "name" : "Adam Bergkvist",
+      "nicks" : [
+         "adambe"
+      ]
+   },
+   {
+      "emails" : [
+         "kadam@inf.u-szeged.hu"
+      ],
+      "name" : "Adam Kallai",
+      "nicks" : [
+         "kadam"
+      ]
+   },
+   {
+      "emails" : [
+         "adamk@chromium.org"
+      ],
+      "name" : "Adam Klein",
+      "nicks" : [
+         "aklein"
+      ]
+   },
+   {
+      "emails" : [
+         "agl@chromium.org"
+      ],
+      "expertise" : "All Chromium Linux Code (yes, all of it)",
+      "name" : "Adam Langley",
+      "nicks" : [
+         "agl"
+      ]
+   },
+   {
+      "emails" : [
+         "aroben@webkit.org",
+         "aroben@apple.com"
+      ],
+      "expertise" : "Plug-ins and Java (Win, General), WebKit API (Win), Windows build system, General Windows port issues, Developer Tools (Web Inspector), Tools",
+      "name" : "Adam Roben",
+      "nicks" : [
+         "aroben"
+      ]
+   },
+   {
+      "emails" : [
+         "manyoso@yahoo.com",
+         "treat@kde.org",
+         "treat@webkit.org"
+      ],
+      "expertise" : "The QtWebKit Port, The HTML Parser/Tokenizer, The platform layer, Image loading and painting, ScrollView and friends",
+      "name" : "Adam Treat",
+      "nicks" : [
+         "manyoso"
+      ]
+   },
+   {
+      "emails" : [
+         "adele@apple.com"
+      ],
+      "expertise" : "HTML Forms, Security, Layout and Rendering, Web Compatibility (General)",
+      "name" : "Adele Peterson",
+      "nicks" : [
+         "adele"
+      ]
+   },
+   {
+      "emails" : [
+         "ademar@webkit.org",
+         "ademar.reis@gmail.com",
+         "ademar.reis@openbossa.org"
+      ],
+      "name" : "Ademar de Souza Reis Jr",
+      "nicks" : [
+         "ademar"
+      ]
+   },
+   {
+      "emails" : [
+         "cavalcantii@gmail.com",
+         "savagobr@yahoo.com",
+         "a.cavalcanti@samsung.com"
+      ],
+      "name" : "Adenilson Cavalcanti",
+      "nicks" : [
+         "Savago"
+      ]
+   },
+   {
+      "emails" : [
+         "akeerthi@apple.com",
+         "pxlcoder@gmail.com"
+      ],
+      "github" : "pxlcoder",
+      "name" : "Aditya Keerthi",
+      "nicks" : [
+         "akeerthi"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "WebkitBugTracker@adobe.com"
+      ],
+      "name" : "Adobe Bug Tracker",
+      "status" : "bot"
+   },
+   {
+      "emails" : [
+         "aperez@igalia.com"
+      ],
+      "github" : "aperezdc",
+      "name" : "Adrian Perez de Castro",
+      "nicks" : [
+         "aperezdc"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "enne@google.com",
+         "enne@chromium.org"
+      ],
+      "name" : "Adrienne Walker",
+      "nicks" : [
+         "enne"
+      ]
+   },
+   {
+      "emails" : [
+         "aharon@google.com"
+      ],
+      "name" : "Aharon Lanin"
+   },
+   {
+      "emails" : [
+         "akiss@inf.u-szeged.hu"
+      ],
+      "name" : "Akos Kiss",
+      "nicks" : [
+         "akiss"
+      ]
+   },
+   {
+      "emails" : [
+         "zalan@apple.com",
+         "zbujtas@gmail.com",
+         "zalan.bujtas@nokia.com"
+      ],
+      "expertise" : "Layout",
+      "github" : "alanbujtas",
+      "name" : "Alan Bujtas",
+      "nicks" : [
+         "zalan"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "alancoon@apple.com"
+      ],
+      "github" : "alancoon",
+      "name" : "Alan Coon",
+      "nicks" : [
+         "alancoon"
+      ]
+   },
+   {
+      "emails" : [
+         "alancutter@chromium.org"
+      ],
+      "name" : "Alan Cutter",
+      "nicks" : [
+         "alancutter"
+      ]
+   },
+   {
+      "emails" : [
+         "stearns@adobe.com"
+      ],
+      "name" : "Alan Stearns",
+      "nicks" : [
+         "astearns"
+      ]
+   },
+   {
+      "emails" : [
+         "ajwong@chromium.org"
+      ],
+      "name" : "Albert J. Wong"
+   },
+   {
+      "emails" : [
+         "berto@igalia.com",
+         "agarcia@igalia.com"
+      ],
+      "github" : "bertogg",
+      "name" : "Alberto Garcia",
+      "nicks" : [
+         "bertogg",
+         "berto"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "alecflett@chromium.org",
+         "alecflett@google.com"
+      ],
+      "name" : "Alec Flett",
+      "nicks" : [
+         "alecf"
+      ]
+   },
+   {
+      "emails" : [
+         "alex@igalia.com",
+         "alex@webkit.org"
+      ],
+      "expertise" : "WebKitGTK, Cairo graphics backend, ShadowBlur rendering, Epiphany/WebKit Contributor",
+      "github" : "alexgcastro",
+      "name" : "Alejandro G. Castro",
+      "nicks" : [
+         "alexg"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "apinheiro@igalia.com"
+      ],
+      "name" : "Alejandro Pineiro"
+   },
+   {
+      "emails" : [
+         "gskachkov@gmail.com"
+      ],
+      "name" : "Aleksandr Skachkov",
+      "nicks" : [
+         "gskachkov"
+      ]
+   },
+   {
+      "emails" : [
+         "alexandera_22@apple.com"
+      ],
+      "expertise" : "Python, Services, Kubernetes",
+      "github" : "akath20",
+      "name" : "Alex Atwater"
+   },
+   {
+      "emails" : [
+         "achristensen@apple.com",
+         "achristensen@webkit.org",
+         "alex.christensen@flexsim.com"
+      ],
+      "expertise" : "Win64, WebGL",
+      "github" : "achristensen07",
+      "name" : "Alex Christensen",
+      "nicks" : [
+         "alexchristensen"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "ahf@0x90.dk",
+         "alexander.faeroy@nokia.com"
+      ],
+      "expertise" : "The QtWebKit Port",
+      "name" : "Alexander F\u00e6r\u00f8y",
+      "nicks" : [
+         "ahf"
+      ]
+   },
+   {
+      "emails" : [
+         "a@lypanov.net",
+         "lypanov@mac.com",
+         "a-lists001@lypanov.net",
+         "lypanov@kde.org"
+      ],
+      "name" : "Alexander Kellett",
+      "nicks" : [
+         "lypanov"
+      ]
+   },
+   {
+      "emails" : [
+         "alexm@gnome.org"
+      ],
+      "expertise" : "WebkitGTK, Epiphany",
+      "name" : "Alexander Mikhaylenko",
+      "nicks" : [
+         "alexm"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "apavlov@chromium.org",
+         "pavlov81@gmail.com"
+      ],
+      "expertise" : "Developer Tools, Web Inspector, CSS OM",
+      "name" : "Alexander Pavlov",
+      "nicks" : [
+         "apavlov"
+      ]
+   },
+   {
+      "emails" : [
+         "aelias@chromium.org",
+         "aelias@google.com"
+      ],
+      "name" : "Alexandre Elias",
+      "nicks" : [
+         "aelias"
+      ]
+   },
+   {
+      "emails" : [
+         "achicu@adobe.com"
+      ],
+      "expertise" : "CSS Regions, CSS Exclusions, CSS Filters, CSS Custom Filters",
+      "name" : "Alexandru Chiculita",
+      "nicks" : [
+         "achicu"
+      ]
+   },
+   {
+      "emails" : [
+         "amarinichev@chromium.org",
+         "amarinichev@google.com"
+      ],
+      "name" : "Alexey Marinichev",
+      "nicks" : [
+         "amarinichev"
+      ]
+   },
+   {
+      "emails" : [
+         "ap@webkit.org",
+         "ap@apple.com"
+      ],
+      "github" : "aproskuryakov",
+      "name" : "Alexey Proskuryakov",
+      "nicks" : [
+         "ap"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "ashvayka@apple.com",
+         "shvaikalesh@gmail.com"
+      ],
+      "expertise" : "JavaScript/ECMAScript, JavaScript DOM Bindings",
+      "github" : "shvaikalesh",
+      "name" : "Alexey Shvayka",
+      "nicks" : [
+         "ashvayka",
+         "shvaikalesh"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "menard@kde.org",
+         "alexis@webkit.org",
+         "alexis.menard@openbossa.org",
+         "alexis@menard.io"
+      ],
+      "expertise" : "The QtWebKit Port, CSS, CSS shorthands, HTML5 Media Elements",
+      "name" : "Alexis Menard",
+      "nicks" : [
+         "darktears"
+      ]
+   },
+   {
+      "emails" : [
+         "ajuma@chromium.org"
+      ],
+      "github" : "alijuma",
+      "name" : "Ali Juma",
+      "nicks" : [
+         "ajuma"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "aboxhall@chromium.org"
+      ],
+      "name" : "Alice Boxhall",
+      "nicks" : [
+         "aboxhall"
+      ]
+   },
+   {
+      "emails" : [
+         "alice.barraclough@webkit.org",
+         "alice.liu@apple.com"
+      ],
+      "expertise" : "HTML Editing, Memory Use / Leaks, Core DOM, Web Compatibility (Web Apps), Web Compatibility (General), Bug Mastery, Web Accessibility",
+      "name" : "Alice Liu",
+      "nicks" : [
+         "aliu"
+      ]
+   },
+   {
+      "emails" : [
+         "aboya@igalia.com",
+         "ntrrgc@gmail.com"
+      ],
+      "github" : "ntrrgc",
+      "name" : "Alicia Boya Garcia",
+      "nicks" : [
+         "ntrrgc",
+         "aboya"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "allan.jensen@digia.com",
+         "kde@carewolf.com",
+         "sandfeld@kde.org",
+         "allan.jensen@nokia.com"
+      ],
+      "expertise" : "QtWebKit, CSS Selectors, Touch Adjustment, Hit Testing",
+      "name" : "Allan Sandfeld Jensen",
+      "nicks" : [
+         "carewolf"
+      ]
+   },
+   {
+      "emails" : [
+         "alokp@chromium.org"
+      ],
+      "name" : "Alok Priyadarshi",
+      "nicks" : [
+         "alokp"
+      ]
+   },
+   {
+      "emails" : [
+         "alp@nuanti.com",
+         "alp@atoker.com",
+         "alp@webkit.org"
+      ],
+      "expertise" : "WebKitGTK Port, Cairo graphics backend (including canvas, SVG), CURL HTTP backend",
+      "name" : "Alp Toker",
+      "nicks" : [
+         "alp"
+      ]
+   },
+   {
+      "emails" : [
+         "fischman@chromium.org",
+         "fischman@google.com"
+      ],
+      "name" : "Ami Fischman",
+      "nicks" : [
+         "fischman"
+      ]
+   },
+   {
+      "emails" : [
+         "amir_mark@apple.com"
+      ],
+      "name" : "Amir Mark Jr",
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "amruthraj@motorola.com"
+      ],
+      "name" : "Amruth Raj",
+      "nicks" : [
+         "amruthraj"
+      ]
+   },
+   {
+      "emails" : [
+         "andersca@apple.com",
+         "acarlsson@apple.com"
+      ],
+      "expertise" : "Storage, Networking, Core DOM, Plug-ins and Java (Win, General), XML, JavaScript/ECMAScript",
+      "name" : "Anders Carlsson",
+      "nicks" : [
+         "andersca"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "abecsi@webkit.org",
+         "andras.becsi@digia.com"
+      ],
+      "expertise" : "The QtWebKit Port, Tools, Layout and Rendering",
+      "name" : "Andras Becsi",
+      "nicks" : [
+         "bbandix"
+      ]
+   },
+   {
+      "emails" : [
+         "aboule@apple.com"
+      ],
+      "name" : "Andre Boule"
+   },
+   {
+      "aliases" : [
+         "Andreas Goran Kling"
+      ],
+      "emails" : [
+         "akling@apple.com",
+         "kling@webkit.org",
+         "awesomekling@apple.com",
+         "andreas.kling@nokia.com"
+      ],
+      "expertise" : "CSS, HTML DOM, Core DOM, Canvas, JavaScript DOM bindings, Memory use",
+      "name" : "Andreas Kling",
+      "nicks" : [
+         "kling"
+      ]
+   },
+   {
+      "emails" : [
+         "abucur@adobe.com"
+      ],
+      "expertise" : "CSS Regions, CSS Fragmentation, Layout and rendering",
+      "name" : "Andrei Bucur",
+      "nicks" : [
+         "abucur"
+      ]
+   },
+   {
+      "emails" : [
+         "andreip@google.com"
+      ],
+      "name" : "Andrei Popescu",
+      "nicks" : [
+         "andreip"
+      ]
+   },
+   {
+      "emails" : [
+         "agomez@igalia.com",
+         "tanty0@gmail.com",
+         "agomez@gnome.org"
+      ],
+      "expertise" : "WebKitGTK",
+      "name" : "Andres Gomez",
+      "nicks" : [
+         "tanty",
+         "agomez"
+      ]
+   },
+   {
+      "emails" : [
+         "andresg_22@apple.com"
+      ],
+      "expertise" : "Accessibility",
+      "github" : "AndresGonzalezApple",
+      "name" : "Andres Gonzalez",
+      "nicks" : [
+         "andresg"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "anlo@rim.com",
+         "anlo@blackberry.com",
+         "andrewlo@gmail.com"
+      ],
+      "name" : "Andrew Lo",
+      "nicks" : [
+         "andrewlo"
+      ]
+   },
+   {
+      "emails" : [
+         "scherkus@chromium.org"
+      ],
+      "name" : "Andrew Scherkus",
+      "nicks" : [
+         "scherkus"
+      ]
+   },
+   {
+      "emails" : [
+         "atrick@apple.com"
+      ],
+      "expertise" : "JavaScript/ECMAScript",
+      "name" : "Andrew Trick",
+      "nicks" : [
+         "atrick"
+      ]
+   },
+   {
+      "emails" : [
+         "andrew@webkit.org",
+         "proton@wiretapped.net"
+      ],
+      "name" : "Andrew Wellington",
+      "nicks" : [
+         "proton"
+      ]
+   },
+   {
+      "emails" : [
+         "aandrey@chromium.org"
+      ],
+      "expertise" : "Developer Tools, Web Inspector",
+      "name" : "Andrey Adaykin",
+      "nicks" : [
+         "aandrey"
+      ]
+   },
+   {
+      "emails" : [
+         "caseq@chromium.org"
+      ],
+      "name" : "Andrey Kosyakov",
+      "nicks" : [
+         "caseq"
+      ]
+   },
+   {
+      "emails" : [
+         "a.badowski@samsung.com"
+      ],
+      "name" : "Andrzej Badowski",
+      "nicks" : [
+         "abadowski"
+      ]
+   },
+   {
+      "emails" : [
+         "aestes@apple.com"
+      ],
+      "expertise" : "Layout and rendering, plug-in loading, HTML parsing, web compatibility",
+      "name" : "Andy Estes",
+      "nicks" : [
+         "estes"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "andy@vanwagoner.family"
+      ],
+      "expertise" : "JavaScriptCore Intl APIs",
+      "name" : "Andy VanWagoner"
+   },
+   {
+      "emails" : [
+         "wingo@igalia.com"
+      ],
+      "expertise" : "JavaScriptCore, the WebKitGTK port",
+      "name" : "Andy Wingo",
+      "nicks" : [
+         "wingo"
+      ]
+   },
+   {
+      "emails" : [
+         "angelos@igalia.com"
+      ],
+      "expertise" : "JavaScriptCore",
+      "github" : "aoikonomopoulos",
+      "name" : "Angelos Oikonomopoulos",
+      "nicks" : [
+         "angelos"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "anjalik_22@apple.com"
+      ],
+      "name" : "Anjali Kumar",
+      "nicks" : [
+         "anjalik"
+      ]
+   },
+   {
+      "emails" : [
+         "annacc@chromium.org"
+      ],
+      "name" : "Anna Cavender",
+      "nicks" : [
+         "annacc"
+      ]
+   },
+   {
+      "emails" : [
+         "annevk@annevk.nl"
+      ],
+      "name" : "Anne van Kesteren",
+      "nicks" : [
+         "annevk"
+      ]
+   },
+   {
+      "emails" : [
+         "sullivan@chromium.org"
+      ],
+      "name" : "Annie Sullivan",
+      "nicks" : [
+         "annie"
+      ]
+   },
+   {
+      "emails" : [
+         "rik@webkit.org"
+      ],
+      "expertise" : "Web Inspector",
+      "name" : "Anthony Ricaud",
+      "nicks" : [
+         "rik"
+      ]
+   },
+   {
+      "emails" : [
+         "piman@chromium.org"
+      ],
+      "name" : "Antoine Labour",
+      "nicks" : [
+         "piman"
+      ]
+   },
+   {
+      "emails" : [
+         "graouts@webkit.org",
+         "graouts@apple.com"
+      ],
+      "github" : "graouts",
+      "name" : "Antoine Quint",
+      "nicks" : [
+         "graouts"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "adauria@apple.com"
+      ],
+      "name" : "Anton D'Auria",
+      "nicks" : [
+         "antonlefou"
+      ]
+   },
+   {
+      "emails" : [
+         "antonm@chromium.org"
+      ],
+      "name" : "Anton Muhin",
+      "nicks" : [
+         "antonm"
+      ]
+   },
+   {
+      "emails" : [
+         "a.obzhirov@samsung.com"
+      ],
+      "expertise" : "The WebKitGTK Port",
+      "name" : "Anton Obzhirov",
+      "nicks" : [
+         "aobzhirov"
+      ]
+   },
+   {
+      "emails" : [
+         "avayvod@chromium.org"
+      ],
+      "name" : "Anton Vayvod",
+      "nicks" : [
+         "avayvod"
+      ]
+   },
+   {
+      "emails" : [
+         "tonikitoo@webkit.org",
+         "a1.gomes@sisa.samsung.com",
+         "antonio.netto@samsung.com",
+         "antonio.gomes@openbossa.org"
+      ],
+      "expertise" : "{BlackBerry, EFL, Qt}WebKit ports, Hit testing, Touch/Event handling, Rendering and scrolling",
+      "name" : "Antonio Gomes",
+      "nicks" : [
+         "tonikitoo"
+      ]
+   },
+   {
+      "emails" : [
+         "koivisto@iki.fi",
+         "antti@apple.com",
+         "antti.j.koivisto@nokia.com"
+      ],
+      "expertise" : "HTML DOM, Core DOM, Loader, Cache, CSS OM, style resolve, performance",
+      "github" : "anttijk",
+      "name" : "Antti Koivisto",
+      "nicks" : [
+         "anttik"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "webkit-bot-watchers-bugzilla@group.apple.com"
+      ],
+      "name" : "Apple Bot Watchers"
+   },
+   {
+      "emails" : [
+         "ariya.hidayat@gmail.com",
+         "ariya@sencha.com",
+         "ariya@webkit.org"
+      ],
+      "expertise" : "The QtWebKit Port",
+      "name" : "Ariya Hidayat",
+      "nicks" : [
+         "ariya"
+      ]
+   },
+   {
+      "emails" : [
+         "arko@motorola.com"
+      ],
+      "name" : "Arko Saha",
+      "nicks" : [
+         "arkos"
+      ]
+   },
+   {
+      "emails" : [
+         "a.renevier@samsung.com"
+      ],
+      "name" : "Arno Renevier",
+      "nicks" : [
+         "arno"
+      ]
+   },
+   {
+      "emails" : [
+         "a.bah@samsung.com"
+      ],
+      "name" : "Arpita Bahuguna",
+      "nicks" : [
+         "arpitab"
+      ]
+   },
+   {
+      "emails" : [
+         "anilsson@rim.com",
+         "anilsson@blackberry.com"
+      ],
+      "name" : "Arvid Nilsson",
+      "nicks" : [
+         "anilsson"
+      ]
+   },
+   {
+      "emails" : [
+         "ayg@aryeh.name"
+      ],
+      "name" : "Aryeh Gregor",
+      "nicks" : [
+         "AryehGregor"
+      ]
+   },
+   {
+      "emails" : [
+         "asumu@igalia.com",
+         "atakikawa@igalia.com"
+      ],
+      "github" : "takikawa",
+      "name" : "Asumu Takikawa",
+      "nicks" : [
+         "asumu"
+      ]
+   },
+   {
+      "emails" : [
+         "ayumi_kojima@apple.com"
+      ],
+      "name" : "Ayumi Kojima",
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "bburg@apple.com",
+         "burg@cs.washington.edu"
+      ],
+      "expertise" : "Developer Tools, Web Inspector, WebDriver, Cocoa API",
+      "github" : "burg",
+      "name" : "BJ Burg",
+      "nicks" : [
+         "bburg",
+         "burg"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "bshafiei@apple.com"
+      ],
+      "name" : "Babak Shafiei",
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "kbalazs@webkit.org",
+         "b.kelemen@sisa.samsung.com",
+         "b.kelemen@samsung.com"
+      ],
+      "expertise" : "The QtWebKit Port, WebKit2",
+      "name" : "Balazs Kelemen",
+      "nicks" : [
+         "kbalazs"
+      ]
+   },
+   {
+      "emails" : [
+         "basile_clement@apple.com",
+         "cbasile06+webkit@gmail.com"
+      ],
+      "name" : "Basile Clement",
+      "nicks" : [
+         "elarnon"
+      ]
+   },
+   {
+      "emails" : [
+         "basuke.suzuki@sony.com"
+      ],
+      "github" : "basuke",
+      "name" : "Basuke Suzuki",
+      "nicks" : [
+         "basuke"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "betravis@adobe.com"
+      ],
+      "name" : "Bear Travis",
+      "nicks" : [
+         "betravis"
+      ]
+   },
+   {
+      "emails" : [
+         "bjonesbe@adobe.com"
+      ],
+      "expertise" : "CSS Shapes, Floats",
+      "name" : "Bem Jones-Bey",
+      "nicks" : [
+         "bemjb"
+      ]
+   },
+   {
+      "emails" : [
+         "benm@google.com"
+      ],
+      "name" : "Ben Murdoch",
+      "nicks" : [
+         "benm"
+      ]
+   },
+   {
+      "emails" : [
+         "nham@apple.com"
+      ],
+      "github" : "bnham",
+      "name" : "Ben Nham",
+      "nicks" : [
+         "nham"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "benwells@chromium.org"
+      ],
+      "name" : "Ben Wells",
+      "nicks" : [
+         "benwells"
+      ]
+   },
+   {
+      "emails" : [
+         "ben@meyerhome.net",
+         "ben@webkit.org"
+      ],
+      "name" : "Benjamin C Meyer",
+      "nicks" : [
+         "icefox"
+      ]
+   },
+   {
+      "emails" : [
+         "kalman@chromium.org",
+         "kalman@google.com"
+      ],
+      "name" : "Benjamin Kalman",
+      "nicks" : [
+         "kalman"
+      ]
+   },
+   {
+      "emails" : [
+         "otte@gnome.org",
+         "otte@webkit.org"
+      ],
+      "expertise" : "WebKitGTK port, GTK lead developer",
+      "name" : "Benjamin Otte",
+      "nicks" : [
+         "otte"
+      ]
+   },
+   {
+      "aliases" : [
+         "Ben Poulain"
+      ],
+      "emails" : [
+         "benjamin@webkit.org",
+         "bpoulain@apple.com",
+         "benjamin.poulain@nokia.com",
+         "ikipou@gmail.com"
+      ],
+      "expertise" : "The Rendering, Performance, Mobile stuff, Touch support.",
+      "name" : "Benjamin Poulain",
+      "nicks" : [
+         "benjaminp"
+      ]
+   },
+   {
+      "aliases" : [
+         "Deth Bakin"
+      ],
+      "emails" : [
+         "bdakin@apple.com"
+      ],
+      "expertise" : "iOS, Inclusive Code, Scrolling, CSS (Cascading Style Sheets), Layout and Rendering, Resolution-Independence, HTML Parsing, Tables, Web Accessibility",
+      "github" : "dethbakin",
+      "name" : "Beth Dakin",
+      "nicks" : [
+         "dethbakin"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "bbudge@gmail.com",
+         "bbudge@chromium.org"
+      ],
+      "name" : "Bill Budge",
+      "nicks" : [
+         "bbudge"
+      ]
+   },
+   {
+      "emails" : [
+         "bobbytung@me.com"
+      ],
+      "github" : "bobbytung",
+      "name" : "Bobby Tung"
+   },
+   {
+      "emails" : [
+         "beidson@apple.com"
+      ],
+      "expertise" : "Networking, Storage, WebCore icon database, Back/forward cache, History",
+      "github" : "beidson",
+      "name" : "Brady Eidson",
+      "nicks" : [
+         "bradee-oh"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "brandonstewart@apple.com"
+      ],
+      "github" : "stwrt",
+      "name" : "Brandon Stewart",
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "self@brendanlong.com",
+         "b.long@cablelabs.com"
+      ],
+      "expertise" : "WebKitGTK, GStreamer",
+      "name" : "Brendan Long",
+      "nicks" : [
+         "brendanlong"
+      ]
+   },
+   {
+      "emails" : [
+         "bfulgham@webkit.org",
+         "bfulgham@apple.com"
+      ],
+      "expertise" : "The WinCairo Port, WebKit on Windows",
+      "github" : "brentfulgham",
+      "name" : "Brent Fulgham",
+      "nicks" : [
+         "bfulgham"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "brettw@chromium.org"
+      ],
+      "expertise" : "The Chromium Port, Graphics, Skia, URL Parsing",
+      "name" : "Brett Wilson",
+      "nicks" : [
+         "brettx"
+      ]
+   },
+   {
+      "emails" : [
+         "brian.holt@samsung.com"
+      ],
+      "expertise" : "WebKitGTK, memory leak detection",
+      "name" : "Brian Holt",
+      "nicks" : [
+         "bdholt1"
+      ]
+   },
+   {
+      "emails" : [
+         "bsalomon@google.com"
+      ],
+      "name" : "Brian Salomon"
+   },
+   {
+      "emails" : [
+         "bweinstein@apple.com"
+      ],
+      "expertise" : "WebKit on Windows, Tools",
+      "name" : "Brian Weinstein",
+      "nicks" : [
+         "bweinstein"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "brunoabinader@gmail.com",
+         "bruno.d@partner.samsung.com",
+         "bruno.abinader@basyskom.com"
+      ],
+      "expertise" : "The QtWebKit Port, CSS, Layout and Rendering",
+      "name" : "Bruno de Oliveira Abinader",
+      "nicks" : [
+         "abinader"
+      ]
+   },
+   {
+      "emails" : [
+         "font@but.tw"
+      ],
+      "github" : "ButTaiwan",
+      "name" : "But Ko"
+   },
+   {
+      "emails" : [
+         "sun.shin@webkit.org",
+         "sun.shin@lge.com"
+      ],
+      "expertise" : "WTF, GPU Accelerated Rendering and Compositing",
+      "name" : "Byungseon Shin",
+      "nicks" : [
+         "xingri"
+      ]
+   },
+   {
+      "emails" : [
+         "bw80.lee@samsung.com",
+         "bw80.lee@gmail.com"
+      ],
+      "expertise" : "The EFLWebKit Port",
+      "name" : "Byungwoo Lee",
+      "nicks" : [
+         "byungwoo"
+      ]
+   },
+   {
+      "emails" : [
+         "ticaiolima@gmail.com",
+         "clima@igalia.com"
+      ],
+      "name" : "Caio Araujo Neponoceno de Lima",
+      "nicks" : [
+         "caiolima"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "cmarcelo@webkit.org",
+         "cmarcelo@gmail.com",
+         "caio.oliveira@openbossa.org"
+      ],
+      "name" : "Caio Marcelo de Oliveira Filho",
+      "nicks" : [
+         "cmarcelo"
+      ]
+   },
+   {
+      "emails" : [
+         "caitp@igalia.com"
+      ],
+      "github" : "caitp",
+      "name" : "Caitlin Potter",
+      "nicks" : [
+         "caitp"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "heycam@apple.com",
+         "cam@mcc.id.au",
+         "cam@webkit.org"
+      ],
+      "github" : "heycam",
+      "name" : "Cameron McCormack",
+      "nicks" : [
+         "heycam"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "zwarich@apple.com",
+         "cwzwarich@apple.com",
+         "cwzwarich@webkit.org"
+      ],
+      "name" : "Cameron Zwarich"
+   },
+   {
+      "emails" : [
+         "clopez@igalia.com"
+      ],
+      "expertise" : "The WebKitGTK and WPE ports, Tools, Build/test infrastructure",
+      "github" : "clopez",
+      "name" : "Carlos Alberto Lopez Perez",
+      "nicks" : [
+         "clopez"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "cadubentzen@gmail.com",
+         "cramalho@igalia.com"
+      ],
+      "name" : "Carlos Eduardo Ramalho",
+      "nicks" : [
+         "cadubentzen",
+         "cramalho"
+      ]
+   },
+   {
+      "emails" : [
+         "cgarcia@igalia.com",
+         "carlosgc@gnome.org",
+         "carlosgc@webkit.org"
+      ],
+      "expertise" : "WebKitGTK, WPE, WebDriver, networking",
+      "github" : "carlosgcampos",
+      "name" : "Carlos Garcia Campos",
+      "nicks" : [
+         "KaL"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "carol@webkit.org",
+         "carol.szabo@nokia.com"
+      ],
+      "name" : "Carol Szabo",
+      "nicks" : [
+         "cszabo1"
+      ]
+   },
+   {
+      "emails" : [
+         "caryclark@google.com",
+         "caryclark@chromium.org"
+      ],
+      "name" : "Cary Clark",
+      "nicks" : [
+         "caryclark"
+      ]
+   },
+   {
+      "emails" : [
+         "cathiechen@igalia.com"
+      ],
+      "github" : "cathiechen",
+      "name" : "Cathie Chen",
+      "nicks" : [
+         "cathiechen"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "cshu@webkit.org",
+         "c.shu@sisa.samsung.com",
+         "chang.shu@nokia.com"
+      ],
+      "expertise" : "JavaScript DOM bindings, WebKit2, QtWebKit port",
+      "name" : "Chang Shu",
+      "nicks" : [
+         "cshu"
+      ]
+   },
+   {
+      "emails" : [
+         "changseok@webkit.org"
+      ],
+      "expertise" : "WebKitGTK, Layout, Rendering, Security",
+      "github" : "shivamidow",
+      "name" : "ChangSeok Oh",
+      "nicks" : [
+         "changseok"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "creis@chromium.org"
+      ],
+      "name" : "Charles Reis",
+      "nicks" : [
+         "creis"
+      ]
+   },
+   {
+      "emails" : [
+         "cturner@igalia.com"
+      ],
+      "name" : "Charlie Turner",
+      "nicks" : [
+         "cturner"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "cpugh@apple.com"
+      ],
+      "name" : "Chelsea Pugh",
+      "nicks" : [
+         "chelsea"
+      ]
+   },
+   {
+      "emails" : [
+         "cblu@apple.com"
+      ],
+      "name" : "Chris Blumenberg",
+      "nicks" : [
+         "cblu"
+      ]
+   },
+   {
+      "aliases" : [
+         "Christophe Dumez"
+      ],
+      "emails" : [
+         "cdumez@apple.com",
+         "dchris@gmail.com",
+         "ch.dumez@samsung.com",
+         "ch.dumez@sta.samsung.com",
+         "ch.dumez@sisa.samsung.com",
+         "ch.dumez@partner.samsung.com",
+         "christophe.dumez@intel.com"
+      ],
+      "expertise" : "Performance, DOM, HTML, Bindings generator, EFLWebKit Port",
+      "github" : "cdumez",
+      "name" : "Chris Dumez",
+      "nicks" : [
+         "cdumez"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "cevans@google.com",
+         "cevans@chromium.org"
+      ],
+      "expertise" : "Security",
+      "name" : "Chris Evans"
+   },
+   {
+      "emails" : [
+         "cfleizach@apple.com"
+      ],
+      "expertise" : "Accessibility",
+      "github" : "fleizach",
+      "name" : "Chris Fleizach",
+      "nicks" : [
+         "cfleizach"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "christopher@gambrell.info",
+         "cgambrell@apple.com"
+      ],
+      "expertise" : "CGI, PHP, and Python",
+      "name" : "Chris Gambrell",
+      "nicks" : [
+         "ChrisGambrell"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "ctguil@chromium.org",
+         "chris.guillory@google.com"
+      ],
+      "name" : "Chris Guillory",
+      "nicks" : [
+         "ctguil"
+      ]
+   },
+   {
+      "emails" : [
+         "cjerdonek@webkit.org"
+      ],
+      "name" : "Chris Jerdonek",
+      "nicks" : [
+         "cjerdonek"
+      ]
+   },
+   {
+      "emails" : [
+         "clord@igalia.com",
+         "chris@igalia.com",
+         "contact@chrislord.net",
+         "chrislord.net@gmail.com"
+      ],
+      "github" : "Cwiiis",
+      "name" : "Chris Lord",
+      "nicks" : [
+         "cwiiis"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "cmarrin@apple.com"
+      ],
+      "name" : "Chris Marrin",
+      "nicks" : [
+         "cmarrin"
+      ]
+   },
+   {
+      "emails" : [
+         "cnardi@chromium.org"
+      ],
+      "name" : "Chris Nardi",
+      "nicks" : [
+         "cnardi"
+      ]
+   },
+   {
+      "emails" : [
+         "c.petersen87@yahoo.com",
+         "cpetersen@apple.com"
+      ],
+      "expertise" : "Performance testing, Qualification testing",
+      "name" : "Chris Petersen",
+      "nicks" : [
+         "cpetersen"
+      ]
+   },
+   {
+      "emails" : [
+         "crogers@google.com"
+      ],
+      "name" : "Chris Rogers",
+      "nicks" : [
+         "crogers"
+      ]
+   },
+   {
+      "emails" : [
+         "cbiesinger@chromium.org"
+      ],
+      "name" : "Christian Biesinger",
+      "nicks" : [
+         "cbiesinger"
+      ]
+   },
+   {
+      "emails" : [
+         "christian@twotoasts.de",
+         "christian@webkit.org",
+         "christian@lanedo.com"
+      ],
+      "name" : "Christian Dywan"
+   },
+   {
+      "emails" : [
+         "chris.reid@sony.com",
+         "christopher.reid@am.sony.com"
+      ],
+      "github" : "c29reid",
+      "name" : "Christopher Reid",
+      "nicks" : [
+         "creid"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "csaavedra@igalia.com"
+      ],
+      "expertise" : "WebKitGTK port, Epiphany developer, HTML Editing",
+      "github" : "csaavedra",
+      "name" : "Claudio Saavedra",
+      "nicks" : [
+         "claudio___"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "collinj@webkit.org"
+      ],
+      "name" : "Collin Jackson",
+      "nicks" : [
+         "collinjackson"
+      ]
+   },
+   {
+      "emails" : [
+         "commit-queue@webkit.org"
+      ],
+      "github" : "webkit-commit-queue",
+      "name" : "Commit Queue",
+      "status" : "bot"
+   },
+   {
+      "emails" : [
+         "conrad_shultz@apple.com"
+      ],
+      "name" : "Conrad Shultz",
+      "nicks" : [
+         "shultzc"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "ctruta@gmail.com",
+         "ctruta@blackberry.com"
+      ],
+      "name" : "Cosmin Truta",
+      "nicks" : [
+         "ctruta"
+      ]
+   },
+   {
+      "emails" : [
+         "cdn@chromium.org"
+      ],
+      "name" : "Cris Neckar",
+      "nicks" : [
+         "cneckar"
+      ]
+   },
+   {
+      "emails" : [
+         "ossy@webkit.org",
+         "oszi@inf.u-szeged.hu"
+      ],
+      "name" : "Csaba Osztrogon\u00e1c",
+      "nicks" : [
+         "ossy"
+      ]
+   },
+   {
+      "aliases" : [
+         "mitz"
+      ],
+      "emails" : [
+         "mitz@webkit.org",
+         "mitz@apple.com"
+      ],
+      "expertise" : "Layout and Rendering, Bidirectional text",
+      "name" : "Dan Bernstein",
+      "nicks" : [
+         "mitzpettel"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "djg@apple.com"
+      ],
+      "github" : "djg",
+      "name" : "Dan Glastonbury",
+      "nicks" : [
+         "djg"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "danw@gnome.org"
+      ],
+      "name" : "Dan Winship",
+      "nicks" : [
+         "danw"
+      ]
+   },
+   {
+      "emails" : [
+         "dburkart@apple.com"
+      ],
+      "name" : "Dana Burkart",
+      "nicks" : [
+         "dana"
+      ]
+   },
+   {
+      "emails" : [
+         "danakj@chromium.org"
+      ],
+      "name" : "Dana Jansens",
+      "nicks" : [
+         "danakj"
+      ]
+   },
+   {
+      "aliases" : [
+         "Dan Bates"
+      ],
+      "emails" : [
+         "dbates@webkit.org",
+         "dabates@apple.com"
+      ],
+      "expertise" : "Text Layout, Event Handling, Security, XSSAuditor, Drag and Drop, Basic types and data structures, Tools, General (probably a good backup on most topics even if not specifically an expert)",
+      "name" : "Daniel Bates",
+      "nicks" : [
+         "dydz",
+         "dydx"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "dcheng@chromium.org"
+      ],
+      "name" : "Daniel Cheng",
+      "nicks" : [
+         "dcheng"
+      ]
+   },
+   {
+      "emails" : [
+         "sievers@chromium.org"
+      ],
+      "name" : "Daniel Sievers"
+   },
+   {
+      "emails" : [
+         "darin@apple.com"
+      ],
+      "expertise" : "HTML Forms, WebKit API (Mac, Win), HTML Editing, Performance, JavaScript/ECMAScript, Text Encoding, Core DOM, HTML DOM, Canvas, JavaScript DOM Bindings, ObjC DOM Bindings, Basic types and data structures, Tools, New Features / Standards Support, General (probably a good backup on most topics even if not specifically an expert)",
+      "github" : "darinadler",
+      "name" : "Darin Adler",
+      "nicks" : [
+         "darin"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "fishd@chromium.org",
+         "darin@chromium.org"
+      ],
+      "expertise" : "The Chromium Port, WebKit API (Chromium), Page Loading",
+      "name" : "Darin Fisher",
+      "nicks" : [
+         "fishd"
+      ]
+   },
+   {
+      "emails" : [
+         "dbarton@mathscribe.com"
+      ],
+      "expertise" : "MathML",
+      "name" : "Dave Barton",
+      "nicks" : [
+         "davebarton"
+      ]
+   },
+   {
+      "emails" : [
+         "dtharp@codeaurora.org"
+      ],
+      "name" : "Dave Tharp",
+      "nicks" : [
+         "dtharp"
+      ]
+   },
+   {
+      "emails" : [
+         "ddorwin@chromium.org"
+      ],
+      "name" : "David Dorwin",
+      "nicks" : [
+         "ddorwin"
+      ]
+   },
+   {
+      "emails" : [
+         "dfarler@apple.com"
+      ],
+      "name" : "David Farler",
+      "nicks" : [
+         "dfarler"
+      ]
+   },
+   {
+      "aliases" : [
+         "Dawei Fenton"
+      ],
+      "emails" : [
+         "david_fenton@apple.com",
+         "realdawei@apple.com"
+      ],
+      "name" : "David Fenton",
+      "nicks" : [
+         "realdawei"
+      ]
+   },
+   {
+      "emails" : [
+         "dgrogan@chromium.org",
+         "dgrogan@google.com"
+      ],
+      "expertise" : "IndexedDB",
+      "name" : "David Grogan",
+      "nicks" : [
+         "dgrogan"
+      ]
+   },
+   {
+      "emails" : [
+         "harrison@apple.com"
+      ],
+      "expertise" : "HTML Editing, Accessibility",
+      "name" : "David Harrison",
+      "nicks" : [
+         "harrison"
+      ]
+   },
+   {
+      "aliases" : [
+         "Dave Hyatt"
+      ],
+      "emails" : [
+         "hyatt@apple.com"
+      ],
+      "expertise" : "Layout and Rendering, CSS (Cascading Style Sheets), HTML Forms, Tables, Text Layout, Fonts, MathML, Memory Cache, HTMLDOM, Core DOM, HTML Parsing, New Features / Standards Support, XML, XSLT, Printing",
+      "name" : "David Hyatt",
+      "nicks" : [
+         "dhyatt",
+         "hyatt"
+      ]
+   },
+   {
+      "emails" : [
+         "david@djr.com"
+      ],
+      "name" : "David Jonathan Ross",
+      "nicks" : [
+         "djr"
+      ]
+   },
+   {
+      "aliases" : [
+         "Dave Kilzer"
+      ],
+      "emails" : [
+         "ddkilzer@webkit.org",
+         "ddkilzer@apple.com"
+      ],
+      "expertise" : "iPhone port, Xcode build system, Tools, Perl, git, WebArchive",
+      "github" : "ddkilzer",
+      "name" : "David Kilzer",
+      "nicks" : [
+         "ddkilzer"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "levin@chromium.org"
+      ],
+      "name" : "David Levin",
+      "nicks" : [
+         "dave_levin"
+      ]
+   },
+   {
+      "emails" : [
+         "davidbarr@chromium.org",
+         "davidbarr@google.com",
+         "b@rr-dav.id.au"
+      ],
+      "name" : "David Michael Barr",
+      "nicks" : [
+         "barrbrain"
+      ]
+   },
+   {
+      "emails" : [
+         "david_quesada@apple.com"
+      ],
+      "github" : "davidquesada",
+      "name" : "David Quesada",
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "reveman@chromium.org"
+      ],
+      "name" : "David Reveman",
+      "nicks" : [
+         "reveman"
+      ]
+   },
+   {
+      "emails" : [
+         "catfish.man@gmail.com",
+         "dsmith@webkit.org"
+      ],
+      "name" : "David Smith",
+      "nicks" : [
+         "catfishman"
+      ]
+   },
+   {
+      "emails" : [
+         "dino@apple.com"
+      ],
+      "expertise" : "Transforms, Transitions, Animations, Filters",
+      "github" : "grorg",
+      "name" : "Dean Jackson",
+      "nicks" : [
+         "dino"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "dean_johnson@apple.com"
+      ],
+      "name" : "Dean Johnson",
+      "nicks" : [
+         "deanj"
+      ]
+   },
+   {
+      "emails" : [
+         "d.nomiyama@samsung.com"
+      ],
+      "expertise" : "The WebKitGTK Port",
+      "name" : "Denis Nomiyama",
+      "nicks" : [
+         "dnomi"
+      ]
+   },
+   {
+      "emails" : [
+         "drousso@apple.com",
+         "dcrousso@apple.com",
+         "webkit@devinrousso.com"
+      ],
+      "expertise" : "Web Inspector, Media Controls, Payment Request",
+      "github" : "dcrousso",
+      "name" : "Devin Rousso",
+      "nicks" : [
+         "drousso",
+         "dcrousso"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "dewei_zhu@apple.com"
+      ],
+      "expertise" : "Performance, Tools",
+      "github" : "dewei-zhu",
+      "name" : "Dewei Zhu",
+      "nicks" : [
+         "Dewei"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "diorahman@rockybars.com"
+      ],
+      "name" : "Dhi Aurrahman",
+      "nicks" : [
+         "diorahman"
+      ]
+   },
+   {
+      "emails" : [
+         "diegohcg@webkit.org",
+         "diego.gonzalez@openbossa.org"
+      ],
+      "expertise" : "The QtWebKit Port",
+      "name" : "Diego Gonzalez",
+      "nicks" : [
+         "diegohcg"
+      ]
+   },
+   {
+      "emails" : [
+         "dpino@igalia.com"
+      ],
+      "github" : "dpino",
+      "name" : "Diego Pino Garcia",
+      "nicks" : [
+         "dpino"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "dglazkov@chromium.org"
+      ],
+      "expertise" : "The Chromium Port, Shadow DOM, DOM, HTML Forms, Shadow DOM, Web Components, V8 Bindings, InspectorController, garden-o-matic",
+      "name" : "Dimitri Glazkov",
+      "nicks" : [
+         "dglazkov"
+      ]
+   },
+   {
+      "emails" : [
+         "dinu.jacob@gmail.com",
+         "dinu.s.jacob@intel.com",
+         "dinu.jacob@nokia.com"
+      ],
+      "name" : "Dinu Jacob",
+      "nicks" : [
+         "dsjacob"
+      ]
+   },
+   {
+      "emails" : [
+         "dpranke@chromium.org"
+      ],
+      "expertise" : "Build/test infrastructure (stuff under Tools/Scripts)",
+      "name" : "Dirk Pranke",
+      "nicks" : [
+         "dpranke"
+      ]
+   },
+   {
+      "emails" : [
+         "krit@webkit.org"
+      ],
+      "expertise" : "Cairo graphics backend, Canvas, SVG (Scalable Vector Graphics)",
+      "name" : "Dirk Schulze",
+      "nicks" : [
+         "krit"
+      ]
+   },
+   {
+      "emails" : [
+         "dbezhetskov@igalia.com",
+         "dima00782@gmail.com"
+      ],
+      "name" : "Dmitry Bezhetskov",
+      "nicks" : [
+         "dbezhetskov"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "dgorbik@apple.com"
+      ],
+      "name" : "Dmitry Gorbik",
+      "nicks" : [
+         "dgorbik"
+      ]
+   },
+   {
+      "emails" : [
+         "dslomov@google.com",
+         "dslomov@chromium.org"
+      ],
+      "expertise" : "V8 bindings, Workers, gtest ",
+      "name" : "Dmitry Lomov",
+      "nicks" : [
+         "dslomov"
+      ]
+   },
+   {
+      "emails" : [
+         "dimich@chromium.org"
+      ],
+      "expertise" : "The Chromium Port, Workers, Timers, Threading",
+      "name" : "Dmitry Titov",
+      "nicks" : [
+         "dimich"
+      ]
+   },
+   {
+      "emails" : [
+         "dominicc@chromium.org",
+         "dominicc@google.com"
+      ],
+      "name" : "Dominic Cooney",
+      "nicks" : [
+         "dominicc"
+      ]
+   },
+   {
+      "emails" : [
+         "dmazzoni@google.com",
+         "dmazzoni@chromium.org"
+      ],
+      "name" : "Dominic Mazzoni",
+      "nicks" : [
+         "dmazzoni"
+      ]
+   },
+   {
+      "emails" : [
+         "dinfuehr@igalia.com"
+      ],
+      "name" : "Dominik Infuehr",
+      "nicks" : [
+         "dinfuehr"
+      ]
+   },
+   {
+      "emails" : [
+         "d-r@roettsches.de",
+         "dominik.rottsches@intel.com"
+      ],
+      "expertise" : "WebKit EFL, Cairo HarfBuzz Support, GraphicsContextCairo",
+      "name" : "Dominik R\u00f6ttsches",
+      "nicks" : [
+         "drott"
+      ]
+   },
+   {
+      "aliases" : [
+         "Gramps"
+      ],
+      "emails" : [
+         "gramps@apple.com"
+      ],
+      "name" : "Don Melton",
+      "nicks" : [
+         "gramps"
+      ]
+   },
+   {
+      "emails" : [
+         "don.olmstead@sony.com",
+         "don.olmstead@am.sony.com"
+      ],
+      "github" : "donny-dont",
+      "name" : "Don Olmstead",
+      "nicks" : [
+         "dolmstead"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "dongseong.hwang@intel.com",
+         "luxtella@gmail.com",
+         "luxtella@company100.net"
+      ],
+      "expertise" : "Accelerated Compositing, Canvas, CSS Shaders",
+      "name" : "Dongseong Hwang",
+      "nicks" : [
+         "dshwang"
+      ]
+   },
+   {
+      "emails" : [
+         "dw.im@samsung.com",
+         "dwim79@gmail.com"
+      ],
+      "expertise" : "The EFLWebKit Port",
+      "name" : "Dongwoo Joshua Im",
+      "nicks" : [
+         "dwim"
+      ]
+   },
+   {
+      "emails" : [
+         "dougk@apple.com"
+      ],
+      "name" : "Doug Kelly",
+      "nicks" : [
+         "dougk"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "d_russell@apple.com"
+      ],
+      "name" : "Doug Russell"
+   },
+   {
+      "emails" : [
+         "ddavidso@apple.com"
+      ],
+      "name" : "Douglas Davidson"
+   },
+   {
+      "emails" : [
+         "dstockwell@chromium.org"
+      ],
+      "name" : "Douglas Stockwell",
+      "nicks" : [
+         "dstockwell"
+      ]
+   },
+   {
+      "emails" : [
+         "atwilson@chromium.org"
+      ],
+      "expertise" : "The Chromium Port, Workers, MessagePorts",
+      "name" : "Drew Wilson",
+      "nicks" : [
+         "atwilson"
+      ]
+   },
+   {
+      "emails" : [
+         "dumi@chromium.org"
+      ],
+      "expertise" : "The Chromium Port, WebSQLDatabases",
+      "name" : "Dumitru Daniliuc",
+      "nicks" : [
+         "dumi"
+      ]
+   },
+   {
+      "emails" : [
+         "dbatyai.u-szeged@partner.samsung.com",
+         "dbatyai@inf.u-szeged.hu",
+         "Batyai.Daniel@stud.u-szeged.hu"
+      ],
+      "name" : "D\u00e1niel B\u00e1tyai",
+      "nicks" : [
+         "dbatyai"
+      ]
+   },
+   {
+      "emails" : [
+         "ews@webkit.org"
+      ],
+      "github" : "webkit-early-warning-system",
+      "name" : "EWS",
+      "status" : "bot"
+   },
+   {
+      "emails" : [
+         "efidler@rim.com",
+         "efidler@blackberry.com"
+      ],
+      "name" : "Eli Fidler",
+      "nicks" : [
+         "efidler"
+      ]
+   },
+   {
+      "emails" : [
+         "epoger@chromium.org"
+      ],
+      "expertise" : "Skia",
+      "name" : "Elliot Poger",
+      "nicks" : [
+         "epoger"
+      ]
+   },
+   {
+      "emails" : [
+         "esprehn@chromium.org",
+         "esprehn+autocc@chromium.org"
+      ],
+      "expertise" : "Layout and Rendering, V8/JSC Bindings, Generated content, Shadow DOM, Web Compatibility (General)",
+      "name" : "Elliott Sprehn",
+      "nicks" : [
+         "esprehn"
+      ]
+   },
+   {
+      "emails" : [
+         "emw@apple.com"
+      ],
+      "expertise" : "Xcode build system",
+      "github" : "emw-apple",
+      "name" : "Elliott Williams",
+      "nicks" : [
+         "emw"
+      ],
+      "status" : "committer"
+   },
+   {
+      "aliases" : [
+         "Emil Eklund"
+      ],
+      "emails" : [
+         "eae@chromium.org"
+      ],
+      "expertise" : "Layout and rendering, Core DOM, HTML DOM",
+      "name" : "Emil A Eklund",
+      "nicks" : [
+         "eae"
+      ]
+   },
+   {
+      "emails" : [
+         "emilio@crisal.io"
+      ],
+      "github" : "emilio",
+      "name" : "Emilio Cobos Alvarez",
+      "nicks" : [
+         "emilio",
+         "ecobos"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "enrica@apple.com"
+      ],
+      "expertise" : "HTML Editing, Drag and drop, Input methods",
+      "name" : "Enrica Casucci",
+      "nicks" : [
+         "enrica"
+      ]
+   },
+   {
+      "emails" : [
+         "eocanha@igalia.com",
+         "eocanha@gmail.com"
+      ],
+      "expertise" : "GStreamer, Media Source Extensions",
+      "github" : "eocanha",
+      "name" : "Enrique Oca\u00f1a Gonz\u00e1lez",
+      "nicks" : [
+         "eocanha"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "eric.carlson@apple.com"
+      ],
+      "expertise" : "HTML5 Media Elements",
+      "github" : "eric-carlson",
+      "name" : "Eric Carlson",
+      "nicks" : [
+         "eric_carlson"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "ehutchison@apple.com"
+      ],
+      "name" : "Eric Hutchison",
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "epenner@chromium.org"
+      ],
+      "name" : "Eric Penner",
+      "nicks" : [
+         "epenner"
+      ]
+   },
+   {
+      "emails" : [
+         "eroman@chromium.org"
+      ],
+      "expertise" : "The Chromium Port",
+      "name" : "Eric Roman",
+      "nicks" : [
+         "eroman"
+      ]
+   },
+   {
+      "emails" : [
+         "eric@webkit.org"
+      ],
+      "expertise" : "The Rendering Engine, Commit Queue, Memory Leaks, webkit-patch, The Chromium Port",
+      "name" : "Eric Seidel",
+      "nicks" : [
+         "eseidel"
+      ]
+   },
+   {
+      "emails" : [
+         "ericu@chromium.org"
+      ],
+      "name" : "Eric Uhrhane",
+      "nicks" : [
+         "ericu"
+      ]
+   },
+   {
+      "emails" : [
+         "arv@chromium.org"
+      ],
+      "name" : "Erik Arvidsson",
+      "nicks" : [
+         "arv"
+      ]
+   },
+   {
+      "emails" : [
+         "eustas@chromium.org"
+      ],
+      "name" : "Eugene Klyuchnikov",
+      "nicks" : [
+         "eustas"
+      ]
+   },
+   {
+      "emails" : [
+         "eunmi15.lee@samsung.com",
+         "enmi.lee@navercorp.com"
+      ],
+      "expertise" : "The EFLWebKit Port, Touch and Gesture",
+      "name" : "Eunmi Lee",
+      "nicks" : [
+         "eunmi"
+      ]
+   },
+   {
+      "emails" : [
+         "evab.u-szeged@partner.samsung.com",
+         "evab@inf.u-szeged.hu",
+         "balazsfalvi.eva@stud.u-szeged.hu"
+      ],
+      "name" : "Eva Balazsfalvi",
+      "nicks" : [
+         "ebalazsfalvi"
+      ]
+   },
+   {
+      "emails" : [
+         "evan@chromium.org"
+      ],
+      "name" : "Evan Martin",
+      "nicks" : [
+         "evmar"
+      ]
+   },
+   {
+      "emails" : [
+         "estade@chromium.org"
+      ],
+      "name" : "Evan Stade",
+      "nicks" : [
+         "estade"
+      ]
+   },
+   {
+      "emails" : [
+         "fsamuel@chromium.org"
+      ],
+      "name" : "Fady Samuel",
+      "nicks" : [
+         "fsamuel"
+      ]
+   },
+   {
+      "emails" : [
+         "fbucchi@apple.com",
+         "b.federico@gmail.com"
+      ],
+      "name" : "Federico Bucchi",
+      "nicks" : [
+         "fbucchi",
+         "federicobucchi"
+      ]
+   },
+   {
+      "emails" : [
+         "feng@chromium.org"
+      ],
+      "name" : "Feng Qian"
+   },
+   {
+      "aliases" : [
+         "Phil Pizlo"
+      ],
+      "emails" : [
+         "fpizlo@apple.com",
+         "pizlo@mac.com"
+      ],
+      "expertise" : "JavaScript/ECMAScript",
+      "name" : "Filip Pizlo",
+      "nicks" : [
+         "pizlo"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "finnur.webkit@gmail.com",
+         "finnur@chromium.org"
+      ],
+      "name" : "Finnur Thorarinsson",
+      "nicks" : [
+         "finnur"
+      ]
+   },
+   {
+      "emails" : [
+         "fmalita@chromium.org",
+         "fmalita@google.com"
+      ],
+      "expertise" : "SVG (Scalable Vector Graphics)",
+      "name" : "Florin Malita",
+      "nicks" : [
+         "fmalita"
+      ]
+   },
+   {
+      "emails" : [
+         "forms-bugs@chromium.org"
+      ],
+      "name" : "Forms Bugs"
+   },
+   {
+      "emails" : [
+         "fgriessh@adobe.com"
+      ],
+      "name" : "Frank Grie\u00dfhammer"
+   },
+   {
+      "emails" : [
+         "fred.wang@free.fr",
+         "fwang@igalia.com"
+      ],
+      "github" : "fred-wang",
+      "name" : "Fr\u00e9d\u00e9ric Wang",
+      "nicks" : [
+         "fredw"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "Hironori.Fujii@sony.com",
+         "fujii.hironori@gmail.com"
+      ],
+      "github" : "fujii",
+      "name" : "Fujii Hironori",
+      "nicks" : [
+         "fujihiro"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "ukai@chromium.org"
+      ],
+      "expertise" : "WebSockets, The Chromium Port",
+      "name" : "Fumitoshi Ukai",
+      "nicks" : [
+         "ukai"
+      ]
+   },
+   {
+      "emails" : [
+         "abrhm@inf.u-szeged.hu"
+      ],
+      "name" : "Gabor Abraham",
+      "nicks" : [
+         "abrhm"
+      ]
+   },
+   {
+      "emails" : [
+         "gaborb@inf.u-szeged.hu"
+      ],
+      "name" : "Gabor Ballabas",
+      "nicks" : [
+         "bgabor"
+      ]
+   },
+   {
+      "emails" : [
+         "loki@webkit.org"
+      ],
+      "expertise" : "The QtWebKit Port, ARM JIT, Qt BuildBot",
+      "name" : "Gabor Loki",
+      "nicks" : [
+         "loki04"
+      ]
+   },
+   {
+      "emails" : [
+         "rgabor@webkit.org",
+         "rgabor@inf.u-szeged.hu"
+      ],
+      "expertise" : "The QtWebKit Port, Qt BuildBot, Tools",
+      "name" : "Gabor Rapcsanyi",
+      "nicks" : [
+         "rgabor"
+      ]
+   },
+   {
+      "emails" : [
+         "gnavamarino@apple.com"
+      ],
+      "name" : "Gabriel Nava Marino",
+      "nicks" : [
+         "gnavamarino"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "barraclough@apple.com"
+      ],
+      "expertise" : "JavaScript/ECMAScript",
+      "name" : "Gavin Barraclough",
+      "nicks" : [
+         "gbarra"
+      ]
+   },
+   {
+      "emails" : [
+         "gavinp@chromium.org",
+         "gavinp@webkit.org",
+         "gavinp@google.com"
+      ],
+      "expertise" : "The Chromium Port, Resource Loading",
+      "name" : "Gavin Peters",
+      "nicks" : [
+         "gavinp"
+      ]
+   },
+   {
+      "emails" : [
+         "geofflang@google.com"
+      ],
+      "name" : "Geoff Lang"
+   },
+   {
+      "aliases" : [
+         "Geoff Garen"
+      ],
+      "emails" : [
+         "ggaren@apple.com"
+      ],
+      "expertise" : "IPC, Process Model, Sandboxing, JavaScript/ECMAScript, Performance, Memory Use / Leaks, Memory Cache, Core DOM, HTML DOM, JavaScript DOM Bindings, Web Compatibility, JavaScriptCore C API, FastMalloc",
+      "github" : "geoffreygaren",
+      "name" : "Geoffrey Garen",
+      "nicks" : [
+         "ggaren"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "staikos@kde.org",
+         "staikos@webkit.org"
+      ],
+      "expertise" : "Core KHTML Contributor, The QtWebKit Port",
+      "name" : "George Staikos"
+   },
+   {
+      "emails" : [
+         "gbalogh.u-szeged@partner.samsung.com",
+         "geryxyz@inf.u-szeged.hu"
+      ],
+      "name" : "Gergo Balogh",
+      "nicks" : [
+         "geryxyz"
+      ]
+   },
+   {
+      "emails" : [
+         "gezalore@gmail.com",
+         "glore@igalia.com"
+      ],
+      "github" : "gezalore",
+      "name" : "Geza Lore",
+      "nicks" : [
+         "gezalore"
+      ]
+   },
+   {
+      "emails" : [
+         "girish@forwardbias.in",
+         "ramakrishnan.girish@gmail.com"
+      ],
+      "expertise" : "The QtWebKit Port, Plug-ins",
+      "name" : "Girish Ramakrishnan",
+      "nicks" : [
+         "girishr"
+      ]
+   },
+   {
+      "emails" : [
+         "glenn@skynav.com"
+      ],
+      "expertise" : "CSS, CSSOM, Complex Script Layout, Line Breaking",
+      "name" : "Glenn Adams",
+      "nicks" : [
+         "gasubic"
+      ]
+   },
+   {
+      "emails" : [
+         "klobag@chromium.org"
+      ],
+      "name" : "Grace Kloba",
+      "nicks" : [
+         "klobag"
+      ]
+   },
+   {
+      "emails" : [
+         "Graham.Dennis@gmail.com",
+         "gdennis@webkit.org"
+      ],
+      "name" : "Graham Dennis"
+   },
+   {
+      "emails" : [
+         "bolsinga@apple.com"
+      ],
+      "name" : "Greg Bolsinga"
+   },
+   {
+      "emails" : [
+         "gregsimon@chromium.org"
+      ],
+      "name" : "Greg Simon",
+      "nicks" : [
+         "gregsimon"
+      ]
+   },
+   {
+      "emails" : [
+         "gman@chromium.org",
+         "gman@google.com"
+      ],
+      "expertise" : "WebGL, CanvasProxy",
+      "name" : "Gregg Tavares",
+      "nicks" : [
+         "gman"
+      ]
+   },
+   {
+      "emails" : [
+         "g.czajkowski@samsung.com"
+      ],
+      "expertise" : "WebKit-EFL API, Layout Test support",
+      "name" : "Grzegorz Czajkowski",
+      "nicks" : [
+         "grzegorz"
+      ]
+   },
+   {
+      "emails" : [
+         "guijemont@igalia.com"
+      ],
+      "expertise" : "JavaScriptCore",
+      "github" : "guijemont",
+      "name" : "Guillaume Emont",
+      "nicks" : [
+         "guijemont"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "frankhome61@hotmail.com",
+         "guowei@framiere.com"
+      ],
+      "name" : "Guowei Yang",
+      "nicks" : [
+         "frank"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "gur.trio@gmail.com",
+         "k.gurpreet@samsung.com",
+         "k.gurpreet@webkit.org"
+      ],
+      "name" : "Gurpreet Kaur",
+      "nicks" : [
+         "k.gurpreet"
+      ]
+   },
+   {
+      "emails" : [
+         "gns@gnome.org",
+         "kov@webkit.org",
+         "gustavo.noronha@collabora.co.uk",
+         "gustavo.noronha@collabora.com"
+      ],
+      "expertise" : "WebKitGTK API, Soup HTTP backend, Debian Packaging, A little bit of Epiphany",
+      "name" : "Gustavo Noronha Silva",
+      "nicks" : [
+         "kov"
+      ]
+   },
+   {
+      "emails" : [
+         "yoon@igalia.com",
+         "yoon@webkit.org",
+         "ryumiel@company100.net"
+      ],
+      "expertise" : "Accelerated Compositing, WebKitGTK",
+      "name" : "Gwang Yoon Hwang",
+      "nicks" : [
+         "ryumiel"
+      ]
+   },
+   {
+      "emails" : [
+         "gyuyoung.kim@webkit.org",
+         "gyuyoung@igalia.com",
+         "gyuyoung.kim@navercorp.com",
+         "gyuyoung@gmail.com",
+         "gyuyoung.kim@samsung.com"
+      ],
+      "expertise" : "The EFLWebKit Port, Navigator Content Utils, CMake build system",
+      "name" : "Gyuyoung Kim",
+      "nicks" : [
+         "gyuyoung"
+      ]
+   },
+   {
+      "emails" : [
+         "morrita@google.com",
+         "morrita@chromium.org"
+      ],
+      "name" : "Hajime Morrita",
+      "nicks" : [
+         "morrita"
+      ]
+   },
+   {
+      "emails" : [
+         "giles_joplin@yahoo.com",
+         "hmuller@adobe.com"
+      ],
+      "expertise" : "CSS Exclusions",
+      "name" : "Hans Muller",
+      "nicks" : [
+         "hansmuller"
+      ]
+   },
+   {
+      "emails" : [
+         "hans@chromium.org"
+      ],
+      "name" : "Hans Wennborg",
+      "nicks" : [
+         "hwennborg"
+      ]
+   },
+   {
+      "emails" : [
+         "zhenghao@chromium.org"
+      ],
+      "name" : "Hao Zheng"
+   },
+   {
+      "emails" : [
+         "hta@google.com"
+      ],
+      "name" : "Harald Alvestrand",
+      "nicks" : [
+         "hta"
+      ]
+   },
+   {
+      "emails" : [
+         "harshil.sratnu@gmail.com"
+      ],
+      "expertise" : "Web Inspector",
+      "name" : "Harshil Ratnu",
+      "nicks" : [
+         "harshil"
+      ]
+   },
+   {
+      "emails" : [
+         "hayato@chromium.org"
+      ],
+      "expertise" : "Shadow DOM, Event Handling, Reftests",
+      "name" : "Hayato Ito",
+      "nicks" : [
+         "hayato"
+      ]
+   },
+   {
+      "emails" : [
+         "hector_i_lopez@apple.com"
+      ],
+      "name" : "Hector Lopez",
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "helder.correia@nokia.com",
+         "helder@sencha.com"
+      ],
+      "expertise" : "The QtWebKit Port, Canvas",
+      "name" : "Helder Correia",
+      "nicks" : [
+         "helder"
+      ]
+   },
+   {
+      "emails" : [
+         "hclam@google.com",
+         "hclam@chromium.org"
+      ],
+      "expertise" : "HTML5 Video, Accelerated Compositing (Chromium Port)",
+      "name" : "Hin-Chung Lam"
+   },
+   {
+      "emails" : [
+         "hbono@chromium.org"
+      ],
+      "name" : "Hironori Bono",
+      "nicks" : [
+         "hbono"
+      ]
+   },
+   {
+      "aliases" : [
+         "Holger Hans Peter Freyther"
+      ],
+      "emails" : [
+         "zecke@selfish.org",
+         "zecke@webkit.org"
+      ],
+      "expertise" : "The QtWebKit Port, The WebKitGTK Port",
+      "name" : "Holger Freyther",
+      "nicks" : [
+         "zecke"
+      ]
+   },
+   {
+      "emails" : [
+         "hugo.lima@openbossa.org"
+      ],
+      "expertise" : "The QtWebKit Port",
+      "name" : "Hugo Parente Lima",
+      "nicks" : [
+         "hugopl"
+      ]
+   },
+   {
+      "emails" : [
+         "hs85.jeong@samsung.com",
+         "hs85jeong@gmail.com"
+      ],
+      "expertise" : "The EFLWebKit port, Cairo graphics backend",
+      "name" : "Hunseop Jeong",
+      "nicks" : [
+         "hunseop"
+      ]
+   },
+   {
+      "emails" : [
+         "hw1008.kim@samsung.com"
+      ],
+      "name" : "Hyowon Kim",
+      "nicks" : [
+         "hyowon"
+      ]
+   },
+   {
+      "emails" : [
+         "hyungwook.lee@navercorp.com"
+      ],
+      "expertise" : "Loader, Graphics, The EFLWebKit port, WebKit on Windows",
+      "name" : "Hyungwook Lee",
+      "nicks" : [
+         "hwlee"
+      ]
+   },
+   {
+      "emails" : [
+         "ian@ianhenderson.org",
+         "ianh@apple.com"
+      ],
+      "name" : "Ian Henderson",
+      "nicks" : [
+         "ianh"
+      ]
+   },
+   {
+      "emails" : [
+         "ian@hixie.ch"
+      ],
+      "name" : "Ian Hickson",
+      "nicks" : [
+         "hixie"
+      ]
+   },
+   {
+      "emails" : [
+         "vollick@chromium.org"
+      ],
+      "expertise" : "Graphics, Animations",
+      "name" : "Ian Vollick",
+      "nicks" : [
+         "vollick"
+      ]
+   },
+   {
+      "emails" : [
+         "webkit-layout-noreply@igalia.com"
+      ],
+      "expertise" : "Flexbox, CSS Grid Layout, CSS Scroll Snap, CSS Containment",
+      "name" : "Igalia Layout Team"
+   },
+   {
+      "emails" : [
+         "igor.oliveira@webkit.org",
+         "igor.o@sisa.samsung.com",
+         "igor.oliveira@openbossa.org"
+      ],
+      "expertise" : "Animations, Accelerated Compositing, WebKitEFL",
+      "name" : "Igor Trindade Oliveira",
+      "nicks" : [
+         "igoroliveira"
+      ]
+   },
+   {
+      "emails" : [
+         "isherman@chromium.org"
+      ],
+      "name" : "Ilya Sherman",
+      "nicks" : [
+         "isherman"
+      ]
+   },
+   {
+      "emails" : [
+         "loislo@chromium.org"
+      ],
+      "name" : "Ilya Tikhonovsky",
+      "nicks" : [
+         "loislo"
+      ]
+   },
+   {
+      "emails" : [
+         "ifernandez@igalia.com",
+         "mortimergoro@gmail.com"
+      ],
+      "expertise" : "Graphics, WebGL, WebXR",
+      "name" : "Imanol Fernandez",
+      "nicks" : [
+         "imanol",
+         "mortimergoro"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "rosca@adobe.com"
+      ],
+      "name" : "Ion Rosca",
+      "nicks" : [
+         "rosca"
+      ]
+   },
+   {
+      "emails" : [
+         "ike@apple.com"
+      ],
+      "name" : "Ivan Ivan Krsti\u0107"
+   },
+   {
+      "emails" : [
+         "j_pascoe@apple.com"
+      ],
+      "github" : "pascoej",
+      "name" : "J Pascoe",
+      "nicks" : [
+         "j_pascoe"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "jfbastien@apple.com",
+         "jfb@chromium.org"
+      ],
+      "expertise" : "JavaScript/ECMAScript",
+      "name" : "JF Bastien",
+      "nicks" : [
+         "jfb",
+         "jfb_",
+         "jfbastien"
+      ]
+   },
+   {
+      "emails" : [
+         "shihchieh_lee@apple.com"
+      ],
+      "name" : "Jack Lee",
+      "nicks" : [
+         "jackl"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "jkjiang@webkit.org",
+         "zkjiang008@gmail.com",
+         "zhajiang@blackberry.com",
+         "zhajiang@rim.com"
+      ],
+      "expertise" : "The BlackBerry Port, Mobile Viewport Handling",
+      "name" : "Jacky Jiang",
+      "nicks" : [
+         "jkjiang"
+      ]
+   },
+   {
+      "emails" : [
+         "jacob_uphoff@apple.com"
+      ],
+      "name" : "Jacob Uphoff",
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "jaepark@webkit.org",
+         "jae.park@company100.net"
+      ],
+      "name" : "Jae Hyun Park",
+      "nicks" : [
+         "jaepark"
+      ]
+   },
+   {
+      "emails" : [
+         "ljaehun.lim@samsung.com"
+      ],
+      "expertise" : "The EFLWebKit port",
+      "name" : "Jaehun Lim",
+      "nicks" : [
+         "jaehun"
+      ]
+   },
+   {
+      "emails" : [
+         "jake.nielsen.webkit@gmail.com",
+         "jacob_nielsen@gmail.com",
+         "jacob_nielsen@apple.com"
+      ],
+      "name" : "Jake Nielsen"
+   },
+   {
+      "emails" : [
+         "jpetsovits@blackberry.com",
+         "jpetsovits@rim.com",
+         "jpetso@gmx.at"
+      ],
+      "expertise" : "The platform layer, OpenVG graphics backend",
+      "name" : "Jakob Petsovits",
+      "nicks" : [
+         "jpetso"
+      ]
+   },
+   {
+      "emails" : [
+         "jwieczorek@webkit.org"
+      ],
+      "name" : "Jakub Wieczorek",
+      "nicks" : [
+         "fawek"
+      ]
+   },
+   {
+      "emails" : [
+         "jcraig@apple.com",
+         "james@cookiecrook.com"
+      ],
+      "name" : "James Craig",
+      "nicks" : [
+         "jcraig"
+      ]
+   },
+   {
+      "emails" : [
+         "jdarpinian@chromium.org"
+      ],
+      "expertise" : "WebGL (Chromium and Safari ports)",
+      "name" : "James Darpinian",
+      "nicks" : [
+         "jdarpinian"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "jhawkins@chromium.org",
+         "jhawkins@google.com"
+      ],
+      "name" : "James Hawkins",
+      "nicks" : [
+         "jhawkins"
+      ]
+   },
+   {
+      "emails" : [
+         "koz@chromium.org",
+         "koz@google.com"
+      ],
+      "name" : "James Kozianski",
+      "nicks" : [
+         "koz"
+      ]
+   },
+   {
+      "emails" : [
+         "jamesr@chromium.org",
+         "jamesr@google.com"
+      ],
+      "expertise" : "Layout, rendering, the Chromium port.",
+      "name" : "James Robinson",
+      "nicks" : [
+         "jamesr"
+      ]
+   },
+   {
+      "emails" : [
+         "james.savage@apple.com"
+      ],
+      "name" : "James Savage",
+      "nicks" : [
+         "axiixc"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "simonjam@chromium.org"
+      ],
+      "name" : "James Simonsen",
+      "nicks" : [
+         "simonjam"
+      ]
+   },
+   {
+      "emails" : [
+         "jmalonzo@gmail.com",
+         "jmalonzo@webkit.org"
+      ],
+      "expertise" : "The WebKitGtk Port",
+      "name" : "Jan Alonzo",
+      "nicks" : [
+         "janm"
+      ]
+   },
+   {
+      "emails" : [
+         "jbadics@inf.u-szeged.hu"
+      ],
+      "name" : "Janos Badics",
+      "nicks" : [
+         "dicska"
+      ]
+   },
+   {
+      "emails" : [
+         "jarred@webkit.org",
+         "jarred@sencha.com"
+      ],
+      "name" : "Jarred Nicholls",
+      "nicks" : [
+         "jarrednicholls"
+      ]
+   },
+   {
+      "emails" : [
+         "lawrence.j@apple.com"
+      ],
+      "name" : "Jason Lawrence",
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "jasonliuwebkit@gmail.com"
+      ],
+      "name" : "Jason Liu",
+      "nicks" : [
+         "jasonliu"
+      ]
+   },
+   {
+      "emails" : [
+         "jmarcell@apple.com"
+      ],
+      "name" : "Jason Marcell",
+      "nicks" : [
+         "jmarcell"
+      ]
+   },
+   {
+      "emails" : [
+         "jfernandez@igalia.com"
+      ],
+      "expertise" : "Layout, CSS",
+      "github" : "javifernandez",
+      "name" : "Javier Fernandez",
+      "nicks" : [
+         "lajava"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "jcivelli@chromium.org"
+      ],
+      "name" : "Jay Civelli",
+      "nicks" : [
+         "jcivelli"
+      ]
+   },
+   {
+      "emails" : [
+         "jean-yves.avenard@apple.com",
+         "jya@apple.com",
+         "jyavenard@gmail.com"
+      ],
+      "github" : "jyavenard",
+      "name" : "Jean-Yves Avenard",
+      "nicks" : [
+         "jya"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "jeffm@apple.com"
+      ],
+      "github" : "jeffmapple",
+      "name" : "Jeff Miller",
+      "nicks" : [
+         "jeffm7"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "twiz@chromium.org",
+         "twiz@google.com"
+      ],
+      "name" : "Jeff Timanus",
+      "nicks" : [
+         "twiz"
+      ]
+   },
+   {
+      "emails" : [
+         "jeffrey+webkit@endrift.com",
+         "jpfau@apple.com"
+      ],
+      "name" : "Jeffrey Pfau",
+      "nicks" : [
+         "jpfau"
+      ]
+   },
+   {
+      "emails" : [
+         "jennb@chromium.org"
+      ],
+      "name" : "Jenn Braithwaite",
+      "nicks" : [
+         "jennb"
+      ]
+   },
+   {
+      "emails" : [
+         "snej@chromium.org",
+         "jens@apple.com"
+      ],
+      "name" : "Jens Alfke"
+   },
+   {
+      "emails" : [
+         "jer.noble@apple.com"
+      ],
+      "github" : "jernoble",
+      "name" : "Jer Noble",
+      "nicks" : [
+         "jernoble"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "jeremyj-wk@apple.com",
+         "jeremyj@apple.com"
+      ],
+      "name" : "Jeremy Jones",
+      "nicks" : [
+         "jeremyj"
+      ]
+   },
+   {
+      "emails" : [
+         "playmobil@google.com",
+         "jeremy@chromium.org"
+      ],
+      "expertise" : "The Chromium Port on OS X",
+      "name" : "Jeremy Moskovich",
+      "nicks" : [
+         "jeremymos"
+      ]
+   },
+   {
+      "emails" : [
+         "jorlow@webkit.org",
+         "jorlow@chromium.org"
+      ],
+      "expertise" : "The Chromium Port, DOM Storage (i.e., LocalStorage and SessionStorage)",
+      "name" : "Jeremy Orlow",
+      "nicks" : [
+         "jorlow"
+      ]
+   },
+   {
+      "emails" : [
+         "jberlin@webkit.org",
+         "jberlin@apple.com"
+      ],
+      "name" : "Jessie Berlin",
+      "nicks" : [
+         "jessieberlin"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "jesus@webkit.org",
+         "jesus.palencia@openbossa.org"
+      ],
+      "expertise" : "The QtWebKit port",
+      "name" : "Jesus Sanchez-Palencia",
+      "nicks" : [
+         "jeez_"
+      ]
+   },
+   {
+      "emails" : [
+         "jiapu.mail@gmail.com",
+         "jpu@apple.com"
+      ],
+      "name" : "Jia Pu"
+   },
+   {
+      "emails" : [
+         "jianli@chromium.org"
+      ],
+      "expertise" : "The Chromium Port, Workers, File API, FormData",
+      "name" : "Jian Li",
+      "nicks" : [
+         "jianli"
+      ]
+   },
+   {
+      "emails" : [
+         "jiewen_tan@apple.com"
+      ],
+      "expertise" : "WebCrypto API",
+      "name" : "Jiewen Tan",
+      "nicks" : [
+         "Jiewen"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "jingzhao@chromium.org"
+      ],
+      "name" : "Jing Zhao"
+   },
+   {
+      "emails" : [
+         "jinwoo7.song@samsung.com",
+         "fantaros77@gmail.com"
+      ],
+      "expertise" : "The EFLWebKit port",
+      "name" : "Jinwoo Song",
+      "nicks" : [
+         "jinwoo"
+      ]
+   },
+   {
+      "emails" : [
+         "hur.ims@navercorp.com"
+      ],
+      "expertise" : "The WinCairo Port, WebGL, Canvas, Accelerated Compositing",
+      "name" : "Jinyoung Hur",
+      "nicks" : [
+         "jyhur"
+      ]
+   },
+   {
+      "emails" : [
+         "jdiggs@igalia.com"
+      ],
+      "expertise" : "Accessibility, WebKitGTK",
+      "name" : "Joanmarie Diggs",
+      "nicks" : [
+         "joanie"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "jturcotte@woboq.com",
+         "jocelyn.turcotte@digia.com",
+         "jocelyn.turcotte@nokia.com"
+      ],
+      "expertise" : "The QtWebKit port, Tools, Loader, Rendering, Accelerated Compositing",
+      "name" : "Jocelyn Turcotte",
+      "nicks" : [
+         "jturcotte"
+      ]
+   },
+   {
+      "emails" : [
+         "jochen@chromium.org",
+         "jochen@webkit.org"
+      ],
+      "name" : "Jochen Eisinger",
+      "nicks" : [
+         "jochen__"
+      ]
+   },
+   {
+      "emails" : [
+         "joethomas@motorola.com"
+      ],
+      "name" : "Joe Thomas",
+      "nicks" : [
+         "joethomas"
+      ]
+   },
+   {
+      "emails" : [
+         "webkit@johanjensen.dk",
+         "johan_jensen@apple.com"
+      ],
+      "name" : "Johan K. Jensen",
+      "nicks" : [
+         "johankj"
+      ]
+   },
+   {
+      "emails" : [
+         "jam@chromium.org"
+      ],
+      "expertise" : "The Chromium Port, Plug-ins, Workers",
+      "name" : "John Abd-El-Malek",
+      "nicks" : [
+         "jam"
+      ]
+   },
+   {
+      "emails" : [
+         "jbates@google.com",
+         "jbates@chromium.org"
+      ],
+      "name" : "John Bates",
+      "nicks" : [
+         "jbates"
+      ]
+   },
+   {
+      "emails" : [
+         "jbauman@chromium.org",
+         "jbauman@google.com"
+      ],
+      "name" : "John Bauman",
+      "nicks" : [
+         "jbauman"
+      ]
+   },
+   {
+      "emails" : [
+         "johnnyg@google.com",
+         "johnnyg@chromium.org"
+      ],
+      "name" : "John Gregg",
+      "nicks" : [
+         "johnnyg"
+      ]
+   },
+   {
+      "emails" : [
+         "jknotten@chromium.org"
+      ],
+      "name" : "John Knottenbelt",
+      "nicks" : [
+         "jknotten"
+      ]
+   },
+   {
+      "emails" : [
+         "johnme@chromium.org"
+      ],
+      "name" : "John Mellor",
+      "nicks" : [
+         "johnme"
+      ]
+   },
+   {
+      "emails" : [
+         "sullivan@apple.com"
+      ],
+      "expertise" : "Safari UI, Printing",
+      "name" : "John Sullivan",
+      "nicks" : [
+         "sullivan"
+      ]
+   },
+   {
+      "emails" : [
+         "wilander@apple.com"
+      ],
+      "name" : "John Wilander",
+      "nicks" : [
+         "johnwilander"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "jnd@chromium.org",
+         "johnnyding.webkit@gmail.com"
+      ],
+      "name" : "Johnny Ding",
+      "nicks" : [
+         "johnnyding"
+      ]
+   },
+   {
+      "aliases" : [
+         "John Honeycutt"
+      ],
+      "emails" : [
+         "jhoneycutt@apple.com"
+      ],
+      "expertise" : "WebKit on Windows, Plug-ins, Windows accessibility",
+      "name" : "Jon Honeycutt",
+      "nicks" : [
+         "jhoneycutt"
+      ]
+   },
+   {
+      "emails" : [
+         "jonlee@apple.com"
+      ],
+      "expertise" : "Forms, Notifications, Media controls",
+      "name" : "Jon Lee",
+      "nicks" : [
+         "jonlee"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "jonahr@google.com"
+      ],
+      "name" : "Jonah Ryan-Davis"
+   },
+   {
+      "emails" : [
+         "backer@chromium.org"
+      ],
+      "name" : "Jonathan Backer",
+      "nicks" : [
+         "backer"
+      ]
+   },
+   {
+      "emails" : [
+         "jbedard@apple.com",
+         "jbedard@webkit.org"
+      ],
+      "expertise" : "webkitpy, Python, testing",
+      "github" : "JonWBedard",
+      "name" : "Jonathan Bedard",
+      "nicks" : [
+         "jbedard",
+         "JonWBedard"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "jond@apple.com",
+         "web-evangelist@apple.com"
+      ],
+      "expertise" : "webkit.org, Developer Tools, Web Inspector",
+      "github" : "jdatapple",
+      "name" : "Jonathan Davis",
+      "nicks" : [
+         "JonDavis"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "jonathan.dong.webkit@gmail.com"
+      ],
+      "expertise" : "The BlackBerry Port",
+      "name" : "Jonathan Dong",
+      "nicks" : [
+         "jondong"
+      ]
+   },
+   {
+      "emails" : [
+         "jonowells@webkit.org",
+         "jonowells@me.com",
+         "jonowells@apple.com"
+      ],
+      "expertise" : "Developer Tools, Web Inspector",
+      "name" : "Jono Wells",
+      "nicks" : [
+         "jonowells"
+      ]
+   },
+   {
+      "emails" : [
+         "joone@webkit.org",
+         "joone.hur@intel.com",
+         "joone.hur@collabora.co.uk"
+      ],
+      "expertise" : "The WebKitGTK port",
+      "name" : "Joone Hur",
+      "nicks" : [
+         "joone"
+      ]
+   },
+   {
+      "emails" : [
+         "jh718.park@samsung.com",
+         "jh718.park@gmail.com",
+         "pjh0718@gmail.com"
+      ],
+      "github" : "joonghunpark",
+      "name" : "Joonghun Park",
+      "nicks" : [
+         "joonghunpark"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "joost@webkit.org",
+         "webkit-dev@joostdevalk.nl"
+      ],
+      "name" : "Joost de Valk",
+      "nicks" : [
+         "Altha"
+      ]
+   },
+   {
+      "emails" : [
+         "jgriego@igalia.com",
+         "joseph.j.griego@gmail.com"
+      ],
+      "github" : "jjgriego",
+      "name" : "Joseph Griego",
+      "nicks" : [
+         "jgriego"
+      ]
+   },
+   {
+      "aliases" : [
+         "Joe Pecoraro"
+      ],
+      "emails" : [
+         "joepeck@webkit.org",
+         "pecoraro@apple.com"
+      ],
+      "expertise" : "Web Inspector",
+      "name" : "Joseph Pecoraro",
+      "nicks" : [
+         "JoePeck"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "jsbell@chromium.org",
+         "jsbell@google.com"
+      ],
+      "name" : "Joshua Bell",
+      "nicks" : [
+         "jsbell"
+      ]
+   },
+   {
+      "emails" : [
+         "jberta.u-szeged@partner.samsung.com",
+         "jberta@inf.u-szeged.hu"
+      ],
+      "name" : "Jozsef Berta",
+      "nicks" : [
+         "jberta"
+      ]
+   },
+   {
+      "emails" : [
+         "juergen@apple.com"
+      ],
+      "expertise" : "JavaScript/ECMAScript",
+      "name" : "Juergen Ributzka",
+      "nicks" : [
+         "juergen"
+      ]
+   },
+   {
+      "emails" : [
+         "jparent@google.com",
+         "jparent@chromium.org"
+      ],
+      "expertise" : "HTML Editing",
+      "name" : "Julie Parent",
+      "nicks" : [
+         "jparent"
+      ]
+   },
+   {
+      "emails" : [
+         "julien.brianceau@gmail.com"
+      ],
+      "name" : "Julien Brianceau",
+      "nicks" : [
+         "jbrianceau"
+      ]
+   },
+   {
+      "emails" : [
+         "jchaffraix@webkit.org",
+         "julien.chaffraix@gmail.com",
+         "jchaffraix@google.com",
+         "jchaffraix@codeaurora.org"
+      ],
+      "expertise" : "Layout and rendering, Tables, XMLHttpRequest",
+      "name" : "Julien Chaffraix",
+      "nicks" : [
+         "jchaffraix"
+      ]
+   },
+   {
+      "emails" : [
+         "jshin@chromium.org"
+      ],
+      "name" : "Jungshik Shin"
+   },
+   {
+      "emails" : [
+         "justvanrossum@gmail.com"
+      ],
+      "expertise" : "Text and Fonts",
+      "name" : "Just van Rossum"
+   },
+   {
+      "emails" : [
+         "justin_fan@apple.com"
+      ],
+      "expertise" : "WebGL, Canvas",
+      "name" : "Justin Fan",
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "justin.garcia@apple.com"
+      ],
+      "expertise" : "Multipart Mixed Replace, HTML Editing",
+      "name" : "Justin Garcia",
+      "nicks" : [
+         "justing"
+      ]
+   },
+   {
+      "emails" : [
+         "justin_michaud@apple.com",
+         "justin@justinmichaud.com"
+      ],
+      "expertise" : "JavaScriptCore",
+      "github" : "justinmichaud",
+      "name" : "Justin Michaud",
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "junov@google.com",
+         "junov@chromium.org"
+      ],
+      "name" : "Justin Novosad",
+      "nicks" : [
+         "junov"
+      ]
+   },
+   {
+      "emails" : [
+         "jschuh@chromium.org"
+      ],
+      "expertise" : "Security",
+      "name" : "Justin Schuh",
+      "nicks" : [
+         "jschuh"
+      ]
+   },
+   {
+      "emails" : [
+         "kalyan.kondapally@intel.com",
+         "kondapallykalyan@gmail.com"
+      ],
+      "name" : "Kalyan Kondapally",
+      "nicks" : [
+         "kalyank"
+      ]
+   },
+   {
+      "emails" : [
+         "kangil.han@samsung.com",
+         "kangil.han@gmail.com"
+      ],
+      "expertise" : "The EFLWebKit Port",
+      "name" : "Kangil Han",
+      "nicks" : [
+         "kangil"
+      ]
+   },
+   {
+      "emails" : [
+         "karen+webkit@chromium.org",
+         "kareng@chromium.org"
+      ],
+      "name" : "Karen Grunberg",
+      "nicks" : [
+         "kareng"
+      ]
+   },
+   {
+      "emails" : [
+         "rackler@apple.com"
+      ],
+      "github" : "karlrackler",
+      "name" : "Karl Rackler",
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "katherine_cheney@apple.com"
+      ],
+      "github" : "kcheney1",
+      "name" : "Kate Cheney",
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "madonnk@gmail.com"
+      ],
+      "expertise" : "Web Inspector",
+      "name" : "Katie Madonna",
+      "nicks" : [
+         "madonk"
+      ]
+   },
+   {
+      "emails" : [
+         "kaustubh.ra@gmail.com",
+         "kaustubh@motorola.com"
+      ],
+      "name" : "Kaustubh Atrawalkar",
+      "nicks" : [
+         "silverroots"
+      ]
+   },
+   {
+      "emails" : [
+         "keishi@webkit.org"
+      ],
+      "expertise" : "Web Inspector",
+      "name" : "Keishi Hattori",
+      "nicks" : [
+         "keishi"
+      ]
+   },
+   {
+      "emails" : [
+         "keith_miller@apple.com"
+      ],
+      "expertise" : "JavaScript/ECMAScript",
+      "github" : "kmiller68",
+      "name" : "Keith Miller",
+      "nicks" : [
+         "keith_miller",
+         "keith_miller_"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "krollin@apple.com"
+      ],
+      "name" : "Keith Rollin",
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "knorton@google.com",
+         "knorton@alum.mit.edu"
+      ],
+      "name" : "Kelly Norton"
+   },
+   {
+      "emails" : [
+         "kenrb@chromium.org"
+      ],
+      "name" : "Ken Buchanan",
+      "nicks" : [
+         "kenrb"
+      ]
+   },
+   {
+      "emails" : [
+         "kocienda@apple.com"
+      ],
+      "name" : "Ken Kocienda",
+      "nicks" : [
+         "kocienda"
+      ]
+   },
+   {
+      "emails" : [
+         "bashi@chromium.org"
+      ],
+      "name" : "Kenichi Ishibashi",
+      "nicks" : [
+         "bashi"
+      ]
+   },
+   {
+      "emails" : [
+         "imasaki@chromium.org"
+      ],
+      "name" : "Kenji Imasaki",
+      "nicks" : [
+         "imasaki"
+      ]
+   },
+   {
+      "aliases" : [
+         "Kenneth Christiansen"
+      ],
+      "emails" : [
+         "kenneth@webkit.org",
+         "kenneth.r.christiansen@intel.com",
+         "kenneth.christiansen@gmail.com",
+         "kenneth.christiansen@openbossa.org"
+      ],
+      "expertise" : "WebKit/WebKit2 API, The Qt and EFL WebKit Port, Mobile Adaptions, Frame Flattening, Mobile Viewport Handling, Input methods.",
+      "name" : "Kenneth Rohde Christiansen",
+      "nicks" : [
+         "kenneth_",
+         "kenneth",
+         "kenne"
+      ]
+   },
+   {
+      "aliases" : [
+         "Ken Russell"
+      ],
+      "emails" : [
+         "kbr@google.com",
+         "kbr@chromium.org"
+      ],
+      "expertise" : " WebGL (Chromium and Safari ports), ANGLE, Canvas",
+      "github" : "kenrussell",
+      "name" : "Kenneth Russell",
+      "nicks" : [
+         "kbr_google",
+         "kbrgg"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "kent.hansen@nokia.com"
+      ],
+      "expertise" : "The QtWebKit Port, JavaScript/ECMAScript",
+      "name" : "Kent Hansen",
+      "nicks" : [
+         "khansen"
+      ]
+   },
+   {
+      "emails" : [
+         "tkent@chromium.org",
+         "tkent@google.com"
+      ],
+      "expertise" : "HTML Forms, DumpRenderTree for Chromium, The Chromium Port",
+      "name" : "Kent Tamura",
+      "nicks" : [
+         "tkent"
+      ]
+   },
+   {
+      "emails" : [
+         "haraken@chromium.org",
+         "haraken@google.com"
+      ],
+      "expertise" : "V8 bindings, JSC bindings, Perl scripts, Garbage collection, DOM lifetime",
+      "name" : "Kentaro Hara",
+      "nicks" : [
+         "haraken"
+      ]
+   },
+   {
+      "emails" : [
+         "kdecker@apple.com"
+      ],
+      "expertise" : "Safari UI, Plug-ins and Java (Mac, General), Enterprise Application Compatibility",
+      "name" : "Kevin Decker",
+      "nicks" : [
+         "superkevin"
+      ]
+   },
+   {
+      "emails" : [
+         "kmccullough@apple.com"
+      ],
+      "expertise" : " JavaScript/ECMAScript, Developer Tools (Web Inspector, JavaScript Profilier), Web Compatibility (Web Apps)",
+      "name" : "Kevin McCullough",
+      "nicks" : [
+         "maculloch"
+      ]
+   },
+   {
+      "emails" : [
+         "kevino@theolliviers.com",
+         "kevino@webkit.org"
+      ],
+      "expertise" : "The wxWebKit Port, Bakefile build system",
+      "name" : "Kevin Ollivier",
+      "nicks" : [
+         "kollivier"
+      ]
+   },
+   {
+      "emails" : [
+         "tho22@apple.com",
+         "tuankiet65@gmail.com"
+      ],
+      "github" : "tuankiet65",
+      "name" : "Kiet Ho",
+      "nicks" : [
+         "tuankiet65"
+      ]
+   },
+   {
+      "emails" : [
+         "kihong.kwon@samsung.com"
+      ],
+      "expertise" : "Device APIs(Battery Status, Vibration...), The EFLWebKit Port",
+      "name" : "Kihong Kwon",
+      "nicks" : [
+         "kihong"
+      ]
+   },
+   {
+      "emails" : [
+         "kim.1.gronholm@nokia.com"
+      ],
+      "name" : "Kim Gr\u00f6nholm"
+   },
+   {
+      "emails" : [
+         "kkinnunen@apple.com"
+      ],
+      "expertise" : "WebGL",
+      "github" : "kkinnunen-apple",
+      "name" : "Kimmo Kinnunen",
+      "nicks" : [
+         "kimmok"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "kinuko@chromium.org"
+      ],
+      "name" : "Kinuko Yasuda",
+      "nicks" : [
+         "kinuko"
+      ]
+   },
+   {
+      "emails" : [
+         "cmuppala@apple.com"
+      ],
+      "name" : "Kiran Muppala",
+      "nicks" : [
+         "kiranm"
+      ]
+   },
+   {
+      "emails" : [
+         "kocsen_chung@apple.com"
+      ],
+      "github" : "kocsenc",
+      "name" : "Kocsen Chung",
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "kojih@chromium.org"
+      ],
+      "name" : "Koji Hara",
+      "nicks" : [
+         "kojih"
+      ]
+   },
+   {
+      "emails" : [
+         "kojiishi@gmail.com"
+      ],
+      "name" : "Koji Ishii"
+   },
+   {
+      "emails" : [
+         "kpiascik@blackberry.com",
+         "kpiascik@rim.com"
+      ],
+      "expertise" : "The BlackBerry Port, Web Inspector",
+      "name" : "Konrad Piascik",
+      "nicks" : [
+         "kpiascik"
+      ]
+   },
+   {
+      "emails" : [
+         "annulen@yandex.ru",
+         "ktokarev@smartlabs.tv"
+      ],
+      "expertise" : "CMake build system, Perl scripts",
+      "name" : "Konstantin Tokarev",
+      "nicks" : [
+         "annulen"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "kkristof@inf.u-szeged.hu",
+         "kkosztyo.u-szeged@partner.samsung.com",
+         "Kosztyo.Kristof@stud.u-szeged.hu"
+      ],
+      "name" : "Kristof Kosztyo",
+      "nicks" : [
+         "kkristof"
+      ]
+   },
+   {
+      "emails" : [
+         "k.czech@samsung.com"
+      ],
+      "expertise" : "WebKit-EFL, Accessibility",
+      "name" : "Krzysztof Czech",
+      "nicks" : [
+         "kczech"
+      ]
+   },
+   {
+      "emails" : [
+         "kkowalczyk@gmail.com"
+      ],
+      "name" : "Krzysztof Kowalczyk"
+   },
+   {
+      "emails" : [
+         "kulanthaivel@codeaurora.org"
+      ],
+      "name" : "Kulanthaivel Palanichamy",
+      "nicks" : [
+         "kvel"
+      ]
+   },
+   {
+      "emails" : [
+         "skyul@company100.com",
+         "skyul@company100.net",
+         "kseo@webkit.org"
+      ],
+      "expertise" : "HTML Parsing, Networking, WebKit2",
+      "name" : "Kwang Yul Seo",
+      "nicks" : [
+         "kseo"
+      ]
+   },
+   {
+      "emails" : [
+         "hyuki.kim@samsung.com"
+      ],
+      "expertise" : "Webkit-EFL, Tiled BackingStore",
+      "name" : "KwangHyuk Kim",
+      "nicks" : [
+         "hyuki"
+      ]
+   },
+   {
+      "emails" : [
+         "kpiddington@apple.com"
+      ],
+      "name" : "Kyle Piddington",
+      "nicks" : [
+         "kpiddington"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "lars.knoll@gmail.com",
+         "lars@trolltech.com",
+         "lars@kde.org",
+         "lars.knoll@nokia.com"
+      ],
+      "expertise" : "Original author of KHTML which WebKit is based on, The QtWebKit Port, Layout and Rendering, CSS (Cascading Style Sheets), HTML Forms, Tables, HTML DOM, Core DOM, HTML Parsing",
+      "name" : "Lars Knoll",
+      "nicks" : [
+         "lars"
+      ]
+   },
+   {
+      "emails" : [
+         "laszlo.gombos@webkit.org",
+         "l.gombos@samsung.com",
+         "laszlo.gombos@gmail.com",
+         "laszlo.1.gombos@nokia.com"
+      ],
+      "expertise" : "The QtWebKit Port",
+      "name" : "Laszlo Gombos",
+      "nicks" : [
+         "lgombos"
+      ]
+   },
+   {
+      "emails" : [
+         "lvidacs.u-szeged@partner.samsung.com",
+         "lac@inf.u-szeged.hu"
+      ],
+      "name" : "Laszlo Vidacs",
+      "nicks" : [
+         "lvidacs"
+      ]
+   },
+   {
+      "emails" : [
+         "lorp@lorp.org"
+      ],
+      "name" : "Laurence Penney"
+   },
+   {
+      "emails" : [
+         "lmoura@igalia.com",
+         "lauro.neto@openbossa.org"
+      ],
+      "github" : "lauromoura",
+      "name" : "Lauro Moura",
+      "nicks" : [
+         "lmoura"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "leandrogracia@chromium.org"
+      ],
+      "name" : "Leandro Gracia Gil",
+      "nicks" : [
+         "leandrogracia"
+      ]
+   },
+   {
+      "emails" : [
+         "leandro@profusion.mobi",
+         "leandro@webkit.org"
+      ],
+      "name" : "Leandro Pereira",
+      "nicks" : [
+         "acidx"
+      ]
+   },
+   {
+      "emails" : [
+         "leoyang@rim.com",
+         "leoyang@blackberry.com",
+         "leoyang@webkit.org",
+         "leoyang.webkit@gmail.com"
+      ],
+      "expertise" : "The BlackBerry Port",
+      "name" : "Leo Yang",
+      "nicks" : [
+         "leoyang"
+      ]
+   },
+   {
+      "emails" : [
+         "leviw@chromium.org",
+         "leviw@google.com",
+         "lweintraub@apple.com"
+      ],
+      "expertise" : "Layout (bidi and line layout, sub-pixel positioning), svg, editing",
+      "name" : "Levi Weintraub",
+      "nicks" : [
+         "leviw"
+      ]
+   },
+   {
+      "emails" : [
+         "li.yin@intel.com"
+      ],
+      "expertise" : "WebSocket, WebAudio",
+      "name" : "Li Yin",
+      "nicks" : [
+         "liyin"
+      ]
+   },
+   {
+      "emails" : [
+         "liachen@blackberry.com",
+         "liachen@rim.com"
+      ],
+      "name" : "Lia Chen"
+   },
+   {
+      "emails" : [
+         "lingho@apple.com"
+      ],
+      "expertise" : "webkit.org admin",
+      "name" : "Ling Ho"
+   },
+   {
+      "emails" : [
+         "ltilve@igalia.com"
+      ],
+      "name" : "Lorenzo Tilve",
+      "nicks" : [
+         "ltilve"
+      ]
+   },
+   {
+      "emails" : [
+         "demarchi@webkit.org",
+         "lucas.demarchi@profusion.mobi"
+      ],
+      "name" : "Lucas De Marchi",
+      "nicks" : [
+         "demarchi"
+      ]
+   },
+   {
+      "emails" : [
+         "lforschler@apple.com"
+      ],
+      "name" : "Lucas Forschler",
+      "nicks" : [
+         "lforschler"
+      ]
+   },
+   {
+      "emails" : [
+         "luciano.wolf@openbossa.org"
+      ],
+      "name" : "Luciano Wolf",
+      "nicks" : [
+         "luck"
+      ]
+   },
+   {
+      "emails" : [
+         "luiz@webkit.org",
+         "luiz.agostini@openbossa.org"
+      ],
+      "expertise" : "The QtWebKit Port",
+      "name" : "Luiz Agostini",
+      "nicks" : [
+         "lca"
+      ]
+   },
+   {
+      "emails" : [
+         "macpherson@chromium.org",
+         "macpherson@google.com"
+      ],
+      "name" : "Luke Macpherson",
+      "nicks" : [
+         "macpherson"
+      ]
+   },
+   {
+      "emails" : [
+         "luming_yin@apple.com"
+      ],
+      "name" : "Luming Yin"
+   },
+   {
+      "emails" : [
+         "llango.u-szeged@partner.samsung.com",
+         "lango@inf.u-szeged.hu"
+      ],
+      "name" : "L\u00e1szl\u00f3 Lang\u00f3",
+      "nicks" : [
+         "llango"
+      ]
+   },
+   {
+      "emails" : [
+         "mjs@apple.com"
+      ],
+      "expertise" : "JavaScript/ECMAScript, Performance, Security, Basic types and data structures, FastMalloc, DOM Bindings for JavaScript, Core DOM, HTML DOM, JavaScript DOM Bindings, WebKit API (Mac, Win), HTML Editing, Networking, Tools, New Features / Standards Support, General (probably a good backup on most topics even if not specifically an expert)",
+      "name" : "Maciej Stachowiak",
+      "nicks" : [
+         "othermaciej",
+         "mjs"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "ager@chromium.org"
+      ],
+      "expertise" : "V8",
+      "name" : "Mads Ager"
+   },
+   {
+      "emails" : [
+         "maheshk@webkit.org",
+         "mahesh.kk@samsung.com",
+         "mahesh.kulkarni@nokia.com"
+      ],
+      "expertise" : "The Qt port, Geolocation",
+      "name" : "Mahesh Kulkarni",
+      "nicks" : [
+         "maheshkk"
+      ]
+   },
+   {
+      "emails" : [
+         "rego@igalia.com"
+      ],
+      "expertise" : "Layout, CSS",
+      "github" : "mrego",
+      "name" : "Manuel Rego Casasnovas",
+      "nicks" : [
+         "rego",
+         "mrego"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "marcelo.lira@openbossa.org",
+         "setanta@gmail.com"
+      ],
+      "name" : "Marcelo Lira",
+      "nicks" : [
+         "setanta"
+      ]
+   },
+   {
+      "emails" : [
+         "bulach@chromium.org"
+      ],
+      "name" : "Marcus Voltis Bulach"
+   },
+   {
+      "emails" : [
+         "mario@webkit.org",
+         "mario@endlessm.com",
+         "mario.prada@samsung.com",
+         "msanchez@igalia.com"
+      ],
+      "expertise" : "WebKitGTK, Accessibility, WebKit2, Epiphany/WebKit Contributor",
+      "name" : "Mario Sanchez Prada",
+      "nicks" : [
+         "msanchez"
+      ]
+   },
+   {
+      "emails" : [
+         "mhahnenb@gmail.com",
+         "mhahnenberg@apple.com"
+      ],
+      "expertise" : "JavaScript/ECMAScript",
+      "name" : "Mark Hahnenberg",
+      "nicks" : [
+         "mhahnenberg"
+      ]
+   },
+   {
+      "emails" : [
+         "mark.lam@apple.com",
+         "menlodorian@outlook.com"
+      ],
+      "github" : "MenloDorian",
+      "name" : "Mark Lam",
+      "nicks" : [
+         "mlam"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "pilgrim@chromium.org"
+      ],
+      "name" : "Mark Pilgrim",
+      "nicks" : [
+         "pilgrim_google"
+      ]
+   },
+   {
+      "emails" : [
+         "mrowe@bdash.net.nz",
+         "mrowe@apple.com"
+      ],
+      "expertise" : "Build/Release Engineering, Malloc, FastMalloc",
+      "name" : "Mark Rowe",
+      "nicks" : [
+         "bdash"
+      ]
+   },
+   {
+      "emails" : [
+         "mhock@apple.com"
+      ],
+      "name" : "Martin Hock",
+      "nicks" : [
+         "mhock"
+      ]
+   },
+   {
+      "emails" : [
+         "mhodovan.u-szeged@partner.samsung.com",
+         "mhodovan@inf.u-szeged.hu"
+      ],
+      "name" : "Martin Hodovan",
+      "nicks" : [
+         "hmartin"
+      ]
+   },
+   {
+      "emails" : [
+         "mrobinson@webkit.org",
+         "mrobinson@igalia.com",
+         "martin.james.robinson@gmail.com"
+      ],
+      "expertise" : "The WebKitGTK port, scroll snap, position:sticky",
+      "github" : "mrobinson",
+      "name" : "Martin Robinson",
+      "nicks" : [
+         "mrobinson"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "mawu@blackberry.com",
+         "wwendy2007@gmail.com"
+      ],
+      "name" : "Mary Wu",
+      "nicks" : [
+         "marywu"
+      ]
+   },
+   {
+      "emails" : [
+         "mattbaker01@gmail.com"
+      ],
+      "expertise" : "Web Inspector",
+      "name" : "Matt Baker",
+      "nicks" : [
+         "mattbaker"
+      ]
+   },
+   {
+      "emails" : [
+         "mdaiter@apple.com"
+      ],
+      "name" : "Matt Daiter",
+      "nicks" : [
+         "mdaiter"
+      ]
+   },
+   {
+      "emails" : [
+         "mdelaney7@gmail.com",
+         "mdelaney@apple.com"
+      ],
+      "name" : "Matt Delaney"
+   },
+   {
+      "emails" : [
+         "falken@chromium.org"
+      ],
+      "name" : "Matt Falkenhagen",
+      "nicks" : [
+         "falken"
+      ]
+   },
+   {
+      "emails" : [
+         "matthew_hanson@apple.com"
+      ],
+      "name" : "Matt Hanson",
+      "nicks" : [
+         "matthanson"
+      ]
+   },
+   {
+      "emails" : [
+         "jlewis3@apple.com"
+      ],
+      "github" : "rancored-mongoose",
+      "name" : "Matt Lewis",
+      "nicks" : [
+         "mattlewis"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "dev+webkit@mattlilek.com",
+         "mlilek@apple.com",
+         "webkit@mattlilek.com",
+         "pewtermoose@webkit.org"
+      ],
+      "name" : "Matt Lilek",
+      "nicks" : [
+         "pewtermoose"
+      ]
+   },
+   {
+      "emails" : [
+         "mpcomplete@chromium.org"
+      ],
+      "name" : "Matt Perry"
+   },
+   {
+      "emails" : [
+         "mrajca@apple.com"
+      ],
+      "name" : "Matt Rajca",
+      "nicks" : [
+         "mrajca"
+      ]
+   },
+   {
+      "emails" : [
+         "mattwoodrow@apple.com"
+      ],
+      "github" : "mattwoodrow",
+      "name" : "Matt Woodrow",
+      "nicks" : [
+         "mattwoodrow"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "Matteo_flores@apple.com"
+      ],
+      "github" : "Smackteo",
+      "name" : "Matteo Flores",
+      "nicks" : [
+         "MatteoF"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "mmirman@apple.com"
+      ],
+      "expertise" : "JavaScript/ECMAScript",
+      "name" : "Matthew Mirman",
+      "nicks" : [
+         "mmirman"
+      ]
+   },
+   {
+      "emails" : [
+         "mvujovic@adobe.com",
+         "maxvujovic@gmail.com"
+      ],
+      "expertise" : "CSS Shaders, CSS Filters",
+      "name" : "Max Vujovic",
+      "nicks" : [
+         "mvujovic"
+      ]
+   },
+   {
+      "emails" : [
+         "maxime.britto@gmail.com",
+         "britto@apple.com"
+      ],
+      "name" : "Maxime Britto"
+   },
+   {
+      "emails" : [
+         "simon.maxime@gmail.com",
+         "maxime.simon@webkit.org"
+      ],
+      "expertise" : "The Haiku Port",
+      "name" : "Maxime Simon",
+      "nicks" : [
+         "maxime.simon"
+      ]
+   },
+   {
+      "emails" : [
+         "megan_gardner@apple.com"
+      ],
+      "expertise" : "iOS Selection",
+      "github" : "megangardner",
+      "name" : "Megan Gardner",
+      "nicks" : [
+         "GameMaker"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "michael.bruning@digia.com",
+         "michaelbruening@gmail.com"
+      ],
+      "expertise" : "The QtWebKit Port",
+      "name" : "Michael Br\u00fcning",
+      "nicks" : [
+         "mibrunin"
+      ]
+   },
+   {
+      "emails" : [
+         "mcatanzaro@gnome.org",
+         "mcatanzaro@redhat.com",
+         "mcatanzaro@igalia.com"
+      ],
+      "expertise" : "The WebKitGTK Port, Epiphany, Soup HTTP Backend",
+      "github" : "mcatanzaro",
+      "name" : "Michael Catanzaro",
+      "nicks" : [
+         "mcatanzaro"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "michaeln@google.com"
+      ],
+      "name" : "Michael Nordman",
+      "nicks" : [
+         "michaeln"
+      ]
+   },
+   {
+      "emails" : [
+         "michael@68k.org"
+      ],
+      "name" : "Michael Pruett",
+      "nicks" : [
+         "mpruett"
+      ]
+   },
+   {
+      "emails" : [
+         "msaboff@apple.com"
+      ],
+      "expertise" : "JavaScript/ECMAScript",
+      "github" : "msaboff",
+      "name" : "Michael Saboff",
+      "nicks" : [
+         "msaboff"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "mpakulavelrutka@gmail.com",
+         "m.pakula@samsung.com"
+      ],
+      "name" : "Micha\u0142 Paku\u0142a vel Rutka",
+      "nicks" : [
+         "mpakula"
+      ]
+   },
+   {
+      "emails" : [
+         "michelangelo@webkit.org"
+      ],
+      "expertise" : "HTML Forms, ValidityState",
+      "name" : "Michelangelo De Simone",
+      "nicks" : [
+         "michelangelo"
+      ]
+   },
+   {
+      "emails" : [
+         "magomez@igalia.com"
+      ],
+      "expertise" : "WebKitGTK, WPE, Accelerated Compositing, HW acceleration",
+      "github" : "magomez",
+      "name" : "Miguel Gomez",
+      "nicks" : [
+         "magomez"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "mibalan@adobe.com"
+      ],
+      "name" : "Mihai Balan",
+      "nicks" : [
+         "miChou"
+      ]
+   },
+   {
+      "emails" : [
+         "mmaerean@adobe.com",
+         "maerean@gmail.com"
+      ],
+      "name" : "Mihai Maerean",
+      "nicks" : [
+         "mmaerean"
+      ]
+   },
+   {
+      "emails" : [
+         "mihaip@chromium.org"
+      ],
+      "expertise" : "The Chromium Port, Layout tests, History",
+      "name" : "Mihai Parparita",
+      "nicks" : [
+         "mihaip"
+      ]
+   },
+   {
+      "emails" : [
+         "mitica@adobe.com",
+         "mihai.o.tica@gmail.com"
+      ],
+      "name" : "Mihai Tica",
+      "nicks" : [
+         "mitica"
+      ]
+   },
+   {
+      "emails" : [
+         "mihnea@adobe.com"
+      ],
+      "expertise" : "CSS Regions, CSS Exclusions",
+      "name" : "Mihnea Ovidenie",
+      "nicks" : [
+         "mihnea"
+      ]
+   },
+   {
+      "emails" : [
+         "mbelshe@chromium.org",
+         "mike@belshe.com"
+      ],
+      "name" : "Mike Belshe"
+   },
+   {
+      "emails" : [
+         "mifenton@blackberry.com",
+         "mifenton@rim.com",
+         "mike.fenton@torchmobile.com"
+      ],
+      "name" : "Mike Fenton",
+      "nicks" : [
+         "mfenton"
+      ]
+   },
+   {
+      "emails" : [
+         "mikelawther@chromium.org"
+      ],
+      "name" : "Mike Lawther",
+      "nicks" : [
+         "mikelawther"
+      ]
+   },
+   {
+      "emails" : [
+         "reed@google.com"
+      ],
+      "name" : "Mike Reed",
+      "nicks" : [
+         "reed"
+      ]
+   },
+   {
+      "emails" : [
+         "mthole@mikethole.com",
+         "mthole@apple.com"
+      ],
+      "expertise" : "The Chromium Port",
+      "name" : "Mike Thole"
+   },
+   {
+      "emails" : [
+         "mkwst@chromium.org",
+         "mike@mikewest.org"
+      ],
+      "expertise" : "Content Security Policy, Chromium",
+      "name" : "Mike West",
+      "nicks" : [
+         "mkwst"
+      ]
+   },
+   {
+      "emails" : [
+         "mwyrzykowski@apple.com"
+      ],
+      "expertise" : "Graphics",
+      "github" : "mwyrzykowski",
+      "name" : "Mike Wyrzykowski"
+   },
+   {
+      "emails" : [
+         "mnaganov@chromium.org"
+      ],
+      "name" : "Mikhail Naganov"
+   },
+   {
+      "emails" : [
+         "mikhail.pozdnyakov@intel.com"
+      ],
+      "name" : "Mikhail Pozdnyakov",
+      "nicks" : [
+         "MPozdnyakov"
+      ]
+   },
+   {
+      "emails" : [
+         "mikhail@igalia.com",
+         "mikhail.ramalho@gmail.com"
+      ],
+      "github" : "mikhailramalho",
+      "name" : "Mikhail R. Gadelha",
+      "nicks" : [
+         "mgadelha"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "qinmin@chromium.org"
+      ],
+      "name" : "Min Qin"
+   },
+   {
+      "emails" : [
+         "Ms2ger@igalia.com",
+         "Ms2ger@gmail.com"
+      ],
+      "github" : "Ms2ger",
+      "name" : "Ms2ger",
+      "nicks" : [
+         "Ms2ger"
+      ],
+      "status" : "committer"
+   },
+   {
+      "aliases" : [
+         "Myles Maxfield"
+      ],
+      "emails" : [
+         "mmaxfield@apple.com"
+      ],
+      "expertise" : "Text layout and rendering",
+      "github" : "litherum",
+      "name" : "Myles C. Maxfield",
+      "nicks" : [
+         "litherum"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "nrotem@apple.com"
+      ],
+      "name" : "Nadav Rotem",
+      "nicks" : [
+         "nadav"
+      ]
+   },
+   {
+      "emails" : [
+         "nael.ouedp@gmail.com",
+         "nael.ouedraogo@crf.canon.fr"
+      ],
+      "name" : "Nael Ouedraogo",
+      "nicks" : [
+         "nael"
+      ]
+   },
+   {
+      "emails" : [
+         "n_wang@apple.com"
+      ],
+      "expertise" : "Accessibility",
+      "name" : "Nan Wang",
+      "nicks" : [
+         "n_wang"
+      ]
+   },
+   {
+      "emails" : [
+         "honten@chromium.org",
+         "takano.naoki@gmail.com"
+      ],
+      "expertise" : "Forms, Autofill and popup window between WebKit and Chromium port",
+      "name" : "Naoki Takano",
+      "nicks" : [
+         "honten"
+      ]
+   },
+   {
+      "emails" : [
+         "nduca@chromium.org",
+         "nduca@google.com"
+      ],
+      "name" : "Nat Duca",
+      "nicks" : [
+         "nduca"
+      ]
+   },
+   {
+      "emails" : [
+         "japhet@chromium.org"
+      ],
+      "expertise" : "The Chromium Port, V8 Bindings",
+      "name" : "Nate Chapin",
+      "nicks" : [
+         "japhet",
+         "natechapin"
+      ]
+   },
+   {
+      "emails" : [
+         "nayankk@motorola.com",
+         "nayankk@gmail.com"
+      ],
+      "name" : "Nayan Kumar K",
+      "nicks" : [
+         "xc0ffee"
+      ]
+   },
+   {
+      "emails" : [
+         "nick.diego@gmail.com",
+         "nick.yamane@openbossa.org"
+      ],
+      "name" : "Nick Diego Yamane",
+      "nicks" : [
+         "diegoyam"
+      ]
+   },
+   {
+      "emails" : [
+         "thakis@chromium.org",
+         "thakis@google.com"
+      ],
+      "expertise" : "The Chromium Port, Graphics, Skia, CoreGraphics",
+      "name" : "Nico Weber",
+      "nicks" : [
+         "thakis"
+      ]
+   },
+   {
+      "emails" : [
+         "nvasilyev@apple.com",
+         "me@elv1s.ru"
+      ],
+      "expertise" : "Web Inspector",
+      "github" : "NV",
+      "name" : "Nikita Vasilyev",
+      "nicks" : [
+         "NVI",
+         "nvasilyev"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "nmouchtaris@apple.com"
+      ],
+      "github" : "nmoucht",
+      "name" : "Nikolaos Mouchtaris",
+      "status" : "committer"
+   },
+   {
+      "aliases" : [
+         "Niko Zimmermann"
+      ],
+      "emails" : [
+         "zimmermann@kde.org",
+         "zimmermann@physik.rwth-aachen.de",
+         "zimmermann@webkit.org",
+         "nzimmermann@blackberry.com",
+         "nzimmermann@rim.com",
+         "nzimmermann@igalia.com"
+      ],
+      "expertise" : "Core KHTML contributor, The QtWebKit Port, Text Layout, JavaScript DOM bindings, Code generation in general, XML, SVG (Scalable Vector Graphics)",
+      "github" : "nikolaszimmermann",
+      "name" : "Nikolas Zimmermann",
+      "nicks" : [
+         "nzimmermann"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "nbarth@chromium.org"
+      ],
+      "name" : "Nils Barth",
+      "nicks" : [
+         "nbarth"
+      ]
+   },
+   {
+      "emails" : [
+         "nghanavatian@blackberry.com",
+         "nghanavatian@rim.com",
+         "nima.ghanavatian@gmail.com"
+      ],
+      "name" : "Nima Ghanavatian",
+      "nicks" : [
+         "nghanavatian"
+      ]
+   },
+   {
+      "emails" : [
+         "noam@webkit.org",
+         "noam.rosenthal@nokia.com"
+      ],
+      "expertise" : "TextureMapper, coordinated graphics, images, paint timing API",
+      "github" : "noamr",
+      "name" : "Noam Rosenthal",
+      "nicks" : [
+         "noamr"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "noel.gordon@gmail.com",
+         "noel@chromium.org",
+         "noel@google.com"
+      ],
+      "name" : "Noel Gordon",
+      "nicks" : [
+         "noel"
+      ]
+   },
+   {
+      "emails" : [
+         "ojan@chromium.org",
+         "ojan.autocc@gmail.com"
+      ],
+      "expertise" : "Selections, Editing, webkit-patch, run-webkit-tests, The Chromium port, HTML Forms, Layout and Rendering, Web Compatibility (General) ",
+      "name" : "Ojan Vafai",
+      "nicks" : [
+         "ojan"
+      ]
+   },
+   {
+      "emails" : [
+         "oliver@apple.com"
+      ],
+      "expertise" : "JavaScript/ECMAScript, FastMalloc",
+      "name" : "Oliver Hunt",
+      "nicks" : [
+         "olliej"
+      ]
+   },
+   {
+      "emails" : [
+         "olivier.blin@softathome.com"
+      ],
+      "name" : "Olivier Blin",
+      "nicks" : [
+         "blino"
+      ]
+   },
+   {
+      "emails" : [
+         "obrufau@igalia.com"
+      ],
+      "github" : "Loirooriol",
+      "name" : "Oriol Brufau",
+      "nicks" : [
+         "obrufau"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "pf@parb.es",
+         "pablof@motorola.com"
+      ],
+      "name" : "Pablo Flouret",
+      "nicks" : [
+         "pablof"
+      ]
+   },
+   {
+      "emails" : [
+         "psaavedra@igalia.com"
+      ],
+      "github" : "psaavedra",
+      "name" : "Pablo Saavedra",
+      "nicks" : [
+         "psaavedra"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "pam@chromium.org"
+      ],
+      "expertise" : "The Chromium Port, Chromium's Tools and Test Infrastructure",
+      "name" : "Pam Greene",
+      "nicks" : [
+         "pamg"
+      ]
+   },
+   {
+      "emails" : [
+         "pangle@apple.com"
+      ],
+      "expertise" : "Developer Tools, Web Inspector, WebDriver",
+      "github" : "patrickangle",
+      "name" : "Patrick Angle",
+      "nicks" : [
+         "pangle"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "paroga@paroga.com",
+         "paroga@webkit.org"
+      ],
+      "expertise" : "CMake build system, The WinCE Port",
+      "name" : "Patrick Gansterer",
+      "nicks" : [
+         "paroga"
+      ]
+   },
+   {
+      "emails" : [
+         "pgriffis@igalia.com"
+      ],
+      "github" : "TingPing",
+      "name" : "Patrick Griffis",
+      "nicks" : [
+         "pgriffis",
+         "TingPing"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "pmatos@igalia.com",
+         "pmatos@linki.tools"
+      ],
+      "expertise" : "JavaScriptCore",
+      "name" : "Paulo Matos",
+      "nicks" : [
+         "pmatos"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "pfeldman@chromium.org",
+         "pfeldman@google.com"
+      ],
+      "expertise" : "Developer Tools, Web Inspector",
+      "name" : "Pavel Feldman",
+      "nicks" : [
+         "pfeldman"
+      ]
+   },
+   {
+      "emails" : [
+         "podivilov@chromium.org"
+      ],
+      "name" : "Pavel Podivilov",
+      "nicks" : [
+         "podivilov"
+      ]
+   },
+   {
+      "emails" : [
+         "peng.liu6@apple.com",
+         "peng.liu6@icloud.com"
+      ],
+      "name" : "Peng Liu",
+      "nicks" : [
+         "peng"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "pvollan@apple.com",
+         "peavo@outlook.com"
+      ],
+      "github" : "pvollan",
+      "name" : "Per Arne Vollan",
+      "nicks" : [
+         "peavo"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "peter@chromium.org",
+         "peter@webkit.org",
+         "beverloo@google.com"
+      ],
+      "name" : "Peter Beverloo",
+      "nicks" : [
+         "beverloo"
+      ]
+   },
+   {
+      "emails" : [
+         "galpeter@inf.u-szeged.hu",
+         "pgal.u-szeged@partner.samsung.com"
+      ],
+      "expertise" : "Python, CURL HTTP backend",
+      "name" : "Peter Gal",
+      "nicks" : [
+         "elecro"
+      ]
+   },
+   {
+      "emails" : [
+         "pkasting@google.com",
+         "pkasting@chromium.org"
+      ],
+      "expertise" : "Image Decoders, Scrollbars, The Chromium port",
+      "name" : "Peter Kasting",
+      "nicks" : [
+         "pkasting"
+      ]
+   },
+   {
+      "emails" : [
+         "peter.linss@hp.com"
+      ],
+      "name" : "Peter Linss",
+      "nicks" : [
+         "plinss"
+      ]
+   },
+   {
+      "emails" : [
+         "pmolnar.u-szeged@partner.samsung.com",
+         "molnarp@inf.u-szeged.hu"
+      ],
+      "name" : "Peter Molnar",
+      "nicks" : [
+         "molnarp"
+      ]
+   },
+   {
+      "emails" : [
+         "pvarga@webkit.org",
+         "pvarga@inf.u-szeged.hu"
+      ],
+      "expertise" : "JavaScriptCore Regular Expressions",
+      "name" : "Peter Varga",
+      "nicks" : [
+         "stampho"
+      ]
+   },
+   {
+      "emails" : [
+         "philipj@opera.com"
+      ],
+      "name" : "Philip J\u00e4genstedt",
+      "nicks" : [
+         "philipj"
+      ]
+   },
+   {
+      "emails" : [
+         "pdr@google.com",
+         "pdr@chromium.org",
+         "pdr+autocc@chromium.org"
+      ],
+      "expertise" : "SVG (Scalable Vector Graphics)",
+      "name" : "Philip Rogers",
+      "nicks" : [
+         "pdr"
+      ]
+   },
+   {
+      "emails" : [
+         "philn@igalia.com",
+         "pnormand@igalia.com",
+         "philn@webkit.org"
+      ],
+      "expertise" : "WebKitGTK, WPE, Media support (focused on the GStreamer implementation), Flatpak SDK",
+      "github" : "philn",
+      "name" : "Philippe Normand",
+      "nicks" : [
+         "philn"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "pierre.rossi@gmail.com"
+      ],
+      "name" : "Pierre Rossi",
+      "nicks" : [
+         "elproxy"
+      ]
+   },
+   {
+      "emails" : [
+         "pdherbemont@webkit.org",
+         "pdherbemont@free.fr",
+         "pdherbemont@apple.com"
+      ],
+      "expertise" : "Media Elements",
+      "name" : "Pierre d'Herbemont",
+      "nicks" : [
+         "pdherbemont"
+      ]
+   },
+   {
+      "emails" : [
+         "pol@mac.com",
+         "pol@apple.com"
+      ],
+      "name" : "Pierre-Olivier Latour",
+      "nicks" : [
+         "pol"
+      ]
+   },
+   {
+      "emails" : [
+         "psolanki@apple.com"
+      ],
+      "name" : "Pratik Solanki",
+      "nicks" : [
+         "psolanki"
+      ]
+   },
+   {
+      "emails" : [
+         "pravind@webkit.org",
+         "pravin.d@samsung.com"
+      ],
+      "name" : "Pravin D",
+      "nicks" : [
+         "pravind"
+      ]
+   },
+   {
+      "emails" : [
+         "qi.2.zhang@nokia.com",
+         "qi.zhang02180@gmail.com"
+      ],
+      "name" : "Qi Zhang",
+      "nicks" : [
+         "qi"
+      ]
+   },
+   {
+      "emails" : [
+         "webkit-bug-importer@group.apple.com"
+      ],
+      "name" : "Radar WebKit Bug Importer",
+      "status" : "bot"
+   },
+   {
+      "emails" : [
+         "stavila@adobe.com"
+      ],
+      "name" : "Radu Stavila",
+      "nicks" : [
+         "radustavila",
+         "stavila"
+      ]
+   },
+   {
+      "emails" : [
+         "antognolli+webkit@gmail.com",
+         "antognolli@profusion.mobi"
+      ],
+      "name" : "Rafael Antognolli",
+      "nicks" : [
+         "antognolli"
+      ]
+   },
+   {
+      "emails" : [
+         "rafael.lobo@webkit.org",
+         "rafael.lobo@openbossa.org"
+      ],
+      "name" : "Rafael Brandao",
+      "nicks" : [
+         "rafaelbrandao"
+      ]
+   },
+   {
+      "emails" : [
+         "rafaelw@chromium.org"
+      ],
+      "name" : "Rafael Weinstein",
+      "nicks" : [
+         "rafaelw"
+      ]
+   },
+   {
+      "emails" : [
+         "rakuco@webkit.org",
+         "rakuco@FreeBSD.org",
+         "raphael.kubo.da.costa@intel.com",
+         "kubo@profusion.mobi"
+      ],
+      "expertise" : "CMake build system, The EFLWebKit port",
+      "name" : "Raphael Kubo da Costa",
+      "nicks" : [
+         "rakuco"
+      ]
+   },
+   {
+      "emails" : [
+         "rhudea@adobe.com"
+      ],
+      "name" : "Raul Hudea",
+      "nicks" : [
+         "rhudea"
+      ]
+   },
+   {
+      "emails" : [
+         "ravi.kasibhatla@motorola.com"
+      ],
+      "name" : "Ravi Kasibhatla",
+      "nicks" : [
+         "kphanee"
+      ]
+   },
+   {
+      "emails" : [
+         "rtoy@google.com",
+         "rtoy@chromium.org"
+      ],
+      "name" : "Raymond Toy",
+      "nicks" : [
+         "rtoy"
+      ]
+   },
+   {
+      "emails" : [
+         "rcaliman@apple.com"
+      ],
+      "github" : "rcaliman-apple",
+      "name" : "Razvan Caliman",
+      "nicks" : [
+         "rcaliman"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "rhauck@adobe.com"
+      ],
+      "name" : "Rebecca Hauck",
+      "nicks" : [
+         "rhauck"
+      ]
+   },
+   {
+      "emails" : [
+         "rhodovan.u-szeged@partner.samsung.com",
+         "reni@inf.u-szeged.hu",
+         "reni@webkit.org"
+      ],
+      "name" : "Renata Hodovan",
+      "nicks" : [
+         "reni"
+      ]
+   },
+   {
+      "emails" : [
+         "rjw@apple.com"
+      ],
+      "name" : "Richard Williamson",
+      "nicks" : [
+         "rjw"
+      ]
+   },
+   {
+      "emails" : [
+         "rmondello@apple.com"
+      ],
+      "name" : "Ricky Mondello",
+      "nicks" : [
+         "rmondello"
+      ]
+   },
+   {
+      "emails" : [
+         "cabanier@adobe.com"
+      ],
+      "name" : "Rik Cabanier",
+      "nicks" : [
+         "cabanier"
+      ]
+   },
+   {
+      "emails" : [
+         "rbuis@igalia.com",
+         "rwlbuis@gmail.com",
+         "rwlbuis@webkit.org",
+         "rob.buis@samsung.com",
+         "rbuis@blackberry.com",
+         "rbuis@rim.com"
+      ],
+      "expertise" : "KDE contributor, The QtWebKit Port, SVG (Scalable Vector Graphics)",
+      "github" : "rwlbuis",
+      "name" : "Rob Buis",
+      "nicks" : [
+         "rwlbuis"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "robert@webkit.org",
+         "robert@roberthogan.net",
+         "lists@roberthogan.net"
+      ],
+      "name" : "Robert Hogan",
+      "nicks" : [
+         "rhogan"
+      ]
+   },
+   {
+      "emails" : [
+         "jenner@apple.com"
+      ],
+      "github" : "robert-jenner",
+      "name" : "Robert Jenner",
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "rjkroege@chromium.org"
+      ],
+      "name" : "Robert Kroeger",
+      "nicks" : [
+         "rjkroege"
+      ]
+   },
+   {
+      "emails" : [
+         "rmorisset@apple.com",
+         "robin.morisset@normalesup.org"
+      ],
+      "name" : "Robin Morisset",
+      "nicks" : [
+         "rmorisset"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "roger_fong@apple.com"
+      ],
+      "name" : "Roger Fong",
+      "nicks" : [
+         "rfong"
+      ]
+   },
+   {
+      "emails" : [
+         "rolandsteiner@chromium.org"
+      ],
+      "name" : "Roland Steiner"
+   },
+   {
+      "emails" : [
+         "rtakacs@inf.u-szeged.hu",
+         "rtakacs.u-szeged@partner.samsung.com"
+      ],
+      "name" : "Roland Takacs",
+      "nicks" : [
+         "rtakacs"
+      ]
+   },
+   {
+      "emails" : [
+         "romain.wkt@gmail.com",
+         "romain.bellessort@crf.canon.fr"
+      ],
+      "name" : "Romain Bellessort",
+      "nicks" : [
+         "romainb"
+      ]
+   },
+   {
+      "emails" : [
+         "ross.kirsling@sony.com",
+         "rkirsling@gmail.com"
+      ],
+      "expertise" : "JavaScript/ECMAScript, PlayStation port, WinCairo port",
+      "github" : "rkirsling",
+      "name" : "Ross Kirsling",
+      "nicks" : [
+         "rkirsling"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "rreapor@apple.com",
+         "roynos@gmail.com"
+      ],
+      "github" : "roynos",
+      "name" : "Roy Reapor",
+      "nicks" : [
+         "rreapor"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "rubent_22@apple.com"
+      ],
+      "name" : "Ruben Turcios"
+   },
+   {
+      "emails" : [
+         "repstein@apple.com"
+      ],
+      "name" : "Russell Epstein",
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "ruthiecftg@gmail.com",
+         "ruth_fong@apple.com"
+      ],
+      "name" : "Ruth Fong",
+      "nicks" : [
+         "ruthfong",
+         "ruth_fong"
+      ]
+   },
+   {
+      "emails" : [
+         "ryanhaddad@apple.com"
+      ],
+      "github" : "ryanhaddad",
+      "name" : "Ryan Haddad",
+      "nicks" : [
+         "ryanhaddad"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "rniwa@webkit.org"
+      ],
+      "expertise" : "HTML Editing, Core DOM, HTML DOM, Event Handling",
+      "github" : "rniwa",
+      "name" : "Ryosuke Niwa",
+      "nicks" : [
+         "rniwa"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "ryuan.choi@navercorp.com",
+         "ryuan.choi@gmail.com",
+         "ryuan.choi@webkit.org",
+         "ryuan.choi@samsung.com"
+      ],
+      "expertise" : "The EFLWebKit Port",
+      "name" : "Ryuan Choi",
+      "nicks" : [
+         "ryuan"
+      ]
+   },
+   {
+      "emails" : [
+         "sbarati@apple.com",
+         "saambarati1@gmail.com"
+      ],
+      "github" : "saambarati",
+      "name" : "Saam Barati",
+      "nicks" : [
+         "saamyjoon"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "sadrul@chromium.org"
+      ],
+      "name" : "Sadrul Habib Chowdhury",
+      "nicks" : [
+         "sadrul",
+         "sadrulhc"
+      ]
+   },
+   {
+      "emails" : [
+         "sabouhallawa@apple.com",
+         "said@apple.com"
+      ],
+      "expertise" : "SVG/Graphics, Image Decoders",
+      "github" : "shallawa",
+      "name" : "Said Abou-Hallawa",
+      "nicks" : [
+         "sabouhallawa"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "gsnedders@apple.com",
+         "me@gsnedders.com"
+      ],
+      "expertise" : "Web Standards, WPT, webkitpy",
+      "github" : "gsnedders",
+      "name" : "Sam Sneddon",
+      "nicks" : [
+         "gsnedders"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "sam@webkit.org",
+         "weinig@apple.com"
+      ],
+      "expertise" : "HTML DOM, Core DOM, DOM Bindings (JavaScript, Objective-C and COM), Security, DumpRenderTree",
+      "github" : "weinig",
+      "name" : "Sam Weinig",
+      "nicks" : [
+         "weinig"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "skyostil@chromium.org"
+      ],
+      "name" : "Sami Ky\u00f6stil\u00e4",
+      "nicks" : [
+         "skyostil"
+      ]
+   },
+   {
+      "emails" : [
+         "samuel_white@apple.com"
+      ],
+      "expertise" : "Accessibility",
+      "name" : "Samuel White",
+      "nicks" : [
+         "samuel_white"
+      ]
+   },
+   {
+      "emails" : [
+         "santoshbit2007@gmail.com"
+      ],
+      "expertise" : "Editing, Event Handling, Theme",
+      "name" : "Santosh Mahto",
+      "nicks" : [
+         "santoshbit2007"
+      ]
+   },
+   {
+      "emails" : [
+         "satish@chromium.org"
+      ],
+      "name" : "Satish Sampath"
+   },
+   {
+      "emails" : [
+         "sky@chromium.org"
+      ],
+      "expertise" : "The Chromium Port",
+      "name" : "Scott Violet",
+      "nicks" : [
+         "sky"
+      ]
+   },
+   {
+      "emails" : [
+         "slomo@coaxion.net",
+         "sebastian@centricular.com",
+         "sebastian.droege@collabora.co.uk",
+         "sebastian.droege@collabora.com"
+      ],
+      "expertise" : "WebKitGTK, Media support (focused on the GStreamer implementation)",
+      "name" : "Sebastian Dr\u00f6ge",
+      "nicks" : [
+         "slomo"
+      ]
+   },
+   {
+      "emails" : [
+         "seokju@webkit.org",
+         "seokju.kwon@gmail.com",
+         "seokju.kwon@samsung.com"
+      ],
+      "name" : "Seokju Kwon",
+      "nicks" : [
+         "seokju"
+      ]
+   },
+   {
+      "emails" : [
+         "chi187@gmail.com"
+      ],
+      "expertise" : "WebAssembly",
+      "github" : "chicoxyzzy",
+      "name" : "Sergey Rubanov",
+      "nicks" : [
+         "chicoxyzzy"
+      ]
+   },
+   {
+      "emails" : [
+         "sergio@correia.cc",
+         "sergio.correia@openbossa.org"
+      ],
+      "name" : "Sergio Correia",
+      "nicks" : [
+         "qrwteyrutiyoup"
+      ]
+   },
+   {
+      "emails" : [
+         "svillar@igalia.com",
+         "sergio@webkit.org"
+      ],
+      "expertise" : "WebKitGTK port, CSS Grid Layout, Flexbox",
+      "github" : "svillar",
+      "name" : "Sergio Villar Senin",
+      "nicks" : [
+         "svillar"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "sroberts@apple.com"
+      ],
+      "name" : "Shawn Roberts"
+   },
+   {
+      "emails" : [
+         "shawnsingh@chromium.org"
+      ],
+      "name" : "Shawn Singh",
+      "nicks" : [
+         "shawnsingh"
+      ]
+   },
+   {
+      "emails" : [
+         "hamaji@chromium.org"
+      ],
+      "expertise" : "CSS (Cascading Style Sheets), Tools",
+      "name" : "Shinichiro Hamaji",
+      "nicks" : [
+         "hamaji"
+      ]
+   },
+   {
+      "emails" : [
+         "shinyak@chromium.org"
+      ],
+      "name" : "Shinya Kawanaka",
+      "nicks" : [
+         "shinyak"
+      ]
+   },
+   {
+      "emails" : [
+         "shiva.jm@samsung.com",
+         "shivakumarjm@gmail.com"
+      ],
+      "expertise" : "The EFLWebKit Port, DOM, HTML",
+      "name" : "Shivakumar J M",
+      "nicks" : [
+         "shivajm"
+      ]
+   },
+   {
+      "emails" : [
+         "s.mathur@ieee.org",
+         "smathur@blackbuck.mobi",
+         "siddharth.mathur@nokia.com"
+      ],
+      "name" : "Siddharth Mathur",
+      "nicks" : [
+         "simathur"
+      ]
+   },
+   {
+      "emails" : [
+         "sihui_liu@apple.com"
+      ],
+      "github" : "szewai",
+      "name" : "Sihui Liu",
+      "nicks" : [
+         "sihuil"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "silviapf@chromium.org"
+      ],
+      "expertise" : "Media elements & controls, track element & WebVTT",
+      "name" : "Silvia Pfeiffer",
+      "nicks" : [
+         "silvia"
+      ]
+   },
+   {
+      "emails" : [
+         "simon.fraser@apple.com"
+      ],
+      "expertise" : "Accelerated Compositing, Transitions and Animations, CSS Transforms",
+      "github" : "smfr",
+      "name" : "Simon Fraser",
+      "nicks" : [
+         "smfr"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "hausmann@webkit.org",
+         "hausmann@kde.org",
+         "simon.hausmann@digia.com"
+      ],
+      "expertise" : "The QtWebKit Port, Former KHTML contributor",
+      "name" : "Simon Hausmann",
+      "nicks" : [
+         "tronical"
+      ]
+   },
+   {
+      "emails" : [
+         "simon.pena@samsung.com",
+         "spenap@gmail.com",
+         "spena@igalia.com"
+      ],
+      "name" : "Simon Pena",
+      "nicks" : [
+         "spenap"
+      ]
+   },
+   {
+      "emails" : [
+         "stephan.szabo@sony.com"
+      ],
+      "github" : "foopoiuyt",
+      "name" : "Stephan Szabo",
+      "nicks" : [
+         "szabos1"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "slewis@apple.com",
+         "stephanielewis@gmail.com"
+      ],
+      "expertise" : "Performance Testing, Tools",
+      "github" : "sundiamonde",
+      "name" : "Stephanie Lewis",
+      "nicks" : [
+         "sundiamonde"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "schenney@chromium.org"
+      ],
+      "expertise" : "SVG (Scalable Vector Graphics)",
+      "name" : "Stephen Chenney",
+      "nicks" : [
+         "schenney"
+      ]
+   },
+   {
+      "emails" : [
+         "senorblanco@chromium.org"
+      ],
+      "expertise" : "Skia port, GPU acceleration",
+      "name" : "Stephen White",
+      "nicks" : [
+         "senorblanco"
+      ]
+   },
+   {
+      "emails" : [
+         "steveblock@chromium.org",
+         "steveblock@google.com"
+      ],
+      "expertise" : "Geolocation, Android Port",
+      "name" : "Steve Block",
+      "nicks" : [
+         "steveblock"
+      ]
+   },
+   {
+      "emails" : [
+         "sfalken@apple.com"
+      ],
+      "expertise" : "WebKit on Windows",
+      "name" : "Steve Falkenburg",
+      "nicks" : [
+         "sfalken"
+      ]
+   },
+   {
+      "emails" : [
+         "sjl@chromium.org"
+      ],
+      "name" : "Steve Lacey",
+      "nicks" : [
+         "stevela"
+      ]
+   },
+   {
+      "emails" : [
+         "naginenis@gmail.com",
+         "sudarsana.nagineni@linux.intel.com",
+         "sudarsana.nagineni@intel.com"
+      ],
+      "expertise" : "The EFLWebKit port, Memory Leaks",
+      "name" : "Sudarsana Nagineni",
+      "nicks" : [
+         "babu"
+      ]
+   },
+   {
+      "emails" : [
+         "sukolsak@gmail.com",
+         "ssakshuwong@apple.com"
+      ],
+      "expertise" : "JavaScript/ECMAScript, WebAssembly",
+      "name" : "Sukolsak Sakshuwong",
+      "nicks" : [
+         "sukol"
+      ]
+   },
+   {
+      "emails" : [
+         "sungmann.cho@navercorp.com",
+         "sungmann.cho@gmail.com"
+      ],
+      "name" : "Sungmann Cho",
+      "nicks" : [
+         "mann"
+      ]
+   },
+   {
+      "emails" : [
+         "szledan@inf.u-szeged.hu"
+      ],
+      "name" : "Szilard Ledan-Muntean",
+      "nicks" : [
+         "szledan"
+      ]
+   },
+   {
+      "emails" : [
+         "tabatkins@google.com",
+         "jackalmage@gmail.com"
+      ],
+      "name" : "Tab Atkins",
+      "nicks" : [
+         "tabatkins"
+      ]
+   },
+   {
+      "emails" : [
+         "tzagallo@apple.com"
+      ],
+      "name" : "Tadeu Zagallo",
+      "nicks" : [
+         "tadeuzagallo"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "tzik@chromium.org"
+      ],
+      "name" : "Taiju Tsuiki",
+      "nicks" : [
+         "tzik"
+      ]
+   },
+   {
+      "emails" : [
+         "Takashi.Komori@sony.com"
+      ],
+      "github" : "tKnmori",
+      "name" : "Takashi Komori",
+      "nicks" : [
+         "takashi_knmori_j"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "tasak@google.com"
+      ],
+      "name" : "Takashi Sakamoto",
+      "nicks" : [
+         "tasak"
+      ]
+   },
+   {
+      "emails" : [
+         "toyoshim@chromium.org",
+         "toyoshim+watchlist@chromium.org"
+      ],
+      "expertise" : "WebSocket",
+      "name" : "Takashi Toyoshima",
+      "nicks" : [
+         "toyoshim"
+      ]
+   },
+   {
+      "emails" : [
+         "tczene@inf.u-szeged.hu",
+         "Czene.Tamas@stud.u-szeged.hu"
+      ],
+      "name" : "Tamas Czene",
+      "nicks" : [
+         "tczene"
+      ]
+   },
+   {
+      "emails" : [
+         "tgergely.u-szeged@partner.samsung.com",
+         "gertom@inf.u-szeged.hu"
+      ],
+      "name" : "Tamas Gergely",
+      "nicks" : [
+         "gertom"
+      ]
+   },
+   {
+      "emails" : [
+         "tdanderson@chromium.org"
+      ],
+      "name" : "Terry Anderson",
+      "nicks" : [
+         "tdanderson"
+      ]
+   },
+   {
+      "emails" : [
+         "tetsuharu.ohzeki@gmail.com"
+      ],
+      "github" : "tetsuharuohzeki",
+      "name" : "Tetsuharu Ohzeki",
+      "nicks" : [
+         "tetsuharuohzeki"
+      ]
+   },
+   {
+      "aliases" : [
+         "Tess O'Connor"
+      ],
+      "emails" : [
+         "eoconnor@apple.com",
+         "hober@apple.com"
+      ],
+      "expertise" : "Web Standards",
+      "github" : "hober",
+      "name" : "Theresa O'Connor",
+      "nicks" : [
+         "hober"
+      ]
+   },
+   {
+      "emails" : [
+         "tmpsantos@gmail.com",
+         "thiago.santos@intel.com"
+      ],
+      "expertise" : "CSS Device Adaptation, CMake build system, The EFLWebKit port",
+      "name" : "Thiago Marcos P. Santos",
+      "nicks" : [
+         "tmpsantos"
+      ]
+   },
+   {
+      "emails" : [
+         "thiago.lacerda@openbossa.org"
+      ],
+      "expertise" : "Nix port, WebRTC, MediaStream",
+      "name" : "Thiago de Barros Lacerda",
+      "nicks" : [
+         "lacerda"
+      ]
+   },
+   {
+      "emails" : [
+         "tsaunier@gnome.org",
+         "tsaunier@igalia.com"
+      ],
+      "expertise" : "WebRTC",
+      "name" : "Thibault Saunier",
+      "nicks" : [
+         "thiblahute"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "tdenney@apple.com",
+         "me@thomasdenney.co.uk"
+      ],
+      "expertise" : "WebGPU",
+      "name" : "Thomas Denney",
+      "nicks" : [
+         "ThomasDenney",
+         "thomasdenney3"
+      ]
+   },
+   {
+      "emails" : [
+         "tsepez@chromium.org"
+      ],
+      "name" : "Thomas Sepez",
+      "nicks" : [
+         "tsepez"
+      ]
+   },
+   {
+      "emails" : [
+         "mtiborinf@gmail.com",
+         "tmeszaros.u-szeged@partner.samsung.com",
+         "mtibor@inf.u-szeged.hu",
+         "tmeszaros@inf.u-szeged.hu"
+      ],
+      "name" : "Tibor Meszaros",
+      "nicks" : [
+         "mtibor"
+      ]
+   },
+   {
+      "emails" : [
+         "trchen@chromium.org"
+      ],
+      "name" : "Tien-Ren Chen",
+      "nicks" : [
+         "trchen"
+      ]
+   },
+   {
+      "emails" : [
+         "mithro@mithis.com"
+      ],
+      "name" : "Tim 'mithro' Ansell",
+      "nicks" : [
+         "mithro"
+      ]
+   },
+   {
+      "aliases" : [
+         "Timothy Horton"
+      ],
+      "emails" : [
+         "thorton@apple.com",
+         "timothy_horton@apple.com"
+      ],
+      "expertise" : "SVG/Canvas/Graphics, WebKit2",
+      "github" : "hortont424",
+      "name" : "Tim Horton",
+      "nicks" : [
+         "thorton"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "ntim@apple.com",
+         "ntim.bugs@gmail.com"
+      ],
+      "github" : "nt1m",
+      "name" : "Tim Nguyen",
+      "nicks" : [
+         "ntim"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "timo@apple.com"
+      ],
+      "name" : "Tim Omernick"
+   },
+   {
+      "emails" : [
+         "timvolodine@chromium.org"
+      ],
+      "name" : "Tim Volodine",
+      "nicks" : [
+         "timvolodine"
+      ]
+   },
+   {
+      "aliases" : [
+         "Tim Hatcher"
+      ],
+      "emails" : [
+         "timothy@apple.com",
+         "timothy@hatcher.name",
+         "thatcher@tesla.com"
+      ],
+      "expertise" : "WebKit (Mac), Developer Tools (Web Inspector)",
+      "github" : "xeenon",
+      "name" : "Timothy Hatcher",
+      "nicks" : [
+         "xenon"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "tobi+webkit@basecode.de"
+      ],
+      "expertise" : "Web Inspector",
+      "name" : "Tobias Reiss",
+      "nicks" : [
+         "basecode"
+      ]
+   },
+   {
+      "emails" : [
+         "tomhudson@google.com",
+         "tomhudson@chromium.org"
+      ],
+      "name" : "Tom Hudson",
+      "nicks" : [
+         "tomhudson"
+      ]
+   },
+   {
+      "emails" : [
+         "tomz@codeaurora.org"
+      ],
+      "name" : "Tom Zakrajsek",
+      "nicks" : [
+         "tomz"
+      ]
+   },
+   {
+      "emails" : [
+         "tommyw@google.com"
+      ],
+      "name" : "Tommy Widenflycht",
+      "nicks" : [
+         "tommyw"
+      ]
+   },
+   {
+      "emails" : [
+         "Tomoki.Imai@sony.com"
+      ],
+      "github" : "tomoki",
+      "name" : "Tomoki Imai",
+      "nicks" : [
+         "tomoki_imai"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "tpopela@redhat.com"
+      ],
+      "name" : "Tom\u00e1\u0161 Popela",
+      "nicks" : [
+         "tpopela"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "tony@chromium.org"
+      ],
+      "expertise" : "Chromium Linux, Editing, Drag and Drop",
+      "name" : "Tony Chang",
+      "nicks" : [
+         "tony^work"
+      ]
+   },
+   {
+      "emails" : [
+         "tonyg@chromium.org"
+      ],
+      "expertise" : "HTML5 parsing, Web Timing",
+      "name" : "Tony Gentilcore",
+      "nicks" : [
+         "tonyg-cr"
+      ]
+   },
+   {
+      "emails" : [
+         "vestbo@webkit.org",
+         "tor.arne.vestbo@nokia.com",
+         "tor.arne.vestbo@digia.com"
+      ],
+      "expertise" : "The QtWebKit Port, HTML5 Media Elements, Plug-ins, Tools",
+      "name" : "Tor Arne Vestb\u00f8",
+      "nicks" : [
+         "torarne"
+      ]
+   },
+   {
+      "emails" : [
+         "trey@usa.net"
+      ],
+      "name" : "Trey Matteson",
+      "nicks" : [
+         "trey"
+      ]
+   },
+   {
+      "emails" : [
+         "tristan@otierney.net",
+         "tristan@apple.com"
+      ],
+      "name" : "Tristan O'Tierney"
+   },
+   {
+      "emails" : [
+         "tsavell@apple.com"
+      ],
+      "github" : "Technose",
+      "name" : "Truitt Savell",
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "tyler_w@apple.com",
+         "tylerw_22@apple.com",
+         "tyler.wilcock@protonmail.com",
+         "twilco.o@protonmail.com",
+         "tyler.l.wilcock@gmail.com"
+      ],
+      "expertise" : "Accessibility",
+      "github" : "twilco",
+      "name" : "Tyler Wilcock",
+      "nicks" : [
+         "twilco"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "ich@liebefonts.com"
+      ],
+      "name" : "Ulrike Rausch"
+   },
+   {
+      "emails" : [
+         "vangelis@chromium.org"
+      ],
+      "name" : "Vangelis Kokkevis",
+      "nicks" : [
+         "vangelis"
+      ]
+   },
+   {
+      "emails" : [
+         "ostap73@gmail.com",
+         "sl.ostapenko@samsung.com",
+         "ostapenko.viatcheslav@nokia.com"
+      ],
+      "name" : "Viatcheslav Ostapenko",
+      "nicks" : [
+         "ostap"
+      ]
+   },
+   {
+      "emails" : [
+         "vicki@apple.com"
+      ],
+      "name" : "Vicki Murley"
+   },
+   {
+      "emails" : [
+         "vcarbune@chromium.org",
+         "victor@rosedu.org"
+      ],
+      "expertise" : "HTML5 <Track>",
+      "name" : "Victor Carbune",
+      "nicks" : [
+         "vcarbune"
+      ]
+   },
+   {
+      "emails" : [
+         "vjaquez@igalia.com"
+      ],
+      "expertise" : "WebKitGTK, WPE, GStreamer",
+      "github" : "ceyusa",
+      "name" : "Victor Jaquez",
+      "nicks" : [
+         "vjaquez",
+         "ceyusa"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "victorw@chromium.org"
+      ],
+      "name" : "Victor Wang",
+      "nicks" : [
+         "victorw"
+      ]
+   },
+   {
+      "emails" : [
+         "vrk@chromium.org",
+         "vrk@google.com"
+      ],
+      "name" : "Victoria Kirst",
+      "nicks" : [
+         "vrk"
+      ]
+   },
+   {
+      "emails" : [
+         "dvh@apple.com"
+      ],
+      "name" : "Viet Hoa Dinh"
+   },
+   {
+      "emails" : [
+         "scheib@chromium.org"
+      ],
+      "name" : "Vincent Scheib",
+      "nicks" : [
+         "scheib"
+      ]
+   },
+   {
+      "emails" : [
+         "code.vineet@gmail.com",
+         "rgf748@motorola.com"
+      ],
+      "name" : "Vineet Chaudhary",
+      "nicks" : [
+         "vineetc"
+      ]
+   },
+   {
+      "emails" : [
+         "vitalyr@chromium.org"
+      ],
+      "name" : "Vitaly Repeshko"
+   },
+   {
+      "emails" : [
+         "vivekg@webkit.org",
+         "vivek.vg@samsung.com"
+      ],
+      "expertise" : "Web Inspector",
+      "name" : "Vivek Galatage",
+      "nicks" : [
+         "vivekg"
+      ]
+   },
+   {
+      "emails" : [
+         "vsevik@chromium.org"
+      ],
+      "expertise" : "Developer Tools, Web Inspector",
+      "name" : "Vsevolod Vlasov",
+      "nicks" : [
+         "vsevik"
+      ]
+   },
+   {
+      "emails" : [
+         "wjmaclean@chromium.org"
+      ],
+      "name" : "W. James MacLean",
+      "nicks" : [
+         "seumas"
+      ]
+   },
+   {
+      "emails" : [
+         "wdx@apple.com",
+         "w_xiong@apple.com"
+      ],
+      "github" : "xw",
+      "name" : "W.D. Xiong",
+      "nicks" : [
+         "wdx"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "webcomponents-bugzilla@chromium.org"
+      ],
+      "name" : "Web Components Team"
+   },
+   {
+      "emails" : [
+         "webkit.review.bot@gmail.com"
+      ],
+      "name" : "WebKit Review Bot",
+      "nicks" : [
+         "sheriff-bot"
+      ],
+      "status" : "bot"
+   },
+   {
+      "emails" : [
+         "bugs-noreply@webkitgtk.org"
+      ],
+      "name" : "WebKitGTK Bugs",
+      "status" : "bot"
+   },
+   {
+      "emails" : [
+         "wenson_hsieh@apple.com",
+         "whsieh@berkeley.edu"
+      ],
+      "github" : "whsieh",
+      "name" : "Wenson Hsieh",
+      "nicks" : [
+         "whsieh"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "wsiegrist@apple.com"
+      ],
+      "expertise" : "webkit.org",
+      "name" : "William Siegrist",
+      "nicks" : [
+         "wms"
+      ]
+   },
+   {
+      "emails" : [
+         "wcarss@chromium.org",
+         "wcarss@google.com"
+      ],
+      "name" : "Wyatt Carss",
+      "nicks" : [
+         "wcarss"
+      ]
+   },
+   {
+      "emails" : [
+         "calvaris@igalia.com",
+         "xrcalvar@igalia.com"
+      ],
+      "expertise" : "WebKitGTK, WPE, GStreamer",
+      "github" : "calvaris",
+      "name" : "Xabier Rodriguez-Calvar",
+      "nicks" : [
+         "calvaris"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "xan.lopez@gmail.com",
+         "xan@igalia.com",
+         "xan@webkit.org",
+         "xlopez@igalia.com"
+      ],
+      "expertise" : "JSC, WebKitGTK/WPE",
+      "github" : "xanlpz",
+      "name" : "Xan Lopez",
+      "nicks" : [
+         "xan"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "wangxianzhu@chromium.org",
+         "phnixwxz@gmail.com",
+         "wangxianzhu@google.com"
+      ],
+      "name" : "Xianzhu Wang",
+      "nicks" : [
+         "wangxianzhu"
+      ]
+   },
+   {
+      "emails" : [
+         "james.wei@intel.com",
+         "wistoch@chromium.org"
+      ],
+      "expertise" : "WebAudio/ChromiumAndroidx86",
+      "name" : "Xiaohai Wei",
+      "nicks" : [
+         "wistoch"
+      ]
+   },
+   {
+      "emails" : [
+         "xji@chromium.org"
+      ],
+      "name" : "Xiaomei Ji",
+      "nicks" : [
+         "xji"
+      ]
+   },
+   {
+      "emails" : [
+         "xingnan.wang@intel.com"
+      ],
+      "name" : "Xingnan Wang",
+      "nicks" : [
+         "xingnan"
+      ]
+   },
+   {
+      "emails" : [
+         "yaar@chromium.org",
+         "yaar@google.com"
+      ],
+      "name" : "Yaar Schnitman"
+   },
+   {
+      "emails" : [
+         "yael@webkit.org",
+         "yael.aharon@nokia.com"
+      ],
+      "name" : "Yael Aharon",
+      "nicks" : [
+         "yael"
+      ]
+   },
+   {
+      "emails" : [
+         "max.hong.shen@gmail.com",
+         "yi.shen@sisa.samsung.com",
+         "yi.4.shen@nokia.com"
+      ],
+      "name" : "Yi Shen"
+   },
+   {
+      "emails" : [
+         "yijia_huang@apple.com",
+         "hyjorc1@gmail.com"
+      ],
+      "github" : "hyjorc1",
+      "name" : "Yijia Huang",
+      "nicks" : [
+         "yijia"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "yoav@yoav.ws"
+      ],
+      "name" : "Yoav Weiss"
+   },
+   {
+      "emails" : [
+         "yong.li.webkit@outlook.com",
+         "yong.li@torchmobile.com",
+         "yoli@rim.com"
+      ],
+      "name" : "Yong Li",
+      "nicks" : [
+         "yong"
+      ]
+   },
+   {
+      "emails" : [
+         "yongjun_zhang@apple.com",
+         "yongjun.zhang@nokia.com"
+      ],
+      "name" : "Yongjun Zhang"
+   },
+   {
+      "emails" : [
+         "yoshiaki.jitsukawa@sony.com"
+      ],
+      "github" : "unicodon",
+      "name" : "Yoshiaki Jitsukawa",
+      "nicks" : [
+         "yjitsukawa"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "yosin@chromium.org"
+      ],
+      "expertise" : "HTML5 Forms especially for multiple-fields UI, charset encoding, decimal arithmetic",
+      "name" : "Yoshifumi Inoue",
+      "nicks" : [
+         "yosin"
+      ]
+   },
+   {
+      "emails" : [
+         "youennf@gmail.com",
+         "youenn@apple.com",
+         "yfablet@apple.com"
+      ],
+      "github" : "youennf",
+      "name" : "Youenn Fablet",
+      "nicks" : [
+         "youenn"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "y_soliman@apple.com",
+         "youssefdevelops@gmail.com"
+      ],
+      "github" : "youssefsoli",
+      "name" : "Youssef Soliman",
+      "nicks" : [
+         "ys",
+         "youssefsoli"
+      ]
+   },
+   {
+      "emails" : [
+         "yousuke.kimoto@sony.com"
+      ],
+      "github" : "ykimot",
+      "name" : "Yousuke Kimoto",
+      "nicks" : [
+         "ykimoto"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "yuqiang.xian@intel.com"
+      ],
+      "expertise" : "JavaScriptCore",
+      "name" : "Yuqiang Xian"
+   },
+   {
+      "emails" : [
+         "yurys@chromium.org"
+      ],
+      "expertise" : "Developer Tools, Web Inspector",
+      "github" : "yury-s",
+      "name" : "Yury Semikhatsky",
+      "nicks" : [
+         "yurys"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "ysuzuki@apple.com",
+         "yusukesuzuki@slowstart.org",
+         "utatane.tea@gmail.com"
+      ],
+      "expertise" : "JIT Compilers, CSS JIT, JavaScript/ECMAScript",
+      "github" : "Constellation",
+      "name" : "Yusuke Suzuki",
+      "nicks" : [
+         "yusukesuzuki"
+      ],
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "yutak@chromium.org"
+      ],
+      "expertise" : "WebSocket, The Chromium Port",
+      "name" : "Yuta Kitamura",
+      "nicks" : [
+         "yutak"
+      ]
+   },
+   {
+      "emails" : [
+         "yuzo@google.com"
+      ],
+      "name" : "Yuzo Fujishima",
+      "nicks" : [
+         "yuzo"
+      ]
+   },
+   {
+      "emails" : [
+         "zack@kde.org"
+      ],
+      "expertise" : "Core KHTML contributor, The QtWebKit Port",
+      "name" : "Zack Rusin",
+      "nicks" : [
+         "zackr"
+      ]
+   },
+   {
+      "emails" : [
+         "zlieber@chromium.org"
+      ],
+      "name" : "Zeev Lieber"
+   },
+   {
+      "emails" : [
+         "zeno@webkit.org",
+         "zeno.albisser@nokia.com",
+         "zeno.albisser@digia.com"
+      ],
+      "expertise" : "The QtWebKit Port",
+      "name" : "Zeno Albisser",
+      "nicks" : [
+         "zalbisser"
+      ]
+   },
+   {
+      "emails" : [
+         "zmo@google.com"
+      ],
+      "name" : "Zhenyao Mo",
+      "nicks" : [
+         "zhenyao"
+      ]
+   },
+   {
+      "emails" : [
+         "zhifei_fang@apple.com",
+         "facetothefate@gmail.com"
+      ],
+      "github" : "facetothefate",
+      "name" : "Zhifei Fang",
+      "nicks" : [
+         "zhifei_fang",
+         "z.f"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "zsun@igalia.com"
+      ],
+      "name" : "Ziran Sun",
+      "nicks" : [
+         "zsun"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
+         "zarvai@inf.u-szeged.hu"
+      ],
+      "expertise" : "The QtWebKit Port, QtWebKit Build Environment",
+      "name" : "Zoltan Arvai",
+      "nicks" : [
+         "azbest_hu"
+      ]
+   },
+   {
+      "aliases" : [
+         "Zolt\u00e1n Herczeg"
+      ],
+      "emails" : [
+         "zherczeg@webkit.org",
+         "zherczeg@inf.u-szeged.hu"
+      ],
+      "expertise" : "The QtWebKit Port, JIT (ARM), SVG, optimizations (SMP, SIMD), Graphics",
+      "name" : "Zoltan Herczeg",
+      "nicks" : [
+         "zherczeg"
+      ]
+   },
+   {
+      "emails" : [
+         "zoltan@webkit.org",
+         "zoltan@adobe.com",
+         "hzoltan@inf.u-szeged.hu",
+         "horvath.zoltan.6@stud.u-szeged.hu"
+      ],
+      "expertise" : "CSS Shapes, Line layout, Custom Allocation Framework, PerformanceTests, QtWebKit",
+      "name" : "Zoltan Horvath",
+      "nicks" : [
+         "zoltan"
+      ]
+   },
+   {
+      "emails" : [
+         "zsborbely.u-szeged@partner.samsung.com",
+         "borbezs@inf.u-szeged.hu"
+      ],
+      "name" : "Zsolt Borbely",
+      "nicks" : [
+         "bzsolt"
+      ]
+   },
+   {
+      "emails" : [
+         "zdobersek@igalia.com",
+         "zan@falconsigh.net"
+      ],
+      "github" : "zdobersek",
+      "name" : "\u017dan Dober\u0161ek",
+      "nicks" : [
+         "zdobersek"
+      ],
+      "status" : "reviewer"
+   }
+]

@@ -1,0 +1,10 @@
+
+PASS length and item
+PASS insertRule before imports
+PASS insertRule after imports
+PASS insert other rules to pre-import layer statements fails
+PASS insert other rules before the first layer statement without imports
+PASS deleteRule before imports
+PASS deleteRule after imports
+FAIL replaceSync clears stale layer statements promise_test: Unhandled rejection with value: object "TypeError: Illegal constructor"
+

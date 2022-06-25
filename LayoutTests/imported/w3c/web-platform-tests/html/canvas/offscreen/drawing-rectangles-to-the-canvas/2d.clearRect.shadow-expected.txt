@@ -1,0 +1,7 @@
+2d.clearRect.shadow
+
+clearRect does not draw shadows
+
+
+PASS clearRect does not draw shadows
+

@@ -1,0 +1,46 @@
+
+PASS Set valueless cookie to its name with empty value
+FAIL Set a nameless cookie (that has an = in its value) assert_equals: The cookie was set as expected. expected "test=2" but got ""
+FAIL Set a nameless cookie (that has multiple ='s in its value) assert_equals: The cookie was set as expected. expected "==test=2b" but got ""
+FAIL Set a nameless cookie assert_equals: The cookie was set as expected. expected "test2c" but got ""
+PASS Remove trailing WSP characters from the name string
+PASS Remove leading WSP characters from the name string
+PASS Only return the new cookie (with the same name)
+FAIL Ignore invalid attributes after nameless cookie assert_equals: The cookie was set as expected. expected "test6" but got ""
+PASS Ignore invalid attributes after valid name (that looks like Cookie2 Version attribute)
+PASS Set a cookie that has whitespace in its name
+FAIL Set a nameless cookie ignoring characters after first ; assert_equals: The cookie was set as expected. expected "\"test9" but got ""
+FAIL Set a nameless cookie ignoring characters after first ; (2) assert_equals: The cookie was set as expected. expected "\"test\"10" but got ""
+FAIL Return the most recent nameless cookie assert_equals: The cookie was set as expected. expected "test11" but got ""
+FAIL Return the most recent nameless cookie, without leading = assert_equals: The cookie was set as expected. expected "test11a" but got ""
+FAIL Return the most recent nameless cookie, even if preceded by = assert_equals: The cookie was set as expected. expected "test11b" but got ""
+FAIL Return the most recent nameless cookie, even if preceded by =, in addition to other valid cookie assert_equals: The cookie was set as expected. expected "test11b; test=11c" but got "test=11c"
+PASS Use last value for cookies with identical names
+PASS Keep first-in, first-out name order
+PASS Keep first-in, first-out single-char name order
+FAIL Keep non-alphabetic first-in, first-out name order assert_equals: The cookie was set as expected. expected "z=test15; a=test15" but got "a=test15; z=test15"
+FAIL Keep first-in, first-out order if comma-separated assert_equals: The cookie was set as expected. expected "z=test16, a=test16" but got "a=test15; z=test16,a=test16"
+FAIL Set nameless cookie, given `Set-Cookie: =test16` assert_equals: The cookie was set as expected. expected "testA=16; test16; testB=16" but got "a=test15; testA=16; testB=16; z=test16,a=test16"
+FAIL Overwrite nameless cookie assert_equals: The cookie was set as expected. expected "test17b" but got "a=test15; testA=16; testB=16; z=test16,a=test16"
+FAIL Ignore cookie with empty name and empty value assert_equals: The cookie was rejected. expected "" but got "a=test15; testA=16; testB=16; z=test16,a=test16"
+FAIL Ignore cookie with no name or value assert_equals: The cookie was rejected. expected "" but got "a=test15; testA=16; testB=16; z=test16,a=test16"
+FAIL URL-encoded cookie name is not decoded assert_equals: The cookie was set as expected. expected "%74%65%73%74=20" but got "%74%65%73%74=20; a=test15; testA=16; testB=16; z=test16,a=test16"
+FAIL Name is set as expected for a=test assert_equals: The cookie was set as expected. expected "a=test" but got "%74%65%73%74=20; a=test; testA=16; testB=16; z=test16,a=test16"
+FAIL Name is set as expected for 1=test assert_equals: The cookie was set as expected. expected "1=test" but got "1=test; %74%65%73%74=20; a=test; testA=16; testB=16; z=test16,a=test16"
+FAIL Name is set as expected for $=test assert_equals: The cookie was set as expected. expected "$=test" but got "$=test; 1=test; %74%65%73%74=20; a=test; testA=16; testB=16; z=test16,a=test16"
+FAIL Name is set as expected for !a=test assert_equals: The cookie was set as expected. expected "!a=test" but got "!a=test; $=test; 1=test; %74%65%73%74=20; a=test; testA=16; testB=16; z=test16,a=test16"
+FAIL Name is set as expected for @a=test assert_equals: The cookie was set as expected. expected "@a=test" but got "!a=test; $=test; 1=test; @a=test; %74%65%73%74=20; a=test; testA=16; testB=16; z=test16,a=test16"
+FAIL Name is set as expected for #a=test assert_equals: The cookie was set as expected. expected "#a=test" but got "!a=test; #a=test; $=test; 1=test; @a=test; %74%65%73%74=20; a=test; testA=16; testB=16; z=test16,a=test16"
+FAIL Name is set as expected for $a=test assert_equals: The cookie was set as expected. expected "$a=test" but got "!a=test; #a=test; $=test; $a=test; 1=test; @a=test; %74%65%73%74=20; a=test; testA=16; testB=16; z=test16,a=test16"
+FAIL Name is set as expected for %a=test assert_equals: The cookie was set as expected. expected "%a=test" but got "!a=test; #a=test; $=test; $a=test; %a=test; 1=test; @a=test; %74%65%73%74=20; a=test; testA=16; testB=16; z=test16,a=test16"
+FAIL Name is set as expected for ^a=test assert_equals: The cookie was set as expected. expected "^a=test" but got "!a=test; #a=test; $=test; $a=test; %a=test; 1=test; @a=test; ^a=test; %74%65%73%74=20; a=test; testA=16; testB=16; z=test16,a=test16"
+FAIL Name is set as expected for &a=test assert_equals: The cookie was set as expected. expected "&a=test" but got "!a=test; #a=test; $=test; $a=test; %a=test; &a=test; 1=test; @a=test; ^a=test; %74%65%73%74=20; a=test; testA=16; testB=16; z=test16,a=test16"
+FAIL Name is set as expected for *a=test assert_equals: The cookie was set as expected. expected "*a=test" but got "!a=test; #a=test; $=test; $a=test; %a=test; &a=test; *a=test; 1=test; @a=test; ^a=test; %74%65%73%74=20; a=test; testA=16; testB=16; z=test16,a=test16"
+FAIL Name is set as expected for (a=test assert_equals: The cookie was set as expected. expected "(a=test" but got "!a=test; #a=test; $=test; $a=test; %a=test; &a=test; (a=test; *a=test; 1=test; @a=test; ^a=test; %74%65%73%74=20; a=test; testA=16; testB=16; z=test16,a=test16"
+FAIL Name is set as expected for )a=test assert_equals: The cookie was set as expected. expected ")a=test" but got "!a=test; #a=test; $=test; $a=test; %a=test; &a=test; (a=test; )a=test; *a=test; 1=test; @a=test; ^a=test; %74%65%73%74=20; a=test; testA=16; testB=16; z=test16,a=test16"
+FAIL Name is set as expected for -a=test assert_equals: The cookie was set as expected. expected "-a=test" but got "!a=test; #a=test; $=test; $a=test; %a=test; &a=test; (a=test; )a=test; *a=test; -a=test; 1=test; @a=test; ^a=test; %74%65%73%74=20; a=test; testA=16; testB=16; z=test16,a=test16"
+FAIL Name is set as expected for _a=test assert_equals: The cookie was set as expected. expected "_a=test" but got "!a=test; #a=test; $=test; $a=test; %a=test; &a=test; (a=test; )a=test; *a=test; -a=test; 1=test; @a=test; ^a=test; _a=test; %74%65%73%74=20; a=test; testA=16; testB=16; z=test16,a=test16"
+FAIL Name is set as expected for +=test assert_equals: The cookie was set as expected. expected "+=test" but got "!a=test; #a=test; $=test; $a=test; %a=test; &a=test; (a=test; )a=test; *a=test; +=test; -a=test; 1=test; @a=test; ^a=test; _a=test; %74%65%73%74=20; a=test; testA=16; testB=16; z=test16,a=test16"
+FAIL Name is set as expected for "a=test assert_equals: The cookie was set as expected. expected "\"a=test" but got "!a=test; \"a=test; #a=test; $=test; $a=test; %a=test; &a=test; (a=test; )a=test; *a=test; +=test; -a=test; 1=test; @a=test; ^a=test; _a=test; %74%65%73%74=20; a=test; testA=16; testB=16; z=test16,a=test16"
+FAIL Name is set as expected for "a=b"=test assert_equals: The cookie was set as expected. expected "\"a=b\"=test" but got "!a=test; \"a=test; #a=test; $=test; $a=test; %a=test; &a=test; (a=test; )a=test; *a=test; +=test; -a=test; 1=test; @a=test; ^a=test; _a=test; %74%65%73%74=20; a=test; testA=16; testB=16; z=test16,a=test16"
+

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>
+      Test allow attribute with "web-share" and share() method
+    </title>
+    <meta name="viewport" content="initial-scale=1, width=device-width" />
+    <script src="/js-test-resources/ui-helper.js"></script>
+    <script src="../resources/js-test-pre.js"></script>
+    <script>
+      testRunner?.dumpAsText();
+      testRunner?.waitUntilDone();
+
+      function waitFor(target, eventName) {
+        return new Promise((resolve) => {
+          target.addEventListener(eventName, resolve, { once: true });
+        });
+      }
+
+      function userActivation(element) {
+        const promise = UIHelper.isIOSFamily()
+          ? UIHelper.tapElement(element)
+          : UIHelper.activateElement(element);
+        return promise;
+      }
+
+      const iframeDetails = [
+        {
+          enabled: "true",
+          src: "https://localhost:8443/webshare/resources/webshare-postmessage.html",
+        },
+        {
+          enabled: "true",
+          src: "./resources/webshare-postmessage.html",
+        },
+        {
+          allow: "web-share",
+          enabled: "true",
+          src: "https://localhost:8443/webshare/resources/webshare-postmessage.html",
+        },
+        {
+          allow: "web-share",
+          enabled: "true",
+          src: "./resources/webshare-postmessage.html",
+        },
+        {
+          allow: "web-share *",
+          enabled: "true",
+          src: "https://localhost:8443/webshare/resources/webshare-postmessage.html",
+        },
+        {
+          allow: "web-share *",
+          enabled: "true",
+          src: "./resources/webshare-postmessage.html",
+        },
+        {
+          allow: "web-share 'none'",
+          enabled: "false",
+          src: "https://localhost:8443/webshare/resources/webshare-postmessage.html",
+        },
+        {
+          allow: "web-share 'none'",
+          enabled: "false",
+          src: "./resources/webshare-postmessage.html",
+        },
+        {
+          allow: "web-share 'self'",
+          enabled: "false",
+          src: "https://localhost:8443/webshare/resources/webshare-postmessage.html",
+        },
+        {
+          allow: "web-share 'self'",
+          enabled: "true",
+          src: "./resources/webshare-postmessage.html",
+        },
+        {
+          allow: "web-share https://localhost:8443",
+          enabled: "true",
+          src: "https://localhost:8443/webshare/resources/webshare-postmessage.html",
+        },
+        {
+          allow: "web-share https://localhost:8443",
+          enabled: "false",
+          src: "./resources/webshare-postmessage.html",
+        },
+      ];
+
+      async function loadIframe(details) {
+        const iframe = document.createElement("iframe");
+        if (details.hasOwnProperty("allow")) {
+          iframe.setAttribute("allow", details.allow);
+        }
+        iframe.dataset.enabled = details.enabled;
+        iframe.src = details.src;
+        document.body.appendChild(iframe);
+        await waitFor(iframe, "load");
+        return iframe;
+      }
+
+      async function runTests () {
+        for (const details of iframeDetails) {
+          const iframe = await loadIframe(details);
+          const { enabled } = iframe.dataset;
+          const isAllowed = enabled === "true";
+          const action = "call share()";
+          iframe.contentWindow.postMessage({ action }, "*");
+          const { data: activateMe } = await waitFor(window, "message");
+          if (activateMe !== "activate me!") {
+            throw new Error("Expected an activate request:" + activateMe);
+          }
+          await userActivation(iframe);
+          const { data } = await waitFor(window, "message");
+          const { exceptionMessage, exceptionName, result } = data;
+          const msg = `iframe src: "${iframe.src}" with allow="${
+            iframe.allow
+          }" ${
+            isAllowed ? "is allowed to" : "MUST NOT be allowed to"
+          } ${action}. ${exceptionName ?? ""} ${exceptionMessage ?? ""}`;
+          switch (result) {
+            case "share completed":
+              isAllowed ? testPassed(msg) : testFailed(msg);
+              break;
+            case "threw":
+              if (
+                !isAllowed &&
+                exceptionName === "NotAllowedError" &&
+                exceptionMessage.endsWith("Feature-Policy (web-share)")
+              ) {
+                testPassed(msg);
+              } else {
+                testFailed(msg);
+              }
+              break;
+            default:
+              testFailed(msg + ` - result was: ${result}`);
+          }
+          iframe.remove();
+        }
+        testRunner.notifyDone();
+      }
+    </script>
+  </head>
+  <body onload="runTests()">
+</html>

@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+  <head>
+    <title>attribute lspace rspace</title>
+    <meta charset="utf-8"/>
+  </head>
+  <body>
+
+    <!-- These operators are not from the operator dictionary, the default is spacing is lspace = rspace = thickmathspace = 5/18em. -->
+    <math><mi>x</mi><mo>X</mo><mi>y</mi></math>
+    <math><mi>x</mi><mo lspace="1em">X</mo><mi>y</mi></math>
+    <math><mi>x</mi><mo rspace="2em">X</mo><mi>y</mi></math>
+    <math><mi>x</mi><mo lspace="3em" rspace="4em">X</mo><mi>y</mi></math>
+
+    <br/>
+
+    <!-- Same with multi-char <mo>. -->
+    <math><mi>x</mi><mo>XXX</mo><mi>y</mi></math>
+    <math><mi>x</mi><mo lspace="1em">XXX</mo><mi>y</mi></math>
+    <math><mi>x</mi><mo rspace="2em">XXX</mo><mi>y</mi></math>
+    <math><mi>x</mi><mo lspace="3em" rspace="4em">XXX</mo><mi>y</mi></math>
+
+    <br/>
+
+    <!-- This should have the default spacing from operator dictionary, that is rspace = rspace = mediummathspace = 4/18em. --> 
+    <math><mi>x</mi><mo>+</mo><mi>y</mi></math>
+    <math><mi>x</mi><mo lspace="1em">+</mo><mi>y</mi></math>
+    <math><mi>x</mi><mo rspace="2em">+</mo><mi>y</mi></math>
+    <math><mi>x</mi><mo lspace="3em" rspace="4em" >+</mo><mi>y</mi></math>
+
+    <br/>
+
+    <!-- Same with an explicit form="prefix". The default is now lspace=0 and rspace = veryverythinmathspace = 1/18em -->
+    <math><mi>x</mi><mo form="prefix">+</mo><mi>y</mi></math>
+    <math><mi>x</mi><mo form="prefix" lspace="1em">+</mo><mi>y</mi></math>
+    <math><mi>x</mi><mo form="prefix" rspace="2em">+</mo><mi>y</mi></math>
+    <math><mi>x</mi><mo form="prefix" lspace="3em" rspace="4em" >+</mo><mi>y</mi></math>
+
+  </body>
+</html>

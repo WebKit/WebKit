@@ -1,0 +1,16 @@
+
+PASS min(1) should be used-value-equivalent to 1
+PASS max(1) should be used-value-equivalent to 1
+PASS min(0.2, max(0.1, 0.15)) should be used-value-equivalent to 0.15
+PASS max(0.1, min(0.2, 0.15)) should be used-value-equivalent to 0.15
+PASS calc(min(0.1, 0.2) + 0.05) should be used-value-equivalent to 0.15
+PASS calc(min(0.1, 0.2) - 0.05) should be used-value-equivalent to 0.05
+PASS calc(min(0.1, 0.2) * 2) should be used-value-equivalent to 0.2
+PASS calc(min(0.1, 0.2) / 2) should be used-value-equivalent to 0.05
+PASS calc(max(0.1, 0.2) + 0.05) should be used-value-equivalent to 0.25
+PASS calc(max(0.1, 0.2) - 0.05) should be used-value-equivalent to 0.15
+PASS calc(max(0.1, 0.2) * 2) should be used-value-equivalent to 0.4
+PASS calc(max(0.1, 0.2) / 2) should be used-value-equivalent to 0.1
+PASS calc(min(0.1, 0.2) + max(0.1, 0.05)) should be used-value-equivalent to 0.2
+PASS calc(min(0.1, 0.2) - max(0.1, 0.05)) should be used-value-equivalent to 0
+

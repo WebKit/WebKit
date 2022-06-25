@@ -1,0 +1,27 @@
+<html>
+    <head>
+        <style type="text/css">
+            .composited {
+                -webkit-transform: translateZ(0);
+            }
+        </style>
+        <script type="text/javascript">
+            if (window.testRunner)
+                testRunner.dumpAsText();
+
+            function doTest() {
+                if (window.testRunner && window.internals)
+                    document.getElementById('layertree').innerText = window.internals.layerTreeAsText(document);
+            }
+            window.addEventListener('load', doTest, false);
+        </script>
+    </head>
+    <body>
+        <!-- Composited control element. -->
+        <!-- Control elements are rendered by native theme. ->
+        <!-- GraphicsLayer::contentsOpaque for control element should be false. -->
+        <input class="composited" type="button" value="Composited Button">
+
+        <pre id="layertree"></pre>
+    </body>
+</html>

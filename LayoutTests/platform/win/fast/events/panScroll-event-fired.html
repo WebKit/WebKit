@@ -1,0 +1,46 @@
+<html>
+    <head>
+        <title>Pan Scrolling Test</title>
+    </head>
+    <body>
+        <script>
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+            }
+            
+            addEventListener('mousedown', 
+                function(event) { 
+                    console.log("Mousedown with " + event.button);
+                }
+            , false);
+        </script>
+        <div id="overflow" style="width:500px; height:150px; overflow:auto; border:2px solid red; padding:10px">
+            <h1>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=32303">bug 32303</a> This tests that pan
+            scrolling works without event.preventDefault and the middle button mousedown event is fired.
+            To test manually, try to pan scroll inside this div.</h1>
+        </div>
+        <p>
+        <div id="console"></div>
+        <script>
+            if (window.eventSender)
+            {
+                eventSender.mouseMoveTo(50, 50);
+                eventSender.mouseDown(1);
+                eventSender.mouseUp(1);
+                eventSender.mouseMoveTo(50, 200);
+                setTimeout(finished, 500);
+            }
+            
+            function finished()
+            {
+                if (document.getElementById('overflow').scrollTop)
+                    document.getElementById('console').innerHTML = "Success! Div with overflow was scrolled";
+                else
+                    document.getElementById('console').innerHTML = "Fail! Div with overflow was not scrolled";
+                
+                window.testRunner.notifyDone();
+            }
+        </script>
+    </body>
+</html>

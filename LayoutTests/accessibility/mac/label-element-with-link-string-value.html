@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<input type="radio" id="input" />
+<label for="input" id="label">
+	<span>first</span>
+	<span><a href="">choice</a></span>
+</label>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+	var label = 0;
+
+    description("This tests that if a label element contains a link it will be exposed as a group with no AXValue.");
+    if (window.accessibilityController) {
+
+        if (window.accessibilityController) {
+
+            var body = document.getElementById("body");
+            body.focus();
+            
+            label = accessibilityController.accessibleElementById("label");
+            shouldBe("label.role", "'AXRole: AXGroup'");
+            shouldBe("label.stringValue", "'AXValue: '");          
+        }
+    }
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: [ITP] Turned Debug Mode on.
+CONSOLE MESSAGE: [ITP] Applying cross-site tracking restrictions to: [3rdpartytestwebkit.org].
+CONSOLE MESSAGE: [ITP] Done applying cross-site tracking restrictions.
+Tests for the Page.overrideSetting command.
+
+
+== Running test suite: Page.overrideSetting
+-- Running test case: Page.overrideSetting.ITPDebugModeEnabled
+Enabling ITP debug mode...
+PASS: Should broadcast at least three console messages.
+

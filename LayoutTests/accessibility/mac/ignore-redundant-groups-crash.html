@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div id="content">
+    <fieldset id="fieldset">Text</fieldset>
+
+    <legend>Text</legend>
+    <fieldset id="fieldset-with-legend">Text</fieldset>
+
+    <figure id="figure">
+        <img src="../resources/cake.png" alt="Cake">
+        <figcaption>Cake</figcaption>
+    </figure>
+
+    <figure id="figure-with-explicit-group-role" role="group">
+        <img src="../resources/cake.png" alt="Cake">
+        <figcaption>Cake</figcaption>
+    </figure>
+</div>
+
+<script>
+    description("This test passes if WebKit doesn't crash trying to compute whether the elements on this page should be ignored.")
+
+    if (window.accessibilityController) {
+        shouldBe("accessibilityController.accessibleElementById('fieldset').role", "'AXRole: AXGroup'");
+
+        shouldBe("accessibilityController.accessibleElementById('fieldset-with-legend').role", "'AXRole: AXGroup'");
+        shouldBe("accessibilityController.accessibleElementById('fieldset-with-legend').role", "'AXRole: AXGroup'");
+
+        shouldBe("accessibilityController.accessibleElementById('figure').role", "'AXRole: AXGroup'");
+        shouldBe("accessibilityController.accessibleElementById('figure-with-explicit-group-role').role", "'AXRole: AXGroup'");
+
+        document.getElementById("content").style.visibility = "hidden";
+    }
+</script>
+</body>
+</html>
+

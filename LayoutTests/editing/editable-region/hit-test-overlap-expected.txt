@@ -1,0 +1,18 @@
+Hit test editable elements that are overlapped by another element.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Non-Composited overlap:
+PASS (x = 29, y = 71, width = 251, height = 201) contains editable elements.
+PASS (x = 270, y = 150, width = 10, height = 10) contains editable elements.
+PASS (x = 281, y = 69, width = 249, height = 201) contains editable elements.
+
+Composited overlap:
+PASS (x = 29, y = 343, width = 251, height = 201) does not contain editable elements.
+PASS (x = 270, y = 400, width = 10, height = 10) does not contain editable elements.
+PASS (x = 281, y = 343, width = 249, height = 201) contains editable elements.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

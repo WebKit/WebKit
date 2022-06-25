@@ -1,0 +1,8 @@
+<script>
+window.onload = function() {
+    import("http://127.0.0.1:8080/security/mixedContent/resources/script.js").catch(function (error) {
+        if (window.parent)
+            window.parent.postMessage(String(error), '*');
+    });
+};
+</script>

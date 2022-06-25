@@ -1,0 +1,64 @@
+<title>This tests that an element with visibility hidden does not show its backdrop filter.</title>
+<style>
+.container {
+    width: 200px;
+    height: 200px;
+    background: blue;
+    margin: 50px;
+}
+.top {
+    width: 400px;
+    height: 50px;
+    position: absolute;
+    left: 0;
+    top: 150px;
+    border: 1px solid red;
+    -webkit-backdrop-filter: blur(50px);
+}
+</style>
+<script>
+    var dump1, dump2, dump3;
+
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function getLayerDump() {
+        if (window.internals)
+            return internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_CONTENT_LAYERS);
+        return "";
+    }
+
+    function step1() {
+        dump1 = getLayerDump();
+        var topElement = document.querySelector(".top");
+        topElement.style.visibility = "hidden";
+        setTimeout(step2, 0);
+    }
+
+    function step2() {
+        dump2 = getLayerDump();
+        var topElement = document.querySelector(".top");
+        topElement.style.visibility = "visible";
+        setTimeout(step3, 0);
+    }
+
+    function step3() {
+        dump3 = getLayerDump();
+        document.getElementById("result1").innerText = "Dump when filter is visible:\n" + dump1;
+        document.getElementById("result2").innerText = "Dump when filter is hidden:\n" + dump2;
+        document.getElementById("result3").innerText = "Dump when filter is visible again:\n" + dump3;
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+
+
+    window.addEventListener("load", step1, false);
+</script>
+</head>
+<body>
+<div class="container"><div class="top"></div></div>
+<pre id="result1"></pre>
+<pre id="result2"></pre>
+<pre id="result3"></pre>

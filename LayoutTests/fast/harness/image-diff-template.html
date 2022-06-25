@@ -1,0 +1,233 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>__TITLE__</title>
+<style>
+    body {
+        font-family: Helvetica, sans-serif;
+        font-size: 11pt;
+    }
+
+    .imageContainer {
+        position: absolute;
+        margin: 10px;
+        outline: 10px solid silver;
+        min-width: 300px;
+        min-height: 150px;
+    }
+    
+    .imageContainer > img {
+        display: block;
+    }
+
+    .controls {
+        margin-bottom: 15px;
+        padding: 10px;
+    }
+    
+    .pixel-diff {
+        font-size: 10pt;
+        font-family: -apple-system;
+    }
+    
+    .pixel-diff > td:first-child {
+        text-align: right;
+    }
+    
+    .hidden {
+        display: none;
+    }
+    
+    .controls button {
+        width: 12em;
+        padding: 4px;
+    }
+    
+    .controls td {
+        padding: 5px 10px;
+    }
+    
+    .controls label {
+        font-family: -apple-system;
+        font-size: 12px;
+    }
+    
+    button.selected {
+        text-decoration: underline;
+    }
+</style>
+</head>
+<body>
+<table class="controls">
+    <tr class="pixel-diff">
+        <td>Test path:</td>
+        <td>__TEST_NAME__</td>
+    </tr>
+    <tr class="pixel-diff __HIDE_DIFF_CLASS__">
+        <td>Pixel difference:</td>
+        <td>__PIXEL_DIFF__</td>
+    </tr>
+    <tr class="pixel-diff __HIDE_FUZZY_CLASS__">
+        <td>Fuzzy match:</td>
+        <td><span>Click to toggle between ranges and values</span><br/><input type="button" id="fuzzy-match-data" onclick="toggleFuzzyMatchString()"</td>
+        <td id="fuzzy-match-form" colspan=2><input type="button" value="Copy to clipboard as <meta> tag" onclick="copyToClipboardFuzzyMetaTag()" /></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td><button id="expected-label" data-type="expected" onclick="switchToImage(this)">Expected Image</button></td>
+        <td><button id="actual-label" data-type="actual" onclick="switchToImage(this)">Actual Image</button></td>
+        <td><button id="diff-label" data-type="diff" onclick="switchToImage(this)">Diff Image</button></td>
+    </tr>
+    <tr>
+        <td><input type="checkbox" id="animate" onchange="toggleAnimate()" checked><label for="animate">Animate:</label></td>
+        <td><input type="checkbox" id="cycle-expected" onchange="updateImageCycle()" checked><label for="cycle-expected">Expected</label></td>
+        <td><input type="checkbox" id="cycle-actual" onchange="updateImageCycle()" checked><label for="cycle-actual">Actual</label></td>
+        <td><input type="checkbox" id="cycle-diff" onchange="updateImageCycle()"><label for="cycle-diff">Diff</label></td>
+    </tr>
+</table>
+
+<div class="imageContainer" data-prefix="__PREFIX__">Loading...</div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+var container = document.querySelector('.imageContainer');
+
+var data = {
+    'expected' : {
+        'image' : preloadImage(container.getAttribute('data-prefix') + '-expected.png'),
+        'label' : document.getElementById('expected-label'),
+    },
+    'actual' : {
+        'image' : preloadImage(container.getAttribute('data-prefix') + '-actual.png'),
+        'label' : document.getElementById('actual-label'),
+    },
+    'diff' : {
+        'image' : preloadImage(container.getAttribute('data-prefix') + '-diff.png'),
+        'label' : document.getElementById('diff-label'),
+    },
+};
+
+var preloadedImageCount = 0;
+
+function preloadComplete()
+{
+    ++preloadedImageCount;
+    if (preloadedImageCount < 3)
+        return;
+    
+    showImage(data['actual']);
+    updateImageCycle();
+    startCyclingImages();
+}
+
+function preloadImage(url)
+{
+    image = new Image();
+    image.addEventListener('load', preloadComplete);
+    image.src = url;
+    return image;
+}
+
+function switchToImage(element)
+{
+    var imageType = element.getAttribute('data-type');
+    showImage(data[imageType]);
+}
+
+function resetLabels()
+{
+    for (var item in data)
+        data[item].label.classList.remove('selected');
+}
+
+function showImage(categoryData)
+{
+    container.replaceChild(categoryData.image, container.firstChild);
+    
+    resetLabels();
+    categoryData.label.classList.add('selected');
+}
+
+function updateImageCycle()
+{
+    data.expected.cycle = document.getElementById('cycle-expected').checked;
+    data.actual.cycle = document.getElementById('cycle-actual').checked;
+    data.diff.cycle = document.getElementById('cycle-diff').checked;
+}
+
+function getCurrentlyShowingImageType()
+{
+    for (var item in data) {
+        if (data[item].label.classList.contains('selected'))
+            return item;
+    }
+}
+
+function toggleAnimate()
+{
+    if (document.getElementById('animate').checked)
+        startCyclingImages();
+    else
+        stopCyclingImages();
+}
+
+var cycleIntervalID;
+function startCyclingImages()
+{
+    stopCyclingImages();
+    cycleIntervalID = window.setInterval(cycleImages, 2000);
+}
+
+function stopCyclingImages()
+{
+    if (cycleIntervalID) {
+        window.clearInterval(cycleIntervalID);
+        cycleIntervalID = undefined;
+    }
+}
+
+function cycleImages()
+{
+    var currentImage = getCurrentlyShowingImageType();
+    var order = ['expected', 'actual', 'diff'];
+    var index = order.indexOf(currentImage);
+    
+    var currIndex = (index + 1) % order.length;
+    do {
+        var type = order[currIndex];
+        if (data[type].cycle)
+            break;
+        
+        currIndex = (currIndex + 1) % order.length;
+    } while (currIndex != index);
+
+    showImage(data[order[currIndex]]);
+}
+
+function copyToClipboardFuzzyMetaTag() {
+    var metaTag = `<meta name="fuzzy" content="${document.getElementById("fuzzy-match-data").value}" />`;
+    navigator.clipboard.writeText(metaTag);
+
+    document.getElementById("fuzzy-match-form").append("Copied! ");
+}
+
+__FUZZY_DATA__;
+bitMaskForWhetherToUseRanges = -1;
+function toggleFuzzyMatchString() {
+    bitMaskForWhetherToUseRanges = (bitMaskForWhetherToUseRanges + 1) % 4;
+    var fuzzyMatchString = "maxDifference=";
+    if (bitMaskForWhetherToUseRanges & 0x2)
+        fuzzyMatchString += "0-";
+    fuzzyMatchString += `${maxDifference}; totalPixels=`;
+    if (bitMaskForWhetherToUseRanges & 0x1)
+        fuzzyMatchString += "0-";
+    fuzzyMatchString += totalPixels;
+
+    document.getElementById("fuzzy-match-data").value = fuzzyMatchString;
+}
+toggleFuzzyMatchString();
+
+</script>
+</body>
+</html>

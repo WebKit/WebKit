@@ -1,0 +1,6 @@
+
+PASS Setting a shorthand with an invalid CSSStyleValue on inline style throws TypeError
+PASS Setting a shorthand with an invalid String on inline style throws TypeError
+FAIL Setting a shorthand with a CSSStyleValue updates inline style styleMap.set is not a function. (In 'styleMap.set('margin', result)', 'styleMap.set' is undefined)
+FAIL Setting a shorthand with a string updates inline style styleMap.set is not a function. (In 'styleMap.set('margin', '1px 2px 3px 4px')', 'styleMap.set' is undefined)
+

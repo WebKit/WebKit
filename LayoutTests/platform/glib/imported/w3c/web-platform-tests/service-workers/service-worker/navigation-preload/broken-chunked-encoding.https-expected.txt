@@ -1,0 +1,5 @@
+
+
+PASS FetchEvent#preloadResponse resolves even if the body is sent with broken chunked encoding.
+PASS FetchEvent#preloadResponse resolves even if the body is sent with broken chunked encoding with some delays
+

@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: The Content Security Policy 'img-src https:' was delivered in report-only mode, but does not specify a 'report-uri'; the policy will have no effect. Please either add a 'report-uri' directive, or deliver the policy via the 'Content-Security-Policy' header.
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Image that redirects to http:// URL prohibited by Report-Only must generate a violation report, even with upgrade-insecure-requests Test timed out
+

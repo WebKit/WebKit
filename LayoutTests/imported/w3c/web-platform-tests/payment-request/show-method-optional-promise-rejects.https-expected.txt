@@ -1,0 +1,12 @@
+
+PASS Rejection of detailsPromise must abort the update with an 'AbortError' DOMException.
+PASS Total in the update is a string, so converting to IDL must abort the update with a TypeError.
+PASS Total is recursive, so converting to IDL must abort the update with a TypeError.
+PASS Updating with a negative total results in a TypeError.
+PASS Updating with a displayItem with an invalid currency results in RangeError.
+PASS Updating with duplicate shippingOptions (same IDs) results in a TypeError.
+PASS Updating with a shippingOption with an invalid currency value results in a RangError.
+PASS Must throw a RangeError when a modifier's total item has an invalid currency.
+PASS Must throw a RangeError when a modifier display item has an invalid currency.
+PASS Must throw as Modifier has a recursive dictionary.
+

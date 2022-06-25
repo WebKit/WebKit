@@ -1,0 +1,28 @@
+<html>
+<body onbeforeunload="accessPlugin()">
+This tests that NPN_GetURL causing the beforeunload event handler to destroy the plug-in doesn't crash.
+ 
+<object name="plg" type="application/x-webkit-test-netscape"></object>
+
+<script>
+    function accessPlugin()
+    {
+        var objects = document.getElementsByTagName("object");
+        for (var i = 0; i < objects.length; ++i) {
+            objects[i].style.display = "none";
+            for (var x in objects[i]) {
+                if (typeof objects[i][x] == "function")
+                    objects[i][x] = function() {};
+            }
+        }
+    }
+    
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    plg.getURL("resources/notify-done.html", "_self");
+</script>
+</body>
+</html>

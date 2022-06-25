@@ -1,0 +1,10 @@
+Test decrypting using AES-GCM with an imported 128bit key, additional data, and tagLength 32
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS bytesToASCIIString(plainText) is expectedPlainText
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,11 @@
+A cached page with a URL fragment shouldn't send the fragment in the referrer
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS xhr.responseText is "http://127.0.0.1:8000/navigation/page-cache-fragment-referrer.html"
+PASS xhr.responseText is "http://127.0.0.1:8000/navigation/page-cache-fragment-referrer.html"
+

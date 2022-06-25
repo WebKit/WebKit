@@ -1,0 +1,10 @@
+layer at (0,0) size 785x889 isolatesBlending
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x1470 backgroundClip at (0,0) size 785x889 clip at (0,0) size 785x889 isolatesBlending blendMode: darken
+  RenderBlock {HTML} at (0,0) size 785x1470
+layer at (8,8) size 769x1454 backgroundClip at (0,0) size 785x889 clip at (0,0) size 785x889 isolatesBlending blendMode: darken
+  RenderBody {BODY} at (8,8) size 769x1454
+    RenderBlock (anonymous) at (0,1433) size 769x21
+      RenderText {#text} at (0,0) size 0x0
+layer at (8,8) size 769x1425 backgroundClip at (0,0) size 785x889 clip at (0,0) size 785x889 blendMode: darken
+  RenderBlock {HR} at (0,0) size 769x1425 [border: (1px inset #000000)]

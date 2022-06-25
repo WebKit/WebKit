@@ -1,0 +1,18 @@
+CONSOLE MESSAGE: Feature policy 'Payment' check failed for iframe with origin 'https://localhost:8443' and allow attribute ''.
+CONSOLE MESSAGE: Feature policy 'Payment' check failed for iframe with origin 'https://localhost:8443' and allow attribute 'payment 'none''.
+CONSOLE MESSAGE: Feature policy 'Payment' check failed for iframe with origin 'https://127.0.0.1:8443' and allow attribute 'payment 'none''.
+CONSOLE MESSAGE: Feature policy 'Payment' check failed for iframe with origin 'https://localhost:8443' and allow attribute 'payment 'self''.
+CONSOLE MESSAGE: Feature policy 'Payment' check failed for iframe with origin 'https://127.0.0.1:8443' and allow attribute 'payment https://localhost:8443'.
+PASS iframe src: "https://localhost:8443/paymentrequest/resources/payment-postmessage.html" with allow="" MUST NOT create a PaymentRequest. SecurityError Third-party iframes are not allowed to request payments unless explicitly allowed via Feature-Policy (payment)
+PASS iframe src: "https://127.0.0.1:8443/paymentrequest/resources/payment-postmessage.html" with allow="" is allowed to create a PaymentRequest.
+PASS iframe src: "https://localhost:8443/paymentrequest/resources/payment-postmessage.html" with allow="payment" is allowed to create a PaymentRequest. SecurityError Trying to start an Apple Pay session from a document with an different security origin than its top-level frame.
+PASS iframe src: "https://127.0.0.1:8443/paymentrequest/resources/payment-postmessage.html" with allow="payment" is allowed to create a PaymentRequest.
+PASS iframe src: "https://localhost:8443/paymentrequest/resources/payment-postmessage.html" with allow="payment *" is allowed to create a PaymentRequest. SecurityError Trying to start an Apple Pay session from a document with an different security origin than its top-level frame.
+PASS iframe src: "https://127.0.0.1:8443/paymentrequest/resources/payment-postmessage.html" with allow="payment *" is allowed to create a PaymentRequest.
+PASS iframe src: "https://localhost:8443/paymentrequest/resources/payment-postmessage.html" with allow="payment 'none'" MUST NOT create a PaymentRequest. SecurityError Third-party iframes are not allowed to request payments unless explicitly allowed via Feature-Policy (payment)
+PASS iframe src: "https://127.0.0.1:8443/paymentrequest/resources/payment-postmessage.html" with allow="payment 'none'" MUST NOT create a PaymentRequest. SecurityError Third-party iframes are not allowed to request payments unless explicitly allowed via Feature-Policy (payment)
+PASS iframe src: "https://localhost:8443/paymentrequest/resources/payment-postmessage.html" with allow="payment 'self'" MUST NOT create a PaymentRequest. SecurityError Third-party iframes are not allowed to request payments unless explicitly allowed via Feature-Policy (payment)
+PASS iframe src: "https://127.0.0.1:8443/paymentrequest/resources/payment-postmessage.html" with allow="payment 'self'" is allowed to create a PaymentRequest.
+PASS iframe src: "https://localhost:8443/paymentrequest/resources/payment-postmessage.html" with allow="payment https://localhost:8443" is allowed to create a PaymentRequest. SecurityError Trying to start an Apple Pay session from a document with an different security origin than its top-level frame.
+PASS iframe src: "https://127.0.0.1:8443/paymentrequest/resources/payment-postmessage.html" with allow="payment https://localhost:8443" MUST NOT create a PaymentRequest. SecurityError Third-party iframes are not allowed to request payments unless explicitly allowed via Feature-Policy (payment)
+

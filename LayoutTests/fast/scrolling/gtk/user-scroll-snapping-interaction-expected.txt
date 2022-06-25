@@ -1,0 +1,9 @@
+PASS Scroll downwards by 25 pixels
+PASS Scroll downwards by another 25 pixels
+PASS End scroll snaps back to top
+PASS Scroll downwards by 200 pixels
+PASS End scroll should snap to next element
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

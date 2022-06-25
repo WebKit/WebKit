@@ -1,0 +1,41 @@
+Nav1
+Nav2
+Nav3
+Nav4
+Nav5
+Nav6
+Nav7
+Nav8
+Nav9
+Nav10
+Nav11
+Nav12
+Nav13
+Nav14
+Nav15
+Nav16
+This tests that aria-current causes the right attribute to be returned.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS: AXARIACurrent is false
+PASS: AXARIACurrent is false
+PASS: AXARIACurrent is false
+PASS: AXARIACurrent is false
+PASS: AXARIACurrent is false
+PASS: AXARIACurrent is false
+PASS: AXARIACurrent is page
+PASS: AXARIACurrent is step
+PASS: AXARIACurrent is location
+PASS: AXARIACurrent is date
+PASS: AXARIACurrent is time
+PASS: AXARIACurrent is true
+PASS: AXARIACurrent is true
+PASS: AXARIACurrent is true
+PASS: AXARIACurrent is page
+PASS: AXARIACurrent is step
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

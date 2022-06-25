@@ -1,0 +1,105 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <style>
+            body {
+                margin: 0;
+                overflow: hidden;
+            }
+
+            #container {
+                width: 300px;
+                height: 300px;
+                position: absolute;
+                top: 0;
+                left: 0;
+                overflow-x: auto;
+                overflow-y: hidden;
+                scroll-snap-type: x proximity;
+                direction: rtl;
+            }
+
+            .drawer {
+                width: 900px;
+                height: 100%;
+            }
+
+            .area {
+                height: 300px;
+                width: 300px;
+                float: left;
+                scroll-snap-align: start;
+            }
+
+            .rtl {
+                direction: rtl;
+            }
+            .ltr {
+                direction: ltr;
+            }
+        </style>
+        <script src="../../../resources/js-test.js"></script>
+        <script src="../../../resources/ui-helper.js"></script>
+        <script>
+        window.jsTestIsAsync = true;
+
+        async function runTest()
+        {
+            try {
+                await UIHelper.delayFor(0);
+
+                let targetElement = document.getElementById("container");
+                expectTrue(0 == targetElement.scrollLeft, "scroll origin is 0");
+
+                targetElement.scrollBy(-100, 0);
+                expectTrue(targetElement.scrollLeft == -100, "can escape first snap position");
+
+                targetElement.scrollBy(10, 0);
+                expectTrue(targetElement.scrollLeft == 0, "snapped back to first snap position");
+
+                targetElement.scrollBy(-295, 0);
+                expectTrue(targetElement.scrollLeft == -300, "snapped to second snap position");
+
+                targetElement.scrollBy(-10, 0);
+                targetElement.scrollBy(-10, 0);
+
+                expectTrue(targetElement.scrollLeft == -320, "can escape second snap position to the left");
+
+                targetElement.scrollBy(1, 0);
+                expectTrue(targetElement.scrollLeft == -300, "snapped back to second snap position");
+
+                targetElement.scrollBy(10, 0);
+                targetElement.scrollBy(10, 0);
+                expectTrue(targetElement.scrollLeft == -280, "can escape second snap position to the right");
+
+                targetElement.scrollBy(-1, 0);
+                expectTrue(targetElement.scrollLeft == -300, "snapped back to second snap position");
+            } catch (e) {
+                console.log(e);
+            } finally {
+                finishJSTest();
+            }
+        }
+
+        function run() {
+            if (!window.eventSender) {
+                write("To manually test, verify that scrolling near one of the boundaries between the colored boxes");
+                write("snaps to the edge of the nearest colored box, but scrolling somewhere near the middle of two");
+                write("boxes does not cause the scroll offset to snap.");
+                return;
+            }
+            runTest();
+        }
+        </script>
+    </head>
+    <body onload=run()>
+        <div id="container">
+            <div class="drawer">
+                <div class="area rtl" style="background-color: red;"></div>
+                <div class="area ltr" style="background-color: blue;"></div>
+                <div class="area rtl" style="background-color: aqua;"></div>
+            </div>
+        </div>
+        <div id="output"></div>
+    </body>
+</html>

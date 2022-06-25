@@ -1,0 +1,4 @@
+This test performs two animations, left and top. It animates over 1 second. At 0.5 second it removes the left animation and the top animation should continue from where it left off.
+PASS - "left" property for "box" element at 0.75s saw something close to: 150
+PASS - "top" property for "box" element at 0.75s saw something close to: 225
+

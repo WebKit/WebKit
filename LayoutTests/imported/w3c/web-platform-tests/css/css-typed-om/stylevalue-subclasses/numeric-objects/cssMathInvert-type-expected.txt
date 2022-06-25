@@ -1,0 +1,5 @@
+
+PASS Inverting a type with empty map returns the empty map
+PASS Inverting a type negates all its exponents
+PASS Inverting an inverted type returns the original type
+

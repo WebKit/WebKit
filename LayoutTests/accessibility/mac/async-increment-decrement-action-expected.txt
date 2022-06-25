@@ -1,0 +1,15 @@
+
+This tests that increment and decrement actions are async.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS obj.intValue is 25
+PASS obj.intValue is 50
+PASS obj.intValue is 25
+PASS obj.intValue is 25
+PASS obj.intValue is 25
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

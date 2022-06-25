@@ -1,0 +1,69 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/compat/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/compat/css-style-declaration-alias-enumeration.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/historical.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/idlharness.window.js
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-background-origin-text-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-background-origin-text.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-box-clamp-bottom-border-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-box-clamp-bottom-border.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-box-clamp-visibility-change-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-box-clamp-visibility-change.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-box-fieldset-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-box-fieldset.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-box-fixed-position-child.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-box-horizontal-reverse-variants-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-box-horizontal-reverse-variants.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-box-horizontal-rtl-variants-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-box-horizontal-rtl-variants.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-box-ignore-box-pack.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-box-removing-triggering-anonymous-merge.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-box-rtl-flex-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-box-rtl-flex.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-box-vertically-centered.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-gradient-comma.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-linear-gradient-diff-unprefixed-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-linear-gradient-diff-unprefixed.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-linear-gradient-line-bottom-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-linear-gradient-line-bottom.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-linear-gradient-line-left-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-linear-gradient-line-left.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-linear-gradient-line-right-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-linear-gradient-line-right.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-linear-gradient-line-top-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-linear-gradient-line-top.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-radial-gradient-radii.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-text-fill-color-currentColor.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-text-fill-color-property-001a-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-text-fill-color-property-001a.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-text-fill-color-property-001b-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-text-fill-color-property-001b.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-text-fill-color-property-001c-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-text-fill-color-property-001c.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-text-fill-color-property-001d-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-text-fill-color-property-001d.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-text-fill-color-property-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-text-fill-color-property-002.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-text-fill-color-property-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-text-fill-color-property-003.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-text-fill-color-property-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-text-fill-color-property-004.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-text-fill-color-property-005-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-text-fill-color-property-005.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-text-fill-color-property-006-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/compat/webkit-text-fill-color-property-006.html

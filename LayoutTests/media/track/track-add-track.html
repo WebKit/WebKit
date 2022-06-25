@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>
+
+            var tracks = [];
+            var trackElement;
+            function trackAdded()
+            {
+                consoleWrite("EVENT(" + event.type + ")");
+
+                testExpected("event.target", video.textTracks);
+                testExpected("event instanceof window.TrackEvent", true);
+                testExpected("event.track", tracks[video.textTracks.length - 1]);
+
+                if (video.textTracks.length == 1) {
+                    consoleWrite("<br>** Test a TextTrack created with video.addTextTrack().");
+                    run("tracks.push(video.addTextTrack('captions', 'Caption Track', 'en'))");
+                    testExpected("video.textTracks.length", 2);
+                } else {
+                    consoleWrite("");
+                    endTest();
+                }
+            }
+
+            function start()
+            {
+                findMediaElement();
+
+                consoleWrite("** Test a TextTrack created for a &lt;track&gt; element.");
+                run("trackElement = document.createElement('track')");
+                run("video.appendChild(trackElement)");
+                tracks.push(trackElement.track);
+
+                // Register the 'addtrack' listener after creating the element to make sure the
+                // event is dispatch asynchronously.
+                video.textTracks.addEventListener("addtrack", trackAdded);
+
+                run("trackElement.src = 'captions-webvtt/tc004-webvtt-file.vtt'");
+                run("trackElement.track.mode = 'hidden'");
+                testExpected("video.textTracks.length", 1);
+                testExpected("trackElement.readyState", HTMLTrackElement.NONE);
+            }
+
+        </script>
+    </head>
+    <body onload="start()">
+        <p>Tests that the 'addtrack' event is fired when a TextTrack is created.</p>
+        <video>
+        </video>
+    </body>
+</html>

@@ -1,0 +1,15 @@
+<style>
+test { transition:0.1s; display:block; height:100px; border: 2px solid green; }
+.animate { display:inline-block; height:10px; width:10px; }
+</style>
+<test></test>
+<script>
+var test = document.querySelector("test");
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    test.ontransitionend = () => testRunner.notifyDone();
+}
+test.offsetWidth;
+test.className = "animate";
+</script>

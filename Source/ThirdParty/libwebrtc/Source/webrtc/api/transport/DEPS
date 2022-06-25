@@ -1,0 +1,7 @@
+specific_include_rules = {
+  "stun\.h": [
+    "+rtc_base/byte_buffer.h",
+    "+rtc_base/ip_address.h",
+    "+rtc_base/socket_address.h",
+  ],
+}

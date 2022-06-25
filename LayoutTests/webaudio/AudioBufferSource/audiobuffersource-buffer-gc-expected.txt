@@ -1,0 +1,11 @@
+Make sure that AudioBufferSourceNode.buffer keeps returning the same object
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS audioBufferSource.buffer.foo is 1
+PASS audioBufferSource.buffer.foo is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

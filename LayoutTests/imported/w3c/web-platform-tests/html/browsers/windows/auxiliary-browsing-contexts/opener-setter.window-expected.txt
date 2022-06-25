@@ -1,0 +1,9 @@
+
+PASS Setting window.opener to undefined
+PASS Setting window.opener to 42
+PASS Setting window.opener to function () { return "hi" }
+PASS Setting window.opener to hi
+PASS Setting window.opener to [object Object]
+PASS Setting window.opener to
+PASS Setting window.opener to Symbol()
+

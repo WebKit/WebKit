@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div tabindex=0></div>
+<input id="input" type="text">
+<input id="readonly" type="text" readonly>
+<script>
+
+document.querySelector('div').focus();
+
+function focusTextField(id)
+{
+    document.getElementById(id).focus();
+}
+
+function blurTextField(id)
+{
+    document.getElementById(id).blur();
+}
+
+function removeTextField(id)
+{
+    document.getElementById(id).remove();
+}
+
+</script>
+</body>
+</html>

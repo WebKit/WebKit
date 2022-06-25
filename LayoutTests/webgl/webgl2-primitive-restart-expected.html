@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>WebGL 2 Samples - draw_primitive_restart</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="2.0.0/resources/webgl_test_files/resources/js-test-style.css">
+    <script src="2.0.0/resources/webgl_test_files/js/js-test-pre.js"></script>
+    <script src="2.0.0/resources/webgl_test_files/js/webgl-test-utils.js"></script>
+</head>
+
+<body>
+    <div id="info">WebGL 2 Samples - draw_primitive_restart</div>
+    <div id="console"></div>
+
+    <script id="vs" type="x-shader/x-vertex">#version 300 es
+        precision highp float;
+        precision highp int;
+
+        layout(location = 0) in vec2 pos;
+
+        void main()
+        {
+            gl_Position = vec4(pos, 0.0, 1.0);
+        }
+    </script>
+
+    <script id="fs" type="x-shader/x-fragment">#version 300 es
+        precision highp float;
+        precision highp int;
+
+        out vec4 color;
+
+        void main()
+        {
+            color = vec4(1.0, 0.5, 0.0, 1.0);
+        }
+    </script>
+
+    <script>
+    (function () {
+        'use strict';
+        var wtu = WebGLTestUtils;
+
+        // -- Init Canvas
+        var canvas = document.createElement('canvas');
+        canvas.width = 200;
+        canvas.height = canvas.width;
+        document.body.appendChild(canvas);
+
+        // -- Init WebGL Context
+        var gl = canvas.getContext('webgl2', { antialias: false });
+        var isWebGL2 = !!gl;
+        if (!isWebGL2) {
+            testFailed("WebGL 2 context does not exist");
+            return;
+        }
+
+        testPassed("WebGL 2 context exists");
+
+        // -- Init Program
+        var program = wtu.setupProgram(gl, ["vs", "fs"]);
+        gl.useProgram(program);
+
+        // -- Init Buffer
+        var vertices = new Float32Array([
+            -1.0, -1.0,
+            -1.0,  1.0,
+             1.0, -1.0,
+             1.0,  1.0
+        ]);
+
+        var vertexPosBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, vertexPosBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+        gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+        var num_vertices = 6;
+        var indices = new Uint16Array([
+            0, 1, 2, 2, 3, 1
+        ]);
+
+        var vertexElementBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, vertexElementBuffer);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+
+        // -- Init Vertex Array
+        var vertexArray = gl.createVertexArray();
+        gl.bindVertexArray(vertexArray);
+
+        var vertexPosLocation = 0;
+        gl.bindBuffer(gl.ARRAY_BUFFER, vertexPosBuffer);
+        gl.enableVertexAttribArray(vertexPosLocation);
+        gl.vertexAttribPointer(vertexPosLocation, 2, gl.FLOAT, false, 0, 0);
+        gl.bindBuffer(gl.ARRAY_BUFFER, null);
+        
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, vertexElementBuffer);
+
+        gl.bindVertexArray(null);
+
+        // -- Render
+        gl.clearColor(0.0, 0.0, 0.0, 1.0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+
+        gl.bindVertexArray(vertexArray);
+
+        gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
+
+        // -- Delete WebGL resources
+        gl.deleteBuffer(vertexPosBuffer);
+        gl.deleteBuffer(vertexElementBuffer);
+        gl.deleteProgram(program);
+        gl.deleteVertexArray(vertexArray);
+    })();
+    </script>
+</body>
+</html>

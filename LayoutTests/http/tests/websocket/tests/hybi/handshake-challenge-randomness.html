@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../../js-test-resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script type="text/javascript">
+description('Handshake request should contain random challenge values.');
+
+window.jsTestIsAsync = true;
+
+var challenge1;
+var challenge2;
+
+var url = 'ws://localhost:8880/websocket/tests/hybi/echo-challenge';
+var ws1 = new WebSocket(url);
+
+ws1.onmessage = function(messageEvent)
+{
+    challenge1 = messageEvent.data;
+    ws1.close();
+}
+
+ws1.onclose = function()
+{
+    var ws2 = new WebSocket(url);
+
+    ws2.onmessage = function(messageEvent)
+    {
+        challenge2 = messageEvent.data;
+        ws2.close();
+    }
+
+    ws2.onclose = function()
+    {
+        shouldBeFalse('challenge1 === challenge2');
+        if (challenge1 === challenge2)
+            debug('challenge was ' + challenge1);
+        finishJSTest();
+    }
+}
+
+</script>
+<script src="../../../../js-test-resources/js-test-post.js"></script>
+</body>
+</html>

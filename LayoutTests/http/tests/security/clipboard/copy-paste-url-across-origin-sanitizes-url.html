@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/resources/js-test-pre.js"></script>
+<script>
+
+description('This tests calling setData with a malformed URL in a null origin document. The malformed value should not be readable in another document');
+jsTestIsAsync = true;
+
+if (window.internals)
+    internals.settings.setCustomPasteboardDataEnabled(true);
+
+onmessage = (event) => {
+    originalURL = event.data.originalURL;
+    urlReadInSameDocument = event.data.url;
+    shouldBeEqualToString('urlReadInSameDocument', originalURL);
+    typesInSameDocument = event.data.types;
+    shouldBeEqualToString('JSON.stringify(typesInSameDocument)', '["text/uri-list"]');
+    itemsInSameDocument = event.data.items;
+    shouldBeEqualToString('JSON.stringify(itemsInSameDocument)', '[{"kind":"string","type":"text/uri-list"}]');
+    document.getElementById('destination').focus();
+    if (window.testRunner)
+        document.execCommand('paste');
+}
+
+function doPaste(event) {
+    shouldBeEqualToString('event.clipboardData.getData("url")', (new URL(originalURL)).href);
+    shouldBeEqualToString('JSON.stringify(event.clipboardData.types)', '["text/uri-list"]');
+    shouldBeEqualToString('JSON.stringify(Array.from(event.clipboardData.items).map((item) => ({kind: item.kind, type: item.type})))',
+        '[{"kind":"string","type":"text/uri-list"}]');
+    document.getElementById('destination').remove();
+    finishJSTest();
+}
+
+</script>
+<iframe src="http://localhost:8000/security/clipboard/resources/copy-url.html"></iframe>
+<div id="destination" onpaste="doPaste(event)" contenteditable>3. Paste here</div>
+<script src="/resources/js-test-post.js"></script>
+</body>
+</html>

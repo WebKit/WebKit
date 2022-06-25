@@ -1,0 +1,90 @@
+<html>
+<head>
+<style>
+.container {
+    width: 90px;
+    height: 90px;
+    color: green;
+    background-color: red;
+    font: 30px/1 Ahem, sans-serif;
+    margin: 10px;
+    -webkit-font-smoothing: antialiased;
+}
+
+.content-box {
+    -webkit-shape-outside: content-box;
+    -webkit-shape-margin: 5px;
+    background-clip: padding-box;  /* padding box matches shape-outside + shape-margin */
+    width: 25px;
+    height: 20px;
+    padding: 5px;
+    margin: 30px 60px;
+}
+
+.padding-box {
+    -webkit-shape-outside: padding-box;
+    -webkit-shape-margin: 5px;
+    background-clip: border-box; /* border box matches shape-outside + shape-margin */
+    width: 20px;
+    height: 10px;
+    padding: 5px;
+    border: 5px solid transparent;
+    margin: 30px 60px;
+}
+
+.border-box {
+    -webkit-shape-outside: border-box;
+    -webkit-shape-margin: 5px;
+    background-clip: border-box; /* shape-outside is 5 pixels from the border-box */
+    width: 20px;
+    height: 10px;
+    border: 5px solid transparent;
+    margin: 35px 65px;
+}
+
+.margin-box {
+    -webkit-shape-outside: margin-box;
+    -webkit-shape-margin: 5px; /* has no effect, shape is clipped to the margin-box */
+    background-clip: content-box; 
+    width: 25px;
+    height: 20px;
+    margin: 5px;
+}
+
+.shape {
+    background-color: green;
+    float: left;
+    padding-left: 0px;
+    border-left: 0px;
+    margin-left: 0px;
+}
+</style>
+</head>
+<body>
+    <p>Verify that shape-margin has the expected effect on the four possible shape-outside box values for left floats.</p>
+
+    <p>shape-outside: content-box</p>
+    <div class='container'>
+        <div class='shape content-box'></div>
+        xxx xx xxx
+    </div>
+
+    <p>shape-outside: padding-box</p>
+    <div class='container'>
+        <div class='shape padding-box'></div>
+        xxx xx xxx
+    </div>
+
+    <p>shape-outside: border-box</p>
+    <div class='container' style="background: blue">
+        <div class='shape border-box'></div>
+        xxx xx xxx
+    </div>
+
+    <p>shape-outside: margin-box</p>
+    <div class='container' style="background: blue">
+        <div class='shape margin-box'></div>
+        xx xxx xxx
+    </div>
+</body>
+</html>

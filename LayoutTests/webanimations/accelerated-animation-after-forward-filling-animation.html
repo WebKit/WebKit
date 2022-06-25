@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<body>
+<style>
+
+    #target {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100px;
+        height: 100px;
+        background-color: black;
+    }
+
+</style>
+<div id="target"></div>
+<script>
+
+(async () => {
+    if (window.testRunner)
+        window.testRunner.waitUntilDone();
+
+    const target = document.getElementById("target");
+
+    // Start a forward-filling accelerated animation.
+    const fillingAnimation = target.animate({ transform: "translateX(100px)" }, { duration: 1, fill: "forwards" });
+    await fillingAnimation.finished;
+
+    // Start another animation with an implicit from keyframe.
+    const animation = target.animate({ transform: "translateY(1px)" }, { duration: 1000 * 1000 });
+
+    // Wait two frames for the accelerated animation to be committed.
+    await animation.ready;
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+
+    if (window.testRunner)
+        window.testRunner.notifyDone();
+})();
+
+</script>
+</body>

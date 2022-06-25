@@ -1,0 +1,11 @@
+Tests that AudioWorklet.addModule() rejects the promise when the URL is invalid.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS context.audioWorklet.addModule(invalidURL); rejected promise  with SyntaxError: Module URL is invalid.
+PASS context.audioWorklet.addModule('doesnotExist.js'); rejected promise  with AbortError: Importing a module script failed..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

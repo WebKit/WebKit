@@ -1,0 +1,9 @@
+
+PASS Same-origin blob URL iframe should inherit service worker controller.
+PASS Same-origin blob URL iframe should intercept fetch().
+PASS Same-origin blob URL worker should inherit service worker controller.
+PASS Same-origin blob URL worker should intercept fetch().
+PASS Data URL iframe should not intercept fetch().
+FAIL Data URL worker should not inherit service worker controller. promise_test: Unhandled rejection with value: "TypeError: undefined is not an object (evaluating 'navigator.serviceWorker.controller')"
+PASS Data URL worker should not intercept fetch().
+

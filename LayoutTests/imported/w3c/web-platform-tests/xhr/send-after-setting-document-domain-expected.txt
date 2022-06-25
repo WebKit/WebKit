@@ -1,0 +1,7 @@
+Blocked access to external URL http://www2.localhost:8800/xhr/resources/send-after-setting-document-domain-window-1.htm
+Blocked access to external URL http://www2.localhost:8800/xhr/resources/send-after-setting-document-domain-window-2.htm
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT All tests ran Test timed out
+

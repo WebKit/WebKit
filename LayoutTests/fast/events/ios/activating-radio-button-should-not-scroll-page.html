@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="resources/press-spacebar-at-element-and-check-for-page-scroll.js"></script>
+</head>
+<body style="height: 4096px"> <!-- Make the page really long to force vertical scrollbars. -->
+<p id="description"></p>
+<p id="test-container"><input id="test" type="radio"></p>
+<div id="console"></div>
+<script>
+description("Tests that activating a radio button (focusing it and pressing the spacebar) does not cause the page to scroll.");
+checkActivatingElementUsingSpacebarDoesNotScrollPage(document.getElementById("test-container"), document.getElementById("test"), "change");
+</script>
+</body>
+</html>

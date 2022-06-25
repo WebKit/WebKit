@@ -1,0 +1,42 @@
+<!doctype>
+<html>
+  <head>
+    <script src="../../resources/js-test-pre.js"></script>
+  </head>
+  <body>
+    <p id="description"></p>
+    <div id="console"></div>
+    <div id="textContent"></div>
+    <script>
+      if (window.testRunner)
+          testRunner.dumpAsText();
+
+      // Put text content on the page with 2^16 'a' characters.
+      textContent.append(document.createTextNode('a'.repeat(2**15)));
+      textContent.append(document.createTextNode('a'.repeat(2**15)));
+      shouldBe("textContent.innerText.length", "2**16");
+
+      // Verify that find fails if no match is found.
+      window.getSelection().removeAllRanges();
+      shouldBeFalse("window.find('b')");
+
+      // Verify that find succeeds for a small string.
+      window.getSelection().removeAllRanges();
+      shouldBeTrue("window.find('a'.repeat(2**5))");
+
+      // Verify that find succeeds just below the limit.
+      window.getSelection().removeAllRanges();
+      shouldBeTrue("window.find('a'.repeat(2**16 - 1))");
+
+      // Verify that find fails when reaching WebKit's hardcoded limit.
+      window.getSelection().removeAllRanges();
+      shouldBeFalse("window.find('a'.repeat(2**16))");
+
+      // Verify that very long string does not cause out-of-memory crash.
+      window.getSelection().removeAllRanges();
+      shouldBeFalse("window.find('a'.repeat(2**30))");
+      document.body.removeChild(textContent);
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
+  </body>
+</html>

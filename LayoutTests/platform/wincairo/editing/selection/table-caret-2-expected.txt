@@ -1,0 +1,33 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 357x19
+          text run at (0,0) width 357: "This tests the caret position for the caret after a block table."
+      RenderBlock {DIV} at (0,36) size 784x122
+        RenderBlock (anonymous) at (0,0) size 784x20
+          RenderText {#text} at (0,0) size 20x19
+            text run at (0,0) width 20: "foo"
+        RenderTable {TABLE} at (0,20) size 50x82 [border: (1px solid #999999)]
+          RenderTableSection {TBODY} at (1,1) size 48x80
+            RenderTableRow {TR} at (0,2) size 48x24
+              RenderTableCell {TD} at (2,2) size 44x24 [border: (1px solid #999999)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 20x19
+                  text run at (2,2) width 20: "this"
+            RenderTableRow {TR} at (0,28) size 48x24
+              RenderTableCell {TD} at (2,28) size 44x24 [border: (1px solid #999999)] [r=1 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 9x19
+                  text run at (2,2) width 9: "is"
+            RenderTableRow {TR} at (0,54) size 48x24
+              RenderTableCell {TD} at (2,54) size 44x24 [border: (1px solid #999999)] [r=2 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 40x19
+                  text run at (2,2) width 40: "a table"
+        RenderBlock (anonymous) at (0,102) size 784x20
+          RenderText {#text} at (0,0) size 21x19
+            text run at (0,0) width 21: "baz"
+caret: position 1 of child 1 {TABLE} of child 2 {DIV} of body

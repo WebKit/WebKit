@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../video-test.js"></script>
+    <script src="../media-file.js"></script>
+    <script>
+        window.addEventListener('load', async event => {
+            if (!window.internals) {
+                failTest('This test requires window.internals.');
+                return;
+            }
+
+            findMediaElement();
+
+            run('internals.settings.setAllowsPictureInPictureMediaPlayback(true)');
+            run('internals.setMockVideoPresentationModeEnabled(true)');
+
+            run('video.src = findMediaFile("video", "../content/test")');
+            await waitFor(video, 'canplaythrough');
+
+            runWithKeyDown(() => {
+                video.requestPictureInPicture()
+                .then(pipWindow => {
+                    window.pipWindow = pipWindow;
+                    // Compare floating point numbers with the precision 0.01
+                    testExpected('Math.abs(pipWindow.height / pipWindow.width - 240 / 320)', 0.01, '<');
+
+                    document.exitPictureInPicture().then(endTest).catch(() => {
+                        failTest('Failed to exit the Picture-in-Picture mode.');
+                    });
+                })
+                .catch(error => {
+                    failTest("Failed to enter the Picture-in-Picture mode.");
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <div>Tests that a pip window has the same aspect ratio as the video content.</div>
+    <video controls width="2" height="2"></video>
+</body>
+</html>

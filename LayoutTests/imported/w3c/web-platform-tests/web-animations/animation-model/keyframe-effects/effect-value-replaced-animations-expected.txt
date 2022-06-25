@@ -1,0 +1,7 @@
+
+PASS Removed animations do not contribute to animated style
+PASS Removed animations do not contribute to the effect stack
+PASS Persisted animations contribute to animated style
+PASS Persisted animations contribute to the effect stack
+PASS Animations persisted before they would be removed contribute to the effect stack
+

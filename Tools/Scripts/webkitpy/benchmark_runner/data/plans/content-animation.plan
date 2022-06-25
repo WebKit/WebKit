@@ -1,0 +1,17 @@
+{
+    "timeout": 120,
+    "count": 5,
+    "svn_source": "https://svn.webkit.org/repository/webkit/trunk/PerformanceTests/Animation/@r205680",
+    "webserver_benchmark_patch": "data/patches/webserver/ContentAnimation.patch",
+    "webdriver_benchmark_patch": "data/patches/webdriver/ContentAnimation.patch",
+    "test_files": [
+        "css-animation.html",
+        "css-accelerated-animation.html",
+        "svg-animation.html",
+        "raf-animation.html"
+    ],
+    "output_file": "css-animation.result",
+    "options": {
+        "animation_command": "ContentAnimation"
+    }
+}

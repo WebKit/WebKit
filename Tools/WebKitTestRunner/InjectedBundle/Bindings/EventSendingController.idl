@@ -1,0 +1,87 @@
+/*
+ * Copyright (C) 2010, 2011, 2014-2015 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+dictionary MonitorWheelEventsOptions {
+    boolean resetLatching = true;
+};
+
+interface EventSendingController {
+    undefined mouseDown(long buttonNumber, object modifierArray, optional DOMString pointerType);
+    undefined mouseUp(long buttonNumber, object modifierArray, optional DOMString pointerType);
+    undefined mouseMoveTo(long x, long y, optional DOMString pointerType);
+    undefined mouseForceClick();
+    undefined startAndCancelMouseForceClick();
+    undefined mouseForceDown();
+    undefined mouseForceUp();
+    undefined mouseForceChanged(double force);
+    undefined mouseScrollBy(long x, long y);
+    undefined mouseScrollByWithWheelAndMomentumPhases(long x, long y, DOMString phase, DOMString momentum);
+    undefined setWheelHasPreciseDeltas(boolean hasPreciseDeltas);
+    undefined continuousMouseScrollBy(long x, long y, optional boolean paged);
+    object contextClick();
+    undefined scheduleAsynchronousClick();
+
+    undefined leapForward(long milliseconds);
+
+    // keyDown is really keyUpAndDown, and perhaps should be renamed to reflect that.
+    // rawKeyDown is just the keyDown, and rawKeyUp is just the keyUp
+    undefined keyDown(DOMString key, object modifierArray, long location);
+    undefined rawKeyDown(DOMString key, object modifierArray, long location);
+    undefined rawKeyUp(DOMString key, object modifierArray, long location);
+    undefined scheduleAsynchronousKeyDown(DOMString key);
+
+    // Zoom functions.
+    undefined textZoomIn();
+    undefined textZoomOut();
+    undefined zoomPageIn();
+    undefined zoomPageOut();
+    undefined scalePageBy(double scale, double x, double y);
+
+    undefined monitorWheelEvents(optional MonitorWheelEventsOptions options);
+    undefined callAfterScrollingCompletes(object functionCallback);
+
+#if defined(ENABLE_TOUCH_EVENTS) && ENABLE_TOUCH_EVENTS
+    // Touch events.
+    undefined addTouchPoint(long x, long y);
+    undefined updateTouchPoint(long index, long x, long y);
+    undefined setTouchModifier(DOMString modifier, boolean enable);
+    undefined setTouchPointRadius(long radiusX, long radiusY);
+    undefined touchStart();
+    undefined touchMove();
+    undefined touchEnd();
+    undefined touchCancel();
+    undefined clearTouchPoints();
+    undefined releaseTouchPoint(long index);
+    undefined cancelTouchPoint(long index);
+#endif
+
+#if defined(ENABLE_MAC_GESTURE_EVENTS) && ENABLE_MAC_GESTURE_EVENTS
+    // Gesture events.
+    undefined scaleGestureStart(double scale);
+    undefined scaleGestureChange(double scale);
+    undefined scaleGestureEnd(double scale);
+#endif
+};
+

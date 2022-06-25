@@ -1,0 +1,22 @@
+
+Harness Error (FAIL), message = TypeError: Candidate must not have both null sdpMid and sdpMLineIndex
+
+FAIL RTCIceTransport constructor does not throw Illegal constructor
+FAIL RTCIceTransport initial properties are set Illegal constructor
+FAIL gather() with { iceServers: null } should throw TypeError Illegal constructor
+FAIL gather() with { iceServers: undefined } should succeed Illegal constructor
+FAIL gather() with one turns server, one turn server, username, credential should succeed Illegal constructor
+FAIL gather() with 2 stun servers should succeed Illegal constructor
+FAIL gather() throws if closed Illegal constructor
+FAIL gather() transitions gatheringState to 'gathering' Illegal constructor
+FAIL gather() throws if called twice Illegal constructor
+FAIL eventually transition gatheringState to 'complete' promise_test: Unhandled rejection with value: object "TypeError: Illegal constructor"
+FAIL onicecandidate fires with null candidate before gatheringState transitions to 'complete' promise_test: Unhandled rejection with value: object "TypeError: Illegal constructor"
+FAIL gather() returns at least one host candidate promise_test: Unhandled rejection with value: object "TypeError: Illegal constructor"
+FAIL gather() returns no candidates with { gatherPolicy: 'relay'} and no turn servers promise_test: Unhandled rejection with value: object "TypeError: Illegal constructor"
+FAIL start() throws if closed Illegal constructor
+FAIL start() throws if usernameFragment or password not set Illegal constructor
+FAIL start() does not transition state to 'checking' if no remote candidates added Illegal constructor
+FAIL start() with default role sets role attribute to 'controlled' Illegal constructor
+FAIL start() sets role attribute to 'controlling' Illegal constructor
+

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Setting undefined to playbackRate and defaultPlaybackRate</title>
+    </head>
+    <body>
+        <video></video>
+        <script src="video-test.js"></script>
+        <script>
+            testException(
+                "video.playbackRate = undefined",
+                "'TypeError: The provided value is non-finite'"
+            );
+            testException(
+                "video.defaultPlaybackRate = undefined",
+                "'TypeError: The provided value is non-finite'"
+            );
+            endTest();
+        </script>
+    </body>
+</html>

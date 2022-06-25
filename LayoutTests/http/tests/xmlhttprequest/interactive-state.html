@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<body>
+<script>
+    description("Test XmlHttpRequest onreadystatechange being called for each chunk of data (bug 7392).");
+    jsTestIsAsync = true;
+
+    let count = 0;
+    
+    let req = new XMLHttpRequest();
+    req.onreadystatechange = () => {
+        if (req.readyState == XMLHttpRequest.LOADING)
+            ++count;
+        else if (req.readyState == XMLHttpRequest.DONE) { 
+            if (count > 1)
+                testPassed("onreadystatechange was called for each chunk of data");
+            else
+                testFailed("onreadystatechange should have been called more than once but was called " + count + " times");
+            finishJSTest();
+        }
+    };
+    req.open('GET', 'interactive-state.cgi', true);
+    req.send(null);
+</script>
+</body>
+</html>

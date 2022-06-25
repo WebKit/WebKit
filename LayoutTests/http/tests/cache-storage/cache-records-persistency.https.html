@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Cache Storage: testing Cache persistency</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+    <script>
+function assert_header_equals(actual, expected, description) {
+    assert_class_string(actual, "Headers", description);
+    var header;
+    var actual_headers = [];
+    var expected_headers = [];
+    for (header of actual)
+        actual_headers.push(header[0] + ": " + header[1]);
+    for (header of expected)
+        expected_headers.push(header[0] + ": " + header[1]);
+    assert_array_equals(actual_headers, expected_headers,
+                        description + " Headers differ.");
+}
+
+function assert_response_equals(actual, expected, description) {
+    assert_class_string(actual, "Response", description);
+    ["type", "url", "status", "ok", "statusText"].forEach(function(attribute) {
+        assert_equals(actual[attribute], expected[attribute],
+                      description + " Attributes differ: " + attribute + ".");
+    });
+    assert_header_equals(actual.headers, expected.headers, description);
+}
+
+function assert_request_equals(actual, expected, description) {
+    assert_class_string(actual, "Request", description);
+    ["url"].forEach(function(attribute) {
+        assert_equals(actual[attribute], expected[attribute],
+                      description + " Attributes differ: " + attribute + ".");
+    });
+    assert_header_equals(actual.headers, expected.headers, description);
+}
+
+function assert_request_array_equals(actual, expected, description) {
+    assert_true(Array.isArray(actual), description);
+    assert_equals(actual.length, expected.length, description);
+    actual.forEach(function(value, index) {
+        assert_request_equals(value, expected[index],
+                              description + " : object[" + index + "]");
+    });
+}
+
+promise_test(test => {
+    return self.caches.keys().then(keys => {
+        var pending = [];
+        for (key of keys)
+            pending.push(self.caches.delete(keys[0]));
+        return Promise.all(pending);
+    });
+}, "Cleaning existing caches");
+
+var test_url = 'https://example.com/foo';
+var test_body = 'Hello world!';
+
+promise_test(() => {
+    var cache;
+    var cache_keys;
+    var first_response = new Response("Old body", { statusText: 'Old status' });
+    var alternate_response = new Response("New body", { statusText: 'New status' });
+    return self.caches.open("test-cache-records-persistency").then(c => {
+        cache = c;
+    }).then(() => {
+        return cache.put(test_url, first_response);
+    }).then(() => {
+        return cache.keys();
+    }).then(keys => {
+        cache_keys = keys;
+        if (window.internals)
+            return internals.clearCacheStorageMemoryRepresentation();
+    }).then(() => {
+        return self.caches.open("test-cache-records-persistency");
+    }).then(c => {
+        cache = c;
+        return cache.keys().then((keys) => {
+            test(() => {
+                assert_request_array_equals(keys, cache_keys);
+            }, "Checking persistency of cache keys");
+            return cache.match(test_url);
+        }).then((result) => {
+            test(() => {
+                assert_response_equals(result, first_response, "Cache.put should store the response persistently");
+            }, "Checking persistency of response");
+            return result.text();
+        }).then((body) => {
+            test(() => {
+                assert_equals(body, "Old body", "Cache put should store the response body persistently.");
+            }, "Checking persistency of response body");
+        });
+    }).then(() => {
+        return cache.put(test_url, alternate_response);
+    }).then(() => {
+        return cache.keys();
+    }).then(keys => {
+        cache_keys = keys;
+        if (window.internals)
+            return internals.clearCacheStorageMemoryRepresentation();
+    }).then(() => {
+        return self.caches.open("test-cache-records-persistency");
+    }).then(c => {
+        cache = c;
+        return cache.keys();
+    }).then((keys) => {
+        assert_request_array_equals(keys, cache_keys);
+    }).then(() => {
+        promise_test(() => {
+            return cache.match(test_url).then((result) => {
+                assert_response_equals(result, alternate_response, 'Cache.put should replace existing ' + 'response with new response.');
+                return result.text();
+            }).then((body) => {
+                assert_equals(body, "New body", 'Cache put should store new response body.');
+            });
+        }, 'Testing overriding of an existing cached record that is not in memory');
+    });
+}, 'Cache.put called twice with matching Requests - keys should remain the same - testing persistency');
+
+promise_test(test => {
+    return self.caches.keys().then(keys => {
+        var pending = [];
+        for (key of keys)
+            pending.push(self.caches.delete(keys[0]));
+        return Promise.all(pending);
+    });
+}, "Cleaning created caches");
+    </script>
+</body>
+</html>

@@ -1,0 +1,3 @@
+
+FAIL Non-redirected cross-origin URLs are not stripped. assert_equals: expected 4 but got 6
+

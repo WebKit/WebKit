@@ -1,0 +1,3 @@
+Div Anchor
+
+Success! This test succeeded because the div is rightly recognized as the anchor's offsetParent :-)

@@ -1,0 +1,27 @@
+<!--
+ *  Copyright 2017 The WebRTC Project Authors. All rights reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license
+ *  that can be found in the LICENSE file in the root of the source
+ *  tree. An additional intellectual property rights grant can be found
+ *  in the file PATENTS.  All contributing project authors may
+ *  be found in the AUTHORS file in the root of the source tree.
+-->
+
+<manifest
+      xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:tools="http://schemas.android.com/tools"
+      package="org.appspot.apprtc.test">
+
+    <uses-permission android:name="android.permission.RUN_INSTRUMENTATION" />
+    <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="21" />
+
+    <application>
+        <uses-library android:name="android.test.runner" />
+    </application>
+
+    <instrumentation android:name="android.support.test.runner.AndroidJUnitRunner"
+        tools:ignore="MissingPrefix"
+        android:targetPackage="org.appspot.apprtc"
+        android:label="Tests for AppRTCMobile"/>
+</manifest>

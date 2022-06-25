@@ -1,0 +1,8 @@
+
+PASS COEP:none embeds same-origin COEP:none
+PASS COEP:none embeds cross-origin COEP:none
+PASS COEP:none embeds same-origin COEP:credentialless
+PASS COEP:none embeds cross-origin COEP:credentialless
+PASS COEP:none embeds same-origin COEP:require-corp
+PASS COEP:none embeds cross-origin COEP:require-corp
+

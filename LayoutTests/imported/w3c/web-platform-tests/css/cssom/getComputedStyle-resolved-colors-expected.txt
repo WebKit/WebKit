@@ -1,0 +1,15 @@
+
+PASS The resolved value for 'background-color' is the used value
+PASS The resolved value for 'border-block-end-color' is the used value
+PASS The resolved value for 'border-block-start-color' is the used value
+PASS The resolved value for 'border-bottom-color' is the used value
+PASS The resolved value for 'border-inline-end-color' is the used value
+PASS The resolved value for 'border-inline-start-color' is the used value
+PASS The resolved value for 'border-left-color' is the used value
+PASS The resolved value for 'border-right-color' is the used value
+PASS The resolved value for 'border-top-color' is the used value
+PASS The resolved value for 'box-shadow' is the used value
+PASS The resolved value for 'caret-color' is the used value
+PASS The resolved value for 'color' is the used value
+PASS The resolved value for 'outline-color' is the used value
+

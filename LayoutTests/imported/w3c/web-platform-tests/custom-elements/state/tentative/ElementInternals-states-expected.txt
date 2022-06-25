@@ -1,0 +1,6 @@
+
+FAIL CustomStateSet behavior of ElementInternals.states: Initial state this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+FAIL CustomStateSet behavior of ElementInternals.states: Exceptions this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+FAIL CustomStateSet behavior of ElementInternals.states: Modifications this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+FAIL Updating a CustomStateSet while iterating it should work this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+

@@ -1,0 +1,11 @@
+
+
+
+FAIL "or" operator depending on the context node assert_true: expected true got false
+FAIL "=" operator depending on the context node assert_true: expected true got false
+FAIL "!=" operator depending on the context node assert_false: expected false got true
+FAIL "<" operator depending on the context node assert_true: expected true got false
+FAIL ">" operator depending on the context node assert_false: expected false got true
+FAIL ">=" operator depending on the context node assert_false: expected false got true
+FAIL "<=" operator depending on the context node assert_true: expected true got false
+

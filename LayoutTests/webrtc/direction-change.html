@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>MediaStream objects should remain the same for a remote track when changing direction</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <video id="video" autoplay=""></video>
+        <script src ="routines.js"></script>
+        <script>
+var pc1, pc2;
+var remoteStream;
+var trackEventCounter = 0;
+promise_test(async () => {
+    const localStream = await navigator.mediaDevices.getUserMedia({audio: true, video: true});
+    remoteStream = await new Promise((resolve, reject) => {
+        createConnections((firstConnection) => {
+            pc1 = firstConnection;
+            pc1.addTrack(localStream.getAudioTracks()[0], localStream);
+            pc1.addTrack(localStream.getVideoTracks()[0], localStream);
+            pc1.getTransceivers().forEach(transceiver => transceiver.direction = "sendonly");
+        }, (secondConnection) => {
+            pc2 = secondConnection;
+            pc2.ontrack = (trackEvent) => {
+                resolve(trackEvent.streams[0]);
+            };
+        });
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+    video.srcObject = remoteStream;
+    await video.play();
+}, "Setup connection with sendonly transceiver");
+
+promise_test(async () => {
+    pc1.getTransceivers().forEach(transceiver => transceiver.direction = "inactive");
+    return renegotiate(pc1, pc2);
+}, "Set transceiver as inactive");
+
+promise_test(async () => {
+    // Setting direction to sendonly will trigger two new track events.
+    pc2.ontrack = (trackEvent) => {
+         test(() => {
+             assert_equals(remoteStream, trackEvent.streams[0]);
+         }, "track event stream test - " + trackEvent.track.kind);
+    };
+
+    pc1.getTransceivers().forEach(transceiver => transceiver.direction = "sendonly");
+    return renegotiate(pc1, pc2);
+}, "Set transceiver as sendonly");
+        </script>
+    </body>
+</html>

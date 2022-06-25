@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <text dominant-baseline="hanging" x="20" y="40" font-size="44px">
+        Foo
+        <animate id="down1" attributeName="y" fill="freeze" begin="indefinite" dur="20ms" to="140"/>
+        <animate id="up1" attributeName="y" fill="freeze" begin="indefinite" dur="20ms" to="40"/>
+    </text>
+    <line x1="200" y1="60" x2="300" y2="60" stroke="green" stroke-width="100">
+        <animate id="down2" attributeName="y1" fill="freeze" begin="indefinite" dur="20ms" to="160"/>
+        <animate id="up2" attributeName="y1" fill="freeze" begin="indefinite" dur="20ms" to="60"/>
+
+        <animate id="down3" attributeName="y2" fill="freeze" begin="indefinite" dur="20ms" to="160"/>
+        <animate id="up3" attributeName="y2" fill="freeze" begin="indefinite" dur="20ms" to="60"/>
+    </line>
+    <marker id="Rectangle" viewBox="0 0 100 100" refX="100" refY="50" markerWidth="100" markerHeight="100" orient="0deg">
+        <rect width="100" height="100" fill="green"/>
+        <animate id="down4" attributeName="orient" fill="freeze" begin="indefinite" dur="20ms" from="0deg" to="180deg"/>
+        <animate id="up4" attributeName="orient" fill="freeze" begin="indefinite" dur="20ms" from="180deg" to="0deg"/>
+    </marker>
+    <line x1="400" y1="160" x2="450" y2="160" stroke-width="1" stroke="white"  marker-end="url(#Rectangle)"/>
+    <script type="text/javascript">
+    <![CDATA[
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        var groups = [
+            { down: "down1", up: "up1" },
+            { down: "down2", up: "up2" },
+            { down: "down3", up: "up3" },
+            { down: "down4", up: "up4" },
+        ];
+
+        var downCount = 0;
+        var upCount = 0;
+
+        for (let group of groups) {
+            let down = document.getElementById(group.down);
+            let up = document.getElementById(group.up);
+
+            down.addEventListener("endEvent", () => {
+                if (++downCount <= groups.length)
+                    toggle(up);
+
+                if (window.testRunner) {
+                    if (downCount == groups.length * 2)
+                        testRunner.notifyDone();
+                }
+            });
+
+            up.addEventListener("endEvent", () => {
+                if (++upCount <= groups.length)
+                    toggle(down);
+            });
+
+            down.beginElement();
+        }
+
+        function toggle(newElement) {
+            newElement.beginElement();
+        }
+    ]]>
+    </script>
+</svg>

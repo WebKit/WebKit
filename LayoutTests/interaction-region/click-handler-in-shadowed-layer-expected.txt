@@ -1,0 +1,34 @@
+ (GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (drawsContent 1)
+      (backgroundColor #FFFFFF)
+      (event region
+        (rect (0,0) width=800 height=600)
+      )
+      (children 1
+        (GraphicsLayer
+          (offsetFromRenderer width=-28 height=-28)
+          (position 72.00 72.00)
+          (bounds 256.00 256.00)
+          (drawsContent 1)
+          (event region
+            (rect (28,28) width=200 height=200)
+
+          (interaction regions [
+            (region
+                (rect (28,28) width=100 height=100)
+)
+            (hasLightBackground 1)
+            (borderRadius 10.00)])
+          )
+        )
+      )
+    )
+  )
+)
+

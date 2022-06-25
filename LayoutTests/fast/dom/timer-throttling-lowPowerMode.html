@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that DOM timers are throttled in low power mode.");
+jsTestIsAsync = true;
+
+let i = 0;
+const maxNestingLevel = 5;
+
+let lowPowerModeEnabled = true;
+debug("Enabling low power mode");
+evalAndLog("internals.setLowPowerModeEnabled(true)");
+
+const timerHandle = setInterval(function() {
+    i++;
+    debug("* Nesting: " + i);
+    if (i >= maxNestingLevel && lowPowerModeEnabled)
+        shouldBeTrue("internals.isTimerThrottled(timerHandle)");
+    else
+        shouldBeFalse("internals.isTimerThrottled(timerHandle)");
+
+    if (i == maxNestingLevel + 1) {
+        debug("");
+        debug("Disabling low power mode");
+        lowPowerModeEnabled = false;
+        evalAndLog("internals.setLowPowerModeEnabled(false)");
+    }
+
+    if (i == 10) {
+        clearInterval(timerHandle);
+        finishJSTest();
+    }
+}, 10);
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

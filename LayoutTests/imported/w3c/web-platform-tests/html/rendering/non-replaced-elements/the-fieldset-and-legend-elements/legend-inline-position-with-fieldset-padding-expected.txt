@@ -1,0 +1,4 @@
+Legend
+
+PASS Test legend's inline-size in a fieldset with inline paddings
+

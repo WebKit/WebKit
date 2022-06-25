@@ -1,0 +1,29 @@
+This tests that speculating other on a branch does not corrupt state.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS foo({f:i}) is "no"
+PASS foo({f:i}) is "yes"
+PASS foo({f:i}) is "yes"
+PASS foo({f:i}) is "yes"
+PASS foo({f:i}) is "yes"
+PASS foo({f:i}) is "yes"
+PASS foo({f:i}) is "yes"
+PASS foo({f:i}) is "yes"
+PASS foo({f:i}) is "yes"
+PASS foo({f:i}) is "yes"
+PASS bar({f:i}) is true
+PASS bar({f:i}) is false
+PASS bar({f:i}) is false
+PASS bar({f:i}) is false
+PASS bar({f:i}) is false
+PASS bar({f:i}) is false
+PASS bar({f:i}) is false
+PASS bar({f:i}) is false
+PASS bar({f:i}) is false
+PASS bar({f:i}) is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

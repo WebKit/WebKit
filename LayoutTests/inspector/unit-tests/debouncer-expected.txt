@@ -1,0 +1,50 @@
+Testing Debouncer functionality.
+
+
+== Running test suite: Debouncer
+-- Running test case: Debouncer.TimeDelay.Same
+PASS: Call was delayed.
+PASS: Arguments length is 2.
+PASS: First argument is 4.
+PASS: Second argument is 'abc'.
+PASS: Debounced function called once.
+
+-- Running test case: Debouncer.TimeDelay.Different
+PASS: Call was delayed.
+PASS: Arguments length is 2.
+PASS: First argument is 4.
+PASS: Second argument is 'abc'.
+PASS: Debounced function called once.
+
+-- Running test case: Debounce.TimeDelay.Zero
+PASS: Call was delayed.
+PASS: Arguments length is 2.
+PASS: First argument is 4.
+PASS: Second argument is 'abc'.
+PASS: Debounced function called once.
+
+-- Running test case: Debounce.MicrotaskDelay
+PASS: Call was delayed.
+PASS: Arguments length is 2.
+PASS: First argument is 4.
+PASS: Second argument is 'abc'.
+PASS: Debounced function called once.
+
+-- Running test case: Debounce.DifferentDelays
+PASS: Call was delayed.
+PASS: Arguments length is 2.
+PASS: First argument is 3.
+PASS: Second argument is 'ert'.
+PASS: Debounced function called once.
+
+-- Running test case: Debounce.Force
+PASS: Call was not delayed.
+PASS: Arguments length is 2.
+PASS: First argument is 2.
+PASS: Second argument is 'fgh'.
+PASS: Debounced function called immediately
+PASS: Debounced function called once.
+
+-- Running test case: Debounce.Cancel
+PASS: Debounced function canceled.
+

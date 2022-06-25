@@ -1,0 +1,83 @@
+#!/usr/bin/env bash
+
+PACKAGES=(
+    # These are dependencies necessary for building WebKitGTK/WPE.
+    alsa-lib
+    autoconf
+    automake
+    bubblewrap
+    cmake
+    file
+    findutils
+    gawk
+    gcc
+    gperf
+    grep
+    groff
+    gst-plugins-base-libs
+    gstreamer
+    gtk-doc
+    gzip
+    intltool
+    itstool
+    lcms2
+    libevent
+    libjpeg-turbo
+    libkate
+    libpng
+    libseccomp
+    libsystemd
+    libtasn1
+    libtool
+    libwebp
+    libxslt
+    m4
+    make
+    ninja
+    openjpeg2
+    patch
+    perl-file-copy-recursive
+    pkg-config
+    sed
+    sqlite
+    texinfo
+    which
+    woff2
+
+    # These are dependencies necessary for running tests.
+    # Note: ruby-json and ruby-highline are available in the AUR.
+    apache
+    curl
+    gdb
+    psmisc
+    pulseaudio
+    python2-psutil
+    ttf-liberation
+
+    # These are dependencies necessary for building with the Flatpak SDK.
+    flatpak
+    python-pipenv
+
+    # These are dependencies necessary for building the jhbuild.
+    # Note: Could not find libegl-mesa.
+    expat
+    git
+    gsettings-desktop-schemas
+    gyp
+    libfdk-aac
+    libproxy
+    libpsl
+    libxcb
+    orc
+    python-setuptools
+    yasm
+
+    # These are dependencies necessary for using webkit-patch.
+    svn
+
+    # These are GStreamer plugins needed to play different media files.
+    gst-plugins-bad
+    gst-plugins-base
+    gst-plugins-good
+    gst-plugins-ugly
+)

@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+
+<input type="text" id="textfield" onfocus="debug('This line should be printed second.');  finishJSTest(); ">
+
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+
+description("This tests makes sure that setting accessibility attributes happens asychronously, so that a caller won't hang if the result is an alert.")
+
+if (window.testRunner && window.accessibilityController) {
+   window.jsTestIsAsync = true;
+   var textfield = accessibilityController.accessibleElementById("textfield");
+   textfield.takeFocus();
+   debug("This line should be printed first");
+} else
+   debug((window.testRunner ? "window.testRunner" : "window.accessibilityController") + " is not present");
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

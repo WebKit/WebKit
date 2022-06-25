@@ -1,0 +1,1 @@
+Tests a display: contents element when selected on computing the style. Test passes if WebKit does not crash. PASS.

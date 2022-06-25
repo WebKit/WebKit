@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div role="grid" id="grid" tabindex="0">
+
+<div role="row" aria-selected="true" id="row0">
+  <span role="gridcell">a</span>
+</div>
+
+<Br><Br>
+
+<div role="row">
+ <span role="gridcell">b</span>
+</div>
+
+<br><br>
+
+<div aria-selected="true" role="row">
+  <span role="gridcell">c</span>
+</div>
+
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+<div id="notifications"></div>
+
+<script>
+
+    description("This tests that the selected rows of a table are exposed correctly and that when they change, a notification is sent.");
+
+    var axTree = 0;
+    function notifyCallback(notification) {  
+        document.getElementById("notifications").innerHTML += "Notification: " + notification + "<br>";
+        if (notification == "AXSelectedRowsChanged") {
+            axTree.removeNotificationListener();
+            finishJSTest();
+        }
+    }
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        document.getElementById("grid").focus();
+
+        axTree = window.accessibilityController.focusedElement;
+
+        var addedNotification = axTree.addNotificationListener(notifyCallback);
+        shouldBe("addedNotification", "true");
+
+        // First row is selected.
+        shouldBeTrue("axTree.selectedRowAtIndex(0).isEqual(axTree.rowAtIndex(0))");
+
+        // Third row is selected.
+        shouldBeTrue("axTree.selectedRowAtIndex(1).isEqual(axTree.rowAtIndex(2))");
+
+        // Change the selected state to ensure the notification is sent.
+        document.getElementById("row0").setAttribute("aria-selected", "false");
+    } else
+        debug("window.accessibilityController is not present");
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

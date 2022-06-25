@@ -1,0 +1,42 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/parsing/flex-basis-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/parsing/flex-basis-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/parsing/flex-basis-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/parsing/flex-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/parsing/flex-direction-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/parsing/flex-direction-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/parsing/flex-direction-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/parsing/flex-flow-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/parsing/flex-flow-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/parsing/flex-flow-shorthand.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/parsing/flex-flow-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/parsing/flex-grow-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/parsing/flex-grow-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/parsing/flex-grow-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/parsing/flex-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/parsing/flex-shorthand.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/parsing/flex-shrink-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/parsing/flex-shrink-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/parsing/flex-shrink-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/parsing/flex-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/parsing/flex-wrap-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/parsing/flex-wrap-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/parsing/flex-wrap-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/parsing/order-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/parsing/order-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/parsing/order-valid.html

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+
+description("Tests that setting a longhand property does not produces a valid shorthand value.");
+
+var shorthands = { "background": ["background-image: url(foo.png)", "background-position-x: 10px", "background-position-y: 10px", "background-size: cover", "background-repeat-x: no-repeat", "background-repeat-y: no-repeat", "background-attachment: scroll", "background-origin: padding-box", "background-clip: padding-box", "background-color: green"] }
+
+for (var shorthand in shorthands) {
+
+    // Test each longhand in isolation.
+    shorthands[shorthand].forEach(function(styleDeclaration) {
+        var description = `Setting style="${styleDeclaration}" should not return a value for element.style.getPropertyValue("${shorthand}").`;
+        var element = document.createElement("div");
+        element.setAttribute("style", styleDeclaration);
+        if (element.style.getPropertyValue(shorthand) === "")
+            testPassed(description);
+        else
+            testFailed(description);
+    });
+}
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

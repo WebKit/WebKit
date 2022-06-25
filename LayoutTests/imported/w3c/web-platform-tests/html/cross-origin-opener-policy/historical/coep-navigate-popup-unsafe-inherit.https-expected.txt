@@ -1,0 +1,6 @@
+
+PASS Popup navigating to same-origin with coop unsafe-inherit/coep
+PASS Popup navigating to same-site with coop unsafe-inherit/coep
+PASS Popup navigating to same-origin with coop unsafe-inherit/no coep
+PASS Popup navigating to same-site with coop unsafe-inherit/no coep
+

@@ -1,0 +1,41 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+    font-size: 24px; 
+}
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    for (i = 0; i < 159; i++) {
+        moveSelectionForwardByCharacterCommand();
+    }
+    for (i = 0; i < 158; i++) {
+        moveSelectionBackwardByCharacterCommand();
+    }
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body>
+<div contenteditable id="root" class="editing">
+<span id="test"><i>F    and seven</i> years <b>  as </b>our fathers  f upon this
+continent, a new nation, conceived &nbsp;&nbsp; in Liberty,                 and dedicated to the
+proposition that all 
+<br>men are created equal.</span>
+</div>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

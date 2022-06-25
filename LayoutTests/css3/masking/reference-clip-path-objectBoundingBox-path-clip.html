@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .clipper {
+            position: absolute;
+            top: 100px;
+            left: 100px;
+            width: 200px;
+            height: 200px;
+            clip-path: url(#clipper);
+            background: lime;
+            margin: 20px;
+        }
+        
+        .clipper > div {
+            position: absolute;
+            top: 100px;
+            left: 100px;
+            width: 200px;
+            height: 200px;
+            background-color: blue;
+        }
+    </style>
+</head>
+<body>
+  <div class="clipper">
+    <div></div>
+  </div>
+    <svg height="0" width="0">
+    <clipPath id="clipper" clipPathUnits="objectBoundingBox">
+      <rect x="0.25" y="0" width="0.5" height="1.5"/>
+    </clipPath>
+  </svg>
+</body>
+</html>

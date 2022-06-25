@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+#test { width: 300px; font-size: 50px; line-height: 10px; border: solid 1px black; padding: 5px; }
+#test span { border: solid 1px red; }
+</style>
+</head>
+<body>
+<p>This test ensures WebKit can place caret after the line even when the line-height is smaller than a line.
+To manually test, click inside the black box outside the red box.
+The caret should be placed at the end of "hello".</p>
+<p>Also test that when you click in the red box above or below the black box, caret is placed at where you clicked.</p>
+<div style="padding: 50px;">
+<div id="test" contenteditable><span>hello</span></div>
+</div>
+<div id="console"></div>
+<script>
+
+var test = document.getElementById('test');
+var span = test.firstChild;
+var textNode = span.firstChild;
+
+function clickAndVerify(title, x, y, expectedOffset) {
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    eventSender.leapForward(500);
+    eventSender.mouseUp();
+
+    var selection = window.getSelection();
+    if (!selection.isCollapsed)
+        testFailed(title + ' - selection was not collapsed');
+    else if (selection.baseNode != textNode)
+        testFailed(title + ' - baseNode was not "' + textNode.textContent + '"');
+    else if (selection.baseOffset != expectedOffset)
+        testFailed(title + ' - caret was at ' + selection.baseOffset + ' but expected to be at ' + expectedOffset);
+    else
+        testPassed(title);
+}
+
+function clickBetweenEachLetterAndVerify(y) {
+    for (var i = 0; i <= textNode.textContent.length; i++) {
+        x = span.offsetLeft + span.offsetWidth * i / 5;
+        x = Math.max(span.offsetLeft + 1, Math.min(span.offsetLeft + span.offsetWidth - 1, x));
+        if (i == textNode.textContent.length)
+            title = 'after "' + textNode.textContent + '"';
+        else
+            title = 'before ' + textNode.textContent.charAt(i);
+        clickAndVerify(title, x, y, i);
+    }
+}
+
+if (window.testRunner && !window.eventSender)
+    testFailed('This test requires eventSender');
+else if (window.testRunner) {
+    testRunner.dumpAsText();
+    clickAndVerify('Click after hello', test.offsetLeft + test.offsetWidth - 5, test.offsetTop + test.offsetHeight / 2, 5);
+    clickAndVerify('Click after hello (top)', test.offsetLeft + test.offsetWidth - 5, test.offsetTop + 1, 5);
+    clickAndVerify('Click after hello (bottom)', test.offsetLeft + test.offsetWidth - 5, test.offsetTop + test.offsetHeight - 1, 5);
+
+    debug('');
+    debug('Click above black box');
+    clickBetweenEachLetterAndVerify(span.offsetTop + 1);
+
+    debug('');
+    debug('Click below black box');
+    clickBetweenEachLetterAndVerify(span.offsetTop + span.offsetHeight - 1);
+
+    test.style.display = 'none';
+}
+
+
+</script>
+</body>
+</html>

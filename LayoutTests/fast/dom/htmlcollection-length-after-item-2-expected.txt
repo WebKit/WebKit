@@ -1,0 +1,11 @@
+This tests accessing the length after accessing the first item in an empty HTMLCollection doesn't cache a wrong length.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS children = container.children; children.item(0) is null
+PASS children.length is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

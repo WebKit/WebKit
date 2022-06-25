@@ -1,0 +1,17 @@
+SVG 1.1 dynamic update tests
+
+Test failed
+Test passed
+Tests dynamic updates of the 'href' attribute of the SVGTRefElement object
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS trefElement.getAttributeNS('http://www.w3.org/1999/xlink', 'href') is "#testFail"
+PASS shadowRoot.textContent is "Test failed"
+PASS trefElement.getAttributeNS('http://www.w3.org/1999/xlink', 'href') is "#testPass"
+PASS shadowRoot.textContent is "Test passed"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

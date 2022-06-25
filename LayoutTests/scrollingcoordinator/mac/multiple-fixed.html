@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            height: 2000px;
+        }
+        .fixed {
+            position: fixed;
+            width: 100%;
+            height: 100px;
+            background-color: green;
+        }
+        
+        .top {
+            top: 0;
+        }
+        .bottom {
+            bottom: 0;
+        }
+    </style>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+        async function scrollTest()
+        {
+            const events = [
+                {
+                    type : "wheel",
+                    viewX : 20,
+                    viewY : 20,
+                    deltaY : -10,
+                    phase : "began"
+                },
+                {
+                    type : "wheel",
+                    deltaY : -1000,
+                    phase : "changed"
+                },
+                {
+                    type : "wheel",
+                    phase : "ended"
+                },
+                {
+                    type : "wheel",
+                    deltaY : -1000,
+                    momentumPhase : "began"
+                },
+                {
+                    type : "wheel",
+                    deltaY : -1000,
+                    momentumPhase : "changed"
+                },
+                {
+                    type : "wheel",
+                    momentumPhase : "ended"
+                }
+            ];
+
+            await UIHelper.mouseWheelSequence({ events: events });
+            testRunner.notifyDone();
+        }
+
+        function startTest()
+        {
+            if (window.eventSender) {
+                testRunner.waitUntilDone();
+                setTimeout(scrollTest, 0);
+            }
+        }
+        
+        window.addEventListener('load', startTest, false);
+    </script>
+</head>
+<body>
+    <div class="fixed top"></div>
+    <div class="fixed bottom"></div>
+</body>
+</html>

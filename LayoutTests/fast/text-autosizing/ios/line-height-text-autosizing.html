@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+    if (window.internals) {
+        internals.settings.setTextAutosizingEnabled(true);
+        internals.settings.setTextAutosizingWindowSizeOverride(320, 480);
+    }
+    </script>
+<script src="../../../resources/js-test-pre.js"></script>
+<style>
+#testDivAdjust {
+  -webkit-text-size-adjust: 150%;
+  font-size: 20px;
+}
+#testDivNoAdjust {
+  font-size: 20px;
+}
+</style>
+</head>
+<boby>
+<div id="testDivNoAdjust">Test</div>
+<div id="testDivAdjust">Test</div>
+<script>
+description("Test the 'line-height' property interaction with '-webkit-text-size-adjust'.");
+
+debug("Case without text size adjust.");
+var testDivNoAdjust = document.getElementById("testDivNoAdjust");
+shouldBeEqualToString("window.getComputedStyle(testDivNoAdjust).getPropertyValue('line-height')", "normal");
+shouldBeEqualToString("window.getComputedStyle(testDivNoAdjust).getPropertyValue('font-size')", "20px");
+evalAndLog("testDivNoAdjust.style['line-height'] = '1.6'");
+// font-size * line-height == 20px * 1.6 == 32px
+shouldBeEqualToString("window.getComputedStyle(testDivNoAdjust).getPropertyValue('line-height')", "32px");
+evalAndLog("testDivNoAdjust.style['line-height'] = '80%'");
+// font-size * line-height == 20px * 80% == 16px
+shouldBeEqualToString("window.getComputedStyle(testDivNoAdjust).getPropertyValue('line-height')", "16px");
+evalAndLog("testDivNoAdjust.style['line-height'] = '12px'");
+shouldBeEqualToString("window.getComputedStyle(testDivNoAdjust).getPropertyValue('line-height')", "12px");
+
+debug("Case with text size adjust.");
+var testDivAdjust = document.getElementById("testDivAdjust");
+if (window.getComputedStyle(testDivAdjust).getPropertyValue('-webkit-text-size-adjust') === "") {
+  debug("Platform does not support  -webkit-text-size-adjust");
+} else {
+  debug("Platform supports -webkit-text-size-adjust");
+  shouldBeEqualToString("window.getComputedStyle(testDivAdjust).getPropertyValue('line-height')", "normal");
+  // font-size * -webkit-text-size-adjust == 20px * 150% == 30px
+  shouldBeEqualToString("window.getComputedStyle(testDivAdjust).getPropertyValue('font-size')", "30px");
+  evalAndLog("testDivAdjust.style['line-height'] = '1.6'");
+  // font-size * line-height == 30px * 1.6 == 48px
+  shouldBeEqualToString("window.getComputedStyle(testDivAdjust).getPropertyValue('line-height')", "48px");
+
+  evalAndLog("testDivAdjust.style['line-height'] = '80%'");
+  // font-size * line-height == 30px * 80% == 24px
+  shouldBeEqualToString("window.getComputedStyle(testDivAdjust).getPropertyValue('line-height')", "24px");
+
+  evalAndLog("testDivAdjust.style['line-height'] = '12px'");
+  // line-height * -webkit-text-size-adjust == 12px * 150% == 18px
+  shouldBeEqualToString("window.getComputedStyle(testDivAdjust).getPropertyValue('line-height')", "18px");
+}
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

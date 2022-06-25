@@ -1,0 +1,12 @@
+<script>
+let isSameOrigin = true;
+try { top.name } catch (e) { isSameOrigin = false; }
+if (isSameOrigin)
+    alert("PASS");
+else
+    console.log("PASS");
+
+var shouldNotifyDone = document.location.search.indexOf("?notifyDone=1") !== -1 && window.testRunner;
+if (shouldNotifyDone)
+    testRunner.notifyDone();
+</script>

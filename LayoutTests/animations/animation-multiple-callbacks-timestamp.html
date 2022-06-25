@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <script>
+        var timestamp1 = 0;
+        var timestamp2 = 0;
+        var currentFrame = 0;
+        const MaxFrames = 10;
+
+        function doAnimation1(timestamp)
+        {
+            if (++currentFrame > MaxFrames) {
+                finishJSTest();
+                return;
+            }
+
+            timestamp1 = timestamp;
+            requestAnimationFrame(doAnimation1);
+            requestAnimationFrame(doAnimation2);
+        }
+
+        function doAnimation2(timestamp)
+        {
+            timestamp2 = timestamp;
+            shouldBe("Math.round(timestamp1)", "Math.round(timestamp2)");
+        }
+
+        window.jsTestIsAsync = true;
+
+        description("Test the timestamps of all the rAF callbacks are the same.");
+        requestAnimationFrame(doAnimation1);
+        requestAnimationFrame(doAnimation2);
+    </script>
+    <script src="../resources/js-test-post.js"></script>
+</body>
+</html>

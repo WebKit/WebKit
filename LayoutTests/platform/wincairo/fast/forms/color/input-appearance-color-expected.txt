@@ -1,0 +1,149 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {H3} at (0,0) size 784x23
+        RenderText {#text} at (0,0) size 163x22
+          text run at (0,0) width 163: "Default Appearance"
+      RenderBlock (anonymous) at (0,41) size 784x47
+        RenderText {#text} at (0,0) size 431x19
+          text run at (0,0) width 431: "List color controls have different appearance if ENABLE(DATALIST)."
+        RenderBR {BR} at (431,15) size 0x0
+        RenderTextControl {INPUT} at (2,22) size 150x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderTextControl {INPUT} at (156,22) size 150x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {H3} at (0,106) size 784x24
+        RenderText {#text} at (0,0) size 162x22
+          text run at (0,0) width 162: "Different Font Sizes"
+      RenderBlock (anonymous) at (0,148) size 784x76
+        RenderText {#text} at (0,0) size 549x19
+          text run at (0,0) width 549: "List color controls have different sizes depending on font sizes. Normal color controls don't."
+        RenderBR {BR} at (549,15) size 0x0
+        RenderTextControl {INPUT} at (2,22) size 212x28 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (216,28) size 4x19
+          text run at (216,28) width 4: " "
+        RenderTextControl {INPUT} at (222,29) size 129x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (353,28) size 4x19
+          text run at (353,28) width 4: " "
+        RenderTextControl {INPUT} at (357,33) size 87x15 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (444,28) size 4x19
+          text run at (444,28) width 4: " "
+        RenderTextControl {INPUT} at (450,22) size 212x28 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (664,28) size 4x19
+          text run at (664,28) width 4: " "
+        RenderTextControl {INPUT} at (2,54) size 129x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (133,53) size 4x19
+          text run at (133,53) width 4: " "
+        RenderTextControl {INPUT} at (137,58) size 87x15 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {H3} at (0,241) size 784x24
+        RenderText {#text} at (0,0) size 124x22
+          text run at (0,0) width 124: "Various Colors"
+      RenderBlock (anonymous) at (0,283) size 784x79
+        RenderTextControl {INPUT} at (2,2) size 150x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (154,3) size 4x19
+          text run at (154,3) width 4: " "
+        RenderTextControl {INPUT} at (160,2) size 150x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (312,3) size 4x19
+          text run at (312,3) width 4: " "
+        RenderTextControl {INPUT} at (318,2) size 150x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (470,3) size 4x19
+          text run at (470,3) width 4: " "
+        RenderTextControl {INPUT} at (476,2) size 150x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (628,3) size 4x19
+          text run at (628,3) width 4: " "
+        RenderTextControl {INPUT} at (2,28) size 150x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (154,29) size 4x19
+          text run at (154,29) width 4: " "
+        RenderTextControl {INPUT} at (160,28) size 150x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (312,29) size 4x19
+          text run at (312,29) width 4: " "
+        RenderTextControl {INPUT} at (318,28) size 150x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (470,29) size 4x19
+          text run at (470,29) width 4: " "
+        RenderTextControl {INPUT} at (476,28) size 150x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (628,29) size 4x19
+          text run at (628,29) width 4: " "
+        RenderTextControl {INPUT} at (2,54) size 150x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (154,55) size 4x19
+          text run at (154,55) width 4: " "
+        RenderTextControl {INPUT} at (160,54) size 150x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {H3} at (0,380) size 784x24
+        RenderText {#text} at (0,0) size 115x22
+          text run at (0,0) width 115: "Arbitrary Size"
+      RenderBlock (anonymous) at (0,422) size 784x31
+        RenderTextControl {INPUT} at (0,0) size 100x30 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+layer at (12,75) size 146x16
+  RenderBlock {DIV} at (2,3) size 146x16
+layer at (166,75) size 146x16
+  RenderBlock {DIV} at (2,3) size 146x16
+layer at (12,181) size 208x22
+  RenderBlock {DIV} at (2,3) size 208x22
+    RenderText {#text} at (0,0) size 72x22
+      text run at (0,0) width 72: "#00FF00"
+layer at (232,188) size 125x13
+  RenderBlock {DIV} at (2,3) size 125x13
+    RenderText {#text} at (0,0) size 43x13
+      text run at (0,0) width 43: "#00FF00"
+layer at (367,192) size 83x9
+  RenderBlock {DIV} at (2,3) size 83x9
+    RenderText {#text} at (0,0) size 30x9
+      text run at (0,0) width 30: "#00FF00"
+layer at (460,181) size 208x22
+  RenderBlock {DIV} at (2,3) size 208x22
+    RenderText {#text} at (0,0) size 72x22
+      text run at (0,0) width 72: "#00FF00"
+layer at (12,213) size 125x13
+  RenderBlock {DIV} at (2,3) size 125x13
+    RenderText {#text} at (0,0) size 43x13
+      text run at (0,0) width 43: "#00FF00"
+layer at (147,217) size 83x9
+  RenderBlock {DIV} at (2,3) size 83x9
+    RenderText {#text} at (0,0) size 30x9
+      text run at (0,0) width 30: "#00FF00"
+layer at (12,297) size 146x16
+  RenderBlock {DIV} at (2,3) size 146x16
+    RenderText {#text} at (0,0) size 51x16
+      text run at (0,0) width 51: "#FF0000"
+layer at (170,297) size 146x16
+  RenderBlock {DIV} at (2,3) size 146x16
+    RenderText {#text} at (0,0) size 51x16
+      text run at (0,0) width 51: "#00FF00"
+layer at (328,297) size 146x16
+  RenderBlock {DIV} at (2,3) size 146x16
+    RenderText {#text} at (0,0) size 51x16
+      text run at (0,0) width 51: "#0000FF"
+layer at (486,297) size 146x16
+  RenderBlock {DIV} at (2,3) size 146x16
+    RenderText {#text} at (0,0) size 55x16
+      text run at (0,0) width 55: "#EC008C"
+layer at (12,323) size 146x16
+  RenderBlock {DIV} at (2,3) size 146x16
+    RenderText {#text} at (0,0) size 51x16
+      text run at (0,0) width 51: "#40e0d0"
+layer at (170,323) size 146x16
+  RenderBlock {DIV} at (2,3) size 146x16
+    RenderText {#text} at (0,0) size 51x16
+      text run at (0,0) width 51: "#FF0000"
+layer at (328,323) size 146x16
+  RenderBlock {DIV} at (2,3) size 146x16
+    RenderText {#text} at (0,0) size 51x16
+      text run at (0,0) width 51: "#00FF00"
+layer at (486,323) size 146x16
+  RenderBlock {DIV} at (2,3) size 146x16
+    RenderText {#text} at (0,0) size 51x16
+      text run at (0,0) width 51: "#0000FF"
+layer at (12,349) size 146x16
+  RenderBlock {DIV} at (2,3) size 146x16
+    RenderText {#text} at (0,0) size 55x16
+      text run at (0,0) width 55: "#EC008C"
+layer at (170,349) size 146x16
+  RenderBlock {DIV} at (2,3) size 146x16
+    RenderText {#text} at (0,0) size 51x16
+      text run at (0,0) width 51: "#40e0d0"
+layer at (10,437) size 96x16
+  RenderBlock {DIV} at (2,7) size 96x16
+    RenderText {#text} at (0,0) size 51x16
+      text run at (0,0) width 51: "#FF0000"

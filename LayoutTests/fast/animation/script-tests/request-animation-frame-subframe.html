@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+    window.requestAnimationFrame(function() {
+        parent.callbackInvoked = true;
+        doWork();
+    });
+
+    function timeoutPromise(interval) {
+        return new Promise((resolve, reject) => {
+            setTimeout(function(){
+                resolve("done");
+            }, interval);
+        });
+    }
+
+    async function doWork() {
+        parent.doDisplay();
+        await timeoutPromise(100);
+        parent.doCheckResult();
+        await timeoutPromise(100);
+        parent.doTestDone();
+    }   
+</script>
+</body>
+</html>

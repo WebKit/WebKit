@@ -1,0 +1,101 @@
+<html>
+<body onload="startTest()">
+
+<script src="../../resources/js-test-pre.js"></script>
+
+<script>
+
+description("This test checks that an iframe that moves between pages with different visibility will have the correct visibility value.");
+
+var jsTestIsAsync = true;
+var window2, iframe;
+var isVisibilityChangeListenerAdded = false;
+var isWindow2VisibilityChangeListenerAdded = false;
+
+function startTest() {
+    if (!window.testRunner)
+        return;
+    testRunner.waitUntilDone();
+
+    debug("Window 1 is loaded");
+
+    if (window.document.hidden) {
+        isVisibilityChangeListenerAdded = true;
+        document.addEventListener("visibilitychange", openWindow, false);
+        return;
+    }
+
+    openWindow();
+}
+
+function openWindow() {
+    debug("Open window 2");
+
+    window2 = window.open("resources/page-visibility-iframe-move-new-page.html");
+    window2.addEventListener("load", window2Loaded, false);
+}
+
+function window2Loaded() {
+    debug("Window 2 is loaded");
+
+    if (window2.document.hidden) {
+        isWindow2VisibilityChangeListenerAdded = true;
+        window2.document.addEventListener("visibilitychange", changePageVisibility, false);
+        return;
+    }
+
+    changePageVisibility();
+}
+
+function changePageVisibility() {
+    debug("Will change visibility of window 1");
+
+    iframe = window2.document.getElementById("iframe");
+
+    shouldBeFalse("window.document.hidden");
+    shouldBeFalse("window2.document.hidden");
+    shouldBeFalse("iframe.contentDocument.hidden");
+
+    if (isVisibilityChangeListenerAdded)
+        document.removeEventListener("visibilitychange", openWindow, false);
+
+    document.addEventListener("visibilitychange", onVisibilityChange, false);
+    if (window.testRunner)
+        window.testRunner.setPageVisibility("hidden");
+}
+
+function onVisibilityChange() {
+    debug("VisibilityChange event is received");
+
+    shouldBeTrue("window.document.hidden");
+    shouldBeFalse("window2.document.hidden");
+    shouldBeFalse("iframe.contentDocument.hidden");
+
+    window.document.adoptNode(iframe);
+    window.document.body.appendChild(iframe);
+
+    debug("Frame is moved")
+    shouldBeTrue("window.document.hidden");
+    shouldBeFalse("window2.document.hidden");
+    shouldBeTrue("iframe.contentDocument.hidden");
+
+    finishTest();
+}
+
+function finishTest() {
+    window2.close();
+    document.removeEventListener("visibilitychange", onVisibilityChange, false);
+    window2.removeEventListener("load", window2Loaded, false);
+
+    if (isWindow2VisibilityChangeListenerAdded)
+        window2.document.removeEventListener("visibilitychange", changePageVisibility, false);
+
+    finishJSTest();
+}
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+
+</body>
+</html>

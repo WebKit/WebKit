@@ -1,0 +1,127 @@
+# Supplemental dependencies
+JSDOMWindow.h: DOMWindowConstructors.idl
+DOMWindowConstructors.idl:
+JSDedicatedWorkerGlobalScope.h: DedicatedWorkerGlobalScopeConstructors.idl
+DedicatedWorkerGlobalScopeConstructors.idl:
+JSExposedStar.h: 
+JSExposedToWorkerAndWindow.h: 
+JSPaintWorkletGlobalScope.h: PaintWorkletGlobalScopeConstructors.idl
+PaintWorkletGlobalScopeConstructors.idl:
+JSServiceWorkerGlobalScope.h: ServiceWorkerGlobalScopeConstructors.idl
+ServiceWorkerGlobalScopeConstructors.idl:
+JSShadowRealmGlobalScope.h: ShadowRealmGlobalScopeConstructors.idl
+ShadowRealmGlobalScopeConstructors.idl:
+JSSharedWorkerGlobalScope.h: SharedWorkerGlobalScopeConstructors.idl
+SharedWorkerGlobalScopeConstructors.idl:
+JSTestCEReactions.h: 
+JSTestCEReactionsStringifier.h: 
+JSTestCallTracer.h: 
+JSTestCallbackFunction.h: 
+JSTestCallbackFunctionRethrow.h: 
+JSTestCallbackFunctionWithThisObject.h: 
+JSTestCallbackFunctionWithTypedefs.h: 
+JSTestCallbackInterface.h: 
+JSTestClassWithJSBuiltinConstructor.h: 
+JSTestConditionalIncludes.h: TestMixinInterface.idl
+TestMixinInterface.idl:
+JSTestConditionallyReadWrite.h: 
+JSTestDOMJIT.h: 
+JSTestDefaultToJSON.h: 
+JSTestDefaultToJSONEnum.h: 
+JSTestDefaultToJSONFilteredByExposed.h: 
+JSTestDefaultToJSONIndirectInheritance.h: 
+JSTestDefaultToJSONInherit.h: 
+JSTestDefaultToJSONInheritFinal.h: 
+JSTestDelegateToSharedSyntheticAttribute.h: 
+JSTestDerivedDictionary.h: 
+JSTestDerivedDictionary2.h: 
+JSTestDictionary.h: 
+JSTestDictionaryWithOnlyConditionalMembers.h: 
+JSTestDomainSecurity.h: 
+JSTestEmptyDictionary.h: 
+JSTestEnabledBySetting.h: TestEnabledBySettingSupplemental.idl
+TestEnabledBySettingSupplemental.idl:
+JSTestEnabledForContext.h: 
+JSTestEventConstructor.h: 
+JSTestEventTarget.h: 
+JSTestException.h: 
+JSTestGenerateAddOpaqueRoot.h: 
+JSTestGenerateIsReachable.h: 
+JSTestGlobalObject.h: BindingTestGlobalConstructors.idl
+BindingTestGlobalConstructors.idl:
+JSTestIndexedSetterNoIdentifier.h: 
+JSTestIndexedSetterThrowingException.h: 
+JSTestIndexedSetterWithIdentifier.h: 
+JSTestInheritedDictionary.h: TestSupplemental.idl
+TestSupplemental.idl:
+JSTestInheritedDictionary2.h: 
+JSTestInterface.h: TestMixinInterface.idl TestSupplemental.idl
+TestMixinInterface.idl:
+TestSupplemental.idl:
+JSTestInterfaceLeadingUnderscore.h: 
+JSTestIterable.h: 
+JSTestJSBuiltinConstructor.h: 
+JSTestLegacyFactoryFunction.h: 
+JSTestLegacyNoInterfaceObject.h: 
+JSTestLegacyOverrideBuiltIns.h: 
+JSTestMapLike.h: 
+JSTestMapLikeWithOverriddenOperations.h: 
+JSTestMixinInterface.h: TestPartialMixinInterface.idl
+TestPartialMixinInterface.idl:
+JSTestNamedAndIndexedSetterNoIdentifier.h: 
+JSTestNamedAndIndexedSetterThrowingException.h: 
+JSTestNamedAndIndexedSetterWithIdentifier.h: 
+JSTestNamedDeleterNoIdentifier.h: 
+JSTestNamedDeleterThrowingException.h: 
+JSTestNamedDeleterWithIdentifier.h: 
+JSTestNamedDeleterWithIndexedGetter.h: 
+JSTestNamedGetterCallWith.h: 
+JSTestNamedGetterNoIdentifier.h: 
+JSTestNamedGetterWithIdentifier.h: 
+JSTestNamedSetterNoIdentifier.h: 
+JSTestNamedSetterThrowingException.h: 
+JSTestNamedSetterWithIdentifier.h: 
+JSTestNamedSetterWithIndexedGetter.h: 
+JSTestNamedSetterWithIndexedGetterAndSetter.h: 
+JSTestNamedSetterWithLegacyOverrideBuiltIns.h: 
+JSTestNamedSetterWithLegacyUnforgeableProperties.h: 
+JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns.h: 
+JSTestNamespaceConst.h: 
+JSTestNamespaceObject.h: TestPartialNamespaceObject.idl
+TestPartialNamespaceObject.idl:
+JSTestNode.h: 
+JSTestObj.h: 
+JSTestOperationBase.h: 
+JSTestOperationConditional.h: TestOperationBase.idl
+TestOperationBase.idl:
+JSTestOverloadedConstructorsWithSequence.h: 
+JSTestPluginInterface.h: 
+JSTestPromiseRejectionEvent.h: 
+JSTestReadOnlyMapLike.h: 
+JSTestReadOnlySetLike.h: 
+JSTestReportExtraMemoryCost.h: 
+JSTestSerializedScriptValueInterface.h: 
+JSTestSetLike.h: 
+JSTestSetLikeWithOverriddenOperations.h: 
+JSTestStandaloneDictionary.h: TestSupplemental.idl
+TestSupplemental.idl:
+JSTestStandaloneEnumeration.h: 
+JSTestStringifier.h: 
+JSTestStringifierAnonymousOperation.h: 
+JSTestStringifierNamedOperation.h: 
+JSTestStringifierOperationImplementedAs.h: 
+JSTestStringifierOperationNamedToString.h: 
+JSTestStringifierReadOnlyAttribute.h: 
+JSTestStringifierReadWriteAttribute.h: 
+JSTestTaggedWrapper.h: 
+JSTestTypedefs.h: 
+JSTestVoidCallbackFunction.h: 
+JSWorkerGlobalScope.h: WorkerGlobalScopeConstructors.idl
+WorkerGlobalScopeConstructors.idl:
+JSWorkletGlobalScope.h: WorkletGlobalScopeConstructors.idl
+WorkletGlobalScopeConstructors.idl:
+# Dictionaries dependencies
+JSTestDerivedDictionary.cpp: TestInheritedDictionary.idl
+JSTestDerivedDictionary2.cpp: TestInheritedDictionary.idl TestInheritedDictionary2.idl
+JSTestEventConstructor.cpp: EventInit.idl
+JSTestPromiseRejectionEvent.cpp: EventInit.idl

@@ -1,0 +1,15 @@
+
+Testing <img id="inside-link">
+PASS cursor is "IBeam"
+
+Testing <img id="cursor-zoom-in">
+PASS cursor is "ZoomIn"
+
+Testing <img id="user-select-none-in-link">
+PASS cursor is "Hand"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+

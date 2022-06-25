@@ -1,0 +1,85 @@
+/*
+* Copyright (C) 2021 Apple Inc. All rights reserved.
+*
+* Redistribution and use in source and binary forms, with or without
+* modification, are permitted provided that the following conditions
+* are met:
+* 1. Redistributions of source code must retain the above copyright
+*    notice, this list of conditions and the following disclaimer.
+* 2. Redistributions in binary form must reproduce the above copyright
+*    notice, this list of conditions and the following disclaimer in the
+*    documentation and/or other materials provided with the distribution.
+*
+* THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+* EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+* PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+* CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+* EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+* PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+* OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+* (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+* OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+// https://www.w3.org/TR/css-typed-om-1/#numeric-factory
+[
+    EnabledBySetting=CSSTypedOMEnabled,
+    Conditional=CSS_TYPED_OM,
+    ImplementedBy=CSSNumericFactory
+] partial namespace DOMCSSNamespace {
+
+    CSSUnitValue number(double value);
+    CSSUnitValue percent(double value);
+
+    // <length>
+    CSSUnitValue em(double value);
+    CSSUnitValue ex(double value);
+    CSSUnitValue ch(double value);
+    CSSUnitValue ic(double value);
+    CSSUnitValue rem(double value);
+    CSSUnitValue lh(double value);
+    CSSUnitValue rlh(double value);
+    CSSUnitValue vw(double value);
+    CSSUnitValue vh(double value);
+    CSSUnitValue vi(double value);
+    CSSUnitValue vb(double value);
+    CSSUnitValue vmin(double value);
+    CSSUnitValue vmax(double value);
+    CSSUnitValue cm(double value);
+    CSSUnitValue mm(double value);
+    CSSUnitValue Q(double value);
+    CSSUnitValue in(double value);
+    CSSUnitValue pt(double value);
+    CSSUnitValue pc(double value);
+    CSSUnitValue px(double value);
+    CSSUnitValue cqw(double value);
+    CSSUnitValue cqh(double value);
+    CSSUnitValue cqi(double value);
+    CSSUnitValue cqb(double value);
+    CSSUnitValue cqmin(double value);
+    CSSUnitValue cqmax(double value);
+
+    // <angle>
+    CSSUnitValue deg(double value);
+    CSSUnitValue grad(double value);
+    CSSUnitValue rad(double value);
+    CSSUnitValue turn(double value);
+
+    // <time>
+    CSSUnitValue s(double value);
+    CSSUnitValue ms(double value);
+
+    // <frequency>
+    CSSUnitValue Hz(double value);
+    CSSUnitValue kHz(double value);
+
+    // <resolution>
+    CSSUnitValue dpi(double value);
+    CSSUnitValue dpcm(double value);
+    CSSUnitValue dppx(double value);
+
+    // <flex>
+    CSSUnitValue fr(double value);
+};

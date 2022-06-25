@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<title>WebVTT rendering, default cue font size transition</title>
+<style>
+html { overflow:hidden }
+body { margin:0 }
+::cue(c) {
+    -o-transition-duration: 0.5s;
+    transition-duration: 0.5s;
+}
+</style>
+<video id="video" width="1280" height="720" autoplay>
+    <source src="../reftest/media/white.webm" type="video/webm">
+    <source src="../reftest/media/white.mp4" type="video/mp4">
+    <track src="support/class.vtt">
+</video>
+<script>
+document.getElementsByTagName('track')[0].track.mode = 'showing';
+</script>
+</html>

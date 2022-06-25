@@ -1,0 +1,26 @@
+<head>
+<base target="_blank">
+<script>
+
+function runTest()
+{
+    // If not running with a test runner, wait for the user to click the button.
+    // They don't need the logic below - They can manually tell if the frame busts into a new tab.
+    if (!window.testRunner)
+        return;
+    
+    if (sessionStorage.frameLoadedOnce) {
+        alert("Test finished with " + testRunner.windowCount() + " windows");
+        testRunner.notifyDone();
+        return;
+    }
+    
+    sessionStorage.frameLoadedOnce = true;
+    location.reload();
+}
+
+</script>
+</head>
+<body onload="runTest();">
+<button onclick="location.reload();">Click to reload. The frame should not bust out into a new window.</button>
+</body>

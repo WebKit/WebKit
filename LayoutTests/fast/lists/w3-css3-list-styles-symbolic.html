@@ -1,0 +1,83 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <style>
+        .test ol { padding-left: 300px; }
+        
+        /* 
+        The following styles are ordered as they appear in section 4.5. of the 
+        Draft 7 November 2002 draft of the CSS3 Lists module <http://www.w3.org/TR/css3-lists/#symbolic>.
+        */
+        
+        ol.asterisks { list-style-type: asterisks; }
+        
+        ol.footnotes { list-style-type: footnotes; }
+    </style>
+    <script src="resources/dump-list.js"></script>
+    <script>
+        function runTest()
+        {
+            if (!window.testRunner)
+                return;
+                
+            testRunner.dumpAsText();
+            filterListsWithReplacement(document.querySelectorAll(".test ol"), testListItemMarkerEqualsListItemText);
+            document.body.removeChild(document.getElementById("description")); // Remove description when running in DRT.
+        }
+        window.onload = runTest;
+    </script>
+</head>
+<body>
+    <h1>CSS3 Symbolic list-style-type</h1>
+    <p id="description">This tests that all of the symbolic CSS3 list-style-types are supported as per <a href="http://www.w3.org/TR/css3-lists/#symbolic">section 4.5 of the spec. CSS3 Lists module</a> (Draft 7 November 2002). This test PASSED if the list item matches its bullet for every list item (below). For example, for the asterisks symbolic system the second &lt;li&gt; (which corresponds to 2 in the standard ordering of the positive integers) should be rendered as: &#x002A;&#x002A; &#x002A;&#x002A;</p>
+    <div class="test">
+        <h2>asterisks</h2>
+        <ol class="asterisks">
+            <li>&#x002A;</li>
+            <li>&#x002A;&#x002A;</li>
+            <li>&#x002A;&#x002A;&#x002A;</li>
+            <li>&#x002A;&#x002A;&#x002A;&#x002A;</li>
+            <li>&#x002A;&#x002A;&#x002A;&#x002A;&#x002A;</li>
+            <li>&#x002A;&#x002A;&#x002A;&#x002A;&#x002A;&#x002A;</li>
+            <li>&#x002A;&#x002A;&#x002A;&#x002A;&#x002A;&#x002A;&#x002A;</li>
+            <li>&#x002A;&#x002A;&#x002A;&#x002A;&#x002A;&#x002A;&#x002A;&#x002A;</li>
+            <li>&#x002A;&#x002A;&#x002A;&#x002A;&#x002A;&#x002A;&#x002A;&#x002A;&#x002A;</li>
+            <li>&#x002A;&#x002A;&#x002A;&#x002A;&#x002A;&#x002A;&#x002A;&#x002A;&#x002A;&#x002A;</li>
+        </ol>
+        <ol class="asterisks" start="0">
+            <li>0</li>
+        </ol>
+        <ol class="asterisks" start="-2">
+            <li>-2</li>
+            <li>-1</li>
+        </ol>
+    </div>
+    
+    <div class="test">
+        <h2>footnotes</h2>
+        <ol class="footnotes">
+            <li>&#x002A;</li>
+            <li>&#x2051;</li>
+            <li>&#x2020;</li>
+            <li>&#x2021;</li>
+            <li>&#x002A;&#x002A;</li>
+            <li>&#x2051;&#x2051;</li>
+            <li>&#x2020;&#x2020;</li>
+            <li>&#x2021;&#x2021;</li>
+            <li>&#x002A;&#x002A;&#x002A;</li>
+            <li>&#x2051;&#x2051;&#x2051;</li>
+            <li>&#x2020;&#x2020;&#x2020;</li>
+            <li>&#x2021;&#x2021;&#x2021;</li>
+            <li>&#x002A;&#x002A;&#x002A;&#x002A;</li>
+            <li>&#x2051;&#x2051;&#x2051;&#x2051;</li>
+        </ol>
+        <ol class="footnotes" start="0">
+            <li>0</li>
+        </ol>
+        <ol class="footnotes" start="-2">
+            <li>-2</li>
+            <li>-1</li>
+        </ol>
+    </div>
+</body>
+</html>

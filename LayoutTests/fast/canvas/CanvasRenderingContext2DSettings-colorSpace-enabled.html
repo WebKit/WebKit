@@ -1,0 +1,27 @@
+<html>
+    <script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+    description("Test that the colorSpace member of CanvasRenderingContext2DSettings is supported.");
+
+    function testColorSpace(settings, expectedColorSpace) {
+        let canvas = document.createElement("canvas");
+        let context = canvas.getContext("2d", settings);
+        window.testSettings = context.getContextAttributes();
+        shouldBeEqualToString("testSettings.colorSpace", "srgb");
+    }
+
+    // Test default value of colorSpace is "srgb".
+    testColorSpace(undefined, "srgb");
+
+    // Test setting colorSpace to "srgb" works.
+    testColorSpace({ colorSpace: "srgb" }, "srgb");
+
+    // Test setting colorSpace to an unsupported value.
+    shouldThrowErrorName(`document.createElement("canvas").getContext("2d", { colorSpace: "foo" })`, "TypeError")
+</script>
+    
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

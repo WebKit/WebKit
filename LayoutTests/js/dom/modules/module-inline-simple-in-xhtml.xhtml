@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description('Test inlined module does not work in XHTML document.');
+
+// Module will be executed asynchronously.
+window.jsTestIsAsync = true;
+</script>
+<script>
+debug('Module is not executed yet.');
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+<script type="module">
+import Cocoa from "./script-tests/module-inline-simple.js";
+var cocoa = new Cocoa();
+
+debug("Module execution is confined in the module environment.");
+shouldBeEqualToString("typeof cocoa", "undefined");
+
+window.exportedCocoa = cocoa;
+shouldBeEqualToString("typeof exportedCocoa", "object");
+shouldBeEqualToString("exportedCocoa.taste()", "awesome");
+finishJSTest();
+</script>
+<script>
+window.addEventListener('load', function () {
+    shouldBe(`window.exportedCocoa`, `undefined`);
+    finishJSTest();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+[%
+   title = "$terms.Bug Change Policies"
+   desc = "Set up $terms.bug change policies"
+%]
+
+[% accept_status = display_value('bug_status', 'IN_PROGRESS') FILTER html %]
+
+[% param_descs = {
+  duplicate_or_move_bug_status => "When $terms.abug is marked as a duplicate of another one " _
+                                  "or is moved to another installation, use this $terms.bug status."
+
+  letsubmitterchoosepriority => "If this is on, then people submitting $terms.bugs can " _
+                                "choose an initial priority for that ${terms.bug}. " _
+                                "If off, then all $terms.bugs initially have the default " _
+                                "priority selected below.",
+
+  letsubmitterchoosemilestone => "If this is on, then people submitting $terms.bugs can " _
+                                 "choose the Target Milestone for that ${terms.bug}. " _
+                                 "If off, then all $terms.bugs initially have the default " _
+                                 "milestone for the product being filed in.",
+
+  musthavemilestoneonaccept => 
+    "If you are using ${field_descs.target_milestone}, do you want to require"
+    _ " that the milestone be set in order for a user to set"
+    _ "  ${terms.abug}'s status to ${accept_status}?",
+
+  commentonchange_resolution => "If this option is on, the user needs to enter a short " _
+                                "comment if the resolution of the $terms.bug changes.",
+
+  commentonduplicate => "If this option is on, the user needs to enter a short comment " _
+                        "if the $terms.bug is marked as duplicate.",
+
+  noresolveonopenblockers => "Don\'t allow $terms.bugs to be resolved as fixed " _
+                             "if they have unresolved dependencies." }
+%]

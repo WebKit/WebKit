@@ -1,0 +1,72 @@
+<!doctype html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<title>Test that sending messages immediately after creating a new connection works.</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<body>
+<script>
+const defaultTimeout = 1000;
+
+promise_test(async t => {
+    if (!window.IPC)
+        return;
+    const testerID = 447;
+    for (const processTarget of IPC.processTargets) {
+        // Test starts here.
+        const [connection, clientConnectionIdentifier] = IPC.createConnectionPair();
+        connection.open();
+        const msgs = [];
+        const numMessages = 10000;
+        for (let v = 0; v < numMessages; v++)
+            msgs.push([{ type: 'uint32_t', value: v + 1}]);
+        let msgName = IPC.messages.IPCConnectionTester_AsyncMessage.name;
+
+        IPC.sendMessage(processTarget, 0, IPC.messages.IPCTester_CreateConnectionTester.name, [
+            { type: 'uint64_t', value: testerID },
+            { type: 'Attachment', value: clientConnectionIdentifier },
+        ]);
+        try {
+            for (let msg of msgs)
+                connection.sendMessage(0, msgName, msg);
+            const reply = connection.sendSyncMessage(0, IPC.messages.IPCConnectionTester_SyncMessage.name, defaultTimeout, [{ type: 'uint32_t', value: 55 }]);
+            const firstResult = reply.arguments[0];
+            assert_equals(firstResult.type, "uint32_t", `for ${ processTarget }`);
+            assert_equals(firstResult.value, 55 + numMessages, `for ${ processTarget }`);
+        } finally {
+            connection.invalidate();
+            IPC.sendSyncMessage(processTarget, 0, IPC.messages.IPCTester_ReleaseConnectionTester.name, defaultTimeout, [{ type: 'uint64_t', value: testerID }]);
+        }
+    }
+}, "Sending async messages from the server immediately after opening a new connection works.");
+
+promise_test(async t => {
+    if (!window.IPC)
+        return;
+    const testerID = 448;
+    for (const processTarget of IPC.processTargets) {
+        // Test starts here.
+        const connectionCount = 5; // FIXME: should be 100, but waiting for messages is slow.
+        for (let i = 0; i < connectionCount; ++i) {
+            const [connection, clientConnectionIdentifier] = IPC.createConnectionPair();
+            connection.open();
+            const messageCount = 3; // FIXME: should be 10000, but waiting for messages is slow.
+            IPC.sendMessage(processTarget, 0, IPC.messages.IPCTester_CreateConnectionTesterAndSendAsyncMessages.name, [
+                { type: 'uint64_t', value: testerID },
+                { type: 'Attachment', value: clientConnectionIdentifier },
+                { type: 'uint32_t', value: messageCount },
+            ]);
+            try {
+                for (let v = 0; v < messageCount; v++) {
+                    const msg = connection.waitForMessage(0, IPC.messages.IPCConnectionTester_AsyncMessage.name, defaultTimeout);
+                    assert_equals(msg[0].type, "uint32_t", `for ${ processTarget }`);
+                    assert_equals(msg[0].value, v, `for ${ processTarget }`);
+
+                }
+            } finally {
+                connection.invalidate();
+                IPC.sendSyncMessage(processTarget, 0, IPC.messages.IPCTester_ReleaseConnectionTester.name, defaultTimeout, [{ type: 'uint64_t', value: testerID }]);
+            }
+        }
+    }
+}, "Sending async messages from the client immediately after opening the connection works.");
+</script>
+</body>

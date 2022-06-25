@@ -1,0 +1,11 @@
+Test the IntersectionObserver timestamp is the same as the timestamp of the rAF callback.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Math.round(animateTimestamp) is Math.round(intersectTimestamp)
+PASS Math.round(animateTimestamp) is Math.round(intersectTimestamp)
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

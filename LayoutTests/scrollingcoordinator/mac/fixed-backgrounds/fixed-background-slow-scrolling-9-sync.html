@@ -1,0 +1,12 @@
+<!DOCTYPE html><!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=false ] -->
+<body style="height: 2000px;">
+<pre id="log"></pre>
+<div style="position: fixed;">
+  <div style="overflow: scroll; width: 80px; height: 80px; opacity: 0.5;">
+     <div style="position: absolute; width: 100px; height: 100px; background: fixed linear-gradient(to bottom right, red, yellow);"></div>
+  </div>
+</div>
+<script>
+if (window.testRunner && window.internals)
+    onload = () => { testRunner.dumpAsText(); log.textContent = internals.scrollingStateTreeAsText() };
+</script>

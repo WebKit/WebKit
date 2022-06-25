@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Tests that lazy image loading doesn't cause Document leaks.");
+jsTestIsAsync = true;
+
+frameDocumentID = 0;
+checkCount = 0;
+popup = null;
+
+function runTest()
+{
+    popup.close();
+    popup = null;
+
+    handle = setInterval(() => {
+        gc();
+        if (!internals.isDocumentAlive(frameDocumentID)) {
+            clearInterval(handle);
+            testPassed("The popup document didn't leak.");
+            finishJSTest();
+        }
+        checkCount++;
+        if (checkCount > 500) {
+            clearInterval(handle);
+            testFailed("The popup document leaked.");
+            finishJSTest();
+        }
+    }, 10);
+}
+
+onload = () => {
+    popup = window.open("resources/lazy-image-loading-document-leak-popup.html");
+    popup.onload = () => {
+        popup.onload = null;
+        frameDocumentID = internals.documentIdentifier(popup.document);
+        shouldBeTrue("internals.isDocumentAlive(frameDocumentID)");
+        setTimeout(runTest, 0);
+    }
+};
+</script>
+</body>
+</html>

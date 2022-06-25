@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("OfflineAudioContext can only be started once.");
+jsTestIsAsync = true;
+
+let context = new OfflineAudioContext(2, 1, 44100);
+context.startRendering().then(() => {
+    context.startRendering().then(() => {
+        testFailed("OfflineAudioContext did not throw when trying to start it again");
+        finishJSTest();
+    }, (e) => {
+        testPassed("OfflineAudioContext threw exception when trying to start it again: " + e);
+        finishJSTest();
+    });
+});
+</script>
+</body>
+</html>

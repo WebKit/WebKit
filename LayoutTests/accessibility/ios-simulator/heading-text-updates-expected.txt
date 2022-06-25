@@ -1,0 +1,75 @@
+This tests that changing the text in headings by four different DOM methods, results on the corresponding text being retrieved via the accessibility property.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+h1
+AXValue: 1
+AXLabel: original text
+h2
+AXValue: 2
+AXLabel: original text
+h3
+AXValue: 3
+AXLabel: original text
+divheading
+AXValue: 2
+AXLabel: original text
+h1
+AXValue: 1
+AXLabel: innerHTML
+h2
+AXValue: 2
+AXLabel: innerHTML
+h3
+AXValue: 3
+AXLabel: innerHTML
+divheading
+AXValue: 2
+AXLabel: innerHTML
+h1
+AXValue: 1
+AXLabel: innerText
+h2
+AXValue: 2
+AXLabel: innerText
+h3
+AXValue: 3
+AXLabel: innerText
+divheading
+AXValue: 2
+AXLabel: innerText
+h1
+AXValue: 1
+AXLabel: textContent
+h2
+AXValue: 2
+AXLabel: textContent
+h3
+AXValue: 3
+AXLabel: textContent
+divheading
+AXValue: 2
+AXLabel: textContent
+h1
+AXValue: 1
+AXLabel: firstChild.data
+h2
+AXValue: 2
+AXLabel: firstChild.data
+h3
+AXValue: 3
+AXLabel: firstChild.data
+divheading
+AXValue: 2
+AXLabel: firstChild.data
+PASS successfullyParsed is true
+
+TEST COMPLETE
+firstChild.data
+
+firstChild.data
+
+firstChild.data
+
+firstChild.data

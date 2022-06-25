@@ -1,0 +1,62 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+layer at (8,19) size 223x146
+  RenderSVGContainer {g} at (12,30) size 403x263
+layer at (8,19) size 223x146
+  RenderSVGContainer {g} at (6,15) size 402x263
+layer at (88,19) size 67x13
+  RenderSVGText {text} at (79,0) size 69x14 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 68x14
+      chunk 1 text run 1 at (88.00,30.00) startOffset 0 endOffset 14 width 67.35: "M, L, L, L, Z,"
+layer at (98,35) size 43x13
+  RenderSVGText {text} at (89,16) size 44x14 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 43x14
+      chunk 1 text run 1 at (98.00,46.00) startOffset 0 endOffset 7 width 42.70: "subpath"
+layer at (88,50) size 64x13
+  RenderSVGText {text} at (79,31) size 65x14 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 65x14
+      chunk 1 text run 1 at (88.00,61.00) startOffset 0 endOffset 13 width 64.02: "M, L, L, L, Z"
+layer at (10,56) size 104x91
+  RenderSVGPath {path} at (4,13) size 192x166 [stroke={[type=SOLID] [color=#000000]}] [data="M 62 56 L 113.962 146 L 10.0385 146 L 62 56 Z M 62 71 L 100.971 138.5 L 23.0289 138.5 L 62 71 Z"]
+layer at (60,54) size 5x5
+  RenderSVGRect {rect} at (6,15) size 8x8 [fill={[type=SOLID] [color=#00C000]}] [x=60.00] [y=54.00] [width=4.00] [height=4.00]
+layer at (112,144) size 5x5
+  RenderSVGRect {rect} at (6,15) size 8x8 [fill={[type=SOLID] [color=#00C000]}] [x=111.96] [y=144.00] [width=4.00] [height=4.00]
+layer at (8,144) size 5x5
+  RenderSVGRect {rect} at (6,15) size 8x8 [fill={[type=SOLID] [color=#00C000]}] [x=8.04] [y=144.00] [width=4.00] [height=4.00]
+layer at (60,69) size 5x5
+  RenderSVGRect {rect} at (6,15) size 8x8 [fill={[type=SOLID] [color=#00C000]}] [x=60.00] [y=69.00] [width=4.00] [height=4.00]
+layer at (99,137) size 5x5
+  RenderSVGRect {rect} at (6,15) size 8x8 [fill={[type=SOLID] [color=#00C000]}] [x=98.97] [y=136.50] [width=4.00] [height=4.00]
+layer at (21,137) size 5x5
+  RenderSVGRect {rect} at (6,15) size 8x8 [fill={[type=SOLID] [color=#00C000]}] [x=21.03] [y=136.50] [width=4.00] [height=4.00]
+layer at (42,151) size 39x13
+  RenderSVGText {text} at (33,132) size 41x14 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 40x14
+      chunk 1 text run 1 at (42.00,162.00) startOffset 0 endOffset 7 width 39.35: "stroked"
+layer at (125,56) size 104x91
+  RenderSVGPath {path} at (6,15) size 188x163 [fill={[type=SOLID] [color=#FF0000] [fill rule=EVEN-ODD]}] [data="M 177 56 L 228.962 146 L 125.038 146 L 177 56 Z M 177 71 L 215.971 138.5 L 138.029 138.5 L 177 71 Z"]
+layer at (175,54) size 5x5
+  RenderSVGRect {rect} at (6,15) size 8x8 [fill={[type=SOLID] [color=#00C000]}] [x=175.00] [y=54.00] [width=4.00] [height=4.00]
+layer at (227,144) size 5x5
+  RenderSVGRect {rect} at (6,15) size 8x8 [fill={[type=SOLID] [color=#00C000]}] [x=226.96] [y=144.00] [width=4.00] [height=4.00]
+layer at (123,144) size 5x5
+  RenderSVGRect {rect} at (6,15) size 8x8 [fill={[type=SOLID] [color=#00C000]}] [x=123.04] [y=144.00] [width=4.00] [height=4.00]
+layer at (175,69) size 5x5
+  RenderSVGRect {rect} at (6,15) size 8x8 [fill={[type=SOLID] [color=#00C000]}] [x=175.00] [y=69.00] [width=4.00] [height=4.00]
+layer at (214,137) size 5x5
+  RenderSVGRect {rect} at (6,15) size 8x8 [fill={[type=SOLID] [color=#00C000]}] [x=213.97] [y=136.50] [width=4.00] [height=4.00]
+layer at (136,137) size 5x5
+  RenderSVGRect {rect} at (6,15) size 8x8 [fill={[type=SOLID] [color=#00C000]}] [x=136.03] [y=136.50] [width=4.00] [height=4.00]
+layer at (162,151) size 25x13
+  RenderSVGText {text} at (153,132) size 26x14 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 25x14
+      chunk 1 text run 1 at (162.00,162.00) startOffset 0 endOffset 6 width 24.68: "filled"
+layer at (10,304) size 263x46
+  RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 264x46
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.7 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (-1,-1) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

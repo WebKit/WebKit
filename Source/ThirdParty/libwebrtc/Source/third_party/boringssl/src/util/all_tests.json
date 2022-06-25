@@ -1,0 +1,49 @@
+[
+  {
+    "cmd": ["crypto/crypto_test"]
+  },
+  {
+    "cmd": ["crypto/crypto_test", "--gtest_also_run_disabled_tests", "--gtest_filter=BNTest.DISABLED_WycheproofPrimality"]
+  },
+  {
+    "cmd": ["crypto/crypto_test", "--gtest_also_run_disabled_tests", "--gtest_filter=RSATest.DISABLED_BlindingCacheConcurrency"],
+    "skip_sde": true
+  },
+  {
+    "cmd": ["crypto/urandom_test"]
+  },
+  {
+    "comment": "Without RDRAND",
+    "cmd": ["crypto/urandom_test"],
+    "env": ["OPENSSL_ia32cap=~0x4000000000000000"]
+  },
+  {
+    "comment": "Potentially with RDRAND, but not Intel",
+    "cmd": ["crypto/urandom_test"],
+    "env": ["OPENSSL_ia32cap=~0x0000000040000000"]
+  },
+  {
+    "comment": "Potentially with RDRAND, and forced to Intel",
+    "cmd": ["crypto/urandom_test"],
+    "env": ["OPENSSL_ia32cap=|0x0000000040000000"]
+  },
+  {
+    "comment": "No RDRAND and without WIPEONFORK",
+    "cmd": ["crypto/urandom_test"],
+    "env": ["OPENSSL_ia32cap=~0x4000000000000000", "BORINGSSL_IGNORE_MADV_WIPEONFORK=1"]
+  },
+  {
+    "comment": "Potentially with RDRAND, but not Intel, and no WIPEONFORK",
+    "cmd": ["crypto/urandom_test"],
+    "env": ["OPENSSL_ia32cap=~0x0000000040000000", "BORINGSSL_IGNORE_MADV_WIPEONFORK=1"]
+  },
+  {
+    "cmd": ["crypto/crypto_test", "--fork_unsafe_buffering", "--gtest_filter=RandTest.*:-RandTest.Fork"]
+  },
+  {
+    "cmd": ["decrepit/decrepit_test"]
+  },
+  {
+    "cmd": ["ssl/ssl_test"]
+  }
+]

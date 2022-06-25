@@ -1,0 +1,34 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (83,76) size 619x361
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGContainer {g} at (83,76) size 619x361
+        RenderSVGText {text} at (50,46) size 90x30 contains 1 chunk(s)
+          RenderSVGInline {a} at (0,0) size 90x30
+            RenderSVGInlineText {#text} at (0,0) size 90x30
+              chunk 1 text run 1 at (50.00,70.00) startOffset 0 endOffset 7 width 90.00: "Visited"
+          RenderSVGInlineText {#text} at (0,0) size 0x0
+        RenderSVGText {text} at (250,46) size 124x30 contains 1 chunk(s)
+          RenderSVGInline {a} at (0,0) size 124x30
+            RenderSVGInlineText {#text} at (0,0) size 124x30
+              chunk 1 text run 1 at (250.00,70.00) startOffset 0 endOffset 9 width 123.60: "Unvisited"
+          RenderSVGInlineText {#text} at (0,0) size 0x0
+        RenderSVGText {text} at (50,116) size 131x30 contains 1 chunk(s)
+          RenderSVGInline {a} at (0,0) size 131x30
+            RenderSVGInlineText {#text} at (0,0) size 131x30
+              chunk 1 text run 1 at (50.00,140.00) startOffset 0 endOffset 8 width 130.80: "Hover me"
+          RenderSVGInlineText {#text} at (0,0) size 0x0
+        RenderSVGText {text} at (250,116) size 171x30 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 171x30
+            chunk 1 text run 1 at (250.00,140.00) startOffset 0 endOffset 12 width 171.00: "And me, too!"
+        RenderSVGText {text} at (80,202) size 268x60 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 268x60
+            chunk 1 text run 1 at (80.00,250.00) startOffset 0 endOffset 9 width 267.60: "Select me"
+    RenderSVGContainer {g} at (16,518) size 380x60
+      RenderSVGText {text} at (10,311) size 228x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 228x36
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 227.40: "$Revision: 1.4 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

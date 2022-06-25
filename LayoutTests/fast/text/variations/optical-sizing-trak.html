@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+#target {
+    display: inline-block;
+    font: 10px "PingFang SC";
+    transform: scale(10);
+    transform-origin: left top;
+    font-optical-sizing: auto;
+}
+</style>
+</head>
+<body>
+<p>
+This test makes sure that 'trak' tables are not honored in fonts that don't have 'STAT' tables. The test passes if the text is rendered identically to the expected file, pixel-per-pixel.
+</p>
+<span id="target">风雨中中国经济定能壮大</span>
+</body>
+</html>

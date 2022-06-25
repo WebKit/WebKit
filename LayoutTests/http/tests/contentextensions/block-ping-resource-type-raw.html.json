@@ -1,0 +1,11 @@
+[
+    {
+        "trigger": {
+            "url-filter": "save-ping.py",
+            "resource-type": ["raw"]
+        },
+        "action": {
+            "type": "block"
+        }
+    }
+]

@@ -1,0 +1,10 @@
+Tests for the Animation.nameChanged event.
+
+
+== Running test suite: Animation.nameChanged
+-- Running test case: Animation.nameChanged.NewString
+PASS: Animation should have the name 'OldName'.
+Changing name...
+
+PASS: Animation should have the name 'NewName'.
+

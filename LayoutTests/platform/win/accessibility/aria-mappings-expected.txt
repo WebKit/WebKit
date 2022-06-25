@@ -1,0 +1,56 @@
+alert role
+alertdialog role
+article role
+dialog role
+document role
+status role
+tooltip role
+tree role
+treeitem role
+
+This tests that each of these ARIA roles have appropriate mappings.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Role for 'body' is: AXRole: AXWebArea
+
+
+role="alert" should give a message with important, and usually time-sensitive, information.
+Role for 'alert' div is: AXRole: alert
+
+
+role="alertdialog" is a dialog which contains an alert message.
+Role for 'alertdialog' div is: AXRole: alert
+
+
+role="article" is a  section of a page that consists of a composition that forms an independent part of a document, page, or site
+Role for 'article' div is: AXRole: AXGroup
+
+
+role="dialog" is an application window that is designed to interrupt the current processing of an application in order to prompt the user to enter information or require a response.
+Role for 'dialog' div is: AXRole: dialog
+
+
+role="document" is a region containing related information that is declared as document content, as opposed to a web application.
+Role for 'document' div is: AXRole: AXGroup
+
+
+role="status" is a container whose content is advisory information for the user but is not important enough to justify an alert, often but not necessarily presented as a status bar.
+Role for 'status' div is: AXRole: status bar
+
+
+role="tooltip" is a contextual popup that displays a description for an element.
+Role for 'tooltip' div is: AXRole: tool tip
+
+
+role="tree" is a type of list that may contain sub-level nested groups that can be collapsed and expanded.
+Role for 'tree' div is: AXRole: outline
+
+
+role="treeitem" is an option item of a tree.
+Role for 'treeitem' div is: AXRole: outline item
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

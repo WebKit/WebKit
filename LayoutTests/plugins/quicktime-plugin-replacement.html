@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../resources/js-test-pre.js"></script>
+        <script>
+            var embed;
+            var orangeURL = "orange.mov";
+            var yellowURL = "yellow.mov";
+
+            function logEvent(event)
+            {
+                debug("<i>EVENT(" + event.type + ")</i>");
+            }
+            
+            function seeked()
+            {
+                debug("");
+                shouldEvaluateTo("embed.GetTime()", embed.GetTimeScale() * 2);
+                evalAndLog("embed.Play()");
+            }
+
+            function playing(event)
+            {
+                embed.removeEventListener("qt_play", playing, true);
+                debug("");
+                logEvent(event);
+                shouldEvaluateTo("embed.GetRate()", 1);
+                evalAndLog("embed.Stop()");
+            }
+            
+            function clearURL(event)
+            {
+                logEvent(event)
+
+                shouldBeTrue("embed.GetURL().indexOf('" + yellowURL + "') != -1");
+
+                debug("<br>** SetURL to an empty string should generate an error.");
+                evalAndLog("embed.SetURL('')");
+            }
+
+            function paused(event)
+            {
+                debug("");
+                logEvent(event)
+                shouldEvaluateTo("embed.GetRate()", 0);
+
+                debug("<br>** SetURL expects a url relative to the original src, not to the document.");
+                embed.addEventListener("qt_canplaythrough", clearURL, true);
+                evalAndLog("embed.SetURL('" + yellowURL + "')");
+            }
+
+            function error(event)
+            {
+                logEvent(event)
+                shouldBeEqualToString("embed.GetURL()", "");
+                shouldBeEqualToString("embed.GetPluginStatus()", "Error");
+                debug("<br>END TEST.");
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }
+
+            function testElement(event)
+            {
+                embed.removeEventListener("qt_canplaythrough", testElement, true);
+                logEvent(event)
+
+                if (window.internals) {
+                    debug("<br>** Test to make sure &lt;video&gt; element is in the shadow DOM.");
+                    evalAndLog("shadowElement = internals.shadowRoot(embed).firstChild");
+                    shouldBeEqualToString("shadowElement.tagName", "VIDEO");
+                    shouldBeEqualToString("internals.shadowPseudoId(shadowElement)", "-webkit-plugin-replacement");
+                } else {
+                    debug("");
+                    testFailed("This test must be run in DRT.");
+                    debug("");
+                }
+
+                debug("<br>** Test for the presence of overridden methods.");
+                var methods = [ "SetURL", "GetURL", "Play", "Stop", "GetRate", "SetRate", "IsFullScreen", 
+                                "ExitFullScreen", "GetPluginStatus", "GetTime", "SetTime", "SeekToDate", "GetDate", 
+                                "GetDuration", "GetTimeScale", "GetMaxTimeLoaded", "GetMaxBytesLoaded", 
+                                "GetMovieSize", "GetTimedMetadataUpdates", "GetAccessLog", "GetErrorLog"
+                              ];
+                for (i = 0; i < methods.length; ++i) {
+                    var type = typeof embed[methods[i]];
+                    if (type == "function")
+                        testPassed("embed." + methods[i] + " is a function.");
+                    else
+                        testFailed("embed." + methods[i] + " should be a function but is \"" + type + "\".");
+                }
+
+                debug("<br>** Test overridden methods.");
+                shouldBeTrue("embed.GetURL().indexOf('" + orangeURL + "') != -1");
+                shouldEvaluateTo("embed.GetDuration()", 300000);
+                shouldEvaluateTo("embed.GetMovieSize()", 24962);
+                shouldEvaluateTo("embed.GetMaxTimeLoaded()", 300000);
+                shouldEvaluateTo("embed.GetMaxBytesLoaded()", 24962);
+                shouldEvaluateTo("embed.GetMovieSize()", 24962);
+                shouldBeEqualToString("embed.GetPluginStatus()", "Playable");
+
+                // "GetDate()" should return the current date, clear seconds and milliseconds 
+                var now = new Date();
+                shouldBeCloseTo("new Date(embed.GetDate()) - new Date()", 0, 100);
+
+                evalAndLog("embed.SetTime(embed.GetTimeScale() * 2)");
+                setTimeout(seeked, 500);
+            }
+            
+            function setup()
+            {
+                if (window.testRunner) {
+                    window.testRunner.waitUntilDone();
+                    window.testRunner.dumpAsText()
+                    window.internals.settings.setQuickTimePluginReplacementEnabled(true);
+                }
+
+                div = document.getElementById("parent");
+
+                debug("<br>** Test 'qtsrc'. src = "  + yellowURL + " qtsrc = " + orangeURL + ", qtsrc should load.");
+                div.innerHTML = '<embed src="resources/' + yellowURL + '" qtsrc="' + orangeURL + '" width="640" height="480" postdomevents=true>';
+                
+                var events = [ "qt_begin", "qt_validated", "qt_enterfullscreen", "qt_exitfullscreen", 
+                                "qt_loadedmetada", "qt_canplay", "qt_ended", "qt_timedmetadataupdated" 
+                              ];
+                embed = div.firstChild;
+                for (i = 0; i < events.length; ++i)
+                    embed.addEventListener(events[i], logEvent, true);
+                embed.addEventListener("qt_canplaythrough", testElement, true);
+                embed.addEventListener("qt_play", playing, true);
+                embed.addEventListener("qt_pause", paused, true);
+                embed.addEventListener("qt_error", error, true);
+            }
+        </script>
+    </head>
+
+    <body onload="setup()">
+        <div id=parent></div>
+        <p>
+        <div id=console></div>
+    </body>
+</html>

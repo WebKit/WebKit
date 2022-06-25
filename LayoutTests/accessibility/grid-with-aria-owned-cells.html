@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div id="content">
+
+<div id="grid" role="grid">
+    <div id="row1" role="row" aria-owns="cell-1-1 cell-1-2 cell-1-3 cell-1-4 cell-1-5 cell-1-6 cell-1-7 cell-1-8 cell-1-9 cell-1-10 cell-1-11 cell-1-12 cell-1-13 cell-1-14 cell-1-15 cell-1-16 cell-1-17 cell-1-18 cell-1-19 cell-1-20 cell-1-21 cell-1-22 cell-1-23 cell-1-24 cell-1-25 cell-1-26 cell-1-27 cell-1-28"></div>
+    <div role="row" aria-owns="cell-2-1 cell-2-2 cell-2-3 cell-2-4 cell-2-5 cell-2-6 cell-2-7 cell-2-8 cell-2-9 cell-2-10 cell-2-11 cell-2-12 cell-2-13 cell-2-14 cell-2-15 cell-2-16 cell-2-17 cell-2-18 cell-2-19 cell-2-20 cell-2-21 cell-2-22 cell-2-23 cell-2-24 cell-2-25 cell-2-26 cell-2-27 cell-2-28"></div>
+    <div id="row3" role="row" aria-owns="cell-3-1 cell-3-2 cell-3-3 cell-3-4 cell-3-5 cell-3-6 cell-3-7 cell-3-8 cell-3-9 cell-3-10 cell-3-11 cell-3-12 cell-3-13 cell-3-14 cell-3-15 cell-3-16 cell-3-17 cell-3-18 cell-3-19 cell-3-20 cell-3-21 cell-3-22 cell-3-23 cell-3-24 cell-3-25 cell-3-26 cell-3-27 cell-3-28"></div>
+    <div role="row" aria-owns="cell-4-1 cell-4-2 cell-4-3 cell-4-4 cell-4-5 cell-4-6 cell-4-7 cell-4-8 cell-4-9 cell-4-10 cell-4-11 cell-4-12 cell-4-13 cell-4-14 cell-4-15 cell-4-16 cell-4-17 cell-4-18 cell-4-19 cell-4-20 cell-4-21 cell-4-22 cell-4-23 cell-4-24 cell-4-25 cell-4-26 cell-4-27 cell-4-28"></div>
+    <div id="row5" role="row" aria-owns="cell-5-1 cell-5-2 cell-5-3 cell-5-4 cell-5-5 cell-5-6 cell-5-7 cell-5-8 cell-5-9 cell-5-10 cell-5-11 cell-5-12 cell-5-13 cell-5-14 cell-5-15 cell-5-16 cell-5-17 cell-5-18 cell-5-19 cell-5-20 cell-5-21 cell-5-22 cell-5-23 cell-5-24 cell-5-25 cell-5-26 cell-5-27 cell-5-28"></div>
+</div>
+
+    <div class="row">
+        <span role="gridcell" class="cell" id="cell-1-1">Hello</span>
+        <span role="gridcell" class="cell" id="cell-1-2">World</span>
+        <span role="gridcell" class="cell" id="cell-1-3">Hello</span>
+        <span role="gridcell" class="cell" id="cell-1-4">World</span>
+        <span role="gridcell" class="cell" id="cell-1-5">Hello</span>
+        <span role="gridcell" class="cell" id="cell-1-6">World</span>
+        <span role="gridcell" class="cell" id="cell-1-7">Hello</span>
+        <span role="gridcell" class="cell" id="cell-1-8">World</span>
+        <span role="gridcell" class="cell" id="cell-1-9">Hello</span>
+        <span role="gridcell" class="cell" id="cell-1-10">World</span>
+        <span role="gridcell" class="cell" id="cell-1-11">Hello</span>
+        <span role="gridcell" class="cell" id="cell-1-12">World</span>
+        <span role="gridcell" class="cell" id="cell-1-13">Hello</span>
+        <span role="gridcell" class="cell" id="cell-1-14">World</span>
+        <span role="gridcell" class="cell" id="cell-1-15">Hello</span>
+        <span role="gridcell" class="cell" id="cell-1-16">World</span>
+        <span role="gridcell" class="cell" id="cell-1-17">Hello</span>
+        <span role="gridcell" class="cell" id="cell-1-18">World</span>
+        <span role="gridcell" class="cell" id="cell-1-19">Hello</span>
+        <span role="gridcell" class="cell" id="cell-1-20">Hello</span>
+        <span role="gridcell" class="cell" id="cell-1-21">Hello</span>
+        <span role="gridcell" class="cell" id="cell-1-22">Hello</span>
+        <span role="gridcell" class="cell" id="cell-1-23">Hello</span>
+        <span role="gridcell" class="cell" id="cell-1-24">Hello</span>
+        <span role="gridcell" class="cell" id="cell-1-25">Hello</span>
+        <span role="gridcell" class="cell" id="cell-1-26">Hello</span>
+        <span role="gridcell" class="cell" id="cell-1-27">Hello</span>
+        <span role="gridcell" class="cell" id="cell-1-28">Hello</span>
+    </div>
+    <div class="row">
+        <span role="gridcell" class="cell" id="cell-2-1">Hello</span>
+        <span role="gridcell" class="cell" id="cell-2-2">World</span>
+        <span role="gridcell" class="cell" id="cell-2-3">Hello</span>
+        <span role="gridcell" class="cell" id="cell-2-4">World</span>
+        <span role="gridcell" class="cell" id="cell-2-5">Hello</span>
+        <span role="gridcell" class="cell" id="cell-2-6">World</span>
+        <span role="gridcell" class="cell" id="cell-2-7">Hello</span>
+        <span role="gridcell" class="cell" id="cell-2-8">World</span>
+        <span role="gridcell" class="cell" id="cell-2-9">Hello</span>
+        <span role="gridcell" class="cell" id="cell-2-10">World</span>
+        <span role="gridcell" class="cell" id="cell-2-11">Hello</span>
+        <span role="gridcell" class="cell" id="cell-2-12">World</span>
+        <span role="gridcell" class="cell" id="cell-2-13">Hello</span>
+        <span role="gridcell" class="cell" id="cell-2-14">World</span>
+        <span role="gridcell" class="cell" id="cell-2-15">Hello</span>
+        <span role="gridcell" class="cell" id="cell-2-16">World</span>
+        <span role="gridcell" class="cell" id="cell-2-17">Hello</span>
+        <span role="gridcell" class="cell" id="cell-2-18">World</span>
+        <span role="gridcell" class="cell" id="cell-2-19">Hello</span>
+        <span role="gridcell" class="cell" id="cell-2-20">Hello</span>
+        <span role="gridcell" class="cell" id="cell-2-21">Hello</span>
+        <span role="gridcell" class="cell" id="cell-2-22">Hello</span>
+        <span role="gridcell" class="cell" id="cell-2-23">Hello</span>
+        <span role="gridcell" class="cell" id="cell-2-24">Hello</span>
+        <span role="gridcell" class="cell" id="cell-2-25">Hello</span>
+        <span role="gridcell" class="cell" id="cell-2-26">Hello</span>
+        <span role="gridcell" class="cell" id="cell-2-27">Hello</span>
+        <span role="gridcell" class="cell" id="cell-2-28">Hello</span>
+    </div>
+    <div class="row">
+        <span role="gridcell" class="cell" id="cell-3-1">Hello</span>
+        <span role="gridcell" class="cell" id="cell-3-2">World</span>
+        <span role="gridcell" class="cell" id="cell-3-3">Hello</span>
+        <span role="gridcell" class="cell" id="cell-3-4">World</span>
+        <span role="gridcell" class="cell" id="cell-3-5">Hello</span>
+        <span role="gridcell" class="cell" id="cell-3-6">World</span>
+        <span role="gridcell" class="cell" id="cell-3-7">Hello</span>
+        <span role="gridcell" class="cell" id="cell-3-8">World</span>
+        <span role="gridcell" class="cell" id="cell-3-9">Hello</span>
+        <span role="gridcell" class="cell" id="cell-3-10">World</span>
+        <span role="gridcell" class="cell" id="cell-3-11">Hello</span>
+        <span role="gridcell" class="cell" id="cell-3-12">World</span>
+        <span role="gridcell" class="cell" id="cell-3-13">Hello</span>
+        <span role="gridcell" class="cell" id="cell-3-14">World</span>
+        <span role="gridcell" class="cell" id="cell-3-15">Hello</span>
+        <span role="gridcell" class="cell" id="cell-3-16">World</span>
+        <span role="gridcell" class="cell" id="cell-3-17">Hello</span>
+        <span role="gridcell" class="cell" id="cell-3-18">World</span>
+        <span role="gridcell" class="cell" id="cell-3-19">Hello</span>
+        <span role="gridcell" class="cell" id="cell-3-20">Hello</span>
+        <span role="gridcell" class="cell" id="cell-3-21">Hello</span>
+        <span role="gridcell" class="cell" id="cell-3-22">Hello</span>
+        <span role="gridcell" class="cell" id="cell-3-23">Hello</span>
+        <span role="gridcell" class="cell" id="cell-3-24">Hello</span>
+        <span role="gridcell" class="cell" id="cell-3-25">Hello</span>
+        <span role="gridcell" class="cell" id="cell-3-26">Hello</span>
+        <span role="gridcell" class="cell" id="cell-3-27">Hello</span>
+        <span role="gridcell" class="cell" id="cell-3-28">Hello</span>
+    </div>
+    <div class="row">
+        <span role="gridcell" class="cell" id="cell-4-1">Hello</span>
+        <span role="gridcell" class="cell" id="cell-4-2">World</span>
+        <span role="gridcell" class="cell" id="cell-4-3">Hello</span>
+        <span role="gridcell" class="cell" id="cell-4-4">World</span>
+        <span role="gridcell" class="cell" id="cell-4-5">Hello</span>
+        <span role="gridcell" class="cell" id="cell-4-6">World</span>
+        <span role="gridcell" class="cell" id="cell-4-7">Hello</span>
+        <span role="gridcell" class="cell" id="cell-4-8">World</span>
+        <span role="gridcell" class="cell" id="cell-4-9">Hello</span>
+        <span role="gridcell" class="cell" id="cell-4-10">World</span>
+        <span role="gridcell" class="cell" id="cell-4-11">Hello</span>
+        <span role="gridcell" class="cell" id="cell-4-12">World</span>
+        <span role="gridcell" class="cell" id="cell-4-13">Hello</span>
+        <span role="gridcell" class="cell" id="cell-4-14">World</span>
+        <span role="gridcell" class="cell" id="cell-4-15">Hello</span>
+        <span role="gridcell" class="cell" id="cell-4-16">World</span>
+        <span role="gridcell" class="cell" id="cell-4-17">Hello</span>
+        <span role="gridcell" class="cell" id="cell-4-18">World</span>
+        <span role="gridcell" class="cell" id="cell-4-19">Hello</span>
+        <span role="gridcell" class="cell" id="cell-4-20">Hello</span>
+        <span role="gridcell" class="cell" id="cell-4-21">Hello</span>
+        <span role="gridcell" class="cell" id="cell-4-22">Hello</span>
+        <span role="gridcell" class="cell" id="cell-4-23">Hello</span>
+        <span role="gridcell" class="cell" id="cell-4-24">Hello</span>
+        <span role="gridcell" class="cell" id="cell-4-25">Hello</span>
+        <span role="gridcell" class="cell" id="cell-4-26">Hello</span>
+        <span role="gridcell" class="cell" id="cell-4-27">Hello</span>
+        <span role="gridcell" class="cell" id="cell-4-28">Hello</span>
+    </div>
+    <div class="row">
+        <span role="gridcell" class="cell" id="cell-5-1">Hello</span>
+        <span role="gridcell" class="cell" id="cell-5-2">World</span>
+        <span role="gridcell" class="cell" id="cell-5-3">Hello</span>
+        <span role="gridcell" class="cell" id="cell-5-4">World</span>
+        <span role="gridcell" class="cell" id="cell-5-5">Hello</span>
+        <span role="gridcell" class="cell" id="cell-5-6">World</span>
+        <span role="gridcell" class="cell" id="cell-5-7">Hello</span>
+        <span role="gridcell" class="cell" id="cell-5-8">World</span>
+        <span role="gridcell" class="cell" id="cell-5-9">Hello</span>
+        <span role="gridcell" class="cell" id="cell-5-10">World</span>
+        <span role="gridcell" class="cell" id="cell-5-11">Hello</span>
+        <span role="gridcell" class="cell" id="cell-5-12">World</span>
+        <span role="gridcell" class="cell" id="cell-5-13">Hello</span>
+        <span role="gridcell" class="cell" id="cell-5-14">World</span>
+        <span role="gridcell" class="cell" id="cell-5-15">Hello</span>
+        <span role="gridcell" class="cell" id="cell-5-16">World</span>
+        <span role="gridcell" class="cell" id="cell-5-17">Hello</span>
+        <span role="gridcell" class="cell" id="cell-5-18">World</span>
+        <span role="gridcell" class="cell" id="cell-5-19">Hello</span>
+        <span role="gridcell" class="cell" id="cell-5-20">Hello</span>
+        <span role="gridcell" class="cell" id="cell-5-21">Hello</span>
+        <span role="gridcell" class="cell" id="cell-5-22">Hello</span>
+        <span role="gridcell" class="cell" id="cell-5-23">Hello</span>
+        <span role="gridcell" class="cell" id="cell-5-24">Hello</span>
+        <span role="gridcell" class="cell" id="cell-5-25">Hello</span>
+        <span role="gridcell" class="cell" id="cell-5-26">Hello</span>
+        <span role="gridcell" class="cell" id="cell-5-27">Hello</span>
+        <span role="gridcell" class="cell" id="cell-5-28">Hello</span>
+    </div>
+
+</div>
+
+<script>
+    if (window.accessibilityController) {
+        let output = "This tests that a grid can use aria-owns to establish parent-child relationships between its rows and cells, even when the cell elements are not descendants of the grid in the DOM hierarchy.\n";
+
+        var table = accessibilityController.accessibleElementById("grid");
+        var row1 = accessibilityController.accessibleElementById("row1");
+        var cell_1_1 = table.cellForColumnAndRow(0, 0);
+        output += expect("row1.childAtIndex(0).isEqual(cell_1_1)", "true");
+        output += expect("cell_1_1.parentElement().isEqual(row1)", "true");
+
+        var row3 = accessibilityController.accessibleElementById("row3");
+        var cell_3_14 = table.cellForColumnAndRow(13, 2);
+        output += expect("row3.childAtIndex(13).isEqual(cell_3_14)", "true");
+        output += expect("cell_3_14.parentElement().isEqual(row3)", "true");
+
+        var row5 = accessibilityController.accessibleElementById("row5");
+        var cell_5_28 = table.cellForColumnAndRow(27, 4);
+        output += expect("row5.childAtIndex(27).isEqual(cell_5_28)", "true");
+        output += expect("cell_5_28.parentElement().isEqual(row5)", "true");
+
+        document.getElementById("content").style.visibility = "hidden";
+        debug(output);
+    }
+</script>
+</body>
+</html>

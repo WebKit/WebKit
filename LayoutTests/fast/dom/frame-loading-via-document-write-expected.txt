@@ -1,0 +1,21 @@
+
+
+--------
+Frame: 'topRow'
+--------
+This page was successfully loaded.
+My protocol is file:
+My referrer is blank
+
+
+--------
+Frame: 'middleRow'
+--------
+Image loaded.
+
+
+--------
+Frame: 'bottomRow'
+--------
+Image loaded.
+

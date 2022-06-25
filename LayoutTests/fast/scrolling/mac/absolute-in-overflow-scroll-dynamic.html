@@ -1,0 +1,75 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        body {
+            height: 1000px;
+        }
+        .container {
+            position: absolute; /* Containing block for the inner absolute */
+            top: 10px;
+            left: 10px;
+        }
+        .scroller {
+            height: 300px;
+            width: 300px;
+            border: 20px solid gray;
+            padding: 5px;
+            overflow: hidden;
+            opacity: 0.8; /* Force stacking context */
+        }
+        
+        body.changed .scroller {
+            overflow: scroll;
+        }
+        
+        .content {
+            width: 200%;
+            height: 300%;
+        }
+        
+        .absolute {
+            position: absolute;
+            top: 100px;
+            left: 50px;
+            height: 200px;
+            width: 200px;
+            background-color: green;
+        }
+    </style>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        async function scrollOverContent()
+        {
+            await UIHelper.renderingUpdate();
+            await UIHelper.mouseWheelScrollAt(50, 50);
+        }
+
+        async function scrollTest()
+        {
+            await scrollOverContent();
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+        
+        async function doTest()
+        {
+            document.body.offsetWidth;
+            document.body.classList.add('changed');
+            setTimeout(scrollTest, 0);
+        }
+
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="scroller">
+            <div class="content">
+                <div class="absolute">
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

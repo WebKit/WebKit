@@ -1,0 +1,56 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # field: Bugzila::Field; the current field being edited
+  #%]
+
+[% title = BLOCK %]
+  Edit the Custom Field '[% field.name FILTER html %]' ([% field.description FILTER html %])
+[% END %]
+
+[% javascript = BLOCK %]
+  [% INCLUDE "admin/custom_fields/cf-js.js.tmpl" %]
+[% END %]
+
+[% PROCESS global/header.html.tmpl
+           title = title
+           onload = "toggleCheckbox(document.getElementById('enter_bug'), 'new_bugmail');"
+           javascript_urls = [ 'js/util.js' ]
+           doc_section = "administering/custom-fields.html#editing-custom-fields"
+           style_urls = ['skins/standard/admin.css']
+%]
+
+<p>
+  Descriptions are a very short string describing the field and will be used as
+  the label for this field in the user interface.
+</p>
+
+<form id="edit_field" action="editfields.cgi" method="GET">
+  [% PROCESS "admin/custom_fields/edit-common.html.tmpl" field = field %]
+
+  <input type="hidden" name="action" value="update">
+  <input type="hidden" name="name" value="[% field.name FILTER html %]">
+  <input type="hidden" name="token" value="[% token FILTER html %]">
+  <input type="submit" id="edit" value="Submit">
+</form>
+
+[% IF field.obsolete %]
+<p>
+  <a href="editfields.cgi?action=del&amp;name=[% field.name FILTER html %]">Remove
+    this custom field from the database.</a><br>
+  This action will only be successful if the custom field has never been used
+  in [% terms.abug %].<br>
+</p>
+[% END %]
+
+<p>
+  <a href="editfields.cgi">Back to the list of existing custom fields</a>
+</p>
+
+[% PROCESS global/footer.html.tmpl %]

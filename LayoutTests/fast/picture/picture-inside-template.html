@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<script src="../../resources/js-test.js"></script>
+<script src="resources/currentSrcHelper.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+function runTest() {
+    shouldBe('document.getElementById("canary").clientWidth', '75');
+    shouldBe('currentSrcFileName("canary")', '"blue_rect.jpg?0"');
+    shouldBe('document.getElementById("simple").clientWidth', '800');
+    shouldBe('currentSrcFileName("simple")', '"image-set-2x.png?2"');
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function removeTemplate() {
+    let container = document.getElementById("container");
+    let template = document.getElementsByTagName("template")[0];
+    container.removeChild(template);
+    let rocketElement = template.content.children[0];
+    container.appendChild(rocketElement);
+    setTimeout(runTest, 100);
+}
+
+window.onload = removeTemplate;
+
+
+</script>
+<!-- A canary image to see that the test is actually working -->
+<img id="canary" src="resources/blue_rect.jpg?0">
+
+<!-- The image source should be selected correctly after remove template element -->
+<div id="container">
+    <template>
+        <picture>
+            <source media="(max-width: 400px)" sizes="400px" srcset="../hidpi/resources/image-set-1x.png?1 400w">
+            <source media="(max-width: 800px)" sizes="800px" srcset="../hidpi/resources/image-set-2x.png?2 800w">
+            <source media="(max-width: 1600px)" sizes="1600px" srcset="resources/image-set-4x.png?3 1600w">
+            <img id="simple" src="resources/blue_rect.jpg?1">
+        </picture>
+    </template>
+</div>

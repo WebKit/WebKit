@@ -1,0 +1,7 @@
+
+PASS self.reportError(1)
+PASS self.reportError(TypeError)
+PASS self.reportError(undefined)
+PASS self.reportError() (without arguments) throws
+PASS self.reportError() doesn't invoke getters
+

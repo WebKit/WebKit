@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests copy/paste of content containing data-detected links.</p>
+<div id="copy" contenteditable="true">
+    <span>Meeting <a href="x-apple-data-detectors://0" dir="ltr" x-apple-data-detectors="true" x-apple-data-detectors-type="calendar-event" x-apple-data-detectors-result="0" style="color: currentcolor; text-decoration-color: rgba(128, 128, 128, 0.38); font-weight: bold;">on Friday 11/6 at 4pm</a> at <a href="x-apple-data-detectors://1" dir="ltr" x-apple-data-detectors="true" x-apple-data-detectors-type="address" x-apple-data-detectors-result="1" style="color: currentcolor; text-decoration-color: rgba(128, 128, 128, 0.38);">1 Apple Park Way, Cupertino CA</a>
+    </span>
+</div>
+<div id="paste" contenteditable="true"></div>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+var copy = document.getElementById("copy");
+copy.focus();
+document.execCommand("SelectAll");
+document.execCommand("Copy");
+
+var paste = document.getElementById("paste");
+paste.focus();
+document.execCommand("Paste");
+
+Markup.description(document.getElementsByTagName('p')[0].textContent);
+Markup.dump('paste');
+</script>
+</body>
+</html>

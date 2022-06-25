@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script>
+        description("Tests that the EventTarget API is no longer working on detached frames.");
+
+        var frame;
+        var innerFrame;
+        var innerFrame2;
+
+        function dispatchClick()
+        {
+            var x = frame.offsetLeft + frame.offsetWidth / 2;
+            var y = frame.offsetTop + frame.offsetHeight / 2;
+
+            eventSender.mouseMoveTo(x, y);
+            eventSender.mouseDown();
+            eventSender.mouseUp();
+        }
+
+        function doTest()
+        {
+            frame = document.getElementById('frame');
+            innerFrame = frame.contentWindow.document.getElementById('frame');
+            innerFrame2 = frame.contentWindow.document.getElementById('frame2');
+
+            shouldBe('internals.lastHandledUserGestureTimestamp()', '0');
+            shouldBe('frame.contentWindow.internals.lastHandledUserGestureTimestamp()', '0');
+            shouldBe('innerFrame.contentWindow.internals.lastHandledUserGestureTimestamp()', '0');
+            shouldBe('innerFrame2.contentWindow.internals.lastHandledUserGestureTimestamp()', '0');
+
+            debug('Dispatching click');
+            dispatchClick();
+
+            shouldNotBe('internals.lastHandledUserGestureTimestamp()', '0');
+            shouldNotBe('frame.contentWindow.internals.lastHandledUserGestureTimestamp()', '0');
+            shouldNotBe('innerFrame.contentWindow.internals.lastHandledUserGestureTimestamp()', '0');
+            // Should have not hit frame2
+            shouldBe('innerFrame2.contentWindow.internals.lastHandledUserGestureTimestamp()', '0');
+        }
+
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <iframe id="frame" srcdoc="
+        <body>
+            <iframe id='frame' srcdoc='
+                Inner frame
+                    '>
+            </iframe>
+            <iframe id='frame2' srcdoc='
+                Inner frame
+                    '>
+            </iframe>
+        </body>">
+    </iframe>
+    <script src="../../resources/js-test-post.js"></script>
+
+</body>
+</html>

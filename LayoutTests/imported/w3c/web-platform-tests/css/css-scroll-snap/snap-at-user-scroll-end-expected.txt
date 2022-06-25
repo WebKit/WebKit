@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: ReferenceError: Can't find variable: action
+CSSScrollSnap
+
+Tests that the window can snap at user scroll end.
+
+Scroll the page vertically and horizontally. Keep scrolling until background has turned yellow.
+Press the button "Done"
+
+
+Harness Error (FAIL), message = ReferenceError: Can't find variable: action
+
+NOTRUN Tests that window should snap at user scroll end.
+

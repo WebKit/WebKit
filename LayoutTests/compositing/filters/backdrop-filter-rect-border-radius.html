@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    img {
+        background-color: green;
+        height: 500px;
+        width: 500px;
+    }
+
+    .backdrop {
+        position: absolute;
+        height: 200px;
+        width: 200px;
+        left: 140px;
+        top: 140px;
+        border-radius: 5px;
+        background-color: rgba(0, 0, 0, 0.2);
+        -webkit-backdrop-filter: saturate(0);
+    }
+    
+    .extender {
+        position: absolute;
+        height: 20px;
+        width: 20px;
+        top: -100px;
+        left: -100px;
+        background-color: blue;
+    }
+}
+</style>
+</head>
+<body>
+	<img>
+	<div class="backdrop">
+	    <div class="extender"></div>
+	</div>
+</body>
+</html>

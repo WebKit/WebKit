@@ -1,0 +1,19 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # subject: subject line of message
+  # recipient: user object for the intended recipient of the message
+  # from: Bugzilla system email address
+  #%]
+
+From: [% from %]
+To: [% recipient.email %]
+Subject: [[% terms.Bugzilla %]] [% subject %]
+X-Bugzilla-Type: whine
+

@@ -1,0 +1,4 @@
+
+
+PASS Test templated video visibility
+

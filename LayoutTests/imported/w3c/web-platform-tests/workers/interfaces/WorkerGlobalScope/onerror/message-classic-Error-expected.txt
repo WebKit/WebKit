@@ -1,0 +1,12 @@
+
+PASS Throw Error in toplevel: classic: listener
+PASS Throw Error in toplevel: classic: handler
+PASS Throw Error in setTimeout-function: classic: listener
+PASS Throw Error in setTimeout-function: classic: handler
+PASS Throw Error in setTimeout-string: classic: listener
+PASS Throw Error in setTimeout-string: classic: handler
+PASS Throw Error in onmessage: classic: listener
+PASS Throw Error in onmessage: classic: handler
+PASS Throw Error in onerror: classic: listener
+PASS Throw Error in onerror: classic: handler
+

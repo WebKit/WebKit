@@ -1,0 +1,8 @@
+
+PASS compileStreaming() on an already-aborted request should reject with AbortError
+PASS compileStreaming() synchronously followed by abort should reject with AbortError
+PASS compileStreaming() asynchronously racing with abort should succeed or reject with AbortError
+PASS instantiateStreaming() on an already-aborted request should reject with AbortError
+PASS instantiateStreaming() synchronously followed by abort should reject with AbortError
+PASS instantiateStreaming() asynchronously racing with abort should succeed or reject with AbortError
+

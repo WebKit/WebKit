@@ -1,0 +1,10 @@
+This tests that a page cannot be scrolled with touch if its body has style overflow:hidden.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+gesture events not implemented on this platform or gesture event scrolling of a document is broken
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

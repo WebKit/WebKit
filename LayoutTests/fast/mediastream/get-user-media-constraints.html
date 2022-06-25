@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Test passing constraints to getUserMedia</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+    <video autoplay playsinline id="localVideo"></video>
+    <script>
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(true);
+
+    promise_test(async (test) => {
+        localVideo.srcObject = await navigator.mediaDevices.getUserMedia({video: {width: {exact: 300}}});
+        await localVideo.play();
+
+        assert_equals(localVideo.videoWidth, 300);
+    }, "Ideal deviceId constraints");
+
+    </script>
+</body>
+</html>

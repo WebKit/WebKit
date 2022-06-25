@@ -1,0 +1,8 @@
+<body><image id=img name=""></image><span>"Tests changing name of an image element. The test passes if WebKit doesn't crash or hit an ssertion."</span>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    
+    img.name = "new name";
+    img.remove();
+</script>

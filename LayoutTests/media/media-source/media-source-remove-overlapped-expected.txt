@@ -1,0 +1,22 @@
+This tests that overlapped samples in the boundaries of removal ranges aren't leaked.
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock"))
+RUN(sourceBuffer.appendBuffer(initSegment))
+EVENT(updateend)
+RUN(sourceBuffer.appendBuffer(samples))
+EVENT(updateend)
+RUN(sourceBuffer.abort())
+RUN(sourceBuffer.appendBuffer(initSegment))
+EVENT(updateend)
+RUN(sourceBuffer.appendBuffer(samples))
+EVENT(updateend)
+RUN(sourceBuffer.remove(sourceBuffer.buffered.start(0), 3.96))
+EVENT(updateend)
+EXPECTED (sourceBuffer.buffered.start(0) <= '4') OK
+RUN(sourceBuffer.remove(sourceBuffer.buffered.start(0), 5))
+EVENT(updateend)
+EXPECTED (sourceBuffer.buffered.length == '0') OK
+END OF TEST
+

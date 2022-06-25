@@ -1,0 +1,11 @@
+WebKit
+This test verifies that text selection does not begin when long pressing on an element that is inside a container with both 'user-select: none' and 'user-drag: element'. To manually run the test, try to select the word 'WebKit' below; the text selection should not change.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getSelection().toString() is ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

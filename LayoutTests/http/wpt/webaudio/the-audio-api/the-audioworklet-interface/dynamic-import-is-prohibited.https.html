@@ -1,0 +1,30 @@
+<!doctype html>
+<title>Tests dynamic-import is prohibited in AudioWorklets</title>
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<script>
+var context;
+promise_setup(async (t) => {
+  context = new AudioContext();
+  const filePath = 'processors/dynamic-import-is-prohibited.js';
+  await context.audioWorklet.addModule(filePath);
+});
+
+const get_error = async (node) => {
+  const event = await new Promise((resolve) => {
+    node.port.onmessage = resolve;
+  });
+  return event.data.error;
+};
+
+promise_test(async (t) => {
+  const options = {
+    numberOfInputs: 0,
+    numberOfOutputs: 1
+  };
+
+  const node = new AudioWorkletNode(context, 'dynamic-import-is-prohibited', options);
+  const error = await get_error(node);
+  assert_equals(error, `TypeError: Dynamic-import is not available in Worklets or ServiceWorkers`);
+}, 'dynamic-import is prohibited in AudioWorklets');
+</script>

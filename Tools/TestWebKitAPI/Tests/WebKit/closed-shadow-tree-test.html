@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<body>
+<shadow-host><span>5</span><span slot="bar">2</span></shadow-host>
+<input type="text">
+<script>
+const shadowRoot = document.querySelector('shadow-host').attachShadow({mode: 'closed'});
+shadowRoot.innerHTML = `
+    <span>1</span>
+    <inner-host>
+        <slot name="bar" slot="foo"><span>FAIL - named slot fallback</span></slot>
+        <span>FAIL - unassigned content</span>
+        <span slot="foo">3</span>
+    </inner-host>
+    <slot><span>FAIL - default slot fallback</span></slot>
+    <span>6</span>`;
+const innerHost = shadowRoot.querySelector('inner-host');
+innerHost.attachShadow({mode: 'closed'}).innerHTML = `
+    <slot name="foo"></slot>
+    <span>4</span>`;
+
+document.addEventListener('testnormalworld', function (event) {
+    alert(window[event.detail] ? `FAIL: ${event.detail} was present in the normal world` : `PASS: ${event.detail} was not present in the normal world`);
+});
+
+</script>
+</body>
+</html>

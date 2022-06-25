@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: NotSupportedError: The operation is not supported.
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x34
+  RenderBlock {HTML} at (0,0) size 800x34
+    RenderBody {BODY} at (8,8) size 784x18
+      RenderBlock {DIV} at (0,0) size 784x0
+      RenderBlock (anonymous) at (0,0) size 784x18
+        RenderInline {SPAN} at (0,0) size 294x18
+          RenderText {#text} at (0,0) size 294x18
+            text run at (0,0) width 294: "This test passes if the renderer does not crash."
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0

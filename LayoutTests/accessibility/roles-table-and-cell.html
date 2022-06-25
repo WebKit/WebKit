@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<!-- ==================================================================================================== -->
+<!-- This tests ARIA table role and cell role work as intended                                            -->
+<!-- ==================================================================================================== -->
+
+<div role="grid" data-role="grid" class="ex">
+    <div role="gridcell" data-role="gridcell" class="ex">data</div>
+    <div role="cell" data-role="cell" class="ex">data2</div>
+    <div role="cell" data-role="cell" class="ex">data3</div>
+</div>
+
+<table role="table" data-role="table" class="ex">
+    <td role="gridcell" data-role="gridcell" class="ex">data</td>
+    <td data-role="cell" class="ex">data2</td>
+    <td role="cell" data-role="cell" class="ex">data3</td>
+</table>
+
+<script>
+    if (window.testRunner && window.accessibilityController) {
+        let output = "This tests that table and cell have the correct ARIA roles.\n";
+
+        let examples = document.querySelectorAll(".ex");
+        for (let i = 0; i < examples.length; i++) {
+            let el = examples[i];
+            el.id = "ex" + i;
+
+            axElement = accessibilityController.accessibleElementById(el.id);
+            if (!axElement)
+                continue;
+
+            let role = axElement.computedRoleString;
+            let contentAttrRoleString = el.getAttribute("role");
+            let note = el.getAttribute("data-note");
+            let out = el.tagName.toLowerCase() + (contentAttrRoleString ? ("[role=\"" + contentAttrRoleString + "\"]") : "") + (note ? note : "");
+            out += ` -> ${role}. `;
+
+            let expectedRole = "";
+            if (el.hasAttribute("data-role"))
+                expectedRole = el.getAttribute("data-role");
+
+            if (role == expectedRole)
+                output += `PASS: ${out}\n`;
+            else
+                output += `FAIL: ${out} Expected: ${expectedRole}.\n`;
+        }
+
+        debug(output);
+        // Once tests are complete, hide all the example markup.
+        examples.forEach((element) => { element.style.display = "none"; });
+    }
+</script>
+</body>
+</html>

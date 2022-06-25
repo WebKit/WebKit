@@ -1,0 +1,27 @@
+<html>
+    <head>
+        <style>
+            div {
+                opacity: 0.5;
+                height: 50%;
+                width: 50%;
+            }
+
+            body > div > div {
+                background-color: green;
+            }
+
+            .composited {
+                width: 100%;
+                height: 50%;
+            }
+        </style>
+    </head>
+    <body>
+        <div><span></span>
+            <div><span></span>
+                <div class="composited"><span></span></div>
+            </div>
+        </div>
+    </body>
+</html>

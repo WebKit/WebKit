@@ -1,0 +1,15 @@
+<!DOCTYPE html><!-- webkit-test-runner [ UsesBackForwardCache=true ] -->
+<html>
+<head>
+<script>
+if (!window.testRunner)
+    document.write("Must be run in WebKitTestRunner");
+else {
+    testRunner.dumpAsText();
+    testRunner.queueLoad("../..//images/resources/green_rectangle.pdf");
+    testRunner.queueLoadingScript('setTimeout("history.back()", 0); testRunner.runUIScript(`uiController.keyDown("", ["leftCommand"])`, () => {});');
+} 
+</script>
+</head>
+<body>PASS did not crash.</body>
+</html>

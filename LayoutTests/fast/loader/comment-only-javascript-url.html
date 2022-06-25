@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+jsTestIsAsync = true;
+var count = 0;
+</script>
+</head>
+<body>
+<script>
+function filtered(url){
+    var parser = document.createElement('a');
+    parser.href = url;
+    if (parser.protocol.indexOf("javascript") == -1) {
+  	    parser.click();
+    }
+}
+
+function unfiltered(url){
+    var parser = document.createElement('a');
+    parser.href = url;
+    if (parser.protocol === "javascript:") {
+  	    parser.click();
+    };
+}
+
+description("Tests that we properly handle JavaScript URLs containing comment characters, newlines, and carriage returns.");
+
+let cases = [ "javascript:alert(count); ++count;",
+    "javascript:// A fun test%0aalert(count); ++count;",
+    "javascript://:%0aalert(count); ++count;",
+    "javascript://:%0dalert(count); ++count;",
+    "javascript://:%0a%0dalert(count); ++count;",
+    "javascript://%0a://%0dalert(count); ++count;",
+    "javascript://%0d//:%0aalert(count); ++count;"
+];
+
+for (var c in cases)
+    filtered(cases[c]);
+
+setTimeout(function () {
+    if (!count)
+        testPassed("No JavaScript URLs executed.");
+    else
+        testFailed("JavaScript URLs were executed.")
+
+    for (var c in cases)
+        unfiltered(cases[c]);
+
+    setTimeout(function() {
+        if (count == cases.length)
+            testPassed("JavaScript URLs were executed.")
+        else
+            testFailed("No JavaScript URLs executed.");
+
+    	finishJSTest();        
+    }, 0);
+}, 0);
+</script>
+</body>
+</html>

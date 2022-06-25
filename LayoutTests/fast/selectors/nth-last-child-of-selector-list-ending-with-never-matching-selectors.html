@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+#test-root * {
+    background-color: red;
+}
+</style>
+<style id="style">
+</style>
+</head>
+<body>
+    <div style="display:none" id="test-root">
+        <testcaseA id="testcase1" attribute1="value1" class="bar baz bazoo" attribute3="value3">Not empty</testcaseA>
+        <testcaseB id="testcase2" class="bar baz bazoo" attribute2="value2" attribute3="value3"></testcaseB>
+        <testcaseA id="testcase3" attribute1="value1" class="foo baz bazoo">Not empty</testcaseA>
+        <testcaseB id="testcase4" attribute1="value1" class="foo bar bazoo">Not empty</testcaseB>
+        <testcaseA id="testcase5" class="foo baz bazoo" attribute2="value2" attribute3="value3">Not empty</testcaseA>
+        <testcaseB id="testcase6" attribute1="value1" class="foo bar baz" attribute3="value3">Not empty</testcaseB>
+        <testcaseA id="testcase7" attribute1="value1" class="bar baz bazoo">Not empty</testcaseA>
+        <testcaseB id="testcase8" attribute1="value1" class="foo baz bazoo">Not empty</testcaseB>
+        <testcaseA id="testcase9" class="foo bar bazoo" attribute2="value2" attribute3="value3"></testcaseA>
+        <testcaseB id="testcase10" attribute1="value1" class="foo bar bazoo" attribute3="value3">Not empty</testcaseB>
+        <testcaseA id="testcase11" attribute1="value1" class="foo bar baz">Not empty</testcaseA>
+        <testcaseB id="testcase12" attribute1="value1" class="bar baz bazoo">Not empty</testcaseB>
+        <testcaseA id="testcase13" attribute1="value1" class="foo baz bazoo" attribute3="value3">Not empty</testcaseA>
+        <testcaseB id="testcase14" class="foo bar baz" attribute2="value2">Not empty</testcaseB>
+        <testcaseA id="testcase15" attribute1="value1" class="foo bar bazoo">Not empty</testcaseA>
+        <testcaseB id="testcase16" attribute1="value1" class="foo bar baz" attribute3="value3">Not empty</testcaseB>
+        <testcaseA id="testcase17" attribute1="value1" class="bar baz bazoo" attribute3="value3">Not empty</testcaseA>
+        <testcaseB id="testcase18" attribute1="value1" class="foo baz bazoo">Not empty</testcaseB>
+        <testcaseA id="testcase19" attribute1="value1" class="foo bar bazoo">Not empty</testcaseA>
+        <testcaseB id="testcase20" class="bar baz bazoo" attribute2="value2" attribute3="value3">Not empty</testcaseB>
+        <testcaseA id="testcase21" attribute1="value1" class="foo bar baz" attribute3="value3"></testcaseA>
+        <testcaseB id="testcase22" attribute1="value1" class="bar baz bazoo">Not empty</testcaseB>
+        <testcaseA id="testcase23" attribute1="value1" class="foo baz bazoo">Not empty</testcaseA>
+        <testcaseB id="testcase24" attribute1="value1" class="foo bar bazoo" attribute3="value3">Not empty</testcaseB>
+        <testcaseA id="testcase25" attribute1="value1" class="foo bar baz" attribute3="value3">Not empty</testcaseA>
+        <testcaseB id="testcase26" attribute1="value1" class="bar baz bazoo">Not empty</testcaseB>
+        <testcaseA id="testcase27" class="foo baz bazoo" attribute2="value2"></testcaseA>
+        <testcaseB id="testcase28" attribute1="value1" class="foo baz bazoo" attribute3="value3">Not empty</testcaseB>
+        <testcaseA id="testcase29" attribute1="value1" class="foo bar bazoo">Not empty</testcaseA>
+        <testcaseB id="testcase30" attribute1="value1" class="foo bar baz">Not empty</testcaseB>
+    </div>
+</body>
+<script>
+description('Check the basic features of the ":nth-last-child(An+B of selectorList)" with a selector which ending with selectors that never match.');
+
+function testQuerySelector(selector, expectedIds) {
+    shouldBe("document.querySelectorAll('" + selector + "').length", '' + expectedIds.length);
+    for (var i = 0; i < expectedIds.length; ++i)
+        shouldBeEqualToString("document.querySelectorAll('" + selector + "')[" + i + "].id", expectedIds[i]);
+}
+
+function testStyling(selector, expectedIds) {
+    var stylingElement = document.getElementById("style");
+    stylingElement.innerHTML = '' + selector + ' { background-color: rgb(10, 100, 200); }';
+
+    var allTestCases = document.querySelectorAll("#test-root *");
+    for (var i = 0; i < allTestCases.length; ++i) {
+        var expectMatch = expectedIds.indexOf(allTestCases[i].id) >= 0;
+        shouldBeEqualToString('getComputedStyle(document.querySelectorAll("#test-root *")[' + i + ']).backgroundColor', expectMatch ? 'rgb(10, 100, 200)' : 'rgb(255, 0, 0)');
+    }
+
+    stylingElement.innerHTML = '';
+}
+
+function testSelector(selector, expectedIds) {
+    debug("Testing \"" + selector + "\"");
+    testQuerySelector("#test-root " + selector, expectedIds);
+    testStyling("#test-root " + selector, expectedIds);
+    debug("");
+}
+
+testSelector(":nth-last-child(n+1 of testcaseA[attribute3], :not(*))", ["testcase1", "testcase5", "testcase9", "testcase13", "testcase17", "testcase21", "testcase25"]);
+testSelector(":nth-last-child(n+1 of testcaseA[attribute3], *:not(*))", ["testcase1", "testcase5", "testcase9", "testcase13", "testcase17", "testcase21", "testcase25"]);
+testSelector(":nth-last-child(n+1 of testcaseA[attribute3], #foo#bar)", ["testcase1", "testcase5", "testcase9", "testcase13", "testcase17", "testcase21", "testcase25"]);
+testSelector(":nth-last-child(n+1 of testcaseA[attribute3], #foo#bar, :not(*), *:not(*), foo:not(*))", ["testcase1", "testcase5", "testcase9", "testcase13", "testcase17", "testcase21", "testcase25"]);
+testSelector(":nth-last-child(n+1 of testcaseA[attribute3], #foo#bar, :not(*), *:not(*), foo:not(*), #foo#bar, :not(*), *:not(*), foo:not(*))", ["testcase1", "testcase5", "testcase9", "testcase13", "testcase17", "testcase21", "testcase25"]);
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

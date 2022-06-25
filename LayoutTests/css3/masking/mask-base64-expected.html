@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <style>
+            p {
+                margin: 0px;
+            }
+            #front {
+                width: 200px;
+                height: 160px;
+                background-color: green;
+                -webkit-mask-repeat: no-repeat;
+                -webkit-mask-origin: content-box;
+                -webkit-mask-clip: content-box;
+            }
+        </style>
+        <script>
+            var sizeX = 50, sizeY = 40, spaceX = 0, spaceY = 0, width = 200, height = 160;
+
+            var urls = Array(), size = Array(), position = Array();
+
+            function addMasks() {
+                for (var x = 0; x < width; x += sizeX + spaceX) {
+                    for (var y = 0; y < height; y += sizeY + spaceY) {
+                        urls.push("url(resources/circle.svg)");
+                        size.push(sizeX + "px " + sizeY + "px");
+                        position.push(x + "px " + y + "px");
+                    }
+                }
+
+                div = document.getElementById("front");
+
+                div.style.cssText += "-webkit-mask-image: " + urls.join(", ") + ";" +
+                                     "-webkit-mask-size: " + size.join(", ")  + ";" +
+                                     "-webkit-mask-position: " + position.join(", ") + ";";
+           }
+       </script>
+    </head>
+
+    <body onload="addMasks()">
+        <p><a href="https://bugs.webkit.org/show_bug.cgi?id=129682">Bug 129682</a> - On success, you should see a 4x4 grid of green circles.</p>
+        <p>This test sets the mask-image value using base64.</p>
+        <div id="front"></div>
+    </body>
+</html>
+

@@ -1,0 +1,6 @@
+
+FAIL Verify that cross origin resources' timings are not exposed when same-origin=>cross-origin=>same-origin redirects have no `Timing-Allow-Origin:` headers. assert_equals: domainLookupStart should be 0 expected 0 but got <nondeterministic test output>
+FAIL Verify that cross origin resources' timings are not exposed when same-origin=>cross-origin=>same-origin redirects have `Timing-Allow-Origin:` headers only on some of the responses. assert_equals: domainLookupStart should be 0 expected 0 but got <nondeterministic test output>
+FAIL Verify that cross origin resources' timings are exposed when cross-origin redirects have `Timing-Allow-Origin: *` headers assert_greater_than: redirectStart should be greater than 0 expected a number greater than 0 but got 0
+PASS Verify that cross origin resources' timings are not exposed when same-origin=>cross-origin=>same-origin redirects have `Timing-Allow-Origin:` headers with a specific origin.
+

@@ -1,0 +1,7 @@
+Rich text
+{
+    "paste": {
+        "text/html": "<!DOCTYPE html><span style=\"...\"\">Rich text</span>",
+        "text/plain": "Rich text"
+    }
+}

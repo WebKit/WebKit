@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration.
+CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration.
+CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration.
+CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration.
+
+FAIL Test that invalid module type assertion leads to TypeError on window. assert_equals: expected function "function TypeError() {
+    [native code]
+}" but got function "function SyntaxError() {
+    [native code]
+}"
+

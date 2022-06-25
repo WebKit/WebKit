@@ -1,0 +1,15 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CSSOMViewSmoothScrollingEnabled=false ] -->
+<html>
+    <head>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        if ("scrollBehavior" in document.documentElement.style)
+            document.write("Fail test scrollBehavior should be invalidate if CSSOMViewSmoothScrollingEnabled is disabled.");
+        else
+            document.write("Pass test scrollBehavior should be invalidate if CSSOMViewSmoothScrollingEnabled is disabled.");
+
+    </script>
+    </head>
+</html>

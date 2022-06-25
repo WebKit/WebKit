@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+    </script>
+
+    <style>
+        * {
+            @\aaa
+        }
+    </style>
+</head>
+<body>
+    <p>
+        Test for crash when the identifier of an at-rule contains unicode escapes.
+        The test passes if it does not cause an assertion failure.
+        [https://bugs.webkit.org/show_bug.cgi?id=134632]
+    </p>
+</body>
+</html>

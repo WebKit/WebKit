@@ -1,0 +1,5 @@
+Test for Bug 20038: REGRESSION (r35151): Can't post comments on flickr.com
+
+
+PASS
+

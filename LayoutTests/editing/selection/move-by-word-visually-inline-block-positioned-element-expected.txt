@@ -1,0 +1,38 @@
+
+======== Move By Word ====
+Test 1, LTR:
+Move right by one word
+"begin start"[0, 6], "abc def"[0, 4], "end ing"[0, 4], "this is float"[0, 5, 8], "this is fixed"[0, 5, 8], "this is relative"[0, 5, 8], "this is absolute"[0, 5, 8, 16]
+Move left by one word
+"this is absolute"[16, 8, 5, 0], "this is relative"[8, 5, 0], "this is fixed"[8, 5, 0], "this is float"[8, 5, 0], "end ing"[4, 0], "abc def"[4, 0], "begin start"[6, 0]
+Test 2, LTR:
+Move right by one word
+"abc def"[0, 4], "end ing"[0, 4], "this is float"[0, 5, 8], "this is fixed"[0, 5, 8], "this is relative"[0, 5, 8], "this is absolute"[0, 5, 8, 16]
+Move left by one word
+"this is absolute"[16, 8, 5, 0], "this is relative"[8, 5, 0], "this is fixed"[8, 5, 0], "this is float"[8, 5, 0], "end ing"[4, 0], "abc def"[4, 0], "begin start"[6, 0]
+Test 3, LTR:
+Move right by one word
+"end ing"[0, 4], "this is float"[0, 5, 8], "this is fixed"[0, 5, 8], "this is relative"[0, 5, 8], "this is absolute"[0, 5, 8, 16]
+Move left by one word
+"this is absolute"[16, 8, 5, 0], "this is relative"[8, 5, 0], "this is fixed"[8, 5, 0], "this is float"[8, 5, 0], "end ing"[4, 0], "abc def"[4, 0], "begin start"[6, 0]
+Test 4, LTR:
+Move right by one word
+"this is float"[0, 5, 8], "this is fixed"[0, 5, 8], "this is relative"[0, 5, 8], "this is absolute"[0, 5, 8, 16]
+Move left by one word
+"this is absolute"[16, 8, 5, 0], "this is relative"[8, 5, 0], "this is fixed"[8, 5, 0], "this is float"[8, 5, 0], "end ing"[4, 0], "abc def"[4, 0], "begin start"[6, 0]
+Test 5, LTR:
+Move right by one word
+"this is fixed"[0, 5, 8], "this is relative"[0, 5, 8], "this is absolute"[0, 5, 8, 16]
+Move left by one word
+"this is absolute"[16, 8, 5, 0], "this is relative"[8, 5, 0], "this is fixed"[8, 5, 0], "this is float"[8, 5, 0], "end ing"[4, 0], "abc def"[4, 0], "begin start"[6, 0]
+Test 6, LTR:
+Move right by one word
+"this is relative"[0, 5, 8], "this is absolute"[0, 5, 8, 16]
+Move left by one word
+"this is absolute"[16, 8, 5, 0], "this is relative"[8, 5, 0], "this is fixed"[8, 5, 0], "this is float"[8, 5, 0], "end ing"[4, 0], "abc def"[4, 0], "begin start"[6, 0]
+Test 7, LTR:
+Move right by one word
+"this is absolute"[0, 5, 8, 16]
+Move left by one word
+"this is absolute"[16, 8, 5, 0], "this is relative"[8, 5, 0], "this is fixed"[8, 5, 0], "this is float"[8, 5, 0], "end ing"[4, 0], "abc def"[4, 0], "begin start"[6, 0]
+

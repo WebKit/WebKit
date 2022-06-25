@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>track-webvtt-snap-to-lines-inline-style</title>
+    <style>
+        .video { 
+            display: inline-block;
+            position: relative;
+            width: 320px;
+            height: 240px;
+        }
+        html { overflow:hidden }
+        body { margin:0 }
+        .cue-box {
+            position: absolute;
+        }
+        .cue {
+            font-family: Ahem, sans-serif;
+            background-color: black;
+            color: green;
+            font-size: 24px;
+        }
+    </style>
+    <script>var requirePixelDump = true;</script>
+    <script src="../video-test.js"></script>
+    <script src="../media-file.js"></script>
+    <script>
+    window.addEventListener('load', async event => {
+        consoleWrite('RUN(video.querySelector("track").src = "captions-webvtt/snap-to-lines-inline-style.vtt")');
+        consoleWrite('RUN(video.textTracks[0].mode = "showing")');
+        consoleWrite('EVENT(load)');
+        consoleWrite('RUN(video.src = findMediaFile("video", "w3c/track/webvtt/media/white"))');
+        consoleWrite('EVENT(canplaythrough)');
+        endTest();
+    });
+    </script>
+</head>
+<body>
+    <div class="video">
+        <div class="cue-box" style="left:0; bottom:0; text-align: left">
+            <span class="cue">Above</span><br>
+            <span class="cue">Left</span>
+        </div>
+        <div class="cue-box" style="right:0; bottom:0; text-align: right">
+            <span class="cue">Above</span><br>
+            <span class="cue">Right</span>
+        </div>
+    </div>
+</body>
+</html>

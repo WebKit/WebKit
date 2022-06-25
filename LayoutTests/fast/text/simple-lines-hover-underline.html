@@ -1,0 +1,23 @@
+<style>
+a { display:inline-block; text-decoration:none }
+a:hover { text-decoration:underline }
+</style>
+<script>
+function test()
+{
+    var target = document.getElementById("target");
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+    if (window.eventSender)
+        eventSender.mouseMoveTo(target.offsetLeft + 10, target.offsetTop + 10);
+}
+function done()
+{
+    document.getElementById("repaintTrigger").style.display = "none";
+    document.offsetLeft;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+<body onload="test()">
+<p id="target"><a href="about:blank" onmouseenter="done()">This text should be underlined when we hover over it.</a><a id="repaintTrigger"> And this text will be removed automatically.</a></p>

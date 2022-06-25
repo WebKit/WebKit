@@ -1,0 +1,15 @@
+This test performs a check that :valid/:invalid CSS psudo selectors are lively applied by HTMLSelectElement::setSelectedIndexByUser.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Change the value of a menulist select by setSelectedIndexByUser:
+PASS backgroundOf(el) is validColor
+PASS backgroundOf(el) is invalidColor
+Change the value of a listbox select by setSelectedIndexByUser:
+PASS backgroundOf(el) is invalidColor
+PASS backgroundOf(el) is validColor
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

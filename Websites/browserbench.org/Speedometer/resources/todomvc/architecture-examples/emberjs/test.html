@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Nacu DOM Bench - Not Another Completely Unrealistic DOM Benchmark</title>
+<script src="../../benchmark.js"></script>
+<script>
+
+BenchmarkRunner.suite({
+    title: 'SimpleEmberJS',
+    url: 'index.html',
+    prepare: function (contentWindow, contentDocument) {
+        contentWindow.Todos.Store = contentWindow.DS.Store.extend({
+            revision: 12,
+            adapter: 'Todos.LSAdapter',
+            commit: function () { }
+        });
+
+        var promise = new SimplePromise;
+
+        function resolveIfReady() {
+            if (contentDocument.querySelector('#new-todo'))
+                return promise.resolve();
+            setTimeout(resolveIfReady, 10);
+        }
+        resolveIfReady();
+
+        return promise;
+    },
+    testSteps: function (contentWindow, contentDocument) {
+        contentDocument.querySelector('#new-todo').focus();
+        var views = contentWindow.Ember.View.views;
+        var emberRun = contentWindow.Ember.run;
+        var numberOfItemsToAdd = 100;
+        return [
+            ['Adding' + numberOfItemsToAdd + 'Items', function () {
+                for (var i = 0; i < numberOfItemsToAdd; i++) {
+                    emberRun(function () { views["new-todo"].set('value', 'Something to do'); });
+                    emberRun(function () { views["new-todo"].insertNewline(document.createEvent('Event')); });
+                }
+            }],
+            ['CompletingAllItems', function () {
+                var checkboxes = contentDocument.querySelectorAll('.ember-checkbox');
+                for (var i = 0; i < checkboxes.length; i++) {
+                    var view = views[checkboxes[i].id];
+                    emberRun(function () { view.set('checked', true); });
+                }
+            }],
+            ['DeletingItems', function () {
+                var deleteButtons = contentDocument.querySelectorAll('.destroy');
+                for (var i = 0; i < deleteButtons.length; i++)
+                    emberRun(function () { deleteButtons[i].click(); });
+            }],
+        ];
+    }
+});
+
+</script>
+</head>
+<body>
+</body>
+</html>

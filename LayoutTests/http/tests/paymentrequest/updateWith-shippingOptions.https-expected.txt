@@ -1,0 +1,4 @@
+
+PASS Calling `updateWith` with a new `shippingOptions` without `requestShipping` should not update any values.
+PASS Calling `updateWith` with a new `shippingOptions` should not update any other values.
+

@@ -1,0 +1,11 @@
+Test that Alt+Space works correctly.
+
+To test manually, press Alt+Space - a menu for resizing the window should appear; the window should not be scrolled.
+
+Also, press other Alt-key combinations, and verify that keypress event is not dispatched.
+
+target - type - ctrlKey,altKey,shiftKey,metaKey - keyIdentifier - keyCode - charCode
+BODY - keydown - false,false,false,false - Alt - 18 - 0
+BODY - keydown - false,false,false,false - U+0020 - 32 - 0
+BODY - keydown - false,false,false,false - U+0058 - 88 - 0
+

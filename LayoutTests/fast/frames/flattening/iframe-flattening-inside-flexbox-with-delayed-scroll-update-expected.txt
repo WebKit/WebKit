@@ -1,0 +1,4 @@
+Test that the layout of a frame-flattened <iframe> inside a flex box doesn't try to modify the list of elements in the main frame that are waiting for a scroll update. This test passed if you see the word PASS below. Otherwise, it failed.
+
+
+PASS

@@ -1,0 +1,31 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<span tabindex="0" id="test" role="unknownrole switch checkbox" aria-checked="true">test</span>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that aria fallback roles work correctly.");
+    if (window.accessibilityController) {
+
+        if (window.accessibilityController) {
+
+            var test = document.getElementById("test");
+            test.focus();
+            test = accessibilityController.focusedElement;
+
+            debug("Role should be: " + test.role);
+        }
+    }
+</script>
+
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

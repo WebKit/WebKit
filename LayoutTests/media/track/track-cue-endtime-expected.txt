@@ -1,0 +1,17 @@
+
+Test to ensure that a cue with an endtime equal to the current time is not active.
+
+RUN(textTrack = video.addTextTrack('subtitles'))
+RUN(textTrack.addCue(new VTTCue(1, 2, 'This should be gone by 2s.')))
+RUN(shouldBeActiveCue = new VTTCue(2, 3, 'This should appear alone at 2s.'))
+RUN(textTrack.addCue(shouldBeActiveCue))
+
+EVENT(canplaythrough)
+RUN(video.currentTime = 2)
+
+EVENT(seeked)
+EXPECTED (activeCues.length == '1') OK
+EXPECTED (shouldBeActiveCue == '[object VTTCue]') OK
+
+END OF TEST
+

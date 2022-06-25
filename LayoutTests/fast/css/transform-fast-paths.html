@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<body>
+    Test test should not trigger any invalid memory accesses when running under ASan.
+
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    var heading = document.createElement("div");
+    heading.style.setProperty("transform", "rotateZ(8deg)");
+    heading.style.setProperty("transform", "rotate(0)");
+    heading.style.setProperty("transform", "translate");
+    heading.style.setProperty("transform", "translate(0px, 1px) rotate(0deg) translate(0px, 0px) rotate(0deg)");
+    heading.style.setProperty("transform", "translate(0px, 1px) rotate(0deg) translate(0px, 0px) rotate(0)");
+    heading.style.setProperty("transform", "translate(0px, 1px) rotate(0deg) translate(0px, 0px) rotate");
+</script>
+</body>
+</html>

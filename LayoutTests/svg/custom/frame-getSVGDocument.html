@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+  description("Tests that HTMLFrameElement and HTMLIFrameElement expose a getSVGDocument accessor");
+
+  if (window.testRunner)
+    testRunner.waitUntilDone();
+
+  var frame;
+  var iframe;
+  var embed;
+  var object;
+  
+  function startTest() {
+    frame = document.createElement("frame");
+    frame.onload = continueTest1;
+    frame.src = "resources/getsvgdocument.svg";
+    document.documentElement.appendChild(frame);
+    shouldBeTrue("!!frame.getSVGDocument");
+  }
+  
+  var continueTest1 = function() {
+    shouldBeEqualToString("frame.getSVGDocument().toString()", "[object XMLDocument]");
+    frame.parentNode.removeChild(frame);
+
+    iframe = document.createElement("iframe");
+    iframe.onload = continueTest2;
+    iframe.src = "resources/getsvgdocument.svg";
+    document.documentElement.appendChild(iframe);
+    shouldBeTrue("!!iframe.getSVGDocument");
+  }
+  
+  var continueTest2 = function() {
+    shouldBeEqualToString("iframe.getSVGDocument().toString()", "[object XMLDocument]");
+    iframe.parentNode.removeChild(iframe);
+
+    embed = document.createElement("embed");
+    embed.onload = continueTest3;
+    embed.src = "resources/getsvgdocument.svg";
+    document.documentElement.appendChild(embed);
+    shouldBeTrue("!!embed.getSVGDocument");
+  }
+  
+  var continueTest3 = function(event) {
+    shouldBeEqualToString("embed.getSVGDocument().toString()", "[object XMLDocument]");
+    embed.parentNode.removeChild(embed);
+
+    object = document.createElement("object");
+    object.onload = continueTest4;
+    object.data = "resources/getsvgdocument.svg";
+    document.documentElement.appendChild(object);
+    shouldBeTrue("!!object.getSVGDocument");
+  }
+
+  function continueTest4() {
+    shouldBeEqualToString("object.getSVGDocument().toString()", "[object XMLDocument]");
+    object.parentNode.removeChild(object);
+    
+    var script = document.createElement('script');
+    script.src = "../../resources/js-test-post.js";
+    script.onload = completeTest;
+    document.body.appendChild(script);
+  }
+
+  function completeTest() {
+    if (window.testRunner)
+      testRunner.notifyDone();
+  }
+  
+  startTest();
+</script>
+</body>
+</html>

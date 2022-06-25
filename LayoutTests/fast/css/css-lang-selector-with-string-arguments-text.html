@@ -1,0 +1,72 @@
+<html>
+<head id="head">
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description("This tests parsing and re-serialization of :lang CSS selector with string arguments");
+
+function parseThenSerializeRule(rule)
+{
+    var styleElement = document.getElementById("style");
+    var head = document.getElementById("head");
+    if (styleElement)
+        head.removeChild(styleElement);
+
+    styleElement = document.createElement("style");
+    styleElement.id = "style";
+    var head = document.getElementById("head");
+    head.appendChild(styleElement);
+    
+    styleElement.appendChild(document.createTextNode(rule));
+    return styleElement.sheet.cssRules[0].cssText;
+}
+
+function expectedSerializedSelector(selector)
+{
+    var args = /\(([^)]+)/.exec(selector);
+    if (!args[1])
+        return;
+
+    args = args[1].split(/\s*,\s*/);
+    var expected = ':lang(';
+    for (var i = 0; i < args.length; ++i) {
+        var arg = args[i];
+        var hasQuotes = arg.indexOf('"') == 0 && arg.lastIndexOf('"') == arg.length - 1;
+        if (!hasQuotes)
+            expected += '"';
+        expected += args[i];
+        if (!hasQuotes)
+            expected += '"';
+        if (i < args.length - 1)
+            expected += ', ';
+    }
+    expected += ')';
+    return expected;
+}
+
+function testSelectorRoundTrip(selector)
+{
+    shouldBe("parseThenSerializeRule('" + selector + " { }')", "'" + expectedSerializedSelector(selector) + " { }'");
+}
+
+testSelectorRoundTrip(':lang("a")');
+testSelectorRoundTrip(':lang("bb", cc)');
+testSelectorRoundTrip(':lang("ddd", eee)');
+testSelectorRoundTrip(':lang("ddd", eee, ffff)');
+testSelectorRoundTrip(':lang("ddd", eee, "ffff")');
+testSelectorRoundTrip(':lang("*-1997")');
+testSelectorRoundTrip(':lang("*-1997", "*-1998")');
+testSelectorRoundTrip(':lang("*-1997", "*-1998", "*-1999")');
+testSelectorRoundTrip(':lang("")');
+
+debug('');
+
+shouldBe("parseThenSerializeRule(':lang(foo, \"bar\", baz) { }')", "':lang(\"foo\", \"bar\", \"baz\") { }'");
+shouldBe("parseThenSerializeRule(':lang(foo,      \"bar\"     , baz) { }')", "':lang(\"foo\", \"bar\", \"baz\") { }'");
+shouldBe("parseThenSerializeRule(':lang(    foo    ,     \"bar\"    ,     baz    ) { }')", "':lang(\"foo\", \"bar\", \"baz\") { }'");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

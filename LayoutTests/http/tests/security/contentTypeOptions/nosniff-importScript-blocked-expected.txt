@@ -1,0 +1,11 @@
+[Worker] Tests that importing scripts with an "X-Content-Type-Options: nosniff" header are blocked if they have a non-script MIME type.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Starting worker: resources/nosniff-importScript-blocked.js
+PASS [Worker] self.scriptsSuccessfullyLoaded is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

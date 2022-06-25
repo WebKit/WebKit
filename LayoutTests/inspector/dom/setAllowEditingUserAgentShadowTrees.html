@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    InspectorTest.debug();
+
+    let userAgentShadowTreeChildNode = null;
+
+    let suite = InspectorTest.createAsyncSuite("DOM.setAllowEditingUserAgentShadowTrees");
+
+    suite.addTestCase({
+        name: "DOM.setAllowEditingUserAgentShadowTrees.Disabled",
+        description: "Check that other DOM commands do not work when disabled.",
+        async test() {
+            await DOMAgent.setAllowEditingUserAgentShadowTrees(false);
+
+            await InspectorTest.expectException(async () => {
+                await DOMAgent.setNodeValue(userAgentShadowTreeChildNode.id, "changed");
+            });
+
+            InspectorTest.expectEqual(userAgentShadowTreeChildNode.nodeValue(), "initial", "Node text content should not have changed.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "DOM.setAllowEditingUserAgentShadowTrees.Enabled",
+        description: "Check that other DOM commands work as expected when enabled.",
+        async test() {
+            await DOMAgent.setAllowEditingUserAgentShadowTrees(true);
+
+            await DOMAgent.setNodeValue(userAgentShadowTreeChildNode.id, "changed");
+
+            InspectorTest.expectEqual(userAgentShadowTreeChildNode.nodeValue(), "changed", "Node text content should have changed.");
+        },
+    });
+
+    WI.domManager.requestDocument((documentNode) => {
+        documentNode.querySelector("#x", (contentNodeId) => {
+            let inputNode = WI.domManager.nodeForId(contentNodeId);
+
+            let fragment = inputNode.shadowRoots()[0];
+            InspectorTest.assert(fragment);
+            InspectorTest.assert(fragment.nodeType() === Node.DOCUMENT_FRAGMENT_NODE);
+
+            fragment.getSubtree(-1, () => {
+                let textContainerNode = fragment.firstChild;
+                InspectorTest.assert(textContainerNode);
+                InspectorTest.assert(textContainerNode.isInUserAgentShadowTree());
+
+                userAgentShadowTreeChildNode = textContainerNode.firstChild;
+                InspectorTest.assert(userAgentShadowTreeChildNode);
+                InspectorTest.assert(userAgentShadowTreeChildNode.nodeType() === Node.TEXT_NODE);
+
+                suite.runTestCasesAndFinish();
+            });
+        });
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for DOM.setAllowEditingUserAgentShadowTrees.</p>
+<input id="x" value="initial">
+</body>
+</html>

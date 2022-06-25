@@ -1,0 +1,12 @@
+Makes sure that upload events are still fired after GC.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS loadstart event fired on XMLHttpRequestUpload: [object XMLHttpRequestProgressEvent]
+PASS onprogress event fired on XMLHttpRequestUpload: [object XMLHttpRequestProgressEvent] [Loaded: 4 Total: 4]
+PASS load event fired on XMLHttpRequestUpload: [object XMLHttpRequestProgressEvent]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

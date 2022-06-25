@@ -1,0 +1,241 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # product: Bugzilla::Product object; The product
+  #
+  # (classification fields available if Param('useclassification') is enabled:)
+  #
+  # classification: Bugzilla::Classification object; The classification 
+  #                                                  the product is in
+  #
+  #%]
+
+[% title = BLOCK %]Delete Product '[% product.name FILTER html %]'
+[% END %]
+
+[% PROCESS global/header.html.tmpl
+  title = title
+  style_urls = ['skins/standard/admin.css']
+%]
+
+<table id="admin_table">
+  <tr class="column_header">
+    <th>Field</th>
+    <th>Value</th>
+  </tr>
+
+  [% IF Param('useclassification') %]
+    <tr>
+      <td>Classification</td>
+      <td>[% classification.name FILTER html %]</td>
+    </tr>
+    <tr>
+      <td>Classification Description</td>
+      <td>
+        [% IF classification.description %]
+          [% classification.description FILTER html_light %]
+        [% ELSE %]
+          <span class="warning">missing</span>
+        [% END %]
+      </td>
+    </tr>
+  [% END %]
+
+  <tr>
+    <td>Product</td>
+    <td>
+      <a href="editproducts.cgi?product=[% product.name FILTER uri %]">
+        [% product.name FILTER html %]
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td>Description</td>
+    <td>[% product.description FILTER html_light %]</td>
+  </tr>
+
+  [% IF Param('usetargetmilestone') %]
+    <tr>
+      <td>Milestone URL</td>
+      <td>
+        [% IF product.milestone_url %]
+          <a href="[% product.milestone_url FILTER html %]">
+            [%- product.milestone_url FILTER html %]
+          </a>
+        [% ELSE %]
+          none
+        [% END %]
+      </td>
+    </tr>
+  [% END %]
+
+  <tr>
+    <td>Closed for [% terms.bugs %]</td>
+    <td>
+      [% IF product.is_active %]
+        open
+      [% ELSE %]
+        closed
+      [% END %]
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      [% IF product.components.size > 0 %]
+        <a href="editcomponents.cgi?product=[% product.name FILTER uri %]"
+           title="Edit components for product '[% product.name FILTER html %]'">
+          Components
+        </a>
+      [% ELSE %]
+        Components
+      [% END %]
+    </td>
+    <td>
+      [% IF product.components.size > 0 %]
+        <table class="no-border">
+          [% FOREACH c = product.components %]
+            <tr>
+              <th>[% c.name FILTER html %]:</th>
+              <td>[% c.description FILTER html_light %]</td>
+            </tr>
+          [% END %]
+        </table>
+      [% ELSE %]
+        none
+      [% END %]
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      [% IF product.versions.size > 0 %]
+        <a href="editversions.cgi?product=[%- product.name FILTER uri %]">
+          Versions
+        </a>
+      [% ELSE %]
+        Versions
+      [% END %]
+    </td>
+    <td>
+      [% IF product.versions.size > 0 %]
+        <div class="multi-columns">
+          [% FOREACH v = product.versions %]
+            [% v.name FILTER html %]<br>
+          [% END %]
+        </div>
+      [% ELSE %]
+        none
+      [% END %]
+    </td>
+  </tr>
+
+
+  [% IF Param('usetargetmilestone') %]
+    <tr>
+      <td>
+        [% IF product.milestones.size > 0 %]
+          <a href="editmilestones.cgi?product=[%- product.name FILTER uri %]">
+            Milestones
+          </a>
+        [% ELSE %]
+          Milestones
+        [% END %]
+      </td>
+      <td>
+        [% IF product.milestones.size > 0 %]
+          <div class="multi-columns">
+            [% FOREACH m = product.milestones %]
+              [% m.name FILTER html %]<br>
+            [% END %]
+          </div>
+        [% ELSE %]
+          none
+        [% END %]
+      </td>
+    </tr>
+  [% END %]
+
+  <tr>
+    <td>[% terms.Bugs %]</td>
+    <td>
+      [% IF product.bug_count %]
+        <a href="buglist.cgi?product=[% product.name FILTER uri %]"
+           title="List of [% terms.bugs %] for product '[% product.name FILTER html %]'">
+          [% product.bug_count FILTER html %]
+        </a>
+      [% ELSE %]
+        none
+      [% END %]
+    </td>
+  </tr>
+</table>
+
+<h2>Confirmation</h2>
+
+[% IF product.bug_count %]
+
+  [% IF !Param("allowbugdeletion") %]
+
+    <p class="confirmation">
+      Sorry, there
+      [% IF product.bug_count > 1 %]
+        are [% product.bug_count FILTER html %] [%+ terms.bugs %]
+      [% ELSE %]
+        is 1 [% terms.bug %]
+      [% END %]
+      outstanding for this product. You must reassign
+      [% IF product.bug_count > 1 %]
+        those [% terms.bugs %]
+      [% ELSE %]
+        that [% terms.bug %]
+      [% END %]
+      to another product before you can delete this one.
+    </p>
+
+  [% ELSE %]
+
+    <p class="confirmation">
+      There
+      [% IF product.bug_count > 1 %]
+        are [% product.bug_count FILTER html %] [%+ terms.bugs %]
+      [% ELSE %]
+        is 1 [% terms.bug %]
+      [% END %]
+      entered for this product!  When you delete this product, <b>ALL</b>
+      stored [% terms.bugs %] and their history will be deleted, too.
+    </p>
+
+  [% END %]
+
+[% END %]
+
+[% Hook.process("confirmation") %]
+
+[% IF product.bug_count == 0 || Param('allowbugdeletion') %]
+
+  <p>Do you really want to delete this product?</p>
+
+  <form method="post" action="editproducts.cgi">
+    <input type="checkbox" id="delete_series" name="delete_series" value=1>
+    <label for="delete_series">
+      Delete all related series (you can also delete them later, by visiting
+      the <a href="chart.cgi?category=[% product.name FILTER html %]">New Charts page</a>.)
+    </label><p>
+    <input type="submit" id="delete" value="Yes, delete">
+    <input type="hidden" name="action" value="delete">
+    <input type="hidden" name="product" value="[% product.name FILTER html %]">
+    <input type="hidden" name="token" value="[% token FILTER html %]">
+  </form>
+
+[% END %]
+
+[% PROCESS admin/products/footer.html.tmpl %]
+
+[% PROCESS global/footer.html.tmpl %]

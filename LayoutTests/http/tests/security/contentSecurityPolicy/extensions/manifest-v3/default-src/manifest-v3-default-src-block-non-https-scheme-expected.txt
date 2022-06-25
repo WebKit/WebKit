@@ -1,0 +1,3 @@
+ALERT: PASS successfully blocked blob-URL script.
+
+Tests CSP for manifest v3 extensions does not permit non https schemes

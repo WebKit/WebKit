@@ -1,0 +1,26 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x128
+  RenderBlock {HTML} at (0,0) size 800x128
+    RenderBody {BODY} at (8,8) size 784x112
+layer at (8,8) size 80x112
+  RenderBlock (relative positioned) {DIV} at (0,0) size 80x112 [bgcolor=#D3D3D3]
+    RenderNamedFlowFragment at (0,16) size 80x96
+layer at (8,8) size 67x18
+  RenderBlock (positioned) at (0,0) size 67x18
+    RenderText at (0,0) size 67x18
+      text run at (0,0) width 67: "BEFORE"
+layer at (32,102) size 56x18
+  RenderBlock (positioned) at (24,94) size 56x18
+    RenderText at (0,0) size 56x18
+      text run at (0,0) width 56: "AFTER"
+Named flows
+  Named flow 'namedFlow'
+    layer at (0,0) size 80x96
+      RenderNamedFlowThread at (0,0) size 80x96
+        RenderBlock {P} at (0,16) size 80x36
+          RenderText {#text} at (0,0) size 76x35
+            text run at (0,0) width 76: "some text to"
+            text run at (0,18) width 29: "flow"
+    Regions for named flow 'namedFlow'
+      RenderNamedFlowFragment (anonymous child of {DIV} #region)

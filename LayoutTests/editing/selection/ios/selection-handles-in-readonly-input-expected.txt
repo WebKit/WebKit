@@ -1,0 +1,10 @@
+
+Initial selected range: (0, 2)
+Final selected range: (0, 2)
+Verifies that dragging a selection handle outside of a readonly input does not cause the selection to jump outside of the input.
+
+To manually test, double-tap to select the word "aa", drag the selection end handle out of the bounds of the input, and then drag the selection handle back in.
+
+"aa" should remain selected.
+
+This test is best run under WebKitTestRunner.

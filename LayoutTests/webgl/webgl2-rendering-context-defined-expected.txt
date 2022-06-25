@@ -1,0 +1,1 @@
+PASS if WebGL2RenderingContext is defined.

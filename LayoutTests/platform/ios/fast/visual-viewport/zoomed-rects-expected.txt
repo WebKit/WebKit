@@ -1,0 +1,23 @@
+This test zooms and scrolls the page and checks that the layout and visual viewports respond as expected.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+JSON.stringify(internals.layoutViewportRect()) is {"top":0,"right":800,"bottom":600,"left":0,"width":800,"height":600}
+JSON.stringify(internals.visualViewportRect()) is {"top":0,"right":400,"bottom":300,"left":0,"width":400,"height":300}
+
+Scrolled to 475, 525
+JSON.stringify(internals.layoutViewportRect()) is {"top":225,"right":875,"bottom":825,"left":75,"width":800,"height":600}
+JSON.stringify(internals.visualViewportRect()) is {"top":525,"right":875,"bottom":825,"left":475,"width":400,"height":300}
+
+Scrolled to 100, 776
+JSON.stringify(internals.layoutViewportRect()) is {"top":476,"right":875,"bottom":1076,"left":75,"width":800,"height":600}
+JSON.stringify(internals.visualViewportRect()) is {"top":776,"right":500,"bottom":1076,"left":100,"width":400,"height":300}
+
+Scrolled to 50, 300
+JSON.stringify(internals.layoutViewportRect()) is {"top":300,"right":850,"bottom":900,"left":50,"width":800,"height":600}
+JSON.stringify(internals.visualViewportRect()) is {"top":300,"right":450,"bottom":600,"left":50,"width":400,"height":300}
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

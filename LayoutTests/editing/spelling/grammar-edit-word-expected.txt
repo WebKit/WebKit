@@ -1,0 +1,27 @@
+Test if WebKit removes grammar markers when we edit a grammatically-incorrect word. To test manually, press backspace key to delete the last character of "has". This test succeeds when "ha" does not have grammar markers.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+document.execCommand("InsertText", false, "You has the right.")
+PASS internals.hasGrammarMarker(4, 3) became true
+Delete the end of this sentence until it becomes "You ha".
+testRunner.execCommand("DeleteBackward")
+testRunner.execCommand("DeleteBackward")
+testRunner.execCommand("DeleteBackward")
+testRunner.execCommand("DeleteBackward")
+testRunner.execCommand("DeleteBackward")
+testRunner.execCommand("DeleteBackward")
+testRunner.execCommand("DeleteBackward")
+testRunner.execCommand("DeleteBackward")
+testRunner.execCommand("DeleteBackward")
+testRunner.execCommand("DeleteBackward")
+testRunner.execCommand("DeleteBackward")
+testRunner.execCommand("DeleteBackward")
+PASS internals.hasGrammarMarker(4, 2) became false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+You ha
+
+

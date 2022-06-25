@@ -1,0 +1,8 @@
+PASS width is 50
+PASS height is 25
+PASS width became 100
+PASS height is 50
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

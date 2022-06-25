@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .container {
+            position: relative;
+            transform-style: preserve-3d;
+            z-index: 0;
+            width: 300px;
+            margin: 20px;
+            height: 0px;
+            
+        }
+        .box {
+            position: relative;
+            width: 220px;
+            height: 150px;
+            margin: 10px;
+            background-color: silver;
+        }
+        
+        #console {
+            margin-top: 100px;
+        }
+    </style>
+    <script src="resources/text-based-repaint.js"></script>
+    <script>
+        function repaintTest()
+        {
+            const container = document.querySelector('.container');
+            container.style.transform = 'translate(-10px, 0)';
+        }
+    </script>
+</head>
+<body onload="runRepaintTest()">
+    <div class="container">
+        <div class="box"></div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,65 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 4 of DIV > DIV > BODY > HTML > #document to 4 of DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 4 of DIV > DIV > BODY > HTML > #document to 4 of DIV > DIV > BODY > HTML > #document toDOMRange:range from 7 of DIV > DIV > BODY > HTML > #document to 7 of DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x80
+        RenderBlock {DIV} at (0,0) size 784x40
+          RenderText {#text} at (0,0) size 39x19
+            text run at (0,0) width 39: "Tests: "
+          RenderBR {BR} at (0,0) size 0x0
+          RenderText {#text} at (0,20) size 97x19
+            text run at (0,20) width 97: "Fix for this bug: "
+          RenderInline {A} at (0,0) size 164x19 [color=#0000EE]
+            RenderText {#text} at (97,20) size 164x19
+              text run at (97,20) width 164: "<rdar://problem/4045511>"
+          RenderText {#text} at (261,20) size 402x19
+            text run at (261,20) width 402: " TOT REGRESSION (r12358): second iframe in pair fails to copy"
+        RenderBlock {DIV} at (0,40) size 784x40
+          RenderText {#text} at (0,0) size 111x19
+            text run at (0,0) width 111: "Expected Results: "
+          RenderBR {BR} at (111,15) size 0x0
+          RenderText {#text} at (0,20) size 182x19
+            text run at (0,20) width 182: "Should see four blank iframes "
+          RenderBR {BR} at (182,35) size 0x0
+      RenderBlock {DIV} at (0,80) size 784x350 [border: (2px solid #FF0000)]
+        RenderBlock {DIV} at (14,14) size 756x322
+          RenderIFrame {IFRAME} at (0,0) size 304x154 [border: (2px solid #0000FF)]
+            layer at (0,0) size 300x150
+              RenderView at (0,0) size 300x150
+            layer at (0,0) size 300x150
+              RenderBlock {HTML} at (0,0) size 300x150
+                RenderBody {BODY} at (8,8) size 284x134
+          RenderText {#text} at (304,133) size 6x27
+            text run at (304,133) width 6: " "
+          RenderIFrame {IFRAME} at (310,0) size 304x154 [border: (2px solid #008000)]
+            layer at (0,0) size 300x150
+              RenderView at (0,0) size 300x150
+            layer at (0,0) size 300x150
+              RenderBlock {HTML} at (0,0) size 300x150
+                RenderBody {BODY} at (8,8) size 284x134
+          RenderIFrame {IFRAME} at (0,161) size 304x154 [border: (2px solid #0000FF)]
+            layer at (0,0) size 300x150
+              RenderView at (0,0) size 300x150
+            layer at (0,0) size 300x150
+              RenderBlock {HTML} at (0,0) size 300x150
+                RenderBody {BODY} at (8,8) size 284x134
+          RenderText {#text} at (304,294) size 6x27
+            text run at (304,294) width 6: " "
+          RenderIFrame {IFRAME} at (310,161) size 304x154 [border: (2px solid #008000)]
+            layer at (0,0) size 300x150
+              RenderView at (0,0) size 300x150
+            layer at (0,0) size 300x150
+              RenderBlock {HTML} at (0,0) size 300x150
+                RenderBody {BODY} at (8,8) size 284x134
+          RenderText {#text} at (0,0) size 0x0
+caret: position 1 of child 6 {IFRAME} of child 1 {DIV} of child 3 {DIV} of body

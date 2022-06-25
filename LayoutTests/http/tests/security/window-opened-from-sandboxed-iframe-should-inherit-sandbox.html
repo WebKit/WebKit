@@ -1,0 +1,26 @@
+<!DOCTYPE html><!-- webkit-test-runner [ JavaScriptCanOpenWindowsAutomatically=true ] -->
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+    description("Tests that windows created from a sandboxed context inherit the same sandbox");
+    jsTestIsAsync = true;
+
+    function run() {
+        iframeContentWindow = document.getElementById("theIframe").contentWindow;
+        iframeContentWindow.didRunScriptInPopup = false;
+        let iframeContentDocument = document.getElementById("theIframe").contentDocument;
+        iframeContentDocument.getElementById("theLink").click();
+
+        setTimeout(() => {
+            shouldBeFalse("iframeContentWindow.didRunScriptInPopup");
+            finishJSTest();
+        }, 500);
+    }
+</script>
+<iframe onload="run()" id="theIframe" sandbox="allow-same-origin allow-popups" src="resources/anchor-tag-with-blank-target.html"></iframe>
+</body>
+</html>

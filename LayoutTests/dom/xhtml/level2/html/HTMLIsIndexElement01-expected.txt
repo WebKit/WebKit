@@ -1,0 +1,3 @@
+Test	http://www.w3.org/2001/DOM-Test-Suite/level2/html/HTMLIsIndexElement01
+Status	failure
+Message	IsIndex.Prompt: assertEquals failed, actual null, expected New Employee: .

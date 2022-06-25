@@ -1,0 +1,9 @@
+x === y: true
+x.baz: 5
+z.size: 1
+z.has(5): true
+post update 1 -- y.has(3): true
+post update 1 -- z.size: 0
+post update 1 -- z.has(5): false
+post update 2 -- x.has(5): true
+post update 2 -- x.size: 2

@@ -1,0 +1,5 @@
+Test HTMLMediaElement to be sure that the video is getting loaded even if the element is hidden.
+
+EVENT(durationchange)
+END OF TEST
+

@@ -1,0 +1,31 @@
+# Copyright (c) 2018 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+if (is_android) {
+  import("//build/config/android/config.gni")
+  import("//build/config/android/rules.gni")
+}
+
+if (rtc_include_tests) {
+  rtc_library("audio_api_unittests") {
+    testonly = true
+    sources = [
+      "audio_frame_unittest.cc",
+      "echo_canceller3_config_json_unittest.cc",
+      "echo_canceller3_config_unittest.cc",
+    ]
+    deps = [
+      "..:aec3_config",
+      "..:aec3_config_json",
+      "..:audio_frame_api",
+      "../../../rtc_base:rtc_base_approved",
+      "../../../test:test_support",
+    ]
+  }
+}

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+	font-family: "webfont";
+	src: local("thisisnotarealfont");
+}
+@font-face {
+	font-family: "webfont";
+	src: url("../../resources/Ahem.ttf");
+	unicode-range: U+1234;
+}
+</style>
+<script>
+if (window.testRunner)
+    window.testRunner.dumpAsText();
+</script>
+</head>
+<body>
+This test passes if there is no crash.
+<div style="font-family: webfont">a</div>
+</body>
+</html>

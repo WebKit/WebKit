@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: Refused to display 'http://127.0.0.1:8800/html/cross-origin-embedder-policy/resources/iframe.html' in a frame because of Cross-Origin-Embedder-Policy.
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT COEP requires a secure context Test timed out
+

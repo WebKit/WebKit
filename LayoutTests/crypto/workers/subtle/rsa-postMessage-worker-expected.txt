@@ -1,0 +1,35 @@
+Test sending rsa crypto keys via postMessage to a worker.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS All checks passed in worker for public key
+PASS publicKey.type is 'public'
+PASS publicKey.extractable is true
+PASS publicKey.algorithm.name is 'RSAES-PKCS1-v1_5'
+PASS publicKey.algorithm.modulusLength is 2048
+PASS bytesToHexString(publicKey.algorithm.publicExponent) is '010001'
+PASS publicKey.algorithm.hash is undefined.
+PASS publicKey.usages is ['encrypt']
+PASS exportedKey.n is publicKeyJSON.n
+PASS exportedKey.e is publicKeyJSON.e
+PASS All checks passed in worker for private key
+PASS privateKey.type is 'private'
+PASS privateKey.extractable is true
+PASS privateKey.algorithm.name is 'RSAES-PKCS1-v1_5'
+PASS privateKey.algorithm.modulusLength is 2048
+PASS bytesToHexString(privateKey.algorithm.publicExponent) is '010001'
+PASS privateKey.algorithm.hash is undefined.
+PASS privateKey.usages is ['decrypt']
+PASS exportedKey.n is privateKeyJSON.n
+PASS exportedKey.e is privateKeyJSON.e
+PASS exportedKey.d is privateKeyJSON.d
+PASS exportedKey.p is privateKeyJSON.p
+PASS exportedKey.q is privateKeyJSON.q
+PASS exportedKey.dp is privateKeyJSON.dp
+PASS exportedKey.dq is privateKeyJSON.dq
+PASS exportedKey.qi is privateKeyJSON.qi
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

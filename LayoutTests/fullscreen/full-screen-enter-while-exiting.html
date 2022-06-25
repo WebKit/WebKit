@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>full-screen-enter-while-exiting</title>
+    <script src="full-screen-test.js"></script>
+    <script>
+
+    window.addEventListener('load', async event => {
+        if (Element.prototype.webkitRequestFullScreen == undefined) {
+            logResult(false, "Element.prototype.webkitRequestFullScreen == undefined");
+            endTest();
+            return;
+        }
+
+        if (!window.testRunner) {
+            logResult(false, "This test requires Internals.");
+            endTest();
+            return;
+        }
+
+        if (!testRunner.setEnterFullscreenForElementCallback) {
+            logResult(false, "This test requires WebKitTestRunner.")
+            endTest();
+            return;
+        }
+
+        testRunner.setHasCustomFullScreenBehavior(true);
+
+        let enterFullScreenPromise = new Promise(resolve => {
+            testRunner.setEnterFullscreenForElementCallback(resolve);
+        });
+
+        consoleWrite('Enter fullscreen with target1');
+        internals.withUserGesture(() => { run('target1.webkitRequestFullScreen()'); });
+
+        await enterFullScreenPromise;
+        
+        var changePromise = waitFor(target1, 'webkitfullscreenchange');
+        run('internals.webkitWillEnterFullScreenForElement(target1)');
+
+        await changePromise;
+
+        run('internals.webkitDidEnterFullScreenForElement(target1)');
+
+        let exitFullScreenPromise = new Promise(resolve => {
+            testRunner.setExitFullscreenForElementCallback(resolve);
+        });
+
+        consoleWrite('Exit fullscreen with target1');
+        run('document.webkitExitFullscreen()');
+        await exitFullScreenPromise;
+        changePromise = waitFor(document, 'webkitfullscreenchange')
+
+        run('internals.webkitWillExitFullScreenForElement(target1)');
+
+        consoleWrite('Attempt to enter fullscreen with target2');
+        internals.withUserGesture(() => { run('target2.webkitRequestFullScreen()'); });
+
+        await waitFor(target2, 'webkitfullscreenerror');
+
+        run('internals.webkitDidExitFullScreenForElement(target1)');
+        await changePromise;
+
+        testRunner.setHasCustomFullScreenBehavior(false);
+
+        endTest();
+    });
+</script>
+</head>
+<body>
+<span id="target1"></span>
+<span id="target2"></span>
+</body>
+</html>

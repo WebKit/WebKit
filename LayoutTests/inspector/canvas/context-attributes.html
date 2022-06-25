@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+let contexts = [];
+
+function createCanvas(contextType, attributes) {
+    let canvas = document.body.appendChild(document.createElement("canvas"));
+    contexts.push(canvas.getContext(contextType, attributes));
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("Canvas.contextAttributes");
+
+    function addTestCase({name, contextType, contextAttributes}) {
+        contextAttributes = contextAttributes || {};
+
+        suite.addTestCase({
+            name,
+            description: "Check that created canvases have the correct type and attributes sent to the frontend.",
+            test(resolve, reject) {
+                WI.canvasManager.canvasCollection.awaitEvent(WI.Collection.Event.ItemAdded)
+                .then((event) => {
+                    let canvas = event.data.item;
+                    InspectorTest.log("Added canvas.");
+
+                    let contextDisplayName = WI.Canvas.displayNameForContextType(contextType);
+                    InspectorTest.expectEqual(canvas.contextType, contextType, `Canvas context should be "${contextDisplayName}".`);
+                    InspectorTest.json(canvas.contextAttributes, (key, value) => {
+                        if (key === "powerPreference") {
+                            InspectorTest.assert(value === "default" || value === "low-power" || value === "high-performance", `Unexpected "powerPreference" value: ${value}`);
+                            return "<filtered>";
+                        }
+                        return value;
+                    });
+
+                    for (let name in contextAttributes)
+                        InspectorTest.expectEqual(canvas.contextAttributes[name], contextAttributes[name], `Canvas context should have attribute "${name}" with value "${contextAttributes[name]}".`);
+                })
+                .then(resolve, reject);
+
+                let type = "";
+                if (contextType === WI.Canvas.ContextType.Canvas2D)
+                    type = "2d";
+                else if (contextType === WI.Canvas.ContextType.BitmapRenderer)
+                    type = "bitmaprenderer";
+                else if (contextType === WI.Canvas.ContextType.WebGL)
+                    type = "webgl";
+                let attributes = JSON.stringify(contextAttributes);
+                InspectorTest.evaluateInPage(`createCanvas("${type}", ${attributes})`);
+            }
+        });
+    }
+
+    const testCases = [
+        {
+            name: "Create2DCanvasContext",
+            contextType: WI.Canvas.ContextType.Canvas2D,
+        },
+        {
+            name: "CreateBitmapRendererCanvasContext",
+            contextType: WI.Canvas.ContextType.BitmapRenderer,
+        },
+        {
+            name: "CreateBitmapRendererCanvasContextWithAttributes",
+            contextType: WI.Canvas.ContextType.BitmapRenderer,
+            contextAttributes: {alpha: false},
+        },
+        {
+            name: "CreateWebGLCanvasContext",
+            contextType: WI.Canvas.ContextType.WebGL,
+        },
+        {
+            name: "CreateWebGLCanvasContextWithAttributes",
+            contextType: WI.Canvas.ContextType.WebGL,
+            contextAttributes: {alpha: false},
+        },
+    ];
+
+    testCases.forEach(addTestCase);
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Test that CanvasAgent is able to send context attributes.</p>
+</body>
+</html>

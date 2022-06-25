@@ -1,0 +1,532 @@
+Verifies that the 'list type change' editing command works as expected. This test requires WebKitTestRunner or DumpRenderTree.
+
+After making the outer list ordered:
+| "\n        "
+| <ol>
+|   class="list"
+|   "\n            "
+|   <li>
+|     id="one"
+|     "one"
+|   "\n            "
+|   <ol>
+|     class="list"
+|     style="color: red"
+|     "\n                "
+|     <li>
+|       id="two"
+|       "two"
+|     "\n                "
+|     <li>
+|       id="three"
+|       "three"
+|     "\n            "
+|   "\n            "
+|   <li>
+|     id="four"
+|     "four"
+|   "\n            "
+|   <pre>
+|     "                "
+|     <ol>
+|       class="list"
+|       "\n                    "
+|       <li>
+|         id="five"
+|         "five"
+|       "\n                    "
+|       <li>
+|         id="six"
+|         "six"
+|       "\n                "
+|     "\n            <#selection-caret>"
+|   "\n        "
+| "\n    "
+
+After an undo:
+| "\n        "
+| <ul>
+|   class="list"
+|   "\n            "
+|   <li>
+|     id="one"
+|     "one<#selection-caret>"
+|   "\n            "
+|   <ol>
+|     class="list"
+|     style="color: red"
+|     "\n                "
+|     <li>
+|       id="two"
+|       "two"
+|     "\n                "
+|     <li>
+|       id="three"
+|       "three"
+|     "\n            "
+|   "\n            "
+|   <li>
+|     id="four"
+|     "four"
+|   "\n            "
+|   <pre>
+|     "                "
+|     <ol>
+|       class="list"
+|       "\n                    "
+|       <li>
+|         id="five"
+|         "five"
+|       "\n                    "
+|       <li>
+|         id="six"
+|         "six"
+|       "\n                "
+|     "\n            "
+|   "\n        "
+| "\n    "
+
+After a redo:
+| "\n        "
+| <ol>
+|   class="list"
+|   "\n            "
+|   <li>
+|     id="one"
+|     "one"
+|   "\n            "
+|   <ol>
+|     class="list"
+|     style="color: red"
+|     "\n                "
+|     <li>
+|       id="two"
+|       "two"
+|     "\n                "
+|     <li>
+|       id="three"
+|       "three"
+|     "\n            "
+|   "\n            "
+|   <li>
+|     id="four"
+|     "four"
+|   "\n            "
+|   <pre>
+|     "                "
+|     <ol>
+|       class="list"
+|       "\n                    "
+|       <li>
+|         id="five"
+|         "five"
+|       "\n                    "
+|       <li>
+|         id="six"
+|         "six"
+|       "\n                "
+|     "\n            <#selection-caret>"
+|   "\n        "
+| "\n    "
+
+After making the first sublist unordered:
+| "\n        "
+| <ol>
+|   class="list"
+|   "\n            "
+|   <li>
+|     id="one"
+|     "one"
+|   "\n            "
+|   <ul>
+|     class="list"
+|     style="color: red"
+|     "\n                "
+|     <li>
+|       id="two"
+|       "two"
+|     "\n                "
+|     <li>
+|       id="three"
+|       "three<#selection-caret>"
+|     "\n            "
+|   "\n            "
+|   <li>
+|     id="four"
+|     "four"
+|   "\n            "
+|   <pre>
+|     "                "
+|     <ol>
+|       class="list"
+|       "\n                    "
+|       <li>
+|         id="five"
+|         "five"
+|       "\n                    "
+|       <li>
+|         id="six"
+|         "six"
+|       "\n                "
+|     "\n            "
+|   "\n        "
+| "\n    "
+
+After changing the first sublist back to ordered:
+| "\n        "
+| <ol>
+|   class="list"
+|   "\n            "
+|   <li>
+|     id="one"
+|     "one"
+|   "\n            "
+|   <ol>
+|     class="list"
+|     style="color: red"
+|     "\n                "
+|     <li>
+|       id="two"
+|       "two"
+|     "\n                "
+|     <li>
+|       id="three"
+|       "three<#selection-caret>"
+|     "\n            "
+|   "\n            "
+|   <li>
+|     id="four"
+|     "four"
+|   "\n            "
+|   <pre>
+|     "                "
+|     <ol>
+|       class="list"
+|       "\n                    "
+|       <li>
+|         id="five"
+|         "five"
+|       "\n                    "
+|       <li>
+|         id="six"
+|         "six"
+|       "\n                "
+|     "\n            "
+|   "\n        "
+| "\n    "
+
+After making the second sublist unordered:
+| "\n        "
+| <ol>
+|   class="list"
+|   "\n            "
+|   <li>
+|     id="one"
+|     "one"
+|   "\n            "
+|   <ol>
+|     class="list"
+|     style="color: red"
+|     "\n                "
+|     <li>
+|       id="two"
+|       "two"
+|     "\n                "
+|     <li>
+|       id="three"
+|       "three"
+|     "\n            "
+|   "\n            "
+|   <li>
+|     id="four"
+|     "four"
+|   "\n            "
+|   <pre>
+|     "                "
+|     <ul>
+|       class="list"
+|       "\n                    "
+|       <li>
+|         id="five"
+|         "five"
+|       "\n                    "
+|       <li>
+|         id="six"
+|         "six"
+|       "\n                <#selection-caret>"
+|     "\n            "
+|   "\n        "
+| "\n    "
+
+After an undo:
+| "\n        "
+| <ol>
+|   class="list"
+|   "\n            "
+|   <li>
+|     id="one"
+|     "one"
+|   "\n            "
+|   <ol>
+|     class="list"
+|     style="color: red"
+|     "\n                "
+|     <li>
+|       id="two"
+|       "two"
+|     "\n                "
+|     <li>
+|       id="three"
+|       "three"
+|     "\n            "
+|   "\n            "
+|   <li>
+|     id="four"
+|     "four"
+|   "\n            "
+|   <pre>
+|     "                "
+|     <ol>
+|       class="list"
+|       "\n                    "
+|       <li>
+|         id="five"
+|         "<#selection-anchor>five"
+|       "\n                    "
+|       <li>
+|         id="six"
+|         "six<#selection-focus>"
+|       "\n                "
+|     "\n            "
+|   "\n        "
+| "\n    "
+
+After making the outer list unordered:
+| "\n        "
+| <ul>
+|   class="list"
+|   "\n            "
+|   <li>
+|     id="one"
+|     "one"
+|   "\n            "
+|   <ol>
+|     class="list"
+|     style="color: red"
+|     "\n                "
+|     <li>
+|       id="two"
+|       "two"
+|     "\n                "
+|     <li>
+|       id="three"
+|       "three"
+|     "\n            "
+|   "\n            "
+|   <li>
+|     id="four"
+|     "four"
+|   "\n            "
+|   <pre>
+|     "                "
+|     <ol>
+|       class="list"
+|       "\n                    "
+|       <li>
+|         id="five"
+|         "five"
+|       "\n                    "
+|       <li>
+|         id="six"
+|         "six"
+|       "\n                "
+|     "\n            <#selection-caret>"
+|   "\n        "
+| "\n    "
+
+After making the outer list ordered again:
+| "\n        "
+| <ol>
+|   class="list"
+|   "\n            "
+|   <li>
+|     id="one"
+|     "one"
+|   "\n            "
+|   <ol>
+|     class="list"
+|     style="color: red"
+|     "\n                "
+|     <li>
+|       id="two"
+|       "two"
+|     "\n                "
+|     <li>
+|       id="three"
+|       "three"
+|     "\n            "
+|   "\n            "
+|   <li>
+|     id="four"
+|     "four"
+|   "\n            "
+|   <pre>
+|     "                "
+|     <ol>
+|       class="list"
+|       "\n                    "
+|       <li>
+|         id="five"
+|         "five"
+|       "\n                    "
+|       <li>
+|         id="six"
+|         "six"
+|       "\n                "
+|     "\n            <#selection-caret>"
+|   "\n        "
+| "\n    "
+
+After making the left list unordered:
+| "\n        "
+| <table>
+|   "\n            "
+|   <tbody>
+|     "\n                "
+|     <tr>
+|       "\n                    "
+|       <td>
+|         "\n                        "
+|         <div>
+|           "foo"
+|         "\n                        "
+|         <ul>
+|           class="list"
+|           "\n                            "
+|           <li>
+|             id="seven"
+|             "seven"
+|           "\n                            "
+|           <li>
+|             id="eight"
+|             "eight<#selection-caret>"
+|           "\n                        "
+|         "\n                    "
+|       "\n                    "
+|       <td>
+|         "\n                        "
+|         <div>
+|           "bar"
+|         "\n                        "
+|         <ul>
+|           class="list"
+|           "\n                            "
+|           <li>
+|             id="nine"
+|             "nine"
+|           "\n                            "
+|           <li>
+|             id="ten"
+|             "ten"
+|           "\n                        "
+|         "\n                    "
+|       "\n                "
+|     "\n            "
+|   "\n        "
+| "\n    "
+
+After making the right list ordered:
+| "\n        "
+| <table>
+|   "\n            "
+|   <tbody>
+|     "\n                "
+|     <tr>
+|       "\n                    "
+|       <td>
+|         "\n                        "
+|         <div>
+|           "foo"
+|         "\n                        "
+|         <ul>
+|           class="list"
+|           "\n                            "
+|           <li>
+|             id="seven"
+|             "seven"
+|           "\n                            "
+|           <li>
+|             id="eight"
+|             "eight"
+|           "\n                        "
+|         "\n                    "
+|       "\n                    "
+|       <td>
+|         "\n                        "
+|         <div>
+|           "bar"
+|         "\n                        "
+|         <ol>
+|           class="list"
+|           "\n                            "
+|           <li>
+|             id="nine"
+|             "nine"
+|           "\n                            "
+|           <li>
+|             id="ten"
+|             "ten<#selection-caret>"
+|           "\n                        "
+|         "\n                    "
+|       "\n                "
+|     "\n            "
+|   "\n        "
+| "\n    "
+
+After selecting both lists and changing list type (this should be a no-op):
+| "\n        "
+| <table>
+|   "\n            "
+|   <tbody>
+|     "\n                "
+|     <tr>
+|       "\n                    "
+|       <td>
+|         "\n                        "
+|         <div>
+|           "foo"
+|         "\n                        "
+|         <ul>
+|           class="list"
+|           "\n                            "
+|           <li>
+|             id="seven"
+|             "<#selection-anchor>seven"
+|           "\n                            "
+|           <li>
+|             id="eight"
+|             "eight"
+|           "\n                        "
+|         "\n                    "
+|       "\n                    "
+|       <td>
+|         "\n                        "
+|         <div>
+|           "bar"
+|         "\n                        "
+|         <ol>
+|           class="list"
+|           "\n                            "
+|           <li>
+|             id="nine"
+|             "nine"
+|           "\n                            "
+|           <li>
+|             id="ten"
+|             "ten<#selection-focus>"
+|           "\n                        "
+|         "\n                    "
+|       "\n                "
+|     "\n            "
+|   "\n        "
+| "\n    "

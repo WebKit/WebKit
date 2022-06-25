@@ -1,0 +1,27 @@
+<iframe id=frame srcdoc="
+<style>
+@media (min-width:200px) {
+    @font-face {
+        font-family: family1;
+        src: local(times);
+    }
+    body { background-color: red }
+}
+
+@media (max-width:200px) {
+    @font-face {
+        font-family: family1;
+        src: local(courier);
+    }
+    body { background-color: green }
+}
+body { font-family:family1 }
+</style>
+Test frame
+"></iframe>
+<script>
+frame.onload = () => {
+    frame.contentDocument.offsetWidth;
+    frame.width = 100;
+}
+</script>

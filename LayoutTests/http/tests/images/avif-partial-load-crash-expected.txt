@@ -1,0 +1,3 @@
+An avif image gets stuck in loading. The test passes unless a crash happens.
+
+

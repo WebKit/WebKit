@@ -1,0 +1,4 @@
+Test that HTMLSelectElement DOM is in a consistent state when handling mutation events.
+
+
+SUCCESS

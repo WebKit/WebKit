@@ -1,0 +1,46 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_AdobeRGB_opaque.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_AdobeRGB_transparent.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_DisplayP3_opaque.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_DisplayP3_transparent.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_ProPhoto_opaque.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_ProPhoto_transparent.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_Rec2020_opaque.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_Rec2020_transparent.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_interlaced_AdobeRGB_opaque.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_interlaced_AdobeRGB_transparent.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_interlaced_DisplayP3_opaque.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_interlaced_DisplayP3_transparent.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_interlaced_ProPhoto_opaque.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_interlaced_ProPhoto_transparent.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_interlaced_Rec2020_opaque.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_interlaced_Rec2020_transparent.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_interlaced_sRGB_opaque.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_interlaced_sRGB_transparent.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_sRGB_opaque.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_16bit_sRGB_transparent.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_8bit_AdobeRGB_opaque.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_8bit_AdobeRGB_transparent.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_8bit_DisplayP3_opaque.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_8bit_DisplayP3_transparent.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_8bit_ProPhoto_opaque.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_8bit_ProPhoto_transparent.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_8bit_Rec2020_opaque.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_8bit_Rec2020_transparent.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_8bit_sRGB_opaque.png
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/resources/png-16bit/2x2_8bit_sRGB_transparent.png

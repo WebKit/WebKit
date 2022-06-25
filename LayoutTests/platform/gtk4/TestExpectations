@@ -1,0 +1,50 @@
+# These are the layout test expectations for the GTK port of WebKit when running with GTK4
+#
+# See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
+#
+# Never add any test to this file without opening a bug on bugzilla.webkit.org or a comment
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# TESTS PASSING
+#
+# These tests are passing on GTK4 but they do not in other ports or GTK3
+# Note: Passing tests should be on the top of the file to ensure that
+#       expected failures below are not overriden by a folder that is
+#       set to Pass to unskip it from the main expectations file and
+#       declared after the expected failure.
+#       The layout test runner evaluates the rules from top to bottom and
+#       it picks as the valid rule the last one matching.
+#////////////////////////////////////////////////////////////////////////////////////////
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# End of PASSING tests. See below where to put expected failures.
+#////////////////////////////////////////////////////////////////////////////////////////
+
+# SOUP
+webkit.org/b/223236 http/tests/xmlhttprequest/loadstart-event-init.html [ Crash ]
+webkit.org/b/223236 http/tests/xmlhttprequest/redirect-cross-origin-post-sync.html [ Crash ]
+webkit.org/b/223236 http/tests/xmlhttprequest/redirect-cross-origin-post.html [ Crash ]
+webkit.org/b/223236 http/tests/xmlhttprequest/response-access-on-error.html [ Crash ]
+webkit.org/b/223236 http/tests/xmlhttprequest/upload-onabort-progressevent-attributes.html [ Crash ]
+webkit.org/b/223236 http/tests/xmlhttprequest/upload-onload-event.html [ Crash ]
+webkit.org/b/223236 http/tests/xmlhttprequest/upload-onload-progressevent-attributes.html [ Crash ]
+webkit.org/b/223236 http/tests/xmlhttprequest/upload-onloadend-event-after-abort.html [ Crash ]
+webkit.org/b/223236 http/tests/xmlhttprequest/upload-onloadend-event-after-load.html [ Crash ]
+webkit.org/b/223236 http/tests/xmlhttprequest/upload-onloadstart-event.html [ Crash ]
+webkit.org/b/223236 http/tests/xmlhttprequest/upload-onprogress-event.html [ Crash ]
+webkit.org/b/223236 http/tests/xmlhttprequest/upload-progress-events.html [ Crash ]
+webkit.org/b/223236 http/tests/xmlhttprequest/xmlhttprequest-sync-no-progress-events.html [ Crash ]
+
+#//////////////////////////////////////////////////////////////////////////////////////////
+# Triaged Expectations
+# * KEEP THE SECTIONS SORTED ALPHABETICALLY.
+# * ALWAYS WITH BUG ENTRIES for things like Timeout, Failure and Crash.
+#
+# For more info, check the glib/TestExpectations file
+# If unsure of where to put the expectations, add the test to the end of the file and
+# ask for triaging.
+#//////////////////////////////////////////////////////////////////////////////////////////
+
+#//////////////////////////////////////////////////////////////////////////////////////////
+# End of Triaged Expectations
+#//////////////////////////////////////////////////////////////////////////////////////////

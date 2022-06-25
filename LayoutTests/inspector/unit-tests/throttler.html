@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Throttler");
+
+    suite.addTestCase({
+        name: "Throttler.Fire.Basic",
+        test(resolve, reject) {
+            const delay = 50;
+            const duration = 110;
+            const maximumNumberOfCalls = Math.ceil(duration / delay) + 1; // Add one for the leading edge. Math.ceil accounts for the trailing edge.
+
+            let lastCallTime = NaN;
+            let numberOfCalls = 0;
+
+            let throttler = new Throttler((isTrailing) => {
+                let now = Date.now();
+
+                if (++numberOfCalls > maximumNumberOfCalls) {
+                    reject("Throttled function called too many times.");
+                    return;
+                }
+
+                if (!isNaN(lastCallTime)) {
+                    let actualDelay = now - lastCallTime;
+                    if (actualDelay < delay - 1) {
+                        InspectorTest.fail(`Delay should be at least ${delay} ms. Was ${actualDelay} ms.`);
+                        reject();
+                        return;
+                    }
+                }
+
+                lastCallTime = now;
+
+                if (isTrailing) {
+                    InspectorTest.pass(`All calls delayed.`);
+                    resolve();
+                }
+            }, delay);
+
+            InspectorTest.log(`Call throttled function every 1 ms for ${duration} ms.`);
+
+            throttler.fire();
+
+            for (let i = 1; i <= duration; i++)
+                setTimeout(() => { throttler.fire(i === duration); }, i);
+        }
+    });
+
+    suite.addTestCase({
+        name: "Throttler.Fire.LastArguments",
+        test(resolve, reject) {
+            let values = [1, 2, 3];
+            let isLeadingCall = true;
+
+            let throttler = new Throttler((value) => {
+                if (isLeadingCall) {
+                    isLeadingCall = false;
+                    return;
+                }
+
+                InspectorTest.expectEqual(value, values.lastValue, "Trailing call invoked with most recent arguments.");
+                resolve();
+            }, 50);
+
+            let i = 0;
+            for (let value of values)
+                setTimeout(() => { throttler.fire(value); }, i++);
+        }
+    });
+
+    suite.addTestCase({
+        name: "Throttler.Force",
+        test(resolve, reject) {
+            let callCount = 0;
+
+            let throttler = new Throttler((foo, bar) => {
+                ++callCount;
+
+                InspectorTest.expectEqual(arguments.length, 2, "Arguments length is 2.");
+
+                if (callCount === 1) {
+                    InspectorTest.expectEqual(foo, 1, "First argument is 1.");
+                    InspectorTest.expectEqual(bar, "xyz", "Second argument is 'xyz'.");
+                } else {
+                    InspectorTest.expectEqual(foo, 4, "First argument is 4.");
+                    InspectorTest.expectEqual(bar, "abc", "Second argument is 'abc'.");
+                }
+            }, 20);
+
+            throttler.fire(1, 'xyz');
+            throttler.fire(2, 'fgh');
+            throttler.fire(3, 'ert');
+
+            throttler.force(4, 'abc');
+            InspectorTest.expectEqual(callCount, 2, "Throttled function should be called twice.");
+
+            setTimeout(() => {
+                InspectorTest.expectEqual(callCount, 2, "Throttled function should not be called again after calling force.");
+                resolve();
+            }, 50);
+        }
+    });
+
+    suite.addTestCase({
+        name: "Throttler.Cancel",
+        test(resolve, reject) {
+            let callCount = 0;
+            let canceled = false;
+
+            let throttler = new Throttler(() => {
+                ++callCount;
+
+                InspectorTest.log("Throttled function called.");
+
+                if (!canceled)
+                    return;
+
+                InspectorTest.fail("Called throttled function after cancel.");
+                reject();
+            }, 20);
+
+            throttler.fire();
+            throttler.fire();
+
+            throttler.cancel();
+            canceled = true;
+
+            InspectorTest.log("Canceled throttled function.");
+
+            setTimeout(() => {
+                InspectorTest.expectEqual(callCount, 1, "Throttled function should not be called again after calling cancel.");
+                resolve();
+            }, 50);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Test Throttler functionality.</p>
+</body>
+</html>

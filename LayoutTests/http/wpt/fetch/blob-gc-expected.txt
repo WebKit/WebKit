@@ -1,0 +1,3 @@
+
+PASS A GCed blob should get unregistered
+

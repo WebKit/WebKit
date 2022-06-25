@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/webxr_util.js"></script>
+<script src="resources/webxr_test_constants_single_view.js"></script>
+
+<script>
+let testName = "XRViewport attributes are valid even when there is only one view";
+
+let fakeDeviceInitParams = TRACKED_IMMERSIVE_SINGLE_VIEWDEVICE;
+
+let testFunction = function(session, fakeDeviceController, t, sessionObjects) {
+  return session.requestReferenceSpace('local')
+    .then((referenceSpace) => new Promise((resolve) =>{
+      let webglLayer = sessionObjects.glLayer;
+      function onFrame(time, xrFrame) {
+        let pose = xrFrame.getViewerPose(referenceSpace);
+        assert_not_equals(pose, null);
+        assert_not_equals(pose.views, null);
+        assert_equals(pose.views.length, 1);
+
+        let leftView = pose.views[0];
+
+        let leftViewport = webglLayer.getViewport(leftView);
+
+        t.step(() => {
+          // Ensure the views report the expected viewports into the WebGL layer.
+          assert_true(leftViewport instanceof XRViewport);
+
+          assert_not_equals(leftViewport, null);
+
+          // Exact viewport values don't matter, but they must pass several tests:
+
+          // Viewports have non-zero widths and heights.
+          assert_greater_than(leftViewport.width, 0);
+          assert_greater_than(leftViewport.height, 0);
+
+          // Viewports are located within the framebuffer.
+          assert_greater_than_equal(leftViewport.x, 0);
+          assert_greater_than_equal(leftViewport.y, 0);
+          assert_greater_than_equal(leftViewport.x, 0);
+          assert_greater_than_equal(leftViewport.y, 0);
+
+          assert_less_than_equal(
+            leftViewport.x + leftViewport.width, webglLayer.framebufferWidth);
+          assert_less_than_equal(
+            leftViewport.y + leftViewport.height, webglLayer.framebufferHeight);
+        });
+
+        resolve();
+      }
+      session.requestAnimationFrame(onFrame);
+  }));
+};
+
+xr_session_promise_test(
+  testName, testFunction, fakeDeviceInitParams, 'immersive-vr');
+
+</script>

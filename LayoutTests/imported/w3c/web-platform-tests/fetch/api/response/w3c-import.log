@@ -1,0 +1,39 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/json.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-body-read-task-handling.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-cancel-stream.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-clone-iframe.window.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-clone.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-consume-empty.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-consume-stream.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-consume.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-error-from-stream.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-error.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-from-stream.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-init-001.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-init-002.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-static-error.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-static-redirect.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-stream-disturbed-1.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-stream-disturbed-2.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-stream-disturbed-3.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-stream-disturbed-4.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-stream-disturbed-5.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-stream-disturbed-6.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-stream-disturbed-by-pipe.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-stream-with-broken-then.any.js

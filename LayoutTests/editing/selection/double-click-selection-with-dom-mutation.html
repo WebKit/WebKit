@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="../editing.js"></script>
+    <script src="../../resources/dump-as-markup.js"></script>
+</head>
+<body>
+<p id="container">Double-click to select <span id="target">→this←</span> text.</p>
+
+<script>
+    Markup.description('This test is for bug where selection vanishes when selection is created by Double-Click on text and then DOM is modified. Expected Output is that selected text should remain selected');
+    var target = document.getElementById("target");
+    Markup.dump("container", 'Before:');
+    doubleClick(target.offsetLeft + target.offsetWidth / 2, target.offsetTop + target.offsetHeight / 2);
+    var domRange = getSelection().getRangeAt(0);
+
+    function splitTextOnBoundary(container, offset, workaroundPreserveEnd) {
+        if (offset && offset < container.length) {
+            // WORKAROUND: doing the split manually avoids https://bugs.webkit.org/show_bug.cgi?id=114041
+            var newNode = document.createTextNode('');
+            if (workaroundPreserveEnd) {
+                newNode.data = container.data.slice(0, offset);
+                container.deleteData(0, offset);
+                container.parentNode.insertBefore(newNode, container);
+            } else {
+                newNode.data = container.data.slice(offset);
+                container.deleteData(offset, container.data.length);
+                container.parentNode.insertBefore(newNode, container.nextSibling);
+            }
+        }
+    }
+    splitTextOnBoundary(domRange.startContainer, domRange.startOffset, true);
+    splitTextOnBoundary(domRange.endContainer, domRange.endOffset, false);
+
+    Markup.dump("container", 'After:');
+</script>
+</body>
+</html>

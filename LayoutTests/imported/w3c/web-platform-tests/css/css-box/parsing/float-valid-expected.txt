@@ -1,0 +1,7 @@
+
+PASS e.style['float'] = "left" should set the property value
+PASS e.style['float'] = "right" should set the property value
+PASS e.style['float'] = "none" should set the property value
+PASS e.style['float'] = "inline-start" should set the property value
+PASS e.style['float'] = "inline-end" should set the property value
+

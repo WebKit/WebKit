@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+onload = () => {
+    setTimeout(() => {
+        window.prompt("PASS: This prompt dialog should show");
+        window.confirm("PASS: This confirm dialog should show");
+        window.alert("PASS: This alert dialog should show");
+        top.postMessage("done", "*");
+    }, 0);
+};
+</script>
+</body>
+</html>

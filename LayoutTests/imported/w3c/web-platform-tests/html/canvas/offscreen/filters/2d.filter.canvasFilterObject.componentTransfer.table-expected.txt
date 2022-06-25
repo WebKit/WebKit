@@ -1,0 +1,7 @@
+2d.filter.canvasFilterObject.componentTransfer.table
+
+Test pixels on CanvasFilter() componentTransfer with table type
+
+
+FAIL Test pixels on CanvasFilter() componentTransfer with table type Can't find variable: CanvasFilter
+

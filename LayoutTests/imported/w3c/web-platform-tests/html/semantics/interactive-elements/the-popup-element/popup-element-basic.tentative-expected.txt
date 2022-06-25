@@ -1,0 +1,6 @@
+This is a popup This is another popup, with an unused "open" attribute
+
+FAIL popup element exists Can't find variable: HTMLPopupElement
+FAIL The IDL "open" content attribute must have no effect, and must not be reflected to the WebIDL. assert_false: expected false got undefined
+FAIL The only visibility control for <popup> is through .show() and .hide(). assert_false: expected false got undefined
+

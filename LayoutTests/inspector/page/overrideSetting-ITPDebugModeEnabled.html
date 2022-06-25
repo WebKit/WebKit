@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Page.overrideSetting");
+
+    suite.addTestCase({
+        name: "Page.overrideSetting.ITPDebugModeEnabled",
+        description: "Test that changing whether ITP debug mode is enabled has an effect.",
+        test(resolve, reject) {
+            let messageCount = 0;
+
+            let listener = WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, (event) => {
+                let {message} = event.data;
+                if (message.source !== WI.ConsoleMessage.MessageSource.ITPDebug)
+                    return;
+
+                if (++messageCount < 3)
+                    return;
+
+                InspectorTest.pass("Should broadcast at least three console messages.");
+
+                WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, listener);
+                resolve();
+            });
+
+            InspectorTest.log("Enabling ITP debug mode...");
+            PageAgent.overrideSetting(InspectorBackend.Enum.Page.Setting.ITPDebugModeEnabled, true).catch(reject);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests for the Page.overrideSetting command.</p>
+</body>
+</html>

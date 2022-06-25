@@ -1,0 +1,10 @@
+
+PASS Tests requestSession accepts XRSessionInit dictionary - webgl
+PASS Tests requestSession accepts XRSessionInit dictionary - webgl2
+PASS Tests requestSession accepts XRSessionInit dictionary with empty feature lists - webgl
+PASS Tests requestSession accepts XRSessionInit dictionary with empty feature lists - webgl2
+PASS Tests requestSession ignores unknown strings in optionalFeatures - webgl
+PASS Tests requestSession ignores unknown strings in optionalFeatures - webgl2
+PASS Tests requestSession ignores unknown objects in optionalFeatures - webgl
+PASS Tests requestSession ignores unknown objects in optionalFeatures - webgl2
+

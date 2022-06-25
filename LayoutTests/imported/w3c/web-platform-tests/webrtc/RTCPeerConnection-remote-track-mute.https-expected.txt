@@ -1,0 +1,9 @@
+
+Harness Error (TIMEOUT), message = null
+
+PASS ontrack: track goes from muted to unmuted
+PASS Changing transceiver direction to 'inactive' mutes the remote track
+FAIL Changing transceiver direction to 'sendrecv' unmutes the remote track assert_true: Not expecting event, but got unmute event expected true got false
+TIMEOUT transceiver.stop() on one side (without renegotiation) causes mute events on the other Test timed out
+NOTRUN pc.close() on one side causes mute events on the other
+

@@ -1,0 +1,16 @@
+<style>
+    .box {
+        position: absolute;
+        width: 100px;
+        height: 100px;
+    }
+</style>
+<script src="resources/ensure-hidpi.js"></script>
+<body>
+    <progress class="box" style="left: 0px; top: 0px;" min="0" max="100" value="100"></progress>
+    <div class="box" style="left: 0px; top: 0px; background-color: green;"></div>
+
+    <datalist id="list"></datalist>
+    <input class="box" style="left: 110px; top: 0px;" type="search" list="list">
+    <div class="box" style="left: 110px; top: 0px; background-color: green;"></div>
+</body>

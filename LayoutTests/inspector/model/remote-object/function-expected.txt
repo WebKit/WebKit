@@ -1,0 +1,65 @@
+
+-----------------------------------------------------
+EXPRESSION: (function(){})
+{
+  "_type": "function",
+  "_objectId": "<filtered>",
+  "_description": "function (){}"
+}
+
+-----------------------------------------------------
+EXPRESSION: function foo(){}; foo
+{
+  "_type": "function",
+  "_objectId": "<filtered>",
+  "_description": "function foo(){}"
+}
+
+-----------------------------------------------------
+EXPRESSION: function myFunction(a, b) { console.log(a, b); }; myFunction
+{
+  "_type": "function",
+  "_objectId": "<filtered>",
+  "_description": "function myFunction(a, b) { console.log(a, b); }"
+}
+
+-----------------------------------------------------
+EXPRESSION: function myTarget(a, b) { console.log(a, b); }; myTarget.bind(null)
+{
+  "_type": "function",
+  "_objectId": "<filtered>",
+  "_description": "function myTarget() {\n    [native code]\n}"
+}
+
+-----------------------------------------------------
+EXPRESSION: Array.prototype.push
+{
+  "_type": "function",
+  "_objectId": "<filtered>",
+  "_description": "function push() {\n    [native code]\n}"
+}
+
+-----------------------------------------------------
+EXPRESSION: window.setTimeout
+{
+  "_type": "function",
+  "_objectId": "<filtered>",
+  "_description": "function setTimeout() {\n    [native code]\n}"
+}
+
+-----------------------------------------------------
+EXPRESSION: Object.getOwnPropertyDescriptor({ get getter() { return 1 } }, "getter").get
+{
+  "_type": "function",
+  "_objectId": "<filtered>",
+  "_description": "function () { return 1 }"
+}
+
+-----------------------------------------------------
+EXPRESSION: Object.getOwnPropertyDescriptor({ set setter(v) { console.log(v); } }, "setter").set
+{
+  "_type": "function",
+  "_objectId": "<filtered>",
+  "_description": "function (v) { console.log(v); }"
+}
+

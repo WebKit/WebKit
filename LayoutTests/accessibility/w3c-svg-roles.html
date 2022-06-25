@@ -1,0 +1,186 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<div id="content">
+<svg>
+  <path id="test1" aria-labelledby="t1" aria-label="down" d="M 100 100 L 300 100 L 200 300 z" fill="red" data-expected="role: img">
+    <title>abc</title>
+    <desc>down</desc>
+  </path>
+  <text id="t1" x="40" y="90">end</text>
+</svg>
+<svg>
+  <path id="test2" aria-labelledby="t2" aria-label="down" d="M 100 100 L 300 100 L 200 300 z" fill="red" data-expected="role: img">
+    <title>abc</title>
+  </path>
+  <text id="t2" x="40" y="90">end</text>
+</svg>
+<svg>
+  <path id="test3" aria-labelledby="t3" aria-label="down" d="M 100 100 L 300 100 L 200 300 z" fill="red" data-expected="role: img">
+    <desc>abc</desc>
+  </path>
+  <text id="t3" x="40" y="90">end</text>
+</svg>
+<svg>
+  <path id="test4" aria-labelledby="t4" aria-label="bob" d="M 100 100 L 300 100 L 200 300 z" fill="red" data-expected="role: img"/>
+  <text id="t4" x="40" y="90">end</text>
+</svg>
+<svg>
+  <path id="test5" aria-labelledby="t5" d="M 100 100 L 300 100 L 200 300 z" fill="red" data-expected="role: img">
+    <title>abc</title>
+  </path>
+  <text id="t5" x="40" y="90">end</text>
+</svg>
+<svg>
+  <path id="test6" aria-labelledby="t6" d="M 100 100 L 300 100 L 200 300 z" fill="red" data-expected="role: img">
+    <desc>abc</desc>
+  </path>
+  <text id="t6" x="40" y="90">end</text>
+</svg>
+<svg>
+  <path id="test7" aria-labelledby="t1" d="M 100 100 L 300 100 L 200 300 z" fill="red" data-expected="role: img"/>
+  <text id="t7" x="40" y="90">end</text>
+</svg>
+<svg>
+  <path id="test8" aria-label="hello" d="M 100 100 L 300 100 L 200 300 z" fill="red" data-expected="role: img">
+    <title>abc</title>
+  </path>
+</svg>
+<svg>
+  <path id="test9" aria-label="hello" d="M 100 100 L 300 100 L 200 300 z" fill="red" data-expected="role: img"/>
+</svg>
+<svg>
+  <path id="test10" d="M 100 100 L 300 100 L 200 300 z" fill="red" data-expected="role: img">
+    <title>abc</title>
+  </path>
+</svg>
+<svg>
+  <path id="test11" d="M 100 100 L 300 100 L 200 300 z" fill="red" data-expected="role: img">
+    <desc>abc</desc>
+  </path>
+</svg>
+<svg>
+  <circle id="test12" aria-labelledby="t12" aria-label="bob" cx="50" cy="100" r="4" data-expected="role: img">
+    <title>abc</title>
+  </circle>
+  <text id="t12" x="40" y="90">end</text>
+</svg>
+<svg>
+  <circle id="test13" aria-labelledby="t13" aria-label="bob" cx="50" cy="100" r="4" data-expected="role: img"/>
+    <text id="t13" x="40" y="90">end</text>
+</svg>
+<svg>
+  <circle id="test14" aria-labelledby="t14" cx="50" cy="100" r="4" data-expected="role: img">
+    <title>abc</title>
+  </circle>
+  <text id="t14" x="40" y="90">end</text>
+</svg>
+<svg>
+  <circle id="test15" aria-labelledby="t15" cx="50" cy="100" r="4" data-expected="role: img"/>
+  <text id="t15" x="40" y="90">end</text>
+</svg>
+<svg>
+  <circle id="test16" aria-label="hello" cx="10" cy="10" r="5" data-expected="role: img">
+    <title>abc</title>
+  </circle>
+</svg>
+<svg>
+  <circle id="test17" aria-label="hello" cx="10" cy="10" r="5" data-expected="role: img"/>
+</svg>
+<svg>
+  <circle id="test18" cx="10" cy="100" r="5" data-expected="role: img">
+    <title>abc</title>
+  </circle>
+</svg>
+<svg>
+  <rect id="test19" aria-label="hello" x="10" y="10" width="50" height="30" data-expected="role: img"/>
+</svg>
+<svg>
+  <ellipse id="test20" cx="10" cy="100" rx="25" ry="15" data-expected="role: img">
+    <title>abc</title>
+  </ellipse>
+</svg>
+<svg>
+  <line id="test21" aria-label="hello" x1="10" y1="10" x2="50" y2="10" data-expected="role: img"/>
+</svg>
+<svg>
+  <polyline id="test22" aria-label="hello" fill="none" stroke="blue" stroke-width="10" points="50,375 150,375 150,325 250,325 250,375 350,375 350,250 450,250 450,375 550,375 550,175 650,175 650,375 750,375 750,100 850,100 850,375 950,375 950,25 1050,25 1050,375 1150,375" data-expected="role: img"/>
+</svg>
+<svg>
+  <polygon id="test23" fill="magenta" points="850,75 958,137.5 958,262.5 850,325 742,262.6 742,137.5" data-expected="role: img">
+    <desc>built up area</desc>
+  </polygon>
+</svg>
+<svg>
+  <foreignObject id="test24" width="100" height="50" aria-label="word wrap example" data-expected="role: group">
+    <body xmlns="http://www.w3.org/1999/xhtml">Here is a paragraph that requires word wrap</body>
+  </foreignObject>
+</svg>
+<svg>
+  <g id="test25" data-expected="role: group">
+    <title>Venn Diagram</title>
+    <circle cx="50" cy="50" r="20" aria-label="set A"/>
+    <circle cx="50" cy="75" r="20" aria-label="set B"/>
+  </g>
+</svg>
+<svg>
+  <image id="test26" x="200" y="200" width="100px" height="100px" href="myimage.png" data-expected="role: img">
+    <title>My image</title>
+  </image>
+</svg>
+<svg id="test27" width="4in" height="3in" xmlns="http://www.w3.org/2000/svg" data-expected="role: group">
+  <desc>This graphic links to an external image</desc>
+  <image x="200" y="200" width="100px" height="100px" href="myimage.png">
+    <title>My image</title>
+  </image>
+</svg>
+<svg>
+  <defs>
+    <rect id="MyRect28" width="60" height="10"/>
+  </defs>
+  <use id="test28" x="20" y="10" href="#MyRect28" aria-label="black bar" data-expected="role: img"/>
+</svg>
+<svg>
+  <text id="test29" x="250" y="180" font-family="Verdana" font-size="64" fill="blue" data-expected="role: group">Hello, out there!</text>
+</svg>
+<svg>
+  <text transform="rotate(45)">
+    <textPath id="test30" href="#path1" data-expected="role: group">Text on a path1</textPath>
+  </text>
+</svg>
+<svg>
+  <text x="100" y="180" fill="blue" >But you
+    <tspan id="test31" dx="2em" dy="-50" font-weight="bold" fill="red" tabindex="0" data-expected="role: group"> are a peach </tspan>
+  </text>
+</svg>
+<svg>
+  <text x="100" y="180" fill="blue" >But you
+    <tspan id="test32" dx="2em" dy="-50" font-weight="bold" fill="red" data-expected="(not exposed)"> are a peach </tspan>
+  </text>
+</svg>
+</div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("This tests the exposure and role mapping of SVG path elements with properties requiring exposure.");
+    if (window.accessibilityController) {
+        var platform = accessibilityController.platformName;
+        for (var i = 1; i <= 32; i++) {
+            var element = document.getElementById("test" + i);
+            var axElement = accessibilityController.accessibleElementById("test" + i);
+            if (axElement)
+                result = axElement.role;
+            else
+                result = "Element not exposed";
+            debug("test" + i + ":\n\tExpected " + element.getAttribute("data-expected") + "\n\t" + result);
+        }
+        document.getElementById("content").style.visibility = "hidden";
+    }
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>
+

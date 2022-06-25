@@ -1,0 +1,7 @@
+Test calling functions from WorkerContext. Should print multiple SUCCESS lines, followed by DONE.
+
+SUCCESS: postMessage() called directly
+SUCCESS: postMessage() invoked via postMessage.call()
+SUCCESS: postMessage() called via intermediate variable
+DONE
+

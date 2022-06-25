@@ -1,0 +1,4 @@
+urlscheme://2 - willSendRequest <NSURLRequest URL urlscheme://2, main document URL multiple-links.html, http method GET> redirectResponse (null)
+multiple-links.html - didFinishLoading
+urlscheme://2 - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -1002, failing URL "urlscheme://2">
+

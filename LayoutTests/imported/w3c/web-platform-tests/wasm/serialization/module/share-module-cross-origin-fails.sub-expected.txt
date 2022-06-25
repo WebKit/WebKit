@@ -1,0 +1,7 @@
+Blocked access to external URL http://www1.localhost:8800/wasm/serialization/module/resources/incrementer-iframe-failure.html
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT postMessaging a wasm module to a cross-origin iframe fails Test timed out
+

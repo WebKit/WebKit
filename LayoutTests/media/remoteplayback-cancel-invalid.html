@@ -1,0 +1,41 @@
+<html>
+    <head>
+        <script src='media-file.js'></script>
+        <script src='video-test.js'></script>
+        <script>
+            var video;
+
+            function start()
+            {
+                findMediaElement();
+
+                if (window.internals) {
+                    internals.setMockMediaPlaybackTargetPickerEnabled(true);
+                    internals.settings.setAllowsAirPlayForMediaPlayback(true);
+                }
+
+                consoleWrite('** create initial callback');
+                video.remote.watchAvailability(callback).then(cancelInvalid);
+            }
+
+            function callback(available) { };
+
+            function cancelInvalid(id)
+            {
+                consoleWrite('** pass invalid id to cancelWatchAvailability');
+                video.remote.cancelWatchAvailability(id + 1).catch(handleError);
+            }
+
+            function handleError(exception)
+            {
+                consoleWrite(`EXPECTED ERROR: ${ exception }`);
+                endTest();
+            }
+        </script>
+    </head>
+
+    <body onload='start()'>
+        <video controls></video>
+        <p>Test that passing an invalid id to cancelWatchAvailability will generate an error.</p>
+    </body>
+</html>

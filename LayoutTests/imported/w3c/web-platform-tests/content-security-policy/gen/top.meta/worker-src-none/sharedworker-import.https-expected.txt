@@ -1,0 +1,17 @@
+Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/shared-worker.py?redirection=keep-origin&action=purge&key=36c6bf2d-872f-4efb-8922-8986779d6132&path=/mixed-content
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Content Security Policy: Expects blocked for sharedworker-import to cross-https origin and keep-origin redirection from https context. Test timed out
+NOTRUN Content Security Policy: Expects blocked for sharedworker-import to cross-https origin and keep-origin redirection from https context.: securitypolicyviolation
+NOTRUN Content Security Policy: Expects blocked for sharedworker-import to cross-https origin and no-redirect redirection from https context.
+NOTRUN Content Security Policy: Expects blocked for sharedworker-import to cross-https origin and no-redirect redirection from https context.: securitypolicyviolation
+NOTRUN Content Security Policy: Expects blocked for sharedworker-import to cross-https origin and swap-origin redirection from https context.
+NOTRUN Content Security Policy: Expects blocked for sharedworker-import to cross-https origin and swap-origin redirection from https context.: securitypolicyviolation
+NOTRUN Content Security Policy: Expects blocked for sharedworker-import to same-https origin and keep-origin redirection from https context.
+NOTRUN Content Security Policy: Expects blocked for sharedworker-import to same-https origin and keep-origin redirection from https context.: securitypolicyviolation
+NOTRUN Content Security Policy: Expects blocked for sharedworker-import to same-https origin and no-redirect redirection from https context.
+NOTRUN Content Security Policy: Expects blocked for sharedworker-import to same-https origin and no-redirect redirection from https context.: securitypolicyviolation
+NOTRUN Content Security Policy: Expects blocked for sharedworker-import to same-https origin and swap-origin redirection from https context.
+NOTRUN Content Security Policy: Expects blocked for sharedworker-import to same-https origin and swap-origin redirection from https context.: securitypolicyviolation
+

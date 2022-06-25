@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+var successfullyParsed = false;
+</script>
+</head>
+<body id="body">
+
+<div role="button" id="button3">c</div>
+
+<div role="grid">
+  <div role="row">
+     <div role="gridcell">
+      <div role="button" id="button1">a</div>
+     </div>
+  </div>
+</div>
+
+<table border=1>
+  <tr>
+    <td>
+      <div role="button" id="button2">b</div>
+    </td>
+    <td>
+      <button>1</button>
+    </td>
+  </tr>
+</table>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that objects in various kinds of tables report they are in the table.");
+
+    if (window.accessibilityController) {
+
+        var button1 = accessibilityController.accessibleElementById("button1");
+        shouldBeTrue("button1.isInTable");
+
+        var button2 = accessibilityController.accessibleElementById("button2");
+        shouldBeTrue("button2.isInTable");
+
+        var button3 = accessibilityController.accessibleElementById("button3");
+        shouldBeFalse("button3.isInTable");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
+

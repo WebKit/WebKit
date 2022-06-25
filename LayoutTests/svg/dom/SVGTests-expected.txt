@@ -1,0 +1,22 @@
+This test checks the SVGTests API
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Check the requiredFeatures, requiredExtensions and systemLanguage attributes
+PASS foreignObject.requiredFeatures instanceof SVGStringList is true
+PASS foreignObject.requiredExtensions instanceof SVGStringList is true
+PASS foreignObject.systemLanguage instanceof SVGStringList is true
+
+Check the hasExtension function
+PASS foreignObject.hasExtension('http://www.w3.org/1998/Math/MathML') is true
+PASS foreignObject.hasExtension('http://www.w3.org/1999/xhtml') is true
+PASS foreignObject.hasExtension('') is false
+PASS foreignObject.hasExtension('unknownExtension') is false
+PASS foreignObject.hasExtension('HTTP://WWW.W3.ORG/1999/XHTML') is false
+PASS foreignObject.hasExtension('http://www.w3.org/1998/Math/MathML http://www.w3.org/1999/xhtml') is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

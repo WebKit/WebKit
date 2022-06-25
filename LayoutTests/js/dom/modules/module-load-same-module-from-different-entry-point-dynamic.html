@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description('2 different module tag will attempt to load the same module from a dynamically generated tag');
+debug('Currently, this is not defined in the spec. This issue should be fixed in the future.');
+// Module will be executed asynchronously.
+window.jsTestIsAsync = true;
+window.moduleExecutedCount = 0;
+debug('Module is not executed yet.');
+shouldBe(`window.moduleExecutedCount`, `0`);
+function onLoad()
+{
+    shouldBe(`window.moduleExecutedCount`, `1`);
+    finishJSTest();
+}
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+<script type="module">
+import "./resources/module-load-same-module-from-different-entry-point.js"
+debug('Executing the module.');
+shouldBe(`window.moduleExecutedCount`, `1`);
+var element = document.createElement("script");
+element.type = "module";
+element.innerText = `import "./resources/module-load-same-module-from-different-entry-point.js"`;
+element.onload = onLoad;
+document.body.appendChild(element);
+</script>
+</body>
+</html>

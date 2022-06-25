@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+let worker;
+
+function createWorker() {
+    worker = new Worker("../worker/resources/worker-1.js");
+}
+
+function terminateWorker() {
+    worker.terminate();
+}
+
+function test()
+{
+    function dumpTargets() {
+        for (let target of WI.targets)
+            InspectorTest.log(`Target - ${String(target.type)} - ${target.displayName}`);
+    }
+
+    let suite = InspectorTest.createAsyncSuite("TargetManager");
+
+    suite.addTestCase({
+        name: "TargetManager.MainTarget",
+        description: "We should always have the main target.",
+        async test() {
+            InspectorTest.assert(WI.targets === WI.targetManager.targets);
+            InspectorTest.expectEqual(WI.targets.length, 1, "Targets list should always start out with the main target.");
+            InspectorTest.expectEqual([...WI.targets][0], WI.mainTarget, "Target list should always contain the main target.");
+            InspectorTest.expectNotNull(WI.mainTarget.executionContext, "Main target should have an ExecutionContext.");
+            InspectorTest.expectEqual(WI.mainTarget.RuntimeAgent, WI.pageTarget.RuntimeAgent, "Main target should have the page target's RuntimeAgent.");
+            dumpTargets();
+        }
+    });
+
+    suite.addTestCase({
+        name: "TargetManager.WorkerTarget.Create",
+        description: "Creating a Worker should create a new Worker Target.",
+        async test() {
+            InspectorTest.evaluateInPage("createWorker()");
+            let event = await WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded);
+            let target = event.data.target;
+            InspectorTest.assert(target instanceof WI.Target);
+            InspectorTest.expectEqual(target.type, WI.TargetType.Worker, "Added Target should have Worker type.");
+            InspectorTest.expectNotNull(target.executionContext, "Added Target should have an ExecutionContext.");
+            InspectorTest.expectNotNull(target.RuntimeAgent, "Added Target should have a RuntimeAgent.");
+            InspectorTest.expectNotEqual(target.RuntimeAgent, RuntimeAgent, "Added Target RuntimeAgent should not be the global RuntimeAgent.");
+            dumpTargets();
+        }
+    });
+
+    suite.addTestCase({
+        name: "TargetManager.WorkerTarget.Remove",
+        description: "Creating a Worker should create a new Worker Target.",
+        async test() {
+            InspectorTest.evaluateInPage("terminateWorker()");
+            let event = await WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetRemoved);
+            let target = event.data.target;
+            InspectorTest.assert(target instanceof WI.Target);
+            InspectorTest.expectEqual(target.type, WI.TargetType.Worker, "Removed Target should have Worker type.");
+            dumpTargets();
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test for TargetManager and other global WI.Target objects.</p>
+</body>
+</html>

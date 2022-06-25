@@ -1,0 +1,55 @@
+Tests calling initCustomEvent() on an custom event while it is being dispatched and after.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS testEvent.__proto__ is CustomEvent.prototype
+PASS testEvent.initCustomEvent("foo", true, false, "detail") did not throw exception.
+PASS testEvent.type is "foo"
+PASS testEvent.bubbles is true
+PASS testEvent.cancelable is false
+PASS testEvent.target is null
+PASS testEvent.currentTarget is null
+PASS testEvent.eventPhase is Event.NONE
+PASS testEvent.detail is "detail"
+
+* In event handler
+PASS event.type is "foo"
+PASS event.bubbles is true
+PASS event.cancelable is false
+PASS event.target is document.body
+PASS event.currentTarget is document.body
+PASS event.eventPhase is Event.AT_TARGET
+PASS event.detail is "detail"
+
+PASS event.initCustomEvent("bar", false, true, "detail2") did not throw exception.
+PASS event.type is "foo"
+PASS event.bubbles is true
+PASS event.cancelable is false
+PASS event.target is document.body
+PASS event.currentTarget is document.body
+PASS event.eventPhase is Event.AT_TARGET
+PASS event.detail is "detail"
+PASS document.body.dispatchEvent(testEvent) did not throw exception.
+
+* After event has been dispatched
+PASS testEvent.type is "foo"
+PASS testEvent.bubbles is true
+PASS testEvent.cancelable is false
+PASS testEvent.target is document.body
+PASS testEvent.currentTarget is null
+PASS testEvent.eventPhase is Event.NONE
+PASS testEvent.detail is "detail"
+
+PASS testEvent.initCustomEvent("bar", false, true, "detail2") did not throw exception.
+PASS testEvent.type is "bar"
+PASS testEvent.bubbles is false
+PASS testEvent.cancelable is true
+PASS testEvent.target is null
+PASS testEvent.currentTarget is null
+PASS testEvent.eventPhase is Event.NONE
+PASS testEvent.detail is "detail2"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

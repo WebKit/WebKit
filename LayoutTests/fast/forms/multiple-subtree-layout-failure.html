@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests when we issue subtree layout on multiple subtrees, they all get laid out properly.</title>
+</head>
+<body>
+<div><input id="test"></div>
+<div><input id="test1"></div>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+setTimeout(function() {
+    document.getElementById("test").value = "foobar";
+    document.getElementById("test1").value = "foobar";
+    if (window.testRunner)
+        testRunner.notifyDone();
+    }, 0);
+</script>
+</body>
+</html>

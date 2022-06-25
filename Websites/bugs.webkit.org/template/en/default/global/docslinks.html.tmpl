@@ -1,0 +1,44 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # docslinks: hash. Hash values will be used as text of the documentation links,
+  #            hash keys will be used as links to the document, relative to
+  #            the main Bugzilla documentation directory.
+  #            Example: If you want a 'FAQ' link to point to, the "faq-general"
+  #            named anchor on faq.html, assign
+  #               { "faq.html#faq-general" => 'FAQ' }
+  #            to docslinks.
+  #            You may only link to sections by their given ID; it is not allowed
+  #            to link to a section which is not given an ID (thus getting
+  #            assigned an automatically generated ID). Otherwise, the link
+  #            would break on a recompilation of the documentation.
+  # admindocslinks: hash. Same as docslinks, but will only be displayed to
+  #                 members of the 'editcomponents' group.
+  #%]
+
+[% IF docslinks.keys.size || (admindocslinks.keys.size && user.in_group('editcomponents')) %]
+  <div id="docslinks">
+    <h2>Related documentation</h2>
+    <ul>
+      [% IF user.in_group('editcomponents') %]
+        [% PROCESS docslinkslist docstype = admindocslinks admin = 1 %]
+      [% END %]
+      [% PROCESS docslinkslist docstype = docslinks admin = 0 %]
+    </ul>
+  </div>
+[% END %]
+
+[% BLOCK docslinkslist %]
+  [% FOREACH docslink = docstype.keys %]
+    <li>
+      <a href="[% docs_urlbase FILTER html %][% "administering/" IF admin %]
+               [% docslink FILTER none %]">[% docstype.$docslink FILTER html %]</a>
+    </li>
+  [% END %]
+[% END %]

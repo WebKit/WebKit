@@ -1,0 +1,116 @@
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+
+
+Harness Error (FAIL), message = TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+
+PASS Single value - name is missing
+FAIL Single value - empty name exists undefined is not an object (evaluating 'this.internals_.setFormValue')
+FAIL Single value - Non-empty name exists undefined is not an object (evaluating 'this.internals_.setFormValue')
+FAIL Null value should submit nothing undefined is not an object (evaluating 'this.internals_.setFormValue')
+FAIL Multiple values - name content attribute is ignored undefined is not an object (evaluating 'this.internals_.setFormValue')
+FAIL setFormValue with an empty FormData should submit nothing undefined is not an object (evaluating 'this.internals_.setFormValue')
+FAIL Newline normalization - \n in name (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \n in name (formdata) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \r in name (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \r in name (formdata) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \r\n in name (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \r\n in name (formdata) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \n\r in name (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \n\r in name (formdata) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \n in value (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \n in value (formdata) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \r in value (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \r in value (formdata) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \r\n in value (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \r\n in value (formdata) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \n\r in value (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \n\r in value (formdata) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \n in filename (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \n in filename (formdata) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \r in filename (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \r in filename (formdata) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \r\n in filename (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \r\n in filename (formdata) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \n\r in filename (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \n\r in filename (formdata) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \n in FormData name (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \n in FormData name (formdata) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \r in FormData name (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \r in FormData name (formdata) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \r\n in FormData name (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \r\n in FormData name (formdata) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \n\r in FormData name (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \n\r in FormData name (formdata) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \n in FormData value (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \n in FormData value (formdata) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \r in FormData value (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \r in FormData value (formdata) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \r\n in FormData value (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \r\n in FormData value (formdata) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \n\r in FormData value (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \n\r in FormData value (formdata) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \n in FormData filename (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \n in FormData filename (formdata) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \r in FormData filename (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \r in FormData filename (formdata) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \r\n in FormData filename (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \r\n in FormData filename (formdata) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \n\r in FormData filename (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL Newline normalization - \n\r in FormData filename (formdata) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+

@@ -1,0 +1,38 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg" >
+
+  <title>Testcase for fallback colours</title>
+
+  <defs>
+    <filter id="dilate">
+      <feMorphology operator="dilate" radius="6"/>
+    </filter>
+  </defs>
+
+  <rect x="0%" y="0%" width="100%" height="100%" fill="lime"/>
+  <text x="10" y="50" font-size="50"
+        stroke-width="8" stroke="red" fill="none">
+    A B
+  </text>
+  <text x="10" y="50" font-size="50"
+        stroke-width="8" stroke="url(#null) lime" fill="none" filter="url(#dilate)">
+    A B
+  </text>
+  <text x="200" y="50" font-size="50" fill="red">
+    A B
+  </text>
+  <text x="200" y="50" font-size="50" fill="url(#null) lime" filter="url(#dilate)">
+    A B
+  </text>
+  <text x="10" y="200" font-size="50" fill="red"
+        stroke-width="1" stroke="red">
+    A B
+  </text>
+  <text x="10" y="200" font-size="50" fill="url(#null) lime"
+        stroke-width="1" stroke="url(#null) lime" filter="url(#dilate)">
+    A B
+  </text>
+</svg>

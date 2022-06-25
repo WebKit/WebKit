@@ -1,0 +1,172 @@
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+    description("This tests that document.createEvent is hooked up for all Event interfaces (and alternatives) and creates the right instance.")
+
+    // Event
+    shouldBeTrue("document.createEvent('Event') instanceof window.Event");
+    shouldBeTrue("document.createEvent('Event').constructor === window.Event");
+
+    // Events (Event alternative)
+    shouldBeTrue("document.createEvent('Events') instanceof window.Event");
+    shouldBeTrue("document.createEvent('Events').constructor === window.Event");
+
+    // HTMLEvents (Event alternative)
+    shouldBeTrue("document.createEvent('HTMLEvents') instanceof window.Event");
+    shouldBeTrue("document.createEvent('HTMLEvents').constructor === window.Event");
+
+    // CompositionEvent
+    shouldBeTrue("document.createEvent('CompositionEvent') instanceof window.CompositionEvent");
+    shouldBeTrue("document.createEvent('CompositionEvent') instanceof window.Event");
+    shouldBeTrue("document.createEvent('CompositionEvent').constructor === window.CompositionEvent");
+
+    // CustomEvent
+    shouldBeTrue("document.createEvent('CustomEvent') instanceof window.CustomEvent");
+    shouldBeTrue("document.createEvent('CustomEvent') instanceof window.Event");
+    shouldBeTrue("document.createEvent('CustomEvent').constructor === window.CustomEvent");
+
+    // HashChangeEvent
+    shouldBeTrue("document.createEvent('HashChangeEvent') instanceof window.HashChangeEvent");
+    shouldBeTrue("document.createEvent('HashChangeEvent') instanceof window.Event");
+    shouldBeTrue("document.createEvent('HashChangeEvent').constructor === window.HashChangeEvent");
+
+    // KeyboardEvent
+    shouldBeTrue("document.createEvent('KeyboardEvent') instanceof window.KeyboardEvent");
+    shouldBeTrue("document.createEvent('KeyboardEvent') instanceof window.UIEvent");
+    shouldBeTrue("document.createEvent('KeyboardEvent') instanceof window.Event");
+    shouldBeTrue("document.createEvent('KeyboardEvent').constructor === window.KeyboardEvent");
+
+    // KeyboardEvents (KeyboardEvent alternative)
+    shouldBeTrue("document.createEvent('KeyboardEvents') instanceof window.KeyboardEvent");
+    shouldBeTrue("document.createEvent('KeyboardEvents') instanceof window.UIEvent");
+    shouldBeTrue("document.createEvent('KeyboardEvents') instanceof window.Event");
+    shouldBeTrue("document.createEvent('KeyboardEvents').constructor === window.KeyboardEvent");
+
+    // MessageEvent
+    shouldBeTrue("document.createEvent('MessageEvent') instanceof window.MessageEvent");
+    shouldBeTrue("document.createEvent('MessageEvent') instanceof window.Event");
+    shouldBeTrue("document.createEvent('MessageEvent').constructor === window.MessageEvent");
+
+    // MouseEvent
+    shouldBeTrue("document.createEvent('MouseEvent') instanceof window.MouseEvent");
+    shouldBeTrue("document.createEvent('MouseEvent') instanceof window.UIEvent");
+    shouldBeTrue("document.createEvent('MouseEvent') instanceof window.Event");
+    shouldBeTrue("document.createEvent('MouseEvent').constructor === window.MouseEvent");
+
+    // MouseEvents (MouseEvent alternative)
+    shouldBeTrue("document.createEvent('MouseEvents') instanceof window.MouseEvent");
+    shouldBeTrue("document.createEvent('MouseEvents') instanceof window.UIEvent");
+    shouldBeTrue("document.createEvent('MouseEvents') instanceof window.Event");
+    shouldBeTrue("document.createEvent('MouseEvents').constructor === window.MouseEvent");
+
+    // MutationEvent
+    shouldBeTrue("document.createEvent('MutationEvent') instanceof window.MutationEvent");
+    shouldBeTrue("document.createEvent('MutationEvent') instanceof window.Event");
+    shouldBeTrue("document.createEvent('MutationEvent').constructor === window.MutationEvent");
+
+    // MutationEvents (MutationEvent alternative)
+    shouldBeTrue("document.createEvent('MutationEvents') instanceof window.MutationEvent");
+    shouldBeTrue("document.createEvent('MutationEvents') instanceof window.Event");
+    shouldBeTrue("document.createEvent('MutationEvents').constructor === window.MutationEvent");
+
+    // OverflowEvent
+    shouldBeTrue("document.createEvent('OverflowEvent') instanceof window.OverflowEvent");
+    shouldBeTrue("document.createEvent('OverflowEvent') instanceof window.Event");
+    shouldBeTrue("document.createEvent('OverflowEvent').constructor === window.OverflowEvent");
+
+    // TextEvent
+    shouldBeTrue("document.createEvent('TextEvent') instanceof window.TextEvent");
+    shouldBeTrue("document.createEvent('TextEvent') instanceof window.UIEvent");
+    shouldBeTrue("document.createEvent('TextEvent') instanceof window.Event");
+    shouldBeTrue("document.createEvent('TextEvent').constructor === window.TextEvent");
+
+    // UIEvent
+    shouldBeTrue("document.createEvent('UIEvent') instanceof window.UIEvent");
+    shouldBeTrue("document.createEvent('UIEvent') instanceof window.Event");
+    shouldBeTrue("document.createEvent('UIEvent').constructor === window.UIEvent");
+
+    // UIEvents (UIEvent alternative)
+    shouldBeTrue("document.createEvent('UIEvents') instanceof window.UIEvent");
+    shouldBeTrue("document.createEvent('UIEvents') instanceof window.Event");
+    shouldBeTrue("document.createEvent('UIEvents').constructor === window.UIEvent");
+
+    // WheelEvent
+    shouldBeTrue("document.createEvent('WheelEvent') instanceof window.WheelEvent");
+    shouldBeTrue("document.createEvent('WheelEvent') instanceof window.MouseEvent");
+    shouldBeTrue("document.createEvent('WheelEvent') instanceof window.UIEvent");
+    shouldBeTrue("document.createEvent('WheelEvent') instanceof window.Event");
+    shouldBeTrue("document.createEvent('WheelEvent').constructor === window.WheelEvent");
+
+    // StorageEvent
+    shouldBeTrue("document.createEvent('StorageEvent') instanceof window.StorageEvent");
+    shouldBeTrue("document.createEvent('StorageEvent') instanceof window.Event");
+    shouldBeTrue("document.createEvent('StorageEvent').constructor === window.StorageEvent");
+
+    // SVGZoomEvents
+    shouldBeTrue("document.createEvent('SVGZoomEvents') instanceof window.SVGZoomEvent");
+    shouldBeTrue("document.createEvent('SVGZoomEvents') instanceof window.Event");
+    shouldBeTrue("document.createEvent('SVGZoomEvents').constructor === window.SVGZoomEvent");
+
+    // The following are here for completeness, but we won't run these tests until they are supported in more ports.
+
+    // #if ENABLE(TOUCH_EVENTS)
+    // TouchEvent
+    // shouldBeTrue("document.createEvent('TouchEvent') instanceof window.TouchEvent");
+    // shouldBeTrue("document.createEvent('TouchEvent') instanceof window.Event");
+    // shouldBeTrue("document.createEvent('TouchEvent').constructor === window.TouchEvent");
+
+    // #if ENABLE(DEVICE_ORIENTATION)
+    // DeviceMotionEvent
+    // shouldBeTrue("document.createEvent('DeviceMotionEvent') instanceof window.DeviceMotionEvent");
+    // shouldBeTrue("document.createEvent('DeviceMotionEvent') instanceof window.Event");
+    // shouldBeTrue("document.createEvent('DeviceMotionEvent').constructor === window.DeviceMotionEvent");
+
+    // #if ENABLE(DEVICE_ORIENTATION)
+    // DeviceOrientationEvent
+    // shouldBeTrue("document.createEvent('DeviceOrientationEvent') instanceof window.DeviceOrientationEvent");
+    // shouldBeTrue("document.createEvent('DeviceOrientationEvent') instanceof window.Event");
+    // shouldBeTrue("document.createEvent('DeviceOrientationEvent').constructor === window.DeviceOrientationEvent");
+
+    // We test both a hard coded set and the automated set below (using enumeration) to ensure that a constructor being removed
+    // from the window is caught a regression.
+
+    var allEventInterfacesCreateEvents = true;
+    for (var propertyName in window) {
+        if (propertyName.match(/Event$/) && window[propertyName].toString().match(/EventConstructor\]$/)) {
+            try {
+                if (!(document.createEvent(propertyName) instanceof window.Event)) {
+                    allEventInterfacesCreateEvents = false;
+                    debug("'document.createEvent(propertyName) instanceof window.Event' with propertyName: " + propertyName + " should be true but isn't");
+                }
+            } catch (e) {
+                allEventInterfacesCreateEvents = false;
+                debug("'document.createEvent(propertyName) instanceof window.Event' with propertyName: " + propertyName + " threw an exception: " + e);
+            }
+
+            try {
+                if (!(document.createEvent(propertyName) instanceof window[propertyName])) {
+                    allEventInterfacesCreateEvents = false;
+                    debug("'document.createEvent(propertyName) instanceof window[propertyName]' with propertyName: " + propertyName + " should be true but isn't");
+                }
+            } catch (e) {
+                allEventInterfacesCreateEvents = false;
+                debug("'document.createEvent(propertyName) instanceof window[propertyName]' with propertyName: " + propertyName + " threw an exception: " + e);
+            }
+
+            try {
+                if (!(document.createEvent(propertyName).constructor === window[propertyName])) {
+                    allEventInterfacesCreateEvents = false;
+                    debug("'document.createEvent(propertyName).constructor === window[propertyName]' with propertyName: " + propertyName + " should be true but isn't");
+                }
+            } catch (e) {
+                allEventInterfacesCreateEvents = false;
+                debug("'document.createEvent(propertyName).constructor === window[propertyName]' with propertyName: " + propertyName + " threw an exception: " + e);
+            }
+        }
+    }
+    shouldBeTrue('allEventInterfacesCreateEvents');
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>

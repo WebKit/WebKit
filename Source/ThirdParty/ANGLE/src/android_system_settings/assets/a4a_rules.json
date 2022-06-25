@@ -1,0 +1,25 @@
+{
+   "Rules":[
+      {
+         "Rule":"Default Rule (i.e. use native driver)",
+         "UseANGLE":false
+      },
+      {
+         "Rule":"Supported application(s) (e.g. Maps on Google devices)",
+         "UseANGLE":true,
+         "Applications":[
+            {
+               "AppName":"com.android.angle"
+            },
+            {
+               "AppName":"com.google.android.angle"
+            }
+         ],
+         "Devices":[
+            {
+               "Manufacturer":"Google"
+            }
+         ]
+      }
+   ]
+}

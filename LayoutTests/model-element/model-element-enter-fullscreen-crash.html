@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<script>
+  document.createElement('model').enterFullscreen();
+  onload = () => {
+    if (window.testRunner)
+      testRunner.dumpAsText();
+    console.log("This test passes if it does not crash.");
+  };
+</script>

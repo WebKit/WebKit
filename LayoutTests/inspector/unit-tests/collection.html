@@ -1,0 +1,102 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    class TestCollection extends WI.Collection {
+        objectIsRequiredType(object)
+        {
+            return true;
+        }
+    }
+
+    class StringCollection extends WI.Collection {
+        objectIsRequiredType(object)
+        {
+            return typeof object === "string";
+        }
+    }
+
+    let suite = InspectorTest.createSyncSuite("Collection");
+
+    suite.addTestCase({
+        name: "WI.Collection.prototype.add",
+        test() {
+            let collection = new TestCollection;
+            collection.add("one");
+            collection.add("two");
+
+            InspectorTest.log(collection);
+
+            collection.add(3);
+
+            InspectorTest.log(collection);
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "WI.Collection.prototype.remove",
+        test() {
+            let item = "one";
+
+            let collection = new TestCollection;
+            collection.add(item);
+            collection.add("two");
+
+            InspectorTest.log(collection);
+
+            collection.remove(item);
+
+            InspectorTest.log(collection);
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "WI.Collection.prototype.clear",
+        test() {
+            let collection = new TestCollection;
+            collection.add("one");
+            collection.add("two");
+            collection.add(3);
+
+            InspectorTest.log(collection);
+
+            collection.clear();
+
+            InspectorTest.log(collection);
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "WI.Collection.SpecifiedType",
+        test() {
+            let collection = new StringCollection;
+            collection.add("one");
+            collection.add("two");
+
+            InspectorTest.log(collection);
+
+            collection.add(3);
+
+            InspectorTest.log(collection);
+
+            return true;
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing all methods of Collection.</p>
+</body>
+</html>

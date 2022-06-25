@@ -1,0 +1,9 @@
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT dedicatedworker-script-src Test timed out
+TIMEOUT Cross-origin `importScripts()` blocked in http: with script-src 'self' Test timed out
+NOTRUN `eval()` blocked in http: with script-src 'self'
+NOTRUN `setTimeout([string])` blocked in http: with script-src 'self'
+NOTRUN Reports are sent for http: with script-src 'self'
+

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/plugin.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function testPluginRemovedItself()
+{
+    document.body.appendChild(document.createTextNode(document.getElementById("plugin") ? "FAIL" : "PASS"));
+}
+
+runAfterPluginLoad(testPluginRemovedItself, NotifyDone);
+</script>
+<meta http-equiv="Content-Security-Policy" content="default-src *">
+</head>
+<body>
+<object id="plugin" type="application/x-webkit-test-netscape" cleardocumentduringnew></object>
+</body>
+</html>

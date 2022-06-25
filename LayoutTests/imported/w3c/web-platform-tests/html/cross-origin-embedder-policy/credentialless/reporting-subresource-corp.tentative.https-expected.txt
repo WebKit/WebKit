@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: undefined is not a constructor (evaluating 'new global.ReportingObserver')
+
+Harness Error (FAIL), message = Unhandled rejection: undefined is not a constructor (evaluating 'new global.ReportingObserver')
+
+FAIL reporting-subresource-corp promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new global.ReportingObserver')"
+

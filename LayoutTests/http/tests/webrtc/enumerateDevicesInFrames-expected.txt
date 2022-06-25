@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: Feature policy 'Camera' check failed for iframe with origin 'http://127.0.0.1:8000' and allow attribute 'microphone:'none'; camera:'none''.
+CONSOLE MESSAGE: Feature policy 'Microphone' check failed for iframe with origin 'http://127.0.0.1:8000' and allow attribute 'microphone:'none'; camera:'none''.
+CONSOLE MESSAGE: Not allowed to call enumerateDevices.
+
+
+PASS allow attribute can be updated dynamically
+

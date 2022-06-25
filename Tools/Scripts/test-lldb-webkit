@@ -1,0 +1,145 @@
+#!/usr/bin/env python3
+# Copyright (c) 2019 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+#
+#     * Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#     * Redistributions in binary form must reproduce the above
+# copyright notice, this list of conditions and the following disclaimer
+# in the documentation and/or other materials provided with the
+# distribution.
+#     * Neither the name of Google Inc. nor the names of its
+# contributors may be used to endorse or promote products derived from
+# this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import argparse
+import logging
+import os
+import sys
+import time
+
+from webkitpy.common.host import Host
+from webkitpy.common.system.executive import ScriptError
+from webkitpy.common.system.logutils import configure_logging
+from webkitpy.port.config import Config
+from webkitpy.test.main import Tester
+
+_log = logging.getLogger(__name__)
+
+EXCEPTIONAL_EXIT_STATUS = -1
+
+
+class NoAction(argparse.Action):
+    def __init__(self, option_strings, dest, **kwargs):
+        super(NoAction, self).__init__(option_strings, dest, nargs=0, **kwargs)
+
+    def __call__(self, parser, namespace, values, option_string):
+        setattr(namespace, self.dest, False if option_string.startswith('--no') else True)
+
+
+class LldbTester(Tester):
+
+    def parse_args(self):
+        parser = argparse.ArgumentParser(description='A script which tests WebKit\'s lldb macros and integration')
+        parser.add_argument('--build', '--no-build',
+                            dest='build', action=NoAction,
+                            default=None, help='Enable or disable calling build-lldbwebkittester before running the test (enabled by default). This will build the lldb test runner, bmalloc and WTF.')
+        parser.add_argument('--root',
+                            dest='root', action='store',
+                            default=None, help='Path to a directory containing the binaries needed to run tests.')
+        parser.add_argument('-v', '--verbose', action='count',
+                            default=0, help='Verbose output (specify once for individual test results, twice for debug messages)')
+        parser.add_argument('-t', '--timing', action='store_true',
+                            default=False, help='Display per-test execution time (implies --verbose)')
+        parser.add_argument('-q', '--quiet', action='store_true',
+                            default=False, help='Run quietly (errors, warnings, and progress only)')
+        parser.add_argument('-p', '--pass-through', action='store_true', default=False,
+                            help='Be debugger friendly by passing captured output through to the system')
+        parser.add_argument('--debug', const='Debug',
+                            dest='configuration', action='store_const',
+                            default=None, help='Alias for configuration=debug.')
+        parser.add_argument('--release', const='Release',
+                            dest='configuration', action='store_const',
+                            default=None, help='Alias for configuration=release.')
+        parser.add_argument('--configuration',
+                            dest='configuration', action='store',
+                            default=None, help='Set configuration (Debug/Release/ASan/ect.) to build and test the lldb test runner with.')
+        parser.add_argument('names', nargs='*',
+                            default=None, help='Name (or names) of test, or test suite, to be run. lldb_webkit_unittest.TestSummaryProviders and dump_class_layout_unittest.TestDumpClassLayout are two examples')
+        return parser.parse_args()
+
+    def run(self, host=None, webkit_root=None):
+        configure_logging(logger=_log)
+        host = host or Host()
+        self._options = self.parse_args()
+        self.printer.configure(self._options)
+        self.finder.clean_trees()
+
+        names = self.finder.find_names(self._options.names or [], True)
+        if not names:
+            _log.error('No tests to run')
+            return False
+
+        config = Config(host.executive, self.finder.filesystem)
+        configuration_to_use = self._options.configuration or config.default_configuration()
+        self.upload_style = configuration_to_use.lower()
+
+        if (not self._options.root and self._options.build is None) or self._options.build:
+            self.printer.write_update('Building lldbWebKitTester ...')
+            build_lldbwebkittester = self.finder.filesystem.join(webkit_root, 'Tools', 'Scripts', 'build-lldbwebkittester')
+            try:
+                host.executive.run_and_throw_if_fail(
+                    [build_lldbwebkittester, config.flag_for_configuration(configuration_to_use)],
+                    quiet=(not bool(self._options.verbose)),
+                )
+            except ScriptError as e:
+                _log.error(e.message_with_output(output_limit=None))
+                return False
+
+        os.environ['LLDB_WEBKIT_TESTER_EXECUTABLE'] = str(self.finder.filesystem.join(config.build_directory(configuration_to_use), 'lldbWebKitTester'))
+        if not self.finder.filesystem.exists(os.environ['LLDB_WEBKIT_TESTER_EXECUTABLE']):
+            _log.error('Failed to find lldbWebKitTester.')
+            return False
+
+        return self._run_tests(names)
+
+
+def main():
+    tester = LldbTester()
+    host = Host()
+    lldb_python_directory = host.path_to_lldb_python_directory()
+    if not host.filesystem.isdir(lldb_python_directory):
+        tester.parse_args()
+        if not lldb_python_directory:
+            print('lldb tests are only supported on macOS with XCode installed')
+        else:
+            print('Could not find {}, derived from running `xcrun lldb --python-path`'.format(lldb_python_directory))
+        return 1
+
+    up = host.filesystem.dirname
+    webkit_root = up(up(up(host.filesystem.abspath(__file__))))
+
+    if lldb_python_directory not in sys.path:
+        sys.path.insert(0, lldb_python_directory)
+    tester.add_tree(host.filesystem.join(webkit_root, 'Tools', 'lldb'))
+
+    return not tester.run(host=host, webkit_root=webkit_root)
+
+
+if __name__ == '__main__':
+    sys.exit(main())

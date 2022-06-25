@@ -1,0 +1,6 @@
+2d.getcontext.extraargs.cache
+The 2D context doesn't throw with extra getContext arguments (cached)
+Actual output:
+
+PASS The 2D context doesn't throw with extra getContext arguments (cached)
+

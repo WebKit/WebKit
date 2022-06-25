@@ -1,0 +1,240 @@
+
+PASS gb18030 decoder: ASCII
+PASS gb18030 decoder: euro
+PASS gb18030 decoder: initial byte out of accepted ranges
+PASS gb18030 decoder: end of queue, gb18030 first not 0
+PASS gb18030 decoder: two bytes 0x81 0x28
+PASS gb18030 decoder: two bytes 0x81 0x40
+PASS gb18030 decoder: two bytes 0x81 0x7e
+PASS gb18030 decoder: two bytes 0x81 0x7f
+PASS gb18030 decoder: two bytes 0x81 0x80
+PASS gb18030 decoder: two bytes 0x81 0xFE
+PASS gb18030 decoder: two bytes 0x81 0xFF
+PASS gb18030 decoder: two bytes 0xFE 0x40
+PASS gb18030 decoder: two bytes 0xFE 0xFE
+PASS gb18030 decoder: two bytes 0xFE 0xFF
+PASS gb18030 decoder: two bytes 0x81 0x30
+PASS gb18030 decoder: three bytes 0x81 0x30 0xFE
+PASS gb18030 decoder: three bytes 0x81 0x30 0xFF
+PASS gb18030 decoder: four bytes 0x81 0x30 0xFE 0x29
+PASS gb18030 decoder: four bytes 0xFE 0x39 0xFE 0x39
+PASS gb18030 decoder: pointer 7458
+PASS gb18030 decoder: pointer 7457
+PASS gb18030 decoder: pointer 7459
+PASS gb18030 decoder: pointer 39419
+PASS gb18030 decoder: pointer 39420
+PASS gb18030 decoder: pointer 189999
+PASS gb18030 decoder: pointer 189000
+PASS gb18030 decoder: pointer 1237575
+PASS gb18030 decoder: pointer 1237576
+PASS gb18030 decoder: legacy ICU special case 1
+PASS gb18030 decoder: legacy ICU special case 2
+PASS gb18030 decoder: legacy ICU special case 3
+PASS gb18030 decoder: range 0
+PASS gb18030 decoder: range 1
+PASS gb18030 decoder: range 2
+PASS gb18030 decoder: range 3
+PASS gb18030 decoder: range 4
+PASS gb18030 decoder: range 5
+PASS gb18030 decoder: range 6
+PASS gb18030 decoder: range 7
+PASS gb18030 decoder: range 8
+PASS gb18030 decoder: range 9
+PASS gb18030 decoder: range 10
+PASS gb18030 decoder: range 11
+PASS gb18030 decoder: range 12
+PASS gb18030 decoder: range 13
+PASS gb18030 decoder: range 14
+PASS gb18030 decoder: range 15
+PASS gb18030 decoder: range 16
+PASS gb18030 decoder: range 17
+PASS gb18030 decoder: range 18
+PASS gb18030 decoder: range 19
+PASS gb18030 decoder: range 20
+PASS gb18030 decoder: range 21
+PASS gb18030 decoder: range 22
+PASS gb18030 decoder: range 23
+PASS gb18030 decoder: range 24
+PASS gb18030 decoder: range 25
+PASS gb18030 decoder: range 26
+PASS gb18030 decoder: range 27
+PASS gb18030 decoder: range 28
+PASS gb18030 decoder: range 29
+PASS gb18030 decoder: range 30
+PASS gb18030 decoder: range 31
+PASS gb18030 decoder: range 32
+PASS gb18030 decoder: range 33
+PASS gb18030 decoder: range 34
+PASS gb18030 decoder: range 35
+PASS gb18030 decoder: range 36
+PASS gb18030 decoder: range 37
+PASS gb18030 decoder: range 38
+PASS gb18030 decoder: range 39
+PASS gb18030 decoder: range 40
+PASS gb18030 decoder: range 41
+PASS gb18030 decoder: range 42
+PASS gb18030 decoder: range 43
+PASS gb18030 decoder: range 44
+PASS gb18030 decoder: range 45
+PASS gb18030 decoder: range 46
+PASS gb18030 decoder: range 47
+PASS gb18030 decoder: range 48
+PASS gb18030 decoder: range 49
+PASS gb18030 decoder: range 50
+PASS gb18030 decoder: range 51
+PASS gb18030 decoder: range 52
+PASS gb18030 decoder: range 53
+PASS gb18030 decoder: range 54
+PASS gb18030 decoder: range 55
+PASS gb18030 decoder: range 56
+PASS gb18030 decoder: range 57
+PASS gb18030 decoder: range 58
+PASS gb18030 decoder: range 59
+PASS gb18030 decoder: range 60
+PASS gb18030 decoder: range 61
+PASS gb18030 decoder: range 62
+PASS gb18030 decoder: range 63
+PASS gb18030 decoder: range 64
+PASS gb18030 decoder: range 65
+PASS gb18030 decoder: range 66
+PASS gb18030 decoder: range 67
+PASS gb18030 decoder: range 68
+PASS gb18030 decoder: range 69
+PASS gb18030 decoder: range 70
+PASS gb18030 decoder: range 71
+PASS gb18030 decoder: range 72
+PASS gb18030 decoder: range 73
+PASS gb18030 decoder: range 74
+PASS gb18030 decoder: range 75
+PASS gb18030 decoder: range 76
+PASS gb18030 decoder: range 77
+PASS gb18030 decoder: range 78
+PASS gb18030 decoder: range 79
+PASS gb18030 decoder: range 80
+PASS gb18030 decoder: range 81
+PASS gb18030 decoder: range 82
+PASS gb18030 decoder: range 83
+PASS gb18030 decoder: range 84
+PASS gb18030 decoder: range 85
+PASS gb18030 decoder: range 86
+PASS gb18030 decoder: range 87
+PASS gb18030 decoder: range 88
+PASS gb18030 decoder: range 89
+PASS gb18030 decoder: range 90
+PASS gb18030 decoder: range 91
+PASS gb18030 decoder: range 92
+PASS gb18030 decoder: range 93
+PASS gb18030 decoder: range 94
+PASS gb18030 decoder: range 95
+PASS gb18030 decoder: range 96
+PASS gb18030 decoder: range 97
+PASS gb18030 decoder: range 98
+PASS gb18030 decoder: range 99
+PASS gb18030 decoder: range 100
+PASS gb18030 decoder: range 101
+PASS gb18030 decoder: range 102
+PASS gb18030 decoder: range 103
+PASS gb18030 decoder: range 104
+PASS gb18030 decoder: range 105
+PASS gb18030 decoder: range 106
+PASS gb18030 decoder: range 107
+PASS gb18030 decoder: range 108
+PASS gb18030 decoder: range 109
+PASS gb18030 decoder: range 110
+PASS gb18030 decoder: range 111
+PASS gb18030 decoder: range 112
+PASS gb18030 decoder: range 113
+PASS gb18030 decoder: range 114
+PASS gb18030 decoder: range 115
+PASS gb18030 decoder: range 116
+PASS gb18030 decoder: range 117
+PASS gb18030 decoder: range 118
+PASS gb18030 decoder: range 119
+PASS gb18030 decoder: range 120
+PASS gb18030 decoder: range 121
+PASS gb18030 decoder: range 122
+PASS gb18030 decoder: range 123
+PASS gb18030 decoder: range 124
+PASS gb18030 decoder: range 125
+PASS gb18030 decoder: range 126
+PASS gb18030 decoder: range 127
+PASS gb18030 decoder: range 128
+PASS gb18030 decoder: range 129
+PASS gb18030 decoder: range 130
+PASS gb18030 decoder: range 131
+PASS gb18030 decoder: range 132
+PASS gb18030 decoder: range 133
+PASS gb18030 decoder: range 134
+PASS gb18030 decoder: range 135
+PASS gb18030 decoder: range 136
+PASS gb18030 decoder: range 137
+PASS gb18030 decoder: range 138
+PASS gb18030 decoder: range 139
+PASS gb18030 decoder: range 140
+PASS gb18030 decoder: range 141
+PASS gb18030 decoder: range 142
+PASS gb18030 decoder: range 143
+PASS gb18030 decoder: range 144
+PASS gb18030 decoder: range 145
+PASS gb18030 decoder: range 146
+PASS gb18030 decoder: range 147
+PASS gb18030 decoder: range 148
+PASS gb18030 decoder: range 149
+PASS gb18030 decoder: range 150
+PASS gb18030 decoder: range 151
+PASS gb18030 decoder: range 152
+PASS gb18030 decoder: range 153
+PASS gb18030 decoder: range 154
+PASS gb18030 decoder: range 155
+PASS gb18030 decoder: range 156
+PASS gb18030 decoder: range 157
+PASS gb18030 decoder: range 158
+PASS gb18030 decoder: range 159
+PASS gb18030 decoder: range 160
+PASS gb18030 decoder: range 161
+PASS gb18030 decoder: range 162
+PASS gb18030 decoder: range 163
+PASS gb18030 decoder: range 164
+PASS gb18030 decoder: range 165
+PASS gb18030 decoder: range 166
+PASS gb18030 decoder: range 167
+PASS gb18030 decoder: range 168
+PASS gb18030 decoder: range 169
+PASS gb18030 decoder: range 170
+PASS gb18030 decoder: range 171
+PASS gb18030 decoder: range 172
+PASS gb18030 decoder: range 173
+PASS gb18030 decoder: range 174
+PASS gb18030 decoder: range 175
+PASS gb18030 decoder: range 176
+PASS gb18030 decoder: range 177
+PASS gb18030 decoder: range 178
+PASS gb18030 decoder: range 179
+PASS gb18030 decoder: range 180
+PASS gb18030 decoder: range 181
+PASS gb18030 decoder: range 182
+PASS gb18030 decoder: range 183
+PASS gb18030 decoder: range 184
+PASS gb18030 decoder: range 185
+PASS gb18030 decoder: range 186
+PASS gb18030 decoder: range 187
+PASS gb18030 decoder: range 188
+PASS gb18030 decoder: range 189
+PASS gb18030 decoder: range 190
+PASS gb18030 decoder: range 191
+PASS gb18030 decoder: range 192
+PASS gb18030 decoder: range 193
+PASS gb18030 decoder: range 194
+PASS gb18030 decoder: range 195
+PASS gb18030 decoder: range 196
+PASS gb18030 decoder: range 197
+PASS gb18030 decoder: range 198
+PASS gb18030 decoder: range 199
+PASS gb18030 decoder: range 200
+PASS gb18030 decoder: range 201
+PASS gb18030 decoder: range 202
+PASS gb18030 decoder: range 203
+PASS gb18030 decoder: range 204
+PASS gb18030 decoder: range 205
+PASS gb18030 decoder: range 206
+

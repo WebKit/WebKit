@@ -1,0 +1,1264 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% PROCESS bug/time.html.tmpl %]
+
+[% IF Param('comment_taggers_group') %]
+  [% IF user.can_tag_comments %]
+    <div id="bz_ctag_div" class="bz_default_hidden">
+      <a href="javascript:void(0)" onclick="YAHOO.bugzilla.commentTagging.hideInput()">x</a>
+      <div>
+        <input id="bz_ctag_add" size="10" placeholder="add tag"
+              maxlength="[% constants.MAX_COMMENT_TAG_LENGTH FILTER html %]">
+        <span id="bz_ctag_autocomp"></span>
+      </div>
+      &nbsp;
+    </div>
+    <div id="bz_ctag_error" class="bz_default_hidden">
+      <a href="javascript:void(0)" onclick="YAHOO.bugzilla.commentTagging.hideError()">x</a>
+      <span id="bz_ctag_error_msg"></span>
+    </div>
+  [% END %]
+  [% IF user.id %]
+    <script type="text/javascript">
+      YAHOO.bugzilla.commentTagging.init([% user.can_tag_comments ? 'true' : 'false' %]);
+      YAHOO.bugzilla.commentTagging.min_len = [% constants.MIN_COMMENT_TAG_LENGTH FILTER js %];
+      YAHOO.bugzilla.commentTagging.max_len = [% constants.MAX_COMMENT_TAG_LENGTH FILTER js %];
+      YAHOO.bugzilla.commentTagging.label = 'Comment Tags:';
+      YAHOO.bugzilla.commentTagging.min_len_error =
+        'Comment tags must be at least
+        [%~ " " _ constants.MIN_COMMENT_TAG_LENGTH FILTER js %] characters.';
+      YAHOO.bugzilla.commentTagging.max_len_error =
+        'Comment tags cannot be longer than
+        [%~ " " _ constants.MAX_COMMENT_TAG_LENGTH FILTER js %] characters.';
+    </script>
+  [% END %]
+[% END %]
+
+<script type="text/javascript">
+<!--
+[% IF user.is_timetracker %]
+  var bz_remaining_time = [% bug.remaining_time %];
+[% END %]
+
+[% IF user.id %]
+  /* Index all classifications so we can keep track of the classification
+   * for the selected product, which could control field visibility.
+   */
+  var all_classifications = new Array([% bug.choices.product.size %]);
+  [%- FOREACH product = bug.choices.product %]
+      all_classifications['[% product.name FILTER js %]'] = '
+          [%- product.classification.name FILTER js %]';
+  [%- END %]
+[% END %]
+//-->
+</script>
+
+<form name="changeform" id="changeform" method="post" action="process_bug.cgi">
+
+  <input type="hidden" name="delta_ts" value="[% bug.delta_ts %]">
+  <input type="hidden" name="id" value="[% bug.bug_id %]">
+  <input type="hidden" name="token" value="[% issue_hash_token([bug.id, bug.delta_ts]) FILTER html %]">
+
+  [% PROCESS section_title %]
+[%# if WEBKIT_CHANGES %]
+  <table id="bug_details" class="edit_form">
+[%# endif // WEBKIT_CHANGES %]
+    <tr>
+      [%# 1st Column %]
+      <td id="bz_show_bug_column_1" class="bz_show_bug_column">     
+        <table>
+          [%# *** ID, product, component, status, resolution, Hardware, and  OS *** %]
+          [% PROCESS section_status %]
+
+          [% PROCESS section_spacer %]
+
+          [% PROCESS section_aliases %]
+
+          [% PROCESS section_spacer %]
+
+          [% PROCESS section_details1 %]
+          
+          [% PROCESS section_spacer %]
+          
+          [%# *** severity, priority, version, milestone, and deadline *** %]
+          [% PROCESS section_details2 %]
+          
+          [%# *** assigned to and qa contact *** %]
+          [% PROCESS section_people %]
+          
+          [% PROCESS section_spacer %]
+          
+          [% PROCESS section_url_keyword_whiteboard %]
+          
+          [% PROCESS section_spacer %]
+
+          [%# *** Dependencies and duplicates *** %]
+          [% PROCESS section_duplicates %]
+
+          [% PROCESS section_dependson_blocks %]
+          
+        </table>
+      </td>
+      <td>
+        <div class="bz_column_spacer">&nbsp;</div>
+      </td>
+      [%# 2nd Column %]
+      <td id="bz_show_bug_column_2" class="bz_show_bug_column">
+        <table>
+        [%# *** Reported and modified dates *** %]
+         [% PROCESS section_dates %]
+
+         [% PROCESS section_cclist %]
+
+         [% PROCESS section_bug_ignored %]
+
+         [% PROCESS section_spacer %]
+
+         [% PROCESS section_see_also %] 
+
+         [% PROCESS section_customfields %]
+
+         [% PROCESS section_spacer %]
+
+         [% Hook.process("after_custom_fields") %]
+
+         [% PROCESS section_flags %]
+
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="3">
+          <hr id="bz_top_half_spacer">
+      </td>
+    </tr>
+  </table>
+
+  <table id="bz_big_form_parts">
+  <tr>
+  <td>
+    [% IF user.is_timetracker %]
+      [% PROCESS section_timetracking %]
+    [% END %]
+
+    [%# *** Attachments *** %]
+
+    [% PROCESS attachment/list.html.tmpl
+               attachments = bug.attachments
+               bugid       = bug.bug_id
+               num_attachment_flag_types = bug.num_attachment_flag_types
+               show_attachment_flags = bug.show_attachment_flags
+    %]
+
+    [% IF user.settings.comment_box_position.value == 'before_comments' %]
+      [% PROCESS comment_box %]
+    [% END %]
+  </td>
+  <td>
+    [% PROCESS section_restrict_visibility %]
+  </td>
+  </tr></table>
+
+  [%# *** Additional Comments *** %]
+  <div id="comments">
+    [% PROCESS bug/comments.html.tmpl
+      comments = bug.comments
+      mode = user.id ? "edit" : "show"
+    %]
+  </div>
+
+  [% IF user.settings.comment_box_position.value == 'after_comments' %]
+    <hr>
+    [% PROCESS comment_box %]
+  [% END %]        
+
+</form>
+
+[%############################################################################%]
+[%# Block for the Title (alias and short desc)                               #%]
+[%############################################################################%]
+
+[% BLOCK section_title %]
+  [%# That's the main table, which contains all editable fields. %]
+  <div class="bz_short_desc_container edit_form">
+      [% PROCESS commit_button id="_top"%]
+     <a href="show_bug.cgi?id=[% bug.bug_id %]">
+        [%-# %]<b>[% terms.Bug %]&nbsp;[% bug.bug_id FILTER html %]</b>
+     [%-# %]</a> <span id="summary_container" class="bz_default_hidden">
+      [% IF bug.alias.size > 0 %]
+        (<span id="alias_nonedit_display">[% bug.alias.join(', ') FILTER html %]</span>)
+      [% END %]
+      - <span id="short_desc_nonedit_display">[% bug.short_desc FILTER quoteUrls(bug) %]</span>
+      [% can_edit_short_desc = bug.check_can_change_field('short_desc', 0, 1) %]
+      [% IF can_edit_short_desc %]
+        <small>(<a href="#" id="summary_edit_action">edit</a>)</small>
+      [% END %]
+     </span>
+
+    <div id="summary_input">
+      [% INCLUDE "bug/field-label.html.tmpl"
+        field = bug_fields.short_desc
+        editable = can_edit_short_desc
+        accesskey = "s"
+        tag_name = 'span'
+      %]
+      [% PROCESS input inputname => "short_desc" size => "80"
+                       maxlength => 255 spellcheck => "true" no_td => 1 %]
+    </div>
+  </div>
+  <script type="text/javascript">
+    hideEditableField('summary_container',
+                      'summary_input',
+                      'summary_edit_action',
+                      'short_desc',
+                      '[% bug.short_desc FILTER js %]' );
+  </script>
+[% END %]
+
+[%############################################################################%]
+[%# Block for the first table in the "Details" section                       #%]
+[%############################################################################%]
+
+[% BLOCK section_details1 %]
+
+    [%#############%]
+    [%#  PRODUCT  #%]
+    [%#############%]
+    <tr>
+      [% INCLUDE bug/field.html.tmpl
+          bug = bug, field = bug_fields.product, value = bug.product
+          override_legal_values = bug.choices.product
+          desc_url = "describecomponents.cgi"
+          editable = bug.check_can_change_field('product', 0, 1)
+      %]
+    </tr>
+
+    [%# Classification is here so that it can be used in value controllers
+      # and visibility controllers. It comes after product because
+      # it uses some javascript that depends on the existence of the
+      # product field.
+      #%]
+    <tr class="bz_default_hidden">
+       [% INCLUDE bug/field.html.tmpl
+            bug = bug field = bug_fields.classification
+            override_legal_values = bug.choices.classification
+            value = bug.classification
+            editable = bug.check_can_change_field('product', 0, 1) %]
+    </tr>
+    [%###############%]    
+    [%#  Component  #%]
+    [%###############%]
+    <tr>
+      [% INCLUDE bug/field.html.tmpl
+          bug = bug, field = bug_fields.component, value = bug.component
+          override_legal_values = bug.choices.component
+          desc_url = "describecomponents.cgi?product=$bug.product"
+          editable = bug.check_can_change_field('component', 0, 1)
+      %]
+    </tr>
+    <tr>
+[%# if WEBKIT_CHANGES %]
+      [% INCLUDE "bug/field-label.html.tmpl"
+          field = bug_fields.version
+          accesskey = "v"
+          editable = bug.check_can_change_field('version', 0, 1) %]
+
+      [% PROCESS select selname => "version" accesskey => "v" %]
+[%# endif // WEBKIT_CHANGES %]
+    </tr>
+    [%############%]    
+    [%# PLATFORM #%]
+    [%############%]    
+    <tr>
+      [% can_edit_rep_platform = bug.check_can_change_field('rep_platform', 0, 1) %]
+      [% INCLUDE "bug/field-label.html.tmpl"
+           field = bug_fields.rep_platform,
+           editable = can_edit_rep_platform,
+           accesskey = "h" %]
+      <td class="field_value">
+        [% INCLUDE bug/field.html.tmpl
+            bug = bug, field = bug_fields.rep_platform,
+            no_tds = 1, value = bug.rep_platform
+            editable = can_edit_rep_platform %]
+        [%+ INCLUDE bug/field.html.tmpl
+            bug = bug, field = bug_fields.op_sys, 
+            no_tds = 1, value = bug.op_sys
+            editable = bug.check_can_change_field('op_sys', 0, 1) %]
+      </td>
+    </tr>
+
+
+
+[% END %]
+
+[%############################################################################%]
+[%# Block for the status section                                             #%]
+[%############################################################################%]
+
+[% BLOCK section_status %]
+  <tr>
+    <th class="field_label">
+      <a href="page.cgi?id=fields.html#bug_status">Status</a>:
+    </th>
+    <td id="bz_field_status">
+      <span id="static_bug_status">
+        [% display_value("bug_status", bug.bug_status) FILTER html %]
+        [% IF bug.resolution %]
+          [%+ display_value("resolution", bug.resolution) FILTER html %]
+          [% IF bug.dup_id %]
+            of [% "${terms.bug} ${bug.dup_id}" FILTER bug_link(bug.dup_id) FILTER none %]
+          [% END %]
+        [% END %]
+        [% IF bug.user.canedit || bug.user.isreporter %]
+          (<a href="#add_comment" 
+              onclick="window.setTimeout(function() { document.getElementById('bug_status').focus(); }, 10)">edit</a>)
+        [% END %]
+      </span>
+    </td>
+  </tr>
+[% END %]
+
+[%############################################################################%]
+[%# Block for the second table in the "Details" section                      #%]
+[%############################################################################%]
+
+[% BLOCK section_details2 %]
+
+ [%###############################################################%]
+ [%# Importance (priority and severity) #%]
+ [%###############################################################%]
+    <tr>
+      <th class="field_label">
+        [% can_edit_priority = bug.check_can_change_field('priority', 0, 1) %]
+        <label [% IF can_edit_priority %]for="priority"[% END %] accesskey="i">
+          <a href="page.cgi?id=fields.html#importance"><u>I</u>mportance</a></label>:
+      </th>
+      <td>
+       [% INCLUDE bug/field.html.tmpl
+            bug = bug, field = bug_fields.priority,
+            no_tds = 1, value = bug.priority
+            editable = can_edit_priority %]
+[%# if WEBKIT_CHANGES %]
+       [%+ INCLUDE bug/field.html.tmpl
+            bug = bug, field = bug_fields.bug_severity,
+            no_tds = 1, value = bug.bug_severity
+            accesskey = "e"
+            editable = bug.check_can_change_field('bug_severity', 0, 1) %]
+[%# endif // WEBKIT_CHANGES %]
+        [% Hook.process('after_importance', 'bug/edit.html.tmpl') %]
+      </td>
+    </tr>
+
+    [% IF Param("usetargetmilestone") && bug.target_milestone %]
+      <tr>
+        [% INCLUDE "bug/field-label.html.tmpl"
+          field = bug_fields.target_milestone
+          editable = bug.check_can_change_field('target_milestone', 0, 1)
+        %]
+[%# if WEBKIT_CHANGES %]
+        [% PROCESS select selname => "target_milestone" accesskey => "t" %]
+[%# endif // WEBKIT_CHANGES %]
+      </tr>
+    [% END %]
+
+    [% IF Param("timetrackinggroup") && bug.deadline %]
+      <tr>
+        <th class="field_label">
+          <a href="page.cgi?id=fields.html#deadline">Deadline</a>:
+        </th>
+        <td>[% bug.deadline FILTER html %]</td>
+      </tr>
+    [% END %]
+[% END %]
+
+[%############################################################################%]
+[%# Block for the table in the "People" section                              #%]
+[%############################################################################%]
+
+[% BLOCK section_people %]
+
+    <tr>
+      [% can_edit_assigned_to = bug.check_can_change_field("assigned_to", 0, 1) %]
+      [% INCLUDE "bug/field-label.html.tmpl"
+          field = bug_fields.assigned_to
+          editable = can_edit_assigned_to
+      %]
+      <td>
+        [% IF can_edit_assigned_to %]
+          <div id="bz_assignee_edit_container" class="bz_default_hidden">
+            <span>
+              [% INCLUDE global/user.html.tmpl who = bug.assigned_to %]
+              (<a href="#" id="bz_assignee_edit_action">edit</a>)
+              [% IF bug.assigned_to.id != user.id %]
+                (<a title="Reassign to yourself" 
+                    href="#" id="bz_assignee_take_action">take</a>)
+              [% END %]
+            </span>
+          </div>
+          <div id="bz_assignee_input">
+            [% INCLUDE global/userselect.html.tmpl
+                 id => "assigned_to"
+                 name => "assigned_to"
+                 value => bug.assigned_to.login
+                 classes => ["bz_userfield"]
+                 size => 30
+            %]
+            <br>
+            <input type="checkbox" id="set_default_assignee" name="set_default_assignee" value="1">
+            <label id="set_default_assignee_label" for="set_default_assignee">Reset Assignee to default</label>
+          </div>
+          <script type="text/javascript">
+           hideEditableField('bz_assignee_edit_container', 
+                             'bz_assignee_input', 
+                             'bz_assignee_edit_action', 
+                             'assigned_to', 
+                             '[% bug.assigned_to.login FILTER js %]' );
+           hideEditableField('bz_assignee_edit_container',
+                             'bz_assignee_input',
+                             'bz_assignee_take_action',
+                             'assigned_to',
+                             '[% bug.assigned_to.login FILTER js %]',
+                             '[% user.login FILTER js %]' );
+           initDefaultCheckbox('assignee');                  
+          </script>
+        [% ELSE %]
+          [% INCLUDE global/user.html.tmpl who = bug.assigned_to %]
+        [% END %]
+      </td>
+    </tr>
+
+    [% IF Param('useqacontact') %]
+    <tr>
+      [% can_edit_qa_contact = bug.check_can_change_field("qa_contact", 0, 1) %]
+      [% INCLUDE "bug/field-label.html.tmpl"
+        field = bug_fields.qa_contact
+        editable = can_edit_qa_contact
+        accesskey = "q"
+      %]
+      <td>
+        [% IF can_edit_qa_contact %]
+          <div id="bz_qa_contact_edit_container" class="bz_default_hidden">
+            <span>
+              [% INCLUDE global/user.html.tmpl who = bug.qa_contact %]
+              (<a href="#" id="bz_qa_contact_edit_action">edit</a>)
+              [% IF bug.qa_contact.id != user.id %]
+                (<a title="Change QA contact to yourself" 
+                    href="#" id="bz_qa_contact_take_action">take</a>)
+              [% END %]
+            </span>
+          </div>
+          <div id="bz_qa_contact_input">
+            [% INCLUDE global/userselect.html.tmpl
+               id      => "qa_contact"
+               name    => "qa_contact"
+               value   => bug.qa_contact.login
+               size    => 30
+               classes => ["bz_userfield"]
+               emptyok => 1
+            %]
+            <br>
+            <input type="checkbox" id="set_default_qa_contact" name="set_default_qa_contact" value="1">
+            <label for="set_default_qa_contact" id="set_default_qa_contact_label">Reset QA Contact to default</label>
+          </div>
+          <script type="text/javascript">
+            hideEditableField('bz_qa_contact_edit_container', 
+                              'bz_qa_contact_input', 
+                              'bz_qa_contact_edit_action', 
+                              'qa_contact', 
+                              '[% bug.qa_contact.login FILTER js %]');
+            hideEditableField('bz_qa_contact_edit_container', 
+                              'bz_qa_contact_input', 
+                              'bz_qa_contact_take_action', 
+                              'qa_contact', 
+                              '[% bug.qa_contact.login FILTER js %]',
+                              '[% user.login FILTER js %]');
+            initDefaultCheckbox('qa_contact');
+          </script>
+        [% ELSE %]
+          [% INCLUDE global/user.html.tmpl who = bug.qa_contact %]
+        [% END %]
+      </td>
+    </tr>
+    [% END %]
+[%# if WEBKIT_CHANGES %]
+    <script type="text/javascript">
+      assignToDefaultOnChange(['product'],
+        '[% bug.component_obj.default_assignee.login FILTER js %]',
+        '[% bug.component_obj.default_qa_contact.login FILTER js %]');
+    </script>
+[%# endif WEBKIT_CHANGES %]
+[% END %]
+
+[%############################################################################%]
+[%# Block for URL Keyword and Whiteboard                                     #%]
+[%############################################################################%]
+[% BLOCK section_url_keyword_whiteboard %]
+  <tr>
+    [% can_edit_bug_file_loc = bug.check_can_change_field("bug_file_loc", 0, 1) %]
+    [% INCLUDE "bug/field-label.html.tmpl"
+      field = bug_fields.bug_file_loc
+      editable = can_edit_bug_file_loc
+      accesskey = "u"
+    %]
+    <td>
+      [% IF can_edit_bug_file_loc %]
+        <span id="bz_url_edit_container" class="bz_default_hidden"> 
+        [% IF is_safe_url(bug.bug_file_loc) %]
+           <a href="[% bug.bug_file_loc FILTER html %]" target="_blank"
+              rel="noreferrer" title="[% bug.bug_file_loc FILTER html %]">
+             [% bug.bug_file_loc FILTER truncate(40) FILTER html %]</a>
+        [% ELSE %]
+          [% bug.bug_file_loc FILTER html %]
+        [% END %]
+        (<a href="#" id="bz_url_edit_action">edit</a>)</span>
+      [% END %]
+      <span id="bz_url_input_area">
+        [% url_output = INCLUDE input no_td = 1 inputname = "bug_file_loc" size = 40 %]
+        [% IF NOT bug.check_can_change_field("bug_file_loc", 0, 1)
+              AND is_safe_url(bug.bug_file_loc) %]
+          <a href="[% bug.bug_file_loc FILTER html %]"
+             rel="noreferrer">[% url_output FILTER none %]</a>
+        [% ELSE %]
+          [% url_output FILTER none %]
+        [% END %]
+      </span>
+      [% IF bug.check_can_change_field("bug_file_loc", 0, 1) %]
+        <script type="text/javascript">
+          hideEditableField('bz_url_edit_container', 
+                            'bz_url_input_area', 
+                            'bz_url_edit_action', 
+                            'bug_file_loc', 
+                            "[% bug.bug_file_loc FILTER js %]");
+        </script>
+      [% END %]
+    </td>
+  </tr>
+
+  [% IF Param('usestatuswhiteboard') %]
+    <tr>
+      [% INCLUDE "bug/field-label.html.tmpl"
+        field = bug_fields.status_whiteboard
+        editable = bug.check_can_change_field("status_whiteboard", 0, 1)
+        accesskey = "w"
+      %]
+      [% INCLUDE input inputname = "status_whiteboard" size = 40 %]
+    </tr>
+  [% END %]
+
+  [% IF use_keywords %]
+    <tr>
+        [% INCLUDE bug/field.html.tmpl
+          bug = bug, field = bug_fields.keywords, value = bug.keywords
+          editable = bug.check_can_change_field("keywords", 0, 1),
+          desc_url = "describekeywords.cgi", possible_values = all_keywords
+        %]
+    </tr>
+  [% END %]
+
+  [% IF user.id %]
+    <tr>
+      [% INCLUDE bug/field.html.tmpl
+         bug = bug, field = bug_fields.tag, value = bug.tags.join(", "),
+         editable = 1, possible_values = user.tags.keys
+      %]
+    </tr>
+  [% END %]
+[% END %]
+
+[%############################################################################%]
+[%# Block for Duplicates                                                     #%]
+[%############################################################################%]
+
+[% BLOCK section_duplicates %]
+  [% RETURN UNLESS bug.duplicates.size %]
+  <tr>
+    <th class="field_label">
+      <label>Duplicates ([% bug.duplicates.size %])</label>:
+    </th>
+    <td class="field_value">
+      <span id="duplicates">
+        [% FOREACH dupe = bug.duplicates %]
+          [% INCLUDE bug/link.html.tmpl bug = dupe, link_text = dupe.id, use_alias = 1 %][% " " %]
+        [% END %]
+      </span>
+      (<a href="buglist.cgi?bug_id=[% bug.duplicate_ids.join(",") FILTER html %]">
+       [%-%]view as [% terms.bug %] list</a>)
+    </td>
+  </tr>
+[% END %]
+
+[%############################################################################%]
+[%# Block for Depends On / Blocks                                            #%]
+[%############################################################################%]
+
+[% BLOCK section_dependson_blocks %]
+  <tr>
+    [% INCLUDE dependencies 
+         field = bug_fields.dependson deps = bug.depends_on_obj %]
+  </tr>
+  
+  <tr>
+    [% INCLUDE dependencies 
+         field = bug_fields.blocked deps = bug.blocks_obj %]
+  </tr>
+
+  [% IF bug.dependson.size || bug.blocked.size %]
+    <tr>
+      <th>&nbsp;</th>
+
+      <td id="show_dependency_tree_or_graph">
+        Show dependency <a href="showdependencytree.cgi?id=[% bug.bug_id %]&amp;hide_resolved=1">tree</a>
+
+        [% IF Param('webdotbase') %]
+          /&nbsp;<a href="showdependencygraph.cgi?id=[% bug.bug_id %]">graph</a>
+        [% END %]
+      </td>
+    </tr>
+  [% END %]
+[% END %]
+
+
+[%############################################################################%]
+[%# Block for Restricting Visibility                                         #%]
+[%############################################################################%]
+
+[% BLOCK section_restrict_visibility %]
+  [% RETURN UNLESS bug.groups.size %]
+
+  <div class="bz_group_visibility_section">
+    [% inallgroups = 1 %]
+    [% inagroup = 0 %]
+    [% emitted_description = 0 %]
+
+    [% FOREACH group = bug.groups %]
+      [% SET inallgroups = 0 IF NOT group.ingroup %]
+      [% SET inagroup = 1 IF group.ison %]
+
+      [% NEXT IF group.mandatory %]
+
+      [% IF NOT emitted_description %]
+        [% emitted_description = 1 %]
+          <div id="bz_restrict_group_visibility_help">
+            <b>Only users in
+              [%+ IF Param('or_groups') %]at least one[% ELSE %]all[% END %]
+              of the selected groups can view this [% terms.bug %]:</b>
+             <p class="instructions">
+               Unchecking all boxes makes this a more public [% terms.bug %].
+             </p>
+          </div>
+      [% END %]
+
+      [% IF group.ingroup %]
+        <input type="hidden" name="defined_groups" 
+               value="[% group.name FILTER html %]">
+      [% END %]
+
+      <input type="checkbox" value="[% group.name FILTER html %]"
+             name="groups" id="group_[% group.bit %]"
+             [% ' checked="checked"' IF group.ison %]
+             [% ' disabled="disabled"' IF NOT group.ingroup %]>
+      <label for="group_[% group.bit %]">
+      [%- group.description FILTER html_light %]</label>
+      <br>
+    [% END %]
+
+    [% IF emitted_description %]
+      [% IF NOT inallgroups %]
+        <p class="instructions">Only members of a group can change the 
+          visibility of [% terms.abug %] for that group.</p>
+      [% END %]
+    [% END %]
+
+    [% IF inagroup %]
+      <div id="bz_enable_role_visibility_help">
+        <b>Users in the roles selected below can always view 
+          this [% terms.bug %]:</b>
+      </div>
+      <div id="bz_enable_role_visibility">
+        <div>
+          [% user_can_edit_accessible = 
+            bug.check_can_change_field("reporter_accessible", 0, 1) 
+          %]
+          [% IF user_can_edit_accessible %]
+            <input type="hidden" name="defined_reporter_accessible" value="1">
+          [% END %]
+          <input type="checkbox" value="1"
+                 name="reporter_accessible" id="reporter_accessible"
+                 [% " checked" IF bug.reporter_accessible %]
+                 [% " disabled=\"disabled\"" UNLESS user_can_edit_accessible %]>
+          <label for="reporter_accessible">Reporter</label>
+        </div>
+        <div>
+          [% user_can_edit_accessible = 
+            bug.check_can_change_field("cclist_accessible", 0, 1) 
+          %]
+          [% IF user_can_edit_accessible %]
+            <input type="hidden" name="defined_cclist_accessible" value="1">
+          [% END %]
+          <input type="checkbox" value="1"
+                 name="cclist_accessible" id="cclist_accessible"
+                 [% " checked" IF bug.cclist_accessible %]
+                 [% " disabled=\"disabled\"" UNLESS user_can_edit_accessible %]>
+          <label for="cclist_accessible">CC List</label>
+        </div>
+        <p class="instructions">
+          The assignee
+          [% IF (Param('useqacontact')) %]
+             and QA contact
+          [% END %]
+          can always see [% terms.abug %], and this section does not
+          take effect unless the [% terms.bug %] is restricted to at
+          least one group.
+        </p>
+      </div>
+    [% END %]
+  </div> [%# bz_group_visibility_section %]
+[% END %]
+
+[%############################################################################%]
+[%# Block for Dates                                                          #%]
+[%############################################################################%]
+
+[% BLOCK section_dates %]
+  <tr>
+    <th class="field_label">
+      Reported:
+    </th>
+    <td>
+     [% bug.creation_ts FILTER time("%Y-%m-%d %H:%M %Z") %] by [% INCLUDE global/user.html.tmpl who = bug.reporter %]
+    </td>
+  </tr>
+  
+  <tr>
+    <th class="field_label">
+      Modified:
+    </th>
+    <td>
+      [% bug.delta_ts FILTER time("%Y-%m-%d %H:%M %Z") %]
+      (<a href="show_activity.cgi?id=[% bug.bug_id %]">[%# terms.Bug %]History</a>)
+    </td>
+  
+  </tr>
+[% END %]
+
+[%############################################################################%]
+[%# Block for CC LIST                                                        #%]
+[%############################################################################%]
+[% BLOCK section_cclist %]
+    <tr>
+      <th class="field_label">
+        <label [% IF user.id %]for="newcc"[% END %] accesskey="a">
+          CC List:
+        </label>
+      </th>
+      <td>
+        [% IF user.id %]
+          [% IF NOT bug.cc.contains(user.login) %]
+            <input type="checkbox" id="addselfcc" name="addselfcc"
+              [% " checked=\"checked\""
+                   IF user.settings.state_addselfcc.value == 'always'
+                      || (!bug.user.has_any_role
+                          && user.settings.state_addselfcc.value == 'cc_unless_role') %]>
+            <label for="addselfcc">Add me to CC list</label>
+            <br> 
+          [% END %]
+        [% END %]
+        [% bug.cc.size FILTER html %] 
+        [% IF bug.cc.size == 1 %]
+          user
+        [% ELSE %]
+          users
+        [% END %]
+        [% IF user.id %]
+          [% IF bug.cc.contains( user.email ) %]
+            including you
+          [% END %]
+        [% END %]
+        [% IF user.id || bug.cc.size %]
+          <span id="cc_edit_area_showhide_container" class="bz_default_hidden">
+            (<a href="#" id="cc_edit_area_showhide">[% IF user.id %]edit[% ELSE %]show[% END %]</a>)
+          </span>
+        [% END %]
+        <div id="cc_edit_area">
+          <br>
+          [% IF user.id %]
+            <div>
+              <div><label for="cc"><b>Add</b></label></div>
+              [% INCLUDE global/userselect.html.tmpl
+                  id => "newcc"
+                  name => "newcc"
+                  value => ""
+                  size => 30
+                  classes => ["bz_userfield"]
+                  multiple => 5
+                %]
+            </div>
+          [% END %]
+          [% IF bug.cc.size %]
+            <select id="cc" multiple="multiple" size="5" [% 'name="cc"' IF bug.user.canedit %]>
+              [% FOREACH c = bug.cc %]
+                <option value="[% c FILTER email FILTER html %]">
+                  [% c FILTER email FILTER html %]</option>
+              [% END %]
+            </select>
+            [% IF user.id && !bug.user.canedit %]
+              <input type="hidden" name="cc" value="[% user.login FILTER email FILTER html %]">
+            [% END %]
+            [% IF user.id AND (bug.user.canedit OR bug.cc.contains(user.login)) %]
+              <br>
+              <input type="checkbox" id="removecc" name="removecc">
+              <label for="removecc">
+                [% IF bug.user.canedit %]
+                  Remove selected CCs
+                [% ELSE %]
+                  Remove me from the CC list
+                [% END %]
+              </label>
+              <br>
+            [% END %]
+          [% END %]
+        </div>
+        [% IF user.id || bug.cc.size %]
+          <script type="text/javascript">
+            hideEditableField( 'cc_edit_area_showhide_container', 
+                               'cc_edit_area', 
+                               'cc_edit_area_showhide', 
+                               '', 
+                               '');  
+          </script>
+        [% END %]
+      </td>
+    </tr>
+[% END %]
+
+[%############################################################################%]
+[%# Block for Bug Ignored                                                    #%]
+[%############################################################################%]
+[% BLOCK section_bug_ignored %]
+  [% IF user.id %]
+    <tr>
+      <th class="field_label">
+        <label for="bug_ignored" title="Ignore all email for this [% terms.bug %]">
+          Ignore [% terms.Bug %] Mail:
+        </label>
+      </th>
+      <td>
+        <input type="hidden" name="defined_bug_ignored" value="1">
+        <span title="You will still receive emails for flag requests directed at you.">
+          <input type="checkbox" name="bug_ignored" id="bug_ignored" value="1"
+                 [% ' checked="checked"' IF user.is_bug_ignored(bug.id) %]>
+          (never email me about this [% terms.bug %])
+        </span>
+      </td>
+    </tr>
+  [% END %]
+[% END %]
+
+[%############################################################################%]
+[%# Block for See Also                                                       #%]
+[%############################################################################%]
+[% BLOCK section_see_also %]
+  [% IF Param('use_see_also') || bug.see_also.size %]
+    <tr>
+      [% INCLUDE bug/field.html.tmpl 
+           field    = bug_fields.see_also
+           value    = bug.see_also
+           editable = bug.check_can_change_field('see_also', 0, 1)
+      %]
+    </tr>
+  [% END %]
+[% END %]
+
+[% BLOCK section_aliases %]
+  <tr>
+    [% INCLUDE "bug/field-label.html.tmpl" field = bug_fields.alias %]
+    <td>
+      [% IF bug.alias.size %]
+        [% bug.alias.join(', ') FILTER html %]
+      [% ELSE %]
+        None
+      [% END %]
+      [% IF bug.check_can_change_field('alias', 0, 1) %]
+        <span id="alias_edit_area_showhide_container" class="bz_default_hidden">
+          (<a href="#" id="alias_edit_area_showhide">edit</a>)
+        </span>
+        <br>
+        <div id="alias_edit_area">
+          <div>
+            <label for="newalias" class="field_label">Add</label>
+            <br>
+            <input name="newalias" id="newalias" size="20">
+          </div>
+          [% IF bug.alias.size %]
+            <select id="alias" name="alias" multiple="multiple" size="5">
+              [% FOREACH a = bug.alias %]
+                <option value="[% a FILTER html %]">[% a FILTER html %]</option>
+              [% END %]
+            </select>
+            <br>
+
+            <input type="checkbox" id="removealias" name="removealias">
+            <label for="removealias">Remove selected aliases</label>
+          [% END %]
+        </div>
+        <script type="text/javascript">
+          hideEditableField( 'alias_edit_area_showhide_container',
+                             'alias_edit_area',
+                             'alias_edit_area_showhide',
+                             '',
+                             '');
+        </script>
+      [% END %]
+    </td>
+  </tr>
+[% END %]
+
+[%############################################################################%]
+[%# Block for FLAGS                                                          #%]
+[%############################################################################%]
+
+[% BLOCK section_flags %]
+  [%# *** Flags *** %]
+  [% show_bug_flags = 0 %]
+  [% bug_flags_set = 0 %]
+  [% show_more_flags = 0 %]
+  [% FOREACH type = bug.flag_types %]
+    [% IF type.flags.size || (user.id && type.is_active && user.can_request_flag(type)) %]
+      [% show_bug_flags = 1 %]
+    [% END %]
+    [% IF user.id && type.is_active && (!type.flags.size || type.is_multiplicable) %]
+      [% show_more_flags = 1 %]
+    [% END %]
+    [% IF type.flags.size %]
+      [% bug_flags_set = 1 %]
+    [% END %]
+    [% LAST IF show_bug_flags && show_more_flags && bug_flags_set %]
+  [% END %]
+  [% IF show_bug_flags %]
+    <tr>
+      <th class="field_label">
+        <label>Flags:</label>
+      </th>
+      <td>
+        [% IF bug.flag_types.size %]
+          [% PROCESS "flag/list.html.tmpl" flag_no_header = 1
+                                           flag_types = bug.flag_types
+                                           any_flags_requesteeble = bug.any_flags_requesteeble %]
+        [% END %]
+        [% IF show_more_flags %]
+          <span id="bz_flags_more_container" class="bz_default_hidden">
+            [% IF !bug_flags_set %]<em>None yet set</em>[% END %]
+            (<a href="#" id="bz_flags_more_action">[% IF !bug_flags_set %]set[% ELSE %]more[% END %] flags</a>)
+          </span>
+          <script type="text/javascript">
+            YAHOO.util.Dom.removeClass('bz_flags_more_container', 'bz_default_hidden');
+            var table = YAHOO.util.Dom.get("flags");
+            var rows = YAHOO.util.Dom.getElementsByClassName('bz_flag_type', 'tbody', table);
+            for (var i = 0; i < rows.length; i++) {
+                YAHOO.util.Dom.addClass(rows[i], 'bz_default_hidden');
+            }
+            YAHOO.util.Event.addListener('bz_flags_more_action', 'click', function (e) {
+                YAHOO.util.Dom.addClass('bz_flags_more_container', 'bz_default_hidden');
+                for (var i = 0; i < rows.length; i++) {
+                    YAHOO.util.Dom.removeClass(rows[i], 'bz_default_hidden');
+                }
+                YAHOO.util.Event.preventDefault(e);
+            }); 
+          </script>
+        [% END %]
+      </td>
+    </tr>
+  [% END %]
+[% END %]
+
+[%############################################################################%]
+[%# Block for Custom Fields                                                  #%]
+[%############################################################################%]
+
+[% BLOCK section_customfields %]
+[%# *** Custom Fields *** %]
+  [% USE Bugzilla %]
+  [% FOREACH field = Bugzilla.active_custom_fields %]
+    <tr>
+      [%# Use PROCESS instead of INCLUDE, because extra_field_item is defined
+        # in the template and must be returned back. INCLUDE cannot do that. %]
+      [% PROCESS bug/field.html.tmpl value = bug.${field.name}
+                                     editable = bug.check_can_change_field(field.name, 0, 1) %]
+    </tr>
+    [% IF extra_field_item %]
+      <tr>
+        <th class="field_label">[% extra_field_item.header FILTER none %]</th>
+        <td>[% extra_field_item.data FILTER none %]</td>
+      </tr>
+    [% END %]
+  [% END %]
+[% END %]
+
+[%############################################################################%]
+[%# Block for Section Spacer                                                 #%]
+[%############################################################################%]
+
+[% BLOCK section_spacer %]
+  <tr>
+    <td colspan="2" class="bz_section_spacer"></td>
+  </tr>
+[% END %]
+
+
+
+
+[%############################################################################%]
+[%# Block for dependencies                                                   #%]
+[%############################################################################%]
+
+[% BLOCK dependencies %]
+
+  [% INCLUDE "bug/field-label.html.tmpl" %]
+
+  <td>
+    <span id="[% field.name FILTER html %]_input_area">
+      [% IF bug.check_can_change_field(field.name, 0, 1) %]
+        <input name="[% field.name FILTER html %]" 
+               id="[% field.name FILTER html %]" class="text_input"
+               value="[% bug.${field.name}.join(', ') FILTER html %]">
+      [% END %]
+    </span>
+
+    [% FOREACH dep_bug = deps %]
+      [% INCLUDE bug/link.html.tmpl bug = dep_bug, link_text = dep_bug.id, use_alias = 1 %][% " " %]
+    [% END %]
+    [% IF bug.check_can_change_field(field.name, 0, 1) %]
+      <span id="[% field.name FILTER html %]_edit_container" 
+            class="edit_me bz_default_hidden">
+        (<a href="#" id="[% field.name FILTER html %]_edit_action">edit</a>)
+      </span>
+      <script type="text/javascript">
+        hideEditableField('[% field.name FILTER js %]_edit_container', 
+                          '[% field.name FILTER js %]_input_area', 
+                          '[% field.name FILTER js %]_edit_action', 
+                          '[% field.name FILTER js %]', 
+                          '[% bug.${field.name}.join(', ') FILTER js %]');
+      </script>
+    [% END %]
+  </td>
+  
+[% END %]
+
+[%############################################################################%]
+[%# Block for Time Tracking Group                                            #%]
+[%############################################################################%]
+
+[% BLOCK section_timetracking %]
+  <table class="bz_time_tracking_table">
+    <tr>
+      [% INCLUDE "bug/field-label.html.tmpl"
+         field = bug_fields.estimated_time, editable = 1
+      %]
+      <th>
+        Current Est.:
+      </th>
+      [% INCLUDE "bug/field-label.html.tmpl"
+         field = bug_fields.work_time, editable = 1
+      %]
+      [% INCLUDE "bug/field-label.html.tmpl"
+         field = bug_fields.remaining_time, editable = 1
+      %]
+      [% INCLUDE "bug/field-label.html.tmpl"
+         field = bug_fields.percentage_complete
+      %]
+      <th>
+        Gain:
+      </th>
+      [% INCLUDE "bug/field-label.html.tmpl"
+         field = bug_fields.deadline, editable = 1
+      %]
+    </tr>
+    <tr>
+      <td>
+        <input name="estimated_time" id="estimated_time"
+               value="[% PROCESS formattimeunit
+                                 time_unit=bug.estimated_time %]"
+               size="6" maxlength="6">
+      </td>
+      <td>
+        [% PROCESS formattimeunit
+                   time_unit=(bug.actual_time + bug.remaining_time) %]
+      </td>
+      <td>
+        [% PROCESS formattimeunit time_unit=bug.actual_time %] +
+        <input name="work_time" id="work_time"
+               value="0" size="3" maxlength="6"
+               onchange="adjustRemainingTime();">
+      </td>
+      <td>
+        <input name="remaining_time" id="remaining_time"
+               value="[% PROCESS formattimeunit
+                                 time_unit=bug.remaining_time %]"
+               size="6" maxlength="6" onchange="updateRemainingTime();">
+      </td>
+      <td>
+        [% PROCESS calculatepercentage act=bug.actual_time
+                                       rem=bug.remaining_time %]
+      </td>
+      <td>
+        [% PROCESS formattimeunit time_unit=bug.estimated_time - (bug.actual_time + bug.remaining_time) %]
+      </td>
+       <td>
+         [% INCLUDE bug/field.html.tmpl
+           field = bug_fields.deadline, value = bug.deadline, no_tds = 1
+           editable = bug.check_can_change_field('deadline', 0, 1) %]
+      </td>        
+    </tr>
+    <tr>
+      <td colspan="7" class="bz_summarize_time">
+        <a href="summarize_time.cgi?id=[% bug.bug_id %]&amp;do_depends=1">
+        Summarize time (including time for [% terms.bugs %]
+        blocking this [% terms.bug %])</a>
+      </td>
+    </tr>
+  </table> 
+[% END %]
+
+[%############################################################################%]
+[%# Block for the Additional Comments box                                    #%]
+[%############################################################################%]
+
+[% BLOCK comment_box %]
+  <div id="add_comment" class="bz_section_additional_comments">
+    [% IF user.id %]
+      <label for="comment" accesskey="c"><b>Additional 
+        <u>C</u>omments</b></label>:
+
+      [% IF user.is_insider && bug.check_can_change_field('longdesc', 0, 1) %]
+        <input type="checkbox" name="comment_is_private" value="1"
+               id="newcommentprivacy"
+               onClick="updateCommentTagControl(this, 'comment')">
+        <label for="newcommentprivacy">
+          Make comment private (visible only to members of the
+          <strong>[% Param('insidergroup') FILTER html %]</strong> group)
+        </label>
+      [% END %]
+
+      <!-- This table keeps the submit button aligned with the box. -->
+      <table><tr><td>
+        [% IF bug.check_can_change_field('longdesc', 0, 1) %]
+          [% INCLUDE bug/comment.html.tmpl
+                     minrows   = 10
+                     maxrows   = 25
+                     cols      = constants.COMMENT_COLS
+          %]
+          [% IF user.is_insider %]
+            <script>
+               updateCommentTagControl(document.getElementById('newcommentprivacy'), 'comment');
+            </script>
+          [% END %]
+          [% Hook.process("after_comment_textarea", 'bug/edit.html.tmpl') %]
+        [% ELSE %]
+          You are not allowed to make an additional comment on this [% terms.bug %].
+        [% END %]
+        <br>
+        [% PROCESS commit_button id=""%]
+
+        [% Hook.process("after_comment_commit_button", 'bug/edit.html.tmpl') %]
+
+        <table id="bug_status_bottom" class="status">
+          <tr>
+            <th class="field_label">
+              <a href="page.cgi?id=fields.html#bug_status">Status</a>:
+            </th>
+            <td>
+              [% PROCESS bug/knob.html.tmpl %]
+            </td>
+          </tr>
+        </table>
+      </td></tr></table>
+
+    [%# For logged-out users %]
+    [% ELSE %]
+      <table>
+        <tr>
+          <td>
+            <fieldset>
+              <legend>Note</legend>
+              You need to
+              <a href="show_bug.cgi?id=
+                      [%- bug.bug_id %]&amp;GoAheadAndLogIn=1">log in</a>
+              before you can comment on or make changes to this [% terms.bug %].
+            </fieldset>
+          </td>
+        </tr> 
+      </table>
+    [% END %]
+  </div>
+[% END %]
+
+[%############################################################################%]
+[%# Block for SELECT fields                                                  #%]
+[%############################################################################%]
+
+[% BLOCK select %]
+  <td>
+    [% IF bug.check_can_change_field(selname, 0, 1) 
+          AND bug.choices.${selname}.size > 1 %]
+      <input type="hidden" id="[% selname %]_dirty">
+      <select id="[% selname %]" name="[% selname %]">
+        [% FOREACH x = bug.choices.${selname} %]
+          <option value="[% x.name FILTER html %]"
+            [% " selected" IF x.name == bug.${selname} %]>
+            [%- x.name FILTER html %]
+          </option>
+        [% END %]
+      </select>
+    [% ELSE %]
+      [% bug.${selname} FILTER html %]
+    [% END %]
+  </td>
+[% END %]
+
+[%############################################################################%]
+[%# Block for INPUT fields                                                   #%]
+[%############################################################################%]
+
+[% BLOCK input %]
+  [% IF no_td != 1 %]
+  <td[% " colspan=\"$colspan\"" IF colspan %]>
+  [% END %]
+    [% val = value ? value : bug.$inputname %]
+    [% IF bug.check_can_change_field(inputname, 0, 1) %]
+       <input id="[% inputname %]" name="[% inputname %]" class="text_input"
+              value="[% val FILTER html %]"[% " size=\"$size\"" IF size %]
+              [% " maxlength=\"$maxlength\"" IF maxlength %]
+              [% " spellcheck=\"$spellcheck\"" IF spellcheck %]>
+    [% ELSE %]
+      [% IF size && val.length > size %]
+        <span title="[% val FILTER html %]">
+          [% val FILTER truncate(size) FILTER html %]
+        </span>
+      [% ELSE %]
+        [% val FILTER html %]
+      [% END %]
+    [% END %]
+  [% IF no_td != 1 %]  
+  </td>
+  [% END %]
+  [% no_td = 0 %]
+  [% maxlength = 0 %]
+  [% colspan = 0 %]
+  [% size = 0 %]
+  [% value = undef %]
+  [% spellcheck = undef %]
+[% END %]
+[% BLOCK commit_button %]
+  [% IF user.id %]
+    <div class="knob-buttons">
+      <input type="submit" value="Save Changes" 
+             id="commit[% id FILTER css_class_quote %]">
+    </div>
+  [% END %]
+[% END %]

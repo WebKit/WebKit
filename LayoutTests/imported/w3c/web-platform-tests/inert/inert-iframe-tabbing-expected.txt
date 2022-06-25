@@ -1,0 +1,11 @@
+before
+
+after
+
+PASS Sequential navigation can't enter an inert iframe
+PASS Sequential navigation can move within an inert iframe
+PASS Sequential navigation can leave an inert iframe
+PASS Sequential navigation can enter a no longer inert iframe
+PASS Sequential navigation can move within a no longer inert iframe
+PASS Sequential navigation can leave a no longer inert iframe
+

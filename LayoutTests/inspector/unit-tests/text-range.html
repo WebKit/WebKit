@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createSyncSuite("WI.TextRange");
+
+    suite.addTestCase({
+        name: "resolveOffsetsNoTrailingLineBreak",
+        description: "Ensure endOffset is zero when there's no trailing line break.",
+        test() {
+            let startLine = 1;
+            let startColumn = 0;
+            let endLine = 2;
+            let endColumn = 0;
+            let range = new WI.TextRange(startLine, startColumn, endLine, endColumn);
+
+            let text = "\ncolor: blue;";
+            range.resolveOffsets(text);
+
+            InspectorTest.expectEqual(range.startOffset, "\n".length, "startOffset should be 1.");
+            InspectorTest.expectEqual(range.endOffset, 0, "endOffset should be 0.");
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "resolveOffsetsTrailingLineBreak",
+        description: "Ensure endOffset is not zero when there's a trailing line break.",
+        test() {
+            let startLine = 1;
+            let startColumn = 0;
+            let endLine = 2;
+            let endColumn = 0;
+            let range = new WI.TextRange(startLine, startColumn, endLine, endColumn);
+
+            let text = "\ncolor: blue;\n";
+            range.resolveOffsets(text);
+
+            InspectorTest.expectEqual(range.startOffset, "\n".length, "startOffset should be 1.");
+            InspectorTest.expectEqual(range.endOffset, text.length, "endOffset should be 14.");
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "resolveOffsetsTwoTrailingLineBreaks",
+        description: "Ensure endOffset is not zero when there're two trailing line breaks.",
+        test() {
+            let startLine = 1;
+            let startColumn = 0;
+            let endLine = 2;
+            let endColumn = 0;
+            let range = new WI.TextRange(startLine, startColumn, endLine, endColumn);
+
+            let text = "\ncolor: blue;\n\n";
+            range.resolveOffsets(text);
+
+            InspectorTest.expectEqual(range.startOffset, "\n".length, "startOffset should be 1.");
+            InspectorTest.expectEqual(range.endOffset, 14, "endOffset should be 14.");
+
+            return true;
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing that WI.TextRange works.</p>
+</body>
+</html>

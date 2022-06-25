@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+    <style>
+      body {
+        height: 10000px;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      if (window.internals) {
+        test(() => {
+          window.scroll(0, 9000);
+          const originalPageYOffset = pageYOffset;
+          window.internals.setPageZoomFactor(2);
+          const afterZoomPageYOffset = pageYOffset;
+          window.internals.setPageZoomFactor(1);
+          const afterResetPageYOffset = pageYOffset;
+
+          assert_equals(originalPageYOffset, afterZoomPageYOffset);
+          assert_equals(originalPageYOffset, afterResetPageYOffset);
+        });
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <div id="test-container" style="display: none;"></div>
+</body>
+<script>
+description('In HTML, attributes should be ASCII case-insensitive. This test mostly checks Element.removeAttribute() with different source for setting the attribute.');
+
+var testContainer = document.getElementById('test-container');
+
+function testAttributeOnTarget(distinctNames) {
+    var names = distinctNames.slice(0);
+    while (names.length) {
+        var nameToRemove = names.pop();
+        shouldBeTrue('document.getElementById("target").hasAttribute("' + nameToRemove + '")');
+        document.getElementById("target").removeAttribute(nameToRemove);
+        shouldBeFalse('document.getElementById("target").hasAttribute("' + nameToRemove + '")');
+
+        for (var name of names) {
+            shouldBeTrue('document.getElementById("target").hasAttribute("' + name + '")');
+            shouldBeEqualToString('document.getElementById("target").getAttribute("' + name + '")', 'WebKit!');
+        }
+    }
+}
+
+function testParsedAttribute(distinctNames) {
+    var testCaseString = '<div id="target" ';
+    for (var name of distinctNames) {
+        testCaseString += ' ' + name + '="WebKit!"';
+    }
+    testCaseString += '</div>';
+
+    testContainer.innerHTML = testCaseString;
+    testAttributeOnTarget(distinctNames);
+    testContainer.innerHTML = '';
+}
+
+function testAttributeFromDOMApis(distinctNames) {
+    var newElement = document.createElement('div');
+    newElement.setAttribute('id', 'target');
+    for (var name of distinctNames) {
+        newElement.setAttribute(name, "WebKit!");
+    }
+    testContainer.appendChild(newElement);
+    testAttributeOnTarget(distinctNames);
+    testContainer.innerHTML = '';
+}
+
+function testAttributes(distinctNames) {
+    testParsedAttribute(distinctNames);
+    testAttributeFromDOMApis(distinctNames);
+    debug("");
+}
+
+testAttributes(['data-Æøå', 'data-æøå', 'data-ÆØÅ', 'data-æØÅ', 'data-ÆøÅ']);
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</html>

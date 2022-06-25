@@ -1,0 +1,9 @@
+This tests that an identity node in the inlined function does not crash the DFG's code generator.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

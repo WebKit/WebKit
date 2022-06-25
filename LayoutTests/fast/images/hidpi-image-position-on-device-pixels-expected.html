@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that we can paint images on device pixel positions.</title>
+<style>
+ div {
+  position: absolute;
+  background: yellow;
+}
+</style>
+</head>
+<body>
+<p id="container"></p>
+<script>
+  var container = document.getElementById("container");
+  adjustment = 0.1;
+  w = 50; h = 50;
+  for (i = 0; i < 10; ++i) {
+    adjustment += 0.1;
+    for (j = 0; j < 10; ++j) {
+      var e = document.createElement("div");
+      e.style.top = ((w + 1) * i + j * adjustment) + "px";
+      e.style.left = ((w + 1) * j + i * adjustment) + "px";
+      e.style.width = w + "px";
+      e.style.height = h + "px";
+      w += 0.1;
+      h += 0.1;
+      container.appendChild(e);
+    }
+  }
+</script></body>
+</html>

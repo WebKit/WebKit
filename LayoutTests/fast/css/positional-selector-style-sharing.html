@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+*:hover {
+    transition: all 0s ease;
+}
+td {
+    vertical-align: baseline;
+}
+.nth-child td:nth-child(3n+1) {
+    color: red;
+}
+.first-of-type td:first-of-type {
+    color: red;
+}
+.nth-of-type td:nth-of-type(1) {
+    color: red;
+}
+.first-child td:first-child {
+    color: red;
+}
+</style>
+</head>
+<body>
+<table>
+<tr class="nth-child">
+<td>Lorem ipsum dolor sit, amet consectetur adipisicing elit</td>
+<td class="hover-target">Lorem ipsum dolor sit, amet consectetur adipisicing elit</td>
+<td>Lorem ipsum dolor sit, amet consectetur adipisicing elit</td>
+</tr>
+<tr class="first-of-type">
+<td>Lorem ipsum dolor sit, amet consectetur adipisicing elit</td>
+<td class="hover-target">Lorem ipsum dolor sit, amet consectetur adipisicing elit</td>
+<td>Lorem ipsum dolor sit, amet consectetur adipisicing elit</td>
+</tr>
+<tr class="nth-of-type">
+<td>Lorem ipsum dolor sit, amet consectetur adipisicing elit</td>
+<td class="hover-target">Lorem ipsum dolor sit, amet consectetur adipisicing elit</td>
+<td>Lorem ipsum dolor sit, amet consectetur adipisicing elit</td>
+</tr>
+<tr class="first-child">
+<td>Lorem ipsum dolor sit, amet consectetur adipisicing elit</td>
+<td class="hover-target">Lorem ipsum dolor sit, amet consectetur adipisicing elit</td>
+<td>Lorem ipsum dolor sit, amet consectetur adipisicing elit</td>
+</tr>
+</table>
+<script>
+
+async function test() {
+    if (!window.testRunner)
+        return;
+
+    await new Promise(requestAnimationFrame);
+
+    for (hoverTarget of document.querySelectorAll(".hover-target")) {
+        eventSender.mouseMoveTo(hoverTarget.offsetLeft + 10, hoverTarget.offsetTop + 10);
+        await new Promise(requestAnimationFrame);
+    }
+}
+test();
+</script>
+</body>
+</html>

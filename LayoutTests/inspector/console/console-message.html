@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script src="../../http/tests/inspector/resources/console-test.js"></script>
+<script>
+function test()
+{
+    let suite = ProtocolTest.createAsyncSuite("Console.MessagesFromCommandLineAPI");
+
+    ProtocolTest.Console.addTestCase(suite, {
+        name: "ConsoleLogString",
+        description: "Test `console.log(\"log\")`",
+        expression: 'console.log("log");',
+        expected: {
+            source: 'console-api',
+            level: 'log',
+            text: 'log',
+            parameters: ['string']
+        }
+    });
+
+    ProtocolTest.Console.addTestCase(suite, {
+        name: "ConsoleInfoString",
+        description: "Test `console.info(\"info\")`",
+        expression: 'console.info("info");',
+        expected: {
+            source: 'console-api',
+            level: 'info',
+            text: 'info',
+            parameters: ['string']
+        }
+    });
+
+    ProtocolTest.Console.addTestCase(suite, {
+        name: "ConsoleWarnString",
+        description: "Test `console.warn(\"warn\")`",
+        expression: 'console.warn("warn");',
+        expected: {
+            source: 'console-api',
+            level: 'warning',
+            text: 'warn',
+            parameters: ['string']
+        }
+    });
+
+    ProtocolTest.Console.addTestCase(suite, {
+        name: "ConsoleErrorString",
+        description: "Test `console.error(\"error\")`",
+        expression: 'console.error("error");',
+        expected: {
+            source: 'console-api',
+            level: 'error',
+            text: 'error',
+            parameters: ['string']
+        }
+    });
+
+    ProtocolTest.Console.addTestCase(suite, {
+        name: "ConsoleDebugString",
+        description: "Test `console.debug(\"debug\")`",
+        expression: 'console.debug("debug");',
+        expected: {
+            source: 'console-api',
+            level: 'debug',
+            text: 'debug',
+            parameters: ['string']
+        }
+    });
+
+    InspectorProtocol.awaitCommand({method: "Console.enable", params: {}})
+        .then(() => { suite.runTestCasesAndFinish(); })
+        .catch(fatalError);
+
+    function fatalError(e) {
+        ProtocolTest.log("Test failed with fatal error: " + JSON.stringify(e));
+        ProtocolTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that <code>console.log</code> and related APIs cause <code>Console.messageAdded</code> events to be generated with correct source, type, level, and parameter types.</p>
+</body>
+</html>

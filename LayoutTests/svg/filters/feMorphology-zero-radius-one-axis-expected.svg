@@ -1,0 +1,5 @@
+<svg id="svg" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <rect x="50" y="30" width="200" height="160" fill="black" stroke-width="8" stroke="gray"/>
+    <rect x="250" y="230" width="200" height="160" fill="black" stroke-width="8" stroke="gray"/>
+    <rect x="249" y="190" width="2" height="40" fill="none" stroke-width="8" stroke="gray"/>
+</svg>

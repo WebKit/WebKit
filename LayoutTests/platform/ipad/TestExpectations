@@ -1,0 +1,130 @@
+# Dark Mode is iPadOS 13 and later.
+css-dark-mode [ Pass ]
+css-dark-mode/older-systems [ Skip ]
+
+compositing/contents-format/ipad [ Pass ]
+
+fast/events/ios/ipad [ Pass ]
+fast/forms/ios/ipad [ Pass ]
+
+# iPads don't zoom when form elements are focused
+fast/forms/ios/accessory-bar-navigation.html [ Skip ]
+fast/forms/ios/choose-select-option.html [ Skip ]
+fast/forms/ios/delete-in-input-in-iframe.html [ Skip ]
+fast/forms/ios/focus-input-in-fixed.html [ Skip ]
+fast/forms/ios/focus-input-in-iframe.html [ Skip ]
+fast/forms/ios/focus-input-via-button-no-scaling.html [ Skip ]
+fast/forms/ios/focus-input-via-button.html [ Skip ]
+fast/forms/ios/focus-long-textarea.html [ Skip ]
+fast/forms/ios/typing-in-input-in-iframe.html [ Skip ]
+fast/forms/ios/user-scalable-does-not-scale-for-keyboard-focus-with-author-defined-scale.html [ Skip ]
+fast/forms/ios/user-scalable-does-not-scale-for-keyboard-focus-with-user-scalable-no.html [ Skip ]
+fast/forms/ios/zoom-after-input-tap-wide-input.html [ Skip ]
+fast/forms/ios/zoom-after-input-tap.html [ Skip ]
+
+media/video-background-playback.html [ Pass Crash ]
+fast/forms/ios/scroll-to-reveal-focused-select.html [ Crash Failure ]
+fast/forms/ios/time-picker-value-change.html [ Failure ]
+fast/forms/ios/delete-in-input-in-iframe.html [ Timeout ]
+[ Debug ] fast/forms/ios/form-control-refresh/select/focus-select-in-touchend.html [ Timeout ]
+fast/forms/ios/typing-in-input-in-iframe.html [ Timeout ]
+fast/forms/ios/user-scalable-does-not-scale-for-keyboard-focus-with-author-defined-scale.html [ Timeout ]
+fast/forms/ios/user-scalable-does-not-scale-for-keyboard-focus-with-user-scalable-no.html [ Timeout ]
+fast/events/ios/should-be-able-to-dismiss-form-accessory-after-tapping-outside-iframe-with-focused-field.html [ Timeout ]
+fast/events/ios/keyboard-scrolling-distance.html [ Failure ]
+
+# iPads don't zoom when form elements are focused
+fast/forms/ios/user-scalable-scales-for-keyboard-focus-with-no-author-defined-scale.html [ Skip ]
+fast/visual-viewport/ios/caret-after-focus-in-fixed.html [ Skip ]
+
+# The select picker input view is not displayed on iPad.
+fast/forms/ios/no-stale-checked-items-in-select-picker.html
+fast/forms/ios/disabled-options-in-multi-select-picker.html
+
+# These tests are designed for iPhone and crash on iPad
+media/modern-media-controls/media-documents/media-document-audio-ios-sizing.html [ Skip ]
+media/modern-media-controls/media-documents/media-document-video-iphone-sizing.html [ Skip ]
+
+# This test is designed for iPhone and would timeout on iPad
+media/video-element-fullscreen-not-in-dom-accelerated-iphone.html [ Skip ]
+
+# This test is iPad-specific
+media/modern-media-controls/media-documents/media-document-video-ipad-sizing.html [ Pass ]
+
+webkit.org/b/229656 fast/forms/ios/ipad/open-picker-using-keyboard.html [ Pass Timeout ]
+
+webkit.org/b/194221 fast/forms/datalist/datalist-textinput-suggestions-order.html [ Failure ]
+webkit.org/b/194221 fast/forms/datalist/datalist-show-hide.html [ Skip ]
+
+webkit.org/b/193970 compositing/ios/overflow-scroll-update-overlap.html [ ImageOnlyFailure ]
+
+webkit.org/b/194228 fast/media/invalid-media-query-list.html [ ImageOnlyFailure ]
+
+webkit.org/b/194234 media/modern-media-controls/media-documents/background-color-and-centering.html [ ImageOnlyFailure ]
+
+webkit.org/b/165311 platform/ipad/media/modern-media-controls/pip-support/pip-support-tap.html [ Skip ]
+
+# webkit.org/b/237689 These tests are constantly failing on iPad 
+webkit.org/b/237689 svg/filters/big-height-filter.svg [ Failure ]
+webkit.org/b/237689 svg/filters/big-sized-off-viewport-filter.svg [ Failure ]
+webkit.org/b/237689 svg/filters/big-width-filter.svg [ Failure ]
+
+webkit.org/b/194226 quicklook/word-legacy.html [ Failure ]
+webkit.org/b/194226 quicklook/word.html [ Failure ]
+
+webkit.org/b/194259 fast/events/ios/rotation/basic-rotation.html [ Skip ]
+webkit.org/b/194259 fast/events/ios/rotation/layout-viewport-during-rotation.html [ Skip ]
+webkit.org/b/194259 fast/events/ios/rotation/layout-viewport-during-safari-type-rotation.html [ Skip ]
+webkit.org/b/194259 fast/events/ios/rotation/resize-iframe-after-orientation-change.html [ Skip ]
+webkit.org/b/194259 fast/events/ios/rotation/safari-like-rotation.html [ Skip ]
+webkit.org/b/194259 fast/events/ios/viewport-no-width-value-allows-double-tap.html [ Skip ]
+
+# This tests an iphone-specific behavior so is expected to fail on iPad.
+fast/scrolling/ios/overflow-scrolling-touch-enabled-stacking.html [ ImageOnlyFailure ]
+
+# This test relies on the numeric keyboard having a different size than regular keyboard. This is not the case on iPad.
+fast/forms/ios/inputmode-change-update-keyboard.html [ Skip ]
+
+# <rdar://problem/51869921> REGRESSION (iOS 13) [ iPad Sim ] Layout Test http/tests/adClickAttribution/anchor-tag-attributes-validation.html is failing
+http/tests/adClickAttribution/anchor-tag-attributes-validation.html [ Failure ]
+
+# <rdar://problem/51865126> [ iPad Simulator ] 2 New Layout tests are failing on iOS 13 iPad Simulator testers fast/scrolling/ios/body-overflow-hidden-height-100-percent-zoomed-*
+fast/scrolling/ios/body-overflow-hidden-height-100-percent-zoomed-2.html [ Skip ]
+fast/scrolling/ios/body-overflow-hidden-height-100-percent-zoomed-1.html [ Skip ]
+
+# <rdar://problem/52914585> (Layout Test fast/forms/file/file-input-reset-using-open-panel.html is Failing)
+fast/forms/file/file-input-reset-using-open-panel.html [ ImageOnlyFailure ]
+
+# <rdar://problem/56512107> [ iOS ] Three editing/pasteboard/smart-paste-paragraph tests have been flaky since they landed in r243124 (203264)
+webkit.org/b/203264 editing/pasteboard/smart-paste-paragraph-001.html [ Pass ]
+
+webkit.org/b/231635 [ Release ] editing/selection/ios/scroll-to-reveal-selection-when-showing-software-keyboard.html [ Timeout ]
+
+media/picture-in-picture [ Pass ]
+media/remove-video-element-in-pip-from-document.html [ Pass ]
+
+webkit.org/b/228622 [ Debug ] accessibility/ios-simulator/scroll-in-overflow-div.html [ Crash ]
+
+webkit.org/b/197960 imported/w3c/web-platform-tests/html/dom/idlharness.https.html [ Pass Failure ]
+
+webkit.org/b/228663 fast/canvas/canvas-color-space-display-p3.html [ ImageOnlyFailure ]
+
+webkit.org/b/230419 platform/ipad/media/modern-media-controls/media-documents/media-document-video-ios-sizing.html [ Pass Timeout Crash ]
+
+webkit.org/b/231611 [ Debug ] imported/w3c/web-platform-tests/webrtc-encoded-transform/sframe-transform-in-worker.https.html [ Pass Failure ]
+
+webkit.org/b/231616 [ Debug ] compositing/layer-creation/scale-rotation-transition-overlap.html [ Pass Failure Timeout ]
+
+webkit.org/b/231640 [ Debug ] webrtc/video-mute.html [ Pass Timeout ]
+
+# These fail due to color space issues in the specific iPad simulator used <rdar://84527732>
+webkit.org/b/232090 fast/canvas/canvas-createPattern-video-loading.html [ Failure ]
+webkit.org/b/292090 fast/canvas/canvas-createPattern-video-modify.html [ Failure ]
+webkit.org/b/232090 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/canvas-createImageBitmap-video-resize.html [ Failure ]
+webkit.org/b/292090 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-drawImage.html [ Failure ]
+webkit.org/b/292090 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-flipY.html [ Failure ]
+webkit.org/b/292090 media/video-canvas-createPattern.html [ Failure ]
+
+# Failure only on iPad simulator
+webkit.org/b/178588 fast/css/button-height.html [ Failure ]
+webkit.org/b/214465 imported/w3c/web-platform-tests/css/mediaqueries/mq-gamut-002.html [ ImageOnlyFailure ]

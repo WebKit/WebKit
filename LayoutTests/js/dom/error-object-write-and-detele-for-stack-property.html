@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <p>This test verifies that the stack property able to be deleted and written to by the developer.</p>
+
+    <pre id="console"></pre>
+
+
+    <script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    function log(s)
+    {
+        document.getElementById("console").appendChild(document.createTextNode(s + "\n"));
+    }
+
+    var e = new Error("hello");
+    var stack = e.stack; 
+    log("Creating new Error e");
+    shouldBeTrue(' typeof(e.stack) == "string"');
+
+    delete(e.stack);
+    log("Deleting the stack property should make it undefined.")
+    shouldBeUndefined('e.stack');
+
+    log("Writing to the stack property.");    
+    e.stack = "Brand new stack!";
+    shouldBeTrue('e.stack == "Brand new stack!"');    
+
+    successfullyParsed = true;
+    </script>
+</body>

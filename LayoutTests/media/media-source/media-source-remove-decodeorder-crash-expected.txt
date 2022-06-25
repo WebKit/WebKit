@@ -1,0 +1,16 @@
+This tests the SourceBuffer.remove() API. The test removes samples where the decode and presentation orders differ. Should not crash.
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock"))
+RUN(sourceBuffer.appendBuffer(initSegment))
+EVENT(updateend)
+RUN(sourceBuffer.appendBuffer(samples))
+EVENT(updateend)
+RUN(sourceBuffer.remove(1.9, 2))
+EVENT(updateend)
+EXPECTED (sourceBuffer.buffered.length == '2') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '0') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '1') OK
+END OF TEST
+

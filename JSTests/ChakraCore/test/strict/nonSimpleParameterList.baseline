@@ -1,0 +1,2 @@
+SyntaxError: Cannot apply strict mode on functions with non-simple parameter list
+	at code (nonSimpleParameterList.js:8:30)

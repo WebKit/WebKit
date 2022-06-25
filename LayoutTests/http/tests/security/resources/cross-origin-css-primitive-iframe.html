@@ -1,0 +1,27 @@
+<head>
+<style>
+.a { width: 0px; }
+.a { width: 100px; }
+.a { width: 50%; }
+.a { width: 1; }
+.a { color: red; }
+.a { color: rgb(0,0,0); }
+.a { color: rgb(255,255,255); }
+.a { color: rgba(0,0,0,255); }
+.a { color: rgba(0,0,0,0); }
+.a { color: inherit; }
+.a { color: initial; }
+</style>
+<script>
+values = new Array();
+var rules = document.getElementsByTagName('style')[0].sheet.cssRules;
+for(i = 0 ; i < rules.length; ++i) {
+    var val = rules[i].style.getPropertyCSSValue('color');
+    if (!val)
+        val =  rules[i].style.getPropertyCSSValue('width');
+    values.push(val);
+    document.write(val.foo ? "FAILED<br>" : "PASSED<br>");
+}
+if (window.testRunner)
+    testRunner.notifyDone();
+</script>

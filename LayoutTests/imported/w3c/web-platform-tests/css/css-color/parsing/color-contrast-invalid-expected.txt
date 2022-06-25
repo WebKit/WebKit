@@ -1,0 +1,10 @@
+
+PASS e.style['color-contrast(white vs red)'] = undefined should not set the property value
+PASS e.style['color-contrast(white vs red,)'] = undefined should not set the property value
+PASS e.style['color-contrast(white vs )'] = undefined should not set the property value
+PASS e.style['color-contrast(white)'] = undefined should not set the property value
+PASS e.style['color-contrast(white vs red green)'] = undefined should not set the property value
+PASS e.style['color-contrast(white vs red, green to)'] = undefined should not set the property value
+PASS e.style['color-contrast(white vs red, green to invalid)'] = undefined should not set the property value
+PASS e.style['color-contrast(white vs red to AA)'] = undefined should not set the property value
+

@@ -1,0 +1,24 @@
+<html>
+<head>
+	<style>
+        p.firstLetter:first-letter {
+            color: green;
+        }
+        p.float:first-letter {
+            float: left;
+        }
+    </style>
+    <script>
+    if (window.internals) {
+        window.internals.settings.setTextAutosizingEnabled(true);
+        window.internals.settings.setTextAutosizingWindowSizeOverride(320, 480);
+    }
+    </script>
+</head>
+<body>
+    <p>The following lines should be identical.</p>
+    <p><span style="color:green">A</span>-Z</p>
+    <p class="firstLetter">A-Z</p>
+    <p class="firstLetter float">A-Z</p>
+</body>
+</html>

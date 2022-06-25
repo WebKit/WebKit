@@ -1,0 +1,5 @@
+Test that a ruby element with multicol style is correctly laid out when it loses the multicol style.
+
+On success you see PASS below.
+
+PASS

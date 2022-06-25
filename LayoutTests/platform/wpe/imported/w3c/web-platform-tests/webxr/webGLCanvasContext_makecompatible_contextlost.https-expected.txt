@@ -1,0 +1,4 @@
+
+PASS A lost webgl context should not be able to set xr compatibility
+FAIL A lost webgl2 context should not be able to set xr compatibility assert_implements: webgl2 not supported. undefined
+

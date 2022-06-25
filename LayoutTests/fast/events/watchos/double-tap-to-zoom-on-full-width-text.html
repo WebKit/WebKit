@@ -1,0 +1,25 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/basic-gestures.js"></script>
+<meta name="viewport" content="width=device-width">
+<body style="margin: 0; font-size: 10px;">
+    <div>
+        Even though this text is laid out at the full document width, we should still
+        be able to double tap to zoom in "extra zoom mode", such that the text becomes
+        legible.
+    </div>
+    <div>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
+        incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+        nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+        fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+        culpa qui officia deserunt mollit anim id est laborum.
+    </div>
+</body>
+<script>
+    jsTestIsAsync = true;
+    doubleTapToZoomAtPoint(75, 75).then(finishJSTest);
+</script>
+</html>

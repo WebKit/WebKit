@@ -1,0 +1,1160 @@
+/*
+ * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+enum PageOverlayType {
+    "view",
+    "document"
+};
+
+// These map to ResourceRequestCachePolicy.
+enum CachePolicy {
+    "UseProtocolCachePolicy",
+    "ReloadIgnoringCacheData",
+    "ReturnCacheDataElseLoad",
+    "ReturnCacheDataDontLoad"
+};
+
+// FIXME: Strings in an enum should not have the name of the enum as a prefix.
+enum ResourceLoadPriority {
+    "ResourceLoadPriorityVeryLow",
+    "ResourceLoadPriorityLow",
+    "ResourceLoadPriorityMedium",
+    "ResourceLoadPriorityHigh",
+    "ResourceLoadPriorityVeryHigh"
+};
+
+enum AutoFillButtonType {
+    "None",
+    "Contacts",
+    "Credentials",
+    "StrongPassword",
+    "CreditCard"
+};
+
+enum UserInterfaceLayoutDirection {
+    "LTR",
+    "RTL"
+};
+
+enum BaseWritingDirection {
+    "Natural",
+    "Ltr",
+    "Rtl"
+};
+
+enum EventThrottlingBehavior {
+    "responsive",
+    "unresponsive"
+};
+
+enum CompositingPolicy {
+    "normal",
+    "conservative"
+};
+
+[Conditional=VIDEO] enum PlaybackControlsPurpose {
+    "ControlsManager",
+    "NowPlaying"
+};
+
+[Conditional=VIDEO] enum MediaSessionState {
+    "Idle",
+    "Autoplaying",
+    "Playing",
+    "Paused",
+    "Interrupted"
+};
+
+enum ContentSizeCategory {
+    "L",
+    "XXXL"
+};
+
+enum TreeType {
+    "Tree",
+    "ShadowIncludingTree",
+    "ComposedTree"
+};
+
+[Conditional=WEBGL] enum SimulatedWebGLContextEvent {
+    "ContextChange",
+    "GPUStatusFailure",
+    "Timeout"
+};
+
+enum AudioSessionCategory {
+    "None",
+    "AmbientSound",
+    "SoloAmbientSound",
+    "MediaPlayback",
+    "RecordAudio",
+    "PlayAndRecord",
+    "AudioProcessing"
+};
+
+enum RouteSharingPolicy {
+    "Default",
+    "LongFormAudio",
+    "Independent",
+    "LongFormVideo"
+};
+
+enum AutoplayPolicy {
+    "Default",
+    "Allow",
+    "AllowWithoutSound",
+    "Deny"
+};
+
+[Conditional=WEBGL] enum RequestedGPU {
+    "default",
+    "low-power",
+    "high-performance"
+};
+
+[
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    Conditional=VIDEO,
+    JSGenerateToJSObject,
+] dictionary NowPlayingState {
+    DOMString title;
+    unrestricted double duration;
+    unrestricted double elapsedTime;
+    unsigned long long uniqueIdentifier;
+    boolean hasActiveSession;
+    boolean registeredAsNowPlayingApplication;
+    boolean haveEverRegisteredAsNowPlayingApplication;
+};
+
+[
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    Conditional=VIDEO,
+    JSGenerateToJSObject,
+] dictionary MediaUsageState {
+    DOMString mediaURL;
+    boolean isPlaying;
+    boolean canShowControlsManager;
+    boolean canShowNowPlayingControls;
+    boolean isSuspended;
+    boolean isInActiveDocument;
+    boolean isFullscreen;
+    boolean isMuted;
+    boolean isMediaDocumentInMainFrame;
+    boolean isVideo;
+    boolean isAudio;
+    boolean hasVideo;
+    boolean hasAudio;
+    boolean hasRenderer;
+    boolean audioElementWithUserGesture;
+    boolean userHasPlayedAudioBefore;
+    boolean isElementRectMostlyInMainFrame;
+    boolean playbackPermitted;
+    boolean pageMediaPlaybackSuspended;
+    boolean isMediaDocumentAndNotOwnerElement;
+    boolean pageExplicitlyAllowsElementToAutoplayInline;
+    boolean requiresFullscreenForVideoPlaybackAndFullscreenNotPermitted;
+    boolean hasHadUserInteractionAndQuirksContainsShouldAutoplayForArbitraryUserGesture;
+    boolean isVideoAndRequiresUserGestureForVideoRateChange;
+    boolean isAudioAndRequiresUserGestureForAudioRateChange;
+    boolean isVideoAndRequiresUserGestureForVideoDueToLowPowerMode;
+    boolean noUserGestureRequired;
+    boolean requiresPlaybackAndIsNotPlaying;
+    boolean hasEverNotifiedAboutPlaying;
+    boolean outsideOfFullscreen;
+    boolean isLargeEnoughForMainContent;
+};
+
+[
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    JSGenerateToJSObject,
+] dictionary FullscreenInsets {
+    double top;
+    double left;
+    double bottom;
+    double right;
+};
+
+enum HEVCParameterCodec {
+    "hev1",
+    "hvc1"
+};
+
+[
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    JSGenerateToJSObject,
+] dictionary HEVCParameterSet {
+    HEVCParameterCodec codec;
+    unsigned short generalProfileSpace;
+    unsigned short generalProfileIDC;
+    unsigned long generalProfileCompatibilityFlags;
+    octet generalTierFlag;
+    required FrozenArray<octet> generalConstraintIndicatorFlags;
+    unsigned short generalLevelIDC;
+};
+
+[
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    JSGenerateToJSObject,
+] dictionary DoViParameterSet {
+    DOMString codecName;
+    unsigned short bitstreamProfileID;
+    unsigned short bitstreamLevelID;
+};
+
+[
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    JSGenerateToJSObject,
+] dictionary VPCodecConfigurationRecord {
+    DOMString codecName;
+    octet profile;
+    octet level;
+    octet bitDepth;
+    octet chromaSubsampling;
+    octet videoFullRangeFlag;
+    octet colorPrimaries;
+    octet transferCharacteristics;
+    octet matrixCoefficients;
+};
+
+[
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    JSGenerateToJSObject,
+] dictionary AcceleratedAnimation {
+    DOMString property;
+    double speed;
+};
+
+[
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    JSGenerateToJSObject,
+] dictionary CookieData {
+    DOMString name;
+    DOMString value;
+    DOMString domain;
+    double expires;
+    boolean isHttpOnly;
+    boolean isSecure;
+    boolean isSession;
+    boolean isSameSiteLax;
+    boolean isSameSiteStrict;
+};
+
+[
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    JSGenerateToJSObject,
+] dictionary TextIndicatorInfo {
+    DOMRectReadOnly textBoundingRectInRootViewCoordinates;
+    DOMRectList textRectsInBoundingRectCoordinates;
+};
+
+[
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    Conditional=ATTACHMENT_ELEMENT,
+    JSGenerateToJSObject,
+] dictionary AttachmentThumbnailInfo {
+    unsigned long width;
+    unsigned long height;
+};
+
+[
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    JSGenerateToJSObject,
+] dictionary TextIndicatorOptions {
+    boolean useBoundingRectAndPaintAllContentForComplexRanges = false;
+    boolean computeEstimatedBackgroundColor = false;
+    boolean respectTextColor = false;
+};
+
+[
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    JSGenerateToJSObject,
+] dictionary TextIteratorState {
+    DOMString text;
+    Range range;
+};
+
+[
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    JSGenerateToJSObject,
+] dictionary ImageOverlayText {
+    required DOMString text;
+    required DOMPointReadOnly topLeft;
+    required DOMPointReadOnly topRight;
+    required DOMPointReadOnly bottomRight;
+    required DOMPointReadOnly bottomLeft;
+    boolean hasLeadingWhitespace = true;
+};
+
+[
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    JSGenerateToJSObject,
+] dictionary ImageOverlayLine {
+    required DOMPointReadOnly topLeft;
+    required DOMPointReadOnly topRight;
+    required DOMPointReadOnly bottomRight;
+    required DOMPointReadOnly bottomLeft;
+    sequence<ImageOverlayText> children;
+    boolean hasTrailingNewline = true;
+};
+
+[
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    JSGenerateToJSObject,
+] dictionary ImageOverlayBlock {
+    required DOMString text;
+    required DOMPointReadOnly topLeft;
+    required DOMPointReadOnly topRight;
+    required DOMPointReadOnly bottomRight;
+    required DOMPointReadOnly bottomLeft;
+};
+
+[
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    JSGenerateToJSObject,
+] dictionary ImageOverlayDataDetector {
+    required DOMPointReadOnly topLeft;
+    required DOMPointReadOnly topRight;
+    required DOMPointReadOnly bottomRight;
+    required DOMPointReadOnly bottomLeft;
+};
+
+typedef (FetchRequest or FetchResponse) FetchObject;
+
+[
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    LegacyNoInterfaceObject,
+] interface Internals {
+    DOMString address(Node node);
+    boolean nodeNeedsStyleRecalc(Node node);
+    DOMString styleChangeType(Node node);
+    DOMString description(any value);
+    undefined log(DOMString value);
+
+    // Animated image pausing testing.
+    boolean hasPausedImageAnimations(Element element);
+
+    // Must be called on an element whose enclosingLayer() is self-painting.
+    boolean isPaintingFrequently(Element element);
+    undefined incrementFrequentPaintCounter(Element element);
+
+    DOMString elementRenderTreeAsText(Element element);
+    boolean isPreloaded(DOMString url);
+    boolean isLoadingFromMemoryCache(DOMString url);
+    DOMString fetchResponseSource(FetchResponse response);
+    DOMString xhrResponseSource(XMLHttpRequest xhr);
+    boolean isSharingStyleSheetContents(HTMLLinkElement a, HTMLLinkElement b);
+    boolean isStyleSheetLoadingSubresources(HTMLLinkElement link);
+    undefined clearMemoryCache();
+    undefined pruneMemoryCacheToSize(long size);
+    undefined destroyDecodedDataForAllImages();
+    long memoryCacheSize();
+    undefined setOverrideCachePolicy(CachePolicy policy);
+    undefined setOverrideResourceLoadPriority(ResourceLoadPriority priority);
+    undefined setStrictRawResourceValidationPolicyDisabled(boolean disabled);
+
+    boolean isFetchObjectContextStopped(FetchObject object);
+
+    undefined clearBackForwardCache();
+    unsigned long backForwardCacheSize();
+    undefined preventDocumentFromEnteringBackForwardCache();
+
+    CSSStyleDeclaration computedStyleIncludingVisitedInfo(Element element);
+
+    Node ensureUserAgentShadowRoot(Element host);
+    Node shadowRoot(Element host);
+
+    DOMString shadowRootType(Node root);
+    DOMString shadowPseudoId(Element element);
+    undefined setShadowPseudoId(Element element, [AtomString] DOMString id);
+    Node treeScopeRootNode(Node node);
+    Node parentTreeScope(Node node);
+
+    // Spatial Navigation testing
+    unsigned long lastSpatialNavigationCandidateCount();
+
+    readonly attribute unsigned long inflightBeaconsCount;
+
+    // CSS Animation testing.
+    boolean animationWithIdExists(DOMString id);
+    unsigned long numberOfActiveAnimations();
+    undefined suspendAnimations();
+    undefined resumeAnimations();
+    boolean animationsAreSuspended();
+    readonly attribute double animationsInterval;
+
+    // Web Animations testing.
+    sequence<AcceleratedAnimation> acceleratedAnimationsForElement(Element element);
+    unsigned long numberOfAnimationTimelineInvalidations();
+    double timeToNextAnimationTick(WebAnimation animation);
+
+    // For animations testing, we need a way to get at pseudo elements.
+    Element? pseudoElement(Element element, DOMString pseudoId);
+
+    DOMString visiblePlaceholder(Element element);
+    undefined selectColorInColorChooser(HTMLInputElement element, DOMString colorValue);
+    sequence<[AtomString] DOMString> formControlStateOfPreviousHistoryItem();
+    undefined setFormControlStateOfPreviousHistoryItem(sequence<[AtomString] DOMString> values);
+
+    DOMRect absoluteLineRectFromPoint(long x, long y);
+
+    DOMRect absoluteCaretBounds();
+    boolean isCaretBlinkingSuspended();
+
+    DOMRect boundingBox(Element element);
+
+    unsigned long inspectorGridOverlayCount();
+    unsigned long inspectorFlexOverlayCount();
+    DOMRectList inspectorHighlightRects();
+    unsigned long inspectorPaintRectCount();
+
+    unsigned long markerCountForNode(Node node, DOMString markerType);
+    Range? markerRangeForNode(Node node, DOMString markerType, unsigned long index);
+    DOMString markerDescriptionForNode(Node node, DOMString markerType, unsigned long index);
+    DOMString dumpMarkerRects(DOMString markerType);
+    undefined setMarkedTextMatchesAreHighlighted(boolean flag);
+
+    undefined invalidateFontCache();
+    undefined setFontSmoothingEnabled(boolean enabled);
+
+    undefined setScrollViewPosition(long x, long y);
+
+    // Like Element.scrollTo(), but without constaints, for testing rubber-banding.
+    undefined unconstrainedScrollTo(Element element, unrestricted double x, unrestricted double y);
+
+    // Scrolls the element by the given delta, approximating the async wheel event handling code path where available.
+    undefined scrollBySimulatingWheelEvent(Element element, unrestricted double deltaX, unrestricted double deltaY);
+
+    DOMRect layoutViewportRect();
+    DOMRect visualViewportRect();
+
+    undefined setViewIsTransparent(boolean trnasparent);
+
+    DOMString viewBaseBackgroundColor();
+    undefined setViewBaseBackgroundColor(DOMString colorValue);
+
+    undefined setPagination(DOMString mode, long gap, optional long pageLength = 0);
+    undefined setPaginationLineGridEnabled(boolean enabled);
+    unsigned long long lineIndexAfterPageBreak(Element element);
+
+    DOMString configurationForViewport(unrestricted float devicePixelRatio, long deviceWidth, long deviceHeight, long availableWidth, long availableHeight);
+
+    boolean wasLastChangeUserEdit(Element textField);
+    boolean elementShouldAutoComplete(HTMLInputElement inputElement);
+    undefined setAutofilled(HTMLInputElement inputElement, boolean enabled);
+    undefined setAutoFilledAndViewable(HTMLInputElement inputElement, boolean enabled);
+    undefined setAutoFilledAndObscured(HTMLInputElement inputElement, boolean enabled);
+    undefined setShowAutoFillButton(HTMLInputElement inputElement, AutoFillButtonType autoFillButtonType);
+    AutoFillButtonType autoFillButtonType(HTMLInputElement inputElement);
+    AutoFillButtonType lastAutoFillButtonType(HTMLInputElement inputElement);
+
+    undefined setCanShowPlaceholder(Element element, boolean canShowPlaceholder);
+
+    Element insertTextPlaceholder(long width, long height);
+    undefined removeTextPlaceholder(Element element);
+
+    Range? rangeOfString(DOMString text, Range? referenceRange, sequence<DOMString> findOptions);
+    unsigned long countMatchesForText(DOMString text, sequence<DOMString> findOptions, DOMString markMatches);
+    unsigned long countFindMatches(DOMString text, sequence<DOMString> findOptions);
+
+    DOMString autofillFieldName(Element formControlElement);
+    boolean isSpellcheckDisabledExceptTextReplacement(HTMLInputElement inputElement);
+
+    undefined invalidateControlTints();
+
+    undefined scrollElementToRect(Element element, long x, long y, long w, long h);
+
+    Range? rangeFromLocationAndLength(Element scope, unsigned long rangeLocation, unsigned long rangeLength);
+    unsigned long locationFromRange(Element scope, Range range, optional sequence<DOMString> behaviors = []);
+    unsigned long lengthFromRange(Element scope, Range range, optional sequence<DOMString> behaviors = []);
+    DOMString rangeAsText(Range range);
+    DOMString rangeAsTextUsingBackwardsTextIterator(Range range);
+    Range subrange(Range range, unsigned long rangeLocation, unsigned long rangeLength);
+    Range? rangeForDictionaryLookupAtLocation(long x, long y);
+    Range? rangeOfStringNearLocation(Range range, DOMString text, long targetOffset);
+    sequence<TextIteratorState> statesOfTextIterator(Range range, optional sequence<DOMString> behaviors = []);
+
+    undefined setDelegatesScrolling(boolean enabled);
+
+    unsigned long long lastSpellCheckRequestSequence();
+    unsigned long long lastSpellCheckProcessedSequence();
+    undefined advanceToNextMisspelling();
+
+    sequence<DOMString> userPreferredLanguages();
+    undefined setUserPreferredLanguages(sequence<DOMString> languages);
+
+    sequence<DOMString> userPreferredAudioCharacteristics();
+    undefined setUserPreferredAudioCharacteristic(DOMString characteristic);
+
+    unsigned long wheelEventHandlerCount();
+    unsigned long touchEventHandlerCount();
+
+    DOMRectList touchEventRectsForEvent(DOMString eventName);
+    DOMRectList passiveTouchEventListenerRects();
+
+    NodeList? nodesFromRect(Document document, long x, long y,
+        unsigned long topPadding, unsigned long rightPadding, unsigned long bottomPadding, unsigned long leftPadding,
+        boolean ignoreClipping, boolean allowShadowContent, boolean allowChildFrameContent);
+
+    // Calling parserMetaData() with no arguments gets the metadata for the script of the current scope.
+    DOMString parserMetaData(optional any func);
+
+    undefined updateEditorUINowIfScheduled();
+
+    readonly attribute boolean sentenceRetroCorrectionEnabled;
+    boolean hasSpellingMarker(long from, long length);
+    boolean hasGrammarMarker(long from, long length);
+    boolean hasAutocorrectedMarker(long from, long length);
+    boolean hasDictationAlternativesMarker(long from, long length);
+    undefined setContinuousSpellCheckingEnabled(boolean enabled);
+    undefined setAutomaticQuoteSubstitutionEnabled(boolean enabled);
+    undefined setAutomaticLinkDetectionEnabled(boolean enabled);
+    undefined setAutomaticDashSubstitutionEnabled(boolean enabled);
+    undefined setAutomaticTextReplacementEnabled(boolean enabled);
+    undefined setAutomaticSpellingCorrectionEnabled(boolean enabled);
+
+    undefined handleAcceptedCandidate(DOMString candidate, unsigned long location, unsigned long length);
+    undefined changeSelectionListType();
+    undefined changeBackToReplacedString(DOMString replacedString);
+
+    boolean isOverwriteModeEnabled();
+    undefined toggleOverwriteModeEnabled();
+
+    unsigned long numberOfScrollableAreas();
+
+    boolean isPageBoxVisible(long pageNumber);
+
+    unsigned long imageFrameIndex(HTMLImageElement element);
+    unsigned long imageFrameCount(HTMLImageElement element);
+    float imageFrameDurationAtIndex(HTMLImageElement element, unsigned long index);
+    undefined setImageFrameDecodingDuration(HTMLImageElement element, unrestricted float duration);
+    undefined resetImageAnimation(HTMLImageElement element);
+    boolean isImageAnimating(HTMLImageElement element);
+    unsigned long imagePendingDecodePromisesCountForTesting(HTMLImageElement element);
+    undefined setClearDecoderAfterAsyncFrameRequestForTesting(HTMLImageElement element, boolean enabled);
+    unsigned long imageDecodeCount(HTMLImageElement element);
+    unsigned long pdfDocumentCachingCount(HTMLImageElement element);
+    unsigned long remoteImagesCountForTesting();
+    undefined setLargeImageAsyncDecodingEnabledForTesting(HTMLImageElement element, boolean enabled);
+    undefined setForceUpdateImageDataEnabledForTesting(HTMLImageElement element, boolean enabled);
+
+    undefined setGridMaxTracksLimit(unsigned long maxTracksLimit);
+
+    readonly attribute InternalSettings settings;
+    readonly attribute unsigned long workerThreadCount;
+
+    readonly attribute boolean areSVGAnimationsPaused;
+    double svgAnimationsInterval(SVGSVGElement element);
+
+    boolean testProcessIncomingSyncMessagesWhenWaitingForSyncReply();
+
+    // Flags for layerTreeAsText.
+    const unsigned short LAYER_TREE_INCLUDES_VISIBLE_RECTS = 1;
+    const unsigned short LAYER_TREE_INCLUDES_TILE_CACHES = 2;
+    const unsigned short LAYER_TREE_INCLUDES_REPAINT_RECTS = 4;
+    const unsigned short LAYER_TREE_INCLUDES_PAINTING_PHASES = 8;
+    const unsigned short LAYER_TREE_INCLUDES_CONTENT_LAYERS = 16;
+    const unsigned short LAYER_TREE_INCLUDES_ACCELERATES_DRAWING = 32;
+    const unsigned short LAYER_TREE_INCLUDES_CLIPPING = 64;
+    const unsigned short LAYER_TREE_INCLUDES_BACKING_STORE_ATTACHED = 128;
+    const unsigned short LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES = 256;
+    const unsigned short LAYER_TREE_INCLUDES_EVENT_REGION = 512;
+    const unsigned short LAYER_TREE_INCLUDES_DEEP_COLOR = 1024;
+    const unsigned short LAYER_TREE_INCLUDES_DEVICE_SCALE = 2048;
+    DOMString layerTreeAsText(Document document, optional unsigned short flags = 0);
+
+    unsigned long long layerIDForElement(Element element);
+
+    // Flags for platformLayerTreeAsText.
+    const unsigned short PLATFORM_LAYER_TREE_DEBUG = 1;
+    const unsigned short PLATFORM_LAYER_TREE_IGNORES_CHILDREN = 2;
+    const unsigned short PLATFORM_LAYER_TREE_INCLUDE_MODELS = 4;
+    DOMString platformLayerTreeAsText(Element element, optional unsigned short flags = 0);
+
+    DOMString scrollbarOverlayStyle(optional Node? node = null);
+    boolean scrollbarUsingDarkAppearance(optional Node? node = null);
+    DOMString horizontalScrollbarState(optional Node? node = null);
+    DOMString verticalScrollbarState(optional Node? node = null);
+
+    DOMString scrollingStateTreeAsText();
+    DOMString scrollingTreeAsText();
+    DOMString synchronousScrollingReasons();
+    DOMRectList nonFastScrollableRects();
+
+    DOMString repaintRectsAsText();
+
+    // These throw if the element does not have a compositing layer.
+    undefined setElementUsesDisplayListDrawing(Element element, boolean usesDisplayListDrawing);
+    undefined setElementTracksDisplayListReplay(Element element, boolean trackReplay);
+
+    // Flags for displayListForElement.
+    const unsigned short DISPLAY_LIST_INCLUDE_PLATFORM_OPERATIONS = 1;
+    const unsigned short DISPLAY_LIST_INCLUDE_RESOURCE_IDENTIFIERS = 2;
+    // Returns the recorded display list.
+    DOMString displayListForElement(Element element, optional unsigned short flags = 0);
+    // Returns the display list that was actually painted.
+    DOMString replayDisplayListForElement(Element element, optional unsigned short flags = 0);
+
+    undefined setForceUseGlyphDisplayListForTesting(boolean enabled);
+    DOMString cachedGlyphDisplayListsForTextNode(Node node, optional unsigned short flags = 0);
+
+    undefined garbageCollectDocumentResources();
+
+    undefined insertAuthorCSS(DOMString css);
+    undefined insertUserCSS(DOMString css);
+
+    readonly attribute boolean isUnderMemoryPressure;
+    undefined beginSimulatedMemoryPressure();
+    undefined endSimulatedMemoryPressure();
+
+    unsigned long numberOfIDBTransactions();
+
+    unsigned long numberOfLiveNodes();
+    unsigned long numberOfLiveDocuments();
+    unsigned long referencingNodeCount(Document document);
+    unsigned long numberOfIntersectionObservers(Document document);
+    unsigned long numberOfResizeObservers(Document document);
+    WindowProxy? openDummyInspectorFrontend(DOMString url);
+    undefined closeDummyInspectorFrontend();
+    undefined setInspectorIsUnderTest(boolean isUnderTest);
+
+    // BaseAudioContext lifetime testing.
+    [Conditional=WEB_AUDIO] unsigned long long baseAudioContextIdentifier(BaseAudioContext context);
+    [Conditional=WEB_AUDIO] boolean isBaseAudioContextAlive(unsigned long long contextID);
+
+    DOMString counterValue(Element element);
+    long pageNumber(Element element, optional unrestricted float pageWidth = 800, optional unrestricted float pageHeight = 600);
+    sequence<DOMString> shortcutIconURLs();
+    long numberOfPages(optional unrestricted double pageWidthInPixels = 800, optional unrestricted double pageHeightInPixels = 600);
+    DOMString pageProperty(DOMString propertyName, long pageNumber);
+    DOMString pageSizeAndMarginsInPixels(long pageIndex, long width, long height, long marginTop, long marginRight, long marginBottom, long marginLeft);
+
+    undefined setPageScaleFactor(unrestricted float scaleFactor, long x, long y);
+    float pageScaleFactor();
+
+    undefined setPageZoomFactor(unrestricted float zoomFactor);
+    undefined setTextZoomFactor(unrestricted float zoomFactor);
+
+    undefined setUseFixedLayout(boolean useFixedLayout);
+    undefined setFixedLayoutSize(long width, long height);
+    undefined setPrinting(long width, long height);
+
+    undefined setViewExposedRect(unrestricted float x, unrestricted float y, unrestricted float width, unrestricted float height);
+
+    undefined setHeaderHeight(unrestricted float height);
+    undefined setFooterHeight(unrestricted float height);
+
+    undefined setTopContentInset(unrestricted float contentInset);
+
+    [Conditional=FULLSCREEN_API] undefined webkitWillEnterFullScreenForElement(Element element);
+    [Conditional=FULLSCREEN_API] undefined webkitDidEnterFullScreenForElement(Element element);
+    [Conditional=FULLSCREEN_API] undefined webkitWillExitFullScreenForElement(Element element);
+    [Conditional=FULLSCREEN_API] undefined webkitDidExitFullScreenForElement(Element element);
+    [Conditional=FULLSCREEN_API] readonly attribute boolean isAnimatingFullScreen;
+
+    undefined setFullscreenInsets(FullscreenInsets insets);
+    undefined setFullscreenAutoHideDuration(double duration);
+    undefined setFullscreenControlsHidden(boolean hidden);
+
+    [Conditional=VIDEO] boolean isChangingPresentationMode(HTMLVideoElement element);
+    [Conditional=VIDEO_PRESENTATION_MODE] undefined setMockVideoPresentationModeEnabled(boolean enabled);
+
+    undefined setApplicationCacheOriginQuota(unsigned long long quota);
+
+    undefined registerURLSchemeAsBypassingContentSecurityPolicy(DOMString scheme);
+    undefined removeURLSchemeRegisteredAsBypassingContentSecurityPolicy(DOMString scheme);
+
+    undefined registerDefaultPortForProtocol(unsigned short port, DOMString scheme);
+
+    MallocStatistics mallocStatistics();
+    TypeConversions typeConversions();
+    MemoryInfo memoryInfo();
+
+    sequence<DOMString> getReferencedFilePaths();
+
+    // These functions both reset the tracked repaint rects. They are intended to be used in the following order:
+    //  startTrackingRepaints, repaintRectsAsText, stopTrackingRepaints.
+    undefined startTrackingRepaints();
+    undefined stopTrackingRepaints();
+
+    undefined startTrackingLayerFlushes();
+    unsigned long layerFlushCount();
+
+    // Query if a timer is currently throttled, to debug timer throttling.
+    boolean isTimerThrottled(long timerHandle);
+
+    DOMString requestAnimationFrameThrottlingReasons();
+    boolean areTimersThrottled();
+
+    undefined setLowPowerModeEnabled(boolean enabled);
+    undefined setOutsideViewportThrottlingEnabled(boolean enabled);
+    readonly attribute double requestAnimationFrameInterval;
+    readonly attribute boolean scriptedAnimationsAreSuspended;
+
+    // Override the behavior of WebPage::eventThrottlingDelay(), which only affects iOS.
+    attribute EventThrottlingBehavior? eventThrottlingBehaviorOverride;
+
+    undefined startTrackingStyleRecalcs();
+    unsigned long styleRecalcCount();
+    readonly attribute unsigned long lastStyleUpdateSize;
+
+    undefined startTrackingCompositingUpdates();
+    unsigned long compositingUpdateCount();
+
+    undefined startTrackingRenderingUpdates();
+    unsigned long renderingUpdateCount();
+
+    attribute CompositingPolicy? compositingPolicyOverride;
+
+    undefined updateLayoutAndStyleForAllFrames();
+
+    // |node| should be Document, HTMLIFrameElement, or unspecified.
+    // If |node| is an HTMLIFrameElement, it assumes node.contentDocument is
+    // specified without security checks. Unspecified or null means this document.
+    undefined updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks(optional Node? node = null);
+
+    readonly attribute unsigned long layoutCount;
+
+    // Returns a string with information about the mouse cursor used at the specified client location.
+    DOMString getCurrentCursorInfo();
+
+    DOMString markerTextForListItem(Element element);
+
+    DOMString toolTipFromElement(Element element);
+
+    SerializedScriptValue deserializeBuffer(ArrayBuffer buffer);
+    ArrayBuffer serializeObject(SerializedScriptValue object);
+
+    boolean isFromCurrentWorld(any obj);
+    any evaluateInWorldIgnoringException(DOMString name, DOMString source);
+
+    undefined setUsesOverlayScrollbars(boolean enabled);
+
+    undefined forceReload(boolean endToEnd);
+    undefined reloadExpiredOnly();
+
+    undefined enableFixedWidthAutoSizeMode(boolean enabled, long width, long height);
+    undefined enableSizeToContentAutoSizeMode(boolean enabled, long width, long height);
+
+    [Conditional=VIDEO] sequence<DOMString> mediaResponseSources(HTMLMediaElement media);
+    [Conditional=VIDEO] sequence<DOMString> mediaResponseContentRanges(HTMLMediaElement media);
+    [Conditional=VIDEO] undefined simulateAudioInterruption(HTMLMediaElement element);
+    [Conditional=VIDEO] boolean mediaElementHasCharacteristic(HTMLMediaElement element, DOMString characteristic);
+    [Conditional=VIDEO] undefined beginSimulatedHDCPError(HTMLMediaElement media);
+    [Conditional=VIDEO] undefined endSimulatedHDCPError(HTMLMediaElement media);
+    [Conditional=VIDEO] boolean mediaPlayerRenderingCanBeAccelerated(HTMLMediaElement media);
+
+    [Conditional=VIDEO] boolean elementShouldBufferData(HTMLMediaElement media);
+    [Conditional=VIDEO] DOMString elementBufferingPolicy(HTMLMediaElement media);
+    [Conditional=VIDEO] double privatePlayerVolume(HTMLMediaElement media);
+    [Conditional=VIDEO] boolean privatePlayerMuted(HTMLMediaElement media);
+    [Conditional=VIDEO] boolean isMediaElementHidden(HTMLMediaElement media);
+    [Conditional=VIDEO] undefined setOverridePreferredDynamicRangeMode(HTMLMediaElement media, DOMString mode);
+    [Conditional=VIDEO] double elementEffectivePlaybackRate(HTMLMediaElement media);
+
+    undefined setIsPlayingToBluetoothOverride(optional boolean? isPlaying = null);
+
+    [Conditional=LEGACY_ENCRYPTED_MEDIA] undefined initializeMockCDM();
+    [Conditional=ENCRYPTED_MEDIA] MockCDMFactory registerMockCDM();
+    undefined enableMockMediaCapabilities();
+
+    [Conditional=SPEECH_SYNTHESIS] undefined enableMockSpeechSynthesizer();
+
+    DOMString getImageSourceURL(Element element);
+
+    [Conditional=VIDEO] DOMString captionsStyleSheetOverride();
+    [Conditional=VIDEO] undefined setCaptionsStyleSheetOverride(DOMString override);
+    [Conditional=VIDEO] undefined setPrimaryAudioTrackLanguageOverride(DOMString language);
+    [Conditional=VIDEO] undefined setCaptionDisplayMode(DOMString mode);
+    [Conditional=VIDEO] TextTrackCueGeneric createGenericCue(double startTime, double endTime, DOMString text);
+    [Conditional=VIDEO] DOMString textTrackBCP47Language(TextTrack track);
+
+    [Conditional=VIDEO] TimeRanges createTimeRanges(Float32Array startTimes, Float32Array
+     endTimes);
+    [Conditional=VIDEO] unrestricted double closestTimeToTimeRanges(unrestricted double time, TimeRanges ranges);
+
+    boolean isSelectPopupVisible(HTMLSelectElement element);
+
+    boolean isPluginUnavailabilityIndicatorObscured(Element element);
+    DOMString unavailablePluginReplacementText(Element element);
+    boolean isPluginSnapshotted(Element element);
+
+    DOMRect selectionBounds();
+    undefined setSelectionWithoutValidation(Node baseNode, unsigned long baseOffset, Node? extentNode, unsigned long extentOffset);
+
+    [Conditional=MEDIA_SOURCE] undefined initializeMockMediaSource();
+    [Conditional=MEDIA_SOURCE] Promise<sequence<DOMString>> bufferedSamplesForTrackId(SourceBuffer buffer, [AtomString] DOMString trackId);
+    [Conditional=MEDIA_SOURCE] Promise<sequence<DOMString>> enqueuedSamplesForTrackID(SourceBuffer buffer, [AtomString] DOMString trackID);
+    [Conditional=MEDIA_SOURCE] undefined setShouldGenerateTimestamps(SourceBuffer buffer, boolean flag);
+    [Conditional=MEDIA_SOURCE] double minimumUpcomingPresentationTimeForTrackID(SourceBuffer buffer, [AtomString] DOMString trackID);
+    [Conditional=MEDIA_SOURCE] undefined setMaximumQueueDepthForTrackID(SourceBuffer buffer, [AtomString] DOMString trackID, unsigned long maxQueueDepth);
+
+    [Conditional=VIDEO] undefined beginMediaSessionInterruption(DOMString interruptionType);
+    [Conditional=VIDEO] undefined endMediaSessionInterruption(DOMString flags);
+    [Conditional=VIDEO] undefined applicationWillBecomeInactive();
+    [Conditional=VIDEO] undefined applicationDidBecomeActive();
+    [Conditional=VIDEO] undefined applicationWillEnterForeground(optional boolean suspendedUnderLock = false);
+    [Conditional=VIDEO] undefined applicationDidEnterBackground(optional boolean suspendedUnderLock = false);
+    [Conditional=VIDEO] undefined setMediaSessionRestrictions(DOMString mediaType, DOMString restrictions);
+    [Conditional=VIDEO] DOMString mediaSessionRestrictions(DOMString mediaType);
+    [Conditional=VIDEO] undefined setMediaElementRestrictions(HTMLMediaElement element, DOMString restrictions);
+    [Conditional=WEB_AUDIO] undefined setAudioContextRestrictions(AudioContext context, DOMString restrictions);
+    [Conditional=VIDEO] undefined postRemoteControlCommand(DOMString command, optional unrestricted float argument = 0);
+    [Conditional=VIDEO] undefined activeAudioRouteDidChange(boolean shouldPause);
+    [Conditional=VIDEO] undefined beginAudioSessionInterruption();
+
+    [Conditional=WIRELESS_PLAYBACK_TARGET] undefined setMockMediaPlaybackTargetPickerEnabled(boolean enabled);
+    [Conditional=WIRELESS_PLAYBACK_TARGET] undefined setMockMediaPlaybackTargetPickerState(DOMString deviceName, DOMString deviceState);
+    [Conditional=WIRELESS_PLAYBACK_TARGET] undefined mockMediaPlaybackTargetPickerDismissPopup();
+    [Conditional=MEDIA_RECORDER] undefined setCustomPrivateRecorderCreator();
+
+    [Conditional=WEB_AUDIO] undefined useMockAudioDestinationCocoa();
+
+    [Conditional=WEB_RTC] undefined emulateRTCPeerConnectionPlatformEvent(RTCPeerConnection connection, DOMString action);
+    [Conditional=WEB_RTC] undefined useMockRTCPeerConnectionFactory(DOMString testCase);
+    [Conditional=WEB_RTC] undefined setICECandidateFiltering(boolean enabled);
+    [Conditional=WEB_RTC] undefined setEnumeratingAllNetworkInterfacesEnabled(boolean enabled);
+    [Conditional=WEB_RTC] undefined stopPeerConnection(RTCPeerConnection connection);
+    [Conditional=WEB_RTC] undefined clearPeerConnectionFactory();
+    [Conditional=WEB_RTC] undefined setEnableWebRTCEncryption(boolean enabled);
+    [Conditional=WEB_RTC] undefined setUseDTLS10(boolean use);
+
+    [Conditional=VIDEO] undefined simulateSystemSleep();
+    [Conditional=VIDEO] undefined simulateSystemWake();
+    [Conditional=VIDEO] boolean elementIsBlockingDisplaySleep(HTMLMediaElement element);
+    [Conditional=VIDEO] boolean isPlayerVisibleInViewport(HTMLMediaElement element);
+    [Conditional=VIDEO] boolean isPlayerMuted(HTMLMediaElement element);
+
+    MockPageOverlay installMockPageOverlay(PageOverlayType type);
+    DOMString pageOverlayLayerTreeAsText(optional unsigned short flags = 0);
+
+    undefined setPageMuted(DOMString mutedState);
+    DOMString pageMediaState();
+
+    undefined setPageDefersLoading(boolean defersLoading);
+    boolean pageDefersLoading();
+
+    File? createFile(DOMString url);
+    DOMString createTemporaryFile(DOMString name, DOMString contents);
+
+    undefined queueMicroTask(long testNumber);
+    boolean testPreloaderSettingViewport();
+
+    [Conditional=CONTENT_FILTERING] readonly attribute MockContentFilterSettings mockContentFilterSettings;
+
+    DOMString scrollSnapOffsets(Element element);
+    boolean isScrollSnapInProgress(Element element);
+    undefined setPlatformMomentumScrollingPredictionEnabled(boolean enabled);
+
+    DOMString pathStringWithShrinkWrappedRects(sequence<double> rectComponents, double radius);
+
+    [Conditional=VIDEO] DOMString getCurrentMediaControlsStatusForElement(HTMLMediaElement element);
+    [Conditional=VIDEO] undefined setMediaControlsMaximumRightContainerButtonCountOverride(HTMLMediaElement element, unsigned long count);
+    [Conditional=VIDEO] undefined setMediaControlsHidePlaybackRates(HTMLMediaElement element, boolean hidePlaybackRates);
+
+    DOMString userVisibleString(DOMURL url);
+    undefined setPageMediaVolume(float volume);
+
+    undefined setShowAllPlugins(boolean showAll);
+
+    [CallWith=CurrentGlobalObject] any cloneArrayBuffer(any buffer, any srcByteOffset, any byteLength);
+    [CallWith=CurrentGlobalObject] boolean isReadableStreamDisturbed(any stream);
+
+    DOMString resourceLoadStatisticsForURL(DOMURL url);
+    undefined setResourceLoadStatisticsEnabled(boolean enable);
+
+    undefined setCanShowModalDialogOverride(boolean allow);
+
+    DOMString composedTreeAsText(Node parent);
+
+    boolean isProcessingUserGesture();
+    double lastHandledUserGestureTimestamp();
+
+    undefined withUserGesture(VoidCallback callback);
+    undefined withoutUserGesture(VoidCallback callback);
+
+    boolean userIsInteracting();
+
+    boolean hasTransientActivation();
+
+    GCObservation? observeGC(any observed);
+
+    undefined setUserInterfaceLayoutDirection(UserInterfaceLayoutDirection userInterfaceLayoutDirection);
+    undefined setBaseWritingDirection(BaseWritingDirection direction);
+
+    boolean userPrefersContrast();
+    boolean userPrefersReducedMotion();
+
+    undefined reportBacktrace();
+
+    [Conditional=POINTER_LOCK] boolean pageHasPendingPointerLock();
+    [Conditional=POINTER_LOCK] boolean pageHasPointerLock();
+
+    sequence<DOMString> accessKeyModifiers();
+
+    undefined setQuickLookPassword(DOMString password);
+
+    [CallWith=CurrentDocument] undefined setAsRunningUserScripts();
+
+    undefined disableTileSizeUpdateDelay();
+    undefined setSpeculativeTilingDelayDisabledForTesting(boolean disabled);
+
+    [Conditional=WEBGL] undefined simulateEventForWebGLContext(SimulatedWebGLContextEvent event, WebGLRenderingContext context);
+    [Conditional=WEBGL] boolean hasLowAndHighPowerGPUs();
+    [Conditional=WEBGL] RequestedGPU requestedGPU(WebGLRenderingContext context);
+    [Conditional=WEBGL] boolean requestedMetal(WebGLRenderingContext context);
+    [Conditional=WEBGL] boolean platformSupportsMetal(boolean isWebGL2);
+
+    undefined setPageVisibility(boolean isVisible);
+    undefined setPageIsFocused(boolean isFocused);
+    undefined setPageIsFocusedAndActive(boolean isFocused);
+    undefined setPageIsInWindow(boolean isInWindow);
+    boolean isPageActive();
+
+    [Conditional=WEB_RTC] undefined setH264HardwareEncoderAllowed(boolean allowed);
+    [Conditional=WEB_RTC] undefined applyRotationForOutgoingVideoSources(RTCPeerConnection connection);
+    [Conditional=WEB_RTC] undefined setWebRTCH265Support(boolean allowed);
+    [Conditional=WEB_RTC] undefined setWebRTCVP9Support(boolean supportVP9Profile0, boolean supportVP9Profile2);
+    [Conditional=WEB_RTC] undefined setWebRTCVP9VTBSupport(boolean allowed);
+    [Conditional=WEB_RTC] boolean isSupportingVP9VTB();
+    [Conditional=WEB_RTC] Promise<boolean> isVP9VTBDeccoderUsed(RTCPeerConnection connection);
+    [Conditional=WEB_RTC] undefined setSFrameCounter(RTCRtpSFrameTransform transform, DOMString counter);
+    [Conditional=WEB_RTC] unsigned long long sframeCounter(RTCRtpSFrameTransform transform);
+    [Conditional=WEB_RTC] unsigned long long sframeKeyId(RTCRtpSFrameTransform transform);
+
+    [Conditional=MEDIA_STREAM] undefined setMockAudioTrackChannelNumber(MediaStreamTrack track, unsigned short count);
+    [Conditional=MEDIA_STREAM] undefined setShouldInterruptAudioOnPageVisibilityChange(boolean shouldInterrupt);
+    [Conditional=MEDIA_STREAM] undefined setCameraMediaStreamTrackOrientation(MediaStreamTrack track, short orientation);
+    [Conditional=MEDIA_STREAM] undefined observeMediaStreamTrack(MediaStreamTrack track);
+    [Conditional=MEDIA_STREAM] Promise<ImageData> grabNextMediaStreamTrackFrame();
+    [Conditional=MEDIA_STREAM] Promise<short> mediaStreamTrackVideoFrameRotation();
+    [Conditional=MEDIA_STREAM] readonly attribute unsigned long trackAudioSampleCount;
+    [Conditional=MEDIA_STREAM] readonly attribute unsigned long trackVideoSampleCount;
+    [Conditional=MEDIA_STREAM] undefined delayMediaStreamTrackSamples(MediaStreamTrack track, float delay);
+    [Conditional=MEDIA_STREAM] undefined setMediaStreamTrackMuted(MediaStreamTrack track, boolean muted);
+    [Conditional=MEDIA_STREAM] undefined removeMediaStreamTrack(MediaStream stream, MediaStreamTrack track);
+    [Conditional=MEDIA_STREAM] undefined simulateMediaStreamTrackCaptureSourceFailure(MediaStreamTrack track);
+    [Conditional=MEDIA_STREAM] undefined setMediaStreamTrackIdentifier(MediaStreamTrack track, DOMString identifier);
+    [Conditional=MEDIA_STREAM] undefined setMediaStreamSourceInterrupted(MediaStreamTrack track, boolean interrupted);
+    [Conditional=MEDIA_STREAM] boolean isMediaStreamSourceInterrupted(MediaStreamTrack track);
+    [Conditional=MEDIA_STREAM] boolean isMediaStreamSourceEnded(MediaStreamTrack track);
+    [Conditional=MEDIA_STREAM] boolean isMockRealtimeMediaSourceCenterEnabled();
+    [Conditional=MEDIA_STREAM] boolean shouldAudioTrackPlay(AudioTrack track);
+
+    DOMString documentIdentifier(Document document);
+    boolean isDocumentAlive(DOMString documentIdentifier);
+
+    readonly attribute unsigned long long storageAreaMapCount;
+
+    unsigned long long elementIdentifier(Element element);
+    boolean isElementAlive(unsigned long long elementIdentifier);
+    unsigned long long frameIdentifier(Document document);
+    unsigned long long pageIdentifier(Document document);
+
+    boolean isAnyWorkletGlobalScopeAlive();
+
+    readonly attribute long processIdentifier;
+    DOMString serviceWorkerClientInternalIdentifier(Document document);
+    Promise<undefined> storeRegistrationsOnDisk();
+    Promise<double> sendH2Ping(DOMString url);
+
+    Promise<undefined> clearCacheStorageMemoryRepresentation();
+    Promise<DOMString> cacheStorageEngineRepresentation();
+    undefined setResponseSizeWithPadding(FetchResponse response, unsigned long long size);
+    unsigned long long responseSizeWithPadding(FetchResponse response);
+    DOMString responseNetworkLoadMetricsProtocol(FetchResponse response);
+
+    DOMString blobInternalURL(Blob blob);
+    Promise<boolean> isBlobInternalURLRegistered(DOMString url);
+
+    undefined updateQuotaBasedOnSpaceUsage();
+
+    undefined setConsoleMessageListener(StringCallback callback);
+
+    readonly attribute boolean supportsAudioSession;
+    AudioSessionCategory audioSessionCategory();
+    [Conditional=VIDEO] AudioSessionCategory categoryAtMostRecentPlayback(HTMLMediaElement element);
+    RouteSharingPolicy routeSharingPolicy();
+
+    double preferredAudioBufferSize();
+    double currentAudioBufferSize();
+    boolean audioSessionActive();
+
+    [Conditional=SERVICE_WORKER] Promise<boolean> hasServiceWorkerRegistration(DOMString scopeURL);
+    [Conditional=SERVICE_WORKER] Promise<undefined> terminateServiceWorker(ServiceWorker worker);
+    [Conditional=SERVICE_WORKER] Promise<undefined> whenServiceWorkerIsTerminated(ServiceWorker worker);
+
+    [CallWith=CurrentDocument, Conditional=APPLE_PAY] readonly attribute MockPaymentCoordinator mockPaymentCoordinator;
+
+    boolean isSystemPreviewLink(Element element);
+    boolean isSystemPreviewImage(Element element);
+
+    [Conditional=IMAGE_ANALYSIS] readonly attribute Element? textRecognitionCandidate;
+    [Conditional=IMAGE_ANALYSIS] undefined requestTextRecognition(Element element, VoidCallback callback);
+    undefined installImageOverlay(Element element, sequence<ImageOverlayLine> lines, optional sequence<ImageOverlayBlock> blocks = [], optional sequence<ImageOverlayDataDetector> dataDetectors = []);
+    readonly attribute boolean hasActiveDataDetectorHighlight;
+
+    boolean usingAppleInternalSDK();
+    boolean usingGStreamer();
+
+    undefined postTask(VoidCallback callback);
+    [CallWith=CurrentScriptExecutionContext] undefined queueTask(DOMString source, VoidCallback callback);
+    [CallWith=CurrentDocument] undefined queueTaskToQueueMicrotask(DOMString source, VoidCallback callback);
+    boolean hasSameEventLoopAs(WindowProxy windowProxy);
+
+    DOMString windowLocationHost(DOMWindow window);
+
+    undefined markContextAsInsecure();
+
+    undefined setMaxCanvasPixelMemory(unsigned long size);
+    undefined setMaxCanvasArea(unsigned long size);
+
+    [Conditional=VIDEO] readonly attribute NowPlayingState nowPlayingState;
+
+    [Conditional=VIDEO] HTMLMediaElement bestMediaElementForRemoteControls(PlaybackControlsPurpose purpose);
+    [Conditional=VIDEO] MediaSessionState mediaSessionState(HTMLMediaElement element);
+
+    [Conditional=VIDEO] MediaUsageState mediaUsageState(HTMLMediaElement element);
+    [Conditional=VIDEO] boolean elementShouldDisplayPosterImage(HTMLVideoElement element);
+    [Conditional=VIDEO] readonly attribute unsigned long mediaElementCount;
+    [Conditional=VIDEO] undefined setMediaElementVolumeLocked(HTMLMediaElement element, boolean volumeLocked);
+
+    DOMString ongoingLoadsDescriptions();
+    undefined setCaptureExtraNetworkLoadMetricsEnabled(boolean value);
+
+    undefined reloadWithoutContentExtensions();
+
+    undefined setUseSystemAppearance(boolean value);
+
+    unsigned long pluginCount();
+
+    undefined notifyResourceLoadObserver();
+
+    unsigned long primaryScreenDisplayID();
+
+    boolean capsLockIsOn();
+
+    HEVCParameterSet? parseHEVCCodecParameters(DOMString codecParameters);
+    DOMString createHEVCCodecParametersString(HEVCParameterSet parameters);
+    DoViParameterSet? parseDoViCodecParameters(DOMString codecParameters);
+    DOMString createDoViCodecParametersString(DoViParameterSet parameters);
+    VPCodecConfigurationRecord? parseVPCodecParameters(DOMString codecParameters);
+
+    sequence<CookieData> getCookies();
+
+    undefined setAlwaysAllowLocalWebarchive(boolean alwaysAllowLocalWebarchive);
+
+    undefined processWillSuspend();
+    undefined processDidResume();
+
+    undefined testDictionaryLogging();
+
+    undefined setMaximumIntervalForUserGestureForwardingForFetch(double interval);
+    undefined setTransientActivationDuration(double seconds);
+
+    undefined setIsPlayingToAutomotiveHeadUnit(boolean value);
+
+    TextIndicatorInfo textIndicatorForRange(Range range, TextIndicatorOptions options);
+
+    undefined addPrefetchLoadEventListener(HTMLLinkElement link, EventListener? callback);
+
+    [Conditional=WEB_AUTHN] undefined setMockWebAuthenticationConfiguration(MockWebAuthenticationConfiguration configuration);
+
+    InternalsMapLike createInternalsMapLike();
+    InternalsSetLike createInternalsSetLike();
+
+    DOMString highlightPseudoElementColor([AtomString] DOMString highlightName, Element element);
+
+    boolean hasSandboxMachLookupAccessToGlobalName(DOMString process, DOMString service);
+    boolean hasSandboxMachLookupAccessToXPCServiceName(DOMString process, DOMString service);
+    boolean hasSandboxIOKitOpenAccessToClass(DOMString process, DOMString ioKitClass);
+
+    DOMString systemColorForCSSValue(DOMString cssValue, boolean useDarkModeAppearance, boolean useElevatedUserInterfaceLevel);
+    DOMString focusRingColor();
+
+    boolean systemHasBattery();
+
+    undefined setSystemHasBatteryForTesting(boolean hasBattery);
+    undefined setSystemHasACForTesting(boolean hasAC);
+
+    undefined setHardwareVP9DecoderDisabledForTesting(boolean disabled);
+    undefined setVP9ScreenSizeAndScaleForTesting(double width, double height, double scale);
+
+    long readPreferenceInteger(DOMString domain, DOMString key);
+    DOMString encodedPreferenceValue(DOMString domain, DOMString key);
+
+    DOMString getUTIFromTag(DOMString tagClass, DOMString tag, DOMString conformingToUTI);
+
+    boolean supportsPictureInPicture();
+
+    boolean isRemoteUIAppForAccessibility();
+
+    unsigned long createSleepDisabler(DOMString reason, boolean display);
+    boolean destroySleepDisabler(unsigned long identifier);
+    
+    [Conditional=APP_HIGHLIGHTS] readonly attribute sequence<DOMString> appHighlightContextMenuItemTitles;
+    [Conditional=APP_HIGHLIGHTS] unsigned long numberOfAppHighlights();
+
+    [Conditional=WEBXR] readonly attribute WebXRTest xrTest;
+
+    [Conditional=ENCRYPTED_MEDIA] unsigned long mediaKeysInternalInstanceObjectRefCount(MediaKeys mediaKeys);
+    [Conditional=ENCRYPTED_MEDIA] unsigned long mediaKeySessionInternalInstanceSessionObjectRefCount(MediaKeySession session);
+
+    undefined setContentSizeCategory(ContentSizeCategory category);
+
+    [Conditional=ATTACHMENT_ELEMENT] AttachmentThumbnailInfo attachmentThumbnailInfo(HTMLAttachmentElement element);
+    [Conditional=ATTACHMENT_ELEMENT, Conditional=SERVICE_CONTROLS] boolean hasImageControls(HTMLImageElement element);
+
+    [Conditional=MEDIA_SESSION] double currentMediaSessionPosition(MediaSession session);
+    [Conditional=MEDIA_SESSION] undefined sendMediaSessionAction(MediaSession session, MediaSessionActionDetails actionDetails);
+    [Conditional=MEDIA_SESSION] Promise<ImageData> loadArtworkImage(DOMString url);
+    [Conditional=MEDIA_SESSION] sequence<DOMString> platformSupportedCommands();
+
+    [Conditional=MEDIA_SESSION_COORDINATOR, CallWith=CurrentScriptExecutionContext] undefined registerMockMediaSessionCoordinator(StringCallback callback);
+    [Conditional=MEDIA_SESSION_COORDINATOR] undefined setMockMediaSessionCoordinatorCommandsShouldFail(boolean shouldFail);
+
+    DOMString treeOrder(Node a, Node b, optional TreeType tree = "Tree");
+    DOMString treeOrderBoundaryPoints(Node containerA, unsigned long offsetA, Node containerB, unsigned long offsetB, optional TreeType tree = "Tree");
+    boolean rangeContainsNode(AbstractRange range, Node node, optional TreeType tree = "Tree");
+    boolean rangeContainsRange(AbstractRange outerRange, AbstractRange innerRange, optional TreeType tree = "Tree");
+    boolean rangeContainsBoundaryPoint(AbstractRange outerRange, Node container, unsigned long offset, optional TreeType tree = "Tree");
+    boolean rangeIntersectsNode(AbstractRange range, Node node, optional TreeType tree = "Tree");
+    boolean rangeIntersectsRange(AbstractRange outerRange, AbstractRange innerRange, optional TreeType tree = "Tree");
+
+    undefined systemBeep();
+
+    DOMString dumpStyleResolvers();
+
+    undefined setDocumentAutoplayPolicy(Document document, AutoplayPolicy policy);
+
+    undefined retainTextIteratorForDocumentContent();
+
+    [Conditional=SERVICE_WORKER] PushSubscription createPushSubscription(USVString endpoint, EpochTimeStamp? expirationTime, ArrayBuffer serverVAPIDPublicKey, ArrayBuffer clientECDHPublicKey, ArrayBuffer auth);
+
+    undefined overrideModalContainerSearchTermForTesting([AtomString] DOMString term);
+
+    [Conditional=ARKIT_INLINE_PREVIEW_MAC] Promise<sequence<DOMString>> modelInlinePreviewUUIDs();
+    [Conditional=ARKIT_INLINE_PREVIEW_MAC] DOMString modelInlinePreviewUUIDForModelElement(HTMLModelElement modelElement);
+};

@@ -1,0 +1,29 @@
+From f5ebab17f32c4f6ca4b479717fde72d03d8c1171 Mon Sep 17 00:00:00 2001
+From: Philippe Normand <philn@igalia.com>
+Date: Tue, 29 Mar 2022 15:25:17 +0000
+Subject: [PATCH 2/2] meson: Bump to 1.62
+
+---
+ elements/components/meson.bst | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/elements/components/meson.bst b/elements/components/meson.bst
+index 4c4e1ba5b..9bb2f410f 100644
+--- a/elements/components/meson.bst
++++ b/elements/components/meson.bst
+@@ -12,9 +12,9 @@ build-depends:
+ sources:
+ - kind: pypi
+   name: meson
+-  url: pypi:57/90/1f5768627ef72e95483b2a899f5efc6efa6c999966b2a1a5ba2d1de6db9c/meson-0.59.4.tar.gz
+-  sha256sum: a77988cc50554f73ede075bc9bf77a2d7ecb6ff892f2a0180d4940920eaaec84
++  url: pypi:05/e8/91874090608d3cf1fb7c313219282f94cda28937150b3e7317009a462df8/meson-0.62.0.tar.gz
++  sha256sum: 06f8c1cfa51bfdb533c82623ffa524cacdbea02ace6d709145e33aabdad6adcb
+   include:
+-  - 0\.59\..*
++  - 0\.62\..*
+ - kind: patch
+   path: patches/meson/meson-no-lib64.patch
+-- 
+2.32.0
+

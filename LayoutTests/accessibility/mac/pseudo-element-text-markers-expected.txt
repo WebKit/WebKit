@@ -1,0 +1,42 @@
+This tests that the pseudo element style:body:before is accessible via the accessibility tree but not via TextMarkers.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS pseudoElement.role is 'AXRole: AXStaticText'
+PASS pseudoElement.stringValue is 'AXValue: Hello'
+PASS pseudoElement.textMarkerRangeLength(range) is 0
+PASS pseudoElement.stringForTextMarkerRange(range) is null
+PASS pseudoElement.accessibilityElementForTextMarker(start) is null
+PASS pseudoElement.accessibilityElementForTextMarker(next) is null
+PASS pseudoElement.accessibilityElementForTextMarker(prev) is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+AXRole: AXScrollArea AXValue:
+AXRole: AXWebArea AXValue:
+AXRole: AXGroup AXValue:
+AXRole: AXStaticText AXValue: Hello
+AXRole: AXGroup AXValue:
+AXRole: AXStaticText AXValue: This tests that the pseudo element style:body:before is accessible via the accessibility tree but not via TextMarkers.
+AXRole: AXGroup AXValue:
+AXRole: AXStaticText AXValue: On success, you will see a series of "
+AXRole: AXStaticText AXValue: PASS
+AXRole: AXStaticText AXValue: " messages, followed by "
+AXRole: AXStaticText AXValue: TEST COMPLETE
+AXRole: AXStaticText AXValue: ".
+AXRole: AXGroup AXValue:
+AXRole: AXStaticText AXValue: AXRole: AXScrollArea AXValue:
+AXRole: AXStaticText AXValue: AXRole: AXWebArea AXValue:
+AXRole: AXStaticText AXValue: AXRole: AXGroup AXValue:
+AXRole: AXStaticText AXValue: AXRole: AXStaticText AXValue: Hello
+AXRole: AXStaticText AXValue: AXRole: AXGroup AXValue:
+AXRole: AXStaticText AXValue: AXRole: AXStaticText AXValue: This tests that the pseudo element style:body:before is accessible via the accessibility tree but not via TextMarkers.
+AXRole: AXStaticText AXValue: AXRole: AXGroup AXValue:
+AXRole: AXStaticText AXValue: AXRole: AXStaticText AXValue: On success, you will see a series of "
+AXRole: AXStaticText AXValue: AXRole: AXStaticText AXValue: PASS
+AXRole: AXStaticText AXValue: AXRole: AXStaticText AXValue: " messages, followed by "
+AXRole: AXStaticText AXValue: AXRole: AXStaticText AXValue: TEST COMPLETE
+AXRole: AXStaticText AXValue: AXRole: AXStaticText AXValue: ".
+AXRole: AXStaticText AXValue: AXRole: AXGroup AXValue:
+

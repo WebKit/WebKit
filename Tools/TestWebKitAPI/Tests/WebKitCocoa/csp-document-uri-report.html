@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="script-src 'nonce-b'">
+</head>
+<body>
+<script>
+</script>
+<script nonce="b">
+    document.addEventListener('securitypolicyviolation', e => {
+        window.webkit.messageHandlers.testHandler.postMessage("document-uri: " + e.documentURI);
+    });
+</script>
+</body>
+</html>

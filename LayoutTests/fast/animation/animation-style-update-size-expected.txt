@@ -1,0 +1,2 @@
+Test that animation on an element doesn't invalidate the entire subtree for style resolution.
+Animation frame resolved style for 1 element(s)

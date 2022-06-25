@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<input id="date" type="date">
+<input id="text" type="text">
+
+<script>
+
+description("Test that changing the value of a focused date input preserves focus.");
+
+date.focus();
+shouldBe("document.activeElement", "date");
+date.value = "2020-09-17";
+shouldBe("document.activeElement", "date");
+date.value = "";
+shouldBe("document.activeElement", "date");
+text.focus();
+shouldBe("document.activeElement", "text");
+
+</script>
+
+</body>
+</html>

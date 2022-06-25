@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<p id="description"></p>
+
+All "li" elements accept the button should be presentational.    
+<div role="group" id="container1" tabindex="0">
+<ul role="presentation">
+    <li>apples</li>
+    <li>bananas</li>
+    <li role="button">cantalope</li>
+    <li>dates</li>
+</ul>
+</div>
+
+Nested list inside a presentational list should not be presentational
+<div role="group" id="container2" tabindex="0">
+<ul role="presentation">
+    <li>This item should not expose an AXGroup; </li>
+    <li>this one should not either.</li>
+    <li>However, because the nested UL and LI do not have explicit role of presentation,</li>
+        <ul>
+            <li> this list item should expose an AXGroup, </li>
+            <li> and this one should, too. </li>
+        </ul>
+    <li>but this one is static text again.</li>
+</ul>
+</div>
+
+<div id="console"></div>
+
+<script>
+
+    description("This tests that when a list has the presentational role, and it has required required children, those required children \"li\" are also presentational.");
+
+    if (window.accessibilityController) {
+
+        // test the list in container 1
+        document.getElementById("container1").focus();
+        var container = accessibilityController.focusedElement;
+        shouldBe("container.childAtIndex(0).role", "'AXRole: AXStaticText'");
+        shouldBe("container.childAtIndex(0).stringValue", "'AXValue: apples'");
+        shouldBe("container.childAtIndex(1).stringValue", "'AXValue: bananas'");
+        shouldBe("container.childAtIndex(3).stringValue", "'AXValue: dates'");
+
+        shouldBe("container.childAtIndex(2).role", "'AXRole: AXButton'");
+        shouldBe("container.childAtIndex(2).title", "'AXTitle: cantalope'");
+
+        // test the list in container 2
+        document.getElementById("container2").focus();
+        var container2 = accessibilityController.focusedElement;
+        shouldBe("container2.childAtIndex(0).role", "'AXRole: AXStaticText'");
+        shouldBe("container2.childAtIndex(1).role", "'AXRole: AXStaticText'");
+        shouldBe("container2.childAtIndex(2).role", "'AXRole: AXStaticText'");
+        shouldBe("container2.childAtIndex(4).role", "'AXRole: AXStaticText'");
+
+        // this nested list should not inherit presentational
+        shouldBe("container2.childAtIndex(3).role", "'AXRole: AXList'");
+        shouldBe("container2.childAtIndex(3).childAtIndex(0).role", "'AXRole: AXGroup'");
+        shouldBe("container2.childAtIndex(3).childAtIndex(0).childAtIndex(0).role", "'AXRole: AXListMarker'");
+        shouldBe("container2.childAtIndex(3).childAtIndex(0).childAtIndex(1).role", "'AXRole: AXStaticText'");
+       
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

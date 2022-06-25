@@ -1,0 +1,7 @@
+
+PASS contentWindow.pageYOffset is 0
+PASS contentWindow.pageYOffset is 1120
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

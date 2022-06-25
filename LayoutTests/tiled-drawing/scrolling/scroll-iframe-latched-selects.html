@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+<body onload="setupTopLevel();">
+<script>
+window.jsTestIsAsync = true;
+
+var iframeTarget;
+var selectLeft;
+var selectRight;
+var previousSelectLeftScrollPosition;
+
+function checkForScroll()
+{
+    if (selectLeft.scrollTop == previousSelectLeftScrollPosition)
+        testPassed("Leftmost <select> was not scrolled by the latch state logic");
+    else
+        testFailed("Leftmost <select> was incorrectly scrolled by wrong latch logic." + " " + selectLeft.scrollTop + " " + previousSelectLeftScrollPosition);
+
+    if (selectRight.scrollTop > 0)
+        testPassed("Rightmost <select> was properly scrolled.");
+    else
+        testFailed("Rightmost <select> was not scrolled though it should.");
+
+    finishJSTest();
+}
+
+async function scrollRightMostSelect()
+{
+    if (selectLeft.scrollTop > 0)
+        testPassed("Leftmost <select> was scrolled");
+    else
+        testFailed("Leftmost <select> was not scrolled");
+    previousSelectLeftScrollPosition = selectLeft.scrollTop;
+
+    const startPosX = Math.round(selectRight.offsetLeft) + 10;
+    const startPosY = Math.round(selectRight.offsetTop) + 10;
+
+    const events = [
+        {
+            type : "wheel",
+            viewX : startPosX,
+            viewY : startPosY,
+            deltaY : -10,
+            phase : "began"
+        },
+        {
+            type : "wheel",
+            deltaY : -10,
+            phase : "changed"
+        },
+        {
+            type : "wheel",
+            phase : "ended"
+        }
+    ];
+
+    await UIHelper.mouseWheelSequence({ events: events });
+    checkForScroll();
+}
+
+async function scrollLeftMostSelect()
+{
+    const startPosX = Math.round(selectLeft.offsetLeft) + 10;
+    const startPosY = Math.round(selectLeft.offsetTop) + 10;
+
+    const events = [
+        {
+            type : "wheel",
+            viewX : startPosX,
+            viewY : startPosY,
+            deltaY : -10,
+            phase : "began"
+        },
+        {
+            type : "wheel",
+            deltaY : -10,
+            phase : "changed"
+        },
+        {
+            type : "wheel",
+            phase : "ended"
+        }
+    ];
+
+    await UIHelper.mouseWheelSequence({ events: events });
+    scrollRightMostSelect();
+}
+
+function setupTopLevel()
+{
+    if (window.eventSender) {
+        iframeTarget = document.getElementById("target");
+        selectLeft = window.frames["target"].document.getElementById("selectLeft");
+        selectRight = window.frames["target"].document.getElementById("selectRight");
+
+        setTimeout(scrollLeftMostSelect, 0);
+    }
+}
+</script>
+<iframe id="target" name="target" height="400" width="400" src="resources/selects-iframe.html"></iframe>
+<div id="console"></div>
+<script>
+description("Tests that latched state logic does not get stuck scrolling a specific &lt;select&gt;. To manually run this test, place the mouse pointer<br>" +
+            "within one left &lt;select&gt; boundary, and then use the mouse wheel or a two-finger to scroll down the list, without momentum scrolling.<br>" +
+            "Do the same for the right &lt;select&gt;. The left &lt;select&gt; should not scroll when trying to scroll the right &lt;select&gt;.");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

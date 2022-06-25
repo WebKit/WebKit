@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: TypeError: Module specifier, 'string-without-dot-slash-prefix' does not start with "/", "./", or "../". Referenced from http://localhost:8800/html/semantics/scripting-1/the-script-element/module/bad-module-specifier.js
+
+PASS Test that invalid module specifier leads to TypeError on window.
+

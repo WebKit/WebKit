@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<canvas id="canvas" width="40" height="40"></canvas>
+<script>
+description("Make sure that getBufferSubData() doesn't work on WebGL 1 contexts");
+
+if (window.internals)
+	internals.settings.setWebGL2Enabled(true);
+
+var arrayBuffer = new ArrayBuffer(40);
+var fullArrayView = new Float32Array(arrayBuffer); // [15, 16, 17, 18, 19, 20, 21, 22, 23, 24], 40 bytes
+var receiver = new Float32Array(20); // 20 floats, 80 bytes
+for (var i = 0; i < 10; ++i)
+	fullArrayView[i] = 15 + i;
+
+var canvas = document.getElementById("canvas");
+var context = canvas.getContext("webgl2");
+
+var targets = [context.ARRAY_BUFFER, context.COPY_READ_BUFFER, context.COPY_WRITE_BUFFER, context.PIXEL_PACK_BUFFER, context.PIXEL_UNPACK_BUFFER, context.TRANSFORM_FEEDBACK_BUFFER, context.UNIFORM_BUFFER];
+targets.forEach(function(i) {
+	targets.forEach(function(j) {
+		if (i != j) {
+			testCopy(i, j);
+		}
+	});
+});
+
+function testCopy(readTarget, writeTarget) {
+	var buffer1 = context.createBuffer();
+	shouldBe("context.getError()", "context.NO_ERROR");
+	context.bindBuffer(readTarget, buffer1);
+	shouldBe("context.getError()", "context.NO_ERROR");
+	context.bufferData(readTarget, arrayBuffer, context.STATIC_DRAW);
+	shouldBe("context.getError()", "context.NO_ERROR");
+
+	var buffer2 = context.createBuffer();
+	shouldBe("context.getError()", "context.NO_ERROR");
+	context.bindBuffer(writeTarget, buffer2);
+	shouldBe("context.getError()", "context.NO_ERROR");
+	context.bufferData(writeTarget, arrayBuffer, context.STATIC_DRAW);
+	shouldBe("context.getError()", "context.NO_ERROR");
+
+	context.copyBufferSubData(readTarget, writeTarget, 0, 4, 4);
+	shouldBe("context.getError()", "context.NO_ERROR");
+	context.getBufferSubData(writeTarget, 0, receiver, 0, 10);
+	shouldBe("context.getError()", "context.NO_ERROR");
+	shouldBe("receiver[0]", "fullArrayView[0]");
+	shouldBe("receiver[1]", "fullArrayView[0]");
+	for (var i = 2; i < 10; ++i)
+		shouldBe("receiver[" + i + "]", "fullArrayView[" + i + "]");
+
+	context.copyBufferSubData(readTarget, writeTarget, 0, 0, 40);
+	shouldBe("context.getError()", "context.NO_ERROR");
+	context.getBufferSubData(writeTarget, 0, receiver, 0, 10);
+	shouldBe("context.getError()", "context.NO_ERROR");
+	for (var i = 0; i < 10; ++i)
+		shouldBe("receiver[" + i + "]", "fullArrayView[" + i + "]");
+
+	context.copyBufferSubData(readTarget, writeTarget, 4, 0, 4);
+	shouldBe("context.getError()", "context.NO_ERROR");
+	context.getBufferSubData(writeTarget, 0, receiver, 0, 10);
+	shouldBe("context.getError()", "context.NO_ERROR");
+	shouldBe("receiver[0]", "fullArrayView[1]");
+	for (var i = 1; i < 10; ++i)
+		shouldBe("receiver[" + i + "]", "fullArrayView[" + i + "]");
+
+	context.copyBufferSubData(readTarget, writeTarget, 0, 0, 40);
+	shouldBe("context.getError()", "context.NO_ERROR");
+	context.getBufferSubData(writeTarget, 0, receiver, 0, 10);
+	shouldBe("context.getError()", "context.NO_ERROR");
+	for (var i = 0; i < 10; ++i)
+		shouldBe("receiver[" + i + "]", "fullArrayView[" + i + "]");
+
+	context.copyBufferSubData(writeTarget, writeTarget, 4, 8, 4);
+	shouldBe("context.getError()", "context.NO_ERROR");
+	context.getBufferSubData(writeTarget, 0, receiver, 0, 10);
+	shouldBe("context.getError()", "context.NO_ERROR");
+	shouldBe("receiver[0]", "fullArrayView[0]");
+	shouldBe("receiver[1]", "fullArrayView[1]");
+	shouldBe("receiver[2]", "fullArrayView[1]");
+	for (var i = 3; i < 10; ++i)
+		shouldBe("receiver[" + i + "]", "fullArrayView[" + i + "]");
+
+	context.deleteBuffer(buffer1);
+	shouldBe("context.getError()", "context.NO_ERROR");
+	context.deleteBuffer(buffer2);
+	shouldBe("context.getError()", "context.NO_ERROR");
+}
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

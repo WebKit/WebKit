@@ -1,0 +1,46 @@
+Test that WEBGL_lose_context functions do not crash after context has been lost.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+TEST COMPLETE: 31 PASS, 0 FAIL
+
+Running test: loseMethod: loseContext, testedMethod: loseContext
+PASS Got webglcontextlost.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS Did not crash on tested method loseContext.
+Running test: loseMethod: loseContext, testedMethod: restoreContext
+PASS Got webglcontextlost.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS Did not crash on tested method restoreContext.
+Running test: loseMethod: manyContexts, testedMethod: loseContext
+PASS Got webglcontextlost.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS Did not crash on tested method loseContext.
+Running test: loseMethod: manyContexts, testedMethod: restoreContext
+PASS Got webglcontextlost.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS Did not crash on tested method restoreContext.
+Running test: loseMethod: gpuStatusFailure, testedMethod: loseContext
+PASS Got webglcontextlost.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS Did not crash on tested method loseContext.
+Running test: loseMethod: gpuStatusFailure, testedMethod: restoreContext
+PASS Got webglcontextlost.
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS Did not crash on tested method restoreContext.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

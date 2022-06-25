@@ -1,0 +1,13 @@
+Verify that scripts running in a detached window can still modify global properties
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS () => foo is 2
+PASS () => globalThis[0] is undefined
+PASS iframeContentWindow.foo is 2
+PASS iframeContentWindow[0] is undefined
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+</head>
+<body>
+
+<input id="emptyInput" type="datetime-local" value=""/>
+<input id="emptyInputWithSecondStep" type="datetime-local" value="" step="2"/>
+<input id="emptyInputWithMillisecondStep" type="datetime-local" value="" step="0.5"/>
+<input id="inputWithSecondsValue" type="datetime-local" value="2021-02-03T10:30:40"/>
+<input id="inputWithMillisecondsValue" type="datetime-local" value="2021-02-03T10:30:00.100"/>
+
+<script>
+
+jsTestIsAsync = true;
+
+async function activateElementAndChooseDateUsingPicker(input) {
+    await UIHelper.activateElementAndWaitForInputSession(input);
+    await UIHelper.isShowingDateTimePicker();
+    await UIHelper.chooseDateTimePickerValue();
+}
+
+addEventListener("load", async () => {
+    description("Tests that choosing a value using the date/time picker does not unexpectedly add or remove second and millisecond fields.");
+
+    debug("Testing empty input with no step value.");
+    emptyInputOriginalWidth = emptyInput.offsetWidth;
+    await activateElementAndChooseDateUsingPicker(emptyInput);
+    shouldBeTrue("emptyInput.offsetWidth === emptyInputOriginalWidth");
+    await UIHelper.deactivateFormControl(emptyInput);
+    await UIHelper.ensurePresentationUpdate();
+
+    debug("");
+    debug("Testing empty input with step attribute precise to seconds.");
+    emptyInputWithSecondStepOriginalWidth = emptyInputWithSecondStep.offsetWidth;
+    await activateElementAndChooseDateUsingPicker(emptyInputWithSecondStep);
+    shouldBeTrue("emptyInputWithSecondStep.offsetWidth === emptyInputWithSecondStepOriginalWidth");
+    await UIHelper.deactivateFormControl(emptyInputWithSecondStep);
+    await UIHelper.ensurePresentationUpdate();
+
+    debug("");
+    debug("Testing empty input with step attribute precise to milliseconds.");
+    emptyInputWithMillisecondStepOriginalWidth = emptyInputWithMillisecondStep.offsetWidth;
+    await activateElementAndChooseDateUsingPicker(emptyInputWithMillisecondStep);
+    shouldBeTrue("emptyInputWithMillisecondStep.offsetWidth === emptyInputWithMillisecondStepOriginalWidth");
+    await UIHelper.deactivateFormControl(emptyInputWithMillisecondStep);
+    await UIHelper.ensurePresentationUpdate();
+
+    debug("");
+    debug("Testing input with a value that contains seconds.");
+    inputWithSecondsValueOriginalWidth = inputWithSecondsValue.offsetWidth;
+    await activateElementAndChooseDateUsingPicker(inputWithSecondsValue);
+    shouldBeTrue("inputWithSecondsValue.offsetWidth === inputWithSecondsValueOriginalWidth");
+    await UIHelper.deactivateFormControl(inputWithSecondsValue);
+    await UIHelper.ensurePresentationUpdate();
+
+    debug("");
+    debug("Testing input with a value that contains milliseconds.");
+    inputWithMillisecondsValueOriginalWidth = inputWithMillisecondsValue.offsetWidth;
+    await activateElementAndChooseDateUsingPicker(inputWithMillisecondsValue);
+    shouldBeTrue("inputWithMillisecondsValue.offsetWidth === inputWithMillisecondsValueOriginalWidth");
+    await UIHelper.deactivateFormControl(inputWithMillisecondsValue);
+    await UIHelper.ensurePresentationUpdate();
+
+    debug("");
+    finishJSTest();
+});
+</script>
+</body>
+</html>

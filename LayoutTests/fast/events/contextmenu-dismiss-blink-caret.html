@@ -1,0 +1,26 @@
+<html>
+<body>
+    <div id="contenteditable" contenteditable>This tests whether the caret continues to blink after the context menu is dismissed. To test manually, right-click anywhere in this contenteditable element to show a context menu and then dismiss the context menu (by pressing esc). After the context menu has been dismissed, use the keyboard to move the caret up/down/left/right. As you move the caret, it should continue to blink (instead of staying frozen on).</div>
+</body>
+</html>
+<script>
+    if (window.testRunner) {
+        var element = document.getElementById('contenteditable');
+        var rect = element.getBoundingClientRect();
+        eventSender.mouseMoveTo(rect.left + rect.width / 2, rect.top + rect.height / 2);
+        // contextClick() implementations in WK1 and WK2 have a subtle, but important difference.
+        // Under WK1, the mousedown is simulated but not the mouseup. Under WK2 both the mousedown
+        // and mouseup are simulated. It turns out the WK1 simulation more closely matches what
+        // happens in real life. This is relevant to this test (and the bug it covers) because,
+        // under WK2, the test will always pass, with or without the bug fix. Under WK1, the test
+        // fails without the bug fix and passes with the bug fix as expected.
+        //
+        // An alternative to using contextClick() would be mouseDown("ctrlKey"), but that is
+        // a Mac-specific way to bring up the context menu instead of a platform-neutral way
+        eventSender.contextClick();
+        // esc key to kill the context menu.
+        eventSender.keyDown(String.fromCharCode(0x001B), null);
+        element.innerText = window.internals.isCaretBlinkingSuspended() ? "FAIL" : "PASS";
+        testRunner.dumpAsText();
+    }
+</script>

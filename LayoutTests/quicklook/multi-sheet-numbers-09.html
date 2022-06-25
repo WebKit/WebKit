@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<script src="../resources/ui-helper.js"></script>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.dumpChildFramesAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function runTest()
+    {
+        UIHelper.activateAt(25, 35).then(() => {
+            window.setTimeout(() => {
+                testRunner.notifyDone();
+            }, 0);
+        });
+    }
+</script>
+<style>
+iframe {
+    width: 100vw;
+    height: 100vh;
+}
+</style>
+<iframe src="resources/multi-sheet-numbers-09.numbers" onload="runTest(this)"></iframe>
+

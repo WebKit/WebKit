@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+
+<div id="text" role="group">
+This is some testing content.
+<a href="#">A link here.</a>
+MOre text.<br/>z<br/>
+Another line of text.<br/>
+
+<img src="../resources/cake.png" alt="cake"><br/>
+
+<svg id="svg" width="300px" height="200px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <path id="TextPath1" d="M 10,150 A 15 15 180 0 1 70 140 A15 25 180 0 0 130 130 A15 55 180 0 1 190 110" />
+    </defs>
+    <text font-size="14">
+      <textPath xlink:href="#TextPath1">
+           Jack and Jill went up the hill to fetch a pail of water. Jack fell down...
+      </textPath>
+    </text>
+</svg>
+
+<!-- Paragraph with soft linebreaks after space and dash. -->
+<p>abcdefghijklmnopqrstuvwxyz0123456789 abcdefghijklmnopqrstuvwxyz0123456789 abcdefghijklmnopqrstuvwxyz0123456789-abcdefghijklmnopqrstuvwxyz0123456789-abcdefghijklmnopqrstuvwxyz0123456789</p>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests that lineRectsAndText returns the correct values.");
+
+    if (window.accessibilityController) {
+        let text = accessibilityController.accessibleElementById("text");
+        let lineRectsAndText = text.lineRectsAndText;
+
+        lineRectsAndText.split("|").forEach((line) => {
+            let text = line.match(/text = \".*\";/);
+            debug(text[0]);
+
+            // Cannot log rect coordinates because it would vary from device to device.
+            // Thus, get the rects width and height and make sure they are > 0.
+            let size = line.match(/NSRect: {{-*[\d]+, -*[\d]+}, {([\d]+), ([\d]+)}}/);
+            debug(`width > 0: ${size[1] > 0}`);
+            debug(`height > 0: ${size[2] > 0}`);
+        });
+    }
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

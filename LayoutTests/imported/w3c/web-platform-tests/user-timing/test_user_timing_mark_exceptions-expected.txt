@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: ReferenceError: Can't find variable: wp_test
+CONSOLE MESSAGE: ReferenceError: Can't find variable: test_true
+
+Harness Error (FAIL), message = ReferenceError: Can't find variable: wp_test
+
+Description
+
+This test validates that the performance.mark() method throws a SYNTAX_ERR exception whenever a navigation timing attribute is provided for the name parameter.
+
+

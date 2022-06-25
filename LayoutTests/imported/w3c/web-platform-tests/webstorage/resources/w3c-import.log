@@ -1,0 +1,29 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/resources/event_body_handler.html
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/resources/event_setattribute_handler.html
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/resources/local_change_item_iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/resources/local_set_item_clear_iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/resources/local_set_item_iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/resources/local_set_item_remove_iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/resources/session_change_item_iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/resources/session_set_item_clear_iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/resources/session_set_item_iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/resources/session_set_item_remove_iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/resources/storage_local_window_open_second.html
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/resources/storage_session_window_noopener_second.html
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/resources/storage_session_window_open_second.html

@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+Test passes if
+<table border="3" cellpadding="10">
+  <td id=first>each cell</td>
+  <td id=second>is in its</td>
+  <td style="display: block;">own row.</td>
+</table>
+<script>
+document.body.offsetHeight;
+first.style.display = "block";
+second.style.display = "block";
+</script>

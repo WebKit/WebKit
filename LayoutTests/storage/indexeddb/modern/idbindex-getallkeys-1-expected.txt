@@ -1,0 +1,42 @@
+Test IDBIndex.getAll()
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS: Good index count
+PASS: Got an array object
+PASS: Correct length
+PASS: Correct key
+PASS: Correct key
+PASS: Got an array object
+PASS: Correct length
+PASS: Correct key
+PASS: Correct key
+PASS: Got an array object
+PASS: Correct length
+PASS: Correct key
+PASS: Correct key
+PASS: Got an array object
+PASS: Correct length
+PASS: Correct key
+PASS: Correct key
+PASS: Got an array object
+PASS: Correct length
+PASS: Correct key
+PASS: Correct key
+PASS: Correct key
+PASS: Correct key
+PASS: Correct key
+PASS: Correct key
+PASS: Got an array object
+PASS: Correct length
+PASS: Correct key
+PASS: Correct key
+PASS: Correct key
+PASS: Correct key
+PASS: Got an array object
+PASS: Correct length
+PASS: Correct key
+

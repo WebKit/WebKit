@@ -1,0 +1,13 @@
+Tests that navigator.serviceWorker always returns the same object.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS navigator.serviceWorker.foo is undefined.
+PASS navigator.serviceWorker.foo is 1
+PASS navigator.serviceWorker.foo is 1
+PASS navigator.serviceWorker.foo is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

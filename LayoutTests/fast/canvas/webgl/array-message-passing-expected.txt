@@ -1,0 +1,689 @@
+Test passing ArrayBuffers and ArrayBufferViews in messages.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS ArrayBuffer0: classes are [object ArrayBuffer]
+PASS ArrayBuffer0: buffer lengths are 0
+PASS ArrayBuffer0: buffers have the same contents
+PASS ArrayBuffer1: classes are [object ArrayBuffer]
+PASS ArrayBuffer1: buffer lengths are 1
+PASS ArrayBuffer1: buffers have the same contents
+PASS ArrayBuffer128: classes are [object ArrayBuffer]
+PASS ArrayBuffer128: buffer lengths are 128
+PASS ArrayBuffer128: buffers have the same contents
+PASS DataView0: classes are [object DataView]
+PASS DataView0: classes are [object ArrayBuffer]
+PASS DataView0: buffer lengths are 0
+PASS DataView0: buffers have the same contents
+PASS DataView0: offset is 0
+PASS DataView0: length is 0
+PASS DataView1: classes are [object DataView]
+PASS DataView1: classes are [object ArrayBuffer]
+PASS DataView1: buffer lengths are 1
+PASS DataView1: buffers have the same contents
+PASS DataView1: offset is 0
+PASS DataView1: length is 1
+PASS DataView1-dup: classes are [object DataView]
+PASS DataView1-dup: classes are [object ArrayBuffer]
+PASS DataView1-dup: buffer lengths are 1
+PASS DataView1-dup: buffers have the same contents
+PASS DataView1-dup: offset is 0
+PASS DataView1-dup: length is 1
+PASS DataView1-dup: classes are [object DataView]
+PASS DataView1-dup: classes are [object ArrayBuffer]
+PASS DataView1-dup: buffer lengths are 1
+PASS DataView1-dup: buffers have the same contents
+PASS DataView1-dup: offset is 0
+PASS DataView1-dup: length is 1
+PASS DataView1-dup2: classes are [object DataView]
+PASS DataView1-dup2: classes are [object ArrayBuffer]
+PASS DataView1-dup2: buffer lengths are 1
+PASS DataView1-dup2: buffers have the same contents
+PASS DataView1-dup2: offset is 0
+PASS DataView1-dup2: length is 1
+PASS DataView1-dup2: classes are [object DataView]
+PASS DataView1-dup2: classes are [object ArrayBuffer]
+PASS DataView1-dup2: buffer lengths are 1
+PASS DataView1-dup2: buffers have the same contents
+PASS DataView1-dup2: offset is 0
+PASS DataView1-dup2: length is 1
+PASS DataView128: classes are [object DataView]
+PASS DataView128: classes are [object ArrayBuffer]
+PASS DataView128: buffer lengths are 128
+PASS DataView128: buffers have the same contents
+PASS DataView128: offset is 0
+PASS DataView128: length is 128
+PASS DataView1_offset_at_end: classes are [object DataView]
+PASS DataView1_offset_at_end: classes are [object ArrayBuffer]
+PASS DataView1_offset_at_end: buffer lengths are 1
+PASS DataView1_offset_at_end: buffers have the same contents
+PASS DataView1_offset_at_end: offset is 1
+PASS DataView1_offset_at_end: length is 0
+PASS DataView128_offset_at_end: classes are [object DataView]
+PASS DataView128_offset_at_end: classes are [object ArrayBuffer]
+PASS DataView128_offset_at_end: buffer lengths are 128
+PASS DataView128_offset_at_end: buffers have the same contents
+PASS DataView128_offset_at_end: offset is 128
+PASS DataView128_offset_at_end: length is 0
+PASS DataView128_offset_slice_length_0: classes are [object DataView]
+PASS DataView128_offset_slice_length_0: classes are [object ArrayBuffer]
+PASS DataView128_offset_slice_length_0: buffer lengths are 128
+PASS DataView128_offset_slice_length_0: buffers have the same contents
+PASS DataView128_offset_slice_length_0: offset is 64
+PASS DataView128_offset_slice_length_0: length is 0
+PASS DataView128_offset_slice_length_1: classes are [object DataView]
+PASS DataView128_offset_slice_length_1: classes are [object ArrayBuffer]
+PASS DataView128_offset_slice_length_1: buffer lengths are 128
+PASS DataView128_offset_slice_length_1: buffers have the same contents
+PASS DataView128_offset_slice_length_1: offset is 64
+PASS DataView128_offset_slice_length_1: length is 1
+PASS DataView128_offset_slice_length_16: classes are [object DataView]
+PASS DataView128_offset_slice_length_16: classes are [object ArrayBuffer]
+PASS DataView128_offset_slice_length_16: buffer lengths are 128
+PASS DataView128_offset_slice_length_16: buffers have the same contents
+PASS DataView128_offset_slice_length_16: offset is 64
+PASS DataView128_offset_slice_length_16: length is 16
+PASS DataView128_offset_slice_unaligned: classes are [object DataView]
+PASS DataView128_offset_slice_unaligned: classes are [object ArrayBuffer]
+PASS DataView128_offset_slice_unaligned: buffer lengths are 128
+PASS DataView128_offset_slice_unaligned: buffers have the same contents
+PASS DataView128_offset_slice_unaligned: offset is 63
+PASS DataView128_offset_slice_unaligned: length is 15
+PASS Int32_0: classes are [object Int32Array]
+PASS Int32_0: classes are [object ArrayBuffer]
+PASS Int32_0: buffer lengths are 0
+PASS Int32_0: buffers have the same contents
+PASS Int32_0: offset is 0
+PASS Int32_0: length is 0
+PASS Uint32_0: classes are [object Uint32Array]
+PASS Uint32_0: classes are [object ArrayBuffer]
+PASS Uint32_0: buffer lengths are 0
+PASS Uint32_0: buffers have the same contents
+PASS Uint32_0: offset is 0
+PASS Uint32_0: length is 0
+PASS Int8_0: classes are [object Int8Array]
+PASS Int8_0: classes are [object ArrayBuffer]
+PASS Int8_0: buffer lengths are 0
+PASS Int8_0: buffers have the same contents
+PASS Int8_0: offset is 0
+PASS Int8_0: length is 0
+PASS Uint8_0: classes are [object Uint8Array]
+PASS Uint8_0: classes are [object ArrayBuffer]
+PASS Uint8_0: buffer lengths are 0
+PASS Uint8_0: buffers have the same contents
+PASS Uint8_0: offset is 0
+PASS Uint8_0: length is 0
+PASS Uint8Clamped_0: classes are [object Uint8ClampedArray]
+PASS Uint8Clamped_0: classes are [object ArrayBuffer]
+PASS Uint8Clamped_0: buffer lengths are 0
+PASS Uint8Clamped_0: buffers have the same contents
+PASS Uint8Clamped_0: offset is 0
+PASS Uint8Clamped_0: length is 0
+PASS Int16_0: classes are [object Int16Array]
+PASS Int16_0: classes are [object ArrayBuffer]
+PASS Int16_0: buffer lengths are 0
+PASS Int16_0: buffers have the same contents
+PASS Int16_0: offset is 0
+PASS Int16_0: length is 0
+PASS Uint16_0: classes are [object Uint16Array]
+PASS Uint16_0: classes are [object ArrayBuffer]
+PASS Uint16_0: buffer lengths are 0
+PASS Uint16_0: buffers have the same contents
+PASS Uint16_0: offset is 0
+PASS Uint16_0: length is 0
+PASS Float32_0: classes are [object Float32Array]
+PASS Float32_0: classes are [object ArrayBuffer]
+PASS Float32_0: buffer lengths are 0
+PASS Float32_0: buffers have the same contents
+PASS Float32_0: offset is 0
+PASS Float32_0: length is 0
+PASS Float64_0: classes are [object Float64Array]
+PASS Float64_0: classes are [object ArrayBuffer]
+PASS Float64_0: buffer lengths are 0
+PASS Float64_0: buffers have the same contents
+PASS Float64_0: offset is 0
+PASS Float64_0: length is 0
+PASS Int32_1: classes are [object Int32Array]
+PASS Int32_1: classes are [object ArrayBuffer]
+PASS Int32_1: buffer lengths are 4
+PASS Int32_1: buffers have the same contents
+PASS Int32_1: offset is 0
+PASS Int32_1: length is 4
+PASS Uint32_1: classes are [object Uint32Array]
+PASS Uint32_1: classes are [object ArrayBuffer]
+PASS Uint32_1: buffer lengths are 4
+PASS Uint32_1: buffers have the same contents
+PASS Uint32_1: offset is 0
+PASS Uint32_1: length is 4
+PASS Int8_1: classes are [object Int8Array]
+PASS Int8_1: classes are [object ArrayBuffer]
+PASS Int8_1: buffer lengths are 1
+PASS Int8_1: buffers have the same contents
+PASS Int8_1: offset is 0
+PASS Int8_1: length is 1
+PASS Uint8_1: classes are [object Uint8Array]
+PASS Uint8_1: classes are [object ArrayBuffer]
+PASS Uint8_1: buffer lengths are 1
+PASS Uint8_1: buffers have the same contents
+PASS Uint8_1: offset is 0
+PASS Uint8_1: length is 1
+PASS Uint8Clamped_1: classes are [object Uint8ClampedArray]
+PASS Uint8Clamped_1: classes are [object ArrayBuffer]
+PASS Uint8Clamped_1: buffer lengths are 1
+PASS Uint8Clamped_1: buffers have the same contents
+PASS Uint8Clamped_1: offset is 0
+PASS Uint8Clamped_1: length is 1
+PASS Int16_1: classes are [object Int16Array]
+PASS Int16_1: classes are [object ArrayBuffer]
+PASS Int16_1: buffer lengths are 2
+PASS Int16_1: buffers have the same contents
+PASS Int16_1: offset is 0
+PASS Int16_1: length is 2
+PASS Uint16_1: classes are [object Uint16Array]
+PASS Uint16_1: classes are [object ArrayBuffer]
+PASS Uint16_1: buffer lengths are 2
+PASS Uint16_1: buffers have the same contents
+PASS Uint16_1: offset is 0
+PASS Uint16_1: length is 2
+PASS Float32_1: classes are [object Float32Array]
+PASS Float32_1: classes are [object ArrayBuffer]
+PASS Float32_1: buffer lengths are 4
+PASS Float32_1: buffers have the same contents
+PASS Float32_1: offset is 0
+PASS Float32_1: length is 4
+PASS Float64_1: classes are [object Float64Array]
+PASS Float64_1: classes are [object ArrayBuffer]
+PASS Float64_1: buffer lengths are 8
+PASS Float64_1: buffers have the same contents
+PASS Float64_1: offset is 0
+PASS Float64_1: length is 8
+PASS Int32_128: classes are [object Int32Array]
+PASS Int32_128: classes are [object ArrayBuffer]
+PASS Int32_128: buffer lengths are 512
+PASS Int32_128: buffers have the same contents
+PASS Int32_128: offset is 0
+PASS Int32_128: length is 512
+PASS Uint32_128: classes are [object Uint32Array]
+PASS Uint32_128: classes are [object ArrayBuffer]
+PASS Uint32_128: buffer lengths are 512
+PASS Uint32_128: buffers have the same contents
+PASS Uint32_128: offset is 0
+PASS Uint32_128: length is 512
+PASS Int8_128: classes are [object Int8Array]
+PASS Int8_128: classes are [object ArrayBuffer]
+PASS Int8_128: buffer lengths are 128
+PASS Int8_128: buffers have the same contents
+PASS Int8_128: offset is 0
+PASS Int8_128: length is 128
+PASS Uint8_128: classes are [object Uint8Array]
+PASS Uint8_128: classes are [object ArrayBuffer]
+PASS Uint8_128: buffer lengths are 128
+PASS Uint8_128: buffers have the same contents
+PASS Uint8_128: offset is 0
+PASS Uint8_128: length is 128
+PASS Uint8Clamped_128: classes are [object Uint8ClampedArray]
+PASS Uint8Clamped_128: classes are [object ArrayBuffer]
+PASS Uint8Clamped_128: buffer lengths are 128
+PASS Uint8Clamped_128: buffers have the same contents
+PASS Uint8Clamped_128: offset is 0
+PASS Uint8Clamped_128: length is 128
+PASS Int16_128: classes are [object Int16Array]
+PASS Int16_128: classes are [object ArrayBuffer]
+PASS Int16_128: buffer lengths are 256
+PASS Int16_128: buffers have the same contents
+PASS Int16_128: offset is 0
+PASS Int16_128: length is 256
+PASS Uint16_128: classes are [object Uint16Array]
+PASS Uint16_128: classes are [object ArrayBuffer]
+PASS Uint16_128: buffer lengths are 256
+PASS Uint16_128: buffers have the same contents
+PASS Uint16_128: offset is 0
+PASS Uint16_128: length is 256
+PASS Float32_128: classes are [object Float32Array]
+PASS Float32_128: classes are [object ArrayBuffer]
+PASS Float32_128: buffer lengths are 512
+PASS Float32_128: buffers have the same contents
+PASS Float32_128: offset is 0
+PASS Float32_128: length is 512
+PASS Float64_128: classes are [object Float64Array]
+PASS Float64_128: classes are [object ArrayBuffer]
+PASS Float64_128: buffer lengths are 1024
+PASS Float64_128: buffers have the same contents
+PASS Float64_128: offset is 0
+PASS Float64_128: length is 1024
+PASS Int32_0_buffer: classes are [object Int32Array]
+PASS Int32_0_buffer: classes are [object ArrayBuffer]
+PASS Int32_0_buffer: buffer lengths are 0
+PASS Int32_0_buffer: buffers have the same contents
+PASS Int32_0_buffer: offset is 0
+PASS Int32_0_buffer: length is 0
+PASS Uint32_0_buffer: classes are [object Uint32Array]
+PASS Uint32_0_buffer: classes are [object ArrayBuffer]
+PASS Uint32_0_buffer: buffer lengths are 0
+PASS Uint32_0_buffer: buffers have the same contents
+PASS Uint32_0_buffer: offset is 0
+PASS Uint32_0_buffer: length is 0
+PASS Int8_0_buffer: classes are [object Int8Array]
+PASS Int8_0_buffer: classes are [object ArrayBuffer]
+PASS Int8_0_buffer: buffer lengths are 0
+PASS Int8_0_buffer: buffers have the same contents
+PASS Int8_0_buffer: offset is 0
+PASS Int8_0_buffer: length is 0
+PASS Uint8_0_buffer: classes are [object Uint8Array]
+PASS Uint8_0_buffer: classes are [object ArrayBuffer]
+PASS Uint8_0_buffer: buffer lengths are 0
+PASS Uint8_0_buffer: buffers have the same contents
+PASS Uint8_0_buffer: offset is 0
+PASS Uint8_0_buffer: length is 0
+PASS Uint8Clamped_0_buffer: classes are [object Uint8ClampedArray]
+PASS Uint8Clamped_0_buffer: classes are [object ArrayBuffer]
+PASS Uint8Clamped_0_buffer: buffer lengths are 0
+PASS Uint8Clamped_0_buffer: buffers have the same contents
+PASS Uint8Clamped_0_buffer: offset is 0
+PASS Uint8Clamped_0_buffer: length is 0
+PASS Int16_0_buffer: classes are [object Int16Array]
+PASS Int16_0_buffer: classes are [object ArrayBuffer]
+PASS Int16_0_buffer: buffer lengths are 0
+PASS Int16_0_buffer: buffers have the same contents
+PASS Int16_0_buffer: offset is 0
+PASS Int16_0_buffer: length is 0
+PASS Uint16_0_buffer: classes are [object Uint16Array]
+PASS Uint16_0_buffer: classes are [object ArrayBuffer]
+PASS Uint16_0_buffer: buffer lengths are 0
+PASS Uint16_0_buffer: buffers have the same contents
+PASS Uint16_0_buffer: offset is 0
+PASS Uint16_0_buffer: length is 0
+PASS Float32_0_buffer: classes are [object Float32Array]
+PASS Float32_0_buffer: classes are [object ArrayBuffer]
+PASS Float32_0_buffer: buffer lengths are 0
+PASS Float32_0_buffer: buffers have the same contents
+PASS Float32_0_buffer: offset is 0
+PASS Float32_0_buffer: length is 0
+PASS Float64_0_buffer: classes are [object Float64Array]
+PASS Float64_0_buffer: classes are [object ArrayBuffer]
+PASS Float64_0_buffer: buffer lengths are 0
+PASS Float64_0_buffer: buffers have the same contents
+PASS Float64_0_buffer: offset is 0
+PASS Float64_0_buffer: length is 0
+PASS Int32_1_buffer: classes are [object Int32Array]
+PASS Int32_1_buffer: classes are [object ArrayBuffer]
+PASS Int32_1_buffer: buffer lengths are 4
+PASS Int32_1_buffer: buffers have the same contents
+PASS Int32_1_buffer: offset is 0
+PASS Int32_1_buffer: length is 4
+PASS Uint32_1_buffer: classes are [object Uint32Array]
+PASS Uint32_1_buffer: classes are [object ArrayBuffer]
+PASS Uint32_1_buffer: buffer lengths are 4
+PASS Uint32_1_buffer: buffers have the same contents
+PASS Uint32_1_buffer: offset is 0
+PASS Uint32_1_buffer: length is 4
+PASS Int8_1_buffer: classes are [object Int8Array]
+PASS Int8_1_buffer: classes are [object ArrayBuffer]
+PASS Int8_1_buffer: buffer lengths are 1
+PASS Int8_1_buffer: buffers have the same contents
+PASS Int8_1_buffer: offset is 0
+PASS Int8_1_buffer: length is 1
+PASS Uint8_1_buffer: classes are [object Uint8Array]
+PASS Uint8_1_buffer: classes are [object ArrayBuffer]
+PASS Uint8_1_buffer: buffer lengths are 1
+PASS Uint8_1_buffer: buffers have the same contents
+PASS Uint8_1_buffer: offset is 0
+PASS Uint8_1_buffer: length is 1
+PASS Uint8Clamped_1_buffer: classes are [object Uint8ClampedArray]
+PASS Uint8Clamped_1_buffer: classes are [object ArrayBuffer]
+PASS Uint8Clamped_1_buffer: buffer lengths are 1
+PASS Uint8Clamped_1_buffer: buffers have the same contents
+PASS Uint8Clamped_1_buffer: offset is 0
+PASS Uint8Clamped_1_buffer: length is 1
+PASS Int16_1_buffer: classes are [object Int16Array]
+PASS Int16_1_buffer: classes are [object ArrayBuffer]
+PASS Int16_1_buffer: buffer lengths are 2
+PASS Int16_1_buffer: buffers have the same contents
+PASS Int16_1_buffer: offset is 0
+PASS Int16_1_buffer: length is 2
+PASS Uint16_1_buffer: classes are [object Uint16Array]
+PASS Uint16_1_buffer: classes are [object ArrayBuffer]
+PASS Uint16_1_buffer: buffer lengths are 2
+PASS Uint16_1_buffer: buffers have the same contents
+PASS Uint16_1_buffer: offset is 0
+PASS Uint16_1_buffer: length is 2
+PASS Float32_1_buffer: classes are [object Float32Array]
+PASS Float32_1_buffer: classes are [object ArrayBuffer]
+PASS Float32_1_buffer: buffer lengths are 4
+PASS Float32_1_buffer: buffers have the same contents
+PASS Float32_1_buffer: offset is 0
+PASS Float32_1_buffer: length is 4
+PASS Float64_1_buffer: classes are [object Float64Array]
+PASS Float64_1_buffer: classes are [object ArrayBuffer]
+PASS Float64_1_buffer: buffer lengths are 8
+PASS Float64_1_buffer: buffers have the same contents
+PASS Float64_1_buffer: offset is 0
+PASS Float64_1_buffer: length is 8
+PASS Int32_128_buffer: classes are [object Int32Array]
+PASS Int32_128_buffer: classes are [object ArrayBuffer]
+PASS Int32_128_buffer: buffer lengths are 512
+PASS Int32_128_buffer: buffers have the same contents
+PASS Int32_128_buffer: offset is 0
+PASS Int32_128_buffer: length is 512
+PASS Uint32_128_buffer: classes are [object Uint32Array]
+PASS Uint32_128_buffer: classes are [object ArrayBuffer]
+PASS Uint32_128_buffer: buffer lengths are 512
+PASS Uint32_128_buffer: buffers have the same contents
+PASS Uint32_128_buffer: offset is 0
+PASS Uint32_128_buffer: length is 512
+PASS Int8_128_buffer: classes are [object Int8Array]
+PASS Int8_128_buffer: classes are [object ArrayBuffer]
+PASS Int8_128_buffer: buffer lengths are 128
+PASS Int8_128_buffer: buffers have the same contents
+PASS Int8_128_buffer: offset is 0
+PASS Int8_128_buffer: length is 128
+PASS Uint8_128_buffer: classes are [object Uint8Array]
+PASS Uint8_128_buffer: classes are [object ArrayBuffer]
+PASS Uint8_128_buffer: buffer lengths are 128
+PASS Uint8_128_buffer: buffers have the same contents
+PASS Uint8_128_buffer: offset is 0
+PASS Uint8_128_buffer: length is 128
+PASS Uint8Clamped_128_buffer: classes are [object Uint8ClampedArray]
+PASS Uint8Clamped_128_buffer: classes are [object ArrayBuffer]
+PASS Uint8Clamped_128_buffer: buffer lengths are 128
+PASS Uint8Clamped_128_buffer: buffers have the same contents
+PASS Uint8Clamped_128_buffer: offset is 0
+PASS Uint8Clamped_128_buffer: length is 128
+PASS Int16_128_buffer: classes are [object Int16Array]
+PASS Int16_128_buffer: classes are [object ArrayBuffer]
+PASS Int16_128_buffer: buffer lengths are 256
+PASS Int16_128_buffer: buffers have the same contents
+PASS Int16_128_buffer: offset is 0
+PASS Int16_128_buffer: length is 256
+PASS Uint16_128_buffer: classes are [object Uint16Array]
+PASS Uint16_128_buffer: classes are [object ArrayBuffer]
+PASS Uint16_128_buffer: buffer lengths are 256
+PASS Uint16_128_buffer: buffers have the same contents
+PASS Uint16_128_buffer: offset is 0
+PASS Uint16_128_buffer: length is 256
+PASS Float32_128_buffer: classes are [object Float32Array]
+PASS Float32_128_buffer: classes are [object ArrayBuffer]
+PASS Float32_128_buffer: buffer lengths are 512
+PASS Float32_128_buffer: buffers have the same contents
+PASS Float32_128_buffer: offset is 0
+PASS Float32_128_buffer: length is 512
+PASS Float64_128_buffer: classes are [object Float64Array]
+PASS Float64_128_buffer: classes are [object ArrayBuffer]
+PASS Float64_128_buffer: buffer lengths are 1024
+PASS Float64_128_buffer: buffers have the same contents
+PASS Float64_128_buffer: offset is 0
+PASS Float64_128_buffer: length is 1024
+PASS Int32_1_buffer_offset_at_end: classes are [object Int32Array]
+PASS Int32_1_buffer_offset_at_end: classes are [object ArrayBuffer]
+PASS Int32_1_buffer_offset_at_end: buffer lengths are 4
+PASS Int32_1_buffer_offset_at_end: buffers have the same contents
+PASS Int32_1_buffer_offset_at_end: offset is 4
+PASS Int32_1_buffer_offset_at_end: length is 0
+PASS Uint32_1_buffer_offset_at_end: classes are [object Uint32Array]
+PASS Uint32_1_buffer_offset_at_end: classes are [object ArrayBuffer]
+PASS Uint32_1_buffer_offset_at_end: buffer lengths are 4
+PASS Uint32_1_buffer_offset_at_end: buffers have the same contents
+PASS Uint32_1_buffer_offset_at_end: offset is 4
+PASS Uint32_1_buffer_offset_at_end: length is 0
+PASS Int8_1_buffer_offset_at_end: classes are [object Int8Array]
+PASS Int8_1_buffer_offset_at_end: classes are [object ArrayBuffer]
+PASS Int8_1_buffer_offset_at_end: buffer lengths are 1
+PASS Int8_1_buffer_offset_at_end: buffers have the same contents
+PASS Int8_1_buffer_offset_at_end: offset is 1
+PASS Int8_1_buffer_offset_at_end: length is 0
+PASS Uint8_1_buffer_offset_at_end: classes are [object Uint8Array]
+PASS Uint8_1_buffer_offset_at_end: classes are [object ArrayBuffer]
+PASS Uint8_1_buffer_offset_at_end: buffer lengths are 1
+PASS Uint8_1_buffer_offset_at_end: buffers have the same contents
+PASS Uint8_1_buffer_offset_at_end: offset is 1
+PASS Uint8_1_buffer_offset_at_end: length is 0
+PASS Uint8Clamped_1_buffer_offset_at_end: classes are [object Uint8ClampedArray]
+PASS Uint8Clamped_1_buffer_offset_at_end: classes are [object ArrayBuffer]
+PASS Uint8Clamped_1_buffer_offset_at_end: buffer lengths are 1
+PASS Uint8Clamped_1_buffer_offset_at_end: buffers have the same contents
+PASS Uint8Clamped_1_buffer_offset_at_end: offset is 1
+PASS Uint8Clamped_1_buffer_offset_at_end: length is 0
+PASS Int16_1_buffer_offset_at_end: classes are [object Int16Array]
+PASS Int16_1_buffer_offset_at_end: classes are [object ArrayBuffer]
+PASS Int16_1_buffer_offset_at_end: buffer lengths are 2
+PASS Int16_1_buffer_offset_at_end: buffers have the same contents
+PASS Int16_1_buffer_offset_at_end: offset is 2
+PASS Int16_1_buffer_offset_at_end: length is 0
+PASS Uint16_1_buffer_offset_at_end: classes are [object Uint16Array]
+PASS Uint16_1_buffer_offset_at_end: classes are [object ArrayBuffer]
+PASS Uint16_1_buffer_offset_at_end: buffer lengths are 2
+PASS Uint16_1_buffer_offset_at_end: buffers have the same contents
+PASS Uint16_1_buffer_offset_at_end: offset is 2
+PASS Uint16_1_buffer_offset_at_end: length is 0
+PASS Float32_1_buffer_offset_at_end: classes are [object Float32Array]
+PASS Float32_1_buffer_offset_at_end: classes are [object ArrayBuffer]
+PASS Float32_1_buffer_offset_at_end: buffer lengths are 4
+PASS Float32_1_buffer_offset_at_end: buffers have the same contents
+PASS Float32_1_buffer_offset_at_end: offset is 4
+PASS Float32_1_buffer_offset_at_end: length is 0
+PASS Float64_1_buffer_offset_at_end: classes are [object Float64Array]
+PASS Float64_1_buffer_offset_at_end: classes are [object ArrayBuffer]
+PASS Float64_1_buffer_offset_at_end: buffer lengths are 8
+PASS Float64_1_buffer_offset_at_end: buffers have the same contents
+PASS Float64_1_buffer_offset_at_end: offset is 8
+PASS Float64_1_buffer_offset_at_end: length is 0
+PASS Int32_128_buffer_offset_at_end: classes are [object Int32Array]
+PASS Int32_128_buffer_offset_at_end: classes are [object ArrayBuffer]
+PASS Int32_128_buffer_offset_at_end: buffer lengths are 512
+PASS Int32_128_buffer_offset_at_end: buffers have the same contents
+PASS Int32_128_buffer_offset_at_end: offset is 512
+PASS Int32_128_buffer_offset_at_end: length is 0
+PASS Uint32_128_buffer_offset_at_end: classes are [object Uint32Array]
+PASS Uint32_128_buffer_offset_at_end: classes are [object ArrayBuffer]
+PASS Uint32_128_buffer_offset_at_end: buffer lengths are 512
+PASS Uint32_128_buffer_offset_at_end: buffers have the same contents
+PASS Uint32_128_buffer_offset_at_end: offset is 512
+PASS Uint32_128_buffer_offset_at_end: length is 0
+PASS Int8_128_buffer_offset_at_end: classes are [object Int8Array]
+PASS Int8_128_buffer_offset_at_end: classes are [object ArrayBuffer]
+PASS Int8_128_buffer_offset_at_end: buffer lengths are 128
+PASS Int8_128_buffer_offset_at_end: buffers have the same contents
+PASS Int8_128_buffer_offset_at_end: offset is 128
+PASS Int8_128_buffer_offset_at_end: length is 0
+PASS Uint8_128_buffer_offset_at_end: classes are [object Uint8Array]
+PASS Uint8_128_buffer_offset_at_end: classes are [object ArrayBuffer]
+PASS Uint8_128_buffer_offset_at_end: buffer lengths are 128
+PASS Uint8_128_buffer_offset_at_end: buffers have the same contents
+PASS Uint8_128_buffer_offset_at_end: offset is 128
+PASS Uint8_128_buffer_offset_at_end: length is 0
+PASS Uint8Clamped_128_buffer_offset_at_end: classes are [object Uint8ClampedArray]
+PASS Uint8Clamped_128_buffer_offset_at_end: classes are [object ArrayBuffer]
+PASS Uint8Clamped_128_buffer_offset_at_end: buffer lengths are 128
+PASS Uint8Clamped_128_buffer_offset_at_end: buffers have the same contents
+PASS Uint8Clamped_128_buffer_offset_at_end: offset is 128
+PASS Uint8Clamped_128_buffer_offset_at_end: length is 0
+PASS Int16_128_buffer_offset_at_end: classes are [object Int16Array]
+PASS Int16_128_buffer_offset_at_end: classes are [object ArrayBuffer]
+PASS Int16_128_buffer_offset_at_end: buffer lengths are 256
+PASS Int16_128_buffer_offset_at_end: buffers have the same contents
+PASS Int16_128_buffer_offset_at_end: offset is 256
+PASS Int16_128_buffer_offset_at_end: length is 0
+PASS Uint16_128_buffer_offset_at_end: classes are [object Uint16Array]
+PASS Uint16_128_buffer_offset_at_end: classes are [object ArrayBuffer]
+PASS Uint16_128_buffer_offset_at_end: buffer lengths are 256
+PASS Uint16_128_buffer_offset_at_end: buffers have the same contents
+PASS Uint16_128_buffer_offset_at_end: offset is 256
+PASS Uint16_128_buffer_offset_at_end: length is 0
+PASS Float32_128_buffer_offset_at_end: classes are [object Float32Array]
+PASS Float32_128_buffer_offset_at_end: classes are [object ArrayBuffer]
+PASS Float32_128_buffer_offset_at_end: buffer lengths are 512
+PASS Float32_128_buffer_offset_at_end: buffers have the same contents
+PASS Float32_128_buffer_offset_at_end: offset is 512
+PASS Float32_128_buffer_offset_at_end: length is 0
+PASS Float64_128_buffer_offset_at_end: classes are [object Float64Array]
+PASS Float64_128_buffer_offset_at_end: classes are [object ArrayBuffer]
+PASS Float64_128_buffer_offset_at_end: buffer lengths are 1024
+PASS Float64_128_buffer_offset_at_end: buffers have the same contents
+PASS Float64_128_buffer_offset_at_end: offset is 1024
+PASS Float64_128_buffer_offset_at_end: length is 0
+PASS Int32_128_buffer_offset_slice_length_0: classes are [object Int32Array]
+PASS Int32_128_buffer_offset_slice_length_0: classes are [object ArrayBuffer]
+PASS Int32_128_buffer_offset_slice_length_0: buffer lengths are 512
+PASS Int32_128_buffer_offset_slice_length_0: buffers have the same contents
+PASS Int32_128_buffer_offset_slice_length_0: offset is 256
+PASS Int32_128_buffer_offset_slice_length_0: length is 0
+PASS Uint32_128_buffer_offset_slice_length_0: classes are [object Uint32Array]
+PASS Uint32_128_buffer_offset_slice_length_0: classes are [object ArrayBuffer]
+PASS Uint32_128_buffer_offset_slice_length_0: buffer lengths are 512
+PASS Uint32_128_buffer_offset_slice_length_0: buffers have the same contents
+PASS Uint32_128_buffer_offset_slice_length_0: offset is 256
+PASS Uint32_128_buffer_offset_slice_length_0: length is 0
+PASS Int8_128_buffer_offset_slice_length_0: classes are [object Int8Array]
+PASS Int8_128_buffer_offset_slice_length_0: classes are [object ArrayBuffer]
+PASS Int8_128_buffer_offset_slice_length_0: buffer lengths are 128
+PASS Int8_128_buffer_offset_slice_length_0: buffers have the same contents
+PASS Int8_128_buffer_offset_slice_length_0: offset is 64
+PASS Int8_128_buffer_offset_slice_length_0: length is 0
+PASS Uint8_128_buffer_offset_slice_length_0: classes are [object Uint8Array]
+PASS Uint8_128_buffer_offset_slice_length_0: classes are [object ArrayBuffer]
+PASS Uint8_128_buffer_offset_slice_length_0: buffer lengths are 128
+PASS Uint8_128_buffer_offset_slice_length_0: buffers have the same contents
+PASS Uint8_128_buffer_offset_slice_length_0: offset is 64
+PASS Uint8_128_buffer_offset_slice_length_0: length is 0
+PASS Uint8Clamped_128_buffer_offset_slice_length_0: classes are [object Uint8ClampedArray]
+PASS Uint8Clamped_128_buffer_offset_slice_length_0: classes are [object ArrayBuffer]
+PASS Uint8Clamped_128_buffer_offset_slice_length_0: buffer lengths are 128
+PASS Uint8Clamped_128_buffer_offset_slice_length_0: buffers have the same contents
+PASS Uint8Clamped_128_buffer_offset_slice_length_0: offset is 64
+PASS Uint8Clamped_128_buffer_offset_slice_length_0: length is 0
+PASS Int16_128_buffer_offset_slice_length_0: classes are [object Int16Array]
+PASS Int16_128_buffer_offset_slice_length_0: classes are [object ArrayBuffer]
+PASS Int16_128_buffer_offset_slice_length_0: buffer lengths are 256
+PASS Int16_128_buffer_offset_slice_length_0: buffers have the same contents
+PASS Int16_128_buffer_offset_slice_length_0: offset is 128
+PASS Int16_128_buffer_offset_slice_length_0: length is 0
+PASS Uint16_128_buffer_offset_slice_length_0: classes are [object Uint16Array]
+PASS Uint16_128_buffer_offset_slice_length_0: classes are [object ArrayBuffer]
+PASS Uint16_128_buffer_offset_slice_length_0: buffer lengths are 256
+PASS Uint16_128_buffer_offset_slice_length_0: buffers have the same contents
+PASS Uint16_128_buffer_offset_slice_length_0: offset is 128
+PASS Uint16_128_buffer_offset_slice_length_0: length is 0
+PASS Float32_128_buffer_offset_slice_length_0: classes are [object Float32Array]
+PASS Float32_128_buffer_offset_slice_length_0: classes are [object ArrayBuffer]
+PASS Float32_128_buffer_offset_slice_length_0: buffer lengths are 512
+PASS Float32_128_buffer_offset_slice_length_0: buffers have the same contents
+PASS Float32_128_buffer_offset_slice_length_0: offset is 256
+PASS Float32_128_buffer_offset_slice_length_0: length is 0
+PASS Float64_128_buffer_offset_slice_length_0: classes are [object Float64Array]
+PASS Float64_128_buffer_offset_slice_length_0: classes are [object ArrayBuffer]
+PASS Float64_128_buffer_offset_slice_length_0: buffer lengths are 1024
+PASS Float64_128_buffer_offset_slice_length_0: buffers have the same contents
+PASS Float64_128_buffer_offset_slice_length_0: offset is 512
+PASS Float64_128_buffer_offset_slice_length_0: length is 0
+PASS Int32_128_buffer_offset_slice_length_1: classes are [object Int32Array]
+PASS Int32_128_buffer_offset_slice_length_1: classes are [object ArrayBuffer]
+PASS Int32_128_buffer_offset_slice_length_1: buffer lengths are 512
+PASS Int32_128_buffer_offset_slice_length_1: buffers have the same contents
+PASS Int32_128_buffer_offset_slice_length_1: offset is 256
+PASS Int32_128_buffer_offset_slice_length_1: length is 4
+PASS Uint32_128_buffer_offset_slice_length_1: classes are [object Uint32Array]
+PASS Uint32_128_buffer_offset_slice_length_1: classes are [object ArrayBuffer]
+PASS Uint32_128_buffer_offset_slice_length_1: buffer lengths are 512
+PASS Uint32_128_buffer_offset_slice_length_1: buffers have the same contents
+PASS Uint32_128_buffer_offset_slice_length_1: offset is 256
+PASS Uint32_128_buffer_offset_slice_length_1: length is 4
+PASS Int8_128_buffer_offset_slice_length_1: classes are [object Int8Array]
+PASS Int8_128_buffer_offset_slice_length_1: classes are [object ArrayBuffer]
+PASS Int8_128_buffer_offset_slice_length_1: buffer lengths are 128
+PASS Int8_128_buffer_offset_slice_length_1: buffers have the same contents
+PASS Int8_128_buffer_offset_slice_length_1: offset is 64
+PASS Int8_128_buffer_offset_slice_length_1: length is 1
+PASS Uint8_128_buffer_offset_slice_length_1: classes are [object Uint8Array]
+PASS Uint8_128_buffer_offset_slice_length_1: classes are [object ArrayBuffer]
+PASS Uint8_128_buffer_offset_slice_length_1: buffer lengths are 128
+PASS Uint8_128_buffer_offset_slice_length_1: buffers have the same contents
+PASS Uint8_128_buffer_offset_slice_length_1: offset is 64
+PASS Uint8_128_buffer_offset_slice_length_1: length is 1
+PASS Uint8Clamped_128_buffer_offset_slice_length_1: classes are [object Uint8ClampedArray]
+PASS Uint8Clamped_128_buffer_offset_slice_length_1: classes are [object ArrayBuffer]
+PASS Uint8Clamped_128_buffer_offset_slice_length_1: buffer lengths are 128
+PASS Uint8Clamped_128_buffer_offset_slice_length_1: buffers have the same contents
+PASS Uint8Clamped_128_buffer_offset_slice_length_1: offset is 64
+PASS Uint8Clamped_128_buffer_offset_slice_length_1: length is 1
+PASS Int16_128_buffer_offset_slice_length_1: classes are [object Int16Array]
+PASS Int16_128_buffer_offset_slice_length_1: classes are [object ArrayBuffer]
+PASS Int16_128_buffer_offset_slice_length_1: buffer lengths are 256
+PASS Int16_128_buffer_offset_slice_length_1: buffers have the same contents
+PASS Int16_128_buffer_offset_slice_length_1: offset is 128
+PASS Int16_128_buffer_offset_slice_length_1: length is 2
+PASS Uint16_128_buffer_offset_slice_length_1: classes are [object Uint16Array]
+PASS Uint16_128_buffer_offset_slice_length_1: classes are [object ArrayBuffer]
+PASS Uint16_128_buffer_offset_slice_length_1: buffer lengths are 256
+PASS Uint16_128_buffer_offset_slice_length_1: buffers have the same contents
+PASS Uint16_128_buffer_offset_slice_length_1: offset is 128
+PASS Uint16_128_buffer_offset_slice_length_1: length is 2
+PASS Float32_128_buffer_offset_slice_length_1: classes are [object Float32Array]
+PASS Float32_128_buffer_offset_slice_length_1: classes are [object ArrayBuffer]
+PASS Float32_128_buffer_offset_slice_length_1: buffer lengths are 512
+PASS Float32_128_buffer_offset_slice_length_1: buffers have the same contents
+PASS Float32_128_buffer_offset_slice_length_1: offset is 256
+PASS Float32_128_buffer_offset_slice_length_1: length is 4
+PASS Float64_128_buffer_offset_slice_length_1: classes are [object Float64Array]
+PASS Float64_128_buffer_offset_slice_length_1: classes are [object ArrayBuffer]
+PASS Float64_128_buffer_offset_slice_length_1: buffer lengths are 1024
+PASS Float64_128_buffer_offset_slice_length_1: buffers have the same contents
+PASS Float64_128_buffer_offset_slice_length_1: offset is 512
+PASS Float64_128_buffer_offset_slice_length_1: length is 8
+PASS Int32_128_buffer_offset_slice_length_16: classes are [object Int32Array]
+PASS Int32_128_buffer_offset_slice_length_16: classes are [object ArrayBuffer]
+PASS Int32_128_buffer_offset_slice_length_16: buffer lengths are 512
+PASS Int32_128_buffer_offset_slice_length_16: buffers have the same contents
+PASS Int32_128_buffer_offset_slice_length_16: offset is 256
+PASS Int32_128_buffer_offset_slice_length_16: length is 64
+PASS Uint32_128_buffer_offset_slice_length_16: classes are [object Uint32Array]
+PASS Uint32_128_buffer_offset_slice_length_16: classes are [object ArrayBuffer]
+PASS Uint32_128_buffer_offset_slice_length_16: buffer lengths are 512
+PASS Uint32_128_buffer_offset_slice_length_16: buffers have the same contents
+PASS Uint32_128_buffer_offset_slice_length_16: offset is 256
+PASS Uint32_128_buffer_offset_slice_length_16: length is 64
+PASS Int8_128_buffer_offset_slice_length_16: classes are [object Int8Array]
+PASS Int8_128_buffer_offset_slice_length_16: classes are [object ArrayBuffer]
+PASS Int8_128_buffer_offset_slice_length_16: buffer lengths are 128
+PASS Int8_128_buffer_offset_slice_length_16: buffers have the same contents
+PASS Int8_128_buffer_offset_slice_length_16: offset is 64
+PASS Int8_128_buffer_offset_slice_length_16: length is 16
+PASS Uint8_128_buffer_offset_slice_length_16: classes are [object Uint8Array]
+PASS Uint8_128_buffer_offset_slice_length_16: classes are [object ArrayBuffer]
+PASS Uint8_128_buffer_offset_slice_length_16: buffer lengths are 128
+PASS Uint8_128_buffer_offset_slice_length_16: buffers have the same contents
+PASS Uint8_128_buffer_offset_slice_length_16: offset is 64
+PASS Uint8_128_buffer_offset_slice_length_16: length is 16
+PASS Uint8Clamped_128_buffer_offset_slice_length_16: classes are [object Uint8ClampedArray]
+PASS Uint8Clamped_128_buffer_offset_slice_length_16: classes are [object ArrayBuffer]
+PASS Uint8Clamped_128_buffer_offset_slice_length_16: buffer lengths are 128
+PASS Uint8Clamped_128_buffer_offset_slice_length_16: buffers have the same contents
+PASS Uint8Clamped_128_buffer_offset_slice_length_16: offset is 64
+PASS Uint8Clamped_128_buffer_offset_slice_length_16: length is 16
+PASS Int16_128_buffer_offset_slice_length_16: classes are [object Int16Array]
+PASS Int16_128_buffer_offset_slice_length_16: classes are [object ArrayBuffer]
+PASS Int16_128_buffer_offset_slice_length_16: buffer lengths are 256
+PASS Int16_128_buffer_offset_slice_length_16: buffers have the same contents
+PASS Int16_128_buffer_offset_slice_length_16: offset is 128
+PASS Int16_128_buffer_offset_slice_length_16: length is 32
+PASS Uint16_128_buffer_offset_slice_length_16: classes are [object Uint16Array]
+PASS Uint16_128_buffer_offset_slice_length_16: classes are [object ArrayBuffer]
+PASS Uint16_128_buffer_offset_slice_length_16: buffer lengths are 256
+PASS Uint16_128_buffer_offset_slice_length_16: buffers have the same contents
+PASS Uint16_128_buffer_offset_slice_length_16: offset is 128
+PASS Uint16_128_buffer_offset_slice_length_16: length is 32
+PASS Float32_128_buffer_offset_slice_length_16: classes are [object Float32Array]
+PASS Float32_128_buffer_offset_slice_length_16: classes are [object ArrayBuffer]
+PASS Float32_128_buffer_offset_slice_length_16: buffer lengths are 512
+PASS Float32_128_buffer_offset_slice_length_16: buffers have the same contents
+PASS Float32_128_buffer_offset_slice_length_16: offset is 256
+PASS Float32_128_buffer_offset_slice_length_16: length is 64
+PASS Float64_128_buffer_offset_slice_length_16: classes are [object Float64Array]
+PASS Float64_128_buffer_offset_slice_length_16: classes are [object ArrayBuffer]
+PASS Float64_128_buffer_offset_slice_length_16: buffer lengths are 1024
+PASS Float64_128_buffer_offset_slice_length_16: buffers have the same contents
+PASS Float64_128_buffer_offset_slice_length_16: offset is 512
+PASS Float64_128_buffer_offset_slice_length_16: length is 128
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

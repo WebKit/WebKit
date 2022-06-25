@@ -1,0 +1,19 @@
+Test performance.now() is at least as the timestamp the rAF callback.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Math.round(window.performance.now()) is >= Math.round(timestamp1)
+PASS Math.round(window.performance.now()) is >= Math.round(timestamp1)
+PASS Math.round(window.performance.now()) is >= Math.round(timestamp1)
+PASS Math.round(window.performance.now()) is >= Math.round(timestamp1)
+PASS Math.round(window.performance.now()) is >= Math.round(timestamp1)
+PASS Math.round(window.performance.now()) is >= Math.round(timestamp1)
+PASS Math.round(window.performance.now()) is >= Math.round(timestamp1)
+PASS Math.round(window.performance.now()) is >= Math.round(timestamp1)
+PASS Math.round(window.performance.now()) is >= Math.round(timestamp1)
+PASS Math.round(window.performance.now()) is >= Math.round(timestamp1)
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

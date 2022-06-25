@@ -1,0 +1,3 @@
+
+FAIL Verify write and read clipboard (multiple types) promise_test: Unhandled rejection with value: object "Error: unimplemented"
+

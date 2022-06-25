@@ -1,0 +1,6 @@
+
+PASS Opaque origin should be serialized to "null"
+PASS BroadcastChannel messages from opaque origins should be self-contained
+PASS BroadcastChannel messages from data URL dedicated workers should be self-contained
+FAIL BroadcastChannel messages from data URL shared workers should be self-contained promise_test: Unhandled rejection with value: object "NotSupportedError: Shared workers are not supported"
+

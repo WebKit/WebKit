@@ -1,0 +1,10 @@
+
+FAIL Meta color-scheme initially 'dark'. assert_equals: Root element's color-scheme should be 'normal' expected "normal" but got "auto"
+FAIL Removed name attribute from meta color-scheme. assert_equals: expected "light" but got "dark"
+FAIL Set meta name to color-scheme. assert_equals: Root element's color-scheme should be 'normal' expected "normal" but got "auto"
+FAIL Set content attribute of meta color-scheme to empty string. assert_equals: Root element's color-scheme should be 'normal' expected "normal" but got "auto"
+FAIL Set content attribute of meta color-scheme to an invalid value. assert_equals: Root element's color-scheme should be 'normal' expected "normal" but got "auto"
+FAIL Set content attribute of meta color-scheme to 'light'. assert_equals: Root element's color-scheme should be 'normal' expected "normal" but got "auto"
+FAIL Set content attribute of meta color-scheme to 'dark'. assert_equals: Root element's color-scheme should be 'normal' expected "normal" but got "auto"
+FAIL Removed the content attribute of meta color-scheme. assert_equals: expected "light" but got "dark"
+

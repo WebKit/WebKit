@@ -1,0 +1,23 @@
+This test checks lastIndexOf for various values in an array
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS lastIndex is -1
+PASS lastIndex is 2
+PASS lastIndex is 3
+PASS lastIndex is -1
+PASS lastIndex is 3
+PASS lastIndex is 0
+PASS lastIndex is 0
+PASS lastIndex is 3
+PASS lastIndex is -1
+PASS lastIndex is -1
+PASS lastIndex is -1
+PASS lastIndex is 19
+PASS lastIndex is -1
+PASS lastIndex is -1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,45 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IntersectionObserverEnabled=true ] -->
+<html>
+
+<head>
+    <script src="../resources/testharness.js"></script>
+    <script src="../resources/testharnessreport.js"></script>
+    <script src="../resources/gc.js"></script>
+</head>
+
+<body>
+    <div id="container"></div>
+    <script>
+        function accessToObserverInCallback() {
+            let test = async_test("test: Nodes inside callback should be garbage collected if no one refers to it");
+            let initialNodesCount = internals.numberOfLiveNodes(document);
+            const iterationCount = 50;
+            let callbackCount = 0;
+            for (let j = 0; j < iterationCount; ++j) {
+                const div = document.createElement('div');
+                container.appendChild(div);
+                let observer = new IntersectionObserver(() => {
+                    callbackCount++;
+                    observer.disconnect();
+                    container.removeChild(div);
+                    if (callbackCount == iterationCount) {
+                        window.requestAnimationFrame(() => {
+                            gc();
+                            test.step(() => {
+                                let additionalNodesCount = internals.numberOfLiveNodes(document) - initialNodesCount;
+                                assert_true(additionalNodesCount < iterationCount, 'Nodes inside callback should be collected.');
+                                test.done();
+                            });
+                        });
+                    }
+                });
+                observer.observe(div);
+            }
+        }
+
+        window.onload = accessToObserverInCallback();
+    </script>
+
+</body>
+
+</html>

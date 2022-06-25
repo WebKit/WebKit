@@ -1,0 +1,40 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-ask-for-reset.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-events.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-form-attribute.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-form-state-restore.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-form-submission.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-keyboard.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-labels.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-many-options.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-nested.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-option-arbitrary-content-displayed-ref.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-option-arbitrary-content-displayed.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-option-arbitrary-content-displayed.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-option-arbitrary-content-not-displayed-ref.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-option-arbitrary-content-not-displayed.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-option-arbitrary-content-not-displayed.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-option-focusable.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-parts-structure.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-popup-position-with-zoom.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-popup-position.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-popup.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-required-attribute.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-shadow-root-replacement.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-validity.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-value-selectedOption.tentative.html

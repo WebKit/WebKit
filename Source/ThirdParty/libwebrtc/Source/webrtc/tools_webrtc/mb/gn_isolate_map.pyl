@@ -1,0 +1,159 @@
+# Copyright (c) 2016 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+# gn_isolate_map.pyl - A mapping of Ninja build target names to GN labels and
+# test type classifications for the tests that are run on the bots.
+#
+# This file is based on testing/buildbot/gn_isolate_map.pyl for Chromium, but
+# is covering WebRTC stand-alone tests instead.
+# See https://cs.chromium.org/chromium/src/testing/buildbot/gn_isolate_map.pyl
+# for more detailed documentation.
+
+{
+  "All": {
+    "label": "//:All",
+    "type": "additional_compile_target",
+  },
+  "AppRTCMobile_test_apk": {
+    "label": "//examples:AppRTCMobile_test_apk",
+    "type": "additional_compile_target",
+  },
+  "android_junit_tests": {
+    "label": "//:android_junit_tests",
+    "type": "junit_test",
+  },
+  "android_examples_junit_tests": {
+    "label": "//examples:android_examples_junit_tests",
+    "type": "junit_test",
+  },
+  "android_sdk_junit_tests": {
+    "label": "//sdk/android:android_sdk_junit_tests",
+    "type": "junit_test",
+  },
+  "apprtcmobile_tests": {
+    "label": "//examples:apprtcmobile_tests",
+    "type": "raw",
+  },
+  "audio_decoder_unittests": {
+    "label": "//modules/audio_coding:audio_decoder_unittests",
+    "type": "console_test_launcher",
+  },
+  "common_audio_unittests": {
+    "label": "//common_audio:common_audio_unittests",
+    "type": "console_test_launcher",
+  },
+  "common_video_unittests": {
+    "label": "//common_video:common_video_unittests",
+    "type": "console_test_launcher",
+  },
+  "dcsctp_unittests": {
+    "label": "//net/dcsctp:dcsctp_unittests",
+    "type": "console_test_launcher",
+  },
+  "isac_fix_test": {
+    "label": "//modules/audio_coding:isac_fix_test",
+    "type": "console_test_launcher",
+    "args": [
+      "32000", "../../resources/speech_and_misc_wb.pcm",
+      "isac_speech_and_misc_wb.pcm",
+    ]
+  },
+  "android_instrumentation_test_apk": {
+    "label": "//sdk/android:android_instrumentation_test_apk",
+    "type": "additional_compile_target",
+  },
+  "low_bandwidth_audio_test": {
+    "label": "//audio:low_bandwidth_audio_test",
+    "type": "console_test_launcher",
+    "args": [
+      "--quick",
+    ],
+  },
+  "low_bandwidth_audio_perf_test": {
+    "label": "//audio:low_bandwidth_audio_perf_test",
+    "type": "script",
+    "script": "//audio/test/low_bandwidth_audio_test.py",
+    "args": [
+      ".", "--remove",
+    ],
+  },
+  "modules_tests": {
+    "label": "//modules:modules_tests",
+    "type": "console_test_launcher",
+  },
+  "modules_unittests": {
+    "label": "//modules:modules_unittests",
+    "type": "windowed_test_launcher",
+  },
+  "peerconnection_unittests": {
+    "label": "//pc:peerconnection_unittests",
+    "type": "console_test_launcher",
+  },
+  "rtc_media_unittests": {
+    "label": "//media:rtc_media_unittests",
+    "type": "console_test_launcher",
+  },
+  "rtc_pc_unittests": {
+    "label": "//pc:rtc_pc_unittests",
+    "type": "console_test_launcher",
+  },
+  "rtc_stats_unittests": {
+    "label": "//stats:rtc_stats_unittests",
+    "type": "console_test_launcher",
+  },
+  "rtc_unittests": {
+    "label": "//:rtc_unittests",
+    "type": "console_test_launcher",
+  },
+  "sdk_framework_unittests": {
+    "label": "//sdk:sdk_framework_unittests",
+    "type": "raw",
+  },
+  "sdk_unittests": {
+    "label": "//sdk:sdk_unittests",
+    "type": "raw",
+  },
+  "slow_tests": {
+    "label": "//:slow_tests",
+    "type": "console_test_launcher",
+  },
+  "system_wrappers_unittests": {
+    "label": "//system_wrappers:system_wrappers_unittests",
+    "type": "console_test_launcher",
+  },
+  "test_support_unittests": {
+    "label": "//test:test_support_unittests",
+    "type": "console_test_launcher",
+  },
+  "tools_unittests": {
+    "label": "//rtc_tools:tools_unittests",
+    "type": "console_test_launcher",
+  },
+  "video_capture_tests": {
+    "label": "//modules/video_capture:video_capture_tests",
+    "type": "non_parallel_console_test_launcher",
+    # TODO(bugs.webrtc.org/9292): remove use_webcam and the ensure script.
+    "use_webcam": True,
+  },
+  "video_engine_tests": {
+    "label": "//:video_engine_tests",
+    "type": "console_test_launcher",
+  },
+  "voip_unittests": {
+    "label": "//:voip_unittests",
+    "type": "console_test_launcher",
+  },
+  "webrtc_nonparallel_tests": {
+    "label": "//:webrtc_nonparallel_tests",
+    "type": "non_parallel_console_test_launcher",
+  },
+  "webrtc_perf_tests": {
+    "label": "//:webrtc_perf_tests",
+    "type": "raw",
+  },
+}

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test-pre.js"></script>
+<script>
+description("Test null handling of several Document attributes");
+
+debug("* cookie attribute");
+shouldBeEqualToString("document.cookie", "");
+evalAndLog("document.cookie = 'key=value'");
+shouldBeEqualToString("document.cookie", "key=value");
+evalAndLog("document.cookie = null");
+shouldBeTrue("document.cookie.indexOf('key=value') != -1");
+shouldBeTrue("document.cookie.indexOf('null=') != -1");
+
+debug("");
+debug("* title attribute");
+shouldBeEqualToString("document.title", "");
+evalAndLog("document.title = null");
+shouldBeEqualToString("document.title", "null");
+
+debug("");
+debug("* domain attribute");
+shouldBeEqualToString("document.domain", "127.0.0.1");
+shouldThrow("document.domain = null");
+shouldBeEqualToString("document.domain", "127.0.0.1");
+</script>
+<script src="/js-test-resources/js-test-post.js"></script>
+</body>
+</html>

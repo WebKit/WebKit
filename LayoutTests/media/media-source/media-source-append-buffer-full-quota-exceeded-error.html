@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>mock-media-source</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var initSegment;
+    var exception;
+
+    async function appendPtsRange(firstPts, lastPts, timescale = 1, gap = 0, step = null) {
+        var resultException = null;
+        if (step == null)
+            step = timescale;
+        for (var pts = firstPts; pts <= lastPts; pts += step) {
+            try {
+                consoleWrite('Appending PTS='+pts / timescale);
+                sourceBuffer.appendBuffer(makeASample(pts, pts, step - gap, timescale, 1, SAMPLE_FLAG.SYNC, 1));
+                await waitFor(sourceBuffer, 'updateend');
+            } catch (e) {
+                resultException = e;
+                sourceBuffer.abort();
+                break;
+            }
+        }
+        return resultException;
+    }
+
+    async function appendConcatenateSamples(start, end) {
+        var resultException = null;
+        const samples = [];
+        for (let time = start; time <= end; time++)
+            samples.push(makeASample(time, time, 1, 1, 1, time === start ? SAMPLE_FLAG.SYNC : SAMPLE_FLAG.NONE));
+
+        try {
+            consoleWrite('Appending PTS='+start+'-'+end );
+            sourceBuffer.appendBuffer(concatenateSamples(samples));
+            await waitFor(sourceBuffer, 'updateend');
+        } catch (e) {
+            resultException = e;
+            sourceBuffer.abort();
+        }
+        return resultException;
+    }
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    window.addEventListener('load', async() => {
+        findMediaElement();
+        source = new MediaSource();
+
+        const videoSource = document.createElement('source');
+        videoSource.type = 'video/mock; codecs=mock';
+        videoSource.src = URL.createObjectURL(source);
+        video.appendChild(videoSource);
+
+        await waitFor(source, 'sourceopen');
+        sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock");
+        initSegment = makeAInit(350, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]);
+        sourceBuffer.appendBuffer(initSegment);
+        await waitFor(sourceBuffer, 'updateend');
+        waitFor(sourceBuffer, 'error');
+
+        internals.settings.setMaximumSourceBufferSize(1000);
+
+        exception = await appendPtsRange(0, 12);
+        testExpected('exception', 'QuotaExceededError: The quota has been exceeded.', '!=');
+
+        exception = await appendConcatenateSamples(13, 15);
+        testExpected('exception', 'QuotaExceededError: The quota has been exceeded.', '==');
+
+        // To exercise eviction ahead of current time we must add over 30s of data.
+        internals.settings.setMaximumSourceBufferSize(3000);
+
+        // Ensure that small gaps that would be ignored during playback are also ignored by eviction.
+        // We use a gap of 2/1000 as gaps of 1/1000th are removed and 2002/24000 is the maximum gap ignored during playback.
+        sourceBuffer.remove(0, Infinity);
+        await waitFor(sourceBuffer, 'updateend');
+        exception = await appendPtsRange(0, 60000, 1000, 2);
+        testExpected('exception', 'QuotaExceededError: The quota has been exceeded.', '==');
+        // Check that appendBuffer removed all the small gaps in the data less than the threshold.
+        testExpected(sourceBuffer.buffered.length, '1', '==');
+
+        // Ensure that if current time is close enough to the buffered data that the nearest range isn't evicted.
+        sourceBuffer.remove(0, Infinity);
+        await waitFor(sourceBuffer, 'updateend');
+        exception = await appendPtsRange(2, 60002, 1000);
+        testExpected('exception', 'QuotaExceededError: The quota has been exceeded.', '==');
+
+        internals.settings.setMaximumSourceBufferSize(4000);
+        // Ensure that small gaps that would be ignored during playback are also ignored by eviction.
+        // We use a gap of 2000/24000 which is less than the 2002/24000 gap ignored during playback.
+        // Gaps are removed during append, so we remove data to create a gap <= 2000/24000.
+        sourceBuffer.remove(0, Infinity);
+        await waitFor(sourceBuffer, 'updateend');
+        exception = await appendPtsRange(0, 29);
+        testExpected('exception', 'QuotaExceededError: The quota has been exceeded.', '!=');
+        // Add 30 to 32s in smaller granularity.
+        exception = await appendPtsRange(720000, 768000 - 1, 24000, 0, 2000);
+        testExpected('exception', 'QuotaExceededError: The quota has been exceeded.', '!=');
+        testExpected(sourceBuffer.buffered.length, '1', '==');
+        // Create a small 2000/24000 gap in the data at 31s.
+        sourceBuffer.remove(744000 / 24000, (744000 + 2000) / 24000);
+        await waitFor(sourceBuffer, 'updateend');
+        testExpected(sourceBuffer.buffered.length, '2', '==');
+        exception = await appendPtsRange(32, 60);
+        testExpected('exception', 'QuotaExceededError: The quota has been exceeded.', '==');
+
+        endTest();
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

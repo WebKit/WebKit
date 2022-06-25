@@ -1,0 +1,10 @@
+This test makes sure that width calculations when shaping in the fast codepath have enough precision.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS beforeWidth is afterWidth
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

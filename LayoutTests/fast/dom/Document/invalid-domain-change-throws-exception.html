@@ -1,0 +1,14 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("This test checks that a SECURITY_ERR exception is raised if an attempt is made to change document.domain to an invalid value.");
+
+shouldThrowErrorName('document.domain = "apple.com"', 'SecurityError');
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

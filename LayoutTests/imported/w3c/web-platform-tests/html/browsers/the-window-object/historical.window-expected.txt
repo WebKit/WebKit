@@ -1,0 +1,3 @@
+
+FAIL showModalDialog() has been removed from the platform assert_false: expected false got true
+

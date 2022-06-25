@@ -1,0 +1,16 @@
+
+PASS addTransceiver() with undefined sendEncodings should have default encoding parameter with active set to true
+PASS addTransceiver() with empty list sendEncodings should have default encoding parameter with active set to true
+FAIL sender.getParameters() should return sendEncodings set by addTransceiver() assert_not_own_property: rid should be removed with a single encoding unexpected property "rid" is found on object
+PASS sender.setParameters() with mismatch number of encodings should reject with InvalidModificationError
+PASS sender.setParameters() with encodings unset should reject with TypeError
+FAIL setParameters() with modified encoding.rid field should reject with InvalidModificationError assert_not_equals: Expect sender param.rtcp.cname to be set got disallowed value undefined
+PASS setParameters() with encoding.scaleResolutionDownBy field set to less than 1.0 should reject with RangeError
+PASS setParameters() with encoding.scaleResolutionDownBy field set to greater than 1.0 should succeed
+PASS setParameters() with modified encoding.active should succeed with RTCRtpTransceiverInit
+PASS setParameters() with modified encoding.active should succeed without RTCRtpTransceiverInit
+PASS setParameters() with modified encoding.maxBitrate should succeed with RTCRtpTransceiverInit
+PASS setParameters() with modified encoding.maxBitrate should succeed without RTCRtpTransceiverInit
+PASS setParameters() with modified encoding.scaleResolutionDownBy should succeed with RTCRtpTransceiverInit
+PASS setParameters() with modified encoding.scaleResolutionDownBy should succeed without RTCRtpTransceiverInit
+

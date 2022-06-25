@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="connect-src *">
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</head>
+<body>
+<pre id="console"></pre>
+<script>
+function log(message)
+{
+    document.getElementById("console").appendChild(document.createTextNode(message + "\n"));
+}
+
+try {
+    new WebSocket("wss://127.0.0.1:9323/websocket/tests/hybi/echo");
+    log("PASS did create WebSocket.");
+} catch(e) {
+    log("FAIL did not create WebSocket.");
+}
+</script>
+</body>
+</html>

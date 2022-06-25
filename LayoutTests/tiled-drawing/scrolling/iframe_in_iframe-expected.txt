@@ -1,0 +1,17 @@
+Inner Frame:
+
+Tests that iframe doesn't pass wheel events to main frame when scrolling inside iframe
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS Page did not receive wheel events.
+PASS iframe did not receive wheel events.
+PASS iframe received wheel events.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

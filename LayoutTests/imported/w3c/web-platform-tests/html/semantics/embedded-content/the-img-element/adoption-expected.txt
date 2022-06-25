@@ -1,0 +1,13 @@
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT img (src only) Test timed out
+PASS img (src only), parent is picture
+PASS img (src only), previous sibling is source
+TIMEOUT img (srcset 1 cand) Test timed out
+PASS img (srcset 1 cand), parent is picture
+PASS img (srcset 1 cand), previous sibling is source
+FAIL adopt a cloned img in template assert_equals: expected "http://localhost:8800/images/green-1x1.png" but got "/images/green-1x1.png"
+PASS adoption is from appendChild
+
+

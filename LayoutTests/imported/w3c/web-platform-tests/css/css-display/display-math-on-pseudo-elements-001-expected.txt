@@ -1,0 +1,10 @@
+
+
+
+FAIL computed display on ::before and ::after for <div class="block"> assert_equals: expected "block" but got "inline"
+FAIL computed display on ::before and ::after for <math class="block"> assert_equals: expected "block" but got "inline"
+FAIL computed display on ::before and ::after for <mrow class="block"> assert_equals: expected "block" but got "inline"
+PASS computed display on ::before and ::after for <div class="inline">
+PASS computed display on ::before and ::after for <math class="inline">
+PASS computed display on ::before and ::after for <mrow class="inline">
+

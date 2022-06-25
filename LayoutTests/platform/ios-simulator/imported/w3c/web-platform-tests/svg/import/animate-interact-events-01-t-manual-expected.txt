@@ -1,0 +1,52 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (50,9) size 714x475
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGRect {rect} at (0,0) size 84x84 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
+      RenderSVGText {text} at (120,5) size 218x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 218x18
+          chunk 1 text run 1 at (120.00,20.00) startOffset 0 endOffset 32 width 217.63: "Shadow tree event listener chain"
+      RenderSVGContainer {use} at (50,50) size 84x84 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,30.00)}]
+        RenderSVGRect {rect} at (50,50) size 84x84 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
+      RenderSVGText {text} at (95,33) size 262x15 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 262x15
+          chunk 1 text run 1 at (95.00,45.00) startOffset 0 endOffset 47 width 261.47: "Case 1: on mouseover all squares must turn blue"
+      RenderSVGContainer {use} at (50,166) size 84x84 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,100.00)}]
+        RenderSVGRect {rect} at (50,166) size 84x84 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
+      RenderSVGRect {rect} at (50,166) size 84x84 [x=30.00] [y=100.00] [width=50.00] [height=50.00]
+      RenderSVGContainer {g} at (158,172) size 464x50
+        RenderSVGText {text} at (95,103) size 262x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 262x15
+            chunk 1 text run 1 at (95.00,115.00) startOffset 0 endOffset 47 width 261.47: "Case 2: on mouseover all squares must turn blue"
+        RenderSVGText {text} at (95,118) size 279x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 279x15
+            chunk 1 text run 1 at (95.00,130.00) startOffset 0 endOffset 50 width 278.16: "and a black stroke must appear on reference square"
+      RenderSVGContainer {g} at (50,283) size 84x84
+        RenderSVGContainer {use} at (50,283) size 84x84 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,170.00)}]
+          RenderSVGRect {rect} at (50,283) size 84x84 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
+        RenderSVGRect {rect} at (50,283) size 84x84 [x=30.00] [y=170.00] [width=50.00] [height=50.00]
+      RenderSVGContainer {g} at (158,289) size 464x50
+        RenderSVGText {text} at (95,173) size 262x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 262x15
+            chunk 1 text run 1 at (95.00,185.00) startOffset 0 endOffset 47 width 261.47: "Case 3: on mouseover all squares must turn blue"
+        RenderSVGText {text} at (95,188) size 279x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 279x15
+            chunk 1 text run 1 at (95.00,200.00) startOffset 0 endOffset 50 width 278.16: "and a black stroke must appear on reference square"
+      RenderSVGContainer {use} at (50,400) size 84x84 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,240.00)}]
+        RenderSVGRect {rect} at (50,400) size 84x84 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
+      RenderSVGRect {rect} at (50,400) size 84x84 [x=30.00] [y=240.00] [width=50.00] [height=50.00]
+      RenderSVGContainer {g} at (158,405) size 606x50
+        RenderSVGText {text} at (95,243) size 262x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 262x15
+            chunk 1 text run 1 at (95.00,255.00) startOffset 0 endOffset 47 width 261.47: "Case 4: on mouseover all squares must turn blue"
+        RenderSVGText {text} at (95,258) size 363x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 363x15
+            chunk 1 text run 1 at (95.00,270.00) startOffset 0 endOffset 63 width 362.88: "and on mousedown a black stroke must appear on reference square"
+    RenderSVGContainer {g} at (16,516) size 385x64
+      RenderSVGText {text} at (10,310) size 231x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 231x38
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 230.19: "$Revision: 1.2 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

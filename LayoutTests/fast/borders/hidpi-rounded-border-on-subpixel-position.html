@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This test if rounded rects on subpixel positions leave cruft behind.</title>
+<style>
+  div {
+    position: fixed;
+  }
+
+  .roundedRect {
+	border-width: 0px 0px 0px 1px;
+	border-style: solid;
+	border-top-left-radius: 1px;
+	border-color: black;
+  }
+</style>
+</head>
+<body>
+<p id="container"></p>
+<script>
+  var container = document.getElementById("container");
+  adjustment = 0.1;
+  w = 5; h = 5;
+  for (i = 0; i < 20; ++i) {
+    adjustment += 0.1;
+    for (j = 0; j < 15; ++j) {
+      var e = document.createElement("div");
+      e.className = "roundedRect";
+      e.style.top = ((w + 1) * i + j * adjustment) + "px";
+      e.style.left = ((w + 1) * j + i * adjustment) + "px";
+      e.style.width = w + "px";
+      e.style.height = h + "px";
+      container.appendChild(e);
+
+      var p = document.createElement("div");
+      p.style.top = ((w + 1) * i + j * adjustment) + "px";
+      p.style.left = ((w + 1) * j + i * adjustment) + "px";
+      p.style.width = w + "px";
+      p.style.height = h + "px";
+      p.style.borderLeft = "solid 1px white";
+      container.appendChild(p);
+
+      w += 0.1;
+      h += 0.1;
+    }
+  }
+</script>
+</body>
+</html>

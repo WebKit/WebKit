@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<ul id="tree0" role="tree" aria-labelledby="treelabel" aria-multiselectable="true" tabindex="0">
+    <li id="tree0_item0" role="treeitem" aria-level="1" aria-selected="true" aria-expanded="true"><span>
+    <span class="expander"></span>Animals</span>
+    <ul role="group">
+        <li id="tree0_item0_0" aria-selected="true" role="treeitem" aria-level="2"><span>Birds</span></li>
+        <li id="tree0_item0_1" aria-selected="true" role="treeitem" aria-level="2" aria-expanded="false">
+        <span><span class="expander"></span>Cats</span>
+        <ul role="group">
+            <li id="tree0_item0_1_0" aria-selected="true" role="treeitem"aria-level="3"><span>Siamese</span></li>
+            <li id="tree0_item0_1_1" aria-selected="true" role="treeitem" aria-level="3"><span>Tabby</span></li>
+         </ul>
+         </li>
+      </ul>
+      </li>
+</ul>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that the index attribute is correctly returned for all tree items, regardless of their hierarchical level.");
+
+    if (window.accessibilityController) {
+
+          var tree = document.getElementById("tree0");
+          tree.focus();
+          var axtree = accessibilityController.focusedElement;
+ 
+          tree.setAttribute("activedescendant", "tree0_item0");
+          shouldBe("axtree.selectedRowAtIndex(0).indexInTable()", "0");
+
+          tree.setAttribute("activedescendant", "tree0_item0_0");
+          shouldBe("axtree.selectedRowAtIndex(1).indexInTable()", "1");
+
+          tree.setAttribute("activedescendant", "tree0_item0_1");
+          shouldBe("axtree.selectedRowAtIndex(2).indexInTable()", "2");
+
+          tree.setAttribute("activedescendant", "tree0_item0_1_0");
+          shouldBe("axtree.selectedRowAtIndex(3).indexInTable()", "3");
+
+          tree.setAttribute("activedescendant", "tree0_item0_1_1");
+          shouldBe("axtree.selectedRowAtIndex(4).indexInTable()", "4");
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

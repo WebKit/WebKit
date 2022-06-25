@@ -1,0 +1,1 @@
+../resources/pending-spec-changes-plain-text-unsafe.dat: PASS

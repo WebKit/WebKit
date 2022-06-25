@@ -1,0 +1,109 @@
+# Copyright (c) 2018 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("//third_party/google_benchmark/buildconfig.gni")
+import("../../webrtc.gni")
+if (is_android) {
+  import("//build/config/android/config.gni")
+  import("//build/config/android/rules.gni")
+}
+
+rtc_library("yield") {
+  sources = [
+    "yield.cc",
+    "yield.h",
+  ]
+  deps = []
+}
+
+rtc_library("mutex") {
+  sources = [
+    "mutex.cc",
+    "mutex.h",
+    "mutex_critical_section.h",
+    "mutex_pthread.h",
+  ]
+  if (rtc_use_absl_mutex) {
+    sources += [ "mutex_abseil.h" ]
+  }
+
+  deps = [
+    ":yield",
+    "..:checks",
+    "..:macromagic",
+    "..:platform_thread_types",
+    "../system:no_unique_address",
+  ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/base:core_headers" ]
+  if (rtc_use_absl_mutex) {
+    absl_deps += [ "//third_party/abseil-cpp/absl/synchronization" ]
+  }
+}
+
+rtc_library("sequence_checker_internal") {
+  visibility = [ "../../api:sequence_checker" ]
+  sources = [
+    "sequence_checker_internal.cc",
+    "sequence_checker_internal.h",
+  ]
+  deps = [
+    ":mutex",
+    "..:checks",
+    "..:macromagic",
+    "..:platform_thread_types",
+    "..:stringutils",
+    "../../api/task_queue",
+    "../system:rtc_export",
+  ]
+}
+
+rtc_library("yield_policy") {
+  sources = [
+    "yield_policy.cc",
+    "yield_policy.h",
+  ]
+  deps = [ "..:checks" ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/base:config",
+    "//third_party/abseil-cpp/absl/base:core_headers",
+  ]
+}
+
+if (rtc_include_tests) {
+  if (enable_google_benchmarks) {
+    rtc_library("synchronization_unittests") {
+      testonly = true
+      sources = [
+        "mutex_unittest.cc",
+        "yield_policy_unittest.cc",
+      ]
+      deps = [
+        ":mutex",
+        ":yield",
+        ":yield_policy",
+        "..:checks",
+        "..:macromagic",
+        "..:rtc_base",
+        "..:rtc_event",
+        "..:threading",
+        "../../test:test_support",
+        "//third_party/google_benchmark",
+      ]
+    }
+
+    rtc_library("mutex_benchmark") {
+      testonly = true
+      sources = [ "mutex_benchmark.cc" ]
+      deps = [
+        ":mutex",
+        "../system:unused",
+        "//third_party/google_benchmark",
+      ]
+    }
+  }
+}

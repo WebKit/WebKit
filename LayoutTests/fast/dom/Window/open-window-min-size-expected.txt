@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: showModalDialog() is deprecated and will be removed. Please use the <dialog> element instead.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS 100 is >= 100
+PASS 100 is >= 100
+PASS 100 is >= 100
+PASS 100 is >= 100
+

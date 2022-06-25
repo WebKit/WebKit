@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<head>
+    <title>This tests that selection stays on when part of the selection gets removed.</title>
+</head>
+<body>
+    This should still be selected.
+    <script>
+        var range = document.createRange(); 
+        range.selectNode(document.body); 
+        window.getSelection().addRange(range);
+    </script>
+</body>
+</html>

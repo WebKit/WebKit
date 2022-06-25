@@ -1,0 +1,47 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1">
+    <script src="../../../../resources/basic-gestures.js"></script>
+    <script src="../../../../resources/ui-helper.js"></script>
+    <script src="../../../../resources/js-test.js"></script>
+    <style>
+    #target {
+        height: 100px;
+        width: 200px;
+        background-color: silver;
+    }
+    </style>
+    <script>
+    jsTestIsAsync = true;
+
+    addEventListener("load", async () => {
+        description("Verifies that long pressing a link presents a context menu that shows the link URL. To manually test, long press on the link. The context menu should show a preview for http://localhost:54321/.");
+
+        if (!window.testRunner || !testRunner.runUIScript)
+            return;
+
+        const targetRect = document.getElementById("targetRect").getBoundingClientRect();
+        const pressPointX = targetRect.x + targetRect.width / 2;
+        const pressPointY = targetRect.y + targetRect.height / 2;
+        results = (await UIHelper.longPressAndGetContextMenuContentAt(pressPointX, pressPointY)).contextMenu;
+        if (results.url == "http://localhost:54321/" && results.isLink)
+            testPassed("correct page loaded in preview");
+        else
+            testFailed("did not load correct page");
+
+        shouldBeTrue("results.items.includes('Copy Link')");
+
+        await liftUpAtPoint(pressPointX, pressPointY);
+        await UIHelper.activateAt(0, 0);
+        finishJSTest();
+    });
+    </script>
+</head>
+<body>
+<div id="target">
+    <a id="targetRect" href="http://localhost:54321">Link Test</a>
+</div>
+</body>
+</html>

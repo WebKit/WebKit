@@ -1,0 +1,45 @@
+<script>
+function runTest(num)
+{
+    sel = window.getSelection();
+    start = document.getElementById("test" + num + "start");
+    end = document.getElementById("test" + num + "end");
+    sel.setBaseAndExtent(start, 0, end, end.childNodes.length);
+    document.execCommand("Delete");
+}
+</script>
+
+<p>This empties a row (the second).  It should be removed. <b>This demonstrates a bug: the two cells that contained the ends of the selection aren't given a placeholder and so appear differently than the other emptied cells.</b></p>
+<div contenteditable="true">
+<table border="1">
+<tr><td>1</td><td id="test1start">2</td><td>3</td></tr>
+<tr><td>4</td><td>5</td><td>6</td></tr>
+<tr><td>7</td><td id="test1end">8</td><td>9</td></tr>
+</table>
+</div>
+
+<script>runTest(1);</script>
+
+
+<p>This empties a row (the second), but it still contains the selection and so shouldn't be removed.</p>
+<div contenteditable="true">
+<table border="1">
+<tr><td>1</td><td>2</td><td>3</td></tr>
+<tr><td id="test2start">4</td><td>5</td><td id="test2end">6</td></tr>
+<tr><td>7</td><td>8</td><td>9</td></tr>
+</table>
+</div>
+
+<script>runTest(2);</script>
+
+<p>This empties the first row, it should be removed.</p>
+<div contenteditable="true">
+<div>Hello <span id="test3start">world!</span></div>
+<table border="1">
+<tr><td>1</td><td>2</td><td>3</td></tr>
+<tr><td>4</td><td id="test3end">5</td><td>6</td></tr>
+<tr><td>7</td><td>8</td><td>9</td></tr>
+</table>
+</div>
+
+<script>runTest(3);</script>

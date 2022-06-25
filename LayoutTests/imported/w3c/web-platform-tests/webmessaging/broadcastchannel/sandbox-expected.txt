@@ -1,0 +1,4 @@
+
+
+PASS Creating BroadcastChannel in an opaque origin
+

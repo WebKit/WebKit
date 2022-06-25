@@ -1,0 +1,40 @@
+<html>
+<body onload="test()">
+<embed name="plg" type="application/x-webkit-test-netscape">
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    function gc()
+    {
+        if (window.GCController)
+            return GCController.collect();
+    
+        for (var i = 0; i < 10000; i++) { // > force garbage collection (FF requires about 9K allocations before a collect)
+            var s = new String("abc");
+        }
+    }
+
+    var recursionsRemaining = 2;
+
+    function pluginCallback()
+    {
+        if (--recursionsRemaining)
+            test();
+        else {
+            document.write("PASS if no crash.<br>");
+            gc();
+        }
+    }
+
+    function test()
+    {
+        try {
+            plg.testCallback("pluginCallback");
+        } catch (ex) {
+            alert("Exception: " + ex.description + ". Test plugin was not found");
+        }
+    }
+</script>
+</body>
+</html>

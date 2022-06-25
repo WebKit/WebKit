@@ -1,0 +1,30 @@
+<html>
+<body>
+<p>For <a href="https://bugs.webkit.org/show_bug.cgi?id=84891">Bug 84891</a> -
+mfenced add/remove child confusion.</p>
+
+<p>This test passes if the mfenced is completely removed from the render tree,
+so e.g. no parentheses or commas are showing after this paragraph.</p>
+
+<math>
+  <mfenced id="mfenced">
+    <mi id="mi1">b</mi>
+    <mi id="mi2">c</mi>
+  </mfenced>
+</math>
+</body>
+
+<script>
+var mfenced = document.getElementById("mfenced");
+
+document.getElementById("mi1").appendChild(document.createElement("div"));
+mfenced.appendChild(document.createElement("span"));
+
+var head = document.getElementsByTagName("head")[0];
+var style = document.createElement("style");
+style.appendChild(document.createTextNode("script{}"));
+head.appendChild(style);
+
+mfenced.parentNode.removeChild(mfenced);
+</script>
+</html>

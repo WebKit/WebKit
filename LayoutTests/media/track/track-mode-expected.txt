@@ -1,0 +1,40 @@
+Tests that the TextTrack mode attribute is appropriately set.
+
+
+
+++ Test default attribute value
+EXPECTED (textTrack.mode == 'showing') OK
+EXPECTED (video.textTracks[0].mode == 'showing') OK
+
+*** Set to bogus value, should return default
+RUN(textTrack.mode = 'bogus')
+EXPECTED (textTrack.mode == 'showing') OK
+EXPECTED (video.textTracks[0].mode == 'showing') OK
+
+*** Set to known values
+++ 'disabled'
+RUN(textTrack.mode = 'disabled')
+EXPECTED (textTrack.mode == 'disabled') OK
+EXPECTED (video.textTracks[0].mode == 'disabled') OK
+EXPECTED (textTrack.cues == 'null') OK
+
+++ 0 events expected while mode = disabled
+
+++ 'hidden'
+RUN(textTrack.mode = 'hidden')
+EXPECTED (textTrack.mode == 'hidden') OK
+EXPECTED (video.textTracks[0].mode == 'hidden') OK
+EXPECTED (textTrack.cues.length == '3') OK
+
+++ 'showing'
+RUN(textTrack.mode = 'showing')
+EXPECTED (textTrack.mode == 'showing') OK
+EXPECTED (video.textTracks[0].mode == 'showing') OK
+EXPECTED (textTrack.cues.length == '3') OK
+
+++ at least 3 events expected while mode = showing
+EVENT(cuechange)
+EVENT(cuechange)
+EVENT(cuechange)
+END OF TEST
+

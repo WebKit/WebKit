@@ -1,0 +1,1 @@
+PASS: body and iframe cleared without crashing.

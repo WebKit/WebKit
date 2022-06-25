@@ -1,0 +1,41 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/test/conftest.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/test/coroutine_tests.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/test/helpers.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/test/test_basic_logic.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/test/test_closed_streams.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/test/test_complex_logic.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/test/test_config.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/test/test_events.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/test/test_exceptions.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/test/test_flow_control_window.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/test/test_h2_upgrade.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/test/test_head_request.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/test/test_header_indexing.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/test/test_informational_responses.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/test/test_interacting_stacks.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/test/test_invalid_content_lengths.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/test/test_invalid_frame_sequences.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/test/test_invalid_headers.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/test/test_priority.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/test/test_related_events.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/test/test_rfc7838.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/test/test_settings.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/test/test_state_machines.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/test/test_stream_reset.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/test/test_utility_functions.py

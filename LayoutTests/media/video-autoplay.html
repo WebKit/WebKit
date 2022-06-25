@@ -1,0 +1,10 @@
+<video autoplay controls></video>
+<script src=media-file.js></script>
+<script src=video-test.js></script>
+
+<script>
+    testExpected("video.autoplay", true);
+    testExpected("video.getAttribute('autoplay')", null, '!=');
+    waitForEvent('play', function () { testExpected("video.paused", false); endTest(); } );
+    video.src = findMediaFile("video", "content/test");
+</script>

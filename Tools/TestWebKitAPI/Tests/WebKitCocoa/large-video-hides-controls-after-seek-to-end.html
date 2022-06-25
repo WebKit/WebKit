@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+
+    function handleEnded() {
+        // The media controls should be updated on the next runloop.
+        setTimeout(function() {
+            try {
+                window.webkit.messageHandlers.testHandler.postMessage("ended");
+            } catch(e) { }
+        }, 0);
+    }
+
+    function seekToEnd() {
+        var video = document.getElementsByTagName("video")[0];
+        video.currentTime = video.duration;
+    }
+
+    function beginTest() {
+        try {
+            window.webkit.messageHandlers.onloadHandler.postMessage("loaded");
+        } catch(e) { }
+    }
+
+    function beganAutoplaying() {
+        setTimeout(function() {
+            try {
+                window.webkit.messageHandlers.testHandler.postMessage("autoplayed");
+            } catch(e) {
+            }
+        }, 0)
+    }
+
+   </script>
+</head>
+<body onmousedown=seekToEnd() onload=beginTest()>
+    <video autoplay onplaying=beganAutoplaying() onended=handleEnded() src="large-video-with-audio.mp4" webkit-playsinline style="width: 800px; height: 600px;"></video>
+</body>
+</html>

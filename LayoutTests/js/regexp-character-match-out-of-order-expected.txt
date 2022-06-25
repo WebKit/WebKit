@@ -1,0 +1,10 @@
+Test to ensure RegExp generates single character matches in the correct order
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS /[\w']+/.exec("'_'").toString() is "'_'"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,15 @@
+Testing that muting a video element should result in page's audio playing state to become false
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.internals.pageMediaState().includes('IsPlayingAudio') became true
+PASS window.internals.pageMediaState().includes('IsPlayingAudio') became false
+PASS window.internals.pageMediaState().includes('IsPlayingAudio') became true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+RUN(video.muted = true)
+RUN(video.muted = false)
+

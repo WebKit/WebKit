@@ -1,0 +1,37 @@
+@supports (-webkit-appearance: -apple-pay-button) {
+    .apple-pay-button {
+    	display: inline-block;
+        -webkit-appearance: -apple-pay-button;
+        -apple-pay-button-type: buy;
+        width: 50px;
+    }
+}
+
+.apple-pay-not-supported::before {
+    content: "Apple Pay not supported";
+    color: grey;
+}
+
+.hidden {
+    visibility: hidden;
+}
+
+#black-buttons > .apple-pay-button {
+	-apple-pay-button-style: black;
+}
+
+#white-buttons > .apple-pay-button {
+	-apple-pay-button-style: white-outline;
+}
+
+#demo {
+	border: 1px solid black;
+	border-radius: 5px;
+	text-align: center;
+}
+
+#description {
+ 	font-family: -apple-system;
+	font-style: italic;
+	font-size: 20px;
+}

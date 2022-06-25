@@ -1,0 +1,63 @@
+<html>
+<head>
+<style>
+body {
+    counter-reset: section;
+}
+h1 {
+    counter-increment: section;
+}
+h2:before {
+    content: counter(section);
+}
+h2:after {
+    content: counters(section, ":", decimal);
+}
+h3:before {
+    content: counter(section, lower-roman);
+}
+h3:after {
+    content: counters(section, ",", upper-roman);
+}
+h3:before {
+    content: counter(section, none);
+}
+</style>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Test the Counter object returned by the getCounterValue method of CSSPrimitiveValues");
+
+function getCounter(cssRule) {
+    return cssRule.style.getPropertyCSSValue('content')[0].getCounterValue();
+}
+
+var rules = document.styleSheets[0].cssRules;
+var counters = [];
+for (var i = 2; i < rules.length; i++) {
+    counters.push(getCounter(rules[i]));
+}
+shouldBeEqualToString("counters[0].identifier", "section");
+shouldBeEqualToString("counters[0].listStyle", "decimal");
+shouldBeEqualToString("counters[0].separator", "");
+
+shouldBeEqualToString("counters[1].identifier", "section");
+shouldBeEqualToString("counters[1].listStyle", "decimal");
+shouldBeEqualToString("counters[1].separator", ":");
+
+shouldBeEqualToString("counters[2].identifier", "section");
+shouldBeEqualToString("counters[2].listStyle", "lower-roman");
+shouldBeEqualToString("counters[2].separator", "");
+
+shouldBeEqualToString("counters[3].identifier", "section");
+shouldBeEqualToString("counters[3].listStyle", "upper-roman");
+shouldBeEqualToString("counters[3].separator", ",");
+
+shouldBeEqualToString("counters[4].identifier", "section");
+shouldBeEqualToString("counters[4].listStyle", "none");
+shouldBeEqualToString("counters[4].separator", "");
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

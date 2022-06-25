@@ -1,0 +1,23 @@
+<!-- webkit-test-runner [ CanvasColorSpaceEnabled=false ] -->
+<html>
+    <script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+    description("Test that the colorSpace member of CanvasRenderingContext2DSettings is unsupported when CanvasColorSpaceEnabled=false.");
+
+    function testColorSpaceUnsupported(settings, expectedColorSpace) {
+        let canvas = document.createElement("canvas");
+        let context = canvas.getContext("2d", settings);
+        window.testSettings = context.getContextAttributes();
+        shouldBeUndefined("testSettings.colorSpace");
+    }
+
+    testColorSpaceUnsupported(undefined);
+    testColorSpaceUnsupported({ colorSpace: "srgb" });
+    testColorSpaceUnsupported({ colorSpace: "foo" });
+</script>
+    
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

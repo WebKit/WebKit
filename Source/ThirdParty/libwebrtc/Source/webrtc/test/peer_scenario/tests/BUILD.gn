@@ -1,0 +1,30 @@
+# Copyright (c) 2019 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+if (rtc_include_tests) {
+  rtc_library("tests") {
+    testonly = true
+    sources = [
+      "peer_scenario_quality_test.cc",
+      "remote_estimate_test.cc",
+      "unsignaled_stream_test.cc",
+    ]
+    deps = [
+      "..:peer_scenario",
+      "../../:field_trial",
+      "../../:rtp_test_utils",
+      "../../:test_support",
+      "../../../media:rtc_media_base",
+      "../../../modules/rtp_rtcp:rtp_rtcp",
+      "../../../modules/rtp_rtcp:rtp_rtcp_format",
+      "../../../pc:rtc_pc_base",
+    ]
+  }
+}

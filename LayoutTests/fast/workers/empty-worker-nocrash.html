@@ -1,0 +1,11 @@
+<html>
+<script>
+var worker = new Worker('about:blank');
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+setTimeout('window.testRunner.notifyDone()', 20);
+</script>
+<p>PASS</p>
+</html>

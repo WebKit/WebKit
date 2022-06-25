@@ -1,0 +1,39 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 13 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > B > DIV > BODY > HTML > #document to 3 of #text > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > A > DIV > BODY > HTML > #document to 3 of #text > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > DIV > BODY > HTML > #document to 3 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+This is a test for execCommand("RemoveFormat"). It demonstrates a bug: everything in the editable region below should be selected, as everything was selected before Remove Format was performed.
+
+markup:
+| "\n"
+| "<#selection-anchor>foo"
+| <a>
+|   href="http://www.google.com/"
+|   "bar"
+| "baz"
+| <br>
+| "\n"
+| <table>
+|   border="1"
+|   <tbody>
+|     <tr>
+|       <td>
+|         "foo"
+|       <td>
+|         "bar"
+|       <td>
+|         "baz"
+| "\n"
+| "foo"
+| "bar"
+| "baz<#selection-focus>"
+| <br>
+| "\n"
+
+console:
+|

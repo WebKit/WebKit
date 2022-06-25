@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText()
+        testRunner.waitUntilDone();
+    }
+</script>
+
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+    var styleEntry = null
+    var paintEntry = null
+    var timestamps = []
+    var charsPerIteration = 80
+    var charThreshold = 200
+    var expectedIterations = Math.ceil(charThreshold / charsPerIteration)
+
+    function slowString(str, delay) {
+        const script = document.createElement('script')
+        const source = `document.write('${str}'); timestamps.push(${performance.now()}); check();`
+        script.src = `./resources/slowscript.py?cacheBuster=${performance.now()}&delay=${delay}&script=${source}`
+        document.write(script.outerHTML)
+    }
+
+    function check() {
+        if (timestamps.length < expectedIterations + 3 || !paintEntry)
+            return;
+
+        document.body.innerText = ''
+
+        shouldBeTrue("paintEntry.startTime > timestamps[expectedIterations]")
+        shouldBeTrue("paintEntry.startTime < timestamps[expectedIterations + 2]")
+        
+        if (window.testRunner)
+            testRunner.notifyDone()
+    }
+
+    const observer = new PerformanceObserver(list => {
+        paintEntry = performance.getEntriesByType('paint')[0]
+        if (paintEntry)
+            check()
+    });
+    observer.observe({entryTypes: ["paint"]})
+
+    function next() {
+        slowString('\t ' + Array(charsPerIteration / 2).fill(' 0 \t A').join('') + "   \n\t", 0.3, charsPerIteration)
+    }
+</script>
+</head>
+<body>
+    <script>next()</script>
+    <script>next()</script>
+    <script>next()</script>
+    <script>next()</script>
+    <script>next()</script>
+    <script>next()</script>
+    <script>next()</script>
+    <script>next()</script>
+    <script>next()</script>
+    <script>next()</script>
+    <script>next()</script>
+    <script>next()</script>
+    <script>next()</script>
+    <script>next()</script>
+    <script>next()</script>
+    <script>next()</script>
+    <script>next()</script>
+    <script>next()</script>
+    <script>next()</script>
+</body>
+</html>

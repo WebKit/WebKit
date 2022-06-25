@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html id="html">
+<head>
+<style id="custom-style">
+    * {
+        background-color: white;
+        margin: 0;
+        padding: 0;
+    }
+    label:active, input:active {
+        background-color: rgb(50, 100, 150) !important;
+    }
+    label {
+        display: block;
+        width: 100px;
+        height: 100px;
+        background-color: green;
+        border: 2px solid black;
+    }
+</style>
+</head>
+<script src="../../resources/js-test-pre.js"></script>
+<body id="body">
+    <div id="webkit-test">
+        <div id="labelable-ancestor">
+            <div id="labelable-parent">
+                <label for="labelable">Label</label>
+                <label for="labelable">Label</label>
+                <label for="labelable">Label</label>
+            </div>
+        </div>
+        <div id="next-group" style="display:none">
+            <input id="labelable" value="Labelable Input">
+            <input id="labelable" value="Labelable Input">
+            <input id="labelable" value="Labelable Input">
+        </div>
+    </div>
+    <div id="console">
+    </div>
+    <script>
+    description("Verify that a labeled elemed gets the :active state even if it has no renderer.");
+    window.jsTestIsAsync = true;
+
+    function generateName(element) {
+        if (element.id && element.id != "labelable")
+            return element.id;
+
+        let childPosition = 1;
+        while (element.previousElementSibling) {
+            element = element.previousElementSibling;
+            ++childPosition;
+        }
+        return "#" + element.parentElement.id + " >> " + element.tagName.toLowerCase() + ":nth-child(" + childPosition + ")";
+    }
+
+    function elementsWithActiveStyle() {
+        let elements = [];
+        for (let element of document.querySelectorAll("*")) {
+            if (getComputedStyle(element).backgroundColor === "rgb(50, 100, 150)")
+                elements.push(generateName(element));
+        }
+        return elements;
+    }
+    function elementsMatchingActiveSelector() {
+        let elements = [];
+        for (let element of document.querySelectorAll(":active")) {
+            elements.push(generateName(element));
+        }
+        return elements;
+    }
+
+    if (window.eventSender) {
+        eventSender.mouseMoveTo(50, 50);
+    } else {
+        debug("");
+        debug("To run Manually, click-hold-release on the first green rect. All the results below should say PASS.")
+        debug("");
+    }
+
+    function sendMouseDown() {
+        if (window.eventSender) {
+            eventSender.mouseDown();
+        }
+    }
+
+    function sendMouseUp() {
+        if (window.eventSender) {
+            eventSender.mouseUp();
+        }
+    }
+
+    function mouseDownHandler(event, delayed = false) {
+        debug(delayed ? "After Mouse Down" : "On Mouse Down");
+        shouldBe('elementsWithActiveStyle()', '["#labelable-parent >> label:nth-child(1)", "#next-group >> input:nth-child(1)"]');
+        shouldBe('elementsMatchingActiveSelector()', '["html", "body", "webkit-test", "labelable-ancestor", "labelable-parent", "#labelable-parent >> label:nth-child(1)", "#next-group >> input:nth-child(1)"]');
+
+        if (!delayed) {
+            setTimeout(function() { mouseDownHandler(event, true); }, 0);
+        } else {
+            sendMouseUp();
+        }
+    }
+    var target = document.querySelector('label:nth-child(1)');
+    target.addEventListener('mousedown', mouseDownHandler);
+
+    function mouseUpHandler(event, delayed = false) {
+        debug(delayed ? "After Mouse Up" : "On Mouse Up");
+        shouldBe('elementsWithActiveStyle()', '[]');
+        shouldBe('elementsMatchingActiveSelector()', '[]');
+        document.getElementById("webkit-test").style.display = "none";
+        document.getElementById("custom-style").innerText = "";
+        finishJSTest();
+    }
+    target.addEventListener('mouseup', mouseUpHandler);
+
+
+    debug("Initial state");
+    shouldBe('elementsWithActiveStyle()', '[]');
+    shouldBe('elementsMatchingActiveSelector()', '[]');
+
+    sendMouseDown();
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

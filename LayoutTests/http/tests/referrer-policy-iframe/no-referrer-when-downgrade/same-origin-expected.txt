@@ -1,0 +1,10 @@
+Tests the behavior of no-referrer-when-downgrade referrer policy when same origin.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS referrer is "http://127.0.0.1:8000/referrer-policy-iframe/no-referrer-when-downgrade/same-origin.html"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

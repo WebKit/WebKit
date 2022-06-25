@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+    RenderMultiColumnSet at (0,0) size 800x600
+layer at (0,0) size 180x54
+  RenderMultiColumnFlowThread at (0,0) size 180x54
+layer at (0,0) size 180x54
+  RenderBlock {html} at (0,0) size 180x54
+    RenderBody {body} at (8,8) size 164x38
+      RenderBlock (anonymous) at (0,0) size 164x18
+        RenderBR {br} at (0,0) size 0x17
+layer at (8,26) size 80x20
+  RenderBlock {div} at (0,18) size 80x20
+layer at (8,26) size 80x20
+  RenderBlock {div} at (0,0) size 80x20 [bgcolor=#0000FF]

@@ -1,0 +1,85 @@
+# Copyright(c) 2020 The WebRTC project authors.All Rights Reserved.
+#
+# Use of this source code is governed by a BSD - style license
+# that can be found in the LICENSE file in the root of the source
+# tree.An additional intellectual property rights grant can be found
+# in the file PATENTS.All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+
+rtc_source_set("voip_api") {
+  visibility = [ "*" ]
+  sources = [
+    "voip_base.h",
+    "voip_codec.h",
+    "voip_dtmf.h",
+    "voip_engine.h",
+    "voip_network.h",
+    "voip_statistics.h",
+    "voip_volume_control.h",
+  ]
+  deps = [
+    "..:array_view",
+    "../audio_codecs:audio_codecs_api",
+    "../neteq:neteq_api",
+  ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/base:core_headers",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+rtc_library("voip_engine_factory") {
+  visibility = [ "*" ]
+  sources = [
+    "voip_engine_factory.cc",
+    "voip_engine_factory.h",
+  ]
+  deps = [
+    ":voip_api",
+    "..:scoped_refptr",
+    "../../audio/voip:voip_core",
+    "../../modules/audio_device:audio_device_api",
+    "../../modules/audio_processing:api",
+    "../../rtc_base:logging",
+    "../audio_codecs:audio_codecs_api",
+    "../task_queue",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_source_set("mock_voip_engine") {
+    testonly = true
+    visibility = [ "*" ]
+    sources = [ "test/mock_voip_engine.h" ]
+    deps = [
+      ":voip_api",
+      "..:array_view",
+      "../../test:test_support",
+    ]
+    absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+  }
+
+  rtc_library("voip_engine_factory_unittests") {
+    testonly = true
+    sources = [ "test/voip_engine_factory_unittest.cc" ]
+    deps = [
+      ":voip_engine_factory",
+      "../../modules/audio_device:mock_audio_device",
+      "../../modules/audio_processing:mocks",
+      "../../test:audio_codec_mocks",
+      "../../test:test_support",
+      "../task_queue:default_task_queue_factory",
+    ]
+  }
+
+  rtc_library("compile_all_headers") {
+    testonly = true
+    sources = [ "test/compile_all_headers.cc" ]
+    deps = [
+      ":mock_voip_engine",
+      "../../test:test_support",
+    ]
+  }
+}

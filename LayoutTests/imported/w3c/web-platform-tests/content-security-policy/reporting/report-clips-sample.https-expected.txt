@@ -1,0 +1,11 @@
+
+FAIL Unsafe eval violation sample is clipped to 40 characters. assert_throws_js: function "_ => {
+      eval("evil = '1234567890123456789012345678901234567890';");
+    }" did not throw
+FAIL Function constructor - the other kind of eval - is clipped. assert_throws_js: function "_ => {
+      new Function("a", "b", "return '1234567890123456789012345678901234567890';");
+    }" did not throw
+FAIL Trusted Types violation sample is clipped to 40 characters excluded the sink name. assert_throws_js: function "_ => {
+      a.innerHTML = "1234567890123456789012345678901234567890xxxx";
+    }" did not throw
+

@@ -1,0 +1,29 @@
+<body>
+<style>
+
+div {
+    position: absolute;
+    left: 150px;
+    top: 150px;
+    height: 100px;
+    width: 100px;
+    background-color: black;
+    transform: scale(2);
+    will-change: transform;
+}
+
+.scale-down {
+    transition-property: transform;
+    transition-duration: 1s;
+    transition-delay: calc(60 * 60s);
+    transform: scale(1);
+}
+
+</style>
+<div></div>
+<script>
+
+requestAnimationFrame(() => document.querySelector('div').className = "scale-down");
+
+</script>    
+</body>

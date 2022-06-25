@@ -1,0 +1,15 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+  <title>Testcase for path with errors</title>
+
+  <!-- From https://bugzilla.mozilla.org/show_bug.cgi?id=553905 -->
+
+  <rect width="100%" height="100%" fill="lime"/>
+  <g shape-rendering="crispEdges">
+    <path d="M 20 200 H 80" stroke-width="20%" stroke="red"/>
+    <path d="M 20 200 H 80#90" stroke-width="20%" stroke="lime"/>
+  </g>
+</svg>

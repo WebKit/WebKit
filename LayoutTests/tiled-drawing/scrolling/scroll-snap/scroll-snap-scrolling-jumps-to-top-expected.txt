@@ -1,0 +1,8 @@
+To manually test, scroll so the green box exactly fills the container, and let go.
+
+The scroll position should not jump to the top.
+
+The scroll position is: 300
+Scrolling without momentum to the same position several times
+The scroll position is now: 300
+

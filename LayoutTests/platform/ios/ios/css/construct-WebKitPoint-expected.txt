@@ -1,0 +1,13 @@
+Test constructor for WebKitPoint. <rdar://problem/6481690>
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS WebKitPoint.prototype.toString.call(new WebKitPoint) is '[object WebKitPoint]'
+PASS WebKitPoint.prototype.toString.call(new WebKitPoint(0)) is '[object WebKitPoint]'
+PASS WebKitPoint.prototype.toString.call(new WebKitPoint(1, 1)) is '[object WebKitPoint]'
+PASS WebKitPoint.prototype.toString.call(new WebKitPoint(1, 2, 3)) is '[object WebKitPoint]'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

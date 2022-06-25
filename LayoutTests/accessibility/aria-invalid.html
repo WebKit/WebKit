@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body id="body">
+
+<div id="examples">
+    <!-- All of these eval to AXInvalid: 'false' -->
+    <input class="ex" id="ex1" data-expected="false" type="text">
+    <input class="ex" id="ex2" data-expected="false" type="text" aria-invalid>
+    <input class="ex" id="ex3" data-expected="false" type="text" aria-invalid="">
+    <input class="ex" id="ex4" data-expected="false" type="text" aria-invalid=" ">
+    <input class="ex" id="ex5" data-expected="false" type="text" aria-invalid="	"><!-- [sic] tab char -->
+    <input class="ex" id="ex6" data-expected="false" type="text" aria-invalid="
+    "><!-- [sic] newline char -->
+    <input class="ex" id="ex7" data-expected="false" type="text" aria-invalid="false">
+    <input class="ex" id="ex8" data-expected="false" type="text" aria-invalid="undefined">
+
+    <!-- Known token values in ARIA 1.0. -->
+    <input class="ex" id="ex9" data-expected="grammar" type="text" aria-invalid="grammar">
+    <input class="ex" id="ex10" data-expected="grammar" type="text" aria-invalid="grammar	"><!-- [sic] tab char -->
+    <input class="ex" id="ex11" data-expected="spelling" type="text" aria-invalid="spelling">
+    <input class="ex" id="ex12" data-expected="spelling" type="text" aria-invalid="spelling
+    "><!-- [sic] newline char -->
+
+    <!-- All other string values are truthy, including a combination of otherwise valid tokens. -->
+    <input class="ex" id="ex13" data-expected="true" type="text" aria-invalid="true">
+    <input class="ex" id="ex14" data-expected="true" type="text" aria-invalid="notallowed">
+    <input class="ex" id="ex15" data-expected="true" type="text" aria-invalid="…">
+    <input class="ex" id="ex16" data-expected="true" type="text" aria-invalid="Ç">
+    <input class="ex" id="ex17" data-expected="true" type="text" aria-invalid="spelling grammar">
+    <input class="ex" id="ex18" data-expected="true" type="text" aria-invalid="spelling	grammar"><!-- [sic] tab char -->
+    <input class="ex" id="ex19" data-expected="true" type="text" aria-invalid="spelling
+    grammar"><!-- [sic] newline char -->
+</div>
+
+<script>
+    var testOutput = "This tests that aria-invalid causes the right attribute to be returned and it ensures a notification is sent when it changes.\n\n";
+
+    var axNotificationElement = null;
+    function notificationCallback(notification) {
+        if (notification == "AXInvalidStatusChanged") {
+            testOutput += "Notification received successfully.\n";
+
+            axNotificationElement.removeNotificationListener();
+        }
+    }
+
+    function verify(value, expectation, element) {
+        if (value === expectation)
+            testOutput += `PASS: AXInvalid is ${value}.\n`;
+        else
+            testOutput += `FAIL: AXInvalid is ${value}. Expected: ${expectation}. ${(element ? element.outerHTML : "")}\n`;
+    }
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        var examples = document.querySelectorAll(".ex");
+        for (var i = 0, c = examples.length; i < c; i++) {
+            var el = examples[i];
+            var expectation = el.getAttribute("data-expected");
+            var value = accessibilityController.accessibleElementById(el.id).stringAttributeValue("AXInvalid");
+            verify(value, expectation, el);
+        }
+
+        const domNotificationElement = document.querySelector(".ex");
+        axNotificationElement = accessibilityController.accessibleElementById(domNotificationElement.id);
+        var didAddNotification = axNotificationElement.addNotificationListener(notificationCallback);
+        testOutput += expect("didAddNotification", "true");
+        domNotificationElement.setAttribute("aria-invalid", "spelling");
+
+        setTimeout(async () => {
+            await waitFor(() => {
+                return axNotificationElement.stringAttributeValue("AXInvalid") === "spelling";
+            });
+            verify(axNotificationElement.stringAttributeValue("AXInvalid"), "spelling", domNotificationElement);
+
+            document.getElementById("examples").hidden = true;
+            debug(testOutput);
+            finishJSTest();
+        });
+    }
+</script>
+</body>
+</html>

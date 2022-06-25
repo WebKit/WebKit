@@ -1,0 +1,16 @@
+Tests for breakpoint resolving behavior.
+
+
+== Running test suite: Breakpoint.Resolve
+-- Running test case: Breakpoint.Resolve.WhenScriptAdded
+Waiting for script...
+PASS: Found script.
+Adding breakpoint...
+Reloading page...
+PASS: Paused
+CALL STACK:
+0: [F] outer
+1: [P] Global Code
+Removing breakpoint...
+Resuming...
+

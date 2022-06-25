@@ -1,0 +1,2 @@
+Pass if no crash or assert when the absolute positioned element becomes static and it still part of the same column fragment.
+

@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<html>
+<!--
+https://bugzilla.mozilla.org/show_bug.cgi?id=339494
+-->
+<head>
+    <meta charset="utf-8">
+    <script src="../../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<a target="_blank" href="https://bugzilla.mozilla.org/show_bug.cgi?id=339494">Mozilla Bug 339494</a>
+<p id="display"></p>
+<div id="content" style="display: none">
+  <div id="d"></div>
+  <div id="s"></div>
+</div>
+<pre id="test">
+<script class="testbody" type="text/javascript">
+
+  /** Test for Bug 339494 **/
+
+  var d = document.getElementById("d");
+  
+  d.setAttribute("hhh", "testvalue");
+
+  document.addEventListener("DOMAttrModified", removeItAgain, false);
+  d.removeAttribute("hhh");
+  document.removeEventListener("DOMAttrModified", removeItAgain, false);
+
+  function removeItAgain()
+  {
+    shouldBeTrue('!d.hasAttribute("hhh")');
+    shouldNotBeEqualToString('d.getAttribute("hhh")', "testvalue");
+    document.removeEventListener("DOMAttrModified", removeItAgain, false);
+    d.removeAttribute("hhh");
+  }
+  
+  var s = document.getElementById("s");
+  
+  s.setAttribute("ggg", "testvalue");
+
+  document.addEventListener("DOMAttrModified", compareVal, false);
+  s.setAttribute("ggg", "othervalue");
+  document.removeEventListener("DOMAttrModified", compareVal, false);
+
+  function compareVal()
+  {
+    shouldBeTrue('s.hasAttribute("ggg")');
+    shouldNotBeEqualToString('s.getAttribute("ggg")', "testvalue");
+    shouldBeEqualToString('s.getAttribute("ggg")', "othervalue");
+  }
+
+</script>
+</pre>
+<script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,10 @@
+
+PASS Snaps correctly for horizontal-tb writing mode with 'scroll-snap-align: end start' alignment
+PASS Snaps correctly for vertical-lr writing mode with 'scroll-snap-align: end start' alignment
+FAIL Snaps correctly for vertical-rl writing mode with 'scroll-snap-align: end start' alignment assert_equals: aligns correctly on x expected -315 but got -300
+FAIL Snaps correctly for horizontal-tb writing mode with 'scroll-snap-align: start end' alignment assert_equals: aligns correctly on x expected 115 but got 0
+FAIL Snaps correctly for vertical-lr writing mode with 'scroll-snap-align: start end' alignment assert_equals: aligns correctly on x expected 300 but got 0
+FAIL Snaps correctly for vertical-rl writing mode with 'scroll-snap-align: start end' alignment assert_equals: aligns correctly on x expected -500 but got -485
+FAIL Snaps correctly for 'direction: rtl' with 'scroll-snap-align: end start' alignment assert_equals: aligns correctly on x expected -500 but got -300
+FAIL Snaps correctly for 'direction: rtl' with 'scroll-snap-align: start end' alignment assert_equals: aligns correctly on x expected -315 but got -485
+

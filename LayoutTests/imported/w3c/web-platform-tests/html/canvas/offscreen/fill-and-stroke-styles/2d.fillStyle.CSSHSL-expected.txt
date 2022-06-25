@@ -1,0 +1,7 @@
+2d.fillStyle.CSSHSL
+
+CSSHSL works as color input
+
+
+FAIL CSSHSL works as color input Can't find variable: CSSHSL
+

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+    #container {
+        width: 500px;
+        height: 500px;
+        border: 1px solid black;
+        background-color: yellow;
+        -webkit-transform:translateZ(0);
+    }
+    
+    .box {
+        position: absolute;
+        left:50px;
+        width: 200px;
+        height: 200px;
+        -webkit-transform:translateZ(0);
+    }
+    
+    .at-the-top {
+        top: 100px;
+        background-color: red;
+    }
+    
+    .at-the-bottom {
+        top:200px;
+        left: 275px;
+        background-color: blue;
+    }   
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+        
+        var result = "";
+
+        function testOnLoad()
+        {
+            // Small layer first
+            if (window.testRunner)
+                result = "First (small layer):<br>" + window.internals.layerTreeAsText(document);
+            
+            // Huge layer second
+            document.getElementById('container').style.height = "5000px";
+            document.getElementById('blue-box').style.top = "4700px";
+            if (window.testRunner)
+                result += "<br><br>Second (huge layer):<br>" + window.internals.layerTreeAsText(document);
+            
+            // Small layer third
+            document.getElementById('container').style.height = "500px";
+            document.getElementById('blue-box').style.top = "200px";
+            if (window.testRunner) {
+                result += "<br><br>Third (small layer):<br>" + window.internals.layerTreeAsText(document);
+                document.getElementById('layers').innerHTML = result;
+            }
+        }
+      
+        window.addEventListener('load', testOnLoad, false);
+    </script>
+  </head>
+  <body>
+      <p>
+        The yellow box should be 500 x 500 on startup. Then it should 
+        stretch to be 500 x 5000, then shrink back down to 500 x 500. 
+        This tests that we can resize to a huge layer and back again
+        and still maintain integrity of the layer tree.
+      </p>
+        <div id="container">
+          <div class="box at-the-top"></div>
+          <div id="blue-box" class="box at-the-bottom"></div>
+        </div>
+        <pre id="layers">Layer tree appears here in DRT.</pre>
+  </body>
+</html>

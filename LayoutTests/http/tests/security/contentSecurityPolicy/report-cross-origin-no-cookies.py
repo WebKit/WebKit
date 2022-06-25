@@ -1,0 +1,35 @@
+#!/usr/bin/env python3
+
+import sys
+
+sys.stdout.write(
+    'Content-Security-Policy: img-src \'none\'; report-uri http://localhost:8080/security/contentSecurityPolicy/resources/save-report.py\r\n'
+    'Content-Type: text/html\r\n\r\n'
+    '<!DOCTYPE html>\n'
+    '<html>\n'
+    '<meta name="referrer" content="unsafe-url">\n'
+    '<body>\n'
+    '<script>\n'
+    'if (window.testRunner) {\n'
+    '    testRunner.waitUntilDone();\n'
+    '    testRunner.dumpAsText();\n'
+    '\n'
+    '    testRunner.setStatisticsShouldDowngradeReferrer(false, function () {\n'
+    '        var xhr = new XMLHttpRequest();\n'
+    '        xhr.open("GET", "http://localhost:8080/cookies/resources/setCookies.cgi", false);\n'
+    '        xhr.setRequestHeader("SET-COOKIE", "hello=world;path=/");\n'
+    '        xhr.send(null);\n'
+    '\n'
+    '        // This image will generate a CSP violation report.\n'
+    '        let imgElement = document.createElement("img");\n'
+    '        imgElement.onload = imgElement.onerror = function () {\n'
+    '            window.location = "/security/contentSecurityPolicy/resources/echo-report.py";\n'
+    '        };\n'
+    '        imgElement.src = "/security/resources/abe.png";\n'
+    '        document.body.appendChild(imgElement);\n'
+    '    });\n'
+    '}\n'
+    '</script>\n'
+    '</body>\n'
+    '</html>\n'
+)

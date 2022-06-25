@@ -1,0 +1,9 @@
+
+FAIL :--foo parsing passes The string did not match the expected pattern.
+PASS :--foo parsing failures
+FAIL :--foo serialization undefined is not an object (evaluating 'document.styleSheets[0].cssRules[1].cssText')
+FAIL :--foo in simple cases this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+FAIL :--foo and other pseudo classes this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+FAIL :--foo and ::part() this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+FAIL :--foo and :host() this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+

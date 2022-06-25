@@ -1,0 +1,3 @@
+
+PASS WebGL2 AllowShared uniformMatrix4fv
+

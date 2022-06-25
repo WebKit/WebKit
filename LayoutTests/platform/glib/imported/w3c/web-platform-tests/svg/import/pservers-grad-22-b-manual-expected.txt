@@ -1,0 +1,37 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (33,83) size 717x251
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGResourceLinearGradient {linearGradient} [id="g1"] [gradientUnits=userSpaceOnUse] [start=(0,0)] [end=(400,50)]
+          RenderSVGGradientStop {stop} [offset=0.00] [color=#0000FF]
+          RenderSVGGradientStop {stop} [offset=0.50] [color=#FFFF00]
+          RenderSVGGradientStop {stop} [offset=1.00] [color=#0000FF]
+        RenderSVGResourceLinearGradient {linearGradient} [id="g2"] [gradientUnits=userSpaceOnUse] [start=(0,0)] [end=(200,12.50)]
+          RenderSVGGradientStop {stop} [offset=0.00] [color=#0000FF]
+          RenderSVGGradientStop {stop} [offset=0.50] [color=#FFFF00]
+          RenderSVGGradientStop {stop} [offset=1.00] [color=#0000FF]
+        RenderSVGResourceLinearGradient {linearGradient} [id="g3"] [gradientUnits=userSpaceOnUse] [gradientTransform={m=((0.71,-0.54)(0.60,0.80)) t=(0.00,0.00)}] [start=(0,0)] [end=(400,50)]
+          RenderSVGGradientStop {stop} [offset=0.00] [color=#0000FF]
+          RenderSVGGradientStop {stop} [offset=0.50] [color=#FFFF00]
+          RenderSVGGradientStop {stop} [offset=1.00] [color=#0000FF]
+        RenderSVGResourceLinearGradient {linearGradient} [id="g4"] [gradientUnits=userSpaceOnUse] [gradientTransform={m=((0.94,-0.34)(0.34,0.94)) t=(0.00,0.00)}] [start=(0,0)] [end=(200,12.50)]
+          RenderSVGGradientStop {stop} [offset=0.00] [color=#0000FF]
+          RenderSVGGradientStop {stop} [offset=0.50] [color=#FFFF00]
+          RenderSVGGradientStop {stop} [offset=1.00] [color=#0000FF]
+      RenderSVGContainer {g} at (33,83) size 334x84 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,50.00)}]
+        RenderSVGContainer {g} at (33,83) size 334x84 [transform={m=((0.50,0.00)(0.00,1.00)) t=(0.00,0.00)}]
+          RenderSVGRect {rect} at (33,83) size 334x84 [fill={[type=LINEAR-GRADIENT] [id="g1"]}] [x=0.00] [y=0.00] [width=400.00] [height=50.00]
+      RenderSVGContainer {g} at (33,200) size 334x84 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,120.00)}]
+        RenderSVGRect {rect} at (33,200) size 334x84 [fill={[type=LINEAR-GRADIENT] [id="g2"]}] [x=0.00] [y=0.00] [width=200.00] [height=50.00]
+      RenderSVGContainer {g} at (416,133) size 334x84 [transform={m=((1.00,0.00)(0.00,1.00)) t=(250.00,80.00)}]
+        RenderSVGRect {rect} at (416,133) size 334x84 [transform={m=((0.50,0.00)(0.00,1.00)) t=(0.00,0.00)}] [fill={[type=LINEAR-GRADIENT] [id="g3"]}] [x=0.00] [y=0.00] [width=400.00] [height=50.00]
+      RenderSVGContainer {g} at (416,250) size 334x84 [transform={m=((1.00,0.00)(0.00,1.00)) t=(250.00,150.00)}]
+        RenderSVGRect {rect} at (416,250) size 334x84 [fill={[type=LINEAR-GRADIENT] [id="g4"]}] [x=0.00] [y=0.00] [width=200.00] [height=50.00]
+    RenderSVGContainer {g} at (16,518) size 380x60
+      RenderSVGText {text} at (10,311) size 228x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 228x36
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 227.40: "$Revision: 1.4 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

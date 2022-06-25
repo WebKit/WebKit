@@ -1,0 +1,43 @@
+<!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true contentMode=desktop ] -->
+<html>
+<head>
+<meta id="viewport" name="viewport" content="width=400, initial-scale=1">
+<script src="../../../../resources/js-test-pre.js"></script>
+<script>
+window.jsTestIsAsync = true;
+if (window.internals) {
+    internals.settings.setTextAutosizingEnabled(true);
+    internals.settings.setTextAutosizingUsesIdempotentMode(true);
+}
+</script>
+</head>
+<body style="font: 14px 'Arial'; width: 631px;">
+<div><em id="em">Japan</em><span id="tail"> with Everything about modern and traditional emphasis</span></div>
+<div style="height: 4000px; background: green;"></div>
+<script>
+function _waitForCondition(condition, completionHandler)
+{
+  if (condition())
+    completionHandler();
+  else
+    setTimeout(_waitForCondition, 5, condition, completionHandler);
+}
+
+const em = document.getElementById("em");
+const tail = document.getElementById("tail");
+
+em.getBoundingClientRect();
+window.setTimeout(function() {
+    document.getElementById("viewport").content = "width=400, initial-scale=0.70";
+    em.getBoundingClientRect();
+}, 0);
+_waitForCondition(function() {
+    return window.getComputedStyle(em).getPropertyValue("font-size") != "14px";
+}, function() {
+    shouldBeTrue("em.getBoundingClientRect().x + em.getBoundingClientRect().width - 0.0001 <= tail.getBoundingClientRect().x");
+    finishJSTest();
+});
+</script>
+<script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

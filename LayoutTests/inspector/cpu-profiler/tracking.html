@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+function test()
+{
+    let suite = ProtocolTest.createAsyncSuite("CPUProfiler.Tracking");
+
+    suite.addTestCase({
+        name: "CPUProfiler.Tracking.StartAndStopTrackingWithEvent",
+        test(resolve, reject) {
+            InspectorProtocol.awaitEvent({event: "CPUProfiler.trackingStart"}).then((messageObject) => {
+                ProtocolTest.log("CPUProfiler.trackingStart");
+                ProtocolTest.expectThat(typeof messageObject.params.timestamp === "number", "Should have a timestamp when starting.");
+            });
+
+            InspectorProtocol.awaitEvent({event: "CPUProfiler.trackingUpdate"}).then((messageObject) => {
+                ProtocolTest.log("CPUProfiler.trackingUpdate");
+                ProtocolTest.expectThat(typeof messageObject.params.event === "object", "Should have an event object.");
+                ProtocolTest.expectThat(typeof messageObject.params.event.timestamp === "number", "Event should have a timestamp.");
+                ProtocolTest.expectThat(typeof messageObject.params.event.usage === "number", "Event should have a usage.");
+                ProtocolTest.expectThat(messageObject.params.event.usage >= 0, "usage should be greater than or equal to zero.");
+
+                InspectorProtocol.sendCommand("CPUProfiler.stopTracking", {});
+            });
+
+            InspectorProtocol.awaitEvent({event: "CPUProfiler.trackingComplete"}).then((messageObject) => {
+                ProtocolTest.log("CPUProfiler.trackingComplete");
+                resolve();
+            });
+
+            InspectorProtocol.sendCommand("CPUProfiler.startTracking", {});
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that CPUProfiler.startTracking and CPUProfiler.stopTracking trigger trackingStart, trackingUpdate, and trackingComplete events with expected data.</p>
+</body>
+</html>

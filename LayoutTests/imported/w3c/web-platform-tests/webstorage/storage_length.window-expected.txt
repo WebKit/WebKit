@@ -1,0 +1,6 @@
+
+PASS localStorage.length (method access)
+PASS localStorage.length (proprty access)
+PASS sessionStorage.length (method access)
+PASS sessionStorage.length (proprty access)
+

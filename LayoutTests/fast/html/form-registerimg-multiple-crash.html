@@ -1,0 +1,12 @@
+<form id="w">
+    <img src="x">
+</form>
+Test passes if no crash on ASSERT.
+<script>
+if (window.testRunner)
+       testRunner.dumpAsText();
+
+var form = document.getElementById("w");
+clone = form.cloneNode(true);
+form.appendChild(clone);
+</script>

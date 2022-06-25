@@ -1,0 +1,20 @@
+<script src="/js-test-resources/js-test-pre.js"></script>
+<script src="resources/cache-test.js"></script>
+<body>
+<script>
+
+var tests =
+[
+ { responseHeaders: {'Status': '302', 'Location': '/', 'Cache-control': 'max-age=0' }, body: "" },
+ { responseHeaders: {'Status': '302', 'Location': '/', 'Cache-control': 'max-age=100' }, body: "" },
+];
+
+description("Test that responses with HTTP status code 302 are not cached");
+
+debug("running " + tests.length + " tests");
+debug("");
+
+runTests(tests);
+
+</script>
+<script src="/js-test-resources/js-test-post.js"></script>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="media-src *">
+<script src="/js-test-resources/js-test-pre.js"></script>
+<script src="/media-resources/media-file.js"></script>
+<style>
+video {
+    background-color: red;
+    width: 128px;
+    height: 128px;
+}
+</style>
+<script>
+window.jsTestIsAsync = true;
+
+function didLoadVideo()
+{
+    testPassed("did load video.");
+    finishJSTest();
+}
+
+function failedToLoadVideo()
+{
+    testFailed("failed to load video.");
+    finishJSTest();
+}
+
+window.onload = function ()
+{
+    var video = document.getElementById("video");
+    video.oncanplay = didLoadVideo;
+    video.onerror = failedToLoadVideo;
+    video.src = "http://127.0.0.1:8000/media-resources/" + findMediaFile("video", "content/test");
+}
+</script>
+</head>
+<body>
+<script>
+description("This tests that loading a video with an HTTP URL is allowed when the page has Content Security Policy &quot;media-src *&quot;.");
+</script>
+<video id="video"></video>
+<script src="/js-test-resources/js-test-post.js"></script>
+</body>
+</html>

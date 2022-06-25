@@ -1,0 +1,28 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<math>
+  <mmultiscripts id="mmultiscripts">
+    <mi>X</mi>
+    <mi>D</mi>
+    <mi>C</mi>
+    <mprescripts />
+    <mi>B</mi>
+    <mi>A</mi>
+    </mmultiscripts>
+</math>
+<div id="console"></div>
+<script>
+description("This tests the attributes of the children of a MathML mmultiscripts element.");
+if (window.testRunner && window.accessibilityController) {
+    var elem = accessibilityController.accessibleElementById("mmultiscripts");
+    debug(elem.attributesOfChildren());
+
+}
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+| <ol>
+|   <li>
+|     "asd"
+|     <span>
+|       id="start"
+|       "fo<#selection-anchor>o"
+|   <li>
+|     "bar"
+|   <li>
+|     "baz"
+|   <li>
+|     "foo"
+|   <li>
+|     "bar"
+|   <li>
+|     "ba<#selection-focus>z"

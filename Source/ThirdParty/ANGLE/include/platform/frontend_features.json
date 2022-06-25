@@ -1,0 +1,103 @@
+{
+    "description": [
+        "Copyright 2022 The ANGLE Project Authors. All rights reserved.",
+        "Use of this source code is governed by a BSD-style license that can be",
+        "found in the LICENSE file.",
+        "",
+        "frontend_features.json: Features/workarounds for driver bugs and other behaviors seen",
+        "on all platforms."
+    ],
+    "features": [
+        {
+            "name": "lose_context_on_out_of_memory",
+            "category": "Workarounds",
+            "description": [
+                "Some users rely on a lost context notification if a GL_OUT_OF_MEMORY error occurs"
+            ]
+        },
+        {
+            "name": "disable_program_caching_for_transform_feedback",
+            "category": "Workarounds",
+            "description": [
+                "On some GPUs, program binaries don't contain transform feedback varyings"
+            ]
+        },
+        {
+            "name": "scalarize_vec_and_mat_constructor_args",
+            "category": "Workarounds",
+            "description": [
+                "Always rewrite vec/mat constructors to be consistent"
+            ],
+            "issue": "http://crbug.com/1165751"
+        },
+        {
+            "name": "disable_program_binary",
+            "category": "Features",
+            "description": [
+                "Disable support for GL_OES_get_program_binary"
+            ],
+            "issue": "http://anglebug.com/5007"
+        },
+        {
+            "name": "disable_anisotropic_filtering",
+            "category": "Workarounds",
+            "description": [
+                "Disable support for anisotropic filtering"
+            ]
+        },
+        {
+            "name": "allow_compressed_formats",
+            "category": "Workarounds",
+            "description": [
+                "Allow compressed formats"
+            ]
+        },
+        {
+            "name": "force_depth_attachment_init_on_clear",
+            "category": "Workarounds",
+            "description": [
+                "Force depth attachment initialization on clear ops"
+            ],
+            "issue": "https://anglebug.com/7246"
+        },
+        {
+            "name": "enable_capture_limits",
+            "category": "Features",
+            "description": [
+                "Set the context limits like frame capturing was enabled"
+            ],
+            "issue": "http://anglebug.com/5750"
+        },
+        {
+            "name": "enable_compressing_pipeline_cache_in_thread_pool",
+            "category": "Workarounds",
+            "description": [
+                "Enable compressing pipeline cache in thread pool."
+            ],
+            "issue": "http://anglebug.com/4722"
+        },
+        {
+            "name": "force_robust_resource_init",
+            "category": "Features",
+            "description": [
+                "Force-enable robust resource init"
+            ],
+            "issue": "http://anglebug.com/6041"
+        },
+        {
+            "name": "force_init_shader_variables",
+            "category": "Features",
+            "description": [
+                "Force-enable shader variable initialization"
+            ]
+        },
+        {
+            "name": "enable_program_binary_for_capture",
+            "category": "Features",
+            "description": [
+                "Even if FrameCapture is enabled, enable GL_OES_get_program_binary"
+            ],
+            "issue": "http://anglebug.com/5658"
+        }
+    ]
+}

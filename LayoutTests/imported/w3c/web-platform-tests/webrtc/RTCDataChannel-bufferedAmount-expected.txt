@@ -1,0 +1,26 @@
+
+PASS datachannel bufferedAmount initial value should be 0 for both peers
+PASS datachannel bufferedAmount should increase to byte length of encodedunicode string sent
+PASS datachannel bufferedAmount should increase to byte length of buffer sent
+PASS datachannel bufferedAmount should increase to size of blob sent
+PASS datachannel bufferedAmount should increase by byte length for each message sent
+PASS datachannel bufferedAmount should not decrease immediately after initiating closure
+PASS datachannel bufferedAmount should not decrease after closing the peer connection
+PASS datachannel bufferedamountlow event fires after send() is complete
+PASS datachannel bufferedamount is data.length on send(data)
+PASS datachannel bufferedamount returns the same amount if no more data is
+PASS datachannel bufferedamountlow event fires only once after multiple consecutive send() calls
+PASS datachannel bufferedamountlow event fires after each sent message
+PASS negotiated datachannel bufferedAmount initial value should be 0 for both peers
+PASS negotiated datachannel bufferedAmount should increase to byte length of encodedunicode string sent
+PASS negotiated datachannel bufferedAmount should increase to byte length of buffer sent
+PASS negotiated datachannel bufferedAmount should increase to size of blob sent
+PASS negotiated datachannel bufferedAmount should increase by byte length for each message sent
+PASS negotiated datachannel bufferedAmount should not decrease immediately after initiating closure
+PASS negotiated datachannel bufferedAmount should not decrease after closing the peer connection
+PASS negotiated datachannel bufferedamountlow event fires after send() is complete
+PASS negotiated datachannel bufferedamount is data.length on send(data)
+PASS negotiated datachannel bufferedamount returns the same amount if no more data is
+PASS negotiated datachannel bufferedamountlow event fires only once after multiple consecutive send() calls
+PASS negotiated datachannel bufferedamountlow event fires after each sent message
+

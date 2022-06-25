@@ -1,0 +1,6 @@
+# These are lines that apply-iwyu will prevent from being added to a
+# file. They are lines that refer to files that are conditionally included
+# in certain configurations.
+#include <sys/socket.h>
+#include <ext/alloc_traits.h>
+#include <netinet/in.h>

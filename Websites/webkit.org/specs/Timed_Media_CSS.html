@@ -1,0 +1,547 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+
+<html>
+<head>
+        <title> Proposed Timed Media CSS </title> 
+        <link href="./mediaelement.css" rel="stylesheet" type="text/css">
+
+        <style type="text/css">
+                h4 + .element { margin-top: -2.5em; padding-top: 2em; }
+                h4 + p + .element { margin-top: -5em; padding-top: 4em; }
+                .element { background: #EEFFEE; color: black; margin: 0 0 1em -1em; padding: 0 1em 0.25em 0.75em; border-left: solid #99FF99 0.25em; -padding: 0; /* that last decl is for IE6. Try removing it, it's hilarious! */ }
+                .proposal { border: blue solid; padding: 1em; }
+                table.matrix, table.matrix td { border: none; text-align: right; }
+                table.matrix { margin-left: 2em; }
+
+                table.propinfo, table.propinfo th, table.propinfo td { border: none; }
+                table.history, table.history th, table.history td { border: solid thin; font-size: x-small }
+                table.history { width: 100%; }
+                td.hversion, td.author, td.date { width: 5%; }
+                td.change { width: 65%; }
+
+                .obsolete {
+                  font-size: larger;
+                  color: red;
+                }
+        </style>
+
+</head>
+<body class="draft">
+
+        <div class="head">
+                <h1> Timed Media CSS </h1> 
+                <h2 class="no-num no-toc" id="working"> Working Draft &mdash; 19 March 2007 </h2> 
+
+                <p class="copyright">&copy; Copyright 2007 Apple Inc. </p>
+
+        </div>
+        <h2 class="no-num no-toc" id="abstract"> Abstract </h2> 
+
+        <p>This specification defines a set of properties of Cascading Style Sheets for the presentation
+        of timed media, including but not limited to video and audio. By separating the presentation
+        style of timed media elements from their contents, these properties further simplify Web
+        authoring and site maintenance.</p>
+
+        <p>While there are cases in which the playback of timed media is semantically meaningful within the
+        context of a document, there are many cases in which playback is entirely presentational.
+        Therefore we offer a reasonable set of CSS properties to control whether media is playing or not
+        according to presentation state, along with control over the portions of media that are to be
+        presented, looping behavior, and audio volume.</p>
+        
+        <h2 class="no-num no-toc" id="status"> Status of this document </h2> 
+
+        <p class="obsolete">This proposal is not under active development at this time.</p>
+        
+        <h2 class="no-num no-toc"id="contents"> Table of contents </h2>
+
+        <!--begin-toc-->
+        <ul class="toc">
+                <li><a href="#introduction"><span class="secno">1.</span>Introduction</a> 
+                        
+                <li><a href="#new-syntax"><span class=secno>2. </span>New syntax</a>
+
+                <li><a href="#new-properties"><span class=secno>3. </span>New Properties</a>
+                        <ul class=toc>
+                                <li><a href="#propdef-media-play-state"><span class=secno>3.1.</span> 'media-play-state'</a>
+                                <li><a href="#propdef-media-play-rate"><span class=secno>3.2.</span> 'media-play-rate'</a>
+                                <li><a href="#propdef-media-start-time"><span class=secno>3.3.</span> 'media-start-time'</a>
+                                <li><a href="#propdef-media-end-time"><span class=secno>3.4.</span> 'media-end-time'</a>
+                                <li><a href="#propdef-media-loop-count"><span class=secno>3.5.</span> 'media-loop-count'</a>
+                                <li><a href="#propdef-media-loop-start-time"><span class=secno>3.6.</span> 'media-loop-start-time'</a>
+                                <li><a href="#propdef-media-loop-end-time"><span class=secno>3.7.</span> 'media-loop-end-time'</a>
+                                <li><a href="#propdef-volume"><span class=secno>3.8.</span> 'volume'</a>
+                                <li><a href="#propdef-media-timing"><span class=secno>3.9.</span> 'media-timing'</a>
+                        </ul>
+
+                <li class=no-num><a href="#references">References</a>
+                
+                <li class=no-num><a href="#acknowledgements">Acknowledgements</a>
+                
+                <li class=no-num><a href="#history">Change history</a>
+
+        </ul>
+        <!--end-toc-->
+
+        <hr>
+        <h2 id="introduction"><span class="secno">1. </span>Introduction</h2> 
+        <em>This section is non-normative.</em> 
+        
+        <p class=big-issue>Moving introduction coming...</p>
+        
+        <h2 id="new-syntax"><span class="secno">2. </span>New syntax</h2> 
+
+        <h2 id="new-properties"><span class="secno">3. </span>New Properties</h2> 
+        
+        <p>These properties apply to elements that embed timed media, such as movies or sounds.</p>
+
+
+        <h4>3.1 <a name="propdef-media-play-state" href="#propdef-media-play-state" class="noxref">
+        <span class="propinst-media-play-state">'media-play-state'</span></a></h4>
+        
+        <div class="propdef">
+                <dl><dt>
+                <span class="index-def" title="'media-play-state'"><a name="propdef-media-play-state" class="propdef-title"><strong>'media-play-state'</strong></a></span>
+                        <dd>
+                        <table class="propinfo">
+                                <tr><td><em>Value:</em>&nbsp;&nbsp;<td>
+                                        playing | paused | inherit
+                                <tr><td><em>Initial:</em>&nbsp;&nbsp;<td>paused
+                                <tr><td><em>Applies to:</em>&nbsp;&nbsp;<td>timed media elements
+                                <tr><td><em>Inherited:</em>&nbsp;&nbsp;<td>no
+                                <tr><td><em>Percentages:</em>&nbsp;&nbsp;<td>see prose
+                                <tr><td><em>Media:</em>&nbsp;&nbsp;<td>visual, audio
+                                <tr><td><em>Computed&nbsp;value:</em>&nbsp;&nbsp;<td>the value or percentage as specified
+                        </table>
+                </dl>
+        </div>
+
+        <p>The <a href="#propdef-media-play-state" class="noxref">
+        <span class="propinst-media-play-state">'media-play-state'</span></a> starts or stops 
+        a timed media item. 
+        </p>
+
+        <p>Values have the following meanings:</p>
+        
+        <dl>
+                <dt><strong>playing</strong>
+                        <dd>Playing at the <a href="#propdef-media-play-rate" class="noxref">'media-play-rate'</a>.
+
+                <dt><strong>paused</strong>
+                        <dd>Not playing.
+        </dl>
+
+
+<pre>
+ movie#halt { media-play-state: paused; }
+</pre>
+
+        <h4>3.2 <a name="propdef-media-play-rate" href="#propdef-media-play-rate" class="noxref">
+        <span class="propinst-media-play-rate">'media-play-rate'</span></a></h4>
+        
+        <div class="propdef">
+                <dl><dt>
+                <span class="index-def" title="'media-play-rate'"><a name="propdef-media-play-rate" class="propdef-title"><strong>'media-play-rate'</strong></a></span>
+                        <dd>
+                        <table class="propinfo">
+                                <tr><td><em>Value:</em>&nbsp;&nbsp;<td>
+                                        <a href="http://www.w3.org/TR/CSS21/syndata.html#value-def-number" class="noxref"><span class="value-inst-number">&lt;number&gt;</span></a> 
+                                        | <a href="http://www.w3.org/TR/CSS21/syndata.html#value-def-percentage" class="noxref"><span class="value-inst-percentage">&lt;percentage&gt;</span></a> 
+                                        | inherit
+                                <tr><td><em>Initial:</em>&nbsp;&nbsp;<td>1
+                                <tr><td><em>Applies to:</em>&nbsp;&nbsp;<td>timed media elements
+                                <tr><td><em>Inherited:</em>&nbsp;&nbsp;<td>no
+                                <tr><td><em>Percentages:</em>&nbsp;&nbsp;<td>see prose
+                                <tr><td><em>Media:</em>&nbsp;&nbsp;<td>visual, audio
+                                <tr><td><em>Computed&nbsp;value:</em>&nbsp;&nbsp;<td>the value or percentage as specified
+                        </table>
+                </dl>
+        </div>
+
+        <p>The <a href="#propdef-media-play-rate" class="noxref">
+        <span class="propinst-media-play-rate">'media-play-rate'</span></a> sets 
+        the play rate of a timed media item, such as a movie or sound. The user agents
+        may preserve pitch when changing the rate of audio if possible.
+        <span class=big-issue>Wording ????</span>
+        </p>
+
+        <p>Values have the following meanings:</p>
+        <dl>
+                <dt><span class="index-inst" title="&lt;number&gt;">
+                                <a name="x11" href="http://www.w3.org/TR/CSS21/syndata.html#value-def-number" class="noxref">
+                                <span class="value-inst-number"><strong>&lt;number&gt;</strong></span></a>
+                        </span>
+                        <dd>A floating point number is the the default play rate of the 
+                        media item. Negative play rates are allowed and imply playing backwards, although not 
+                        all media formats support reverse play.</p>
+
+                <dt><span class="index-inst" title="&lt;percentage&gt;"><a name="x12" href="http://www.w3.org/TR/CSS21/syndata.html#value-def-percentage" class="noxref">
+                        <span class="value-inst-percentage"><strong>&lt;percentage&gt;</strong></span></a></span>
+                        <dd>Percentage values are calculated relative to the default play rate of the media item,
+                        as defined by the resource's container format, for example the "preferredRate" of a
+                        QuickTime movie. May be negative or greater than 100% as allowed by the media format. 
+        </dl>
+
+<pre>
+ movie:hover { media-play-state: playing; media-play-rate: 0.5; }
+</pre>
+
+        <h4>3.3 <a name="propdef-media-start-time" href="#propdef-media-start-time" class="noxref">
+        <span class="propinst-media-start-time">'media-start-time'</span></a></h4>
+        
+        <div class="propdef">
+                <dl><dt>
+                <span class="index-def" title="'media-start-time'"><a name="propdef-media-start-time" class="propdef-title"><strong>'media-start-time'</strong></a></span>
+                        <dd>
+                        <table class="propinfo">
+                                <tr><td><em>Value:</em>&nbsp;&nbsp;<td>
+                                        <a href="http://www.w3.org/TR/CSS21/aural.html#value-def-time" class="noxref"><span class="value-inst-time">&lt;time&gt;</span></a> 
+                                        | <a href="http://www.w3.org/TR/CSS21/syndata.html#value-def-percentage" class="noxref"><span class="value-inst-percentage">&lt;percentage&gt;</span></a> 
+                                        | inherit
+                                <tr><td><em>Initial:</em>&nbsp;&nbsp;<td>0s
+                                <tr><td><em>Applies to:</em>&nbsp;&nbsp;<td>timed media elements
+                                <tr><td><em>Inherited:</em>&nbsp;&nbsp;<td>no
+                                <tr><td><em>Percentages:</em>&nbsp;&nbsp;<td>see prose
+                                <tr><td><em>Media:</em>&nbsp;&nbsp;<td>visual, audio
+                                <tr><td><em>Computed&nbsp;value:</em>&nbsp;&nbsp;<td>the value as specified
+                        </table>
+                </dl>
+        </div>
+
+        <p>The <a href="#propdef-media-start-time" class="noxref">
+        <span class="propinst-media-start-time">'media-start-time'</span></a> sets 
+        the time at which the media item begins playing. Negative values are from 
+        the total duration of the complete media item.</p>
+
+        <p>Values have the following meanings:</p>
+        <dl>
+                <dt><span class="index-inst" title="&lt;number&gt;">
+                                <a name="x11" href="http://www.w3.org/TR/CSS21/syndata.html#value-def-number" class="noxref">
+                                <span class="value-inst-number"><strong>&lt;number&gt;</strong></span></a>
+                        </span>
+                        <dd>Start time in absolute time units (seconds and milliseconds).
+        
+                <dt><span class="index-inst" title="&lt;percentage&gt;"><a name="x12" href="http://www.w3.org/TR/CSS21/syndata.html#value-def-percentage" class="noxref">
+                        <span class="value-inst-percentage"><strong>&lt;percentage&gt;</strong></span></a></span>
+                        <dd>Percentage values are calculated relative to the total duration of the complete 
+                        media item. Negative percentages are relative offsets from the total duration of 
+                        the complete media item.
+        </dl>
+
+<pre>
+movie#main { media-start-time: 10s }
+</pre>
+
+        <h4>3.4 <a name="propdef-media-end-time" href="#propdef-media-end-time" class="noxref">
+        <span class="propinst-media-end-time">'media-end-time'</span></a></h4>
+        
+        <div class="propdef">
+                <dl><dt>
+                <span class="index-def" title="'media-end-time'"><a name="propdef-media-end-time" class="propdef-title"><strong>'media-end-time'</strong></a></span>
+                        <dd>
+                        <table class="propinfo">
+                                <tr><td><em>Value:</em>&nbsp;&nbsp;<td>
+                                        <a href="http://www.w3.org/TR/CSS21/aural.html#value-def-time" class="noxref"><span class="value-inst-time">&lt;time&gt;</span></a> 
+                                        | <a href="http://www.w3.org/TR/CSS21/syndata.html#value-def-percentage" class="noxref"><span class="value-inst-percentage">&lt;percentage&gt;</span></a> 
+                                        | inherit
+                                <tr><td><em>Initial:</em>&nbsp;&nbsp;<td>-0s
+                                <tr><td><em>Applies to:</em>&nbsp;&nbsp;<td>timed media elements
+                                <tr><td><em>Inherited:</em>&nbsp;&nbsp;<td>no
+                                <tr><td><em>Percentages:</em>&nbsp;&nbsp;<td>see prose
+                                <tr><td><em>Media:</em>&nbsp;&nbsp;<td>visual, audio
+                                <tr><td><em>Computed&nbsp;value:</em>&nbsp;&nbsp;<td>the value as specified
+                        </table>
+                </dl>
+        </div>
+
+        <p>The <a href="#propdef-media-end-time" class="noxref">
+        <span class="propinst-media-end-time">'media-end-time'</span></a> sets 
+        the time at which the media item stops playing. Negative values are offsets 
+        from the total duration of the complete media item.</p>
+
+        <p>Values have the following meanings:</p>
+        <dl>
+                <dt><span class="index-inst" title="&lt;time&gt;">
+                                <a name="x11" href="http://www.w3.org/TR/CSS21/aural.html#value-def-time" class="noxref">
+                                <span class="value-inst-time"><strong>&lt;time&gt;</strong></span></a>
+                        </span>
+                        <dd>End time in absolute time units (seconds and milliseconds).
+        
+                <dt><span class="index-inst" title="&lt;percentage&gt;"><a name="x12" href="http://www.w3.org/TR/CSS21/syndata.html#value-def-percentage" class="noxref">
+                        <span class="value-inst-percentage"><strong>&lt;percentage&gt;</strong></span></a></span>
+                        <dd>Percentage values are calculated relative to the total duration of the complete 
+                        media item. Negative percentages are relative offsets from the total duration of 
+                        the complete media item.
+        </dl>
+
+<pre>
+movie#main { media-end-time: -5s }
+</pre>
+
+
+
+        <h4>3.5 <a name="propdef-media-loop-count" href="#propdef-media-loop-count" class="noxref">
+        <span class="propinst-media-loop-count">'media-loop-count'</span></a></h4>
+        
+        <div class="propdef">
+                <dl><dt>
+                <span class="index-def" title="'media-loop-count'"><a name="propdef-media-loop-count" class="propdef-title"><strong>'media-loop-count'</strong></a></span>
+                        <dd>
+                        <table class="propinfo">
+                                <tr><td><em>Value:</em>&nbsp;&nbsp;<td>
+                                        <a href="http://www.w3.org/TR/CSS21/syndata.html#value-def-number" class="noxref"><span class="value-inst-number">&lt;number&gt;</span></a> 
+                                        | infinite 
+                                        | inherit
+                                <tr><td><em>Initial:</em>&nbsp;&nbsp;<td>1
+                                <tr><td><em>Applies to:</em>&nbsp;&nbsp;<td>timed media elements
+                                <tr><td><em>Inherited:</em>&nbsp;&nbsp;<td>no
+                                <tr><td><em>Percentages:</em>&nbsp;&nbsp;<td>N/A
+                                <tr><td><em>Media:</em>&nbsp;&nbsp;<td>visual, audio
+                                <tr><td><em>Computed&nbsp;value:</em>&nbsp;&nbsp;<td>the value as specified
+                        </table>
+                </dl>
+        </div>
+
+        <p>The <a href="#propdef-media-loop-count" class="noxref">
+        <span class="propinst-media-loop-count">'media-loop-count'</span></a> sets 
+        the number of times the media item will loop when played.</p>
+
+        <p>Values have the following meanings:</p>
+        <dl>
+                <dt><span class="index-inst" title="&lt;number&gt;">
+                                <a name="x11" href="http://www.w3.org/TR/CSS21/syndata.html#value-def-number" class="noxref">
+                                <span class="value-inst-number"><strong>&lt;number&gt;</strong></span></a>
+                        </span>
+                        <dd>The number of time the media resource will loop. The default value of "1" means
+                        the item will play through once but will not loop.
+        
+                <dt><span class="index-inst" title="infinite">
+                        <span class="value-inst-infinite"><strong>infinite</strong></span></span>
+                        <dd>The media item will loop indefinitely.
+        </dl>
+
+
+<pre>
+audio.ambient { media-loop-count: infinite }
+</pre>
+
+
+
+        <h4>3.6 <a name="propdef-media-loop-start-time" href="#propdef-media-loop-start-time" class="noxref">
+        <span class="propinst-media-loop-start-time">'media-loop-start-time'</span></a></h4>
+        
+        <div class="propdef">
+                <dl><dt>
+                <span class="index-def" title="'media-loop-start-time'"><a name="propdef-media-loop-start-time" class="propdef-title"><strong>'media-loop-start-time'</strong></a></span>
+                        <dd>
+                        <table class="propinfo">
+                                <tr ><td><em>Value:</em>&nbsp;&nbsp;<td>
+                                        <a href="http://www.w3.org/TR/CSS21/aural.html#value-def-time" class="noxref"><span class="value-inst-time">&lt;time&gt;</span></a> 
+                                        | <a href="http://www.w3.org/TR/CSS21/syndata.html#value-def-percentage" class="noxref"><span class="value-inst-percentage">&lt;percentage&gt;</span></a> 
+                                        | inherit
+                                <tr><td><em>Initial:</em>&nbsp;&nbsp;<td>0s
+                                <tr><td><em>Applies to:</em>&nbsp;&nbsp;<td>timed media elements
+                                <tr><td><em>Inherited:</em>&nbsp;&nbsp;<td>no
+                                <tr><td><em>Percentages:</em>&nbsp;&nbsp;<td>see prose
+                                <tr><td><em>Media:</em>&nbsp;&nbsp;<td>visual, audio
+                                <tr><td><em>Computed&nbsp;value:</em>&nbsp;&nbsp;<td>the value as specified
+                        </table>
+                </dl>
+        </div>
+
+        <p>The <a href="#propdef-media-loop-start-time" class="noxref">
+        <span class="propinst-media-loop-start-time">'media-loop-start-time'</span></a> sets 
+        the time at which the media item begins playing after looping. </p>
+
+        <p>Values have the following meanings:</p>
+        <dl>
+                <dt><span class="index-inst" title="&lt;time&gt;">
+                                <a name="x11" href="http://www.w3.org/TR/CSS21/aural.html#value-def-time" class="noxref">
+                                <span class="value-inst-time"><strong>&lt;time&gt;</strong></span></a>
+                        </span>
+                        <dd>Start time in absolute time units (seconds and milliseconds). Negative values are offsets from 
+                        the total duration of the complete media item.
+        
+                <dt><span class="index-inst" title="&lt;percentage&gt;"><a name="x12" href="http://www.w3.org/TR/CSS21/syndata.html#value-def-percentage" class="noxref">
+                        <span class="value-inst-percentage"><strong>&lt;percentage&gt;</strong></span></a></span>
+                        <dd>Percent of total duration of the complete media item. Negative percentages are 
+                        relative offsets from the total duration of the complete media item.
+        </dl>
+
+<pre>
+audio.ambient { media-loop-start-time: 6s }
+</pre>
+
+
+
+        <h4>3.7 <a name="propdef-media-loop-end-time" href="#propdef-media-loop-end-time" class="noxref">
+        <span class="propinst-media-loop-end-time">'media-loop-end-time'</span></a></h4>
+        
+        <div class="propdef">
+                <dl><dt>
+                <span class="index-def" title="'media-loop-end-time'"><a name="propdef-media-loop-end-time" class="propdef-title"><strong>'media-loop-end-time'</strong></a></span>
+                        <dd>
+                        <table class="propinfo">
+                                <tr ><td><em>Value:</em>&nbsp;&nbsp;<td>
+                                        <a href="http://www.w3.org/TR/CSS21/aural.html#value-def-time" class="noxref"><span class="value-inst-time">&lt;time&gt;</span></a> 
+                                        | <a href="http://www.w3.org/TR/CSS21/syndata.html#value-def-percentage" class="noxref"><span class="value-inst-percentage">&lt;percentage&gt;</span></a> 
+                                        | inherit
+                                <tr><td><em>Initial:</em>&nbsp;&nbsp;<td>-0s
+                                <tr><td><em>Applies to:</em>&nbsp;&nbsp;<td>timed media elements
+                                <tr><td><em>Inherited:</em>&nbsp;&nbsp;<td>no
+                                <tr><td><em>Percentages:</em>&nbsp;&nbsp;<td>see prose
+                                <tr><td><em>Media:</em>&nbsp;&nbsp;<td>visual, audio
+                                <tr><td><em>Computed&nbsp;value:</em>&nbsp;&nbsp;<td>the value as specified
+                        </table>
+                </dl>
+        </div>
+
+        <p>The <a href="#propdef-media-loop-end-time" class="noxref">
+        <span class="propinst-media-loop-end-time">'media-loop-end-time'</span></a> sets 
+        the time at which the media item loops for the second and subsequent repetitions.</p>
+
+        <p>Values have the following meanings:</p>
+        <dl>
+                <dt><span class="index-inst" title="&lt;time&gt;">
+                                <a name="x11" href="http://www.w3.org/TR/CSS21/aural.html#value-def-time" class="noxref">
+                                <span class="value-inst-time"><strong>&lt;time&gt;</strong></span></a>
+                        </span>
+                        <dd>End time in absolute time units (seconds and milliseconds). Negative values are offsets from 
+                        the total duration of the complete media item.
+        
+                <dt><span class="index-inst" title="&lt;percentage&gt;"><a name="x12" href="http://www.w3.org/TR/CSS21/syndata.html#value-def-percentage" class="noxref">
+                        <span class="value-inst-percentage"><strong>&lt;percentage&gt;</strong></span></a></span>
+                        <dd>Percent of total duration of the complete media item. Negative percentages are 
+                        relative offsets from the total duration of the complete media item.
+        </dl>
+
+
+<pre>
+audio.ambient { media-loop-end-time: -9s }
+</pre>
+
+        <h4>3.8 <a name="propdef-volume">Volume properties</a>: <a href="aural.html#propdef-volume" class="noxref">
+        <span class="propinst-volume">'volume'</span></a></h4>
+
+        <div class="propdef">
+                <dl><dt>
+                        <span class="index-def" title="'volume'"><a name="propdef-volume" class="propdef-title"><strong>'volume'</strong></a></span>
+                        <dd>
+                        <table class="propinfo" cellspacing=0 cellpadding=0>
+                                <tr valign=baseline><td><em>Value:</em>&nbsp;&nbsp;<td>
+                                        <a href="http://www.w3.org/TR/CSS21/syndata.html#value-def-number" class="noxref"><span class="value-inst-number">&lt;number&gt;</span></a> 
+                                        <a href="http://www.w3.org/TR/CSS21/syndata.html#value-def-percentage" class="noxref"><span class="value-inst-percentage">&lt;percentage&gt;</span></a> 
+                                        | silent | soft | medium | loud |
+                                x-loud | <a href="cascade.html#value-def-inherit" class="noxref"><span class="value-inst-inherit">inherit</span></a>
+                                <tr valign=baseline><td><em>Initial:</em>&nbsp;&nbsp;<td>medium
+                                <tr valign=baseline><td><em>Applies to:</em>&nbsp;&nbsp;<td>all elements
+                                <tr valign=baseline><td><em>Inherited:</em>&nbsp;&nbsp;<td>yes
+                                <tr valign=baseline><td><em>Percentages:</em>&nbsp;&nbsp;<td>refer to inherited value
+                                <tr valign=baseline><td><em>Media:</em>&nbsp;&nbsp;<td>visual, audio
+                                <tr valign=baseline><td><em>Computed&nbsp;value:</em>&nbsp;&nbsp;<td>number
+                        </table>
+                </dl>
+        </div>
+        
+        <p>The <a href="#propdef-volume" class="noxref">
+        <span class="index-def" title="volume">'volume'</span></a> refers to the
+        volume of the waveform from 0 to 1.0.</p>
+        
+        <p>Values have the following meanings:</p>
+        
+        <dl>
+                <dt><span class="index-inst" title="&lt;number&gt;">
+                                <a name="x11" href="http://www.w3.org/TR/CSS21/syndata.html#value-def-number" class="noxref">
+                                <span class="value-inst-number"><strong>&lt;number&gt;</strong></span></a>
+                        </span>
+                        <dd>Any number between '0' and '1.0'. '0' represents silence and 1.0 
+                        represents full volume.
+
+                <dt><span class="index-inst" title="&lt;percentage&gt;"><a name="x12" href="http://www.w3.org/TR/CSS21/syndata.html#value-def-percentage" class="noxref">
+                        <span class="value-inst-percentage"><strong>&lt;percentage&gt;</strong></span></a></span>
+                        <dd>Percentage values are calculated relative to the inherited value,
+                        and are then clipped to the range '0' to '1.0'.
+
+                <dt><strong>silent</strong>
+                        <dd>No sound at all. Same as '0'.
+
+                <dt><strong>low</strong>
+                        <dd>Same as '0.25'.
+
+                <dt><strong>medium</strong>
+                        <dd>Same as '0.50'.
+
+                <dt><strong>high</strong>
+                        <dd>Same as '0.75'.
+
+                <dt><strong>full-volume</strong>
+                        <dd>Same as '1.0'.
+        </dl>
+
+        <p>User agents should allow the values corresponding to '0' and '1.0' to be set by the listener.
+        No one setting is universally applicable; suitable values depend on the equipment in use
+        (speakers, headphones), the environment (in car, home theater, library) and personal
+        preferences. </p>
+
+
+        <h4>3.9 Shorthand media timing property<a name="propdef-media-timing" href="#propdef-media-timing" class="noxref">
+        <span class="propinst-media-timing">'media-timing'</span></a></h4>
+        
+        <div class="propdef">
+                <dl><dt>
+                <span class="index-def" title="'media-timing'"><a name="propdef-media-timing" class="propdef-title"><strong>'media-timing'</strong></a></span>
+                        <dd>
+                        <table class="propinfo">
+                                <tr ><td><em>Value:</em>&nbsp;&nbsp;<td>
+                                         [<a href="#propdef-media-play-state"><span class="propinst-media-play-state">'media-play-state'</span></a>
+                                        || <a href="#propdef-media-start-time"><span class="propinst-media-start-time">'media-start-time'</span></a>
+                                        || <a href="#propdef-media-end-time"><span class="propinst-media-end-time">'media-end-time'</span></a>
+                                        || <a href="#propdef-media-loop-count"><span class="propinst-media-loop-count">'media-loop-count'</span></a>
+                                        || <a href="#propdef-media-loop-start-time"><span class="propinst-media-loop-start-time">'media-loop-start-time'</span></a>
+                                        || <a href="#propdef-media-loop-end-time"><span class="propinst-media-loop-end-time">'media-loop-end-time'</span></a>
+                                        || <a href="#propdef-media-play-rate"><span class="propinst-media-play-rate">'media-play-rate'</span></a>]
+                                        | inherit
+                                <tr><td><em>Initial:</em>&nbsp;&nbsp;<td>see individual properties
+                                <tr><td><em>Applies to:</em>&nbsp;&nbsp;<td>timed media elements
+                                <tr><td><em>Inherited:</em>&nbsp;&nbsp;<td>no
+                                <tr><td><em>Percentages:</em>&nbsp;&nbsp;<td>see individual properties
+                                <tr><td><em>Media:</em>&nbsp;&nbsp;<td>visual, audio
+                                <tr><td><em>Computed&nbsp;value:</em>&nbsp;&nbsp;<td>see individual properties
+                        </table>
+                </dl>
+        </div>
+
+        <p>The <a href="#propdef-media-timing" class="noxref">
+        <span class="propinst-media-timing">'media-timing'</span></a> is a shorthand property for
+        setting the individual media properties (i.e., 
+        <a href="#propdef-media-play-state"><span class="propinst-media-play-state">'media-play-state'</span></a>,
+        <a href="#propdef-media-start-time"><span class="propinst-media-start-time">'media-start-time'</span></a>,
+        <a href="#propdef-media-end-time"><span class="propinst-media-end-time">'media-end-time'</span></a>,
+        <a href="#propdef-media-loop-count"><span class="propinst-media-loop-count">'media-loop-count'</span></a>,
+        <a href="#propdef-media-loop-start-time"><span class="propinst-media-loop-start-time">'media-loop-start-time'</span></a>,
+        <a href="#propdef-media-loop-end-time"><span class="propinst-media-loop-end-time">'media-loop-end-time'</span></a>,
+        and <a href="#propdef-media-play-rate"><span class="propinst-media-play-rate">'media-play-rate'</span></a>) at the same place in the
+        style sheet. Given a valid declaration, the 
+        <a href="#propdef-media-timing"><span class="propinst-media-timing">'media-timing'</span></a>
+        property first sets all the individual media properties to their initial values, then assigns
+        explicit values given in the declaration.</p>
+
+        <p>In the first rule of the following example, only a value for 'media-timing' has been given
+        and the other individual properties are set to their initial value. In the second rule, all
+        individual properties have been specified.</p>
+        
+        <pre>
+audio.ambient { media-timing: playing; }
+        </pre>
+
+        <pre>
+movie#main { media-timing: playing 0s -0.5s 2 2s -4s 1 }
+        </pre>
+
+        <h2 class=no-num id=references>References</h2>
+                <p class=big-issue>Coming soon</p>
+        
+        <h2 class=no-num id=acknowledgements>Acknowledgements</h2>
+                <p class=big-issue>Coming soon</p>
+        
+</body>
+</html>

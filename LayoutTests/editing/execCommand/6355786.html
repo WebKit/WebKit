@@ -1,0 +1,16 @@
+<body>
+<div>This tests find with queries that contain line breaks, for text broken into paragraphs using brs, divs, and preserved newlines.</div>
+<div id="find">test<br>over<br>brs<br><div>test</div><div>over</div><div>divs</div><pre>test
+over
+newlines</pre>
+<script>
+if (window.testRunner)
+    window.testRunner.dumpAsText();
+if (!document.execCommand("FindString", false, "test\nover\nbrs"))
+    document.body.innerText = "Find with line breaks failed over brs.";
+if (!document.execCommand("FindString", false, "test\nover\ndivs"))
+    document.body.innerText = "Find with line breaks failed over divs.";
+if (!document.execCommand("FindString", false, "test\nover\nnewlines"))
+    document.body.innerText = "Find with line breaks failed over newlines.";
+</script>
+</body>

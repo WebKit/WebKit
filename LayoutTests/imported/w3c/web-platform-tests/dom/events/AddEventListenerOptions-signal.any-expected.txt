@@ -1,0 +1,12 @@
+
+PASS Passing an AbortSignal to addEventListener options should allow removing a listener
+PASS Passing an AbortSignal to addEventListener does not prevent removeEventListener
+PASS Passing an AbortSignal to addEventListener works with the once flag
+PASS Removing a once listener works with a passed signal
+PASS Passing an AbortSignal to multiple listeners
+PASS Passing an AbortSignal to addEventListener works with the capture flag
+PASS Aborting from a listener does not call future listeners
+PASS Adding then aborting a listener in another listener does not call it
+PASS Aborting from a nested listener should remove it
+PASS Passing null as the signal should throw
+

@@ -1,0 +1,4 @@
+
+PASS It should not be possible to open same origin-domain (but not same origin) documents.
+PASS It should not be possible to implicitly open same origin-domain (but not same origin) documents.
+

@@ -1,0 +1,36 @@
+<!DOCTYPE html><!-- webkit-test-runner [ BroadcastChannelOriginPartitioningEnabled=true ] -->
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Tests that BroadcastChannel is partioning based on top origin / frame origin.");
+jsTestIsAsync = true;
+
+let bc = new BroadcastChannel("broadcastchannel-partitioning");
+
+let gotMessageFromSameOriginPopup = false;
+let gotMessageFromSameOriginIframeUnderSameOriginPopup = false;
+bc.onmessage = (message) => {
+    if (message.data == "same-origin-popup") {
+        testPassed("Received message from same-origin popup");
+        shouldBeFalse("gotMessageFromSameOriginPopup");
+        gotMessageFromSameOriginPopup = true;
+    } else if (message.data == "same-origin-iframe-under-same-origin-popup") {
+        testPassed("Received message from same-origin iframe under same-origin popup");
+        shouldBeFalse("gotMessageFromSameOriginIframeUnderSameOriginPopup");
+        gotMessageFromSameOriginIframeUnderSameOriginPopup = true;
+    } else {
+        testFailed("Received unexpected message: " + message.data);
+    }
+
+    if (gotMessageFromSameOriginPopup && gotMessageFromSameOriginIframeUnderSameOriginPopup)
+        setTimeout(finishJSTest, 1000);
+};
+
+onload = () => {
+    open("http://localhost:8000/messaging/resources/broadcastchannel-partitioning-popup.html");
+    open("resources/broadcastchannel-partitioning-popup.html", "same-origin-popup", "noopener");
+};
+</script>
+</body>
+</html>

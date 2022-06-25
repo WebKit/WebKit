@@ -1,0 +1,438 @@
+#!/usr/bin/env perl
+
+# Copyright (C) 2005-2019 Apple Inc. All rights reserved.
+# Copyright (C) 2009 Google Inc. All rights reserved.
+# Copyright (C) 2010 moiji-mobile.com All rights reserved.
+# Copyright (C) 2011 Research In Motion Limited. All rights reserved.
+# Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer. 
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution. 
+# 3.  Neither the name of Apple Inc. ("Apple") nor the names of
+#     its contributors may be used to endorse or promote products derived
+#     from this software without specific prior written permission. 
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Build script wrapper for the WebKit Open Source Project.
+
+use strict;
+use warnings;
+use File::Basename;
+use File::Find;
+use File::Spec;
+use FindBin;
+use Getopt::Long qw(:config pass_through no_auto_abbrev);
+use lib $FindBin::Bin;
+use webkitdirs;
+use List::Util qw(first);
+use webkitperl::FeatureList qw(getFeatureOptionList);
+use POSIX;
+use Text::ParseWords;
+
+sub writeCongrats();
+
+checkRequiredSystemConfig();
+setConfiguration();
+
+if (shouldUseFlatpak()) {
+    print "Building flatpak based environment\n";
+    my @command = (File::Spec->catfile(sourceDir(), "Tools", "Scripts", "build-webkit"));
+    runInFlatpak(@command);
+}
+
+my $originalWorkingDirectory = getcwd();
+chdirWebKit();
+
+my $showHelp = 0;
+my $verbose = 0;
+my $clean = 0;
+my $minimal = 0;
+my $installHeaders;
+my $installLibs;
+my $prefixPath;
+my $makeArgs = "";
+my @cmakeArgs;
+my $onlyWebKitProject = 0;
+my $coverageSupport = 0;
+my $shouldRunStaticAnalyzer = 0;
+my $noExperimentalFeatures = 0;
+my $ltoMode = "default";
+my $useWorkspace = 1;
+my $startTime = time();
+my $archs32bit = 0;
+my $skipLibraryUpdate = 0;
+my $useCCache = -1;
+my $exportCompileCommands = 0;
+
+my @features = getFeatureOptionList();
+
+# Additional environment parameters
+push @ARGV, parse_line('\s+', 0, $ENV{'BUILD_WEBKIT_ARGS'}) if ($ENV{'BUILD_WEBKIT_ARGS'});
+
+# Initialize values from defaults
+foreach (@ARGV) {
+    if ($_ eq '--minimal') {
+        $minimal = 1;
+    } elsif ($_ eq 'ARCHS=i386' or $_ eq 'ARCHS=armv7' or $_ eq 'ARCHS=armv7s') {
+        $archs32bit = 1;
+    }
+}
+
+# Feature flags default to undefined, where they will inherit the default value
+# specified by the build system, or to 'off' if --minimal is specified.
+foreach (@features) {
+    ${$_->{value}} = ($minimal ? 0 : undef);
+}
+
+my $programName = basename($0);
+my $usage = <<EOF;
+Usage: $programName [options] [options to pass to build system]
+  -h, --help                        Show this help message
+  -v, --verbose                     Show verbose build output
+  --clean                           Cleanup the build directory
+  --generate-project-only           Only generate project files
+  --debug                           Compile with Debug configuration
+  --release                         Compile with Release configuration
+  --sdk=<sdk>                       Use a specific Xcode SDK (Apple platforms only)
+  --ios-device                      Use "iphoneos.internal" SDK if installed, else "iphoneos" SDK (iOS only)
+  --device                          DEPRECATED alias of --ios-device
+  --ios-simulator                   Use "iphonesimulator.internal" SDK if installed, else "iphonesimulator" SDK (iOS only)
+  --simulator                       DEPRECATED alias of --ios-simulator
+  --tvos-device                     Use "appletvos.internal" SDK if installed, else "appletvos" SDK (tvOS only)
+  --tvos-simulator                  Use "appletvsimulator" (tvOS only)
+  --watchos-device                  Use "watchos.internal" SDK if installed, else "watchos" SDK (watchOS only)
+  --watchos-simulator               Use "watchsimulator" (watchOS only)
+  --coverage                        Enable code coverage support (Mac only)
+  --analyze                         Enable static anaylsis (Apple platforms only)
+  --lto-mode=<mode>                 Set Link Time Optimization mode (full, thin, or none) (LLVM only)
+  --no-use-workspace                Build projects one at a time instead of using WebKit.xcworkspace (Apple platforms only)
+
+  --ftw                             Build the FTW Windows port
+  --gtk                             Build the GTK+ port
+  --wpe                             Build the WPE port
+  --wincairo                        Build using Cairo (rather than CoreGraphics) on Windows
+  --playstation                     Build the PlayStation port
+
+  --inspector-frontend              Copy Web Inspector user interface resources to the build directory
+
+  --prefix=<path>                   Set installation prefix to the given path (CMake only, except Windows)
+  --makeargs=<arguments>            Optional Makefile flags
+  --cmakeargs=<arguments>           One or more optional CMake flags (e.g. --cmakeargs="-DFOO=bar -DCMAKE_PREFIX_PATH=/usr/local")
+
+  --minimal                         No optional features, unless explicitly enabled
+  --no-experimental-features        No experimental features, unless explicitly enabled (CMake only)
+
+  --only-webkit                     Build only the WebKit project
+
+  --skip-library-update             Skip the check to see if windows libraries are up to date
+
+  --[no-]use-ccache                 Enable (or disable) CCache, if available
+
+  --export-compile-commands         Generate compile_commands.json (Apple platforms only)
+
+EOF
+
+my %options = (
+    'h|help' => \$showHelp,
+    'v|verbose' => \$verbose,
+    'clean' => \$clean,
+    'install-headers=s' => \$installHeaders,
+    'install-libs=s' => \$installLibs,
+    'prefix=s' => \$prefixPath,
+    'makeargs=s' => \$makeArgs,
+    'cmakeargs=s' => \@cmakeArgs,
+    'minimal' => \$minimal,
+    'only-webkit' => \$onlyWebKitProject,
+    'coverage' => \$coverageSupport,
+    'analyze' => \$shouldRunStaticAnalyzer,
+    'no-experimental-features' => \$noExperimentalFeatures,
+    'lto-mode=s' => \$ltoMode,
+    'use-workspace!' => \$useWorkspace,
+    'skip-library-update' => \$skipLibraryUpdate,
+    'use-ccache!' => \$useCCache,
+    'export-compile-commands' => \$exportCompileCommands
+);
+
+# Build usage text and options list from features
+foreach (@features) {
+    my $opt = sprintf("%-35s", "  --[no-]$_->{option}");
+    $usage .= "$opt $_->{desc}\n";
+    $options{"$_->{option}!"} = $_->{value};
+}
+
+GetOptions(%options);
+
+if ($showHelp) {
+   print STDERR $usage;
+   exit 1;
+}
+
+$ENV{'VERBOSE'} = 1 if $verbose;
+
+if ($useCCache == 1) {
+    $ENV{'WK_USE_CCACHE'} = "YES";
+} elsif ($useCCache == 0) {
+    $ENV{'WK_USE_CCACHE'} = "NO";
+}
+
+$ENV{'EXPORT_COMPILE_COMMANDS'} = "YES" if $exportCompileCommands;
+
+my $productDir = productDir();
+
+# Check that all the project directories are there.
+my @projects = ("Source/JavaScriptCore");
+if (isAppleCocoaWebKit()) {
+    push @projects, ("Source/WebGPU");
+}
+push @projects, ("Source/WebCore");
+push @projects, ("Source/WebKitLegacy");
+
+
+# Build WTF as a separate static library on ports which support it.
+splice @projects, 0, 0, "Source/WTF" if isAppleWebKit() or isWinCairo() or isFTW();
+
+splice @projects, 0, 0, "Source/bmalloc" if isAppleCocoaWebKit();
+
+# Ports using CMake will check if directories exist in the CMake configuration.
+if (!isCMakeBuild()) {
+    for my $dir (@projects) {
+        if (! -d $dir) {
+            die "Error: No $dir directory found. Please do a fresh checkout.\n";
+        }
+    }
+}
+
+if ((isAppleWebKit() || isWinCairo() || isPlayStation() || isFTW()) && !-d "WebKitLibraries") {
+    die "Error: No WebKitLibraries directory found. Please do a fresh checkout.\n";
+}
+
+my @options = ();
+
+if (isAppleCocoaWebKit()) {
+    push @options, XcodeOptions();
+
+    sub option($$)
+    {
+        my ($feature, $isEnabled) = @_;
+        return "" if not defined $isEnabled;
+        return $feature . "=" . ($isEnabled ? $feature : "");
+    }
+
+    foreach (@features) {
+        my $option = option($_->{define}, ${$_->{value}});
+        push @options, $option unless $option eq "";
+    }
+
+    # In workspaces, build order is determined by XCBuild.
+    if (!$useWorkspace) {
+        print STDERR "warning: Building with --no-use-workspace is " .
+        "deprecated.\nIf you have a workflow requirement that depends " .
+        "on building targets in manual order, please document it in " .
+        "https://bugs.webkit.org/show_bug.cgi?id=241295.\n";
+        # ANGLE and libwebrtc must come before WebCore
+        splice @projects, 0, 0, ("Source/ThirdParty/ANGLE");
+        # if (not $archs32bit and (portName() eq Mac or portName() eq iOS or portName() eq watchOS)) {
+        if (portName() eq Mac or portName() eq iOS) {
+            splice @projects, 0, 0, ("Source/ThirdParty/libwebrtc");
+        }
+
+        push @projects, ("Source/WebKit");
+
+        if (!isEmbeddedWebKit()) {
+            push @projects, ("Tools/MiniBrowser");
+
+            # WebInspectorUI must come after JavaScriptCore and WebCore but before WebKit and WebKit2
+            my $webKitIndex = first { $projects[$_] eq "Source/WebKitLegacy" } 0..$#projects;
+            splice(@projects, $webKitIndex, 0, "Source/WebInspectorUI");
+        }
+
+        if (isAppleMacWebKit()) {
+            push @projects, ("Tools/lldb/lldbWebKitTester");
+        }
+
+        # Build Tools needed for Apple ports (except for tvOS)
+        push @projects, ("Tools/DumpRenderTree", "Tools/WebKitTestRunner", "Source/ThirdParty/gtest", "Tools/TestWebKitAPI");
+    }
+
+} elsif (isWinCairo() && !$skipLibraryUpdate) {
+    (system("python Tools/Scripts/update-webkit-wincairo-libs.py") == 0) or die;
+} elsif (isAppleWinWebKit() && !$skipLibraryUpdate) {
+    # Copy WebKitSupportLibrary to the correct location in WebKitLibraries so it can be found.
+    # Will fail if WebKitSupportLibrary.zip is not in source root.
+    (system("perl Tools/Scripts/update-webkit-support-libs") == 0) or die;
+    (system("perl Tools/Scripts/update-webkit-auxiliary-libs") == 0) or die;
+    setupAppleWinEnv()
+}
+
+# If asked to build just the WebKit project, overwrite the projects
+# list after all of the port specific tweaks have been made to
+# build options, etc.
+@projects = ("Source/WebKitLegacy") if $onlyWebKitProject;
+
+my $result = 0;
+
+if (isInspectorFrontend()) {
+    die "The --inspector-frontend option is not supported for CMake-based builds." if isCMakeBuild();
+    @projects = ("Source/WebInspectorUI");
+}
+
+if (isCMakeBuild() && !isAnyWindows()) {
+    if (!canUseNinja() || defined($ENV{NUMBER_OF_PROCESSORS})) {
+        # If the user environment is not setting a specific number of process,
+        # then don't pass the number of jobs to Ninja. Because Ninja will
+        # automatically determine the number of jobs to run in parallel.
+        $makeArgs .= ($makeArgs ? " " : "") . "-j" . numberOfCPUs() if $makeArgs !~ /-j\s*\d+/;
+    }
+
+    my $maxCPULoad = maxCPULoad() if $makeArgs !~ /-l\s*\d+\.?\d*/;
+    $makeArgs .= " -l" . maxCPULoad() if defined $maxCPULoad;
+
+    # We remove CMakeCache to avoid the bots reusing cached flags when
+    # we enable new features. This forces a reconfiguration.
+    my @featureArgs = cmakeArgsFromFeatures(@features, !$noExperimentalFeatures);
+    removeCMakeCache(@featureArgs);
+
+    buildCMakeProjectOrExit($clean, $prefixPath, $makeArgs, @featureArgs, @cmakeArgs);
+}
+
+my $baseProductDir = baseProductDir();
+if (isAppleWinWebKit() || isWinCairo() || isPlayStation() || isFTW()) {
+    my @featureArgs = cmakeArgsFromFeatures(@features, !$noExperimentalFeatures);
+    removeCMakeCache(@featureArgs);
+
+    chdirWebKit();
+    if (exitStatus(generateBuildSystemFromCMakeProject($prefixPath, @featureArgs, @cmakeArgs))) {
+        die "Run Visual Studio 2017 installation vcvars.bat before build-webkit when using ninja";
+    }
+
+    exit 0 if isGenerateProjectOnly();
+
+    chdirWebKit();
+    if (canUseNinja()) {
+        chdir File::Spec->catdir($baseProductDir, configuration());
+        $result = system("ninja");
+    } else {
+        $result = buildVisualStudioProject(File::Spec->catfile($baseProductDir, configuration(), "WebKit.sln"), $clean);
+    }
+    if (exitStatus($result)) {
+        my $scriptDir = relativeScriptsDir();
+        if (isAppleWinWebKit() || isWinCairo() || isFTW()) {
+            print "\n\n===== BUILD FAILED ======\n\n";
+            print "Please ensure you have run $scriptDir/update-webkit to install dependencies.\n\n";
+            print "You can view build errors by checking the BuildLog.htm files located at:\n$baseProductDir/obj/<project>/<config>.\n";
+        }
+        exit exitStatus($result);
+    }
+} elsif (isAppleCocoaWebKit() && !isCMakeBuild()) {
+    exit 0 if isGenerateProjectOnly();
+
+    my @local_options = @options;
+    push @local_options, XcodeCoverageSupportOptions() if $coverageSupport;
+    push @local_options, XcodeStaticAnalyzerOption() if $shouldRunStaticAnalyzer;
+    push @local_options, "WK_LTO_MODE=$ltoMode" if ($ltoMode ne "default");
+    # When we know we're in a workspace (and not an individual project), turn
+    # on dependency validation errors. Other conditions (e.g. whether we're in
+    # a script phase or not) influence the actual VALIDATE_DEPENDENCIES setting
+    # recognized by the build system.
+    push @local_options, "WK_VALIDATE_DEPENDENCIES=YES_ERROR" if $useWorkspace;
+ 
+    markBaseProductDirectoryAsCreatedByXcodeBuildSystem();
+
+    # Build, and abort if the build fails.
+    if ($useWorkspace) {
+        my $scheme = $onlyWebKitProject ? "WebKitLegacy" : "All Modules";
+        $result = buildXCodeWorkspace("WebKit.xcworkspace", $scheme, $clean, @local_options, @ARGV);
+        if (exitStatus($result)) {
+            exit exitStatus($result);
+        }
+    } else {
+        for my $dir (@projects) {
+            chdir $dir or die;
+            $result = 0;
+
+            my $project = basename($dir);
+            my $projectPath = $project =~ /gtest/ ? "xcode/gtest" : $project;
+            $result = buildXCodeProject($projectPath, $clean, @local_options, @ARGV);
+
+            # Various build* calls above may change the CWD.
+            chdirWebKit();
+
+            if (exitStatus($result)) {
+                exit exitStatus($result);
+            }
+        }
+    }
+
+    if (isInspectorFrontend()) {
+        exit exitStatus($result);
+    }
+
+    if ($clean) {
+        # No need to have build-imagediff do cleaning, the build directory has already been deleted.
+        exit exitStatus($result);
+    }
+
+    # Build ImageDiff for host
+    my @command = File::Spec->catfile(getcwd(), "/Tools/Scripts/build-imagediff");
+    chdirWebKit();
+    if (!-e $command[0]) {
+        die "build-imagediff script not found";
+    }
+
+    push @command, argumentsForConfiguration();
+    push @command, @ARGV;
+    @command = extractNonMacOSHostConfiguration(\@command);
+    $result = system(@command);
+    if (exitStatus($result)) {
+        exit exitStatus($result);
+    }
+}
+
+# Don't report the "WebKit is now built" message after a clean operation.
+exit if $clean;
+
+# Don't report congrats message if build was interrupted by the user.
+exit if ($result & 127) == SIGINT;
+
+# Explicitly chdir back to where exit will take us anyway, since the following "launcher"
+# message is relative to that directory.
+chdir $originalWorkingDirectory;
+
+# Write out congratulations message.
+writeCongrats();
+
+exit 0;
+
+sub writeCongrats()
+{
+    my $launcherPath = launcherPath();
+    my $launcherName = launcherName();
+    my $endTime = time();
+    my $buildTime = formatBuildTime($endTime - $startTime);
+
+    print "\n";
+    print "====================================================================\n";
+    print " WebKit is now built ($buildTime). \n";
+    if ($launcherPath && $launcherName) {
+        print " To run $launcherName with this newly-built code, use the\n";
+        print " \"$launcherPath\" script.\n";
+    }
+    print "====================================================================\n";
+}

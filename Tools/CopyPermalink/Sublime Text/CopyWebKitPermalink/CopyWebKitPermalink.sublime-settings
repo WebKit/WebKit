@@ -1,0 +1,7 @@
+{
+    // Controls whether the SVN revision is included in the URL.
+    "include_revision": true,
+
+    // Controls whether the URL is automatically opened in the default browser.
+    "automatically_open_in_browser": false,
+}

@@ -1,0 +1,5 @@
+PASS children.namedItem('child') is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,13 @@
+Test File.lastModifiedDate returns null if the information is not available.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS event.dataTransfer contains a File object on drop.
+PASS lastModified is not null
+PASS lastModified is >= testStartTime.getTime()
+PASS (new Date()).getTime() is >= lastModified
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

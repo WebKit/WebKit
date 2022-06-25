@@ -1,0 +1,14 @@
+Ensure a source map loads for resources with sourceMappingURLs.
+
+
+== Running test suite: Network.SourceMap
+-- Running test case: Network.SourceMap.Stylesheet
+PASS: Stylesheet Resource should be created.
+PASS: Resource should have loaded 1 SourceMap.
+PASS: SourceMap should be a WI.SourceMap instance.
+
+-- Running test case: Network.SourceMap.Script
+PASS: Script Resource should be created.
+PASS: Resource should have loaded 1 SourceMap.
+PASS: SourceMap should be a WI.SourceMap instance.
+

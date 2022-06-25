@@ -1,0 +1,97 @@
+From fb8e8533a6175757deec1696c9d1c4a87a4c9eb3 Mon Sep 17 00:00:00 2001
+From: ChangSeok Oh <changseok@gatech.edu>
+Date: Fri, 22 May 2020 04:43:43 -0400
+Subject: [PATCH] Fix building with `-fno-common`
+
+* GCC 10 will switch the default to `-fno-common`.
+  https://gcc.gnu.org/PR85678
+---
+ hw/dmx/config/dmxconfig.c  | 2 +-
+ hw/dmx/config/xdmxconfig.c | 2 +-
+ hw/xwayland/xwayland.c     | 2 +-
+ test/misc.c                | 2 +-
+ test/xi2/protocol-common.c | 2 ++
+ test/xi2/protocol-common.h | 2 +-
+ 6 files changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/hw/dmx/config/dmxconfig.c b/hw/dmx/config/dmxconfig.c
+index c1a9e1cf3..85bc0dbe4 100644
+--- a/hw/dmx/config/dmxconfig.c
++++ b/hw/dmx/config/dmxconfig.c
+@@ -72,7 +72,7 @@ typedef struct DMXConfigCmdStruct {
+     DMXConfigList *xinputs;
+ } DMXConfigCmd, *DMXConfigCmdPtr;
+ 
+-DMXConfigEntryPtr dmxConfigEntry;
++extern DMXConfigEntryPtr dmxConfigEntry;
+ static DMXConfigCmd dmxConfigCmd;
+ 
+ static int dmxDisplaysFromCommandLine;
+diff --git a/hw/dmx/config/xdmxconfig.c b/hw/dmx/config/xdmxconfig.c
+index 49e4b5459..05d839688 100644
+--- a/hw/dmx/config/xdmxconfig.c
++++ b/hw/dmx/config/xdmxconfig.c
+@@ -65,7 +65,7 @@ extern FILE *yyin;
+ #define DMX_CANVAS_WIDTH  400
+ #define DMX_CANVAS_HEIGHT 500
+ 
+-DMXConfigEntryPtr dmxConfigEntry;
++extern DMXConfigEntryPtr dmxConfigEntry;
+ static DMXConfigVirtualPtr dmxConfigCurrent, dmxConfigNewVirtual;
+ static DMXConfigDisplayPtr dmxConfigCurrentDisplay, dmxConfigNewDisplay;
+ static int dmxConfigGrabbed, dmxConfigGrabbedFine;
+diff --git a/hw/xwayland/xwayland.c b/hw/xwayland/xwayland.c
+index 939f3392c..a15b27b96 100644
+--- a/hw/xwayland/xwayland.c
++++ b/hw/xwayland/xwayland.c
+@@ -37,7 +37,7 @@
+ 
+ #ifdef XF86VIDMODE
+ #include <X11/extensions/xf86vmproto.h>
+-_X_EXPORT Bool noXFree86VidModeExtension;
++extern _X_EXPORT Bool noXFree86VidModeExtension;
+ #endif
+ 
+ void
+diff --git a/test/misc.c b/test/misc.c
+index 66330a140..069aac902 100644
+--- a/test/misc.c
++++ b/test/misc.c
+@@ -31,7 +31,7 @@
+ #include "dix.h"
+ #include "dixstruct.h"
+ 
+-ScreenInfo screenInfo;
++extern ScreenInfo screenInfo;
+ 
+ static void
+ dix_version_compare(void)
+diff --git a/test/xi2/protocol-common.c b/test/xi2/protocol-common.c
+index 9265ba390..33483e73f 100644
+--- a/test/xi2/protocol-common.c
++++ b/test/xi2/protocol-common.c
+@@ -44,6 +44,8 @@ static ClientRec server_client;
+ 
+ void *global_userdata;
+ 
++void (*reply_handler) (ClientPtr client, int len, char *data, void *userdata);
++
+ static void
+ fake_init_sprite(DeviceIntPtr dev)
+ {
+diff --git a/test/xi2/protocol-common.h b/test/xi2/protocol-common.h
+index f8504787f..d4ccb4e0a 100644
+--- a/test/xi2/protocol-common.h
++++ b/test/xi2/protocol-common.h
+@@ -97,7 +97,7 @@ extern void *global_userdata;
+  * The reply handler called from WriteToClient. Set this handler if you need
+  * to check the reply values.
+  */
+-void (*reply_handler) (ClientPtr client, int len, char *data, void *userdata);
++extern void (*reply_handler) (ClientPtr client, int len, char *data, void *userdata);
+ 
+ /**
+  * The default screen used for the windows. Initialized by init_simple().
+-- 
+2.26.2
+

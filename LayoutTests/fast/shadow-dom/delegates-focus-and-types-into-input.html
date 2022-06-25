@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+</head>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+
+description('This tests delegating focus in a shadow tree to an input element. WebKit should move the selection as well as the focus');
+
+jsTestIsAsync = true;
+
+const host = document.createElement('div');
+document.body.appendChild(host);
+
+const shadowRoot = host.attachShadow({mode: 'closed', delegatesFocus: true});
+shadowRoot.innerHTML = `<input type="text" id="target">
+<div onclick="checkSelection()">Click here</div>`;
+const target = shadowRoot.getElementById("target");
+
+async function runTest() {
+    const divRect = shadowRoot.querySelector('div').getBoundingClientRect();
+    await UIHelper.activateAt(divRect.x + 5, divRect.y + 5);
+    await UIHelper.ensurePresentationUpdate();
+    await new Promise(requestAnimationFrame);
+    await selectionCheck;
+}
+
+let resolveSelectionCheck;
+const selectionCheck = new Promise((resolve) => resolveSelectionCheck = resolve);
+function checkSelection() {
+    shouldBe('document.activeElement', 'host');
+    shouldBe('shadowRoot.querySelector("input")', 'target');
+    shouldBe('shadowRoot.activeElement', 'target');
+    shouldBeEqualToString('target.value', '');
+    document.execCommand('insertText', false, 'hello');
+    shouldBeEqualToString('target.value', 'hello');
+    shouldBe('target.selectionStart', '5');
+    shouldBe('target.selectionEnd', '5');
+    resolveSelectionCheck();
+}
+
+if (window.testRunner)
+    UIHelper.wait(runTest());
+else
+    selectionCheck.then(() => finishJSTest());
+
+</script>
+</body>
+</html>

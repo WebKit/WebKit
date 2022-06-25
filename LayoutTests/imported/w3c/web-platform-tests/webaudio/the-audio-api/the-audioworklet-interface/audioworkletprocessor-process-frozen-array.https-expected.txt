@@ -1,0 +1,15 @@
+
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "check-frozen-array"
+PASS Executing "transfer-frozen-array"
+PASS Audit report
+PASS > [check-frozen-array]
+PASS   |inputs| is frozen is true.
+PASS   |outputs| is frozen is true.
+PASS < [check-frozen-array] All assertions passed. (total 2 assertions)
+PASS > [transfer-frozen-array]
+PASS   Transferring inputs/outputs, an individual input/output array, or a channel Float32Array is not allowed as expected. is true.
+PASS   Transferring ArrayBuffers was successful as expected. is true.
+PASS < [transfer-frozen-array] All assertions passed. (total 2 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully.
+

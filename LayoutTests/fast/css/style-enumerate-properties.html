@@ -1,0 +1,104 @@
+<head>
+    <script src="../../resources/js-test-pre.js"></script>
+</head>
+<body style="text-decoration: underline; border-top-color: green">
+    <div id="description">This test makes sure that CSSStyleDeclaration enumerates JavaScript properties for defined and non-defined CSS properties, indexed properties, and properties defined on the prototype. See <a href="https://bugs.webkit.org/show_bug.cgi?id=23946">Bug 23946</a>.</div>
+    <div id="console"></div>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        shouldBe("document.body.style.length", "2");
+        shouldBeTrue("'0' in document.body.style");
+        shouldBeTrue("'1' in document.body.style");
+        shouldBeTrue("'textDecoration' in document.body.style");
+        shouldBeTrue("'borderTopColor' in document.body.style");
+        shouldBeTrue("'border' in document.body.style");
+        shouldBeTrue("'font' in document.body.style");
+        shouldBeTrue("'webkitTransform' in document.body.style");
+        shouldBeTrue("'WebkitTransform' in document.body.style");
+        shouldBeFalse("'bogus-random-String' in document.body.style");
+        shouldBeTrue("'cssText' in document.body.style");
+        shouldBeTrue("'getPropertyCSSValue' in document.body.style");
+        
+        // Test invariants on the order of the enumerated properties. These are not in the spec, but we
+        // currently expect them to hold.
+        // - 6 groupings
+        //.  - 1st grouping [0, 1, cssText, length, parentRule, cssFloat]
+        //   - 2nd grouping, camel case, alphabetical, includes properties with "Webkit" and "Epub" 
+        //     prefix with initial uppercase letter, no dashes anywhere in the name
+        //   - 3nd grouping, webkit case, alphabetical, all properties prefixed with "webkit" with
+        //     initial lowercase letter 'w'.
+        //   - 4th grouping, dashed case, alphabetical, all properties have a dash in them.
+        //   - 5th grouping, epub case, alphabetical, all properties prefixed with "epub" with 
+        //     initial lowercase letter 'e'.
+        //   - 6th grouping, [item, getPropertyValue, getPropertyPriority, setProperty, removeProperty, 
+        //     getPropertyShorthand, isPropertyImplicit, getPropertyCSSValue]
+
+        let properties = [];
+        for (let p in document.body.style)
+            properties.push(p);
+
+        let initialIndexOfGroup1 = 0;
+        let initialIndexOfGroup2 = properties.findIndex(property => property == "cssFloat") + 1;
+        let initialIndexOfGroup3 = properties.findIndex(property => property.startsWith("webkit"));
+        let initialIndexOfGroup4 = properties.findIndex(property => property.includes("-"));
+        let initialIndexOfGroup5 = properties.findIndex(property => property.startsWith("epub"));
+        let initialIndexOfGroup6 = properties.findIndex(property => property == "item");
+
+        shouldBeTrue("initialIndexOfGroup2 > initialIndexOfGroup1");
+        shouldBeTrue("initialIndexOfGroup3 > initialIndexOfGroup2");
+        shouldBeTrue("initialIndexOfGroup4 > initialIndexOfGroup3");
+        shouldBeTrue("initialIndexOfGroup5 > initialIndexOfGroup4");
+        shouldBeTrue("initialIndexOfGroup6 > initialIndexOfGroup5");
+
+        let group1 = properties.slice(initialIndexOfGroup1, initialIndexOfGroup2);
+        let group2 = properties.slice(initialIndexOfGroup2, initialIndexOfGroup3);
+        let group3 = properties.slice(initialIndexOfGroup3, initialIndexOfGroup4);
+        let group4 = properties.slice(initialIndexOfGroup4, initialIndexOfGroup5);
+        let group5 = properties.slice(initialIndexOfGroup5, initialIndexOfGroup6);
+        let group6 = properties.slice(initialIndexOfGroup6);
+
+        // Group 1
+        shouldBe(`group1`, `["0", "1", "cssText", "length", "parentRule", "cssFloat"]`);
+
+        // Group 2 - Camel Case
+        let group2Clone = [...group2];
+        group2Clone.sort();
+        shouldBe("group2", "group2Clone");
+        shouldBeTrue(`group2.some(property => property.startsWith("Webkit"))`);
+        shouldBeTrue(`group2.some(property => property.startsWith("Epub"))`);
+        shouldBeTrue(`group2.every(property => !property.includes("-"))`);
+
+        // Group 3 - WebKit Case
+        let group3Clone = [...group3];
+        group3Clone.sort();
+        shouldBe("group3", "group3Clone");
+        shouldBeTrue(`group3.every(property => !property.startsWith("Webkit"))`);
+        shouldBeTrue(`group3.every(property => !property.startsWith("Epub"))`);
+        shouldBeTrue(`group3.every(property => !property.includes("-"))`);
+        shouldBeTrue(`group3.every(property => property.startsWith("webkit"))`);
+
+        // Group 4 - Dashed Case
+        let group4Clone = [...group4];
+        group4Clone.sort();
+        shouldBe("group4", "group4Clone");
+        shouldBeTrue(`group4.every(property => !property.startsWith("Webkit"))`);
+        shouldBeTrue(`group4.every(property => !property.startsWith("Epub"))`);
+        shouldBeTrue(`group4.every(property => !property.startsWith("webkit"))`);
+        shouldBeTrue(`group4.every(property => property.includes("-"))`);
+
+        // Group 5 - Epub Case
+        let group5Clone = [...group5];
+        group5Clone.sort();
+        shouldBe("group5", "group5Clone");
+        shouldBeTrue(`group5.every(property => !property.startsWith("Webkit"))`);
+        shouldBeTrue(`group5.every(property => !property.startsWith("Epub"))`);
+        shouldBeTrue(`group5.every(property => !property.includes("-"))`);
+        shouldBeTrue(`group5.every(property => property.startsWith("epub"))`);
+
+        // Group 6
+        shouldBe(`group6`, `["item", "getPropertyValue", "getPropertyPriority", "setProperty", "removeProperty", "getPropertyShorthand", "isPropertyImplicit", "getPropertyCSSValue"]`);
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
+</body>

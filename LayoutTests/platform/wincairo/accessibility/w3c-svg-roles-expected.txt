@@ -1,0 +1,105 @@
+This tests the exposure and role mapping of SVG path elements with properties requiring exposure.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+test1:
+	Expected role: img
+	AXRole: AXImage
+test2:
+	Expected role: img
+	AXRole: AXImage
+test3:
+	Expected role: img
+	AXRole: AXImage
+test4:
+	Expected role: img
+	AXRole: AXImage
+test5:
+	Expected role: img
+	AXRole: AXImage
+test6:
+	Expected role: img
+	AXRole: AXImage
+test7:
+	Expected role: img
+	AXRole: AXImage
+test8:
+	Expected role: img
+	AXRole: AXImage
+test9:
+	Expected role: img
+	AXRole: AXImage
+test10:
+	Expected role: img
+	AXRole: AXImage
+test11:
+	Expected role: img
+	AXRole: AXImage
+test12:
+	Expected role: img
+	AXRole: AXImage
+test13:
+	Expected role: img
+	AXRole: AXImage
+test14:
+	Expected role: img
+	AXRole: AXImage
+test15:
+	Expected role: img
+	AXRole: AXImage
+test16:
+	Expected role: img
+	AXRole: AXImage
+test17:
+	Expected role: img
+	AXRole: AXImage
+test18:
+	Expected role: img
+	AXRole: AXImage
+test19:
+	Expected role: img
+	AXRole: AXImage
+test20:
+	Expected role: img
+	AXRole: AXImage
+test21:
+	Expected role: img
+	AXRole: AXImage
+test22:
+	Expected role: img
+	AXRole: AXImage
+test23:
+	Expected role: img
+	AXRole: AXImage
+test24:
+	Expected role: group
+	AXRole: AXGroup
+test25:
+	Expected role: group
+	AXRole: AXGroup
+test26:
+	Expected role: img
+	AXRole: AXImage
+test27:
+	Expected role: group
+	AXRole: AXGroup
+test28:
+	Expected role: img
+	AXRole: AXImage
+test29:
+	Expected role: group
+	AXRole: AXWebArea
+test30:
+	Expected role: group
+	AXRole: AXWebArea
+test31:
+	Expected role: group
+	AXRole: AXWebArea
+test32:
+	Expected (not exposed)
+	Element not exposed
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

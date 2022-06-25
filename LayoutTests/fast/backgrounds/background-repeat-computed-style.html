@@ -1,0 +1,28 @@
+﻿<html>
+<head>
+    <title>Syntax for backgroundRepeat</title>
+    <style type="text/css">
+        #testDiv
+        {
+            background-image: url(resources/map.jpg);
+            width:500px;
+            height:500px;
+            border: 10px solid black;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            window.testRunner.dumpAsText();
+    </script>
+</head>
+<body>
+    <div id="testDiv" style="background-repeat:repeat-x">This div should have a horizontal repeating background</div>
+    <div id="testresult">Fail</div>
+    <script type="text/javascript">
+        if(window.getComputedStyle(testDiv, "").getPropertyValue("background-repeat") == "repeat-x")
+        {
+            document.getElementById("testresult").innerHTML = "Pass";
+        }
+    </script>
+</body>
+</html>

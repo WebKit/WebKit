@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script>
+            function startCapture()
+            {
+                navigator.mediaDevices.getUserMedia({ audio: true, video: true }).then(async (s) => {
+                    video.srcObject = s;
+                    await video.play();
+                    while (video.videoWidth != 640)
+                        await new Promise(resolve => setTimeout(resolve, 50));
+                    checkIsPlaying();
+                });
+            }
+
+            function checkIsNotPlaying() {
+                window.webkit.messageHandlers.gum.postMessage(video.paused ? "PASS" : "FAIL");
+            }
+
+            function checkIsPlaying() {
+                window.webkit.messageHandlers.gum.postMessage(video.paused ? "FAIL" : "PASS");
+            }
+        </script>
+    <head>
+
+    <body onload="startCapture()">
+        <video id="video" controls playsinline autoplay></video>
+    </body>
+</html>

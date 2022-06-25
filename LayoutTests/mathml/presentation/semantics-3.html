@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+<head>
+  <title>Semantics</title>
+</head>
+
+<body>
+
+  <!-- These <semantics> elements are content MathML expressions with various annotations. Only the first recognized annotation should be displayed. WebKit recognizes the following annotations:
+   - Any <annotation> element without src attribute.
+   - An <annotation-xml> element without src attribute and with one of the encoding among "application/mathml-presentation+xml", "MathML-Presentation", "image/svg+xml", "SVG1.1", "application/xhtml+xml" and "text/html".
+   -->
+
+  <p>annotation 1: <math><semantics><csymbol>Content MathML</csymbol><annotation>annotation</annotation><annotation>error</annotation><annotation-xml encoding="application/mathml-presentation+xml"><math><mtext>error</mtext></math></annotation-xml></semantics></math></p>
+  <p>annotation 2: <math><semantics><csymbol>Content MathML</csymbol><annotation encoding="application/x-tex">\sin x + 5</annotation><annotation>error</annotation><annotation-xml encoding="application/mathml-presentation+xml"><math><mtext>error</mtext></math></annotation-xml></semantics></math></p>
+  <p>annotation 3: <math><semantics><csymbol>Content MathML</csymbol><annotation src="external-resource">error</annotation><annotation>annotation</annotation><annotation-xml encoding="application/mathml-presentation+xml"><math><mtext>error</mtext></math></annotation-xml></semantics></math></p>
+
+  <p>annotation-xml 1: <math><semantics><csymbol>Content MathML</csymbol><annotation-xml encoding="application/mathml-presentation+xml"><math><mtext>application/mathml-presentation+xml</mtext></math></annotation-xml><annotation-xml encoding="application/mathml-presentation+xml"><math><mtext>error</mtext></math></annotation-xml><annotation>error</annotation></semantics></math></p>
+  <p>annotation-xml 2: <math><semantics><csymbol>Content MathML</csymbol><annotation-xml encoding="MathML-Presentation"><math><mtext>MathML-Presentation</mtext></math></annotation-xml><annotation-xml encoding="application/mathml-presentation+xml"><math><mtext>error</mtext></math></annotation-xml><annotation>error</annotation></semantics></math></p>
+  <p>annotation-xml 3: <math><semantics><csymbol>Content MathML</csymbol><annotation-xml encoding="image/svg+xml"><svg width="20px" height="20px"><rect width="20px" height="20px" fill="red" stroke="none"/></svg></annotation-xml><annotation-xml encoding="application/mathml-presentation+xml"><math><mtext>error</mtext></math></annotation-xml><annotation>error</annotation></semantics></math></p>
+  <p>annotation-xml 4: <math><semantics><csymbol>Content MathML</csymbol><annotation-xml encoding="SVG1.1"><svg width="20px" height="20px"><rect width="20px" height="20px" fill="red" stroke="none"/></svg></annotation-xml><annotation-xml encoding="application/mathml-presentation+xml"><math><mtext>error</mtext></math></annotation-xml><annotation>error</annotation></semantics></math></p>
+  <p>annotation-xml 5: <math><semantics><csymbol>Content MathML</csymbol><annotation-xml encoding="application/xhtml+xml"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>application/xhtml+xml</title></head><body><p>application/xhtml+xml</p></body></html></annotation-xml><annotation-xml encoding="application/mathml-presentation+xml"><math><mtext>error</mtext></math></annotation-xml><annotation>error</annotation></math></p>
+  <p>annotation-xml 6: <math><semantics><csymbol>Content MathML</csymbol><annotation-xml encoding="text/html"><html><head><title>text/html</title></head><body><p>text/html</p></body></html></annotation-xml><annotation-xml encoding="application/mathml-presentation+xml"><math><mtext>error</mtext></math></annotation-xml><annotation>error</annotation></semantics></math></p>
+  <p>annotation-xml 7: <math><semantics><csymbol>Content MathML</csymbol><annotation-xml encoding="unknown"><math><mtext>error</mtext></math></annotation-xml><annotation-xml encoding="application/mathml+xml"><math><mtext>error</mtext></math></annotation-xml><annotation-xml encoding="application/mathml-presentation+xml"><math><mtext>annotation-xml</mtext></math></annotation-xml><annotation>error</annotation></semantics></math></p>
+</body>
+</html>

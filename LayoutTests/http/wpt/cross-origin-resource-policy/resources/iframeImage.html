@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <div id="testDiv"></div>
+    <h3>The iframe making an image load.</h3>
+    <script src="/common/get-host-info.sub.js"></script>
+    <script>
+const host = get_host_info();
+const baseURL = host.HTTP_ORIGIN + window.location.pathname.replace(/\/[^\/]*$/, '/') ;
+const ok = true;
+const ko = false;
+
+const img = new Image();
+img.src = baseURL + "image.py?corp=same-origin&cached";
+img.onload = () => { parent.postMessage("ok", "*") };
+img.onerror = () => { parent.postMessage("ko", "*") };
+testDiv.appendChild(img);
+    </script>
+</body>
+</html>

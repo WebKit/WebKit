@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<script>
+    description("Test that assistiveTechnologyMakeFirstResponder works correctly on iOS.");
+    window.jsTestIsAsync = true;
+
+    function performTest() {
+        if (window.testRunner) {
+            setTimeout(async function() {
+                await verifyWebContentIsFirstResponder(true);
+                debug("Resigning web content first respondership");
+                await resignWebContentFirstResponder();
+                await verifyWebContentIsFirstResponder(false);
+
+                var inputObj = accessibilityController.accessibleElementById("input");
+                inputObj.takeFocus();
+                debug("Performing accessibility object focus");
+
+                await verifyWebContentIsFirstResponder(true);
+                finishJSTest();
+            }, 0);
+        }
+    }
+
+    var isWebContentFirstResponder;
+    async function verifyWebContentIsFirstResponder(expectFirstRespondership)
+    {
+        // Set the global var to the opposite of what we expect and allow the UI script to give us the expected value.
+        isWebContentFirstResponder = !expectFirstRespondership;
+
+        // Because taking and resigning first respondership requires async IPC between the web and UI processes, we
+        // must also asynchronously wait to get our expected value.
+        await waitFor(() => {
+            setTimeout(async () => {
+                isWebContentFirstResponder = await (new Promise(resolve => {
+                    testRunner.runUIScript(`uiController.isWebContentFirstResponder`, result => resolve(result === "true"));
+                }));
+            }, 0)
+            return isWebContentFirstResponder == expectFirstRespondership;
+        });
+        shouldBe("isWebContentFirstResponder", `${expectFirstRespondership}`);
+    }
+
+    async function resignWebContentFirstResponder()
+    {
+        await (new Promise(resolve => {
+            testRunner.runUIScript(`uiController.resignFirstResponder()`, resolve);
+        }));
+    }
+
+    window.addEventListener('load', performTest, false);
+    </script>
+</head>
+<body>
+    <input id="input" type="text">
+</body>
+</html>

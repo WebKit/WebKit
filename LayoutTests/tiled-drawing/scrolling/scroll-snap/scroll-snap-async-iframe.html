@@ -1,0 +1,173 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncFrameScrollingEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        iframe {
+            display: block;
+            width: 400px;
+            height: 250px;
+            margin: 5px;
+        }
+        
+        /* It's important for the test that the main frame does not become scrollable */
+        #console {
+            height: 1em;
+            overflow: hidden;
+        }
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    
+    <script>
+    window.jsTestIsAsync = true;
+
+    var iframeScrollPositionBeforeGlide;
+    var divScrollPositionBeforeSnap;
+
+    function locationInWindowCoordinates(element)
+    {
+        var position = {};
+        position.x = element.offsetLeft;
+        position.y = element.offsetTop;
+
+        while (element.offsetParent) {
+            position.x = position.x + element.offsetParent.offsetLeft;
+            position.y = position.y + element.offsetParent.offsetTop;
+            if (element == document.getElementsByTagName("body")[0])
+                break;
+
+            element = element.offsetParent;
+        }
+
+        return position;
+    }
+
+    function checkForScrollSnap(targetLabel)
+    {
+        var iframeTarget = document.getElementById(targetLabel);
+
+        var actualPosition = iframeTarget.scrollTop;
+        if (targetLabel == 'horizontalTarget')
+            actualPosition = iframeTarget.scrollLeft;
+
+        // The div should have snapped back to the previous position
+        if (actualPosition != divScrollPositionBeforeSnap)
+            testFailed("div did not snap back to proper location for " + targetLabel +". Expected " + divScrollPositionBeforeSnap + ", but got " + actualPosition);
+        else
+            testPassed("div honored snap points.");
+    }
+
+    async function scrollSnapTest(targetLabel)
+    {
+        debug("Testing scroll-snap snap for " + targetLabel + ":");
+        var iframeTarget = document.getElementById(targetLabel);
+
+        var dx = 0;
+        var dy = 0;
+        if (targetLabel == 'horizontalTarget') {
+            divScrollPositionBeforeSnap = iframeTarget.scrollLeft;
+            dx = -1;
+        } else {
+            divScrollPositionBeforeSnap = iframeTarget.scrollTop;
+            dy = -1;
+        }
+
+        var windowPosition = locationInWindowCoordinates(iframeTarget);
+
+        var startPosX = windowPosition.x + 0.5 * iframeTarget.clientWidth;
+        var startPosY = windowPosition.y + 0.5 * iframeTarget.clientHeight;
+        eventSender.monitorWheelEvents();
+        eventSender.mouseMoveTo(startPosX, startPosY); // Make sure we are just outside the iFrame
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'began', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'changed', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'changed', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+
+        await UIHelper.waitForScrollCompletion();
+        checkForScrollSnap(targetLabel);
+    }
+
+    function checkForScrollGlide(targetLabel)
+    {
+        var iframeTarget = document.getElementById(targetLabel);
+        var iframeScrollingElement = window.frames[targetLabel].contentDocument.scrollingElement;
+
+        var actualPosition = iframeScrollingElement.scrollTop;
+        var expectedPosition = iframeTarget.clientHeight;
+        if (targetLabel == 'horizontalTarget') {
+            actualPosition = iframeScrollingElement.scrollLeft;
+            expectedPosition = iframeTarget.clientWidth;
+        }
+
+        // The div should have scrolled (glided) to the next snap point.
+        if (actualPosition == expectedPosition)
+            testPassed("div scrolled to next window.");
+        else
+            testFailed("div did not honor snap points. Expected " + expectedPosition + ", but got " + actualPosition);
+    }
+
+    async function scrollGlideTest(targetLabel)
+    {
+        debug("Testing scroll-snap glide for " + targetLabel + ":");
+        var iframeTarget = document.getElementById(targetLabel);
+        var iframeScrollingElement = window.frames[targetLabel].contentDocument.scrollingElement;
+
+        var dx = 0;
+        var dy = 0;
+        if (targetLabel == 'horizontalTarget') {
+            iframeScrollPositionBeforeGlide = iframeScrollingElement.scrollLeft;
+            dx = -1;
+        } else {
+            iframeScrollPositionBeforeGlide = iframeScrollingElement.scrollTop;
+            dy = -1;
+        }
+
+        if (!eventSender)
+            return;
+
+        var windowPosition = locationInWindowCoordinates(iframeTarget);
+
+        var startPosX = windowPosition.x + 0.5 * iframeTarget.clientWidth;
+        var startPosY = windowPosition.y + 0.5 * iframeTarget.clientHeight;
+        eventSender.monitorWheelEvents();
+        eventSender.mouseMoveTo(startPosX, startPosY);
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'began', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'changed', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'changed', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'changed', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'none', 'begin');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(dx, dy, 'none', 'continue');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
+        
+        await UIHelper.waitForScrollCompletion();
+        checkForScrollGlide(targetLabel);
+    }
+    
+    async function runTests()
+    {
+        await scrollGlideTest('horizontalTarget');
+        await scrollSnapTest('horizontalTarget');
+
+        await scrollGlideTest('verticalTarget');
+        await scrollSnapTest('verticalTarget');
+        
+        finishJSTest();
+    }
+
+    window.addEventListener('load', () => {
+        if (window.internals)
+            internals.setPlatformMomentumScrollingPredictionEnabled(false);
+        setTimeout(runTests, 0);
+    }, false);
+    </script>
+</head>
+<body>
+    <div>Tests that the scroll-snap feature works properly in iframes.</div>
+    <iframe id="horizontalTarget" class="horizontalGallery" src="resources/horizontal-mainframe.html"></iframe>
+    <iframe id="verticalTarget" class="verticalGallery" src="resources/vertical-mainframe.html"></iframe>
+    <div id="console"></div>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

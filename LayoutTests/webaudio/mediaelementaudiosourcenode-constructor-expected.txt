@@ -1,0 +1,16 @@
+Tests the MediaElementAudioSourceNode constructor
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS new MediaElementAudioSourceNode(); threw exception TypeError: Not enough arguments.
+PASS new MediaElementAudioSourceNode(context); threw exception TypeError: Not enough arguments.
+PASS new MediaElementAudioSourceNode(context, { }); threw exception TypeError: Member MediaElementAudioSourceOptions.mediaElement is required and must be an instance of HTMLMediaElement.
+PASS new MediaElementAudioSourceNode(context, { mediaElement: document.body }); threw exception TypeError: Type error.
+PASS node = new MediaElementAudioSourceNode(context, { mediaElement: audioElement }); did not throw exception.
+PASS node.mediaElement is audioElement
+PASS new MediaElementAudioSourceNode(context, { mediaElement: audioElement }); threw exception InvalidStateError: Media element is already associated with an audio source node.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

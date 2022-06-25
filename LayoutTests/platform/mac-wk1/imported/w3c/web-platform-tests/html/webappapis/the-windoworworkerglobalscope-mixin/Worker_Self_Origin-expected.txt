@@ -1,0 +1,8 @@
+
+PASS Same Origin Worker
+FAIL Same Origin SharedWorker Shared workers are not supported
+PASS Data Url Worker
+FAIL Data Url SharedWorker Shared workers are not supported
+PASS Blob Url Worker
+FAIL Blob Url SharedWorker Shared workers are not supported
+

@@ -1,0 +1,42 @@
+<!-- webkit-test-runner [ CaptureVideoInUIProcessEnabled=true ] -->
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing video rotation without CVO</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <video id="localVideo" autoplay playsInline width="320" height="240"></video>
+        <video id="remoteVideo" autoplay playsInline width="320" height="240"></video>
+        <script src ="routines.js"></script>
+        <script>
+promise_test(async (test) => {
+    const localStream = await navigator.mediaDevices.getUserMedia({ video: { width: 320, height: 240 } });
+    if (window.testRunner)
+        window.testRunner.setMockCameraOrientation(90);
+
+    localVideo.srcObject = localStream;
+    const remoteStream = await new Promise((resolve, reject) => {
+        track = localStream.getVideoTracks()[0];
+
+        createConnections((firstConnection) => {
+            firstConnection.addTrack(track, localStream);
+            if (window.internals)
+                internals.applyRotationForOutgoingVideoSources(firstConnection);
+        }, (secondConnection) => {
+            secondConnection.ontrack = (trackEvent) => {
+                resolve(trackEvent.streams[0]);
+            };
+        });
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+
+    remoteVideo.srcObject = remoteStream;
+    await remoteVideo.play();
+    await waitForVideoSize(remoteVideo, 240, 320);
+}, "Testing video exchange with rotation applied before transmission");
+        </script>
+    </body>
+</html>

@@ -1,0 +1,5 @@
+
+
+PASS dialog.show(): focusing steps should not change focus on disconnected <dialog>
+PASS dialog.showModal() should throw on disconnected <dialog>
+

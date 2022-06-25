@@ -1,0 +1,332 @@
+
+PASS setup
+PASS Partial interface Document: original interface defined
+PASS Partial interface Document: member names are unique
+PASS Partial interface mixin DocumentOrShadowRoot: original interface mixin defined
+PASS Partial interface mixin DocumentOrShadowRoot: member names are unique
+PASS Partial interface mixin NavigatorID: original interface mixin defined
+PASS Partial interface mixin NavigatorID: member names are unique
+PASS Partial interface HTMLAnchorElement: original interface defined
+PASS Partial interface HTMLAnchorElement: member names are unique
+PASS Partial interface HTMLAreaElement: original interface defined
+PASS Partial interface HTMLAreaElement: member names are unique
+PASS Partial interface HTMLBodyElement: original interface defined
+PASS Partial interface HTMLBodyElement: member names are unique
+PASS Partial interface HTMLBRElement: original interface defined
+PASS Partial interface HTMLBRElement: member names are unique
+PASS Partial interface HTMLTableCaptionElement: original interface defined
+PASS Partial interface HTMLTableCaptionElement: member names are unique
+PASS Partial interface HTMLTableColElement: original interface defined
+PASS Partial interface HTMLTableColElement: member names are unique
+PASS Partial interface HTMLDivElement: original interface defined
+PASS Partial interface HTMLDivElement: member names are unique
+PASS Partial interface HTMLDListElement: original interface defined
+PASS Partial interface HTMLDListElement: member names are unique
+PASS Partial interface HTMLEmbedElement: original interface defined
+PASS Partial interface HTMLEmbedElement: member names are unique
+PASS Partial interface HTMLHeadingElement: original interface defined
+PASS Partial interface HTMLHeadingElement: member names are unique
+PASS Partial interface HTMLHRElement: original interface defined
+PASS Partial interface HTMLHRElement: member names are unique
+PASS Partial interface HTMLHtmlElement: original interface defined
+PASS Partial interface HTMLHtmlElement: member names are unique
+PASS Partial interface HTMLIFrameElement: original interface defined
+PASS Partial interface HTMLIFrameElement: member names are unique
+PASS Partial interface HTMLImageElement: original interface defined
+PASS Partial interface HTMLImageElement: member names are unique
+PASS Partial interface HTMLInputElement: original interface defined
+PASS Partial interface HTMLInputElement: member names are unique
+PASS Partial interface HTMLLegendElement: original interface defined
+PASS Partial interface HTMLLegendElement: member names are unique
+PASS Partial interface HTMLLIElement: original interface defined
+PASS Partial interface HTMLLIElement: member names are unique
+PASS Partial interface HTMLLinkElement: original interface defined
+PASS Partial interface HTMLLinkElement: member names are unique
+PASS Partial interface HTMLMenuElement: original interface defined
+PASS Partial interface HTMLMenuElement: member names are unique
+PASS Partial interface HTMLMetaElement: original interface defined
+PASS Partial interface HTMLMetaElement: member names are unique
+PASS Partial interface HTMLObjectElement: original interface defined
+PASS Partial interface HTMLObjectElement: member names are unique
+PASS Partial interface HTMLOListElement: original interface defined
+PASS Partial interface HTMLOListElement: member names are unique
+PASS Partial interface HTMLParagraphElement: original interface defined
+PASS Partial interface HTMLParagraphElement: member names are unique
+PASS Partial interface HTMLParamElement: original interface defined
+PASS Partial interface HTMLParamElement: member names are unique
+PASS Partial interface HTMLPreElement: original interface defined
+PASS Partial interface HTMLPreElement: member names are unique
+PASS Partial interface HTMLStyleElement: original interface defined
+PASS Partial interface HTMLStyleElement: member names are unique
+PASS Partial interface HTMLScriptElement: original interface defined
+PASS Partial interface HTMLScriptElement: member names are unique
+PASS Partial interface HTMLTableElement: original interface defined
+PASS Partial interface HTMLTableElement: member names are unique
+PASS Partial interface HTMLTableSectionElement: original interface defined
+PASS Partial interface HTMLTableSectionElement: member names are unique
+PASS Partial interface HTMLTableCellElement: original interface defined
+PASS Partial interface HTMLTableCellElement: member names are unique
+PASS Partial interface HTMLTableRowElement: original interface defined
+PASS Partial interface HTMLTableRowElement: member names are unique
+PASS Partial interface HTMLUListElement: original interface defined
+PASS Partial interface HTMLUListElement: member names are unique
+PASS Partial interface Document[2]: original interface defined
+PASS Partial interface Document[2]: member names are unique
+PASS Partial interface Window: original interface defined
+PASS Partial interface Window: member names are unique
+PASS Partial interface Document[3]: member names are unique
+PASS Partial interface mixin DocumentOrShadowRoot[2]: member names are unique
+PASS Partial interface UIEvent: member names are unique
+PASS Partial interface MouseEvent: member names are unique
+PASS Partial interface UIEvent[2]: member names are unique
+PASS Partial dictionary UIEventInit: member names are unique
+PASS Document includes GlobalEventHandlers: member names are unique
+PASS Document includes DocumentAndElementEventHandlers: member names are unique
+PASS HTMLElement includes GlobalEventHandlers: member names are unique
+PASS HTMLElement includes DocumentAndElementEventHandlers: member names are unique
+PASS HTMLElement includes ElementContentEditable: member names are unique
+PASS HTMLElement includes HTMLOrSVGElement: member names are unique
+PASS HTMLLinkElement includes LinkStyle: member names are unique
+PASS HTMLStyleElement includes LinkStyle: member names are unique
+PASS HTMLBodyElement includes WindowEventHandlers: member names are unique
+PASS HTMLAnchorElement includes HTMLHyperlinkElementUtils: member names are unique
+PASS HTMLAreaElement includes HTMLHyperlinkElementUtils: member names are unique
+PASS CanvasRenderingContext2D includes CanvasState: member names are unique
+PASS CanvasRenderingContext2D includes CanvasTransform: member names are unique
+PASS CanvasRenderingContext2D includes CanvasCompositing: member names are unique
+PASS CanvasRenderingContext2D includes CanvasImageSmoothing: member names are unique
+PASS CanvasRenderingContext2D includes CanvasFillStrokeStyles: member names are unique
+PASS CanvasRenderingContext2D includes CanvasShadowStyles: member names are unique
+PASS CanvasRenderingContext2D includes CanvasFilters: member names are unique
+PASS CanvasRenderingContext2D includes CanvasRect: member names are unique
+PASS CanvasRenderingContext2D includes CanvasDrawPath: member names are unique
+PASS CanvasRenderingContext2D includes CanvasUserInterface: member names are unique
+PASS CanvasRenderingContext2D includes CanvasText: member names are unique
+PASS CanvasRenderingContext2D includes CanvasDrawImage: member names are unique
+PASS CanvasRenderingContext2D includes CanvasImageData: member names are unique
+PASS CanvasRenderingContext2D includes CanvasPathDrawingStyles: member names are unique
+PASS CanvasRenderingContext2D includes CanvasTextDrawingStyles: member names are unique
+PASS CanvasRenderingContext2D includes CanvasPath: member names are unique
+PASS Path2D includes CanvasPath: member names are unique
+PASS OffscreenCanvasRenderingContext2D includes CanvasState: member names are unique
+PASS OffscreenCanvasRenderingContext2D includes CanvasTransform: member names are unique
+PASS OffscreenCanvasRenderingContext2D includes CanvasCompositing: member names are unique
+PASS OffscreenCanvasRenderingContext2D includes CanvasImageSmoothing: member names are unique
+PASS OffscreenCanvasRenderingContext2D includes CanvasFillStrokeStyles: member names are unique
+PASS OffscreenCanvasRenderingContext2D includes CanvasShadowStyles: member names are unique
+PASS OffscreenCanvasRenderingContext2D includes CanvasFilters: member names are unique
+PASS OffscreenCanvasRenderingContext2D includes CanvasRect: member names are unique
+PASS OffscreenCanvasRenderingContext2D includes CanvasDrawPath: member names are unique
+PASS OffscreenCanvasRenderingContext2D includes CanvasText: member names are unique
+PASS OffscreenCanvasRenderingContext2D includes CanvasDrawImage: member names are unique
+PASS OffscreenCanvasRenderingContext2D includes CanvasImageData: member names are unique
+PASS OffscreenCanvasRenderingContext2D includes CanvasPathDrawingStyles: member names are unique
+PASS OffscreenCanvasRenderingContext2D includes CanvasTextDrawingStyles: member names are unique
+PASS OffscreenCanvasRenderingContext2D includes CanvasPath: member names are unique
+PASS ElementInternals includes ARIAMixin: member names are unique
+PASS Window includes GlobalEventHandlers: member names are unique
+PASS Window includes WindowEventHandlers: member names are unique
+PASS Window includes WindowOrWorkerGlobalScope: member names are unique
+PASS WorkerGlobalScope includes WindowOrWorkerGlobalScope: member names are unique
+PASS Navigator includes NavigatorID: member names are unique
+PASS Navigator includes NavigatorLanguage: member names are unique
+PASS Navigator includes NavigatorOnLine: member names are unique
+PASS Navigator includes NavigatorContentUtils: member names are unique
+PASS Navigator includes NavigatorCookies: member names are unique
+PASS Navigator includes NavigatorPlugins: member names are unique
+PASS Navigator includes NavigatorConcurrentHardware: member names are unique
+PASS Window includes AnimationFrameProvider: member names are unique
+PASS DedicatedWorkerGlobalScope includes AnimationFrameProvider: member names are unique
+PASS Worker includes AbstractWorker: member names are unique
+PASS SharedWorker includes AbstractWorker: member names are unique
+PASS WorkerNavigator includes NavigatorID: member names are unique
+PASS WorkerNavigator includes NavigatorLanguage: member names are unique
+PASS WorkerNavigator includes NavigatorOnLine: member names are unique
+PASS WorkerNavigator includes NavigatorConcurrentHardware: member names are unique
+PASS Window includes WindowSessionStorage: member names are unique
+PASS Window includes WindowLocalStorage: member names are unique
+PASS HTMLFrameSetElement includes WindowEventHandlers: member names are unique
+PASS Element includes ARIAMixin: member names are unique
+PASS SVGElement includes GlobalEventHandlers: member names are unique
+PASS SVGElement includes DocumentAndElementEventHandlers: member names are unique
+PASS SVGElement includes SVGElementInstance: member names are unique
+PASS SVGElement includes HTMLOrSVGElement: member names are unique
+PASS SVGGraphicsElement includes SVGTests: member names are unique
+PASS SVGSVGElement includes SVGFitToViewBox: member names are unique
+PASS SVGSVGElement includes WindowEventHandlers: member names are unique
+PASS SVGImageElement includes SVGURIReference: member names are unique
+PASS SVGScriptElement includes SVGURIReference: member names are unique
+PASS HTMLElement includes ElementCSSInlineStyle: member names are unique
+PASS SVGElement includes ElementCSSInlineStyle: member names are unique
+PASS Document includes NonElementParentNode: member names are unique
+PASS DocumentFragment includes NonElementParentNode: member names are unique
+PASS Document includes DocumentOrShadowRoot: member names are unique
+PASS ShadowRoot includes DocumentOrShadowRoot: member names are unique
+PASS Document includes ParentNode: member names are unique
+PASS DocumentFragment includes ParentNode: member names are unique
+PASS Element includes ParentNode: member names are unique
+PASS Element includes NonDocumentTypeChildNode: member names are unique
+PASS Element includes ChildNode: member names are unique
+PASS Element includes Slottable: member names are unique
+PASS Document includes XPathEvaluatorBase: member names are unique
+PASS HTMLAllCollection interface: existence and properties of interface object
+PASS HTMLFormControlsCollection interface: existence and properties of interface object
+PASS RadioNodeList interface: existence and properties of interface object
+PASS HTMLOptionsCollection interface: existence and properties of interface object
+PASS DOMStringList interface: existence and properties of interface object
+PASS HTMLElement interface: existence and properties of interface object
+PASS HTMLUnknownElement interface: existence and properties of interface object
+PASS DOMStringMap interface: existence and properties of interface object
+PASS HTMLHtmlElement interface: existence and properties of interface object
+PASS HTMLHeadElement interface: existence and properties of interface object
+PASS HTMLTitleElement interface: existence and properties of interface object
+PASS HTMLBaseElement interface: existence and properties of interface object
+PASS HTMLLinkElement interface: existence and properties of interface object
+PASS HTMLMetaElement interface: existence and properties of interface object
+PASS HTMLStyleElement interface: existence and properties of interface object
+PASS HTMLBodyElement interface: existence and properties of interface object
+PASS HTMLHeadingElement interface: existence and properties of interface object
+PASS HTMLParagraphElement interface: existence and properties of interface object
+PASS HTMLHRElement interface: existence and properties of interface object
+PASS HTMLPreElement interface: existence and properties of interface object
+PASS HTMLQuoteElement interface: existence and properties of interface object
+PASS HTMLOListElement interface: existence and properties of interface object
+PASS HTMLUListElement interface: existence and properties of interface object
+PASS HTMLMenuElement interface: existence and properties of interface object
+PASS HTMLLIElement interface: existence and properties of interface object
+PASS HTMLDListElement interface: existence and properties of interface object
+PASS HTMLDivElement interface: existence and properties of interface object
+PASS HTMLAnchorElement interface: existence and properties of interface object
+PASS HTMLDataElement interface: existence and properties of interface object
+PASS HTMLTimeElement interface: existence and properties of interface object
+PASS HTMLSpanElement interface: existence and properties of interface object
+PASS HTMLBRElement interface: existence and properties of interface object
+PASS HTMLModElement interface: existence and properties of interface object
+PASS HTMLPictureElement interface: existence and properties of interface object
+PASS HTMLSourceElement interface: existence and properties of interface object
+PASS HTMLImageElement interface: existence and properties of interface object
+PASS HTMLIFrameElement interface: existence and properties of interface object
+PASS HTMLEmbedElement interface: existence and properties of interface object
+PASS HTMLObjectElement interface: existence and properties of interface object
+PASS HTMLParamElement interface: existence and properties of interface object
+PASS HTMLVideoElement interface: existence and properties of interface object
+PASS HTMLAudioElement interface: existence and properties of interface object
+PASS HTMLTrackElement interface: existence and properties of interface object
+PASS HTMLMediaElement interface: existence and properties of interface object
+PASS MediaError interface: existence and properties of interface object
+PASS AudioTrackList interface: existence and properties of interface object
+PASS AudioTrack interface: existence and properties of interface object
+PASS VideoTrackList interface: existence and properties of interface object
+PASS VideoTrack interface: existence and properties of interface object
+PASS TextTrackList interface: existence and properties of interface object
+PASS TextTrack interface: existence and properties of interface object
+PASS TextTrackCueList interface: existence and properties of interface object
+PASS TextTrackCue interface: existence and properties of interface object
+PASS TimeRanges interface: existence and properties of interface object
+PASS TrackEvent interface: existence and properties of interface object
+PASS HTMLMapElement interface: existence and properties of interface object
+PASS HTMLAreaElement interface: existence and properties of interface object
+PASS HTMLTableElement interface: existence and properties of interface object
+PASS HTMLTableCaptionElement interface: existence and properties of interface object
+PASS HTMLTableColElement interface: existence and properties of interface object
+PASS HTMLTableSectionElement interface: existence and properties of interface object
+PASS HTMLTableRowElement interface: existence and properties of interface object
+PASS HTMLTableCellElement interface: existence and properties of interface object
+PASS HTMLFormElement interface: existence and properties of interface object
+PASS HTMLLabelElement interface: existence and properties of interface object
+PASS HTMLInputElement interface: existence and properties of interface object
+PASS HTMLButtonElement interface: existence and properties of interface object
+PASS HTMLSelectElement interface: existence and properties of interface object
+PASS HTMLDataListElement interface: existence and properties of interface object
+PASS HTMLOptGroupElement interface: existence and properties of interface object
+PASS HTMLOptionElement interface: existence and properties of interface object
+PASS HTMLTextAreaElement interface: existence and properties of interface object
+PASS HTMLOutputElement interface: existence and properties of interface object
+PASS HTMLProgressElement interface: existence and properties of interface object
+PASS HTMLMeterElement interface: existence and properties of interface object
+PASS HTMLFieldSetElement interface: existence and properties of interface object
+PASS HTMLLegendElement interface: existence and properties of interface object
+PASS ValidityState interface: existence and properties of interface object
+PASS SubmitEvent interface: existence and properties of interface object
+PASS FormDataEvent interface: existence and properties of interface object
+PASS HTMLDetailsElement interface: existence and properties of interface object
+PASS HTMLDialogElement interface: existence and properties of interface object
+PASS HTMLScriptElement interface: existence and properties of interface object
+PASS HTMLTemplateElement interface: existence and properties of interface object
+PASS HTMLSlotElement interface: existence and properties of interface object
+PASS HTMLCanvasElement interface: existence and properties of interface object
+PASS CanvasRenderingContext2D interface: existence and properties of interface object
+PASS CanvasFilter interface: existence and properties of interface object
+PASS CanvasGradient interface: existence and properties of interface object
+PASS CanvasPattern interface: existence and properties of interface object
+PASS TextMetrics interface: existence and properties of interface object
+PASS ImageData interface: existence and properties of interface object
+PASS Path2D interface: existence and properties of interface object
+PASS ImageBitmapRenderingContext interface: existence and properties of interface object
+PASS OffscreenCanvas interface: existence and properties of interface object
+PASS OffscreenCanvasRenderingContext2D interface: existence and properties of interface object
+PASS CustomElementRegistry interface: existence and properties of interface object
+PASS ElementInternals interface: existence and properties of interface object
+PASS DataTransfer interface: existence and properties of interface object
+PASS DataTransferItemList interface: existence and properties of interface object
+PASS DataTransferItem interface: existence and properties of interface object
+PASS DragEvent interface: existence and properties of interface object
+PASS Window interface: existence and properties of interface object
+PASS BarProp interface: existence and properties of interface object
+PASS History interface: existence and properties of interface object
+PASS Location interface: existence and properties of interface object
+PASS PopStateEvent interface: existence and properties of interface object
+PASS HashChangeEvent interface: existence and properties of interface object
+PASS PageTransitionEvent interface: existence and properties of interface object
+PASS BeforeUnloadEvent interface: existence and properties of interface object
+PASS ErrorEvent interface: existence and properties of interface object
+PASS ErrorEvent interface object length
+PASS ErrorEvent interface object name
+PASS ErrorEvent interface: existence and properties of interface prototype object
+PASS ErrorEvent interface: existence and properties of interface prototype object's "constructor" property
+PASS ErrorEvent interface: existence and properties of interface prototype object's @@unscopables property
+PASS ErrorEvent interface: attribute message
+PASS ErrorEvent interface: attribute filename
+PASS ErrorEvent interface: attribute lineno
+PASS ErrorEvent interface: attribute colno
+PASS ErrorEvent interface: attribute error
+PASS PromiseRejectionEvent interface: existence and properties of interface object
+PASS PromiseRejectionEvent interface object length
+PASS PromiseRejectionEvent interface object name
+PASS PromiseRejectionEvent interface: existence and properties of interface prototype object
+PASS PromiseRejectionEvent interface: existence and properties of interface prototype object's "constructor" property
+PASS PromiseRejectionEvent interface: existence and properties of interface prototype object's @@unscopables property
+PASS PromiseRejectionEvent interface: attribute promise
+PASS PromiseRejectionEvent interface: attribute reason
+PASS DOMParser interface: existence and properties of interface object
+PASS Navigator interface: existence and properties of interface object
+PASS PluginArray interface: existence and properties of interface object
+PASS MimeTypeArray interface: existence and properties of interface object
+PASS Plugin interface: existence and properties of interface object
+PASS MimeType interface: existence and properties of interface object
+PASS ImageBitmap interface: existence and properties of interface object
+PASS MessageEvent interface: existence and properties of interface object
+PASS EventSource interface: existence and properties of interface object
+PASS WebSocket interface: existence and properties of interface object
+PASS CloseEvent interface: existence and properties of interface object
+PASS MessageChannel interface: existence and properties of interface object
+PASS MessagePort interface: existence and properties of interface object
+PASS BroadcastChannel interface: existence and properties of interface object
+PASS WorkerGlobalScope interface: existence and properties of interface object
+PASS DedicatedWorkerGlobalScope interface: existence and properties of interface object
+PASS SharedWorkerGlobalScope interface: existence and properties of interface object
+PASS Worker interface: existence and properties of interface object
+PASS SharedWorker interface: existence and properties of interface object
+PASS WorkerNavigator interface: existence and properties of interface object
+PASS WorkerLocation interface: existence and properties of interface object
+PASS WorkletGlobalScope interface: existence and properties of interface object
+PASS Worklet interface: existence and properties of interface object
+PASS Storage interface: existence and properties of interface object
+PASS StorageEvent interface: existence and properties of interface object
+PASS HTMLMarqueeElement interface: existence and properties of interface object
+PASS HTMLFrameSetElement interface: existence and properties of interface object
+PASS HTMLFrameElement interface: existence and properties of interface object
+PASS HTMLDirectoryElement interface: existence and properties of interface object
+PASS HTMLFontElement interface: existence and properties of interface object
+PASS External interface: existence and properties of interface object
+

@@ -1,0 +1,18 @@
+There are three directories here, standard/, custom/, and contrib/.
+
+standard/ holds the standard stylesheets. These are used no matter what skin
+the user selects. If the user selects the "Classic" skin, then *only* the
+standard/ stylesheets are used.
+
+contrib/ holds "skins" that the user can select in their preferences.  skins
+are in directories, and they contain files with the same names as the files in
+skins/standard/. Simply putting a new directory into the contrib/ directory
+adds a new skin as an option in users' preferences.
+
+custom/ allows you to locally override the standard/ and contrib/ CSS.  If you
+put files into the custom/ directory with the same names as the CSS files in
+skins/standard/, you can override the standard/ and contrib/ CSS. For example,
+if you want to override some CSS in skins/standard/global.css, then you should
+create a file called "global.css" in custom/ and put some CSS in it. The CSS
+you put into files in custom/ will be used *in addition* to the CSS in
+skins/standard/ or the CSS in skins/contrib/. It will apply to every skin.

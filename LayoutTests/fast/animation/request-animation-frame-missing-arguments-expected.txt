@@ -1,0 +1,11 @@
+Test how animation methods react to too few arguments.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS requestAnimationFrame() threw exception TypeError: Not enough arguments.
+PASS cancelAnimationFrame() threw exception TypeError: Not enough arguments.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

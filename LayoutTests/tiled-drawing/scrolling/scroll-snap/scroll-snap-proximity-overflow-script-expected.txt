@@ -1,0 +1,12 @@
+PASS scroll origin is 0
+PASS can escape first snap position
+PASS snapped back to first snap position
+PASS snapped to second snap position
+PASS can escape second snap position to the left
+PASS snapped back to second snap position
+PASS can escape second snap position to the right
+PASS snapped back to second snap position
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

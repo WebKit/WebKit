@@ -1,0 +1,69 @@
+<html>
+    <head>
+        <script src=video-test.js></script>
+        <script src=media-file.js></script>
+        <script>
+            var mediaFile;
+            var loadedCount = 0;
+            var errorCount = 0;
+    
+            function errorEvent()
+            {
+                testExpected("relativeURL(video.currentSrc)", "bogus");
+                testExpected("video.networkState", HTMLMediaElement.NETWORK_NO_SOURCE);
+                testExpected("video.error.code", MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED);
+                consoleWrite("");
+
+                // Prevent runaway tests when unexpected errors happen.
+                if (++errorCount > 1)
+                    endTest();
+
+                setSrcAttribure(findMediaFile("video", "content/test"));
+                consoleWrite("");
+            }
+        
+            function loadedmetadata()
+            {
+                testExpected("stripExtension(relativeURL(video.currentSrc))", stripExtension(mediaFile));
+                testExpected("isNaN(video.duration)", false);
+                consoleWrite("");
+                
+                if (++loadedCount >= 2) {
+                    mediaElement.removeEventListener('loadedmetadata', loadedmetadata);
+                    endTest();
+                    return;
+                }
+
+                setSrcAttribure(findMediaFile("video", "content/counting"));
+                consoleWrite("");
+            }
+            
+            function setSrcAttribure(src)
+            {
+                mediaFile = src;
+                video.setAttribute('src', src);
+            }
+        
+            function setup()
+            {
+                findMediaElement();
+                waitForEvent('loadedmetadata', loadedmetadata);
+                waitForEvent('error', errorEvent);
+                setSrcAttribure("bogus");
+                consoleWrite("");
+            }
+        </script>
+    </head>
+
+<body onload="setup()">
+    
+    <video  controls" ></video>
+
+    <p>
+    1. Test that an invalid src attribute fires an error when the file fails to load.<br>
+    2. Test that changing src attribute triggers load after a load fails.<br>
+    3. Test that changing src triggers load once a file is known to be valid.
+    </p>
+
+</body>
+</html>

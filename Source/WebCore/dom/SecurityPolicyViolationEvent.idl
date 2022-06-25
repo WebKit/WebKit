@@ -1,0 +1,71 @@
+/*
+ * Copyright (C) 2013 Google Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+// https://w3c.github.io/webappsec-csp/#securitypolicyviolationevent
+
+enum SecurityPolicyViolationEventDisposition {
+  "enforce", "report"
+};
+
+[
+    Exposed=(Window,Worker)
+] interface SecurityPolicyViolationEvent : Event {
+    constructor([AtomString] DOMString type);
+    constructor([AtomString] DOMString type, SecurityPolicyViolationEventInit eventInitDict);
+
+    readonly attribute USVString documentURI;
+    readonly attribute USVString referrer;
+    readonly attribute USVString blockedURI;
+    readonly attribute DOMString effectiveDirective;
+    readonly attribute DOMString violatedDirective;
+    readonly attribute DOMString originalPolicy;
+    readonly attribute USVString sourceFile;
+    readonly attribute DOMString sample;
+    readonly attribute SecurityPolicyViolationEventDisposition disposition;
+    readonly attribute unsigned short statusCode;
+    [ImplementedAs=lineNumber] readonly attribute unsigned long lineno;
+    readonly attribute unsigned long lineNumber; // historical alias of lineno
+    [ImplementedAs=columnNumber] readonly attribute unsigned long colno;
+    readonly attribute unsigned long columnNumber; // historical alias of colno
+};
+
+dictionary SecurityPolicyViolationEventInit : EventInit {
+    // The spec says "USVString documentURL" but it does not match Blink.
+    required USVString documentURI;
+    USVString referrer = "";
+    // The spec says "USVString blockedURL" but it does not match Blink.
+    USVString blockedURI = "";
+    required DOMString violatedDirective;
+    required DOMString effectiveDirective;
+    required DOMString originalPolicy;
+    USVString sourceFile = "";
+    DOMString sample = "";
+    required SecurityPolicyViolationEventDisposition disposition;
+    required unsigned short statusCode;
+    // The spec says "unsigned long lineno" but it does not match Blink.
+    unsigned long lineNumber = 0;
+    // The spec says "unsigned long colno" but it does not match Blink.
+    unsigned long columnNumber = 0;
+};

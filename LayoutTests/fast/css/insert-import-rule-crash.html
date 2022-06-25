@@ -1,0 +1,13 @@
+This test passes if it doesn't crash.
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+const style = document.createElement("style");
+document.head.append(style);
+
+style.sheet.insertRule('@import url(data:,foo)');
+style.sheet.cssRules[0];
+style.sheet.deleteRule(0);
+style.sheet.insertRule('@import url(data:,bar)');
+</script>

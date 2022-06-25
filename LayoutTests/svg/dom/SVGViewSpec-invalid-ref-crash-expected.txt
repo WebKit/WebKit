@@ -1,0 +1,13 @@
+Confirm that null is returned when an SVGViewSpec is used after its corresponding element has been removed.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL viewPreserveAspectRatio = svgView.preserveAspectRatio; should be null. Was [object SVGAnimatedPreserveAspectRatio].
+FAIL viewTransform = svgView.transform; should be null. Was [object SVGTransformList].
+PASS viewViewTarget = svgView.viewTarget; is null
+FAIL viewViewBox = svgView.viewBox; should be null. Was [object SVGAnimatedRect].
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

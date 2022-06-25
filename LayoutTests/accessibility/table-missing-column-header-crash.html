@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<table id="table" border="1" cellspacing="1">
+<tbody><tr><td><table border="1" width="100%"><tbody>
+<tr><td><a href="/" accesskey="1">Home</a></td>
+<td><a href="/">Help</a></td>
+<td><a href="/">Login</a></td></tr></tbody></table>
+</td></tr><tr><td colspan="4">
+<input type="text"></td><td colspan="2"><a href="/">Tip us on news</a></td>
+</tr></tbody></table>
+
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that accessing invalid column headers does not crash.");
+
+    if (window.accessibilityController) {
+        var table = accessibilityController.accessibleElementById("table");
+
+        var cell = table.childAtIndex(1).childAtIndex(1);
+        // This should not crash.
+        cell.attributesOfColumnHeaders();
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</head>
+<body>
+<p>This tests that we don't cause an assertion failure when implicitly removing a &lt;use&gt; (by removing its parent), with the same id as another element, that is referenced by a later &lt;mpath&gt;.</p>
+<svg>
+    <use id="A"></use>
+    <use id="A"></use>
+    <mpath xlink:href="#A"></mpath>
+</svg>
+<script>
+var svg = document.querySelector("svg");
+document.body.removeChild(svg);
+</script>
+<p>PASS</p>
+</body>
+</html>

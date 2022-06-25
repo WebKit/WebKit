@@ -1,0 +1,31 @@
+Tests 'TimerFire' Timeline event records.
+
+
+== Running test suite: TimelineEvent.TimerFire
+-- Running test case: TimelineEvent.TimerFire.setTimeout
+Starting Capture...
+Evaluating...
+PASS: setTimeout fired
+Stopping Capture...
+PASS: Should be 1 TimerFired record.
+DETAILS: number
+PASS: ScriptTimelineRecord details should be the setTimeout identifier.
+
+-- Running test case: TimelineEvent.TimerFire.setInterval
+Starting Capture...
+Evaluating...
+PASS: setInterval fired: 1
+PASS: setInterval fired: 2
+PASS: setInterval fired: 3
+Stopping Capture...
+PASS: Should be 3 TimerFired records.
+DETAILS: number
+PASS: ScriptTimelineRecord details should be the setInterval identifier.
+DETAILS: number
+PASS: ScriptTimelineRecord details should be the setInterval identifier.
+DETAILS: number
+PASS: ScriptTimelineRecord details should be the setInterval identifier.
+
+-- Running test case: SanityCheck
+PASS: The setTimeout identifier and setInterval identifiers should be different.
+

@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'aaa'.
+
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js because it does not appear in the script-src directive of the Content Security Policy.
+This script should not execute even though there are parse errors in the policy.
+
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+PASS

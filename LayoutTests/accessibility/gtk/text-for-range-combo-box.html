@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<select><option selected value='foo'>An option in a combo box</option></select>
+<select><option selected value='foo'>foo</option><option value='bar'>bar</option></select>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("This tests the ability to get element text for a specified range.");
+    if (window.accessibilityController) {
+        document.getElementById("body").focus();
+        var webArea = accessibilityController.focusedElement;
+        var panel = webArea.childAtIndex(0);
+
+        var combobox = panel.childAtIndex(0);
+        var popup = combobox.childAtIndex(0);
+        var option = popup.childAtIndex(0);
+
+        shouldBe("combobox.stringForRange(0, -1)", "''");
+        shouldBe("popup.stringForRange(0, -1)", "''");
+        shouldBe("option.stringForRange(0, -1)", "'An option in a combo box'");
+
+        combobox = panel.childAtIndex(1);
+        popup = combobox.childAtIndex(0);
+        option = popup.childAtIndex(0);
+
+        shouldBe("combobox.stringForRange(0, -1)", "''");
+        shouldBe("popup.stringForRange(0, -1)", "''");
+        shouldBe("option.stringForRange(0, -1)", "'foo'");
+        shouldBe("option.stringForRange(0, 2)", "'fo'");
+
+        option = popup.childAtIndex(1);
+        shouldBe("option.stringForRange(0, -1)", "'bar'");
+        shouldBe("option.stringForRange(1, 3)", "'ar'");
+    }
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

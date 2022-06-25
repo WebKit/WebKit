@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<input id="number-input-invalid" type="number" value="abc">
+<input id="number-input-valid" type="number" value="10">
+
+<input id="url-input-invalid" type="url" value="abc">
+<input id="url-input-valid" type="url" value="http://abc.com">
+
+<input id="email-input-invalid" type="email" value="abc">
+<input id="email-input-valid" type="email" value="abc@abc.com">
+
+<script>
+    description("This tests that we are exposing correct invalid status for different types.");
+
+    var input;
+    function expectAXInvalid(id, expectedValue) {
+        debug(`Testing #${id}`);
+        input = accessibilityController.accessibleElementById(id);
+        shouldBe("input.stringAttributeValue('AXInvalid')", `'${expectedValue}'`);
+    }
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        expectAXInvalid("number-input-valid", false);
+        expectAXInvalid("url-input-invalid", true);
+        expectAXInvalid("url-input-valid", false);
+        expectAXInvalid("email-input-invalid", true);
+        expectAXInvalid("email-input-valid", false);
+
+        setTimeout(async function() {
+            // For <input type="number" value="abc"> inputs, we must explicitly send a non-number keystroke for it to be
+            // considered invalid at the HTMLInputElement level despite the `value` attribute clearly not being a valid number.
+            document.getElementById("number-input-invalid").focus();
+            eventSender.keyDown("a");
+            await waitFor(() => {
+                input = accessibilityController.accessibleElementById("number-input-invalid");
+                return input && input.stringAttributeValue("AXInvalid") === "true";
+            });
+            expectAXInvalid("number-input-invalid", true);
+
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>
+

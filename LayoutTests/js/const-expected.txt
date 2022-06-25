@@ -1,0 +1,62 @@
+This test checks that const declarations in JavaScript work and are readonly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS const redef='a'; const redef='a'; threw exception SyntaxError: Cannot declare a const variable twice: 'redef'..
+PASS function threw exception: 'function () { x = "WRONG"; }'
+PASS Assertion passed.
+PASS function threw exception: 'function () { y = "WRONG"; }'
+PASS Assertion passed.
+PASS function threw exception: 'function () { a = one++; }'
+PASS Assertion passed.
+PASS Assertion passed.
+PASS function threw exception: 'function () { a = one--; }'
+PASS Assertion passed.
+PASS Assertion passed.
+PASS function threw exception: 'function () { a = ++one; }'
+PASS Assertion passed.
+PASS Assertion passed.
+PASS function threw exception: 'function () { a = --one; }'
+PASS Assertion passed.
+PASS Assertion passed.
+PASS function threw exception: 'function () { a = one += 2; }'
+PASS Assertion passed.
+PASS Assertion passed.
+PASS function threw exception: 'function () { a = one = 2; }'
+PASS Assertion passed.
+PASS Assertion passed.
+PASS function f() { const one = 1; one++; return one; } f(); threw exception TypeError: Attempted to assign to readonly property..
+PASS function f() { const oneString = '1'; return oneString++; } f(); threw exception TypeError: Attempted to assign to readonly property..
+PASS function f() { const one = 1; return one++; } f(); threw exception TypeError: Attempted to assign to readonly property..
+PASS function f() { const one = 1; one--; return one; } f(); threw exception TypeError: Attempted to assign to readonly property..
+PASS function f() { const oneString = '1'; return oneString--; } f(); threw exception TypeError: Attempted to assign to readonly property..
+PASS function f() { const one = 1; return one--; } f(); threw exception TypeError: Attempted to assign to readonly property..
+PASS function f() { const one = 1; ++one; return one; } f(); threw exception TypeError: Attempted to assign to readonly property..
+PASS function f() { const one = 1; return ++one; } f(); threw exception TypeError: Attempted to assign to readonly property..
+PASS function f() { const one = 1; --one; return one; } f(); threw exception TypeError: Attempted to assign to readonly property..
+PASS function f() { const one = 1; return --one; } f(); threw exception TypeError: Attempted to assign to readonly property..
+PASS function f() { const one = 1; one += 2; return one; } f(); threw exception TypeError: Attempted to assign to readonly property..
+PASS function f() { const one = 1; return one += 2; } f(); threw exception TypeError: Attempted to assign to readonly property..
+PASS function f() { const one = 1; one = 2; return one; } f(); threw exception TypeError: Attempted to assign to readonly property..
+PASS function f() { const one = 1; return one = 2; } f(); threw exception TypeError: Attempted to assign to readonly property..
+PASS Assertion passed.
+PASS Assertion passed.
+PASS object.inWith1 is 'a'
+PASS object.inWith2 is 'b'
+PASS f() is f
+PASS tryCatch1Result is null
+PASS tryCatch2Result is null
+PASS with1Result is null
+PASS with2Result is null
+PASS function threw exception: 'function () { ++x; }'
+PASS Assertion passed.
+PASS function threw exception: 'function () { x++; }'
+PASS Assertion passed.
+PASS function threw exception: 'function () { x--; }'
+PASS Assertion passed.
+PASS function threw exception: 'function () { --x; }'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,20 @@
+PASS document.getElementById('test1').sheet.cssRules[0].style.getPropertyValue('text-orientation') is "upright"
+PASS document.getElementById('test2').sheet.cssRules[0].style.getPropertyValue('text-orientation') is "upright"
+PASS document.getElementById('test3').sheet.cssRules[0].style.getPropertyValue('text-orientation') is "upright"
+PASS document.getElementById('test4').sheet.cssRules[0].style.getPropertyValue('text-orientation') is "mixed"
+PASS document.getElementById('test5').sheet.cssRules[0].style.getPropertyValue('text-orientation') is "mixed"
+PASS document.getElementById('test6').sheet.cssRules[0].style.getPropertyValue('text-orientation') is "sideways"
+PASS document.getElementById('test7').sheet.cssRules[0].style.getPropertyValue('text-orientation') is "sideways"
+PASS document.getElementById('test8').sheet.cssRules[0].style.getPropertyValue('text-orientation') is ""
+PASS document.getElementById('test1').sheet.cssRules[0].style.getPropertyValue('-webkit-text-orientation') is "upright"
+PASS document.getElementById('test2').sheet.cssRules[0].style.getPropertyValue('-webkit-text-orientation') is "upright"
+PASS document.getElementById('test3').sheet.cssRules[0].style.getPropertyValue('-webkit-text-orientation') is "upright"
+PASS document.getElementById('test4').sheet.cssRules[0].style.getPropertyValue('-webkit-text-orientation') is "mixed"
+PASS document.getElementById('test5').sheet.cssRules[0].style.getPropertyValue('-webkit-text-orientation') is "mixed"
+PASS document.getElementById('test6').sheet.cssRules[0].style.getPropertyValue('-webkit-text-orientation') is "sideways"
+PASS document.getElementById('test7').sheet.cssRules[0].style.getPropertyValue('-webkit-text-orientation') is "sideways"
+PASS document.getElementById('test8').sheet.cssRules[0].style.getPropertyValue('-webkit-text-orientation') is ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

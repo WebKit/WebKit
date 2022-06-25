@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<script>
+if (window.testRunner) {
+    testRunner.dumpResourceLoadCallbacks();
+    testRunner.dumpFrameLoadCallbacks();
+    testRunner.dumpAsText();
+    testRunner.queueLoad("/resources/redirect.py?url=should-not-load.html");
+}
+</script>

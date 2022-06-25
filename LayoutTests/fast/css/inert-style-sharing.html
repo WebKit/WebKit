@@ -1,0 +1,21 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ InertAttributeEnabled=true ] -->
+<div>node</div>
+<div inert>inert node</div>
+<div inert>inert node</div>
+<div inert>inert node</div>
+<div inert="foo">inert node</div>
+
+<div id="result"></div>
+
+<style>
+div[inert="foo"] {
+    background: blue;
+}
+</style>
+
+<script>
+// Test that inertness is properly applied, by checking only the non-inert node is selected
+document.execCommand('SelectAll');
+result.textContent = window.getSelection().toString().trim();
+window.getSelection().removeAllRanges();
+</script>

@@ -1,0 +1,26 @@
+
+FAIL 2024  ONE DOT LEADER may appear at line start if de and loose assert_true: expected true got false
+FAIL 2025  TWO DOT LEADER may appear at line start if de and loose assert_true: expected true got false
+FAIL 2026  HORIZONTAL ELLIPSIS may appear at line start if de and loose assert_true: expected true got false
+FAIL 22EF  MIDLINE HORIZONTAL ELLIPSIS may appear at line start if de and loose assert_true: expected true got false
+FAIL FE19  PRESENTATION FORM FOR VERTICAL HORIZONTAL ELLIPSIS may appear at line start if de and loose assert_true: expected true got false
+2024
+文文文文文文․字字
+文文文文文文
+․字字
+2025
+文文文文文文‥字字
+文文文文文文
+‥字字
+2026
+文文文文文文…字字
+文文文文文文
+…字字
+22EF
+文文文文文文⋯字字
+文文文文文文
+⋯字字
+FE19
+文文文文文文︙字字
+文文文文文文
+︙字字

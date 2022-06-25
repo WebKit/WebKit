@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+<style>
+.class1 { -webkit-mask-box-image-source: url(#nonexistentURL); }
+</style>
+<script>
+function freememory() {
+    var a;
+    for(var i=0;i<100;i++) {
+        a = new Uint8Array(1024*1024);
+    }
+    document.implementation.createHTMLDocument("doc");
+}
+
+function createTestRange() {
+    var testRange = document.createRange();
+    testRange.setEndAfter(testSelectOption);
+    testRange.deleteContents();
+}
+
+function eventhandler1() {
+    var testDataList = document.createElement("datalist");
+    testSelect.appendChild(testObjectParam);
+    document.title = "foo";
+    testDataList.addEventListener("DOMNodeInsertedIntoDocument", createTestRange);
+    testObject.appendChild(testDataList);
+    freememory();
+}
+
+function eventhandler2() {
+    testObject.setAttribute("onbeforeload", "eventhandler1()");
+    testSelect.addEventListener("DOMNodeRemovedFromDocument", eventhandler1);
+    testSelect.replaceWith("This test passes if there is no exception.");
+}
+
+function runTest() {
+    var testSource = document.createElement("source");
+    testSource.addEventListener("DOMSubtreeModified", eventhandler2);
+    testSource.setAttribute("onsubmit", "");
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+</head>
+<body onload=runTest()>
+    <li class="class1">Test List</li>
+    <object id="testObject">
+        <param id="testObjectParam"></param>
+    </object>
+    <select id="testSelect">
+        <option id="testSelectOption">Test Option</option>
+    </select>
+</body>
+</html>

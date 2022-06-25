@@ -1,0 +1,10 @@
+
+FAIL 3: Shrink-to-fit inline-block with a child of orthogonal block with borders assert_equals: the left edge of the orange box touches the right edge of the blue box expected 0 but got -20
+Test passes if the X-position of the left edge of the orange box and the right edge of the blue box are the same.
+
+If script is enabled, there should be one or more PASS and no FAIL.
+
+3: Shrink-to-fit inline-block with a child of orthogonal block with borders
+
+HHH
+ZZ

@@ -1,0 +1,71 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (200,33) size 408x462
+      RenderSVGContainer {g} at (200,33) size 408x462
+        RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGText {text} at (121,20) size 238x25 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 237x25
+            chunk 1 (middle anchor) text run 1 at (121.61,40.00) startOffset 0 endOffset 27 width 236.79: "Test pointer-events on text"
+        RenderSVGContainer {g} at (200,93) size 408x402 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,-10.00)}]
+          RenderSVGContainer {g} at (200,93) size 408x239
+            RenderSVGContainer {g} at (200,93) size 408x72
+              RenderSVGText {text} at (120,66) size 245x43 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 245x43
+                  chunk 1 text run 1 at (120.00,100.00) startOffset 0 endOffset 1 width 27.93: "@"
+                  chunk 1 text run 2 at (157.93,100.00) startOffset 1 endOffset 2 width 15.00: " "
+                  chunk 1 text run 3 at (182.93,100.00) startOffset 2 endOffset 3 width 21.93: "A"
+                  chunk 1 text run 4 at (214.86,100.00) startOffset 3 endOffset 4 width 15.00: " "
+                  chunk 1 text run 5 at (239.86,100.00) startOffset 4 endOffset 5 width 15.60: "y"
+                  chunk 1 text run 6 at (265.46,100.00) startOffset 5 endOffset 6 width 15.00: " "
+                  chunk 1 text run 7 at (290.46,100.00) startOffset 6 endOffset 7 width 23.94: "\x{D6}"
+                  chunk 1 text run 8 at (324.40,100.00) startOffset 7 endOffset 8 width 15.00: " "
+                  chunk 1 text run 9 at (349.40,100.00) startOffset 8 endOffset 9 width 15.39: "\x{E7}"
+            RenderSVGContainer {g} at (200,176) size 408x73 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,50.00)}]
+              RenderSVGText {text} at (120,66) size 245x43 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 245x43
+                  chunk 1 text run 1 at (120.00,100.00) startOffset 0 endOffset 1 width 27.93: "@"
+                  chunk 1 text run 2 at (157.93,100.00) startOffset 1 endOffset 2 width 15.00: " "
+                  chunk 1 text run 3 at (182.93,100.00) startOffset 2 endOffset 3 width 21.93: "A"
+                  chunk 1 text run 4 at (214.86,100.00) startOffset 3 endOffset 4 width 15.00: " "
+                  chunk 1 text run 5 at (239.86,100.00) startOffset 4 endOffset 5 width 15.60: "y"
+                  chunk 1 text run 6 at (265.46,100.00) startOffset 5 endOffset 6 width 15.00: " "
+                  chunk 1 text run 7 at (290.46,100.00) startOffset 6 endOffset 7 width 23.94: "\x{D6}"
+                  chunk 1 text run 8 at (324.40,100.00) startOffset 7 endOffset 8 width 15.00: " "
+                  chunk 1 text run 9 at (349.40,100.00) startOffset 8 endOffset 9 width 15.39: "\x{E7}"
+            RenderSVGContainer {g} at (200,260) size 375x72 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,100.00)}]
+              RenderSVGText {text} at (120,66) size 225x43 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 225x43
+                  chunk 1 text run 1 at (120.00,100.00) startOffset 0 endOffset 1 width 27.93: "@"
+                  chunk 1 text run 2 at (177.93,100.00) startOffset 1 endOffset 2 width 21.93: "A"
+                  chunk 1 text run 3 at (229.86,100.00) startOffset 2 endOffset 3 width 15.60: "y"
+                  chunk 1 text run 4 at (275.46,100.00) startOffset 3 endOffset 4 width 23.94: "\x{D6}"
+                  chunk 1 text run 5 at (329.40,100.00) startOffset 4 endOffset 5 width 15.39: "\x{E7}"
+          RenderSVGContainer {g} at (200,351) size 374x144
+            RenderSVGContainer {g} at (200,351) size 362x61 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,150.00)}]
+              RenderSVGText {text} at (120,71) size 218x36 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 218x36
+                  chunk 1 text run 1 at (120.00,100.00) startOffset 0 endOffset 1 width 30.45: "@"
+                  chunk 1 text run 2 at (160.45,100.00) startOffset 1 endOffset 2 width 8.33: " "
+                  chunk 1 text run 3 at (178.79,100.00) startOffset 2 endOffset 3 width 20.01: "A"
+                  chunk 1 text run 4 at (208.80,100.00) startOffset 3 endOffset 4 width 8.33: " "
+                  chunk 1 text run 5 at (227.13,100.00) startOffset 4 endOffset 5 width 15.00: "y"
+                  chunk 1 text run 6 at (252.13,100.00) startOffset 5 endOffset 6 width 8.33: " "
+                  chunk 1 text run 7 at (270.47,100.00) startOffset 6 endOffset 7 width 23.33: "\x{D6}"
+                  chunk 1 text run 8 at (303.80,100.00) startOffset 7 endOffset 8 width 8.33: " "
+                  chunk 1 text run 9 at (322.14,100.00) startOffset 8 endOffset 9 width 15.00: "\x{E7}"
+            RenderSVGContainer {g} at (200,435) size 374x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,200.00)}]
+              RenderSVGText {text} at (120,71) size 224x36 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 224x36
+                  chunk 1 text run 1 at (120.00,100.00) startOffset 0 endOffset 1 width 30.45: "@"
+                  chunk 1 text run 2 at (180.45,100.00) startOffset 1 endOffset 2 width 20.01: "A"
+                  chunk 1 text run 3 at (230.46,100.00) startOffset 2 endOffset 3 width 15.00: "y"
+                  chunk 1 text run 4 at (275.46,100.00) startOffset 3 endOffset 4 width 23.33: "\x{D6}"
+                  chunk 1 text run 5 at (328.80,100.00) startOffset 4 endOffset 5 width 15.00: "\x{E7}"
+    RenderSVGContainer {g} at (16,516) size 385x64
+      RenderSVGText {text} at (10,310) size 231x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 231x38
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 230.19: "$Revision: 1.7 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

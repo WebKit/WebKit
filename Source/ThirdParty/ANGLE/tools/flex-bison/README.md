@@ -1,0 +1,129 @@
+# flex and bison binaries
+
+This folder contains the flex and bison binaries. We use these binaries to
+generate the ANGLE translator's lexer and parser.
+
+Use the script [`update_flex_bison_binaries.py`](update_flex_bison_binaries.py)
+to update the versions of these binaries in cloud storage. It must be run on
+Linux or Windows. It will update the SHAs for your platform. After running the
+script run `git commit` and then `git cl upload` to code review using the normal
+review process. You will also want to run
+[`scripts/run_code_generation.py`](../../scripts/run_code_generation.py) to
+update the generated files.
+
+Please update both Windows and Linux binaries at the same time. Use two CLs. One
+for each platform. Note that we don't currently support Mac for generating the
+lexer and parser files. If we do we should add a flex/bison download for Mac as
+well.
+
+Contact jmadill or syoussefi for any help with updating the binaries.
+
+## Updating flex and bison binaries
+
+This is expected to be a rare operation, and is currently done based on the
+following instructions.  Note: get the binaries first on windows, as only a
+single option is available, then build the binaries for the same version on
+Linux.
+
+### On Windows
+
+Install MSys2 (x86_64) from http://www.msys2.org/ on Windows.  `flex` should
+already be installed.  Install bison:
+
+```
+$ pacman -S bison
+```
+
+Note the versions of flex and bison so the same versions can be build on Linux.
+For example:
+
+```
+$ flex --version
+flex 2.6.4
+
+$ bison --version
+bison (GNU Bison) 3.3.2
+```
+
+The only dependencies from MSys2 should be the following:
+
+```
+msys-intl-8.dll
+msys-iconv-2.dll
+msys-2.0.dll
+```
+
+This can be verified with:
+
+```
+$ ldd /usr/bin/flex
+$ ldd /usr/bin/bison
+```
+
+Additionally, we need the binary for m4 at `/usr/bin/m4`.
+
+Copy all these 5 files to this directory:
+
+```
+$ cd angle/
+$ cp /usr/bin/flex.exe \
+     /usr/bin/bison.exe \
+     /usr/bin/m4.exe \
+     /usr/bin/msys-intl-8.dll \
+     /usr/bin/msys-iconv-2.dll \
+     /usr/bin/msys-2.0.dll \
+     tools/flex-bison/windows/
+```
+
+Upload the binaries:
+
+```
+$ cd angle/
+$ python tools/flex-bison/update_flex_bison_binaries.py
+```
+
+### On Linux
+
+```
+# Get the source of flex
+$ git clone https://github.com/westes/flex.git
+$ cd flex/
+# Checkout the same version as msys2 on windows
+$ git checkout v2.6.4
+# Build
+$ autoreconf -i
+$ mkdir build && cd build
+$ ../configure CFLAGS="-O2 -D_GNU_SOURCE"
+$ make -j
+```
+
+```
+# Get the source of bison
+$ curl http://ftp.gnu.org/gnu/bison/bison-3.3.2.tar.xz | tar -xJ
+$ cd bison-3.3.2
+# Build
+$ mkdir build && cd build
+$ ../configure CFLAGS="-O2"
+$ make -j
+```
+
+Note: Bison's [home page][Bison] lists ftp server and other mirrors.  If the
+above link is broken, replace with a mirror.
+
+Copy the 2 executables to this directory:
+
+```
+$ cd angle/
+$ cp /path/to/flex/build/src/flex \
+     /path/to/bison/build/src/bison \
+     tools/flex-bison/linux/
+```
+
+Upload the binaries:
+
+```
+$ cd angle/
+$ python tools/flex-bison/update_flex_bison_binaries.py
+```
+
+[Bison]: https://www.gnu.org/software/bison/

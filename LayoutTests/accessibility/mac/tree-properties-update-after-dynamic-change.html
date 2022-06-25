@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<ul id="tree" role="tree" tabindex="0">
+    <li id="treeitem1" role="treeitem"></li>
+    <li id="treeitem2" role="treeitem"></li>
+    <li id="treeitem3" role="treeitem">
+        <button>Button inside treeitem3</button>
+    </li>
+</ul>
+
+<div id="group" role="group">
+    <li id="treeitem4" role="treeitem">
+        <button>Button inside treeitem4</button>
+    </li>
+</div>
+
+<script>
+    var testOutput = "This test ensures that tree and treeitem objects report the most up-to-date children and rows after dynamic page changes.\n\n";
+
+    function verifyChildren(id) {
+        const axElement = accessibilityController.accessibleElementById(id);
+        if (!axElement)
+            return;
+
+        const childrenCount = axElement.childrenCount;
+        testOutput += `#${id} childrenCount: ${childrenCount}\n`;
+        for (let i = 0; i < childrenCount; i++)
+            testOutput += `    child: ${axElement.childAtIndex(i).role}\n`;
+    }
+
+    function verifyTreeRows() {
+        const axElement = accessibilityController.accessibleElementById("tree");
+        if (!axElement)
+            return;
+
+        const rowCount = axElement.rowCount;
+        testOutput += `#tree rowCount: ${rowCount}\n`;
+        for (let i = 0; i < rowCount; i++) {
+            const row = axElement.rowAtIndex(i);
+            testOutput += `    row ${i}: ${row.role}, #${row.domIdentifier}\n`;
+        }
+    }
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+        verifyChildren("treeitem1");
+        verifyChildren("treeitem2");
+        verifyTreeRows();
+
+        let button = document.createElement("button");
+        button.innerHTML = "Button inside treeitem1";
+        document.getElementById("treeitem1").appendChild(button);
+
+        testOutput += "\nAdding content to #treeitem1 and #treeitem2.\n\n";
+        document.getElementById("treeitem2").appendChild(document.getElementById("treeitem3"));
+        document.getElementById("treeitem2").appendChild(document.getElementById("group"));
+        setTimeout(async function() {
+            let firstDisclosedRow, secondDisclosedRow;
+            await waitFor(() => {
+                const treeitem1 = accessibilityController.accessibleElementById("treeitem1");
+                if (!treeitem1 || treeitem1.childrenCount !== 1)
+                    return false;
+                const treeitem2 = accessibilityController.accessibleElementById("treeitem2");
+                firstDisclosedRow = treeitem2.disclosedRowAtIndex(0);
+                secondDisclosedRow = treeitem2.disclosedRowAtIndex(1);
+                return firstDisclosedRow && secondDisclosedRow;
+            });
+            verifyChildren("treeitem1");
+            // We added a group and treeitem to #treeitem2, neither of which should show up as a child (but should be considered when computing disclosed rows).
+            verifyChildren("treeitem2");
+            testOutput += `#treeitem2 had disclosed row #${firstDisclosedRow.domIdentifier}\n`;
+            testOutput += `#treeitem2 had disclosed row #${secondDisclosedRow.domIdentifier}\n`;
+            verifyTreeRows();
+
+            debug(testOutput);
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>
+

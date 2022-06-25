@@ -1,0 +1,43 @@
+
+PASS .x:has(.a) matches expected elements
+PASS .x:has(.a > .b) matches expected elements
+PASS .x:has(.a .b) matches expected elements
+PASS .x:has(.a + .b) matches expected elements
+PASS .x:has(.a ~ .b) matches expected elements
+PASS .x:has(> .a) matches expected elements
+PASS .x:has(> .a > .b) matches expected elements
+PASS .x:has(> .a .b) matches expected elements
+PASS .x:has(> .a + .b) matches expected elements
+PASS .x:has(> .a ~ .b) matches expected elements
+PASS .x:has(+ .a) matches expected elements
+PASS .x:has(+ .a > .b) matches expected elements
+PASS .x:has(+ .a .b) matches expected elements
+PASS .x:has(+ .a + .b) matches expected elements
+PASS .x:has(+ .a ~ .b) matches expected elements
+PASS .x:has(~ .a) matches expected elements
+PASS .x:has(~ .a > .b) matches expected elements
+PASS .x:has(~ .a .b) matches expected elements
+PASS .x:has(~ .a + .b) matches expected elements
+PASS .x:has(~ .a + .b > .c) matches expected elements
+PASS .x:has(~ .a + .b .c) matches expected elements
+PASS .x:has(.d .e) matches expected elements
+PASS .x:has(.d .e) .f matches expected elements
+PASS .x:has(> .d) matches expected elements
+PASS .x:has(> .d) .f matches expected elements
+PASS .x:has(~ .d ~ .e) matches expected elements
+PASS .x:has(~ .d ~ .e) ~ .f matches expected elements
+PASS .x:has(+ .d ~ .e) matches expected elements
+PASS .x:has(+ .d ~ .e) ~ .f matches expected elements
+PASS .y:has(> .g .h) matches expected elements
+PASS .y:has(.g .h) matches expected elements
+PASS .y:has(> .g .h) .i matches expected elements
+PASS .y:has(.g .h) .i matches expected elements
+FAIL .x:has(+ .y:has(> .g .h) .i) matches expected elements The string did not match the expected pattern.
+FAIL .x:has(+ .y:has(.g .h) .i) matches expected elements The string did not match the expected pattern.
+FAIL .x:has(+ .y:has(> .g .h) .i) ~ .j matches expected elements The string did not match the expected pattern.
+FAIL .x:has(+ .y:has(.g .h) .i) ~ .j matches expected elements The string did not match the expected pattern.
+FAIL .x:has(~ .y:has(> .g .h) .i) matches expected elements The string did not match the expected pattern.
+FAIL .x:has(~ .y:has(.g .h) .i) matches expected elements The string did not match the expected pattern.
+PASS .d .x:has(.e) matches expected elements
+PASS .d ~ .x:has(~ .e) matches expected elements
+

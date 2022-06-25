@@ -1,0 +1,6 @@
+Hover me - should become green
+Hover me - should become green
+
+PASS Hover #hovered element should make it go green
+PASS Hover #hoveredContents child should make it go green
+

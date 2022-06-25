@@ -1,0 +1,3 @@
+
+PASS Only <a>s and <area>s that have a href attribute match ':link'
+

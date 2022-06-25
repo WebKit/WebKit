@@ -1,0 +1,20 @@
+Paint API should be available for same-origin frames but not to cross-origin/sandboxed frames.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS receivedEvent.source is document.getElementById('nonSandboxed').contentWindow
+PASS receivedEntry.name is 'first-contentful-paint'
+PASS didReceiveMessageFromSandboxedIframe is false
+PASS Array.isArray(nonSandboxSupportedTypes) is true
+PASS Array.isArray(sandboxSupportedTypes) is true
+PASS didReceiveMessage is true
+PASS nonSandboxSupportedTypes.includes("paint") is true
+PASS sandboxSupportedTypes.includes("paint") is false
+PASS PerformanceObserver first-contentful-paint callback was fired for same-origin frame but not for cross-origin frame
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+TEXT

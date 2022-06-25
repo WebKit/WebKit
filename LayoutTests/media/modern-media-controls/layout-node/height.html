@@ -1,0 +1,45 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../../Source/WebCore/Modules/modern-media-controls/controls/scheduler.js" type="text/javascript"></script>
+<script src="../../../../Source/WebCore/Modules/modern-media-controls/controls/layout-node.js" type="text/javascript"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+description("Testing the <code>LayoutNode.height</code> property.");
+
+window.jsTestIsAsync = true;
+
+const node = new LayoutNode;
+
+debug("Checking default value");
+shouldBe("node.height", "0");
+shouldBeEqualToString("node.element.style.height", "");
+
+debug("");
+debug("node.height = 10");
+node.height = 10;
+shouldBe("node.height", "10");
+shouldBeEqualToString("node.element.style.height", "");
+
+// Set the value to another one so we can check it's the one committed to the DOM.
+debug("");
+debug("node.height = 20");
+node.height = 20;
+
+scheduler.frameDidFire = function()
+{
+    debug("");
+    debug("Layout was performed");
+    shouldBe("node.height", "20");
+    shouldBeEqualToString("node.element.style.height", "20px");
+
+    debug("");
+    debug("node.height = 20");
+    node.height = 20;
+    shouldBeFalse("scheduler.hasScheduledLayoutCallbacks");
+    debug("");
+
+    finishMediaControlsTest();
+};
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>

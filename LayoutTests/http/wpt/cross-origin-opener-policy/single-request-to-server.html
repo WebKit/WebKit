@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8>
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<script src="/common/utils.js"></script
+</head>
+<body>
+<script>
+async_test((t) => {
+    var bc = new BroadcastChannel('single-request-to-server');
+    let w = open("resources/single-request-to-server-popup.py?token=" + token());
+    bc.onmessage = t.step_func((event) => {
+        assert_equals(event.data, "not_already_loaded");
+        assert_true(w.closed, "Should switch browsing context group");
+        t.done();
+    });
+}, "Make sure we make a single request to the HTTP server when switching browsing context group");
+</script>
+</body>
+</html>

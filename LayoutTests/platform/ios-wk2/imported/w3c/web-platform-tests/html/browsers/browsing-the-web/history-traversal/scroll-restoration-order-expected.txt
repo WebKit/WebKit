@@ -1,0 +1,3 @@
+
+FAIL Traversing history should restore scroll position after dispatching popstate and before dispatching hashchange assert_not_equals: scroll is restored before popstate for #2 got disallowed value 100
+

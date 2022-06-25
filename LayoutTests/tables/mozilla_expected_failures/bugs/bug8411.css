@@ -1,0 +1,14 @@
+doc {
+  display: block;
+  margin: 5px;
+}
+
+p {
+  display: block;
+}
+
+captionelement {
+  display: table-caption;
+  text-align: center;
+  color: red;
+}

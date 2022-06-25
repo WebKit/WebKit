@@ -1,0 +1,67 @@
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > B > DIV > DIV > BODY > HTML > #document to 1 of #text > B > DIV > DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > B > DIV > DIV > BODY > HTML > #document to 1 of #text > B > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > B > DIV > DIV > BODY > HTML > #document to 1 of #text > B > DIV > DIV > BODY > HTML > #document toDOMRange:range from 2 of #text > B > DIV > DIV > BODY > HTML > #document to 2 of #text > B > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of #text > B > DIV > DIV > BODY > HTML > #document to 2 of #text > B > DIV > DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > B > DIV > DIV > BODY > HTML > #document to 3 of #text > B > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of #text > B > DIV > DIV > BODY > HTML > #document to 3 of #text > B > DIV > DIV > BODY > HTML > #document toDOMRange:range from 4 of #text > B > DIV > DIV > BODY > HTML > #document to 4 of #text > B > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 4 of #text > B > DIV > DIV > BODY > HTML > #document to 4 of #text > B > DIV > DIV > BODY > HTML > #document toDOMRange:range from 5 of #text > B > DIV > DIV > BODY > HTML > #document to 5 of #text > B > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 5 of #text > B > DIV > DIV > BODY > HTML > #document to 5 of #text > B > DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 5 of #text > B > DIV > DIV > BODY > HTML > #document to 5 of #text > B > DIV > DIV > BODY > HTML > #document toDOMRange:range from 4 of #text > DIV > DIV > BODY > HTML > #document to 4 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x194 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x60
+          RenderText {#text} at (0,1) size 66x28
+            text run at (0,1) width 66: "Tests: "
+          RenderBR {BR} at (0,0) size 0x0
+          RenderText {#text} at (0,31) size 694x28
+            text run at (0,31) width 694: "Pasting at style boundary does not crash or produce empty style span(s)."
+        RenderBlock {DIV} at (14,90) size 756x90
+          RenderBlock (anonymous) at (0,0) size 756x60
+            RenderText {#text} at (0,1) size 190x28
+              text run at (0,1) width 190: "Expected Results: "
+            RenderBR {BR} at (189,23) size 1x0
+            RenderText {#text} at (0,31) size 438x28
+              text run at (0,31) width 438: "Should see this content in the red box below: "
+            RenderBR {BR} at (437,53) size 1x0
+          RenderBlock {DIV} at (0,60) size 756x30
+            RenderText {#text} at (0,1) size 137x28
+              text run at (0,1) width 137: "one two three "
+            RenderInline {B} at (0,0) size 45x28
+              RenderText {#text} at (136,1) size 45x28
+                text run at (136,1) width 45: "four"
+            RenderText {#text} at (180,1) size 36x28
+              text run at (180,1) width 36: "one"
+      RenderBlock {DIV} at (0,218) size 784x24
+        RenderBlock {DIV} at (0,0) size 784x24 [border: (2px solid #FF0000)]
+          RenderText {#text} at (2,2) size 88x19
+            text run at (2,2) width 88: "one two three"
+          RenderInline {B} at (0,0) size 34x19
+            RenderText {#text} at (89,2) size 34x19
+              text run at (89,2) width 34: " four"
+          RenderText {#text} at (122,2) size 28x19
+            text run at (122,2) width 24: "one"
+            text run at (145,2) width 5: " "
+        RenderBlock (anonymous) at (0,24) size 784x0
+caret: position 4 of child 2 {#text} of child 1 {DIV} of child 3 {DIV} of body

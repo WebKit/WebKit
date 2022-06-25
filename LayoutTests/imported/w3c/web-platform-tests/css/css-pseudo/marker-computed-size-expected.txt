@@ -1,0 +1,10 @@
+
+PASS Decimal ::marker
+PASS Decimal ::marker with custom value
+PASS String ::marker
+PASS ::marker with no box due to 'list-style'
+FAIL ::marker with custom string contents assert_equals: width expected "60px" but got "auto"
+FAIL ::marker with custom image contents assert_equals: width expected "100px" but got "auto"
+FAIL ::marker with custom string and image contents assert_equals: width expected "130px" but got "auto"
+PASS ::marker with no box due to 'content'
+

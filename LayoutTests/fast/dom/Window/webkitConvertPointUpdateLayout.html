@@ -1,0 +1,44 @@
+<html>
+  <head>
+    <title>webkitConvertPointFromNodeToPage Test</title>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <style type="text/css" media="screen">
+
+      #test {
+        position: absolute;
+        left: 10px;
+        top: 10px;
+        width: 50px;
+        height: 50px;
+        background-color: blue;
+      }
+
+    </style>
+
+    <script type="text/javascript" charset="utf-8">
+      function doTest()
+      {
+        description("This test exercises the webkitConvertPointFromNodeToPage() function after changing the transform.");
+
+        var node = document.getElementById('test');
+        node.style.webkitTransform = 'translate(50px, 60px)';
+        var p = webkitConvertPointFromNodeToPage(node, new WebKitPoint(0, 0));
+        x = Math.round(p.x);
+        y = Math.round(p.y);
+        shouldBe('x', 60 + "");
+        shouldBe('y', 70 + "");
+        
+        isSuccessfullyParsed();
+      }
+      
+      window.onload = doTest;
+    </script>
+
+  </head>
+  <body>
+    <div id="test"></div>
+
+    <div id="description" style="margin-top: 200px"></div>
+    <div id="console"></div>
+  </body>
+</html>

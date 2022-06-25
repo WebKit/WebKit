@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script>
+            document.addEventListener('mousedown', function(event) {
+                var target = document.getElementById('video');
+                target.webkitSetPresentationMode(target.webkitPresentationMode == "inline" ? "picture-in-picture" : "inline");
+            });
+            
+            function load() {
+                var target = document.getElementById('video');
+                target.play();
+
+                if (window.webkit !== undefined && window.webkit.messageHandlers.pictureInPictureChangeHandler !== undefined) {
+                    window.webkit.messageHandlers.pictureInPictureChangeHandler.postMessage('load');
+                }
+            }
+        </script>
+        <style>
+            #video {
+                background-color: red;
+                width: 640px;
+                height: 480px;
+            }
+        </style>
+    </head>
+    <body onload="load(); window.onloadcompleted = true; ">
+        <video id="video" playsinline src="test.mp4" />
+    </body>
+</html>
+
+

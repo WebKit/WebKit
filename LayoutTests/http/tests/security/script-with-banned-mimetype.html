@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+window.jsTestIsAsync = true;
+
+description("Test that an external JavaScript script is blocked if it has a banned MIME type.");
+
+// This is not a comprehensive list.
+var bannedMIMETypes = [
+    "audio/mp4",
+    "audio/mpeg",
+    "audio/ogg",
+    "audio/wav",
+    "audio/x-aiff",
+    "image/gif",
+    "image/png",
+    "text/csv",
+    "video/mpeg",
+    "video/ogg",
+    "video/quicktime",
+];
+
+window.scriptsSuccessfullyLoaded = 0;
+
+for (let mimeType of bannedMIMETypes)
+    document.write(`<script src="contentTypeOptions/resources/script-with-header.pl?mime=${mimeType}&no-content-type-options=1"><` + "/script>");
+
+document.write('<script src="resources/abe-that-increments-scriptsSuccessfullyLoaded.jpg"><' + "/script>");
+
+window.onload = function () {
+    shouldBeZero("window.scriptsSuccessfullyLoaded");
+    finishJSTest();
+};
+</script>
+</body>
+</html>

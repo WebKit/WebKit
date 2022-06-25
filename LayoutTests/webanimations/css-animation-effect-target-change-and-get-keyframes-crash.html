@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<body>
+<style>
+
+@keyframes anim {
+    from { margin-left: 0 }
+    to   { margin-left: 100px }
+}
+
+</style>
+<script>
+
+const target = document.body.appendChild(document.createElement("div"));
+target.style.animation = "anim 1s";
+
+const animation = target.getAnimations()[0];
+
+const effect = animation.effect;
+effect.target = null;
+effect.getKeyframes();
+
+</script>
+</body>

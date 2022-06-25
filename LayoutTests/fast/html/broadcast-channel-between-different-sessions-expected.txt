@@ -1,0 +1,10 @@
+Makes sure that BroadcastChannel cannot be used to communicate between different sessions.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Did not receive BroadcastChannel channel from ephemeral session Window
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

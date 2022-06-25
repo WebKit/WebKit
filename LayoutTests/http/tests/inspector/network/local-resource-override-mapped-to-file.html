@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+function createTemporaryFile(name, contents) {
+    if (!window.internals)
+        return "";
+
+    let path = window.internals.createTemporaryFile(name, contents);
+    if (!path) {
+        TestPage.addResult(`FAIL: could not create file`);
+        return "";
+    }
+
+    return path;
+}
+
+function triggerOverrideLoad() {
+    fetch("http://127.0.0.1:8000/inspector/network/resources/override.txt").then(() => {
+        TestPage.dispatchEventToFrontend("LoadComplete");
+    });
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("LocalResourceOverride");
+
+    suite.addTestCase({
+        name: "LocalResourceOverride.MappedToFile.Valid",
+        description: "Test that `WI.LocalResource.prototype.mapToFile` correctly loads a file that exists.",
+        async test() {
+            const url = "http://127.0.0.1:8000/inspector/network/resources/override.txt";
+
+            InspectorTest.log("Creating Local Resource Override for: " + url);
+            let localResourceOverride = WI.LocalResourceOverride.create(url, WI.LocalResourceOverride.InterceptType.Response, {
+                responseMIMEType: "text/plain",
+                responseContent: "FAIL: Should load from file.",
+            });
+            WI.networkManager.addLocalResourceOverride(localResourceOverride);
+
+            InspectorTest.log("Linking to file...");
+            localResourceOverride.localResource.mappedFilePath = await InspectorTest.evaluateInPage(`createTemporaryFile("LocalResourceOverride_MappedToFile_Valid", "PASS: Should load from file.")`);
+
+            InspectorTest.log("Triggering load...");
+            let [resourceWasAddedEvent, responseReceivedEvent, loadCompleteEvent] = await Promise.all([
+                WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded),
+                WI.Resource.awaitEvent(WI.Resource.Event.ResponseReceived),
+                InspectorTest.awaitEvent("LoadComplete"),
+                InspectorTest.evaluateInPage(`triggerOverrideLoad()`),
+            ]);
+
+            InspectorTest.pass("Resource Loaded.");
+            let resource = resourceWasAddedEvent.data.resource;
+            let {rawContent, rawBase64Encoded} = await resource.requestContent();
+            InspectorTest.log(`Resource Content: '${rawBase64Encoded ? "[base64] " : ""}${rawContent}'`);
+
+            let localResourceCurrentRevision = localResourceOverride.localResource.currentRevision;
+            InspectorTest.log(`Local Resource Override Content: '${localResourceCurrentRevision.base64Encoded ? "[base64] " : ""}${localResourceCurrentRevision.content}'`)
+
+            WI.networkManager.removeLocalResourceOverride(localResourceOverride);
+        }
+    });
+
+    suite.addTestCase({
+        name: "LocalResourceOverride.MappedToFile.MappedFileChanged",
+        description: "Test that `WI.LocalResource.prototype.mapToFile` correctly re-loads the mapped file.",
+        async test() {
+            const url = "http://127.0.0.1:8000/inspector/network/resources/override.txt";
+
+            InspectorTest.log("Creating Local Resource Override for: " + url);
+            let localResourceOverride = WI.LocalResourceOverride.create(url, WI.LocalResourceOverride.InterceptType.Response, {
+                responseMIMEType: "text/plain",
+                responseContent: "FAIL: Should load from file.",
+            });
+            WI.networkManager.addLocalResourceOverride(localResourceOverride);
+
+            InspectorTest.log("Linking to file...");
+            // Simulate the file contents changing after the frontend has already loaded it, as `set mappedFilePath` will immediately attempt to load the file's contents.
+            localResourceOverride.localResource._mappedFilePath = await InspectorTest.evaluateInPage(`createTemporaryFile("LocalResourceOverride_MappedToFile_MappedFileChanged", "PASS: Should load from file.")`);
+
+            InspectorTest.log("Triggering load...");
+            let [resourceWasAddedEvent, responseReceivedEvent, loadCompleteEvent] = await Promise.all([
+                WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded),
+                WI.Resource.awaitEvent(WI.Resource.Event.ResponseReceived),
+                InspectorTest.awaitEvent("LoadComplete"),
+                InspectorTest.evaluateInPage(`triggerOverrideLoad()`),
+            ]);
+
+            InspectorTest.pass("Resource Loaded.");
+            let resource = resourceWasAddedEvent.data.resource;
+            let {rawContent, rawBase64Encoded} = await resource.requestContent();
+            InspectorTest.log(`Resource Content: '${rawBase64Encoded ? "[base64] " : ""}${rawContent}'`);
+
+            let localResourceCurrentRevision = localResourceOverride.localResource.currentRevision;
+            InspectorTest.log(`Local Resource Override Content: '${localResourceCurrentRevision.base64Encoded ? "[base64] " : ""}${localResourceCurrentRevision.content}'`)
+
+            WI.networkManager.removeLocalResourceOverride(localResourceOverride);
+        }
+    });
+
+    suite.addTestCase({
+        name: "LocalResourceOverride.MappedToFile.MappedFileDeleted",
+        description: "Test that `WI.LocalResource.prototype.mapToFile` does not crash if the previously mapped file no longer exists.",
+        async test() {
+            const url = "http://127.0.0.1:8000/inspector/network/resources/override.txt";
+
+            InspectorTest.log("Creating Local Resource Override for: " + url);
+            let localResourceOverride = WI.LocalResourceOverride.create(url, WI.LocalResourceOverride.InterceptType.Response, {
+                responseMIMEType: "text/plain",
+                responseContent: "PASS: Should not load from file.",
+            });
+            WI.networkManager.addLocalResourceOverride(localResourceOverride);
+
+            InspectorTest.log("Linking to file...");
+            // Simulate the file being deleted after the frontend has already loaded it, as `set mappedFilePath` will immediately attempt to load the file's contents.
+            localResourceOverride.localResource._mappedFilePath = "DOES NOT EXIST";
+
+            InspectorTest.log("Triggering load...");
+            let [resourceWasAddedEvent, responseReceivedEvent, loadCompleteEvent] = await Promise.all([
+                WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded),
+                WI.Resource.awaitEvent(WI.Resource.Event.ResponseReceived),
+                InspectorTest.awaitEvent("LoadComplete"),
+                InspectorTest.evaluateInPage(`triggerOverrideLoad()`),
+            ]);
+
+            InspectorTest.pass("Resource Loaded.");
+            let resource = resourceWasAddedEvent.data.resource;
+            let {rawContent, rawBase64Encoded} = await resource.requestContent();
+            InspectorTest.log(`Resource Content: '${rawBase64Encoded ? "[base64] " : ""}${rawContent}'`);
+
+            let localResourceCurrentRevision = localResourceOverride.localResource.currentRevision;
+            InspectorTest.log(`Local Resource Override Content: '${localResourceCurrentRevision.base64Encoded ? "[base64] " : ""}${localResourceCurrentRevision.content}'`)
+
+            WI.networkManager.removeLocalResourceOverride(localResourceOverride);
+        }
+    });
+
+    suite.addTestCase({
+        name: "LocalResourceOverride.MappedToFile.Invalid",
+        description: "Test that `WI.LocalResource.prototype.mapToFile` does not crash when attempting to load a file that does not exist.",
+        async test() {
+            const url = "http://127.0.0.1:8000/inspector/network/resources/override.txt";
+
+            InspectorTest.log("Creating Local Resource Override for: " + url);
+            let localResourceOverride = WI.LocalResourceOverride.create(url, WI.LocalResourceOverride.InterceptType.Response, {
+                responseMIMEType: "text/plain",
+                responseContent: "PASS: Should not load from file.",
+            });
+            WI.networkManager.addLocalResourceOverride(localResourceOverride);
+
+            InspectorTest.log("Linking to file...");
+            localResourceOverride.localResource.mappedFilePath = "DOES NOT EXIST";
+
+            InspectorTest.log("Triggering load...");
+            let [resourceWasAddedEvent, responseReceivedEvent, loadCompleteEvent] = await Promise.all([
+                WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded),
+                WI.Resource.awaitEvent(WI.Resource.Event.ResponseReceived),
+                InspectorTest.awaitEvent("LoadComplete"),
+                InspectorTest.evaluateInPage(`triggerOverrideLoad()`),
+            ]);
+
+            InspectorTest.pass("Resource Loaded.");
+            let resource = resourceWasAddedEvent.data.resource;
+            let {rawContent, rawBase64Encoded} = await resource.requestContent();
+            InspectorTest.log(`Resource Content: '${rawBase64Encoded ? "[base64] " : ""}${rawContent}'`);
+
+            let localResourceCurrentRevision = localResourceOverride.localResource.currentRevision;
+            InspectorTest.log(`Local Resource Override Content: '${localResourceCurrentRevision.base64Encoded ? "[base64] " : ""}${localResourceCurrentRevision.content}'`)
+
+            WI.networkManager.removeLocalResourceOverride(localResourceOverride);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for LocalResourceOverride being mapped to a file.</p>
+</body>
+</html>

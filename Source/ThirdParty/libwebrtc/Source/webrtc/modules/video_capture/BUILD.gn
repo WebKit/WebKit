@@ -1,0 +1,147 @@
+# Copyright (c) 2014 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+
+# Note this target is missing an implementation for the video capture.
+# Targets must link with either 'video_capture' or
+# 'video_capture_internal_impl' depending on whether they want to
+# use the internal capturer.
+rtc_library("video_capture_module") {
+  visibility = [ "*" ]
+  sources = [
+    "device_info_impl.cc",
+    "device_info_impl.h",
+    "video_capture.h",
+    "video_capture_config.h",
+    "video_capture_defines.h",
+    "video_capture_factory.cc",
+    "video_capture_factory.h",
+    "video_capture_impl.cc",
+    "video_capture_impl.h",
+  ]
+
+  deps = [
+    "../../api:scoped_refptr",
+    "../../api/video:video_frame",
+    "../../api/video:video_rtp_headers",
+    "../../common_video",
+    "../../media:rtc_media_base",
+    "../../rtc_base:rtc_base_approved",
+    "../../rtc_base:stringutils",
+    "../../rtc_base/synchronization:mutex",
+    "../../system_wrappers",
+    "//third_party/libyuv",
+  ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
+}
+
+if (!build_with_chromium) {
+  rtc_source_set("video_capture_internal_impl") {
+    visibility = [ "*" ]
+    deps = [
+      ":video_capture_module",
+      "../../api:scoped_refptr",
+      "../../rtc_base:checks",
+      "../../rtc_base:rtc_base_approved",
+      "../../rtc_base/synchronization:mutex",
+      "../../system_wrappers",
+    ]
+
+    if (is_linux || is_chromeos) {
+      sources = [
+        "linux/device_info_linux.cc",
+        "linux/device_info_linux.h",
+        "linux/video_capture_linux.cc",
+        "linux/video_capture_linux.h",
+      ]
+      deps += [ "../../media:rtc_media_base" ]
+    }
+    if (is_win) {
+      sources = [
+        "windows/device_info_ds.cc",
+        "windows/device_info_ds.h",
+        "windows/help_functions_ds.cc",
+        "windows/help_functions_ds.h",
+        "windows/sink_filter_ds.cc",
+        "windows/sink_filter_ds.h",
+        "windows/video_capture_ds.cc",
+        "windows/video_capture_ds.h",
+        "windows/video_capture_factory_windows.cc",
+      ]
+
+      libs = [
+        "ole32.lib",
+        "oleaut32.lib",
+        "strmiids.lib",
+        "user32.lib",
+      ]
+
+      if (build_with_mozilla) {
+        sources += [
+          "windows/BaseFilter.cpp",
+          "windows/BaseInputPin.cpp",
+          "windows/BasePin.cpp",
+          "windows/MediaType.cpp",
+        ]
+      }
+    }
+
+    if (build_with_mozilla && is_android) {
+      include_dirs = [
+        "/config/external/nspr",
+        "/nsprpub/lib/ds",
+        "/nsprpub/pr/include",
+      ]
+
+      sources = [
+        "android/device_info_android.cc",
+        "android/video_capture_android.cc",
+      ]
+    }
+  }
+
+  if (!is_android && rtc_include_tests) {
+    rtc_test("video_capture_tests") {
+      sources = [ "test/video_capture_unittest.cc" ]
+      ldflags = []
+      if (is_linux || is_chromeos || is_mac) {
+        ldflags += [
+          "-lpthread",
+          "-lm",
+        ]
+      }
+      if (is_linux || is_chromeos) {
+        ldflags += [
+          "-lrt",
+          "-lXext",
+          "-lX11",
+        ]
+      }
+
+      deps = [
+        ":video_capture_internal_impl",
+        ":video_capture_module",
+        "../../api:scoped_refptr",
+        "../../api/video:video_frame",
+        "../../api/video:video_rtp_headers",
+        "../../common_video",
+        "../../rtc_base:rtc_base_approved",
+        "../../rtc_base/synchronization:mutex",
+        "../../system_wrappers",
+        "../../test:frame_utils",
+        "../../test:test_main",
+        "../../test:test_support",
+        "../../test:video_test_common",
+        "../utility",
+        "//testing/gtest",
+        "//third_party/abseil-cpp/absl/memory",
+      ]
+    }
+  }
+}

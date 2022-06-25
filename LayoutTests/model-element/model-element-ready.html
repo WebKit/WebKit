@@ -1,0 +1,38 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>&lt;model> ready promise</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="resources/model-element-test-utils.js"></script>
+<body>
+<script>
+'use strict';
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "resources/does-not-exist.usdz");
+    return model.ready.then(
+        value => assert_unreached("Unexpected ready promise resolution."),
+        reason => assert_true(reason.toString().includes("NetworkError"), "The ready promise is rejected with a NetworkError.")
+    );
+}, `<model> rejects the ready promise when provided with an unknown resoure.`);
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "resources/heart.usdz");
+    const modelReady = model.ready;
+
+    source.remove();
+    assert_not_equals(model.ready, modelReady, "Removing the <source> child resets the ready promise.");
+
+    return modelReady.then(
+        value => assert_unreached("Unexpected ready promise resolution."),
+        reason => assert_true(reason.toString().includes("AbortError"), "The ready promise is rejected with a NetworkError.")
+    );
+}, `<model> rejects the ready promise when its resource load is aborted.`);
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "resources/cube.usdz");
+    await model.ready;
+}, `<model> resolves the ready promise when provided with a known resource.`);
+
+</script>
+</body>

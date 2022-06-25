@@ -1,0 +1,8 @@
+
+RUN(internals.settings.setShouldManageAudioSessionCategory(true))
+RUN(audio.autoplay = true)
+RUN(audio.src = findMediaFile("audio", "../../../media/content/test"))
+EVENT(playing)
+EXPECTED (internals.audioSessionCategory() == 'MediaPlayback') OK
+END OF TEST
+

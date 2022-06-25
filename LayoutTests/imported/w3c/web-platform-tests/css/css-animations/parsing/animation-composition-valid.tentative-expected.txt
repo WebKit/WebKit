@@ -1,0 +1,6 @@
+
+PASS e.style['animation-composition'] = "replace" should set the property value
+PASS e.style['animation-composition'] = "add" should set the property value
+PASS e.style['animation-composition'] = "accumulate" should set the property value
+PASS e.style['animation-composition'] = "replace, add, accumulate" should set the property value
+

@@ -1,0 +1,36 @@
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+
+<div id="content" role="group">
+    Hello World!
+    <p>First paragraph.</p>
+</div>
+
+<pre id="tree"></pre>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests that for the given HTML content, the accessibility trees in isolated tree mode on and off are identical.");
+
+    if (window.accessibilityController) {
+        accessibilityController.setIsolatedTreeMode(false);
+        content = accessibilityController.accessibleElementById("content");
+        shouldBeFalse("content.isIsolatedObject");
+        isolatedTreeOff = dumpAccessibilityTree(content, null, 0, true, false, true);
+
+        accessibilityController.setIsolatedTreeMode(true);
+        content = accessibilityController.accessibleElementById("content");
+        shouldBeTrue("content.isIsolatedObject");
+        isolatedTreeOn = dumpAccessibilityTree(content, null, 0, true, false, true);
+
+        shouldBeTrue("isolatedTreeOff[1] == isolatedTreeOn[1]");
+    }
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,3 @@
+
+PASS Test that the inline event handler is allowed to run
+

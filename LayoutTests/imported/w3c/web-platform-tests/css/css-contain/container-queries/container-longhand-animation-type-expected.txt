@@ -1,0 +1,5 @@
+
+PASS Reference variable is applied
+PASS container-name is not animatable
+PASS container-type is not animatable
+

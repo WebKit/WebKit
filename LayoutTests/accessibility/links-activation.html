@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+var clicked = false;
+function handleClick(event) {
+    clicked = true;
+    debug("click event " + event
+          + " for element " + event.target.nodeName
+          + " with id " + event.target.id);
+    return false;
+}
+</script>
+</head>
+<body>
+
+<p>This is a very long, long, long, long, line that contains a link that expands multiple lines: <a id="multiline-link" onclick="return handleClick(event);" href="#">Apple<br><br>Inc.</a> is based in Cupertino California.
+</p>
+
+<br><br>
+
+<p>A singleline link: <a id="singleline-link" onclick="return handleClick(event);" href="#">Apple Inc.</a> is based in Cupertino California.
+</p>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This test ensures that a link is activated with a simulated accessibility press regardless whether its bounding rect encompasses points outside the link. The multiline-link is an example of a bounding rect that contains points that are not part of the link, in particular the middle point of the rect.");
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        var link = accessibilityController.accessibleElementById("multiline-link");
+        link.press();
+        shouldBecomeEqual("clicked", "true", function() {
+            clicked = false;
+
+            link = accessibilityController.accessibleElementById("singleline-link");
+            link.press();
+            shouldBecomeEqual("clicked", "true", function() {
+                finishJSTest();
+            });
+        });
+    }
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

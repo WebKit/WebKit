@@ -1,0 +1,47 @@
+<style>
+
+div {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100px;
+    height: 100px;
+    background-color: green;
+    opacity: 0;
+}
+
+</style>
+
+<div></div>
+
+<script src="../resources/ui-helper.js"></script>
+<script>
+
+(async () => {
+    window.testRunner?.waitUntilDone();
+
+    const target = document.querySelector("div");
+
+    // Create a scale animation for 0.1s.
+    const scale = target.animate({ scale: [0.5, 1] }, 100);
+
+    // And a fade animation for 10s but which visually completes
+    // at the same time as the scale animation.
+    const fade = target.animate([
+        { offset: 0,    opacity: 0.5 },
+        { offset: 0.01, opacity: 1 },
+        { offset: 1,    opacity: 1 },
+    ], { duration: 10_000, fill: "both" });
+
+    // Wait until the scale animation ends and for animations to be updated
+    // to check that the opacity animation is in the expected visual state.
+    await scale.finished;
+
+    await UIHelper.animationFrame();
+    await UIHelper.animationFrame();
+    await UIHelper.animationFrame();
+
+    window.testRunner?.notifyDone();
+})();
+
+</script>

@@ -1,0 +1,12 @@
+
+This tests that if a missing image has a title attribute, it still appears in the AX hierarchy.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+image1.role is AXRole: AXImage
+image1's accessible name with source is AXTitle: baz
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

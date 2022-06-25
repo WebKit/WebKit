@@ -1,0 +1,32 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<header tabindex="0" id="header01">Header outside section and article elements.</header>
+<article>
+    <header tabindex="0" id="header02">Header inside an article.</header>
+</article>
+<section>
+    <header tabindex="0" id="header03">Header inside a section.</header>
+</section>
+
+<script>
+    function expectRole(expectedRole, expectedDescription, id) {
+        shouldBeEqualToString(`accessibilityController.accessibleElementById("${id}").role`, `AXRole: ${expectedRole}`);
+        shouldBeEqualToString(`accessibilityController.accessibleElementById("${id}").roleDescription`, `AXRoleDescription: ${expectedDescription}`);
+    }
+
+    if (window.accessibilityController) {
+        expectRole("AXGroup", "banner", "header01");
+        expectRole("AXGroup", "group", "header02");
+        expectRole("AXGroup", "group", "header03");
+    }
+</script>
+
+</body>
+</html>
+

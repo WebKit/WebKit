@@ -1,0 +1,66 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x54
+        RenderText {#text} at (0,0) size 758x36
+          text run at (0,0) width 758: "(1) Table with 2 columns. Relative width value for first column is \"1*\" and for column 2 is \"3*\". Table width is 100%."
+          text run at (0,18) width 748: "The first column should span 1/4 of the window width and the second column should span 3/4 of the window width. "
+        RenderInline {B} at (0,0) size 768x36
+          RenderText {#text} at (747,18) size 768x36
+            text run at (747,18) width 21: "5.0"
+            text run at (0,36) width 150: "renders this correctly."
+      RenderTable {TABLE} at (0,70) size 784x28 [border: (1px outset #808080)]
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableSection {TBODY} at (1,1) size 782x26
+          RenderTableRow {TR} at (0,2) size 782x22
+            RenderTableCell {TD} at (2,2) size 388x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 27x18
+                text run at (2,2) width 27: "Test"
+            RenderTableCell {TD} at (392,2) size 388x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 27x18
+                text run at (2,2) width 27: "Test"
+      RenderBlock (anonymous) at (0,98) size 784x36
+        RenderBR {BR} at (0,0) size 0x18
+        RenderBR {BR} at (0,18) size 0x18
+      RenderBlock {P} at (0,150) size 784x36
+        RenderText {#text} at (0,0) size 773x36
+          text run at (0,0) width 773: "(2) Table with 1 column. Relative width value for column is \"0*\" with table width of 100%. The column should span the"
+          text run at (0,18) width 368: "minimum width necessary to hold the column's contents. "
+        RenderInline {B} at (0,0) size 64x18
+          RenderText {#text} at (367,18) size 64x18
+            text run at (367,18) width 64: "Problem."
+      RenderTable {TABLE} at (0,202) size 784x28 [border: (1px outset #808080)]
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableSection {TBODY} at (1,1) size 782x26
+          RenderTableRow {TR} at (0,2) size 782x22
+            RenderTableCell {TD} at (2,2) size 778x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 27x18
+                text run at (2,2) width 27: "Test"
+      RenderBlock (anonymous) at (0,230) size 784x36
+        RenderBR {BR} at (0,0) size 0x18
+        RenderBR {BR} at (0,18) size 0x18
+      RenderBlock {P} at (0,282) size 784x54
+        RenderText {#text} at (0,0) size 758x54
+          text run at (0,0) width 758: "(3) Table with 2 columns. Relative width value for first column is \"0*\" and for column 2 is \"3*\". Table width is 100%."
+          text run at (0,18) width 753: "The first column should span the minimum width necessary to hold the column's contents. The second column should"
+          text run at (0,36) width 29: "????"
+        RenderInline {B} at (0,0) size 736x18
+          RenderText {#text} at (28,36) size 736x18
+            text run at (28,36) width 736: "The first column is rendered properly, but there seems to be a problem with the width of the second column."
+      RenderTable {TABLE} at (0,352) size 784x28 [border: (1px outset #808080)]
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableSection {TBODY} at (1,1) size 782x26
+          RenderTableRow {TR} at (0,2) size 782x22
+            RenderTableCell {TD} at (2,2) size 388x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 27x18
+                text run at (2,2) width 27: "Test"
+            RenderTableCell {TD} at (392,2) size 388x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 27x18
+                text run at (2,2) width 27: "Test"

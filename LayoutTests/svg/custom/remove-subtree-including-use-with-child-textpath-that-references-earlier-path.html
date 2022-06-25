@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</head>
+<body>
+<!-- This tests that we don't crash when removing a SVG subtree (by removing <html>) that contains nodes that reference nodes within the same subtree. This test PASSED if and only if there isn't any red or "FAIL" on the page and a JavaScript alert with message "PASS" is shown. -->
+<svg style="width: 200px; height: 200px">
+    <path id="Path" d="M 0 20 L 100 20 L 100 120 L 0 120" fill="red">
+        <text>
+            <textPath xlink:href="#Path">FAIL FAIL FAIL FAIL FAIL FAIL FAIL FAIL</textPath>
+        </text>
+    </path>
+    <!--
+     Notice that the <use> (below) will be expanded (since it references #Path) and have the form:
+     <use xlink:href="#Path">
+         <path id="Path" d="M 0 20 L 100 20 L 100 120 L 0 120" fill="red">
+            <text>
+                <textPath xlink:href="#Path">FAIL FAIL FAIL FAIL FAIL FAIL FAIL FAIL</textPath>
+            </text>
+        </path>
+    </use>
+    -->
+    <use xlink:href="#Path"/>
+</svg>
+<script>
+document.removeChild(document.documentElement);
+alert("PASS");
+</script>
+</body>
+</html>

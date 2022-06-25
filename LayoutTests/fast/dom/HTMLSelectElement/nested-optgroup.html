@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<body>
+<select id="testSelect">
+  <option>FAIL</option>
+  <optgroup id="topGroup" label="Top group"></optgroup>
+  <option>PASS</option>
+</select>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+description("Test that options in nested optgroup elements cannot be selected.");
+
+var select = document.getElementById("testSelect");
+var topgroup = document.getElementById("topGroup");
+
+var nestedGroup = document.createElement("optgroup");
+nestedGroup.label = "Nested group";
+var option = document.createElement("option");
+option.appendChild(document.createTextNode("FAIL"));
+nestedGroup.appendChild(option);
+topGroup.appendChild(nestedGroup);
+
+select.selectedIndex = 1;
+shouldBeEqualToString("select.value", "PASS");
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

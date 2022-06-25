@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+  <circle id="lime-circle" fill="lime" cx="100" cy="100" r="45"/>
+  <circle id="yellow-circle" fill="yellow" cx="100" cy="100" r="90">
+    <animateTransform attributeName="transform" type="scale" values="1; 0.5; 1" dur="2s"/>
+  </circle>
+  <text x="100" y="100" text-anchor="middle" alignment-baseline="middle">PASS</text>
+  <script>
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
+    }
+    setTimeout(function() {
+      var limeCircle = document.getElementById("lime-circle");
+      var yellowCircle = document.getElementById("yellow-circle");
+      document.documentElement.insertBefore(yellowCircle, limeCircle);
+      // This timeout is needed to ensure that the animation timer is fired at
+      // least once before the test is done.
+      setTimeout(function() {
+        if (window.testRunner)
+          testRunner.notifyDone();
+      }, 0);
+    }, 0);
+  </script>
+</svg>

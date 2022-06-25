@@ -1,0 +1,67 @@
+Tests MediaStreamTrack callbacks.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+
+**** calling mediaDevices.getUserMedia() ****
+PASS mediaDevices.getUserMedia succeeded.
+
+**** setup video element ****
+video.srcObject = mediaStream
+Event 'loadedmetadata'
+Event 'loadeddata'
+Event 'canplay'
+
+*** start playback ****
+video.play()
+Event 'canplaythrough'
+Event 'play'
+video.pause()
+
+**** check states with live video stream track ****
+PASS video.ended is false
+PASS video.videoWidth is mediaStream.getVideoTracks()[0].getSettings().width
+PASS video.videoHeight is mediaStream.getVideoTracks()[0].getSettings().height
+
+PASS video.videoTracks.length is 1
+PASS video.videoTracks.selectedIndex is 0
+PASS video.videoTracks[0].id is mediaStream.getVideoTracks()[0].id
+PASS video.videoTracks[0].selected is true
+PASS mediaStream.getVideoTracks()[0].enabled is true
+
+PASS mediaStream.getVideoTracks()[0].enabled is true
+PASS mediaStream.getVideoTracks()[0].readyState is "live"
+
+**** disable MediaStream video track ****
+mediaStream.getVideoTracks()[0].enabled = false
+
+**** re-check states now that the video stream has been disabled ****
+PASS mediaStream.getVideoTracks()[0].enabled is false
+PASS video.videoWidth is mediaStream.getVideoTracks()[0].getSettings().width
+PASS video.videoHeight is mediaStream.getVideoTracks()[0].getSettings().height
+
+**** stop MediaStream tracks ****
+mediaStream.getVideoTracks()[0].enabled = true
+mediaStream.getVideoTracks()[0].stop()
+mediaStream.getAudioTracks()[0].stop()
+
+Event 'ended'
+
+**** re-check states now that the video stream has ended ****
+PASS video.ended is true
+PASS video.videoWidth is 0
+PASS video.videoHeight is 0
+
+PASS video.videoTracks.length is 1
+PASS video.videoTracks.selectedIndex is -1
+PASS video.videoTracks[0].selected is false
+
+PASS mediaStream.getVideoTracks()[0].enabled is true
+PASS mediaStream.getVideoTracks()[0].readyState is "ended"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

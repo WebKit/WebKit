@@ -1,0 +1,13 @@
+Tests that parameters to CSSStyleDeclaration API are mandatory.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS style.item() threw exception TypeError: Not enough arguments.
+PASS style.removeProperty() threw exception TypeError: Not enough arguments.
+PASS style.getPropertyPriority() threw exception TypeError: Not enough arguments.
+PASS style.getPropertyCSSValue() threw exception TypeError: Not enough arguments.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

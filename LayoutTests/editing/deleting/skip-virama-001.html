@@ -1,0 +1,44 @@
+<html>
+<head>
+<title>Editing Test (Skipping a virama sign)</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<script src="../editing.js" language="javascript" type="text/javascript"></script>
+<script language="javascript" type="text/javascript">
+function log(str) {
+    var li = document.createElement("li");
+    li.appendChild(document.createTextNode(str));
+    var console = document.getElementById("console");
+    console.appendChild(li);
+}
+function sendBackwardDeleteKey() {
+    if (window.eventSender)
+        eventSender.keyDown(String.fromCharCode(0x0008), null);
+}
+function editingTest() {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    var testarea = document.getElementById("test");
+    testarea.focus();
+    typeCharacterCommand(String.fromCharCode(0x0915));
+    typeCharacterCommand(String.fromCharCode(0x094D));
+    typeCharacterCommand(String.fromCharCode(0x0937));
+    moveSelectionBackwardByCharacterCommand();
+    sendBackwardDeleteKey();
+    var expected_result = "\u0915\u094D\u0937";
+    if (testarea.textContent == expected_result)
+        log("Succeeded.");
+    else
+        log("Failed. Actual: \"" + testarea.textContent + "\", Expected: \"" + expected_result + "\".");
+}
+</script>
+</head>
+<body>
+<p>This test tests whether or not we can prevent a cursor from moving after a virama sign.</p>
+<p>If this test succeeds, you can see a string "succeeded" below.</p>
+<div contenteditable id="test"></div>
+<ul id="console"></ul>
+<script language="javascript" type="text/javascript">
+runEditingTest();
+</script>
+</body>
+</html>

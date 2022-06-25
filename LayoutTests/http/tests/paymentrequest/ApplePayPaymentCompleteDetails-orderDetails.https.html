@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Tests for providing `orderDetails` as part of `ApplePayPaymentCompleteDetails`.</title>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/payment-request.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<script>
+setup({ explicit_done: true, explicit_timeout: true });
+
+const orderTypeIdentifier = "orderTypeIdentifier";
+const orderIdentifier = "orderIdentifier";
+const webServiceURL = "https://apple.com";
+const authenticationToken = "authenticationToken";
+
+function testValidPaymentCompleteData(description, {orderDetails}) {
+    user_activation_test(async (test) => {
+        let request = new PaymentRequest([validPaymentMethod()], validPaymentDetails());
+        request.addEventListener("merchantvalidation", (event) => {
+            event.complete({ });
+        });
+        request.addEventListener("shippingaddresschange", (event) => {
+            event.updateWith({ });
+            internals.mockPaymentCoordinator.acceptPayment();
+        });
+
+        let response = await request.show();
+
+        try {
+            await response.complete("success", {data: {orderDetails}});
+            assert_true(true, "should not error");
+        } catch (e) {
+            assert_true(false, `should not error, but saw '${e.message}'`);
+        }
+    }, description);
+}
+
+testValidPaymentCompleteData("Should not error if all properties are provided", {
+    orderDetails: {orderTypeIdentifier, orderIdentifier, webServiceURL, authenticationToken},
+});
+
+function testInvalidPaymentCompleteData(description, {orderDetails, expectedErrorSubstring}) {
+    user_activation_test(async (test) => {
+        let request = new PaymentRequest([validPaymentMethod()], validPaymentDetails());
+        request.addEventListener("merchantvalidation", (event) => {
+            event.complete({ });
+        });
+        request.addEventListener("shippingaddresschange", (event) => {
+            event.updateWith({ });
+            internals.mockPaymentCoordinator.acceptPayment();
+        });
+
+        let response = await request.show();
+
+        try {
+            await response.complete("success", {data: {orderDetails}});
+            assert_true(false, `should error about '${expectedErrorSubstring}'`);
+        } catch (e) {
+            assert_true(e.message.includes(expectedErrorSubstring), `should error about '${expectedErrorSubstring}'`);
+        }
+
+        try {
+            await response.complete("success");
+            assert_true(true, "should be able to recover from error");
+        } catch (e) {
+            assert_true(false, `should be able to recover from error, but exception was thrown '${e.message}'`);
+        }
+    }, description);
+}
+
+testInvalidPaymentCompleteData("Should error if `orderDetails` is not an object", {
+    orderDetails: [],
+    expectedErrorSubstring: "Member ApplePayPaymentOrderDetails.authenticationToken is required and must be an instance of DOMString",
+});
+
+testInvalidPaymentCompleteData("Should error if `orderTypeIdentifier` is not provided", {
+    orderDetails: {orderIdentifier, webServiceURL, authenticationToken},
+    expectedErrorSubstring: "Member ApplePayPaymentOrderDetails.orderTypeIdentifier is required and must be an instance of DOMString",
+});
+
+testInvalidPaymentCompleteData("Should error if `orderIdentifier` is not provided", {
+    orderDetails: {orderTypeIdentifier, webServiceURL, authenticationToken},
+    expectedErrorSubstring: "Member ApplePayPaymentOrderDetails.orderIdentifier is required and must be an instance of DOMString",
+});
+
+testInvalidPaymentCompleteData("Should error if `webServiceURL` is not provided", {
+    orderDetails: {orderTypeIdentifier, orderIdentifier, authenticationToken},
+    expectedErrorSubstring: "Member ApplePayPaymentOrderDetails.webServiceURL is required and must be an instance of DOMString",
+});
+testInvalidPaymentCompleteData("Should error if `webServiceURL` is not a valid URL", {
+    orderDetails: {orderTypeIdentifier, orderIdentifier, webServiceURL: 42, authenticationToken},
+    expectedErrorSubstring: "not a valid URL",
+});
+
+testInvalidPaymentCompleteData("Should error if `authenticationToken` is not provided", {
+    orderDetails: {orderTypeIdentifier, orderIdentifier, webServiceURL},
+    expectedErrorSubstring: "Member ApplePayPaymentOrderDetails.authenticationToken is required and must be an instance of DOMString",
+});
+
+done();
+</script>
+

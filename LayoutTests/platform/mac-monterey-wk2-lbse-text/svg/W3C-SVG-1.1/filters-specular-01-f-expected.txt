@@ -1,0 +1,72 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+layer at (90,9) size 348x51
+  RenderSVGContainer {g} at (0,0) size 348x281
+layer at (171,9) size 138x13
+  RenderSVGText {text} at (80,0) size 140x14 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 139x14
+      chunk 1 (middle anchor) text run 1 at (170.63,20.00) startOffset 0 endOffset 27 width 138.74: "Filters: feSpecularLighting"
+layer at (90,11) size 296x50
+  RenderSVGContainer {g} at (0,20) size 296x49
+layer at (90,11) size 296x18
+  RenderSVGText {text} at (0,0) size 296x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 296x18
+      chunk 1 text run 1 at (90.00,25.00) startOffset 0 endOffset 46 width 295.90: "Various values for surfaceScale: 1, 10 and -10"
+layer at (90,30) size 280x30
+  RenderSVGContainer {g} at (0,20) size 280x30
+layer at (90,30) size 50x30
+  RenderSVGRect {rect} at (0,20) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=90.00] [y=30.00] [width=50.00] [height=30.00]
+layer at (205,30) size 50x30
+  RenderSVGRect {rect} at (0,20) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=205.00] [y=30.00] [width=50.00] [height=30.00]
+layer at (320,30) size 50x30
+  RenderSVGRect {rect} at (0,20) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=320.00] [y=30.00] [width=50.00] [height=30.00]
+layer at (90,11) size 311x50
+  RenderSVGContainer {g} at (0,90) size 311x49
+layer at (90,11) size 310x18
+  RenderSVGText {text} at (0,0) size 311x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 311x18
+      chunk 1 text run 1 at (90.00,25.00) startOffset 0 endOffset 48 width 310.16: "Various values for specularConstants: 0, 1 and 2"
+layer at (90,30) size 280x30
+  RenderSVGContainer {g} at (0,90) size 280x30
+layer at (90,30) size 50x30
+  RenderSVGRect {rect} at (0,90) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=90.00] [y=30.00] [width=50.00] [height=30.00]
+layer at (205,30) size 50x30
+  RenderSVGRect {rect} at (0,90) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=205.00] [y=30.00] [width=50.00] [height=30.00]
+layer at (320,30) size 50x30
+  RenderSVGRect {rect} at (0,90) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=320.00] [y=30.00] [width=50.00] [height=30.00]
+layer at (90,11) size 315x50
+  RenderSVGContainer {g} at (0,160) size 315x49
+layer at (90,11) size 315x18
+  RenderSVGText {text} at (0,0) size 315x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 315x18
+      chunk 1 text run 1 at (90.00,25.00) startOffset 0 endOffset 48 width 314.59: "Various values for specularExponents: 1, 2 and 4"
+layer at (90,30) size 280x30
+  RenderSVGContainer {g} at (0,160) size 280x30
+layer at (90,30) size 50x30
+  RenderSVGRect {rect} at (0,160) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=90.00] [y=30.00] [width=50.00] [height=30.00]
+layer at (205,30) size 50x30
+  RenderSVGRect {rect} at (0,160) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=205.00] [y=30.00] [width=50.00] [height=30.00]
+layer at (320,30) size 50x30
+  RenderSVGRect {rect} at (0,160) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=320.00] [y=30.00] [width=50.00] [height=30.00]
+layer at (90,11) size 348x50
+  RenderSVGContainer {g} at (0,230) size 348x49
+layer at (90,11) size 348x18
+  RenderSVGText {text} at (0,0) size 348x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 348x18
+      chunk 1 text run 1 at (90.00,25.00) startOffset 0 endOffset 55 width 347.91: "Various values for lighting color: red, yellow and blue"
+layer at (90,30) size 280x30
+  RenderSVGContainer {g} at (0,230) size 280x30
+layer at (90,30) size 50x30
+  RenderSVGRect {rect} at (0,230) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=90.00] [y=30.00] [width=50.00] [height=30.00]
+layer at (205,30) size 50x30
+  RenderSVGRect {rect} at (0,230) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=205.00] [y=30.00] [width=50.00] [height=30.00]
+layer at (320,30) size 50x30
+  RenderSVGRect {rect} at (0,230) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=320.00] [y=30.00] [width=50.00] [height=30.00]
+layer at (10,304) size 263x46
+  RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 264x46
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.8 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (-1,-1) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

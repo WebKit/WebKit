@@ -1,0 +1,6 @@
+
+PASS em relative inline-size
+PASS rem relative inline-size
+PASS ex relative inline-size
+PASS ch relative inline-size
+

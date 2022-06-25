@@ -1,0 +1,15 @@
+//
+//  ProductionProject.xcconfig
+//
+//  These are Production Configuration project settings for the gtest framework
+//  and examples. It is set in the "Based On:" dropdown in the "Project" info
+//  dialog.
+//  This file is based on the Xcode Configuration files in:
+//  http://code.google.com/p/google-toolbox-for-mac/
+// 
+
+#include "ReleaseProject.xcconfig"
+
+ONLY_ACTIVE_ARCH = NO
+
+SDKROOT = macosx.internal;

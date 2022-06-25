@@ -1,0 +1,26 @@
+This tests the constructor for the OverconstrainedErrorEvent DOM class.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS new OverconstrainedErrorEvent('eventType').bubbles is false
+PASS new OverconstrainedErrorEvent('eventType').cancelable is false
+PASS new OverconstrainedErrorEvent('eventType').error is null
+PASS new OverconstrainedErrorEvent('eventType', { bubbles: false }).bubbles is false
+PASS new OverconstrainedErrorEvent('eventType', { bubbles: true }).bubbles is true
+PASS new OverconstrainedErrorEvent('eventType', { cancelable: false }).cancelable is false
+PASS new OverconstrainedErrorEvent('eventType', { cancelable: true }).cancelable is true
+PASS new OverconstrainedErrorEvent('eventType', { error: new OverconstrainedError() }).error.constraint is ""
+PASS new OverconstrainedErrorEvent('eventType', { error: new OverconstrainedError() }).error.message is ""
+PASS new OverconstrainedErrorEvent('eventType', { error: new OverconstrainedError('width') }).error.constraint is "width"
+PASS new OverconstrainedErrorEvent('eventType', { error: new OverconstrainedError('fred', 'unsupported constraint') }).error.message is "unsupported constraint"
+PASS new OverconstrainedErrorEvent('eventType', { error: null }).reason is undefined.
+PASS new OverconstrainedErrorEvent('eventType', { error: 'fake error' }) threw exception TypeError: Type error.
+PASS new OverconstrainedErrorEvent('eventType', { error: [] }) threw exception TypeError: Type error.
+PASS new OverconstrainedErrorEvent('eventType', { bubbles: true, cancelable: true, error: new OverconstrainedError() }).bubbles is true
+PASS new OverconstrainedErrorEvent('eventType', { bubbles: true, cancelable: true, error: new OverconstrainedError() }).cancelable is true
+PASS new OverconstrainedErrorEvent('eventType', { bubbles: true, cancelable: true, error: new OverconstrainedError('bogus') }).error.constraint is "bogus"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

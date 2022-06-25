@@ -1,0 +1,2 @@
+RewriteEngine on
+RewriteRule ^.* /appcache/resources/print-uri.py [L,NS]

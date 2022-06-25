@@ -1,0 +1,21 @@
+
+FAIL ClipboardItem({string, Blob}) succeeds with different types Can't find variable: ClipboardItem
+FAIL ClipboardItem() succeeds with empty options Can't find variable: ClipboardItem
+FAIL ClipboardItem({}) fails with empty dictionary input assert_throws_js: function "() => {new ClipboardItem({});}" threw object "ReferenceError: Can't find variable: ClipboardItem" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL ClipboardItem(Blob) fails assert_throws_js: function "() => {new ClipboardItem(blob);}" threw object "ReferenceError: Can't find variable: ClipboardItem" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL ClipboardItem() fails with null input assert_throws_js: function "() => {new ClipboardItem(null);}" threw object "ReferenceError: Can't find variable: ClipboardItem" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL ClipboardItem() fails with no input assert_throws_js: function "() => {new ClipboardItem();}" threw object "ReferenceError: Can't find variable: ClipboardItem" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL types() returns correct values Can't find variable: ClipboardItem
+FAIL raw() returns correct values, defaulting to false Can't find variable: ClipboardItem
+FAIL getType(DOMString valid type) succeeds with correct output promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ClipboardItem"
+FAIL getType(DOMString invalid type) succeeds with correct output promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ClipboardItem"
+FAIL getType(DOMString type) rejects correctly when querying for missing type promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ClipboardItem"
+

@@ -1,0 +1,3 @@
+
+FAIL Scheme outside white list and isProtocolHandlerRegistered navigator.registerProtocolHandler is not a function. (In 'navigator.registerProtocolHandler(scheme, url, 'Ignore dialog or decline it')', 'navigator.registerProtocolHandler' is undefined)
+

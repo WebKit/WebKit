@@ -1,0 +1,29 @@
+This tests the platform role exposed for buttons with aria-haspopup
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+test1 AXRole: AXButton for aria-haspopup = (null)
+AX popupValue = 'false'
+test2 AXRole: AXPopUpButton for aria-haspopup = 'true'
+AX popupValue = 'menu'
+test3 AXRole: AXButton for aria-haspopup = 'false'
+AX popupValue = 'false'
+test4 AXRole: AXPopUpButton for aria-haspopup = 'dialog'
+AX popupValue = 'dialog'
+test5 AXRole: AXPopUpButton for aria-haspopup = 'grid'
+AX popupValue = 'grid'
+test6 AXRole: AXPopUpButton for aria-haspopup = 'listbox'
+AX popupValue = 'listbox'
+test7 AXRole: AXPopUpButton for aria-haspopup = 'menu'
+AX popupValue = 'menu'
+test8 AXRole: AXPopUpButton for aria-haspopup = 'tree'
+AX popupValue = 'tree'
+test9 AXRole: AXButton for aria-haspopup = 'foo'
+AX popupValue = 'false'
+test10 AXRole: AXButton for aria-haspopup = ''
+AX popupValue = 'false'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

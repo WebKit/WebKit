@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src=media-file.js></script>
+<script src=video-test.js></script>
+<script>
+function runTest() {
+    run('internals.settings.setAllowsInlineMediaPlayback(false)');
+
+    iframe = document.querySelector('iframe');
+    mediaElement = video = iframe.contentDocument.createElement('video');
+    iframe.contentDocument.body.appendChild(video);
+
+    video.controls = true;
+    video.src = findMediaFile("video", "content/test");
+    video.style.width = '100%';
+    video.style.height = '100%';
+
+    video.addEventListener('webkitbeginfullscreen', beginfullscreen);
+    video.addEventListener('webkitfullscreenchange', beginfullscreen);
+    waitForEvent('canplaythrough', canplaythrough);
+
+    runWithKeyDown(() => {
+        run('video.load()');
+    });
+}
+
+function canplaythrough() {
+    runWithKeyDown(() => {
+        run('video.play()');
+    });
+}
+
+function beginfullscreen() {
+    consoleWrite("EVENT(webkitbeginfullscreen)");
+    setTimeout(() => {
+        run('iframe.src = "about:blank"');
+        setTimeout(endTest, 100);
+    }, 1000);
+}
+</script>
+</head>
+<body onload="runTest()">
+    <div>Destroy the document containing a video while that video is in fullscreen; should not crash.</div>
+    <iframe></iframe>
+</body>
+</html>

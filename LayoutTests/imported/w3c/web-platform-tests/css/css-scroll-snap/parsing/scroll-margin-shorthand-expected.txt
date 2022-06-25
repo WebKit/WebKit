@@ -1,0 +1,22 @@
+
+PASS e.style['scroll-margin'] = "10px" should set scroll-margin-bottom
+PASS e.style['scroll-margin'] = "10px" should set scroll-margin-left
+PASS e.style['scroll-margin'] = "10px" should set scroll-margin-right
+PASS e.style['scroll-margin'] = "10px" should set scroll-margin-top
+PASS e.style['scroll-margin'] = "10px" should not set unrelated longhands
+PASS e.style['scroll-margin'] = "30px 20px" should set scroll-margin-bottom
+PASS e.style['scroll-margin'] = "30px 20px" should set scroll-margin-left
+PASS e.style['scroll-margin'] = "30px 20px" should set scroll-margin-right
+PASS e.style['scroll-margin'] = "30px 20px" should set scroll-margin-top
+PASS e.style['scroll-margin'] = "30px 20px" should not set unrelated longhands
+PASS e.style['scroll-margin'] = "1px 2px 3px" should set scroll-margin-bottom
+PASS e.style['scroll-margin'] = "1px 2px 3px" should set scroll-margin-left
+PASS e.style['scroll-margin'] = "1px 2px 3px" should set scroll-margin-right
+PASS e.style['scroll-margin'] = "1px 2px 3px" should set scroll-margin-top
+PASS e.style['scroll-margin'] = "1px 2px 3px" should not set unrelated longhands
+PASS e.style['scroll-margin'] = "-1px 2px 3px 0" should set scroll-margin-bottom
+PASS e.style['scroll-margin'] = "-1px 2px 3px 0" should set scroll-margin-left
+PASS e.style['scroll-margin'] = "-1px 2px 3px 0" should set scroll-margin-right
+PASS e.style['scroll-margin'] = "-1px 2px 3px 0" should set scroll-margin-top
+PASS e.style['scroll-margin'] = "-1px 2px 3px 0" should not set unrelated longhands
+

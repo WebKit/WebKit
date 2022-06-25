@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+div {
+    white-space: pre-line;
+    padding-bottom: 10px;
+    font-size: 20px;
+    font-family: ahem;
+    border: 1px solid blue;
+}
+</style>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+</head>
+<body>
+<div id="text">foo
+bar</div>
+<script>
+document.body.offsetWidth;
+setTimeout(function() {
+    if (window.internals)
+        internals.startTrackingRepaints();
+    document.getElementById('text').innerHTML = "foo";
+    if (window.internals) {
+        let repaintRects = internals.repaintRectsAsText();
+        internals.stopTrackingRepaints();
+
+        let pre = document.createElement('pre');
+        document.body.appendChild(pre);
+        pre.innerHTML = repaintRects;
+        testRunner.notifyDone();
+    }
+}, 10);
+</script>
+</body>
+</html>

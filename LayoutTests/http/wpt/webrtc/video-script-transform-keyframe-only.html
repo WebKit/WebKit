@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="/resources/testharness.js"></script>
+        <script src="/resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <video id="video" autoplay playsInline></video>
+        <script src="routines.js"></script>
+        <script>
+function setH264BaselineCodec(sdp)
+{
+    const lines = sdp.split('\r\n');
+    const h264Lines = lines.filter(line => line.indexOf("a=fmtp") === 0 && line.indexOf("42e01f") !== -1);
+    const baselineNumber = h264Lines[0].substring(6).split(' ')[0];
+    return lines.filter(line => {
+        return (line.indexOf('a=fmtp') === -1 && line.indexOf('a=rtcp-fb') === -1 && line.indexOf('a=rtpmap') === -1) || line.indexOf(baselineNumber) !== -1;
+    }).join('\r\n');
+}
+
+let pc2;
+promise_test(async (test) => {
+    worker = new Worker('video-script-transform-keyframe-only-worker.js');
+    const data = await new Promise(resolve => worker.onmessage = (event) => resolve(event.data));
+    assert_equals(data, "registered");
+
+    const localStream = await navigator.mediaDevices.getUserMedia({video: true});
+
+    const senderTransform = new RTCRtpScriptTransform(worker, {name:'MockRTCRtpTransform', mediaType:'video', side:'sender'});
+    const receiverTransform = new RTCRtpScriptTransform(worker, {name:'MockRTCRtpTransform', mediaType:'video', side:'receiver'});
+
+    video.srcObject = await new Promise((resolve, reject) => {
+        createConnections((firstConnection) => {
+            const sender = firstConnection.addTrack(localStream.getVideoTracks()[0], localStream);
+            sender.transform = senderTransform;
+        }, (secondConnection) => {
+            pc2 = secondConnection;
+            secondConnection.ontrack = (trackEvent) => {
+                const receiver = trackEvent.receiver;
+                receiver.transform = receiverTransform;
+                resolve(trackEvent.streams[0]);
+            };
+        }, { observeOffer : (offer) => {
+            offer.sdp = setH264BaselineCodec(offer.sdp);
+            return offer;
+        }});
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+
+    await video.play();
+    await waitFor(50);
+}, "enqueue video frames with empty buffer");
+        </script>
+    </body>
+</html>

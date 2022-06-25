@@ -1,0 +1,48 @@
+Tests calling the various uniform[Matrix]* APIs with a null uniform location
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.useProgram(program) is undefined.
+PASS callUniformFunction('uniform1f') is undefined.
+PASS gl.getError() is gl.NO_ERROR
+PASS callUniformFunction('uniform1fv') is undefined.
+PASS gl.getError() is gl.NO_ERROR
+PASS callUniformFunction('uniform1i') is undefined.
+PASS gl.getError() is gl.NO_ERROR
+PASS callUniformFunction('uniform1iv') is undefined.
+PASS gl.getError() is gl.NO_ERROR
+PASS callUniformFunction('uniform2f') is undefined.
+PASS gl.getError() is gl.NO_ERROR
+PASS callUniformFunction('uniform2fv') is undefined.
+PASS gl.getError() is gl.NO_ERROR
+PASS callUniformFunction('uniform2i') is undefined.
+PASS gl.getError() is gl.NO_ERROR
+PASS callUniformFunction('uniform2iv') is undefined.
+PASS gl.getError() is gl.NO_ERROR
+PASS callUniformFunction('uniform3f') is undefined.
+PASS gl.getError() is gl.NO_ERROR
+PASS callUniformFunction('uniform3fv') is undefined.
+PASS gl.getError() is gl.NO_ERROR
+PASS callUniformFunction('uniform3i') is undefined.
+PASS gl.getError() is gl.NO_ERROR
+PASS callUniformFunction('uniform3iv') is undefined.
+PASS gl.getError() is gl.NO_ERROR
+PASS callUniformFunction('uniform4f') is undefined.
+PASS gl.getError() is gl.NO_ERROR
+PASS callUniformFunction('uniform4fv') is undefined.
+PASS gl.getError() is gl.NO_ERROR
+PASS callUniformFunction('uniform4i') is undefined.
+PASS gl.getError() is gl.NO_ERROR
+PASS callUniformFunction('uniform4iv') is undefined.
+PASS gl.getError() is gl.NO_ERROR
+PASS callUniformFunction('uniformMatrix2fv') is undefined.
+PASS gl.getError() is gl.NO_ERROR
+PASS callUniformFunction('uniformMatrix3fv') is undefined.
+PASS gl.getError() is gl.NO_ERROR
+PASS callUniformFunction('uniformMatrix4fv') is undefined.
+PASS gl.getError() is gl.NO_ERROR
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

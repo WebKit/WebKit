@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<head>
+    <title>This tests that selection stays on when part of the selection gets removed.</title>
+</head>
+<body>
+    <div id=foo>When this text disappears, selection clears too.</div>
+    This should still be selected.
+    <script>
+        if (window.testRunner)
+            window.testRunner.waitUntilDone();
+
+        var range = document.createRange(); 
+        range.selectNode(document.body); 
+        window.getSelection().addRange(range);
+
+        function select() {
+            document.getElementById("foo").style.display = "none";
+            if (window.testRunner)
+                window.testRunner.notifyDone();
+        }
+
+        setTimeout(select, 0);
+    </script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+Testing DOMAgent.getEventListenersForNode.
+
+
+== Running test suite: DOM.getEventListenersForNode
+-- Running test case: DOM.getEventListenersForNode.Basic
+Event: A
+Target: body
+Capture: true
+Attribute: false
+Handler Name: bodyA
+The Event Listener has a source location.
+
+Event: B
+Target: body
+Capture: true
+Attribute: false
+The Event Listener has a source location.
+
+Event: E
+Target: div#x
+Capture: false
+Attribute: false
+Handler Name: ObjectEventHandler
+The Event Listener has a source location.
+
+Event: D
+Target: div#x
+Capture: false
+Attribute: false
+Handler Name: handleEvent
+The Event Listener has a source location.
+
+Event: C
+Target: div#x
+Capture: false
+Attribute: false
+The Event Listener has a source location.
+
+Event: B
+Target: div#x
+Capture: false
+Attribute: false
+Handler Name: xB
+Once: true
+The Event Listener has a source location.
+
+Event: A
+Target: div#x
+Capture: false
+Attribute: false
+Handler Name: xA
+The Event Listener has a source location.
+
+Event: click
+Target: div#x
+Capture: false
+Attribute: true
+Handler Name: onclick
+The Event Listener has a source location.
+
+Event: B
+Target: #document
+Capture: false
+Attribute: false
+Passive: true
+The Event Listener has a source location.
+
+Event: A
+Target: #document
+Capture: false
+Attribute: false
+Handler Name: documentA
+Passive: true
+The Event Listener has a source location.
+
+Event: load
+Target: window
+Capture: false
+Attribute: true
+Handler Name: onload
+The Event Listener has a source location.
+
+Event: error
+Target: window
+Capture: false
+Attribute: true
+
+

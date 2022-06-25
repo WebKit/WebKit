@@ -1,0 +1,138 @@
+<!doctype html>
+<html id=htmlDocument>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div style="display:none">
+    <!-- Simple case -->
+    <div id=simple>
+        <ul>
+            <li id=simpleTarget></li>
+        </ul>
+    </div>
+
+    <!-- Duplicated IDs case -->
+    <div id=duplicated>
+        <ul>
+            <li id=duplicatedTarget1></li>
+        </ul>
+        <div id=duplicated>
+            <ul>
+                <li id=duplicatedTarget2></li>
+            </ul>
+        </div>
+    </div>
+    <div>
+        <ul>
+            <li id=siblingOfDuplicated1></li>
+        </ul>
+    </div>
+
+    <div id=duplicated>
+        <ul>
+            <li id=duplicatedTarget3></li>
+        </ul>
+    </div>
+    <div>
+        <ul>
+            <li id=siblingOfDuplicated2></li>
+        </ul>
+    </div>
+
+    <!-- Duplicated IDs in a non-duplicated ID -->
+    <div id=nonDuplicatedParentOfDuplicate>
+        <div id=deduplicated>
+            <ul>
+                <li id=deduplicatedTarget1></li>
+            </ul>
+            <div id=deduplicated>
+                <ul>
+                    <li id=deduplicatedTarget2></li>
+                </ul>
+            </div>
+        </div>
+        <div>
+            <ul>
+                <li id=siblingOfDeduplicated1></li>
+            </ul>
+        </div>
+
+        <div id=deduplicated>
+            <ul>
+                <li id=deduplicatedTarget3></li>
+            </ul>
+        </div>
+        <div>
+            <ul>
+                <li id=siblingOfDeduplicated2></li>
+            </ul>
+        </div>
+    </div>
+    <div>
+        <ul>
+            <li id=siblingOfNonDuplicatedParentOfDuplicate></li>
+        </ul>
+    </div>
+
+    <!-- ID adjacent of target -->
+    <div id=directAdjacentRoot></div>
+    <div>
+        <ul>
+            <li id="directAdjacentTarget"></li>
+        </ul>
+    </div>
+
+    <!-- ID indirect adjacent of target -->
+    <div id=indirectAdjacentRoot></div>
+    <div></div>
+    <div></div>
+    <div>
+        <ul>
+            <li id="indirectAdjacentTarget"></li>
+        </ul>
+    </div>
+</div>
+</body>
+<script>
+description('Test various cases when we constrain a selector matching to a subtree selected by #ID');
+
+debug("Missing id.");
+shouldBe('document.body.querySelectorAll("#notThere *").length', '0');
+
+debug("<br>Trivial filtering.");
+shouldBe('document.body.querySelectorAll("#simple li").length', '1');
+shouldBeEqualToString('document.body.querySelectorAll("#simple li")[0].id', 'simpleTarget');
+
+debug("<br>ID is adjacent of target.");
+shouldBe('document.body.querySelectorAll("#directAdjacentRoot+div li").length', '1');
+shouldBeEqualToString('document.body.querySelectorAll("#directAdjacentRoot+div li")[0].id', 'directAdjacentTarget');
+shouldBe('document.body.querySelectorAll("#indirectAdjacentRoot~div li").length', '1');
+shouldBeEqualToString('document.body.querySelectorAll("#indirectAdjacentRoot~div li")[0].id', 'indirectAdjacentTarget');
+
+debug("<br>Duplicated IDs.");
+shouldBe('document.body.querySelectorAll("#duplicated li").length', '3');
+shouldBeEqualToString('document.body.querySelectorAll("#duplicated li")[0].id', 'duplicatedTarget1');
+shouldBeEqualToString('document.body.querySelectorAll("#duplicated li")[1].id', 'duplicatedTarget2');
+shouldBeEqualToString('document.body.querySelectorAll("#duplicated li")[2].id', 'duplicatedTarget3');
+shouldBe('document.body.querySelectorAll("#duplicated+div li").length', '2');
+shouldBeEqualToString('document.body.querySelectorAll("#duplicated+div li")[0].id', 'siblingOfDuplicated1');
+shouldBeEqualToString('document.body.querySelectorAll("#duplicated+div li")[1].id', 'siblingOfDuplicated2');
+
+debug("<br>Duplicated IDs with a non-duplicated ancestor.");
+shouldBe('document.body.querySelectorAll("#nonDuplicatedParentOfDuplicate #deduplicated li").length', '3');
+shouldBeEqualToString('document.body.querySelectorAll("#nonDuplicatedParentOfDuplicate #deduplicated li")[0].id', 'deduplicatedTarget1');
+shouldBeEqualToString('document.body.querySelectorAll("#nonDuplicatedParentOfDuplicate #deduplicated li")[1].id', 'deduplicatedTarget2');
+shouldBeEqualToString('document.body.querySelectorAll("#nonDuplicatedParentOfDuplicate #deduplicated li")[2].id', 'deduplicatedTarget3');
+shouldBe('document.body.querySelectorAll("#nonDuplicatedParentOfDuplicate #deduplicated+div li").length', '2');
+shouldBeEqualToString('document.body.querySelectorAll("#nonDuplicatedParentOfDuplicate #deduplicated+div li")[0].id', 'siblingOfDeduplicated1');
+shouldBeEqualToString('document.body.querySelectorAll("#nonDuplicatedParentOfDuplicate #deduplicated+div li")[1].id', 'siblingOfDeduplicated2');
+shouldBe('document.body.querySelectorAll("#nonDuplicatedParentOfDuplicate+div li").length', '1');
+shouldBeEqualToString('document.body.querySelectorAll("#nonDuplicatedParentOfDuplicate+div li")[0].id', 'siblingOfNonDuplicatedParentOfDuplicate');
+
+debug("<br>Sibling of HTML document.");
+shouldBe('document.body.querySelectorAll("#htmlDocument~* *").length', '0');
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

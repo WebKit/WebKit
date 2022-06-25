@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test importing an ECDH raw key with P-384");
+
+jsTestIsAsync = true;
+
+var rawKey = hexStringToUint8Array("048ba3e0a0ac5c9bb25476323570fa11dff30745a13da751a5eb1dacb5e9b439df0f77979077ee9ac97c02ca1e3cd72677cbbc256a69b99fd83a519ca9a9a26c62d45b51659274b1cea3c9858543abf5c64bfcfcd1948b7075c0409da4494f9060");
+var extractable = true;
+
+debug("Importing a key...");
+crypto.subtle.importKey("raw", rawKey, { name: "ECDH", namedCurve: "P-384" }, extractable, [ ]).then(function(result) {
+    publicKey = result;
+
+    shouldBe("publicKey.toString()", "'[object CryptoKey]'");
+    shouldBe("publicKey.type", "'public'");
+    shouldBe("publicKey.extractable", "true");
+    shouldBe("publicKey.algorithm.name", "'ECDH'");
+    shouldBe("publicKey.algorithm.namedCurve", "'P-384'");
+    shouldBe("publicKey.usages", "[ ]");
+
+    finishJSTest();
+});
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

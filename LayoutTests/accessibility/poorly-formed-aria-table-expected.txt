@@ -1,0 +1,12 @@
+This tests that if an ARIA table does not report the rows as its direct children, the table will still correctly report the rows.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS grid.rowAtIndex(0).isEqual(row1) is true
+PASS grid.rowAtIndex(1).isEqual(row2) is true
+PASS grid.rowCount is 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

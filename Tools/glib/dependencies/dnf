@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+
+PACKAGES=(
+    # These are dependencies necessary for building WebKitGTK/WPE.
+    alsa-lib-devel
+    autoconf
+    automake
+    bubblewrap
+    cmake
+    gcc-c++
+    gperf
+    gstreamer1-devel
+    gstreamer1-plugins-bad-free-devel
+    gstreamer1-plugins-base-devel
+    gtk-doc
+    intltool
+    lcms2-devel
+    libevent-devel
+    libjpeg-turbo-devel
+    libkate-devel
+    libpng-devel
+    libseccomp-devel
+    libtasn1-devel
+    libwebp-devel
+    libxslt-devel
+    ninja-build
+    openjpeg2-devel
+    patch
+    perl-File-Copy-Recursive
+    perl-JSON-PP
+    perl-Time-HiRes
+    perl-version
+    ruby
+    sqlite-devel
+    systemd-devel
+
+    # These are dependencies necessary for running tests.
+    curl
+    gdb
+    httpd
+    liberation-fonts
+    mod_ssl
+    perl-CGI
+    psmisc
+    pulseaudio-utils
+    python2-psutil
+    rubygem-highline
+    rubygem-json
+
+    # These are dependencies necessary for building with the Flatpak SDK.
+    flatpak
+    pipenv
+
+    # These are dependencies necessary for building the jhbuild.
+    expat-devel
+    fdk-aac-devel
+    git
+    gsettings-desktop-schemas-devel
+    gyp
+    libproxy-devel
+    libpsl-devel
+    libuuid-devel
+    libxcb-devel
+    mesa-libEGL-devel
+    orc-devel
+    perl-XML-LibXML
+    python3-setuptools
+    yasm
+
+    # These are dependencies necessary for using webkit-patch.
+    git-svn
+    subversion
+
+    # These are GStreamer plugins needed to play different media files.
+    gstreamer1-plugins-bad-free
+    gstreamer1-plugins-bad-free-extras
+    gstreamer1-plugins-base
+    gstreamer1-plugins-good
+    gstreamer1-plugins-good-extras
+    gstreamer1-plugins-ugly-free
+)

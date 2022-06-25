@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<style>
+  div {
+    aspect-ratio: 1;
+    mask-image: url(http://localhost:8000);
+  }
+  ol {
+    column-span: all;
+  }
+  ol:only-child {
+    column-count: 2;
+  }
+  :nth-child(2) {
+    content: url();
+  }
+</style>
+<script>
+  onload = () => {
+    document.documentElement.append(document.createElement('div'));
+    document.designMode = 'on';
+    document.execCommand('SelectAll');
+    for (let i = 0; i < 10; i++) { 
+      document.execCommand('InsertNestedOrderedList');
+    }
+    if (window.testRunner)
+      testRunner.dumpAsText();
+    console.log("This test passes if it does not crash.");
+  };
+</script>

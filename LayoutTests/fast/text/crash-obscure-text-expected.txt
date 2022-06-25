@@ -1,0 +1,3 @@
+This test makes sure we don't crash when encountering some particularly exotic codepoints. The test passes if we do not crash.
+
+ܘ̈

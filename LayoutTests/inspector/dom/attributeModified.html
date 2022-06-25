@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+
+function createTestNode(id) {
+    let node = document.body.appendChild(document.createElement("div"));
+    node.id = id;
+    node.setAttributeNS("http://example.com", "attribute:existing", 42);
+}
+
+function test() {
+    let documentNode = null;
+
+    let suite = InspectorTest.createAsyncSuite("DOM.attributeModified");
+
+    suite.addTestCase({
+        name: "DOM.attributeModified.WithNamespace",
+        description: "Check that the attributeModified event sends the full attribute name, including the namespace.",
+        async test() {
+            const id = "with-namespace";
+
+            InspectorTest.log("Creating test node...");
+            await InspectorTest.evaluateInPage(`createTestNode("${id}")`);
+            let testNodeId = await documentNode.querySelector("#" + id);
+            let testNode = WI.domManager.nodeForId(testNodeId);
+            InspectorTest.assert(testNode, "Missing test node for id " + testNodeId);
+
+            function logAttributes() {
+                let attributes = {};
+                for (let attribute of testNode.attributes())
+                    attributes[attribute.name] = attribute.value;
+                InspectorTest.json(attributes);
+                InspectorTest.log("");
+            }
+
+            logAttributes();
+
+            InspectorTest.log("Adding attribute with namespace...");
+            await Promise.all([
+                testNode.awaitEvent(WI.DOMNode.Event.AttributeModified),
+                InspectorTest.evaluateInPage(`document.getElementById("${id}").setAttributeNS("http://example.com", "attribute:new", 1)`)
+            ]);
+
+            logAttributes();
+
+            InspectorTest.log("Replacing attribute with namespace...");
+            await Promise.all([
+                testNode.awaitEvent(WI.DOMNode.Event.AttributeModified),
+                InspectorTest.evaluateInPage(`document.getElementById("${id}").setAttributeNS("http://example.com", "attribute:new", 2)`)
+            ]);
+
+            logAttributes();
+
+            InspectorTest.log("Replacing attribute without namespace...");
+            await Promise.all([
+                testNode.awaitEvent(WI.DOMNode.Event.AttributeModified),
+                InspectorTest.evaluateInPage(`document.getElementById("${id}").setAttribute("attribute:new", "3")`)
+            ]);
+
+            logAttributes();
+        },
+    });
+
+    WI.domManager.requestDocument((root) => {
+        documentNode = root;
+
+        suite.runTestCasesAndFinish();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for the DOM.attributeModified event.</p>
+</body>
+</html>

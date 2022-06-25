@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style type="text/css" media="screen">
+    embed {
+      width: 300px;
+      height: 150px;
+      border: 1px solid black;
+    }
+
+    embed.small {
+      height: 1px;
+      width: 1px;
+    }
+
+    .container {
+      height: 100px;
+      width: 200px;
+      overflow: hidden;
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function doTest()
+    {
+        window.setTimeout(function() {
+          document.getElementById('plugin').className = 'small';
+          // Need to wait for compositing layers to be updated.
+          window.setTimeout(function() {
+              if (window.testRunner) {
+                  var layers = window.internals.layerTreeAsText(document);
+                  var result;
+                  if (layers == "")
+                    result = "PASS: no layers found";
+                  else
+                    result = "FAIL: found layers " + layers;
+                  document.getElementById('result').innerHTML = result;
+                  testRunner.notifyDone();
+              }
+          }, 0);
+        }, 0);
+    }
+
+    window.addEventListener('load', doTest, false);
+  </script>
+</head>
+<body>
+  
+  <div class="container">
+    <embed id="plugin" type="application/x-webkit-test-netscape" width="1" height="1" drawingmodel="coreanimation">
+  </div>
+
+  <div id="result">Test only works in DRT</div>
+</body>
+</html>

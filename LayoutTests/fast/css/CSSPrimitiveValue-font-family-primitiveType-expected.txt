@@ -1,0 +1,20 @@
+Test that the font-family CSSValue is a CSSValueList of CSSPrimitiveValues that are of primitive type CSS_STRING.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS fontFamilyCSSValue.__proto__ is CSSValueList.prototype
+PASS fontFamilyCSSValue.length is 3
+PASS fontFamilyCSSValue[0].__proto__ is CSSPrimitiveValue.prototype
+PASS fontFamilyCSSValue[0].primitiveType is CSSPrimitiveValue.CSS_STRING
+PASS fontFamilyCSSValue[0].getStringValue() is "times"
+PASS fontFamilyCSSValue[1].__proto__ is CSSPrimitiveValue.prototype
+PASS fontFamilyCSSValue[1].primitiveType is CSSPrimitiveValue.CSS_STRING
+PASS fontFamilyCSSValue[1].getStringValue() is "courier"
+PASS fontFamilyCSSValue[2].__proto__ is CSSPrimitiveValue.prototype
+PASS fontFamilyCSSValue[2].primitiveType is CSSPrimitiveValue.CSS_STRING
+PASS fontFamilyCSSValue[2].getStringValue() is "arial"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

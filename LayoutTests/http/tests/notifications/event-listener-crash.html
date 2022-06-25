@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<script src="/resources/js-test-pre.js"></script>
+<script src="/resources/notifications-test-pre.js"></script>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+if (window.testRunner) {
+	testRunner.grantWebNotificationPermission(testURL);
+	testRunner.waitUntilDone();
+}
+
+description("Test that setting a null event listener in the options dictionary does not cause a crash.");
+
+new Notification("title", { onshow: null });
+
+setTimeout(function() {
+	testPassed('No crash.');
+	testCompleted();
+}, 0);
+</script>

@@ -1,0 +1,16 @@
+CONSOLE MESSAGE: WebGL: INVALID_ENUM: getVertexAttrib: invalid parameter name
+This test verifies the functionality of the ANGLE_instanced_arrays extension, if it is available.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS WebGL context exists
+Testing VERTEX_ATTRIB_ARRAY_DIVISOR_ANGLE with extension disabled
+PASS getError was expected value: INVALID_ENUM : VERTEX_ATTRIB_ARRAY_DIVISOR_ANGLE should not be queryable if extension is disabled
+PASS No ANGLE_instanced_arrays support -- this is legal
+PASS ANGLE_instanced_arrays not listed as supported and getExtension failed -- this is legal
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

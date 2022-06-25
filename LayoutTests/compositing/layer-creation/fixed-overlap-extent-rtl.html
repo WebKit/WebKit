@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+
+<html dir="rtl">
+<head>
+    <style>
+        body {
+            width: 1100px;
+            height: 1000px;
+        }
+        .fixed {
+            position: fixed;
+            top: 120px;
+            left: 60px;
+            width: 200px;
+            height: 150px;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            box-sizing: border-box;
+            color: white;
+            box-shadow: 0 0 10px black;
+        }
+        
+        #container {
+            position: relative;
+        }
+        
+        .dot {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: orange;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        if (window.internals)
+            internals.settings.setAcceleratedCompositingForFixedPositionEnabled(true);
+
+        function doTest()
+        {
+            setupDots();
+            dumpLayers();
+        }
+
+        function setupDots()
+        {
+            var across = 40;
+            var down = 50;
+            var spacing = 20;
+            var container = document.getElementById('container');
+            
+            for (var col = 0; col < across; ++col) {
+                for (var row = 0; row < down; ++row) {
+                    var div = document.createElement('div');
+                    div.className = 'dot';
+                    div.style.left = (col * spacing) + 'px';
+                    div.style.top = (row * spacing) + 'px';
+                    
+                    container.appendChild(div);
+                }
+            }
+        }
+
+        function dumpLayers()
+        {
+            if (window.testRunner) {
+                document.getElementById('layers').innerText = window.internals.layerTreeAsText(document);
+            }
+        }
+        
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div class="fixed">
+        Fixed layer.
+    </div>
+    <div id="container"></div>
+<pre id="layers"></pre>
+</body>
+</html>

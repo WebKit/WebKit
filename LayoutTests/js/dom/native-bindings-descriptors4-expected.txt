@@ -1,0 +1,16 @@
+Tests calling property setter on a different object.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS firstDiv.innerText is ""
+PASS secondDiv.innerText is ""
+Object.getOwnPropertyDescriptor(firstDiv.__proto__.__proto__, "innerText").set.call(secondDiv, "test")
+PASS firstDiv.innerText is ""
+PASS Object.getOwnPropertyDescriptor(secondDiv.__proto__.__proto__, "innerText").get.call(firstDiv) is ""
+PASS secondDiv.innerText is "test"
+PASS Object.getOwnPropertyDescriptor(firstDiv.__proto__.__proto__, "innerText").get.call(secondDiv) is "test"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+test

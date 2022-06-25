@@ -1,0 +1,28 @@
+This test checks that :focus-visible is not triggered by mouse focus on <input> elements which do not take text input, even if appearance: none is used.
+If the user-agent does not claim to support the :focus-visible pseudo-class then SKIP this test.
+Click each element element below to focus it.
+If the element has a red outline, then the test result is FAILURE. If the element has a green background, then the test result is SUCCESS.
+
+Focus me
+Focus me
+Focus me
+Focus me
+
+
+
+
+
+ Focus me.
+ Focus me.
+
+PASS Focus element SPAN#el-1 via mouse should NOT match :focus-visible as it does NOT support keyboard input - not affected by "appearance: none"
+PASS Focus element SPAN#el-2 via mouse should NOT match :focus-visible as it does NOT support keyboard input - not affected by "appearance: none"
+PASS Focus element SPAN#el-3 via mouse should NOT match :focus-visible as it does NOT support keyboard input - not affected by "appearance: none"
+PASS Focus element BUTTON#el-4 via mouse should NOT match :focus-visible as it does NOT support keyboard input - not affected by "appearance: none"
+PASS Focus element INPUT#el-5 via mouse should NOT match :focus-visible as it does NOT support keyboard input - not affected by "appearance: none"
+PASS Focus element INPUT#el-6 via mouse should NOT match :focus-visible as it does NOT support keyboard input - not affected by "appearance: none"
+PASS Focus element INPUT#el-7 via mouse should NOT match :focus-visible as it does NOT support keyboard input - not affected by "appearance: none"
+PASS Focus element INPUT#el-8 via mouse should NOT match :focus-visible as it does NOT support keyboard input - not affected by "appearance: none"
+PASS Focus element INPUT#el-10 via mouse should NOT match :focus-visible as it does NOT support keyboard input - not affected by "appearance: none"
+FAIL Focus element INPUT#el-11 via mouse should NOT match :focus-visible as it does NOT support keyboard input - not affected by "appearance: none" assert_equals: backgroundColor for INPUT#el-11 should be lime expected "rgb(0, 255, 0)" but got "rgb(255, 255, 255)"
+

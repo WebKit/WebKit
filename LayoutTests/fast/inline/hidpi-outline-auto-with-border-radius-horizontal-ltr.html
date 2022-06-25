@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests hugging outlines for multiline horizontal ltr content.</title>
+<style>
+body {
+    font-size: 20px;
+    font-family: ahem;
+    color: rgba(0, 0, 0, 0);
+}
+
+.container {
+    margin-bottom: 20px;
+}
+
+span {
+    border-radius: 15px 10px 8px 5px;
+    outline-offset: 0px;
+    outline: auto;
+}
+
+.cover {
+    position: absolute;
+    border-radius: 15px 4px 8px 5px;
+    border: 7px solid white;
+}
+</style>
+</head>
+<body>
+<div class=cover style="top: 3px; left: 3px; width: 56px; height: 56px; border-radius: 20px 3px 0px 3px;"></div>
+<div class=cover style="top: 23px; left: 66px; width: 53px; height: 36px; border-radius: 0px 3px 0px 0px;"></div>
+<div class=cover style="top: 43px; left: 126px; width: 133px; height: 16px; border-radius: 0px 18px 18px 0px;"></div>
+
+<div class=cover style="top: 83px; left: 3px; width: 256px; height: 16px; border-radius: 20px 3px 3px 0px;"></div>
+<div class=cover style="top: 106px; left: 3px; width: 196px; height: 13px; border-radius: 0px 0px 3px 0px;"></div>
+<div class=cover style="top: 126px; left: 3px; width: 116px; height: 13px; border-radius: 0px 0px 14px 3px;"></div>
+
+<div class=cover style="top: 163px; left: 3px; width: 116px; height: 13px; border-radius: 20px 3px 0px 0px;"></div>
+<div class=cover style="top: 183px; left: 3px; width: 256px; height: 16px; border-radius: 0px 3px 3px 0px;"></div>
+<div class=cover style="top: 206px; left: 3px; width: 116px; height: 13px; border-radius: 0px 0px 14px 3px;"></div>
+
+<div class=cover style="top: 243px; left: 3px; width: 256px; height: 15px; border-radius: 20px 3px 3px 0px;"></div>
+<div class=cover style="top: 265px; left: 3px; width: 116px; height: 13px; border-radius: 0px 0px 0px 0px;"></div>
+<div class=cover style="top: 284px; left: 3px; width: 256px; height: 14px; border-radius: 0px 18px 18px 3px;"></div>
+
+<div class=container><span>foo<br>foobar<br>foobar foobar</span></div>
+<div class=container><span>foobar foobar<br>foobar foo<br>foobar</span></div>
+<div class=container><span>foobar<br>foobar foobar<br>foobar</span></div>
+<div class=container><span>foobar foobar<br>foobar<br>foobar foobar</span></div>
+</body>
+</html>

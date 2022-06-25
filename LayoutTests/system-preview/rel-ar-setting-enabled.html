@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<body>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script>
+
+test(() => {
+    assert_true(document.createElement("a").relList.supports("ar"));
+}, `a.relList.supports("ar") should be true when SystemPreviewEnabled is true.`);
+
+</script>
+</body>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body, html {
+    margin: 0;
+}
+</style>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+</head>
+<body>
+<img src="../../resources/green-400x400.png"></img>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    internals.installImageOverlay(document.querySelector("img"), [
+        {
+            topLeft : new DOMPointReadOnly(0.1, 0.3),
+            topRight : new DOMPointReadOnly(0.3, 0.1),
+            bottomRight : new DOMPointReadOnly(0.4, 0.2),
+            bottomLeft : new DOMPointReadOnly(0.2, 0.4),
+            children: [
+                {
+                    text : "AB",
+                    topLeft : new DOMPointReadOnly(0.1, 0.3),
+                    topRight : new DOMPointReadOnly(0.2, 0.2),
+                    bottomRight : new DOMPointReadOnly(0.3, 0.3),
+                    bottomLeft : new DOMPointReadOnly(0.2, 0.4),
+                },
+                {
+                    text : "CD",
+                    topLeft : new DOMPointReadOnly(0.2, 0.2),
+                    topRight : new DOMPointReadOnly(0.3, 0.1),
+                    bottomRight : new DOMPointReadOnly(0.4, 0.2),
+                    bottomLeft : new DOMPointReadOnly(0.3, 0.3),
+                }
+            ]
+        }
+    ]);
+
+    await UIHelper.longPressAtPoint(80, 120);
+    await UIHelper.waitForSelectionToAppear();
+    document.execCommand("SelectAll");
+    await UIHelper.ensurePresentationUpdate();
+    selectionRectsAfterSelectingAll = await UIHelper.getUISelectionViewRects();
+    shouldBe("selectionRectsAfterSelectingAll.length", "1");
+    finishJSTest();
+});
+</script>
+</body>
+</html>

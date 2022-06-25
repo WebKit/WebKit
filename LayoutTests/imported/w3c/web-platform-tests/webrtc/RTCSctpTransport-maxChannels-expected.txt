@@ -1,0 +1,4 @@
+
+PASS An unconnected peerconnection must not have maxChannels set
+PASS maxChannels gets instantiated after connecting
+

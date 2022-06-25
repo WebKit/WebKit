@@ -1,0 +1,131 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Test simple animation with fill modes</title>
+  <style type="text/css" media="screen">
+    .box {
+      position: relative;
+      left: 100px;
+      top: 10px;
+      height: 100px;
+      width: 100px;
+      -webkit-animation-delay: 0.1s;
+      -webkit-animation-duration: 2s;
+      -webkit-animation-timing-function: linear;
+      -webkit-animation-name: anim;
+      -webkit-animation-direction: reverse
+    }
+    @-webkit-keyframes anim {
+        from { left: 200px; }
+        to   { left: 300px; }
+    }
+    #a {
+      background-color: blue;
+      -webkit-animation-fill-mode: none;
+    }
+    #b {
+      background-color: red;
+      -webkit-animation-fill-mode: backwards;
+    }
+    #c {
+      background-color: green;
+      -webkit-animation-fill-mode: forwards;
+    }
+    #d {
+      background-color: yellow;
+      -webkit-animation-fill-mode: both;
+    }
+    #e {
+      background-color: gray;
+      -webkit-animation-fill-mode: both;
+      -webkit-animation-iteration-count: 2;
+      -webkit-animation-direction: alternate;
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    const numAnims = 5;
+    var animsFinished = 0;
+    const allowance = 5;
+    const expectedValues = [
+      {id: "a", start: 100, end: 100},
+      {id: "b", start: 300, end: 100},
+      {id: "c", start: 100, end: 200},
+      {id: "d", start: 300, end: 200},
+      {id: "e", start: 200, end: 200}
+    ];
+    var result = "";
+
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function animationEnded(event) {
+        if (++animsFinished == numAnims) {
+            setTimeout(endTest, 0); // this set timeout should be ok in the test environment
+                                    // since we're just giving style a chance to resolve
+        }
+    };
+
+    function endTest() {
+
+        for (var i=0; i < expectedValues.length; i++) {
+            var el = document.getElementById(expectedValues[i].id);
+            var expectedValue = expectedValues[i].end;
+            var realValue = window.getComputedStyle(el).getPropertyCSSValue("left").getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
+            if (Math.abs(expectedValue - realValue) < allowance) {
+              result += "PASS";
+            } else {
+              result += "FAIL";
+            }
+            result += " - end of animation - id: " + expectedValues[i].id + " expected: " + expectedValue + " actual: " + realValue + "<br>";
+        }
+        document.getElementById('result').innerHTML = result;
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+
+    window.onload = function () {
+        for (var i=0; i < expectedValues.length; i++) {
+            var el = document.getElementById(expectedValues[i].id);
+            var expectedValue = expectedValues[i].start;
+            var realValue = window.getComputedStyle(el).getPropertyCSSValue("left").getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
+            if (Math.abs(expectedValue - realValue) < allowance) {
+              result += "PASS";
+            } else {
+              result += "FAIL";
+            }
+            result += " - start of animation - id: " + expectedValues[i].id + " expected: " + expectedValue + " actual: " + realValue + "<br>";
+        }
+        document.addEventListener("webkitAnimationEnd", animationEnded, false);
+    };
+
+  </script>
+</head>
+<body>
+This test performs an animation of the left property with four different
+fill modes. It animates over 0.1 second with a 0.1 second delay.
+It takes snapshots at document load and the end of the animation.
+<div id="a" class="box">
+  None
+</div>
+<div id="b" class="box">
+  Backwards
+</div>
+<div id="c" class="box">
+  Forwards
+</div>
+<div id="d" class="box">
+  Both
+</div>
+<div id="e" class="box">
+  Both iterating
+</div>
+<div id="result">
+</div>
+</body>
+</html>

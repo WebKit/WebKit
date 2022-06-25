@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/formatting-utilities.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("HTMLFormatter.XML");
+
+    addFormattingTests(suite, "text/xml", [
+        "resources/xml-tests/atom.xml",
+        "resources/xml-tests/basic.xml",
+        "resources/xml-tests/rss.xml",
+        "resources/xml-tests/self-closing.xml",
+        "resources/xml-tests/tag-case.xml",
+        "resources/xml-tests/valid-html-invalid-xml.xml",
+        "resources/xml-tests/xslt.xml",
+    ]);
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test XML formatting.</p>
+</body>
+</html>

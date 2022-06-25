@@ -1,0 +1,4 @@
+
+PASS XRFrame.session meets [SameObject] requirement - webgl
+FAIL XRFrame.session meets [SameObject] requirement - webgl2 assert_implements: webgl2 not supported. undefined
+

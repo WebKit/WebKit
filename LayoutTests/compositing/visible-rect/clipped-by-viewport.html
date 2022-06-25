@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .container {
+            position: relative;
+            height: 200px;
+            width: 500px;
+            border: 1px solid black;
+            overflow: hidden;
+            z-index: 0;
+        }
+        
+        .box {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background-color: blue;
+        }
+        
+        .composited {
+            -webkit-transform: translateZ(1px);
+        }
+        
+        pre {
+            margin-top: 450px;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        function dumpLayers()
+        {
+            if (window.internals)
+                document.getElementById('layers').innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS)
+        }
+        window.addEventListener('load', dumpLayers, false);
+    </script>
+</head>
+<body>
+
+<div class="composited box" style="top: -120px; left: -100px"></div>
+<div class="composited box" style="top: 200px; left: -100px"></div>
+
+<pre id="layers">Layer tree goes here when testing</pre>
+</body>
+</html>

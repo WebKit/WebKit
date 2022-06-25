@@ -1,0 +1,14 @@
+Menu item 1
+Menu item 2
+This tests that the AXMenuOpened notification gets fired when an ARIA menu popup opens.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS addedNotification is true
+Received menu opened notification: AXMenuOpened
+Menu element: AXRole: AXMenu
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

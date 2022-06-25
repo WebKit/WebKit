@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+
+<style>
+ins {  -webkit-user-modify: read-write-plaintext-only; padding-top: min(0.567808180561cm,0.646823110843rem,0.220603270448cm,0.306470816913cm,4%) }
+</style>
+<script>
+
+function cssPrimitiveValTest() {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    document.getSelection().collapse(x, 0);
+    document.getSelection().extend(x);
+
+    document.execCommand("insertHTML", false, "The test passes if there is no crash.");
+}
+</script>
+
+<body onload=cssPrimitiveValTest()>
+<ins id="x"></ins>
+
+</body>
+</html>

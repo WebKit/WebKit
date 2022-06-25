@@ -1,0 +1,52 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-decode-cseucpkdfmtjapanese.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-decode-errors.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-decode-x-euc-jp.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-decode.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-decoder.js
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-form-cseucpkdfmtjapanese.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-form-cseucpkdfmtjapanese.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-form-errors-han.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-form-errors-han.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-form-errors-hangul.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-form-errors-hangul.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-form-errors-misc.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-form-errors-misc.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-form-x-euc-jp.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-form-x-euc-jp.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-form.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-form.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-href-errors-han.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-href-errors-han.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-href-errors-hangul.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-href-errors-hangul.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-href-errors-misc.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-href-errors-misc.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-href.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encode-href.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp-encoder.js
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp_chars-cseucpkdfmtjapanese.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp_chars-cseucpkdfmtjapanese.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp_chars-x-euc-jp.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp_chars-x-euc-jp.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp_chars.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp_chars.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp_errors.html
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/eucjp_errors.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/jis0208_index.js
+/LayoutTests/imported/w3c/web-platform-tests/encoding/legacy-mb-japanese/euc-jp/jis0212_index.js

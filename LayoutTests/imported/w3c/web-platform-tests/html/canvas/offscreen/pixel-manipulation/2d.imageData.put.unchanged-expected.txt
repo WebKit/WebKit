@@ -1,0 +1,7 @@
+2d.imageData.put.unchanged
+
+putImageData(getImageData(...), ...) has no effect
+
+
+PASS putImageData(getImageData(...), ...) has no effect
+

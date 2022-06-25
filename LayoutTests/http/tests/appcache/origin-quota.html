@@ -1,0 +1,80 @@
+<html>
+<head>
+<script>
+
+// Helpers.
+
+function log(message) {
+    document.getElementById("console").innerHTML += message + "<br>";
+}
+
+// Start and end.
+
+function startTest() {
+    if (window.testRunner) {
+        testRunner.clearAllApplicationCaches();
+        testRunner.dumpApplicationCacheDelegateCallbacks();
+        testRunner.disallowIncreaseForApplicationCacheQuota();
+        if (window.internals)
+            internals.setApplicationCacheOriginQuota(20*1024);
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    addFirstIFrame();
+}
+
+function finishTest() {
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+// Stages.
+
+function addIFrameWithContinuation(src, continuation) {
+    window.onmessage = continuation;
+    var iframe = document.createElement("iframe");
+    iframe.src = src;
+    document.body.appendChild(iframe);
+}
+
+function addFirstIFrame() {
+    // Expected to succeed.
+    addIFrameWithContinuation("resources/quota-origin-iframe-1.html", function(event) {
+        log(event.data);
+        addSecondIFrame();
+    });
+}
+
+function addSecondIFrame() {
+    // Expected to fail, then increase the quota.
+    addIFrameWithContinuation("resources/quota-origin-iframe-2.html", function(event) {
+        log(event.data);
+        if (window.internals)
+            internals.setApplicationCacheOriginQuota(100*1024);
+        addThirdIFrame();
+    });
+}
+
+function addThirdIFrame() {
+    // Expected to succeed.
+    addIFrameWithContinuation("resources/quota-origin-iframe-3.html", function(event) {
+        log(event.data);
+        finishTest();
+    });
+}
+
+</script>
+</head>
+<body onload="startTest()">
+<p>This test checks that per-origin application cache quotas are enforced.</p>
+<p>
+    This test sets the quota for the origin to 20kb, and attempts to fill
+    it up with 2 iframes that are 13kb each. The application cache download
+    process should fail on the 2nd iframe and the UI Delegate should be
+    informed of the exceeded quota. Increasing the size to 40kb. A 3rd
+    iframe is added, which should succeed.
+</p>
+<pre id="console"></pre>
+</body>
+</html>

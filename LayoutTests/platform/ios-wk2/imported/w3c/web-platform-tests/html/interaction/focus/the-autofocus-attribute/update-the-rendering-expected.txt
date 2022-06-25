@@ -1,0 +1,3 @@
+
+FAIL "Flush autofocus candidates" should be happen before a scroll event and animation frame callbacks assert_array_equals: autofocus,animationFrame lengths differ, expected array ["autofocus", "scroll", "animationFrame"] length 3, got ["autofocus", "animationFrame"] length 2
+

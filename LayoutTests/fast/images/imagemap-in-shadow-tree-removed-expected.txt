@@ -1,0 +1,4 @@
+This tests removing an image map area inside a shadow tree. WebKit should not hit any assertions.
+
+PASS
+

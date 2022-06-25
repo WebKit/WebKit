@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+    </script>
+    <style>
+        marquee {display: inline-grid;}
+        table {writing-mode: tb-rl;}
+    </style>
+    </head>
+
+    <body>
+        <marquee><table>
+        <div class="tableAfter"></div>
+        <div>Bug <a href="https://bugs.webkit.org/show_bug.cgi?id=204527">204527</a>: Crashes in RenderTable when layoutStateStack is empty</div>
+        <div>This test passes if it does not CRASH.</div>
+    </body>
+</html>

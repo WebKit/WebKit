@@ -1,0 +1,49 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<meta charset="utf8">
+<style>
+body, html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+}
+
+#text {
+    font-size: 500px;
+    margin-top: 0;
+    word-wrap: break-word;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("This test verifies that tapping selected non-editable text clears the text selection in the case where the selected text covers the vast majority of visible content. To manually test, select the text above, and then tap inside the selection to clear it.");
+
+    const text = document.getElementById("text");
+
+    await UIHelper.longPressAtPoint(160, 150);
+    await UIHelper.waitForSelectionToAppear();
+    testPassed("Observed selection.");
+
+    await UIHelper.waitForDoubleTapDelay();
+    await UIHelper.activateAt(160, 150);
+    await UIHelper.waitForSelectionToDisappear();
+    testPassed("Dismissed selection.");
+
+    text.remove();
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+<p id="text">Select</p>
+<p id="description"></p>
+<p id="console"></p>
+</body>
+</html>

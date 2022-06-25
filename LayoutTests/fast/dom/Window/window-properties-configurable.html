@@ -1,0 +1,42 @@
+<!DOCYTPE html>
+<html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that Window properties are indeed configurable unless [Unforgeable]");
+
+debug("* Regular IDL attribute.");
+shouldBeTrue("Object.getOwnPropertyDescriptor(window, 'name').configurable");
+shouldBeEqualToString("window.name", "");
+shouldBeTrue("delete window.name");
+shouldBeUndefined("window.name");
+evalAndLog("window.name = 3");
+shouldBe("window.name", "3");
+shouldBeTrue("delete window.name");
+shouldBeUndefined("window.name");
+
+debug("");
+debug("* Constructor attributes.");
+shouldBeTrue("Object.getOwnPropertyDescriptor(window, 'Node').configurable");
+shouldNotBe("window.Node", "undefined");
+shouldBeTrue("delete window.Node");
+shouldBeUndefined("window.Node");
+evalAndLog("window.Node = 3");
+shouldBe("window.Node", "3");
+shouldBeTrue("delete window.Node");
+shouldBeUndefined("window.Node");
+
+debug("");
+debug("* [Unforgeable] IDL attribute.");
+shouldBeFalse("Object.getOwnPropertyDescriptor(window, 'window').configurable");
+shouldNotBe("window.window", "undefined");
+shouldBeFalse("delete window.window");
+shouldNotBe("window.window", "undefined");
+evalAndLog("window.window = 3");
+shouldNotBe("window.window", "3");
+
+debug("");
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

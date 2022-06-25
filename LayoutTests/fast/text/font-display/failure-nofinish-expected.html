@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.internals) {
+    internals.settings.setFontTimeoutIndex(7);
+    internals.settings.setShouldIgnoreFontLoadCompletions(true);
+}
+</script>
+<style>
+@font-face {
+    font-family: "MyFont";
+    src: url("garbage") format("truetype");
+}
+</style>
+</head>
+<body>
+This test makes sure that text being drawn during the "failure" period while the font is still loading is rendered as visible. The test passes if there is text below.
+<div style="font: 100px 'MyFont';">Hello</div>
+</body>
+</html>

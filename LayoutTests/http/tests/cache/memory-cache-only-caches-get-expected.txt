@@ -1,0 +1,10 @@
+This test makes sure that only GET requests end up in the memory cache.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS origSize === internals.memoryCacheSize() is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

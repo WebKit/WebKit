@@ -1,0 +1,8 @@
+original scroll y for RTL page : Success
+vertical scroll: : Success
+continuously call window.scrollY : Success
+zoom in and out preserve scroll position: Success
+resize preserves scroll position: Success
+KeyDown HOME move y-scroll position to bottom for RTL page: 0
+KeyDown END move y-scroll position to bottom for RTL page: 0
+selectAll selects all document: Success

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<head>
+<title>This test that ruby before/after element does not cause an unexpected downcast.</title>
+<style>
+	ruby:after {
+		content:"foo";
+	}
+	ruby:before {
+		content:"bar";
+	}
+</style>
+<script>
+  if (window.testRunner)
+      testRunner.dumpAsText();
+</script>
+</head>
+<body>
+<br><ruby id="foo"></ruby>PASS if no assert or crash in debug build.
+<script>
+	setTimeout(function() { document.getElementById("foo").appendChild(document.createElement("rt")); }, 0);
+</script>
+</body>
+</html>

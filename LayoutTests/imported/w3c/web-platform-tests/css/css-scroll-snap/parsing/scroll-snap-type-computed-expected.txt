@@ -1,0 +1,10 @@
+
+PASS Property scroll-snap-type value 'none'
+PASS Property scroll-snap-type value 'x'
+PASS Property scroll-snap-type value 'y'
+PASS Property scroll-snap-type value 'block'
+PASS Property scroll-snap-type value 'inline'
+PASS Property scroll-snap-type value 'both'
+PASS Property scroll-snap-type value 'y mandatory'
+PASS Property scroll-snap-type value 'inline proximity'
+

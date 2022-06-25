@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Verify that error event is fired when permission is denied.");
+
+if (window.testRunner) {
+    jsTestIsAsync = true;
+    testRunner.setUserMediaPermission(false);
+}
+
+shouldNotThrow("recognition = new webkitSpeechRecognition()");
+shouldNotThrow("recognition.start()");
+recognition.onerror = (event) => {
+    shouldBeEqualToString("event.error", "not-allowed");
+    shouldBeEqualToString("event.message", "User permission check has failed");
+
+    finishJSTest();
+}
+
+</script>
+</body>
+</html>

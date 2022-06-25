@@ -1,0 +1,34 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (floating) {P} at (0,16) size 634x24 [border: (2px solid #008000)]
+        RenderText {#text} at (2,2) size 630x19
+          text run at (2,2) width 35: "There"
+          text run at (67,2) width 43: " should"
+          text run at (140,2) width 19: " be"
+          text run at (189,2) width 35: " 30px"
+          text run at (254,2) width 16: " of"
+          text run at (300,2) width 36: " word"
+          text run at (366,2) width 49: " spacing"
+          text run at (445,2) width 55: " between"
+          text run at (530,2) width 32: " each"
+          text run at (592,2) width 40: " word."
+      RenderBlock {DIV} at (0,0) size 784x100
+      RenderTable {TABLE} at (0,100) size 100x104
+        RenderTableSection {TBODY} at (0,0) size 100x104
+          RenderTableRow {TR} at (0,0) size 100x104
+            RenderTableCell {TD} at (0,0) size 100x104 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {P} at (0,0) size 100x104 [border: (2px solid #008000)]
+                RenderText {#text} at (2,2) size 96x99
+                  text run at (2,2) width 35: "There"
+                  text run at (52,2) width 43: " should"
+                  text run at (2,22) width 15: "be"
+                  text run at (32,22) width 35: " 15px"
+                  text run at (82,22) width 16: " of"
+                  text run at (2,42) width 32: "word"
+                  text run at (49,42) width 49: " spacing"
+                  text run at (2,62) width 51: "between"
+                  text run at (2,82) width 28: "each"
+                  text run at (45,82) width 40: " word."

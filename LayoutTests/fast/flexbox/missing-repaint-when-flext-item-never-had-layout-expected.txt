@@ -1,0 +1,6 @@
+PASS if visible
+(repaint rects
+  (rect 8 8 200 18)
+  (rect 8 8 200 200)
+)
+

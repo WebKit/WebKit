@@ -1,0 +1,4 @@
+Popup
+
+FAIL Removal from the document shouldn't cause issues assert_false: expected false got undefined
+

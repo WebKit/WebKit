@@ -1,0 +1,11 @@
+document.all works as superclass.prototype, but not as superclass
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS testAsSuperclassPrototype() is true
+PASS class Foo extends document.all {} threw exception TypeError: The superclass is not a constructor..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

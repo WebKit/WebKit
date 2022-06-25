@@ -1,0 +1,28 @@
+When deleting the second ordered list items in a table cell, which entire content is a contenteditable area, its content is merged with the first list item:
+
+Before:
+| <table>
+|   border="1"
+|   <tbody>
+|     <tr>
+|       <td>
+|         <div>
+|           contenteditable="true"
+|           <ol>
+|             <li>
+|               "a"
+|             <li>
+|               id="li"
+|               "<#selection-caret>|b"
+
+After:
+| <table>
+|   border="1"
+|   <tbody>
+|     <tr>
+|       <td>
+|         <div>
+|           contenteditable="true"
+|           <ol>
+|             <li>
+|               "a<#selection-caret>|b"

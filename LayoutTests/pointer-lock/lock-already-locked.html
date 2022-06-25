@@ -1,0 +1,64 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../http/tests/resources/js-test-pre.js"></script>
+<script src="../http/tests/resources/pointer-lock/pointer-lock-test-harness.js"></script>
+</head>
+<body>
+<div>
+  <div id="target1"></div>
+  <div id="target2"></div>
+</div>
+<script>
+    description("Test calling lock when already in a locked state.")
+    window.jsTestIsAsync = true;
+
+    targetdiv1 = document.getElementById("target1");
+    targetdiv2 = document.getElementById("target2");
+
+    // Expect change event only for all transitions below.
+    expectedTargetToBeLockedString = "";
+    document.onpointerlockchange = function ()
+        {
+            testPassed("document.onpointerlockchange event received.");
+            shouldBe("document.pointerLockElement", expectedTargetToBeLockedString);
+            doNextStepWithUserGesture();
+        };
+    document.onpointerlockerror =
+        function () { testFailed("document.onpointerlockerror event received."); finishJSTest(); };
+
+    var expectTarget1Unlock = false;
+    targetdiv1.addEventListener("pointerlocklost",
+        function () { shouldBe("expectTarget1Unlock", "true"); });
+
+    var expectTarget2Unlock = false;
+    targetdiv2.addEventListener("pointerlocklost",
+        function () { shouldBe("expectTarget2Unlock", "true"); });
+
+    todo = [
+        function () {
+            shouldBe("document.pointerLockElement", "null");
+            debug("     Locking targetdiv1.")
+            targetdiv1.requestPointerLock();
+            expectedTargetToBeLockedString = "targetdiv1";
+            // doNextStep() called by onpointerlockchange handler.
+        },
+        function () {
+            debug("     Locking targetdiv1, again.")
+            targetdiv1.requestPointerLock();
+            expectedTargetToBeLockedString = "targetdiv1";
+            // doNextStep() called by onpointerlockchange handler.
+        },
+        function () {
+            debug("     Locking targetdiv2.")
+            expectTarget1Unlock = true;
+            targetdiv2.requestPointerLock();
+            expectedTargetToBeLockedString = "targetdiv2";
+            // doNextStep() called by onpointerlockchange handler.
+        },
+    ];
+    doNextStepWithUserGesture();
+</script>
+<script src="../http/tests/resources/js-test-post.js"></script>
+</body>
+</html>

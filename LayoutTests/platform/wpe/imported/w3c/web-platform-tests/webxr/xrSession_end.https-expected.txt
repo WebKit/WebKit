@@ -1,0 +1,6 @@
+
+PASS end event fires when immersive session ends - webgl
+FAIL end event fires when immersive session ends - webgl2 assert_implements: webgl2 not supported. undefined
+PASS end event fires when non-immersive session ends - webgl
+FAIL end event fires when non-immersive session ends - webgl2 assert_implements: webgl2 not supported. undefined
+

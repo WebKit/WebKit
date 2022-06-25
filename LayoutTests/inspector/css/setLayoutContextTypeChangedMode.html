@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function changeElementDisplayValue(id, value)
+{
+    document.getElementById(id).style.display = value;
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("CSS.setLayoutContextTypeChangedMode");
+
+    async function changeElementDisplayValue(id, value)
+    {
+        await InspectorTest.evaluateInPage(`changeElementDisplayValue("${id}", "${value}")`);
+    }
+
+    async function setLayoutContextTypeChangeMode(layoutContextTypeChangedMode)
+    {
+        WI.cssManager.layoutContextTypeChangedMode = layoutContextTypeChangedMode;
+    }
+
+    function nodesWithLayoutContextType(type)
+    {
+        return Array.from(WI.domManager.attachedNodes({filter: (node) => node.layoutContextType === type}));
+    }
+
+    suite.addTestCase({
+        name: "CSS.setLayoutContextTypeChangedMode.queryGrid",
+        description: "Test that the expected number of grids are instrumented without chagning the LayoutContextTypeChangedMode.",
+        async test() {
+            InspectorTest.expectEqual(nodesWithLayoutContextType(WI.DOMNode.LayoutContextType.Grid).length, 0, "0 grid nodes should be instrumented.");
+
+            // Query for the node, sending it to the frontend.
+            InspectorTest.log("Querying document for selector `#queryGrid`...");
+            let documentNode = await WI.domManager.requestDocument();
+            let queryNode = WI.domManager.nodeForId(await documentNode.querySelector("#queryGrid"));
+            InspectorTest.expectEqual(nodesWithLayoutContextType(WI.DOMNode.LayoutContextType.Grid).length, 1, "1 grid node should be instrumented.");
+
+            InspectorTest.log("Changing `#queryGrid` to `display: block;`...");
+            await Promise.all([
+                queryNode.awaitEvent(WI.DOMNode.Event.LayoutContextTypeChanged),
+                changeElementDisplayValue("queryGrid", "block"),
+            ]);
+            InspectorTest.expectEqual(nodesWithLayoutContextType(WI.DOMNode.LayoutContextType.Grid).length, 0, "0 grid nodes should be instrumented.");
+
+            InspectorTest.log("Changing `#queryGrid` to `display: grid;`...");
+            await Promise.all([
+                queryNode.awaitEvent(WI.DOMNode.Event.LayoutContextTypeChanged),
+                changeElementDisplayValue("queryGrid", "grid"),
+            ]);
+            InspectorTest.expectEqual(nodesWithLayoutContextType(WI.DOMNode.LayoutContextType.Grid).length, 1, "1 grid node should be instrumented.");
+
+            InspectorTest.log("Changing `#queryGrid` to `display: block;`...");
+            await Promise.all([
+                queryNode.awaitEvent(WI.DOMNode.Event.LayoutContextTypeChanged),
+                changeElementDisplayValue("queryGrid", "block"),
+            ]);
+            InspectorTest.expectEqual(nodesWithLayoutContextType(WI.DOMNode.LayoutContextType.Grid).length, 0, "0 grid nodes should be instrumented.");
+
+            InspectorTest.log("Changing `#queryGrid` to `display: inline-grid;`...");
+            await Promise.all([
+                queryNode.awaitEvent(WI.DOMNode.Event.LayoutContextTypeChanged),
+                changeElementDisplayValue("queryGrid", "inline-grid"),
+            ]);
+            InspectorTest.expectEqual(nodesWithLayoutContextType(WI.DOMNode.LayoutContextType.Grid).length, 1, "1 grid node should be instrumented.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "CSS.setLayoutContextTypeChangedMode.normalGrid",
+        description: "Test that grids become instrumented when chagning the mode to `All`.",
+        async test() {
+            await WI.domManager.requestDocument();
+
+            InspectorTest.expectEqual(nodesWithLayoutContextType(WI.DOMNode.LayoutContextType.Grid).length, 1, "1 grid node should be instrumented.");
+
+            // Grid layout contexts are sent to the frontend when the mode is changed to all.
+            InspectorTest.log("Changing `layoutContextTypeChangedMode` to `All`...");
+            await Promise.all([
+                WI.domManager.awaitEvent(WI.DOMManager.Event.NodeInserted),
+                setLayoutContextTypeChangeMode(WI.CSSManager.LayoutContextTypeChangedMode.All),
+            ]);
+            InspectorTest.expectEqual(nodesWithLayoutContextType(WI.DOMNode.LayoutContextType.Grid).length, 2, "2 grid nodes should be instrumented.");
+
+            // Once a node has been observed, it will always be kept up-to-date.
+            InspectorTest.log("Changing `layoutContextTypeChangedMode` to `Observed`...");
+            await setLayoutContextTypeChangeMode(WI.CSSManager.LayoutContextTypeChangedMode.Observed),
+            InspectorTest.expectEqual(nodesWithLayoutContextType(WI.DOMNode.LayoutContextType.Grid).length, 2, "2 grid nodes should be instrumented.");
+
+            InspectorTest.log("Changing `#normalGrid` to `display: block;`...");
+            await Promise.all([
+                WI.DOMNode.awaitEvent(WI.DOMNode.Event.LayoutContextTypeChanged),
+                changeElementDisplayValue("normalGrid", "block"),
+            ]);
+            InspectorTest.expectEqual(nodesWithLayoutContextType(WI.DOMNode.LayoutContextType.Grid).length, 1, "1 grid node should be instrumented.");
+
+            InspectorTest.log("Changing `#normalGrid` to `display: grid;`...");
+            await Promise.all([
+                WI.DOMNode.awaitEvent(WI.DOMNode.Event.LayoutContextTypeChanged),
+                changeElementDisplayValue("normalGrid", "grid"),
+            ]);
+            InspectorTest.expectEqual(nodesWithLayoutContextType(WI.DOMNode.LayoutContextType.Grid).length, 2, "2 grid nodes should be instrumented.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "CSS.setLayoutContextTypeChangedMode.normalNonGrid",
+        description: "Ensure that layout context type changes for unobserved nodes do not fire events when the mode is `Observed`.",
+        async test() {
+            await WI.domManager.requestDocument();
+
+            InspectorTest.expectEqual(nodesWithLayoutContextType(WI.DOMNode.LayoutContextType.Grid).length, 2, "2 grid nodes should be instrumented.");
+
+            // Changes to unobserved nodes should not change the grid count.
+            InspectorTest.log("Changing `#normalNonGrid` to `display: grid;`...");
+            await changeElementDisplayValue("normalNonGrid", "grid");
+            InspectorTest.expectEqual(nodesWithLayoutContextType(WI.DOMNode.LayoutContextType.Grid).length, 2, "2 grid nodes should be instrumented.");
+
+            InspectorTest.log("Changing `#normalNonGrid` to `display: block;`...");
+            await changeElementDisplayValue("normalNonGrid", "block");
+            InspectorTest.expectEqual(nodesWithLayoutContextType(WI.DOMNode.LayoutContextType.Grid).length, 2, "2 grid nodes should be instrumented.");
+
+            // Enabling `All` mode should not change the grid count.
+            InspectorTest.log("Changing `layoutContextTypeChangedMode` to `All`...");
+            await setLayoutContextTypeChangeMode(WI.CSSManager.LayoutContextTypeChangedMode.All),
+            InspectorTest.expectEqual(nodesWithLayoutContextType(WI.DOMNode.LayoutContextType.Grid).length, 2, "2 grid nodes should be instrumented.");
+
+            // Changing a node to a grid after enabling `All` mode will increase the count.
+            InspectorTest.log("Changing `#normalNonGrid` to `display: grid;`...");
+            await Promise.all([
+                WI.DOMNode.awaitEvent(WI.DOMNode.Event.LayoutContextTypeChanged),
+                changeElementDisplayValue("normalNonGrid", "grid"),
+            ]);
+            InspectorTest.expectEqual(nodesWithLayoutContextType(WI.DOMNode.LayoutContextType.Grid).length, 3, "3 grid nodes should be instrumented.");
+
+            InspectorTest.log("Changing `#normalNonGrid` to `display: block;`...");
+            await Promise.all([
+                WI.DOMNode.awaitEvent(WI.DOMNode.Event.LayoutContextTypeChanged),
+                changeElementDisplayValue("normalNonGrid", "block"),
+            ]);
+            InspectorTest.expectEqual(nodesWithLayoutContextType(WI.DOMNode.LayoutContextType.Grid).length, 2, "2 grid nodes should be instrumented.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<style>
+    .grid-container {
+        display: grid;
+    }
+</style>
+</head>
+<body onload="runTest()">
+    <p>Tests for the CSS.setLayoutContextTypeChangedMode command.</p>
+    <div id="queryGrid" class="grid-container">
+        <div></div>
+        <div></div>
+    </div>
+
+    <div>
+        <div id="normalGrid" class="grid-container">
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+
+    <div>
+        <div id="normalNonGrid">
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</body>
+</html>

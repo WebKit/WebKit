@@ -1,0 +1,5 @@
+
+PASS Check that container queries is supported
+PASS (min-width: 0) does not match a container without a principal box (display:none)
+PASS (min-width: 0) does not match a container without a principal box (display:contents)
+

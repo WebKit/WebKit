@@ -1,0 +1,11 @@
+Tests for resource security connection information.
+
+
+== Running test suite: Resource.Security.Connection
+-- Running test case: Resource.Security.Connection.Basic
+PASS: Resource should have been loaded securely.
+PASS: Resource should have security information.
+PASS: Security information should include connection information.
+PASS: Connection should have protocol.
+PASS: Connection should have cipher.
+

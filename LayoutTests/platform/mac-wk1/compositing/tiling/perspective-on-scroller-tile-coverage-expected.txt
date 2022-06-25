@@ -1,0 +1,55 @@
+ 
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (visible rect 0.00, 0.00 800.00 x 600.00)
+  (coverage rect 0.00, 0.00 800.00 x 600.00)
+  (intersects coverage rect 1)
+  (contentsScale 1.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (visible rect 0.00, 0.00 800.00 x 600.00)
+      (coverage rect 0.00, 0.00 800.00 x 600.00)
+      (intersects coverage rect 1)
+      (contentsScale 1.00)
+      (children 1
+        (GraphicsLayer
+          (position 18.00 10.00)
+          (bounds 600.00 500.00)
+          (visible rect 0.00, 0.00 600.00 x 500.00)
+          (coverage rect -18.00, -10.00 800.00 x 600.00)
+          (intersects coverage rect 1)
+          (contentsScale 1.00)
+          (children 1
+            (GraphicsLayer
+              (anchor 0.51 0.50)
+              (bounds 585.00 500.00)
+              (childrenTransform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [3.00 2.50 1.00 -0.01] [0.00 0.00 0.00 1.00])
+              (visible rect 0.00, 0.00 585.00 x 500.00)
+              (coverage rect 0.00, 0.00 585.00 x 500.00)
+              (intersects coverage rect 1)
+              (contentsScale 1.00)
+              (children 1
+                (GraphicsLayer
+                  (position 20.00 -880.00)
+                  (anchor 0.00 0.00)
+                  (bounds 585.00 1200.00)
+                  (contentsOpaque 1)
+                  (drawsContent 1)
+                  (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 -50.00 1.00])
+                  (visible rect 0.00, 880.00 585.00 x 320.00)
+                  (coverage rect -20.00, 880.00 877.50 x 750.00)
+                  (intersects coverage rect 1)
+                  (contentsScale 1.00)
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+

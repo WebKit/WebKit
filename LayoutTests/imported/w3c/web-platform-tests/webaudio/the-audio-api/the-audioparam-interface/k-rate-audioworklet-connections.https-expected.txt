@@ -1,0 +1,17 @@
+
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "Create Test Worklet"
+PASS Executing "AudioWorklet k-rate AudioParam"
+PASS Audit report
+PASS > [Create Test Worklet]
+PASS   Construction of AudioWorklet resolved correctly.
+PASS < [Create Test Worklet] All assertions passed. (total 1 assertions)
+PASS > [AudioWorklet k-rate AudioParam]
+PASS   output is not constantly 0.
+PASS    k-rate output [0: 127] contains only the constant 0.
+PASS    k-rate output [128: 255] contains only the constant 2.5.
+PASS    k-rate output [256: 383] contains only the constant 5.
+PASS    k-rate output [384: 511] contains only the constant 7.5.
+PASS < [AudioWorklet k-rate AudioParam] All assertions passed. (total 5 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully.
+

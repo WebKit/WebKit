@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+#target {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100px;
+    height: 100px;
+    background-color: black;
+}
+
+</style>
+</head>
+<body>
+<div id="target"></div>
+<script>
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+const animation = document.getElementById("target").animate({ transform: ["translateX(0)", "translateX(100px)"] }, 1000);
+
+animation.ready.then(() => {
+    // Ensure accelerated animations have been commmitted by waiting for the next frame.
+    requestAnimationFrame(() => {
+        // We pause the animation right away.
+        animation.pause();
+
+        // Then on the next frame, we change its delay to seek it to its mid-point.
+        requestAnimationFrame(() => {
+            const effect = animation.effect;
+            const duration = effect.getTiming().duration;
+            const delay = animation.currentTime - 0.5 * duration;
+            animation.effect.updateTiming({ delay });
+
+            // Then wait another frame to ensure the seek was committed.
+            if (window.testRunner)
+                requestAnimationFrame(() => testRunner.notifyDone());
+        });
+    });
+});
+
+</script>
+</body>
+</html>

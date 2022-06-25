@@ -1,0 +1,3 @@
+
+FAIL isPointInStroke w/dashes works properly at large scale factors assert_false: hit-test past the end of the dash (t=10.2) expected false got true
+

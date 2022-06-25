@@ -1,0 +1,4 @@
+PASS function getDisplayMedia() {
+    [native code]
+} is defined.
+

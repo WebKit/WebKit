@@ -1,0 +1,31 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/README
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/broken-symbols-expected.htm
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/broken-symbols.htm
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-additive-symbols-syntax.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-fallback.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-name-syntax.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-negative-syntax.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-pad-syntax.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-prefix-suffix-syntax.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-range-syntax.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-speak-as-syntax.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-symbols-syntax.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-system-syntax.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/idlharness.html

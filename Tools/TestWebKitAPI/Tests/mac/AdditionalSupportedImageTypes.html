@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <img src="100x100-red.tga" onerror="imgError(this);">
+    <script>
+        function imgError(image) {
+            image.parentNode. removeChild(image);
+            return true;
+        }
+    </script>
+</body>
+</html>

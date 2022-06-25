@@ -1,0 +1,10 @@
+# This file is used by gcl to get repository specific information.
+CODE_REVIEW_SERVER: codereview.webrtc.org
+CC_LIST: webrtc-reviews@webrtc.org
+VIEW_VC: https://chromium.googlesource.com/external/webrtc/+/
+TRY_ON_UPLOAD: False
+TRYSERVER_SVN_URL: svn://svn.chromium.org/chrome-try/try-webrtc
+TRYSERVER_PROJECT: webrtc
+TRYSERVER_ROOT: src
+PROJECT: webrtc
+PENDING_REF_PREFIX: refs/pending/

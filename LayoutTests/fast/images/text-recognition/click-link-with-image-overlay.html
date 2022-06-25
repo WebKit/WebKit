@@ -1,0 +1,69 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+img {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+a {
+    display: inline-block;
+}
+</style>
+</head>
+<body>
+<a href="http://localhost:54321">
+    <img src="../resources/green-400x400.png"></img>
+</a>
+<script>
+jsTestIsAsync = true;
+addEventListener("load", async () => {
+    clickCount = 0;
+
+    document.querySelector("a").addEventListener("click", (event) => {
+        event.preventDefault();
+        clickCount++;
+    });
+
+    internals.installImageOverlay(document.querySelector("img"), [
+        {
+            topLeft : new DOMPointReadOnly(0, 0),
+            topRight : new DOMPointReadOnly(1, 0),
+            bottomRight : new DOMPointReadOnly(1, 0.25),
+            bottomLeft : new DOMPointReadOnly(0, 0.25),
+            children: [
+                {
+                    text : "hello",
+                    topLeft : new DOMPointReadOnly(0, 0),
+                    topRight : new DOMPointReadOnly(1, 0),
+                    bottomRight : new DOMPointReadOnly(1, 0.25),
+                    bottomLeft : new DOMPointReadOnly(0, 0.25),
+                }
+            ],
+        }
+    ]);
+
+    internals.installImageOverlay(document.querySelector("img"), [
+        {
+            text : "hello",
+            topLeft : new DOMPointReadOnly(0, 0),
+            topRight : new DOMPointReadOnly(1, 0),
+            bottomRight : new DOMPointReadOnly(1, 0.25),
+            bottomLeft : new DOMPointReadOnly(0, 0.25),
+        }
+    ]);
+
+    await UIHelper.activateAt(100, 50);
+    await UIHelper.waitForDoubleTapDelay();
+    await UIHelper.activateAt(300, 300);
+
+    shouldBecomeEqual("clickCount", "2", finishJSTest);
+});
+</script>
+</body>
+</html>

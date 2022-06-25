@@ -1,0 +1,3 @@
+
+FAIL Shared worker with data: url inherits CSP assert_unreached: The 'error' event should not have fired. Reached unreachable code
+

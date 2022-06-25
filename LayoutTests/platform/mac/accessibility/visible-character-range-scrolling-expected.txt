@@ -1,0 +1,30 @@
+This tests that visibleCharacterRange returns expected visible ranges with various scrollTop values.
+
+
+Testing scrollTop values 0 to 2000.
+Range with view 200x500, scrollTop 0: NSRange: {0, 810}
+Range with view 200x500, scrollTop 100: NSRange: {180, 780}
+Range with view 200x500, scrollTop 200: NSRange: {330, 810}
+Range with view 200x500, scrollTop 300: NSRange: {510, 810}
+Range with view 200x500, scrollTop 400: NSRange: {660, 810}
+Range with view 200x500, scrollTop 500: NSRange: {840, 810}
+Range with view 200x500, scrollTop 600: NSRange: {990, 810}
+Range with view 200x500, scrollTop 700: NSRange: {1170, 810}
+Range with view 200x500, scrollTop 800: NSRange: {1320, 810}
+Range with view 200x500, scrollTop 900: NSRange: {1500, 810}
+Range with view 200x500, scrollTop 1000: NSRange: {1680, 780}
+Range with view 200x500, scrollTop 1100: NSRange: {1830, 810}
+Range with view 200x500, scrollTop 1200: NSRange: {2010, 810}
+Range with view 200x500, scrollTop 1300: NSRange: {2160, 810}
+Range with view 200x500, scrollTop 1400: NSRange: {2340, 810}
+Range with view 200x500, scrollTop 1500: NSRange: {2490, 810}
+Range with view 200x500, scrollTop 1600: NSRange: {2670, 810}
+Range with view 200x500, scrollTop 1700: NSRange: {2820, 810}
+Range with view 200x500, scrollTop 1800: NSRange: {3000, 810}
+Range with view 200x500, scrollTop 1900: NSRange: {3180, 780}
+Range with view 200x500, scrollTop 2000: NSRange: {3330, 810}
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

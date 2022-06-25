@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+@font-face {
+    font-family: Ahem;
+    src: url("../../resources/fonts/Ahem.ttf");
+}
+</style>
+</head>
+<body>
+<p>This test records the order by which load and DOMContentLoaded evnets fire relative to when document.fonts.ready is resolved.<br>
+fonts.ready should resolve only after DOMContentLoaded and load event are fired, and fonts.check should return true for Ahem at that point.</p>
+<pre id="log"></pre>
+<div id="element1">hello</div>
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(message) {
+    document.getElementById('log').textContent += message + '\n';
+}
+
+function checkAhem(description) {
+    const check = document.fonts.check('10px Ahem');
+    log(`${description} - fonts.check Ahem: ${check}`);
+}
+
+window.addEventListener('DOMContentLoaded', () => log('DOMContentLoaded'));
+window.addEventListener('load', () => log('load'));
+
+checkAhem('Before setting font-family');
+element1.getBoundingClientRect();
+element1.style.fontFamily = 'Ahem';
+document.fonts.ready.then(() => {
+    checkAhem('fonts.ready');
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+
+</script>
+</body>
+</html>

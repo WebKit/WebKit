@@ -1,0 +1,24 @@
+<html>
+    <head>
+        <script>
+            function pageLoaded() {
+                try {
+                    window.webkit.messageHandlers.pictureInPictureChangeHandler.postMessage('load');
+                } catch(e) { }
+            }
+
+            function play() {
+                document.getElementById("audio").play();
+            }
+
+            function didStartPlaying() {
+                try {
+                    window.webkit.messageHandlers.pictureInPictureChangeHandler.postMessage('playing');
+                } catch(e) { }
+            }
+        </script>
+    </head>
+    <body onload="pageLoaded()">
+        <audio controls id="audio" src="silence-long.m4a" onplaying="didStartPlaying()" />
+    </body>
+</html>

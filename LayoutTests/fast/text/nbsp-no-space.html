@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+    font-family: "WebFont";
+    src: url("resources/Ahem-nbsp-no-space.ttf") format("truetype");
+}
+@font-face {
+    font-family: "WebFont2";
+    src: url("resources/Ahem-visible-tab-and-space.ttf") format("truetype");
+}
+</style>
+</head>
+<body>
+This test makes sure that the nbsp glyph is used in a font if the space glyph is unavailable. The test passes if this text you're reading right now is the only text on the page.
+<div style="font: 48px 'WebFont';">&nbsp;</div>
+<div style="font: 48px 'WebFont2'; white-space: pre;">&#x9;</div>
+</body>
+</html>

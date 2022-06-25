@@ -1,0 +1,23 @@
+Test for TargetManager and other global WI.Target objects.
+
+
+== Running test suite: TargetManager
+-- Running test case: TargetManager.MainTarget
+PASS: Targets list should always start out with the main target.
+PASS: Target list should always contain the main target.
+PASS: Main target should have an ExecutionContext.
+PASS: Main target should have the page target's RuntimeAgent.
+Target - page - Page
+
+-- Running test case: TargetManager.WorkerTarget.Create
+PASS: Added Target should have Worker type.
+PASS: Added Target should have an ExecutionContext.
+PASS: Added Target should have a RuntimeAgent.
+PASS: Added Target RuntimeAgent should not be the global RuntimeAgent.
+Target - page - Page
+Target - worker - worker-1.js
+
+-- Running test case: TargetManager.WorkerTarget.Remove
+PASS: Removed Target should have Worker type.
+Target - page - Page
+

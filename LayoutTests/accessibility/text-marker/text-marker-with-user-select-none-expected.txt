@@ -1,0 +1,16 @@
+hello test world test hello
+link to here
+test
+This tests that accessibility text markers still work even when user-select:none is set.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS textElement.textMarkerRangeLength(textMarkerRange) is 45
+PASS text is "hello test world test hello\nlink to here\ntest"
+PASS text is 'h'
+PASS element.isEqual(textElement.childAtIndex(0)) is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,5 @@
+This tests the number of resize events dispatched to JavaScript.
+
+PASS
+
+

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>accesskey focus element</title>
+<link rel="help" href="https://html.spec.whatwg.org/multipage/interaction.html#the-accesskey-attribute">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+
+<div id="focusableDiv" tabindex="0" accesskey="a"></div>
+<div id="nonFocusableDiv" accesskey="b"></div>
+<input id="input" accesskey="c"</input>
+<select id="select" accesskey="d"></select>
+<a id="link" href="#" accesskey="e"></a>
+
+<script>
+
+function pressAccessKey(key)
+{
+    if (navigator.userAgent.search(/\bMac OS X\b/) != -1)
+        modifiers = ["ctrlKey", "altKey"];
+    else
+        modifiers = ["altKey"];
+    eventSender.keyDown(key, modifiers);
+}
+
+test(() => {
+    pressAccessKey("a");
+    assert_equals(document.activeElement, focusableDiv);
+}, "DIV element with tabindex can be focused via accesskey");
+test(() => {
+    pressAccessKey("b");
+    assert_equals(document.activeElement, focusableDiv);
+}, "DIV element without tabindex can NOT be focused via accesskey");
+test(() => {
+    pressAccessKey("c");
+    assert_equals(document.activeElement, input);
+}, "INPUT element can be focused via accesskey");
+test(() => {
+    pressAccessKey("d");
+    assert_equals(document.activeElement, select);
+}, "SELECT element can be focused via accesskey");
+test(() => {
+    pressAccessKey("e");
+    assert_equals(document.activeElement, link);
+}, "A element can be focused via accesskey");
+
+</script>

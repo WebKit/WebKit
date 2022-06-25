@@ -1,0 +1,116 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        body {
+            height: 2000px;
+        }
+
+        .scroller {
+            margin: 10px;
+            width: 500px;
+            height: 400px;
+            overflow: auto;
+            border: 2px solid black;
+        }
+        
+        .horizontal .scroller {
+            width: 400px;
+            height: 400px;
+            margin: 10px;
+            overscroll-behavior: contain;
+        }
+        
+        .filler {
+            height: 200px;
+            width: 100%;
+            margin: 10px;
+            background-color: silver;
+        }
+
+        .horizontal .filler {
+            height: 80%;
+            width: 200%;
+            background-color: silver;
+        }
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    
+    <script>
+        jsTestIsAsync = true;
+
+        var minXOffset = 0;
+        var maxXOffset = -1000;
+        
+        async function onScrollCompletion(x, y)
+        {
+            eventSender.monitorWheelEvents();
+            eventSender.mouseMoveTo(x, y);
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(1, 0, "began", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(10, 0, "changed", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(10, 0, "changed", "none");
+            await UIHelper.animationFrame();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(10, 0, "changed", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
+            return UIHelper.waitForScrollCompletion();
+        }
+        
+        async function onSwipeCallback()
+        {
+            return new Promise(resolve => {
+                testRunner.installDidBeginSwipeCallback(resolve);
+            });
+        }
+
+        async function scrollTest()
+        {
+            description('A back swipe, over a scrolled-to-left overflow, should start a navigation gesture.');
+
+            if (window.testRunner) {
+                testRunner.setNavigationGesturesEnabled(true);
+            }
+
+            history.pushState({ name: 'backstate' }, 'back');
+
+            window.addEventListener('scroll', () => {
+                minXOffset = Math.min(minXOffset, window.pageXOffset);
+                maxXOffset = Math.max(maxXOffset, window.pageXOffset);
+            }, false);
+
+            if (!window.eventSender) {
+                finishJSTest();
+                return;
+            }
+
+            const mouseLocationX = 150; // Over the horizontally scrollable overflow.
+            const mouseLocationY = 300;
+
+            debug('Swipe to the left');
+            
+            await Promise.all([onSwipeCallback(), onScrollCompletion(mouseLocationX, mouseLocationY)]);
+
+            // Should not have received any scroll events.
+            shouldBe('minXOffset', '0');
+            shouldBe('maxXOffset', '-1000');
+
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+            scrollTest();
+        }, false);
+    </script>
+</head>
+<body>
+    <div id="outer" class="scroller">
+        <div class="filler">Scrolls vertically</div>
+        <div id="inner" class="horizontal scroller">
+            <div class="filler">Scrolls horizontally</div>
+        </div>
+        <div class="filler"></div>
+    </div>
+    <div id="console"></div>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

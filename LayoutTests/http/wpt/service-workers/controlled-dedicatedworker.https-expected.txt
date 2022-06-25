@@ -1,0 +1,4 @@
+
+PASS Register service worker
+PASS Verify dedicated worker is controlled
+

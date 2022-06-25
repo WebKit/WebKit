@@ -1,0 +1,15 @@
+<span>
+<div style="display: inline-block">
+<ul id=list>
+  <li>
+    <div style="column-span: all;">Pass if no crash or assert when the list marker is inside a column spanner.</div>
+  </li>
+</ul>
+</div>
+</span>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+document.body.offsetHeight;
+list.style.columnCount = 2;
+</script>

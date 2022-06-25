@@ -1,0 +1,6 @@
+
+FAIL Default CSS properties on merror assert_equals: expected "1px" but got "0px"
+FAIL Bounding box is the same as mrow + 1px border assert_equals: expected 128 but got 133
+AN ERROR
+AN ERROR
+

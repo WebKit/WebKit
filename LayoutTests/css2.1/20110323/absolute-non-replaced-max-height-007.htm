@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>CSS Test: Max-height on absolutely positioned, non-replaced elements, shrink-to-fit solve for top</title>
+        <link rel="author" title="Microsoft" href="http://www.microsoft.com/">
+        <link rel="help" href="http://www.w3.org/TR/CSS21/visudet.html#abs-non-replaced-height">
+        <meta name="flags" content="ahem">
+        <meta name="assert" content="The height is based on the overall height of the content, 'margin-top', 'auto' is set to '0' and solve for 'top', when 'top' and 'height' are both 'auto' and 'bottom' is not 'auto'.">
+        <style type="text/css">
+            #div1
+            {
+                font: 1in/1em Ahem;
+                height: 4in;
+                position: relative;
+                width: 1in;
+            }
+            #div2
+            {
+                background: orange;
+                height: 0.5in;
+                position: relative;
+                top: 0.5in;
+                width: 1in;
+            }
+            #div3
+            {
+                background: blue;
+                bottom: 3in;
+                height: auto;
+                margin-bottom: auto;
+                margin-top: auto;
+                max-height: 0.5in;
+                position: absolute;
+                top: auto;
+                width: 0.5in;
+            }
+        </style>
+    </head>
+    <body>
+        <p>Test passes if the blue and orange boxes below are the same height.</p>
+        <div id="div1">
+            <div id="div2"></div>
+            <div id="div3">&nbsp;</div>
+        </div>
+    </body>
+</html>

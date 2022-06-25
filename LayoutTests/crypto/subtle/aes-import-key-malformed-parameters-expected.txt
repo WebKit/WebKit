@@ -1,0 +1,54 @@
+Test importing an AES key with malformed parameters
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS crypto.subtle.importKey("raw", asciiToUint8Array("jnOw97"), "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("jwk", {kty: "RSA"}, "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("jwk", {kty: "oct"}, "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("jwk", {kty: "oct", k: k128, alg: "A192CBC"}, "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("jwk", {kty: "oct", k: k192, alg: "A256CBC"}, "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("jwk", {kty: "oct", k: k256, alg: "A128CBC"}, "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("jwk", {kty: "oct", k: "A72F", alg: "foo"}, "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("jwk", {kty: "oct", k: k128, alg: ""}, "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("jwk", {kty: "oct", k: k192, alg: ""}, "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("jwk", {kty: "oct", k: k256, alg: ""}, "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("jwk", {kty: "oct", k: k128, alg: "A192KW"}, "aes-kw", extractable, ["wrapKey", "unwrapKey"]) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("jwk", {kty: "oct", k: k192, alg: "A256KW"}, "aes-kw", extractable, ["wrapKey", "unwrapKey"]) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("jwk", {kty: "oct", k: k256, alg: "A128KW"}, "aes-kw", extractable, ["wrapKey", "unwrapKey"]) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("jwk", {kty: "oct", k: "A72F", alg: "foo"}, "aes-kw", extractable, ["wrapKey", "unwrapKey"]) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("jwk", {kty: "oct", k: k128, alg: ""}, "aes-kw", extractable, ["wrapKey", "unwrapKey"]) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("jwk", {kty: "oct", k: k192, alg: ""}, "aes-kw", extractable, ["wrapKey", "unwrapKey"]) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("jwk", {kty: "oct", k: k256, alg: ""}, "aes-kw", extractable, ["wrapKey", "unwrapKey"]) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("jwk", {kty: "oct", k: k128, alg: "A192CFB8"}, "aes-cfb-8", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("jwk", {kty: "oct", k: k192, alg: "A256CFB8"}, "aes-cfb-8", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("jwk", {kty: "oct", k: k256, alg: "A128CFB8"}, "aes-cfb-8", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("jwk", {kty: "oct", k: "A72F", alg: "foo"}, "aes-cfb-8", extractable, ["wrapKey", "unwrapKey"]) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("jwk", {kty: "oct", k: k128, alg: ""}, "aes-cfb-8", extractable, ["wrapKey", "unwrapKey"]) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("jwk", {kty: "oct", k: k192, alg: ""}, "aes-cfb-8", extractable, ["wrapKey", "unwrapKey"]) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("jwk", {kty: "oct", k: k256, alg: ""}, "aes-cfb-8", extractable, ["wrapKey", "unwrapKey"]) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("jwk", {kty: "oct", k: k128, alg: "A192GCM"}, "aes-gcm", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("jwk", {kty: "oct", k: k192, alg: "A256GCM"}, "aes-gcm", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("jwk", {kty: "oct", k: k256, alg: "A128GCM"}, "aes-gcm", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("jwk", {kty: "oct", k: "A72F", alg: "foo"}, "aes-gcm", extractable, ["wrapKey", "unwrapKey"]) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("jwk", {kty: "oct", k: k128, alg: ""}, "aes-gcm", extractable, ["wrapKey", "unwrapKey"]) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("jwk", {kty: "oct", k: k192, alg: ""}, "aes-gcm", extractable, ["wrapKey", "unwrapKey"]) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("jwk", {kty: "oct", k: k256, alg: ""}, "aes-gcm", extractable, ["wrapKey", "unwrapKey"]) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("jwk", {kty: "oct", k: k128, alg: "A192CTR"}, "aes-ctr", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("jwk", {kty: "oct", k: k192, alg: "A256CTR"}, "aes-ctr", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("jwk", {kty: "oct", k: k256, alg: "A128CTR"}, "aes-ctr", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("jwk", {kty: "oct", k: "A72F", alg: "foo"}, "aes-ctr", extractable, ["wrapKey", "unwrapKey"]) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("jwk", {kty: "oct", k: k128, alg: ""}, "aes-ctr", extractable, ["wrapKey", "unwrapKey"]) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("jwk", {kty: "oct", k: k192, alg: ""}, "aes-ctr", extractable, ["wrapKey", "unwrapKey"]) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("jwk", {kty: "oct", k: k256, alg: ""}, "aes-ctr", extractable, ["wrapKey", "unwrapKey"]) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("jwk", {kty: "oct", k: "!!!", alg: "foo"}, "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("jwk", {kty: "oct", k: "", alg: "foo"}, "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("jwk", {kty: "oct", k: k128, alg: "A128CBC", use: "sig"}, "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("jwk", {kty: "oct", k: k128, alg: "A128CBC", use: ""}, "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("jwk", {kty: "oct", k: k128, alg: "A128CBC", key_ops: ["encrypt", "decrypt"]}, "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("jwk", {kty: "oct", k: k128, alg: "A128CBC", key_ops: [ ]}, "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("jwk", {kty: "oct", k: k128, alg: "A128CBC", ext: false}, "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

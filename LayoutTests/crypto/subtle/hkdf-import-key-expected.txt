@@ -1,0 +1,14 @@
+Test importing a HKDF raw key
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS publicKey.toString() is '[object CryptoKey]'
+PASS publicKey.type is 'secret'
+PASS publicKey.extractable is false
+PASS publicKey.algorithm.name is 'HKDF'
+PASS publicKey.usages is ['deriveBits', 'deriveKey']
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function changeElementDisplayValue(id, value)
+{
+    document.getElementById(id).style.display = value;
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("CSS.getMatchedStyleForNode.MarkerPseudoId");
+
+    function addTestCase({name, description, selector, domNodeStylesHandler})
+    {
+        suite.addTestCase({
+            name,
+            description,
+            async test() {
+                let documentNode = await WI.domManager.requestDocument();
+                let nodeId = await documentNode.querySelector(selector);
+                let domNode = WI.domManager.nodeForId(nodeId);
+                InspectorTest.assert(domNode, `Should find DOM Node for selector '${selector}'.`);
+
+                let domNodeStyles = WI.cssManager.stylesForNode(domNode);
+                InspectorTest.assert(domNodeStyles, `Should find CSS Styles for DOM Node.`);
+                await domNodeStyles.refreshIfNeeded();
+
+                await domNodeStylesHandler(domNodeStyles);
+            },
+        });
+    }
+
+    async function changeElementDisplayValue(id, value)
+    {
+        await InspectorTest.evaluateInPage(`changeElementDisplayValue("${id}", "${value}")`);
+    }
+
+    addTestCase({
+        name: "CSS.getMatchedStyleForNode.MarkerPseudoId.ListItem",
+        description: "A list item should have both the User Agent and authored `::marker` rules.",
+        selector: "#listItem",
+        async domNodeStylesHandler(styles) {
+            InspectorTest.expectEqual(styles.pseudoElements.get(WI.CSSManager.PseudoSelectorNames.Marker).matchedRules.length, 2, "Expected exactly 2 rules for selector `*::marker`.");
+        }
+    });
+
+    addTestCase({
+        name: "CSS.getMatchedStyleForNode.MarkerPseudoId.NonListItem",
+        description: "A non-list item should have no `::marker` rules.",
+        selector: "#nonListItem",
+        async domNodeStylesHandler(styles) {
+            InspectorTest.expectEqual(styles.pseudoElements.get(WI.CSSManager.PseudoSelectorNames.Marker), undefined, "Expected no rules entry for selector `*::marker`.");
+        }
+    });
+
+    addTestCase({
+        name: "CSS.getMatchedStyleForNode.MarkerPseudoId.NonListItemWithMarkerSpecified",
+        description: "A non-list item with a `base-selector::marker` specified should not show the specified rule unless it becomes a list item.",
+        selector: "#nonListItemWithMarkerSpecified",
+        async domNodeStylesHandler(styles) {
+            InspectorTest.expectEqual(styles.pseudoElements.get(WI.CSSManager.PseudoSelectorNames.Marker), undefined, "Expected no rules entry for selector `*::marker`.");
+            await changeElementDisplayValue("nonListItemWithMarkerSpecified", "list-item");
+            await styles.refresh();
+            InspectorTest.expectEqual(styles.pseudoElements.get(WI.CSSManager.PseudoSelectorNames.Marker).matchedRules.length, 3, "Expected 3 rules for selector `*::marker`.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<style>
+    ::marker {
+        color: red;
+    }
+    #nonListItemWithMarkerSpecified::marker {
+        color: green;
+    }
+</style>
+</head>
+<body onload="runTest()">
+    <p>Tests for the CSS.getMatchedStyleForNode command and the `::marker` CSS rule selector.</p>
+    <ul>
+        <li id="listItem"></li>
+    </ul>
+    <div id="nonListItem"></div>
+    <div id="nonListItemWithMarkerSpecified"></div>
+</body>
+</html>

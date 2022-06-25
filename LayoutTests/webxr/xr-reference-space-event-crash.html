@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+  description("Makes sure that constructing a XRReferenceSpaceEvent without a transform member doesn't crash");
+  jsTestIsAsync = true;
+
+  navigator.xr.requestSession('inline')
+    .then(s => s.requestReferenceSpace('viewer'))
+    .then(_referenceSpace => {
+      referenceSpace = _referenceSpace;
+      event = new XRReferenceSpaceEvent('', { referenceSpace });
+      shouldBe("event.referenceSpace", "referenceSpace");
+      shouldBeNull("event.transform");
+      finishJSTest();
+    });
+</script>
+</body>
+</html>

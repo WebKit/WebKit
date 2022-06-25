@@ -1,0 +1,18 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+ positive z-order list (1)
+  layer at (0,0) size 800x516 layerType: background only
+   negative z-order list (1)
+    layer at (8,258) size 102x52
+      RenderBlock (positioned) zI: -1 {DIV} at (8,258) size 102x52 [border: (1px solid #000000)]
+  layer at (0,0) size 800x516 layerType: foreground only
+    RenderBlock {HTML} at (0,0) size 800x516
+      RenderBody {BODY} at (8,8) size 784x500
+        RenderBlock {DIV} at (0,0) size 200x250 (layout overflow 0,0 200x400)
+        RenderBlock {DIV} at (0,250) size 784x200
+          RenderSVGRoot {svg} at (0,0) size 300x150 clipped at (18,278) size 100x100
+            RenderSVGRect {rect} at (18,278) size 100x100 [fill={[type=SOLID] [color=#0000FF]}] [x=10.00] [y=20.00] [width=100.00] [height=100.00]
+          RenderText {#text} at (0,0) size 0x0
+   positive z-order list (1)
+    layer at (8,8) size 200x400
+      RenderBlock (relative positioned) zI: 1 {DIV} at (0,0) size 200x400

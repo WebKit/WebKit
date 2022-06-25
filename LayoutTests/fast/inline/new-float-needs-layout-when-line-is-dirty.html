@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+div {
+    border: 1px solid green;
+}
+
+#container {
+    width: 100px;
+    height: 200px;
+}
+
+#inlineblock {
+	display: inline-block;
+	width: 10px;
+	height: 10px;
+}
+
+.floatBox {
+	width: 30px;
+	height: 30px;
+	float: left;
+}
+</style>
+</head>
+<body>
+<div id=container>Pass if no crash<div id=inlineblock></div>foobar foobar foobar foobar foobar</div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+document.body.offsetHeight;
+
+let floatBox = document.createElement("div");
+floatBox.className = "floatBox";
+inlineblock.style.height = "20px";
+container.appendChild(floatBox);
+
+document.body.offsetHeight;
+</script>
+</body>
+</html>

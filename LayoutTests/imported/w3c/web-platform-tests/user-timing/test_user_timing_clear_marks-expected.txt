@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: ReferenceError: Can't find variable: wp_test
+
+Harness Error (FAIL), message = ReferenceError: Can't find variable: wp_test
+
+Description
+
+This test validates that the performance.clearMarks() method is working properly. This test creates the following marks to test this method:
+
+"mark1"
+"mark2"
+After creating each mark, performance.clearMarks() is called three times. First, it is provided with a name of "markUndefined", a non-existent mark, which shouldn't change the state of the Performance Timeline. Next, it is provided with a name of "mark2", after which, this mark should no longer be present in the Performance Timeline. Finally, performance.clearMarks() is called without any name provided. After this call, no marks should be present in the Performance Timeline. The state of the Performance Timeline is tested with the performance.getEntriesByType() and performance.getEntries() methods.
+

@@ -1,0 +1,86 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock (anonymous) at (0,0) size 784x38
+        RenderText {#text} at (0,1) size 779x36
+          text run at (0,1) width 575: "The following tests text iteration over RTL text embedded with LTR text. "
+          text run at (574,1) width 205: "TextIterators are used for"
+          text run at (0,20) width 246: "find, spellcheck, and .innerText"
+      RenderBlock {HR} at (0,46) size 784x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,56) size 784x19
+        RenderText {#text} at (0,1) size 169x17
+          text run at (0,1) width 169: "Embedded Numbers:"
+      RenderBlock {DIV} at (0,75) size 784x19 [color=#0000FF]
+        RenderText {#text} at (0,1) size 132x17
+          text run at (0,1) width 67: "Testing ("
+          text run at (66,1) width 16 RTL: "\x{5DF}\x{5DE}"
+          text run at (81,1) width 11: "3"
+          text run at (91,1) width 35 RTL: "\x{5D7}\x{5D5}\x{5D3}\x{5D0}"
+          text run at (125,1) width 7: ")"
+      RenderBlock (anonymous) at (0,94) size 784x19
+        RenderText {#text} at (0,1) size 124x17
+          text run at (0,1) width 124: "Embedded LTR:"
+      RenderBlock {DIV} at (0,113) size 784x19 [color=#0000FF]
+        RenderText {#text} at (0,1) size 160x17
+          text run at (0,1) width 67: "Testing ("
+          text run at (66,1) width 35 RTL: "\x{5D7}\x{5D5}\x{5D3}\x{5D0}"
+          text run at (100,1) width 39: "hello"
+          text run at (138,1) width 16 RTL: "\x{5DF}\x{5DE}"
+          text run at (153,1) width 7: ")"
+      RenderBlock (anonymous) at (0,132) size 784x19
+        RenderText {#text} at (0,1) size 232x17
+          text run at (0,1) width 232: "Embedded Numbers and LTR"
+      RenderBlock {DIV} at (0,151) size 784x19 [color=#0000FF]
+        RenderText {#text} at (0,1) size 152x17
+          text run at (0,1) width 67: "Testing ("
+          text run at (66,1) width 28 RTL: "\x{5E7}\x{5E7}\x{5E8}"
+          text run at (93,1) width 11: "3"
+          text run at (103,1) width 33 RTL: "\x{5D9}\x{5E7}\x{5DD}\x{5DC}"
+          text run at (135,1) width 17: "h)"
+      RenderBlock (anonymous) at (0,170) size 784x19
+        RenderText {#text} at (0,1) size 273x17
+          text run at (0,1) width 273: "Embedded Numbers with spacing:"
+      RenderBlock {DIV} at (0,189) size 784x19 [color=#0000FF]
+        RenderText {#text} at (0,1) size 287x17
+          text run at (0,1) width 67: "Testing ("
+          text run at (66,1) width 40 RTL: " \x{5D7}\x{5D5}\x{5D3}\x{5D0}"
+          text run at (105,1) width 31: "300"
+          text run at (135,1) width 55 RTL: "\x{5D7}\x{5D5}\x{5D3}\x{5D0}\x{5DF}\x{5DE} "
+          text run at (189,1) width 51: "34023"
+          text run at (239,1) width 42 RTL: "\x{5D9}\x{5E7}\x{5DA}\x{5DA}\x{5DD}"
+          text run at (280,1) width 7: ")"
+      RenderBlock (anonymous) at (0,208) size 784x19
+        RenderText {#text} at (0,1) size 76x17
+          text run at (0,1) width 76: "Plain LTR:"
+      RenderBlock {DIV} at (0,227) size 784x19 [color=#0000FF]
+        RenderText {#text} at (0,1) size 111x17
+          text run at (0,1) width 111: "Testing (hello)"
+      RenderBlock (anonymous) at (0,246) size 784x19
+        RenderText {#text} at (0,1) size 228x17
+          text run at (0,1) width 228: "Embedded LTR with spacing:"
+      RenderBlock {DIV} at (0,265) size 784x19 [color=#0000FF]
+        RenderText {#text} at (0,1) size 205x17
+          text run at (0,1) width 67: "Testing ("
+          text run at (66,1) width 66 RTL: "\x{5D7}\x{5D5}\x{5D3}\x{5D9}\x{5E7}\x{5DA}\x{5DA}\x{5DD}"
+          text run at (131,1) width 49: " hello "
+          text run at (179,1) width 20 RTL: "\x{5DF}\x{5DE}\x{5D9}"
+          text run at (198,1) width 7: ")"
+      RenderBlock (anonymous) at (0,284) size 784x19
+        RenderText {#text} at (0,1) size 205x17
+          text run at (0,1) width 205: "Mixed but not embedded:"
+      RenderBlock {DIV} at (0,303) size 784x19 [color=#0000FF]
+        RenderText {#text} at (0,1) size 150x17
+          text run at (0,1) width 105: "Testing (hello"
+          text run at (104,1) width 40 RTL: "\x{5D7}\x{5D5}\x{5D3}\x{5DF}\x{5DE}"
+          text run at (143,1) width 7: ")"
+      RenderBlock (anonymous) at (0,322) size 784x19
+        RenderText {#text} at (0,1) size 205x17
+          text run at (0,1) width 205: "Mixed but not embedded:"
+      RenderBlock {DIV} at (0,341) size 784x19 [color=#0000FF]
+        RenderText {#text} at (0,1) size 150x17
+          text run at (0,1) width 67: "Testing ("
+          text run at (66,1) width 40 RTL: "\x{5D7}\x{5D5}\x{5D3}\x{5DF}\x{5DE}"
+          text run at (105,1) width 45: "hello)"
+      RenderBlock {OL} at (0,376) size 784x0

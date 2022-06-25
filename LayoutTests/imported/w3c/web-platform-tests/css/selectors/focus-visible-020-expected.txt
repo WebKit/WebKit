@@ -1,0 +1,8 @@
+This test checks that :focus-visible doesn't math on ShadowRoot.
+
+The input should be focused on load, if it's not focused, focus it via mouse or keyboard.
+If you see no red the test result is SUCCESS.
+
+PASS ":focus-visible" should be a valid selector
+PASS :focus-visible doesn't match on ShadowRoot
+

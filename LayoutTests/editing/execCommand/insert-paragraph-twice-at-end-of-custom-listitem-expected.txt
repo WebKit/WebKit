@@ -1,0 +1,66 @@
+This test verifies that inserting paragraph twice at the end of last listitem created with custom tag and display:list-item does not remove entire list.
+Expected behavior is list should not be removed and one empty line should get added.
+
+Initial:
+| "\n        "
+| <p>
+|   "Paragraph before list."
+| "\n        "
+| <ul>
+|   "\n            "
+|   <item>
+|     "First Item"
+|   "\n            "
+|   <item>
+|     id="target"
+|     "Second Item<#selection-caret>"
+|   "\n        "
+| "\n        "
+| <p>
+|   "Paragraph after list."
+| "\n    "
+
+After inserting first paragraph:
+| "\n        "
+| <p>
+|   "Paragraph before list."
+| "\n        "
+| <ul>
+|   "\n            "
+|   <item>
+|     "First Item"
+|   "\n            "
+|   <item>
+|     id="target"
+|     "Second Item"
+|   <item>
+|     id="target"
+|     <#selection-caret>
+|     <br>
+|   "\n        "
+| "\n        "
+| <p>
+|   "Paragraph after list."
+| "\n    "
+
+After inserting second paragraph:
+| "\n        "
+| <p>
+|   "Paragraph before list."
+| "\n        "
+| <ul>
+|   "\n            "
+|   <item>
+|     "First Item"
+|   "\n            "
+|   <item>
+|     id="target"
+|     "Second Item"
+|   "\n        "
+| <div>
+|   <#selection-caret>
+|   <br>
+| "\n        "
+| <p>
+|   "Paragraph after list."
+| "\n    "

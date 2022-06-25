@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+var successfullyParsed = false;
+if (window.testRunner)
+   testRunner.dumpAsText();
+
+function touchEnd(event) {
+    debug("Received touch ended " + event);
+    event.stopPropagation(); 
+    event.preventDefault();
+}
+
+function touchStart(event) {
+    debug("Received touch start " + event);
+    event.stopPropagation(); 
+    event.preventDefault();
+}
+
+</script>
+</head>
+<body>
+
+<div role="button" id="button" ontouchstart="touchStart(event);" ontouchend="touchEnd(event);">button</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("Ensure that if an element on handles touch events, the simulated accessibility press will still activate those elements.");
+
+    if (window.accessibilityController) {
+        var button = accessibilityController.accessibleElementById("button");
+        button.press();
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+
+</body>
+</html>
+

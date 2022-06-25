@@ -1,0 +1,51 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+<meta name="viewport" content="initial-scale=1, width=device-width">
+<head>
+    <script src="../../../../resources/js-test.js"></script>
+    <style>
+        body {
+            margin: none;
+        }
+
+        #target {
+            border: 1px black solid;
+            width: 200px;
+            height: 200px;
+        }
+    </style>
+</head>
+<body>
+    <div id="target">FAIL</div>
+    <div id="console"></div>
+    <p id="description"></p>
+    <script>
+        description("Verifies that tapping an element with a stylus dispatches a click event. To manually test, tap the black square above and check that the text in the square reads 'PASS'.");
+        jsTestIsAsync = true;
+
+        function tapUsingStylus(x, y) {
+            return new Promise(resolve => {
+                testRunner.runUIScript(`(() => {
+                    uiController.stylusDownAtPoint(${x}, ${y}, 0, 0, 0, () => { });
+                    uiController.stylusUpAtPoint(${x}, ${y}, () => uiController.uiScriptComplete());
+                })()`, resolve);
+            })
+        }
+
+        async function runTest() {
+            if (window.testRunner)
+                await tapUsingStylus(100, 100);
+        }
+
+        const target = document.getElementById("target");
+        target.addEventListener("click", () => {
+            target.textContent = "PASS";
+            finishJSTest();
+        });
+
+        addEventListener("load", runTest, false);
+    </script>
+    <script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

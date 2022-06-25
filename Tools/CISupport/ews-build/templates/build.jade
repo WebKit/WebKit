@@ -1,0 +1,39 @@
+.container
+  .alert.alert-danger(ng-show="error") {{error}}
+  nav
+    ul.pager
+      li.previous(ng-class="{'disabled': build.number == 1}")
+        a(ng-if="build.number > 1 ", ui-sref="build({build:prevbuild.number})")
+            span.badge-status(ng-class="results2class(prevbuild, 'pulse')") &larr;
+            span.nomobile &nbsp;Previous
+        span(ng-if="build.number == 1") &larr;
+            span.nomobile &nbsp;Previous
+      li(ng-if="build.complete" title="{{ build.complete_at | dateformat:'LLL' }}") Finished {{ build.complete_at | timeago }}
+      li.next(ng-class="{'disabled': last_build}")
+        a(ng-if="!last_build", ui-sref="build({build:nextbuild.number})")
+            span.nomobile Next&nbsp;
+            span.badge-status(ng-class="results2class(nextbuild, 'pulse')") &rarr;
+        span(ng-if="last_build")
+            span.nomobile Next&nbsp;
+            span &rarr;
+  .row
+      uib-tabset
+          uib-tab(heading="Build steps")
+              buildsummary(ng-if="build", build="build", parentbuild="parent_build",
+                           parentrelationship="buildset.parent_relationship")
+          uib-tab(heading="Build Properties")
+              properties(properties="properties")
+          uib-tab(heading="Worker: {{worker.name}}")
+            table.table.table-hover.table-striped.table-condensed
+              tbody
+                tr
+                  td.text-left name
+                  td.text-center {{worker.name}}
+                tr(ng-repeat="(name, value) in worker.workerinfo")
+                  td.text-left {{ name }}
+                  td.text-right {{ value }}
+          uib-tab(heading="Debug")
+              h4
+                  a(ui-sref="buildrequest({buildrequest:buildrequest.buildrequestid})")
+                     | Buildrequest:
+              rawdata(data="buildrequest")

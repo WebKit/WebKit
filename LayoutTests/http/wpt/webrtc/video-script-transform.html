@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="/resources/testharness.js"></script>
+        <script src="/resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <video id="video" autoplay playsInline></video>
+        <script src="routines.js"></script>
+        <script>
+function waitForMessage(port, data)
+{
+    let gotMessage;
+    const promise = new Promise((resolve, reject) => {
+        gotMessage = resolve;
+        setTimeout(() => { reject("did not get " + data) }, 5000);
+    });
+    port.onmessage = event => {
+       if (event.data === data)
+           gotMessage();
+    };
+    return promise;
+}
+
+let senderTransform, receiverTransform;
+let stream;
+promise_test(async (test) => {
+    worker = new Worker('context-transform.js');
+    const data = await new Promise(resolve => worker.onmessage = (event) => resolve(event.data));
+    assert_equals(data, "registered");
+
+    const localStream = await navigator.mediaDevices.getUserMedia({video: true});
+
+    const senderChannel = new MessageChannel;
+    const receiverChannel = new MessageChannel;
+    let sender, receiver;
+    senderTransform = new RTCRtpScriptTransform(worker, {name:'MockRTCRtpTransform', mediaType:'video', side:'sender', port:senderChannel.port2}, [senderChannel.port2]);
+    receiverTransform = new RTCRtpScriptTransform(worker, {name:'MockRTCRtpTransform', mediaType:'video', side:'receiver', port:receiverChannel.port2}, [receiverChannel.port2]);
+    senderTransform.port = senderChannel.port1;
+    receiverTransform.port = receiverChannel.port1;
+
+    promise1 = waitForMessage(senderTransform.port, "started video sender");
+    promise2 = waitForMessage(receiverTransform.port, "started video receiver");
+
+    stream = await new Promise((resolve, reject) => {
+        createConnections((firstConnection) => {
+            sender = firstConnection.addTrack(localStream.getVideoTracks()[0], localStream);
+            sender.transform = senderTransform;
+        }, (secondConnection) => {
+            secondConnection.ontrack = (trackEvent) => {
+                receiver = trackEvent.receiver;
+                receiver.transform = receiverTransform;
+                resolve(trackEvent.streams[0]);
+            };
+        });
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+
+    await promise1;
+    await promise2;
+}, "setup");
+
+promise_test((test) => {
+    video.srcObject = stream;
+    return video.play();
+}, "video is playing");
+
+promise_test(async (test) => {
+    await waitForMessage(receiverTransform.port, "video frame delta");
+}, "video frame type");
+
+promise_test(async (test) => {
+    senderTransform.port.postMessage("startKeyFrames");
+    await waitForMessage(senderTransform.port, "video frame key");
+    await waitForMessage(receiverTransform.port, "video frame key");
+    senderTransform.port.postMessage("endKeyFrames");
+
+    await waitForMessage(receiverTransform.port, "video frame delta");
+}, "key frame requests from sender");
+
+promise_test(async (test) => {
+    receiverTransform.port.postMessage("startKeyFrames");
+    await waitForMessage(senderTransform.port, "video frame key");
+    await waitForMessage(receiverTransform.port, "video frame key");
+    receiverTransform.port.postMessage("endKeyFrames");
+
+}, "key frame requests from receiver");
+        </script>
+    </body>
+</html>

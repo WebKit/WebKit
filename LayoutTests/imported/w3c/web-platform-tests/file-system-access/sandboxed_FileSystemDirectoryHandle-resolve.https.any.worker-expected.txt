@@ -1,0 +1,6 @@
+
+PASS Resolve returns empty array for same directory
+PASS Resolve returns correct path
+PASS Resolve returns correct path with non-ascii characters
+FAIL Resolve returns null when entry is not a child assert_equals: expected null but got []
+

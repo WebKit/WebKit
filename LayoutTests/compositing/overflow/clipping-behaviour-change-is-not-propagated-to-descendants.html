@@ -1,0 +1,93 @@
+<html>
+<head>
+<style>
+  div {
+    position:relative;
+    white-space: nowrap;
+  }
+
+  .container {
+    z-index:1;
+  }
+
+  .transform {
+    -webkit-transform: translateZ(0);
+    height: 20px;
+    width: 20px;
+    top: 0px;
+    z-index:0;
+    border: solid 1px red;
+  }
+
+  .box {
+    border: solid 1px green;
+    top: 10px;
+    width: 100px;
+  }
+
+  .listItem {
+    display: list-item;
+  }
+</style>
+
+
+<script type="text/javascript">
+  if (testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+  }
+
+  function changeOverflowVisibilityAndRemoveId() {
+    var parentDiv = document.getElementById('changeOverflowVisibleToHidden');
+    parentDiv.style.overflow = 'hidden';
+    parentDiv.removeAttribute('id');
+
+    parentDiv = document.getElementById('changeOverflowHiddenToVisible');
+    parentDiv.style.overflow = 'visible';
+    parentDiv.removeAttribute('id');
+
+    if (window.internals)
+      document.getElementById('layers').innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS);
+
+    if (testRunner)
+      testRunner.notifyDone();
+  }
+
+  function run() {
+    // Flip divs' overflow property.
+    var parentDivs = document.getElementsByClassName('box');
+    parentDivs[0].id = 'changeOverflowVisibleToHidden';
+    parentDivs[0].style.overflow = 'visible';
+
+    parentDivs[1].id = 'changeOverflowHiddenToVisible';
+    parentDivs[1].style.overflow = 'hidden';
+
+    setTimeout('changeOverflowVisibilityAndRemoveId();', 0);
+  }
+</script>
+</head>
+<body onload='run();'>
+<p>This tests if changing the clipping behaviour on the parent compositing layer makes the child layer disappear.</p>
+<p>Text in both of the green boxes should stay visible.</p>
+
+<div class='container'>
+  <div class='box'>
+    <div class='listItem'>
+      Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+    </div>
+  </div>
+</div>
+<div class='transform'></div>
+
+<div class='container'>
+  <div class='box'>
+    <div class='listItem'>
+      Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+    </div>
+  </div>
+</div>
+<div class='transform'></div>
+
+<pre id="layers">Layer tree goes here when testing</pre>
+</body>
+</html>

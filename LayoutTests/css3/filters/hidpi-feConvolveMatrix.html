@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .box {
+            width: 200px;
+            height: 200px;
+            background-color: green;
+            filter: url(#sharpen);
+        }
+    </style>
+</head>
+<body>
+	<svg style="display:none;" xmlns="http://www.w3.org/2000/svg" version="1.1">
+		<defs>
+			<filter id="sharpen">
+    			<feConvolveMatrix order="3 3" preserveAlpha="true" kernelMatrix="0 0 0 0 1 0 0 0 0" />
+  			</filter>
+		</defs>
+	</svg>
+    <div class="box"></div>
+</body>
+</html>

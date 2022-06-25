@@ -1,0 +1,90 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+layer at (0,-28) size 126x211 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (10,80) size 420x243
+layer at (0,-28) size 126x210 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (10,80) size 420x243
+layer at (10,22) size 43x10
+  RenderSVGText {text} at (10,50) size 43x10 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 43x10
+      chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 13 width 42.49: "Raster to fit"
+layer at (10,102) size 41x10
+  RenderSVGText {text} at (10,130) size 41x10 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 41x10
+      chunk 1 text run 1 at (10.00,110.00) startOffset 0 endOffset 10 width 40.74: "Viewport 1"
+layer at (1,1) size 50x30
+  RenderSVGContainer {g} at (9,149) size 51x31
+layer at (1,1) size 49x29
+  RenderSVGRect {rect} at (9,149) size 51x31 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
+layer at (10,172) size 41x10
+  RenderSVGText {text} at (10,200) size 41x10 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 41x10
+      chunk 1 text run 1 at (10.00,180.00) startOffset 0 endOffset 10 width 40.74: "Viewport 2"
+layer at (1,1) size 30x60
+  RenderSVGContainer {g} at (19,219) size 31x61
+layer at (1,1) size 29x59
+  RenderSVGRect {rect} at (19,219) size 31x61 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
+layer at (0,-28) size 112x58 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (120,80) size 120x108
+layer at (0,-13) size 50x43 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (120,80) size 50x43
+layer at (1,1) size 50x30
+  RenderSVGRect {rect} at (119,79) size 51x31 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
+layer at (0,-13) size 50x43 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (190,80) size 50x43
+layer at (1,1) size 50x30
+  RenderSVGRect {rect} at (189,79) size 51x31 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
+layer at (0,-13) size 50x43 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (120,130) size 50x43
+layer at (1,1) size 50x30
+  RenderSVGRect {rect} at (119,129) size 51x31 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
+layer at (0,-28) size 124x88 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (300,80) size 130x88
+layer at (0,-13) size 30x73 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (300,80) size 30x73
+layer at (1,1) size 30x60
+  RenderSVGRect {rect} at (299,79) size 31x61 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
+layer at (0,-13) size 30x73 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (350,80) size 30x73
+layer at (1,1) size 30x60
+  RenderSVGRect {rect} at (349,79) size 31x61 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
+layer at (0,-13) size 30x73 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (400,80) size 30x73
+layer at (1,1) size 30x60
+  RenderSVGRect {rect} at (399,79) size 31x61 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
+layer at (0,-28) size 126x88 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (120,215) size 130x88
+layer at (0,-13) size 30x73 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (120,215) size 30x73
+layer at (1,1) size 30x60
+  RenderSVGRect {rect} at (119,214) size 31x61 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
+layer at (0,-13) size 30x73 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (170,215) size 30x73
+layer at (1,1) size 30x60
+  RenderSVGRect {rect} at (169,214) size 31x61 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
+layer at (0,-13) size 30x73 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (220,215) size 30x73
+layer at (1,1) size 30x60
+  RenderSVGRect {rect} at (219,214) size 31x61 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
+layer at (0,-28) size 114x58 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (300,215) size 120x108
+layer at (0,-13) size 50x43 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (300,215) size 50x43
+layer at (1,1) size 50x30
+  RenderSVGRect {rect} at (299,214) size 51x31 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
+layer at (0,-13) size 50x43 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (370,215) size 50x43
+layer at (1,1) size 50x30
+  RenderSVGRect {rect} at (369,214) size 51x31 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
+layer at (0,-13) size 50x43 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (300,265) size 50x43
+layer at (1,1) size 50x30
+  RenderSVGRect {rect} at (299,264) size 51x31 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
+layer at (10,304) size 263x46
+  RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 264x46
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.5 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (-1,-1) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

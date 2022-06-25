@@ -1,0 +1,29 @@
+<div id="description1">This tests splitting two paragraphs with InsertParagraph while the typing style is bold. New text entered after the split should be bold.</div>
+<div id="edit1" contentEditable="true">xx</div>
+
+<div id="description2">This tests splitting two paragraphs with InsertLineBreak while the typing style is bold. New text entered after the split should be bold. The inserted &lt;br&gt; doesn't need to be surrounded by a bold tag here.</div>
+<div id="edit2" contentEditable="true">xx</div>
+
+<script>
+if (window.testRunner)
+    window.testRunner.dumpAsText();
+edit1 = document.getElementById("edit1");
+edit1.focus();
+text = edit1.firstChild;
+window.getSelection().setPosition(text, 1);
+document.execCommand("Bold");
+document.execCommand("InsertParagraph");
+document.execCommand("InsertText", false, "Bold");
+
+edit2 = document.getElementById("edit2");
+edit2.focus();
+text = edit2.firstChild;
+window.getSelection().setPosition(text, 1);
+document.execCommand("Bold");
+document.execCommand("InsertLineBreak");
+document.execCommand("InsertText", false, "Bold");
+
+if (window.testRunner)
+    document.body.innerText = document.getElementById("description1").innerText + "\n" + edit1.innerHTML + "\n\n" +
+                              document.getElementById("description2").innerText + "\n" + edit2.innerHTML;
+</script>

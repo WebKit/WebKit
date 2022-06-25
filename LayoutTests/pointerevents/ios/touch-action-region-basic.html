@@ -1,0 +1,46 @@
+<html>
+<style>
+.test {
+    width: 200px;
+    height: 200px;
+    position: relative;
+}
+.box {
+    width: 100px;
+    height: 100px;
+    background: green;
+    position: absolute;
+}
+.none {
+    touch-action:none;
+    background: red;
+}
+
+.red {
+    background: red;
+}
+</style>
+<script>
+window.onload = function () {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    if (window.internals)
+        results.innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+}
+</script>
+<body>
+<div class="test">
+    <div class="box none"></div>
+</div>
+<div class="test">
+    <div class="none" style="height:25px;">
+        <div class="box red"></div>
+    </div>
+</div>
+<div class="test">
+    <div class="box none"></div>
+    <div class="box" style="top:50px;left:50px;"></div>
+</div>
+<pre id="results"></pre>
+</body>
+</html>

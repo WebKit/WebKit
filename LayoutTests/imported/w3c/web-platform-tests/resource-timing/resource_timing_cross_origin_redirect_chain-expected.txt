@@ -1,0 +1,10 @@
+
+
+PASS window.performance is defined
+PASS window.performance.getEntriesByName is defined
+PASS There should be one entry.
+PASS redirectStart == 0 in cross-origin redirect.
+PASS redirectEnd == 0 in cross-origin redirect.
+PASS fetchStart > 0 in cross-origin redirect.
+PASS startTime == fetchStart in cross-origin redirect.
+

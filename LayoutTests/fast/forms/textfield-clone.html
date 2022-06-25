@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<script src="../../resources/js-test-pre.js"></script>
+<p>There was a bug that the value property of a cloned text input was not updated.</p>
+<div id=container>
+<input id=i1 value="Initial" style>
+<input id=i2 type=search value="Initial" style>
+<!-- ENABLE_INPUT_SPEECH flag doesn't affect the test result -->
+<input id=i3 type=search value="Initial" x-webkit-speech style>
+<input id=i4 type=number value="0" style>
+</div>
+<div id=console></div>
+<script>
+var clone;
+var container = document.getElementById('container');
+var newValue;
+
+function check(id, value) {
+    var original = document.getElementById(id);
+    clone = original.cloneNode();
+    container.replaceChild(clone, original);
+    clone.focus();
+    document.execCommand('selectAll');
+    document.execCommand('insertText', false, value);
+    newValue = value;
+    debug('Check for ' + clone.type + ' type:');
+    shouldBe('clone.value', 'newValue');
+}
+
+check('i1', 'foo');
+check('i2', 'query');
+check('i3', 'speech');
+check('i4', '13');
+container.innerHTML = '';
+</script>
+<script src="../../resources/js-test-post.js"></script>

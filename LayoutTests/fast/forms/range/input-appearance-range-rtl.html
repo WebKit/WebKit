@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div><input type=range value=0 dir=rtl></div>
+<div><input type=range value=50 dir=rtl></div>
+<div><input type=range value=100 dir=rtl></div>
+<div><input type=range value=100 style="direction:rtl"></div>
+<div><input type=range value=100 id=r1></div>
+<div><input type=range value=100 id=r2></div>
+<div><input type=range value=0 id=r3 dir=rtl></div>
+<div><input type=range value=0 id=r4 style="direction:rtl"></div>
+<div><input type=range style="-webkit-appearance:slider-vertical; height:140px;" value=80 dir=rtl></div>
+<script>
+document.getElementById('r1').dir = 'rtl';
+document.getElementById('r2').style.direction = 'rtl';
+document.getElementById('r3').dir = 'ltr';
+document.getElementById('r4').style.direction = 'ltr';
+</script>
+</body>
+</html>

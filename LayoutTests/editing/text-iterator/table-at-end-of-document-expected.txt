@@ -1,0 +1,7 @@
+This tests getting the plain text of a CSS table followed by a text. You should see X and Y in two seprate lines below twice:
+
+PASS
+X
+Y
+X
+Y

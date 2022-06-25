@@ -1,0 +1,8 @@
+specific_include_rules = {
+  "thread_registry\.cc": [
+    "+sdk/android/native_api/stacktrace/stacktrace.h",
+  ],
+  "warn_current_thread_is_deadlocked\.cc": [
+    "+sdk/android/native_api/stacktrace/stacktrace.h",
+  ],
+}

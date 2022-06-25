@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../../editing/editing.js" language="JavaScript" type="text/JavaScript" ></script>
+<script id="ui-script" type="text/plain">
+    (function() {
+        uiController.retrieveSpeakSelectionContent(function() {
+            uiController.uiScriptComplete(uiController.accessibilitySpeakSelectionContent);
+        });
+    })();
+</script>
+</head>
+
+<body onload="runTest();">
+<p id="result">This test has to run in iOS WebKitTestRunner.</p>
+
+<input type="text" id="myText" value="Text outside iframe">
+<iframe id="frame" srcdoc="<html><body><input id='myText2' type='text' value='Text inside iframe'><span tabindex=0 id='myText3'>text3</span></body></html>"></iframe>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests that accessibility speak selection content is correct.");
+
+    if (window.testRunner)
+        window.jsTestIsAsync = true;
+
+    function runTest() {
+        var input1 = document.getElementById("myText");
+        selectInputContent(input1);
+        if (testRunner.runUIScript) {
+            var uiScript = document.getElementById('ui-script').text;
+            testRunner.runUIScript(uiScript, function(result) {
+                debug("Content: " + result);
+                testInsideFrame(document.getElementById('frame').contentWindow.document);
+            });
+        }
+    }
+    
+    function testInsideFrame(iframeDocument) {
+        var input2 = iframeDocument.getElementById("myText2");
+        selectInputContent(input2);
+        if (testRunner.runUIScript) {
+            var uiScript = document.getElementById('ui-script').text;
+            testRunner.runUIScript(uiScript, function(result) {
+                debug("Content: " + result);
+                testNonInputInsideFrame(iframeDocument);
+            });
+        }
+    }
+    
+    function testNonInputInsideFrame(iframeDocument) {
+        var text3 =  iframeDocument.getElementById("myText3");
+        var text3Obj = accessibilityController.accessibleElementById("myText3");
+        selectElementContent(text3, text3Obj, 5);
+        if (testRunner.runUIScript) {
+            var uiScript = document.getElementById('ui-script').text;
+            testRunner.runUIScript(uiScript, function(result) {
+                debug("Content: " + result);
+                finishJSTest();
+            });
+        }
+    }
+    
+    function selectInputContent(input) {
+        input.focus();
+        input.selectionStart = 0;
+        input.selectionEnd = 100;
+    }
+    
+    function selectElementContent(element, elementObj, length) {
+        element.focus();
+        setSelectionCommand(element, 0, element, 0);
+        for (var i = 0; i < length; i++)
+            elementObj.increaseTextSelection;
+    }
+    
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

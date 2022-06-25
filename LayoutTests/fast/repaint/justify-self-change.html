@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+<script src="resources/text-based-repaint.js"></script>
+<script>
+function repaintTest() {
+  document.getElementsByClassName('item1')[0].style.justifySelf = 'stretch';
+  document.getElementsByClassName('item2')[0].style.justifySelf = 'stretch';
+}
+onload = runRepaintTest;
+</script>
+<style>
+body {
+  margin: 0;
+}
+#container {
+  display: grid;
+  grid: 300px / 100px 100px;
+  justify-items: center;
+  width: 200px;
+  background-color: red;
+}
+.item1 {
+  grid-row: 1;
+  grid-column: 1;
+  background-color: green;
+  border: solid thin blue;
+}
+.item2 {
+  grid-row: 1;
+  grid-column: 2;
+  background-color: green;
+  border: solid thin blue;
+</style>
+<p style="height: 20px">Tests invalidation on justify-self style change. Passes if there is no red.</p>
+<div id="container">
+  <div class="item1">
+    <div style="width: 50px; height: 150px"></div>
+  </div>
+  <div class="item2">
+    <div style="width: 50px; height: 100px"></div>
+  </div>
+</div>

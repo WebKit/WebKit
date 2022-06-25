@@ -1,0 +1,10 @@
+
+Test that rubberbanding inside overflow:scroll in the non-fast scrollable region does not trigger page scrolls
+Waiting for rubberband...
+Waiting for stabilization
+PASS overflowScrollEventCount > 0 is true
+PASS windowScrollEventCount == 0 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,110 @@
+<html><body><script src="../../resources/js-test.js"></script><script>
+
+description("Test tree ordering algorithm for boundary points.")
+
+function shouldBeBoth(containerA, offsetA, containerB, offsetB, forward, reversed)
+{
+    shouldBeEqualToString("internals.treeOrderBoundaryPoints(" + containerA + ", " + offsetA + ", " + containerB + ", " + offsetB + ", 'ComposedTree')", forward)
+    if (containerA != containerB || offsetA != offsetB)
+        shouldBeEqualToString("internals.treeOrderBoundaryPoints(" + containerB + ", " + offsetB + ", " + containerA + ", " + offsetA + ", 'ComposedTree')", reversed)
+}
+
+function shouldBeEquivalent(containerA, offsetA, containerB, offsetB)
+{
+    shouldBeBoth(containerA, offsetA, containerB, offsetB, "equivalent", "equivalent")
+}
+
+function shouldBeLess(containerA, offsetA, containerB, offsetB)
+{
+    shouldBeBoth(containerA, offsetA, containerB, offsetB, "less", "greater")
+}
+
+function shouldBeUnordered(containerA, offsetA, containerB, offsetB)
+{
+    shouldBeBoth(containerA, offsetA, containerB, offsetB, "unordered", "unordered")
+}
+
+shouldBeEquivalent("document", 0, "document", 0)
+shouldBeLess("document", 0, "document", 1)
+
+let body = document.body;
+
+shouldBe("body.childNodes.length", "4")
+
+shouldBeEquivalent("body", 0, "body", 0)
+shouldBeLess("document", 0, "body", 0)
+shouldBeLess("body", 0, "document", 1)
+shouldBeLess("body", 4, "document", 1)
+
+let a = document.createElement("div")
+shouldBeEquivalent("a", 0, "a", 0)
+shouldBeUnordered("body", 0, "a", 0)
+
+body.appendChild(a)
+shouldBeLess("body", 0, "a", 0)
+shouldBeEquivalent("a", 0, "a", 0)
+shouldBeLess("a", 0, "body", 5)
+
+let b = document.createElement("div")
+body.appendChild(b)
+shouldBeLess("body", 0, "b", 0)
+shouldBeLess("a", 0, "b", 0)
+shouldBeLess("body", 5, "b", 0)
+shouldBeLess("b", 0, "body", 6)
+
+let c = document.createElement("div")
+b.appendChild(c)
+shouldBeLess("body", 0, "c", 0)
+shouldBeLess("a", 0, "c", 0)
+shouldBeLess("b", 0, "c", 0)
+shouldBeLess("body", 4, "c", 0)
+shouldBeLess("c", 0, "body", 6)
+shouldBeLess("a", 1, "c", 0)
+shouldBeLess("c", 0, "b", 1)
+
+let d = document.createElement("div")
+a.appendChild(d)
+shouldBeLess("body", 0, "d", 0)
+shouldBeLess("body", 0, "d", 0)
+shouldBeLess("a", 0, "d", 0)
+shouldBeLess("d", 0, "b", 0)
+shouldBeLess("d", 0, "c", 0)
+shouldBeLess("a", 0, "d", 0)
+shouldBeLess("d", 0, "b", 0)
+shouldBeLess("d", 0, "c", 0)
+shouldBeLess("d", 0, "body", 5)
+shouldBeLess("d", 0, "a", 1)
+shouldBeLess("d", 0, "b", 1)
+shouldBeLess("d", 0, "c", 1)
+
+let e = document.createElement("div")
+let f = document.createElement("div")
+e.appendChild(f)
+shouldBeUnordered("body", 0, "f", 0)
+shouldBeUnordered("f", 0, "body", 0)
+shouldBeUnordered("body", 4, "f", 0)
+
+let g = document.createElement("textarea")
+c.appendChild(g)
+shouldBeLess("body", 0, "g", 0)
+shouldBeLess("body", 4, "g", 0)
+shouldBeLess("c", 0, "c", 1)
+shouldBeLess("c", 1, "c", 2)
+shouldBeLess("c", 0, "c", 2)
+shouldBeLess("c", 0, "g", 0)
+shouldBeLess("g", 0, "c", 1)
+shouldBeLess("g", 0, "c", 2)
+
+let h = internals.ensureUserAgentShadowRoot(g).firstChild
+shouldBeLess("body", 0, "h", 0)
+shouldBeLess("body", 4, "h", 0)
+shouldBeLess("c", 0, "h", 0)
+shouldBeLess("h", 0, "c", 1)
+shouldBeLess("h", 0, "c", 2)
+
+let i = a.attachShadow({ mode: "closed" })
+shouldBeLess("body", 0, "i", 0)
+shouldBeLess("i", 0, "d", 0)
+shouldBeLess("i", 0, "b", 0)
+
+</script></body></html>

@@ -1,0 +1,5 @@
+
+FAIL RadicalKernBeforeDegree = -1em < 0 assert_approx_equals: should be clamped to 0 expected 0 +/- 1 but got 2.765625
+FAIL RadicalKernBeforeAfterDegree = -5em < -3em = -degree's inline size assert_approx_equals: should be clamped to 3em expected 30 +/- 1 but got 50
+
+

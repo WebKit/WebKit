@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that selection gaps can be painted on subpixel position.</title>
+<style>
+  ::selection {
+    background: rgba(255, 0, 0, 0.9);
+  }
+
+  div {
+    font-size: 16px;
+    font-family: 'Ahem';
+    height: 20px;
+  }
+
+</style>
+</head>
+<body>
+<p id="container"></p>
+<script>
+  var container = document.getElementById("container");
+  fontSize = 16;
+  margin = 0;
+  for (i = 0; i < 20; ++i) {
+    var e = document.createElement("div");
+    e.innerHTML = "&nbsp";
+    e.style.fontSize = fontSize + "px";
+    e.style.margin = margin + "px";
+    container.appendChild(e);
+    fontSize+=0.3;
+    margin+=0.5;
+  }
+
+  var range = document.createRange(); 
+  range.selectNode(document.getElementById("container")); 
+  window.getSelection().addRange(range);
+</script>
+</body>
+</html>

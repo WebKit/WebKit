@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>video-currentTime-duration</title>
+    <script src="video-test.js"></script>
+    <script src="media-file.js"></script>
+    <script>
+    window.addEventListener('load', async event => {
+        findMediaElement();
+        run('video.src = findMediaFile("video", "content/test")');
+        await waitFor(video, 'canplaythrough');
+        run('video.currentTime = video.duration - 0.1');
+        await waitFor(video, 'seeked');
+        run('video.play()');
+        await waitFor(video, 'playing');
+        await waitFor(video, 'timeupdate');
+        testExpected('video.currentTime <= video.duration', true);
+        endTest();
+    });
+    </script>
+</head>
+<body>
+    <video muted></video>
+</body>
+</html>

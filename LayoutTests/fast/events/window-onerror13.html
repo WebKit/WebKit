@@ -1,0 +1,27 @@
+<html>
+<head>
+<script src="resources/window-onerror.js">
+</script>
+</head>
+<body>
+<p>Test that error is treated as not handled when window.onerror return
+value is not 'true'. <a href="https://bugs.webkit.org/show_bug.cgi?id=67119">Bug 67119</a>.</p>
+<div id="console"></div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function log(msg) {
+    document.getElementById("console").innerHTML += msg + "<br>";
+}
+
+window.onerror = function(msg, url, line, column, error)
+{
+  log("Uncaught error should be printed in console when window.onerror returns not true.");
+  log("DONE.");
+}
+
+throw "An Error";
+</script>
+</body>
+</html>

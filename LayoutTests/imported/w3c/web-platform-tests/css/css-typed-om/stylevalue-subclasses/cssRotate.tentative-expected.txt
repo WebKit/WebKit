@@ -1,0 +1,29 @@
+
+PASS Constructing a CSSRotate with a CSSUnitValue with type other than angle for the angle throws a TypeError
+PASS Constructing a CSSRotate with a CSSMathValue that doesn't match <angle> for the angle throws a TypeError
+PASS Constructing a CSSRotate with a CSSUnitValue with type other than number for the coordinates throws a TypeError
+PASS Constructing a CSSRotate with a CSSMathValue that doesn't match <number> for the coordinates throws a TypeError
+PASS Updating CSSRotate.x to a CSSUnitValue with type other than number throws a TypeError
+PASS Updating CSSRotate.x to a CSSMathValue that doesn't match <number> throws a TypeError
+PASS Updating CSSRotate.y to a CSSUnitValue with type other than number throws a TypeError
+PASS Updating CSSRotate.y to a CSSMathValue that doesn't match <number> throws a TypeError
+PASS Updating CSSRotate.z to a CSSUnitValue with type other than number throws a TypeError
+PASS Updating CSSRotate.z to a CSSMathValue that doesn't match <number> throws a TypeError
+PASS Updating CSSRotate.angle to a CSSUnitValue with type other than angle throws a TypeError
+PASS Updating CSSRotate.angle to a CSSMathValue that doesn't match <angle> throws a TypeError
+PASS CSSRotate can be constructed from a single angle
+PASS CSSRotate can be constructed from numberish coordinates
+PASS CSSRotate can be constructed from CSSMathValues
+PASS CSSRotate.x can be updated to a double
+PASS CSSRotate.x can be updated to a number CSSUnitValue
+PASS CSSRotate.x can be updated to a CSSMathValue matching <number>
+PASS CSSRotate.y can be updated to a double
+PASS CSSRotate.y can be updated to a number CSSUnitValue
+PASS CSSRotate.y can be updated to a CSSMathValue matching <number>
+PASS CSSRotate.z can be updated to a double
+PASS CSSRotate.z can be updated to a number CSSUnitValue
+PASS CSSRotate.z can be updated to a CSSMathValue matching <number>
+PASS CSSRotate.angle can be updated to a degree CSSUnitValue
+PASS CSSRotate.angle can be updated to a CSSMathValue matching <angle>
+PASS Modifying CSSRotate.is2D can be updated to true or false
+

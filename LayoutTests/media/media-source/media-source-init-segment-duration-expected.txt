@@ -1,0 +1,10 @@
+This tests the ability of the SourceBuffer to detect the movie fragment duration from a 'mvex' header.
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(update)
+EXPECTED (video.duration == '10') OK
+END OF TEST
+

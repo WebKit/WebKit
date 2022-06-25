@@ -1,0 +1,13 @@
+
+Tests that making other frame window a prototype doesn't expose that window properties
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS __proto__ = targetWindow threw exception TypeError: Object.prototype.__proto__ called on null or undefined.
+PASS: location === originalLocation should be 'true' and is.
+PASS: this.location === originalLocation should be 'true' and is.
+PASS: successfullyParsed should be 'true' and is.
+
+TEST COMPLETE
+

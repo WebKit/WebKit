@@ -1,0 +1,21 @@
+This tests that pressing and releasing keys dispatches DOM keydown and keyup events in the same order the keys were pressed and released.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Press e, g then release e, g (in order):
+type: keydown, key: e, code: KeyE, keyIdentifier: U+0045, keyCode: 69, charCode: 0, keyCode: 69, which: 69, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 0, keyLocation: 0
+type: keydown, key: g, code: KeyG, keyIdentifier: U+0047, keyCode: 71, charCode: 0, keyCode: 71, which: 71, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 0, keyLocation: 0
+type: keyup, key: e, code: KeyE, keyIdentifier: U+0045, keyCode: 69, charCode: 0, keyCode: 69, which: 69, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 0, keyLocation: 0
+type: keyup, key: g, code: KeyG, keyIdentifier: U+0047, keyCode: 71, charCode: 0, keyCode: 71, which: 71, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 0, keyLocation: 0
+
+Press the Left Option, Right Option then release the Left Option, Right Option (in order):
+type: keydown, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keydown, key: Alt, code: AltRight, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: true, ctrlKey: false, metaKey: false, shiftKey: false, location: 2, keyLocation: 2
+type: keyup, key: Alt, code: AltLeft, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 1, keyLocation: 1
+type: keyup, key: Alt, code: AltRight, keyIdentifier: Alt, keyCode: 18, charCode: 0, keyCode: 18, which: 18, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, location: 2, keyLocation: 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

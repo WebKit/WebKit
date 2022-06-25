@@ -1,0 +1,45 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>This tests that sets for overhanging floating objects are cleaned up properly when the floating object is destroyed.</title>
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<style>
+  html {
+    position: absolute;
+  }
+  
+  .float { 
+    float: left; 
+  }
+</style>
+</head>
+<head id="head1" style="-webkit-writing-mode: horizontal-bt;"></head>
+
+<i>
+  <button id="button1">PASS if no crash or ASSERT in debug.</button>
+</i>
+<td id="td1">
+  <body></body>
+</td>
+<i></i>
+
+<script>
+var docElement = document.documentElement;
+function crash() {
+    button1 = document.getElementById("button1");
+    button1.classList.toggle("float");
+
+    head1 = document.getElementById("head1");
+    td1 = document.getElementById("td1");
+    head1.appendChild(td1);
+
+    docElement.offsetTop;
+    head1.style.display = "list-item";
+    docElement.offsetTop;
+    button1.classList.toggle("float");
+}
+document.addEventListener("DOMContentLoaded", crash, false);
+</script>
+</html>

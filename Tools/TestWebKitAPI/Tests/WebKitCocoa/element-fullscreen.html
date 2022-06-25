@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<style>
+body, html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+.container {
+    width: 640px;
+    height: 480px;
+    position: relative;
+    border: 1px solid red;
+}
+
+video {
+    width: 100%;
+    height: 100%;
+}
+</style>
+</head>
+<body>
+    <div class="container">
+        <video muted loop></video>
+    </div>
+</body>
+<script>
+var container = document.querySelector(".container");
+var video = document.querySelector("video");
+
+async function loadSource(source)
+{
+    return new Promise(resolve => {
+        video.addEventListener("load", resolve, { once: true });
+        video.src = source;
+    });
+}
+
+async function waitForVideoFrame()
+{
+    return new Promise(resolve => {
+        video.requestVideoFrameCallback((timestamp, metadata) => {
+            resolve(timestamp);
+        });
+    });
+}
+
+function performWithUserGestureIfPossible(callback)
+{
+    if (window.internals)
+        internals.withUserGesture(callback);
+    else
+        callback();
+}
+
+function enterFullscreen()
+{
+    if (document.webkitIsFullScreen)
+        return false;
+
+    performWithUserGestureIfPossible(() => {
+        container.webkitRequestFullscreen({ navigationUI: "hide" });
+        video.play();
+    });
+    return true;
+}
+
+function exitFullscreen()
+{
+    if (!document.webkitIsFullScreen)
+        return false;
+
+    performWithUserGestureIfPossible(() => {
+        document.webkitExitFullscreen();
+        video.pause();
+    });
+    return true;
+}
+</script>
+</html>

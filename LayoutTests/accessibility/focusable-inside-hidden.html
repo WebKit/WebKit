@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+
+<body id="body">
+
+<div id="otherbutton" tabindex="0">a</div>
+
+<div aria-hidden="true">
+    <p id="backgroundContent">
+        <div tabindex="0" id="button" role="button" aria-label="BUTTON">test</div>
+    </p>
+</div>
+
+<script>
+    description("This tests that a focusable object inside an aria-hidden is in the hieararchy only after it gains focus.");
+
+    if (window.accessibilityController) {
+       jsTestIsAsync = true;
+
+       // By default, if it doesn't have focus it should be hidden because its inside aria-hidden.
+       var button = accessibilityController.accessibleElementById("button");
+       shouldBeTrue("!button || !button.isValid");
+
+       // Gain focus and this element should be visible to AX.
+       document.getElementById("button").focus();
+
+       setTimeout(function() {
+           button = accessibilityController.focusedElement;
+           if (accessibilityController.platformName == "atspi") {
+               shouldBe("button.title", "'AXTitle: BUTTON'");
+           } else {
+               shouldBe("button.description", "'AXDescription: BUTTON'");
+           }
+
+           button = accessibilityController.accessibleElementById("button");
+
+           if (accessibilityController.platformName == "atspi") {
+               shouldBe("button.title", "'AXTitle: BUTTON'");
+           } else {
+               shouldBe("button.description", "'AXDescription: BUTTON'");
+           }
+
+           // Lose focus and this element should be hidden again.
+           document.getElementById("otherbutton").focus();
+           setTimeout(function() {
+               button = accessibilityController.accessibleElementById("button");
+               shouldBeTrue("!button || !button.isValid");
+               finishJSTest();
+           }, 1);
+        }, 1);   
+    }
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

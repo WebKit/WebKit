@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<p>This test verifies that moving an element to a different document during blur doesn't crash (see <a href="https://webkit.org/b/224957">bug #224957</a>).</p>
+
+<div id="initial" tabindex="0">initial</div>
+<div id="target" tabindex="0">target</div>
+<iframe id="iframe"></iframe>
+
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+
+  initial.addEventListener("blur", () => {
+    iframe.contentDocument.body.appendChild(target);
+  });
+  initial.focus();
+  target.focus();
+  iframe.remove();
+</script>

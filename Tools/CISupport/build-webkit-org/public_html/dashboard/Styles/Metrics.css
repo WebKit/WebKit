@@ -1,0 +1,88 @@
+/*
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+body {
+    margin-top: 15px;
+}
+
+#range-picker {
+    font-family: "HelveticaNeue-Light", sans-serif;
+    font-size: 14px;
+    color: rgb(145, 135, 95);
+    cursor: pointer;
+}
+
+.queue-view .result-line {
+    text-align: left;
+    padding: 2px 0;
+    font-family: "Helvetica Neue", sans-serif;
+    font-size: 12px;
+    color: rgb(145, 135, 95);
+    -webkit-user-select: auto;
+    cursor: text;
+}
+
+table.aggregate-grid tr.headers th {
+    font-size: 36px;
+}
+
+.aggregate-queue-view .result-line {
+    font-size: 14px;
+    text-align: center;
+    text-transform: lowercase;
+}
+
+.queue-view .queueLabel + .result-line,
+.queue-view .error-line + .result-line,
+.result-line:first-child
+{
+    padding: 10px 0 2px 0;
+    font-weight: bold;
+}
+
+.queue-view .error-line {
+    color: rgb(191, 67, 41);
+}
+
+.queue-view .divider {
+    height: 6px;
+}
+
+table.aggregate-grid .queue-view .divider {
+    height: 10px;
+}
+
+.metrics-loading-indicator {
+    font-family: "HelveticaNeue-Light", sans-serif;
+    font-size: 14px;
+    color: rgb(145, 135, 95);
+    height: 100px;
+    line-height: 100px;
+    visibility: hidden;
+}
+
+.tables-divider {
+    height: 60px;
+}

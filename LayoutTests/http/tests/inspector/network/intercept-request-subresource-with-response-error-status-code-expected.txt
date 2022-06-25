@@ -1,0 +1,8 @@
+ALERT: DEFAULT override.js TEXT
+Test request interception with response that has an error status code for the subresource load.
+
+
+== Running test suite: Network.interceptRequestWithResponse
+-- Running test case: Network.interceptRequestWithResponse.Subresource.StatusCode.Error
+Failed to load resource: the server responded with a status of 418 (PASS)
+

@@ -1,0 +1,12 @@
+This tests the fragment parsing algorithm inside a XHTML document without xmlns set on the document element via innerHTML. The element without prefix or xmlns attribute should use the default namespace of the context element (that of body element in this case).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+xmlDocumentWithoutXmlns.body = xmlDocumentWithoutXmlns.createElement('body');
+contextElement = xmlDocumentWithoutXmlns.body;
+FAIL contextElement.innerHTML = '<a href=""></a>'; contextElement.body.firstChild.namespaceURI should be http://www.w3.org/1999/xhtml. Threw exception TypeError: undefined is not an object (evaluating 'contextElement.body.firstChild')
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

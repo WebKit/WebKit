@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf8">
+<head>
+<script src="../../resources/ui-helper.js"></script>
+<style>
+canvas {
+    width: 200px;
+    height: 200px;
+    margin-top: 0;
+}
+</style>
+</head>
+<body>
+<canvas width="400" height="400"></canvas>
+</body>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+addEventListener("load", async () => {
+    let canvas = document.querySelector("canvas");
+    let context = canvas.getContext("2d");
+    context.font = "bold 36px '.AppleSimplifiedChineseFont-Heavy'";
+    context.strokeText("苹果电脑", 40, 40);
+    await UIHelper.renderingUpdate();
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+</script>
+</html>

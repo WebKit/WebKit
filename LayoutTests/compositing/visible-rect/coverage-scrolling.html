@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        body {
+            height: 4000px;
+        }
+        
+        ol {
+            height: 80%;
+        }
+        li {
+            margin: 200px 100px;
+            height: 200px;
+            width: 300px;
+            border: 10px solid blue;
+            background-color: gray;
+            box-shadow: 0 0 10px black;
+            font-size: 24pt;
+            box-sizing: border-box;
+            -webkit-transform: translateZ(0);
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function doTest()
+        {
+            window.setTimeout(function() {
+                window.scrollTo(0, 980);
+                if (window.internals)
+                    document.getElementById('layers').innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS)
+
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, 0);
+        }
+
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+
+<ol>
+    <li></li>
+    <li></li>
+    <li></li>
+    <li></li>
+    <li></li>
+    <li></li>
+    <li></li>
+    <li></li>
+    <li></li>
+</ol>
+<pre id="layers">Layer tree goes here when testing</pre>
+
+</body>
+</html>
+

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Service Worker Header Filtering</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+ <script src="/common/get-host-info.sub.js"></script>
+</head>
+<body>
+<script>
+var scope = "resources";
+var registration;
+var frame;
+
+var url1 = "/WebKit/service-workers/resources/response-full-of-headers.py";
+var url2 = get_host_info().HTTPS_REMOTE_ORIGIN + url1;
+
+function withFrame(url)
+{
+    return new Promise((resolve) => {
+        const frame = document.createElement('iframe');
+        frame.src = url;
+        frame.onload = function() { resolve(frame); };
+        document.body.appendChild(frame);
+    });
+}
+
+async function registerServiceWorker(scope)
+{
+    const registration = await navigator.serviceWorker.register("header-filtering-worker.js", { scope : scope });
+    let activeWorker = registration.active;
+    if (activeWorker)
+        return registration;
+    activeWorker = registration.installing;
+    return new Promise(resolve => {
+        activeWorker.addEventListener('statechange', () => {
+            if (activeWorker.state === "activated")
+                resolve(registration);
+        });
+    });
+}
+
+var processMessage;
+promise_test(async (test) => {
+    registration = await registerServiceWorker(scope);
+    registration.active.postMessage("ready?");
+
+    navigator.serviceWorker.onmessage = (event) => {
+        processMessage(event.data);
+    };
+
+    return new Promise((resolve) => {
+        processMessage = (data) => {
+            assert_equals(event.data, "ready");
+            resolve();
+        }
+    });
+}, "Prepare tests: setup worker and register the client");
+
+promise_test(async (test) => {
+    const promise = new Promise((resolve) => {
+        processMessage = (data) => {
+            resolve(data);
+        };
+    });
+    frame = await withFrame(scope + "/header-filtering-iframe.html");
+    await promise;
+}, "Prepare tests: Add a frame controlled by service worker");
+
+promise_test(async (test) => {
+    const promise = new Promise((resolve) => {
+        processMessage = (data) => {
+            resolve(data);
+        };
+    });
+    frame.contentWindow.fetch(url1 + "?fetch");
+    assert_array_equals(await promise, ["Access-Control-Allow-Credentials","Access-Control-Allow-Methods","Access-Control-Allow-Origin",
+        "Access-Control-Expose-Headers","Cache-Control","Content-Length","Content-Type","Date","Referrer-Policy","Server",
+        "SourceMap","Timing-Allow-Origin","X-SourceMap","x-header1","x-header2"]);
+}, "Test same-origin fetch");
+
+promise_test(async (test) => {
+    const data = new Promise((resolve) => {
+        processMessage = (data) => {
+            resolve(data);
+        };
+    });
+    frame.contentWindow.fetch(url2 + "?fetch-cors", { mode : "cors" });
+    assert_array_equals(await data, ["Access-Control-Allow-Credentials","Access-Control-Allow-Methods","Access-Control-Allow-Origin",
+        "Access-Control-Expose-Headers","Cache-Control","Content-Length","Content-Type","Date","Referrer-Policy",
+        "SourceMap","Timing-Allow-Origin","X-SourceMap","x-Header1"]);
+}, "Test cors cross-origin fetch");
+
+promise_test(async (test) => {
+    const data = new Promise((resolve) => {
+        processMessage = (data) => {
+            resolve(data);
+        };
+    });
+    frame.contentWindow.fetch(url2 + "?fetch-no-cors", { mode : "no-cors" });
+    assert_array_equals(await data, ["Access-Control-Allow-Credentials","Access-Control-Allow-Methods","Access-Control-Allow-Origin",
+        "Access-Control-Expose-Headers","Cache-Control","Content-Length","Content-Type","Date","Referrer-Policy",
+        "SourceMap","Timing-Allow-Origin","X-SourceMap"]);
+}, "Test no-cors cross-origin fetch");
+
+promise_test(async (test) => {
+    const data = new Promise((resolve) => {
+        processMessage = (data) => {
+            resolve(data);
+        };
+    });
+    frame.contentWindow.loadScript(url1 + "?script");
+    assert_array_equals(await data, ["Access-Control-Allow-Credentials","Access-Control-Allow-Methods","Access-Control-Allow-Origin",
+        "Access-Control-Expose-Headers","Cache-Control","Content-Length","Content-Type","Date","Referrer-Policy",
+        "Server","SourceMap","Timing-Allow-Origin","X-SourceMap","x-header1","x-header2"]);
+}, "Test same-origin script load");
+
+promise_test(async (test) => {
+    const data = new Promise((resolve) => {
+        processMessage = (data) => {
+            resolve(data);
+        };
+    });
+    frame.contentWindow.loadScript(url2 + "?script-nocors");
+    assert_array_equals(await data, ["Access-Control-Allow-Credentials","Access-Control-Allow-Methods","Access-Control-Allow-Origin",
+        "Access-Control-Expose-Headers","Cache-Control","Content-Length","Content-Type","Date","Referrer-Policy",
+        "SourceMap","Timing-Allow-Origin","X-SourceMap"]);
+}, "Test no-cors script load");
+
+promise_test(async (test) => {
+    const data = new Promise((resolve) => {
+        processMessage = (data) => {
+            resolve(data);
+        };
+    });
+    frame.contentWindow.loadScript(url2 + "?script-cors", "anonymous");
+    assert_array_equals(await data, ["Access-Control-Allow-Credentials","Access-Control-Allow-Methods","Access-Control-Allow-Origin",
+        "Access-Control-Expose-Headers","Cache-Control","Content-Length","Content-Type","Date","Referrer-Policy",
+        "SourceMap","Timing-Allow-Origin","X-SourceMap","x-Header1"]);
+}, "Test cors script load");
+
+promise_test(async (test) => {
+    const data = new Promise((resolve) => {
+        processMessage = (data) => {
+            resolve(data);
+        };
+    });
+    let frame = await withFrame(url1 + "?html");
+    assert_array_equals(await data, ["Access-Control-Allow-Credentials","Access-Control-Allow-Methods","Access-Control-Allow-Origin",
+        "Access-Control-Expose-Headers","Cache-Control","Content-Length","Content-Type","Date","Referrer-Policy",
+        "Server", "SourceMap","Timing-Allow-Origin","X-SourceMap","x-header1", "x-header2"]);
+    frame.remove();
+}, "Test HTML load");
+
+promise_test(async (test) => {
+    await registration.unregister();
+    frame.remove();
+}, "After tests clean-up");
+
+</script>
+</body>
+</html>

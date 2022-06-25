@@ -1,0 +1,24 @@
+
+PASS localStorage.key
+PASS localStorage.key(0) should return the right thing.
+PASS localStorage.key(4294967296) should return the right thing.
+PASS localStorage.key(1) should return the right thing.
+PASS localStorage.key(4294967297) should return the right thing.
+PASS localStorage.key(2) should return the right thing.
+PASS localStorage.key(4294967298) should return the right thing.
+PASS localStorage.key(3) should return the right thing.
+PASS localStorage.key(4294967299) should return the right thing.
+PASS localStorage.key() should return null for out-of-range arguments.
+PASS localStorage.key with value changes
+PASS sessionStorage.key
+PASS sessionStorage.key(0) should return the right thing.
+PASS sessionStorage.key(4294967296) should return the right thing.
+PASS sessionStorage.key(1) should return the right thing.
+PASS sessionStorage.key(4294967297) should return the right thing.
+PASS sessionStorage.key(2) should return the right thing.
+PASS sessionStorage.key(4294967298) should return the right thing.
+PASS sessionStorage.key(3) should return the right thing.
+PASS sessionStorage.key(4294967299) should return the right thing.
+PASS sessionStorage.key() should return null for out-of-range arguments.
+PASS sessionStorage.key with value changes
+

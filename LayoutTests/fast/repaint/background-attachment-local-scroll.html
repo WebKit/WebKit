@@ -1,0 +1,61 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        #scroller {
+            width: 300px;
+            height: 300px;
+            overflow: scroll;
+            border: 1px solid black;
+            background-image: linear-gradient(lightblue, palegreen);
+            background-attachment: local;
+        }
+        
+        .content {
+            height: 300%;
+        }
+
+        /* Hide the scrollbars to remove scrollbar repaints. */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script>
+        jsTestIsAsync = true;
+        description("Test that a scroll of an overflow scrolling element, with `background-attachment:local`, repaints");
+
+        function startTrackingRepaints()
+        {
+            window.internals.startTrackingRepaints();
+            document.getElementById('scroller').scrollTop = 800;
+
+            logRepaints();
+        }
+
+        function logRepaints()
+        {
+            layerTreeAsText =  window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_REPAINT_RECTS);
+            window.internals.stopTrackingRepaints();
+            shouldBeTrue("layerTreeAsText.indexOf('repaint rect') > -1");
+
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+            if (!window.testRunner || !window.internals)
+                return;
+
+            setTimeout(startTrackingRepaints, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <div id="scroller">
+        <div class="content">
+            text here
+        </div>
+    </div>
+
+<script src="../../resources/js-test-post.js"></script>
+</html>

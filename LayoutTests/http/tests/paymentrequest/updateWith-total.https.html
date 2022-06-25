@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Tests for providing `total` to `PaymentRequestUpdateEvent.prototype.updateWith`.</title>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/payment-request.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<script>
+setup({ explicit_done: true, explicit_timeout: true });
+
+const method = validPaymentMethod();
+
+const detailsInit = validPaymentDetails();
+
+const detailsUpdate = {
+    total: {
+        label: "NewTotal",
+        amount: {
+            currency: "USD",
+            value: "20.00",
+        },
+    },
+};
+
+user_activation_test(async (test) => {
+    let request = new PaymentRequest([method], detailsInit);
+    request.addEventListener("merchantvalidation", (event) => {
+        event.complete({ });
+    });
+    request.addEventListener("shippingaddresschange", (event) => {
+        event.updateWith(detailsUpdate);
+        internals.mockPaymentCoordinator.acceptPayment();
+    });
+
+    let response = await request.show();
+
+    assert_equals(internals.mockPaymentCoordinator.total.label, detailsUpdate.total.label, "label of total should change");
+    assert_equals(internals.mockPaymentCoordinator.total.amount, detailsUpdate.total.amount.value, "value of total should change");
+    assert_equals(internals.mockPaymentCoordinator.lineItems.length, detailsInit.displayItems.length, "number of display items should not change");
+    for (let i = 0; i < detailsInit.displayItems.length; ++i) {
+        assert_equals(internals.mockPaymentCoordinator.lineItems[i].label, detailsInit.displayItems[i].label, `display item ${i} label should not change`);
+        assert_equals(internals.mockPaymentCoordinator.lineItems[i].amount, detailsInit.displayItems[i].amount.value, `display item ${i} value should not change`);
+    }
+
+    await response.complete("success");
+}, "Calling `updateWith` with a new `total` should not update any other values.");
+
+done();
+</script>
+

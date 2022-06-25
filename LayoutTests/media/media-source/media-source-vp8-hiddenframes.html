@@ -1,0 +1,38 @@
+<html>
+<head>
+<meta name="fuzzy" content="maxDifference=16; totalPixels=57600" />
+<title>MSE webm file with alternate reference frame</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../utilities.js"></script>
+<script>
+    // VP8 files were generated such that alternative reference frames were used:
+    // $ fmpeg -i dragon.webm -c:v libvpx -vf scale=320:-1 -auto-alt-ref 1 -arnr-maxframes 5 -arnr-strength 3 -pass 1 test-vp8-hiddenframes.webm
+    // $ fmpeg -i dragon.webm -c:v libvpx -vf scale=320:-1 -auto-alt-ref 1 -arnr-maxframes 5 -arnr-strength 3 -pass 2 test-vp8-hiddenframes.webm
+    // The command used to extract the last frame in png format was:
+    // $ ffmpeg -sseof -3 -i test-vp8-hiddenframes.webm -pred mixed -pix_fmt rgb24 -sws_flags +accurate_rnd+full_chroma_int -update 1 -q:v 1 test-vp8-hiddenframes.png
+    async function init()
+    {
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        let v = document.getElementsByTagName('video')[0];
+        let ms = new MediaSource();
+        v.src = URL.createObjectURL(ms);
+        await once(ms, 'sourceopen');
+        let videosb = ms.addSourceBuffer("video/webm; codecs=vp8");
+        await Promise.all([fetchAndLoad(videosb, '../content/test-vp8-hiddenframes', [''], '.webm') , once(v, 'loadedmetadata')]);
+        ms.endOfStream();
+        v.play();
+        // duration of the last frame.
+        v.currentTime = v.duration - 0.038;
+        await Promise.all([ once(v, 'ended'), once(v, 'seeked')]);
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+</script>
+</head>
+<body onload="init();">
+<video/>
+</body>
+</html>

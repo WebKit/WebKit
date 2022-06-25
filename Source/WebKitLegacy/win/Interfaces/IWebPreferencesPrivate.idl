@@ -1,0 +1,282 @@
+/*
+ * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer. 
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution. 
+ * 3.  Neither the name of Apple Inc. ("Apple") nor the names of
+ *     its contributors may be used to endorse or promote products derived
+ *     from this software without specific prior written permission. 
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#ifndef DO_NO_IMPORTS
+import "oaidl.idl";
+import "ocidl.idl";
+#endif
+
+typedef enum WebKitJavaScriptRuntimeFlags {
+    WebKitJavaScriptRuntimeFlagsAllEnabled = 0
+} WebKitJavaScriptRuntimeFlags;
+
+[
+    object,
+    oleautomation,
+    hidden,
+    uuid(1380DE41-42CF-4170-9D5D-7840EDE5B36C),
+    pointer_default(unique)
+]
+interface IWebPreferencesPrivate : IUnknown
+{
+    HRESULT setDeveloperExtrasEnabled([in] BOOL enabled);
+    HRESULT developerExtrasEnabled([out, retval] BOOL* enabled);
+
+    HRESULT setAutomaticallyDetectsCacheModel([in] BOOL automaticallyDetectsCacheModel);
+    HRESULT automaticallyDetectsCacheModel([out, retval] BOOL* automaticallyDetectsCacheModel);
+
+    HRESULT setAuthorAndUserStylesEnabled([in] BOOL enabled);
+    HRESULT authorAndUserStylesEnabled([out, retval] BOOL* enabled);
+
+    HRESULT inApplicationChromeMode([out, retval] BOOL *allowed);
+    HRESULT setApplicationChromeMode([in] BOOL allowed);
+
+    HRESULT setOfflineWebApplicationCacheEnabled([in] BOOL enabled);
+    HRESULT offlineWebApplicationCacheEnabled([out, retval] BOOL *enabled);
+
+    HRESULT localStorageDatabasePath([out, retval] BSTR* location);
+    HRESULT setLocalStorageDatabasePath([in] BSTR location);
+
+    // These two methods are no-ops, and only retained to keep
+    // the Interface consistent. DO NOT USE THEM.
+    HRESULT setShouldPaintNativeControls([in] BOOL shouldPaint);
+    HRESULT shouldPaintNativeControls([out, retval] BOOL* enabled);
+
+    HRESULT setDatabasesEnabled([in] BOOL enabled);
+    HRESULT databasesEnabled([out, retval] BOOL *enabled);
+
+    HRESULT setLocalStorageEnabled([in] BOOL enabled);
+    HRESULT localStorageEnabled([out, retval] BOOL* enabled);
+
+    HRESULT setFontSmoothingContrast([in] float contrast);
+    HRESULT fontSmoothingContrast([out, retval] float* contrast);
+
+    HRESULT isWebSecurityEnabled([out, retval] BOOL* enabled);
+    HRESULT setWebSecurityEnabled([in] BOOL enabled);
+
+    HRESULT allowUniversalAccessFromFileURLs([out, retval] BOOL *allowAccess);
+    HRESULT setAllowUniversalAccessFromFileURLs([in] BOOL allowAccess);
+
+    HRESULT isXSSAuditorEnabled([out, retval] BOOL *enabled);
+    HRESULT setXSSAuditorEnabled([in] BOOL enabled);
+
+    HRESULT isFrameFlatteningEnabled([out, retval] BOOL *enabled);
+    HRESULT setFrameFlatteningEnabled([in] BOOL enabled);
+
+    HRESULT experimentalNotificationsEnabled([out, retval] BOOL *enabled);
+    HRESULT setExperimentalNotificationsEnabled([in] BOOL enabled);
+
+    HRESULT setShouldUseHighResolutionTimers([in] BOOL useHighResolutionTimers);
+    HRESULT shouldUseHighResolutionTimers([out, retval] BOOL* useHighResolutionTimers);
+
+    // Used to set preference specified by a test via TestRunner.overridePreference(..).
+    // Used by DumpRenderTree.
+    HRESULT setPreferenceForTest([in] BSTR key, [in] BSTR value);
+
+    HRESULT unused1();
+    HRESULT unused2();
+
+    HRESULT setAcceleratedCompositingEnabled([in] BOOL);
+    HRESULT acceleratedCompositingEnabled([out, retval] BOOL*);
+
+    HRESULT setCustomDragCursorsEnabled([in] BOOL);
+    HRESULT customDragCursorsEnabled([out, retval] BOOL*);
+
+    HRESULT allowFileAccessFromFileURLs([out, retval] BOOL *allowAccess);
+    HRESULT setAllowFileAccessFromFileURLs([in] BOOL allowAccess);
+
+    HRESULT setShowDebugBorders([in] BOOL);
+    HRESULT showDebugBorders([out, retval] BOOL*);
+
+    HRESULT setShowRepaintCounter([in] BOOL);
+    HRESULT showRepaintCounter([out, retval] BOOL*);
+
+    HRESULT javaScriptCanAccessClipboard([out, retval] BOOL *enabled);
+    HRESULT setJavaScriptCanAccessClipboard([in] BOOL enabled);
+
+    HRESULT isDNSPrefetchingEnabled([out, retval] BOOL *enabled);
+    HRESULT setDNSPrefetchingEnabled([in] BOOL enabled);
+
+    HRESULT hyperlinkAuditingEnabled(BOOL *hyperlinkAuditingEnabled);
+    HRESULT setHyperlinkAuditingEnabled(BOOL hyperlinkAuditingEnabled);
+
+    HRESULT setLoadsSiteIconsIgnoringImageLoadingPreference([in] BOOL enabled);
+    HRESULT loadsSiteIconsIgnoringImageLoadingPreference([out, retval] BOOL* enabled);
+
+    HRESULT setFullScreenEnabled([in] BOOL enabled);
+    HRESULT isFullScreenEnabled([out, retval] BOOL* enabled);
+
+    HRESULT setHixie76WebSocketProtocolEnabled([in] BOOL enabled);
+    HRESULT hixie76WebSocketProtocolEnabled([out, retval] BOOL* enabled);
+
+    HRESULT setMediaPlaybackRequiresUserGesture([in] BOOL);
+    HRESULT mediaPlaybackRequiresUserGesture([out, retval] BOOL*);
+
+    HRESULT setMediaPlaybackAllowsInline([in] BOOL);
+    HRESULT mediaPlaybackAllowsInline([out, retval] BOOL*);
+
+    HRESULT setShowsToolTipOverTruncatedText([in] BOOL);
+    HRESULT showsToolTipOverTruncatedText([out, retval] BOOL*);
+
+    HRESULT setShouldInvertColors([in] BOOL);
+    HRESULT shouldInvertColors([out, retval] BOOL*);
+
+    HRESULT setRequestAnimationFrameEnabled([in] BOOL);
+    HRESULT requestAnimationFrameEnabled([out, retval] BOOL*);
+
+    HRESULT mockScrollbarsEnabled([out, retval] BOOL* enabled);
+    HRESULT setMockScrollbarsEnabled([in] BOOL enabled);
+
+    // These two methods are no-ops, and only retained to keep
+    // the Interface consistent. DO NOT USE THEM.
+    HRESULT screenFontSubstitutionEnabled([out, retval] BOOL* enabled);
+    HRESULT setScreenFontSubstitutionEnabled([in] BOOL enabled);
+
+    HRESULT isInheritURIQueryComponentEnabled([out, retval] BOOL* enabled);
+    HRESULT setEnableInheritURIQueryComponent([in] BOOL enabled);
+}
+
+[ uuid(0E1DDB80-6B38-4ABC-A252-B58A83EB6D8C) ]
+interface IWebPreferencesPrivate2 : IWebPreferencesPrivate
+{
+    HRESULT javaScriptRuntimeFlags([out, retval] unsigned* flags);
+    HRESULT setJavaScriptRuntimeFlags([in] unsigned flags);
+    HRESULT allowDisplayAndRunningOfInsecureContent([out, retval] BOOL* enabled);
+    HRESULT setAllowDisplayAndRunningOfInsecureContent([in] BOOL enabled);
+}
+
+[uuid(92809BFB-C24F-43AD-863F-601B08CC268D)]
+interface IWebPreferencesPrivate3 : IWebPreferencesPrivate2
+{
+    HRESULT showTiledScrollingIndicator([out, retval] BOOL* enabled);
+    HRESULT setShowTiledScrollingIndicator([in] BOOL enabled);
+    HRESULT fetchAPIEnabled([out, retval] BOOL* enabled);
+    HRESULT setFetchAPIEnabled([in] BOOL enabled);
+    HRESULT shadowDOMEnabled([out, retval] BOOL* enabled);
+    HRESULT setShadowDOMEnabled([in] BOOL enabled);
+    HRESULT customElementsEnabled([out, retval] BOOL* enabled);
+    HRESULT setCustomElementsEnabled([in] BOOL enabled);
+}
+
+[uuid(F9582D72-6348-45B1-AB09-39E33459B5B9)]
+interface IWebPreferencesPrivate4 : IWebPreferencesPrivate3
+{
+    HRESULT setApplicationId([in] BSTR applicationId);
+    HRESULT userTimingEnabled([out, retval] BOOL*);
+    HRESULT setUserTimingEnabled([in] BOOL enabled);
+    HRESULT resourceTimingEnabled([out, retval] BOOL*);
+    HRESULT setResourceTimingEnabled([in] BOOL enabled);
+    HRESULT linkPreloadEnabled([out, retval] BOOL*);
+    HRESULT setLinkPreloadEnabled([in] BOOL enabled);
+    HRESULT mediaPreloadingEnabled([out, retval] BOOL*);
+    HRESULT setMediaPreloadingEnabled([in] BOOL enabled);
+    HRESULT clearNetworkLoaderSession();
+    HRESULT switchNetworkLoaderToNewTestingSession();
+}
+
+[uuid(9C4CBF53-19BC-46B3-831E-6A8B88200F20)]
+interface IWebPreferencesPrivate5 : IWebPreferencesPrivate4
+{
+    HRESULT isSecureContextAttributeEnabled([out, retval] BOOL*);
+    HRESULT setIsSecureContextAttributeEnabled([in] BOOL enabled);
+}
+
+[uuid(B8BC62C9-1CA9-4FD1-B328-CB0BD171249F)]
+interface IWebPreferencesPrivate6 : IWebPreferencesPrivate5
+{
+    HRESULT dataTransferItemsEnabled([out, retval] BOOL*);
+    HRESULT setDataTransferItemsEnabled([in] BOOL enabled);
+    HRESULT visualViewportAPIEnabled([out, retval] BOOL*);
+    HRESULT setVisualViewportAPIEnabled([in] BOOL enabled);
+    HRESULT CSSOMViewScrollingAPIEnabled([out, retval] BOOL*);
+    HRESULT setCSSOMViewScrollingAPIEnabled([in] BOOL enabled);
+    HRESULT CSSOMViewSmoothScrollingEnabled([out, retval] BOOL*);
+    HRESULT setCSSOMViewSmoothScrollingEnabled([in] BOOL enabled);
+    HRESULT fetchAPIKeepAliveEnabled([out, retval] BOOL* enabled);
+    HRESULT setFetchAPIKeepAliveEnabled([in] BOOL enabled);
+    HRESULT spatialNavigationEnabled([out, retval] BOOL *enabled);
+    HRESULT setSpatialNavigationEnabled([in] BOOL enabled);
+    HRESULT menuItemElementEnabled([out, retval] BOOL* enabled);
+    HRESULT setMenuItemElementEnabled([in] BOOL enabled);
+    HRESULT keygenElementEnabled([out, retval] BOOL* enabled);
+    HRESULT setKeygenElementEnabled([in] BOOL enabled);
+    HRESULT serverTimingEnabled([out, retval] BOOL* enabled);
+    HRESULT setServerTimingEnabled([in] BOOL enabled);
+}
+
+[uuid(9A49D1DE-53DD-11E8-95E6-003EE1C28AB6)]
+interface IWebPreferencesPrivate7 : IWebPreferencesPrivate6
+{
+    HRESULT crossOriginWindowPolicySupportEnabled([out, retval] BOOL* enabled);
+    HRESULT setCrossOriginWindowPolicySupportEnabled([in] BOOL enabled);
+    HRESULT resizeObserverEnabled([out, retval] BOOL*);
+    HRESULT setResizeObserverEnabled([in] BOOL enabled);
+    HRESULT coreMathMLEnabled([out, retval] BOOL* enabled);
+    HRESULT setCoreMathMLEnabled([in] BOOL enabled);
+    HRESULT requestIdleCallbackEnabled([out, retval] BOOL* enabled);
+    HRESULT setRequestIdleCallbackEnabled([in] BOOL enabled);
+    HRESULT asyncClipboardAPIEnabled([out, retval] BOOL* enabled);
+    HRESULT setAsyncClipboardAPIEnabled([in] BOOL enabled);
+    HRESULT webAnimationsCompositeOperationsEnabled([out, retval] BOOL*);
+    HRESULT setWebAnimationsCompositeOperationsEnabled([in] BOOL enabled);
+    HRESULT webAnimationsMutableTimelinesEnabled([out, retval] BOOL*);
+    HRESULT setWebAnimationsMutableTimelinesEnabled([in] BOOL enabled);
+    HRESULT CSSCustomPropertiesAndValuesEnabled([out, retval] BOOL*);
+    HRESULT setCSSCustomPropertiesAndValuesEnabled([in] BOOL enabled);
+    HRESULT aspectRatioOfImgFromWidthAndHeightEnabled([out, retval] BOOL*);
+    HRESULT setAspectRatioOfImgFromWidthAndHeightEnabled([in] BOOL enabled);
+    HRESULT setWebSQLEnabled([in] BOOL enabled);
+    HRESULT webSQLEnabled([out, retval] BOOL* enabled);
+    HRESULT CSSIndividualTransformPropertiesEnabled([out, retval] BOOL* enabled);
+    HRESULT setCSSIndividualTransformPropertiesEnabled([in] BOOL enabled);
+}
+
+[uuid(04D4AAE1-5D01-4CCD-B46E-C022F10A6826)]
+interface IWebPreferencesPrivate8 : IWebPreferencesPrivate7
+{
+    HRESULT allowTopNavigationToDataURLs([out, retval] BOOL* enabled);
+    HRESULT setAllowTopNavigationToDataURLs([in] BOOL enabled);
+    HRESULT modernUnprefixedWebAudioEnabled([out, retval] BOOL* enabled);
+    HRESULT setModernUnprefixedWebAudioEnabled([in] BOOL enabled);
+    HRESULT contactPickerAPIEnabled([out, retval] BOOL* enabled);
+    HRESULT setContactPickerAPIEnabled([in] BOOL enabled);
+    HRESULT setBoolPreferenceForTesting([in] BSTR key, [in] BOOL value);
+    HRESULT setUInt32PreferenceForTesting([in] BSTR key, [in] unsigned value);
+    HRESULT setDoublePreferenceForTesting([in] BSTR key, [in] double value);
+    HRESULT setStringPreferenceForTesting([in] BSTR key, [in] BSTR value);
+    HRESULT speechRecognitionEnabled([out, retval] BOOL* enabled);
+    HRESULT setSpeechRecognitionEnabled([in] BOOL enabled);
+    HRESULT overscrollBehaviorEnabled([ out, retval ] BOOL*);
+    HRESULT setOverscrollBehaviorEnabled([in] BOOL enabled);
+    HRESULT resetForTesting();
+    HRESULT startBatchingUpdates();
+    HRESULT stopBatchingUpdates();
+}
+
+// NOTE: Please do not add any more preferences that are only for testing purposes. Instead,
+// please use the generalized set<type>PreferenceForTesting() functions.

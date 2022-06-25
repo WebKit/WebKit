@@ -1,0 +1,86 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+<style>
+    body {
+        height: 2500px;
+    }
+
+    .scroller {
+        width: 500px;
+        height: 300px;
+        overflow-x: hidden;
+        overflow-y: auto;
+        border: 1px solid black;
+    }
+
+    .contents {
+        height: 300%;
+        width: 300%;
+    }
+    </style>
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+    jsTestIsAsync = true;
+
+    let scroller;
+    function checkForScroll()
+    {
+        scroller = document.querySelector('.scroller');
+        shouldBe('scroller.scrollLeft', '0');
+        shouldBeTrue('scroller.scrollTop > 0');
+        finishJSTest();
+    }
+
+    async function scrollTest()
+    {
+        eventSender.mouseMoveTo(100, 100);
+
+        eventSender.monitorWheelEvents();
+        // Latch to the scroller.
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, 'changed', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, 'none', 'begin');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -10, 'none', 'continue');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
+        await UIHelper.waitForScrollCompletion();
+        
+        // Now scroll on the other axis.
+        eventSender.monitorWheelEvents({ resetLatching: false });
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'began', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(-10, 0, 'changed', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(-10, 0, 'none', 'begin');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(-10, 0, 'none', 'continue');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
+        await UIHelper.waitForScrollCompletion();
+
+        checkForScroll();
+    }
+
+    function setupTopLevel()
+    {
+        description("Tests that scroll events of type 'none' work properly.");
+        if (window.eventSender) {
+            setTimeout(scrollTest, 0);
+            return;
+        }
+
+        finishJSTest();
+    }
+
+    window.addEventListener('load', () => {
+        setupTopLevel();
+    }, false);
+</script>
+</head>
+<body>
+    <div class="scroller">
+        <div class="contents"></div>
+    </div>
+<div id="console"></div>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

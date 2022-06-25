@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Test of very large layer</title>
+
+    <style type="text/css" media="screen">
+
+    #container {
+      width: 500px;
+      height: 5000px;
+      border: 1px solid black;
+      background-color: yellow;
+      -webkit-transform:translateZ(0);
+    }
+    
+    .box {
+        position: absolute;
+        left:50px;
+        width: 200px;
+        height: 200px;
+    }
+    
+    .at-the-top {
+        top: 100px;
+        background-color: red;
+    }
+    
+    .at-the-bottom {
+        top:4700px;
+        background-color: blue;
+    }   
+    </style>
+    <script type="text/javascript" charset="utf-8">
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function testOnLoad()
+        {
+            // Wait for a layer update and the tiled layer to fill in.
+            window.setTimeout(function() {
+                window.setTimeout(function() {
+                    if (window.testRunner) {
+                        document.getElementById('layers').innerHTML = window.internals.layerTreeAsText(document);
+                        testRunner.notifyDone();
+                    }
+                }, 0);
+            }, 0);
+        }
+      
+        window.addEventListener('load', testOnLoad, false);
+    </script>
+  </head>
+  <body>
+      <p>
+        The yellow box should be large enough to scroll off the bottom.
+        There should be a red box on the first page and a blue box
+        near the bottom of the yellow box. This tests that we can support
+        very large compositing layers.
+      </p>
+        <div id="container">
+          <div class="box at-the-top"></div>
+          <div class="box at-the-bottom"></div>
+        </div>
+        <pre id="layers">Layer tree appears here in DRT.</pre>
+  </body>
+</html>

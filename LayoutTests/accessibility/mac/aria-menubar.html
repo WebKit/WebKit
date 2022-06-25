@@ -1,0 +1,27 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div tabindex="0" id="menu" role="menubar">menubar</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that an ARIA menu bar is exposed as a menu bar.");
+
+    if (window.accessibilityController) {
+
+        document.getElementById("menu").focus();
+        shouldBe("accessibilityController.focusedElement.role", "'AXRole: AXMenuBar'");
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+</script>
+<p>This tests inserting a paragraph separator before a special element at the start of an editable root.</p>
+<p>Visually, it should leave a blank line before the link, and the caret selection at the start of the link.</p>
+<p>Structurally, the empty paragraph element should go before the anchor element, rather than inside of it. See Radar #5452675.</p>
+<div contenteditable="true"><a id="anchor" href="http://www.apple.com">applesite</a></div>
+<script>
+var sel = window.getSelection();
+sel.setPosition(document.getElementById("anchor"), 0);
+document.execCommand("InsertParagraph");
+</script>

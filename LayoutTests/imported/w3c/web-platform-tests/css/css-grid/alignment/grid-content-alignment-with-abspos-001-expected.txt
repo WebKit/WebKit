@@ -1,0 +1,7 @@
+
+FAIL .grid 1 assert_equals:
+<div class="grid" data-expected-width="800" data-expected-height="600">
+    <div class="a" id="item" data-offset-x="329" data-offset-y="269" data-expected-width="142" data-expected-height="62" style="align-self: center; justify-self: center;"></div>
+  </div>
+offsetLeft expected 329 but got 0
+

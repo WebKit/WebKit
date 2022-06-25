@@ -1,0 +1,4 @@
+
+FAIL TextTrackCue.endTime, script-created cue The provided value is non-finite
+FAIL TextTrackCue.endTime, parsed cue null is not an object (evaluating 'c[0]')
+

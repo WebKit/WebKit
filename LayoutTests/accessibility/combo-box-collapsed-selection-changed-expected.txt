@@ -1,0 +1,11 @@
+
+This tests that a combo box notifies when the selected child has changed while arrowing through the options of a combobox while collapsed.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS selectionChangedNotifications is 4
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

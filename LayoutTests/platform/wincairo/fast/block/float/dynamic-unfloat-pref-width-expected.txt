@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+layer at (8,8) size 34x48
+  RenderBlock (positioned) {DIV} at (8,8) size 34x48 [border: (2px solid #0000FF)]
+    RenderBlock {DIV} at (2,2) size 30x24 [border: (2px solid #FFA500)]
+      RenderText {#text} at (2,2) size 26x19
+        text run at (2,2) width 26: "One"
+    RenderBlock (floating) {DIV} at (2,26) size 28x20
+      RenderText {#text} at (0,0) size 28x19
+        text run at (0,0) width 28: "Two"

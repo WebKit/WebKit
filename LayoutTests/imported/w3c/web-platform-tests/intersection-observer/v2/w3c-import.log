@@ -1,0 +1,32 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/v2/animated-occlusion.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/v2/blur-filter.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/v2/box-shadow.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/v2/cross-origin-effects.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/v2/cross-origin-occlusion.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/v2/delay-test.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/v2/drop-shadow-filter-vertical-rl.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/v2/iframe-target.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/v2/inline-occlusion.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/v2/position-relative.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/v2/scaled-target.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/v2/simple-effects.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/v2/simple-occlusion-svg-foreign-object.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/v2/simple-occlusion.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/v2/text-editor-occlusion.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/v2/text-shadow.html

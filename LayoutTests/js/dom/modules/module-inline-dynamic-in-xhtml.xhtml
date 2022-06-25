@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description('Test dynamically added inlined module does not work in XHTML document.');
+
+// Module will be executed asynchronously.
+window.jsTestIsAsync = true;
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+<script>
+debug('Module is not executed yet.');
+(function () {
+    var element = document.createElement("script");
+    element.textContent = `
+        import Cocoa from "./script-tests/module-inline-dynamic.js";
+        var cocoa = new Cocoa();
+
+        debug("Module execution is confined in the module environment.");
+        shouldBeEqualToString("typeof cocoa", "undefined");
+
+        window.exportedCocoa = cocoa;
+        shouldBeEqualToString("typeof exportedCocoa", "object");
+        shouldBeEqualToString("exportedCocoa.taste()", "awesome");
+        finishJSTest();
+    `;
+    element.type = "module";
+    document.body.appendChild(element);
+    setTimeout(function () {
+        shouldBe(`window.exportedCocoa`, `undefined`);
+        finishJSTest();
+    }, 100);
+} ());
+</script>
+</body>
+</html>

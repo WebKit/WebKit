@@ -1,0 +1,27 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/h2/__init__.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/h2/config.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/h2/connection.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/h2/errors.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/h2/events.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/h2/exceptions.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/h2/frame_buffer.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/h2/settings.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/h2/stream.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/h2/utilities.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/h2/h2/windows.py

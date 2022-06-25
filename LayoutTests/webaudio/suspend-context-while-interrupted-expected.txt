@@ -1,0 +1,25 @@
+Tests that media session interruption does not cause AudioContext.suspend() to throw
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Did start rendering
+internals.beginMediaSessionInterruption('enteringbackground')
+PASS Did begin interruption
+PASS context.state is "interrupted"
+PASS context.state is "interrupted"
+PASS didResolveSuspendPromise is false
+PASS context.state is "interrupted"
+PASS didResolveSuspendPromise is false
+internals.endMediaSessionInterruption('mayresumeplaying')
+PASS context.suspend() promise was resolved
+PASS Did end interruption
+PASS context.state is "suspended"
+PASS didResolveSuspendPromise is true
+PASS context.state is "suspended"
+PASS resume() promise was resolved
+PASS context.state is "running"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

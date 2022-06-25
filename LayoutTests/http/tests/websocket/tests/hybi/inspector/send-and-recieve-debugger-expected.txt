@@ -1,0 +1,18 @@
+Tests sending and receiving WebSocket messages.
+
+
+== Running test suite: WebSocket.SendAndReceiveDebugger
+-- Running test case: WebSocket.SendAndReceiveDebugger.DefferedReceiveWhilePaused
+PASS: Resource size should be 33 bytes.
+PASS: Frame data should be 'Hello World! Привет Мир!'
+PASS: Frame should be text.
+PASS: Frame should be outgoing.
+PASS: Message is walltime.
+Pausing script execution with `debugger` statement.
+Resuming script execution.
+PASS: Resource size should double.
+PASS: Frame data should be 'Hello World! Привет Мир!'
+PASS: Frame should be text.
+PASS: Frame should be incoming.
+PASS: Frame walltime should be greater than the previous one.
+

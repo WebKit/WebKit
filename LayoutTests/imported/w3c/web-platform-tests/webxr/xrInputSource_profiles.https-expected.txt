@@ -1,0 +1,4 @@
+
+PASS WebXR InputSource's profiles list can be set - webgl
+PASS WebXR InputSource's profiles list can be set - webgl2
+

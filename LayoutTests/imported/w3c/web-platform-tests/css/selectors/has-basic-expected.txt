@@ -1,0 +1,22 @@
+
+PASS :has(#a) matches expected elements
+PASS :has(.ancestor) matches expected elements
+PASS :has(.target) matches expected elements
+PASS :has(.descendant) matches expected elements
+PASS .parent:has(.target) matches expected elements
+PASS :has(.sibling ~ .target) matches expected elements
+PASS .parent:has(.sibling ~ .target) matches expected elements
+PASS :has(:is(.target ~ .sibling .descendant)) matches expected elements
+PASS .parent:has(:is(.target ~ .sibling .descendant)) matches expected elements
+PASS .sibling:has(.descendant) ~ .target matches expected elements
+FAIL :has(.sibling:has(.descendant) ~ .target) matches expected elements The string did not match the expected pattern.
+FAIL :has(.sibling:has(.descendant) ~ .target) ~ .parent > .descendant matches expected elements The string did not match the expected pattern.
+PASS :has(> .parent) matches expected elements
+PASS :has(> .target) matches expected elements
+PASS :has(> .parent, > .target) matches expected elements
+PASS :has(+ #h) matches expected elements
+PASS .parent:has(~ #h) matches expected elements
+PASS .sibling:has(.descendant) matches expected element
+PASS closest(.ancestor:has(.descendant)) returns expected element
+PASS :has(.target ~ .sibling .descendant) matches expectedly
+

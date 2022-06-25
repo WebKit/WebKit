@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
+</head>
+<body>
+    <script>
+    window.onerror = function(message, url, lineNumber)
+    {
+        document.getElementById("error").innerHTML = "ERROR: " + url + ":" + lineNumber + ": " + message;
+    }
+
+    const isInBrowser = true;
+    </script>
+    <script src="driver.js"></script>
+    <script src="results.js"></script>
+    <script src="stats.js"></script>
+    
+    <div class="swoop">&nbsp;</div>
+    
+    <header>
+        <h1 class="logo"><img src="ARES-6.svg" title="ARES-6" alt="ARES-6"></h1>
+        <button id="trigger" class="start">
+            <span id="status">Start</span>
+        </button>
+        <div id="error" class="error"></div>
+    </header>
+
+    <main>
+    
+    <p>ARES-6 measures the execution time of JavaScript's newest features. <a href="about.html">Read more details&hellip;</a></p>
+
+    <div class="overall">
+        <h2>Overall</h2>
+        <div class="score">
+            <span id="Geomean">
+                <span class="value">&#8709;</span><span class="units">ms</span>
+            </span>
+        </div>
+    </div>    
+    
+    <div class="tests">
+        
+        <div class="air test">
+            <h2 id="AirMessage">Air</h2> 
+
+            <div class="score">
+                <label>First Iteration</label>
+                <span id="AirFirstIteration">
+                    <span class="value">&#8709;</span><span class="units">ms</span>
+                </span>
+            </div>
+ 
+            <div class="score">
+                <label>Worst 4 Iterations</label>
+                <span id="AirAverageWorstCase">
+                    <span class="value">&#8709;</span><span class="units">ms</span>
+                </span>
+            </div>
+
+            <div class="score">
+                <label>Average</label>
+                <span id="AirSteadyState">
+                    <span class="value">&#8709;</span><span class="units">ms</span>
+                </span>
+            </div>
+        </div>
+    
+        <div class="basic test">
+            <h2 id="BasicMessage">Basic</h2> 
+            
+            <div class="score">
+                <label>First Iteration</label>
+                <span id="BasicFirstIteration">
+                    <span class="value">&#8709;</span><span class="units">ms</span>                    
+                </span>
+            </div>
+ 
+            <div class="score">
+                <label>Worst 4 Iteratons</label>
+                <span id="BasicAverageWorstCase">
+                    <span class="value">&#8709;</span><span class="units">ms</span>                    
+                </span>
+            </div>
+
+            <div class="score">
+                <label>Average</label>
+                <span id="BasicSteadyState">
+                    <span class="value">&#8709;</span><span class="units">ms</span>                    
+                </span>
+            </div>
+        </div>
+
+        <div class="babylon test">
+            <h2 id="BabylonMessage">Babylon</h2> 
+            
+            <div class="score">
+                <label>First Iteration</label>
+                <span id="BabylonFirstIteration">
+                    <span class="value">&#8709;</span><span class="units">ms</span>                    
+                </span>
+            </div>
+ 
+            <div class="score">
+                <label>Worst 4 Iterations</label>
+                <span id="BabylonAverageWorstCase">
+                    <span class="value">&#8709;</span><span class="units">ms</span>                    
+                </span>
+            </div>
+
+            <div class="score">
+                <label>Average</label>
+                <span id="BabylonSteadyState">
+                    <span class="value">&#8709;</span><span class="units">ms</span>                    
+                </span>
+            </div>
+        </div>
+
+        <div class="ML test">
+            <h2 id="MLMessage">ML</h2> 
+            
+            <div class="score">
+                <label>First Iteration</label>
+                <span id="MLFirstIteration">
+                    <span class="value">&#8709;</span><span class="units">ms</span>                    
+                </span>
+            </div>
+ 
+            <div class="score">
+                <label>Worst 4 Iterations</label>
+                <span id="MLAverageWorstCase">
+                    <span class="value">&#8709;</span><span class="units">ms</span>                    
+                </span>
+            </div>
+
+            <div class="score">
+                <label>Average</label>
+                <span id="MLSteadyState">
+                    <span class="value">&#8709;</span><span class="units">ms</span>                    
+                </span>
+            </div>
+        </div>
+
+    </div>
+    </main>
+    
+    <iframe id="magic" frameBorder=0></iframe>
+    <script src="air_benchmark.js"></script>
+    <script src="basic_benchmark.js"></script>
+    <script src="babylon_benchmark.js"></script>
+    <script src="ml_benchmark.js"></script>
+    <script src="glue.js"></script>
+        
+</body>
+</html>

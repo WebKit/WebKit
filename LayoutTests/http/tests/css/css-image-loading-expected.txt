@@ -1,0 +1,8 @@
+item
+Resource requests:
+
+
+background2.jpg
+content-image2.jpg
+content-image3.jpg
+list-image2.jpg

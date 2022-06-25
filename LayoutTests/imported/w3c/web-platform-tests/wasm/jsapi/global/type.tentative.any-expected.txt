@@ -1,0 +1,15 @@
+
+PASS i32, mutable
+PASS i32, immutable
+PASS i64, mutable
+PASS i64, immutable
+PASS f32, mutable
+PASS f32, immutable
+PASS f64, mutable
+PASS f64, immutable
+PASS externref, mutable
+PASS externref, immutable
+PASS anyfunc, mutable
+PASS anyfunc, immutable
+PASS key ordering
+

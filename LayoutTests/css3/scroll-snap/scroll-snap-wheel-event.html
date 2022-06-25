@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Simple wheel events should trigger scroll snapping</title>
+        <style type="text/css">
+            .container {
+                height: 200px;
+                width: 200px;
+                overflow: auto;
+                scroll-snap-type: both mandatory;
+            }
+
+            .horizontal-drawer {
+                height: 100%;
+                width: 500px;
+            }
+
+            .block {
+                height: 100%;
+                width: 200px;
+                scroll-snap-align: start;
+            }
+        </style>
+        <script src="../../resources/js-test.js"></script>
+        <script src="../../resources/ui-helper.js"></script>
+        <script>
+        window.jsTestIsAsync = true;
+
+        async function onLoad()
+        {
+            if (window.eventSender == undefined) {
+                document.getElementById('console').innerText = "Simple wheel events should trigger scroll snapping";
+                return;
+            }
+            try {
+                eventSender.mouseMoveTo(20, 190);
+                eventSender.mouseDown();
+                eventSender.mouseMoveTo(80, 190);
+                eventSender.mouseUp();
+
+                await UIHelper.statelessMouseWheelScrollAt(80, 190, -3, 0);
+
+                let horizontalContainer = document.getElementById("horizontal-container");
+                expectTrue(horizontalContainer.scrollLeft == 200, "horizontal mouse wheel event snapped");
+
+                eventSender.mouseMoveTo(190, 220);
+                eventSender.mouseDown();
+                eventSender.mouseMoveTo(190, 270);
+                eventSender.mouseUp();
+
+                await UIHelper.statelessMouseWheelScrollAt(190, 270, 0, -3);
+
+                let verticalContainer = document.getElementById("vertical-container");
+                expectTrue(verticalContainer.scrollTop == 185, "vertical mouse wheel event snapped");
+            } catch (e) {
+                console.log(e);
+            } finally {
+                finishJSTest();
+            }
+        }
+        </script>
+    </head>
+    <body onload="onLoad();">
+        <div id="horizontal-container" class="container">
+            <div class="horizontal-drawer">
+                <div class="block" style="float: left; background: #80475E"></div>
+                <div class="block" style="float: left; background: #CC5A71"></div>
+            </div>
+        </div>
+        <div id="vertical-container" class="container">
+            <div class="block" style="background: #80475E"></div>
+            <div class="block" style="background: #CC5A71"></div>
+        </div>
+        <p id="console"></p>
+        <script>
+        </script>
+    </body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            .block {
+                overflow-x: hidden;
+                width: 100px;
+            }
+            .subpixelAligned {
+                display: inline-block;
+                background-color: blue;
+                height: 29px;
+                width: 29px;
+            }
+        </style>
+        <script src="../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <div id="test-block1" class="block">
+            <span class="subpixelAligned" style="vertical-align: middle">&nbsp;</span>
+            <span>text</span>
+        </div>
+        <div id="test-block2" class="block">
+            <span class="subpixelAligned" style="vertical-align: 58%">&nbsp;</span>
+            <span>text</span>
+        </div>
+
+        <div id="test-block3" class="block">
+            <span class="subpixelAligned" style="vertical-align: 10.5px">&nbsp;</span>
+            <span>text</span>
+        </div>
+
+        <p>
+            The blocks above should not have scrollbars.
+        </p>
+        
+        <script>
+            for (let i = 1; i <= 3; ++i) {
+                let element = document.getElementById('test-block' + i);
+
+                if (element.offsetHeight == element.scrollHeight)
+                    testPassed('Does not overflow.');
+                else
+                    testFailed('Overflows, offsetHeight ' + element.offsetHeight + 'px, scrollHeight ' + element.scrollHeight + 'px');
+            }
+        </script>
+  </body>
+</html>

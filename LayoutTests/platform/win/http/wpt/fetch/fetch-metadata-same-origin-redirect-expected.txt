@@ -1,0 +1,8 @@
+
+
+PASS Same-Origin -> Same-Origin redirect
+FAIL undefined: sec-fetch-dest assert_equals: expected "image" but got ""
+FAIL undefined: sec-fetch-mode assert_equals: expected "no-cors" but got ""
+FAIL undefined: sec-fetch-site assert_equals: expected "same-origin" but got ""
+PASS undefined: sec-fetch-user
+

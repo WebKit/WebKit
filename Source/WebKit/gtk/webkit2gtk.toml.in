@@ -1,0 +1,41 @@
+[library]
+description = "The WebKit2 library"
+license = "BSD, LGPL-2.1"
+authors = "The WebKit GTK and WPE teams"
+version = "@PROJECT_VERSION@"
+repository_url = "https://github.com/WebKit/WebKit"
+website_url = "https://webkit.org"
+dependencies = ["GObject-2.0", "Gio-2.0", "Gtk-@GTK_API_VERSION@.0", "Soup-@SOUP_API_VERSION@"]
+devhelp = true
+search_index = true
+
+[dependencies."GObject-2.0"]
+name = "GObject"
+description = "The base type system library"
+docs_url = "https://docs.gtk.org/gobject/"
+
+[dependencies."Gio-2.0"]
+name = "Gio"
+description = "GObject Interfaces and Objects, Networking, IPC, and I/O"
+docs_url = "https://docs.gtk.org/gio/"
+
+[dependencies."Gtk-@GTK_API_VERSION@.0"]
+name = "Gtk"
+description = "The GTK widget toolkit"
+docs_url = "https://docs.gtk.org/gtk@GTK_API_VERSION@/"
+
+[dependencies."Soup-@SOUP_API_VERSION@"]
+name = "Soup"
+description = "HTTP client/server library"
+docs_url = "https://libsoup.org/libsoup-@SOUP_API_VERSION@"
+
+[theme]
+name = "basic"
+show_index_summary = true
+show_class_hierarchy = true
+
+[source-location]
+base_url = "https://github.com/WebKit/WebKit/tree/main"
+
+[extra]
+urlmap_file = "urlmap.js"

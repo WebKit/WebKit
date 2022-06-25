@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/runner.js"></script>
+<script>
+
+const numberOfIterations = 20;
+const numberOfItems = 5000;
+
+// Delete database(s) for the test ahead of time.
+var databaseName = "objectstore-add-DB";
+indexedDB.deleteDatabase(databaseName).onsuccess = function() {
+    startIteration();
+}
+
+var testGenerator = null;
+var db = null;
+
+PerfTestRunner.prepareToMeasureValuesAsync({
+    customIterationCount: numberOfIterations,
+    unit: 'ms',
+    done: function () {
+        db = null;
+        testGenerator = null;
+        PerfTestRunner.gc();
+    }
+});
+
+function startIteration()
+{
+    testGenerator = runIteration();
+    nextStep();
+}
+
+function nextStep()
+{
+    testGenerator.next();
+}
+
+function *runIteration()
+{
+    var openRequest = indexedDB.open(databaseName);
+    openRequest.onupgradeneeded = function(event) {
+        db = event.target.result;
+        var objectStore = db.createObjectStore('store');
+    }
+    openRequest.onsuccess = nextStep;
+
+    yield;
+
+    var startTime = PerfTestRunner.now();
+
+    var objectStore = db.transaction('store', 'readwrite').objectStore('store');
+    var completedAdds = 0;
+    for (var i = 0; i < numberOfItems; ++i) {
+        objectStore.add("value" + i, i).onsuccess = (function (key) {
+            return function(event) {
+                if (event.target.result != key)
+                    alert("Expected '" + key + "', got '" + event.target.result + "'");
+
+                if (++completedAdds == numberOfItems)
+                    nextStep();
+            }
+        })(i);
+    }
+
+    yield;
+
+    if (!PerfTestRunner.measureValueAsync(PerfTestRunner.now() - startTime))
+        return;
+
+    // Clear the object store so we don't add existing items in the next iteration.
+    objectStore = db.transaction('store', 'readwrite').objectStore('store');
+    objectStore.clear().onsuccess = function(event) {
+        nextStep();
+    }
+
+    yield;
+
+    setTimeout(startIteration, 0);
+}
+</script>
+</body>
+</html>

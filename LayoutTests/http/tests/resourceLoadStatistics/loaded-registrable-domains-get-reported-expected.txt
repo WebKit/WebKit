@@ -1,0 +1,10 @@
+Tests that a iframe gets reported as a loaded third party domain.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Loaded domain was successfully captured.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

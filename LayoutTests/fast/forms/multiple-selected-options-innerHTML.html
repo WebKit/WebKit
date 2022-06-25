@@ -1,0 +1,23 @@
+<body>
+<p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=25379">bug 25379<a>:
+Selecting a bank in American Express Pay Bill fails.</p>
+<p>Both SELECT elements below should say PASS.</p>
+<select>
+<option selected>FAIL</option>
+<option selected>PASS</option>
+</select>
+<div id=paymentoptions></div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+document.getElementById("paymentoptions").innerHTML = 
+    '<select>' +
+    '<option selected>FAIL</option>' +
+    '<option selected>PASS</option>' +
+    '</select>'
+
+if (window.testRunner && document.getElementsByTagName("select")[0].value == "PASS" && document.getElementsByTagName("select")[1].value == "PASS")
+    document.write("PASS");
+</script>
+</body>

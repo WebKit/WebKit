@@ -1,0 +1,62 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 51x19
+          text run at (0,0) width 51: "Test for "
+        RenderInline {I} at (0,0) size 701x19
+          RenderInline {A} at (0,0) size 305x19 [color=#0000EE]
+            RenderText {#text} at (51,0) size 305x19
+              text run at (51,0) width 305: "http://bugs.webkit.org/show_bug.cgi?id=11916"
+          RenderText {#text} at (356,0) size 396x19
+            text run at (356,0) width 4: " "
+            text run at (360,0) width 392: "REGRESSION (SearchField): RTL search fields are mixed up"
+        RenderText {#text} at (752,0) size 4x19
+          text run at (752,0) width 4: "."
+      RenderBlock {P} at (0,36) size 784x78
+        RenderTextControl {INPUT} at (2,2) size 179x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderFlexibleBox {DIV} at (3,3) size 173x16
+            RenderBlock {DIV} at (152,1) size 18x14
+            RenderBlock {DIV} at (12,0) size 138x16
+            RenderBlock {DIV} at (0,3) size 9x10
+        RenderText {#text} at (183,3) size 4x19
+          text run at (183,3) width 4: " "
+        RenderBR {BR} at (0,0) size 0x0
+        RenderTextControl {INPUT} at (2,28) size 249x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderFlexibleBox {DIV} at (3,3) size 243x16
+            RenderBlock {DIV} at (222,1) size 18x14
+            RenderBlock {DIV} at (12,0) size 208x16
+            RenderBlock {DIV} at (0,3) size 9x10
+        RenderText {#text} at (253,29) size 4x19
+          text run at (253,29) width 4: " "
+        RenderBR {BR} at (0,0) size 0x0
+        RenderTextControl {INPUT} at (2,54) size 179x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderFlexibleBox {DIV} at (3,3) size 173x16
+            RenderBlock {DIV} at (152,1) size 18x14
+            RenderBlock {DIV} at (12,0) size 138x16
+            RenderBlock {DIV} at (0,3) size 9x10
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,130) size 784x20
+        RenderText {#text} at (0,0) size 38x19
+          text run at (0,0) width 38: "PASS"
+layer at (25,49) size 138x16 scrollX 13 scrollWidth 151
+  RenderBlock {DIV} at (0,0) size 138x16
+    RenderText {#text} at (-13,0) size 151x16
+      text run at (-13,0) width 26 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
+      text run at (13,0) width 22: "she"
+      text run at (35,0) width 48 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
+      text run at (83,0) width 15: "he"
+      text run at (98,0) width 40 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
+layer at (25,75) size 208x16
+  RenderBlock {DIV} at (0,0) size 208x16
+    RenderText {#text} at (57,0) size 151x16
+      text run at (57,0) width 26 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
+      text run at (83,0) width 22: "she"
+      text run at (105,0) width 48 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
+      text run at (153,0) width 15: "he"
+      text run at (168,0) width 40 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
+layer at (25,101) size 138x16
+  RenderBlock {DIV} at (0,0) size 138x16
+caret: position 0 of child 0 {DIV} of child 1 {DIV} of child 0 {DIV} of {#document-fragment} of child 9 {INPUT} of child 3 {P} of body

@@ -1,0 +1,5 @@
+
+FAIL DOMTokenList behavior of ElementInternals.states: Initial state this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+FAIL DOMTokenList behavior of ElementInternals.states: Exceptions this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+FAIL DOMTokenList behavior of ElementInternals.states: Modifications this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
+

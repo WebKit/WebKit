@@ -1,0 +1,11 @@
+This test makes sure cells are not marked as row headers when they're in a row of headers.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS table1.rowHeaders().length is 0
+PASS table2.rowHeaders().length is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

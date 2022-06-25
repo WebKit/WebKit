@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<style>
+div {
+  width: 50px;
+  height: 50px;
+  background-color: green;
+}
+
+iframe {
+  border: 10px solid blue;
+}
+
+.normal {
+  height: calc(100% - 20px);
+  width: calc(100% - 20px);
+}
+
+.min {
+  min-height: calc(100% - 20px);
+  min-width: calc(100% - 20px);
+  width: 30px;
+  height: 30px;
+}
+
+.max {
+  max-height: calc(100% - 20px);
+  max-width: calc(100% - 20px);
+}
+</style>
+<!-- iframes should grow with their containers -->
+<div><iframe class=normal src="broken.html"></iframe></div>
+<div><iframe class=min src="broken.html"></iframe></div>
+<div><iframe class=max src="broken.html"></iframe></div>
+<script>
+document.body.offsetHeight;
+let containers = document.getElementsByTagName("div");
+for (let container of containers)
+  container.style.height = "100px";
+</script>

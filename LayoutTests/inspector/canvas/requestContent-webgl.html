@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function load() {
+    window.contextWebGL = document.createElement("canvas").getContext("webgl");
+    window.contextWebGL.clearColor(0, 1, 0, 0.5); // Half-transparent green
+    window.contextWebGL.clear(window.contextWebGL.COLOR_BUFFER_BIT);
+
+    runTest();
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("Canvas.requestContentWebGL");
+
+    suite.addTestCase({
+        name: "Canvas.requestContentWebGL.validCanvasId",
+        description: "Get the base64 encoded data for the WebGL canvas on the page.",
+        test(resolve, reject) {
+            let canvas = Array.from(WI.canvasManager.canvasCollection).find((canvas) => canvas.contextType === WI.Canvas.ContextType.WebGL);
+            if (!canvas) {
+                reject(`Missing Canvas.`);
+                return;
+            }
+
+            CanvasAgent.requestContent(canvas.identifier)
+            .then(({content}) => InspectorTest.expectGreaterThan(content.length, "data:image/png;base64,".length, "Content should not be empty."))
+            .then(resolve, reject);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="load()">
+    <p>Test that CanvasAgent.requestContent can retrieve a dataURL with the current content of the WebGL canvas.</p>
+</body>
+</html>

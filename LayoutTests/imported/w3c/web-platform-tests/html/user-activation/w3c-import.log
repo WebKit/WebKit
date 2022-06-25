@@ -1,0 +1,31 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/activation-trigger-keyboard-enter.html
+/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/activation-trigger-keyboard-escape.html
+/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/activation-trigger-mouse-left.html
+/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/activation-trigger-mouse-right.html
+/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/activation-trigger-pointerevent.html
+/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/chained-setTimeout.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/consumption-crossorigin.sub.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/consumption-sameorigin.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/message-event-activation-api-iframe-cross-origin.sub.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/message-event-init.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/navigation-state-reset-crossorigin.sub.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/navigation-state-reset-sameorigin.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/no-activation-thru-escape-key.html
+/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/propagation-crossorigin.sub.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/propagation-sameorigin.tentative.html

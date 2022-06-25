@@ -1,0 +1,5 @@
+
+PASS Tests requestSession should succeed when device does not support hand-tracking and hand-tracking is an optional feature - webgl
+PASS Tests requestSession should succeed when device does not support hand-tracking and hand-tracking is an optional feature - webgl2
+PASS Tests requestSession should fail when device does not support hand-tracking and hand-tracking is a required feature
+

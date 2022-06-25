@@ -1,0 +1,25 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (100,0) size 500x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGResourceRadialGradient {radialGradient} [id="reference"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.50] [focalRadius=0.00]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#0000FF]
+        RenderSVGGradientStop {stop} [offset=0.50] [color=#FFFF00]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#008000]
+      RenderSVGResourceRadialGradient {radialGradient} [id="grad1"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.30] [focalRadius=0.00]
+      RenderSVGResourceRadialGradient {radialGradient} [id="grad2"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.30] [focalRadius=0.15]
+      RenderSVGResourceRadialGradient {radialGradient} [id="grad3"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.30] [focalRadius=0.30]
+      RenderSVGResourceRadialGradient {radialGradient} [id="grad4"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.30] [focalRadius=0.50]
+      RenderSVGResourceRadialGradient {radialGradient} [id="grad5"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(-0.03,0.50)] [radius=0.30] [focalRadius=0.10]
+      RenderSVGResourceRadialGradient {radialGradient} [id="grad6"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(1.02,0.50)] [radius=0.30] [focalRadius=0.10]
+      RenderSVGResourceRadialGradient {radialGradient} [id="grad7"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(0.50,-0.03)] [radius=0.30] [focalRadius=0.10]
+      RenderSVGResourceRadialGradient {radialGradient} [id="grad8"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(0.50,1.02)] [radius=0.30] [focalRadius=0.10]
+    RenderSVGRect {rect} at (100,0) size 150x150 [fill={[type=RADIAL-GRADIENT] [id="grad1"]}] [x=100.00] [y=0.00] [width=150.00] [height=150.00]
+    RenderSVGRect {rect} at (100,150) size 150x150 [fill={[type=RADIAL-GRADIENT] [id="grad2"]}] [x=100.00] [y=150.00] [width=150.00] [height=150.00]
+    RenderSVGRect {rect} at (100,300) size 150x150 [fill={[type=RADIAL-GRADIENT] [id="grad3"]}] [x=100.00] [y=300.00] [width=150.00] [height=150.00]
+    RenderSVGRect {rect} at (100,450) size 150x150 [fill={[type=RADIAL-GRADIENT] [id="grad4"]}] [x=100.00] [y=450.00] [width=150.00] [height=150.00]
+    RenderSVGRect {rect} at (450,0) size 150x150 [fill={[type=RADIAL-GRADIENT] [id="grad5"]}] [x=450.00] [y=0.00] [width=150.00] [height=150.00]
+    RenderSVGRect {rect} at (450,150) size 150x150 [fill={[type=RADIAL-GRADIENT] [id="grad6"]}] [x=450.00] [y=150.00] [width=150.00] [height=150.00]
+    RenderSVGRect {rect} at (450,300) size 150x150 [fill={[type=RADIAL-GRADIENT] [id="grad7"]}] [x=450.00] [y=300.00] [width=150.00] [height=150.00]
+    RenderSVGRect {rect} at (450,450) size 150x150 [fill={[type=RADIAL-GRADIENT] [id="grad8"]}] [x=450.00] [y=450.00] [width=150.00] [height=150.00]

@@ -1,0 +1,40 @@
+<html>
+<head>
+  <style>
+    span {
+        background: blue;
+        color: white;
+        opacity: .666;
+        -webkit-transition: opacity, .25s, .15s ease-out;
+    }
+  </style>
+  <script>
+    function checkRunning()
+    {
+      var current = internals.numberOfActiveAnimations();
+      if (current == 0)
+        document.getElementById('result').innerHTML = "Number of active animations before transition is (0) as expected";
+      else
+        document.getElementById('result').innerHTML = "Number of active transitions is (" + current + ") but was expecting (0)";
+      testRunner.notifyDone();
+    }
+    
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+        window.setTimeout(checkRunning, 300);            
+    }
+  </script>
+</head>
+<body>
+
+<span id="doomSpan">If you can see this then we didn't hang!!!</span>
+
+<script type="text/javascript" charset="utf-8">
+    document.getElementById("doomSpan").style.opacity=1;
+</script>
+
+<div id="result">
+</div>
+</body>
+</html>

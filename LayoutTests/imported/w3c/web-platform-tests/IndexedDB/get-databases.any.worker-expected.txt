@@ -1,0 +1,7 @@
+
+PASS Ensure that databases() returns a promise.
+PASS Enumerate one database.
+PASS Enumerate multiple databases.
+PASS Make sure an empty list is returned for the case of no databases.
+PASS Ensure that databases() doesn't pick up changes that haven't commited.
+

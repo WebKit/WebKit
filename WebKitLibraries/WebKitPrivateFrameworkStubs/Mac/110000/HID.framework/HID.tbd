@@ -1,0 +1,12 @@
+--- !tapi-tbd
+tbd-version:     4
+targets:         [ x86_64-macos ]
+uuids:
+  - target:          x86_64-macos
+    value:           DC29BC33-5745-3EC7-B955-1A75E9339FF0
+install-name:    '/System/Library/PrivateFrameworks/HID.framework/Versions/A/HID'
+exports:
+  - targets:         [ x86_64-macos ]
+    symbols:         [ _HIDVersionNumber, _HIDVersionString, _kHIDUserDevicePropertyCreateInactiveKey ]
+    objc-classes:    [ HIDEventSystemClient, HIDManager, HIDUserDevice, HIDVirtualEventService ]
+...

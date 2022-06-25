@@ -1,0 +1,5 @@
+
+PASS "math + p" should be a valid selector
+PASS "h1.opener + h2" should be a valid selector
+PASS "h1 ~ pre" should be a valid selector
+

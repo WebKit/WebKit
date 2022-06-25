@@ -1,0 +1,31 @@
+<svg width="500" height="150" viewBox="0 0 1000 300" xmlns="http://www.w3.org/2000/svg">
+    <rect id="background" width="100%" height="100%" fill="red" />
+    <text id="text" x="10" y="1em" dx="0 50 100">Foo</text>
+    <defs>
+        <style type="text/css">
+        <![CDATA[
+            @font-face {
+                font-family: Ahem;
+                src: url(../../resources/Ahem.ttf);
+            }
+            text {
+                font-family: Ahem;
+                font-size: 40px;
+            }
+            ]]>
+        </style>
+        <script type="text/javascript">
+        <![CDATA[
+            // The point at 15,15 is contained within the text's bounding box.
+            // The point at 30,15 is contained in between the text's character cells
+            // and thus should return the background.
+            var text = document.getElementById("text");
+            var background = document.getElementById("background");
+            if (document.elementFromPoint(15, 15) === text && document.elementFromPoint(35, 15) === background) {
+                background.setAttribute("fill", "green");
+                text.remove();
+            }
+        ]]>
+        </script>
+    </defs>
+</svg>

@@ -1,0 +1,18 @@
+This test makes sure that elements within tables cells return the correct row, col ranges
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS cell2.rowIndexRange() is '{1, 1}'
+PASS cell2.columnIndexRange() is '{1, 2}'
+PASS cell6.rowIndexRange() is '{2, 1}'
+PASS cell6.columnIndexRange() is '{2, 1}'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+header 1	header 2	header 3
+cell 1	
+cell
+2
+cell 4	cell 5	cell
+6

@@ -1,0 +1,10 @@
+
+PASS SpeechSynthesisEvent with no arguments throws TypeError
+PASS SpeechSynthesisEvent with no eventInitDict throws TypeError
+PASS SpeechSynthesisEvent with empty eventInitDict throws TypeError (requires
+    utterance)
+PASS SpeechSynthesisEvent with eventInitDict not having utterance throws
+    TypeError
+PASS SpeechSynthesisEvent with eventInitDict having an utterance
+PASS SpeechSynthesisEvent with custom eventInitDict
+

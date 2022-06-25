@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html> 
+<head>
+<script src="../../../resources/dump-as-markup.js"></script>
+<style>
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+    font-size: 24px; 
+}
+</style>
+</head> 
+<body>
+<p>This test copies and pastes "is a tide in the affairs of men,\nWhich taken at the flood leads on to fortune.\nOmitted" twice.</p>
+<div contenteditable id="root">
+<div id="test" class="editing">There is a tide in the affairs of men,
+<div class="editing">Which taken at the flood leads on to fortune.
+<div class="editing">Omitted, all the voyage of their life,
+<div class="editing">Is bound in shallows and in miseries.
+</div>
+</div>
+</div>
+</div>
+</div>
+<script src="../editing.js"></script> 
+<script>
+
+function editingTest() {
+    for (i = 0; i < 6; i++)
+        moveSelectionForwardByCharacterCommand();
+    for (i = 0; i < 86; i++)
+        extendSelectionForwardByCharacterCommand();
+    copyCommand();
+    pasteCommand();
+    pasteCommand();
+}
+
+runDumpAsTextEditingTest(true);
+</script>
+</body>
+</html>

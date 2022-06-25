@@ -1,0 +1,3 @@
+
+PASS Calling `updateWith` with a new `displayItems` should not update any other values.
+

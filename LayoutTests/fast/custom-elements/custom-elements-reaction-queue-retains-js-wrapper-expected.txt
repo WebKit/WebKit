@@ -1,0 +1,24 @@
+This tests enqueuing a lot of custom elements during innerHTML.
+WebKit should not lose JS wrappers of those custom elements.
+
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+

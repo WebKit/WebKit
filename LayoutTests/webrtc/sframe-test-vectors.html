@@ -1,0 +1,225 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>SFrame test vector</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+<script>
+// Tests taken from https://github.com/eomara/sframe/blob/master/test-vectors.json and updated to cope with key/counter length difference.
+// Test suite 1 is AES_CM_128_HMAC_SHA256_4, test suite 2 is AES_CM_128_HMAC_SHA256_8.
+// Test suites 3 and 4 are GCM and not yet added here since not supported.
+const tests = [
+  {
+    "cipher_suite": 1,
+    "base_key": "101112131415161718191a1b1c1d1e1f",
+    "key": "343d3290f5c0b936415bea9a43c6f5a2",
+    "salt": "42d662fbad5cd81eb3aad79a",
+    "plaintext": "46726f6d2068656176656e6c79206861726d6f6e79202f2f205468697320756e6976657273616c206672616d6520626567616e",
+    "encryptions": [
+      {
+        "kid": "7",
+        "ctr": "0",
+        "header": "0700",
+        "nonce": "42d662fbad5cd81eb3aad79a",
+        "ciphertext": "070065c67c6fb784631a7db1b589ffb62d75b78e28b0899e632fbbee3b944747a6382d75b6bd3788dc7b71b9295c7fb90b5098f7ad92befabb"
+      },
+      {
+        "kid": "7",
+        "ctr": "1",
+        "header": "0701",
+        "nonce": "42d662fbad5cd81eb3aad79b",
+        "ciphertext": "0701ec742e98d667be810f153ff0d4dad7969f69b310aa7c6b9cb911e83af09b0f0a6d74772d8195c8c9dae3878fd1cb10edb4176dd4a56026"
+      },
+      {
+        "kid": "7",
+        "ctr": "2",
+        "header": "0702",
+        "nonce": "42d662fbad5cd81eb3aad798",
+        "ciphertext": "0702ac9b495d37a1e48c712ade5cba72df0bf90f24aa022a454cfb92d8b87cd54335fb6b9eeded6a5aa4e2643d7a09946646001d0afd6a2d5f"
+      },
+      {
+        "kid": "15",
+        "ctr": "170",
+        "header": "080faa",
+        "nonce": "42d662fbad5cd81eb3aad730",
+        "ciphertext": "080faaeaa5adc70cae0d6ebd36805fa87d2351dd02c55c751cd351a7fdb7f0927b474eae3e800033e08100a440002da17579678b36dcafb808b3"
+      },
+      {
+        "kid": "511",
+        "ctr": "170",
+        "header": "0901ffaa",
+        "nonce": "42d662fbad5cd81eb3aad730",
+        "ciphertext": "0901ffaaeaa5adc70cae0d6ebd36805fa87d2351dd02c55c751cd351a7fdb7f0927b474eae3e800033e08100a440002da17579678b36dcc0a409c5"
+      },
+      {
+        "kid": "511",
+        "ctr": "543690",
+        "header": "2901ff084bca",
+        "nonce": "42d662fbad5cd81eb3a29c50",
+        "ciphertext": "2901ff084bca99362198463c4739ebe78d4c1158fc7b7e118e8d035130a583744af343a370ab964a76d31aba68939336187bd251a7f63e9ec25a2bed97"
+      },
+      {
+        "kid": "72057594037927935",
+        "ctr": "72057594037927935",
+        "header": "6effffffffffffffffffffffffffff",
+        "nonce": "42d662fbada327e14c552865",
+        "ciphertext": "6effffffffffffffffffffffffffffdca3655d5117bc838d6f4382ca468a4f992ff77bfd1d2f4391be6b33e8fb638dc48aa82f57fd91430c714def0b2089c8bfb2ac6a36e584"
+      },
+      {
+        "kid": "92057594037927935",
+        "ctr": "8",
+        "header": "0f01470de4df81ffff08",
+        "nonce": "42d662fbad5cd81eb3aad792",
+        "ciphertext": "0f01470de4df81ffff084db66f48555956af80a014f06670d7771071afc72ad7452fbb835d353d07d16e771b2ca3593a6a87b643e39370b404a2eb898de8114fb9"
+      }
+    ]
+  },
+  {
+    "cipher_suite": 2,
+    "base_key": "202122232425262728292a2b2c2d2e2f",
+    "key": "3fce747d505e46ec9b92d9f58ee7a5d4",
+    "salt": "77fbf5f1d82c73f6d2b353c9",
+    "plaintext": "46726f6d2068656176656e6c79206861726d6f6e79202f2f205468697320756e6976657273616c206672616d6520626567616e",
+    "encryptions": [
+      {
+        "kid": "7",
+        "ctr": "0",
+        "header": "0700",
+        "nonce": "77fbf5f1d82c73f6d2b353c900000000",
+        "ciphertext": "0700647513fce71aab7fed1e904fd9240343d77092c831f0d58fde0985a0f3e5ba4020e87a7b9c870b5f8f7f628d27690cc1e571e4e8b90ec99c582cfa"
+      },
+      {
+        "kid": "7",
+        "ctr": "1",
+        "header": "0701",
+        "nonce": "77fbf5f1d82c73f6d2b353c8",
+        "ciphertext": "07019e1bdf713b0d4c02f3dbf50a72ea773286e7da38f3872cc734f3e1b1448aab5009b424e05495214f96d02e4e8f8da975cc808fe931237a6ab700e8"
+      },
+      {
+        "kid": "7",
+        "ctr": "2",
+        "header": "0702",
+        "nonce": "77fbf5f1d82c73f6d2b353cb",
+        "ciphertext": "070220ad36fd9191453ace2d36a175ad8a69c1f16b8613d14b4f7ef30c68bc5609e349df38155cc1544d7dbfa079e3faae3c7883b479fccb144b0c78a5"
+      },
+      {
+        "kid": "15",
+        "ctr": "170",
+        "header": "080faa",
+        "nonce": "77fbf5f1d82c73f6d2b35363",
+        "ciphertext": "080faadab9b284a4b9e3aea36b9cdcae4a58e141d3f0f52f240ef80a93dbb8d809ede01b05b2cace18a22fb39c032724481c5baa181d081e260067ccd683"
+      },
+      {
+        "kid": "511",
+        "ctr": "170",
+        "header": "0901ffaa",
+        "nonce": "77fbf5f1d82c73f6d2b35363",
+        "ciphertext": "0901ffaadab9b284a4b9e3aea36b9cdcae4a58e141d3f0f52f240ef80a93dbb8d809ede01b05b2cace18a22fb39c032724481c5baa181dc24facba5e9f7ea5"
+      },
+      {
+        "kid": "511",
+        "ctr": "43690",
+        "header": "1901ffaaaa",
+        "nonce": "77fbf5f1d82c73f6d2b3f963",
+        "ciphertext": "1901ffaaaae0f2384e4dc472cb92238b5b722159205c4481665484de66985f155071655ca4e9d1c998781f8c7d439f8d1eb6f6071cd80fd2af2cd093aa260618"
+      },
+      {
+        "kid": "72057594037927935",
+        "ctr": "72057594037927935",
+        "header": "6effffffffffffffffffffffffffff",
+        "nonce": "77fbf5f1d8d38c092d4cac36",
+        "ciphertext": "6effffffffffffffffffffffffffff4b8c7429d7ee83eec5e53808b80555b1f80b1df9d97877575fa1c7fa35b6119c68ed6543020075959dcc4ca6900a7f9cf1d9366dfcb086029e8966"
+      },
+      {
+        "kid": "92057594037927935",
+        "ctr": "8",
+        "header": "0f01470de4df81ffff08",
+        "nonce": "77fbf5f1d82c73f6d2b353c1",
+        "ciphertext": "0f01470de4df81ffff08aaf4ea538ad99858a76f87b673dd548459dfbf98906fe82ce159ec738363b2af84d39c34418e2c56609d185ef66a3d7ce8d30547c1c9725439ac12"
+      }
+    ]
+  }
+];
+
+function hexaDecodeToUint8Array(encoded)
+{
+    return new Uint8Array(encoded.match(/[\da-f]{2}/gi).map(function (h) {
+        return parseInt(h, 16)
+    }));
+}
+
+function hexaEncodeUint8Array(buffer)
+{
+    return Array.prototype.map.call(new Uint8Array(buffer), x => {
+        return ('00' + x.toString(16)).slice(-2)
+    }).join('');
+}
+
+function numberOrBigIntFromString(string)
+{
+    const value = parseInt(string);
+    if ((''+ value) === string)
+        return string;
+    return BigInt(string);
+}
+
+async function doAESCMTest(testSuite, authenticationSize)
+{
+    let testCounter = 0;
+    const key = await crypto.subtle.importKey("raw", hexaDecodeToUint8Array(testSuite.base_key), "HKDF", false, ["deriveBits", "deriveKey"]);
+
+    for (const encryption of testSuite.encryptions) {
+        testCounter++;
+
+        promise_test(async () => {
+            const transform = new SFrameTransform({ role : 'decrypt', authenticationSize : authenticationSize });
+            transform.setEncryptionKey(key, numberOrBigIntFromString(encryption.kid));
+            const reader = transform.readable.getReader();
+            const writer = transform.writable.getWriter();
+
+            const encryptedData = hexaDecodeToUint8Array(encryption.ciphertext);
+            writer.write(encryptedData.buffer);
+            const decrypted = await reader.read();
+
+            const text = hexaEncodeUint8Array(new Uint8Array(decrypted.value));
+            assert_equals(text, testSuite.plaintext);
+        }, "Decryption test " + testCounter + " for ciphersuite " + testSuite.cipher_suite);
+
+        const plaintextData = hexaDecodeToUint8Array(testSuite.plaintext);
+        promise_test(async () => {
+            const transform1 = new SFrameTransform({ role : 'encrypt', authenticationSize : authenticationSize });
+            const transform2 = new SFrameTransform({ role : 'decrypt', authenticationSize : authenticationSize });
+            transform1.setEncryptionKey(key, numberOrBigIntFromString(encryption.kid));
+            transform2.setEncryptionKey(key, numberOrBigIntFromString(encryption.kid));
+            const reader = transform2.readable.getReader();
+            const writer = transform1.writable.getWriter();
+            transform1.readable.pipeTo(transform2.writable);
+
+            if (window.internals)
+                internals.setSFrameCounter(transform1, encryption.ctr);
+            else {
+                const counter = numberOrBigIntFromString(encryption.ctr);
+                if (typeof counter === "bigint") 
+                    return;
+                for (let i = 0; i < counter; ++i) {
+                    await writer.write(new ArrayBuffer());
+                    await reader.read();
+               }
+            }
+
+            writer.write(plaintextData.buffer);
+            const decrypted = await reader.read();
+
+            const text = hexaEncodeUint8Array(new Uint8Array(decrypted.value));
+            assert_equals(text, testSuite.plaintext);
+        }, "Encryption/Decryption test " + testCounter + " for ciphersuite " + testSuite.cipher_suite);
+    }
+}
+doAESCMTest(tests[0], 4);
+doAESCMTest(tests[1], 8);
+</script>
+</body>
+</html>

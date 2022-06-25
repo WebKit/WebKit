@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../../resources/ui-helper.js"></script>
+        <script src="../../../resources/js-test.js"></script>
+        <script>
+            jsTestIsAsync = true;
+
+            addEventListener("load", async () => {
+                description("This test verifies that when option element labels are included in datalist suggestions, the text of the label is considered when computing matching datalist suggestions. Otherwise, if labels are not included in suggestions, there should be no datalist suggestions shown. To manually run the test, focus the input element and type 'e'. There should either be no matches or two matches (and selecting the second match should set the value to 'baz').");
+                input = document.querySelector("input");
+
+                await UIHelper.activateElementAndWaitForInputSession(input);
+                await UIHelper.typeCharacter("e");
+                await new Promise(resolve => shouldBecomeEqual("input.value", "'e'", resolve));
+                if (await UIHelper.isShowingDataListSuggestions()) {
+                    await UIHelper.activateDataListSuggestion(1);
+                    shouldBeEqualToString("input.value", "baz");
+                } else
+                    testPassed("Not showing suggestions.");
+
+                input.blur();
+                await UIHelper.waitForKeyboardToHide();
+                finishJSTest();
+            });
+        </script>
+    </head>
+    <body>
+        <input list="list" autocapitalize="none">
+        <datalist id="list">
+            <option value="foo" label="one"></option>
+            <option value="bar">two</option>
+            <option value="baz" label="three">four</option>
+            <option value="garply"></option>
+            <option value="qux" label="qux">qux</option>
+            <option label="five"></option>
+        </datalist>
+    </body>
+</html>

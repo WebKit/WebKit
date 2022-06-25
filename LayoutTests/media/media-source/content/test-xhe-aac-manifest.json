@@ -1,0 +1,9 @@
+{
+    "url": "content/test-xhe-aac.m4a",
+    "type": "audio/mp4; codecs=\"mp4a.40.42\"",
+    "init": { "offset": 0, "size": 756 },
+    "duration": 33.968,
+    "media": [
+        { "offset": 756,   "size": 280130, "timestamp": 0, "duration": 33.968 }
+    ]
+}

@@ -1,0 +1,3 @@
+
+PASS putImageData() handles dirty rectangles outside the canvas correctly
+

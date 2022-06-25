@@ -1,0 +1,10 @@
+Make sure we don't crash when setting HTMLDocument.constructor
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.constructor = 'test' did not throw exception.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

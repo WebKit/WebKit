@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script>
+            var repeated = false;
+            var mediaElement = new Audio();
+
+            function start()
+            {
+                mediaElement.src = findMediaFile('audio', 'content/silence');
+                waitForEvent("loadedmetadata", mediaLoadedMetadata);
+            }
+
+            function mediaLoadedMetadata()
+            {
+                waitForEvent("playing", mediaPlaying);
+                waitForEvent("pause", mediaPause);
+                waitForEvent("ended", mediaEnded);
+                run("mediaElement.play()");
+            }
+
+            function mediaPlaying()
+            {
+                mediaElement.currentTime = mediaElement.duration - 0.2;
+            }
+
+            function mediaPause()
+            {
+                testExpected("mediaElement.paused", true);
+            }
+
+            function mediaEnded()
+            {
+                testExpected("mediaElement.ended", true);
+ 
+                if (repeated)
+                    endTest();
+ 
+                repeated = true;
+                run("mediaElement.play()");
+            }
+
+        </script>
+    </head>
+    <body onload="start()">
+        <p>This tests ensure that media element emits the 'playing' event every time it starts playing after eos. It also ensure that 'pause' and 'ended' events are sent when media playback ends.</p>
+    </body>
+</html>
+

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+    body { margin: 0; padding: 0;}
+    #resizable {
+        background: yellow;
+        box-sizing: border-box;
+        resize: both;
+        overflow: auto;
+    }
+    </style>
+</head>
+<body>
+
+<div style="writing-mode: vertical-lr; width:800px; height:700px">
+    <div style="writing-mode: horizontal-tb; width:400px; height:400px; min-width:10%; min-height:10%" id="resizable"></div>
+</div>
+
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../imported/w3c/web-platform-tests/resources/testdriver.js"></script>
+<script src="../../imported/w3c/web-platform-tests/resources/testdriver-actions.js"></script>
+<script src="../../imported/w3c/web-platform-tests/resources/testdriver-vendor.js"></script>
+<script>
+function drag(startX, startY, destX, destY) {
+    const actions = new test_driver.Actions()
+        .pointerMove(startX - 1, startY - 1)
+        .pointerDown()
+        .pointerMove(destX - 1, destY - 1)
+        .pointerUp();
+    return actions.send();
+}
+
+promise_test(async () => {
+    const box = document.getElementById("resizable");
+    const startX = box.getBoundingClientRect().right;
+    const startY = box.getBoundingClientRect().bottom;
+    await drag(startX, startY, startX - 395, startY - 395);
+    // The containing block is orthogonal to the textarea so min-width will
+    // be 10% of height of containing block and min-height is 10% of width of
+    // containing block.
+    assert_equals(box.style.width, "80px");
+    assert_equals(box.style.height, "70px");
+}, "Test for resizing the box below its initial size and with orthogonal containing block.");
+</script>
+</body>
+</html>

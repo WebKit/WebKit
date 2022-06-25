@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style id="style-container">
+</style>
+</head>
+<body>
+</body>
+<script>
+description('Test the parsing of :not(selectorList) for querySelector and style. This test focus on pseudo elements nested inside other functional pseudo class.');
+
+function testInvalidSelector(selectorString) {
+    var styleContainer = document.getElementById('style-container');
+    styleContainer.innerHTML = ':not(' + selectorString + ') { }';
+    const parsed = document.getElementById('style-container').sheet.cssRules.length == 1;
+    debug(`selector '${styleContainer.innerHTML}' parsed: ${parsed ? "YES" : "NO"}`);
+    styleContainer.innerHTML = '';
+}
+
+var validSelectorsPart2 = [
+    // Basic types.
+    "foobar",
+    ".class",
+    ":last-child",
+
+    // Compound selectors.
+    "foobar#id.class",
+    "#id:empty",
+
+    // Complex selectors.
+    "a b",
+    "a ~ b",
+
+    // Functional pseudo classes.
+    ":-webkit-any(.selector,#tama,#hanayo,#midoriko)",
+    ":nth-child(even of a, b, c)",
+    ":not(:is(cocoa, cappuccino))",
+    ":not(:matches(cocoa, cappuccino))",
+];
+
+var invalidSelectors = [
+    ":is(a, b, c::after)",
+    ":matches(a, b, c::after)",
+    ":is(a, b, c:after)",
+    ":matches(a, b, c:after)",
+    ":nth-child(2n+1 of d, e, :is(f, g, ::before))",
+    ":nth-child(2n+1 of d, e, :matches(f, g, ::before))",
+    ":nth-child(2n+1 of d, e, :is(f, g, :before))",
+    ":nth-child(2n+1 of d, e, :matches(f, g, :before))",
+    ":not(:is(a, b, c::after))",
+    ":not(:matches(a, b, c::after))",
+    ":not(:is(a, b, c:after))",
+    ":not(:matches(a, b, c:after))",
+    ":is(a, b, :is(c, d, :is(e, f, :is(g, h, i::after))))",
+    ":matches(a, b, :matches(c, d, :matches(e, f, :matches(g, h, i::after))))",
+];
+
+debug("3 :not(valid, valid, invalid) selectors");
+for (var i = 0; i < validSelectorsPart2.length; ++i) {
+    for (var j = i; j < validSelectorsPart2.length; ++j) {
+        for (var k = 0; k < invalidSelectors.length; ++k) {
+            var selectorString = validSelectorsPart2[i] + ',' + validSelectorsPart2[j] + ',' + invalidSelectors[k];
+            testInvalidSelector(selectorString);
+        }
+    }
+}
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

@@ -1,0 +1,37 @@
+This test makes sure that Osaka's synthetic bold doesn't cause bogus character widths.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internals.absoluteCaretBounds().left is <= comparison.getBoundingClientRect().width + 2
+PASS internals.absoluteCaretBounds().left is <= comparison.getBoundingClientRect().width + 2
+PASS internals.absoluteCaretBounds().left is <= comparison.getBoundingClientRect().width + 2
+PASS internals.absoluteCaretBounds().left is <= comparison.getBoundingClientRect().width + 2
+PASS internals.absoluteCaretBounds().left is <= comparison.getBoundingClientRect().width + 2
+PASS internals.absoluteCaretBounds().left is <= comparison.getBoundingClientRect().width + 2
+PASS internals.absoluteCaretBounds().left is <= comparison.getBoundingClientRect().width + 2
+PASS internals.absoluteCaretBounds().left is <= comparison.getBoundingClientRect().width + 2
+PASS internals.absoluteCaretBounds().left is <= comparison.getBoundingClientRect().width + 2
+PASS internals.absoluteCaretBounds().left is <= comparison.getBoundingClientRect().width + 2
+PASS internals.absoluteCaretBounds().left is <= comparison.getBoundingClientRect().width + 2
+PASS internals.absoluteCaretBounds().left is <= comparison.getBoundingClientRect().width + 2
+PASS internals.absoluteCaretBounds().left is <= comparison.getBoundingClientRect().width + 2
+PASS internals.absoluteCaretBounds().left is <= comparison.getBoundingClientRect().width + 2
+PASS internals.absoluteCaretBounds().left is <= comparison.getBoundingClientRect().width + 2
+PASS internals.absoluteCaretBounds().left is <= comparison.getBoundingClientRect().width + 2
+PASS internals.absoluteCaretBounds().left is <= comparison.getBoundingClientRect().width + 2
+PASS internals.absoluteCaretBounds().left is <= comparison.getBoundingClientRect().width + 2
+PASS internals.absoluteCaretBounds().left is <= comparison.getBoundingClientRect().width + 2
+PASS internals.absoluteCaretBounds().left is <= comparison.getBoundingClientRect().width + 2
+PASS internals.absoluteCaretBounds().left is <= comparison.getBoundingClientRect().width + 2
+PASS internals.absoluteCaretBounds().left is <= comparison.getBoundingClientRect().width + 2
+PASS internals.absoluteCaretBounds().left is <= comparison.getBoundingClientRect().width + 2
+PASS internals.absoluteCaretBounds().left is <= comparison.getBoundingClientRect().width + 2
+PASS internals.absoluteCaretBounds().left is <= comparison.getBoundingClientRect().width + 2
+PASS internals.absoluteCaretBounds().left is <= comparison.getBoundingClientRect().width + 2
+PASS internals.absoluteCaretBounds().left is <= comparison.getBoundingClientRect().width + 2
+PASS internals.absoluteCaretBounds().left is <= comparison.getBoundingClientRect().width + 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+20202020202020202020202020202020202020202020202020202020

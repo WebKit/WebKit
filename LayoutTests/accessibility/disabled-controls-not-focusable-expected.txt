@@ -1,0 +1,54 @@
+This test makes sure that disabled form controls are not exposed as focusable.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Testing #button
+PASS axElement.isFocusable is true
+Setting the disabled attribute of element #button
+PASS axElement.isFocusable === false
+
+Testing #text
+PASS axElement.isFocusable is true
+Setting the disabled attribute of element #text
+PASS axElement.isFocusable === false
+
+Testing #checkbox
+PASS axElement.isFocusable is true
+Setting the disabled attribute of element #checkbox
+PASS axElement.isFocusable === false
+
+Testing #radio
+PASS axElement.isFocusable is true
+Setting the disabled attribute of element #radio
+PASS axElement.isFocusable === false
+
+Testing #submit
+PASS axElement.isFocusable is true
+Setting the disabled attribute of element #submit
+PASS axElement.isFocusable === false
+
+Testing #slider
+PASS axElement.isFocusable is true
+Setting the disabled attribute of element #slider
+PASS axElement.isFocusable === false
+
+Testing #combobox
+PASS axElement.isFocusable is true
+Setting the disabled attribute of element #combobox
+PASS axElement.isFocusable === false
+
+Testing #listbox
+PASS axElement.isFocusable is true
+Setting the disabled attribute of element #listbox
+PASS axElement.isFocusable === false
+
+Testing #textarea
+PASS axElement.isFocusable is true
+Setting the disabled attribute of element #textarea
+PASS axElement.isFocusable === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

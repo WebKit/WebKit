@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Tests that IntersectionObserver doesn't cause Document leaks.");
+jsTestIsAsync = true;
+
+frameDocumentID = 0;
+checkCount = 0;
+
+onload = () => {
+    window.open("resources/intersection-observer-document-leak-popup.html");
+};
+
+function popupDocumentWasCreated(frameDocument)
+{
+    if (!window.internals)
+        return;
+
+    frameDocumentID = internals.documentIdentifier(frameDocument);
+    shouldBeTrue("internals.isDocumentAlive(frameDocumentID)");
+    handle = setInterval(() => {
+        gc();
+        if (!internals.isDocumentAlive(frameDocumentID)) {
+            clearInterval(handle);
+            testPassed("The iframe document didn't leak.");
+            finishJSTest();
+        }
+        checkCount++;
+        if (checkCount > 500) {
+            clearInterval(handle);
+            testFailed("The iframe document leaked.");
+            finishJSTest();
+        }
+    }, 10);
+}
+</script>
+</body>
+</html>

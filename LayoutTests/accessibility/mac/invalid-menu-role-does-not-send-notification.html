@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body id="body">
+
+<div id="content">
+    <div id="menu" role="menu" hidden>
+        <a href="#">item</a>
+    </div>
+</div>
+
+<script>
+    var testOutput = "This tests that the AXMenuOpened notification does not get fired for a menu that is invalid (does not have a menu item child).\n\n";
+
+    function endTest() {
+        document.getElementById("content").style.display = "none";
+        accessibilityController.removeNotificationListener();
+        debug(testOutput);
+        finishJSTest();
+    }
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        accessibilityController.addNotificationListener((element, notification) => {
+            if (notification == "AXMenuOpened")
+                testOutput += `FAIL Received menu opened notification: ${notification}`;
+        });
+        setTimeout(async () => {
+            document.getElementById("menu").removeAttribute("hidden");
+            await waitFor(() => {
+                const menu = accessibilityController.accessibleElementById("menu");
+                return menu && !menu.role.includes("Menu");
+            });
+            testOutput += `The item should not have a menu role: ${accessibilityController.accessibleElementById("menu").role}\n`;
+
+            // We should not actually get this notification, so end the test after a short time when we 'might' have gotten the notification.
+            setTimeout("endTest()", 100);
+        }, 0);
+    }
+</script>
+</body>
+</html>

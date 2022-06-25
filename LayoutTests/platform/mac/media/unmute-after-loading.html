@@ -1,0 +1,28 @@
+
+<html>
+<head>
+    <title>unmute-after-loading</title>
+    <script src="../../../media/video-test.js"></script>
+    <script src="../../../media/media-file.js"></script>
+    <script>
+        window.addEventListener('load', async event => {
+            try {
+                findMediaElement();
+                run('video.muted = true');
+                run('video.src = findMediaFile("video", "../../../media/content/audio-tracks")');
+                await waitFor(video, 'canplaythrough');
+                run('video.load()');
+                await waitFor(video, 'canplaythrough');
+                run('video.muted = false');
+                testExpected('internals.privatePlayerMuted(video)', false);
+                endTest();
+            } catch(e) {
+                failTest(e);
+            }
+        })
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Checks that the client can prevent a fragment navigation via the decidePolicyForNavigationAction delegate.");
+jsTestIsAsync = true;
+
+if (window.testRunner)
+    testRunner.setCustomPolicyDelegate(true, false);
+
+onload = function() {
+    location = "#test";
+    setTimeout(function() {
+        shouldBeEqualToString("window.location.href", "http://127.0.0.1:8000/navigation/fragment-navigation-policy-ignore.html");
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

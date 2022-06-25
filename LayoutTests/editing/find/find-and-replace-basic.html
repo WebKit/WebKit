@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/dump-as-markup.js"></script>
+</head>
+<body>
+    <div id="editor" contenteditable>
+        <p>Apple banana orange.</p>
+        <p>Kiwi banana pear.</p>
+    </div>
+</body>
+<script>
+Markup.description("Verifies that find and replace can be used to replace words in an editable area. This test requires WebKitTestRunner.");
+
+testRunner.findStringMatchesInPage("orange", []);
+testRunner.replaceFindMatchesAtIndices([0], "apricot", false);
+Markup.dump("editor", "After replacing 'orange' with 'apricot'");
+
+testRunner.findStringMatchesInPage("banana", []);
+testRunner.replaceFindMatchesAtIndices([0, 1], "watermelon", false);
+Markup.dump("editor", "After replacing 'banana' with 'watermelon'");
+</script>
+</html>

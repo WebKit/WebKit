@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="svg-image-with-css-cross-domain.css"/>
+  </head>
+  <body>
+    <h1>WebKit bug</h1>
+    <h3>SVG circle with same-origin and different-origin CSS</h3>
+    <p>Expected: 2 gray circles, 4 orange circles with red borders, 2 gray circle.</p>
+    <p>
+      <span class="image">
+        <svg height="68" width="68" viewBox="-34 -34 68 68">
+          <circle cx="0" cy="0" r="24" fill="#c8c8c8" />
+        </svg>
+      </span>
+      <span class="image">
+        <svg height="68" width="68" viewBox="-34 -34 68 68">
+          <circle cx="0" cy="0" r="24" fill="#c8c8c8" />
+        </svg>
+      </span>
+      <span class="image">
+        <svg height="68" width="68" viewBox="-34 -34 68 68">
+          <circle cx="0" cy="0" r="24" stroke="red" stroke-width="2" fill="orange" />
+        </svg>	
+      </span>
+      <span class="image">
+        <svg height="68" width="68" viewBox="-34 -34 68 68">
+          <circle cx="0" cy="0" r="24" stroke="red" stroke-width="2" fill="orange" />
+        </svg>	
+      </span>
+      <span class="image">
+        <svg height="68" width="68" viewBox="-34 -34 68 68">
+          <circle cx="0" cy="0" r="24" stroke="red" stroke-width="2" fill="orange" />
+        </svg>	
+      </span>
+      <span class="image">
+        <svg height="68" width="68" viewBox="-34 -34 68 68">
+          <circle cx="0" cy="0" r="24" stroke="red" stroke-width="2" fill="orange" />
+        </svg>	
+      </span>
+      <span class="image">
+        <svg height="68" width="68" viewBox="-34 -34 68 68">
+          <circle cx="0" cy="0" r="24" fill="#c8c8c8" />
+        </svg>
+      </span>
+      <span class="image">
+        <svg height="68" width="68" viewBox="-34 -34 68 68">
+          <circle cx="0" cy="0" r="24" fill="#c8c8c8" />
+        </svg>
+      </span>
+    </p>
+  </body>
+</html>

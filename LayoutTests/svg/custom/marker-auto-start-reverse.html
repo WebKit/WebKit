@@ -1,0 +1,14 @@
+<!doctype html>
+<!-- 
+Reftest for auto-start-reverse value for orient property of marker element.
+Markers at each end of the path should point outwards. Middle marker should point along the direction of the path.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="300" height="300">
+    <defs>
+        <!-- Correct definition - uses lower case -->
+        <marker id="arrow" orient="auto-start-reverse" markerWidth="10" markerHeight="10" style="overflow:visible">
+            <path d="M5,0 L 0,-5 L0,5 z" fill="green"/>
+        </marker>
+     </defs>
+    <path d="M 20,20 l30,30 30,30" marker-start="url(#arrow)" marker-mid="url(#arrow)" marker-end="url(#arrow)" stroke="black"/>
+</svg>

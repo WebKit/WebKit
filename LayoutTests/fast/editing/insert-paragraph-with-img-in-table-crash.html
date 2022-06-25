@@ -1,0 +1,15 @@
+<style>
+  #last::before {
+    content: '.';
+  }
+</style>
+<script>
+  onload = () => {
+    if (window.testRunner)
+      testRunner.dumpAsText();
+    console.log("This test passes if it does not crash.")
+    getSelection().setBaseAndExtent(document.querySelector('img'), 1, document.querySelector('#last'), 0);
+    document.execCommand('InsertParagraph');
+  };
+</script>
+<body contenteditable style="display: table"><img style="content: ''"><div></div><div id="last"></div></body>

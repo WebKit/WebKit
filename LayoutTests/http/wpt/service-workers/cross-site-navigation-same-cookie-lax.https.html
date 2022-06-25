@@ -1,0 +1,39 @@
+<html>
+<head>
+</head>
+<body>
+<script>
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+var scope = "";
+
+async function doTest()
+{
+    if (window.origin == "https://127.0.0.1:9443") {
+        window.location = "https://localhost:9443/WebKit/service-workers/resources/get-document-cookie.py?fetchTest";
+        return;
+    }
+
+    const registration = await navigator.serviceWorker.register("same-cookie-lax-worker.js", { scope : scope });
+    if (!registration.active) {
+        const worker = registration.installing;
+        await new Promise(resolve => {
+            worker.addEventListener('statechange', () => {
+                if (worker.state === "activated")
+                    resolve();
+            });
+        });
+    }
+    const cookieValue = "PASS: got samesite-cookie-test";
+    await fetch("resources/set-cookie-lax.py?name=" + cookieValue);
+
+    window.location = "https://127.0.0.1:9443/WebKit/service-workers/cross-site-navigation-same-cookie-lax.https.html?fetchTest";
+}
+doTest();
+</script>
+</body>
+</html>

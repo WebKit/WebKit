@@ -1,0 +1,263 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createSyncSuite("CSSQueryController");
+
+    suite.addTestCase({
+        name: "FindSpecialCharacterIndices",
+        description: "Should correctly find special characters.",
+        test() {
+            let matcher = new WI.CSSQueryController;
+            let tests = [
+                {
+                    padvalue: "margin",
+                    expected: "^     ",
+                },
+                {
+                    padvalue: "MARGIN",
+                    expected: "^     ",
+                },
+                {
+                    padvalue: "margin-right",
+                    expected: "^     ^^    ",
+                },
+                {
+                    padvalue: "-webkit-mask",
+                    expected: "^^     ^^   ",
+                },
+                {
+                    padvalue: "--var-kebab-case",
+                    expected: "^^^  ^^    ^^   ",
+                },
+                {
+                    padvalue: "--varCamelCase",
+                    expected: "^^^  ^    ^   ",
+                },
+                {
+                    padvalue: "--varlowercase",
+                    expected: "^^^           ",
+                },
+                {
+                    padvalue: "--VARUPPERCASE",
+                    expected: "^^^           ",
+                },
+                {
+                    padvalue: "--var_snake_case",
+                    expected: "^^^  ^^    ^^   ",
+                },
+                {
+                    padvalue: "var(--name)",
+                    expected: "^   ^^^    ",
+                },
+                {
+                    padvalue: "rgb(0, 0, 0)",
+                    expected: "^           ",
+                },
+                {
+                    padvalue: "rgb(0 0 0 / 100%)",
+                    expected: "^                ",
+                },
+                {
+                    padvalue: "rgb(0 0 0 / 0.1)",
+                    expected: "^               ",
+                }
+            ];
+
+            function createSpecialMask(padvalue, specialIndices) {
+                let mask = " ".repeat(padvalue.length);
+                specialIndices.forEach((index) => {
+                    mask = mask.substr(0, index) + "^" + mask.substr(index + 1);
+                });
+                return mask;
+            }
+
+            for (let {padvalue, expected} of tests) {
+                let actual = createSpecialMask(padvalue, matcher._findSpecialCharacterIndicesInPropertyName(padvalue));
+                InspectorTest.expectEqual(actual, expected, `The special characters in "${padvalue}" should match.`);
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "ExecuteQueryAgainstNoValues",
+        description: "Should return no results if no values were added to the controller.",
+        test() {
+            let matcher = new WI.CSSQueryController;
+            let results = matcher.executeQuery("abcde");
+            InspectorTest.expectThat(!results.length, "Should return no results.")
+        }
+    });
+
+    suite.addTestCase({
+        name: "ExecuteWhitespaceQueryOrEmptyQuery",
+        description: "Empty queries and queries containing only whitespace should return no results.",
+        test() {
+            const whitespaceCharacters = " \t\r\n";
+            let matcher = new WI.CSSQueryController(["abcde"]);
+
+            for (let query of whitespaceCharacters) {
+                let results = matcher.executeQuery(query);
+                InspectorTest.expectThat(!results.length, "Whitespace query should return no results.");
+            }
+
+            let results = matcher.executeQuery("");
+            InspectorTest.expectThat(!results.length, "Empty query should return no results.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "ExecuteQueryMatchNone",
+        description: "Should not find a match.",
+        test() {
+            let matcher = new WI.CSSQueryController;
+            let tests = [
+                {query: "abcde", value: "abcd"},
+                {query: "abcd-", value: "abcde"},
+                {query: "abcde", value: "abced"},
+            ];
+
+            for (let {query, value} of tests) {
+                matcher.reset();
+                matcher.addValues([value]);
+                let results = matcher.executeQuery(query);
+                InspectorTest.expectThat(!results.length, `Query "${query}" shouldn't match "${value}".`);
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "ExecuteQueryMatchesExpectedCharacters",
+        description: "Should match the expected query characters.",
+        test() {
+            let matcher = new WI.CSSQueryController;
+            let tests = [
+                {
+                    query: "abcd",
+                    value: "abcde",
+                    expected: "abcd"
+                },
+                {
+                    query: "a-bcde",
+                    value: "abcde-abcde",
+                    expected: "a    - bcde"
+                },
+                {
+                    query: "abcde",
+                    value: "AaBbCcDdEe",
+                    expected: "A B C D E"
+                },
+                {
+                    query: "abcde",
+                    value: "AbcdBcdCdDe",
+                    expected: "A   B  C De"
+                },
+                {
+                    query: "abcdex",
+                    value: "AxBxCxdxexDxyxEF",
+                    expected: "A B C d ex"
+                },
+                {
+                    query: "bc",
+                    value: "abCd",
+                    expected: " bC"
+                },
+                {
+                    query: "bb",
+                    value: "abBc",
+                    expected: " bB"
+                }
+            ];
+
+            function createMatchesMask(queryResult) {
+                let value = queryResult.value;
+                let lastIndex = -1;
+                let result = "";
+
+                for (let match of queryResult.matches) {
+                    let gap = " ".repeat(match.index - lastIndex - 1);
+                    result += gap;
+                    result += value[match.index];
+                    lastIndex = match.index;
+                }
+
+                return result;
+            }
+
+            for (let {query, value, expected} of tests) {
+                matcher.reset();
+                matcher.addValues([value]);
+
+                let results = matcher.executeQuery(query);
+                InspectorTest.assert(results.length === 1, "Should return exactly one match.");
+                let actual = results.length ? createMatchesMask(results[0]) : null;
+                InspectorTest.expectEqual(actual, expected, `Query "${query}" should match "${expected}" in "${value}".`);
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "ExecuteQueryGeneralRankings",
+        description: "Check that query results are ranked by descending relevance.",
+        test() {
+            // Values in order of descending rank.
+            let values = ["AbCdE", "AbcDe", "abcde", "AxbcDe", "AxBxCxDxEx", "AxbxcDe", "xabcde"];
+            let matcher = new WI.CSSQueryController(values);
+            let query = "abcde";
+            let results = matcher.executeQuery(query);
+            let resultValues = results.map((result) => result.value);
+            InspectorTest.expectShallowEqual(resultValues, values, "Results should be ranked by descending relevancy.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "ExecuteQueryPositionRankings",
+        description: "Check that matches close to the beginning of the filename rank higher.",
+        test() {
+            // Values in order of descending rank.
+            let values = ["bcd", "BxCxDx", "AxBxCxDx", "abcd", "xxxAxxxBxxxCxxxD"];
+            let matcher = new WI.CSSQueryController(values);
+            let query = "bcd";
+            let results = matcher.executeQuery(query);
+            let resultValues = results.map((result) => result.value);
+            InspectorTest.expectShallowEqual(resultValues, values, "Results should be ranked by descending relevancy.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "GetMatchingTextRanges",
+        description: "Check that query result TextRanges are correct.",
+        test() {
+            function textRange(start, end) {
+                return new WI.TextRange(0, start, 0, end);
+            }
+
+            let matcher = new WI.CSSQueryController;
+            let tests = [
+                {value: "a", ranges: []},
+                {value: "abcde", ranges: [textRange(0, 5)]},
+                {value: "AxBxCxDe", ranges: [textRange(0, 1), textRange(2, 3), textRange(4, 5), textRange(6, 8)]},
+            ];
+
+            for (let {value, ranges} of tests) {
+                matcher.reset();
+                matcher.addValues([value]);
+
+                let results = matcher.executeQuery("abcde");
+                let resultTextRanges = results.length ? results[0].matchingTextRanges : [];
+                InspectorTest.expectEqual(JSON.stringify(resultTextRanges), JSON.stringify(ranges), "Result TextRanges should match the expected ranges.");
+            }
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing WI.CSSQueryController</p>
+</body>
+</html>

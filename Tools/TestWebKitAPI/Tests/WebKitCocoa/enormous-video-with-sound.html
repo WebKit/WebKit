@@ -1,0 +1,15 @@
+<html>
+<head>
+<script>
+    function handlePlaying() {
+        try {
+            window.webkit.messageHandlers.testHandler.postMessage("playing");
+        } catch(e) {
+        }
+    }
+</script>
+</head>
+<body>
+    <video autoplay src="large-video-with-audio.mp4" width=65536 height=65536 onplaying=handlePlaying()></video>
+</body>
+</html>

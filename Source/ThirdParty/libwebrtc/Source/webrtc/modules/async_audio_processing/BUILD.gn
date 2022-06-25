@@ -1,0 +1,44 @@
+# Copyright (c) 2020 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+
+rtc_library("async_audio_processing") {
+  sources = [
+    "async_audio_processing.cc",
+    "async_audio_processing.h",
+  ]
+
+  public = [ "async_audio_processing.h" ]
+
+  deps = [
+    "../../api:scoped_refptr",
+    "../../api:sequence_checker",
+    "../../api/audio:audio_frame_api",
+    "../../api/audio:audio_frame_processor",
+    "../../api/task_queue:task_queue",
+    "../../rtc_base:checks",
+    "../../rtc_base:rtc_base_approved",
+    "../../rtc_base:rtc_task_queue",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_library("async_audio_processing_test") {
+    testonly = true
+
+    sources = []
+
+    deps = [
+      ":async_audio_processing",
+      "../../api/audio:audio_frame_api",
+      "../../rtc_base:checks",
+      "../../rtc_base:rtc_base_approved",
+    ]
+  }
+}

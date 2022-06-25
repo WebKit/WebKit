@@ -1,0 +1,24 @@
+<style>
+body {
+	margin: 0;
+}
+span {
+	background: red;
+	padding-left: 40px;
+}
+div {
+	background: green;
+	line-height: 40px;
+	width: 60px;
+}
+p {
+	line-height: 40px;
+	margin: 0;
+}
+</style>
+<script src="../../resources/check-layout.js"></script>
+<p> webkit.org/b/115818: The empty inline should get a linebox</p>
+<span id="inline" data-total-y=40></span><div id="first">&nbsp;</div>
+<script>
+    checkLayout('#inline');
+</script>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+
+<script>
+description("Tests that only HTML spaces in a script's 'event' / 'for' attributes are stripped.");
+var wasExecuted = false;
+// U+000B / &#xb; is not an HTML space.
+</script>
+
+<script for="&#xb;window&#xb;" event="onload">
+wasExecuted = true;
+</script>
+
+<script>
+debug("* for=\"&amp;#xb;window&amp;#xb;\" event=\"onload\"");
+shouldBeFalse("wasExecuted");
+wasExecuted = false;
+</script>
+
+<script for="window" event="&#xb;onload&#xb;">
+wasExecuted = true;
+</script>
+
+<script>
+debug("");
+debug("* for=\"window\" event=\"&amp;#xb;onload&amp;#xb;\"");
+shouldBeFalse("wasExecuted");
+wasExecuted = false;
+</script>
+
+</body>
+</html>

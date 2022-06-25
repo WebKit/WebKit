@@ -1,0 +1,10 @@
+This test checks that a script focus after blur after a mouse click on a NOT focusable element does match :focus-visible.
+
+Click on the element that says "Click me".
+If the element that says "Focused" has a red background then the test result is FAILURE, if it has a green outline then the test result is SUCCESS.
+Click me
+Focused
+
+PASS ":focus-visible" should be a valid selector
+PASS Script focus after blur after mouse click on a NOT focusable element does match :focus-visible
+

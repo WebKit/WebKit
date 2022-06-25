@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Validates User-Agent header of XMLHttpRequest");
+jsTestIsAsync = true;
+
+onload = () => {
+    debug ("* Synchronous XHR");
+    syncXHR = new XMLHttpRequest();
+    syncXHR.open("GET", 'resources/echo-user-agent.py', false);
+    syncXHR.send("");
+    shouldBe("syncXHR.status", "200");
+    syncXHRUserAgent = syncXHR.responseText;
+    shouldBeTrue("syncXHRUserAgent.includes('AppleWebKit/')");
+   
+    debug("");
+    asyncXHR = new XMLHttpRequest();
+    asyncXHR.onload = () => {
+        debug("* Asynchronous XHR");
+        shouldBe("asyncXHR.status", "200");
+        asyncXHRUserAgent = asyncXHR.responseText;
+        shouldBeTrue("asyncXHRUserAgent.includes('AppleWebKit/')");
+        debug("");
+        shouldBeTrue("syncXHRUserAgent === asyncXHRUserAgent");
+        debug("");
+        finishJSTest();
+    }
+    asyncXHR.open("GET", 'resources/echo-user-agent.py', true);
+    asyncXHR.send("");
+}
+</script>
+</body>
+</html>

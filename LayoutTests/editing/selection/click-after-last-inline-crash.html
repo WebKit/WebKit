@@ -1,0 +1,23 @@
+<html>
+<body>
+<div style="border: solid red 2px;">
+Click after the end of the line with link.<br><br><a id='test' href="http://aftershock.su/?q=node/259078">This is a link</a><wbr><br><br>It should NOT crash!<br><br>
+</div>
+</body>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    
+    if (!window.eventSender)
+        document.writeln('This test requires eventSender');
+    else {
+        var testElement = document.getElementById('test');
+        eventSender.mouseMoveTo(testElement.offsetLeft + testElement.offsetWidth + 50, testElement.offsetTop + 5);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+        document.writeln('PASS');
+    }
+}
+
+</script>
+</html>

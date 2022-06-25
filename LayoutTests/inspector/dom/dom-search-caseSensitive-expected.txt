@@ -1,0 +1,115 @@
+Testing DOM.performSearch with no parent node ids.
+
+
+=== Query: "body" ===
+Count: 2
+body.main-frame
+body.inside-iframe
+=== Query: "<body" ===
+Count: 0
+=== Query: "body>" ===
+Count: 0
+=== Query: "<body>" ===
+Count: 0
+=== Query: "bOdY" ===
+Count: 2
+body.main-frame
+body.inside-iframe
+=== Query: "<bOdY" ===
+Count: 0
+=== Query: "bOdY>" ===
+Count: 0
+=== Query: "<bOdY>" ===
+Count: 0
+=== Query: "BODY" ===
+Count: 2
+body.main-frame
+body.inside-iframe
+=== Query: "<BODY" ===
+Count: 2
+body.main-frame
+body.inside-iframe
+=== Query: "BODY>" ===
+Count: 2
+body.main-frame
+body.inside-iframe
+=== Query: "<BODY>" ===
+Count: 2
+body.main-frame
+body.inside-iframe
+=== Query: "onload" ===
+Count: 1
+body.main-frame
+=== Query: "oNLoAd" ===
+Count: 0
+=== Query: "ONLOAD" ===
+Count: 0
+=== Query: "runTest()" ===
+Count: 1
+body.main-frame
+=== Query: "\"runTest()" ===
+Count: 1
+body.main-frame
+=== Query: "runTest()\"" ===
+Count: 1
+body.main-frame
+=== Query: "\"runTest()\"" ===
+Count: 1
+body.main-frame
+=== Query: "runtest()" ===
+Count: 0
+=== Query: "\"runtest()" ===
+Count: 0
+=== Query: "runtest()\"" ===
+Count: 0
+=== Query: "\"runtest()\"" ===
+Count: 0
+=== Query: "rUnTeSt()" ===
+Count: 0
+=== Query: "\"rUnTeSt()" ===
+Count: 0
+=== Query: "rUnTeSt()\"" ===
+Count: 0
+=== Query: "\"rUnTeSt()\"" ===
+Count: 0
+=== Query: "RUNTEST()" ===
+Count: 0
+=== Query: "\"RUNTEST()" ===
+Count: 0
+=== Query: "RUNTEST()\"" ===
+Count: 0
+=== Query: "\"RUNTEST()\"" ===
+Count: 0
+=== Query: ".body-inside-iframe" ===
+Count: 0
+=== Query: "*" ===
+Count: 14
+html
+head
+script
+script
+script
+script
+body.main-frame
+p
+iframe
+html.inside-iframe
+head.inside-iframe
+body.inside-iframe
+div.base1.inside-iframe
+p.inside-iframe
+=== Query: "BODY[ONLOAD]" ===
+Count: 1
+body.main-frame
+=== Query: "/html/body" ===
+Count: 2
+body.main-frame
+body.inside-iframe
+=== Query: "/html/body/@onload" ===
+Count: 1
+body.main-frame
+=== Query: "/HTML/BODY" ===
+Count: 2
+body.main-frame
+body.inside-iframe
+

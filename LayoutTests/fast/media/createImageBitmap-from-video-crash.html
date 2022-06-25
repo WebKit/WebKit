@@ -1,0 +1,18 @@
+<script>
+  window.console.log = function() { };
+  if (window.testRunner) {
+    testRunner.dumpAsText();
+  }
+  onload = async () => {
+    let video = document.createElement('video');
+    video.src = "../../media/content/test.mp4";
+    await RTCPeerConnection.generateCertificate({
+      name: 'RSASSA-PKCS1-v1_5',
+      modulusLength: 2048,
+      publicExponent: new Uint8Array([1, 0, 1]),
+      hash: 'SHA-256'
+    });
+    try { await createImageBitmap(video, 0, 0, 1, 2); } catch (error) {}
+  }
+</script>
+PASS

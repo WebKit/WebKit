@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'navigator.serviceWorker.onmessage = ({data}) => {
+  if (data.url === image_url && data.mode === 'no-cors') {
+    sawNoCorsRequest = true;
+  }
+}')
+
+Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'navigator.serviceWorker.onmessage = ({data}) => {
+  if (data.url === image_url && data.mode === 'no-cors') {
+    sawNoCorsRequest = true;
+  }
+}')
+
+

@@ -1,0 +1,195 @@
+# Copyright (c) 2018 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+
+rtc_library("column_printer") {
+  testonly = true
+  sources = [
+    "column_printer.cc",
+    "column_printer.h",
+  ]
+  deps = [
+    "../../rtc_base:macromagic",
+    "../../rtc_base:stringutils",
+    "../logging:log_writer",
+  ]
+}
+
+if (rtc_include_tests && !build_with_chromium) {
+  scenario_resources = [
+    "../../resources/difficult_photo_1850_1110.yuv",
+    "../../resources/photo_1850_1110.yuv",
+    "../../resources/presentation_1850_1110.yuv",
+    "../../resources/web_screenshot_1850_1110.yuv",
+  ]
+  scenario_unittest_resources = [ "../../resources/foreman_cif.yuv" ]
+
+  if (is_ios) {
+    bundle_data("scenario_resources_bundle_data") {
+      testonly = true
+      sources = scenario_resources
+      outputs = [ "{{bundle_resources_dir}}/{{source_file_part}}" ]
+    }
+    bundle_data("scenario_unittest_resources_bundle_data") {
+      testonly = true
+      sources = scenario_unittest_resources
+      outputs = [ "{{bundle_resources_dir}}/{{source_file_part}}" ]
+    }
+  }
+
+  rtc_library("scenario") {
+    testonly = true
+    sources = [
+      "audio_stream.cc",
+      "audio_stream.h",
+      "call_client.cc",
+      "call_client.h",
+      "hardware_codecs.cc",
+      "hardware_codecs.h",
+      "network_node.cc",
+      "network_node.h",
+      "performance_stats.cc",
+      "performance_stats.h",
+      "scenario.cc",
+      "scenario.h",
+      "scenario_config.cc",
+      "scenario_config.h",
+      "stats_collection.cc",
+      "stats_collection.h",
+      "video_frame_matcher.cc",
+      "video_frame_matcher.h",
+      "video_stream.cc",
+      "video_stream.h",
+    ]
+    deps = [
+      ":column_printer",
+      "../:fake_video_codecs",
+      "../:fileutils",
+      "../:rtp_test_utils",
+      "../:test_common",
+      "../:test_support",
+      "../:video_test_common",
+      "../../api:create_frame_generator",
+      "../../api:fec_controller_api",
+      "../../api:frame_generator_api",
+      "../../api:libjingle_peerconnection_api",
+      "../../api:rtc_event_log_output_file",
+      "../../api:rtp_parameters",
+      "../../api:sequence_checker",
+      "../../api:time_controller",
+      "../../api:time_controller",
+      "../../api:transport_api",
+      "../../api/audio_codecs:builtin_audio_decoder_factory",
+      "../../api/audio_codecs:builtin_audio_encoder_factory",
+      "../../api/rtc_event_log",
+      "../../api/rtc_event_log:rtc_event_log_factory",
+      "../../api/test/video:function_video_factory",
+      "../../api/transport:network_control",
+      "../../api/units:data_rate",
+      "../../api/units:data_size",
+      "../../api/units:time_delta",
+      "../../api/units:timestamp",
+      "../../api/video:builtin_video_bitrate_allocator_factory",
+      "../../api/video:video_frame",
+      "../../api/video:video_rtp_headers",
+      "../../api/video_codecs:video_codecs_api",
+      "../../audio",
+      "../../call",
+      "../../call:call_interfaces",
+      "../../call:rtp_sender",
+      "../../call:simulated_network",
+      "../../call:video_stream_api",
+      "../../common_video",
+      "../../media:rtc_audio_video",
+      "../../media:rtc_internal_video_codecs",
+      "../../media:rtc_media_base",
+      "../../modules/audio_device",
+      "../../modules/audio_device:audio_device_impl",
+      "../../modules/audio_device:mock_audio_device",
+      "../../modules/audio_mixer:audio_mixer_impl",
+      "../../modules/audio_processing",
+      "../../modules/congestion_controller/goog_cc:test_goog_cc_printer",
+      "../../modules/rtp_rtcp",
+      "../../modules/rtp_rtcp:mock_rtp_rtcp",
+      "../../modules/rtp_rtcp:rtp_rtcp_format",
+      "../../modules/video_coding:video_codec_interface",
+      "../../modules/video_coding:video_coding_utility",
+      "../../modules/video_coding:webrtc_h264",
+      "../../modules/video_coding:webrtc_multiplex",
+      "../../modules/video_coding:webrtc_vp8",
+      "../../modules/video_coding:webrtc_vp9",
+      "../../rtc_base",
+      "../../rtc_base:checks",
+      "../../rtc_base:rtc_base_approved",
+      "../../rtc_base:rtc_base_tests_utils",
+      "../../rtc_base:rtc_numerics",
+      "../../rtc_base:rtc_stats_counters",
+      "../../rtc_base:rtc_task_queue",
+      "../../rtc_base:safe_minmax",
+      "../../rtc_base:socket_address",
+      "../../rtc_base:task_queue_for_test",
+      "../../rtc_base:threading",
+      "../../rtc_base/synchronization:mutex",
+      "../../rtc_base/task_utils:repeating_task",
+      "../../system_wrappers",
+      "../../system_wrappers:field_trial",
+      "../../video",
+      "../logging:log_writer",
+      "../network:emulated_network",
+      "../time_controller",
+    ]
+    absl_deps = [
+      "//third_party/abseil-cpp/absl/flags:flag",
+      "//third_party/abseil-cpp/absl/flags:parse",
+      "//third_party/abseil-cpp/absl/memory",
+      "//third_party/abseil-cpp/absl/strings",
+      "//third_party/abseil-cpp/absl/types:optional",
+    ]
+    if (is_android) {
+      deps += [ "../../modules/video_coding:android_codec_factory_helper" ]
+    } else if (is_ios || is_mac) {
+      deps += [ "../../modules/video_coding:objc_codec_factory_helper" ]
+    }
+    if (rtc_enable_protobuf) {
+      deps += [ "../../modules/audio_coding:ana_config_proto" ]
+    }
+    data = scenario_resources
+    if (is_ios) {
+      deps += [ ":scenario_resources_bundle_data" ]
+    }
+  }
+  rtc_library("scenario_unittests") {
+    testonly = true
+    sources = [
+      "performance_stats_unittest.cc",
+      "probing_test.cc",
+      "scenario_unittest.cc",
+      "stats_collection_unittest.cc",
+      "video_stream_unittest.cc",
+    ]
+    deps = [
+      ":scenario",
+      "../../api/test/network_emulation",
+      "../../api/test/network_emulation:create_cross_traffic",
+      "../../logging:mocks",
+      "../../rtc_base:checks",
+      "../../rtc_base:rtc_base_approved",
+      "../../system_wrappers",
+      "../../system_wrappers:field_trial",
+      "../../test:field_trial",
+      "../../test:test_support",
+      "../logging:log_writer",
+      "//testing/gmock",
+    ]
+    data = scenario_unittest_resources
+    if (is_ios) {
+      deps += [ ":scenario_unittest_resources_bundle_data" ]
+    }
+  }
+}

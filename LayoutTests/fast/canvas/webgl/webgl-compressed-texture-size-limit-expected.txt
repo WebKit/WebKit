@@ -1,0 +1,496 @@
+Checks size limit of the webgl compressed textures
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+num levels: 14, levels used in positive test: 14
+
+PASS Successfully enabled WEBGL_compressed_texture_s3tc extension
+
+TEXTURE_2D
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 0
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 1
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 2
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 3
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 4
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 5
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 6
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 7
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 8
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 9
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 10
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 11
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 12
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 13
+PASS getError was expected value: INVALID_OPERATION : width or height out of bounds for level 0: should generate INVALID_VALUE.
+PASS getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. Size is 256x256
+
+num levels: 14, levels used in positive test: 14
+
+PASS Successfully enabled WEBGL_compressed_texture_s3tc extension
+
+TEXTURE_2D
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 0
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 1
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 2
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 3
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 4
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 5
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 6
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 7
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 8
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 9
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 10
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 11
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 12
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 13
+PASS getError was expected value: INVALID_OPERATION : width or height out of bounds for level 0: should generate INVALID_VALUE.
+PASS getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. Size is 256x256
+
+num levels: 14, levels used in positive test: 14
+
+PASS Successfully enabled WEBGL_compressed_texture_s3tc extension
+
+TEXTURE_2D
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 0
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 1
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 2
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 3
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 4
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 5
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 6
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 7
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 8
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 9
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 10
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 11
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 12
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 13
+PASS getError was expected value: INVALID_OPERATION : width or height out of bounds for level 0: should generate INVALID_VALUE.
+PASS getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. Size is 256x256
+
+num levels: 14, levels used in positive test: 14
+
+PASS Successfully enabled WEBGL_compressed_texture_s3tc extension
+
+TEXTURE_2D
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 0
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 1
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 2
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 3
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 4
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 5
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 6
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 7
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 8
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 9
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 10
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 11
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 12
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 13
+PASS getError was expected value: INVALID_OPERATION : width or height out of bounds for level 0: should generate INVALID_VALUE.
+PASS getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. Size is 256x256
+
+num levels: 14, levels used in positive test: 12
+
+PASS Successfully enabled WEBGL_compressed_texture_s3tc extension
+
+TEXTURE_CUBE_MAP_POSITIVE_X
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 0
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 1
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 2
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 3
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 4
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 5
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 6
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 7
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 8
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 9
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 10
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 11
+PASS getError was expected value: INVALID_OPERATION : width or height out of bounds for level 0: should generate INVALID_VALUE.
+PASS getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. Size is 256x256
+
+TEXTURE_CUBE_MAP_NEGATIVE_X
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 0
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 1
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 2
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 3
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 4
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 5
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 6
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 7
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 8
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 9
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 10
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 11
+PASS getError was expected value: INVALID_OPERATION : width or height out of bounds for level 0: should generate INVALID_VALUE.
+PASS getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. Size is 256x256
+
+TEXTURE_CUBE_MAP_POSITIVE_Y
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 0
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 1
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 2
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 3
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 4
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 5
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 6
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 7
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 8
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 9
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 10
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 11
+PASS getError was expected value: INVALID_OPERATION : width or height out of bounds for level 0: should generate INVALID_VALUE.
+PASS getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. Size is 256x256
+
+TEXTURE_CUBE_MAP_NEGATIVE_Y
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 0
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 1
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 2
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 3
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 4
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 5
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 6
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 7
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 8
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 9
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 10
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 11
+PASS getError was expected value: INVALID_OPERATION : width or height out of bounds for level 0: should generate INVALID_VALUE.
+PASS getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. Size is 256x256
+
+TEXTURE_CUBE_MAP_POSITIVE_Z
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 0
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 1
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 2
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 3
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 4
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 5
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 6
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 7
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 8
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 9
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 10
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 11
+PASS getError was expected value: INVALID_OPERATION : width or height out of bounds for level 0: should generate INVALID_VALUE.
+PASS getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. Size is 256x256
+
+TEXTURE_CUBE_MAP_NEGATIVE_Z
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 0
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 1
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 2
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 3
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 4
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 5
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 6
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 7
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 8
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 9
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 10
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 11
+PASS getError was expected value: INVALID_OPERATION : width or height out of bounds for level 0: should generate INVALID_VALUE.
+PASS getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. Size is 256x256
+
+num levels: 14, levels used in positive test: 12
+
+PASS Successfully enabled WEBGL_compressed_texture_s3tc extension
+
+TEXTURE_CUBE_MAP_POSITIVE_X
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 0
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 1
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 2
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 3
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 4
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 5
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 6
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 7
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 8
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 9
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 10
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 11
+PASS getError was expected value: INVALID_OPERATION : width or height out of bounds for level 0: should generate INVALID_VALUE.
+PASS getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. Size is 256x256
+
+TEXTURE_CUBE_MAP_NEGATIVE_X
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 0
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 1
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 2
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 3
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 4
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 5
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 6
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 7
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 8
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 9
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 10
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 11
+PASS getError was expected value: INVALID_OPERATION : width or height out of bounds for level 0: should generate INVALID_VALUE.
+PASS getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. Size is 256x256
+
+TEXTURE_CUBE_MAP_POSITIVE_Y
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 0
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 1
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 2
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 3
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 4
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 5
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 6
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 7
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 8
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 9
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 10
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 11
+PASS getError was expected value: INVALID_OPERATION : width or height out of bounds for level 0: should generate INVALID_VALUE.
+PASS getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. Size is 256x256
+
+TEXTURE_CUBE_MAP_NEGATIVE_Y
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 0
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 1
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 2
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 3
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 4
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 5
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 6
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 7
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 8
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 9
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 10
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 11
+PASS getError was expected value: INVALID_OPERATION : width or height out of bounds for level 0: should generate INVALID_VALUE.
+PASS getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. Size is 256x256
+
+TEXTURE_CUBE_MAP_POSITIVE_Z
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 0
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 1
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 2
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 3
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 4
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 5
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 6
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 7
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 8
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 9
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 10
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 11
+PASS getError was expected value: INVALID_OPERATION : width or height out of bounds for level 0: should generate INVALID_VALUE.
+PASS getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. Size is 256x256
+
+TEXTURE_CUBE_MAP_NEGATIVE_Z
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 0
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 1
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 2
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 3
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 4
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 5
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 6
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 7
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 8
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 9
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 10
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 11
+PASS getError was expected value: INVALID_OPERATION : width or height out of bounds for level 0: should generate INVALID_VALUE.
+PASS getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. Size is 256x256
+
+num levels: 14, levels used in positive test: 12
+
+PASS Successfully enabled WEBGL_compressed_texture_s3tc extension
+
+TEXTURE_CUBE_MAP_POSITIVE_X
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 0
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 1
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 2
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 3
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 4
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 5
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 6
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 7
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 8
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 9
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 10
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 11
+PASS getError was expected value: INVALID_OPERATION : width or height out of bounds for level 0: should generate INVALID_VALUE.
+PASS getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. Size is 256x256
+
+TEXTURE_CUBE_MAP_NEGATIVE_X
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 0
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 1
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 2
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 3
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 4
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 5
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 6
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 7
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 8
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 9
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 10
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 11
+PASS getError was expected value: INVALID_OPERATION : width or height out of bounds for level 0: should generate INVALID_VALUE.
+PASS getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. Size is 256x256
+
+TEXTURE_CUBE_MAP_POSITIVE_Y
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 0
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 1
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 2
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 3
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 4
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 5
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 6
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 7
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 8
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 9
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 10
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 11
+PASS getError was expected value: INVALID_OPERATION : width or height out of bounds for level 0: should generate INVALID_VALUE.
+PASS getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. Size is 256x256
+
+TEXTURE_CUBE_MAP_NEGATIVE_Y
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 0
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 1
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 2
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 3
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 4
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 5
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 6
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 7
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 8
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 9
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 10
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 11
+PASS getError was expected value: INVALID_OPERATION : width or height out of bounds for level 0: should generate INVALID_VALUE.
+PASS getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. Size is 256x256
+
+TEXTURE_CUBE_MAP_POSITIVE_Z
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 0
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 1
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 2
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 3
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 4
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 5
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 6
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 7
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 8
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 9
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 10
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 11
+PASS getError was expected value: INVALID_OPERATION : width or height out of bounds for level 0: should generate INVALID_VALUE.
+PASS getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. Size is 256x256
+
+TEXTURE_CUBE_MAP_NEGATIVE_Z
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 0
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 1
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 2
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 3
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 4
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 5
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 6
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 7
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 8
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 9
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 10
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 11
+PASS getError was expected value: INVALID_OPERATION : width or height out of bounds for level 0: should generate INVALID_VALUE.
+PASS getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. Size is 256x256
+
+num levels: 14, levels used in positive test: 12
+
+PASS Successfully enabled WEBGL_compressed_texture_s3tc extension
+
+TEXTURE_CUBE_MAP_POSITIVE_X
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 0
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 1
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 2
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 3
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 4
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 5
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 6
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 7
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 8
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 9
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 10
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 11
+PASS getError was expected value: INVALID_OPERATION : width or height out of bounds for level 0: should generate INVALID_VALUE.
+PASS getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. Size is 256x256
+
+TEXTURE_CUBE_MAP_NEGATIVE_X
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 0
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 1
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 2
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 3
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 4
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 5
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 6
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 7
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 8
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 9
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 10
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 11
+PASS getError was expected value: INVALID_OPERATION : width or height out of bounds for level 0: should generate INVALID_VALUE.
+PASS getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. Size is 256x256
+
+TEXTURE_CUBE_MAP_POSITIVE_Y
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 0
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 1
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 2
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 3
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 4
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 5
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 6
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 7
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 8
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 9
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 10
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 11
+PASS getError was expected value: INVALID_OPERATION : width or height out of bounds for level 0: should generate INVALID_VALUE.
+PASS getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. Size is 256x256
+
+TEXTURE_CUBE_MAP_NEGATIVE_Y
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 0
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 1
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 2
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 3
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 4
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 5
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 6
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 7
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 8
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 9
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 10
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 11
+PASS getError was expected value: INVALID_OPERATION : width or height out of bounds for level 0: should generate INVALID_VALUE.
+PASS getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. Size is 256x256
+
+TEXTURE_CUBE_MAP_POSITIVE_Z
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 0
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 1
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 2
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 3
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 4
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 5
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 6
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 7
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 8
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 9
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 10
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 11
+PASS getError was expected value: INVALID_OPERATION : width or height out of bounds for level 0: should generate INVALID_VALUE.
+PASS getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. Size is 256x256
+
+TEXTURE_CUBE_MAP_NEGATIVE_Z
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 0
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 1
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 2
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 3
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 4
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 5
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 6
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 7
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 8
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 9
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 10
+PASS getError was expected value: NO_ERROR : uploading compressed texture should generate NO_ERROR. level is 11
+PASS getError was expected value: INVALID_OPERATION : width or height out of bounds for level 0: should generate INVALID_VALUE.
+PASS getError was expected value: INVALID_VALUE : level out of bounds: should generate INVALID_VALUE. Size is 256x256
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

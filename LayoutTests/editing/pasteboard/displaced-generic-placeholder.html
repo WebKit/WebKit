@@ -1,0 +1,14 @@
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+</script>
+<p>This is a test to make sure that a placeholder, even one that doesn't have our special class on it, is removed when it is displaced by pasted content.</p>
+<div id="test" contenteditable="true"><br></div>
+
+<script>
+var s = window.getSelection();
+var e = document.getElementById("test");
+
+s.setPosition(e, 0);
+document.execCommand("InsertHTML", false, "First paragraph.<div>Second paragraph.</div>");
+</script>

@@ -1,0 +1,4 @@
+Passes if the test does not crash.
+
+END OF TEST
+

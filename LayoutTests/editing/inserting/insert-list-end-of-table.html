@@ -1,0 +1,10 @@
+<body contenteditable="true"><input id=input><table><td id=td>content</td></table></body>
+<script>
+document.body.offsetHeight;
+window.getSelection().setBaseAndExtent(td, 1, input, 0);
+document.execCommand("insertUnorderedList", false);
+document.body.offsetHeight;
+document.body.innerText = "Tests inserting list at the end of a table. The test passes if WebKit doesn't crash or hit an assertion.";
+if (window.testRunner)
+  testRunner.dumpAsText();
+</script>

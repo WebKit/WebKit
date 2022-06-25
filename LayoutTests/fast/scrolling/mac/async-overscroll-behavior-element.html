@@ -1,0 +1,86 @@
+<!doctype html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true AsyncFrameScrollingEnabled=true ] -->
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<script src="../resources/overscroll-behavior-support.js"></script>
+<link rel="help" href="https://drafts.csswg.org/css-overscroll-behavior">
+<style>
+    .scrolling {
+        overflow: scroll;
+    }
+    .scrollContent {
+        width: 300px;
+        height: 300px;
+    }
+    #root {
+        width: 200px;
+        height: 200px;
+    }
+    #scroller {
+        width: 100px;
+        height: 100px;
+    }
+</style>
+<div id='root' class="scrolling">
+    <div id='scroller' class="scrolling">
+        <div class="scrollContent"></div>
+    </div>
+    <div class="scrollContent"></div>
+</div>
+
+<script>
+const root = document.getElementById('root');
+const scroller = document.getElementById('scroller');
+var overscrollDatas = [["auto", "auto", true, true],
+                        ["contain", "auto", false, true],
+                        ["none", "auto", false, true],
+                        ["auto", "contain", true, false],
+                        ["contain", "contain", false, false],
+                        ["none", "contain", false, false],
+                        ["auto", "none", true, false],
+                        ["contain", "none", false, false],
+                        ["none", "none", false, false]];
+
+function resetTest() {
+    // Try various methods to ensure the element position is reset immediately.
+    scroller.scrollLeft = 300;
+    scroller.scrollTop = 300;
+    scroller.scrollTo(300, 300);
+
+    root.scrollLeft = 0;
+    root.scrollTop = 0;
+    root.scrollTo(0, 0);
+}
+
+function startTest() {
+    overscrollDatas.forEach(([overscrollX, overscrollY, propagateX, propagateY]) => {
+        promise_test(() => {
+            resetTest();
+            scroller.style.overscrollBehaviorX = overscrollX;
+            scroller.style.overscrollBehaviorY = overscrollY;
+            document.body.clientWidth;
+
+            var x = scroller.clientWidth / 2;
+            var y = scroller.clientHeight / 2;
+            var delta = getDeltas("right");
+            return mouseWheelScrollAndWait(x, y, delta.X, delta.Y, delta.X, delta.Y).then(() => {
+                assert_equals(root.scrollLeft > 0, propagateX, 'Propagate horizontal scroll');
+            });
+        }, 'Element horizontal scroll test with overscroll-behavior: ' + overscrollX + ' ' + overscrollY + '.');
+
+        promise_test(() => {
+            resetTest();
+            scroller.style.overscrollBehaviorX = overscrollX;
+            scroller.style.overscrollBehaviorY = overscrollY;
+
+            var x = scroller.clientWidth / 2;
+            var y = scroller.clientHeight / 2;
+            var delta = getDeltas("down");
+            return mouseWheelScrollAndWait(x, y, delta.X, delta.Y, delta.X, delta.Y).then(() => {
+                assert_equals(root.scrollTop > 0, propagateY, 'Propagate vertical scroll');
+            });
+        }, 'Element vertical scroll test with overscroll-behavior: ' + overscrollX + ' ' + overscrollY + '.');
+    });
+}
+
+addEventListener("load", startTest);
+</script>

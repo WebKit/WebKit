@@ -1,0 +1,36 @@
+From b51d6c17f2eb1f0a4c0832c9603bd46268e22bb7 Mon Sep 17 00:00:00 2001
+From: Philippe Normand <philn@igalia.com>
+Date: Sun, 20 Feb 2022 11:05:52 +0000
+Subject: [PATCH] pango: Bump to 1.50.4
+
+Needed for GTK 4.6.
+---
+ elements/components/pango.bst | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/elements/components/pango.bst b/elements/components/pango.bst
+index 6dfa50e4a..5750b901c 100644
+--- a/elements/components/pango.bst
++++ b/elements/components/pango.bst
+@@ -1,5 +1,4 @@
+ kind: meson
+-
+ build-depends:
+ - components/gobject-introspection.bst
+ - public-stacks/buildsystem-meson.bst
+@@ -30,9 +29,9 @@ variables:
+     -Dgtk_doc=false
+     -Dintrospection=enabled
+     -Dinstall-tests=false
+-
+ sources:
+ - kind: git_tag
+   url: gnome:pango.git
+-  track: pango-1-48
+-  ref: 1.48.11-0-gaa565e5dee2ba3aa11345ea0fcb39befe7d1cef8
++  # No pango-1-50 branch so track most recent release.
++  track: 1.50.4
++  ref: 1.50.4-0-gbcf61fc3a0c30da173c8629d1458fe3440288878
+-- 
+2.35.1
+

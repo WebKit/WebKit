@@ -1,0 +1,13 @@
+main frame - didStartProvisionalLoadForFrame
+main frame - didCommitLoadForFrame
+http://127.0.0.1:8000/resources/js-test-pre.js has priority Medium
+http://127.0.0.1:8000/misc/resources/image-slow.pl has priority VeryLow
+http://127.0.0.1:8000/resources/js-test-post.js has priority Medium
+http://127.0.0.1:8000/misc/resources/image-slow.pl changed priority to Low
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

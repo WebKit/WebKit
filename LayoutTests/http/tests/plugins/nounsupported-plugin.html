@@ -1,0 +1,16 @@
+<html>
+<body>
+<script src= "../resources/testharness.js"></script>
+<script src= "../resources/testharnessreport.js"></script>
+<script>
+function checkPlugins()
+{
+    return !!(navigator.plugins["WebKit Test PlugIn"] || navigator.plugins["WebKit built-in PDF"]);
+}
+
+test(() => {
+    assert_true(checkPlugins());
+}, "Test plugins");
+</script>
+</body>
+</html>

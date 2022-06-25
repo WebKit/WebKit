@@ -1,0 +1,16 @@
+
+RUN(video.muted = true)
+RUN(video.src = findMediaFile("video", "content/audio-tracks"))
+EVENT(canplaythrough)
+EXPECTED (internals.categoryAtMostRecentPlayback(video) == 'None') OK
+RUN(video.play())
+EVENT(playing)
+EXPECTED (internals.categoryAtMostRecentPlayback(video) == 'None') OK
+RUN(video.pause())
+EVENT(pause)
+RUN(video.muted = false)
+RUN(video.play())
+EVENT(playing)
+EXPECTED (internals.categoryAtMostRecentPlayback(video) == 'MediaPlayback') OK
+END OF TEST
+

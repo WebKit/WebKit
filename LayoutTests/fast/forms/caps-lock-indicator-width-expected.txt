@@ -1,0 +1,20 @@
+This test verifies that the width of the caps lock indicator in password fields adapts to the height of the field, but does not exceed a maximum value.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Small height
+PASS capsLockIndicatorWidth is 15
+
+Default height
+PASS capsLockIndicatorWidth is 17
+
+Large height
+PASS capsLockIndicatorWidth is 17
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+

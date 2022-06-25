@@ -1,0 +1,25 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x160
+  RenderBlock {HTML} at (0,0) size 800x160
+    RenderBody {BODY} at (8,16) size 784x136
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 635x17
+          text run at (0,0) width 635: "Test passes if the underline of all 'a' characters within black border box is horizontal and no breaking."
+      RenderFlexibleBox {DIV} at (0,34) size 784x102 [border: (1px solid #000000)]
+        RenderBlock {DIV} at (1,10) size 30x90
+          RenderInline {A} at (0,0) size 27x22 [color=#0000EE]
+            RenderText {#text} at (0,0) size 27x22
+              text run at (0,0) width 27: "aaa"
+        RenderBlock {DIV} at (31,19) size 30x50
+          RenderInline {A} at (0,0) size 20x11 [color=#0000EE]
+            RenderText {#text} at (0,0) size 20x11
+              text run at (0,0) width 20: "aaaaa"
+        RenderBlock {DIV} at (61,1) size 30x100
+          RenderInline {A} at (0,0) size 26x33 [color=#0000EE]
+            RenderText {#text} at (0,0) size 26x33
+              text run at (0,0) width 26: "aa"
+        RenderBlock {DIV} at (91,15) size 30x80
+          RenderInline {A} at (0,0) size 21x16 [color=#0000EE]
+            RenderText {#text} at (0,0) size 21x16
+              text run at (0,0) width 21: "aaa"

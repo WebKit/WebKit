@@ -1,0 +1,4 @@
+XXX small YYY
+
+PASS document.elementFromPoint finds container SPAN in the empty region above a child SPAN with a smaller font size
+

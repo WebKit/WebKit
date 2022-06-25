@@ -1,0 +1,9 @@
+<h1 id="password">Cocoa</h1>
+<script>
+onload = function() {
+    location.__defineSetter__('setter', function(value) {
+        throw new Error();
+    });
+    parent.postMessage("finishedLoad", "*");
+}
+</script>

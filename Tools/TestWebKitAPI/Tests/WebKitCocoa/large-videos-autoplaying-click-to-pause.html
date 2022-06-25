@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            video {
+                width: 480px;
+                height: 320px;
+            }
+        </style>
+        <script>
+            var isFirstClick = true;
+            function handleMouseDown() {
+                document.querySelector(isFirstClick ? "#first" : "#second").pause();
+                isFirstClick = false;
+            }
+
+            function handleFirstPause() {
+                setTimeout(function() {
+                    try {
+                        window.webkit.messageHandlers.testHandler.postMessage("paused");
+                    } catch(e) { }
+                }, 0);
+            }
+
+            function handleSecondPause() {
+                setTimeout(function() {
+                    try {
+                        window.webkit.messageHandlers.testHandler.postMessage("paused");
+                    } catch(e) { }
+                }, 0);
+            }
+
+            function beganAutoplaying() {
+                setTimeout(function() {
+                    try {
+                        window.webkit.messageHandlers.testHandler.postMessage("autoplayed");
+                    } catch(e) {
+                    }
+                }, 0)
+            }
+        </script>
+    </head>
+    <body onmousedown=handleMouseDown()>
+        <video autoplay onplaying=beganAutoplaying() loop id="first" src="large-video-with-audio.mp4" onpause=handleFirstPause()></video>
+        <video autoplay onplaying=beganAutoplaying() loop id="second" src="large-video-with-audio.mp4" onpause=handleSecondPause()></video>
+    </body>
+<html>

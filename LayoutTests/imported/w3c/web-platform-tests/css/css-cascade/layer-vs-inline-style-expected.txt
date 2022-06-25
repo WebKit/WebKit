@@ -1,0 +1,6 @@
+
+PASS Normal inline style > normal layered style
+PASS Normal inline style < important layered style
+PASS Important inline style > normal layered style
+PASS Important inline style > important layered style
+

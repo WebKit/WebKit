@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <style>
+        #ellipse-1 { ry: 20px; }
+        #ellipse-2 { rx: 30px; }
+        #ellipse-3 { ry: 40px; }
+        #ellipse-4 { rx: 50px; }
+    </style>
+    <ellipse id="ellipse-1" cx="40" cy="60" rx="20" fill="green"/>
+    <ellipse id="ellipse-2" cx="90" cy="60" ry="30" fill="green"/>
+
+    <ellipse id="ellipse-3" cx="160" cy="60" rx="20" fill="green">
+        <animate attributeType="XML" attributeName="rx" from="20" to="40" dur="1s" fill="freeze"/>
+    </ellipse>
+
+    <ellipse id="ellipse-4" cx="250" cy="60" ry="20" fill="green">
+        <animate attributeType="XML" attributeName="ry" from="20" to="50" dur="1s" fill="freeze"/>
+    </ellipse>
+
+    <use y="100" href="#ellipse-1"/>
+    <use y="100" href="#ellipse-2"/>
+    <use y="100" href="#ellipse-3"/>
+    <use y="100" href="#ellipse-4"/>
+
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        window.addEventListener('load', (event) => {
+            document.documentElement.setCurrentTime(5);
+            if (window.testRunner)
+                testRunner.notifyDone();
+        });
+    </script>
+</svg>

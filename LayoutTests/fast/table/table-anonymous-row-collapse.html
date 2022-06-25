@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<div style="display: table;">
+  <div style="display: table-row-group;">
+    <span style="display: table-cell;">Test passes if this text is&#xa0;</span>
+    <div id=second style="display: table-row;"></div>
+    <span style="display: table-cell;">all on one line.</span>
+    <div style="display: table-row;"></div>
+  </div>
+</div>
+<script>
+document.body.offsetHeight;
+second.remove();
+</script>

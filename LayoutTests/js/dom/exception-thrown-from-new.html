@@ -1,0 +1,44 @@
+<p>
+This page tests exceptions thrown from 'new' expressions. If the test passes,
+you'll see a series of PASS messages below.
+</p>
+<pre id="console"></pre>
+
+<script>
+function log(s)
+{
+    document.getElementById("console").appendChild(document.createTextNode(s + "\n"));
+}
+
+function shouldBe(a, aDescription, b)
+{
+    if (a == b) {
+        log("PASS: " + aDescription + " should be '" + String(b) + "' and is.");
+        return;
+    }
+    
+    log ("FAIL: " + aDescription + " should be '" + String(b) + "' but instead is '" + String(a) + "'.");
+}
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+(function () {
+    try {
+        var f;
+        new f;
+    } catch(e1) {
+        shouldBe(e1, "e1", "TypeError: 'undefined' is not a constructor (evaluating 'new f')");
+    }
+})();
+
+(function () {
+    try {
+        var f;
+        var g;
+        new f(g());
+    } catch(e2) {
+        shouldBe(e2, "e2", "TypeError: 'undefined' is not a function (evaluating 'g()')");
+    }
+})();
+</script>

@@ -1,0 +1,20 @@
+<html>
+<body style="font-family:-webkit-body">
+<!-- WebKit assumes that -webkit-body is a valid font. The font-family:inherit will crash on load if it isn't -->
+<input style="font-family:inherit"/>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+    window.setTimeout(runTest, 0);
+    function runTest() {
+        document.getElementById("result").innerText = "PASS";
+        if (window.testRunner) {
+            testRunner.notifyDone();
+        }
+    }
+</script>
+<div id="result">FAIL</div>
+</body>
+</html>

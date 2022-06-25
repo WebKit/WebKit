@@ -1,0 +1,34 @@
+Test -webkit-user-select all user select all area Test -webkit-user-select all
+Test -webkit-user-select all selection movements and extensions (left right forward backward)
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+placeCaretBeforeUserSelectAllElement()
+window.getSelection().modify('extend', 'forward', 'character')
+PASS Selection is the entire user-select-all element
+window.getSelection().modify('extend', 'backward', 'character')
+PASS Selection is right before user-select-all element
+window.getSelection().modify('extend', 'right', 'character')
+PASS Selection is the entire user-select-all element
+window.getSelection().modify('extend', 'left', 'character')
+PASS Selection is right before user-select-all element
+window.getSelection().modify('move', 'forward', 'character')
+PASS Selection is right after user-select-all element
+window.getSelection().modify('move', 'backward', 'character')
+PASS Selection is right before user-select-all element
+window.getSelection().modify('move', 'right', 'character')
+PASS Selection is right after user-select-all element
+window.getSelection().modify('move', 'left', 'character')
+PASS Selection is right before user-select-all element
+clickAt(descendant.offsetLeft + 10 , descendant.offsetTop + 10)
+PASS Selection is the entire user-select-all element
+mouseMoveFromTo(leftTarget.offsetLeft, descendant.offsetLeft + 20)
+PASS Selection is the entire user-select-all element plus everything on its left
+mouseMoveFromTo(userSelectAllElement.offsetLeft + userSelectAllElement.offsetWidth + rightTarget.offsetWidth, descendant.offsetLeft + 10)
+PASS Selection is the entire user-select-all element plus everything on its right
+PASS Selection is only the text in bold
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

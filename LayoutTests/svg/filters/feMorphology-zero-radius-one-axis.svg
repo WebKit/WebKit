@@ -1,0 +1,17 @@
+<svg id="svg" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<defs>
+    <filter id="morph">
+        <feMorphology operator="erode" radius="0 20"/>
+    </filter>
+</defs>
+
+<g filter="url(#morph)">
+    <rect x="50" y="10" width="200" height="200" fill="black"/>
+    <rect x="250" y="210" width="200" height="200" fill="black"/>
+</g>
+
+<rect x="50" y="30" width="200" height="160" fill="none" stroke-width="8" stroke="gray"/>
+<rect x="250" y="230" width="200" height="160" fill="none" stroke-width="8" stroke="gray"/>
+<rect x="249" y="190" width="2" height="40" fill="none" stroke-width="8" stroke="gray"/>
+
+</svg>

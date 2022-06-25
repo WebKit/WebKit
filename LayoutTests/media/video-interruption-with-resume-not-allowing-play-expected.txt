@@ -1,0 +1,18 @@
+
+Test that playback is paused by an interruption, and that ending the interruption does automatically resume playback.
+
+EVENT(canplaythrough)
+RUN(video.play())
+
+EVENT(playing)
+RUN(internals.beginMediaSessionInterruption('System'))
+
+100ms timer fired...
+EXPECTED (video.paused == 'true') OK
+RUN(internals.endMediaSessionInterruption(''))
+
+100ms timer fired...
+EXPECTED (video.paused == 'true') OK
+
+END OF TEST
+

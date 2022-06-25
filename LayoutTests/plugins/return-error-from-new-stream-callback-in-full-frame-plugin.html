@@ -1,0 +1,9 @@
+<html>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<div>This tests that we won't crash if a full-frame plugin returns an error from its NPP_NewStream callback</div>
+<div>SUCCESS - Didn't crash</div>
+<iframe src="data:application/x-webkit-test-netscape,returnerrorfromnewstream">
+</html>

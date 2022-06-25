@@ -1,0 +1,20 @@
+<head>
+    <style>
+        @font-face { 
+            font-family: 'custom';
+            src: url(firstInvalidURL), url(secondInvalidURL), local('Ahem'); 
+        }
+    </style>
+</head>
+<body>
+    <div style="font-family: 'custom'; font-size: 20px; color: green; background-color: red; width: 5em;">
+        _fail
+        fail_
+        _fail
+        fail_
+        _fail
+    </div>
+    <script>
+        document.body.offsetTop;
+    </script>
+</body>

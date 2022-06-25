@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+window.jsTestIsAsync = true;
+
+description("This test makes sure that preinstalled fonts are never returned from the CSS Font Loading API.");
+var result;
+
+var fontFaceSet = new FontFaceSet([]);
+var fontFace = new FontFace("Helvetica", "url('../../resources/Ahem.ttf')", {unicodeRange: "U+10FFFF"});
+fontFaceSet.add(fontFace);
+fontFaceSet.load("16px Helvetica", "test").then(function(r) {
+    result = r;
+    shouldBe("result.length", "0");
+}).then(function() {
+    fontFaceSet = document.fonts;
+    fontFaceSet.add(fontFace);
+    return fontFaceSet.load("16px Helvetica", "test")
+}).then(function(r) {
+    result = r;
+    shouldBe("result.length", "0");
+    finishJSTest();
+}, function(result) {
+    testFailed("Load should be successful.");
+});
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</script>
+</div>
+</body>
+</html>

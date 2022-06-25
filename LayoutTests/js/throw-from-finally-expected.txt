@@ -1,0 +1,10 @@
+This tests that throwing from a finally block has the expected effect.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS "" + events is "1:try,1:finally,2:finally,2:thingy,3:thingy,3:finally,4:thingy,4:finally,4:another thingy,5:hi,5:wat"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

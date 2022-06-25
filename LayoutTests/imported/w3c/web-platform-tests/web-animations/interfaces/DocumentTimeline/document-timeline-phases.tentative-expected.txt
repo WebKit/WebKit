@@ -1,0 +1,6 @@
+
+FAIL Document timeline starts in "active" phase. assert_equals: expected (string) "active" but got (undefined) undefined
+FAIL Setting document timeline phase (which is readonly) throws TypeError. assert_throws_js: function "() => {
+      timeline.phase = "after";
+    }" did not throw
+

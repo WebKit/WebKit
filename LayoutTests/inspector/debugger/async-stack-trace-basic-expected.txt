@@ -1,0 +1,83 @@
+Tests for checking that async stack traces exist when pausing in asynchronous callbacks: requestAnimationFrame, setTimeout, setInterval, and postMessage.
+
+
+== Running test suite: AsyncStackTrace.Basic
+-- Running test case: AsyncStackTrace.Basic.RequestAnimationFrame
+PAUSED
+CALL STACK:
+0: [F] handleAnimationFrame
+ASYNC CALL STACK:
+1: --- requestAnimationFrame ---
+2: [F] triggerRequestAnimationFrame
+3: [P] Global Code
+
+-- Running test case: AsyncStackTrace.Basic.NestedRequestAnimationFrame
+PAUSED
+CALL STACK:
+0: [F] handleAnimationFrame2
+ASYNC CALL STACK:
+1: --- requestAnimationFrame ---
+2: [F] handleAnimationFrame1
+3: --- requestAnimationFrame ---
+4: [F] triggerNestedRequestAnimationFrame
+5: [P] Global Code
+
+-- Running test case: AsyncStackTrace.Basic.SetTimeout
+PAUSED
+CALL STACK:
+0: [F] handleTimeout
+ASYNC CALL STACK:
+1: --- setTimeout ---
+2: [F] triggerSetTimeout
+3: [P] Global Code
+
+-- Running test case: AsyncStackTrace.Basic.NestedSetTimeout
+PAUSED
+CALL STACK:
+0: [F] handleTimeout2
+ASYNC CALL STACK:
+1: --- setTimeout ---
+2: [F] handleTimeout1
+3: --- setTimeout ---
+4: [F] triggerNestedSetTimeout
+5: [P] Global Code
+
+-- Running test case: AsyncStackTrace.Basic.SetInterval
+PAUSED
+CALL STACK:
+0: [F] handleInterval
+ASYNC CALL STACK:
+1: --- setInterval ---
+2: [F] triggerSetInterval
+3: [P] Global Code
+
+-- Running test case: AsyncStackTrace.Basic.NestedSetInterval
+PAUSED
+CALL STACK:
+0: [F] handleInterval2
+ASYNC CALL STACK:
+1: --- setInterval ---
+2: [F] handleInterval1
+3: --- setInterval ---
+4: [F] triggerNestedSetInterval
+5: [P] Global Code
+
+-- Running test case: AsyncStackTrace.Basic.NestedSetInterval
+PAUSED
+CALL STACK:
+0: [F] handleInterval2
+ASYNC CALL STACK:
+1: --- setInterval ---
+2: [F] handleInterval1
+3: --- setInterval ---
+4: [F] triggerNestedSetInterval
+5: [P] Global Code
+
+-- Running test case: AsyncStackTrace.Basic.PostMessage
+PAUSED
+CALL STACK:
+0: [F] handleMessage
+ASYNC CALL STACK:
+1: --- postMessage ---
+2: [P] Global Code
+

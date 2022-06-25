@@ -1,0 +1,17 @@
+Blocked access to external URL http://www1.localhost:8800/common/security-features/subresource/shared-worker.py?redirection=keep-origin&action=purge&key=c6b12da3-f354-4013-ab7a-9df1886cfeba&path=/mixed-content
+
+Harness Error (TIMEOUT), message = null
+
+PASS Content Security Policy: Expects allowed for sharedworker-import to same-http origin and keep-origin redirection from http context.
+PASS Content Security Policy: Expects allowed for sharedworker-import to same-http origin and keep-origin redirection from http context.: securitypolicyviolation
+PASS Content Security Policy: Expects allowed for sharedworker-import to same-http origin and no-redirect redirection from http context.
+PASS Content Security Policy: Expects allowed for sharedworker-import to same-http origin and no-redirect redirection from http context.: securitypolicyviolation
+TIMEOUT Content Security Policy: Expects blocked for sharedworker-import to cross-http origin and keep-origin redirection from http context. Test timed out
+NOTRUN Content Security Policy: Expects blocked for sharedworker-import to cross-http origin and keep-origin redirection from http context.: securitypolicyviolation
+NOTRUN Content Security Policy: Expects blocked for sharedworker-import to cross-http origin and no-redirect redirection from http context.
+NOTRUN Content Security Policy: Expects blocked for sharedworker-import to cross-http origin and no-redirect redirection from http context.: securitypolicyviolation
+NOTRUN Content Security Policy: Expects blocked for sharedworker-import to cross-http origin and swap-origin redirection from http context.
+NOTRUN Content Security Policy: Expects blocked for sharedworker-import to cross-http origin and swap-origin redirection from http context.: securitypolicyviolation
+NOTRUN Content Security Policy: Expects blocked for sharedworker-import to same-http origin and swap-origin redirection from http context.
+NOTRUN Content Security Policy: Expects blocked for sharedworker-import to same-http origin and swap-origin redirection from http context.: securitypolicyviolation
+

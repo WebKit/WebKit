@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id=foobar style="width: 100px; height: 100px;"></div>
+<script>
+let foobarWidth = 200;
+testRunner.waitUntilDone();
+testRunner.forceLayout();
+
+setInterval(function() {
+    foobar.style.width = foobarWidth + "px";
+    testRunner.forceLayout();
+    foobarWidth += 50;
+}, 10);
+
+setTimeout(function() {
+    testRunner.notifyDone();
+}, 500);
+</script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<style>
+#remove_me {
+  transform: translateX(10px);
+  background-color: red;
+  width: 100px;
+  height: 100px;
+}
+</style>
+<!-- PASS if no red -->
+<div id=remove_me></div>
+<pre id=result></pre>
+<script>
+if (window.testRunner) {
+  testRunner.waitUntilDone();
+  testRunner.dumpAsText();
+}
+
+document.body.offsetHeight;
+
+setTimeout(function() {
+  if (window.internals)
+    internals.startTrackingRepaints();
+  
+  remove_me.remove();
+
+  if (window.internals) {
+    result.innerText = internals.repaintRectsAsText().indexOf("18 8 100 100") != -1 ? "PASS" : "FAIL";
+    internals.stopTrackingRepaints();
+  }
+  if (window.testRunner)
+    testRunner.notifyDone();
+}, 1);
+</script>

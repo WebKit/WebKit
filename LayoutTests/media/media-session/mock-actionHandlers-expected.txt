@@ -1,0 +1,39 @@
+Test that synthetic Media Session actions trigger page installed actionHandlers.
+RUN(internals.sendMediaSessionAction(navigator.mediaSession, {action: "play"}))
+ACTION: play
+EXPECTED (actionDetails === '{"action":"play"}') OK
+RUN(internals.sendMediaSessionAction(navigator.mediaSession, {action: "pause"}))
+ACTION: pause
+EXPECTED (actionDetails === '{"action":"pause"}') OK
+RUN(internals.sendMediaSessionAction(navigator.mediaSession, {action: "seekbackward", seekOffset: -10}))
+ACTION: seekbackward
+EXPECTED (actionDetails === '{"action":"seekbackward","seekOffset":-10}') OK
+RUN(internals.sendMediaSessionAction(navigator.mediaSession, {action: "seekbackward", seekOffset: -10, fastSeek: true}))
+ACTION: seekbackward
+EXPECTED (actionDetails === '{"action":"seekbackward","seekOffset":-10,"fastSeek":true}') OK
+RUN(internals.sendMediaSessionAction(navigator.mediaSession, {action: "seekforward", seekOffset: 10}))
+ACTION: seekforward
+EXPECTED (actionDetails === '{"action":"seekforward","seekOffset":10}') OK
+RUN(internals.sendMediaSessionAction(navigator.mediaSession, {action: "seekforward", seekOffset: 10, fastSeek: true}))
+ACTION: seekforward
+EXPECTED (actionDetails === '{"action":"seekforward","seekOffset":10,"fastSeek":true}') OK
+RUN(internals.sendMediaSessionAction(navigator.mediaSession, {action: "previoustrack"}))
+ACTION: previoustrack
+EXPECTED (actionDetails === '{"action":"previoustrack"}') OK
+RUN(internals.sendMediaSessionAction(navigator.mediaSession, {action: "nexttrack"}))
+ACTION: nexttrack
+EXPECTED (actionDetails === '{"action":"nexttrack"}') OK
+RUN(internals.sendMediaSessionAction(navigator.mediaSession, {action: "skipad"}))
+ACTION: skipad
+EXPECTED (actionDetails === '{"action":"skipad"}') OK
+RUN(internals.sendMediaSessionAction(navigator.mediaSession, {action: "stop"}))
+ACTION: stop
+EXPECTED (actionDetails === '{"action":"stop"}') OK
+RUN(internals.sendMediaSessionAction(navigator.mediaSession, {action: "seekto", seekTime: 1}))
+ACTION: seekto
+EXPECTED (actionDetails === '{"action":"seekto","seekTime":1}') OK
+RUN(internals.sendMediaSessionAction(navigator.mediaSession, {action: "seekto", seekTime: 1, fastSeek: true}))
+ACTION: seekto
+EXPECTED (actionDetails === '{"action":"seekto","seekTime":1,"fastSeek":true}') OK
+END OF TEST
+

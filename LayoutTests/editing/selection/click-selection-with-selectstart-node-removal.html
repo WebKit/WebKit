@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p id="container">Click the box below.</p>
+<div id="editor" style="border: solid 2px red; padding: 2px; width: 100px; height: 100px" contenteditable>a</div>
+<script src="../../resources/ui-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+jsTestIsAsync = true;
+
+description(`This tests removing the target of mouse down during selectstart.
+WebKit should not set the selection's endpoints to newly disconnected nodes even in this case.'`);
+
+editor.addEventListener('mousedown', () => {
+    getSelection().removeAllRanges();
+    editor.addEventListener('selectstart', () => {
+        editor.remove();
+    }, {once: true});
+    setTimeout(() => {
+        shouldBe('getSelection().rangeCount', '0');
+        if (getSelection().rangeCount)
+            console.log(getSelection().getRangeAt(0));
+        finishJSTest();
+    }, 5);
+});
+
+if (window.testRunner)
+    UIHelper.activateElement(editor);
+
+successfullyParsed = true;
+
+</script>
+</body>
+</html>

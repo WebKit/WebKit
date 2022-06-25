@@ -1,0 +1,9 @@
+Tests storage of private click measurement with nested links.
+
+Unattributed Private Click Measurements:
+WebCore::PrivateClickMeasurement 1
+Source site: 127.0.0.1
+Attribute on site: localhost
+Source ID: 3
+No attribution trigger data.
+Application bundle identifier: testBundleID

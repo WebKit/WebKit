@@ -1,0 +1,29 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 0 of #text > SPAN > DIV > TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document to 4 of #text > SPAN > DIV > TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of DIV > TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document to 0 of DIV > TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document toDOMRange:range from 24 of #text > DIV > TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document to 24 of #text > DIV > TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 685x19
+          text run at (0,0) width 342: "This tests deletion of a selection that spans multiple cells. "
+          text run at (342,0) width 343: "Just table content should be removed, not table structure."
+      RenderBlock {DIV} at (0,36) size 784x30
+        RenderTable {TABLE} at (0,0) size 326x30 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 324x28
+            RenderTableRow {TR} at (0,2) size 324x24
+              RenderTableCell {TD} at (2,2) size 151x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderBlock {DIV} at (2,2) size 147x20
+                  RenderText {#text} at (0,0) size 147x19
+                    text run at (0,0) width 147: "These two pieces of text"
+              RenderTableCell {TD} at (155,2) size 167x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                RenderBlock {DIV} at (2,2) size 163x20
+                  RenderText {#text} at (0,0) size 163x19
+                    text run at (0,0) width 163: " should be in different cells."
+caret: position 24 of child 0 {#text} of child 0 {DIV} of child 0 {TD} of child 0 {TR} of child 0 {TBODY} of child 0 {TABLE} of child 2 {DIV} of body

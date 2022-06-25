@@ -1,0 +1,18 @@
+<p>This tests for a crash when pasting content into a table cell.  The table cell has some collapsed whitespace at the end of it that tickled the crash.  You should see 'Hello World' in the table cell below.</p>
+<div contenteditable="true">
+<table border=1>
+<tr>
+<td id="td">Hello W
+		
+		</td>
+</tr>
+</table>
+</div>
+
+<script>
+td = document.getElementById("td");
+text = td.firstChild;
+sel = window.getSelection();
+sel.setPosition(text, 7);
+document.execCommand("InsertHTML", false, "orld");
+</script>

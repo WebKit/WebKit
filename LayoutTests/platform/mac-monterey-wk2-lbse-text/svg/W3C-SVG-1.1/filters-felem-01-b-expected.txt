@@ -1,0 +1,52 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+layer at (90,20) size 353x265
+  RenderSVGContainer {g} at (0,0) size 353x265
+layer at (90,20) size 80x115
+  RenderSVGContainer {g} at (0,0) size 80x115
+layer at (100,30) size 60x60
+  RenderSVGEllipse {circle} at (0,0) size 60x60 [fill={[type=SOLID] [color=#FF0000]}] [cx=130.00] [cy=60.00] [r=30.00]
+layer at (90,20) size 80x80
+  RenderSVGEllipse {circle} at (0,0) size 80x80 [fill={[type=SOLID] [color=#000000]}] [cx=130.00] [cy=60.00] [r=40.00]
+layer at (96,112) size 68x23
+  RenderSVGText {text} at (5,92) size 70x23 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 69x23
+      chunk 1 (middle anchor) text run 1 at (95.84,130.00) startOffset 0 endOffset 9 width 68.31: "No filter"
+layer at (90,170) size 80x115
+  RenderSVGContainer {g} at (0,0) size 80x115
+layer at (100,180) size 60x60
+  RenderSVGEllipse {circle} at (0,0) size 60x60 [fill={[type=SOLID] [color=#FF0000]}] [cx=130.00] [cy=210.00] [r=30.00]
+layer at (90,170) size 80x80
+  RenderSVGEllipse {circle} at (0,0) size 80x80 [fill={[type=SOLID] [color=#000000]}] [cx=130.00] [cy=210.00] [r=40.00]
+layer at (90,262) size 80x23
+  RenderSVGText {text} at (0,92) size 80x23 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 80x23
+      chunk 1 (middle anchor) text run 1 at (90.29,280.00) startOffset 0 endOffset 11 width 79.42: "Null filter"
+layer at (256,20) size 148x115
+  RenderSVGContainer {g} at (0,0) size 148x115
+layer at (300,30) size 61x60
+  RenderSVGEllipse {circle} at (0,0) size 60x60 [fill={[type=SOLID] [color=#FF0000]}] [cx=330.00] [cy=60.00] [r=30.00]
+layer at (290,20) size 81x80
+  RenderSVGEllipse {circle} at (0,0) size 80x80 [fill={[type=SOLID] [color=#000000]}] [cx=330.00] [cy=60.00] [r=40.00]
+layer at (256,112) size 147x23
+  RenderSVGText {text} at (0,92) size 148x23 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 148x23
+      chunk 1 (middle anchor) text run 1 at (256.41,130.00) startOffset 0 endOffset 19 width 147.18: "Non-existant filter"
+layer at (218,170) size 226x115
+  RenderSVGContainer {g} at (0,0) size 225x115
+layer at (300,180) size 61x60
+  RenderSVGEllipse {circle} at (0,0) size 60x60 [fill={[type=SOLID] [color=#FF0000]}] [cx=330.00] [cy=210.00] [r=30.00]
+layer at (290,170) size 81x80
+  RenderSVGEllipse {circle} at (0,0) size 80x80 [fill={[type=SOLID] [color=#000000]}] [cx=330.00] [cy=210.00] [r=40.00]
+layer at (218,262) size 224x23
+  RenderSVGText {text} at (0,92) size 225x23 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 225x23
+      chunk 1 (middle anchor) text run 1 at (217.80,280.00) startOffset 0 endOffset 29 width 224.40: "Null with small region filter"
+layer at (10,304) size 283x46
+  RenderSVGText {text} at (10,304) size 284x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 284x46
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 17 width 283.34: "$Revision: 1.13 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (-1,-1) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="target"></div>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that br.outerText does not throw");
+
+var target = document.getElementById("target");
+var br = document.createElement("br");
+target.appendChild(br);
+shouldNotThrow("br.outerText = 'PASS';");
+shouldBeNull("br.parentNode");
+shouldBeEqualToString("target.firstChild.data", "PASS");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

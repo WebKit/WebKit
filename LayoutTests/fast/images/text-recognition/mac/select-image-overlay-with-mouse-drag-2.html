@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+img {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+</style>
+</head>
+<body>
+<img src="../../resources/green-400x400.png"></img>
+<script>
+addEventListener("load", () => {
+    internals.installImageOverlay(document.querySelector("img"), [
+        {
+            topLeft : new DOMPointReadOnly(0, 0),
+            topRight : new DOMPointReadOnly(1, 0),
+            bottomRight : new DOMPointReadOnly(1, 0.5),
+            bottomLeft : new DOMPointReadOnly(0, 0.5),
+            children: [
+                {
+                    text : "helloworld1",
+                    topLeft : new DOMPointReadOnly(0, 0),
+                    topRight : new DOMPointReadOnly(0.5, 0),
+                    bottomRight : new DOMPointReadOnly(0.5, 0.5),
+                    bottomLeft : new DOMPointReadOnly(0, 0.5),
+                },
+                {
+                    text : "helloworld2",
+                    topLeft : new DOMPointReadOnly(0.5, 0),
+                    topRight : new DOMPointReadOnly(1, 0),
+                    bottomRight : new DOMPointReadOnly(1, 0.5),
+                    bottomLeft : new DOMPointReadOnly(0.5, 0.5),
+                }
+            ]
+        },
+        {
+            topLeft : new DOMPointReadOnly(0.5, 0.5),
+            topRight : new DOMPointReadOnly(1, 0.5),
+            bottomRight : new DOMPointReadOnly(1, 1),
+            bottomLeft : new DOMPointReadOnly(0.5, 1),
+            children: [
+                {
+                    text : "helloworld3",
+                    topLeft : new DOMPointReadOnly(0.5, 0.5),
+                    topRight : new DOMPointReadOnly(1, 0.5),
+                    bottomRight : new DOMPointReadOnly(1, 1),
+                    bottomLeft : new DOMPointReadOnly(0.5, 1),
+                }
+            ]
+        }
+    ]);
+
+    eventSender.mouseMoveTo(50, 50);
+    eventSender.mouseDown();
+    eventSender.mouseMoveTo(350, 350);
+    eventSender.mouseUp();
+});
+</script>
+</body>
+</html>

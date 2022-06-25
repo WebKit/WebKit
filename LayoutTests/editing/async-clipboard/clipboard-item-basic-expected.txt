@@ -1,0 +1,60 @@
+Tests the ability to create and extract data from ClipboardItems.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+PASS Created new ClipboardItem with 1 type(s)
+PASS commaSeparated(item.types) is "text/plain"
+PASS blob.size is 3
+PASS blob.type is "text/plain"
+PASS text is "foo"
+PASS Caught expected exception. (calling getType('text/html'))
+PASS Caught expected exception. (calling getType('foo bar'))
+
+PASS Created new ClipboardItem with 1 type(s)
+PASS commaSeparated(item.types) is "text/html"
+PASS blob.size is 20
+PASS blob.type is "text/html"
+PASS text is "<strong>bar</strong>"
+
+PASS Created new ClipboardItem with 1 type(s)
+PASS commaSeparated(item.types) is "text/uri-list"
+PASS blob.size is 37
+PASS blob.type is "text/uri-list"
+PASS text is "https://www.w3.org/TR/clipboard-apis/"
+
+PASS Created new ClipboardItem with 1 type(s)
+PASS commaSeparated(item.types) is "image/png"
+PASS blob.size is 979
+PASS blob.type is "image/png"
+PASS image.width is 60
+PASS image.height is 60
+
+PASS Created new ClipboardItem with 4 type(s)
+PASS commaSeparated(item.types) is "image/png, text/html, text/uri-list, text/plain"
+PASS image.width is 60
+PASS image.height is 60
+PASS html is "<strong>Hello</strong><script>console.log(\"world\")</script>"
+PASS url is "https://www.w3.org/TR/clipboard-apis/"
+PASS text is "Async 📋 API"
+
+PASS Created new ClipboardItem with 5 type(s)
+PASS commaSeparated(item.types) is "text/plain, text/html, image/png, 🤔🤔🤔, מקור השם עברית"
+PASS text is "謝謝"
+PASS customText1 is "מקור השם עברית"
+PASS customText2 is "🤔🤔🤔"
+PASS Caught expected exception. (calling getType('text/html'))
+PASS Caught expected exception. (calling getType('image/png'))
+
+PASS Created new ClipboardItem with 5 type(s)
+PASS commaSeparated(item.types) is "!@#$%, image/png, text/html, text/uri-list, text/plain"
+PASS Caught expected exception. (calling getType('!@#$%'))
+PASS Caught expected exception. (calling getType('image/png'))
+PASS Caught expected exception. (calling getType('text/html'))
+PASS Caught expected exception. (calling getType('text/uri-list'))
+PASS Caught expected exception. (calling getType('text/plain'))
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

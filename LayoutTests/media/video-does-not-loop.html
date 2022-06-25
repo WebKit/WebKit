@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style> video { height: 25px; width: 300px; } </style>
+        <script src=video-test.js></script>
+    
+        <script>
+            var seekCount = 0;
+    
+            function loadedmetadata()
+            {
+                consoleWrite("<br><em>++ seek to near the end to reduce test time.</em>");
+                run("video.currentTime = video.duration - 0.4");
+            }
+
+            function seeked()
+            {
+                if (++seekCount == 1)
+                {
+                    consoleWrite("<br><em>++ seek completed, beginning playback.</em>");
+                    testExpected("video.paused", true);
+                    testExpected("video.ended", false);
+                    run("video.play()");
+                    consoleWrite("");
+                }
+            }
+    
+            function ended() 
+            {
+                consoleWrite("<br><em>++ played to end and stopped.</em>");
+                testExpected("video.ended", true);
+
+                // don't use "testExpected()" so we won't log the actual duration as the floating point result may differ with different engines
+                reportExpected(mediaElement.currentTime == mediaElement.duration, "mediaElement.currentTime", "==", "mediaElement.duration", mediaElement.currentTime);
+
+                consoleWrite("");
+                endTest();
+            }
+    
+            function start()
+            {
+                findMediaElement();
+
+                consoleWrite("<em>++ Test initial state.</em>");
+                testExpected("video.loop", false);
+            
+                waitForEvent('pause');
+                waitForEvent("ended", ended);
+                waitForEvent("seeked", seeked);
+                waitForEvent("loadedmetadata", loadedmetadata);
+
+                video.src = "content/silence-loop.mov";
+            }
+        </script>
+
+    </head>
+    <body>
+        <video controls ></video>
+        <p>Test to make sure QuickTime movie saved with 'loop' user data does not loop automatically.</p>
+        <script>start()</script>
+    </body>
+</html>

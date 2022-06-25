@@ -1,0 +1,15 @@
+This test checks that drag-and-drop support works for a hyperlink.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Dragging HTML hyperlink
+
+PASS event.dataTransfer.getData("url") is "http://www.whatwg.org/html"
+
+Dragging SVG hyperlink
+
+PASS event.dataTransfer.getData("url") is "http://www.w3.org/TR/SVG11/"
+
+TEST COMPLETE
+

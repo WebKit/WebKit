@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test() {
+    function hasFontFamily(fontFamilies, fontFamily) {
+        return (fontFamilies.includes(fontFamily) ? "Includes " : "Missing ") + fontFamily;
+    }
+
+    function fontFamilyNamesCallback(error, fontFamilyNames) {
+        InspectorTest.assert(!error, "Error in getting font family names.");
+
+        if (!error) {
+            InspectorTest.assert(fontFamilyNames.length >= 5, "Has at least 5 fonts");
+            // We can't count on any font existing on every platform, so we list enough fonts here
+            // such that at least one will exist. Update your port's test expectations as needed.
+            InspectorTest.log(hasFontFamily(fontFamilyNames, "Arial"));
+            InspectorTest.log(hasFontFamily(fontFamilyNames, "Times"));
+            InspectorTest.log(hasFontFamily(fontFamilyNames, "DejaVu Sans"));
+            InspectorTest.log(hasFontFamily(fontFamilyNames, "Liberation Serif"));
+        }
+
+        InspectorTest.completeTest();
+    }
+    CSSAgent.getSupportedSystemFontFamilyNames(fontFamilyNamesCallback);
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>This test ensures that the inspector can enumerate system font families, and checks for the existence of common fonts.</p>
+</body>
+</html>

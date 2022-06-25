@@ -1,0 +1,1 @@
+Tests multicol when a fragment flow gains a new in-flow descendant. The test passes if WebKit doesn't crash or hit an assertion.

@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+var successfullyParsed = false;
+if (window.testRunner)
+   testRunner.dumpAsText();
+</script>
+</head>
+<body>
+
+<a href="store.html" id="link">
+<img src="image.gif" width=100 height=100 alt="Hello World">
+</a>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This test makes sure that a link with only an image will report the correct label.");
+
+    if (window.accessibilityController) {
+
+        var obj = accessibilityController.accessibleElementById("link");
+        shouldBeFalse("obj.isIgnored");
+        shouldBe("obj.description", "'AXLabel: Hello World'");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+
+</body>
+</html>
+

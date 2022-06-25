@@ -1,0 +1,134 @@
+
+PASS setup
+PASS Partial interface Window: original interface defined
+PASS Partial interface Window: member names are unique
+PASS Partial interface Document: member names are unique
+PASS Partial interface Document[2]: member names are unique
+PASS Partial interface Window[2]: member names are unique
+PASS Document includes NonElementParentNode: member names are unique
+PASS DocumentFragment includes NonElementParentNode: member names are unique
+PASS Document includes ParentNode: member names are unique
+PASS DocumentFragment includes ParentNode: member names are unique
+PASS Element includes ParentNode: member names are unique
+PASS Element includes NonDocumentTypeChildNode: member names are unique
+PASS CharacterData includes NonDocumentTypeChildNode: member names are unique
+PASS DocumentType includes ChildNode: member names are unique
+PASS Element includes ChildNode: member names are unique
+PASS CharacterData includes ChildNode: member names are unique
+PASS Element includes Slottable: member names are unique
+PASS Text includes Slottable: member names are unique
+PASS Document includes XPathEvaluatorBase: member names are unique
+PASS XPathEvaluator includes XPathEvaluatorBase: member names are unique
+PASS Document includes GlobalEventHandlers: member names are unique
+PASS Document includes DocumentAndElementEventHandlers: member names are unique
+PASS HTMLElement includes GlobalEventHandlers: member names are unique
+PASS HTMLElement includes DocumentAndElementEventHandlers: member names are unique
+PASS HTMLElement includes ElementContentEditable: member names are unique
+PASS HTMLElement includes HTMLOrSVGElement: member names are unique
+PASS Window includes GlobalEventHandlers: member names are unique
+PASS Window includes WindowEventHandlers: member names are unique
+PASS Window includes WindowOrWorkerGlobalScope: member names are unique
+PASS Window includes AnimationFrameProvider: member names are unique
+PASS Window includes WindowSessionStorage: member names are unique
+PASS Window includes WindowLocalStorage: member names are unique
+PASS Event interface: existence and properties of interface object
+PASS Event interface object length
+PASS Event interface object name
+PASS Event interface: existence and properties of interface prototype object
+PASS Event interface: existence and properties of interface prototype object's "constructor" property
+PASS Event interface: existence and properties of interface prototype object's @@unscopables property
+PASS Event interface: attribute type
+PASS Event interface: attribute target
+PASS Event interface: attribute srcElement
+PASS Event interface: attribute currentTarget
+PASS Event interface: operation composedPath()
+PASS Event interface: constant NONE on interface object
+PASS Event interface: constant NONE on interface prototype object
+PASS Event interface: constant CAPTURING_PHASE on interface object
+PASS Event interface: constant CAPTURING_PHASE on interface prototype object
+PASS Event interface: constant AT_TARGET on interface object
+PASS Event interface: constant AT_TARGET on interface prototype object
+PASS Event interface: constant BUBBLING_PHASE on interface object
+PASS Event interface: constant BUBBLING_PHASE on interface prototype object
+PASS Event interface: attribute eventPhase
+PASS Event interface: operation stopPropagation()
+PASS Event interface: attribute cancelBubble
+PASS Event interface: operation stopImmediatePropagation()
+PASS Event interface: attribute bubbles
+PASS Event interface: attribute cancelable
+PASS Event interface: attribute returnValue
+PASS Event interface: operation preventDefault()
+PASS Event interface: attribute defaultPrevented
+PASS Event interface: attribute composed
+PASS Event interface: attribute timeStamp
+PASS Event interface: operation initEvent(DOMString, optional boolean, optional boolean)
+PASS CustomEvent interface: existence and properties of interface object
+PASS CustomEvent interface object length
+PASS CustomEvent interface object name
+PASS CustomEvent interface: existence and properties of interface prototype object
+PASS CustomEvent interface: existence and properties of interface prototype object's "constructor" property
+PASS CustomEvent interface: existence and properties of interface prototype object's @@unscopables property
+PASS CustomEvent interface: attribute detail
+PASS CustomEvent interface: operation initCustomEvent(DOMString, optional boolean, optional boolean, optional any)
+PASS EventTarget interface: existence and properties of interface object
+PASS EventTarget interface object length
+PASS EventTarget interface object name
+PASS EventTarget interface: existence and properties of interface prototype object
+PASS EventTarget interface: existence and properties of interface prototype object's "constructor" property
+PASS EventTarget interface: existence and properties of interface prototype object's @@unscopables property
+PASS EventTarget interface: operation addEventListener(DOMString, EventListener?, optional (AddEventListenerOptions or boolean))
+PASS EventTarget interface: operation removeEventListener(DOMString, EventListener?, optional (EventListenerOptions or boolean))
+PASS EventTarget interface: operation dispatchEvent(Event)
+PASS EventListener interface: existence and properties of interface object
+PASS AbortController interface: existence and properties of interface object
+PASS AbortController interface object length
+PASS AbortController interface object name
+PASS AbortController interface: existence and properties of interface prototype object
+PASS AbortController interface: existence and properties of interface prototype object's "constructor" property
+PASS AbortController interface: existence and properties of interface prototype object's @@unscopables property
+PASS AbortController interface: attribute signal
+PASS AbortController interface: operation abort(optional any)
+PASS AbortSignal interface: existence and properties of interface object
+PASS AbortSignal interface object length
+PASS AbortSignal interface object name
+PASS AbortSignal interface: existence and properties of interface prototype object
+PASS AbortSignal interface: existence and properties of interface prototype object's "constructor" property
+PASS AbortSignal interface: existence and properties of interface prototype object's @@unscopables property
+PASS AbortSignal interface: operation abort(optional any)
+PASS AbortSignal interface: member timeout
+PASS AbortSignal interface: attribute aborted
+PASS AbortSignal interface: attribute reason
+PASS AbortSignal interface: operation throwIfAborted()
+PASS AbortSignal interface: attribute onabort
+PASS NodeList interface: existence and properties of interface object
+PASS HTMLCollection interface: existence and properties of interface object
+PASS MutationObserver interface: existence and properties of interface object
+PASS MutationRecord interface: existence and properties of interface object
+PASS Node interface: existence and properties of interface object
+PASS Document interface: existence and properties of interface object
+PASS XMLDocument interface: existence and properties of interface object
+PASS DOMImplementation interface: existence and properties of interface object
+PASS DocumentType interface: existence and properties of interface object
+PASS DocumentFragment interface: existence and properties of interface object
+PASS ShadowRoot interface: existence and properties of interface object
+PASS Element interface: existence and properties of interface object
+PASS NamedNodeMap interface: existence and properties of interface object
+PASS Attr interface: existence and properties of interface object
+PASS CharacterData interface: existence and properties of interface object
+PASS Text interface: existence and properties of interface object
+PASS CDATASection interface: existence and properties of interface object
+PASS ProcessingInstruction interface: existence and properties of interface object
+PASS Comment interface: existence and properties of interface object
+PASS AbstractRange interface: existence and properties of interface object
+PASS StaticRange interface: existence and properties of interface object
+PASS Range interface: existence and properties of interface object
+PASS NodeIterator interface: existence and properties of interface object
+PASS TreeWalker interface: existence and properties of interface object
+PASS NodeFilter interface: existence and properties of interface object
+PASS DOMTokenList interface: existence and properties of interface object
+PASS XPathResult interface: existence and properties of interface object
+PASS XPathExpression interface: existence and properties of interface object
+PASS XPathNSResolver interface: existence and properties of interface object
+PASS XPathEvaluator interface: existence and properties of interface object
+PASS XSLTProcessor interface: existence and properties of interface object
+

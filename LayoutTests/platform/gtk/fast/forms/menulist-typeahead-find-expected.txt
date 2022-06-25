@@ -1,0 +1,11 @@
+
+
+Cannot run interactively.
+Expected Apple: was Apple
+Expected Carrot: was Carrot
+Expected Cauliflower: was Cauliflower
+Expected Corn: was Corn
+Expected Carrot: was Carrot
+Expected Apple: was Apple
+Expected Cauliflower: was Cauliflower
+Expected Star fruit: was Star fruit

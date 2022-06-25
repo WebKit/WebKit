@@ -1,0 +1,56 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ language=en-US,zh-HK,es-US useFlexibleViewport=true ] -->
+<meta name="viewport" content="width=device-width">
+<script src="../resources/media-controls-utils.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test-pre.js"></script>
+<body>
+<video src="../../content/counting.mp4" style="position: absolute; left: 0; top: 0; width: 600px;" autoplay controls muted playsinline>
+    <track src="../../lorem-ipsum.vtt" kind="descriptions" srclang="en" label="Descriptions">
+    <track src="../../lorem-ipsum.vtt" kind="captions"     srclang="en" label="label-en">
+    <track src="../../lorem-ipsum.vtt" kind="subtitles"    srclang="en" label="label-en">
+    <track src="../../lorem-ipsum.vtt" kind="descriptions" srclang="de" label="Descriptions">
+    <track src="../../lorem-ipsum.vtt" kind="captions"     srclang="de">
+    <track src="../../lorem-ipsum.vtt" kind="subtitles"    srclang="de">
+    <track src="../../lorem-ipsum.vtt" kind="descriptions" srclang="fr" label="Descriptions">
+    <track src="../../lorem-ipsum.vtt" kind="captions"     srclang="fr" label="label-fr">
+    <track src="../../lorem-ipsum.vtt" kind="subtitles"    srclang="fr" label="label-fr">
+    <track src="../../lorem-ipsum.vtt" kind="descriptions" srclang="es" label="Descriptions">
+    <track src="../../lorem-ipsum.vtt" kind="captions"     srclang="es">
+    <track src="../../lorem-ipsum.vtt" kind="subtitles"    srclang="es">
+    <track src="../../lorem-ipsum.vtt" kind="subtitles"    srclang="zh-CN">
+</video>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description(`This test checks that tracks are sorted based on the user's preferred languages.`);
+
+const media = document.querySelector("video");
+const shadowRoot = window.internals.shadowRoot(media);
+
+window.internals.setMediaControlsMaximumRightContainerButtonCountOverride(media, 100); // A finite value larger than anything likely.
+window.internals.setCaptionDisplayMode("manual"); // Show all tracks.
+
+media.addEventListener("play", () => {
+    media.pause();
+
+    shouldBecomeDifferent("shadowRoot.querySelector('button.tracks')", "null", () => {
+        shouldBecomeDifferent("shadowRoot.querySelector('button.tracks').getBoundingClientRect().width", "0", async () => {
+            debug("Tapping tracks button...");
+            await pressOnElement(shadowRoot.querySelector("button.tracks"));
+
+            let contextmenu = await getTracksContextMenu();
+            let items = contextmenu[0].children;
+            if (items[0].title === "Subtitles")
+                items = items.slice(1);
+            debug("Subtitles: " + JSON.stringify(items.map((item) => item.title), null, 2));
+
+            media.remove();
+            finishJSTest();
+        });
+    });
+});
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

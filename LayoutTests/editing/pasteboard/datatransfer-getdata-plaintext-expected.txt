@@ -1,0 +1,13 @@
+This tests peeks plain text using dataTransfer.getDAta. To manually test, click on "Copy text".
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS clipboardData.setData(" text/PLAIN ", "hello"); clipboardData.getData("text/plain") is "hello"
+PASS clipboardData.setData("   tEXT/pLaIN", "world"); clipboardData.getData("text/plain") is "world"
+PASS clipboardData.setData("text/plain; charset=utf-8", "hello"); clipboardData.getData("text/plain; charset=Shift_JIS") is "hello"
+PASS clipboardData.clearData("url"); clipboardData.getData("text/plain") is "hello"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

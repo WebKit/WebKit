@@ -1,0 +1,58 @@
+<html>
+<head>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function editingTest() {
+    var word = document.getElementById("word");
+    var x = word.offsetLeft;
+    var y = word.offsetTop;
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+
+    document.execCommand("Delete");
+    document.execCommand("Undo");
+    
+    var selection = window.getSelection();
+    if (selection.anchorNode != document.getElementById("root").firstChild ||
+        selection.anchorOffset != 4 ||
+        selection.focusNode != word.firstChild ||
+        selection.focusOffset != 3) {
+        document.getElementById("result").innerHTML = "FAILED";
+        console.log(selection.anchorNode);
+        console.log(selection.anchorOffset);
+        console.log(selection.focusNode);
+        console.log(selection.focusOffset);        
+    } else
+        document.getElementById("result").innerHTML = "PASSED";
+}
+
+</script>
+</head> 
+<body>
+
+<div class="explanation">
+<div class="scenario">
+Tests: 
+<br>
+Select a word via double-click. Delete. Then undo the delete. The space that got smart deleted should now be selected.
+</div>
+</div>
+
+<div contenteditable id="root">
+foo <span id="word">bar</span> baz
+</div>
+
+<div id="result"></div>
+<script>
+editingTest();
+</script>
+
+</body>
+</html>

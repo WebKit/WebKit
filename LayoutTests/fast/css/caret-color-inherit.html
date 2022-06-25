@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#test-container {
+    height: 50px;
+    width: 50px;
+    overflow: hidden;
+    caret-color: green;
+}
+
+#test {
+    height: inherit;
+    width: inherit;
+    caret-color: inherit;
+    transform-origin: left top;
+    transform: scale(50, 50);
+    font-size: 10px; /* Needed for the caret to render in Firefox. */
+}
+</style>
+</head>
+<body>
+<p>This tests that caret-color is inherited.</p>
+<div id="test-container">
+    <div id="test" contenteditable="true">&nbsp;<!-- Needed for the caret to render in Firefox. --></div>
+</div>
+<script>
+document.getElementById("test").focus();
+</script>
+</body>
+</html>

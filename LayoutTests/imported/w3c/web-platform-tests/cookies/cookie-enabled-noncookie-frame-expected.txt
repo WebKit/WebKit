@@ -1,0 +1,4 @@
+
+
+PASS navigator.cookieEnabled behavior on frames without cookie access
+

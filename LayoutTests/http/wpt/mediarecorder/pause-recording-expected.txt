@@ -1,0 +1,5 @@
+
+
+PASS Pausing and resuming the recording should impact the video duration
+PASS Calling requestData once after pausing should lead to more than header data
+

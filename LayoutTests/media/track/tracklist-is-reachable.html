@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>
+
+            function forceGC()
+            {
+                if (window.GCController)
+                    return GCController.collect();
+            
+                // Force garbage collection
+                for (var ndx = 0; ndx < 99000; ndx++)
+                    var str = new String("1234");
+            }
+
+            function start()
+            {
+                findMediaElement();
+
+                consoleWrite("** Add a custom property to a track.");
+                testExpected("video.textTracks.length", 1);
+                run("video.textTracks.myProperty = 'chicken salad!'");
+                testExpected("video.textTracks.length", 1);
+                testExpected("video.textTracks.myProperty", "chicken salad!");
+
+                consoleWrite("<br>** Force garbage collection.");
+                forceGC();
+                testExpected("video.textTracks.length", 1);
+                testExpected("video.textTracks.myProperty", "chicken salad!");
+
+                consoleWrite("");
+                endTest();
+            }
+
+        </script>
+    </head>
+    <body onload="start()">
+        <p>Ensure that a TrackList won't be collected if it has custom properties.</p>
+        <video>
+            <track>
+        </video>
+    </body>
+</html>

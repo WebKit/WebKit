@@ -1,0 +1,11 @@
+
+PASS Single-argument form allows for declarations without enclosing parentheses
+PASS Complex conditions allowed
+PASS general_enclosed still parses
+PASS Variable references always parse
+PASS Variable references in an unknown function always parse
+PASS two argument form succeeds for known property
+PASS two argument form fails for unknown property
+PASS two argument form fails for invalid value
+FAIL two argument form succeeds for custom property assert_equals: expected true but got false
+

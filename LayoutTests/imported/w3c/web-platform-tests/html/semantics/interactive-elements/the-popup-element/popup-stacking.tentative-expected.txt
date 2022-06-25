@@ -1,0 +1,16 @@
+This is popup #1
+
+Popup 2  Popup 4
+This is popup #2
+
+Popup 3
+This is popup #3
+
+This is popup #4
+
+ Popup 1 This is a dialogCloseDialog
+
+FAIL popup stacking behavior assert_equals: Popup #1 incorrect state expected (boolean) false but got (undefined) undefined
+FAIL popups should be closed by dialogs p1.show is not a function. (In 'p1.show()', 'p1.show' is undefined)
+FAIL dialogs should not be closed by popups p1.show is not a function. (In 'p1.show()', 'p1.show' is undefined)
+

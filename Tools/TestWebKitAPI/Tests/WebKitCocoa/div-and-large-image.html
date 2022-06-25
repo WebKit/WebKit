@@ -1,0 +1,31 @@
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+html, body {
+    margin: 0;
+    font-size: 1.2em;
+    overflow: scroll;
+    -webkit-overflow-scrolling: touch;
+}
+
+#target {
+    width: 2000px;
+    height: 300px;
+    background-color: gray;
+}
+
+code {
+    color: green;
+}
+</style>
+
+<div id="target"></div>
+<img src="large-red-square.png"></img>
+
+<script>
+target.addEventListener("dragenter", event => event.preventDefault());
+target.addEventListener("dragover", event => event.preventDefault());
+target.addEventListener("drop", event => {
+    target.innerHTML = "<code>PASS</code>";
+    event.preventDefault();
+});
+</script>

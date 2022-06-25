@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<body onload="runTest()">
+<p id="description">This tests single-clicking on an image inside user-select: all. WebKit should select the entire element.
+Firefox doesn't do this but I'm not sure it makes sense for us to be inconsistent since Firefox DOES allow text with user-select: all to be selected by a single click.<br>
+To manually test, single click on the image below. WebKit should select the entire bordered region.</p>
+<div id="container"><div class="select-all"><img src="../resources/abe.png"></div></div>
+<script src="../../resources/dump-as-markup.js"></script>
+<style>
+.select-all {
+    border: 1px solid black;
+    height: 200px;
+    width: 200px;
+    -webkit-user-select: all;
+    -moz-user-select: all;
+}
+</style>
+<script>
+
+Markup.description(document.getElementById('description').textContent);
+Markup.waitUntilDone();
+
+function runTest() {
+    function clickOnElement(element) {
+        eventSender.mouseMoveTo(element.offsetLeft + 10, element.offsetTop + 10);
+        eventSender.mouseDown(0);
+        eventSender.mouseUp(0);
+    }
+
+    if (window.eventSender) {
+        clickOnElement(document.querySelector('.select-all'));
+        Markup.dump('container');
+        Markup.notifyDone();
+    }
+}
+
+</script>
+</body>
+</html>

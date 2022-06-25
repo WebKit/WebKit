@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: [object Object]
+CONSOLE MESSAGE: TypeError: 'handleEvent' property of event listener should be callable
+CONSOLE MESSAGE: TypeError: 'handleEvent' property of event listener should be callable
+
+PASS calls handleEvent method of event listener
+PASS looks up handleEvent method on every event dispatch
+PASS doesn't look up handleEvent method on callable event listeners
+PASS rethrows errors when getting handleEvent
+FAIL throws if handleEvent is falsy and not callable promise_rejects_js: function "function () { throw e }" threw null, not an object
+FAIL throws if handleEvent is thruthy and not callable promise_rejects_js: function "function () { throw e }" threw null, not an object
+

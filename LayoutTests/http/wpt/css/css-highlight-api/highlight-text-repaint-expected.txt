@@ -1,0 +1,8 @@
+One two three
+(repaint rects
+  (rect 8 8 784 20)
+  (rect 8 8 784 20)
+  (rect 8 8 784 20)
+  (rect 8 8 784 20)
+)
+

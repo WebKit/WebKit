@@ -1,0 +1,236 @@
+=================
+WPE WebKit 2.35.1
+=================
+
+What's new in WPE WebKit 2.35.1?
+
+  - Make user interactive threads (event handler, scrolling, etc.) real time
+    on Linux.
+  - Add new API to set HTTP response information to custom URI schemes.
+  - Add support for the MediaSession API.
+  - Add initial support, disabled by default at build time, for the JPEG-XL
+	image format.
+  - Make the WPE Qt API use only public WPE library symbols, which makes
+    it possible to build it separately from the rest of WebKit.
+  - Fix jsc_value_object_define_property_accessor() to work with objects
+    not having a wrapped instance.
+  - Fix several crashes and rendering issues.
+
+=================
+WPE WebKit 2.33.2
+=================
+
+What's new in WPE WebKit 2.33.2?
+
+  - HTTP/2 support when building with libsoup3.
+  - Add API to disable CORS on a web view for particular domains.
+  - Remove dependency on the GStreamer glvideoflip and videoflip elements.
+  - Support building with the uClibc C standard library.
+  - Ensure WebKitScriptWorld::window-object-cleared signal is always emitted.
+  - Fix rendering of VP9 with transparency.
+  - Fix handling of elements with position:sticky in RTL layers with scroll
+	overflow.
+  - Fix handling of 2D axis input events.
+
+=================
+WPE WebKit 2.33.1
+=================
+
+What's new in WPE WebKit 2.33.1?
+
+  - Add support for CSS Scroll Snap.
+  - Add basic support for ICC color management.
+  - Build with libsoup3 by default.
+  - Add new API to handle web process unresponsiveness.
+  - Add support for link preconnect when building with libsoup3.
+  - Refectores Media Source Extensions (MSE) platform code to increase
+    stability and ease adding more features in the futures.
+
+=================
+WPE WebKit 2.31.1
+=================
+
+What's new in WPE WebKit 2.31.1?
+
+  - Remove support for NPAPI plugins.
+  - Enable the web process cache when PSON is enabled too.
+  - TLS errors and proxy settings APIs have been moved from WebKitContext to WebKitWebsiteDataManager.
+  - Add new API to remove individual scripts/stylesheets using WebKitUserContentManager.
+  - Correctly apply the system font scaling factor.
+  - Show main loop frames information in the web inspector.
+  - Internal audio rendering support. The WebProcess can now maintain a single
+    connection to the system audio daemon and perform audio mixing internally.
+	For the time being this has to be enabled at runtime through the
+	WEBKIT_GST_ENABLE_AUDIO_MIXER=1 environment variable.
+  - On-demand GStreamer initialization support, mostly contained to WebProcess.
+    GStreamer used to be initialized unconditionally once from the UI process
+	and once from the WebProcess. GStreamer is now used mostly only from the
+    WebProcess, even for audio/video capture devices probing. Users of the
+    webkit_web_view_can_show_mime_type API will still trigger GStreamer
+    initialization in the UIProcess though.
+  - ImageDecoder video decoder switched to decodebin3.
+  - WebAudio to MediaStream support.
+  - Multi-channel (>2) support for the AudioFileReader.
+  - Multi-channel (>2) support for the WebAudio renderer.
+  - Audio worklet support.
+  - Optional support for native formats rendering.
+  - Opus support for the Thunder CDM.
+  - Common-encryption support for CMAF in Thunder CDM.
+  - MSE/EME/WebAudio and general media playback bug fixes.
+
+=================
+WPE WebKit 2.29.2
+=================
+
+What's new in WPE WebKit 2.29.2?
+
+  - Add support for backdrop filters.
+  - Add support for text-underline-offset and text-decoration-thickness.
+  - Add OpenCDM and AV1 support to media backend.
+  - Add new API to get ITP data summary.
+  - Fix several crashes and rendering issues.
+
+=================
+WPE WebKit 2.29.1
+=================
+
+What's new in WPE WebKit 2.29.1?
+
+  - Add Intelligent Tracking Prevention (ITP) support.
+  - Add webkit_authentication_request_get_security_origin.
+  - Add support for video formats in img elements.
+  - Add API to handle video autoplay policy that now defaults to disallow autoplay videos with audio.
+  - Add API to mute a web view.
+  - Add API to allow applications to handle the HTTP authentication credential storage.
+  - Add API to configure and handle the DOM cache.
+  - Add API to configure and handle Service Worker registrations.
+  - Add a WebKitSetting to set the media content types requiring hardware support.
+  - Add support for sndio to bubblewrap sandbox.
+  - Add support for website data to the existing permission request API.
+  - Add support for rendering many user interface controls (scroll bars, progress bars,
+    spin buttons, menu lists, sliders, etc.)
+  - Add USER_AGENT_BRANDING build option.
+  - Use a mobile User-Agent string on tablets and handheld devices.
+  - Change the cookies accept policy to always when no-third-party is set and ITP is enabled.
+  - Enable kinetic scrolling with async scrolling.
+  - Bubblewrap sandbox should not attempt to bind empty paths.
+  - Fix several race conditions and threading issues in the media player.
+  - Fix web process hangs on large GitHub pages.
+  - Fix a race condition causing a crash in media player.
+  - Fix several crashes and rendering issues.
+
+=================
+WPE WebKit 2.27.4
+=================
+
+What's new in WPE WebKit 2.27.3?
+
+  - Add API for input methods.
+  - Add API to serialize/deserialize a JSCValue to/from a JSON string.
+  - Add WebKitOptionMenu API.
+  - Add support for strict secure cookies.
+  - Add support for saving data from remote inspector.
+  - Support client-side video rendering using DMA-BUF to share frames across processes.
+  - Fix rendering of conic gradients in high resolution displays.
+  - Fix special combination characters not respecting the keystroke order when high CPU load.
+  - Honor the IndexedDB directory set in WebsiteDataManager.
+  - Fix rendering of text when there's an initial advance in the text run.
+  - Fix web process crash when displaying a KaTeX formula.
+  - Fix several crashes and rendering issues.
+
+=================
+WPE WebKit 2.27.3
+=================
+
+What's new in WPE WebKit 2.27.3?
+
+  - Improve performance when falling back to system fonts.
+  - Stop using DBus for the remote inspector implementation to improve the performance of both
+    WebDriver and remote inspector.
+  - Implement support for new ARIA roles: code, strong, emphasis, generic.
+  - Fix handling of content type with new custom protocols implementation.
+  - Make image decoders fully thread safe.
+  - Add support for get page source command in WebDriver.
+  - Add support for network proxy capabilities in WebDriver.
+  - Add support for new window command in WebDriver.
+  - Fix several crashes and rendering issues.
+
+=================
+WPE WebKit 2.27.2
+=================
+
+  - Add user messages API for the communication with the web extension.
+  - Enable service workers by default.
+  - Fix the build with WebDriver disabled.
+  - Show also client EGL extensions in about:gpu.
+  - Fix the build with unified sources disabled.
+  - Fix several crashes and rendering issues.
+
+=================
+WPE WebKit 2.27.1
+=================
+
+What's new in WPE WebKit 2.27.1?
+
+  - Enable asynchronous scrolling.
+  - Add about:gpu to show information about the graphics stack.
+  - Add WebKitWebView:page-id property.
+  - Fix the build with ENABLE_WEBDRIVER=OFF.
+  - Fix several crashes and rendering issues.
+
+=================
+WPE WebKit 2.25.1
+=================
+
+  - Enable process switch on cross site navigation.
+  - Fix rendering artifacts in youtube volume button.
+  - Fix trapezoid artifact in github comment box.
+  - Enable hyperlink auditing setting by default.
+  - Fix HLS streams being slow to start.
+  - Add support for subprocess sandboxing.
+  - Add API to get the web process unique identifier of a WebKitFrame.
+  - Add WebKitWebPage::did-associate-form-controls-for-frame signal and deprecate did-associate-form-controls.
+  - Implement AtkComponentIface scroll_to methods.
+  - Fix touch capabilities detection for websites checking touch events properties present in window or pointer media queries.
+  - Fix several crashes and rendering issues.
+
+
+==================
+WPE WebKit 2.21.91
+==================
+
+What' new in WPE WebKit 2.21.2?
+
+  - Add API to evaluate code in a new object to JavaScriptCore GLib API.
+  - Add API to check for syntax errors in given code to JavaScriptCore GLib API.
+  - Update jsc_context_evaluate_with_source_uri() to receive also a starting line number.
+  - Add API to allow creating variadic functions to JavaScriptCore GLib API.
+  - Add API to run javascript from a WebKitWebView in an isolated world.
+  - Disable Gigacage if mmap fails to allocate in Linux.
+  - Fix WebProcess crash when trying to use the remote Web Inspector.
+  - Fix a network process crash when trying to get cookies of about:blank page.
+  - Fix some frames being dropped when using requestAnimationFrame() to animate elements.
+  - Fix several crashes and rendering issues.
+
+
+=================
+WPE WebKit 2.21.2
+=================
+
+What' new in WPE WebKit 2.21.2?
+
+  - Add initial support for the fullscreen Web API.
+  - Add initial implementation of WebDriver advance user interaction commands.
+  - Add introspectable alternatives for functions using vargars to JavaScriptCore GLib API.
+  - Fix memory pressure monitor to reliably notify all subprocesses.
+  - Fix building with the Raspberry Pi userland GPU driver and certain versions of GStreamer-GL.
+  - Fix building with the ICU headers in a non-default directory.
+  - Fix several crashes and rendering issues.
+
+=================
+WPE WebKit 2.21.1
+=================
+
+What's new in WPE WebKit 2.21.1?
+
+  - Everything. This is the first release. Enjoy.

@@ -1,0 +1,23 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../js-test-resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("This test checks that Web Timing reports redirectCount correctly and has reasonable values for redirectStart and redirectCount.");
+
+window.performance = window.performance || {};
+var navigation = performance.navigation || {};
+var timing = performance.timing || {};
+
+shouldBeGreaterThanOrEqual("timing.redirectStart", "timing.navigationStart");
+shouldBeGreaterThanOrEqual("timing.redirectEnd", "timing.redirectStart");
+shouldBe("navigation.redirectCount", "2");
+
+</script>
+<script src="../../js-test-resources/js-test-post.js"></script>
+</body>
+</html>

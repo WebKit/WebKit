@@ -1,0 +1,3 @@
+
+FAIL Send and receive messages using a broadcast channel in an iframe, dedicated worker and service worker. promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
+

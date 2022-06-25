@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WebCrypto API Demo: PBKDF2</title>
+    <style>
+    .inner
+    {
+        display: inline-block;
+    }
+    </style>
+    <script type="text/javascript" src="common.js"></script>
+    <script type="text/javascript">
+    function PBKDF2()
+    {
+        var rawKey = document.getElementById("password").value;
+
+        crypto.subtle.importKey("raw", asciiToUint8Array(rawKey), "PBKDF2", false, ["deriveBits"]).then(function(baseKey) {
+            return crypto.subtle.deriveBits({name: "PBKDF2", salt: crypto.getRandomValues(new Uint8Array(16)), iterations: 100000, hash: "sha-256"}, baseKey, 128);
+        }, failAndLog).then(function(result) {
+            document.getElementById("derivedKey").innerHTML = bytesToHexString(result);
+        }, failAndLog);
+    }
+    </script>
+</head>
+<body>
+    <h1>PBKDF2</h1>
+    <p>Click the following button multiple times to see how random salts can strengthen password hashes.</p>
+    <div>
+        Password: <input type="text" id="password" value="123456789">
+        <button type="button" onclick="PBKDF2()" class="inner">derive</button>
+        <div id="derivedKey" class="inner"></div>
+    </div>
+</body>
+</html>

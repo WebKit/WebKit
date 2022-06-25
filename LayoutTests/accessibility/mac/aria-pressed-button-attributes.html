@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body id="body">
+
+<div id="button1" role="button" aria-pressed="true">Foo</div>
+<div id="button2" role="button" aria-pressed="false">Bar</div>
+<div id="button-without-initial-press" role="button">Baz</div>
+
+<script>
+    var testOutput = "This test ensures a role=button element with aria-pressed has the right attribute values, even after dynamic page changes.\n\n";
+
+    function verify(id) {
+        const element = accessibilityController.accessibleElementById(id);
+        testOutput += `#${id}: ${element.role}\n`;
+        testOutput += `#${id}: ${element.subrole}\n`;
+        testOutput += `#${id}: ${element.stringValue}\n`;
+        testOutput += `#${id}: AXARIAPressedIsPresent: ${element.boolAttributeValue("AXARIAPressedIsPresent")}\n\n`;
+    }
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+        verify("button1");
+        verify("button2");
+        verify("button-without-initial-press");
+
+        testOutput += `Toggling aria-pressed state on both buttons.\n\n`;
+        document.getElementById("button1").ariaPressed = "false";
+        document.getElementById("button2").ariaPressed = "true";
+        document.getElementById("button-without-initial-press").ariaPressed = "true";
+        setTimeout(async () => {
+            await waitFor(() => {
+                return accessibilityController.accessibleElementById("button-without-initial-press").boolAttributeValue("AXARIAPressedIsPresent");
+            });
+
+            verify("button1");
+            verify("button2");
+            verify("button-without-initial-press");
+
+            debug(testOutput);
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:00.500 align:left line:0%
+Left
+
+2
+00:00:00.000 --> 00:00:00.500 align:right line:0%
+Right
+
+3
+00:00:00.000 --> 00:00:00.500 align:left line:0%
+Below
+
+4
+00:00:00.000 --> 00:00:00.500 align:right line:0%
+Below
+
+1
+00:00:00.000 --> 00:00:00.500 align:left line:100%
+Left
+
+2
+00:00:00.000 --> 00:00:00.500 align:right line:100%
+Right
+
+3
+00:00:00.000 --> 00:00:00.500 align:left line:100%
+Above
+
+4
+00:00:00.000 --> 00:00:00.500 align:right line:100%
+Above

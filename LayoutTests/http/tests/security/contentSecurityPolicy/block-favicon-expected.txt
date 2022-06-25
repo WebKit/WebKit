@@ -1,0 +1,5 @@
+http://127.0.0.1:8000/security/contentSecurityPolicy/block-favicon.html - didFinishLoading
+http://127.0.0.1:8000/security/contentSecurityPolicy/block-favicon.html - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/security/contentSecurityPolicy/block-favicon.html, main document URL http://127.0.0.1:8000/security/contentSecurityPolicy/block-favicon.html, http method GET> redirectResponse (null)
+http://127.0.0.1:8000/security/contentSecurityPolicy/block-favicon.html - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/security/contentSecurityPolicy/block-favicon.html, http status code 200>
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/misc/resources/favicon.ico because it does not appear in the img-src directive of the Content Security Policy.
+

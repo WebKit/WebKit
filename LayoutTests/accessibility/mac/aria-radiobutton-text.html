@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div role="radiogroup">
+   <div role="radio" tabindex="0" aria-checked="true">One</div>
+   <div role="radio" tabindex="0">Two</div>
+   <div role="radio" tabindex="0" id="foo" aria-labelledby="foo">Three</div>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that aria radio buttons use the text inside of them as the title.");
+
+    if (window.accessibilityController) {
+
+          // this text field should be required.
+          document.getElementById("body").focus();
+          var obj = accessibilityController.focusedElement.childAtIndex(0);
+
+          var succeeded = obj.childAtIndex(0).title == "AXTitle: One";
+          shouldBe("succeeded", "true");
+
+          var succeeded = obj.childAtIndex(1).title == "AXTitle: Two";
+          shouldBe("succeeded", "true");
+
+          // Because the third button uses aria-labelledby, the accessible name
+          // will be inside the description field.
+          var succeeded = obj.childAtIndex(2).description == "AXDescription: Three";
+          shouldBe("succeeded", "true");
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

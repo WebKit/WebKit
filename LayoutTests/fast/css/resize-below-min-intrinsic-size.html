@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+    body { margin: 0; padding: 0;}
+    #resizable {
+        background: yellow;
+        box-sizing: border-box;
+        resize: both;
+        overflow: auto;
+    }
+    </style>
+</head>
+<body>
+<div id="resizable" style="width: 400px; height: 400px;"></div>
+
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../imported/w3c/web-platform-tests/resources/testdriver.js"></script>
+<script src="../../imported/w3c/web-platform-tests/resources/testdriver-actions.js"></script>
+<script src="../../imported/w3c/web-platform-tests/resources/testdriver-vendor.js"></script>
+<script>
+function drag(startX, startY, destX, destY) {
+    const actions = new test_driver.Actions()
+        .pointerMove(startX - 1, startY - 1)
+        .pointerDown()
+        .pointerMove(destX - 1, destY - 1)
+        .pointerUp();
+    return actions.send();
+}
+
+promise_test(async () => {
+    const box = document.getElementById("resizable");
+    const startX = box.getBoundingClientRect().right;
+    const startY = box.getBoundingClientRect().bottom;
+    await drag(startX, startY, startX - 395, startY - 395);
+    assert_equals(box.style.width, "15px");
+    assert_equals(box.style.height, "15px");
+}, "Test for resizing the box below its min intrinsic size.");
+</script>
+</body>
+</html>

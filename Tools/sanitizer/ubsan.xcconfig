@@ -1,0 +1,13 @@
+#include "sanitizer.xcconfig"
+
+ENABLE_UNDEFINED_BEHAVIOR_SANITIZER = $(ENABLE_UNDEFINED_BEHAVIOR_SANITIZER_$(WK_UBSAN_DISALLOWED));
+ENABLE_UNDEFINED_BEHAVIOR_SANITIZER_ = YES;
+ENABLE_UNDEFINED_BEHAVIOR_SANITIZER_NO = YES;
+
+WK_ENABLE_UNDEFINED_BEHAVIOR_SANITIZER = $(ENABLE_UNDEFINED_BEHAVIOR_SANITIZER);
+
+// FIXME: Tune list of UBSan checkers: <https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html>.
+// FIXME: UBSan checker -fsanitize=vptr is incompatible with GCC_ENABLE_CPP_RTTI=NO.
+// -fno-delete-null-pointer-checks: do not let the compiler remove nullptr checks that could otherwise be removed because they are considered undefined behavior.
+// -fno-optimize-sibling-calls: disable tail call elimination for more accurate crash stacks.
+WK_UNDEFINED_BEHAVIOR_SANITIZER_OTHER_CFLAGS_YES = -fno-delete-null-pointer-checks -fno-optimize-sibling-calls -fno-sanitize=vptr;

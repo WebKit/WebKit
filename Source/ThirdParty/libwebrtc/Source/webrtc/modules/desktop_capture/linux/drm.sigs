@@ -1,0 +1,11 @@
+// Copyright 2021 The WebRTC project authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+//------------------------------------------------
+// Functions from DRM used in capturer code.
+//--------
+
+// xf86drm.h
+int drmGetDevices2(uint32_t flags, drmDevicePtr devices[], int max_devices);
+void drmFreeDevices(drmDevicePtr devices[], int count);

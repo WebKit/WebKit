@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+<head>
+<style>
+#test1 {
+    animation:test1 3s steps(1,end) 0s 1 normal both
+}
+#test2 {
+    animation:test2 3s steps(1,end) 0s 1 normal both
+}
+@keyframes test1 {
+    from {visibility: hidden}
+    to {visibility: visible}
+}
+@keyframes test2 {
+    from {color: green}
+    to {color: red}
+}
+</style>
+</head>
+<body>
+<div id=test1>
+This shouldn't be initially visible
+<div>This shouldn't be initially visible</div>
+</div>
+<div id=test2>
+This should be initially green
+<div>This should be initially green</div>
+</div>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    test2.onanimationstart = () => testRunner.notifyDone();
+}
+</script>
+</body>
+</html>

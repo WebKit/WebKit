@@ -1,0 +1,5 @@
+PASS navigator.language is "zh-TW"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../media-resources/media-file.js"></script>
+    <script src="resources/canvas-video-crossorigin.js"></script>
+</head>
+<body>
+<pre id="console"></pre>
+<script>
+    description("Ensure that data cannot be retrieved from a canvas tainted by a video resource with remote subresources when CORS is not enabled.");
+
+    function test()
+    {
+        testDataRetrievalForbidden("hls video resource containing remote contents");
+        finishJSTest();
+    }
+
+    var video = document.createElement("video");
+    video.addEventListener("loadeddata", test);
+    video.src = '/media/resources/hls/test-vod-localhost.m3u8'
+    
+    window.jsTestIsAsync = true;
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

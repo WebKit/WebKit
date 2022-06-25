@@ -1,0 +1,48 @@
+CONSOLE MESSAGE: Provisional navigation started.
+CONSOLE MESSAGE: No trusted events should be logged and the input element should have the value "".
+CONSOLE MESSAGE: Dispatching untrusted keypress event.
+CONSOLE MESSAGE: keypressevent dispatched (isTrusted: false).
+CONSOLE MESSAGE: Pressing tab.
+CONSOLE MESSAGE: Active element after pressing tab: [object HTMLInputElement].
+CONSOLE MESSAGE: Pressing "a".
+CONSOLE MESSAGE: Setting marked text to "b".
+CONSOLE MESSAGE: Inserting text "c".
+CONSOLE MESSAGE: Pasting text "d".
+CONSOLE MESSAGE: Input element value after text input events: "".
+CONSOLE MESSAGE: Pressing "z" with access key modifiers should navigate to resources/keyboard-events-after-navigation.html.
+CONSOLE MESSAGE: keydownevent dispatched (isTrusted: true).
+CONSOLE MESSAGE: keyupevent dispatched (isTrusted: true).
+CONSOLE MESSAGE: Finished navigating to resources/keyboard-events-after-navigation.html.
+CONSOLE MESSAGE: Trusted events should be logged and the input element should have the value "acd".
+CONSOLE MESSAGE: Dispatching untrusted keypress event.
+CONSOLE MESSAGE: keypressevent dispatched (isTrusted: false).
+CONSOLE MESSAGE: Pressing tab.
+CONSOLE MESSAGE: keydownevent dispatched (isTrusted: true).
+CONSOLE MESSAGE: keyupevent dispatched (isTrusted: true).
+CONSOLE MESSAGE: Active element after pressing tab: [object HTMLInputElement].
+CONSOLE MESSAGE: Pressing "a".
+CONSOLE MESSAGE: keydownevent dispatched (isTrusted: true).
+CONSOLE MESSAGE: keypressevent dispatched (isTrusted: true).
+CONSOLE MESSAGE: textInputevent dispatched (isTrusted: true).
+CONSOLE MESSAGE: beforeinputevent dispatched (isTrusted: true).
+CONSOLE MESSAGE: inputevent dispatched (isTrusted: true).
+CONSOLE MESSAGE: keyupevent dispatched (isTrusted: true).
+CONSOLE MESSAGE: Setting marked text to "b".
+CONSOLE MESSAGE: compositionstartevent dispatched (isTrusted: true).
+CONSOLE MESSAGE: compositionupdateevent dispatched (isTrusted: true).
+CONSOLE MESSAGE: beforeinputevent dispatched (isTrusted: true).
+CONSOLE MESSAGE: inputevent dispatched (isTrusted: true).
+CONSOLE MESSAGE: Inserting text "c".
+CONSOLE MESSAGE: beforeinputevent dispatched (isTrusted: true).
+CONSOLE MESSAGE: inputevent dispatched (isTrusted: true).
+CONSOLE MESSAGE: textInputevent dispatched (isTrusted: true).
+CONSOLE MESSAGE: beforeinputevent dispatched (isTrusted: true).
+CONSOLE MESSAGE: inputevent dispatched (isTrusted: true).
+CONSOLE MESSAGE: compositionendevent dispatched (isTrusted: true).
+CONSOLE MESSAGE: Pasting text "d".
+CONSOLE MESSAGE: pasteevent dispatched (isTrusted: true).
+CONSOLE MESSAGE: textInputevent dispatched (isTrusted: true).
+CONSOLE MESSAGE: beforeinputevent dispatched (isTrusted: true).
+CONSOLE MESSAGE: inputevent dispatched (isTrusted: true).
+CONSOLE MESSAGE: Input element value after text input events: "acd".
+

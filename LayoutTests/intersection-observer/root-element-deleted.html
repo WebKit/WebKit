@@ -1,0 +1,95 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IntersectionObserverEnabled=true ] -->
+<head>
+<script src="../resources/gc.js"></script>
+<body>
+<pre id="log">This tests removing the root node of IntersectionObserver. The root node should be eligible for GC.
+
+</pre>
+<script>
+
+function createRoot(rootId)
+{
+    const container = document.createElement('div');
+    container.innerHTML = `<div id="${rootId}" class="root" style="position:absolute"><div class="target" style="width: 100px; height: 100px; background-color: green"></div></div>`;
+    const root = container.getElementsByClassName('root')[0];
+    root.remove();
+    return root;
+}
+
+let initialNodeCount = 0;
+window.onload = () => {
+    if (!window.testRunner || !window.internals) {
+        log.textContent += 'FAIL - This test requires internals';
+        return;
+    }
+    if (internals.numberOfIntersectionObservers(document)) {
+        log.textContent += 'FAIL - Initial intersection observer count is not zero';
+        return;
+    }
+    initialNodeCount = internals.referencingNodeCount(document);
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    setTimeout(() => testRunner.notifyDone(), 5000);
+    runTest(1);
+}
+
+const totalTestCount = 20;
+function runTest(testNumber) {
+    log.textContent += `Test ${testNumber}: `;
+    const rootId = 'root-' + testNumber;
+    let root = createRoot(rootId);
+    root.alive = true;
+    document.body.appendChild(root);
+
+    let observer = new IntersectionObserver(() => { }, { root });
+    let target = root.getElementsByClassName('target')[0];
+    if (observer.root != root)
+        return testFailed(testNumber, 'observer.root != root after construction');
+    observer.observe(target);
+
+    root.remove();
+    root = null;
+    target = null;
+    requestAnimationFrame(function () {
+        observer.takeRecords();
+        gc();
+
+        if (!observer.root)
+            return testFailed(testNumber, 'observer.root is null');
+        if (observer.root.id != rootId)
+            return testFailed(testNumber, `observer.root.id (${observer.root.id}) != rootId (${rootId}) after running rAF and GC`);
+        if (!observer.root.alive)
+            return testFailed(testNumber, 'observer.alive is false');
+
+        observer = null;
+        gc();
+
+        log.textContent += 'PASS\n';
+
+        if (testNumber < totalTestCount)
+            setTimeout(() => runTest(testNumber + 1), 0);
+        else
+            setTimeout(() => finish(testNumber), 0);
+    });
+}
+
+function testFailed(testNumber, error)
+{
+    log.textContent += `FAIL: ${error}\n`;
+    finish(testNumber);
+}
+
+function finish(finishedTestCount)
+{
+    log.textContent += 'Node count: ';
+    log.textContent += (internals.referencingNodeCount(document) < initialNodeCount + 2 * finishedTestCount * 0.8) ? 'PASS' : 'FAIL - Less than 20% of the root nodes were collected';
+    log.textContent += '\n';
+    log.textContent += 'Intersection observer count: ';
+    log.textContent += (internals.numberOfIntersectionObservers(document) < finishedTestCount * 0.8) ? 'PASS' : 'FAIL - Less than 20% of the intersection observers were collected';
+    log.textContent += '\n';
+    testRunner.notifyDone();
+}
+
+</script>
+</body>
+</html>

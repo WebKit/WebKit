@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>
+
+            tracks = [];
+
+            function startTest()
+            {
+                consoleWrite("Create video and add text tracks.");
+                var video = document.createElement('video');
+                for (var i = 0; i < 1000; i++)
+                    tracks[i] = video.addTextTrack('captions', 'Captions Track', 'en');
+                testExpected("tracks.length", 1000);
+                consoleWrite("");
+                consoleWrite("Destroy the video and force a garbage collection.");
+                video = 0;
+                forceGC();
+                consoleWrite("SUCCESS: Did not crash");
+                endTest();
+            }
+            
+            function forceGC()
+            {
+                if (window.GCController)
+                    return GCController.collect();
+            
+                // Force garbage collection
+                for (var ndx = 0; ndx < 99000; ndx++)
+                    var str = new String("1234");
+            }
+
+        </script>
+    </head>
+    <body onload="startTest()">
+    <p>Tests that we don't crash when a media element that has text tracks is destructed.</p>
+    </body>
+</html>

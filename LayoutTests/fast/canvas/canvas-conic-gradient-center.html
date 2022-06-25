@@ -1,0 +1,34 @@
+<style>
+    canvas {
+        border: 1px solid;
+    }
+</style>
+<body>
+    <canvas id="c1" width="100" height="100"></canvas>
+    <canvas id="c2" width="100" height="100"></canvas>
+    <canvas id="c3" width="100" height="100"></canvas>
+    <canvas id="c4" width="100" height="100"></canvas>
+    <script>
+        function fillCanvasWithConicGradient(canvasId, angle, x, y) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            const gradient = ctx.createConicGradient(angle, x, y);
+
+            gradient.addColorStop(0, "black");
+            gradient.addColorStop(0.25, "black");
+            gradient.addColorStop(0.25, "transparent");
+            gradient.addColorStop(0.5, "transparent");
+            gradient.addColorStop(0.5, "black");
+            gradient.addColorStop(0.75, "black");
+            gradient.addColorStop(0.75, "transparent");
+
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 100, 100);
+        }
+
+        fillCanvasWithConicGradient("c1", 0, 20, 20);
+        fillCanvasWithConicGradient("c2", 0, 80, 20);
+        fillCanvasWithConicGradient("c3", 0, 20, 80);
+        fillCanvasWithConicGradient("c4", 0, 80, 80);
+    </script>
+</body>

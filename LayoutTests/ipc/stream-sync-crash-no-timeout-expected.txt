@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: TypeError: Bad type name
+
+FAIL Test that stream sync message crash is noticed immediately TypeError: Bad type name
+

@@ -1,0 +1,18 @@
+<!DOCTYPE  html>
+<html>
+    <head>
+        <script src="../media-file.js"></script>
+        <script src="../video-test.js"></script>
+    </head>
+    <body>
+      <p>Tests that inserting a &lt;track&gt; element immediately after a load() doesn't crash.</p>
+      <video id="v"></video>
+      <script>
+        var v = document.querySelector('#v');
+        v.src = findMediaFile('video', '../content/test');
+        v.load();
+        v.appendChild(document.createElement('track'));
+        v.addEventListener('loadedmetadata', endTest);
+      </script>
+    </body>
+</html>

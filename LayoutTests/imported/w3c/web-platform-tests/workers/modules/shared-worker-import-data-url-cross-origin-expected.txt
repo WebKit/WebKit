@@ -1,0 +1,8 @@
+
+Harness Error (TIMEOUT), message = null
+
+PASS static import data url from data: URL should be allowed.
+TIMEOUT static import script from data: URL should be allowed. Test timed out
+NOTRUN dynamic import data url from data: URL should be allowed.
+NOTRUN dynamic import script from data: URL should be blocked.
+

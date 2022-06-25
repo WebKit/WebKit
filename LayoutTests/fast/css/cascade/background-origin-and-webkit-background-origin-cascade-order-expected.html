@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.faux-left-border {
+    display: inline-block;
+    background-color: #00FF00;
+    width: 32px;
+    height: 128px;
+}
+</style>
+</head>
+<body>
+    <!--
+    The green in the image green-128x128.png may not match CSS color #00FF00 because of color reproduction
+    issues (why?). Therefore we use a combination of a <div> with CSS background color #00FF00 and
+    green-128x128.png instead of using only green-128x128.png so as to ensure that the reference image
+    (generated from this file) matches the actual image.
+    -->
+    <!-- Test: -webkit-background-origin before background-origin -->
+    <div class="faux-left-border"></div><img src="../resources/green-128x128.png" width="96" height="128">
+    <!-- Test: background-origin before -webkit-background-origin -->
+    <div class="faux-left-border" style="margin-left: 32px"></div><img src="../resources/green-128x128.png" width="96" height="128" valign="top">
+</body>
+</html>

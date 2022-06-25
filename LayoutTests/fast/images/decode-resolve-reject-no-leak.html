@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<script src="../../resources/js-test-pre.js"></script>
+<body>
+    <script>
+        var image = new Image;
+
+        description('Test HTMLImageElement::decode() does not leak the pending promises after resolving or rejecting them.');
+        jsTestIsAsync = true;
+
+        function decodeMultiple(image, multipleCount) {
+            var promises = [];
+            for (index = 0; index < multipleCount; ++index)
+                promises.push(image.decode());
+            return promises;
+        }
+
+        function resolveSingle(image, singleCount) {
+            if (!singleCount)
+                return Promise.resolve();
+            return image.decode().then(() => {
+                return resolveSingle(image, singleCount - 1);
+            });
+        }
+
+        function rejectSingle(image, singleCount) {
+            if (!singleCount)
+                return Promise.reject();
+            return image.decode().catch(() => {
+                return rejectSingle(image, singleCount - 1);
+            });
+        }
+
+        function decodeBitmapImage(image, multipleCount, singleCount) {
+            debug("Decoding a bitmap image - promises will be resolved:");
+            image.src = "resources/red-400x400.png";
+            return Promise.all(decodeMultiple(image, multipleCount)).then(() => {
+                return resolveSingle(image, singleCount);
+            });
+        }
+
+        function decodeSVGImage(image, multipleCount, singleCount) {
+            debug("Decoding a SVG image - promises will be resolved:");
+            image.src = "resources/green-100x100.svg";
+            return Promise.all(decodeMultiple(image, multipleCount)).then(() => {
+                return resolveSingle(image, singleCount);
+            });
+        }
+
+        function decodeBrokenImage(image, multipleCount, singleCount) {
+            debug("Decoding a broken image - promises will be rejected:");
+            image.src = "";
+            return Promise.all(decodeMultiple(image, multipleCount)).catch(() => {
+                return rejectSingle(image, singleCount);
+            });
+        }
+
+        (function() {
+            decodeBitmapImage(image, 10, 10).then(() => {
+                if (window.internals)
+                    shouldBeZero("internals.imagePendingDecodePromisesCountForTesting(image)");
+                return decodeSVGImage(image, 10, 10);
+            }).then(() => {
+                if (window.internals)
+                    shouldBeZero("internals.imagePendingDecodePromisesCountForTesting(image)");
+                return decodeBrokenImage(image, 10, 10);
+            }).catch(() => {
+                if (window.internals)
+                    shouldBeZero("internals.imagePendingDecodePromisesCountForTesting(image)");
+                finishJSTest();
+            });
+        })();
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
+</body>

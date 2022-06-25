@@ -1,0 +1,57 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% title = "Edit Series" %]
+[% subheader = BLOCK %]
+  [% default.category FILTER html %] / 
+  [%+ default.subcategory FILTER html %] /
+  [%+ default.name FILTER html %]
+[% END %]
+
+[% PROCESS global/header.html.tmpl
+  style_urls = ['skins/standard/buglist.css']
+%]
+
+<form method="get" action="chart.cgi" name="chartform">
+  
+  [% PROCESS reports/series.html.tmpl 
+     button_name = "Change Data Set" %]
+  <input type="hidden" name="action" value="alter">
+  <input type="hidden" name="token"
+         value="[% issue_hash_token([default.id, default.name]) FILTER html %]">
+  
+  [% IF default.series_id %]
+    <input type="hidden" name="series_id" value="[% default.series_id %]">
+  [% END %]
+</form>
+
+<p>
+  <b>Creator</b>: 
+  [% IF default.creator %]
+    <a href="mailto:[% default.creator.email FILTER html %]">
+    [% default.creator.email FILTER html %]</a>
+  [% ELSE %]
+    (automatically created by Bugzilla)
+  [% END %]
+</p>
+
+<p>Note: it is not yet possible to edit the search associated with this data
+set.
+</p>
+
+<p>
+  <a href="query.cgi?[% default.query FILTER html %]">View 
+    series search parameters</a> |
+  <a href="buglist.cgi?cmdtype=dorem&amp;namedcmd=
+    [% default.category FILTER uri %]-
+    [% default.subcategory FILTER uri %]-
+    [% default.name FILTER uri %]&amp;remaction=runseries&amp;series_id=
+    [% default.series_id %]">Run series search</a>
+</p>
+
+[% PROCESS global/footer.html.tmpl %]

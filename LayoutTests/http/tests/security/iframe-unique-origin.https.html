@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<script>
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    }
+
+    window.onmessage = (event) => {
+        document.body.innerHTML = event.data === false ? "PASS" : "FAIL";
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+
+    window.onload = () => {
+        var url = 'data:text/html,<scri' + 'pt>parent.postMessage(window.isSecureContext, "*");</scri' + 'pt>';
+        document.body.innerHTML = "<iframe src='" + url + "'></iframe>";
+    };
+</script>

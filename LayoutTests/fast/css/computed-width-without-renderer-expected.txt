@@ -1,0 +1,7 @@
+This tests obtaining widths of the same CSSComputedStyleDeclaration twice immediately after inserting a stylesheet. They should match.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.body.appendChild(div); style = getComputedStyle(div); style.width is style.width
+

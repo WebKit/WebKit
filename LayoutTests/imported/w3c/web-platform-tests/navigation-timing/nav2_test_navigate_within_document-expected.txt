@@ -1,0 +1,7 @@
+Description
+
+This test validates that all of the window.performance.getEntriesByType("navigation") attributes remain unchanged after an in document navigation (URL fragment change).
+
+
+PASS Navigation Timing 2 WPT
+

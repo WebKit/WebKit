@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.scrollable_region {
+    width: 680px;
+}
+
+.contents {
+    height: 1036px;
+    width: 100%;
+    background-image: repeating-linear-gradient(silver, white 200px);
+}
+</style>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+    jsTestIsAsync = true;
+
+    var divTarget;
+    var pageScrollPositionBefore;
+    var divScrollPositionBefore;
+
+    function checkForScroll()
+    {
+        // The div should not have scrolled at all.
+        var pageScrollPositionAfter = document.scrollingElement.scrollTop;
+        var divScrollPositionAfter = divTarget.scrollTop;
+
+        if (pageScrollPositionBefore != pageScrollPositionAfter)
+            testFailed("Page received wheel events.");
+        else
+            testPassed("Page did not receive wheel events.");
+
+        finishJSTest();
+    }
+
+    function scrollTest()
+    {
+        pageScrollPositionBefore = document.scrollingElement.scrollTop;
+
+        divTarget = document.getElementById('target');
+        divTarget.scrollTop = divTarget.scrollHeight - divTarget.clientHeight - 100;
+
+        divScrollPositionBefore = divTarget.scrollTop;
+
+        // Scroll the #source until we reach the #target.
+        var startPosX = Math.round(divTarget.offsetLeft) + 20;
+        var startPosY = Math.round(divTarget.offsetTop) + 100; // One wheel turn before end.
+
+        eventSender.monitorWheelEvents();
+        eventSender.mouseMoveTo(startPosX, startPosY);
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'begin');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
+        eventSender.callAfterScrollingCompletes(checkForScroll);
+    }
+
+    function setupTopLevel()
+    {
+        description("Tests that a scrollable div doesn't pass wheel events to main frame when scrolling at bottom");
+        if (window.eventSender) {
+            setTimeout(scrollTest, 0);
+            return;
+        }
+
+        var messageLocation = document.getElementById('parent');
+        var message = document.createElement('div');
+        message.innerHTML = "<p>To manually run this test, place the mouse pointer "
+            + "at the top of the page, and then use the mouse wheel or a two-finger swipe to scroll the "
+            + "down past the div.<p>"
+            + "<p>You should not see the row of END labels if this test is successful.</p>";
+        messageLocation.appendChild(message);
+        finishJSTest();
+    }
+
+    window.addEventListener('load', () => {
+        setupTopLevel();
+    }, false);
+</script>
+</head>
+<body>
+<div id="parent" style="height: 2000px; width: 2000px;">
+    <div id="source" style="height: 100px; width: 500px;">
+        Put mouse here and flick downwards
+    </div>
+    <div class="scrollable_region">
+        <h3>Scrollable Region</h3>
+        <div id="target" style="overflow-y: auto; overflow-x: hidden; max-height: 350px;">
+            <div class="contents">
+                Scrolled contents
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

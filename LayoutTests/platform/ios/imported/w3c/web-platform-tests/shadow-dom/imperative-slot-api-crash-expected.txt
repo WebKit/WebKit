@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: TypeError: slot1.assign is not a function. (In 'slot1.assign([child1])', 'slot1.assign' is undefined)
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x36
+  RenderBlock {HTML} at (0,0) size 800x36
+    RenderBody {BODY} at (8,8) size 784x20
+      RenderBlock {DIV} at (0,0) size 784x0
+        RenderBlock {DIV} at (0,0) size 784x0
+      RenderBlock (anonymous) at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 226x19
+          text run at (0,0) width 226: "This test passes if it does not crash."
+        RenderText {#text} at (0,0) size 0x0

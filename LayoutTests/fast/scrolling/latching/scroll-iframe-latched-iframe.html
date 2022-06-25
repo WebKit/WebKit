@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script>
+        jsTestIsAsync = true;
+
+        var iframeTarget;
+        var pageScrollPositionBefore;
+        var iframeScrollPositionBefore;
+
+        function checkForScroll()
+        {
+            // The iframe should not have scrolled at all.
+            var pageScrollPositionAfter = document.scrollingElement.scrollTop;
+            var iframeScrollPositionAfter = window.frames['target'].document.scrollingElement.scrollTop;
+
+            if (pageScrollPositionBefore != pageScrollPositionAfter)
+                testFailed("Page received wheel events.");
+            else
+                testPassed("Page did not receive wheel events.");
+
+            finishJSTest();
+        }
+
+        function scrollTest()
+        {
+            pageScrollPositionBefore = document.scrollingElement.scrollTop;
+
+            iframeTarget = document.getElementById('target');
+
+            var iframeScrollingElement = window.frames['target'].document.scrollingElement;
+            iframeScrollingElement.scrollTop = iframeScrollingElement.scrollHeight - iframeTarget.clientHeight - 100;
+
+            iframeScrollPositionBefore = iframeScrollingElement.scrollTop;
+
+            // Scroll the #source until we reach the #target.
+            var startPosX = iframeTarget.offsetLeft + 20;
+            debug("IFrame display height = " + iframeTarget.clientHeight);
+            var startPosY = iframeTarget.offsetTop + iframeTarget.clientHeight - 42; // One wheel turn before end.
+
+            eventSender.monitorWheelEvents();
+            eventSender.mouseMoveTo(startPosX, startPosY); // Make sure we are just outside the iFrame
+
+            debug("Mouse moved to (" + startPosX + ", " + startPosY + ")");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'begin');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
+            eventSender.callAfterScrollingCompletes(checkForScroll);
+        }
+
+        function setupTopLevel() 
+        {
+            description("Tests that iframe doesn't pass wheel events to main frame when scrolling at bottom");
+            if (window.eventSender) {
+                setTimeout(scrollTest, 0);
+                return;
+            }
+            
+            var messageLocation = document.getElementById('parent');
+            var message = document.createElement('div');
+            message.innerHTML = "<p>This test is better run under DumpRenderTree. To manually test it, place the mouse pointer<br/>"
+                + "inside the iframe, then use the mouse wheel or a two-finger swipe to scroll the iframe to the bottom (and beyond).<br/>"
+                + "<br/><br/>"
+                + "The test passes if you scroll far enough to see the row of END labels but the main page does not scroll.</p>";
+            messageLocation.appendChild(message);
+            finishJSTest();
+        }
+        
+    </script>
+
+</head>
+<body>
+<div id="parent" style="height: 2000px">
+    <div id="source" style="height: 100px">
+        Put mouse here and flick downwards
+    </div>
+    <iframe id="target" name="target" style="border:solid 1px green; height: 500px; width: 500px;" 
+     src= "data:text/html,
+     <div style='height: 1000px; width: 1000px;'>
+     TOP TOP TOP TOP TOP TOP TOP TOP TOP TOP TOP TOP TOP TOP<br/><br/>
+     This should still be visible inside the frame after you scroll down
+     <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+     <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+     <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+     This should NOT be visible inside the frame after you scroll down<br/>
+     <br/>
+     END END END END END END END END END END END END END
+     </div>
+     "
+     onload="setupTopLevel();"
+     >
+    </iframe>
+</div>
+<div id="console"></div>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

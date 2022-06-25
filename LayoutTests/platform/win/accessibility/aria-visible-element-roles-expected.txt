@@ -1,0 +1,162 @@
+This test ensures ARIA visible elements (e.g. those with both `hidden` and `aria-hidden='false'` attributes) have the correct role.
+
+<a href="https://apple.com" id="link" hidden="" aria-hidden="false"></a>
+    AXRole: AXLink
+
+<select id="select" name="pets" hidden="" aria-hidden="false"></select>
+    AXRole: AXComboBox
+
+<select id="select-multiple" multiple="" name="pets-multiple" hidden="" aria-hidden="false"></select>
+    AXRole: AXList
+
+<textarea id="textarea" rows="5" cols="33" hidden="" aria-hidden="false"></textarea>
+    AXRole: AXStaticText
+
+<img id="img-with-map" src="resources/cake.png" width="145" height="126" usemap="#map" aria-label="Label" hidden="" aria-hidden="false">
+    AXRole: AXImage
+
+<li hidden="" aria-hidden="false" id="li-element"></li>
+    AXRole: AXTab
+
+<button hidden="" aria-hidden="false" id="button"></button>
+    AXRole: AXButton
+
+<legend hidden="" aria-hidden="false" id="legend"></legend>
+    AXRole: AXGroup
+
+<canvas hidden="" aria-hidden="false" id="canvas-without-fallback-content"></canvas>
+    AXRole: AXImage
+
+<canvas hidden="" aria-hidden="false" id="canvas-with-fallback-content"></canvas>
+    AXRole: AXImage
+
+<input hidden="" aria-hidden="false" id="file-upload-button" type="file">
+    AXRole: AXButton
+
+<input hidden="" aria-hidden="false" id="checkbox" type="checkbox">
+    AXRole: AXCheckBox
+
+<input hidden="" aria-hidden="false" type="radio" id="radio-button" name="monster">
+    AXRole: AXRadioButton
+
+<input hidden="" aria-hidden="false" id="text-button" type="submit">
+    AXRole: AXButton
+
+<input hidden="" aria-hidden="false" id="text-button-with-pressed" aria-pressed="false" type="submit">
+    AXRole: AXCheckBox
+
+<input hidden="" aria-hidden="false" id="date-input" type="date">
+    AXRole: AXStaticText
+
+<input hidden="" aria-hidden="false" id="color-input" type="color">
+    AXRole: AXStaticText
+
+<input hidden="" aria-hidden="false" id="range-input" type="range">
+    AXRole: slider
+
+<input hidden="" aria-hidden="false" id="search-input" type="search">
+    AXRole: AXWebArea
+
+<h2 hidden="" aria-hidden="false" id="h2"></h2>
+    AXRole: AXStaticText
+
+<del hidden="" aria-hidden="false" id="del"></del>
+    AXRole: AXWebArea
+
+<ins hidden="" aria-hidden="false" id="ins"></ins>
+    AXRole: AXWebArea
+
+<sub hidden="" aria-hidden="false" id="sub"></sub>
+    AXRole: AXWebArea
+
+<sup hidden="" aria-hidden="false" id="sup"></sup>
+    AXRole: AXWebArea
+
+<code hidden="" aria-hidden="false" id="code"></code>
+    AXRole: AXWebArea
+
+<dt hidden="" aria-hidden="false" id="dt"></dt>
+    AXRole: AXGroup
+
+<dd hidden="" aria-hidden="false" id="dd"></dd>
+    AXRole: AXGroup
+
+<dl hidden="" aria-hidden="false" id="dl"></dl>
+    AXRole: AXList
+
+<ol hidden="" aria-hidden="false" id="ol"></ol>
+    AXRole: AXList
+
+<ul hidden="" aria-hidden="false" id="ul"></ul>
+    AXRole: AXList
+
+<figure hidden="" aria-hidden="false" id="figure"></figure>
+    AXRole: AXWebArea
+
+<p hidden="" aria-hidden="false" id="p"></p>
+    AXRole: AXGroup
+
+<label hidden="" aria-hidden="false" id="label"></label>
+    AXRole: AXStaticText
+
+<dfn hidden="" aria-hidden="false" id="dfn"></dfn>
+    AXRole: AXGroup
+
+<div hidden="" aria-hidden="false" id="div"></div>
+    AXRole: AXGroup
+
+<form hidden="" aria-hidden="false" id="form"></form>
+    AXRole: AXGroup
+
+<article hidden="" aria-hidden="false" id="article"></article>
+    AXRole: AXGroup
+
+<main hidden="" aria-hidden="false" id="main"></main>
+    AXRole: AXGroup
+
+<nav hidden="" aria-hidden="false" id="nav"></nav>
+    AXRole: AXGroup
+
+<aside hidden="" aria-hidden="false" id="aside"></aside>
+    AXRole: AXGroup
+
+<section hidden="" aria-hidden="false" id="section-with-name" aria-label="Section name"></section>
+    AXRole: AXGroup
+
+<section hidden="" aria-hidden="false" id="section-without-name"></section>
+    AXRole: AXWebArea
+
+<blockquote hidden="" aria-hidden="false" id="blockquote"></blockquote>
+    AXRole: AXWebArea
+
+<mark hidden="" aria-hidden="false" id="mark"></mark>
+    AXRole: AXWebArea
+
+<pre hidden="" aria-hidden="false" id="pre"></pre>
+    AXRole: AXWebArea
+
+<details hidden="" aria-hidden="false" id="details"></details>
+    AXRole: AXWebArea
+
+<summary hidden="" aria-hidden="false" id="summary"></summary>
+    AXRole: AXWebArea
+
+<output hidden="" aria-hidden="false" id="output"></output>
+    AXRole: status bar
+
+<menu hidden="" aria-hidden="false" type="toolbar" id="menu-toolbar"></menu>
+    AXRole: tool bar
+
+<hr hidden="" aria-hidden="false" id="hr">
+    AXRole: separator
+
+<time hidden="" aria-hidden="false" id="time"></time>
+    AXRole: AXWebArea
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+

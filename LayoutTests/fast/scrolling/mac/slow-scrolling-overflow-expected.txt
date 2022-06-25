@@ -1,0 +1,7 @@
+
+Test that scroll over scroller with background-attachment:fixed content works.
+PASS overflowScrollEventCount > 0 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

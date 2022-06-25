@@ -1,0 +1,10 @@
+<body onload="loaded()">
+<script>
+function loaded()
+{
+  if (window.opener)
+    window.opener.postMessage('done', '*');
+}
+</script>
+<iframe src="http://127.0.0.1:8080/security/mixedContent/resources/boring.html"></iframe>
+</body>

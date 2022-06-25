@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function triggerPause() {
+    TestPage.addResult("before debugger");
+    debugger;
+    TestPage.addResult("after debugger");
+}
+
+function testEmulateUserGesture() {
+    if (window.internals)
+        TestPage.addResult(window.internals.hasTransientActivation() ? "Has transient activation" : "No transient activation");
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Debugger.BreakpointAction");
+
+    suite.addTestCase({
+        name: "Debugger.BreakpointAction.emulateUserGesture.hasTransientActivation.false",
+        description: "Evalute with the emulateUserGesture option set to false.",
+        async test() {
+            let action = new WI.BreakpointAction(WI.BreakpointAction.Type.Evaluate, {data: `testEmulateUserGesture()`, emulateUserGesture: false});
+            WI.debuggerManager.debuggerStatementsBreakpoint.addAction(action);
+
+            InspectorTest.log("Pausing...");
+            let pausedPromise = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
+            let evaluatePromise = InspectorTest.evaluateInPage("triggerPause()");
+            await pausedPromise;
+
+            InspectorTest.assert(WI.debuggerManager.activeCallFrame, "Should have active call frame.");
+
+            InspectorTest.log("Resuming...");
+            await Promise.all([
+                WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Resumed),
+                WI.debuggerManager.resume(),
+            ]);
+
+            WI.debuggerManager.debuggerStatementsBreakpoint.removeAction(action);
+
+            await evaluatePromise;
+        }
+    });
+
+    suite.addTestCase({
+        name: "Debugger.BreakpointAction.emulateUserGesture.hasTransientActivation.true",
+        description: "Evalute with the emulateUserGesture option set to true.",
+        async test() {
+            let action = new WI.BreakpointAction(WI.BreakpointAction.Type.Evaluate, {data: `testEmulateUserGesture()`, emulateUserGesture: true});
+            WI.debuggerManager.debuggerStatementsBreakpoint.addAction(action);
+
+            InspectorTest.log("Pausing...");
+            let pausedPromise = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
+            let evaluatePromise = InspectorTest.evaluateInPage("triggerPause()");
+            await pausedPromise;
+
+            InspectorTest.assert(WI.debuggerManager.activeCallFrame, "Should have active call frame.");
+
+            InspectorTest.log("Resuming...");
+            await Promise.all([
+                WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Resumed),
+                WI.debuggerManager.resume(),
+            ]);
+
+            WI.debuggerManager.debuggerStatementsBreakpoint.removeAction(action);
+
+            await evaluatePromise;
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for Debugger.BreakpointAction emulateUserGesture parameter.</p>
+</body>
+</html>

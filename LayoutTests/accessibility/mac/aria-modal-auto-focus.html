@@ -1,0 +1,105 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<style>
+.hidden { display: none; }
+</style>
+<body>
+
+<div id="bg">
+    <p id="bgContent">Other page content with <a href="#">a dummy focusable element</a></p>
+    <p>
+        <a onclick="toggleDialog(document.getElementById('dialog1'), 'show'); document.getElementById('new').focus(); return false;"
+           href="#" role="button" id="displayBtn">
+            Display a dialog
+        </a>
+    </p>
+</div>
+
+<div role="dialog" aria-labelledby="dialog1-heading" id="dialog1" class="hidden" tabindex="-1" aria-modal="false">
+    <h3 id="dialog1-heading">Dialog1 heading</h3>
+    <button id="ok" onclick="toggleDialog(document.getElementById('dialog1'), 'hide');" class="close-button">OK</button>
+    <button onclick="toggleDialog(document.getElementById('dialog2'), 'show');" id="new">New</button>
+</div>
+
+<div role="dialog" aria-labelledby="dialog2-heading" id="dialog2" class="hidden" tabindex="-1">
+    <h3 id="dialog2-heading">Dialog2 heading</h3>
+    <button id="close" onclick="toggleDialog(document.getElementById('dialog2'), 'hide');" class="close-button">Close</button>
+</div>
+
+<script>
+    var testOutput = "This tests that focus will automatically move to aria-modal dialogs\n\n";
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        if (backgroundAccessible())
+            testOutput += `PASS: Background is initially accessible.\n`;
+        else
+            testOutput += `FAIL: Background is not initially accessible.\n`;
+
+        var newBtn, okBtn, closeBtn;
+        // 1. Click the display button, dialog1 shows and focus shouldn't move since we have
+        // javascript code to focus on the "new" button.
+        testOutput += "\nOpening dialog1.\n";
+        document.getElementById("displayBtn").click();
+        setTimeout(async () => {
+            await waitFor(() => {
+                newBtn = accessibilityController.accessibleElementById("new");
+                return newBtn && newBtn.isFocused;
+            });
+            testOutput += "PASS: #new button is focused.\n";
+
+            // 2. Click the new button, dialog2 shows and focus should move to the close button.
+            // Set aria-modal to false on the previous modal object (we shouldn't have two modals in play).
+            testOutput += "\nOpening dialog2.\n";
+            document.getElementById("new").click();
+            document.getElementById("dialog1").ariaModal = false;
+
+            await waitFor(() => {
+                closeBtn = accessibilityController.accessibleElementById("close");
+                return closeBtn && closeBtn.isFocused;
+            });
+            testOutput += "PASS: #close button is focused.\n";
+
+            // 3. Click the close button, dialog2 closes and focus should go back to the
+            // first focusable child of dialog1, which we now need to add aria-modal back to.
+            testOutput += "\nClosing dialog2 and making dialog1 `ariaModal = true`.\n";
+            document.getElementById("close").click();
+            document.getElementById("dialog1").ariaModal = true;
+
+            await waitFor(() => {
+                okBtn = accessibilityController.accessibleElementById("ok");
+                return okBtn && okBtn.isFocused;
+            });
+            testOutput += "PASS: #ok button is focused.\n";
+
+            debug(testOutput);
+            finishJSTest();
+        });
+    }
+    
+    function backgroundAccessible() {
+        const displayBtn = accessibilityController.accessibleElementById("displayBtn");
+        const bgContent = accessibilityController.accessibleElementById("bgContent");
+        if (!displayBtn || !bgContent)
+            return false;
+        
+        return !displayBtn.isIgnored && !bgContent.isIgnored;
+    }
+    
+    function toggleDialog(dialog, sh) {
+        if (sh == "show") {
+            dialog.style.display = "block";
+            dialog.setAttribute("aria-modal", "true");
+        } else {
+            dialog.style.display = "none";
+            dialog.setAttribute("aria-modal", "false"); 
+        }
+    }
+</script>
+</body>
+</html>

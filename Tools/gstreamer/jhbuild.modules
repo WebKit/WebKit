@@ -1,0 +1,207 @@
+<?xml version="1.0"?>
+<!DOCTYPE moduleset SYSTEM "moduleset.dtd">
+<?xml-stylesheet type="text/xsl" href="moduleset.xsl"?>
+<moduleset>
+
+  <metamodule id="webkit-gstreamer-testing-dependencies">
+    <dependencies>
+      <dep package="gstreamer"/>
+      <dep package="gst-plugins-base"/>
+      <dep package="gst-plugins-good"/>
+      <dep package="gst-plugins-bad"/>
+      <dep package="gst-libav"/>
+      <if condition-set="Thunder">
+        <dep package="thunder"/>
+        <dep package="widevine"/>
+        <dep package="thunder-cdmi-widevine"/>
+        <dep package="thunder-nanoservices"/>
+      </if>
+    </dependencies>
+  </metamodule>
+
+  <!-- Please use http/https to access repositories to be friendly to users stuck behind firewalls. -->
+  <repository type="tarball" name="gstreamer"
+      href="http://gstreamer.freedesktop.org/src/"/>
+  <repository type="tarball" name="github-tarball"
+      href="https://github.com/"/>
+  <repository type="git" name="github-ssh"
+      href="git@github.com:"/>
+  <repository type="git" name="chromium.googlesource.com"
+      href="https://chromium.googlesource.com/webm/"/>
+  <repository type="git" name="aomedia.googlesource.com"
+      href="https://aomedia.googlesource.com/"/>
+  <repository type="tarball" name="ffmpeg" href="https://ffmpeg.org/releases/"/>
+
+  <meson id="orc" mesonargs="-Dgtk_doc=disabled">
+    <branch module="orc/orc-${version}.tar.xz" version="0.4.30"
+            repo="gstreamer"
+            hash="sha256:ba41b92146a5691cd102eb79c026757d39e9d3b81a65810d2946a1786a1c4972">
+      <patch file="orc-satisfy-fno-common-under-gcc10.patch" strip="1"/>
+    </branch>
+  </meson>
+
+  <autotools id="openh264" supports-non-srcdir-builds="no" autogen-sh="pseudo-configure">
+    <branch module="cisco/openh264/archive/v${version}.tar.gz" version="1.5.0"
+            checkoutdir="openh264-${version}" repo="github-tarball">
+      <patch file="openh264-configure.patch" strip="0"/>
+    </branch>
+  </autotools>
+
+  <cmake id="aom" cmakeargs="-DBUILD_SHARED_LIBS=1">
+    <branch repo="aomedia.googlesource.com" module="aom" checkoutdir="aom" branch="master"
+            revision="master" tag="cdb083e84a71d6d31163a4f64f18dc1328fd782c" />
+  </cmake>
+
+  <autotools id="libsrtp">
+    <branch repo="github-tarball" module="cisco/libsrtp/archive/v${version}.tar.gz" version="2.2.0"
+            checkoutdir="libsrtp-${version}">
+      <patch file="libsrtp-Fix-building-with-gcc-10.patch" strip="1"/>
+    </branch>
+  </autotools>
+
+  <meson id="gstreamer" mesonargs="-Dgtk_doc=disabled -Dintrospection=disabled -Dexamples=disabled -Dtests=disabled">
+    <dependencies>
+      <dep package="orc"/>
+    </dependencies>
+    <branch hash="sha256:de094a404a3ad8f4977829ea87edf695a4da0b5c8f613ebe54ab414bac89f031" module="gstreamer/gstreamer-${version}.tar.xz" repo="gstreamer" version="1.20.1">
+      <path file="gstreamer-0001-typefind-Skip-parsing-of-data-URIs.patch" strip="1" />
+      <path file="gstreamer-0002-uri-Build-doubly-linked-list-by-prepending-items.patch" strip="1" />
+    </branch>
+  </meson>
+
+  <meson id="gst-plugins-base" mesonargs="-Dgtk_doc=disabled -Dintrospection=disabled -Dexamples=disabled">
+    <if condition-set="wpe">
+      <autogenargs value="-Dpango=disabled"/>
+    </if>
+    <dependencies>
+      <dep package="gstreamer"/>
+    </dependencies>
+    <branch hash="sha256:96d8a6413ba9394fbec1217aeef63741a729d476a505a797c1d5337d8fa7c204" module="gst-plugins-base/gst-plugins-base-${version}.tar.xz" repo="gstreamer" version="1.20.1">
+    </branch>
+  </meson>
+
+  <meson id="gst-plugins-good" mesonargs="-Dgtk_doc=disabled -Dintrospection=disabled -Dexamples=disabled -Dgtk3=disabled">
+    <dependencies>
+      <dep package="gst-plugins-base"/>
+    </dependencies>
+    <branch hash="sha256:3c66876f821d507bcdbebffb08b4f31a322727d6753f65a0f02c905ecb7084aa" module="gst-plugins-good/gst-plugins-good-${version}.tar.xz" repo="gstreamer" version="1.20.1">
+    </branch>
+  </meson>
+
+  <meson id="gst-plugins-bad" mesonargs="-Dgtk_doc=disabled -Dintrospection=disabled -Dexamples=disabled -Dopenexr=disabled -Dopencv=disabled">
+    <dependencies>
+      <dep package="graphene"/>
+      <dep package="gst-plugins-base"/>
+      <dep package="openh264"/>
+      <dep package="aom"/>
+      <dep package="libsrtp"/>
+    </dependencies>
+    <branch hash="sha256:09d3c2cf5911f0bc7da6bf557a55251779243d3de216b6a26cc90c445b423848" module="gst-plugins-bad/gst-plugins-bad-${version}.tar.xz" repo="gstreamer" version="1.20.1">
+    </branch>
+  </meson>
+
+  <autotools id="ffmpeg" autogen-template="%(srcdir)s/configure --prefix=%(prefix)s --enable-static --enable-pic --disable-avdevice --disable-postproc --disable-swscale --disable-programs --disable-ffplay --disable-ffprobe --disable-ffmpeg --disable-encoder=flac --disable-protocols --disable-devices --disable-network --disable-hwaccels --disable-dxva2 --disable-vdpau --disable-filters --enable-filter=yadif --disable-doc --disable-d3d11va --disable-dxva2 --disable-audiotoolbox --disable-videotoolbox --disable-vaapi --disable-crystalhd --disable-mediacodec --disable-nvenc --disable-mmal --disable-omx --disable-omx-rpi --disable-cuda --disable-cuvid --disable-libmfx --disable-libnpp --disable-iconv --disable-jni --disable-v4l2_m2m --enable-optimizations">
+    <branch repo="ffmpeg" version="4.0.4" module="ffmpeg-${version}.tar.gz" hash="sha256:80bb685abfcdda7c9b6c9c5caf1d8dbb927858050d7377c2b8f3488c7e8a9b7f"/>
+  </autotools>
+
+  <meson id="gst-libav" mesonargs="-Dgtk_doc=disabled">
+    <dependencies>
+      <dep package="gst-plugins-base"/>
+      <dep package="ffmpeg"/>
+    </dependencies>
+    <branch hash="sha256:91a71fb633b75e1bd52e22a457845cb0ba563a2972ba5954ec88448f443a9fc7" module="gst-libav/gst-libav-${version}.tar.xz" repo="gstreamer" version="1.20.1">
+    </branch>
+  </meson>
+
+  <meson id="libva" mesonargs="-Denable_va_messaging=false">
+    <branch module="intel/libva/archive/${version}.tar.gz" version="2.4.1"
+            hash="sha256:68ca8d071dcb84ac82e3c6d7f02a55937d9f690fcb215853f4aa1de8d459812f"
+           checkoutdir="libva-${version}" repo="github-tarball"/>
+  </meson>
+
+  <cmake id="thunder"
+         cmakeargs="-DBUILD_REFERENCE=${version} -DPORT=8081
+                    -DBINDING=0.0.0.0 -DIDLE_TIME=180
+                    -DPERSISTENT_PATH=/tmp/thunder/persistent
+                    -DVOLATILE_PATH=/tmp/thunder/volatile
+                    -DDATA_PATH=${prefix}/share/WPEFramework
+                    -DSYSTEM_PATH=${prefix}/lib/wpeframework/plugins
+                    -DPROXYSTUB_PATH=${prefix}/lib/wpeframework/proxystubs
+                    -DOOMADJUST= -DBUILD_TYPE=ReleaseSymbols
+                    -DBLUETOOTH_SUPPORT=OFF -DVIRTUALINPUT=OFF
+                    -DCOMPOSITORCLIENT=OFF -DCOMPOSITORCLIENT=OFF
+                    -DBROADCAST=OFF -DCDMI=ON -DCDMI_BCM_NEXUS_SVP=OFF
+                    -DCDMI_ADAPTER_IMPLEMENTATION=gstreamer
+                    -DGSTREAMERCLIENT=OFF -DPROVISIONPROXY=OFF
+                    -DSECURITYAGENT=OFF -DCOMPOSITORSERVERPLUGIN=OFF
+                    -DPLUGIN_WEBKITBROWSER=OFF -DPLUGIN_WEBSERVER=OFF
+                    -DPLUGIN_ESPIAL=OFF -DNETWORKCONTROL=OFF">
+    <branch repo="github-tarball" module="rdkcentral/Thunder/tarball/${version}" version="6adeee006fecdd1b2bc49bd360d49fc5718deb61" checkoutdir="thunder"/>
+  </cmake>
+
+  <autotools id="widevine" supports-non-srcdir-builds="no"
+             autogen-sh="build.py" autogenargs="x86-64 -r -DOEMCRYPTO_KEYBOX_PATH_PREFIX=${prefix}"
+             makeargs="BUILDTYPE=Release -j1"
+             makeinstallargs="BUILDTYPE=Release -j1 -f Makefile.install" >
+    <dependencies>
+      <dep package="thunder"/>
+    </dependencies>
+    <branch repo="github-ssh" module="Metrological/widevine.git" checkoutdir="widevine" tag="264c137501b289e356b11dacc329b05636ea9396"/>
+  </autotools>
+
+  <cmake id="thunder-cdmi-widevine" cmakeargs="-DCMAKE_BUILD_TYPE=RelWithDebInfo">
+    <branch repo="github-tarball"
+            module="WebPlatformForEmbedded/OCDM-Widevine/tarball/${version}"
+            version="9dc3964b0339abb70d66e4f931632324a075d6d4" checkoutdir="thunder-cdmi-widevine"/>
+    <dependencies>
+      <dep package="thunder"/>
+      <dep package="widevine"/>
+    </dependencies>
+  </cmake>
+
+  <cmake id="thunder-nanoservices"
+         cmakeargs="-DBUILD_REFERENCE=${version} -DBUILD_TYPE=ReleaseSymbols
+                    -DPLUGIN_COBALT=OFF -DPLUGIN_COMMANDER=OFF
+                    -DPLUGIN_DEVICEINFO=OFF -DPLUGIN_DISPLAYINFO=OFF
+                    -DPLUGIN_DEVICEIDENTIFICATION=OFF
+                    -DPLUGIN_DSRESOLUTION=OFF -DPLUGIN_DHCPSERVER=OFF
+                    -DPLUGIN_DIALSERVER=OFF -DPLUGIN_DICTIONARY=OFF
+                    -DPLUGIN_IOCONNECTOR=OFF -DPLUGIN_EGLTEST=OFF
+                    -DPLUGIN_FRONTPANEL=OFF -DPLUGIN_LOCATIONSYNC=OFF
+                    -DPLUGIN_MONITOR=OFF -DPLUGIN_NETWORKCONTROL=OFF
+                    -DPLUGIN_OPENCDMI=ON
+                    -DPLUGIN_OPENCDMI_AUTOSTART=true
+                    -DPLUGIN_OPENCDMI_OOP=true
+                    -DPLUGIN_OPENCDMI_WIDEVINE=ON
+                    -DPLUGIN_OPENCDMI_CLEARKEY=OFF
+                    -DPLUGIN_OPENCDMI_PLAYREADY=OFF
+                    -DPLUGIN_OPENCDMI_NAGRA=OFF
+                    -DPLUGIN_OPENCDMI_NCAS=OFF -DPLUGIN_BLUETOOTH=OFF
+                    -DPLUGIN_BLUETOOTHREMOTECONTROL=OFF
+                    -DPLUGIN_REMOTECONTROL=OFF -DPLUGIN_SNAPSHOT=OFF
+                    -DPLUGIN_SYSTEMCOMMANDS=OFF
+                    -DPLUGIN_FILETRANSFER=OFF
+                    -DPLUGIN_TESTCONTROLLER=OFF -DPLUGIN_JSONRPC=OFF
+                    -DPLUGIN_TESTUTILITY=OFF -DPLUGIN_TIMESYNC=OFF
+                    -DPLUGIN_TRACECONTROL=OFF
+                    -DPLUGIN_VOLUMECONTROL=OFF
+                    -DPLUGIN_WEBKITBROWSER=OFF -DPLUGIN_RTSPCLIENT=OFF
+                    -DPLUGIN_WEBPA=OFF -DPLUGIN_WEBPROXY=OFF
+                    -DPLUGIN_WEBSERVER=OFF -DPLUGIN_WEBSHELL=OFF
+                    -DPLUGIN_WIFICONTROL=OFF -DPLUGIN_PACKAGER=OFF
+                    -DPLUGIN_PLAYERINFO=OFF -DPLUGIN_POWER=OFF
+                    -DPLUGIN_PROCESSMONITOR=OFF -DPLUGIN_STREAMER=OFF
+                    -DPLUGIN_SPARK=OFF -DPLATFORM_LINUX=ON
+                    -DPLUGIN_MESSENGER=OFF -DPLUGIN_SECURITYAGENT=OFF
+                    -DPLUGIN_RPCLINK=OFF -DPLUGIN_COMPOSITOR=OFF">
+    <branch repo="github-tarball"
+            module="rdkcentral/ThunderNanoServices/tarball/${version}"
+            version="de9f3d40d8408ee811c48f486c9b14f752c97345"
+            checkoutdir="thunder-nanoservices"/>
+    <dependencies>
+      <dep package="thunder"/>
+      <dep package="thunder-cdmi-widevine"/>
+    </dependencies>
+  </cmake>
+
+</moduleset>

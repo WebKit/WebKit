@@ -1,0 +1,56 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/align-content-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/align-content-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/align-content-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/align-items-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/align-items-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/align-items-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/align-self-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/align-self-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/align-self-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/column-gap-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/column-gap-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/column-gap-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/gap-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/gap-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/gap-shorthand.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/gap-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/justify-content-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/justify-content-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/justify-content-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/justify-items-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/justify-items-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/justify-items-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/justify-self-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/justify-self-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/justify-self-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/place-content-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/place-content-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/place-content-shorthand.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/place-content-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/place-items-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/place-items-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/place-items-shorthand.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/place-items-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/place-self-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/place-self-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/place-self-shorthand.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/place-self-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/row-gap-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/row-gap-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/parsing/row-gap-valid.html

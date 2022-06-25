@@ -1,0 +1,42 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 766x36
+          text run at (0,0) width 625: "This tests for a hang when creating a list out of a selection that starts inside a table and ends after it. "
+          text run at (625,0) width 141: "You should see empty"
+          text run at (0,18) width 346: "list items in each table cell and 'foo' in the first list item."
+      RenderBlock {DIV} at (0,52) size 784x84
+        RenderTable {TABLE} at (0,0) size 117x84 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 115x82
+            RenderTableRow {TR} at (0,2) size 115x38
+              RenderTableCell {TD} at (2,2) size 65x38 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderBlock {UL} at (2,2) size 61x18
+                  RenderListItem {LI} at (40,0) size 21x18
+                    RenderListMarker at (-17,0) size 7x18: bullet
+                    RenderText {#text} at (0,0) size 21x18
+                      text run at (0,0) width 21: "foo"
+                RenderBlock (anonymous) at (2,36) size 61x0
+              RenderTableCell {TD} at (69,2) size 44x38 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                RenderBlock {UL} at (2,2) size 40x18
+                  RenderListItem {LI} at (40,0) size 0x18
+                    RenderListMarker at (-17,0) size 7x18: bullet
+                    RenderBR {BR} at (0,0) size 0x18
+                RenderBlock (anonymous) at (2,36) size 40x0
+            RenderTableRow {TR} at (0,42) size 115x38
+              RenderTableCell {TD} at (2,42) size 65x38 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+                RenderBlock {UL} at (2,2) size 61x18
+                  RenderListItem {LI} at (40,0) size 21x18
+                    RenderListMarker at (-17,0) size 7x18: bullet
+                    RenderBR {BR} at (0,0) size 0x18
+                RenderBlock (anonymous) at (2,36) size 61x0
+              RenderTableCell {TD} at (69,42) size 44x38 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+                RenderBlock {UL} at (2,2) size 40x18
+                  RenderListItem {LI} at (40,0) size 0x18
+                    RenderListMarker at (-17,0) size 7x18: bullet
+                    RenderBR {BR} at (0,0) size 0x18
+                RenderBlock (anonymous) at (2,36) size 40x0
+selection start: position 0 of child 0 {#text} of child 0 {LI} of child 0 {UL} of child 0 {TD} of child 0 {TR} of child 0 {TBODY} of child 0 {TABLE} of child 2 {DIV} of body
+selection end:   position 0 of child 0 {LI} of child 0 {UL} of child 1 {TD} of child 1 {TR} of child 0 {TBODY} of child 0 {TABLE} of child 2 {DIV} of body

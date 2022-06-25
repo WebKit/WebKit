@@ -1,0 +1,64 @@
+<!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<title>This tests the case when visible content change happens on the main frame while the subframe is removed</title>
+<script src="../../../../../resources/basic-gestures.js"></script>
+<style>
+#tapthis {
+    width: 400px;
+    height: 400px;
+    border: 1px solid green;
+}
+
+#becomesVisible {
+    display: none;
+    width: 100px;
+    height: 100px;
+    background-color: green;
+}
+</style>
+<script>
+async function test() {
+    if (!window.testRunner || !testRunner.runUIScript)
+        return;
+    if (window.internals)
+        internals.settings.setContentChangeObserverEnabled(true);
+
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+
+    let rect = tapthis.getBoundingClientRect();
+    let x = rect.left + rect.width / 2;
+    let y = rect.top + rect.height / 2;
+
+    await tapAtPoint(x, y);
+}
+</script>
+</head>
+<body onload="test()">
+<div id=tapthis>PASS if 'clicked' text is not shown below.</div>
+<div id=becomesVisible></div>
+<iframe id=removeThis src=subframe.html></iframe>
+<pre id=result></pre>
+<script>
+tapthis.addEventListener("mousemove", function( event ) {
+    becomesVisible.style.display = "block";
+    document.body.offsetHeight;
+
+    let iframeToRemove = document.getElementById("removeThis");
+    if (iframeToRemove)
+        iframeToRemove.remove();
+    if (window.testRunner)
+        setTimeout("testRunner.notifyDone()", 250);
+}, false);
+
+becomesVisible.addEventListener("click", function( event ) {   
+    result.innerHTML = "clicked hidden";
+}, false);
+
+tapthis.addEventListener("click", function( event ) {   
+    result.innerHTML = "clicked";
+}, false);
+</script>
+</body>
+</html>

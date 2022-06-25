@@ -1,0 +1,8 @@
+
+EVENT(sourceopen)
+EVENT(updateend)
+EXPECTED (bufferedRanges() == '[ 200000000...200000056 ]') OK
+EXPECTED (video.currentTime == '200000040') OK
+EXPECTED (bufferedRanges() == '[ 200000010...200000057 ]') OK
+END OF TEST
+

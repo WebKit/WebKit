@@ -1,0 +1,130 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body onload="run()">
+<svg id="svg" xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+    <path id="p1" d="M-100 -100L100 -100 L100 100 L-100 100 z"/>
+    <path id="p2" d="M-1 0 L 200 0"/>
+    <path id="p3" d="M-1 0 L 200 0" stroke="black"/>
+    <path id="p4" d="M0 0 L 200 0" stroke="black" stroke-width="20" stroke-dashoffset="20" stroke-dasharray="20 20"/>
+    <path id="p5" d="M20 0 L 200 0" stroke="black" stroke-width="20" stroke-linecap="round"/>
+    <path id="p6" d="M20 0 L 200 0" stroke="black" stroke-width="20" stroke-linecap="square"/>
+    <path id="p7" d="M20 0 L 200 0" stroke="black" stroke-width="20" stroke-linecap="butt"/>
+    <path id="p8" d="M0 0 L20 60 L40 0" stroke="black" stroke-width="20" stroke-linejoin="miter" stroke-miterlimit="30"/>
+    <path id="p9" d="M0 0 L20 60 L40 0" stroke="black" stroke-width="20" stroke-linejoin="round" stroke-miterlimit="30"/>
+    <path id="p10" d="M0 0 L20 60 L40 0" stroke="black" stroke-width="20" stroke-linejoin="bevel" stroke-miterlimit="30"/>
+    <path id="p11" d="M-1 0 L 200 0" stroke="black" stroke-width="20" transform="translate(-200, -200)"/>
+    <path id="p12" d="M-1 0 L 200 0" stroke="black" stroke-width="20" display="none"/>
+    <path id="p13" d="M-1 0 L 200 0" stroke="black" stroke-width="20" visibility="hidden"/>
+    <path id="p14" d="M-1 0 L 200 0" stroke="black" stroke-width="20" opacity="0"/>
+    <g transform="scale(20)">
+        <path id="p15" d="M0 0 L 200 0" stroke="black" stroke-width="20" vector-effect="non-scaling-stroke"/>
+    </g>
+</svg>
+<p id="description"></p>
+<div id="console"></div>
+<script type="text/javascript">
+<![CDATA[
+window.enablePixelTesting = false;
+window.jsTestIsAsync = true;
+var svg = document.getElementById("svg");
+var p1 = document.getElementById("p1"),
+    p2 = document.getElementById("p2"),
+    p3 = document.getElementById("p3"),
+    p4 = document.getElementById("p4"),
+    p5 = document.getElementById("p5"),
+    p6 = document.getElementById("p6"),
+    p7 = document.getElementById("p7"),
+    p8 = document.getElementById("p8"),
+    p9 = document.getElementById("p9"),
+    p10 = document.getElementById("p10"),
+    p11 = document.getElementById("p11"),
+    p12 = document.getElementById("p12"),
+    p13 = document.getElementById("p13"),
+    p14 = document.getElementById("p14"),
+    p15 = document.getElementById("p15");
+var svgPoint = svg.createSVGPoint();
+
+function run() {
+    description("Test isPointInStroke() on path.");
+
+    debug("");
+    debug("Test that fill area does not contribute to stroke area");
+    shouldBe("p1.isPointInStroke()", "false");
+    shouldBe("p1.isPointInStroke({})", "false");
+
+    debug("");
+    debug("Test disabled stroke");
+    shouldBe("p2.isPointInStroke({x: 1, y: 0})", "false");
+
+    debug("");
+    debug("Test general functionality");
+    shouldBe("p3.isPointInStroke()", "true");
+    shouldBe("p3.isPointInStroke({})", "true");
+    shouldBe("p3.isPointInStroke(new DOMPoint())", "true");
+    shouldBe("p3.isPointInStroke(new DOMPoint(1, 0))", "true");
+    shouldBe("p3.isPointInStroke(new DOMPoint(-200, -200))", "false");
+    shouldBe("p3.isPointInStroke(new DOMPointReadOnly())", "true");
+    shouldBe("p3.isPointInStroke(new DOMPointReadOnly(-200, -200))", "false");
+    shouldBe("p3.isPointInStroke(svgPoint)", "true");
+    svgPoint.x = -200;
+    svgPoint.y = -200;
+    shouldBe("p3.isPointInStroke(svgPoint)", "false");
+    shouldBe("p3.isPointInStroke(new DOMPoint(NaN))", "false");
+    shouldBe("p3.isPointInStroke(new DOMPoint(Infinity))", "false");
+    shouldThrow("p3.isPointInStroke('string')");
+
+    debug("");
+    debug("Test CSS properties that shall not affect isPointInStroke");
+    shouldBe("p11.isPointInStroke()", "true");
+    shouldBe("p12.isPointInStroke()", "true");
+    shouldBe("p13.isPointInStroke()", "true");
+    shouldBe("p14.isPointInStroke()", "true");
+
+    debug("");
+    debug("Test different stroke properties");
+    shouldBe("p4.isPointInStroke()", "false");
+    shouldBe("p4.isPointInStroke({x: 19})", "false");
+    shouldBe("p4.isPointInStroke({x: 20})", "true");
+    shouldBe("p4.isPointInStroke({x: 30})", "true");
+    shouldBe("p4.isPointInStroke({x: 40})", "true");
+    shouldBe("p4.isPointInStroke({x: 41})", "false");
+    shouldBe("p4.isPointInStroke({x: 50})", "false");
+    shouldBe("p4.isPointInStroke({x: 59})", "false");
+    shouldBe("p4.isPointInStroke({x: 60})", "true");
+    shouldBe("p4.isPointInStroke({x: 20, y: 10})", "true");
+    shouldBe("p4.isPointInStroke({x: 20, y: 11})", "false");
+    shouldBe("p4.isPointInStroke({x: 20, y: -10})", "true");
+    shouldBe("p4.isPointInStroke({x: 20, y: -11})", "false");
+
+    debug("");
+    debug("Test different linecaps");
+    shouldBe("p5.isPointInStroke({x: 18})", "true");
+    shouldBe("p6.isPointInStroke({x: 18})", "true");
+    shouldBe("p7.isPointInStroke({x: 18})", "false");
+
+    debug("");
+    debug("Test different linejoins");
+    shouldBe("p8.isPointInStroke({x: 20, y: 60})", "true");
+    shouldBe("p8.isPointInStroke({x: 20, y: 75})", "true");
+    shouldBe("p8.isPointInStroke({x: 20, y: 90})", "true");
+    shouldBe("p9.isPointInStroke({x: 20, y: 60})", "true");
+    shouldBe("p9.isPointInStroke({x: 20, y: 70})", "true");
+    shouldBe("p9.isPointInStroke({x: 20, y: 90})", "false");
+    shouldBe("p10.isPointInStroke({x: 20, y: 60})", "true");
+    shouldBe("p10.isPointInStroke({x: 20, y: 70})", "false");
+    shouldBe("p10.isPointInStroke({x: 20, y: 90})", "false");
+
+    debug("");
+    debug("Test non-scaling-stroke");
+    shouldBe("p15.isPointInStroke({})", "true");
+    shouldBe("p15.isPointInStroke({y: 1})", "true");
+    shouldBe("p15.isPointInStroke({y: 11})", "false");
+    finishJSTest();
+}
+]]>
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+PASS if the green box is visible below.
+some content here
+(repaint rects
+  (rect 8 28 500 20)
+)
+

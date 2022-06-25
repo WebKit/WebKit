@@ -1,0 +1,45 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ignoreSynchronousMessagingTimeouts=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+body, html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+input {
+    font-size: 20px;
+}
+</style>
+</head>
+<body>
+<input placeholder="Tap to show an alert" type="text"></input>
+<script>
+if (window.testRunner)
+    testRunner.setShouldDismissJavaScriptAlertsAsynchronously(true);
+
+jsTestIsAsync = true;
+doneShowingAlert = false;
+
+addEventListener("load", async () => {
+    description("This test verifies that presenting a modal alert while focusing an editable input doesn't cause the application process to hang. To verify manually, tap the text field above, and check that the JavaScript alert is presented with no significant delay (i.e. a 1-second hang).");
+
+    textField = document.querySelector("input");
+    textField.addEventListener("focus", () => {
+        alert("This is a modal alert.");
+        doneShowingAlert = true;
+    });
+
+    if (!window.testRunner)
+        return;
+
+    await UIHelper.activateElement(textField);
+    shouldBecomeEqual("doneShowingAlert", "true", finishJSTest);
+});
+</script>
+</body>
+</html>

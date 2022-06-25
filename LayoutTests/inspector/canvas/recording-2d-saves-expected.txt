@@ -1,0 +1,95 @@
+Test that CanvasManager is able to record actions made to 2D canvas contexts.
+
+
+== Running test suite: Canvas.recording2D
+-- Running test case: Canvas.recording2D.ExistingSaves
+PASS: There should be 4 existing states.
+PASS: State 0 setTransform value should be matrix(1, 0, 0, 1, 0, 0).
+PASS: State 0 globalAlpha value should be 1.
+PASS: State 0 globalCompositeOperation value should be source-over.
+PASS: State 0 lineWidth value should be 1.
+PASS: State 0 lineCap value should be butt.
+PASS: State 0 lineJoin value should be miter.
+PASS: State 0 miterLimit value should be 10.
+PASS: State 0 shadowOffsetX value should be 0.
+PASS: State 0 shadowOffsetY value should be 0.
+PASS: State 0 shadowBlur value should be 0.
+PASS: State 0 shadowColor value should be rgba(0, 0, 0, 0).
+PASS: State 0 setLineDash value should be .
+PASS: State 0 lineDashOffset value should be 0.
+PASS: State 0 font value should be 10px sans-serif.
+PASS: State 0 textAlign value should be start.
+PASS: State 0 textBaseline value should be alphabetic.
+PASS: State 0 direction value should be inherit.
+PASS: State 0 strokeStyle value should be #000000.
+PASS: State 0 fillStyle value should be #000000.
+PASS: State 0 imageSmoothingEnabled value should be true.
+PASS: State 0 imageSmoothingQuality value should be low.
+PASS: State 0 setPath value should be [object Path2D].
+PASS: State 1 setTransform value should be matrix(1, 0, 0, 1, 1, 0).
+PASS: State 1 globalAlpha value should be 0.5.
+PASS: State 1 globalCompositeOperation value should be source-in.
+PASS: State 1 lineWidth value should be 0.5.
+PASS: State 1 lineCap value should be round.
+PASS: State 1 lineJoin value should be bevel.
+PASS: State 1 miterLimit value should be 20.
+PASS: State 1 shadowOffsetX value should be 2.
+PASS: State 1 shadowOffsetY value should be 3.
+PASS: State 1 shadowBlur value should be 4.
+PASS: State 1 shadowColor value should be #100000.
+PASS: State 1 setLineDash value should be 1,2.
+PASS: State 1 lineDashOffset value should be 10.
+PASS: State 1 font value should be 20px sans-serif.
+PASS: State 1 textAlign value should be left.
+PASS: State 1 textBaseline value should be top.
+PASS: State 1 direction value should be ltr.
+PASS: State 1 strokeStyle value should be [object CanvasPattern].
+PASS: State 1 fillStyle value should be [object CanvasGradient].
+PASS: State 1 imageSmoothingEnabled value should be false.
+PASS: State 1 imageSmoothingQuality value should be medium.
+PASS: State 1 setPath value should be [object Path2D].
+PASS: State 2 setTransform value should be matrix(1, 0, 0, 1, 1, 1).
+PASS: State 2 globalAlpha value should be 0.
+PASS: State 2 globalCompositeOperation value should be difference.
+PASS: State 2 lineWidth value should be 2.
+PASS: State 2 lineCap value should be square.
+PASS: State 2 lineJoin value should be round.
+PASS: State 2 miterLimit value should be 30.
+PASS: State 2 shadowOffsetX value should be 4.
+PASS: State 2 shadowOffsetY value should be 5.
+PASS: State 2 shadowBlur value should be 6.
+PASS: State 2 shadowColor value should be #001000.
+PASS: State 2 setLineDash value should be 3,4.
+PASS: State 2 lineDashOffset value should be 11.
+PASS: State 2 font value should be 30px cursive.
+PASS: State 2 textAlign value should be right.
+PASS: State 2 textBaseline value should be hanging.
+PASS: State 2 direction value should be inherit.
+PASS: State 2 strokeStyle value should be [object CanvasGradient].
+PASS: State 2 fillStyle value should be [object CanvasPattern].
+PASS: State 2 imageSmoothingEnabled value should be true.
+PASS: State 2 imageSmoothingQuality value should be high.
+PASS: State 2 setPath value should be [object Path2D].
+PASS: State 3 setTransform value should be matrix(1, 0, 0, 1, 0, -1).
+PASS: State 3 globalAlpha value should be 0.75.
+PASS: State 3 globalCompositeOperation value should be source-over.
+PASS: State 3 lineWidth value should be 3.
+PASS: State 3 lineCap value should be round.
+PASS: State 3 lineJoin value should be bevel.
+PASS: State 3 miterLimit value should be 40.
+PASS: State 3 shadowOffsetX value should be 6.
+PASS: State 3 shadowOffsetY value should be 7.
+PASS: State 3 shadowBlur value should be 8.
+PASS: State 3 shadowColor value should be #000010.
+PASS: State 3 setLineDash value should be 5,6.
+PASS: State 3 lineDashOffset value should be 12.
+PASS: State 3 font value should be 40px fantasy.
+PASS: State 3 textAlign value should be center.
+PASS: State 3 textBaseline value should be ideographic.
+PASS: State 3 direction value should be rtl.
+PASS: State 3 strokeStyle value should be #200000.
+PASS: State 3 fillStyle value should be #300000.
+PASS: State 3 imageSmoothingEnabled value should be false.
+PASS: State 3 imageSmoothingQuality value should be medium.
+PASS: State 3 setPath value should be [object Path2D].
+

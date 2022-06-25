@@ -1,0 +1,18 @@
+The tests in this directory require a working database, as opposed
+to the tests in t/, which simply test the code without a working
+installation.
+
+Some of the tests may modify your current working installation, even
+if only temporarily. To run the tests that modify your database,
+set the environment variable BZ_WRITE_TESTS to 1.
+
+Some tests also take additional, optional arguments. You can pass arguments
+to tests like:
+
+  prove xt/search.t :: --long --operators=equals,notequals
+
+Note the "::"--that is necessary to note that the arguments are going to
+the test, not to "prove".
+
+See the perldoc of the individual tests to see what options they support,
+or do "perl xt/search.t --help".

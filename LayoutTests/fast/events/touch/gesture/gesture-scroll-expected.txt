@@ -1,0 +1,10 @@
+This tests scroll gesture events. Square is (mostly) green on pass
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Gesture events not implemented on this platform or broken
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

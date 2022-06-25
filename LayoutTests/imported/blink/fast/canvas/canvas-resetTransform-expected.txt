@@ -1,0 +1,36 @@
+This test checks resetTransform in canvas v5
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+resetTransform should reset other transforms.
+PASS imgdata[0] is 0
+PASS imgdata[1] is 128
+PASS imgdata[2] is 0
+resetTransform should not affect CTM outside of save() and restore().
+PASS imgdata[0] is 0
+PASS imgdata[1] is 128
+PASS imgdata[2] is 0
+PASS imgdata[0] is 255
+PASS imgdata[1] is 0
+PASS imgdata[2] is 0
+resetTransform should restore the path transform to identity.
+PASS imgdata[0] is 0
+PASS imgdata[1] is 128
+PASS imgdata[2] is 0
+resetTransform should resolve the non-invertible CTM state.
+PASS imgdata[0] is 0
+PASS imgdata[1] is 128
+PASS imgdata[2] is 0
+The path object should not be updated on the non-invertible CTM state.
+resetTransform should restore the path object just before CTM became non-invertible.
+PASS imgdata[0] is 255
+PASS imgdata[1] is 0
+PASS imgdata[2] is 0
+PASS imgdata[0] is 0
+PASS imgdata[1] is 128
+PASS imgdata[2] is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

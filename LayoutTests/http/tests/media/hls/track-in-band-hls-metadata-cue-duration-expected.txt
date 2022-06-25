@@ -1,0 +1,38 @@
+
+Test that metadata cues have valid duration.
+
+
+** Set video.src, wait for media data to load
+RUN(video.src = "http://127.0.0.1:8000/media/resources/hls/metadata/prog_index.m3u8")
+EVENT(addtrack)
+RUN(track = video.textTracks[0])
+RUN(track.mode = "hidden")
+EVENT(canplaythrough)
+
+
+cue 1
+EXPECTED (cue.startTime != 'Infinity') OK
+EXPECTED (cue.endTime != 'Infinity') OK
+
+cue 2
+EXPECTED (cue.startTime != 'Infinity') OK
+EXPECTED (cue.endTime != 'Infinity') OK
+
+cue 3
+EXPECTED (cue.startTime != 'Infinity') OK
+EXPECTED (cue.endTime != 'Infinity') OK
+
+cue 4
+EXPECTED (cue.startTime != 'Infinity') OK
+EXPECTED (cue.endTime != 'Infinity') OK
+
+cue 5
+EXPECTED (cue.startTime != 'Infinity') OK
+EXPECTED (cue.endTime != 'Infinity') OK
+
+cue 6
+EXPECTED (cue.startTime != 'Infinity') OK
+EXPECTED (cue.endTime != 'Infinity') OK
+
+END OF TEST
+

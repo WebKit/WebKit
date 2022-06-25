@@ -1,0 +1,5 @@
+
+
+PASS frame-ancestors-none-block
+PASS A 'frame-ancestors' CSP directive with a value 'none' should block rendering.
+

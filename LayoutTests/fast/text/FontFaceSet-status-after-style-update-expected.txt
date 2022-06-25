@@ -1,0 +1,12 @@
+This function makes sure document.fonts.status gets updated after style changes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS fonts.status is "loaded"
+PASS fonts.status is "loading"
+PASS fonts.status is "loaded"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

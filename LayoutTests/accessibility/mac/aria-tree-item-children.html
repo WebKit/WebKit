@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+if (window.testRunner)
+   testRunner.dumpAsText();
+</script>
+</head>
+<body id="body">
+
+<ul id="tree" role="tree" aria-labelledby="treelabel" aria-activedescendant="tree0_item0_2_0_1" tabindex="0">
+    <li id="treeitem1" role="treeitem" aria-level="1" aria-expanded="true">
+        <span>
+            <span class="expander"></span>
+            Animals
+            </span>
+            <ul role="group">
+                <div id="treeitem2" role="treeitem" aria-level="2"><span>Birds</span></div>
+            </ul>
+        </span>
+    </li>
+</ul>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that aria tree items can be fetched as either a full list of children or via range getter to ensure the range getter isn't returning a row as it's first child.");
+
+    if (window.accessibilityController) {
+
+          var tree = accessibilityController.accessibleElementById("tree")
+          shouldBe("tree.role", "'AXRole: AXOutline'");
+
+          var treeitem = tree.childAtIndex(0);
+          var child1 = treeitem.childAtIndex(0);
+          var child2 = treeitem.uiElementArrayAttributeValue("AXChildren")[0];
+          shouldBe("child1 == child2", "true");
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

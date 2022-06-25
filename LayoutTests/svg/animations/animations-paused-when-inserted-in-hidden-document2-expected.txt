@@ -1,0 +1,16 @@
+Tests that SVG animations are properly paused in iframes that are inserted into hidden pages.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Setting page visibility to hidden
+Inserting SVG animation in the document
+PASS internals.areSVGAnimationsPaused is true
+PASS svgElement.animationsPaused() is true
+Setting page visibility to visible
+PASS internals.areSVGAnimationsPaused is false
+PASS svgElement.animationsPaused() is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

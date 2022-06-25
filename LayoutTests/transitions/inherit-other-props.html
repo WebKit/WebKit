@@ -1,0 +1,101 @@
+<html>
+<head>
+  <style>
+    .box {
+      position: relative;
+      left: 0;
+      height: 100px;
+      width: 100px;
+      margin: 10px;
+      background-color: blue;
+    }
+    .transition {
+      -webkit-transition-property: left;
+      -webkit-transition-duration: 2s;
+      -webkit-transition-timing-function: linear;
+    }
+    #box4 {
+      -webkit-transition-property: inherit;
+      -webkit-transition-duration: inherit;
+      -webkit-transition-timing-function: inherit;
+    }
+  </style>
+  <script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    var kExpectedProp = [
+      'all', /* box1 */
+      'left', /* box2 */
+      'left', /* box3 */
+      'left', /* box4 */ /* inherits from box3 */
+      'left', /* box5 */
+      'all', /* box6 */ /* does NOT inherit */
+    ];
+
+    var kExpectedDuration = [
+      '0s', /* box1 */
+      '2s', /* box2 */
+      '2s', /* box3 */
+      '2s', /* box4 */ /* inherits from box3 */
+      '2s', /* box5 */
+      '0s', /* box6 */ /* does NOT inherit */
+    ];
+
+    var kExpectedTimingFunction = [
+      'ease', /* box1 */
+      'linear', /* box2 */
+      'linear', /* box3 */
+      'linear', /* box4 */ /* inherits from box3 */
+      'linear', /* box5 */
+      'ease', /* box6 */ /* does NOT inherit */
+    ];
+
+    var result = '';
+
+    function testValue(index, name, actual, expected) {
+      if (actual == expected)
+        result += "PASS -- ";
+      else
+        result += "FAIL -- ";
+      result += "Box " + index + " computed transition " + name + ": " + actual + " expected: " + expected + "<br>";
+    }
+    
+    function testProperties()
+    {
+      var boxes = document.body.getElementsByClassName('box');
+      for (var i = 0; i < boxes.length; ++i) {
+        var curBox = boxes[i];
+        testValue(i+1, "property", window.getComputedStyle(curBox).webkitTransitionProperty, kExpectedProp[i]);
+        testValue(i+1, "duration", window.getComputedStyle(curBox).webkitTransitionDuration, kExpectedDuration[i]);
+        testValue(i+1, "timing function", window.getComputedStyle(curBox).webkitTransitionTimingFunction, kExpectedTimingFunction[i]);
+      }
+
+      document.body.removeChild(document.getElementById('container'));
+      document.getElementById('result').innerHTML = result;
+      if (window.testRunner)
+          testRunner.notifyDone();
+    }
+
+    window.addEventListener('load', testProperties, false);
+  </script>
+</head>
+<body>
+
+<div id="container">
+  <div id="box1" class="box"></div>
+  <div id="box2" class="box transition"></div>
+  <div id="box3" class="box transition">
+    <div id="box4" class="box"></div>
+  </div>
+  <div id="box5" class="box transition">
+    <div id="box6" class="box"></div>
+  </div>
+</div>
+
+<div id="result"></div>
+
+</body>
+</html>

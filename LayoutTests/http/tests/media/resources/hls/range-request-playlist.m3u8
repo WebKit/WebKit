@@ -1,0 +1,11 @@
+#EXTM3U
+# Created with Bento4 mp4-hls.py version 1.1.0r615
+
+#EXT-X-VERSION:4
+
+# Media Playlists
+#EXT-X-STREAM-INF:AVERAGE-BANDWIDTH=361262,BANDWIDTH=368806,CODECS="avc1.42C00D",RESOLUTION=640x480
+range-request-playlists/stream.m3u8
+
+# I-Frame Playlists
+#EXT-X-I-FRAME-STREAM-INF:AVERAGE-BANDWIDTH=179875,BANDWIDTH=195520,CODECS="avc1.42C00D",RESOLUTION=640x480,URI="range-request-playlists/iframes.m3u8"

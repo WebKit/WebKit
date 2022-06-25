@@ -1,0 +1,258 @@
+
+PASS .flexbox 1
+PASS .flexbox 2
+PASS .flexbox 3
+PASS .flexbox 4
+PASS .flexbox 5
+PASS .flexbox 6
+PASS .flexbox 7
+PASS .flexbox 8
+PASS .flexbox 9
+PASS .flexbox 10
+PASS .flexbox 11
+PASS .flexbox 12
+PASS .flexbox 13
+PASS .flexbox 14
+PASS .flexbox 15
+PASS .flexbox 16
+PASS .flexbox 17
+PASS .flexbox 18
+PASS .flexbox 19
+PASS .flexbox 20
+PASS .flexbox 21
+PASS .flexbox 22
+PASS .flexbox 23
+PASS .flexbox 24
+PASS .flexbox 25
+PASS .flexbox 26
+PASS .flexbox 27
+PASS .flexbox 28
+PASS .flexbox 29
+PASS .flexbox 30
+PASS .flexbox 31
+PASS .flexbox 32
+FAIL .flexbox 33 assert_equals:
+<div class="flexbox vertical-rl ltr row justify-content-flex-start align-items-flex-start"><div class="abspos" data-offset-x="50" data-offset-y="0"></div></div>
+offsetLeft expected 50 but got 0
+FAIL .flexbox 34 assert_equals:
+<div class="flexbox vertical-rl ltr row justify-content-flex-start align-items-flex-end"><div class="abspos" data-offset-x="0" data-offset-y="0"></div></div>
+offsetLeft expected 0 but got 50
+FAIL .flexbox 35 assert_equals:
+<div class="flexbox vertical-rl ltr row justify-content-flex-end align-items-flex-start"><div class="abspos" data-offset-x="50" data-offset-y="50"></div></div>
+offsetLeft expected 50 but got 0
+FAIL .flexbox 36 assert_equals:
+<div class="flexbox vertical-rl ltr row justify-content-flex-end align-items-flex-end"><div class="abspos" data-offset-x="0" data-offset-y="50"></div></div>
+offsetLeft expected 0 but got 50
+FAIL .flexbox 37 assert_equals:
+<div class="flexbox vertical-rl rtl row justify-content-flex-start align-items-flex-start"><div class="abspos" data-offset-x="50" data-offset-y="50"></div></div>
+offsetLeft expected 50 but got 0
+FAIL .flexbox 38 assert_equals:
+<div class="flexbox vertical-rl rtl row justify-content-flex-start align-items-flex-end"><div class="abspos" data-offset-x="0" data-offset-y="50"></div></div>
+offsetLeft expected 0 but got 50
+FAIL .flexbox 39 assert_equals:
+<div class="flexbox vertical-rl rtl row justify-content-flex-end align-items-flex-start"><div class="abspos" data-offset-x="50" data-offset-y="0"></div></div>
+offsetLeft expected 50 but got 0
+FAIL .flexbox 40 assert_equals:
+<div class="flexbox vertical-rl rtl row justify-content-flex-end align-items-flex-end"><div class="abspos" data-offset-x="0" data-offset-y="0"></div></div>
+offsetLeft expected 0 but got 50
+FAIL .flexbox 41 assert_equals:
+<div class="flexbox vertical-rl ltr column justify-content-flex-start align-items-flex-start"><div class="abspos" data-offset-x="50" data-offset-y="0"></div></div>
+offsetLeft expected 50 but got 0
+FAIL .flexbox 42 assert_equals:
+<div class="flexbox vertical-rl ltr column justify-content-flex-start align-items-flex-end"><div class="abspos" data-offset-x="0" data-offset-y="0"></div></div>
+offsetLeft expected 0 but got 50
+FAIL .flexbox 43 assert_equals:
+<div class="flexbox vertical-rl ltr column justify-content-flex-end align-items-flex-start"><div class="abspos" data-offset-x="50" data-offset-y="50"></div></div>
+offsetLeft expected 50 but got 0
+FAIL .flexbox 44 assert_equals:
+<div class="flexbox vertical-rl ltr column justify-content-flex-end align-items-flex-end"><div class="abspos" data-offset-x="0" data-offset-y="50"></div></div>
+offsetLeft expected 0 but got 50
+FAIL .flexbox 45 assert_equals:
+<div class="flexbox vertical-rl rtl column justify-content-flex-start align-items-flex-start"><div class="abspos" data-offset-x="50" data-offset-y="50"></div></div>
+offsetLeft expected 50 but got 0
+FAIL .flexbox 46 assert_equals:
+<div class="flexbox vertical-rl rtl column justify-content-flex-start align-items-flex-end"><div class="abspos" data-offset-x="0" data-offset-y="50"></div></div>
+offsetLeft expected 0 but got 50
+FAIL .flexbox 47 assert_equals:
+<div class="flexbox vertical-rl rtl column justify-content-flex-end align-items-flex-start"><div class="abspos" data-offset-x="50" data-offset-y="0"></div></div>
+offsetLeft expected 50 but got 0
+FAIL .flexbox 48 assert_equals:
+<div class="flexbox vertical-rl rtl column justify-content-flex-end align-items-flex-end"><div class="abspos" data-offset-x="0" data-offset-y="0"></div></div>
+offsetLeft expected 0 but got 50
+FAIL .flexbox 49 assert_equals:
+<div class="flexbox vertical-rl ltr row-reverse justify-content-flex-start align-items-flex-start"><div class="abspos" data-offset-x="50" data-offset-y="0"></div></div>
+offsetLeft expected 50 but got 0
+FAIL .flexbox 50 assert_equals:
+<div class="flexbox vertical-rl ltr row-reverse justify-content-flex-start align-items-flex-end"><div class="abspos" data-offset-x="0" data-offset-y="0"></div></div>
+offsetLeft expected 0 but got 50
+FAIL .flexbox 51 assert_equals:
+<div class="flexbox vertical-rl ltr row-reverse justify-content-flex-end align-items-flex-start"><div class="abspos" data-offset-x="50" data-offset-y="50"></div></div>
+offsetLeft expected 50 but got 0
+FAIL .flexbox 52 assert_equals:
+<div class="flexbox vertical-rl ltr row-reverse justify-content-flex-end align-items-flex-end"><div class="abspos" data-offset-x="0" data-offset-y="50"></div></div>
+offsetLeft expected 0 but got 50
+FAIL .flexbox 53 assert_equals:
+<div class="flexbox vertical-rl rtl row-reverse justify-content-flex-start align-items-flex-start"><div class="abspos" data-offset-x="50" data-offset-y="50"></div></div>
+offsetLeft expected 50 but got 0
+FAIL .flexbox 54 assert_equals:
+<div class="flexbox vertical-rl rtl row-reverse justify-content-flex-start align-items-flex-end"><div class="abspos" data-offset-x="0" data-offset-y="50"></div></div>
+offsetLeft expected 0 but got 50
+FAIL .flexbox 55 assert_equals:
+<div class="flexbox vertical-rl rtl row-reverse justify-content-flex-end align-items-flex-start"><div class="abspos" data-offset-x="50" data-offset-y="0"></div></div>
+offsetLeft expected 50 but got 0
+FAIL .flexbox 56 assert_equals:
+<div class="flexbox vertical-rl rtl row-reverse justify-content-flex-end align-items-flex-end"><div class="abspos" data-offset-x="0" data-offset-y="0"></div></div>
+offsetLeft expected 0 but got 50
+FAIL .flexbox 57 assert_equals:
+<div class="flexbox vertical-rl ltr column-reverse justify-content-flex-start align-items-flex-start"><div class="abspos" data-offset-x="50" data-offset-y="0"></div></div>
+offsetLeft expected 50 but got 0
+FAIL .flexbox 58 assert_equals:
+<div class="flexbox vertical-rl ltr column-reverse justify-content-flex-start align-items-flex-end"><div class="abspos" data-offset-x="0" data-offset-y="0"></div></div>
+offsetLeft expected 0 but got 50
+FAIL .flexbox 59 assert_equals:
+<div class="flexbox vertical-rl ltr column-reverse justify-content-flex-end align-items-flex-start"><div class="abspos" data-offset-x="50" data-offset-y="50"></div></div>
+offsetLeft expected 50 but got 0
+FAIL .flexbox 60 assert_equals:
+<div class="flexbox vertical-rl ltr column-reverse justify-content-flex-end align-items-flex-end"><div class="abspos" data-offset-x="0" data-offset-y="50"></div></div>
+offsetLeft expected 0 but got 50
+FAIL .flexbox 61 assert_equals:
+<div class="flexbox vertical-rl rtl column-reverse justify-content-flex-start align-items-flex-start"><div class="abspos" data-offset-x="50" data-offset-y="50"></div></div>
+offsetLeft expected 50 but got 0
+FAIL .flexbox 62 assert_equals:
+<div class="flexbox vertical-rl rtl column-reverse justify-content-flex-start align-items-flex-end"><div class="abspos" data-offset-x="0" data-offset-y="50"></div></div>
+offsetLeft expected 0 but got 50
+FAIL .flexbox 63 assert_equals:
+<div class="flexbox vertical-rl rtl column-reverse justify-content-flex-end align-items-flex-start"><div class="abspos" data-offset-x="50" data-offset-y="0"></div></div>
+offsetLeft expected 50 but got 0
+FAIL .flexbox 64 assert_equals:
+<div class="flexbox vertical-rl rtl column-reverse justify-content-flex-end align-items-flex-end"><div class="abspos" data-offset-x="0" data-offset-y="0"></div></div>
+offsetLeft expected 0 but got 50
+PASS .flexbox 65
+PASS .flexbox 66
+PASS .flexbox 67
+PASS .flexbox 68
+PASS .flexbox 69
+PASS .flexbox 70
+PASS .flexbox 71
+PASS .flexbox 72
+PASS .flexbox 73
+PASS .flexbox 74
+PASS .flexbox 75
+PASS .flexbox 76
+PASS .flexbox 77
+PASS .flexbox 78
+PASS .flexbox 79
+PASS .flexbox 80
+PASS .flexbox 81
+PASS .flexbox 82
+PASS .flexbox 83
+PASS .flexbox 84
+PASS .flexbox 85
+PASS .flexbox 86
+PASS .flexbox 87
+PASS .flexbox 88
+PASS .flexbox 89
+PASS .flexbox 90
+PASS .flexbox 91
+PASS .flexbox 92
+PASS .flexbox 93
+PASS .flexbox 94
+PASS .flexbox 95
+PASS .flexbox 96
+horizontal-tb ltr row justify-content-flex-start align-items-flex-start .flexbox 1
+horizontal-tb ltr row justify-content-flex-start align-items-flex-end .flexbox 2
+horizontal-tb ltr row justify-content-flex-end align-items-flex-start .flexbox 3
+horizontal-tb ltr row justify-content-flex-end align-items-flex-end .flexbox 4
+horizontal-tb rtl row justify-content-flex-start align-items-flex-start .flexbox 5
+horizontal-tb rtl row justify-content-flex-start align-items-flex-end .flexbox 6
+horizontal-tb rtl row justify-content-flex-end align-items-flex-start .flexbox 7
+horizontal-tb rtl row justify-content-flex-end align-items-flex-end .flexbox 8
+horizontal-tb ltr column justify-content-flex-start align-items-flex-start .flexbox 9
+horizontal-tb ltr column justify-content-flex-start align-items-flex-end .flexbox 10
+horizontal-tb ltr column justify-content-flex-end align-items-flex-start .flexbox 11
+horizontal-tb ltr column justify-content-flex-end align-items-flex-end .flexbox 12
+horizontal-tb rtl column justify-content-flex-start align-items-flex-start .flexbox 13
+horizontal-tb rtl column justify-content-flex-start align-items-flex-end .flexbox 14
+horizontal-tb rtl column justify-content-flex-end align-items-flex-start .flexbox 15
+horizontal-tb rtl column justify-content-flex-end align-items-flex-end .flexbox 16
+horizontal-tb ltr row-reverse justify-content-flex-start align-items-flex-start .flexbox 17
+horizontal-tb ltr row-reverse justify-content-flex-start align-items-flex-end .flexbox 18
+horizontal-tb ltr row-reverse justify-content-flex-end align-items-flex-start .flexbox 19
+horizontal-tb ltr row-reverse justify-content-flex-end align-items-flex-end .flexbox 20
+horizontal-tb rtl row-reverse justify-content-flex-start align-items-flex-start .flexbox 21
+horizontal-tb rtl row-reverse justify-content-flex-start align-items-flex-end .flexbox 22
+horizontal-tb rtl row-reverse justify-content-flex-end align-items-flex-start .flexbox 23
+horizontal-tb rtl row-reverse justify-content-flex-end align-items-flex-end .flexbox 24
+horizontal-tb ltr column-reverse justify-content-flex-start align-items-flex-start .flexbox 25
+horizontal-tb ltr column-reverse justify-content-flex-start align-items-flex-end .flexbox 26
+horizontal-tb ltr column-reverse justify-content-flex-end align-items-flex-start .flexbox 27
+horizontal-tb ltr column-reverse justify-content-flex-end align-items-flex-end .flexbox 28
+horizontal-tb rtl column-reverse justify-content-flex-start align-items-flex-start .flexbox 29
+horizontal-tb rtl column-reverse justify-content-flex-start align-items-flex-end .flexbox 30
+horizontal-tb rtl column-reverse justify-content-flex-end align-items-flex-start .flexbox 31
+horizontal-tb rtl column-reverse justify-content-flex-end align-items-flex-end .flexbox 32
+vertical-rl ltr row justify-content-flex-start align-items-flex-start .flexbox 33
+vertical-rl ltr row justify-content-flex-start align-items-flex-end .flexbox 34
+vertical-rl ltr row justify-content-flex-end align-items-flex-start .flexbox 35
+vertical-rl ltr row justify-content-flex-end align-items-flex-end .flexbox 36
+vertical-rl rtl row justify-content-flex-start align-items-flex-start .flexbox 37
+vertical-rl rtl row justify-content-flex-start align-items-flex-end .flexbox 38
+vertical-rl rtl row justify-content-flex-end align-items-flex-start .flexbox 39
+vertical-rl rtl row justify-content-flex-end align-items-flex-end .flexbox 40
+vertical-rl ltr column justify-content-flex-start align-items-flex-start .flexbox 41
+vertical-rl ltr column justify-content-flex-start align-items-flex-end .flexbox 42
+vertical-rl ltr column justify-content-flex-end align-items-flex-start .flexbox 43
+vertical-rl ltr column justify-content-flex-end align-items-flex-end .flexbox 44
+vertical-rl rtl column justify-content-flex-start align-items-flex-start .flexbox 45
+vertical-rl rtl column justify-content-flex-start align-items-flex-end .flexbox 46
+vertical-rl rtl column justify-content-flex-end align-items-flex-start .flexbox 47
+vertical-rl rtl column justify-content-flex-end align-items-flex-end .flexbox 48
+vertical-rl ltr row-reverse justify-content-flex-start align-items-flex-start .flexbox 49
+vertical-rl ltr row-reverse justify-content-flex-start align-items-flex-end .flexbox 50
+vertical-rl ltr row-reverse justify-content-flex-end align-items-flex-start .flexbox 51
+vertical-rl ltr row-reverse justify-content-flex-end align-items-flex-end .flexbox 52
+vertical-rl rtl row-reverse justify-content-flex-start align-items-flex-start .flexbox 53
+vertical-rl rtl row-reverse justify-content-flex-start align-items-flex-end .flexbox 54
+vertical-rl rtl row-reverse justify-content-flex-end align-items-flex-start .flexbox 55
+vertical-rl rtl row-reverse justify-content-flex-end align-items-flex-end .flexbox 56
+vertical-rl ltr column-reverse justify-content-flex-start align-items-flex-start .flexbox 57
+vertical-rl ltr column-reverse justify-content-flex-start align-items-flex-end .flexbox 58
+vertical-rl ltr column-reverse justify-content-flex-end align-items-flex-start .flexbox 59
+vertical-rl ltr column-reverse justify-content-flex-end align-items-flex-end .flexbox 60
+vertical-rl rtl column-reverse justify-content-flex-start align-items-flex-start .flexbox 61
+vertical-rl rtl column-reverse justify-content-flex-start align-items-flex-end .flexbox 62
+vertical-rl rtl column-reverse justify-content-flex-end align-items-flex-start .flexbox 63
+vertical-rl rtl column-reverse justify-content-flex-end align-items-flex-end .flexbox 64
+vertical-lr ltr row justify-content-flex-start align-items-flex-start .flexbox 65
+vertical-lr ltr row justify-content-flex-start align-items-flex-end .flexbox 66
+vertical-lr ltr row justify-content-flex-end align-items-flex-start .flexbox 67
+vertical-lr ltr row justify-content-flex-end align-items-flex-end .flexbox 68
+vertical-lr rtl row justify-content-flex-start align-items-flex-start .flexbox 69
+vertical-lr rtl row justify-content-flex-start align-items-flex-end .flexbox 70
+vertical-lr rtl row justify-content-flex-end align-items-flex-start .flexbox 71
+vertical-lr rtl row justify-content-flex-end align-items-flex-end .flexbox 72
+vertical-lr ltr column justify-content-flex-start align-items-flex-start .flexbox 73
+vertical-lr ltr column justify-content-flex-start align-items-flex-end .flexbox 74
+vertical-lr ltr column justify-content-flex-end align-items-flex-start .flexbox 75
+vertical-lr ltr column justify-content-flex-end align-items-flex-end .flexbox 76
+vertical-lr rtl column justify-content-flex-start align-items-flex-start .flexbox 77
+vertical-lr rtl column justify-content-flex-start align-items-flex-end .flexbox 78
+vertical-lr rtl column justify-content-flex-end align-items-flex-start .flexbox 79
+vertical-lr rtl column justify-content-flex-end align-items-flex-end .flexbox 80
+vertical-lr ltr row-reverse justify-content-flex-start align-items-flex-start .flexbox 81
+vertical-lr ltr row-reverse justify-content-flex-start align-items-flex-end .flexbox 82
+vertical-lr ltr row-reverse justify-content-flex-end align-items-flex-start .flexbox 83
+vertical-lr ltr row-reverse justify-content-flex-end align-items-flex-end .flexbox 84
+vertical-lr rtl row-reverse justify-content-flex-start align-items-flex-start .flexbox 85
+vertical-lr rtl row-reverse justify-content-flex-start align-items-flex-end .flexbox 86
+vertical-lr rtl row-reverse justify-content-flex-end align-items-flex-start .flexbox 87
+vertical-lr rtl row-reverse justify-content-flex-end align-items-flex-end .flexbox 88
+vertical-lr ltr column-reverse justify-content-flex-start align-items-flex-start .flexbox 89
+vertical-lr ltr column-reverse justify-content-flex-start align-items-flex-end .flexbox 90
+vertical-lr ltr column-reverse justify-content-flex-end align-items-flex-start .flexbox 91
+vertical-lr ltr column-reverse justify-content-flex-end align-items-flex-end .flexbox 92
+vertical-lr rtl column-reverse justify-content-flex-start align-items-flex-start .flexbox 93
+vertical-lr rtl column-reverse justify-content-flex-start align-items-flex-end .flexbox 94
+vertical-lr rtl column-reverse justify-content-flex-end align-items-flex-start .flexbox 95
+vertical-lr rtl column-reverse justify-content-flex-end align-items-flex-end .flexbox 96
+

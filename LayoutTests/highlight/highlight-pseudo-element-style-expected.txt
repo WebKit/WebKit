@@ -1,0 +1,21 @@
+Tests computing the highlight pseudo element style.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internals.highlightPseudoElementColor('green-yellow-range', testdiv) is "rgb(0, 128, 0)"
+PASS internals.highlightPseudoElementColor('green-yellow-range', testspan1) is "rgb(0, 128, 0)"
+PASS internals.highlightPseudoElementColor('green-yellow-range', testspan2) is "rgb(255, 255, 0)"
+PASS internals.highlightPseudoElementColor('green-yellow-range', testspan3) is "rgb(0, 128, 0)"
+PASS internals.highlightPseudoElementColor('blue-range', testdiv) is ""
+PASS internals.highlightPseudoElementColor('blue-range', testspan1) is ""
+PASS internals.highlightPseudoElementColor('blue-range', testspan2) is ""
+PASS internals.highlightPseudoElementColor('blue-range', testspan3) is "rgb(0, 0, 255)"
+PASS internals.highlightPseudoElementColor('non-existent-range', testdiv) is ""
+PASS internals.highlightPseudoElementColor('non-existent-range', testspan1) is ""
+PASS internals.highlightPseudoElementColor('non-existent-range', testspan2) is ""
+PASS internals.highlightPseudoElementColor('non-existent-range', testspan3) is ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

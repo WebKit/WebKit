@@ -1,0 +1,3 @@
+
+PASS Test that timing allow check fails when service worker changes origin from same to cross origin.
+

@@ -1,0 +1,19 @@
+Test String.prototype.normalize.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Basic function properties
+PASS typeof String.prototype.normalize is "function"
+PASS String.prototype.normalize.name is "normalize"
+PASS String.prototype.normalize.length is 0
+PASS Object.getOwnPropertyDescriptor(String.prototype, 'normalize').configurable is true
+PASS Object.getOwnPropertyDescriptor(String.prototype, 'normalize').enumerable is false
+PASS Object.getOwnPropertyDescriptor(String.prototype, 'normalize').writable is true
+Invokes ToString on the argument.
+PASS String.prototype.normalize.call(listener) is "WebKit"
+PASS listener.callCount is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

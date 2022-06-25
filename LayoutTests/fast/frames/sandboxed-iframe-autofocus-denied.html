@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        function test() {
+            activeTag = document.querySelector('iframe').contentWindow.document.activeElement.tagName;
+            if (activeTag == "INPUT")
+                console.log("FAIL: The input element is focused.");
+            else
+                console.log("PASS: The input element is not focused.");
+        }
+    </script>
+</head>
+<body>
+    <p>This test passes if the input element in the sandboxed frame is not
+    automatically focused upon, as it should be blocked by the sandboxed
+    scripts flag. A console warning to that effect should also be present.</p>
+    <iframe sandbox="allow-same-origin"
+            onload="test()"
+            srcdoc="<input autofocus onfocus>"></iframe>
+</body>
+</html>

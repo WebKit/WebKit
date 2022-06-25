@@ -1,0 +1,45 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <style>
+        body {
+            height: 4000px;
+        }
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 30px;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+    </style>
+
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.dumpAsText();
+        }
+
+        window.addEventListener('load', async () => {
+
+            await UIHelper.activateAndWaitForInputSessionAt(5, 5);
+            document.getElementById('input').value = 'hi'; // Trigger a layout and flush.
+            await UIHelper.ensureStablePresentationUpdate();
+
+            let scrollingTree = await UIHelper.getScrollingTree();
+            document.getElementById('scrolling-tree').textContent = scrollingTree;
+            testRunner.notifyDone();
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="header">
+        <input id="input">
+    </div>
+<pre id="scrolling-tree"></pre>
+</body>
+</html>

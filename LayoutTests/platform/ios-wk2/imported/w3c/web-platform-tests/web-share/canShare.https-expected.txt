@@ -1,0 +1,8 @@
+
+PASS canShare() empty and default dictionary
+FAIL canShare() url member assert_false: data URL is not allowed expected false got true
+PASS canShare() title member
+PASS canShare() text member
+FAIL canShare() files member assert_false: invalid URL invalidates the share expected false got true
+PASS canShare() multiple members
+

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="fuzzy" content="maxDifference=0-1; totalPixels=0-1423" />
+<style>
+    div { 
+        width: 100px;
+        height: 100px;
+    }
+
+    #linear {
+        background-image: linear-gradient(rgba(255, 0, 255, 0), rgb(0, 0, 255));
+    }
+
+    #linear-repeating {
+        background-image: repeating-linear-gradient(rgba(255, 0, 255, 0), rgb(0, 0, 255) 25px);
+    }
+
+    #radial {
+        background-image: radial-gradient(rgba(255, 0, 255, 0), rgb(0, 0, 255));
+    }
+
+    #radial-repeating {
+        background-image: repeating-radial-gradient(rgba(255, 0, 255, 0), rgb(0, 0, 255) 25px);
+    }
+
+    #conic {
+        background-image: conic-gradient(rgba(255, 0, 255, 0), rgb(0, 0, 255));
+    }
+
+    #conic-repeating {
+        background-image: repeating-conic-gradient(rgba(255, 0, 255, 0), rgb(0, 0, 255) 30deg);
+    }
+    
+</style>
+</head>
+<body>
+<div id="linear"></div>
+<div id="linear-repeating"></div>
+<div id="radial"></div>
+<div id="radial-repeating"></div>
+<div id="conic"></div>
+<div id="conic-repeating"></div>
+</body>
+</html>

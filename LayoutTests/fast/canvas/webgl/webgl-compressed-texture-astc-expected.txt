@@ -1,0 +1,704 @@
+This test verifies the functionality of the WEBGL_compressed_texture_astc extension, if it is available.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS WebGL context exists
+Testing binding enum with extension disabled
+PASS supportedFormats is []
+
+PASS Successfully enabled WEBGL_compressed_texture_astc extension
+
+PASS WEBGL_compressed_texture_astc listed as supported and getExtension succeeded
+
+Testing WEBGL_compressed_texture_astc
+PASS supportedFormats.length is 28
+
+Testing every supported formats exist
+PASS supported format COMPRESSED_RGBA_ASTC_4x4_KHR exists
+PASS supported format COMPRESSED_RGBA_ASTC_5x4_KHR exists
+PASS supported format COMPRESSED_RGBA_ASTC_5x5_KHR exists
+PASS supported format COMPRESSED_RGBA_ASTC_6x5_KHR exists
+PASS supported format COMPRESSED_RGBA_ASTC_6x6_KHR exists
+PASS supported format COMPRESSED_RGBA_ASTC_8x5_KHR exists
+PASS supported format COMPRESSED_RGBA_ASTC_8x6_KHR exists
+PASS supported format COMPRESSED_RGBA_ASTC_8x8_KHR exists
+PASS supported format COMPRESSED_RGBA_ASTC_10x5_KHR exists
+PASS supported format COMPRESSED_RGBA_ASTC_10x6_KHR exists
+PASS supported format COMPRESSED_RGBA_ASTC_10x8_KHR exists
+PASS supported format COMPRESSED_RGBA_ASTC_10x10_KHR exists
+PASS supported format COMPRESSED_RGBA_ASTC_12x10_KHR exists
+PASS supported format COMPRESSED_RGBA_ASTC_12x12_KHR exists
+PASS supported format COMPRESSED_SRGB8_ALPHA8_ASTC_4x4_KHR exists
+PASS supported format COMPRESSED_SRGB8_ALPHA8_ASTC_5x4_KHR exists
+PASS supported format COMPRESSED_SRGB8_ALPHA8_ASTC_5x5_KHR exists
+PASS supported format COMPRESSED_SRGB8_ALPHA8_ASTC_6x5_KHR exists
+PASS supported format COMPRESSED_SRGB8_ALPHA8_ASTC_6x6_KHR exists
+PASS supported format COMPRESSED_SRGB8_ALPHA8_ASTC_8x5_KHR exists
+PASS supported format COMPRESSED_SRGB8_ALPHA8_ASTC_8x6_KHR exists
+PASS supported format COMPRESSED_SRGB8_ALPHA8_ASTC_8x8_KHR exists
+PASS supported format COMPRESSED_SRGB8_ALPHA8_ASTC_10x5_KHR exists
+PASS supported format COMPRESSED_SRGB8_ALPHA8_ASTC_10x6_KHR exists
+PASS supported format COMPRESSED_SRGB8_ALPHA8_ASTC_10x8_KHR exists
+PASS supported format COMPRESSED_SRGB8_ALPHA8_ASTC_10x10_KHR exists
+PASS supported format COMPRESSED_SRGB8_ALPHA8_ASTC_12x10_KHR exists
+PASS supported format COMPRESSED_SRGB8_ALPHA8_ASTC_12x12_KHR exists
+
+Testing every supported formats is valid
+PASS ext['COMPRESSED_RGBA_ASTC_4x4_KHR'] is 0x93b0
+PASS ext['COMPRESSED_RGBA_ASTC_5x4_KHR'] is 0x93b1
+PASS ext['COMPRESSED_RGBA_ASTC_5x5_KHR'] is 0x93b2
+PASS ext['COMPRESSED_RGBA_ASTC_6x5_KHR'] is 0x93b3
+PASS ext['COMPRESSED_RGBA_ASTC_6x6_KHR'] is 0x93b4
+PASS ext['COMPRESSED_RGBA_ASTC_8x5_KHR'] is 0x93b5
+PASS ext['COMPRESSED_RGBA_ASTC_8x6_KHR'] is 0x93b6
+PASS ext['COMPRESSED_RGBA_ASTC_8x8_KHR'] is 0x93b7
+PASS ext['COMPRESSED_RGBA_ASTC_10x5_KHR'] is 0x93b8
+PASS ext['COMPRESSED_RGBA_ASTC_10x6_KHR'] is 0x93b9
+PASS ext['COMPRESSED_RGBA_ASTC_10x8_KHR'] is 0x93ba
+PASS ext['COMPRESSED_RGBA_ASTC_10x10_KHR'] is 0x93bb
+PASS ext['COMPRESSED_RGBA_ASTC_12x10_KHR'] is 0x93bc
+PASS ext['COMPRESSED_RGBA_ASTC_12x12_KHR'] is 0x93bd
+PASS ext['COMPRESSED_SRGB8_ALPHA8_ASTC_4x4_KHR'] is 0x93d0
+PASS ext['COMPRESSED_SRGB8_ALPHA8_ASTC_5x4_KHR'] is 0x93d1
+PASS ext['COMPRESSED_SRGB8_ALPHA8_ASTC_5x5_KHR'] is 0x93d2
+PASS ext['COMPRESSED_SRGB8_ALPHA8_ASTC_6x5_KHR'] is 0x93d3
+PASS ext['COMPRESSED_SRGB8_ALPHA8_ASTC_6x6_KHR'] is 0x93d4
+PASS ext['COMPRESSED_SRGB8_ALPHA8_ASTC_8x5_KHR'] is 0x93d5
+PASS ext['COMPRESSED_SRGB8_ALPHA8_ASTC_8x6_KHR'] is 0x93d6
+PASS ext['COMPRESSED_SRGB8_ALPHA8_ASTC_8x8_KHR'] is 0x93d7
+PASS ext['COMPRESSED_SRGB8_ALPHA8_ASTC_10x5_KHR'] is 0x93d8
+PASS ext['COMPRESSED_SRGB8_ALPHA8_ASTC_10x6_KHR'] is 0x93d9
+PASS ext['COMPRESSED_SRGB8_ALPHA8_ASTC_10x8_KHR'] is 0x93da
+PASS ext['COMPRESSED_SRGB8_ALPHA8_ASTC_10x10_KHR'] is 0x93db
+PASS ext['COMPRESSED_SRGB8_ALPHA8_ASTC_12x10_KHR'] is 0x93dc
+PASS ext['COMPRESSED_SRGB8_ALPHA8_ASTC_12x12_KHR'] is 0x93dd
+
+Testing format restrictions on buffer size
+PASS getError was expected value: INVALID_VALUE : COMPRESSED_RGBA_ASTC_4x4_KHR expected size: 256
+PASS getError was expected value: INVALID_VALUE : COMPRESSED_RGBA_ASTC_5x4_KHR expected size: 256
+PASS getError was expected value: INVALID_VALUE : COMPRESSED_RGBA_ASTC_5x5_KHR expected size: 256
+PASS getError was expected value: INVALID_VALUE : COMPRESSED_RGBA_ASTC_6x5_KHR expected size: 192
+PASS getError was expected value: INVALID_VALUE : COMPRESSED_RGBA_ASTC_6x6_KHR expected size: 144
+PASS getError was expected value: INVALID_VALUE : COMPRESSED_RGBA_ASTC_8x5_KHR expected size: 128
+PASS getError was expected value: INVALID_VALUE : COMPRESSED_RGBA_ASTC_8x6_KHR expected size: 96
+PASS getError was expected value: INVALID_VALUE : COMPRESSED_RGBA_ASTC_8x8_KHR expected size: 64
+PASS getError was expected value: INVALID_VALUE : COMPRESSED_RGBA_ASTC_10x5_KHR expected size: 128
+PASS getError was expected value: INVALID_VALUE : COMPRESSED_RGBA_ASTC_10x6_KHR expected size: 96
+PASS getError was expected value: INVALID_VALUE : COMPRESSED_RGBA_ASTC_10x8_KHR expected size: 64
+PASS getError was expected value: INVALID_VALUE : COMPRESSED_RGBA_ASTC_10x10_KHR expected size: 64
+PASS getError was expected value: INVALID_VALUE : COMPRESSED_RGBA_ASTC_12x10_KHR expected size: 64
+PASS getError was expected value: INVALID_VALUE : COMPRESSED_RGBA_ASTC_12x12_KHR expected size: 64
+PASS getError was expected value: INVALID_VALUE : COMPRESSED_SRGB8_ALPHA8_ASTC_4x4_KHR expected size: 64
+PASS getError was expected value: INVALID_VALUE : COMPRESSED_SRGB8_ALPHA8_ASTC_5x4_KHR expected size: 64
+PASS getError was expected value: INVALID_VALUE : COMPRESSED_SRGB8_ALPHA8_ASTC_5x5_KHR expected size: 64
+PASS getError was expected value: INVALID_VALUE : COMPRESSED_SRGB8_ALPHA8_ASTC_6x5_KHR expected size: 64
+PASS getError was expected value: INVALID_VALUE : COMPRESSED_SRGB8_ALPHA8_ASTC_6x6_KHR expected size: 64
+PASS getError was expected value: INVALID_VALUE : COMPRESSED_SRGB8_ALPHA8_ASTC_8x5_KHR expected size: 64
+PASS getError was expected value: INVALID_VALUE : COMPRESSED_SRGB8_ALPHA8_ASTC_8x6_KHR expected size: 64
+PASS getError was expected value: INVALID_VALUE : COMPRESSED_SRGB8_ALPHA8_ASTC_8x8_KHR expected size: 64
+PASS getError was expected value: INVALID_VALUE : COMPRESSED_SRGB8_ALPHA8_ASTC_10x5_KHR expected size: 64
+PASS getError was expected value: INVALID_VALUE : COMPRESSED_SRGB8_ALPHA8_ASTC_10x6_KHR expected size: 64
+PASS getError was expected value: INVALID_VALUE : COMPRESSED_SRGB8_ALPHA8_ASTC_10x8_KHR expected size: 64
+PASS getError was expected value: INVALID_VALUE : COMPRESSED_SRGB8_ALPHA8_ASTC_10x10_KHR expected size: 64
+PASS getError was expected value: INVALID_VALUE : COMPRESSED_SRGB8_ALPHA8_ASTC_12x10_KHR expected size: 64
+PASS getError was expected value: INVALID_VALUE : COMPRESSED_SRGB8_ALPHA8_ASTC_12x12_KHR expected size: 64
+
+Testing every LDR texture format compression
+
+
+testing COMPRESSED_RGBA_ASTC_4x4_KHR 16x16 (LDR) via compressedTexImage2D
+
+PASS getError was expected value: NO_ERROR : uploading compressed texture
+
+expected
+
+actual
+
+PASS texture rendered correctly with NEAREST filtering
+
+expected
+
+actual
+
+PASS texture rendered correctly with LINEAR filtering
+
+PASS getError was expected value: INVALID_OPERATION : trying to generate mipmaps from compressed texture
+PASS getError was expected value: INVALID_VALUE : non 0 border
+
+PASS getError was expected value: NO_ERROR : compressedTexSubImage2D allowed for reloading of complete textures
+
+testing COMPRESSED_RGBA_ASTC_5x4_KHR 16x16 (LDR) via compressedTexImage2D
+
+PASS getError was expected value: NO_ERROR : uploading compressed texture
+
+expected
+
+actual
+
+PASS texture rendered correctly with NEAREST filtering
+
+expected
+
+actual
+
+PASS texture rendered correctly with LINEAR filtering
+
+PASS getError was expected value: INVALID_OPERATION : trying to generate mipmaps from compressed texture
+PASS getError was expected value: INVALID_VALUE : non 0 border
+
+PASS getError was expected value: NO_ERROR : compressedTexSubImage2D allowed for reloading of complete textures
+
+testing COMPRESSED_RGBA_ASTC_5x5_KHR 16x16 (LDR) via compressedTexImage2D
+
+PASS getError was expected value: NO_ERROR : uploading compressed texture
+
+expected
+
+actual
+
+PASS texture rendered correctly with NEAREST filtering
+
+expected
+
+actual
+
+PASS texture rendered correctly with LINEAR filtering
+
+PASS getError was expected value: INVALID_OPERATION : trying to generate mipmaps from compressed texture
+PASS getError was expected value: INVALID_VALUE : non 0 border
+
+PASS getError was expected value: NO_ERROR : compressedTexSubImage2D allowed for reloading of complete textures
+
+testing COMPRESSED_RGBA_ASTC_6x5_KHR 16x16 (LDR) via compressedTexImage2D
+
+PASS getError was expected value: NO_ERROR : uploading compressed texture
+
+expected
+
+actual
+
+PASS texture rendered correctly with NEAREST filtering
+
+expected
+
+actual
+
+PASS texture rendered correctly with LINEAR filtering
+
+PASS getError was expected value: INVALID_OPERATION : trying to generate mipmaps from compressed texture
+PASS getError was expected value: INVALID_VALUE : non 0 border
+
+PASS getError was expected value: NO_ERROR : compressedTexSubImage2D allowed for reloading of complete textures
+
+testing COMPRESSED_RGBA_ASTC_6x6_KHR 16x16 (LDR) via compressedTexImage2D
+
+PASS getError was expected value: NO_ERROR : uploading compressed texture
+
+expected
+
+actual
+
+PASS texture rendered correctly with NEAREST filtering
+
+expected
+
+actual
+
+PASS texture rendered correctly with LINEAR filtering
+
+PASS getError was expected value: INVALID_OPERATION : trying to generate mipmaps from compressed texture
+PASS getError was expected value: INVALID_VALUE : non 0 border
+
+PASS getError was expected value: NO_ERROR : compressedTexSubImage2D allowed for reloading of complete textures
+
+testing COMPRESSED_RGBA_ASTC_8x5_KHR 16x16 (LDR) via compressedTexImage2D
+
+PASS getError was expected value: NO_ERROR : uploading compressed texture
+
+expected
+
+actual
+
+PASS texture rendered correctly with NEAREST filtering
+
+expected
+
+actual
+
+PASS texture rendered correctly with LINEAR filtering
+
+PASS getError was expected value: INVALID_OPERATION : trying to generate mipmaps from compressed texture
+PASS getError was expected value: INVALID_VALUE : non 0 border
+
+PASS getError was expected value: NO_ERROR : compressedTexSubImage2D allowed for reloading of complete textures
+
+testing COMPRESSED_RGBA_ASTC_8x6_KHR 16x16 (LDR) via compressedTexImage2D
+
+PASS getError was expected value: NO_ERROR : uploading compressed texture
+
+expected
+
+actual
+
+PASS texture rendered correctly with NEAREST filtering
+
+expected
+
+actual
+
+PASS texture rendered correctly with LINEAR filtering
+
+PASS getError was expected value: INVALID_OPERATION : trying to generate mipmaps from compressed texture
+PASS getError was expected value: INVALID_VALUE : non 0 border
+
+PASS getError was expected value: NO_ERROR : compressedTexSubImage2D allowed for reloading of complete textures
+
+testing COMPRESSED_RGBA_ASTC_8x8_KHR 16x16 (LDR) via compressedTexImage2D
+
+PASS getError was expected value: NO_ERROR : uploading compressed texture
+
+expected
+
+actual
+
+PASS texture rendered correctly with NEAREST filtering
+
+expected
+
+actual
+
+PASS texture rendered correctly with LINEAR filtering
+
+PASS getError was expected value: INVALID_OPERATION : trying to generate mipmaps from compressed texture
+PASS getError was expected value: INVALID_VALUE : non 0 border
+
+PASS getError was expected value: NO_ERROR : compressedTexSubImage2D allowed for reloading of complete textures
+
+testing COMPRESSED_RGBA_ASTC_10x5_KHR 16x16 (LDR) via compressedTexImage2D
+
+PASS getError was expected value: NO_ERROR : uploading compressed texture
+
+expected
+
+actual
+
+PASS texture rendered correctly with NEAREST filtering
+
+expected
+
+actual
+
+PASS texture rendered correctly with LINEAR filtering
+
+PASS getError was expected value: INVALID_OPERATION : trying to generate mipmaps from compressed texture
+PASS getError was expected value: INVALID_VALUE : non 0 border
+
+PASS getError was expected value: NO_ERROR : compressedTexSubImage2D allowed for reloading of complete textures
+
+testing COMPRESSED_RGBA_ASTC_10x6_KHR 16x16 (LDR) via compressedTexImage2D
+
+PASS getError was expected value: NO_ERROR : uploading compressed texture
+
+expected
+
+actual
+
+PASS texture rendered correctly with NEAREST filtering
+
+expected
+
+actual
+
+PASS texture rendered correctly with LINEAR filtering
+
+PASS getError was expected value: INVALID_OPERATION : trying to generate mipmaps from compressed texture
+PASS getError was expected value: INVALID_VALUE : non 0 border
+
+PASS getError was expected value: NO_ERROR : compressedTexSubImage2D allowed for reloading of complete textures
+
+testing COMPRESSED_RGBA_ASTC_10x8_KHR 16x16 (LDR) via compressedTexImage2D
+
+PASS getError was expected value: NO_ERROR : uploading compressed texture
+
+expected
+
+actual
+
+PASS texture rendered correctly with NEAREST filtering
+
+expected
+
+actual
+
+PASS texture rendered correctly with LINEAR filtering
+
+PASS getError was expected value: INVALID_OPERATION : trying to generate mipmaps from compressed texture
+PASS getError was expected value: INVALID_VALUE : non 0 border
+
+PASS getError was expected value: NO_ERROR : compressedTexSubImage2D allowed for reloading of complete textures
+
+testing COMPRESSED_RGBA_ASTC_10x10_KHR 16x16 (LDR) via compressedTexImage2D
+
+PASS getError was expected value: NO_ERROR : uploading compressed texture
+
+expected
+
+actual
+
+PASS texture rendered correctly with NEAREST filtering
+
+expected
+
+actual
+
+PASS texture rendered correctly with LINEAR filtering
+
+PASS getError was expected value: INVALID_OPERATION : trying to generate mipmaps from compressed texture
+PASS getError was expected value: INVALID_VALUE : non 0 border
+
+PASS getError was expected value: NO_ERROR : compressedTexSubImage2D allowed for reloading of complete textures
+
+testing COMPRESSED_RGBA_ASTC_12x10_KHR 16x16 (LDR) via compressedTexImage2D
+
+PASS getError was expected value: NO_ERROR : uploading compressed texture
+
+expected
+
+actual
+
+PASS texture rendered correctly with NEAREST filtering
+
+expected
+
+actual
+
+PASS texture rendered correctly with LINEAR filtering
+
+PASS getError was expected value: INVALID_OPERATION : trying to generate mipmaps from compressed texture
+PASS getError was expected value: INVALID_VALUE : non 0 border
+
+PASS getError was expected value: NO_ERROR : compressedTexSubImage2D allowed for reloading of complete textures
+
+testing COMPRESSED_RGBA_ASTC_12x12_KHR 16x16 (LDR) via compressedTexImage2D
+
+PASS getError was expected value: NO_ERROR : uploading compressed texture
+
+expected
+
+actual
+
+PASS texture rendered correctly with NEAREST filtering
+
+expected
+
+actual
+
+PASS texture rendered correctly with LINEAR filtering
+
+PASS getError was expected value: INVALID_OPERATION : trying to generate mipmaps from compressed texture
+PASS getError was expected value: INVALID_VALUE : non 0 border
+
+PASS getError was expected value: NO_ERROR : compressedTexSubImage2D allowed for reloading of complete textures
+
+Testing every HDR texture format compression
+
+
+testing COMPRESSED_RGBA_ASTC_4x4_KHR 16x16 (HDR) via compressedTexImage2D
+
+PASS getError was expected value: NO_ERROR : uploading compressed texture
+
+expected
+
+actual
+
+PASS texture rendered correctly with NEAREST filtering
+
+expected
+
+actual
+
+PASS texture rendered correctly with LINEAR filtering
+
+PASS getError was expected value: INVALID_OPERATION : trying to generate mipmaps from compressed texture
+PASS getError was expected value: INVALID_VALUE : non 0 border
+
+PASS getError was expected value: NO_ERROR : compressedTexSubImage2D allowed for reloading of complete textures
+
+testing COMPRESSED_RGBA_ASTC_5x4_KHR 16x16 (HDR) via compressedTexImage2D
+
+PASS getError was expected value: NO_ERROR : uploading compressed texture
+
+expected
+
+actual
+
+PASS texture rendered correctly with NEAREST filtering
+
+expected
+
+actual
+
+PASS texture rendered correctly with LINEAR filtering
+
+PASS getError was expected value: INVALID_OPERATION : trying to generate mipmaps from compressed texture
+PASS getError was expected value: INVALID_VALUE : non 0 border
+
+PASS getError was expected value: NO_ERROR : compressedTexSubImage2D allowed for reloading of complete textures
+
+testing COMPRESSED_RGBA_ASTC_5x5_KHR 16x16 (HDR) via compressedTexImage2D
+
+PASS getError was expected value: NO_ERROR : uploading compressed texture
+
+expected
+
+actual
+
+PASS texture rendered correctly with NEAREST filtering
+
+expected
+
+actual
+
+PASS texture rendered correctly with LINEAR filtering
+
+PASS getError was expected value: INVALID_OPERATION : trying to generate mipmaps from compressed texture
+PASS getError was expected value: INVALID_VALUE : non 0 border
+
+PASS getError was expected value: NO_ERROR : compressedTexSubImage2D allowed for reloading of complete textures
+
+testing COMPRESSED_RGBA_ASTC_6x5_KHR 16x16 (HDR) via compressedTexImage2D
+
+PASS getError was expected value: NO_ERROR : uploading compressed texture
+
+expected
+
+actual
+
+PASS texture rendered correctly with NEAREST filtering
+
+expected
+
+actual
+
+PASS texture rendered correctly with LINEAR filtering
+
+PASS getError was expected value: INVALID_OPERATION : trying to generate mipmaps from compressed texture
+PASS getError was expected value: INVALID_VALUE : non 0 border
+
+PASS getError was expected value: NO_ERROR : compressedTexSubImage2D allowed for reloading of complete textures
+
+testing COMPRESSED_RGBA_ASTC_6x6_KHR 16x16 (HDR) via compressedTexImage2D
+
+PASS getError was expected value: NO_ERROR : uploading compressed texture
+
+expected
+
+actual
+
+PASS texture rendered correctly with NEAREST filtering
+
+expected
+
+actual
+
+PASS texture rendered correctly with LINEAR filtering
+
+PASS getError was expected value: INVALID_OPERATION : trying to generate mipmaps from compressed texture
+PASS getError was expected value: INVALID_VALUE : non 0 border
+
+PASS getError was expected value: NO_ERROR : compressedTexSubImage2D allowed for reloading of complete textures
+
+testing COMPRESSED_RGBA_ASTC_8x5_KHR 16x16 (HDR) via compressedTexImage2D
+
+PASS getError was expected value: NO_ERROR : uploading compressed texture
+
+expected
+
+actual
+
+PASS texture rendered correctly with NEAREST filtering
+
+expected
+
+actual
+
+PASS texture rendered correctly with LINEAR filtering
+
+PASS getError was expected value: INVALID_OPERATION : trying to generate mipmaps from compressed texture
+PASS getError was expected value: INVALID_VALUE : non 0 border
+
+PASS getError was expected value: NO_ERROR : compressedTexSubImage2D allowed for reloading of complete textures
+
+testing COMPRESSED_RGBA_ASTC_8x6_KHR 16x16 (HDR) via compressedTexImage2D
+
+PASS getError was expected value: NO_ERROR : uploading compressed texture
+
+expected
+
+actual
+
+PASS texture rendered correctly with NEAREST filtering
+
+expected
+
+actual
+
+PASS texture rendered correctly with LINEAR filtering
+
+PASS getError was expected value: INVALID_OPERATION : trying to generate mipmaps from compressed texture
+PASS getError was expected value: INVALID_VALUE : non 0 border
+
+PASS getError was expected value: NO_ERROR : compressedTexSubImage2D allowed for reloading of complete textures
+
+testing COMPRESSED_RGBA_ASTC_8x8_KHR 16x16 (HDR) via compressedTexImage2D
+
+PASS getError was expected value: NO_ERROR : uploading compressed texture
+
+expected
+
+actual
+
+PASS texture rendered correctly with NEAREST filtering
+
+expected
+
+actual
+
+PASS texture rendered correctly with LINEAR filtering
+
+PASS getError was expected value: INVALID_OPERATION : trying to generate mipmaps from compressed texture
+PASS getError was expected value: INVALID_VALUE : non 0 border
+
+PASS getError was expected value: NO_ERROR : compressedTexSubImage2D allowed for reloading of complete textures
+
+testing COMPRESSED_RGBA_ASTC_10x5_KHR 16x16 (HDR) via compressedTexImage2D
+
+PASS getError was expected value: NO_ERROR : uploading compressed texture
+
+expected
+
+actual
+
+PASS texture rendered correctly with NEAREST filtering
+
+expected
+
+actual
+
+PASS texture rendered correctly with LINEAR filtering
+
+PASS getError was expected value: INVALID_OPERATION : trying to generate mipmaps from compressed texture
+PASS getError was expected value: INVALID_VALUE : non 0 border
+
+PASS getError was expected value: NO_ERROR : compressedTexSubImage2D allowed for reloading of complete textures
+
+testing COMPRESSED_RGBA_ASTC_10x6_KHR 16x16 (HDR) via compressedTexImage2D
+
+PASS getError was expected value: NO_ERROR : uploading compressed texture
+
+expected
+
+actual
+
+PASS texture rendered correctly with NEAREST filtering
+
+expected
+
+actual
+
+PASS texture rendered correctly with LINEAR filtering
+
+PASS getError was expected value: INVALID_OPERATION : trying to generate mipmaps from compressed texture
+PASS getError was expected value: INVALID_VALUE : non 0 border
+
+PASS getError was expected value: NO_ERROR : compressedTexSubImage2D allowed for reloading of complete textures
+
+testing COMPRESSED_RGBA_ASTC_10x8_KHR 16x16 (HDR) via compressedTexImage2D
+
+PASS getError was expected value: NO_ERROR : uploading compressed texture
+
+expected
+
+actual
+
+PASS texture rendered correctly with NEAREST filtering
+
+expected
+
+actual
+
+PASS texture rendered correctly with LINEAR filtering
+
+PASS getError was expected value: INVALID_OPERATION : trying to generate mipmaps from compressed texture
+PASS getError was expected value: INVALID_VALUE : non 0 border
+
+PASS getError was expected value: NO_ERROR : compressedTexSubImage2D allowed for reloading of complete textures
+
+testing COMPRESSED_RGBA_ASTC_10x10_KHR 16x16 (HDR) via compressedTexImage2D
+
+PASS getError was expected value: NO_ERROR : uploading compressed texture
+
+expected
+
+actual
+
+PASS texture rendered correctly with NEAREST filtering
+
+expected
+
+actual
+
+PASS texture rendered correctly with LINEAR filtering
+
+PASS getError was expected value: INVALID_OPERATION : trying to generate mipmaps from compressed texture
+PASS getError was expected value: INVALID_VALUE : non 0 border
+
+PASS getError was expected value: NO_ERROR : compressedTexSubImage2D allowed for reloading of complete textures
+
+testing COMPRESSED_RGBA_ASTC_12x10_KHR 16x16 (HDR) via compressedTexImage2D
+
+PASS getError was expected value: NO_ERROR : uploading compressed texture
+
+expected
+
+actual
+
+PASS texture rendered correctly with NEAREST filtering
+
+expected
+
+actual
+
+PASS texture rendered correctly with LINEAR filtering
+
+PASS getError was expected value: INVALID_OPERATION : trying to generate mipmaps from compressed texture
+PASS getError was expected value: INVALID_VALUE : non 0 border
+
+PASS getError was expected value: NO_ERROR : compressedTexSubImage2D allowed for reloading of complete textures
+
+testing COMPRESSED_RGBA_ASTC_12x12_KHR 16x16 (HDR) via compressedTexImage2D
+
+PASS getError was expected value: NO_ERROR : uploading compressed texture
+
+expected
+
+actual
+
+PASS texture rendered correctly with NEAREST filtering
+
+expected
+
+actual
+
+PASS texture rendered correctly with LINEAR filtering
+
+PASS getError was expected value: INVALID_OPERATION : trying to generate mipmaps from compressed texture
+PASS getError was expected value: INVALID_VALUE : non 0 border
+
+PASS getError was expected value: NO_ERROR : compressedTexSubImage2D allowed for reloading of complete textures
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

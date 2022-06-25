@@ -1,0 +1,10 @@
+
+PASS Object with usemap of #sanityCheck should not match any of the areas (it does not support usemap)
+PASS Object with usemap of #sImPlE should not match any of the areas (it does not support usemap)
+PASS Object with usemap of #paSSfield-killroyß should not match any of the areas (it does not support usemap)
+PASS Object with usemap of #глупый should not match any of the areas (it does not support usemap)
+FAIL Object with usemap of #åωk should not match any of the areas (it does not support usemap) null is not an object (evaluating 'element.parentElement')
+FAIL Object with usemap of #blah1 should not match any of the areas (it does not support usemap) null is not an object (evaluating 'element.parentElement')
+FAIL Object with usemap of #tÉdz5アパートFi should not match any of the areas (it does not support usemap) null is not an object (evaluating 'element.parentElement')
+FAIL Object with usemap of #ΣΣ should not match any of the areas (it does not support usemap) null is not an object (evaluating 'element.parentElement')
+

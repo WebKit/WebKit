@@ -1,0 +1,5 @@
+2d.path.roundrect.end.1
+
+
+PASS OffscreenCanvas test: 2d.path.roundrect.end.1
+

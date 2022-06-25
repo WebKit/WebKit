@@ -1,0 +1,37 @@
+{
+  "name": "WebKitBot",
+  "version": "1.0.0",
+  "description": "WebKitBot + WKR implementation",
+  "type": "module",
+  "main": "src/index.mjs",
+  "dependencies": {
+    "@slack/rtm-api": "^5.0.5",
+    "@slack/web-api": "^5.10.0",
+    "axios": "^0.19.2",
+    "dotenv": "^8.2.0",
+    "eslint": "^7.3.1",
+    "jest": "^26.1.0",
+    "node-persist": "^3.1.0",
+    "replaceall": "^0.1.6",
+    "rss-parser": "^3.8.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "$NODE --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "start": "$NODE ./src/index.mjs",
+    "lint": "eslint src/*.mjs tests/*.mjs"
+  },
+  "jest": {
+    "testMatch": [
+      "**/?(*.)(spec|test).mjs"
+    ],
+    "transform": {},
+    "testEnvironment": "jest-environment-node",
+    "moduleFileExtensions": [
+      "js",
+      "mjs"
+    ]
+  },
+  "author": "webkit.org",
+  "license": "BSD-2-Clause"
+}

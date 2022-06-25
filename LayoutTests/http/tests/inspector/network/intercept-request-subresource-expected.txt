@@ -1,0 +1,8 @@
+ALERT: DEFAULT override.js TEXT
+ALERT: OVERRIDEN override.js TEXT
+Test request interception intercepting the subresource load.
+
+
+== Running test suite: Network.interceptRequest
+-- Running test case: Network.interceptRequest.Subresource
+

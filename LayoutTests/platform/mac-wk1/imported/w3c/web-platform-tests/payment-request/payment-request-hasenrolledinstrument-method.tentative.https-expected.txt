@@ -1,0 +1,6 @@
+If you find a buggy test, please file a bug and tag one of the suggested reviewers.
+
+FAIL hasEnrolledInstrument() resolves to false for unsupported payment methods. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: PaymentRequest"
+FAIL If request.[[state]] is "interactive", then return a promise rejected with an "InvalidStateError" DOMException. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: PaymentRequest"
+FAIL If request.[[state]] is "closed", then return a promise rejected with an "InvalidStateError" DOMException. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: PaymentRequest"
+

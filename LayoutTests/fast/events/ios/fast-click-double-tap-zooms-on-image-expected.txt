@@ -1,0 +1,3 @@
+
+PASS: Double tap caused zoom.
+This document is set up to enable fast clicks. However, since the green image doesn't have any handlers, double tapping on it should trigger a zoom, not a fast click.

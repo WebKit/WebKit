@@ -1,0 +1,3 @@
+This tests obtaining the offsetWidth of a layout-dependent table cell.
+The td with width set to 5px should be expanded to have the wider width:
+18px

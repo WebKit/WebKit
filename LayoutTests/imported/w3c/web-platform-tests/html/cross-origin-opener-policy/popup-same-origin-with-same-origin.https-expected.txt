@@ -1,0 +1,10 @@
+
+PASS same-origin document opening popup to https://localhost:9443 with COOP: ""
+PASS same-origin document opening popup to https://localhost:9443 with COOP: "unsafe-none"
+PASS same-origin document opening popup to https://localhost:9443 with COOP: "jibberish"
+PASS same-origin document opening popup to https://localhost:9443 with COOP: "same-site"
+PASS same-origin document opening popup to https://localhost:9443 with COOP: "same-site unsafe-allow-outgoing"
+PASS same-origin document opening popup to https://localhost:9443 with COOP: "same-origin unsafe-allow-outgoing"
+PASS same-origin document opening popup to https://localhost:9443 with COOP: "same-origin"
+PASS same-origin document opening popup to https://localhost:9443 with COOP: "same-origin-allow-popups"
+

@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+layer at (8,8) size 202x202 clip at (9,9) size 200x200
+  RenderBlock {DIV} at (0,0) size 202x202 [border: (1px solid #008000)]
+    RenderText {#text} at (1,1) size 35x17
+      text run at (1,1) width 35: "inline"
+    RenderText {#text} at (36,1) size 46x17
+      text run at (36,1) width 46: "content"
+layer at (94,73) size 67x56
+  RenderBlock (positioned) {SPAN} at (50,50) size 67x56 [border: (1px solid #0000FF)]
+    RenderText {#text} at (1,1) size 65x53
+      text run at (1,1) width 52: "absolute"
+      text run at (1,19) width 65: "positioned"
+      text run at (1,37) width 46: "content"

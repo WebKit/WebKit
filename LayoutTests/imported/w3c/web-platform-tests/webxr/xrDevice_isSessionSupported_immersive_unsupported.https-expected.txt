@@ -1,0 +1,3 @@
+
+PASS isSessionSupported resolves to false when options not supported
+

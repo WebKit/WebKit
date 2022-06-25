@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>mock-media-source</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var initSegment;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    function runTest() {
+        findMediaElement();
+
+        source = new MediaSource();
+        waitForEventOn(source, 'sourceopen', sourceOpen1, false, true);
+        run('video.src = URL.createObjectURL(source)');
+    }
+
+    function sourceOpen1() {
+        waitForEventOnce('error', videoError1);
+        run('source.endOfStream("network")');
+    }
+
+    function videoError1() {
+        testExpected('video.error.code', MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED);
+
+        source = new MediaSource();
+        waitForEventOn(source, 'sourceopen', sourceOpen2, false, true);
+        run('video.src = URL.createObjectURL(source)');
+    }    
+
+    function sourceOpen2() {
+        waitForEventOnce('error', videoError2);
+        run('source.endOfStream("decode")');
+    }
+
+    function videoError2() {
+        testExpected('video.error.code', MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED);
+
+        source = new MediaSource();
+        waitForEventOn(source, 'sourceopen', sourceOpen3, false, true);
+        run('video.src = URL.createObjectURL(source)');
+    }
+
+    function sourceOpen3() {
+        run('sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
+        waitForEventOn(sourceBuffer, 'updateend', updateEnd3);
+        initSegment = makeAInit(100, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]);
+        run('sourceBuffer.appendBuffer(initSegment)');
+    }
+
+    function updateEnd3() {
+        waitForEventOnce('error', videoError3);
+        run('source.endOfStream("network")');
+    }
+
+    function videoError3() {
+        testExpected('video.error.code', MediaError.MEDIA_ERR_NETWORK);
+
+        source = new MediaSource();
+        waitForEventOn(source, 'sourceopen', sourceOpen4, false, true);
+        run('video.src = URL.createObjectURL(source)');
+    }
+
+    function sourceOpen4() {
+        run('sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
+        waitForEventOn(sourceBuffer, 'updateend', updateEnd4);
+        initSegment = makeAInit(100, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]);
+        run('sourceBuffer.appendBuffer(initSegment)');
+    }
+
+    function updateEnd4() {
+        waitForEventOnce('error', videoError4);
+        run('source.endOfStream("decode")');
+    }
+
+    function videoError4() {
+        testExpected('video.error.code', MediaError.MEDIA_ERR_DECODE);
+
+        source = new MediaSource();
+        waitForEventOn(source, 'sourceopen', sourceOpen5, false, true);
+        run('video.src = URL.createObjectURL(source)');
+    }
+
+    function sourceOpen5() {
+        run('sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
+        waitForEventOn(sourceBuffer, 'updateend', updateEnd5);
+        initSegment = makeAInit(100, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]);
+        run('sourceBuffer.appendBuffer(initSegment)');
+    }
+
+    function updateEnd5() {
+        waitForEventOnce('suspend', videoSuspend5);
+        run('source.endOfStream()');
+    }
+
+    function videoSuspend5() {
+        testExpected('video.networkState', HTMLMediaElement.NETWORK_IDLE);
+
+        endTest();
+    }
+
+    </script>
+</head>
+<body onload="runTest()">
+    <video></video>
+</body>
+</html>

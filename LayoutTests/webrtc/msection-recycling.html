@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Trying to recycle m sections</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <script>
+promise_test(async test => {
+    const stream = await navigator.mediaDevices.getUserMedia({audio: true, video: true});
+
+    const firstConnection = new RTCPeerConnection({sdpSemantics:'unified-plan'});
+    const secondConnection = new RTCPeerConnection({sdpSemantics:'unified-plan'});
+
+    firstConnection.addTrack(stream.getAudioTracks()[0], stream);
+    firstConnection.addTrack(stream.getVideoTracks()[0], stream);
+    firstConnection.addTransceiver("audio", {direction: "recvonly"});
+    firstConnection.addTransceiver("video", {direction: "recvonly"});
+
+    let desc = await firstConnection.createOffer();
+    await firstConnection.setLocalDescription(desc);
+
+    await secondConnection.setRemoteDescription(desc);
+    const desc2 = await secondConnection.createAnswer();
+
+    let lines = desc2.sdp.trim().split('\r\n');
+
+    let counter;
+    for (counter = 0; counter < lines.length; ++counter) {
+        if (lines[counter] == "a=mid:2")
+            break;
+    }
+    for (;counter < lines.length; ++counter) {
+        if (lines[counter].startsWith("m=video ")) {
+            lines[counter] = "m=video 0 RTP/SAVPF 0";
+            break;
+        }
+    }
+    for (counter = 0; counter < lines.length; ++counter) {
+        if (lines[counter] == "a=mid:3")
+            break;
+    }
+
+    for (;counter < lines.length; ++counter) {
+        if (lines[counter].startsWith("m=audio "))
+            lines[counter] = "m=audio 0 RTP/SAVPF 0";
+        else if (lines[counter].startsWith("m=video "))
+            lines[counter] = "m=video 0 RTP/SAVPF 0";
+        else if (lines[counter] === "a=inactive" || lines[counter].startsWith("a=mid")) {
+        } else
+            lines[counter] = "XXX";
+    }
+    lines = lines.filter((line) => { return line != "XXX"; });
+
+    desc2.sdp = lines.join('\r\n') + '\r\n';
+
+    await firstConnection.setRemoteDescription(desc2);
+
+    firstConnection.addTransceiver("audio");
+    firstConnection.addTransceiver("audio");
+
+    await firstConnection.createOffer();
+}, "Recycle m-section with different media type");
+        </script>
+    </body>
+</html>

@@ -1,0 +1,4 @@
+frame "theiframe" - has 1 onunload handler(s)
+This is a test for bug 48621: The V8 date extension cannot handle if Date is overwritten with non-Object. Succeeds if it does not crash.
+
+PASS

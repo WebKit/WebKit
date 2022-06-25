@@ -1,0 +1,71 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0">
+    <script src="../../../../resources/js-test.js"></script>
+</head>
+<body onorientationchange="bodyOrientationChange()" onresize="bodyResize()">
+    <script>
+        description("Tests the behavior of the resize / orientationchange event listeners on both the body and the window.");
+        jsTestIsAsync = true;
+
+        function getRotationUIScript()
+        {
+            return `
+            (function() {
+                uiController.simulateRotation('landscape-right', function() {
+                    uiController.doAfterVisibleContentRectUpdate(function () {
+                        uiController.uiScriptComplete();
+                    })
+                });
+            })();`
+        }
+
+        function doTest()
+        {
+            debug('Before rotation');
+            if (!window.testRunner)
+                return;
+
+            testRunner.runUIScript(getRotationUIScript(), function(result) {
+                debug('After rotation');
+                shouldBe("eventListenerCalls", "4");
+                finishJSTest();
+            });
+        }
+
+        eventListenerCalls = 0;
+        window.addEventListener('resize', function() {
+            ++eventListenerCalls;
+        }, false);
+
+        window.addEventListener('orientationchange', function() {
+            ++eventListenerCalls;
+        }, false);
+
+        document.body.addEventListener('resize', function() {
+            testFailed("In body's resize event listener");
+            ++eventListenerCalls;
+        }, false);
+
+        document.body.addEventListener('orientationchange', function() {
+            testFailed("In body's orientationchange event listener");
+            ++eventListenerCalls;
+        }, false);
+
+        function bodyOrientationChange()
+        {
+            ++eventListenerCalls;
+        }
+
+        function bodyResize()
+        {
+            ++eventListenerCalls;
+        }
+
+        window.addEventListener('load', doTest, false);
+    </script>
+    Rotation test.
+</body>
+</html>

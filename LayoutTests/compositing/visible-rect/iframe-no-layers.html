@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            height: 1500px;
+            width: 1500px;
+        }
+        
+        iframe {
+            margin: 10px;
+            border: 0px solid black;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        function scroll()
+        {
+            window.scrollTo(40, 40);
+            testIsDone();
+        }
+
+        // This function is called twice - once from this frame and once from the iframe.
+        var scrollingCompleted = 0;
+        function testIsDone()
+        {
+            scrollingCompleted++;
+            if (scrollingCompleted == 2) {
+                if (window.internals) {
+                    // Dump the iframe's layers.
+                    var iframe = document.getElementById('iframe');
+                    document.getElementById('layers').innerText = internals.layerTreeAsText(iframe.contentDocument, internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS)
+                }
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }
+        }
+        window.addEventListener('load', scroll, false);
+
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+    </script>
+</head>
+<body>
+
+    <iframe id="iframe" src="resources/subframe-with-layers.html"></iframe>
+
+<pre id="layers">Layer tree goes here when testing</pre>
+</body>
+</html>

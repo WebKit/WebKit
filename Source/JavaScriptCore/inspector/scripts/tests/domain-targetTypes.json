@@ -1,0 +1,8 @@
+[
+{
+    "domain": "Domain",
+    "targetTypes": ["page"],
+    "commands": [{"name": "Command", "targetTypes": ["page"]}],
+    "events": [{"name": "Event", "targetTypes": ["page"]}]
+}
+]

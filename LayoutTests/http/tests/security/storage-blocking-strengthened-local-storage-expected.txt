@@ -1,0 +1,10 @@
+This iframe should return only one security error:
+
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+No exception
+
+SecurityError

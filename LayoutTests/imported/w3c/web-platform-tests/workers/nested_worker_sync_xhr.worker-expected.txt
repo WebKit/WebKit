@@ -1,0 +1,3 @@
+
+FAIL Nested worker that issues a sync XHR Can't find variable: Worker
+

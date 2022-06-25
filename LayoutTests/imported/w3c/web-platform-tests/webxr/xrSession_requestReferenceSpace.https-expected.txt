@@ -1,0 +1,6 @@
+
+PASS Immersive XRSession requestReferenceSpace returns expected objects - webgl
+PASS Immersive XRSession requestReferenceSpace returns expected objects - webgl2
+PASS Non-immersive XRSession requestReferenceSpace returns expected objects - webgl
+PASS Non-immersive XRSession requestReferenceSpace returns expected objects - webgl2
+

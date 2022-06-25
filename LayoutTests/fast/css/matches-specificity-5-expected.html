@@ -1,0 +1,16 @@
+<!doctype html>
+<html>
+<head>
+<style>
+    target::before {
+        content: "Target";
+        background-color: green;
+        color: white;
+    }
+</style>
+</head>
+<body>
+    <p>This test checks the specificity of the rules inside :matches() applying to the pseudo element ::before. The test succeed if the text "Target" is displayed in white on a green background.</p>
+    <target></target>
+</body>
+</html>

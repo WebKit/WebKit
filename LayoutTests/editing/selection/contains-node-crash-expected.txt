@@ -1,0 +1,2 @@
+ALERT: PASS: containsNode returned false
+Test calling containsNode on a selection of a closed document doesn't cause a crash.

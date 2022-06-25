@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/js-test-pre.js"></script>
+<script src="/resources/payment-request.js"></script>
+</head>
+<body>
+<script>
+
+description("Test PaymentDetailsModifier with Apple Pay.");
+
+window.jsTestIsAsync = true;
+
+function validPaymentMethod() {
+    return {
+        supportedMethods: 'https://apple.com/apple-pay',
+        data: {
+            version: 2,
+            merchantIdentifier: '',
+            countryCode: 'US',
+            supportedNetworks: ['visa', 'masterCard'],
+            merchantCapabilities: ['supports3DS'],
+        },
+    }
+}
+
+function validPaymentDetails() {
+    return {
+        total: {
+            label: 'Total',
+            amount: {
+                currency: 'USD',
+                value: '10.00',
+            },
+        },
+        displayItems: [{
+            label: 'Item',
+            amount: {
+                currency: 'USD',
+                value: '10.00',
+            },
+        }],
+        modifiers: [{
+            supportedMethods: 'https://apple.com/apple-pay',
+            total: {
+                label: 'Credit total override',
+                amount: {
+                    currency: 'USD',
+                    value: '15.00',
+                },
+            },
+            additionalDisplayItems: [{
+                label: 'Credit surcharge',
+                amount: {
+                    currency: 'USD',
+                    value: '5.00',
+                },
+            }],
+            data: {
+                paymentMethodType: 'credit',
+            },
+        }, {
+            supportedMethods: 'https://apple.com/apple-pay',
+            total: {
+                label: 'Duplicate credit total override',
+                amount: {
+                    currency: 'USD',
+                    value: '17.00',
+                },
+            },
+            additionalDisplayItems: [{
+                label: 'Duplicate credit surcharge',
+                amount: {
+                    currency: 'USD',
+                    value: '7.00',
+                },
+            }],
+            data: {
+                paymentMethodType: 'credit',
+            },
+        }, {
+            supportedMethods: 'https://apple.com/apple-pay',
+            total: {
+                label: 'Debit total override',
+                amount: {
+                    currency: 'USD',
+                    value: '13.00',
+                },
+            },
+            additionalDisplayItems: [{
+                label: 'Debit surcharge',
+                amount: {
+                    currency: 'USD',
+                    value: '3.00',
+                },
+            }],
+            data: {
+                paymentMethodType: 'debit',
+            },
+        }],
+    }
+}
+
+async function runTests() {
+    await new Promise((resolve, reject) => {
+        debug("Testing PaymentDetailsModifier after selecting a 'credit' payment method type.");
+
+        var paymentRequest = new PaymentRequest([validPaymentMethod()], validPaymentDetails());
+
+        activateThen(() => {
+            paymentRequest.show().then((response) => {
+                shouldBe("internals.mockPaymentCoordinator.total.label", "'Credit total override'");
+                shouldBe("internals.mockPaymentCoordinator.total.amount", "'15.00'");
+                shouldBe("internals.mockPaymentCoordinator.lineItems.length", "2");
+                shouldBe("internals.mockPaymentCoordinator.lineItems[0].label", "'Item'");
+                shouldBe("internals.mockPaymentCoordinator.lineItems[0].amount", "'10.00'");
+                shouldBe("internals.mockPaymentCoordinator.lineItems[1].label", "'Credit surcharge'");
+                shouldBe("internals.mockPaymentCoordinator.lineItems[1].amount", "'5.00'");
+                response.complete("success");
+                resolve();
+            });
+
+            internals.mockPaymentCoordinator.changePaymentMethod({ type: 'credit' });
+            internals.mockPaymentCoordinator.acceptPayment();
+        });
+    });
+    debug("");
+    
+    await new Promise((resolve, reject) => {
+        debug("Testing PaymentDetailsModifier after selecting a 'debit' payment method type.");
+
+        var paymentRequest = new PaymentRequest([validPaymentMethod()], validPaymentDetails());
+
+        activateThen(() => {
+            paymentRequest.show().then((response) => {
+                shouldBe("internals.mockPaymentCoordinator.total.label", "'Debit total override'");
+                shouldBe("internals.mockPaymentCoordinator.total.amount", "'13.00'");
+                shouldBe("internals.mockPaymentCoordinator.lineItems.length", "2");
+                shouldBe("internals.mockPaymentCoordinator.lineItems[0].label", "'Item'");
+                shouldBe("internals.mockPaymentCoordinator.lineItems[0].amount", "'10.00'");
+                shouldBe("internals.mockPaymentCoordinator.lineItems[1].label", "'Debit surcharge'");
+                shouldBe("internals.mockPaymentCoordinator.lineItems[1].amount", "'3.00'");
+                response.complete("success");
+                resolve();
+            });
+
+            internals.mockPaymentCoordinator.changePaymentMethod({ type: 'debit' });
+            internals.mockPaymentCoordinator.acceptPayment();
+        });
+    });
+    debug("");
+
+    await new Promise((resolve, reject) => {
+        debug("Testing PaymentDetailsModifier after selecting an unmodified payment method type.");
+
+        var paymentRequest = new PaymentRequest([validPaymentMethod()], validPaymentDetails());
+
+        activateThen(() => {
+            paymentRequest.show().then((response) => {
+                shouldBe("internals.mockPaymentCoordinator.total.label", "'Total'");
+                shouldBe("internals.mockPaymentCoordinator.total.amount", "'10.00'");
+                shouldBe("internals.mockPaymentCoordinator.lineItems.length", "1");
+                shouldBe("internals.mockPaymentCoordinator.lineItems[0].label", "'Item'");
+                shouldBe("internals.mockPaymentCoordinator.lineItems[0].amount", "'10.00'");
+                response.complete("success");
+                resolve();
+            });
+
+            internals.mockPaymentCoordinator.changePaymentMethod({ type: 'prepaid' });
+            internals.mockPaymentCoordinator.acceptPayment();
+        });
+    });
+    debug("");
+
+    finishJSTest();
+}
+
+runTests();
+</script>
+<script src="/resources/js-test-post.js"></script>
+</body>
+</html>

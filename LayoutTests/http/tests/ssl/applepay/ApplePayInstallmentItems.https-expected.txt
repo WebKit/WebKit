@@ -1,0 +1,61 @@
+Test ApplePayInstallmentItem and friends.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test installmentConfiguration.items
+PASS request = validRequest(); request.installmentConfiguration.items = 4; new ApplePaySession(apiVersion, request) threw exception TypeError: Value is not a sequence.
+PASS request = validRequest(); request.installmentConfiguration.items = ""; new ApplePaySession(apiVersion, request) threw exception TypeError: Value is not a sequence.
+PASS request = validRequest(); request.installmentConfiguration.items = null; new ApplePaySession(apiVersion, request) threw exception TypeError: Value is not a sequence.
+PASS request = validRequest(); request.installmentConfiguration.items = true; new ApplePaySession(apiVersion, request) threw exception TypeError: Value is not a sequence.
+PASS request = validRequest(); request.installmentConfiguration.items = new Date(); new ApplePaySession(apiVersion, request) threw exception TypeError: Type error.
+PASS request = validRequest(); request.installmentConfiguration.items = ["a", "b"]; new ApplePaySession(apiVersion, request) threw exception TypeError: Type error.
+PASS request = validRequest(); request.installmentConfiguration.items = [{type: 4}]; new ApplePaySession(apiVersion, request) threw exception TypeError: Type error.
+PASS request = validRequest(); request.installmentConfiguration.items = [{type: "invalid"}]; new ApplePaySession(apiVersion, request) threw exception TypeError: Type error.
+PASS request = validRequest(); request.installmentConfiguration.items = undefined; new ApplePaySession(apiVersion, request) did not throw exception.
+PASS request = validRequest(); request.installmentConfiguration.items = []; new ApplePaySession(apiVersion, request) did not throw exception.
+PASS request = validRequest(); request.installmentConfiguration.items = [{}]; new ApplePaySession(apiVersion, request) did not throw exception.
+PASS request = validRequest(); request.installmentConfiguration.items = [{type: undefined}]; new ApplePaySession(apiVersion, request) did not throw exception.
+PASS request = validRequest(); request.installmentConfiguration.items = [{type: "generic"}]; new ApplePaySession(apiVersion, request) did not throw exception.
+PASS request = validRequest(); request.installmentConfiguration.items = [{type: "phone"}]; new ApplePaySession(apiVersion, request) did not throw exception.
+PASS request = validRequest(); request.installmentConfiguration.items = [{type: "pad"}]; new ApplePaySession(apiVersion, request) did not throw exception.
+PASS request = validRequest(); request.installmentConfiguration.items = [{type: "watch"}]; new ApplePaySession(apiVersion, request) did not throw exception.
+PASS request = validRequest(); request.installmentConfiguration.items = [{type: "mac"}]; new ApplePaySession(apiVersion, request) did not throw exception.
+
+Test installmentConfiguration.applicationMetadata
+PASS request = validRequest(); request.installmentConfiguration.applicationMetadata = 4; new ApplePaySession(apiVersion, request) threw exception TypeError: applicationMetadata must be a JSON object.
+PASS request = validRequest(); request.installmentConfiguration.applicationMetadata = ""; new ApplePaySession(apiVersion, request) threw exception TypeError: applicationMetadata must be a JSON object.
+PASS request = validRequest(); request.installmentConfiguration.applicationMetadata = null; new ApplePaySession(apiVersion, request) threw exception TypeError: applicationMetadata must be a JSON object.
+PASS request = validRequest(); request.installmentConfiguration.applicationMetadata = true; new ApplePaySession(apiVersion, request) threw exception TypeError: applicationMetadata must be a JSON object.
+PASS request = validRequest(); request.installmentConfiguration.applicationMetadata = new Date(); new ApplePaySession(apiVersion, request) threw exception TypeError: applicationMetadata must be a JSON object.
+PASS request = validRequest(); request.installmentConfiguration.applicationMetadata = ["a", "b"]; new ApplePaySession(apiVersion, request) threw exception TypeError: applicationMetadata must be a JSON object.
+PASS request = validRequest(); request.installmentConfiguration.applicationMetadata = undefined; new ApplePaySession(apiVersion, request) did not throw exception.
+PASS request = validRequest(); request.installmentConfiguration.applicationMetadata = {}; new ApplePaySession(apiVersion, request) did not throw exception.
+PASS request = validRequest(); request.installmentConfiguration.applicationMetadata = {"foo": "bar"}; new ApplePaySession(apiVersion, request) did not throw exception.
+
+Test installmentConfiguration.retailChannel
+PASS request = validRequest(); request.installmentConfiguration.retailChannel = null; new ApplePaySession(apiVersion, request) threw exception TypeError: Type error.
+PASS request = validRequest(); request.installmentConfiguration.retailChannel = 4; new ApplePaySession(apiVersion, request) threw exception TypeError: Type error.
+PASS request = validRequest(); request.installmentConfiguration.retailChannel = ""; new ApplePaySession(apiVersion, request) threw exception TypeError: Type error.
+PASS request = validRequest(); request.installmentConfiguration.retailChannel = "invalid"; new ApplePaySession(apiVersion, request) threw exception TypeError: Type error.
+PASS request = validRequest(); request.installmentConfiguration.retailChannel = undefined; new ApplePaySession(apiVersion, request) did not throw exception.
+PASS request = validRequest(); request.installmentConfiguration.retailChannel = "unknown"; new ApplePaySession(apiVersion, request) did not throw exception.
+PASS request = validRequest(); request.installmentConfiguration.retailChannel = "app"; new ApplePaySession(apiVersion, request) did not throw exception.
+PASS request = validRequest(); request.installmentConfiguration.retailChannel = "web"; new ApplePaySession(apiVersion, request) did not throw exception.
+PASS request = validRequest(); request.installmentConfiguration.retailChannel = "inStore"; new ApplePaySession(apiVersion, request) did not throw exception.
+
+Test platform conversion
+PASS internals.mockPaymentCoordinator.installmentConfiguration.items.length is 2
+PASS internals.mockPaymentCoordinator.installmentConfiguration.items[0].type is expectedItemType
+PASS internals.mockPaymentCoordinator.installmentConfiguration.items[0].amount is expectedItemAmount
+PASS internals.mockPaymentCoordinator.installmentConfiguration.items[0].currencyCode is expectedCurrencyCode
+PASS internals.mockPaymentCoordinator.installmentConfiguration.items[0].programIdentifier is expectedProgramIdentifier
+PASS internals.mockPaymentCoordinator.installmentConfiguration.items[0].apr is expectedAPR
+PASS internals.mockPaymentCoordinator.installmentConfiguration.items[0].programTerms is expectedProgramTerms
+PASS internals.mockPaymentCoordinator.installmentConfiguration.items[1].type is "generic"
+PASS JSON.stringify(internals.mockPaymentCoordinator.installmentConfiguration.applicationMetadata) is JSON.stringify(expectedApplicationMetadata, Object.keys(expectedApplicationMetadata).sort())
+PASS internals.mockPaymentCoordinator.installmentConfiguration.retailChannel is expectedRetailChannel
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

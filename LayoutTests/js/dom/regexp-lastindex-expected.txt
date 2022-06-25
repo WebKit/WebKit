@@ -1,0 +1,11 @@
+Test for regression against REGRESSION: RegExp("[^\s$]+", "g") returns extra matches
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS while (match = re.exec("  abcdefg")) accumulate += match + "; "; accumulate is "abcdefg; "
+PASS while (match = re.exec("123456789")) accumulate += match + "; "; accumulate is "1; 2; 3; 4; 5; 6; 7; 8; 9; "
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

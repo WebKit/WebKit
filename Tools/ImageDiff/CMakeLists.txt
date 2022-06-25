@@ -1,0 +1,14 @@
+set(IMAGE_DIFF_DIR "${TOOLS_DIR}/ImageDiff")
+
+set(ImageDiff_SOURCES
+    ImageDiff.cpp
+    PlatformImage.cpp
+)
+
+set(ImageDiff_PRIVATE_INCLUDE_DIRECTORIES
+    ${IMAGE_DIFF_DIR}
+)
+
+WEBKIT_EXECUTABLE_DECLARE(ImageDiff)
+WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
+WEBKIT_EXECUTABLE(ImageDiff)

@@ -1,0 +1,2 @@
+This tests that overflowchanged events are fired correctly on nodes with writing-mode: vertical-lr. If the test is successful, the text "SUCCESS" should be shown below.
+SUCCESS

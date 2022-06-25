@@ -1,0 +1,10 @@
+PASS font.status is "unloaded"
+PASS set1.status is "loaded"
+PASS set2.status is "loaded"
+PASS font.status is "loading"
+PASS set1.status is "loading"
+PASS set2.status is "loading"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

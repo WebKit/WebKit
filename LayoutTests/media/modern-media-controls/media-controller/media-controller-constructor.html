@@ -1,0 +1,28 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<video src="../../content/test.mp4"></video>
+<div id="shadow"></div>
+<script type="text/javascript">
+
+description("Testing the <code>MediaController</code> constructor.");
+
+shouldBeDefined("createControls");
+shouldBeType("createControls", "Function");
+
+const shadowRoot = document.querySelector("div#shadow").attachShadow({ mode: "open" });
+const media = document.querySelector("video");
+const mediaController = createControls(shadowRoot, media, null);
+
+shouldBeType("mediaController", "MediaController");
+shouldBe("mediaController.shadowRoot", "shadowRoot");
+shouldBe("mediaController.media", "media");
+shouldBeType("mediaController.controls", "MediaControls");
+
+shadowRoot.host.remove();
+media.remove();
+debug("");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

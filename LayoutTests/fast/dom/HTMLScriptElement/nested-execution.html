@@ -1,0 +1,33 @@
+<head>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        var started = false;
+        var executed = false;
+        var canPass = false;
+
+        function test()
+        {
+            var cachingElement = document.getElementById("cache-script");
+            var script = document.createElement("script");
+            script.src = cachingElement.src;
+            started = true;
+            document.body.appendChild(script);
+            if (executed)
+                document.getElementById("result").innerText = "FAIL: Script executed synchronously beneath appendChild()";
+            else
+                canPass = true;
+
+            if (window.testRunner)
+                testRunner.setCacheModel(0); // WebCacheModelDocumentViewer
+        }
+    </script>
+</head>
+<body>
+    <div id="result">FAIL: Test did not run</div>
+    <!-- loads the script into the cache, then begins the test -->
+    <script id="cache-script" onload="setTimeout(test, 0)" src="resources/nested-execution.js"></script>
+</body>

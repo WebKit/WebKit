@@ -1,0 +1,35 @@
+<!doctype html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<title>Test that stream sync message can reply with shared memory</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<body>
+<script>
+setup({ single_test: true });
+if (window.IPC) { // For compiles with !ENABLE(IPC_TESTING_API)
+    const defaultTimeout = 1000;
+    const bufferSize = 100;
+    const streamTesterID = 447;
+    for (const processTarget of IPC.processTargets) {
+        const streamConnection = IPC.createStreamClientConnection(processTarget, bufferSize);
+        IPC.sendMessage(processTarget, 0, IPC.messages.IPCTester_CreateStreamTester.name, [
+            { type: 'uint64_t', value: streamTesterID },
+            { type: 'StreamConnectionBuffer', value: streamConnection.streamBuffer() },
+        ]);
+        const arguments = IPC.waitForMessage(processTarget, streamTesterID, IPC.messages.IPCStreamTesterProxy_WasCreated.name, defaultTimeout);
+        streamConnection.setSemaphores(arguments[0].value, arguments[1].value);
+
+        // Test starts here.
+        try {
+            const result = streamConnection.sendSyncMessage(streamTesterID, IPC.messages.IPCStreamTester_SyncMessageReturningSharedMemory1.name, defaultTimeout, [{ type: 'uint32_t', value: 8 }]);
+            const firstReply = result.arguments[0];
+            assert_equals(firstReply.type, "SharedMemory", `for ${ processTarget }`);
+            assert_equals(firstReply.protection, "ReadOnly", `for ${ processTarget }`);
+            assert_equals(Array.from(new Uint8Array(firstReply.value.readBytes(0, 8))).toString(), "0,1,2,3,4,5,6,7", `for ${ processTarget }`);
+        } finally {
+            IPC.sendSyncMessage(processTarget, 0, IPC.messages.IPCTester_ReleaseStreamTester.name, defaultTimeout, [{ type: 'uint64_t', value: streamTesterID }]);
+        }
+    }
+}
+done();
+</script>
+</body>

@@ -1,0 +1,122 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div role="group" tabindex=0 id="liveregion1" aria-live="polite" aria-relevant="additions">
+<h3 id="innerlive1">text</h3>
+</div>
+
+<div role="group" tabindex=0 id="liveregion2" aria-live="polite" aria-relevant="additions"></div>
+
+<div role="group" tabindex=0 id="liveregion3" aria-live="polite" aria-relevant="additions">
+<img src="test.gif" width=100 height=100 alt="alt text" tabindex=0 id="image">
+</div>
+
+<div role="group" tabindex=0 id="liveregion4" aria-live="polite" aria-relevant="additions">
+<h3 id="innerlive2">text</h3>
+</div>
+
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    var jsTestIsAsync = true;
+
+    description("This tests that ARIA live regions are sending out the correct notifications. We perform four operations (add, remove, change text, change alt tag), each one should trigger a live region notification");
+
+    var receivedTextChangeNotification = false;
+    var receivedNewElementNotification = false;
+    var receivedAlternativeChangeNotification = false;
+    var receivedRemoveElementNotification = false;
+    
+    // notification callbacks
+    function textChangeCallback(notification) {
+        if (notification == "AXLiveRegionChanged") {
+            receivedTextChangeNotification = true;
+            finishTest();
+        }
+    }
+    function newElementCallback(notification) {
+        if (notification == "AXLiveRegionChanged") {
+            receivedNewElementNotification = true;
+            finishTest();
+        }
+    }
+    function alternativeChangeCallback(notification) {
+        if (notification == "AXLiveRegionChanged") {
+            receivedAlternativeChangeNotification = true;
+            finishTest();
+        }
+    }
+    function removeElementCallback(notification) {
+        if (notification == "AXLiveRegionChanged") {
+            receivedRemoveElementNotification = true;
+            finishTest();
+        }
+    }
+
+    function finishTest() {
+        // We should get a total of four live region changes.
+        if(receivedTextChangeNotification
+           && receivedNewElementNotification
+           && receivedAlternativeChangeNotification
+           && receivedRemoveElementNotification) {
+            liveRegion1.removeNotificationListener();
+            liveRegion2.removeNotificationListener();
+            liveRegion3.removeNotificationListener();
+            liveRegion4.removeNotificationListener();
+            finishJSTest();
+        }
+    }
+
+    if (window.accessibilityController) {
+
+        liveRegion1 = accessibilityController.accessibleElementById("liveregion1");
+        liveRegion2 = accessibilityController.accessibleElementById("liveregion2");
+        liveRegion3 = accessibilityController.accessibleElementById("liveregion3");
+        liveRegion4 = accessibilityController.accessibleElementById("liveregion4");
+
+        var addedNotification1 = liveRegion1.addNotificationListener(textChangeCallback);
+        shouldBe("addedNotification1", "true");
+        var addedNotification2 = liveRegion2.addNotificationListener(newElementCallback);
+        shouldBe("addedNotification2", "true");
+        var addedNotification3 = liveRegion3.addNotificationListener(alternativeChangeCallback);
+        shouldBe("addedNotification3", "true");
+        var addedNotification4 = liveRegion4.addNotificationListener(removeElementCallback);
+        shouldBe("addedNotification4", "true");
+
+        textChangeOperation();
+        newElementOperation();
+        alternativeChangeOperation();
+        removeElementOperation();
+    }
+
+    function textChangeOperation() {
+        // this should trigger our live region callback for a text change.
+        document.getElementById("innerlive1").innerText = "changed text";
+    }
+
+    function newElementOperation() {
+        // this should trigger our live region callback for a new element.
+        document.getElementById("liveregion2").innerHTML += "new text element";
+    }
+
+    function alternativeChangeOperation() {
+        // this should also trigger our live region change because its a text alternative change. 
+        document.getElementById("image").setAttribute('alt', "new image text");
+    }
+
+    function removeElementOperation() {
+        // this should trigger our live region callback for a removed element.
+        document.getElementById("liveregion4").removeChild(document.getElementById("innerlive2")); 
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

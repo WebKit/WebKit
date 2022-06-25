@@ -1,0 +1,76 @@
+diff --git a/resources/runner/motionmark.js b/resources/runner/motionmark.js
+index d45155e..b10635a 100644
+--- a/resources/runner/motionmark.js
++++ b/resources/runner/motionmark.js
+@@ -411,6 +411,62 @@ window.benchmarkRunnerClient = {
+     didFinishLastIteration: function()
+     {
+         benchmarkController.showResults();
++    },
++
++    _computeTestReport: function(testName, testResults)
++    {
++        return [testResults[Strings.json.score]];
++    },
++
++    _computeSuiteReports: function(suiteName, suiteResults)
++    {
++        var testsReports = {};
++        for (var testName in suiteResults) {
++            var testReports = this._computeTestReport(testName, suiteResults[testName]);
++            testsReports[testName] = { "metrics": { "Score": { "current": testReports } } };
++        }
++        return testsReports;
++    },
++
++    _computeIterationReports: function(iterationResults)
++    {
++        var suitesReports = {};
++        var suffix = Strings.version ? '-' + Strings.version : '';
++        for (var suiteName in iterationResults[Strings.json.results.tests]) {
++            var testsReports = this._computeSuiteReports(suiteName, iterationResults[Strings.json.results.tests][suiteName]);
++            suitesReports[suiteName + suffix] = { "metrics": { "Score": ["Geometric"] }, "tests": testsReports };
++        }
++        return suitesReports;
++    },
++
++    _computeResultsReports: function()
++    {
++        var results = this.results.results[0];
++        var iterationReports = this._computeIterationReports(results);
++        iterationReports['debugOutput'] = {
++            options: benchmarkRunnerClient.results.options,
++            data: benchmarkRunnerClient.results.data,
++        }
++        return iterationReports;
++    },
++
++    didFinishLastIteration: function()
++    {
++        // submit result to server
++        var results = JSON.stringify(this._computeResultsReports());
++        var xhr = new XMLHttpRequest();
++        xhr.open("POST", "/report");
++        xhr.setRequestHeader("Content-type", "application/json");
++        xhr.setRequestHeader("Content-length", results.length);
++        xhr.setRequestHeader("Connection", "close");
++        xhr.onreadystatechange = function() {
++            if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
++                closeRequest = new XMLHttpRequest();
++                closeRequest.open("GET", "/shutdown");
++                closeRequest.send()
++            }
++        }
++        xhr.send(results);
+     }
+ };
+ 
+@@ -652,4 +708,7 @@ window.benchmarkController = {
+     }
+ };
+ 
+-window.addEventListener("load", function() { benchmarkController.initialize(); });
++window.addEventListener("load", function() {
++    setTimeout(benchmarkController.startBenchmark.bind(benchmarkController), 3000);
++    benchmarkController.initialize();
++});

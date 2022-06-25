@@ -1,0 +1,10 @@
+This tests removing the target of mouse down during selectstart. WebKit should not set the selection's endpoints to newly disconnected nodes even in this case.'
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getSelection().rangeCount is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Click the box below.

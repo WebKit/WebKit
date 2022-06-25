@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="tests"><input type="button"><input type="checkbox"><input type="file"><input type="hidden">
+<input type="image"><input type="radio"><input type="range"><input type="reset"><input type="submit"></div>
+<div id="console"></div>
+<div>
+<script type="text/javascript">
+description('Tests to ensure selectionStart, selectionEnd, and selectionDirection throw exceptions when the input element is not a text field.');
+
+var tests = document.getElementById('tests');
+for (var i = 0; i < tests.children.length; i++) {
+    var test = tests.children[i];
+    test.focus();
+
+    shouldBe('test.selectionStart', 'null');
+    shouldThrow('test.selectionStart = 0');
+    shouldBe('test.selectionEnd', 'null');
+    shouldThrow('test.selectionEnd = 0');
+    shouldBe('test.selectionDirection', 'null');
+    shouldThrow('test.selectionDirection = 0');
+    shouldThrow('test.selectionRange()');
+}
+
+tests.style.display = 'none';
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
+

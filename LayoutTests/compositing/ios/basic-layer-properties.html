@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .box {
+            height: 100px;
+            width: 100px;
+            background-color: silver;
+            box-shadow: 0 0 10px black;
+            padding: 10px;
+            margin: 20px;
+        }
+        
+        .composited {
+            will-change: transform;
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function sortedJSONStringify(object, space)
+        {
+            function sorted(o)
+            {
+                var result = {};
+                
+                var keys = [];
+                for (var key in o) {
+                    if (o.hasOwnProperty(key))
+                        keys.push(key);
+                }
+                
+                keys.sort();
+                for (var key of keys)
+                    result[key] = o[key];
+                
+                return result;
+            }
+            
+            return JSON.stringify(sorted(object), function(key, value) {
+                if (typeof value === 'object' && !Array.isArray(value) && !(typeof(value) === 'function'))
+                    return sorted(value);
+                return value;
+            }, space);
+        }
+        
+        function getUIScript(layerID)
+        {
+            return `
+                (function() {
+                    uiController.doAfterPresentationUpdate(function() {
+                        var layerProperties = JSON.stringify(uiController.propertiesOfLayerWithID(${layerID}));
+                        uiController.uiScriptComplete(layerProperties);
+                    })
+                })();`
+        }
+
+        function doTest()
+        {
+            if (!window.testRunner)
+                return;
+
+            var layerID = internals.layerIDForElement(document.getElementById('composited'));
+
+            testRunner.runUIScript(getUIScript(layerID), function(layerProperties) {
+                var propertiesAsJSON = JSON.parse(layerProperties);
+                document.getElementById('layer-properties').textContent = sortedJSONStringify(propertiesAsJSON, 4);
+                testRunner.notifyDone();
+            });
+        }
+        
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+
+<div id="composited" class="composited box">
+    Composited box.
+</div>
+
+<pre id="layer-properties"></pre>
+</body>
+</html>

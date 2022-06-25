@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?><!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
+<?xml-stylesheet type="text/xsl" href="resources/xsl-using-external-entity.xsl"?>
+<xml>
+FAIL: XML stylesheet did not run.
+</xml>

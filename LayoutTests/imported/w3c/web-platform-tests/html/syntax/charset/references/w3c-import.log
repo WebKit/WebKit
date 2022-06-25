@@ -1,0 +1,38 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/references/after-1kb-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/references/after-bogus-after-1kb-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/references/after-bogus-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/references/after-head-after-1kb-crlf-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/references/after-head-after-1kb-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/references/after-head-in-1kb-crlf-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/references/after-head-in-1kb-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/references/baseline-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/references/document-write-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/references/in-comment-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/references/in-noscript-after-template-after-1kb-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/references/in-object-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/references/in-script-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/references/in-style-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/references/in-svg-in-cdata-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/references/in-svg-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/references/in-template-after-1kb-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/references/in-template-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/references/in-title-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/references/ncr-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/references/non-ascii-in-comment-before-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/references/non-ascii-in-title-before-ref.html

@@ -1,0 +1,88 @@
+<!-- webkit-test-runner [ UsesBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        #overflowing {
+            width: 200px;
+            height: 200px;
+            margin: 10px;
+            border: 1px solid black;
+            overflow: scroll;
+        }
+        
+        .content {
+            height: 400px;
+            background-image: linear-gradient(white, gray)
+        }
+    </style>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+        
+        function logResult(s)
+        {
+            document.getElementById('result').textContent += s + "\n";
+        }
+
+        var scrollTopBeforeScroll;
+        var scrollTopAfterScroll;
+
+        function iframeScrolled()
+        {
+            scrollTopAfterScroll = document.getElementById('iframe').contentDocument.scrollingElement.scrollTop;
+        }
+        
+        async function testScrollability()
+        {
+            var iframeTarget = document.getElementById('iframe');
+            var iframeBounds = iframeTarget.getBoundingClientRect();
+
+            scrollTopBeforeScroll = iframeTarget.contentDocument.scrollingElement.scrollTop;
+            logResult('Sending mouseWheel events');
+
+            await UIHelper.mouseWheelScrollAt(iframeBounds.left + 10, iframeBounds.top + 10, 0, -1, 0, -1);
+
+            if (scrollTopAfterScroll > scrollTopBeforeScroll)
+                logResult('PASS: mouseWheel caused scrolling');
+            else
+                logResult('FAIL; mouseWheel did not scroll; scrollTop is ' + scrollTopAfterScroll + ', was ' + scrollTopBeforeScroll);
+        }
+        
+        async function startTest()
+        {
+            if (!window.eventSender) {
+                logResult('This test must be run in DumpRenderTree/WebKitTestRunner');
+                return;
+            }
+
+            await testScrollability();
+            setTimeout(() => {
+                logResult('\nNavigating forward then back\n');
+                window.location.href = "data:text/html,<body onload='history.back()'></body>";
+            }, 0);
+        }
+        
+        var showCount = 0;
+        async function pageShowed()
+        {
+            if (++showCount == 2) {
+                await testScrollability();
+                testRunner.notifyDone();
+            }
+        }
+        
+        window.addEventListener('load', startTest, false);
+        window.addEventListener('pageshow', pageShowed, false);
+    </script>
+</head>
+<body>
+
+<iframe id="iframe" src="resources/scroll-notifying-page.html"></iframe>
+
+<pre id="result"></pre>
+</body>
+</html>

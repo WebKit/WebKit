@@ -1,0 +1,62 @@
+<style>
+#container {
+  border: 2px solid blue;
+  width:200px;
+  height:200px;
+  position:relative;
+}
+
+#box1 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100px;
+  height: 100px;
+  background: blue;
+
+  animation: top-left 1s linear;
+}
+
+#box2 {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 100px;
+  height: 100px;
+  background: green;
+
+  animation: bottom-right 1s linear;
+}
+
+@keyframes top-left {
+  100% {
+     top: 100%;
+     left: 100%;
+  }
+}
+@keyframes bottom-right {
+  100% {
+     bottom: 100%;
+     right: 100%;
+  }
+}
+</style>
+<script src="resources/animation-test-helpers.js"></script>
+<script>
+
+const expectedValues = [
+    // [animation-name, time, element-id, property, expected-value, tolerance]
+    ["top-left", 0.5, "box1", "left", 100, 20],
+    ["top-left", 0.5, "box1", "top", 100, 20],
+    ["bottom-right", 0.5, "box2", "right", 100, 20],
+    ["bottom-right", 0.5, "box2", "bottom", 100, 20],
+];
+
+runAnimationTest(expectedValues);
+</script>
+<div id="container">
+  <div id="box1"></div>
+  <div id="box2"></div>
+</div>
+<div id="result">
+</div>

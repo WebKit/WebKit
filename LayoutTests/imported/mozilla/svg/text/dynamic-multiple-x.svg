@@ -1,0 +1,57 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg" style="font: 16px sans-serif">
+  <text x="100 150 200 250" y="50"><tspan>12</tspan>34</text>
+  <text x="100 150 200 250" y="100"><tspan display="none">12</tspan>34</text>
+  <text x="100 150 200 250" y="150">34</text>
+  <text x="100 150 200 250" y="200">34</text>
+  <text x="100 150 200 250 300 350" y="250"><tspan>12</tspan>56</text>
+  <text x="100 150 200 250 300 350" y="300"><tspan>12</tspan>56</text>
+  <text x="100 150 200 250" y="350"><tspan display="none"/>34</text>
+
+  <script>
+    function newTSpan(s) {
+      var e = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
+      e.textContent = s;
+      return e;
+    }
+
+    function doTest() {
+    
+      var t = document.getElementsByTagName("text");
+      var e;
+
+      t[0].removeChild(t[0].firstChild);
+
+      t[1].removeChild(t[1].firstChild);
+
+      e = newTSpan("12");
+      t[2].insertBefore(e, t[2].firstChild);
+
+      e = newTSpan("12");
+      e.setAttribute("display", "none");
+      t[3].insertBefore(e, t[3].firstChild);
+
+      e = newTSpan("34");
+      t[4].firstChild.appendChild(e);
+
+      e = newTSpan("34");
+      e.setAttribute("display", "none");
+      t[5].firstChild.appendChild(e);
+
+      e = newTSpan("12");
+      t[6].firstChild.appendChild(e);
+
+      document.documentElement.removeAttribute("class");
+      if (window.testRunner)
+        testRunner.notifyDone();
+    }
+
+    if (window.testRunner)
+      testRunner.waitUntilDone();
+
+    setTimeout(doTest, 100);
+  </script>
+</svg>

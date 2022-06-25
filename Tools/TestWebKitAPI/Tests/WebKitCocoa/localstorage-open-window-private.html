@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<script>
+window.localStorage.setItem("local", "storage");
+
+var newWindow = window.open("about:blank");
+if (newWindow)
+    window.webkit.messageHandlers.testHandler.postMessage("local:" + newWindow.localStorage.getItem("local"));
+else
+    window.webkit.messageHandlers.testHandler.postMessage("open window fails");
+
+</script>

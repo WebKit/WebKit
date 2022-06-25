@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/common/utils.js"></script>
+<script src="resources/routines.js"></script>
+</head>
+<body>
+<script>
+var url = "/WebKit/service-workers/resources/service-worker-iframe-preload-after-response-script.py";
+
+promise_test(async (test) => {
+    let registration = await navigator.serviceWorker.register("/WebKit/service-workers/service-worker-iframe-preload-after-response-worker.js", { scope : url });
+    if (!registration.installing) {
+        registration.unregister();
+        registration = await navigator.serviceWorker.register("/WebKit/service-workers/service-worker-iframe-preload-after-response-worker.js", { scope : url });
+    }
+    const activeWorker = registration.installing;
+
+    let resolve;
+    let promise = new Promise(r => resolve = r);
+    activeWorker.addEventListener('statechange', () => {
+        if (activeWorker.state === "activated")
+            resolve();
+    });
+    await promise;
+
+    await registration.navigationPreload.enable();
+    await registration.navigationPreload.setHeaderValue("ThisIsAPreload");
+}, "Setup preloading worker");
+
+promise_test(async (test) => {
+    const frame = await withIframe(url);
+    assert_equals(frame.contentWindow.value, "ThisIsAPreload");
+}, "Service worker load uses preload after passing a response to fetch event handler");
+</script>
+</body>
+</html>

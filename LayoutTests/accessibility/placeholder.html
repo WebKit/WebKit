@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<input placeholder="search" type="text" name="q" size="15" maxlength="255" id="searchterm" />
+
+<input id="password" class="field" type="password" name="sc1798" value="" placeholder="Password" spellcheck="true" maxlength="5096">
+
+<span id="label">Birthday:</span>
+<div id="search" role="searchbox" aria-labelledby="label" aria-placeholder="MM-DD-YYYY">03-14-1879</div>
+
+<input type="text" id="input" placeholder="Fill in the blank" aria-placeholder="aria placeholder">
+
+<script>
+    var testOutput = "This test ensures that the placeholder is returned as the correct attribute.\n\n";
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        var fieldElement = accessibilityController.accessibleElementById("searchterm");
+        testOutput += expect("fieldElement.stringAttributeValue('AXPlaceholderValue')", "'search'");
+
+        var passwordElement = accessibilityController.accessibleElementById("password");
+        testOutput += expect("passwordElement.stringAttributeValue('AXPlaceholderValue')", "'Password'");
+
+        var searchElement = accessibilityController.accessibleElementById("search");
+        testOutput += expect("searchElement.stringAttributeValue('AXPlaceholderValue')", "'MM-DD-YYYY'");
+
+        // When the placeholder and aria-placeholder attributes are both present, use the placeholder attribute's value.
+        var textInput = accessibilityController.accessibleElementById("input");
+        testOutput += expect("textInput.stringAttributeValue('AXPlaceholderValue')", "'Fill in the blank'");
+
+        testOutput += "\nUpdating aria-placeholder attribute of the #search element to 'YYYY-MM-DD'.\n";
+        document.getElementById("search").ariaPlaceholder = "YYYY-MM-DD";
+        setTimeout(async function() {
+            await waitFor(() => searchElement.stringAttributeValue("AXPlaceholderValue") === "YYYY-MM-DD");
+            testOutput += expect("searchElement.stringAttributeValue('AXPlaceholderValue')", "'YYYY-MM-DD'");
+
+            testOutput += "\nUpdating placeholder attribute of the #search element to 'Foo'.\n";
+            document.getElementById("search").setAttribute("placeholder", "Foo");
+            await waitFor(() => searchElement.stringAttributeValue("AXPlaceholderValue") === "Foo");
+            testOutput += expect("searchElement.stringAttributeValue('AXPlaceholderValue')", "'Foo'");
+
+            debug(testOutput);
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>
+

@@ -1,0 +1,58 @@
+# Copyright (c) 2020 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the ../../../LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+rtc_library("fft_size_128") {
+  sources = [
+    "fft_size_128/ooura_fft.cc",
+    "fft_size_128/ooura_fft.h",
+    "fft_size_128/ooura_fft_tables_common.h",
+  ]
+  deps = [
+    "../../../rtc_base/system:arch",
+    "../../../system_wrappers",
+  ]
+  cflags = []
+
+  if (current_cpu == "x86" || current_cpu == "x64") {
+    sources += [
+      "fft_size_128/ooura_fft_sse2.cc",
+      "fft_size_128/ooura_fft_tables_neon_sse2.h",
+    ]
+    if (is_posix || is_fuchsia) {
+      cflags += [ "-msse2" ]
+    }
+  }
+
+  if (rtc_build_with_neon) {
+    sources += [
+      "fft_size_128/ooura_fft_neon.cc",
+      "fft_size_128/ooura_fft_tables_neon_sse2.h",
+    ]
+
+    deps += [ "../../../common_audio" ]
+
+    if (current_cpu != "arm64") {
+      # Enable compilation for the NEON instruction set.
+      suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
+      cflags += [ "-mfpu=neon" ]
+    }
+  }
+
+  if (current_cpu == "mipsel" && mips_float_abi == "hard") {
+    sources += [ "fft_size_128/ooura_fft_mips.cc" ]
+  }
+}
+
+rtc_library("fft_size_256") {
+  sources = [
+    "fft_size_256/fft4g.cc",
+    "fft_size_256/fft4g.h",
+  ]
+}

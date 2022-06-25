@@ -1,0 +1,6 @@
+PASS dragging the horizontal scrollbar thumb snapped
+PASS dragging the vertical scrollbar thumb snapped
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

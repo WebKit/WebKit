@@ -1,0 +1,6 @@
+
+
+PASS unscopable `document.testVariable` doesn't shadow `window.testVariable`
+PASS unscopable `element.testVariable` doesn't shadow `window.testVariable`
+PASS unscopable `formOwner.testVariable` doesn't shadow `window.testVariable`
+

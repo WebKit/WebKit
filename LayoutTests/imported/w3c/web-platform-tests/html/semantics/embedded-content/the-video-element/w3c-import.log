@@ -1,0 +1,38 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/intrinsic_sizes.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/resize-during-playback.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-import-to-inactive-document-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-poster-shown-preload-auto-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-poster-shown-preload-auto-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-poster-shown-preload-auto.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-tabindex.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_content-ref.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_content_image-expected.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_content_image.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_content_text-expected.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_content_text.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_crash_empty_src.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_dynamic_poster-ref.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_dynamic_poster_absolute-expected.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_dynamic_poster_absolute.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_dynamic_poster_relative-expected.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_dynamic_poster_relative.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_initially_paused-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_initially_paused-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_initially_paused.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_size_preserved_after_ended.html

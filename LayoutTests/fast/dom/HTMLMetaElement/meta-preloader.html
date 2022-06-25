@@ -1,0 +1,24 @@
+<html>
+<head>
+</head>
+<body>
+You should see 1 line with "SUCCESS" below:
+<div id=result></div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function checkExpected(actual, expected)
+{
+    var result = document.getElementById("result");
+    if (actual != expected)
+        result.innerHTML = "<p>FAILURE: expected \"" + expected + "\", actual \"" + actual + "\"</p>";
+    else
+        result.innerHTML = "<p>SUCCESS (value: \"" + actual + "\")</p>";
+}
+
+if (window.internals)
+    checkExpected(internals.testPreloaderSettingViewport(), true);
+</script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+Testing all methods of IterableWeakSet.
+
+
+== Running test suite: IterableWeakSet
+-- Running test case: IterableWeakSet.prototype.constructor.Empty
+[]
+
+-- Running test case: IterableWeakSet.prototype.constructor.NonEmpty
+[{"value":1},{"value":2},{"value":3}]
+
+-- Running test case: IterableWeakSet.prototype.has
+[{"value":1},{"value":2},{"value":3}]
+PASS: 'has' should return true if a key exists.
+PASS: 'has' should return true if a key exists (more than once).
+PASS: 'has' should return true if a key exists.
+PASS: 'has' should return false if a key doesn't exist.
+
+-- Running test case: IterableWeakSet.prototype.add
+[]
+[{"value":1}]
+[{"value":1},{"value":2}]
+[{"value":1},{"value":2},{"value":3}]
+[{"value":1},{"value":2},{"value":3}]
+
+-- Running test case: IterableWeakSet.prototype.delete
+[{"value":1},{"value":2},{"value":3}]
+PASS: 'delete' should return true for a known key.
+[{"value":2},{"value":3}]
+PASS: 'delete' should return true for a known key.
+[{"value":3}]
+PASS: 'delete' should return false for an already deleted key.
+[{"value":3}]
+PASS: 'delete' should return true for a known key.
+[]
+PASS: 'delete' should return false for an unknown key.
+[]
+
+-- Running test case: IterableWeakSet.prototype.take
+[{"value":1},{"value":2},{"value":3}]
+PASS: 'take' should return the key for a known key.
+[{"value":2},{"value":3}]
+PASS: 'take' should return the key for a known key.
+[{"value":3}]
+PASS: 'take' should return undefined for an already deleted key.
+[{"value":3}]
+PASS: 'take' should return the key for a known key.
+[]
+PASS: 'take' should return undefined for an unknown key.
+[]
+
+-- Running test case: IterableWeakSet.prototype.clear
+[{"value":1},{"value":2},{"value":3}]
+[]
+
+-- Running test case: IterableWeakSet.prototype.keys
+[{"value":1},{"value":2},{"value":3}]
+
+-- Running test case: IterableWeakSet.prototype.values
+[{"value":1},{"value":2},{"value":3}]
+
+-- Running test case: IterableWeakSet.prototype.copy
+[{"value":1},{"value":2},{"value":3}]
+PASS: Copy should not return the same object.
+PASS: Copy should return a deep copy.
+PASS: Modifying the original should not modify the copy.
+
+-- Running test case: IterableWeakSet.DoesNotKeepObjectsAlive
+Evaluating `IterableWeakSet` source in the inspected page...
+Testing `IterableWeakSet` in the inspected page...
+[{"value":1},{"value":2},{"value":3}]
+PASS: 'has' should return true for '{"value":1}' after construction.
+PASS: 'has' should return true for '{"value":2}' after construction.
+PASS: 'has' should return true for '{"value":3}' after construction.
+[{"value":2},{"value":3}]
+PASS: Should not contain '{"value": 1}' after `one = null`.
+PASS: 'has' should return true for '{"value":2}' after `one = null`.
+PASS: 'has' should return true for '{"value":3}' after `one = null`.
+[{"value":3}]
+PASS: Should not contain '{"value": 1}' after `two = null`.
+PASS: Should not contain '{"value": 2}' after `two = null`.
+PASS: 'has' should return true for '{"value":3}' after `two = null`.
+[]
+PASS: Should not contain '{"value": 1}' after `three = null`.
+PASS: Should not contain '{"value": 2}' after `three = null`.
+PASS: Should not contain '{"value": 3}' after `three = null`.
+

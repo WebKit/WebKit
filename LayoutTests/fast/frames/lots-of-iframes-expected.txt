@@ -1,0 +1,3 @@
+Sucessfully created 1000 frames.
+Successfully blocked creation of frame number 1001.
+

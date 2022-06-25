@@ -1,0 +1,60 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # keywords: array keyword objects. May be empty. Each has has four members:
+  #   id: id of the keyword
+  #   name: the name of the keyword
+  #   description: keyword description. Can contain some limited HTML code.
+  #   bug_count: number of bugs with that keyword
+ %]
+
+[% PROCESS global/header.html.tmpl
+  title = "$terms.Bugzilla Keyword Descriptions"
+  style_urls = ['skins/standard/admin.css']
+%]
+
+<table id="admin_table">
+  <tr class="column_header">
+    <th>Name</th>
+    <th>Description</th>
+    <th>Open [% terms.Bugs %]</th>
+    <th>Total [% terms.Bugs %]</th>
+  </tr>
+
+  [% FOREACH keyword = keywords %]
+  <tr id="[% keyword.name FILTER html %]">
+    <td>[% keyword.name FILTER html %]</td>
+    <td>[% keyword.description FILTER html_light %]</td>
+    <td class="center">
+      [% IF keyword.bug_count > 0 %]
+        <a href="buglist.cgi?keywords=[% keyword.name FILTER uri %]&amp;resolution=---">
+          Search</a>
+      [% ELSE %]
+        none
+      [% END %]
+    </td>
+    <td class="right">
+      [% IF keyword.bug_count > 0 %]
+        <a href="buglist.cgi?keywords=[% keyword.name FILTER uri %]">
+          [% keyword.bug_count %]</a>
+      [% ELSE %]
+        none
+      [% END %]
+    </td>
+  </tr>
+  [% END %]
+</table>
+
+[% IF user.in_group("editkeywords") %]
+  <p>
+    <a href="editkeywords.cgi">Edit keywords</a>.
+  </p>
+[% END %]
+
+[% PROCESS global/footer.html.tmpl %]

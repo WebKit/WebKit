@@ -1,0 +1,36 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# This script/template only handles one bug #%]
+[% bug = bugs.0 %]
+
+[% IF !header_done %]
+  [% PROCESS "bug/show-header.html.tmpl" %]
+  [% PROCESS global/header.html.tmpl %]
+[% END %]
+
+[% IF nextbug %]
+  <hr>
+  <p>
+    The next [% terms.bug %] in your list is [% terms.bug %]
+    <a href="show_bug.cgi?id=[% bug.bug_id %]">[% bug.bug_id %]</a>:
+  </p>
+  <hr>
+[% END %]
+
+[% PROCESS bug/navigate.html.tmpl %]
+
+[% PROCESS bug/edit.html.tmpl %]
+
+<hr>
+
+[% PROCESS bug/navigate.html.tmpl bottom_navigator => 1%]
+
+<br>
+
+[% PROCESS global/footer.html.tmpl %]

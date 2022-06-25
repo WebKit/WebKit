@@ -1,0 +1,16 @@
+
+PASS Setting a StylePropertyMap with an unsupported property name throws TypeError
+PASS Setting a StylePropertyMap with an null property name throws TypeError
+PASS Setting a StylePropertyMap with a descriptor throws TypeError
+PASS Setting a StylePropertyMap with an invalid CSSStyleValue throws TypeError
+PASS Setting a StylePropertyMap with an invalid String throws TypeError
+PASS Setting a non list-valued property with multiple arguments throws TypeError
+PASS Setting a non list-valued property with list-valued string throws TypeError
+PASS Setting a list-valued property with a CSSUnparsedValue and other values throws TypeError
+PASS Setting a list-valued property with a var ref() and other values throws TypeError
+FAIL Setting a property with CSSStyleValue or String updates its value styleMap.set is not a function. (In 'styleMap.set('width', CSS.px(10))', 'styleMap.set' is undefined)
+FAIL Setting a list-valued property with CSSStyleValue or String updates its values styleMap.set is not a function. (In 'styleMap.set('transition-duration', CSS.s(1), '2s')', 'styleMap.set' is undefined)
+FAIL Setting a list-valued property with a list-valued string updates its value styleMap.set is not a function. (In 'styleMap.set('transition-duration', '1s, 2s')', 'styleMap.set' is undefined)
+FAIL Setting a custom property with CSSStyleValue or String updates its value styleMap.set is not a function. (In 'styleMap.set('--foo', new CSSUnparsedValue(['auto']))', 'styleMap.set' is undefined)
+FAIL StylePropertyMap.set is case-insensitive styleMap.set is not a function. (In 'styleMap.set('tRaNsItIoN-dUrAtIoN', '1s', CSS.s(2))', 'styleMap.set' is undefined)
+

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1, viewport-fit=cover">
+    <title>Designing Websites for iPhone X: min() and max()</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <style>
+    #topBar {
+        background-color: #729fcf;
+        padding: env(safe-area-inset-top) env(safe-area-inset-right) 0 env(safe-area-inset-left);
+    }
+
+    #topBar a {
+        display: inline-block;
+
+        height: 100%;
+        padding: 12px;
+
+        border-right: 3px solid rgba(255, 255, 255, 0.5);
+
+        color: white;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 18pt;
+    }
+
+    #topBar a:last-child {
+        border-right: none;
+    }
+
+    #bottomBar {
+        position: fixed;
+
+        left: 0;
+        right: 0;
+        bottom: 0;
+
+        background-color: #3465a4;
+
+        text-align: center;
+
+        padding: 8px;
+    }
+
+    #bottomBar a {
+        padding: 0 24px;
+
+        color: white;
+        font-size: 12pt;
+        text-decoration: none;
+    }
+
+    h1 {
+        margin: 12px 0 0 0;
+    }
+
+    h2 {
+        color: #aaa;
+        font-size: 12pt;
+        text-align: left;
+
+        margin: 0;
+    }
+
+    .post {
+        width: 100%;
+
+        margin-bottom: 50px;
+
+        padding: 12px;
+    }
+
+    .post p:first-child {
+        margin: 0;
+    }
+
+    @supports(padding: max(0px)) {
+        #bottomBar {
+            padding-left: max(8px, env(safe-area-inset-left));
+            padding-right: max(8px, env(safe-area-inset-right));
+            padding-bottom: max(8px, env(safe-area-inset-bottom));
+        }
+
+        .post {
+            padding-left: max(12px, env(safe-area-inset-left));
+            padding-right: max(12px, env(safe-area-inset-right));
+        }
+    }
+    </style>
+</head>
+<body>
+    <div id="topBar"><a href="#">Blog</a><a href="#">Photos</a><a href="#">Projects</a></div>
+    <div class="post">
+    <h1>Welcome</h1>
+    <h2>two hours ago</h2>
+    <p>Hi!</p>
+    <p>Welcome to my sample blog!</p>
+    <p>This post is here to help demonstrate how easy it is to take an existing site, along with full-width bars and fixed-position elements, and make it take full advantage of iPhone X's edge-to-edge display.</p>
+    <p>The actual post describing how to adopt the new API is over on the <a href="https://webkit.org/blog/7929/designing-websites-for-iphone-x/">WebKit blog</a>.</p>
+    <p>There, you will learn all about new WebKit features, including <code>viewport-fit</code>, <code>env()</code>, safe area insets, and <code>min()</code> and <code>max()</code>.</p>
+    <p>I hope that it helps you adopt these new features in your websites.</p>
+    </div>
+    <div id="bottomBar"><a href="#">About Me</a><a href="#">Contact</a><a href="#">Site Map</a></div>
+</body>
+</html>

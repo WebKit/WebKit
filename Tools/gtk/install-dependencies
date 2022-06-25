@@ -1,0 +1,98 @@
+#!/usr/bin/env bash
+
+# On Linux systems, this script needs to be run with root rights.
+if [ `uname` != "Darwin" ] && [ $UID -ne 0 ]; then
+    sudo $0
+    exit 0
+fi
+
+declare -ga PACKAGES
+
+function printNotSupportedMessageAndExit() {
+    echo
+    echo "Currently this script only works for distributions supporting apt-get, dnf, pacman and brew."
+    echo "Please add support for your distribution: http://webkit.org/b/110693"
+    echo
+    exit 1
+}
+
+function guessPackageManager() {
+    local ret
+
+    if apt-get --version &>/dev/null; then
+        # apt-get - Debian based distributions
+        ret="apt"
+    elif [[ $(uname) == "Darwin" ]]; then
+        if brew &>/dev/null; then
+            echo "Please install HomeBrew. Instructions on http://brew.sh"
+            exit 1
+        fi
+        ret="brew"
+    elif dnf --version &>/dev/null; then
+        # dnf - Fedora
+        ret="dnf"
+    elif pacman -Ss &>/dev/null; then
+        # pacman - Arch Linux
+        # pacman --version and pacman --help both return non-0
+        ret="pacman"
+    else
+        printNotSupportedMessageAndExit
+    fi
+
+    echo $ret
+}
+
+function installDependencies {
+    local packageManager
+
+    packageManager=$(guessPackageManager)
+    source "$(dirname "$0")/dependencies/$packageManager"
+    installDependenciesWith${packageManager^}
+}
+
+function installDependenciesWithApt {
+    apt-get install -y --no-install-recommends ${PACKAGES[@]}
+
+    # Ubuntu Bionic doesn't ship pipenv. So fallback to the pip3 install path.
+    if apt-cache show pipenv &>/dev/null; then
+        apt-get install -y --no-install-recommends pipenv
+    else
+        apt-get install -y --no-install-recommends python3-pip
+        pip3 install pipenv
+    fi
+}
+
+function installDependenciesWithBrew {
+    brew install ${PACKAGES[@]}
+}
+
+function installDependenciesWithDnf {
+    dnf install ${PACKAGES[@]}
+}
+
+function installDependenciesWithPacman {
+    pacman -S --needed ${PACKAGES[@]}
+
+    cat <<-EOF
+
+The following packages are available from AUR, and needed for running tests:
+
+    ruby-json ruby-highline
+
+Instructions on how to use the AUR can be found on the Arch Wiki:
+
+    https://wiki.archlinux.org/index.php/Arch_User_Repository
+
+You will also need to follow the instructions on the wiki to make 'python'
+call python2 in the WebKit folder:
+
+    https://wiki.archlinux.org/index.php/Python#Dealing_with_version_problem_in_build_scripts
+
+Alternatively, you may use a Python 2.x virtualenv while hacking on WebKitGTK:
+
+    https://wiki.archlinux.org/index.php/Python/Virtual_environment
+
+EOF
+}
+
+installDependencies

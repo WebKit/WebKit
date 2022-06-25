@@ -1,0 +1,5 @@
+Hidden Text
+(repaint rects
+  (rect 550 8 200 50)
+)
+

@@ -1,0 +1,32 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body id="body">
+<div id="content">
+<div id="button" tabindex=0 role="button" aria-label="title" aria-help="click here">
+button
+</div>
+</div>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that aria-help attribute works as expected.");
+
+    if (window.accessibilityController) {
+        document.getElementById("button").focus();
+        var axButton = accessibilityController.focusedElement;
+        shouldBeEqualToString("platformValueForW3CName(axButton)", "title");
+        shouldBeEqualToString("platformValueForW3CDescription(axButton)", "click here");
+
+        document.getElementById("content").style.visibility = "hidden";
+    }
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

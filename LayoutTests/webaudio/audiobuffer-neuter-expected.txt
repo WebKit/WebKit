@@ -1,0 +1,13 @@
+Tests that neutered AudioBuffers produce silence
+PASS sourceBuffer.length is numberOfFrames
+PASS sourceBuffer.getChannelData(0).length is 0
+PASS sourceBuffer.getChannelData(0) === sourceBuffer.getChannelData(0) is true
+PASS sourceBuffer.getChannelData(0) === originalFirstChannel is true
+PASS sourceBuffer.getChannelData(1).length is numberOfFrames
+PASS sourceBuffer.getChannelData(1) === sourceBuffer.getChannelData(1) is true
+PASS sourceBuffer.getChannelData(1) === originalSecondChannel is true
+PASS Output matches expectations.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

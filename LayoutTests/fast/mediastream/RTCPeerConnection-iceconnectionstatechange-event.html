@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <script>
+            description("Test RTCPeerConnection 'iceconnectionstatechange' event");
+
+            if (window.internals)
+                internals.useMockRTCPeerConnectionFactory("ICEConnectionState");
+
+            let expectedState;
+            let expectedStates = [
+                "checking",
+                "connected",
+                "completed",
+                "failed",
+                "disconnected",
+                "new"
+            ];
+
+            if (window.testRunner)
+                testRunner.setUserMediaPermission(true);
+            else {
+                debug("This test can not be run without the testRunner");
+                finishJSTest();
+            }
+
+            const pc = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
+
+            pc.oniceconnectionstatechange = function () {
+                testPassed("Got icetransportstatechange event");
+
+                expectedState = expectedStates.shift();
+                debug(`expectedState is "${expectedState}"`);
+                shouldBe("pc.iceConnectionState", "expectedState");
+                debug("");
+
+                if (pc.iceConnectionState === "new")
+                    finishJSTest();
+            };
+
+            navigator.mediaDevices.getUserMedia({ "video": true }).then(function (stream) {
+                const stream2 = stream.clone();
+                const stream3 = stream.clone();
+
+                pc.addTrack(stream.getTracks()[0], stream);
+                pc.addTrack(stream2.getTracks()[0], stream2);
+                pc.addTrack(stream3.getTracks()[0], stream3);
+
+                return pc.createOffer();
+            })
+            .then(function (offer) {
+                return pc.setLocalDescription(offer);
+            })
+            .then(function () {
+                testPassed("Local description set");
+                shouldBe("pc.getTransceivers().length", "3");
+                shouldBe("pc.iceConnectionState", "'new'");
+
+                window.internals.emulateRTCPeerConnectionPlatformEvent(pc, "step-ice-transport-states");
+                testPassed("End of test promise chain");
+                debug("");
+            })
+            .catch(function (error) {
+                testFailed("Error in promise chain: " + error);
+                finishJSTest();
+            });
+
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

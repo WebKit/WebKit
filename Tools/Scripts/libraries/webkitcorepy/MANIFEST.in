@@ -1,0 +1,2 @@
+include README.md
+include webkitcorepy/cacert.pem

@@ -1,0 +1,50 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# NOTE: Everywhere you use this template, you must call 
+  # "FILTER remove('^X')" on the result. This is unfortunately the only way
+  # to preserve leading whitespace in comments.
+  #%]
+
+[%# INTERFACE:
+  #   comment: A Bugzilla::Comment object.
+  #   is_bugmail: boolean; True if this comment is going into a plain-text
+  #               bugmail.
+  #%]
+
+[%# Please don't use field-descs here. It can slow down Bugzilla. %]
+
+[% SET comment_body = comment.body %]
+
+[% IF comment.type == constants.CMT_DUPE_OF %]
+X[% comment_body %]
+
+*** This [% terms.bug %] has been marked as a duplicate of [% terms.bug %] [%+ comment.extra_data %] ***
+[% ELSIF comment.type == constants.CMT_HAS_DUPE %]
+*** [% terms.Bug %] [%+ comment.extra_data %] has been marked as a duplicate of this [% terms.bug %]. ***
+[% ELSIF comment.type == constants.CMT_ATTACHMENT_CREATED %]
+Created attachment [% comment.extra_data %]
+[% IF is_bugmail %]
+[%# if WEBKIT_CHANGES %]
+  --> [% urlbase _ "attachment.cgi?id=" _ comment.extra_data _ "&action=review" %]
+[%# endif // WEBKIT_CHANGES %]
+[% END %]
+[%+ comment.attachment.description %]
+
+[%+ comment.body %]
+[% ELSIF comment.type == constants.CMT_ATTACHMENT_UPDATED %]
+Comment on attachment [% comment.extra_data %]
+[% IF is_bugmail %]
+  --> [% urlbase _ "attachment.cgi?id=" _ comment.extra_data %]
+[% END %]
+[%+ comment.attachment.description %]
+
+[%+ comment.body %]
+[% ELSE %]
+X[% Hook.process('type') %]
+[% END %]

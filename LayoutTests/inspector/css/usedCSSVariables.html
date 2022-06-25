@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("DOMNodeStyles.usedCSSVariables");
+
+    function addTestCase({name, description, selector, checkUsedCSSVariables})
+    {
+        suite.addTestCase({
+            name,
+            description,
+            async test() {
+                let documentNode = await WI.domManager.requestDocument();
+                let nodeId = await documentNode.querySelector(selector);
+                let domNode = await WI.domManager.nodeForId(nodeId);
+                InspectorTest.assert(domNode, `Should find DOM Node for selector '${selector}'.`);
+
+                let cssStyles = WI.cssManager.stylesForNode(domNode);
+                InspectorTest.assert(cssStyles, `Should find CSS Styles for DOM Node.`);
+
+                await cssStyles.refreshIfNeeded();
+
+                checkUsedCSSVariables(cssStyles.usedCSSVariables);
+            },
+        });
+    }
+
+    addTestCase({
+        name: "DOMNodeStyles.usedCSSVariables.InheritedUsed",
+        description: "A used inherited variable is found in the set of used variables",
+        selector: "#used-inherited-variable",
+        checkUsedCSSVariables(usedCSSVariables) {
+            InspectorTest.expectEqual(usedCSSVariables.size, 1, "Set should contain one used variable");
+            InspectorTest.expectTrue(usedCSSVariables.has("--inherited-color"), "--inherited-color should be used");
+        },
+    });
+
+    addTestCase({
+        name: "DOMNodeStyles.usedCSSVariables.InheritedUsedReferenced",
+        description: "An inherited variable referenced by another used variable is found in the set of used variables",
+        selector: "#used-referenced-inherited-variable",
+        checkUsedCSSVariables(usedCSSVariables) {
+            InspectorTest.expectEqual(usedCSSVariables.size, 2, "Set should contain two used variables");
+            InspectorTest.expectTrue(usedCSSVariables.has("--inherited-color"), "--inherited-color should be used");
+            InspectorTest.expectTrue(usedCSSVariables.has("--color"), "--color should be used");
+        },
+    });
+
+    addTestCase({
+        name: "DOMNodeStyles.usedCSSVariables.InheritedNotUsed",
+        description: "Unused inherited variables are not found in the set of used variables",
+        selector: "#unused-inherited-variable",
+        checkUsedCSSVariables(usedCSSVariables) {
+            InspectorTest.expectEqual(usedCSSVariables.size, 1, "Set should contain one used variable");
+            InspectorTest.expectTrue(usedCSSVariables.has("--color"), "--color should be used");
+            InspectorTest.expectFalse(usedCSSVariables.has("--inherited-color"), "--inherited-color should not be used");
+        },
+    });
+
+    addTestCase({
+        name: "DOMNodeStyles.usedCSSVariables.InheritedUsedFunction",
+        description: "An inherited variable used in a function value is found in the set of used variables",
+        selector: "#used-inherited-variable-function",
+        checkUsedCSSVariables(usedCSSVariables) {
+            InspectorTest.expectEqual(usedCSSVariables.size, 1, "Set should contain one used variable");
+            InspectorTest.expectTrue(usedCSSVariables.has("--inherited-color"), "--inherited-color should be used");
+        },
+    });
+
+    addTestCase({
+        name: "DOMNodeStyles.usedCSSVariables.HighSpecificityUsed",
+        description: "A variable declared in a higher specificity rule but used in a lower specificity rule is found in the set of used variables",
+        selector: "#used-higher-specificity",
+        checkUsedCSSVariables(usedCSSVariables) {
+            InspectorTest.expectTrue(usedCSSVariables.has("--color"), "--color should be used");
+        },
+    });
+
+    addTestCase({
+        name: "DOMNodeStyles.usedCSSVariables.InheritedHighSpecificityUsed",
+        description: "An inherited variable declared in a higher specificity rule but used in a lower specificity rule on an inheritable property (`color`) is found in the set of used variables",
+        selector: "#used-higher-specificity-inheritable > p",
+        checkUsedCSSVariables(usedCSSVariables) {
+            InspectorTest.expectEqual(usedCSSVariables.size, 1, "Set should contain one used variable");
+            InspectorTest.expectTrue(usedCSSVariables.has("--color"), "--color should be used");
+        },
+    });
+
+    addTestCase({
+        name: "DOMNodeStyles.usedCSSVariables.InheritedHighSpecificityNotUsed",
+        description: "An inherited variable declared in a higher specificity rule but used in a lower specificity rule on a non-inheritable property (`background-color`) is not found in the set of used variables",
+        selector: "#unused-higher-specificity-non-inheritable > p",
+        checkUsedCSSVariables(usedCSSVariables) {
+            InspectorTest.expectFalse(usedCSSVariables.has("--color"), "--color should not be used");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<style>
+
+html {
+    --inherited-color: green;
+}
+
+div#used-inherited-variable {
+    color: var(--inherited-color, red);
+}
+
+div#used-referenced-inherited-variable {
+    --color: var(--inherited-color);
+    color: var(--color, red);
+}
+
+div#unused-inherited-variable {
+    --color: green;
+    color: var(--color, red);
+}
+
+div#used-inherited-variable-function {
+    background: linear-gradient(90deg, var(--inherited-color, red), white);
+}
+
+div.used-lower-specificity {
+    background-color: var(--color, red);
+}
+
+div#used-higher-specificity {
+    --color: green;
+}
+
+div.used-lower-specificity-inheritable {
+    color: var(--color, red);
+}
+
+div#used-higher-specificity-inheritable {
+    --color: green;
+}
+
+div.unused-lower-specificity-non-inheritable {
+    background-color: var(--color, red);
+}
+
+div#unused-higher-specificity-non-inheritable {
+    --color: green;
+}
+
+</style>
+</head>
+<body onload="runTest();">
+<p>Test for DOMNodeStyles.usedCSSVariables</p>
+<div>
+    <div id="used-inherited-variable"></div>
+    <div id="used-referenced-inherited-variable"></div>
+    <div id="unused-inherited-variable"></div>
+    <div id="used-inherited-variable-function"></div>
+    <div id="used-higher-specificity" class="used-lower-specificity"></div>
+    <div id="used-higher-specificity-inheritable" class="used-lower-specificity-inheritable">
+        <p></p>
+    </div>
+    <div id="unused-higher-specificity-non-inheritable" class="unused-lower-specificity-non-inheritable">
+        <p></p>
+    </div>
+</div>
+</body>
+</html>

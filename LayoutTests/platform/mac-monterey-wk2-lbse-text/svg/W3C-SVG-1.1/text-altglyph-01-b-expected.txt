@@ -1,0 +1,58 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+layer at (5,14) size 463x273
+  RenderSVGContainer {g} at (0,0) size 468x277
+layer at (5,14) size 404x45
+  RenderSVGText {text} at (0,0) size 405x45 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 405x45
+      chunk 1 text run 1 at (5.00,50.00) startOffset 0 endOffset 26 width 404.30: "Test 'altGlyph' facilities"
+layer at (5,63) size 460x34
+  RenderSVGText {text} at (0,49) size 461x34 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 461x34
+      chunk 1 text run 1 at (5.00,90.00) startOffset 0 endOffset 32 width 460.21: "and many-to-many chars to glyphs"
+layer at (50,130) size 418x156
+  RenderSVGContainer {g} at (-5,-5) size 428x166
+layer at (140,130) size 198x75
+  RenderSVGText {text} at (90,0) size 199x76 contains 1 chunk(s)
+    RenderSVGTSpan {altGlyph} at (0,0) size 44x76
+      RenderSVGInlineText {#text} at (0,0) size 44x76
+        chunk 1 text run 1 at (140.00,190.00) startOffset 0 endOffset 1 width 43.33: "H"
+    RenderSVGInlineText {#text} at (0,0) size 0x0
+    RenderSVGTSpan {altGlyph} at (0,0) size 38x76
+      RenderSVGInlineText {#text} at (43,0) size 38x76
+        chunk 1 text run 1 at (183.33,190.00) startOffset 0 endOffset 1 width 37.50: "A"
+    RenderSVGInlineText {#text} at (0,0) size 0x0
+    RenderSVGTSpan {altGlyph} at (0,0) size 41x76
+      RenderSVGInlineText {#text} at (80,0) size 41x76
+        chunk 1 text run 1 at (220.83,190.00) startOffset 0 endOffset 1 width 40.02: "P"
+    RenderSVGInlineText {#text} at (0,0) size 0x0
+    RenderSVGTSpan {altGlyph} at (0,0) size 41x76
+      RenderSVGInlineText {#text} at (120,0) size 41x76
+        chunk 1 text run 1 at (260.85,190.00) startOffset 0 endOffset 1 width 40.02: "P"
+    RenderSVGInlineText {#text} at (0,0) size 0x0
+    RenderSVGTSpan {altGlyph} at (0,0) size 39x76
+      RenderSVGInlineText {#text} at (160,0) size 38x76
+        chunk 1 text run 1 at (300.87,190.00) startOffset 0 endOffset 1 width 37.50: "Y"
+    RenderSVGInlineText {#text} at (0,0) size 0x0
+layer at (50,210) size 113x75
+  RenderSVGText {text} at (0,80) size 113x76 contains 1 chunk(s)
+    RenderSVGTSpan {altGlyph} at (0,0) size 38x76
+      RenderSVGInlineText {#text} at (0,0) size 38x76
+        chunk 1 text run 1 at (50.00,270.00) startOffset 0 endOffset 1 width 37.50: "S"
+    RenderSVGTSpan {altGlyph} at (0,0) size 38x76
+      RenderSVGInlineText {#text} at (37,0) size 38x76
+        chunk 1 text run 1 at (87.50,270.00) startOffset 0 endOffset 1 width 37.50: "A"
+    RenderSVGInlineText {#text} at (75,0) size 38x76
+      chunk 1 text run 1 at (125.00,270.00) startOffset 0 endOffset 1 width 37.50: "D"
+layer at (280,210) size 188x75
+  RenderSVGText {text} at (230,80) size 188x76 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 188x76
+      chunk 1 text run 1 at (280.00,270.00) startOffset 0 endOffset 5 width 187.50: "SASSY"
+layer at (10,304) size 263x46
+  RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 264x46
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.5 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (-1,-1) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

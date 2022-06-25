@@ -1,0 +1,3 @@
+rdar://problem/6621701 Test that XML resources with incorrect encoding retrieved via XMLHttpRequest are fully decoded, cf. bug 17079.
+
+PASS

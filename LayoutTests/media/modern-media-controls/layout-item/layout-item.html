@@ -1,0 +1,30 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+description("Testing the <code>LayoutItem</code> class.");
+
+const layoutDelegate = new class
+{
+    get layoutTraits()
+    {
+        return new MacOSLayoutTraits(LayoutTraits.Mode.Fullscreen);
+    }
+};
+
+debug("Creating a LayoutItem and setting a layout delegate after construction.");
+const itemWithNoParameter = new LayoutItem;
+shouldThrow("itemWithNoParameter.layoutTraits");
+
+itemWithNoParameter.layoutDelegate = layoutDelegate;
+shouldBeType("itemWithNoParameter.layoutTraits", "MacOSLayoutTraits");
+shouldBeTrue("itemWithNoParameter.layoutTraits.isFullscreen");
+
+debug("");
+debug("Creating a LayoutItem with a layout delegate set at construction.");
+const itemWithLayoutDelegate = new LayoutItem({ layoutDelegate });
+shouldBeType("itemWithNoParameter.layoutTraits", "MacOSLayoutTraits");
+shouldBeTrue("itemWithNoParameter.layoutTraits.isFullscreen");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>

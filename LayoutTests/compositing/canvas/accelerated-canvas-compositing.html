@@ -1,0 +1,29 @@
+<!DOCTYPE html><html>
+<head>
+<script>
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
+    }
+
+    function doTest() {
+        var c = document.getElementById('cvs_img2');
+        var ctx = c.getContext('2d');
+        ctx.fillStyle = 'rgba(255,0,0,1)';
+        ctx.fillRect(0,0,c.width, c.height);
+
+        if (window.testRunner) {
+            document.getElementById('layers').innerText = window.internals.layerTreeAsText(document);
+            testRunner.notifyDone();
+        }
+    }
+
+    window.addEventListener('load', doTest, false);
+</script>
+</head>
+<body>
+<p>Tests whether an accelerated canvas creates a compositing layer.</p>
+<canvas id="cvs_img2" width="174" height="131"></canvas>
+<pre id="layers">Layer tree goes here in DRT</pre>
+</body>
+</html>

@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: SyntaxError: No identifiers allowed directly after numeric literal
+
+Harness Error (FAIL), message = SyntaxError: No identifiers allowed directly after numeric literal
+
+

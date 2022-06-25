@@ -1,0 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+<style type="text/css">
+    div.test { width: 200px; height: 120px; border: 1px solid blue; padding: 10px; }
+</style>
+    <script src="resources/repaint.js" type="text/javascript"></script>
+    <script type="text/javascript">
+       function repaintTest()
+       {
+           document.getElementById('a').style.height = '40px';
+           document.getElementById('b').style.height = '60px';
+       }
+    </script>
+</head>
+<body onload="runRepaintTest();">
+<div class="test">
+    <div style="background: teal; padding: 0; outline: solid red 4px; outline-offset: -5px;">
+        <div id="a" style="height: 60px; margin: 10px; background:silver;"></div>
+    </div>
+</div>
+<br>
+<div class="test">
+    <div style="background: teal; padding: 0; outline: solid red 4px; outline-offset: -5px;">
+        <div id="b" style="height: 40px; margin: 10px; background:silver;"></div>
+    </div>
+</div>
+</body>
+</html>

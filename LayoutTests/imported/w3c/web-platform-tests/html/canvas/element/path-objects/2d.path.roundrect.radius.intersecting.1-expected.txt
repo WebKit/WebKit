@@ -1,0 +1,6 @@
+2d.path.roundrect.radius.intersecting.1
+Check that roundRects with intersecting corner arcs are rendered correctly.
+Actual output:
+
+PASS Check that roundRects with intersecting corner arcs are rendered correctly.
+

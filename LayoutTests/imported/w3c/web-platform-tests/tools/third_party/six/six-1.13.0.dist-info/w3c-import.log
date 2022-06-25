@@ -1,0 +1,22 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/six/six-1.13.0.dist-info/INSTALLER
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/six/six-1.13.0.dist-info/LICENSE
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/six/six-1.13.0.dist-info/METADATA
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/six/six-1.13.0.dist-info/RECORD
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/six/six-1.13.0.dist-info/WHEEL
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/six/six-1.13.0.dist-info/top_level.txt

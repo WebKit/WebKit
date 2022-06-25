@@ -1,0 +1,79 @@
+﻿<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+shouldBe('window.atob("YQ==")', '"a"');
+shouldBe('window.atob("YWI=")', '"ab"');
+shouldBe('window.atob("YWJj")', '"abc"');
+shouldBe('window.atob("YWJjZA==")', '"abcd"');
+shouldBe('window.atob("YWJjZGU=")', '"abcde"');
+shouldBe('window.atob("YWJjZGVm")', '"abcdef"');
+shouldBe('window.btoa("a")', '"YQ=="');
+shouldBe('window.btoa("ab")', '"YWI="');
+shouldBe('window.btoa("abc")', '"YWJj"');
+shouldBe('window.btoa("abcd")', '"YWJjZA=="');
+shouldBe('window.btoa("abcde")', '"YWJjZGU="');
+shouldBe('window.btoa("abcdef")', '"YWJjZGVm"');
+
+shouldBe('typeof window.btoa', '"function"');
+shouldThrow('window.btoa()', '"TypeError: Not enough arguments"');
+shouldBe('window.btoa("")', '""');
+shouldBe('window.btoa(null)', '"bnVsbA=="'); // Gets converted to "null" string.
+shouldBe('window.btoa(undefined)', '"dW5kZWZpbmVk"');
+shouldBe('window.btoa(window)', '"W29iamVjdCBXaW5kb3dd"'); // "[object Window]"
+shouldBe('window.btoa("éé")', '"6ek="');
+shouldBe('window.btoa("\\u0080\\u0081")', '"gIE="');
+shouldThrow('window.btoa("тест")');
+window.btoa = 0;
+shouldBe('window.btoa', '0');
+shouldBe('typeof window.btoa', '"number"');
+
+shouldBe('typeof window.atob', '"function"');
+shouldThrow('window.atob()', '"TypeError: Not enough arguments"');
+shouldBe('window.atob("")', '""');
+shouldBe('window.atob(null)', '"\x9Eée"'); // Gets converted to "null" string.
+shouldThrow('window.atob(undefined)');
+shouldBe('window.atob(" YQ==")', '"a"');
+shouldBe('window.atob("YQ==\\u000a")', '"a"');
+shouldBe('window.atob("ab\\tcd")', '"i·\x1d"');
+shouldBe('window.atob("ab\\ncd")', '"i·\x1d"');
+shouldBe('window.atob("ab\\fcd")', '"i·\x1d"');
+shouldBe('window.atob("ab cd")', '"i·\x1d"');
+shouldBe('window.atob("ab\\t\\n\\f\\r cd")', '"i·\x1d"');
+shouldBe('window.atob(" \\t\\n\\f\\r ab\\t\\n\\f\\r cd\\t\\n\\f\\r ")', '"i·\x1d"');
+shouldBe('window.atob("ab\\t\\n\\f\\r =\\t\\n\\f\\r =\\t\\n\\f\\r ")', '"i"');
+shouldBe('window.atob("            ")', '""');
+shouldThrow('window.atob(" abcd===")');
+shouldThrow('window.atob("abcd=== ")');
+shouldThrow('window.atob("abcd ===")');
+shouldBe('window.atob("6ek=")', '"éé"');
+shouldBe('window.atob("6ek")', '"éé"');
+shouldBe('window.atob("gIE=")', '"\u0080\u0081"');
+shouldThrow('window.atob("тест")');
+shouldThrow('window.atob("z")');
+shouldBe('window.atob("zz")', '"Ï"');
+shouldBe('window.atob("zzz")', '"Ï\u003C"');
+shouldBe('window.atob("zzz=")', '"Ï\u003C"');
+shouldThrow('window.atob("zzz==")'); // excess pad characters.
+shouldThrow('window.atob("zzz===")'); // excess pad characters.
+shouldThrow('window.atob("zzz====")'); // excess pad characters.
+shouldThrow('window.atob("zzz=====")'); // excess pad characters.
+shouldBe('window.atob("zzzz")', '"Ï\u003Có"');
+shouldThrow('window.atob("zzzzz")');
+shouldThrow('window.atob("z=zz")');
+shouldThrow('window.atob("=")');
+shouldThrow('window.atob("==")');
+shouldThrow('window.atob("===")');
+shouldThrow('window.atob("====")');
+shouldThrow('window.atob("=====")');
+window.atob = 0;
+shouldBe('window.atob', '0');
+shouldBe('typeof window.atob', '"number"');
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

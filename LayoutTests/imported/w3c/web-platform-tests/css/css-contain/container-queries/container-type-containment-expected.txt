@@ -1,0 +1,8 @@
+AA
+A
+
+PASS container-type:inline-size turns on layout containment
+PASS container-type:inline-size turns on inline-size containment
+PASS container-type:size turns on full size containment
+PASS container-type:inline/size turns on style containment
+

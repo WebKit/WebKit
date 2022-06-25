@@ -1,0 +1,65 @@
+This tests the accessible text alternatives results for SVG when the content-language attribute is set.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+test1:
+	Expected name: generic title; description: generic desc
+	AXTitle: generic title
+	AXDescription: generic desc
+test2:
+	Expected name: title for en; description: desc for en
+	AXTitle: title for en
+	AXDescription: desc for en
+test3:
+	Expected name: title for en; description: desc for en
+	AXTitle: title for en
+	AXDescription: desc for en
+test4:
+	Expected name: title for EN; description: desc for EN
+	AXTitle: title for EN
+	AXDescription: desc for EN
+test5:
+	Expected name: generic title; description: generic desc
+	AXTitle: generic title
+	AXDescription: generic desc
+test6:
+	Expected name: generic title; description: generic desc
+	AXTitle: generic title
+	AXDescription: generic desc
+test7:
+	Expected name: title for en-gb; description: desc for en-gb
+	AXTitle: title for en-gb
+	AXDescription: desc for en-gb
+test8:
+	Expected name: title for en_GB; description: desc for en_GB
+	AXTitle: title for en_GB
+	AXDescription: desc for en_GB
+test9:
+	Expected name: title for en; description: desc for en
+	AXTitle: title for en
+	AXDescription: desc for en
+test10:
+	Expected name: title for en-us; description: desc for en-us
+	AXTitle: title for en-us
+	AXDescription: desc for en-us
+test11:
+	Expected name: title for en-us; description: desc for en-us
+	AXTitle: title for en-us
+	AXDescription: desc for en-us
+test12:
+	Expected name: generic title; description: generic desc
+	AXTitle: generic title
+	AXDescription: generic desc
+test13:
+	Expected name: 1st title for en_GB; description: 1st desc for en_GB
+	AXTitle: 1st title for en_GB
+	AXDescription: 1st desc for en_GB
+test14:
+	Expected name: 1st generic title; description: 1st generic desc
+	AXTitle: 1st generic title
+	AXDescription: 1st generic desc
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

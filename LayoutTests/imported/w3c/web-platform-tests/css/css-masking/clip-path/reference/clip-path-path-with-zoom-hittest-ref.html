@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>CSS Masking: Test clip-path property when the page is zoomed</title>
+  <link rel="author" title="Noam Rosenthal" href="mailto:noam@webkit.org">
+  <link rel="help" href="https://drafts.csswg.org/css-shapes-2/#funcdef-path">
+  <link rel="match" href="reference/clip-path-path-with-zoom-ref.html">
+  <meta name="assert" content="The path gets zoomed together with the content">
+</head>
+<style>
+  #triangle {
+    width: 200px;
+    height: 200px;
+    background-color: green;
+    clip-path: path(nonzero, 'M0 0, L200 0, L0 200, L 0 0');
+  }
+</style>
+<body>
+  <div id="triangle"></div>
+  <output id="log">triangle;triangle;BODY</output>
+</body>
+</html>

@@ -1,0 +1,116 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+layer at (10,304) size 263x46
+  RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 264x46
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.7 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (-1,-1) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+layer at (172,11) size 136x18
+  RenderSVGText {text} at (171,11) size 138x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 137x18
+      chunk 1 (middle anchor) text run 1 at (171.89,25.00) startOffset 0 endOffset 18 width 136.22: "<animateTransform>"
+layer at (-50,-40) size 129x159 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (71,60) size 441x279
+layer at (-36,46) size 74x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (60,90) size 73x18
+layer at (-36,46) size 73x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (0,0) size 73x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 73x18
+      chunk 1 (middle anchor) text run 1 at (-36.50,60.00) startOffset 0 endOffset 11 width 72.99: "type=rotate"
+layer at (-41,26) size 82x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (180,110) size 82x18
+layer at (-41,26) size 81x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (0,0) size 82x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 82x18
+      chunk 1 (middle anchor) text run 1 at (-40.50,40.00) startOffset 0 endOffset 10 width 81.01: "type=skewX"
+layer at (-41,46) size 82x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (300,90) size 82x18
+layer at (-41,46) size 81x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (0,0) size 82x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 82x18
+      chunk 1 (middle anchor) text run 1 at (-40.50,60.00) startOffset 0 endOffset 10 width 81.01: "type=skewY"
+layer at (-40,-40) size 80x119 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (390,60) size 112x149
+layer at (-40,-40) size 80x80 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGEllipse {circle} at (418,88) size 84x84 [stroke={[type=SOLID] [color=#C0C0C0] [stroke width=4.00]}] [cx=0.00] [cy=0.00] [r=40.00]
+layer at (-30,-30) size 60x60 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGEllipse {circle} at (418,88) size 64x64 [stroke={[type=SOLID] [color=#C0C0C0] [stroke width=4.00]}] [cx=0.00] [cy=0.00] [r=30.00]
+layer at (-20,-20) size 40x40 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGEllipse {circle} at (418,88) size 44x44 [stroke={[type=SOLID] [color=#C0C0C0] [stroke width=4.00]}] [cx=0.00] [cy=0.00] [r=20.00]
+layer at (-10,-10) size 20x20 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGEllipse {circle} at (418,88) size 24x24 [stroke={[type=SOLID] [color=#C0C0C0] [stroke width=4.00]}] [cx=0.00] [cy=0.00] [r=10.00]
+layer at (-10,-10) size 20x20 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGEllipse {circle} at (390,60) size 80x80 [fill={[type=SOLID] [color=#C85050]}] [cx=0.00] [cy=0.00] [r=10.00]
+layer at (-34,46) size 68x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (5,86) size 70x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 69x18
+      chunk 1 (middle anchor) text run 1 at (-34.27,60.00) startOffset 0 endOffset 10 width 68.55: "type=scale"
+layer at (-35,61) size 70x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (4,101) size 72x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 71x18
+      chunk 1 (middle anchor) text run 1 at (-35.11,75.00) startOffset 0 endOffset 11 width 70.21: "(sx and sy)"
+layer at (1,86) size 78x33
+  RenderSVGContainer {g} at (20,180) size 78x33
+layer at (4,86) size 73x18
+  RenderSVGText {text} at (2,0) size 74x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 73x18
+      chunk 1 (middle anchor) text run 1 at (3.50,100.00) startOffset 0 endOffset 11 width 72.99: "type=rotate"
+layer at (1,101) size 78x18
+  RenderSVGText {text} at (0,15) size 78x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 78x18
+      chunk 1 (middle anchor) text run 1 at (1.13,115.00) startOffset 0 endOffset 12 width 77.75: "(with cx/cy)"
+layer at (-50,-10) size 100x89 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (178,218) size 104x91
+layer at (-10,-10) size 20x20 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGEllipse {circle} at (178,218) size 24x24 [stroke={[type=SOLID] [color=#C0C0C0] [stroke width=4.00]}] [cx=0.00] [cy=0.00] [r=10.00]
+layer at (10,-10) size 20x20 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGEllipse {circle} at (178,218) size 24x24 [stroke={[type=SOLID] [color=#C0C0C0] [stroke width=4.00]}] [cx=20.00] [cy=0.00] [r=10.00]
+layer at (30,-10) size 20x20 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGEllipse {circle} at (178,218) size 24x24 [stroke={[type=SOLID] [color=#C0C0C0] [stroke width=4.00]}] [cx=40.00] [cy=0.00] [r=10.00]
+layer at (-6,-6) size 12x12 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGEllipse {circle} at (140,220) size 12x12 [fill={[type=SOLID] [color=#C85050]}] [cx=0.00] [cy=0.00] [r=6.00]
+layer at (-45,46) size 90x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (4,56) size 92x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 91x18
+      chunk 1 (middle anchor) text run 1 at (-45.38,60.00) startOffset 0 endOffset 14 width 90.77: "type=translate"
+layer at (-28,61) size 56x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (22,71) size 56x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 56x18
+      chunk 1 (middle anchor) text run 1 at (-27.77,75.00) startOffset 0 endOffset 9 width 55.55: "(tx only)"
+layer at (-50,-40) size 100x119 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (298,218) size 104x121
+layer at (-10,-10) size 20x20 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGEllipse {circle} at (298,218) size 24x24 [stroke={[type=SOLID] [color=#C0C0C0] [stroke width=4.00]}] [cx=0.00] [cy=0.00] [r=10.00]
+layer at (-6,-6) size 12x12 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGEllipse {circle} at (260,250) size 12x12 [fill={[type=SOLID] [color=#C85050]}] [cx=0.00] [cy=0.00] [r=6.00]
+layer at (-45,46) size 90x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (4,86) size 92x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 91x18
+      chunk 1 (middle anchor) text run 1 at (-45.38,60.00) startOffset 0 endOffset 14 width 90.77: "type=translate"
+layer at (-33,61) size 66x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (16,101) size 68x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 67x18
+      chunk 1 (middle anchor) text run 1 at (-33.32,75.00) startOffset 0 endOffset 11 width 66.65: "(tx and ty)"
+layer at (-34,-10) size 70x89 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (382,158) size 107x151
+layer at (-10,-10) size 21x20 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGEllipse {circle} at (388,188) size 84x84 [stroke={[type=SOLID] [color=#C0C0C0]}] [cx=0.00] [cy=0.00] [r=10.00]
+layer at (-10,-10) size 21x20 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGEllipse {circle} at (397,197) size 66x66 [stroke={[type=SOLID] [color=#C0C0C0] [stroke width=1.33]}] [cx=0.00] [cy=0.00] [r=10.00]
+layer at (-10,-10) size 21x20 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGEllipse {circle} at (408,208) size 44x44 [stroke={[type=SOLID] [color=#C0C0C0] [stroke width=2.00]}] [cx=0.00] [cy=0.00] [r=10.00]
+layer at (-10,-10) size 21x20 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGEllipse {circle} at (418,218) size 24x24 [stroke={[type=SOLID] [color=#C0C0C0] [stroke width=4.00]}] [cx=0.00] [cy=0.00] [r=10.00]
+layer at (-10,-10) size 21x20 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGEllipse {circle} at (390,190) size 80x80 [fill={[type=SOLID] [color=#C85050]}] [cx=0.00] [cy=0.00] [r=10.00]
+layer at (-34,46) size 69x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (0,56) size 69x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 69x18
+      chunk 1 (middle anchor) text run 1 at (-34.27,60.00) startOffset 0 endOffset 10 width 68.55: "type=scale"
+layer at (-29,61) size 57x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGText {text} at (5,71) size 58x18 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 58x18
+      chunk 1 (middle anchor) text run 1 at (-28.66,75.00) startOffset 0 endOffset 9 width 57.33: "(sx only)"

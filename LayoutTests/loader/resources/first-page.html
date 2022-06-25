@@ -1,0 +1,27 @@
+<html>
+<head>
+    <script>
+    function didShowPage() {
+        // Notify opener.
+        opener.postMessage('first-page', '*');
+
+        // We register the listeners in the initial load (this is not needed
+        // when the page is restored from cache).
+        if (!event.persisted) {
+            // Our opener will tell us to perform various loads.
+            window.addEventListener('message', function(event) {
+
+                // Navigate to other page.
+                if (event.data === 'navigate-other-page') {
+                    window.location = 'other-page.html';
+                    return;
+                }
+
+            }, false);
+        }
+    }
+    </script>
+</head>
+<body onpageshow="didShowPage();">
+</body>
+</html>

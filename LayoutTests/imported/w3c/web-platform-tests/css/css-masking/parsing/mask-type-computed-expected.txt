@@ -1,0 +1,4 @@
+
+PASS Property mask-type value 'luminance'
+PASS Property mask-type value 'alpha'
+

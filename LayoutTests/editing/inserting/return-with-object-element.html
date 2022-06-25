@@ -1,0 +1,34 @@
+<html>
+<head>
+    <style>
+        div { border:2px solid green; width:700px; }
+    </style>
+    <script>
+        function runTest() {
+            if (window.testRunner)
+                window.testRunner.dumpAsText();
+
+            var obj = document.getElementById("objectInQuestion");
+            var s = window.getSelection();
+            s.setPosition(obj, 0);
+
+            document.execCommand("InsertParagraph");
+        }
+    </script>
+</head>
+<body onload="runTest()">
+    <div contentEditable="true">
+        <a href="http://www.facebook.com/">
+            <span>
+                <object id="objectInQuestion" style="border-color: initial; display: block; position: absolute; background-image: initial; background-repeat: initial; background-attachment: initial; -webkit-background-clip: initial; -webkit-background-origin: initial; "></object>
+            </span>
+        </a>
+    </div>
+    <br>
+    <br>
+    <div>
+        This test is solely making sure we don't crash.
+        <br>If this page loaded then no crash occured.
+    </div>
+</body>
+</html>

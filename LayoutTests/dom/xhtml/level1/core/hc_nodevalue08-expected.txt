@@ -1,0 +1,3 @@
+Test	http://www.w3.org/2001/DOM-Test-Suite/level1/core/hc_nodevalue08
+Status	failure
+Message	notationsNotNull: assertNotNull failed

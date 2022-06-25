@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<body>
+    <script>
+        test(function() {
+            window.open("", "_self");
+            window.close();
+            assert_false(window.closed, "window should not be closeable by script");
+        }, "Calling window.open with windowName '_self' should not make the window closeable by script");
+    </script>
+</body>
+</html>

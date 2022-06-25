@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>
+
+            numberOfTrackTests = 1;
+
+            function trackLoaded()
+            {
+                numberOfTracksLoaded++;
+                if (numberOfTracksLoaded == numberOfTrackTests) {
+                    testTrack0();
+                }
+            }
+
+            function testTrack0()
+            {
+                findMediaElement();
+                var expected =
+                {
+                    length: 3,
+                    tests:
+                    [
+                        {
+                            property: "startTime",
+                            values: [ "0", "2", "4" ],
+                        },
+                        {
+                            property: "endTime",
+                            values: [ "1", "3", "5" ],
+                        },
+                        {
+                            property: "text",
+                            values: [ '', '', '' ],
+                        },
+                    ],
+                };
+
+                testCues(0, expected);
+
+                allTestsEnded();
+            }
+        </script>
+    </head>
+    <body onload="enableAllTextTracks()">
+      <p>Tests that a degenerate cues without separating blank lines are parsed correctly.</p>
+        <video>
+            <track src="captions-webvtt/tc032-degenerate-cues.vtt" onload="trackLoaded()">
+        </video>
+    </body>
+</html>

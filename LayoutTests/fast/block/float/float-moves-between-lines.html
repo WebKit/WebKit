@@ -1,0 +1,17 @@
+<html>
+<head>
+<title>This tests that when a float box gets assigned to a new line, we can properly disconnect it from its original line.</title>
+</head>
+<body>
+<div style="width: 5px;"><img id="makeTaller" style="height: 50px; width: 1px"><img id="removeThis" style="width: 5px; height: 5px;"> <div style="float: left;">foo</div>Pass if no assert in debug.</div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+var removeThis = document.getElementById("removeThis");
+removeThis.offsetTop;
+removeThis.parentNode.removeChild(removeThis); 
+var makeTaller = document.getElementById("makeTaller");
+makeTaller.style.height = '55px';
+</script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<title>old title</title>
+</head>
+<body>
+<script>
+debug("document.title");
+shouldNotBe("Object.getOwnPropertyDescriptor(Document.prototype, 'title')", "Object.getOwnPropertyDescriptor(Document.prototype, 'title')");
+shouldBe("Object.getOwnPropertyDescriptor(Document.prototype, 'title').get", "Object.getOwnPropertyDescriptor(Document.prototype, 'title').get");
+shouldBe("Object.getOwnPropertyDescriptor(Document.prototype, 'title').set", "Object.getOwnPropertyDescriptor(Document.prototype, 'title').set");
+shouldBeEqualToString("Object.getOwnPropertyDescriptor(Document.prototype, 'title').get.toString()", "function title() {\n    [native code]\n}");
+shouldBe("Object.getOwnPropertyDescriptor(Document.prototype, 'title').get.length", "0");
+shouldBeEqualToString("Object.getOwnPropertyDescriptor(Document.prototype, 'title').set.toString()", "function title() {\n    [native code]\n}");
+shouldBe("Object.getOwnPropertyDescriptor(Document.prototype, 'title').set.length", "1");
+shouldBe("Object.getOwnPropertyDescriptor(Document.prototype, 'title').get.call(document)", "document.title");
+shouldBeEqualToString('document.title', 'old title');
+shouldBeEqualToString("Object.getOwnPropertyDescriptor(Document.prototype, 'title').get.call(document)", 'old title');
+shouldThrow("Object.getOwnPropertyDescriptor(Document.prototype, 'title').get.call()");
+shouldThrow("Object.getOwnPropertyDescriptor(Document.prototype, 'title').get.call(null)");
+shouldThrow("Object.getOwnPropertyDescriptor(Document.prototype, 'title').get.call(document.documentElement)");
+shouldBeUndefined("Object.getOwnPropertyDescriptor(Document.prototype, 'title').set.call(document, 'new title')");
+shouldBeEqualToString('document.title', 'new title');
+shouldBeEqualToString("Object.getOwnPropertyDescriptor(Document.prototype, 'title').get.call(document)", 'new title');
+shouldThrow("Object.getOwnPropertyDescriptor(Document.prototype, 'title').set.call()");
+shouldThrow("Object.getOwnPropertyDescriptor(Document.prototype, 'title').set.call(null)");
+shouldThrow("Object.getOwnPropertyDescriptor(Document.prototype, 'title').set.call(document.documentElement)");
+
+// document.readyState CustomAccessor: getter
+// readonly attribute DOMString readyState;
+debug("");
+debug("document.readyState");
+shouldNotBe("Object.getOwnPropertyDescriptor(Document.prototype, 'readyState')", "Object.getOwnPropertyDescriptor(Document.prototype, 'readyState')");
+shouldBe("Object.getOwnPropertyDescriptor(Document.prototype, 'readyState').get", "Object.getOwnPropertyDescriptor(Document.prototype, 'readyState').get");
+shouldBe("Object.getOwnPropertyDescriptor(Document.prototype, 'readyState').set", "Object.getOwnPropertyDescriptor(Document.prototype, 'readyState').set");
+shouldBeEqualToString("Object.getOwnPropertyDescriptor(Document.prototype, 'readyState').get.toString()", "function readyState() {\n    [native code]\n}");
+shouldBe("Object.getOwnPropertyDescriptor(Document.prototype, 'readyState').get.length", "0");
+shouldBe("Object.getOwnPropertyDescriptor(Document.prototype, 'readyState').get.call(document)", "document.readyState");
+shouldBeUndefined("Object.getOwnPropertyDescriptor(Document.prototype, 'readyState').set");
+
+debug("");
+debug("Node.nodeType");
+
+var node_type = Object.getOwnPropertyDescriptor(Node.prototype, 'nodeType');
+
+// tests that logging one of these to the console does not cause a crash or throw an exception.
+shouldNotThrow("console.log(node_type)");
+
+var getter = node_type.get;
+shouldNotThrow("console.log(getter)");
+
+shouldBeDefined("node_type.get");
+shouldBe("node_type.get.call(document.body)", "1");
+shouldBeTrue("node_type.enumerable");
+
+// tests that the getter on native descriptors is always the same under strict equality. 
+var otherGetter = Object.getOwnPropertyDescriptor(Node.prototype, 'nodeType').get;
+shouldBeTrue("getter === otherGetter");
+
+</script>
+</body>
+<script src="../../resources/js-test-post.js"></script>
+</html>

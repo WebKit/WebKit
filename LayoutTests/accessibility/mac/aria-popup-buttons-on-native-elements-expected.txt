@@ -1,0 +1,18 @@
+This tests that native style buttons with aria-haspopup appear as popup buttons.
+PASS: button.role === 'AXRole: AXPopUpButton'
+PASS: button.title === 'AXTitle: Options'
+PASS: button.stringValue === 'AXValue: '
+PASS: button.role === 'AXRole: AXPopUpButton'
+PASS: button.title === 'AXTitle: Options'
+PASS: button.stringValue === 'AXValue: '
+PASS: button.role === 'AXRole: AXPopUpButton'
+PASS: button.title === 'AXTitle: Options'
+PASS: button.stringValue === 'AXValue: '
+PASS: button.role === 'AXRole: AXPopUpButton'
+PASS: button.title === 'AXTitle: Options'
+PASS: button.stringValue === 'AXValue: '
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

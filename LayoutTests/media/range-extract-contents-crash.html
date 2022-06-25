@@ -1,0 +1,64 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/gc.js"></script>
+<script>
+    if (window.testRunner) {
+        window.testRunner.dumpAsText();
+        window.testRunner.waitUntilDone();
+    }
+
+    let tracks = [];
+
+    function runTest()
+    {
+        div = document.getElementsByTagName('div')[0];
+
+        audio = document.createElement("audio");
+        div.appendChild(audio);
+
+        video = document.createElement("video");
+        div.appendChild(video);
+
+        for (let i = 0; i < 10; i++) {
+            let track = document.createElement("track");
+            track.src = 'data:text/vtt,'+encodeURIComponent('WEBVTT\n\n00:00:00.000 --> 00:00:01.000\ntest\n');
+            track.kind = "caption";
+            track.srclang = "fr";
+            video.appendChild(track);
+            tracks.push(track);
+        }
+
+        object = document.createElement("object");
+        video.appendChild(object);
+
+        range = document.createRange();
+        range.selectNodeContents(audio);
+        range.setEndBefore(object);
+        setTimeout(step1, 0);
+        gc();
+    }
+
+    function step1()
+    {
+        range.extractContents();
+        gc();
+        setTimeout(step2, 0);
+    }
+
+    function step2()
+    {
+        for (let i = 0; i < 10; i++)
+            tracks[i].srclang = "en";
+
+        if (window.testRunner)
+            window.testRunner.notifyDone();
+    }
+</script>
+</head>
+<body onload="runTest()">
+    <div></div>
+    <p>Tests that moving a video element from the document tree into a DocumentFragment does not crash.</p>
+    <p>If this test does not crash, it passes.</p>
+</body>
+</html>

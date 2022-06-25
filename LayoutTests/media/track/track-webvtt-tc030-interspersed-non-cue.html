@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>
+
+            numberOfTrackTests = 1;
+
+            function trackLoaded()
+            {
+                numberOfTracksLoaded++;
+                if (numberOfTracksLoaded == numberOfTrackTests) {
+                    testTrack0();
+                }
+            }
+
+            function testTrack0()
+            {
+                findMediaElement();
+                var expected =
+                {
+                    length: 2,
+                    tests:
+                    [
+                        {
+                            property: "text",
+                            values:
+                            [
+                                'First',
+                                'Second',
+                            ],
+                        },
+                    ],
+                };
+                testCues(0, expected);
+
+                allTestsEnded();
+            }
+        </script>
+    </head>
+    <body onload="enableAllTextTracks()">
+      <p>Tests that an empty line after an identifier line discards the current cue and restarts the cue loop.</p>
+        <video>
+            <track src="captions-webvtt/tc030-interspersed-non-cue.vtt" onload="trackLoaded()">
+        </video>
+    </body>
+</html>

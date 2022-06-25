@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="script-src 'none'">
+</head>
+<body>
+<script nonce="a">
+window.webkit.messageHandlers.testHandler.postMessage("MainFrame: A");
+</script>
+<script nonce="b">
+window.webkit.messageHandlers.testHandler.postMessage("MainFrame: B");
+</script>
+<iframe id="iframe" src="page-with-csp-iframe.html"></iframe>
+</body>
+</html>

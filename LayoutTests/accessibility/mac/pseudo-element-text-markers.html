@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+
+<style>
+    body:before {
+        content: "Hello";
+        position: fixed;
+    }
+</style>
+</head>
+<body>
+
+<pre id="tree"></pre>
+
+<script>
+    description("This tests that the pseudo element style:body:before is accessible via the accessibility tree but not via TextMarkers.");
+
+    if (window.accessibilityController) {
+        let root = accessibilityController.rootElement;
+        dumpAccessibilityTree(root);
+
+        var pseudoElement = root.childAtIndex(0).childAtIndex(0).childAtIndex(0);
+        shouldBe("pseudoElement.role", "'AXRole: AXStaticText'");
+        shouldBe("pseudoElement.stringValue", "'AXValue: Hello'");
+
+        var range = pseudoElement.textMarkerRangeForElement(pseudoElement);
+        shouldBe("pseudoElement.textMarkerRangeLength(range)", "0");
+        shouldBe("pseudoElement.stringForTextMarkerRange(range)", "null");
+
+        var start = pseudoElement.startTextMarkerForTextMarkerRange(range);
+        shouldBe("pseudoElement.accessibilityElementForTextMarker(start)", "null");
+        var next = pseudoElement.nextTextMarker(start);
+        shouldBe("pseudoElement.accessibilityElementForTextMarker(next)", "null");
+        var prev = pseudoElement.previousTextMarker(start);
+        shouldBe("pseudoElement.accessibilityElementForTextMarker(prev)", "null");
+    }
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

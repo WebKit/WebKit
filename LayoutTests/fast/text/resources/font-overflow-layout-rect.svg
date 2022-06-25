@@ -1,0 +1,14 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<svg xmlns="http://www.w3.org/2000/svg">
+<metadata></metadata>
+<defs>
+<font id="font-overflow-layout-rect" horiz-adv-x="1024">
+<font-face font-family="font-overflow-layout-rect" units-per-em="1024" ascent="1024" descent="1"/>
+<glyph unicode="a" horiz-adv-x="1024" d="M0 341L-1024 512L0 682L341 1024L512 2048L682 1024L1024 682L2048 512L1024 341L682 0L512 -1024L341 0z"/>
+</font>
+</defs>
+<text x="8" y="24" font-size="16">The green box represents the layout rect of the 'a' glyph.</text>
+<text x="100" y="200" font-size="100" font-family="font-overflow-layout-rect">a</text>
+<rect x="100" y="100" width="100" height="100" fill="none" stroke="green"/>
+</svg>

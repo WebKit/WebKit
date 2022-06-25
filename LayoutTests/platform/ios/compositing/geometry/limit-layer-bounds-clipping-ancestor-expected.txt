@@ -1,0 +1,40 @@
+top
+
+middlebottom
+top
+
+middlebottom
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 2618.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 2618.00)
+      (contentsOpaque 1)
+      (children 3
+        (GraphicsLayer
+          (position 21.00 21.00)
+          (bounds 100.00 100.00)
+        )
+        (GraphicsLayer
+          (position 18.00 10.00)
+          (bounds 220.00 220.00)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (position 28.00 250.00)
+          (bounds 185.00 200.00)
+          (children 1
+            (GraphicsLayer
+              (offsetFromRenderer width=0 height=100)
+              (bounds 149.00 2086.00)
+              (usingTiledLayer 1)
+              (drawsContent 1)
+            )
+          )
+        )
+      )
+    )
+  )
+)
+

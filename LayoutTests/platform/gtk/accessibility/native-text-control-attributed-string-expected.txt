@@ -1,0 +1,135 @@
+Tests that attributedStringForRange works properly for native text and password fields, including for ranges out of bound.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Attributed string for range (0, 9):
+	Default text attributes:
+		indent:0
+		family-name:Liberation Sans
+		bg-color:255,255,255
+		editable:true
+		strikethrough:false
+		direction:ltr
+		style:normal
+		weight:400
+		fg-color:0,0,0
+		size:12pt
+		invisible:false
+		underline:none
+	Range attributes for 'some word':
+Attributed string for range (0, 3):
+	Default text attributes:
+		indent:0
+		family-name:Liberation Sans
+		bg-color:255,255,255
+		editable:true
+		strikethrough:false
+		direction:ltr
+		style:normal
+		weight:400
+		fg-color:0,0,0
+		size:12pt
+		invisible:false
+		underline:none
+	Range attributes for 'som':
+Attributed string for range (5, 4):
+	Default text attributes:
+		indent:0
+		family-name:Liberation Sans
+		bg-color:255,255,255
+		editable:true
+		strikethrough:false
+		direction:ltr
+		style:normal
+		weight:400
+		fg-color:0,0,0
+		size:12pt
+		invisible:false
+		underline:none
+	Range attributes for 'word':
+Attributed string for range (5, 10):
+Attributed string for range (10, 1):
+Attributed string for range (-1, 1):
+	Default text attributes:
+		indent:0
+		family-name:Liberation Sans
+		bg-color:255,255,255
+		editable:true
+		strikethrough:false
+		direction:ltr
+		style:normal
+		weight:400
+		fg-color:0,0,0
+		size:12pt
+		invisible:false
+		underline:none
+	Range attributes for 's':
+
+Attributed string for range (0, 3):
+	Default text attributes:
+		indent:0
+		family-name:Liberation Sans
+		bg-color:255,255,255
+		editable:true
+		strikethrough:false
+		direction:ltr
+		style:normal
+		weight:400
+		fg-color:0,0,0
+		size:12pt
+		invisible:false
+		underline:none
+	Range attributes for '•••':
+Attributed string for range (0, 2):
+	Default text attributes:
+		indent:0
+		family-name:Liberation Sans
+		bg-color:255,255,255
+		editable:true
+		strikethrough:false
+		direction:ltr
+		style:normal
+		weight:400
+		fg-color:0,0,0
+		size:12pt
+		invisible:false
+		underline:none
+	Range attributes for '••':
+Attributed string for range (1, 2):
+	Default text attributes:
+		indent:0
+		family-name:Liberation Sans
+		bg-color:255,255,255
+		editable:true
+		strikethrough:false
+		direction:ltr
+		style:normal
+		weight:400
+		fg-color:0,0,0
+		size:12pt
+		invisible:false
+		underline:none
+	Range attributes for '••':
+Attributed string for range (1, 10):
+Attributed string for range (10, 1):
+Attributed string for range (-1, 1):
+	Default text attributes:
+		indent:0
+		family-name:Liberation Sans
+		bg-color:255,255,255
+		editable:true
+		strikethrough:false
+		direction:ltr
+		style:normal
+		weight:400
+		fg-color:0,0,0
+		size:12pt
+		invisible:false
+		underline:none
+	Range attributes for '•':
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,8 @@
+The headers in this directory are for compiling on macOS 10.15 (Catalina) and newer.
+macOS releases include the ICU binary, but not ICU headers.
+
+For other platforms, installed ICU headers should be used rather than these.
+They are specific to the macOS platform.
+
+The headers here are from ICU version 64.2 downloaded from the ICU project.
+https://icu.unicode.org/download/64#h.vrjm9tyoew9f

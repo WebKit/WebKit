@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+<head>
+  <title>Semantics</title>
+</head>
+
+<body>
+
+  <!-- No annotations: the first child is displayed -->
+  <p>presentation MathML (no annotations): <math><semantics><mtext>presentation MathML</mtext></semantics></math></p>
+  <p>content MathML (no annotations): <math><semantics><csymbol>content MathML</csymbol></semantics></math></p>
+
+  <!-- Presentation MathML: the child is displayed -->
+  <p>presentation MathML ; annotation: <math><semantics><mtext>presentation MathML</mtext><annotation>annotation</annotation></semantics></math></p>
+  <p>presentation MathML ; annotation-xml: <math><semantics><mtext>presentation MathML</mtext><annotation-xml encoding="application/mathml-presentation+xml"><math><mtext>annotation-xml</mtext></math></annotation-xml></semantics></math></p>
+
+  <!-- Content MathML: the annotation is displayed -->
+  <p>content MathML ; annotation: <math><semantics><csymbol>content MathML</csymbol><annotation>annotation</annotation></semantics></math></p>
+  <p>content MathML ; annotation-xml: <math><semantics><csymbol>content MathML</csymbol><annotation-xml encoding="application/mathml-presentation+xml"><math><mtext>annotation-xml</mtext></math></annotation-xml></semantics></math></p>
+
+</body>
+</html>

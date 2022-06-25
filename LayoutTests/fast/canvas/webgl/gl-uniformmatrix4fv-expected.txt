@@ -1,0 +1,26 @@
+This test ensures WebGL implementations handle uniformMatrix in a OpenGL ES 2.0 spec compliant way
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Checking gl.uniformMatrix.
+PASS getError was expected value: INVALID_VALUE : should fail with insufficient array size for uniformMatrix2fv
+PASS getError was expected value: NO_ERROR : should succeed with correct array size for uniformMatrix2fv
+PASS getError was expected value: INVALID_VALUE : should fail with more than 1 array size for uniformMatrix2fv
+PASS getError was expected value: NO_ERROR : can call uniformMatrix2fvwith transpose = false
+PASS getError was expected value: INVALID_VALUE : uniformMatrix2fv should return INVALID_VALUE with transpose = true
+PASS getError was expected value: INVALID_VALUE : should fail with insufficient array size for uniformMatrix3fv
+PASS getError was expected value: NO_ERROR : should succeed with correct array size for uniformMatrix3fv
+PASS getError was expected value: INVALID_VALUE : should fail with more than 1 array size for uniformMatrix3fv
+PASS getError was expected value: NO_ERROR : can call uniformMatrix3fvwith transpose = false
+PASS getError was expected value: INVALID_VALUE : uniformMatrix3fv should return INVALID_VALUE with transpose = true
+PASS getError was expected value: INVALID_VALUE : should fail with insufficient array size for uniformMatrix4fv
+PASS getError was expected value: NO_ERROR : should succeed with correct array size for uniformMatrix4fv
+PASS getError was expected value: INVALID_VALUE : should fail with more than 1 array size for uniformMatrix4fv
+PASS getError was expected value: NO_ERROR : can call uniformMatrix4fvwith transpose = false
+PASS getError was expected value: INVALID_VALUE : uniformMatrix4fv should return INVALID_VALUE with transpose = true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

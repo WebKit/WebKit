@@ -1,0 +1,25 @@
+<p>This tests to make sure that a drag-selecting through a -webkit-user-select:ignore region works.  The selection should end somewhere inside the word 'World' below.</p>
+<div><span id="start">Hello</span> <span id="end" style="-webkit-user-select:ignore;">World</span></div>
+
+<script>
+if (window.testRunner) {
+    start = document.getElementById("start");
+    end = document.getElementById("end");
+
+    x = start.offsetParent.offsetLeft + start.offsetLeft - 5;
+    y = start.offsetParent.offsetTop + start.offsetTop + start.offsetHeight / 2;
+    
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    
+    eventSender.mouseMoveTo(x + 10, y);
+    eventSender.mouseMoveTo(x + 20, y);
+    eventSender.mouseMoveTo(x + 30, y);
+    
+    x = end.offsetParent.offsetLeft + end.offsetLeft + end.offsetWidth / 2;
+    y = end.offsetParent.offsetTop + end.offsetTop + end.offsetHeight / 2;
+    
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseUp();
+}
+</script>

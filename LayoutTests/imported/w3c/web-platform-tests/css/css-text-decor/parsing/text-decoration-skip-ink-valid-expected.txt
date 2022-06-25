@@ -1,0 +1,4 @@
+
+PASS e.style['text-decoration-skip-ink'] = "auto" should set the property value
+PASS e.style['text-decoration-skip-ink'] = "none" should set the property value
+

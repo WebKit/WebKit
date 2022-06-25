@@ -1,0 +1,20 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <script src="../../resources/testharness.js"></script>
+        <script src="../../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <script>
+promise_test(async (test) => {
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(true);
+
+    for (var cptr = 0; cptr < 5; ++cptr) {
+        const stream = await navigator.mediaDevices.getUserMedia({audio:false, video:true});
+        stream.getTracks().forEach((track) => track.stop());
+    }
+}, "Call getUserMedia and track.stop in a loop");
+        </script>
+    </body>
+</html>

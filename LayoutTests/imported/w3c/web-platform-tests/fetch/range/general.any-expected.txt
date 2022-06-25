@@ -1,0 +1,9 @@
+
+PASS Range header setting allowed for guard type: none
+PASS Range header setting allowed for guard type: response
+PASS Range header setting allowed for guard type: request
+PASS Privileged header not allowed for guard type: request-no-cors
+PASS Fetch with range header will be sent with Accept-Encoding: identity
+PASS Cross Origin Fetch with non safe range header
+PASS Cross Origin Fetch with safe range header
+

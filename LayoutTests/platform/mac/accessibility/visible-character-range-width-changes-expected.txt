@@ -1,0 +1,22 @@
+This tests that visibleCharacterRange returns expected visible ranges with various view width values.
+
+
+Testing view width values 100 to 1300.
+Range with view 100x500, scrollTop 500: NSRange: {80, 260}
+Range with view 200x500, scrollTop 500: NSRange: {840, 810}
+Range with view 300x500, scrollTop 500: NSRange: {1400, 1350}
+Range with view 400x500, scrollTop 500: NSRange: {1960, 1890}
+Range with view 500x500, scrollTop 500: NSRange: {2520, 2430}
+Range with view 600x500, scrollTop 500: NSRange: {2940, 2799}
+Range with view 700x500, scrollTop 500: NSRange: {2375, 3364}
+Range with view 800x500, scrollTop 500: NSRange: {1885, 3854}
+Range with view 900x500, scrollTop 500: NSRange: {1320, 4419}
+Range with view 1000x500, scrollTop 500: NSRange: {925, 4814}
+Range with view 1100x500, scrollTop 500: NSRange: {400, 5339}
+Range with view 1200x500, scrollTop 500: NSRange: {0, 5739}
+Range with view 1300x500, scrollTop 500: NSRange: {0, 5739}
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-webm-opus-partial</title>
+    <script src="../../media/media-source/media-source-loader.js"></script>
+    <script src="../../media/video-test.js"></script>
+    <script>
+    var loader;
+    var source;
+    var sourceBuffer;
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    window.addEventListener('load', async event => {
+        try {
+            findMediaElement();
+            loader = new MediaSourceLoader('content/test-opus-manifest.json');
+            await loaderPromise(loader);
+
+            source = new MediaSource();
+            run('video.src = URL.createObjectURL(source)');
+            await waitFor(source, 'sourceopen');
+            waitFor(video, 'error').then(failTest);
+
+            run('sourceBuffer = source.addSourceBuffer(loader.type())');
+            run('sourceBuffer.appendBuffer(loader.initSegment())');
+            await waitFor(sourceBuffer, 'update');
+
+            consoleWrite('Divide the first media segment in two.');
+            run('partial1 = loader.mediaSegment(0).slice(0, 14006)');
+            run('partial2 = loader.mediaSegment(0).slice(14006)');
+
+            consoleWrite('Append a partial media segment.')
+            run('sourceBuffer.appendBuffer(partial1)');
+            await waitFor(sourceBuffer, 'update');
+            testExpected('sourceBuffer.buffered.length', '1');
+            testExpected('sourceBuffer.buffered.end(0)', '3.621', '==');
+
+            consoleWrite('Complete the partial media segment.')
+            run('sourceBuffer.appendBuffer(partial2)');
+            await waitFor(sourceBuffer, 'update');
+
+            testExpected('sourceBuffer.buffered.length', '1');
+            testExpected('sourceBuffer.buffered.end(0)', '10.001', '==');
+
+            consoleWrite('Clean sourcebuffer of all content.');
+            run('sourceBuffer.remove(0, 100)');
+            await waitFor(sourceBuffer, 'update');
+
+            consoleWrite('Append the two media segment in reverse order.');
+            run('sourceBuffer.appendBuffer(loader.mediaSegment(1))');
+            await waitFor(sourceBuffer, 'update');
+            testExpected('sourceBuffer.buffered.length', '1');
+            testExpected('sourceBuffer.buffered.end(0)', '90.001', '==');
+
+            run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
+            await waitFor(sourceBuffer, 'update');
+            testExpected('sourceBuffer.buffered.length', '2');
+            testExpected('sourceBuffer.buffered.end(0)', '10.001', '==');
+            testExpected('sourceBuffer.buffered.end(1)', '90.001', '==');
+
+            endTest();
+        } catch (e) {
+            failTest(`Caught exception: "${e}"`);
+        }
+    });
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>

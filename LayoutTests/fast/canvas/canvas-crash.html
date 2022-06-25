@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<title>Canvas test: This test passes if it doesn't crash.'</title>
+
+<body>
+
+<a id="a"></a>
+
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function canvastest()
+{
+    if (window.internals) {
+        window.internals.setMaxCanvasPixelMemory(16384 * 16384 * 4);
+        window.internals.setMaxCanvasArea(13951 * 11138);
+    }
+    var ctx = document.getCSSCanvasContext("2d", "canvastest", 13951, 11138);
+    ctx.putImageData(ctx.getImageData(1431655766, document.getElementById("a").appendChild(document.createElement("media")).clientWidth, 4096, -1024), 128, -65535, 127, -2147483648, 2147483647, -2147483648);
+
+    // Resize the context to ensure the large canvas doesn't leak into the next test.
+    document.getCSSCanvasContext("2d", "canvastest", 1, 1);
+}
+
+canvastest();
+
+var result = document.getElementById("a");
+result.innerHTML = "PASSED";
+
+</script>
+
+</body>

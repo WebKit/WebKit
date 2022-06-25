@@ -1,0 +1,3 @@
+
+PASS window.devicePixelRatio in an undisplayed iframe matches the dpi of the parent document
+

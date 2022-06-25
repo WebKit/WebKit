@@ -1,0 +1,34 @@
+Verifies that changing the text writing direction fires input events which may be prevented. To manually test, select 'מקור' in the top contenteditable and change the selection direction to 'left to right'; then, select the same word in the prevented contenteditable and change selection direction to 'left to right'. Check that the bottom editable area's contents did not change.
+
+beforeinput, formatSetInlineTextDirection, ltr on #notPrevented:
+| "Hello <#selection-anchor>מקור<#selection-focus> השם עברית world"
+
+input, formatSetInlineTextDirection, ltr on #notPrevented:
+| "Hello "
+| <span>
+|   style="unicode-bidi: embed;"
+|   "<#selection-anchor>מקור<#selection-focus>"
+| " השם עברית world"
+
+beforeinput, formatSetInlineTextDirection, rtl on #notPrevented:
+| "Hello "
+| <span>
+|   style="unicode-bidi: embed;"
+|   "מקור"
+| " השם עברית <#selection-anchor>world<#selection-focus>"
+
+input, formatSetInlineTextDirection, rtl on #notPrevented:
+| "Hello "
+| <span>
+|   style="unicode-bidi: embed;"
+|   "מקור"
+| " השם עברית "
+| <span>
+|   style="unicode-bidi: embed; direction: rtl;"
+|   "<#selection-anchor>world<#selection-focus>"
+
+beforeinput, formatSetInlineTextDirection, ltr on #prevented:
+| "Hello <#selection-anchor>מקור<#selection-focus> השם עברית world"
+
+beforeinput, formatSetInlineTextDirection, rtl on #prevented:
+| "Hello מקור השם עברית <#selection-anchor>world<#selection-focus>"

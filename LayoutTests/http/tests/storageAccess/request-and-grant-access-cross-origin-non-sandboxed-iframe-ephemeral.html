@@ -1,0 +1,81 @@
+<!-- webkit-test-runner [ useEphemeralSession=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="/js-test-resources/ui-helper.js"></script>
+    <script src="/resourceLoadStatistics/resources/util.js"></script>
+    <script>
+        description("Tests that cross-origin iframe storage access is granted if the iframe is not sandboxed and the user accepts (ephemeral).");
+        jsTestIsAsync = true;
+
+        const firstPartyUrl = "http://127.0.0.1:8000";
+        const thirdPartyUrl = "http://localhost:8000";
+
+        window.addEventListener("message", receiveMessage, false);
+
+        function finishTest() {
+            testRunner.setStatisticsShouldBlockThirdPartyCookies(false, function() {
+                setEnableFeature(false, finishJSTest);
+            });
+        }
+
+        function receiveMessage(event) {
+            if (event.origin === "http://localhost:8000") {
+                if (event.data.indexOf("PASS ") !== -1)
+                    testPassed(event.data.replace("PASS ", ""));
+                else
+                    testFailed(event.data);
+            } else
+                testFailed("Received a message from an unexpected origin: " + event.origin);
+            finishTest();
+        }
+
+        function activateElement(elementId) {
+            var element = document.getElementById(elementId);
+            var centerX = element.offsetLeft + element.offsetWidth / 2;
+            var centerY = element.offsetTop + element.offsetHeight / 2;
+            UIHelper.activateAt(centerX, centerY).then(
+                function () {
+                    if (window.eventSender)
+                        eventSender.keyDown("escape");
+                    else {
+                        testFailed("No eventSender.");
+                        finishTest();
+                    }
+                },
+                function () {
+                    testFailed("Promise rejected.");
+                    finishTest();
+                }
+            );
+        }
+
+        function runTest() {
+            switch (document.location.hash) {
+                case "":
+                    setEnableFeature(true, function() {
+                        testRunner.setStatisticsShouldBlockThirdPartyCookies(true, function() {
+                            // Set a cookie for the third-party and continue.
+                            document.location.href = thirdPartyUrl + "/storageAccess/resources/set-cookie.py?name=firstPartyCookie&value=value#" + firstPartyUrl + "/storageAccess/request-and-grant-access-cross-origin-non-sandboxed-iframe-ephemeral.html#step1";
+                        });
+                    });
+                    break;
+                case "#step1":
+                    testRunner.setStatisticsHasHadUserInteraction(thirdPartyUrl, true, function() {
+                        let iframeElement = document.createElement("iframe");
+                        iframeElement.onload = function() {
+                            activateElement("TheIframeThatRequestsStorageAccess");
+                        };
+                        iframeElement.id = "TheIframeThatRequestsStorageAccess";
+                        iframeElement.src = thirdPartyUrl + "/storageAccess/resources/request-storage-access-iframe.html#userShouldGrantAccess,userShouldBeConsulted,policyShouldGrantAccess,isNotSameOriginIframe";
+                        document.body.appendChild(iframeElement);
+                    });
+                    break;
+            }
+        }
+    </script>
+</head>
+<body onload="runTest()">
+</body>
+</html>

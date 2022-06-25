@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+window.jsTestIsAsync = true;
+
+let testElement;
+
+function checkTextInput(event)
+{
+    shouldBeEqualToString("window.event.data", "a");
+    document.body.removeChild(testElement);
+    finishJSTest();
+}
+
+function handleFocus()
+{
+    testElement.addEventListener("input", checkTextInput, { once: true });
+    if (window.testRunner) {
+        UIHelper.keyDown("v", ["metaKey", "shiftKey"]); // Should emit no TextInput event.
+        UIHelper.keyDown("a"); // To end the test.
+    }
+}
+
+function runTest()
+{
+    testElement = document.getElementById("test");
+
+    description("Tests that <kbd>Command</kbd> + <kbd>Shift</kbd> + <kbd>v</kbd> does not insert v and that pressing <kbd>a</kbd> does insert an a.");
+
+    testElement.addEventListener("focus", handleFocus, { once: true });
+    if (window.testRunner)
+        UIHelper.activateFormControl(testElement);
+    else
+        testElement.focus();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p id="description"></p>
+<div id="console"></div>
+<input type="text" id="test" placeholder="Press Command + Shift + v. Then press a." style="width: 300px"></div>
+</body>
+</html>

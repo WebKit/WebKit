@@ -1,0 +1,8 @@
+Test1
+
+Test1
+
+
+PASS Container ineligible for containment
+PASS Changing containment eligibility invalidates style
+

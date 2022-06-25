@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Performance Dashboard is Loading...</title>
+    <script>
+
+        function redirectToV3IfNeeded()
+        {
+            const hash = window.location.hash;
+            if (hash.startsWith('#/analysis') || hash.startsWith('#/dashboard'))
+                window.location.pathname = '/v3/';
+            else
+                window.location.href = '/v3/';
+        }
+
+        window.onhashchange = redirectToV3IfNeeded;
+        redirectToV3IfNeeded();
+
+    </script>
+</head>
+<body>
+Redirecting to v3 UI...
+</body>
+</html>

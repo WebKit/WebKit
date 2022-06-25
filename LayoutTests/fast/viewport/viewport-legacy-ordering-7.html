@@ -1,0 +1,15 @@
+<head>
+    <title>Viewport, MobileOptimized, HandheldFriendly Meta.</title>
+    <meta name="viewport" content="width = 300">
+    <meta name="MobileOptimized" content="480">
+    <meta name="HandheldFriendly" content="true">
+    <script>
+        function test() {
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                alert(internals.configurationForViewport(1, 320, 480, 320, 352));
+            }
+        }
+    </script>
+</head>
+<body onload="test();">

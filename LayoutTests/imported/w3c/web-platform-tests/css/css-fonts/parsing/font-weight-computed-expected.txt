@@ -1,0 +1,31 @@
+
+PASS Property font-weight value 'normal'
+PASS Property font-weight value 'bold'
+PASS Property font-weight value '100'
+PASS Property font-weight value '200'
+PASS Property font-weight value '300'
+PASS Property font-weight value '400'
+PASS Property font-weight value '500'
+PASS Property font-weight value '600'
+PASS Property font-weight value '700'
+PASS Property font-weight value '800'
+PASS Property font-weight value '900'
+PASS 100 made bolder computes to 400
+PASS 200 made bolder computes to 400
+PASS 300 made bolder computes to 400
+PASS 400 made bolder computes to 700
+PASS 500 made bolder computes to 700
+PASS 600 made bolder computes to 900
+PASS 700 made bolder computes to 900
+PASS 800 made bolder computes to 900
+PASS 900 made bolder computes to 900
+PASS 100 made lighter computes to 100
+PASS 200 made lighter computes to 100
+PASS 300 made lighter computes to 100
+PASS 400 made lighter computes to 100
+PASS 500 made lighter computes to 100
+PASS 600 made lighter computes to 400
+PASS 700 made lighter computes to 400
+PASS 800 made lighter computes to 700
+PASS 900 made lighter computes to 700
+

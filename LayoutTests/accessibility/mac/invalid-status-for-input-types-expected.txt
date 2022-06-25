@@ -1,0 +1,21 @@
+This tests that we are exposing correct invalid status for different types.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Testing #number-input-valid
+PASS input.stringAttributeValue('AXInvalid') is 'false'
+Testing #url-input-invalid
+PASS input.stringAttributeValue('AXInvalid') is 'true'
+Testing #url-input-valid
+PASS input.stringAttributeValue('AXInvalid') is 'false'
+Testing #email-input-invalid
+PASS input.stringAttributeValue('AXInvalid') is 'true'
+Testing #email-input-valid
+PASS input.stringAttributeValue('AXInvalid') is 'false'
+Testing #number-input-invalid
+PASS input.stringAttributeValue('AXInvalid') is 'true'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

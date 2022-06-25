@@ -1,0 +1,4 @@
+
+PASS Input sources are re-created when handedness or target ray mode changes - webgl
+FAIL Input sources are re-created when handedness or target ray mode changes - webgl2 assert_implements: webgl2 not supported. undefined
+

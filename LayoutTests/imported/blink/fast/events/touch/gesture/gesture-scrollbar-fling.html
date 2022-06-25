@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+
+<!-- This tests that the scrollbar thumb is deselected on a fling start -->
+
+<head>
+<style type="text/css">
+::-webkit-scrollbar {
+  background-color: #ccc;
+  height: 15px;
+  width: 15px;
+}
+
+::-webkit-scrollbar-button {
+  display: none;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #777;
+  height: 15px;
+  width: 15px;
+}
+
+::-webkit-scrollbar-thumb:active {
+  background-color: #333;
+}
+
+#scrollable {
+    height: 300px;
+    width: 300px;
+    overflow: scroll;
+}
+
+.large {
+    height: 600px;
+    width: 600px;
+}
+</style>
+</head>
+<body onload="runTest();">
+<div id="scrollable">
+  <div class="large">
+  </div>
+</div>
+<div id="console"></div>
+
+<script type="text/javascript">
+
+
+function scrollTest() {
+    var movingDiv;
+    movingDiv = document.getElementById('scrollable');
+    var scrollbarX = movingDiv.offsetLeft + movingDiv.offsetWidth - 5;
+    var scrollThumbSafeOffset = 80;
+    var scrollbarY = movingDiv.offsetTop + scrollThumbSafeOffset;
+
+    // Ensure we use a touch with an area to test under touch adjustment
+    var touchWidth = 25;
+    var touchHeight = 25;
+
+    eventSender.gestureTapDown(scrollbarX, scrollbarY, touchWidth, touchHeight);
+    eventSender.gestureFlingStart(0, 0, 0, 0, "touchscreen");
+}
+
+function exitIfNecessary()
+{
+    debug('Gesture events not implemented on this platform or broken');
+    isSuccessfullyParsed();
+}
+
+function runTest()
+{
+    internals.settings.setMockScrollbarsEnabled(true);
+
+    if (window.eventSender) {
+        if (eventSender.clearTouchPoints)
+            scrollTest();
+        else
+            exitIfNecessary();
+    } else {
+        debug("This test requires DumpRenderTree.");
+    }
+}
+</script>
+</body>
+</html>

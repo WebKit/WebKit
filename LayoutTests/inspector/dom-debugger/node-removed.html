@@ -1,0 +1,123 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+function removeNode()
+{
+    document.getElementById("target_element").remove();
+}
+
+function moveNode()
+{
+    var targetElement = document.getElementById("target_element");
+    document.getElementById("final_container").appendChild(targetElement);
+}
+
+function test()
+{
+    var nodesById = {};
+
+    InspectorProtocol.eventHandler["DOM.setChildNodes"] = onSetChildNodes;
+    InspectorProtocol.eventHandler["DOM.childNodeRemoved"] = onChildNodeRemoved;
+    InspectorProtocol.eventHandler["DOM.childNodeInserted"] = onChildNodeInserted;
+    InspectorProtocol.eventHandler["Debugger.paused"] = onDebuggerPaused;
+
+    function createNodeAttributesMap(attributes)
+    {
+        var attributesMap = {};
+        for (var i = 0; i < attributes.length; i += 2)
+            attributesMap[attributes[i]] = attributes[i + 1];
+        return attributesMap;
+    }
+
+    function collectNode(node)
+    {
+        if (node.nodeType === 1)
+            node.attributes = createNodeAttributesMap(node.attributes);
+        if (node.children)
+            node.children.forEach(collectNode);
+        nodesById[node.nodeId] = node;
+    }
+
+    function nodeToString(node)
+    {
+        switch (node.nodeType) {
+        case 1:
+            return node.localName + "#" + node.attributes.id;
+        case 3:
+            return "<text node " + JSON.stringify(node.nodeValue) + ">";
+        default:
+            return "<nodeType " + node.nodeType + ">";
+        }
+    }
+
+    function getNodeIdentifier(nodeId)
+    {
+        if (!nodeId)
+            return "<invalid node id>";
+        var node = nodesById[nodeId];
+        return node ? nodeToString(node) : "<unknown node>";
+    }
+
+    function onSetChildNodes(response)
+    {
+        response.params.nodes.forEach(collectNode);
+    }
+
+    function onChildNodeRemoved(response)
+    {
+        var nodeId = response.params.nodeId;
+        ProtocolTest.expectThat(getNodeIdentifier(nodeId) === "div#target_element", "onChildNodeRemoved called for #target_element");
+        delete nodesById[nodeId];
+    }
+
+    function onChildNodeInserted(response)
+    {
+        collectNode(response.params.node);
+        ProtocolTest.expectThat(getNodeIdentifier(response.params.parentNodeId) === "div#final_container", "onChildNodeInserted called for parent node #final_container");
+        ProtocolTest.expectThat(getNodeIdentifier(response.params.node.nodeId) === "div#target_element", "onChildNodeInserted called for child node #target_element");
+    }
+
+    function onDebuggerPaused(response)
+    {
+        ProtocolTest.log("Stopped on DOM breakpoint");
+        InspectorProtocol.sendCommand("Runtime.evaluate", {"expression": "moveNode()"}, function() {
+            InspectorProtocol.sendCommand("Debugger.resume");
+            ProtocolTest.completeTest();
+        });
+    }
+
+    function onGotDocument(response)
+    {
+        InspectorProtocol.checkForError(response);
+        InspectorProtocol.sendCommand("DOM.querySelectorAll", {"nodeId": response.result.root.nodeId, "selector": "#target_element,#final_container"}, onQuerySelectorAll);
+    }
+
+    function onQuerySelectorAll(response)
+    {
+        var targetElementId = response.result.nodeIds[0];
+        var finalContainerId = response.result.nodeIds[1];
+
+        InspectorProtocol.sendCommand("DOMDebugger.setDOMBreakpoint", {nodeId: targetElementId, type: "node-removed"});
+        InspectorProtocol.sendCommand("DOM.requestChildNodes", {nodeId: finalContainerId});
+
+        InspectorProtocol.sendCommand("Runtime.evaluate", {"expression": "removeNode()"});
+    }
+
+    InspectorProtocol.sendCommand("Debugger.enable", {});
+    InspectorProtocol.sendCommand("Debugger.setBreakpointsActive", {active: true});
+    InspectorProtocol.sendCommand("DOM.getDocument", {}, onGotDocument);
+    // Log something to precreate output element to avoid DOM events from test logs.
+    ProtocolTest.log("Created output element.");
+}
+</script>
+</head>
+<body onload="runTest()">
+
+<p>Testing that DOM.childNodeRemoved is correctly triggered even when the element is moved while paused in the debugger on a DOMDebugger "node-removed" breakpoint.</p>
+
+<div id="target_element"></div>
+<div id="final_container"></div>
+
+</body>
+</html>

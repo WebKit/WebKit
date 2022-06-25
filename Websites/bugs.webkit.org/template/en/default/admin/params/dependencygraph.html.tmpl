@@ -1,0 +1,46 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+[%
+   title = "Graphs"
+   desc = "Optional setup to generate graphs"
+%]
+
+[% param_descs = {
+  webdotbase => "It is possible to show graphs of dependent ${terms.bugs}. You may set
+                 this parameter to any of the following:
+                 <ul>
+                   <li>
+                     A complete file path to 'dot' (part of
+                     <a href=\"http://www.graphviz.org\">GraphViz</a>) will
+                     generate the graphs locally.
+                   </li>
+                   <li>
+                     A URL prefix pointing to an installation of the
+                     <a href=\"http://www.research.att.com/~north/cgi-bin/webdot.cgi\">webdot
+                     package</a> will generate the graphs remotely.
+                   </li>
+                   <li>
+                     A blank value will disable dependency graphing.
+                   </li>
+                 </ul>
+                 The default value is a publicly-accessible webdot server. If you change
+                 this value, make certain that the webdot server can read files from your
+                 webdot directory. On Apache you do this by editing the .htaccess file,
+                 for other systems the needed measures may vary. You can run <kbd>checksetup.pl</kbd>
+                 to recreate the .htaccess file if it has been lost.",
+
+  font_file => "You can specify the full path to a TrueType or OpenType font file which will " _
+               "be used to display text (labels, legends, ...) in charts and graphical reports. " _
+               "To support as many languages as possible, we recommend to specify a font " _
+               "such as <a href=\"http://unifoundry.com/unifont.html\">Unifont</a> " _
+               "which supports all printable characters in the Basic Multilingual Plane. " _
+               "If you leave this parameter empty, a default font will be used, but " _
+               "its support is limited to English characters only and so other characters " _
+               "will be displayed incorrectly.",
+  }
+%]

@@ -1,0 +1,6 @@
+
+PASS <iframe src='javascript:'> blocked without 'unsafe-inline'.
+PASS <iframe> navigated to 'javascript:' blocked without 'unsafe-inline'.
+PASS <iframe src='...'> with 'unsafe-inline' navigated to 'javascript:' blocked in this document
+PASS <iframe src='...'> without 'unsafe-inline' navigated to 'javascript:' blocked in this document.
+

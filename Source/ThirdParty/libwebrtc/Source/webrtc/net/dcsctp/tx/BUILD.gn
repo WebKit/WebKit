@@ -1,0 +1,142 @@
+# Copyright (c) 2021 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+rtc_source_set("send_queue") {
+  deps = [
+    "../../../api:array_view",
+    "../common:internal_types",
+    "../packet:chunk",
+    "../packet:data",
+    "../public:types",
+  ]
+  sources = [ "send_queue.h" ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+}
+
+rtc_library("rr_send_queue") {
+  deps = [
+    ":send_queue",
+    "../../../api:array_view",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:rtc_base_approved",
+    "../packet:data",
+    "../public:socket",
+    "../public:types",
+  ]
+  sources = [
+    "rr_send_queue.cc",
+    "rr_send_queue.h",
+  ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/algorithm:container",
+    "//third_party/abseil-cpp/absl/algorithm:container",
+    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+rtc_library("retransmission_error_counter") {
+  deps = [
+    "../../../rtc_base:checks",
+    "../../../rtc_base:rtc_base_approved",
+    "../public:types",
+  ]
+  sources = [
+    "retransmission_error_counter.cc",
+    "retransmission_error_counter.h",
+  ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
+}
+
+rtc_library("retransmission_timeout") {
+  deps = [
+    "../../../rtc_base:checks",
+    "../../../rtc_base:rtc_base_approved",
+    "../public:types",
+  ]
+  sources = [
+    "retransmission_timeout.cc",
+    "retransmission_timeout.h",
+  ]
+}
+
+rtc_library("retransmission_queue") {
+  deps = [
+    ":retransmission_timeout",
+    ":send_queue",
+    "../../../api:array_view",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:rtc_base_approved",
+    "../common:math",
+    "../common:sequence_numbers",
+    "../common:str_join",
+    "../packet:chunk",
+    "../packet:data",
+    "../public:socket",
+    "../public:types",
+    "../timer",
+  ]
+  sources = [
+    "retransmission_queue.cc",
+    "retransmission_queue.h",
+  ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/algorithm:container",
+    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_source_set("mock_send_queue") {
+    testonly = true
+    deps = [
+      ":send_queue",
+      "../../../api:array_view",
+      "../../../test:test_support",
+    ]
+    absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+    sources = [ "mock_send_queue.h" ]
+  }
+
+  rtc_library("dcsctp_tx_unittests") {
+    testonly = true
+
+    deps = [
+      ":mock_send_queue",
+      ":retransmission_error_counter",
+      ":retransmission_queue",
+      ":retransmission_timeout",
+      ":rr_send_queue",
+      ":send_queue",
+      "../../../api:array_view",
+      "../../../rtc_base:checks",
+      "../../../rtc_base:gunit_helpers",
+      "../../../rtc_base:rtc_base_approved",
+      "../../../test:test_support",
+      "../common:handover_testing",
+      "../common:math",
+      "../packet:chunk",
+      "../packet:data",
+      "../public:socket",
+      "../public:types",
+      "../testing:data_generator",
+      "../testing:testing_macros",
+      "../timer",
+    ]
+    absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+    sources = [
+      "retransmission_error_counter_test.cc",
+      "retransmission_queue_test.cc",
+      "retransmission_timeout_test.cc",
+      "rr_send_queue_test.cc",
+    ]
+  }
+}

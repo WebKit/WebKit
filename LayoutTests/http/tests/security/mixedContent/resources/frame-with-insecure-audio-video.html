@@ -1,0 +1,10 @@
+<body onload="loaded()">
+<audio src="http://127.0.0.1:8080/resources/test.mp4"></audio>
+<video src="http://127.0.0.1:8080/resources/test.mp4"></video>
+<script>
+function loaded() {
+    if (window.opener)
+        window.opener.postMessage('done', '*');
+}
+</script>
+</body>

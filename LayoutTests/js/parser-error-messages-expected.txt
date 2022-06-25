@@ -1,0 +1,14 @@
+Tests error messages to make sure that they're sane
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS parseTest('0x') is "No hexadecimal digits after '0x'"
+PASS parseTest('0xg') is "No hexadecimal digits after '0x'"
+PASS parseTest('0x1.2') is "Unexpected number '.2'. Parse error."
+PASS parseTest('0x1g') is "No space between hexadecimal literal and identifier"
+PASS parseTest('0x1in') is "No space between hexadecimal literal and identifier"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

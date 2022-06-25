@@ -1,0 +1,4 @@
+
+PASS Inline style blocks should not have a sample.
+PASS Inline style attributes should not have a sample.
+

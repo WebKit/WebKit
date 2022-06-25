@@ -1,0 +1,70 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (16,0) size 779x600
+      RenderSVGText {text} at (120,2) size 243x15 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 243x14
+          chunk 1 text run 1 at (120.00,14.00) startOffset 0 endOffset 42 width 242.76: "Quadric bezier curves drawn with commands:"
+      RenderSVGPath {path} at (21,0) size 287x153 [stroke={[type=SOLID] [color=#0000FF] [stroke width=3.00]}] [data="M 15 20 C 25 86.6667 63.3333 90 130 30 M 180 80 C 130 13.3333 75.6667 -6.66667 17 20 Z"]
+      RenderSVGText {text} at (80,74) size 69x15 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 69x14
+          chunk 1 text run 1 at (80.00,86.00) startOffset 0 endOffset 13 width 68.67: "M, Q, M, q, z"
+      RenderSVGRect {rect} at (21,30) size 8x7 [fill={[type=SOLID] [color=#00C000]}] [x=13.00] [y=18.00] [width=4.00] [height=4.00]
+      RenderSVGRect {rect} at (213,46) size 7x8 [fill={[type=SOLID] [color=#00C000]}] [x=128.00] [y=28.00] [width=4.00] [height=4.00]
+      RenderSVGRect {rect} at (296,130) size 8x7 [fill={[type=SOLID] [color=#00C000]}] [x=178.00] [y=78.00] [width=4.00] [height=4.00]
+      RenderSVGRect {rect} at (25,30) size 7x7 [fill={[type=SOLID] [color=#00C000]}] [x=15.00] [y=18.00] [width=4.00] [height=4.00]
+      RenderSVGPath {path} at (507,0) size 287x219 [stroke={[type=SOLID] [color=#0000CF]}] [fill={[type=SOLID] [color=#FFFF00]}] [data="M 372 130 C 305.333 76.6667 322 36.6667 422 10 Z M 442 130 C 475.333 30 448.667 0 362 40 Z"]
+      RenderSVGText {text} at (352,138) size 79x15 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 79x14
+          chunk 1 text run 1 at (352.00,150.00) startOffset 0 endOffset 16 width 78.68: "m, q, z, m, q, z"
+      RenderSVGRect {rect} at (616,213) size 8x7 [fill={[type=SOLID] [color=#0000FF]}] [x=370.00] [y=128.00] [width=4.00] [height=4.00]
+      RenderSVGRect {rect} at (700,13) size 7x7 [fill={[type=SOLID] [color=#0000FF]}] [x=420.00] [y=8.00] [width=4.00] [height=4.00]
+      RenderSVGRect {rect} at (733,213) size 7x7 [fill={[type=SOLID] [color=#0000FF]}] [x=440.00] [y=128.00] [width=4.00] [height=4.00]
+      RenderSVGRect {rect} at (600,63) size 7x7 [fill={[type=SOLID] [color=#0000FF]}] [x=360.00] [y=38.00] [width=4.00] [height=4.00]
+      RenderSVGPath {path} at (372,3) size 137x171 [stroke={[type=SOLID] [color=#00FFFF]}] [data="M 224 103 C 230.667 26.3333 257.333 3 304 33 Z"]
+      RenderSVGText {text} at (192,24) size 40x15 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 40x14
+          chunk 1 text run 1 at (192.00,36.00) startOffset 0 endOffset 7 width 40.00: "M, Q, Z"
+      RenderSVGRect {rect} at (370,168) size 7x7 [fill={[type=SOLID] [color=#0000FF]}] [x=222.00] [y=101.00] [width=4.00] [height=4.00]
+      RenderSVGRect {rect} at (503,51) size 7x8 [fill={[type=SOLID] [color=#0000FF]}] [x=302.00] [y=31.00] [width=4.00] [height=4.00]
+      RenderSVGPath {path} at (256,140) size 314x253 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00C000]}] [data="M 208 168 C 241.333 234.667 274.667 234.667 308 168 C 341.333 101.333 324.667 84.6667 258 118 C 171.333 98 154.667 114.667 208 168 Z"]
+      RenderSVGText {text} at (308,176) size 69x15 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 69x14
+          chunk 1 text run 1 at (308.00,188.00) startOffset 0 endOffset 13 width 68.67: "M, Q, T, Q, z"
+      RenderSVGRect {rect} at (343,276) size 7x8 [fill={[type=SOLID] [color=#0000FF]}] [x=206.00] [y=166.00] [width=4.00] [height=4.00]
+      RenderSVGRect {rect} at (510,276) size 7x8 [fill={[type=SOLID] [color=#0000FF]}] [x=306.00] [y=166.00] [width=4.00] [height=4.00]
+      RenderSVGRect {rect} at (426,193) size 8x7 [fill={[type=SOLID] [color=#0000FF]}] [x=256.00] [y=116.00] [width=4.00] [height=4.00]
+      RenderSVGRect {rect} at (343,343) size 7x7 [fill={[type=SOLID] [color=#0000FF]}] [x=206.00] [y=206.00] [width=4.00] [height=4.00]
+      RenderSVGPath {path} at (16,166) size 168x168 [fill={[type=SOLID] [color=#00CF00]}] [data="M 60 100 C -6.66667 133.333 -6.66667 166.667 60 200 C 126.667 166.667 126.667 133.333 60 100 Z"]
+      RenderSVGText {text} at (80,188) size 55x15 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 55x14
+          chunk 1 text run 1 at (80.00,200.00) startOffset 0 endOffset 10 width 54.67: "M, Q, Q, z"
+      RenderSVGRect {rect} at (96,163) size 8x7 [fill={[type=SOLID] [color=#0000FF]}] [x=58.00] [y=98.00] [width=4.00] [height=4.00]
+      RenderSVGRect {rect} at (96,330) size 8x7 [fill={[type=SOLID] [color=#0000FF]}] [x=58.00] [y=198.00] [width=4.00] [height=4.00]
+      RenderSVGRect {rect} at (96,163) size 8x7 [fill={[type=SOLID] [color=#0000FF]}] [x=58.00] [y=98.00] [width=4.00] [height=4.00]
+      RenderSVGPath {path} at (398,381) size 395x219 [stroke={[type=SOLID] [color=#40DD20]}] [data="M 240 296 C 256.667 229.333 272.333 229.333 287 296 C 301.667 362.667 317.333 362.667 334 296 C 350.667 229.333 366.333 229.333 381 296 C 395.667 362.667 411.333 362.667 428 296 C 444.667 229.333 460.333 229.333 475 296 Z"]
+      RenderSVGText {text} at (380,224) size 77x15 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 77x14
+          chunk 1 text run 1 at (380.00,236.00) startOffset 0 endOffset 19 width 76.01: "M, q, t, t, t, t, z"
+      RenderSVGRect {rect} at (396,490) size 8x7 [fill={[type=SOLID] [color=#0000FF]}] [x=238.00] [y=294.00] [width=4.00] [height=4.00]
+      RenderSVGRect {rect} at (475,490) size 7x7 [fill={[type=SOLID] [color=#0000FF]}] [x=285.00] [y=294.00] [width=4.00] [height=4.00]
+      RenderSVGRect {rect} at (553,490) size 7x7 [fill={[type=SOLID] [color=#0000FF]}] [x=332.00] [y=294.00] [width=4.00] [height=4.00]
+      RenderSVGRect {rect} at (631,490) size 8x7 [fill={[type=SOLID] [color=#0000FF]}] [x=379.00] [y=294.00] [width=4.00] [height=4.00]
+      RenderSVGRect {rect} at (710,490) size 7x7 [fill={[type=SOLID] [color=#0000FF]}] [x=426.00] [y=294.00] [width=4.00] [height=4.00]
+      RenderSVGRect {rect} at (788,490) size 7x7 [fill={[type=SOLID] [color=#0000FF]}] [x=473.00] [y=294.00] [width=4.00] [height=4.00]
+      RenderSVGPath {path} at (201,319) size 171x172 [stroke={[type=SOLID] [color=#00CF00] [stroke width=2.00]}] [fill={[type=SOLID] [color=#0000C0]}] [data="M 172 193 C 105.333 226.333 105.333 243 172 243 C 105.333 243 105.333 259.667 172 293 C 238.667 259.667 238.667 243 172 243 C 238.667 243 238.667 226.333 172 193 Z"]
+      RenderSVGText {text} at (48,268) size 82x15 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 82x14
+          chunk 1 text run 1 at (48.00,280.00) startOffset 0 endOffset 16 width 81.35: "M, q, Q, q, Q, z"
+      RenderSVGRect {rect} at (283,318) size 7x7 [fill={[type=SOLID] [color=#40DD20]}] [x=170.00] [y=191.00] [width=4.00] [height=4.00]
+      RenderSVGRect {rect} at (283,401) size 7x8 [fill={[type=SOLID] [color=#40DD20]}] [x=170.00] [y=241.00] [width=4.00] [height=4.00]
+      RenderSVGRect {rect} at (283,485) size 7x7 [fill={[type=SOLID] [color=#40DD20]}] [x=170.00] [y=291.00] [width=4.00] [height=4.00]
+      RenderSVGRect {rect} at (283,401) size 7x8 [fill={[type=SOLID] [color=#40DD20]}] [x=170.00] [y=241.00] [width=4.00] [height=4.00]
+      RenderSVGRect {rect} at (283,318) size 7x7 [fill={[type=SOLID] [color=#40DD20]}] [x=170.00] [y=191.00] [width=4.00] [height=4.00]
+    RenderSVGContainer {g} at (16,517) size 381x62
+      RenderSVGText {text} at (10,310) size 229x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 229x37
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 228.03: "$Revision: 1.7 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

@@ -1,0 +1,25 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+[% IF bug.product_obj.votesperuser %]
+  <span id="votes_container">
+    [% IF bug.votes %]
+      with
+      <a href="page.cgi?id=voting/bug.html&amp;bug_id=
+               [%- bug.id FILTER uri %]">
+        [%- bug.votes FILTER html %] 
+        [% IF bug.votes == 1 %]
+            vote
+        [% ELSE %]
+            votes
+        [% END %]</a>
+    [% END %]
+    (<a href="page.cgi?id=voting/user.html&amp;bug_id=
+              [%- bug.id FILTER uri %]#vote_
+              [%- bug.id FILTER uri %]">vote</a>)
+  </span>
+[% END %]

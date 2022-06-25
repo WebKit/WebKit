@@ -1,0 +1,52 @@
+Testing asynchronous View layout operations: needsLayout, cancelLayout.
+
+
+== Running test suite: View.AsynchronousLayout
+-- Running test case: View.automaticLayout
+PASS: View should have a pending layout once it is attached.
+Layout complete.
+PASS: View should do an initial layout.
+PASS: View should update its layout.
+PASS: View should not have a pending layout.
+
+-- Running test case: View.automaticLayout.cancelled
+PASS: View should have a pending layout once it is attached.
+PASS: View should not have a pending layout once it is detached.
+
+-- Running test case: View.needsLayout
+Flush pending layouts, then schedule an update.
+PASS: View should have a pending layout.
+Layout complete.
+PASS: View should update its layout.
+PASS: View should not have a pending layout.
+
+-- Running test case: View.SyncronousLayoutDuringAsyncronousLayout
+PASS: Root view should have 2 dirty descendants.
+PASS: Parent view should have 1 dirty descendant.
+PASS: Child view should have 0 dirty descendants.
+PASS: View should have a pending layout.
+Child view completed a layout.
+PASS: Root view should have 1 dirty descendant.
+PASS: Parent view should have 0 dirty descendants.
+PASS: Child view should have 0 dirty descendants.
+PASS: Parent view should have started a layout.
+PASS: Child view should have completed 1 layout.
+Child view completed a layout.
+PASS: Root view should have 0 dirty descendants.
+PASS: Parent view should have 0 dirty descendants.
+PASS: Child view should have 0 dirty descendants.
+PASS: Parent view should have started a layout.
+PASS: Child view should have completed 2 layouts.
+Parent view completed a layout.
+PASS: Root view should have 0 dirty descendants.
+PASS: Root view should have 0 dirty descendants.
+PASS: Root view should have 0 dirty descendants.
+PASS: Parent view should have completed 1 layout.
+PASS: Parent view should not have a pending layout.
+
+-- Running test case: View.needsLayout.propogateToSubview
+Schedule parent view update.
+Layout complete.
+PASS: Chlid view should do an initial layout.
+PASS: Child view should update its layout.
+

@@ -1,0 +1,19 @@
+This tests that when requestIdleCallback is enabled, requestIdleCallback and IdleDeadline are defined.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS typeof window.requestIdleCallback is "function"
+PASS window.requestIdleCallback.length is 1
+PASS typeof window.cancelIdleCallback is "function"
+PASS window.cancelIdleCallback.length is 1
+PASS window.IdleDeadline is defined.
+PASS idleDeadlineProperties = Object.getOwnPropertyNames(window.IdleDeadline.prototype); idleDeadlineProperties.length is 3
+PASS JSON.stringify(idleDeadlineProperties.sort()) is "[\"constructor\",\"didTimeout\",\"timeRemaining\"]"
+PASS didTimeoutDescriptor = Object.getOwnPropertyDescriptor(window.IdleDeadline.prototype, "didTimeout"); didTimeoutDescriptor.get is defined.
+PASS didTimeoutDescriptor.set is undefined.
+PASS typeof window.IdleDeadline.prototype.timeRemaining is "function"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

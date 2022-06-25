@@ -1,0 +1,12 @@
+Test that, when RequireUserGestureForAudioRateChange is set along with MediaUserGestureInheritsForDocument, a user gesture in the document will allow future media playback requests to succeed.
+
+
+RUN(internals.setMediaElementRestrictions(mediaElement, "RequireUserGestureForAudioRateChange"))
+RUN(internals.settings.setMediaUserGestureInheritsFromDocument(true))
+Running with keyDown.
+RUN(mediaElement.src = findMediaFile('audio', 'content/test'))
+EVENT(canplaythrough)
+RUN(mediaElement.play())
+EXPECTED (mediaElement.paused == 'false') OK
+END OF TEST
+

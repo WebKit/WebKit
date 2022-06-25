@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: Preflight response is not successful. Status code: 404
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/status-404-without-body.py due to access control checks.
+Tests non app initiated requests get marked for sync preflights
+
+PASS: NetworkError:  A network error occurred.
+PASS successfully loaded only non app initiated requests
+

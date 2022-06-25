@@ -1,0 +1,10 @@
+# Copyright 2019 The ANGLE Project Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# Paths to glslang dependencies in ANGLE
+glslang_spirv_tools_dir = "//third_party/vulkan-deps/spirv-tools/src"
+
+# Reduce glslang's features to what the Vulkan backend of ANGLE uses. This both speeds up glslang's
+# initialization and reduces binary footprint.
+glslang_angle = true

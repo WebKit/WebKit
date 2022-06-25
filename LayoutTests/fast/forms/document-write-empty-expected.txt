@@ -1,0 +1,3 @@
+This tests that document.write() with no parameters does not output any text. See bug 815592.
+
+There should not be any text below this sentence.

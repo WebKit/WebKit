@@ -1,0 +1,5 @@
+
+PASS Test import.meta.url on the top-level module script.
+PASS Test import.meta.url on the imported module script.
+PASS Test import.meta.url on the imported module script with a fragment.
+

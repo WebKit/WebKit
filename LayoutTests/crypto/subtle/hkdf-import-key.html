@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script type="text/javascript">
+description("Test importing a HKDF raw key");
+
+jsTestIsAsync = true;
+
+var nonExtractable = false;
+var rawKey = asciiToUint8Array("jnOw99oOZFLIEPMr");
+
+crypto.subtle.importKey("raw", rawKey, { name: "HKDF" }, nonExtractable, ["deriveKey", "deriveBits"]).then(function(result) {
+    publicKey = result;
+
+    shouldBe("publicKey.toString()", "'[object CryptoKey]'");
+    shouldBe("publicKey.type", "'secret'");
+    shouldBe("publicKey.extractable", "false");
+    shouldBe("publicKey.algorithm.name", "'HKDF'");
+    shouldBe("publicKey.usages", "['deriveBits', 'deriveKey']");
+
+    finishJSTest();
+})
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

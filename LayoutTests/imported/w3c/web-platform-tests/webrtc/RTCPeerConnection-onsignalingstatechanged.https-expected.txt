@@ -1,0 +1,5 @@
+
+PASS Negotiation methods fire signalingstatechange events
+PASS Closing a PeerConnection should not fire signalingstatechange event
+PASS signalingstatechange is the first event to fire
+

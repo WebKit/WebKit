@@ -1,0 +1,36 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+    <head>
+        <style>
+            .scroller {
+                width: 400px;
+                height: 400px;
+                overflow-y: scroll;
+            }
+
+            .contents {
+                width: 200%;
+                height: 200%;
+                background-color: silver;
+            }
+            
+            .scroller::-webkit-scrollbar {
+                width: 20px;
+                height: 20px;
+            }
+
+            .scroller::-webkit-scrollbar-thumb {
+                background-color: green;
+            }
+            
+            .scroller::-webkit-scrollbar-corner {
+                background-color: green;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="scroller">
+            <div class="contents"></div>
+        </div>
+    </body>
+</html>

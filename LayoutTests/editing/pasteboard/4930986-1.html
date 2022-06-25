@@ -1,0 +1,27 @@
+<html>
+<head>
+<style>
+blockquote {
+    color: blue;
+    border-left: 2px solid blue;
+    margin-left: 0px;
+    padding-left: 10px;
+}
+</style>
+</head>
+<body>
+<div id="description">This tests to make sure that content that has the document default color is pasted as blue (or whatever the color for quoted content is) during a Paste as Quotation.</div>
+<div id="edit" contenteditable="true"></div>
+
+<script>
+edit = document.getElementById("edit");
+description = document.getElementById("description");
+edit.focus();
+document.execCommand("InsertHTML", false, "<blockquote class='Apple-paste-as-quotation'><span class='Apple-style-span' style='color: black;'>This text should be blue (it should not be wrapped in a style span).</span></blockquote>");
+if (window.testRunner) {
+    window.testRunner.dumpAsText();
+    document.body.innerText = description.innerText + "\n" + edit.innerHTML;
+}
+</script>
+</body>
+</html>

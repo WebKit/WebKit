@@ -1,0 +1,10 @@
+This test verifies that focusing an element that presents a keyboard, and then focusing an element which dismisses the keyboard, does not change the scrollable area.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.scrollingElement.scrollTop is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

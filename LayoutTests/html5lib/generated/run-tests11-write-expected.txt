@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: Warning: Problem parsing viewBox=""
+CONSOLE MESSAGE: Warning: Problem parsing viewBox=""
+CONSOLE MESSAGE: Warning: Problem parsing viewBox=""
+../resources/tests11.dat: PASS

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.internals) {
+    internals.invalidateFontCache();
+    internals.clearMemoryCache();
+}
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+</script>
+<style>
+@font-face {
+    font-family: "WebFont";
+    src: url("../../resources/Ahem.otf") format("opentype");
+}
+</style>
+</head>
+<body>
+This test passes if there is no ASSERT in debug mode. This happens when:
+<ol>
+<li>No one uses the CSS Font Loading API</li>
+<li>A font starts loading</li>
+<li>Someone uses the CSS Font Loading API, causing us to create Javascript wrappers for our internal objects</li>
+<li>The font finishes loading</li>
+</ol>
+The bug occurs when the wrappers do not correctly understand that there are in-flight loads already happening.
+<div style="font-family: 'WebFont';">Hello</div>
+<script>
+document.body.offsetTop; // Force layout, which starts fonts loading
+document.fonts.ready.then(function() {
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .container {
+            display: inline-block;
+            margin: 25px;
+            width: 50px;
+            height: 50px;
+            position: relative;
+            border: 1px solid black;
+        }
+        
+        .container div {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .potential-stacking-context {
+            z-index: auto;
+            background-color: silver;
+            display: inline;
+            padding: 20px;
+        }
+        
+        .child {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 1;
+            background-color: orange;
+        }
+
+        .interposer {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 0;
+            background-color: green;
+        }
+    </style>
+
+    <script src="resources/will-change-stacking-helper.js"></script>
+    <script>
+        function doTest()
+        {
+            for (value of willChangeValues) {
+                makeStackingElement('opacity', value.stacking ? '0.999999' : '1');
+            }
+        }
+        
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+</body>
+</html>

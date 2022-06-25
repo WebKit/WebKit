@@ -1,0 +1,141 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # product: Bugzilla::Product object; The product
+  #
+  # (classification fields available if Param('useclassification') is enabled:)
+  #
+  # classification: Bugzilla::Classification object; The classification 
+  #                                                  the product is in
+  #%]
+
+[% title = BLOCK %]Edit Product '[% product.name FILTER html %]'[% END %]
+
+[% PROCESS global/header.html.tmpl
+  title = title
+  style_urls = ['skins/standard/admin.css']
+  javascript_urls = ['js/util.js']
+%]
+
+[% group_control = {${constants.CONTROLMAPNA}        => 'NA',
+                    ${constants.CONTROLMAPSHOWN}     => 'Shown',
+                    ${constants.CONTROLMAPDEFAULT}   => 'Default',
+                    ${constants.CONTROLMAPMANDATORY} => 'Mandatory'}
+ %]
+
+<form method="post" action="editproducts.cgi">
+  <table id="admin_table_edit">
+
+    [% PROCESS "admin/products/edit-common.html.tmpl" %]
+
+    <tr>
+      <th>
+        <a href="editcomponents.cgi?product=[% product.name FILTER uri %]">
+        Edit components:
+        </a>
+      </th>
+      <td>
+        [% IF product.components.size -%]
+          [% FOREACH comp = product.components %]
+            <a href="editcomponents.cgi?action=edit&product=
+            [%- product.name FILTER uri %]&component=
+            [%- comp.name FILTER uri %]">[% comp.name FILTER html %]</a>:
+            [% comp.description FILTER html_light %]
+            <br>
+          [% END %]
+        [% ELSE %]
+          <span class="warning">missing</span>
+        [% END %]
+      </td>
+    </tr>
+    <tr>
+      <th>
+        <a href="editversions.cgi?product=[% product.name FILTER uri %]">Edit versions:</a>
+      </th>
+      <td>
+        [%- IF product.versions.size -%]
+          <div class="multi-columns">
+            [% FOREACH v = product.versions %]
+              [% v.name FILTER html %]<br>
+            [% END %]
+          </div>
+        [% ELSE %]
+          <span class="warning">missing</span>
+        [% END %]
+      </td>
+    </tr>
+    [% IF Param('usetargetmilestone') %]
+      <tr>
+        <th>
+          <a href="editmilestones.cgi?product=[% product.name FILTER uri %]">
+          Edit milestones:</a>
+        </th>
+        <td>
+          [%- IF product.milestones.size -%]
+            <div class="multi-columns">
+              [%- FOREACH m = product.milestones -%]
+                [% m.name FILTER html %]<br>
+              [% END %]
+            </div>
+          [% ELSE %]
+            <span class="warning">missing</span>
+          [% END %]
+        </td>
+      </tr>
+    [% END %]
+    <tr>
+      <th>
+        <a href="editproducts.cgi?action=editgroupcontrols&product=
+          [%- product.name FILTER uri %]">
+          Edit Group Access Controls:
+        </a>
+      </th>
+      <td>
+        [% IF product.group_controls.size %]
+          [% FOREACH g = product.group_controls.values.sort("name") %]
+            <b>[% g.group.name FILTER html %]:</b>
+            [% IF g.group.isactive %]
+              [% group_control.${g.membercontrol} FILTER html %]/
+              [% group_control.${g.othercontrol} FILTER html %]
+              [% IF g.entry %], ENTRY[% END %]
+              [% IF g.canedit %], CANEDIT[% END %]
+              [% IF g.editcomponents %], editcomponents[% END %]
+              [% IF g.canconfirm %], canconfirm[% END %]
+              [% IF g.editbugs %], editbugs[% END %]
+            [% ELSE %]
+              DISABLED
+            [% END %]
+            <br>
+          [% END %]
+        [% ELSE %]
+          no groups
+        [% END %]
+      </td>
+    </tr>
+    <tr>
+      <th>[% terms.Bugs %]:</th>
+      <td>
+        <a href="buglist.cgi?product=[% product.name FILTER uri %]">
+          [% product.bug_count FILTER html %]</a>
+      </td>
+    </tr>
+  </table>
+  
+  <input type="hidden" name="product_old_name" 
+        value="[% product.name FILTER html %]">
+  <input type="hidden" name="action" value="update">
+  <input type="hidden" name="token" value="[% token FILTER html %]">
+  <input type="submit" id="update-product" value="Save Changes">
+</form>
+  
+[% PROCESS "admin/products/footer.html.tmpl"
+   no_add_product_link = 1 
+   no_edit_product_link = 1 %]
+
+[% PROCESS global/footer.html.tmpl %]

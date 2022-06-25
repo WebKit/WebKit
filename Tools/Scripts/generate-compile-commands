@@ -1,0 +1,123 @@
+#!/usr/bin/env python3
+
+# Copyright (C) 2022 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+# 3.  Neither the name of Apple Inc. ("Apple") nor the names of
+#     its contributors may be used to endorse or promote products derived
+#     from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Script to generate compile_commands.json file
+
+import re
+import os
+import sys
+import glob
+import json
+import argparse
+
+# Get command line args
+parser = argparse.ArgumentParser(description='Generate compile_commands.json', 
+            usage="""
+                  make r EXPORT_COMPILE_COMMANDS=YES
+                  generate-compile-commands WebKitBuild/Release
+
+                  https://trac.webkit.org/wiki/Clangd
+                  """)
+
+parser.add_argument('built_products_dir', help='path to the build directory containing generated compile commands (ex: WebKitBuild/Release)')
+opts = parser.parse_args()
+
+# Change to the root of WebKit Directory
+file_dir = os.path.dirname(os.path.realpath(__file__))
+base_dir = file_dir + "/../../"
+os.chdir(base_dir)
+
+# Check compile_commands folder exists
+compile_commands_dir = opts.built_products_dir + "/compile_commands/"
+
+if not os.path.exists(compile_commands_dir):
+    print("Please specify the build directory with compile_commands.")
+    print("Example: generate-compile-commands WebKitBuild/Release")
+    exit(1)
+
+# Generate compile_commands.json
+
+# For things not to horribly break for users during normal use we need to validate the compiler is spitting out
+# valid json files. Sometimes if a compile error happens or the user stops the build part way through
+# there will be a very invalid json file sitting in the directory. When we go to bundle it up into the final
+# compile_commands.json file, we now have an invalid compile_commands.json file and clangd will not work.
+# To prevent this from happening we should check that every json file we add is valid, and also ensure there are no 
+# duplicate entries. We will build a map of all the valid files.
+
+# Key   - JSON file contents
+# Value - Timestamp contents
+files = dict()
+
+# Do not index third party code.
+# Most people probably do not need it.
+third_party_regex = re.compile('Source/ThirdParty')
+
+for j_file_name in glob.glob(compile_commands_dir + "/*.json"):
+    j_file = open(j_file_name, "r")
+    json_contents = j_file.read()
+
+    if third_party_regex.search(json_contents):
+        continue
+
+    # -2 gets rid of the comma at the end of the file.
+    json_contents = json_contents[:-2]
+
+    # Try to load JSON File
+    try:
+        json.loads(json_contents)
+    except Exception:
+        print("Invalid JSON File: " + j_file_name)
+        continue
+
+    # Validate if the json file already exists in the map.
+    if json_contents in files:
+        pass
+    else:
+        files[json_contents] = os.path.getmtime(j_file_name)
+
+# Remove any previous compile_commands.json
+try:
+    os.remove("compile_commands.json")
+except Exception:
+    pass
+
+# Write the new compile_commands.json file
+new_compile_commands_file = open("compile_commands.json", 'w')
+new_compile_commands_file.write("[")
+
+for index, key in enumerate(files.keys()):
+    if index != 0:
+        new_compile_commands_file.write(",\n")
+    else:
+        new_compile_commands_file.write("\n")
+    new_compile_commands_file.write(key)
+
+new_compile_commands_file.write("\n]\n")
+new_compile_commands_file.close()
+
+print("Generated Compile Commands!")

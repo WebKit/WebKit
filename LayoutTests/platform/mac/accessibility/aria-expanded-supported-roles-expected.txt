@@ -1,0 +1,20 @@
+Verify which roles support aria-expanded.
+AXRole: AXGroup is expanded
+AXRole: AXButton is expanded
+AXRole: AXCheckBox is expanded
+AXRole: AXCell is expanded
+AXRole: AXComboBox is expanded
+AXRole: AXCell is expanded
+AXRole: AXList is expanded
+AXRole: AXMenuItem is expanded
+AXRole: AXMenuItem is expanded
+AXRole: AXMenuItem is expanded
+AXRole: AXRow is expanded
+AXRole: AXCell is expanded
+AXRole: AXCheckBox is expanded
+AXRole: AXRadioButton is expanded
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

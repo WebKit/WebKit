@@ -1,0 +1,9 @@
+
+PASS Indexed properties of the window object (non-strict mode)
+PASS Ensure indexed properties have the correct configuration
+PASS Indexed properties of the window object (non-strict mode) 1
+PASS Indexed properties of the window object (non-strict mode) 2
+PASS Borderline numeric key: 2 ** 32 - 2 is an index
+PASS Borderline numeric key: 2 ** 32 - 1 is not an index
+PASS Indexed properties of the window object (non-strict mode) 3
+

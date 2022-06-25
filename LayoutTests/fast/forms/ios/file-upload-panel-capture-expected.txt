@@ -1,0 +1,15 @@
+Test that the iOS File Upload Panel doesn't crash when the 'capture' is present.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+* accept = image/*
+
+* accept = video/*
+
+* accept = audio/*
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

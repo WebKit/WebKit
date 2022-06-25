@@ -1,0 +1,34 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_allowed-href.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_allowed-href_blank.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_allowed-window_location.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_allowed-window_open.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_denied_missing_unsafe_hashes-href.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_denied_missing_unsafe_hashes-href_blank.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_denied_missing_unsafe_hashes-window_location.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_denied_missing_unsafe_hashes-window_open.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_denied_wrong_hash-href.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_denied_wrong_hash-href_blank.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_denied_wrong_hash-window_location.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_denied_wrong_hash-window_open.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/unsafe-hashes/script_event_handlers_allowed.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/unsafe-hashes/script_event_handlers_denied_missing_unsafe_hashes.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/unsafe-hashes/script_event_handlers_denied_wrong_hash.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/unsafe-hashes/style_attribute_allowed.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/unsafe-hashes/style_attribute_denied_missing_unsafe_hashes.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/unsafe-hashes/style_attribute_denied_wrong_hash.html

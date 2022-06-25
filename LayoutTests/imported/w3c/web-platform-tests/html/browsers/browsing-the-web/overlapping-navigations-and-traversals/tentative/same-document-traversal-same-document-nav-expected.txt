@@ -1,0 +1,4 @@
+
+FAIL same-document traversals are not canceled by fragment navigations step_wait_func: Timed out waiting on condition
+FAIL same-document traversals are not canceled by pushState() step_wait_func: Timed out waiting on condition
+

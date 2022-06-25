@@ -1,0 +1,5 @@
+
+PASS ensure loading artwork image method operates properly
+PASS ensure loading invalid artwork causes a failure
+PASS ensure loading a non-image causes a failure
+

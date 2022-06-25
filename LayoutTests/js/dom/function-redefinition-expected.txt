@@ -1,0 +1,8 @@
+PASS typeof test1 == 'function' is true
+PASS typeof test2 == 'function' is true
+PASS typeof test3 == 'function' is true
+PASS test3() is "SUCCESS"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

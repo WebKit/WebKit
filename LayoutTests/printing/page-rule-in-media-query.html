@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+<title>Test for Bug 40452 - REGRESSION: printing is broken if stylesheet has @page</title>
+<style>
+* {
+    margin: 1px;
+}
+div {
+    border: 1px solid black;
+}
+@media print {
+    @page {
+        margin: 0.5in;
+    }
+}
+</style>
+<script>
+if (window.testRunner)
+    testRunner.setPrinting();
+</script>
+</head>
+<body>
+    <div>DIV 1
+        <div>
+            DIV 2
+            <div>
+                The margins of divs should remain 1px in printing.
+            </div>
+        </div>
+    </div>
+</body>
+</html>

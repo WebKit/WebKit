@@ -1,0 +1,8 @@
+Description
+
+See the included test script
+
+
+PASS PerformanceResrouceTiming entries need to conform to the spec when a distinct resource is fetched over a persistent connection
+PASS PerformanceResrouceTiming entries need to conform to the spec when the resource is cache-revalidated over a persistent connection
+

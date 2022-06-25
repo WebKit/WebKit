@@ -1,0 +1,10 @@
+When prompted, accept to share your video stream.
+
+Description
+
+This test checks that a disabled video track in a MediaStream is rendered as blackness.
+
+
+
+PASS Tests that a disabled video track in a MediaStream is rendered as blackness
+

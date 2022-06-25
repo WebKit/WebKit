@@ -1,0 +1,3 @@
+
+PASS getContext with empty string returns null
+

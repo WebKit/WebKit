@@ -1,0 +1,13 @@
+This test checks that variable declarations with initializers inside of catch and with blocks do not set values in a deeper scope.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS catchTest() is 'foo'
+PASS catchTest2() is 'baz'
+PASS withTest() is 'foo'
+PASS withTest2() is 'baz'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

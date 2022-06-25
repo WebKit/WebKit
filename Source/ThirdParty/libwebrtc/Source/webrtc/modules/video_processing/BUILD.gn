@@ -1,0 +1,108 @@
+# Copyright (c) 2014 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+
+build_video_processing_sse2 = current_cpu == "x86" || current_cpu == "x64"
+
+rtc_library("video_processing") {
+  visibility = [ "*" ]
+  sources = [
+    "util/denoiser_filter.cc",
+    "util/denoiser_filter_c.cc",
+    "util/denoiser_filter_c.h",
+    "util/noise_estimation.cc",
+    "util/noise_estimation.h",
+    "util/skin_detection.cc",
+    "util/skin_detection.h",
+    "video_denoiser.cc",
+    "video_denoiser.h",
+  ]
+
+  deps = [
+    ":denoiser_filter",
+    "../../api:scoped_refptr",
+    "../../api/video:video_frame",
+    "../../api/video:video_rtp_headers",
+    "../../common_audio",
+    "../../common_video",
+    "../../modules/utility",
+    "../../rtc_base:checks",
+    "../../rtc_base:rtc_base_approved",
+    "../../rtc_base/system:arch",
+    "../../system_wrappers",
+    "//third_party/libyuv",
+  ]
+  if (build_video_processing_sse2) {
+    deps += [ ":video_processing_sse2" ]
+  }
+  if (rtc_build_with_neon) {
+    deps += [ ":video_processing_neon" ]
+  }
+}
+
+rtc_source_set("denoiser_filter") {
+  # Target that only exists to avoid cyclic depdency errors for the SSE2 and
+  # Neon implementations below.
+  sources = [ "util/denoiser_filter.h" ]
+}
+
+if (build_video_processing_sse2) {
+  rtc_library("video_processing_sse2") {
+    sources = [
+      "util/denoiser_filter_sse2.cc",
+      "util/denoiser_filter_sse2.h",
+    ]
+
+    deps = [
+      ":denoiser_filter",
+      "../../rtc_base:rtc_base_approved",
+      "../../system_wrappers",
+    ]
+
+    if (is_posix || is_fuchsia) {
+      cflags = [ "-msse2" ]
+    }
+  }
+}
+
+if (rtc_build_with_neon) {
+  rtc_library("video_processing_neon") {
+    sources = [
+      "util/denoiser_filter_neon.cc",
+      "util/denoiser_filter_neon.h",
+    ]
+
+    deps = [ ":denoiser_filter" ]
+
+    if (current_cpu != "arm64") {
+      suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
+      cflags = [ "-mfpu=neon" ]
+    }
+  }
+}
+
+if (rtc_include_tests) {
+  rtc_library("video_processing_unittests") {
+    testonly = true
+
+    sources = [ "test/denoiser_test.cc" ]
+    deps = [
+      ":denoiser_filter",
+      ":video_processing",
+      "../../api:scoped_refptr",
+      "../../api/video:video_frame",
+      "../../api/video:video_rtp_headers",
+      "../../common_video",
+      "../../test:fileutils",
+      "../../test:frame_utils",
+      "../../test:test_support",
+      "../../test:video_test_common",
+    ]
+  }
+}

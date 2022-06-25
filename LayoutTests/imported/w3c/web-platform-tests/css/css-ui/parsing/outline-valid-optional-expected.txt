@@ -1,0 +1,4 @@
+
+FAIL e.style['outline'] = "invert" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['outline'] = "invert dotted 1px" should set the property value assert_not_equals: property should be set got disallowed value ""
+

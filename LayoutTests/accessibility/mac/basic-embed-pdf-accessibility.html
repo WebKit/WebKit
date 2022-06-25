@@ -1,0 +1,102 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div id="embedContainer">
+    <embed id="pdfEmbed" width="75%" height="75%" name="plugin" src="../resources/simple-webkit-pages.pdf" type="application/pdf">
+</div>
+
+<script>
+    description("This test ensures PDFs loaded in embed tags are exposed in the accessibility tree.")
+
+    async function traverseChildrenWithPath(startObject, traversalPath) {
+        let currentObject = startObject;
+        for (let index of traversalPath) {
+            await waitFor(() => {
+                return currentObject.childAtIndex(index);
+            });
+            currentObject = currentObject.childAtIndex(index);
+        }
+        return currentObject;
+    }
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        var hitTestResult, pdfAxObject, pdfEmbedElement, pdfLayerController, searchResultElement;
+        setTimeout(async function() {
+            // First, ensure the <embed> and the PDF inside the <embed> are completely initialized.
+            // It would be nice if we could listen for an <embed> load event to be fired, but WebKit erroneously
+            // doesn't fire those for <embed>s: https://bugs.webkit.org/show_bug.cgi?id=230054
+            await waitFor(() => {
+                embedContainer = accessibilityController.accessibleElementById("embedContainer");
+                return embedContainer && embedContainer.childrenCount >= 1;
+            });
+            await waitFor(() => {
+                pdfEmbedElement = accessibilityController.accessibleElementById("pdfEmbed");
+                return pdfEmbedElement && pdfEmbedElement.children.length >= 1;
+            });
+            await waitFor(() => {
+                pdfAxObject = pdfEmbedElement.childAtIndex(0);
+                return pdfAxObject && pdfAxObject.children.length >= 1;
+            });
+            await waitFor(() => {
+                pdfLayerController = pdfAxObject.childAtIndex(0);
+                return pdfLayerController && pdfLayerController.children.length >= 1;
+            });
+
+            shouldBe("pdfEmbedElement.domIdentifier", "'pdfEmbed'");
+            shouldBe("pdfEmbedElement.role", "'AXRole: AXGroup'");
+            // Verify the group that contains the PDF AX object isn't considered empty via an AXEmptyGroup subrole.
+            shouldBe("pdfEmbedElement.subrole", "'AXSubrole: '");
+            shouldBe("pdfEmbedElement.childrenCount", "1");
+
+            shouldBe("pdfAxObject.stringAttributeValue('AXSubrole')", "'AXPDFPluginSubrole'");
+            shouldBe("pdfAxObject.childrenCount", "1");
+            // Ensure the PDF accessibility object considers the embed element to be its parent.
+            shouldBe("pdfAxObject.parentElement().domIdentifier", "'pdfEmbed'");
+
+            shouldBe("pdfLayerController.stringAttributeValue('AXRole')", "'AXGroup'");
+            shouldBe("pdfLayerController.stringAttributeValue('AXDescription')", "'document'");
+
+            traversalPathToTextNode = [0, 0, 0, 0, 1, 0, 0];
+            pdfTextNode = await traverseChildrenWithPath(pdfLayerController, traversalPathToTextNode);
+            shouldBe("pdfTextNode.stringAttributeValue('AXRole')", "'AXStaticText'");
+            shouldBe("pdfTextNode.stringAttributeValue('AXValue')", "'Welcome to the website for the WebKit Open Source Project!'");
+
+            // Ensure we can hit test onto the PDF.
+            await waitFor(() => {
+                domPdfEmbedElement = document.getElementById("pdfEmbed");
+                if (!domPdfEmbedElement)
+                    return false;
+
+                hitTestResult = accessibilityController.elementAtPoint(
+                    domPdfEmbedElement.offsetLeft + (domPdfEmbedElement.offsetWidth / 2),
+                    domPdfEmbedElement.offsetTop + (domPdfEmbedElement.offsetHeight / 2),
+                );
+                return hitTestResult;
+            });
+            shouldBe("hitTestResult.stringAttributeValue('AXRole')", "'AXGroup'");
+            shouldBe("hitTestResult.stringAttributeValue('AXDescription')", "'document'");
+            pdfTextNode = await traverseChildrenWithPath(hitTestResult, traversalPathToTextNode);
+            shouldBe("pdfTextNode.stringAttributeValue('AXRole')", "'AXStaticText'");
+            shouldBe("pdfTextNode.stringAttributeValue('AXValue')", "'Welcome to the website for the WebKit Open Source Project!'");
+
+            // Ensure a search from the embed element returns the PDF accessibility object.
+            await waitFor(() => {
+                searchResultElement = pdfEmbedElement.uiElementForSearchPredicate(null, true, "AXAnyTypeSearchKey", "", false);
+                return searchResultElement;
+            });
+            shouldBe("searchResultElement.stringAttributeValue('AXSubrole')", "'AXPDFPluginSubrole'");
+
+            finishJSTest();
+        }, 0)
+    }
+</script>
+</body>
+</html>
+

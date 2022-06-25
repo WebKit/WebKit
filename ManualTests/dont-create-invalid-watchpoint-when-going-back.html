@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+
+<script>
+
+function run() {
+    popupWindow = window.open("resources/test-results-page.html");
+    console.log("created popup window");
+    popupWindow.onload = () => {
+        setTimeout(() => {
+            let a = popupWindow.document.querySelectorAll("a[href='fast/multicol/crash-when-spanner-candidate-is-out-of-flow-crash-log.txt']")[0];
+            console.log(popupWindow.location.href);
+            a.href = "empty-text.txt";
+            let priorHistoryLength = popupWindow.history.length;
+            a.click();
+            console.log("called click()");
+            function checkNavigated() {
+                if (popupWindow.history.length !== (priorHistoryLength + 1)) {
+                    setTimeout(checkNavigated, 100);
+                    return;
+                }
+
+                setTimeout(() => {
+                    console.log(popupWindow.location.href);
+                    popupWindow.history.back();
+                    console.log("setting timer to notifyDone");
+                    setTimeout(() => { 
+                        console.log(popupWindow.location.href);
+                        console.log("calling notifydone");
+                    }, 2500);
+                }, 2500);
+            }
+            setTimeout(checkNavigated, 100);
+        }, 2000);
+    };
+}
+
+</script>
+
+<a onclick="run()"> click me </a>
+
+</body>
+</html>

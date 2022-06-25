@@ -1,0 +1,7 @@
+This page tests that a page with a search popup does not crash, as reported in this bug. Below is a search input that the test automatically fills then submits. Pass if this does not crash.
+
+
+
+
+
+

@@ -1,0 +1,90 @@
+WebCrypto { }
+
+DEFINITIONS EXPLICIT TAGS ::=
+
+BEGIN
+
+-- http://www.ietf.org/rfc/rfc5280.txt Appendix A.1
+
+SubjectPublicKeyInfo ::=  SEQUENCE  {
+  algorithm         AlgorithmIdentifier,
+  subjectPublicKey  BIT STRING
+}
+
+AlgorithmIdentifier ::=  SEQUENCE  {
+  algorithm   OBJECT IDENTIFIER,
+  parameters  ANY DEFINED BY algorithm OPTIONAL
+}
+
+-- http://www.ietf.org/rfc/rfc5208.txt Appendix A
+
+PrivateKeyInfo ::= SEQUENCE {
+  version                   Version,
+  privateKeyAlgorithm       PrivateKeyAlgorithmIdentifier,
+  privateKey                PrivateKey,
+  attributes           [0]  IMPLICIT Attributes OPTIONAL
+}
+
+Version ::= INTEGER
+
+PrivateKeyAlgorithmIdentifier ::= AlgorithmIdentifier
+
+PrivateKey ::= OCTET STRING
+
+Attributes ::= SET OF Attribute
+
+Attribute ::= SEQUENCE {
+  type    OBJECT IDENTIFIER,
+  values  AttributeSetValue
+}
+
+AttributeSetValue ::= SET OF ANY
+
+-- http://www.ietf.org/rfc/rfc5480.txt Appendix A
+
+ECParameters ::= CHOICE {
+  namedCurve         OBJECT IDENTIFIER -- MUST be supported.
+  -- implicitCurve   NULL - MUST NOT be used.
+  -- specifiedCurve  SpecifiedECDomain - MUST NOT be used.
+}
+
+-- http://www.ietf.org/rfc/rfc5915.txt Appendix A
+
+ECPrivateKey ::= SEQUENCE {
+  version        INTEGER,
+  privateKey     OCTET STRING,
+  parameters [0] ECParameters OPTIONAL,
+  publicKey  [1] BIT STRING OPTIONAL
+}
+
+-- http://www.ietf.org/rfc/rfc3447.txt Appendix A.1.1
+
+RSAPublicKey ::= SEQUENCE {
+  modulus           INTEGER,  -- n
+  publicExponent    INTEGER   -- e
+}
+
+-- http://www.ietf.org/rfc/rfc3447.txt Appendix A.1.2
+
+RSAPrivateKey ::= SEQUENCE {
+  version           Version,
+  modulus           INTEGER,  -- n
+  publicExponent    INTEGER,  -- e
+  privateExponent   INTEGER,  -- d
+  prime1            INTEGER,  -- p
+  prime2            INTEGER,  -- q
+  exponent1         INTEGER,  -- d mod (p-1)
+  exponent2         INTEGER,  -- d mod (q-1)
+  coefficient       INTEGER,  -- (inverse of q) mod p
+  otherPrimeInfos   OtherPrimeInfos OPTIONAL
+}
+
+OtherPrimeInfos ::= SEQUENCE SIZE(1..MAX) OF OtherPrimeInfo
+
+OtherPrimeInfo ::= SEQUENCE {
+  prime INTEGER,  -- ri
+  exponent INTEGER, -- di
+  coefficient INTEGER -- ti
+}
+
+END

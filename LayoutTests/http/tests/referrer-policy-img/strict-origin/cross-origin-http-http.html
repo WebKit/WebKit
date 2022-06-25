@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body onload="loadImage()">
+<script>
+description("Tests the behavior of strict-origin referrer policy when cross origin.");
+jsTestIsAsync = true;
+
+if (window.internals)
+    internals.setResourceLoadStatisticsEnabled(false);
+
+function loadImage() {
+    // Should be the origin, not the full URL.
+    let expected = "http://127.0.0.1:8000/";
+    let img = new Image();
+    img.referrerPolicy = "strict-origin";
+    img.onload = function() { testPassed('referrer is "' + expected + '"'); finishJSTest(); }
+    img.onerror = function() { testFailed("referrer is not as expected"); finishJSTest(); }
+    img.src = "http://localhost:8000/referrer-policy/resources/image.py?expected=" + expected;
+    if (window.internals)
+        internals.setResourceLoadStatisticsEnabled(true);
+}
+
+</script>
+</body>
+</html>

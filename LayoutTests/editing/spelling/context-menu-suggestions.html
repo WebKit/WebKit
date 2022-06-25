@@ -1,0 +1,37 @@
+<body onload="test()">
+<p>This test checks that spelling suggestions in the context menu are not show when spellcheck="false".
+To test manually, right click on the text in the input box.</p>
+<input id="input" spellcheck="false" />
+<div id="result">FAIL: Did not run test</div>
+</body>
+<script>
+function test()
+{
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    var input = document.getElementById("input");
+    input.focus();
+    document.execCommand("InsertText", false, 'welllcome');
+    document.execCommand("InsertText", false, ' ');
+
+    var x = input.offsetParent.offsetLeft + input.offsetLeft + 4;
+    var y = input.offsetParent.offsetTop + input.offsetTop + input.offsetHeight / 2;
+
+    if (!window.eventSender)
+        return;
+
+    eventSender.mouseMoveTo(x, y);
+    var itemNamesWithoutSpellChecking = eventSender.contextClick();
+
+    input.setAttribute("spellcheck", "true");
+    eventSender.mouseMoveTo(x, y);
+
+    var itemNamesWithSpellChecking = eventSender.contextClick();
+    
+    if (itemNamesWithSpellChecking.length > itemNamesWithoutSpellChecking.length) 
+        document.getElementById('result').innerHTML = 'SUCCESS';
+    else
+        document.getElementById('result').innerHTML = 'FAILURE: No spell checking suggestions';
+}
+</script>

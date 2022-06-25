@@ -1,0 +1,197 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("DOM.showGridOverlay");
+
+    async function getGridContainerNode() {
+        let doc = await WI.domManager.requestDocument();
+        let nodeId = await doc.querySelector(".grid-container");
+        return WI.domManager.nodeForId(nodeId);
+    }
+
+    async function getAllGridContainerNodes() {
+        let doc = await WI.domManager.requestDocument();
+        let nodeIds = await doc.querySelectorAll(".grid-container");
+        return nodeIds.map((nodeId) => WI.domManager.nodeForId(nodeId));
+    }
+
+    async function gridOverlayCount() {
+        return InspectorTest.evaluateInPage("window.internals.inspectorGridOverlayCount()");
+    }
+
+    async function checkGridOverlayCount(expected) {
+        let actual = await gridOverlayCount();
+        let message;
+        switch (expected) {
+        case 1:
+            message = "Should have 1 grid displayed.";
+            break;
+        default:
+            message = `Should have ${expected} grids displayed.`;
+            break;
+        }
+
+        InspectorTest.expectEqual(actual, expected, message);
+    }
+
+    suite.addTestCase({
+        name: "DOM.showGridOverlay.ShowOneGrid",
+        description: "No error occurs when requesting to show a grid overlay.",
+        async test() {
+            await checkGridOverlayCount(0);
+            let container = await getGridContainerNode();
+
+            InspectorTest.log("Requesting to show grid overlay for first .grid-container");
+            await container.showLayoutOverlay({color: WI.Color.fromString("magenta")});
+            await checkGridOverlayCount(1);
+
+            // No error should occur if showing grid overlay for a node that already has one.
+            InspectorTest.log("Requesting to show a different grid overlay for first .grid-container");
+            await container.showLayoutOverlay({color: WI.Color.fromString("green")});
+            await checkGridOverlayCount(1);
+
+            // No error should occur when hiding the grid overlay.
+            InspectorTest.log("Requesting to hide grid overlay");
+            await container.hideLayoutOverlay();
+            await checkGridOverlayCount(0);
+        }
+    });
+
+    suite.addTestCase({
+        name: "DOM.showGridOverlay.ShowTwoGrids",
+        description: "No error occurs when requesting to show multiple grid overlays.",
+        async test() {
+            await checkGridOverlayCount(0);
+            let [first, second] = await getAllGridContainerNodes();
+
+            InspectorTest.log("Requesting to show first grid overlay");
+            await first.showLayoutOverlay({color: WI.Color.fromString("magenta")});
+            await checkGridOverlayCount(1);
+
+            InspectorTest.log("Requesting to show second grid overlay");
+            await second.showLayoutOverlay({color: WI.Color.fromString("green")});
+            await checkGridOverlayCount(2);
+
+            // No error should occur when hiding the grid overlay.
+            InspectorTest.log("Requesting to hide first grid overlay");
+            await first.hideLayoutOverlay();
+            await checkGridOverlayCount(1);
+
+            // No error should occur when hiding the grid overlay.
+            InspectorTest.log("Requesting to hide second grid overlay");
+            await second.hideLayoutOverlay();
+            await checkGridOverlayCount(0);
+        }
+    });
+
+    suite.addTestCase({
+        name: "DOM.showGridOverlay.HideAllGrids",
+        description: "No error occurs when requesting to show multiple grid overlays.",
+        async test() {
+            await checkGridOverlayCount(0);
+            let [first, second] = await getAllGridContainerNodes();
+
+            InspectorTest.log("Requesting to show grid overlay");
+            await first.showLayoutOverlay({color: WI.Color.fromString("magenta")});
+            await checkGridOverlayCount(1);
+
+            InspectorTest.log("Requesting to show a different grid overlay");
+            await second.showLayoutOverlay({color: WI.Color.fromString("green")});
+            await checkGridOverlayCount(2);
+
+            // No error should occur when hiding the grid overlay.
+            InspectorTest.log("Requesting to hide all grid overlays. Hiding all grids is idempotent and should not throw an error.");
+            await DOMAgent.hideGridOverlay();
+            await checkGridOverlayCount(0);
+
+            // No error should occur when hiding the grid overlay.
+            InspectorTest.log("Requesting to hide all grid overlays again, expecting none to be cleared. Hiding all grids is idempotent and should not throw an error.");
+            await DOMAgent.hideGridOverlay();
+            await checkGridOverlayCount(0);
+        }
+    });
+
+    suite.addTestCase({
+        name: "DOM.showGridOverlay.HideBeforeShowShouldError",
+        description: "Return an error when requesting to hide a grid overlay when none is active for the node.",
+        async test() {
+            let container = await getGridContainerNode();
+
+            await checkGridOverlayCount(0);
+
+            InspectorTest.log("Requesting to hide grid overlay for .grid-container");
+            await InspectorTest.expectException(async () => {
+                await DOMAgent.hideGridOverlay(container.id);
+            });
+
+            InspectorTest.log("Requesting to hide all grid overlays. Hiding all grids is idempotent and should not throw an error.");
+            await DOMAgent.hideGridOverlay();
+            await checkGridOverlayCount(0);
+        }
+    });
+
+    suite.addTestCase({
+        name: "DOM.showGridOverlay.ForNonexistentNodeShouldError",
+        description: "Return an error when requesting to show a grid overlay for a nonexistent node.",
+        async test() {
+            await checkGridOverlayCount(0);
+
+            InspectorTest.log("Requesting to show grid overlay for invalid nodeId -1");
+            await InspectorTest.expectException(async () => {
+                await DOMAgent.showGridOverlay(-1, WI.Color.fromString("magenta").toProtocol());
+            });
+
+        await checkGridOverlayCount(0);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <style>
+        body {
+            margin: 100px;
+        }
+        .grid-container {
+            display: grid;
+            grid-gap: 10px;
+            grid-template-columns: 100px 100px 100px;
+            background-color: white;
+            color: gray;
+        }
+
+        .grid-container > .box {
+            background-color: gray;
+            color: white;
+            border-radius: 5px;
+            padding: 20px;
+            font-size: 150%;
+        }
+    </style>
+
+    <p>Tests for the DOM.showGridOverlay command.</p>
+    <div class="grid-container" style="color: #366">
+        <div class="box a">A</div>
+        <div class="box b">B</div>
+        <div class="box c">C</div>
+        <div class="box d">D</div>
+        <div class="box e">E</div>
+        <div class="box f">F</div>
+    </div>
+    <br />
+    <div class="grid-container" style="color: #636">
+        <div class="box a">A</div>
+        <div class="box b">B</div>
+        <div class="box c">C</div>
+        <div class="box d">D</div>
+        <div class="box e">E</div>
+        <div class="box f">F</div>
+    </div>
+</body>
+</html>

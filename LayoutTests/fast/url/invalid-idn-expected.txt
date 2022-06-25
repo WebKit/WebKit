@@ -1,0 +1,4 @@
+Test passes if all the invalid urls are converted to about:blank.
+http://.com
+http://www.اast.fm
+

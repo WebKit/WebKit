@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<button id="clicker" onclick="go()">Click</button>
+<script>
+
+description("Test that the processing user gesture bit is maintained through postMessage.");
+
+window.jsTestIsAsync = true;
+
+function go()
+{
+    debug("Testing that isProcessingUserGesture() is true in response to a click.")
+    shouldBeTrue("window.internals.isProcessingUserGesture()");
+    window.postMessage("go", "*");
+}
+
+window.onmessage = function(evt)
+{
+    if (evt.data == "go") {
+        if (window.internals) {
+            debug("Testing that isProcessingUserGesture() is true after processing a postMessage.")
+            shouldBeTrue("window.internals.isProcessingUserGesture()");
+        }
+        finishJSTest();
+    }
+}
+
+debug("Testing that isProcessingUserGesture() is false on load.")
+shouldBeFalse("window.internals.isProcessingUserGesture()");
+
+if (window.eventSender) {
+    var element = document.getElementById('clicker');
+    eventSender.mouseMoveTo(element.offsetLeft + 5, element.offsetTop + 5);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,217 @@
+{
+    "fast": {
+        "harness": {
+            "sample-mismatch-reftest.html": {
+                "results": [
+                    0,
+                    11,
+                    42597,
+                    393,
+                    197
+                ]
+            },
+            "fastmallocstatistics-object.html": {
+                "results": [
+                    0,
+                    0,
+                    42597,
+                    12985,
+                    13009
+                ]
+            },
+            "override-preferences-2.html": {
+                "results": [
+                    0,
+                    5,
+                    42597,
+                    103,
+                    302
+                ]
+            },
+            "snapshot-captures-compositing.html": {
+                "results": [
+                    0,
+                    12,
+                    42597,
+                    199,
+                    200
+                ]
+            },
+            "testrunner-object.html": {
+                "results": [
+                    0,
+                    14,
+                    42597,
+                    86,
+                    87
+                ]
+            },
+            "results.html": {
+                "results": [
+                    0,
+                    9,
+                    42597,
+                    591,
+                    593
+                ]
+            },
+            "render-tree-as-text-options.html": {
+                "results": [
+                    0,
+                    8,
+                    42597,
+                    96,
+                    97
+                ]
+            },
+            "uiscriptcontroller": {
+                "concurrent-ui-side-scripts.html": {
+                    "results": [
+                        2,
+                        0,
+                        42603,
+                        12830,
+                        12848
+                    ]
+                },
+                "ui-side-script-with-callback.html": {
+                    "results": [
+                        2,
+                        2,
+                        42603,
+                        148,
+                        150
+                    ]
+                },
+                "ui-side-scripts.html": {
+                    "results": [
+                        2,
+                        3,
+                        42603,
+                        134,
+                        135
+                    ]
+                },
+                "ui-side-script-unregister-callback.html": {
+                    "results": [
+                        2,
+                        1,
+                        42603,
+                        198,
+                        200
+                    ]
+                }
+            },
+            "override-zzz-reset.html": {
+                "results": [
+                    0,
+                    7,
+                    42597,
+                    97,
+                    98
+                ]
+            },
+            "memoryinfo-object.html": {
+                "results": [
+                    0,
+                    4,
+                    42597,
+                    94,
+                    96
+                ]
+            },
+            "image-diff-template.html": {
+                "results": [
+                    0,
+                    2,
+                    42597,
+                    276,
+                    277
+                ]
+            },
+            "internals-object.html": {
+                "results": [
+                    0,
+                    3,
+                    42597,
+                    99,
+                    101
+                ]
+            },
+            "font-weight-bold.html": {
+                "results": [
+                    0,
+                    1,
+                    42597,
+                    258,
+                    259
+                ]
+            },
+            "user-preferred-language.html": {
+                "results": [
+                    0,
+                    15,
+                    42597,
+                    89,
+                    91
+                ]
+            },
+            "test-duration-treemap.html": {
+                "results": [
+                    0,
+                    13,
+                    42597,
+                    125,
+                    127
+                ]
+            },
+            "sample-fail-mismatch-reftest.html": {
+                "results": [
+                    0,
+                    10,
+                    42597,
+                    222,
+                    224
+                ]
+            },
+            "perftests": {
+                "runs-per-second-iterations.html": {
+                    "results": [
+                        1,
+                        1,
+                        42600,
+                        172,
+                        174
+                    ]
+                },
+                "runs-per-second-log.html": {
+                    "results": [
+                        1,
+                        2,
+                        42600,
+                        168,
+                        169
+                    ]
+                },
+                "perf-runner-compute-statistics.html": {
+                    "results": [
+                        1,
+                        0,
+                        42600,
+                        13008,
+                        13025
+                    ]
+                }
+            },
+            "override-preferences.html": {
+                "results": [
+                    0,
+                    6,
+                    42597,
+                    37,
+                    38
+                ]
+            }
+        }
+    }
+}

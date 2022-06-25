@@ -1,0 +1,13 @@
+Test canvas context after draw too small surface.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test left box.
+PASS imgdata[0] is 128
+Test right box.
+PASS imgdata[0] is 128
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,36 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+[%
+   title = "Shadow Database"
+   desc = "An optional hack to increase database performance"
+%]
+
+[% param_descs = {
+  shadowdbhost => "The host the shadow database is on.",
+
+  shadowdbport => "The port the shadow database is on. Ignored if " _
+                  "<var>shadowdbhost</var> is blank. Note: if the host is the local " _
+                  "machine, then MySQL will ignore this setting, and you must " _
+                  "specify a socket below.",
+
+  shadowdbsock => "The socket used to connect to the shadow database, if the host " _
+                  "is the local machine. This setting is required because MySQL " _
+                  "ignores the port specified by the client and connects using " _
+                  "its compiled-in socket path (on unix machines) when connecting " _
+                  "from a client to a local server. If you leave this blank, and " _
+                  "have the database on localhost, then the <var>shadowdbport</var> " _
+                  "will be ignored.",
+
+  shadowdb => "If non-empty, then this is the name of another database in " _
+              "which Bugzilla will use as a read-only copy of everything. " _
+              "This is done so that long slow read-only operations can be used " _
+              "against this db, and not lock up things for everyone else. This " _
+              "database is on the <var>shadowdbhost</var>, and must exist. " _
+              "Bugzilla does not update it, if you use this parameter, then " _
+              "you need to set up replication for your database." }
+%]

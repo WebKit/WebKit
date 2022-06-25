@@ -1,0 +1,15 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<body>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+// Invalid message
+if (window.IPC)
+    IPC.sendSyncMessage('UI',IPC.webPageProxyID,IPC.messages.WebPageProxy_ExecuteSavedCommandBySelector.name, 1, [{type: 'String',value: 'AAA'}]);
+
+</script>
+
+<p>Test passes if it does not crash.</p>
+</body>
+</html>

@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: non-ASCII encoded length: 2
+CONSOLE MESSAGE: value: 195
+CONSOLE MESSAGE: value: 174
+CONSOLE MESSAGE: invalid surrogate pair encoded length: 4
+CONSOLE MESSAGE: value: 239
+CONSOLE MESSAGE: value: 191
+CONSOLE MESSAGE: value: 189
+CONSOLE MESSAGE: value: 65
+

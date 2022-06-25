@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Testing template video visibility</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<template id="aVideoTemplate">
+    <video id="myVideo" playsinline autoplay muted></video>
+</template>
+<div id="myTemplatedVideo"></div>
+<script>
+async function getStream()
+{
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia)
+       return navigator.mediaDevices.getUserMedia({video:true}).then(stream => stream, () => { });
+}
+
+promise_test(async () => {
+    const clone = aVideoTemplate.content.cloneNode(true);
+    myTemplatedVideo.appendChild(clone);
+
+    myVideo.srcObject = await getStream();
+    // Fallback to regular video streaming if getUserMedia is not available.
+    if (!myVideo.srcObject)
+        myVideo.src = "../../media/content/test.mp4";
+    await myVideo.play();
+    if (window.internals)
+        assert_false(internals.isMediaElementHidden(myVideo));
+}, "Test templated video visibility");
+</script>
+</body>
+</html>

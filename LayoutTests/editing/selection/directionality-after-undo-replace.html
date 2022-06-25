@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests WebKit preserves non-directional selection after unapplying replacement on Mac. To manually test on Mac,</p>
+<ol>
+<li>Select "world" by double-clicking the word</li>
+<li>Replace "world" by a character by pressing a key</li>
+<li>Undo</li>
+<li>Extend selection to the left</li>
+</ol>
+<p>" world" should be selected.</p>
+<div contenteditable>hello wo<span id="target">r</span>ld WebKit</div>
+<script>
+
+if (window.testRunner && window.internals) {
+    testRunner.dumpAsText();
+
+    if (!window.eventSender)
+        document.writeln('FAIL - this test requires eventSender');
+    else {
+        internals.settings.setEditingBehavior('mac');
+
+        var test = document.getElementById('target');
+        eventSender.mouseMoveTo(target.offsetLeft + target.offsetWidth / 2, target.offsetTop + target.offsetHeight / 2);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+
+        eventSender.leapForward(200);
+
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+
+        document.execCommand('InsertText', false, 'a');
+        document.execCommand('Undo');
+        window.getSelection().modify('extend', 'left', 'character');
+
+        var actual = window.getSelection().toString();
+        // Windows has a trailing whitespace, other platforms don't.
+        document.writeln((actual == ' world' || actual == ' world ') ? 'PASS' : 'FAIL - expected " world" but got "' + actual + '"');
+    }
+}
+
+</script>
+</body>
+</html>

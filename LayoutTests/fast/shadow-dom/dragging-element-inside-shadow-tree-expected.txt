@@ -1,0 +1,8 @@
+This tests dragging an element inside a shadow tree. To manually test, drag and drop the blue box below into a green box.
+
+here
+dragstart event fired on target for: target
+dragenter event fired on destination for: destination
+drop event fired on destination for: destination
+dragend event fired on target for: target
+

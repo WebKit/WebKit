@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="content">
+<div id="textcontrol" contenteditable="true">some<div>hello world</div><div>test</div></div>
+<textarea id="textarea" cols='60' rows='8'>hello test
+world</textarea>
+</div>
+<div id="textcontrol2" contenteditable="true">abc<div><br></div<div><br></div><div><br></div><div>def</div></div>
+
+<div id="textcontrol3" contenteditable="true">
+<p>ab</p>
+<p>cd ef</p>
+</div>
+
+<div id="textcontrol4" contenteditable="true">
+<pre>
+Text in a pre element
+is displayed in a fixed-width
+font
+</pre>
+</div>
+
+<div role="group" id="console"></div>
+
+<script>
+
+    description("This tests that when there are newline characters within text controls, we can get the correct text range from index and length.");
+
+    // Test contenteditable with newlines.
+    var textControl = accessibilityController.accessibleElementById("textcontrol");
+    var textSome = textControl.stringForRange(0, 4);
+    shouldBe("textSome", "'some'");
+    
+    var textHello = textControl.stringForRange(5, 5);
+    shouldBe("textHello", "'hello'");
+    
+    var textWorld = textControl.stringForRange(11, 5);
+    shouldBe("textWorld", "'world'");
+    
+    var textTest = textControl.stringForRange(17, 4);
+    shouldBe("textTest", "'test'");
+    
+    // Test <textarea> with newlines.
+    var textarea = accessibilityController.accessibleElementById("textarea");
+    var textareaTextHello = textarea.stringForRange(0, 5);
+    var textareaTextWorld = textarea.stringForRange(11, 5);
+    shouldBe("textareaTextHello", "'hello'");
+    shouldBe("textareaTextWorld", "'world'");
+    
+    // Test multiple <br> in contenteditable
+    var textControl2 = accessibilityController.accessibleElementById("textcontrol2");
+    var textDEF = textControl2.stringForRange(7, 3);
+    shouldBe("textDEF", "'def'");
+    
+    // Test line ranges in contenteditable
+    var textControl3 = accessibilityController.accessibleElementById("textcontrol3");
+    var rangeValue = textControl3.stringForRange(2, 4);
+    // Replace the newline characters, and make sure it has two of them
+    rangeValue = rangeValue.replace(/(?:\r\n|\r|\n)/g, '[newline]'); 
+    shouldBe("rangeValue", "'[newline][newline]cd'");
+    
+    // pre tag in contenteditable
+    var textControl4 = accessibilityController.accessibleElementById("textcontrol4");
+    rangeForLine = textControl4.rangeForLine(1);
+    shouldBe("rangeForLine", "'{22, 30}'");
+    textLine = textControl4.stringForRange(22, 30);
+    shouldBe("textLine", "'is displayed in a fixed-width\\n'");
+    firstLine = textControl4.lineForIndex(21);
+    secondLine = textControl4.lineForIndex(51);
+    shouldBe("firstLine", "0");
+    shouldBe("secondLine", "1");
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

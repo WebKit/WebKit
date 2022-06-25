@@ -1,0 +1,35 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 266x18
+          text run at (0,0) width 266: "You should see the numbers 1 to 9 below."
+      RenderBlock {DIV} at (0,34) size 784x48
+        RenderText {#text} at (0,2) size 24x44
+          text run at (0,2) width 24: "A"
+      RenderBlock {DIV} at (0,82) size 784x48
+        RenderText {#text} at (0,2) size 25x44
+          text run at (0,2) width 25: "A"
+      RenderBlock {DIV} at (0,130) size 784x48
+        RenderText {#text} at (0,2) size 26x44
+          text run at (0,2) width 26: "A"
+      RenderBlock {DIV} at (0,178) size 784x48
+        RenderText {#text} at (0,2) size 27x44
+          text run at (0,2) width 27: "A"
+      RenderBlock {DIV} at (0,226) size 784x48
+        RenderText {#text} at (0,2) size 29x44
+          text run at (0,2) width 29: "A"
+      RenderBlock {DIV} at (0,274) size 784x48
+        RenderText {#text} at (0,2) size 30x44
+          text run at (0,2) width 30: "A"
+      RenderBlock {DIV} at (0,322) size 784x48
+        RenderText {#text} at (0,2) size 31x44
+          text run at (0,2) width 31: "A"
+      RenderBlock {DIV} at (0,370) size 784x48
+        RenderText {#text} at (0,2) size 32x44
+          text run at (0,2) width 32: "A"
+      RenderBlock {DIV} at (0,418) size 784x48
+        RenderText {#text} at (0,2) size 33x44
+          text run at (0,2) width 33: "A"

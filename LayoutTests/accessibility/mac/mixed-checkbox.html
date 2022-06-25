@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div tabindex=0 id="box1" role="checkbox" aria-checked="false">checkbox1</div><BR>
+<div tabindex=0 id="box2" role="checkbox" aria-checked="true">checkbox2</div><BR>
+<div tabindex=0 id="box3" role="checkbox" aria-checked="mixed">checkbox3</div><BR>
+<div tabindex=0 id="box4" role="checkbox">checkbox4</div><BR>
+<input tabindex=0 id="box5" type="checkbox" role="checkbox" aria-checked="true"><br>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that checkboxes will return the right AXValue for false/true/mixed.");
+
+    if (window.accessibilityController) {
+
+          // aria-state=false
+          shouldBe("accessibilityController.accessibleElementById('box1').intValue", "0");
+
+          // aria-state=true
+          shouldBe("accessibilityController.accessibleElementById('box2').intValue", "1");
+
+          // aria-state=mixed
+          shouldBe("accessibilityController.accessibleElementById('box3').intValue", "2");
+
+          // no aria state, default to off
+          shouldBe("accessibilityController.accessibleElementById('box4').intValue", "0");
+
+          // native checkbox is also aria checkbox, default to native semantics
+          shouldBe("accessibilityController.accessibleElementById('box5').intValue", "0");
+
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

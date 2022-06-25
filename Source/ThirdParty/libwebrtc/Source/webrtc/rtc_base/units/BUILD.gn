@@ -1,0 +1,33 @@
+# Copyright (c) 2018 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+
+rtc_source_set("unit_base") {
+  visibility = [
+    "../../api/units:*",
+    ":*",
+  ]
+  sources = [ "unit_base.h" ]
+
+  deps = [
+    "../../rtc_base:checks",
+    "../../rtc_base:safe_conversions",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_library("units_unittests") {
+    testonly = true
+    sources = [ "unit_base_unittest.cc" ]
+    deps = [
+      ":unit_base",
+      "../../test:test_support",
+    ]
+  }
+}

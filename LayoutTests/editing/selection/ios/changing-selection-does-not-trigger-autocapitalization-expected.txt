@@ -1,0 +1,11 @@
+
+Verifies that tapping to change selection does not leave the software keyboard in a state where it is automatically shifted. To manually run the test, focus the input field, tap on 'world', and then tap on 'hello' such that the final selection is after the word 'hello'. The keyboard should not be in shifted state.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS keyboardIsAutomaticallyShifted is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

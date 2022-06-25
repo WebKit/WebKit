@@ -1,0 +1,3 @@
+This tests the parsing of charset in the meta tag. The following should be a Hebrew word:
+
+עברית

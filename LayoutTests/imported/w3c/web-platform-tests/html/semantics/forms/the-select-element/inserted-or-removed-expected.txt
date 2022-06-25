@@ -1,0 +1,7 @@
+
+
+PASS The last selected OPTION should win; Inserted by parser
+PASS The last selected OPTION should win; Inserted by DOM API
+PASS The last selected OPTION should win; Inserted by jQuery append()
+PASS The last selected OPTION should win; Inserted by innerHTML
+

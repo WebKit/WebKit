@@ -1,0 +1,27 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ UseGPUProcessForMediaEnabled=false ] -->
+<html>
+<head>
+    <title>media-webm-no-duration</title>
+    <script src="../media/video-test.js"></script>
+    <script>
+    window.addEventListener('load', async event => {
+        try {
+            window.audio = document.querySelector('audio');
+            run('audio.src = "../../../media/content/test-no-duration.webm"');
+            waitFor(audio, 'error').then(e => { failTest('Failed to load media'); });
+
+            await waitFor(audio, 'canplay');
+            run('promise = audio.play()');
+            await shouldResolve(promise);
+            await testExpectedEventually('audio.currentTime', 0, '>');
+            endTest();
+        } catch(e) {
+            failTest(e);
+        }
+    });
+    </script>
+</head>
+<body>
+    <audio controls></audio>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>                                                                                                                                                                                
+<html>
+<head>
+<script src="/js-test-resources/plugin.js"></script>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.dumpChildFramesAsText();
+    }
+
+    runAfterPluginLoad(null, NotifyDone);
+</script>
+<script src="/plugins/resources/mock-plugin-logger.js"></script>
+<meta http-equiv="Content-Security-Policy" content="plugin-types application/x-invalid-type">
+</head>
+<body>
+    Given a `plugin-types` directive, plugins have to declare a type explicitly.
+    No declared type, no load. This test passes if there's a console message
+    above and "FAIL!" isn't logged.
+    <object data="data:application/x-webkit-test-netscape,logifloaded"
+            log="FAIL!"></object>
+</body>
+</html>
+

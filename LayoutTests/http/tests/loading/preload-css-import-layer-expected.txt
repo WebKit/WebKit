@@ -1,0 +1,13 @@
+main frame - didStartProvisionalLoadForFrame
+main frame - didCommitLoadForFrame
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+Preload scanner should preload @import rules with layers
+
+PASS
+PASS
+PASS
+PASS
+PASS
+

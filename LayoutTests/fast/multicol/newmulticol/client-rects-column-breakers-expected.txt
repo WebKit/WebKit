@@ -1,0 +1,6 @@
+bounding client rect x:288 y:11 width: 229 height:0
+bounding client rect x:19 y:651 width: 229 height:0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

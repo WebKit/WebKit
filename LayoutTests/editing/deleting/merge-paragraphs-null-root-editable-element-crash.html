@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This test is for the root editable element being nullptr in CompositeEditCommand::moveParagraph. WebKit should not crash.</p>
+<div id="editor" contenteditable><span id="start">hello</span><span id="end"> world</span><span id="text"> WebKit</span></div>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+const frame = document.createElement('iframe');
+start.appendChild(frame);
+frame.contentWindow.addEventListener('unload', () => {
+    editor.removeAttribute('contenteditable');
+    end.innerHTML = '<div><br></div>';
+
+    // Avoid hitting debug assertions in CompositeEditCommand::moveParagraph
+    text.firstChild.data = ' ';
+    text.prepend(document.createElement('br'));
+});
+getSelection().setBaseAndExtent(start, 0, end, 1);
+document.execCommand('delete', false, null);
+
+document.write('PASS. WebKit did not crash');
+
+</script>
+</body>
+</html>

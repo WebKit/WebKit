@@ -1,0 +1,19 @@
+<video controls></video>
+<p>Test 'volume' attribute<p>
+<script src=../media-file.js></script>
+<script src=../video-test.js></script>
+<script>
+    testExpected("video.volume", 1.0);
+    run("video.volume = 0.5");
+    testExpected("video.volume", 0.5);
+    run("video.volume = 0");
+    testExpected("video.volume", 0);
+    testDOMException("video.volume = 1.5", "DOMException.INDEX_SIZE_ERR");
+    testDOMException("video.volume = -0.5", "DOMException.INDEX_SIZE_ERR");
+    video.src = findMediaFile("video", "content/test");
+
+	setTimeout(function() { 
+	    testExpected("video.volume", 1.0);
+        endTest();
+	} , 100);
+</script>

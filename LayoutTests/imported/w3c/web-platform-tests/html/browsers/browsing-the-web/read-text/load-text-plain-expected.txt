@@ -1,0 +1,5 @@
+
+FAIL Checking document metadata for text file assert_equals: expected "CSS1Compat" but got "BackCompat"
+PASS Checking DOM for text file
+PASS Checking contents for text file
+

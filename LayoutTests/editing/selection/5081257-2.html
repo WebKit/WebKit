@@ -1,0 +1,14 @@
+<html>
+<body contenteditable="true">
+<p>This tests for setting the selection at a position inside a document in designMode.  You should see a caret at the start of the body.</p>
+
+</body>                
+<script>
+document.designMode = "on";
+var sel = window.getSelection();
+var range = document.createRange();
+range.setStart(document, 0);
+range.setEnd(document, 0);
+sel.addRange(range);
+</script>
+</html>

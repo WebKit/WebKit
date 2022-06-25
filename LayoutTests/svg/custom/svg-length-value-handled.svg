@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+  <rect width="100" height="100" fill="green"/>
+  <text id="label" y="200"/>
+    <script>
+      if (window.testRunner)
+        testRunner.dumpAsText();
+
+      document.getElementById("label").textContent =
+        "PASS: root svg element size handled (" +
+        document.rootElement.width.baseVal.value + "x" +
+        document.rootElement.height.baseVal.value + ")";
+    </script>
+</svg>

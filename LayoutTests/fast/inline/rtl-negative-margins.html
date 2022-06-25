@@ -1,0 +1,37 @@
+<style>
+.inline-block {
+  display: inline-block;
+  height: 20px;
+  width: 20px;
+  background-color: blue;
+  vertical-align: bottom;
+}
+
+.test {
+  direction: rtl;
+  width: 100px;
+  font-family: Ahem;
+  font-size: 20px;
+  color: blue;
+  background-color: green;
+}
+</style>
+<div class=test><span>X</span><div class=inline-block></div></div>
+<div class=test><span style="margin-left: 20px;">X</span><div class=inline-block></div></div>
+<div class=test><span style="margin-right: 40px;">X</span><div class=inline-block></div></div>
+<div class=test><span style="margin-left: 20px; margin-right: 40px;">X</span><div class=inline-block></div></div>
+<div class=test><span style="margin-inline-start: 40px; margin-inline-end: 20px;">X</span><div class=inline-block></div></div>
+
+<div class=test><span style="margin-left: -40px;">X</span><div class=inline-block></div></div>
+<div class=test><span style="margin-right: -80px;">X</span><div class=inline-block></div></div>
+<div class=test><span style="margin-left: -40px; margin-right: -80px;">X</span><div class=inline-block></div></div>
+<div class=test><span style="margin-inline-start: -80px; margin-inline-end: -40px;">X</span><div class=inline-block></div></div>
+
+<div class=test><span style="margin-left: 40px; margin-right: -80px;">X</span><div class=inline-block></div></div>
+<div class=test><span style="margin-left: -40px; margin-right: 80px;">X</span><div class=inline-block></div></div>
+<div class=test><span style="margin-inline-start: -80px; margin-inline-end: 40px;">X</span><div class=inline-block></div></div>
+
+<div class=test><span style="margin-left: -40px;">X</span><div class=inline-block style="margin-left: -50px;"></div></div>
+<div class=test><span style="margin-right: -80px;">X</span><div class=inline-block style="margin-right: -50px;"></div></div>
+<div class=test><span style="margin-left: -40px; margin-right: -80px;">X</span><div class=inline-block style="margin-left: 50px;"></div></div>
+<div class=test><span style="margin-inline-start: -80px; margin-inline-end: -40px;">X</span><div class=inline-block style="margin-right: 50px;"></div></div>

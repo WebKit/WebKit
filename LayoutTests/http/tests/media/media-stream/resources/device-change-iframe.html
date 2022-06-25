@@ -1,0 +1,5 @@
+<script>
+    navigator.mediaDevices.ondevicechange = (event) => {
+        parent.postMessage(location.search.substring(1), '*');
+    };
+</script>

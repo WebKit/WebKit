@@ -1,0 +1,28 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inside-worker/dedicatedworker-connect-src.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inside-worker/dedicatedworker-connect-src.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inside-worker/dedicatedworker-report-only.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inside-worker/dedicatedworker-report-only.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inside-worker/dedicatedworker-script-src.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inside-worker/dedicatedworker-script-src.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inside-worker/serviceworker-connect-src.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inside-worker/serviceworker-report-only.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inside-worker/serviceworker-script-src.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inside-worker/sharedworker-connect-src.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inside-worker/sharedworker-report-only.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inside-worker/sharedworker-script-src.sub.html

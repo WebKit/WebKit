@@ -1,0 +1,15 @@
+
+PASS subscribe should fail if there is no active service worker
+PASS wait for active service worker
+PASS aes128gcm should be supported
+PASS supportedContentEncodings should be frozen
+PASS pushManager should return same object
+PASS subscribe requires userVisibleOnly to be true
+PASS subscribe requires applicationServerKey
+PASS applicationServerKey string should be base64url-encoded
+PASS applicationServerKey buffer should be a valid point on the P-256 curve
+PASS applicationServerKey string should be a valid point on the P-256 curve
+PASS can subscribe with valid applicationServerKey buffer
+PASS can subscribe with valid applicationServerKey string
+PASS unregister service worker
+

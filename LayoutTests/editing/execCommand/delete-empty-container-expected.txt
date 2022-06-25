@@ -1,0 +1,1 @@
+Deleting an empty selection should have no effect.

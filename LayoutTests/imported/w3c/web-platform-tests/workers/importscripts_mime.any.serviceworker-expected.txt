@@ -1,0 +1,26 @@
+
+PASS importScripts() requires scripty MIME types: text/javascript is allowed.
+PASS importScripts() requires scripty MIME types: application/javascript is allowed.
+PASS importScripts() requires scripty MIME types: text/ecmascript is allowed.
+PASS importScripts() requires scripty MIME types: image/png is blocked.
+PASS importScripts() requires scripty MIME types: text/csv is blocked.
+PASS importScripts() requires scripty MIME types: video/mpeg is blocked.
+PASS importScripts() requires scripty MIME types: text/html is blocked.
+PASS importScripts() requires scripty MIME types: text/plain is blocked.
+PASS importScripts() requires scripty MIME types: application/xml is blocked.
+PASS importScripts() requires scripty MIME types: application/octet-stream is blocked.
+PASS importScripts() requires scripty MIME types: text/potato is blocked.
+PASS importScripts() requires scripty MIME types: potato/text is blocked.
+PASS importScripts() requires scripty MIME types: aaa/aaa is blocked.
+PASS importScripts() requires scripty MIME types: zzz/zzz is blocked.
+PASS importScripts() requires scripty MIME types: text/javascript; charset=utf-8 is allowed.
+PASS importScripts() requires scripty MIME types: text/javascript;charset=utf-8 is allowed.
+PASS importScripts() requires scripty MIME types: text/javascript;bla;bla is allowed.
+PASS importScripts() requires scripty MIME types: text/csv; charset=utf-8 is blocked.
+PASS importScripts() requires scripty MIME types: text/csv;charset=utf-8 is blocked.
+PASS importScripts() requires scripty MIME types: text/csv;bla;bla is blocked.
+PASS importScripts() requires scripty MIME types: Text/html is blocked.
+PASS importScripts() requires scripty MIME types: text/Html is blocked.
+PASS importScripts() requires scripty MIME types: TeXt/HtMl is blocked.
+PASS importScripts() requires scripty MIME types: TEXT/HTML is blocked.
+

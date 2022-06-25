@@ -1,0 +1,20 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CSSContainmentEnabled=false ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<div id="target" style="display: none"></div>
+<script>
+description("Tests that contain is not exposed when the feature is disabled");
+
+shouldBeFalse("'contain' in document.documentElement.style");
+shouldBeFalse("'contain' in getComputedStyle(document.documentElement)");
+shouldBeTrue("getComputedStyle(document.getElementById('target')).getPropertyValue('contain') == ''");
+shouldBeFalse("CSS.supports('contain: paint')");
+shouldBeFalse("CSS.supports('contain: inherit')");
+
+</script>
+</body>
+</html>

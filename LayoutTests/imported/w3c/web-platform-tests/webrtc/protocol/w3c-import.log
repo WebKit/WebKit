@@ -1,0 +1,42 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/README.txt
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/RTCPeerConnection-payloadTypes.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/bundle.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/candidate-exchange.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/crypto-suite.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/dtls-fingerprint-validation.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/dtls-setup.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/handover-datachannel.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/handover.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/ice-state.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/ice-ufragpwd.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/jsep-initial-offer.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/missing-fields.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/msid-parse.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/rtp-clockrate.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/rtp-demuxing.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/rtp-extension-support.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/rtp-payloadtypes.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/sctp-format.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/sdes-dont-dont-dont.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/simulcast-answer.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/simulcast-offer.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/split.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/unknown-mediatypes.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/video-codecs.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/vp8-fmtp.html

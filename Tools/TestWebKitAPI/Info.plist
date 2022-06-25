@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>WKAppBoundDomains</key>
+	<array>
+		<string>test:</string>
+		<string>:</string>
+		<string>test:</string>
+		<string>testDomain1</string>
+		<string>apple.com</string>
+		<string>sub.domain.webkit.org/road/to/nowhere/</string>
+		<string>webkit.org</string>
+		<string>file:///some/file</string>
+		<string></string>
+		<string>   </string>
+		<string>https://sub.domain.webkit.org</string>
+		<string>https://www.apple.com/</string>
+		<string>https://webkit.org</string>
+		<string>https://www.apple.com/iphone/</string>
+		<string>http://www.example.com/</string>
+		<string>http://bar.com/</string>
+		<string>localhost</string>
+		<string>https://searchforlongboards.biz</string>
+		<string>app-bound-custom-scheme:</string>
+		<string>longboardshop.biz</string>
+		<string>should-not-be-included:</string>
+	</array>
+	<key>CFBundleName</key>
+	<string>${PRODUCT_NAME}</string>
+	<key>CFBundleIdentifier</key>
+	<string>${PRODUCT_BUNDLE_IDENTIFIER}</string>
+</dict>
+</plist>

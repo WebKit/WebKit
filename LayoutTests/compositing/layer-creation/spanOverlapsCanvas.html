@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="viewport" content="width=480"/>
+
+	<script>
+
+	    function init() {
+	        var ctx = document.getElementById("world").getContext("2d");
+	        ctx.fillStyle = "red";
+	        ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height);
+	        
+            if (window.testRunner) {
+                window.testRunner.dumpAsText(true);
+                var console = document.getElementById("layeroutput");
+                console.innerHTML = window.internals.layerTreeAsText(document);
+            }
+	    }
+	</script>
+
+	<style>
+        #output
+        {
+            width: 100px;
+            height: 50px;
+            background-color: green;
+            position: absolute;
+        }
+        #layeroutput
+        {
+            position: absolute;
+            top: -100%;
+        }
+	</style>
+</head>
+<body onLoad="init()">
+    <pre id="layeroutput"></pre>
+	<div id="output"></div>
+	<canvas id="world" width="100" height="50"></canvas>
+</body>
+</html>

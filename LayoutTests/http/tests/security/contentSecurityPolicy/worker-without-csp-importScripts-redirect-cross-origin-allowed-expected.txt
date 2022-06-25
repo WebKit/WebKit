@@ -1,0 +1,3 @@
+This tests a Web Worker without a Content Security Policy is allowed to import a script from a different origin through a redirect.
+
+PASS did import script from different origin.

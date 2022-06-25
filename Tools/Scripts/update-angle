@@ -1,0 +1,220 @@
+#!/bin/sh
+set -e
+cd "$(dirname "$0")/../../Source/ThirdParty/ANGLE"
+ANGLE_DIR="$PWD"
+
+regenerate_changes_diff() {
+    echo "Regenerating changes.diff."
+    # Exclude WebKit-added build files from the diff.
+    git diff "$1" --full-index --cached -b --ignore-cr-at-eol -- . \
+        ':(exclude)ChangeLog' \
+        ':(exclude)ANGLE.plist' \
+        ':(exclude)ANGLE.xcodeproj' \
+        ':(exclude)Configurations' \
+        ':(exclude)**CMakeLists.txt' \
+        ':(exclude)*.cmake' \
+        ':(exclude)adjust-angle-include-paths*' \
+        ':(exclude)changes.diff' \
+        ':(exclude)gni-to-cmake.py' \
+        ':(exclude)src/angle_commit.h' \
+        ':(exclude)Makefile' \
+        ':(exclude)src/empty.cpp' \
+        ':(exclude)third_party/zlib/google/compression_utils_portable*' \
+        ':(exclude)**.DS_Store' \
+        ':(exclude)update-angle.sh' \
+        ':(exclude)WebKitBuild' \
+        ':(exclude)ChangeLog*' \
+        ':(exclude)scripts/copy-frameworks-to-secondary-path.sh' \
+        ':(exclude)third_party/r8/custom_d8.jar' \
+        > changes.diff
+}
+
+if [ ! -z "$1" ] ; then
+    if [ "$1" = "--regenerate-changes-diff" ] ; then
+        echo "Regenerating Source/ThirdParty/ANGLE/changes.diff"
+        PREVIOUS_ANGLE_COMMIT_HASH=$(grep -m 1 -o -E "[a-z0-9]{40}" ANGLE.plist)
+        rm -rf .git
+        git init
+        git remote add origin https://chromium.googlesource.com/angle/angle
+        git fetch --depth 1 origin "$PREVIOUS_ANGLE_COMMIT_HASH"
+        git add -A
+        regenerate_changes_diff "$PREVIOUS_ANGLE_COMMIT_HASH"
+        rm -rf .git
+        cat changes.diff
+        echo
+        echo "Success."
+        exit 0
+    
+    
+    elif [ "$1" = "--regenerate-changes-diff-main" ] ; then
+        rm -rf .git
+        git init
+        git remote add origin https://chromium.googlesource.com/angle/angle
+        git fetch --depth 1 origin main
+        git add -A
+        regenerate_changes_diff origin/main
+        rm -rf .git
+        cat changes.diff
+        echo
+        echo "Success."
+        exit 0
+    fi
+    echo "Unrecognized argument: $1"
+    exit 1
+fi
+
+echo "This script helps you update the copy of ANGLE in Source/ThirdParty/ANGLE"
+echo "with the latest changes from upstream, without clobbering WebKit's local"
+echo "changes."
+echo
+
+
+if ! which git-filter-repo > /dev/null; then
+    echo "Please install git-filter-repo from https://github.com/newren/git-filter-repo"
+    echo "git-filter-repo is recommended by the git project itself as a better"
+    echo "alternative to the built-in git filter-branch."
+    exit 1
+fi
+
+in_rebase() {
+    test -d .git && { test -d "$(git rev-parse --git-path rebase-merge)" || test -d "$(git rev-parse --git-path rebase-apply)"; } ;
+}
+
+wait_for_rebase_to_complete() {
+    if ! in_rebase; then
+        return 1
+    fi
+    echo
+    echo "For patches that have been upstreamed, you should choose the 'ours' version,"
+    echo "and the resulting commits after rebase should be mostly empty. For patches"
+    echo "that haven't been upstreamed, resolve conflicts prioritizing 'theirs' when"
+    echo "possible to preserve WebKit's changes."
+    echo
+    echo "The script will pause now. Please complete the rebase, then come back and"
+    echo "press Enter to continue:"
+    read -r
+    while in_rebase && ! GIT_EDITOR=true git rebase --continue; do
+        echo
+        echo "Rebase still in progress. Complete the rebase and press Enter to continue:"
+        read -r
+    done
+}
+
+cleanup_after_successful_rebase_and_exit() {
+    cd "$ANGLE_DIR"
+    echo
+    regenerate_changes_diff "origin/main"
+    git --no-pager diff -b --cached "$LAST_ROLL_COMMIT_HASH" -- Compiler.cmake GLESv2.cmake
+    echo
+    echo "Rebase complete!"
+    echo "Above are the changes to Compiler.cmake and GLESv2.cmake."
+    echo "Now you'll need to apply the equivalent changes to the ANGLE XCode"
+    echo "project and make sure it builds. Please examine changes.diff and"
+    echo "undo any unintentional changes or unnecessary added files."
+    echo "You can examine the rebased history in the temporary git repository in"
+    echo "Source/ThirdParty/ANGLE to see where changes came from."
+    echo
+    echo "This script will pause now. Press Enter to continue when you're"
+    echo "done. The script will regenerate changes.diff and delete the"
+    echo "temporary git repository in Source/ThirdParty/ANGLE."
+    echo
+    echo "Press Enter to continue after fixing build:"
+    read -r
+    regenerate_changes_diff "origin/main"
+    echo "Generating contents of commit message into commit-message.txt."
+    echo "Be sure to copy out this file's contents and delete it before committing."
+    echo "Update ANGLE to $(git log -1 ${COMMIT_HASH} --format=%cs) (${COMMIT_HASH}))" > commit-message.txt
+    echo "" >> commit-message.txt
+    echo "Contains upstream commits:" >> commit-message.txt
+    echo git log --oneline "$PREVIOUS_ANGLE_COMMIT_HASH".."$COMMIT_HASH" --pretty="%h %s" >> commit-message.txt
+    git log --oneline "$PREVIOUS_ANGLE_COMMIT_HASH".."$COMMIT_HASH" --pretty="%h %s" >> commit-message.txt
+    echo "Removing temporary git repository from Source/ThirdParty/ANGLE"
+    rm -rf .git
+    git add -A .
+    # Undo the addition of commit-message.txt to make it easier for the user to remove.
+    git restore --staged commit-message.txt
+    echo
+    echo "ANGLE update is now staged. Ready to commit and upload patch."
+    exit 0
+}
+
+if wait_for_rebase_to_complete ; then
+    cleanup_after_successful_rebase_and_exit
+fi
+
+if [ -n "$(git status -s .)" ] ; then
+    git status -s .
+    echo "Error: ANGLE directory Source/ThirdParty/ANGLE has local uncommitted"
+    echo "changes. Please stash your changes first and start with a clean"
+    echo "checkout of WebKit main."
+    exit 1
+fi
+
+PREVIOUS_ANGLE_COMMIT_HASH=$(grep -m 1 -o -E "[a-z0-9]{40}" ANGLE.plist)
+
+cd ../../..
+echo "Creating WebKit branch that only contains ANGLE changes, using git-filter-repo."
+echo "This may take a few minutes, but massively speeds up rebasing later."
+git branch -f just-angle main && git-filter-repo --refs refs/heads/just-angle --path Source/ThirdParty/ANGLE --path-rename Source/ThirdParty/ANGLE/: --force
+cd "$ANGLE_DIR"
+
+echo "Downloading latest ANGLE via git clone."
+# Remove all files including hidden ones, but not . or ..
+rm -rf ..?* .[!.]* ./*
+git clone --branch main https://chromium.googlesource.com/angle/angle .
+echo "Successfully downloaded latest ANGLE."
+echo "Commit hash: "
+COMMIT_HASH=$(git rev-parse HEAD)
+echo "$COMMIT_HASH"
+echo ""
+
+echo "Generating angle_commit.h"
+./src/commit_id.py gen src/angle_commit.h.TEMP
+
+echo "Applying WebKit's local ANGLE changes to the old ANGLE version."
+echo "Fetching WebKit changes into ANGLE repo."
+git remote add webkit ../../.. -t just-angle
+git fetch webkit
+git checkout just-angle
+
+PREVIOUS_ANGLE_COMMIT_HASH=$(grep -m 1 -o -E "[a-z0-9]{40}" ANGLE.plist)
+LAST_ROLL_COMMIT_HASH=$(git log --format="%H" -1 ANGLE.plist)
+
+echo "Updating ANGLE.plist commit hashes."
+sed -i.bak -e "s/\([^a-z0-9]\)[a-z0-9]\{40\}\([^a-z0-9]\)/\1$COMMIT_HASH\2/g" ANGLE.plist
+echo "Updating ANGLE.plist date."
+sed -i.bak -e "s/<string>[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]<\/string>/<string>$(date +%Y-%m-%d)<\/string>/g" ANGLE.plist
+rm ANGLE.plist.bak
+
+echo "Translating gni build files to cmake."
+git checkout origin/main -- src/compiler.gni src/libGLESv2.gni src/libANGLE/renderer/d3d/BUILD.gn
+./gni-to-cmake.py src/compiler.gni Compiler.cmake
+./gni-to-cmake.py src/libGLESv2.gni GLESv2.cmake
+./gni-to-cmake.py src/libANGLE/renderer/d3d/BUILD.gn D3D.cmake --prepend 'src/libANGLE/renderer/d3d/'
+./gni-to-cmake.py src/libANGLE/renderer/gl/BUILD.gn GL.cmake --prepend 'src/libANGLE/renderer/gl/'
+./gni-to-cmake.py src/libANGLE/renderer/metal/BUILD.gn Metal.cmake --prepend 'src/libANGLE/renderer/metal/'
+git checkout src/compiler.gni src/libGLESv2.gni
+
+echo "Moving angle_commit.h into place"
+mv src/angle_commit.h.TEMP src/angle_commit.h
+
+git add -A .
+git commit -m "Updated ANGLE.plist, angle_commit.h and cmake files."
+
+# Graft the WebKit commit history on top of the ANGLE commit history at
+# the point of the last ANGLE roll. This will allow us to rebase just
+# the WebKit changes since the last roll on top of ANGLE main.
+git replace --graft "$LAST_ROLL_COMMIT_HASH" "$PREVIOUS_ANGLE_COMMIT_HASH"
+# Rebase the WebKit commit history on top of ANGLE main.
+git checkout -b rebased-webkit-changes
+
+echo "Rebasing WebKit's local changes on latest ANGLE main."
+if ! git rebase origin/main; then
+    echo
+    echo "There is now a temporary git repo in Source/ThirdParty/ANGLE with a"
+    echo "rebase in progress. You must resolve the merge conflict and continue"
+    echo "the rebase. Make sure to do this in the temporary"
+    echo "Source/ThirdParty/ANGLE repo, not the main WebKit repo."
+    wait_for_rebase_to_complete
+fi
+cleanup_after_successful_rebase_and_exit

@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<svg viewBox="0 0 80 140" version="1.2" baseProfile="tiny" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <linearGradient id="surface" x1="1" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FFF"/>
+      <stop offset="1" stop-color="#FEA"/>
+    </linearGradient>
+  </defs>
+  <a xlink:href="#">
+    <rect x="1" y="1" width="38" height="38" rx="4" fill="url(#surface)" stroke="#FC3" stroke-width="2"/>
+    <text x="20" y="27" font-size="20" text-anchor="middle">B</text>
+  </a>
+  <a xlink:href="#">
+    <rect x="41" y="1" width="38" height="38" rx="4" fill="url(#surface)" stroke="#FC3" stroke-width="2"/>
+  </a>
+  <a xlink:href="#">
+    <circle cx="20" cy="70" r="19" fill="url(#surface)" stroke="#FC3" stroke-width="2"/>
+    <text x="20" y="77" font-size="20" text-anchor="middle">C</text>
+  </a>
+  <a xlink:href="#">
+    <circle cx="60" cy="70" r="19" fill="url(#surface)" stroke="#FC3" stroke-width="2"/>
+  </a>
+  <a xlink:href="#">
+    <circle cx="20" cy="120" r="19" fill="url(#surface)" stroke="#FC3" stroke-width="2"/>
+    <text x="20" y="127" font-size="20" text-anchor="middle">D</text>
+  </a>
+  <a xlink:href="#">
+    <circle cx="60" cy="120" r="19" fill="url(#surface)" stroke="#FC3" stroke-width="2"/>
+    <text x="60" y="127" font-size="20" text-anchor="middle">E</text>
+  </a>
+</svg>

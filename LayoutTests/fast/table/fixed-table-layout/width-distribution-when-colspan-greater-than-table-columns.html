@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+table, tr, td {
+    border: 1px solid black;
+}
+
+td {
+    width: 1%;
+}
+table {
+    background: red;
+}
+tr {
+    background: green;
+    height: 35px;
+}
+</style>
+</head>
+<body>
+<p>This test verifies that the width of table cells are computed correctly in fixed table layout regardless of whether colspan &gt; than the number of columns.</p>
+<table cellspacing="0" cellspacing="0" width="100%" style="table-layout: fixed;">
+    <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td style="width:94%;"></td>
+    </tr>
+    <tr>
+        <td colspan="10" style="height:24px;width:100%"></td>
+    </tr>
+</table>
+</body>
+</html>

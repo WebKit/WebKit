@@ -1,0 +1,7 @@
+
+PASS searchParams on location object
+PASS <a> and <area>.searchParams should be undefined
+PASS Setting URL's href attribute and base URLs
+PASS URL.domainToASCII should be undefined
+PASS URL.domainToUnicode should be undefined
+

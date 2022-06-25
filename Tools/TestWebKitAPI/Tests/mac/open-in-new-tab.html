@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<body>
+<iframe name="subframe"></iframe>
+<script>
+function openNewTab()
+{
+    let callOpen = () => open("https://webkit.org", "subframe");
+    if (window.internals)
+        internals.withUserGesture(callOpen);
+    else
+        callOpen();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+partial interface DedicatedWorkerGlobalScope {
+    attribute DedicatedWorkerGlobalScopeConstructor DedicatedWorkerGlobalScope;
+    attribute ExposedStarConstructor ExposedStar;
+};

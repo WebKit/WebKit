@@ -1,0 +1,11 @@
+Test verifies that process does not crash when item is updated in another window
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS localStorage.getItem('result') is "pass"
+PASS sessionStorage.getItem('key') is "value"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,3 @@
+
+PASS Should block the object and fire a spv
+

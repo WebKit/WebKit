@@ -1,0 +1,12 @@
+<div id="d1"></div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+document.addEventListener('beforeload', function(event) {
+    d1.appendChild(document.createElement('button'));
+    d1.offsetLeft;
+    d1.remove();
+}, true);
+</script>
+<embed src="data:image/png,"></embed>
+<p>PASS if no assertion failure.</p>

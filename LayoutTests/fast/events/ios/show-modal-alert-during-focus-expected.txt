@@ -1,0 +1,11 @@
+ALERT: This is a modal alert.
+This test verifies that presenting a modal alert while focusing an editable input doesn't cause the application process to hang. To verify manually, tap the text field above, and check that the JavaScript alert is presented with no significant delay (i.e. a 1-second hang).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS doneShowingAlert became true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

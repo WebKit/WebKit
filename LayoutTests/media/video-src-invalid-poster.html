@@ -1,0 +1,28 @@
+<script src=video-test.js></script>
+<video poster="content/abe.png">
+    <source src="content/bogus" type="bogus">
+</video>
+<script>
+    findMediaElement();
+
+    function listenForWidthAndHeight(expectedWidth, expectedHeight, callback) {
+        if (video.clientWidth == expectedWidth && video.clientHeight == expectedHeight) {
+            callback();
+        } else {
+            // This uses a 20ms sleep loop to accomplish the wait, since the
+            // standard specifies no events that fire on poster load or error.
+            window.setTimeout(listenForWidthAndHeight, 20, expectedWidth, expectedHeight, callback);
+        }
+    }
+
+    function expected() {
+        testExpected("video.clientWidth", 76);
+        testExpected("video.clientHeight", 103);
+        endTest();
+    }
+
+    run("video.load()");
+    waitForEvent("loadstart", function () {
+        listenForWidthAndHeight(76, 103, expected);
+    });
+</script>

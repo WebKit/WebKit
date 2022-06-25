@@ -1,0 +1,43 @@
+This test ensures keyboard-focusable leaf nodes with AXLabels are considered accessibility elements on iOS.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS !accessibilityController.accessibleElementById('div-empty') is true
+Testing ID div-empty-with-aria-label
+PASS element.isIgnored is false
+Testing ID div-content
+PASS element.isIgnored is true
+Testing ID div-content-with-aria-label
+PASS element.isIgnored is true
+Testing ID group-empty
+PASS element.isIgnored is true
+Testing ID group-empty-with-aria-label
+PASS element.isIgnored is false
+Testing ID group-content
+PASS element.isIgnored is true
+PASS !accessibilityController.accessibleElementById('blockquote-empty') is true
+Testing ID blockquote-empty-with-aria-label
+PASS element.isIgnored is false
+Testing ID blockquote-content
+PASS element.isIgnored is true
+Testing ID footer-empty
+PASS element.isIgnored is true
+Testing ID footer-empty-with-aria-label
+PASS element.isIgnored is false
+Testing ID radiogroup-empty
+PASS element.isIgnored is true
+Testing ID radiogroup-empty-with-aria-label
+PASS element.isIgnored is false
+PASS !accessibilityController.accessibleElementById('paragraph-empty') is true
+Testing ID paragraph-empty-with-aria-label
+PASS element.isIgnored is false
+Testing ID paragraph-content
+PASS element.isIgnored is true
+Testing ID paragraph-content-with-aria-label
+PASS element.isIgnored is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

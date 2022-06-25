@@ -1,0 +1,40 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-armenian-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-armenian.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-circle-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-circle.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-decimal-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-decimal-leading-zero-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-decimal-leading-zero.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-decimal.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-disc-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-disc.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-georgian-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-georgian.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-lower-greek-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-lower-greek.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-lower-latin-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-lower-latin.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-lower-roman-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-lower-roman.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-square-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-square.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-upper-latin-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-upper-latin.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-upper-roman-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-upper-roman.html

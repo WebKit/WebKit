@@ -1,0 +1,10 @@
+This test checks that a multiline comment containing a newline is converted to a line terminator token.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS shouldBeUndefined is undefined
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

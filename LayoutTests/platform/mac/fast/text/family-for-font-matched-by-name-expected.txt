@@ -1,0 +1,26 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 54x18
+          text run at (0,0) width 54: "Test for "
+        RenderInline {I} at (0,0) size 578x18
+          RenderInline {A} at (0,0) size 305x18 [color=#0000EE]
+            RenderText {#text} at (53,0) size 305x18
+              text run at (53,0) width 305: "http://bugs.webkit.org/show_bug.cgi?id=17194"
+          RenderText {#text} at (357,0) size 274x18
+            text run at (357,0) width 5: " "
+            text run at (361,0) width 270: "Changing text to bold changes font family"
+        RenderText {#text} at (630,0) size 5x18
+          text run at (630,0) width 5: "."
+      RenderBlock {P} at (0,34) size 784x18
+        RenderText {#text} at (0,0) size 294x18
+          text run at (0,0) width 294: "These lines should be in Lucida Grande Bold:"
+      RenderBlock {P} at (0,68) size 784x18
+        RenderText {#text} at (0,0) size 229x18
+          text run at (0,0) width 229: "Lorem ipsum dolor sit amet"
+      RenderBlock {P} at (0,102) size 784x18
+        RenderText {#text} at (0,0) size 229x18
+          text run at (0,0) width 229: "Lorem ipsum dolor sit amet"

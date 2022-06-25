@@ -1,0 +1,19 @@
+Test that importing P-384 EC keys for the ECDH algorithm through PKCS#8 fails in case of incorrect curve identifier or public key used in the ECPrivateKey structure
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+ECDH: importing P-384 key that uses matching curve identifiers and valid public key in ECParameters structures in PKCS#8 ...
+PASS Successfully imported a P-384 key.
+ECDH: importing P-384 key whose curve identifiers in ECParameters structures in PKCS#8 don't match ...
+PASS importKey(pkcs8P384KeyMismatchedCurveIdentifiers) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+ECDH: importing P-384 key that has a public key in PKCS#8 of invalid length ...
+PASS importKey(pkcs8P384KeyInvalidPublicKeyLength) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+ECDH: importing P-384 key that has a public key in PKCS#8 of invalid EC point format ...
+PASS importKey(pkcs8P384KeyInvalidPublicKeyECPointFormat) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+ECDH: importing P-384 key that has an invalid public key in PKCS#8 ...
+PASS importKey(pkcs8P384KeyInvalidPublicKey) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

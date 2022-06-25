@@ -1,0 +1,19 @@
+Test that drawImage() does nothing with an incomplete image or video
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS ctx.drawImage(img, 0, 0) is undefined
+PASS imgdata[0] is 255
+PASS imgdata[1] is 0
+PASS imgdata[2] is 0
+PASS imgdata[3] is 255
+PASS ctx.drawImage(video, 0, 0) is undefined
+PASS imgdata[0] is 255
+PASS imgdata[1] is 0
+PASS imgdata[2] is 0
+PASS imgdata[3] is 255
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

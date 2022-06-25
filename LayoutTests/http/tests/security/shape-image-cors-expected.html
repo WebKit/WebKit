@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    #clear-left {
+        clear: left;
+        font: 20px/1 Ahem, sans-serif;
+        color: green;
+    }
+
+    #clear-left > div {
+        float: left;
+        height: 20px;
+    }
+
+    #shape-outside-block-origin {
+        width: 200px;
+    }
+
+    #shape-outside-same-origin {
+        width: 100px;
+    }
+
+    #shape-outside-data-url {
+        width: 100px;
+    }
+
+    #shape-outside-allow-origin-url {
+        width: 100px;
+    }
+
+    #shape-outside-disallow-origin-url {
+        width: 200px;
+    } 
+</style>
+</head>
+<body>
+    <p>Verify that images not allowed by CORS don't affect the layout and that same-origin images, data URLs, and images with a "Access-Control-Allow-Origin: *" header do define the layout.</p>
+    <div id="clear-left"><div id="shape-outside-block-origin"></div>X</div>
+    <div id="clear-left"><div id="shape-outside-same-origin"></div>X</div>
+    <div id="clear-left"><div id="shape-outside-data-url"></div>X</div>
+    <div id="clear-left"><div id="shape-outside-allow-origin-url"></div>X</div>
+    <div id="clear-left"><div id="shape-outside-disallow-origin-url"></div>X</div>
+</body>
+</html>
+
+

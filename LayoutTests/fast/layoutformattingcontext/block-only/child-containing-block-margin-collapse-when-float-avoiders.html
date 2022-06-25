@@ -1,0 +1,28 @@
+<!-- webkit-test-runner [ LayoutFormattingContextEnabled=true InlineFormattingContextIntegrationEnabled=false ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+  margin: 0px;
+}
+
+.container {
+  margin: 20px;
+  width: 100px;
+  height: 100px;
+  background-color: green;
+  border: 10px solid blue;
+  padding: 8px;
+  overflow: hidden;
+}
+</style>    
+</head>
+<body>
+<div class="container">
+  <div class="container">
+    <div class="container"></div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Test verifies that process does not crash when item is updated in another window");
+jsTestIsAsync = true;
+
+sessionStorage.clear();
+localStorage.clear();
+
+sessionStorage.setItem("key", "value");
+window.open("resources/window-open-remove-item.html");
+
+addEventListener('storage', event => { 
+    shouldBeEqualToString("localStorage.getItem('result')", "pass");
+    shouldBeEqualToString("sessionStorage.getItem('key')", "value");
+    finishJSTest();
+});
+
+</script>
+</body>
+</html>

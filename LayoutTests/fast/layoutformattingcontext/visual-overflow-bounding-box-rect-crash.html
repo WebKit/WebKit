@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<style>
+  :only-child {
+    -webkit-line-clamp: 1;
+  }
+</style>
+<script>
+  internals.settings.setLayerBasedSVGEngineEnabled(true);
+
+  onload = () => {
+    let tr0 = document.createElement('tr');
+    document.body.append(tr0);
+    let div0 = document.createElement('div');
+    tr0.append(div0);
+    let span0 = document.createElement('span');
+    span0.style.appearance = 'button';
+    span0.style.shapeOutside = 'circle()';
+    div0.append(span0);
+    span0.append(document.createElement('span'));
+    document.body.offsetTop;
+    tr0.append(document.createElement('div'));
+    if (window.testRunner)
+      testRunner.dumpAsText();
+  };
+</script>
+PASS if this doesn't crash

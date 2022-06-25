@@ -1,0 +1,12 @@
+
+This tests that a combobox element used on a native text control will return the correct AXValue and placeholder.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS combobox.stringValue is 'AXValue: text'
+PASS combobox.stringAttributeValue('AXPlaceholderValue') is 'Placeholder'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

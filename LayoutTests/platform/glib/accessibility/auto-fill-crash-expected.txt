@@ -1,0 +1,12 @@
+This tests that when an auto fill element is removed we won't crash accessing an old value.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS axTextField.childrenCount === 1
+PASS axTextField.childAtIndex(expectedChildrenCount - 1).description === 'AXDescription: contact info AutoFill'
+PASS axTextField.childrenCount === 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

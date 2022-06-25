@@ -1,0 +1,16 @@
+
+PASS instantiateStreaming using resolved response
+PASS instantiateStreaming using resolved response and check instantiate
+PASS instantiateStreaming using promise response from fetch and check instantiate
+PASS instantiateStreaming raise error if wrong mime type
+PASS instantiateStreaming raise error if no mime type
+PASS instantiateStreaming raise error if 404 status
+PASS instantiateStreaming check CORS
+PASS instantiateStreaming raise error if no-cors
+PASS instantiateStreaming receive promise with response created from ArrayBuffer
+PASS instantiateStreaming receive response that deliver data by chunks as bufferArray
+PASS instantiateStreaming using blob
+FAIL instantiateStreaming using FormData promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: Not implemented" ("NotSupportedError") expected instance of function "function CompileError() {
+    [native code]
+}" ("CompileError")
+

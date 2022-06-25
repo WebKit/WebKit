@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div role="grid" id="grid1">
+    <div role="rowgroup">
+        <div role="row">
+            <span role="columnheader">A</span>
+            <span role="columnheader">B</span>
+            <span role="columnheader">C</span>
+        </div>
+    </div>
+    <div role="rowgroup" id="myData"><!-- to be populated by script --></div>
+</div>
+
+<script>
+    let output = "This tests that the number of rows and columns of a grid are correct after adding and removing rows and columns.\n";
+
+    function $(id) {
+       return document.getElementById(id);
+    }
+
+    function createNode(tagName, role) {
+        let el = document.createElement(tagName);
+        el.setAttribute('role', role);
+        return el;
+    }
+
+    function clearGridData() {
+        let data = $("myData");
+        data.innerHTML = "";
+    }
+
+    function randomizeGridData() {
+        let choices = ['foo', 'bar', 'baz', 'baf', 'bop', 'bip'];
+        let data = $("myData");
+        for (let i = 0; i < 3; i++) {
+            let row = createNode("tr", "row");
+            for (let j = 0; j < 3; j++) {
+                let cell = createNode("tr", "gridcell");
+                cell.innerHTML = choices[Math.floor(Math.random() * choices.length)]; // Populate cell with a random entry from 'choices' array: 'foo', 'bar', 'baz', etc.
+                row.appendChild(cell);
+            }
+            data.appendChild(row);
+        }
+    }
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        window.grid = accessibilityController.accessibleElementById("grid1");
+        output += "Initial count:\n";
+        output += expect("grid.rowCount", "1");
+        output += expect("grid.columnCount", "3");
+
+        randomizeGridData();
+        setTimeout(async () => {
+            await waitFor(() => { return grid.rowCount == 4; });
+            output += "Count after adding 3 rows:\n";
+            output += expect("grid.rowCount", "4");
+            output += expect("grid.columnCount", "3");
+
+            clearGridData();
+            await waitFor(() => { return grid.rowCount == 1; });
+            output += "Count after clearing data:\n";
+            output += expect("grid.rowCount", "1");
+            output += expect("grid.columnCount", "3");
+
+            randomizeGridData();
+            await waitFor(() => { return grid.rowCount == 4; });
+            output += "Count after adding 3 rows again:\n";
+            output += expect("grid.rowCount", "4");
+            output += expect("grid.columnCount", "3");
+
+            debug(output);
+            $("grid1").style.visibility = "hidden";
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>

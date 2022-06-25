@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            .a {
+                transform: rotate(5deg);
+            }
+            .x .a {
+                transform: rotate(10deg);
+            }
+        </style>
+        <script>
+            if (window.testRunner)
+                testRunner.waitUntilDone();
+            onload = () => {
+                setTimeout(() => {
+                    document.body.className = 'x';
+                    if (window.testRunner)
+                        testRunner.notifyDone();
+                }, 100)
+            }
+        </script>
+    </head>
+    <body>
+        Top captions should be placed above the table even ater the simplified table relayout.
+        <table border=3>
+            <caption>top caption 1</caption>
+            <caption>top caption 2</caption>
+            <caption align=bottom>bottom caption 1</caption>
+            <caption align=bottom>bottom caption 2</caption>
+            <tr>
+                <th>Apple</th>
+                <th>Banana</th>
+                <th>Orange</th>
+            </tr>
+            <tr>
+                <td><div class=a>text</div></td>
+                <td><div class=a>text</div></td>
+                <td><div class=a>text</div></td>
+            </tr>
+        </table>
+    </body>
+</html>

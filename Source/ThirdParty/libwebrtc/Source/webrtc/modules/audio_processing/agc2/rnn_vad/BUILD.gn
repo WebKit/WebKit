@@ -1,0 +1,333 @@
+# Copyright (c) 2018 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../../webrtc.gni")
+
+rtc_library("rnn_vad") {
+  visibility = [ "../*" ]
+  sources = [
+    "features_extraction.cc",
+    "features_extraction.h",
+    "rnn.cc",
+    "rnn.h",
+  ]
+
+  defines = []
+  if (rtc_build_with_neon && current_cpu != "arm64") {
+    suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
+    cflags = [ "-mfpu=neon" ]
+  }
+
+  deps = [
+    ":rnn_vad_common",
+    ":rnn_vad_layers",
+    ":rnn_vad_lp_residual",
+    ":rnn_vad_pitch",
+    ":rnn_vad_sequence_buffer",
+    ":rnn_vad_spectral_features",
+    "..:biquad_filter",
+    "..:cpu_features",
+    "../../../../api:array_view",
+    "../../../../rtc_base:checks",
+    "../../../../rtc_base:safe_compare",
+    "../../../../rtc_base:safe_conversions",
+    "//third_party/rnnoise:rnn_vad",
+  ]
+}
+
+rtc_library("rnn_vad_auto_correlation") {
+  sources = [
+    "auto_correlation.cc",
+    "auto_correlation.h",
+  ]
+  deps = [
+    ":rnn_vad_common",
+    "../../../../api:array_view",
+    "../../../../rtc_base:checks",
+    "../../utility:pffft_wrapper",
+  ]
+}
+
+rtc_source_set("rnn_vad_common") {
+  # TODO(alessiob): Make this target visibility private.
+  visibility = [
+    ":*",
+    "..:rnn_vad_with_level",
+  ]
+  sources = [ "common.h" ]
+  deps = [
+    "../../../../rtc_base/system:arch",
+    "../../../../system_wrappers",
+  ]
+}
+
+rtc_library("rnn_vad_lp_residual") {
+  sources = [
+    "lp_residual.cc",
+    "lp_residual.h",
+  ]
+  deps = [
+    "../../../../api:array_view",
+    "../../../../rtc_base:checks",
+    "../../../../rtc_base:safe_compare",
+  ]
+}
+
+rtc_source_set("rnn_vad_layers") {
+  sources = [
+    "rnn_fc.cc",
+    "rnn_fc.h",
+    "rnn_gru.cc",
+    "rnn_gru.h",
+  ]
+
+  defines = []
+  if (rtc_build_with_neon && current_cpu != "arm64") {
+    suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
+    cflags = [ "-mfpu=neon" ]
+  }
+
+  deps = [
+    ":rnn_vad_common",
+    ":vector_math",
+    "..:cpu_features",
+    "../../../../api:array_view",
+    "../../../../api:function_view",
+    "../../../../rtc_base:checks",
+    "../../../../rtc_base:safe_conversions",
+    "//third_party/rnnoise:rnn_vad",
+  ]
+  if (current_cpu == "x86" || current_cpu == "x64") {
+    deps += [ ":vector_math_avx2" ]
+  }
+  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
+}
+
+rtc_source_set("vector_math") {
+  sources = [ "vector_math.h" ]
+  deps = [
+    "..:cpu_features",
+    "../../../../api:array_view",
+    "../../../../rtc_base:checks",
+    "../../../../rtc_base:safe_conversions",
+    "../../../../rtc_base/system:arch",
+  ]
+}
+
+if (current_cpu == "x86" || current_cpu == "x64") {
+  rtc_library("vector_math_avx2") {
+    sources = [ "vector_math_avx2.cc" ]
+    if (is_win) {
+      cflags = [ "/arch:AVX2" ]
+    } else {
+      cflags = [
+        "-mavx2",
+        "-mfma",
+      ]
+    }
+    deps = [
+      ":vector_math",
+      "../../../../api:array_view",
+      "../../../../rtc_base:checks",
+      "../../../../rtc_base:safe_conversions",
+    ]
+  }
+}
+
+rtc_library("rnn_vad_pitch") {
+  sources = [
+    "pitch_search.cc",
+    "pitch_search.h",
+    "pitch_search_internal.cc",
+    "pitch_search_internal.h",
+  ]
+
+  defines = []
+  if (rtc_build_with_neon && current_cpu != "arm64") {
+    suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
+    cflags = [ "-mfpu=neon" ]
+  }
+
+  deps = [
+    ":rnn_vad_auto_correlation",
+    ":rnn_vad_common",
+    ":vector_math",
+    "..:cpu_features",
+    "../../../../api:array_view",
+    "../../../../rtc_base:checks",
+    "../../../../rtc_base:gtest_prod",
+    "../../../../rtc_base:safe_compare",
+    "../../../../rtc_base:safe_conversions",
+    "../../../../rtc_base/system:arch",
+  ]
+  if (current_cpu == "x86" || current_cpu == "x64") {
+    deps += [ ":vector_math_avx2" ]
+  }
+}
+
+rtc_source_set("rnn_vad_ring_buffer") {
+  sources = [ "ring_buffer.h" ]
+  deps = [
+    "../../../../api:array_view",
+    "../../../../rtc_base:checks",
+  ]
+}
+
+rtc_source_set("rnn_vad_sequence_buffer") {
+  sources = [ "sequence_buffer.h" ]
+  deps = [
+    "../../../../api:array_view",
+    "../../../../rtc_base:checks",
+  ]
+}
+
+rtc_library("rnn_vad_spectral_features") {
+  sources = [
+    "spectral_features.cc",
+    "spectral_features.h",
+    "spectral_features_internal.cc",
+    "spectral_features_internal.h",
+  ]
+  deps = [
+    ":rnn_vad_common",
+    ":rnn_vad_ring_buffer",
+    ":rnn_vad_symmetric_matrix_buffer",
+    "../../../../api:array_view",
+    "../../../../rtc_base:checks",
+    "../../../../rtc_base:safe_compare",
+    "../../utility:pffft_wrapper",
+  ]
+}
+
+rtc_source_set("rnn_vad_symmetric_matrix_buffer") {
+  sources = [ "symmetric_matrix_buffer.h" ]
+  deps = [
+    "../../../../api:array_view",
+    "../../../../rtc_base:checks",
+    "../../../../rtc_base:safe_compare",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_library("test_utils") {
+    testonly = true
+    sources = [
+      "test_utils.cc",
+      "test_utils.h",
+    ]
+    deps = [
+      ":rnn_vad",
+      ":rnn_vad_common",
+      "../../../../api:array_view",
+      "../../../../api:scoped_refptr",
+      "../../../../rtc_base:checks",
+      "../../../../rtc_base:safe_compare",
+      "../../../../test:fileutils",
+      "../../../../test:test_support",
+    ]
+  }
+
+  unittest_resources = [
+    "../../../../resources/audio_processing/agc2/rnn_vad/band_energies.dat",
+    "../../../../resources/audio_processing/agc2/rnn_vad/pitch_buf_24k.dat",
+    "../../../../resources/audio_processing/agc2/rnn_vad/pitch_lp_res.dat",
+    "../../../../resources/audio_processing/agc2/rnn_vad/pitch_search_int.dat",
+    "../../../../resources/audio_processing/agc2/rnn_vad/samples.pcm",
+    "../../../../resources/audio_processing/agc2/rnn_vad/vad_prob.dat",
+  ]
+
+  if (is_ios) {
+    bundle_data("unittests_bundle_data") {
+      testonly = true
+      sources = unittest_resources
+      outputs = [ "{{bundle_resources_dir}}/{{source_file_part}}" ]
+    }
+  }
+
+  rtc_library("unittests") {
+    testonly = true
+    sources = [
+      "auto_correlation_unittest.cc",
+      "features_extraction_unittest.cc",
+      "lp_residual_unittest.cc",
+      "pitch_search_internal_unittest.cc",
+      "pitch_search_unittest.cc",
+      "ring_buffer_unittest.cc",
+      "rnn_fc_unittest.cc",
+      "rnn_gru_unittest.cc",
+      "rnn_unittest.cc",
+      "rnn_vad_unittest.cc",
+      "sequence_buffer_unittest.cc",
+      "spectral_features_internal_unittest.cc",
+      "spectral_features_unittest.cc",
+      "symmetric_matrix_buffer_unittest.cc",
+      "vector_math_unittest.cc",
+    ]
+
+    defines = []
+    if (rtc_build_with_neon && current_cpu != "arm64") {
+      suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
+      cflags = [ "-mfpu=neon" ]
+    }
+
+    deps = [
+      ":rnn_vad",
+      ":rnn_vad_auto_correlation",
+      ":rnn_vad_common",
+      ":rnn_vad_layers",
+      ":rnn_vad_lp_residual",
+      ":rnn_vad_pitch",
+      ":rnn_vad_ring_buffer",
+      ":rnn_vad_sequence_buffer",
+      ":rnn_vad_spectral_features",
+      ":rnn_vad_symmetric_matrix_buffer",
+      ":test_utils",
+      ":vector_math",
+      "..:cpu_features",
+      "../..:audioproc_test_utils",
+      "../../../../api:array_view",
+      "../../../../common_audio/",
+      "../../../../rtc_base:checks",
+      "../../../../rtc_base:logging",
+      "../../../../rtc_base:safe_compare",
+      "../../../../rtc_base:safe_conversions",
+      "../../../../rtc_base:stringutils",
+      "../../../../rtc_base/system:arch",
+      "../../../../test:test_support",
+      "../../utility:pffft_wrapper",
+      "//third_party/rnnoise:rnn_vad",
+    ]
+    if (current_cpu == "x86" || current_cpu == "x64") {
+      deps += [ ":vector_math_avx2" ]
+    }
+    absl_deps = [ "//third_party/abseil-cpp/absl/memory" ]
+    data = unittest_resources
+    if (is_ios) {
+      deps += [ ":unittests_bundle_data" ]
+    }
+  }
+
+  if (!build_with_chromium) {
+    rtc_executable("rnn_vad_tool") {
+      testonly = true
+      sources = [ "rnn_vad_tool.cc" ]
+      deps = [
+        ":rnn_vad",
+        ":rnn_vad_common",
+        "..:cpu_features",
+        "../../../../api:array_view",
+        "../../../../common_audio",
+        "../../../../rtc_base:rtc_base_approved",
+        "../../../../rtc_base:safe_compare",
+        "../../../../test:test_support",
+        "//third_party/abseil-cpp/absl/flags:flag",
+        "//third_party/abseil-cpp/absl/flags:parse",
+      ]
+    }
+  }
+}

@@ -1,0 +1,6 @@
+This is some text.
+
+PASS :modal pseudo-class is not active with dialog.show()
+PASS :modal pseudo-class invalidation with showModal+close
+PASS :modal pseudo-class invalidation with showModal+remove
+

@@ -1,0 +1,18 @@
+This test ensures a table's "exposed" state (whether it is an accessibility data table, vs. just a layout table) updates in response to dynamic page changes.
+
+Initial table state has aria-rowcount, so it should be a data table.
+#table Table
+#cellOne Cell
+
+Removing aria-rowcount. Based on this table's contents, it should now become a layout table.
+#table Unknown
+#cellOne TextGroup
+
+Adding a lot of rows which should cause the table to become an accessibility data table.
+#table Table
+#cellOne Cell
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

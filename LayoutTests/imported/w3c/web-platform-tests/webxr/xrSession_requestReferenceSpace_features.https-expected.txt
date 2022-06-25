@@ -1,0 +1,26 @@
+
+PASS Non-immersive session supports viewer space by default - webgl
+FAIL Non-immersive session supports viewer space by default - webgl2 assert_implements: webgl2 not supported. undefined
+PASS Immersive session supports viewer space by default - webgl
+FAIL Immersive session supports viewer space by default - webgl2 assert_implements: webgl2 not supported. undefined
+PASS Immersive session supports local space by default - webgl
+FAIL Immersive session supports local space by default - webgl2 assert_implements: webgl2 not supported. undefined
+PASS Non-immersive session supports local space when required - webgl
+FAIL Non-immersive session supports local space when required - webgl2 assert_implements: webgl2 not supported. undefined
+PASS Non-immersive session supports local space when optional - webgl
+FAIL Non-immersive session supports local space when optional - webgl2 assert_implements: webgl2 not supported. undefined
+PASS Non-immersive session supports local-floor space when required - webgl
+FAIL Non-immersive session supports local-floor space when required - webgl2 assert_implements: webgl2 not supported. undefined
+PASS Immersive session supports local-floor space when required - webgl
+FAIL Immersive session supports local-floor space when required - webgl2 assert_implements: webgl2 not supported. undefined
+PASS Immersive session supports local-floor space when optional - webgl
+FAIL Immersive session supports local-floor space when optional - webgl2 assert_implements: webgl2 not supported. undefined
+FAIL Non-immersive session rejects bounded-floor space even when requested - webgl promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'sessionObjects.gl.makeXRCompatible')"
+FAIL Non-immersive session rejects bounded-floor space even when requested - webgl2 assert_implements: webgl2 not supported. undefined
+FAIL Non-immersive session rejects unbounded space even when requested - webgl promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'sessionObjects.gl.makeXRCompatible')"
+FAIL Non-immersive session rejects unbounded space even when requested - webgl2 assert_implements: webgl2 not supported. undefined
+FAIL Non-immersive session rejects local space if not requested - webgl promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'sessionObjects.gl.makeXRCompatible')"
+FAIL Non-immersive session rejects local space if not requested - webgl2 assert_implements: webgl2 not supported. undefined
+FAIL Immersive session rejects local-floor space if not requested - webgl promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'sessionObjects.gl.makeXRCompatible')"
+FAIL Immersive session rejects local-floor space if not requested - webgl2 assert_implements: webgl2 not supported. undefined
+

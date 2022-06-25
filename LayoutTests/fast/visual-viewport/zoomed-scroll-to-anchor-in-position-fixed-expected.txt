@@ -1,0 +1,11 @@
+Tests scrolling to an anchor inside position:fixed after zooming doesn't try to scroll the page
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.scrollingElement.scrollTop is 559
+PASS document.scrollingElement.scrollLeft is 41
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Anchor is here

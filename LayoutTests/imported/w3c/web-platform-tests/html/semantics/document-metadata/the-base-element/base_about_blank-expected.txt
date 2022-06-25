@@ -1,0 +1,4 @@
+
+
+PASS base element in about:blank document should resolve against its fallback base URI
+

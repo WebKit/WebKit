@@ -1,0 +1,16 @@
+
+
+FAIL Canvas width and height attributes are used as the surface size with contain:size assert_approx_equals: expected 2.5 +/- 0.001 but got Infinity
+PASS Canvas width and height attributes are used as the surface size
+FAIL Computed style test: canvas with {"width":"10","height":"20"} assert_equals: expected "auto 10 / 20" but got "auto"
+FAIL Computed style test: canvas with {"width":"0","height":"1"} assert_equals: expected "auto 0 / 1" but got "auto"
+FAIL Computed style test: canvas with {"width":"1","height":"0"} assert_equals: expected "auto 1 / 0" but got "auto"
+FAIL Computed style test: canvas with {"width":"0","height":"0"} assert_equals: expected "auto 0 / 0" but got "auto"
+FAIL Computed style test: canvas with {"width":"0.5","height":"1.5"} assert_equals: expected "auto 0 / 1" but got "auto"
+FAIL Computed style test: canvas with {"width":"10%","height":"20"} assert_equals: expected "auto 10 / 20" but got "auto"
+PASS Computed style test: canvas with {"width":null,"height":null}
+PASS Computed style test: canvas with {"width":"10","height":null}
+PASS Computed style test: canvas with {"width":null,"height":"20"}
+PASS Computed style test: canvas with {"width":"xx","height":"20"}
+PASS Computed style test: canvas with {"width":"20","height":"xx"}
+

@@ -1,0 +1,1115 @@
+#!/usr/bin/env perl
+
+# Copyright (C) 2005-2017 Apple Inc.  All rights reserved.
+# Copyright (C) 2007 Eric Seidel <eric@webkit.org>
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+# 3.  Neither the name of Apple Inc. ("Apple") nor the names of
+#     its contributors may be used to endorse or promote products derived
+#     from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Script to run the WebKit Open Source Project JavaScriptCore tests (adapted from Mozilla),
+# as well as other tests: testapi on Mac and LayoutTests/js.
+
+use strict;
+use warnings;
+use File::Spec;
+use FindBin;
+use Getopt::Long qw(:config pass_through);
+use JSON::PP;
+use lib $FindBin::Bin;
+use List::Util qw(min max);
+use POSIX;
+use webkitdirs;
+use Scalar::Util qw(looks_like_number);
+use Text::ParseWords;
+
+# determine configuration
+setConfiguration();
+my $configuration = configuration();
+
+if (shouldUseFlatpak()) {
+    my @command = (File::Spec->catfile(sourceDir(), "Tools", "Scripts", "run-javascriptcore-tests"));
+    runInFlatpak(@command);
+}
+
+
+# These variables are intentionally left undefined.
+my $root;
+my $showHelp;
+my @extraTests = ();
+my $childProcesses;
+my $shellRunner;
+my $makeRunner;
+my $rubyRunner;
+my $gnuParallelRunner;
+my $gnuParallelChunkSize;
+my $testWriter;
+my $memoryLimited;
+my $reportExecutionTime;
+my $treatFailingAsFlaky;
+
+my $report;
+my $buildbotMaster;
+my $builderName;
+my $buildNumber;
+my $buildbotWorker;
+
+my $buildJSC = 1;
+my $copyJSC = 1;
+
+use constant {
+    ENV_VAR_SAYS_DO_RUN => 4,
+    ENV_VAR_SAYS_DONT_RUN => 3,
+    RUN_IF_NO_TESTS_SPECIFIED => 2,
+    DO_RUN => 1,
+    DONT_RUN => 0,
+};
+
+my $runTestMasm = RUN_IF_NO_TESTS_SPECIFIED;
+my $runTestAir = RUN_IF_NO_TESTS_SPECIFIED;
+my $runTestB3 = RUN_IF_NO_TESTS_SPECIFIED;
+my $runTestDFG = RUN_IF_NO_TESTS_SPECIFIED;
+my $runTestAPI = RUN_IF_NO_TESTS_SPECIFIED;
+my $runJSCStress = RUN_IF_NO_TESTS_SPECIFIED;
+my $runMozillaTests = RUN_IF_NO_TESTS_SPECIFIED;
+
+# $runJITStressTests is special because it is not for enabling a different set of tests.
+# Instead it is only meaningful for when we want to disable using JIT test configurations
+# on the JSC stress test or mozilla tests.
+my $runJITStressTests = 1;
+
+my $runQuickMode = 0;
+
+my $forceCollectContinuously = 0;
+my $envVars = "";
+my $gmallocPath = undef;
+my $gmallocDefaultPath = "/usr/lib/libgmalloc.dylib";
+
+my $createTarball = 0;
+my $remoteHost = 0;
+my $model = 0;
+my $archs = undef;
+my $ldd = undef;
+my $artifact_exec_wrapper = undef;
+my $version;
+my $versionName;
+my $sdk;
+my $deviceOS;
+my $failFast = 1;
+my $coverage = 0;
+my $coverageDir;
+my %jsonData = ();
+my %reportData = ();
+my @testResults = ();
+my $isTestFailed = 0;
+my $remoteConfigFile;
+my $jsonFileName;
+my $verbose = 0;
+
+if ($ENV{RUN_JAVASCRIPTCORE_TESTS_TESTMASM}) {
+    if ($ENV{RUN_JAVASCRIPTCORE_TESTS_TESTMASM} eq "true") {
+        $runTestMasm = ENV_VAR_SAYS_DO_RUN;
+    } elsif ($ENV{RUN_JAVASCRIPTCORE_TESTS_TESTMASM} eq "false") {
+        $runTestMasm = ENV_VAR_SAYS_DONT_RUN;
+    } else {
+        print "Don't recognize value for RUN_JAVASCRIPTCORE_TESTS_TESTMASM environment variable: '"
+            . $ENV{RUN_JAVASCRIPTCORE_TESTS_TESTMASM} . "'. Should be set to 'true' or 'false'.\n";
+    }
+}
+
+if ($ENV{RUN_JAVASCRIPTCORE_TESTS_TESTAIR}) {
+    if ($ENV{RUN_JAVASCRIPTCORE_TESTS_TESTAIR} eq "true") {
+        $runTestAir = ENV_VAR_SAYS_DO_RUN;
+    } elsif ($ENV{RUN_JAVASCRIPTCORE_TESTS_TESTAIR} eq "false") {
+        $runTestAir = ENV_VAR_SAYS_DONT_RUN;
+    } else {
+        print "Don't recognize value for RUN_JAVASCRIPTCORE_TESTS_TESTAIR environment variable: '"
+            . $ENV{RUN_JAVASCRIPTCORE_TESTS_TESTAIR} . "'. Should be set to 'true' or 'false'.\n";
+    }
+}
+
+if ($ENV{RUN_JAVASCRIPTCORE_TESTS_TESTB3}) {
+    if ($ENV{RUN_JAVASCRIPTCORE_TESTS_TESTB3} eq "true") {
+        $runTestB3 = ENV_VAR_SAYS_DO_RUN;
+    } elsif ($ENV{RUN_JAVASCRIPTCORE_TESTS_TESTB3} eq "false") {
+        $runTestB3 = ENV_VAR_SAYS_DONT_RUN;
+    } else {
+        print "Don't recognize value for RUN_JAVASCRIPTCORE_TESTS_TESTB3 environment variable: '"
+            . $ENV{RUN_JAVASCRIPTCORE_TESTS_TESTB3} . "'. Should be set to 'true' or 'false'.\n";
+    }
+}
+
+if ($ENV{RUN_JAVASCRIPTCORE_TESTS_TESTDFG}) {
+    if ($ENV{RUN_JAVASCRIPTCORE_TESTS_TESTDFG} eq "true") {
+        $runTestDFG = ENV_VAR_SAYS_DO_RUN;
+    } elsif ($ENV{RUN_JAVASCRIPTCORE_TESTS_TESTDFG} eq "false") {
+        $runTestDFG = ENV_VAR_SAYS_DONT_RUN;
+    } else {
+        print "Don't recognize value for RUN_JAVASCRIPTCORE_TESTS_TESTDFG environment variable: '"
+            . $ENV{RUN_JAVASCRIPTCORE_TESTS_TESTDFG} . "'. Should be set to 'true' or 'false'.\n";
+    }
+}
+
+if ($ENV{RUN_JAVASCRIPTCORE_TESTS_TESTAPI}) {
+    if ($ENV{RUN_JAVASCRIPTCORE_TESTS_TESTAPI} eq "true") {
+        $runTestAPI = ENV_VAR_SAYS_DO_RUN;
+    } elsif ($ENV{RUN_JAVASCRIPTCORE_TESTS_TESTAPI} eq "false") {
+        $runTestAPI = ENV_VAR_SAYS_DONT_RUN;
+    } else {
+        print "Don't recognize value for RUN_JAVASCRIPTCORE_TESTS_TESTAPI environment variable: '"
+            . $ENV{RUN_JAVASCRIPTCORE_TESTS_TESTAPI} . "'. Should be set to 'true' or 'false'.\n";
+    }
+}
+
+if ($ENV{RUN_JAVASCRIPTCORE_TESTS_BUILD}) {
+    if ($ENV{RUN_JAVASCRIPTCORE_TESTS_BUILD} eq "true") {
+        $buildJSC = 1;
+    } elsif ($ENV{RUN_JAVASCRIPTCORE_TESTS_BUILD} eq "false") {
+        $buildJSC = 0;
+    } else {
+        print "Don't recognize value for RUN_JAVASCRIPTCORE_TESTS_BUILD environment variable: '"
+            . $ENV{RUN_JAVASCRIPTCORE_TESTS_BUILD} . "'. Should be set to 'true' or 'false'.\n";
+    }
+}
+
+if ($ENV{RUN_JAVASCRIPTCORE_TESTS_COPY}) {
+    if ($ENV{RUN_JAVASCRIPTCORE_TESTS_COPY} eq "true") {
+        $copyJSC = 1;
+    } elsif ($ENV{RUN_JAVASCRIPTCORE_TESTS_COPY} eq "false") {
+        $copyJSC = 0;
+    } else {
+        print "Don't recognize value for RUN_JAVASCRIPTCORE_TESTS_COPY environment variable: '"
+            . $ENV{RUN_JAVASCRIPTCORE_TESTS_COPY} . "'. Should be set to 'true' or 'false'.\n";
+    }
+}
+
+if ($ENV{RUN_JAVASCRIPTCORE_TESTS_EXTRA_TESTS}) {
+    push @extraTests, $ENV{RUN_JAVASCRIPTCORE_TESTS_EXTRA_TESTS};
+}
+
+sub defaultStringForTestState {
+    my ($state) = @_;
+    if ($state == ENV_VAR_SAYS_DONT_RUN) {
+        return "will not run due to environment variable";
+    } elsif ($state == DONT_RUN) {
+        return "will not run";
+    } else {
+        return "will run";
+    }
+}
+
+# Additional environment parameters
+push @ARGV, parse_line('\s+', 0, $ENV{'TEST_JSC_ARGS'}) if ($ENV{'TEST_JSC_ARGS'});
+
+my $programName = basename($0);
+my $buildJSCDefault = $buildJSC ? "will check" : "will not check";
+my $testmasmDefault = defaultStringForTestState($runTestMasm);
+my $testairDefault = defaultStringForTestState($runTestAir);
+my $testb3Default = defaultStringForTestState($runTestB3);
+my $testDFGDefault = defaultStringForTestState($runTestDFG);
+my $testapiDefault = defaultStringForTestState($runTestAPI);
+my $jscStressDefault = defaultStringForTestState($runJSCStress);
+my $mozillaTestsDefault = defaultStringForTestState($runMozillaTests);
+my $jitStressTestsDefault = $runJITStressTests ? "will run" : " will not run";
+my $quickModeDefault = $runQuickMode ? "some" : "all";
+my $failFastDefault = $failFast ? "fail fast" : "don't fail fast";
+my $coverageDefault = $coverage ? "coverage enabled" : "coverage disabled";
+my $copyJSCDefault = $copyJSC ? "copy" : "do not copy";
+my $filter;
+my $usage = <<EOF;
+Usage: $programName [options] [options to pass to build system]
+  --help                        Show this help message
+  --architecture                Attempt to override the native architecture of a machine.
+  --ldd                         Use alternate ldd
+  --artifact-exec-wrapper       Wrapper for executing a build artifact
+  --root=                       Path to pre-built root containing jsc
+  --[no-]ftl-jit                Turn the FTL JIT on or off
+  --[no-]build                  Check (or don't check) to see if the jsc build is up-to-date (default: $buildJSCDefault)
+  --[no-]testmasm               Only run (or don't run) testmasm (default: $testmasmDefault)
+  --[no-]testair                Only run (or don't run) testair (default: $testairDefault)
+  --[no-]testb3                 Only run (or don't run) testb3 (default: $testb3Default)
+  --[no-]testdfg                Only run (or don't run) testdfg (default: $testDFGDefault)
+  --[no-]testapi                Only run (or don't run) testapi (default: $testapiDefault)
+  --[no-]jsc-stress             Only run (or don't run) the JSC stress tests (default: $jscStressDefault)
+  --[no-]mozilla-tests          Only run (or don't run) the Mozilla tests (default: $mozillaTestsDefault)
+  --[no-]jit-stress-tests       Run (or don't run) the JIT stress tests (default: $jitStressTestsDefault)
+  --[no-]quick                  Run some (or all) of the regular testing modes (default: $quickModeDefault)
+                                If the runner only runs some it will run the default and no-cjit-validate modes.
+                                Note, this will not change the behavior of tests that specify their own modes.
+
+  --[no-]fail-fast              Stop this script when a test family reports an error or failure (default: $failFastDefault)
+  --[no-]force-collectContinuously Enable the collectContinuously mode even if it was disabled on this platform.
+  --[no-]copy                   Copy (or don't copy) the JavaScriptCore build product before testing (default: $copyJSCDefault)
+  --[no-]coverage               Enable (or disable) LLVM Source-based Code Coverage instrumentation for the test run (default: $coverageDefault).
+  --coverage-dir=               Output path for LLVM Source-based Code Coverage instrumentation (default: a temporary directory).
+  --json-output=                Create a file at specified path, listing failed stress tests in JSON format.
+  --tarball                     Create a tarball of the bundle produced by running the JSC stress tests.
+  --remote=                     Run the JSC stress tests on the specified remote host. Implies --tarball.
+  --remote-config-file=         Same as remote, but read config from JSON file.
+  --model=                      Specify remote hardware model, this info used for determine what jsc tests should run on remote
+  --version                     Specify the version number of the device running tests.
+  --version-name                Specify the version name of the hardware running tests.
+  --sdk                         Specific SDK or OS version of the form ##*###
+  --device-os                   Speicifc OS version for the remote device
+  --extra-tests=                Path to a file containing extra tests
+  --child-processes=            Specify the number of child processes.
+  --shell-runner                Uses the shell-based test runner instead of the default make-based runner.
+                                In general the shell runner is slower than the make runner.
+  --make-runner                 Uses the faster make-based runner.
+  --ruby-runner                 Uses the ruby runner for machines without unix shell or make.
+
+  --test-writer [writer]        Specifies the test script format."
+                                default is to use shell scripts to run the tests"
+                                \"ruby\" to use ruby scripts for systems without a unix shell.
+
+  --memory-limited              Indicate that we are targeting the test for a memory limited device.
+                                Skip tests tagged with //\@skip if \$memoryLimited
+
+  --report-execution-time       Print execution time for each stress test.
+  --treat-failing-as-flaky      Treat failing stress tests as flaky.
+                                Expects 3 comma-separated values: passPercentage,maxTries,maxFailing
+                                If less than maxFailing tests failed, run them again (up to maxTries)
+                                until we can tell whether they pass more than passPercentage of the
+                                time (in which case the test is counted as a pass).
+
+  --filter                      Only run tests whose name matches the given regular expression.
+  --env-vars                    Pass a list of environment variables to set before running tests.
+                                Each environment variable should be separated by a space.
+                                e.g. \"foo=bar x=y\" (no quotes).
+  --gmalloc:                    Run tests with Guard Malloc enabled (if no path is given: $gmallocDefaultPath is used)
+  --verbose:                    Verbose output (specify more than once to increase verbosity).
+
+  --report:                     Results database url to report results to.
+  --buildbot-master:            The url of the buildbot master.
+  --builder-name:               The name of the buildbot builder tests were run on.
+  --build-number:               The buildbot build number tests are associated with.
+  --buildbot-worker:            The buildbot worker tests were run on.
+
+Environment Variables:
+  - set RUN_JAVASCRIPTCORE_TESTS_TESTMASM to "true" or "false" (no quotes) to determine if we run testmasm by default.
+  - set RUN_JAVASCRIPTCORE_TESTS_TESTAIR to "true" or "false" (no quotes) to determine if we run testair by default.
+  - set RUN_JAVASCRIPTCORE_TESTS_TESTB3 to "true" or "false" (no quotes) to determine if we run testb3 by default.
+  - set RUN_JAVASCRIPTCORE_TESTS_TESTDFG to "true" or "false" (no quotes) to determine if we run testdfg by default.
+  - set RUN_JAVASCRIPTCORE_TESTS_TESTAPI to "true" or "false" (no quotes) to determine if we run testapi by default.
+  - set RUN_JAVASCRIPTCORE_TESTS_BUILD to "true" or "false" (no quotes) to set the should-we-build-before-running-tests setting.
+  - set RUN_JAVASCRIPTCORE_TESTS_EXTRA_TESTS to the path of a yaml file or a directory of JS files to be run as part of run-javascriptcore-tests.
+
+If one or more --<testname> options are specified, only those tests will run. For example,
+the following only runs testmasm and testapi:
+    \$ run-javascriptcore-tests --testmasm --testapi
+
+Otherwise, all tests will run unless the test is disabled using --no-<testname> or an
+environment variable.
+EOF
+
+GetOptions(
+    'root=s' => \$root,
+    'extra-tests=s' => \@extraTests,
+    'build!' => \$buildJSC,
+    'testmasm!' => \$runTestMasm,
+    'testair!' => \$runTestAir,
+    'testb3!' => \$runTestB3,
+    'testdfg!' => \$runTestDFG,
+    'testapi!' => \$runTestAPI,
+    'jsc-stress!' => \$runJSCStress,
+    'mozilla-tests!' => \$runMozillaTests,
+    'jit-stress-tests!' => \$runJITStressTests,
+    'quick!' => \$runQuickMode,
+    'fail-fast!' => \$failFast,
+    'force-collectContinuously!' => \$forceCollectContinuously,
+    'copy!' => \$copyJSC,
+    'coverage!' => \$coverage,
+    'coverage-dir=s' => \$coverageDir,
+    'json-output=s' => \$jsonFileName,
+    'tarball!' => \$createTarball,
+    'remote=s' => \$remoteHost,
+    'model=s' => \$model,
+    'architecture=s' => \$archs,
+    'ldd=s' => \$ldd,
+    'artifact-exec-wrapper=s' => \$artifact_exec_wrapper,
+    'version=s' => \$version,
+    'version-name=s' => \$versionName,
+    'sdk=s' => \$sdk,
+    'device-os=s' => \$deviceOS,
+    'remote-config-file=s' => \$remoteConfigFile,
+    'child-processes=s' => \$childProcesses,
+    'shell-runner' => \$shellRunner,
+    'make-runner' => \$makeRunner,
+    'ruby-runner' => \$rubyRunner,
+    'gnu-parallel-runner' => \$gnuParallelRunner,
+    'gnu-parallel-chunk-size=s' => \$gnuParallelChunkSize,
+    'test-writer=s' => \$testWriter,
+    'memory-limited' => \$memoryLimited,
+    'report-execution-time' => \$reportExecutionTime,
+    'treat-failing-as-flaky=s' => \$treatFailingAsFlaky,
+    'filter=s' => \$filter,
+    'help' => \$showHelp,
+    'env-vars=s' => \$envVars,
+    'gmalloc:s' => \$gmallocPath,
+    'verbose+' => \$verbose,
+    'report=s' => \$report,
+    'buildbot-master=s' => \$buildbotMaster,
+    'builder-name=s' => \$builderName,
+    'build-number=s' => \$buildNumber,
+    'buildbot-worker=s' => \$buildbotWorker,
+);
+
+my $specificTestsSpecified = 0;
+if ($runTestMasm == DO_RUN
+   || $runTestAir == DO_RUN
+   || $runTestB3 == DO_RUN
+   || $runTestDFG == DO_RUN
+   || $runTestAPI == DO_RUN
+   || $runJSCStress == DO_RUN
+   || $runMozillaTests == DO_RUN) {
+    $specificTestsSpecified = 1;
+}
+
+if ($version) {
+    $version = splitVersionString($version);
+}
+
+sub enableTestOrNot {
+    my ($state) = @_;
+    if ($state == RUN_IF_NO_TESTS_SPECIFIED || $state == ENV_VAR_SAYS_DO_RUN) {
+        return $specificTestsSpecified ? DONT_RUN : DO_RUN;
+    } elsif ($state == ENV_VAR_SAYS_DONT_RUN) {
+        return DONT_RUN;
+    }
+    return $state;
+}
+
+sub configurationForUpload()
+{
+    my $platform;
+    my $sdk;
+    my $simulator = 0;
+
+    if (index(xcodeSDKPlatformName(), "simulator") != -1) {
+        $simulator = 1;
+    }
+
+    if (index($model, 'iPhone') != -1 || index($model, 'iPad') != -1) {
+        $platform = 'ios';
+        if (!$version) {
+            $version = iosVersion();
+        }
+    } elsif (index($model, 'watch') != -1 || index(xcodeSDKPlatformName(), "watch") != -1) {
+        $platform = 'watchos';
+        die "No watchOS version specified" if !$version;
+    } elsif (index(xcodeSDKPlatformName(), "appletv") != -1) {
+        $platform = 'tvos';
+        die "No tvOS version specified" if !$version;
+    } elsif (isGtk()) {
+        $platform = 'GTK';
+        if (!$version) {
+            chomp($version = `uname -r`);
+            $version = splitVersionString($version);
+        }
+    } elsif (isWPE()) {
+        $platform = 'WPE';
+        if (!$version) {
+            chomp($version = `uname -r`);
+            $version = splitVersionString($version);
+        }
+    } elsif (isAnyWindows()) {
+        $platform = 'win';
+        if (!$version) {
+            $version = winVersion();
+            $versionName = "Win$version->{major}";
+        }
+    } elsif (isAppleMacWebKit()) {
+        $platform = 'mac';
+        chomp($model = `/usr/sbin/sysctl -n hw.model`);
+        if (!$version) {
+            $version = osXVersion();
+        }
+        if (!$sdk) {
+            chomp($sdk = `/usr/bin/sw_vers -buildVersion`);
+        }
+
+        if (!$versionName) {
+            if ($version->{major} eq 11 && $version->{minor} eq 0) {
+                $versionName = "Big Sur";
+            } elsif ($version->{major} eq 10 && $version->{minor} eq 15) {
+                $versionName = "Catalina";
+            } elsif ($version->{major} eq 10 && $version->{minor} eq 14) {
+                $versionName = "Mojave";
+            } elsif ($version->{major} eq 10 && $version->{minor} eq 13) {
+                $versionName = "High Sierra";
+            }
+        }
+    } else {
+        # FIXME: This will be the kernel version, which is not always exactly what we want, but it will at least
+        # always give us something to work with
+        chomp($platform = `uname`);
+        $platform = lc $platform;
+        if (!$version) {
+            chomp($version = `uname -r`);
+            $version = splitVersionString($version);
+        }
+    }
+
+    my $result = {
+        platform => $platform,
+        architecture => $archs,
+        is_simulator => $simulator,
+        style => lc(configuration()),
+        version => "$version->{major}.$version->{minor}.$version->{subminor}",
+    };
+    if ($model) {
+        $result->{model} = $model;
+    }
+    if ($versionName) {
+        $result->{version_name} = $versionName;
+    }
+    if ($sdk) {
+        $result->{sdk} = $sdk;
+    }
+    if ($deviceOS) {
+        $result->{sdk} = $deviceOS;
+    }
+    return $result;
+}
+
+$runTestMasm = enableTestOrNot($runTestMasm);
+$runTestAir = enableTestOrNot($runTestAir);
+$runTestB3 = enableTestOrNot($runTestB3);
+$runTestDFG = enableTestOrNot($runTestDFG);
+$runTestAPI = enableTestOrNot($runTestAPI);
+$runJSCStress = enableTestOrNot($runJSCStress);
+$runMozillaTests = enableTestOrNot($runMozillaTests);
+
+my @buildArgs;
+
+if ($buildJSC) {
+    # Assume any arguments left over from GetOptions are to be passed as build arguments.
+    @buildArgs = @ARGV;
+} elsif (scalar(@ARGV) > 0) {
+    foreach (@ARGV) {
+        my $arg = $_;
+        if ($arg =~ /^-.*/) {
+            print STDERR "Unrecognized option `$arg'\n";
+        } else {
+            print STDERR "Stray anonymous argument `$arg'\n";
+        }
+    }
+    exit 2;
+}
+
+if ($showHelp) {
+   print STDERR $usage;
+   exit 1;
+}
+
+setConfigurationProductDir(Cwd::abs_path($root)) if (defined($root));
+my $archsInBuild = architecturesForProducts();
+
+my $remotes = [];
+if (defined $remoteConfigFile) {
+    open my $handle, '<', $remoteConfigFile or die "Failed to open $remoteConfigFile: $!";
+    my $configJson = do { local $/; <$handle> };
+    my $remoteConfig = decode_json($configJson);
+    if (defined $remoteConfig->{"remotes"}) {
+        $remotes = $remoteConfig->{"remotes"};
+    } elsif (defined $remoteConfig->{"remote"}) {
+        my @split = split(':', $remoteConfig->{"remote"});
+        my $remote = {
+            "name" => "synthesized",
+            "address" => $remoteConfig->{"remote"}
+        };
+        if (exists $remoteConfig->{"idFilePath"}) {
+            $remote->{'idFilePath'} = $remoteConfig->{'idFilePath'};
+        }
+        $remotes = [$remote];
+    }
+}
+
+if (defined $archs) {
+    die "$archs not supported by the provided binary, which supports '$archsInBuild'" if index($archsInBuild, $archs) == -1;
+} else {
+    # Fallback is x86_64, which we replace with the native architecture if the native architecture is in the provided build
+    $archs = "x86_64";
+    $archs = nativeArchitecture($remotes) if (!isAppleMacWebKit() || index($archsInBuild, nativeArchitecture($remotes)) != -1);
+}
+
+# For running tests, arm64e should map to arm64
+$archs = "arm64" if $archs eq "arm64e";
+if ($archs ne nativeArchitecture($remotes) && (nativeArchitecture($remotes) ne "arm64" || !isAppleMacWebKit())) {
+    die "Cannot run tests with $archs on this machine";
+}
+
+configurationForUpload() if (defined($report));
+
+if (defined($jsonFileName)) {
+    $jsonFileName = File::Spec->rel2abs($jsonFileName);
+}
+
+if (!defined($root) && $buildJSC) {
+    chdirWebKit();
+
+    push(@buildArgs, argumentsForConfiguration());
+
+    print "Running: build-jsc " . join(" ", @buildArgs) . "\n";
+    my $buildResult = system "perl", File::Spec->catfile("Tools", "Scripts", "build-jsc"), @buildArgs;
+    if ($buildResult) {
+        print STDERR "Compiling jsc failed!\n";
+        exit exitStatus($buildResult);
+    }
+}
+
+if (defined($gmallocPath)) {
+    if ($gmallocPath eq "") {
+        $envVars .= " DYLD_INSERT_LIBRARIES=" . $gmallocDefaultPath;
+    } else {
+        $envVars .= " DYLD_INSERT_LIBRARIES=" . $gmallocPath;
+    }
+}
+
+my $htmlDir;
+my $profdataPath;
+
+if ($coverage) {
+    if ($coverageDir) {
+        print "Using output path specified on the command line for coverage data: $coverageDir\n";
+    } else {
+        $coverageDir = tempdir();
+        print "Generating coverage data into $coverageDir\n";
+    }
+    $htmlDir = File::Spec->catfile($coverageDir, "html_report");
+    $profdataPath = File::Spec->catfile($coverageDir, "jsc_tests.profdata");
+    $envVars .=  " LLVM_PROFILE_FILE=" . File::Spec->catfile($coverageDir, "jsc_test_%9m.profraw");
+} else {
+    if ($coverageDir) {
+        die "--coverage-dir= is set but --coverage is not set\n"
+    }
+}
+
+my $productDir = jscProductDir();
+$ENV{DYLD_FRAMEWORK_PATH} = $productDir;
+$ENV{JSCTEST_timeout} = 120 unless $ENV{JSCTEST_timeout}; # Set a 120 second timeout on all jsc tests (if environment variable not defined already).
+$ENV{JSCTEST_hardTimeout} = 300 unless $ENV{JSCTEST_hardTimeout}; # Set a 300 second hard timeout on all jsc tests (if environment variable not defined already). If the test does not finish after 300 seconds from soft-timeout, we terminate the shell.
+$ENV{TZ}="US/Pacific"; # Some tests fail if the time zone is not set to US/Pacific (<https://webkit.org/b/136363>)
+setPathForRunningWebKitApp(\%ENV) if isCygwin();
+
+my $startTime = time();
+my $endTime = $startTime;
+
+sub testPath {
+    my ($productDir, $testName) = @_;
+    $testName .= "_debug" if configuration() eq "Debug_All";
+    return File::Spec->catfile($productDir, $testName);
+}
+
+sub runTest {
+    my ($testName, $jsonTestStatusName) = @_;
+
+    chdirWebKit();
+    chdir($productDir) or die "Failed to switch directory to '$productDir'\n";
+    my @command = (testPath($productDir, $testName));
+    if (defined($artifact_exec_wrapper)) {
+        # This needs to go first, as one use case is to override the
+        # ELF interpreter.
+        unshift @command, $artifact_exec_wrapper;
+    }
+    unshift @command, ("xcrun", "-sdk", xcodeSDK(), "sim") if willUseIOSSimulatorSDK();
+    unshift @command, ("/usr/bin/arch", "-$archs") if $archs ne nativeArchitecture($remotes);
+    unshift @command, wrapperPrefixIfNeeded() if isGtk() or isWPE();
+
+    if ($envVars ne "") {
+        foreach my $var (split(/\s+/, $envVars)) {
+            if ($var =~ /([^=]*)=(.*)/) {
+                $ENV{$1} = $2;
+            }
+        }
+    }
+
+    my $testResult = 0;
+    my $lastOptimizeLevel;
+
+    open(TEST, "-|", "@command 2>&1") or die "Failed to run @command";
+    my $testOutput = "";
+    while ( my $line = <TEST> ) {
+        $testOutput .= $line;
+    }
+    $testResult = close(TEST) ? 0 : $?;
+    $reportData{$testName} = $testResult ? {actual => "FAIL"} : {actual => "PASS"};
+
+    my $exitStatus = exitStatus($testResult);
+
+    print "$testOutput" if ($verbose or $testResult);
+    print "$testName completed with rc=$testResult ($exitStatus)\n\n";
+
+    if ($testResult) {
+        $isTestFailed = 1;
+        push @testResults, $testName;
+    }
+    if (defined($jsonFileName)) {
+        my $testStatus = ($exitStatus == 0)? JSON::PP::true: JSON::PP::false;
+        $jsonData{$jsonTestStatusName} = $testStatus;
+    }
+
+    if ($testResult && $failFast) {
+        reportTestFailures();
+        writeJsonDataIfApplicable();
+
+        $endTime = time();
+        uploadResults();
+        exit $exitStatus;
+    }
+}
+
+sub reportTestFailures {
+  my $numJSCtestFailures = @testResults;
+  if ($numJSCtestFailures) {
+      print "\n** The following JSC test binaries failures have been introduced:\n";
+      foreach my $testFailure (@testResults) {
+          print "\t$testFailure\n";
+      }
+  }
+  print "\n";
+
+  print "Results for JSC test binaries:\n";
+  printThingsFound($numJSCtestFailures, "failure", "failures", "found");
+  print "    OK.\n" if $numJSCtestFailures == 0;
+
+  print "\n";
+}
+
+sub convertProfrawToProfdata
+{
+    print "Converting profraw files to profdata.\n";
+    my @command;
+    opendir(PROFRAWS, $coverageDir);
+    my @profrawFiles = grep {/jsc_test_.*\.profraw/} map {File::Spec->catfile($coverageDir, $_)} readdir(PROFRAWS);
+    close(PROFRAWS);
+    push @command, "xcrun";
+    push @command, ("-sdk", xcodeSDK()) if xcodeSDK();
+    push @command, "llvm-profdata", "merge", @profrawFiles, "-o", $profdataPath;
+    system(@command);
+}
+
+sub generateHTMLFromProfdata
+{
+    print "Generating html report from profdata file.\n";
+    my @command;
+    push @command, "xcrun";
+    push @command, ("-sdk", xcodeSDK()) if xcodeSDK();
+    push @command, "llvm-cov", "show", builtDylibPathForName("JavaScriptCore"), "--format=html", "--instr-profile=" . $profdataPath, "--output-dir=" . $htmlDir;
+    system(@command);
+
+    print "HTML report is in file://$htmlDir/index.html\n";
+}
+
+sub processCoverageData
+{
+    convertProfrawToProfdata();
+    generateHTMLFromProfdata();
+}
+
+if ($runTestMasm) { runTest("testmasm", "allMasmTestsPassed") }
+if ($runTestAir) { runTest("testair", "allAirTestsPassed") }
+if ($runTestB3) { runTest("testb3", "allB3TestsPassed") }
+if ($runTestDFG) { runTest("testdfg", "allDFGTestsPassed") }
+if ($runTestAPI) { runTest("testapi", "allApiTestsPassed") }
+
+
+# Find JavaScriptCore directory
+chdirWebKit();
+
+runJSCStressTests();
+reportTestFailures();
+if ($coverage) {
+    processCoverageData();
+}
+
+$endTime = time();
+uploadResults();
+
+if ($isTestFailed) {
+  exit(1);
+}
+
+sub runJSCStressTests
+{
+    my $jscStressResultsDir = $productDir . "/jsc-stress-results";
+
+    my $hasTestsToRun = 0;
+    my @testList;
+    if ($runJSCStress) {
+        @testList = (
+            "PerformanceTests/SunSpider/tests/sunspider-1.0",
+            "PerformanceTests/JetStream/cdjs/cdjs-tests.yaml",
+            "PerformanceTests/ARES-6/Air/airjs-tests.yaml",
+            "PerformanceTests/ARES-6/Basic/basic-tests.yaml",
+            "JSTests/executableAllocationFuzz.yaml",
+            "JSTests/exceptionFuzz.yaml",
+            "PerformanceTests/SunSpider/no-architecture-specific-optimizations.yaml",
+            "PerformanceTests/SunSpider/shadow-chicken.yaml",
+            "PerformanceTests/SunSpider/with-baseline-code-sharing.yaml",
+            "PerformanceTests/SunSpider/tests/v8-v6",
+            "JSTests/stress",
+            "JSTests/microbenchmarks",
+            "JSTests/slowMicrobenchmarks.yaml",
+            "PerformanceTests/SunSpider/profiler-test.yaml",
+            "LayoutTests/jsc-layout-tests.yaml",
+            "JSTests/typeProfiler.yaml",
+            "JSTests/controlFlowProfiler.yaml",
+            "JSTests/es6.yaml",
+            "JSTests/modules.yaml",
+            "JSTests/complex.yaml",
+            "JSTests/ChakraCore.yaml",
+            "JSTests/wasm.yaml");
+
+        my $internalTestsDir = File::Spec->catdir(dirname(sourceDir()), "Internal", "Tests", "InternalJSTests");
+        if (-e $internalTestsDir and -d $internalTestsDir) {
+            push(@testList, File::Spec->catfile($internalTestsDir, "internal-js-tests.yaml"));
+            push(@testList, File::Spec->catfile($internalTestsDir, "regress.yaml"));
+        }
+
+        $hasTestsToRun = 1;
+    }
+
+    if ($runMozillaTests) {
+        push(@testList, "JSTests/mozilla/mozilla-tests.yaml");
+        $hasTestsToRun = 1;
+    }
+
+    # Set LANG environment variable so the stress tests will work with newer ruby (<rdar://problem/15010705>)
+    $ENV{LANG}="en_US.UTF-8";
+    my @jscStressDriverCmd = (
+        "/usr/bin/env", "ruby", "Tools/Scripts/run-jsc-stress-tests",
+        "-j", jscPath($productDir), "-o", $jscStressResultsDir, "--arch", $archs);
+
+    if (nativeArchitecture($remotes) ne $archs) {
+        push(@jscStressDriverCmd, "--force-architecture");
+        push(@jscStressDriverCmd, $archs);
+    }
+
+    if (defined($ldd)) {
+        push(@jscStressDriverCmd, "--ldd");
+        push(@jscStressDriverCmd, $ldd);
+    }
+    if (defined($artifact_exec_wrapper)) {
+        push(@jscStressDriverCmd, "--artifact-exec-wrapper");
+        push(@jscStressDriverCmd, $artifact_exec_wrapper);
+    }
+    if (defined($treatFailingAsFlaky)) {
+        push(@jscStressDriverCmd, "--treat-failing-as-flaky");
+        push(@jscStressDriverCmd, $treatFailingAsFlaky);
+    }
+    push(@jscStressDriverCmd, @testList);
+
+    if (isWindows() && !isCygwin()) {
+        shift @jscStressDriverCmd; # Remove /usr/bin/env
+    }
+
+    if (configuration() eq "Debug") {
+        push(@jscStressDriverCmd, "--debug");
+    }
+
+    if (!$copyJSC) {
+        push(@jscStressDriverCmd, "--no-copy");
+    }
+
+    if ($forceCollectContinuously) {
+        push(@jscStressDriverCmd, "--force-collectContinuously");
+    }
+
+    if ($envVars ne "") {
+            push(@jscStressDriverCmd, "--env-vars");
+            push(@jscStressDriverCmd, $envVars);
+    }
+
+    if ($runQuickMode) {
+        push(@jscStressDriverCmd, "--quick");
+    }
+
+    if (!$runJITStressTests) {
+        push(@jscStressDriverCmd, "--no-jit");
+    }
+    if ($createTarball) {
+        push(@jscStressDriverCmd, "--tarball");
+    }
+
+    if ($remoteHost) {
+        push(@jscStressDriverCmd, "--remote");
+        push(@jscStressDriverCmd, $remoteHost);
+        # We're doing this for verbosity=2 which will cause us to log "PASS: " results
+        push(@jscStressDriverCmd, "-v", "-v");
+    }
+
+    if ($remoteConfigFile) {
+        push(@jscStressDriverCmd, "--remote-config-file");
+        push(@jscStressDriverCmd, $remoteConfigFile);
+    }
+    
+    if ($model) {
+        push(@jscStressDriverCmd, "--model");
+        push(@jscStressDriverCmd, $model);
+    }
+
+    if ($childProcesses) {
+        push(@jscStressDriverCmd, "--child-processes");
+        push(@jscStressDriverCmd, $childProcesses);
+    }
+
+    if ($shellRunner) {
+        push(@jscStressDriverCmd, "--shell-runner");
+    }
+
+    if ($makeRunner) {
+        push(@jscStressDriverCmd, "--make-runner");
+    }
+
+    if ($rubyRunner) {
+        push(@jscStressDriverCmd, "--ruby-runner");
+    }
+
+    if ($gnuParallelRunner) {
+        push(@jscStressDriverCmd, "--gnu-parallel-runner");
+    }
+
+    if ($gnuParallelChunkSize) {
+        push(@jscStressDriverCmd, "--gnu-parallel-chunk-size");
+        push(@jscStressDriverCmd, $gnuParallelChunkSize);
+    }
+
+    if ($testWriter) {
+        push(@jscStressDriverCmd, "--test-writer");
+        push(@jscStressDriverCmd, $testWriter);
+    }
+
+    if ($memoryLimited) {
+        push(@jscStressDriverCmd, "--memory-limited");
+    }
+
+    if ($reportExecutionTime) {
+        push(@jscStressDriverCmd, "--report-execution-time");
+    }
+
+    if ($filter) {
+        push(@jscStressDriverCmd, "--filter");
+        push(@jscStressDriverCmd, $filter);
+    }
+
+    push(@jscStressDriverCmd, ("--verbose") x $verbose) if ($verbose > 0);
+
+    if (isPlayStation()) {
+        push(@jscStressDriverCmd, "--os=playstation");
+        push(@jscStressDriverCmd, "--no-copy");
+    }
+
+    unshift @jscStressDriverCmd, wrapperPrefixIfNeeded() if isGtk() or isWPE();
+
+    # End option processing, the rest of the arguments are tests
+    push(@jscStressDriverCmd, "--");
+
+    for my $testSuite (@extraTests) {
+        push(@jscStressDriverCmd, $testSuite);
+        $hasTestsToRun = 1;
+    }
+    if (defined($ENV{"EXTRA_JSC_TESTS"})) {
+        push(@jscStressDriverCmd, $ENV{"EXTRA_JSC_TESTS"});
+        $hasTestsToRun = 1;
+    }
+
+    if (!$hasTestsToRun) {
+        return;
+    }
+
+    print "Running: " . join(" ", @jscStressDriverCmd) . "\n";
+    my $result = system(@jscStressDriverCmd);
+    exit exitStatus($result) if $result;
+
+    my @jscStressPassList = readAllLines($jscStressResultsDir . "/passed");
+    foreach my $testSucceeded (@jscStressPassList) {
+        $reportData{$testSucceeded} = {actual => "PASS"};
+    }
+
+    my @jscStressFailList = readAllLines($jscStressResultsDir . "/failed");
+    @jscStressFailList = sort @jscStressFailList;
+    my $numJSCStressFailures = @jscStressFailList;
+
+    if ($numJSCStressFailures) {
+        $isTestFailed = 1;
+        print "\n** The following JSC stress test failures have been introduced:\n";
+        foreach my $testFailure (@jscStressFailList) {
+            print "\t$testFailure\n";
+            $reportData{$testFailure} = {actual => "FAIL"};
+        }
+    }
+    print "\n";
+
+    my @jscStressFlaky = readAllLines($jscStressResultsDir . "/flaky");
+    @jscStressFlaky = sort @jscStressFlaky;
+    my $numJSCStressFlaky = @jscStressFlaky;
+
+    my %jscStressFlakyInfo = ();
+
+    my $numJSCStressFlakyButPassed = 0;
+    if ($numJSCStressFlaky) {
+        print "\n** The following JSC stress tests were flaky:\n";
+        foreach my $testFlaky (@jscStressFlaky) {
+            my @fields = split / /, $testFlaky;
+            my $testName = $fields[0];
+            my $numPasses = $fields[1];
+            my $numTotal = $fields[2];
+            looks_like_number($fields[3]) || die "Malformed line: $testFlaky";
+            my $successful = int($fields[3]);
+            if ($successful) {
+                $numJSCStressFlakyButPassed += 1;
+            }
+            my $passFail = $successful ? "passed" : "failed";
+            print "\t$testName $fields[1]/$fields[2] passes, $passFail\n";
+            $jscStressFlakyInfo{$testName} = { 'P' => $numPasses, 'T' => $numTotal, 'S' => $successful };
+            # NB: the dict has been created above, we're only adding the flakiness field.
+            $reportData{$testName}{"flakiness_num_passes"} = int($numPasses);
+            $reportData{$testName}{"flakiness_num_tries"} =  int($numTotal);
+        }
+        print "\n";
+    }
+
+    my @jscStressNoResultList = readAllLines($jscStressResultsDir . "/noresult");
+    my $numJSCStressNoResultTests = @jscStressNoResultList;
+
+    if ($numJSCStressNoResultTests) {
+        $isTestFailed = 1;
+    }
+    foreach my $testNoResult (@jscStressNoResultList) {
+            $reportData{$testNoResult} = {actual => "ERROR"};
+    }
+
+    print "Results for JSC stress tests:\n";
+    printThingsFound($numJSCStressFailures, "failure", "failures", "found");
+    printThingsFound($numJSCStressFlakyButPassed, "test", "tests", "flaky but passed");
+    printThingsFound($numJSCStressFlaky - $numJSCStressFlakyButPassed, "test", "tests", "flaky and failed");
+    printThingsFound($numJSCStressNoResultTests, "test", "tests", "failed to complete");
+    print "    OK.\n" if $numJSCStressFailures == 0 and $numJSCStressNoResultTests == 0;
+
+    print "\n";
+
+    if (defined($jsonFileName)) {
+        $jsonData{'flaky'} =  \%jscStressFlakyInfo;
+        $jsonData{'stressTestFailures'} = \@jscStressFailList;
+    }
+
+    writeJsonDataIfApplicable();
+}
+
+sub readAllLines
+{
+    my ($filename) = @_;
+    my @array = ();
+    eval {
+        open FILE, $filename or die;
+        while (<FILE>) {
+            chomp;
+            push @array, $_;
+        }
+        close FILE;
+    };
+    return @array;
+}
+
+sub printThingsFound
+{
+    my ($number, $label, $pluralLabel, $verb) = @_;
+    print "    $number ";
+    if ($number == 1) {
+        print $label;
+    } else {
+        print $pluralLabel;
+    }
+    print " $verb.\n";
+}
+
+sub writeJsonDataIfApplicable
+{
+    if (defined($jsonFileName)) {
+        open(my $fileHandler, ">", $jsonFileName) or die;
+        print $fileHandler "${\encode_json(\%jsonData)}\n";
+        close($fileHandler);
+    }
+}
+
+sub uploadResults
+{
+    if (not defined $report) {
+        print "Skipping upload to results database since no report URL was specified\n";
+        return 0;
+    }
+
+    my @commits = [];
+    my $internalCheckout = File::Spec->catdir(dirname(sourceDir()), "Internal");
+    if (-e $internalCheckout and -d $internalCheckout) {
+        @commits = [commitForDirectory(sourceDir(), 'webkit'), commitForDirectory($internalCheckout, 'safari')]
+    } else {
+        @commits = [commitForDirectory(sourceDir(), 'webkit')]
+    }
+
+    my %upload = (
+        version => 0,
+        suite => 'javascriptcore-tests',
+        commits => @commits,
+        configuration => configurationForUpload(),
+        test_results => {
+            run_stats => {
+                start_time => $startTime,
+                end_time => $endTime,
+                tests_skipped => 0,
+            },
+            results => \%reportData,
+        },
+        timestamp => $startTime,
+    );
+    if (defined $buildbotMaster and defined $builderName and defined $buildNumber and defined $buildbotWorker) {
+        $upload{test_results}{details} = {
+            'buildbot-master' => $buildbotMaster,
+            'builder-name' => $builderName,
+            'build-number' => $buildNumber,
+            'buildbot-worker' => $buildbotWorker,
+        };
+    } else {
+        print "    No buildbot details provided, test run will not be linked to CI system\n";
+    }
+    if (defined $ENV{'RESULTS_SERVER_API_KEY'}) {
+        $upload{'api_key'} = $ENV{'RESULTS_SERVER_API_KEY'};
+    }
+
+    print "Uploading results to $report\n";
+    open(HANDLE, "|-", "curl -X POST $report/api/upload -H 'Content-Type: application/json' -f -d '\@-'") or die "Failed to open curl";
+
+    # Json conforming to https://results.webkit.org/documentation#API-Uploads.
+    my $encodedUpload = encode_json(\%upload);
+    print HANDLE "$encodedUpload\n\0";
+    my $success = close HANDLE;
+
+    if ($success) {
+        print "Upload successful!\n";
+        return 0;
+    }
+    print "Upload to $report failed\n";
+
+    return 1;
+}

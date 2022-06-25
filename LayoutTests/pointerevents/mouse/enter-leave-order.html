@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+
+div.test-container {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100px;
+    height: 100px;
+}
+
+#top {
+    left: 50px;
+    top: 50px;
+}
+
+</style>
+</head>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../utils.js"></script>
+<script>
+
+'use strict';
+
+const events = [];
+
+function logEvent(event)
+{
+    events.push(`${event.type}@${event.target.id}`);
+}
+
+function makeDiv(id)
+{
+    const div = document.createElement("div");
+    div.addEventListener("pointerenter", logEvent);
+    div.addEventListener("pointerleave", logEvent);
+    div.className = "test-container";
+    div.id = id;
+    return div;
+}
+
+// Add three nested and fully overlapping elements.
+document.body.appendChild(makeDiv("top")).appendChild(makeDiv("middle")).appendChild(makeDiv("bottom"));
+
+// mouse over and out of the elements.
+eventSender.mouseMoveTo(75, 75);
+eventSender.mouseMoveTo(25, 25);
+
+test(() => {
+    assert_array_equals(events, [
+        "pointerenter@top",
+        "pointerenter@middle",
+        "pointerenter@bottom",
+        "pointerleave@bottom",
+        "pointerleave@middle",
+        "pointerleave@top"
+    ]);
+}, `Testing that "pointerenter" events are dispatched from top to bottom and "pointerleave" events are dispatched bottom to top.`);
+
+</script>
+</body>
+</html>

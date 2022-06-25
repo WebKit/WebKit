@@ -1,0 +1,8 @@
+
+PASS Contenteditable element should support autofocus
+PASS Element with tabindex should support autofocus
+PASS Non-HTMLElement should not support autofocus
+FAIL Host element with delegatesFocus should support autofocus assert_equals: expected Element node <div autofocus=""></div> but got Element node <body><div autofocus=""></div></body>
+PASS Host element with delegatesFocus including no focusable descendants should be skipped
+PASS Area element should support autofocus
+

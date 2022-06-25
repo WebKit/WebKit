@@ -1,0 +1,2 @@
+PASS: Click fired on element with handler.
+This document is set up to enable fast clicks, because it has not moved from its initial scale. Double tapping on the rectangle above should send a click event, not trigger a zoom.

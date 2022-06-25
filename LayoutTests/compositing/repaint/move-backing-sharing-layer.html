@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .trigger {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            transform: translateZ(0);
+            background-color: silver;
+        }
+        
+        .composited-sharing {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            width: 800px;
+            height: 200px;
+            border: 1px solid blue;
+        }
+
+        .test {
+            position: absolute;
+            transform: scale(1, 1);
+            top: 50px;
+            left: 100px;
+            background: orange;
+            height: 100px;
+            width: 100px;
+        }
+        
+        body.changed .test {
+            left: 200px;
+        }
+
+        body.changed.again .test {
+            left: 400px;
+        }
+    </style>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(async () => {
+                document.body.classList.add('changed');
+                await UIHelper.renderingUpdate();
+                
+                if (window.internals)
+                    window.internals.startTrackingRepaints();
+
+                document.body.classList.add('again');
+
+                if (window.internals)
+                    document.getElementById('layers').textContent = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_REPAINT_RECTS);
+
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="trigger"></div>
+    <div class="composited-sharing">
+        <div class="test"></div>
+    </div>
+<pre id="layers"></pre>
+</body>
+</html>

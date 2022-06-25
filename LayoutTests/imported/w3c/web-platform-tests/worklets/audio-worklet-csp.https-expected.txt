@@ -1,0 +1,44 @@
+CONSOLE MESSAGE: Refused to load https://127.0.0.1:9443/worklets/resources/empty-worklet-script-with-cors-header.js because it does not appear in the script-src directive of the Content Security Policy.
+Blocked access to external URL https://www1.localhost:9443/worklets/resources/empty-worklet-script-with-cors-header.js
+CONSOLE MESSAGE: Refused to load https://127.0.0.1:9443/worklets/resources/import-empty-worklet-script-with-cors-header.js because it does not appear in the script-src directive of the Content Security Policy.
+Blocked access to external URL https://www1.localhost:9443/worklets/resources/empty-worklet-script-with-cors-header.js
+Blocked access to external URL https://www1.localhost:9443/worklets/resources/empty-worklet-script-with-cors-header.js
+Blocked access to external URL https://www1.localhost:9443/worklets/resources/empty-worklet-script-with-cors-header.js
+Blocked access to external URL https://www1.localhost:9443/worklets/resources/empty-worklet-script-with-cors-header.js
+Blocked access to external URL https://www1.localhost:9443/worklets/resources/empty-worklet-script-with-cors-header.js
+Blocked access to external URL https://www1.localhost:9443/worklets/resources/empty-worklet-script-with-cors-header.js
+Blocked access to external URL https://www1.localhost:9443/worklets/resources/empty-worklet-script-with-cors-header.js
+CONSOLE MESSAGE: [blocked] The page at https://localhost:9443/worklets/resources/addmodule-window.html was not allowed to display insecure content from http://localhost:8800/worklets/resources/empty-worklet-script-with-cors-header.js.
+
+CONSOLE MESSAGE: [blocked] The page at https://localhost:9443/worklets/resources/addmodule-window.html was not allowed to display insecure content from http://localhost:8800/worklets/resources/empty-worklet-script-with-cors-header.js.
+
+CONSOLE MESSAGE: [blocked] The page at https://localhost:9443/worklets/resources/addmodule-window.html was not allowed to display insecure content from http://localhost:9443/worklets/resources/empty-worklet-script-with-cors-header.js.
+
+CONSOLE MESSAGE: [blocked] The page at https://localhost:9443/worklets/resources/addmodule-window.html was not allowed to display insecure content from http://localhost:9443/worklets/resources/empty-worklet-script-with-cors-header.js.
+
+
+PASS A remote-origin worklet should be blocked by the script-src 'self' directive.
+PASS A same-origin worklet importing a remote-origin script should be blocked by the script-src 'self' directive.
+PASS A remote-origin worklet importing a remote-origin script should be blocked by the script-src 'self' directive.
+FAIL A remote-origin-redirected worklet should be blocked by the script-src 'self' directive. assert_equals: expected "REJECTED" but got "RESOLVED"
+PASS A same-origin worklet importing a remote-origin-redirected script should be blocked by the script-src 'self' directive.
+PASS A remote-origin worklet should not be blocked because the script-src directive specifying the origin allows it.
+FAIL A same-origin worklet importing a remote-origin script should not be blocked because the script-src directive specifying the origin allows it. assert_equals: expected "RESOLVED" but got "REJECTED"
+PASS A remote-origin worklet importing a remote-origin script should not be blocked because the script-src directive specifying the origin allows it.
+PASS A remote-origin-redirected worklet should not be blocked because the script-src directive specifying the origin allows it.
+FAIL A same-origin worklet importing a remote-origin-redirected script should not be blocked because the script-src directive specifying the origin allows it. assert_equals: expected "RESOLVED" but got "REJECTED"
+PASS A remote-origin worklet should not be blocked because the script-src * directive allows it.
+FAIL A same-origin worklet importing a remote-origin script should not be blocked because the script-src * directive allows it. assert_equals: expected "RESOLVED" but got "REJECTED"
+PASS A remote-origin worklet importing a remote-origin script should not be blocked because the script-src * directive allows it.
+PASS A remote-origin-redirected worklet should not be blocked because the script-src * directive allows it.
+FAIL A same-origin worklet importing a remote-origin-redirected script should not be blocked because the script-src * directive allows it. assert_equals: expected "RESOLVED" but got "REJECTED"
+PASS A remote-origin worklet should not be blocked by the worker-src directive because worklets obey the script-src directive.
+FAIL A same-origin worklet importing a remote-origin script should not be blocked by the worker-src directive because worklets obey the script-src directive. assert_equals: expected "RESOLVED" but got "REJECTED"
+PASS A remote-origin worklet importing a remote-origin script should not be blocked by the worker-src directive because worklets obey the script-src directive.
+PASS A remote-origin-redirected worklet should not be blocked by the worker-src directive because worklets obey the script-src directive.
+FAIL A same-origin worklet importing a remote-origin-redirected script should not be blocked by the worker-src directive because worklets obey the script-src directive. assert_equals: expected "RESOLVED" but got "REJECTED"
+PASS An insecure-origin worklet should be blocked because of mixed contents.
+PASS An insecure-origin-redirected worklet should be blocked because of mixed contents.
+PASS A same-origin worklet importing an insecure-origin script should be blocked because of mixed contents.
+PASS A same-origin worklet importing an insecure-origin-redirected script should be blocked because of mixed contents.
+

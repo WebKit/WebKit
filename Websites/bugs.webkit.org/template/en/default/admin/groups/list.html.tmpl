@@ -1,0 +1,155 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # groups: array with group objects having the properties:
+  #   - id: number. The ID of the group.
+  #   - name: string. The name of the group.
+  #   - description: string. The description of the group.
+  #   - userregexp: string. The user regexp for the given group.
+  #   - isactive: boolean int. Specifies if the group is active or not.
+  #   - isbuggroup: boolean int. Specifies if it can be used for bugs.
+  #%]
+
+[% PROCESS global/header.html.tmpl
+  title = "Edit Groups"
+  subheader = "This lets you edit the groups available to put users in."
+  style_urls = ['skins/standard/admin.css']
+  doc_section = "administering/groups.html"
+%]
+
+[% edit_contentlink = "editgroups.cgi?action=changeform&amp;group=%%id%%" %]
+[% del_contentlink = "editgroups.cgi?action=del&amp;group=%%id%%" %]
+
+[% columns =
+  [{name               => 'name'
+    heading            => 'Name'
+    contentlink        => edit_contentlink
+   }
+   {name               => 'description'
+    heading            => 'Description'
+    allow_html_content => 1
+   }
+   {name               => 'userregexp'
+    heading            => 'User RegExp'
+   }
+   {name               => 'is_active_bug_group'
+    heading            => "Use For $terms.Bugs"
+    class              => 'center'
+   }
+   {name               => 'type'
+    heading            => 'Type'
+    class              => 'center'
+   }
+   {name               => 'action'
+    heading            => 'Action'
+   }
+  ]
+%]
+
+[% overrides.is_active_bug_group = {
+     'is_active_bug_group' => {
+       "0" => {
+          override_content => 1
+          content => "&nbsp;"
+       }
+       "1" => {
+          override_content => 1
+          content => "X"
+       }
+     }
+   }
+
+   overrides.userregexp = {
+     'userregexp' => {
+       "" => {
+         override_content => 1
+         content => "&nbsp;"
+       }
+     }
+   } 
+%]
+
+[% FOREACH group IN ["chartgroup", "comment_taggers_group", "debug_group",
+                     "insidergroup", "querysharegroup", "timetrackinggroup"] %]
+  [% special_group = Param(group) %]
+
+  [% IF special_group %]
+    [% overrides.action.name.$special_group = {
+         override_content => 1
+         content => "(used as the '$group')"
+       }
+    %]
+  [% END %]
+[% END %]
+
+[% overrides.action.isbuggroup = {
+     "1" => {
+         override_content => 1
+         content => "Delete"
+         override_contentlink => 1
+         contentlink => del_contentlink
+     }
+   }
+
+   overrides.type.isbuggroup = {
+     "0" => {
+         override_content => 1
+         content => "system"
+     }
+     "1" => {
+         override_content => 1
+         content => "user"
+     }
+   }
+%] 
+
+[% PROCESS admin/table.html.tmpl
+  columns = columns
+  data    = groups
+  overrides = overrides
+%]
+
+<p><a href="editgroups.cgi?action=add">Add Group</a></p>
+
+<p>
+  <b>Name</b> is what is used with the B<!-- blah -->ugzilla->user->in_group()
+function in any customized cgi files you write that use a given group.
+It can also be used by people submitting [% terms.bugs %] by email to
+limit [% terms.abug %] to a certain set of groups.
+</p>
+
+<p>
+  <b>Description</b> is what will be shown in the [% terms.bug %] reports
+to members of the group where they can choose whether the [% terms.bug %]
+will be restricted to others in the same group.
+</p>
+
+<p>
+  <b>User RegExp</b> is optional, and if filled in, will automatically
+grant membership to this group to anyone with an email address
+that matches this perl regular expression. Do not forget
+the trailing '$'.  Example '@mycompany\.com$'
+</p>
+
+<p>
+  The <b>Use For [% terms.Bugs %]</b> flag determines whether or not
+the group is eligible to be used for [% terms.bugs %]. If you remove
+this flag, it will no longer be possible for users to add [% terms.bugs %]
+to this group, although [% terms.bugs %] already in the group will remain
+in the group. Doing so is a much less drastic way to stop a group
+from growing than deleting the group as well as a way to maintain
+lists of users without cluttering the lists of groups used
+for [% terms.bug %] restrictions.
+</p>
+
+<p>
+  The <b>Type</b> field identifies system groups.
+</p>
+
+[% PROCESS global/footer.html.tmpl %]

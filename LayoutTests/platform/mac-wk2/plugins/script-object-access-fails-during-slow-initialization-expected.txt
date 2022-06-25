@@ -1,0 +1,8 @@
+
+Tests that accessing the script object of a plug-in that hasn't been initialized fails instead of waiting for initialization to finish.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Accessing the property took less than 550ms, meaning the plug-in had not finished initializing after our call to the plug-in script object returned.
+

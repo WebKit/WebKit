@@ -1,0 +1,141 @@
+# Copyright (c) 2014 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../webrtc.gni")
+
+rtc_library("common_video") {
+  visibility = [ "*" ]
+
+  sources = [
+    "bitrate_adjuster.cc",
+    "frame_rate_estimator.cc",
+    "frame_rate_estimator.h",
+    "framerate_controller.cc",
+    "framerate_controller.h",
+    "h264/h264_bitstream_parser.cc",
+    "h264/h264_bitstream_parser.h",
+    "h264/h264_common.cc",
+    "h264/h264_common.h",
+    "h264/pps_parser.cc",
+    "h264/pps_parser.h",
+    "h264/sps_parser.cc",
+    "h264/sps_parser.h",
+    "h264/sps_vui_rewriter.cc",
+    "h264/sps_vui_rewriter.h",
+    "include/bitrate_adjuster.h",
+    "include/incoming_video_stream.h",
+    "include/quality_limitation_reason.h",
+    "include/video_frame_buffer.h",
+    "include/video_frame_buffer_pool.h",
+    "incoming_video_stream.cc",
+    "libyuv/include/webrtc_libyuv.h",
+    "libyuv/webrtc_libyuv.cc",
+    "video_frame_buffer.cc",
+    "video_frame_buffer_pool.cc",
+    "video_render_frames.cc",
+    "video_render_frames.h",
+  ]
+
+  deps = [
+    "../api:array_view",
+    "../api:scoped_refptr",
+    "../api:sequence_checker",
+    "../api/task_queue",
+    "../api/units:time_delta",
+    "../api/units:timestamp",
+    "../api/video:encoded_image",
+    "../api/video:video_bitrate_allocation",
+    "../api/video:video_bitrate_allocator",
+    "../api/video:video_frame",
+    "../api/video:video_rtp_headers",
+    "../api/video_codecs:bitstream_parser_api",
+    "../api/video_codecs:video_codecs_api",
+    "../rtc_base",
+    "../rtc_base:bitstream_reader",
+    "../rtc_base:checks",
+    "../rtc_base:rtc_task_queue",
+    "../rtc_base:safe_minmax",
+    "../rtc_base/synchronization:mutex",
+    "../rtc_base/system:rtc_export",
+    "../system_wrappers:metrics",
+    "//third_party/libyuv",
+  ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/numeric:bits",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+rtc_source_set("frame_counts") {
+  visibility = [ "*" ]
+
+  sources = [ "frame_counts.h" ]
+}
+
+if (rtc_include_tests && !build_with_chromium) {
+  common_video_resources = [ "../resources/foreman_cif.yuv" ]
+
+  if (is_ios) {
+    bundle_data("common_video_unittests_bundle_data") {
+      testonly = true
+      sources = common_video_resources
+      outputs = [ "{{bundle_resources_dir}}/{{source_file_part}}" ]
+    }
+  }
+
+  rtc_test("common_video_unittests") {
+    testonly = true
+
+    sources = [
+      "bitrate_adjuster_unittest.cc",
+      "frame_rate_estimator_unittest.cc",
+      "framerate_controller_unittest.cc",
+      "h264/h264_bitstream_parser_unittest.cc",
+      "h264/pps_parser_unittest.cc",
+      "h264/sps_parser_unittest.cc",
+      "h264/sps_vui_rewriter_unittest.cc",
+      "libyuv/libyuv_unittest.cc",
+      "video_frame_buffer_pool_unittest.cc",
+      "video_frame_unittest.cc",
+    ]
+
+    deps = [
+      ":common_video",
+      "../api:scoped_refptr",
+      "../api/units:time_delta",
+      "../api/video:video_frame",
+      "../api/video:video_frame_i010",
+      "../api/video:video_rtp_headers",
+      "../api/video_codecs:video_codecs_api",
+      "../rtc_base",
+      "../rtc_base:checks",
+      "../rtc_base:rtc_base_approved",
+      "../rtc_base:rtc_base_tests_utils",
+      "../system_wrappers:system_wrappers",
+      "../test:fileutils",
+      "../test:frame_utils",
+      "../test:test_main",
+      "../test:test_support",
+      "../test:video_test_common",
+      "//testing/gtest",
+      "//third_party/libyuv",
+    ]
+
+    absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+
+    data = common_video_resources
+    if (is_android) {
+      deps += [ "//testing/android/native_test:native_test_support" ]
+      shard_timeout = 900
+    }
+
+    if (is_ios) {
+      deps += [ ":common_video_unittests_bundle_data" ]
+    }
+  }
+}

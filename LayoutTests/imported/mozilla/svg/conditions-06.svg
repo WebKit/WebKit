@@ -1,0 +1,69 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg id="svg-root" width="100%" height="100%"
+  xmlns="http://www.w3.org/2000/svg"
+  xmlns:xlink="http://www.w3.org/1999/xlink" onload="runtest()">
+  <title>Test conditional processing DOM interface</title>
+  <defs>
+    <script>
+      function runtest() {
+        try {
+          var r1 = document.getElementById("r1");
+          var r2 = document.getElementById("r2");
+          var r3 = document.getElementById("r3");
+          var i0 = r1.requiredFeatures.getItem(0);
+          var i1 = r1.requiredFeatures.getItem(1);
+
+          if(i0 != "http://www.w3.org/TR/SVG11/feature#Shape") {
+            r1.removeAttribute("requiredFeatures");
+            return;
+          }
+          if(i1 != "this.is.a.bogus.feature.string") {
+            r1.removeAttribute("requiredFeatures");
+            return;
+          }
+          if(r1.requiredFeatures.numberOfItems != 2) {
+            r1.removeAttribute("requiredFeatures");
+            return;
+          }
+          r2.requiredFeatures.appendItem(i1);
+          if(r1.requiredFeatures.numberOfItems != 2) {
+            r1.removeAttribute("requiredFeatures");
+            return;
+          }
+          if(r2.requiredFeatures.numberOfItems != 1) {
+            r1.removeAttribute("requiredFeatures");
+            return;
+          }
+          r3.requiredFeatures.insertItemBefore(i0,0);
+          if(r3.requiredFeatures.numberOfItems != 2) {
+            r3.setAttribute("fill", "red");
+            return;
+          }
+          if(r1.requiredFeatures.numberOfItems != 2) {
+            r1.removeAttribute("requiredFeatures");
+            return;
+          }
+        } catch(e) {
+          var f = document.getElementById("fail");
+          f.setAttribute("fill", "red");
+        }
+      }
+    </script>
+  </defs>
+
+  <rect width="100%" height="100%" fill="lime"/>
+  <!-- background images -->
+  <rect x="100" y="100" width="100" height="100" fill="lime"/>
+  <rect x="190" y="100" width="100" height="100" fill="lime"/>
+  <rect x="300" y="100" width="100" height="100" fill="red"/>
+
+  <!-- tests -->
+  <rect id="r1" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Shape this.is.a.bogus.feature.string" x="100" y="100" width="100" height="100" fill="red"/>
+  <rect id="r2" x="190" y="100" width="100" height="100" fill="red"/>
+  <rect id="r3" x="300" y="100" width="100" height="100" fill="lime" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Shape"/>
+
+  <rect id="fail" width="100%" height="100%" fill="none"/>
+</svg>

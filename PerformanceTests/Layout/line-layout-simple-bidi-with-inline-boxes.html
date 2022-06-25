@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Line breaking performance test</title>
+    <script src="../resources/runner.js"></script>
+</head>
+<body>
+    <pre id="log"></pre>
+    <div id="target" style="width: 300px; display: none">
+        <div style="text-align: center">
+            <h4>ARGUMENTUM</h4>
+            <p>
+            L. <span>Sergius <span>Catilina, &#x05d0;&#x05d1;</span> homo patricii generis</span>, &#x05d0;&#x05d1; magna vi et animi et
+            corporis, &#x05d0;&#x05d1; sed ingenio malo pravoque, &#x05d0;&#x05d1; praetorius, &#x05d0;&#x05d1; qui iam a. u. c. 689
+            caedem consulum facere eaque facta rerum potiri constituerat, &#x05d0;&#x05d1; casu autem
+            rem perficere prohibitus erat, &#x05d0;&#x05d1; ascitis ad consilium rei publicae
+            opprimendae hominibus omnis generis perditissiis atque audacissimis, &#x05d0;&#x05d1; quos
+            inopia, &#x05d0;&#x05d1; cupiditas, &#x05d0;&#x05d1; scelera stimulabant, &#x05d0;&#x05d1; consulatum in annum 691 p. u. c.
+            petivit, &#x05d0;&#x05d1; sed cum, &#x05d0;&#x05d1; quae in animo habebat, &#x05d0;&#x05d1; perniciosa rei publicae consilia
+            parum occultata essent, &#x05d0;&#x05d1; studiis bonorum omnium M. Tullius Cicero una cum
+            C. Antonio consul factus est.  Qua re commotus L. Catilina M. Cicerone
+            C. Antonio consulibus cupidius etiam sua consilia recepit, &#x05d0;&#x05d1; quibus maxime
+            Ciceronis consulis <span>diligentia restitit ad quem Catilinae eiusque</span> sociorum
+            consilia a Fulvia, &#x05d0;&#x05d1; muliere nobili, &#x05d0;&#x05d1; quae rem habebat cum Q. Curio, &#x05d0;&#x05d1; qui
+            particeps fuit conspirationis illius, &#x05d0;&#x05d1; deferebantur.  Cum autem ista mala
+            consilia contra <span>salutem rei publicae a coniuratis inita</span> apertius iam
+            agitarentur, &#x05d0;&#x05d1; senatus consultum factum est, &#x05d0;&#x05d1; darent operam consules, &#x05d0;&#x05d1; ne quid
+            res publica detrimenti caperet, &#x05d0;&#x05d1; effectumque est, &#x05d0;&#x05d1; ut Catilina spe
+            consulatus, &#x05d0;&#x05d1; quem in proximum annum <span>petebat, &#x05d0;&#x05d1; excideret</span>, &#x05d0;&#x05d1; designarenturque
+            D. Silanus et L. Murena.  Quae cum ita essent, &#x05d0;&#x05d1; L. <span>Catilina, &#x05d0;&#x05d1;</span> qui iam ante
+            per <span>Italiam ad homines seditiosos, &#x05d0;&#x05d1; maxime</span> veteres L. Sullae milites, &#x05d0;&#x05d1;
+            concitandos nuntios miserat, &#x05d0;&#x05d1; ad C. Manlium, &#x05d0;&#x05d1; qui Faesulas, &#x05d0;&#x05d1; in urbem
+            Etruriae munitam, &#x05d0;&#x05d1; manum armatorum coegerat, &#x05d0;&#x05d1; proficisci constituit et
+            bellum patriae inferre convocatisque nocte, &#x05d0;&#x05d1; quae inter VIII et VII Id.
+            Novembres erat, &#x05d0;&#x05d1; sociis in domum M. Porci Laecae consilium, &#x05d0;&#x05d1; quod ceperat, &#x05d0;&#x05d1;
+            aperuit. &#x05d0;&#x05d1;Qua in congregatione nocturna 
+            duo equites Romani Ciceronem
+            consulem illa ipsa nocte ante lucem, &#x05d0;&#x05d1; cum sicut salutaturi eius domum
+            intrassent, &#x05d0;&#x05d1; interficiendum receperunt.  M. Cicero vitatis insidiis proximo
+            die, &#x05d0;&#x05d1; qui fuit a. d.  VI Id. Novembres, &#x05d0;&#x05d1; dispositis praesidiis senatum in
+            templum Iovis Statoris convocavit, &#x05d0;&#x05d1; quo cum Catilina quasi sui purgandi
+            causa venisset, &#x05d0;&#x05d1; Cicero eam, &#x05d0;&#x05d1; quae infra legitur, &#x05d0;&#x05d1; orationem in Catilinam
+            vehementissime invehens habuit.
+            </p>
+            <p>
+            <span>Quo usque tandem abutere, &#x05d0;&#x05d1; Catilina</span>, &#x05d0;&#x05d1; patientia nostra?  quam diu etiam
+            furor iste tuus nos eludet?  quem ad finem sese effrenata iactabit
+            audacia?  Nihilne te nocturnum praesidium Palati, &#x05d0;&#x05d1; nihil urbis vigiliae, &#x05d0;&#x05d1;
+            nihil timor populi, &#x05d0;&#x05d1; nihil concursus bonorum omnium, &#x05d0;&#x05d1; nihil hic munitissimus
+            habendi senatus locus, &#x05d0;&#x05d1; <span>nihil horum ora voltusque moverunt?</span>  Patere tua
+            consilia non sentis, &#x05d0;&#x05d1; constrictam iam horum omnium scientia teneri
+            coniurationem tuam non vides?  Quid proxima, &#x05d0;&#x05d1; quid superiore nocte egeris, &#x05d0;&#x05d1;
+            ubi fueris, &#x05d0;&#x05d1; quos convocaveris, &#x05d0;&#x05d1; quid consilii ceperis, &#x05d0;&#x05d1; quem nostrum
+            ignorare arbitraris?  O tempora, &#x05d0;&#x05d1; o mores! Senatus haec intellegit.  consul
+            videt; hic tamen vivit.  Vivit?  immo vero etiam in senatum venit, &#x05d0;&#x05d1; fit
+            publici consilii particeps, &#x05d0;&#x05d1; notat et designat oculis ad caedem unum
+            quemque nostrum.  Nos autem fortes viri satis facere rei publicae videmur, &#x05d0;&#x05d1;
+            si istius furorem ac tela vitemus.  Ad mortem te, &#x05d0;&#x05d1; <span>Catilina, &#x05d0;&#x05d1;</span> duci iussu
+            consulis iam pridem oportebat, &#x05d0;&#x05d1; in te conferri pestem, &#x05d0;&#x05d1; quam tu in nos
+            [omnes iam diu] machinaris.  An vero vir amplissumus, &#x05d0;&#x05d1; P. Scipio, &#x05d0;&#x05d1; pontifex
+            maximus, &#x05d0;&#x05d1; Ti.  Gracchum mediocriter labefactantem statum rei publicae
+            privatus interfecit; Catilinam orbem terrae caede atque incendiis vastare
+            cupientem nos consules perferemus?  Nam illa nimis antiqua praetereo, &#x05d0;&#x05d1; quod
+            C. Servilius Ahala Sp.  <span>Maelium novis rebus studentem</span> manu sua occidit.
+            Fuit, &#x05d0;&#x05d1; <span>fuit ista quondam in hac re publica virtus, &#x05d0;&#x05d1;</span> ut viri fortes
+            acrioribus suppliciis civem perniciosum quam acerbissimum hostem
+            coercerent.  Habemus senatus consultum in te, &#x05d0;&#x05d1; <span>Catilina, &#x05d0;&#x05d1;</span> vehemens et grave, &#x05d0;&#x05d1;
+            non deest rei publicae consilium neque auctoritas huius ordinis; nos, &#x05d0;&#x05d1; nos, &#x05d0;&#x05d1;
+            dico aperte, &#x05d0;&#x05d1; consules desumus.  Decrevit quondam senatus, &#x05d0;&#x05d1; ut L. Opimius
+            consul videret, &#x05d0;&#x05d1; ne quid res publica detrimenti caperet; nox nulla
+            intercessit; interfectus est propter quasdam seditionum suspiciones
+            C. Gracchus, &#x05d0;&#x05d1; clarissimo patre, &#x05d0;&#x05d1; avo, &#x05d0;&#x05d1; maioribus, &#x05d0;&#x05d1; occisus est cum liberis
+            M. Fulvius consularis.  Simili senatus consulto C. Mario et L.  Valerio
+            consulibus est permissa res publica; num unum diem postea L. Saturninum
+            tribunum pl.  et C.  Servilium praetorem mors ac rei publicae poena
+            remorata est?  At [vero] nos vicesimum iam diem patimur hebescere aciem
+            horum auctoritatis.  Habemus enim huiusce modi senatus consultum, &#x05d0;&#x05d1; verum
+            inclusum in <span>tabulis tamquam in vagina reconditum, &#x05d0;&#x05d1;</span> quo ex senatus consulto
+            confestim te interfectum esse, &#x05d0;&#x05d1; <span>Catilina, &#x05d0;&#x05d1;</span> convenit.  Vivis, &#x05d0;&#x05d1; et vivis non ad
+            deponendam, &#x05d0;&#x05d1; sed ad confirmandam audaciam.  Cupio, &#x05d0;&#x05d1; patres conscripti, &#x05d0;&#x05d1; me
+            esse clementem, &#x05d0;&#x05d1; cupio in tantis rei publicae periculis me non dissolutum
+            videri, &#x05d0;&#x05d1; sed iam me ipse inertiae nequitiaeque condemno.  Castra sunt in
+            Italia contra populum Romanum in Etruriae faucibus conlocata, &#x05d0;&#x05d1; crescit in
+            dies singulos hostium numerus; eorum autem castrorum imperatorem ducemque
+            hostium intra moenia atque adeo in senatu videmus intestinam aliquam
+            cotidie perniciem rei publicae molientem.  Si te iam, &#x05d0;&#x05d1; <span>Catilina, &#x05d0;&#x05d1;</span>
+            comprehendi, &#x05d0;&#x05d1; si interfici iussero, &#x05d0;&#x05d1; credo, &#x05d0;&#x05d1; erit verendum mihi, &#x05d0;&#x05d1; ne non
+            potius hoc omnes boni serius a me quam quisquam crudelius factum esse
+            dicat.  Verum ego hoc, &#x05d0;&#x05d1; quod iam pridem factum esse oportuit, &#x05d0;&#x05d1; certa de
+            causa nondum adducor ut faciam.  Tum denique interficiere, &#x05d0;&#x05d1; cum iam nemo
+            tam inprobus, &#x05d0;&#x05d1; tam perditus, &#x05d0;&#x05d1; tam tui similis inveniri poterit, &#x05d0;&#x05d1; qui id non
+            iure factum esse fateatur.  Quamdiu quisquam erit, &#x05d0;&#x05d1; qui te defendere
+            audeat, &#x05d0;&#x05d1; vives, &#x05d0;&#x05d1; et vives ita, &#x05d0;&#x05d1; ut [nunc] vivis.  multis meis et firmis
+            praesidiis obsessus, &#x05d0;&#x05d1; ne commovere te contra rem publicam possis.  Multorum
+            te etiam oculi et aures non sentientem, &#x05d0;&#x05d1; sicut adhuc fecerunt, &#x05d0;&#x05d1;
+            speculabuntur atque custodient.
+            </p>
+        </div>
+        <div style="text-align: right">
+            <h4>ARGUMENTUM</h4>
+            <p>
+            L. <span>Sergius <span>Catilina, &#x05d0;&#x05d1;</span> homo patricii generis</span>, &#x05d0;&#x05d1; magna vi et animi et
+            corporis, &#x05d0;&#x05d1; sed ingenio malo pravoque, &#x05d0;&#x05d1; praetorius, &#x05d0;&#x05d1; qui iam a. u. c. 689
+            caedem consulum facere eaque facta rerum potiri constituerat, &#x05d0;&#x05d1; casu autem
+            rem perficere prohibitus erat, &#x05d0;&#x05d1; ascitis ad consilium rei publicae
+            opprimendae hominibus omnis generis perditissiis atque audacissimis, &#x05d0;&#x05d1; quos
+            inopia, &#x05d0;&#x05d1; cupiditas, &#x05d0;&#x05d1; scelera stimulabant, &#x05d0;&#x05d1; consulatum in annum 691 p. u. c.
+            petivit, &#x05d0;&#x05d1; sed cum, &#x05d0;&#x05d1; quae in animo habebat, &#x05d0;&#x05d1; perniciosa rei publicae consilia
+            parum occultata essent, &#x05d0;&#x05d1; studiis bonorum omnium M. Tullius Cicero una cum
+            C. Antonio consul factus est.  Qua re commotus L. Catilina M. Cicerone
+            C. Antonio consulibus cupidius etiam sua consilia recepit, &#x05d0;&#x05d1; quibus maxime
+            Ciceronis consulis <span>diligentia restitit ad quem Catilinae eiusque</span> sociorum
+            consilia a Fulvia, &#x05d0;&#x05d1; muliere nobili, &#x05d0;&#x05d1; quae rem habebat cum Q. Curio, &#x05d0;&#x05d1; qui
+            particeps fuit conspirationis illius, &#x05d0;&#x05d1; deferebantur.  Cum autem ista mala
+            consilia contra <span>salutem rei publicae a coniuratis inita</span> apertius iam
+            agitarentur, &#x05d0;&#x05d1; senatus consultum factum est, &#x05d0;&#x05d1; darent operam consules, &#x05d0;&#x05d1; ne quid
+            res publica detrimenti caperet, &#x05d0;&#x05d1; effectumque est, &#x05d0;&#x05d1; ut Catilina spe
+            consulatus, &#x05d0;&#x05d1; quem in proximum annum <span>petebat, &#x05d0;&#x05d1; excideret</span>, &#x05d0;&#x05d1; designarenturque
+            D. Silanus et L. Murena.  Quae cum ita essent, &#x05d0;&#x05d1; L. <span>Catilina, &#x05d0;&#x05d1;</span> qui iam ante
+            per <span>Italiam ad homines seditiosos, &#x05d0;&#x05d1; maxime</span> veteres L. Sullae milites, &#x05d0;&#x05d1;
+            concitandos nuntios miserat, &#x05d0;&#x05d1; ad C. Manlium, &#x05d0;&#x05d1; qui Faesulas, &#x05d0;&#x05d1; in urbem
+            Etruriae munitam, &#x05d0;&#x05d1; manum armatorum coegerat, &#x05d0;&#x05d1; proficisci constituit et
+            bellum patriae inferre convocatisque nocte, &#x05d0;&#x05d1; quae inter VIII et VII Id.
+            Novembres erat, &#x05d0;&#x05d1; sociis in domum M. Porci Laecae consilium, &#x05d0;&#x05d1; quod ceperat, &#x05d0;&#x05d1;
+            aperuit.  Qua in congregatione nocturna duo equites Romani Ciceronem
+            consulem illa ipsa nocte ante lucem, &#x05d0;&#x05d1; cum sicut salutaturi eius domum
+            intrassent, &#x05d0;&#x05d1; interficiendum receperunt.  M. Cicero vitatis insidiis proximo
+            die, &#x05d0;&#x05d1; qui fuit a. d.  VI Id.  Novembres, &#x05d0;&#x05d1; dispositis praesidiis senatum in
+            templum Iovis Statoris convocavit, &#x05d0;&#x05d1; quo cum Catilina quasi sui purgandi
+            causa venisset, &#x05d0;&#x05d1; Cicero eam, &#x05d0;&#x05d1; quae infra legitur, &#x05d0;&#x05d1; orationem in Catilinam
+            vehementissime invehens habuit.
+            </p>
+            <p>
+            <span>Quo usque tandem abutere, &#x05d0;&#x05d1; Catilina</span>, &#x05d0;&#x05d1; patientia nostra?  quam diu etiam
+            furor iste tuus nos eludet?  quem ad finem sese effrenata iactabit
+            audacia?  Nihilne te nocturnum praesidium Palati, &#x05d0;&#x05d1; nihil urbis vigiliae, &#x05d0;&#x05d1;
+            nihil timor populi, &#x05d0;&#x05d1; nihil concursus bonorum omnium, &#x05d0;&#x05d1; nihil hic munitissimus
+            habendi senatus locus, &#x05d0;&#x05d1; <span>nihil horum ora voltusque moverunt?</span>  Patere tua
+            consilia non sentis, &#x05d0;&#x05d1; constrictam iam horum omnium scientia teneri
+            coniurationem tuam non vides?  Quid proxima, &#x05d0;&#x05d1; quid superiore nocte egeris, &#x05d0;&#x05d1;
+            ubi fueris, &#x05d0;&#x05d1; quos convocaveris, &#x05d0;&#x05d1; quid consilii ceperis, &#x05d0;&#x05d1; quem nostrum
+            ignorare arbitraris?  O tempora, &#x05d0;&#x05d1; o mores! Senatus haec intellegit.  consul
+            videt; hic tamen vivit.  Vivit?  immo vero etiam in senatum venit, &#x05d0;&#x05d1; fit
+            publici consilii particeps, &#x05d0;&#x05d1; notat et designat oculis ad caedem unum
+            quemque nostrum.  Nos autem fortes viri satis facere rei publicae videmur, &#x05d0;&#x05d1;
+            si istius furorem ac tela vitemus.  Ad mortem te, &#x05d0;&#x05d1; <span>Catilina, &#x05d0;&#x05d1;</span> duci iussu
+            consulis iam pridem oportebat, &#x05d0;&#x05d1; in te conferri pestem, &#x05d0;&#x05d1; quam tu in nos
+            [omnes iam diu] machinaris.  An vero vir amplissumus, &#x05d0;&#x05d1; P. Scipio, &#x05d0;&#x05d1; pontifex
+            maximus, &#x05d0;&#x05d1; Ti.  Gracchum mediocriter labefactantem statum rei publicae
+            privatus interfecit; Catilinam orbem terrae caede atque incendiis vastare
+            cupientem nos consules perferemus?  Nam illa nimis antiqua praetereo, &#x05d0;&#x05d1; quod
+            C. Servilius Ahala Sp.  <span>Maelium novis rebus studentem</span> manu sua occidit.
+            Fuit, &#x05d0;&#x05d1; <span>fuit ista quondam in hac re publica virtus, &#x05d0;&#x05d1;</span> ut viri fortes
+            acrioribus suppliciis civem perniciosum quam acerbissimum hostem
+            coercerent.  Habemus senatus consultum in te, &#x05d0;&#x05d1; <span>Catilina, &#x05d0;&#x05d1;</span> vehemens et grave, &#x05d0;&#x05d1;
+            non deest rei publicae consilium neque auctoritas huius ordinis; nos, &#x05d0;&#x05d1; nos, &#x05d0;&#x05d1;
+            dico aperte, &#x05d0;&#x05d1; consules desumus.  Decrevit quondam senatus, &#x05d0;&#x05d1; ut L. Opimius
+            consul videret, &#x05d0;&#x05d1; ne quid res publica detrimenti caperet; nox nulla
+            intercessit; interfectus est propter quasdam seditionum suspiciones
+            C. Gracchus, &#x05d0;&#x05d1; clarissimo patre, &#x05d0;&#x05d1; avo, &#x05d0;&#x05d1; maioribus, &#x05d0;&#x05d1; occisus est cum liberis
+            M. Fulvius consularis.  Simili senatus consulto C. Mario et L.  Valerio
+            consulibus est permissa res publica; num unum diem postea L. Saturninum
+            tribunum pl.  et C.  Servilium praetorem mors ac rei publicae poena
+            remorata est?  At [vero] nos vicesimum iam diem patimur hebescere aciem
+            horum auctoritatis.  Habemus enim huiusce modi senatus consultum, &#x05d0;&#x05d1; verum
+            inclusum in <span>tabulis tamquam in vagina reconditum, &#x05d0;&#x05d1;</span> quo ex senatus consulto
+            confestim te interfectum esse, &#x05d0;&#x05d1; <span>Catilina, &#x05d0;&#x05d1;</span> convenit.  Vivis, &#x05d0;&#x05d1; et vivis non ad
+            deponendam, &#x05d0;&#x05d1; sed ad confirmandam audaciam.  Cupio, &#x05d0;&#x05d1; patres conscripti, &#x05d0;&#x05d1; me
+            esse clementem, &#x05d0;&#x05d1; cupio in tantis rei publicae periculis me non dissolutum
+            videri, &#x05d0;&#x05d1; sed iam me ipse inertiae nequitiaeque condemno.  Castra sunt in
+            Italia contra populum Romanum in Etruriae faucibus conlocata, &#x05d0;&#x05d1; crescit in
+            dies singulos hostium numerus; eorum autem castrorum imperatorem ducemque
+            hostium intra moenia atque adeo in senatu videmus intestinam aliquam
+            cotidie perniciem rei publicae molientem.  Si te iam, &#x05d0;&#x05d1; <span>Catilina, &#x05d0;&#x05d1;</span>
+            comprehendi, &#x05d0;&#x05d1; si interfici iussero, &#x05d0;&#x05d1; credo, &#x05d0;&#x05d1; erit verendum mihi, &#x05d0;&#x05d1; ne non
+            potius hoc omnes boni serius a me quam quisquam crudelius factum esse
+            dicat.  Verum ego hoc, &#x05d0;&#x05d1; quod iam pridem factum esse oportuit, &#x05d0;&#x05d1; certa de
+            causa nondum adducor ut faciam.  Tum denique interficiere, &#x05d0;&#x05d1; cum iam nemo
+            tam inprobus, &#x05d0;&#x05d1; tam perditus, &#x05d0;&#x05d1; tam tui similis inveniri poterit, &#x05d0;&#x05d1; qui id non
+            iure factum esse fateatur.  Quamdiu quisquam erit, &#x05d0;&#x05d1; qui te defendere
+            audeat, &#x05d0;&#x05d1; vives, &#x05d0;&#x05d1; et vives ita, &#x05d0;&#x05d1; ut [nunc] vivis.  multis meis et firmis
+            praesidiis obsessus, &#x05d0;&#x05d1; ne commovere te contra rem publicam possis.  Multorum
+            te etiam oculi et aures non sentientem, &#x05d0;&#x05d1; sicut adhuc fecerunt, &#x05d0;&#x05d1;
+            speculabuntur atque custodient.
+            </p>
+        </div>
+        <div style="text-align: justify">
+            <h4>ARGUMENTUM</h4>
+            <p>
+            L. <span>Sergius <span>Catilina, &#x05d0;&#x05d1;</span> homo patricii generis</span>, &#x05d0;&#x05d1; magna vi et animi et
+            corporis, &#x05d0;&#x05d1; sed ingenio malo pravoque, &#x05d0;&#x05d1; praetorius, &#x05d0;&#x05d1; qui iam a. u. c. 689
+            caedem consulum facere eaque facta rerum potiri constituerat, &#x05d0;&#x05d1; casu autem
+            rem perficere prohibitus erat, &#x05d0;&#x05d1; ascitis ad consilium rei publicae
+            opprimendae hominibus omnis generis perditissiis atque audacissimis, &#x05d0;&#x05d1; quos
+            inopia, &#x05d0;&#x05d1; cupiditas, &#x05d0;&#x05d1; scelera stimulabant, &#x05d0;&#x05d1; consulatum in annum 691 p. u. c.
+            petivit, &#x05d0;&#x05d1; sed cum, &#x05d0;&#x05d1; quae in animo habebat, &#x05d0;&#x05d1; perniciosa rei publicae consilia
+            parum occultata essent, &#x05d0;&#x05d1; studiis bonorum omnium M. Tullius Cicero una cum
+            C. Antonio consul factus est.  Qua re commotus L. Catilina M. Cicerone
+            C. Antonio consulibus cupidius etiam sua consilia recepit, &#x05d0;&#x05d1; quibus maxime
+            Ciceronis consulis <span>diligentia restitit ad quem Catilinae eiusque</span> sociorum
+            consilia a Fulvia, &#x05d0;&#x05d1; muliere nobili, &#x05d0;&#x05d1; quae rem habebat cum Q. Curio, &#x05d0;&#x05d1; qui
+            particeps fuit conspirationis illius, &#x05d0;&#x05d1; deferebantur.  Cum autem ista mala
+            consilia contra <span>salutem rei publicae a coniuratis inita</span> apertius iam
+            agitarentur, &#x05d0;&#x05d1; senatus consultum factum est, &#x05d0;&#x05d1; darent operam consules, &#x05d0;&#x05d1; ne quid
+            res publica detrimenti caperet, &#x05d0;&#x05d1; effectumque est, &#x05d0;&#x05d1; ut Catilina spe
+            consulatus, &#x05d0;&#x05d1; quem in proximum annum <span>petebat, &#x05d0;&#x05d1; excideret</span>, &#x05d0;&#x05d1; designarenturque
+            D. Silanus et L. Murena.  Quae cum ita essent, &#x05d0;&#x05d1; L. <span>Catilina, &#x05d0;&#x05d1;</span> qui iam ante
+            per <span>Italiam ad homines seditiosos, &#x05d0;&#x05d1; maxime</span> veteres L. Sullae milites, &#x05d0;&#x05d1;
+            concitandos nuntios miserat, &#x05d0;&#x05d1; ad C. Manlium, &#x05d0;&#x05d1; qui Faesulas, &#x05d0;&#x05d1; in urbem
+            Etruriae munitam, &#x05d0;&#x05d1; manum armatorum coegerat, &#x05d0;&#x05d1; proficisci constituit et
+            bellum patriae inferre convocatisque nocte, &#x05d0;&#x05d1; quae inter VIII et VII Id.
+            Novembres erat, &#x05d0;&#x05d1; sociis in domum M. Porci Laecae consilium, &#x05d0;&#x05d1; quod ceperat, &#x05d0;&#x05d1;
+            aperuit.  Qua in congregatione nocturna duo equites Romani Ciceronem
+            consulem illa ipsa nocte ante lucem, &#x05d0;&#x05d1; cum sicut salutaturi eius domum
+            intrassent, &#x05d0;&#x05d1; interficiendum receperunt.  M. Cicero vitatis insidiis proximo
+            die, &#x05d0;&#x05d1; qui fuit a. d.  VI Id.  Novembres, &#x05d0;&#x05d1; dispositis praesidiis senatum in
+            templum Iovis Statoris convocavit, &#x05d0;&#x05d1; quo cum Catilina quasi sui purgandi
+            causa venisset, &#x05d0;&#x05d1; Cicero eam, &#x05d0;&#x05d1; quae infra legitur, &#x05d0;&#x05d1; orationem in Catilinam
+            vehementissime invehens habuit.
+            </p>
+            <p>
+            <span>Quo usque tandem abutere, &#x05d0;&#x05d1; Catilina</span>, &#x05d0;&#x05d1; patientia nostra?  quam diu etiam
+            furor iste tuus nos eludet?  quem ad finem sese effrenata iactabit
+            audacia?  Nihilne te nocturnum praesidium Palati, &#x05d0;&#x05d1; nihil urbis vigiliae, &#x05d0;&#x05d1;
+            nihil timor populi, &#x05d0;&#x05d1; nihil concursus bonorum omnium, &#x05d0;&#x05d1; nihil hic munitissimus
+            habendi senatus locus, &#x05d0;&#x05d1; <span>nihil horum ora voltusque moverunt?</span>  Patere tua
+            consilia non sentis, &#x05d0;&#x05d1; constrictam iam horum omnium scientia teneri
+            coniurationem tuam non vides?  Quid proxima, &#x05d0;&#x05d1; quid superiore nocte egeris, &#x05d0;&#x05d1;
+            ubi fueris, &#x05d0;&#x05d1; quos convocaveris, &#x05d0;&#x05d1; quid consilii ceperis, &#x05d0;&#x05d1; quem nostrum
+            ignorare arbitraris?  O tempora, &#x05d0;&#x05d1; o mores! Senatus haec intellegit.  consul
+            videt; hic tamen vivit.  Vivit?  immo vero etiam in senatum venit, &#x05d0;&#x05d1; fit
+            publici consilii particeps, &#x05d0;&#x05d1; notat et designat oculis ad caedem unum
+            quemque nostrum.  Nos autem fortes viri satis facere rei publicae videmur, &#x05d0;&#x05d1;
+            si istius furorem ac tela vitemus.  Ad mortem te, &#x05d0;&#x05d1; <span>Catilina, &#x05d0;&#x05d1;</span> duci iussu
+            consulis iam pridem oportebat, &#x05d0;&#x05d1; in te conferri pestem, &#x05d0;&#x05d1; quam tu in nos
+            [omnes iam diu] machinaris.  An vero vir amplissumus, &#x05d0;&#x05d1; P. Scipio, &#x05d0;&#x05d1; pontifex
+            maximus, &#x05d0;&#x05d1; Ti.  Gracchum mediocriter labefactantem statum rei publicae
+            privatus interfecit; Catilinam orbem terrae caede atque incendiis vastare
+            cupientem nos consules perferemus?  Nam illa nimis antiqua praetereo, &#x05d0;&#x05d1; quod
+            C. Servilius Ahala Sp.  <span>Maelium novis rebus studentem</span> manu sua occidit.
+            Fuit, &#x05d0;&#x05d1; <span>fuit ista quondam in hac re publica virtus, &#x05d0;&#x05d1;</span> ut viri fortes
+            acrioribus suppliciis civem perniciosum quam acerbissimum hostem
+            coercerent.  Habemus senatus consultum in te, &#x05d0;&#x05d1; <span>Catilina, &#x05d0;&#x05d1;</span> vehemens et grave, &#x05d0;&#x05d1;
+            non deest rei publicae consilium neque auctoritas huius ordinis; nos, &#x05d0;&#x05d1; nos, &#x05d0;&#x05d1;
+            dico aperte, &#x05d0;&#x05d1; consules desumus.  Decrevit quondam senatus, &#x05d0;&#x05d1; ut L. Opimius
+            consul videret, &#x05d0;&#x05d1; ne quid res publica detrimenti caperet; nox nulla
+            intercessit; interfectus est propter quasdam seditionum suspiciones
+            C. Gracchus, &#x05d0;&#x05d1; clarissimo patre, &#x05d0;&#x05d1; avo, &#x05d0;&#x05d1; maioribus, &#x05d0;&#x05d1; occisus est cum liberis
+            M. Fulvius consularis.  Simili senatus consulto C. Mario et L.  Valerio
+            consulibus est permissa res publica; num unum diem postea L. Saturninum
+            tribunum pl.  et C.  Servilium praetorem mors ac rei publicae poena
+            remorata est?  At [vero] nos vicesimum iam diem patimur hebescere aciem
+            horum auctoritatis.  Habemus enim huiusce modi senatus consultum, &#x05d0;&#x05d1; verum
+            inclusum in <span>tabulis tamquam in vagina reconditum, &#x05d0;&#x05d1;</span> quo ex senatus consulto
+            confestim te interfectum esse, &#x05d0;&#x05d1; <span>Catilina, &#x05d0;&#x05d1;</span> convenit.  Vivis, &#x05d0;&#x05d1; et vivis non ad
+            deponendam, &#x05d0;&#x05d1; sed ad confirmandam audaciam.  Cupio, &#x05d0;&#x05d1; patres conscripti, &#x05d0;&#x05d1; me
+            esse clementem, &#x05d0;&#x05d1; cupio in tantis rei publicae periculis me non dissolutum
+            videri, &#x05d0;&#x05d1; sed iam me ipse inertiae nequitiaeque condemno.  Castra sunt in
+            Italia contra populum Romanum in Etruriae faucibus conlocata, &#x05d0;&#x05d1; crescit in
+            dies singulos hostium numerus; eorum autem castrorum imperatorem ducemque
+            hostium intra moenia atque adeo in senatu videmus intestinam aliquam
+            cotidie perniciem rei publicae molientem.  Si te iam, &#x05d0;&#x05d1; <span>Catilina, &#x05d0;&#x05d1;</span>
+            comprehendi, &#x05d0;&#x05d1; si interfici iussero, &#x05d0;&#x05d1; credo, &#x05d0;&#x05d1; erit verendum mihi, &#x05d0;&#x05d1; ne non
+            potius hoc omnes boni serius a me quam quisquam crudelius factum esse
+            dicat.  Verum ego hoc, &#x05d0;&#x05d1; quod iam pridem factum esse oportuit, &#x05d0;&#x05d1; certa de
+            causa nondum adducor ut faciam.  Tum denique interficiere, &#x05d0;&#x05d1; cum iam nemo
+            tam inprobus, &#x05d0;&#x05d1; tam perditus, &#x05d0;&#x05d1; tam tui similis inveniri poterit, &#x05d0;&#x05d1; qui id non
+            iure factum esse fateatur.  Quamdiu quisquam erit, &#x05d0;&#x05d1; qui te defendere
+            audeat, &#x05d0;&#x05d1; vives, &#x05d0;&#x05d1; et vives ita, &#x05d0;&#x05d1; ut [nunc] vivis.  multis meis et firmis
+            praesidiis obsessus, &#x05d0;&#x05d1; ne commovere te contra rem publicam possis.  Multorum
+            te etiam oculi et aures non sentientem, &#x05d0;&#x05d1; sicut adhuc fecerunt, &#x05d0;&#x05d1;
+            speculabuntur atque custodient.
+            </p>
+        </div>
+        <div style="white-space: pre">
+            <h4>ARGUMENTUM</h4>
+            <p>
+            L. <span>Sergius <span>Catilina, &#x05d0;&#x05d1;</span> homo patricii generis</span>, &#x05d0;&#x05d1; magna vi et animi et
+            corporis, &#x05d0;&#x05d1; sed ingenio malo pravoque, &#x05d0;&#x05d1; praetorius, &#x05d0;&#x05d1; qui iam a. u. c. 689
+            caedem consulum facere eaque facta rerum potiri constituerat, &#x05d0;&#x05d1; casu autem
+            rem perficere prohibitus erat, &#x05d0;&#x05d1; ascitis ad consilium rei publicae
+            opprimendae hominibus omnis generis perditissiis atque audacissimis, &#x05d0;&#x05d1; quos
+            inopia, &#x05d0;&#x05d1; cupiditas, &#x05d0;&#x05d1; scelera stimulabant, &#x05d0;&#x05d1; consulatum in annum 691 p. u. c.
+            petivit, &#x05d0;&#x05d1; sed cum, &#x05d0;&#x05d1; quae in animo habebat, &#x05d0;&#x05d1; perniciosa rei publicae consilia
+            parum occultata essent, &#x05d0;&#x05d1; studiis bonorum omnium M. Tullius Cicero una cum
+            C. Antonio consul factus est.  Qua re commotus L. Catilina M. Cicerone
+            C. Antonio consulibus cupidius etiam sua consilia recepit, &#x05d0;&#x05d1; quibus maxime
+            Ciceronis consulis <span>diligentia restitit ad quem Catilinae eiusque</span> sociorum
+            consilia a Fulvia, &#x05d0;&#x05d1; muliere nobili, &#x05d0;&#x05d1; quae rem habebat cum Q. Curio, &#x05d0;&#x05d1; qui
+            particeps fuit conspirationis illius, &#x05d0;&#x05d1; deferebantur.  Cum autem ista mala
+            consilia contra <span>salutem rei publicae a coniuratis inita</span> apertius iam
+            agitarentur, &#x05d0;&#x05d1; senatus consultum factum est, &#x05d0;&#x05d1; darent operam consules, &#x05d0;&#x05d1; ne quid
+            res publica detrimenti caperet, &#x05d0;&#x05d1; effectumque est, &#x05d0;&#x05d1; ut Catilina spe
+            consulatus, &#x05d0;&#x05d1; quem in proximum annum <span>petebat, &#x05d0;&#x05d1; excideret</span>, &#x05d0;&#x05d1; designarenturque
+            D. Silanus et L. Murena.  Quae cum ita essent, &#x05d0;&#x05d1; L. <span>Catilina, &#x05d0;&#x05d1;</span> qui iam ante
+            per <span>Italiam ad homines seditiosos, &#x05d0;&#x05d1; maxime</span> veteres L. Sullae milites, &#x05d0;&#x05d1;
+            concitandos nuntios miserat, &#x05d0;&#x05d1; ad C. Manlium, &#x05d0;&#x05d1; qui Faesulas, &#x05d0;&#x05d1; in urbem
+            Etruriae munitam, &#x05d0;&#x05d1; manum armatorum coegerat, &#x05d0;&#x05d1; proficisci constituit et
+            bellum patriae inferre convocatisque nocte, &#x05d0;&#x05d1; quae inter VIII et VII Id.
+            Novembres erat, &#x05d0;&#x05d1; sociis in domum M. Porci Laecae consilium, &#x05d0;&#x05d1; quod ceperat, &#x05d0;&#x05d1;
+            aperuit.  Qua in congregatione nocturna duo equites Romani Ciceronem
+            consulem illa ipsa nocte ante lucem, &#x05d0;&#x05d1; cum sicut salutaturi eius domum
+            intrassent, &#x05d0;&#x05d1; interficiendum receperunt.  M. Cicero vitatis insidiis proximo
+            die, &#x05d0;&#x05d1; qui fuit a. d.  VI Id.  Novembres, &#x05d0;&#x05d1; dispositis praesidiis senatum in
+            templum Iovis Statoris convocavit, &#x05d0;&#x05d1; quo cum Catilina quasi sui purgandi
+            causa venisset, &#x05d0;&#x05d1; Cicero eam, &#x05d0;&#x05d1; quae infra legitur, &#x05d0;&#x05d1; orationem in Catilinam
+            vehementissime invehens habuit.
+            </p>
+            <p>
+            <span>Quo usque tandem abutere, &#x05d0;&#x05d1; Catilina</span>, &#x05d0;&#x05d1; patientia nostra?  quam diu etiam
+            furor iste tuus nos eludet?  quem ad finem sese effrenata iactabit
+            audacia?  Nihilne te nocturnum praesidium Palati, &#x05d0;&#x05d1; nihil urbis vigiliae, &#x05d0;&#x05d1;
+            nihil timor populi, &#x05d0;&#x05d1; nihil concursus bonorum omnium, &#x05d0;&#x05d1; nihil hic munitissimus
+            habendi senatus locus, &#x05d0;&#x05d1; <span>nihil horum ora voltusque moverunt?</span>  Patere tua
+            consilia non sentis, &#x05d0;&#x05d1; constrictam iam horum omnium scientia teneri
+            coniurationem tuam non vides?  Quid proxima, &#x05d0;&#x05d1; quid superiore nocte egeris, &#x05d0;&#x05d1;
+            ubi fueris, &#x05d0;&#x05d1; quos convocaveris, &#x05d0;&#x05d1; quid consilii ceperis, &#x05d0;&#x05d1; quem nostrum
+            ignorare arbitraris?  O tempora, &#x05d0;&#x05d1; o mores! Senatus haec intellegit.  consul
+            videt; hic tamen vivit.  Vivit?  immo vero etiam in senatum venit, &#x05d0;&#x05d1; fit
+            publici consilii particeps, &#x05d0;&#x05d1; notat et designat oculis ad caedem unum
+            quemque nostrum.  Nos autem fortes viri satis facere rei publicae videmur, &#x05d0;&#x05d1;
+            si istius furorem ac tela vitemus.  Ad mortem te, &#x05d0;&#x05d1; <span>Catilina, &#x05d0;&#x05d1;</span> duci iussu
+            consulis iam pridem oportebat, &#x05d0;&#x05d1; in te conferri pestem, &#x05d0;&#x05d1; quam tu in nos
+            [omnes iam diu] machinaris.  An vero vir amplissumus, &#x05d0;&#x05d1; P. Scipio, &#x05d0;&#x05d1; pontifex
+            maximus, &#x05d0;&#x05d1; Ti.  Gracchum mediocriter labefactantem statum rei publicae
+            privatus interfecit; Catilinam orbem terrae caede atque incendiis vastare
+            cupientem nos consules perferemus?  Nam illa nimis antiqua praetereo, &#x05d0;&#x05d1; quod
+            C. Servilius Ahala Sp.  <span>Maelium novis rebus studentem</span> manu sua occidit.
+            Fuit, &#x05d0;&#x05d1; <span>fuit ista quondam in hac re publica virtus, &#x05d0;&#x05d1;</span> ut viri fortes
+            acrioribus suppliciis civem perniciosum quam acerbissimum hostem
+            coercerent.  Habemus senatus consultum in te, &#x05d0;&#x05d1; <span>Catilina, &#x05d0;&#x05d1;</span> vehemens et grave, &#x05d0;&#x05d1;
+            non deest rei publicae consilium neque auctoritas huius ordinis; nos, &#x05d0;&#x05d1; nos, &#x05d0;&#x05d1;
+            dico aperte, &#x05d0;&#x05d1; consules desumus.  Decrevit quondam senatus, &#x05d0;&#x05d1; ut L. Opimius
+            consul videret, &#x05d0;&#x05d1; ne quid res publica detrimenti caperet; nox nulla
+            intercessit; interfectus est propter quasdam seditionum suspiciones
+            C. Gracchus, &#x05d0;&#x05d1; clarissimo patre, &#x05d0;&#x05d1; avo, &#x05d0;&#x05d1; maioribus, &#x05d0;&#x05d1; occisus est cum liberis
+            M. Fulvius consularis.  Simili senatus consulto C. Mario et L.  Valerio
+            consulibus est permissa res publica; num unum diem postea L. Saturninum
+            tribunum pl.  et C.  Servilium praetorem mors ac rei publicae poena
+            remorata est?  At [vero] nos vicesimum iam diem patimur hebescere aciem
+            horum auctoritatis.  Habemus enim huiusce modi senatus consultum, &#x05d0;&#x05d1; verum
+            inclusum in <span>tabulis tamquam in vagina reconditum, &#x05d0;&#x05d1;</span> quo ex senatus consulto
+            confestim te interfectum esse, &#x05d0;&#x05d1; <span>Catilina, &#x05d0;&#x05d1;</span> convenit.  Vivis, &#x05d0;&#x05d1; et vivis non ad
+            deponendam, &#x05d0;&#x05d1; sed ad confirmandam audaciam.  Cupio, &#x05d0;&#x05d1; patres conscripti, &#x05d0;&#x05d1; me
+            esse clementem, &#x05d0;&#x05d1; cupio in tantis rei publicae periculis me non dissolutum
+            videri, &#x05d0;&#x05d1; sed iam me ipse inertiae nequitiaeque condemno.  Castra sunt in
+            Italia contra populum Romanum in Etruriae faucibus conlocata, &#x05d0;&#x05d1; crescit in
+            dies singulos hostium numerus; eorum autem castrorum imperatorem ducemque
+            hostium intra moenia atque adeo in senatu videmus intestinam aliquam
+            cotidie perniciem rei publicae molientem.  Si te iam, &#x05d0;&#x05d1; <span>Catilina, &#x05d0;&#x05d1;</span>
+            comprehendi, &#x05d0;&#x05d1; si interfici iussero, &#x05d0;&#x05d1; credo, &#x05d0;&#x05d1; erit verendum mihi, &#x05d0;&#x05d1; ne non
+            potius hoc omnes boni serius a me quam quisquam crudelius factum esse
+            dicat.  Verum ego hoc, &#x05d0;&#x05d1; quod iam pridem factum esse oportuit, &#x05d0;&#x05d1; certa de
+            causa nondum adducor ut faciam.  Tum denique interficiere, &#x05d0;&#x05d1; cum iam nemo
+            tam inprobus, &#x05d0;&#x05d1; tam perditus, &#x05d0;&#x05d1; tam tui similis inveniri poterit, &#x05d0;&#x05d1; qui id non
+            iure factum esse fateatur.  Quamdiu quisquam erit, &#x05d0;&#x05d1; qui te defendere
+            audeat, &#x05d0;&#x05d1; vives, &#x05d0;&#x05d1; et vives ita, &#x05d0;&#x05d1; ut [nunc] vivis.  multis meis et firmis
+            praesidiis obsessus, &#x05d0;&#x05d1; ne commovere te contra rem publicam possis.  Multorum
+            te etiam oculi et aures non sentientem, &#x05d0;&#x05d1; sicut adhuc fecerunt, &#x05d0;&#x05d1;
+            speculabuntur atque custodient.
+            </p>
+        </div>
+        <div style="overflow-wrap: break-word;">
+            <h4>ARGUMENTUM</h4>
+            <p>
+            L. <span>Sergius <span>Catilina, &#x05d0;&#x05d1;</span> homo patricii generis</span>, &#x05d0;&#x05d1; magna vi et animi et
+            corporis, &#x05d0;&#x05d1; sed ingenio malo pravoque, &#x05d0;&#x05d1; praetorius, &#x05d0;&#x05d1; qui iam a. u. c. 689
+            caedem consulum facere eaque facta rerum potiri constituerat, &#x05d0;&#x05d1; casu autem
+            rem perficere prohibitus erat, &#x05d0;&#x05d1; ascitis ad consilium rei publicae
+            opprimendae hominibus omnis generis perditissiis atque audacissimis, &#x05d0;&#x05d1; quos
+            inopia, &#x05d0;&#x05d1; cupiditas, &#x05d0;&#x05d1; scelera stimulabant, &#x05d0;&#x05d1; consulatum in annum 691 p. u. c.
+            petivit, &#x05d0;&#x05d1; sed cum, &#x05d0;&#x05d1; quae in animo habebat, &#x05d0;&#x05d1; perniciosa rei publicae consilia
+            parum occultata essent, &#x05d0;&#x05d1; studiis bonorum omnium M. Tullius Cicero una cum
+            C. Antonio consul factus est.  Qua re commotus L. Catilina M. Cicerone
+            C. Antonio consulibus cupidius etiam sua consilia recepit, &#x05d0;&#x05d1; quibus maxime
+            Ciceronis consulis <span>diligentia restitit ad quem Catilinae eiusque</span> sociorum
+            consilia a Fulvia, &#x05d0;&#x05d1; muliere nobili, &#x05d0;&#x05d1; quae rem habebat cum Q. Curio, &#x05d0;&#x05d1; qui
+            particeps fuit conspirationis illius, &#x05d0;&#x05d1; deferebantur.  Cum autem ista mala
+            consilia contra <span>salutem rei publicae a coniuratis inita</span> apertius iam
+            agitarentur, &#x05d0;&#x05d1; senatus consultum factum est, &#x05d0;&#x05d1; darent operam consules, &#x05d0;&#x05d1; ne quid
+            res publica detrimenti caperet, &#x05d0;&#x05d1; effectumque est, &#x05d0;&#x05d1; ut Catilina spe
+            consulatus, &#x05d0;&#x05d1; quem in proximum annum <span>petebat, &#x05d0;&#x05d1; excideret</span>, &#x05d0;&#x05d1; designarenturque
+            D. Silanus et L. Murena.  Quae cum ita essent, &#x05d0;&#x05d1; L. <span>Catilina, &#x05d0;&#x05d1;</span> qui iam ante
+            per <span>Italiam ad homines seditiosos, &#x05d0;&#x05d1; maxime</span> veteres L. Sullae milites, &#x05d0;&#x05d1;
+            concitandos nuntios miserat, &#x05d0;&#x05d1; ad C. Manlium, &#x05d0;&#x05d1; qui Faesulas, &#x05d0;&#x05d1; in urbem
+            Etruriae munitam, &#x05d0;&#x05d1; manum armatorum coegerat, &#x05d0;&#x05d1; proficisci constituit et
+            bellum patriae inferre convocatisque nocte, &#x05d0;&#x05d1; quae inter VIII et VII Id.
+            Novembres erat, &#x05d0;&#x05d1; sociis in domum M. Porci Laecae consilium, &#x05d0;&#x05d1; quod ceperat, &#x05d0;&#x05d1;
+            aperuit.  Qua in congregatione nocturna duo equites Romani Ciceronem
+            consulem illa ipsa nocte ante lucem, &#x05d0;&#x05d1; cum sicut salutaturi eius domum
+            intrassent, &#x05d0;&#x05d1; interficiendum receperunt.  M. Cicero vitatis insidiis proximo
+            die, &#x05d0;&#x05d1; qui fuit a. d.  VI Id.  Novembres, &#x05d0;&#x05d1; dispositis praesidiis senatum in
+            templum Iovis Statoris convocavit, &#x05d0;&#x05d1; quo cum Catilina quasi sui purgandi
+            causa venisset, &#x05d0;&#x05d1; Cicero eam, &#x05d0;&#x05d1; quae infra legitur, &#x05d0;&#x05d1; orationem in Catilinam
+            vehementissime invehens habuit.
+            </p>
+            <p>
+            <span>Quo usque tandem abutere, &#x05d0;&#x05d1; Catilina</span>, &#x05d0;&#x05d1; patientia nostra?  quam diu etiam
+            furor iste tuus nos eludet?  quem ad finem sese effrenata iactabit
+            audacia?  Nihilne te nocturnum praesidium Palati, &#x05d0;&#x05d1; nihil urbis vigiliae, &#x05d0;&#x05d1;
+            nihil timor populi, &#x05d0;&#x05d1; nihil concursus bonorum omnium, &#x05d0;&#x05d1; nihil hic munitissimus
+            habendi senatus locus, &#x05d0;&#x05d1; <span>nihil horum ora voltusque moverunt?</span>  Patere tua
+            consilia non sentis, &#x05d0;&#x05d1; constrictam iam horum omnium scientia teneri
+            coniurationem tuam non vides?  Quid proxima, &#x05d0;&#x05d1; quid superiore nocte egeris, &#x05d0;&#x05d1;
+            ubi fueris, &#x05d0;&#x05d1; quos convocaveris, &#x05d0;&#x05d1; quid consilii ceperis, &#x05d0;&#x05d1; quem nostrum
+            ignorare arbitraris?  O tempora, &#x05d0;&#x05d1; o mores! Senatus haec intellegit.  consul
+            videt; hic tamen vivit.  Vivit?  immo vero etiam in senatum venit, &#x05d0;&#x05d1; fit
+            publici consilii particeps, &#x05d0;&#x05d1; notat et designat oculis ad caedem unum
+            quemque nostrum.  Nos autem fortes viri satis facere rei publicae videmur, &#x05d0;&#x05d1;
+            si istius furorem ac tela vitemus.  Ad mortem te, &#x05d0;&#x05d1; <span>Catilina, &#x05d0;&#x05d1;</span> duci iussu
+            consulis iam pridem oportebat, &#x05d0;&#x05d1; in te conferri pestem, &#x05d0;&#x05d1; quam tu in nos
+            [omnes iam diu] machinaris.  An vero vir amplissumus, &#x05d0;&#x05d1; P. Scipio, &#x05d0;&#x05d1; pontifex
+            maximus, &#x05d0;&#x05d1; Ti.  Gracchum mediocriter labefactantem statum rei publicae
+            privatus interfecit; Catilinam orbem terrae caede atque incendiis vastare
+            cupientem nos consules perferemus?  Nam illa nimis antiqua praetereo, &#x05d0;&#x05d1; quod
+            C. Servilius Ahala Sp.  <span>Maelium novis rebus studentem</span> manu sua occidit.
+            Fuit, &#x05d0;&#x05d1; <span>fuit ista quondam in hac re publica virtus, &#x05d0;&#x05d1;</span> ut viri fortes
+            acrioribus suppliciis civem perniciosum quam acerbissimum hostem
+            coercerent.  Habemus senatus consultum in te, &#x05d0;&#x05d1; <span>Catilina, &#x05d0;&#x05d1;</span> vehemens et grave, &#x05d0;&#x05d1;
+            non deest rei publicae consilium neque auctoritas huius ordinis; nos, &#x05d0;&#x05d1; nos, &#x05d0;&#x05d1;
+            dico aperte, &#x05d0;&#x05d1; consules desumus.  Decrevit quondam senatus, &#x05d0;&#x05d1; ut L. Opimius
+            consul videret, &#x05d0;&#x05d1; ne quid res publica detrimenti caperet; nox nulla
+            intercessit; interfectus est propter quasdam seditionum suspiciones
+            C. Gracchus, &#x05d0;&#x05d1; clarissimo patre, &#x05d0;&#x05d1; avo, &#x05d0;&#x05d1; maioribus, &#x05d0;&#x05d1; occisus est cum liberis
+            M. Fulvius consularis.  Simili senatus consulto C. Mario et L.  Valerio
+            consulibus est permissa res publica; num unum diem postea L. Saturninum
+            tribunum pl.  et C.  Servilium praetorem mors ac rei publicae poena
+            remorata est?  At [vero] nos vicesimum iam diem patimur hebescere aciem
+            horum auctoritatis.  Habemus enim huiusce modi senatus consultum, &#x05d0;&#x05d1; verum
+            inclusum in <span>tabulis tamquam in vagina reconditum, &#x05d0;&#x05d1;</span> quo ex senatus consulto
+            confestim te interfectum esse, &#x05d0;&#x05d1; <span>Catilina, &#x05d0;&#x05d1;</span> convenit.  Vivis, &#x05d0;&#x05d1; et vivis non ad
+            deponendam, &#x05d0;&#x05d1; sed ad confirmandam audaciam.  Cupio, &#x05d0;&#x05d1; patres conscripti, &#x05d0;&#x05d1; me
+            esse clementem, &#x05d0;&#x05d1; cupio in tantis rei publicae periculis me non dissolutum
+            videri, &#x05d0;&#x05d1; sed iam me ipse inertiae nequitiaeque condemno.  Castra sunt in
+            Italia contra populum Romanum in Etruriae faucibus conlocata, &#x05d0;&#x05d1; crescit in
+            dies singulos hostium numerus; eorum autem castrorum imperatorem ducemque
+            hostium intra moenia atque adeo in senatu videmus intestinam aliquam
+            cotidie perniciem rei publicae molientem.  Si te iam, &#x05d0;&#x05d1; <span>Catilina, &#x05d0;&#x05d1;</span>
+            comprehendi, &#x05d0;&#x05d1; si interfici iussero, &#x05d0;&#x05d1; credo, &#x05d0;&#x05d1; erit verendum mihi, &#x05d0;&#x05d1; ne non
+            potius hoc omnes boni serius a me quam quisquam crudelius factum esse
+            dicat.  Verum ego hoc, &#x05d0;&#x05d1; quod iam pridem factum esse oportuit, &#x05d0;&#x05d1; certa de
+            causa nondum adducor ut faciam.  Tum denique interficiere, &#x05d0;&#x05d1; cum iam nemo
+            tam inprobus, &#x05d0;&#x05d1; tam perditus, &#x05d0;&#x05d1; tam tui similis inveniri poterit, &#x05d0;&#x05d1; qui id non
+            iure factum esse fateatur.  Quamdiu quisquam erit, &#x05d0;&#x05d1; qui te defendere
+            audeat, &#x05d0;&#x05d1; vives, &#x05d0;&#x05d1; et vives ita, &#x05d0;&#x05d1; ut [nunc] vivis.  multis meis et firmis
+            praesidiis obsessus, &#x05d0;&#x05d1; ne commovere te contra rem publicam possis.  Multorum
+            te etiam oculi et aures non sentientem, &#x05d0;&#x05d1; sicut adhuc fecerunt, &#x05d0;&#x05d1;
+            speculabuntur atque custodient.
+            </p>
+        </div>
+        <pre>
+            <h4>ARGUMENTUM</h4>
+            <p>
+            L. <span>Sergius <span>Catilina, &#x05d0;&#x05d1;</span> homo patricii generis</span>, &#x05d0;&#x05d1; magna vi et animi et
+            corporis, &#x05d0;&#x05d1; sed ingenio malo pravoque, &#x05d0;&#x05d1; praetorius, &#x05d0;&#x05d1; qui iam a. u. c. 689
+            caedem consulum facere eaque facta rerum potiri constituerat, &#x05d0;&#x05d1; casu autem
+            rem perficere prohibitus erat, &#x05d0;&#x05d1; ascitis ad consilium rei publicae
+            opprimendae hominibus omnis generis perditissiis atque audacissimis, &#x05d0;&#x05d1; quos
+            inopia, &#x05d0;&#x05d1; cupiditas, &#x05d0;&#x05d1; scelera stimulabant, &#x05d0;&#x05d1; consulatum in annum 691 p. u. c.
+            petivit, &#x05d0;&#x05d1; sed cum, &#x05d0;&#x05d1; quae in animo habebat, &#x05d0;&#x05d1; perniciosa rei publicae consilia
+            parum occultata essent, &#x05d0;&#x05d1; studiis bonorum omnium M. Tullius Cicero una cum
+            C. Antonio consul factus est.  Qua re commotus L. Catilina M. Cicerone
+            C. Antonio consulibus cupidius etiam sua consilia recepit, &#x05d0;&#x05d1; quibus maxime
+            Ciceronis consulis <span>diligentia restitit ad quem Catilinae eiusque</span> sociorum
+            consilia a Fulvia, &#x05d0;&#x05d1; muliere nobili, &#x05d0;&#x05d1; quae rem habebat cum Q. Curio, &#x05d0;&#x05d1; qui
+            particeps fuit conspirationis illius, &#x05d0;&#x05d1; deferebantur.  Cum autem ista mala
+            consilia contra <span>salutem rei publicae a coniuratis inita</span> apertius iam
+            agitarentur, &#x05d0;&#x05d1; senatus consultum factum est, &#x05d0;&#x05d1; darent operam consules, &#x05d0;&#x05d1; ne quid
+            res publica detrimenti caperet, &#x05d0;&#x05d1; effectumque est, &#x05d0;&#x05d1; ut Catilina spe
+            consulatus, &#x05d0;&#x05d1; quem in proximum annum <span>petebat, &#x05d0;&#x05d1; excideret</span>, &#x05d0;&#x05d1; designarenturque
+            D. Silanus et L. Murena.  Quae cum ita essent, &#x05d0;&#x05d1; L. <span>Catilina, &#x05d0;&#x05d1;</span> qui iam ante
+            per <span>Italiam ad homines seditiosos, &#x05d0;&#x05d1; maxime</span> veteres L. Sullae milites, &#x05d0;&#x05d1;
+            concitandos nuntios miserat, &#x05d0;&#x05d1; ad C. Manlium, &#x05d0;&#x05d1; qui Faesulas, &#x05d0;&#x05d1; in urbem
+            Etruriae munitam, &#x05d0;&#x05d1; manum armatorum coegerat, &#x05d0;&#x05d1; proficisci constituit et
+            bellum patriae inferre convocatisque nocte, &#x05d0;&#x05d1; quae inter VIII et VII Id.
+            Novembres erat, &#x05d0;&#x05d1; sociis in domum M. Porci Laecae consilium, &#x05d0;&#x05d1; quod ceperat, &#x05d0;&#x05d1;
+            aperuit.  Qua in congregatione nocturna duo equites Romani Ciceronem
+            consulem illa ipsa nocte ante lucem, &#x05d0;&#x05d1; cum sicut salutaturi eius domum
+            intrassent, &#x05d0;&#x05d1; interficiendum receperunt.  M. Cicero vitatis insidiis proximo
+            die, &#x05d0;&#x05d1; qui fuit a. d.  VI Id.  Novembres, &#x05d0;&#x05d1; dispositis praesidiis senatum in
+            templum Iovis Statoris convocavit, &#x05d0;&#x05d1; quo cum Catilina quasi sui purgandi
+            causa venisset, &#x05d0;&#x05d1; Cicero eam, &#x05d0;&#x05d1; quae infra legitur, &#x05d0;&#x05d1; orationem in Catilinam
+            vehementissime invehens habuit.
+            </p>
+            <p>
+            <span>Quo usque tandem abutere, &#x05d0;&#x05d1; Catilina</span>, &#x05d0;&#x05d1; patientia nostra?  quam diu etiam
+            furor iste tuus nos eludet?  quem ad finem sese effrenata iactabit
+            audacia?  Nihilne te nocturnum praesidium Palati, &#x05d0;&#x05d1; nihil urbis vigiliae, &#x05d0;&#x05d1;
+            nihil timor populi, &#x05d0;&#x05d1; nihil concursus bonorum omnium, &#x05d0;&#x05d1; nihil hic munitissimus
+            habendi senatus locus, &#x05d0;&#x05d1; <span>nihil horum ora voltusque moverunt?</span>  Patere tua
+            consilia non sentis, &#x05d0;&#x05d1; constrictam iam horum omnium scientia teneri
+            coniurationem tuam non vides?  Quid proxima, &#x05d0;&#x05d1; quid superiore nocte egeris, &#x05d0;&#x05d1;
+            ubi fueris, &#x05d0;&#x05d1; quos convocaveris, &#x05d0;&#x05d1; quid consilii ceperis, &#x05d0;&#x05d1; quem nostrum
+            ignorare arbitraris?  O tempora, &#x05d0;&#x05d1; o mores! Senatus haec intellegit.  consul
+            videt; hic tamen vivit.  Vivit?  immo vero etiam in senatum venit, &#x05d0;&#x05d1; fit
+            publici consilii particeps, &#x05d0;&#x05d1; notat et designat oculis ad caedem unum
+            quemque nostrum.  Nos autem fortes viri satis facere rei publicae videmur, &#x05d0;&#x05d1;
+            si istius furorem ac tela vitemus.  Ad mortem te, &#x05d0;&#x05d1; <span>Catilina, &#x05d0;&#x05d1;</span> duci iussu
+            consulis iam pridem oportebat, &#x05d0;&#x05d1; in te conferri pestem, &#x05d0;&#x05d1; quam tu in nos
+            [omnes iam diu] machinaris.  An vero vir amplissumus, &#x05d0;&#x05d1; P. Scipio, &#x05d0;&#x05d1; pontifex
+            maximus, &#x05d0;&#x05d1; Ti.  Gracchum mediocriter labefactantem statum rei publicae
+            privatus interfecit; Catilinam orbem terrae caede atque incendiis vastare
+            cupientem nos consules perferemus?  Nam illa nimis antiqua praetereo, &#x05d0;&#x05d1; quod
+            C. Servilius Ahala Sp.  <span>Maelium novis rebus studentem</span> manu sua occidit.
+            Fuit, &#x05d0;&#x05d1; <span>fuit ista quondam in hac re publica virtus, &#x05d0;&#x05d1;</span> ut viri fortes
+            acrioribus suppliciis civem perniciosum quam acerbissimum hostem
+            coercerent.  Habemus senatus consultum in te, &#x05d0;&#x05d1; <span>Catilina, &#x05d0;&#x05d1;</span> vehemens et grave, &#x05d0;&#x05d1;
+            non deest rei publicae consilium neque auctoritas huius ordinis; nos, &#x05d0;&#x05d1; nos, &#x05d0;&#x05d1;
+            dico aperte, &#x05d0;&#x05d1; consules desumus.  Decrevit quondam senatus, &#x05d0;&#x05d1; ut L. Opimius
+            consul videret, &#x05d0;&#x05d1; ne quid res publica detrimenti caperet; nox nulla
+            intercessit; interfectus est propter quasdam seditionum suspiciones
+            C. Gracchus, &#x05d0;&#x05d1; clarissimo patre, &#x05d0;&#x05d1; avo, &#x05d0;&#x05d1; maioribus, &#x05d0;&#x05d1; occisus est cum liberis
+            M. Fulvius consularis.  Simili senatus consulto C. Mario et L.  Valerio
+            consulibus est permissa res publica; num unum diem postea L. Saturninum
+            tribunum pl.  et C.  Servilium praetorem mors ac rei publicae poena
+            remorata est?  At [vero] nos vicesimum iam diem patimur hebescere aciem
+            horum auctoritatis.  Habemus enim huiusce modi senatus consultum, &#x05d0;&#x05d1; verum
+            inclusum in <span>tabulis tamquam in vagina reconditum, &#x05d0;&#x05d1;</span> quo ex senatus consulto
+            confestim te interfectum esse, &#x05d0;&#x05d1; <span>Catilina, &#x05d0;&#x05d1;</span> convenit.  Vivis, &#x05d0;&#x05d1; et vivis non ad
+            deponendam, &#x05d0;&#x05d1; sed ad confirmandam audaciam.  Cupio, &#x05d0;&#x05d1; patres conscripti, &#x05d0;&#x05d1; me
+            esse clementem, &#x05d0;&#x05d1; cupio in tantis rei publicae periculis me non dissolutum
+            videri, &#x05d0;&#x05d1; sed iam me ipse inertiae nequitiaeque condemno.  Castra sunt in
+            Italia contra populum Romanum in Etruriae faucibus conlocata, &#x05d0;&#x05d1; crescit in
+            dies singulos hostium numerus; eorum autem castrorum imperatorem ducemque
+            hostium intra moenia atque adeo in senatu videmus intestinam aliquam
+            cotidie perniciem rei publicae molientem.  Si te iam, &#x05d0;&#x05d1; <span>Catilina, &#x05d0;&#x05d1;</span>
+            comprehendi, &#x05d0;&#x05d1; si interfici iussero, &#x05d0;&#x05d1; credo, &#x05d0;&#x05d1; erit verendum mihi, &#x05d0;&#x05d1; ne non
+            potius hoc omnes boni serius a me quam quisquam crudelius factum esse
+            dicat.  Verum ego hoc, &#x05d0;&#x05d1; quod iam pridem factum esse oportuit, &#x05d0;&#x05d1; certa de
+            causa nondum adducor ut faciam.  Tum denique interficiere, &#x05d0;&#x05d1; cum iam nemo
+            tam inprobus, &#x05d0;&#x05d1; tam perditus, &#x05d0;&#x05d1; tam tui similis inveniri poterit, &#x05d0;&#x05d1; qui id non
+            iure factum esse fateatur.  Quamdiu quisquam erit, &#x05d0;&#x05d1; qui te defendere
+            audeat, &#x05d0;&#x05d1; vives, &#x05d0;&#x05d1; et vives ita, &#x05d0;&#x05d1; ut [nunc] vivis.  multis meis et firmis
+            praesidiis obsessus, &#x05d0;&#x05d1; ne commovere te contra rem publicam possis.  Multorum
+            te etiam oculi et aures non sentientem, &#x05d0;&#x05d1; sicut adhuc fecerunt, &#x05d0;&#x05d1;
+            speculabuntur atque custodient.
+            </p>
+        </pre>
+        <pre style="white-space: pre-wrap">
+            <h4>ARGUMENTUM</h4>
+            <p>
+            L. <span>Sergius <span>Catilina, &#x05d0;&#x05d1;</span> homo patricii generis</span>, &#x05d0;&#x05d1; magna vi et animi et
+            corporis, &#x05d0;&#x05d1; sed ingenio malo pravoque, &#x05d0;&#x05d1; praetorius, &#x05d0;&#x05d1; qui iam a. u. c. 689
+            caedem consulum facere eaque facta rerum potiri constituerat, &#x05d0;&#x05d1; casu autem
+            rem perficere prohibitus erat, &#x05d0;&#x05d1; ascitis ad consilium rei publicae
+            opprimendae hominibus omnis generis perditissiis atque audacissimis, &#x05d0;&#x05d1; quos
+            inopia, &#x05d0;&#x05d1; cupiditas, &#x05d0;&#x05d1; scelera stimulabant, &#x05d0;&#x05d1; consulatum in annum 691 p. u. c.
+            petivit, &#x05d0;&#x05d1; sed cum, &#x05d0;&#x05d1; quae in animo habebat, &#x05d0;&#x05d1; perniciosa rei publicae consilia
+            parum occultata essent, &#x05d0;&#x05d1; studiis bonorum omnium M. Tullius Cicero una cum
+            C. Antonio consul factus est.  Qua re commotus L. Catilina M. Cicerone
+            C. Antonio consulibus cupidius etiam sua consilia recepit, &#x05d0;&#x05d1; quibus maxime
+            Ciceronis consulis <span>diligentia restitit ad quem Catilinae eiusque</span> sociorum
+            consilia a Fulvia, &#x05d0;&#x05d1; muliere nobili, &#x05d0;&#x05d1; quae rem habebat cum Q. Curio, &#x05d0;&#x05d1; qui
+            particeps fuit conspirationis illius, &#x05d0;&#x05d1; deferebantur.  Cum autem ista mala
+            consilia contra <span>salutem rei publicae a coniuratis inita</span> apertius iam
+            agitarentur, &#x05d0;&#x05d1; senatus consultum factum est, &#x05d0;&#x05d1; darent operam consules, &#x05d0;&#x05d1; ne quid
+            res publica detrimenti caperet, &#x05d0;&#x05d1; effectumque est, &#x05d0;&#x05d1; ut Catilina spe
+            consulatus, &#x05d0;&#x05d1; quem in proximum annum <span>petebat, &#x05d0;&#x05d1; excideret</span>, &#x05d0;&#x05d1; designarenturque
+            D. Silanus et L. Murena.  Quae cum ita essent, &#x05d0;&#x05d1; L. <span>Catilina, &#x05d0;&#x05d1;</span> qui iam ante
+            per <span>Italiam ad homines seditiosos, &#x05d0;&#x05d1; maxime</span> veteres L. Sullae milites, &#x05d0;&#x05d1;
+            concitandos nuntios miserat, &#x05d0;&#x05d1; ad C. Manlium, &#x05d0;&#x05d1; qui Faesulas, &#x05d0;&#x05d1; in urbem
+            Etruriae munitam, &#x05d0;&#x05d1; manum armatorum coegerat, &#x05d0;&#x05d1; proficisci constituit et
+            bellum patriae inferre convocatisque nocte, &#x05d0;&#x05d1; quae inter VIII et VII Id.
+            Novembres erat, &#x05d0;&#x05d1; sociis in domum M. Porci Laecae consilium, &#x05d0;&#x05d1; quod ceperat, &#x05d0;&#x05d1;
+            aperuit.  Qua in congregatione nocturna duo equites Romani Ciceronem
+            consulem illa ipsa nocte ante lucem, &#x05d0;&#x05d1; cum sicut salutaturi eius domum
+            intrassent, &#x05d0;&#x05d1; interficiendum receperunt.  M. Cicero vitatis insidiis proximo
+            die, &#x05d0;&#x05d1; qui fuit a. d.  VI Id.  Novembres, &#x05d0;&#x05d1; dispositis praesidiis senatum in
+            templum Iovis Statoris convocavit, &#x05d0;&#x05d1; quo cum Catilina quasi sui purgandi
+            causa venisset, &#x05d0;&#x05d1; Cicero eam, &#x05d0;&#x05d1; quae infra legitur, &#x05d0;&#x05d1; orationem in Catilinam
+            vehementissime invehens habuit.
+            </p>
+            <p>
+            <span>Quo usque tandem abutere, &#x05d0;&#x05d1; Catilina</span>, &#x05d0;&#x05d1; patientia nostra?  quam diu etiam
+            furor iste tuus nos eludet?  quem ad finem sese effrenata iactabit
+            audacia?  Nihilne te nocturnum praesidium Palati, &#x05d0;&#x05d1; nihil urbis vigiliae, &#x05d0;&#x05d1;
+            nihil timor populi, &#x05d0;&#x05d1; nihil concursus bonorum omnium, &#x05d0;&#x05d1; nihil hic munitissimus
+            habendi senatus locus, &#x05d0;&#x05d1; <span>nihil horum ora voltusque moverunt?</span>  Patere tua
+            consilia non sentis, &#x05d0;&#x05d1; constrictam iam horum omnium scientia teneri
+            coniurationem tuam non vides?  Quid proxima, &#x05d0;&#x05d1; quid superiore nocte egeris, &#x05d0;&#x05d1;
+            ubi fueris, &#x05d0;&#x05d1; quos convocaveris, &#x05d0;&#x05d1; quid consilii ceperis, &#x05d0;&#x05d1; quem nostrum
+            ignorare arbitraris?  O tempora, &#x05d0;&#x05d1; o mores! Senatus haec intellegit.  consul
+            videt; hic tamen vivit.  Vivit?  immo vero etiam in senatum venit, &#x05d0;&#x05d1; fit
+            publici consilii particeps, &#x05d0;&#x05d1; notat et designat oculis ad caedem unum
+            quemque nostrum.  Nos autem fortes viri satis facere rei publicae videmur, &#x05d0;&#x05d1;
+            si istius furorem ac tela vitemus.  Ad mortem te, &#x05d0;&#x05d1; <span>Catilina, &#x05d0;&#x05d1;</span> duci iussu
+            consulis iam pridem oportebat, &#x05d0;&#x05d1; in te conferri pestem, &#x05d0;&#x05d1; quam tu in nos
+            [omnes iam diu] machinaris.  An vero vir amplissumus, &#x05d0;&#x05d1; P. Scipio, &#x05d0;&#x05d1; pontifex
+            maximus, &#x05d0;&#x05d1; Ti.  Gracchum mediocriter labefactantem statum rei publicae
+            privatus interfecit; Catilinam orbem terrae caede atque incendiis vastare
+            cupientem nos consules perferemus?  Nam illa nimis antiqua praetereo, &#x05d0;&#x05d1; quod
+            C. Servilius Ahala Sp.  <span>Maelium novis rebus studentem</span> manu sua occidit.
+            Fuit, &#x05d0;&#x05d1; <span>fuit ista quondam in hac re publica virtus, &#x05d0;&#x05d1;</span> ut viri fortes
+            acrioribus suppliciis civem perniciosum quam acerbissimum hostem
+            coercerent.  Habemus senatus consultum in te, &#x05d0;&#x05d1; <span>Catilina, &#x05d0;&#x05d1;</span> vehemens et grave, &#x05d0;&#x05d1;
+            non deest rei publicae consilium neque auctoritas huius ordinis; nos, &#x05d0;&#x05d1; nos, &#x05d0;&#x05d1;
+            dico aperte, &#x05d0;&#x05d1; consules desumus.  Decrevit quondam senatus, &#x05d0;&#x05d1; ut L. Opimius
+            consul videret, &#x05d0;&#x05d1; ne quid res publica detrimenti caperet; nox nulla
+            intercessit; interfectus est propter quasdam seditionum suspiciones
+            C. Gracchus, &#x05d0;&#x05d1; clarissimo patre, &#x05d0;&#x05d1; avo, &#x05d0;&#x05d1; maioribus, &#x05d0;&#x05d1; occisus est cum liberis
+            M. Fulvius consularis.  Simili senatus consulto C. Mario et L.  Valerio
+            consulibus est permissa res publica; num unum diem postea L. Saturninum
+            tribunum pl.  et C.  Servilium praetorem mors ac rei publicae poena
+            remorata est?  At [vero] nos vicesimum iam diem patimur hebescere aciem
+            horum auctoritatis.  Habemus enim huiusce modi senatus consultum, &#x05d0;&#x05d1; verum
+            inclusum in <span>tabulis tamquam in vagina reconditum, &#x05d0;&#x05d1;</span> quo ex senatus consulto
+            confestim te interfectum esse, &#x05d0;&#x05d1; <span>Catilina, &#x05d0;&#x05d1;</span> convenit.  Vivis, &#x05d0;&#x05d1; et vivis non ad
+            deponendam, &#x05d0;&#x05d1; sed ad confirmandam audaciam.  Cupio, &#x05d0;&#x05d1; patres conscripti, &#x05d0;&#x05d1; me
+            esse clementem, &#x05d0;&#x05d1; cupio in tantis rei publicae periculis me non dissolutum
+            videri, &#x05d0;&#x05d1; sed iam me ipse inertiae nequitiaeque condemno.  Castra sunt in
+            Italia contra populum Romanum in Etruriae faucibus conlocata, &#x05d0;&#x05d1; crescit in
+            dies singulos hostium numerus; eorum autem castrorum imperatorem ducemque
+            hostium intra moenia atque adeo in senatu videmus intestinam aliquam
+            cotidie perniciem rei publicae molientem.  Si te iam, &#x05d0;&#x05d1; <span>Catilina, &#x05d0;&#x05d1;</span>
+            comprehendi, &#x05d0;&#x05d1; si interfici iussero, &#x05d0;&#x05d1; credo, &#x05d0;&#x05d1; erit verendum mihi, &#x05d0;&#x05d1; ne non
+            potius hoc omnes boni serius a me quam quisquam crudelius factum esse
+            dicat.  Verum ego hoc, &#x05d0;&#x05d1; quod iam pridem factum esse oportuit, &#x05d0;&#x05d1; certa de
+            causa nondum adducor ut faciam.  Tum denique interficiere, &#x05d0;&#x05d1; cum iam nemo
+            tam inprobus, &#x05d0;&#x05d1; tam perditus, &#x05d0;&#x05d1; tam tui similis inveniri poterit, &#x05d0;&#x05d1; qui id non
+            iure factum esse fateatur.  Quamdiu quisquam erit, &#x05d0;&#x05d1; qui te defendere
+            audeat, &#x05d0;&#x05d1; vives, &#x05d0;&#x05d1; et vives ita, &#x05d0;&#x05d1; ut [nunc] vivis.  multis meis et firmis
+            praesidiis obsessus, &#x05d0;&#x05d1; ne commovere te contra rem publicam possis.  Multorum
+            te etiam oculi et aures non sentientem, &#x05d0;&#x05d1; sicut adhuc fecerunt, &#x05d0;&#x05d1;
+            speculabuntur atque custodient.
+            </p>
+        </pre>
+        <pre style="white-space: pre-line">
+            <h4>ARGUMENTUM</h4>
+            <p>
+            L. <span>Sergius <span>Catilina, &#x05d0;&#x05d1;</span> homo patricii generis</span>, &#x05d0;&#x05d1; magna vi et animi et
+            corporis, &#x05d0;&#x05d1; sed ingenio malo pravoque, &#x05d0;&#x05d1; praetorius, &#x05d0;&#x05d1; qui iam a. u. c. 689
+            caedem consulum facere eaque facta rerum potiri constituerat, &#x05d0;&#x05d1; casu autem
+            rem perficere prohibitus erat, &#x05d0;&#x05d1; ascitis ad consilium rei publicae
+            opprimendae hominibus omnis generis perditissiis atque audacissimis, &#x05d0;&#x05d1; quos
+            inopia, &#x05d0;&#x05d1; cupiditas, &#x05d0;&#x05d1; scelera stimulabant, &#x05d0;&#x05d1; consulatum in annum 691 p. u. c.
+            petivit, &#x05d0;&#x05d1; sed cum, &#x05d0;&#x05d1; quae in animo habebat, &#x05d0;&#x05d1; perniciosa rei publicae consilia
+            parum occultata essent, &#x05d0;&#x05d1; studiis bonorum omnium M. Tullius Cicero una cum
+            C. Antonio consul factus est.  Qua re commotus L. Catilina M. Cicerone
+            C. Antonio consulibus cupidius etiam sua consilia recepit, &#x05d0;&#x05d1; quibus maxime
+            Ciceronis consulis <span>diligentia restitit ad quem Catilinae eiusque</span> sociorum
+            consilia a Fulvia, &#x05d0;&#x05d1; muliere nobili, &#x05d0;&#x05d1; quae rem habebat cum Q. Curio, &#x05d0;&#x05d1; qui
+            particeps fuit conspirationis illius, &#x05d0;&#x05d1; deferebantur.  Cum autem ista mala
+            consilia contra <span>salutem rei publicae a coniuratis inita</span> apertius iam
+            agitarentur, &#x05d0;&#x05d1; senatus consultum factum est, &#x05d0;&#x05d1; darent operam consules, &#x05d0;&#x05d1; ne quid
+            res publica detrimenti caperet, &#x05d0;&#x05d1; effectumque est, &#x05d0;&#x05d1; ut Catilina spe
+            consulatus, &#x05d0;&#x05d1; quem in proximum annum <span>petebat, &#x05d0;&#x05d1; excideret</span>, &#x05d0;&#x05d1; designarenturque
+            D. Silanus et L. Murena.  Quae cum ita essent, &#x05d0;&#x05d1; L. <span>Catilina, &#x05d0;&#x05d1;</span> qui iam ante
+            per <span>Italiam ad homines seditiosos, &#x05d0;&#x05d1; maxime</span> veteres L. Sullae milites, &#x05d0;&#x05d1;
+            concitandos nuntios miserat, &#x05d0;&#x05d1; ad C. Manlium, &#x05d0;&#x05d1; qui Faesulas, &#x05d0;&#x05d1; in urbem
+            Etruriae munitam, &#x05d0;&#x05d1; manum armatorum coegerat, &#x05d0;&#x05d1; proficisci constituit et
+            bellum patriae inferre convocatisque nocte, &#x05d0;&#x05d1; quae inter VIII et VII Id.
+            Novembres erat, &#x05d0;&#x05d1; sociis in domum M. Porci Laecae consilium, &#x05d0;&#x05d1; quod ceperat, &#x05d0;&#x05d1;
+            aperuit.  Qua in congregatione nocturna duo equites Romani Ciceronem
+            consulem illa ipsa nocte ante lucem, &#x05d0;&#x05d1; cum sicut salutaturi eius domum
+            intrassent, &#x05d0;&#x05d1; interficiendum receperunt.  M. Cicero vitatis insidiis proximo
+            die, &#x05d0;&#x05d1; qui fuit a. d.  VI Id.  Novembres, &#x05d0;&#x05d1; dispositis praesidiis senatum in
+            templum Iovis Statoris convocavit, &#x05d0;&#x05d1; quo cum Catilina quasi sui purgandi
+            causa venisset, &#x05d0;&#x05d1; Cicero eam, &#x05d0;&#x05d1; quae infra legitur, &#x05d0;&#x05d1; orationem in Catilinam
+            vehementissime invehens habuit.
+            </p>
+            <p>
+            <span>Quo usque tandem abutere, &#x05d0;&#x05d1; Catilina</span>, &#x05d0;&#x05d1; patientia nostra?  quam diu etiam
+            furor iste tuus nos eludet?  quem ad finem sese effrenata iactabit
+            audacia?  Nihilne te nocturnum praesidium Palati, &#x05d0;&#x05d1; nihil urbis vigiliae, &#x05d0;&#x05d1;
+            nihil timor populi, &#x05d0;&#x05d1; nihil concursus bonorum omnium, &#x05d0;&#x05d1; nihil hic munitissimus
+            habendi senatus locus, &#x05d0;&#x05d1; <span>nihil horum ora voltusque moverunt?</span>  Patere tua
+            consilia non sentis, &#x05d0;&#x05d1; constrictam iam horum omnium scientia teneri
+            coniurationem tuam non vides?  Quid proxima, &#x05d0;&#x05d1; quid superiore nocte egeris, &#x05d0;&#x05d1;
+            ubi fueris, &#x05d0;&#x05d1; quos convocaveris, &#x05d0;&#x05d1; quid consilii ceperis, &#x05d0;&#x05d1; quem nostrum
+            ignorare arbitraris?  O tempora, &#x05d0;&#x05d1; o mores! Senatus haec intellegit.  consul
+            videt; hic tamen vivit.  Vivit?  immo vero etiam in senatum venit, &#x05d0;&#x05d1; fit
+            publici consilii particeps, &#x05d0;&#x05d1; notat et designat oculis ad caedem unum
+            quemque nostrum.  Nos autem fortes viri satis facere rei publicae videmur, &#x05d0;&#x05d1;
+            si istius furorem ac tela vitemus.  Ad mortem te, &#x05d0;&#x05d1; <span>Catilina, &#x05d0;&#x05d1;</span> duci iussu
+            consulis iam pridem oportebat, &#x05d0;&#x05d1; in te conferri pestem, &#x05d0;&#x05d1; quam tu in nos
+            [omnes iam diu] machinaris.  An vero vir amplissumus, &#x05d0;&#x05d1; P. Scipio, &#x05d0;&#x05d1; pontifex
+            maximus, &#x05d0;&#x05d1; Ti.  Gracchum mediocriter labefactantem statum rei publicae
+            privatus interfecit; Catilinam orbem terrae caede atque incendiis vastare
+            cupientem nos consules perferemus?  Nam illa nimis antiqua praetereo, &#x05d0;&#x05d1; quod
+            C. Servilius Ahala Sp.  <span>Maelium novis rebus studentem</span> manu sua occidit.
+            Fuit, &#x05d0;&#x05d1; <span>fuit ista quondam in hac re publica virtus, &#x05d0;&#x05d1;</span> ut viri fortes
+            acrioribus suppliciis civem perniciosum quam acerbissimum hostem
+            coercerent.  Habemus senatus consultum in te, &#x05d0;&#x05d1; <span>Catilina, &#x05d0;&#x05d1;</span> vehemens et grave, &#x05d0;&#x05d1;
+            non deest rei publicae consilium neque auctoritas huius ordinis; nos, &#x05d0;&#x05d1; nos, &#x05d0;&#x05d1;
+            dico aperte, &#x05d0;&#x05d1; consules desumus.  Decrevit quondam senatus, &#x05d0;&#x05d1; ut L. Opimius
+            consul videret, &#x05d0;&#x05d1; ne quid res publica detrimenti caperet; nox nulla
+            intercessit; interfectus est propter quasdam seditionum suspiciones
+            C. Gracchus, &#x05d0;&#x05d1; clarissimo patre, &#x05d0;&#x05d1; avo, &#x05d0;&#x05d1; maioribus, &#x05d0;&#x05d1; occisus est cum liberis
+            M. Fulvius consularis.  Simili senatus consulto C. Mario et L.  Valerio
+            consulibus est permissa res publica; num unum diem postea L. Saturninum
+            tribunum pl.  et C.  Servilium praetorem mors ac rei publicae poena
+            remorata est?  At [vero] nos vicesimum iam diem patimur hebescere aciem
+            horum auctoritatis.  Habemus enim huiusce modi senatus consultum, &#x05d0;&#x05d1; verum
+            inclusum in <span>tabulis tamquam in vagina reconditum, &#x05d0;&#x05d1;</span> quo ex senatus consulto
+            confestim te interfectum esse, &#x05d0;&#x05d1; <span>Catilina, &#x05d0;&#x05d1;</span> convenit.  Vivis, &#x05d0;&#x05d1; et vivis non ad
+            deponendam, &#x05d0;&#x05d1; sed ad confirmandam audaciam.  Cupio, &#x05d0;&#x05d1; patres conscripti, &#x05d0;&#x05d1; me
+            esse clementem, &#x05d0;&#x05d1; cupio in tantis rei publicae periculis me non dissolutum
+            videri, &#x05d0;&#x05d1; sed iam me ipse inertiae nequitiaeque condemno.  Castra sunt in
+            Italia contra populum Romanum in Etruriae faucibus conlocata, &#x05d0;&#x05d1; crescit in
+            dies singulos hostium numerus; eorum autem castrorum imperatorem ducemque
+            hostium intra moenia atque adeo in senatu videmus intestinam aliquam
+            cotidie perniciem rei publicae molientem.  Si te iam, &#x05d0;&#x05d1; <span>Catilina, &#x05d0;&#x05d1;</span>
+            comprehendi, &#x05d0;&#x05d1; si interfici iussero, &#x05d0;&#x05d1; credo, &#x05d0;&#x05d1; erit verendum mihi, &#x05d0;&#x05d1; ne non
+            potius hoc omnes boni serius a me quam quisquam crudelius factum esse
+            dicat.  Verum ego hoc, &#x05d0;&#x05d1; quod iam pridem factum esse oportuit, &#x05d0;&#x05d1; certa de
+            causa nondum adducor ut faciam.  Tum denique interficiere, &#x05d0;&#x05d1; cum iam nemo
+            tam inprobus, &#x05d0;&#x05d1; tam perditus, &#x05d0;&#x05d1; tam tui similis inveniri poterit, &#x05d0;&#x05d1; qui id non
+            iure factum esse fateatur.  Quamdiu quisquam erit, &#x05d0;&#x05d1; qui te defendere
+            audeat, &#x05d0;&#x05d1; vives, &#x05d0;&#x05d1; et vives ita, &#x05d0;&#x05d1; ut [nunc] vivis.  multis meis et firmis
+            praesidiis obsessus, &#x05d0;&#x05d1; ne commovere te contra rem publicam possis.  Multorum
+            te etiam oculi et aures non sentientem, &#x05d0;&#x05d1; sicut adhuc fecerunt, &#x05d0;&#x05d1;
+            speculabuntur atque custodient.
+            </p>
+        </pre>
+        <pre style="white-space: nowrap">
+            <h4>ARGUMENTUM</h4>
+            <p>
+            L. <span>Sergius <span>Catilina, &#x05d0;&#x05d1;</span> homo patricii generis</span>, &#x05d0;&#x05d1; magna vi et animi et
+            corporis, &#x05d0;&#x05d1; sed ingenio malo pravoque, &#x05d0;&#x05d1; praetorius, &#x05d0;&#x05d1; qui iam a. u. c. 689
+            caedem consulum facere eaque facta rerum potiri constituerat, &#x05d0;&#x05d1; casu autem
+            rem perficere prohibitus erat, &#x05d0;&#x05d1; ascitis ad consilium rei publicae
+            opprimendae hominibus omnis generis perditissiis atque audacissimis, &#x05d0;&#x05d1; quos
+            inopia, &#x05d0;&#x05d1; cupiditas, &#x05d0;&#x05d1; scelera stimulabant, &#x05d0;&#x05d1; consulatum in annum 691 p. u. c.
+            petivit, &#x05d0;&#x05d1; sed cum, &#x05d0;&#x05d1; quae in animo habebat, &#x05d0;&#x05d1; perniciosa rei publicae consilia
+            parum occultata essent, &#x05d0;&#x05d1; studiis bonorum omnium M. Tullius Cicero una cum
+            C. Antonio consul factus est.  Qua re commotus L. Catilina M. Cicerone
+            C. Antonio consulibus cupidius etiam sua consilia recepit, &#x05d0;&#x05d1; quibus maxime
+            Ciceronis consulis <span>diligentia restitit ad quem Catilinae eiusque</span> sociorum
+            consilia a Fulvia, &#x05d0;&#x05d1; muliere nobili, &#x05d0;&#x05d1; quae rem habebat cum Q. Curio, &#x05d0;&#x05d1; qui
+            particeps fuit conspirationis illius, &#x05d0;&#x05d1; deferebantur.  Cum autem ista mala
+            consilia contra <span>salutem rei publicae a coniuratis inita</span> apertius iam
+            agitarentur, &#x05d0;&#x05d1; senatus consultum factum est, &#x05d0;&#x05d1; darent operam consules, &#x05d0;&#x05d1; ne quid
+            res publica detrimenti caperet, &#x05d0;&#x05d1; effectumque est, &#x05d0;&#x05d1; ut Catilina spe
+            consulatus, &#x05d0;&#x05d1; quem in proximum annum <span>petebat, &#x05d0;&#x05d1; excideret</span>, &#x05d0;&#x05d1; designarenturque
+            D. Silanus et L. Murena.  Quae cum ita essent, &#x05d0;&#x05d1; L. <span>Catilina, &#x05d0;&#x05d1;</span> qui iam ante
+            per <span>Italiam ad homines seditiosos, &#x05d0;&#x05d1; maxime</span> veteres L. Sullae milites, &#x05d0;&#x05d1;
+            concitandos nuntios miserat, &#x05d0;&#x05d1; ad C. Manlium, &#x05d0;&#x05d1; qui Faesulas, &#x05d0;&#x05d1; in urbem
+            Etruriae munitam, &#x05d0;&#x05d1; manum armatorum coegerat, &#x05d0;&#x05d1; proficisci constituit et
+            bellum patriae inferre convocatisque nocte, &#x05d0;&#x05d1; quae inter VIII et VII Id.
+            Novembres erat, &#x05d0;&#x05d1; sociis in domum M. Porci Laecae consilium, &#x05d0;&#x05d1; quod ceperat, &#x05d0;&#x05d1;
+            aperuit.  Qua in congregatione nocturna duo equites Romani Ciceronem
+            consulem illa ipsa nocte ante lucem, &#x05d0;&#x05d1; cum sicut salutaturi eius domum
+            intrassent, &#x05d0;&#x05d1; interficiendum receperunt.  M. Cicero vitatis insidiis proximo
+            die, &#x05d0;&#x05d1; qui fuit a. d.  VI Id.  Novembres, &#x05d0;&#x05d1; dispositis praesidiis senatum in
+            templum Iovis Statoris convocavit, &#x05d0;&#x05d1; quo cum Catilina quasi sui purgandi
+            causa venisset, &#x05d0;&#x05d1; Cicero eam, &#x05d0;&#x05d1; quae infra legitur, &#x05d0;&#x05d1; orationem in Catilinam
+            vehementissime invehens habuit.
+            </p>
+            <p>
+            <span>Quo usque tandem abutere, &#x05d0;&#x05d1; Catilina</span>, &#x05d0;&#x05d1; patientia nostra?  quam diu etiam
+            furor iste tuus nos eludet?  quem ad finem sese effrenata iactabit
+            audacia?  Nihilne te nocturnum praesidium Palati, &#x05d0;&#x05d1; nihil urbis vigiliae, &#x05d0;&#x05d1;
+            nihil timor populi, &#x05d0;&#x05d1; nihil concursus bonorum omnium, &#x05d0;&#x05d1; nihil hic munitissimus
+            habendi senatus locus, &#x05d0;&#x05d1; <span>nihil horum ora voltusque moverunt?</span>  Patere tua
+            consilia non sentis, &#x05d0;&#x05d1; constrictam iam horum omnium scientia teneri
+            coniurationem tuam non vides?  Quid proxima, &#x05d0;&#x05d1; quid superiore nocte egeris, &#x05d0;&#x05d1;
+            ubi fueris, &#x05d0;&#x05d1; quos convocaveris, &#x05d0;&#x05d1; quid consilii ceperis, &#x05d0;&#x05d1; quem nostrum
+            ignorare arbitraris?  O tempora, &#x05d0;&#x05d1; o mores! Senatus haec intellegit.  consul
+            videt; hic tamen vivit.  Vivit?  immo vero etiam in senatum venit, &#x05d0;&#x05d1; fit
+            publici consilii particeps, &#x05d0;&#x05d1; notat et designat oculis ad caedem unum
+            quemque nostrum.  Nos autem fortes viri satis facere rei publicae videmur, &#x05d0;&#x05d1;
+            si istius furorem ac tela vitemus.  Ad mortem te, &#x05d0;&#x05d1; <span>Catilina, &#x05d0;&#x05d1;</span> duci iussu
+            consulis iam pridem oportebat, &#x05d0;&#x05d1; in te conferri pestem, &#x05d0;&#x05d1; quam tu in nos
+            [omnes iam diu] machinaris.  An vero vir amplissumus, &#x05d0;&#x05d1; P. Scipio, &#x05d0;&#x05d1; pontifex
+            maximus, &#x05d0;&#x05d1; Ti.  Gracchum mediocriter labefactantem statum rei publicae
+            privatus interfecit; Catilinam orbem terrae caede atque incendiis vastare
+            cupientem nos consules perferemus?  Nam illa nimis antiqua praetereo, &#x05d0;&#x05d1; quod
+            C. Servilius Ahala Sp.  <span>Maelium novis rebus studentem</span> manu sua occidit.
+            Fuit, &#x05d0;&#x05d1; <span>fuit ista quondam in hac re publica virtus, &#x05d0;&#x05d1;</span> ut viri fortes
+            acrioribus suppliciis civem perniciosum quam acerbissimum hostem
+            coercerent.  Habemus senatus consultum in te, &#x05d0;&#x05d1; <span>Catilina, &#x05d0;&#x05d1;</span> vehemens et grave, &#x05d0;&#x05d1;
+            non deest rei publicae consilium neque auctoritas huius ordinis; nos, &#x05d0;&#x05d1; nos, &#x05d0;&#x05d1;
+            dico aperte, &#x05d0;&#x05d1; consules desumus.  Decrevit quondam senatus, &#x05d0;&#x05d1; ut L. Opimius
+            consul videret, &#x05d0;&#x05d1; ne quid res publica detrimenti caperet; nox nulla
+            intercessit; interfectus est propter quasdam seditionum suspiciones
+            C. Gracchus, &#x05d0;&#x05d1; clarissimo patre, &#x05d0;&#x05d1; avo, &#x05d0;&#x05d1; maioribus, &#x05d0;&#x05d1; occisus est cum liberis
+            M. Fulvius consularis.  Simili senatus consulto C. Mario et L.  Valerio
+            consulibus est permissa res publica; num unum diem postea L. Saturninum
+            tribunum pl.  et C.  Servilium praetorem mors ac rei publicae poena
+            remorata est?  At [vero] nos vicesimum iam diem patimur hebescere aciem
+            horum auctoritatis.  Habemus enim huiusce modi senatus consultum, &#x05d0;&#x05d1; verum
+            inclusum in <span>tabulis tamquam in vagina reconditum, &#x05d0;&#x05d1;</span> quo ex senatus consulto
+            confestim te interfectum esse, &#x05d0;&#x05d1; <span>Catilina, &#x05d0;&#x05d1;</span> convenit.  Vivis, &#x05d0;&#x05d1; et vivis non ad
+            deponendam, &#x05d0;&#x05d1; sed ad confirmandam audaciam.  Cupio, &#x05d0;&#x05d1; patres conscripti, &#x05d0;&#x05d1; me
+            esse clementem, &#x05d0;&#x05d1; cupio in tantis rei publicae periculis me non dissolutum
+            videri, &#x05d0;&#x05d1; sed iam me ipse inertiae nequitiaeque condemno.  Castra sunt in
+            Italia contra populum Romanum in Etruriae faucibus conlocata, &#x05d0;&#x05d1; crescit in
+            dies singulos hostium numerus; eorum autem castrorum imperatorem ducemque
+            hostium intra moenia atque adeo in senatu videmus intestinam aliquam
+            cotidie perniciem rei publicae molientem.  Si te iam, &#x05d0;&#x05d1; <span>Catilina, &#x05d0;&#x05d1;</span>
+            comprehendi, &#x05d0;&#x05d1; si interfici iussero, &#x05d0;&#x05d1; credo, &#x05d0;&#x05d1; erit verendum mihi, &#x05d0;&#x05d1; ne non
+            potius hoc omnes boni serius a me quam quisquam crudelius factum esse
+            dicat.  Verum ego hoc, &#x05d0;&#x05d1; quod iam pridem factum esse oportuit, &#x05d0;&#x05d1; certa de
+            causa nondum adducor ut faciam.  Tum denique interficiere, &#x05d0;&#x05d1; cum iam nemo
+            tam inprobus, &#x05d0;&#x05d1; tam perditus, &#x05d0;&#x05d1; tam tui similis inveniri poterit, &#x05d0;&#x05d1; qui id non
+            iure factum esse fateatur.  Quamdiu quisquam erit, &#x05d0;&#x05d1; qui te defendere
+            audeat, &#x05d0;&#x05d1; vives, &#x05d0;&#x05d1; et vives ita, &#x05d0;&#x05d1; ut [nunc] vivis.  multis meis et firmis
+            praesidiis obsessus, &#x05d0;&#x05d1; ne commovere te contra rem publicam possis.  Multorum
+            te etiam oculi et aures non sentientem, &#x05d0;&#x05d1; sicut adhuc fecerunt, &#x05d0;&#x05d1;
+            speculabuntur atque custodient.
+            </p>
+        </pre>
+        <pre style="white-space: pre-wrap; overflow-wrap:break-word">
+            <h4>ARGUMENTUM</h4>
+            <p>
+            L. <span>Sergius <span>Catilina, &#x05d0;&#x05d1;</span> homo patricii generis</span>, &#x05d0;&#x05d1; magna vi et animi et
+            corporis, &#x05d0;&#x05d1; sed ingenio malo pravoque, &#x05d0;&#x05d1; praetorius, &#x05d0;&#x05d1; qui iam a. u. c. 689
+            caedem consulum facere eaque facta rerum potiri constituerat, &#x05d0;&#x05d1; casu autem
+            rem perficere prohibitus erat, &#x05d0;&#x05d1; ascitis ad consilium rei publicae
+            opprimendae hominibus omnis generis perditissiis atque audacissimis, &#x05d0;&#x05d1; quos
+            inopia, &#x05d0;&#x05d1; cupiditas, &#x05d0;&#x05d1; scelera stimulabant, &#x05d0;&#x05d1; consulatum in annum 691 p. u. c.
+            petivit, &#x05d0;&#x05d1; sed cum, &#x05d0;&#x05d1; quae in animo habebat, &#x05d0;&#x05d1; perniciosa rei publicae consilia
+            parum occultata essent, &#x05d0;&#x05d1; studiis bonorum omnium M. Tullius Cicero una cum
+            C. Antonio consul factus est.  Qua re commotus L. Catilina M. Cicerone
+            C. Antonio consulibus cupidius etiam sua consilia recepit, &#x05d0;&#x05d1; quibus maxime
+            Ciceronis consulis <span>diligentia restitit ad quem Catilinae eiusque</span> sociorum
+            consilia a Fulvia, &#x05d0;&#x05d1; muliere nobili, &#x05d0;&#x05d1; quae rem habebat cum Q. Curio, &#x05d0;&#x05d1; qui
+            particeps fuit conspirationis illius, &#x05d0;&#x05d1; deferebantur.  Cum autem ista mala
+            consilia contra <span>salutem rei publicae a coniuratis inita</span> apertius iam
+            agitarentur, &#x05d0;&#x05d1; senatus consultum factum est, &#x05d0;&#x05d1; darent operam consules, &#x05d0;&#x05d1; ne quid
+            res publica detrimenti caperet, &#x05d0;&#x05d1; effectumque est, &#x05d0;&#x05d1; ut Catilina spe
+            consulatus, &#x05d0;&#x05d1; quem in proximum annum <span>petebat, &#x05d0;&#x05d1; excideret</span>, &#x05d0;&#x05d1; designarenturque
+            D. Silanus et L. Murena.  Quae cum ita essent, &#x05d0;&#x05d1; L. <span>Catilina, &#x05d0;&#x05d1;</span> qui iam ante
+            per <span>Italiam ad homines seditiosos, &#x05d0;&#x05d1; maxime</span> veteres L. Sullae milites, &#x05d0;&#x05d1;
+            concitandos nuntios miserat, &#x05d0;&#x05d1; ad C. Manlium, &#x05d0;&#x05d1; qui Faesulas, &#x05d0;&#x05d1; in urbem
+            Etruriae munitam, &#x05d0;&#x05d1; manum armatorum coegerat, &#x05d0;&#x05d1; proficisci constituit et
+            bellum patriae inferre convocatisque nocte, &#x05d0;&#x05d1; quae inter VIII et VII Id.
+            Novembres erat, &#x05d0;&#x05d1; sociis in domum M. Porci Laecae consilium, &#x05d0;&#x05d1; quod ceperat, &#x05d0;&#x05d1;
+            aperuit.  Qua in congregatione nocturna duo equites Romani Ciceronem
+            consulem illa ipsa nocte ante lucem, &#x05d0;&#x05d1; cum sicut salutaturi eius domum
+            intrassent, &#x05d0;&#x05d1; interficiendum receperunt.  M. Cicero vitatis insidiis proximo
+            die, &#x05d0;&#x05d1; qui fuit a. d.  VI Id.  Novembres, &#x05d0;&#x05d1; dispositis praesidiis senatum in
+            templum Iovis Statoris convocavit, &#x05d0;&#x05d1; quo cum Catilina quasi sui purgandi
+            causa venisset, &#x05d0;&#x05d1; Cicero eam, &#x05d0;&#x05d1; quae infra legitur, &#x05d0;&#x05d1; orationem in Catilinam
+            vehementissime invehens habuit.
+            </p>
+            <p>
+            <span>Quo usque tandem abutere, &#x05d0;&#x05d1; Catilina</span>, &#x05d0;&#x05d1; patientia nostra?  quam diu etiam
+            furor iste tuus nos eludet?  quem ad finem sese effrenata iactabit
+            audacia?  Nihilne te nocturnum praesidium Palati, &#x05d0;&#x05d1; nihil urbis vigiliae, &#x05d0;&#x05d1;
+            nihil timor populi, &#x05d0;&#x05d1; nihil concursus bonorum omnium, &#x05d0;&#x05d1; nihil hic munitissimus
+            habendi senatus locus, &#x05d0;&#x05d1; <span>nihil horum ora voltusque moverunt?</span>  Patere tua
+            consilia non sentis, &#x05d0;&#x05d1; constrictam iam horum omnium scientia teneri
+            coniurationem tuam non vides?  Quid proxima, &#x05d0;&#x05d1; quid superiore nocte egeris, &#x05d0;&#x05d1;
+            ubi fueris, &#x05d0;&#x05d1; quos convocaveris, &#x05d0;&#x05d1; quid consilii ceperis, &#x05d0;&#x05d1; quem nostrum
+            ignorare arbitraris?  O tempora, &#x05d0;&#x05d1; o mores! Senatus haec intellegit.  consul
+            videt; hic tamen vivit.  Vivit?  immo vero etiam in senatum venit, &#x05d0;&#x05d1; fit
+            publici consilii particeps, &#x05d0;&#x05d1; notat et designat oculis ad caedem unum
+            quemque nostrum.  Nos autem fortes viri satis facere rei publicae videmur, &#x05d0;&#x05d1;
+            si istius furorem ac tela vitemus.  Ad mortem te, &#x05d0;&#x05d1; <span>Catilina, &#x05d0;&#x05d1;</span> duci iussu
+            consulis iam pridem oportebat, &#x05d0;&#x05d1; in te conferri pestem, &#x05d0;&#x05d1; quam tu in nos
+            [omnes iam diu] machinaris.  An vero vir amplissumus, &#x05d0;&#x05d1; P. Scipio, &#x05d0;&#x05d1; pontifex
+            maximus, &#x05d0;&#x05d1; Ti.  Gracchum mediocriter labefactantem statum rei publicae
+            privatus interfecit; Catilinam orbem terrae caede atque incendiis vastare
+            cupientem nos consules perferemus?  Nam illa nimis antiqua praetereo, &#x05d0;&#x05d1; quod
+            C. Servilius Ahala Sp.  <span>Maelium novis rebus studentem</span> manu sua occidit.
+            Fuit, &#x05d0;&#x05d1; <span>fuit ista quondam in hac re publica virtus, &#x05d0;&#x05d1;</span> ut viri fortes
+            acrioribus suppliciis civem perniciosum quam acerbissimum hostem
+            coercerent.  Habemus senatus consultum in te, &#x05d0;&#x05d1; <span>Catilina, &#x05d0;&#x05d1;</span> vehemens et grave, &#x05d0;&#x05d1;
+            non deest rei publicae consilium neque auctoritas huius ordinis; nos, &#x05d0;&#x05d1; nos, &#x05d0;&#x05d1;
+            dico aperte, &#x05d0;&#x05d1; consules desumus.  Decrevit quondam senatus, &#x05d0;&#x05d1; ut L. Opimius
+            consul videret, &#x05d0;&#x05d1; ne quid res publica detrimenti caperet; nox nulla
+            intercessit; interfectus est propter quasdam seditionum suspiciones
+            C. Gracchus, &#x05d0;&#x05d1; clarissimo patre, &#x05d0;&#x05d1; avo, &#x05d0;&#x05d1; maioribus, &#x05d0;&#x05d1; occisus est cum liberis
+            M. Fulvius consularis.  Simili senatus consulto C. Mario et L.  Valerio
+            consulibus est permissa res publica; num unum diem postea L. Saturninum
+            tribunum pl.  et C.  Servilium praetorem mors ac rei publicae poena
+            remorata est?  At [vero] nos vicesimum iam diem patimur hebescere aciem
+            horum auctoritatis.  Habemus enim huiusce modi senatus consultum, &#x05d0;&#x05d1; verum
+            inclusum in <span>tabulis tamquam in vagina reconditum, &#x05d0;&#x05d1;</span> quo ex senatus consulto
+            confestim te interfectum esse, &#x05d0;&#x05d1; <span>Catilina, &#x05d0;&#x05d1;</span> convenit.  Vivis, &#x05d0;&#x05d1; et vivis non ad
+            deponendam, &#x05d0;&#x05d1; sed ad confirmandam audaciam.  Cupio, &#x05d0;&#x05d1; patres conscripti, &#x05d0;&#x05d1; me
+            esse clementem, &#x05d0;&#x05d1; cupio in tantis rei publicae periculis me non dissolutum
+            videri, &#x05d0;&#x05d1; sed iam me ipse inertiae nequitiaeque condemno.  Castra sunt in
+            Italia contra populum Romanum in Etruriae faucibus conlocata, &#x05d0;&#x05d1; crescit in
+            dies singulos hostium numerus; eorum autem castrorum imperatorem ducemque
+            hostium intra moenia atque adeo in senatu videmus intestinam aliquam
+            cotidie perniciem rei publicae molientem.  Si te iam, &#x05d0;&#x05d1; <span>Catilina, &#x05d0;&#x05d1;</span>
+            comprehendi, &#x05d0;&#x05d1; si interfici iussero, &#x05d0;&#x05d1; credo, &#x05d0;&#x05d1; erit verendum mihi, &#x05d0;&#x05d1; ne non
+            potius hoc omnes boni serius a me quam quisquam crudelius factum esse
+            dicat.  Verum ego hoc, &#x05d0;&#x05d1; quod iam pridem factum esse oportuit, &#x05d0;&#x05d1; certa de
+            causa nondum adducor ut faciam.  Tum denique interficiere, &#x05d0;&#x05d1; cum iam nemo
+            tam inprobus, &#x05d0;&#x05d1; tam perditus, &#x05d0;&#x05d1; tam tui similis inveniri poterit, &#x05d0;&#x05d1; qui id non
+            iure factum esse fateatur.  Quamdiu quisquam erit, &#x05d0;&#x05d1; qui te defendere
+            audeat, &#x05d0;&#x05d1; vives, &#x05d0;&#x05d1; et vives ita, &#x05d0;&#x05d1; ut [nunc] vivis.  multis meis et firmis
+            praesidiis obsessus, &#x05d0;&#x05d1; ne commovere te contra rem publicam possis.  Multorum
+            te etiam oculi et aures non sentientem, &#x05d0;&#x05d1; sicut adhuc fecerunt, &#x05d0;&#x05d1;
+            speculabuntur atque custodient.
+            </p>
+        </pre>
+        <div>
+            <h4>ARGUMENTUM</h4>
+            <br>
+            L. <span>Sergius <span>Catilina, &#x05d0;&#x05d1;</span> homo patricii generis</span>, &#x05d0;&#x05d1; magna vi et animi et
+            corporis, &#x05d0;&#x05d1; sed ingenio malo pravoque, &#x05d0;&#x05d1; praetorius, &#x05d0;&#x05d1; qui iam a. u. c. 689
+            caedem consulum facere eaque facta rerum potiri constituerat, &#x05d0;&#x05d1; casu autem
+            rem perficere prohibitus erat, &#x05d0;&#x05d1; ascitis ad consilium rei publicae
+            opprimendae hominibus omnis generis perditissiis atque audacissimis, &#x05d0;&#x05d1; quos
+            inopia, &#x05d0;&#x05d1; cupiditas, &#x05d0;&#x05d1; scelera stimulabant, &#x05d0;&#x05d1; consulatum in annum 691 p. u. c.
+            petivit, &#x05d0;&#x05d1; sed cum, &#x05d0;&#x05d1; quae in animo habebat, &#x05d0;&#x05d1; perniciosa rei publicae consilia
+            parum occultata essent, &#x05d0;&#x05d1; studiis bonorum omnium M. Tullius Cicero una cum
+            C. Antonio consul factus est.  Qua re commotus L. Catilina M. Cicerone
+            C. Antonio consulibus cupidius etiam sua consilia recepit, &#x05d0;&#x05d1; quibus maxime
+            Ciceronis consulis <span>diligentia restitit ad quem Catilinae eiusque</span> sociorum
+            consilia a Fulvia, &#x05d0;&#x05d1; muliere nobili, &#x05d0;&#x05d1; quae rem habebat cum Q. Curio, &#x05d0;&#x05d1; qui
+            particeps fuit conspirationis illius, &#x05d0;&#x05d1; deferebantur.  Cum autem ista mala
+            consilia contra <span>salutem rei publicae a coniuratis inita</span> apertius iam
+            agitarentur, &#x05d0;&#x05d1; senatus consultum factum est, &#x05d0;&#x05d1; darent operam consules, &#x05d0;&#x05d1; ne quid
+            res publica detrimenti caperet, &#x05d0;&#x05d1; effectumque est, &#x05d0;&#x05d1; ut Catilina spe
+            consulatus, &#x05d0;&#x05d1; quem in proximum annum <span>petebat, &#x05d0;&#x05d1; excideret</span>, &#x05d0;&#x05d1; designarenturque
+            D. Silanus et L. Murena.  Quae cum ita essent, &#x05d0;&#x05d1; L. <span>Catilina, &#x05d0;&#x05d1;</span> qui iam ante
+            per <span>Italiam ad homines seditiosos, &#x05d0;&#x05d1; maxime</span> veteres L. Sullae milites, &#x05d0;&#x05d1;
+            concitandos nuntios miserat, &#x05d0;&#x05d1; ad C. Manlium, &#x05d0;&#x05d1; qui Faesulas, &#x05d0;&#x05d1; in urbem
+            Etruriae munitam, &#x05d0;&#x05d1; manum armatorum coegerat, &#x05d0;&#x05d1; proficisci constituit et
+            bellum patriae inferre convocatisque nocte, &#x05d0;&#x05d1; quae inter VIII et VII Id.
+            Novembres erat, &#x05d0;&#x05d1; sociis in domum M. Porci Laecae consilium, &#x05d0;&#x05d1; quod ceperat, &#x05d0;&#x05d1;
+            aperuit.  Qua in congregatione nocturna duo equites Romani Ciceronem
+            consulem illa ipsa nocte ante lucem, &#x05d0;&#x05d1; cum sicut salutaturi eius domum
+            intrassent, &#x05d0;&#x05d1; interficiendum receperunt.  M. Cicero vitatis insidiis proximo
+            die, &#x05d0;&#x05d1; qui fuit a. d.  VI Id.  Novembres, &#x05d0;&#x05d1; dispositis praesidiis senatum in
+            templum Iovis Statoris convocavit, &#x05d0;&#x05d1; quo cum Catilina quasi sui purgandi
+            causa venisset, &#x05d0;&#x05d1; Cicero eam, &#x05d0;&#x05d1; quae infra legitur, &#x05d0;&#x05d1; orationem in Catilinam
+            vehementissime invehens habuit.
+            <br>
+            <br>
+            <span>Quo usque tandem abutere, &#x05d0;&#x05d1; Catilina</span>, &#x05d0;&#x05d1; patientia nostra?  quam diu etiam
+            furor iste tuus nos eludet?  quem ad finem sese effrenata iactabit
+            audacia?  Nihilne te nocturnum praesidium Palati, &#x05d0;&#x05d1; nihil urbis vigiliae, &#x05d0;&#x05d1;
+            nihil timor populi, &#x05d0;&#x05d1; nihil concursus bonorum omnium, &#x05d0;&#x05d1; nihil hic munitissimus
+            habendi senatus locus, &#x05d0;&#x05d1; <span>nihil horum ora voltusque moverunt?</span>  Patere tua
+            consilia non sentis, &#x05d0;&#x05d1; constrictam iam horum omnium scientia teneri
+            coniurationem tuam non vides?  Quid proxima, &#x05d0;&#x05d1; quid superiore nocte egeris, &#x05d0;&#x05d1;
+            ubi fueris, &#x05d0;&#x05d1; quos convocaveris, &#x05d0;&#x05d1; quid consilii ceperis, &#x05d0;&#x05d1; quem nostrum
+            ignorare arbitraris?  O tempora, &#x05d0;&#x05d1; o mores! Senatus haec intellegit.  consul
+            videt; hic tamen vivit.  Vivit?  immo vero etiam in senatum venit, &#x05d0;&#x05d1; fit
+            publici consilii particeps, &#x05d0;&#x05d1; notat et designat oculis ad caedem unum
+            quemque nostrum.  Nos autem fortes viri satis facere rei publicae videmur, &#x05d0;&#x05d1;
+            si istius furorem ac tela vitemus.  Ad mortem te, &#x05d0;&#x05d1; <span>Catilina, &#x05d0;&#x05d1;</span> duci iussu
+            consulis iam pridem oportebat, &#x05d0;&#x05d1; in te conferri pestem, &#x05d0;&#x05d1; quam tu in nos
+            [omnes iam diu] machinaris.  An vero vir amplissumus, &#x05d0;&#x05d1; P. Scipio, &#x05d0;&#x05d1; pontifex
+            maximus, &#x05d0;&#x05d1; Ti.  Gracchum mediocriter labefactantem statum rei publicae
+            privatus interfecit; Catilinam orbem terrae caede atque incendiis vastare
+            cupientem nos consules perferemus?  Nam illa nimis antiqua praetereo, &#x05d0;&#x05d1; quod
+            C. Servilius Ahala Sp.  <span>Maelium novis rebus studentem</span> manu sua occidit.
+            Fuit, &#x05d0;&#x05d1; <span>fuit ista quondam in hac re publica virtus, &#x05d0;&#x05d1;</span> ut viri fortes
+            acrioribus suppliciis civem perniciosum quam acerbissimum hostem
+            coercerent.  Habemus senatus consultum in te, &#x05d0;&#x05d1; <span>Catilina, &#x05d0;&#x05d1;</span> vehemens et grave, &#x05d0;&#x05d1;
+            non deest rei publicae consilium neque auctoritas huius ordinis; nos, &#x05d0;&#x05d1; nos, &#x05d0;&#x05d1;
+            dico aperte, &#x05d0;&#x05d1; consules desumus.  Decrevit quondam senatus, &#x05d0;&#x05d1; ut L. Opimius
+            consul videret, &#x05d0;&#x05d1; ne quid res publica detrimenti caperet; nox nulla
+            intercessit; interfectus est propter quasdam seditionum suspiciones
+            C. Gracchus, &#x05d0;&#x05d1; clarissimo patre, &#x05d0;&#x05d1; avo, &#x05d0;&#x05d1; maioribus, &#x05d0;&#x05d1; occisus est cum liberis
+            M. Fulvius consularis.  Simili senatus consulto C. Mario et L.  Valerio
+            consulibus est permissa res publica; num unum diem postea L. Saturninum
+            tribunum pl.  et C.  Servilium praetorem mors ac rei publicae poena
+            remorata est?  At [vero] nos vicesimum iam diem patimur hebescere aciem
+            horum auctoritatis.  Habemus enim huiusce modi senatus consultum, &#x05d0;&#x05d1; verum
+            inclusum in <span>tabulis tamquam in vagina reconditum, &#x05d0;&#x05d1;</span> quo ex senatus consulto
+            confestim te interfectum esse, &#x05d0;&#x05d1; <span>Catilina, &#x05d0;&#x05d1;</span> convenit.  Vivis, &#x05d0;&#x05d1; et vivis non ad
+            deponendam, &#x05d0;&#x05d1; sed ad confirmandam audaciam.  Cupio, &#x05d0;&#x05d1; patres conscripti, &#x05d0;&#x05d1; me
+            esse clementem, &#x05d0;&#x05d1; cupio in tantis rei publicae periculis me non dissolutum
+            videri, &#x05d0;&#x05d1; sed iam me ipse inertiae nequitiaeque condemno.  Castra sunt in
+            Italia contra populum Romanum in Etruriae faucibus conlocata, &#x05d0;&#x05d1; crescit in
+            dies singulos hostium numerus; eorum autem castrorum imperatorem ducemque
+            hostium intra moenia atque adeo in senatu videmus intestinam aliquam
+            cotidie perniciem rei publicae molientem.  Si te iam, &#x05d0;&#x05d1; <span>Catilina, &#x05d0;&#x05d1;</span>
+            comprehendi, &#x05d0;&#x05d1; si interfici iussero, &#x05d0;&#x05d1; credo, &#x05d0;&#x05d1; erit verendum mihi, &#x05d0;&#x05d1; ne non
+            potius hoc omnes boni serius a me quam quisquam crudelius factum esse
+            dicat.  Verum ego hoc, &#x05d0;&#x05d1; quod iam pridem factum esse oportuit, &#x05d0;&#x05d1; certa de
+            causa nondum adducor ut faciam.  Tum denique interficiere, &#x05d0;&#x05d1; cum iam nemo
+            tam inprobus, &#x05d0;&#x05d1; tam perditus, &#x05d0;&#x05d1; tam tui similis inveniri poterit, &#x05d0;&#x05d1; qui id non
+            iure factum esse fateatur.  Quamdiu quisquam erit, &#x05d0;&#x05d1; qui te defendere
+            audeat, &#x05d0;&#x05d1; vives, &#x05d0;&#x05d1; et vives ita, &#x05d0;&#x05d1; ut [nunc] vivis.  multis meis et firmis
+            praesidiis obsessus, &#x05d0;&#x05d1; ne commovere te contra rem publicam possis.  Multorum
+            te etiam oculi et aures non sentientem, &#x05d0;&#x05d1; sicut adhuc fecerunt, &#x05d0;&#x05d1;
+            speculabuntur atque custodient.
+            <br>
+        </div>
+    </div>
+    <script>
+        var target = document.getElementById("target");
+        var style = target.style;
+
+        function test() {
+            style.display = "block";
+            style.width = "280px";
+            target.offsetLeft;
+            style.width = "300px";
+            target.offsetLeft;
+            style.width = "290px";
+            target.offsetLeft;
+            style.display = "none";
+        }
+
+        PerfTestRunner.measureRunsPerSecond({ run: test });
+    </script>
+</body>
+</html>

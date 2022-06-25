@@ -1,0 +1,20 @@
+Test unhandled promise rejection event.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS error.type is "unhandledrejection"
+PASS error.cancelable is true
+PASS error.promise is promise[0]
+PASS error.reason is 0
+PASS error.type is "unhandledrejection"
+PASS error.cancelable is true
+PASS error.promise is promise[1]
+PASS error.reason is 1
+PASS error.type is "unhandledrejection"
+PASS error.cancelable is true
+PASS error.promise is promise[2]
+PASS error.reason is 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

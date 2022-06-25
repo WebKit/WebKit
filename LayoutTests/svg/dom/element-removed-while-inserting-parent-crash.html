@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+var element = document.createElementNS('http://www.w3.org/2000/svg', "test");
+
+var script = document.createElementNS('http://www.w3.org/2000/svg', 'script');
+script.id = 'script';
+script.textContent = 'document.getElementById(\'script\').nextSibling.remove()'; // document.currentScript doesn't work for SVGScriptElement.
+
+var container = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+container.appendChild(script);
+container.appendChild(element);
+
+document.body.appendChild(container);
+document.body.innerHTML = 'PASS';
+</script>
+</body>
+</html>

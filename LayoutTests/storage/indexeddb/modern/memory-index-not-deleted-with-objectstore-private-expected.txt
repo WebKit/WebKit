@@ -1,0 +1,164 @@
+Makes sure that when an in-memory object store is deleted, any in-memory indexes it has are also deleted. If the test does not crash, it passes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+connection = event.target.result;
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+store = connection.createObjectStore('name');
+index = store.createIndex('name', 'foo');
+Deleted all object stores.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

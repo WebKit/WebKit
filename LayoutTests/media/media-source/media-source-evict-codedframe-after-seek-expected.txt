@@ -1,0 +1,107 @@
+
+EVENT(sourceopen)
+EVENT(updateend)
+Appending PTS=0
+EVENT(updateend)
+Appending PTS=1
+EVENT(updateend)
+Appending PTS=2
+EVENT(updateend)
+Appending PTS=3
+EVENT(updateend)
+Appending PTS=4
+EVENT(updateend)
+Appending PTS=5
+EVENT(updateend)
+Appending PTS=6
+EVENT(updateend)
+Appending PTS=7
+EVENT(updateend)
+Appending PTS=8
+EVENT(updateend)
+Appending PTS=9
+EVENT(updateend)
+Appending PTS=10
+EVENT(updateend)
+Appending PTS=11
+EVENT(updateend)
+EXPECTED (exception != 'QuotaExceededError: The quota has been exceeded.') OK
+bufferedRanges()=[ 0...12 ]
+video.currentTime=46
+Appending PTS=46
+EVENT(updateend)
+Appending PTS=47
+EVENT(updateend)
+EXPECTED (exception != 'QuotaExceededError: The quota has been exceeded.') OK
+bufferedRanges()=[ 0...12, 46...48 ]
+video.currentTime=13
+Appending PTS=13
+EVENT(updateend)
+Appending PTS=14
+EVENT(updateend)
+Appending PTS=15
+EVENT(updateend)
+Appending PTS=16
+EVENT(updateend)
+Appending PTS=17
+EVENT(updateend)
+Appending PTS=18
+EVENT(updateend)
+Appending PTS=19
+EVENT(updateend)
+Appending PTS=20
+EVENT(updateend)
+Appending PTS=21
+EVENT(updateend)
+Appending PTS=22
+EVENT(updateend)
+Appending PTS=23
+EVENT(updateend)
+Appending PTS=24
+EVENT(updateend)
+Appending PTS=25
+EVENT(updateend)
+Appending PTS=26
+EVENT(updateend)
+Appending PTS=27
+EVENT(updateend)
+Appending PTS=28
+EVENT(updateend)
+Appending PTS=29
+EVENT(updateend)
+Appending PTS=30
+EVENT(updateend)
+Appending PTS=31
+EVENT(updateend)
+Appending PTS=32
+EVENT(updateend)
+Appending PTS=33
+EVENT(updateend)
+Appending PTS=34
+EVENT(updateend)
+Appending PTS=35
+EVENT(updateend)
+Appending PTS=36
+EVENT(updateend)
+Appending PTS=37
+EVENT(updateend)
+Appending PTS=38
+EVENT(updateend)
+Appending PTS=39
+EVENT(updateend)
+Appending PTS=40
+EVENT(updateend)
+Appending PTS=41
+EVENT(updateend)
+Appending PTS=42
+EVENT(updateend)
+Appending PTS=43
+EVENT(updateend)
+Appending PTS=44
+EVENT(updateend)
+Appending PTS=45
+EVENT(updateend)
+EXPECTED (exception != 'QuotaExceededError: The quota has been exceeded.') OK
+bufferedRanges()=[ 0...12, 13...46 ]
+END OF TEST
+

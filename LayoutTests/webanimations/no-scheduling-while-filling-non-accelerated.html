@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+#target {
+    width: 100px;
+    height: 100px;
+    background-color: black;
+}
+
+</style>
+</head>
+<body>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<div id="target"></div>
+<script>
+
+function waitNFrames(numberOfFrames, continuation)
+{
+    let elapsedFrames = 0;
+    (function rAFCallback() {
+        if (elapsedFrames++ >= numberOfFrames)
+            continuation();
+        else
+            requestAnimationFrame(rAFCallback);
+    })();
+}
+
+async_test(t => {
+    const keyframes = { marginLeft: ["50px", "100px"] };
+    const timing = { duration: 50, fill: "forwards" };
+    document.getElementById("target").animate(keyframes, timing).addEventListener("finish", event => {
+        const numberOfTimelineInvalidationsWhenFinished = internals.numberOfAnimationTimelineInvalidations();
+        waitNFrames(2, () => {
+            assert_equals(internals.numberOfAnimationTimelineInvalidations(), numberOfTimelineInvalidationsWhenFinished);
+            t.done();
+        });
+    });
+}, "There should not be any updates made to the timeline after a forward-filling animation completes.");
+
+</script>
+</body>
+</html>

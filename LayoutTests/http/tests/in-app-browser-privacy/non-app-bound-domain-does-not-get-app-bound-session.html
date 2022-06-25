@@ -1,0 +1,32 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableInAppBrowserPrivacy=true applicationBundleIdentifier=inAppBrowserPrivacyTestIdentifier ] -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="/resourceLoadStatistics/resources/util.js"></script>
+</head>
+<body onload="runTest()">
+<script>
+    description("Tests that a non-app-bound domain does not have an app-bound session.");
+    jsTestIsAsync = true;
+
+    function runTest() {
+        if (document.location.hash == "") {
+            // Clear the app bound session that will be present before a navigation occurs.
+            testRunner.clearAppBoundSession();
+            // Load this test again with a random dummy value to avoid caching.
+            document.location.href = "http://127.0.0.1:8000/in-app-browser-privacy/non-app-bound-domain-does-not-get-app-bound-session.html?dummyParam=" + Math.random() + "#step1";
+        } else {
+            if (testRunner.hasAppBoundSession()) {
+                testFailed("Origin started with app-bound session.");
+                finishJSTest();
+            } else {
+                testPassed("Origin has non-app-bound session.");
+                finishJSTest();
+            }
+        }
+    }
+
+</script>
+</body>
+</html>

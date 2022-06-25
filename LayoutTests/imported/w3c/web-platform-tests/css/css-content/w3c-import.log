@@ -1,0 +1,105 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/attr-case-insensitive-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/attr-case-insensitive.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/computed-value.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/element-replacement-alt-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/element-replacement-alt.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/element-replacement-display-contents-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/element-replacement-display-contents.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/element-replacement-display-none-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/element-replacement-display-none.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/element-replacement-dynamic-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/element-replacement-dynamic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/element-replacement-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/element-replacement-image-alt-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/element-replacement-image-alt.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/element-replacement-on-replaced-element.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/element-replacement-on-replaced-element.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/element-replacement.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/inheritance.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/pseudo-element-inline-box-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/pseudo-element-inline-box.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-005-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-006-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-007-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-007.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-008-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-009-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-009.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-010-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-010.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-011-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-011.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-012-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-012.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-013-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-013.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-014-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-014.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-015-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-015.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-016-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-016.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-017-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-017.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-018-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-018.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-019-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-019.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-020-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-020.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-021-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-021.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-022-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-022.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-023-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-023.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-024-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-024.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-025-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-025.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-026-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-026.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-027-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-027.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-028-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-028.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-029-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-029.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-030-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-030.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-031-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-031.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-032-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-032.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-033-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-033.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-034-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-content/quotes-034.html

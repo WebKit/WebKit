@@ -1,0 +1,45 @@
+<script src="/js-test-resources/js-test-pre.js"></script>
+<script src="resources/cache-test.js"></script>
+<body>
+<script>
+
+var tests =
+[
+ { responseHeaders: {'Cache-control': 'max-age=0' }, body: "unique", delay: 1 },
+ { responseHeaders: {'Cache-control': 'max-age=100' }, body: "unique", delay: 1 },
+ { responseHeaders: {'Cache-control': 'max-age=0', 'ETag': 'match' }, body: "unique", delay: 1 },
+];
+
+description("Test that canceled network loads don't leave behind stale cache entries");
+
+debug("running " + tests.length + " tests");
+debug("");
+
+function runTests(tests)
+{
+    debug("Warming cache");
+    internals.setOverrideCachePolicy("ReloadIgnoringCacheData");
+    loadResources(tests, function () {
+        debug("Starting loads, then canceling");
+        loadResources(tests, function (ev) {
+            debug("Loading again with back navigation cache policy");
+            internals.setOverrideCachePolicy("ReturnCacheDataElseLoad");
+            loadResources(tests, function (ev) {
+                printResults(tests);
+                finishJSTest();
+            });
+        });
+
+        setTimeout(function () {
+            for (var i = 0; i < tests.length; ++i) {
+                var test = tests[i];
+                test.xhr.abort();
+            }
+        }, 200);
+    });
+}
+
+runTests(tests);
+
+</script>
+<script src="/js-test-resources/js-test-post.js"></script>

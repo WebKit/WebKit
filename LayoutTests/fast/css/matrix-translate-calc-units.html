@@ -1,0 +1,11 @@
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+  description("Verify invalid DOMMatrix strings throw, and more importantly don't crash");
+  shouldThrow("new DOMMatrix('translate(min(0em))')");
+  shouldThrow("new DOMMatrix('translateX(max(0ex))')");
+  shouldThrow("new DOMMatrix('translateY(calc(0ch))')");
+  shouldThrow("new DOMMatrix('translateZ(calc(11ic))')");
+  shouldThrow("new DOMMatrix('translateZ(calc(123lh))')");
+  shouldNotThrow("new DOMMatrix('translate(max(123px))')");
+</script>
+<script src="../../resources/js-test-post.js"></script>

@@ -1,0 +1,3 @@
+
+PASS Check that a securitypolicyviolation event is fired
+

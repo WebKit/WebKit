@@ -1,0 +1,245 @@
+#!/usr/bin/env perl
+
+# Copyright (C) 2007 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer. 
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution. 
+# 3.  Neither the name of Apple Inc. ("Apple") nor the names of
+#     its contributors may be used to endorse or promote products derived
+#     from this software without specific prior written permission. 
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Script to run the Mac OS X leaks tool with more expressive '-exclude' lists.
+
+use strict;
+use warnings;
+
+use File::Basename;
+use Getopt::Long;
+
+sub runLeaks($$);
+sub parseLeaksOutput(\@);
+sub removeMatchingRecords(\@$\@);
+sub reportError($);
+
+sub main()
+{
+    # Read options.
+    my $usage =
+        "Usage: " . basename($0) . " [options] pid | executable name\n" .
+        "  --exclude-callstack regexp   Exclude leaks whose call stacks match the regular expression 'regexp'.\n" .
+        "  --exclude-type regexp        Exclude leaks whose data types match the regular expression 'regexp'.\n" .
+        "  --output-file path           Store result in a file. If not specified, standard output is used.\n" .
+        "  --memgraph-file path         Store memgraph in a file.\n" .
+        "  --help                       Show this help message.\n";
+
+    my @callStacksToExclude = ();
+    my @typesToExclude = ();
+    my $outputPath;
+    my $memgraphPath;
+    my $help = 0;
+
+    my $getOptionsResult = GetOptions(
+        'exclude-callstack:s' => \@callStacksToExclude,
+        'exclude-type:s' => \@typesToExclude,
+        'output-file:s' => \$outputPath,
+        'memgraph-file:s' => \$memgraphPath,
+        'help' => \$help
+    );
+    my $pidOrExecutableName = $ARGV[0];
+
+    if (!$getOptionsResult || $help) {
+        print STDERR $usage;
+        return 1;
+    }
+
+    if (!$pidOrExecutableName) {
+        reportError("Missing argument: pid | executable.");
+        print STDERR $usage;
+        return 1;
+    }
+
+    # Run leaks tool.
+    my $leaksOutput = runLeaks($pidOrExecutableName, $memgraphPath);
+    if (!$leaksOutput) {
+        return 1;
+    }
+
+    my $parsedOutput = parseLeaksOutput(@$leaksOutput);
+    if (!$parsedOutput) {
+        return 1;
+    }
+
+    # Filter output.
+    # FIXME: Adjust the overall leak count in the output accordingly. This will affect callers, notably leakdetector.py.
+    my $parsedLineCount = @$parsedOutput;
+    removeMatchingRecords(@$parsedOutput, "callStack", @callStacksToExclude);
+    removeMatchingRecords(@$parsedOutput, "type", @typesToExclude);
+    my $excludeCount = $parsedLineCount - @$parsedOutput;
+
+    my $outputFH;
+    if (defined $outputPath) {
+        open($outputFH , '>', $outputPath) or die "Could not open $outputPath for writing";
+    } else {
+        $outputFH = *STDOUT;
+    }
+
+    foreach my $leak (@$parsedOutput) {
+        print $outputFH $leak->{"leaksOutput"};
+    }
+
+    if ($excludeCount) {
+        print $outputFH "$excludeCount leaks excluded (not printed)\n";
+    }
+
+    return 0;
+}
+
+exit(main());
+
+# Returns the output of the leaks tool in list form.
+sub runLeaks($$)
+{
+    my ($target, $memgraphPath) = @_;
+
+    if (defined $memgraphPath) {
+        `/usr/bin/leaks \"$target\" --outputGraph=\"$memgraphPath\"`;
+        $target = $memgraphPath;
+    }
+
+    # To get a result we can parse, we need to pass --list to all versions of the leaks tool
+    # that recognize it, but there is no certain way to tell in advance (the version of the
+    # tool is not always tied to OS version, and --help doesn't document the option in some
+    # of the tool versions where it's supported and needed).
+    my @leaksOutput = `/usr/bin/leaks \"$target\" --list`;
+
+    # FIXME: Remove the fallback once macOS Mojave is the oldest supported version.
+    my $leaksExitCode = $? >> 8;
+    if ($leaksExitCode > 1) {
+        @leaksOutput = `/usr/bin/leaks \"$target\"`;
+    }
+
+    return \@leaksOutput;
+}
+
+# Returns a list of hash references with the keys { address, size, type, callStack, leaksOutput }
+sub parseLeaksOutput(\@)
+{
+    my ($leaksOutput) = @_;
+
+    # Format:
+    #   Process 00000: 1234 nodes malloced for 1234 KB
+    #   Process 00000: XX leaks for XXX total leaked bytes.    
+    #   Leak: 0x00000000 size=1234 [instance of 'blah']
+    #       0x00000000 0x00000000 0x00000000 0x00000000 a..d.e.e
+    #       ...
+    #       Call stack: leak_caller() | leak() | malloc
+    #
+    #   We treat every line except for  Process 00000: and Leak: as optional
+
+    my $leakCount;
+    my @parsedOutput = ();
+    my $parsingLeak = 0;
+    my $parsedLeakCount = 0;
+    for my $line (@$leaksOutput) {
+        if ($line =~ /^Process \d+: (\d+) leaks?/) {
+            $leakCount = $1;
+        }
+
+        if ($line eq "\n") {
+            $parsingLeak = 0;
+        }
+
+        if ($line =~ /^Leak: /) {
+            $parsingLeak = 1;
+            $parsedLeakCount++;
+            my ($address) = ($line =~ /Leak: ([[:xdigit:]x]+)/);
+            if (!defined($address)) {
+                reportError("Could not parse Leak address.");
+                return;
+            }
+
+            my ($size) = ($line =~ /size=([[:digit:]]+)/);
+            if (!defined($size)) {
+                reportError("Could not parse Leak size.");
+                return;
+            }
+
+            # FIXME: This code seems wrong, the leaks tool doesn't actually use single quotes.
+            # We should reconcile with other format changes that happened since, such as the
+            # addition of zone information.
+            my ($type) = ($line =~ /'([^']+)'/); #'
+            if (!defined($type)) {
+                $type = ""; # The leaks tool sometimes omits the type.
+            }
+
+            my %leak = (
+                "address" => $address,
+                "size" => $size,
+                "type" => $type,
+                "callStack" => "", # The leaks tool sometimes omits the call stack.
+                "leaksOutput" => $line
+            );
+            push(@parsedOutput, \%leak);
+        } elsif ($parsingLeak) {
+            $parsedOutput[$#parsedOutput]->{"leaksOutput"} .= $line;
+            if ($line =~ /Call stack:/) {
+                $parsedOutput[$#parsedOutput]->{"callStack"} = $line;
+            }
+        } else {
+            my %nonLeakLine = (
+                "leaksOutput" => $line
+            );
+            push(@parsedOutput, \%nonLeakLine);
+        }
+    }
+    
+    if ($parsedLeakCount != $leakCount) {
+        reportError("Parsed leak count ($parsedLeakCount) does not match leak count reported by leaks tool ($leakCount).");
+        return;
+    }
+
+    return \@parsedOutput;
+}
+
+sub removeMatchingRecords(\@$\@)
+{
+    my ($recordList, $key, $regexpList) = @_;
+    
+    RECORD: for (my $i = 0; $i < @$recordList;) {
+        my $record = $recordList->[$i];
+
+        foreach my $regexp (@$regexpList) {
+            if (defined $record->{$key} and $record->{$key} =~ $regexp) {
+                splice(@$recordList, $i, 1);
+                next RECORD;
+            }
+        }
+        
+        $i++;
+    }
+}
+
+sub reportError($)
+{
+    my ($errorMessage) = @_;
+    
+    print STDERR basename($0) . ": $errorMessage\n";
+}

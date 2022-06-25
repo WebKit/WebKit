@@ -1,0 +1,120 @@
+This test ensures elements with CSS display: contents have the correct role.
+
+<a href="https://apple.com" id="link" class="testcase"></a>
+    WebCoreLink
+
+<article class="testcase" id="article"></article>
+    DocumentArticle
+
+<aside class="testcase" id="aside"></aside>
+    LandmarkComplementary
+
+<blockquote class="testcase" id="blockquote"></blockquote>
+    Blockquote
+
+<button class="testcase" id="button"></button>
+    Button
+
+<code class="testcase" id="code"></code>
+    TextGroup
+
+<del class="testcase" id="del"></del>
+    Deletion
+
+<details class="testcase" id="details"></details>
+    Details
+
+<summary class="testcase" id="summary"></summary>
+    Summary
+
+<dfn class="testcase" id="dfn"></dfn>
+    Definition
+
+<div class="testcase" id="div"></div>
+    Div
+
+<dl class="testcase" id="dl"></dl>
+    DescriptionList
+
+<dt class="testcase" id="dt"></dt>
+    DescriptionListTerm
+
+<dd class="testcase" id="dd"></dd>
+    DescriptionListDetail
+
+<legend class="testcase" id="legend"></legend>
+    Legend
+
+<figure class="testcase" id="figure"></figure>
+    Figure
+
+<form class="testcase" id="form"></form>
+    Form
+
+<h2 class="testcase" id="h2"></h2>
+    Heading
+
+<hr class="testcase" id="hr">
+    HorizontalRule
+
+<ins class="testcase" id="ins"></ins>
+    Insertion
+
+<label class="testcase" id="label"></label>
+    Label
+
+<main class="testcase" id="main"></main>
+    LandmarkMain
+
+<mark class="testcase" id="mark"></mark>
+    Mark
+
+<menu class="testcase" type="toolbar" id="menu-toolbar"></menu>
+    Toolbar
+
+<nav class="testcase" id="nav"></nav>
+    LandmarkNavigation
+
+<ol class="testcase" id="ol"></ol>
+    List
+
+<li class="testcase" id="ol-li-element"></li>
+    ListItem
+
+<output class="testcase" id="output"></output>
+    ApplicationStatus
+
+<p class="testcase" id="p"></p>
+    Paragraph
+
+<pre class="testcase" id="pre"></pre>
+    TextGroup
+
+<section class="testcase" id="section-with-name" aria-label="Section name"></section>
+    LandmarkRegion
+
+<section class="testcase" id="section-without-name"></section>
+    TextGroup
+
+<sub class="testcase" id="sub"></sub>
+    Subscript
+
+<sup class="testcase" id="sup"></sup>
+    Superscript
+
+<time class="testcase" id="time"></time>
+    Time
+
+<ul class="testcase" id="ul"></ul>
+    List
+
+<li class="testcase" id="ul-li-element"></li>
+    ListItem
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+

@@ -1,0 +1,17 @@
+This tests text descendants of modal dialog are accessible.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS backgroundAccessible() is false
+FAIL text.isIgnored should be false. Threw exception TypeError: null is not an object (evaluating 'text.isIgnored')
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Other page content with a dummy focusable element
+
+Display a dialog
+
+Just an example.
+
+text

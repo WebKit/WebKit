@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<script>
+function run() {
+    const contexts = [];
+    for (let i = 0; i < 50; i++) {
+        const c = document.createElement("canvas");
+        const ctx = c.getContext("webgl");
+        ctx.clearColor(0, 1, 0, 1);
+        ctx.clear(ctx.COLOR_BUFFER_BIT);
+        contexts.push(ctx);
+    }
+    contexts.forEach(ctx => {
+        ctx.getError();
+        ctx.getError();
+        ctx.getError();
+        ctx.getError();
+    });
+}
+
+window.addEventListener("load", run, false);
+</script>
+<h1>Should not crash</h1>

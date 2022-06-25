@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/storage-utilities.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("DOMStorage.clearDOMStorageItems");
+
+    suite.addTestCase({
+        name: "DOMStorage.clearDOMStorageItems.Session",
+        description: "Test that DOMStorage.clearDOMStorageItems works with Session storage.",
+        async test() {
+            let sessionStorage = WI.domStorageManager.domStorageObjects.find((x) => !x.isLocalStorage());
+            InspectorTest.expectThat(sessionStorage, "Should have a DOMStorageObject for sessionStorage.");
+
+            await InspectorTest.Storage.logEntries(sessionStorage);
+
+            InspectorTest.log("Clearing storage...");
+            await sessionStorage.clear();
+
+            await InspectorTest.Storage.logEntries(sessionStorage);
+        },
+    });
+
+    suite.addTestCase({
+        name: "DOMStorage.clearDOMStorageItems.Local",
+        description: "Test that DOMStorage.clearDOMStorageItems works with Local storage.",
+        async test() {
+            let localStorage = WI.domStorageManager.domStorageObjects.find((x) => x.isLocalStorage());
+            InspectorTest.expectThat(localStorage, "Should have a DOMStorageObject for localStorage.");
+
+            await InspectorTest.Storage.logEntries(localStorage);
+
+            InspectorTest.log("Clearing storage...");
+            await localStorage.clear();
+
+            await InspectorTest.Storage.logEntries(localStorage);
+        },
+    });
+
+    InspectorTest.evaluateInPage("clearStorages()", () => {
+        suite.runTestCasesAndFinish();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for DOMStorage.clearDOMStorageItems.</p>
+</body>
+</html>

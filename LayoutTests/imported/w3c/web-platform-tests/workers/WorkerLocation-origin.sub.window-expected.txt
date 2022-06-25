@@ -1,0 +1,6 @@
+Blocked access to external URL http://xn--n8j6ds53lwwkrqhv28a.localhost:8800/workers/support/WorkerLocation-origin.html
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT workerLocation.origin must use ASCII code points Test timed out
+

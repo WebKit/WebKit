@@ -1,0 +1,31 @@
+<html>
+<head>
+<script src=../editing.js language="JavaScript" type="text/JavaScript"></script>
+<script>
+function log(message) {
+    var console = document.getElementById("console");
+    var li = document.createElement("li");
+    var text = document.createTextNode(message);
+    li.appendChild(text);
+    console.appendChild(li);
+}
+
+function editingTest() {
+    insertImageCommand("../resources/abe.png");
+    insertImageCommand("../resources/do-not-name-an-image-this.jpg");
+}
+</script>
+</head>
+
+<body>
+<p>This is a test of execCommand(InsertImage, ...).  The first test passes execCommand a path to a valid image, the second passes execCommand a path where no image should exist.</p>
+
+<div id="test" contenteditable="true"></div>
+<ul id="console"></ul>
+<script>
+runEditingTest();
+</script>
+
+</body>
+
+</html>

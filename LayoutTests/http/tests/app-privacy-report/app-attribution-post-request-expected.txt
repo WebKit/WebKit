@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: PASS successfully loaded only app initiated requests
+Tests app initiated requests get marked for POST requests.
+
+

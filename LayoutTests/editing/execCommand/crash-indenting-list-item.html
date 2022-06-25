@@ -1,0 +1,8 @@
+<div contentEditable><ul><li id='foo'></li></ul></div>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+window.getSelection().setBaseAndExtent(foo, 0, foo, 0);
+// This test passes if it does not crash.
+document.execCommand('indent', false, null);
+document.getElementById("foo").innerText = "PASSED";
+</script>

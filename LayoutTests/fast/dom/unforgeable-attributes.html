@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Checks that [Unforgeable] attributes are non-configurable and on the instance rather than the prototype.");
+
+function testProperty(object, propertyName)
+{
+    testObject = object;
+    testPropertyName = propertyName;
+
+    if (testObject[propertyName] === undefined) {
+        testFailed("Unsupported property.");
+        return;
+    }
+
+    shouldBeTrue("testObject.hasOwnProperty(testPropertyName)");
+    shouldBeFalse("testObject.__proto__.hasOwnProperty(testPropertyName)");
+    shouldThrow("Object.defineProperty(testObject, testPropertyName, { value: 'test' })");
+    shouldBeFalse("Object.getOwnPropertyDescriptor(testObject, testPropertyName).configurable");
+}
+
+// DOM specification.
+debug("Event.isTrusted");
+var event = new Event("test");
+testProperty(event, "isTrusted");
+
+// HTML specification.
+debug("");
+debug("Document.location");
+testProperty(document, "location");
+
+for (var property of ["window", "document", "location", "top"]) {
+    debug("");
+    debug("Window." + property);
+    testProperty(window, property);
+}
+
+for (var property of ["ancestorOrigins", "href", "origin", "protocol", "username", "password", "host", "hostname", "port", "pathname", "search", "hash"]) {
+    debug("");
+    debug("Location." + property);
+    testProperty(window.location, property);
+}
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

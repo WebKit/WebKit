@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	</head>
+	<body>
+		This test makes sure that text-orientation: sideways is treated the same as text-orientation: sideways-right.
+		<div id="placeholder"></div>
+		<div style="text-orientation: upright;">
+			<div id="t" style="-webkit-writing-mode: vertical-rl; -webkit-text-orientation: sideways;">苹果公司 abcd  
+				<div>
+					你好 Hello World!   
+				</div>	
+			</div>
+			<div id="t" style="-webkit-writing-mode: vertical-rl; -webkit-text-orientation: mixed;">苹果公司 abcd  
+				<div>
+					你好 Hello World!   
+				</div>	
+			</div>
+			<div id="t" style="-webkit-writing-mode: vertical-rl; -webkit-text-orientation: upright;">苹果公司 abcd  
+				<div>
+					你好 Hello World!
+				</div>	
+			</div>
+		</div>
+	</body>
+</html>

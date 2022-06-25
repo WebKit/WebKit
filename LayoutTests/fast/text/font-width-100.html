@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+    font-family: "MyFont";
+    src: local("Helvetica");
+    font-stretch: 120%;
+}
+@font-face {
+    font-family: "MyFont";
+    src: local("Times");
+    font-stretch: 80%;
+}
+</style>
+</head>
+<body>
+This test makes sure that "font-stretch: 100%" selects fonts which are condensed
+rather than expanded. The test passes if the text below is in Times.
+<div style="font-family: 'MyFont'; font-size: 100px; font-stretch: 100%">Hello</div>
+</body>
+</html>

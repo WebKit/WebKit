@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>video track created with getDisplayMedia should return correct settings</title>
+        <script src="../../resources/testharness.js"></script>
+        <script src="../../resources/testharnessreport.js"></script>
+        <script src="resources/getDisplayMedia-utils.js"></script>
+    </head>
+    <body>
+
+        <script>
+            promise_test(async () => {
+                stream = await callGetDisplayMedia({ video: true });
+                const settings = stream.getVideoTracks()[0].getSettings();
+
+                assert_equals(settings.height, 1080);
+                assert_equals(settings.width, 1920);
+                assert_equals(settings.frameRate, 30);
+                assert_true(typeof settings.deviceId === 'string', true);
+
+            }, "check settings");
+
+        </script>
+    </body>
+</html>

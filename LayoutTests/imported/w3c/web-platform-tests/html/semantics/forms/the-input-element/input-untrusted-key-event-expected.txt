@@ -1,0 +1,47 @@
+
+PASS Dipatching untrusted keypress events to input button should not cause form submission or click event
+PASS Dipatching untrusted keyup/keydown event to input button should not cause form submission or click event
+PASS Dipatching untrusted keypress events to input checkbox should not cause form submission or click event
+PASS Dipatching untrusted keyup/keydown event to input checkbox should not cause form submission or click event
+PASS Dipatching untrusted keypress events to input color should not cause form submission or click event
+PASS Dipatching untrusted keyup/keydown event to input color should not cause form submission or click event
+PASS Dipatching untrusted keypress events to input date should not cause form submission or click event
+PASS Dipatching untrusted keyup/keydown event to input date should not cause form submission or click event
+PASS Dipatching untrusted keypress events to input datetime-local should not cause form submission or click event
+PASS Dipatching untrusted keyup/keydown event to input datetime-local should not cause form submission or click event
+PASS Dipatching untrusted keypress events to input email should not cause form submission or click event
+PASS Dipatching untrusted keyup/keydown event to input email should not cause form submission or click event
+PASS Dipatching untrusted keypress events to input file should not cause form submission or click event
+PASS Dipatching untrusted keyup/keydown event to input file should not cause form submission or click event
+PASS Dipatching untrusted keypress events to input hidden should not cause form submission or click event
+PASS Dipatching untrusted keyup/keydown event to input hidden should not cause form submission or click event
+PASS Dipatching untrusted keypress events to input image should not cause form submission or click event
+PASS Dipatching untrusted keyup/keydown event to input image should not cause form submission or click event
+PASS Dipatching untrusted keypress events to input month should not cause form submission or click event
+PASS Dipatching untrusted keyup/keydown event to input month should not cause form submission or click event
+PASS Dipatching untrusted keypress events to input number should not cause form submission or click event
+PASS Dipatching untrusted keyup/keydown event to input number should not cause form submission or click event
+PASS Dipatching untrusted keypress events to input password should not cause form submission or click event
+PASS Dipatching untrusted keyup/keydown event to input password should not cause form submission or click event
+PASS Dipatching untrusted keypress events to input radio should not cause form submission or click event
+PASS Dipatching untrusted keyup/keydown event to input radio should not cause form submission or click event
+PASS Dipatching untrusted keypress events to input range should not cause form submission or click event
+PASS Dipatching untrusted keyup/keydown event to input range should not cause form submission or click event
+PASS Dipatching untrusted keypress events to input reset should not cause form submission or click event
+PASS Dipatching untrusted keyup/keydown event to input reset should not cause form submission or click event
+PASS Dipatching untrusted keypress events to input search should not cause form submission or click event
+PASS Dipatching untrusted keyup/keydown event to input search should not cause form submission or click event
+PASS Dipatching untrusted keypress events to input submit should not cause form submission or click event
+PASS Dipatching untrusted keyup/keydown event to input submit should not cause form submission or click event
+PASS Dipatching untrusted keypress events to input tel should not cause form submission or click event
+PASS Dipatching untrusted keyup/keydown event to input tel should not cause form submission or click event
+PASS Dipatching untrusted keypress events to input text should not cause form submission or click event
+PASS Dipatching untrusted keyup/keydown event to input text should not cause form submission or click event
+PASS Dipatching untrusted keypress events to input time should not cause form submission or click event
+PASS Dipatching untrusted keyup/keydown event to input time should not cause form submission or click event
+PASS Dipatching untrusted keypress events to input url should not cause form submission or click event
+PASS Dipatching untrusted keyup/keydown event to input url should not cause form submission or click event
+PASS Dipatching untrusted keypress events to input week should not cause form submission or click event
+PASS Dipatching untrusted keyup/keydown event to input week should not cause form submission or click event
+
+

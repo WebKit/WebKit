@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<body style="width: 2000px; height: 2000px;">
+<script src="../../resources/js-test.js"></script>
+<script>
+
+description('Tests that scroll event on visualViewport fires after resize event in a subframe. To manually test, pinch zoom.');
+
+const jsTestIsAsync = true;
+
+const iframe = document.createElement('iframe');
+document.body.appendChild(iframe);
+iframe.contentDocument.body.innerHTML = '<span>hi</span>';
+        
+async function zoom() {
+    if (!window.testRunner) {
+        return new Promise((resolve) => {
+            window.visualViewport.addEventListener('resize', resolve);
+        });
+    }
+
+    return new Promise((resolve) => {
+        testRunner.runUIScript(`(function() {
+            uiController.zoomToScale(${pageScaleFactor}, function() {
+                uiController.uiScriptComplete(uiController.zoomScale);
+            });
+        })();`, resolve);
+    });
+}
+
+const events = [];
+
+window.onload = async function () {
+    requestAnimationFrame(async () => {
+        await zoom();
+
+        iframe.contentWindow.addEventListener('resize', () => {
+            events.push('resize');
+        });
+        window.visualViewport.addEventListener('scroll', () => {
+            events.push('scroll');
+        });
+        window.scrollTo(1000, 1000);
+
+        iframe.style.width = '100px';
+        iframe.style.height = '100px';
+        window.rect = iframe.contentDocument.querySelector('span').getBoundingClientRect();
+
+        requestAnimationFrame(() => {
+            shouldBeEqualToString('events.join(", ")', 'resize, scroll');
+        });
+    });
+};
+
+</script>
+</body>
+</html>

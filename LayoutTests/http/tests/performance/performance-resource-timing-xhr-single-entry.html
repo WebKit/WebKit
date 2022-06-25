@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText()
+        testRunner.waitUntilDone();
+    }
+</script>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+    var foundResource = 0;
+    var initiator;
+    var runTest = function() {
+        var resources = performance.getEntriesByType('resource');
+        for (var i = 0; i < resources.length; ++i) {
+            if (resources[i].name.indexOf("square") != -1) {
+                ++foundResource;
+                initiator = resources[i].initiatorType;
+            }
+        };
+        shouldBe("foundResource", "1");
+        shouldBeEqualToString("initiator", "xmlhttprequest");
+        if (window.testRunner)
+            testRunner.notifyDone();
+    };
+    var xhr = new XMLHttpRequest();
+    xhr.addEventListener("load", function() {
+        setTimeout(runTest, 0);
+    });
+    xhr.open("GET", "../../resources/square100.png");
+    xhr.send();
+</script>
+</body>
+</html>

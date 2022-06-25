@@ -1,0 +1,30 @@
+Verifies that calling the indexing operator on WebGLArrays with out-of-range indices returns undefined.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Regression test for https://bugs.webkit.org/show_bug.cgi?id=38039
+PASS webGLArray[2] is undefined.
+PASS webGLArray[-1] is undefined.
+PASS webGLArray[0x20000000] is undefined.
+PASS webGLArray[2] is undefined.
+PASS webGLArray[-1] is undefined.
+PASS webGLArray[0x20000000] is undefined.
+PASS webGLArray[2] is undefined.
+PASS webGLArray[-1] is undefined.
+PASS webGLArray[0x20000000] is undefined.
+PASS webGLArray[2] is undefined.
+PASS webGLArray[-1] is undefined.
+PASS webGLArray[0x20000000] is undefined.
+PASS webGLArray[2] is undefined.
+PASS webGLArray[-1] is undefined.
+PASS webGLArray[0x20000000] is undefined.
+PASS webGLArray[2] is undefined.
+PASS webGLArray[-1] is undefined.
+PASS webGLArray[0x20000000] is undefined.
+PASS webGLArray[2] is undefined.
+PASS webGLArray[-1] is undefined.
+PASS webGLArray[0x20000000] is undefined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

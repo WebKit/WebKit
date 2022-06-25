@@ -1,0 +1,24 @@
+PASS content.querySelector('div ul li SPAN') is document.getElementById('upper1')
+PASS document.getElementById('upper1').webkitMatchesSelector('div ul li SPAN') is true
+PASS content.querySelector('div ul li textarea + SPAN') is document.getElementById('upper1')
+PASS document.getElementById('upper1').webkitMatchesSelector('div ul li textarea + SPAN') is true
+PASS content.querySelector('div ul li span') is null
+PASS content.querySelector('div ul li spAn') is null
+PASS content.querySelector('DIV ul li span') is null
+PASS content.querySelector('div UL li span') is null
+PASS content.querySelector('unknownTag') is document.getElementById('unknownTag1')
+PASS document.getElementById('unknownTag1').webkitMatchesSelector('unknownTag') is true
+PASS content.querySelector('div unknownTag') is document.getElementById('unknownTag1')
+PASS document.getElementById('unknownTag1').webkitMatchesSelector('div unknownTag') is true
+PASS content.querySelector('ul + unknownTag') is document.getElementById('unknownTag1')
+PASS document.getElementById('unknownTag1').webkitMatchesSelector('ul + unknownTag') is true
+PASS content.querySelector('DIV unknownTag') is null
+PASS content.querySelector('UL + unknownTag') is null
+PASS content.querySelector('unknownTag1') is null
+PASS content.querySelector('unknowntag') is null
+PASS content.querySelector('Unknowntag') is null
+PASS content.querySelector('div unknowntag') is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

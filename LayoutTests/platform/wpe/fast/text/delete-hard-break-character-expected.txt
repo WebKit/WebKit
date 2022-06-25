@@ -1,0 +1,23 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 53x17
+          text run at (0,0) width 53: "Test for "
+        RenderInline {I} at (0,0) size 670x35
+          RenderInline {A} at (0,0) size 301x17 [color=#0000EE]
+            RenderText {#text} at (53,0) size 301x17
+              text run at (53,0) width 301: "http://bugs.webkit.org/show_bug.cgi?id=10144"
+          RenderText {#text} at (354,0) size 670x35
+            text run at (354,0) width 4: " "
+            text run at (358,0) width 312: "REGRESSION: Reproducible assertion failure in"
+            text run at (0,18) width 288: "DeleteSelectionCommand::fixupWhitespace()"
+        RenderText {#text} at (288,18) size 4x17
+          text run at (288,18) width 4: "."
+      RenderBlock {DIV} at (0,52) size 784x100
+        RenderText {#text} at (0,0) size 0x17
+          text run at (0,0) width 0: " "
+        RenderBR {BR} at (0,18) size 0x17
+caret: position 0 of child 1 {BR} of child 3 {DIV} of body

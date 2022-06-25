@@ -1,0 +1,24 @@
+<!--
+  A variation on reset-6.svg but this time since the animation has an end
+  specification the second interval SHOULD be deleted.
+ -->
+<svg xmlns="http://www.w3.org/2000/svg"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  onload="addInstanceTimes()">
+  <script type="text/ecmascript"><![CDATA[
+    function addInstanceTimes() {
+      var svg = document.documentElement;
+      svg.pauseAnimations();
+      svg.setCurrentTime(1.5);
+      var anim = document.getElementById('anim');
+      anim.beginElementAt(1.5);
+      anim.endElementAt(2.5);
+      setTimeAndSnapshot(3.2, true);
+    }
+  ]]></script>
+  <script xlink:href="../smil-util.js" type="text/javascript"/>
+  <rect width="100" height="100" fill="green">
+    <set attributeName="fill" attributeType="CSS"
+      to="red" begin="1s" end="2s" dur="1s" fill="remove" id="anim"/>
+  </rect>
+</svg>

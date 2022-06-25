@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<ul id="tree" role="tree" aria-label="Help Topics">
+<li role="treeitem">Release Notes</li>
+<li role="presentation">  
+<span role="treeitem" aria-expanded="true">Using Search</span>
+<ul role="group" aria-label="Using Search" aria-expanded="true">
+<li role="treeitem">Power Search</li>
+</ul>
+</li>
+<li role="presentation">
+<span role="treeitem" aria-expanded="false">Common Info Area</span>
+</li>
+</ul>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that aria trees are correctly exposed when there is role='presentation' presented.");
+
+    if (window.accessibilityController) {
+    
+          // Test tree attributes.
+          var tree = accessibilityController.accessibleElementById("tree");
+          dumpAccessibilityChildren(tree, 0);
+    }
+    
+    function dumpAccessibilityChildren(element, level) {
+        if (element.stringValue.indexOf('End of test') >= 0)
+            return false;
+
+        var indent = "";
+        for (var k = 0; k < level; k++) { indent += "  "; }
+        if (element.role == "AXRole: AXRow")
+            debug(indent + element.role + " " + "level: " + element.hierarchicalLevel);
+        else
+            debug(indent + element.role + " " + element.stringValue);
+        var childrenCount = element.childrenCount;
+        for (var k = 0; k < childrenCount; k++) {
+            if (!dumpAccessibilityChildren(element.childAtIndex(k), level+1))
+                return false;
+        }
+        return true;
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

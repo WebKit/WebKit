@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: Error: boo
+
+PASS It rethrows exceptions
+

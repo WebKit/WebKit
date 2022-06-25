@@ -1,0 +1,69 @@
+# Copyright (c) 2014 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+
+rtc_library("utility") {
+  visibility = [ "*" ]
+  sources = [
+    "include/process_thread.h",
+    "source/process_thread_impl.cc",
+    "source/process_thread_impl.h",
+  ]
+
+  if (is_android) {
+    sources += [
+      "include/helpers_android.h",
+      "include/jvm_android.h",
+      "source/helpers_android.cc",
+      "source/jvm_android.cc",
+    ]
+  }
+
+  if (is_ios) {
+    frameworks = [ "AVFoundation.framework" ]
+  }
+
+  deps = [
+    "..:module_api",
+    "../../api:sequence_checker",
+    "../../api/task_queue",
+    "../../common_audio",
+    "../../rtc_base:checks",
+    "../../rtc_base:rtc_base_approved",
+    "../../rtc_base/system:arch",
+    "../../system_wrappers",
+  ]
+}
+
+rtc_library("mock_process_thread") {
+  testonly = true
+  visibility = [ "*" ]
+  sources = [ "include/mock/mock_process_thread.h" ]
+  deps = [
+    ":utility",
+    "../../rtc_base:rtc_base_approved",
+    "../../test:test_support",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_library("utility_unittests") {
+    testonly = true
+
+    sources = [ "source/process_thread_impl_unittest.cc" ]
+    deps = [
+      ":utility",
+      "..:module_api",
+      "../../api/task_queue",
+      "../../api/task_queue:task_queue_test",
+      "../../rtc_base:rtc_base_approved",
+      "../../test:test_support",
+    ]
+  }
+}

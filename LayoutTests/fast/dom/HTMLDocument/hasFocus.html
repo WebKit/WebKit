@@ -1,0 +1,83 @@
+<html>
+    <head>
+        <script>
+            var subFrameDocument;
+            function test()
+            {
+                if (window.internals)
+                    window.internals.settings.setWindowFocusRestricted(false);
+                else
+                    log("Could not lift restrictions on window.blur(), this part of the test will fail.\n")
+                if (window.testRunner) {
+                    testRunner.dumpAsText();
+                    testRunner.waitUntilDone();
+                } else {
+                    /*
+                     * Opening a separate window is only necessary for testing in Safari.
+                     * In Safari, window.blur() only blurs the current window if there's another window to focus.
+                     * In DumpRenderTree, it will just cause the window to lose focus regardless.
+                     * The popup blocker needs to be off to pass this test in Safari.
+                     */
+                    window.open("about:blank", "test");
+                    window.focus();
+                }
+                subFrameDocument = document.getElementById('subFrame').contentDocument;
+                
+                log("Focus the text field in the frame");
+                subFrameDocument.getElementById('two').focus();
+                checkFocus(true, true);
+                
+                log("\nFocus the text field in the main document");
+                document.getElementById('one').focus();
+                checkFocus(true, false);
+                
+                log("\nBlur the window");
+                window.blur();
+                checkFocus(false, false);
+                
+                log("\nFocus the window again");
+                window.focus();
+                checkFocus(true, false);
+                
+                setTimeout(doneHandler, 1);
+            }
+            function checkFocus(expectedMain, expectedSub)
+            {
+                var mainFocus = document.hasFocus();
+                var msg = "Main document.hasFocus() should be " + expectedMain;
+                if (mainFocus != expectedMain)
+                    msg = msg + " : FAIL";
+                else
+                    msg = msg + " : PASS";
+                
+                log(msg);
+
+                var subFocus = subFrameDocument.hasFocus();
+                msg = "Sub-frame document.hasFocus() should be " + expectedSub;
+                if (subFocus != expectedSub)
+                    msg = msg + " : FAIL";
+                else
+                    msg = msg + " : PASS";
+
+                log(msg);
+            }
+            
+            function doneHandler()
+            {
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }
+            function log(msg)
+            {
+                document.getElementById("console").appendChild(document.createTextNode(msg + "\n"));
+            }
+        </script>
+    </head>
+    <body onload="test()">
+        <input id="one">
+        <iframe id="subFrame" src="resources/hasFocus-iframe.html"></iframe>
+        <br>
+        <pre id="console"></pre>
+    </body>
+</html>
+

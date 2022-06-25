@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/resources/js-test-pre.js"></script>
+<div id="container">
+<style>
+    #container { position: relative; }
+    #container > div { position: relative; border: solid 1px black; width: 200px; height: 200px; }
+</style>
+<div id="source" contenteditable>
+    Drag this, <meta content="some secret"><!-- secret -->
+    <img onclick="dangerousCode()" src="resources/apple.gif"><br>
+    <iframe src="http://localhost:8000/security/clipboard/resources/content-to-copy.html" width=100 height=100></iframe>
+</div>
+<div id="destination" style="position: absolute; top: 0px; left: 220px; border-color: blue;" ondrop="doDrop(event)" contenteditable></div>
+</div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description('This tests draggin and dropping HTML by the default action. WebKit should not sanitize the HTML in the same document.<br>'
+    + 'To manually test, drag & drop the content in the block above to the blue box on the right.');
+jsTestIsAsync = true;
+
+let loadCount = 0;
+window.onmessage = (event) => {
+    if (!loadCount++)
+        runTest()
+    else
+        checkFrameAccess();
+}
+
+function runTest() {
+    document.getElementById('source').focus();
+    document.execCommand('selectAll');
+    if (window.testRunner) {
+        internals.settings.setCustomPasteboardDataEnabled(true);
+        const sourceRect = source.getBoundingClientRect();
+        const destinationRect = destination.getBoundingClientRect();
+        eventSender.mouseMoveTo(sourceRect.x + 10, sourceRect.y + 10);
+        eventSender.mouseDown();
+        eventSender.leapForward(500);
+        eventSender.mouseMoveTo(destinationRect.x + 10, destinationRect.y + 10);
+        eventSender.mouseUp();
+    }
+}
+
+function doDrop(event) {
+    shouldBeTrue('html = event.dataTransfer.getData("text/html"); html.includes("Drag this,")');
+    shouldBeTrue('destination.innerHTML = html; img = destination.querySelector("img"); !!img');
+    shouldBeEqualToString('new URL(img.src).protocol', 'http:');
+    shouldBeTrue('html.includes("http://localhost:8000/security/clipboard/resources/content-to-copy.html")');
+    shouldBeFalse('html.includes("secret")');
+    evalAndLog('destination.innerHTML = ""');
+
+    const observer = new MutationObserver((recordList) => {
+        for (const record of recordList) {
+            for (const node of record.addedNodes) {
+                if (node.nodeValue === null)
+                    continue;
+                if (node.nodeValue.includes('secret'))
+                    testFailed(`Saw secret in a node ${node}`);
+                if (node.nodeValue.includes('dangerousCode'))
+                    testFailed(`Saw dangerous code in a node ${node}`);
+            }
+        }
+    });
+    observer.observe(destination, {childList: true, subtree: true});
+}
+
+function checkFrameAccess() {
+    shouldBeEqualToString('source.innerHTML', '');
+    shouldBeTrue('destination.textContent.includes("Drag this,")');
+    shouldBeFalse('destination.innerHTML.includes("secret")');
+    shouldBeFalse('destination.innerHTML.includes("dangerousCode")');
+    shouldBeTrue('destination.querySelector("img"); !!img');
+    shouldBeEqualToString('new URL(img.src).protocol', 'http:');
+    shouldBeNull('destination.querySelector("iframe").contentDocument');
+
+    if (window.testRunner)
+        container.remove();
+    finishJSTest();
+}
+
+var successfullyParsed = true;
+
+</script>
+<script src="/resources/js-test-post.js"></script>
+</body>
+</html>

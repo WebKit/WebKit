@@ -1,0 +1,28 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (33,80) size 753x399
+      RenderSVGContainer {g} at (33,80) size 753x399
+        RenderSVGResourceClipper {clipPath} [id="clip1"] [clipPathUnits=objectBoundingBox]
+          RenderSVGRect {rect} at (0,0) size 2x3 [fill={[type=SOLID] [color=#000000]}] [x=0.25] [y=0.50] [width=0.60] [height=1.00]
+        RenderSVGRect {rect} at (195,83) size 431x67 [fill={[type=SOLID] [color=#FF0088]}] [x=10.00] [y=10.00] [width=430.00] [height=80.00]
+          [clipPath="clip1"] RenderSVGResourceClipper {clipPath} at (117.50,50) size 258x80
+        RenderSVGRect {rect} at (191,80) size 438x74 [stroke={[type=SOLID] [color=#000000] [stroke width=4.00]}] [x=117.00] [y=50.00] [width=258.00] [height=40.00]
+        RenderSVGText {text} at (20,102) size 452x35 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 452x35
+            chunk 1 text run 1 at (20.00,130.00) startOffset 0 endOffset 31 width 451.13: "clipPathUnits=objectBoundingBox"
+        RenderSVGResourceClipper {clipPath} [id="clip2"] [clipPathUnits=userSpaceOnUse]
+          RenderSVGRect {rect} at (100,100) size 134x134 [fill={[type=SOLID] [color=#000000]}] [x=60.00] [y=60.00] [width=80.00] [height=80.00]
+        RenderSVGRect {rect} at (308,262) size 142x143 [transform={m=((0.71,-0.71)(0.71,0.71)) t=(100.00,200.00)}] [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=120.00] [height=120.00]
+          [clipPath="clip2"] RenderSVGResourceClipper {clipPath} at (60,60) size 80x80
+        RenderSVGRect {rect} at (303,257) size 152x152 [transform={m=((0.71,-0.71)(0.71,0.71)) t=(100.00,200.00)}] [stroke={[type=SOLID] [color=#000000] [stroke width=4.00]}] [x=60.00] [y=60.00] [width=60.00] [height=60.00]
+        RenderSVGText {text} at (20,252) size 430x35 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 430x35
+            chunk 1 text run 1 at (20.00,280.00) startOffset 0 endOffset 28 width 429.39: "clipPathUnits=userSpaceOnUse"
+    RenderSVGContainer {g} at (16,517) size 381x62
+      RenderSVGText {text} at (10,310) size 229x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 229x37
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 228.03: "$Revision: 1.8 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

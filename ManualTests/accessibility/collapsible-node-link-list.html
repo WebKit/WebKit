@@ -1,0 +1,28 @@
+<html>
+<body>
+
+
+<p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=130911">Bug 130911: Web Inspector: AXI: node-link-list should be collapsible</a>.</p>
+<ol>
+<li>Open Accessibility Inspector.</li>
+<li>In DOM tree in the Web Inspector, click on the unordered list below.</li>
+<li>In the Accessibility Inspector, you should be able to see that 5 out of 10 nodes are showing. The remaining 5 are hidden. If you do not see this, the test fails.</li>
+<li>In the Accessibility Inspector click on "5 more&hellip;" to reveal the remaining 5 nodes.</li>
+<li>If the click on the said link does not function as described in #4, the test fails.</li>
+</ol>
+
+<ul>
+<li>Item 1</li>
+<li>Item 2</li>
+<li>Item 3</li>
+<li>Item 4</li>
+<li>Item 5</li>
+<li>Item 6</li>
+<li>Item 7</li>
+<li>Item 8</li>
+<li>Item 9</li>
+<li>Item 10</li>
+</ul>
+
+</body>
+</html>

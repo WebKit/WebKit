@@ -1,0 +1,8 @@
+Description
+
+This test validates that for a cross origin resource with different ports, the timing allow check algorithm will fail when the value of Timing-Allow-Origin value has the right host but the wrong port in it.
+
+
+PASS A port mismatch must fail the TAO check
+PASS An identical port must pass the TAO check
+

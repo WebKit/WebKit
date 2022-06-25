@@ -1,0 +1,34 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/anb-parsing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/anb-serialization.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/cdc-vs-ident-tokens.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/charset-is-not-a-rule.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/decimal-points-in-numbers.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/declarations-trim-whitespace.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/escaped-eof.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/ident-three-code-points.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/inclusive-ranges.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/input-preprocessing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/serialize-consecutive-tokens.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/unclosed-constructs.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/unclosed-url-at-eof.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/unicode-range-selector.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/urange-parsing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/url-whitespace-consumption.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/whitespace.html

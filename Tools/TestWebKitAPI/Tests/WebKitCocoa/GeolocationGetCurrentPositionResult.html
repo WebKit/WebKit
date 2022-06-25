@@ -1,0 +1,9 @@
+<script>
+function success(position) {
+    alert("SUCCESS");
+}
+function error(err) {
+    alert("ERROR:" + err.code);
+}
+navigator.geolocation.getCurrentPosition(success, error);
+</script>

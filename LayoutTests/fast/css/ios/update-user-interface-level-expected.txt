@@ -1,0 +1,21 @@
+Test that changing the user interface level updates the page's background color.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Dark Mode = Off, User Interface Level = Base
+PASS pageBackgroundColor is "rgb(255, 255, 255)"
+
+Dark Mode = On, User Interface Level = Base
+PASS pageBackgroundColor is "rgb(0, 0, 0)"
+
+Dark Mode = On, User Interface Level = Elevated
+PASS pageBackgroundColor is "rgb(28, 28, 30)"
+
+Dark Mode = Off, User Interface Level = Elevated
+PASS pageBackgroundColor is "rgb(255, 255, 255)"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

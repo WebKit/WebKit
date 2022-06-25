@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="editor" contenteditable>
+<div>This is the first sentence</div>
+<div id="target">Here is another one.</div>
+</div>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+
+Markup.description('This tests extending the selection backwards at the beginning of a line by sentence granularity. The first sentence should be selected.');
+
+editor.focus();
+getSelection().setPosition(target, 0);
+getSelection().modify('extend', 'backward', 'sentence');
+
+Markup.dump(editor);
+
+</script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+Tests that performing an OSR entry into a loop with a hoisted structure check, where the loop may clobber the world, works.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS foo(object, 10000) is 926684
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

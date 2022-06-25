@@ -1,0 +1,26 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {FORM} at (0,0) size 784x29
+        RenderTable {TABLE} at (0,0) size 718x29 [bgcolor=#FFE030] [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 716x27
+            RenderTableRow {TR} at (0,0) size 716x27
+              RenderTableCell {TD} at (0,0) size 716x27 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderInline {NOBR} at (0,0) size 714x19
+                  RenderTextControl {INPUT} at (3,3) size 225x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+                  RenderText {#text} at (229,2) size 15x19
+                    text run at (229,2) width 15: " - "
+                  RenderTextControl {INPUT} at (245,3) size 225x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+                  RenderText {#text} at (471,2) size 15x19
+                    text run at (471,2) width 15: " - "
+                  RenderTextControl {INPUT} at (487,3) size 226x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
+                RenderText {#text} at (0,0) size 0x0
+            RenderTableRow {TR} at (0,27) size 716x0
+layer at (19,15) size 211x14
+  RenderBlock {DIV} at (6,3) size 213x15
+layer at (261,15) size 211x14
+  RenderBlock {DIV} at (6,3) size 213x15
+layer at (503,15) size 211x14
+  RenderBlock {DIV} at (6,3) size 213x15

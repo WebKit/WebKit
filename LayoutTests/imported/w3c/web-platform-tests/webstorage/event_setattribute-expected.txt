@@ -1,0 +1,4 @@
+
+PASS sessionStorage mutations fire StorageEvents that are caught by the event listener attached via setattribute.
+PASS localStorage mutations fire StorageEvents that are caught by the event listener attached via setattribute.
+

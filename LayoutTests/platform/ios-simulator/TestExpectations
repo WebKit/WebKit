@@ -1,0 +1,133 @@
+# These are the layout test expectations for Apple's iOS simulator port of WebKit (both WebKit1 and WebKit2).
+#
+# See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
+#
+
+accessibility/img-no-alt-not-ignored-with-title.html [ Pass ]
+accessibility/insert-newline.html [ Pass ]
+accessibility/url-test.html [ Pass ]
+accessibility/keyevents-posted-for-dismiss-action.html [ Pass ]
+accessibility/embedded-image-description.html [ Pass ]
+fast/multicol/flexbox-rows.html [ Skip ]
+
+fast/forms/input-text-word-wrap.html [ Skip ]
+fast/forms/search-vertical-alignment.html [ Skip ]
+fast/forms/searchfield-heights.html [ Skip ]
+fast/forms/visual-hebrew-text-field.html [ Skip ]
+
+# The MediaSource API is unsupported on iOS simulator.
+fast/media/ios/ipad/enable-MediaSource-API-in-modern-compatibility-mode.html [ Skip ]
+
+fast/events/document-elementFromPoint.html [ Pass Failure ]
+
+transforms/hittest-translated-content-off-to-infinity-and-back.html [ Pass ImageOnlyFailure ]
+
+# Imported w3c tests require fuzzy image comparison
+imported/w3c/web-platform-tests/density-size-correction/density-corrected-various-elements.html [ ImageOnlyFailure ]
+
+# This test requires Skia, which isn't available on iOS.
+webkit.org/b/174079 fast/text/variations/skia-postscript-name.html [ ImageOnlyFailure ]
+
+imported/w3c/web-platform-tests/fetch/api/abort/general.any.worker.html [ Pass Failure ]
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/scroll-restoration-fragment-scrolling-cross-origin.html [ Failure ]
+imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-offer.html [ Failure ]
+
+webkit.org/b/235765 webrtc/canvas-to-peer-connection.html [ Failure ]
+webkit.org/b/235765 webrtc/canvas-to-peer-connection-2d.html [ Failure ]
+webkit.org/b/235765 webrtc/canvas-to-peer-connection-vp8.html [ Failure ]
+webkit.org/b/235765 webrtc/canvas-to-peer-connection-vp8-2d.html [ Failure ]
+
+# Simulator doesn't support WebAssembly.
+imported/w3c/web-platform-tests/wasm/wasm_stream_instantiate_test.html  [ Skip ]
+imported/w3c/web-platform-tests/wasm/wasm_stream_compile_test.html  [ Skip ]
+
+# display-p3 canvas and ImageData are not working in the simulator.
+fast/canvas/canvas-color-space-display-p3-ImageData.html [ Failure ]
+fast/canvas/canvas-color-space-display-p3.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage.https.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-Blob.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-ImageBitmap.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-ImageData.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-canvas.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-cloned.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-image.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-video.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-video.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-pattern-canvas.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-pattern-image.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-settings.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.fillText.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.fillText.shadow.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.strokeText.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.to.p3.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.to.srgb.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toBlob.p3.canvas.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toBlob.with.putImageData.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toDataURL.p3.canvas.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toDataURL.jpeg.p3.canvas.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toDataURL.with.putImageData.html [ Failure ]
+storage/indexeddb/structured-clone-image-data-display-p3.html [ Failure ]
+
+# Imported css-text test suite from WPT
+webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-001.html [ ImageOnlyFailure ]
+webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-002.html [ ImageOnlyFailure ]
+webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-003.html [ ImageOnlyFailure ]
+webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-004.html [ ImageOnlyFailure ]
+webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-005.html [ ImageOnlyFailure ]
+webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-006.html [ ImageOnlyFailure ]
+webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-007.html [ ImageOnlyFailure ]
+webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-011.html [ ImageOnlyFailure ]
+webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-pre-wrap-014.html [ ImageOnlyFailure ]
+
+imported/w3c/web-platform-tests/css/css-ui/outline-020.html [ ImageOnlyFailure ]
+
+webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/white-space/textarea-break-spaces-002.html [ ImageOnlyFailure ]
+
+# Baseline Alignment tests affected by 1px diff failures only on Mac and iOS platforms
+webkit.org/b/170293 fast/css-grid-layout/grid-align-baseline-vertical.html [ Failure ]
+webkit.org/b/170293 fast/css-grid-layout/grid-self-baseline-two-dimensional.html [ Failure ]
+
+# A sub-test in this test is extremely flaky and fails most of the time, messing up partial-failure expectations
+webkit.org/b/189686 webgl/2.0.0/conformance2/renderbuffers/multisampled-renderbuffer-initialization.html [ Skip ]
+# Crashes
+webkit.org/b/189686 webgl/2.0.0/conformance2/buffers/one-large-uniform-buffer.html [ Skip ]
+
+# This test takes a long time to execute in the simulator, since it creates a huge (empty) buffer
+# to draw lots of nothing.
+webkit.org/b/209416 fast/canvas/webgl/out-of-bounds-simulated-vertexAttrib0-drawArrays.html [ Pass Timeout ]
+
+# Test is slow.
+webkit.org/b/226813 webgl/draw-webgl-to-context2d-memory-test.html [ Skip ]
+
+imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-georgian.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-lower-greek.html [ Pass ]
+
+webkit.org/b/195466 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-width-1000px.html [ Pass Failure ]
+webkit.org/b/195466 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/autoplay.html [ Pass Failure ]
+webkit.org/b/195466 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/error-codes/error.html [ Pass Failure ]
+
+imported/w3c/web-platform-tests/wasm [ Skip ]
+
+webkit.org/b/201509 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_timeupdate_on_seek.html [ Failure ]
+
+# ANGLE Metal backend failing tests with shared texture memory on the simulator
+webkit.org/b/222685 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-array-buffer-view.html [ Pass Failure ]
+webkit.org/b/222685 webgl/1.0.3/conformance/textures/texture-mips.html [ Pass Failure ]
+
+# webkit.org/b/223724 These two tests are flakey timeouts on iOS Debug:
+http/tests/security/webaudio-render-remote-audio-allowed-crossorigin.html [ Pass Timeout ]
+http/tests/security/webaudio-render-remote-audio-allowed-crossorigin-redirect.html [ Pass Timeout ]
+
+webkit.org/b/223949 crypto/crypto-random-values-oom.html [ Pass Timeout ]
+
+# This test relies on ARQL APIs which are not available in the Simulator
+model-element/model-element-ready.html [ Skip ]
+
+# webkit.org/b/238220 These 5 tests are constant failures on gpup arm64
+[ arm64 ] webaudio/Analyser/realtimeanalyser-fftsize-reset.html [ Failure ]
+[ arm64 ] webaudio/Analyser/realtimeanalyser-freq-data-smoothing.html [ Failure ]
+[ arm64 ] webaudio/Analyser/realtimeanalyser-freq-data.html [ Failure ]
+[ arm64 ] webaudio/OfflineAudioContext-bad-buffer-crash.html [ Failure ]
+[ arm64 ] webaudio/OfflineAudioContext/bad-buffer-length.html [ Failure ]
+
+webkit.org/b/239990 css3/calc/transitions-dependent.html [ Pass Failure ]

@@ -1,0 +1,7 @@
+
+FAIL share with no arguments (same as empty dictionary) navigator.share is not a function. (In 'navigator.share()', 'navigator.share' is undefined)
+FAIL share with an empty dictionary navigator.share is not a function. (In 'navigator.share({})', 'navigator.share' is undefined)
+FAIL share with a undefined argument (same as empty dictionary) navigator.share is not a function. (In 'navigator.share(undefined)', 'navigator.share' is undefined)
+FAIL share with a null argument (same as empty dictionary) navigator.share is not a function. (In 'navigator.share(null)', 'navigator.share' is undefined)
+FAIL share with a dictionary containing only surplus fields navigator.share is not a function. (In 'navigator.share({unused: 'unexpected field'})', 'navigator.share' is undefined)
+

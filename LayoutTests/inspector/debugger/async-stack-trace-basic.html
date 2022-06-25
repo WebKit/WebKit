@@ -1,0 +1,115 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/async-stack-trace-test.js"></script>
+<script>
+
+function triggerRequestAnimationFrame() {
+    requestAnimationFrame(function handleAnimationFrame() {
+        debugger;
+    });
+}
+
+function triggerNestedRequestAnimationFrame() {
+    requestAnimationFrame(function handleAnimationFrame1() {
+        requestAnimationFrame(function handleAnimationFrame2() {
+            debugger;
+        });
+    });
+}
+
+function triggerSetTimeout() {
+    setTimeout(function handleTimeout() {
+        debugger;
+    });
+}
+
+function triggerNestedSetTimeout() {
+    setTimeout(function handleTimeout1() {
+        setTimeout(function handleTimeout2() {
+            debugger;
+        });
+    });
+}
+
+function triggerSetInterval() {
+    let timer = setInterval(function handleInterval() {
+        clearInterval(timer);
+        debugger;
+    });
+}
+
+function triggerNestedSetInterval() {
+    let outerTimer = setInterval(function handleInterval1() {
+        clearInterval(outerTimer);
+        let innerTimer = setInterval(function handleInterval2() {
+            clearInterval(innerTimer);
+            debugger;
+        });
+    });
+}
+
+function triggerPostMessage() {
+    let frame = document.createElement("iframe");
+    frame.srcdoc = `<script>window.parent.postMessage(42, "*");<\/script>`;
+    document.body.appendChild(frame);
+
+    window.addEventListener("message", function handleMessage() {
+        window.removeEventListener("message", handleMessage);
+        debugger;
+    });
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("AsyncStackTrace.Basic");
+
+    addAsyncStackTraceTestCase(suite, {
+        name: "AsyncStackTrace.Basic.RequestAnimationFrame",
+        expression: "triggerRequestAnimationFrame()",
+    });
+
+    addAsyncStackTraceTestCase(suite, {
+        name: "AsyncStackTrace.Basic.NestedRequestAnimationFrame",
+        expression: "triggerNestedRequestAnimationFrame()",
+    });
+
+    addAsyncStackTraceTestCase(suite, {
+        name: "AsyncStackTrace.Basic.SetTimeout",
+        expression: "triggerSetTimeout()",
+    });
+
+    addAsyncStackTraceTestCase(suite, {
+        name: "AsyncStackTrace.Basic.NestedSetTimeout",
+        expression: "triggerNestedSetTimeout()",
+    });
+
+    addAsyncStackTraceTestCase(suite, {
+        name: "AsyncStackTrace.Basic.SetInterval",
+        expression: "triggerSetInterval()",
+    });
+
+    addAsyncStackTraceTestCase(suite, {
+        name: "AsyncStackTrace.Basic.NestedSetInterval",
+        expression: "triggerNestedSetInterval()",
+    });
+
+    addAsyncStackTraceTestCase(suite, {
+        name: "AsyncStackTrace.Basic.NestedSetInterval",
+        expression: "triggerNestedSetInterval()",
+    });
+
+    addAsyncStackTraceTestCase(suite, {
+        name: "AsyncStackTrace.Basic.PostMessage",
+        expression: "triggerPostMessage()",
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for checking that async stack traces exist when pausing in asynchronous callbacks: requestAnimationFrame, setTimeout, setInterval, and postMessage.</p>
+</body>
+</html>

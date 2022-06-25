@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This test passes if it does not crash.</p>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function gc() {
+    if (typeof GCController !== "undefined")
+        GCController.collect();
+    else {
+        var gcRec = function (n) {
+            if (n < 1)
+                return {};
+            var temp = {i: "ab" + i + (i / 100000)};
+            temp += "foo";
+            gcRec(n-1);
+        };
+        for (var i = 0; i < 1000; i++)
+            gcRec(10);
+    }
+}
+
+let reloads = 0;
+function frameLoaded()
+{
+    reloads++;
+    gc();
+    if (reloads == 50) {
+        testFrame.remove();
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+}
+</script>
+<iframe id="testFrame" src="resources/crash-on-navigation-iframe.html"></iframe>
+</body>
+</html>

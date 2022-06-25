@@ -1,0 +1,17 @@
+This tests ensure that media element emits the 'playing' event every time it starts playing after eos. It also ensure that 'pause' and 'ended' events are sent when media playback ends.
+
+EVENT(loadedmetadata)
+RUN(mediaElement.play())
+EVENT(playing)
+EVENT(pause)
+EXPECTED (mediaElement.paused == 'true') OK
+EVENT(ended)
+EXPECTED (mediaElement.ended == 'true') OK
+RUN(mediaElement.play())
+EVENT(playing)
+EVENT(pause)
+EXPECTED (mediaElement.paused == 'true') OK
+EVENT(ended)
+EXPECTED (mediaElement.ended == 'true') OK
+END OF TEST
+

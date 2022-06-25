@@ -1,0 +1,47 @@
+ALERT:
+
+ALERT: Allowing all cookies
+CONSOLE MESSAGE: http://localhost:8000/cookies/resources/cookie-utility.py?queryfunction=deleteCookies
+CONSOLE MESSAGE: XHR response - Deleted all cookies
+CONSOLE MESSAGE: Test stage 1 document.cookie is:
+ALERT: Restricting to first party only cookies
+CONSOLE MESSAGE: http://localhost:8000/cookies/resources/cookie-utility.py?queryfunction=setFooCookie
+CONSOLE MESSAGE: XHR response - Set the foo cookie
+CONSOLE MESSAGE: Test stage 2 document.cookie is:
+ALERT:
+
+ALERT: Allowing all cookies
+CONSOLE MESSAGE: http://localhost:8000/cookies/resources/cookie-utility.py?queryfunction=deleteCookies
+CONSOLE MESSAGE: XHR response - Deleted all cookies
+CONSOLE MESSAGE: Test stage 3 document.cookie is:
+ALERT: Restricting to first party only cookies
+CONSOLE MESSAGE: http://localhost:8000/cookies/resources/cookie-utility.py?queryfunction=setFooAndBarCookie
+CONSOLE MESSAGE: XHR response - Set the foo and bar cookies
+CONSOLE MESSAGE: Test stage 4 document.cookie is:
+ALERT:
+
+ALERT: Allowing all cookies
+CONSOLE MESSAGE: http://localhost:8000/cookies/resources/cookie-utility.py?queryfunction=deleteCookies
+CONSOLE MESSAGE: XHR response - Deleted all cookies
+CONSOLE MESSAGE: Test stage 5 document.cookie is:
+CONSOLE MESSAGE: http://localhost:8000/cookies/resources/cookie-utility.py?queryfunction=setFooCookie
+CONSOLE MESSAGE: XHR response - Set the foo cookie
+CONSOLE MESSAGE: Test stage 6 document.cookie is: foo=awesomevalue
+ALERT: Restricting to first party only cookies
+CONSOLE MESSAGE: http://localhost:8000/cookies/resources/cookie-utility.py?queryfunction=deleteCookies
+CONSOLE MESSAGE: XHR response - Deleted all cookies
+CONSOLE MESSAGE: Test stage 7 document.cookie is:
+ALERT:
+
+ALERT: Allowing all cookies
+CONSOLE MESSAGE: http://localhost:8000/cookies/resources/cookie-utility.py?queryfunction=deleteCookies
+CONSOLE MESSAGE: XHR response - Deleted all cookies
+CONSOLE MESSAGE: Test stage 8 document.cookie is:
+CONSOLE MESSAGE: http://localhost:8000/cookies/resources/cookie-utility.py?queryfunction=setFooCookie
+CONSOLE MESSAGE: XHR response - Set the foo cookie
+CONSOLE MESSAGE: Test stage 9 document.cookie is: foo=awesomevalue
+ALERT: Restricting to first party only cookies
+CONSOLE MESSAGE: http://localhost:8000/cookies/resources/cookie-utility.py?queryfunction=setFooAndBarCookie
+CONSOLE MESSAGE: XHR response - Set the foo and bar cookies
+CONSOLE MESSAGE: Test stage 10 document.cookie is: bar=anotherawesomevalue; foo=awesomevalue
+

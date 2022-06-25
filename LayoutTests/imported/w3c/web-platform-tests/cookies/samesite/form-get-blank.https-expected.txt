@@ -1,0 +1,17 @@
+Blocked access to external URL https://www1.localhost:9443/cookies/samesite/resources/puppet.html
+
+Harness Error (TIMEOUT), message = null
+
+PASS Same-host top-level form GETs are strictly same-site
+TIMEOUT Subdomain top-level form GETs are strictly same-site Test timed out
+NOTRUN Cross-site top-level form GETs are laxly same-site
+NOTRUN Same-host redirecting to same-host top-level form GETs are strictly same-site
+NOTRUN Subdomain redirecting to same-host top-level form GETs are strictly same-site
+NOTRUN Cross-site redirecting to same-host top-level form GETs are laxly same-site
+NOTRUN Same-host redirecting to subdomain top-level form GETs are strictly same-site
+NOTRUN Subdomain redirecting to subdomain top-level form GETs are strictly same-site
+NOTRUN Cross-site redirecting to subdomain top-level form GETs are laxly same-site
+NOTRUN Same-host redirecting to cross-site top-level form GETs are laxly same-site
+NOTRUN Subdomain redirecting to cross-site top-level form GETs are laxly same-site
+NOTRUN Cross-site redirecting to cross-site top-level form GETs are laxly same-site
+

@@ -1,0 +1,26 @@
+
+In-band text tracks.
+
+EVENT(addtrack)
+EXPECTED (event.track == 'video.textTracks[0]') OK
+
+EVENT(canplaythrough)
+
+** Check initial in-band track states
+EXPECTED (video.textTracks.length == '1') OK
+RUN(inbandTrack1 = video.textTracks[0])
+EXPECTED (inbandTrack1.mode == 'disabled') OK
+EXPECTED (inbandTrack1.cues == 'null') OK
+EXPECTED (inbandTrack1.language == 'en') OK
+EXPECTED (inbandTrack1.kind == 'captions') OK
+
+RUN(inbandTrack1.mode = 'showing')
+EVENT(change)
+RUN(video.play())
+
+RUN(video.pause())
+RUN(video.play())
+
+RUN(video.pause())
+END OF TEST
+

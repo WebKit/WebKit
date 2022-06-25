@@ -1,0 +1,32 @@
+<html>
+<head>
+<title>CSS4 media query test: inverted-colors.</title>
+<style type="text/css">
+p { color: black; }
+</style>
+<script>
+window.addEventListener("load", function () {
+    if (!window.internals)
+        return;
+
+    window.internals.settings.forcedColorsAreInvertedAccessibilityValue = "on";
+    if (window.matchMedia("(inverted-colors)").matches)
+        document.getElementById("a").style.color = "green";
+    if (window.matchMedia("(inverted-colors: inverted)").matches)
+        document.getElementById("b").style.color = "green";
+
+    window.internals.settings.forcedColorsAreInvertedAccessibilityValue = "off";
+    if (!window.matchMedia("(inverted-colors)").matches)
+        document.getElementById("c").style.color = "green";
+    if (window.matchMedia("(inverted-colors: none)").matches)
+        document.getElementById("d").style.color = "green";
+}, false);
+</script>
+</head>
+<body>
+  <p id="a">This text should be green.</p>
+  <p id="b">This text should be green.</p>
+  <p id="c">This text should be green.</p>
+  <p id="d">This text should be green.</p>
+</body>
+</html>

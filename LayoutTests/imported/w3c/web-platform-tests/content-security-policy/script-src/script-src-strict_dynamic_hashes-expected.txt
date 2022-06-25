@@ -1,0 +1,6 @@
+`strict-dynamic` allows scripts matching hashes present in the policy.
+
+
+PASS Script matching SHA256 hash is allowed with `strict-dynamic`.
+PASS Script injected via `appendChild` from a script matching SHA256 hash is allowed with `strict-dynamic`.
+

@@ -1,0 +1,9 @@
+
+PASS postMessage
+PASS start
+PASS close
+PASS onmessage
+PASS addEventListener
+PASS removeEventListener
+PASS despatchEvent
+

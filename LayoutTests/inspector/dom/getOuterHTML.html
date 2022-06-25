@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("DOM.getOuterHTML");
+
+    suite.addTestCase({
+        name: "GetOuterHTML",
+        description: "Get the OuterHTML of the target element.",
+        test(resolve, reject) {
+            WI.domManager.requestDocument(function(documentNode) {
+                documentNode.querySelector("#x", function(nodeId) {
+                    let domNode = WI.domManager.nodeForId(nodeId);
+                    InspectorTest.assert(domNode, "DOMNode exists");
+                    domNode.getOuterHTML(function(error, outerHTML) {
+                        InspectorTest.expectNoError(error);
+                        InspectorTest.log("Dumping outerHTML for element div#x:");
+                        InspectorTest.log(outerHTML);
+                        resolve();
+                    });
+                });
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Test for DOM.getOuterHTML (Copy HTML).</p>
+
+<div id="x" style="display:none">
+    <h1>A Title</h1>
+    <p>A Paragraph</p>
+</div>
+
+</body>
+</html>

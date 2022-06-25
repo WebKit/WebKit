@@ -1,0 +1,152 @@
+/*
+ * Copyright (C) 2007-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Matt Lilek <webkit@mattlilek.com>
+ * Copyright (C) 2009 Google Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ *
+ *     * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above
+ * copyright notice, this list of conditions and the following disclaimer
+ * in the documentation and/or other materials provided with the
+ * distribution.
+ *     * Neither the name of Google Inc. nor the names of its
+ * contributors may be used to endorse or promote products derived from
+ * this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+[
+    LegacyNoInterfaceObject,
+] interface InspectorFrontendHost {
+    undefined loaded();
+    undefined closeWindow();
+    undefined reopen();
+    undefined reset();
+
+    undefined bringToFront();
+    undefined inspectedURLChanged(DOMString newURL);
+
+    readonly attribute boolean supportsShowCertificate;
+    boolean showCertificate(DOMString serializedCertificate);
+
+    undefined setZoomFactor(unrestricted float zoom);
+    float zoomFactor();
+
+    undefined setForcedAppearance(DOMString appearance);
+
+    DOMString userInterfaceLayoutDirection();
+
+    boolean supportsDockSide(DOMString dockSide);
+    undefined requestSetDockSide(DOMString dockSide);
+
+    undefined setAttachedWindowHeight(unsigned long height);
+    undefined setAttachedWindowWidth(unsigned long width);
+
+    undefined setSheetRect(unrestricted float x, unrestricted float y, unsigned long width, unsigned long height);
+
+    undefined startWindowDrag();
+    undefined moveWindowBy(unrestricted float x, unrestricted float y);
+
+    readonly attribute boolean isRemote;
+    readonly attribute DOMString localizedStringsURL;
+    readonly attribute DOMString backendCommandsURL;
+    readonly attribute unsigned long inspectionLevel;
+    readonly attribute DebuggableInfo debuggableInfo;
+
+    undefined copyText(DOMString text);
+    undefined killText(DOMString text, boolean shouldPrependToKillRing, boolean shouldStartNewSequence);
+
+    undefined openURLExternally(DOMString url);
+    undefined revealFileExternally(DOMString path);
+
+    boolean canSave(SaveMode saveMode);
+    undefined save(sequence<SaveData> saveDatas, boolean forceSaveAs);
+
+    boolean canLoad();
+    [NewObject] Promise<DOMString> load(DOMString path);
+
+    boolean canPickColorFromScreen();
+    [NewObject] Promise<DOMString> pickColorFromScreen();
+
+    readonly attribute DOMString platform;
+    readonly attribute DOMString platformVersionName;
+
+    undefined showContextMenu(Event event, sequence<ContextMenuItem> items);
+    undefined dispatchEventAsContextMenuEvent(Event event);
+    undefined sendMessageToBackend(DOMString message);
+    undefined unbufferedLog(DOMString message);
+
+    boolean isUnderTest();
+
+    undefined beep();
+    undefined inspectInspector();
+    boolean isBeingInspected();
+    undefined setAllowsInspectingInspector(boolean allow);
+
+    readonly attribute boolean supportsDiagnosticLogging;
+    [Conditional=INSPECTOR_TELEMETRY] undefined logDiagnosticEvent(DOMString eventName, DOMString content);
+
+    readonly attribute boolean supportsWebExtensions;
+    [Conditional=INSPECTOR_EXTENSIONS] undefined didShowExtensionTab(DOMString extensionID, DOMString extensionTabID, HTMLIFrameElement extensionFrame);
+    [Conditional=INSPECTOR_EXTENSIONS] undefined didHideExtensionTab(DOMString extensionID, DOMString extensionTabID);
+    [Conditional=INSPECTOR_EXTENSIONS] undefined didNavigateExtensionTab(DOMString extensionID, DOMString extensionTabID, DOMString newURL);
+    [Conditional=INSPECTOR_EXTENSIONS] undefined inspectedPageDidNavigate(DOMString newURL);
+    [Conditional=INSPECTOR_EXTENSIONS] any evaluateScriptInExtensionTab(HTMLIFrameElement extensionFrame, DOMString scriptSource);
+
+    // IDL extensions.
+
+    DOMString getPath(File file);
+
+    float getCurrentX(CanvasRenderingContext2D context);
+    float getCurrentY(CanvasRenderingContext2D context);
+    [NewObject] Path2D getPath(CanvasRenderingContext2D context);
+    undefined setPath(CanvasRenderingContext2D context, Path2D path);
+};
+
+// Keep in sync with `WI.FileUtilities.SaveMode` and `InspectorFrontendClient::SaveMode`.
+enum SaveMode {
+    "single-file",
+    "file-variants"
+};
+
+dictionary SaveData {
+    DOMString displayType;
+    DOMString url;
+    DOMString content;
+    boolean base64Encoded;
+};
+
+dictionary ContextMenuItem {
+    DOMString type;
+    DOMString label;
+    long id;
+    boolean enabled;
+    boolean checked;
+    sequence<ContextMenuItem> subItems;
+};
+
+[
+    JSGenerateToJSObject,
+]
+dictionary DebuggableInfo {
+    DOMString debuggableType;
+    DOMString targetPlatformName;
+    DOMString targetBuildVersion;
+    DOMString targetProductVersion;
+    boolean targetIsSimulator;
+};

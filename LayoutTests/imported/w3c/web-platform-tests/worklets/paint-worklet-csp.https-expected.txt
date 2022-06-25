@@ -1,0 +1,50 @@
+CONSOLE MESSAGE: Error: Script error.
+CONSOLE MESSAGE: Error: Script error.
+CONSOLE MESSAGE: Error: Script error.
+CONSOLE MESSAGE: Error: Script error.
+CONSOLE MESSAGE: Error: Script error.
+CONSOLE MESSAGE: Error: Script error.
+CONSOLE MESSAGE: Error: Script error.
+CONSOLE MESSAGE: Error: Script error.
+CONSOLE MESSAGE: Error: Script error.
+CONSOLE MESSAGE: Error: Script error.
+CONSOLE MESSAGE: Error: Script error.
+CONSOLE MESSAGE: Error: Script error.
+CONSOLE MESSAGE: Error: Script error.
+CONSOLE MESSAGE: Error: Script error.
+CONSOLE MESSAGE: Error: Script error.
+CONSOLE MESSAGE: Error: Script error.
+CONSOLE MESSAGE: Error: Script error.
+CONSOLE MESSAGE: Error: Script error.
+CONSOLE MESSAGE: Error: Script error.
+CONSOLE MESSAGE: Error: Script error.
+CONSOLE MESSAGE: Error: Script error.
+CONSOLE MESSAGE: Error: Script error.
+CONSOLE MESSAGE: Error: Script error.
+CONSOLE MESSAGE: Error: Script error.
+
+FAIL A remote-origin worklet should be blocked by the script-src 'self' directive. assert_equals: expected "REJECTED" but got "RESOLVED"
+FAIL A same-origin worklet importing a remote-origin script should be blocked by the script-src 'self' directive. assert_equals: expected "REJECTED" but got "RESOLVED"
+FAIL A remote-origin worklet importing a remote-origin script should be blocked by the script-src 'self' directive. assert_equals: expected "REJECTED" but got "RESOLVED"
+FAIL A remote-origin-redirected worklet should be blocked by the script-src 'self' directive. assert_equals: expected "REJECTED" but got "RESOLVED"
+FAIL A same-origin worklet importing a remote-origin-redirected script should be blocked by the script-src 'self' directive. assert_equals: expected "REJECTED" but got "RESOLVED"
+PASS A remote-origin worklet should not be blocked because the script-src directive specifying the origin allows it.
+PASS A same-origin worklet importing a remote-origin script should not be blocked because the script-src directive specifying the origin allows it.
+PASS A remote-origin worklet importing a remote-origin script should not be blocked because the script-src directive specifying the origin allows it.
+PASS A remote-origin-redirected worklet should not be blocked because the script-src directive specifying the origin allows it.
+PASS A same-origin worklet importing a remote-origin-redirected script should not be blocked because the script-src directive specifying the origin allows it.
+PASS A remote-origin worklet should not be blocked because the script-src * directive allows it.
+PASS A same-origin worklet importing a remote-origin script should not be blocked because the script-src * directive allows it.
+PASS A remote-origin worklet importing a remote-origin script should not be blocked because the script-src * directive allows it.
+PASS A remote-origin-redirected worklet should not be blocked because the script-src * directive allows it.
+PASS A same-origin worklet importing a remote-origin-redirected script should not be blocked because the script-src * directive allows it.
+PASS A remote-origin worklet should not be blocked by the worker-src directive because worklets obey the script-src directive.
+PASS A same-origin worklet importing a remote-origin script should not be blocked by the worker-src directive because worklets obey the script-src directive.
+PASS A remote-origin worklet importing a remote-origin script should not be blocked by the worker-src directive because worklets obey the script-src directive.
+PASS A remote-origin-redirected worklet should not be blocked by the worker-src directive because worklets obey the script-src directive.
+PASS A same-origin worklet importing a remote-origin-redirected script should not be blocked by the worker-src directive because worklets obey the script-src directive.
+FAIL An insecure-origin worklet should be blocked because of mixed contents. assert_equals: expected "REJECTED" but got "RESOLVED"
+FAIL An insecure-origin-redirected worklet should be blocked because of mixed contents. assert_equals: expected "REJECTED" but got "RESOLVED"
+FAIL A same-origin worklet importing an insecure-origin script should be blocked because of mixed contents. assert_equals: expected "REJECTED" but got "RESOLVED"
+FAIL A same-origin worklet importing an insecure-origin-redirected script should be blocked because of mixed contents. assert_equals: expected "REJECTED" but got "RESOLVED"
+

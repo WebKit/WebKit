@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: Reloading
+PASS

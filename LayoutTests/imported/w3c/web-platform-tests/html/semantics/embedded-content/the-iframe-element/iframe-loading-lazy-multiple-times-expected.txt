@@ -1,0 +1,4 @@
+
+
+PASS Iframes with loading='lazy' can be lazy loaded multiple times
+

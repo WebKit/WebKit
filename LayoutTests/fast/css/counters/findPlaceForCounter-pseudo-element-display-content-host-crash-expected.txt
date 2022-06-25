@@ -1,0 +1,1 @@
+Tests CSS counter of a pseudo element that has display: contents host. The test passes if WebKit doesn't crash or hit an assertion.

@@ -1,0 +1,3 @@
+
+FAIL contain-intrinsic-size: auto assert_equals: expected 1 but got 0
+

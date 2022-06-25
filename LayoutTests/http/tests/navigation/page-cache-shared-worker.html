@@ -1,0 +1,56 @@
+<!-- webkit-test-runner [ UsesBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/resources/js-test-pre.js"></script>
+<script>
+description('Tests that a page with a SharedWorker goes into the page cache.');
+window.jsTestIsAsync = true;
+
+var restoredFromPageCache = false;
+var sw1, sw2;
+var state;
+
+window.addEventListener("pageshow", async function(event) {
+    debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");
+
+    if (event.persisted) {
+        testPassed("Page did enter and was restored from the page cache");
+        restoredFromPageCache = true;
+
+        sw1.port.postMessage('counter');
+        const counter = await new Promise(resolve => sw1.port.onmessage = (event) => resolve(event.data));
+        if (counter < 100)
+            testPassed("counter is below 100");
+        else
+            testFailed("counter is above 100");
+
+        sw2.port.postMessage('getState');
+        state = await new Promise(resolve => sw2.port.onmessage = (event) => resolve(event.data));
+        shouldBeEqualToString("state", "hungry");
+
+        setTimeout(finishJSTest, 0);
+    }
+}, false);
+
+window.addEventListener("pagehide", function(event) {
+    debug("pagehide - " + (event.persisted ? "" : "not ") + "entering cache");
+    if (!event.persisted) {
+        testFailed("Page did not enter the page cache.");
+        finishJSTest();
+    }
+}, false);
+
+window.addEventListener('load', function() {
+    sw1 = new SharedWorker('resources/shared-worker-script.js?1');
+    sw2 = new SharedWorker('resources/shared-worker-script.js?2');
+    setTimeout(function() {
+      // Force a back navigation back to this page.
+      window.location.href = "resources/page-cache-helper-for-sharedworker.html";
+    }, 1000);
+}, false);
+
+</script>
+<script src="/resources/js-test-post.js"></script>
+</body>
+</html>

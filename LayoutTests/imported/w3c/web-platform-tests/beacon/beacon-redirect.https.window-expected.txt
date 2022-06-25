@@ -1,0 +1,10 @@
+
+PASS cross-origin, CORS-safelisted: status = 307, type = string
+PASS cross-origin, CORS-safelisted: status = 307, type = arraybuffer
+PASS cross-origin, CORS-safelisted: status = 307, type = form
+PASS cross-origin, CORS-safelisted: status = 307, type = blob
+PASS cross-origin, CORS-safelisted: status = 308, type = string
+PASS cross-origin, CORS-safelisted: status = 308, type = arraybuffer
+PASS cross-origin, CORS-safelisted: status = 308, type = form
+PASS cross-origin, CORS-safelisted: status = 308, type = blob
+

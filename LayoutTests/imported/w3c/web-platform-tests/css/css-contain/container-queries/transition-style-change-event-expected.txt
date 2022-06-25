@@ -1,0 +1,4 @@
+Green
+
+PASS Container Queries - Style Change Event for transitions
+

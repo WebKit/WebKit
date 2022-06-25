@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<style>
+#target {
+    border: 1px solid;
+}
+</style>
+<div id="target"></div>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+const target = document.getElementById("target");
+const style = target.style;
+const cs = getComputedStyle(target);
+
+test(() => {
+    style.cssText = "border-image: url(\"\");";
+
+    assert_equals(style.cssText, "border-image: url(\"\");", "cssText");
+    assert_array_equals([...style], ["border-image-source", "border-image-slice", "border-image-width", "border-image-outset", "border-image-repeat"]);
+
+    assert_equals(style.borderImageSource, "url(\"\")", "Specified border-image-source");
+    assert_equals(style.borderImageSlice, "initial", "Specified border-image-slice");
+    assert_equals(style.borderImageWidth, "initial", "Specified border-image-width");
+    assert_equals(style.borderImageOutset, "initial", "Specified border-image-outset");
+    assert_equals(style.borderImageRepeat, "initial", "Specified border-image-repeat");
+    assert_equals(style.borderImage, "url(\"\")", "Specified border-image");
+    assert_equals(style.webkitBorderImage, "url(\"\")", "Specified -webkit-border-image");
+
+    assert_equals(cs.borderImageSource, "url(\"\")", "Computed border-image-source");
+    assert_equals(cs.borderImageSlice, "100%", "Computed border-image-slice");
+    assert_equals(cs.borderImageWidth, "1", "Computed border-image-width");
+    assert_equals(cs.borderImageOutset, "0", "Computed border-image-outset");
+    assert_equals(cs.borderImageRepeat, "stretch", "Computed border-image-repeat");
+    assert_equals(cs.borderImage, "url(\"\") 100% / 1 / 0 stretch", "Computed border-image");
+    assert_equals(cs.webkitBorderImage, "url(\"\") 100% / 1 / 0 stretch", "Computed -webkit-border-image");
+
+    assert_equals(cs.borderWidth, "1px", "Computed border-width");
+}, "border-image: url(\"\")");
+
+test(() => {
+    style.cssText = "-webkit-border-image: url(\"\");";
+
+    assert_equals(style.cssText, "border-image: url(\"\");", "cssText");
+    assert_array_equals([...style], ["border-image-source", "border-image-slice", "border-image-width", "border-image-outset", "border-image-repeat"]);
+
+    assert_equals(style.borderImageSource, "url(\"\")", "Specified border-image-source");
+    assert_equals(style.borderImageSlice, "initial", "Specified border-image-slice");
+    assert_equals(style.borderImageWidth, "initial", "Specified border-image-width");
+    assert_equals(style.borderImageOutset, "initial", "Specified border-image-outset");
+    assert_equals(style.borderImageRepeat, "initial", "Specified border-image-repeat");
+    assert_equals(style.borderImage, "url(\"\")", "Specified border-image");
+    assert_equals(style.webkitBorderImage, "url(\"\")", "Specified -webkit-border-image");
+
+    assert_equals(cs.borderImageSource, "url(\"\")", "Computed border-image-source");
+    assert_equals(cs.borderImageSlice, "100%", "Computed border-image-slice");
+    assert_equals(cs.borderImageWidth, "1", "Computed border-image-width");
+    assert_equals(cs.borderImageOutset, "0", "Computed border-image-outset");
+    assert_equals(cs.borderImageRepeat, "stretch", "Computed border-image-repeat");
+    assert_equals(cs.borderImage, "url(\"\") 100% / 1 / 0 stretch", "Computed border-image");
+    assert_equals(cs.webkitBorderImage, "url(\"\") 100% / 1 / 0 stretch", "Computed -webkit-border-image");
+
+    assert_equals(cs.borderWidth, "1px", "Computed border-width");
+}, "-webkit-border-image: url(\"\")");
+
+test(() => {
+    style.cssText = "border-image: url(\"\") 50%;";
+
+    assert_equals(style.cssText, "border-image: url(\"\") 50%;", "cssText");
+    assert_array_equals([...style], ["border-image-source", "border-image-slice", "border-image-width", "border-image-outset", "border-image-repeat"]);
+
+    assert_equals(style.borderImageSource, "url(\"\")", "Specified border-image-source");
+    assert_equals(style.borderImageSlice, "50%", "Specified border-image-slice");
+    assert_equals(style.borderImageWidth, "initial", "Specified border-image-width");
+    assert_equals(style.borderImageOutset, "initial", "Specified border-image-outset");
+    assert_equals(style.borderImageRepeat, "initial", "Specified border-image-repeat");
+    assert_equals(style.borderImage, "url(\"\") 50%", "Specified border-image");
+    assert_equals(style.webkitBorderImage, "url(\"\") 50%", "Specified -webkit-border-image");
+
+    assert_equals(cs.borderImageSource, "url(\"\")", "Computed border-image-source");
+    assert_equals(cs.borderImageSlice, "50%", "Computed border-image-slice");
+    assert_equals(cs.borderImageWidth, "1", "Computed border-image-width");
+    assert_equals(cs.borderImageOutset, "0", "Computed border-image-outset");
+    assert_equals(cs.borderImageRepeat, "stretch", "Computed border-image-repeat");
+    assert_equals(cs.borderImage, "url(\"\") 50% / 1 / 0 stretch", "Computed border-image");
+    assert_equals(cs.webkitBorderImage, "url(\"\") 50% / 1 / 0 stretch", "Computed -webkit-border-image");
+
+    assert_equals(cs.borderWidth, "1px", "Computed border-width");
+}, "border-image: url(\"\") 50%");
+
+test(() => {
+    style.cssText = "-webkit-border-image: url(\"\") 50%;";
+
+    assert_equals(style.cssText, "border-image: url(\"\") 50% fill;", "cssText");
+    assert_array_equals([...style], ["border-image-source", "border-image-slice", "border-image-width", "border-image-outset", "border-image-repeat"]);
+
+    assert_equals(style.borderImageSource, "url(\"\")", "Specified border-image-source");
+    assert_equals(style.borderImageSlice, "50% fill", "Specified border-image-slice");
+    assert_equals(style.borderImageWidth, "initial", "Specified border-image-width");
+    assert_equals(style.borderImageOutset, "initial", "Specified border-image-outset");
+    assert_equals(style.borderImageRepeat, "initial", "Specified border-image-repeat");
+    assert_equals(style.borderImage, "url(\"\") 50% fill", "Specified border-image");
+    assert_equals(style.webkitBorderImage, "url(\"\") 50% fill", "Specified -webkit-border-image");
+
+    assert_equals(cs.borderImageSource, "url(\"\")", "Computed border-image-source");
+    assert_equals(cs.borderImageSlice, "50% fill", "Computed border-image-slice");
+    assert_equals(cs.borderImageWidth, "1", "Computed border-image-width");
+    assert_equals(cs.borderImageOutset, "0", "Computed border-image-outset");
+    assert_equals(cs.borderImageRepeat, "stretch", "Computed border-image-repeat");
+    assert_equals(cs.borderImage, "url(\"\") 50% fill / 1 / 0 stretch", "Computed border-image");
+    assert_equals(cs.webkitBorderImage, "url(\"\") 50% fill / 1 / 0 stretch", "Computed -webkit-border-image");
+
+    assert_equals(cs.borderWidth, "1px", "Computed border-width");
+}, "-webkit-border-image: url(\"\") 50%");
+
+test(() => {
+    style.cssText = "border-image: url(\"\") 50% / 11 22% calc(33% + 33px) auto;";
+
+    assert_equals(style.cssText, "border-image: url(\"\") 50% / 11 22% calc(33% + 33px) auto;", "cssText");
+    assert_array_equals([...style], ["border-image-source", "border-image-slice", "border-image-width", "border-image-outset", "border-image-repeat"]);
+
+    assert_equals(style.borderImageSource, "url(\"\")", "Specified border-image-source");
+    assert_equals(style.borderImageSlice, "50%", "Specified border-image-slice");
+    assert_equals(style.borderImageWidth, "11 22% calc(33% + 33px) auto", "Specified border-image-width");
+    assert_equals(style.borderImageOutset, "initial", "Specified border-image-outset");
+    assert_equals(style.borderImageRepeat, "initial", "Specified border-image-repeat");
+    assert_equals(style.borderImage, "url(\"\") 50% / 11 22% calc(33% + 33px) auto", "Specified border-image");
+    assert_equals(style.webkitBorderImage, "url(\"\") 50% / 11 22% calc(33% + 33px) auto", "Specified -webkit-border-image");
+
+    assert_equals(cs.borderImageSource, "url(\"\")", "Computed border-image-source");
+    assert_equals(cs.borderImageSlice, "50%", "Computed border-image-slice");
+    assert_equals(cs.borderImageWidth, "11 22% calc(33% + 33px) auto", "Computed border-image-width");
+    assert_equals(cs.borderImageOutset, "0", "Computed border-image-outset");
+    assert_equals(cs.borderImageRepeat, "stretch", "Computed border-image-repeat");
+    assert_equals(cs.borderImage, "url(\"\") 50% / 11 22% calc(33% + 33px) auto / 0 stretch", "Computed border-image");
+    assert_equals(cs.webkitBorderImage, "url(\"\") 50% / 11 22% calc(33% + 33px) auto / 0 stretch", "Computed -webkit-border-image");
+
+    assert_equals(cs.borderWidth, "1px", "Computed border-width");
+}, "border-image: url(\"\") 50% / 11 22% calc(33% + 33px) auto");
+
+test(() => {
+    style.cssText = "border-image: url(\"\") 50% / 11 22% calc(33% + 33px) calc(22px * 2);";
+
+    assert_equals(style.cssText, "border-image: url(\"\") 50% / 11 22% calc(33% + 33px) calc(44px);", "cssText");
+    assert_array_equals([...style], ["border-image-source", "border-image-slice", "border-image-width", "border-image-outset", "border-image-repeat"]);
+
+    assert_equals(style.borderImageSource, "url(\"\")", "Specified border-image-source");
+    assert_equals(style.borderImageSlice, "50%", "Specified border-image-slice");
+    assert_equals(style.borderImageWidth, "11 22% calc(33% + 33px) calc(44px)", "Specified border-image-width");
+    assert_equals(style.borderImageOutset, "initial", "Specified border-image-outset");
+    assert_equals(style.borderImageRepeat, "initial", "Specified border-image-repeat");
+    assert_equals(style.borderImage, "url(\"\") 50% / 11 22% calc(33% + 33px) calc(44px)", "Specified border-image");
+    assert_equals(style.webkitBorderImage, "", "Specified -webkit-border-image");
+
+    assert_equals(cs.borderImageSource, "url(\"\")", "Computed border-image-source");
+    assert_equals(cs.borderImageSlice, "50%", "Computed border-image-slice");
+    assert_equals(cs.borderImageWidth, "11 22% calc(33% + 33px) 44px", "Computed border-image-width");
+    assert_equals(cs.borderImageOutset, "0", "Computed border-image-outset");
+    assert_equals(cs.borderImageRepeat, "stretch", "Computed border-image-repeat");
+    assert_equals(cs.borderImage, "url(\"\") 50% / 11 22% calc(33% + 33px) 44px / 0 stretch", "Computed border-image");
+    assert_equals(cs.webkitBorderImage, "", "Computed -webkit-border-image");
+
+    assert_equals(cs.borderWidth, "1px", "Computed border-width");
+}, "border-image: url(\"\") 50% / 11 22% calc(33% + 33px) calc(22px * 2)");
+
+test(() => {
+    style.cssText = "-webkit-border-image: url(\"\") 50% / 11 22% calc(33% + 33px) calc(22px * 2);";
+
+    assert_equals(style.cssText, "-webkit-border-image: url(\"\") 50% fill / 11 22% calc(33% + 33px) calc(44px);", "cssText");
+    assert_array_equals([...style], ["border-image-source", "border-image-slice", "border-image-width", "border-image-outset", "border-image-repeat"]);
+
+    assert_equals(style.borderImageSource, "url(\"\")", "Specified border-image-source");
+    assert_equals(style.borderImageSlice, "50% fill", "Specified border-image-slice");
+    assert_equals(style.borderImageWidth, "", "Specified border-image-width");
+    assert_equals(style.borderImageOutset, "initial", "Specified border-image-outset");
+    assert_equals(style.borderImageRepeat, "initial", "Specified border-image-repeat");
+    assert_equals(style.borderImage, "", "Specified border-image");
+    assert_equals(style.webkitBorderImage, "url(\"\") 50% fill / 11 22% calc(33% + 33px) calc(44px)", "Specified -webkit-border-image");
+
+    assert_equals(cs.borderImageSource, "url(\"\")", "Computed border-image-source");
+    assert_equals(cs.borderImageSlice, "50% fill", "Computed border-image-slice");
+    assert_equals(cs.borderImageWidth, "", "Computed border-image-width");
+    assert_equals(cs.borderImageOutset, "0", "Computed border-image-outset");
+    assert_equals(cs.borderImageRepeat, "stretch", "Computed border-image-repeat");
+    assert_equals(cs.borderImage, "", "Computed border-image");
+    assert_equals(cs.webkitBorderImage, "url(\"\") 50% fill / 11 22% calc(33% + 33px) 44px / 0 stretch", "Computed -webkit-border-image");
+
+    assert_equals(cs.borderWidth, "1px 1px 1px 44px", "Computed border-width");
+}, "-webkit-border-image: url(\"\") 50% fill / 11 22% calc(33% + 33px) calc(22px * 2)");
+
+test(() => {
+    style.cssText = "border-image: url(\"\") 50% / 11px 22px 33px 44px;";
+
+    assert_equals(style.cssText, "border-image: url(\"\") 50% / 11px 22px 33px 44px;", "cssText");
+    assert_array_equals([...style], ["border-image-source", "border-image-slice", "border-image-width", "border-image-outset", "border-image-repeat"]);
+
+    assert_equals(style.borderImageSource, "url(\"\")", "Specified border-image-source");
+    assert_equals(style.borderImageSlice, "50%", "Specified border-image-slice");
+    assert_equals(style.borderImageWidth, "11px 22px 33px 44px", "Specified border-image-width");
+    assert_equals(style.borderImageOutset, "initial", "Specified border-image-outset");
+    assert_equals(style.borderImageRepeat, "initial", "Specified border-image-repeat");
+    assert_equals(style.borderImage, "url(\"\") 50% / 11px 22px 33px 44px", "Specified border-image");
+    assert_equals(style.webkitBorderImage, "", "Specified -webkit-border-image");
+
+    assert_equals(cs.borderImageSource, "url(\"\")", "Computed border-image-source");
+    assert_equals(cs.borderImageSlice, "50%", "Computed border-image-slice");
+    assert_equals(cs.borderImageWidth, "11px 22px 33px 44px", "Computed border-image-width");
+    assert_equals(cs.borderImageOutset, "0", "Computed border-image-outset");
+    assert_equals(cs.borderImageRepeat, "stretch", "Computed border-image-repeat");
+    assert_equals(cs.borderImage, "url(\"\") 50% / 11px 22px 33px 44px / 0 stretch", "Computed border-image");
+    assert_equals(cs.webkitBorderImage, "", "Computed -webkit-border-image");
+
+    assert_equals(cs.borderWidth, "1px", "Computed border-width");
+}, "border-image: url(\"\") 50% / 11px 22px 33px 44px");
+
+test(() => {
+    style.cssText = "-webkit-border-image: url(\"\") 50% / 11px 22px 33px 44px;";
+
+    assert_equals(style.cssText, "-webkit-border-image: url(\"\") 50% fill / 11px 22px 33px 44px;", "cssText");
+    assert_array_equals([...style], ["border-image-source", "border-image-slice", "border-image-width", "border-image-outset", "border-image-repeat"]);
+
+    assert_equals(style.borderImageSource, "url(\"\")", "Specified border-image-source");
+    assert_equals(style.borderImageSlice, "50% fill", "Specified border-image-slice");
+    assert_equals(style.borderImageWidth, "", "Specified border-image-width");
+    assert_equals(style.borderImageOutset, "initial", "Specified border-image-outset");
+    assert_equals(style.borderImageRepeat, "initial", "Specified border-image-repeat");
+    assert_equals(style.borderImage, "", "Specified border-image");
+    assert_equals(style.webkitBorderImage, "url(\"\") 50% fill / 11px 22px 33px 44px", "Specified -webkit-border-image");
+
+    assert_equals(cs.borderImageSource, "url(\"\")", "Computed border-image-source");
+    assert_equals(cs.borderImageSlice, "50% fill", "Computed border-image-slice");
+    assert_equals(cs.borderImageWidth, "", "Computed border-image-width");
+    assert_equals(cs.borderImageOutset, "0", "Computed border-image-outset");
+    assert_equals(cs.borderImageRepeat, "stretch", "Computed border-image-repeat");
+    assert_equals(cs.borderImage, "", "Computed border-image");
+    assert_equals(cs.webkitBorderImage, "url(\"\") 50% fill / 11px 22px 33px 44px / 0 stretch", "Computed -webkit-border-image");
+
+    assert_equals(cs.borderWidth, "11px 22px 33px 44px", "Computed border-width");
+}, "-webkit-border-image: url(\"\") 50% fill / 11px 22px 33px 44px");
+
+test(() => {
+    style.cssText = "--v: 50px; border-image: url(\"\") 50% / var(--v);";
+
+    assert_equals(style.cssText, "--v: 50px; border-image: url(\"\") 50% / var(--v);", "cssText");
+    assert_array_equals([...style], ["--v", "border-image-source", "border-image-slice", "border-image-width", "border-image-outset", "border-image-repeat"]);
+
+    assert_equals(style.borderImageSource, "", "Specified border-image-source");
+    assert_equals(style.borderImageSlice, "", "Specified border-image-slice");
+    assert_equals(style.borderImageWidth, "", "Specified border-image-width");
+    assert_equals(style.borderImageOutset, "", "Specified border-image-outset");
+    assert_equals(style.borderImageRepeat, "", "Specified border-image-repeat");
+    assert_equals(style.borderImage, "url(\"\") 50% / var(--v)", "Specified border-image");
+    assert_equals(style.webkitBorderImage, "", "Specified -webkit-border-image");
+
+    assert_equals(cs.borderImageSource, "url(\"\")", "Computed border-image-source");
+    assert_equals(cs.borderImageSlice, "50%", "Computed border-image-slice");
+    assert_equals(cs.borderImageWidth, "50px", "Computed border-image-width");
+    assert_equals(cs.borderImageOutset, "0", "Computed border-image-outset");
+    assert_equals(cs.borderImageRepeat, "stretch", "Computed border-image-repeat");
+    assert_equals(cs.borderImage, "url(\"\") 50% / 50px / 0 stretch", "Computed border-image");
+    assert_equals(cs.webkitBorderImage, "", "Computed -webkit-border-image");
+
+    assert_equals(cs.borderWidth, "1px", "Computed border-width");
+}, "--v: 50px; border-image: url(\"\") 50% / var(--v)");
+
+test(() => {
+    style.cssText = "--v: 50px; -webkit-border-image: url(\"\") 50% / var(--v);";
+
+    assert_equals(style.cssText, "--v: 50px; -webkit-border-image: url(\"\") 50% / var(--v);", "cssText");
+    assert_array_equals([...style], ["--v", "border-image-source", "border-image-slice", "border-image-width", "border-image-outset", "border-image-repeat"]);
+
+    assert_equals(style.borderImageSource, "", "Specified border-image-source");
+    assert_equals(style.borderImageSlice, "", "Specified border-image-slice");
+    assert_equals(style.borderImageWidth, "", "Specified border-image-width");
+    assert_equals(style.borderImageOutset, "", "Specified border-image-outset");
+    assert_equals(style.borderImageRepeat, "", "Specified border-image-repeat");
+    assert_equals(style.borderImage, "", "Specified border-image");
+    assert_equals(style.webkitBorderImage, "url(\"\") 50% / var(--v)", "Specified -webkit-border-image");
+
+    assert_equals(cs.borderImageSource, "url(\"\")", "Computed border-image-source");
+    assert_equals(cs.borderImageSlice, "50% fill", "Computed border-image-slice");
+    assert_equals(cs.borderImageWidth, "", "Computed border-image-width");
+    assert_equals(cs.borderImageOutset, "0", "Computed border-image-outset");
+    assert_equals(cs.borderImageRepeat, "stretch", "Computed border-image-repeat");
+    assert_equals(cs.borderImage, "", "Computed border-image");
+    assert_equals(cs.webkitBorderImage, "url(\"\") 50% fill / 50px / 0 stretch", "Computed -webkit-border-image");
+
+    assert_equals(cs.borderWidth, "50px", "Computed border-width");
+}, "--v: 50px; -webkit-border-image: url(\"\") 50% / var(--v)");
+</script>

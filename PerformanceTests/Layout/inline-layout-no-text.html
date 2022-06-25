@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test layout performance with inlines and inline-blocks.</title>
+    <script src="../resources/runner.js"></script>
+    <style>
+        .inlineBlock { display:inline-block; width:10px; height:10px; }
+    </style>
+</head>
+<body>
+    <pre id="log"></pre>
+    <div id="target" style="width: 300px; height: 0px; display: block;">
+    </div>
+    <script>
+        var style = target.style;
+
+        for (var i = 0; i < 40000; i++) {
+            const span = document.createElement("span");
+            const div = document.createElement("div");
+            div.classList.add("inlineBlock");
+            span.appendChild(div);
+            target.appendChild(span);
+        }
+
+        function test() {
+            style.width = "280px";
+            target.offsetLeft;
+            style.width = "300px";
+            target.offsetLeft;
+            style.width = "290px";
+            target.offsetLeft;
+        }
+
+        PerfTestRunner.measureRunsPerSecond({ run: test });
+    </script>
+</body>
+</html>

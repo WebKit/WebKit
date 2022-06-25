@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        #tiled {
+            width: 800px;
+            height: 1800px;
+            background-color: silver;
+            -webkit-transform: translateZ(00);
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        function doTest()
+        {
+            // Force compositing update before changing layer size.
+            if (window.internals)
+                window.internals.layerTreeAsText(document);
+
+            document.getElementById('tiled').style.height = '2100px';
+
+            if (window.internals)
+                document.getElementById('layers').textContent = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_TILE_CACHES);
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+
+    <div id="tiled">Tiled layer</div>
+<pre id="layers"></pre>
+</body>
+</html>

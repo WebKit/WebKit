@@ -1,0 +1,47 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true, shouldHandleRunOpenPanel=false ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+</head>
+<body>
+<input id="fileInput" type="file">
+<script>
+
+jsTestIsAsync = true;
+
+async function runTest(accept, expectedIdentifiers)
+{
+    debug("* accept = " + accept);
+    fileInput.accept = accept;
+
+    await UIHelper.activateElement(fileInput);
+
+    items = await UIHelper.filePickerAcceptedTypeIdentifiers();
+    shouldBeTrue("areArraysEqual(items, " + expectedIdentifiers + ")");
+
+    debug("");
+    await UIHelper.dismissFilePicker();
+}
+
+addEventListener("load", async () => {
+    description("Tests that the accept attribute for file inputs is mapped to the correct set of type identifiers on iOS.");
+
+    await runTest("", '[]');
+    await runTest("*/*", '[]');
+    await runTest("image/*", '["public.image"]');
+    await runTest("video/*", '["public.movie"]');
+    await runTest("image/*, video/*", '["public.image", "public.movie"]');
+    await runTest(".PNG, .GIF", '["com.compuserve.gif", "public.png"]');
+    await runTest(".PNG, .GIF, .MOV", '["com.apple.quicktime-movie", "com.compuserve.gif", "public.png"]');
+    await runTest(".TXT", '["public.plain-text"]');
+    await runTest(".PDF", '["com.adobe.pdf"]');
+    await runTest(".PDF, .TXT", '["com.adobe.pdf", "public.plain-text"]');
+
+    finishJSTest();
+});
+
+</script>
+</body>
+</html>

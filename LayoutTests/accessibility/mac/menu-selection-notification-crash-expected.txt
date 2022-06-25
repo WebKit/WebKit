@@ -1,0 +1,13 @@
+
+This tests that inserting a node into a select menu won't cause a crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS addedNotification is true
+menu role: AXRole: AXPopUpButton
+Notification received successfully.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,3 @@
+This tests changing a transitioning property while running and resetting its duration to 0. The box should start moving left and after 500ms snap back to 0
+
+PASS

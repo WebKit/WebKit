@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        body {
+            overflow: hidden;
+        }
+        
+        .container {
+            position: relative;
+            height: 200px;
+            width: 200px;
+            border: 2px solid black;
+            margin: 10px;
+            overflow: hidden;
+            -webkit-perspective: 600px;
+        }
+        .box {
+            position: absolute;
+            height: 200px;
+            width: 200px;
+            background-color: red;
+            border: 1px solid black;
+            -webkit-backface-visibility: hidden;
+            -webkit-transform-style: preserve-3d;
+            -webkit-transform: rotateY(180deg);
+        }
+        
+        .tiled {
+            height: 2500px;
+        }
+        
+        #layers {
+            opacity: 0; /* Hide from pixel result */
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText(true);
+        
+        function dumpLayers()
+        {
+            if (window.internals)
+                document.getElementById('layers').innerText = window.internals.layerTreeAsText(document);
+        }
+        window.addEventListener('load', dumpLayers, false);
+    </script>
+</head>
+<body>
+    <!-- You should see two empty white squares. -->
+    <div class="container">
+        <div class="box"></div>
+    </div>
+    <div class="container">
+        <div class="tiled box">
+        </div>
+    </div>
+
+<pre id="layers">Layers go here</pre>
+</body>
+</html>

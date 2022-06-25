@@ -1,0 +1,126 @@
+
+== Running test suite: MIMETypeUtilities
+-- Running test case: parseMIMEType
+
+Test null
+PASS: type should be: null
+PASS: boundary should be: null
+PASS: encoding should be: null
+
+Test "a"
+PASS: type should be: "a"
+PASS: boundary should be: null
+PASS: encoding should be: null
+
+Test "mime"
+PASS: type should be: "mime"
+PASS: boundary should be: null
+PASS: encoding should be: null
+
+Test "mime-dash"
+PASS: type should be: "mime-dash"
+PASS: boundary should be: null
+PASS: encoding should be: null
+
+Test "mime/slash"
+PASS: type should be: "mime/slash"
+PASS: boundary should be: null
+PASS: encoding should be: null
+
+Test "mime+plus"
+PASS: type should be: "mime+plus"
+PASS: boundary should be: null
+PASS: encoding should be: null
+
+Test "mime/slash+plus"
+PASS: type should be: "mime/slash+plus"
+PASS: boundary should be: null
+PASS: encoding should be: null
+
+Test "mime/slash ;"
+PASS: type should be: "mime/slash"
+PASS: boundary should be: null
+PASS: encoding should be: null
+
+Test "mime ; semicolon"
+PASS: type should be: "mime"
+PASS: boundary should be: null
+PASS: encoding should be: null
+
+Test "mime/generic ; a = b"
+PASS: type should be: "mime/generic"
+PASS: boundary should be: null
+PASS: encoding should be: null
+
+Test "mime/generic ; boundary = charset"
+PASS: type should be: "mime/generic"
+PASS: boundary should be: "charset"
+PASS: encoding should be: null
+
+Test "mime/generic ; charset = boundary"
+PASS: type should be: "mime/generic"
+PASS: boundary should be: null
+PASS: encoding should be: "boundary"
+
+Test "mime/generic ; boundary = foo ; charset = bar"
+PASS: type should be: "mime/generic"
+PASS: boundary should be: "foo"
+PASS: encoding should be: "bar"
+
+-- Running test case: fileExtensionForFilename
+PASS: File extension for null filename should be null.
+PASS: File extension for filename without a period should be null.
+PASS: File extension for filename ending in a period should be null.
+PASS: File extension for "foo.xyz" should be "xyz".
+PASS: File extension for "image.png" should be "png".
+PASS: File extension for "image.png" should be "gif".
+PASS: File extension for "script.js" should be "js".
+PASS: File extension for "script.min.js" should be "js".
+
+-- Running test case: fileExtensionForURL
+PASS: File extension for null URL should be null.
+PASS: File extension for invalid URL should be null.
+PASS: File extension for URL without last path component should be null.
+PASS: File extension for URL without last path component should be null.
+PASS: File extension for URL with last path component without a period should be null.
+PASS: File extension for URL with last path component without a period should be null.
+PASS: File extension for URL with last path component ending in a period should be null.
+PASS: File extension for "foo.xyz" should be "xyz".
+PASS: File extension for "image.png" should be "png".
+PASS: File extension for "image.png" should be "gif".
+PASS: File extension for "script.js" should be "js".
+PASS: File extension for "script.min.js" should be "js".
+
+-- Running test case: fileExtensionForMIMEType
+PASS: File extension for null mime type should be null.
+PASS: File extension for invalid mime type should be null.
+PASS: File extension for unknown mime type should be null.
+PASS: File extension for "image/jpeg" should be "jpg".
+PASS: File extension for "image/png" should be "png".
+PASS: File extension for "image/gif" should be "gif".
+PASS: File extension for "text/javascript" should be "js".
+PASS: File extension for "application/json" should be "json".
+PASS: File extension for "application/vnd.api+json" should be "json".
+PASS: File extension for "application/xhtml+xml" should be "xhtml".
+PASS: File extension for "image/svg+xml" should be "svg".
+PASS: File extension for "text/foo+xml" should be "xml".
+
+-- Running test case: shouldTreatMIMETypeAsText
+PASS: null mime type should not be treated as text.
+PASS: "application/unknown" should not be treated as text.
+PASS: "text/plain" should be treated as text.
+PASS: "text/javascript" should be treated as text.
+PASS: "application/json" should be treated as text.
+PASS: "application/vnd.api+json" should be treated as text.
+PASS: "application/vnd.apple.mpegurl" should be treated as text.
+PASS: "image/svg+xml" should be treated as text.
+PASS: "text/x-coffeescript" should be treated as text.
+PASS: "application/xml" should be treated as text.
+PASS: "image/jpeg" should not be treated as text.
+PASS: "image/png" should not be treated as text.
+PASS: "image/gif" should not be treated as text.
+PASS: "font/woff" should not be treated as text.
+PASS: "video/mpeg" should not be treated as text.
+PASS: "audio/ogg" should not be treated as text.
+PASS: "application/pdf" should not be treated as text.
+

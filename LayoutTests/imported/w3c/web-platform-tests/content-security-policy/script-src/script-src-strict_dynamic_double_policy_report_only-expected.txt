@@ -1,0 +1,5 @@
+A separate Report-Only policy does not influence `strict-dynamic` in the script-src directive.
+
+
+PASS Script injected via `appendChild` is allowed with `strict-dynamic` + Report-Only `script-src 'none'` policy.
+

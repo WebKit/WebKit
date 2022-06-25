@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            p {
+                margin: 0px;
+            }
+            #maskedElement {
+                width: 200px;
+                height: 160px;
+                background-color: green;
+                -webkit-mask-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgd2lkdGg9IjM2MCIgaGVpZ2h0PSIyODgiPgogICAgPGNpcmNsZSBjeD0iMTgwIiBjeT0iMTQ0IiByPSI4MCIgLz4KPC9zdmc+Cgo=);
+                -webkit-mask-size: 50px 40px;
+            }
+        </style>
+    </head>
+
+    <body>
+        <p><a href="https://bugs.webkit.org/show_bug.cgi?id=129682">Bug 129682</a> - On success, you should see a 4x4 grid of green circles.</p>
+        <p>This test sets the mask-image value using base64.</p>
+        <div id="maskedElement"></div>
+    </body>
+</html>

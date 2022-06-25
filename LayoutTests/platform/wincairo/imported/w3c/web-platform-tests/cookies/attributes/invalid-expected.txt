@@ -1,0 +1,28 @@
+
+PASS Set cookie with invalid attribute
+PASS Set cookie ending with invalid attribute.
+PASS Set cookie ending with quoted invalid attribute.
+PASS Set cookie ending with double-quoted invalid attribute.
+PASS Set cookie ending with invalid attribute equals.
+PASS Set cookie with two invalid attributes (lol="aaa and bbb).
+PASS Set cookie ending with two invalid attributes (lol="aaa and bbb).
+PASS Set cookie for quoted Secure attribute
+PASS Set cookie for Secure qux
+PASS Ignore invalid attribute name with comma
+PASS Ignore invalid attribute value with comma
+PASS Set cookie ignoring multiple invalid attributes, whitespace, and semicolons
+PASS Set cookie with multiple '='s in its value, ignoring multiple invalid attributes, whitespace, and semicolons
+PASS Set cookie with (invalid) version=1 attribute
+PASS Set cookie with (invalid) version=1000 attribute
+PASS Set cookie ignoring anything after ; (which looks like an invalid attribute)
+PASS Set cookie ignoring anything after ; (which looks like an invalid attribute, with no trailing semicolon)
+PASS Ignore keys after semicolon
+PASS Ignore attributes after semicolon
+PASS Ignore `Set-Cookie: =`
+PASS Ignore empty cookie string
+PASS Ignore `Set-Cookie: =` with other `Set-Cookie` headers
+PASS Ignore name- and value-less `Set-Cookie: ; bar`
+PASS Ignore name- and value-less `Set-Cookie:    `
+PASS Ignore name- and value-less `Set-Cookie: \t`
+PASS Ignore cookie with domain that won't domain match (along with other invalid noise)
+

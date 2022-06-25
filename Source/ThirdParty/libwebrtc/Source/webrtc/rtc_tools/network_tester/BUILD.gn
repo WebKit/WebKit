@@ -1,0 +1,169 @@
+# Copyright (c) 2017 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+if (rtc_enable_protobuf) {
+  import("//third_party/protobuf/proto_library.gni")
+}
+
+if (rtc_enable_protobuf) {
+  proto_library("network_tester_config_proto") {
+    sources = [ "network_tester_config.proto" ]
+    proto_out_dir = "rtc_tools/network_tester"
+  }
+
+  proto_library("network_tester_packet_proto") {
+    sources = [ "network_tester_packet.proto" ]
+    proto_out_dir = "rtc_tools/network_tester"
+  }
+
+  rtc_library("network_tester") {
+    sources = [
+      "config_reader.cc",
+      "config_reader.h",
+      "packet_logger.cc",
+      "packet_logger.h",
+      "packet_sender.cc",
+      "packet_sender.h",
+      "test_controller.cc",
+      "test_controller.h",
+    ]
+
+    defines = [ "WEBRTC_NETWORK_TESTER_PROTO" ]
+
+    deps = [
+      ":network_tester_config_proto",
+      ":network_tester_packet_proto",
+      "../../api:sequence_checker",
+      "../../api/task_queue",
+      "../../api/task_queue:default_task_queue_factory",
+      "../../p2p",
+      "../../rtc_base",
+      "../../rtc_base:checks",
+      "../../rtc_base:ignore_wundef",
+      "../../rtc_base:ip_address",
+      "../../rtc_base:protobuf_utils",
+      "../../rtc_base:rtc_base_approved",
+      "../../rtc_base:rtc_task_queue",
+      "../../rtc_base:socket_address",
+      "../../rtc_base:threading",
+      "../../rtc_base/synchronization:mutex",
+      "../../rtc_base/system:no_unique_address",
+      "../../rtc_base/third_party/sigslot",
+    ]
+    absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+  }
+
+  network_tester_unittests_resources = [
+    "../../resources/network_tester/client_config.dat",
+    "../../resources/network_tester/server_config.dat",
+  ]
+
+  if (is_ios) {
+    bundle_data("network_tester_unittests_bundle_data") {
+      testonly = true
+      sources = network_tester_unittests_resources
+      outputs = [ "{{bundle_resources_dir}}/{{source_file_part}}" ]
+    }
+  }
+
+  rtc_library("network_tester_unittests") {
+    testonly = true
+
+    sources = [ "network_tester_unittest.cc" ]
+
+    deps = [
+      ":network_tester",
+      "../../rtc_base:gunit_helpers",
+      "../../test:fileutils",
+      "../../test:test_support",
+      "//testing/gtest",
+    ]
+
+    if (is_ios) {
+      deps += [ ":network_tester_unittests_bundle_data" ]
+    }
+
+    defines = [ "WEBRTC_NETWORK_TESTER_TEST_ENABLED" ]
+
+    data = network_tester_unittests_resources
+  }
+
+  rtc_executable("network_tester_server") {
+    sources = [ "server.cc" ]
+
+    deps = [ ":network_tester" ]
+  }
+}
+
+if (is_android) {
+  rtc_android_apk("NetworkTesterMobile") {
+    testonly = true
+    apk_name = "NetworkTesterMobile"
+    android_manifest = "androidapp/AndroidManifest.xml"
+    min_sdk_version = 21
+    target_sdk_version = 24
+
+    deps = [
+      ":NetworkTesterMobile_javalib",
+      ":NetworkTesterMobile_resources",
+      "../../rtc_base:base_java",
+    ]
+
+    shared_libraries = [ "../../rtc_tools/network_tester:network_tester_so" ]
+  }
+
+  rtc_android_library("NetworkTesterMobile_javalib") {
+    testonly = true
+    android_manifest = "androidapp/AndroidManifest.xml"
+
+    sources = [
+      "androidapp/src/com/google/media/networktester/MainActivity.java",
+      "androidapp/src/com/google/media/networktester/NetworkTester.java",
+    ]
+
+    resources_package = "com.google.media.networktester"
+    deps = [
+      ":NetworkTesterMobile_resources",
+      "../../rtc_base:base_java",
+    ]
+  }
+
+  android_resources("NetworkTesterMobile_resources") {
+    testonly = true
+    custom_package = "com.google.media.networktester"
+    sources = [
+      "androidapp/res/layout/activity_main.xml",
+      "androidapp/res/mipmap-hdpi/ic_launcher.png",
+      "androidapp/res/mipmap-mdpi/ic_launcher.png",
+      "androidapp/res/mipmap-xhdpi/ic_launcher.png",
+      "androidapp/res/mipmap-xxhdpi/ic_launcher.png",
+      "androidapp/res/mipmap-xxxhdpi/ic_launcher.png",
+      "androidapp/res/values-v17/styles.xml",
+      "androidapp/res/values-w820dp/dimens.xml",
+      "androidapp/res/values/colors.xml",
+      "androidapp/res/values/dimens.xml",
+      "androidapp/res/values/strings.xml",
+    ]
+
+    # Needed for Bazel converter.
+    resource_dirs = [ "androidapp/res" ]
+    assert(resource_dirs != [])  # Mark as used.
+  }
+
+  rtc_shared_library("network_tester_so") {
+    sources = [ "jni.cpp" ]
+
+    deps = [ ":network_tester" ]
+
+    suppressed_configs += [ "//build/config/android:hide_all_but_jni_onload" ]
+    configs += [ "//build/config/android:hide_all_but_jni" ]
+
+    output_extension = "so"
+  }
+}

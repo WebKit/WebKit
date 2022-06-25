@@ -1,0 +1,1 @@
+Pass if no crash or assert when the min-height value can't be resolved.

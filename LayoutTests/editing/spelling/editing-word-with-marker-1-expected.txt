@@ -1,0 +1,15 @@
+The test verified that when a word is modified, its spelling markers are removed. When manually testing, type "it's a meagesga", then edit the word "meagesga". You should see the underline under the modified "meagesga" disppears after editing.
+
+
+SUCCESS
+SUCCESS
+SUCCESS
+SUCCESS
+SUCCESS
+SUCCESS
+SUCCESS
+SUCCESS
+SUCCESS
+SUCCESS
+SUCCESS
+

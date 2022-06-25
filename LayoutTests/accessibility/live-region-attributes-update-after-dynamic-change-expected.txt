@@ -1,0 +1,48 @@
+This test ensures that an element's busy state updates aria-busy changes.
+
+Verifying initial states:
+
+#clock is atomic: true
+#clock-display-contents is atomic: true
+
+#clock is busy: false
+#clock-display-contents is busy: false
+
+#clock relevant: additions text
+#clock-display-contents relevant: additions text
+
+#clock live region status: polite
+#clock-display-contents live region status: polite
+
+Setting aria-busy to true.
+
+#clock is busy: true
+#clock-display-contents is busy: true
+
+Setting aria-busy to false.
+
+#clock is busy: false
+#clock-display-contents is busy: false
+
+Setting aria-atomic to false.
+
+#clock is atomic: false
+#clock-display-contents is atomic: false
+
+Setting aria-relevant to removals.
+
+#clock relevant: removals
+#clock-display-contents relevant: removals
+
+Setting aria-live to assertive.
+
+#clock live region status: assertive
+#clock-display-contents live region status: assertive
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+2:30pm
+4:30pm
+

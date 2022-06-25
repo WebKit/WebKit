@@ -1,0 +1,35 @@
+Test using setAttributeNode() behaves like setAttribute() to get the existing attribute, but like setAttributeNS() to set the new value. This test covers attributes set through an AttributeNode with a namespace."
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS testElement.attributes.length is 1
+PASS testElement.getAttribute("foobar") is "WebKit"
+PASS testElement.hasAttribute("foobar") is true
+PASS testElement.getAttribute("FooBar") is "WebKit"
+PASS testElement.hasAttribute("FooBar") is true
+PASS testElement.getAttributeNS("ns1", "foobar") is "WebKit"
+PASS testElement.hasAttributeNS("ns1", "foobar") is true
+PASS testElement.getAttributeNS("ns1", "FooBar") is null
+PASS testElement.hasAttributeNS("ns1", "FooBar") is false
+PASS testElement.getAttributeNS("", "foobar") is null
+PASS testElement.hasAttributeNS("", "foobar") is false
+PASS testElement.getAttributeNS("", "FooBar") is null
+PASS testElement.hasAttributeNS("", "FooBar") is false
+PASS testElement.attributes.length is 1
+PASS testElement.getAttribute("foobar") is null
+PASS testElement.hasAttribute("foobar") is false
+PASS testElement.getAttribute("FooBar") is null
+PASS testElement.hasAttribute("FooBar") is false
+PASS testElement.getAttributeNS("ns1", "foobar") is null
+PASS testElement.hasAttributeNS("ns1", "foobar") is false
+PASS testElement.getAttributeNS("ns1", "FooBar") is "Rocks!"
+PASS testElement.hasAttributeNS("ns1", "FooBar") is true
+PASS testElement.getAttributeNS("", "foobar") is null
+PASS testElement.hasAttributeNS("", "foobar") is false
+PASS testElement.getAttributeNS("", "FooBar") is null
+PASS testElement.hasAttributeNS("", "FooBar") is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

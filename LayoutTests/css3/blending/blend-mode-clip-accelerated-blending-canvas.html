@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+
+<link rel="stylesheet" href="resources/blending-style.css">
+
+<!-- <p>This test checks that blending works if the isolating layer has overflow hidden and the blending layer is an accelerated canvas.<br /> -->
+<!-- Test passes if you see a green rectangle.</p> -->
+<div class="clipping isolating red box">
+    <canvas class="difference" id="blending-canvas" width="400" height="400"></canvas>
+</div>
+<pre id="layers">Layer tree goes here in DRT</pre>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+    function doTest() {
+        var canvas = document.getElementById("blending-canvas");
+        var ctx = canvas.getContext("2d");
+        ctx.fillStyle = "#000000";
+        ctx.fillRect(0,0,400,400);
+
+        if (window.testRunner) {
+            document.getElementById('layers').innerText = window.internals.layerTreeAsText(document);
+            testRunner.notifyDone();
+        }
+    }
+    window.addEventListener('load', doTest, false);
+</script>

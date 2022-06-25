@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body onload="runTest()">
+<iframe src="http://localhost:8000/security/resources/blank.html"></iframe>
+<script>
+description("Tests that using another window's property getter does not bypass cross-origin checks.");
+jsTestIsAsync = true;
+
+function callingFunctionShouldRejectPromiseWithErrorName(functionName, errorName)
+{
+    return Object.getOwnPropertyDescriptor(window, functionName).value.call(crossOriginWindow).then(() => {
+        testFailed("Calling " + functionName + " did not reject the promise");
+    }, (e) => {
+        if (e.name == errorName)
+           testPassed("Calling " + functionName + " rejected promise with exception " + errorName + ".");
+       else
+           testFailed("Calling " + functionName + " should reject promise with exception " + errorName + ". Rejected with exception " + e.name + " instead.");
+    });
+}
+
+async function runTest()
+{
+    crossOriginWindow = frames[0];
+    shouldThrowErrorName('Object.getOwnPropertyDescriptor(window, "document").get.call(crossOriginWindow)', 'SecurityError');
+    shouldThrowErrorName('Object.getOwnPropertyDescriptor(window, "name").get.call(crossOriginWindow)', 'SecurityError');
+    shouldThrowErrorName('Object.getOwnPropertyDescriptor(window, "menubar").get.call(crossOriginWindow)', 'SecurityError');
+    shouldThrowErrorName('Object.getOwnPropertyDescriptor(window, "scrollbars").get.call(crossOriginWindow)', 'SecurityError');
+    shouldThrowErrorName('Object.getOwnPropertyDescriptor(window, "navigator").get.call(crossOriginWindow)', 'SecurityError');
+    shouldThrowErrorName('Object.getOwnPropertyDescriptor(window, "screenX").get.call(crossOriginWindow)', 'SecurityError');
+    await callingFunctionShouldRejectPromiseWithErrorName('createImageBitmap', 'SecurityError');
+    await callingFunctionShouldRejectPromiseWithErrorName('fetch', 'SecurityError');
+    shouldThrowErrorName('Object.getOwnPropertyDescriptor(window.__proto__, "constructor").get.call(crossOriginWindow)', 'TypeError');
+    shouldThrowErrorName('Object.getOwnPropertyDescriptor(window.__proto__, "constructor").get.call(crossOriginWindow.__proto__)', 'TypeError');
+    shouldThrowErrorName('crossOriginWindow.constructor', 'SecurityError');
+    shouldThrowErrorName('Object.getOwnPropertyDescriptor(crossOriginWindow.__proto__, "constructor").value', 'SecurityError');
+    shouldBeTrue('Object.getOwnPropertyDescriptor(window, "location").get.call(crossOriginWindow) === crossOriginWindow.location');
+    finishJSTest();
+}
+</script>
+</body>
+<script src="../../resources/js-test-post.js"></script>
+</html>

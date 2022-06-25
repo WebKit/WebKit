@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x8
+  RenderBlock {HTML} at (0,0) size 800x8
+    RenderBody {BODY} at (8,8) size 784x0
+layer at (8,2) size 330x43
+  RenderTable {TABLE} at (8,1) size 331x44
+    RenderTableSection {TBODY} at (0,0) size 331x44
+      RenderTableRow {TR} at (0,2) size 331x40
+        RenderTableCell {TD} at (2,2) size 327x40 [r=0 c=0 rs=1 cs=1]
+          RenderBlock {PRE} at (1,12) size 325x15
+            RenderText {#text} at (0,0) size 325x14
+              text run at (0,0) width 325: "There should be no selection artifacts below."
+              text run at (324,0) width 1: " "

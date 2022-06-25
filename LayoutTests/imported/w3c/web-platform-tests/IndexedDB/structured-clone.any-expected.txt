@@ -1,0 +1,123 @@
+
+Harness Error (TIMEOUT), message = null
+
+PASS undefined: undefined
+PASS object: null
+PASS boolean: false
+PASS boolean: true
+PASS number: NaN
+PASS number: -Infinity
+PASS number: -1.7976931348623157e+308
+PASS number: -4294967295
+PASS number: -2147483648
+PASS number: -2147483647
+PASS number: -1
+PASS number: -5e-324
+PASS number: -0
+PASS number: 0
+PASS number: 1
+PASS number: 5e-324
+PASS number: 2147483647
+PASS number: 2147483648
+PASS number: 4294967295
+PASS number: 1.7976931348623157e+308
+PASS number: Infinity
+PASS bigint: -12345678901234567890
+PASS bigint: -1
+PASS bigint: 0
+PASS bigint: 1
+PASS bigint: 12345678901234567890
+PASS string:
+PASS string: this is a sample string
+PASS string: null(\0)
+PASS Boolean: false
+PASS Boolean: true
+PASS Number: NaN
+PASS Number: -Infinity
+PASS Number: -1.7976931348623157e+308
+PASS Number: -4294967295
+PASS Number: -2147483648
+PASS Number: -2147483647
+PASS Number: -1
+PASS Number: -5e-324
+PASS Number: -0
+PASS Number: 0
+PASS Number: 1
+PASS Number: 5e-324
+PASS Number: 2147483647
+PASS Number: 2147483648
+PASS Number: 4294967295
+PASS Number: 1.7976931348623157e+308
+PASS Number: Infinity
+PASS String:
+PASS String: this is a sample string
+PASS String: null(\0)
+PASS Date: Sun Feb 09 1653 22:20:22 GMT-0752 (PST)
+PASS Date: Sun Apr 24 1938 14:13:20 GMT-0800 (PST)
+PASS Date: Sat Dec 20 1969 02:13:20 GMT-0800 (PST)
+PASS Date: Wed Dec 31 1969 15:43:20 GMT-0800 (PST)
+PASS Date: Wed Dec 31 1969 15:59:59 GMT-0800 (PST)
+PASS Date: Wed Dec 31 1969 16:00:00 GMT-0800 (PST)
+PASS Date: Wed Dec 31 1969 16:00:01 GMT-0800 (PST)
+PASS Date: Wed Dec 31 1969 16:16:40 GMT-0800 (PST)
+PASS Date: Mon Jan 12 1970 05:46:40 GMT-0800 (PST)
+PASS Date: Sat Sep 08 2001 18:46:40 GMT-0700 (PDT)
+PASS Date: Sat Nov 20 2286 09:46:40 GMT-0800 (PST)
+PASS RegExp: /(?:)/
+PASS RegExp: /abc/
+PASS RegExp: /abc/g
+PASS RegExp: /abc/i
+PASS RegExp: /abc/gi
+PASS RegExp: /abc/m
+PASS RegExp: /abc/gm
+PASS RegExp: /abc/im
+PASS RegExp: /abc/gim
+PASS RegExp: /abc/gimsuy
+PASS ArrayBuffer: [object ArrayBuffer]
+PASS Uint8Array:
+PASS Uint8Array: 0,1,254,255
+PASS Uint16Array: 0,1,65534,65535
+PASS Uint32Array: 0,1,4294967294,4294967295
+PASS Int8Array: 0,1,-2,-1
+PASS Int16Array: 0,1,-2,-1
+PASS Int32Array: 0,1,-2,-1
+PASS Uint8ClampedArray: 0,1,254,255
+PASS Float32Array: -Infinity,-1.5,-1,-0.5,0,0.5,1,1.5,Infinity,NaN
+PASS Float64Array: -Infinity,-1.7976931348623157e+308,-5e-324,0,5e-324,1.7976931348623157e+308,Infinity,NaN
+PASS Map: [object Map]
+PASS Set: [object Set]
+FAIL Error: Error promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+FAIL Error: Error: abc promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+FAIL EvalError: EvalError promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+FAIL EvalError: EvalError: ghi promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+FAIL RangeError: RangeError promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+FAIL RangeError: RangeError: ghi promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+FAIL ReferenceError: ReferenceError promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+FAIL ReferenceError: ReferenceError: ghi promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+FAIL SyntaxError: SyntaxError promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+FAIL SyntaxError: SyntaxError: ghi promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+FAIL TypeError: TypeError promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+FAIL TypeError: TypeError: ghi promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+FAIL URIError: URIError promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+FAIL URIError: URIError: ghi promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+PASS Array:
+PASS Array: 1,2,3
+PASS Array: foo,bar,,,,,,,,,true,false,,,,,,,,,123,456,,,,,,,,,
+PASS Array: foo,bar
+PASS Object: [object Object]
+PASS DOMMatrix: matrix(1, 0, 0, 1, 0, 0)
+PASS DOMMatrixReadOnly: matrix(1, 0, 0, 1, 0, 0)
+PASS DOMPoint: [object DOMPoint]
+PASS DOMPointReadOnly: [object DOMPointReadOnly]
+PASS DOMRect: [object DOMRect]
+PASS DOMRectReadOnly: [object DOMRectReadOnly]
+PASS ImageData: [object ImageData]
+TIMEOUT Blob: [object Blob] Test timed out
+NOTRUN File: [object File]
+NOTRUN FileList: [object FileList]
+NOTRUN Not serializable: function: function () {}
+NOTRUN Not serializable: symbol: Symbol(desc)
+NOTRUN Not serializable: Window: [object Window]
+NOTRUN Not serializable: Event: [object Event]
+NOTRUN Not serializable: MessageChannel: [object MessageChannel]
+

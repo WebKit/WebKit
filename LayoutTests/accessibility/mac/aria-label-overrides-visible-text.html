@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div id="content">
+<a id="link1" href="#">test1</a>
+<a id="link2" href="#" aria-label="LINK">test1</a>
+</div>
+
+<script>
+    if (window.testRunner && window.accessibilityController) {
+        let output = "This tests ensures that if aria-label is used, the AXTitle will not expose its children on Mac.\n";
+
+        var link1 = accessibilityController.accessibleElementById("link1");
+        output += expect("link1.description", "'AXDescription: '");
+        output += expect("link1.title", "'AXTitle: test1'");
+
+        var link2 = accessibilityController.accessibleElementById("link2");
+        output += expect("link2.description", "'AXDescription: LINK'");
+        output += expect("link2.title", "'AXTitle: '");
+
+        debug(output);
+        document.getElementById("content").style.visibility = "hidden";
+    }
+</script>
+</body>
+</html>

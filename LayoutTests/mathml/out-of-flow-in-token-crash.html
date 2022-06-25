@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>ASSERTION with out-of-flow elements inside MathML</title>
+    <meta charset="utf-8"/>
+    <script>
+      if (window.testRunner)
+          testRunner.dumpAsText();
+    </script>
+  </head>
+  <body>
+
+    <p>This test passes if it does not crash</p>
+
+    <p>
+      <math>
+        <mfenced style="position: relative">
+          <mtext>
+            <span>
+              <span style="position: absolute">RenderMathMLFenced</span>
+            </span>
+          </mtext>
+        </mfenced>
+      </math>
+    </p>
+
+    <p>
+      <math>
+        <mfrac style="position: relative">
+          <mtext>
+            <span>
+              <span style="position: absolute">RenderMathMLFraction</span>
+            </span>
+          </mtext>
+          <mspace></mspace>
+        </mfrac>
+      </math>
+    </p>
+
+    <p>
+      <math style="position: relative">
+        <mtext>
+          <span>
+            <span style="position: absolute">RenderMathMLMath</span>
+          </span>
+        </mtext>
+      </math>
+    </p>
+
+    <p>
+      <math>
+        <menclose style="position: relative">
+          <mtext>
+            <span>
+              <span style="position: absolute">RenderMathMLMenclose</span>
+            </span>
+          </mtext>
+        </menclose>
+      </math>
+    </p>
+
+    <p>
+      <math>
+        <mo style="position: relative">
+          <span>
+            <span style="position: absolute">RenderMathMLOperator</span>
+            </span>
+        </mo>
+      </math>
+    </p>
+
+    <p>
+      <math>
+        <mpadded style="position: relative">
+          <mtext>
+            <span>
+              <span style="position: absolute">RenderMathMLPadded</span>
+            </span>
+          </mtext>
+        </mpadded>
+      </math>
+    </p>
+
+    <p>
+      <math>
+        <mroot style="position: relative">
+          <mtext>
+            <span>
+              <span style="position: absolute">RenderMathMLRoot</span>
+            </span>
+          </mtext>
+          <mspace></mspace>
+        </mroot>
+      </math>
+    </p>
+
+    <p>
+      <math>
+        <mrow style="position: relative">
+          <mtext><span><span style="position: absolute">RenderMathMLRow</span><span></mtext>
+        </mrow>
+      </math>
+    </p>
+
+    <p>
+      <math>
+        <msubsup style="position: relative">
+          <mtext>
+            <span>
+              <span style="position: absolute">RenderMathMLScripts</span>
+            </span>
+          </mtext>
+          <mspace></mspace>
+          <mspace></mspace>
+        </msubsup>
+      </math>
+    </p>
+
+    <p>
+      <math>
+        <mtext style="position: relative">
+          <span>
+            <span style="position: absolute">RenderMathMLToken</span>
+          </span>
+        </mtext>
+      </math>
+    </p>
+
+    <p>
+      <math>
+        <munderover style="position: relative">
+          <mtext>
+            <span>
+              <span style="position: absolute">RenderMathMLUnderOver</span>
+            </span>
+          </mtext>
+          <mspace></mspace>
+          <mspace></mspace>
+        </munderover>
+      </math>
+    </p>
+
+    <p>
+      <math>
+        <mfrac style="position: relative">
+          <mtext>
+            <span>
+              <span style="position: absolute">RenderMathMLBlock (invalid markup)</span>
+            </span>
+          </mtext>
+        </mfrac>
+      </math>
+    </p>
+
+  </body>
+</html>

@@ -1,0 +1,3 @@
+
+FAIL RTCPeerConnection.getDefaultIceServers() should return array of RTCIceServer RTCPeerConnection.getDefaultIceServers is not a function. (In 'RTCPeerConnection.getDefaultIceServers()', 'RTCPeerConnection.getDefaultIceServers' is undefined)
+

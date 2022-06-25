@@ -1,0 +1,11 @@
+frame "<!--frame1-->" - has 1 onunload handler(s)
+frame "<!--frame1-->" - has 1 onunload handler(s)
+frame "<!--frame1-->" - has 1 onunload handler(s)
+Description
+
+This test validates that a PerformanceNavigatingTiming corresponding to a detached document can't access a different document's state.
+
+
+
+PASS Navigation Timing 2 WPT
+

@@ -1,0 +1,1 @@
+PASS: animation did not restart after changing animation-duration.

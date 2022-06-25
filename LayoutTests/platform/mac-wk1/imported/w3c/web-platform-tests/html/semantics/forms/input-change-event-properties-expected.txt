@@ -1,0 +1,18 @@
+
+
+  Clickable
+
+Harness Error (TIMEOUT), message = null
+
+PASS <input type="checkbox"> click()
+PASS <input type="radio"> click()
+PASS <input type="text"> typing
+PASS <input type="search"> typing
+PASS <input type="tel"> typing
+PASS <input type="url"> typing
+PASS <input type="email"> typing
+PASS <input type="password"> typing
+PASS <input type="number"> typing
+PASS <textarea></textarea> typing
+TIMEOUT <select> pressing down arrow Test timed out
+

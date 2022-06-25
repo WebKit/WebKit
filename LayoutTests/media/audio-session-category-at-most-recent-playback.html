@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="video-test.js"></script>
+    <script src="media-file.js"></script>
+    <script>
+    window.addEventListener('load', async event => {
+        findMediaElement();
+
+        if (window.internals)
+            internals.settings.setShouldManageAudioSessionCategory(true);
+
+        run('video.muted = true');
+        run('video.src = findMediaFile("video", "content/audio-tracks")');
+
+        await waitFor(video, 'canplaythrough');
+
+        testExpected('internals.categoryAtMostRecentPlayback(video)', 'None');
+
+        run('video.play()');
+        await waitFor(video, 'playing');
+        await sleepFor(500);
+
+        testExpected('internals.categoryAtMostRecentPlayback(video)', 'None');
+
+        run('video.pause()');
+        await waitFor(video, 'pause');
+
+        run('video.muted = false');
+        run('video.play()');
+        await waitFor(video, 'playing');
+        await sleepFor(500);
+        testExpected('internals.categoryAtMostRecentPlayback(video)', 'MediaPlayback');
+
+        endTest();
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

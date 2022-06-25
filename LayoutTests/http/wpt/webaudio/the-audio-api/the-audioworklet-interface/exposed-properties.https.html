@@ -1,0 +1,34 @@
+<!doctype html>
+<title>Tests which global properties are exposed to AudioWorklets</title>
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<script>
+var context;
+promise_setup(async (t) => {
+  context = new AudioContext();
+  const filePath = 'processors/exposed-properties-processor.js';
+  await context.audioWorklet.addModule(filePath);
+});
+
+const get_exposed_properties = async (node) => {
+  const event = await new Promise((resolve) => {
+    node.port.onmessage = resolve;
+  });
+  return event.data.exposed_properties;
+};
+
+promise_test(async (t) => {
+  const options = {
+    numberOfInputs: 0,
+    numberOfOutputs: 1
+  };
+
+  const node = new AudioWorkletNode(context, 'exposed-properties-test', options);
+  const exposed_properties = await get_exposed_properties(node);
+  assert_true(exposed_properties.includes('WorkletGlobalScope'), 'WorkletGlobalScope is exposed');
+  assert_true(exposed_properties.includes('AudioWorkletGlobalScope'), 'AudioWorkletGlobalScope is exposed');
+  assert_true(exposed_properties.includes('AudioWorkletProcessor'), 'AudioWorkletProcessor is exposed');
+  assert_true(exposed_properties.includes('MessagePort'), 'MessagePort is exposed');
+  assert_true(exposed_properties.includes('MessageEvent'), 'MessageEvent is exposed');
+}, 'Exposed properties');
+</script>

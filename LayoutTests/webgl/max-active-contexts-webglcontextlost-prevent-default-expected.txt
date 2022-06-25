@@ -1,0 +1,73 @@
+Test that first losing context, trying to restore it, and then doing something to really lose it does not crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+TEST COMPLETE: 46 PASS, 6 FAIL
+
+Running test: loseMethod: loseContext, loseMethod2: loseContext
+PASS Got webglcontextlost and restore was attempted.
+PASS getError was expected value: CONTEXT_LOST_WEBGL :
+PASS getError was expected value: INVALID_OPERATION :
+PASS gl.isContextLost() is true
+PASS getError was expected value: NO_ERROR :
+Running test: loseMethod: loseContext, loseMethod2: manyContexts
+PASS Got webglcontextlost and restore was attempted.
+PASS getError was expected value: CONTEXT_LOST_WEBGL :
+PASS gl.isContextLost() is true
+FAIL getError expected: NO_ERROR. Was INVALID_OPERATION :
+Running test: loseMethod: loseContext, loseMethod2: gpuStatusFailure
+PASS Got webglcontextlost and restore was attempted.
+PASS getError was expected value: CONTEXT_LOST_WEBGL :
+PASS gl.isContextLost() is true
+PASS getError was expected value: NO_ERROR :
+Running test: loseMethod: loseContext, loseMethod2: nothing
+PASS Got webglcontextlost and restore was attempted.
+PASS getError was expected value: CONTEXT_LOST_WEBGL :
+PASS gl.isContextLost() is true
+PASS getError was expected value: NO_ERROR :
+Running test: loseMethod: manyContexts, loseMethod2: loseContext
+PASS Got webglcontextlost and restore was attempted.
+PASS getError was expected value: CONTEXT_LOST_WEBGL :
+PASS getError was expected value: INVALID_OPERATION :
+PASS gl.isContextLost() is true
+PASS getError was expected value: NO_ERROR :
+Running test: loseMethod: manyContexts, loseMethod2: manyContexts
+PASS Got webglcontextlost and restore was attempted.
+PASS getError was expected value: CONTEXT_LOST_WEBGL :
+PASS gl.isContextLost() is true
+PASS getError was expected value: NO_ERROR :
+Running test: loseMethod: manyContexts, loseMethod2: gpuStatusFailure
+PASS Got webglcontextlost and restore was attempted.
+PASS getError was expected value: CONTEXT_LOST_WEBGL :
+PASS gl.isContextLost() is true
+PASS getError was expected value: NO_ERROR :
+Running test: loseMethod: manyContexts, loseMethod2: nothing
+PASS Got webglcontextlost and restore was attempted.
+PASS getError was expected value: CONTEXT_LOST_WEBGL :
+PASS gl.isContextLost() is true
+PASS getError was expected value: NO_ERROR :
+Running test: loseMethod: gpuStatusFailure, loseMethod2: loseContext
+PASS Got webglcontextlost and restore was attempted.
+PASS getError was expected value: CONTEXT_LOST_WEBGL :
+FAIL getError expected: INVALID_OPERATION. Was NO_ERROR :
+FAIL Expected restore be ignored, but it was not.
+PASS getError was expected value: NO_ERROR :
+Running test: loseMethod: gpuStatusFailure, loseMethod2: manyContexts
+PASS Got webglcontextlost and restore was attempted.
+PASS getError was expected value: CONTEXT_LOST_WEBGL :
+FAIL Expected restore be ignored, but it was not.
+PASS getError was expected value: NO_ERROR :
+Running test: loseMethod: gpuStatusFailure, loseMethod2: gpuStatusFailure
+PASS Got webglcontextlost and restore was attempted.
+PASS getError was expected value: CONTEXT_LOST_WEBGL :
+FAIL Expected restore be ignored, but it was not.
+PASS getError was expected value: NO_ERROR :
+Running test: loseMethod: gpuStatusFailure, loseMethod2: nothing
+PASS Got webglcontextlost and restore was attempted.
+PASS getError was expected value: CONTEXT_LOST_WEBGL :
+FAIL Expected restore be ignored, but it was not.
+PASS getError was expected value: NO_ERROR :
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

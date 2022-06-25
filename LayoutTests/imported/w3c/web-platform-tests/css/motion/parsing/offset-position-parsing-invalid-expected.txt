@@ -1,0 +1,5 @@
+
+PASS e.style['offset-position'] = "none" should not set the property value
+PASS e.style['offset-position'] = "30deg" should not set the property value
+PASS e.style['offset-position'] = "left 10% top" should not set the property value
+

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/dump-as-markup.js"></script>
+</head>
+<body>
+<div id="test"><div><a href="#">link</a></div><div></div><div><br><br><img src="" id="img-tag"></div><div><br><br>text</div></div>
+<div id="expectations">
+    <div id="test_right_complex_subtree"><div><a href="#">link</a></div><div></div><div><br><br></div></div>
+    <div id="test_left_complex_subtree"><div></div><div><br><br>text</div></div>
+</div>
+<pre id="console"></pre>
+<script>
+
+function log(message) {
+    document.getElementById('console').innerHTML += message + '\n';
+}
+
+function testCloneContents(description, range, expectedContentsId) {
+    var actualContents = range.cloneContents();
+
+    var action = description + ' yields:\n' + Markup.get(actualContents).replace(/</g, '&lt;');
+    var expectedContents = document.getElementById(expectedContentsId);
+    if (Markup.get(actualContents) == Markup.get(expectedContents))
+        log('PASS: ' + action);
+    else
+        log('FAIL: ' + action + '\n but expected:\n' + Markup.get(expectedContents).replace(/</g, '&lt;'));
+
+    log('');
+}
+
+Markup.noAutoDump();
+
+var test = document.getElementById('test');
+log('test contents:\n' + Markup.get(test).replace(/</g, '&lt;') + '\n')
+
+var range = document.createRange();
+
+range.setStartBefore(test.firstChild);
+var imgTag = document.getElementById('img-tag')
+range.setEndBefore(imgTag);
+
+testCloneContents('Cloning right complex subtree', range, 'test_right_complex_subtree');
+
+range.setStartAfter(imgTag);
+range.setEndAfter(test.lastChild);
+
+testCloneContents('Cloning left complex subtree', range, 'test_left_complex_subtree');
+
+test.style.display = 'none';
+document.getElementById('expectations').style.display = 'none';
+
+log('DONE');
+
+</script>
+</body>
+</html>

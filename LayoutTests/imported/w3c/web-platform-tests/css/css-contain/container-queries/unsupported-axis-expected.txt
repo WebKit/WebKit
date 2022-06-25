@@ -1,0 +1,14 @@
+Test
+
+PASS (width > 0px)
+PASS (height > 0px)
+PASS ((height > 0px) or (width > 0px))
+PASS ((width > 0px) or (height > 0px))
+PASS ((orientation: landscape) or (width > 0px))
+PASS ((width > 0px) or (orientation: landscape))
+PASS ((height > 0px) or (orientation: landscape))
+PASS ((height > 0px) or (orientation: landscape)), with contain:size
+PASS (inline-size > 0px)
+PASS (block-size > 0px)
+PASS (block-size > 0px), with writing-mode:vertical-rl
+

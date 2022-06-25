@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function startTest()
+{
+    const target = document.getElementById('target');
+    const object = document.createElement('object');
+    document.getElementById('container').appendChild(object);
+    object.data = "data:text/html,hello";
+    object.focus();
+    object.appendChild(document.createElement('div'));
+    target.appendChild(object);
+
+    location.href = 'data:text/html, <!DOCTYPE html><p>This tests removing a focused object element. WebKit must not crash.</p>'
+        + '<script>if (testRunner) testRunner.notifyDone();<\/script>';
+}
+</script>
+</head>
+<body onload="startTest()"><div id='container'><div id="target"></div></body>
+</html>

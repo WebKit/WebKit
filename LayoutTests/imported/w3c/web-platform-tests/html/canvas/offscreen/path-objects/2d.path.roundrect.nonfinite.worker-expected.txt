@@ -1,0 +1,3 @@
+
+PASS roundRect() with Infinity/NaN is ignored
+

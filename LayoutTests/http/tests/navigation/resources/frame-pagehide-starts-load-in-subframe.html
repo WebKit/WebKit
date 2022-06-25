@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<body>
+<iframe src="frame-do-load.html" id="doLoadSubframe"></iframe>
+<script>
+window.addEventListener("pagehide", function(event) {
+    // Start load in subframe.
+    var subframe = document.getElementById("doLoadSubframe");
+    subframe.contentWindow.doLoad();
+}, false);
+</script>
+</body>
+</html>

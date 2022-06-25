@@ -1,0 +1,27 @@
+This test ensures we can traverse through an object's children after its role is changed dynamically.
+
+Performing search traversal with initial page state.
+
+StaticText
+AXLabel: Hello world!
+
+Button
+
+StaticText
+AXLabel: Lorem ipsum
+
+Performing search traversal after role change.
+
+StaticText
+AXLabel: Hello world!
+
+Button
+
+StaticText
+AXLabel: Lorem ipsum
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

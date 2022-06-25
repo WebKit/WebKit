@@ -1,0 +1,12 @@
+
+FAIL Registering invalid chunked encoding script assert_unreached: Should have rejected: Registration of invalid chunked encoding script should fail. Reached unreachable code
+FAIL Registering invalid chunked encoding script with flush assert_unreached: Should have rejected: Registration of invalid chunked encoding script should fail. Reached unreachable code
+PASS Registering script including parse error
+PASS Registering script including undefined error
+PASS Registering script including uncaught exception
+FAIL Registering script with top-level await assert_unreached: Should have rejected: Registration of script with top-level await should fail. Reached unreachable code
+PASS Registering script with module instantiation error
+PASS Registering script with module instantiation error and top-level await
+PASS Registering non-existent script
+PASS Registering script including caught exception
+

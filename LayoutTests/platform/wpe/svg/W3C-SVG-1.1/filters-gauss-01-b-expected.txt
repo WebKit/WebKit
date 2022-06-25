@@ -1,0 +1,46 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGContainer {g} at (0,0) size 765x582
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGContainer {g} at (0,0) size 225x225
+          RenderSVGRect {rect} at (0,0) size 150x150 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=90.00] [height=90.00]
+          RenderSVGRect {rect} at (75,75) size 150x150 [fill={[type=SOLID] [color=#FFFF00]}] [x=45.00] [y=45.00] [width=90.00] [height=90.00]
+        RenderSVGContainer {g} at (0,0) size 248x248
+          RenderSVGRect {rect} at (0,0) size 226x226 [stroke={[type=SOLID] [color=#0000FF] [stroke width=0.50]}] [x=0.00] [y=0.00] [width=135.00] [height=135.00]
+          RenderSVGRect {rect} at (0,0) size 248x248 [stroke={[type=SOLID] [color=#0000FF] [stroke width=0.50]}] [x=-13.50] [y=-13.50] [width=162.00] [height=162.00]
+        RenderSVGResourceFilter {filter} [id="blur"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feGaussianBlur stdDeviation="10.00, 10.00"]
+            [SourceGraphic]
+        RenderSVGResourceFilter {filter} [id="blurxy"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feGaussianBlur stdDeviation="20.00, 1.00"]
+            [SourceGraphic]
+      RenderSVGContainer {use} at (0,0) size 225x225
+        RenderSVGContainer {g} at (0,0) size 225x225
+          RenderSVGRect {rect} at (0,0) size 150x150 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=90.00] [height=90.00]
+          RenderSVGRect {rect} at (75,75) size 150x150 [fill={[type=SOLID] [color=#FFFF00]}] [x=45.00] [y=45.00] [width=90.00] [height=90.00]
+      RenderSVGContainer {g} at (493,2) size 272x271 [transform={m=((1.00,0.00)(0.00,1.00)) t=(310.00,15.00)}]
+        RenderSVGContainer {use} at (494,2) size 271x271
+          [filter="blur"] RenderSVGResourceFilter {filter} at (-13.50,-13.50) size 162x162
+          RenderSVGContainer {g} at (516,25) size 226x225
+            RenderSVGRect {rect} at (516,25) size 151x150 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=90.00] [height=90.00]
+            RenderSVGRect {rect} at (591,100) size 151x150 [fill={[type=SOLID] [color=#FFFF00]}] [x=45.00] [y=45.00] [width=90.00] [height=90.00]
+        RenderSVGContainer {use} at (493,2) size 272x271
+          RenderSVGContainer {g} at (493,2) size 272x271
+            RenderSVGRect {rect} at (516,24) size 227x227 [stroke={[type=SOLID] [color=#0000FF] [stroke width=0.50]}] [x=0.00] [y=0.00] [width=135.00] [height=135.00]
+            RenderSVGRect {rect} at (493,2) size 272x271 [stroke={[type=SOLID] [color=#0000FF] [stroke width=0.50]}] [x=-13.50] [y=-13.50] [width=162.00] [height=162.00]
+      RenderSVGContainer {g} at (493,310) size 272x272 [transform={m=((1.00,0.00)(0.00,1.00)) t=(310.00,200.00)}]
+        RenderSVGContainer {use} at (494,310) size 271x271
+          [filter="blurxy"] RenderSVGResourceFilter {filter} at (-13.50,-13.50) size 162x162
+          RenderSVGContainer {g} at (516,333) size 226x226
+            RenderSVGRect {rect} at (516,333) size 151x151 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=90.00] [height=90.00]
+            RenderSVGRect {rect} at (591,408) size 151x151 [fill={[type=SOLID] [color=#FFFF00]}] [x=45.00] [y=45.00] [width=90.00] [height=90.00]
+        RenderSVGContainer {use} at (493,310) size 272x272
+          RenderSVGContainer {g} at (493,310) size 272x272
+            RenderSVGRect {rect} at (516,332) size 227x227 [stroke={[type=SOLID] [color=#0000FF] [stroke width=0.50]}] [x=0.00] [y=0.00] [width=135.00] [height=135.00]
+            RenderSVGRect {rect} at (493,310) size 272x272 [stroke={[type=SOLID] [color=#0000FF] [stroke width=0.50]}] [x=-13.50] [y=-13.50] [width=162.00] [height=162.00]
+    RenderSVGText {text} at (10,304) size 269x45 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 269x45
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 268.20: "$Revision: 1.6 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

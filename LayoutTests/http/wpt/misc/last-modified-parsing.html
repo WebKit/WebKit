@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Last-Modified - Parsing</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/last-modified-utilities.js"></script>
+</head>
+<body>
+<h1>Last-Modified: Parsing</h1>
+<div id="log"></div>
+<script>
+function test_last_modified(date) {
+    promise_test(async () => {
+        let actual = await getLastModified(date);
+        assert_equals((new Date(Date.parse(actual)).toUTCString()), (new Date(Date.parse(date)).toUTCString()));
+    }, "Last-Modified date " + date);
+}
+
+
+test_last_modified("Mon, 21 Nov 2008 01:03:33 GMT");
+test_last_modified("Tuesday, 21 Nov 2008 01:03:33 GMT");
+test_last_modified("Mon, 21 Nov 97 01:03:33 GMT");
+test_last_modified("Mon, 21-Nov-2008 01:03:33 GMT");
+test_last_modified("Mon, 21-Feb-2008 01:03:33 GMT");
+test_last_modified("Mon, 03-Feb-2008 01:03:33 GMT");
+test_last_modified("Mon, 3-Mar-2008 01:03:33 GMT");
+</script>
+</body>
+</html>

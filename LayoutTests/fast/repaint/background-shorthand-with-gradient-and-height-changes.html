@@ -1,0 +1,84 @@
+<html>
+<head>
+<script>jsTestIsAsync = true;</script>
+<script src="../../resources/js-test-pre.js"></script>
+
+<style>
+#wrapper {
+    width: 40px;
+}
+
+#outer-background-shorthand {
+    width: 20px;
+    padding-top: 20px;
+    float:right;
+	background:-webkit-gradient(
+	    linear, 
+	    left top, 
+	    left bottom, 
+	    color-stop(0%, rgba(255,255,0,0)), color-stop(100%, rgba(0,0,0,1))
+	);
+}
+
+#outer-background-size-auto {
+    width: 20px;
+    padding-top: 20px;
+	background-size: auto;
+	background-image: -webkit-gradient(
+	    linear, 
+	    left top, 
+	    left bottom, 
+	    color-stop(0%, rgba(255,255,0,0)), color-stop(100%, rgba(0,0,0,1))
+	);
+}
+
+.inner {
+    height: 10px;
+}
+</style>
+
+<script>
+description("This test verifies that gradient background gets repainted properly after child box height change.");
+
+function start() {
+    window.setTimeout(function() { 
+        document.getElementsByClassName('inner')[0].style.height = 200 + 'px'; 
+        document.getElementsByClassName('inner')[1].style.height = 200 + 'px'; 
+        
+        window.setTimeout(logRepaints, 200);
+    }, 0); 
+
+    if (!window.testRunner || !window.internals)
+        return;
+        
+    window.internals.startTrackingRepaints();
+    window.testRunner.displayAndTrackRepaints();
+}
+
+function logRepaints() {
+    if (!window.internals)
+        return;
+
+    repaintRects = window.internals.repaintRectsAsText();
+    window.internals.stopTrackingRepaints();
+    shouldNotBe("repaintRects.indexOf('28 84')", "-1");
+    shouldNotBe("repaintRects.indexOf('8 84')", "-1");
+    finishJSTest();
+}
+</script>
+</head>
+
+<body onload='start();'>
+<div id='wrapper'>
+    <div id='outer-background-shorthand'>
+        <div class='inner'>
+        </div>
+    </div>
+    <div id='outer-background-size-auto'>
+        <div class='inner'>
+        </div>
+    </div>
+</div>
+</body>
+<script src="../../resources/js-test-post.js"></script>
+</html>

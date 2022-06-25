@@ -1,0 +1,9 @@
+<meta charset="utf-8">
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+    description("Test media queries to make sure only ASCII case is folded, and other non-ASCII case folding is not performed.");
+    shouldBeTrue("matchMedia('screen').matches");
+    shouldBeTrue("matchMedia('SCREEN').matches");
+    shouldBeFalse("matchMedia('ſcreen').matches");
+</script>
+<script src="../../resources/js-test-post.js"></script>

@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../../js-test-resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script type="text/javascript">
+description("Test whether WebSocket request contains no-cache headers");
+
+window.jsTestIsAsync = true;
+
+var ws = new WebSocket("ws://localhost:8880/websocket/tests/hybi/nocache-test");
+var closeEvent;
+var message;
+
+ws.onopen = function() {
+    debug("onopen() was called.");
+};
+
+ws.onmessage = function(event) {
+    message = event.data;
+    shouldBeEqualToString("message", "PASS");
+    ws.close();
+};
+
+ws.onerror = function(event) {
+    debug("onerror() was called.");
+};
+
+ws.onclose = function(event) {
+    debug("onclose() was called.");
+    closeEvent = event;
+    shouldBeTrue("closeEvent.wasClean");
+    finishJSTest();
+};
+
+</script>
+<script src="../../../../js-test-resources/js-test-post.js"></script>
+</body>
+</html>

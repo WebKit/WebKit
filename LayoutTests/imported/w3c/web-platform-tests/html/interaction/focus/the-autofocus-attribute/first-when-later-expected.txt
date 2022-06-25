@@ -1,0 +1,4 @@
+
+
+PASS The first autofocus in the document wins, even if elements are inserted later.
+

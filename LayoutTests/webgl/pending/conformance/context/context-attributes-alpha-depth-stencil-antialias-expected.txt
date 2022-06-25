@@ -1,0 +1,4 @@
+This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
+
+Test: ../../../resources/pending_webgl_test_files/conformance/context/context-attributes-alpha-depth-stencil-antialias.html?webglVersion=2
+[ PASS ] All tests passed

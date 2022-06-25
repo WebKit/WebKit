@@ -1,0 +1,58 @@
+#!/usr/bin/env python3
+# Copyright (C) 2021 Igalia S.L.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# 1. Redistributions of source code must retain the above copyright notice, this
+#    list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright notice,
+#    this list of conditions and the following disclaimer in the documentation
+#    and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import argparse
+import logging
+import os
+import sys
+
+top_level_directory = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, os.path.join(top_level_directory, 'Tools', 'Scripts', 'webkitpy'))
+
+from binary_bundling.ldd import SharedObjectResolver
+from binary_bundling.bundle import BinaryBundler
+
+def main():
+    parser = argparse.ArgumentParser('usage %prog [options]')
+    parser.add_argument('--ldd', dest='ldd', default='ldd', help='Use alternative ldd (useful for non-native binaries')
+    parser.add_argument('--log-level', dest='log_level', choices=['debug', 'info', 'warning', 'error', 'critical'], default='info')
+    parser.add_argument('--dest-dir', dest='dest_dir', required=True)
+    parser.add_argument('binary')
+    args = parser.parse_args()
+
+    logging.getLogger().setLevel(args.log_level.upper())
+    logging.getLogger().addHandler(logging.StreamHandler())
+    libraries, interpreter = SharedObjectResolver(args.ldd).get_libs_and_interpreter(args.binary)
+
+    if interpreter is None:
+        raise RuntimeError("Could not determine interpreter for binary %s" % object)
+    bundler = BinaryBundler(args.dest_dir)
+    bundler.copy_and_maybe_strip_patchelf(interpreter, type='interpreter', strip=False, patchelf_removerpath=True, patchelf_nodefaultlib=False)
+    bundler.copy_and_maybe_strip_patchelf(args.binary, type='bin', strip=False, patchelf_removerpath=True, patchelf_nodefaultlib=False)
+    for lib in libraries:
+        bundler.copy_and_maybe_strip_patchelf(lib, type='lib', strip=False, patchelf_removerpath=True, patchelf_nodefaultlib=False)
+    bundler.generate_wrapper_script(interpreter, os.path.basename(args.binary))
+    return 0
+
+if __name__ == '__main__':
+    sys.exit(main())

@@ -1,0 +1,72 @@
+# Copyright (c) 2019 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+
+rtc_library("time_controller") {
+  testonly = true
+  sources = [
+    "external_time_controller.cc",
+    "external_time_controller.h",
+    "real_time_controller.cc",
+    "real_time_controller.h",
+    "simulated_process_thread.cc",
+    "simulated_process_thread.h",
+    "simulated_task_queue.cc",
+    "simulated_task_queue.h",
+    "simulated_thread.cc",
+    "simulated_thread.h",
+    "simulated_time_controller.cc",
+    "simulated_time_controller.h",
+  ]
+
+  deps = [
+    "../../api:sequence_checker",
+    "../../api:time_controller",
+    "../../api/task_queue",
+    "../../api/task_queue:default_task_queue_factory",
+    "../../api/units:time_delta",
+    "../../api/units:timestamp",
+    "../../modules:module_api",
+    "../../modules/utility:utility",
+    "../../rtc_base",
+    "../../rtc_base:checks",
+    "../../rtc_base:null_socket_server",
+    "../../rtc_base:rtc_base_tests_utils",
+    "../../rtc_base:rtc_event",
+    "../../rtc_base/synchronization:mutex",
+    "../../rtc_base/synchronization:yield_policy",
+    "../../rtc_base/task_utils:to_queued_task",
+    "../../system_wrappers",
+  ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
+}
+
+if (rtc_include_tests) {
+  rtc_library("time_controller_unittests") {
+    testonly = true
+    sources = [
+      "external_time_controller_unittest.cc",
+      "simulated_time_controller_unittest.cc",
+      "time_controller_conformance_test.cc",
+    ]
+    deps = [
+      ":time_controller",
+      "../:test_support",
+      "../../api:time_controller",
+      "../../api/units:time_delta",
+      "../../rtc_base",
+      "../../rtc_base:rtc_base_approved",
+      "../../rtc_base:rtc_task_queue",
+      "../../rtc_base:threading",
+      "../../rtc_base/synchronization:mutex",
+      "../../rtc_base/task_utils:repeating_task",
+      "../../rtc_base/task_utils:to_queued_task",
+    ]
+  }
+}

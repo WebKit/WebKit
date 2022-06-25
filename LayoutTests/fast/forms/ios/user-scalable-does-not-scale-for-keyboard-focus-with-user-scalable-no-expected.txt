@@ -1,0 +1,13 @@
+
+This test has to run in iOS WebKitTestRunner.
+
+This tests that even though force user scalable = true, we won't scale if a text field gets focus and the page has user-scalable=no
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Zoom scale is: 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

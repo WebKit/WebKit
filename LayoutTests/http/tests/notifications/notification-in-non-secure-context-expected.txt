@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: The Notification permission may only be requested in a secure context.
+CONSOLE MESSAGE: The Notification permission may only be requested in a secure context.
+
+PASS Notification permission in insecure context
+

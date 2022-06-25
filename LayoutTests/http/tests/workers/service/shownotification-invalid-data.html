@@ -1,0 +1,52 @@
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/resources/notifications-test-pre.js"></script>
+<script>
+description("This tests that a notification shown by a service worker fails if it is passed an invalid data option");
+jsTestIsAsync = true;
+
+function failTheTest(msg)
+{
+    testFailed(msg);
+    finishJSTest();
+}
+
+if (window.testRunner)
+    testRunner.grantWebNotificationPermission(testURL);
+
+shouldBeEqualToString("Notification.permission", "granted");
+
+async function registerServiceWorker() {
+    var registration = await navigator.serviceWorker.register('resources/shownotification-worker.js');
+    
+    if (!registration)
+        return testFailed("No registration");
+    
+    if (registration.active) {
+        registration.active.postMessage("tryshowinvaliddata");
+        return;
+    }
+
+    var installingWorker = registration.installing;
+    if (!installingWorker)
+        failTheTest("No active *or* installing worker");
+
+    installingWorker.addEventListener("statechange", () => {
+        if (installingWorker.state === "activated") {
+            installingWorker.postMessage("tryshowinvaliddata");
+        }
+    });
+}
+
+navigator.serviceWorker.addEventListener('message', event => {
+    if (event.data == "showFailed: threw DataCloneError") {
+        testPassed("Notification constructor failed with DataCloneError");
+    } else {
+        testFailed("Message received: " + event.data);
+    }
+    finishJSTest();
+});
+</script>
+</head>
+<body onload="registerServiceWorker()">
+</body>

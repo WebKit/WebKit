@@ -1,0 +1,5 @@
+
+PASS HTMLScriptElement: crossorigin attribute network test1
+PASS HTMLScriptElement: crossorigin attribute network test2
+PASS HTMLScriptElement: crossorigin attribute network test3
+

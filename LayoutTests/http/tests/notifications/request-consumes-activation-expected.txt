@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: Notification prompting can only be done from a user gesture.
+This tests that Notification.requestPermission can only be called once per user gesture.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS both permission requests denied
+PASS Notification.permission is "denied"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

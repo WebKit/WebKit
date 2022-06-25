@@ -1,0 +1,14 @@
+
+PASS oncut: DocumentAndElementEventHandlers must be on SVGElement not Element
+PASS oncut: the default value must be null
+PASS oncut: the content attribute must be compiled into a function as the corresponding property
+PASS oncut: the content attribute must execute when an event is dispatched
+PASS oncopy: DocumentAndElementEventHandlers must be on SVGElement not Element
+PASS oncopy: the default value must be null
+PASS oncopy: the content attribute must be compiled into a function as the corresponding property
+PASS oncopy: the content attribute must execute when an event is dispatched
+PASS onpaste: DocumentAndElementEventHandlers must be on SVGElement not Element
+PASS onpaste: the default value must be null
+PASS onpaste: the content attribute must be compiled into a function as the corresponding property
+PASS onpaste: the content attribute must execute when an event is dispatched
+

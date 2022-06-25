@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .box {
+            width: 100px;
+            height: 100px;
+            margin: 10px;
+            background-color: blue;
+            border: 2px solid black;
+            -webkit-transform: translateZ(0);
+        }
+        
+        .colorchange {
+            background-color: green;
+        }
+        
+        .dummy {
+            /* Empty. */
+        }
+        
+    </style>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script>
+        description('Test that compositing updates do not happen for style changes that do not need them.');
+        window.jsTestIsAsync = true;
+
+        var updateCount;
+        
+        function zeroUpdateCount()
+        {
+            if (window.internals) {
+                internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
+                internals.startTrackingCompositingUpdates();
+            }
+        }
+
+        function updateLayoutAndCompositingCount()
+        {
+            if (window.internals) {
+                internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
+                updateCount = internals.compositingUpdateCount();
+            }
+        }
+        
+        function testForCompositingUpdate(callback)
+        {
+            zeroUpdateCount();
+            callback();
+            updateLayoutAndCompositingCount();
+        }
+        
+        function runTest()
+        {
+            updateLayoutAndCompositingCount();
+
+            if (window.internals) {
+                internals.startTrackingCompositingUpdates();
+                updateCount = internals.compositingUpdateCount();
+            }
+
+            shouldBe('updateCount', '0');
+            
+            testForCompositingUpdate(function() {
+                document.getElementById('box').classList.add('colorchange');
+            });
+            
+            shouldBe('updateCount', '1');
+
+            testForCompositingUpdate(function() {
+                document.getElementById('box').classList.add('dummy');
+            });
+
+            shouldBe('updateCount', '0');
+            
+            testForCompositingUpdate(function() {
+                var div = document.createElement('div');
+                div.className = 'box';
+                document.body.appendChild(div);
+            });
+            
+            shouldBe('updateCount', '1');
+            
+            testForCompositingUpdate(function() {
+                var stylesheet = document.createElement('style');
+                stylesheet.type = 'text/css';
+                stylesheet.rel = 'stylesheet';
+                stylesheet.textContent = '.unmatched { border: 5px solid blue; }';
+                document.getElementsByTagName("head")[0].appendChild(stylesheet);
+            });
+            
+            shouldBe('updateCount', '0');
+
+            finishJSTest();
+        }
+        
+        window.addEventListener('load', function() {
+            window.setTimeout(runTest, 200);
+        }, false);
+    </script>
+
+</head>
+<body>
+    <div id="box" class="box"></div>
+
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

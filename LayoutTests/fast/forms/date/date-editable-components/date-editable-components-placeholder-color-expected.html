@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+#black-on-white input {
+    background-color: white;
+    color: black;
+}
+
+#black-on-white input::-webkit-datetime-edit-day-field,
+#black-on-white input::-webkit-datetime-edit-month-field,
+#black-on-white input::-webkit-datetime-edit-year-field {
+    color: rgb(168, 168, 168);
+}
+
+#white-on-black input {
+    background-color: black;
+    color: white;
+}
+
+#white-on-black input::-webkit-datetime-edit-day-field,
+#white-on-black input::-webkit-datetime-edit-month-field,
+#white-on-black input::-webkit-datetime-edit-year-field {
+    color: rgb(168, 168, 168);
+}
+
+#red-on-white input {
+    background-color: white;
+    color: red;
+}
+
+#red-on-white input::-webkit-datetime-edit-day-field,
+#red-on-white input::-webkit-datetime-edit-month-field,
+#red-on-white input::-webkit-datetime-edit-year-field {
+    color: rgb(255, 168, 168);
+}
+
+#blue-on-orange input {
+    background-color: orange;
+    color: blue;
+}
+
+#blue-on-orange input::-webkit-datetime-edit-day-field,
+#blue-on-orange input::-webkit-datetime-edit-month-field,
+#blue-on-orange input::-webkit-datetime-edit-year-field {
+    color: rgb(168, 168, 255);
+}
+
+#transparent input {
+    color: transparent;
+}
+
+</style>
+</head>
+<body>
+    <div id="black-on-white">
+        <input type="date">
+    </div>
+    <div id="white-on-black">
+        <input type="date">
+    </div>
+    <div id="red-on-white">
+        <input type="date">
+    </div>
+    <div id="blue-on-orange">
+        <input type="date">
+    </div>
+    <div id="transparent">
+        <input type="date">
+    </div>
+</body>
+<script>
+
+function pad(number) {
+    if (number < 10) {
+        return '0' + number;
+    }
+    return number;
+}
+
+let now = new Date();
+let currentHTMLDateString = now.getFullYear() +
+                            "-" +
+                            pad(now.getMonth() + 1) +
+                            "-" +
+                            pad(now.getDate());
+
+let inputs = document.getElementsByTagName("input");
+Array.from(inputs).forEach(element => {
+    element.value = currentHTMLDateString;
+});
+
+</script>
+</html>

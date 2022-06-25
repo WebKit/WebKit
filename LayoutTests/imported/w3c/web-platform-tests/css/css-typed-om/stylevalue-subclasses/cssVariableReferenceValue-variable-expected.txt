@@ -1,0 +1,5 @@
+
+PASS CSSVariableReferenceValue.variable can updated to a valid custom property name
+PASS Updating CSSVariableReferenceValue.variable to the empty string throws TypeError
+PASS Updating CSSVariableReferenceValue.variable to an invalid custom property name throws TypeError
+

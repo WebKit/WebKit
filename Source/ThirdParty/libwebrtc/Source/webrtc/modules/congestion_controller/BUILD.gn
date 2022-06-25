@@ -1,0 +1,72 @@
+# Copyright (c) 2014 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+
+config("bwe_test_logging") {
+  if (rtc_enable_bwe_test_logging) {
+    defines = [ "BWE_TEST_LOGGING_COMPILE_TIME_ENABLE=1" ]
+  } else {
+    defines = [ "BWE_TEST_LOGGING_COMPILE_TIME_ENABLE=0" ]
+  }
+}
+
+rtc_library("congestion_controller") {
+  visibility = [ "*" ]
+  configs += [ ":bwe_test_logging" ]
+  sources = [
+    "include/receive_side_congestion_controller.h",
+    "receive_side_congestion_controller.cc",
+    "remb_throttler.cc",
+    "remb_throttler.h",
+  ]
+
+  deps = [
+    "..:module_api",
+    "../../api/transport:field_trial_based_config",
+    "../../api/transport:network_control",
+    "../../api/units:data_rate",
+    "../../api/units:time_delta",
+    "../../api/units:timestamp",
+    "../../rtc_base/synchronization:mutex",
+    "../pacing",
+    "../remote_bitrate_estimator",
+    "../rtp_rtcp:rtp_rtcp_format",
+  ]
+
+  if (!build_with_mozilla) {
+    deps += [ "../../rtc_base" ]
+  }
+}
+
+if (rtc_include_tests && !build_with_chromium) {
+  rtc_library("congestion_controller_unittests") {
+    testonly = true
+
+    sources = [
+      "receive_side_congestion_controller_unittest.cc",
+      "remb_throttler_unittest.cc",
+    ]
+    deps = [
+      ":congestion_controller",
+      "../../api/test/network_emulation",
+      "../../api/test/network_emulation:create_cross_traffic",
+      "../../api/units:data_rate",
+      "../../api/units:time_delta",
+      "../../api/units:timestamp",
+      "../../system_wrappers",
+      "../../test:test_support",
+      "../../test/scenario",
+      "../pacing",
+      "goog_cc:estimators",
+      "goog_cc:goog_cc_unittests",
+      "pcc:pcc_unittests",
+      "rtp:congestion_controller_unittests",
+    ]
+  }
+}

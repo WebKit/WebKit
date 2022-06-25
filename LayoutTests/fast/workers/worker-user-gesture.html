@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+<input id="testButton" type="button" value="Click me">
+<script>
+description("Test that we do not crash when timers fire on the worker thread while user gestures are happening.");
+jsTestIsAsync = true;
+
+var worker = new Worker('worker-user-gesture.js');
+
+let gestureCount = 0;
+
+function doUserGesture() {
+    let inputElement = document.getElementById("testButton");
+    let centerX = inputElement.offsetLeft + inputElement.offsetWidth / 2;
+    let centerY = inputElement.offsetTop + inputElement.offsetHeight / 2;
+    UIHelper.activateAt(centerX, centerY).then(function() {
+        if (++gestureCount == 10) {
+            finishJSTest();
+            return;
+        }
+        setTimeout(doUserGesture, 0);
+    });
+}
+
+setTimeout(doUserGesture, 0);
+</script>
+</body>
+</html>

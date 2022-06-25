@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<style></style>
+<script>
+
+if (window.testRunner)
+    window.testRunner.dumpAsText();
+
+onload = async () => {
+    document.styleSheets[0].insertRule(`@keyframes a0 { }`);
+    document.styleSheets[0].insertRule(`a { animation-delay: 0ms, 0ms, 25ms, 25ms; }`);
+    document.styleSheets[0].insertRule(`a { animation-name: a0; }`);
+    document.styleSheets[0].insertRule(`a { min-block-size: 100px; }`);
+    document.styleSheets[0].insertRule(`head { display: block; }`);
+    document.styleSheets[0].insertRule(`style { -webkit-appearance: slider-vertical; }`);
+    document.styleSheets[0].insertRule(`a { -webkit-appearance: slider-vertical; }`);
+    document.styleSheets[0].insertRule(`style{ display: inline; }`);
+    document.designMode = 'on';
+    document.body.appendChild(document.createElement('a'));
+    document.execCommand('SelectAll');
+    await caches.has('a');
+    document.head.appendChild(document.createElement('a'));
+    await caches.has('b');
+    document.execCommand('Italic');
+    document.execCommand('SelectAll');
+    document.execCommand('Bold');
+};
+
+</script>
+<p>PASS if this test doesn't crash</p>

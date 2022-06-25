@@ -1,0 +1,10 @@
+
+PASS setLocalDescription with valid offer should succeed
+PASS setLocalDescription with type offer and null sdp should use lastOffer generated from createOffer
+FAIL setLocalDescription() with offer not created by own createOffer() should reject with InvalidModificationError assert_equals: expected "InvalidModificationError" but got "OperationError"
+FAIL Set created offer other than last offer should reject with InvalidModificationError assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS Creating and setting offer multiple times should succeed
+PASS Setting previously generated offer after a call to createAnswer should work
+PASS Negotiation works when there has been a repeated setLocalDescription(offer)
+PASS setLocalDescription(offer) should update internal state with a queued task, in the right order
+

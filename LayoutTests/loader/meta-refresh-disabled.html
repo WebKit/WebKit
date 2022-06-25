@@ -1,0 +1,39 @@
+<head>
+<script>
+if (window.testRunner && window.internals) {
+    internals.settings.setHttpEquivEnabled(false);
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+// This bizarre practice of continuously delaying notifyDone() by multiple 0-delay timers
+// is meant to work around a few 0-delays in the meta refresh process.
+// The refresh itself is on a timer, and then the policy delegate's reply might be on a timer.
+// The goal here is to give a successfully scheduled meta refresh long enough to occur,
+// but to not also wait an arbitrary amount of clock time before concluding the test.
+function notifyDoneDelayer(iteration)
+{
+    if (iteration == 10) {
+        if (window.testRunner)
+            testRunner.notifyDone();
+        else
+            document.body.innerHTML = "This test can only be run under DRT/WKTR";
+        return;
+    }
+    
+    setTimeout("notifyDoneDelayer(" + ++iteration + ");", 0);
+}
+
+function loaded()
+{
+    setTimeout("notifyDoneDelayer(1);", 0);
+}
+
+</script>
+<meta http-equiv="refresh" content="0;url=resources/notify-done.html">    
+</head>
+<body onload="loaded();">
+This test makes sure the preference to disable meta refreshes works as expected.<br>
+You should see this text when the test is done.<br>
+If you do not see this text, and instead you see a blank page, then the redirect happened, which it should not have.<br>
+</body>

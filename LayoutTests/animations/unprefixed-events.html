@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Unprefixed animation events test</title>
+  <style>
+    #box {
+        position: absolute;
+        left: 0;
+        top: 200px;
+        height: 100px;
+        width: 100px;
+        background-color: blue;
+        animation-duration: 100ms;
+        animation-iteration-count: 2;
+    }
+    @keyframes move {
+        from { left: 0px; }
+        to   { left: 100px; }
+    }
+    </style>
+    <script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+var results;
+
+function dump(msg) {
+    results.innerHTML += msg + "<br/>";
+}
+
+function handleEvent(event) {
+    dump(event.type + ": " + event.animationName);
+    if (event.type == "animationend" && window.testRunner)
+        testRunner.notifyDone();
+}
+
+function init() {
+    results = document.getElementById("results");
+    var box = document.getElementById("box");
+    box.addEventListener("animationstart", handleEvent, false);
+    box.addEventListener("animationiteration", handleEvent, false);
+    box.addEventListener("animationend", handleEvent, false);
+    box.style.animationName = "move";
+}
+
+window.addEventListener("load", init, false);
+
+  </script>
+</head>
+<body>
+This test performs two iterations of an animation. The animation should fire all three events (start, iteration, end).
+<div id="box">
+</div>
+<div id="results">
+</div>
+</body>
+</html>

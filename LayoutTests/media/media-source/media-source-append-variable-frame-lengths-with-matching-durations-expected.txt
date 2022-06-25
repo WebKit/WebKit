@@ -1,0 +1,15 @@
+This tests that variable frame lengths with matching frame durations will not be dropped.
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock"))
+RUN(sourceBuffer.appendBuffer(initSegment))
+EVENT(updateend)
+RUN(sourceBuffer.appendBuffer(samples))
+EVENT(updateend)
+EXPECTED (bufferedSamples.length == '3') OK
+{PTS({0/1000 = 0.000000}), DTS({0/1000 = 0.000000}), duration({10/1000 = 0.010000}), flags(1), generation(0)}
+{PTS({10/1000 = 0.010000}), DTS({10/1000 = 0.010000}), duration({30/1000 = 0.030000}), flags(0), generation(0)}
+{PTS({40/1000 = 0.040000}), DTS({40/1000 = 0.040000}), duration({10/1000 = 0.010000}), flags(0), generation(0)}
+END OF TEST
+

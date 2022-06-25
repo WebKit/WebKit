@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="console"></div>
+<script>
+function done() {
+  if (window.testRunner)
+    testRunner.notifyDone();
+}
+window.func = function () {
+  alert("FAIL: Wrong function.");
+  done();
+};
+document.foo = "FAIL: Wrong wrappers.";
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+  testRunner.evaluateScriptInIsolatedWorld(
+    0,
+    "document.foo = 'PASS';\n" +
+    "window.func = function () {\n" +
+    "  alert(document.foo);\n" +
+    "  window.location = 'javascript:done()';\n" +
+    "};\n" +
+    "window.setTimeout(func, 0);");
+}
+</script>
+</body>
+</html>

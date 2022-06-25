@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body id="body">
+
+<code id="code">
+code
+</code>
+
+<p id="description"></p>
+<div id="console"></div>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+
+    description("This test ensures that ios simulator exposes textual context attributes for elements correctly.");
+
+    if (window.accessibilityController) {
+
+        var obj = accessibilityController.accessibleElementById("code");
+        debug("context value: " + obj.stringAttributeValue("AXTextualContext"));
+
+        var text = obj.attributedStringForElement();
+        debug("Attributed string: " + text);
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
+

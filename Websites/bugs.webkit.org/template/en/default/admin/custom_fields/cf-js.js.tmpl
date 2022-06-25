@@ -1,0 +1,66 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+// Disable a checkbox based on the state of another one.
+function toggleCheckbox(this_checkbox, other_checkbox_id) {
+    var other_checkbox = document.getElementById(other_checkbox_id);
+    other_checkbox.disabled = !this_checkbox.checked;
+}
+
+var select_values = new Array();
+[% USE Bugzilla %]
+[% FOREACH sel_field = Bugzilla.fields({ is_select => 1 }) %]
+  select_values[[% sel_field.id FILTER js %]] = [
+  [% FOREACH legal_value = sel_field.legal_values %]
+    [%# Prefix components with the name of their product so that admins
+        know which component we're talking about. #%]
+    [% IF sel_field.name == 'component' %]
+      [% SET value_name = display_value('product', legal_value.product.name) _ ': '
+                          _ display_value(sel_field.name, legal_value.name) %]
+    [% ELSE %]
+      [% SET value_name = display_value(sel_field.name, legal_value.name) %]
+    [% END %]
+    [[% legal_value.id FILTER js %], '[% value_name FILTER js %]'][% ',' UNLESS loop.last %]
+  [% END %]
+  ];
+[% END %]
+
+function onChangeType(type_field) {
+    var value_field = document.getElementById('value_field_id');
+    if (type_field.value == [% constants.FIELD_TYPE_SINGLE_SELECT %]
+        || type_field.value == [% constants.FIELD_TYPE_MULTI_SELECT %])
+    {
+        value_field.disabled = false;
+    }
+    else {
+        value_field.disabled = true;
+    }
+
+   var reverse_desc = document.getElementById('reverse_desc');
+   if (type_field.value == [% constants.FIELD_TYPE_BUG_ID %])
+   {
+       reverse_desc.disabled = false;
+   }
+   else {
+       reverse_desc.disabled = true;
+       reverse_desc.value = '';
+   }
+}
+
+function onChangeVisibilityField() {
+    var vis_field = document.getElementById('visibility_field_id');
+    var vis_value = document.getElementById('visibility_values');
+
+    if (vis_field.value) {
+        var values = select_values[vis_field.value];
+        bz_populateSelectFromArray(vis_value, values);
+    }
+    else {
+        bz_clearOptions(vis_value);
+    }
+}

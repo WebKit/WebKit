@@ -1,0 +1,12 @@
+Tests for animation frame event breakpoint functionality (DOMDebugger) in a Worker.
+
+
+== Running test suite: Worker.DOMDebugger.EventBreakpoint.AnimationFrame
+-- Running test case: Worker.DOMDebugger.EventBreakpoint.AnimationFrame.setEventBreakpoint
+PASS: Should produce an exception.
+Error: Not supported
+
+-- Running test case: Worker.DOMDebugger.EventBreakpoint.AnimationFrame.removeEventBreakpoint
+PASS: Should produce an exception.
+Error: Not supported
+

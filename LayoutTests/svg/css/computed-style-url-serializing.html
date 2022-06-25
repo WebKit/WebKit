@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../svg/dynamic-updates/resources/SVGTestCase.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+description("Test url serializing of SVG presentation attributes.")
+createSVGTestCase();
+
+var rect = createSVGElement("rect");
+rect.setAttribute("id", "rect");
+rect.setAttribute("mask", "url(#reference)");
+rect.setAttribute("marker-start", "url(#reference)");
+rect.setAttribute("marker-mid", "url(#reference)");
+rect.setAttribute("marker-end", "url(#reference)");
+rect.setAttribute("fill", "url(#reference)");
+rect.setAttribute("stroke", "url(#reference)");
+rootSVGElement.appendChild(rect);
+
+shouldBeEqualToString("document.defaultView.getComputedStyle(rect, null).mask", 'url("#reference") 0% 0% / auto repeat border-box border-box add match-source');
+shouldBeEqualToString("document.defaultView.getComputedStyle(rect, null).markerStart", 'url("#reference")');
+shouldBeEqualToString("document.defaultView.getComputedStyle(rect, null).markerMid", 'url("#reference")');
+shouldBeEqualToString("document.defaultView.getComputedStyle(rect, null).markerEnd", 'url("#reference")');
+shouldBeEqualToString("document.defaultView.getComputedStyle(rect, null).fill", 'url("#reference")');
+shouldBeEqualToString("document.defaultView.getComputedStyle(rect, null).stroke", 'url("#reference")');
+
+var successfullyParsed = true;
+
+completeTest();
+</script>
+</body>
+</html>

@@ -1,0 +1,594 @@
+PASS successfullyParsed is true
+
+TEST COMPLETE
+baseline=top align=start text="Some simple text"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.emHeightAscent) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=top align=end text="Some simple text"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.emHeightAscent) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=top align=left text="Some simple text"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.emHeightAscent) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=top align=right text="Some simple text"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.emHeightAscent) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=top align=center text="Some simple text"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.emHeightAscent) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=hanging align=start text="Some simple text"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.hangingBaseline) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=hanging align=end text="Some simple text"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.hangingBaseline) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=hanging align=left text="Some simple text"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.hangingBaseline) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=hanging align=right text="Some simple text"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.hangingBaseline) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=hanging align=center text="Some simple text"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.hangingBaseline) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=middle align=start text="Some simple text"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=middle align=end text="Some simple text"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=middle align=left text="Some simple text"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=middle align=right text="Some simple text"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=middle align=center text="Some simple text"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=alphabetic align=start text="Some simple text"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.alphabeticBaseline) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=alphabetic align=end text="Some simple text"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.alphabeticBaseline) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=alphabetic align=left text="Some simple text"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.alphabeticBaseline) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=alphabetic align=right text="Some simple text"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.alphabeticBaseline) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=alphabetic align=center text="Some simple text"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.alphabeticBaseline) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=ideographic align=start text="Some simple text"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.ideographicBaseline) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=ideographic align=end text="Some simple text"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.ideographicBaseline) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=ideographic align=left text="Some simple text"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.ideographicBaseline) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=ideographic align=right text="Some simple text"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.ideographicBaseline) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=ideographic align=center text="Some simple text"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.ideographicBaseline) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=bottom align=start text="Some simple text"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.emHeightDescent) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=bottom align=end text="Some simple text"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.emHeightDescent) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=bottom align=left text="Some simple text"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.emHeightDescent) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=bottom align=right text="Some simple text"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.emHeightDescent) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=bottom align=center text="Some simple text"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.emHeightDescent) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=top align=start text="དབུ་མེད་"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.emHeightAscent) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=top align=end text="དབུ་མེད་"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.emHeightAscent) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=top align=left text="དབུ་མེད་"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.emHeightAscent) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=top align=right text="དབུ་མེད་"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.emHeightAscent) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=top align=center text="དབུ་མེད་"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.emHeightAscent) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=hanging align=start text="དབུ་མེད་"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.hangingBaseline) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=hanging align=end text="དབུ་མེད་"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.hangingBaseline) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=hanging align=left text="དབུ་མེད་"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.hangingBaseline) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=hanging align=right text="དབུ་མེད་"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.hangingBaseline) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=hanging align=center text="དབུ་མེད་"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.hangingBaseline) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=middle align=start text="དབུ་མེད་"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=middle align=end text="དབུ་མེད་"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=middle align=left text="དབུ་མེད་"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=middle align=right text="དབུ་མེད་"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=middle align=center text="དབུ་མེད་"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=alphabetic align=start text="དབུ་མེད་"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.alphabeticBaseline) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=alphabetic align=end text="དབུ་མེད་"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.alphabeticBaseline) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=alphabetic align=left text="དབུ་མེད་"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.alphabeticBaseline) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=alphabetic align=right text="དབུ་མེད་"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.alphabeticBaseline) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=alphabetic align=center text="དབུ་མེད་"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.alphabeticBaseline) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=ideographic align=start text="དབུ་མེད་"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.ideographicBaseline) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=ideographic align=end text="དབུ་མེད་"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.ideographicBaseline) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=ideographic align=left text="དབུ་མེད་"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.ideographicBaseline) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=ideographic align=right text="དབུ་མེད་"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.ideographicBaseline) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=ideographic align=center text="དབུ་མེད་"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.ideographicBaseline) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=bottom align=start text="དབུ་མེད་"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.emHeightDescent) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=bottom align=end text="དབུ་མེད་"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.emHeightDescent) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=bottom align=left text="དབུ་མེད་"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.emHeightDescent) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=bottom align=right text="དབུ་མེད་"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.emHeightDescent) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+baseline=bottom align=center text="དབུ་མེད་"
+PASS metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight - metrics.width is within 1 of 0
+PASS metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent is >= 0
+PASS metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent is >= 0
+PASS metrics.emHeightAscent + metrics.emHeightDescent is >= 0
+PASS Math.abs(metrics.emHeightDescent) is 0
+PASS metrics.emHeightAscent is >= metrics.hangingBaseline
+PASS metrics.hangingBaseline is >= metrics.alphabeticBaseline
+PASS metrics.alphabeticBaseline is >= metrics.ideographicBaseline
+PASS metrics.ideographicBaseline is >= -metrics.emHeightDescent
+

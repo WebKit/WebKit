@@ -1,0 +1,14 @@
+Name: WebRTC
+URL: http://www.webrtc.org
+Version: 90
+CPEPrefix: cpe:/a:webrtc_project:webrtc:90
+License: BSD
+License File: LICENSE
+
+Description:
+WebRTC provides real time voice and video processing
+functionality to enable the implementation of
+PeerConnection/MediaStream.
+
+Third party code used in this project is described
+in the file LICENSE_THIRD_PARTY.

@@ -1,0 +1,11 @@
+This tests that an ARIA table can use aria-owns for its cells.
+PASS: row1.childAtIndex(0).isEqual(table.cellForColumnAndRow(0, 0)) === true
+PASS: row1.childAtIndex(0).isEqual(accessibilityController.accessibleElementById('row1-cell-1')) === true
+PASS: cell1.parentElement().isEqual(row1) === true
+PASS: row1.parentElement().isEqual(table) === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Foo
+Bar

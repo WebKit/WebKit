@@ -1,0 +1,11 @@
+<body><span id=span></span><span>"Tests copying selected range that contains surrogate characters. The test passes if WebKit doesn't crash or hit an ssertion."</span>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+        
+    span.offsetParent.before(document.createElement("frameset"));
+    span.prepend("\ud800");
+    document.execCommand("selectAll", true);
+    document.execCommand("copy", true);
+    document.getElementById("span").remove();
+</script>

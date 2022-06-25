@@ -1,0 +1,211 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # group - A Bugzilla::Group representing the group being edited.
+  # *_current - Arrays of Bugzilla::Group objects that show the current
+  #             values for this group, as far as grants.
+  # *_available - Arrays of Bugzilla::Group objects that show the current 
+  #               available values for each grant.
+  #%]
+
+[% title = BLOCK %]Change Group: [% group.name FILTER html %][% END %]
+
+[% PROCESS global/header.html.tmpl
+  title = title
+  style_urls = ['skins/standard/admin.css']
+  doc_section = "administering/groups.html#editing-groups-and-assigning-group-permissions"
+%]
+
+<form method="post" action="editgroups.cgi">
+  <input type="hidden" name="action" value="postchanges">
+  <input type="hidden" name="group_id" value="[% group.id FILTER html %]">
+
+  <table id="admin_table_edit">
+    <tr>
+      <th>Group:</th>
+      <td>
+        [% IF group.is_bug_group %]
+          <input type="text" name="name" size="60" maxlength="255"
+                 value="[% group.name FILTER html %]" required>
+        [% ELSE %]
+          [% group.name FILTER html %]
+        [% END %]
+      </td>
+    </tr>
+
+    <tr>
+      <th>Description:</th>
+      <td>
+        [% IF group.is_bug_group %]
+          <input type="text" name="desc" size="60"
+                 value="[% group.description FILTER html %]" required>
+        [% ELSE %]
+          [% group.description FILTER html %]
+        [% END %]
+      </td>
+    </tr>
+
+    <tr>
+      <th>User Regexp:</th>
+      <td>
+        <input type="text" name="regexp" size="60"
+               value="[% group.user_regexp FILTER html %]">
+      </td>
+    </tr>
+
+    <tr>
+      <th>
+        Icon URL:
+        [% IF group.icon_url %]
+          <img src="[% group.icon_url FILTER html %]" alt="[% group.name FILTER html %]">
+        [% END %]
+      </th>
+      <td>
+        <input type="text" name="icon_url" size="60"
+               value="[% group.icon_url FILTER html %]">
+      </td>
+    </tr>
+
+    [% IF group.is_bug_group %]
+      <tr>
+        <th>Use For [% terms.Bugs %]:</th>
+        <td>
+          <input type="checkbox" name="isactive" 
+                 value="1" [% 'checked="checked"' IF group.is_active %]>
+        </td>
+      </tr>
+    [% END %]
+    [% Hook.process('field') %]
+  </table>
+
+  <h4>Group Permissions</h4>
+
+  <table id="grant_table">
+    <tr>
+      <th colspan="2">
+        Groups That Are a Member of This Group<br>
+        ("Users in <var>X</var> are automatically in [% group.name FILTER html %]")
+      </th>
+      <th colspan="2">
+        Groups That This Group Is a Member Of<br>
+        ("If you are in [% group.name FILTER html %], you are automatically also in...")
+      </th>
+    </tr>
+
+    <tr>
+      [% PROCESS select_pair name = "members" size = 10
+                 items_available = members_available
+                 items_current = members_current %]
+
+      [% PROCESS select_pair name = "member_of" size = 10
+                 items_available = member_of_available
+                 items_current = member_of_current %]
+    </tr>
+
+    <tr>
+      <th colspan="2">
+        Groups That Can Grant Membership in This Group<br>
+        ("Users in <var>X</var> can add other users to [% group.name FILTER html %]")
+      </th>
+      <th colspan="2">
+        Groups That This Group Can Grant Membership In<br>
+        ("Users in [% group.name FILTER html %] can add users to...")
+      </th>
+    </tr>
+
+    <tr>
+      [% PROCESS select_pair name = "bless_from" size = 10
+                 items_available = bless_from_available
+                 items_current = bless_from_current %]
+
+      [% PROCESS select_pair name = "bless_to" size = 10
+                 items_available = bless_to_available
+                 items_current = bless_to_current %]
+    </tr>
+
+    [% IF Param('usevisibilitygroups') %]
+      <tr>
+        <th colspan="2">
+          Groups That Can See This Group<br>
+          ("Users in <var>X</var> can see users in [% group.name FILTER html %]")
+        </th>
+        <th colspan="2">
+          Groups That This Group Can See<br>
+          ("Users in [% group.name FILTER html %] can see users in...")
+        </th>
+      </tr>
+
+      <tr>
+        [% PROCESS select_pair name = "visible_from" size = 10
+                   items_available = visible_from_available
+                   items_current = visible_from_current %]
+
+        [% PROCESS select_pair name = "visible_to_me" size = 10
+                   items_available = visible_to_me_available
+                   items_current = visible_to_me_current %]
+      </tr>
+    [% END %]
+  </table>
+
+  <input type="submit" id="update-group" value="Update Group">
+  <input type="hidden" name="token" value="[% token FILTER html %]">
+</form>
+  
+<h4>Mass Remove</h4>
+
+<p>You can use this form to do mass-removal of users from groups.
+  This is often very useful if you upgraded from Bugzilla
+  2.16.</p>
+
+<form method="post" action="editgroups.cgi">
+  <fieldset id="mass-remove">
+    <legend>Remove all explicit memberships from users whose login names
+      match the following regular expression:</legend>
+    <input type="text" size="20" name="regexp">
+    <input type="submit" id="remove-membership" value="Remove Memberships">
+
+    <p>If you leave the field blank, all explicit memberships in 
+      this group will be removed.</p>
+
+    <input type="hidden" name="action" value="confirm_remove">
+    <input type="hidden" name="group_id" value="[% group.id FILTER html %]">
+  </fieldset>
+</form>
+
+<p>Back to the <a href="editgroups.cgi">group list</a>.</p>
+
+[% PROCESS global/footer.html.tmpl %] 
+
+[% BLOCK select_pair %]
+  <td>
+    <label for="[% "${name}_add" FILTER html %]">Add<br>(select to add)</label>
+    <br>
+    <select multiple="multiple" size="[% size FILTER html %]"
+            name="[% "${name}_add" FILTER html %]"
+            id="[% "${name}_add" FILTER html %]">
+      [% FOREACH item = items_available %]
+        <option value="[% item.id FILTER html %]">
+          [% item.name FILTER html %]</option>
+      [% END %]
+    </select>
+  </td>
+
+  <td>
+    <label for="[% "${name}_remove" FILTER html %]">Current<br>(select to remove)</label>
+    <br>
+    <select multiple="multiple" size="[% size FILTER html %]"
+            name="[% "${name}_remove" FILTER html %]"
+            id="[% "${name}_remove" FILTER html %]">
+      [% FOREACH item = items_current %]
+        <option value="[% item.id FILTER html %]">
+          [% item.name FILTER html %]</option>
+      [% END %]
+    </select>
+  </td>
+[% END %]

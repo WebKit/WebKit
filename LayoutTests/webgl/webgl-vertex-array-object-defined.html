@@ -1,0 +1,8 @@
+<div id="result">PASS if WebGLVertexArrayObject is defined.</div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+if (typeof WebGLVertexArrayObject === "undefined")
+    document.getElementById("result").innerHTML = "FAIL";
+</script>

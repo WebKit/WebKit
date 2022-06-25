@@ -1,0 +1,4 @@
+
+
+FAIL Focusing on visible sticky input box should reset the scroll to unshifted sticky position. assert_equals: expected 0 but got 100
+

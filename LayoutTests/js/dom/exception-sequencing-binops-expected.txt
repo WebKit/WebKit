@@ -1,0 +1,182 @@
+Test exception handling with various arithmetic and logic operators, it checks the following things:
+In assignment expressions the lefthand side is not modified if the right hand side throws
+If the left hand side of a binary operator throws then the right hand should not be executed
+If valueOf/toString throws in the left hand expression of a binop it does not prevent evaluation of the right hand expression, but does prevent evaluation of toString/valueOf on the rhs.
+PASS: Handled "1 - valueOfThrower" correctly.
+PASS: Handled "1 - toStringThrower" correctly.
+PASS: Handled "1 - throwingProperty" correctly.
+PASS: Handled "1 - ({get throwingProperty(){ throw "throwing property" }}).throwingProperty" correctly.
+PASS: Handled "1 - getterThrower.value" correctly.
+PASS: Handled "'string' - valueOfThrower" correctly.
+PASS: Handled "'string' - toStringThrower" correctly.
+PASS: Handled "'string' - throwingProperty" correctly.
+PASS: Handled "'string' - ({get throwingProperty(){ throw "throwing property" }}).throwingProperty" correctly.
+PASS: Handled "'string' - getterThrower.value" correctly.
+PASS: Handled "valueOfThrower - rhsNonZeroNum" correctly.
+PASS: Handled "toStringThrower - rhsNonZeroNum" correctly.
+PASS: Handled "throwingProperty - rhsNonZeroNum" correctly.
+PASS: Handled "({get throwingProperty(){ throw "throwing property" }}).throwingProperty - rhsNonZeroNum" correctly.
+PASS: Handled "getterThrower.value - rhsNonZeroNum" correctly.
+PASS: Handled "valueOfThrower - rhsToStringThrower" correctly.
+PASS: Handled "toStringThrower - rhsToStringThrower" correctly.
+PASS: Handled "throwingProperty - rhsToStringThrower" correctly.
+PASS: Handled "({get throwingProperty(){ throw "throwing property" }}).throwingProperty - rhsToStringThrower" correctly.
+PASS: Handled "getterThrower.value - rhsToStringThrower" correctly.
+PASS: Handled "valueOfThrower - rhsGetterTester.value" correctly.
+PASS: Handled "toStringThrower - rhsGetterTester.value" correctly.
+PASS: Handled "1 + valueOfThrower" correctly.
+PASS: Handled "1 + toStringThrower" correctly.
+PASS: Handled "1 + throwingProperty" correctly.
+PASS: Handled "1 + ({get throwingProperty(){ throw "throwing property" }}).throwingProperty" correctly.
+PASS: Handled "1 + getterThrower.value" correctly.
+PASS: Handled "'string' + valueOfThrower" correctly.
+PASS: Handled "'string' + toStringThrower" correctly.
+PASS: Handled "'string' + throwingProperty" correctly.
+PASS: Handled "'string' + ({get throwingProperty(){ throw "throwing property" }}).throwingProperty" correctly.
+PASS: Handled "'string' + getterThrower.value" correctly.
+PASS: Handled "valueOfThrower + rhsNonZeroNum" correctly.
+PASS: Handled "toStringThrower + rhsNonZeroNum" correctly.
+PASS: Handled "throwingProperty + rhsNonZeroNum" correctly.
+PASS: Handled "({get throwingProperty(){ throw "throwing property" }}).throwingProperty + rhsNonZeroNum" correctly.
+PASS: Handled "getterThrower.value + rhsNonZeroNum" correctly.
+PASS: Handled "valueOfThrower + rhsToStringThrower" correctly.
+PASS: Handled "toStringThrower + rhsToStringThrower" correctly.
+PASS: Handled "throwingProperty + rhsToStringThrower" correctly.
+PASS: Handled "({get throwingProperty(){ throw "throwing property" }}).throwingProperty + rhsToStringThrower" correctly.
+PASS: Handled "getterThrower.value + rhsToStringThrower" correctly.
+PASS: Handled "valueOfThrower + rhsGetterTester.value" correctly.
+PASS: Handled "toStringThrower + rhsGetterTester.value" correctly.
+PASS: Handled "1 * valueOfThrower" correctly.
+PASS: Handled "1 * toStringThrower" correctly.
+PASS: Handled "1 * throwingProperty" correctly.
+PASS: Handled "1 * ({get throwingProperty(){ throw "throwing property" }}).throwingProperty" correctly.
+PASS: Handled "1 * getterThrower.value" correctly.
+PASS: Handled "'string' * valueOfThrower" correctly.
+PASS: Handled "'string' * toStringThrower" correctly.
+PASS: Handled "'string' * throwingProperty" correctly.
+PASS: Handled "'string' * ({get throwingProperty(){ throw "throwing property" }}).throwingProperty" correctly.
+PASS: Handled "'string' * getterThrower.value" correctly.
+PASS: Handled "valueOfThrower * rhsNonZeroNum" correctly.
+PASS: Handled "toStringThrower * rhsNonZeroNum" correctly.
+PASS: Handled "throwingProperty * rhsNonZeroNum" correctly.
+PASS: Handled "({get throwingProperty(){ throw "throwing property" }}).throwingProperty * rhsNonZeroNum" correctly.
+PASS: Handled "getterThrower.value * rhsNonZeroNum" correctly.
+PASS: Handled "valueOfThrower * rhsToStringThrower" correctly.
+PASS: Handled "toStringThrower * rhsToStringThrower" correctly.
+PASS: Handled "throwingProperty * rhsToStringThrower" correctly.
+PASS: Handled "({get throwingProperty(){ throw "throwing property" }}).throwingProperty * rhsToStringThrower" correctly.
+PASS: Handled "getterThrower.value * rhsToStringThrower" correctly.
+PASS: Handled "valueOfThrower * rhsGetterTester.value" correctly.
+PASS: Handled "toStringThrower * rhsGetterTester.value" correctly.
+PASS: Handled "1 / valueOfThrower" correctly.
+PASS: Handled "1 / toStringThrower" correctly.
+PASS: Handled "1 / throwingProperty" correctly.
+PASS: Handled "1 / ({get throwingProperty(){ throw "throwing property" }}).throwingProperty" correctly.
+PASS: Handled "1 / getterThrower.value" correctly.
+PASS: Handled "'string' / valueOfThrower" correctly.
+PASS: Handled "'string' / toStringThrower" correctly.
+PASS: Handled "'string' / throwingProperty" correctly.
+PASS: Handled "'string' / ({get throwingProperty(){ throw "throwing property" }}).throwingProperty" correctly.
+PASS: Handled "'string' / getterThrower.value" correctly.
+PASS: Handled "valueOfThrower / rhsNonZeroNum" correctly.
+PASS: Handled "toStringThrower / rhsNonZeroNum" correctly.
+PASS: Handled "throwingProperty / rhsNonZeroNum" correctly.
+PASS: Handled "({get throwingProperty(){ throw "throwing property" }}).throwingProperty / rhsNonZeroNum" correctly.
+PASS: Handled "getterThrower.value / rhsNonZeroNum" correctly.
+PASS: Handled "valueOfThrower / rhsToStringThrower" correctly.
+PASS: Handled "toStringThrower / rhsToStringThrower" correctly.
+PASS: Handled "throwingProperty / rhsToStringThrower" correctly.
+PASS: Handled "({get throwingProperty(){ throw "throwing property" }}).throwingProperty / rhsToStringThrower" correctly.
+PASS: Handled "getterThrower.value / rhsToStringThrower" correctly.
+PASS: Handled "valueOfThrower / rhsGetterTester.value" correctly.
+PASS: Handled "toStringThrower / rhsGetterTester.value" correctly.
+PASS: Handled "1 % valueOfThrower" correctly.
+PASS: Handled "1 % toStringThrower" correctly.
+PASS: Handled "1 % throwingProperty" correctly.
+PASS: Handled "1 % ({get throwingProperty(){ throw "throwing property" }}).throwingProperty" correctly.
+PASS: Handled "1 % getterThrower.value" correctly.
+PASS: Handled "'string' % valueOfThrower" correctly.
+PASS: Handled "'string' % toStringThrower" correctly.
+PASS: Handled "'string' % throwingProperty" correctly.
+PASS: Handled "'string' % ({get throwingProperty(){ throw "throwing property" }}).throwingProperty" correctly.
+PASS: Handled "'string' % getterThrower.value" correctly.
+PASS: Handled "valueOfThrower % rhsNonZeroNum" correctly.
+PASS: Handled "toStringThrower % rhsNonZeroNum" correctly.
+PASS: Handled "throwingProperty % rhsNonZeroNum" correctly.
+PASS: Handled "({get throwingProperty(){ throw "throwing property" }}).throwingProperty % rhsNonZeroNum" correctly.
+PASS: Handled "getterThrower.value % rhsNonZeroNum" correctly.
+PASS: Handled "valueOfThrower % rhsToStringThrower" correctly.
+PASS: Handled "toStringThrower % rhsToStringThrower" correctly.
+PASS: Handled "throwingProperty % rhsToStringThrower" correctly.
+PASS: Handled "({get throwingProperty(){ throw "throwing property" }}).throwingProperty % rhsToStringThrower" correctly.
+PASS: Handled "getterThrower.value % rhsToStringThrower" correctly.
+PASS: Handled "valueOfThrower % rhsGetterTester.value" correctly.
+PASS: Handled "toStringThrower % rhsGetterTester.value" correctly.
+PASS: Handled "1 | valueOfThrower" correctly.
+PASS: Handled "1 | toStringThrower" correctly.
+PASS: Handled "1 | throwingProperty" correctly.
+PASS: Handled "1 | ({get throwingProperty(){ throw "throwing property" }}).throwingProperty" correctly.
+PASS: Handled "1 | getterThrower.value" correctly.
+PASS: Handled "'string' | valueOfThrower" correctly.
+PASS: Handled "'string' | toStringThrower" correctly.
+PASS: Handled "'string' | throwingProperty" correctly.
+PASS: Handled "'string' | ({get throwingProperty(){ throw "throwing property" }}).throwingProperty" correctly.
+PASS: Handled "'string' | getterThrower.value" correctly.
+PASS: Handled "valueOfThrower | rhsNonZeroNum" correctly.
+PASS: Handled "toStringThrower | rhsNonZeroNum" correctly.
+PASS: Handled "throwingProperty | rhsNonZeroNum" correctly.
+PASS: Handled "({get throwingProperty(){ throw "throwing property" }}).throwingProperty | rhsNonZeroNum" correctly.
+PASS: Handled "getterThrower.value | rhsNonZeroNum" correctly.
+PASS: Handled "valueOfThrower | rhsToStringThrower" correctly.
+PASS: Handled "toStringThrower | rhsToStringThrower" correctly.
+PASS: Handled "throwingProperty | rhsToStringThrower" correctly.
+PASS: Handled "({get throwingProperty(){ throw "throwing property" }}).throwingProperty | rhsToStringThrower" correctly.
+PASS: Handled "getterThrower.value | rhsToStringThrower" correctly.
+PASS: Handled "valueOfThrower | rhsGetterTester.value" correctly.
+PASS: Handled "toStringThrower | rhsGetterTester.value" correctly.
+PASS: Handled "1 & valueOfThrower" correctly.
+PASS: Handled "1 & toStringThrower" correctly.
+PASS: Handled "1 & throwingProperty" correctly.
+PASS: Handled "1 & ({get throwingProperty(){ throw "throwing property" }}).throwingProperty" correctly.
+PASS: Handled "1 & getterThrower.value" correctly.
+PASS: Handled "'string' & valueOfThrower" correctly.
+PASS: Handled "'string' & toStringThrower" correctly.
+PASS: Handled "'string' & throwingProperty" correctly.
+PASS: Handled "'string' & ({get throwingProperty(){ throw "throwing property" }}).throwingProperty" correctly.
+PASS: Handled "'string' & getterThrower.value" correctly.
+PASS: Handled "valueOfThrower & rhsNonZeroNum" correctly.
+PASS: Handled "toStringThrower & rhsNonZeroNum" correctly.
+PASS: Handled "throwingProperty & rhsNonZeroNum" correctly.
+PASS: Handled "({get throwingProperty(){ throw "throwing property" }}).throwingProperty & rhsNonZeroNum" correctly.
+PASS: Handled "getterThrower.value & rhsNonZeroNum" correctly.
+PASS: Handled "valueOfThrower & rhsToStringThrower" correctly.
+PASS: Handled "toStringThrower & rhsToStringThrower" correctly.
+PASS: Handled "throwingProperty & rhsToStringThrower" correctly.
+PASS: Handled "({get throwingProperty(){ throw "throwing property" }}).throwingProperty & rhsToStringThrower" correctly.
+PASS: Handled "getterThrower.value & rhsToStringThrower" correctly.
+PASS: Handled "valueOfThrower & rhsGetterTester.value" correctly.
+PASS: Handled "toStringThrower & rhsGetterTester.value" correctly.
+PASS: Handled "1 ^ valueOfThrower" correctly.
+PASS: Handled "1 ^ toStringThrower" correctly.
+PASS: Handled "1 ^ throwingProperty" correctly.
+PASS: Handled "1 ^ ({get throwingProperty(){ throw "throwing property" }}).throwingProperty" correctly.
+PASS: Handled "1 ^ getterThrower.value" correctly.
+PASS: Handled "'string' ^ valueOfThrower" correctly.
+PASS: Handled "'string' ^ toStringThrower" correctly.
+PASS: Handled "'string' ^ throwingProperty" correctly.
+PASS: Handled "'string' ^ ({get throwingProperty(){ throw "throwing property" }}).throwingProperty" correctly.
+PASS: Handled "'string' ^ getterThrower.value" correctly.
+PASS: Handled "valueOfThrower ^ rhsNonZeroNum" correctly.
+PASS: Handled "toStringThrower ^ rhsNonZeroNum" correctly.
+PASS: Handled "throwingProperty ^ rhsNonZeroNum" correctly.
+PASS: Handled "({get throwingProperty(){ throw "throwing property" }}).throwingProperty ^ rhsNonZeroNum" correctly.
+PASS: Handled "getterThrower.value ^ rhsNonZeroNum" correctly.
+PASS: Handled "valueOfThrower ^ rhsToStringThrower" correctly.
+PASS: Handled "toStringThrower ^ rhsToStringThrower" correctly.
+PASS: Handled "throwingProperty ^ rhsToStringThrower" correctly.
+PASS: Handled "({get throwingProperty(){ throw "throwing property" }}).throwingProperty ^ rhsToStringThrower" correctly.
+PASS: Handled "getterThrower.value ^ rhsToStringThrower" correctly.
+PASS: Handled "valueOfThrower ^ rhsGetterTester.value" correctly.
+PASS: Handled "toStringThrower ^ rhsGetterTester.value" correctly.
+Passed 176 of 176 tests.
+

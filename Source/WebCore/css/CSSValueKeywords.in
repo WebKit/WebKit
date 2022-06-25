@@ -1,0 +1,1603 @@
+//
+// CSS value names
+//
+inherit
+initial
+unset
+revert
+revert-layer
+
+//
+// CSS_PROP_OUTLINE_STYLE
+// CSS_PROP_BORDER_TOP_STYLE
+// CSS_PROP_BORDER_BOTTOM_STYLE
+// CSS_PROP_BORDER_LEFT_STYLE
+// The order here must match the order of the BorderStyle enum in RenderStyleConstants.h.
+none
+hidden
+inset
+groove
+outset
+ridge
+dotted
+dashed
+solid
+double
+
+//
+// CSS_PROP_FONT:
+//
+// This needs to be kept in sync with SystemFontDatabase::FontShorthand.
+caption
+icon
+menu
+message-box
+small-caption
+-webkit-mini-control
+-webkit-small-control
+-webkit-control
+
+#if defined(WTF_PLATFORM_COCOA) && WTF_PLATFORM_COCOA
+-apple-system-headline
+-apple-system-body
+-apple-system-subheadline
+-apple-system-footnote
+-apple-system-caption1
+-apple-system-caption2
+-apple-system-short-headline
+-apple-system-short-body
+-apple-system-short-subheadline
+-apple-system-short-footnote
+-apple-system-short-caption1
+-apple-system-tall-body
+-apple-system-title0
+-apple-system-title1
+-apple-system-title2
+-apple-system-title3
+-apple-system-title4
+#endif
+
+// This has to go after the -apple-system versions.
+status-bar
+
+//
+// CSS_PROP_FONT_STYLE:
+//
+//normal
+italic
+oblique
+// The following is only allowed in @font-face:
+all
+//
+// CSS_PROP_FONT_VARIANT:
+//
+//normal
+small-caps
+
+// font-variant-ligatures:
+//
+common-ligatures
+no-common-ligatures
+discretionary-ligatures
+no-discretionary-ligatures
+historical-ligatures
+no-historical-ligatures
+contextual
+no-contextual
+
+// font-variant-caps
+//
+// FIXME: Unify this with plain font-variant
+// small-caps
+all-small-caps
+petite-caps
+all-petite-caps
+unicase
+titling-caps
+
+// font-variant-numeric
+//
+lining-nums
+oldstyle-nums
+proportional-nums
+tabular-nums
+diagonal-fractions
+stacked-fractions
+ordinal
+slashed-zero
+
+// font-variant-alternates
+//
+historical-forms
+
+// font-variant-east-asian
+//
+jis78
+jis83
+jis90
+jis04
+simplified
+traditional
+full-width
+proportional-width
+ruby
+
+//
+// CSS_PROP_FONT_WEIGHT:
+//
+normal
+bold
+bolder
+lighter
+
+//
+// CSS_PROP_FONT_SIZE:
+//
+xx-small
+x-small
+small
+medium
+large
+x-large
+xx-large
+-webkit-xxx-large
+-webkit-ruby-text
+smaller
+larger
+
+//
+// CSS_PROP_FONT_STRETCH:
+//
+//normal
+wider
+narrower
+ultra-condensed
+extra-condensed
+condensed
+semi-condensed
+semi-expanded
+expanded
+extra-expanded
+ultra-expanded
+//
+// CSS_PROP_GENERIC_FONT_FAMILY:
+//
+serif
+sans-serif
+cursive
+fantasy
+monospace
+-webkit-body
+-webkit-pictograph
+system-ui
+//
+//
+// CSS_PROP_*_COLOR
+//
+alpha
+aqua
+black
+blue
+fuchsia
+gray
+green
+lime
+maroon
+navy
+olive
+orange
+purple
+red
+silver
+teal
+white
+yellow
+transparent
+-webkit-link
+-webkit-activelink
+activeborder
+activecaption
+activetext
+appworkspace
+background
+buttonface
+buttonhighlight
+buttonshadow
+buttontext
+activebuttontext
+canvas
+canvastext
+captiontext
+field
+fieldtext
+graytext
+highlight
+highlighttext
+inactiveborder
+inactivecaption
+inactivecaptiontext
+infobackground
+infotext
+linktext
+luminance
+menutext
+scrollbar
+threeddarkshadow
+threedface
+threedhighlight
+threedlightshadow
+threedshadow
+visitedtext
+window
+windowframe
+windowtext
+#if (defined(WTF_PLATFORM_MAC) && WTF_PLATFORM_MAC) || (defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
+-apple-system-header-text
+-apple-system-text-background
+-apple-system-control-background
+-apple-system-placeholder-text
+-apple-system-label
+-apple-system-secondary-label
+-apple-system-tertiary-label
+-apple-system-quaternary-label
+-apple-system-grid
+-apple-system-separator
+-apple-system-container-border
+-apple-system-background
+-apple-system-secondary-background
+-apple-system-tertiary-background
+-apple-system-grouped-background
+-apple-system-secondary-grouped-background
+-apple-system-tertiary-grouped-background
+-apple-system-selected-content-background
+-apple-system-unemphasized-selected-content-background
+-apple-wireless-playback-target-active
+-apple-system-blue
+-apple-system-brown
+-apple-system-gray
+-apple-system-green
+-apple-system-orange
+-apple-system-pink
+-apple-system-purple
+-apple-system-red
+-apple-system-yellow
+-apple-system-app-highlight-background
+#endif
+#if defined(WTF_PLATFORM_MAC) && WTF_PLATFORM_MAC
+-apple-system-alternate-selected-text
+-apple-system-control-accent
+-apple-system-even-alternating-content-background
+-apple-system-odd-alternating-content-background
+-apple-system-selected-text
+-apple-system-unemphasized-selected-text
+-apple-system-selected-text-background
+-apple-system-unemphasized-selected-text-background
+-apple-system-find-highlight-background
+#endif
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+-apple-system-indigo
+-apple-system-teal
+-apple-system-opaque-fill
+-apple-system-opaque-secondary-fill
+-apple-system-opaque-secondary-fill-disabled
+-apple-system-opaque-tertiary-fill
+-apple-system-opaque-separator
+#endif
+#if (defined(WTF_PLATFORM_MAC) && WTF_PLATFORM_MAC) || (defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY) || (defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT)
+-webkit-control-background
+#endif
+-webkit-focus-ring-color
+currentcolor
+//
+// colors in non strict mode
+grey
+-webkit-text
+//
+// CSS_PROP_BACKGROUND_REPEAT:
+//
+repeat
+repeat-x
+repeat-y
+no-repeat
+// round
+// space
+//
+// CSS_PROP__WEBKIT_BACKGROUND_COMPOSITE:
+//
+clear
+copy
+source-over
+source-in
+source-out
+source-atop
+destination-over
+destination-in
+destination-out
+destination-atop
+xor
+plus-darker
+// highlight
+plus-lighter
+//
+// CSS_PROP_VERTICAL_ALIGN:
+//
+baseline
+middle
+sub
+super
+text-top
+text-bottom
+top
+bottom
+// HTML alignment MIDDLE has no corresponding CSS alignment
+-webkit-baseline-middle
+//
+// CSS_PROP_TEXT_ALIGN:
+// The order here must match the order of the TextAlignMode enum in RenderStyleConstants.h.
+//
+-webkit-auto
+left
+right
+center
+justify
+-webkit-left
+-webkit-right
+-webkit-center
+match-parent
+-webkit-match-parent
+-internal-th-center
+//start
+//end
+//
+// CSS_PROP_TEXT_JUSTIFY:
+//
+//auto
+//none
+inter-word
+distribute
+//
+// CSS_PROP_CLEAR:
+// CSS_PROP_FLOAT:
+// none
+// left
+// right
+inline-start
+inline-end
+//
+// CSS_PROP_LIST_STYLE_POSITION:
+//
+outside
+inside
+//
+// CSS_PROP_LIST_STYLE_TYPE:
+// The order here must match the order of the ListStyleType enum in RenderStyleConstants.h.
+//
+disc
+circle
+square
+decimal
+decimal-leading-zero
+arabic-indic
+binary
+bengali
+cambodian
+khmer
+devanagari
+gujarati
+gurmukhi
+kannada
+lower-hexadecimal
+lao
+malayalam
+mongolian
+myanmar
+octal
+oriya
+persian
+urdu
+telugu
+tibetan
+thai
+upper-hexadecimal
+lower-roman
+upper-roman
+lower-greek
+lower-alpha
+lower-latin
+upper-alpha
+upper-latin
+afar
+ethiopic-halehame-aa-et
+ethiopic-halehame-aa-er
+amharic
+ethiopic-halehame-am-et
+amharic-abegede
+ethiopic-abegede-am-et
+cjk-earthly-branch
+cjk-heavenly-stem
+ethiopic
+ethiopic-halehame-gez
+ethiopic-abegede
+ethiopic-abegede-gez
+hangul-consonant
+hangul
+lower-norwegian
+oromo
+ethiopic-halehame-om-et
+sidama
+ethiopic-halehame-sid-et
+somali
+ethiopic-halehame-so-et
+tigre
+ethiopic-halehame-tig
+tigrinya-er
+ethiopic-halehame-ti-er
+tigrinya-er-abegede
+ethiopic-abegede-ti-er
+tigrinya-et
+ethiopic-halehame-ti-et
+tigrinya-et-abegede
+ethiopic-abegede-ti-et
+upper-greek
+upper-norwegian
+asterisks
+footnotes
+hebrew
+armenian
+lower-armenian
+upper-armenian
+georgian
+cjk-ideographic
+hiragana
+katakana
+hiragana-iroha
+katakana-iroha
+cjk-decimal
+tamil
+disclosure-open
+disclosure-closed
+japanese-informal
+japanese-formal
+korean-hangul-formal
+korean-hanja-informal
+korean-hanja-formal
+simp-chinese-informal
+simp-chinese-formal
+trad-chinese-informal
+trad-chinese-formal
+ethiopic-numeric
+//none
+//
+// CSS_PROP_DISPLAY:
+// The order here must match the order of the DisplayType enum in RenderStyleConstants.h.
+//
+inline
+block
+list-item
+inline-block
+table
+inline-table
+table-row-group
+table-header-group
+table-footer-group
+table-row
+table-column-group
+table-column
+table-cell
+table-caption
+-webkit-box
+-webkit-inline-box
+flex
+inline-flex
+contents
+grid
+inline-grid
+flow-root
+flow
+-webkit-inline-flex
+-webkit-flex
+//none
+//
+// CSS_PROP_CURSOR:
+// The order here must match the order of the CursorType enum in RenderStyleConstants.h.
+//
+auto
+default
+// none
+context-menu
+help
+pointer
+progress
+wait
+cell
+crosshair
+text
+vertical-text
+alias
+// copy
+move
+no-drop
+not-allowed
+grab
+grabbing
+e-resize
+n-resize
+ne-resize
+nw-resize
+s-resize
+se-resize
+sw-resize
+w-resize
+ew-resize
+ns-resize
+nesw-resize
+nwse-resize
+col-resize
+row-resize
+all-scroll
+zoom-in
+zoom-out
+-webkit-grab
+-webkit-grabbing
+-webkit-zoom-in
+-webkit-zoom-out
+//
+// CSS_PROP_CURSOR_VISIBILITY:
+// auto
+auto-hide
+//
+// CSS_PROP_DIRECTION:
+//
+ltr
+rtl
+//
+// CSS_PROP_TEXT_TRANSFORM:
+//
+capitalize
+uppercase
+lowercase
+//none
+//
+// CSS_PROP_VISIBILITY:
+//
+visible
+//hidden
+collapse
+//
+// Unordered rest
+//
+a3
+a4
+a5
+above
+absolute
+always
+avoid
+b4
+b5
+below
+bidi-override
+blink
+both
+close-quote
+crop
+cross
+embed
+fixed
+hand
+hide
+higher
+invert
+inverted
+isolate-override
+plaintext
+-webkit-isolate
+-webkit-isolate-override
+-webkit-plaintext
+landscape
+ledger
+legal
+letter
+level
+line-through
+local
+loud
+lower
+mix
+no-close-quote
+no-open-quote
+nowrap
+open-quote
+overline
+portrait
+pre
+pre-line
+pre-wrap
+relative
+scroll
+separate
+show
+static
+thick
+thin
+underline
+wavy
+ink
+objects
+-webkit-nowrap
+
+// CSS3 Values
+// CSS_PROP_BOX_ALIGN
+stretch
+start
+end
+//center
+//baseline
+
+#if defined(ENABLE_CSS_BOX_DECORATION_BREAK) && ENABLE_CSS_BOX_DECORATION_BREAK
+// CSS_PROP_BOX_DECORATION_BREAK
+clone
+slice
+#endif
+
+// CSS_PROP_BOX_DIRECTION
+// normal
+reverse
+
+// CSS_PROP_BOX_ORIENT
+horizontal
+vertical
+inline-axis
+block-axis
+
+// CSS_PROP_BOX_PACK
+// start
+// end
+// center
+// justify
+
+// CSS_PROP_BOX_LINES
+single
+multiple
+
+// CSS_PROP_ALIGN_CONTENT
+flex-start
+flex-end
+// center
+space-between
+space-around
+space-evenly
+// stretch
+
+// CSS_PROP_ALIGN_ITEMS / CSS_PROP_ALIGN_SELF
+// flex-start
+// flex-end
+// center
+// baseline
+first-baseline
+last-baseline
+// stretch
+
+// CSS_PROP_JUSTIFY_CONTENT
+// start
+// end
+// flex-start
+// flex-end
+// center
+// space-between
+// space-around
+// space-evenly
+// stretch
+
+// CSS_PROP_JUSTIFY_ITEMS / CSS_PROP_JUSTIFY_SELF
+// auto
+// stretch
+// baseline
+// last baseline
+// first baseline
+// center
+// start
+// end
+self-start
+self-end
+// flex-start
+// flex-end
+// left
+// right
+unsafe
+safe
+legacy
+
+// CSS_PROP_FLEX_FLOW
+row
+row-reverse
+column
+column-reverse
+// nowrap
+// wrap
+wrap-reverse
+
+// CSS_PROP_MARQUEE_DIRECTION
+forwards
+backwards
+ahead
+// reverse
+// left
+// right
+up
+down
+// auto
+
+// CSS_PROP_MARQUEE_SPEED
+slow
+// normal
+fast
+
+// CSS_PROP_MARQUEE_REPETITION
+infinite
+
+// CSS_PROP_MARQUEE_STYLE
+// none
+slide
+// scroll
+alternate
+
+//
+// CSS_PROP__KHTML_USER_MODIFY
+//
+read-only
+read-write
+read-write-plaintext-only
+
+//
+// CSS_PROP__KHTML_USER_DRAG
+//
+element
+
+//
+// CSS_PROP__KHTML_USER_SELECT
+//
+ignore
+
+//
+// CSS_PROP_WIDTH/MIN_WIDTH/MAX_WIDTH
+//
+intrinsic
+min-intrinsic
+
+//
+// CSS3 intrinsic dimension keywords
+//
+min-content
+-webkit-min-content
+max-content
+-webkit-max-content
+-webkit-fill-available
+fit-content
+-webkit-fit-content
+
+//
+// CSS_PROP_TEXT_OVERFLOW
+//
+clip
+ellipsis
+
+//
+// CSS_PROP__KHTML_MARGIN_COLLAPSE
+//
+// collapse
+// separate
+discard
+
+//
+// CSS_PROP_TEXT_*_COLOR
+//
+dot-dash
+dot-dot-dash
+wave
+
+//
+// CSS_PROP_TEXT_*_MODE
+//
+continuous
+skip-white-space
+
+//
+// CSS_PROP_WORD_BREAK
+//
+break-all
+keep-all
+
+//
+// CSS_PROP_WORD_WRAP
+//
+break-word
+
+//
+// CSS_PROP_WHITE_SPACE
+//
+break-spaces
+
+//
+// CSS_PROP__KHTML_NBSP_MODE
+//
+space
+
+//
+// CSS_PROP__KHTML_LINE_BREAK
+//
+// auto
+loose
+// normal
+strict
+after-white-space
+anywhere
+
+// -webkit-appearance
+// The order here must match the order in the ControlPart enum in ThemeTypes.h.
+// All appearance values that should be accepted by the parser should be listed between 'checkbox' and 'textarea':
+checkbox
+radio
+push-button
+square-button
+button
+default-button
+listbox
+menulist
+menulist-button
+meter
+progress-bar
+slider-horizontal
+slider-vertical
+searchfield
+#if defined(ENABLE_APPLE_PAY) && ENABLE_APPLE_PAY
+-apple-pay-button
+#endif
+#if defined(ENABLE_ATTACHMENT_ELEMENT) && ENABLE_ATTACHMENT_ELEMENT
+attachment
+borderless-attachment
+#endif
+textarea
+textfield
+
+//
+// CSS_PROP_BORDER_IMAGE
+//
+// stretch
+// repeat
+round
+
+//
+// CSS_PROP_BACKGROUND_CLIP/ORIGIN
+//
+// border/content/padding are deprecated and ultimately will only apply to the -webkit- form of these properties.
+// border-box/content-box/padding-box should be used instead.
+//
+border
+border-box
+content
+content-box
+padding
+padding-box
+
+//
+// CSS_PROP_MASK_CLIP
+//
+// Same as background-clip above, except with some extra values.
+no-clip
+
+//
+// CSS_PROP_MASK_COMPOSITE
+//
+add
+subtract
+intersect
+exclude
+
+//
+// Variables Implementation
+//
+var
+-internal-variable-value
+
+//
+// Environment Variables
+//
+env
+
+//
+// CSS_PROP_BREAK_BEFORE/AFTER/INSIDE
+//
+avoid-column
+avoid-page
+page
+recto
+region
+verso
+
+// CSS Shapes
+margin-box
+
+// clip-path
+stroke-box
+view-box
+
+//
+// background-size
+//
+contain
+cover
+
+//
+// CSS_PROP__KHTML_RTL_ORDERING
+//
+logical
+visual
+
+//
+// CSS_PROP__WEBKIT_ANIMATION_DIRECTION
+//
+// alternate
+
+alternate-reverse
+
+//
+// CSS_PROP__WEBKIT_ANIMATION_FILL_MODE
+//
+// forwards
+// backwards
+// both
+
+//
+// CSS_PROP__WEBKIT_ANIMATION_ITERATION_COUNT
+//
+// infinite
+
+//
+// CSS_PROP__WEBKIT_ANIMATION_PLAY_STATE
+//
+running
+paused
+
+//
+// CSS_PROP__WEBKIT_TRANSFORM_STYLE
+//
+flat
+preserve-3d
+#if defined(ENABLE_CSS_TRANSFORM_STYLE_OPTIMIZED_3D) && ENABLE_CSS_TRANSFORM_STYLE_OPTIMIZED_3D
+optimized-3d
+#endif
+
+//
+// CSS_PROP__WEBKIT_TRANSITION_TIMING_FUNCTION
+// CSS_PROP__WEBKIT_ANIMATION_TIMING_FUNCTION
+//
+ease
+linear
+ease-in
+ease-out
+ease-in-out
+step-start
+step-end
+jump-start
+jump-end
+jump-none
+jump-both
+// start
+// end
+
+//
+// animation-composition
+//
+// add
+accumulate
+replace
+
+//
+// CSS_PROP_ZOOM
+//
+document
+reset
+
+//
+// CSS_PROP_POINTER_EVENTS
+//
+visiblePainted
+visibleFill
+visibleStroke
+//visible
+painted
+fill
+stroke
+bounding-box
+//all
+//none
+
+//
+// CSS_PROP_SPEECH
+//
+spell-out
+digits
+literal-punctuation
+no-punctuation
+
+//
+// -webkit-font-smoothing
+//
+// auto
+// none
+antialiased
+subpixel-antialiased
+
+// text-rendering
+//auto
+optimizeSpeed
+optimizeLegibility
+geometricPrecision
+
+// -webkit-color-adjust
+economy
+exact
+
+// -webkit-hyphenate-limit-lines
+no-limit
+
+// -webkit-hyphens
+// none
+manual
+// auto
+
+#if defined(ENABLE_OVERFLOW_SCROLLING_TOUCH) && ENABLE_OVERFLOW_SCROLLING_TOUCH
+// -webkit-overflow-scrolling
+// auto
+touch
+#endif
+
+// -webkit-writing-mode
+// SVG compatibility
+lr
+rl
+tb
+lr-tb
+rl-tb
+tb-rl
+// Standard values from CSS3
+horizontal-tb
+vertical-rl
+vertical-lr
+horizontal-bt
+
+// -webkit-ruby-position
+after
+before
+inter-character
+
+// -webkit-text-combine
+// horizontal
+
+// text-combine-upright
+// all
+// none
+
+// text-emphasis-position
+over
+under
+
+// text-emphasis-style
+filled
+open
+dot
+// circle
+double-circle
+triangle
+sesame
+
+// -webkit-radial-gradient
+// circle
+ellipse
+closest-side
+closest-corner
+farthest-side
+farthest-corner
+// contain
+// cover
+
+// -webkit-text-orientation
+sideways
+sideways-right
+upright
+vertical-right
+mixed
+
+// -webkit-line-box-contain
+font
+glyphs
+inline-box
+initial-letter
+replaced
+
+// font-feature-settings
+on
+off
+
+// image-rendering
+// auto
+// optimizeSpeed (deprecated)
+optimizeQuality // ( deprecated)
+crisp-edges
+pixelated
+-webkit-crisp-edges
+-webkit-optimize-contrast
+
+// shape-outside
+nonzero
+evenodd
+at
+// closest-side
+// farthest-side
+
+// -webkit-scroll-snap-points-x
+// -webkit-scroll-snap-points-y
+elements
+
+// -webkit-scroll-snap-type
+mandatory
+proximity
+// x
+// y
+
+break
+
+wrap
+
+// -webkit-line-align
+edges
+
+alphabetic
+
+// position
+sticky
+-webkit-sticky
+
+// (pointer:) media feature
+// none
+coarse
+fine
+
+// (hover:) media feature.
+// none
+hover
+
+// blend modes
+// normal
+multiply
+screen
+overlay
+darken
+lighten
+color-dodge
+color-burn
+hard-light
+soft-light
+difference
+exclusion
+hue
+saturation
+color
+luminosity
+// plus-darker
+// plus-lighter
+
+// isolation
+// auto
+isolate
+
+// object-fit
+// fill
+// contain
+// cover
+// none
+scale-down
+
+// background-image, etc.
+container-scroll
+cross-fade
+image-set
+linear-gradient
+radial-gradient
+conic-gradient
+repeating-linear-gradient
+repeating-radial-gradient
+repeating-conic-gradient
+-webkit-canvas
+-webkit-cross-fade
+-webkit-gradient
+-webkit-linear-gradient
+-webkit-radial-gradient
+-webkit-repeating-linear-gradient
+-webkit-repeating-radial-gradient
+-webkit-image-set
+-webkit-named-image
+filter
+-webkit-filter
+#if defined(ENABLE_CSS_PAINTING_API) && ENABLE_CSS_PAINTING_API
+paint
+#endif
+
+// deprecated gradients
+from
+to
+color-stop
+radial
+
+// content
+attr
+counter
+counters
+
+// clip
+rect
+
+// shapes
+polygon
+
+// @font-face src
+format
+
+// (-webkit-)filter
+// invert
+grayscale
+sepia
+saturate
+hue-rotate
+opacity
+brightness
+contrast
+blur
+drop-shadow
+url
+cubic-bezier
+spring
+steps
+apple-invert-lightness
+
+// colors
+rgb
+rgba
+hsl
+hsla
+hwb
+lab
+lch
+oklab
+oklch
+//color
+
+// relative color identifiers
+// from
+r
+g
+b
+h
+s
+l
+// h
+w
+// b
+// l
+a
+// b
+// l
+c
+// h
+// alpha
+
+// transform
+matrix
+matrix3d
+perspective
+rotate
+rotateX
+rotateY
+rotateZ
+rotate3d
+scale
+scaleX
+scaleY
+scaleZ
+scale3d
+skew
+skewX
+skewY
+translate
+translateX
+translateY
+translateZ
+translate3d
+
+// transform-box
+// border-box
+// view-box
+// stroke-box
+// content-box
+fill-box
+
+// motion path
+path
+
+calc
+-webkit-calc
+min
+max
+clamp
+pow
+sqrt
+hypot
+sin
+cos
+e
+pi
+exp
+log
+asin
+acos
+atan
+atan2
+abs
+sign
+mod
+rem
+to-zero
+nearest
+infinity
+-infinity
+NaN
+
+from-image
+
+#if defined(ENABLE_CSS_IMAGE_RESOLUTION) && ENABLE_CSS_IMAGE_RESOLUTION
+snap
+#endif
+
+// overflow
+-webkit-paged-x
+-webkit-paged-y
+
+// paint-order
+// normal
+// fill
+// stroke
+markers
+
+// grid-{column-start|column-end|row-start|row-end}
+span
+
+// grid-template-{columns|rows}
+minmax
+subgrid
+
+// grid-auto-flow
+auto-flow
+dense
+
+// text-indent
+each-line
+// hanging
+
+// -webkit-column-fill
+balance
+
+#if defined(ENABLE_APPLE_PAY) && ENABLE_APPLE_PAY
+// -apple-pay-button-style
+white-outline
+
+// -apple-pay-button-type
+plain
+buy
+set-up
+donate
+check-out
+book
+subscribe
+#if defined(ENABLE_APPLE_PAY_NEW_BUTTON_TYPES) && ENABLE_APPLE_PAY_NEW_BUTTON_TYPES
+reload
+add-money
+top-up
+order
+rent
+support
+contribute
+tip
+#endif
+#endif
+
+// font-synthesis
+weight
+style
+
+// will-change
+scroll-position
+//contents
+
+// touch-action
+// auto
+// none
+manipulation
+pan-x
+pan-y
+pinch-zoom
+
+// scroll-behavior
+// auto
+smooth
+
+// overscroll-behavior
+// contain
+
+// hanging-punctuation
+allow-end
+first
+force-end
+last
+
+// color-gamut
+p3
+rec2020
+sRGB
+
+// color() function
+a98-rgb
+display-p3
+prophoto-rgb
+// rec2020
+// sRGB
+srgb-linear
+xyz
+xyz-d50
+xyz-d65
+
+// color-contast()
+color-contrast
+vs
+AA
+AA-large
+AAA
+AAA-large
+
+// color-mix()
+color-mix
+
+// color-space-interpolation
+in
+// srgb
+// srgb-linear
+// lab
+// oklab
+// xyz
+// xyz-d50
+// xyz-d65
+// hsl
+// hwb
+// lch
+// oklch
+shorter
+longer
+increasing
+decreasing
+specified
+// hue
+
+// prefers-default-appearance
+prefers
+// no-preference
+
+// prefers-reduced-motion
+reduce
+no-preference
+
+// prefers-contrast
+more
+less
+// no-preference
+
+// prefers-color-scheme, font-palette
+light
+dark
+
+#if defined(ENABLE_DARK_MODE_CSS) && ENABLE_DARK_MODE_CSS
+// color-scheme
+only
+// light
+// dark
+#endif
+
+// auto-repeat
+auto-fill
+auto-fit
+
+// font-display
+// auto
+// block
+swap
+fallback
+optional
+
+#if defined(ENABLE_APPLICATION_MANIFEST) && ENABLE_APPLICATION_MANIFEST
+fullscreen
+standalone
+minimal-ui
+browser
+#endif
+
+// text-decoration-thickness, text-underline-offset
+from-font
+
+// dynamic-range
+standard
+high
+
+// @counter-style `system` descriptor values
+// https://www.w3.org/TR/css-counter-styles-3/#counter-style-system
+cyclic
+numeric
+// alphabetic
+symbolic
+additive
+// fixed
+extends
+
+// @counter-style `speak-as` descriptor values
+// https://www.w3.org/TR/css-counter-styles-3/#counter-style-speak-as
+// auto
+bullets
+numbers
+words
+// spell-out
+
+// @supports selector()
+// https://drafts.csswg.org/css-conditional-4/#typedef-supports-selector-fn
+selector
+
+// math-style
+// normal
+compact
+
+// mask-type, mask-mode
+// alpha
+// luminance
+match-source
+
+// rotate
+x
+y
+z
+
+// contain
+// none
+// strict
+// content
+size
+layout
+#if !(defined(ENABLE_CSS_PAINTING_API) && ENABLE_CSS_PAINTING_API)
+paint
+#endif
+
+// container-type
+// none
+// size
+inline-size
+
+// offset-path
+// https://drafts.fxtf.org/motion-1/#offset-path-property
+ray
+// closest-side
+// closest-corner
+// farthest-side
+// farthest-corner
+sides
+// contain
+
+// for @media/@supports/@container
+and
+or
+not

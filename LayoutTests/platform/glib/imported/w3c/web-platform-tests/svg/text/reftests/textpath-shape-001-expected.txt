@@ -1,0 +1,106 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (122,222) size 556x223
+    RenderSVGContainer {g} at (0,0) size 0x0
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGRect {rect} at (150,250) size 167x167 [fill={[type=SOLID] [color=#000000]}] [x=90.00] [y=150.00] [width=100.00] [height=100.00]
+      RenderSVGEllipse {circle} at (483,250) size 167x167 [fill={[type=SOLID] [color=#000000]}] [cx=340.00] [cy=200.00] [r=50.00]
+    RenderSVGContainer {g} at (122,222) size 556x223
+      RenderSVGContainer {use} at (149,249) size 169x169
+        RenderSVGRect {rect} at (149,249) size 169x169 [stroke={[type=SOLID] [color=#ADD8E6]}] [x=90.00] [y=150.00] [width=100.00] [height=100.00]
+      RenderSVGText {text} at (73,133) size 134x134 contains 1 chunk(s)
+        RenderSVGTextPath {textPath} at (0,0) size 133x133
+          RenderSVGInlineText {#text} at (0,0) size 133x133
+            chunk 1 text run 1 at (115.10,150.00) startOffset 0 endOffset 1 width 10.20: "L"
+            chunk 1 text run 2 at (125.00,150.00) startOffset 1 endOffset 2 width 9.60: "o"
+            chunk 1 text run 3 at (132.80,150.00) startOffset 2 endOffset 3 width 6.00: "r"
+            chunk 1 text run 4 at (140.60,150.00) startOffset 3 endOffset 4 width 9.60: "e"
+            chunk 1 text run 5 at (152.60,150.00) startOffset 4 endOffset 5 width 14.40: "m"
+            chunk 1 text run 6 at (162.20,150.00) startOffset 5 endOffset 6 width 4.80: " "
+            chunk 1 text run 7 at (166.70,150.00) startOffset 6 endOffset 7 width 4.20: "i"
+            chunk 1 text run 8 at (173.88,150.38) startOffset 7 endOffset 8 width 10.20: "p"
+            chunk 1 text run 9 at (182.50,154.38) startOffset 8 endOffset 9 width 9.00: "s"
+            chunk 1 text run 10 at (188.18,161.64) startOffset 9 endOffset 10 width 9.60: "u"
+            chunk 1 text run 11 at (190.00,173.38) startOffset 10 endOffset 11 width 14.40: "m"
+            chunk 1 text run 12 at (190.00,182.98) startOffset 11 endOffset 12 width 4.80: " "
+            chunk 1 text run 13 at (190.00,190.48) startOffset 12 endOffset 13 width 10.20: "d"
+            chunk 1 text run 14 at (190.00,200.38) startOffset 13 endOffset 14 width 9.60: "o"
+            chunk 1 text run 15 at (190.00,206.98) startOffset 14 endOffset 15 width 3.60: "l"
+            chunk 1 text run 16 at (190.00,213.58) startOffset 15 endOffset 16 width 9.60: "o"
+            chunk 1 text run 17 at (190.00,221.38) startOffset 16 endOffset 17 width 6.00: "r"
+            chunk 1 text run 18 at (190.00,226.78) startOffset 17 endOffset 18 width 4.80: " "
+            chunk 1 text run 19 at (189.67,233.66) startOffset 18 endOffset 19 width 9.00: "s"
+            chunk 1 text run 20 at (187.42,239.83) startOffset 19 endOffset 20 width 4.20: "i"
+            chunk 1 text run 21 at (184.78,243.47) startOffset 20 endOffset 21 width 4.80: "t"
+            chunk 1 text run 22 at (181.16,246.60) startOffset 21 endOffset 22 width 4.80: " "
+            chunk 1 text run 23 at (174.60,249.47) startOffset 22 endOffset 23 width 9.60: "a"
+            chunk 1 text run 24 at (162.64,250.00) startOffset 23 endOffset 24 width 14.40: "m"
+            chunk 1 text run 25 at (150.64,250.00) startOffset 24 endOffset 25 width 9.60: "e"
+            chunk 1 text run 26 at (143.44,250.00) startOffset 25 endOffset 26 width 4.80: "t"
+            chunk 1 text run 27 at (138.64,250.00) startOffset 26 endOffset 27 width 4.80: ","
+            chunk 1 text run 28 at (133.84,250.00) startOffset 27 endOffset 28 width 4.80: " "
+            chunk 1 text run 29 at (126.94,250.00) startOffset 28 endOffset 29 width 9.00: "c"
+            chunk 1 text run 30 at (117.64,250.00) startOffset 29 endOffset 30 width 9.60: "o"
+            chunk 1 text run 31 at (108.04,249.91) startOffset 30 endOffset 31 width 9.60: "n"
+            chunk 1 text run 32 at (99.33,246.92) startOffset 31 endOffset 32 width 9.00: "s"
+            chunk 1 text run 33 at (92.87,240.34) startOffset 32 endOffset 33 width 9.60: "e"
+            chunk 1 text run 34 at (90.06,231.56) startOffset 33 endOffset 34 width 9.00: "c"
+            chunk 1 text run 35 at (90.00,224.66) startOffset 34 endOffset 35 width 4.80: "t"
+            chunk 1 text run 36 at (90.00,217.46) startOffset 35 endOffset 36 width 9.60: "e"
+            chunk 1 text run 37 at (90.00,210.26) startOffset 36 endOffset 37 width 4.80: "t"
+            chunk 1 text run 38 at (90.00,203.06) startOffset 37 endOffset 38 width 9.60: "u"
+            chunk 1 text run 39 at (90.00,195.26) startOffset 38 endOffset 39 width 6.00: "r"
+            chunk 1 text run 40 at (90.00,189.86) startOffset 39 endOffset 40 width 4.80: " "
+            chunk 1 text run 41 at (90.00,182.66) startOffset 40 endOffset 41 width 9.60: "a"
+            chunk 1 text run 42 at (90.00,172.76) startOffset 41 endOffset 42 width 10.20: "d"
+            chunk 1 text run 43 at (90.49,165.60) startOffset 42 endOffset 43 width 4.20: "i"
+            chunk 1 text run 44 at (93.29,159.01) startOffset 43 endOffset 44 width 10.20: "p"
+            chunk 1 text run 45 at (98.23,153.83) startOffset 44 endOffset 45 width 4.20: "i"
+            chunk 1 text run 46 at (104.11,150.88) startOffset 45 endOffset 46 width 9.00: "s"
+        RenderSVGInlineText {#text} at (0,0) size 0x0
+      RenderSVGContainer {use} at (482,249) size 169x169
+        RenderSVGEllipse {circle} at (482,249) size 169x169 [stroke={[type=SOLID] [color=#ADD8E6]}] [cx=340.00] [cy=200.00] [r=50.00]
+      RenderSVGText {text} at (273,133) size 134x134 contains 1 chunk(s)
+        RenderSVGTextPath {textPath} at (0,0) size 133x133
+          RenderSVGInlineText {#text} at (0,0) size 133x133
+            chunk 1 text run 1 at (389.74,205.09) startOffset 0 endOffset 1 width 10.20: "L"
+            chunk 1 text run 2 at (387.78,214.78) startOffset 1 endOffset 2 width 9.60: "o"
+            chunk 1 text run 3 at (384.90,222.02) startOffset 2 endOffset 3 width 6.00: "r"
+            chunk 1 text run 4 at (380.93,228.72) startOffset 3 endOffset 4 width 9.60: "e"
+            chunk 1 text run 5 at (372.93,237.63) startOffset 4 endOffset 5 width 14.40: "m"
+            chunk 1 text run 6 at (365.15,243.22) startOffset 5 endOffset 6 width 4.80: " "
+            chunk 1 text run 7 at (361.16,245.31) startOffset 6 endOffset 7 width 4.20: "i"
+            chunk 1 text run 8 at (354.44,247.88) startOffset 7 endOffset 8 width 10.20: "p"
+            chunk 1 text run 9 at (345.04,249.75) startOffset 8 endOffset 9 width 9.00: "s"
+            chunk 1 text run 10 at (335.76,249.82) startOffset 9 endOffset 10 width 9.60: "u"
+            chunk 1 text run 11 at (324.03,247.40) startOffset 10 endOffset 11 width 14.40: "m"
+            chunk 1 text run 12 at (315.29,243.47) startOffset 11 endOffset 12 width 4.80: " "
+            chunk 1 text run 13 at (309.07,239.29) startOffset 12 endOffset 13 width 10.20: "d"
+            chunk 1 text run 14 at (301.95,232.44) startOffset 13 endOffset 14 width 9.60: "o"
+            chunk 1 text run 15 at (298.01,227.15) startOffset 14 endOffset 15 width 3.60: "l"
+            chunk 1 text run 16 at (294.79,221.39) startOffset 15 endOffset 16 width 9.60: "o"
+            chunk 1 text run 17 at (292.02,214.11) startOffset 16 endOffset 17 width 6.00: "r"
+            chunk 1 text run 18 at (290.78,208.86) startOffset 17 endOffset 18 width 4.80: " "
+            chunk 1 text run 19 at (290.04,202.00) startOffset 18 endOffset 19 width 9.00: "s"
+            chunk 1 text run 20 at (290.21,195.41) startOffset 19 endOffset 20 width 4.20: "i"
+            chunk 1 text run 21 at (290.82,190.95) startOffset 20 endOffset 21 width 4.80: "t"
+            chunk 1 text run 22 at (291.91,186.28) startOffset 21 endOffset 22 width 4.80: " "
+            chunk 1 text run 23 at (294.37,179.52) startOffset 22 endOffset 23 width 9.60: "a"
+            chunk 1 text run 24 at (300.56,169.27) startOffset 23 endOffset 24 width 14.40: "m"
+            chunk 1 text run 25 at (308.99,160.78) startOffset 24 endOffset 25 width 9.60: "e"
+            chunk 1 text run 26 at (314.94,156.73) startOffset 25 endOffset 26 width 4.80: "t"
+            chunk 1 text run 27 at (319.20,154.52) startOffset 26 endOffset 27 width 4.80: ","
+            chunk 1 text run 28 at (323.65,152.74) startOffset 27 endOffset 28 width 4.80: " "
+            chunk 1 text run 29 at (330.31,150.94) startOffset 28 endOffset 29 width 9.00: "c"
+            chunk 1 text run 30 at (339.55,150.00) startOffset 29 endOffset 30 width 9.60: "o"
+            chunk 1 text run 31 at (349.10,150.83) startOffset 30 endOffset 31 width 9.60: "n"
+            chunk 1 text run 32 at (358.03,153.35) startOffset 31 endOffset 32 width 9.00: "s"
+            chunk 1 text run 33 at (366.34,157.50) startOffset 32 endOffset 33 width 9.60: "e"
+            chunk 1 text run 34 at (373.74,163.11) startOffset 33 endOffset 34 width 9.00: "c"
+            chunk 1 text run 35 at (378.50,168.10) startOffset 34 endOffset 35 width 4.80: "t"
+            chunk 1 text run 36 at (382.68,173.95) startOffset 35 endOffset 36 width 9.60: "e"
+            chunk 1 text run 37 at (385.99,180.34) startOffset 36 endOffset 37 width 4.80: "t"
+            chunk 1 text run 38 at (388.33,187.14) startOffset 37 endOffset 38 width 9.60: "u"
+            chunk 1 text run 39 at (389.73,194.81) startOffset 38 endOffset 39 width 6.00: "r"
+        RenderSVGInlineText {#text} at (0,0) size 0x0

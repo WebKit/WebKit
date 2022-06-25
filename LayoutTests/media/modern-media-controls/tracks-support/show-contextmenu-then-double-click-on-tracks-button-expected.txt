@@ -1,0 +1,19 @@
+Ensure that clicking the tracks button when the tracks contextmenu is shown makes the contextmenu hide.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS shadowRoot.querySelector('button.tracks') became different from null
+PASS shadowRoot.querySelector('button.tracks').getBoundingClientRect().width became different from 0
+Tapping tracks button...
+Context menu shown.
+Tapping tracks button...
+Context menu hidden.
+Tapping tracks button...
+Context menu shown.
+Tapping tracks button...
+Context menu hidden.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,25 @@
+<!-- webkit-test-runner [ ModelElementEnabled=true ] -->
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+<model alt="Heart" id="model">
+    <source src="resources/heart.usdz">
+</model>
+
+<script>
+    description("This tests model elements have basic accessibility support");
+    if (window.accessibilityController) {
+        model = accessibilityController.accessibleElementById("model");
+        debug("Model description: " + model.description);
+        if (accessibilityController.platformName == "mac") {
+            shouldBe("model.role", "'AXRole: AXGroup'");
+            shouldBe("model.subrole", "'AXSubrole: AXModel'");
+        }        
+    }
+</script>
+
+</body>
+</html>

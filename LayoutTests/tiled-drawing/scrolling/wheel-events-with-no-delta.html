@@ -1,0 +1,79 @@
+<html>
+<head>
+<style>
+body {
+    height: 2000px;
+}
+</style>
+
+<script src="../../resources/ui-helper.js"></script>
+<script>
+
+function mouseWheelFired(e)
+{
+    if (e.wheelDelta == 0)
+        document.getElementById('log').textContent = "FAIL. We got a wheel event with a delta of 0.";
+
+    if (window.eventSender)
+        testRunner.notifyDone();
+}
+
+async function scrollTest()
+{
+    const events = [
+        {
+            type : "wheel",
+            viewX : 20,
+            viewY : 20,
+            deltaY : -10,
+            phase : "began"
+        },
+        {
+            type : "wheel",
+            phase : "changed"
+        },
+        {
+            type : "wheel",
+            phase : "ended"
+        },
+        {
+            type : "wheel",
+            deltaY : -10,
+            momentumPhase : "began"
+        },
+        {
+            type : "wheel",
+            momentumPhase : "changed"
+        },
+        {
+            type : "wheel",
+            momentumPhase : "ended"
+        }
+    ];
+
+    await UIHelper.mouseWheelSequence({ events: events });
+}
+
+function loaded()
+{
+    document.body.addEventListener('mousewheel', mouseWheelFired, false);
+
+    if (window.eventSender) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+        setTimeout(scrollTest, 0);
+    }
+}
+
+window.addEventListener('load', loaded, false);
+</script>
+</head>
+
+<body>
+
+<!--To run this test outside of the test harness, just manually scroll and ensure that the success message
+does not change to a failure message.-->
+<pre id="log">Success! We didn't get a wheel event with a delta of 0.</pre>
+
+</body>
+</html>

@@ -1,0 +1,5 @@
+
+PASS IntersectionObserver in a single document using document as root.
+PASS First rAF.
+PASS document.scrollingElement.scrollTop = 300
+

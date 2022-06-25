@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+async function loadSubresource() {
+    let response = await fetch(`resources/data.json`);
+    let text = await response.text();
+    TestPage.dispatchEventToFrontend("TestPage-loadSubresource", {text});
+}
+
+function test()
+{
+    const interceptionRegex = "resources/data\.json";
+
+    let suite = ProtocolTest.createAsyncSuite("Network.interceptContinue");
+
+    InspectorProtocol.sendCommand("Network.enable");
+    InspectorProtocol.sendCommand("Network.setInterceptionEnabled", {enabled: true});
+
+    suite.addTestCase({
+        name: "Network.interceptContinue.Request",
+        description: "Test an override continue request to let the original load complete.",
+        async test() {
+            ProtocolTest.log("Adding interception...");
+            await InspectorProtocol.awaitCommand({
+                method: "Network.addInterception",
+                params: {
+                    url: interceptionRegex,
+                    stage: /* Network.NetworkStage */ "request",
+                    isRegex: true,
+                },
+            });
+
+            ProtocolTest.log("Triggering load...");
+            let [requestInterceptedEvent] = await Promise.all([
+                InspectorProtocol.awaitEvent({event: "Network.requestIntercepted"}),
+                ProtocolTest.evaluateInPage(`loadSubresource()`),
+            ]);
+
+            ProtocolTest.newline();
+
+            ProtocolTest.log("Testing invalid requestId...");
+            await ProtocolTest.expectException(async () => {
+                await InspectorProtocol.awaitCommand({
+                    method: "Network.interceptContinue",
+                    params: {
+                        requestId: "INVALID",
+                        stage: /* Network.NetworkStage */ "request",
+                    },
+                });
+            });
+
+            ProtocolTest.newline();
+
+            ProtocolTest.log("Testing incorrect stage...");
+            await ProtocolTest.expectException(async () => {
+                await InspectorProtocol.awaitCommand({
+                    method: "Network.interceptContinue",
+                    params: {
+                        requestId: requestInterceptedEvent.params.requestId,
+                        stage: /* Network.NetworkStage */ "response",
+                    },
+                });
+            });
+
+            ProtocolTest.newline();
+
+            ProtocolTest.log("Continuing load...");
+            let [loadSubresourceEvent] = await Promise.all([
+                ProtocolTest.awaitEvent("TestPage-loadSubresource"),
+                InspectorProtocol.awaitCommand({
+                    method: "Network.interceptContinue", 
+                    params: {
+                        requestId: requestInterceptedEvent.params.requestId,
+                        stage: /* Network.NetworkStage */ "request",
+                    },
+                }),
+            ]);
+
+            ProtocolTest.log(loadSubresourceEvent.data.text);
+
+            ProtocolTest.log("Removing interception...");
+            await InspectorProtocol.awaitCommand({
+                method: "Network.removeInterception",
+                params: {
+                    url: interceptionRegex,
+                    stage: /* Network.NetworkStage */ "request",
+                    isRegex: true,
+                },
+            });
+        },
+    });
+
+    suite.addTestCase({
+        name: "Network.interceptContinue.Response",
+        description: "Test an override continue response to let the original load complete.",
+        async test() {
+            ProtocolTest.log("Adding interception...");
+            await InspectorProtocol.awaitCommand({
+                method: "Network.addInterception",
+                params: {
+                    url: interceptionRegex,
+                    stage: /* Network.NetworkStage */ "response",
+                    isRegex: true,
+                },
+            });
+
+            ProtocolTest.log("Triggering load...");
+            let [responseInterceptedEvent] = await Promise.all([
+                InspectorProtocol.awaitEvent({event: "Network.responseIntercepted"}),
+                ProtocolTest.evaluateInPage(`loadSubresource()`),
+            ]);
+
+            ProtocolTest.newline();
+
+            ProtocolTest.log("Testing invalid requestId...");
+            await ProtocolTest.expectException(async () => {
+                await InspectorProtocol.awaitCommand({
+                    method: "Network.interceptContinue",
+                    params: {
+                        requestId: "INVALID",
+                        stage: /* Network.NetworkStage */ "response",
+                    },
+                });
+            });
+
+            ProtocolTest.newline();
+
+            ProtocolTest.log("Testing incorrect stage...");
+            await ProtocolTest.expectException(async () => {
+                await InspectorProtocol.awaitCommand({
+                    method: "Network.interceptContinue",
+                    params: {
+                        requestId: responseInterceptedEvent.params.requestId,
+                        stage: /* Network.NetworkStage */ "request",
+                    },
+                });
+            });
+
+            ProtocolTest.newline();
+
+            ProtocolTest.log("Continuing load...");
+            let [loadSubresourceEvent] = await Promise.all([
+                ProtocolTest.awaitEvent("TestPage-loadSubresource"),
+                InspectorProtocol.awaitCommand({
+                    method: "Network.interceptContinue", 
+                    params: {
+                        requestId: responseInterceptedEvent.params.requestId,
+                        stage: /* Network.NetworkStage */ "response",
+                    },
+                }),
+            ]);
+
+            ProtocolTest.log(loadSubresourceEvent.data.text);
+
+            ProtocolTest.log("Removing interception...");
+            await InspectorProtocol.awaitCommand({
+                method: "Network.removeInterception",
+                params: {
+                    url: interceptionRegex,
+                    stage: /* Network.NetworkStage */ "response",
+                    isRegex: true,
+                },
+            });
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for Network.interceptContinue.</p>
+</body>
+</html>

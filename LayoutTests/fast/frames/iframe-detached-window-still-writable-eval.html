@@ -1,0 +1,24 @@
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+    description("Verify that scripts running in a detached window can still modify global properties");
+    const iframe = document.createElement('iframe');
+    document.body.appendChild(iframe);
+    const iframeContentWindow = iframe.contentWindow;
+    const iframeEval = iframeContentWindow.eval;
+    iframeContentWindow.foo = 1;
+    iframeContentWindow[0] = 1;
+    iframeContentWindow.shouldBe = shouldBe;
+    iframe.remove();
+    iframeEval(`
+        foo++;
+        globalThis[0]++;
+        shouldBe(() => foo, "2");
+        shouldBe(() => globalThis[0], "undefined");
+    `);
+    shouldBe("iframeContentWindow.foo", "2");
+    shouldBe("iframeContentWindow[0]", "undefined");
+</script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+<script>
+function editingTest() {
+    var selection = window.getSelection();
+    var s = document.getElementById("start");
+    selection.setPosition(s, 0);
+    execMoveSelectionForwardByCharacterCommand();
+    for (i = 0; i < 2; i++) {
+        deleteCommand();
+    }
+}
+</script>
+<div contenteditable="true" id="test">
+<div>Before</div>
+  <hr>
+<span id="start">after</span>
+</div>
+<script>
+runEditingTest();
+</script>

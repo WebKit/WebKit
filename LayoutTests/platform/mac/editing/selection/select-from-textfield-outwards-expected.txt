@@ -1,0 +1,51 @@
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 13 of #text > DIV > #document-fragment to 13 of #text > DIV > #document-fragment affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 13 of #text > DIV > #document-fragment to 13 of #text > DIV > #document-fragment toDOMRange:range from 12 of #text > DIV > #document-fragment to 17 of #text > DIV > #document-fragment affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 12 of #text > DIV > #document-fragment to 17 of #text > DIV > #document-fragment toDOMRange:range from 0 of #text > DIV > #document-fragment to 17 of #text > DIV > #document-fragment affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > DIV > #document-fragment to 17 of #text > DIV > #document-fragment toDOMRange:range from 12 of #text > DIV > #document-fragment to 17 of #text > DIV > #document-fragment affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 12 of #text > DIV > #document-fragment to 17 of #text > DIV > #document-fragment toDOMRange:range from 0 of #text > DIV > #document-fragment to 17 of #text > DIV > #document-fragment affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > DIV > #document-fragment to 17 of #text > DIV > #document-fragment toDOMRange:range from 12 of #text > DIV > #document-fragment to 17 of #text > DIV > #document-fragment affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 108x18
+          text run at (0,0) width 108: "This is a test for "
+        RenderInline {I} at (0,0) size 766x36
+          RenderInline {A} at (0,0) size 353x18 [color=#0000EE]
+            RenderText {#text} at (107,0) size 353x18
+              text run at (107,0) width 353: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9312"
+          RenderText {#text} at (459,0) size 766x36
+            text run at (459,0) width 5: " "
+            text run at (463,0) width 303: "REGRESSION: Selection bug in new text fields"
+            text run at (0,18) width 216: "when selecting past the first letter"
+        RenderText {#text} at (215,18) size 5x18
+          text run at (215,18) width 5: "."
+      RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,70) size 784x54
+        RenderText {#text} at (0,0) size 771x54
+          text run at (0,0) width 761: "Curabitur pretium, quam quis semper malesuada, est libero feugiat libero, vel fringilla orci nibh sed neque. Quisque eu"
+          text run at (0,18) width 771: "nulla non nisi molestie accumsan. Etiam tellus urna, laoreet ac, laoreet non, suscipit sed, sapien. Phasellus vehicula, sem"
+          text run at (0,36) width 569: "at posuere vehicula, augue nibh molestie nisl, nec ullamcorper lacus ante vulputate pede."
+      RenderBlock (anonymous) at (0,140) size 784x92
+        RenderTextControl {INPUT} at (20,20) size 320x52 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,248) size 784x72
+        RenderText {#text} at (0,0) size 772x72
+          text run at (0,0) width 772: "Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Mauris viverra augue vitae purus."
+          text run at (0,18) width 728: "Morbi sed sem. Donec dui nisi, ultrices non, pretium quis, hendrerit non, est. Donec tellus. Donec eget dui id eros"
+          text run at (0,36) width 767: "pharetra rutrum. Suspendisse sodales lectus sit amet nulla. Morbi tortor arcu, convallis blandit, elementum eu, aliquet a,"
+          text run at (0,54) width 39: "tellus."
+layer at (40,180) size 296x28
+  RenderBlock {DIV} at (12,12) size 296x28
+    RenderText {#text} at (0,0) size 192x28
+      text run at (0,0) width 192: "Lorem ipsum dolor"
+selection start: position 12 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 7 {INPUT} of body
+selection end:   position 17 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 7 {INPUT} of body

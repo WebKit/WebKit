@@ -1,0 +1,10 @@
+
+PASS :not(#foo) wins over :not(.foo)
+PASS :not(div#foo) wins over :not(#foo)
+PASS :not(.bar, #foo) has same specificity as :not(#foo, .bar)
+PASS :not(.bar, #foo) wins over :not(.foo, .bar)
+PASS :not(span + span) wins over :not(span)
+PASS :not(span, li, p) wins over :not(span, lo, p)
+PASS :not(span, :not(:not(.a#foo)), p) wins over :not(span, #foo, p)
+PASS :not(span, #foo, p) wins over :not(span, :where(.a#foo), p)
+

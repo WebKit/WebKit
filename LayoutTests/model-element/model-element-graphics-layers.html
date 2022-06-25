@@ -1,0 +1,32 @@
+<!DOCTYPE html><!-- webkit-test-runner [ ModelElementEnabled=true ] -->
+<html>
+<body>
+<model id="model">
+    <source src="resources/heart.usdz">
+</model>
+<pre id="layers"></pre>
+<script>
+    window.testRunner?.waitUntilDone();
+    window.testRunner?.dumpAsText();
+
+    const layers = document.getElementById("layers");
+    const model = document.getElementById("model");
+
+    const modelDidLoad = () => {
+        layers.innerText = window.internals?.layerTreeAsText(document) ?? "This test requires testRunner.";
+        model.remove();
+        window.testRunner?.notifyDone();
+    }
+
+    if (model.complete)
+        modelDidLoad();
+    else {
+        model.addEventListener("load", modelDidLoad);
+        model.addEventListener("error", event => {
+            layers.textContent = `Failed. Model did not load.`;
+            window.testRunner?.notifyDone();
+        });
+    }
+</script>
+</body>
+</html>

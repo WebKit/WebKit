@@ -1,0 +1,5 @@
+ALERT: PASS: Successfully loaded script.
+
+Test that CSP for extensions allows wildcards if they include https://, are not scheme-only, the host string is non-empty and contains more than a TLD.
+
+PASS

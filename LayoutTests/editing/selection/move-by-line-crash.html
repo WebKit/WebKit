@@ -1,0 +1,38 @@
+<!DOCTYPE>
+<html>
+<style>
+  summary::first-letter {
+    background: grey;
+  }
+  html {
+    -webkit-user-modify: read-write-plaintext-only;
+    min-inline-size: min-content;
+    writing-mode: vertical-lr;
+  }
+  video {
+    float: left;
+    inline-size: 10%;
+  }
+  div {
+    border-block-start-style: ridge;
+    padding-top: 100%;
+    height: 10px;
+  }
+</style>
+<script>
+  if (window.testRunner)
+    window.testRunner.dumpAsText();
+  onload = () => {
+    let summary0 = document.createElement('summary');
+    document.documentElement.appendChild(summary0);
+    let video0 = document.createElement('video');
+    summary0.appendChild(video0);
+    let div0 = document.createElement('div');
+    document.documentElement.append(div0);
+    video0.controls = true;
+    getSelection().selectAllChildren(summary0);
+    summary0.append('foo');
+    getSelection().modify('move', 'left', 'line');
+    document.write("Test passes if it does not crash.");
+  };
+</script>

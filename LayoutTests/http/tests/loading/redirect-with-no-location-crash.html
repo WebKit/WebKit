@@ -1,0 +1,14 @@
+<html>
+<head>
+    <!-- Test for https://bugs.webkit.org/show_bug.cgi?id=29293 -->
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+    </script>
+</head>
+<body onload="setTimeout(function() { if (window.testRunner) testRunner.notifyDone(); })">
+  <iframe src="resources/redirect-with-no-location-crash.py"></iframe>
+</body>
+<html>

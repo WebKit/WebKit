@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/dump-as-markup.js"></script>
+</head>
+<body>
+    <div id="editor" contenteditable>appleappleapple</div>
+</body>
+<script>
+function reset() {
+    editor.textContent = "appleappleapple";
+}
+
+Markup.description("Verifies that find and replace can be used to replace adjacent words in an editable area. This test requires WebKitTestRunner.");
+
+testRunner.findStringMatchesInPage("apple", []);
+testRunner.replaceFindMatchesAtIndices([0, 1, 2], "", false);
+Markup.dump("editor", "After replacing 'apple' with an empty string");
+
+reset();
+
+testRunner.findStringMatchesInPage("apple", []);
+testRunner.replaceFindMatchesAtIndices([0, 1, 2], "appleapple", false);
+Markup.dump("editor", "After replacing 'apple' with 'appleapple'");
+
+reset();
+
+testRunner.findStringMatchesInPage("apple", []);
+testRunner.replaceFindMatchesAtIndices([0, 1, 2], "APPLE", false);
+Markup.dump("editor", "After replacing 'apple' with 'APPLE'");
+</script>
+</html>

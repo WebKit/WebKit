@@ -1,0 +1,115 @@
+# Copyright (c) 2014 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+
+rtc_library("pacing") {
+  # Client code SHOULD NOT USE THIS TARGET, but for now it needs to be public
+  # because there exists client code that uses it.
+  # TODO(bugs.webrtc.org/9808): Move to private visibility as soon as that
+  # client code gets updated.
+  visibility = [ "*" ]
+  sources = [
+    "bitrate_prober.cc",
+    "bitrate_prober.h",
+    "paced_sender.cc",
+    "paced_sender.h",
+    "pacing_controller.cc",
+    "pacing_controller.h",
+    "packet_router.cc",
+    "packet_router.h",
+    "round_robin_packet_queue.cc",
+    "round_robin_packet_queue.h",
+    "rtp_packet_pacer.h",
+    "task_queue_paced_sender.cc",
+    "task_queue_paced_sender.h",
+  ]
+
+  deps = [
+    ":interval_budget",
+    "..:module_api",
+    "../../api:function_view",
+    "../../api:sequence_checker",
+    "../../api/rtc_event_log",
+    "../../api/task_queue:task_queue",
+    "../../api/transport:field_trial_based_config",
+    "../../api/transport:network_control",
+    "../../api/transport:webrtc_key_value_config",
+    "../../api/units:data_rate",
+    "../../api/units:data_size",
+    "../../api/units:time_delta",
+    "../../api/units:timestamp",
+    "../../logging:rtc_event_bwe",
+    "../../logging:rtc_event_pacing",
+    "../../rtc_base:checks",
+    "../../rtc_base:rtc_base_approved",
+    "../../rtc_base:rtc_task_queue",
+    "../../rtc_base/experiments:field_trial_parser",
+    "../../rtc_base/synchronization:mutex",
+    "../../rtc_base/task_utils:to_queued_task",
+    "../../system_wrappers",
+    "../../system_wrappers:metrics",
+    "../remote_bitrate_estimator",
+    "../rtp_rtcp",
+    "../rtp_rtcp:rtp_rtcp_format",
+    "../utility",
+  ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+rtc_library("interval_budget") {
+  sources = [
+    "interval_budget.cc",
+    "interval_budget.h",
+  ]
+
+  deps = [
+    "../../rtc_base:checks",
+    "../../rtc_base:rtc_base_approved",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_library("pacing_unittests") {
+    testonly = true
+
+    sources = [
+      "bitrate_prober_unittest.cc",
+      "interval_budget_unittest.cc",
+      "paced_sender_unittest.cc",
+      "pacing_controller_unittest.cc",
+      "packet_router_unittest.cc",
+      "task_queue_paced_sender_unittest.cc",
+    ]
+    deps = [
+      ":interval_budget",
+      ":pacing",
+      "../../api/transport:network_control",
+      "../../api/units:data_rate",
+      "../../api/units:time_delta",
+      "../../modules/utility:mock_process_thread",
+      "../../rtc_base:checks",
+      "../../rtc_base:rtc_base_approved",
+      "../../rtc_base:rtc_base_tests_utils",
+      "../../rtc_base/experiments:alr_experiment",
+      "../../system_wrappers",
+      "../../system_wrappers:field_trial",
+      "../../test:explicit_key_value_config",
+      "../../test:field_trial",
+      "../../test:test_support",
+      "../../test/time_controller:time_controller",
+      "../rtp_rtcp",
+      "../rtp_rtcp:mock_rtp_rtcp",
+      "../rtp_rtcp:rtp_rtcp_format",
+    ]
+  }
+}

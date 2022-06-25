@@ -1,0 +1,17 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+
+  <title>Reference for text font-weight</title>
+
+  <!-- From https://bugzilla.mozilla.org/show_bug.cgi?id=379284 -->
+
+  <g id="test-body-content" font-family="Georgia, 'Times New Roman', Times,  'MS Mincho', serif" font-size="30">
+    <text font-weight="normal" x="10" y="50">This should be normal</text>
+    <text font-weight="bold" x="10" y="100">This should be bold</text>
+    <text font-weight="400" x="10" y="150">This should be normal</text>
+    <text font-weight="700" x="10" y="200">This should be bold</text>
+  </g>
+</svg>

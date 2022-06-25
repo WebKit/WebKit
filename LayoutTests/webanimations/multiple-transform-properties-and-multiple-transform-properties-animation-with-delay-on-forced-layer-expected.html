@@ -1,0 +1,30 @@
+<style>
+
+div {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100px;
+    height: 100px;
+    background-color: black;
+
+    will-change: transform;
+    translate: 100px 100px;
+    rotate: 180deg;
+    scale: 0.5;
+    transform: translate(-50px -50px);
+}
+
+div::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 50%;
+    background-color: gray;
+}
+    
+</style>
+<div></div>
+<script src="resources/wait-until-animations-are-committed.js"></script>

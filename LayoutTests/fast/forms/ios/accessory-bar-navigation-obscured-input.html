@@ -1,0 +1,46 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+    #overlay {
+        background-color: red;
+        position: absolute;
+        width: 500px;
+        height: 500px;
+    }
+</style>
+</head>
+<body>
+<input id="input">
+<br>
+<div id="overlay"></div>
+<iframe id="iframe" srcdoc="<input>"></iframe>
+<script>
+jsTestIsAsync = true;
+
+description("Tests that obscured inputs are not focusable using the accessory bar.");
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    debug("Focus the unobscured input.");
+    await UIHelper.activateElement(input);
+    shouldBe("document.activeElement", "input");
+
+    debug("\nAttempting to to use the accessory bar to focus an obscured input should preserve the existing focus.");
+    await UIHelper.moveToNextByKeyboardAccessoryBar();
+    shouldBe("document.activeElement", "input");
+
+    debug("\nAttempting to to use the accessory bar to focus an unobscured input should change focus.");
+    overlay.style.display = "none";
+    await UIHelper.moveToNextByKeyboardAccessoryBar();
+    shouldBe("document.activeElement", "iframe");
+
+    finishJSTest();
+});
+</script>
+</body>
+</html>

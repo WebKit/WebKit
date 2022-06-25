@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.dumpChildFramesAsText();
+            testRunner.dumpResourceLoadCallbacks();
+        }
+    </script>
+</head>
+<body>
+    <p>The frame below should not load, and a console message should be generated that notes the invalid header.</p>
+    <iframe style="width:500px; height:500px" src="http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-multiple-headers-conflict.cgi"></iframe>
+</body>
+</html>

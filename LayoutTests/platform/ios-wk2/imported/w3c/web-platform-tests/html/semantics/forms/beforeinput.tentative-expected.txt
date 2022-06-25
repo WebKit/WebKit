@@ -1,0 +1,21 @@
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT <input type="text" onbeforeinput="onBeforeInput(event)" oninput="onInput(event)"> Test timed out
+NOTRUN <input type="text">
+NOTRUN <input type="search" onbeforeinput="onBeforeInput(event)" oninput="onInput(event)">
+NOTRUN <input type="search">
+NOTRUN <input type="tel" onbeforeinput="onBeforeInput(event)" oninput="onInput(event)">
+NOTRUN <input type="tel">
+NOTRUN <input type="url" onbeforeinput="onBeforeInput(event)" oninput="onInput(event)">
+NOTRUN <input type="url">
+NOTRUN <input type="email" onbeforeinput="onBeforeInput(event)" oninput="onInput(event)">
+NOTRUN <input type="email">
+NOTRUN <input type="password" onbeforeinput="onBeforeInput(event)" oninput="onInput(event)">
+NOTRUN <input type="password">
+NOTRUN <input type="number" onbeforeinput="onBeforeInput(event)" oninput="onInput(event)">
+NOTRUN <input type="number">
+NOTRUN <textarea onbeforeinput="onBeforeInput(event)" oninput="onInput(event)"></textarea>
+NOTRUN <textarea></textarea>
+

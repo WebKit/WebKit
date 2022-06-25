@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+description('This tests adopting a shadow tree with an Attr node.');
+
+var referenceCountInSource;
+var referenceCountInDestination;
+function runTest() {
+    let startCount = internals.referencingNodeCount(document);
+
+    const outerHost = document.createElement('shadow-host');
+    document.body.appendChild(outerHost);
+    const outerRoot = outerHost.attachShadow({mode: 'closed'});
+    outerRoot.innerHTML = '<span title="foo"></span>';
+
+    const innerHost = outerRoot.firstChild;
+    const innerRoot = innerHost.attachShadow({mode: 'closed'});
+    innerRoot.innerHTML = '<div lang="en"></div>';
+
+    const outerAttr = innerHost.attributes[0];
+    const outerAttrNodeList = outerAttr.childNodes;
+    const innerAttr = innerRoot.firstChild.attributes[0];
+    const innerAttrNodeList = innerAttr.childNodes;
+
+    referenceCountInSource = internals.referencingNodeCount(document) - startCount;
+
+    const iframe = document.createElement('iframe');
+    document.body.appendChild(iframe);
+
+    startCount = internals.referencingNodeCount(iframe.contentDocument);
+    iframe.contentDocument.body.appendChild(outerHost);
+    referenceCountInDestination = internals.referencingNodeCount(iframe.contentDocument) - startCount;
+
+    iframe.remove();
+}
+
+if (!window.GCController || !window.internals)
+    testFailed('This test requires testRunner, internals, and GCController objects.');
+else {
+    runTest();
+    GCController.collect();
+    shouldBe('referenceCountInDestination', 'referenceCountInSource');
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,3 @@
+This test is for crash when executing SelectAll command on focused select element containing only disabled element
+
+

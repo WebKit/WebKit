@@ -1,0 +1,5 @@
+ PASS drawing is correct
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

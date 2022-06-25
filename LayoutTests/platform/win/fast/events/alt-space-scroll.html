@@ -1,0 +1,48 @@
+<body onkeypress="log(eventInfo(event))" onkeydown="log(eventInfo(event));">
+<p>Test that Alt+Space works correctly.</p>
+<p>To test manually, press Alt+Space - a menu for resizing the window should appear;
+the window should not be scrolled.</p>
+<p>Also, press other Alt-key combinations, and verify that keypress event is not dispatched.</p>
+<div id="log"></div>
+<div style="width:1;height:1000"></div>
+<script>
+function log(msg) {
+   document.getElementById("log").innerHTML+= msg + "<br />";
+}
+
+
+function eventInfo(event, where) {
+  try {
+  if (!event)
+    event = window.event;
+    target = event.srcElement ? event.srcElement : event.target;
+    if (event.type == "keydown" || event.type == "keypress" || event.type == "keyup") 
+        return (where ? "(" + where + ") " : "") + target.tagName
+            + (target.tagName == "INPUT" ? " " + target.type : "")
+            + " - " + event.type
+            + ' - ' + [event.ctrlKey, event.altKey, event.shiftKey, event.metaKey]
+            + ' - ' + event.keyIdentifier
+            + ' - ' + event.keyCode
+            + ' - ' + event.charCode;
+    } catch (ex) {
+        alert(ex);
+    }
+}
+log("target - type - " + ["ctrlKey", "altKey", "shiftKey", "metaKey"]
+        + ' - ' + "keyIdentifier"
+        + ' - ' + "keyCode"
+        + ' - ' + "charCode");
+
+if (window.testRunner) {
+
+    testRunner.dumpAsText();
+    eventSender.dispatchMessage(eventSender.WM_SYSKEYDOWN, 0x12 /* Alt */, 0x20380001);
+    eventSender.dispatchMessage(eventSender.WM_SYSKEYDOWN, 0x20 /* Space */, 0x20390001);
+    eventSender.dispatchMessage(eventSender.WM_SYSCHAR, 0x20 /* Space */, 0x20390001);
+    eventSender.dispatchMessage(eventSender.WM_SYSKEYDOWN, 0x58 /* X */, 0x202d0001);
+    eventSender.dispatchMessage(eventSender.WM_SYSCHAR, 0x78 /* x */, 0x202d0001);
+}
+
+</script>
+
+</body>

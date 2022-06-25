@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Tests that no callbacks are invoked until permission is denied.");
+window.jsTestIsAsync = true;
+
+function denyPermission() {
+    permissionSet = true;
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(false);
+}
+
+if (window.testRunner)
+    testRunner.resetUserMediaPermission();
+
+var error;
+var options = {audio: true, video: true};
+navigator.mediaDevices.getUserMedia(options)
+    .then(stream => {
+        testFailed('Success callback invoked unexpectedly');
+        finishJSTest();
+    })
+    .catch(err => {
+        if (permissionSet) {
+            error = err;
+            shouldBeEqualToString('error.name', 'NotAllowedError');
+        } else
+            testFailed('Error callback invoked unexpectedly');
+        finishJSTest();
+    });
+
+window.setTimeout(denyPermission, 100);
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+This test is for the root editable element being nullptr in CompositeEditCommand::moveParagraph. WebKit should not crash.
+
+
+
+PASS. WebKit did not crash

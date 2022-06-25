@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        #scrolling {
+            height: 300px;
+            width: 300px;
+            border: 1px solid black;
+            overflow-y: scroll;
+        }
+        
+        .content {
+            height: 600px;
+            width: 100%;
+            background-image: linear-gradient(silver, gray);
+        }
+    </style>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+        function checkForScroll()
+        {
+            var scroller = document.getElementById("scrolling");
+            var expectedScrollTop = 300;
+            
+            if (scroller.scrollTop == expectedScrollTop)
+                document.getElementById('result').textContent = "PASS: scrollTop was " + expectedScrollTop;
+            else
+                document.getElementById('result').textContent = "FAIL: scrollTop was " + scroller.scrollTop;
+
+            testRunner.notifyDone();
+        }
+        
+        async function scrollTest()
+        {
+            const events = [
+                {
+                    type : "wheel",
+                    viewX : 20,
+                    viewY : 20,
+                    deltaY : -10,
+                    phase : "began"
+                },
+                {
+                    type : "wheel",
+                    deltaY : -1000,
+                    phase : "changed"
+                },
+                {
+                    type : "wheel",
+                    deltaY : -1000,
+                    phase : "changed"
+                },
+                {
+                    type : "wheel",
+                    deltaY : -10,
+                    phase : "changed"
+                },
+                {
+                    type : "wheel",
+                    phase : "ended"
+                },
+                {
+                    type : "wheel",
+                    deltaY : -1000,
+                    momentumPhase : "began"
+                },
+                {
+                    type : "wheel",
+                    deltaY : -1000,
+                    momentumPhase : "began"
+                },
+                {
+                    type : "wheel",
+                    deltaY : -1000,
+                    momentumPhase : "began"
+                },
+                {
+                    type : "wheel",
+                    deltaY : -1000,
+                    momentumPhase : "began"
+                },
+                {
+                    type : "wheel",
+                    deltaY : -1000,
+                    momentumPhase : "began"
+                },
+                {
+                    type : "wheel",
+                    deltaY : -1000,
+                    momentumPhase : "began"
+                },
+                {
+                    type : "wheel",
+                    momentumPhase : "ended"
+                }
+            ];
+
+            await UIHelper.mouseWheelSequence({ events: events });
+            checkForScroll();
+        }
+
+        function startTest()
+        {
+            if (window.eventSender) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+
+                eventSender.monitorWheelEvents();
+                setTimeout(scrollTest, 0);
+            }
+        }
+        
+        window.addEventListener('load', startTest, false);
+    </script>
+</head>
+<body>
+<div id="scrolling">
+    <div class="content"></div>
+</div>
+<div id="result"></div>
+</body>
+</html>

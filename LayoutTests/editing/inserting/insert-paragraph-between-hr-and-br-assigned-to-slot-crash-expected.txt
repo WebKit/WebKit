@@ -1,0 +1,4 @@
+
+
+
+This tests inserting a paragraph between hr and br assigned to a slot. WebKit should not hit any assertions or crash.

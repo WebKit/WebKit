@@ -1,0 +1,11 @@
+This test ensures input elements properly use the aria-describedby in their accessibility description.
+
+The accessibility description of #time is "AXHelp: Allows you to specify the number of minutes after which the computer will self-destruct."
+
+Updating aria-describedby of #time to #description3.
+The accessibility description of #time is "AXHelp: Foobar."
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

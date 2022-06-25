@@ -1,0 +1,28 @@
+<div>Pass if no crash or assert</div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+    
+function wait() {
+if (window.testRunner)
+    testRunner.waitUntilDone();
+}
+
+function done() {
+if (window.testRunner)
+    testRunner.notifyDone();
+}
+</script>
+<iframe srcdoc="<script>
+window.matchMedia('print').addListener(function(mql) {
+    let parentWindow = window.parent;
+    window.frameElement.remove();
+    parentWindow.done();
+});
+
+if (window.internals) {
+    internals.setPrinting(800, 600);
+    window.parent.wait();
+} else
+    print();
+</script>">

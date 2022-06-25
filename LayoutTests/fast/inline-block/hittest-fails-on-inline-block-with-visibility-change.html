@@ -1,0 +1,33 @@
+<script src="../../resources/ui-helper.js"></script>
+<style>
+#container {
+  visibility: hidden;
+}
+
+#click_me {
+  display: inline-block;
+  width: 100px;
+  height: 100px;
+  background-color: green;
+}
+</style>
+<div id=container><div id=click_me>click me</div></div>
+<pre id=result></pre>
+<script>
+document.body.offsetHeight;
+
+click_me.addEventListener("click", function() {
+  result.innerText = "clicked - PASSED";
+  if (window.testRunner)
+    testRunner.notifyDone();
+  }, false);
+
+container.style.visibility = "visible";
+document.body.offsetHeight;
+
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+  UIHelper.activateElement(click_me);
+}
+</script>

@@ -1,0 +1,15 @@
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+</script>
+<p>This tests for a bug in InsertLineBreakCommand.  Only one line break should be inserted and the caret should end up at the end of the bordered div below.</p><div contenteditable="true" id="div" style="white-space:pre; border: 1px solid black;">Hello world.
+
+</div>
+
+<script>
+var sel = window.getSelection();
+var div = document.getElementById("div");
+sel.setPosition(div, 0);
+sel.modify("move", "forward", "line");
+document.execCommand("InsertLineBreak");
+</script>

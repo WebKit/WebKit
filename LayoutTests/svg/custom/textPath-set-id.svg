@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" onload="runTest()">
+  <defs>
+    <path d="M150 50 L 450 50" />
+  </defs>
+  <text>
+    <textPath id="theTP" xlink:href="#foo">FAIL</textPath>
+  </text>
+  <script><![CDATA[
+    function runTest() {
+      var path = document.getElementsByTagName("path")[0];
+      path.parentNode.addEventListener('DOMSubtreeModified', handler);
+      path.setAttribute("id","foo");
+      if (window.testRunner)
+        testRunner.notifyDone();
+    }
+  ]]></script>
+</svg>

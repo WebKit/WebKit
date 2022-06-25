@@ -1,0 +1,81 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="/js-test-resources/ui-helper.js"></script>
+    <style>
+        .wide-link {
+            width: 150px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body onload="runAllTests()">
+<div id="description"></div>
+<div id="output"></div><br>
+<div id="console"></div>
+<script>
+    description("Test for validity of private click measurement attributes on anchor tags.");
+    jsTestIsAsync = true;
+
+    function createPrivateClickMeasurementAnchorElement(elementID, sourceID, destination) {
+        let anchorElement = document.createElement("a");
+        anchorElement.id = elementID;
+        anchorElement.classList.add("wide-link");
+        if (sourceID !== null)
+            anchorElement.attributionSourceId = sourceID;
+        if (destination !== null)
+            anchorElement.attributionDestination = destination;
+        anchorElement.href = "#";
+        anchorElement.innerText = "Link" + currentTest;
+        return anchorElement;
+    }
+
+    function activateElement(elementID, callback) {
+        UIHelper.activateElement(document.getElementById(elementID)).then(
+            function () {
+                callback();
+            },
+            function () {
+                testFailed("Promise rejected.");
+                finishJSTest();
+            }
+        );
+    }
+
+    let currentTest = 0;
+    function runOneTest(sourceID, destination, callback) {
+        const currentElementID = "test" + currentTest++;
+        const anchorElement = createPrivateClickMeasurementAnchorElement(currentElementID, sourceID, destination);
+        output.appendChild(anchorElement);
+        activateElement(currentElementID, callback);
+    }
+
+    const validSourceID = 3;
+    const validDestination = "https://webkit.org";
+    const sameSite = document.location.origin;
+    const testCases = [
+        [ validSourceID, validDestination ],
+        [ 298, validDestination ],           // Too high source ID.
+        [ null, validDestination ],          // No source ID.
+        [ validSourceID, "webkit.org" ],     // Missing destination protocol.
+        [ validSourceID, "://webkit.org" ],  // Partially missing destination protocol.
+        [ validSourceID, "" ],            // Non-ASCII characters as destination.
+        [ validSourceID, "" ],               // Empty destination.
+        [ validSourceID, sameSite ],         // Same-site destination.
+        [ validSourceID, null ]              // No destination.
+    ];
+
+    function runAllTests() {
+        if (currentTest < testCases.length)
+            runOneTest(testCases[currentTest][0], testCases[currentTest][1], runAllTests);
+        else {
+            document.body.removeChild(output);
+            finishJSTest();
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+<p>This tests Select All when the caret is inside an editable region that is inside a non editable region.  Whenever the selection is in an editable region, Select All should select the contents of the highest editable root.</p>
+<div contenteditable="true">
+<div>One</div>
+<div contenteditable="false"><span>Two</span> <span id="start" contenteditable="true">Three</span></div>
+<div>Four</div>
+</div>
+
+<script>
+var span = document.getElementById("start");
+var sel = window.getSelection();
+sel.setPosition(span, 0);
+
+document.execCommand("SelectAll");
+</script>

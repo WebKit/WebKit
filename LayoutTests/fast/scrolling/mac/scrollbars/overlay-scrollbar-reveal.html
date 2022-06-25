@@ -1,0 +1,63 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ MockScrollbarsEnabled=false AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        body {
+            height: 1000px;
+        }
+    </style>
+    <script src="../../../../resources/js-test-pre.js"></script>
+    <script src="../../../../resources/ui-helper.js"></script>
+    
+    <script>
+        jsTestIsAsync = true;
+        
+        if (window.internals)
+            internals.setUsesOverlayScrollbars(true);
+
+        async function doTest()
+        {
+            description('Test maybegin and cancelled');
+            if (!window.internals) {
+                finishJSTest();
+                return;
+            }
+            
+            debug('Initial state');
+            debug(internals.verticalScrollbarState());
+            
+            let windowWidth = window.innerWidth;
+
+            debug('MayBegin should show the scrollbar');
+            await UIHelper.mouseWheelMayBeginAt(100, 100);
+            await UIHelper.waitForCondition(() => {
+                let state = internals.verticalScrollbarState();
+                let visible = state.indexOf('visible_thumb') != -1;
+                if (visible)
+                    testPassed('Scrollbar state: ' + state);
+                return visible;
+            });
+
+            debug('Cancelled should hide the scrollbar');
+            await UIHelper.mouseWheelCancelAt(100, 100);
+
+            await UIHelper.waitForCondition(() => {
+                let state = internals.verticalScrollbarState();
+                let hidden = state.indexOf('visible_thumb') == -1;
+                if (hidden)
+                    testPassed('Scrollbar state: ' + state);
+                return hidden;
+            });
+
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+            doTest();
+        }, false);
+    </script>
+</head>
+<body>
+    <script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

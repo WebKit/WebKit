@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'">
+</head>
+<body>
+<iframe src="about:blank" id="frame"></iframe>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+    testRunner.waitUntilDone();
+}
+
+function appendTestScriptToDocument(contentDocument)
+{
+    var script = contentDocument.createElement("script");
+    script.src = "resources/alert-pass-and-notify-done.js";
+    contentDocument.body.appendChild(script);
+}
+
+appendTestScriptToDocument(document.getElementById("frame").contentDocument);
+</script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0">
+    <style>
+        body {
+            height: 2000px;
+        }
+        .fixed {
+            position: fixed;
+            top: 0; 
+            width: 100%; 
+            background: beige;
+            padding-top: 300px;
+        }
+        input {
+            display: block;
+            margin: 60px 30px;
+        }
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script>
+        var jsTestIsAsync = true;
+
+        function getScrollDownUIScript()
+        {
+            return `(function() {
+                uiController.immediateScrollToOffset(0, 800);
+            })();`;
+        }
+        
+        function getFocusInputUIScript(x, y)
+        {
+            return `(function() {
+                uiController.didEndZoomingCallback = function() {
+                    uiController.uiScriptComplete();
+                };
+                uiController.singleTapAtPoint(${x}, ${y}, function() {});
+            })();`;
+        }
+        
+        function getMoveToNextInputScript()
+        {
+            return `(function() {
+                uiController.doAfterNextStablePresentationUpdate(function() {
+                    uiController.uiScriptComplete(JSON.stringify(uiController.textSelectionCaretRect));
+                });
+                uiController.keyboardAccessoryBarNext();
+            })();`;
+        }
+
+        function getCaretRectScript()
+        {
+            return `(function() {
+                return JSON.stringify(uiController.textSelectionCaretRect);
+            })();`;
+        }
+
+        function toString(rect)
+        {
+            return `[${rect.left.toFixed(2)} ${rect.top.toFixed(2)} ; ${rect.width.toFixed(2)} ${rect.height.toFixed(2)}]`;
+        }
+
+        var finalCaretRect;
+
+        function runTest()
+        {
+            if (!window.testRunner || !testRunner.runUIScript)
+                return;
+            
+            testRunner.runUIScript(getScrollDownUIScript(), function() {
+                window.setTimeout(function() {
+                    var rect = document.getElementById('input').getBoundingClientRect();
+                    debug('Focusing first field');
+                    testRunner.runUIScript(getFocusInputUIScript(rect.left, rect.top + document.scrollingElement.scrollTop), function() {
+                        debug('Moving to next field');
+                        testRunner.runUIScript(getMoveToNextInputScript(), function() {
+                            setTimeout(function() {
+                                testRunner.runUIScript(getMoveToNextInputScript(), function(caretRect) {
+                                    finalCaretRect = JSON.parse(caretRect);
+                                    shouldBeEqualToString('finalCaretRect.left.toFixed(2)', '44.00');
+                                    shouldBeEqualToString('finalCaretRect.top.toFixed(2)', '1244.00');
+                                    finishJSTest();
+                                });
+                            }, 0);
+                        });
+                    });
+                }, 0);
+            });
+        }
+
+        window.addEventListener('load', runTest, false);
+    </script>
+</head>
+<body>
+<p>Checks the location of the caret after focussing inputs inside position:fixed.</p>
+<div class="fixed">
+    <input id="input" type="text"/>
+    <input type="text"/>
+</div>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

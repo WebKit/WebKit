@@ -1,0 +1,100 @@
+# Copyright (C) 2020 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+# THE POSSIBILITY OF SUCH DAMAGE.
+
+#if ENABLE(GPU_PROCESS)
+
+messages -> MediaPlayerPrivateRemote NotRefCounted {
+    NetworkStateChanged(struct WebKit::RemoteMediaPlayerState state)
+    ReadyStateChanged(struct WebKit::RemoteMediaPlayerState state)
+    FirstVideoFrameAvailable()
+    VolumeChanged(double volume)
+    MuteChanged(bool mute)
+    TimeChanged(struct WebKit::RemoteMediaPlayerState state)
+    DurationChanged(struct WebKit::RemoteMediaPlayerState state)
+    RateChanged(double rate)
+    PlaybackStateChanged(bool paused, MediaTime mediaTime, MonotonicTime wallTime)
+    EngineFailedToLoad(int platformErrorCode)
+    UpdateCachedState(struct WebKit::RemoteMediaPlayerState state)
+    CharacteristicChanged(struct WebKit::RemoteMediaPlayerState state)
+    SizeChanged(WebCore::FloatSize naturalSize)
+    RenderingModeChanged()
+
+    CurrentTimeChanged(MediaTime mediaTime, MonotonicTime wallTime, bool timeIsProgressing)
+
+    AddRemoteAudioTrack(WebKit::TrackPrivateRemoteIdentifier trackID, struct WebKit::AudioTrackPrivateRemoteConfiguration configuration)
+    RemoveRemoteAudioTrack(WebKit::TrackPrivateRemoteIdentifier trackID)
+    RemoteAudioTrackConfigurationChanged(WebKit::TrackPrivateRemoteIdentifier trackID, struct WebKit::AudioTrackPrivateRemoteConfiguration configuration)
+
+    AddRemoteVideoTrack(WebKit::TrackPrivateRemoteIdentifier trackID, struct WebKit::VideoTrackPrivateRemoteConfiguration configuration)
+    RemoveRemoteVideoTrack(WebKit::TrackPrivateRemoteIdentifier trackID)
+    RemoteVideoTrackConfigurationChanged(WebKit::TrackPrivateRemoteIdentifier trackID, struct WebKit::VideoTrackPrivateRemoteConfiguration configuration)
+
+    AddRemoteTextTrack(WebKit::TrackPrivateRemoteIdentifier trackID, struct WebKit::TextTrackPrivateRemoteConfiguration configuration)
+    RemoveRemoteTextTrack(WebKit::TrackPrivateRemoteIdentifier trackID)
+    RemoteTextTrackConfigurationChanged(WebKit::TrackPrivateRemoteIdentifier trackID, struct WebKit::TextTrackPrivateRemoteConfiguration configuration)
+
+    ParseWebVTTFileHeader(WebKit::TrackPrivateRemoteIdentifier trackID, String header)
+    ParseWebVTTCueData(WebKit::TrackPrivateRemoteIdentifier trackID, IPC::DataReference data)
+    ParseWebVTTCueDataStruct(WebKit::TrackPrivateRemoteIdentifier trackID, WebCore::ISOWebVTTCue cueData)
+
+    AddDataCue(WebKit::TrackPrivateRemoteIdentifier trackID, MediaTime start, MediaTime end, IPC::DataReference data)
+#if ENABLE(DATACUE_VALUE)
+    AddDataCueWithType(WebKit::TrackPrivateRemoteIdentifier trackID, MediaTime start, MediaTime end, WebCore::SerializedPlatformDataCueValue cueData, String type)
+    UpdateDataCue(WebKit::TrackPrivateRemoteIdentifier trackID, MediaTime start, MediaTime end, WebCore::SerializedPlatformDataCueValue cueData)
+    RemoveDataCue(WebKit::TrackPrivateRemoteIdentifier trackID, MediaTime start, MediaTime end, WebCore::SerializedPlatformDataCueValue cueData)
+#endif
+
+    AddGenericCue(WebKit::TrackPrivateRemoteIdentifier trackID, struct WebCore::GenericCueData cue)
+    UpdateGenericCue(WebKit::TrackPrivateRemoteIdentifier trackID, struct WebCore::GenericCueData cue)
+    RemoveGenericCue(WebKit::TrackPrivateRemoteIdentifier trackID, struct WebCore::GenericCueData cue)
+
+    RequestResource(WebKit::RemoteMediaResourceIdentifier remoteMediaResourceIdentifier, WebCore::ResourceRequest request, enum:uint8_t WebCore::PlatformMediaResourceLoader::LoadOptions options)
+    RemoveResource(WebKit::RemoteMediaResourceIdentifier remoteMediaResourceIdentifier)
+    SendH2Ping(URL url) -> (Expected<Seconds, WebCore::ResourceError> result)
+    ResourceNotSupported()
+
+    ActiveSourceBuffersChanged()
+
+#if ENABLE(ENCRYPTED_MEDIA)
+    WaitingForKeyChanged(bool waitingForKey)
+    InitializationDataEncountered(String initDataType, IPC::DataReference initData)
+#endif
+
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+    MediaPlayerKeyNeeded(IPC::DataReference message)
+#endif
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    CurrentPlaybackTargetIsWirelessChanged(bool isCurrentPlaybackTargetWireless)
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+    GetRawCookies(URL url) -> (Vector<WebCore::Cookie> result)
+#endif
+
+#if PLATFORM(COCOA)
+    PushVideoFrameMetadata(struct WebCore::VideoFrameMetadata metadata, WebKit::RemoteVideoFrameProxy::Properties frameProperties);
+#endif
+}
+
+#endif

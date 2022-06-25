@@ -1,0 +1,4 @@
+
+PASS Lock requests are granted in order
+PASS Requests for distinct resources can be granted
+

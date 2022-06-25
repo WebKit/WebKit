@@ -1,0 +1,148 @@
+Verify :indeterminate, :checked and the indeterminate property on radio button detached from the document.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Initial state
+PASS document.getElementById('radio1-in-document').indeterminate is false
+PASS document.getElementById('radio2-in-document').indeterminate is false
+PASS document.getElementById('radio3-in-document').indeterminate is false
+PASS document.getElementById('radio4-in-document').indeterminate is false
+PASS document.getElementById('radio1-in-document').checked is false
+PASS document.getElementById('radio2-in-document').checked is true
+PASS document.getElementById('radio3-in-document').checked is false
+PASS document.getElementById('radio4-in-document').checked is false
+PASS document.getElementById('radio1-in-document').matches(':indeterminate') is false
+PASS document.getElementById('radio2-in-document').matches(':indeterminate') is false
+PASS document.getElementById('radio3-in-document').matches(':indeterminate') is true
+PASS document.getElementById('radio4-in-document').matches(':indeterminate') is true
+PASS document.getElementById('radio1-in-document').matches(':checked') is false
+PASS document.getElementById('radio2-in-document').matches(':checked') is true
+PASS document.getElementById('radio3-in-document').matches(':checked') is false
+PASS document.getElementById('radio4-in-document').matches(':checked') is false
+PASS getComputedStyle(document.getElementById('radio1-in-document')).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.getElementById('radio2-in-document')).backgroundColor is "rgb(7, 8, 9)"
+PASS getComputedStyle(document.getElementById('radio3-in-document')).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.getElementById('radio4-in-document')).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.getElementById('radio1-in-document')).color is "rgb(4, 5, 6)"
+PASS getComputedStyle(document.getElementById('radio2-in-document')).color is "rgb(4, 5, 6)"
+PASS getComputedStyle(document.getElementById('radio3-in-document')).color is "rgb(10, 11, 12)"
+PASS getComputedStyle(document.getElementById('radio4-in-document')).color is "rgb(10, 11, 12)"
+Remove radio2-in-document from document, into variable radio2
+PASS document.querySelectorAll('radio2-in-document') is []
+PASS document.getElementById('radio1-in-document').indeterminate is false
+PASS radio2.indeterminate is false
+PASS document.getElementById('radio3-in-document').indeterminate is false
+PASS document.getElementById('radio4-in-document').indeterminate is false
+PASS document.getElementById('radio1-in-document').checked is false
+PASS radio2.checked is true
+PASS document.getElementById('radio3-in-document').checked is false
+PASS document.getElementById('radio4-in-document').checked is false
+PASS document.getElementById('radio1-in-document').matches(':indeterminate') is true
+PASS radio2.matches(':indeterminate') is false
+PASS document.getElementById('radio3-in-document').matches(':indeterminate') is true
+PASS document.getElementById('radio4-in-document').matches(':indeterminate') is true
+PASS document.getElementById('radio1-in-document').matches(':checked') is false
+PASS radio2.matches(':checked') is true
+PASS document.getElementById('radio3-in-document').matches(':checked') is false
+PASS document.getElementById('radio4-in-document').matches(':checked') is false
+PASS getComputedStyle(document.getElementById('radio1-in-document')).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(radio2).backgroundColor is ""
+PASS getComputedStyle(document.getElementById('radio3-in-document')).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.getElementById('radio4-in-document')).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.getElementById('radio1-in-document')).color is "rgb(10, 11, 12)"
+PASS getComputedStyle(radio2).color is ""
+PASS getComputedStyle(document.getElementById('radio3-in-document')).color is "rgb(10, 11, 12)"
+PASS getComputedStyle(document.getElementById('radio4-in-document')).color is "rgb(10, 11, 12)"
+Remove radio3-in-document from document, into variable radio3
+PASS document.querySelectorAll('radio3-in-document') is []
+PASS document.getElementById('radio1-in-document').indeterminate is false
+PASS radio2.indeterminate is false
+PASS radio3.indeterminate is false
+PASS document.getElementById('radio4-in-document').indeterminate is false
+PASS document.getElementById('radio1-in-document').checked is false
+PASS radio2.checked is true
+PASS radio3.checked is false
+PASS document.getElementById('radio4-in-document').checked is false
+PASS document.getElementById('radio1-in-document').matches(':indeterminate') is true
+PASS radio2.matches(':indeterminate') is false
+PASS radio3.matches(':indeterminate') is true
+PASS document.getElementById('radio4-in-document').matches(':indeterminate') is true
+PASS document.getElementById('radio1-in-document').matches(':checked') is false
+PASS radio2.matches(':checked') is true
+PASS radio3.matches(':checked') is false
+PASS document.getElementById('radio4-in-document').matches(':checked') is false
+PASS getComputedStyle(document.getElementById('radio1-in-document')).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(radio2).backgroundColor is ""
+PASS getComputedStyle(radio3).backgroundColor is ""
+PASS getComputedStyle(document.getElementById('radio4-in-document')).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(document.getElementById('radio1-in-document')).color is "rgb(10, 11, 12)"
+PASS getComputedStyle(radio2).color is ""
+PASS getComputedStyle(radio3).color is ""
+PASS getComputedStyle(document.getElementById('radio4-in-document')).color is "rgb(10, 11, 12)"
+Create new element named webkitRadio
+PASS document.getElementById('radio1-in-document').indeterminate is false
+PASS radio2.indeterminate is false
+PASS radio3.indeterminate is false
+PASS document.getElementById('radio4-in-document').indeterminate is false
+PASS webkitRadio.indeterminate is false
+PASS document.getElementById('radio1-in-document').checked is false
+PASS radio2.checked is true
+PASS radio3.checked is false
+PASS document.getElementById('radio4-in-document').checked is false
+PASS webkitRadio.checked is false
+PASS document.getElementById('radio1-in-document').matches(':indeterminate') is true
+PASS radio2.matches(':indeterminate') is false
+PASS radio3.matches(':indeterminate') is true
+PASS document.getElementById('radio4-in-document').matches(':indeterminate') is true
+PASS webkitRadio.matches(':indeterminate') is true
+PASS document.getElementById('radio1-in-document').matches(':checked') is false
+PASS radio2.matches(':checked') is true
+PASS radio3.matches(':checked') is false
+PASS document.getElementById('radio4-in-document').matches(':checked') is false
+PASS webkitRadio.matches(':checked') is false
+PASS getComputedStyle(document.getElementById('radio1-in-document')).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(radio2).backgroundColor is ""
+PASS getComputedStyle(radio3).backgroundColor is ""
+PASS getComputedStyle(document.getElementById('radio4-in-document')).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(webkitRadio).backgroundColor is ""
+PASS getComputedStyle(document.getElementById('radio1-in-document')).color is "rgb(10, 11, 12)"
+PASS getComputedStyle(radio2).color is ""
+PASS getComputedStyle(radio3).color is ""
+PASS getComputedStyle(document.getElementById('radio4-in-document')).color is "rgb(10, 11, 12)"
+PASS getComputedStyle(webkitRadio).color is ""
+Check webkitRadio
+PASS document.getElementById('radio1-in-document').indeterminate is false
+PASS radio2.indeterminate is false
+PASS radio3.indeterminate is false
+PASS document.getElementById('radio4-in-document').indeterminate is false
+PASS webkitRadio.indeterminate is false
+PASS document.getElementById('radio1-in-document').checked is false
+PASS radio2.checked is true
+PASS radio3.checked is false
+PASS document.getElementById('radio4-in-document').checked is false
+PASS webkitRadio.checked is true
+PASS document.getElementById('radio1-in-document').matches(':indeterminate') is true
+PASS radio2.matches(':indeterminate') is false
+PASS radio3.matches(':indeterminate') is true
+PASS document.getElementById('radio4-in-document').matches(':indeterminate') is true
+PASS webkitRadio.matches(':indeterminate') is false
+PASS document.getElementById('radio1-in-document').matches(':checked') is false
+PASS radio2.matches(':checked') is true
+PASS radio3.matches(':checked') is false
+PASS document.getElementById('radio4-in-document').matches(':checked') is false
+PASS webkitRadio.matches(':checked') is true
+PASS getComputedStyle(document.getElementById('radio1-in-document')).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(radio2).backgroundColor is ""
+PASS getComputedStyle(radio3).backgroundColor is ""
+PASS getComputedStyle(document.getElementById('radio4-in-document')).backgroundColor is "rgb(1, 2, 3)"
+PASS getComputedStyle(webkitRadio).backgroundColor is ""
+PASS getComputedStyle(document.getElementById('radio1-in-document')).color is "rgb(10, 11, 12)"
+PASS getComputedStyle(radio2).color is ""
+PASS getComputedStyle(radio3).color is ""
+PASS getComputedStyle(document.getElementById('radio4-in-document')).color is "rgb(10, 11, 12)"
+PASS getComputedStyle(webkitRadio).color is ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

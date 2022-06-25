@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../dynamic-updates/resources/SVGTestCase.js"></script>
+<script src="resources/SVGAnimationTestCase.js"></script>
+</head>
+<body onload="runSMILTest()">
+<h1>SVG 1.1 dynamic animation tests</h1>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("This tests fill=remove for animate and animateMotion");
+embedSVGTestCase("resources/fill-remove-support.svg");
+
+// Setup animation test
+function sampleAnimateBeforeOrAfter() {
+    debug("");
+    debug("Check state before/after animation");
+    shouldBeCloseEnough("animateMotionRect.getBoundingClientRect().x", "10");
+    shouldBeCloseEnough("animateMotionRect.getBBox().x", "10");
+    shouldBeCloseEnough("animateRect.getBBox().x", "10");
+    shouldBeCloseEnough("animateRect.getBoundingClientRect().x", "10");
+    shouldBeCloseEnough("animateRect.x.animVal.value", "10");
+    shouldBe("animateRect.x.baseVal.value", "10");
+}
+
+function sampleAnimateBegin() {
+    debug("");
+    debug("Check state right after the beginning of the animation");
+    shouldBeCloseEnough("animateMotionRect.getBoundingClientRect().x", "20");
+    shouldBeCloseEnough("animateMotionRect.getBBox().x", "10");
+    shouldBeCloseEnough("animateRect.getBBox().x", "20");
+    shouldBeCloseEnough("animateRect.getBoundingClientRect().x", "20");
+    shouldBeCloseEnough("animateRect.x.animVal.value", "20");
+    shouldBe("animateRect.x.baseVal.value", "10");
+}
+
+function sampleAnimateMiddle() {
+    debug("");
+    debug("Check state in the middle of the animation");
+    shouldBeCloseEnough("animateMotionRect.getBoundingClientRect().x", "115");
+    shouldBeCloseEnough("animateMotionRect.getBBox().x", "10");
+    shouldBeCloseEnough("animateRect.getBBox().x", "115");
+    shouldBeCloseEnough("animateRect.getBoundingClientRect().x", "115");
+    shouldBeCloseEnough("animateRect.x.animVal.value", "115");
+    shouldBe("animateRect.x.baseVal.value", "10");
+}
+
+function sampleAnimateEnd() {
+    debug("");
+    debug("Check state just before the end of the animation");
+    shouldBeCloseEnough("animateMotionRect.getBoundingClientRect().x", "210");
+    shouldBeCloseEnough("animateMotionRect.getBBox().x", "10");
+    shouldBeCloseEnough("animateRect.getBBox().x", "210");
+    shouldBeCloseEnough("animateRect.getBoundingClientRect().x", "210");
+    shouldBeCloseEnough("animateRect.x.animVal.value", "210");
+    shouldBe("animateRect.x.baseVal.value", "10");
+}
+
+function executeTest() {
+    animateMotionRect = rootSVGElement.ownerDocument.getElementById("animateMotionRect");
+    animateRect = rootSVGElement.ownerDocument.getElementById("animateRect");
+
+    const expectedValues = [
+        // [animationId, time, sampleCallback]
+        [ "animate", -0.5,    sampleAnimateBeforeOrAfter ],
+        [ "animate",  0.0,    sampleAnimateBegin         ],
+        [ "animate",  1.0,    sampleAnimateMiddle        ],
+        [ "animate",  1.9999, sampleAnimateEnd           ],
+        [ "animate",  2.0,    sampleAnimateBeforeOrAfter ],
+        [ "animate",  3.0,    sampleAnimateBeforeOrAfter ]
+    ];
+
+    runAnimationTest(expectedValues);
+}
+
+window.animationStartsImmediately = true;
+var successfullyParsed = true;
+</script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+<!DOCTYPE html><!-- webkit-test-runner [ jscOptions=--slowPathAllocsBetweenGCs=10 ] -->
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description('Do not invoke GC while modifying WeakGCMap');
+for (let name of Object.keys(this)) {
+    Object.getOwnPropertyDescriptor(this, name);
+}
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

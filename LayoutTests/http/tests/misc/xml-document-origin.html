@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Tests that XML documents do not end up with a unique origin.");
+jsTestIsAsync = true;
+
+function finishTest()
+{
+    clearTimeout(timeoutHandle);
+    clearInterval(id);
+    finishJSTest();
+}
+
+onload = () => {
+    win = open("/resources/dummy.xml");
+    id = setInterval(() => {
+        try {
+            if (win.location.href == "about:blank")
+                return;
+        } catch(e) {
+            testFailed("Exception thrown when trying to access the popup's URL: " + e);
+            finishTest();
+            return;
+        }
+
+        shouldBe("win.origin", "self.origin");
+        finishTest();
+    }, 10);
+    timeoutHandle = setTimeout(() => {
+        testFailed("The location of the popup stayed 'about:blank'");
+        finishTest();
+    }, 5000);
+};
+</script>
+</body>
+</html>

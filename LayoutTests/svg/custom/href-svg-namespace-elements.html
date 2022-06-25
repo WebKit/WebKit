@@ -1,0 +1,42 @@
+<head>
+    <script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <script>
+        description("Ensures the svg href attribute can work without having to be prefixed by the xlink namespace.");
+
+        var tagHrefTable = [
+            { tagName: "a",              xlinkValue: "www.webkit.org",            svgValue: "www.build.webkit.org" },
+            { tagName: "feImage",        xlinkValue: "resources/red-checker.png", svgValue: "resources/green-checker.png" },
+            { tagName: "filter",         xlinkValue: "base-filter-1",             svgValue: "base-filter-2" },
+            { tagName: "image",          xlinkValue: "resources/red-checker.png", svgValue: "resources/green-checker.png" },
+            { tagName: "linearGradient", xlinkValue: "#base-linear-gradient-1",   svgValue: "#base-linear-gradient-2" },
+            { tagName: "pattern",        xlinkValue: "#base-pattern-1",           svgValue: "#base-pattern-2" },
+            { tagName: "radialGradient", xlinkValue: "#base-radial-gradient-1",   svgValue: "#base-radial-gradient-2" },
+            { tagName: "textPath",       xlinkValue: "#text-path-1",              svgValue: "#text-path-2" },
+            { tagName: "use",            xlinkValue: "#red-rect",                 svgValue: "#green-rect" },
+        ];
+
+        tagHrefTable.forEach(function(tagHref) {
+            window.element = document.createElementNS("http://www.w3.org/2000/svg", tagHref.tagName);
+            shouldBeEqualToString("window.element.tagName", tagHref.tagName);
+
+            window.element.setAttributeNS("http://www.w3.org/1999/xlink", "href", tagHref.xlinkValue);
+            shouldBeEqualToString("window.element.getAttributeNS('http://www.w3.org/1999/xlink', 'href')", tagHref.xlinkValue);
+            shouldBeEqualToString("window.element.getAttribute('href')", tagHref.xlinkValue);
+            window.element.removeAttributeNS('http://www.w3.org/1999/xlink', "href");
+
+            window.element.setAttributeNS("http://www.w3.org/2000/svg", "href", tagHref.svgValue);
+            shouldBeNull("window.element.getAttributeNS('http://www.w3.org/1999/xlink', 'href')");
+            shouldBeEqualToString("window.element.getAttribute('href')", tagHref.svgValue);
+            window.element.removeAttributeNS("http://www.w3.org/2000/svg", "href");
+
+            window.element.setAttribute("href", tagHref.svgValue);
+            shouldBeNull("window.element.getAttributeNS('http://www.w3.org/1999/xlink', 'href')");
+            shouldBeNull("window.element.getAttributeNS('http://www.w3.org/2000/svg', 'href')");
+            shouldBeEqualToString("window.element.getAttribute('href')", tagHref.svgValue);
+            shouldBeEqualToString("window.element.href.baseVal", tagHref.svgValue);
+        });
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
+</body>

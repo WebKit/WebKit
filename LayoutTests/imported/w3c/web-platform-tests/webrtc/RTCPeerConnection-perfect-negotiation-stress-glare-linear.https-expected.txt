@@ -1,0 +1,4 @@
+
+PASS Perfect negotiation stress glare linear
+PASS Perfect negotiation stress glare linear with roles reversed
+

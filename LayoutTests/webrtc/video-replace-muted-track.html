@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing basic video exchange from offerer to receiver</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+<div id="log"></div>
+        <video id="video" autoplay=""></video>
+        <canvas id="canvas" width="640" height="480"></canvas>
+        <script src ="routines.js"></script>
+        <script>
+promise_test((test) => {
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(true);
+
+    var sender;
+    var firstTrack;
+    return navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: ["user"] } } }).then((stream) => {
+        frontStream = stream;
+        return new Promise((resolve, reject) => {
+            createConnections((firstConnection) => {
+                firstTrack = frontStream.getVideoTracks()[0];
+                sender = firstConnection.addTrack(firstTrack, frontStream);
+           }, (secondConnection) => {
+                secondConnection.ontrack = (trackEvent) => {
+                    resolve(trackEvent.streams[0]);
+                };
+            });
+            setTimeout(() => reject("Test timed out"), 5000);
+        });
+    }).then((remoteStream) => {
+        video.srcObject = remoteStream;
+        return video.play();
+    }).then(() => {
+        firstTrack.enabled = false;
+        return checkVideoBlack(true, canvas, video, "Check we receive black frames after disabling the track");
+    }).then(() => {
+        return navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: ["environment"] } } });
+    }).then((stream) => {
+        return sender.replaceTrack(stream.getVideoTracks()[0]);
+    }).then(() => {
+        return checkVideoBlack(false, canvas, video, "Check we receive some non black frames");
+    }).then(() => {
+        return checkVideoBlack(true, canvas, video, "Check we do not receive any black frame", 40).then(assert_unreached, () => { });
+    });
+}, "Switching from disabled to enabled track");
+        </script>
+    </body>
+</html>

@@ -1,0 +1,71 @@
+# Copyright (c) 2016 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../webrtc.gni")
+
+group("stats") {
+  deps = [ ":rtc_stats" ]
+}
+
+rtc_library("rtc_stats") {
+  visibility = [ "*" ]
+  cflags = []
+  sources = [
+    "rtc_stats.cc",
+    "rtc_stats_report.cc",
+    "rtcstats_objects.cc",
+  ]
+
+  deps = [
+    "../api:rtc_stats_api",
+    "../rtc_base:checks",
+    "../rtc_base:rtc_base_approved",
+  ]
+}
+
+rtc_library("rtc_stats_test_utils") {
+  visibility = [ "*" ]
+  cflags = []
+  sources = [
+    "test/rtc_test_stats.cc",
+    "test/rtc_test_stats.h",
+  ]
+
+  deps = [
+    ":rtc_stats",
+    "../api:rtc_stats_api",
+    "../rtc_base:checks",
+    "../rtc_base/system:rtc_export",
+  ]
+}
+
+if (rtc_include_tests && !build_with_chromium) {
+  rtc_test("rtc_stats_unittests") {
+    testonly = true
+    sources = [
+      "rtc_stats_report_unittest.cc",
+      "rtc_stats_unittest.cc",
+    ]
+
+    deps = [
+      ":rtc_stats",
+      ":rtc_stats_test_utils",
+      "../api:rtc_stats_api",
+      "../rtc_base:checks",
+      "../rtc_base:gunit_helpers",
+      "../rtc_base:rtc_base_approved",
+      "../rtc_base:rtc_json",
+      "../test:test_main",
+      "../test:test_support",
+    ]
+
+    if (is_android) {
+      deps += [ "//testing/android/native_test:native_test_native_code" ]
+    }
+  }
+}

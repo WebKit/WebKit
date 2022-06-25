@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="160.1138 87.71104 624.2782 265.04314" width="624.2782" height="265.04314">
+  <defs>
+    <font-face font-family="Helvetica Neue" font-size="13" panose-1="2 0 4 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="523" cap-height="721" ascent="966.9952" descent="-212.99744" font-weight="300">
+      <font-face-src>
+        <font-face-name name="HelveticaNeue-Light"/>
+      </font-face-src>
+    </font-face>
+    <font-face font-family="Monaco" font-size="8" units-per-em="1000" underline-position="-37.597656" underline-thickness="75.68359" slope="0" x-height="545.41016" cap-height="757.8125" ascent="1e3" descent="-250" font-weight="400">
+      <font-face-src>
+        <font-face-name name="Monaco"/>
+      </font-face-src>
+    </font-face>
+    <font-face font-family="Helvetica Neue" font-size="11" panose-1="2 0 2 6 0 0 0 9 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="1363.6364" x-height="520" cap-height="722" ascent="930.9998" descent="-212.99744" font-style="italic" font-weight="200">
+      <font-face-src>
+        <font-face-name name="HelveticaNeue-UltraLightItalic"/>
+      </font-face-src>
+    </font-face>
+    <font-face font-family="Helvetica Neue" font-size="10" panose-1="2 0 4 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="523" cap-height="721" ascent="966.9952" descent="-212.99744" font-weight="300">
+      <font-face-src>
+        <font-face-name name="HelveticaNeue-Light"/>
+      </font-face-src>
+    </font-face>
+    <font-face font-family="Helvetica Neue" font-size="13" panose-1="2 11 4 3 2 2 2 2 2 4" units-per-em="1000" underline-position="-75" underline-thickness="50" slope="1153.8462" x-height="514" cap-height="714" ascent="966.9952" descent="-212.99744" font-style="italic" font-weight="300">
+      <font-face-src>
+        <font-face-name name="HelveticaNeue-ThinItalic"/>
+      </font-face-src>
+    </font-face>
+  </defs>
+  <metadata> Produced by OmniGraffle 7.14.1 
+    <dc:date>2020-04-02 16:47:19 +0000</dc:date>
+  </metadata>
+  <g id="Canvas_1" stroke-opacity="1" stroke="none" fill-opacity="1" stroke-dasharray="none" fill="none">
+    <title>Canvas 1</title>
+    <rect fill="white" x="160.1138" y="87.71104" width="624.2782" height="265.04314"/>
+    <g id="Canvas_1: Layer 1">
+      <title>Layer 1</title>
+      <g id="Graphic_21">
+        <rect x="173" y="112.5" width="113.6138" height="183.5" fill="white"/>
+        <rect x="173" y="112.5" width="113.6138" height="183.5" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(178 117.5)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="300" fill="black" x="28.328904" y="13">Baseline</tspan>
+        </text>
+      </g>
+      <g id="Graphic_26">
+        <rect x="496.5" y="112.5" width="113.6138" height="183.5" fill="white"/>
+        <rect x="496.5" y="112.5" width="113.6138" height="183.5" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(501.5 117.5)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="300" fill="black" x="39.047404" y="13">DFG</tspan>
+        </text>
+      </g>
+      <g id="Graphic_32">
+        <rect x="181" y="179.5" width="99.5" height="62" fill="white"/>
+        <rect x="181" y="179.5" width="99.5" height="62" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(186 184.5)" fill="black">
+          <tspan font-family="Monaco" font-size="8" font-weight="400" fill="black" x="0" y="8">jmp Lslow</tspan>
+          <tspan font-family="Monaco" font-size="8" font-weight="400" fill="black" x="0" y="18.667969">nop</tspan>
+          <tspan font-family="Monaco" font-size="8" font-weight="400" fill="black" x="0" y="29.335938">nop</tspan>
+          <tspan font-family="Monaco" font-size="8" font-weight="400" fill="black" x="0" y="40.003906">nop</tspan>
+          <tspan font-family="Monaco" font-size="8" font-weight="400" fill="black" x="0" y="50.671875">nop</tspan>
+        </text>
+      </g>
+      <g id="Graphic_34">
+        <rect x="334.75" y="112.5" width="113.6138" height="183.5" fill="white"/>
+        <rect x="334.75" y="112.5" width="113.6138" height="183.5" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(339.75 117.5)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="300" fill="black" x="28.328904" y="13">Baseline</tspan>
+        </text>
+      </g>
+      <g id="Graphic_33">
+        <rect x="342.75" y="179.5" width="99.5" height="62" fill="white"/>
+        <rect x="342.75" y="179.5" width="99.5" height="62" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(347.75 184.5)" fill="black">
+          <tspan font-family="Monaco" font-size="8" font-weight="400" fill="black" x="0" y="8">cmp S1, (%rax)</tspan>
+          <tspan font-family="Monaco" font-size="8" font-weight="400" fill="black" x="0" y="18.667969">jnz Lslow</tspan>
+          <tspan font-family="Monaco" font-size="8" font-weight="400" fill="black" x="0" y="29.335938">mov 10(%rax), %rax</tspan>
+          <tspan font-family="Monaco" font-size="8" font-weight="400" fill="black" x="0" y="40.003906">nop</tspan>
+          <tspan font-family="Monaco" font-size="8" font-weight="400" fill="black" x="0" y="50.671875">nop</tspan>
+        </text>
+      </g>
+      <g id="Graphic_35">
+        <rect x="658.25" y="112.5" width="113.6138" height="183.5" fill="white"/>
+        <rect x="658.25" y="112.5" width="113.6138" height="183.5" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(663.25 117.5)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="300" fill="black" x="41.211904" y="13">FTL</tspan>
+        </text>
+      </g>
+      <g id="Line_38">
+        <line x1="471.9319" y1="88.21104" x2="471.9319" y2="320.28896" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1.0,4.0" stroke-width="1"/>
+      </g>
+      <g id="Line_39">
+        <line x1="310.1819" y1="88.21104" x2="310.1819" y2="320.28896" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1.0,4.0" stroke-width="1"/>
+      </g>
+      <g id="Line_40">
+        <line x1="633.6819" y1="88.21104" x2="633.6819" y2="320.28896" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1.0,4.0" stroke-width="1"/>
+      </g>
+      <g id="Graphic_43">
+        <text transform="translate(183 165)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="11" font-style="italic" font-weight="200" fill="black" x="0" y="10">inline cache</tspan>
+        </text>
+      </g>
+      <g id="Graphic_45">
+        <text transform="translate(344.09946 165)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="11" font-style="italic" font-weight="200" fill="black" x="0" y="10">inline cache</tspan>
+        </text>
+      </g>
+      <g id="Graphic_47">
+        <text transform="translate(501.5 190.38502)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="10" font-weight="300" fill="black" x="0" y="10">CheckStructure(@o, S1)</tspan>
+          <tspan font-family="Helvetica Neue" font-size="10" font-weight="300" fill="black" x="0" y="22.29007">GetByOffset(@o, …)</tspan>
+        </text>
+      </g>
+      <g id="Graphic_54">
+        <text transform="translate(165.1138 315)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="300" fill="black" x="4.2301" y="13">Step 1: </tspan>
+          <tspan font-family="Helvetica Neue" font-size="13" font-style="italic" font-weight="300" fill="black" y="13">Baseline code </tspan>
+          <tspan font-family="Helvetica Neue" font-size="13" font-style="italic" font-weight="300" fill="black" x="12.5761" y="29.37709">with uninitialized IC.</tspan>
+        </text>
+      </g>
+      <g id="Graphic_55">
+        <text transform="translate(326.8638 315)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="300" fill="black" x="4.2301" y="13">Step 2: </tspan>
+          <tspan font-family="Helvetica Neue" font-size="13" font-style="italic" font-weight="300" fill="black" y="13">Baseline code </tspan>
+          <tspan font-family="Helvetica Neue" font-size="13" font-style="italic" font-weight="300" fill="black" x="11.4646" y="29.37709">after IC repartching.</tspan>
+        </text>
+      </g>
+      <g id="Graphic_56">
+        <text transform="translate(488.2558 315)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="300" fill="black" x="1.7081" y="13">Step 3: </tspan>
+          <tspan font-family="Helvetica Neue" font-size="13" font-style="italic" font-weight="300" fill="black" y="13">DFG code with </tspan>
+          <tspan font-family="Helvetica Neue" font-size="13" font-style="italic" font-weight="300" fill="black" x="38.3096" y="29.37709">inlined IC.</tspan>
+        </text>
+      </g>
+      <g id="Graphic_57">
+        <text transform="translate(650.0058 315)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="300" fill="black" x="4.3536" y="13">Step 4: </tspan>
+          <tspan font-family="Helvetica Neue" font-size="13" font-style="italic" font-weight="300" fill="black" y="13">FTL code with </tspan>
+          <tspan font-family="Helvetica Neue" font-size="13" font-style="italic" font-weight="300" fill="black" x="38.3096" y="29.37709">inlined IC.</tspan>
+        </text>
+      </g>
+      <g id="Graphic_60">
+        <text transform="translate(663.8138 190.38502)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="10" font-weight="300" fill="black" x="0" y="10">CheckStructure(@o, S1)</tspan>
+          <tspan font-family="Helvetica Neue" font-size="10" font-weight="300" fill="black" x="0" y="22.29007">GetByOffset(@o, …)</tspan>
+        </text>
+      </g>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <script src="../../resources/js-test-pre.js"></script>
+    <style>
+        #scroller {
+            height: 300px;
+            width: 300px;
+            background-color: green;
+            overflow-y: scroll;
+        }
+        
+        .contents {
+            width: 100%;
+            height: 200%;
+            background-color: silver;
+        }
+    </style>
+    <script>
+        var jsTestIsAsync = true;
+
+        var scroller;
+        function doTest()
+        {
+            scroller = document.getElementById('scroller');
+            if (window.internals)
+                internals.unconstrainedScrollTo(scroller, 0, -150);
+
+            shouldBe('scroller.scrollTop', '-150');
+            finishJSTest();
+        }
+        
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+
+<div id="scroller">
+    <div class="contents"></div>
+</div>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

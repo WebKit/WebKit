@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<style>
+img {
+    width: 100px;
+    height: 200px;
+}
+</style>
+</head>
+<body>
+<img src="../resources/green-400x400.png"></img>
+<script>
+jsTestIsAsync = true;
+let image = document.querySelector("img");
+width = 0;
+height = 0;
+
+function updateImageOverlayTextDimensions() {
+    let textBoundingRect = internals.shadowRoot(image).querySelector(".image-overlay-text").getBoundingClientRect();
+    width = textBoundingRect.width;
+    height = textBoundingRect.height;
+}
+
+addEventListener("load", async () => {
+    image.style.objectFit = "contain";
+    internals.installImageOverlay(image, [
+        {
+            topLeft : new DOMPointReadOnly(0, 0),
+            topRight : new DOMPointReadOnly(0.5, 0),
+            bottomRight : new DOMPointReadOnly(0.5, 0.25),
+            bottomLeft : new DOMPointReadOnly(0, 0.25),
+            children: [
+                {
+                    text : "foo",
+                    topLeft : new DOMPointReadOnly(0, 0),
+                    topRight : new DOMPointReadOnly(0.5, 0),
+                    bottomRight : new DOMPointReadOnly(0.5, 0.25),
+                    bottomLeft : new DOMPointReadOnly(0, 0.25),
+                }
+            ]
+        }
+    ]);
+
+    updateImageOverlayTextDimensions();
+
+    shouldBe("width", "50");
+    shouldBe("height", "25");
+
+    image.style.objectFit = "cover";
+    setInterval(updateImageOverlayTextDimensions, 10);
+
+    await shouldBecomeEqual("width", "100");
+    shouldBe("height", "50");
+
+    finishJSTest();
+});
+</script>
+</body>
+</html>

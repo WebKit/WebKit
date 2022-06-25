@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="media-src 'none'; script-src 'unsafe-inline'">
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+</head>
+<body>
+<p>Tests that a HTML video element, in a user agent shadow tree, is allowed to load when the page has CSP policy: <code>media-src 'none'</code>.</p>
+<div id="shadow-host"></div>
+<pre id="console"></pre>
+<script>
+function log(message)
+{
+    document.getElementById("console").appendChild(document.createTextNode(message + "\n"));
+}
+
+function runTest()
+{
+    if (!window.testRunner || !window.internals)
+        return;
+
+    var userAgentShadowRoot = internals.ensureUserAgentShadowRoot(document.getElementById("shadow-host"));
+    var video = document.createElement("video");
+    userAgentShadowRoot.appendChild(video);
+
+    video.onloadedmetadata = function () { 
+        log("PASS did load video metadata.");
+        testRunner.notifyDone();
+    }
+    video.onerror = function () {
+        log("FAIL did not load video metadata.");
+        testRunner.notifyDone();
+    }
+    video.src = "http://127.0.0.1:8000/resources/test.mp4";
+}
+
+runTest();
+</script>
+</body>
+</html>

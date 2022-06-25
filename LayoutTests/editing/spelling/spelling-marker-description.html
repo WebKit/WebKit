@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="container">
+  <div id="destination" contentEditable></div>
+</div>
+
+<script>
+
+function test()
+{
+    jsTestIsAsync = true;
+    internals.settings.setUnifiedTextCheckerEnabled(true);
+    internals.settings.setAsynchronousSpellCheckingEnabled(true);
+
+    var sel = window.getSelection();
+    var destination = document.getElementById("destination");
+    destination.focus();
+    document.execCommand("InsertHTML", false, "weicome");
+    document.execCommand("InsertText", false, ".");
+
+    shouldBecomeEqualToString('internals.markerDescriptionForNode(destination.firstChild, "spelling", 0)', '', finishJSTest);
+}
+
+description("The spellchecker should add a spelling marker.");
+if (window.internals)
+    test();
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

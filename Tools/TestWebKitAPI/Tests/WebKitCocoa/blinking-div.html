@@ -1,0 +1,23 @@
+<html>
+    <script>
+window.onload = function () {
+    setInterval(blink, 0);
+}
+
+var a = 0;
+
+function blink() {
+    document.getElementById("blink").style.backgroundColor = a ? "blue" : "green";
+    a = !a;
+}
+    </script>
+    <style>
+#blink {
+    width: 200px; height: 200px;
+    display: inline-block;
+}
+    </style>
+    <body>
+        <div id="blink"></div>
+    </body>
+</html>

@@ -1,0 +1,65 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    font-size: 24px; 
+}
+.explanation { 
+    border: 2px solid blue; 
+    padding: 12px; 
+    font-size: 24px; 
+    margin-bottom: 24px;
+}
+.scenario { margin-bottom: 16px;}
+.scenario:first-line { font-weight: bold; margin-bottom: 16px;}
+.expected-results:first-line { font-weight: bold }
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+function log(message) {
+    var console = document.getElementById("console");
+    var li = document.createElement("li");
+    var text = document.createTextNode(message);
+    li.appendChild(text);
+    console.appendChild(li);
+}
+
+function editingTest() {
+    execSelectAllCommand();
+    copyCommand();
+    execDeleteCommand();
+    pasteCommand();
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body>
+Problem: copy/pasting some HTML including tables can give rise to a &lt;div&gt; element as the first child of the table element. This is invalid.
+<div contenteditable id="root">
+<div id="test" class="editing">
+<div>
+abcdef
+<div style="text-align: center" >
+<table><tr><td>foo</td><td>bar</td></tr></table>
+ghijk
+</div>
+</div>
+</div>
+</div>
+
+<ol id="console" />
+
+<script>
+runEditingTest();
+log(root.innerHTML);
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+
+</body>
+</html>

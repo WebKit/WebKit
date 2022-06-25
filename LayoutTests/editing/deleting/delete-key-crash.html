@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<style>
+  html {
+    display: table;
+  }
+</style>
+<script>
+  if (window.testRunner)
+    window.testRunner.dumpAsText();
+  onload = () => {
+    document.designMode = 'on';
+    getSelection().selectAllChildren(document.body);
+    document.execCommand('InsertNestedUnorderedList');
+    document.body.append(document.createElement('div'));
+    document.body.innerHTML += '';
+    document.execCommand('Delete');
+    document.write("Test passes if it does not crash.");
+  };
+</script>
+<body>
+</body>

@@ -1,0 +1,290 @@
+layer at (0,0) size 1084x585
+  RenderView at (0,0) size 800x585
+layer at (0,0) size 800x102
+  RenderBlock {HTML} at (0,0) size 800x102
+    RenderBody {BODY} at (8,16) size 784x78
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 272x19
+          text run at (0,0) width 272: "The following two lines should look the same:"
+      RenderBlock {DIV} at (0,36) size 784x21
+        RenderInline {SPAN} at (0,0) size 20x19
+          RenderInline (generated) at (0,0) size 20x19
+            RenderCounter at (0,1) size 20x19
+              text run at (0,1) width 20: "\x{10D0}.\x{10D0}"
+        RenderText {#text} at (20,1) size 4x19
+          text run at (20,1) width 4: " "
+        RenderInline {SPAN} at (0,0) size 21x19
+          RenderInline (generated) at (0,0) size 21x19
+            RenderCounter at (24,1) size 21x19
+              text run at (24,1) width 21: "\x{10D0}.\x{10D1}"
+        RenderText {#text} at (45,1) size 4x19
+          text run at (45,1) width 4: " "
+        RenderInline {SPAN} at (0,0) size 21x19
+          RenderInline (generated) at (0,0) size 21x19
+            RenderCounter at (49,1) size 21x19
+              text run at (49,1) width 21: "\x{10D0}.\x{10D2}"
+        RenderText {#text} at (70,1) size 4x19
+          text run at (70,1) width 4: " "
+        RenderInline {SPAN} at (0,0) size 27x19
+          RenderInline (generated) at (0,0) size 27x19
+            RenderCounter at (74,1) size 27x19
+              text run at (74,1) width 27: "\x{10D0}.\x{10D3}"
+        RenderText {#text} at (101,1) size 4x19
+          text run at (101,1) width 4: " "
+        RenderInline {SPAN} at (0,0) size 20x19
+          RenderInline (generated) at (0,0) size 20x19
+            RenderCounter at (105,1) size 20x19
+              text run at (105,1) width 20: "\x{10D0}.\x{10D4}"
+        RenderText {#text} at (125,1) size 4x19
+          text run at (125,1) width 4: " "
+        RenderInline {SPAN} at (0,0) size 20x19
+          RenderInline (generated) at (0,0) size 20x19
+            RenderCounter at (129,1) size 20x19
+              text run at (129,1) width 20: "\x{10D0}.\x{10D5}"
+        RenderText {#text} at (149,1) size 4x19
+          text run at (149,1) width 4: " "
+        RenderInline {SPAN} at (0,0) size 24x19
+          RenderInline (generated) at (0,0) size 24x19
+            RenderCounter at (153,1) size 24x19
+              text run at (153,1) width 24: "\x{10D0}.\x{10D6}"
+        RenderText {#text} at (177,1) size 4x19
+          text run at (177,1) width 4: " "
+        RenderInline {SPAN} at (0,0) size 22x19
+          RenderInline (generated) at (0,0) size 22x19
+            RenderCounter at (181,1) size 22x19
+              text run at (181,1) width 22: "\x{10D0}.\x{10F1}"
+        RenderText {#text} at (203,1) size 4x19
+          text run at (203,1) width 4: " "
+        RenderInline {SPAN} at (0,0) size 26x19
+          RenderInline (generated) at (0,0) size 26x19
+            RenderCounter at (207,1) size 26x19
+              text run at (207,1) width 26: "\x{10D0}.\x{10D7}"
+        RenderText {#text} at (233,1) size 4x19
+          text run at (233,1) width 4: " "
+        RenderInline {SPAN} at (0,0) size 21x19
+          RenderInline (generated) at (0,0) size 21x19
+            RenderCounter at (237,1) size 21x19
+              text run at (237,1) width 21: "\x{10D0}.\x{10D8}"
+        RenderText {#text} at (258,1) size 4x19
+          text run at (258,1) width 4: " "
+        RenderInline {SPAN} at (0,0) size 29x19
+          RenderInline (generated) at (0,0) size 29x19
+            RenderCounter at (262,1) size 29x19
+              text run at (262,1) width 29: "\x{10D0}.\x{10D8}\x{10D0}"
+        RenderText {#text} at (291,1) size 4x19
+          text run at (291,1) width 4: " "
+        RenderInline {SPAN} at (0,0) size 30x19
+          RenderInline (generated) at (0,0) size 30x19
+            RenderCounter at (295,1) size 30x19
+              text run at (295,1) width 30: "\x{10D0}.\x{10D8}\x{10D1}"
+        RenderText {#text} at (325,1) size 4x19
+          text run at (325,1) width 4: " "
+        RenderInline {SPAN} at (0,0) size 17x19
+          RenderInline (generated) at (0,0) size 17x19
+            RenderCounter at (329,1) size 17x19
+              text run at (329,1) width 17: "\x{10D0}.\x{10D9}"
+        RenderText {#text} at (346,1) size 4x19
+          text run at (346,1) width 4: " "
+        RenderInline {SPAN} at (0,0) size 29x19
+          RenderInline (generated) at (0,0) size 29x19
+            RenderCounter at (350,1) size 29x19
+              text run at (350,1) width 29: "\x{10D0}.\x{10DA}"
+        RenderText {#text} at (379,1) size 4x19
+          text run at (379,1) width 4: " "
+        RenderInline {SPAN} at (0,0) size 21x19
+          RenderInline (generated) at (0,0) size 21x19
+            RenderCounter at (383,1) size 21x19
+              text run at (383,1) width 21: "\x{10D0}.\x{10DB}"
+        RenderText {#text} at (404,1) size 4x19
+          text run at (404,1) width 4: " "
+        RenderInline {SPAN} at (0,0) size 21x19
+          RenderInline (generated) at (0,0) size 21x19
+            RenderCounter at (408,1) size 21x19
+              text run at (408,1) width 21: "\x{10D0}.\x{10DC}"
+        RenderText {#text} at (429,1) size 4x19
+          text run at (429,1) width 4: " "
+        RenderInline {SPAN} at (0,0) size 21x19
+          RenderInline (generated) at (0,0) size 21x19
+            RenderCounter at (433,1) size 21x19
+              text run at (433,1) width 21: "\x{10D0}.\x{10F2}"
+        RenderText {#text} at (454,1) size 4x19
+          text run at (454,1) width 4: " "
+        RenderInline {SPAN} at (0,0) size 24x19
+          RenderInline (generated) at (0,0) size 24x19
+            RenderCounter at (458,1) size 24x19
+              text run at (458,1) width 24: "\x{10D0}.\x{10DD}"
+        RenderText {#text} at (482,1) size 4x19
+          text run at (482,1) width 4: " "
+        RenderInline {SPAN} at (0,0) size 19x19
+          RenderInline (generated) at (0,0) size 19x19
+            RenderCounter at (486,1) size 19x19
+              text run at (486,1) width 19: "\x{10D0}.\x{10DE}"
+        RenderText {#text} at (505,1) size 4x19
+          text run at (505,1) width 4: " "
+        RenderInline {SPAN} at (0,0) size 22x19
+          RenderInline (generated) at (0,0) size 22x19
+            RenderCounter at (509,1) size 22x19
+              text run at (509,1) width 22: "\x{10D0}.\x{10DF}"
+        RenderText {#text} at (531,1) size 4x19
+          text run at (531,1) width 4: " "
+        RenderInline {SPAN} at (0,0) size 24x19
+          RenderInline (generated) at (0,0) size 24x19
+            RenderCounter at (535,1) size 24x19
+              text run at (535,1) width 24: "\x{10D0}.\x{10E0}"
+        RenderText {#text} at (559,1) size 4x19
+          text run at (559,1) width 4: " "
+        RenderInline {SPAN} at (0,0) size 21x19
+          RenderInline (generated) at (0,0) size 21x19
+            RenderCounter at (563,1) size 21x19
+              text run at (563,1) width 21: "\x{10D0}.\x{10E1}"
+        RenderText {#text} at (584,1) size 4x19
+          text run at (584,1) width 4: " "
+        RenderInline {SPAN} at (0,0) size 24x19
+          RenderInline (generated) at (0,0) size 24x19
+            RenderCounter at (588,1) size 24x19
+              text run at (588,1) width 24: "\x{10D0}.\x{10E2}"
+        RenderText {#text} at (612,1) size 4x19
+          text run at (612,1) width 4: " "
+        RenderInline {SPAN} at (0,0) size 20x19
+          RenderInline (generated) at (0,0) size 20x19
+            RenderCounter at (616,1) size 20x19
+              text run at (616,1) width 20: "\x{10D0}.\x{10F3}"
+        RenderText {#text} at (636,1) size 4x19
+          text run at (636,1) width 4: " "
+        RenderInline {SPAN} at (0,0) size 27x19
+          RenderInline (generated) at (0,0) size 27x19
+            RenderCounter at (640,1) size 27x19
+              text run at (640,1) width 27: "\x{10D0}.\x{10E4}"
+        RenderText {#text} at (667,1) size 4x19
+          text run at (667,1) width 4: " "
+        RenderInline {SPAN} at (0,0) size 18x19
+          RenderInline (generated) at (0,0) size 18x19
+            RenderCounter at (671,1) size 18x19
+              text run at (671,1) width 18: "\x{10D0}.\x{10E5}"
+        RenderText {#text} at (689,1) size 4x19
+          text run at (689,1) width 4: " "
+        RenderInline {SPAN} at (0,0) size 24x19
+          RenderInline (generated) at (0,0) size 24x19
+            RenderCounter at (693,1) size 24x19
+              text run at (693,1) width 24: "\x{10D0}.\x{10E6}"
+        RenderText {#text} at (717,1) size 4x19
+          text run at (717,1) width 4: " "
+        RenderInline {SPAN} at (0,0) size 21x19
+          RenderInline (generated) at (0,0) size 21x19
+            RenderCounter at (721,1) size 21x19
+              text run at (721,1) width 21: "\x{10D0}.\x{10E7}"
+        RenderText {#text} at (742,1) size 4x19
+          text run at (742,1) width 4: " "
+        RenderInline {SPAN} at (0,0) size 21x19
+          RenderInline (generated) at (0,0) size 21x19
+            RenderCounter at (746,1) size 21x19
+              text run at (746,1) width 21: "\x{10D0}.\x{10E8}"
+        RenderText {#text} at (767,1) size 4x19
+          text run at (767,1) width 4: " "
+        RenderInline {SPAN} at (0,0) size 21x19
+          RenderInline (generated) at (0,0) size 21x19
+            RenderCounter at (771,1) size 21x19
+              text run at (771,1) width 21: "\x{10D0}.\x{10E9}"
+        RenderText {#text} at (792,1) size 4x19
+          text run at (792,1) width 4: " "
+        RenderInline {SPAN} at (0,0) size 21x19
+          RenderInline (generated) at (0,0) size 21x19
+            RenderCounter at (796,1) size 21x19
+              text run at (796,1) width 21: "\x{10D0}.\x{10EA}"
+        RenderText {#text} at (817,1) size 4x19
+          text run at (817,1) width 4: " "
+        RenderInline {SPAN} at (0,0) size 21x19
+          RenderInline (generated) at (0,0) size 21x19
+            RenderCounter at (821,1) size 21x19
+              text run at (821,1) width 21: "\x{10D0}.\x{10EB}"
+        RenderText {#text} at (842,1) size 4x19
+          text run at (842,1) width 4: " "
+        RenderInline {SPAN} at (0,0) size 20x19
+          RenderInline (generated) at (0,0) size 20x19
+            RenderCounter at (846,1) size 20x19
+              text run at (846,1) width 20: "\x{10D0}.\x{10EC}"
+        RenderText {#text} at (866,1) size 4x19
+          text run at (866,1) width 4: " "
+        RenderInline {SPAN} at (0,0) size 20x19
+          RenderInline (generated) at (0,0) size 20x19
+            RenderCounter at (870,1) size 20x19
+              text run at (870,1) width 20: "\x{10D0}.\x{10ED}"
+        RenderText {#text} at (890,1) size 4x19
+          text run at (890,1) width 4: " "
+        RenderInline {SPAN} at (0,0) size 21x19
+          RenderInline (generated) at (0,0) size 21x19
+            RenderCounter at (894,1) size 21x19
+              text run at (894,1) width 21: "\x{10D0}.\x{10EE}"
+        RenderText {#text} at (915,1) size 4x19
+          text run at (915,1) width 4: " "
+        RenderInline {SPAN} at (0,0) size 19x19
+          RenderInline (generated) at (0,0) size 19x19
+            RenderCounter at (919,1) size 19x19
+              text run at (919,1) width 19: "\x{10D0}.\x{10F4}"
+        RenderText {#text} at (938,1) size 4x19
+          text run at (938,1) width 4: " "
+        RenderInline {SPAN} at (0,0) size 23x19
+          RenderInline (generated) at (0,0) size 23x19
+            RenderCounter at (942,1) size 23x19
+              text run at (942,1) width 23: "\x{10D0}.\x{10EF}"
+        RenderText {#text} at (965,1) size 4x19
+          text run at (965,1) width 4: " "
+        RenderInline {SPAN} at (0,0) size 19x19
+          RenderInline (generated) at (0,0) size 19x19
+            RenderCounter at (969,1) size 19x19
+              text run at (969,1) width 19: "\x{10D0}.\x{10F0}"
+        RenderText {#text} at (988,1) size 4x19
+          text run at (988,1) width 4: " "
+        RenderInline {SPAN} at (0,0) size 20x19
+          RenderInline (generated) at (0,0) size 20x19
+            RenderCounter at (992,1) size 20x19
+              text run at (992,1) width 20: "\x{10D0}.\x{10F5}"
+        RenderText {#text} at (1012,1) size 4x19
+          text run at (1012,1) width 4: " "
+        RenderInline {SPAN} at (0,0) size 60x19
+          RenderInline (generated) at (0,0) size 60x19
+            RenderCounter at (1016,1) size 60x19
+              text run at (1016,1) width 60: "\x{10D0}.\x{10F5}\x{10F0}\x{10E8}\x{10DF}\x{10D7}"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,57) size 784x21
+        RenderText {#text} at (0,1) size 1076x19
+          text run at (0,1) width 24: "\x{10D0}.\x{10D0} "
+          text run at (24,1) width 25: "\x{10D0}.\x{10D1} "
+          text run at (49,1) width 25: "\x{10D0}.\x{10D2} "
+          text run at (74,1) width 31: "\x{10D0}.\x{10D3} "
+          text run at (105,1) width 24: "\x{10D0}.\x{10D4} "
+          text run at (129,1) width 24: "\x{10D0}.\x{10D5} "
+          text run at (153,1) width 28: "\x{10D0}.\x{10D6} "
+          text run at (181,1) width 26: "\x{10D0}.\x{10F1} "
+          text run at (207,1) width 30: "\x{10D0}.\x{10D7} "
+          text run at (237,1) width 25: "\x{10D0}.\x{10D8} "
+          text run at (262,1) width 33: "\x{10D0}.\x{10D8}\x{10D0} "
+          text run at (295,1) width 34: "\x{10D0}.\x{10D8}\x{10D1} "
+          text run at (329,1) width 21: "\x{10D0}.\x{10D9} "
+          text run at (350,1) width 33: "\x{10D0}.\x{10DA} "
+          text run at (383,1) width 25: "\x{10D0}.\x{10DB} "
+          text run at (408,1) width 25: "\x{10D0}.\x{10DC} "
+          text run at (433,1) width 25: "\x{10D0}.\x{10F2} "
+          text run at (458,1) width 28: "\x{10D0}.\x{10DD} "
+          text run at (486,1) width 23: "\x{10D0}.\x{10DE} "
+          text run at (509,1) width 26: "\x{10D0}.\x{10DF} "
+          text run at (535,1) width 28: "\x{10D0}.\x{10E0} "
+          text run at (563,1) width 25: "\x{10D0}.\x{10E1} "
+          text run at (588,1) width 28: "\x{10D0}.\x{10E2} "
+          text run at (616,1) width 24: "\x{10D0}.\x{10F3} "
+          text run at (640,1) width 31: "\x{10D0}.\x{10E4} "
+          text run at (671,1) width 22: "\x{10D0}.\x{10E5} "
+          text run at (693,1) width 28: "\x{10D0}.\x{10E6} "
+          text run at (721,1) width 25: "\x{10D0}.\x{10E7} "
+          text run at (746,1) width 25: "\x{10D0}.\x{10E8} "
+          text run at (771,1) width 25: "\x{10D0}.\x{10E9} "
+          text run at (796,1) width 25: "\x{10D0}.\x{10EA} "
+          text run at (821,1) width 25: "\x{10D0}.\x{10EB} "
+          text run at (846,1) width 24: "\x{10D0}.\x{10EC} "
+          text run at (870,1) width 24: "\x{10D0}.\x{10ED} "
+          text run at (894,1) width 25: "\x{10D0}.\x{10EE} "
+          text run at (919,1) width 23: "\x{10D0}.\x{10F4} "
+          text run at (942,1) width 27: "\x{10D0}.\x{10EF} "
+          text run at (969,1) width 23: "\x{10D0}.\x{10F0} "
+          text run at (992,1) width 24: "\x{10D0}.\x{10F5} "
+          text run at (1016,1) width 60: "\x{10D0}.\x{10F5}\x{10F0}\x{10E8}\x{10DF}\x{10D7}"

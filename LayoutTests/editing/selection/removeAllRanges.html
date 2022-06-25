@@ -1,0 +1,14 @@
+<p>This tests Selection::removeAllRanges().</p>
+<div id="div">This should not be selected.</div>
+
+<script>
+if (window.testRunner) {
+    window.testRunner.dumpEditingCallbacks();
+    window.testRunner.dumpAsText();
+}
+var sel = window.getSelection();
+var div = document.getElementById("div");
+div.focus();
+document.execCommand("SelectAll");
+sel.removeAllRanges();
+</script>

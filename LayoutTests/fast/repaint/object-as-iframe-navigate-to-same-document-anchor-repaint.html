@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+object {
+	border: 1px solid black;
+}
+</style>
+<script>
+function changeURLFragment(objectElement)
+{
+    objectElement.data = objectElement.data + "#green";
+}
+</script>
+</head>
+<body>
+<!-- This test verifies that we paint the contents of an HTML object that is programmatically navigated to an anchor in the same document. This test PASSED if you see a green square. Otherwise, it FAILED. -->
+<object data="resources/red-square-on-top-of-green-square.html" width="256" height="256" onload="changeURLFragment(this)"></object>
+</body>
+</html>

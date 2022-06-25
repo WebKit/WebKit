@@ -1,0 +1,43 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/reference/clip-path-circle-001-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/reference/clip-path-clip-rule-001-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/reference/clip-path-clip-rule-002-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/reference/clip-path-clip-rule-003-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/reference/clip-path-clip-rule-004-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/reference/clip-path-content-clip-004-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/reference/clip-path-ellipse-001-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/reference/clip-path-invisible-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/reference/clip-path-negative-scale-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/reference/clip-path-on-marker-001-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/reference/clip-path-on-marker-002-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/reference/clip-path-precision-001-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/reference/clip-path-recursion-002-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/reference/clip-path-shape-inset-001-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/reference/clip-path-square-001-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/reference/clip-path-square-002-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/reference/clip-path-square-003-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/reference/clip-path-square-hole-001-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/reference/clip-path-text-001-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/reference/clip-path-text-002-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/reference/clip-path-text-003-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/reference/mask-and-nested-clip-path-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/reference/mask-content-clip-001-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/reference/mask-content-clip-002-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/reference/mask-nested-clip-path-001-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/reference/mask-nested-clip-path-002-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/reference/mask-nested-clip-path-003-ref.svg

@@ -1,0 +1,42 @@
+<html>
+	<head>
+		<title>Test - Bug #124647: Fix hover area for divs with css transforms</title>
+		<style>
+			#transformed {
+				-webkit-transform: translateY(50px) rotateX(20deg) rotateZ(10deg);
+				border: solid 5px rgba(128,128,128,0.5);
+				padding: 10px;
+				margin: 15px;
+			}
+			#transformed:hover {
+				box-shadow: 0px 0px 0px 10px rgba(0,128,0,0.5);
+			}
+			#parent {
+				outline: dotted 1px #888;
+			}
+			#transformed, #parent {
+				width: 600px;
+				height: 150px;
+			}
+		</style>
+
+		<script src="resources/hit-test-utils.js"></script>
+		<script>
+			var hitTestData = [
+				{ 'point': [70, 70], 'target' : 'transformed' },
+				{ 'point': [630, 130], 'target' : 'transformed' },
+				{ 'point': [40, 130], 'target' : 'transformed' },
+				{ 'point': [620, 270], 'target' : 'transformed' }
+			];
+
+			window.addEventListener('load', runTest, false);
+		  </script>
+	</head>
+	<body id="body">
+		<div id="parent"><div id="transformed">transformed</div></div>
+
+		<p>Test passes if the hover state of a transformed div is activated on the entire surface of the div.</p>
+
+		<div id="results"></div>
+	</body>
+</html>

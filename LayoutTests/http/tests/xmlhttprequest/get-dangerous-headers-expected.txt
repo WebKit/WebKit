@@ -1,0 +1,3 @@
+Test that getResponseHeader and getAllResponseHeaders cannot be used to get the cookie header fields.
+
+PASS

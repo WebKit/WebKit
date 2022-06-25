@@ -1,0 +1,2 @@
+This tests that we do not hit an assertion while unfocusing.
+

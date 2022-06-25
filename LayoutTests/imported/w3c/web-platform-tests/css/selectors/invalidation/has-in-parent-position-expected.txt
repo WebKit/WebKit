@@ -1,0 +1,213 @@
+
+PASS Initial color
+PASS add .test to subject_ancestor
+PASS remove .test from subject_ancestor
+PASS add .test to subject_parent
+PASS remove .test from subject_parent
+PASS add .test to subject
+PASS remove .test from subject
+PASS add .test to subject_child
+PASS remove .test from subject_child
+PASS add .test to subject_descendant
+PASS remove .test from subject_descendant
+PASS insert element div.test before subject_ancestor
+PASS remove the class 'test' from the element inserted before subject_ancestor
+PASS add the class 'test' again to the element inserted before subject_ancestor
+PASS remove element div.test before subject_ancestor
+PASS insert element div before subject_ancestor
+PASS add the class 'test' to the element inserted again before subject_ancestor
+PASS remove the class 'test' from the element inserted again before subject_ancestor
+PASS remove element div before subject_ancestor
+PASS insert element div[test_attr] before subject_ancestor
+PASS remove element div[test_attr] before subject_ancestor
+PASS insert element div.test before subject_parent
+PASS remove the class 'test' from the element inserted before subject_parent
+PASS add the class 'test' again to the element inserted before subject_parent
+PASS remove element div.test before subject_parent
+PASS insert element div before subject_parent
+PASS add the class 'test' to the element inserted again before subject_parent
+PASS remove the class 'test' from the element inserted again before subject_parent
+PASS remove element div before subject_parent
+PASS insert element div[test_attr] before subject_parent
+PASS remove element div[test_attr] before subject_parent
+PASS insert element div.test before subject
+PASS remove the class 'test' from the element inserted before subject
+PASS add the class 'test' again to the element inserted before subject
+PASS remove element div.test before subject
+PASS insert element div before subject
+PASS add the class 'test' to the element inserted again before subject
+PASS remove the class 'test' from the element inserted again before subject
+PASS remove element div before subject
+PASS insert element div[test_attr] before subject
+PASS remove element div[test_attr] before subject
+PASS insert element div.test before subject_child
+PASS remove the class 'test' from the element inserted before subject_child
+PASS add the class 'test' again to the element inserted before subject_child
+PASS remove element div.test before subject_child
+PASS insert element div before subject_child
+PASS add the class 'test' to the element inserted again before subject_child
+PASS remove the class 'test' from the element inserted again before subject_child
+PASS remove element div before subject_child
+PASS insert element div[test_attr] before subject_child
+PASS remove element div[test_attr] before subject_child
+PASS insert element div.test before subject_descendant
+PASS remove the class 'test' from the element inserted before subject_descendant
+PASS add the class 'test' again to the element inserted before subject_descendant
+PASS remove element div.test before subject_descendant
+PASS insert element div before subject_descendant
+PASS add the class 'test' to the element inserted again before subject_descendant
+PASS remove the class 'test' from the element inserted again before subject_descendant
+PASS remove element div before subject_descendant
+PASS insert element div[test_attr] before subject_descendant
+PASS remove element div[test_attr] before subject_descendant
+PASS insert element div.test after subject_ancestor
+PASS remove the class 'test' from the element inserted after subject_ancestor
+PASS add the class 'test' again to the element inserted after subject_ancestor
+PASS remove element div.test after subject_ancestor
+PASS insert element div after subject_ancestor
+PASS add the class 'test' to the element inserted again after subject_ancestor
+PASS remove the class 'test' from the element inserted again after subject_ancestor
+PASS remove element div after subject_ancestor
+PASS insert element div[test_attr] after subject_ancestor
+PASS remove element div[test_attr] after subject_ancestor
+PASS insert element div.test after subject_parent
+PASS remove the class 'test' from the element inserted after subject_parent
+PASS add the class 'test' again to the element inserted after subject_parent
+PASS remove element div.test after subject_parent
+PASS insert element div after subject_parent
+PASS add the class 'test' to the element inserted again after subject_parent
+PASS remove the class 'test' from the element inserted again after subject_parent
+PASS remove element div after subject_parent
+PASS insert element div[test_attr] after subject_parent
+PASS remove element div[test_attr] after subject_parent
+PASS insert element div.test after subject
+PASS remove the class 'test' from the element inserted after subject
+PASS add the class 'test' again to the element inserted after subject
+PASS remove element div.test after subject
+PASS insert element div after subject
+PASS add the class 'test' to the element inserted again after subject
+PASS remove the class 'test' from the element inserted again after subject
+PASS remove element div after subject
+PASS insert element div[test_attr] after subject
+PASS remove element div[test_attr] after subject
+PASS insert element div.test after subject_child
+PASS remove the class 'test' from the element inserted after subject_child
+PASS add the class 'test' again to the element inserted after subject_child
+PASS remove element div.test after subject_child
+PASS insert element div after subject_child
+PASS add the class 'test' to the element inserted again after subject_child
+PASS remove the class 'test' from the element inserted again after subject_child
+PASS remove element div after subject_child
+PASS insert element div[test_attr] after subject_child
+PASS remove element div[test_attr] after subject_child
+PASS insert element div.test after subject_descendant
+PASS remove the class 'test' from the element inserted after subject_descendant
+PASS add the class 'test' again to the element inserted after subject_descendant
+PASS remove element div.test after subject_descendant
+PASS insert element div after subject_descendant
+PASS add the class 'test' to the element inserted again after subject_descendant
+PASS remove the class 'test' from the element inserted again after subject_descendant
+PASS remove element div after subject_descendant
+PASS insert element div[test_attr] after subject_descendant
+PASS remove element div[test_attr] after subject_descendant
+PASS insert tree div>div.test before subject_ancestor
+PASS remove the class 'test' from the element in the tree inserted before subject_ancestor
+PASS add the class 'test' again to the element in the tree inserted before subject_ancestor
+PASS remove tree div>div.test before subject_ancestor
+PASS insert tree div>div before subject_ancestor
+PASS add the class 'test' to the element in the tree inserted again before subject_ancestor
+PASS remove the class 'test' from the element in the tree inserted again before subject_ancestor
+PASS remove tree div>div before subject_ancestor
+PASS insert element div>div[test_attr] before subject_ancestor
+PASS remove element div>div[test_attr] before subject_ancestor
+PASS insert tree div>div.test before subject_parent
+PASS remove the class 'test' from the element in the tree inserted before subject_parent
+PASS add the class 'test' again to the element in the tree inserted before subject_parent
+PASS remove tree div>div.test before subject_parent
+PASS insert tree div>div before subject_parent
+PASS add the class 'test' to the element in the tree inserted again before subject_parent
+PASS remove the class 'test' from the element in the tree inserted again before subject_parent
+PASS remove tree div>div before subject_parent
+PASS insert element div>div[test_attr] before subject_parent
+PASS remove element div>div[test_attr] before subject_parent
+PASS insert tree div>div.test before subject
+PASS remove the class 'test' from the element in the tree inserted before subject
+PASS add the class 'test' again to the element in the tree inserted before subject
+PASS remove tree div>div.test before subject
+PASS insert tree div>div before subject
+PASS add the class 'test' to the element in the tree inserted again before subject
+PASS remove the class 'test' from the element in the tree inserted again before subject
+PASS remove tree div>div before subject
+PASS insert element div>div[test_attr] before subject
+PASS remove element div>div[test_attr] before subject
+PASS insert tree div>div.test before subject_child
+PASS remove the class 'test' from the element in the tree inserted before subject_child
+PASS add the class 'test' again to the element in the tree inserted before subject_child
+PASS remove tree div>div.test before subject_child
+PASS insert tree div>div before subject_child
+PASS add the class 'test' to the element in the tree inserted again before subject_child
+PASS remove the class 'test' from the element in the tree inserted again before subject_child
+PASS remove tree div>div before subject_child
+PASS insert element div>div[test_attr] before subject_child
+PASS remove element div>div[test_attr] before subject_child
+PASS insert tree div>div.test before subject_descendant
+PASS remove the class 'test' from the element in the tree inserted before subject_descendant
+PASS add the class 'test' again to the element in the tree inserted before subject_descendant
+PASS remove tree div>div.test before subject_descendant
+PASS insert tree div>div before subject_descendant
+PASS add the class 'test' to the element in the tree inserted again before subject_descendant
+PASS remove the class 'test' from the element in the tree inserted again before subject_descendant
+PASS remove tree div>div before subject_descendant
+PASS insert element div>div[test_attr] before subject_descendant
+PASS remove element div>div[test_attr] before subject_descendant
+PASS insert tree div>div.test after subject_ancestor
+PASS remove the class 'test' from the element in the tree inserted after subject_ancestor
+PASS add the class 'test' again to the element in the tree inserted after subject_ancestor
+PASS remove tree div>div.test after subject_ancestor
+PASS insert tree div>div after subject_ancestor
+PASS add the class 'test' to the element in the tree inserted again after subject_ancestor
+PASS remove the class 'test' from the element in the tree inserted again after subject_ancestor
+PASS remove tree div>div after subject_ancestor
+PASS insert element div>div[test_attr] after subject_ancestor
+PASS remove element div>div[test_attr] after subject_ancestor
+PASS insert tree div>div.test after subject_parent
+PASS remove the class 'test' from the element in the tree inserted after subject_parent
+PASS add the class 'test' again to the element in the tree inserted after subject_parent
+PASS remove tree div>div.test after subject_parent
+PASS insert tree div>div after subject_parent
+PASS add the class 'test' to the element in the tree inserted again after subject_parent
+PASS remove the class 'test' from the element in the tree inserted again after subject_parent
+PASS remove tree div>div after subject_parent
+PASS insert element div>div[test_attr] after subject_parent
+PASS remove element div>div[test_attr] after subject_parent
+PASS insert tree div>div.test after subject
+PASS remove the class 'test' from the element in the tree inserted after subject
+PASS add the class 'test' again to the element in the tree inserted after subject
+PASS remove tree div>div.test after subject
+PASS insert tree div>div after subject
+PASS add the class 'test' to the element in the tree inserted again after subject
+PASS remove the class 'test' from the element in the tree inserted again after subject
+PASS remove tree div>div after subject
+PASS insert element div>div[test_attr] after subject
+PASS remove element div>div[test_attr] after subject
+PASS insert tree div>div.test after subject_child
+PASS remove the class 'test' from the element in the tree inserted after subject_child
+PASS add the class 'test' again to the element in the tree inserted after subject_child
+PASS remove tree div>div.test after subject_child
+PASS insert tree div>div after subject_child
+PASS add the class 'test' to the element in the tree inserted again after subject_child
+PASS remove the class 'test' from the element in the tree inserted again after subject_child
+PASS remove tree div>div after subject_child
+PASS insert element div>div[test_attr] after subject_child
+PASS remove element div>div[test_attr] after subject_child
+PASS insert tree div>div.test after subject_descendant
+PASS remove the class 'test' from the element in the tree inserted after subject_descendant
+PASS add the class 'test' again to the element in the tree inserted after subject_descendant
+PASS remove tree div>div.test after subject_descendant
+PASS insert tree div>div after subject_descendant
+PASS add the class 'test' to the element in the tree inserted again after subject_descendant
+PASS remove the class 'test' from the element in the tree inserted again after subject_descendant
+PASS remove tree div>div after subject_descendant
+PASS insert element div>div[test_attr] after subject_descendant
+PASS remove element div>div[test_attr] after subject_descendant
+

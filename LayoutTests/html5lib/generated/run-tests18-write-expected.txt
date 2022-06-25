@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: SyntaxError: Unexpected token '<'
+CONSOLE MESSAGE: SyntaxError: Unexpected token '<'
+CONSOLE MESSAGE: SyntaxError: Unexpected token '<'
+CONSOLE MESSAGE: SyntaxError: Unexpected token '<'
+../resources/tests18.dat: PASS

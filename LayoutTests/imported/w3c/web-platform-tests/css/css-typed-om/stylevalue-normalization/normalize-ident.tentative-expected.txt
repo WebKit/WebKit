@@ -1,0 +1,4 @@
+
+FAIL CSS identifiers are normalized from String to CSSKeywordValues assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
+FAIL CSS identifiers are normalized from CSSOM to CSSKeywordValues assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
+

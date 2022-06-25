@@ -1,0 +1,10 @@
+
+PASS textRects['fill'] is [0, 0, 100, 25]
+PASS textRects['contain'] is [50, 0, 50, 25]
+PASS textRects['cover'] is [0, -50, 100, 50]
+PASS textRects['none'] is [-100, -150, 200, 100]
+PASS textRects['scale-down'] is [50, 0, 50, 25]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

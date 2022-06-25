@@ -1,0 +1,14 @@
+Test that if document is visibly mutated in mouseover handler then synthetic click is not generated until the next tap.
+Tapping once
+mouseover
+mouseclick
+Tapping again
+mouseclick
+Tapping out
+mouseout
+Enabling mutation on mouseover
+Tapping once
+mouseover
+Tapping again
+mouseclick
+

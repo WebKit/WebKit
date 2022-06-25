@@ -1,0 +1,20 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     style="font-size:2em;">
+
+  <title>Reference to check that text in links is displayed</title>
+
+  <!-- link in text -->
+  <text x="10" y="50" fill="lime">This should be green</text>
+
+  <!-- link in tspan -->
+  <text x="10" y="100" fill="lime">This should be green</text>
+
+  <!-- tspan in link -->
+  <text x="10" y="150" fill="lime">This should be green</text>
+
+</svg>

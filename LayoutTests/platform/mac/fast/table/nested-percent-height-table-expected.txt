@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {H3} at (0,0) size 784x22
+        RenderText {#text} at (0,0) size 191x22
+          text run at (0,0) width 191: "Height:100% Problems"
+      RenderBlock {P} at (0,40) size 784x19
+        RenderText {#text} at (0,0) size 757x18
+          text run at (0,0) width 406: "In the example below, the inner table should be 300 pixels tall. "
+          text run at (405,0) width 352: "Instead the height:100% on the table cell isn't honored."
+      RenderTable {TABLE} at (354,74) size 76x301 [bgcolor=#FF0000]
+        RenderTableSection {TBODY} at (0,0) size 75x300
+          RenderTableRow {TR} at (0,0) size 75x300
+            RenderTableCell {TD} at (0,0) size 75x300 [bgcolor=#0000FF] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (0,0) size 75x300 [bgcolor=#008000]
+                RenderTableSection {TBODY} at (0,0) size 75x300
+                  RenderTableRow {TR} at (0,2) size 75x296
+                    RenderTableCell {TD} at (2,140) size 71x20 [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (1,1) size 69x18
+                        text run at (1,1) width 69: "Inner table"

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<div id="container">
+<div id="source" contenteditable="true">hello, <b>world</b><br>WebKit</div>
+<div id="destination" onpaste="check(event)" contenteditable="true"></div>
+</div>
+</body>
+<script>
+description('Tests that pasting as plain text only exposes "text/html" as well as "text/plain" in the clipboard when custom data support is turned off.');
+
+if (!window.internals || !window.internals.settings)
+    testFailed('This test requires internals.settings');
+else {
+    internals.settings.setCustomPasteboardDataEnabled(false);
+
+    document.getElementById("source").focus();
+    document.execCommand("SelectAll");
+    document.execCommand("Copy");
+
+    document.getElementById("destination").focus();
+    document.execCommand("Paste");
+    document.getElementById('container').remove();
+}
+
+function check(event)
+{
+    shouldBeTrue('event.clipboardData.types.includes("text/plain")');
+    shouldBeTrue('event.clipboardData.types.includes("text/html")');
+    shouldBeEqualToString('event.clipboardData.getData("text/plain")', 'hello, world\nWebKit');
+    shouldNotBeEqualToString('event.clipboardData.getData("text/html")', '');
+    shouldBeTrue('items = Array.from(event.clipboardData.items); items.length >= 2');
+    shouldBeTrue('items.some((item) => item.type == "text/plain")');
+    shouldBeTrue('items.some((item) => item.type == "text/html")');
+}
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+var element = document.createElement('p');
+
+var script = document.createElement('script');
+script.textContent = 'document.currentScript.nextSibling.remove()';
+
+var container = document.createElement('div');
+container.appendChild(script);
+container.appendChild(element);
+
+document.body.appendChild(container);
+document.body.innerHTML = 'PASS';
+</script>
+</body>
+</html>

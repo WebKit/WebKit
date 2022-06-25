@@ -1,0 +1,10 @@
+Ensure the image frame duration is respected even if the frame finishes decoding early.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internals.imageFrameIndex(image) is 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,3 @@
+
+PASS Setting border-radius does not expand to longhand properties in cssText.
+

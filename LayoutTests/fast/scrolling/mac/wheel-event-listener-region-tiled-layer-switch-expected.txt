@@ -1,0 +1,10 @@
+
+Test that scroll over box does not scroll page
+PASS windowScrollEventCount is 0
+
+Test that scroll over box does not scroll page after switch to tiled layer
+PASS windowScrollEventCount is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

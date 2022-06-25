@@ -1,0 +1,337 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+#webkit-test * {
+    background-color: white;
+}
+#webkit-test :default {
+    background-color: rgb(1, 2, 3);
+}
+</style>
+</head>
+<body>
+    <div style="display:none" id="webkit-test">
+        <button id="button1">Button1</button>
+        <form>
+            <input id="input1">
+            <button id="button2">Button2</button>
+        </form>
+        <form>
+            <input id="input2" type="submit">
+            <button id="button3">Button3</button>
+        </form>
+        <form>
+            <input id="input3" type="image">
+            <button id="button4">Button4</button>
+        </form>
+        <form id="free-form-1">
+        </form>
+        <input id="input4" type="submit" form="free-form-1">
+        <button id="button5" form="free-form-1">Button5</button>
+        <form id="free-form-2">
+        </form>
+        <button id="button6" form="free-form-2">Button6</button>
+        <input id="input5" type="image" form="free-form-2">
+        <input type="checkbox" id="input6">
+        <input type="checkbox" id="input7" checked>
+        <input type="radio" id="input8">
+        <input type="radio" id="input9" checked>
+        <input type="radio" id="input10" name="group1">
+        <input type="radio" id="input11" name="group1" checked>
+        <option id="option1">Option</option>
+        <option selected id="option2">Option</option>
+        <select>
+            <option id="option3">Option</option>
+            <option selected id="option4">Option</option>
+        </select>
+    </div>
+</body>
+<script>
+"use strict";
+description('Check the basic features of the :default pseudo class');
+
+function elementsStyledWithDefaultSelector() {
+    let elements = [];
+    for (let element of document.querySelectorAll("#webkit-test *")) {
+        if (getComputedStyle(element).backgroundColor === 'rgb(1, 2, 3)') {
+            elements.push(element.id);
+        }
+    }
+    return elements;
+}
+
+function elementsMatchingDefaultSelector() {
+    let elements = [];
+    for (let element of document.querySelectorAll(":default")) {
+        elements.push(element.id);
+    }
+    return elements;
+}
+
+debug("Initial State");
+shouldBe('elementsStyledWithDefaultSelector()', '["button2", "input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]');
+shouldBe('elementsMatchingDefaultSelector()', '["button2", "input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]');
+
+debug("Changing input1 input a submit button, it should become the form's default button");
+var input1 = document.getElementById("input1");
+input1.type = "submit";
+shouldBe('elementsStyledWithDefaultSelector()', '["input1", "input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]');
+shouldBe('elementsMatchingDefaultSelector()', '["input1", "input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]');
+
+debug("Changing button order in the first form");
+input1.parentElement.appendChild(input1);
+shouldBe('elementsStyledWithDefaultSelector()', '["button2", "input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]');
+shouldBe('elementsMatchingDefaultSelector()', '["button2", "input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]');
+
+debug("Removing button2 from its form");
+var button2 = document.getElementById("button2");
+button2.parentElement.removeChild(button2);
+shouldBe('elementsStyledWithDefaultSelector()', '["input1", "input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]');
+shouldBe('elementsMatchingDefaultSelector()', '["input1", "input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]');
+shouldBeFalse('button2.matches(":default")');
+
+debug("Adding back button2");
+input1.parentElement.insertBefore(button2, input1);
+shouldBe('elementsStyledWithDefaultSelector()', '["button2", "input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]');
+shouldBe('elementsMatchingDefaultSelector()', '["button2", "input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]');
+
+debug("Setting button2 type to button");
+button2.setAttribute("type", "button");
+shouldBe('elementsStyledWithDefaultSelector()', '["input1", "input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]');
+shouldBe('elementsMatchingDefaultSelector()', '["input1", "input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]');
+
+debug("Setting button2 type to submit");
+button2.setAttribute("type", "submit");
+shouldBe('elementsStyledWithDefaultSelector()', '["button2", "input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]');
+shouldBe('elementsMatchingDefaultSelector()', '["button2", "input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]');
+
+debug("Setting button2 type to reset");
+button2.setAttribute("type", "reset");
+shouldBe('elementsStyledWithDefaultSelector()', '["input1", "input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]');
+shouldBe('elementsMatchingDefaultSelector()', '["input1", "input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]');
+
+debug("Setting button2 type to webkit");
+button2.setAttribute("type", "webkit");
+shouldBe('elementsStyledWithDefaultSelector()', '["button2", "input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]');
+shouldBe('elementsMatchingDefaultSelector()', '["button2", "input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]');
+
+debug("Removing the type attribute from button2");
+button2.removeAttribute("type");
+shouldBe('elementsStyledWithDefaultSelector()', '["button2", "input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]');
+shouldBe('elementsMatchingDefaultSelector()', '["button2", "input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]');
+
+debug("Removing input1, button2 is still the first button");
+input1.parentElement.removeChild(input1);
+shouldBe('elementsStyledWithDefaultSelector()', '["button2", "input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]');
+shouldBe('elementsMatchingDefaultSelector()', '["button2", "input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]');
+shouldBeFalse('input1.matches(":default")');
+
+debug("Removing the form from the tree");
+var firstRemovedForm = button2.parentElement;
+firstRemovedForm.parentElement.removeChild(firstRemovedForm);
+shouldBe('elementsStyledWithDefaultSelector()', '["input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]');
+shouldBe('elementsMatchingDefaultSelector()', '["input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]');
+shouldBeTrue('button2.matches(":default")');
+shouldBeFalse('input1.matches(":default")');
+
+// Give GC a chance to collect.
+firstRemovedForm = undefined;
+input1 = undefined;
+button2 = undefined;
+
+debug("Changing the type of input2 to password");
+var input2 = document.getElementById("input2");
+input2.setAttribute("type", "password");
+shouldBe('elementsStyledWithDefaultSelector()', '["button3", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]');
+shouldBe('elementsMatchingDefaultSelector()', '["button3", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]');
+
+debug("Changing the type of input2 to image");
+input2.setAttribute("type", "image");
+shouldBe('elementsStyledWithDefaultSelector()', '["input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]');
+shouldBe('elementsMatchingDefaultSelector()', '["input2", "input3", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]');
+
+debug("Moving input2 to the form of input3, before input3");
+var input3 = document.getElementById("input3");
+input3.parentElement.insertBefore(input2, input3);
+shouldBe('elementsStyledWithDefaultSelector()', '["button3", "input2", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]');
+shouldBe('elementsMatchingDefaultSelector()', '["button3", "input2", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]');
+
+debug("Moving button5 inside the first form, but button5 has a form attribute");
+var button3 = document.getElementById("button3");
+var button5 = document.getElementById("button5");
+button3.parentElement.insertBefore(button5, button3);
+shouldBe('elementsStyledWithDefaultSelector()', '["button5", "button3", "input2", "button6", "input7", "input9", "input11", "option2", "option4"]');
+shouldBe('elementsMatchingDefaultSelector()', '["button5", "button3", "input2", "button6", "input7", "input9", "input11", "option2", "option4"]');
+
+debug("Removing button 5");
+button5.parentElement.removeChild(button5);
+shouldBe('elementsStyledWithDefaultSelector()', '["button3", "input2", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]');
+shouldBe('elementsMatchingDefaultSelector()', '["button3", "input2", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]');
+shouldBeFalse('button5.matches(":default")');
+button5 = undefined;
+
+debug("Moving input5 above button 6");
+var input5 = document.getElementById("input5");
+var button6 = document.getElementById("button6");
+input5.parentElement.insertBefore(input5, button6)
+shouldBe('elementsStyledWithDefaultSelector()', '["button3", "input2", "input4", "input5", "input7", "input9", "input11", "option2", "option4"]');
+shouldBe('elementsMatchingDefaultSelector()', '["button3", "input2", "input4", "input5", "input7", "input9", "input11", "option2", "option4"]');
+
+debug("Changing input5's type to submit");
+input5.type = "SUBMIT";
+shouldBe('elementsStyledWithDefaultSelector()', '["button3", "input2", "input4", "input5", "input7", "input9", "input11", "option2", "option4"]');
+shouldBe('elementsMatchingDefaultSelector()', '["button3", "input2", "input4", "input5", "input7", "input9", "input11", "option2", "option4"]');
+
+debug("Changing input5's type to reset");
+input5.type = "reset";
+shouldBe('elementsStyledWithDefaultSelector()', '["button3", "input2", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]');
+shouldBe('elementsMatchingDefaultSelector()', '["button3", "input2", "input4", "button6", "input7", "input9", "input11", "option2", "option4"]');
+
+debug("Removing free-form-1");
+var freeForm1 = document.getElementById("free-form-1");
+freeForm1.parentElement.removeChild(freeForm1);
+shouldBe('elementsStyledWithDefaultSelector()', '["button3", "input2", "button6", "input7", "input9", "input11", "option2", "option4"]');
+shouldBe('elementsMatchingDefaultSelector()', '["button3", "input2", "button6", "input7", "input9", "input11", "option2", "option4"]');
+freeForm1 = undefined;
+
+debug("Changing input5's type to image");
+input5.type = "image";
+shouldBe('elementsStyledWithDefaultSelector()', '["button3", "input2", "input5", "input7", "input9", "input11", "option2", "option4"]');
+shouldBe('elementsMatchingDefaultSelector()', '["button3", "input2", "input5", "input7", "input9", "input11", "option2", "option4"]');
+
+debug("Removing input5");
+input5.parentElement.removeChild(input5);
+shouldBe('elementsStyledWithDefaultSelector()', '["button3", "input2", "button6", "input7", "input9", "input11", "option2", "option4"]');
+shouldBe('elementsMatchingDefaultSelector()', '["button3", "input2", "button6", "input7", "input9", "input11", "option2", "option4"]');
+shouldBeFalse('input5.matches(":default")');
+input5 = undefined;
+
+debug("Removing button6");
+button6.parentElement.removeChild(button6);
+shouldBe('elementsStyledWithDefaultSelector()', '["button3", "input2", "input7", "input9", "input11", "option2", "option4"]');
+shouldBe('elementsMatchingDefaultSelector()', '["button3", "input2", "input7", "input9", "input11", "option2", "option4"]');
+shouldBeFalse('button6.matches(":default")');
+button6 = undefined;
+
+debug("Setting input6 as checked");
+var input6 = document.getElementById("input6");
+// Interestingly, the selector looks for the attribute, not the state.
+input6.checked = true;
+shouldBe('elementsStyledWithDefaultSelector()', '["button3", "input2", "input7", "input9", "input11", "option2", "option4"]');
+shouldBe('elementsMatchingDefaultSelector()', '["button3", "input2", "input7", "input9", "input11", "option2", "option4"]');
+
+debug("Setting the checked attribute to input6");
+input6.setAttribute("checked", "");
+shouldBe('elementsStyledWithDefaultSelector()', '["button3", "input2", "input6", "input7", "input9", "input11", "option2", "option4"]');
+shouldBe('elementsMatchingDefaultSelector()', '["button3", "input2", "input6", "input7", "input9", "input11", "option2", "option4"]');
+
+debug("Setting input7 as unchecked");
+var input7 = document.getElementById("input7");
+// Interestingly, the selector looks for the attribute, not the state.
+input7.checked = false;
+shouldBe('elementsStyledWithDefaultSelector()', '["button3", "input2", "input6", "input7", "input9", "input11", "option2", "option4"]');
+shouldBe('elementsMatchingDefaultSelector()', '["button3", "input2", "input6", "input7", "input9", "input11", "option2", "option4"]');
+
+debug("Setting input7's checked attribute to 'WebKit'");
+input7.setAttribute("checked", "WebKit");
+shouldBe('elementsStyledWithDefaultSelector()', '["button3", "input2", "input6", "input7", "input9", "input11", "option2", "option4"]');
+shouldBe('elementsMatchingDefaultSelector()', '["button3", "input2", "input6", "input7", "input9", "input11", "option2", "option4"]');
+
+debug("Removing input7's checked attribute");
+input7.removeAttribute("checked");
+shouldBe('elementsStyledWithDefaultSelector()', '["button3", "input2", "input6", "input9", "input11", "option2", "option4"]');
+shouldBe('elementsMatchingDefaultSelector()', '["button3", "input2", "input6", "input9", "input11", "option2", "option4"]');
+
+debug("Setting input7's selected attribute");
+input7.setAttribute("selected", "");
+shouldBe('elementsStyledWithDefaultSelector()', '["button3", "input2", "input6", "input9", "input11", "option2", "option4"]');
+shouldBe('elementsMatchingDefaultSelector()', '["button3", "input2", "input6", "input9", "input11", "option2", "option4"]');
+
+debug("Removing input6");
+input6.parentElement.removeChild(input6);
+shouldBe('elementsStyledWithDefaultSelector()', '["button3", "input2", "input9", "input11", "option2", "option4"]');
+shouldBe('elementsMatchingDefaultSelector()', '["button3", "input2", "input9", "input11", "option2", "option4"]');
+shouldBeTrue('input6.matches(":default")');
+input6 = undefined;
+
+debug("Setting input8 as checked");
+var input8 = document.getElementById("input8");
+// Interestingly, the selector looks for the attribute, not the state.
+input8.checked = true;
+shouldBe('elementsStyledWithDefaultSelector()', '["button3", "input2", "input9", "input11", "option2", "option4"]');
+shouldBe('elementsMatchingDefaultSelector()', '["button3", "input2", "input9", "input11", "option2", "option4"]');
+
+debug("Setting the checked attribute to input8");
+input8.setAttribute("checked", "");
+shouldBe('elementsStyledWithDefaultSelector()', '["button3", "input2", "input8", "input9", "input11", "option2", "option4"]');
+shouldBe('elementsMatchingDefaultSelector()', '["button3", "input2", "input8", "input9", "input11", "option2", "option4"]');
+
+debug("Setting input9 as unchecked");
+var input9 = document.getElementById("input9");
+// Interestingly, the selector looks for the attribute, not the state.
+input9.checked = false;
+shouldBe('elementsStyledWithDefaultSelector()', '["button3", "input2", "input8", "input9", "input11", "option2", "option4"]');
+shouldBe('elementsMatchingDefaultSelector()', '["button3", "input2", "input8", "input9", "input11", "option2", "option4"]');
+
+debug("Setting input9's checked attribute to 'WebKit'");
+input9.setAttribute("checked", "WebKit");
+shouldBe('elementsStyledWithDefaultSelector()', '["button3", "input2", "input8", "input9", "input11", "option2", "option4"]');
+shouldBe('elementsMatchingDefaultSelector()', '["button3", "input2", "input8", "input9", "input11", "option2", "option4"]');
+
+debug("Removing input9's checked attribute");
+input9.removeAttribute("checked");
+shouldBe('elementsStyledWithDefaultSelector()', '["button3", "input2", "input8", "input11", "option2", "option4"]');
+shouldBe('elementsMatchingDefaultSelector()', '["button3", "input2", "input8", "input11", "option2", "option4"]');
+
+debug("Setting input9's selected attribute");
+input9.setAttribute("selected", "");
+shouldBe('elementsStyledWithDefaultSelector()', '["button3", "input2", "input8", "input11", "option2", "option4"]');
+shouldBe('elementsMatchingDefaultSelector()', '["button3", "input2", "input8", "input11", "option2", "option4"]');
+
+debug("Removing input11");
+var input11 = document.getElementById("input11");
+input11.parentElement.removeChild(input11);
+shouldBe('elementsStyledWithDefaultSelector()', '["button3", "input2", "input8", "option2", "option4"]');
+shouldBe('elementsMatchingDefaultSelector()', '["button3", "input2", "input8", "option2", "option4"]');
+shouldBeTrue('input11.matches(":default")');
+input11 = undefined;
+
+debug("Add the selected attribute to option1");
+var option1 = document.getElementById("option1");
+option1.setAttribute("selected", "");
+shouldBe('elementsStyledWithDefaultSelector()', '["button3", "input2", "input8", "option1", "option2", "option4"]');
+shouldBe('elementsMatchingDefaultSelector()', '["button3", "input2", "input8", "option1", "option2", "option4"]');
+
+debug("Remove the selected attribute from option2");
+var option2 = document.getElementById("option2");
+option2.removeAttribute("selected");
+shouldBe('elementsStyledWithDefaultSelector()', '["button3", "input2", "input8", "option1", "option4"]');
+shouldBe('elementsMatchingDefaultSelector()', '["button3", "input2", "input8", "option1", "option4"]');
+
+debug("Set the checked attribute on option2");
+var option2 = document.getElementById("option2");
+option2.setAttribute("checked", "");
+shouldBe('elementsStyledWithDefaultSelector()', '["button3", "input2", "input8", "option1", "option4"]');
+shouldBe('elementsMatchingDefaultSelector()', '["button3", "input2", "input8", "option1", "option4"]');
+
+debug("Add the selected attribute to false on  option3");
+var option3 = document.getElementById("option3");
+option3.setAttribute("selected", "false");
+shouldBe('elementsStyledWithDefaultSelector()', '["button3", "input2", "input8", "option1", "option3", "option4"]');
+shouldBe('elementsMatchingDefaultSelector()', '["button3", "input2", "input8", "option1", "option3", "option4"]');
+
+debug("Remove option4");
+var option4 = document.getElementById("option4");
+option4.parentElement.removeChild(option4);
+shouldBe('elementsStyledWithDefaultSelector()', '["button3", "input2", "input8", "option1", "option3"]');
+shouldBe('elementsMatchingDefaultSelector()', '["button3", "input2", "input8", "option1", "option3"]');
+shouldBeTrue('option4.matches(":default")');
+option4 = undefined;
+
+gc();
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

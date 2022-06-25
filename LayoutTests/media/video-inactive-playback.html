@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<head>
+<script src="video-test.js"></script>
+<script src="media-file.js"></script>
+<script>
+
+function go()
+{
+    nextTest();
+}
+
+function nextTest()
+{
+    if (tests.length)
+        tests.shift()();
+    else
+        endTest();
+}
+
+function timeoutFor(time)
+{
+    return new Promise(resolve => {
+        setTimeout(resolve, time);
+    });
+}
+
+function waitFor(eventName)
+{
+    return new Promise(resolve => {
+        waitForEventOnce(eventName, resolve);
+    });
+}
+
+var tests = [
+    function initializeTests() {
+        findMediaElement();
+        run('internals.setMediaSessionRestrictions("videoaudio", "")');
+        run('video.src = findMediaFile("video", "content/test")');
+        waitFor('canplaythrough').then(nextTest);
+
+    },
+
+    function testPlaybackContinuesWhenInactive() {
+        run('video.play()');
+        waitFor('playing').then(() => {
+            run("internals.applicationWillBecomeInactive()");
+            timeoutFor(100).then(() => {
+                testExpected('video.paused', false);
+            }).then(nextTest);
+        })
+    },
+
+    function testPlaybackPausesWhenInactive() {
+        run('internals.setMediaSessionRestrictions("videoaudio", "inactiveprocessplaybackrestricted")');
+        run('internals.applicationWillBecomeInactive()');
+        waitFor('pause').then(nextTest);
+    },
+
+    function testPlaybackResumesWhenActive() {
+        run('internals.applicationDidBecomeActive()');
+        waitFor('playing').then(nextTest);
+    },
+];
+
+</script>
+</head>
+<body onload="go()">
+    <video controls></video>
+</body>

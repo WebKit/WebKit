@@ -1,0 +1,11 @@
+
+PASS Property will-change value 'auto'
+PASS Property will-change value 'scroll-position'
+PASS Property will-change value 'contents'
+PASS Property will-change value 'transform'
+PASS Property will-change value 'background-color'
+PASS Property will-change value 'scroll-position, contents'
+PASS Property will-change value 'scroll-position, transform'
+PASS Property will-change value 'contents, transform'
+PASS Property will-change value 'transform, background-color'
+

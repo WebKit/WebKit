@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>Test that Accessory bar next/previous buttons work on inputs which is not assigned to any slot in shadow tree</h1>
+<p>To manually test, do following steps.</p>
+<ol>
+    <li>Focus the 1st of input, then Accessory bar will shown.</li>
+    <li>Press "next" icon 4 times.</li>
+    <li>Press "prev" icon 4 times.</li>
+    <li>It should traverse focusable elements in the increasing numerical order and reverse the order of them.</li>
+</ol>
+
+<input id="first" tabindex="1" onfocus="logOnFocus(this)"
+    placeholder="0. First sequentially input element outside shadow trees" />
+
+<div id="host-with-negative-tabindex" tabindex="-1">Should not focus: Shadow host with a negative tabindex but not input element</div>
+
+<div id="host-with-no-tabindex">
+    <input id="host-with-no-tabindex"
+        onfocus="logOnFocus(this)"
+        placeholder="Should not focus: input element having no tabindex in a element having no tabindex but will not assigned to slot" />
+</div>
+
+<div id="host-with-positive-tabindex" tabindex="2">
+    <div>
+        <input id="input-in-host-with-positive-tabindex-negative"
+            tabindex="-1"
+            onfocus="logOnFocus(this)"
+            placeholder="Should not focus: input element having a negative tabindex in a element having a positive tabindex" />
+    </div>
+    <div>
+        <input id="input-in-host-with-positive-tabindex"
+            tabindex="0"
+            onfocus="logOnFocus(this)"
+            placeholder="3. input element having tabindex=1 in a element having a positive tabindex" />
+    </div>
+    <div>
+        <input id="input-in-host-with-positive-tabindex-positive"
+            tabindex="1"
+            onfocus="logOnFocus(this)"
+            placeholder="2. input element having a positive tabindex in a element having a positive tabindex" />
+    </div>
+</div>
+
+<div id="closed-shadow-tree-host">
+    <input id="inpunt-descendants-of-closed-shadow-tree-host"
+        onfocus="logOnFocus(this)"
+        placeholder="6. input element in closed shadow tree host" />
+</div>
+
+<nest-input-holder></nest-input-holder>
+
+<input id="last" tabindex="0" onfocus="logOnFocus(this)"
+    placeholder="10. Last sequentially input element outside shadow trees" />
+
+<div id="description"></div>
+<div id="console"></div>
+<pre id="log"></pre>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+
+document.getElementById('host-with-negative-tabindex').attachShadow({ mode: 'open' }).innerHTML = `
+    <input tabindex="0"
+        onfocus="logOnFocus(this)"
+        placeholder="Should not focus: input element having tabindex=0 in a shadow tree host having negative tabindex"/>
+`;
+
+document.getElementById('host-with-no-tabindex').attachShadow({ mode: 'open' }).innerHTML = `
+    <input tabindex="0"
+        onfocus="logOnFocus(this)"
+        placeholder="5. input element having a positive tabindex in a shadow tree host which does not tabindex"/>
+`;
+
+document.getElementById('host-with-positive-tabindex').attachShadow({ mode: 'open' }).innerHTML = `
+    <slot></slot>
+    <div>
+        <input tabindex="0"
+            onfocus="logOnFocus(this)"
+            placeholder="4. input element having tabindex=0 in a shadow tree host having a positive tabindex"/>
+    </div>
+    <div>
+        <input tabindex="-1"
+            onfocus="logOnFocus(this)"
+            placeholder="Should not focus: input element having negatibe tabindex in a shadow tree host having a positive tabindex"/>
+    </div>
+    <div>
+        <input tabindex="1"
+            onfocus="logOnFocus(this)"
+            placeholder="1. input element having a positive tabindex in a shadow tree host having a positive tabindex"/>
+    </div>
+`;
+
+document.getElementById('closed-shadow-tree-host').attachShadow({ mode: 'closed' }).innerHTML = `
+    <slot></slot>
+`;
+
+class InputHolder extends HTMLElement {
+  constructor() {
+    super();
+
+    this.attachShadow({ mode: 'open' })
+        .innerHTML = '<p><input onfocus="logOnFocus(this)" placeholder=""/></p>';
+  }
+}
+customElements.define('input-holder', InputHolder);
+
+class NestInputHolder extends HTMLElement {
+  constructor() {
+    super();
+
+    this.attachShadow({ mode: 'open' })
+        .innerHTML = `
+        <input onfocus="logOnFocus(this)" placeholder='7. input element before nested custom element having shadow tree' />
+        <input-holder></input-holder>
+        <input onfocus="logOnFocus(this)" placeholder='9. input element after nested custom element having shadow tree'/>
+        `;
+    this.shadowRoot.querySelector('input-holder')
+        .shadowRoot.querySelector('input').setAttribute('placeholder', '8. input element in nested shadow tree');
+  }
+}
+customElements.define('nest-input-holder', NestInputHolder);
+
+function logOnFocus(element) {
+    document.getElementById('log').textContent += element.getAttribute('placeholder') + '\n';
+}
+
+function testCase(documentOrShadowRoot, inputGetter) {
+    const inputElement = inputGetter(documentOrShadowRoot);
+    return {
+        documentOrShadowRoot,
+        inputElement,
+    };
+}
+
+async function runTest() {
+    const hostWithPositiveTabIndexShadowRoot = document.getElementById('host-with-positive-tabindex').shadowRoot;
+    const nestInputHolderShadowRoot = document.querySelector('nest-input-holder').shadowRoot;
+
+    const stack = [
+        testCase(document, (_) => document.getElementById('first')),
+
+        testCase(hostWithPositiveTabIndexShadowRoot,
+            (shadowRoot) => shadowRoot.querySelector('input[tabindex="1"]')),
+
+        testCase(document, (_) => document.getElementById('input-in-host-with-positive-tabindex-positive')),
+
+        testCase(document, (_) => document.getElementById('input-in-host-with-positive-tabindex')),
+
+        testCase(hostWithPositiveTabIndexShadowRoot,
+            (shadowRoot) => shadowRoot.querySelector('input[tabindex="0"]')),
+
+        testCase(document.getElementById('host-with-no-tabindex').shadowRoot,
+            (shadowRoot) => shadowRoot.querySelector('input[tabindex="0"]')),
+
+        testCase(document, (_) => document.getElementById('inpunt-descendants-of-closed-shadow-tree-host')),
+
+        testCase(nestInputHolderShadowRoot,
+            (shadowRoot) => shadowRoot.querySelector('input:nth-child(1)')),
+
+        testCase(nestInputHolderShadowRoot.querySelector('input-holder').shadowRoot,
+            (shadowRoot) => shadowRoot.querySelector('input')),
+
+        testCase(nestInputHolderShadowRoot,
+            (shadowRoot) => shadowRoot.querySelector('input:nth-last-child(1)')),
+
+        testCase(document, (_) => document.getElementById('last')),
+    ];
+
+    {
+        const firstElement = stack[0].inputElement;
+        debug('activate 0th input');
+        await UIHelper.activateElement(firstElement);
+        debug('activated 0th input');
+    }
+
+    for (let i = 1, l = stack.length; i < l; ++i) {
+        const { documentOrShadowRoot, inputElement, } = stack[i];
+
+        debug(`forward to ${String(i)}th input`);
+        await UIHelper.moveToNextByKeyboardAccessoryBar();
+        const activeElement = documentOrShadowRoot.activeElement;
+        debug(`documentOrShadowRoot.activeElement's placeholder attribute: ${activeElement.getAttribute('placeholder')}`);
+        shouldBe(() => activeElement.getAttribute('placeholder'), () => inputElement.getAttribute('placeholder'));
+    }
+
+    debug('focus has moved to the last element and will move to the first reversely');
+
+    for (let i = stack.length - 2; -1 < i; --i) {
+        debug(`back to ${String(i)}th input`);
+        await UIHelper.moveToPrevByKeyboardAccessoryBar();
+        const { documentOrShadowRoot, inputElement, } = stack[i];
+        const activeElement = documentOrShadowRoot.activeElement;
+        debug(`documentOrShadowRoot.activeElement's placeholder attribute: ${activeElement.getAttribute('placeholder')}`);
+        shouldBe(() => activeElement.getAttribute('placeholder'), () => inputElement.getAttribute('placeholder'));
+    }
+}
+
+if (window.testRunner) {
+    description(`Test that Accessory bar next/previous buttons work on inputs which is not assigned to any slot in shadow tree`);
+    const run = runTest().catch((e) => debug(`FAIL: \`${e}\``));
+    UIHelper.wait(run);
+} else
+    document.getElementById('console').style.display = 'none';
+
+</script>
+</body>
+</html>

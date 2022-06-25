@@ -1,0 +1,9 @@
+{
+    "domain": "WebOnly",
+    "debuggableTypes": ["webb"],
+    "commands": [
+        {
+            "name": "enable"
+        }
+    ]
+}

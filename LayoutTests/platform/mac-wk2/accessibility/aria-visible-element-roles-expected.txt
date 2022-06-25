@@ -1,0 +1,220 @@
+This test ensures ARIA visible elements (e.g. those with both `hidden` and `aria-hidden='false'` attributes) have the correct role.
+
+<a href="https://apple.com" id="link" hidden="" aria-hidden="false"></a>
+    AXRole: AXLink
+    computedRoleString: link
+
+<select id="select" name="pets" hidden="" aria-hidden="false"></select>
+    AXRole: AXPopUpButton
+    computedRoleString: button
+
+<select id="select-multiple" multiple="" name="pets-multiple" hidden="" aria-hidden="false"></select>
+    AXRole: AXList
+    computedRoleString: listbox
+
+<textarea id="textarea" rows="5" cols="33" hidden="" aria-hidden="false"></textarea>
+    AXRole: AXTextArea
+    computedRoleString: textbox
+
+<img id="img-with-map" src="resources/cake.png" width="145" height="126" usemap="#map" aria-label="Label" hidden="" aria-hidden="false">
+    AXRole: AXImageMap
+
+<li hidden="" aria-hidden="false" id="li-element"></li>
+    AXRole: AXGroup
+    computedRoleString: listitem
+
+<button hidden="" aria-hidden="false" id="button"></button>
+    AXRole: AXButton
+    computedRoleString: button
+
+<legend hidden="" aria-hidden="false" id="legend"></legend>
+    AXRole: AXGroup
+
+<canvas hidden="" aria-hidden="false" id="canvas-without-fallback-content"></canvas>
+    AXRole: AXImage
+
+<canvas hidden="" aria-hidden="false" id="canvas-with-fallback-content"></canvas>
+    AXRole: AXGroup
+
+<input hidden="" aria-hidden="false" id="file-upload-button" type="file">
+    AXRole: AXButton
+    computedRoleString: button
+    AXSubrole: AXFileUploadButton
+
+<input hidden="" aria-hidden="false" id="checkbox" type="checkbox">
+    AXRole: AXCheckBox
+    computedRoleString: checkbox
+
+<input hidden="" aria-hidden="false" type="radio" id="radio-button" name="monster">
+    AXRole: AXRadioButton
+    computedRoleString: radio
+
+<input hidden="" aria-hidden="false" id="text-button" type="submit">
+    AXRole: AXButton
+    computedRoleString: button
+
+<input hidden="" aria-hidden="false" id="text-button-with-pressed" aria-pressed="false" type="submit">
+    AXRole: AXCheckBox
+    computedRoleString: button
+    AXSubrole: AXToggle
+
+<input hidden="" aria-hidden="false" id="date-input" type="date">
+    AXRole: AXTextField
+
+<input hidden="" aria-hidden="false" id="color-input" type="color">
+    AXRole: AXColorWell
+
+<input hidden="" aria-hidden="false" id="range-input" type="range">
+    AXRole: AXSlider
+    computedRoleString: slider
+
+<input hidden="" aria-hidden="false" id="search-input" type="search">
+    AXRole: AXTextField
+    computedRoleString: searchbox
+    AXSubrole: AXSearchField
+
+<h2 hidden="" aria-hidden="false" id="h2"></h2>
+    AXRole: AXHeading
+    computedRoleString: heading
+
+<del hidden="" aria-hidden="false" id="del"></del>
+    AXRole: AXGroup
+    computedRoleString: deletion
+    AXSubrole: AXDeleteStyleGroup
+
+<ins hidden="" aria-hidden="false" id="ins"></ins>
+    AXRole: AXGroup
+    computedRoleString: insertion
+    AXSubrole: AXInsertStyleGroup
+
+<sub hidden="" aria-hidden="false" id="sub"></sub>
+    AXRole: AXGroup
+    computedRoleString: subscript
+    AXSubrole: AXSubscriptStyleGroup
+
+<sup hidden="" aria-hidden="false" id="sup"></sup>
+    AXRole: AXGroup
+    computedRoleString: superscript
+    AXSubrole: AXSuperscriptStyleGroup
+
+<code hidden="" aria-hidden="false" id="code"></code>
+    AXRole: AXGroup
+    AXSubrole: AXCodeStyleGroup
+
+<dt hidden="" aria-hidden="false" id="dt"></dt>
+    AXRole: AXGroup
+    AXSubrole: AXTerm
+
+<dd hidden="" aria-hidden="false" id="dd"></dd>
+    AXRole: AXGroup
+    AXSubrole: AXDescription
+
+<dl hidden="" aria-hidden="false" id="dl"></dl>
+    AXRole: AXList
+
+<ol hidden="" aria-hidden="false" id="ol"></ol>
+    AXRole: AXList
+    computedRoleString: list
+
+<ul hidden="" aria-hidden="false" id="ul"></ul>
+    AXRole: AXList
+    computedRoleString: list
+
+<figure hidden="" aria-hidden="false" id="figure"></figure>
+    AXRole: AXGroup
+    computedRoleString: figure
+    AXSubrole: AXEmptyGroup
+
+<p hidden="" aria-hidden="false" id="p"></p>
+    AXRole: AXGroup
+    computedRoleString: paragraph
+
+<label hidden="" aria-hidden="false" id="label"></label>
+    AXRole: AXGroup
+
+<dfn hidden="" aria-hidden="false" id="dfn"></dfn>
+    AXRole: AXGroup
+    computedRoleString: definition
+    AXSubrole: AXDefinition
+
+<div hidden="" aria-hidden="false" id="div"></div>
+    AXRole: AXGroup
+
+<form hidden="" aria-hidden="false" id="form"></form>
+    AXRole: AXGroup
+    computedRoleString: form
+    AXSubrole: AXEmptyGroup
+
+<article hidden="" aria-hidden="false" id="article"></article>
+    AXRole: AXGroup
+    computedRoleString: article
+    AXSubrole: AXDocumentArticle
+
+<main hidden="" aria-hidden="false" id="main"></main>
+    AXRole: AXGroup
+    computedRoleString: main
+    AXSubrole: AXLandmarkMain
+
+<nav hidden="" aria-hidden="false" id="nav"></nav>
+    AXRole: AXGroup
+    computedRoleString: navigation
+    AXSubrole: AXLandmarkNavigation
+
+<aside hidden="" aria-hidden="false" id="aside"></aside>
+    AXRole: AXGroup
+    computedRoleString: complementary
+    AXSubrole: AXLandmarkComplementary
+
+<section hidden="" aria-hidden="false" id="section-with-name" aria-label="Section name"></section>
+    AXRole: AXGroup
+    computedRoleString: region
+    AXSubrole: AXLandmarkRegion
+
+<section hidden="" aria-hidden="false" id="section-without-name"></section>
+    AXRole: AXGroup
+
+<blockquote hidden="" aria-hidden="false" id="blockquote"></blockquote>
+    AXRole: AXGroup
+    computedRoleString: blockquote
+
+<mark hidden="" aria-hidden="false" id="mark"></mark>
+    AXRole: AXGroup
+
+<pre hidden="" aria-hidden="false" id="pre"></pre>
+    AXRole: AXGroup
+    AXSubrole: AXPreformattedStyleGroup
+
+<details hidden="" aria-hidden="false" id="details"></details>
+    AXRole: AXGroup
+    AXSubrole: AXDetails
+
+<summary hidden="" aria-hidden="false" id="summary"></summary>
+    AXRole: AXButton
+    AXSubrole: AXSummary
+
+<output hidden="" aria-hidden="false" id="output"></output>
+    AXRole: AXGroup
+    computedRoleString: status
+    AXSubrole: AXApplicationStatus
+
+<menu hidden="" aria-hidden="false" type="toolbar" id="menu-toolbar"></menu>
+    AXRole: AXToolbar
+    computedRoleString: toolbar
+
+<hr hidden="" aria-hidden="false" id="hr">
+    AXRole: AXSplitter
+    computedRoleString: separator
+    AXSubrole: AXContentSeparator
+
+<time hidden="" aria-hidden="false" id="time"></time>
+    AXRole: AXGroup
+    computedRoleString: time
+    AXSubrole: AXEmptyGroup
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+

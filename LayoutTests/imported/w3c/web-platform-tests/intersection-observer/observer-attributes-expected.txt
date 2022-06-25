@@ -1,0 +1,6 @@
+
+FAIL Observer attribute getters. Failed to construct 'IntersectionObserver': rootMargin must be specified in pixels or percent.
+PASS observer.root
+PASS observer.thresholds
+PASS observer.rootMargin
+

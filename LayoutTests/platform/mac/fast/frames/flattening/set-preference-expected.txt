@@ -1,0 +1,7 @@
+Test for iframe flattening. The flattening only works inside the DRT.
+
+This inner frame should be 400px in each direction and it must not be scrollable or have scrollbars.
+
+
+
+PASS

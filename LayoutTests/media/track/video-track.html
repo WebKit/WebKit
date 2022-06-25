@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>
+
+            var addtrackEventCount = 0;
+
+            function trackAdded(event)
+            {
+                consoleWrite("EVENT(" + event.type + ")");
+                compareTracks("event.track", "video.videoTracks[" + addtrackEventCount + "]");
+                ++addtrackEventCount;
+                consoleWrite("");
+            }
+
+            function compareTracks(track1, track2)
+            {
+                var equal = (eval(track1) == eval(track2));
+                reportExpected(equal, track1, "==", track2, track1);
+            }
+
+            function canplaythrough()
+            {
+                consoleWrite("<br><i>** Check initial in-band track states<" + "/i>");
+                testExpected("video.videoTracks.length", 1);
+
+                consoleWrite("<br><i>** Unload video file, check track count<" + "/i>");
+                run("video.src = ''");
+                testExpected("video.videoTracks.length", 0);
+
+                consoleWrite("");
+                endTest();
+            }
+
+            function setup()
+            {
+                findMediaElement();
+                video.videoTracks.addEventListener("addtrack", trackAdded);
+                video.src = findMediaFile('video', '../content/test');
+                waitForEvent('canplaythrough', canplaythrough);
+            }
+
+        </script>
+    </head>
+    <body onload="setup()">
+        <video controls></video>
+        <p>In-band video tracks.</p>
+    </body>
+</html>

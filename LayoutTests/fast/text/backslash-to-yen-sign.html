@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+<script>
+
+function test()
+{
+    var FONT_AND_EXPECTATIONS = [
+        [ null, "backslash" ],
+        [ "MS PGothic", "yen sign" ],
+        [ "MS Gothic", "yen sign" ],
+        [ "MS PMincho", "yen sign" ],
+        [ "MS Mincho", "yen sign" ],
+        [ "Meiryo", "yen sign" ],
+        [ "ＭＳ Ｐゴシック", "yen sign" ],
+        [ "ＭＳ ゴシック", "yen sign" ],
+        [ "ＭＳ Ｐ明朝", "yen sign" ],
+        [ "ＭＳ 明朝", "yen sign" ],
+        [ "メイリオ", "yen sign" ],
+        [ "Times", "backslash" ],
+        [ "foobar", "backslash" ]
+    ];
+
+    for (var i = 0; FONT_AND_EXPECTATIONS[i]; i++) {
+        var fontName = FONT_AND_EXPECTATIONS[i][0];
+        var expectation = FONT_AND_EXPECTATIONS[i][1];
+        var element = document.createElement("div");
+        if (fontName)
+            element.style.fontFamily = fontName;
+
+        if (fontName)
+            text = 'Using font "' + fontName + '". ';
+        else
+            text = 'No font is specified. ';
+        text += 'expected: ' + expectation + ', actual: ' + '\\';
+        element.innerHTML = text;
+        document.body.appendChild(element);
+    }
+}
+
+</script>
+</head>
+
+<body onload="test();">
+</body>
+
+</html>

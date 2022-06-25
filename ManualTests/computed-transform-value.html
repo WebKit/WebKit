@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Get Computed Transform</title>
+    <style type="text/css" media="screen">
+    .box {
+        height: 200px;
+        width: 200px;
+        background-color: #00a0a0;
+    }
+    </style>
+    <script type="text/javascript" charset="utf-8">
+        function printTransform(event)
+        {
+            var box = event.target;
+            var computedTransform = window.getComputedStyle(box).webkitTransform;
+            document.getElementById("output").innerHTML = 'Computed transform is ' + computedTransform;
+        }
+        
+    </script>
+</head>
+<body onclick="printTransform(event)">
+
+<h1>Testing transform computed style</h1>
+<p>All boxes are 200x200 pixels. When you click on an element, the computed transform style will be displayed below</p>
+<p id="output">Computed style for -webkit-transform displayed here</p>
+
+
+<div class="box" style="position: absolute; left: 100px; top: 200px; -webkit-transform: scale(1.5, 0.75)">
+  scale(1.5, 0.75)
+</div>
+
+<div class="box" style="position: absolute; left: 400px; top: 200px; -webkit-transform: rotate(30deg)">
+  rotate(30deg)
+</div>
+
+<div class="box" style="position: absolute; left: 100px; top: 400px; -webkit-transform: translate(50px, 80px)">
+  translate(50px, 80px)
+</div>
+
+<div class="box" style="position: absolute; left: 400px; top: 400px; -webkit-transform: translate(10px, 50px) scale(0.8) rotate(-10deg)">
+  translate(10px, 50px) scale(0.8) rotate(-10deg)
+</div>
+
+</body>
+</html>

@@ -1,0 +1,15 @@
+Clicking on items of <select> with padding set.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS selectionPattern("sl1") is "00000000000000000"
+PASS selectionPattern("sl1") is "01000000000000000"
+PASS selectionPattern("sl1") is "10000000000000000"
+PASS selectionPattern("sl1") is "10000000000000000"
+PASS selectionPattern("sl1") is "10000000000000000"
+PASS selectionPattern("sl1") is "00000000100000000"
+

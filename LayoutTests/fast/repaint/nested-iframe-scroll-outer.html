@@ -1,0 +1,18 @@
+<html>
+<head>
+    <link rel="stylesheet" href="resources/default.css">
+    <script src="resources/repaint.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        if (window.testRunner)
+            testRunner.dumpAsText(true);
+        function repaintTest()
+        {
+            document.getElementById('iframe').contentWindow.scrollTo(200, 200);
+        }
+    </script>
+</head>
+<body onload="runRepaintTest()">
+    <!-- You should 3 non-overlapping rectangle (from left to right): a green, a yellow and a blue. -->
+    <iframe id="iframe" src="resources/iframe-outer.html"></iframe>
+</body>
+</html>

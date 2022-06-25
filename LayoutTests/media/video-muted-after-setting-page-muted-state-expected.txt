@@ -1,0 +1,10 @@
+
+Test 'muted' IDL attribute after setting the Page's muted state. The Page's muted state should not affect the 'muted' IDL attribute.
+
+EXPECTED (video.muted == 'false') OK
+EXPECTED (video.muted == 'false') OK
+RUN(video.muted = true)
+EXPECTED (video.muted == 'true') OK
+EXPECTED (video.muted == 'true') OK
+END OF TEST
+

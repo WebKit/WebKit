@@ -1,0 +1,5 @@
+
+
+PASS Detection of missing capturing device should trigger capture to fail
+PASS Adding or removing a new device should not fail ongoing capture
+

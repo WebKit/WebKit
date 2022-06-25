@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<h1 class="output" id="h1">original text</h1>
+<h2 class="output" id="h2">original text</h2>
+<h3 class="output" id="h3">original text</h3>
+<div role="heading" class="output" id="divheading">original text</div>
+
+<script>
+    description("This tests that changing the text in headings by four different DOM methods, results on the corresponding text being retrieved via the accessibility property.");
+
+    var ids = [ "h1", "h2", "h3", "divheading" ];
+
+    function setValue(value) {
+        [...document.querySelectorAll('.output')].forEach((node) => {
+            node[value] = `${value}`;
+        });
+    }
+
+    function setFirstChildData(value) {
+        [...document.querySelectorAll('.output')].forEach((node) => {
+            node.firstChild.data = `${value}`;
+        });
+    }
+
+    function checkAXLabels() {
+        ids.forEach((id) => {
+            debug(id);
+            axElement = accessibilityController.accessibleElementById(id);
+            debug(axElement.stringValue);
+            debug(axElement.childAtIndex(0).stringValue);
+        });
+    }
+
+    if (window.accessibilityController) {
+        // Log original text.
+        checkAXLabels();
+
+        setValue("innerHTML");
+        checkAXLabels();
+
+        setValue("innerText");
+        checkAXLabels();
+
+        setValue("textContent");
+        checkAXLabels();
+
+        setFirstChildData("firstChild.data");
+        checkAXLabels();
+    }
+</script>
+</body>
+</html>

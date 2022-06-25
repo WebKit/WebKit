@@ -1,0 +1,25 @@
+Testing DOM.performSearch with parent node ids.
+
+
+=== Query: "p" in [] ===
+Count: 0
+=== Query: "p" in [.base1] ===
+Count: 1
+p.base1.main-frame
+=== Query: "p" in [.base2] ===
+Count: 1
+p.base2.main-frame
+=== Query: "p" in [.base1, .base2] ===
+Count: 2
+p.base1.main-frame
+p.base2.main-frame
+=== Query: "p" in [iframe] ===
+Count: 1
+p.inside-iframe
+=== Query: "//p" in [.base1] ===
+Count: 1
+p.base1.main-frame
+=== Query: "//div" in [.base1] ===
+Count: 1
+div.base1
+

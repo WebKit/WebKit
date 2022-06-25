@@ -1,0 +1,42 @@
+<html>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+</script>
+<body id="body">
+    
+    <!-- the AXGroup that comes from the <td> should have the <th> as its title ui element 
+         In the 2nd case, it should not have a title ui element -->
+
+    <table width="90" border="0">
+    <tr>
+    <th>Header for button</th>
+    <td><input type="button" value="button"></td>
+    </tr>
+    </table>
+
+    <table width="90" border="0">
+    <tr>
+    <td>Header for button</td>
+    <td><input type="button" value="button"></td>
+    </tr>
+    </table>
+    
+    <div id="result"></div>
+    
+    <script>
+        if (window.accessibilityController) {
+            var result = document.getElementById("result");
+
+            var body = document.getElementById("body");
+            body.focus();
+            var group = accessibilityController.focusedElement.childAtIndex(1);
+            var group2 = accessibilityController.focusedElement.childAtIndex(3);
+            if (group.titleUIElement().allAttributes() != "" && (group2.titleUIElement() == null || group2.titleUIElement().allAttributes() == "")) 
+                result.innerText += "Pass";
+            else
+                result.innerText += "Fail";
+        }
+    </script>
+</body>
+</html>

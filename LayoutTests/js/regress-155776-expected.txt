@@ -1,0 +1,10 @@
+Regresion test for 155776. This test should pass and not crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS stringResult is expectedString
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<script>
+description("Document's execCommand() / queryCommand*() should throw an exception on non-HTML/XHTML documents.");
+
+let xmlDocument = new Document();
+shouldThrowErrorName("xmlDocument.execCommand('selectAll')", "InvalidStateError");
+shouldThrowErrorName("xmlDocument.queryCommandEnabled('selectAll')", "InvalidStateError");
+shouldThrowErrorName("xmlDocument.queryCommandIndeterm('selectAll')", "InvalidStateError");
+shouldThrowErrorName("xmlDocument.queryCommandState('selectAll')", "InvalidStateError");
+shouldThrowErrorName("xmlDocument.queryCommandSupported('selectAll')", "InvalidStateError");
+shouldThrowErrorName("xmlDocument.queryCommandValue('selectAll')", "InvalidStateError");
+
+let svgDocument = document.implementation.createDocument('http://www.w3.org/2000/svg', 'svg', null);
+shouldThrowErrorName("svgDocument.execCommand('selectAll')", "InvalidStateError");
+shouldThrowErrorName("svgDocument.queryCommandEnabled('selectAll')", "InvalidStateError");
+shouldThrowErrorName("svgDocument.queryCommandIndeterm('selectAll')", "InvalidStateError");
+shouldThrowErrorName("svgDocument.queryCommandState('selectAll')", "InvalidStateError");
+shouldThrowErrorName("svgDocument.queryCommandSupported('selectAll')", "InvalidStateError");
+shouldThrowErrorName("svgDocument.queryCommandValue('selectAll')", "InvalidStateError");
+
+
+// As of June 2021, Gecko also throws for XHTML documents but Blink doesn't. We are aligned with Blink.
+let xhtmlDocument = document.implementation.createDocument('http://www.w3.org/1999/xhtml', 'html', null);
+shouldNotThrow("xhtmlDocument.execCommand('selectAll')");
+shouldNotThrow("xhtmlDocument.queryCommandEnabled('selectAll')");
+shouldNotThrow("xhtmlDocument.queryCommandIndeterm('selectAll')");
+shouldNotThrow("xhtmlDocument.queryCommandState('selectAll')");
+shouldNotThrow("xhtmlDocument.queryCommandSupported('selectAll')");
+shouldNotThrow("xhtmlDocument.queryCommandValue('selectAll')");
+
+let htmlDocument = document.implementation.createHTMLDocument();
+shouldNotThrow("htmlDocument.execCommand('selectAll')");
+shouldNotThrow("htmlDocument.queryCommandEnabled('selectAll')");
+shouldNotThrow("htmlDocument.queryCommandIndeterm('selectAll')");
+shouldNotThrow("htmlDocument.queryCommandState('selectAll')");
+shouldNotThrow("htmlDocument.queryCommandSupported('selectAll')");
+shouldNotThrow("htmlDocument.queryCommandValue('selectAll')");
+</script>
+</body>
+</html>

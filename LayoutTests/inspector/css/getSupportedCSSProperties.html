@@ -1,0 +1,63 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+function test()
+{
+    InspectorProtocol.sendCommand("CSS.getSupportedCSSProperties", {}, (messageObject) => {
+        if ("error" in messageObject)
+            ProtocolTest.log(messageObject.error.message);
+        else {
+            let entries = messageObject["result"]["cssProperties"];
+
+            const expectedProperties = [
+                "box-sizing",
+                "filter",
+                "font-style",
+                "margin",
+                "text-transform",
+            ];
+
+            for (let expectedProperty of expectedProperties) {
+                for (let entry of entries) {
+                    if (entry.name !== expectedProperty)
+                        continue;
+
+                    ProtocolTest.log(`"${expectedProperty}" is supported`);
+
+                    if (entry.aliases) {
+                        ProtocolTest.log(`"${expectedProperty}" has aliases:`);
+                        for (let alias of entry.aliases)
+                            ProtocolTest.log(` - "${alias}"`);
+                    }
+
+                    if (entry.longhands) {
+                        ProtocolTest.log(`"${expectedProperty}" has longhands:`);
+                        for (let longhand of entry.longhands)
+                            ProtocolTest.log(` - "${longhand}"`);
+                    }
+
+                    if (entry.inherited)
+                        ProtocolTest.log(`"${expectedProperty}" is inherited`);
+
+                    if (entry.values) {
+                        ProtocolTest.log(`"${expectedProperty}" has keyword values:`);
+                        for (let value of entry.values)
+                            ProtocolTest.log(` - "${value}"`);
+                    }
+
+                    break;
+                }
+
+                ProtocolTest.log("");
+            }
+        }
+
+        ProtocolTest.completeTest();
+    });
+}
+</script>
+</head>
+<body onLoad="runTest()">
+</body>
+</html>

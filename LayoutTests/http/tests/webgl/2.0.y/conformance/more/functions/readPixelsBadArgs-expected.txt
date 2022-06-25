@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
+This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
+
+Test: ../../../../resources/webgl_test_files/conformance/more/functions/readPixelsBadArgs.html?webglVersion=2
+[ PASS ] All tests passed

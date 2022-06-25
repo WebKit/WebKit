@@ -1,0 +1,11 @@
+Test that a non-redirected top frame navigation doesn't get captured in statistics.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS testRunner.isStatisticsRegisteredAsSubFrameUnder("http://localhost", "http://127.0.0.1") is false
+PASS testRunner.isStatisticsRegisteredAsSubFrameUnder("http://127.0.0.1", "http://localhost") is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

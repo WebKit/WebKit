@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src='resources/cookies-test-pre.js'></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+</head>
+<body>
+<input id="testButton" type="button" value="Click me"></input>
+<script>
+description('Tests that document.cookie returns the right value after a showModalDialog() call');
+jsTestIsAsync = true;
+
+testButton.onclick = () => {
+    document.cookie = "testKey=testValue";
+    shouldBeEqualToString('normalizeCookie(document.cookie)', 'testKey=testValue');
+
+    showModalDialog("resources/set-cookie-and-serve.py?cookie-name=foo&cookie-value=bar&destination=close-modal-dialog.html");
+
+    // This is so the cookie gets removed at the end of the test.
+    registerCookieForCleanup('foo=bar; path=/');
+    shouldBeEqualToString('normalizeCookie(document.cookie)', 'foo=bar; testKey=testValue');
+
+    finishJSTest();
+}
+
+onload = () => {
+    internals.withUserGesture(() => {
+        testButton.click();
+    });
+};
+</script>
+<script src='resources/cookies-test-post.js'></script>
+</body>
+</html>

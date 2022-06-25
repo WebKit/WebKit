@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+    .spacer {
+        height: 500px;
+        background-color: silver;
+        margin: 10px;
+    }
+    </style>
+    <script>
+        function doTest()
+        {
+            setTimeout(function() {
+                var link = document.getElementById('test-link');
+                link.click();
+            }, 0);
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+<ul>
+    <li><a id="test-link" href="#target">Jump to target</a></li>
+</ul>
+
+<div class="spacer"></div>
+<div class="spacer"></div>
+<div class="spacer"></div>
+
+<h2 id="target">Target link</h2>
+
+<div class="spacer"></div>
+<div class="spacer"></div>
+
+</body>
+</html>

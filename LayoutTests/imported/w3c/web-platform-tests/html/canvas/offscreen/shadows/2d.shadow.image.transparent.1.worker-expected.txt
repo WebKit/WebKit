@@ -1,0 +1,3 @@
+
+PASS Shadows are not drawn for transparent images
+

@@ -1,0 +1,7 @@
+PASS - "background-position-x" property for "box1" element at 0.5s saw something close to: 45px
+PASS - "background-position-y" property for "box1" element at 0.5s saw something close to: 60px
+PASS - "background-position-x" property for "box2" element at 0.5s saw something close to: right 45px
+PASS - "background-position-y" property for "box2" element at 0.5s saw something close to: bottom 60px
+PASS - "background-position-x" property for "box3" element at 0.5s saw something close to: calc(50% - 35px)
+PASS - "background-position-y" property for "box3" element at 0.5s saw something close to: calc(50% - 40px)
+

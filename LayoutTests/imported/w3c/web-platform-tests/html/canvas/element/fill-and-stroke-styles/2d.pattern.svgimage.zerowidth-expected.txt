@@ -1,0 +1,5 @@
+2d.pattern.svgimage.zerowidth
+Actual output:
+
+FAIL Canvas test: 2d.pattern.svgimage.zerowidth Type error
+

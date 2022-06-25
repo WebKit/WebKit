@@ -1,0 +1,7 @@
+2d.fillStyle.toStringFunctionCallback
+
+Passing a function in to ctx.fillStyle or ctx.strokeStyle with a toString callback works as specified
+
+
+FAIL Passing a function in to ctx.fillStyle or ctx.strokeStyle with a toString callback works as specified assert_equals: ctx.fillStyle === "#008000" (got #800000[string], expected #008000[string]) expected "#008000" but got "#800000"
+

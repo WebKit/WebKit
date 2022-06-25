@@ -1,0 +1,38 @@
+
+FAIL Compositing: property <offset-rotate> underlying [20deg] from add [10deg] to add [20deg] at (-0.3) should be [27deg] assert_equals: expected "27deg " but got "7deg "
+FAIL Compositing: property <offset-rotate> underlying [20deg] from add [10deg] to add [20deg] at (0) should be [30deg] assert_equals: expected "30deg " but got "10deg "
+FAIL Compositing: property <offset-rotate> underlying [20deg] from add [10deg] to add [20deg] at (0.3) should be [33deg] assert_equals: expected "33deg " but got "13deg "
+FAIL Compositing: property <offset-rotate> underlying [20deg] from add [10deg] to add [20deg] at (0.6) should be [36deg] assert_equals: expected "36deg " but got "16deg "
+FAIL Compositing: property <offset-rotate> underlying [20deg] from add [10deg] to add [20deg] at (1) should be [40deg] assert_equals: expected "40deg " but got "20deg "
+FAIL Compositing: property <offset-rotate> underlying [20deg] from add [10deg] to add [20deg] at (1.5) should be [45deg] assert_equals: expected "45deg " but got "25deg "
+PASS Compositing: property <offset-rotate> underlying [auto 20deg] from add [10deg] to add [20deg] at (-0.3) should be [7deg]
+PASS Compositing: property <offset-rotate> underlying [auto 20deg] from add [10deg] to add [20deg] at (0) should be [10deg]
+PASS Compositing: property <offset-rotate> underlying [auto 20deg] from add [10deg] to add [20deg] at (0.3) should be [13deg]
+PASS Compositing: property <offset-rotate> underlying [auto 20deg] from add [10deg] to add [20deg] at (0.6) should be [16deg]
+PASS Compositing: property <offset-rotate> underlying [auto 20deg] from add [10deg] to add [20deg] at (1) should be [20deg]
+PASS Compositing: property <offset-rotate> underlying [auto 20deg] from add [10deg] to add [20deg] at (1.5) should be [25deg]
+FAIL Compositing: property <offset-rotate> underlying [auto 20deg] from add [reverse 10deg] to add [auto 20deg] at (-0.3) should be [auto 261deg] assert_equals: expected "auto 261deg " but got "auto 241deg "
+FAIL Compositing: property <offset-rotate> underlying [auto 20deg] from add [reverse 10deg] to add [auto 20deg] at (0) should be [auto 210deg] assert_equals: expected "auto 210deg " but got "auto 190deg "
+FAIL Compositing: property <offset-rotate> underlying [auto 20deg] from add [reverse 10deg] to add [auto 20deg] at (0.3) should be [auto 159deg] assert_equals: expected "auto 159deg " but got "auto 139deg "
+FAIL Compositing: property <offset-rotate> underlying [auto 20deg] from add [reverse 10deg] to add [auto 20deg] at (0.6) should be [auto 108deg] assert_equals: expected "auto 108deg " but got "auto 88deg "
+FAIL Compositing: property <offset-rotate> underlying [auto 20deg] from add [reverse 10deg] to add [auto 20deg] at (1) should be [auto 40deg] assert_equals: expected "auto 40deg " but got "auto 20deg "
+FAIL Compositing: property <offset-rotate> underlying [auto 20deg] from add [reverse 10deg] to add [auto 20deg] at (1.5) should be [auto -45deg] assert_equals: expected "auto - 45deg " but got "auto - 65deg "
+PASS Compositing: property <offset-rotate> underlying [20deg] from add [reverse 10deg] to add [20deg] at (-0.3) should be [auto 190deg]
+PASS Compositing: property <offset-rotate> underlying [20deg] from add [reverse 10deg] to add [20deg] at (0) should be [auto 190deg]
+PASS Compositing: property <offset-rotate> underlying [20deg] from add [reverse 10deg] to add [20deg] at (0.3) should be [auto 190deg]
+FAIL Compositing: property <offset-rotate> underlying [20deg] from add [reverse 10deg] to add [20deg] at (0.6) should be [40deg] assert_equals: expected "40deg " but got "20deg "
+FAIL Compositing: property <offset-rotate> underlying [20deg] from add [reverse 10deg] to add [20deg] at (1) should be [40deg] assert_equals: expected "40deg " but got "20deg "
+FAIL Compositing: property <offset-rotate> underlying [20deg] from add [reverse 10deg] to add [20deg] at (1.5) should be [40deg] assert_equals: expected "40deg " but got "20deg "
+PASS Compositing: property <offset-rotate> underlying [20deg] from replace [reverse 10deg] to add [20deg] at (-0.3) should be [auto 190deg]
+PASS Compositing: property <offset-rotate> underlying [20deg] from replace [reverse 10deg] to add [20deg] at (0) should be [auto 190deg]
+PASS Compositing: property <offset-rotate> underlying [20deg] from replace [reverse 10deg] to add [20deg] at (0.3) should be [auto 190deg]
+FAIL Compositing: property <offset-rotate> underlying [20deg] from replace [reverse 10deg] to add [20deg] at (0.6) should be [40deg] assert_equals: expected "40deg " but got "20deg "
+FAIL Compositing: property <offset-rotate> underlying [20deg] from replace [reverse 10deg] to add [20deg] at (1) should be [40deg] assert_equals: expected "40deg " but got "20deg "
+FAIL Compositing: property <offset-rotate> underlying [20deg] from replace [reverse 10deg] to add [20deg] at (1.5) should be [40deg] assert_equals: expected "40deg " but got "20deg "
+FAIL Compositing: property <offset-rotate> underlying [20deg] from add [10deg] to replace [10deg] at (-0.3) should be [36deg] assert_equals: expected "36deg " but got "10deg "
+FAIL Compositing: property <offset-rotate> underlying [20deg] from add [10deg] to replace [10deg] at (0) should be [30deg] assert_equals: expected "30deg " but got "10deg "
+FAIL Compositing: property <offset-rotate> underlying [20deg] from add [10deg] to replace [10deg] at (0.3) should be [24deg] assert_equals: expected "24deg " but got "10deg "
+FAIL Compositing: property <offset-rotate> underlying [20deg] from add [10deg] to replace [10deg] at (0.6) should be [18deg] assert_equals: expected "18deg " but got "10deg "
+PASS Compositing: property <offset-rotate> underlying [20deg] from add [10deg] to replace [10deg] at (1) should be [10deg]
+FAIL Compositing: property <offset-rotate> underlying [20deg] from add [10deg] to replace [10deg] at (1.5) should be [0deg] assert_equals: expected "0deg " but got "10deg "
+

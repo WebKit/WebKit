@@ -1,0 +1,14 @@
+<html>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+    }
+</script>
+</head>
+<body>
+    <div>This test passes if this img tag below is empty and displays nothing. It ensures that the srcset attribute supports invalid data uri schemes</div>
+    <img src="" srcset="data:image/png;base64,ThisIsAMalFormedData%/,withForbidden,Characters:!?~&#') 2x, data: 3x, data:;charset= 4x, data:;charset=us-ASCII 5x, data:,BadData 6x, data:foo/bar,foobar 7x, data:foo/bar, 8x, data:foo/bar 9x">
+</body>
+</html>

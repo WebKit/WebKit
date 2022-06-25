@@ -1,0 +1,87 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CaptureAudioInGPUProcessEnabled=false CaptureVideoInGPUProcessEnabled=false ] -->
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Don't unmute video when a tab becomes visible unless it was muted when the tab was hidden</title>
+        <script src="../../../resources/testharness.js"></script>
+        <script src="../../../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <script>
+            let audioTrack;
+            let videoTrack;
+
+            async function validateMediaStreamTrackIsGeneratingContent(track)
+            {
+                if (!window.internals)
+                    return true;
+                internals.observeMediaStreamTrack(track);
+                let count = 100;
+                do {
+                    await new Promise(resolve => setTimeout(resolve, 50));
+                    if (internals.trackAudioSampleCount || internals.trackVideoSampleCount)
+                        return true;
+                } while (--count > 0);
+                return false;
+            }
+
+            promise_test((t) => {
+                if (window.testRunner)
+                    testRunner.setUserMediaPermission(true);
+                if (!window.internals)
+                    return Promise.reject("this test needs internals API");
+
+                return navigator.mediaDevices.getUserMedia({ audio: true, video: true }).then((stream) => {
+                    audioTrack = stream.getAudioTracks()[0];
+                    videoTrack = stream.getVideoTracks()[0];
+
+                    assert_false(audioTrack.muted, "audio track is active");
+                    assert_false(videoTrack.muted, "video track is active");
+                })
+            }, "Setup stream");
+
+            promise_test(async (t) => {
+                if (window.internals) {
+                    window.internals.setShouldInterruptAudioOnPageVisibilityChange(false);
+                    window.internals.setPageVisibility(false);
+                }
+                assert_false(audioTrack.muted, "audio track is active");
+                if (!videoTrack.muted)
+                    await new Promise(resolve => videoTrack.onmute = resolve);
+                assert_true(videoTrack.muted, "video track is muted");
+            }, "Hide page, only video should be muted");
+
+            promise_test(async (t) => {
+                if (window.internals)
+                    window.internals.setPageVisibility(true);
+                assert_false(audioTrack.muted, "audio track is active");
+                if (videoTrack.muted)
+                    await new Promise(resolve => videoTrack.onunmute = resolve);
+                assert_false(videoTrack.muted, "video track is active");
+
+                assert_true(await validateMediaStreamTrackIsGeneratingContent(audioTrack), "audio track");
+                assert_true(await validateMediaStreamTrackIsGeneratingContent(videoTrack), "video track");
+            }, "Show page, video and audio should be unmuted");
+
+            promise_test(async (t) => {
+                if (window.internals) {
+                    window.internals.setPageVisibility(false);
+                    window.internals.setPageMuted("capturedevices");
+                }
+                if (!audioTrack.muted)
+                    await new Promise(resolve => audioTrack.onmute = resolve);
+                assert_true(audioTrack.muted, "audio track is muted");
+                if (!videoTrack.muted)
+                    await new Promise(resolve => videoTrack.onmute = resolve);
+                assert_true(videoTrack.muted, "video track is muted");
+            }, "Hide and mute page, video and audio should be muted");
+
+            promise_test(async (t) => {
+                if (window.internals)
+                    window.internals.setPageVisibility(true);
+                assert_true(audioTrack.muted, "audio track is muted");
+                assert_true(videoTrack.muted, "video track is muted");
+            }, "Show page, video and audio should remain muted");
+        </script>
+    </body>
+</html>

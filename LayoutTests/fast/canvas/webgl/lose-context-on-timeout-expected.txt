@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: WebGL: CONTEXT_LOST_WEBGL: loseContext: context lost
+Checks that a GPU process timeout on a result producing WebGL call will lose the context.
+NOTE: This only passes in the test harness because it requires Internals.
+
+PASS gl.isContextLost() is false
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS val is [0, 0, 0, 0]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

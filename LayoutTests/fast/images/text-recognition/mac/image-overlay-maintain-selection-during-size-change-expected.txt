@@ -1,0 +1,10 @@
+PASS selectionWidth is 200
+PASS selectionHeight is 200
+PASS selectionWidth became 50
+PASS selectionHeight is 50
+PASS selectionWidth became 200
+PASS selectionHeight is 200
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that we compute the visual overflow rect for negative letter spacing properly.</title>
+<style>
+div {
+    position: absolute;
+    font-family: ahem;
+    font-size: 20px;
+    -webkit-transform: translateZ(0);
+}
+</style>
+</head>
+<body>
+<script>
+var letterSpacing = 0;
+var topPosition = 0;
+for (var i = 0; i < 20; ++i, topPosition += 25, letterSpacing -= 1) {
+    var element = document.createElement("div");
+    element.style.letterSpacing = letterSpacing + "px";
+    element.style.top = topPosition + "px";
+    element.innerText = "foo";
+    document.body.appendChild(element);
+}
+</script>
+</body>
+</html>

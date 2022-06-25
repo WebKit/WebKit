@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Test passes if you see a single 100px by 100px green box below.</p>
+<div id="host" style="width: 100px; height: 100px;"></div>
+<svg>
+    <defs>
+        <rect id="rect" width="100" height="100" fill="red">
+    </defs>
+</svg>
+<template>
+    <svg viewbox="0 0 100 100">
+        <defs>
+            <rect id="rect" width="100" height="100" fill="green">
+        </defs>
+        <use href="#rect">
+            <rect id="rect" width="50" height="50" fill="red">
+        </use>
+    </svg>
+</template>
+<script>
+
+const shadowRoot = host.attachShadow({mode: 'closed'});
+shadowRoot.appendChild(document.querySelector('template').content.cloneNode(true)); 
+
+</script>
+</body>
+</html>

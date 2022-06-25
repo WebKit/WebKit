@@ -1,0 +1,154 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style id="style-container">
+</style>
+</head>
+<body>
+    <div style="display:none">
+        <!-- Empty -->
+        <target attr=" "></target>
+
+        <!-- Regular spaces. -->
+        <target attr="value"></target>
+        <target attr=" value"></target>
+        <target attr="value "></target>
+        <target attr=" value "></target>
+        <target attr=" value value value "></target>
+
+        <!-- Tabs. -->
+        <target attr="&#9;"></target>
+        <target attr="&#9;value"></target>
+        <target attr="value&#9;"></target>
+        <target attr="&#9;value&#9;"></target>
+        <target attr="&#9;value&#9;value&#9;value&#9;"></target>
+
+        <!-- Line feed. -->
+        <target attr="&#10;"></target>
+        <target attr="&#10;value"></target>
+        <target attr="value&#10;"></target>
+        <target attr="&#10;value&#10;"></target>
+        <target attr="&#10;value&#10;value&#10;value&#10;"></target>
+
+        <!-- Carriage return. -->
+        <target attr="&#13;"></target>
+        <target attr="&#13;value"></target>
+        <target attr="value&#13;"></target>
+        <target attr="&#13;value&#13;"></target>
+        <target attr="&#13;value&#13;value&#13;value&#13;"></target>
+
+        <!-- Carriage return. -->
+        <target attr="&#12;"></target>
+        <target attr="&#12;value"></target>
+        <target attr="value&#12;"></target>
+        <target attr="&#12;value&#12;"></target>
+        <target attr="&#12;value&#12;value&#12;value&#12;"></target>
+
+        <!-- The spec explicitely says EM SPACE (U+2003) and IDEOGRAPHIC SPACE (U+3000) are not whitespace. Let's test for that. -->
+        <!-- EM SPACE (U+2003). -->
+        <target attr="&#x2003"></target>
+        <target attr="&#x2003value"></target>
+        <target attr="value&#x2003"></target>
+        <target attr="&#x2003value&#x2003"></target>
+
+        <!-- IDEOGRAPHIC SPACE (U+3000). -->
+        <target attr="&#x3000"></target>
+        <target attr="&#x3000value"></target>
+        <target attr="value&#x3000"></target>
+        <target attr="&#x3000value&#x3000"></target>
+    </div>
+</body>
+<script>
+description('When performing attribute matching for space separated values (e.g. [attr~=value]), the selector cannot match anything if the selector\'s "value" contains a white space. This test check this is true for all the definitions of whitespace of the spec.');
+
+function hasElementStyledBySelector()
+{
+    var allElements = document.querySelectorAll("*");
+    for (var i = 0; i < allElements.length; ++i) {
+        if (getComputedStyle(allElements[i]).backgroundColor == "rgb(1, 2, 3)")
+            return true;
+    }
+    return false;
+}
+
+function testInvalidSelector(selectorString) {
+    shouldBe('document.querySelectorAll(\'' + selectorString.replace(/\\/g, '\\\\') + '\').length', '0');
+
+    var styleContainer = document.getElementById('style-container');
+    styleContainer.innerHTML = '' + selectorString + ' { background-color: rgb(1, 2, 3); }';
+
+    shouldBeFalse("hasElementStyledBySelector()");
+    styleContainer.innerHTML = '';
+}
+
+var invalidValues = [
+    // Empty.
+    '[attr~=""]',
+
+    // Regular whitespace.
+    '[attr~=" "]',
+    '[attr~="value "]',
+    '[attr~=" value"]',
+    '[attr~=" value "]',
+
+    // Tab.
+    '[attr~="\t"]',
+    '[attr~="value\t"]',
+    '[attr~="\tvalue"]',
+    '[attr~="\tvalue\t"]',
+
+    // Line feed.
+    '[attr~="\\0a"]',
+    '[attr~="\\0a "]',
+    '[attr~="value\\0a"]',
+    '[attr~="\\0a value"]',
+    '[attr~="\\0a value\\0a"]',
+
+    // Carriage return.
+    '[attr~="\\0d"]',
+    '[attr~="\\0d "]',
+    '[attr~="value\\0d"]',
+    '[attr~="\\0d value"]',
+    '[attr~="\\0d value\\0d"]',
+
+    // Form feed.
+    '[attr~="\\0c"]',
+    '[attr~="\\0c "]',
+    '[attr~="value\\0c"]',
+    '[attr~="\\0c value"]',
+    '[attr~="\\0c value\\0c"]',
+];
+
+for (var i = 0; i < invalidValues.length; ++i)
+    testInvalidSelector(invalidValues[i]);
+
+var validValues = [
+    // EM SPACE.
+    '[attr~="\\002003"]',
+    '[attr~="value\\002003"]',
+    '[attr~="\\002003 value"]',
+    '[attr~="\\002003 value\\002003"]',
+
+    // IDEOGRAPHIC SPACE.
+    '[attr~="\\003000"]',
+    '[attr~="value\\003000"]',
+    '[attr~="\\003000 value"]',
+    '[attr~="\\003000 value\\003000"]',
+];
+
+function testValidSelector(selectorString) {
+    shouldBe('document.querySelectorAll(\'' + selectorString.replace(/\\/g, '\\\\') + '\').length', '1');
+
+    var styleContainer = document.getElementById('style-container');
+    styleContainer.innerHTML = '' + selectorString + ' { background-color: rgb(1, 2, 3); }';
+
+    shouldBeTrue("hasElementStyledBySelector()");
+    styleContainer.innerHTML = '';
+}
+
+for (var i = 0; i < validValues.length; ++i)
+    testValidSelector(validValues[i]);
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

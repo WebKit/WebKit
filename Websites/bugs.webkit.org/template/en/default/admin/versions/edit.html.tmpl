@@ -1,0 +1,51 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # product: object; Bugzilla::Product object representing the product to
+  #               which the version belongs.
+  # version: object; Bugzilla::Version object representing the
+  #                    version the user wants to edit.
+  #%]
+
+[% title = BLOCK %]Edit Version '[% version.name FILTER html %]' of product '
+                   [%- product.name FILTER html %]'[% END %]
+[% PROCESS global/header.html.tmpl
+  title = title
+  style_urls = ['skins/standard/admin.css']
+%]
+
+<form method="post" action="editversions.cgi">
+  <table id="admin_table_edit">
+    <tr>
+      <th><label for="version">Version:</label></th>
+      <td>
+        <input id="version" size="64" maxlength="64" name="version"
+               value="[% version.name FILTER html %]" required>
+      </td>
+    </tr>
+    <tr>
+      <th><label for="isactive">Enabled For [% terms.Bugs %]:</label></th>
+      <td>
+        <input id="isactive" name="isactive" type="checkbox" value="1"
+                 [% 'checked="checked"' IF version.isactive %]>
+      </td>
+    </tr>
+  </table>
+
+  <input type="hidden" name="versionold" value="[% version.name FILTER html %]">
+  <input type="hidden" name="action" value="update">
+  <input type="hidden" name="product" value="[% product.name FILTER html %]">
+  <input type="hidden" name="token" value="[% token FILTER html %]">
+  <input type="submit" id="update" value="Save Changes">
+</form>
+
+[% PROCESS admin/versions/footer.html.tmpl
+  no_edit_version_link = 1 %]
+
+[% PROCESS global/footer.html.tmpl %]

@@ -1,0 +1,19 @@
+
+PASS Cookie sent for exact redirected path match
+PASS Cookie sent for exact redirected path match, one level deeper
+PASS Cookie sent for redirected path with trailing '/' and the redirected URL is one level deeper
+PASS Cookie sent for redirected path with trailing '/' and a double '/' in the redirected URL
+PASS Cookie sent for redirected path match with a trailing ';' after an unquoted Path
+PASS No cookie sent for redirected path match with a trailing ';' inside a quoted Path
+PASS No cookie sent for redirected path match with partially URL encoded path
+PASS Multiple cookies sent for multiple redirected path matches, sorted by length
+PASS No cookie sent for redirected path mismatch where path and redirected URL begin with same string
+PASS No cookie sent for redirected path mismatch where final path directory component and redirected URL resource begin with same string
+PASS No cookie sent for redirected path mismatch where final path directory component begins with same string as redirected URL final directory component
+PASS No cookie sent for redirected path mismatch for different resources inside the same final directory component
+PASS No cookie sent for redirected path mismatch where final path directory component ends in '/' and does not match redirected URL
+PASS No cookie sent for redirected path mismatch with a similar start to the redirected URL
+PASS No cookie sent for redirected path mismatch with trailing '?' after unquoted Path
+PASS No cookie sent for redirected path mismatch with trailing '#' after unquoted Path
+PASS No cookie sent for redirected path mismatch with trailing '/' after unquoted Path
+

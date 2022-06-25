@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+  <head>
+    <title>mo stretchy vertical bar</title>
+    <meta charset="utf-8"/>
+  </head>
+  <body>
+
+    <!-- This verifies that the vertical bar stretches to an arbitrary size -->
+    <div style="position: absolute; top: 0px; left: 0;">
+      <math>
+        <mrow>
+          <mo>|</mo>
+          <mspace height="200px" depth="200px"/>
+        </mrow>
+      </math>
+    </div>
+
+    <!-- Red rectangle that should only partially cover the bar. -->
+    <div style="position: absolute; top: 0px; left: 0;">
+      <math>
+        <mrow>
+          <mspace height="190px" depth="190px" width="200px" mathbackground="red"/>
+          <mspace height="200px" depth="200px"/>
+        </mrow>
+      </math>
+    </div>
+  </body>
+</html>

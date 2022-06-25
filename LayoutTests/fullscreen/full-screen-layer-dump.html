@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+    font-family: ahem;
+    -webkit-font-smoothing: none;
+}
+</style>
+<script>
+    window.addEventListener('load', event => {
+        let out = document.querySelector('#out');
+        let target = document.querySelector('#target');
+
+        if (!window.internals || !window.testRunner || !window.eventSender) {
+            out.innerText = 'This test requires internals';
+            return;
+        }
+
+        testRunner.dumpAsText(false);
+        testRunner.waitUntilDone();
+
+        document.addEventListener('webkitfullscreenchange', event => {
+            if (document.webkitIsFullScreen) {
+                setTimeout(() => {
+                    out.innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_CONTENT_LAYERS);
+                    document.webkitCancelFullScreen();
+                }, 0)
+            } else 
+                testRunner.notifyDone();
+        });
+
+
+        document.addEventListener('keydown', event => {
+            target.webkitRequestFullScreen();
+        });
+        if (window.eventSender)
+            eventSender.keyDown('a');
+    });
+</script>
+</head>
+<body>
+    <div id=target></div>
+    <pre id=out></pre>
+</body>
+</html>

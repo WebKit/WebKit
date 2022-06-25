@@ -1,0 +1,32 @@
+
+PASS The default value of `recurringPaymentRequest` should be `null` if `data` is not provided as part of the request.
+PASS The default value of `recurringPaymentRequest` should be `null` if `data` is not provided as part of an update.
+PASS Should not error if optional properties are not provided as part of the request.
+PASS Should not error if optional properties are not provided as part of an update.
+PASS Should propagate all data as part of the request.
+PASS Should propagate all data as part of an update.
+PASS Should error when `regularBilling` is missing `paymentTiming` as part of the request.
+PASS Should error when `regularBilling` is missing `paymentTiming` as part of an update.
+PASS Should error when `regularBilling` has an invalid `paymentTiming` as part of the request.
+PASS Should error when `regularBilling` has an invalid `paymentTiming` as part of an update.
+PASS Should error when `regularBilling` is missing `label` as part of the request.
+PASS Should error when `regularBilling` is missing `label` as part of an update.
+PASS Should error when `regularBilling` is missing `amount` as part of the request.
+PASS Should error when `regularBilling` is missing `amount` as part of an update.
+PASS Should error when `regularBilling` has an invalid `amount` as part of the request.
+PASS Should error when `regularBilling` has an invalid `amount` as part of an update.
+PASS Should error when `trialBilling` is missing `paymentTiming` as part of the request.
+PASS Should error when `trialBilling` is missing `paymentTiming` as part of an update.
+PASS Should error when `trialBilling` has an invalid `paymentTiming` as part of the request.
+PASS Should error when `trialBilling` has an invalid `paymentTiming` as part of an update.
+PASS Should error when `trialBilling` is missing `label` as part of the request.
+PASS Should error when `trialBilling` is missing `label` as part of an update.
+PASS Should error when `trialBilling` is missing `amount` as part of the request.
+PASS Should error when `trialBilling` is missing `amount` as part of an update.
+PASS Should error when `trialBilling` has an invalid `amount` as part of the request.
+PASS Should error when `trialBilling` has an invalid `amount` as part of an update.
+PASS Should error when `managementURL` is not a valid URL as part of the request.
+PASS Should error when `managementURL` is not a valid URL as part of an update.
+PASS Should error when `tokenNotificationURL` is not a valid URL as part of the request.
+PASS Should error when `tokenNotificationURL` is not a valid URL as part of an update.
+

@@ -1,0 +1,69 @@
+<html>
+    <head>
+        <script src='media-file.js'></script>
+        <script src='video-test.js'></script>
+        <script>
+            var video1;
+            var video2;
+
+            function start()
+            {
+                video1 = document.getElementsByTagName('video')[0];
+                video2 = document.getElementsByTagName('video')[1];
+
+                if (window.internals)
+                    internals.setMockMediaPlaybackTargetPickerEnabled(true);
+                
+                video1.addEventListener('webkitplaybacktargetavailabilitychanged', noSource, true);
+            }
+            
+            function noSource(event)
+            {
+                video1.removeEventListener('webkitplaybacktargetavailabilitychanged', noSource, true);
+
+                consoleWrite(`EVENT( ${event.type} )`);
+                testExpected('event.availability', 'not-available');
+
+                video1.addEventListener('webkitplaybacktargetavailabilitychanged', haveTarget, true);
+
+                consoleWrite('<br>** simulate device becoming available');
+                if (window.internals)
+                    internals.setMockMediaPlaybackTargetPickerState('Sleepy TV', 'DeviceAvailable');
+            }
+                
+            function haveTarget(event)
+            {
+                // setMockMediaPlaybackTargetPickerState happens asynchronously in WK2 and a
+                // 'webkitplaybacktargetavailabilitychanged' is always sent when an event listener
+                // is added, so we may get a "not available" event first.
+                if (event.availability == 'not-available')
+                    return;
+
+                video1.removeEventListener('webkitplaybacktargetavailabilitychanged', haveTarget, true);
+                consoleWrite(`EVENT( ${event.type} )`);
+
+                consoleWrite('<br>** set src on video that does not have event listener');
+
+                video2.src = findMediaFile('video', 'content/test');
+                video1.addEventListener('webkitplaybacktargetavailabilitychanged', withSource, true);
+            }
+
+            function withSource(event)
+            {
+                consoleWrite(`EVENT( ${event.type} )`);
+                testExpected('event.availability', 'available');
+                consoleWrite('');
+                endTest();
+            }
+
+        </script>
+    </head>
+
+    <body onload='start()'>
+        <video controls></video>
+        <br>
+        <video controls></video>
+        <p>Test that 'webkitplaybacktargetavailabilitychanged' event is sent when at least one 
+        video element has playable media.</p>
+    </body>
+</html>

@@ -1,0 +1,6 @@
+
+PASS createImageBitmap with EXIF rotation, imageOrientation none, and no cropping
+PASS createImageBitmap with EXIF rotation, imageOrientation flipY, and no cropping
+PASS createImageBitmap with EXIF rotation, imageOrientation none, and cropping
+PASS createImageBitmap with EXIF rotation, imageOrientation flipY, and cropping
+

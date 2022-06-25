@@ -1,0 +1,22 @@
+<html><head>
+
+<link rel="stylesheet" type="text/css" href="resources/test-preload-resources.css">
+<link rel="alternate stylesheet" type="text/css" href="resources/test-preload-resources.css?1" title="green">
+<link rel="alternate stylesheet" type="text/css" href="resources/test-preload-resources.css?2" title="blue">
+<link rel="alternate stylesheet" type="text/css" href="resources/test-preload-resources.css?3" title="yellow">
+<link rel="alternate stylesheet" type="text/css" href="resources/test-preload-resources.css?4" title="pink">
+<link rel="alternate stylesheet" type="text/css" href="resources/test-preload-resources.css?5" title="purple">
+<link rel="alternate stylesheet" type="text/css" href="resources/test-preload-resources.css?6" title="gray">
+
+<script>
+if (window.testRunner)
+    testRunner.dumpDOMAsWebArchive();
+</script>
+
+</head><body>
+<div>
+Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=22466">Bug 22466:
+REGRESSION (35867): Many resources missing when saving webarchive of webkit.org</a>
+</div>
+<p>Some resources are missing when saving this page as a webarchive.</p>
+</body></html>

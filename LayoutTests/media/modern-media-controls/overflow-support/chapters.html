@@ -1,0 +1,46 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<meta name="viewport" content="width=device-width">
+<script src="../resources/media-controls-utils.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test-pre.js"></script>
+<body>
+<video src="../../content/long-test.mp4" style="position: absolute; left: 0; top: 0; width: 600px;" controls autoplay muted playsinline>
+    <track src="../../content/lorem-ipsum.vtt" kind="chapters">
+</video>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Testing the <code>OverflowSupport</code> behavior for Playback Speed.");
+
+const media = document.querySelector("video");
+const shadowRoot = window.internals.shadowRoot(media);
+
+window.internals.setMediaControlsHidePlaybackRates(media, true);
+
+media.addEventListener("play", async function() {
+    media.pause();
+
+    await shouldBecomeDifferent("shadowRoot.querySelector('button.overflow')", "null");
+
+    await shouldBecomeDifferent("shadowRoot.querySelector('button.overflow').getBoundingClientRect().width", "0");
+
+    await shouldBecomeDifferent("media.textTracks[0].mode", "'disabled'");
+
+    debug("Tapping overflow button...");
+    await pressOnElement(shadowRoot.querySelector("button.overflow"));
+    await UIHelper.waitForContextMenuToShow();
+
+    debug("Selecting first chapter cue...");
+    await UIHelper.chooseMenuAction("ipsum");
+    await UIHelper.waitForContextMenuToHide();
+
+    await shouldBecomeEqual("media.currentTime >= 5", "true");
+
+    media.remove();
+    finishJSTest();
+});
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

@@ -1,0 +1,82 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <style>
+            body {
+                margin: 0;
+                overflow: hidden;
+            }
+
+            #container {
+                width: 600px;
+                height: 600px;
+                position: absolute;
+                top: 0;
+                left: 0;
+                overflow-x: none;
+                overflow-y: scroll;
+                scroll-snap-type: y mandatory;
+                opacity: 0.5;
+            }
+
+            .area {
+                height: 600px;
+                width: 600px;
+                float: left;
+                scroll-snap-align: start;
+            }
+        </style>
+        <script>
+        let write = s => output.innerHTML += s + "<br>";
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function verticalScrollInContainer(dragDeltas, momentumDeltas)
+        {
+            return new Promise(resolve => {
+                write(`Scrolling in ${container.id} with scroll-snap-type: ${getComputedStyle(container).scrollSnapType}`);
+                eventSender.monitorWheelEvents();
+                internals.setPlatformMomentumScrollingPredictionEnabled(false);
+                eventSender.mouseMoveTo(300, 300);
+                dragDeltas.forEach((delta, i) => eventSender.mouseScrollByWithWheelAndMomentumPhases(0, delta, i == 0 ? "began" : "changed", "none"));
+                eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
+                if (momentumDeltas && momentumDeltas.length) {
+                    momentumDeltas.forEach((delta, i) => eventSender.mouseScrollByWithWheelAndMomentumPhases(0, delta, "none", i == 0 ? "begin" : "continue"));
+                    eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "none", "end");
+                }
+                eventSender.callAfterScrollingCompletes(() => {
+                    write(`- Did the scrolling snap to the top? ${container.scrollTop == 0 ? "YES" : "NO"}`);
+                    write(`- Did scrolling snap to the second box? ${container.scrollTop == 600 ? "YES" : "NO"}`);
+                    container.style.scrollSnapType = "y proximity"
+                    container.scrollTop = 0;
+                    setTimeout(resolve, 0);
+                });
+            });
+        }
+
+        function run() {
+            if (!window.testRunner || !window.eventSender) {
+                write("This test requires EventSender support.");
+                return;
+            }
+
+            verticalScrollInContainer(new Array(16).fill(-1), new Array(3).fill(-1))
+                .then(() => verticalScrollInContainer(new Array(16).fill(-1), new Array(3).fill(-1)))
+                .then(() => testRunner.notifyDone());
+        }
+        </script>
+    </head>
+    <body onload=run()>
+        <div id="container">
+            <div class="area" style="background-color: red;"></div>
+            <div class="area" style="background-color: green;"></div>
+            <div class="area" style="background-color: blue;"></div>
+            <div class="area" style="background-color: aqua;"></div>
+            <div class="area" style="background-color: yellow;"></div>
+            <div class="area" style="background-color: fuchsia;"></div>
+        </div>
+        <div id="output"></div>
+    </body>
+</html>

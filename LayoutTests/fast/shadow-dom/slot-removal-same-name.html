@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<script>
+  onload = () => {
+    const shadowRoot = document.body.attachShadow({mode: 'open'});
+    shadowRoot.append(document.createElement('slot'));
+    shadowRoot.append(document.createElement('slot'));
+    document.body.getBoundingClientRect();
+    shadowRoot.replaceChildren();
+    document.write("PASS if this doesn't crash");
+    if (window.testRunner)
+        testRunner.dumpAsText();
+  };
+</script>
+<body></body>
+</html>

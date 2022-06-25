@@ -1,0 +1,6 @@
+Download started.
+Downloading URL with suggested filename "_.png"
+Download completed.
+The suggested filename above should be "*.png" and the download should succeed.
+
+File backed blob URL

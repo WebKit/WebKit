@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-stalled-holds-sleep-assertion</title>
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+
+    var canvas;
+    var loader;
+    var source;
+    var sourceBuffer;
+
+    function runTest() {
+        mediaElement = video = document.createElement('video');
+
+        loader = new MediaSourceLoader('content/test-fragmented-manifest.json');
+        loader.onload = mediaDataLoaded;
+        loader.onerror = mediaDataLoadingFailed;
+    }
+
+    function mediaDataLoadingFailed() {
+        failTest('Media data loading failed');
+    }
+
+    function mediaDataLoaded() {
+        source = new MediaSource();
+        waitForEvent('sourceopen', sourceOpen, false, false, source);
+        video.src = URL.createObjectURL(source);
+    }
+
+    function sourceOpen() {
+        source.duration = loader.duration();
+        sourceBuffer = source.addSourceBuffer(loader.type());
+        waitForEventOn(sourceBuffer, 'update', sourceInitialized, false, true);
+        sourceBuffer.appendBuffer(loader.initSegment());
+    }
+
+    function sourceInitialized() {
+        waitForEvent('canplay', canPlay, false, true);
+        sourceBuffer.appendBuffer(loader.mediaSegment(0));
+    }
+
+    function paint() {
+        canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth / 2;
+        canvas.height = video.videoHeight / 2;
+        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+        document.getElementById('canvases').appendChild(canvas);
+        testExpected('canvas.getContext("2d").getImageData(250, 130, 1, 1).data[0]', '0', '!=');
+    }
+
+    function canPlay() {
+        waitForEvent('seeked', seeked1, false, true);
+        run('video.currentTime += 1.001 / 24');
+    }
+
+    function seeked1() {
+        paint();
+        waitForEvent('seeked', seeked2, false, true);
+        run('video.currentTime += 1.001 / 24');
+    }
+
+    function seeked2() {
+        paint();
+        waitForEvent('seeked', seeked3, false, true);
+        run('video.currentTime += 1.001 / 24');
+    }
+
+    function seeked3() {
+        paint();
+        endTest();
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    <div id="canvases"></canvas>
+</body>
+</html>

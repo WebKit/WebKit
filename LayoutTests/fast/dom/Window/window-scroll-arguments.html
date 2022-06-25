@@ -1,0 +1,166 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+    <script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div style="height: 1000px; width: 1000px; border: 1px solid black;">This box should force the window to have a scrollable area to test.</div>
+<script language="JavaScript" type="text/javascript">
+    var resetX;
+    var resetY;
+
+    var x = 25;
+    var y = 50;
+
+    function reset()
+    {
+        window.scrollTo(0,0);
+        resetX = window.scrollX;
+        resetY = window.scrollY;
+    }
+
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    reset();
+
+    description("This tests calling the window scrolling with only 1 argument");
+
+    // scrollTo /////////////////////////
+    debug('');
+    debug('window.scrollTo Tests');
+    debug('');
+
+    debug("Testing - scrollTo with 0 arguments");
+    window.scrollTo();
+    shouldBe('window.scrollX', 'resetX');
+    shouldBe('window.scrollY', 'resetY');
+    reset();
+    window.scrollTo(x, y);
+    window.scrollTo();
+    shouldBe('window.scrollX', 'x');
+    shouldBe('window.scrollY', 'y');
+    reset();
+
+    debug("Testing - scrollTo with 1 non-dictionary argument");
+    shouldThrow("scrollTo(0)");
+    reset();
+
+    debug("Testing - scrollTo with 1 dictionary argument");
+    window.scrollTo({ left: x });
+    shouldBe('window.scrollX', 'x');
+    shouldBe('window.scrollY', 'resetY');
+    reset();
+    window.scrollTo({ top: y });
+    shouldBe('window.scrollX', 'resetX');
+    shouldBe('window.scrollY', 'y');
+    reset();
+    window.scrollTo({ left: x, top: y });
+    shouldBe('window.scrollX', 'x');
+    shouldBe('window.scrollY', 'y');
+    reset();
+    window.scrollTo(x, y);
+    window.scrollTo({ left: NaN, top: NaN });
+    shouldBe('window.scrollX', '0');
+    shouldBe('window.scrollY', '0');
+    reset();
+
+    debug("Testing - scrollTo with more than 2 arguments");
+    window.scrollTo(x, y, 200, "text");
+    shouldBe('window.scrollX', 'x');
+    shouldBe('window.scrollY', 'y');
+    reset();
+
+    // scroll /////////////////////////
+    debug('');
+    debug('window.scroll Tests');
+    debug('');
+
+    debug("Testing - scroll with 0 arguments");
+    window.scroll();
+    shouldBe('window.scrollX', 'resetX');
+    shouldBe('window.scrollY', 'resetY');
+    reset();
+    window.scroll(x, y);
+    window.scroll();
+    shouldBe('window.scrollX', 'x');
+    shouldBe('window.scrollY', 'y');
+    reset();
+
+    debug("Testing - scroll with 1 non-dictionary argument");
+    shouldThrow("scroll(0)");
+    reset();
+
+    debug("Testing - scroll with 1 dictionary argument");
+    window.scroll({ left: x });
+    shouldBe('window.scrollX', 'x');
+    shouldBe('window.scrollY', 'resetY');
+    reset();
+    window.scroll({ top: y });
+    shouldBe('window.scrollX', 'resetX');
+    shouldBe('window.scrollY', 'y');
+    reset();
+    window.scroll({ left: x, top: y });
+    shouldBe('window.scrollX', 'x');
+    shouldBe('window.scrollY', 'y');
+    reset();
+    window.scroll(x, y);
+    window.scroll({ left: NaN, top: NaN });
+    shouldBe('window.scrollX', '0');
+    shouldBe('window.scrollY', '0');
+    reset();
+
+    debug("Testing - scroll with more than 2 arguments");
+    window.scroll(x, y, 200, "text");
+    shouldBe('window.scrollX', 'x');
+    shouldBe('window.scrollY', 'y');
+    reset();
+
+    // scrollBy /////////////////////////
+    debug('');
+    debug('window.scrollBy Tests');
+    debug('');
+
+    debug("Testing - scrollBy with 0 arguments");
+    window.scrollBy();
+    shouldBe('window.scrollX', 'resetX');
+    shouldBe('window.scrollY', 'resetY');
+    reset();
+    window.scrollBy(x, y);
+    window.scrollBy();
+    shouldBe('window.scrollX', 'x');
+    shouldBe('window.scrollY', 'y');
+    reset();
+
+    debug("Testing - scrollBy with 1 non-dictionary argument");
+    shouldThrow("scrollBy(0)");
+    reset();
+
+    debug("Testing - scrollBy with 1 argument");
+    window.scrollBy({ left: x });
+    shouldBe('window.scrollX', 'resetX + x');
+    shouldBe('window.scrollY', 'resetY');
+    reset();
+    window.scrollBy({ top: y });
+    shouldBe('window.scrollX', 'resetX');
+    shouldBe('window.scrollY', 'resetY + y');
+    reset();
+    window.scrollBy({ left: x, top: y });
+    shouldBe('window.scrollX', 'resetX + x');
+    shouldBe('window.scrollY', 'resetY + y');
+    reset();
+    window.scrollBy(x, y);
+    window.scrollBy({ left: NaN, top: NaN });
+    shouldBe('window.scrollX', 'resetX + x');
+    shouldBe('window.scrollY', 'resetY + y');
+    reset();
+
+    debug("Testing - scrollBy with more than 2 arguments");
+    window.scrollBy(x, y, 200, "text");
+    shouldBe('window.scrollX', 'resetX + x');
+    shouldBe('window.scrollY', 'resetY + y');
+    reset();
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

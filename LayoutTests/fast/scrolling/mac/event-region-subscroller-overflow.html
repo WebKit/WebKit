@@ -1,0 +1,51 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<style>
+.testdiv {
+    display: inline-block;
+    box-sizing: border-box;
+    border: 2px solid blue;
+    position: relative;
+    height: 200px;
+    width: 200px;
+    will-change: transform;
+}
+.inner {
+    height: 200px;
+    width: 200px;
+    background-color: green;
+}
+.scroller {
+    overflow: scroll;
+    height: 50px;
+    width: 50px;
+}
+.scrollcontent {
+    height: 100px;
+    background-color:red;
+}
+</style>
+<script>
+window.onload = function () {
+    if (!window.internals)
+        return;
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    results.innerText = "Before adding scroller:\n\n"
+    results.innerText += internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION);
+
+    scroller.removeAttribute("hidden");
+
+    results.innerText += "After adding scroller:\n\n"
+    results.innerText += internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION);
+}
+</script>
+<body>
+<div class="testdiv">
+</div>
+<div id="scroller" class="scroller" hidden><div class="scrollcontent"></div></div>
+
+<pre id="results"></pre>
+</body>
+</html>

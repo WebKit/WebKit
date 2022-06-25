@@ -1,0 +1,2 @@
+click me
+clicked - PASSED

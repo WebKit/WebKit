@@ -1,0 +1,42 @@
+Input:
+<#start><b>hello <span id="host"><#shadow-start><slot style="color: blue;"></slot> Web<#end>Kit<#shadow-end>world</span></b> rocks
+
+Output:
+NSParagraphStyle:
+Alignment 4
+    LineSpacing: 0
+    ParagraphSpacing: 0
+    ParagraphSpacingBefore: 0
+    HeadIndent: 0
+    TailIndent: 0
+    FirstLineHeadIndent: 0
+    LineHeight: 0/0
+    LineHeightMultiple: 0
+    LineBreakMode: 0
+    Tabs: ()
+    DefaultTabInterval: 36
+    Blocks: (
+)
+    Lists: (
+)
+    BaseWritingDirection: 0
+    HyphenationFactor: 0
+    TighteningForTruncation: YES
+    HeaderLevel: 0
+[hello ]
+    NSFont: Times-Bold 16.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: #000000 (sRGB)
+    NSStrokeWidth: 0
+[world]
+    NSColor: #0000ff (sRGB)
+    NSFont: Times-Roman 16.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: #0000ff (sRGB)
+    NSStrokeWidth: 0
+[ Web]
+    NSFont: Times-Bold 16.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: #000000 (sRGB)
+    NSStrokeWidth: 0
+

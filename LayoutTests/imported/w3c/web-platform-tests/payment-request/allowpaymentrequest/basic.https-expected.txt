@@ -1,0 +1,4 @@
+
+
+FAIL PaymentRequest <iframe allowpaymentrequest> basic Trying to start an Apple Pay session from an insecure document.
+

@@ -1,0 +1,11 @@
+<link rel="manifest" href="resources/developer-warnings.manifest">
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.getApplicationManifestThen(function() {
+        alert("Pass");
+        testRunner.notifyDone();
+    });
+}
+</script>

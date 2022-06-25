@@ -1,0 +1,19 @@
+<html>
+<head>
+<script>
+    var count = 0;
+    function handleBeforeLoad() {
+        if (++count == 2)
+            window.frameElement.parentNode.removeChild(window.frameElement);
+    }
+   			
+    function documentLoaded() {
+        var o = document.createElement('object');
+        o.addEventListener('beforeload', handleBeforeLoad, false);
+        document.body.appendChild(o);
+    }
+</script>
+</head>
+<body onload='documentLoaded();'>
+</body>
+</html>

@@ -1,0 +1,7 @@
+
+PASS iframe.contentWindow.scrollY is 0
+PASS iframe.contentWindow.scrollY is 400
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

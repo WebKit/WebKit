@@ -1,0 +1,32 @@
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.unload = function() {
+    alert("FAIL");
+}
+
+window.onload = function() {
+    // There's no way to write a test that determinstically fails because the
+    // history API is asynchronous.  There's no way to know whether the
+    // asynchronous haven't yet happened or never will.  Consequently, we just
+    // wait for a bit.
+    setTimeout(function() {
+        alert("PASS");
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 20);
+}
+</script>
+</head>
+<body>
+<p>This test verifies that a sandboxed IFrame cannot navigate the top-level frame using the history API.</p>
+<iframe sandbox="allow-scripts" src="data:text/html,<script>top.history.back()</script>">
+<iframe sandbox="allow-scripts" src="data:text/html,<script>top.history.forward()</script>">
+<iframe sandbox="allow-scripts" src="data:text/html,<script>top.history.go(-1)</script>">
+</body>
+</html>

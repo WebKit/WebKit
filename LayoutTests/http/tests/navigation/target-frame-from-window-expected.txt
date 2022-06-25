@@ -1,0 +1,6 @@
+
+
+--------
+Frame: 'test'
+--------
+PASS New page loaded from popup window

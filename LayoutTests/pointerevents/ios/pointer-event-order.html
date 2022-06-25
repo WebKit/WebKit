@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../utils.js"></script>
+<script>
+
+'use strict';
+
+target_test({ width: "200px", height: "200px" }, (target, test) => {
+    const eventTracker = new EventTracker(target, ["pointerdown", "pointerenter", "pointerleave", "pointermove", "pointerout", "pointerover", "pointerup", "click"]);
+
+    ui.tap({ x: 100, y: 100 }).then(() => {
+        eventTracker.assertMatchesEvents([
+            { type: "pointerover", x: 100, y: 100, isPrimary: true },
+            { type: "pointerenter", x: 100, y: 100, isPrimary: true },
+            { type: "pointerdown", x: 100, y: 100, isPrimary: true },
+            { type: "pointerup", x: 100, y: 100, isPrimary: true },
+            { type: "pointerout", x: 100, y: 100, isPrimary: true },
+            { type: "pointerleave", x: 100, y: 100, isPrimary: true },
+            { type: "click", x: 100, y: 100 },
+        ]);
+        test.done();
+    });
+}, `Testing the order in which pointer events are dispatched and that only one of each event is dispatched, even when a click event is registered.`);
+
+</script>
+</body>
+</html>

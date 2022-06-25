@@ -1,0 +1,23 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGContainer {g} at (83,133) size 640x252
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGText {text} at (50,80) size 384x150 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 225x150
+          chunk 1 text run 1 at (50.00,200.00) startOffset 0 endOffset 3 width 225.00: "a\x{729C}\x{923}"
+        RenderSVGTSpan {tspan} at (0,0) size 114x75
+          RenderSVGInlineText {#text} at (225,60) size 114x75
+            chunk 1 text run 1 at (275.00,200.00) startOffset 0 endOffset 3 width 113.40: "a\x{729C}\x{923}"
+        RenderSVGTSpan {tspan} at (0,0) size 46x30
+          RenderSVGInlineText {#text} at (338,96) size 45x30
+            chunk 1 text run 1 at (388.40,200.00) startOffset 0 endOffset 3 width 45.00: "a\x{729C}\x{923}"
+        RenderSVGInlineText {#text} at (0,0) size 0x0
+      RenderSVGPath {line} at (83,332) size 639x3 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=50.00] [y1=200.00] [x2=433.00] [y2=200.00]
+      RenderSVGPath {line} at (83,382) size 639x3 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=50.00] [y1=230.00] [x2=433.00] [y2=230.00]
+      RenderSVGPath {line} at (83,157) size 639x3 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=50.00] [y1=95.00] [x2=433.00] [y2=95.00]
+    RenderSVGText {text} at (10,304) size 269x45 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 269x45
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 268.20: "$Revision: 1.7 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

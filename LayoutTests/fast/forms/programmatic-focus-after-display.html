@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+    <script src="../../resources/ui-helper.js"></script>
+    <script src="../../resources/js-test.js"></script>
+    <style>
+        input {
+            font-size: 20px;
+        }
+
+        input[type="password"] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <input type="text" value="Click me">
+    <input type="password">
+    <script>
+        jsTestIsAsync = true;
+        didFinishActivatingElement = false;
+        textInput = document.querySelector("input[type='text']");
+        passwordInput = document.querySelector("input[type='password']");
+
+        textInput.addEventListener("focus", async () => {
+            getComputedStyle(passwordInput).display; // This is necessary in order to reproduce the bug.
+            passwordInput.style.display = "block";
+            passwordInput.focus();
+
+            shouldBe("document.activeElement", "passwordInput");
+            passwordInput.remove();
+            textInput.remove();
+
+            await new Promise(resolve => shouldBecomeEqual("didFinishActivatingElement", "true", resolve));
+            finishJSTest();
+        });
+
+        addEventListener("load", async () => {
+            description("This test verifies that programmatically focusing a newly displayed input field changes the active element. To test manually, tap or click the input field below.");
+            if (window.testRunner)
+                await UIHelper.activateElement(textInput);
+            didFinishActivatingElement = true;
+        });
+    </script>
+</body>
+</html>

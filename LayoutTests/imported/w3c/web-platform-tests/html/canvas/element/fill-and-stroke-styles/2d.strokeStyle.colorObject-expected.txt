@@ -1,0 +1,8 @@
+2d.strokeStyle.colorObject
+ctx.strokeStyle works with color objects
+Actual output:
+Expected output:
+
+
+FAIL ctx.strokeStyle works with color objects assert_equals: Red channel of the pixel at (50, 25) expected 255 but got 0
+

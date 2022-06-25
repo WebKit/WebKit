@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createSyncSuite("IDLExtensions.CanvasRenderingContext2D");
+
+    suite.addTestCase({
+        name: "IDLExtensions.CanvasRenderingContext2D.setPath",
+        test() {
+            let context = document.createElement("canvas").getContext("2d");
+            InspectorTest.assert(context.currentX === 0);
+            InspectorTest.assert(context.currentY === 0);
+
+            context.setPath(new Path2D("M 1 2"));
+            InspectorTest.expectEqual(context.currentX, 1, "Should modify X after setting new path.");
+            InspectorTest.expectEqual(context.currentY, 2, "Should modify Y after setting new path.");
+
+            context.setPath(new Path2D);
+            InspectorTest.expectEqual(context.currentX, 0, "Should modify X after setting empty path.");
+            InspectorTest.expectEqual(context.currentY, 0, "Should modify Y after setting empty path.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Test that the IDL extensions for CanvasRenderingContext2D work correctly.</p>
+</body>
+</html>

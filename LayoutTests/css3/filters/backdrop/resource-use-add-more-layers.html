@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<link rel="stylesheet" href="resource-use.css">
+<!-- start with a small number of backdrop filters, so each should get a backdrop layer at first -->
+<div></div>
+<div></div>
+<div></div>
+<!-- then add a bunch via script, as children to the first div, eventually pushing us over the limit -->
+<script>
+const doNotAutomaticallyCallLayerTree = true;
+
+window.addEventListener("load", () => {
+    const firstDiv = document.querySelector("div");
+    for (let i = 0; i < 10; i++) {
+        const newDiv = document.createElement("div");
+        firstDiv.appendChild(newDiv);
+    }
+    setTimeout(() => {
+        addLayerTreeAndFinish();
+    }, 0);
+}, false);
+</script>
+<script src="layer-tree-as-text.js"></script>

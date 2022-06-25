@@ -1,0 +1,88 @@
+# Copyright (c) 2019 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+
+rtc_library("repeating_task") {
+  sources = [
+    "repeating_task.cc",
+    "repeating_task.h",
+  ]
+  deps = [
+    ":pending_task_safety_flag",
+    ":to_queued_task",
+    "..:logging",
+    "..:timeutils",
+    "../../api:sequence_checker",
+    "../../api/task_queue",
+    "../../api/units:time_delta",
+    "../../api/units:timestamp",
+    "../../system_wrappers:system_wrappers",
+  ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/memory" ]
+}
+
+rtc_library("pending_task_safety_flag") {
+  sources = [
+    "pending_task_safety_flag.cc",
+    "pending_task_safety_flag.h",
+  ]
+  deps = [
+    "..:checks",
+    "../../api:refcountedbase",
+    "../../api:scoped_refptr",
+    "../../api:sequence_checker",
+    "../system:no_unique_address",
+  ]
+}
+
+rtc_source_set("to_queued_task") {
+  sources = [ "to_queued_task.h" ]
+  deps = [
+    ":pending_task_safety_flag",
+    "../../api/task_queue",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_library("pending_task_safety_flag_unittests") {
+    testonly = true
+    sources = [ "pending_task_safety_flag_unittest.cc" ]
+    deps = [
+      ":pending_task_safety_flag",
+      ":to_queued_task",
+      "..:rtc_base_approved",
+      "..:rtc_task_queue",
+      "..:task_queue_for_test",
+      "../../test:test_support",
+    ]
+  }
+
+  rtc_library("repeating_task_unittests") {
+    testonly = true
+    sources = [ "repeating_task_unittest.cc" ]
+    deps = [
+      ":repeating_task",
+      "..:rtc_base_approved",
+      "..:rtc_task_queue",
+      "..:task_queue_for_test",
+      "../../test:test_support",
+    ]
+  }
+
+  rtc_library("to_queued_task_unittests") {
+    testonly = true
+    sources = [ "to_queued_task_unittest.cc" ]
+    deps = [
+      ":to_queued_task",
+      "../../api/task_queue",
+      "../../test:test_support",
+    ]
+    absl_deps = [ "//third_party/abseil-cpp/absl/memory" ]
+  }
+}

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .container {
+            position: absolute;
+            left: 100px;
+            height: 50px;
+            width: 500px;
+            border-radius: 0 25px 25px 0;
+            background-color: silver;
+            box-sizing: border-box;
+        }
+
+        .child {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            height: 50px;
+            width: 220px;
+            border: 4px solid green;
+            padding: 10px;
+            background-color: orange;
+            transform: translateZ(0);
+        }
+        
+        .compositing-trigger {
+            position: absolute;
+            top: 40px;
+            left: 110px;
+            width: 20px;
+            height: 520px;
+            background-color: gray;
+            transform: translateZ(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="compositing-trigger"></div>
+
+    <div class="container" style="top: 50px; clip: rect(0px, 500px, 150px, 0px);">
+        <div class="child">
+            this element should not be clipped
+        </div>
+    </div>
+
+    <div class="container" style="top: 200px; clip: rect(0px, 500px, 150px, 0px); border-radius: 0px">
+        <div class="child">
+            this element should not be clipped
+        </div>
+    </div>
+
+    <div class="container" style="top: 350px; clip: rect(0px, 500px, 50px, 0px);">
+        <div class="child">
+            this element should be clipped
+        </div>
+    </div>
+
+    <div class="container" style="top: 500px; clip: rect(0px, 500px, 50px, 0px); border-radius: 0px">
+        <div class="child">
+            this element should be clipped
+        </div>
+    </div>
+</body>
+</html>

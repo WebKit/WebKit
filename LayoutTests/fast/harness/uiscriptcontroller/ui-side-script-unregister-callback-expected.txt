@@ -1,0 +1,11 @@
+Test that a second immediate UI script returns if an earlier script registered then unregistered a callback
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS scriptResult is "async task complete"
+PASS scriptResult is "immediate script complete"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

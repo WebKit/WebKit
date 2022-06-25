@@ -1,0 +1,82 @@
+This tests checks that ellipse can draw lines correctly in edge cases.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS imageData.data[1] is 255
+moveTo + empty ellipse (swing == 0)
+PASS imageData.data[1] is 0
+PASS imageData.data[1] is 0
+moveTo + empty ellipse (radiusX == 0)
+PASS imageData.data[1] is 0
+PASS imageData.data[1] is 0
+PASS imageData.data[1] is 0
+moveTo + empty ellipse (radiusY == 0)
+PASS imageData.data[1] is 0
+PASS imageData.data[1] is 0
+PASS imageData.data[1] is 0
+empty ellipse (swing == 0) + lineTo
+PASS imageData.data[1] is 255
+PASS imageData.data[1] is 0
+PASS imageData.data[1] is 0
+empty ellipse (radiusX == 0) + lineTo
+PASS imageData.data[1] is 0
+PASS imageData.data[1] is 0
+PASS imageData.data[1] is 0
+empty ellipse (radiusY == 0) + lineTo
+PASS imageData.data[1] is 0
+PASS imageData.data[1] is 0
+PASS imageData.data[1] is 0
+lineTo + empty ellipse (radiusX == 0) + lineTo
+ 1. sweepAngle < PI / 2
+PASS imageData.data[1] is 0
+PASS imageData.data[1] is 0
+PASS imageData.data[1] is 0
+PASS imageData.data[1] is 0
+ 2. sweepAngle < PI
+PASS imageData.data[1] is 0
+PASS imageData.data[1] is 0
+PASS imageData.data[1] is 0
+ 3. sweepAngle < 2PI
+PASS imageData.data[1] is 0
+PASS imageData.data[1] is 0
+PASS imageData.data[1] is 0
+ 4. sweepAngle < 4PI
+PASS imageData.data[1] is 0
+PASS imageData.data[1] is 0
+PASS imageData.data[1] is 0
+PASS imageData.data[1] is 255
+ 5. sweepAngle > 4PI
+PASS imageData.data[1] is 0
+PASS imageData.data[1] is 0
+PASS imageData.data[1] is 0
+PASS imageData.data[1] is 255
+lineTo + empty ellipse (radiusY == 0) + lineTo
+ 1. sweepAngle < PI / 2
+PASS imageData.data[1] is 0
+PASS imageData.data[1] is 0
+PASS imageData.data[1] is 0
+ 2. sweepAngle < PI
+PASS imageData.data[1] is 0
+PASS imageData.data[1] is 255
+PASS imageData.data[1] is 0
+PASS imageData.data[1] is 0
+ 3. sweepAngle < 2PI
+PASS imageData.data[1] is 0
+PASS imageData.data[1] is 0
+PASS imageData.data[1] is 0
+PASS imageData.data[1] is 0
+ 4. sweepAngle < 4PI
+PASS imageData.data[1] is 0
+PASS imageData.data[1] is 0
+PASS imageData.data[1] is 0
+PASS imageData.data[1] is 0
+ 5. sweepAngle > 4PI
+PASS imageData.data[1] is 0
+PASS imageData.data[1] is 0
+PASS imageData.data[1] is 0
+PASS imageData.data[1] is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

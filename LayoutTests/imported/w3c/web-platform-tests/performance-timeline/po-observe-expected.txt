@@ -1,0 +1,7 @@
+PerformanceObservers: PerformanceObserverInit.buffered
+
+PerformanceObserverInit.buffered should retrieve previously buffered entries
+
+
+PASS PerformanceObserverInit.buffered should retrieve previously buffered entries
+

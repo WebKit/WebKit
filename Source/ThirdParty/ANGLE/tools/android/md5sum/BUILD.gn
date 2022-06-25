@@ -1,0 +1,8 @@
+# Copyright 2020 The ANGLE Project Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# Empty placeholder to satisfy build/config/android/internal_rules.gni.
+# This should be removed once //tools/android/md5sum moves to //build in Chromium.
+group("md5sum") {
+}

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <script>
+if (window.testRunner)
+    testRunner.setAllowStorageQuotaIncrease(false);
+
+async function doTest() {
+    const cache = await self.caches.open("test");
+    const response30ko = new Response(new ArrayBuffer(30 * 1024));
+    try {
+        await cache.put("30ko", response30ko.clone());
+    } catch (e) {
+        window.parent.postMessage("UNEXPECTED", "*");
+    }
+    cache.put("30ko2", response30ko.clone()).then(() => {
+        window.parent.postMessage("PASS", "*");
+    }, () => {
+        window.parent.postMessage("FAIL", "*");
+    })
+}
+doTest();
+    </script>
+</body>
+</html>
+

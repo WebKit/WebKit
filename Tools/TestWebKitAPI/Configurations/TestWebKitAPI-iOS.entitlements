@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>keychain-access-groups</key>
+	<array>
+		<string>com.apple.TestWebKitAPIAlternate</string>
+		<string>com.apple.TestWebKitAPI</string>
+	</array>
+	<key>com.apple.developer.WebKit.ServiceWorkers</key>
+	<true/>
+	<key>com.apple.Pasteboard.paste-unchecked</key>
+	<true/>
+	<key>com.apple.private.webkit.adattributiond.testing</key>
+	<true/>
+	<key>com.apple.private.webkit.webpush</key>
+	<true/>
+	<key>com.apple.private.webkit.webpush.inject</key>
+	<true/>
+	<key>com.apple.private.xpc.launchd.job-manager</key>
+	<string>TestWebKitAPI</string>
+</dict>
+</plist>

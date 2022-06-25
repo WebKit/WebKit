@@ -1,0 +1,167 @@
+# Copyright (c) 2018 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+
+rtc_library("bitrate_settings") {
+  visibility = [ "*" ]
+  sources = [
+    "bitrate_settings.cc",
+    "bitrate_settings.h",
+  ]
+  deps = [ "../../rtc_base/system:rtc_export" ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+}
+
+rtc_source_set("enums") {
+  visibility = [ "*" ]
+  sources = [ "enums.h" ]
+}
+
+rtc_library("network_control") {
+  visibility = [ "*" ]
+  sources = [
+    "network_control.h",
+    "network_types.cc",
+    "network_types.h",
+  ]
+
+  deps = [
+    ":webrtc_key_value_config",
+    "../rtc_event_log",
+    "../units:data_rate",
+    "../units:data_size",
+    "../units:time_delta",
+    "../units:timestamp",
+  ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/base:core_headers",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+rtc_source_set("webrtc_key_value_config") {
+  visibility = [ "*" ]
+  sources = [ "webrtc_key_value_config.h" ]
+  deps = [ "../../rtc_base/system:rtc_export" ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
+}
+
+rtc_library("field_trial_based_config") {
+  visibility = [ "*" ]
+  sources = [
+    "field_trial_based_config.cc",
+    "field_trial_based_config.h",
+  ]
+  deps = [
+    ":webrtc_key_value_config",
+    "../../system_wrappers:field_trial",
+  ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
+}
+
+# TODO(nisse): Rename?
+rtc_source_set("datagram_transport_interface") {
+  visibility = [ "*" ]
+  sources = [ "data_channel_transport_interface.h" ]
+  deps = [
+    "..:array_view",
+    "..:rtc_error",
+    "../../rtc_base:rtc_base_approved",
+  ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+}
+
+rtc_library("goog_cc") {
+  visibility = [ "*" ]
+  sources = [
+    "goog_cc_factory.cc",
+    "goog_cc_factory.h",
+  ]
+  deps = [
+    ":network_control",
+    ":webrtc_key_value_config",
+    "..:network_state_predictor_api",
+    "../../modules/congestion_controller/goog_cc",
+  ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/base:core_headers" ]
+}
+
+rtc_source_set("sctp_transport_factory_interface") {
+  visibility = [ "*" ]
+  sources = [ "sctp_transport_factory_interface.h" ]
+}
+
+rtc_source_set("stun_types") {
+  visibility = [ "*" ]
+  sources = [
+    "stun.cc",
+    "stun.h",
+  ]
+
+  deps = [
+    "../../api:array_view",
+    "../../rtc_base:checks",
+    "../../rtc_base:ip_address",
+    "../../rtc_base:rtc_base",
+    "../../rtc_base:rtc_base_approved",
+    "../../rtc_base:socket_address",
+  ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
+}
+
+if (rtc_include_tests) {
+  rtc_source_set("test_feedback_generator_interface") {
+    testonly = true
+    sources = [ "test/feedback_generator_interface.h" ]
+    deps = [
+      ":network_control",
+      "..:simulated_network_api",
+    ]
+  }
+  rtc_library("test_feedback_generator") {
+    testonly = true
+    sources = [
+      "test/create_feedback_generator.cc",
+      "test/create_feedback_generator.h",
+    ]
+    visibility = [ "*" ]
+    deps = [
+      ":network_control",
+      ":test_feedback_generator_interface",
+      "../../test/network:feedback_generator",
+    ]
+  }
+}
+
+if (rtc_include_tests) {
+  rtc_source_set("stun_unittest") {
+    visibility = [ "*" ]
+    testonly = true
+    sources = [ "stun_unittest.cc" ]
+    deps = [
+      ":stun_types",
+      "../../rtc_base",
+      "../../rtc_base:rtc_base_approved",
+      "../../rtc_base:socket_address",
+      "../../test:test_support",
+      "//testing/gtest",
+    ]
+  }
+}
+
+if (rtc_include_tests) {
+  rtc_source_set("mock_network_control") {
+    testonly = true
+    sources = [ "test/mock_network_control.h" ]
+    deps = [
+      ":network_control",
+      "../../test:test_support",
+    ]
+  }
+}

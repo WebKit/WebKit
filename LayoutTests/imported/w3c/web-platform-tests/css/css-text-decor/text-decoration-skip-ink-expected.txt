@@ -1,0 +1,4 @@
+
+PASS Body must have text-decoration-skip-ink auto by default.
+PASS Property text-decoration-skip-ink must support values auto, none and all.
+

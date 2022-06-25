@@ -1,0 +1,34 @@
+<p>
+    This is a test for <i><a href="rdar://problem/6755137">rdar://problem/6755137</a>
+    Action dictionary for policy decision is missing keys when full-page zoom is used</i>.
+</p>
+<a id="link" href="about:blank">Link</a>
+<pre id="log"></pre>
+<script>
+    function log(message)
+    {
+        document.getElementById("log").appendChild(document.createTextNode(message + '\n'));
+    }
+
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+
+        eventSender.zoomPageIn();
+        eventSender.zoomPageIn();
+
+        var zoomFactor = 1.2 * 1.2;
+
+        var link = document.getElementById("link");
+        var x = (link.offsetLeft + link.offsetWidth / 2) * zoomFactor;
+        var y = (link.offsetTop + link.offsetHeight / 2) * zoomFactor;
+
+        testRunner.setCustomPolicyDelegate(true, false);
+
+        log("The policy delegate message should indicate that the originating node is the text child of an anchor element.");
+
+        eventSender.mouseMoveTo(x, y);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    } else
+        log("The test can only be run in DumpRenderTree.");
+</script>

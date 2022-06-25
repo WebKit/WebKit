@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (233,133) size 334x334
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGResourceMasker {mask} [id="maskedtext"] [maskUnits=objectBoundingBox] [maskContentUnits=userSpaceOnUse]
+          RenderSVGEllipse {circle} at (316,216) size 168x168 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=240.00] [cy=180.00] [r=50.00]
+          RenderSVGText {text} at (190,153) size 100x57 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 99x56
+              chunk 1 (middle anchor) text run 1 at (190.65,198.00) startOffset 0 endOffset 3 width 98.70: "ABC"
+      RenderSVGImage {image} at (233,133) size 334x334
+      RenderSVGRect {rect} at (316,216) size 168x168 [fill={[type=SOLID] [color=#0000FF]}] [x=190.00] [y=130.00] [width=100.00] [height=100.00]
+        [masker="maskedtext"] RenderSVGResourceMasker {mask} at (190,130) size 100x100
+    RenderSVGContainer {g} at (16,516) size 385x64
+      RenderSVGText {text} at (10,310) size 231x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 231x38
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 230.19: "$Revision: 1.4 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

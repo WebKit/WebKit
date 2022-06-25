@@ -1,0 +1,36 @@
+<html>
+<head>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function appendMarquee()
+    {
+        document.getElementById("a").appendChild(b);
+    }
+
+    function onSVGLoad()
+    {
+        var frameset = document.createElement("frameset");
+        frameset.onresize = frameset.onload;
+
+        var svg = document.getElementById("svg");
+        svg.currentScale = 200;
+        
+        setTimeout(function() {
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, 0);
+    }
+</script>
+</head>
+<body onload="appendMarquee()">
+    <p>This test should not crash.</p>
+<iframe></iframe>
+<div id="a" onwheel="b()"><marquee id="b"></marquee></div>
+<input autofocus>
+<svg id="svg" onload="onSVGLoad()">
+</body>
+</html>

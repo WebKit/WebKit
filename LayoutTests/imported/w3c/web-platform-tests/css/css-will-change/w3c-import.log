@@ -1,0 +1,99 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/inheritance.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-abspos-cb-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-abspos-cb-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-abspos-cb-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-abspos-cb-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-abspos-cb-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-abspos-cb-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-abspos-cb-dynamic-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-abspos-cb-dynamic-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-fixedpos-cb-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-fixedpos-cb-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-fixedpos-cb-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-fixedpos-cb-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-fixedpos-cb-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-fixedpos-cb-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-fixedpos-cb-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-fixedpos-cb-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-fixedpos-cb-005-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-fixedpos-cb-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-fixedpos-cb-006-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-fixedpos-cb-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-fixpos-cb-contain-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-fixpos-cb-contain-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-fixpos-cb-filter-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-fixpos-cb-filter-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-fixpos-cb-height-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-fixpos-cb-height-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-fixpos-cb-offset-path-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-fixpos-cb-offset-path-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-fixpos-cb-perspective-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-fixpos-cb-perspective-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-fixpos-cb-position-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-fixpos-cb-position-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-fixpos-cb-transform-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-fixpos-cb-transform-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-fixpos-cb-transform-style-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-fixpos-cb-transform-style-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-fixpos-cb-translate-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-fixpos-cb-translate-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-inherit-dynamic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-backdrop-filter-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-backdrop-filter-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-clip-path-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-clip-path-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-filter-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-filter-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-height-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-height-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-isolation-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-isolation-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-mask-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-mask-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-mix-blend-mode-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-mix-blend-mode-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-offset-path-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-offset-path-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-opacity-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-opacity-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-opacity-2-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-opacity-2.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-perspective-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-perspective-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-position-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-position-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-transform-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-transform-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-transform-style-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-transform-style-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-translate-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-translate-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-z-index-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-z-index-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-transform-add-content-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-transform-add-content.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-transform-huge-offset-scrolled-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-transform-huge-offset-scrolled.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-transform-image-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-transform-image.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-transform-zero-size-child-overflow-visible-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-transform-zero-size-child-overflow-visible.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-will-change-1-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-will-change/will-change-will-change-1.html

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Simple MediaSource playback &amp; seek test case.</title>
+        <script src="/resources/testharness.js"></script>
+        <script src="/resources/testharnessreport.js"></script>
+        <script src="mediasource-util.js"></script>
+    </head>
+    <body>
+        <div id="log"></div>
+        <script>
+
+            mediasource_testafterdataloaded(function(test, mediaElement, mediaSource, segmentInfo, sourceBuffer, mediaData)
+            {
+                if (window.internals && !internals.settings.mediaSourceInlinePaintingEnabled) {
+                    test.done();
+                    return;
+                }
+                mediaElement.play();
+                // Append all the segments
+                test.expectEvent(sourceBuffer, 'updateend', 'sourceBuffer');
+                test.expectEvent(mediaElement, 'playing', 'Playing triggered');
+                sourceBuffer.appendBuffer(mediaData);
+                mediaElement.requestVideoFrameCallback((now, metadata) => {
+                   mediaElement.requestVideoFrameCallback((now, metadata) => {
+                        assert_greater_than(metadata.presentedFrames, 0);
+                        assert_equals(metadata.width, 320);
+                        assert_equals(metadata.height, 240);
+                        test.done();
+                    });
+               });
+            }, 'Test media source with requestVideoFrameCallback.');
+        </script>
+    </body>
+</html>

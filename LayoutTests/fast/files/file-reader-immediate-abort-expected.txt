@@ -1,0 +1,6 @@
+Test that FileReader.abort on newly created FileReader doesn't crash.
+PASSED
+Test that FileReader.abort on newly created FileReader doesn't fire events.
+PASSED
+DONE
+

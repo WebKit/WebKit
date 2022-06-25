@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    div { 
+        width: 100px;
+        height: 100px;
+        border: dashed black 1px;
+        display: inline-block;
+    }
+
+    #blue-white-none {
+        background-image: linear-gradient(in oklch, oklch(45% 0.3 265) 0%, oklch(from white l c none) 100%);
+    }
+    #white-none-blue {
+        background-image: linear-gradient(in oklch, oklch(from white l c none) 0%, oklch(45% 0.3 265) 100%);
+    }
+    #blue-white-none-red {
+        background-image: linear-gradient(in oklch, oklch(45% 0.3 265) 0%, oklch(from white l c none) 50%, oklch(60% 0.25 30) 100%);
+    }
+    #white-none-red-white-none {
+        background-image: linear-gradient(in oklch, oklch(from white l c none) 0%, oklch(60% 0.25 30) 50%, oklch(from white l c none) 100%);
+    }
+
+    #blue-black-none {
+        background-image: linear-gradient(in oklch, oklch(45% 0.3 265) 0%, oklch(from black l c none) 100%);
+    }
+    #black-none-blue {
+        background-image: linear-gradient(in oklch, oklch(from black l c none) 0%, oklch(45% 0.3 265) 100%);
+    }
+    #blue-black-none-red {
+        background-image: linear-gradient(in oklch, oklch(45% 0.3 265) 0%, oklch(from black l c none) 50%, oklch(60% 0.25 30) 100%);
+    }
+    #black-none-red-black-none {
+        background-image: linear-gradient(in oklch, oklch(from black l c none) 0%, oklch(60% 0.25 30) 50%, oklch(from black l c none) 100%);
+    }
+</style>
+</head>
+<body>
+<div id="blue-white-none"></div>
+<div id="white-none-blue"></div>
+<div id="blue-white-none-red"></div>
+<div id="white-none-red-white-none"></div>
+
+<div id="blue-black-none"></div>
+<div id="black-none-blue"></div>
+<div id="blue-black-none-red"></div>
+<div id="black-none-red-black-none"></div>
+</body>
+</html>

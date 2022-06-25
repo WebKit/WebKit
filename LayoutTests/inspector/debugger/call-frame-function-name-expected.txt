@@ -1,0 +1,9 @@
+Debugger.setBreakpoint on line:column in <script>
+
+Found <script>
+Running testFunction
+Hit Breakpoint!
+PASS: frame[0] ""
+PASS: frame[1] "forEach"
+PASS: frame[2] "testFunction"
+

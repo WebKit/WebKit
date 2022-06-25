@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script>
+            let stream = null;
+
+            function promptForCapture(constraints)
+            {
+                if (!window.internals) {
+                    window.webkit.messageHandlers.testHandler.postMessage('test requires internals');
+                    return;
+                }
+
+                window.internals.withUserGesture(() => {
+                    navigator.mediaDevices.getDisplayMedia(constraints)
+                    .then((s) => {
+                        stream = s;
+                        video.srcObject = stream;
+                        if (window.webkit)
+                          window.webkit.messageHandlers.testHandler.postMessage('allowed');
+                    })
+                    .catch((error) => {
+                        if (window.webkit)
+                           window.webkit.messageHandlers.testHandler.postMessage('denied');
+                    });
+                });
+            }
+
+            function stop(kind)
+            {
+                if (!stream)
+                    return;
+
+                let activeTracks = [];
+                stream.getTracks().forEach(track => {
+                    if (!kind || track.kind == kind)
+                        track.stop();
+                    else
+                        activeTracks.push(track);
+                });
+
+                if (!activeTracks.length) {
+                    stream = null;
+                    video.srcObject = null;
+                }
+            }
+
+            function haveStream()
+            {
+                return stream !== null;
+            }
+        </script>
+    <head>
+
+    <body>
+        <video id="video" controls></video>
+        <p>
+        <button onclick="stop()">Stop</button>
+        </p>
+    </body>
+</html>

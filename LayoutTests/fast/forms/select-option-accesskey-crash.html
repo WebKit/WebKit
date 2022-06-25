@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<form>
+<select id="target">
+<option accesskey="x">foo</option>
+</select>
+</form>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description('This test is to ensure that we do not crash when selecting an item from a menu list in a list box through an access key.')
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+
+    var selectElement = document.getElementById("target");
+    selectElement.focus();
+    if (window.eventSender) {
+        var modifiers;
+        if (navigator.userAgent.search(/\bMac OS X\b/) != -1)
+            modifiers = ['ctrlKey', 'altKey'];
+        else
+            modifiers = ['altKey'];
+
+        eventSender.keyDown('x', modifiers);
+        testPassed("Did not crash");
+    }
+}
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpResourceResponseMIMETypes();
+}
+</script>
+This test requires DumpRenderTree to see the log of what resources are loaded.
+It verifies that noscript-image1.png is not loaded because it is in a noscript block and
+noscript-image2.png is loaded because it is not in a noscript block.
+
+<script>
+    document.write('<script src="resources/non-existant.js"></scr'+'ipt>');
+    document.write('<noscript>');
+    document.write('<img src="resources/noscript-image1.png">');
+    document.write('</noscript>');
+</script>
+
+<script>
+    document.write('<noscript>');
+</script>
+</noscript>
+<script>
+    document.write('<script src="resources/non-existant.js"></scr'+'ipt>');
+    document.write('<img src="resources/noscript-image2.png">');
+</script>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that we don't trigger assert incorrectly for ellipsis boxes</title>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>      
+<style>
+@font-face{
+    font-family:"Market Sans"; src:url('');
+}
+
+div {
+    display: -webkit-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    font-family: "Market Sans";
+    max-width: 224px;
+}
+</style>
+</head>
+<body>
+PASS if no assert or crash.
+<div>foobaar foobarfoobarfo foobar</div>
+</body>
+</html>

@@ -1,0 +1,7 @@
+PerformanceObservers: resource
+
+New resources will queue a PerformanceEntry.
+
+
+PASS resource entries are observable
+

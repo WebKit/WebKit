@@ -1,0 +1,16 @@
+diff --git a/random/rndlinux.c b/random/rndlinux.c
+index d3a144a4..b4bdc466 100644
+--- a/random/rndlinux.c
++++ b/random/rndlinux.c
+@@ -158,6 +158,11 @@ _gcry_rndlinux_gather_random (void (*add)(const void*, size_t,
+   if (length > 1)
+     length -= n_hw;
+ 
++  // Enforce the use of /dev/urandom for testing of the libgcrypt-based
++  // Web Crypto implementation testing in WebKit.
++  // DO NOT USE THIS PATCH OUTSIDE OF TESTING ENVIRONMENTS.
++  level = 0;
++
+   /* Open the requested device.  The first time a device is to be
+      opened we fail with a fatal error if the device does not exists.
+      In case the device has ever been closed, further open requests

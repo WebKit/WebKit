@@ -1,0 +1,1014 @@
+#!/usr/bin/env python3
+#
+# Copyright (C) 2018, 2020 Igalia S.L.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# 1. Redistributions of source code must retain the above copyright notice, this
+#    list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright notice,
+#    this list of conditions and the following disclaimer in the documentation
+#    and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+import argparse
+import base64
+import datetime
+import hashlib
+import json
+import logging
+import os
+from pathlib import PurePath
+import shutil
+import subprocess
+import sys
+import tarfile
+import tempfile
+import zipfile
+
+top_level_directory = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, os.path.join(top_level_directory, 'Tools', 'flatpak'))
+sys.path.insert(0, os.path.join(top_level_directory, 'Tools', 'jhbuild'))
+sys.path.insert(0, os.path.join(top_level_directory, 'Tools', 'Scripts', 'webkitpy'))
+import jhbuildutils
+import flatpakutils
+from binary_bundling.ldd import SharedObjectResolver
+from binary_bundling.bundle import BinaryBundler
+
+INSTALL_DEPS_SCRIPT_TEMPLATE = """\
+#!/bin/bash
+set -eu -o pipefail
+
+REQUIREDPACKAGES="%(packages_needed)s"
+
+if ! which apt-get >/dev/null; then
+    echo "This script only supports apt-get based distributions like Debian or Ubuntu."
+    exit 1
+fi
+
+# Calling dpkg-query is slow, so call it only once and cache the results
+TMPCHECKPACKAGES="$(mktemp)"
+dpkg-query --show --showformat='${binary:Package} ${db:Status-Status}\\n' > "${TMPCHECKPACKAGES}"
+TOINSTALL=""
+for PACKAGE in ${REQUIREDPACKAGES}; do
+    if ! grep -qxF "${PACKAGE} installed" "${TMPCHECKPACKAGES}"; then
+        TOINSTALL="${TOINSTALL} ${PACKAGE}"
+    fi
+done
+rm -f "${TMPCHECKPACKAGES}"
+
+if [[ -z "${TOINSTALL}" ]]; then
+    echo "All required dependencies are already installed"
+else
+    echo "Need to install the following extra packages: ${TOINSTALL}"
+    [[ ${#} -gt 0 ]] && [[ "${1}" == "--printonly" ]] && exit 0
+    SUDO=""
+    [[ ${UID} -ne 0 ]] && SUDO="sudo"
+    AUTOINSTALL=""
+    if [[ ${#} -gt 0 ]] && [[ "${1}" == "--autoinstall" ]]; then
+        AUTOINSTALL="-y"
+        export DEBIAN_FRONTEND="noninteractive"
+        [[ ${UID} -ne 0 ]] && SUDO="sudo --preserve-env=DEBIAN_FRONTEND"
+        ${SUDO} apt-get update
+    fi
+    set -x
+    ${SUDO} apt-get install --no-install-recommends ${AUTOINSTALL} ${TOINSTALL}
+fi
+"""
+
+FONT_CONF_FILE = """\
+<?xml version="1.0"?>
+<!DOCTYPE fontconfig SYSTEM "fonts.dtd">
+<fontconfig>
+    <its:rules xmlns:its="http://www.w3.org/2005/11/its" version="1.0">
+        <its:translateRule translate="no" selector="/fontconfig/*[not(self::description)]"/>
+    </its:rules>
+
+    <description>Default configuration file</description>
+
+<!-- Font directory list, relative to XDG_DATA_HOME -->
+    <dir prefix="xdg">fonts/fonts</dir>
+
+<!-- Load system customization files, relative to previous dir -->
+    <include ignore_missing="yes">conf.d</include>
+
+<!-- Font cache directory list, relative to XDG_CACHE_HOME -->
+    <cachedir prefix="xdg">fontconfig</cachedir>
+
+<!-- Include also the system font config if is on the standard dir -->
+    <include ignore_missing="yes">/etc/fonts/fonts.conf</include>
+
+<!-- Accept deprecated 'mono' alias, replacing it with 'monospace' -->
+    <match target="pattern">
+        <test qual="any" name="family">
+            <string>mono</string>
+        </test>
+        <edit name="family" mode="assign" binding="same">
+            <string>monospace</string>
+        </edit>
+    </match>
+
+<!-- Accept alternate 'sans serif' spelling, replacing it with 'sans-serif' -->
+    <match target="pattern">
+        <test qual="any" name="family">
+            <string>sans serif</string>
+        </test>
+        <edit name="family" mode="assign" binding="same">
+            <string>sans-serif</string>
+        </edit>
+    </match>
+
+<!-- Accept deprecated 'sans' alias, replacing it with 'sans-serif' -->
+    <match target="pattern">
+        <test qual="any" name="family">
+            <string>sans</string>
+        </test>
+        <edit name="family" mode="assign" binding="same">
+            <string>sans-serif</string>
+        </edit>
+    </match>
+</fontconfig>
+"""
+
+_log = logging.getLogger(__name__)
+LOG_MESSAGE = 25
+
+class Archiver(object):
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, type, v, tb):
+        return self._archive.close()
+
+class TarArchiver(Archiver):
+
+    def __init__(self, path):
+        self._archive = tarfile.open(path, 'w:xz')
+
+    def add_file(self, system_path, zip_path):
+        return self._archive.add(system_path, zip_path)
+
+class ZipArchiver(Archiver):
+
+    def __init__(self, path):
+        self._archive = zipfile.ZipFile(path, 'w', compression=zipfile.ZIP_DEFLATED)
+
+    def add_file(self, system_path, zip_path):
+        if os.path.islink(system_path):
+            symlink_zip_info = zipfile.ZipInfo(zip_path)
+            symlink_zip_info.create_system = 3 # Unix (for symlink support)
+            symlink_zip_info.external_attr = 0xA1ED0000 # Zip softlink magic number
+            return self._archive.writestr(symlink_zip_info, os.readlink(system_path))
+        return self._archive.write(system_path, zip_path)
+
+class BundleCreator(object):
+
+    def __init__(self, configuration, platform, bundle_type, syslibs, ldd, should_strip_objects, compression_type, destination = None, revision = None, builder_name = None):
+        self._configuration = configuration
+        self._platform = platform.lower()
+        self._revision = revision
+        self._bundle_binaries = ['jsc', 'MiniBrowser'] if bundle_type == 'all' else [ bundle_type ]
+        self._bundle_type = bundle_type
+        self._buildername = builder_name
+        self._syslibs = syslibs
+        self._shared_object_resolver = SharedObjectResolver(ldd)
+        self._should_strip_objects = should_strip_objects
+        self._compression_type = compression_type
+        self._tmpdir = None
+        self._wrapper_scripts = []
+        self._port_binary_preffix = 'WebKit' if self._platform == 'gtk' else 'WPE'
+        wk_build_path = os.environ['WEBKIT_OUTPUTDIR'] if 'WEBKIT_OUTPUTDIR' in os.environ else \
+                        os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'WebKitBuild'))
+        self._buildpath = os.path.join(wk_build_path, self._configuration.capitalize())
+        self._dlopenwrap_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'webkitpy', 'binary_bundling', 'dlopenwrap'))
+        if not os.path.isdir(self._dlopenwrap_dir):
+            raise RuntimeError("Can't find the dlopenwrap directory at: %s" % self._dlopenwrap_dir)
+
+        default_bundle_name = bundle_type  + '_' + self._platform + '_' + self._configuration + '.' + self._compression_type
+        if destination and  os.path.isdir(destination):
+            self._bundle_file_path = os.path.join(destination, default_bundle_name)
+        else:
+            self._bundle_file_path = os.path.join(wk_build_path, default_bundle_name)
+
+    def _create_tempdir(self, basedir = None):
+        if basedir is not None:
+            if not os.path.isdir(basedir):
+                raise ValueError('%s is not a directory' % basedir)
+            return tempfile.mkdtemp(prefix=os.path.join(os.path.abspath(basedir), 'tmp'))
+        return tempfile.mkdtemp()
+
+    def _run_cmd_and_get_output(self, command):
+        _log.debug("EXEC %s" % command)
+        command_process = subprocess.Popen(command,
+                                           stdout=subprocess.PIPE,
+                                           stderr=subprocess.STDOUT,
+                                           encoding='utf-8')
+        stdout, stderr = command_process.communicate()
+        return command_process.returncode, stdout, stderr
+
+    def _get_osprettyname(self):
+        with open('/etc/os-release', 'r') as osrelease_handle:
+            for line in osrelease_handle.readlines():
+                if line.startswith('PRETTY_NAME='):
+                    return line.split('=')[1].strip().strip('"')
+        return None
+
+    def _generate_readme(self):
+        _log.info('Generate README.txt file')
+        readme_file = os.path.join(self._tmpdir, 'README.txt')
+        with open(readme_file, 'w') as readme_handle:
+            readme_handle.write('Bundle details:\n')
+            readme_handle.write('  - WebKit Platform: %s\n' % self._platform.upper())
+            readme_handle.write('  - Configuration: %s\n' % self._configuration.capitalize())
+            if self._revision:
+                readme_handle.write('  - WebKit Revision: %s\n' % self._revision)
+            readme_handle.write('  - Bundle type: %s\n' % self._bundle_type)
+            if self._buildername:
+                readme_handle.write('  - Builder name: %s\n' % self._buildername)
+            readme_handle.write('  - Builder date: %s\n' % datetime.datetime.now().isoformat())
+            readme_handle.write('  - Builder OS: %s\n' % self._get_osprettyname())
+            if self._syslibs == 'generate-install-script':
+                readme_handle.write('\nRequired dependencies:\n')
+                readme_handle.write('  - This bundle depends on several system libraries that are assumed to be installed.\n')
+                readme_handle.write('  - To ensure all the required libraries are installed execute the script: install-dependencies.sh\n')
+                readme_handle.write('  - You can pass the flag "--autoinstall" to this script to automatically install the dependencies if needed.\n')
+            readme_handle.write('\nRun instructions:\n')
+            scripts = 'script' if len(self._wrapper_scripts) == 1 else 'scripts'
+            readme_handle.write('  - Execute the wrapper %s in this directory:\n' % scripts)
+            for wrapper_script in self._wrapper_scripts:
+                readme_handle.write('    * %s\n' %wrapper_script)
+        return True
+
+    def _generate_wrapper_script(self, interpreter, binary_to_wrap):
+        variables = dict()
+        mydir = self._bundler.VAR_MYDIR
+        lib_dir = os.path.join(self._bundler.destination_dir(), 'lib')
+        syslib_dir = os.path.join(self._bundler.destination_dir(), 'sys/lib')
+        bin_dir = os.path.join(self._bundler.destination_dir(), 'bin')
+        share_dir = os.path.join(self._bundler.destination_dir(), 'sys/share')
+
+        if os.path.isdir(os.path.join(syslib_dir, 'gio')):
+            gio_var = 'GIO_MODULE_DIR' if self._syslibs == 'bundle-all' else 'GIO_EXTRA_MODULES'
+            variables[gio_var] = '${%s}/sys/lib/gio' % mydir
+        if os.path.isdir(os.path.join(syslib_dir, 'gst')):
+            gst_var = 'GST_PLUGIN_SYSTEM_PATH_1_0' if self._syslibs == 'bundle-all' else 'GST_PLUGIN_PATH_1_0'
+            variables[gst_var] = '${%s}/sys/lib/gst' % mydir
+            variables['GST_REGISTRY_1_0'] = '${%s}/sys/lib/gst/gstreamer-1.0.registry' % mydir
+            if os.path.isfile(os.path.join(bin_dir, 'gst-plugin-scanner')):
+                variables['GST_PLUGIN_SCANNER'] = '${%s}/bin/gst-plugin-scanner' % mydir
+            # pipewire spa plugins may be needed by gstreamer-pipewire
+            if os.path.isdir(os.path.join(syslib_dir, 'pipewire')):
+                variables['SPA_PLUGIN_DIR'] = '${%s}/sys/lib/pipewire' % mydir
+        if os.path.isdir(os.path.join(syslib_dir, 'dri')):
+            variables['LIBGL_DRIVERS_PATH'] = '${%s}/sys/lib/dri' % mydir
+        if os.path.isdir(os.path.join(syslib_dir, 'glvnd/egl_vendor.d')):
+            variables['__EGL_VENDOR_LIBRARY_DIRS'] = '${%s}/sys/lib/glvnd/egl_vendor.d' % mydir
+        if os.path.isdir(os.path.join(share_dir)):
+            assert(self._syslibs == 'bundle-all')
+            variables['XDG_DATA_HOME'] = '${%s}/sys/share' % mydir
+            variables['XDG_DATA_DIRS'] = '${%s}/sys/share' % mydir
+        if os.path.isdir(os.path.join(share_dir, 'fonts')):
+            variables['FONTCONFIG_PATH'] = '${%s}/sys/share/fonts/config' % mydir
+        if os.path.isdir(os.path.join(syslib_dir, 'gtk')):
+            variables['GTK_PATH'] = '${%s}/sys/lib/gtk' % mydir
+        if binary_to_wrap != 'jsc':
+            variables['WEBKIT_EXEC_PATH'] = '${%s}/bin' % mydir
+            variables['WEBKIT_INJECTED_BUNDLE_PATH'] = '${%s}/lib' % mydir
+        self._bundler.generate_wrapper_script(interpreter, binary_to_wrap, variables)
+        self._wrapper_scripts.append(binary_to_wrap)
+
+    def _generate_install_deps_script(self, system_packages_needed):
+        if not system_packages_needed:
+            return
+        if 'MiniBrowser' in self._bundle_binaries:
+            # Add some extra packages that are needed but the script can't automatically detect
+            for extra_needed_pkg in ['ca-certificates', 'shared-mime-info']:
+                system_packages_needed.add(extra_needed_pkg)
+            # And remove some packages that may be detected due to indirect deps (gstreamer/gio) but are really not needed
+            for not_needed_pkg in ['dconf-gsettings-backend', 'gvfs', 'pitivi', 'gstreamer1.0-convolver-pulseeffects', 'gstreamer1.0-x',
+                                   'gstreamer1.0-adapter-pulseeffects', 'gstreamer1.0-autogain-pulseeffects', 'gstreamer1.0-alsa',
+                                   'gstreamer1.0-clutter-3.0', 'gstreamer1.0-crystalizer-pulseeffects', 'gstreamer1.0-gtk3', 'gstreamer1.0-nice']:
+                if not_needed_pkg in system_packages_needed:
+                    system_packages_needed.remove(not_needed_pkg)
+                # Sometimes the package is identified with an arch suffix, but not always
+                not_needed_pkg_arch = not_needed_pkg + ':amd64'
+                if not_needed_pkg_arch in system_packages_needed:
+                    system_packages_needed.remove(not_needed_pkg_arch)
+        installdeps_file = os.path.join(self._tmpdir, 'install-dependencies.sh')
+        with open(installdeps_file, 'w') as installdeps_handle:
+            installdeps_handle.write(INSTALL_DEPS_SCRIPT_TEMPLATE % {'packages_needed' : ' '.join(system_packages_needed)} )
+        os.chmod(installdeps_file, 0o755)
+
+    def _remove_tempdir(self):
+        if not self._tmpdir:
+            return
+        if os.path.isdir(self._tmpdir):
+            shutil.rmtree(self._tmpdir)
+
+    def _touch_reset_mtime(self):
+        _log.info('Update timestamps (touch)')
+        now = datetime.datetime.now().timestamp()
+        for root, dirs, files in os.walk(self._tmpdir):
+            for name in files:
+                os.utime(os.path.join(root, name), times=(now, now))
+            for name in dirs:
+                os.utime(os.path.join(root, name), times=(now, now))
+
+    def create(self):
+        self._tmpdir = self._create_tempdir(self._buildpath)
+        self._bundler = BinaryBundler(self._tmpdir, self._buildpath)
+
+        if os.path.isfile(self._bundle_file_path):
+            _log.info('Removing previous bundle %s' % self._bundle_file_path)
+            os.remove(self._bundle_file_path)
+
+        for bundle_binary in self._bundle_binaries:
+            self._create_bundle(bundle_binary)
+        self._generate_readme()
+
+        # Potentially avoids errors related to ZIP not able to store mtimes older than 1980
+        self._touch_reset_mtime()
+
+        if self._compression_type == 'zip':
+            archiver = ZipArchiver(self._bundle_file_path)
+        elif self._compression_type == 'tar.xz':
+            archiver = TarArchiver(self._bundle_file_path)
+        else:
+            raise NotImplementedError('Support for compression type %s not implemented' % self._compression_type)
+        self._create_archive(archiver)
+        self._remove_tempdir()
+        if not os.path.isfile(self._bundle_file_path):
+            raise RuntimeError('Unable to create the file %s' % self._bundle_file_path)
+        _log.log(LOG_MESSAGE, 'Bundle file created at: %s' % self._bundle_file_path)
+        return self._bundle_file_path
+
+    def _get_webkit_binaries(self):
+        webkit_binaries = []
+        bin_dir = os.path.join(self._buildpath, 'bin')
+        for entry in os.listdir(bin_dir):
+            if entry.startswith(self._port_binary_preffix) and (entry.endswith('Process') or entry.endswith('Driver')):
+                binary = os.path.join(bin_dir, entry)
+                if os.path.isfile(binary) and os.access(binary, os.X_OK):
+                    webkit_binaries.append(binary)
+        if len(webkit_binaries) < 2:
+            raise RuntimeError('Could not find required WebKit Process binaries. Check if you are passing the right platform value.')
+        return webkit_binaries
+
+    def _get_webkit_lib(self, name):
+        libkeyname = name.lower()
+        lib_dir = os.path.join(self._buildpath, 'lib')
+        bundle_lib = None
+        for entry in os.listdir(lib_dir):
+            if entry.endswith('.so') and libkeyname in entry.lower() and 'test' not in entry.lower():
+                assert(bundle_lib == None)
+                bundle_lib = os.path.join(lib_dir, entry)
+                break
+        assert(bundle_lib)
+        return bundle_lib
+
+    def _create_archive(self, archiver):
+        _log.info('Create archive')
+        with archiver:
+            for dirname, subdirs, files in os.walk(self._tmpdir):
+                for filename in files:
+                    system_file_path = os.path.join(dirname, filename)
+                    zip_file_path = system_file_path.replace(self._tmpdir, '', 1).lstrip('/')
+                    archiver.add_file(system_file_path, zip_file_path)
+
+
+    def _get_system_package_name(self, object):
+        if not shutil.which('dpkg'):
+            raise RuntimeError('Adding system dependencies only supported for dpkg-based distros. Try passing --syslibs=bundle-all')
+        retcode, stdout, stderr = self._run_cmd_and_get_output(['dpkg', '-S', object])
+        if retcode != 0:
+            # Give a second-try with the realpath of the object.
+            # This fixes issue on Ubuntu-20.04 that has a /lib symlink to /usr/lib
+            # and objects point to /lib, but dpkg only recognizes the files on /usr/lib
+            object_realpath = os.path.realpath(object)
+            if object_realpath != object:
+                retcode, stdout, stderr = self._run_cmd_and_get_output(['dpkg', '-S', object_realpath])
+        if retcode != 0:
+            # Package not found
+            return None
+        package = stdout.split(' ')[0].rstrip(':')
+        _log.info('Add dependency on system package [%s]: %s' %(package, object))
+        return package
+
+    def _get_pkg_config_var(self, module, var_name, assert_value=True):
+        retcode, stdout, stderr = self._run_cmd_and_get_output(['pkg-config', '--variable=%s' % var_name, module])
+        if retcode != 0:
+            raise RuntimeError('The pkg-config command returned status %d' % retcode)
+        var_value = stdout.strip()
+        if assert_value:
+            if var_name.endswith('dir') and not os.path.isdir(var_value):
+                raise RuntimeError('The pkg-config entry for %s is not a directory: %s' % (var_name, var_value))
+            if len(var_value) == 0:
+                raise RuntimeError('The pkg-config entry for %s has zero lenght' % var_value)
+        return var_value
+
+    def _list_files_directory(self, directory, list_inside_subdirs=False, filter_suffix=None):
+        found_files = []
+        for entry in os.listdir(directory):
+            entry_path = os.path.join(directory, entry)
+            if os.path.isdir(entry_path):
+                if list_inside_subdirs:
+                    found_files.extend(self._list_files_directory(entry_path, list_inside_subdirs, filter_suffix))
+            elif os.path.isfile(entry_path):
+                if filter_suffix is None or entry_path.endswith(filter_suffix):
+                    found_files.append(entry_path)
+        if len(found_files) == 0:
+            raise RunTimeError('Can not find any matching file at directory %s' % directory)
+        return found_files
+
+    def _get_gio_modules(self):
+        gio_module_dir = self._get_pkg_config_var('gio-2.0', 'giomoduledir')
+        return self._list_files_directory(gio_module_dir, filter_suffix='.so')
+
+    def _get_gtk_modules(self, subdir):
+        gtk_lib_dir = self._get_pkg_config_var('gtk+-3.0', 'libdir')
+        gtk_binary_version = self._get_pkg_config_var('gtk+-3.0', 'gtk_binary_version')
+        gtk_module_dir = os.path.join(gtk_lib_dir, 'gtk-3.0', gtk_binary_version, subdir)
+        if not os.path.isdir(gtk_module_dir):
+            raise RuntimeError('Can not find the the gtk module dir %s' % gtk_module_dir)
+        return self._list_files_directory(gtk_module_dir, filter_suffix='.so')
+
+    def _get_gstreamer_modules(self):
+        gstreamer_plugins_dir = self._get_pkg_config_var('gstreamer-1.0', 'pluginsdir')
+        return self._list_files_directory(gstreamer_plugins_dir, filter_suffix='.so')
+
+    def _get_gstreamer_plugin_scanner(self):
+        def plugin_scanner_found(plugin_scanner_path):
+            return (os.path.isfile(plugin_scanner_path) and os.access(plugin_scanner_path, os.X_OK))
+
+        gstreamer_plugin_scanner_dir = gio_module_dir = self._get_pkg_config_var('gstreamer-1.0', 'pluginscannerdir', assert_value=False)
+        gstreamer_plugin_scanner = os.path.join(gstreamer_plugin_scanner_dir, 'gst-plugin-scanner')
+        if not plugin_scanner_found(gstreamer_plugin_scanner):
+            # pluginscannerdir pkg-config variable is available only on recent versions of gst
+            # give it a second chance with some known directories on debian/ubuntu and fedora/centos
+            lib_dir = self._get_pkg_config_var('gstreamer-1.0', 'libdir')
+            plugins_dir = self._get_pkg_config_var('gstreamer-1.0', 'pluginsdir')
+            for gstreamer_plugin_scanner_dir in [ os.path.join(lib_dir, 'gstreamer1.0/gstreamer-1.0'), plugins_dir, '/usr/libexec/gstreamer-1.0']:
+                gstreamer_plugin_scanner = os.path.join(gstreamer_plugin_scanner_dir, 'gst-plugin-scanner')
+                if plugin_scanner_found(gstreamer_plugin_scanner):
+                    break
+        if not plugin_scanner_found(gstreamer_plugin_scanner):
+            raise RuntimeError('Could not find gst-plugin-scanner binary at path "%s".' % gstreamer_plugin_scanner)
+        return gstreamer_plugin_scanner
+
+    def _get_libc_libraries(self):
+        libc_library_names = [ 'libanl', 'libBrokenLocale', 'libc', 'libcrypt', 'libdl', 'libgcc_s', 'libm',
+                               'libmvec', 'libnsl', 'libpthread', 'libresolv', 'librt', 'libthread_db', 'libutil']
+        libc_libraries = []
+        lib_dir = self._get_pkg_config_var('dri', 'libdir')
+        for entry in os.listdir(lib_dir):
+            if any(entry.startswith(l+'.so.') for l in libc_library_names) or (entry.startswith('libnss_') and '.so.' in entry):
+                libc_libraries.append(os.path.join(lib_dir, entry))
+        for libc_library_prefix in libc_library_names:
+            if not any(os.path.basename(l).startswith(libc_library_prefix+'.so.') for l in libc_libraries):
+                raise RuntimeError('Unable to find libc library %s' % libc_library_prefix)
+        if not any(os.path.basename(l).startswith('libnss_') for l in libc_libraries):
+            raise RuntimeError('Unable to find libc libnss_ libraries')
+        return libc_libraries
+
+    def _get_mesa_libraries(self):
+        mesa_library_names = ['libglapi', 'libxcb-glx', 'libGLX', 'libEGL', 'libGL', 'libGLESv2', 'libEGL_mesa', 'libGLX_mesa']
+        mesa_libraries = []
+        lib_dir_dri = self._get_pkg_config_var('dri', 'libdir')
+        # Some versions of the flatpak SDK ships the Mesa libraries into a non-standard path.
+        candidate_lib_dirs = [ lib_dir_dri, os.path.join(lib_dir_dri, 'GL/default/lib') ]
+        for lib_dir in candidate_lib_dirs:
+            if os.path.isdir(lib_dir):
+                for entry in os.listdir(lib_dir):
+                    if any(entry.startswith(l+'.so.') for l in mesa_library_names):
+                        mesa_libraries.append(os.path.join(lib_dir, entry))
+        for mesa_library_prefix in mesa_library_names:
+            if not any(os.path.basename(l).startswith(mesa_library_prefix+'.so.') for l in mesa_libraries):
+                raise RuntimeError('Unable to find mesa library %s' % mesa_library_prefix)
+        return mesa_libraries
+
+    def _get_mesa_dri_drivers(self):
+        dridriver_dir = self._get_pkg_config_var('dri', 'dridriverdir')
+        return self._list_files_directory(dridriver_dir, filter_suffix='.so')
+
+    def _get_gdk_pixbuf_loaders(self):
+        loaders_dir = self._get_pkg_config_var('gdk-pixbuf-2.0', 'gdk_pixbuf_moduledir')
+        return self._list_files_directory(loaders_dir, filter_suffix='.so')
+
+    def _get_gdk_query_loaders_binary(self):
+        gdk_pixbuf_query_loader_value = self._get_pkg_config_var('gdk-pixbuf-2.0', 'gdk_pixbuf_query_loaders')
+        gdk_pixbuf_libdir = self._get_pkg_config_var('gdk-pixbuf-2.0', 'libdir')
+        # Some distros (like Debian) don't ship the binary on the declared path on pkg-config, but inside $libdir/gdk-pixbuf-2.0
+        for gdk_pixbuf_binary  in [ gdk_pixbuf_query_loader_value, os.path.join(gdk_pixbuf_libdir, 'gdk-pixbuf-2.0/gdk-pixbuf-query-loaders') ]:
+            if os.path.isfile(gdk_pixbuf_binary) and os.access(gdk_pixbuf_binary, os.X_OK):
+                return gdk_pixbuf_binary
+        raise RuntimeError('Unable to find a valid path to gdk-pixbuf-query-loaders binary')
+
+    def _get_gtk_query_immodules_binary(self):
+        gtk_libdir = self._get_pkg_config_var('gtk+-3.0', 'libdir')
+        for gtk_dir in [ '/usr/bin', gtk_libdir, os.path.join(gtk_libdir, 'libgtk-3-0'), os.path.join(gtk_libdir, 'gtk-3.0') ]:
+            gtk_immodules_binary = os.path.join(gtk_dir, 'gtk-query-immodules-3.0')
+            if os.path.isfile(gtk_immodules_binary) and os.access(gtk_immodules_binary, os.X_OK):
+                return gtk_immodules_binary
+        raise RuntimeError('Unable to find a valid path to gdk-pixbuf-query-loaders binary')
+
+    def _get_pipewire_spa_basedir_and_plugins(self):
+        spa_plugin_dir = self._get_pkg_config_var('libspa-0.2', 'plugindir', assert_value=False)
+        # Currently the flatpak SDK doesn't declare plugindir (not sure why).. fallback to build it from libdir
+        if not os.path.isdir(spa_plugin_dir):
+            spa_plugin_dir = self._get_pkg_config_var('libspa-0.2', 'libdir')
+            spa_plugin_dir = os.path.join(spa_plugin_dir, 'spa-0.2')
+        pipewire_spa_plugins = self._list_files_directory(spa_plugin_dir, list_inside_subdirs=True, filter_suffix='.so')
+        return spa_plugin_dir, pipewire_spa_plugins
+
+    def _add_object_or_get_sysdep(self, object, object_type):
+        provided_by_system_package = None
+        if self._syslibs == 'bundle-all':
+            self._bundler.copy_and_maybe_strip_patchelf(object, type=object_type, strip=self._should_strip_objects, patchelf_removerpath=True, patchelf_nodefaultlib=True)
+        else:
+            provided_by_system_package = self._get_system_package_name(object)
+            if not provided_by_system_package:
+                self._bundler.copy_and_maybe_strip_patchelf(object, type=object_type, strip=self._should_strip_objects, patchelf_removerpath=True, patchelf_nodefaultlib=False)
+        return provided_by_system_package
+
+    def _ensure_wpe_backend_symlink(self):
+        # WPE/WPERenderer dlopens this library without a version suffix,
+        # so we need to ensure there is a proper symlink
+        bundle_lib_dir = os.path.join(self._tmpdir, 'lib')
+        wpe_backend_soname = 'libWPEBackend-fdo-1.0.so'
+        previous_dir = os.getcwd()
+        for entry in os.listdir(bundle_lib_dir):
+            if entry.startswith(wpe_backend_soname + '.'):
+                os.chdir(bundle_lib_dir)
+                if not os.path.exists(wpe_backend_soname):
+                    os.symlink(entry, wpe_backend_soname)
+                os.chdir(previous_dir)
+                break
+        if not os.path.isfile(os.path.join(bundle_lib_dir, wpe_backend_soname)):
+            raise RuntimeError('Unable to create libWPEBackend-fdo-1.0.so symlink')
+
+    def _dlopenwrap_make(self, action=None):
+        dlopenwrap_path = os.path.join(self._dlopenwrap_dir, 'dlopenwrap.so')
+        previous_cwd = os.getcwd()
+        os.chdir(self._dlopenwrap_dir)
+        if action == 'build':
+            retcode, stdout, stderr = self._run_cmd_and_get_output(['make'])
+            if (retcode != 0) or (not os.path.isfile(dlopenwrap_path)):
+                raise RuntimeError('Error building dlopenwrap.so: The make command returned %d status with this output: %s %s' % (retcode, stdout, stderr))
+        elif action == 'clean':
+            retcode, stdout, stderr = self._run_cmd_and_get_output(['make', 'clean'])
+            if (retcode != 0) or os.path.isfile(dlopenwrap_path):
+                raise RuntimeError('Error cleaning dlopenwrap.so: The make command returned %d status with this output: %s %s' % (retcode, stdout, stderr))
+        else:
+            raise NotImplementedError('Unknown action %s' % action)
+        os.chdir(previous_cwd)
+        return dlopenwrap_path
+
+    def _discover_egl_mesa_config_file(self):
+        egl_libdir = self._get_pkg_config_var('egl', 'libdir')
+        # Not known way of getting the directory dynamically, assume it is there.
+        icd_egl_mesa_config_candidates = ['/usr/share/glvnd/egl_vendor.d/50_mesa.json',
+                                           os.path.join(egl_libdir, 'GL/glvnd/egl_vendor.d/50_mesa.json'),
+                                           os.path.join(egl_libdir, 'glvnd/egl_vendor.d/50_mesa.json')]
+        for icd_egl_mesa_config_candidate in icd_egl_mesa_config_candidates:
+            if os.path.isfile(icd_egl_mesa_config_candidate):
+                return icd_egl_mesa_config_candidate
+        raise RuntimeError('Could not find mesa EGL ICD config')
+
+    def _get_mesa_egl_icd_driver_path(self, icd_config):
+        with open(icd_config, 'r') as f:
+            json_data = json.load(f)
+        egl_icd_library_name = json_data['ICD']['library_path']
+        if os.path.isabs(egl_icd_library_name):
+            raise NotImplementedError('Path rewritting needs to be implemented to handle ICD config files with abspath')
+        # Some versions of the flatpak SDK ships the EGL ICD library into a non-standard path.
+        egl_libdir = self._get_pkg_config_var('egl', 'libdir')
+        egl_icd_library_found = False
+        egl_icd_library_paths = [os.path.join(egl_libdir, egl_icd_library_name), os.path.join(egl_libdir, 'GL/default/lib', egl_icd_library_name)]
+        for egl_icd_library_path in egl_icd_library_paths:
+            if os.path.isfile(egl_icd_library_path):
+                egl_icd_library_found = True
+                break
+        if not egl_icd_library_found:
+            raise RuntimeError('Unable to find the EGL ICD library %s' % egl_icd_library_path)
+        return egl_icd_library_path
+
+    def _get_total_size_dir(self, directory):
+        size = 0
+        for root, dirs, files in os.walk(directory):
+            for file in files:
+                file_path = os.path.join(root, file)
+                if os.path.isfile(file_path):
+                    size += os.path.getsize(file_path)
+        return size
+
+    def _generate_font_conf(self, data_directory):
+        font_conf_path = os.path.join(data_directory, 'fonts.conf')
+        with open(font_conf_path, 'w') as font_conf_handle:
+            font_conf_handle.write(FONT_CONF_FILE)
+
+    def _generate_tls_cafile(self, data_directory):
+        cafile_path = os.path.join(data_directory, 'bundle-ca-certificates.pem')
+        retcode, stdout, stderr = self._run_cmd_and_get_output(['trust', 'extract', '--format=pem-bundle', cafile_path])
+        # trust fails inside flatpak due to https://gitlab.com/freedesktop-sdk/freedesktop-sdk/-/issues/904
+        # fall-back to trying to manually copy the bundle
+        if (retcode != 0) or (not os.path.isfile(cafile_path)) or (os.path.getsize(cafile_path) < 100):
+            _log.warning('Failed to get system CA bundle with the trust command. Trying to fall-back to manual copy.')
+            if os.path.isfile(cafile_path):
+                os.unlink(cafile_path)
+            for candidate_cafile in ['/etc/ssl/certs/ca-certificates.crt', '/etc/ssl/cert.pem', '/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem']:
+                if os.path.isfile(candidate_cafile):
+                    shutil.copy(candidate_cafile, cafile_path)
+                    break
+        if (not os.path.isfile(cafile_path)) or (os.path.getsize(cafile_path) < 100):
+            raise RuntimeError('Failed to generate or copy the system TLS CAFile with the certificates.')
+
+    def _create_bundle(self, bundle_binary):
+        main_binary_path = os.path.join(self._buildpath, 'bin', bundle_binary)
+        if not os.path.isfile(main_binary_path) or not os.access(main_binary_path, os.X_OK):
+            raise ValueError('Cannot find binary for %s at %s' % (bundle_binary, main_binary_path) )
+
+        copied_interpreter = None
+        needs_to_create_wpe_backend_symlink = False
+        gio_modules = []
+        gtk_print_modules = []
+        gtk_im_modules = []
+        gstreamer_modules = []
+        mesa_dri_drivers = []
+        pipewire_spa_plugins = []
+        gdk_pixbuf_loaders = []
+        egl_icd_mesa_config_file = None
+        libraries_checked = set()
+        system_packages_needed = set()
+        binaries_to_copy = set()
+        objects_to_copy = [ main_binary_path ]
+        # We only want to separate the libraries in lib and sys/lib for MiniBrowser and 'all' bundles
+        self._bundler.set_use_sys_lib_directory('MiniBrowser' in self._bundle_binaries)
+        if bundle_binary == 'MiniBrowser':
+            # bunddle WebKit libraries
+            objects_to_copy.extend(self._get_webkit_binaries())
+            objects_to_copy.append(self._get_webkit_lib('InjectedBundle'))
+            if self._platform == 'wpe':
+                objects_to_copy.append(self._get_webkit_lib('InspectorResources'))
+            # Bundle extra system related libraries
+            gio_modules = self._get_gio_modules()
+            objects_to_copy.extend(gio_modules)
+            gstreamer_modules = self._get_gstreamer_modules()
+            objects_to_copy.extend(gstreamer_modules)
+            if self._syslibs == 'bundle-all':
+                # need to ship a copy of gst pluging scanner
+                objects_to_copy.append(self._get_gstreamer_plugin_scanner())
+                # pipewire spa plugins
+                pipewire_spa_plugin_basedir, pipewire_spa_plugins = self._get_pipewire_spa_basedir_and_plugins()
+                objects_to_copy.extend(pipewire_spa_plugins)
+                # graphics drivers
+                mesa_dri_drivers = self._get_mesa_dri_drivers()
+                objects_to_copy.extend(mesa_dri_drivers)
+                objects_to_copy.extend(self._get_mesa_libraries())
+                egl_icd_mesa_config_file = self._discover_egl_mesa_config_file()
+                objects_to_copy.append(self._get_mesa_egl_icd_driver_path(egl_icd_mesa_config_file))
+                # system extra libraries
+                objects_to_copy.extend(self._get_libc_libraries())
+                # gtk modules
+                if self._platform == 'gtk':
+                    gtk_print_modules = self._get_gtk_modules('printbackends')
+                    objects_to_copy.extend(gtk_print_modules)
+                    gtk_im_modules = self._get_gtk_modules('immodules')
+                    objects_to_copy.extend(gtk_im_modules)
+                    gdk_pixbuf_loaders = self._get_gdk_pixbuf_loaders()
+                    objects_to_copy.extend(gdk_pixbuf_loaders)
+                    objects_to_copy.append(self._get_gdk_query_loaders_binary())
+                    objects_to_copy.append(self._get_gtk_query_immodules_binary())
+                # our dlopenwrap lib
+                objects_to_copy.append(self._dlopenwrap_make('build'))
+
+        for object in objects_to_copy:
+            system_package = None
+            if object in gio_modules:
+                system_package = self._add_object_or_get_sysdep(object, 'lib/gio')
+            elif object in gstreamer_modules:
+                system_package = self._add_object_or_get_sysdep(object, 'lib/gst')
+            elif object in gtk_print_modules:
+                system_package = self._add_object_or_get_sysdep(object, 'lib/gtk/printbackends')
+            elif object in gtk_print_modules:
+                system_package = self._add_object_or_get_sysdep(object, 'lib/gtk/printbackends')
+            elif object in gtk_im_modules:
+                system_package = self._add_object_or_get_sysdep(object, 'lib/gtk/immodules')
+            elif object in mesa_dri_drivers:
+                system_package = self._add_object_or_get_sysdep(object, 'lib/dri')
+            elif object in gdk_pixbuf_loaders:
+                system_package = self._add_object_or_get_sysdep(object, 'lib/gdk-pixbuf/loaders')
+            elif object in pipewire_spa_plugins:
+                # This is a level-2 indirect dependency (gstreamer -> gst-pipewire -> pipewire-spa-plugin)
+                # For the case of system_packages we rely on the distro dependencies betwen packages
+                # But the bundle-all case we need a special case because this dep is not automatically detected (dlopen of plugins)
+                if self._syslibs == 'bundle-all':
+                    pipewire_spa_plugin_dest_subdir = object.replace(pipewire_spa_plugin_basedir, '', 1)
+                    pipewire_spa_plugin_dest_subdir = os.path.dirname(pipewire_spa_plugin_dest_subdir.lstrip('/'))
+                    pipewire_spa_plugin_dest_subdir = os.path.join('lib/pipewire', pipewire_spa_plugin_dest_subdir)
+                    self._bundler.copy_and_maybe_strip_patchelf(object, type=pipewire_spa_plugin_dest_subdir, strip=self._should_strip_objects, patchelf_removerpath=True, patchelf_nodefaultlib=True)
+            elif '.so' in object:
+                if 'libwpebackend' in object.lower():
+                    needs_to_create_wpe_backend_symlink = True
+                self._bundler.copy_and_maybe_strip_patchelf(object, type='lib', strip=self._should_strip_objects, patchelf_removerpath=True, patchelf_nodefaultlib=self._syslibs=='bundle-all')
+            else:
+                binaries_to_copy.add(object)
+            # There is no need to examine the libraries linked with objects coming from a system package,
+            # because system packages already declare dependencies between them.
+            # However, if we are running with self._syslibs == 'bundle-all' then system_package will be None,
+            # and everything will be examined and bundled as we don't account for system packages in that case.
+            if system_package:
+                system_packages_needed.add(system_package)
+            else:
+                libraries, interpreter = self._shared_object_resolver.get_libs_and_interpreter(object)
+                if interpreter is None:
+                    raise RuntimeError('Could not determine interpreter for binary %s' % object)
+                if copied_interpreter is None:
+                    if self._syslibs == 'bundle-all':
+                        self._bundler.copy_and_maybe_strip_patchelf(interpreter, type='interpreter', strip=self._should_strip_objects, patchelf_removerpath=self._syslibs=='bundle-all', patchelf_nodefaultlib=self._syslibs=='bundle-all')
+                    copied_interpreter = interpreter
+                elif copied_interpreter != interpreter:
+                    raise RuntimeError('Detected binaries with different interpreters: %s != %s' %(copied_interpreter, interpreter))
+                for library in libraries:
+                    if library in libraries_checked:
+                        _log.debug('Skip already checked [lib]: %s' % library)
+                        continue
+                    libraries_checked.add(library)
+                    system_package = self._add_object_or_get_sysdep(library, 'lib')
+                    if system_package:
+                        system_packages_needed.add(system_package)
+                    elif 'libwpebackend' in library.lower():
+                        needs_to_create_wpe_backend_symlink = True
+        if needs_to_create_wpe_backend_symlink:
+            self._ensure_wpe_backend_symlink()
+        for binary in binaries_to_copy:
+            if self._syslibs == 'bundle-all':
+                self._bundler.copy_and_maybe_strip_patchelf(binary, type='bin', strip=self._should_strip_objects, patchelf_removerpath=True, patchelf_nodefaultlib=True, patchelf_setinterpreter_relativepath=interpreter)
+            else:
+                self._bundler.copy_and_maybe_strip_patchelf(binary, type='bin', strip=self._should_strip_objects, patchelf_removerpath=True, patchelf_nodefaultlib=False)
+
+        # Now copy data files to share dir (only needed when bunding all for MiniBrowser).
+        # We assume that the system uses standard paths at /usr/share and /etc for this resources
+        # Every path should be checked and if some one is not found, then it will raise an error.
+        if bundle_binary == 'MiniBrowser' and self._syslibs == 'bundle-all':
+            target_share_dir = os.path.join(self._tmpdir, 'sys/share')
+            # Copy glvnd EGL json files
+            _log.info('Copy EGL config files')
+            egl_icd_configdir_dest = os.path.join(self._tmpdir, 'sys/lib/glvnd/egl_vendor.d')
+            if not os.path.isdir(egl_icd_configdir_dest):
+                os.makedirs(egl_icd_configdir_dest)
+                shutil.copy(egl_icd_mesa_config_file, egl_icd_configdir_dest)
+            # Copy glib-2 compiled schemas
+            _log.info('Copy Glib compiled schemas')
+            schemas_target_dir = os.path.join(target_share_dir, 'glib-2.0/schemas')
+            os.makedirs(schemas_target_dir)
+            compiled_schemas_file = '/usr/share/glib-2.0/schemas/gschemas.compiled'
+            if not os.path.isfile(compiled_schemas_file):
+                raise NotImplementedError("Can't find the gschemas.compiled file at the standard location in this system")
+            shutil.copy(compiled_schemas_file, schemas_target_dir)
+            _log.info('Copy shared mime info cache')
+            # Same for shared-mime-info cache
+            mime_target_dir = os.path.join(target_share_dir, 'mime')
+            os.makedirs(mime_target_dir)
+            mime_cache = '/usr/share/mime/mime.cache'
+            if not os.path.isfile(mime_cache):
+                raise NotImplementedError("Can't find the mime.cache file from shared-mime-info at the standard location in this system")
+            shutil.copy(mime_cache, mime_target_dir)
+            _log.info('Generate fontconfig config')
+            # Fontconfig fonts and config
+            target_font_config_dir = os.path.join(target_share_dir, 'fonts/config')
+            target_font_data_dir = os.path.join(target_share_dir, 'fonts/fonts')
+            os.makedirs(target_font_config_dir)
+            # We keep assuming standard locations for this files on the target system
+            system_font_config_dir = '/etc/fonts/conf.d'
+            system_font_data_dir = '/usr/share/fonts'
+            if not (os.path.isdir(system_font_config_dir) and os.path.isdir(system_font_data_dir)):
+                raise NotImplementedError("Can't find the fontconfig files at the standard location in this system")
+            shutil.copytree(system_font_config_dir, os.path.join(target_font_config_dir, os.path.basename(system_font_config_dir)))
+            self._generate_font_conf(target_font_config_dir)
+            _log.info('Copy fonts')
+            # We copy every font, so this may copy lot of data if you have lot of fonts installed.
+            # So print a warning in that ase
+            system_font_data_size = self._get_total_size_dir(system_font_data_dir)
+            if system_font_data_size > 104857600:  # 100 MB
+                _log.warning('Copying %d MB of font data from the system at /usr/share/fonts. This should be optimized.' % int(system_font_data_size / (1024*1024)))
+            shutil.copytree(system_font_data_dir, target_font_data_dir)
+            # Copy XKB data
+            _log.info('Copy XKB data')
+            system_xkb_data = '/usr/share/X11/xkb'
+            if not (os.path.isdir(system_xkb_data)):
+                raise NotImplementedError("Can't find the XKB data files at the standard location in this system")
+            target_xkb_data = os.path.join(target_share_dir, 'xkb')
+            shutil.copytree(system_xkb_data, target_xkb_data)
+            # Flatpak configures gnutls to use the p11-kit trust store and then uses p11-kit to access the host SSL certificates.
+            # - It starts a p11 kit server on the hosts and bind-mounting a socket that later is used from inside the sandbox via p11-kit-client.so
+            # See: https://github.com/p11-glue/p11-kit/issues/68
+            # Starting a p11-kit server is problematic for the use case of the bundle, and also will only work if the host is configured to use p11-kit
+            # So we take a different approach here.
+            # 1. We generate a bundle-ca-certificates.pem file with all the certs of the system were the bundle was generated and we ship this file
+            # 2. At runtime we look for the system TLS ca-bundle.pem file and we use it. If we can't find it then we default to using the one shipped inside the bundle.
+            # We pass the path to the TLS ca-bundle.pem file using the env var WEBKIT_TLS_CAFILE_PEM
+            # The host p11-kit setup may still work if it is using the same paths for loading the p11-kit modules, but otherwise it will fail to load the modules.
+            # That is ok, since we don't need anymore a working p11-kit setup. If it works it will be used, but if not we have a fallback.
+            # To debug this is useful to export P11_KIT_DEBUG=all
+            # This approach also allows this bundle script go generate a working bundle when gnutls is not configured to use p11-kit.
+            _log.info('Generate TLS CA certificates file')
+            certs_target_dir = os.path.join(target_share_dir, 'certs')
+            os.makedirs(certs_target_dir)
+            self._generate_tls_cafile(certs_target_dir)
+            if self._platform == 'gtk':
+                _log.info('Copy basic GTK icons and themes.')
+                icons_target_dir = os.path.join(target_share_dir, 'icons')
+                os.makedirs(icons_target_dir)
+                for gtk_icon_dir in ['/usr/share/icons/Adwaita', '/usr/share/icons/hicolor']:
+                    if not os.path.isdir(gtk_icon_dir):
+                        raise NotImplementedError('Can not find the GTK icon theme at path "%s" in this system' % gtk_icon_dir)
+                    shutil.copytree(gtk_icon_dir, os.path.join(icons_target_dir, os.path.basename(gtk_icon_dir)))
+
+        # Finally generate the wrappers.
+        self._generate_wrapper_script(interpreter, bundle_binary)
+        if bundle_binary == 'MiniBrowser':
+            self._generate_wrapper_script(interpreter, self._port_binary_preffix + 'WebDriver')
+        self._generate_install_deps_script(system_packages_needed)
+        # Clean remaining stuff
+        if bundle_binary == 'MiniBrowser' and self._syslibs == 'bundle-all':
+            self._dlopenwrap_make('clean')
+
+
+class BundleUploader(object):
+
+    def __init__(self, bundle_file_path, remote_config_file, bundle_type, platform, configuration, compression_type, revision, log_level):
+        self._bundle_file_path = bundle_file_path
+        self._remote_config_file = remote_config_file
+        self._configuration = configuration
+        self._revision = revision
+        self._bundle_type = bundle_type
+        self._platform = platform
+        self._compression_type = compression_type
+        self._sftp_quiet = log_level == 'quiet' or log_level == 'minimal'
+        if not os.path.isfile(self._remote_config_file):
+            raise ValueError('Can not find remote config file for upload at path %s' % self._remote_config_file)
+
+    def _sha256sum(self, file):
+        hash = hashlib.sha256()
+        with open(file, 'rb') as f:
+            for chunk in iter(lambda: f.read(4096), b''):
+                hash.update(chunk)
+        return hash.hexdigest()
+
+    def _get_osidversion(self):
+        with open('/etc/os-release', 'r') as osrelease_handle:
+            for line in osrelease_handle.readlines():
+                if line.startswith('ID='):
+                    os_id = line.split('=')[1].strip().strip('"')
+                if line.startswith('VERSION_ID='):
+                    version_id = line.split('=')[1].strip().strip('"')
+        assert(os_id)
+        assert(version_id)
+        osidversion = os_id + '-' + version_id
+        assert(' ' not in osidversion)
+        assert(len(osidversion) > 3)
+        return osidversion
+
+    # The expected format for --remote-config-file is something like:
+    # {
+    # "servername": "webkitgtk.org",
+    # "serveraddress": "webkitgtk.intranet-address.local",
+    # "serverport": "23",
+    # "username": "upload-bot-64",
+    # "baseurl": "https://webkitgtk.org/built-products",
+    # "remotepath" : "x86_64/nightly/%(bundletype)s/%(distro_id_ver)s/%(bundletype)s_%(platform)s_%(configuration)s_r%(version)s.%(compression_type)s",
+    # "sshkey": "output of the priv key in base64. E.g. cat ~/.ssh/id_rsa|base64 -w0"
+    # }
+    def upload(self):
+        remote_data = json.load(open(self._remote_config_file))
+        remote_file_bundle_path = remote_data['remotepath'] % { 'bundletype' : self._bundle_type,
+                                                                'configuration' : self._configuration,
+                                                                'compression_type' : self._compression_type,
+                                                                'distro_id_ver' : self._get_osidversion().capitalize(),
+                                                                'platform' : self._platform,
+                                                                'version' : self._revision }
+        with tempfile.NamedTemporaryFile(mode='w+b') as sshkeyfile, tempfile.NamedTemporaryFile(mode='w+') as hashcheckfile, \
+             tempfile.NamedTemporaryFile(mode='w+') as lastisfile, tempfile.NamedTemporaryFile(mode='w+') as uploadinstructionsfile:
+
+            # In theory NamedTemporaryFile() is already created 0600. But it don't hurts ensuring this again here.
+            os.chmod(sshkeyfile.name, 0o600)
+            sshkeyfile.write(base64.b64decode(remote_data['sshkey']))
+            sshkeyfile.flush()
+            # Generate and upload also a sha256 hash
+            hashforbundle = self._sha256sum(self._bundle_file_path)
+            os.chmod(hashcheckfile.name, 0o644)
+            hashcheckfile.write('%s %s\n' % (hashforbundle, os.path.basename(remote_file_bundle_path)))
+            hashcheckfile.flush()
+            # A LAST-IS file for convenience
+            os.chmod(lastisfile.name, 0o644)
+            lastisfile.write('%s\n' % os.path.basename(remote_file_bundle_path))
+            lastisfile.flush()
+            # SFTP upload instructions file
+            uploadinstructionsfile.write('progress\n')
+            uploadinstructionsfile.write('put %s %s\n' % (self._bundle_file_path, remote_file_bundle_path))
+            remote_file_bundle_path_no_ext, _ = os.path.splitext(remote_file_bundle_path)
+            uploadinstructionsfile.write('put %s %s\n' % (hashcheckfile.name, remote_file_bundle_path_no_ext + '.sha256sum'))
+            uploadinstructionsfile.write('put %s %s\n' % (lastisfile.name, os.path.join(os.path.dirname(remote_file_bundle_path), 'LAST-IS')))
+            uploadinstructionsfile.write('quit\n')
+            uploadinstructionsfile.flush()
+            # The idea of this is to ensure scp doesn't ask any question (not even on the first run).
+            # This should be secure enough according to https://www.gremwell.com/ssh-mitm-public-key-authentication
+            sftpCommand = ['sftp',
+                           '-o', 'StrictHostKeyChecking=no',
+                           '-o', 'UserKnownHostsFile=/dev/null',
+                           '-o', 'LogLevel=ERROR',
+                           '-P', remote_data['serverport'],
+                           '-i', sshkeyfile.name,
+                           '-b', uploadinstructionsfile.name,
+                           '%s@%s' % (remote_data['username'], remote_data['serveraddress'])]
+            _log.info('Uploading bundle to %s as %s with sha256 hash %s' % (remote_data['servername'], remote_file_bundle_path, hashforbundle))
+            sftp_out = subprocess.DEVNULL if self._sftp_quiet else sys.stdout
+            if subprocess.call(sftpCommand, stdout=sftp_out, stderr=sftp_out) != 0:
+                raise RuntimeError('The sftp command returned non-zero status')
+
+        _log.log(LOG_MESSAGE, 'Done: archive sucesfully uploaded to %s/%s' % (remote_data['baseurl'], remote_file_bundle_path))
+        return 0
+
+
+def configure_logging(selected_log_level='info'):
+
+    class LogHandler(logging.StreamHandler):
+        def __init__(self, stream):
+             super().__init__(stream)
+
+        def format(self, record):
+            if record.levelno > LOG_MESSAGE:
+                return '%s: %s' % (record.levelname, record.getMessage())
+            return record.getMessage()
+
+    logging.addLevelName(LOG_MESSAGE, 'MESSAGE')
+    if selected_log_level == 'debug':
+        log_level = logging.DEBUG
+    elif selected_log_level == 'info':
+        log_level = logging.INFO
+    elif selected_log_level == 'quiet':
+        log_level = logging.NOTSET
+    elif selected_log_level == 'minimal':
+        log_level = logging.getLevelName(LOG_MESSAGE)
+
+    handler = LogHandler(sys.stdout)
+    logger = logging.getLogger()
+    logger.addHandler(handler)
+    logger.setLevel(log_level)
+    return handler
+
+
+def main():
+    parser = argparse.ArgumentParser('usage: %prog [options]')
+    configuration = parser.add_mutually_exclusive_group(required=True)
+    configuration.add_argument('--debug', action='store_const', const='debug', dest='configuration')
+    configuration.add_argument('--release', action='store_const', const='release', dest='configuration')
+    parser.add_argument('--platform', dest='platform', choices=['gtk', 'wpe'], required=True,
+                        help='The WebKit port to generate the bundle')
+    parser.add_argument('--bundle', dest='bundle_binary', choices=['jsc', 'MiniBrowser', 'all'], required=True,
+                        help='Select what main binary should be included in the bundle')
+    parser.add_argument('--syslibs', dest='syslibs', choices=['bundle-all', 'generate-install-script'], default='generate-install-script',
+                        help='If value is "bundle-all", the bundle will include _all_ the system libraries instead of a install-dependencies script.\n'
+                        'If value is "generate-install-script", the system libraries will not be bundled and a install-dependencies script will be generated for this distribution.')
+    parser.add_argument('--ldd', dest='ldd', default='ldd', help='Use alternative ldd (useful for non-native binaries')
+    parser.add_argument('--compression', dest='compression', choices=['zip', 'tar.xz'], default='zip')
+    parser.add_argument('--destination', action='store', dest='destination',
+                        help='Optional path were to store the bundle')
+    parser.add_argument('--no-strip', action='store_true', dest='no_strip',
+                        help='Do not strip the binaries and libraries inside the bundle')
+    parser.add_argument('--log-level', dest='log_level', choices=['quiet', 'minimal', 'info', 'debug'], default='info')
+    parser.add_argument('--revision', action='store', dest='webkit_version')
+    parser.add_argument('--builder-name', action='store', dest='builder_name')
+    parser.add_argument('--remote-config-file', action='store', dest='remote_config_file',
+                        help='Optional configuration file with the configuration needed to upload the generated the bundle to a remote server via sftp/ssh.')
+    options = parser.parse_args()
+
+    flatpakutils.run_in_sandbox_if_available([sys.argv[0], '--flatpak-' + options.platform] + sys.argv[1:])
+    if not flatpakutils.is_sandboxed():
+        jhbuildutils.enter_jhbuild_environment_if_available(options.platform)
+
+    configure_logging(options.log_level)
+    bundle_creator = BundleCreator(options.configuration, options.platform, options.bundle_binary, options.syslibs, options.ldd,
+                                   not options.no_strip, options.compression, options.destination, options.webkit_version, options.builder_name)
+    bundle_file_path = bundle_creator.create()
+
+    if options.remote_config_file is not None:
+        bundle_uploader = BundleUploader(bundle_file_path, options.remote_config_file, options.bundle_binary, options.platform,
+                                         options.configuration, options.compression, options.webkit_version, options.log_level)
+        return bundle_uploader.upload()
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())

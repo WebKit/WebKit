@@ -1,0 +1,31 @@
+<html>
+<p>Test that setting local storage, reloading and getting local storage works.</p>
+<pre id=log></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(msg)
+{
+    document.getElementById("log").innerHTML += msg + "\n";
+}
+
+var haveReloaded = localStorage.getItem("reloaded") == "YES";
+localStorage.removeItem("reloaded");
+
+if (haveReloaded) {
+    log("Reloaded");
+    if (window.testRunner)
+        testRunner.notifyDone();
+} else {
+    setTimeout(() => {
+        localStorage.setItem("reloaded", "YES");
+        console.log("Reloading...");
+        window.location.reload();
+    }, 0);
+}
+</script>
+
+</html>

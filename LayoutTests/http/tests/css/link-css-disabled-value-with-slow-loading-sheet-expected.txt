@@ -1,0 +1,19 @@
+Test that HTMLLinkElement's disabled attribute is properly cached while set when loading a stylesheet.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Testing value of 'disabled' prior to load just after setting them
+PASS mainSheetLink.sheet is non-null.
+PASS alternateSheetLink.sheet is null
+PASS mainSheetLink.disabled is true
+PASS alternateSheetLink.disabled is false
+Testing the values when the alternate sheet is loaded (as this is the only one that has sheet() === null)
+PASS mainSheetLink.sheet is non-null.
+PASS alternateSheetLink.sheet is non-null.
+PASS mainSheetLink.disabled is true
+PASS alternateSheetLink.disabled is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

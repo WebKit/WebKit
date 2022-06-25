@@ -1,0 +1,30 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/auto-expand-ax-slot-recalc-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/auto-expand-details-element-fragment.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/auto-expand-window-find-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/closed-details-layout-apis.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/details-add-summary-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/details-add-summary-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/details-add-summary.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/details-findstring-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/details.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/display-table-with-rt-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/modified-details-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/nested-details-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/nested-top-layer-elements-in-details-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-details-element/toggleEvent.html

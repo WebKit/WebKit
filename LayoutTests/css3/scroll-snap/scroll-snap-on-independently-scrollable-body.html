@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        html {
+            margin: 0;
+            overflow: scroll;
+        }
+        body {
+            width: 300px;
+            height: 300px;
+            overflow: scroll;
+            scroll-snap-type: both mandatory;
+        }
+        .block {
+            scroll-snap-align: start;
+            width: 300px;
+            height: 300px;
+        }
+    </style>
+    <script src="../../resources/js-test.js"></script>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+            function runTests()
+            {
+                try {
+                    document.body.scrollTop = 160;
+                    expectTrue(document.body.scrollTop == 300, "snapped to second snap offset");
+
+                    document.body.scrollBy(0, 300);
+                    expectTrue(document.body.scrollTop == 600, "snapped to third snap offset");
+
+                    document.body.scrollBy(0, -100);
+                    expectTrue(document.body.scrollTop == 300, "snapped back to second snap offset");
+                } catch (e) {
+                    console.log(e);
+                }
+            }
+
+            function onLoad()
+            {
+                if (window.eventSender) {
+                    runTests();
+                } else {
+                    document.getElementById('console').innerText = "This test cannot be run manually."
+                }
+            }
+    </script>
+</head>
+<body onload="onLoad();">
+    <div class="block" style="background: #34344A"><div id="console"></div></div>
+    <div class="block" style="background: #80475E"></div>
+    <div class="block" style="background: #CC5A71"></div>
+    <div class="block" style="background: #C89B7B"></div>
+</body>

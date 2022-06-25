@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function runTest() {
+    document.getElementById("column1").width = "90";
+    var firstRow = document.getElementById("firstRow");
+    firstRow.removeChild(firstRow.firstElementChild);
+    document.getElementById("row").offsetWidth;
+}
+</script>
+<style>
+.column2 {
+    width: 10px;
+}
+</style>
+</head>
+<body onload="runTest()">
+<table>
+    <colgroup>
+        <col id="column1" class="column1">
+        <col class="column2">
+    </colgroup>
+    <tbody>
+        <tr id="firstRow">
+            <td colspan="4"></td>
+        </tr>
+        <tr id="row">
+            <td colspan="4"></td>
+        </tr>
+    </tbody>
+</table>
+<p>This test PASSED if it doesn't cause a crash, especially when run with Guard Malloc or MallocScribble enabled.</p>
+</body>
+</html>

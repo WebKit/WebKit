@@ -1,0 +1,7 @@
+
+Test that the canplaythrough event is fired after starting to load a webm resource with video with audio.
+
+EVENT(loadstart)
+EVENT(canplaythrough)
+END OF TEST
+

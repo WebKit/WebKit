@@ -1,0 +1,34 @@
+
+== Running test suite: ScriptProfiler.Samples.ManyCallFrames
+-- Running test case: Sampling Profiler sourceURL directive.
+PASS: Should have seen stacktrace:
+[
+  {
+    "name": "top"
+  },
+  {
+    "name": "g"
+  },
+  {
+    "name": "f"
+  },
+  {
+    "name": "e"
+  },
+  {
+    "name": "d"
+  },
+  {
+    "name": "c"
+  },
+  {
+    "name": "b"
+  },
+  {
+    "name": "a"
+  },
+  {
+    "name": "runFor"
+  }
+]
+

@@ -1,0 +1,109 @@
+#!/usr/bin/env bash
+
+# If the package $1 is available, prints it. Otherwise prints $2.
+# Useful for handling when a package is renamed on new versions of Debian/Ubuntu.
+aptIfElse() {
+    if apt-cache show $1 &>/dev/null; then
+        echo $1
+    else
+        echo $2
+    fi
+}
+
+aptIfExists() {
+    local ret=$(apt show "$1" 2>/dev/null)
+    if [[ $? -ne 0 ]]; then
+        return
+    fi
+    if [[ "$ret" =~ "(virtual)" ]]; then
+        return
+    fi
+    echo "$1"
+}
+
+PACKAGES=(
+    # These are dependencies necessary for building WebKitGTK/WPE.
+    autoconf
+    automake
+    autopoint
+    autotools-dev
+    bubblewrap
+    cmake
+    gawk
+    gperf
+    gtk-doc-tools
+    intltool
+    itstool
+    libasound2-dev
+    libatk1.0-dev
+    libepoxy-dev
+    libevent-dev
+    libfile-copy-recursive-perl
+    $(aptIfElse libgcrypt20-dev libgcrypt11-dev)
+    libgstreamer1.0-dev
+    libgstreamer-plugins-bad1.0-dev
+    libgstreamer-plugins-base1.0-dev
+    libjpeg-dev
+    libkate-dev
+    liblcms2-dev
+    libopenjp2-7-dev
+    libpng-dev
+    libseccomp-dev
+    libsqlite3-dev
+    libsystemd-dev
+    libtasn1-6-dev
+    libtool
+    libwayland-dev
+    libwebp-dev
+    libwoff-dev
+    libxslt1-dev
+    ninja-build
+    patch
+    ruby
+
+    # These are dependencies necessary for running tests.
+    apache2
+    curl
+    fonts-liberation
+    gdb
+    libcgi-pm-perl
+    psmisc
+    pulseaudio-utils
+    ruby-highline
+    ruby-json
+    $(aptIfExists python-gi)
+
+    # These are dependencies necessary for building with the Flatpak SDK.
+    flatpak
+    libglib2.0-bin
+
+    # These are dependencies necessary for building the jhbuild.
+    git
+    gsettings-desktop-schemas-dev
+    gyp
+    libegl1-mesa-dev
+    libexpat1-dev
+    libfdk-aac-dev
+    libgles2-mesa-dev
+    liborc-0.4-dev
+    libproxy-dev
+    libpsl-dev
+    libtool-bin
+    libxml-libxml-perl
+    python3-setuptools
+    uuid-dev
+    yasm
+
+    # These are dependencies necessary for using webkit-patch.
+    git-svn
+    subversion
+
+    # These are GStreamer plugins needed to play different media files.
+    gstreamer1.0-gl
+    gstreamer1.0-libav
+    gstreamer1.0-plugins-bad
+    gstreamer1.0-plugins-base
+    gstreamer1.0-plugins-good
+    gstreamer1.0-plugins-ugly
+    gstreamer1.0-pulseaudio
+)

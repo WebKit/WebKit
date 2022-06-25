@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests hugging outlines with fractional radius.</title>
+<style>
+div {
+    position: absolute;
+}
+
+.outline-radius {
+    outline-style: auto;
+    border-top-right-radius: 10px 87.5px;
+    border-bottom-right-radius: 10px;
+    top: 20px;
+    left: 20px;
+	width: 300px;
+	height: 40px;
+}
+
+.cover {
+    border: 7px solid white;
+    border-top-right-radius: 10px 23px;
+    border-bottom-right-radius: 10px;
+    top: 15px;
+    left: 16px;
+    width: 295px;
+    height: 35px;
+}
+</style>
+</head>
+<body>
+<div class=outline-radius></div>
+<div class=cover></div>
+</body>
+</html>

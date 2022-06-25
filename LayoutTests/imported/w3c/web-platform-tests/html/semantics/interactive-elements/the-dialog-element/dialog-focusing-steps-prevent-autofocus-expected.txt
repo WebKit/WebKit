@@ -1,0 +1,4 @@
+
+
+PASS After showing a dialog, non-dialog autofocus processing won't work.
+

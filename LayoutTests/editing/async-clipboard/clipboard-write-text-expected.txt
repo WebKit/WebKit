@@ -1,0 +1,14 @@
+This test verifies that navigator.clipboard.writeText can be used to write plain text the system clipboard. To verify manually, click the 'Copy' button to write text, and then click the 'Paste' button to read it back.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Copied text to the clipboard.
+PASS finishedCopying became true
+PASS items.length is 1
+PASS item.types is ['text/plain']
+PASS text is "foo bar baz"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

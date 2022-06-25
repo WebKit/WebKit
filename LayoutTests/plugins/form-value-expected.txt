@@ -1,0 +1,5 @@
+This tests that WebKit can obtain form value from plugins
+
+
+form values: "plugin=Plugin+form+value"
+PASS: The form value was successfully obtained.

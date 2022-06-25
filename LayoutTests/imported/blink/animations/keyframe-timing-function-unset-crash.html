@@ -1,0 +1,16 @@
+<!doctype html>
+
+<style>
+@keyframes anim {
+    from { animation-timing-function: unset; }
+    50% { animation-timing-function: inherit; }
+    to { animation-timing-function: initial; }
+}
+</style>
+
+<div style="animation: anim 10s">This test passes if it doesn't crash</div>
+
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+</script>

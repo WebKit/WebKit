@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: TypeError: null is not an object (evaluating 'window.opener.functionCalledByOpenee')
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Cross-Origin-Opener-Policy only works over secure contexts Test timed out
+PASS Bonus: window.crossOriginIsolated
+

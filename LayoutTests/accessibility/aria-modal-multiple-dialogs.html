@@ -1,0 +1,133 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+
+<body>
+
+<input type="text" id="textfield" value="Text field.">
+<p id="bgContent">Other page content with <a id="background-link" tabindex="0" href="#">a dummy focusable element</a></p>
+<p><a onclick="toggleDialog(document.getElementById('dialog1'), 'show'); return false;" href="#" role="button" id="displayBtn">Display a dialog</a></p>
+
+<div role="dialog" aria-labelledby="description1" id="dialog1" style="display: none" tabindex="-1">
+    <h3 id="description1">Just an example.</h3>
+    <a id="dialog1-link" tabindex="0" href="#">Link present to ensure we have a focusable element</a>
+    <button id="ok" onclick="toggleDialog(document.getElementById('dialog1'), 'hide');">OK</button>
+    <button onclick="toggleDialog(document.getElementById('dialog2'), 'show');" id="new">New</button>
+</div>
+
+<div role="dialog" aria-labelledby="description2" id="dialog2" style="display: none" tabindex="-1">
+    <h3 id="description2">Another dialog.</h3>
+    <a id="dialog2-link" tabindex="0" href="#">Link present to ensure we have a focusable element</a>
+    <button id="close" onclick="toggleDialog(document.getElementById('dialog2'), 'hide');">Close</button>
+</div>
+
+<script>
+    var testOutput = "This tests that aria-modal works correctly on multiple dialogs\n\n";
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+        setTimeout(async () => {
+            testOutput += "\nVerifying the background is accessible on page load.\n\n";
+            await backgroundAccessible(true);
+
+            testOutput += "\nClicking the display button to open #dialog1.\n\n";
+            document.getElementById("displayBtn").click();
+            await backgroundAccessible(false);
+            await dialog1Accessible(true);
+
+            testOutput += "\nClicking the new button to open #dialog2 without closing #dialog1.\n\n";
+            document.getElementById("new").click();
+            await backgroundAccessible(false);
+            await dialog1Accessible(false);
+            await dialog2Accessible(true);
+
+            // With both modals active, and focus currently in #dialog2, moving focus to #dialog1 should cause it to become the active modal.
+            testOutput += "\nFocusing first descendant of #dialog1.\n\n";
+            focusFirstDescendant(document.getElementById("dialog1"));
+            await backgroundAccessible(false);
+            await dialog1Accessible(true);
+            await dialog2Accessible(false);
+
+            testOutput += "\nMoving focus back to first descendant of #dialog2.\n\n";
+            focusFirstDescendant(document.getElementById("dialog2"));
+            await backgroundAccessible(false);
+            await dialog1Accessible(false);
+            await dialog2Accessible(true);
+
+            testOutput += "\nClosing dialog2.\n\n";
+            document.getElementById("close").click();
+            await backgroundAccessible(false);
+            await dialog1Accessible(true);
+
+            testOutput += "\nClosing dialog1.\n\n";
+            document.getElementById("ok").click();
+            await backgroundAccessible(true);
+
+            debug(testOutput);
+            finishJSTest();
+        });
+    }
+    
+    async function backgroundAccessible(shouldBeAccessible) {
+        await waitFor(() => {
+            const displayBtn = accessibilityController.accessibleElementById("displayBtn");
+            const bgContent = accessibilityController.accessibleElementById("bgContent");
+            if (!displayBtn || !bgContent)
+                return !shouldBeAccessible;
+            return (!displayBtn.isIgnored && !bgContent.isIgnored) === shouldBeAccessible;
+        });
+        testOutput += `PASS: background accessible: ${shouldBeAccessible}\n`
+    }
+    
+    async function dialog1Accessible(shouldBeAccessible) {
+        await waitFor(() => {
+            const okBtn = accessibilityController.accessibleElementById("ok");
+            const newBtn = accessibilityController.accessibleElementById("new");
+            if (!okBtn || !newBtn)
+                return !shouldBeAccessible;
+            return (!okBtn.isIgnored && !newBtn.isIgnored) === shouldBeAccessible;
+        });
+        testOutput += `PASS: #dialog1 accessible: ${shouldBeAccessible}\n`
+    }
+
+    async function dialog2Accessible(shouldBeAccessible) {
+        await waitFor(() => {
+            const closeButton = accessibilityController.accessibleElementById("close");
+            if (!closeButton)
+                return !shouldBeAccessible;
+            return closeButton.isIgnored !== shouldBeAccessible;
+        });
+        testOutput += `PASS: #dialog2 accessible: ${shouldBeAccessible}\n`
+    }
+    
+    function toggleDialog(dialog, sh) {
+        if (sh == "show") {
+            dialog.style.display = "block";
+            dialog.setAttribute("aria-modal", "true");
+            // Put focus inside the new dialog so it takes precedence over other dialogs (even if they come later in DOM order).
+            focusFirstDescendant(dialog);
+        } else {
+            dialog.style.display = "none";
+            dialog.setAttribute("aria-modal", "false");
+        }
+    }
+
+    function focusFirstDescendant(element) {
+        for (let i = 0; i < element.childNodes.length; i++) {
+            const child = element.childNodes[i];
+            if (!attemptFocus(child))
+                focusFirstDescendant(child)
+        }
+    };
+
+    function attemptFocus(element) {
+        try { element.focus() } catch (e) {}
+        return document.activeElement === element;
+    }
+</script>
+</body>
+</html>
+

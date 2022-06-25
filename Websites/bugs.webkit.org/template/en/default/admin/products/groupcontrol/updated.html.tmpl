@@ -1,0 +1,54 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # product: Bugzilla::Product object; the product.
+  # changes: Hashref with changes made to the product group controls.
+  #%]
+
+[% title = BLOCK %]
+    Update group access controls for [% product.name FILTER html %]
+[% END %]
+
+[% PROCESS global/header.html.tmpl
+  title = title
+%]
+
+[% IF changes._group_controls.now_na.size %]
+  [% FOREACH g = changes._group_controls.now_na %]
+    <p>
+    Removing [% terms.bugs %] from group '[% g.name FILTER html %]' which is
+    no longer applicable to this product.<br>
+    [% IF g.bug_count == 1 %]
+      One [% terms.bug %] removed.
+    [% ELSE %]
+      [% g.bug_count FILTER html %] [%+ terms.bugs %] removed.
+    [% END %]
+    </p>
+  [% END %]
+[% END %]
+
+[% IF changes._group_controls.now_mandatory.size %]
+  [% FOREACH g = changes._group_controls.now_mandatory %]
+    <p>
+    Adding [% terms.bugs %] to group '[% g.name FILTER html %]' which is 
+    now mandatory for this product.<br>
+    [% IF g.bug_count == 1 %]
+      One [% terms.bug %] added.
+    [% ELSE %]
+      [% g.bug_count FILTER html %] [%+ terms.bugs %] added.
+    [% END %]
+    </p>
+  [% END %]
+[% END %]
+
+<p>Group control updated.</p>
+
+[% PROCESS admin/products/footer.html.tmpl %]
+
+[% PROCESS global/footer.html.tmpl %]

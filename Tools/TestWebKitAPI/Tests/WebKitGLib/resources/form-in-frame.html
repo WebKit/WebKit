@@ -1,0 +1,8 @@
+<form id='form'>
+</form>
+<script>
+    window.addEventListener('message', event => {
+        if (event.data === 'submit the form!')
+            document.getElementById('form').submit();
+    }, false);
+</script>

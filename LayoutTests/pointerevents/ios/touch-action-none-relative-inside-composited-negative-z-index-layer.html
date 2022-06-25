@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.trigger-bug {
+    position: absolute;
+    will-change: transform;
+    z-index: -1;
+}
+
+.touch-action {
+    position: relative;
+    touch-action: none;
+
+    /* The following are just to make the test prettier and help debug */
+    width: 100px;
+    height: 100px;
+    border: 1px solid black;
+}
+</style>
+</head>
+<body>
+<div>
+    <div class="touch-action"></div>
+    <div class="trigger-bug"></div>
+</div>
+<pre id="results"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+if (window.internals)
+    results.innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+</script>
+</body>
+</html>

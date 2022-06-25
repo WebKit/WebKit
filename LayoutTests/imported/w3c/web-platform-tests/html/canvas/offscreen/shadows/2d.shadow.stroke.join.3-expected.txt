@@ -1,0 +1,7 @@
+2d.shadow.stroke.join.3
+
+Shadows are drawn for stroke joins respecting miter limit
+
+
+PASS Shadows are drawn for stroke joins respecting miter limit
+

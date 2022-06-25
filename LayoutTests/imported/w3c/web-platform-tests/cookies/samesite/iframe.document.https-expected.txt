@@ -1,0 +1,4 @@
+
+PASS Same-site iframes can set lax/strict cookies via document.cookie
+FAIL Cross-site iframe cannot set lax/strict cookies via document.cookie assert_equals: SameSite=none cookies can be set via document.cookies even by cross-origin documents expected (string) "0.88885874537134" but got (undefined) undefined
+

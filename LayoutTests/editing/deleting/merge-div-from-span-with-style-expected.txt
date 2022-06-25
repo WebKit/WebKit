@@ -1,0 +1,8 @@
+The span style should be preserved when merging div element.
+The test passes if "bar" contatins the yellow background and it's underlined.
+| "\n"
+| <div>
+|   "foo<#selection-caret>"
+|   <span>
+|     style="background-color: yellow; text-decoration: underline;"
+|     "bar"

@@ -1,0 +1,41 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x8
+  RenderBlock {HTML} at (0,0) size 800x8
+    RenderBody {BODY} at (8,8) size 784x0
+      RenderBlock {DIV} at (0,0) size 784x0
+layer at (20,36) size 424x291
+  RenderBlock (positioned) {P} at (20,36) size 424x291 [border: (2px solid #000000)]
+    RenderMultiColumnSet at (2,2) size 420x287
+layer at (22,38) size 200x560
+  RenderMultiColumnFlowThread at (2,2) size 200x560
+    RenderBlock (floating) at (0,0) size 24x43
+      RenderText at (0,1) size 24x41
+        text run at (0,1) width 24: "L"
+    RenderText {#text} at (28,0) size 200x559
+      text run at (28,0) width 172: "orem ipsum dolor sit"
+      text run at (28,20) width 172: "amet, consectetur"
+      text run at (0,40) width 200: "adipiscing elit. Cras pharetra"
+      text run at (0,60) width 200: "mollis pharetra. Suspendisse"
+      text run at (0,80) width 200: "lacinia orci et felis tristique sit"
+      text run at (0,100) width 200: "amet semper massa tempus."
+      text run at (0,120) width 200: "Suspendisse consectetur"
+      text run at (0,140) width 200: "tempor pulvinar. Proin dui"
+      text run at (0,160) width 200: "eros, ultricies vel malesuada"
+      text run at (0,180) width 200: "vel, tempor at ante. Nam eget"
+      text run at (0,200) width 200: "nisl dui. Donec molestie"
+      text run at (0,220) width 200: "lectus a nunc scelerisque"
+      text run at (0,240) width 200: "blandit. Nam non ligula"
+      text run at (0,300) width 200: "massa, sed suscipit turpis."
+      text run at (0,320) width 200: "Etiam eget ligula sit amet"
+      text run at (0,340) width 200: "turpis venenatis dictum in"
+      text run at (0,360) width 200: "eleifend augue. Duis tellus"
+      text run at (0,380) width 200: "lectus, volutpat et adipiscing"
+      text run at (0,400) width 200: "a, pellentesque eu metus."
+      text run at (0,420) width 200: "Aenean suscipit congue"
+      text run at (0,440) width 200: "mauris at gravida. Integer"
+      text run at (0,460) width 200: "lectus ligula, consectetur sit"
+      text run at (0,480) width 200: "amet venenatis id, scelerisque"
+      text run at (0,500) width 200: "eget nisl. Nunc dapibus"
+      text run at (0,520) width 200: "posuere risus, vitae tempor"
+      text run at (0,540) width 95: "nibh iaculis et."

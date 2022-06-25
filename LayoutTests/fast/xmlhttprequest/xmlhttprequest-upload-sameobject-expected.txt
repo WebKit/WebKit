@@ -1,0 +1,10 @@
+Tests that XMLHttpRequest.upload always returns the same object.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS xhr.upload.foo is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

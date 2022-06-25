@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="host"></div>
+<button onclick="goFullscreen()">Enter fullscreen</button>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+description('Test that webkitfullscreenchange from shadow tree should be propagated to the shadow host.');
+
+const shadowHost = document.getElementById('host');
+const shadowRoot = shadowHost.attachShadow({mode: 'closed'});
+shadowRoot.innerHTML = '<span>full screen content</span>';
+
+function logFullScreenChangeEvent(subroot) {
+    return new Promise((resolve, reject) => {
+        subroot.addEventListener('webkitfullscreenchange', event => {
+            shouldBe(() => event.composed, 'true');
+            shouldBe(() => event.currentTarget, () => subroot);
+            resolve();
+        }, {
+            once: true,
+        });
+    });
+}
+
+async function goFullscreen() {
+    shadowRoot.querySelector('span').webkitRequestFullScreen();
+    
+    try {
+        await Promise.all([
+            logFullScreenChangeEvent(shadowRoot),
+            logFullScreenChangeEvent(document),
+        ]);
+    } finally {
+        finishJSTest();
+    }
+}
+
+if (window.eventSender) {
+    const button = document.querySelector('button');
+    jsTestIsAsync = true;
+    eventSender.mouseMoveTo(button.offsetLeft + 5, button.offsetTop + 5);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+} else
+    document.write('To test manually, click "Enter Fullscreen" above.');
+
+</script>
+</body>
+</html>

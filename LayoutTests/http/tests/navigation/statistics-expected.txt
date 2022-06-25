@@ -1,0 +1,12 @@
+main frame - has 1 onunload handler(s)
+main frame - has 1 onunload handler(s)
+PASS
+Dumping Resource Load Statistics:
+
+
+
+============== Back Forward List ==============
+        http://127.0.0.1:8000/navigation/statistics.html  **nav target**
+curr->  http://127.0.0.1:8000/navigation/resources/redirect-updates-history-item-done-statistics.html  **nav target**
+        http://127.0.0.1:8000/navigation/resources/redirect-on-reload-updates-history-item-goback.html  **nav target**
+===============================================

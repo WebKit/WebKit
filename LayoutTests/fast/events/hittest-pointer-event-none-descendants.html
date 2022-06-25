@@ -1,0 +1,26 @@
+<style>
+.container { pointer-events:none; display:inline-block; }
+.target { background-color: red; height:200px; width:200px; pointer-events:auto}
+.target:hover { background-color: green; }
+</style>
+<script>
+async function test() {
+    if (!window.testRunner)
+        return;
+    testRunner.waitUntilDone();
+
+    await new Promise(requestAnimationFrame);
+
+    eventSender.mouseMoveTo(100, 100);
+
+    await new Promise(requestAnimationFrame);
+    
+    testRunner.notifyDone();
+}
+</script>
+<body onload="test()">
+<div class=container>
+<div class=target>
+hover me
+</div>
+</div>

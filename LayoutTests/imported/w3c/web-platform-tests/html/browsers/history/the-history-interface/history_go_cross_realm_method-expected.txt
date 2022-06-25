@@ -1,0 +1,4 @@
+
+
+PASS history.go() uses this's associated document's browsing context to determine if navigation is allowed
+

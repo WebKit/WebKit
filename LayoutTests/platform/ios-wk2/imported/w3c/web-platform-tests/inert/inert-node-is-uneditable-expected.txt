@@ -1,0 +1,5 @@
+I'm not editable. I'm editable.
+
+PASS Can't edit inert contenteditable
+FAIL Can edit non-inert contenteditable assert_not_equals: got disallowed value "I'm editable."
+

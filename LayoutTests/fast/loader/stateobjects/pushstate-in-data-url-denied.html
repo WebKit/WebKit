@@ -1,0 +1,19 @@
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+window.onload = function() {
+    window.location = 'data:text/html,' +
+    '%3Cscript%3E' +
+    'try{' +
+        'history.pushState({},"","data:");' +
+        'document.write("FAIL data URL was manipula via pushState.");' +
+    '} catch(e) {' +
+        'document.write("PASS: data URLs cannot be manipulated via pushState.");' +
+    '}' +
+    'if (window.testRunner)' +
+        'testRunner.notifyDone();' +
+    '%3C/script%3E';
+}
+</script>

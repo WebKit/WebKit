@@ -1,0 +1,26 @@
+<html>
+    <head>
+        <title>Test that accessing member of a non loaded video works.</title>
+        <script src=video-test.js></script>
+        <script>
+        function test()
+        {
+            findMediaElement();
+    
+            run("video.played");
+            run("video.buffered");
+            run("video.seekable");
+            run("video.volume");
+            consoleWrite("SUCCESS");
+            endTest();
+        }
+        </script>
+     </head>
+
+<body onload="test()">
+
+    <video controls></video>
+    <p>Test that accessing member of a non loaded video works.</p>
+
+</body>
+</html>

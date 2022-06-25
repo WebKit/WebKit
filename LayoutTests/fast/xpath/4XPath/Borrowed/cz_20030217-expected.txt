@@ -1,0 +1,8 @@
+PASS nodeset.snapshotLength is 1
+PASS nodeset.snapshotLength is 0
+PASS nodeset.snapshotLength is 1
+PASS nodeset.snapshotLength is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

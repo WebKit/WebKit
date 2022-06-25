@@ -1,0 +1,5 @@
+This test requires DumpRenderTree. To test manually, try to scroll the blue div to the left and the red div up using the scrollbar arrows or the mouse wheel. The test passes if the divs scroll.
+
+rtl: PASS
+bt: PASS
+

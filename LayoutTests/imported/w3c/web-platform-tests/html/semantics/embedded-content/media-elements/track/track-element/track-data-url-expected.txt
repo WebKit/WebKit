@@ -1,0 +1,5 @@
+
+FAIL track element data: URL No CORS null is not an object (evaluating 't.track.cues.length')
+FAIL track element data: URL anonymous null is not an object (evaluating 't.track.cues.length')
+FAIL track element data: URL use-credentials null is not an object (evaluating 't.track.cues.length')
+

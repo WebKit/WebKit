@@ -1,0 +1,39 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <body>
+    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+      <g id="g" stroke="orange" stroke-width="2px">
+        <rect id="rect" width="100" height="100" fill="blue" />
+      </g>
+    </svg>
+    <div id="log"></div>
+    <script src="../../fast/css/getComputedStyle/resources/property-names.js"/>
+    <script><![CDATA[
+      if (window.testRunner)
+          testRunner.dumpAsText();
+
+      function debugLog(s) {
+        var logDiv = document.getElementById("log");
+        logDiv.appendChild(document.createTextNode(s));
+        logDiv.appendChild(document.createElementNS("http://www.w3.org/1999/xhtml", "br"));
+      }
+
+      function printStyle(elementId) {
+        var element = document.getElementById(elementId);
+        var style = document.defaultView.getComputedStyle(element);
+      
+        for (var x = 0; x < style.length; x++) {
+          var name = style.item(x);
+          if (!propertiesToTest[name])
+            continue;
+          var value = style.getPropertyValue(name);
+          var cssValue = style.getPropertyCSSValue(name);
+          debugLog(elementId + ": style.getPropertyValue(" + name + ") : " + value);
+          debugLog(elementId + ": style.getPropertyCSSValue(" + name + ") : " + cssValue);
+        }
+      }
+      
+      printStyle("rect");
+      printStyle("g");
+    ]]></script>
+  </body>
+</html>

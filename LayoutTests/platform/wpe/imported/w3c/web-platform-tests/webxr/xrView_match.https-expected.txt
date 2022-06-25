@@ -1,0 +1,4 @@
+
+PASS XRFrame contains the expected views - webgl
+FAIL XRFrame contains the expected views - webgl2 assert_implements: webgl2 not supported. undefined
+

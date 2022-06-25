@@ -1,0 +1,3 @@
+
+PASS scrollIntoView scrolls partially-visible child in both axes
+

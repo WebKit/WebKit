@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="/js-test-resources/testharness.js"></script>
+  <script src="/js-test-resources/testharnessreport.js"></script>
+</head>
+<body>
+  <script>
+  async_test(function () {
+      var blob = new Blob([
+          "postMessage({ origin: location.origin, href: location.href, protocol: location.protocol, host: location.host, hostname: location.hostname, pathname: location.pathname });"
+      ]);
+      var worker = new Worker(window.URL.createObjectURL(blob));
+      worker.onmessage = this.step_func(function (evt) {
+          assert_equals(evt.data.origin, "http://127.0.0.1:8000");
+          assert_true(evt.data.href.startsWith("blob:http://127.0.0.1:8000/"));
+          assert_equals(evt.data.protocol, "blob:");
+          assert_equals(evt.data.host, "");
+          assert_equals(evt.data.hostname, "");
+          assert_true(evt.data.pathname.startsWith("http://127.0.0.1:8000/"));
+
+          this.done();
+      });
+  }, "Blob worker location");
+  </script>
+</body>
+</html>

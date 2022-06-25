@@ -1,0 +1,10 @@
+Tests that byteOffset does the right thing for neutered views.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS foo(array) is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

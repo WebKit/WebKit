@@ -1,0 +1,9 @@
+
+PASS blur
+PASS brightness
+PASS contrast
+PASS grayscale
+PASS invert
+PASS sepia
+PASS saturate
+

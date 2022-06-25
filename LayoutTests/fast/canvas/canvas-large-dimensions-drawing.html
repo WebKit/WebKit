@@ -1,0 +1,22 @@
+<style>
+    html, body {
+        margin: 0; 
+        height: 100%; 
+        overflow: hidden;
+    }
+    canvas {
+        image-rendering: pixelated;
+    }
+</style>
+<body>
+    <canvas id="canvas" width="4096" height="4096"></canvas>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        ctx.resetTransform();
+
+        ctx.fillStyle = 'green';
+        ctx.fillRect(10, 10, 100, 100);
+    </script>
+</body>

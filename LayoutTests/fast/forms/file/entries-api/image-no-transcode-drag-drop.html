@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../../../resources/js-test.js"></script>
+    <script src="../../../../resources/ui-helper.js"></script>
+</head>
+<body>
+    <input type="file" accept="IMAGE/HEIC" onchange="changed(event)"></input>
+    <script>
+        description("Tests a HEIC image will not be converted to any supported MIME type when it is dragged and dropped to a file input element which accepts HEIC.");
+        jsTestIsAsync = true;
+
+        function runTest()
+        {
+            if (!window.eventSender || !eventSender.beginDragWithFiles) {
+                finishJSTest();
+                return;
+            }
+
+            var element = document.getElementsByTagName('input')[0];
+            var centerX = element.offsetLeft + element.offsetWidth / 2;
+            var centerY = element.offsetTop + element.offsetHeight / 2;
+
+            eventSender.beginDragWithFiles(["resources/images/green-400x400.heic"]);
+            eventSender.mouseMoveTo(centerX, centerY);
+            eventSender.mouseUp();
+        }
+
+        function changed(event)
+        {
+            fileList = event.target.files;
+            shouldBe("fileList.length", "1");
+
+            file = fileList[0];
+            shouldBeEqualToString("file.type", "image/heic");
+            shouldBeNonZero("file.size");
+
+            img = document.createElement("img");
+            document.body.appendChild(img);
+
+            var reader = new FileReader();
+            reader.onload = () => {
+                img.onload = () => {
+                    debug("Image was loaded.");
+                    shouldBe("img.width", "400");
+                    shouldBe("img.height", "400");
+                    finishJSTest();
+                };
+                img.onerror = () => {
+                    debug("Image could not be loaded.");
+                    shouldNotBe("img.width", "400");
+                    shouldNotBe("img.height", "400");
+                    finishJSTest();
+                };
+                img.src = reader.result;
+            };
+            reader.readAsDataURL(file);
+        }
+        runTest();
+    </script>
+</body>
+</html>

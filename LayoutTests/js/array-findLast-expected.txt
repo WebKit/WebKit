@@ -1,0 +1,71 @@
+Tests for Array.prototype.findLast
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Array.prototype.findLast.length is 1
+PASS Array.prototype.findLast.name is 'findLast'
+PASS [undefined, 0, null, false, ''].findLast(passUndefined) is undefined
+PASS [undefined, 0, null, false, ''].findLast(passZero) is 0
+PASS [undefined, 0, null, false, ''].findLast(passNull) is null
+PASS [undefined, 0, null, false, ''].findLast(passFalse) is false
+PASS [undefined, 0, null, false, ''].findLast(passEmptyString) is ''
+PASS [0,1,2,3,4,5,6,7,8,9].findLast(passEven) is 8
+PASS [0,1,2,3,4,5,6,7,8,9].findLast(passAfter5) is 9
+PASS [0, null, false, ''].findLast(passUndefined) is undefined
+PASS [undefined, 0, false, ''].findLast(passNull) is undefined
+PASS [undefined, 0, null, ''].findLast(passFalse) is undefined
+PASS [undefined, 0, null, false].findLast(passEmptyString) is undefined
+PASS [1,3,5,7,9].findLast(passEven) is undefined
+PASS [0,1,2,3,4].findLast(passAfter5) is undefined
+PASS [undefined, null, false, ''].findLast(passZero) is undefined
+Array with holes
+PASS (new Array(20)).findLast(passUndefined) is undefined
+PASS arrayWithHoles.findLast(passUndefined) is undefined
+PASS arrayWithHoles.findLast(passZero) is 0
+PASS arrayWithHoles.findLast(passNull) is null
+PASS arrayWithHoles.findLast(passFalse) is false
+PASS arrayWithHoles.findLast(passEmptyString) is ''
+PASS arrayWithHoles.findLast(passAfter5) is ''
+Generic Object
+PASS toObject([undefined, 0, null, false, '']).findLast(passUndefined) is undefined
+PASS toObject([undefined, 0, null, false, '']).findLast(passZero) is 0
+PASS toObject([undefined, 0, null, false, '']).findLast(passNull) is null
+PASS toObject([undefined, 0, null, false, '']).findLast(passFalse) is false
+PASS toObject([undefined, 0, null, false, '']).findLast(passEmptyString) is ''
+PASS toObject([0, null, false, '']).findLast(passUndefined) is undefined
+PASS toObject([undefined, 0, false, '']).findLast(passNull) is undefined
+PASS toObject([undefined, 0, null, '']).findLast(passFalse) is undefined
+PASS toObject([undefined, 0, null, false]).findLast(passEmptyString) is undefined
+PASS toObject([undefined, null, false, '']).findLast(passZero) is undefined
+PASS toObject(new Array(20)).findLast(passUndefined) is undefined
+Array-like object with invalid lengths
+PASS var obj = { 0: 1, 1: 2, 2: 3, length: 0 }; Array.prototype.findLast.call(obj, throwError) is undefined.
+PASS var obj = { 0: 1, 1: 2, 2: 3, length: -0 }; Array.prototype.findLast.call(obj, throwError) is undefined.
+PASS var obj = { 0: 1, 1: 2, 2: 3, length: -3 }; Array.prototype.findLast.call(obj, throwError) is undefined.
+Modification during search
+PASS [0,1,2,3,4,5,6,7,8,9].findLast(findItemAddedDuringSearch) is undefined
+PASS [0,1,2,3,4,5,6,7,8,9].findLast(findItemRemovedDuringSearch) is undefined
+Exceptions
+PASS Array.prototype.findLast.call(undefined, function() {}) threw exception TypeError: Array.prototype.findLast requires that |this| not be null or undefined.
+PASS Array.prototype.findLast.call(null, function() {}) threw exception TypeError: Array.prototype.findLast requires that |this| not be null or undefined.
+PASS [].findLast(1) threw exception TypeError: Array.prototype.findLast callback must be a function.
+PASS [].findLast('hello') threw exception TypeError: Array.prototype.findLast callback must be a function.
+PASS [].findLast([]) threw exception TypeError: Array.prototype.findLast callback must be a function.
+PASS [].findLast({}) threw exception TypeError: Array.prototype.findLast callback must be a function.
+PASS [].findLast(null) threw exception TypeError: Array.prototype.findLast callback must be a function.
+PASS [].findLast(undefined) threw exception TypeError: Array.prototype.findLast callback must be a function.
+Callbacks in the expected order and *not* skipping holes
+findLast callback called with index 7
+findLast callback called with index 6
+findLast callback called with index 5
+findLast callback called with index 4
+findLast callback called with index 3
+findLast callback called with index 2
+findLast callback called with index 1
+findLast callback called with index 0
+PASS numberOfCallbacksInFindInArrayWithHoles() is 8
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

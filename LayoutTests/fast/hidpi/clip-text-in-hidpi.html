@@ -1,0 +1,22 @@
+<html>
+<head>
+<script>
+    function startTest() {
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.setBackingScaleFactor(2, finishTest);
+        }
+    }
+    
+    function finishTest() {
+        var test = document.getElementById("test");
+        test.innerHTML = window.devicePixelRatio;
+        setTimeout(function() { testRunner.notifyDone(); }, 0);
+    }
+</script>
+</head>
+<body onload="startTest();">
+    <span style="background-color:red; -webkit-background-clip:text; -webkit-text-fill-color:transparent">This text should be nice and sharp. devicePixelRatio is: </span>
+    <span id="test"></span>
+</body>
+</html>

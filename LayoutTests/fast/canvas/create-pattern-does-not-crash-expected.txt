@@ -1,0 +1,2 @@
+
+This test case ensures we don't crash when using canvas.createPattern

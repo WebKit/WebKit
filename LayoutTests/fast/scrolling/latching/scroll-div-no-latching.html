@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+    height: 1200px;
+}
+
+.post {
+    width: 500px;
+    height: 600px;
+    overflow: auto;
+    border: 1px solid black;
+}
+
+.content {
+    width: 1000px;
+    height: 100%;
+    background-image: repeating-linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.2) 100px), repeating-linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.2) 100px);
+    
+}
+</style>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+    jsTestIsAsync = true;
+
+    var divTarget;
+    var pageScrollPositionBefore;
+    var divScrollPositionBefore;
+
+    function checkForScroll()
+    {
+        var pageScrollPositionAfter = document.scrollingElement.scrollTop;
+        var divScrollPositionAfter = divTarget.scrollLeft;
+
+        if (pageScrollPositionBefore != pageScrollPositionAfter)
+            testPassed("Page received wheel events.");
+        else
+            testFailed("Page did not receive wheel events.");
+
+        finishJSTest();
+    }
+
+    function scrollTest()
+    {
+        pageScrollPositionBefore = document.scrollingElement.scrollTop;
+
+        divTarget = document.getElementById('parent');
+
+        divScrollPositionBefore = divTarget.scrollLeft;
+
+        var startPosX = divTarget.offsetLeft + 20;
+        var startPosY = divTarget.offsetTop + (divTarget.clientHeight / 2); // One wheel turn before end.
+        eventSender.mouseMoveTo(startPosX, startPosY); // Make sure we are just outside the iFrame
+
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 1, 'none', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 1, 'none', 'none');
+
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'none', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'none', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'none', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'none', 'none');
+
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'none');
+
+        setTimeout(checkForScroll, 100);
+    }
+
+    function setupTopLevel()
+    {
+        description("Tests that scroll events of type 'none' work properly.");
+        if (window.eventSender) {
+            setTimeout(scrollTest, 0);
+            return;
+        }
+
+        var messageLocation = document.getElementById('parent');
+        var message = document.createElement('div');
+        message.innerHTML = "<p>This test is better run under DumpRenderTree. To manually test it, place the mouse pointer<br/>"
+            + "inside the textured region. (1) Use the mouse wheel to scroll vertically, then (2) hold the shift key while<br/>"
+            + "moving the mouse wheel to scroll horizontally, then (3) release the shift key and attempt to scroll vertically.<br/><br/>"
+            + "The final set of vertical moves should modify the parent page scroll position.</p>";
+        messageLocation.appendChild(message);
+        finishJSTest();
+    }
+
+    window.addEventListener('load', () => {
+        setupTopLevel();
+    }, false);
+</script>
+</head>
+<body>
+    <div id="parent" class="post">
+        <div id="target" class="content">
+            Test region.
+        </div>
+    </div>
+</div>
+<div id="console"></div>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

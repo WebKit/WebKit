@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Adapt camera track framerate</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+    <script src ="../../webrtc/routines.js"></script>
+</head>
+<body>
+    <video autoplay id="video"></video>
+    <script>
+promise_test(async (t) => {
+    const stream1 = await navigator.mediaDevices.getUserMedia({ video: { width: 160, frameRate : 5 } });
+    const stream2 = await navigator.mediaDevices.getUserMedia({ video: { width: 720, frameRate : 30 } });
+
+    // We adapt frame rate after 1 second of samples.
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    const frameRate = await computeFrameRate(stream2, video);
+
+    // On heavily loaded bots, our mock capture source might not be able to deliver 30 fps. Our test only makes sense if we have sufficient fps.
+    if (frameRate <= 10)
+        return;
+
+    assert_greater_than(frameRate, 10, "stream2 frame rate above 10");
+    assert_less_than(frameRate, 60, "stream2 frame rate below 60");
+
+    if (!stream1.getVideoTracks()[0].muted) {
+        const frameRate = await computeFrameRate(stream1, video);
+        assert_greater_than(frameRate, 1, "stream1 frame rate above 1");
+        assert_less_than(frameRate, 10, "stream1 frame rate below 10");
+    }
+}, "getUserMedia with increasing frame rates");
+    </script>
+</body>
+</html>

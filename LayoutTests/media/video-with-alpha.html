@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>video-with-alpha</title>
+  <style>
+    body {
+        background: white;
+    }
+
+    #video {
+        position: absolute;
+        left: 0px;
+        top: 0px;
+    }
+    #spacer {
+        position: absolute;
+        left: 200px;
+        top: 0px;
+        background-color: red;
+    }
+    #canvas {
+        position: absolute;
+        left: 400px;
+        top: 0px;
+    }
+  </style>
+  <script src=media-file.js></script>
+  <script>
+    // Put a video element to the left, a spacer in the middle and a canvas to the right. The video element will
+    // play a transparent video, and a video frame will be copied into the canvas.
+    // As the video and the canvas are invisible, to visually check that the video element is really playing something,
+    // set the size of the spacer to the size of the video frames (200x200).
+
+    var requirePixelDump = true;
+
+    function seeked() {
+        let canvas = document.getElementById("canvas");
+        context = canvas.getContext("2d");
+        context.drawImage(video, 0, 0);
+        if (window.testRunner)
+            setTimeout("testRunner.notifyDone()", 0);
+    }
+
+    function buffered() {
+        video.width = video.videoWidth;
+        video.height = video.videoHeight;
+
+        let spacer = document.getElementById("spacer");
+        spacer.style.width = video.width + "px";
+        spacer.style.height = video.height + "px";
+
+        canvas.width = video.width;
+        canvas.height = video.height;
+
+        video.currentTime = .5;
+    }
+
+    function start() {
+        findMediaElement();
+        video.src = "content/video-with-alpha.webm";
+        video.addEventListener("seeked", seeked);
+        video.addEventListener("canplaythrough", buffered, false);
+    }
+  </script>
+  <script src=video-test.js></script>
+</head>
+
+<body onload="start()">
+  <video id="video"></video>
+  <div id="spacer"></div>
+  <canvas id="canvas"></canvas>
+</body>
+</html>

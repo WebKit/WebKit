@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=video-test.js></script>
+        <script src=media-file.js></script>
+        <script>
+            
+            function start()
+            {
+                findMediaElement();
+
+                waitForEvent("loadstart");
+                waitForEvent("loadedmetadata");
+                waitForEvent("loadeddata");
+                waitForEvent("abort");
+                waitForEvent("emptied");
+                waitForEvent("canplaythrough", testLoad);
+                waitForEvent("error", errorEvent);
+                consoleWrite("** &lt;video&gt; with valid non-empty 'src' attribute**");
+                video.src = findMediaFile("video", "content/test");
+            }
+
+            function errorEvent()
+            {
+                consoleWrite("<br>'error' event:");
+                testExpected('event.target', video);
+                testExpected("video.error.code", MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED);
+                testExpected("video.networkState", HTMLMediaElement.NETWORK_NO_SOURCE);
+                endTest();
+            }
+
+            function testLoad()
+            {
+                consoleWrite("<br>** &lt;video&gt; with empty src attribute**");
+                run('video.src = ""');
+            }
+        </script>
+    </head>
+    <body onload="start()">
+        <video width=320 height=60 controls></video>
+        <p> &lt;video&gt; element with src="" should invoke media element's load algorithm and should fire 'error' event. Network state should be NETWORK_NO_SOURCE and set error to MEDIA_ERR_SRC_NOT_SUPPORTED.</p>
+    </body>
+</html>

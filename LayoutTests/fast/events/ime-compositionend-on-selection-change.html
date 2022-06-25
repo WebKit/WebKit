@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <p>To manually test, start editing a composition in the input field and focus the contenteditable without committing
+    the composition. A compositionend event should be logged, with the event target being the input field. Next, insert
+    a pending composition in the contenteditable and focus the input. A compositionend should be logged, with the event
+    target being the contenteditable. Then insert a pending composition in the input field and focus the document. A
+    compositionend event should be logged with the target being the input field. Lastly, insert a pending composition in
+    the rich contenteditable and click and drag to select all the text in the contenteditable. A compositionend event
+    should be fired on the contenteditable.</p>
+    <input id="plain"></input>
+    <div id="rich" contenteditable style="border: 1px dashed"></div>
+    <div id="output"></div>
+    <script type="text/javascript">
+        let write = s => output.innerHTML += `${s}<br>`;
+        plain.addEventListener("compositionend", logCompositionEnd);
+        rich.addEventListener("compositionend", logCompositionEnd);
+        plain.focus();
+
+        if (window.testRunner && window.textInputController) {
+            testRunner.dumpAsText();
+
+            write("");
+            write("1. Editing the plain input field");
+            textInputController.setMarkedText("a", 1, 0);
+            write("   Focusing the rich contenteditable");
+            rich.focus();
+
+            write("");
+            write("2. Editing the rich contenteditable");
+            textInputController.setMarkedText("b", 1, 0);
+            write("   Focusing the plain input field");
+            plain.focus();
+
+            write("");
+            write("3. Editing the plain input field again");
+            textInputController.setMarkedText("c", 1, 0);
+            write("   Blurring the plain input field");
+            plain.blur();
+
+            write("");
+            write("4. Editing the rich contenteditable again");
+            rich.focus();
+            textInputController.setMarkedText("d", 1, 0);
+            textInputController.setMarkedText("de", 2, 0);
+            textInputController.setMarkedText("def", 3, 0);
+            write("   Changing selection within the rich contenteditable");
+            document.execCommand("SelectAll");
+        }
+
+        function logCompositionEnd(event)
+        {
+            write(`PASS: Dispatched compositionend on &lt;${event.target.tagName} id="${event.target.id}"&gt;`);
+        }
+    </script>
+</body>
+</html>

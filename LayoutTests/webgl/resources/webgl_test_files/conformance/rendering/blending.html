@@ -1,0 +1,216 @@
+<!--
+Copyright (c) 2019 The Khronos Group Inc.
+Use of this source code is governed by an MIT-style license that can be
+found in the LICENSE.txt file.
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../../resources/js-test-style.css"/>
+<script src="../../js/js-test-pre.js"></script>
+<script src="../../js/webgl-test-utils.js"></script>
+
+<script id="eVsSrc" type="text/plain">
+void main()
+{
+    gl_PointSize = 1.0;
+    gl_Position = vec4(0, 0, 0, 1);
+}
+</script>
+
+<script id="eFsSrc" type="text/plain">
+precision mediump float;
+uniform vec4 uColor;
+
+void main()
+{
+    gl_FragColor = uColor;
+}
+</script>
+
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+"use strict";
+description('Blending tests');
+
+const wtu = WebGLTestUtils;
+
+function CreateContext() {
+    const gl = wtu.create3DContext();
+    gl.viewport(0, 0, 1, 1);
+
+    gl.prog = wtu.setupProgram(gl, [eVsSrc.innerHTML, eFsSrc.innerHTML]);
+    gl.prog.uColor = (() => {
+        const loc = gl.getUniformLocation(gl.prog, 'uColor');
+        return x => gl.uniform4fv(loc, x);
+    })();
+    gl.useProgram(gl.prog);
+    gl.prog.uColor([1 / 255, 2 / 255, 3 / 255, 4 / 255]);
+
+    gl.drawAndRead = type => {
+        gl.drawArrays(gl.POINTS, 0, 1);
+        let ret;
+        if (type == gl.UNSIGNED_BYTE) {
+            ret = new Uint8Array(4);
+        } else if (type == gl.FLOAT) {
+            ret = new Float32Array(4);
+        }
+        gl.readPixels(0, 0, 1, 1, gl.RGBA, type, ret);
+        return ret;
+    };
+
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.CONSTANT_COLOR, gl.ZERO);
+    gl.blendColor(10, 1, 1, 1);
+
+    return gl;
+}
+
+function CreateValidFb(gl, formats) {
+    const fb = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
+
+    for (let i in formats) {
+        i = i|0; // Otherwise i is a string. :(
+        const f = formats[i];
+        if (!f)
+            continue;
+        if (f.length == 1) {
+            const rb = gl.createRenderbuffer();
+            gl.bindRenderbuffer(gl.RENDERBUFFER, rb);
+            gl.renderbufferStorage(gl.RENDERBUFFER, f[0], 1, 1);
+            gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0+i,
+                                       gl.RENDERBUFFER, rb);
+            continue;
+        }
+        if (f.length == 3) {
+            let internalFormat = f[0];
+            if (internalFormat === undefined) {
+                internalFormat = f[1];
+            }
+
+            const tex = gl.createTexture();
+            gl.bindTexture(gl.TEXTURE_2D, tex);
+            gl.texImage2D(gl.TEXTURE_2D, 0, internalFormat, 1,1,0, f[1],f[2], null);
+            gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0+i,
+                                    gl.TEXTURE_2D, tex, 0);
+            continue;
+        }
+        throw new Error('Invalid format length: ' + f);
+    }
+
+    const status = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
+    if (status != gl.FRAMEBUFFER_COMPLETE) {
+        gl.deleteFramebuffer(fb);
+        return null;
+    }
+    return fb;
+}
+
+let was, fb;
+
+const TESTS = [
+    () => {
+        debug('');
+        debug("State queries don't clamp.");
+
+        const gl = wtu.create3DContext();
+        gl.blendColor(1000, 1, 1, 1);
+        const was = gl.getParameter(gl.BLEND_COLOR);
+        expectArray(was, [1000, 1, 1, 1]);
+    },
+    () => {
+        debug('');
+        debug('Blending for RGBA8:');
+
+        const gl = CreateContext();
+        fb = CreateValidFb(gl, [[gl.RGBA8, gl.RGBA, gl.UNSIGNED_BYTE]]);
+        shouldBeNonNull('fb');
+
+        const was = gl.drawAndRead(gl.UNSIGNED_BYTE);
+        expectArray(was, [1, 2, 3, 4]);
+
+        if (gl.getExtension('EXT_color_buffer_float') ||
+            gl.getExtension('EXT_color_buffer_half_float'))
+        {
+            debug('Enable color_buffer_half_float and retest');
+            gl.blendColor(1000, 1, 1, 1);
+            const was = gl.drawAndRead(gl.UNSIGNED_BYTE);
+            expectArray(was, [1, 2, 3, 4]);
+        }
+    },
+    () => {
+        debug('');
+        debug('Blending for RGBA16F:');
+
+        const gl = CreateContext();
+        if (gl.blitFramebuffer) {
+            if (!gl.getExtension('EXT_color_buffer_float')) {
+                testPassed('Missing ext EXT_color_buffer_float is optional, skipping.');
+                return;
+            }
+        } else {
+            if (!gl.getExtension('EXT_color_buffer_half_float')) {
+                testPassed('Missing ext EXT_color_buffer_half_float is optional, skipping.');
+                return;
+            }
+            const ext = gl.getExtension('OES_texture_half_float');
+            gl.HALF_FLOAT = ext.HALF_FLOAT_OES; // These aren't the same value, but this'll work.
+        }
+
+        fb = CreateValidFb(gl, [[gl.RGBA16F, gl.RGBA, gl.HALF_FLOAT]]);
+        shouldBeNonNull('fb');
+        gl.prog.uColor([1, 2, 3, 4]);
+        const was = gl.drawAndRead(gl.FLOAT);
+        expectArray(was, [10, 2, 3, 4]);
+    },
+    () => {
+        debug('');
+        debug('Blending for RGBA32F:');
+
+        const gl = CreateContext();
+        if (gl.blitFramebuffer) {
+            if (!gl.getExtension('EXT_color_buffer_float')) {
+                testPassed('Missing ext EXT_color_buffer_float is optional, skipping.');
+                return;
+            }
+        } else {
+            if (!gl.getExtension('WEBGL_color_buffer_float')) {
+                testPassed('Missing ext WEBGL_color_buffer_float is optional, skipping.');
+                return;
+            }
+            gl.getExtension('OES_texture_float');
+        }
+        fb = CreateValidFb(gl, [[gl.RGBA32F, gl.RGBA, gl.FLOAT]]);
+        shouldBeNonNull('fb');
+        gl.prog.uColor([1, 2, 3, 4]);
+        const was = gl.drawAndRead(gl.FLOAT);
+
+        if (!gl.getExtension('EXT_float_blend')) {
+            wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION, 'Should not be able to blend 32F formats.');
+            return;
+        }
+        wtu.glErrorShouldBe(gl, 0, 'Should be able to blend 32F formats.');
+        expectArray(was, [10, 2, 3, 4]);
+    },
+];
+
+async function Test() {
+    for (const fn of TESTS) {
+        await wtu.dispatchPromise(fn);
+    }
+    wtu.destroyAllContexts();
+    finishTest();
+}
+
+Test();
+
+var successfullyParsed = true;
+</script>
+</body>
+</html>

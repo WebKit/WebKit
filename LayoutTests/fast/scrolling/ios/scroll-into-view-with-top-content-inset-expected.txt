@@ -1,0 +1,13 @@
+Verifies that Element.scrollIntoView() does not scroll away the top content inset if the element is already visible. This test requires WebKitTestRunner.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS originalContentOffset.x is 0
+PASS originalContentOffset.y is -100
+PASS finalContentOffset.x is 0
+PASS finalContentOffset.y is -100
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

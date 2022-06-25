@@ -1,0 +1,3 @@
+
+FAIL Form associated custom elements should work with document.forms.elements.namedItem() assert_equals: Single input should be returned as-is expected (object) Element node <custom-input id="custom-1" name="alone"></custom-input> but got (undefined) undefined
+

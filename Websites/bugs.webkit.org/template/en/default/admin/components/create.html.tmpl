@@ -1,0 +1,38 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # product: object; Bugzilla::Product object representing the product to
+  #               which the component belongs.
+  #%]
+
+[% title = BLOCK %]Add component to the [% product.name FILTER html %] product[% END %]
+[% PROCESS global/header.html.tmpl
+  title = title
+  generate_api_token = 1
+  style_urls = ['skins/standard/admin.css']
+  yui = [ 'autocomplete' ]
+  javascript_urls = [ "js/field.js" ]
+%]
+
+<form method="post" action="editcomponents.cgi">
+  <table id="admin_table_edit">
+
+    [% PROCESS "admin/components/edit-common.html.tmpl" %]
+
+  </table>
+
+  <input type="submit" id="create" value="Add">
+  <input type="hidden" name="action" value="new">
+  <input type="hidden" name='product' value="[% product.name FILTER html %]">
+  <input type="hidden" name="token" value="[% token FILTER html %]">
+</form>
+
+[% PROCESS admin/components/footer.html.tmpl %]
+
+[% PROCESS global/footer.html.tmpl %]

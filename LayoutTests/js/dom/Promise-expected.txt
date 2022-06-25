@@ -1,0 +1,135 @@
+Promises - Adapted from http://dxr.mozilla.org/mozilla-central/source/dom/promise/tests/test_promise.html.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+About to run test - promiseResolve
+PASS Promise object should exist
+PASS Promise.resolve exists
+PASS Promise.reject exists
+PASS Then - resolveCb has been called
+PASS 42 is 42
+
+About to run test - promiseReject
+PASS Then - rejectCb has been called
+PASS 42 is 42
+
+About to run test - promiseException
+PASS Then - rejectCb has been called
+PASS 42 is 42
+
+About to run test - promiseGC
+PASS Then - promise is still alive
+
+About to run test - promiseAsync
+PASS foo is foo
+PASS foo is foo
+PASS foo is foo
+PASS bar is bar
+
+About to run test - promiseDoubleThen
+PASS Then.resolve has been called
+PASS 42 is 42
+PASS Then.resolve has been called
+PASS 1 is 1
+PASS 42 is 42
+
+About to run test - promiseThenException
+PASS Then.resolve has been called
+PASS window.onerror has been called!
+
+About to run test - promiseThenCatchThen
+PASS [object Promise] should not be [object Promise]
+PASS Then.resolve has been called
+PASS 42 is 42
+PASS Then.resolve has been called
+PASS 43 is 43
+PASS Then.resolve has been called
+PASS 44 is 44
+
+About to run test - promiseRejectThenCatchThen
+PASS [object Promise] should not be [object Promise]
+PASS Then.reject has been called
+PASS 42 is 42
+PASS Then.resolve has been called
+PASS 43 is 43
+PASS Then.resolve has been called
+PASS 44 is 44
+
+About to run test - promiseRejectThenCatchThen2
+PASS 42 is 42
+PASS Catch has been called
+PASS Then.resolve has been called
+PASS 43 is 43
+
+About to run test - promiseRejectThenCatchExceptionThen
+PASS Then.reject has been called
+PASS 42 is 42
+PASS Catch has been called
+PASS 43 is 43
+PASS Then.resolve has been called
+PASS 44 is 44
+
+About to run test - promiseThenCatchOrderingResolve
+PASS 2 is 2
+
+About to run test - promiseThenCatchOrderingReject
+PASS 2 is 2
+
+About to run test - promiseNestedPromise
+PASS Nested promise is executed
+PASS 42 is 42
+
+About to run test - promiseNestedNestedPromise
+PASS Nested promise is executed
+PASS 43 is 43
+
+About to run test - promiseWrongNestedPromise
+PASS Nested promise is executed
+PASS 42 is 42
+
+About to run test - promiseLoop
+PASS Nested promise is executed
+PASS Nested nested promise is executed
+PASS 42 is 42
+
+About to run test - promiseStaticReject
+PASS 42 is 42
+
+About to run test - promiseStaticResolve
+PASS 42 is 42
+
+About to run test - promiseResolveNestedPromise
+PASS Nested promise is executed
+PASS 42 is 42
+
+About to run test - promiseResolveNoArg
+PASS Promise.resolve exists
+PASS Promise.reject exists
+PASS Then - resolveCb has been called
+PASS undefined is undefined
+
+About to run test - promiseRejectNoArg
+PASS Then - rejectCb has been called
+PASS undefined is undefined
+
+About to run test - promiseThenNoArg
+PASS [object Promise] should not be [object Promise]
+PASS 42 is 42
+
+About to run test - promiseThenUndefinedResolveFunction
+PASS 42 is 42
+
+About to run test - promiseThenNullResolveFunction
+PASS 42 is 42
+
+About to run test - promiseCatchNoArg
+PASS [object Promise] should not be [object Promise]
+PASS 42 is 42
+
+About to run test - promiseRejectNoHandler
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

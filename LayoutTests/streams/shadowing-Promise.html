@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<script src='../resources/testharness.js'></script>
+<script src='../resources/testharnessreport.js'></script>
+<script>
+test(function() {
+    const PromiseBackup = Promise;
+
+    try {
+        Promise = function() { assert_unreached("streams should not use this Promise object"); };
+
+        new ReadableStream();
+        new WritableStream();
+    } finally {
+        Promise = PromiseBackup;
+    }
+}, 'Streams and promises: replace Promise constructor');
+
+test(function() {
+    const PromiseResolveBackup = Promise.resolve;
+
+    try {
+        Promise.resolve = function() { assert_unreached("streams should not use this Promise.resolve method"); };
+
+        new ReadableStream();
+        new WritableStream();
+    } finally {
+        Promise.resolve = PromiseResolveBackup;
+    }
+}, 'Streams and promises: replace Promise.resolve');
+
+test(function() {
+    const PromiseRejectBackup = Promise.reject;
+
+    function handle() { }
+
+    try {
+        Promise.reject = function() { assert_unreached("streams should not use this Promise.reject method"); };
+
+        ReadableStream.prototype.cancel.call({}, "reason").then(handle, handle);
+        WritableStream.prototype.abort.call({}, "reason").then(handle, handle);
+    } finally {
+        Promise.reject = PromiseRejectBackup;
+    }
+}, 'Streams and promises: replace Promise.reject');
+
+test(function() {
+    function createMangledPromise() {
+        const promise = Promise.resolve();
+        Object.setPrototypeOf(promise, { constructor: Promise, then: function() { assert_unreached("streams should not use this promise then method"); } });
+        return promise;
+    }
+    new ReadableStream({ start: function() { return createMangledPromise(); } })
+    new WritableStream({ start: function() { return createMangledPromise(); } })
+}, 'Streams and promises: replace prototype of a promise object');
+
+test(function() {
+    const PromiseThenBackup = Promise.prototype.then;
+
+    try {
+        Promise.prototype.then = function() { assert_unreached("streams should not use this Promise.prototype.then method"); };
+
+        new ReadableStream();
+        new WritableStream();
+    } finally {
+        Promise.prototype.then = PromiseThenBackup;
+    }
+}, 'Streams and promises: replace then method in Promise prototype');
+
+test(function() {
+    const PromiseCatchBackup = Promise.prototype.catch;
+    const PromiseThenBackup = Promise.prototype.then;
+
+    try {
+        Promise.prototype.catch = function() { assert_unreached("streams should not use this Promise.prototype.catch method"); };
+        Promise.prototype.then = function() { assert_unreached("streams should not use this Promise.prototype.catch method"); };
+
+        const rs = new ReadableStream();
+        rs.tee();
+    } finally {
+        Promise.prototype.catch = PromiseCatchBackup;
+        Promise.prototype.then = PromiseThenBackup;
+    }
+}, 'Streams and promises: replace catch method in Promise prototype');
+
+test(function() {
+    function createMangledPromise() {
+        const promise = Promise.resolve();
+        promise.then = function() { assert_unreached("streams should not use this promise then method"); };
+        return promise;
+    }
+    new ReadableStream({ start: function() { return createMangledPromise(); } })
+    new WritableStream({ start: function() { return createMangledPromise(); } })
+}, 'Streams and promises: replace then method in promise object');
+
+test(function() {
+    const NumberBackup = Number;
+    const NumberIsNaNBackup = Number.isNaN;
+    const NumberIsFiniteBackup = Number.isFinite;
+
+    try {
+        Number.isNaN = function() { assert_unreached("streams should not use this Number.isNaN method"); };
+        Number.isFinite = function() { assert_unreached("streams should not use this Number.isFinite method"); };
+        Number = null;
+
+        new ReadableStream({
+            start: function(controller) {
+                controller.enqueue("small potato");
+            }
+        }, {
+            size: function(chunk) { return 2; },
+            highWaterMark: 1
+        });
+
+    } finally {
+        Number = NumberBackup;
+        Number.isNaN = NumberIsNaNBackup;
+        Number.isFinite = NumberIsFiniteBackup;
+    }
+}, 'Streams should not directly use Number and related methods');
+test(function() {
+    const ReadableStreamGetReaderBackup = ReadableStream.prototype.getReader;
+
+    try {
+        ReadableStream.prototype.getReader = function() { assert_unreached("streams should not use this ReadableStream.getReader method"); };
+        new ReadableStream().tee();
+    } finally {
+        ReadableStream.prototype.getReader = ReadableStreamGetReaderBackup;
+    }
+}, 'Streams should not directly use ReadableStream public APIs');
+
+promise_test(function() {
+    const ReadableStreamDefaultReader = new ReadableStream().getReader().constructor;
+    const ReadableStreamDefaultReaderReadBackup = ReadableStreamDefaultReader.prototype.read;
+
+    function cleanTest() {
+        ReadableStreamDefaultReader.prototype.read = ReadableStreamDefaultReaderReadBackup;
+    }
+
+    try {
+        ReadableStreamDefaultReader.prototype.read = function() { assert_unreached("streams should not use this ReadableStreamDefaultReader.read method"); };
+
+        [s1, s2] = new ReadableStream({
+            start: function(controller) {
+                controller.close();
+            }
+        }).tee();
+        return s1.getReader().closed.then(cleanTest, cleanTest);
+
+    } catch (error) {
+        cleanTest();
+        assert_unreached("test should not throw");
+    }
+}, 'Streams should not directly use ReadableStreamDefaultReader read public API');
+</script>

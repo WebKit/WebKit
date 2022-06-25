@@ -1,0 +1,22 @@
+<html>
+<head>
+<script>
+  if (window.testRunner){
+     testRunner.dumpAsText();
+     testRunner.waitUntilDone();
+  }
+
+  let request = indexedDB.open(Math.random());
+  request.onupgradeneeded = () => {
+    let db = request.result;
+    let idbObjectStore = db.createObjectStore('b');
+    let transaction = idbObjectStore.transaction;
+    transaction.dispatchEvent(new Event(''));
+    globalThis.testRunner?.notifyDone();
+  };
+</script>
+</head>
+<body>
+WebKit should not crash.
+<body>
+</html>

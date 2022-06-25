@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that changing the canvas size while executing fillText does not crash.</title>
+</head>
+<body>
+Pass if no crash or assert.
+<canvas id=ca></canvas>
+<textarea autofocus='below' onfocusin = 'changeCanvasWidth()'></textarea>
+<script>
+function changeCanvasWidth() {
+    for (var i = 0; i < 1000; ++i) {
+      c3 = document.getElementById("ca");
+      c3.width = i;
+    }
+}
+
+function fillText() {
+    c2 = document.getElementById("ca").getContext("2d");
+    c2.fillText("foobar", 100, 34);
+}
+
+document.write("<iframe onbeforeload='fillText()'></iframe>");
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: Not executing script because it moved between documents during fetching
+
+
+PASS Sanity check around top-level Window
+PASS Eval: Move parse-error inline classic script to iframe after-prepare
+PASS <script> load: Move parse-error inline classic script to iframe after-prepare
+PASS <script> error: Move parse-error inline classic script to iframe after-prepare
+PASS window error: Move parse-error inline classic script to iframe after-prepare
+

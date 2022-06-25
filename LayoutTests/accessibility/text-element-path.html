@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+
+<h1 id="h1">Add or delete a table in Numbers on iPhone</h1>
+<p id="p1">When you add a table, you choose from a number of predesigned styles that match your <a href="#" id="link1">template</a>. After you add a table, you can customize it however you like. You can add as many tables as you want to a <a href="#" id="link2">sheet</a>.</p>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests that text elements properly support paths.");
+
+    function logChildrenPath(accessibleElement) {
+        for (i = 0; i < accessibleElement.childrenCount; ++i) {
+            child = accessibleElement.childAtIndex(i);
+            debug(child.role);
+            debug(child.stringValue);
+            debug(child.pathDescription);
+        }
+    }
+
+    if (window.accessibilityController) {
+        logChildrenPath(accessibilityController.accessibleElementById("h1"));
+        logChildrenPath(accessibilityController.accessibleElementById("p1"));
+        logChildrenPath(accessibilityController.accessibleElementById("link1"));
+    }
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

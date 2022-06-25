@@ -1,0 +1,852 @@
+{
+    "workers":     [
+                    { "name": "bot105", "platform": "mac-monterey" },
+                    { "name": "bot111", "platform": "mac-monterey" },
+                    { "name": "bot135", "platform": "mac-monterey" },
+                    { "name": "bot138", "platform": "mac-monterey" },
+                    { "name": "bot139", "platform": "mac-monterey" },
+                    { "name": "bot141", "platform": "mac-monterey" },
+                    { "name": "bot165", "platform": "mac-monterey" },
+                    { "name": "bot179", "platform": "mac-monterey" },
+                    { "name": "bot185", "platform": "mac-monterey" },
+                    { "name": "bot187", "platform": "mac-monterey" },
+                    { "name": "bot198", "platform": "mac-monterey" },
+                    { "name": "bot279", "platform": "mac-monterey" },
+                    { "name": "bot603", "platform": "mac-monterey" },
+                    { "name": "bot632", "platform": "mac-monterey" },
+                    { "name": "bot1021", "platform": "mac-monterey" },
+                    { "name": "bot1023", "platform": "mac-monterey" },
+                    { "name": "bot1025", "platform": "mac-monterey" },
+                    { "name": "bot1026", "platform": "mac-monterey" },
+
+                    { "name": "bot121", "platform": "mac-bigsur" },
+                    { "name": "bot124", "platform": "mac-bigsur" },
+                    { "name": "bot126", "platform": "mac-bigsur" },
+                    { "name": "bot131", "platform": "mac-bigsur" },
+                    { "name": "bot132", "platform": "mac-bigsur" },
+                    { "name": "bot137", "platform": "mac-bigsur" },
+                    { "name": "bot140", "platform": "mac-bigsur" },
+                    { "name": "bot142", "platform": "mac-bigsur" },
+                    { "name": "bot178", "platform": "mac-bigsur" },
+                    { "name": "bot183", "platform": "mac-bigsur" },
+                    { "name": "bot184", "platform": "mac-bigsur" },
+                    { "name": "bot260", "platform": "mac-bigsur" },
+                    { "name": "bot302", "platform": "mac-bigsur" },
+                    { "name": "bot610", "platform": "mac-bigsur" },
+                    { "name": "bot638", "platform": "mac-bigsur" },
+                    { "name": "bot1020", "platform": "mac-bigsur" },
+                    { "name": "bot1022", "platform": "mac-bigsur" },
+                    { "name": "bot1024", "platform": "mac-bigsur" },
+                    { "name": "bot1027", "platform": "mac-bigsur" },
+
+                    { "name": "bot205", "platform": "*" },
+                    { "name": "bot242", "platform": "*" },
+                    { "name": "bot243", "platform": "*" },
+                    { "name": "bot244", "platform": "*" },
+                    { "name": "bot245", "platform": "*" },
+                    { "name": "bot246", "platform": "*" },
+                    { "name": "bot247", "platform": "*" },
+                    { "name": "bot248", "platform": "*" },
+                    { "name": "bot611", "platform": "*" },
+                    { "name": "bot612", "platform": "*" },
+                    { "name": "bot613", "platform": "*" },
+                    { "name": "bot674", "platform": "*" },
+                    { "name": "bot683", "platform": "*" },
+                    { "name": "bot684", "platform": "*" },
+                    { "name": "bot687", "platform": "*" },
+                    { "name": "bot688", "platform": "*" },
+
+                    { "name": "bot210", "platform": "ios-simulator-15" },
+                    { "name": "bot303", "platform": "ios-simulator-15" },
+                    { "name": "bot304", "platform": "ios-15" },
+                    { "name": "bot305", "platform": "ios-simulator-15" },
+                    { "name": "bot306", "platform": "ios-simulator-15" },
+                    { "name": "bot307", "platform": "ios-simulator-15" },
+                    { "name": "bot308", "platform": "ios-simulator-15" },
+                    { "name": "bot600", "platform": "ios-simulator-15" },
+                    { "name": "bot673", "platform": "ios-15" },
+                    { "name": "bot614", "platform": "ios-simulator-15" },
+                    { "name": "bot651", "platform": "ios-simulator-15" },
+                    { "name": "bot652", "platform": "ios-simulator-15" },
+                    { "name": "bot653", "platform": "ios-simulator-15" },
+                    { "name": "bot654", "platform": "ios-simulator-15" },
+                    { "name": "bot641", "platform": "ios-simulator-15" },
+                    { "name": "bot682", "platform": "ios-simulator-15" },
+                    { "name": "bot685", "platform": "ios-simulator-15" },
+                    { "name": "bot694", "platform": "ios-simulator-15" },
+                    { "name": "bot695", "platform": "ios-simulator-15" },
+                    { "name": "bot667", "platform": "ios-simulator-15"},
+                    { "name": "bot664", "platform": "ios-simulator-15"},
+
+                    { "name": "bot607", "platform": "tvos-15" },
+                    { "name": "bot608", "platform": "tvos-simulator-15" },
+                    { "name": "bot609", "platform": "watchos-8" },
+                    { "name": "bot672", "platform": "watchos-simulator-8" },
+
+                    { "name": "bot545", "platform": "win" },
+                    { "name": "bot546", "platform": "win" },
+                    { "name": "bot547", "platform": "win" },
+                    { "name": "bot548", "platform": "win" },
+
+                    { "name": "wincairo-wkl-release-build-01", "platform": "wincairo" },
+                    { "name": "wincairo-wkl-release-tests-01", "platform": "wincairo" },
+                    { "name": "wincairo-wkl-release-tests-02", "platform": "wincairo" },
+                    { "name": "wincairo-jsc-release-tests-01", "platform": "wincairo" },
+                    { "name": "wincairo-wkl-debug-build-01", "platform": "wincairo" },
+                    { "name": "wincairo-wkl-debug-tests-01", "platform": "wincairo" },
+                    { "name": "wincairo-wkl-debug-tests-02", "platform": "wincairo" },
+                    { "name": "wincairo-jsc-debug-tests-01", "platform": "wincairo" },
+
+                    { "name": "playstation-release-build-01", "platform": "playstation" },
+                    { "name": "playstation-debug-build-01", "platform": "playstation" },
+
+                    { "name": "gtk-linux-bot-1", "platform": "gtk" },
+                    { "name": "gtk-linux-bot-2", "platform": "gtk" },
+                    { "name": "gtk-linux-bot-3", "platform": "gtk" },
+                    { "name": "gtk-linux-bot-5", "platform": "gtk" },
+                    { "name": "gtk-linux-bot-6", "platform": "gtk" },
+                    { "name": "gtk-linux-bot-7", "platform": "gtk" },
+                    { "name": "gtk-linux-bot-8", "platform": "gtk" },
+                    { "name": "gtk-linux-bot-9", "platform": "gtk" },
+                    { "name": "gtk-linux-bot-10", "platform": "gtk" },
+                    { "name": "gtk-linux-bot-11", "platform": "gtk" },
+                    { "name": "gtk-linux-bot-12", "platform": "gtk" },
+                    { "name": "gtk-linux-bot-13", "platform": "gtk" },
+                    { "name": "gtk-linux-bot-14", "platform": "gtk" },
+                    { "name": "gtk-linux-bot-15", "platform": "gtk" },
+                    { "name": "gtk-linux-bot-16", "platform": "gtk" },
+                    { "name": "gtk-linux-bot-17", "platform": "gtk" },
+                    { "name": "gtk-linux-bot-18", "platform": "gtk" },
+                    { "name": "gtk-linux-bot-19", "platform": "gtk" },
+                    { "name": "gtk-linux-bot-20", "platform": "gtk" },
+                    { "name": "gtk-linux-bot-21", "platform": "gtk" },
+
+                    { "name": "jsconly-linux-igalia-bot-1", "platform": "jsc-only" },
+                    { "name": "jsconly-linux-igalia-bot-2", "platform": "jsc-only" },
+                    { "name": "jsconly-linux-igalia-bot-3", "platform": "jsc-only" },
+                    { "name": "jsconly-linux-igalia-bot-4", "platform": "jsc-only" },
+                    { "name": "jsconly-linux-igalia-bot-5", "platform": "jsc-only" },
+
+                    { "name": "wpe-linux-bot-1", "platform": "wpe" },
+                    { "name": "wpe-linux-bot-2", "platform": "wpe" },
+                    { "name": "wpe-linux-bot-3", "platform": "wpe" },
+                    { "name": "wpe-linux-bot-4", "platform": "wpe" },
+                    { "name": "wpe-linux-bot-5", "platform": "wpe" },
+                    { "name": "wpe-linux-bot-6", "platform": "wpe" },
+                    { "name": "wpe-linux-bot-7", "platform": "wpe" },
+                    { "name": "wpe-linux-bot-8", "platform": "wpe" },
+                    { "name": "wpe-linux-bot-9", "platform": "wpe" },
+                    { "name": "wpe-linux-bot-10", "platform": "wpe" },
+                    { "name": "wpe-linux-bot-11", "platform": "wpe" },
+                    { "name": "wpe-linux-bot-12", "platform": "wpe" }
+                  ],
+
+    "builders":   [
+                    { "name": "Apple-Monterey-Release-Build", "factory": "BuildFactory",
+                      "platform": "mac-monterey", "configuration": "release", "architectures": ["x86_64", "arm64"],
+                      "triggers": [
+                          "monterey-applesilicon-release-tests-test262" ,"monterey-release-tests-test262", "monterey-release-tests-wk1", "monterey-release-tests-wk2",
+                          "monterey-release-applesilicon-tests-wk1", "monterey-release-applesilicon-tests-wk2", "monterey-applesilicon-release-tests-jsc",
+                          "monterey-release-tests-wk2-accessibility-isolated-tree"
+                      ],
+                      "workernames": ["bot185", "bot187"]
+                    },
+                    { "name": "Apple-Monterey-AppleSilicon-Release-Test262-Tests", "factory": "Test262Factory",
+                      "platform": "mac-monterey", "configuration": "release", "architectures": ["x86_64", "arm64"],
+                      "workernames": ["bot165"]
+                    },
+                    { "name": "Apple-Monterey-Release-Test262-Tests", "factory": "Test262Factory",
+                      "platform": "mac-monterey", "configuration": "release", "architectures": ["x86_64", "arm64"],
+                      "workernames": ["bot632"]
+                    },
+                    { "name": "Apple-Monterey-Release-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
+                      "platform": "mac-monterey", "configuration": "release", "architectures": ["x86_64", "arm64"],
+                      "additionalArguments": ["--no-retry-failures"],
+                      "workernames": ["bot1021"]
+                    },
+                    { "name": "Apple-Monterey-Release-AppleSilicon-WK2-Tests", "factory": "TestAllButJSCFactory",
+                      "platform": "mac-monterey", "configuration": "release", "architectures": ["x86_64", "arm64"],
+                      "additionalArguments": ["--no-retry-failures"],
+                      "workernames": ["bot135"]
+                    },
+                    { "name": "Apple-Monterey-Release-AppleSilicon-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
+                      "platform": "mac-monterey", "configuration": "release", "architectures": ["x86_64", "arm64"],
+                      "additionalArguments": ["--no-retry-failures"],
+                      "workernames": ["bot138"]
+                    },
+                    { "name": "Apple-Monterey-Release-WK2-Tests", "factory": "TestAllButJSCFactory",
+                      "platform": "mac-monterey", "configuration": "release", "architectures": ["x86_64", "arm64"],
+                      "additionalArguments": ["--no-retry-failures"],
+                      "workernames": ["bot1023"]
+                    },
+                    { "name": "Apple-Monterey-Release-WK2-Accessibility-Isolated-Tree-Tests", "factory": "TestLayoutFactory",
+                      "platform": "mac-monterey", "configuration": "release", "architectures": ["x86_64", "arm64"],
+                      "additionalArguments": ["--no-retry-failures", "--accessibility-isolated-tree", "accessibility/"],
+                      "workernames": ["bot179"]
+                    },
+                    { "name": "Apple-Monterey-Debug-Build", "factory": "BuildFactory",
+                      "platform": "mac-monterey", "configuration": "debug", "architectures": ["x86_64", "arm64"],
+                      "triggers": [
+                          "monterey-debug-tests-test262", "monterey-debug-tests-wk1", "monterey-debug-tests-wk2", "monterey-debug-applesilicon-tests-wk1",
+                          "monterey-debug-applesilicon-tests-wk2", "monterey-applesilicon-debug-tests-jsc"
+                      ],
+                      "workernames": ["bot198", "bot279"]
+                    },
+                    { "name": "Apple-Monterey-Debug-Test262-Tests", "factory": "Test262Factory",
+                      "platform": "mac-monterey", "configuration": "debug", "architectures": ["x86_64", "arm64"],
+                      "workernames": ["bot603"]
+                    },
+                    { "name": "Apple-Monterey-Debug-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
+                      "platform": "mac-monterey", "configuration": "debug", "architectures": ["x86_64", "arm64"],
+                      "additionalArguments": ["--no-retry-failures"],
+                      "workernames": ["bot1025"]
+                    },
+                    { "name": "Apple-Monterey-Debug-WK2-Tests", "factory": "TestAllButJSCFactory",
+                      "platform": "mac-monterey", "configuration": "debug", "architectures": ["x86_64", "arm64"],
+                      "additionalArguments": ["--no-retry-failures"],
+                      "workernames": ["bot1026"]
+                    },
+                    { "name": "Apple-Monterey-Debug-AppleSilicon-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
+                      "platform": "mac-monterey", "configuration": "debug", "architectures": ["x86_64", "arm64"],
+                      "additionalArguments": ["--no-retry-failures"],
+                      "workernames": ["bot139"]
+                    },
+                    { "name": "Apple-Monterey-Debug-AppleSilicon-WK2-Tests", "factory": "TestAllButJSCFactory",
+                      "platform": "mac-monterey", "configuration": "debug", "architectures": ["x86_64", "arm64"],
+                      "additionalArguments": ["--no-retry-failures"],
+                      "workernames": ["bot141"]
+                    },
+                    { "name": "Apple-Monterey-AppleSilicon-Debug-JSC-Tests", "factory": "TestJSCFactory",
+                      "platform": "mac-monterey", "configuration": "debug", "architectures": ["x86_64", "arm64"],
+                      "workernames": ["bot105"]
+                    },
+                    { "name": "Apple-Monterey-AppleSilicon-Release-JSC-Tests", "factory": "TestJSCFactory",
+                      "platform": "mac-monterey", "configuration": "release", "architectures": ["x86_64", "arm64"],
+                      "workernames": ["bot111"]
+                    },
+                    { "name": "Apple-BigSur-Release-Build", "factory": "BuildFactory",
+                      "platform": "mac-bigsur", "configuration": "release", "architectures": ["x86_64", "arm64"],
+                      "triggers": [
+                          "bigsur-release-tests-jsc", "bigsur-release-perf-tests", "bigsur-release-tests-wk1", "bigsur-release-tests-wk2",
+                          "bigsur-release-applesilicon-tests-wk1", "bigsur-release-applesilicon-tests-wk2", "bigsur-release-tests-wk2-webgl-gpuprocess"
+                      ],
+                      "workernames": ["bot121", "bot124"]
+                    },
+                    { "name": "Apple-BigSur-Release-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
+                      "platform": "mac-bigsur", "configuration": "release", "architectures": ["x86_64", "arm64"],
+                      "additionalArguments": ["--no-retry-failures"],
+                      "workernames": ["bot1020"]
+                    },
+                    { "name": "Apple-BigSur-Release-AppleSilicon-WK2-Tests", "factory": "TestAllButJSCFactory",
+                      "platform": "mac-bigsur", "configuration": "release", "architectures": ["x86_64", "arm64"],
+                      "additionalArguments": ["--no-retry-failures"],
+                      "workernames": ["bot132"]
+                    },
+                    { "name": "Apple-BigSur-Release-AppleSilicon-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
+                      "platform": "mac-bigsur", "configuration": "release", "architectures": ["x86_64", "arm64"],
+                      "additionalArguments": ["--no-retry-failures"],
+                      "workernames": ["bot137"]
+                    },
+                    { "name": "Apple-BigSur-Release-WK2-Tests", "factory": "TestAllButJSCFactory",
+                      "platform": "mac-bigsur", "configuration": "release", "architectures": ["x86_64", "arm64"],
+                      "additionalArguments": ["--no-retry-failures"],
+                      "workernames": ["bot1022"]
+                    },
+                    { "name": "Apple-BigSur-Release-WK2-WebGL-GPUProcess-Tests", "factory": "TestAllButJSCFactory",
+                      "platform": "mac-bigsur", "configuration": "release", "architectures": ["x86_64", "arm64"],
+                      "additionalArguments": ["--no-retry-failures", "--webgl-test-suite", "--use-gpu-process"],
+                      "workernames": ["bot302"]
+                    },
+                    { "name": "Apple-BigSur-Debug-Build", "factory": "BuildFactory",
+                      "platform": "mac-bigsur", "configuration": "debug", "architectures": ["x86_64", "arm64"],
+                      "triggers": [
+                          "bigsur-debug-tests-jsc", "bigsur-debug-tests-wk1", "bigsur-debug-tests-wk2", "bigsur-debug-applesilicon-tests-wk1",
+                          "bigsur-debug-applesilicon-tests-wk2", "bigsur-debug-tests-wk2-gpuprocess"
+                      ],
+                      "workernames": ["bot126", "bot131"]
+                    },
+                    { "name": "Apple-BigSur-Debug-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
+                      "platform": "mac-bigsur", "configuration": "debug", "architectures": ["x86_64", "arm64"],
+                      "additionalArguments": ["--no-retry-failures"],
+                      "workernames": ["bot1024"]
+                    },
+                    { "name": "Apple-BigSur-Debug-WK2-Tests", "factory": "TestAllButJSCFactory",
+                      "platform": "mac-bigsur", "configuration": "debug", "architectures": ["x86_64", "arm64"],
+                      "additionalArguments": ["--no-retry-failures"],
+                      "workernames": ["bot1027"]
+                    },
+                    { "name": "Apple-BigSur-Debug-AppleSilicon-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
+                      "platform": "mac-bigsur", "configuration": "debug", "architectures": ["x86_64", "arm64"],
+                      "additionalArguments": ["--no-retry-failures"],
+                      "workernames": ["bot140"]
+                    },
+                    { "name": "Apple-BigSur-Debug-AppleSilicon-WK2-Tests", "factory": "TestAllButJSCFactory",
+                      "platform": "mac-bigsur", "configuration": "debug", "architectures": ["x86_64", "arm64"],
+                      "additionalArguments": ["--no-retry-failures"],
+                      "workernames": ["bot142"]
+                    },
+                    { "name": "Apple-BigSur-Debug-JSC-Tests", "factory": "TestJSCFactory",
+                      "platform": "mac-bigsur", "configuration": "debug", "architectures": ["x86_64", "arm64"],
+                      "workernames": ["bot638"]
+                    },
+                    { "name": "Apple-BigSur-Release-JSC-Tests", "factory": "TestJSCFactory",
+                      "platform": "mac-bigsur", "configuration": "release", "architectures": ["x86_64", "arm64"],
+                      "workernames": ["bot610"]
+                    },
+                    { "name": "Apple-BigSur-Debug-WK2-GPUProcess-Tests", "factory": "TestAllButJSCFactory",
+                      "platform": "mac-bigsur", "configuration": "debug", "architectures": ["x86_64", "arm64"],
+                      "additionalArguments": ["--no-retry-failures", "--use-gpu-process"],
+                      "workernames": ["bot260"]
+                    },
+                    { "name": "Apple-BigSur-LLINT-CLoop-BuildAndTest", "factory": "BuildAndTestLLINTCLoopFactory",
+                      "platform": "mac-bigsur", "configuration": "debug", "architectures": ["x86_64"],
+                      "workernames": ["bot178"]
+                    },
+                    {
+                      "name": "Apple-BigSur-Release-WK2-Perf", "factory": "DownloadAndPerfTestFactory",
+                      "platform": "mac-bigsur", "configuration": "release", "architectures": ["x86_64", "arm64"],
+                      "workernames": ["bot184"]
+                    },
+                    { "name": "Apple-BigSur-XCBuild-Release-Build", "factory": "BuildFactory",
+                      "platform": "mac-bigsur", "configuration": "release", "architectures": ["x86_64", "arm64"],
+                      "additionalArguments": ["--use-workspace"],
+                      "workernames": ["bot183"]
+                    },
+                    {
+                      "name": "Apple-iOS-15-Release-Build", "factory": "BuildFactory",
+                      "platform": "ios-15", "configuration": "release", "architectures": ["arm64"],
+                      "workernames": ["bot673", "bot304"]
+                    },
+                    {
+                      "name": "Apple-iOS-15-Simulator-Release-Build", "factory": "BuildFactory",
+                      "platform": "ios-simulator-15", "configuration": "release", "architectures": ["x86_64", "arm64"],
+                      "triggers": ["ios-simulator-15-release-arm64-tests-wk2", "ios-simulator-15-release-gpuprocess-tests-wk2", "ios-simulator-15-release-tests-wk2", "ipados-simulator-15-release-tests-wk2"],
+                      "workernames": ["bot614", "bot641", "bot682", "bot685", "bot303", "bot305", "bot306"]
+                    },
+                    {
+                      "name": "Apple-iOS-15-Simulator-Debug-Build", "factory": "BuildFactory",
+                      "platform": "ios-simulator-15", "configuration": "debug", "architectures": ["x86_64"],
+                      "triggers": ["ios-simulator-15-debug-tests-wk2", "ipados-simulator-15-debug-tests-wk2"],
+                      "workernames": ["bot694", "bot695", "bot307", "bot308"]
+                    },
+                    {
+                      "name": "Apple-iOS-15-Simulator-Release-arm64-WK2-Tests", "factory": "TestAllButJSCFactory",
+                      "platform": "ios-simulator-15", "configuration": "release", "architectures": ["x86_64", "arm64"], "device_model": "iphone",
+                      "additionalArguments": ["--no-retry-failures"],
+                      "workernames": ["bot210"]
+                    },
+                    {
+                      "name": "Apple-iOS-15-Simulator-Release-GPUProcess-WK2-Tests", "factory": "TestAllButJSCFactory",
+                      "platform": "ios-simulator-15", "configuration": "release", "architectures": ["x86_64", "arm64"], "device_model": "iphone",
+                      "additionalArguments": ["--no-retry-failures", "--use-gpu-process"],
+                      "workernames": ["bot600"]
+                    },
+                    {
+                      "name": "Apple-iOS-15-Simulator-Release-WK2-Tests", "factory": "TestAllButJSCFactory",
+                      "platform": "ios-simulator-15", "configuration": "release", "architectures": ["x86_64", "arm64"], "device_model": "iphone",
+                      "additionalArguments": ["--no-retry-failures"],
+                      "workernames": ["bot651", "bot652"]
+                    },
+                    {
+                      "name": "Apple-iOS-15-Simulator-Debug-WK2-Tests", "factory": "TestAllButJSCFactory",
+                      "platform": "ios-simulator-15", "configuration": "debug", "architectures": ["x86_64"], "device_model": "iphone",
+                      "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout"],
+                      "workernames": ["bot653", "bot654"]
+                    },
+                    {
+                      "name": "Apple-iPadOS-15-Simulator-Release-WK2-Tests", "factory": "TestAllButJSCFactory",
+                      "platform": "ios-simulator-15", "configuration": "release", "architectures": ["x86_64", "arm64"], "device_model": "ipad",
+                      "additionalArguments": ["--no-retry-failures"],
+                      "workernames": ["bot667"]
+                    },
+                    {
+                      "name": "Apple-iPadOS-15-Simulator-Debug-WK2-Tests", "factory": "TestAllButJSCFactory",
+                      "platform": "ios-simulator-15", "configuration": "debug", "architectures": ["x86_64"], "device_model": "ipad",
+                      "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout"],
+                      "workernames": ["bot664"]
+                    },
+                    {
+                      "name": "Apple-tvOS-15-Release-Build", "factory": "BuildFactory",
+                      "platform": "tvos-15", "configuration": "release", "architectures": ["arm64"],
+                      "workernames": ["bot607"]
+                    },
+                    {
+                      "name": "Apple-tvOS-Simulator-15-Release-Build", "factory": "BuildFactory",
+                      "platform": "tvos-simulator-15", "configuration": "release", "architectures": ["arm64"],
+                      "workernames": ["bot608"]
+                    },
+                    {
+                      "name": "Apple-watchOS-8-Release-Build", "factory": "BuildFactory",
+                      "platform": "watchos-8", "configuration": "release", "architectures": ["arm64_32", "arm64"],
+                      "workernames": ["bot609"]
+                    },
+                    {
+                      "name": "Apple-watchOS-Simulator-8-Release-Build", "factory": "BuildFactory",
+                      "platform": "watchos-simulator-8", "configuration": "release", "architectures": ["arm64"],
+                      "workernames": ["bot672"]
+                    },
+                    {
+                      "name": "Apple-Win-10-Release-Build", "factory": "BuildFactory",
+                      "platform": "win", "configuration": "release", "architectures": ["x86_64"],
+                      "triggers": ["win10-release-tests"],
+                      "workernames": ["bot548"]
+                    },
+                    {
+                      "name": "Apple-Win-10-Debug-Build", "factory": "BuildFactory",
+                      "platform": "win", "configuration": "debug", "architectures": ["x86_64"],
+                      "triggers": ["win10-debug-tests"],
+                      "workernames": ["bot547"]
+                    },
+                    {
+                      "name": "Apple-Win-10-Release-Tests", "factory": "TestWebKit1Factory",
+                      "platform": "win", "configuration": "release", "architectures": ["x86_64"],
+                      "workernames": ["bot546"]
+                    },
+                    {
+                      "name": "Apple-Win-10-Debug-Tests", "factory": "TestWebKit1Factory",
+                      "platform": "win", "configuration": "debug", "architectures": ["x86_64"],
+                      "workernames": ["bot545"]
+                    },
+                    {
+                      "name": "GTK-Linux-64-bit-Release-Build", "factory": "BuildAndGenerateJSCBundleFactory",
+                      "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
+                      "triggers": ["gtk-linux-64-release-tests", "gtk-linux-64-release-tests-js", "gtk-linux-64-release-tests-webdriver",
+                                   "gtk-linux-64-release-wayland-tests", "gtk-linux-64-release-perf-tests", "gtk-linux-64-release-gtk4-tests",
+                                   "gtk-linux-64-release-skip-failing-tests"],
+                      "workernames": ["gtk-linux-bot-2"]
+                    },
+                    {
+                      "name": "GTK-Linux-64-bit-Release-Tests", "factory": "TestAllButJSCFactory",
+                      "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
+                      "workernames": ["gtk-linux-bot-6"]
+                    },
+                    {
+                      "name": "GTK-Linux-64-bit-Release-JS-Tests", "factory": "TestJSFactory",
+                      "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
+                      "workernames": ["gtk-linux-bot-12"]
+                    },
+                    {
+                      "name": "GTK-Linux-64-bit-Release-WebDriver-Tests", "factory": "TestWebDriverFactory",
+                      "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
+                      "workernames": ["gtk-linux-bot-14"]
+                    },
+                    {
+                      "name": "GTK-Linux-64-bit-Debug-Build", "factory": "BuildFactory",
+                      "platform": "gtk", "configuration": "debug", "architectures": ["x86_64"],
+                      "triggers": ["gtk-linux-64-debug-tests", "gtk-linux-64-debug-tests-js", "gtk-linux-64-debug-tests-webdriver"],
+                      "workernames": ["gtk-linux-bot-3"]
+                    },
+                    {
+                      "name": "GTK-Linux-64-bit-Debug-Tests", "factory": "TestAllButJSCFactory",
+                      "platform": "gtk", "configuration": "debug", "architectures": ["x86_64"],
+                      "workernames": ["gtk-linux-bot-7"]
+                    },
+                    {
+                      "name": "GTK-Linux-64-bit-Debug-JS-Tests", "factory": "TestJSFactory",
+                      "platform": "gtk", "configuration": "debug", "architectures": ["x86_64"],
+                      "workernames": ["gtk-linux-bot-13"]
+                    },
+                    {
+                      "name": "GTK-Linux-64-bit-Debug-WebDriver-Tests", "factory": "TestWebDriverFactory",
+                      "platform": "gtk", "configuration": "debug", "architectures": ["x86_64"],
+                      "workernames": ["gtk-linux-bot-15"]
+                    },
+                    {
+                      "name": "GTK-Linux-64-bit-Release-Perf", "factory": "DownloadAndPerfTestFactory",
+                      "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
+                      "additionalArguments": ["--display-server=xorg"],
+                      "workernames": ["gtk-linux-bot-8"]
+                    },
+                    {
+                      "name": "GTK-Linux-64-bit-Release-Wayland-Tests", "factory": "TestAllButJSCFactory",
+                      "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
+                      "additionalArguments": ["--display-server=wayland"],
+                      "workernames": ["gtk-linux-bot-9"]
+                    },
+                    {
+                      "name": "GTK-Linux-64-bit-Release-Debian-Stable-Build", "factory": "BuildFactory",
+                      "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
+                      "additionalArguments": ["--no-experimental-features"],
+                      "workernames": ["gtk-linux-bot-10"]
+                    },
+                    {
+                      "name": "GTK-Linux-64-bit-Release-Ubuntu-2004-Build", "factory": "BuildFactory",
+                      "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
+                      "additionalArguments": ["--no-experimental-features"],
+                      "workernames": ["gtk-linux-bot-11"]
+                    },
+                    {
+                      "name": "GTK-Linux-64-bit-Release-Ubuntu-LTS-Build", "factory": "BuildFactory",
+                      "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
+                      "additionalArguments": ["--no-experimental-features"],
+                      "workernames": ["gtk-linux-bot-21"]
+                    },
+                    {
+                      "name": "GTK-Linux-64bit-Release-Packaging-Nightly-Ubuntu1804", "factory": "BuildAndGenerateMiniBrowserBundleFactory",
+                      "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
+                      "additionalArguments": ["--no-bubblewrap-sandbox"],
+                      "workernames": ["gtk-linux-bot-16"]
+                    },
+                    {
+                      "name": "GTK-Linux-64bit-Release-Packaging-Nightly-Ubuntu2004", "factory": "BuildAndGenerateMiniBrowserBundleFactory",
+                      "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
+                      "additionalArguments": ["--no-bubblewrap-sandbox"],
+                      "workernames": ["gtk-linux-bot-17"]
+                    },
+                    {
+                      "name": "GTK-Linux-64-bit-Release-GTK4-Tests", "factory": "BuildAndTestAllButJSCFactory",
+                      "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
+                      "workernames": ["gtk-linux-bot-18"]
+                    },
+                    {
+                      "name": "GTK-Linux-64-bit-Release-Skip-Failing-Tests", "factory": "TestLayoutFactory",
+                      "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
+                      "additionalArguments": ["--skip-failing-tests"],
+                      "workernames": ["gtk-linux-bot-19"]
+                    },
+                    {
+                      "name": "GTK-Linux-64-bit-Release-Clang-Build", "factory": "BuildFactory",
+                      "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
+                      "workernames": ["gtk-linux-bot-20"]
+                    },
+                    {
+                      "name": "WinCairo-64-bit-WKL-Release-Build", "factory": "BuildFactory",
+                      "platform": "wincairo", "configuration": "release", "architectures": ["x86_64"],
+                      "triggers": ["wincairo-wkl-release-tests", "wincairo-jsc-release-tests"],
+                      "workernames": ["wincairo-wkl-release-build-01"]
+                    },
+                    {
+                      "name": "WinCairo-64-bit-WKL-Release-Tests", "factory": "TestWebKit1AllButJSCFactory",
+                      "platform": "wincairo", "configuration": "release", "architectures": ["x86_64"],
+                      "workernames": ["wincairo-wkl-release-tests-01", "wincairo-wkl-release-tests-02"]
+                    },
+                    {
+                      "name": "WinCairo-64-bit-JSC-Release-Tests", "factory": "TestJSCFactory",
+                      "platform": "wincairo", "configuration": "release", "architectures": ["x86_64"],
+                      "workernames": ["wincairo-jsc-release-tests-01"]
+                    },
+                    {
+                      "name": "WinCairo-64-bit-WKL-Debug-Build", "factory": "BuildFactory",
+                      "platform": "wincairo", "configuration": "debug", "architectures": ["x86_64"],
+                      "triggers": ["wincairo-wkl-debug-tests", "wincairo-jsc-debug-tests"],
+                      "workernames": ["wincairo-wkl-debug-build-01"]
+                    },
+                    {
+                      "name": "WinCairo-64-bit-WKL-Debug-Tests", "factory": "TestWebKit1AllButJSCFactory",
+                      "platform": "wincairo", "configuration": "debug", "architectures": ["x86_64"],
+                      "workernames": ["wincairo-wkl-debug-tests-01", "wincairo-wkl-debug-tests-02"]
+                    },
+                    {
+                      "name": "WinCairo-64-bit-JSC-Debug-Tests", "factory": "TestJSCFactory",
+                      "platform": "wincairo", "configuration": "debug", "architectures": ["x86_64"],
+                      "workernames": ["wincairo-jsc-debug-tests-01"]
+                    },
+                    {
+                      "name": "PlayStation-Debug-Build", "factory": "BuildFactory",
+                      "platform": "playstation", "configuration": "debug", "architectures": ["x86_64"],
+                      "workernames": ["playstation-debug-build-01"]
+                    },
+                    {
+                      "name": "PlayStation-Release-Build", "factory": "BuildFactory",
+                      "platform": "playstation", "configuration": "release", "architectures": ["x86_64"],
+                      "workernames": ["playstation-release-build-01"]
+                    },
+                    {
+                      "name": "JSCOnly-Linux-AArch64-Release", "factory": "BuildAndJSCTestsFactory",
+                      "platform": "jsc-only", "configuration": "release", "architectures": ["aarch64"],
+                      "workernames": ["jsconly-linux-igalia-bot-2"]
+                    },
+                    {
+                      "name": "JSCOnly-Linux-ARMv7-Thumb2-Release", "factory": "BuildAndJSCTestsFactory",
+                      "platform": "jsc-only", "configuration": "release", "architectures": ["armv7"],
+                      "workernames": ["jsconly-linux-igalia-bot-3"]
+                    },
+                    {
+                      "name": "JSCOnly-Linux-ARMv7-Thumb2-SoftFP-Release", "factory": "BuildAndJSCTestsFactory",
+                      "platform": "jsc-only", "configuration": "release", "architectures": ["armv7"],
+                      "workernames": ["jsconly-linux-igalia-bot-5"]
+                    },
+                    {
+                      "name": "JSCOnly-Linux-MIPS32el-Release", "factory": "BuildAndJSCTestsFactory",
+                      "platform": "jsc-only", "configuration": "release", "architectures": ["mips"],
+                      "workernames": ["jsconly-linux-igalia-bot-1"]
+                    },
+                    {
+                      "name": "WPE-Linux-64-bit-Release-Build", "factory": "BuildFactory",
+                      "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
+                      "triggers": ["wpe-linux-64-release-tests", "wpe-linux-64-release-tests-js"],
+                      "workernames": ["wpe-linux-bot-1"]
+                    },
+                    {
+                      "name": "WPE-Linux-64-bit-Release-Tests", "factory": "TestAllButJSCFactory",
+                      "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
+                      "workernames": ["wpe-linux-bot-2"]
+                    },
+                    {
+                      "name": "WPE-Linux-64-bit-Release-JS-Tests", "factory": "TestJSFactory",
+                      "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
+                      "workernames": ["wpe-linux-bot-5"]
+                    },
+                    {
+                      "name": "WPE-Linux-64-bit-Debug-Build", "factory": "BuildFactory",
+                      "platform": "wpe", "configuration": "debug", "architectures": ["x86_64"],
+                      "triggers": ["wpe-linux-64-debug-tests", "wpe-linux-64-debug-tests-js"],
+                      "workernames": ["wpe-linux-bot-3"]
+                    },
+                    {
+                      "name": "WPE-Linux-64-bit-Debug-Tests", "factory": "TestAllButJSCFactory",
+                      "platform": "wpe", "configuration": "debug", "architectures": ["x86_64"],
+                      "workernames": ["wpe-linux-bot-4"]
+                    },
+                    {
+                      "name": "WPE-Linux-64-bit-Debug-JS-Tests", "factory": "TestJSFactory",
+                      "platform": "wpe", "configuration": "debug", "architectures": ["x86_64"],
+                      "workernames": ["wpe-linux-bot-6"]
+                    },
+                    {
+                      "name": "WPE-Linux-64bit-Release-Packaging-Nightly-Ubuntu1804", "factory": "BuildAndGenerateMiniBrowserBundleFactory",
+                      "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
+                      "additionalArguments": ["--no-bubblewrap-sandbox", "--cmakeargs=-DENABLE_WPE_QT_API=OFF"],
+                      "workernames": ["wpe-linux-bot-7"]
+                    },
+                    {
+                      "name": "WPE-Linux-64bit-Release-Packaging-Nightly-Ubuntu2004", "factory": "BuildAndGenerateMiniBrowserBundleFactory",
+                      "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
+                      "additionalArguments": ["--no-bubblewrap-sandbox", "--cmakeargs=-DENABLE_WPE_QT_API=OFF"],
+                      "workernames": ["wpe-linux-bot-8"]
+                    },
+                    {
+                      "name": "WPE-Linux-64-bit-Release-Non-Unified-Build", "factory": "BuildFactory",
+                      "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
+                      "additionalArguments": ["--cmakeargs=-DENABLE_UNIFIED_BUILDS=OFF"],
+                      "workernames": ["wpe-linux-bot-9"]
+                    },
+                    {
+                      "name": "WPE-Linux-64-bit-Release-Ubuntu-2004-Build", "factory": "BuildFactory",
+                      "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
+                      "additionalArguments": ["--no-experimental-features"],
+                      "workernames": ["wpe-linux-bot-10"]
+                    },
+                    {
+                      "name": "WPE-Linux-64-bit-Release-Ubuntu-LTS-Build", "factory": "BuildFactory",
+                      "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
+                      "additionalArguments": ["--no-experimental-features"],
+                      "workernames": ["wpe-linux-bot-11"]
+                    },
+                    {
+                      "name": "WPE-Linux-64-bit-Release-Clang-Build", "factory": "BuildFactory",
+                      "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
+                      "workernames": ["wpe-linux-bot-12"]
+                    }
+                  ],
+
+    "schedulers": [ { "type": "AnyBranchScheduler", "name": "main", "change_filter": "main_filter", "treeStableTimer": 45.0,
+                      "builderNames": ["GTK-Linux-64-bit-Release-Build", "GTK-Linux-64-bit-Debug-Build",
+                                       "GTK-Linux-64-bit-Release-Clang-Build",
+                                       "GTK-Linux-64-bit-Release-Debian-Stable-Build",
+                                       "GTK-Linux-64-bit-Release-Ubuntu-2004-Build",
+                                       "GTK-Linux-64-bit-Release-Ubuntu-LTS-Build",
+                                       "WPE-Linux-64-bit-Release-Ubuntu-2004-Build",
+                                       "WPE-Linux-64-bit-Release-Ubuntu-LTS-Build",
+                                       "JSCOnly-Linux-AArch64-Release",
+                                       "JSCOnly-Linux-ARMv7-Thumb2-Release", "JSCOnly-Linux-ARMv7-Thumb2-SoftFP-Release",
+                                       "JSCOnly-Linux-MIPS32el-Release", "PlayStation-Release-Build", "PlayStation-Debug-Build",
+                                       "WinCairo-64-bit-WKL-Release-Build", "WinCairo-64-bit-WKL-Debug-Build",
+                                       "WPE-Linux-64-bit-Release-Build", "WPE-Linux-64-bit-Debug-Build",
+                                       "WPE-Linux-64-bit-Release-Clang-Build",
+                                       "WPE-Linux-64-bit-Release-Non-Unified-Build"]
+                    },
+
+                    { "type": "PlatformSpecificScheduler", "platform": "mac-monterey", "branch": "main", "treeStableTimer": 45.0,
+                      "builderNames": ["Apple-Monterey-Release-Build", "Apple-Monterey-Debug-Build"]
+                    },
+                    { "type": "Triggerable", "name": "monterey-release-tests-wk1",
+                      "builderNames": ["Apple-Monterey-Release-WK1-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "monterey-release-tests-wk2",
+                      "builderNames": ["Apple-Monterey-Release-WK2-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "monterey-release-applesilicon-tests-wk1",
+                      "builderNames": ["Apple-Monterey-Release-AppleSilicon-WK1-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "monterey-release-applesilicon-tests-wk2",
+                      "builderNames": ["Apple-Monterey-Release-AppleSilicon-WK2-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "monterey-release-tests-wk2-accessibility-isolated-tree",
+                      "builderNames": ["Apple-Monterey-Release-WK2-Accessibility-Isolated-Tree-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "monterey-debug-tests-wk1",
+                      "builderNames": ["Apple-Monterey-Debug-WK1-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "monterey-debug-tests-wk2",
+                      "builderNames": ["Apple-Monterey-Debug-WK2-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "monterey-debug-applesilicon-tests-wk1",
+                      "builderNames": ["Apple-Monterey-Debug-AppleSilicon-WK1-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "monterey-debug-applesilicon-tests-wk2",
+                      "builderNames": ["Apple-Monterey-Debug-AppleSilicon-WK2-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "monterey-debug-tests-test262",
+                      "builderNames": ["Apple-Monterey-Debug-Test262-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "monterey-release-tests-test262",
+                      "builderNames": ["Apple-Monterey-Release-Test262-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "monterey-applesilicon-release-tests-test262",
+                      "builderNames": ["Apple-Monterey-AppleSilicon-Release-Test262-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "monterey-applesilicon-debug-tests-jsc",
+                      "builderNames": ["Apple-Monterey-AppleSilicon-Debug-JSC-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "monterey-applesilicon-release-tests-jsc",
+                      "builderNames": ["Apple-Monterey-AppleSilicon-Release-JSC-Tests"]
+                    },
+                    { "type": "PlatformSpecificScheduler", "platform": "mac-bigsur", "branch": "main", "treeStableTimer": 45.0,
+                      "builderNames": ["Apple-BigSur-Release-Build", "Apple-BigSur-Debug-Build", "Apple-BigSur-LLINT-CLoop-BuildAndTest", "Apple-BigSur-XCBuild-Release-Build"]
+                    },
+                    { "type": "Triggerable", "name": "bigsur-release-tests-jsc",
+                      "builderNames": ["Apple-BigSur-Release-JSC-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "bigsur-release-perf-tests",
+                      "builderNames": ["Apple-BigSur-Release-WK2-Perf"]
+                    },
+                    { "type": "Triggerable", "name": "bigsur-release-tests-wk1",
+                      "builderNames": ["Apple-BigSur-Release-WK1-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "bigsur-release-tests-wk2",
+                      "builderNames": ["Apple-BigSur-Release-WK2-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "bigsur-release-applesilicon-tests-wk1",
+                      "builderNames": ["Apple-BigSur-Release-AppleSilicon-WK1-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "bigsur-release-applesilicon-tests-wk2",
+                      "builderNames": ["Apple-BigSur-Release-AppleSilicon-WK2-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "bigsur-release-tests-wk2-webgl-gpuprocess",
+                      "builderNames": ["Apple-BigSur-Release-WK2-WebGL-GPUProcess-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "bigsur-debug-tests-jsc",
+                      "builderNames": ["Apple-BigSur-Debug-JSC-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "bigsur-debug-tests-wk1",
+                      "builderNames": ["Apple-BigSur-Debug-WK1-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "bigsur-debug-tests-wk2",
+                      "builderNames": ["Apple-BigSur-Debug-WK2-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "bigsur-debug-applesilicon-tests-wk1",
+                      "builderNames": ["Apple-BigSur-Debug-AppleSilicon-WK1-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "bigsur-debug-applesilicon-tests-wk2",
+                      "builderNames": ["Apple-BigSur-Debug-AppleSilicon-WK2-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "bigsur-debug-tests-wk2-gpuprocess",
+                      "builderNames": ["Apple-BigSur-Debug-WK2-GPUProcess-Tests"]
+                    },
+                    { "type": "PlatformSpecificScheduler", "platform": "ios-15", "branch": "main", "treeStableTimer": 45.0,
+                      "builderNames": ["Apple-iOS-15-Release-Build"]
+                    },
+                    { "type": "PlatformSpecificScheduler", "platform": "ios-simulator-15", "branch": "main", "treeStableTimer": 45.0,
+                      "builderNames": ["Apple-iOS-15-Simulator-Release-Build", "Apple-iOS-15-Simulator-Debug-Build"]
+                    },
+                    { "type": "PlatformSpecificScheduler", "platform": "tvos-15", "branch": "main", "treeStableTimer": 45.0,
+                      "builderNames": ["Apple-tvOS-15-Release-Build"]
+                    },
+                    { "type": "PlatformSpecificScheduler", "platform": "tvos-simulator-15", "branch": "main", "treeStableTimer": 45.0,
+                      "builderNames": ["Apple-tvOS-Simulator-15-Release-Build"]
+                    },
+                    { "type": "PlatformSpecificScheduler", "platform": "watchos-8", "branch": "main", "treeStableTimer": 45.0,
+                      "builderNames": ["Apple-watchOS-8-Release-Build"]
+                    },
+                    { "type": "PlatformSpecificScheduler", "platform": "watchos-simulator-8", "branch": "main", "treeStableTimer": 45.0,
+                      "builderNames": ["Apple-watchOS-Simulator-8-Release-Build"]
+                    },
+                    { "type": "PlatformSpecificScheduler", "platform": "win", "branch": "main", "treeStableTimer": 45.0,
+                      "builderNames": ["Apple-Win-10-Release-Build", "Apple-Win-10-Debug-Build"]
+                    },
+                    { "type": "Triggerable", "name": "ios-simulator-15-release-arm64-tests-wk2",
+                      "builderNames": ["Apple-iOS-15-Simulator-Release-arm64-WK2-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "ios-simulator-15-release-gpuprocess-tests-wk2",
+                      "builderNames": ["Apple-iOS-15-Simulator-Release-GPUProcess-WK2-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "ios-simulator-15-release-tests-wk2",
+                      "builderNames": ["Apple-iOS-15-Simulator-Release-WK2-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "ios-simulator-15-debug-tests-wk2",
+                      "builderNames": ["Apple-iOS-15-Simulator-Debug-WK2-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "ipados-simulator-15-release-tests-wk2",
+                      "builderNames": ["Apple-iPadOS-15-Simulator-Release-WK2-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "ipados-simulator-15-debug-tests-wk2",
+                      "builderNames": ["Apple-iPadOS-15-Simulator-Debug-WK2-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "win10-release-tests",
+                      "builderNames": ["Apple-Win-10-Release-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "win10-debug-tests",
+                      "builderNames": ["Apple-Win-10-Debug-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "gtk-linux-64-release-tests",
+                      "builderNames": ["GTK-Linux-64-bit-Release-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "gtk-linux-64-release-tests-js",
+                      "builderNames": ["GTK-Linux-64-bit-Release-JS-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "gtk-linux-64-release-tests-webdriver",
+                      "builderNames": ["GTK-Linux-64-bit-Release-WebDriver-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "gtk-linux-64-release-gtk4-tests",
+                      "builderNames": ["GTK-Linux-64-bit-Release-GTK4-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "gtk-linux-64-debug-tests",
+                      "builderNames": ["GTK-Linux-64-bit-Debug-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "gtk-linux-64-debug-tests-js",
+                      "builderNames": ["GTK-Linux-64-bit-Debug-JS-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "gtk-linux-64-debug-tests-webdriver",
+                      "builderNames": ["GTK-Linux-64-bit-Debug-WebDriver-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "gtk-linux-64-release-perf-tests",
+                      "builderNames": ["GTK-Linux-64-bit-Release-Perf"]
+                    },
+                    { "type": "Triggerable", "name": "gtk-linux-64-release-wayland-tests",
+                      "builderNames": ["GTK-Linux-64-bit-Release-Wayland-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "gtk-linux-64-release-skip-failing-tests",
+                      "builderNames": ["GTK-Linux-64-bit-Release-Skip-Failing-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "wincairo-wkl-release-tests",
+                      "builderNames": ["WinCairo-64-bit-WKL-Release-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "wincairo-jsc-release-tests",
+                      "builderNames": ["WinCairo-64-bit-JSC-Release-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "wincairo-wkl-debug-tests",
+                      "builderNames": ["WinCairo-64-bit-WKL-Debug-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "wincairo-jsc-debug-tests",
+                      "builderNames": ["WinCairo-64-bit-JSC-Debug-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "wpe-linux-64-release-tests",
+                      "builderNames": ["WPE-Linux-64-bit-Release-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "wpe-linux-64-release-tests-js",
+                      "builderNames": ["WPE-Linux-64-bit-Release-JS-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "wpe-linux-64-debug-tests",
+                      "builderNames": ["WPE-Linux-64-bit-Debug-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "wpe-linux-64-debug-tests-js",
+                      "builderNames": ["WPE-Linux-64-bit-Debug-JS-Tests"]
+                    },
+                    { "type": "Nightly", "name": "NightlyScheduler", "change_filter": "main_filter",
+                      "branch": "main", "hour": 22, "minute": 0,
+                      "builderNames": ["GTK-Linux-64bit-Release-Packaging-Nightly-Ubuntu1804", "GTK-Linux-64bit-Release-Packaging-Nightly-Ubuntu2004",
+                                       "WPE-Linux-64bit-Release-Packaging-Nightly-Ubuntu1804", "WPE-Linux-64bit-Release-Packaging-Nightly-Ubuntu2004"]
+                    }
+                  ]
+}

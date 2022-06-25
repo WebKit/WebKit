@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style type="text/css" media="screen">
+    .box {
+      height: 100px;
+      width: 100px;
+      background-color: blue;
+    }
+    
+    .spinning {
+      -webkit-animation: spin 2s infinite linear;
+    }
+    
+    @-webkit-keyframes spin {
+      from { -webkit-transform: rotate(0); }
+      to   { -webkit-transform: rotate(360deg); }
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function doTest()
+    {
+      var box = document.getElementById('box');
+      box.addEventListener('webkitAnimationStart', function() {
+        if (window.testRunner) {
+            var layers = window.internals.layerTreeAsText(document);
+            var result;
+            if (layers != "")
+              result = "PASS: created compositing layers when animating transform.";
+            else
+              result = "FAIL: no layers found";
+            document.getElementById('result').innerHTML = result;
+            testRunner.notifyDone();
+        }
+      }, false);
+      document.getElementById('box').className = 'spinning';
+    }
+
+    window.addEventListener('load', doTest, false);
+  </script>
+</head>
+<body>
+
+  <div id="box" class="box"></div>
+
+  <!-- We should create layers, even on platforms that don't support accelerated animation. -->
+  <div id="result">Test only works in DRT</div>
+
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .box {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100px;
+            width: 100px;
+        }
+
+        #animating {
+            background-color: orange;
+            z-index: 0;
+        }
+
+        .behind {
+            background-color: blue;
+            top: 50px;
+            left: 50px;
+            z-index: 1;
+        }
+
+        .front {
+            top: 25px;
+            left: 25px;
+            background-color: green;
+            z-index: 2;
+        }
+    </style>
+</head>
+<body>
+
+<div class="behind box"></div>
+<div id="animating" class="box">
+    <div class="front box"></div>
+</div>
+
+</body>
+</html>

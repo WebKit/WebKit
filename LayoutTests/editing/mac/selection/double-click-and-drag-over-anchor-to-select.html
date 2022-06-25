@@ -1,0 +1,52 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../resources/dump-as-markup.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+p {
+    font-size: 20px;
+}
+
+p + p {
+    margin-top: 100px;
+}
+
+#start {
+    border: 1px solid blue;
+}
+
+#end {
+    padding-right: 2px;
+    border: 1px solid tomato;
+}
+</style>
+</head>
+<body>
+<div>This test verifies that double-clicking and then dragging over the selection anchor point (in LTR languages, this is dragging left) to extend the text selection does not extend the selection from the original selection focus as well (in LRT languages, the selection should not extent to the right as well while dragging left). To test manually, load the page and double click on 'over' and drag to 'quick'. The text 'quick brown fox jumped over' should be selected, and nothing else.</div>
+<div id="container">
+    <p>The <span id="end">quick</span> <span id="middle3">brown</span> <span id="middle2">fox</span> <span id="middle1">jumped</span> <span id="start">over</span> the lazy dog. And then there was another sentence.</p>
+</div>
+<script>
+
+(async function () {
+    if (!window.testRunner)
+        return;
+
+    internals.settings.setEditingBehavior("mac");
+    Markup.dump(document.getElementById("container"), "Before extending the selection");
+
+    UIHelper.doubleClickElementMouseDown(document.getElementById("start"));
+    UIHelper.dragMouseAcrossElement(document.getElementById("middle1"));
+    UIHelper.dragMouseAcrossElement(document.getElementById("middle2"));
+    UIHelper.dragMouseAcrossElement(document.getElementById("middle3"));
+    UIHelper.dragMouseAcrossElement(document.getElementById("end"));
+    UIHelper.mouseUp();
+
+    Markup.dump(document.getElementById("container"), document.getSelection().toString());
+    Markup.notifyDone();
+})();
+</script>
+</body>
+</html>

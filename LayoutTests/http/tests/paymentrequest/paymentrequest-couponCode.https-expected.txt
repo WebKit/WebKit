@@ -1,0 +1,4 @@
+
+PASS Should not have a default value for `couponCode`.
+PASS Should propagate `couponCode` if provided.
+

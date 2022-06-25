@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This test verifies that we don't crash when attempting to handle "contextmenu" events in a reentrant manner. This test passes if the green text "PASS" is present after page load.</p>
+</body>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function dispatchContextMenuEvent() {
+    document.body.dispatchEvent(new MouseEvent("contextmenu"));
+}
+
+document.designMode = "on";
+document.addEventListener("beforepaste", dispatchContextMenuEvent);
+dispatchContextMenuEvent();
+document.writeln("<pre style='color: green'>PASS</pre>");
+</script>
+</html>

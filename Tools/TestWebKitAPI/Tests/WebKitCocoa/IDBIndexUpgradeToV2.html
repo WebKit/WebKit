@@ -1,0 +1,21 @@
+<script>
+
+var databaseName = "index-upgrade-test";
+var openRequest = indexedDB.open(databaseName);
+var db;
+openRequest.onupgradeneeded = function(event) {
+    window.webkit.messageHandlers.testHandler.postMessage('Unexpected upgrade needed');
+}
+
+openRequest.onsuccess = function(event) {
+    var req = event.target.result.transaction('store').objectStore('store').index('index').get("indexkey!");
+    
+    req.onsuccess = function (event) {
+        window.webkit.messageHandlers.testHandler.postMessage("Object expected to be a blob: " +  event.target.result.test);
+    }
+    req.onerror = function (event) {
+        window.webkit.messageHandlers.testHandler.postMessage("Unexpected get error");
+    }
+}
+
+</script>

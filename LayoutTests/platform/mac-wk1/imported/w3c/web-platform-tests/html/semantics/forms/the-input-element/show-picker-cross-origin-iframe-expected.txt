@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: SecurityError: Attempted to use a non-registrable domain.
+
+
+Harness Error (TIMEOUT), message = null
+
+PASS Test showPicker() called from cross-origin iframe
+FAIL Test showPicker() called from cross-origin iframe 1 assert_equals: In cross-origin iframes, showPicker() throws a SecurityError except on file and color. expected "button,checkbox,date,datetime-local,email,hidden,image,month,number,password,radio,range,reset,search,submit,tel,text,time,url,week" but got "button,checkbox,color,date,datetime-local,email,hidden,image,month,number,password,radio,range,reset,search,submit,tel,text,time,url,week"
+PASS Test showPicker() called from cross-origin iframe 2
+TIMEOUT Test showPicker() called from cross-origin iframe 3 Test timed out
+

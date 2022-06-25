@@ -1,0 +1,9 @@
+This tests that windowed plugins are hidden by visibility:hidden.
+
+Should be hidden:
+
+Should be visible:
+
+
+
+

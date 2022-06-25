@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src=../../media-resources/video-test.js></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        async function start() {
+            video = document.getElementById('video');
+            video.src = "../resources/hls/test-webvtt.m3u8";
+
+            run("video.play()");
+            await waitFor(video.textTracks, 'addtrack');
+            testExpected("video.textTracks.length", "1");
+
+            run("video.textTracks[0].mode = 'showing'");
+            await waitFor(video.textTracks[0], 'cuechange');
+            testExpected("video.textTracks[0].activeCues.length", "1");
+            testExpected("video.textTracks[0].activeCues[0].text", "Subtitle Test");
+
+            run("video.currentTime = 9.5");
+            await waitFor(video, 'ended');
+
+            run("video.currentTime = 0");
+            run("video.play()");
+
+            await waitFor(video.textTracks[0], 'cuechange');
+            testExpected("video.textTracks[0].activeCues.length", "1");
+            testExpected("video.textTracks[0].activeCues[0].text", "Subtitle Test");
+
+            endTest();
+        }
+    </script>
+</head>
+<body onload="start()">
+    <video id="video" controls muted></video>
+</body>
+</html>

@@ -1,0 +1,525 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		14105E7F18DF7D73003A106E /* balloon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14105E7D18DF7D73003A106E /* balloon.cpp */; };
+		14105E8218E13EEC003A106E /* realloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14105E8018E13EEC003A106E /* realloc.cpp */; };
+		1444AE93177E79BB00F8030A /* fragment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1444AE91177E79BB00F8030A /* fragment.cpp */; };
+		1444AE96177E8DF200F8030A /* message.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1444AE94177E8DF200F8030A /* message.cpp */; };
+		14452CB0177D24460097E057 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14452CAF177D24460097E057 /* main.cpp */; };
+		14452CEF177D47110097E057 /* churn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14452CED177D47110097E057 /* churn.cpp */; };
+		1447AE8418FB4B2400B3D7FF /* libSystem.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1447AE8318FB4B2400B3D7FF /* libSystem.dylib */; };
+		1447AE9018FB584200B3D7FF /* flickr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1447AE8718FB584200B3D7FF /* flickr.cpp */; };
+		1447AE9118FB584200B3D7FF /* reddit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1447AE8A18FB584200B3D7FF /* reddit.cpp */; };
+		1447AE9218FB584200B3D7FF /* theverge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1447AE8D18FB584200B3D7FF /* theverge.cpp */; };
+		1447AE9318FB588600B3D7FF /* flickr.ops in Copy Files */ = {isa = PBXBuildFile; fileRef = 1447AE8918FB584200B3D7FF /* flickr.ops */; };
+		1447AE9418FB589400B3D7FF /* reddit.ops in Copy Files */ = {isa = PBXBuildFile; fileRef = 1447AE8C18FB584200B3D7FF /* reddit.ops */; };
+		1447AE9518FB58A300B3D7FF /* theverge.ops in Copy Files */ = {isa = PBXBuildFile; fileRef = 1447AE8F18FB584200B3D7FF /* theverge.ops */; };
+		1447AE9918FB59E000B3D7FF /* flickr_memory_warning.ops in Copy Files */ = {isa = PBXBuildFile; fileRef = 1447AE9618FB59D900B3D7FF /* flickr_memory_warning.ops */; };
+		1447AE9A18FB59E300B3D7FF /* reddit_memory_warning.ops in Copy Files */ = {isa = PBXBuildFile; fileRef = 1447AE9718FB59D900B3D7FF /* reddit_memory_warning.ops */; };
+		1447AE9B18FB59E600B3D7FF /* theverge_memory_warning.ops in Copy Files */ = {isa = PBXBuildFile; fileRef = 1447AE9818FB59D900B3D7FF /* theverge_memory_warning.ops */; };
+		1451FAED18B14B7100DB6D47 /* medium.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1451FAEB18B14B7100DB6D47 /* medium.cpp */; };
+		1486502A1C7CF1CC008AABFE /* nimlang.ops in Copy Files */ = {isa = PBXBuildFile; fileRef = 148650291C7CF182008AABFE /* nimlang.ops */; };
+		14976EC8177E3649006B819A /* list.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14976EC6177E3649006B819A /* list.cpp */; };
+		14976ECC177E3C87006B819A /* CommandLine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14976ECB177E3C87006B819A /* CommandLine.cpp */; };
+		14976ECE177E3D67006B819A /* Benchmark.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14976ECD177E3D67006B819A /* Benchmark.cpp */; };
+		14976ED1177E4AF7006B819A /* tree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14976ECF177E4AF7006B819A /* tree.cpp */; };
+		14C5008D184016CF007A531D /* facebook.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14C5008B184016CF007A531D /* facebook.cpp */; };
+		14C5009018401841007A531D /* facebook.ops in Copy Files */ = {isa = PBXBuildFile; fileRef = 14C5008E18401726007A531D /* facebook.ops */; };
+		14C5009318403DA0007A531D /* Interpreter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14C5009118403DA0007A531D /* Interpreter.cpp */; };
+		14CC393C18EA812B004AFE34 /* libmbmalloc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 14CC393818EA811F004AFE34 /* libmbmalloc.dylib */; settings = {ATTRIBUTES = (Required, ); }; };
+		14CC393F18EA8184004AFE34 /* mbmalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14CC391C18EA6759004AFE34 /* mbmalloc.cpp */; };
+		14CE4A6017BD355800288DAA /* big.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14CE4A5E17BD355800288DAA /* big.cpp */; };
+		14D0BFF31A6F4D3B00109F31 /* stress_aligned.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14D0BFF11A6F4D3B00109F31 /* stress_aligned.cpp */; };
+		14E11932177ECC8B003A8D15 /* CPUCount.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14E11930177ECC8B003A8D15 /* CPUCount.cpp */; };
+		14FCA36119A7C917001CFDA9 /* stress.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14FCA35F19A7C917001CFDA9 /* stress.cpp */; };
+		65E401A61C657A87003C6E9C /* nimlang.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E401A41C657A87003C6E9C /* nimlang.cpp */; };
+		65E401AC1C73B068003C6E9C /* alloc_free.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E401AA1C73B068003C6E9C /* alloc_free.cpp */; };
+		E37681031F8529EF00617E4C /* Memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E37681011F8529EF00617E4C /* Memory.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		14452CA7177D24460097E057 /* Copy Files */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 12;
+			dstPath = "";
+			dstSubfolderSpec = 7;
+			files = (
+				14C5009018401841007A531D /* facebook.ops in Copy Files */,
+				1447AE9318FB588600B3D7FF /* flickr.ops in Copy Files */,
+				1447AE9918FB59E000B3D7FF /* flickr_memory_warning.ops in Copy Files */,
+				1486502A1C7CF1CC008AABFE /* nimlang.ops in Copy Files */,
+				1447AE9418FB589400B3D7FF /* reddit.ops in Copy Files */,
+				1447AE9A18FB59E300B3D7FF /* reddit_memory_warning.ops in Copy Files */,
+				1447AE9518FB58A300B3D7FF /* theverge.ops in Copy Files */,
+				1447AE9B18FB59E600B3D7FF /* theverge_memory_warning.ops in Copy Files */,
+			);
+			name = "Copy Files";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		14105E7D18DF7D73003A106E /* balloon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = balloon.cpp; path = MallocBench/balloon.cpp; sourceTree = "<group>"; };
+		14105E7E18DF7D73003A106E /* balloon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = balloon.h; path = MallocBench/balloon.h; sourceTree = "<group>"; };
+		14105E8018E13EEC003A106E /* realloc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = realloc.cpp; path = MallocBench/realloc.cpp; sourceTree = "<group>"; };
+		14105E8118E13EEC003A106E /* realloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = realloc.h; path = MallocBench/realloc.h; sourceTree = "<group>"; };
+		1444AE91177E79BB00F8030A /* fragment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fragment.cpp; path = MallocBench/fragment.cpp; sourceTree = "<group>"; };
+		1444AE92177E79BB00F8030A /* fragment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fragment.h; path = MallocBench/fragment.h; sourceTree = "<group>"; };
+		1444AE94177E8DF200F8030A /* message.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = message.cpp; path = MallocBench/message.cpp; sourceTree = "<group>"; };
+		1444AE95177E8DF200F8030A /* message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = message.h; path = MallocBench/message.h; sourceTree = "<group>"; };
+		14452CA9177D24460097E057 /* MallocBench */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MallocBench; sourceTree = BUILT_PRODUCTS_DIR; };
+		14452CAF177D24460097E057 /* main.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		14452CED177D47110097E057 /* churn.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = churn.cpp; path = MallocBench/churn.cpp; sourceTree = "<group>"; };
+		14452CEE177D47110097E057 /* churn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = churn.h; path = MallocBench/churn.h; sourceTree = "<group>"; };
+		1447AE8318FB4B2400B3D7FF /* libSystem.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libSystem.dylib; path = /usr/lib/libSystem.dylib; sourceTree = "<absolute>"; };
+		1447AE8718FB584200B3D7FF /* flickr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = flickr.cpp; path = MallocBench/flickr.cpp; sourceTree = "<group>"; };
+		1447AE8818FB584200B3D7FF /* flickr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = flickr.h; path = MallocBench/flickr.h; sourceTree = "<group>"; };
+		1447AE8918FB584200B3D7FF /* flickr.ops */ = {isa = PBXFileReference; lastKnownFileType = file; name = flickr.ops; path = MallocBench/flickr.ops; sourceTree = "<group>"; };
+		1447AE8A18FB584200B3D7FF /* reddit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = reddit.cpp; path = MallocBench/reddit.cpp; sourceTree = "<group>"; };
+		1447AE8B18FB584200B3D7FF /* reddit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = reddit.h; path = MallocBench/reddit.h; sourceTree = "<group>"; };
+		1447AE8C18FB584200B3D7FF /* reddit.ops */ = {isa = PBXFileReference; lastKnownFileType = file; name = reddit.ops; path = MallocBench/reddit.ops; sourceTree = "<group>"; };
+		1447AE8D18FB584200B3D7FF /* theverge.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = theverge.cpp; path = MallocBench/theverge.cpp; sourceTree = "<group>"; };
+		1447AE8E18FB584200B3D7FF /* theverge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = theverge.h; path = MallocBench/theverge.h; sourceTree = "<group>"; };
+		1447AE8F18FB584200B3D7FF /* theverge.ops */ = {isa = PBXFileReference; lastKnownFileType = file; name = theverge.ops; path = MallocBench/theverge.ops; sourceTree = "<group>"; };
+		1447AE9618FB59D900B3D7FF /* flickr_memory_warning.ops */ = {isa = PBXFileReference; lastKnownFileType = file; name = flickr_memory_warning.ops; path = MallocBench/flickr_memory_warning.ops; sourceTree = "<group>"; };
+		1447AE9718FB59D900B3D7FF /* reddit_memory_warning.ops */ = {isa = PBXFileReference; lastKnownFileType = file; name = reddit_memory_warning.ops; path = MallocBench/reddit_memory_warning.ops; sourceTree = "<group>"; };
+		1447AE9818FB59D900B3D7FF /* theverge_memory_warning.ops */ = {isa = PBXFileReference; lastKnownFileType = file; name = theverge_memory_warning.ops; path = MallocBench/theverge_memory_warning.ops; sourceTree = "<group>"; };
+		1451FAEB18B14B7100DB6D47 /* medium.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = medium.cpp; path = MallocBench/medium.cpp; sourceTree = "<group>"; };
+		1451FAEC18B14B7100DB6D47 /* medium.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = medium.h; path = MallocBench/medium.h; sourceTree = "<group>"; };
+		148650291C7CF182008AABFE /* nimlang.ops */ = {isa = PBXFileReference; lastKnownFileType = file; name = nimlang.ops; path = MallocBench/nimlang.ops; sourceTree = "<group>"; };
+		14976EC6177E3649006B819A /* list.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = list.cpp; path = MallocBench/list.cpp; sourceTree = "<group>"; };
+		14976EC7177E3649006B819A /* list.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = list.h; path = MallocBench/list.h; sourceTree = "<group>"; };
+		14976EC9177E3B4A006B819A /* Benchmark.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Benchmark.h; sourceTree = "<group>"; };
+		14976ECA177E3C05006B819A /* CommandLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandLine.h; sourceTree = "<group>"; };
+		14976ECB177E3C87006B819A /* CommandLine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommandLine.cpp; sourceTree = "<group>"; };
+		14976ECD177E3D67006B819A /* Benchmark.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Benchmark.cpp; sourceTree = "<group>"; };
+		14976ECF177E4AF7006B819A /* tree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tree.cpp; path = MallocBench/tree.cpp; sourceTree = "<group>"; };
+		14976ED0177E4AF7006B819A /* tree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tree.h; path = MallocBench/tree.h; sourceTree = "<group>"; };
+		14C5008B184016CF007A531D /* facebook.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = facebook.cpp; path = MallocBench/facebook.cpp; sourceTree = "<group>"; };
+		14C5008C184016CF007A531D /* facebook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = facebook.h; path = MallocBench/facebook.h; sourceTree = "<group>"; };
+		14C5008E18401726007A531D /* facebook.ops */ = {isa = PBXFileReference; lastKnownFileType = file; name = facebook.ops; path = MallocBench/facebook.ops; sourceTree = "<group>"; };
+		14C5009118403DA0007A531D /* Interpreter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Interpreter.cpp; sourceTree = "<group>"; };
+		14C5009218403DA0007A531D /* Interpreter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Interpreter.h; sourceTree = "<group>"; };
+		14CC391C18EA6759004AFE34 /* mbmalloc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = mbmalloc.cpp; path = MallocBench/mbmalloc.cpp; sourceTree = "<group>"; };
+		14CC393818EA811F004AFE34 /* libmbmalloc.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libmbmalloc.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		14CE4A5E17BD355800288DAA /* big.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = big.cpp; path = MallocBench/big.cpp; sourceTree = "<group>"; };
+		14CE4A5F17BD355800288DAA /* big.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = big.h; path = MallocBench/big.h; sourceTree = "<group>"; };
+		14D0BFF11A6F4D3B00109F31 /* stress_aligned.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = stress_aligned.cpp; path = MallocBench/stress_aligned.cpp; sourceTree = "<group>"; };
+		14D0BFF21A6F4D3B00109F31 /* stress_aligned.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stress_aligned.h; path = MallocBench/stress_aligned.h; sourceTree = "<group>"; };
+		14E11930177ECC8B003A8D15 /* CPUCount.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CPUCount.cpp; sourceTree = "<group>"; };
+		14E11931177ECC8B003A8D15 /* CPUCount.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPUCount.h; sourceTree = "<group>"; };
+		14E11934177F5219003A8D15 /* mbmalloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mbmalloc.h; path = MallocBench/mbmalloc.h; sourceTree = "<group>"; };
+		14FCA35F19A7C917001CFDA9 /* stress.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = stress.cpp; path = MallocBench/stress.cpp; sourceTree = "<group>"; };
+		14FCA36019A7C917001CFDA9 /* stress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stress.h; path = MallocBench/stress.h; sourceTree = "<group>"; };
+		65E401A41C657A87003C6E9C /* nimlang.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = nimlang.cpp; path = MallocBench/nimlang.cpp; sourceTree = "<group>"; };
+		65E401A51C657A87003C6E9C /* nimlang.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = nimlang.h; path = MallocBench/nimlang.h; sourceTree = "<group>"; };
+		65E401AA1C73B068003C6E9C /* alloc_free.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = alloc_free.cpp; path = MallocBench/alloc_free.cpp; sourceTree = "<group>"; };
+		65E401AB1C73B068003C6E9C /* alloc_free.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = alloc_free.h; path = MallocBench/alloc_free.h; sourceTree = "<group>"; };
+		E37681011F8529EF00617E4C /* Memory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Memory.cpp; sourceTree = "<group>"; };
+		E37681021F8529EF00617E4C /* Memory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Memory.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		14452CA6177D24460097E057 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				14CC393C18EA812B004AFE34 /* libmbmalloc.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		14CC393518EA811F004AFE34 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1447AE8418FB4B2400B3D7FF /* libSystem.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		14452CA0177D24460097E057 = {
+			isa = PBXGroup;
+			children = (
+				14E11933177F51AC003A8D15 /* Benchmarks */,
+				1447AE8618FB4B5100B3D7FF /* Libraries */,
+				14452CAE177D24460097E057 /* MallocBench */,
+				14CC391B18EA6722004AFE34 /* mbmalloc */,
+				14452CAA177D24460097E057 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		14452CAA177D24460097E057 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				14452CA9177D24460097E057 /* MallocBench */,
+				14CC393818EA811F004AFE34 /* libmbmalloc.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		14452CAE177D24460097E057 /* MallocBench */ = {
+			isa = PBXGroup;
+			children = (
+				14976ECD177E3D67006B819A /* Benchmark.cpp */,
+				14976EC9177E3B4A006B819A /* Benchmark.h */,
+				14976ECB177E3C87006B819A /* CommandLine.cpp */,
+				14976ECA177E3C05006B819A /* CommandLine.h */,
+				14E11930177ECC8B003A8D15 /* CPUCount.cpp */,
+				14E11931177ECC8B003A8D15 /* CPUCount.h */,
+				14C5009118403DA0007A531D /* Interpreter.cpp */,
+				14C5009218403DA0007A531D /* Interpreter.h */,
+				14452CAF177D24460097E057 /* main.cpp */,
+				E37681011F8529EF00617E4C /* Memory.cpp */,
+				E37681021F8529EF00617E4C /* Memory.h */,
+			);
+			path = MallocBench;
+			sourceTree = "<group>";
+		};
+		1447AE8618FB4B5100B3D7FF /* Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				1447AE8318FB4B2400B3D7FF /* libSystem.dylib */,
+			);
+			name = Libraries;
+			sourceTree = "<group>";
+		};
+		14CC391B18EA6722004AFE34 /* mbmalloc */ = {
+			isa = PBXGroup;
+			children = (
+				14CC391C18EA6759004AFE34 /* mbmalloc.cpp */,
+				14E11934177F5219003A8D15 /* mbmalloc.h */,
+			);
+			name = mbmalloc;
+			sourceTree = "<group>";
+		};
+		14E11933177F51AC003A8D15 /* Benchmarks */ = {
+			isa = PBXGroup;
+			children = (
+				65E401AA1C73B068003C6E9C /* alloc_free.cpp */,
+				65E401AB1C73B068003C6E9C /* alloc_free.h */,
+				14105E7D18DF7D73003A106E /* balloon.cpp */,
+				14105E7E18DF7D73003A106E /* balloon.h */,
+				14CE4A5E17BD355800288DAA /* big.cpp */,
+				14CE4A5F17BD355800288DAA /* big.h */,
+				14452CED177D47110097E057 /* churn.cpp */,
+				14452CEE177D47110097E057 /* churn.h */,
+				14C5008B184016CF007A531D /* facebook.cpp */,
+				14C5008C184016CF007A531D /* facebook.h */,
+				14C5008E18401726007A531D /* facebook.ops */,
+				1447AE8718FB584200B3D7FF /* flickr.cpp */,
+				1447AE8818FB584200B3D7FF /* flickr.h */,
+				1447AE8918FB584200B3D7FF /* flickr.ops */,
+				1447AE9618FB59D900B3D7FF /* flickr_memory_warning.ops */,
+				1444AE91177E79BB00F8030A /* fragment.cpp */,
+				1444AE92177E79BB00F8030A /* fragment.h */,
+				14976EC6177E3649006B819A /* list.cpp */,
+				14976EC7177E3649006B819A /* list.h */,
+				1451FAEB18B14B7100DB6D47 /* medium.cpp */,
+				1451FAEC18B14B7100DB6D47 /* medium.h */,
+				1444AE94177E8DF200F8030A /* message.cpp */,
+				1444AE95177E8DF200F8030A /* message.h */,
+				65E401A41C657A87003C6E9C /* nimlang.cpp */,
+				65E401A51C657A87003C6E9C /* nimlang.h */,
+				148650291C7CF182008AABFE /* nimlang.ops */,
+				14105E8018E13EEC003A106E /* realloc.cpp */,
+				14105E8118E13EEC003A106E /* realloc.h */,
+				1447AE8A18FB584200B3D7FF /* reddit.cpp */,
+				1447AE8B18FB584200B3D7FF /* reddit.h */,
+				1447AE8C18FB584200B3D7FF /* reddit.ops */,
+				1447AE9718FB59D900B3D7FF /* reddit_memory_warning.ops */,
+				14FCA35F19A7C917001CFDA9 /* stress.cpp */,
+				14FCA36019A7C917001CFDA9 /* stress.h */,
+				14D0BFF11A6F4D3B00109F31 /* stress_aligned.cpp */,
+				14D0BFF21A6F4D3B00109F31 /* stress_aligned.h */,
+				1447AE8D18FB584200B3D7FF /* theverge.cpp */,
+				1447AE8E18FB584200B3D7FF /* theverge.h */,
+				1447AE8F18FB584200B3D7FF /* theverge.ops */,
+				1447AE9818FB59D900B3D7FF /* theverge_memory_warning.ops */,
+				14976ECF177E4AF7006B819A /* tree.cpp */,
+				14976ED0177E4AF7006B819A /* tree.h */,
+			);
+			name = Benchmarks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		14CC393618EA811F004AFE34 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		14452CA8177D24460097E057 /* MallocBench */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 14452CB7177D24460097E057 /* Build configuration list for PBXNativeTarget "MallocBench" */;
+			buildPhases = (
+				14452CA5177D24460097E057 /* Sources */,
+				14452CA6177D24460097E057 /* Frameworks */,
+				14452CA7177D24460097E057 /* Copy Files */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MallocBench;
+			productName = MallocBench;
+			productReference = 14452CA9177D24460097E057 /* MallocBench */;
+			productType = "com.apple.product-type.tool";
+		};
+		14CC393718EA811F004AFE34 /* mbmalloc */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 14CC393918EA811F004AFE34 /* Build configuration list for PBXNativeTarget "mbmalloc" */;
+			buildPhases = (
+				14CC393418EA811F004AFE34 /* Sources */,
+				14CC393518EA811F004AFE34 /* Frameworks */,
+				14CC393618EA811F004AFE34 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = mbmalloc;
+			productName = mbmalloc;
+			productReference = 14CC393818EA811F004AFE34 /* libmbmalloc.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		14452CA1177D24460097E057 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0600;
+				ORGANIZATIONNAME = "Geoffrey Garen";
+			};
+			buildConfigurationList = 14452CA4177D24460097E057 /* Build configuration list for PBXProject "MallocBench" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 14452CA0177D24460097E057;
+			productRefGroup = 14452CAA177D24460097E057 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				14452CA8177D24460097E057 /* MallocBench */,
+				14CC393718EA811F004AFE34 /* mbmalloc */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		14452CA5177D24460097E057 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				65E401AC1C73B068003C6E9C /* alloc_free.cpp in Sources */,
+				14105E7F18DF7D73003A106E /* balloon.cpp in Sources */,
+				14976ECE177E3D67006B819A /* Benchmark.cpp in Sources */,
+				14CE4A6017BD355800288DAA /* big.cpp in Sources */,
+				14452CEF177D47110097E057 /* churn.cpp in Sources */,
+				14976ECC177E3C87006B819A /* CommandLine.cpp in Sources */,
+				14E11932177ECC8B003A8D15 /* CPUCount.cpp in Sources */,
+				14C5008D184016CF007A531D /* facebook.cpp in Sources */,
+				1447AE9018FB584200B3D7FF /* flickr.cpp in Sources */,
+				1444AE93177E79BB00F8030A /* fragment.cpp in Sources */,
+				14C5009318403DA0007A531D /* Interpreter.cpp in Sources */,
+				14976EC8177E3649006B819A /* list.cpp in Sources */,
+				14452CB0177D24460097E057 /* main.cpp in Sources */,
+				1451FAED18B14B7100DB6D47 /* medium.cpp in Sources */,
+				E37681031F8529EF00617E4C /* Memory.cpp in Sources */,
+				1444AE96177E8DF200F8030A /* message.cpp in Sources */,
+				65E401A61C657A87003C6E9C /* nimlang.cpp in Sources */,
+				14105E8218E13EEC003A106E /* realloc.cpp in Sources */,
+				1447AE9118FB584200B3D7FF /* reddit.cpp in Sources */,
+				14FCA36119A7C917001CFDA9 /* stress.cpp in Sources */,
+				14D0BFF31A6F4D3B00109F31 /* stress_aligned.cpp in Sources */,
+				1447AE9218FB584200B3D7FF /* theverge.cpp in Sources */,
+				14976ED1177E4AF7006B819A /* tree.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		14CC393418EA811F004AFE34 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				14CC393F18EA8184004AFE34 /* mbmalloc.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		14452CB5177D24460097E057 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+			};
+			name = Debug;
+		};
+		14452CB6177D24460097E057 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+			};
+			name = Release;
+		};
+		14452CB8177D24460097E057 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos.internal;
+			};
+			name = Debug;
+		};
+		14452CB9177D24460097E057 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				ONLY_ACTIVE_ARCH = YES;
+				"OTHER_CFLAGS[arch=*]" = "";
+				"OTHER_CPLUSPLUSFLAGS[arch=*]" = (
+					"-fno-optimize-sibling-calls",
+					"-fno-omit-frame-pointer",
+				);
+				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos.internal;
+			};
+			name = Release;
+		};
+		14CC393A18EA811F004AFE34 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = lib;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		14CC393B18EA811F004AFE34 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = lib;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		14452CA4177D24460097E057 /* Build configuration list for PBXProject "MallocBench" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				14452CB5177D24460097E057 /* Debug */,
+				14452CB6177D24460097E057 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		14452CB7177D24460097E057 /* Build configuration list for PBXNativeTarget "MallocBench" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				14452CB8177D24460097E057 /* Debug */,
+				14452CB9177D24460097E057 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		14CC393918EA811F004AFE34 /* Build configuration list for PBXNativeTarget "mbmalloc" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				14CC393A18EA811F004AFE34 /* Debug */,
+				14CC393B18EA811F004AFE34 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 14452CA1177D24460097E057 /* Project object */;
+}

@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+source "$(dirname "$0")/../glib/dependencies/apt"
+
+PACKAGES+=(
+    # These are dependencies necessary for building WPE.
+    g++
+    gcc
+    libatk-bridge2.0-dev
+    libcairo2-dev
+    libgbm-dev
+    libgnutls28-dev
+    libharfbuzz-dev
+    libicu-dev
+    libwpebackend-fdo-1.0-dev
+    libwpewebkit-1.0-dev
+    libxml2-dev
+    pkg-config
+    wayland-protocols
+    zlib1g-dev
+
+    # These are dependencies necessary for running tests.
+    python3-psutil
+
+    # These are dependencies necessary for building the jhbuild.
+    libegl-mesa0
+    libluajit-5.1-dev
+    libmount-dev
+    libopus-dev
+    libpulse-dev
+    libsrtp2-dev
+    libtheora-dev
+    libvorbis-dev
+    libvpx-dev
+    libxcb-glx0-dev
+    libxcb-xkb-dev
+    libxkbcommon-dev
+    libxrandr-dev
+    luajit
+)

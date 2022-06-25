@@ -1,0 +1,27 @@
+<script>
+   if (window.testRunner)
+     testRunner.dumpAsText();
+  onload = async () => {
+    visualViewport.onresize = () => {
+      document.execCommand('InsertNewlineInQuotedContent');
+      document.write("Test passes if it does not crash.");
+    };
+    document.body.appendChild(document.createElement('object'));
+    document.body.appendChild(document.createElement('div'));
+    document.body.appendChild(document.createElement('iframe'));
+    document.execCommand('SelectAll');
+    document.designMode = 'on';
+    document.execCommand('Copy');
+    document.createElement('img').src = 'a';
+    let animation = new Animation();
+    animation.play();
+    await animation.ready;
+    document.execCommand('Paste');
+    document.execCommand('PasteAsQuotation');
+    getSelection().modify('move', 'left', 'character');
+    document.execCommand('InsertUnorderedList');
+    await new Blob().arrayBuffer();
+    document.execCommand('SelectAll');
+    document.execCommand('InsertUnorderedList');
+  };
+</script>

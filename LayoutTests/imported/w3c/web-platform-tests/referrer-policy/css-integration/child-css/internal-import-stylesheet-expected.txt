@@ -1,0 +1,5 @@
+Check that child css are loaded with the referrer and referrer policy from the internal stylesheet.
+
+
+FAIL Child css from internal stylesheet. promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'server_data.headers')"
+

@@ -1,0 +1,41 @@
+<html>
+  <head>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <style>
+        .test { -webkit-writing-mode: vertical-lr; }
+    </style>
+    </script>
+    </head>
+    <body>
+        <div id="testarea">
+            <p>
+                <div class="test" id="test1">Hello</div>
+            </p>
+            <p>
+                <div class="test" id="test2">Hello</div>
+            </p>
+        </div>
+        <script> 
+            description("This tests that Range.getClientRects() work correctly for partially selected vertical text.")
+            
+            // Select a whole element's worth of text.
+            var range1 = document.createRange();
+            range1.selectNodeContents(document.getElementById("test1").firstChild);
+
+
+            // Select slightly less than a whole elements worth of text.
+            var range2 = document.createRange();
+            range2.selectNodeContents(document.getElementById("test2").firstChild);
+            range2.setEnd(range2.endContainer, range2.endOffset - 1);
+
+            // They should have the same width.
+            shouldBe("range1.getClientRects()[0].width", "range2.getClientRects()[0].width");
+
+
+            // Cleanup
+            var testarea = document.getElementById("testarea");
+            testarea.parentNode.removeChild(testarea);
+        </script>
+        <script src="../../../resources/js-test-post.js"></script>
+    </body>
+</html>

@@ -1,0 +1,6 @@
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT same-origin > w => w.self Test timed out
+NOTRUN cross-origin > w => w.self
+

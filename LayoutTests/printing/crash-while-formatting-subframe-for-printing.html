@@ -1,0 +1,17 @@
+<title>Unfortunately not 100% repro.</title>
+<body onload="runTests()">
+    <div id="foobar">
+        <iframe style="width: 90%" src="data:text/html,<body style='width: 80%'>PASS if no crash</body>"></iframe>
+    </div>
+</body>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function runTests() {
+    setTimeout(function() {
+        foobar.style.width = "400px";
+    }, 0);
+    window.print();
+}
+</script>

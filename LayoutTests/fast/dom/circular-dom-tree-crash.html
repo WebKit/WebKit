@@ -1,0 +1,40 @@
+<!doctype HTML>
+<html>
+<body onload="runTest()">
+<p>Tests that validity of node insertion is retained after removing nodes from a parent. The test passes if we do not crash and we encounter a HierarchyRequestError.</p>
+<div id=first></div>
+<div id=second></div>
+<pre id='logger'></pre>
+<script>
+if (window.testRunner)
+{
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function runTest()
+{
+    var first = document.getElementById('first');
+    var second = document.getElementById('second');
+    second.addEventListener('DOMNodeRemoved', function() {
+        second.appendChild(first);
+    });
+
+    var errorName = 'No errors';
+    try {
+        first.appendChild(second);
+    } catch (error) {
+        errorName = error.name;
+    } finally {
+        var state = 'FAIL';
+        if (errorName == 'HierarchyRequestError')
+            state = 'PASS'
+        document.getElementById('logger').innerHTML += state + ': Encountered: ' + errorName + '\n';
+    }
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+</body>
+</html>

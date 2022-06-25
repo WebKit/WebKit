@@ -1,0 +1,56 @@
+diff --git a/base.js b/base.js
+index 9d6e3de..cddf800
+--- a/base.js
++++ b/base.js
+@@ -167,7 +167,7 @@ BenchmarkSuite.RunSuites = function(runner, skipBenchmarks) {
+     if (runner.NotifyScore) {
+       var score = BenchmarkSuite.GeometricMean(BenchmarkSuite.scores);
+       var formatted = BenchmarkSuite.FormatScore(100 * score);
+-      runner.NotifyScore(formatted);
++      runner.NotifyScore(formatted, 100 * score);
+     }
+   }
+   RunStep();
+@@ -250,7 +250,7 @@ BenchmarkSuite.prototype.NotifyResult = function() {
+   BenchmarkSuite.scores.push(score);
+   if (this.runner.NotifyResult) {
+     var formatted = BenchmarkSuite.FormatScore(100 * score);
+-    this.runner.NotifyResult(this.name, formatted);
++    this.runner.NotifyResult(this.name, formatted, 100 * score);
+   }
+   if (this.reference.length == 2) {
+     var meanLatency = BenchmarkSuite.GeometricMeanLatency(this.results);
+@@ -259,7 +259,7 @@ BenchmarkSuite.prototype.NotifyResult = function() {
+       BenchmarkSuite.scores.push(scoreLatency);
+       if (this.runner.NotifyResult) {
+         var formattedLatency = BenchmarkSuite.FormatScore(100 * scoreLatency)
+-        this.runner.NotifyResult(this.name + "Latency", formattedLatency);
++        this.runner.NotifyResult(this.name + "Latency", formattedLatency, 100 * scoreLatency);
+       }
+     }
+   }
+index 77cbdfb..fe56fc4
+--- a/index.html
++++ b/index.html
+@@ -57,7 +57,9 @@
+     });
+   }
+
+-  function AddResult(name, result) {
++  var octaneSubtests = {};
++  function AddResult(name, result, rawScore) {
++    octaneSubtests[name] = {"metrics": {"Score": {"current": [rawScore]}}};
+     console.log(name + ': ' + result);
+     var box = document.getElementById("Result-" + name);
+     box.innerHTML = result;
+@@ -75,7 +77,9 @@
+     success = false;
+   }
+
+-  function AddScore(score) {
++  function AddScore(score, rawScore) {
++    var results = JSON.stringify({"Octane": {"metrics": {"Score": {"current": [rawScore]}}, "tests": octaneSubtests}});
++    window.webdriver_results = results
+     var status = document.getElementById("main-banner");
+     if (success) {
+       status.innerHTML = "Octane Score: " + score;

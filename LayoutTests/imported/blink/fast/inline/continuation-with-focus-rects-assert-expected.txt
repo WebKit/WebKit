@@ -1,0 +1,2 @@
+Test passes if there's no assert.
+

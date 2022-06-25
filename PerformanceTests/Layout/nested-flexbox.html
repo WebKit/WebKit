@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<style>
+html, body {
+    margin: 0;
+    height: 100%;
+    width: 500px;
+}
+.flex { display: flex; }
+.column { flex-direction: column; }
+.row { flex-direction: row; }
+.flex-item { flex-basis: auto; flex-shrink: 0; }
+
+</style>
+<script src="../resources/runner.js"></script>
+<script>
+function startTest() {
+    document.body.offsetHeight;
+    var index = 0;
+    PerfTestRunner.measureRunsPerSecond({
+        run: function () {
+            var wrap = document.getElementById("wrap");
+            wrap.style.width = ++index % 2 ? "99%" : "98%";
+            document.body.offsetHeight;
+        }
+    });
+}
+</script>
+</head>
+
+<body onload="startTest()">
+<div id="wrap" class="flex column">
+    <div class="flex column flex-item">
+        <div class="flex column flex-item">
+            <div class="flex column flex-item">
+                <div class="flex column flex-item">
+                    <div class="flex row flex-item">
+                        <div class="flex column flex-item">
+                            <div class="flex column flex-item">
+                                <div class="flex column flex-item">
+                                    <div class="flex column flex-item">
+                                        <div class="flex row flex-item">
+                                            <div class="flex column flex-item">
+                                                <div class="flex column flex-item">
+                                                    <div class="flex column flex-item">
+                                                        <div class="flex column flex-item">
+                                                            <div class="flex row flex-item">
+                                                                <span style="display: inline-flex">XXX</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>

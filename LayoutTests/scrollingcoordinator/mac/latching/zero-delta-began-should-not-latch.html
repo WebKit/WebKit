@@ -1,0 +1,62 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        body {
+            height: 1000px;
+        }
+        
+        .scroller {
+            width: 200px;
+            height: 200px;
+            overflow: scroll;
+            border: 1px solid black;
+        }
+        
+        .contents {
+            width: 100%;
+            height: 300%;
+        }
+        
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        jsTestIsAsync = true;
+
+        var overflow;
+        async function scrollTest()
+        {
+            overflow = document.querySelector('.scroller');
+
+            shouldBe('overflow.scrollTop', '0');
+            shouldBe('window.pageYOffset', '0');
+
+            if (!window.eventSender) {
+                finishJSTest();
+                return;
+            }
+
+            await UIHelper.mouseWheelScrollAt(100, 100, 0, 0, 0, -20);
+
+            debug('After scroll');
+            shouldBe('overflow.scrollTop', '200');
+            shouldBe('window.pageYOffset', '0');
+
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+            description("Tests a gesture with zero delta on the began event doesn't latch on the document");
+            setTimeout(scrollTest, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="scroller">
+        <div class="contents"></div>
+    </div>
+<div id="console"></div>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

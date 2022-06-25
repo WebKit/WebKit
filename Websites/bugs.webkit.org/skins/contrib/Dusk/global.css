@@ -1,0 +1,237 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ * This Source Code Form is "Incompatible With Secondary Licenses", as
+ * defined by the Mozilla Public License, v. 2.0.
+ */
+
+body {
+    background: #c8c8c8;
+    font-family: Helvetica, Arial, Geneva;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+/* page title */
+
+#titles {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+#header .links, #footer {
+    background-color: #929bb1;
+    color: #ddd;
+}
+
+#header {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border: none;
+}
+
+#header a, #footer a {
+    color: white;
+    text-decoration: none;
+}
+#header a:hover, #footer a:hover {
+    text-decoration: underline;
+}
+
+/* body */
+
+#bugzilla-body {
+    background: #f0f0f0;
+    color: black;
+    border: 1px solid #747e93;
+    padding: 10px;
+    font-size: 10pt;
+    border-radius: 5px;
+}
+
+a {
+    color: #6070cf;
+}
+a:hover {
+    color: #8090ef;
+}
+
+hr {
+  border-color: #969696;
+  border-style: dashed;
+  border-width: 1px;
+  margin-top: 10px;
+}
+
+/* edit */
+
+#bug-form td {
+    padding-top: 2px;
+}
+
+/* attachments */
+
+#attachment-list {
+    border: 2px solid #c8c8ba;
+    font-size: 9pt;
+}
+
+#attachment-list th {
+    background-color: #e6e6d8;
+    border: none;
+    border-bottom: 1px solid #c8c8ba;
+    text-align: left;
+}
+
+#attachment-list th a {
+    color: #646456;
+}
+
+#attachment-list td {
+    border: none;
+}
+
+#attachment-list-actions td {
+    border-top: 1px solid #c8c8ba;
+}
+
+/************/
+/* Comments */
+/************/
+
+#comments th {
+    font-size: 9pt;
+    font-weight: bold;
+    padding-top: 5px;
+    padding-right: 5px;
+    padding-bottom: 10px;
+    text-align: right;
+    vertical-align: top;
+    white-space: nowrap;
+}
+
+#comments td {
+    padding-top: 2px;
+}
+
+.reply-button a {
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+.bz_comment {
+    background-color: #e8e8e8;
+    margin: 1px 1px 10px 1px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #c8c8ba;
+    padding: 5px;
+    font-size: 9pt;
+}
+
+.bz_comment_head, .bz_first_comment_head {
+    margin: 0; padding: 0;
+    background-color: transparent;
+    font-weight: bold;
+}
+
+.bz_comment_user {
+    margin-left: 0;
+}
+
+.bz_comment.bz_private {
+    background-color: #f0e8e8;
+    border-color: #f8c8ba;
+}
+
+.comment_rule {
+    display: none;
+}
+
+/* footer */
+
+#footer {
+    border: 1px solid #747e93;
+    width: 100%;
+    border-radius: 5px;
+}
+
+#footer #links-actions,
+#footer #links-edit,
+#footer #links-saved,
+#footer #links-special {
+    margin-top: 2ex;
+}
+
+#footer .links {
+    border-spacing: 30px;
+    margin-bottom: 2ex;
+}
+
+.separator {
+    color: #cccccc;
+}
+
+/* tabs */
+
+.tabbed .tabbody {
+    background: #f8f8f8;
+    padding: 1em;
+    border-style: solid;
+    border-color: #000000;
+    border-width: 0 3px 3px 1px;
+}
+
+.tabs {
+    margin: 0;
+    padding: 0;
+    border-collapse: collapse;
+}
+
+.tabs td {
+    background: #c8c8c8;
+    border-width: 1px;
+}
+
+.tabs td.selected {
+    background: #f8f8f8;
+    border-width: 1px 3px 0 1px;
+}
+
+.tabs td.spacer {
+    background: transparent;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+}
+
+/* other */
+
+.bz_row_odd {
+    background-color: #f0f0f0;
+}
+
+#page-index .outro {
+    clear:both;
+}
+
+/* Rules specific for printing */
+@media print {
+    #header,
+    #footer,
+    .navigation {
+        display: none;
+    }
+
+    body {
+        background-image: none;
+        background-color: #ffffff;
+    }
+
+    #bugzilla-body {
+        border: none;
+        margin: 0;
+        padding: 0;
+    }
+}

@@ -1,0 +1,19 @@
+Tests that program compiling/linking with a reserved keyword.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getError was expected value: NO_ERROR : no error for using reserved keyword in struct
+PASS getError was expected value: NO_ERROR : no error for using reserved keyword in variable name
+PASS getError was expected value: NO_ERROR : no error for using reserved keyword for struct name
+PASS getError was expected value: NO_ERROR : no error for using reserved keyword for struct name with global struct
+PASS getError was expected value: NO_ERROR : no error for using reserved keyword in type with global struct
+PASS getError was expected value: NO_ERROR : no error for using reserved keyword for struct name  with global struct
+PASS getError was expected value: NO_ERROR : no error for using reserved keyword for variable name with global struct
+PASS getError was expected value: NO_ERROR : no error for using reserved keyword for variable name and struct name with global struct
+PASS getError was expected value: NO_ERROR : no error for using reserved keyword in nested struct
+PASS getError was expected value: NO_ERROR : no error for using reserved keyword to access nested struct
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

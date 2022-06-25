@@ -1,0 +1,12 @@
+
+PASS navigator.locks.request requires a name and a callback
+PASS mode must be "shared" or "exclusive"
+PASS The 'steal' and 'ifAvailable' options are mutually exclusive
+PASS The 'steal' option must be used with exclusive locks
+PASS The 'signal' and 'steal' options are mutually exclusive
+PASS The 'signal' and 'ifAvailable' options are mutually exclusive
+PASS callback must be a function
+PASS navigator.locks.request's returned promise resolves after lock is released
+PASS Returned Promise rejects if callback throws synchronously
+PASS Returned Promise rejects if callback throws asynchronously
+

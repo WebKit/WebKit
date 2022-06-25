@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+description("This ensures that postMessage called in a callback does not crash.");
+jsTestIsAsync = true;
+
+window.onmessage = function(e) {
+   messageEvent = e;
+   shouldBeEqualToString("messageEvent.data", "msg");
+   shouldBe("messageEvent.source", "window");
+   finishJSTest();
+}
+
+var boundPostMessage = window.postMessage.bind(window, "msg", "*");
+setTimeout(boundPostMessage, 0);
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+This test passes if it doesn't crash.
+<div role="img" id="div"></div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText()
+var elem = document.getElementById("div"); var parent = elem.parentNode;
+new_elem = document.createElement("frameset");
+new_elem.setAttribute("role", "img");
+parent.insertBefore(new_elem, elem);
+document.execCommand("SelectAll");
+</script>

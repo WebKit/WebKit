@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+<text x="10" y="50">This test passed, if it doesn't crash in a debug build (fires assertion).</text>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+}
+
+var oFEConvolveMatrix = document.createElementNS("http://www.w3.org/2000/svg", "feConvolveMatrix");
+document.createElementNS("http://www.w3.org/2000/svg", "altGlyph").x.baseVal.insertItemBefore(oFEConvolveMatrix.width.baseVal, 0);
+</script>
+</svg>

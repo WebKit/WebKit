@@ -1,0 +1,9 @@
+This tests that DFG generated code speculating SlowPutArrayStorageShape doesn't crash when seeing fast ArrayStorageShapes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

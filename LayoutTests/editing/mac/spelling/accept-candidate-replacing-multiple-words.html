@@ -1,0 +1,39 @@
+<html>
+<head>
+<script src=../../editing.js></script>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+
+function editingTest() {
+    edit = document.getElementById('edit');
+    edit.focus();
+    typeCharacterCommand('g');
+    typeCharacterCommand('o');
+    typeCharacterCommand('o');
+    typeCharacterCommand(' ');
+    typeCharacterCommand('d');
+    typeCharacterCommand('i');
+    typeCharacterCommand('d');
+    typeCharacterCommand('e');
+    typeCharacterCommand('a');
+    
+    if (window.internals)
+        internals.handleAcceptedCandidate("good idea ", 0, 9);
+
+    if (window.testRunner)
+        testRunner.dumpAsText(true);
+}
+
+</script>
+</head>
+<body>
+<p>This test verifies that accepted candidates replace the entire range of the candidate source.</p>
+<div style="border:1px solid black;">
+    <div contenteditable="true" id="edit"></div>
+</div>
+<script>
+runEditingTest();
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body>
+<svg><symbol id="symbol1"><g id="g"><tspan id="tspan"/></symbol><use id="use" href="#symbol1" /></svg>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+description(`This tests updating the SVG use element's shadow tree inside a event queue scope.<br>
+WebKit should not dispach any mutation events`);
+
+g.setAttribute("stroke", "blue");
+let subtreeModifiedFired = false;
+g.addEventListener("DOMSubtreeModified", () => subtreeModifiedFired = true, {once: true});
+
+shouldBeFalse('subtreeModifiedFired');
+evalAndLog('document.execCommand("usecss", false)');
+shouldBeFalse('subtreeModifiedFired');
+
+successfullyParsed = true;
+
+</script>
+</body>
+</html>

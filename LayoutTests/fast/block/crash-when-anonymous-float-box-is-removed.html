@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<head>
+<style>
+*::first-letter {
+  margin-bottom: 1em;
+  float: left;
+}
+*::before {
+  content: 'A';
+}
+*::after {
+  content: 'B';
+}
+</style>
+</head>
+<body>PASS if no crash or assert.</body>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+document.body.offsetTop;
+document.createElement('div').appendChild(document.body);
+</script>
+</html>

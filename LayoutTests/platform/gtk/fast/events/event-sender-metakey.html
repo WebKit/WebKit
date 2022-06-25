@@ -1,0 +1,42 @@
+<html>
+<body>
+<div id="result"></div>
+<input id="test" type="button" value="">
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    var metaKey = false;
+    var failed = false;
+    function handleMetakey(e) {
+        if (true == failed)
+            return;
+        if (e.metaKey != metaKey)
+            failed = true;
+    }
+    var test = document.getElementById("test");
+    test.addEventListener('mousemove', handleMetakey, false);
+    test.addEventListener('mousedown', handleMetakey, false);
+    test.addEventListener('mouseup', handleMetakey, false);
+    test.addEventListener('keydown', handleMetakey, false);
+
+    test.focus();
+
+
+    // Events with metakey as false
+    eventSender.mouseMoveTo(test.offsetLeft, test.offsetTop);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    eventSender.keyDown('a');
+
+    // Events with metakey as true
+    metaKey = true;
+    eventSender.mouseMoveTo(test.offsetLeft, test.offsetTop, ["metaKey"]);
+    eventSender.mouseDown(1, ["metaKey"]);
+    eventSender.mouseUp(1, ["metaKey"]);
+    eventSender.keyDown('a', ["metaKey"]);
+
+    var resultDiv = document.getElementById("result");
+    resultDiv.innerHTML = failed ? "FAIL" : "PASS";
+</script>
+</body>

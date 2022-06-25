@@ -1,0 +1,24 @@
+WebGL tests for Canvas.requestShaderSource command.
+
+
+== Running test suite: Canvas.requestShaderSource.WebGL
+-- Running test case: Canvas.requestShaderSource.WebGL.Vertex
+
+    void main(void) {
+        gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
+    }
+
+
+-- Running test case: Canvas.requestShaderSource.WebGL.Fragment
+
+    precision mediump float;
+
+    void main(void) {
+        gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+    }
+
+
+-- Running test case: Canvas.requestShaderSource.WebGL.ShaderType.Invalid
+PASS: Should produce an error.
+Error: Unknown shaderType: INVALID_SHADER_TYPE
+

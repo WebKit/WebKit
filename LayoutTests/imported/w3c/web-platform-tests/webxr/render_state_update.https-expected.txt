@@ -1,0 +1,12 @@
+
+PASS updateRenderState handles appropriately ended sessions - webgl
+PASS updateRenderState handles appropriately ended sessions - webgl2
+PASS updateRenderState handles appropriately baseLayers created with different sessions - webgl
+PASS updateRenderState handles appropriately baseLayers created with different sessions - webgl2
+PASS updateRenderState handles appropriately immersive sessions with specified inlineVerticalFieldOfView - webgl
+PASS updateRenderState handles appropriately immersive sessions with specified inlineVerticalFieldOfView - webgl2
+PASS updateRenderState handles appropriately XRRenderStateInit with no params - webgl
+PASS updateRenderState handles appropriately XRRenderStateInit with no params - webgl2
+PASS updateRenderState handles appropriately XRRenderStateInit params - webgl
+PASS updateRenderState handles appropriately XRRenderStateInit params - webgl2
+

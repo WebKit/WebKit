@@ -1,0 +1,14 @@
+<p>This tests for a bug where deleting a character inserted with Kotoeri would remove the caret.</p>
+<div id="div" contenteditable="true"></div>
+
+<script>
+document.getElementById("div").focus();
+if (window.testRunner) {
+    window.testRunner.dumpEditingCallbacks();
+    var markedText = textInputController.makeAttributedString("a");
+    markedText.addAttribute("NSUnderline", 2);
+    textInputController.setMarkedText(markedText, 1, 0);
+    // Delete the marked text.
+    textInputController.setMarkedText("", 0, 0);
+}
+</script>

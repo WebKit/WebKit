@@ -1,0 +1,16 @@
+Tests intrinsic width values on flex-items.
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS

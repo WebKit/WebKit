@@ -1,0 +1,47 @@
+RUN(internals.initializeMockMediaSource())
+RUN(mock = internals.registerMockCDM())
+RUN(mock.supportedDataTypes = ["keyids"])
+RUN(capabilities.initDataTypes = ["keyids"])
+RUN(capabilities.videoCapabilities = [{ contentType: 'video/mock; codecs="mock"' }] )
+RUN(promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", [capabilities]))
+Promise resolved OK
+
+RUN(promise = mediaKeySystemAccess.createMediaKeys())
+Promise resolved OK
+
+Using an invalid initDataType string should reject.
+RUN(mediaKeySession = mediaKeys.createSession("temporary"))
+EXPECTED (typeof mediaKeySession == 'object') OK
+RUN(promise = mediaKeySession.generateRequest("invalid", stringToUInt8Array("invalid")))
+Promise rejected correctly OK
+
+Re-using a failed mediaKeySession should reject.
+RUN(kids = JSON.stringify({ kids: [ "MTIzNDU=" ] }))
+RUN(promise = mediaKeySession.generateRequest("keyids", stringToUInt8Array(kids)))
+Promise rejected correctly OK
+
+Using a new mediaKeySession should resolve.
+RUN(kids = JSON.stringify({ kids: [ "MTIzNDU=" ] }))
+RUN(mediaKeySession = mediaKeys.createSession("temporary"))
+RUN(promise = mediaKeySession.generateRequest("keyids", stringToUInt8Array(kids)))
+Promise resolved OK
+
+Using invalid initData should reject.
+RUN(kids = JSON.stringify({ invalid: "invalid" }))
+RUN(mediaKeySession = mediaKeys.createSession("temporary"))
+RUN(promise = mediaKeySession.generateRequest("keyids", stringToUInt8Array(kids)))
+Promise rejected correctly OK
+
+Using initData with extraneous information should resolve.
+RUN(kids = JSON.stringify({ kids: [ "MTIzNDU="], invalid: "invalid" }))
+RUN(mediaKeySession = mediaKeys.createSession("temporary"))
+RUN(promise = mediaKeySession.generateRequest("keyids", stringToUInt8Array(kids)))
+Promise resolved OK
+
+initData is encoded in base64url.
+RUN(kids = JSON.stringify({ kids: [ "ig2FRSEF1BU1j-qPaObBkQ"] }))
+RUN(mediaKeySession = mediaKeys.createSession("temporary"))
+RUN(promise = mediaKeySession.generateRequest("keyids", stringToUInt8Array(kids)))
+Promise resolved OK
+END OF TEST
+

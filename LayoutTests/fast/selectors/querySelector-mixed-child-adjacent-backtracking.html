@@ -1,0 +1,135 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div style="display:none">
+
+  <!-- Direct matching, no need to backtrack. -->
+  <div></div>
+  <table></table>
+  <h1></h1>
+  <blockquote>
+    <p></p>
+    <div></div>
+    <blockquote></blockquote>
+    <table></table>
+    <ul>
+      <li><p id="target1">Target 1</p></li>
+    </ul>
+  </blockquote>
+
+  <!-- A first block lacks the <p>. -->
+  <div></div>
+  <table></table>
+  <h1></h1>
+  <blockquote>
+    <p></p>
+    <div></div>
+    <blockquote></blockquote>
+    <table></table>
+    <div></div>
+    <blockquote></blockquote>
+    <table></table>
+    <ul>
+      <li><p id="target2">Target 2</p></li>
+    </ul>
+  </blockquote>
+
+  <!-- A second block lacks the <h1>. -->
+  <div></div>
+  <table></table>
+  <h1></h1>
+  <blockquote>
+    <p></p>
+    <div></div>
+    <blockquote></blockquote>
+    <table></table>
+    <ul>
+      <li>
+
+        <h2></h2>
+        <blockquote>
+          <p id="target3">Target 3</p>
+          <div></div>
+          <blockquote></blockquote>
+          <table></table>
+          <ul>
+            <li><p id="target4">Target 4</p></li>
+          </ul>
+        </blockquote>
+
+      </li>
+    </ul>
+  </blockquote>
+
+  <!-- A second block lacks the <div>. -->
+  <div></div>
+  <table></table>
+  <h1></h1>
+  <blockquote>
+    <p></p>
+    <div></div>
+    <blockquote></blockquote>
+    <table></table>
+    <ul>
+      <li>
+
+        <table></table>
+        <h1></h1>
+        <blockquote>
+          <p id="target5">Target 5</p>
+          <div></div>
+          <blockquote></blockquote>
+          <table></table>
+          <ul>
+            <li><p id="target6">Target 6</p></li>
+          </ul>
+        </blockquote>
+
+      </li>
+    </ul>
+  </blockquote>
+
+  <!-- A third block lacks the div. -->
+  <div></div>
+  <table></table>
+  <h1></h1>
+  <blockquote>
+    <p></p>
+    <div></div>
+    <blockquote></blockquote>
+    <table></table>
+    <ul>
+      <li>
+
+        <div></div>
+        <table></table>
+        <h1></h1>
+        <blockquote>
+          <p id="target7">Target 7</p>
+          <div></div>
+          <blockquote></blockquote>
+          <table></table>
+          <ul>
+            <li><p id="target8">Target 8</p></li>
+          </ul>
+        </blockquote>
+
+      </li>
+    </ul>
+  </blockquote>
+
+</div>
+</body>
+<script>
+description('Test backtracking of adjacent and child relation mixed together.');
+
+shouldBe('document.querySelectorAll("html>head+body div>div~h1+blockquote>p+div+blockquote~ul p").length', '8');
+for (var i = 0; i < document.querySelectorAll("html>head+body div>div~h1+blockquote>p+div+blockquote~ul p").length; ++i)
+  shouldBeEqualToString('document.querySelectorAll("html>head+body div>div~h1+blockquote>p+div+blockquote~ul p")[' + i +'].id', 'target' + (i + 1));
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</html>

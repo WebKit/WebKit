@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Test Changing Name of A Keyframes Rule Using CSSOM</title>
+  <style type="text/css" media="screen">
+    #box {
+        position: relative;
+        left: 0;
+        top: 0;
+        height: 100px;
+        width: 100px;
+        background-color: blue;
+        animation-duration: 0.5s;
+        animation-timing-function: linear;
+        animation-repeat-count: infinite;
+        animation-name: "bar";
+    }
+    @-webkit-keyframes "foo" {
+        from { left: 100px; }
+        40%  { left: 200px; }
+        60%  { left: 200px; }
+        to   { left: 300px; }
+    }
+    </style>
+    <script src="../resources/testharness.js"></script>
+ 	<script src="../resources/testharnessreport.js"></script>
+ 	<script src="resources/animation-test.js"></script>
+</head>
+<body>
+<div id="box"></div>
+    <script type="text/javascript" charset="utf-8">
+
+    function findKeyframesRule(rule)
+    {
+        var ss = document.styleSheets;
+        for (var i = 0; i < ss.length; ++i) {
+            for (var j = 0; j < ss[i].cssRules.length; ++j) {
+                if (ss[i].cssRules[j].type == window.CSSRule.WEBKIT_KEYFRAMES_RULE && ss[i].cssRules[j].name == rule)
+                    return ss[i].cssRules[j];
+            }
+        }
+
+        return null;
+    }
+
+    promise_test(async t => {
+        const delay = 100;
+        const box = document.getElementById("box");
+        const previousAnimationName = "foo";
+        const newAnimationName = "anim";
+
+        const test = new AnimationTest({
+            target: box,
+            styleExtractor: style => parseFloat(style.left)
+        });
+
+        // First, ensure that there is no animation running.
+        assert_true(!test.animation, "There is no animation initially.");
+
+        // Now, rename "@keyframes foo" to allow an animation to start.
+        findKeyframesRule(previousAnimationName).name = newAnimationName;
+        box.style.animationName = newAnimationName;
+
+        // There should be a running animation now.
+        assert_true(test.animation instanceof CSSAnimation, "There is an animation after changing the @keyframes rule.");
+
+        // Record two computed values after the specified delay each and ensure they're not the same,
+        // showing animated values are applied.
+        const initialValue = await test.recordValueAfterRunningFor(delay);
+        const currentValue = await test.recordValueAfterRunningFor(delay);
+        assert_not_equals(initialValue, currentValue, "Values recorded while running aren't the same.");
+
+        // Now, check the recorded values were correct.
+        test.checkRecordedValues();
+    }, `Test that dynamically changing the name of a @keyframes rule starts animations using that name.`);
+  </script>
+</body>
+</html>

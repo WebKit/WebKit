@@ -1,0 +1,5 @@
+
+FAIL Request.isReloadNavigation is reset with non-empty RequestInit promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.serviceWorker.getRegistration')"
+FAIL Request.isHistoryNavigation is reset with non-empty RequestInit promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.serviceWorker.getRegistration')"
+FAIL Request.mode is reset with non-empty RequestInit when it's "navigate" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.serviceWorker.getRegistration')"
+

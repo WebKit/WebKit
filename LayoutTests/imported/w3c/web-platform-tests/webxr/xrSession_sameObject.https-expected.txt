@@ -1,0 +1,4 @@
+
+PASS XRSession attributes meet [SameObject] requirement - webgl
+PASS XRSession attributes meet [SameObject] requirement - webgl2
+

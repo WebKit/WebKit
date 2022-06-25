@@ -1,0 +1,23 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ InlineFormattingContextIntegrationEnabled=false ] -->
+<html>
+<head>
+<style>
+div {
+    font: expanded 48px 'Apple Chancery';
+    white-space: pre-wrap;
+    white-space: nowrap;
+    display: inline-block;
+    background: green;
+}
+</style>
+</head>
+<body>
+This test makes sure that newline characters have the same widths as space characters. We're using Apple Chancery here because the font its newline character is much wider than its space character.
+<p><div>
+a
+b
+c
+d
+e</div></p>
+</body>
+</html>

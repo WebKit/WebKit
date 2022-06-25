@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+<head>
+    <style>
+        /* Pack them to fit everything in 800*600 */
+        div > * {
+            padding: 5px;
+            width: 100px;
+            float: left;
+        }
+    </style>
+</head>
+<body>
+    <p>Verify style sharing does not ignore the "type" attribute.</p>
+    <div>
+        <div style="background-color: blue;">No type</div>
+        <div style="background-color: blue;">Type defined</div>
+        <div style="background-color: blue;">Type defined empty</div>
+        <div>Type is foobar</div>
+    </div>
+    <div>
+        <span style="background-color: blue;">No type</span>
+        <span style="background-color: blue;">Type defined</span>
+        <span style="background-color: blue;">Type defined empty</span>
+        <span>Type is foobar</span>
+    </div>
+    <div>
+        <input style="background-color: blue;" value="No type">
+        <input style="background-color: blue;" value="Type defined">
+        <input style="background-color: blue;" value="Type defined empty">
+        <input value="Type is foobar">
+    </div>
+</body>
+</html>

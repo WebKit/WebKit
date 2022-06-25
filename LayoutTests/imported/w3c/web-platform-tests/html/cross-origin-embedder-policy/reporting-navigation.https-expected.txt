@@ -1,0 +1,34 @@
+CONSOLE MESSAGE: Refused to load https://127.0.0.1:9443/common/blank.html?pipe=|header(cross-origin-resource-policy,cross-origin)|header(content-security-policy,frame-ancestors%20%27none%27) because it does not appear in the frame-ancestors directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load https://127.0.0.1:9443/common/blank.html?pipe=|header(cross-origin-resource-policy,cross-origin)|header(content-security-policy,frame-ancestors%20%27none%27) because it does not appear in the frame-ancestors directive of the Content Security Policy.
+
+PASS parent: (none), target: (none), with empty frame: false
+PASS parent: (none), target: (none), with empty frame: true
+PASS parent: (none), target: |header(cross-origin-embedder-policy,require-corp), with empty frame: false
+PASS parent: (none), target: |header(cross-origin-embedder-policy,require-corp), with empty frame: true
+FAIL parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-embedder-policy,require-corp), with empty frame: false undefined is not a constructor (evaluating 'new global.ReportingObserver')
+FAIL parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-embedder-policy,require-corp), with empty frame: true undefined is not a constructor (evaluating 'new global.ReportingObserver')
+FAIL parent: |header(cross-origin-embedder-policy,require-corp), target: (none), with empty frame: false undefined is not a constructor (evaluating 'new global.ReportingObserver')
+FAIL parent: |header(cross-origin-embedder-policy,require-corp), target: (none), with empty frame: true undefined is not a constructor (evaluating 'new global.ReportingObserver')
+PASS parent: (none), target: |header(cross-origin-resource-policy,cross-origin), with empty frame: false
+PASS parent: (none), target: |header(cross-origin-resource-policy,cross-origin), with empty frame: true
+FAIL parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-resource-policy,cross-origin), with empty frame: false undefined is not a constructor (evaluating 'new global.ReportingObserver')
+FAIL parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-resource-policy,cross-origin), with empty frame: true undefined is not a constructor (evaluating 'new global.ReportingObserver')
+PASS parent: (none), target: |header(cross-origin-embedder-policy,require-corp)|header(cross-origin-resource-policy,cross-origin), with empty frame: false
+PASS parent: (none), target: |header(cross-origin-embedder-policy,require-corp)|header(cross-origin-resource-policy,cross-origin), with empty frame: true
+PASS parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-embedder-policy,require-corp)|header(cross-origin-resource-policy,cross-origin), with empty frame: false
+PASS parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-embedder-policy,require-corp)|header(cross-origin-resource-policy,cross-origin), with empty frame: true
+FAIL parent: |header(cross-origin-embedder-policy-report-only,require-corp), target: |header(cross-origin-embedder-policy,require-corp), with empty frame: false undefined is not a constructor (evaluating 'new global.ReportingObserver')
+FAIL parent: |header(cross-origin-embedder-policy-report-only,require-corp), target: |header(cross-origin-embedder-policy,require-corp), with empty frame: true undefined is not a constructor (evaluating 'new global.ReportingObserver')
+FAIL parent: |header(cross-origin-embedder-policy-report-only,require-corp), target: (none), with empty frame: false undefined is not a constructor (evaluating 'new global.ReportingObserver')
+FAIL parent: |header(cross-origin-embedder-policy-report-only,require-corp), target: (none), with empty frame: true undefined is not a constructor (evaluating 'new global.ReportingObserver')
+FAIL parent: |header(cross-origin-embedder-policy-report-only,require-corp), target: |header(cross-origin-resource-policy,cross-origin), with empty frame: false undefined is not a constructor (evaluating 'new global.ReportingObserver')
+FAIL parent: |header(cross-origin-embedder-policy-report-only,require-corp), target: |header(cross-origin-resource-policy,cross-origin), with empty frame: true undefined is not a constructor (evaluating 'new global.ReportingObserver')
+PASS parent: |header(cross-origin-embedder-policy-report-only,require-corp), target: |header(cross-origin-embedder-policy,require-corp)|header(cross-origin-resource-policy,cross-origin), with empty frame: false
+PASS parent: |header(cross-origin-embedder-policy-report-only,require-corp), target: |header(cross-origin-embedder-policy,require-corp)|header(cross-origin-resource-policy,cross-origin), with empty frame: true
+FAIL parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-embedder-policy-report-only,require-corp)|header(cross-origin-resource-policy,cross-origin), with empty frame: false undefined is not a constructor (evaluating 'new global.ReportingObserver')
+FAIL parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-embedder-policy-report-only,require-corp)|header(cross-origin-resource-policy,cross-origin), with empty frame: true undefined is not a constructor (evaluating 'new global.ReportingObserver')
+PASS parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-resource-policy,cross-origin)|header(content-security-policy,frame-ancestors 'none'), with empty frame: false
+PASS parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-resource-policy,cross-origin)|header(content-security-policy,frame-ancestors 'none'), with empty frame: true
+FAIL parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-resource-policy,cross-origin)|header(x-frame-options,deny), with empty frame: false undefined is not a constructor (evaluating 'new global.ReportingObserver')
+FAIL parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-resource-policy,cross-origin)|header(x-frame-options,deny), with empty frame: true undefined is not a constructor (evaluating 'new global.ReportingObserver')
+

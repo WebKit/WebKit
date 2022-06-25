@@ -1,0 +1,29 @@
+<body>
+<script>
+if (window.testRunner)
+    window.testRunner.dumpAsText();
+
+var canvas = document.createElement("canvas");
+canvas.width = 100;
+canvas.height = 100;
+
+// Make a pattern so large that it will fail to be allocated.
+var patternCanvas = document.createElement("canvas");
+patternCanvas.width = 300000;
+patternCanvas.height = 300000;
+
+var ctx = canvas.getContext("2d");
+var pattern;
+try {
+    pattern = ctx.createPattern(patternCanvas, "repeat");
+} catch (e) {
+    if (e.code == DOMException.INVALID_STATE_ERR)
+        document.body.appendChild(document.createTextNode("PASS: Saw exception."));
+}
+
+// The remainder of this code doesn't really matter, since pattern is null.
+ctx.rect(0, 0, canvas.width, canvas.height);
+ctx.fillStyle = pattern;
+
+ctx.fill();
+</script>

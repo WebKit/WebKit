@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests pasting a list ('Item 1') into a position that would normally result in an end merge.</p>
+<div id="test1" contenteditable="true">xx</div>
+<script src="../../resources/dump-as-markup.js"></script>
+<script src="../editing.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.dumpEditingCallbacks();
+
+var e = document.getElementById("test1");
+var s = window.getSelection();
+
+Markup.description(document.querySelector('p').textContent);
+Markup.dump(e, 'Before insertion');
+
+setSelectionCommand(e, 0, e, 0);
+moveSelectionForwardByCharacterCommand();
+insertHTMLCommand("<ul><li><div>Item 1</div></li></ul>");
+
+Markup.dump(e, 'After insertion');
+</script>
+</body>
+</html>

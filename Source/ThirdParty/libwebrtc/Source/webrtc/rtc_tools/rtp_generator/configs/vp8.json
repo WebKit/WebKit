@@ -1,0 +1,13 @@
+{
+  "video_streams": [
+    {
+      "duration_ms": 10000,
+      "video_width": 640,
+      "video_height": 480,
+      "video_fps": 24,
+      "rtp" : {
+         "payload_name" : "VP8"
+      }
+    }
+  ]
+}

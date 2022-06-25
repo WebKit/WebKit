@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<input type="text" placeholder="first">
+<textarea placeholder="second"></textarea>
+<script>
+description("Tests that the placeholder can be hidden and shown for empty fields via setCanShowPlaceholder().");
+
+function testThatPlaceholderIsHidden(tagName)
+{
+    let element = document.querySelector(tagName);
+    internals.setCanShowPlaceholder(element, false);
+    shouldBeEqualToString(`internals.visiblePlaceholder(document.querySelector("${tagName}"))`, "");
+}
+
+function testThatPlaceholderIsEqualToString(tagName, expectedText)
+{
+    let element = document.querySelector(tagName);
+    internals.setCanShowPlaceholder(element, true);
+    shouldBeEqualToString(`internals.visiblePlaceholder(document.querySelector("${tagName}"))`, expectedText);
+}
+
+function runTest()
+{
+    if (!window.internals) {
+        testFailed("Must have window.internals.");
+        return;
+    }
+
+    debug("Disallow showing of placeholder:");
+    testThatPlaceholderIsHidden("input");
+    testThatPlaceholderIsHidden("textarea");
+
+    debug("<br>Allow showing of placeholder:");
+    testThatPlaceholderIsEqualToString("input", "first");
+    testThatPlaceholderIsEqualToString("textarea", "second");
+}
+
+runTest();
+</script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CSS Grid, display: contents &amp; ::before/::after</title>
+    <style>
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(5, 150px);
+        }
+
+        .replaced {
+            display: contents;
+        }
+
+        .replaced::before {
+            content: "before";
+        }
+
+        .replaced::after {
+            content: "after";
+        }
+
+        .replaced-container {
+            display: contents;
+        }
+
+        .replaced::before, .replaced::after, span {
+            width: 100px;
+            height: 100px;
+            background-color: green;
+        }
+    </style>
+</head>
+<body>
+    <div class="grid">
+        <div class="replaced"></div>
+        <span>span</span>
+        <div class="replaced-container">
+            <div class="replaced"></div>
+        </div>
+    </div>
+</body>
+</html>

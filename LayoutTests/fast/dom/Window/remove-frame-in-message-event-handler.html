@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<iframe id="subframe"></iframe>
+<script>
+description("Make sure that we do not crash when a frame gets detached in a message event handler.");
+jsTestIsAsync = true;
+
+onload = function() {
+    frames[0].onmessage = function(msg) {
+        subframe.remove();
+        gc();
+        setTimeout(finishJSTest, 0);
+    }
+
+    frames[0].postMessage("foo", "*");
+}
+</script>
+</body>
+</html>

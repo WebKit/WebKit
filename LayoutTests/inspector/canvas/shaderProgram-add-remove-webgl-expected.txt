@@ -1,0 +1,20 @@
+Test that CanvasManager tracks creation and destruction of WebGL shader programs.
+
+
+== Running test suite: Canvas.ShaderProgram.webgl
+-- Running test case: Canvas.ShaderProgram.webgl.reloadPage
+PASS: Added ShaderProgram.
+PASS: ShaderProgram should have a parent Canvas.
+
+-- Running test case: Canvas.ShaderProgram.webgl.ShaderProgramAdded
+PASS: Added ShaderProgram.
+PASS: ShaderProgram should have a parent Canvas.
+PASS: Removed ShaderProgram.
+PASS: ShaderProgram should have a parent Canvas.
+PASS: Removed the previously added ShaderProgram.
+
+-- Running test case: Canvas.ShaderProgram.webgl.ParentCanvasRemoved
+PASS: Removed ShaderProgram.
+PASS: ShaderProgram should have a parent Canvas.
+PASS: Removed ShaderProgram before Canvas.
+

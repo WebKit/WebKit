@@ -1,0 +1,4 @@
+
+PASS Property transition-property value 'left, top, right, bottom'
+PASS Property transition-property value 'one, two, three'
+

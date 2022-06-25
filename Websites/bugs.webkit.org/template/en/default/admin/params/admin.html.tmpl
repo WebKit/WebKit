@@ -1,0 +1,31 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+[%
+   title = "Administrative Policies"
+   desc = "Set up account policies"
+%]
+
+[% param_descs = {
+  allowbugdeletion => "The pages to edit products and components can delete all " _
+                      "associated $terms.bugs when you delete a product (or component). " _
+                      "Since that is a pretty scary idea, you have to turn on " _
+                      "this option before any such deletions will ever happen.",
+
+  allowemailchange => "Users can change their own email address through the preferences. " _
+                      "Note that the change is validated by emailing both addresses, so " _
+                      "switching this option on will not let users use an invalid address.",
+
+  allowuserdeletion => "The user editing pages are capable of letting you delete user accounts. " _
+                       "Bugzilla will issue a warning in case you'd run into inconsistencies " _
+                       "when you're about to do so, but such deletions remain kinda scary. " _
+                       "So, you have to turn on this option before any such deletions " _
+                       "will ever happen."
+
+  last_visit_keep_days => "This option controls how many days $terms.Bugzilla will " _
+                          "remember when users visit specific ${terms.bugs}."}
+%]

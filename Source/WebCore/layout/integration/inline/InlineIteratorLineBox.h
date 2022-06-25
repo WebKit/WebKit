@@ -1,0 +1,261 @@
+/*
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include "FontBaseline.h"
+#include "InlineIteratorLineBoxLegacyPath.h"
+#include "InlineIteratorLineBoxModernPath.h"
+#include "RenderBlockFlow.h"
+#include <variant>
+
+namespace WebCore {
+
+class LineSelection;
+
+namespace InlineIterator {
+
+class LineBoxIterator;
+class PathIterator;
+class LeafBoxIterator;
+
+struct EndLineBoxIterator { };
+
+class LineBox {
+public:
+    using PathVariant = std::variant<
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+        LineBoxIteratorModernPath,
+#endif
+        LineBoxIteratorLegacyPath
+    >;
+
+    LineBox(PathVariant&&);
+
+    float top() const;
+    float bottom() const;
+    float height() const { return bottom() - top(); }
+
+    float contentLogicalTop() const;
+    float contentLogicalBottom() const;
+    float contentLogicalLeft() const;
+    float contentLogicalRight() const;
+    float contentLogicalWidth() const;
+
+    float contentLogicalTopAdjustedForPrecedingLineBox() const;
+    float contentLogicalBottomAdjustedForFollowingLineBox() const;
+
+    float inkOverflowTop() const;
+    float inkOverflowBottom() const;
+
+    const RenderBlockFlow& containingBlock() const;
+    RenderFragmentContainer* containingFragment() const;
+
+    bool isHorizontal() const;
+    FontBaseline baselineType() const;
+
+    bool isFirst() const;
+    bool isFirstAfterPageBreak() const;
+
+    LeafBoxIterator firstLeafBox() const;
+    LeafBoxIterator lastLeafBox() const;
+
+    LineBoxIterator next() const;
+    LineBoxIterator previous() const;
+
+private:
+    friend class LineBoxIterator;
+
+    PathVariant m_pathVariant;
+};
+
+class LineBoxIterator {
+public:
+    LineBoxIterator() : m_lineBox(LineBoxIteratorLegacyPath { nullptr }) { };
+    LineBoxIterator(const LegacyRootInlineBox* rootInlineBox) : m_lineBox(LineBoxIteratorLegacyPath { rootInlineBox }) { };
+    LineBoxIterator(LineBox::PathVariant&&);
+    LineBoxIterator(const LineBox&);
+
+    LineBoxIterator& operator++() { return traverseNext(); }
+    WEBCORE_EXPORT LineBoxIterator& traverseNext();
+    LineBoxIterator& traversePrevious();
+
+    WEBCORE_EXPORT explicit operator bool() const;
+
+    bool operator==(const LineBoxIterator&) const;
+    bool operator!=(const LineBoxIterator& other) const { return !(*this == other); }
+
+    bool operator==(EndLineBoxIterator) const { return atEnd(); }
+    bool operator!=(EndLineBoxIterator) const { return !atEnd(); }
+
+    const LineBox& operator*() const { return m_lineBox; }
+    const LineBox* operator->() const { return &m_lineBox; }
+
+    bool atEnd() const;
+
+private:
+    LineBox m_lineBox;
+};
+
+WEBCORE_EXPORT LineBoxIterator firstLineBoxFor(const RenderBlockFlow&);
+LineBoxIterator lastLineBoxFor(const RenderBlockFlow&);
+LeafBoxIterator closestBoxForHorizontalPosition(const LineBox&, float horizontalPosition, bool editableOnly = false);
+
+// -----------------------------------------------
+inline float previousLineBoxContentBottomOrBorderAndPadding(const LineBox& lineBox)
+{
+    return lineBox.isFirst() ? lineBox.containingBlock().borderAndPaddingBefore().toFloat() : lineBox.contentLogicalTopAdjustedForPrecedingLineBox(); 
+}
+
+inline float contentStartInBlockDirection(const LineBox& lineBox)
+{
+    if (!lineBox.containingBlock().style().isFlippedBlocksWritingMode())
+        return std::max(lineBox.contentLogicalTop(), previousLineBoxContentBottomOrBorderAndPadding(lineBox));
+    return std::min(lineBox.contentLogicalBottom(), lineBox.contentLogicalBottomAdjustedForFollowingLineBox());
+}
+
+inline LineBox::LineBox(PathVariant&& path)
+    : m_pathVariant(WTFMove(path))
+{
+}
+
+inline float LineBox::contentLogicalTop() const
+{
+    return WTF::switchOn(m_pathVariant, [](const auto& path) {
+        return path.contentLogicalTop();
+    });
+}
+
+inline float LineBox::contentLogicalBottom() const
+{
+    return WTF::switchOn(m_pathVariant, [](const auto& path) {
+        return path.contentLogicalBottom();
+    });
+}
+
+inline float LineBox::contentLogicalTopAdjustedForPrecedingLineBox() const
+{
+    return WTF::switchOn(m_pathVariant, [](const auto& path) {
+        return path.contentLogicalTopAdjustedForPrecedingLineBox();
+    });
+}
+
+inline float LineBox::contentLogicalBottomAdjustedForFollowingLineBox() const
+{
+    return WTF::switchOn(m_pathVariant, [](const auto& path) {
+        return path.contentLogicalBottomAdjustedForFollowingLineBox();
+    });
+}
+
+inline float LineBox::top() const
+{
+    return WTF::switchOn(m_pathVariant, [](const auto& path) {
+        return path.top();
+    });
+}
+
+inline float LineBox::bottom() const
+{
+    return WTF::switchOn(m_pathVariant, [](const auto& path) {
+        return path.bottom();
+    });
+}
+
+inline float LineBox::inkOverflowTop() const
+{
+    return WTF::switchOn(m_pathVariant, [](const auto& path) {
+        return path.inkOverflowTop();
+    });
+}
+
+inline float LineBox::inkOverflowBottom() const
+{
+    return WTF::switchOn(m_pathVariant, [](const auto& path) {
+        return path.inkOverflowBottom();
+    });
+}
+
+inline float LineBox::contentLogicalLeft() const
+{
+    return WTF::switchOn(m_pathVariant, [](const auto& path) {
+        return path.contentLogicalLeft();
+    });
+}
+
+inline float LineBox::contentLogicalRight() const
+{
+    return WTF::switchOn(m_pathVariant, [](const auto& path) {
+        return path.contentLogicalRight();
+    });
+}
+
+inline float LineBox::contentLogicalWidth() const
+{
+    return contentLogicalRight() - contentLogicalLeft();
+}
+
+inline bool LineBox::isHorizontal() const
+{
+    return WTF::switchOn(m_pathVariant, [](const auto& path) {
+        return path.isHorizontal();
+    });
+}
+
+inline FontBaseline LineBox::baselineType() const
+{
+    return WTF::switchOn(m_pathVariant, [](const auto& path) {
+        return path.baselineType();
+    });
+}
+
+inline const RenderBlockFlow& LineBox::containingBlock() const
+{
+    return WTF::switchOn(m_pathVariant, [](const auto& path) -> const RenderBlockFlow& {
+        return path.containingBlock();
+    });
+}
+
+inline RenderFragmentContainer* LineBox::containingFragment() const
+{
+    return WTF::switchOn(m_pathVariant, [](const auto& path) {
+        return path.containingFragment();
+    });
+}
+
+inline bool LineBox::isFirstAfterPageBreak() const
+{
+    return WTF::switchOn(m_pathVariant, [](const auto& path) {
+        return path.isFirstAfterPageBreak();
+    });
+}
+
+inline bool LineBox::isFirst() const
+{
+    return !previous();
+}
+
+}
+}
+

@@ -1,0 +1,18 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.addUserStyleSheet("div { width:0; }", true);
+}
+</script>
+</head>
+<body>
+<div id="target">FAIL</div>
+<script>
+if (document.getElementById('target').offsetWidth == 0)
+    document.getElementById('target').innerHTML = 'PASS';
+</script>
+</body>
+</html>

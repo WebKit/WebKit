@@ -1,0 +1,117 @@
+<!--
+
+/*
+** Copyright (c) 2016 The Khronos Group Inc.
+**
+** Permission is hereby granted, free of charge, to any person obtaining a
+** copy of this software and/or associated documentation files (the
+** "Materials"), to deal in the Materials without restriction, including
+** without limitation the rights to use, copy, modify, merge, publish,
+** distribute, sublicense, and/or sell copies of the Materials, and to
+** permit persons to whom the Materials are furnished to do so, subject to
+** the following conditions:
+**
+** The above copyright notice and this permission notice shall be included
+** in all copies or substantial portions of the Materials.
+**
+** THE MATERIALS ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+** EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+** MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+** IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+** CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+** TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+** MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
+*/
+
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WEBGL_get_buffer_sub_data_async context loss regression test.</title>
+<link rel="stylesheet" href="../../resources/js-test-style.css"/>
+<script src="../../js/js-test-pre.js"></script>
+<script src="../../js/webgl-test-utils.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<canvas id="canvas" width="1" height="1"></canvas>
+<div id="console"></div>
+<script>
+"use strict";
+description("This test makes sure that getBufferSubDataAsync does not cause crashes upon context loss.");
+
+var wtu = WebGLTestUtils;
+var canvas = document.getElementById("canvas");
+
+var gl = wtu.create3DContext(canvas, undefined, 2);
+var WEBGL_get_buffer_sub_data_async = gl.getExtension("WEBGL_get_buffer_sub_data_async");
+wtu.glErrorShouldBe(gl, gl.NO_ERROR, "Should be no errors from setup.");
+if (!WEBGL_get_buffer_sub_data_async) {
+  testPassed("No WEBGL_get_buffer_sub_data_async support -- this is legal");
+  finishTest();
+} else {
+  testPassed("Successfully enabled WEBGL_get_buffer_sub_data_async extension");
+  runTests();
+}
+
+var extension;
+
+function runTests() {
+  var extensionName = wtu.getSupportedExtensionWithKnownPrefixes(gl, "WEBGL_lose_context");
+  if (!extensionName) {
+    debug("Could not find WEBGL_lose_context extension");
+    return;
+  }
+  extension = gl.getExtension(extensionName);
+
+  var iter = 0;
+  var ITERS = 20;
+  canvas.addEventListener("webglcontextrestored", test);
+  canvas.addEventListener("webglcontextlost", function(e) {
+    e.preventDefault();
+    webglHarnessCollectGarbage();
+    setTimeout(function() {
+      wtu.shouldGenerateGLError(gl, gl.NO_ERROR, "extension.restoreContext()");
+    }, 100);
+  });
+
+  test();
+
+  function test() {
+    shouldBeFalse("gl.isContextLost()");
+    if (iter >= ITERS) {
+      finishTest();
+      return;
+    }
+    iter++;
+
+    var pbo = gl.createBuffer();
+    gl.bindBuffer(gl.PIXEL_PACK_BUFFER, pbo);
+    gl.bufferData(gl.PIXEL_PACK_BUFFER, 4, gl.DYNAMIC_READ);
+    gl.bindBuffer(gl.PIXEL_PACK_BUFFER, null);
+    var readbackBuffer = new Uint8Array(4);
+
+    gl.bindBuffer(gl.PIXEL_PACK_BUFFER, pbo);
+    gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, 0);
+    var promise = WEBGL_get_buffer_sub_data_async.getBufferSubDataAsync(gl.PIXEL_PACK_BUFFER, 0, readbackBuffer);
+    gl.bindBuffer(gl.PIXEL_PACK_BUFFER, null);
+    var completed = false;
+    promise.then(function(buf) {
+      testFailed("should not resolve");
+    }, function(e) {
+      testPassed("correctly rejected with " + e);
+      wtu.glErrorShouldBe(gl, gl.NO_ERROR, "should be no new errors from late rejection");
+    }).then(function() {
+      completed = true;
+    });
+
+    wtu.shouldGenerateGLError(gl, gl.CONTEXT_LOST_WEBGL, "extension.loseContext()");
+  }
+}
+
+var successfullyParsed = true;
+</script>
+</body>
+</html>

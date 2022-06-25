@@ -1,0 +1,81 @@
+
+
+
+** <audio> element test **
+
+** Check category before anything has loaded.
+EXPECTED (internals.audioSessionCategory() == 'None') OK
+
+** Check category when a muted, paused, element has loaded.
+EVENT(canplaythrough)
+EXPECTED (internals.audioSessionCategory() == 'None') OK
+
+** Check category when a muted element is playing.
+RUN(video.play())
+EVENT(playing)
+EXPECTED (internals.audioSessionCategory() == 'None') OK
+EXPECTED (internals.routeSharingPolicy() == 'Default') OK
+
+** Check category when an unmuted element is playing.
+RUN(video.muted = false)
+EVENT(volumechange)
+EXPECTED (internals.audioSessionCategory() == 'MediaPlayback') OK
+EXPECTED (internals.routeSharingPolicy() == 'LongFormAudio') OK
+
+** Mute the element, check again after 500ms.
+RUN(video.pause())
+RUN(video.muted = true)
+EXPECTED (internals.audioSessionCategory() == 'MediaPlayback') OK
+EXPECTED (internals.routeSharingPolicy() == 'LongFormAudio') OK
+
+** And check again after 3 seconds.
+EXPECTED (internals.audioSessionCategory() == 'None') OK
+EXPECTED (internals.routeSharingPolicy() == 'Default') OK
+
+
+** AudioContext test **
+
+** Check category before creating AudioContext.
+EXPECTED (internals.audioSessionCategory() == 'None') OK
+
+** Check category after AudioContext has been created but not started.
+EXPECTED (internals.audioSessionCategory() == 'None') OK
+
+** Check category after starting oscillator.
+EXPECTED (internals.audioSessionCategory() == 'AmbientSound') OK
+EXPECTED (internals.routeSharingPolicy() == 'Default') OK
+
+** Close the context, check again after 500ms.
+EXPECTED (internals.audioSessionCategory() == 'AmbientSound') OK
+EXPECTED (internals.routeSharingPolicy() == 'Default') OK
+
+** And check again after 3 seconds.
+EXPECTED (internals.audioSessionCategory() == 'None') OK
+EXPECTED (internals.routeSharingPolicy() == 'Default') OK
+
+
+** MediaStream test **
+
+** Check category before capture begins.
+EXPECTED (internals.audioSessionCategory() == 'None') OK
+
+** Check category when capturing.
+EXPECTED (internals.audioSessionCategory() == 'PlayAndRecord') OK
+EXPECTED (internals.routeSharingPolicy() == 'Default') OK
+
+** Check after MediaStream is attached to audio element.
+RUN(video.play())
+EVENT(playing)
+EXPECTED (internals.audioSessionCategory() == 'PlayAndRecord') OK
+EXPECTED (internals.routeSharingPolicy() == 'Default') OK
+
+** Check after MediaStream muting audio track.
+EXPECTED (internals.audioSessionCategory() == 'PlayAndRecord') OK
+
+** Check 500ms after MediaStream stopping capture.
+EXPECTED (internals.audioSessionCategory() == 'PlayAndRecord') OK
+
+** And check again after 3 seconds.
+EXPECTED (internals.audioSessionCategory() == 'None') OK
+END OF TEST
+

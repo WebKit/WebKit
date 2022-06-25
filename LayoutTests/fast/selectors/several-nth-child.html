@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+body:nth-child(n) div:nth-child(n) ul:nth-child(n) li:nth-child(n) span:nth-child(n) span:nth-child(n) span:nth-child(n) span:nth-child(n) span:nth-child(n) span:nth-child(n) {
+    background-color:rgb(1, 2, 3);
+}
+body:nth-child(n+1) div:nth-child(n+1) ul:nth-child(n+1) li:nth-child(n+1) span:nth-child(n+1) span:nth-child(n+1) span:nth-child(n+1) span:nth-child(n+1) span:nth-child(n+1) span:nth-child(n+1) {
+    color:rgb(4, 5, 6);
+}
+</style>
+</head>
+<body>
+    <div style="display:none">
+        <ul>
+            <li><span><span><span><span><span><span id=target></span></span></span></span></span></span></li>
+        </ul>
+    </div>
+</body>
+<script>
+description('Verify the nth-child() pseudo class does not leak registers.');
+
+shouldBe('document.querySelectorAll("body:nth-child(n) div:nth-child(n) ul:nth-child(n) li:nth-child(n) span:nth-child(n) span:nth-child(n) span:nth-child(n) span:nth-child(n) span:nth-child(n) span:nth-child(n)").length', '1');
+shouldBeEqualToString('getComputedStyle(document.getElementById("target")).backgroundColor', 'rgb(1, 2, 3)');
+shouldBe('document.querySelectorAll("body:nth-child(n+1) div:nth-child(n+1) ul:nth-child(n+1) li:nth-child(n+1) span:nth-child(n+1) span:nth-child(n+1) span:nth-child(n+1) span:nth-child(n+1) span:nth-child(n+1) span:nth-child(n+1)").length', '1');
+shouldBeEqualToString('getComputedStyle(document.getElementById("target")).color', 'rgb(4, 5, 6)');
+
+shouldBe('document.querySelectorAll("body:nth-child(1) div:nth-child(1) ul:nth-child(1) li:nth-child(1) span:nth-child(1) span:nth-child(1) span:nth-child(1) span:nth-child(1) span:nth-child(1) span:nth-child(1)").length', '0');
+shouldBe('document.querySelectorAll("body:nth-child(2) div:nth-child(2) ul:nth-child(2) li:nth-child(2) span:nth-child(2) span:nth-child(2) span:nth-child(2) span:nth-child(2) span:nth-child(2) span:nth-child(2)").length', '0');
+shouldBe('document.querySelectorAll("body:nth-child(2n) div:nth-child(2n) ul:nth-child(2n) li:nth-child(2n) span:nth-child(2n) span:nth-child(2n) span:nth-child(2n) span:nth-child(2n) span:nth-child(2n) span:nth-child(2n)").length', '0');
+shouldBe('document.querySelectorAll("body:nth-child(2n+1) div:nth-child(2n+1) ul:nth-child(2n+1) li:nth-child(2n+1) span:nth-child(2n+1) span:nth-child(2n+1) span:nth-child(2n+1) span:nth-child(2n+1) span:nth-child(2n+1) span:nth-child(2n+1)").length', '0');
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

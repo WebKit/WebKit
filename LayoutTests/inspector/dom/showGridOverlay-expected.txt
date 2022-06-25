@@ -1,0 +1,63 @@
+Tests for the DOM.showGridOverlay command.
+
+A
+B
+C
+D
+E
+F
+
+A
+B
+C
+D
+E
+F
+
+== Running test suite: DOM.showGridOverlay
+-- Running test case: DOM.showGridOverlay.ShowOneGrid
+PASS: Should have 0 grids displayed.
+Requesting to show grid overlay for first .grid-container
+PASS: Should have 1 grid displayed.
+Requesting to show a different grid overlay for first .grid-container
+PASS: Should have 1 grid displayed.
+Requesting to hide grid overlay
+PASS: Should have 0 grids displayed.
+
+-- Running test case: DOM.showGridOverlay.ShowTwoGrids
+PASS: Should have 0 grids displayed.
+Requesting to show first grid overlay
+PASS: Should have 1 grid displayed.
+Requesting to show second grid overlay
+PASS: Should have 2 grids displayed.
+Requesting to hide first grid overlay
+PASS: Should have 1 grid displayed.
+Requesting to hide second grid overlay
+PASS: Should have 0 grids displayed.
+
+-- Running test case: DOM.showGridOverlay.HideAllGrids
+PASS: Should have 0 grids displayed.
+Requesting to show grid overlay
+PASS: Should have 1 grid displayed.
+Requesting to show a different grid overlay
+PASS: Should have 2 grids displayed.
+Requesting to hide all grid overlays. Hiding all grids is idempotent and should not throw an error.
+PASS: Should have 0 grids displayed.
+Requesting to hide all grid overlays again, expecting none to be cleared. Hiding all grids is idempotent and should not throw an error.
+PASS: Should have 0 grids displayed.
+
+-- Running test case: DOM.showGridOverlay.HideBeforeShowShouldError
+PASS: Should have 0 grids displayed.
+Requesting to hide grid overlay for .grid-container
+PASS: Should produce an exception.
+Error: No grid overlay exists for the node, so cannot clear.
+Requesting to hide all grid overlays. Hiding all grids is idempotent and should not throw an error.
+PASS: Should have 0 grids displayed.
+
+-- Running test case: DOM.showGridOverlay.ForNonexistentNodeShouldError
+PASS: Should have 0 grids displayed.
+Requesting to show grid overlay for invalid nodeId -1
+PASS: Should produce an exception.
+Error: Missing node for given nodeId
+PASS: Should have 0 grids displayed.
+

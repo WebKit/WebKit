@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<ul id="list">
+    <li id="first-list-item" aria-setsize="100" aria-posinset="3">3</li>
+    <li id="second-list-item">4</li>
+</ul>
+
+<script>
+    var testOutput = "This tests verifies that aria-posinset and aria-setsize are exposed to accessibility correctly.\n\n";
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        var firstListItem = accessibilityController.accessibleElementById("first-list-item");
+        var secondListItem = accessibilityController.accessibleElementById("second-list-item");
+
+        testOutput += "\nVerify that the first item in the list exposes setsize and posinset attributes.\n";
+        testOutput += expect("firstListItem.isAttributeSupported('AXARIASetSize')", "true");
+        testOutput += expect("firstListItem.isAttributeSupported('AXARIAPosInSet')", "true");
+
+        testOutput += "\nVerify that the first item in the list returns the correct value for setsize and posinset.\n";
+        testOutput += expect("firstListItem.numberAttributeValue('AXARIASetSize')", "100");
+        testOutput += expect("firstListItem.numberAttributeValue('AXARIAPosInSet')", "3");
+
+        testOutput += "\nVerify that the second item in the list does not support setsize and posinset.\n";
+        testOutput += expect("secondListItem.isAttributeSupported('AXARIASetSize')", "false");
+        testOutput += expect("secondListItem.isAttributeSupported('AXARIAPosInSet')", "false");
+
+        testOutput += "\nUpdating aria-posinset to 4 for element #first-list-item.\n";
+        document.getElementById("first-list-item").ariaPosInSet = "4";
+        setTimeout(async function() {
+            await waitFor(() => firstListItem.numberAttributeValue('AXARIAPosInSet') === 4);
+            testOutput += expect("firstListItem.numberAttributeValue('AXARIAPosInSet')", "4");
+
+            testOutput += "\nUpdating aria-setsize to 101 for element #first-list-item.\n";
+            document.getElementById("first-list-item").ariaSetSize = "101";
+            await waitFor(() => firstListItem.numberAttributeValue("AXARIASetSize") === 101);
+            testOutput += expect("firstListItem.numberAttributeValue('AXARIASetSize')", "101");
+
+            document.getElementById("list").style.visibility = 'hidden';
+            debug(testOutput);
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>
+

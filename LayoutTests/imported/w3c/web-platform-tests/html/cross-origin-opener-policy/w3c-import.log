@@ -1,0 +1,90 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/README.md
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/blob-popup.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/blob-popup.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coep-blob-popup.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coep-blob-popup.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coep-navigate-popup.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coep-navigate-popup.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coep-redirect.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coep-redirect.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coep.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coep.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-coep-sandbox.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-coep-sandbox.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-csp-sandbox-navigate.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-csp-sandbox.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-navigate-same-origin-csp-sandbox.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-navigated-history-popup.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-navigated-popup.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-navigated-popup.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-same-origin-allow-popups-document-write.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-sandbox-cuts-opener.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-sandbox-redirects-cuts-opener.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-sandbox.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-sandbox.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/header-parsing.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-same-origin-allow-popups.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-same-origin-allow-popups.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-same-origin.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-same-origin.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-unsafe-none.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-unsafe-none.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-to-same-origin.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-to-same-origin.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-to-unsafe-none.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-to-unsafe-none.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-unsafe-none-to-same-origin.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-unsafe-none-to-same-origin.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-unsafe-none-to-unsafe-none.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-unsafe-none-to-unsafe-none.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/javascript-url.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/navigate-to-aboutblank.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/navigate-top-to-aboutblank.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/no-https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/no-https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-coop-by-sw.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-meta-http-equiv.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-redirect-cache.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-redirect-cache.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-redirect-same-origin-allow-popups.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-same-origin-allow-popups-with-cross-origin.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-same-origin-allow-popups-with-cross-origin.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-same-origin-allow-popups-with-same-origin.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-same-origin-allow-popups-with-same-origin.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-same-origin-allow-popups-with-same-site.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-same-origin-allow-popups-with-same-site.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-same-origin-non-initial-about-blank.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-same-origin-non-initial-about-blank.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-same-origin-with-cross-origin.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-same-origin-with-cross-origin.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-same-origin-with-same-origin.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-same-origin-with-same-origin.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-same-origin-with-same-site.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-same-origin-with-same-site.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-unsafe-none-with-cross-origin.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-unsafe-none-with-same-origin.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-unsafe-none-with-same-origin.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-unsafe-none-with-same-site.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-unspecified-with-cross-origin.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-unspecified-with-same-origin.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-unspecified-with-same-site.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-with-structured-header.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-with-structured-header.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resource-popup.https.html

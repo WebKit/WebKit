@@ -1,0 +1,20 @@
+<!DOCTYPE html><!-- webkit-test-runner [ isAppInitiated=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<p>Tests app initiated requests get marked for POST requests.</p>
+<form id="testForm" action="resources/app-initiated-post.py" target="_blank" rel="noreferrer" method="post">
+<input type="submit" value="Test"></input>
+<form>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+document.forms[0].submit();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+
+PASS Basic nonce tests for meh in HTML namespace
+PASS Ensure that removal of content attribute does not affect IDL attribute for meh in HTML namespace
+PASS Test empty nonces for meh in HTML namespace
+PASS Basic nonce tests for div in HTML namespace
+PASS Ensure that removal of content attribute does not affect IDL attribute for div in HTML namespace
+PASS Test empty nonces for div in HTML namespace
+PASS Basic nonce tests for script in HTML namespace
+PASS Ensure that removal of content attribute does not affect IDL attribute for script in HTML namespace
+PASS Test empty nonces for script in HTML namespace
+PASS Basic nonce tests for meh in SVG namespace
+PASS Ensure that removal of content attribute does not affect IDL attribute for meh in SVG namespace
+PASS Test empty nonces for meh in SVG namespace
+PASS Basic nonce tests for svg in SVG namespace
+PASS Ensure that removal of content attribute does not affect IDL attribute for svg in SVG namespace
+PASS Test empty nonces for svg in SVG namespace
+PASS Basic nonce tests for script in SVG namespace
+PASS Ensure that removal of content attribute does not affect IDL attribute for script in SVG namespace
+PASS Test empty nonces for script in SVG namespace
+

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+var varGlobalVariable = 1;
+let letGlobalVariable = 2;
+const constGlobalVariable = 3;
+var varGlobalFunctionVariable = 4;
+
+function test()
+{
+    const objectGroup = "test";
+    const includeCommandLineAPI = true;
+    const returnByValue = true;
+
+    function testEvaluate(expression, callback) {
+        RuntimeAgent.evaluate.invoke({expression, objectGroup, includeCommandLineAPI, returnByValue}, (error, resultValue, wasThrown) => {
+            InspectorTest.assert(!error, "Should not be a protocol error.");
+            InspectorTest.assert(!wasThrown, "Should not be a runtime error.");
+            if (callback)
+                callback(resultValue.value);
+        });
+    }
+
+    function testEvaluateThrow(expression, callback) {
+        RuntimeAgent.evaluate.invoke({expression, objectGroup, includeCommandLineAPI, returnByValue}, (error, resultValue, wasThrown) => {
+            InspectorTest.assert(!error, "Should not be a protocol error.");
+            InspectorTest.assert(wasThrown, "Should be a runtime error.");
+            if (callback)
+                callback(wasThrown);
+        });
+    }
+
+    let suite = InspectorTest.createAsyncSuite("Runtime.evaluate.CommandLineAPI");
+
+    suite.addTestCase({
+        name: "AccessCommandLineAPI",
+        description: "Test evaluate can access CommandLineAPI methods.",
+        test(resolve, reject) {
+            testEvaluate("keys.toString()", (resultValue) => {
+                InspectorTest.expectThat(resultValue.includes("[Command Line API]"), "CommandLineAPI `keys` can be accessed.");
+            });
+            testEvaluate("keys({a:1, b:2})", (resultValue) => {
+                InspectorTest.expectThat(resultValue.length === 2 && resultValue[0] === "a" && resultValue[1] === "b", "CommandLineAPI `keys` should work with a simple object.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "AccessGlobalVariable",
+        description: "Test evaluate can access global variables.",
+        test(resolve, reject) {
+            testEvaluate("varGlobalVariable", (resultValue) => {
+                InspectorTest.expectThat(resultValue === 1, "Should be able to access var in global scope.");
+            });
+            testEvaluate("letGlobalVariable", (resultValue) => {
+                InspectorTest.expectThat(resultValue === 2, "Should be able to access let in global scope.");
+            });
+            testEvaluate("constGlobalVariable", (resultValue) => {
+                InspectorTest.expectThat(resultValue === 3, "Should be able to access const in global scope.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "CreateGlobalVariable",
+        description: "Test evaluate can create global variables.",
+        test(resolve, reject) {
+            testEvaluate(`
+                var createdVarGlobalVariable = 1;
+                let createdLetGlobalVariable = 2;
+                const createdConstGlobalVariable = 3;
+            `);
+            testEvaluate("createdVarGlobalVariable", (resultValue) => {
+                InspectorTest.expectThat(resultValue === 1, "Should be able to access created var in global scope.");
+            });
+            testEvaluate("createdLetGlobalVariable", (resultValue) => {
+                InspectorTest.expectThat(resultValue === 2, "Should be able to access created let in global scope.");
+            });
+            testEvaluate("createdConstGlobalVariable", (resultValue) => {
+                InspectorTest.expectThat(resultValue === 3, "Should be able to access created const in global scope.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "CreateGlobalClass",
+        description: "Test evaluate can create a class.",
+        test(resolve, reject) {
+            testEvaluate(`
+                class Foo {
+                    static staticMethod() {
+                        return 42;
+                    }
+                }
+            `);
+            testEvaluate("Foo.staticMethod()", (resultValue) => {
+                InspectorTest.expectThat(resultValue === 42, "Should be able to access class created in earlier evaluation.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "ExpectedExceptionCreatingDuplicateLexicalGlobalVariables",
+        description: "Test evaluate produces expected exception creating duplicate lexical global variables across evaluations.",
+        test(resolve, reject) {
+            testEvaluate(`let duplicateGlobalVariable = 1`);
+            testEvaluateThrow(`let duplicateGlobalVariable = 1`, (wasThrown) => {
+                InspectorTest.expectThat(wasThrown, "Should be an exception defining a lexical global multiple times.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "NonStrictAndStrictEvaluations",
+        description: "Test evaluate can run strict and non-strict programs.",
+        test(resolve, reject) {
+            testEvaluate(`
+                // Not strict, this is okay.
+                (function f() {
+                    return arguments.callee.name;
+                })();
+            `, (resultValue) => {
+                InspectorTest.expectThat(resultValue === "f", "Non-strict evaluation. Should be able to access arguments.callee.");
+            });
+            testEvaluateThrow(`"use strict";
+                // Strict, this throw an exception.
+                (function() {
+                    return arguments.callee;
+                })();`
+            , (wasThrown) => {
+                InspectorTest.expectThat(wasThrown, "Script evaluation. Should not be able to access arguments.callee.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "CommandLineAPIDoesNotShadowVariables",
+        description: "Test CommandLineAPI does not shadow global variables.",
+        test(resolve, reject) {
+            testEvaluate("keys.toString()", (resultValue) => {
+                InspectorTest.expectThat(resultValue.includes("[Command Line API]"), "`keys` is currently CommandLineAPI function.");
+            });
+            testEvaluate("var keys = 123; keys", (resultValue) => {
+                InspectorTest.expectThat(resultValue === 123, "Creating global `keys` variable should be okay.");
+            });
+            testEvaluate("keys", (resultValue) => {
+                InspectorTest.expectThat(resultValue === 123, "Global `keys` variable should not be shadowed by CommandLineAPI function.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "CommandLineAPIDoesNotShadowGlobalObjectProperties",
+        description: "Test CommandLineAPI does not shadow global object properties.",
+        test(resolve, reject) {
+            testEvaluate("values.toString()", (resultValue) => {
+                InspectorTest.expectThat(resultValue === "[object HTMLDivElement]", "`values` should be `window.values` and not shadowed by CommandLineAPI `values` function.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "NonStrictEvalHoistEvaluations",
+        description: "Test CommandLineAPI does not shadow global object variable that hoisted from eval.",
+        test(resolve, reject) {
+            testEvaluate("varGlobalFunctionVariable", (resultValue) => {
+                InspectorTest.expectThat(resultValue === 4, "Should be able to access var in global scope.");
+            });            
+            testEvaluate(`
+                let noError = varGlobalFunctionVariable === 4;
+                eval('eval(" { function varGlobalFunctionVariable() { }; } ")');
+                typeof varGlobalFunctionVariable === 'function' && noError;
+            `, (resultValue) => {
+                InspectorTest.expectThat(resultValue, "Should be able to hoist function to var in global scope.");
+            });
+            testEvaluate("varGlobalFunctionVariable", (resultValue) => {
+                InspectorTest.expectThat(typeof resultValue, "Should be able to hoist function to var in global scope and keep it.");
+                resolve();
+            });    
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<div id="values"></div> <!-- This introduces the named property `window.values` on the window global object. -->
+<p>Tests for the Runtime.evaluate with the Command Line API.</p>
+</body>
+</html>

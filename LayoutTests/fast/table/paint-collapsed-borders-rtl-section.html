@@ -1,0 +1,40 @@
+<!doctype html>
+<head>
+<style>
+table  {
+    border: solid 20px red; 
+    border-collapse: collapse;
+}
+#tbody1  {
+    border: solid 20px blue; 
+    direction: rtl;
+}
+td  {
+    height: 20px;
+    width: 20px;
+}
+</style>
+</head>
+<body>
+<table>
+    <p> webkit.org/b/119691: Paint collapsed section borders correctly when the section has rtl direction.
+	<tbody id="tbody1">
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    </tbody>
+</table>
+</body
+</html>

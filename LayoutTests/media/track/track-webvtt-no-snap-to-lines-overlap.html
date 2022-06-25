@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>track-webvtt-no-snap-to-lines-overlap</title>
+    <style>
+        html { overflow:hidden }
+        body { margin:0 }
+        ::cue {
+            font-family: Ahem, sans-serif;
+            font-size: 12px;
+            background-color: black;
+            color: green;
+        }
+    </style>
+    <script>var requirePixelDump = true;</script>
+    <script src="../video-test.js"></script>
+    <script src="../media-file.js"></script>
+    <script>
+    window.addEventListener('load', async event => {
+        findMediaElement();
+
+        run(`video.querySelector("track").src = "captions-webvtt/no-snap-to-lines-overlap.vtt"`);
+        run(`video.textTracks[0].mode = "showing"`);
+        await waitFor(video.querySelector('track'), 'load');
+
+        run(`video.src = findMediaFile("video", "w3c/track/webvtt/media/white")`);
+        await waitFor(video, 'canplaythrough');
+
+        endTest();
+    });
+    </script>
+</head>
+<body>
+    <video>
+        <track id="testTrack" kind="captions" default>
+    </video>
+</body>
+</html>

@@ -1,0 +1,5 @@
+Tests that we support cloning deep(ish) arrays.
+
+PASS: eventData is [object Array](default toString threw RangeError: Maximum call stack size exceeded.) of type object
+PASS: eventData is done of type string
+

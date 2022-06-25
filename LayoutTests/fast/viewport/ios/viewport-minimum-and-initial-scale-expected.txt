@@ -1,0 +1,2 @@
+The current scale is 0.94000, and the minimum scale is 0.94000
+This test verifies that specifying initial and minimum scales of 0.94 sets the current and minimum zoom scales to exactly 0.94. This is best run under WebKitTestRunner.

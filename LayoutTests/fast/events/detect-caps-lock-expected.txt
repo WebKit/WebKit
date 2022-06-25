@@ -1,0 +1,16 @@
+This test verifies that the function WebCore::currentCapsLockState() returns true when Caps Lock is on.
+
+
+1. Press Caps Lock key when view is active, make view inactive, make view active again, press Caps Lock key.
+CapsLock is on.
+CapsLock is not on.
+2. Press Caps Lock key in inactive view, make view active, press Caps Lock key.
+CapsLock is on.
+CapsLock is not on.
+3. Press Caps Lock key when view is active, press Caps Lock key when view is active.
+CapsLock is on.
+CapsLock is not on.
+4. Press Caps Lock key when view is inactive, press Caps Lock key when view inactive.
+CapsLock is on.
+CapsLock is not on.
+

@@ -1,0 +1,186 @@
+body {
+	font-family: Verdana, Arial, Helvetica;
+	font-size: 12px;
+	padding: 0 5px 0 5px;
+	margin: 0;
+}
+
+a img {
+	border: 0;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+th {
+	padding-right: 10px;
+}
+
+hr {
+	border: 1px dotted #aaa;
+	border-bottom: 0px;
+}
+
+#header {
+        padding-top: 5px;
+}
+
+#titles {
+        height: 32px;
+	-webkit-border-top-left-radius: 10px;
+	-webkit-border-top-right-radius: 10px;
+	-moz-border-top-left-radius: 10px;
+	-moz-border-top-right-radius: 10px;
+}
+
+#title {
+        text-align: center;
+        padding-left: 10px;
+        padding-right: 10px;
+        font-size: 20px;
+        text-shadow: #000 1px 1px 5px;
+}
+
+#bug_title {
+        text-align: center;
+	background-color: #ddd;
+        padding: 5px;
+        border: 1px solid #aaa;
+}
+
+#header > .links {
+	-webkit-border-bottom-left-radius: 10px;
+	-webkit-border-bottom-right-radius: 10px;
+	-moz-border-botom-left-radius: 10px;
+	-moz-border-botom-right-radius: 10px;
+}
+
+#header h1, #header h2, #header h3 {
+        font-family: Verdana, Arial, Helvetica;
+	padding: 0;
+	margin: 0;
+}
+
+#header h1, #header h3 {
+	font-weight: normal;
+}
+
+div#header h2 {
+	font-weight: bold;
+	font-size: 14px;
+	text-align: center;
+}
+
+div#navigate {
+	text-align: center;
+/*	background-color: #ddd; */
+        -webkit-border-radius: 10px;
+        -moz-border-radius: 10px;     
+	padding: 10px 0 10px 0;
+}
+
+table#bug_details {
+	width: 98%;
+	padding: 10px;
+	margin: 10px 0 10px 0;
+}
+
+table#bug_details select {
+	width: 150px;
+}
+
+table#bug_details #flags {
+        margin-top: 1.5em;
+}
+
+table#bug_details #flags select {
+        width: auto;
+}
+
+table#bug_details #flags th {
+        display: none;
+}
+
+table#bug_details #flags td {
+        font-weight: bold;
+}
+
+#attachment_table {
+        width: auto;
+}
+
+#summary_fields input {
+  width: 50em;
+}
+
+#comment, #description {
+  width: 98%;
+}
+
+span.bz_comment {
+	display: block;
+	background-color: #ddd;
+	border-bottom: 1px dotted #bbb;
+	padding: 2px 0 2px 0;
+}
+
+.bz_comment_text {
+    /* Do not specify a hard width.  Otherwise, comment lines will "pre-wrap"
+       to the specified width rather than to the window width. */
+    width: auto;
+}
+
+.bz_comment_text > span.quote {
+    /* Prevent span.quote's "white-space: pre" from styling quoted lines
+       inside comments.  Otherwise, a single quoted line that extends
+       beyond the window width will cause all non-quoted long lines to
+       extend beyond the window width as well. */
+    white-space: inherit;
+}
+
+#footer form {
+	border-top: 1px dotted #aaa;
+	border-bottom: 1px dotted #aaa;
+	background-position: right center;
+	background-repeat: no-repeat;
+	min-height: 100px;
+}
+
+#footer .label {
+	width: 100px;
+	font-weight: bold;
+}
+
+div.links {
+	margin-bottom: 6px;
+}
+
+.bz_tr_obsolete,
+.bz_obsolete, tr.bz_obsolete td, tr.bz_obsolete a {
+	color: #aaa;
+	text-decoration: none;
+}
+
+.bz_tr_obsolete:hover,
+.bz_obsolete:hover, tr.bz_obsolete td:hover, tr.bz_obsolete td:hover a, tr.bz_obsolete td:hover a:hover {
+	background-color: #ddd;
+	color: #111;
+}
+
+.bz_patch {
+
+}
+
+.bz_alias_short_desc_container {
+        -webkit-border-radius: 5px;
+        -moz-border-radius: 5px;     
+}
+
+.comment_rule {
+        visibility: collapse;
+}
+
+.flag_select {
+        min-width: 40px;
+}

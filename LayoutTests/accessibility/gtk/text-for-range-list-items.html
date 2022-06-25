@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<ol>
+<li>A list item</li>
+<li><span style='display:block;'>Block span in a list item</span><span>Inline span in a list item</span></li>
+<li><a href='foo'><span style='display:block;'>Block span in a link in a list item</span><span>Inline span in a link in a list item</span></a></li>
+</ol>
+<ul><li>text only</li><li><a href='foo'>link only</a></li><li>text and a <a href='bar'>link</a></li></ul>
+<ol><li>text only</li><li><a href='foo'>link only</a></li><li>text and a <a href='bar'>link</a></li></ol>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("This tests the ability to get element text for a specified range.");
+    if (window.accessibilityController) {
+        document.getElementById("body").focus();
+        var webArea = accessibilityController.focusedElement;
+
+        var list = webArea.childAtIndex(0);
+        var listitem1 = list.childAtIndex(0);
+        var listitem2 = list.childAtIndex(1);
+        var listitem3 = list.childAtIndex(2);
+        shouldBe("listitem1.stringForRange(0, -1)", "'1. A list item'");
+        shouldBe("listitem2.stringForRange(0, -1)", "'2. Block span in a list item\\nInline span in a list item'");
+        shouldBe("listitem3.stringForRange(0, -1)", "'3. Block span in a link in a list item\\nInline span in a link in a list item'");
+
+        list = webArea.childAtIndex(1);
+        listitem1 = list.childAtIndex(0);
+        listitem2 = list.childAtIndex(1);
+        listitem3 = list.childAtIndex(2);
+        shouldBe("listitem1.stringForRange(0, -1)", "'\342\200\242 text only'");
+        shouldBe("listitem2.stringForRange(0, -1)", "'\342\200\242 link only'");
+        shouldBe("listitem3.stringForRange(0, -1)", "'\342\200\242 text and a link'");
+
+        list = webArea.childAtIndex(2);
+        listitem1 = list.childAtIndex(0);
+        listitem2 = list.childAtIndex(1);
+        listitem3 = list.childAtIndex(2);
+        shouldBe("listitem1.stringForRange(0, -1)", "'1. text only'");
+        shouldBe("listitem2.stringForRange(0, -1)", "'2. link only'");
+        shouldBe("listitem3.stringForRange(0, -1)", "'3. text and a link'");
+    }
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

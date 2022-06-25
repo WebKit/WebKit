@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-mp4-h264-partial-abort</title>
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var loader;
+    var source;
+    var sourceBuffer;
+    var random;
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    function randomNumber(min, max) {
+        return Math.floor(Math.random() * (max - min) + min);
+    }
+
+    window.addEventListener('load', async event => {
+        try {
+            findMediaElement();
+            loader = new MediaSourceLoader('content/test-fragmented-video-manifest.json');
+            await loaderPromise(loader);
+
+            source = new MediaSource();
+            run('video.src = URL.createObjectURL(source)');
+            await waitFor(source, 'sourceopen');
+            waitFor(video, 'error').then(failTest);
+
+            consoleWrite('Append the init segment in two chunks');
+            run('sourceBuffer = source.addSourceBuffer(loader.type())');
+            consoleWrite('Divide the init segment in two.');
+            run('random = randomNumber(1, 720)');
+            run('partial1 = loader.initSegment().slice(0, random)');
+            run('partial2 = loader.initSegment().slice(random)');
+            let firstSegment = true;
+            run('sourceBuffer.appendBuffer(partial1)');
+            waitFor(video, 'loadedmetadata').then(() => {
+                if (firstSegment)
+                    failtest('loadedmetada can only be fired once the whole init segment has been appended');
+            });
+            await waitFor(sourceBuffer, 'update');
+            firstSegment = false;
+            run('sourceBuffer.appendBuffer(partial2)');
+            await waitFor(sourceBuffer, 'update');
+
+            consoleWrite('Append the two partial media segments in reverse order. Separated with an abort');
+            run('sourceBuffer.appendBuffer(loader.mediaSegment(3).slice(0, 45000))');
+            await waitFor(sourceBuffer, 'update');
+            run('sourceBuffer.abort()');
+            testExpected('sourceBuffer.buffered.length', '1');
+            testExpected('sourceBuffer.buffered.end(0)', '3.541', '>=');
+            run('sourceBuffer.appendBuffer(loader.mediaSegment(0).slice(0, 45000))');
+            await waitFor(sourceBuffer, 'update');
+            testExpected('sourceBuffer.buffered.length', '2');
+            testExpected('sourceBuffer.buffered.end(0)', '0.708', '>=');
+            testExpected('sourceBuffer.buffered.end(1)', '3.541', '>=');
+
+            consoleWrite('Clean sourcebuffer of all content.');
+            consoleWrite('Ensure an init segment is accepted right after an aborted partial media segment');
+            run('sourceBuffer.abort()');
+            run('sourceBuffer.remove(0, 100)');
+            await waitFor(sourceBuffer, 'update');
+            run('sourceBuffer.appendBuffer(loader.mediaSegment(3).slice(0, 45000))');
+            await waitFor(sourceBuffer, 'update');
+            run('sourceBuffer.abort()');
+            testExpected('sourceBuffer.buffered.length', '1');
+            testExpected('sourceBuffer.buffered.end(0)', '3.541', '>=');
+            run('sourceBuffer.appendBuffer(loader.initSegment())');
+            await waitFor(sourceBuffer, 'update');
+            run('sourceBuffer.appendBuffer(loader.mediaSegment(0).slice(0, 45000))');
+            await waitFor(sourceBuffer, 'update');
+            testExpected('sourceBuffer.buffered.length', '2');
+            testExpected('sourceBuffer.buffered.end(0)', '0.708', '>=');
+            testExpected('sourceBuffer.buffered.end(1)', '3.541', '>=');
+
+            consoleWrite('Same as above without waiting for the first append to complete. This is not a deterministic speced behaviour');
+            consoleWrite('Clean sourcebuffer of all content.');
+            run('sourceBuffer.abort()');
+            run('sourceBuffer.remove(0, 100)');
+            await waitFor(sourceBuffer, 'update');
+            run('sourceBuffer.appendBuffer(loader.mediaSegment(3).slice(0, 45000))');
+            run('sourceBuffer.abort()');
+            run('sourceBuffer.appendBuffer(loader.initSegment())');
+            await waitFor(sourceBuffer, 'update');
+            run('sourceBuffer.appendBuffer(loader.mediaSegment(0).slice(0, 45000))');
+            await waitFor(sourceBuffer, 'update');
+            testExpected('sourceBuffer.buffered.length', '1');
+            testExpected('sourceBuffer.buffered.end(0)', '0.708', '>=');
+
+            endTest();
+        } catch (e) {
+            failTest(`Caught exception: "${e}"`);
+        }
+    });
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>

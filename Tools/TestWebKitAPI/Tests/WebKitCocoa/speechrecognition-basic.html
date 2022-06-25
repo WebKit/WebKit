@@ -1,0 +1,57 @@
+<html>
+<body>
+<audio id="audio" autoplay></audio>
+
+<script>
+
+var speechRecognition = null;
+var recorder = null;
+var shouldHandleEndEvent = false;
+
+function setShouldHandleEndEvent(shouldHandleEvent)
+{
+    shouldHandleEndEvent = shouldHandleEvent;
+}
+
+function start()
+{
+    if (!speechRecognition)
+        speechRecognition = new webkitSpeechRecognition();
+    speechRecognition.continuous = true;
+    speechRecognition.onstart = () => window.webkit.messageHandlers.testHandler.postMessage("Start");
+    speechRecognition.onerror = (event) => window.webkit.messageHandlers.testHandler.postMessage("Error: " + event.error + " - " +  event.message);
+    if (shouldHandleEndEvent)
+        speechRecognition.onend = () => window.webkit.messageHandlers.testHandler.postMessage("End");
+
+    speechRecognition.start();
+}
+
+function stop()
+{
+    if (speechRecognition)
+        speechRecognition.stop();
+}
+
+function gotMedia(stream) {
+    try {
+        var tracks = stream.getAudioTracks();
+        tracks[0].onmute = () => window.webkit.messageHandlers.testHandler.postMessage("Audio Mute");
+        var audio = document.getElementById('audio');
+        audio.srcObject = stream;
+        audio.play();
+    } catch(e) {
+        window.webkit.messageHandlers.testHandler.postMessage("gotMedia Error : " + e);
+    }
+}
+
+function startAudio()
+{
+    navigator.mediaDevices.getUserMedia({ audio: true })
+    .then(gotMedia)
+    .catch(e => { window.webkit.messageHandlers.testHandler.postMessage("startAudio Error: " + e); });
+}
+
+</script>
+
+</body>
+</html>

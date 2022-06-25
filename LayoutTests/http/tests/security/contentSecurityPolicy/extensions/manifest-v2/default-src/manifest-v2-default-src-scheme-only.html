@@ -1,0 +1,33 @@
+<!DOCTYPE html><!-- webkit-test-runner [ contentSecurityPolicyExtensionMode=v2 ] -->
+<html>
+<head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: 'nonce-test';">
+    <p><br>Test that scheme-only CSP for extensions blocks sources with that scheme.</p>
+</head>
+<body>
+    <div id="result" text="FAIL">
+      PASS
+    </div>
+    <script nonce='test'>
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.dumpAsText();
+        }
+
+        let script = document.createElement('script');
+        script.src = "https://localhost:8443/security/contentSecurityPolicy/resources/script.js";
+
+        script.onload = function() {
+            alert("FAIL: Should not have loaded script.");
+            testRunner.notifyDone();
+        };
+
+        script.onerror = function() {
+            alert("PASS: Successfully blocked script.");
+            testRunner.notifyDone();
+        };
+
+        document.body.append(script);
+    </script>
+</body>
+</html>

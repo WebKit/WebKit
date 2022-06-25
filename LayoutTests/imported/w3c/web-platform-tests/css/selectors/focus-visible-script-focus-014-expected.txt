@@ -1,0 +1,10 @@
+This test checks that a script focus after a keyboard input does match :focus-visible.
+
+Click on the input below and type some letter.
+If the element that says "Focused" has a red background then the test result is FAILURE, if it has a green outline then the test result is SUCCESS.
+
+Focused
+
+PASS ":focus-visible" should be a valid selector
+PASS Script focus after keyboard input does match :focus-visible
+

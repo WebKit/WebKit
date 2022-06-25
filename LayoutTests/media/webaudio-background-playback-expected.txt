@@ -1,0 +1,3 @@
+
+PASS Ensure WebAudio stops playing in the background when the 'BackgroundProcessPlaybackRestricted' restriction is set
+

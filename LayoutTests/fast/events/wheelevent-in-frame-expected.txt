@@ -1,0 +1,29 @@
+Tests that detaching a frame with a wheel event handlers doesn't crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internals.wheelEventHandlerCount() is 0
+PASS internals.wheelEventHandlerCount() is 0
+PASS internals.wheelEventHandlerCount() is 0
+PASS internals.wheelEventHandlerCount() is 0
+PASS internals.wheelEventHandlerCount() is 0
+PASS internals.wheelEventHandlerCount() is 0
+PASS internals.wheelEventHandlerCount() is 0
+PASS internals.wheelEventHandlerCount() is 0
+PASS internals.wheelEventHandlerCount() is 0
+PASS internals.wheelEventHandlerCount() is 0
+PASS internals.wheelEventHandlerCount() is 0
+PASS internals.wheelEventHandlerCount() is 0
+PASS internals.wheelEventHandlerCount() is 0
+PASS internals.wheelEventHandlerCount() is 0
+PASS internals.wheelEventHandlerCount() is 0
+PASS internals.wheelEventHandlerCount() is 0
+PASS internals.wheelEventHandlerCount() is 0
+PASS internals.wheelEventHandlerCount() is 0
+PASS internals.wheelEventHandlerCount() is 0
+PASS internals.wheelEventHandlerCount() is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

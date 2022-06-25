@@ -1,0 +1,14 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
+  <title>Reference for changes to the IDs in the document causing textPath references to update</title>
+
+  <defs>
+    <path id="p1" d="M 100,200 h 200"/>
+  </defs>
+
+  <text style="16px sans-serif"><textPath xlink:href="#p1">Hello</textPath></text>
+</svg>

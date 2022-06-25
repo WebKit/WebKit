@@ -1,0 +1,21 @@
+Test for invalid input of webkitLineDash and webkitLineDashOffset
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS trySettingLineDash([1, 2, 3]) is [1, 2, 3]
+PASS trySettingLineDash([1, -1]) is [1.5, 2.5]
+PASS trySettingLineDash([1, Infinity]) is [1.5, 2.5]
+PASS trySettingLineDash([1, -Infinity]) is [1.5, 2.5]
+PASS trySettingLineDash([1, NaN]) is [1.5, 2.5]
+PASS trySettingLineDash([1, 'string']) is [1.5, 2.5]
+PASS trySettingLineDashOffset(0.5) is 0.5
+PASS trySettingLineDashOffset(-0.5) is -0.5
+PASS trySettingLineDashOffset(Infinity) is 1.5
+PASS trySettingLineDashOffset(-Infinity) is 1.5
+PASS trySettingLineDashOffset(NaN) is 1.5
+PASS trySettingLineDashOffset('string') is 1.5
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

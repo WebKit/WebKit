@@ -1,0 +1,27 @@
+<html>
+<body>
+<p>This tests copying content across shadow boundaries doesn't crash.<br>
+To test manually, copy text below starting from "Hello" ending in the space before "World". Test passes if it doesn't crash.</p>
+<p>PASS if didn't crash.</p>
+<div id="start"><span id="hello">Hello</span></div>
+<script>
+const shadowRoot = start.attachShadow({mode: 'open'});
+shadowRoot.innerHTML = '<slot></slot> World';
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+
+    var x = start.offsetLeft;
+    var y = start.offsetTop + start.offsetHeight / 2;
+
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+
+    eventSender.mouseMoveTo(x + hello.offsetWidth, y);
+    eventSender.mouseUp();
+
+    document.execCommand('copy');
+}
+</script>
+</body>
+</html>

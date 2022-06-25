@@ -1,0 +1,63 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script src="../../http/tests/inspector/resources/stable-id-map.js"></script>
+<script>
+function createIsolatedWorld() {
+    const name = "InspectorTestInternalIsolatedWorld";
+    function source() { return 42; }
+
+    if (window.internals)
+        window.internals.evaluateInWorldIgnoringException(name, source.toString());
+}
+
+function test()
+{
+    ProtocolTest.debug();
+
+    let suite = ProtocolTest.createAsyncSuite("Runtime.executionContextCreated.IsolatedWorld");
+
+    suite.addTestCase({
+        name: "Runtime.executionContextCreated.IsolatedWorld.Internal",
+        description: "Test that Runtime.executionContextCreated events are dispatched for internal isolated worlds.",
+        async test() {
+            let completion = new WI.WrappedPromise;
+
+            let listener = InspectorProtocol.addEventListener("Runtime.executionContextCreated", (messageObject) => {
+                let {id, name, type} = messageObject.params.context;
+                if (name !== "InspectorTestInternalIsolatedWorld")
+                    return;
+
+                InspectorProtocol.removeEventListener("Runtime.executionContextCreated", listener);
+
+                ProtocolTest.pass("Received event for internal isolated world.");
+                ProtocolTest.expectEqual(type, "internal", "Execution context should be internal.");
+
+                completion.resolve();
+            });
+
+            await Promise.all([
+                InspectorProtocol.awaitCommand({method: "Page.enable"}),
+                InspectorProtocol.awaitCommand({method: "Runtime.enable"}),
+            ]);
+
+            await InspectorProtocol.awaitCommand({
+                method: "Runtime.evaluate",
+                params: {
+                    expression: `createIsolatedWorld()`,
+                },
+            });
+
+            await completion.promise;
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body>
+<iframe id="subframe" src="resources/change-execution-context-identifier-subframe.html" onload="runTest()"></iframe>
+<p>Test that exactly one Runtime.executionContextCreated event is fired for each existing context when Runtime.enable is called.</p>
+</body>
+</html>

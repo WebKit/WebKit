@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+<clipPath id="clip1" style="
+	-webkit-transform: scale(10) translate(2px, 2px);
+	transform: scale(10) translate(2px, 2px);">
+  <rect width="10" height="10"/>
+  <!-- Second rect may cause masking -->
+  <rect width="5" height="4"/>
+</clipPath>
+<rect width="200" height="200" fill="green" clip-path="url(#clip1)"/>
+</svg>

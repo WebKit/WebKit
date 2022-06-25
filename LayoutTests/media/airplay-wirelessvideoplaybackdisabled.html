@@ -1,0 +1,53 @@
+<html>
+    <head>
+        <script src='media-file.js'></script>
+        <script src='video-test.js'></script>
+        <script>
+
+            async function start()
+            {
+                findMediaElement();
+                
+                consoleWrite('Test a video element without a source.');
+
+                testExpected('video.hasAttribute("x-webkit-wirelessvideoplaybackdisabled")', true);
+                testExpected('video.webkitWirelessVideoPlaybackDisabled', true);
+                
+            
+                run('video.removeAttribute("x-webkit-wirelessvideoplaybackdisabled")');
+                
+                testExpected('video.hasAttribute("x-webkit-wirelessvideoplaybackdisabled")', false);
+                testExpected('video.webkitWirelessVideoPlaybackDisabled', true);
+        
+                
+                consoleWrite('Test a video element with a source.');
+                
+                video.src = findMediaFile('video', 'content/test');
+                
+                await waitFor(video, 'canplaythrough');
+                
+                run('video.setAttribute("x-webkit-wirelessvideoplaybackdisabled", "")');
+                
+                
+                testExpected('video.hasAttribute("x-webkit-wirelessvideoplaybackdisabled")', true);
+                testExpected('video.webkitWirelessVideoPlaybackDisabled', true);
+                
+            
+                run('video.removeAttribute("x-webkit-wirelessvideoplaybackdisabled")');
+                
+                testExpected('video.hasAttribute("x-webkit-wirelessvideoplaybackdisabled")', false);
+                testExpected('video.webkitWirelessVideoPlaybackDisabled', false);
+                
+                
+                endTest();
+            }
+
+        </script>
+    </head>
+
+    <body onload='start()'>
+        <video x-webkit-wirelessvideoplaybackdisabled></video>
+        <p>Test that 'wirelessvideoplaybackdisabled' attribute is set correctly after
+        removing the 'x-webkit-wirelessvideoplaybackdisabled' attribute.</p>
+    </body>
+</html>

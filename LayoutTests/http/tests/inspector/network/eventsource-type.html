@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+function triggerEventSourceRequest(users) {
+    const eventSource = new EventSource(`resources/event-source.py?users=${users}`);
+    const messages = [];
+    eventSource.addEventListener('user', e => {
+        messages.push('user: ' + e.data);
+    });
+    eventSource.onmessage = e => {
+        messages.push("onmessage: " + e.data);
+        TestPage.dispatchEventToFrontend("Completed", messages);
+    }
+}
+
+// ----
+
+function test()
+{
+    const suite = InspectorTest.createAsyncSuite("Resource.Type.EventSource");
+
+    function addTestCase({name, description, expression, resourceHandler}) {
+        suite.addTestCase({
+            name, description,
+            async test() {
+                const completeEvent = InspectorTest.awaitEvent("Completed");
+                InspectorTest.evaluateInPage(expression);
+                const event = await WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded);
+                const resource = event.data.resource;
+                InspectorTest.assert(resource.url.includes('event-source.py'), `Resource should be "event-source.py"`);
+                InspectorTest.expectEqual(resource.type, WI.Resource.Type.EventSource, "Resource should be EventSource type.");
+                InspectorTest.expectEqual(resource.requestMethod, "GET", "Resource should be a GET request.");
+                await resource.awaitEvent(WI.Resource.Event.LoadingDidFinish);
+                const content = await resource.requestContentFromBackend()
+                InspectorTest.log('EventSource events: ' + (await completeEvent).data);
+                resourceHandler(resource, content);
+            }
+        });
+    }
+
+    addTestCase({
+        name: "Resource.Type.EventSource.1.Event",
+        description: "Event source that receives 1 event.",
+        expression: "triggerEventSourceRequest('')",
+        resourceHandler(resource, content) {
+            InspectorTest.expectEqual(resource.statusCode, 200, "Resource should have a 200 response.");
+            InspectorTest.expectEqual(content.body, "data: the end.\n\n", "Resource should receive 'Success' in the response.");
+            InspectorTest.expectEqual(content.base64Encoded, false, "Response should not be base64 encoded.");
+        }
+    });
+
+    addTestCase({
+        name: "Resource.Type.EventSource.3.Events",
+        description: "Event source that receives 3 events.",
+        expression: "triggerEventSourceRequest('alice,bill')",
+        resourceHandler(resource, content) {
+            InspectorTest.expectEqual(resource.statusCode, 200, "Resource should have a 200 response.");
+            InspectorTest.expectEqual(content.body, "event: user\ndata: alice\n\nevent: user\ndata: bill\n\ndata: the end.\n\n", "Resource should receive 'Success' in the response.");
+            InspectorTest.expectEqual(content.base64Encoded, false, "Response should not be base64 encoded.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for Resource.Type.EventSource.</p>
+<div id="log"></div>
+</body>
+</html>

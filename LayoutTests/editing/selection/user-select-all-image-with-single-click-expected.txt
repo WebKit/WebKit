@@ -1,0 +1,9 @@
+This tests single-clicking on an image inside user-select: all. WebKit should select the entire element.
+Firefox doesn't do this but I'm not sure it makes sense for us to be inconsistent since Firefox DOES allow text with user-select: all to be selected by a single click.
+To manually test, single click on the image below. WebKit should select the entire bordered region.
+| <div>
+|   class="select-all"
+|   <#selection-anchor>
+|   <img>
+|     src="../resources/abe.png"
+|   <#selection-focus>

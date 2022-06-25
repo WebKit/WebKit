@@ -1,0 +1,4 @@
+
+
+FAIL Verifies that form submissions cancel javascript navigations to prevent duplicate load events. assert_equals: expected "/formaction.html" but got "blank"
+

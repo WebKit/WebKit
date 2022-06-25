@@ -1,0 +1,10 @@
+Tests that opaque roots behave correctly during young generation collections.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS elem.customProperty is "hello"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,4 @@
+
+FAIL internal script assert_true: script element from XSLTProcessor.transformToFragment() is evaluated expected true got undefined
+FAIL external script assert_true: script element from XSLTProcessor.transformToFragment() is evaluated expected true got undefined
+

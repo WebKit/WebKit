@@ -1,0 +1,149 @@
+#!/bin/bash
+#
+# Copyright (C) 2014-2019 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+# THE POSSIBILITY OF SUCH DAMAGE.
+#
+
+if [[ -z "${SCRIPT_HEADER_VISIBILITY}" ]]; then
+    exit 0
+fi
+
+function process_definitions () {
+    local DEFINITIONS_FILE=$1
+
+    if [[ ! -f "${DEFINITIONS_FILE}" ]]; then
+        return 1
+    fi
+
+    source "${DEFINITIONS_FILE}"
+}
+
+DEFINITIONS_PATH=usr/local/include/WebKitAdditions/Scripts/postprocess-framework-headers-definitions
+
+process_definitions "${BUILT_PRODUCTS_DIR}/${DEFINITIONS_PATH}" || process_definitions "${SDKROOT}/${DEFINITIONS_PATH}"
+
+# Determine what postprocessor steps to run based on build settings and the file being
+# processed, then pipe together all the commands we need and write the output file.
+# FIXME: rdar://90704735 (Run unifdef more uniformly on all WebKit.framework headers)
+
+if [[ "${WK_FRAMEWORK_HEADER_POSTPROCESSING_DISABLED}" != "YES" ]]; then
+    if [[ "${WK_PLATFORM_NAME}" == "macosx" ]]; then
+        [[ -n ${OSX_VERSION} ]] || OSX_VERSION=${MACOSX_DEPLOYMENT_TARGET}
+        [[ -n ${IOS_VERSION} ]] || IOS_VERSION="NA"
+    elif [[ "${WK_PLATFORM_NAME}" =~ "iphone" ]]; then
+        [[ -n ${IOS_VERSION} ]] || IOS_VERSION=${IPHONEOS_DEPLOYMENT_TARGET}
+        [[ -n ${OSX_VERSION} ]] || OSX_VERSION="NA"
+    fi
+
+    SED_OPTIONS=()
+
+    if [[ -n "$OSX_VERSION" && -n "$IOS_VERSION" ]]; then
+        SED_OPTIONS+=(
+            -e s/WK_MAC_TBA/${OSX_VERSION}/g
+            -e s/WK_IOS_TBA/${IOS_VERSION}/g
+            -e s/WK_API_AVAILABLE/API_AVAILABLE/
+            -e s/WK_API_UNAVAILABLE/API_UNAVAILABLE/
+            -e s/WK_API_DEPRECATED/API_DEPRECATED/
+            -e "s/^WK_CLASS_AVAILABLE/WK_EXTERN API_AVAILABLE/"
+            -e "s/^WK_CLASS_DEPRECATED/WK_EXTERN API_DEPRECATED/"
+        )
+    else
+        SED_OPTIONS+=(
+            -e 's/WK_(API_|CLASS_)AVAILABLE\(.*\)\s*\)//g'
+            -e 's/WK_API_UNAVAILABLE\(.*\)//g'
+            -e 's/WK_(API_|CLASS_)DEPRECATED(_WITH_REPLACEMENT)?\(.*\)\s*\)//g'
+        )
+    fi
+
+    SED_OPTIONS+=(${OTHER_SED_OPTIONS[*]})
+fi
+
+UNIFDEF_OPTIONS=(-B)
+
+case "${INPUT_FILE_PATH}" in
+*/WKBase.h)
+    UNIFDEF_OPTIONS+=(-D__APPLE__ -UBUILDING_GTK__ -UBUILDING_WPE__ -UUSE_SOUP)
+    ;;
+*/WKFoundation.h)
+    if [[ "${WK_FRAMEWORK_HEADER_POSTPROCESSING_DISABLED}" == "YES" ]]; then
+        UNIFDEF_OPTIONS+=(-UWK_FRAMEWORK_HEADER_POSTPROCESSING_ENABLED)
+    else
+        UNIFDEF_OPTIONS+=(-DWK_FRAMEWORK_HEADER_POSTPROCESSING_ENABLED)
+    fi
+    ;;
+*/WebKitLegacy.h)
+    [ "${WK_PLATFORM_NAME}" = macosx ]
+    UNIFDEF_OPTIONS+=(-DTARGET_OS_IPHONE=$?)
+    ;;
+*/WebKitLegacy/*)
+    [ "${USE_INTERNAL_SDK}" != YES ]
+    UNIFDEF_OPTIONS+=(-DUSE_APPLE_INTERNAL_SDK=$?)
+    [ "${WK_PLATFORM_NAME}" = macosx ]
+    UNIFDEF_OPTIONS+=(-DTARGET_OS_IPHONE=$?)
+    [[ "${WK_PLATFORM_NAME}" != *simulator* ]]
+    UNIFDEF_OPTIONS+=(-DTARGET_OS_SIMULATOR=$?)
+
+    for featureDefine in "ENABLE_TOUCH_EVENTS" "ENABLE_IOS_GESTURE_EVENTS"
+    do
+        # We assume a disabled feature is either undefined or has the empty string as its value.
+        eval "isFeatureEnabled=\$$featureDefine"
+        test -z $isFeatureEnabled
+        UNIFDEF_OPTIONS+=(-D$featureDefine=$?)
+    done
+
+    SED_OPTIONS+=(-e "s/\<WebKitLegacy/\<WebKit/")
+    if [[ "${SOURCE_FILE}" != */WebKitAvailability.h ]] && [ ${WK_PLATFORM_NAME} != macosx ]; then
+        SED_OPTIONS+=(-e "s/ *WEBKIT_((CLASS_|ENUM_)?(AVAILABLE|DEPRECATED))_MAC\([^)]+\)//g")
+    fi
+    ;;
+*/WebCore/*)
+    [ "${USE_INTERNAL_SDK}" != YES ]
+    UNIFDEF_OPTIONS+=(-DUSE_APPLE_INTERNAL_SDK=$?)
+    [ "${WK_PLATFORM_NAME}" = macosx ]
+    UNIFDEF_OPTIONS+=(-DTARGET_OS_IPHONE=$?)
+    [[ "${WK_PLATFORM_NAME}" != *simulator* ]]
+    UNIFDEF_OPTIONS+=(-DTARGET_OS_SIMULATOR=$?)
+
+    for featureDefine in "ENABLE_TOUCH_EVENTS" "ENABLE_IOS_GESTURE_EVENTS"
+    do
+        # We assume a disabled feature is either undefined or has the empty string as its value.
+        eval "isFeatureEnabled=\$$featureDefine"
+        test -z $isFeatureEnabled
+        UNIFDEF_OPTIONS+=(-D$featureDefine=$?)
+    done
+
+    SED_OPTIONS+=(-e 's/<WebCore\//<WebKit\//' -e "s/(^ *)WEBCORE_EXPORT /\1/")
+esac
+
+# As a performance optimization, only run replace-webkit-additions-includes.py if we know we need it.
+if grep -q '#import <WebKitAdditions/.*\.h>' "${INPUT_FILE_PATH}"; then
+    REPLACE_WEBKIT_ADDITIONS_INCLUDES=(python3 "${SRCROOT}/mac/replace-webkit-additions-includes.py" "${BUILT_PRODUCTS_DIR}" "${SDKROOT}")
+else
+    REPLACE_WEBKIT_ADDITIONS_INCLUDES=cat
+fi
+
+${REPLACE_WEBKIT_ADDITIONS_INCLUDES[@]} < "${INPUT_FILE_PATH}" |
+sed -E "${SED_OPTIONS[@]}" |
+unifdef ${UNIFDEF_OPTIONS[@]} > "${SCRIPT_OUTPUT_FILE_0}"
+exits=(${PIPESTATUS[@]})
+[ ${exits[0]} -eq 0 -a ${exits[1]} -eq 0 -a ${exits[2]} -lt 2 ]

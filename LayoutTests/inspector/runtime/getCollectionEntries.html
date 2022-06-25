@@ -1,0 +1,87 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script src="resources/property-descriptor-utilities.js"></script>
+<script>
+function test()
+{
+    let suite = ProtocolTest.createAsyncSuite("Runtime.getCollectionEntries");
+
+    function addTestCase({name, expression, fetchStart, fetchCount, isWeakCollection}) {
+        suite.addTestCase({
+            name,
+            async test() {
+                ProtocolTest.log(`Evaluating expression...`);
+                let evaluateResponse = await InspectorProtocol.awaitCommand({
+                    method: "Runtime.evaluate",
+                    params: {expression},
+                });
+                ProtocolTest.assert(!evaluateResponse.wasThrown);
+
+                let log = "Getting collection entries";
+                if (fetchStart)
+                    log += ` with fetchStart ${fetchStart}`;
+                if (fetchCount)
+                    log += ` with fetchCount ${fetchCount}`;
+                ProtocolTest.log(log + "...");
+
+                let getCollectionEntriesResponse = await InspectorProtocol.awaitCommand({
+                    method: "Runtime.getCollectionEntries",
+                    params: {
+                        objectId: evaluateResponse.result.objectId,
+                        fetchStart,
+                        fetchCount,
+                    },
+                });
+
+                // Weak collections are randomly ordered, so logging the entries doesn't make sense.
+                if (isWeakCollection) {
+                    ProtocolTest.log(`Got ${getCollectionEntriesResponse.entries.length} entries.`);
+                    return;
+                }
+
+                ProtocolTest.assert(!fetchCount || getCollectionEntriesResponse.entries.length <= fetchCount, `Should only get ${fetchCount} entries.`);
+
+                for (let entry of getCollectionEntriesResponse.entries) {
+                    let entryLog = "  ";
+                    if (entry.key)
+                        entryLog += ProtocolTest.PropertyDescriptorUtilities.stringifyRemoteObject(entry.key) + " => ";
+                    entryLog += ProtocolTest.PropertyDescriptorUtilities.stringifyRemoteObject(entry.value);
+                    ProtocolTest.log(entryLog);
+                }
+            },
+        });
+    }
+
+    for (let type of ["Map", "Set", "WeakMap", "WeakSet"]) {
+        addTestCase({
+            name: `Runtime.getDisplayableProperties.fetchStart.${type}`,
+            expression: `make${type}(10)`,
+            fetchStart: 5, // this will have no effect for WeakMap/WeakSet
+            isWeakCollection: type.startsWith("Weak"),
+        });
+
+        addTestCase({
+            name: `Runtime.getDisplayableProperties.fetchCount.${type}`,
+            expression: `make${type}(10)`,
+            fetchCount: 5,
+            isWeakCollection: type.startsWith("Weak"),
+        });
+
+        addTestCase({
+            name: `Runtime.getDisplayableProperties.fetchStartCount.${type}`,
+            expression: `make${type}(10)`,
+            fetchStart: 3, // this will have no effect for WeakMap/WeakSet
+            fetchCount: 4,
+            isWeakCollection: type.startsWith("Weak"),
+        });
+    }
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onLoad="runTest()">
+<p>Tests for the Runtime.getCollectionEntries command.</p>
+</body>
+</html>

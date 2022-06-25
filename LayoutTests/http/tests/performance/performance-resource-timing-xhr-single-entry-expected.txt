@@ -1,0 +1,3 @@
+PASS foundResource is 1
+PASS initiator is "xmlhttprequest"
+

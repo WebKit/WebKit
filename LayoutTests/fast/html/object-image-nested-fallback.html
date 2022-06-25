@@ -1,0 +1,19 @@
+<html>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+        function done() {
+            if (testRunner)
+                testRunner.notifyDone();
+        }
+    </script>
+    <body>
+        <object type="image/png" data="this.object.does.not.exist.dtd">
+            <object type="image/png" data="this.object.does.not.exist.dtd">
+                <object type="image/png" data="this.object.does.not.exist.dtd" onerror="done()">PASS when no crash occurs.</object>
+            </object>
+        </object>
+    </body>
+</html>

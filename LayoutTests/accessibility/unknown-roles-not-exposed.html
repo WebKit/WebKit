@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script>
+function findUnknownChild(accessibilityObject) {
+    if (accessibilityObject.role == "AXRole: AXUnknown")
+        return accessibilityObject;
+
+    var count = accessibilityObject.childrenCount;
+    for (var i = 0; i < count; ++i) {
+        var child = findUnknownChild(accessibilityObject.childAtIndex(i));
+        if (child)
+            return child;
+    }
+
+    return null;
+}
+
+function runTest()
+{
+  if (window.accessibilityController) {
+    document.body.focus();
+    shouldBeTrue("findUnknownChild(accessibilityController.focusedElement) == null");
+  }
+}
+</script>
+</head>
+<body id="body" onload="runTest()">
+<iframe src="data:text/html,<body><button>Click me</button></body>"></iframe>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("This tests accessibility objects with role 'unknown' are not being exposed.");
+
+</script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+Tests checking removing MediaStream track applies to the video element.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+
+**** calling mediaDevices.getUserMedia() ****
+PASS mediaDevices.getUserMedia succeeded.
+
+**** setup video element ****
+video.srcObject = mediaStream
+Event 'canplay'
+
+*** start playback ****
+video.play()
+video.pause()
+
+**** check video element ****
+
+**** check video tracks ****
+PASS video.videoTracks.length is 1
+PASS video.videoTracks[0].id is mediaStream.getVideoTracks()[0].id
+
+**** check audio tracks ****
+PASS video.audioTracks.length is 1
+PASS video.audioTracks[0].id is mediaStream.getAudioTracks()[0].id
+
+**** removing audio track ****
+
+**** check video element ****
+PASS video.videoWidth is mediaStream.getVideoTracks()[0].getSettings().width
+PASS video.videoHeight is mediaStream.getVideoTracks()[0].getSettings().height
+
+**** check video tracks ****
+PASS video.videoTracks.length is 1
+PASS video.videoTracks[0].id is mediaStream.getVideoTracks()[0].id
+PASS video.videoTracks[0].language is ""
+PASS video.videoTracks[0].kind is "main"
+
+**** check no audio track ****
+PASS video.audioTracks.length is 0
+PASS mediaStream.getAudioTracks().length is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

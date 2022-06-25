@@ -1,0 +1,9 @@
+Tests that a pip window has the same aspect ratio as the video content.
+
+RUN(internals.settings.setAllowsPictureInPictureMediaPlayback(true))
+RUN(internals.setMockVideoPresentationModeEnabled(true))
+RUN(video.src = findMediaFile("video", "../content/test"))
+EVENT(canplaythrough)
+EXPECTED (Math.abs(pipWindow.height / pipWindow.width - 240 / 320) < '0.01') OK
+END OF TEST
+

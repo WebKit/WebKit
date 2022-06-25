@@ -1,0 +1,216 @@
+{
+    "description": [
+        "Copyright 2022 The ANGLE Project Authors. All rights reserved.",
+        "Use of this source code is governed by a BSD-style license that can be",
+        "found in the LICENSE file.",
+        "",
+        "mtl_features.json: Optional features for the Metal renderer."
+    ],
+    "features": [
+        {
+            "name": "has_base_vertex_instanced_draw",
+            "category": "Features",
+            "description": [
+                "The renderer supports base vertex instanced draw"
+            ]
+        },
+        {
+            "name": "has_explicit_mem_barrier",
+            "category": "Features",
+            "description": [
+                "The renderer supports explicit memory barrier"
+            ]
+        },
+        {
+            "name": "has_cheap_render_pass",
+            "category": "Features",
+            "description": [
+                "The renderer can cheaply break a render pass."
+            ]
+        },
+        {
+            "name": "has_non_uniform_dispatch",
+            "category": "Features",
+            "description": [
+                "The renderer supports non uniform compute shader dispatch's group size"
+            ]
+        },
+        {
+            "name": "has_shader_stencil_output",
+            "category": "Features",
+            "description": [
+                "The renderer supports stencil output from fragment shader"
+            ]
+        },
+        {
+            "name": "has_texture_swizzle",
+            "category": "Features",
+            "description": [
+                "The renderer supports texture swizzle"
+            ]
+        },
+        {
+            "name": "has_depth_auto_resolve",
+            "category": "Features",
+            "description": [
+                "The renderer supports MSAA depth auto resolve at the end of render pass"
+            ]
+        },
+        {
+            "name": "has_stencil_auto_resolve",
+            "category": "Features",
+            "description": [
+                "The renderer supports MSAA stencil auto resolve at the end of render pass"
+            ]
+        },
+        {
+            "name": "has_events",
+            "category": "Features",
+            "description": [
+                "The renderer supports MTL(Shared)Event"
+            ]
+        },
+        {
+            "name": "allow_inline_const_vertex_data",
+            "category": "Features",
+            "description": [
+                "The renderer supports using inline constant data for small client vertex data"
+            ]
+        },
+        {
+            "name": "allow_separate_depth_stencil_buffers",
+            "category": "Features",
+            "description": [
+                "Some Apple platforms such as iOS allows separate depth and stencil buffers, ",
+                "whereas others such as macOS don't"
+            ]
+        },
+        {
+            "name": "allow_runtime_sampler_compare_mode",
+            "category": "Features",
+            "description": [
+                "The renderer supports changing sampler's compare mode outside shaders"
+            ]
+        },
+        {
+            "name": "allow_sampler_compare_gradient",
+            "category": "Features",
+            "description": [
+                "The renderer supports sample_compare with gradients"
+            ]
+        },
+        {
+            "name": "allow_sampler_compare_lod",
+            "category": "Features",
+            "description": [
+                "The renderer supports sample_compare with lod"
+            ]
+        },
+        {
+            "name": "allow_buffer_read_write",
+            "category": "Features",
+            "description": [
+                "The renderer supports buffer read and write in the same shader"
+            ]
+        },
+        {
+            "name": "allow_multisample_store_and_resolve",
+            "category": "Features",
+            "description": [
+                "The renderer supports MSAA store and resolve in the same pass"
+            ]
+        },
+        {
+            "name": "allow_gen_multiple_mips_per_pass",
+            "category": "Features",
+            "description": [
+                "The renderer supports generating multiple mipmaps per pass"
+            ]
+        },
+        {
+            "name": "force_D24S8_as_unsupported",
+            "category": "Features",
+            "description": [
+                "Force Depth24Stencil8 format as unsupported."
+            ]
+        },
+        {
+            "name": "force_buffer_GPU_storage",
+            "category": "Features",
+            "description": [
+                "On systems that support both buffer' memory allocation on GPU and shared memory (such as ",
+                    "macOS), force using GPU memory allocation for buffers everytime or not."
+            ]
+        },
+        {
+            "name": "direct_metal_generation",
+            "category": "Features",
+            "description": [
+                "Direct translation to Metal."
+            ],
+            "issue": "http://anglebug.com/5505"
+        },
+        {
+            "name": "force_non_CS_base_mipmap_generation",
+            "category": "Features",
+            "description": [
+                "Turn this feature on to disallow Compute Shader based mipmap generation. Compute Shader ",
+                "based mipmap generation might cause GPU hang on some older iOS devices."
+            ]
+        },
+        {
+            "name": "emulate_transform_feedback",
+            "category": "Features",
+            "description": [
+                "Turn this on to allow transform feedback in Metal using a 2-pass VS for GLES3."
+            ]
+        },
+        {
+            "name": "rewrite_row_major_matrices",
+            "category": "Features",
+            "description": [
+                "Rewrite row major matrices in shaders as column major."
+            ]
+        },
+        {
+            "name": "intel_explicit_bool_cast_workaround",
+            "category": "Workarounds",
+            "description": [
+                "Insert explicit casts for float/double/unsigned/signed int on macOS 10.15 with Intel ",
+                "driver"
+            ]
+        },
+        {
+            "name": "intel_disable_fast_math",
+            "category": "Workarounds",
+            "description": [
+                "Disable fast math in atan and invariance cases when running below macOS 12.0"
+            ]
+        },
+        {
+            "name": "multisample_color_format_shader_read_workaround",
+            "category": "Workarounds",
+            "description": [
+                "Add shaderRead usage to some multisampled texture formats"
+            ],
+            "issue": "http://anglebug.com/7049"
+        },
+        {
+            "name": "copy_IOSurface_to_non_IOSurface_for_read_optimization",
+            "category": "Workarounds",
+            "description": [
+                "some GPUs are faster to read an IOSurface texture by first copying the texture to a ",
+                "non-IOSurface texture"
+            ],
+            "issue": "http://anglebug.com/7117"
+        },
+        {
+            "name": "copy_texture_to_buffer_for_read_optimization",
+            "category": "Workarounds",
+            "description": [
+                "some GPUs are faster to read a texture by first copying the texture to a buffer"
+            ],
+            "issue": "http://anglebug.com/7117"
+        }
+    ]
+}

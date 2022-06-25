@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<body>
+<style> div { width: 100px; height: 100px; } </style>
+<div id="container" style="background: red;">
+<div id="host" style="background: blue;"><div id="child">Some content (DOM)</div></div>
+</div>
+<script>
+
+const slotted = document.querySelector('#slotted');
+
+const shadowRoot = host.attachShadow({mode: 'closed'});
+shadowRoot.innerHTML = '<div style="width: 100px; height: 100px; background: green;"><slot></slot></div>';
+shadowRoot.querySelector('slot').remove();
+
+document.body.getBoundingClientRect();
+
+child.remove();
+
+document.body.getBoundingClientRect();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (5,29) size 75x177
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGPath {path} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [data="M 2.5 90 L 200 90"]
+    RenderSVGText {text} at (0,-8) size 25x10 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 25x10
+        chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 4 width 25.00: "1234"
+    RenderSVGContainer {g} at (10,90) size 70x116
+      RenderSVGText {text} at (-5,0) size 10x58 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 10x58
+          chunk 1 (vertical) text run 1 at (-3.00,0.00) startOffset 0 endOffset 1 height 10.00: "1"
+          chunk 1 (vertical) text run 2 at (-3.00,16.00) startOffset 1 endOffset 2 height 10.00: "2"
+          chunk 1 (vertical) text run 3 at (-3.00,32.00) startOffset 2 endOffset 3 height 10.00: "3"
+          chunk 1 (vertical) text run 4 at (-3.00,48.00) startOffset 3 endOffset 4 height 10.00: "4"
+      RenderSVGText {text} at (-5,0) size 10x46 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (3,0) size 3x10
+          chunk 1 (vertical) text run 1 at (-3.00,0.00) startOffset 0 endOffset 1 height 10.00: "1"
+        RenderSVGTSpan {tspan} at (0,0) size 8x26
+          RenderSVGInlineText {#text} at (1,10) size 8x26
+            chunk 1 (vertical) text run 1 at (-3.00,10.00) startOffset 0 endOffset 1 height 10.00: "2"
+            chunk 1 (vertical) text run 2 at (-3.00,26.00) startOffset 1 endOffset 2 height 10.00: "3"
+        RenderSVGInlineText {#text} at (0,36) size 10x10
+          chunk 1 (vertical) text run 1 at (-3.00,36.00) startOffset 0 endOffset 1 height 10.00: "4"

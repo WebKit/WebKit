@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests if borders with border-radius use the same pair of dark, light colors as non-radius borders.</title>
+<style>
+  div {
+    border-color: green;
+    border-width: 2px;
+    width: 50px;
+    height: 50px;
+    margin: 10px;
+    position: relative;
+  }
+  
+  .hide {
+    width: 15px;
+    height: 15px;
+    background-color: red;
+    position: absolute;
+  }
+  
+</style>
+</head>
+<body>
+  <div style="border-style: inset"><p class=hide style="left: -5px; top: -21px;"></p><p class=hide style="left: 40px; top: -21px;"></p><p class=hide style="left: -5px; top: 24px;"></p><p class=hide style="left: 40px; top: 24px;"></p></div>
+  <div style="border-style: outset"><p class=hide style="left: -5px; top: -21px;"></p><p class=hide style="left: 40px; top: -21px;"></p><p class=hide style="left: -5px; top: 24px;"></p><p class=hide style="left: 40px; top: 24px;"></p></div>
+  <div style="border-style: groove"><p class=hide style="left: -5px; top: -21px;"></p><p class=hide style="left: 40px; top: -21px;"></p><p class=hide style="left: -5px; top: 24px;"></p><p class=hide style="left: 40px; top: 24px;"></p></div>
+  <div style="border-style: ridge"><p class=hide style="left: -5px; top: -21px;"></p><p class=hide style="left: 40px; top: -21px;"></p><p class=hide style="left: -5px; top: 24px;"></p><p class=hide style="left: 40px; top: 24px;"></p></div>
+</body>
+</html>

@@ -1,0 +1,4 @@
+
+PASS Textarea wrapping transformation: Newlines should be normalized to LF.
+PASS Textarea wrapping transformation: Wrapping happens with LF newlines.
+

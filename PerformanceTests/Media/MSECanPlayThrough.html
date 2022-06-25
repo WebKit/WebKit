@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="media-source-loader.js"></script>
+<script src="../resources/runner.js"></script>
+<script>
+var loader;
+var video;
+
+window.addEventListener('load', () => {
+    PerfTestRunner.prepareToMeasureValuesAsync({
+        unit: 'ms',
+        done: function () {
+            if (video) {
+                video.src = null;
+                video.load();
+            }
+        }
+    });
+
+    loader = new MediaSourceLoader('test-fragmented-video.json');
+    loader.loadMediaData().then(runTest);
+});
+
+function runTest() {   
+    video =  document.createElement('video');
+
+    var startTime = PerfTestRunner.now();
+    var loadPromise = loadMediaDataIntoVideo(video);
+    video.addEventListener('canplaythrough', () => {
+        if (!PerfTestRunner.measureValueAsync(PerfTestRunner.now() - startTime))
+            return;
+
+        loadPromise.then(() => {
+            PerfTestRunner.gc();
+            setTimeout(runTest, 0);
+        });
+    });
+}
+
+function loadMediaDataIntoVideo(video, segmentCount) {
+    return new Promise((resolve, reject) => {
+        var source = new MediaSource();
+        source.addEventListener('sourceopen', (e) => {
+            var source = e.target;
+            var currentMediaSegment = 0;
+            var sourceBuffer = source.addSourceBuffer(loader.type);
+            sourceBuffer.appendBuffer(loader.initSegment);
+
+            var appendedMediaSegment = false;
+            sourceBuffer.addEventListener('update', () => {
+
+                if (appendedMediaSegment) {
+                    if (source.readyState !== 'ended') {
+                        source.endOfStream();
+                        resolve();
+                    }
+                    return;
+                }
+
+                sourceBuffer.appendBuffer(loader.everyMediaSegment);
+                appendedMediaSegment = true;
+            });
+            sourceBuffer.addEventListener('error', error => {
+                reject();
+            });
+        });
+        video.src = URL.createObjectURL(source);
+    });
+}
+</script>
+</head>
+<body>
+</body>
+</html>

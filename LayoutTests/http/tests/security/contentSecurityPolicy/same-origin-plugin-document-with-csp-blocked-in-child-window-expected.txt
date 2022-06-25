@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/plugins/resources/plugin-document-alert-and-notify-done.pl?additionalHeader=Content-Security-Policy%3A+object-src+%27none%27 because it does not appear in the object-src directive of the Content Security Policy.
+

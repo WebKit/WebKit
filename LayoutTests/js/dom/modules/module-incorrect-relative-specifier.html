@@ -1,0 +1,42 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description('Test script.onerror will be fired when the incorrect relative specifier is specified.');
+// Module will be executed asynchronously.
+window.jsTestIsAsync = true;
+debug('Module is not executed yet.');
+var count = 0;
+var errors = [];
+window.addEventListener("error", ev => {
+    var current = count++;
+    debug(`${current}`);
+    errors.push(ev.message);
+    if (count === 3) {
+        shouldBeTrue(`errors.some(e => e.match(/incorrect/))`);
+        shouldBeTrue(`errors.some(e => e.match(/hello/))`);
+        shouldBeTrue(`errors.some(e => e.match(/test/))`);
+        shouldHaveHadError("TypeError");
+        finishJSTest();
+    }
+});
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+
+<script type="module" id="s0">
+import Incorrect from "incorrect"
+</script>
+
+<script type="module" id="s1">
+import Incorrect from "$hello"
+</script>
+
+<script type="module" id="s2">
+import Incorrect from ".../test"
+</script>
+
+</body>
+</html>

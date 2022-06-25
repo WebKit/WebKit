@@ -1,0 +1,14 @@
+<p id="description">When a user puts the caret at the very beginning of a blockquote and hits backspace, if the line before the blockquote is empty, the blockquote should just move up.</p>
+<div contenteditable="true"><div><br></div><blockquote style="margin: 0px; padding-left: 25px; border-left: 3px solid blue; color: blue;" type="cite"><span id="test">foo</span></blockquote></div>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+
+var e = document.getElementById("test");
+window.getSelection().setPosition(e, 0);
+
+document.execCommand("Delete");
+Markup.description(document.getElementById('description').textContent);
+Markup.dump(document.querySelector('div'));
+</script>

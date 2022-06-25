@@ -1,0 +1,192 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CSSGradientPremultipliedAlphaInterpolationEnabled=false ] -->
+<html>
+<head>
+<style>
+    div { 
+        width: 100px;
+        height: 100px;
+        border: dashed black 1px;
+        display: inline-block;
+    }
+
+    :root {
+        --transparent-1: rgba(0, 0, 255, 0);
+        --transparent-2: rgba(255, 0, 0, 0);
+        --transparent-3: rgba(0, 255, 0, 0);
+        --transparent-4: rgba(255, 255, 0, 0);
+
+        --opaque-1: rgba(0, 0, 255, 1);
+        --opaque-2: rgba(255, 0, 0, 1);
+        --opaque-3: rgba(0, 255, 0, 1);
+        --opaque-4: rgba(255, 255, 0, 1);
+
+        --partial-1: rgba(0, 0, 255, 0.5);
+        --partial-2: rgba(255, 0, 0, 0.5);
+        --partial-3: rgba(0, 255, 0, 0.5);
+        --partial-4: rgba(255, 255, 0, 0.5);
+    }
+
+    /* NOTE: If we ever want to remove the option to disable alpha premultiplied gradients, and alternative way
+             to test this would be using either Canvas or SVG, which both use unpremultiplied interpolation.    */
+
+    #opaque-opaque {
+        /* No transform */
+        background-image: linear-gradient(var(--opaque-1), var(--opaque-2));
+    }
+
+    #partial-partial {
+        /* No transform */
+        background-image: linear-gradient(var(--partial-1), var(--partial-2));
+    }
+
+    #transparent-transparent {
+        /* No transform */
+        background-image: linear-gradient(var(--transparent-1), var(--transparent-2));
+    }
+
+    #transparent-opaque {
+        /* Steal next */
+        background-image: linear-gradient(var(--transparent-2), var(--opaque-2));
+    }
+
+    #transparent-partial {
+        /* Steal next */
+        background-image: linear-gradient(var(--transparent-2), var(--partial-2));
+    }
+
+    #opaque-transparent {
+        /* Steal previous */
+        background-image: linear-gradient(var(--opaque-1), var(--transparent-1));
+    }
+
+    #partial-transparent {
+        /* Steal previous */
+        background-image: linear-gradient(var(--partial-1), var(--transparent-1));
+    }
+
+    #opaque-transparent-opaque {
+        /* Split */
+        background-image: linear-gradient(var(--opaque-1), var(--transparent-1) 50%, var(--transparent-3) 50%, var(--opaque-3));
+    }
+
+    #opaque-transparent-partial {
+        /* Split */
+        background-image: linear-gradient(var(--opaque-1), var(--transparent-1) 50%, var(--transparent-3) 50%, var(--partial-3));
+    }
+
+    #partial-transparent-partial {
+        /* Split */
+        background-image: linear-gradient(var(--partial-1), var(--transparent-1) 50%, var(--transparent-3) 50%, var(--partial-3));
+    }
+
+    #partial-transparent-opaque {
+        /* Split */
+        background-image: linear-gradient(var(--partial-1), var(--transparent-1) 50%, var(--transparent-3) 50%, var(--opaque-3));
+    }
+
+    #opaque-transparent-transparent-opaque {
+        /* Steal previous, steal next */
+        background-image: linear-gradient(var(--opaque-1), var(--transparent-1), var(--transparent-4), var(--opaque-4));
+    }
+
+    #opaque-transparent-transparent-partial {
+        /* Steal previous, steal next */
+        background-image: linear-gradient(var(--opaque-1), var(--transparent-1), var(--transparent-4), var(--partial-4));
+    }
+
+    #partial-transparent-transparent-partial {
+        /* Steal previous, steal next */
+        background-image: linear-gradient(var(--partial-1), var(--transparent-1), var(--transparent-4), var(--partial-4));
+    }
+
+    #partial-transparent-transparent-opaque {
+        /* Steal previous, nothing, steal next */
+        background-image: linear-gradient(var(--partial-1), var(--transparent-1), var(--transparent-4), var(--opaque-4));
+    }
+
+    #opaque-transparent-transparent-transparent-opaque {
+        /* Steal previous, nothing, steal next */
+        background-image: linear-gradient(var(--opaque-1), var(--transparent-1), var(--transparent-3), var(--transparent-2), var(--opaque-2));
+    }
+
+    #opaque-transparent-transparent-transparent-partial {
+        /* Steal previous, nothing, steal next */
+        background-image: linear-gradient(var(--opaque-1), var(--transparent-1), var(--transparent-3), var(--transparent-2), var(--partial-2));
+    }
+
+    #partial-transparent-transparent-transparent-partial {
+        /* Steal previous, nothing, steal next */
+        background-image: linear-gradient(var(--partial-1), var(--transparent-1), var(--transparent-3), var(--transparent-2), var(--partial-2));
+    }
+
+    #partial-transparent-transparent-transparent-opaque {
+        /* Steal previous, nothing, steal next */
+        background-image: linear-gradient(var(--partial-1), var(--transparent-1), var(--transparent-3), var(--transparent-2), var(--opaque-2));
+    }
+
+    #opaque-transparent-transparent {
+        /* Steal previous, nothing */
+        background-image: linear-gradient(var(--opaque-1), var(--transparent-1), var(--transparent-3));
+    }
+
+    #partial-transparent-transparent {
+        /* Steal previous, nothing */
+        background-image: linear-gradient(var(--partial-1), var(--transparent-1), var(--transparent-3));
+    }
+
+    #transparent-transparent-opaque {
+        /* Nothing, steal next */
+        background-image: linear-gradient(var(--transparent-1), var(--transparent-3), var(--opaque-3));
+    }
+
+    #transparent-transparent-partial {
+        /* Nothing, steal next */
+        background-image: linear-gradient(var(--transparent-1), var(--transparent-3), var(--partial-3));
+    }
+
+    #transparent-transparent-transparent {
+        /* No transform */
+        background-image: linear-gradient(var(--transparent-1), var(--transparent-2), var(--transparent-3));
+    }
+
+    #transparent-opaque-transparent {
+        /* Steal next, steal previous */
+        background-image: linear-gradient(var(--transparent-2), var(--opaque-2), var(--transparent-2));
+    }
+
+    #transparent-partial-transparent {
+        /* Steal next, steal previous */
+        background-image: linear-gradient(var(--transparent-2), var(--partial-2), var(--transparent-2));
+    }
+
+</style>
+</head>
+<body>
+<div id="opaque-opaque"></div>
+<div id="partial-partial"></div>
+<div id="transparent-transparent"></div>
+<div id="transparent-opaque"></div>
+<div id="transparent-partial"></div>
+<div id="opaque-transparent"></div>
+<div id="partial-transparent"></div>
+<div id="opaque-transparent-opaque"></div>
+<div id="opaque-transparent-partial"></div>
+<div id="partial-transparent-partial"></div>
+<div id="partial-transparent-opaque"></div>
+<div id="opaque-transparent-transparent-opaque"></div>
+<div id="opaque-transparent-transparent-partial"></div>
+<div id="partial-transparent-transparent-partial"></div>
+<div id="partial-transparent-transparent-opaque"></div>
+<div id="opaque-transparent-transparent-transparent-opaque"></div>
+<div id="opaque-transparent-transparent-transparent-partial"></div>
+<div id="partial-transparent-transparent-transparent-partial"></div>
+<div id="partial-transparent-transparent-transparent-opaque"></div>
+<div id="opaque-transparent-transparent"></div>
+<div id="partial-transparent-transparent"></div>
+<div id="transparent-transparent-opaque"></div>
+<div id="transparent-transparent-partial"></div>
+<div id="transparent-transparent-transparent"></div>
+<div id="transparent-opaque-transparent"></div>
+<div id="transparent-partial-transparent"></div>
+</body>
+</html>

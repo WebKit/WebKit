@@ -1,0 +1,6 @@
+
+PASS Property text-justify value 'auto'
+PASS Property text-justify value 'none'
+PASS Property text-justify value 'inter-word'
+PASS Property text-justify value 'inter-character'
+

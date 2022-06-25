@@ -1,0 +1,31 @@
+# FIXME: This is a work-around for Rosetta, remove once <https://bugs.webkit.org/show_bug.cgi?id=213761> is resolved
+
+# rdar://67281310 ([ Rosetta Layout Tests ] REGRESSION (r265639): [ Big Sur ] 1 canvas layout test is a constant failure)
+[ BigSur+ ] fast/canvas/canvas-ellipse-zero-lineto.html [ Failure ]
+
+# rdar://67353771 ([run-webkit-tests] Rosetta specific test expectations)
+[ BigSur+ ] tiled-drawing/scrolling/non-fast-region/wheel-event-plugin.html [ Skip ]
+
+# rdar://66861801 ([ Layout Tests] REGRESSION (r265487): svg/W3C-I18N/tspan-direction-rtl.svg is a constant failure)
+[ BigSur+ ] svg/W3C-I18N/tspan-direction-rtl.svg [ Failure ]
+
+# rdar://66661355 ([ASi Layout Tests] 3 compositing tests failing with 0.01% diffs)
+[ BigSur+ ] compositing/backgrounds/fixed-background-on-descendant.html [ ImageOnlyFailure ]
+[ BigSur+ ] compositing/backgrounds/fixed-backgrounds.html [ ImageOnlyFailure ]
+[ BigSur+ ] compositing/patterns/direct-pattern-compositing-cover.html [ ImageOnlyFailure ]
+
+# rdar://66842535 ([AS Layout Tests] REGRESSION (r265488): fast/text/letter-spacing-shaping.html is a constant ImageOnlyFailure)
+[ BigSur+ ] fast/text/letter-spacing-shaping.html [ Pass ImageOnlyFailure ]
+
+# rdar://66660924 ([ASi Layout Tests] 6 WPT css-backgrounds tests consistently failing)
+[ BigSur+ ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-contain.xht [ ImageOnlyFailure ]
+[ BigSur+ ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-cover.xht [ ImageOnlyFailure ]
+
+# rdar://65848157 ([AS Layout Tests] webgl/2.0.0/conformance2/reading/read-pixels-pack-parameters.html is failing)
+[ BigSur+ ] webgl/2.0.0/conformance2/reading/read-pixels-pack-parameters.html  [ Failure ]
+
+# rdar://64535650 (BlitFramebuffer sRGB webgl tests crashing/failing)
+[ BigSur+ ] webgl/2.0.0/conformance2/rendering/blitframebuffer-filter-srgb.html [ Failure ]
+
+# webkit.org/b/207150 [ BigSur+ wk2 ]
+[ BigSur+ ] platform/mac/webrtc/captureCanvas-webrtc-software-encoder.html [ Pass Failure ]

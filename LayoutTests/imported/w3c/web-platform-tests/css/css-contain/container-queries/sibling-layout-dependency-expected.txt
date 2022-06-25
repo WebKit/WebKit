@@ -1,0 +1,7 @@
+XXXX
+
+PASS Sibling style mutation
+PASS Sibling style mutation, parent is affected
+PASS Sibling style mutation, ancestor is affected
+PASS Sibling text mutation
+

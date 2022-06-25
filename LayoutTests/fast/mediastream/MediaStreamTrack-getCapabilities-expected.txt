@@ -1,0 +1,23 @@
+Tests MediaStreamTrack.getCapabilities.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+video track capabilities:
+  capabilities.aspectRatio = { max: 2560, min: 0.001 }
+  capabilities.deviceId = <UUID>
+  capabilities.facingMode = [ user ]
+  capabilities.frameRate = { max: 30, min: 1 }
+  capabilities.height = { max: 1440, min: 1 }
+  capabilities.width = { max: 2560, min: 1 }
+
+audio track capabilities:
+  capabilities.deviceId = <UUID>
+  capabilities.echoCancellation = [ true, false ]
+  capabilities.sampleRate = { max: 48000, min: 44100 }
+  capabilities.volume = { max: 1, min: 0 }
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Perspective By Example</title>
+  <style type="text/css" media="screen">
+    body {
+      font-family: 'Lucida Grande', Verdana, Arial;
+      font-size: 12px;
+    }
+    #container {
+      position: relative;
+      height: 300px;
+      width: 300px;
+      margin: 50px 100px;
+      border: 2px solid blue;
+      -webkit-perspective: 500;
+    }
+
+    #container > div {
+      position: absolute;
+      margin: 10px;
+      width: 280px;
+      height: 140px;
+      padding: 20px;
+      font-family: monospace;
+      font-size: 12pt;
+      border: 1px solid black;
+      -webkit-box-sizing: border-box;
+    }
+
+    #container > :first-child {
+      background-color: #49DC93;
+      -webkit-transform: rotateY(45deg);
+    }
+
+    #container > :last-child {
+      top: 140px;
+      background-color: #FF6;
+      -webkit-transform: rotateX(45deg);
+    }
+
+    #controls {
+      margin: 50px 100px;
+      width: 300px;
+    }
+    
+    #controls > input {
+      width: 100%;
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    function updatePerpective(value)
+    {
+      document.getElementById('container').style.webkitPerspective = value;
+      document.getElementById('perspective-value').innerText = value;
+    }
+
+    function setPerspectiveOrigin(event)
+    {
+      var container = document.getElementById('container');
+
+      var offsetX = event.pageX - container.offsetLeft;
+      var offsetY = event.pageY - container.offsetTop;
+      
+      var originStyle = (100 * offsetX / container.offsetWidth) + '% ' + (100 * offsetY / container.offsetHeight) + '%';
+      container.style.webkitPerspectiveOrigin = originStyle;
+    }
+
+    window.addEventListener('load', function() {
+      var container = document.getElementById('container');
+      container.addEventListener('mousemove', setPerspectiveOrigin, false);
+      container.addEventListener('mouseout', function() {
+        container.style.webkitPerspectiveOrigin = '50% 50%';
+      }, false);
+      updatePerpective(500)
+    }, false);
+  </script>
+</head>
+<body>
+
+  <div id="container">
+    <div>-webkit-transform: rotateY(45deg)</div>
+    <div>-webkit-transform: rotateX(45deg)</div>
+  </div>
+  
+  <div id="controls">
+    <input type="range" min="120" max="5000" value="500" onchange="updatePerpective(this.value)"><br>
+    Current perspective: <span id="perspective-value"></span>
+  </div>
+  <h1>Perspective</h1>
+  <p>Drag the slider to change the -webkit-perspective value on the blue box. You can also 
+    hover over the blue box to change the perspective-origin to be under the mouse.</p>
+
+</body>
+</html>

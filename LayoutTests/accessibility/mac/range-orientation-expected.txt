@@ -1,0 +1,13 @@
+
+Validate orientation on range types.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS range1.orientation is 'AXOrientation: AXVerticalOrientation'
+PASS range2.orientation is 'AXOrientation: AXHorizontalOrientation'
+PASS range3.orientation is 'AXOrientation: AXHorizontalOrientation'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

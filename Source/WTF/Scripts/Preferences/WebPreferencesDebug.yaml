@@ -1,0 +1,187 @@
+# Copyright (c) 2020 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+# THE POSSIBILITY OF SUCH DAMAGE.
+
+AcceleratedDrawingEnabled:
+  type: bool
+  defaultValue:
+    WebKitLegacy:
+      "PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)": true
+      default: false
+    WebKit:
+      default: true
+    WebCore:
+      default: false
+
+# FIXME: WebKit has an alternate name for this called 'ShowDebugBorders'. We should standardize on one name.
+CompositingBordersVisible:
+  type: bool
+  webKitLegacyPreferenceKey: WebKitShowDebugBorders
+  webcoreName: showDebugBorders
+  webcoreOnChange: setNeedsRecalcStyleInAllFrames
+  inspectorOverride: true
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
+# FIXME: WebKit has an alternate name for this called 'ShowRepaintCounter'. We should standardize on one name.
+CompositingRepaintCountersVisible:
+  type: bool
+  webKitLegacyPreferenceKey: WebKitShowRepaintCounter
+  webcoreName: showRepaintCounter
+  webcoreOnChange: setNeedsRecalcStyleInAllFrames
+  inspectorOverride: true
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
+DeveloperExtrasEnabled:
+  type: bool
+  webKitLegacyPreferenceKey: WebKitDeveloperExtrasEnabledPreferenceKey
+  webKitLegacyBinding: custom
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
+# FIXME: Starting the preference name with "Disable" is inconsistent with most other preferences and should be changed.
+DisableScreenSizeOverride:
+  type: bool
+  webcoreBinding: DeprecatedGlobalSettings
+  condition: PLATFORM(IOS_FAMILY)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
+DisplayListDrawingEnabled:
+  type: bool
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
+ForceAlwaysUserScalable:
+  type: bool
+  webcoreBinding: none
+  condition: PLATFORM(IOS_FAMILY)
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: false
+
+LegacyLineLayoutVisualCoverageEnabled:
+  type: bool
+  webcoreOnChange: setNeedsRecalcStyleInAllFrames
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
+LogsPageMessagesToSystemConsoleEnabled:
+  type: bool
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
+NeedsInAppBrowserPrivacyQuirks:
+  type: bool
+  humanReadableName: "Needs In-App Browser Privacy Quirks"
+  humanReadableDescription: "Enable quirks needed to support In-App Browser privacy"
+  webcoreBinding: none
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: false
+
+ResourceUsageOverlayVisible:
+  type: bool
+  condition: ENABLE(RESOURCE_USAGE)
+  webcoreOnChange: resourceUsageOverlayVisibleChanged
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
+SubpixelAntialiasedLayerTextEnabled:
+  type: bool
+  webcoreOnChange: setNeedsRecalcStyleInAllFrames
+  defaultValue:
+    WebKitLegacy:
+      "PLATFORM(MAC)": true
+      default: false
+    WebKit:
+      "PLATFORM(MAC)": true
+      default: false
+    WebCore:
+      default: false
+
+# FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
+TiledScrollingIndicatorVisible:
+  type: bool
+  webcoreName: showTiledScrollingIndicator
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
+VisibleDebugOverlayRegions:
+  type: uint32_t
+  webcoreType: DebugOverlayRegions
+  defaultValue:
+    WebKitLegacy:
+      default: 0
+    WebKit:
+      default: 0
+    WebCore:
+      default: 0
+

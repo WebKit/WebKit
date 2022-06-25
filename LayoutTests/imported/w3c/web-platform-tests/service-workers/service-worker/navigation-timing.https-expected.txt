@@ -1,0 +1,5 @@
+
+FAIL Service worker controlled navigation timing assert_greater_than: expected a number greater than 0 but got 0
+PASS Service worker controlled navigation timing network fallback
+PASS Service worker controlled navigation timing redirect
+

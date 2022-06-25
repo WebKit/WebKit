@@ -1,0 +1,47 @@
+<DOCTYPE !html>
+<html>
+<head>
+<meta charset="utf8">
+<meta name="viewport" content="width=device-width">
+<style>
+    body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+    }
+
+    #source, #destination {
+        width: 200px;
+        height: 200px;
+    }
+
+    #destination {
+        border: red 1px solid;
+    }
+</style>
+<script>
+    function runTest() {
+        destination.addEventListener("dragenter", event => event.preventDefault());
+        destination.addEventListener("dragover", event => event.preventDefault());
+        destination.addEventListener("drop", event => {
+            filecount.textContent = event.dataTransfer.files.length;
+            destination.setAttribute("src", URL.createObjectURL(event.dataTransfer.files[0]));
+            event.preventDefault();
+        });
+    }
+
+    function destinationLoaded() {
+        imageload.textContent = "true";
+        imageload.style.color = "green";
+    }
+</script>
+</head>
+<body onload="runTest()">
+    <div><img id="source" src="icon.png"></img></div>
+    <img onload="destinationLoaded()" src="" id="destination"></img>
+    <div id="output">
+        <div>Number of files: <span id="filecount">N/A</span></div>
+        <div>Image loaded? <span style="color: red" id="imageload">false</span></div>
+    </div>
+</body>
+</html>

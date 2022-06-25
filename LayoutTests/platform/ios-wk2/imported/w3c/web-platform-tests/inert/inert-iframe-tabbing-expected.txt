@@ -1,0 +1,23 @@
+before
+
+after
+
+FAIL Sequential navigation can't enter an inert iframe assert_equals: #after got outer focus expected Element node <div id="after" tabindex="0">after
+
+<script>
+const tabKey... but got Element node <div id="before" tabindex="0">before</div>
+FAIL Sequential navigation can move within an inert iframe assert_equals: #end got inner focus expected Element node <div id="end" tabindex="0">target</div> but got Element node <div id="start" tabindex="0">target</div>
+FAIL Sequential navigation can leave an inert iframe assert_equals: #after got outer focus expected Element node <div id="after" tabindex="0">after
+
+<script>
+const tabKey... but got Element node <iframe id="iframe" srcdoc="
+      <div id="start" tabind...
+FAIL Sequential navigation can enter a no longer inert iframe assert_equals: #iframe got outer focus expected Element node <iframe id="iframe" srcdoc="
+      <div id="start" tabind... but got Element node <div id="before" tabindex="0">before</div>
+FAIL Sequential navigation can move within a no longer inert iframe assert_equals: #end got inner focus expected Element node <div id="end" tabindex="0">target</div> but got Element node <div id="start" tabindex="0">target</div>
+FAIL Sequential navigation can leave a no longer inert iframe assert_equals: #after got outer focus expected Element node <div id="after" tabindex="0">after
+
+<script>
+const tabKey... but got Element node <iframe id="iframe" srcdoc="
+      <div id="start" tabind...
+

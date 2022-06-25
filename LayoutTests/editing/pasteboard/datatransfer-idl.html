@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/WebIDLParser.js"></script>
+<script src="../../resources/idlharness.js"></script>
+</head>
+<body>
+<script id="datatransfer-idl" type="text/plain">
+[Exposed=Window]
+interface DataTransfer {
+    constructor();
+
+    attribute DOMString dropEffect;
+    attribute DOMString effectAllowed;
+
+    [SameObject] readonly attribute DataTransferItemList items;
+
+    undefined setDragImage(Element image, long x, long y);
+
+    readonly attribute FrozenArray<DOMString> types;
+    DOMString getData(DOMString format);
+    undefined setData(DOMString format, DOMString data);
+    undefined clearData(optional DOMString format);
+    [SameObject] readonly attribute FileList files;
+};
+</script>
+<script id="datatransferitemlist-idl" type="text/plain">
+interface DataTransferItemList {
+    readonly attribute unsigned long length;
+    getter DataTransferItem (unsigned long index);
+    DataTransferItem? add(DOMString data, DOMString type);
+    DataTransferItem? add(File data);
+    void remove(unsigned long index);
+    void clear();
+};
+</script>
+<script id="datatransferitem-idl" type="text/plain">
+[Exposed=Window]
+interface DataTransferItem {
+    readonly attribute DOMString kind;
+    readonly attribute DOMString type;
+
+    undefined getAsString(StringCallback? callback);
+    File getAsFile();
+
+    // https://wicg.github.io/entries-api/#html-data
+    FileSystemEntry? webkitGetAsEntry();
+};
+
+callback StringCallback = void (DOMString data);
+</script>
+<script>
+var idlsArray = new IdlArray();
+var idl = document.getElementById("datatransfer-idl").textContent
+    + document.getElementById("datatransferitemlist-idl").textContent
+    + document.getElementById("datatransferitem-idl").textContent;
+
+idlsArray.add_idls(idl);
+idlsArray.add_untested_idls("interface Element {};");
+idlsArray.add_untested_idls("interface FileSystemEntry {};");
+idlsArray.test();
+</script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<style>
+  video {
+    block-size: 400px;
+  }
+  input {
+    float: left;
+    content: url();
+  }
+</style>
+<script>
+  onload = () => {
+    document.documentElement.prepend(document.createElement('span'));
+    document.body.append(document.createElement('div'));
+    document.body.append(document.createElement('span'));
+    document.documentElement.append(document.createElement('div'));
+    let html2 = document.createElement('html');
+    html2.style.blockSize = '0';
+    document.body.appendChild(html2);
+    html2.appendChild(document.createElement('q'));
+    html2.appendChild(document.createElement('input'));
+    html2.appendChild(document.createElement('video'));
+    document.body.offsetTop;
+    document.styleSheets[0].insertRule(`html, body, video { float: left; }`);
+    if (window.testRunner)
+        testRunner.dumpAsText();
+  };
+</script>
+PASS if this doesn't crash

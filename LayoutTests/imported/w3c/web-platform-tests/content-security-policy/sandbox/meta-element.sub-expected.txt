@@ -1,0 +1,6 @@
+
+
+PASS Document shouldn't be sandboxed by <meta>
+PASS Worker shouldn't be sandboxed by inheriting <meta>
+FAIL Worker shouldn't be sandboxed when created <iframe> inheriting parent's CSP with sandbox <meta> null is not an object (evaluating 'iframeDocument.createElement')
+

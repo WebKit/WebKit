@@ -1,0 +1,1 @@
+Caught exception opening a WebSQL database in private browsing: SecurityError: The operation is insecure.

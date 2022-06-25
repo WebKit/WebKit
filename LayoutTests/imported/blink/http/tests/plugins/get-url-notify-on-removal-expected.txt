@@ -1,0 +1,4 @@
+ALERT: Request completed
+This tests that NPP_URLNotify gets called exactly once for canceled streams on plugin removal.
+SUCCESS
+

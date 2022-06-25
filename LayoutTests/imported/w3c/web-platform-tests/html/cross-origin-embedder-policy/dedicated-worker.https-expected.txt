@@ -1,0 +1,28 @@
+CONSOLE MESSAGE: Refused to load 'https://localhost:9443/html/cross-origin-embedder-policy/resources/dedicated-worker.js' worker because of Cross-Origin-Embedder-Policy.
+CONSOLE MESSAGE: Worker load was blocked by Cross-Origin-Embedder-Policy
+CONSOLE MESSAGE: Cannot load https://localhost:9443/html/cross-origin-embedder-policy/resources/dedicated-worker.js due to access control checks.
+CONSOLE MESSAGE: Cancelled load to https://127.0.0.1:9443/common/blank.html because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: Cancelled load to https://127.0.0.1:9443/common/blank.html because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: Refused to load 'https://localhost:9443/html/cross-origin-embedder-policy/resources/dedicated-worker.js' worker because of Cross-Origin-Embedder-Policy.
+CONSOLE MESSAGE: Worker load was blocked by Cross-Origin-Embedder-Policy
+CONSOLE MESSAGE: Cannot load https://localhost:9443/html/cross-origin-embedder-policy/resources/dedicated-worker.js due to access control checks.
+CONSOLE MESSAGE: Cancelled load to https://127.0.0.1:9443/common/blank.html because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: Cancelled load to https://127.0.0.1:9443/common/blank.html because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: Cancelled load to https://127.0.0.1:9443/common/blank.html because it violates the resource's Cross-Origin-Resource-Policy response header.
+CONSOLE MESSAGE: Cancelled load to https://127.0.0.1:9443/common/blank.html because it violates the resource's Cross-Origin-Resource-Policy response header.
+
+PASS COEP: none worker in COEP: none frame
+PASS COEP: none worker in COEP: require-corp frame
+PASS COEP: require-corp worker in COEP: none frame
+PASS COEP: require-corp worker in COEP: require-corp frame
+PASS COEP: none module worker in COEP: none frame
+PASS COEP: none module worker in COEP: require-corp frame
+PASS COEP: require-corp module worker in COEP: none frame
+PASS COEP: require-corp module worker in COEP: require-corp frame
+PASS COEP: worker inherits COEP for blob URL.
+PASS COEP: worker inherits COEP from blob URL creator, not owner.
+FAIL COEP: worker inherits COEP for data URL. assert_equals: expected "FAILED" but got "LOADED"
+PASS COEP: worker inherits COEP from owner, not data URL creator.
+FAIL COEP: worker inherits COEP for filesystem URL. assert_equals: url creation error expected (undefined) undefined but got (string) "unimplemented"
+FAIL COEP: worker inherits COEP from filesystem URL creator, not owner. assert_equals: url creation error expected (undefined) undefined but got (string) "unimplemented"
+

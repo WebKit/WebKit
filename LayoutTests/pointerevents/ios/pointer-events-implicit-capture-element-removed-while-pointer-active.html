@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body style="width: 800px; height: 600px;">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../utils.js"></script>
+<script>
+
+'use strict';
+
+target_test((target, test) => {
+    document.body.addEventListener("pointerup", event => {
+        assert_equals(event.target, event.currentTarget, "The pointerup event was fired at the body and not a child element.");
+        test.done();
+    });
+    target.addEventListener("pointerdown", event => target.remove());
+    target.style.touchAction = "none";
+
+    // Tap on the target element, which will remove the target element as the pointerdown event is handled,
+    // which should fire the pointerup event at the body, not the target.
+    ui.tap({ x: 50, y: 50 });
+}, "Disconnecting the capture element during a touch interaction redirects further pointer events to the hit-testing element.");
+
+</script>
+</body>
+</html>

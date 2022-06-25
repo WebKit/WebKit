@@ -1,0 +1,19 @@
+This test ensures object accessibility text updates after a dynamic change (e.g. via JavaScript).
+
+Initial button descriptions:
+
+#aria-label-button AXDescription:
+#aria-labelledby-button AXDescription:
+#title-button AXDescription:
+
+Final button descriptions:
+
+#aria-label-button AXDescription: aria-label provided description
+#aria-labelledby-button AXDescription: aria-labelledby provided description
+#title-button AXDescription: title provided description
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+  aria-labelledby provided description

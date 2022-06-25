@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Date Input Test</title>
+    <style>
+    .fixed-width input {
+        width: 200px;
+    }
+    .flavored input {
+        letter-spacing: 8px;
+        border-color: green;
+        color: green;
+        font-size: 15px;
+        font-family: georgia, serif;
+        font-weight: bold;
+    }
+    </style>
+</head>
+<body>
+    <form method="get" action="#">
+        <div class="regular">
+            <input type="date"><br>
+            <input type="datetime"><br>
+            <input type="datetime-local"><br>
+            <input type="month"><br>
+            <input type="time"><br>
+            <input type="week"><br>
+        </div>
+        <br>
+        <div class="fixed-width">
+            <input type="date"><br>
+            <input type="datetime"><br>
+            <input type="datetime-local"><br>
+            <input type="month"><br>
+            <input type="time"><br>
+            <input type="week"><br>
+        </div>
+        <br>
+        <div class="flavored">
+            <input type="date"><br>
+            <input type="datetime"><br>
+            <input type="datetime-local"><br>
+            <input type="month"><br>
+            <input type="time"><br>
+            <input type="week"><br>
+        </div>
+        <br>
+        <input type="submit" value="Submit">
+    </form>
+    <script>
+    // Tue Apr 26 2011 18:56:20 GMT-0700 (PDT) which is Wed Apr 27 2011 01:56:20 GMT.
+    var date = new Date(1303869380391);
+    var dateAsNumber = +date;
+    var inputs = document.getElementsByTagName('input');
+    for (var i=0, len=inputs.length; i<len; ++i) {
+        var input = inputs[i];
+        if (input.type === "submit")
+            continue;
+        input.name = i;
+        if ("valueAsNumber" in input && input.type !== "month")
+            input.valueAsNumber = dateAsNumber;
+        else if ("valueAsDate" in input)
+            input.valueAsDate = date;
+    }
+    </script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+Tests that we use the right entry window to convert relative URL when setting Location.href
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS popup.location.href is "http://127.0.0.1:8000/resources/square20.jpg"
+PASS popup.location.href is "http://127.0.0.1:8000/dom/resources/square20.jpg"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

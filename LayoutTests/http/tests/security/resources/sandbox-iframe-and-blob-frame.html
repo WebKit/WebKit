@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <iframe id="myFrame"></iframe>
+    <script>
+const html = "<body" + ">PASS<script" + ">parent.postMessage('loaded', '*')</"+ "script></" + "body>";
+var blob = new Blob([html], {type: 'text/html'});
+var url = URL.createObjectURL(blob);
+myFrame.src = url;
+window.onmessage = (event) => {
+    parent.postMessage(event.data, '*');
+};
+    </script>
+</body>
+</html>

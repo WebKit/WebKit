@@ -1,0 +1,70 @@
+{
+    "url": "test-fragmented-video.mp4",
+    "type": "video/mp4; codecs=\"avc1.42c00d\"",
+    "init": {
+        "offset": 0,
+        "size": 692
+    },
+    "media": [
+        {
+            "offset": 692,
+            "size": 39865,
+            "timestamp": 0,
+            "duration": 1
+        },
+        {
+            "offset": 40557,
+            "size": 39333,
+            "timestamp": 1,
+            "duration": 1
+        },
+        {
+            "offset": 79890,
+            "size": 42651,
+            "timestamp": 2,
+            "duration": 1
+        },
+        {
+            "offset": 122541,
+            "size": 39979,
+            "timestamp": 3,
+            "duration": 1
+        },
+        {
+            "offset": 162520,
+            "size": 42743,
+            "timestamp": 4,
+            "duration": 1
+        },
+        {
+            "offset": 205263,
+            "size": 39869,
+            "timestamp": 5,
+            "duration": 1
+        },
+        {
+            "offset": 245132,
+            "size": 42718,
+            "timestamp": 6,
+            "duration": 1
+        },
+        {
+            "offset": 287850,
+            "size": 40327,
+            "timestamp": 7,
+            "duration": 1
+        },
+        {
+            "offset": 328177,
+            "size": 42830,
+            "timestamp": 8,
+            "duration": 1
+        },
+        {
+            "offset": 371007,
+            "size": 39738,
+            "timestamp": 9,
+            "duration": 1
+        }
+    ]
+}

@@ -1,0 +1,31 @@
+<style>
+  th, body, span, html {
+    padding-left: 250px;
+  }
+</style>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+
+  onload = () => {
+    let div = document.createElement('div');
+    document.querySelector('style').appendChild(div);
+    document.styleSheets[0].insertRule(`pre { aspect-ratio: 1; }`);
+    document.body.appendChild(document.createElement('pre'));
+    let th = document.createElement('th');
+    document.body.appendChild(th);
+    document.designMode = 'on';
+    document.execCommand('SelectAll');
+    document.execCommand('InsertLineBreak');
+    getSelection().selectAllChildren(th);
+    document.execCommand('InsertText', false, 'a');
+    document.execCommand('UseCSS', false, 'false');
+    div.before(undefined);
+    document.execCommand('InsertLineBreak');
+    document.execCommand('SelectAll');
+    document.execCommand('Copy');
+    document.execCommand('PasteAndMatchStyle');
+    document.execCommand('JustifyFull');
+  };
+</script>
+<!-- PASS if no crash or assert. -->

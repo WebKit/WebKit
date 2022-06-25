@@ -1,0 +1,14 @@
+
+PASS readAsText
+PASS readAsDataURL
+PASS readAsArrayBuffer
+PASS readAsBinaryString
+PASS result is null during "loadstart" event for readAsText
+PASS result is null during "loadstart" event for readAsDataURL
+PASS result is null during "loadstart" event for readAsArrayBuffer
+PASS result is null during "loadstart" event for readAsBinaryString
+PASS result is null during "progress" event for readAsText
+PASS result is null during "progress" event for readAsDataURL
+PASS result is null during "progress" event for readAsArrayBuffer
+PASS result is null during "progress" event for readAsBinaryString
+

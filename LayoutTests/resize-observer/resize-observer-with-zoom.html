@@ -1,0 +1,88 @@
+<!DOCTYPE html><!-- webkit-test-runner [ ResizeObserverEnabled=true ] -->
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="./resources/resizeTestHelper.js"></script>
+<style>
+    #target {
+        width: 200px;
+        height: 200px;
+    }
+</style>
+<div id="target"></div>
+<svg height="200" width="200">
+    <circle cx="10" cy="10" r="5" style="fill:orange;stroke:black;stroke-width:1" />
+</svg>
+<script>
+'use strict';
+
+// allow uncaught exception because ResizeObserver posts exceptions
+// to window error handler when limit is exceeded.
+setup({ allow_uncaught_exception: true });
+
+function test0() {
+    let target = document.querySelector('#target');
+    let helper = new ResizeTestHelper(
+        "test0: The change of zoom shouldn't affect resizeObserver size.",
+        [
+            {
+                setup: observer => {
+                    observer.observe(target);
+                },
+                notify: entries => {
+                    assert_equals(entries[0].contentRect.width, 200);
+                    assert_equals(entries[0].contentRect.height, 200);
+                }
+            }, 
+            {
+                setup: observer => {
+                    window.internals.setPageZoomFactor(2);
+                    target.style.width = "100px";
+                },
+                notify: entries => {
+                    assert_equals(entries[0].contentRect.width, 100);
+                    assert_equals(entries[0].contentRect.height, 200);
+                }
+            }
+        ]);
+    return helper.start();
+}
+
+function test1() {
+    let target = document.querySelector('circle');
+    let helper = new ResizeTestHelper(
+        "test1: The change of zoom shouldn't affect svg resizeObserver size.",
+        [
+            {
+                setup: observer => {
+                    observer.observe(target);
+                },
+                notify: entries => {
+                    assert_equals(entries[0].contentRect.width, 10);
+                    assert_equals(entries[0].contentRect.height, 10);
+                }
+            },
+            {
+                setup: observer => {
+                    window.internals.setPageZoomFactor(2);
+                    target.setAttribute('r', 10);
+                },
+                notify: entries => {
+                    assert_equals(entries[0].contentRect.width, 20);
+                    assert_equals(entries[0].contentRect.height, 20);
+                }
+            }
+        ]);
+    return helper.start();
+}
+
+let guard;
+test(_ => {
+    assert_own_property(window, "ResizeObserver");
+    guard = async_test('guard');
+}, "ResizeObserver implemented")
+
+test0()
+    .then(() => { return test1(); })
+    .then(() => { guard.done(); });
+    
+</script>

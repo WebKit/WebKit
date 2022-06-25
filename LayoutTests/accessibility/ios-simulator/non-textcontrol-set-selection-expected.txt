@@ -1,0 +1,10 @@
+This test verifies we can set the selected text range on a non text control.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.getSelection().toString() became 'line 1'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+line 1 line 2 line 3

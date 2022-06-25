@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Demo: prefers-reduced-motion media query</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style type="text/css">
+html {
+	font: 100% sans-serif;
+	font: -apple-system-body;
+}
+body {
+	font-size: 0.8em;
+	line-height: 1.1;
+}
+
+
+button {
+	cursor: pointer;
+	font-size: 1em;
+	-webkit-appearance: none;
+	border: solid 1px black;
+	color: black;
+	background-color: white;
+	padding: 0;
+	position: relative;
+}
+button::before {
+	display: block;
+	position: absolute;
+	content: " ";
+	top: 50%;
+	left: 50%;
+	width: 1px;
+	height: 1px;
+	opacity: 0;
+	background-color: rgba(255,100,100,0.3);
+	transition-duration: 0.4s;
+	transition-timing-function: ease-in-out;
+
+	/* Example 1: This value will be modified when 'reduce motion' is enabled. */
+	transition-property: top left width height opacity;
+}
+@media (prefers-reduced-motion) {
+	button::before {
+		/* Example 1: Now only animating the opacity... not size or position, which control the scale effect. */ 
+		transition-property: opacity;
+	}
+}
+button:hover::before, button:focus::before {
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	opacity:1;
+}
+button > div {
+	margin: 1.5em 2em;
+}
+
+#twirl {
+    position: relative;
+    border: solid 1px black;
+    overflow: hidden;
+}
+#twirl > div {
+	margin: 1.5em 2em;
+}
+
+@keyframes animation-twirl {  
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+#twirl::after {
+    width: 2000px;
+    height: 2000px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -1000px;
+    margin-top: -1000px;
+    background: repeating-linear-gradient(140deg, rgba(0,0,0,0), rgba(0,0,0,0) 10px, rgba(200,200,200,0.3) 10px, rgba(200,200,200,0.3) 20px);
+    background-size: cover;
+    content: '';
+    animation: animation-twirl 100s infinite;
+}
+
+/* Example 2: Disabling a ongoing, decorative background animation. */
+@media (prefers-reduced-motion) {
+	#twirl::after {
+		animation: none;
+	}
+}
+
+
+#indicator #prmValue {
+	display: inline-block;
+	padding: 0.2em 0.4em;
+	text-transform: uppercase;
+	border: solid 1px #666;
+	background-color: #eee;
+}
+#indicator a {
+	text-decoration: none;
+}
+
+</style>
+</head>
+<body>
+
+<h1>Reduced Motion Demos for WebKit blog post: <a href="https://webkit.org/blog/7551/responsive-design-for-motion/">Responsive Design for Motion</a></h1>
+
+<p>To test these, enable the "Reduce Motion" setting.</p>
+<ul>
+	<li><strong>iOS:</strong> Settings > General > Accessibility > Reduce Motion</li>
+	<li><strong>macOS:</strong> System Preferences > Accessibility > Display > Reduce Motion</li>
+	<li><strong>Xcode Accessibility Inspector:</strong> Settings > Reduce Motion (<a href="./axi.htm">see video demo</a>)</li>
+</ul>
+
+<h2>Example 1: Using CSS to modify an interaction transition-property</h2>
+<!-- Check the 'button::before' blocks in the CSS. -->
+<button>
+	<div>
+		On hover/focus (or tap on mobile), a zoom/scale trigger appears by default,
+		but it uses a simple dissolve when 'reduce motion' is enabled.
+	</div>
+</button>
+
+<h2>Example 2: Using CSS to disable an ongoing, purely decorative animation</h2>
+<!-- Check the '#twirl::after' blocks in the CSS. -->
+<div id="twirl">
+	<div>
+		The spinning background animation is stopped entirely if 'reduce motion' is enabled.
+	</div>
+</div>
+
+
+<h2>Example 3: Using JavaScript to access the current value</h2>
+<div id="indicator">Prefers reduced motion: <span id="prmValue">unsupported</span> <a href="https://webkit.org/b/168491" title="Outstanding bug: 168491" aria-label="Outstanding bug: 168491"><sup>1</sup></a></div>
+
+<script type="text/javascript">
+
+var motionQuery = matchMedia('(prefers-reduced-motion)');
+function handleReduceMotionChanged() {
+    document.getElementById('prmValue').innerText = motionQuery.matches ? 'on' : 'no-preference or unsupported';
+}
+handleReduceMotionChanged(); // trigger this once on load to set up the initial value
+motionQuery.addListener(handleReduceMotionChanged); // Note: https://webkit.org/b/168491
+
+</script>
+
+
+<h2>Example 4: Only display animated version if prefers-reduced-motion is both supported *and* off.</h2>
+<p>This example uses a more explicit match for <code>(prefers-reduced-motion: no-preference)</code> which excludes all browsers that don't yet support the new feature.</p>
+<img id="jaws" src="jaws.jpg" alt="Brody realizing the shark is in the water" width="480" height="214">
+
+<script type="text/javascript">
+
+var motionQuery2 = matchMedia('(prefers-reduced-motion: no-preference)'); 
+function handleReduceMotionChanged2() {
+    document.images['jaws'].src = motionQuery2.matches ? 'jaws.gif' : 'jaws.jpg';
+}
+handleReduceMotionChanged2(); // trigger this once on load to set up the initial value
+motionQuery.addListener(handleReduceMotionChanged2); // Note: https://webkit.org/b/168491
+
+</script>
+
+<p>Return to WebKit blog post: <a href="https://webkit.org/blog/7551/responsive-design-for-motion/">Responsive Design for Motion</a></p>
+
+</body>
+</html>

@@ -1,0 +1,6 @@
+
+PASS Longhand with variable preserves original serialization: with whitespace
+PASS Shorthand with variable preserves original serialization: with whitespace
+PASS Longhand with variable preserves original serialization but trims whitespace: without whitespace
+PASS Shorthand with variable preserves original serialization but trims whitespace: without whitespace
+

@@ -1,0 +1,28 @@
+
+== Running test suite: SciptProfiler.Samples.DOM
+-- Running test case: Sampling Profiler sourceURL directive.
+PASS: Should have seen stacktrace:
+[
+  {
+    "name": "createElement"
+  },
+  {
+    "name": "foo"
+  },
+  {
+    "name": "runFor"
+  }
+]
+PASS: Should have seen stacktrace:
+[
+  {
+    "name": "appendChild"
+  },
+  {
+    "name": "foo"
+  },
+  {
+    "name": "runFor"
+  }
+]
+

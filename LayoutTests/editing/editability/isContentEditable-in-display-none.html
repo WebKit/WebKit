@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<style>
+    body { white-space: pre-wrap; }
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function visit(node, f, depth) {
+    f(node, depth);
+    for (let child of node.childNodes)
+        visit(child, f, depth + 1);
+}
+
+window.onload = function () {
+    let description = "";
+    visit(document.body, function (node, depth) {
+        let indent = "\t".repeat(depth);
+
+        if (node.nodeType == Node.TEXT_NODE) {
+            let trimmedContent = node.textContent.trim();
+            if (trimmedContent)
+                description += `${indent}${trimmedContent}\n`;
+            return;
+        }
+
+        let identifier = node.id ? `#${node.id}` : node.nodeName;
+        let editability = node.isContentEditable ? "Editable" : "Read-only";
+        description += `${indent}${identifier}: ${editability}\n`;
+    }, 0);
+    document.body.innerText = description;
+}
+</script>
+<body>
+<div id="nonEditable">Directly inside a normal div.
+    <p>In a child of a normal div.</p>
+</div>
+<div id="visible" contenteditable>Directly inside a contenteditable.
+    <p>In a child of a contenteditable.</p>
+</div>
+<div id="nonVisible" style="display: none" contenteditable>Directly inside a display:none contenteditable.
+    <p>In a child of a display:none contenteditable.</p>
+</div>
+<div style="display: none">
+<div id="nonVisibleParent" contenteditable>Directly inside a contenteditable with a display:none parent.
+    <p>In a child of a contenteditable with a display:none parent.</p>
+</div>
+</div>
+</body>
+</html>

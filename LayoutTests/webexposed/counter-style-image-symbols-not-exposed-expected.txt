@@ -1,0 +1,3 @@
+
+PASS @counter-style image symbols are not exposed
+

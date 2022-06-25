@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script>
+            function start()
+            {
+                if (!window.internals)
+                    consoleWrite('To run this test manually, cause the machine to sleep then wake up.');
+
+                findMediaElement();
+                waitForEventOnce('playing', playing);
+                video.src = findMediaFile("video", "content/test");
+            }
+
+            function playing()
+            {
+                waitForEventOnce('pause', paused);
+                run('internals.simulateSystemSleep()');
+            }
+
+            function paused()
+            {
+                waitForEventOnce('playing', resumed);
+                run('internals.simulateSystemWake()');
+            }
+
+            function resumed()
+            {
+                endTest();
+            }
+        </script>
+    </head>
+
+    <body onload="start()">
+        <video controls autoplay></video>
+        <p>Test that video elements pause during system sleep.</p>
+    </body>
+</html>

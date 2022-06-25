@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that semi-transparent layers with compositing parent on subpixel position get clipped properly. Non-retina test only.</title>
+<style>
+  img {
+    opacity: 0.9;
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    }
+</style>
+</head>
+<body>
+<p id="container"></p>
+<script>
+  var container = document.getElementById("container");
+  var adjustment = 1;
+  for (i = 0; i < 20; ++i) {
+    for (j = 0; j < 20; ++j) {
+      if (j % 5 == 0 && j != 0)
+        adjustment += 0.5;
+      var e = document.createElement("img");
+      e.style.top = (20 * i) + adjustment + "px";
+      e.style.left = (20 * j) + adjustment + "px";
+      container.appendChild(e);
+    }
+    adjustment += 0.5;
+  }
+</script>
+</body>
+</html>

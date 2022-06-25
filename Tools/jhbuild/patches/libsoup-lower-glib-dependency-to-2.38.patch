@@ -1,0 +1,30 @@
+From 8b52555afed23e4c22e0a110c06d38a1c88dc3cf Mon Sep 17 00:00:00 2001
+From: Carlos Alberto Lopez Perez <clopez@igalia.com>
+Date: Wed, 1 Jul 2020 14:47:50 +0200
+Subject: [PATCH] Revert "Bump glib dependency to 2.58"
+
+This reverts commit c7da362a2593ed9391ee831edbf0d27cbd680a67.
+
+The new glib version is only needed to be able to use
+g_canonicalize_filename() on tests/test-utils.c which we dont
+build.
+---
+ meson.build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/meson.build b/meson.build
+index fffbb42f..7d9d7d86 100644
+--- a/meson.build
++++ b/meson.build
+@@ -80,7 +80,7 @@ endif
+ 
+ add_project_arguments(common_flags, language : 'c')
+ 
+-glib_required_version = '>= 2.58'
++glib_required_version = '>= 2.38'
+ glib_dep = dependency('glib-2.0', version : glib_required_version,
+                        fallback: ['glib', 'libglib_dep'])
+ gobject_dep = dependency('gobject-2.0', version : glib_required_version,
+-- 
+2.20.1
+

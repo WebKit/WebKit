@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .target {
+            margin: 10px;
+            overflow: hidden;
+            width: 200px;
+            height: 100px;
+            resize: both;
+            border: 12px solid silver;
+        }
+        #rtl-target {
+            direction: rtl;
+        }
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        window.jsTestIsAsync = true;
+
+        const borderWidth = 12;
+
+        window.addEventListener('load', async () => {
+            description("Tests that the mouse cursor updates over the resize control.");
+
+            await UIHelper.moveMouseAndWaitForFrame(2, 2);
+            shouldBeEqualToString('internals.getCurrentCursorInfo()', 'type=Pointer hotSpot=0,0');
+
+            let target = document.getElementById('target');
+            let targetBounds = target.getBoundingClientRect();
+            await UIHelper.moveMouseAndWaitForFrame(targetBounds.right - borderWidth - 4, targetBounds.bottom - borderWidth - 4);
+            shouldBeEqualToString('internals.getCurrentCursorInfo()', 'type=SouthEastResize hotSpot=0,0');
+
+            target = document.getElementById('rtl-target');
+            targetBounds = target.getBoundingClientRect();
+            await UIHelper.moveMouseAndWaitForFrame(targetBounds.left + borderWidth + 4, targetBounds.bottom - borderWidth - 4);
+            shouldBeEqualToString('internals.getCurrentCursorInfo()', 'type=SouthWestResize hotSpot=0,0');
+            
+            document.getElementById('test-container').remove();
+            finishJSTest();
+        }, false);
+    </script>
+</head>
+<body>
+    <div id="test-container">
+        <div id="target" class="target">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        </div>
+
+        <div id="rtl-target" class="target">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        </div>
+    </div>
+    <div id="console"></div>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

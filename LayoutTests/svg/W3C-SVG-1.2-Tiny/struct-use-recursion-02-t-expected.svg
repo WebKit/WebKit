@@ -1,0 +1,7 @@
+<svg viewBox="0 0 480 360" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="100" cy="25" r="10" fill="#FF7F00"/>
+  <circle cx="380" cy="50" r="10" fill="yellow" stroke="gray" stroke-width="2" stroke-dasharray="4" stroke-linecap="round"/>
+  <text x="240" y="280" text-anchor="middle" fill="green" font-family="sans-serif" font-size="24">This text should be visible.</text>
+  <text x="10" y="340" font-family="sans-serif" font-size="32">$Revision: 1.5 $</text>
+  <rect x="1" y="1" width="478" height="358" fill="none" stroke="black"/>
+</svg>

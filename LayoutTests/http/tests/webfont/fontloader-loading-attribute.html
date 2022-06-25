@@ -1,0 +1,39 @@
+<html>
+<head>
+<script src="../../js-test-resources/js-test-pre.js"></script>
+<style>
+  @font-face {
+    font-family: 'TestFont';
+    src: url(slow-ahem-loading.cgi);
+  }
+</style>
+<script>
+description('Test for FontLoader.loading attribute');
+
+window.jsTestIsAsync = true;
+
+function runTests() {
+    shouldBe("document.fonts.checkFont('10px TestFont')", "false");
+    shouldBe("document.fonts.loading", "false");
+    document.fonts.loadFont({ font: '10px TestFont', onsuccess: onsuccess });
+    shouldBe("document.fonts.loading", "true");
+}
+
+function onsuccess() {
+    shouldBe("document.fonts.checkFont('10px TestFont')", "true");
+    shouldBe("document.fonts.loading", "false");
+    finishJSTest();
+}
+
+if (document.fonts)
+    runTests();
+else {
+    testFailed('document.fonts does not exist');
+    finishJSTest();
+}
+</script>
+</head>
+<body>
+  <script src="../../js-test-resources/js-test-post.js"></script>
+</body>
+</html>

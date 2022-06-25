@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <style>
+    body {
+      margin: 0;
+    }
+
+    #box1, #box2 {
+      position: relative;
+      height: 25px;
+      width: 100px;
+      margin: 5px;
+      background: lightsteelblue;
+    }
+
+    .move1 {
+      -webkit-animation-name: move1;
+      -webkit-animation-delay: 1s;
+      -webkit-animation-duration: 1s;
+      -webkit-animation-timing-function: linear;
+    }
+
+    @-webkit-keyframes move1 {
+      from { left: 0px; }
+      to { left: 200px; }
+    }
+
+    .move2 {
+      -webkit-animation-name: move2;
+      -webkit-animation-delay: 1s;
+      -webkit-animation-duration: 1s;
+      -webkit-animation-timing-function: linear;
+    }
+
+    @-webkit-keyframes move2 {
+      from { left: 0px; }
+      to { left: 200px; }
+    }
+  </style>
+  <script src="resources/animation-test-helpers.js"></script>
+  <script>
+    window.onload = function() {
+      document.querySelector('#box1').classList.add('move1');
+      // Start the animation on box2 after 500ms
+      setTimeout(function() { document.querySelector('#box2').classList.add('move2'); }, 500);
+
+      const expectedValues = [
+        // [animation-name, time, element-id, property, expected-value, tolerance]
+        [null, 1.0, "box1", "left",  200, 10],
+        [null, 1.0, "box2", "left",  100, 10],
+      ];
+
+      runAnimationTest(expectedValues);
+    }
+  </script>
+</head>
+<body>
+<div id="box1">starts after 1s</div>
+<div id="box2">starts after 1.5s</div>
+<div id="result"></div>
+</div>
+</body>
+</html>

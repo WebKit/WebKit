@@ -1,0 +1,15 @@
+PASS window.frames.length is 2
+PASS window.frames[0].frameElement.name is "frame"
+PASS window.frames[0].frameElement.contentWindow is window.frames[0].frameElement.contentDocument.defaultView
+PASS window.frames[0].frameElement.contentWindow.document is window.frames[0].frameElement.contentDocument
+PASS window.frames[1].frameElement.name is "obj"
+PASS window.frames[1].frameElement.contentWindow is window.frames[1].frameElement.contentDocument.defaultView
+PASS window.frames[1].frameElement.contentWindow.document is window.frames[1].frameElement.contentDocument
+Loading 'resources/dummy-frame-2.html' in iframe...
+Loading 'resources/dummy-frame-1.html' in object...
+PASS window.frames[0].location.href.endsWith("resources/dummy-frame-2.html") is true
+PASS window.frames[1].location.href.endsWith("resources/dummy-frame-1.html") is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

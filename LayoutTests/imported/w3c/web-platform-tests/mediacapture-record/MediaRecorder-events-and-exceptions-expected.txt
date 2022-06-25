@@ -1,0 +1,6 @@
+
+FAIL MediaRecorder events and exceptions assert_throws_dom: recorder should throw() with unsupported mimeType function "function () {
+                        recorder = new MediaRecorder(
+                          new MediaStream(), {mimeType : "video/invalid"});
+                      }" threw object "ReferenceError: Cannot access uninitialized variable." that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
+

@@ -1,0 +1,33 @@
+This tests the exposure of aria-activedescendant
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+test1 descendant: ''
+parent AXRole: AXEmbedded, isFocusable: true, isFocused: true
+child1 AXRole: AXGroup, isFocusable: false, isFocused: false
+
+test2 descendant: 'child2'
+parent AXRole: AXEmbedded, isFocusable: true, isFocused: false
+child2 AXRole: AXGroup, isFocusable: true, isFocused: true
+
+test3 descendant: ''
+parent AXRole: AXTextField, isFocusable: true, isFocused: true
+child3 AXRole: AXGroup, isFocusable: false, isFocused: false
+
+test4 descendant: 'child4'
+parent AXRole: AXTextField, isFocusable: true, isFocused: false
+child4 AXRole: AXGroup, isFocusable: true, isFocused: true
+
+test5 descendant: ''
+parent AXRole: AXGroup, isFocusable: true, isFocused: true
+child5 AXRole: AXCheckBox, isFocusable: false, isFocused: false
+
+test6 descendant: 'child6'
+parent AXRole: AXCheckBox, isFocusable: true, isFocused: true
+child6 AXRole: AXCheckBox, isFocusable: true, isFocused: true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

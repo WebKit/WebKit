@@ -1,0 +1,7 @@
+{
+"version": 3,
+"file": "script-with-sourcemap.js",
+"sources": ["script-with-sourcemap.js"],
+"names": ["nothingSpecialToSeeHere1","console","log"],
+"mappings": "AACA,QAASA,4BACLC,QAAQC,IAAI"
+}

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../editing.js"></script>
+</head>
+<body>
+<div id="dropzone" style="width: 200px; height: 200px; background-color: grey;"></div>
+<script>
+description("Basic test coverage for fileSystemDirectoryEntry.getFile()");
+jsTestIsAsync = true;
+
+function getFileAsPromise(directory, path, flags)
+{
+    return new Promise((resolve, reject) => {
+        directory.getFile(path, flags, resolve, reject);
+    });
+}
+
+function test1() {
+    debug("* Error case: create flag is set to true");
+    return getFileAsPromise(directoryEntry, "file1.txt", { create: true }).then(entry => {
+        testFailed("Should fail when create flag is true");
+    }, e => {
+        ex = e;
+        shouldBeEqualToString("ex.name", "SecurityError");
+    });
+}
+
+function test2() {
+    debug("* Regular case: getFile('file1.txt')");
+    return getFileAsPromise(directoryEntry, "file1.txt", {}).then(entry => {
+        file1Entry = entry;
+        shouldBeEqualToString("file1Entry.name", "file1.txt");
+        shouldBeEqualToString("file1Entry.fullPath", "/testFiles/file1.txt");
+        shouldBeTrue("file1Entry.isFile");
+    }, e => {
+        testFailed("getFile('file1.txt') should succeed");
+    });
+}
+
+function test3() {
+    debug("* Error case: calling getFile() with path to folder");
+    return getFileAsPromise(directoryEntry, "subfolder1", {}).then(entry => {
+        testFailed("Should fail when path points to a folder");
+    }, e => {
+        ex = e;
+        shouldBeEqualToString("ex.name", "TypeMismatchError");
+    });
+}
+
+function test4() {
+    debug("* Error case: calling getFile() with path containing backslash");
+    return getFileAsPromise(directoryEntry, "\\file1.txt", {}).then(entry => {
+        testFailed("Should fail when path is invalid");
+    }, e => {
+        ex = e;
+        shouldBeEqualToString("ex.name", "TypeMismatchError");
+    });
+}
+
+function test5() {
+    debug("* Error case: calling getFile() with path which does not exist");
+    return getFileAsPromise(directoryEntry, "doesnotexist.txt", {}).then(entry => {
+        testFailed("Should fail when path does not exist");
+    }, e => {
+        ex = e;
+        shouldBeEqualToString("ex.name", "NotFoundError");
+    });
+}
+
+function test6() {
+    debug("* Error case: calling getFile() with path containing a NUL character");
+    return getFileAsPromise(directoryEntry, "file1.txt\0", {}).then(entry => {
+        testFailed("Should fail when path is invalid");
+    }, e => {
+        ex = e;
+        shouldBeEqualToString("ex.name", "TypeMismatchError");
+    });
+}
+
+function test7() {
+    debug("* Error case: calling getFile() with path to root");
+    return getFileAsPromise(directoryEntry, "/", {}).then(entry => {
+        testFailed("Should fail when path is not a directory");
+    }, e => {
+        ex = e;
+        shouldBeEqualToString("ex.name", "TypeMismatchError");
+    });
+}
+
+function test8() {
+    debug("* Regular case: calling getFile() with absolute path");
+    return getFileAsPromise(directoryEntry, "/testFiles/subfolder1/file3.txt", {}).then(entry => {
+        file3Entry = entry;
+        shouldBeEqualToString("file3Entry.name", "file3.txt");
+        shouldBeEqualToString("file3Entry.fullPath", "/testFiles/subfolder1/file3.txt");
+        shouldBeTrue("file3Entry.isFile");
+    }, e => {
+        testFailed("getFile('/testFiles/subfolder1/file3.txt') should succeed");
+    });
+}
+
+function test9() {
+    debug("* Edge case: calling getFile() with relative path containing '.' and '..'");
+    return getFileAsPromise(directoryEntry, "../testFiles/././subfolder1/../subfolder1/./file3.txt", {}).then(entry => {
+        file3Entry = entry;
+        shouldBeEqualToString("file3Entry.name", "file3.txt");
+        shouldBeEqualToString("file3Entry.fullPath", "/testFiles/subfolder1/file3.txt");
+        shouldBeTrue("file3Entry.isFile");
+    }, e => {
+        testFailed("getFile('../testFiles/././subfolder1/../subfolder1/./file3.txt') should succeed");
+    });
+}
+
+function test10() {
+    debug("* Edge case: calling getFile() with relative path containing too many '..'");
+    return getFileAsPromise(directoryEntry, "../../../../../testFiles/file1.txt", {}).then(entry => {
+        file1Entry = entry;
+        shouldBeEqualToString("file1Entry.name", "file1.txt");
+        shouldBeEqualToString("file1Entry.fullPath", "/testFiles/file1.txt");
+        shouldBeTrue("file1Entry.isFile");
+    }, e => {
+        testFailed("getFile('../../../../../testFiles/file1.txt') should succeed");
+    });
+}
+
+function test11() {
+    debug("* Edge case: calling getFile() with absolute path containing '..'");
+    return getFileAsPromise(directoryEntry, "/testFiles/../testFiles/file1.txt", {}).then(entry => {
+        file1Entry = entry;
+        shouldBeEqualToString("file1Entry.name", "file1.txt");
+        shouldBeEqualToString("file1Entry.fullPath", "/testFiles/file1.txt");
+        shouldBeTrue("file1Entry.isFile");
+    }, e => {
+        testFailed("getFile('../../../../../testFiles/file1.txt') should succeed");
+    });
+}
+
+function test12() {
+    debug("* Edge case: calling getFile() with absolute path containing too many '..'");
+    return getFileAsPromise(directoryEntry, "/../../../../../testFiles/file1.txt", {}).then(entry => {
+        file1Entry = entry;
+        shouldBeEqualToString("file1Entry.name", "file1.txt");
+        shouldBeEqualToString("file1Entry.fullPath", "/testFiles/file1.txt");
+        shouldBeTrue("file1Entry.isFile");
+    }, e => {
+        testFailed("getFile('../../../../../testFiles/file1.txt') should succeed");
+    });
+}
+
+function test13() {
+    debug("* Error case: calling getFile() with empty path");
+    return getFileAsPromise(directoryEntry, "", {}).then(entry => {
+        testFailed("Should fail when path is invalid");
+    }, e => {
+        ex = e;
+        shouldBeEqualToString("ex.name", "TypeMismatchError");
+    });
+}
+
+function test14() {
+    debug("* Edge case: calling getFile() with absolute path starting with 2 slashes");
+    return getFileAsPromise(directoryEntry, "//testFiles/file1.txt", {}).then(entry => {
+        file1Entry = entry;
+        shouldBeEqualToString("file1Entry.name", "file1.txt");
+        shouldBeEqualToString("file1Entry.fullPath", "/testFiles/file1.txt");
+        shouldBeTrue("file1Entry.isFile");
+    }, e => {
+        testFailed("getFile('//testFiles/file1.txt') should succeed");
+    });
+}
+
+function test15() {
+    debug("* Edge case: calling getFile() with absolute path starting with 2 slashes and containing 2 following slashes");
+    return getFileAsPromise(directoryEntry, "//testFiles//file1.txt", {}).then(entry => {
+        file1Entry = entry;
+        shouldBeEqualToString("file1Entry.name", "file1.txt");
+        shouldBeEqualToString("file1Entry.fullPath", "/testFiles/file1.txt");
+        shouldBeTrue("file1Entry.isFile");
+    }, e => {
+        testFailed("getFile('//testFiles//file1.txt') should succeed");
+    });
+}
+
+var dropzone = document.getElementById('dropzone');
+dropzone.ondrop = function(e) {
+    e.preventDefault();
+    dataTransfer = e.dataTransfer;
+
+    shouldBe("dataTransfer.items.length", "1");
+
+    directoryEntry = dataTransfer.items[0].webkitGetAsEntry();
+    test1()
+    .then(test2)
+    .then(test3)
+    .then(test4)
+    .then(test5)
+    .then(test6)
+    .then(test7)
+    .then(test8)
+    .then(test9)
+    .then(test10)
+    .then(test11)
+    .then(test12)
+    .then(test13)
+    .then(test14)
+    .then(test15)
+    .then(finishJSTest);
+};
+
+dropzone.ondragover = function(ev) {
+    ev.preventDefault();
+}
+
+onload = function() {
+    dragFilesOntoElement(dropzone, ['../../../fast/forms/file/entries-api/resources/testFiles']);
+}
+</script>
+</body>
+</html>

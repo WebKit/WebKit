@@ -1,0 +1,19 @@
+
+This tests that images with SVG source are indeed exposed as images and not as SVG groups, if the SVG source is not accessible.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS image.traits is pngImage1.traits
+PASS image.traits is pngImage1.traits
+PASS image.traits is pngImage1.traits
+PASS image.traits is pngImage2.traits
+PASS image.traits is pngImage2.traits
+PASS image.traits is pngImage1.traits
+PASS image.traits is pngImage1.traits
+PASS image.traits is pngImage1.traits
+PASS image.traits is pngImage1.traits
+

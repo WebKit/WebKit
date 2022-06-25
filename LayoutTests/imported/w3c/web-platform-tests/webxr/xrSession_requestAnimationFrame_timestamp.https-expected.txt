@@ -1,0 +1,6 @@
+
+PASS XRFrame getViewerPose updates on the next frame for immersive - webgl
+PASS XRFrame getViewerPose updates on the next frame for immersive - webgl2
+PASS XRFrame getViewerPose updates on the next frame for non-immersive - webgl
+PASS XRFrame getViewerPose updates on the next frame for non-immersive - webgl2
+

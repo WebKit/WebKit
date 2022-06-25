@@ -1,0 +1,297 @@
+Think different Apple
+
+bold italic
+underline last!
+
+Hello World!
+This test that textMarkerRangeForRange works properly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+content length: 65
+All ranges from index 0 to each character in the text:
+0
+''
+1
+'T'
+2
+'Th'
+3
+'Thi'
+4
+'Thin'
+5
+'Think'
+6
+'Think '
+7
+'Think d'
+8
+'Think di'
+9
+'Think dif'
+10
+'Think diff'
+11
+'Think diffe'
+12
+'Think differ'
+13
+'Think differe'
+14
+'Think differen'
+15
+'Think different'
+16
+'Think different '
+17
+'Think different A'
+18
+'Think different Ap'
+19
+'Think different App'
+20
+'Think different Appl'
+21
+'Think different Apple'
+22
+'Think different Apple'
+23
+'Think different Apple
+
+'
+24
+'Think different Apple
+
+b'
+25
+'Think different Apple
+
+bo'
+26
+'Think different Apple
+
+bol'
+27
+'Think different Apple
+
+bold'
+28
+'Think different Apple
+
+bold '
+29
+'Think different Apple
+
+bold i'
+30
+'Think different Apple
+
+bold it'
+31
+'Think different Apple
+
+bold ita'
+32
+'Think different Apple
+
+bold ital'
+33
+'Think different Apple
+
+bold itali'
+34
+'Think different Apple
+
+bold italic'
+35
+'Think different Apple
+
+bold italic
+'
+36
+'Think different Apple
+
+bold italic
+u'
+37
+'Think different Apple
+
+bold italic
+un'
+38
+'Think different Apple
+
+bold italic
+und'
+39
+'Think different Apple
+
+bold italic
+unde'
+40
+'Think different Apple
+
+bold italic
+under'
+41
+'Think different Apple
+
+bold italic
+underl'
+42
+'Think different Apple
+
+bold italic
+underli'
+43
+'Think different Apple
+
+bold italic
+underlin'
+44
+'Think different Apple
+
+bold italic
+underline'
+45
+'Think different Apple
+
+bold italic
+underline '
+46
+'Think different Apple
+
+bold italic
+underline l'
+47
+'Think different Apple
+
+bold italic
+underline la'
+48
+'Think different Apple
+
+bold italic
+underline las'
+49
+'Think different Apple
+
+bold italic
+underline last'
+50
+'Think different Apple
+
+bold italic
+underline last!'
+51
+'Think different Apple
+
+bold italic
+underline last!'
+52
+'Think different Apple
+
+bold italic
+underline last!
+
+￼'
+53
+'Think different Apple
+
+bold italic
+underline last!
+
+￼H'
+54
+'Think different Apple
+
+bold italic
+underline last!
+
+￼He'
+55
+'Think different Apple
+
+bold italic
+underline last!
+
+￼Hel'
+56
+'Think different Apple
+
+bold italic
+underline last!
+
+￼Hell'
+57
+'Think different Apple
+
+bold italic
+underline last!
+
+￼Hello'
+58
+'Think different Apple
+
+bold italic
+underline last!
+
+￼Hello '
+59
+'Think different Apple
+
+bold italic
+underline last!
+
+￼Hello W'
+60
+'Think different Apple
+
+bold italic
+underline last!
+
+￼Hello Wo'
+61
+'Think different Apple
+
+bold italic
+underline last!
+
+￼Hello Wor'
+62
+'Think different Apple
+
+bold italic
+underline last!
+
+￼Hello Worl'
+63
+'Think different Apple
+
+bold italic
+underline last!
+
+￼Hello World'
+64
+'Think different Apple
+
+bold italic
+underline last!
+
+￼Hello World!'
+Get the range for the word Apple:
+'Apple'
+Out of range values:
+'Think different Apple
+
+bold italic
+underline last!
+
+￼Hello World!'
+''
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

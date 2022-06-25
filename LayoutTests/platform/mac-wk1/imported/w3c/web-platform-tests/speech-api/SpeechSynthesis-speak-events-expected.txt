@@ -1,0 +1,4 @@
+
+FAIL speechSynthesis.speak() fires start and end events with empty utterance assert_true: Not expecting event, but got end event expected true got false
+FAIL speechSynthesis.speak() fires start and end events assert_true: Not expecting event, but got start event expected true got false
+

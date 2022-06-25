@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div style="text-align: justify; font-family: Ahem;">
+<ruby id="ruby">abcdefg abcdefg<rt>a</ruby> mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+</div>
+<script>
+description("This test makes sure that hit testing works with ruby inside text-align: justify.");
+var ruby = document.getElementById("ruby");
+var boundingRect = ruby.getBoundingClientRect();
+var right = boundingRect.right;
+var bottom = boundingRect.bottom;
+shouldBe("right", "792");
+shouldBeEqualToString("document.elementFromPoint(right - 1, bottom - 1).id", "ruby");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

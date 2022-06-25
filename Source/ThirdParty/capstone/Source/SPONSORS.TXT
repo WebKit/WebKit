@@ -1,0 +1,20 @@
+* Version 4.0.1 - January 10th, 2019
+
+Release 4.0.1 was sponsored by the following companies (in no particular order).
+
+- NowSecure: https://www.nowsecure.com
+- Verichains: https://verichains.io
+- Vsec: https://vsec.com.vn
+
+-----------------------------------
+* Version 4.0 - December 18th, 2018
+
+Capstone 4.0 version marks 5 years of the project!
+This release was sponsored by the following companies (in no particular order).
+
+- Thinkst Canary: https://canary.tools
+- NowSecure: https://www.nowsecure.com
+- ECQ: https://e-cq.net
+- Senrio: https://senr.io
+- GracefulBits: https://gracefulbits.com
+- Catena Cyber: https://catenacyber.fr

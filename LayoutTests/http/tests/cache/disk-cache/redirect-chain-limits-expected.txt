@@ -1,0 +1,29 @@
+Test the limits of redirect chain length.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Redirect chain length: 1
+Response status code: 200
+Response source: Disk cache
+
+Redirect chain length: 5
+Response status code: 200
+Response source: Disk cache
+
+Redirect chain length: 6
+Response status code: 200
+Response source: Network
+
+Redirect chain length: 20
+Response status code: 200
+Response source: Network
+
+Redirect chain length: 40
+Response status code: 0
+Response source: Null response
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

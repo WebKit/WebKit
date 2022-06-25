@@ -1,0 +1,5 @@
+
+
+PASS Autofocus elements in iframed documents with non-existent fragments should work.
+PASS Autofocus elements in top-level browsing context's documents with non-existent fragments should work.
+

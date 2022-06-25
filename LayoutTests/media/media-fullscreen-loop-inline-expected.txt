@@ -1,0 +1,27 @@
+
+Test that a <video> keeps playing and looping after exiting fullscreen when the internal property "allowsInlineMediaPlaybackAfterFullscreen" is true.
+
+RUN(video.loop = true)
+RUN(video.src = findMediaFile("video", "content/test"))
+EVENT(canplaythrough)
+RUN(video.play())
+Wait to enter fullscreen
+EVENT(webkitpresentationmodechanged)
+EXPECTED (internals.isChangingPresentationMode(video) == 'false') OK
+EXPECTED (video.webkitDisplayingFullscreen == 'true') OK
+Entered fullscreen
+RUN(video.currentTime = 5)
+RUN(video.webkitExitFullscreen())
+Wait to exit fullscreen
+EVENT(webkitpresentationmodechanged)
+EXPECTED (internals.isChangingPresentationMode(video) == 'false') OK
+EXPECTED (video.webkitDisplayingFullscreen == 'false') OK
+Exited fullscreen
+EXPECTED (video.paused == 'false') OK
+RUN(video.ontimeupdate = timeupdate)
+Looped
+RUN(video.ontimeupdate = null)
+EXPECTED (video.playsInline == 'false') OK
+EXPECTED (video.paused == 'false') OK
+END OF TEST
+

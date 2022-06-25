@@ -1,0 +1,11 @@
+Tests for ES6 arrow function, passing arrow function as the paramter
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS f(x=>{return x * 25;}, 121) is 25*121
+PASS f2((x, y)=>{return x * y;}, 14, 12) is 14*12
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

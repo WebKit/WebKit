@@ -1,0 +1,191 @@
+#!/usr/bin/env ruby
+
+# Copyright (C) 2020 Igalia S. L.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+# THE POSSIBILITY OF SUCH DAMAGE.
+
+# Wrapper for a .cpp -> .o compilation command. It
+# 1. converts the command to generate a `.s' file
+# 2. runs the ASM postprocessor on it to generate the final `.s` file
+# 3. assembles the `.s` file to a `.o` file
+
+$asm_suffix_pre = ".pre.s"
+$asm_suffix = ".s"
+$postprocessor = "#{File.dirname($0)}/resolve-asm-file-conflicts.rb"
+
+
+$intermediate_paths = []
+
+# We need to work with indices a lot and unfortunately 'getoptlong' in
+# the standard library doesn't expose optind, so we're going with
+# array searches for simplicity.
+def index_nofail(ary, f, errmsg)
+  idx = ary.index { |el|
+    f.call(el)
+  }
+  if idx.nil?
+    $stderr.puts(errmsg)
+    exit(3)
+  end
+  idx
+end
+
+# Find and return the source file for this compilation command,
+# removing it from the args. Note that the path (A) as it appears here
+# (coming from a cmake rule) is likely to be different to the
+# anonymous argument (B) to the compilation command. However, A will
+# be a suffix of B.
+#
+# Exit with an error if the argument is not there. This has already
+# been checked by `cxx-wrapper`, otherwise we wouldn't be running.
+def extract_input!(args)
+  prefix = '-DPOSTPROCESS_ASM='
+
+  idx = index_nofail(args, Proc.new { |arg|
+    arg.start_with?(prefix)
+  }, "No `-DPOSTPROCESS_ASM` argument`")
+
+  path = args[idx][prefix.size..-1]
+  if path.size == 0
+    $stderr.puts("Empty path in -DPOSTPROCESS_ASM=")
+    exit(3)
+  end
+  # We only need this to be defined for the preprocessor (not any
+  # wrapper) from now on.
+  args[idx] = "-DPOSTPROCESS_ASM"
+  return path
+end
+
+# Get the index of the first argument ending in this suffix.
+#
+# Exit with an error if the argument isn't there. We're only ever
+# called with arguments we know are being passed in by the build
+# system.
+def get_arg_idx_suffix(args, wanted)
+  index_nofail(args, Proc.new { |arg|
+                 arg.end_with?(wanted)
+               }, "No argument ends with #{wanted}")
+end
+
+# Get index of a given argument. Die if it's not there.
+def get_arg_idx(args, wanted)
+  index_nofail(args, Proc.new { |arg|
+                 arg == wanted
+               }, "No `#{wanted}` argument")
+end
+
+# Get the index of `-o` and verify that an argument follows.
+# Both are guaranteed to exist (from our build system).
+def get_o_idx(args)
+  i = get_arg_idx(args, '-o')
+  if (i + 1) >= args.size
+    $stderr.puts("No argument to `-o`")
+    exit(3)
+  end
+  i
+end
+
+# Run command and die if it fails, propagating the exit code.
+def run_cmd(cmd)
+  pid = Process.spawn(*cmd)
+  Process.waitpid(pid)
+  ret = $?
+  if not ret.success?
+    $stderr.puts("Error running cmd: #{ret}")
+    exit(ret.exitstatus)
+  end
+end
+
+# Convert
+#    cxx -o blah.o -c blah.cpp
+# to
+#    cxx -o blah.s -S blah.cpp
+def build_cxx_cmd(args)
+  c_idx = get_arg_idx(args, '-c')
+  o_idx = get_o_idx(args)
+
+  cxx_args = args.clone
+
+  cxx_args[c_idx] = '-S'
+  o_path = cxx_args[o_idx + 1]
+  cxx_args[o_idx + 1] = o_path.sub(/[.]o$/, $asm_suffix)
+  $intermediate_paths << cxx_args[o_idx + 1]
+  if cxx_args[o_idx + 1] == o_path
+    $stderr.puts("Output file name not an object file: `#{o_path}`")
+    exit(3)
+  end
+  cxx_args
+end
+
+# Do
+#     mv blah.S blah.pre.S
+# The reason we do a rename instead of directly generating the .pre.s
+# file when compiling is so that the corresponding .dwo file will have
+# the correct name embedded.
+def rename_s_file(args)
+  o_path = args[get_o_idx(args) + 1]
+  File.rename(o_path.sub(/[.]o$/, $asm_suffix),
+              o_path.sub(/[.]o$/, $asm_suffix_pre))
+end
+
+# Build
+#     postprocessor blah.pre.S blah.S
+def build_postprocessor_cmd(args)
+  o_path = args[get_o_idx(args) + 1]
+
+  pp_args = [
+    $postprocessor,
+    o_path.sub(/[.]o$/, $asm_suffix_pre), # input
+    o_path.sub(/[.]o$/, $asm_suffix) # output
+  ]
+  $intermediate_paths << pp_args[-2]
+  $intermediate_paths << pp_args[-1]
+  pp_args
+end
+
+# Build
+#     cxx -o blah.o -c blah.S
+def build_as_cmd(args, i_path)
+  i_idx = get_arg_idx_suffix(args, i_path)
+  o_path = args[get_o_idx(args) + 1]
+
+  as_args = args.clone
+  i_path = as_args[i_idx]
+  as_args[i_idx] = o_path.sub(/[.]o$/, $asm_suffix)
+  as_args
+end
+
+args = ARGV.to_a
+i_path = extract_input!(args)
+
+begin
+  run_cmd(build_cxx_cmd(args))
+  rename_s_file(args)
+  run_cmd(build_postprocessor_cmd(args))
+  run_cmd(build_as_cmd(args, i_path))
+ensure
+  $intermediate_paths.each { |p|
+    if File.exist?(p)
+      File.delete(p)
+    end
+  }
+end

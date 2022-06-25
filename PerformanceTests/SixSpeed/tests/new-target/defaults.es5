@@ -1,0 +1,10 @@
+function Fn() {
+  return !!(this && this.constructor === Fn);
+}
+
+assertEqual(typeof Fn(), 'boolean');
+assertEqual(typeof (new Fn()), 'object');
+
+test(function() {
+  return (Fn() || new Fn());
+});

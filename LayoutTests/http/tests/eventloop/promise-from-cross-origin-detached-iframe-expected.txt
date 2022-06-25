@@ -1,0 +1,10 @@
+Tests that a promise in a cross-origin iframe properly gets resolved after the iframe gets detached.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Promise was resolved
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

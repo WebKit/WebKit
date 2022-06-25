@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+    .container {
+        border: 1px solid black;
+        margin: 30px;
+        padding: 50px;
+        width: 300px;
+        height: 300px;
+        overflow: visible;
+        box-shadow: black 0px 0px 20px;
+        transform: translateZ(0px);
+        box-sizing: border-box;
+    }
+
+    .child {
+        width: 200px;
+        height: 200px;
+        background-color: green;
+        transform: translateZ(0);
+    }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        window.addEventListener('load', () => {
+            requestAnimationFrame(() => {
+                document.querySelector(".container").style.overflow = "hidden";
+
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            });
+        }, false);
+    </script>
+</head>
+<body>
+    <p>The green box should remain centered in the container</p>
+    <div class="container">
+        <div class="child">&nbsp;</div>
+    </div>
+</body>
+</html>

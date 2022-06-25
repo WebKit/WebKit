@@ -1,0 +1,71 @@
+Blocked access to external URL https://www1.localhost:9443/cookies/samesite/resources/puppet.html
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Setup service workers Test timed out
+NOTRUN same-origin, window.open with no service worker
+NOTRUN same-origin, window.open with fallback
+NOTRUN same-origin, window.open with passthrough
+NOTRUN same-origin, window.open with change-request
+NOTRUN same-origin, window.open with navpreload
+NOTRUN same-site, window.open with no service worker
+NOTRUN same-site, window.open with fallback
+NOTRUN same-site, window.open with passthrough
+NOTRUN same-site, window.open with change-request
+NOTRUN same-site, window.open with navpreload
+NOTRUN cross-site, window.open with no service worker
+NOTRUN cross-site, window.open with fallback
+NOTRUN cross-site, window.open with passthrough
+NOTRUN cross-site, window.open with change-request
+NOTRUN cross-site, window.open with navpreload
+NOTRUN same-origin, window.open with no service worker and same-site redirect
+NOTRUN same-origin, window.open with fallback and same-site redirect
+NOTRUN same-origin, window.open with passthrough and same-site redirect
+NOTRUN same-origin, window.open with change-request and same-site redirect
+NOTRUN same-origin, window.open with navpreload and same-site redirect
+NOTRUN same-origin, window.open with no service worker and cross-site redirect
+NOTRUN same-origin, window.open with fallback and cross-site redirect
+NOTRUN same-origin, window.open with passthrough and cross-site redirect
+NOTRUN same-origin, window.open with change-request and cross-site redirect
+NOTRUN same-origin, window.open with navpreload and cross-site redirect
+NOTRUN same-origin, window.open with no service worker, cross-site redirect, and same-origin redirect
+NOTRUN same-origin, window.open with fallback, cross-site redirect, and same-origin redirect
+NOTRUN same-origin, window.open with passthrough, cross-site redirect, and same-origin redirect
+NOTRUN same-origin, window.open with change-request, cross-site redirect, and same-origin redirect
+NOTRUN same-origin, window.open with navpreload, cross-site redirect, and same-origin redirect
+NOTRUN same-origin, nested window.open with cross-site middle frame and no service worker
+NOTRUN same-origin, nested window.open with cross-site middle frame and fallback service worker
+NOTRUN same-origin, nested window.open with cross-site middle frame and passthrough service worker
+NOTRUN same-origin, nested window.open with cross-site middle frame and change-request service worker
+NOTRUN same-origin, nested window.open with cross-site middle frame and navpreload service worker
+NOTRUN same-origin, nested set location with cross-site middle frame and no service worker
+NOTRUN same-origin, nested set location with cross-site middle frame and fallback service worker
+NOTRUN same-origin, nested set location with cross-site middle frame and passthrough service worker
+NOTRUN same-origin, nested set location with cross-site middle frame and change-request service worker
+NOTRUN same-origin, nested set location with cross-site middle frame and navpreload service worker
+NOTRUN same-origin, form post with no service worker
+NOTRUN same-origin, form post with fallback
+NOTRUN same-origin, form post with passthrough
+NOTRUN same-origin, form post with change-request
+NOTRUN same-site, form post with no service worker
+NOTRUN same-site, form post with fallback
+NOTRUN same-site, form post with passthrough
+NOTRUN same-site, form post with change-request
+NOTRUN cross-site, form post with no service worker
+NOTRUN cross-site, form post with fallback
+NOTRUN cross-site, form post with passthrough
+NOTRUN cross-site, form post with change-request
+NOTRUN same-origin, form post with no service worker and same-site redirect
+NOTRUN same-origin, form post with fallback and same-site redirect
+NOTRUN same-origin, form post with passthrough and same-site redirect
+NOTRUN same-origin, form post with change-request and same-site redirect
+NOTRUN same-origin, form post with no service worker and cross-site redirect
+NOTRUN same-origin, form post with fallback and cross-site redirect
+NOTRUN same-origin, form post with passthrough and cross-site redirect
+NOTRUN same-origin, form post with change-request and cross-site redirect
+NOTRUN same-origin, form post with no service worker, cross-site redirect, and same-origin redirect
+NOTRUN same-origin, form post with fallback, cross-site redirect, and same-origin redirect
+NOTRUN same-origin, form post with passthrough, cross-site redirect, and same-origin redirect
+NOTRUN same-origin, form post with change-request, cross-site redirect, and same-origin redirect
+NOTRUN Cleanup service workers
+

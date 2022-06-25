@@ -1,0 +1,13 @@
+[Worker] Test Promise.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Starting worker: ../resources/Promise-reject-in-workers.js
+PASS [Worker] promiseState is "pending"
+PASS [Worker] promiseState is "pending"
+PASS [Worker] promiseState is "rejected"
+PASS [Worker] promiseResult is "hello"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

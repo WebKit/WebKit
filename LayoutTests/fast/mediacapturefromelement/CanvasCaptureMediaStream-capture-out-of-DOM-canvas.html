@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Capture canvas to video track framerate</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+    <script src="../../webrtc/routines.js"></script>
+</head>
+<body>
+    <video id="video" autoplay playsInline controls width="200px"></video>
+    <script>
+promise_test(async (t) => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 200;
+    canvas.height = 200;
+
+    const ctx = canvas.getContext('2d');
+
+    let frames = 0;
+    const loop = () => {
+        frames += 1;
+        ctx.fillStyle = (ctx.fillStyle !== '#ff0000') ? 'red' : 'green';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        setTimeout(loop, 1000/30);
+    }
+
+    loop();
+
+    const stream = canvas.captureStream();
+    video.srcObject = stream;
+    video.play();
+
+    const frameRate = await computeFrameRate(stream, video);
+
+    // If the test was unable to generate any frames then nothing meaningful can be determined. Our test only makes sense if we have sufficient fps.
+    if (frames <= 10)
+        return;
+
+    // Check that the difference in expected and observed frame rates is < 25%
+    const percentDiff = Math.abs(frameRate - frames) / frames * 100;
+    assert_less_than(percentDiff, 25, `frame rate difference between ${frames} & ${frameRate} is below 25%`);
+}, "check frame of capture canvas is sufficient");
+    </script>
+</body>
+</html>

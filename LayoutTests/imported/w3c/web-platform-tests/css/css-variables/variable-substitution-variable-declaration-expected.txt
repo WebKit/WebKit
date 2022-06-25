@@ -1,0 +1,33 @@
+
+PASS target1 --var2
+PASS target1 margin-top
+PASS target1 margin-right
+PASS target1 margin-bottom
+PASS target1 margin-left
+PASS target2parent --var1
+PASS target2parent --var2
+PASS target2 --var1
+PASS target2 --var2
+PASS target3 --var1
+PASS target3 --var2
+PASS target4 --varA
+PASS target4 --varB
+PASS target4 --varC
+PASS target5 --varA
+PASS target5 --varB
+PASS target5 --varC
+PASS target6 --varA
+PASS target6 --varB
+PASS target6 --varC
+PASS target7 --varA
+PASS target7 --varB
+PASS target7 --varC
+PASS target8 --varA
+PASS target8 --varB
+PASS target9 --varA
+PASS target9 --varB
+PASS target9 --varC
+PASS target10 --varA
+PASS target10 --varB
+FAIL target10 --varC assert_equals: expected "" but got "another good one"
+

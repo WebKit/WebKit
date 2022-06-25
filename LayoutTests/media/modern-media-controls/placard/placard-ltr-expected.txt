@@ -1,0 +1,17 @@
+Testing placard has 'direction: rtl' set for RTL languages.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Waiting for placard to appear
+PASS !!shadowRoot.querySelector('.placard') became true
+
+Default layout direction is LTR
+PASS getComputedStyle(shadowRoot.querySelector('.placard')).direction became "ltr"
+
+Setting layout direction to RTL
+PASS getComputedStyle(shadowRoot.querySelector('.placard')).direction became "rtl"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

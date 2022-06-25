@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test() {
+    let testElement = null;
+    let nodeStyles = null;
+
+    let suite = InspectorTest.createAsyncSuite("CSS.forcePseudoState");
+
+    [
+        {forceablePseudoClass: WI.CSSManager.ForceablePseudoClass.Active, expectedBackgroundColor: "rgb(0, 0, 10)"},
+        {forceablePseudoClass: WI.CSSManager.ForceablePseudoClass.Focus, expectedBackgroundColor: "rgb(0, 0, 20)"},
+        {forceablePseudoClass: WI.CSSManager.ForceablePseudoClass.FocusVisible, expectedBackgroundColor: "rgb(0, 0, 30)"},
+        {forceablePseudoClass: WI.CSSManager.ForceablePseudoClass.FocusWithin, expectedBackgroundColor: "rgb(0, 0, 40)"},
+        {forceablePseudoClass: WI.CSSManager.ForceablePseudoClass.Hover, expectedBackgroundColor: "rgb(0, 0, 50)"},
+        {forceablePseudoClass: WI.CSSManager.ForceablePseudoClass.Target, expectedBackgroundColor: "rgb(0, 0, 60)"},
+        {forceablePseudoClass: WI.CSSManager.ForceablePseudoClass.Visited, expectedBackgroundColor: "rgb(0, 0, 70)"},
+    ].forEach(({forceablePseudoClass, expectedBackgroundColor}) => {
+        suite.addTestCase({
+            name: "CSS.forcePseudoState." + forceablePseudoClass,
+            async test() {
+                await nodeStyles.refreshIfNeeded();
+
+                InspectorTest.assert(Object.shallowEqual(testElement.enabledPseudoClasses, []), "Should not have any enabled pseudo classes.");
+                InspectorTest.assert(nodeStyles.computedStyle.propertyForName("background-color").value === "rgb(0, 0, 0)", "Should have expected initial style.");
+
+                InspectorTest.log("Forcing pseudo class...");
+                await Promise.all([
+                    testElement.awaitEvent(WI.DOMNode.Event.EnabledPseudoClassesChanged),
+                    testElement.setPseudoClassEnabled(forceablePseudoClass, true),
+                ]);
+                await nodeStyles.refreshIfNeeded();
+                InspectorTest.expectShallowEqual(testElement.enabledPseudoClasses, [forceablePseudoClass], "Should have one enabled pseudo class.");
+                InspectorTest.expectEqual(nodeStyles.computedStyle.propertyForName("background-color").value, expectedBackgroundColor, "Should change styles.");
+
+                InspectorTest.log("Removing forced pseudo class...");
+                await Promise.all([
+                    testElement.awaitEvent(WI.DOMNode.Event.EnabledPseudoClassesChanged),
+                    testElement.setPseudoClassEnabled(forceablePseudoClass, false),
+                ]);
+                await nodeStyles.refreshIfNeeded();
+                InspectorTest.expectShallowEqual(testElement.enabledPseudoClasses, [], "Should not have any enabled pseudo classes.");
+                InspectorTest.expectEqual(nodeStyles.computedStyle.propertyForName("background-color").value, "rgb(0, 0, 0)", "Should change back to initial style.");
+            },
+        });
+    });
+
+    WI.domManager.requestDocument((documentNode) => {
+        documentNode.querySelector("#test-element", (contentNodeId) => {
+            if (contentNodeId) {
+                testElement = WI.domManager.nodeForId(contentNodeId);
+                nodeStyles = WI.cssManager.stylesForNode(testElement);
+                suite.runTestCasesAndFinish();
+            } else {
+                InspectorTest.fail("DOM node not found.");
+                InspectorTest.completeTest();
+            }
+        });
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing CSS.forcePseudoState.</p>
+
+    <style>
+#test-element {
+    background-color: rgb(0, 0, 0);
+}
+#test-element:active {
+    background-color: rgb(0, 0, 10);
+}
+#test-element:focus {
+    background-color: rgb(0, 0, 20);
+}
+#test-element:focus-visible {
+    background-color: rgb(0, 0, 30);
+}
+#test-element:focus-within {
+    background-color: rgb(0, 0, 40);
+}
+#test-element:hover {
+    background-color: rgb(0, 0, 50);
+}
+#test-element:target {
+    background-color: rgb(0, 0, 60);
+}
+#test-element:visited {
+    background-color: rgb(0, 0, 70);
+}
+    </style>
+    <a href="#" id="test-element"></a>
+</body>
+</html>

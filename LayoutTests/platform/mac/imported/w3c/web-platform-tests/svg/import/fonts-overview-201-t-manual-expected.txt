@@ -1,0 +1,36 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (83,91) size 717x382
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGPath {path} at (83,331) size 617x4 [stroke={[type=SOLID] [color=#888888] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 50 200 L 420 200"]
+      RenderSVGPath {path} at (83,91) size 617x4 [stroke={[type=SOLID] [color=#888888] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 50 56 L 420 56"]
+      RenderSVGPath {path} at (83,391) size 617x4 [stroke={[type=SOLID] [color=#888888] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 50 236 L 420 236"]
+      RenderSVGText {text} at (50,55) size 99x181 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 99x181
+          chunk 1 text run 1 at (50.00,200.00) startOffset 0 endOffset 1 width 99.00: "\x{3B2}"
+      RenderSVGText {text} at (180,55) size 99x181 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 99x181
+          chunk 1 text run 1 at (180.00,200.00) startOffset 0 endOffset 1 width 99.00: "\x{3B2}"
+      RenderSVGText {text} at (310,55) size 990x181 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 990x181
+          chunk 1 text run 1 at (310.00,200.00) startOffset 0 endOffset 1 width 990.00: "\x{3B2}"
+      RenderSVGText {text} at (60,250) size 26x13 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 26x12
+          chunk 1 text run 1 at (60.00,260.00) startOffset 0 endOffset 5 width 25.52: "1,000"
+      RenderSVGText {text} at (190,250) size 12x13 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 12x12
+          chunk 1 text run 1 at (190.00,260.00) startOffset 0 endOffset 2 width 11.35: "10"
+      RenderSVGText {text} at (320,250) size 32x13 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 32x12
+          chunk 1 text run 1 at (320.00,260.00) startOffset 0 endOffset 6 width 31.20: "10,000"
+      RenderSVGText {text} at (110,265) size 199x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 199x19
+          chunk 1 text run 1 at (110.00,280.00) startOffset 0 endOffset 27 width 198.98: "varying units-per-em values"
+    RenderSVGContainer {g} at (16,517) size 381x62
+      RenderSVGText {text} at (10,310) size 229x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 229x37
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 228.03: "$Revision: 1.2 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

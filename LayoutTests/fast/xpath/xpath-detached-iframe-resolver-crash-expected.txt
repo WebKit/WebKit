@@ -1,0 +1,6 @@
+Ensure that using XPath namespace resolver with a detached iframe doesn't crash.
+
+PASS Did not crash.
+PASS dummyResolverCalled is true
+PASS foundNode.toString() is "[object HTMLDivElement]"
+

@@ -1,0 +1,123 @@
+Testing behaviors of CSSPrimitiveValue on the Q unit.
+PASS divWidth.primitiveType is CSSPrimitiveValue.CSS_UNKNOWN
+PASS divWidth.getFloatValue(CSSPrimitiveValue.CSS_S) threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getCounterValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getRGBColorValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getRectValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getStringValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+Testing behaviors of CSSPrimitiveValue on the cap unit.
+PASS divWidth.primitiveType is CSSPrimitiveValue.CSS_UNKNOWN
+PASS divWidth.getFloatValue(CSSPrimitiveValue.CSS_S) threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getCounterValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getRGBColorValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getRectValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getStringValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+Testing behaviors of CSSPrimitiveValue on the ch unit.
+PASS divWidth.primitiveType is CSSPrimitiveValue.CSS_UNKNOWN
+PASS divWidth.getFloatValue(CSSPrimitiveValue.CSS_S) threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getCounterValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getRGBColorValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getRectValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getStringValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+Testing behaviors of CSSPrimitiveValue on the ic unit.
+PASS divWidth.primitiveType is CSSPrimitiveValue.CSS_UNKNOWN
+PASS divWidth.getFloatValue(CSSPrimitiveValue.CSS_S) threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getCounterValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getRGBColorValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getRectValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getStringValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+Testing behaviors of CSSPrimitiveValue on the lh unit.
+PASS divWidth.primitiveType is CSSPrimitiveValue.CSS_UNKNOWN
+PASS divWidth.getFloatValue(CSSPrimitiveValue.CSS_S) threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getCounterValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getRGBColorValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getRectValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getStringValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+Testing behaviors of CSSPrimitiveValue on the rcap unit.
+PASS divWidth.primitiveType is CSSPrimitiveValue.CSS_UNKNOWN
+PASS divWidth.getFloatValue(CSSPrimitiveValue.CSS_S) threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getCounterValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getRGBColorValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getRectValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getStringValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+Testing behaviors of CSSPrimitiveValue on the rch unit.
+PASS divWidth.primitiveType is CSSPrimitiveValue.CSS_UNKNOWN
+PASS divWidth.getFloatValue(CSSPrimitiveValue.CSS_S) threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getCounterValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getRGBColorValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getRectValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getStringValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+Testing behaviors of CSSPrimitiveValue on the rem unit.
+PASS divWidth.primitiveType is CSSPrimitiveValue.CSS_UNKNOWN
+PASS divWidth.getFloatValue(CSSPrimitiveValue.CSS_S) threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getCounterValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getRGBColorValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getRectValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getStringValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+Testing behaviors of CSSPrimitiveValue on the rex unit.
+PASS divWidth.primitiveType is CSSPrimitiveValue.CSS_UNKNOWN
+PASS divWidth.getFloatValue(CSSPrimitiveValue.CSS_S) threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getCounterValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getRGBColorValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getRectValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getStringValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+Testing behaviors of CSSPrimitiveValue on the ric unit.
+PASS divWidth.primitiveType is CSSPrimitiveValue.CSS_UNKNOWN
+PASS divWidth.getFloatValue(CSSPrimitiveValue.CSS_S) threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getCounterValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getRGBColorValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getRectValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getStringValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+Testing behaviors of CSSPrimitiveValue on the rlh unit.
+PASS divWidth.primitiveType is CSSPrimitiveValue.CSS_UNKNOWN
+PASS divWidth.getFloatValue(CSSPrimitiveValue.CSS_S) threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getCounterValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getRGBColorValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getRectValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getStringValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+Testing behaviors of CSSPrimitiveValue on the vb unit.
+PASS divWidth.primitiveType is CSSPrimitiveValue.CSS_UNKNOWN
+PASS divWidth.getFloatValue(CSSPrimitiveValue.CSS_S) threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getCounterValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getRGBColorValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getRectValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getStringValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+Testing behaviors of CSSPrimitiveValue on the vh unit.
+PASS divWidth.primitiveType is CSSPrimitiveValue.CSS_UNKNOWN
+PASS divWidth.getFloatValue(CSSPrimitiveValue.CSS_S) threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getCounterValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getRGBColorValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getRectValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getStringValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+Testing behaviors of CSSPrimitiveValue on the vi unit.
+PASS divWidth.primitiveType is CSSPrimitiveValue.CSS_UNKNOWN
+PASS divWidth.getFloatValue(CSSPrimitiveValue.CSS_S) threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getCounterValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getRGBColorValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getRectValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getStringValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+Testing behaviors of CSSPrimitiveValue on the vmax unit.
+PASS divWidth.primitiveType is CSSPrimitiveValue.CSS_UNKNOWN
+PASS divWidth.getFloatValue(CSSPrimitiveValue.CSS_S) threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getCounterValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getRGBColorValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getRectValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getStringValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+Testing behaviors of CSSPrimitiveValue on the vmin unit.
+PASS divWidth.primitiveType is CSSPrimitiveValue.CSS_UNKNOWN
+PASS divWidth.getFloatValue(CSSPrimitiveValue.CSS_S) threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getCounterValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getRGBColorValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getRectValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getStringValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+Testing behaviors of CSSPrimitiveValue on the vw unit.
+PASS divWidth.primitiveType is CSSPrimitiveValue.CSS_UNKNOWN
+PASS divWidth.getFloatValue(CSSPrimitiveValue.CSS_S) threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getCounterValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getRGBColorValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getRectValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS divWidth.getStringValue() threw exception InvalidAccessError: The object does not support the operation or argument..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

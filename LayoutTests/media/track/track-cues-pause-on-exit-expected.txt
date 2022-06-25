@@ -1,0 +1,22 @@
+Tests that the video is paused after cues that have pause-on-exit flag are processed
+
+
+EVENT(canplaythrough)
+EXPECTED (testTrack.track.cues.length == '4') OK
+
+RUN(video.play())
+EXPECTED (video.paused == 'false') OK
+
+EVENT(pause)
+EVENT(exit)
+EXPECTED (currentCue.id == '0') OK
+EXPECTED (video.paused == 'true') OK
+RUN(video.play())
+
+EVENT(pause)
+EVENT(exit)
+EXPECTED (currentCue.id == '2') OK
+EXPECTED (video.paused == 'true') OK
+RUN(video.play())
+END OF TEST
+

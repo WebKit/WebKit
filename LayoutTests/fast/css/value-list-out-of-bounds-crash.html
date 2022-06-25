@@ -1,0 +1,26 @@
+<head>
+<style>
+    #div {
+        width: 200px;
+        height: 200px;
+        background-image:url(resources/bikes.bmp); 
+        -webkit-background-size: 50% 100%;
+    }
+</style>
+</head>
+
+<body>
+
+<div id='pass'>Failed! This test should not crash, and this text should be changed to a passing message.</div>
+<div id='div'></div>
+
+<script>
+    var div = document.getElementById('div');
+    var style = document.defaultView.getComputedStyle(div);
+    var valueList = style.getPropertyCSSValue('-webkit-background-size');
+    var one = valueList.item(100);
+
+    var pass = document.getElementById('pass');
+    pass.innerHTML = 'PASS! This test passes if it does not crash.';
+</script>
+</body>

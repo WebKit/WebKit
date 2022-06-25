@@ -1,0 +1,29 @@
+
+<!DOCTYPE html>
+<html>
+<script src="../../../resources/ui-helper.js"></script>
+</head>
+<body>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+    async function runTest() {
+        if (!testRunner.runUIScript)
+            return;
+
+        var input = document.getElementById('colorInput');
+        await UIHelper.activateElement(input);
+        await UIHelper.ensurePresentationUpdate();
+        document.getElementById('result').innerHTML = 'PASS: Test did not crash';
+        testRunner.notifyDone();
+    }
+
+    window.addEventListener('load', runTest, false);
+</script>
+<div>Touching the color input form should not crash.</div>
+<input id = 'colorInput' type = "color" value = "#00FF00" style = "font-size:18px">
+<div id = 'result'></div>
+</body>
+</html>

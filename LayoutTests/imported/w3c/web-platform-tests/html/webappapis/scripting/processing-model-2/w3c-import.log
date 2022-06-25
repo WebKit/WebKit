@@ -1,0 +1,50 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/addEventListener.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/body-onerror-compile-error-data-url.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/body-onerror-compile-error.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/body-onerror-runtime-error.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/compile-error-cross-origin-setInterval.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/compile-error-cross-origin-setTimeout.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/compile-error-cross-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/compile-error-data-url.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/compile-error-in-attribute.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/compile-error-in-body-onerror.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/compile-error-in-setInterval.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/compile-error-in-setTimeout.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/compile-error-same-origin-with-hash.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/compile-error-same-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/compile-error.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/runtime-error-cross-origin-setInterval.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/runtime-error-cross-origin-setTimeout.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/runtime-error-cross-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/runtime-error-data-url.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/runtime-error-in-attribute.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/runtime-error-in-body-onerror.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/runtime-error-in-setInterval.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/runtime-error-in-setTimeout.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/runtime-error-in-window-onerror.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/runtime-error-same-origin-with-hash.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/runtime-error-same-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/runtime-error.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/window-onerror-parse-error.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/window-onerror-runtime-error-throw.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/window-onerror-runtime-error.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/window-onerror-with-cross-frame-event-listeners-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/window-onerror-with-cross-frame-event-listeners-2.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/window-onerror-with-cross-frame-event-listeners-3.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/window-onerror-with-cross-frame-event-listeners-4.html

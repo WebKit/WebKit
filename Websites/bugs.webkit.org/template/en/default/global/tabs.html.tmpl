@@ -1,0 +1,42 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # tabs: List of hashes. Must have at least one item.  Each hash has:
+  #   name: string. Name of the tab.
+  #   link: string. relative URL to the tab's resource on this installation.
+  #   label: string. text displayed in the tab.
+  # current_tab_name: string. name of the currently selected tab
+  #%]
+
+<div class="tabbed">
+  <table class="tabs">
+    <tr>
+      <td class="spacer">&nbsp;</td>
+
+      [% FOREACH tab = tabs %]
+        [% IF tab.name == current_tab_name %]
+          <td id="tab_[% tab.name FILTER html %]" class="selected">
+            [% tab.label FILTER html %]</td>
+        [% ELSE %]
+          <td id="tab_[% tab.name FILTER html %]" class="clickable_area"
+              onClick="document.location='[% tab.link FILTER js FILTER html %]'">
+            <a href="[% tab.link FILTER html %]">[% tab.label FILTER html %]</a>
+          </td>
+        [% END %]
+      [% END %]
+
+      <td class="spacer">&nbsp;</td>
+    </tr>
+  </table>
+
+  <div class="tabbody">
+    [% content %]
+  </div>
+
+</div>

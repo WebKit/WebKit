@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<node name="/node">
+<interface name="org.a11y.atspi.DeviceEventListener">
+
+  <method name="NotifyEvent">
+    <arg direction="in" name="event" type="(uiuuisb)"/>
+    <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="QSpiDeviceEvent"/>
+    <arg direction="out" type="b"/>
+  </method>
+
+</interface>
+</node>

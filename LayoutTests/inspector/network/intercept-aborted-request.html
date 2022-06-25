@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+
+function fetchAndAbort() {
+    let abortController = new AbortController;
+    fetch("resources/data.json", { signal: abortController.signal });
+    abortController.abort();
+}
+
+function test()
+{
+    let suite = ProtocolTest.createAsyncSuite("Network.InterceptAbortedRequest");
+
+    InspectorProtocol.sendCommand("Network.enable");
+    InspectorProtocol.sendCommand("Network.setInterceptionEnabled", {enabled: true});
+    InspectorProtocol.sendCommand("Network.addInterception", {
+        url: "resources/data\.json",
+        stage: /* Network.NetworkStage */ "request",
+        isRegex: true,
+    });
+
+    suite.addTestCase({
+        name: "Network.InterceptAbortedRequest.Response",
+        description: "Tests request interception that fulfills aborted request",
+        async test() {
+            ProtocolTest.log("Triggering load...");
+            let [requestInterceptedEvent] = await Promise.all([
+                InspectorProtocol.awaitEvent({event: "Network.requestIntercepted"}),
+                ProtocolTest.evaluateInPage(`fetchAndAbort()`),
+            ]);
+
+            ProtocolTest.log("Intercepting with response...");
+            await ProtocolTest.expectException(async () => {
+                await InspectorProtocol.awaitCommand({
+                    method: "Network.interceptRequestWithResponse",
+                    params: {
+                        requestId: requestInterceptedEvent.params.requestId,
+                        content: "FAIL",
+                        base64Encoded: false,
+                        mimeType: "text/plain",
+                        status: 200,
+                        statusText: "OK",
+                        headers: {},
+                    },
+                });
+            });
+        },
+    });
+
+    suite.addTestCase({
+        name: "Network.InterceptAbortedRequest.Error",
+        description: "Tests request interception that rejects aborted request",
+        async test() {
+            ProtocolTest.log("Triggering load...");
+            let [requestInterceptedEvent] = await Promise.all([
+                InspectorProtocol.awaitEvent({event: "Network.requestIntercepted"}),
+                ProtocolTest.evaluateInPage(`fetchAndAbort()`),
+            ]);
+
+            ProtocolTest.log("Intercepting with error...");
+            await ProtocolTest.expectException(async () => {
+                await InspectorProtocol.awaitCommand({
+                    method: "Network.interceptRequestWithError",
+                    params: {
+                        requestId: requestInterceptedEvent.params.requestId,
+                        errorType: /* Network.ResourceErrorType */ "General",
+                    },
+                });
+            });
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test request interception of the aborted request.</p>
+</body>
+</html>

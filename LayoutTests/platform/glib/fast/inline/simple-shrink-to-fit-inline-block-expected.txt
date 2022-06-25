@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 300x102
+        RenderText {#text} at (0,1) size 83x17
+          text run at (0,1) width 83: "first line with"
+        RenderBlock {DIV} at (83,0) size 74x102 [border: (1px solid #FF0000)]
+          RenderText {#text} at (1,1) size 72x17
+            text run at (1,1) width 72: "shrink to fit"
+        RenderText {#text} at (157,1) size 46x17
+          text run at (157,1) width 46: "content"

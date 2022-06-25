@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Pizza is Amazing</title>
+  <style>
+    body {
+      font-family: "Lucida Grande", "Lucida Sans Unicode", Thonburi, sans-serif;
+    }
+
+    /* Content flow */
+    .contentFlow {
+      -webkit-flow-into: content-flow;
+    }
+
+    h1 {
+        text-align: center;
+        font-size: 42px;
+        margin: 0.4em auto 0.4em auto;
+    }
+
+    p {
+      font-size: 17px;
+      line-height: 26px;
+    }
+
+    /* Content flow regions */
+    .regionContentFlow {
+      -webkit-flow-from: content-flow;
+    }
+
+    .regionBox {
+      margin: 8px;
+      width: 700px;
+      height: 90px;
+    }
+
+    #region-4 {
+      float: left;
+      width: 340px;
+    }
+
+    #region-5 {
+      float: left;
+      width: 340px;
+    }
+
+    #region-6 {
+      position:absolute;
+      top: 0px;
+      left:724px;
+      width: 360px;
+      height: auto;
+    }
+
+    /* Image flow */
+    .imageFlow {
+      -webkit-flow-into: image-flow;
+    }
+
+    img {
+        display: block;
+        width: 512px;
+        height: 342px;
+        margin: auto;
+    }
+
+    /* Image flow region */
+    .regionImageFlow {
+      -webkit-flow-from: image-flow;
+    }
+
+    #region-2 {
+      height:375px;
+    }
+
+    /* Style the content in regions */
+    @-webkit-region #region-3 {
+      p { color: green; }
+    }
+
+    @-webkit-region #region-4, #region-5 {
+      p { color: coral; }
+    }
+
+    @-webkit-region #region-6 {
+      p { color: crimson; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Content that will be flowed into regions.-->
+  <div class="contentFlow">
+    <h1>Pizza is Amazing</h1>
+    <!-- The image will be collected in a different named flow. -->
+    <img class="imageFlow" src="yellow-pizza.jpg" />
+    <p>Is there any food better than pizza? I don't think so. Its simplest form is really my favorite -
+      a perfect thin crust, a barely-altered tomato sauce, fresh mozzarella, and a light sprinkling of basil.
+      But I like all of the less pure interpretations of pizza too. From a mushroom-and-sausage-filled
+      Chicago-style deep dish to a California sourdough crust with fresh corn, feta cheese, and cilantro,
+      to an almost sweet Hawaiian pie <span class="">(don't tell Enrica about that one),</span> I just love it all. Is there anyone who doesn't love pizza? I pity the fool who does not love pizza. So until then, I will continue to believe that pizza the most universally-loved food. (I know what you're thinking. You're thinking, "What about chocolate?" Well, I have met people who don't like chocolate. I know, they cray, but they do exist.)</p>
+    <p>So there is a reason that you can't tell Enrica about my Hawiian pizza treason. It's because
+    in addition to being a kick-booty WebKit hacker, Enrica is also a true pizza virtuoso. She's a whiz.
+    A hotshot. The honest to goodness pizza whisperer. Best. Pizza. Ever. See that amazing photo over there?
+    The pizza on the yellow dish?? Enrica made that. She has a brick oven in her backyard where she performs
+    her wizardry, and I need to ensure that I have a ticket back to that magical land of bready cheesy nirvana.
+    Plus it's actually physically impossible to visit Enrica without being served at least 3 desserts.
+    So hush about the Hawaiian pies, okay?! And I'll try to bring you some leftovers.</p>
+  </div>
+  
+  <!-- Layout of the page using regions displaying content from different named flows -->
+  <div id="regionContainer">
+    <div id="region-1" class="regionContentFlow regionBox"></div>
+    <!-- The following region element displays content from the image flow -->
+    <div id="region-2" class="regionImageFlow regionBox"></div>
+    <div id="region-3" class="regionContentFlow regionBox"></div>
+    <div id="region-4" class="regionContentFlow regionBox"></div>
+    <div id="region-5" class="regionContentFlow regionBox"></div>
+    <div id="region-6" class="regionContentFlow regionBox"></div>
+  </div>
+  
+</body>
+</html>

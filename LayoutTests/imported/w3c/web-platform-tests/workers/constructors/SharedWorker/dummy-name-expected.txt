@@ -1,0 +1,3 @@
+
+PASS creating a dummy shared worker with name "foo"
+

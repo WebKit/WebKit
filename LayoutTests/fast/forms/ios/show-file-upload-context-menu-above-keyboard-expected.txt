@@ -1,0 +1,10 @@
+This test verifies that when programmatically clicking a file input while focusing an editable control with a software keyboard attached, the file upload context menu is presented above the software keyboard. To manually test, click the 'Show file picker' button without a hardware keyboard attached, and verify that the context menu is visible.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Context menu was presented above the keyboard
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Show file picker

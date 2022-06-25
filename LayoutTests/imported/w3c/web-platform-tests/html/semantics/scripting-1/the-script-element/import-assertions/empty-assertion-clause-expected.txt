@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration.
+
+Harness Error (FAIL), message = SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration.
+
+FAIL Test that no error occurs when an empty import assertion clause is provided. assert_array_equals: lengths differ, expected array ["hello", "empty-assertion-clause"] length 2, got [object "SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration."] length 1
+

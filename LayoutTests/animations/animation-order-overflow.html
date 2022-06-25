@@ -1,0 +1,38 @@
+<!doctype html>
+<title>Testing if integer interpolation is overflowed for 32bit integer type min/max value</title>
+<link rel="author" title="Joonghun Park" href="pjh0718@gmail.com">
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<style>
+
+#flex-container {
+    display: flex;
+    animation: anim-order 4s steps(4) forwards 1;
+    animation-delay: -3s;
+    animation-play-state: paused;
+}
+
+@keyframes anim-order {
+  from {
+    order: -2147483647;
+  }
+
+  to {
+    order: 2147483647;
+  }
+}
+
+</style>
+<div id="flex-container"></div>
+<script>
+var test_description = "Integer interpolation should be rounded towards positive infinity";
+test(
+    t => {
+        const container = document.getElementById("flex-container");
+        const order_value = Number.parseFloat(getComputedStyle(container).getPropertyValue('order'));
+
+        assert_greater_than(order_value, 0, "Interpolation result for z-index should be positive integer");
+    },
+    test_description
+);
+</script>

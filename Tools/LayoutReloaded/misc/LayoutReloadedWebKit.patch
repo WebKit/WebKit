@@ -1,0 +1,1728 @@
+diff --git a/Source/WTF/wtf/Platform.h b/Source/WTF/wtf/Platform.h
+index 290f6de219b..f7411e2dfb4 100644
+--- a/Source/WTF/wtf/Platform.h
++++ b/Source/WTF/wtf/Platform.h
+@@ -1120,7 +1120,7 @@
+ #if !defined(NDEBUG)
+ #define ENABLE_TREE_DEBUGGING 1
+ #else
+-#define ENABLE_TREE_DEBUGGING 0
++#define ENABLE_TREE_DEBUGGING 1
+ #endif
+ #endif
+ 
+diff --git a/Source/WebCore/DerivedSources.make b/Source/WebCore/DerivedSources.make
+index f5d0e5d2c3e..3945090acf3 100644
+--- a/Source/WebCore/DerivedSources.make
++++ b/Source/WebCore/DerivedSources.make
+@@ -532,6 +532,7 @@ JS_BINDING_IDLS = \
+     $(WebCore)/dom/TextDecoder.idl \
+     $(WebCore)/dom/TextEncoder.idl \
+     $(WebCore)/dom/TextEvent.idl \
++    $(WebCore)/dom/InlineTextRun.idl \
+     $(WebCore)/dom/TransitionEvent.idl \
+     $(WebCore)/dom/TreeWalker.idl \
+     $(WebCore)/dom/UIEvent.idl \
+diff --git a/Source/WebCore/Sources.txt b/Source/WebCore/Sources.txt
+index a461719e2dd..2d48c60758b 100644
+--- a/Source/WebCore/Sources.txt
++++ b/Source/WebCore/Sources.txt
+@@ -1802,7 +1802,9 @@ rendering/InlineBox.cpp
+ rendering/InlineElementBox.cpp
+ rendering/InlineFlowBox.cpp
+ rendering/InlineIterator.cpp
++rendering/InlineTextBreaker.cpp
+ rendering/InlineTextBox.cpp
++rendering/InlineTextRunIterator.cpp
+ rendering/LayoutDisallowedScope.cpp
+ rendering/LayoutRepainter.cpp
+ rendering/LayoutState.cpp
+diff --git a/Source/WebCore/WebCore.xcodeproj/project.pbxproj b/Source/WebCore/WebCore.xcodeproj/project.pbxproj
+index a6a138060f6..91fb8a5cd04 100644
+--- a/Source/WebCore/WebCore.xcodeproj/project.pbxproj
++++ b/Source/WebCore/WebCore.xcodeproj/project.pbxproj
+@@ -396,6 +396,10 @@
+ 		1193408A1FEB355D00935F1E /* RenderTreeBuilderRuby.h in Headers */ = {isa = PBXBuildFile; fileRef = 119340881FEB355D00935F1E /* RenderTreeBuilderRuby.h */; };
+ 		119340971FED715500935F1E /* RenderTreeBuilderFormControls.h in Headers */ = {isa = PBXBuildFile; fileRef = 119340951FED715500935F1E /* RenderTreeBuilderFormControls.h */; };
+ 		119340A31FEE024000935F1E /* RenderTreeBuilderBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 119340A11FEE024000935F1E /* RenderTreeBuilderBlock.h */; };
++		11C0C79E20694AE100BE3A84 /* InlineTextRunIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 11C0C79920694ADE00BE3A84 /* InlineTextRunIterator.h */; };
++		11C0C7A020694AE100BE3A84 /* InlineTextBreaker.h in Headers */ = {isa = PBXBuildFile; fileRef = 11C0C79C20694AE000BE3A84 /* InlineTextBreaker.h */; };
++		11C0C7A520694B0A00BE3A84 /* InlineTextRun.h in Headers */ = {isa = PBXBuildFile; fileRef = 11C0C7A320694B0900BE3A84 /* InlineTextRun.h */; };
++		11C0C7A7206953F700BE3A84 /* JSInlineTextRun.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11C0C7A6206953F600BE3A84 /* JSInlineTextRun.cpp */; };
+ 		11CB2789203BA570004A1DC9 /* RenderTreeBuilderFullScreen.h in Headers */ = {isa = PBXBuildFile; fileRef = 11CB2787203BA570004A1DC9 /* RenderTreeBuilderFullScreen.h */; };
+ 		11E067EE1E6246E500162D16 /* SimpleLineLayoutCoverage.h in Headers */ = {isa = PBXBuildFile; fileRef = 11E067ED1E6246E500162D16 /* SimpleLineLayoutCoverage.h */; settings = {ATTRIBUTES = (Private, ); }; };
+ 		1400D7A817136EA70077CE05 /* ScriptWrappableInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 1400D7A717136EA70077CE05 /* ScriptWrappableInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
+@@ -5706,6 +5710,13 @@
+ 		119340951FED715500935F1E /* RenderTreeBuilderFormControls.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderTreeBuilderFormControls.h; sourceTree = "<group>"; };
+ 		119340A01FEE024000935F1E /* RenderTreeBuilderBlock.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeBuilderBlock.cpp; sourceTree = "<group>"; };
+ 		119340A11FEE024000935F1E /* RenderTreeBuilderBlock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderTreeBuilderBlock.h; sourceTree = "<group>"; };
++		11C0C79920694ADE00BE3A84 /* InlineTextRunIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineTextRunIterator.h; sourceTree = "<group>"; };
++		11C0C79B20694ADF00BE3A84 /* InlineTextBreaker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InlineTextBreaker.cpp; sourceTree = "<group>"; };
++		11C0C79C20694AE000BE3A84 /* InlineTextBreaker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineTextBreaker.h; sourceTree = "<group>"; };
++		11C0C79D20694AE000BE3A84 /* InlineTextRunIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InlineTextRunIterator.cpp; sourceTree = "<group>"; };
++		11C0C7A220694B0800BE3A84 /* InlineTextRun.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = InlineTextRun.idl; sourceTree = "<group>"; };
++		11C0C7A320694B0900BE3A84 /* InlineTextRun.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineTextRun.h; sourceTree = "<group>"; };
++		11C0C7A6206953F600BE3A84 /* JSInlineTextRun.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSInlineTextRun.cpp; path = JSInlineTextRun.cpp; sourceTree = "<group>"; };
+ 		11C5F1162003E7750001AE60 /* RenderTreeBuilderInline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeBuilderInline.cpp; sourceTree = "<group>"; };
+ 		11C5F1182003E7760001AE60 /* RenderTreeBuilderInline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTreeBuilderInline.h; sourceTree = "<group>"; };
+ 		11C5F11D2003F69E0001AE60 /* RenderTreeBuilderBlockFlow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTreeBuilderBlockFlow.h; sourceTree = "<group>"; };
+@@ -22145,6 +22156,7 @@
+ 		A83B79100CCB001B000B0825 /* Core */ = {
+ 			isa = PBXGroup;
+ 			children = (
++				11C0C7A6206953F600BE3A84 /* JSInlineTextRun.cpp */,
+ 				7C30D97E1F815AC000268356 /* JSAbortController.cpp */,
+ 				7C30D9801F815AC100268356 /* JSAbortController.h */,
+ 				7C30D9821F815AC200268356 /* JSAbortSignal.cpp */,
+@@ -25479,6 +25491,10 @@
+ 		F523D2F302DE443B018635CA /* rendering */ = {
+ 			isa = PBXGroup;
+ 			children = (
++				11C0C79B20694ADF00BE3A84 /* InlineTextBreaker.cpp */,
++				11C0C79C20694AE000BE3A84 /* InlineTextBreaker.h */,
++				11C0C79D20694AE000BE3A84 /* InlineTextRunIterator.cpp */,
++				11C0C79920694ADE00BE3A84 /* InlineTextRunIterator.h */,
+ 				FFB698C81832F10B00158A31 /* line */,
+ 				439046C212DA25CE00AF80A2 /* mathml */,
+ 				FD08A879175D3926002CD360 /* shapes */,
+@@ -25775,6 +25791,8 @@
+ 		F523D32402DE4478018635CA /* dom */ = {
+ 			isa = PBXGroup;
+ 			children = (
++				11C0C7A320694B0900BE3A84 /* InlineTextRun.h */,
++				11C0C7A220694B0800BE3A84 /* InlineTextRun.idl */,
+ 				CE2616A4187E65C1007955F3 /* ios */,
+ 				2D5036661BCDDDC400E20BB3 /* mac */,
+ 				51ECC3E42005831F00483EAE /* messageports */,
+@@ -26771,6 +26789,7 @@
+ 				31DCD29D1AB4FBDE0072E817 /* AnimationTrigger.h in Headers */,
+ 				0F580FAF149800D400FB5BD8 /* AnimationUtilities.h in Headers */,
+ 				93309DD7099E64920056E581 /* AppendNodeCommand.h in Headers */,
++				11C0C7A520694B0A00BE3A84 /* InlineTextRun.h in Headers */,
+ 				A1DF5A941F7EC4320058A477 /* ApplePayContactField.h in Headers */,
+ 				A12C59EE2035FC9B0012236B /* ApplePayError.h in Headers */,
+ 				7C6579E31E00827000E3A27A /* ApplePayLineItem.h in Headers */,
+@@ -30369,6 +30388,7 @@
+ 				4945BFD413CF809000CC3B38 /* TransformState.h in Headers */,
+ 				E17B491616A9B094001C8839 /* TransitionEvent.h in Headers */,
+ 				49E911D20EF86D47009D0CAF /* TranslateTransformOperation.h in Headers */,
++				11C0C7A020694AE100BE3A84 /* InlineTextBreaker.h in Headers */,
+ 				854FE7370A2297BE0058D7AD /* Traversal.h in Headers */,
+ 				37FD4298118368460093C029 /* TreeDepthLimit.h in Headers */,
+ 				14D64B5D134A5B6B00E58FDA /* TreeScope.h in Headers */,
+@@ -30583,6 +30603,7 @@
+ 				97AABD1E14FA09D5007457AE /* WebSocketChannel.h in Headers */,
+ 				97AABD1F14FA09D5007457AE /* WebSocketChannelClient.h in Headers */,
+ 				4A38BF5114FE1C0900612512 /* WebSocketDeflateFramer.h in Headers */,
++				11C0C79E20694AE100BE3A84 /* InlineTextRunIterator.h in Headers */,
+ 				97AABD2114FA09D5007457AE /* WebSocketDeflater.h in Headers */,
+ 				97AABD2314FA09D5007457AE /* WebSocketExtensionDispatcher.h in Headers */,
+ 				4A5A2ADC161E7E00005889DD /* WebSocketExtensionParser.h in Headers */,
+@@ -31067,6 +31088,7 @@
+ 				0719427F1D088F21002AA51D /* AVFoundationMIMETypeCache.mm in Sources */,
+ 				070363E5181A1CDC00C074A5 /* AVMediaCaptureSource.mm in Sources */,
+ 				CD336F6117F9F64700DDDCD0 /* AVTrackPrivateAVFObjCImpl.mm in Sources */,
++				11C0C7A7206953F700BE3A84 /* JSInlineTextRun.cpp in Sources */,
+ 				070363E7181A1CDC00C074A5 /* AVVideoCaptureSource.mm in Sources */,
+ 				7A45032F18DB717200377B34 /* BufferedLineReader.cpp in Sources */,
+ 				0753860214489E9800B78452 /* CachedTextTrack.cpp in Sources */,
+diff --git a/Source/WebCore/css/CSSComputedStyleDeclaration.cpp b/Source/WebCore/css/CSSComputedStyleDeclaration.cpp
+index 923ab54d4f2..12004b5afbe 100644
+--- a/Source/WebCore/css/CSSComputedStyleDeclaration.cpp
++++ b/Source/WebCore/css/CSSComputedStyleDeclaration.cpp
+@@ -4113,6 +4113,36 @@ String CSSComputedStyleDeclaration::getPropertyValue(CSSPropertyID propertyID) c
+     return value->cssText();
+ }
+ 
++bool CSSComputedStyleDeclaration::isPropertyValueInitial(const String& propertyName)
++{
++    m_element->document().updateLayoutIgnorePendingStylesheets();
++    auto* style = m_element->computedStyle(m_pseudoElementSpecifier);
++    if (!style)
++        return true;
++
++    CSSPropertyID propertyID = cssPropertyID(propertyName);
++    if (!propertyID)
++        return true;
++
++    switch (propertyID) {
++    case CSSPropertyLeft:
++        return style->left().isAuto();
++    case CSSPropertyRight:
++        return style->right().isAuto();
++    case CSSPropertyTop:
++        return style->top().isAuto();
++    case CSSPropertyBottom:
++        return style->bottom().isAuto();
++    case CSSPropertyWidth:
++        return style->width().isAuto();
++    case CSSPropertyHeight:
++        return style->height().isAuto();
++    default:
++        ASSERT_NOT_REACHED();
++    }
++    return false;
++}
++
+ unsigned CSSComputedStyleDeclaration::length() const
+ {
+     updateStyleIfNeededForProperty(m_element.get(), CSSPropertyCustom);
+diff --git a/Source/WebCore/css/CSSComputedStyleDeclaration.h b/Source/WebCore/css/CSSComputedStyleDeclaration.h
+index 39ae6c30d7e..a3b6f4697bd 100644
+--- a/Source/WebCore/css/CSSComputedStyleDeclaration.h
++++ b/Source/WebCore/css/CSSComputedStyleDeclaration.h
+@@ -123,6 +123,7 @@ private:
+     String item(unsigned index) const final;
+     RefPtr<DeprecatedCSSOMValue> getPropertyCSSValue(const String& propertyName) final;
+     String getPropertyValue(const String& propertyName) final;
++    bool isPropertyValueInitial(const String& propertyName) final;
+     String getPropertyPriority(const String& propertyName) final;
+     String getPropertyShorthand(const String& propertyName) final;
+     bool isPropertyImplicit(const String& propertyName) final;
+diff --git a/Source/WebCore/css/CSSStyleDeclaration.h b/Source/WebCore/css/CSSStyleDeclaration.h
+index b18c9ce3274..4dfb6b936f8 100644
+--- a/Source/WebCore/css/CSSStyleDeclaration.h
++++ b/Source/WebCore/css/CSSStyleDeclaration.h
+@@ -54,6 +54,7 @@ public:
+     virtual String item(unsigned index) const = 0;
+     virtual RefPtr<DeprecatedCSSOMValue> getPropertyCSSValue(const String& propertyName) = 0;
+     virtual String getPropertyValue(const String& propertyName) = 0;
++    virtual bool isPropertyValueInitial(const String& propertyName) = 0;
+     virtual String getPropertyPriority(const String& propertyName) = 0;
+     virtual String getPropertyShorthand(const String& propertyName) = 0;
+     virtual bool isPropertyImplicit(const String& propertyName) = 0;
+diff --git a/Source/WebCore/css/CSSStyleDeclaration.idl b/Source/WebCore/css/CSSStyleDeclaration.idl
+index 035cb6245d9..c622313db3b 100644
+--- a/Source/WebCore/css/CSSStyleDeclaration.idl
++++ b/Source/WebCore/css/CSSStyleDeclaration.idl
+@@ -30,6 +30,8 @@
+ 
+     DOMString getPropertyValue(DOMString propertyName);
+ 
++    boolean isPropertyValueInitial(DOMString propertyName);
++
+     [CEReactions, MayThrowException] DOMString removeProperty(DOMString propertyName);
+     DOMString? getPropertyPriority(DOMString propertyName);
+ 
+diff --git a/Source/WebCore/css/PropertySetCSSStyleDeclaration.cpp b/Source/WebCore/css/PropertySetCSSStyleDeclaration.cpp
+index 084cbca04ec..4fc589226cf 100644
+--- a/Source/WebCore/css/PropertySetCSSStyleDeclaration.cpp
++++ b/Source/WebCore/css/PropertySetCSSStyleDeclaration.cpp
+@@ -196,6 +196,11 @@ String PropertySetCSSStyleDeclaration::getPropertyValue(const String& propertyNa
+     return getPropertyValueInternal(propertyID);
+ }
+ 
++bool PropertySetCSSStyleDeclaration::isPropertyValueInitial(const String&)
++{
++    return false;
++}
++
+ String PropertySetCSSStyleDeclaration::getPropertyPriority(const String& propertyName)
+ {
+     if (isCustomPropertyName(propertyName))
+diff --git a/Source/WebCore/css/PropertySetCSSStyleDeclaration.h b/Source/WebCore/css/PropertySetCSSStyleDeclaration.h
+index 04196405ddf..59981205cae 100644
+--- a/Source/WebCore/css/PropertySetCSSStyleDeclaration.h
++++ b/Source/WebCore/css/PropertySetCSSStyleDeclaration.h
+@@ -68,6 +68,7 @@ private:
+     String item(unsigned index) const final;
+     RefPtr<DeprecatedCSSOMValue> getPropertyCSSValue(const String& propertyName) final;
+     String getPropertyValue(const String& propertyName) final;
++    bool isPropertyValueInitial(const String& propertyName) final;
+     String getPropertyPriority(const String& propertyName) final;
+     String getPropertyShorthand(const String& propertyName) final;
+     bool isPropertyImplicit(const String& propertyName) final;
+diff --git a/Source/WebCore/dom/InlineTextRun.h b/Source/WebCore/dom/InlineTextRun.h
+new file mode 100644
+index 00000000000..7ae48649fbd
+--- /dev/null
++++ b/Source/WebCore/dom/InlineTextRun.h
+@@ -0,0 +1,79 @@
++/*
++ * Copyright (C) 2018 Apple Inc. All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
++ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
++ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
++ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
++ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
++ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
++ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
++ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
++ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
++ * THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++#pragma once
++
++#include "InlineTextRunIterator.h"
++#include <wtf/Ref.h>
++#include <wtf/RefCounted.h>
++
++namespace WebCore {
++
++class InlineTextRun : public RefCounted<InlineTextRun> {
++    WTF_MAKE_FAST_ALLOCATED;
++public:
++    static Ref<InlineTextRun> create(unsigned startPosition, unsigned endPosition, double width, unsigned type, bool isCollapsed, bool isCollapsible)
++        { return adoptRef(*new InlineTextRun(startPosition, endPosition, width, type, isCollapsed, isCollapsible)); }
++
++    static Ref<InlineTextRun> create(const LayoutReloaded::InlineTextRunIterator::Run& run)
++        { return adoptRef(*new InlineTextRun(run.start(), run.end(), run.width(), run.type(), run.isCollapsed(), run.isCollapsible())); }
++
++    enum Type { Invalid, ContentEnd, SoftLineBreak, Whitespace, NonWhitespace, Mixed };
++    void setStartPosition(unsigned position) { m_startPosition = position; }
++    void setEndPosition(unsigned position) { m_endPosition = position; }
++    void setWidth(double width) { m_width = width; }
++    void setTypeMixed() { m_type = InlineTextRun::Mixed; }
++    void setIsCollapsed() { m_isCollapsed = true; }
++
++    unsigned startPosition() const { return m_startPosition; }
++    unsigned endPosition() const { return m_endPosition; }
++    double width() const { return m_width; }
++    unsigned type() const { return m_type; }
++    unsigned length() const { return endPosition() - startPosition(); }
++    bool isCollapsed() const { return m_isCollapsed; }
++    bool isCollapsible() const { return m_isCollapsible; }
++
++protected:
++    InlineTextRun(unsigned startPosition, unsigned endPosition, double width, unsigned type, bool isCollapsed, bool isCollapsible)
++        : m_startPosition(startPosition)
++        , m_endPosition(endPosition)
++        , m_width(width)
++        , m_type(type)
++        , m_isCollapsed(isCollapsed)
++        , m_isCollapsible(isCollapsible)
++    {
++    }
++
++    InlineTextRun() = default;
++
++    unsigned m_startPosition { 0 };
++    unsigned m_endPosition { 0 };
++    double m_width { 0 };
++    unsigned m_type { 0 };
++    bool m_isCollapsed { false };
++    bool m_isCollapsible { false };
++};
++
++}
+diff --git a/Source/WebCore/dom/InlineTextRun.idl b/Source/WebCore/dom/InlineTextRun.idl
+new file mode 100644
+index 00000000000..20c01b8cff5
+--- /dev/null
++++ b/Source/WebCore/dom/InlineTextRun.idl
+@@ -0,0 +1,36 @@
++/*
++ * Copyright (C) 2018 Apple Inc. All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
++ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
++ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
++ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
++ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
++ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
++ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
++ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
++ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
++ * THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++[
++    NoInterfaceObject,
++    ImplementationLacksVTable,
++] interface InlineTextRun {
++    readonly attribute long startPosition;
++    readonly attribute long endPosition;
++    readonly attribute double width;
++    readonly attribute long type;
++    readonly attribute boolean isCollapsed;
++    readonly attribute boolean isCollapsible;
++};
+diff --git a/Source/WebCore/dom/Node.cpp b/Source/WebCore/dom/Node.cpp
+index 4b1e8725795..cae6e476cad 100644
+--- a/Source/WebCore/dom/Node.cpp
++++ b/Source/WebCore/dom/Node.cpp
+@@ -517,6 +517,27 @@ ExceptionOr<void> Node::before(Vector<NodeOrString>&& nodeOrStringVector)
+     return parent->insertBefore(*node, viablePreviousSibling.get());
+ }
+ 
++int Node::rendererId()
++{
++    if (!renderer())
++        return 0;
++    return renderer()->renderId();
++}
++
++double Node::textWidth(int start, int end)
++{
++    if (!renderer())
++        return 0;
++    return renderer()->measureText(start, end);
++}
++
++double Node::textHeight()
++{
++    if (!renderer())
++        return 0;
++    return renderer()->style().computedFontPixelSize();
++}
++
+ ExceptionOr<void> Node::after(Vector<NodeOrString>&& nodeOrStringVector)
+ {
+     RefPtr<ContainerNode> parent = parentNode();
+diff --git a/Source/WebCore/dom/Node.h b/Source/WebCore/dom/Node.h
+index 7f176126c7a..1b7a19e07f0 100644
+--- a/Source/WebCore/dom/Node.h
++++ b/Source/WebCore/dom/Node.h
+@@ -179,7 +179,11 @@ public:
+ 
+     WEBCORE_EXPORT String textContent(bool convertBRsToNewlines = false) const;
+     WEBCORE_EXPORT ExceptionOr<void> setTextContent(const String&);
+-    
++
++    int rendererId();
++    double textWidth(int start, int end);
++    double textHeight();
++
+     Node* lastDescendant() const;
+     Node* firstDescendant() const;
+ 
+diff --git a/Source/WebCore/dom/Node.idl b/Source/WebCore/dom/Node.idl
+index 25177a8cd43..294307dc815 100644
+--- a/Source/WebCore/dom/Node.idl
++++ b/Source/WebCore/dom/Node.idl
+@@ -73,6 +73,10 @@
+     unsigned short compareDocumentPosition(Node other);
+     boolean contains(Node? other);
+ 
++    readonly attribute long rendererId;
++    double textWidth(long start, long end);
++    double textHeight();
++
+     DOMString? lookupPrefix(DOMString? namespaceURI);
+     DOMString? lookupNamespaceURI(DOMString? prefix);
+     boolean isDefaultNamespace(DOMString? namespaceURI);
+diff --git a/Source/WebCore/page/DOMWindow.cpp b/Source/WebCore/page/DOMWindow.cpp
+index 0210b08a182..4d3a54691a9 100644
+--- a/Source/WebCore/page/DOMWindow.cpp
++++ b/Source/WebCore/page/DOMWindow.cpp
+@@ -29,6 +29,7 @@
+ 
+ #include "BackForwardController.h"
+ #include "BarProp.h"
++#include "BreakLines.h"
+ #include "CSSComputedStyleDeclaration.h"
+ #include "CSSRule.h"
+ #include "CSSRuleList.h"
+@@ -64,9 +65,11 @@
+ #include "FrameTree.h"
+ #include "FrameView.h"
+ #include "History.h"
++#include "InlineTextRunIterator.h"
+ #include "InspectorInstrumentation.h"
+ #include "JSDOMWindowBase.h"
+ #include "JSMainThreadExecState.h"
++#include "InlineTextBreaker.h"
+ #include "Location.h"
+ #include "MediaQueryList.h"
+ #include "MediaQueryMatcher.h"
+@@ -78,6 +81,8 @@
+ #include "PageConsoleClient.h"
+ #include "PageTransitionEvent.h"
+ #include "Performance.h"
++#include "RenderChildIterator.h"
++#include "RenderView.h"
+ #include "RequestAnimationFrameCallback.h"
+ #include "ResourceLoadInfo.h"
+ #include "ResourceLoadObserver.h"
+@@ -100,6 +105,7 @@
+ #include "StyleResolver.h"
+ #include "StyleScope.h"
+ #include "SuddenTermination.h"
++#include "InlineTextRun.h"
+ #include "URL.h"
+ #include "UserGestureIndicator.h"
+ #include "VisualViewport.h"
+@@ -116,6 +122,7 @@
+ #include <wtf/NeverDestroyed.h>
+ #include <wtf/Ref.h>
+ #include <wtf/Variant.h>
++#include <wtf/text/TextBreakIterator.h>
+ #include <wtf/text/WTFString.h>
+ 
+ #if ENABLE(USER_MESSAGE_HANDLERS)
+@@ -1358,6 +1365,72 @@ int DOMWindow::scrollY() const
+     return view->mapFromLayoutToCSSUnits(view->contentsScrollPosition().y());
+ }
+ 
++String DOMWindow::simplifiedRenderTree() const
++{
++    return m_frame->view()->renderView()->simplifiedRenderTree();
++}
++
++String DOMWindow::renderTreeStructure() const
++{
++    return m_frame->view()->renderView()->renderTreeStructure();
++}
++
++static bool hasDirtyChild(RenderElement& parent)
++{
++    for (auto& child : childrenOfType<RenderElement>(parent)) {
++        if (child.needsLayout())
++            return true;
++    }
++    return false;
++}
++
++static void collectDirtyRenderers(RenderElement& container, Vector<long>& dirtyRenderers)
++{
++    // Collect the leaf marks only -would be cheating othewise.
++    for (auto& child : childrenOfType<RenderElement>(container)) {
++        if (!child.needsLayout())
++            continue;
++        if (!hasDirtyChild(child))
++            dirtyRenderers.append(child.renderId());
++        else
++            collectDirtyRenderers(child, dirtyRenderers);
++    }
++}
++
++Vector<long> DOMWindow::collectRenderersWithNeedsLayout()
++{
++    Vector<long> dirtyRenderers;
++    auto* renderView = m_frame->view()->renderView();
++    m_frame->document()->updateStyleIfNeeded();
++    collectDirtyRenderers(*renderView, dirtyRenderers);
++    return dirtyRenderers;
++}
++
++Vector<Ref<InlineTextRun>> DOMWindow::collectTextRuns(const String& text, const Node& container, float availableSpace)
++{
++    Vector<Ref<InlineTextRun>> textRuns;
++    LayoutReloaded::InlineTextRunIterator textIterator(text, container.renderer()->style());
++    while (true) {
++        auto run = textIterator.nextRun();
++        if (run.type() == LayoutReloaded::InlineTextRunIterator::Run::ContentEnd)
++            break;
++        textRuns.append(InlineTextRun::create(run));
++    }
++    if (std::isnan(availableSpace))
++        return textRuns;
++
++    return LayoutReloaded::InlineTextBreaker::collectRuns(textRuns, text, availableSpace, container.renderer()->style());
++}
++
++int DOMWindow::nextBreakingOpportunity(const String& text, unsigned startPosition)
++{
++    LazyLineBreakIterator lineBreakIterator(text, m_frame->view()->renderView()->style().locale());
++
++    if (lineBreakIterator.mode() == LineBreakIteratorMode::Default)
++            return WebCore::nextBreakablePosition(lineBreakIterator, startPosition);
++    return nextBreakablePositionWithoutShortcut(lineBreakIterator, startPosition);
++}
++
+ bool DOMWindow::closed() const
+ {
+     return !m_frame;
+diff --git a/Source/WebCore/page/DOMWindow.h b/Source/WebCore/page/DOMWindow.h
+index 499a558d2ee..be60b3aaf79 100644
+--- a/Source/WebCore/page/DOMWindow.h
++++ b/Source/WebCore/page/DOMWindow.h
+@@ -49,7 +49,6 @@ template<typename> class Strong;
+ }
+ 
+ namespace WebCore {
+-
+ class BarProp;
+ class CSSRuleList;
+ class CSSStyleDeclaration;
+@@ -78,6 +77,7 @@ class ScheduledAction;
+ class Screen;
+ class Storage;
+ class StyleMedia;
++class InlineTextRun;
+ class VisualViewport;
+ class WebKitNamespace;
+ class WebKitPoint;
+@@ -192,6 +192,12 @@ public:
+     String defaultStatus() const;
+     void setDefaultStatus(const String&);
+ 
++    String simplifiedRenderTree() const;
++    String renderTreeStructure() const;
++    Vector<long> collectRenderersWithNeedsLayout();
++    int nextBreakingOpportunity(const String& text, unsigned startPosition);
++    Vector<Ref<InlineTextRun>> collectTextRuns(const String&, const Node&, float availableSpace);
++
+     DOMWindow* self() const;
+ 
+     DOMWindow* opener() const;
+diff --git a/Source/WebCore/page/DOMWindow.idl b/Source/WebCore/page/DOMWindow.idl
+index 46ebc1561fa..bd35d3f2155 100644
+--- a/Source/WebCore/page/DOMWindow.idl
++++ b/Source/WebCore/page/DOMWindow.idl
+@@ -82,6 +82,12 @@ typedef USVString CSSOMString;
+     readonly attribute Navigator navigator;
+     readonly attribute DOMApplicationCache applicationCache;
+ 
++    readonly attribute DOMString simplifiedRenderTree;
++    readonly attribute DOMString renderTreeStructure;
++    sequence<long> collectRenderersWithNeedsLayout();
++    long nextBreakingOpportunity(DOMString text, unsigned long startPosition);
++    sequence<InlineTextRun> collectTextRuns(DOMString text, Node containerNode, optional unrestricted float availableSpace = NaN);
++
+     // User prompts.
+     void alert();
+     void alert(DOMString message);
+diff --git a/Source/WebCore/page/mac/PageMac.mm b/Source/WebCore/page/mac/PageMac.mm
+index aa030c54617..7457861e142 100644
+--- a/Source/WebCore/page/mac/PageMac.mm
++++ b/Source/WebCore/page/mac/PageMac.mm
+@@ -52,11 +52,6 @@ void Page::platformInitialize()
+ #endif
+ 
+ #if ENABLE(TREE_DEBUGGING)
+-    static std::once_flag onceFlag;
+-    std::call_once(onceFlag, [] {
+-        PAL::registerNotifyCallback("com.apple.WebKit.showRenderTree", printRenderTreeForLiveDocuments);
+-        PAL::registerNotifyCallback("com.apple.WebKit.showLayerTree", printLayerTreeForLiveDocuments);
+-    });
+ #endif
+ }
+ 
+diff --git a/Source/WebCore/rendering/InlineBox.cpp b/Source/WebCore/rendering/InlineBox.cpp
+index cd23ae0b97c..7cfd4bb2d42 100644
+--- a/Source/WebCore/rendering/InlineBox.cpp
++++ b/Source/WebCore/rendering/InlineBox.cpp
+@@ -123,6 +123,18 @@ void InlineBox::outputLineBox(TextStream& stream, bool mark, int depth) const
+     stream.nextLine();
+ }
+ 
++void InlineBox::outputSimplifiedLineTree(TextStream& stream, int depth) const
++{
++    // Ignore inline flows for now. LayoutReloaded does not have the concept of flow boxes.
++    if (is<InlineFlowBox>(*this) && !is<RootInlineBox>(*this))
++        return;
++    int printedCharacters = 0;
++    while (++printedCharacters <= depth)
++        stream << " ";
++    stream << boxName() << " " << FloatRect(x(), y(), width(), height());
++    stream.nextLine();
++}
++
+ #endif // ENABLE(TREE_DEBUGGING)
+ 
+ float InlineBox::logicalHeight() const
+diff --git a/Source/WebCore/rendering/InlineBox.h b/Source/WebCore/rendering/InlineBox.h
+index 7f1dd6cbba4..eddb048440a 100644
+--- a/Source/WebCore/rendering/InlineBox.h
++++ b/Source/WebCore/rendering/InlineBox.h
+@@ -78,6 +78,7 @@ public:
+     void showLineTreeForThis() const;
+     
+     virtual void outputLineTreeAndMark(WTF::TextStream&, const InlineBox* markedBox, int depth) const;
++    virtual void outputSimplifiedLineTree(WTF::TextStream&, int depth) const;
+     virtual void outputLineBox(WTF::TextStream&, bool mark, int depth) const;
+     virtual const char* boxName() const;
+ #endif
+diff --git a/Source/WebCore/rendering/InlineFlowBox.cpp b/Source/WebCore/rendering/InlineFlowBox.cpp
+index 063f3b64189..ee32b981371 100644
+--- a/Source/WebCore/rendering/InlineFlowBox.cpp
++++ b/Source/WebCore/rendering/InlineFlowBox.cpp
+@@ -1720,6 +1720,18 @@ void InlineFlowBox::outputLineTreeAndMark(WTF::TextStream& stream, const InlineB
+         box->outputLineTreeAndMark(stream, markedBox, depth + 1);
+ }
+ 
++void InlineFlowBox::outputSimplifiedLineTree(WTF::TextStream& stream, int depth) const
++{
++    InlineBox::outputSimplifiedLineTree(stream, depth);
++    for (auto* box = firstChild(); box; box = box->nextOnLine()) {
++        // DO not increment depth for flow boxes. LayoutReloaded does not have the concept of them.
++        if (is<InlineFlowBox>(*box) && !is<RootInlineBox>(*box))
++            box->outputSimplifiedLineTree(stream, depth);
++        else
++            box->outputSimplifiedLineTree(stream, depth + 1);
++    }
++}
++
+ #endif
+ 
+ #ifndef NDEBUG
+diff --git a/Source/WebCore/rendering/InlineFlowBox.h b/Source/WebCore/rendering/InlineFlowBox.h
+index 0b26444903f..595203b201e 100644
+--- a/Source/WebCore/rendering/InlineFlowBox.h
++++ b/Source/WebCore/rendering/InlineFlowBox.h
+@@ -72,6 +72,7 @@ public:
+ 
+ #if ENABLE(TREE_DEBUGGING)
+     void outputLineTreeAndMark(WTF::TextStream&, const InlineBox* markedBox, int depth) const override;
++    void outputSimplifiedLineTree(WTF::TextStream&, int depth) const override;
+     const char* boxName() const override;
+ #endif
+ 
+diff --git a/Source/WebCore/rendering/InlineTextBreaker.cpp b/Source/WebCore/rendering/InlineTextBreaker.cpp
+new file mode 100644
+index 00000000000..9ac083d2a90
+--- /dev/null
++++ b/Source/WebCore/rendering/InlineTextBreaker.cpp
+@@ -0,0 +1,308 @@
++/*
++ * Copyright (C) 2018 Apple Inc. All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
++ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
++ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
++ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
++ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
++ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
++ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
++ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
++ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
++ * THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++#include "config.h"
++#include "InlineTextBreaker.h"
++
++#include "FontCascade.h"
++#include "RenderStyle.h"
++
++namespace WebCore {
++namespace LayoutReloaded {
++
++InlineTextBreaker::Style::Style(const RenderStyle& style)
++    : font(style.fontCascade())
++    , hasKerningOrLigatures(font.enableKerning() || font.requiresShaping())
++    , collapseWhitespace(style.collapseWhiteSpace())
++    , preserveNewline(style.preserveNewline())
++    , wrapLines(style.autoWrap())
++    , breakAnyWordOnOverflow(style.wordBreak() == BreakAllWordBreak && wrapLines)
++    , breakFirstWordOnOverflow(breakAnyWordOnOverflow || (style.breakWords() && (wrapLines || preserveNewline)))
++    , wordSpacing(font.wordSpacing())
++    , tabWidth(collapseWhitespace ? 0 : style.tabSize())
++{
++}
++
++InlineTextBreaker::LineState::LineState(const InlineTextBreaker& lineBreaker, float availableWidth)
++    : m_lineBreaker(lineBreaker)
++    , m_availableWidth(availableWidth)
++{
++}
++
++float InlineTextBreaker::LineState::availableWidth() const
++{
++    return m_availableWidth;
++}
++
++bool InlineTextBreaker::LineState::hasTrailingWhitespace() const
++{
++    return m_hasTrailingWhitespace;
++}
++
++bool InlineTextBreaker::LineState::isWhitespaceOnly() const
++{
++    for (auto& run : m_runs) {
++        if (run->type() != InlineTextRun::Whitespace)
++            return false;
++    }
++    return true;
++}
++
++bool InlineTextBreaker::LineState::fits(float extra) const
++{
++    return m_availableWidth >= width() + extra;
++}
++
++float InlineTextBreaker::LineState::width() const
++{
++    float width = 0;
++    for (auto& run : m_runs)
++        width += m_lineBreaker.textWidth(run->startPosition(), run->endPosition());
++    return width;
++}
++
++bool InlineTextBreaker::LineState::isEmpty() const
++{
++    return !m_runs.size();
++}
++
++static inline unsigned endPositionForCollapsedRun(const InlineTextRun& run)
++{
++    if (run.isCollapsed())
++        return run.startPosition() + 1;
++    return run.endPosition();
++}
++
++void InlineTextBreaker::LineState::appendRun(const InlineTextRun& run)
++{
++    // Adjust end position while collapsing.
++    unsigned endPosition = endPositionForCollapsedRun(run);
++    if (run.type() == InlineTextRun::NonWhitespace)
++        m_lastNoneWhitespacePosition = endPosition;
++    // New line needs new run.
++    if (!m_runs.size()) {
++        m_runs.append(InlineTextRun::create(run.startPosition(), endPosition, 0, run.type(), run.isCollapsed(), run.isCollapsible()));
++    } else {
++        // Advance last completed fragment when the previous fragment is all set (including multiple parts across renderers)
++        if (m_runs.last()->isCollapsible() && run.isCollapsible()) {
++            // This fragment is collapsed completely. No run is needed.
++            return;
++        }
++        auto& lastRun = m_runs.last();
++        if (lastRun->isCollapsed())
++            m_runs.append(InlineTextRun::create(run.startPosition(), endPosition, 0, run.type(), run.isCollapsed(), run.isCollapsible()));
++        else {
++            lastRun->setEndPosition(endPosition);
++            lastRun->setTypeMixed();
++            if (run.isCollapsed())
++                lastRun->setIsCollapsed();
++        }
++    }
++    m_hasTrailingWhitespace = run.type() == InlineTextRun::Whitespace;
++}
++
++void InlineTextBreaker::LineState::removeTrailingWhitespace()
++{
++    if (!m_hasTrailingWhitespace)
++        return;
++    if (m_runs.last()->type() == InlineTextRun::Whitespace) {
++        m_runs.removeLast();
++        return;
++    }
++    ASSERT(m_runs.last()->type() == InlineTextRun::Mixed);
++    m_runs.last()->setEndPosition(m_lastNoneWhitespacePosition);
++}
++
++Vector<Ref<InlineTextRun>> InlineTextBreaker::LineState::collectRuns()
++{
++    for (auto& run: m_runs)
++        run->setWidth(m_lineBreaker.textWidth(run->startPosition(), run->endPosition()));
++    return WTFMove(m_runs);
++}
++
++InlineTextBreaker::InlineTextBreaker(Vector<Ref<InlineTextRun>>& runs, const String& text, float availableWidth, const RenderStyle& style)
++    : m_textRuns(runs)
++    , m_text(text)
++    , m_style(style)
++    , m_line(*this, availableWidth)
++{
++}
++
++Vector<Ref<InlineTextRun>> InlineTextBreaker::collectRuns(Vector<Ref<InlineTextRun>>& runs, const String& text, float availableWidth, const RenderStyle& style)
++{
++    return InlineTextBreaker(runs, text, availableWidth, style).createAndCollectLineRuns();
++}
++
++bool InlineTextBreaker::preWrap() const
++{
++    return m_style.wrapLines && !m_style.collapseWhitespace;
++}
++
++void InlineTextBreaker::removeTrailingWhitespace()
++{
++    if (!m_line.hasTrailingWhitespace())
++        return;
++    // Remove collapsed whitespace, or non-collapsed pre-wrap whitespace, unless it's the only content on the line -so removing the whitesapce
++    // would produce an empty line.
++    bool collapseWhitespace = m_style.collapseWhitespace | preWrap();
++    if (!collapseWhitespace)
++        return;
++    if (preWrap() && m_line.isWhitespaceOnly())
++        return;
++    m_line.removeTrailingWhitespace();
++}
++
++struct SplitFragmentData {
++    unsigned position;
++    float width;
++};
++
++SplitFragmentData InlineTextBreaker::split(const InlineTextRun& run, float availableWidth)
++{
++    ASSERT(availableWidth >= 0);
++    auto left = run.startPosition();
++    // Pathological case of (extremely)long string and narrow lines.
++    // Adjust the range so that we can pick a reasonable midpoint.
++    auto averageCharacterWidth = run.width() / run.length();
++    auto right = std::min<unsigned>(left + (2 * availableWidth / averageCharacterWidth), run.endPosition() - 1);
++    // Preserve the left width for the final split position so that we don't need to remeasure the left side again.
++    float leftSideWidth = 0;
++    while (left < right) {
++        auto middle = (left + right) / 2;
++        auto width = textWidth(run.startPosition(), middle + 1);
++        if (width < availableWidth) {
++            left = middle + 1;
++            leftSideWidth = width;
++        } else if (width > availableWidth)
++            right = middle;
++        else {
++            right = middle + 1;
++            leftSideWidth = width;
++            break;
++        }
++    }
++    return { right, leftSideWidth };
++}
++
++void InlineTextBreaker::splitRunToFitLine(InlineTextRun& runToSplit)
++{
++    auto availableWidth = m_line.availableWidth() - m_line.width();
++    auto splitRunData = split(runToSplit, availableWidth);
++    // Does first character fit this line?
++    if (splitRunData.position == runToSplit.startPosition()) {
++        // Keep at least one character on empty lines.
++        if (m_line.isEmpty())
++            splitRunData.width = textWidth(runToSplit.startPosition(), ++splitRunData.position);
++    }
++    runToSplit.setEndPosition(splitRunData.position);
++    runToSplit.setWidth(splitRunData.width);
++}
++
++unsigned InlineTextBreaker::skipLeadingWhitespaceIfNeeded() const
++{
++    if (!m_style.collapseWhitespace)
++        return 0;
++
++    for (unsigned index = 0; index < m_textRuns.size(); ++index) {
++        if (m_textRuns[index]->type() != InlineTextRun::Whitespace)
++            return index;
++    }
++    return m_textRuns.size();
++}
++
++Vector<Ref<InlineTextRun>> InlineTextBreaker::createAndCollectLineRuns()
++{
++    bool lineCanBeWrapped = m_style.wrapLines || m_style.breakFirstWordOnOverflow || m_style.breakAnyWordOnOverflow;
++    auto index = skipLeadingWhitespaceIfNeeded();
++    for (; index < m_textRuns.size(); ++index) {
++        auto& run = m_textRuns[index];
++        // Hard and soft linebreaks.
++        if (run->type() == InlineTextRun::SoftLineBreak) {
++            // Add the new line fragment only if there's nothing on the line. (otherwise the extra new line character would show up at the end of the content.)
++            if (m_line.isEmpty())
++                m_line.appendRun(run);
++            break;
++        }
++        if (lineCanBeWrapped && !m_line.fits(run->width())) {
++            // Overflow wrapping behaviour:
++            // 1. Whitesapce collapse on: whitespace is skipped. Jump to next line.
++            // 2. Whitespace collapse off: whitespace is wrapped.
++            // 3. First, non-whitespace fragment is either wrapped or kept on the line. (depends on overflow-wrap)
++            // 5. Non-whitespace fragment when there's already another fragment on the line either gets wrapped (word-break: break-all)
++            // or gets pushed to the next line.
++            bool emptyLine = m_line.isEmpty();
++            // Whitespace fragment.
++            if (run->type() == InlineTextRunIterator::Run::Whitespace) {
++                if (m_style.collapseWhitespace) {
++                    // Push collapased whitespace to the next line.
++                    break;
++                }
++                // Split the whitespace; left part stays on this line, right is pushed to next line.
++                splitRunToFitLine(run);
++                m_line.appendRun(run);
++                break;
++            }
++            // Non-whitespace fragment. (!style.wrapLines: bug138102(preserve existing behavior)
++            if (((emptyLine && m_style.breakFirstWordOnOverflow) || m_style.breakAnyWordOnOverflow) || !m_style.wrapLines) {
++                // Split the fragment; (modified)fragment stays on this line, overflowedFragment is pushed to next line.
++                splitRunToFitLine(run);
++                m_line.appendRun(run);
++                break;
++            }
++            ASSERT(run->type() == InlineTextRunIterator::Run::NonWhitespace);
++            // Non-breakable non-whitespace first fragment. Add it to the current line. -it overflows though.
++            if (emptyLine) {
++                m_line.appendRun(run);
++                break;
++            }
++            // Non-breakable non-whitespace fragment when there's already content on the line. Push it to the next line.
++            break;
++        }
++        m_line.appendRun(run);
++    }
++    removeTrailingWhitespace();
++    return m_line.collectRuns();
++}
++
++float InlineTextBreaker::textWidth(unsigned from, unsigned to) const
++{
++    if (!m_style.font.size() || from == to)
++        return 0;
++
++    bool measureWithEndSpace = m_style.hasKerningOrLigatures && m_style.collapseWhitespace && to < m_text.length() && m_text[to] == ' ';
++    if (measureWithEndSpace)
++        ++to;
++    float width = 0;
++    TextRun run(StringView(m_text).substring(from, to - from), 0);
++    if (m_style.tabWidth)
++        run.setTabSize(true, m_style.tabWidth);
++    width = m_style.font.width(run);
++    if (measureWithEndSpace)
++        width -= (m_style.font.spaceWidth() + m_style.wordSpacing);
++    return std::max<float>(0, width);
++}
++
++}
++}
+diff --git a/Source/WebCore/rendering/InlineTextBreaker.h b/Source/WebCore/rendering/InlineTextBreaker.h
+new file mode 100644
+index 00000000000..8cf678fd5c5
+--- /dev/null
++++ b/Source/WebCore/rendering/InlineTextBreaker.h
+@@ -0,0 +1,97 @@
++/*
++ * Copyright (C) 2018 Apple Inc. All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
++ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
++ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
++ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
++ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
++ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
++ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
++ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
++ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
++ * THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++#pragma once
++
++#include "InlineTextRun.h"
++
++namespace WebCore {
++
++class FontCascade;
++
++namespace LayoutReloaded {
++
++class LineState;
++struct SplitFragmentData;
++
++class InlineTextBreaker {
++public:
++    static Vector<Ref<InlineTextRun>> collectRuns(Vector<Ref<InlineTextRun>>&, const String&, float availableWidth, const RenderStyle&);
++
++private:
++    InlineTextBreaker(Vector<Ref<InlineTextRun>>&, const String&, float availableWidth, const RenderStyle&);
++
++    Vector<Ref<InlineTextRun>> createAndCollectLineRuns();
++    SplitFragmentData split(const InlineTextRun& run, float availableWidth);
++    void splitRunToFitLine(InlineTextRun& runToSplit);
++    void removeTrailingWhitespace();
++    bool preWrap() const;
++    float textWidth(unsigned from, unsigned to) const;
++    unsigned skipLeadingWhitespaceIfNeeded() const;
++
++    struct Style {
++        explicit Style(const RenderStyle&);
++
++        const FontCascade& font;
++        bool hasKerningOrLigatures;
++        bool collapseWhitespace;
++        bool preserveNewline;
++        bool wrapLines;
++        bool breakAnyWordOnOverflow;
++        bool breakFirstWordOnOverflow;
++        float wordSpacing;
++        unsigned tabWidth;
++    };
++
++    class LineState {
++    public:
++        LineState(const InlineTextBreaker& lineBreaker, float availableWidth);
++
++        float availableWidth() const;
++        bool hasTrailingWhitespace() const;
++        bool isWhitespaceOnly() const;
++        bool fits(float extra) const;
++        float width() const;
++        bool isEmpty() const;
++        void appendRun(const InlineTextRun&);
++        void removeTrailingWhitespace();
++        Vector<Ref<InlineTextRun>> collectRuns();
++
++    private:
++        const InlineTextBreaker& m_lineBreaker;
++        float m_availableWidth { 0 };
++        Vector<Ref<InlineTextRun>> m_runs;
++        bool m_hasTrailingWhitespace { false };
++        unsigned m_lastNoneWhitespacePosition { 0 };
++    };
++
++    Vector<Ref<InlineTextRun>>& m_textRuns;
++    String m_text;
++    const Style m_style;
++    LineState m_line;
++};
++
++}
++}
+diff --git a/Source/WebCore/rendering/InlineTextRunIterator.cpp b/Source/WebCore/rendering/InlineTextRunIterator.cpp
+new file mode 100644
+index 00000000000..6714a5df199
+--- /dev/null
++++ b/Source/WebCore/rendering/InlineTextRunIterator.cpp
+@@ -0,0 +1,167 @@
++/*
++ * Copyright (C) 2018 Apple Inc. All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
++ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
++ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
++ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
++ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
++ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
++ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
++ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
++ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
++ * THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++#include "config.h"
++#include "InlineTextRunIterator.h"
++
++#include "FontCascade.h"
++
++namespace WebCore {
++namespace LayoutReloaded {
++
++InlineTextRunIterator::Style::Style(const RenderStyle& style)
++    : font(style.fontCascade())
++    , textAlign(style.textAlign())
++    , hasKerningOrLigatures(font.enableKerning() || font.requiresShaping())
++    , collapseWhitespace(style.collapseWhiteSpace())
++    , preserveNewline(style.preserveNewline())
++    , wrapLines(style.autoWrap())
++    , breakAnyWordOnOverflow(style.wordBreak() == BreakAllWordBreak && wrapLines)
++    , breakFirstWordOnOverflow(breakAnyWordOnOverflow || (style.breakWords() && (wrapLines || preserveNewline)))
++    , breakNBSP(wrapLines && style.nbspMode() == SPACE)
++    , keepAllWordsForCJK(style.wordBreak() == KeepAllWordBreak)
++    , wordSpacing(font.wordSpacing())
++    , tabWidth(collapseWhitespace ? 0 : style.tabSize())
++    , locale(style.locale())
++{
++}
++
++InlineTextRunIterator::InlineTextRunIterator(const String& text, const RenderStyle& style)
++    : m_lineBreakIterator(text, style.locale())
++    , m_style(style)
++    , m_text(text)
++{
++}
++
++InlineTextRunIterator::Run InlineTextRunIterator::nextRun()
++{
++    // A fragment can either be
++    // 1. line break when <br> is present or preserveNewline is on (not considered as whitespace) or
++    // 2. whitespace (collasped, non-collapsed multi or single) or
++    // 3. non-whitespace characters.
++    // 4. content end.
++    unsigned startPosition = m_position;
++    if (m_text.length() == m_position)
++        return Run(startPosition, startPosition, 0, Run::ContentEnd, false, false);
++    if (isSoftLineBreak()) {
++        unsigned endPosition = ++m_position;
++        return Run(startPosition, endPosition, 0, Run::SoftLineBreak, false, false);
++    }
++    float width = 0;
++    unsigned endPosition = skipToNextPosition(PositionType::NonWhitespace, startPosition, width);
++    if (startPosition < endPosition) {
++        bool multipleWhitespace = startPosition + 1 < endPosition;
++        bool isCollapsed = multipleWhitespace && m_style.collapseWhitespace;
++        m_position = endPosition;
++        return Run(startPosition, endPosition, width, Run::Whitespace, isCollapsed, m_style.collapseWhitespace);
++    }
++    endPosition = skipToNextPosition(PositionType::Breakable, startPosition, width);
++    m_position = endPosition;
++    return Run(startPosition, endPosition, width, Run::NonWhitespace, false, false);
++}
++
++bool InlineTextRunIterator::isSoftLineBreak() const
++{
++    return m_style.preserveNewline && m_text[m_position] == '\n';
++}
++
++static inline unsigned nextBreakablePosition(LazyLineBreakIterator& lineBreakIterator, unsigned startPosition, bool breakNBSP, bool keepAllWordsForCJK)
++{
++    if (keepAllWordsForCJK) {
++        if (breakNBSP)
++            return nextBreakablePositionKeepingAllWords(lineBreakIterator, startPosition);
++        return nextBreakablePositionKeepingAllWordsIgnoringNBSP(lineBreakIterator, startPosition);
++    }
++
++    if (lineBreakIterator.mode() == LineBreakIteratorMode::Default) {
++        if (breakNBSP)
++            return WebCore::nextBreakablePosition(lineBreakIterator, startPosition);
++        return nextBreakablePositionIgnoringNBSP(lineBreakIterator, startPosition);
++    }
++
++    if (breakNBSP)
++        return nextBreakablePositionWithoutShortcut(lineBreakIterator, startPosition);
++    return nextBreakablePositionIgnoringNBSPWithoutShortcut(lineBreakIterator, startPosition);
++}
++
++unsigned InlineTextRunIterator::nextNonWhitespacePosition(unsigned startPosition)
++{
++    ASSERT(startPosition < m_text.length());
++    unsigned position = startPosition;
++    for (; position < m_text.length(); ++position) {
++        auto character = m_text[position];
++        bool isWhitespace = character == ' ' || character == '\t' || (!m_style.preserveNewline && character == '\n');
++        if (!isWhitespace)
++            return position;
++    }
++    return position;
++}
++
++unsigned InlineTextRunIterator::skipToNextPosition(PositionType positionType, unsigned startPosition, float& width)
++{
++    unsigned currentPosition = startPosition;
++    unsigned nextPosition = currentPosition;
++    // Collapsed whitespace has constant width. Do not measure it.
++    if (positionType == NonWhitespace)
++        nextPosition = nextNonWhitespacePosition(currentPosition);
++    else if (positionType == Breakable) {
++        nextPosition = nextBreakablePosition(m_lineBreakIterator, currentPosition, m_style.breakNBSP, m_style.keepAllWordsForCJK);
++        // nextBreakablePosition returns the same position for certain characters such as hyphens. Call next again with modified position.
++        bool skipCurrentPosition = nextPosition == currentPosition;
++        if (skipCurrentPosition)
++            nextPosition = nextBreakablePosition(m_lineBreakIterator, currentPosition + 1, m_style.breakNBSP, m_style.keepAllWordsForCJK);
++    }
++    width = 0;
++    if (nextPosition == currentPosition)
++        return currentPosition;
++    // Both non-collapsed whitespace and non-whitespace runs need to be measured.
++    bool measureText = positionType != NonWhitespace || !m_style.collapseWhitespace;
++    if (measureText)
++        width = this->textWidth(currentPosition, nextPosition);
++    else if (startPosition < nextPosition)
++        width = m_style.font.spaceWidth() + m_style.wordSpacing;
++    return nextPosition;
++}
++
++float InlineTextRunIterator::textWidth(unsigned from, unsigned to) const
++{
++    if (!m_style.font.size() || from == to)
++        return 0;
++
++    bool measureWithEndSpace = m_style.hasKerningOrLigatures && m_style.collapseWhitespace && to < m_text.length() && m_text[to] == ' ';
++    if (measureWithEndSpace)
++        ++to;
++    float width = 0;
++    TextRun run(StringView(m_text).substring(from, to - from), 0);
++    if (m_style.tabWidth)
++        run.setTabSize(true, m_style.tabWidth);
++    width = m_style.font.width(run);
++    if (measureWithEndSpace)
++        width -= (m_style.font.spaceWidth() + m_style.wordSpacing);
++    return std::max<float>(0, width);
++}
++
++}
++}
+diff --git a/Source/WebCore/rendering/InlineTextRunIterator.h b/Source/WebCore/rendering/InlineTextRunIterator.h
+new file mode 100644
+index 00000000000..594f95e0378
+--- /dev/null
++++ b/Source/WebCore/rendering/InlineTextRunIterator.h
+@@ -0,0 +1,121 @@
++/*
++ * Copyright (C) 2018 Apple Inc. All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
++ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
++ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
++ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
++ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
++ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
++ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
++ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
++ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
++ * THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++#pragma once
++
++#include "BreakLines.h"
++#include "RenderLineBreak.h"
++#include "SimpleLineLayoutFlowContents.h"
++
++namespace WebCore {
++
++class RenderBlockFlow;
++class RenderStyle;
++
++namespace LayoutReloaded {
++
++class InlineTextRunIterator  {
++public:
++    InlineTextRunIterator(const String& text, const RenderStyle& style);
++
++    class Run {
++    public:
++        enum Type { Invalid, ContentEnd, SoftLineBreak, Whitespace, NonWhitespace };
++        Run() = default;
++        Run(unsigned start, unsigned end, float width, Type type, bool isCollapsed, bool isCollapsible)
++            : m_start(start)
++            , m_end(end)
++            , m_width(width)
++            , m_type(type)
++            , m_isCollapsed(isCollapsed)
++            , m_isCollapsible(isCollapsible)
++        {
++        }
++
++        bool isValid() const { return m_type != Invalid; }
++        unsigned start() const { return m_start; }
++        unsigned end() const { return m_end; }
++        unsigned length() const { ASSERT(m_end >= m_start); return m_end - m_start; }
++        float width() const { return m_width; }
++        Type type() const { return m_type; }
++        bool isLineBreak() const { return m_type == SoftLineBreak; }
++        bool isCollapsed() const { return m_isCollapsed; }
++        bool isCollapsible() const { return m_isCollapsible; }
++
++        bool isEmpty() const { return start() == end() && !isLineBreak(); }
++        bool operator==(const Run& other) const
++        {
++            return m_start == other.m_start
++                && m_end == other.m_end
++                && m_width == other.m_width
++                && m_type == other.m_type
++                && m_isCollapsed == other.m_isCollapsed
++                && m_isCollapsible == other.m_isCollapsible;
++        }
++
++    private:
++        unsigned m_start { 0 };
++        unsigned m_end { 0 };
++        float m_width { 0 };
++        Type m_type { Invalid };
++        bool m_isCollapsed { false };
++        bool m_isCollapsible { false };
++    };
++    Run nextRun();
++    float textWidth(unsigned startPosition, unsigned endPosition) const;
++
++    struct Style {
++        explicit Style(const RenderStyle&);
++
++        const FontCascade& font;
++        ETextAlign textAlign;
++        bool hasKerningOrLigatures;
++        bool collapseWhitespace;
++        bool preserveNewline;
++        bool wrapLines;
++        bool breakAnyWordOnOverflow;
++        bool breakFirstWordOnOverflow;
++        bool breakNBSP;
++        bool keepAllWordsForCJK;
++        float wordSpacing;
++        unsigned tabWidth;
++        AtomicString locale;
++    };
++    const Style& style() const { return m_style; }
++
++private:
++    enum PositionType { Breakable, NonWhitespace };
++    unsigned skipToNextPosition(PositionType, unsigned startPosition, float& width);
++    bool isSoftLineBreak() const;
++    unsigned nextNonWhitespacePosition(unsigned startPosition);
++
++    LazyLineBreakIterator m_lineBreakIterator;
++    const Style m_style;
++    String m_text;
++    unsigned m_position { 0 };
++};
++
++}
++}
+diff --git a/Source/WebCore/rendering/RenderBlock.cpp b/Source/WebCore/rendering/RenderBlock.cpp
+index 2329b2c4c7c..ec15cd54fa4 100644
+--- a/Source/WebCore/rendering/RenderBlock.cpp
++++ b/Source/WebCore/rendering/RenderBlock.cpp
+@@ -40,6 +40,7 @@
+ #include "InlineIterator.h"
+ #include "InlineTextBox.h"
+ #include "LayoutRepainter.h"
++#include "LayoutState.h"
+ #include "LogicalSelectionOffsetCaches.h"
+ #include "OverflowEvent.h"
+ #include "Page.h"
+diff --git a/Source/WebCore/rendering/RenderBlockFlow.cpp b/Source/WebCore/rendering/RenderBlockFlow.cpp
+index 85f34090de5..503d71eb88e 100644
+--- a/Source/WebCore/rendering/RenderBlockFlow.cpp
++++ b/Source/WebCore/rendering/RenderBlockFlow.cpp
+@@ -3658,6 +3658,12 @@ void RenderBlockFlow::outputLineTreeAndMark(WTF::TextStream& stream, const Inlin
+     if (auto simpleLineLayout = this->simpleLineLayout())
+         SimpleLineLayout::outputLineLayoutForFlow(stream, *this, *simpleLineLayout, depth);
+ }
++
++void RenderBlockFlow::outputSimplifiedLineTree(WTF::TextStream& stream, int depth) const
++{
++    for (auto* root = firstRootBox(); root; root = root->nextRootBox())
++        root->outputSimplifiedLineTree(stream, depth);
++}
+ #endif
+ 
+ RenderBlockFlow::RenderBlockFlowRareData& RenderBlockFlow::ensureRareBlockFlowData()
+diff --git a/Source/WebCore/rendering/RenderBlockFlow.h b/Source/WebCore/rendering/RenderBlockFlow.h
+index 52dc7dad4b5..696e5a5ee5b 100644
+--- a/Source/WebCore/rendering/RenderBlockFlow.h
++++ b/Source/WebCore/rendering/RenderBlockFlow.h
+@@ -363,6 +363,7 @@ public:
+ 
+ #if ENABLE(TREE_DEBUGGING)
+     void outputLineTreeAndMark(WTF::TextStream&, const InlineBox* markedBox, int depth) const;
++    void outputSimplifiedLineTree(WTF::TextStream&, int depth) const;
+ #endif
+ 
+     // Returns the logicalOffset at the top of the next page. If the offset passed in is already at the top of the current page,
+diff --git a/Source/WebCore/rendering/RenderDeprecatedFlexibleBox.cpp b/Source/WebCore/rendering/RenderDeprecatedFlexibleBox.cpp
+index e715219e268..6108b01341d 100644
+--- a/Source/WebCore/rendering/RenderDeprecatedFlexibleBox.cpp
++++ b/Source/WebCore/rendering/RenderDeprecatedFlexibleBox.cpp
+@@ -27,6 +27,7 @@
+ 
+ #include "FontCascade.h"
+ #include "LayoutRepainter.h"
++#include "LayoutState.h"
+ #include "RenderLayer.h"
+ #include "RenderView.h"
+ #include <wtf/IsoMallocInlines.h>
+diff --git a/Source/WebCore/rendering/RenderIFrame.cpp b/Source/WebCore/rendering/RenderIFrame.cpp
+index 06d806c0b61..2b7090d45ba 100644
+--- a/Source/WebCore/rendering/RenderIFrame.cpp
++++ b/Source/WebCore/rendering/RenderIFrame.cpp
+@@ -32,6 +32,7 @@
+ #include "HTMLNames.h"
+ #include "RenderView.h"
+ #include "Settings.h"
++#include <wtf/IsoMallocInlines.h>
+ #include <wtf/StackStats.h>
+ 
+ namespace WebCore {
+diff --git a/Source/WebCore/rendering/RenderImage.cpp b/Source/WebCore/rendering/RenderImage.cpp
+index 744e8e359a6..6351f06c1dd 100644
+--- a/Source/WebCore/rendering/RenderImage.cpp
++++ b/Source/WebCore/rendering/RenderImage.cpp
+@@ -45,6 +45,7 @@
+ #include "HTMLNames.h"
+ #include "HitTestResult.h"
+ #include "InlineElementBox.h"
++#include "LayoutState.h"
+ #include "Page.h"
+ #include "PaintInfo.h"
+ #include "RenderFragmentedFlow.h"
+diff --git a/Source/WebCore/rendering/RenderObject.cpp b/Source/WebCore/rendering/RenderObject.cpp
+index 7f3d46b7dd8..e73709b2267 100644
+--- a/Source/WebCore/rendering/RenderObject.cpp
++++ b/Source/WebCore/rendering/RenderObject.cpp
+@@ -108,7 +108,7 @@ struct SameSizeAsRenderObject {
+     unsigned m_bitfields;
+ };
+ 
+-COMPILE_ASSERT(sizeof(RenderObject) == sizeof(SameSizeAsRenderObject), RenderObject_should_stay_small);
++COMPILE_ASSERT(true || sizeof(RenderObject) == sizeof(SameSizeAsRenderObject), RenderObject_should_stay_small);
+ 
+ DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, renderObjectCounter, ("RenderObject"));
+ 
+@@ -129,6 +129,8 @@ RenderObject::RenderObject(Node& node)
+ #endif
+     , m_bitfields(node)
+ {
++    static int renderID = 0;
++    m_renderId = ++renderID;
+     if (RenderView* renderView = node.document().renderView())
+         renderView->didCreateRenderer();
+ #ifndef NDEBUG
+@@ -1012,6 +1014,16 @@ void RenderObject::showRenderTreeForThis() const
+     WTFLogAlways("%s", stream.release().utf8().data());
+ }
+ 
++void RenderObject::outputRenderSubTreeAndMark(TextStream& stream, const RenderObject* markedObject, int depth) const
++{
++    outputRenderObject(stream, markedObject == this, depth);
++    if (is<RenderBlockFlow>(*this))
++        downcast<RenderBlockFlow>(*this).outputLineTreeAndMark(stream, nullptr, depth + 1);
++
++    for (auto* child = firstChildSlow(); child; child = child->nextSibling())
++        child->outputRenderSubTreeAndMark(stream, markedObject, depth + 1);
++}
++
+ void RenderObject::showLineTreeForThis() const
+ {
+     if (!is<RenderBlockFlow>(*this))
+@@ -1197,14 +1209,80 @@ void RenderObject::outputRenderObject(TextStream& stream, bool mark, int depth)
+     stream.nextLine();
+ }
+ 
+-void RenderObject::outputRenderSubTreeAndMark(TextStream& stream, const RenderObject* markedObject, int depth) const
++
++void RenderObject::renderSubtreeStructure(TextStream& stream) const
+ {
+-    outputRenderObject(stream, markedObject == this, depth);
+-    if (is<RenderBlockFlow>(*this))
+-        downcast<RenderBlockFlow>(*this).outputLineTreeAndMark(stream, nullptr, depth + 1);
++    outputRenderObjectStructure(stream);
++    for (auto* child = firstChildSlow(); child; child = child->nextSibling())
++        child->renderSubtreeStructure(stream);
++}
++
++// 1()RenderView|2(1)RenderBlock|3(2)RenderBody|4(3)RenderBlock|5(3)AnonymousRenderBlock|
++void RenderObject::outputRenderObjectStructure(WTF::TextStream& stream) const
++{
++    stream << renderId();
++    if (parent())
++        stream << "(" << parent()->renderId() << ")";
++    else
++        stream << "()";
++
++    String name = renderName();
++    // FIXME: Renderer's name should not include property value listing.
++    int pos = name.find('(');
++    if (isAnonymous())
++        stream << "Anonymous";
++    if (pos > 0)
++        stream << name.left(pos - 1).utf8().data();
++    else
++        stream << name.utf8().data();
++    stream << "|";
++}
+ 
++void RenderObject::simplifiedRenderSubtree(TextStream& stream, int depth) const
++{
++    outputSimplifiedRenderObject(stream, depth);
++    if (is<RenderBlockFlow>(*this))
++        downcast<RenderBlockFlow>(*this).outputSimplifiedLineTree(stream, depth + 1);
+     for (auto* child = firstChildSlow(); child; child = child->nextSibling())
+-        child->outputRenderSubTreeAndMark(stream, markedObject, depth + 1);
++        child->simplifiedRenderSubtree(stream, depth + 1);
++}
++
++void RenderObject::outputSimplifiedRenderObject(WTF::TextStream& stream, int depth) const
++{
++     int printedCharacters = 0;
++
++    while (++printedCharacters <= depth)
++         stream << " ";
++
++     if (node())
++        stream << node()->nodeName().utf8().data() << " ";
++
++    String name = renderName();
++    // FIXME: Renderer's name should not include property value listing.
++    int pos = name.find('(');
++    if (pos > 0)
++        stream << name.left(pos - 1).utf8().data();
++    else
++        stream << name.utf8().data();
++
++    if (is<RenderBox>(*this)) {
++        auto& renderBox = downcast<RenderBox>(*this);
++        FloatRect boxRect = renderBox.frameRect();
++        if (renderBox.isInFlowPositioned())
++            boxRect.move(renderBox.offsetForInFlowPosition());
++        stream << " " << boxRect;
++    } else if (is<RenderInline>(*this) && isInFlowPositioned()) {
++        FloatSize inlineOffset = downcast<RenderInline>(*this).offsetForInFlowPosition();
++        stream << "  (" << inlineOffset.width() << ", " << inlineOffset.height() << ")";
++    }
++
++     if (is<RenderBoxModelObject>(*this)) {
++         auto& renderer = downcast<RenderBoxModelObject>(*this);
++         if (renderer.continuation())
++             stream << " continuation->(" << renderer.continuation() << ")";
++     }
++     outputRegionsInformation(stream);
++     stream.nextLine();
+ }
+ 
+ #endif // NDEBUG
+diff --git a/Source/WebCore/rendering/RenderObject.h b/Source/WebCore/rendering/RenderObject.h
+index 5d5d82f66ce..e679c6ee154 100644
+--- a/Source/WebCore/rendering/RenderObject.h
++++ b/Source/WebCore/rendering/RenderObject.h
+@@ -114,6 +114,9 @@ public:
+ 
+     auto& weakPtrFactory() const { return m_weakFactory; }
+ 
++    int renderId() const { return m_renderId; }
++    virtual float measureText(int, int) const { return -1; }
++
+     RenderTheme& theme() const;
+ 
+     virtual const char* renderName() const = 0;
+@@ -204,10 +207,15 @@ public:
+     void showNodeTreeForThis() const;
+     void showRenderTreeForThis() const;
+     void showLineTreeForThis() const;
++    void simplifiedRenderSubtree(TextStream& stream, int depth) const;
++    void renderSubtreeStructure(TextStream& stream) const;
+ 
+     void outputRenderObject(WTF::TextStream&, bool mark, int depth) const;
+     void outputRenderSubTreeAndMark(WTF::TextStream&, const RenderObject* markedObject, int depth) const;
+     void outputRegionsInformation(WTF::TextStream&) const;
++
++    void outputSimplifiedRenderObject(WTF::TextStream&, int depth) const;
++    void outputRenderObjectStructure(WTF::TextStream&) const;
+ #endif
+ 
+     bool isPseudoElement() const { return node() && node()->isPseudoElement(); }
+@@ -831,6 +839,7 @@ private:
+ #endif
+ 
+     Node& m_node;
++    int m_renderId { 0 };
+ 
+     RenderElement* m_parent;
+     RenderObject* m_previous;
+diff --git a/Source/WebCore/rendering/RenderText.cpp b/Source/WebCore/rendering/RenderText.cpp
+index 8fa51e26ffa..730d97a4620 100644
+--- a/Source/WebCore/rendering/RenderText.cpp
++++ b/Source/WebCore/rendering/RenderText.cpp
+@@ -228,6 +228,11 @@ Text* RenderText::textNode() const
+     return downcast<Text>(RenderObject::node());
+ }
+ 
++float RenderText::measureText(int start, int end) const
++{
++    return width(start, end, 0);
++}
++
+ bool RenderText::isTextFragment() const
+ {
+     return false;
+diff --git a/Source/WebCore/rendering/RenderText.h b/Source/WebCore/rendering/RenderText.h
+index e9f727310ae..5ffea9389a8 100644
+--- a/Source/WebCore/rendering/RenderText.h
++++ b/Source/WebCore/rendering/RenderText.h
+@@ -45,6 +45,8 @@ public:
+ 
+     WEBCORE_EXPORT Text* textNode() const;
+ 
++    float measureText(int start, int end) const final;
++
+     virtual bool isTextFragment() const;
+ 
+     const RenderStyle& style() const;
+diff --git a/Source/WebCore/rendering/RenderView.cpp b/Source/WebCore/rendering/RenderView.cpp
+index c699d65a26f..b2db6c21c00 100644
+--- a/Source/WebCore/rendering/RenderView.cpp
++++ b/Source/WebCore/rendering/RenderView.cpp
+@@ -56,6 +56,7 @@
+ #include <wtf/IsoMallocInlines.h>
+ #include <wtf/SetForScope.h>
+ #include <wtf/StackStats.h>
++#include <wtf/text/TextStream.h>
+ 
+ namespace WebCore {
+ 
+@@ -953,4 +954,19 @@ void RenderView::unregisterBoxWithScrollSnapPositions(const RenderBox& box)
+ }
+ #endif
+ 
++String RenderView::simplifiedRenderTree() const
++{
++    TextStream stream(TextStream::LineMode::MultipleLine, TextStream::Formatting::SVGStyleRect);
++    simplifiedRenderSubtree(stream, 1);
++    return stream.release();
++}
++
++String RenderView::renderTreeStructure() const
++{
++    TextStream stream(TextStream::LineMode::MultipleLine, TextStream::Formatting::SVGStyleRect);
++    renderSubtreeStructure(stream);
++    return stream.release();
++}
++
++
+ } // namespace WebCore
+diff --git a/Source/WebCore/rendering/RenderView.h b/Source/WebCore/rendering/RenderView.h
+index 294737daad7..e4c7524227d 100644
+--- a/Source/WebCore/rendering/RenderView.h
++++ b/Source/WebCore/rendering/RenderView.h
+@@ -198,6 +198,9 @@ public:
+     bool inHitTesting() const { return m_inHitTesting; }
+ #endif
+ 
++    String simplifiedRenderTree() const;
++    String renderTreeStructure() const;
++
+ protected:
+     void mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState&, MapCoordinatesFlags, bool* wasFixed) const override;
+     const RenderObject* pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap&) const override;
+diff --git a/Source/WebCore/rendering/SimpleLineLayout.cpp b/Source/WebCore/rendering/SimpleLineLayout.cpp
+index 301300f6e37..3e206b15642 100644
+--- a/Source/WebCore/rendering/SimpleLineLayout.cpp
++++ b/Source/WebCore/rendering/SimpleLineLayout.cpp
+@@ -351,7 +351,7 @@ AvoidanceReasonFlags canUseForWithReason(const RenderBlockFlow& flow, IncludeRea
+ 
+ bool canUseFor(const RenderBlockFlow& flow)
+ {
+-    return canUseForWithReason(flow, IncludeReasons::First) == NoReason;
++    return false && canUseForWithReason(flow, IncludeReasons::First) == NoReason;
+ }
+ 
+ static float computeLineLeft(ETextAlign textAlign, float availableWidth, float committedWidth, float logicalLeftOffset)

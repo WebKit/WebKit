@@ -1,0 +1,18 @@
+This test ensures that an aria-hidden display:contents element behaves as expected.
+
+Testing element #main
+LandmarkMain
+
+Testing element #list
+List
+
+Testing element #paragraph
+Paragraph
+
+Hiding #main with aria-hidden='true'.
+PASS: All elements are now hidden.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

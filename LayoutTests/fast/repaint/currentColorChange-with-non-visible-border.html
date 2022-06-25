@@ -1,0 +1,26 @@
+<style>
+#color_change {
+  border-style: none;
+  border-width: 10px;
+  background-color: green;
+  width: 100px;
+  height: 100px;
+}
+</style>
+<!-- current-color change should not trigger repaint unless the container has text content -->
+<div id=color_change><div>
+<pre id=result></pre>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+document.body.offsetHeight;
+if (window.internals)
+  internals.startTrackingRepaints();
+color_change.style.color = "red";
+document.body.offsetHeight;
+
+if (window.internals) {
+  result.innerText = internals.repaintRectsAsText();
+  internals.stopTrackingRepaints();
+}
+</script>

@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<html>
+<body>
+  <img src="data:image/svg+xml,
+  <svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'>
+    <rect width='100%' height='100%' fill='Lime'/>
+    <text x='10' y='25'>svg-text</text>
+    <svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='40' y='40'>
+      <rect width='100%' height='100%' fill='yellow'/>
+      <text x='10' y='25'>svg-svg-text</text>
+    </svg>  
+    <image x='80' y='80' width='100%' height='100%'
+      xlink:href='data:image/svg+xml;base64,
+      PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHhtbG5zOnhsaW5rPSdodHRw
+      Oi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rJz4NCiAgICA8cmVjdCB3aWR0aD0nMTAwJScgaGVpZ2h0
+      PScxMDAlJyBmaWxsPSdvcmFuZ2UnLz4NCiAgICA8dGV4dCB4PScxMCcgeT0nMjUnPnN2Zy1pbWFn
+      ZS10ZXh0PC90ZXh0Pg0KICAgIDxzdmcgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3Zn
+      JyB4bWxuczp4bGluaz0naHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluaycgeD0nNDAnIHk9JzQw
+      Jz4NCiAgICAgIDxyZWN0IHdpZHRoPScxMDAlJyBoZWlnaHQ9JzEwMCUnIGZpbGw9J3JlZCcvPg0K
+      ICAgICAgPHRleHQgeD0nMTAnIHk9JzI1Jz5zdmctaW1hZ2Utc3ZnLXRleHQ8L3RleHQ+DQogICAg
+      PC9zdmc+ICANCjwvc3ZnPg=='>
+    </image>
+  </svg>">
+  <script>
+    if (window.testRunner) {
+      testRunner.waitUntilDone();
+      // window load event fires when the the page and its resources are loaded.
+      // However it does not wait till the sub-resources are loaded. And this is
+      // why we need to wait a little bit before we call notifyDone().
+      window.addEventListener("load", function() {
+        setTimeout(function () {
+          testRunner.notifyDone();
+        }, 200);
+      });
+    }
+  </script>
+</body>
+</html>
+
+

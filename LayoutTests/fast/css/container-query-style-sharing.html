@@ -1,0 +1,23 @@
+<style>
+body {
+    display: grid;
+    grid-template-columns: 100px 50px;
+}
+div {
+    container-type: inline-size;
+    background-color: blue;
+}
+span { background-color: red }
+@container (width = 100px) {
+    span { background-color: green }
+}
+</style>
+<body>
+<div>
+    <span>1</span>
+</div>
+<div>
+    <span>2</span>
+</div>
+</body>
+

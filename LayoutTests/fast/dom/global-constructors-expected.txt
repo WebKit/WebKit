@@ -1,0 +1,7 @@
+This page tests global constructor objects like window.HTMLDocument. If it passes, you'll see no lines with the text FAIL below.
+
+[Deleted window.Node.prototype]
+[Set window.Node = 1]
+[Deleted window.Node]
+[Added an iframe named 'Node']
+

@@ -1,0 +1,9 @@
+
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "Query |sampleRate| upon AudioWorkletGlobalScope construction"
+PASS Audit report
+PASS > [Query |sampleRate| upon AudioWorkletGlobalScope construction]
+PASS   frequencyParam.maxValue is equal to 24000.
+PASS < [Query |sampleRate| upon AudioWorkletGlobalScope construction] All assertions passed. (total 1 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
+

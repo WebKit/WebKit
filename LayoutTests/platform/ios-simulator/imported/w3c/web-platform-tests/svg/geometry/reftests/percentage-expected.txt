@@ -1,0 +1,7 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 310x170
+  RenderSVGRoot {svg} at (23,0) size 287x170
+    RenderSVGEllipse {circle} at (84,0) size 226x170 [stroke={[type=SOLID] [color=#00FFFF] [stroke width=30.00]}] [cx=0.00] [cy=0.00] [r=0.00]
+    RenderSVGEllipse {ellipse} at (85,9) size 78x84 [stroke={[type=SOLID] [color=#008000] [stroke width=30.00]}] [cx=0.00] [cy=0.00] [rx=0.00] [ry=0.00]
+    RenderSVGRect {rect} at (23,26) size 233x118 [stroke={[type=SOLID] [color=#0000FF] [stroke width=30.00]}] [x=0.00] [y=0.00] [width=0.00] [height=0.00]

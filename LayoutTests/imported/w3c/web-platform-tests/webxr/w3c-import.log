@@ -1,0 +1,102 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/webxr/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/webxr/events_input_source_recreation.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/events_input_sources_change.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/events_referenceSpace_reset_immersive.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/events_referenceSpace_reset_inline.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/events_session_select.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/events_session_select_subframe.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/events_session_squeeze.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/exclusive_requestFrame_nolayer.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/getInputPose_handedness.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/getInputPose_pointer.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/getViewerPose_emulatedPosition.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/idlharness.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/webxr/navigator_xr_sameObject.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/render_state_update.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/render_state_vertical_fov_immersive.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/render_state_vertical_fov_inline.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/webGLCanvasContext_create_xrcompatible.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/webGLCanvasContext_makecompatible_contextlost.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/webGLCanvasContext_makecompatible_reentrant.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/webxr-supported-by-feature-policy.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/webxr_availability.http.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/webxr_feature_policy.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/webxr_feature_policy.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrBoundedReferenceSpace_updates.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrDevice_disconnect_ends.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrDevice_isSessionSupported_immersive.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrDevice_isSessionSupported_immersive_unsupported.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrDevice_isSessionSupported_inline.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_immersive.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_immersive_no_gesture.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_immersive_unsupported.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_no_mode.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_non_immersive_no_gesture.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_optionalFeatures.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_requiredFeatures_unknown.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrFrame_getPose.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrFrame_getViewerPose_getPose.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrFrame_getViewerPose_getPose_identities.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrFrame_lifetime.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrFrame_session_sameObject.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrInputSource_add_remove.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrInputSource_emulatedPosition.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrInputSource_profiles.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrInputSource_sameObject.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrPose_transform_sameObject.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrReferenceSpace_originOffset.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrReferenceSpace_originOffsetBounded.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrReferenceSpace_originOffset_viewer.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrReferenceSpace_relationships.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrRigidTransform_constructor.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrRigidTransform_inverse.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrRigidTransform_matrix.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrRigidTransform_sameObject.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrSession_cancelAnimationFrame.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrSession_cancelAnimationFrame_invalidhandle.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrSession_end.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrSession_features_deviceSupport.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrSession_input_events_end.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrSession_prevent_multiple_exclusive.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrSession_requestAnimationFrame_callback_calls.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrSession_requestAnimationFrame_data_valid.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrSession_requestAnimationFrame_getViewerPose.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrSession_requestAnimationFrame_timestamp.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrSession_requestReferenceSpace.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrSession_requestReferenceSpace_features.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrSession_requestSessionDuringEnd.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrSession_sameObject.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrSession_viewer_availability.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrSession_viewer_referenceSpace.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrSession_visibilityState.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrStationaryReferenceSpace_floorlevel_updates.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrView_eyes.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrView_match.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrView_oneframeupdate.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrView_sameObject.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrViewerPose_views_sameObject.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrViewport_valid.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrWebGLLayer_constructor.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrWebGLLayer_framebuffer_draw.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrWebGLLayer_framebuffer_sameObject.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrWebGLLayer_framebuffer_scale.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrWebGLLayer_opaque_framebuffer.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrWebGLLayer_opaque_framebuffer_stencil.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrWebGLLayer_viewports.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xr_viewport_scale.https.html

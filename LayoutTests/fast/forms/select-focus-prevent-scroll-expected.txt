@@ -1,0 +1,12 @@
+Verifies that programmatically focusing a select element with preventScroll: true does not cause the page to scroll. To run the test manually, tap or click the button and check that the page does not scroll to the bottom.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.activeElement is select
+PASS pageYOffset is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Focus select
+

@@ -1,0 +1,35 @@
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 3821.00)
+  (backingStoreAttached 1)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 3821.00)
+      (contentsOpaque 1)
+      (backingStoreAttached 1)
+      (children 3
+        (GraphicsLayer
+          (position 8.00 13.00)
+          (bounds 600.00 600.00)
+          (drawsContent 1)
+          (backingStoreAttached 1)
+        )
+        (GraphicsLayer
+          (position 8.00 1613.00)
+          (bounds 600.00 600.00)
+          (drawsContent 1)
+          (backingStoreAttached 0)
+        )
+        (GraphicsLayer
+          (position 8.00 3213.00)
+          (bounds 600.00 600.00)
+          (drawsContent 1)
+          (backingStoreAttached 0)
+        )
+      )
+    )
+  )
+)
+I'm attached.
+I'm detached.
+I'm detached. Triggers repaint

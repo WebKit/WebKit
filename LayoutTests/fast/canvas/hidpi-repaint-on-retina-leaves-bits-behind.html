@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that we don't leave bits behind on the canvas context.</title>
+<style>
+</style>
+</head>
+<body>
+<canvas style="width: 100px; height: 100px" id="canvas" width="100" height="100"></canvas>
+<canvas style="width: 200px; height: 200px" id="stretchedCanvas" width="100" height="100"></canvas>
+<script>
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+    var ctx = canvas.getContext("2d");
+    var stretchedCtx = stretchedCanvas.getContext("2d");
+	ctx.fillRect(1, 1, 50, 50);
+	stretchedCtx.fillRect(1, 1, 50, 50);
+    setTimeout(function() {
+		ctx.clearRect(1, 1, 50, 50);
+		stretchedCtx.clearRect(1, 1, 50, 50);
+		if (window.testRunner)
+		   testRunner.notifyDone();
+    }, 10);
+</script>
+</body>
+</html>

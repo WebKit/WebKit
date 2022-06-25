@@ -1,0 +1,10 @@
+This test passes if it doesn't crash.
+<iframe src="data:text/plain,Hi"></iframe>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+frames[0].onunload = function () {
+    document.open();
+};
+</script>

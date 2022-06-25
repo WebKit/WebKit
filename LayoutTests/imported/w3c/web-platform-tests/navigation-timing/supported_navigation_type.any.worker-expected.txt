@@ -1,0 +1,6 @@
+
+Harness Error (TIMEOUT), message = null
+
+PASS supportedEntryTypes contains 'navigation'.
+TIMEOUT 'navigation' entries should be observable. Test timed out
+

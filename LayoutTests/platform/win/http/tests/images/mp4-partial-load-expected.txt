@@ -1,0 +1,10 @@
+This tests that an mp4 loaded in a video tag does not cause a hang when the load stalls.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL Took too long
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

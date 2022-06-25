@@ -1,0 +1,25 @@
+<style>
+.multi-column {
+  column-count: 2;
+}
+.absolute {
+  position: absolute;
+}
+.spanner {
+  column-span: all;
+}
+</style>
+PASS if no crash or assert.
+<div class=multi-column>
+  <div id=go_inflow class="absolute spanner">
+    <div id=become_spanner></div>
+  </div>
+</div>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+document.body.offsetHeight;
+go_inflow.classList.remove("absolute");
+document.body.offsetHeight;
+become_spanner.classList.add("spanner");
+</script>

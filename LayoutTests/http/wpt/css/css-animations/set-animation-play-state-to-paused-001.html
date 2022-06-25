@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Dynamically set animation-play-state to paused</title>
+    <link rel="author" title="Igalia S.L." href="https://www.igalia.com/">
+    <link rel="help" href="https://drafts.csswg.org/css-animations-1/#animation-play-state">
+    <meta name="assert" content="Visually check that transform animations stop
+                                 when animation-play-state is set to paused">
+    <link rel="match" href="set-animation-play-state-to-paused-001-ref.html">
+    <style>
+      #container {
+        position: absolute;
+        left: 0;
+        top: 3em;
+      }
+      #squareLinear, #squareSteps  {
+        width: 100px;
+        height: 100px;
+        background: red;
+        position: absolute;
+        left: -50px;
+      }
+      #squareLinear {
+        top: 25px;
+        animation: move 2s linear;
+      }
+      #squareSteps {
+        top: 175px;
+        animation: move 2s steps(1000, end);
+      }
+      #coveringRect {
+        position: absolute;
+        background: lightgreen;
+        width: 150px;
+        height: 300px;
+        left: -75px;
+        top: 0px;
+        transform: translate(150px);
+      }
+      .pause {
+        opacity: 0.6;
+        animation-play-state: paused !important;
+      }
+      @keyframes move
+      {
+        100% {
+          transform: translate(500px);
+        }
+      }
+    </style>
+    <script>
+      var start = null;
+      var animationDuration = 2000;
+      function halfWidth(id)
+      {
+        return document.getElementById(id).scrollWidth / 2;
+      }
+      function shift(id)
+      {
+        var transform = window.getComputedStyle(document.getElementById(id)).transform;
+        if (transform === "none")
+          return 0;
+        // See https://drafts.csswg.org/css-transforms-2/#serialization-of-the-computed-value
+        return parseFloat(transform.split(/,\s*/)[4]);
+      }
+      function step(timestamp) {
+        // For each square, pause the animation as soon as it passes under the covering rect.
+        ["squareLinear", "squareSteps"].forEach((id) => {
+          if (Math.abs(shift("coveringRect") - shift(id)) < halfWidth("coveringRect") - halfWidth(id))
+            document.getElementById(id).classList.add("pause");
+        });
+
+        // Stop the reftest after the time when the animations would have stop.
+        // If pausing failed for some reason, the squares will be visible.
+        if (!start) start = timestamp;
+        if (timestamp - start < animationDuration)
+          window.requestAnimationFrame(step);
+        else if (window.testRunner)
+            testRunner.notifyDone();
+      }
+      function runTest() {
+          if (window.testRunner)
+              testRunner.waitUntilDone();
+          window.requestAnimationFrame(step);
+      }
+    </script>
+  </head>
+  <body onload="runTest()">
+    <p>This test passes if you see a green rectangle and no red.</p>
+    <div id="container">
+      <div id="squareLinear"></div>
+      <div id="squareSteps"></div>
+      <div id="coveringRect"></div>
+    </div>
+  </body>
+</html>

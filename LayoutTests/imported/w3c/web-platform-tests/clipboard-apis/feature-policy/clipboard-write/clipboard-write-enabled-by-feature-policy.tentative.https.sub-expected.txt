@@ -1,0 +1,7 @@
+
+
+Harness Error (TIMEOUT), message = null
+
+FAIL Feature-Policy header clipboard-write "*" allows the top-level document. promise_test: Unhandled rejection with value: object "Error: unimplemented"
+TIMEOUT Feature-Policy header clipboard-write "*" allows same-origin iframes. Test timed out
+

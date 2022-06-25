@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div role="group" tabindex=0 id="liveregion1" aria-live="polite" aria-relevant="additions">
+<h3 id="innerlive">text</h3>
+</div>
+
+<div role="group" tabindex=0 id="liveregion2" aria-live="polite" aria-relevant="additions">
+<img src="test.gif" width=100 height=100 alt="alt text" tabindex=0 id="image">
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    var jsTestIsAsync = true;
+
+    description("This tests that ARIA live regions are sending out the correct notifications. We perform two operations to each aria region, at the end it should trigger two live region notifications");
+
+    var liveRegion1 = 0;
+    var liveRegion2 = 0;
+    var liveRegionChangeCount = 0;
+    function ariaCallback(notification) {
+        if (notification == "AXLiveRegionChanged") {
+            liveRegionChangeCount++;
+        }
+    }
+
+    if (window.accessibilityController) {
+
+        liveRegion1 = accessibilityController.accessibleElementById("liveregion1");
+        var addedNotification1 = liveRegion1.addNotificationListener(ariaCallback);
+        shouldBeTrue("addedNotification1");
+
+        liveRegion2 = accessibilityController.accessibleElementById("liveregion2");
+        var addedNotification2 = liveRegion2.addNotificationListener(ariaCallback);
+        shouldBeTrue("addedNotification2");
+
+        // perform operations on both live regions.
+        textChangeOperation();
+        newElementOperation();
+        alternativeChangeOperation();
+        removeElementOperation();
+
+        // add a short delay to check after all the operations if we have exactly two notifications
+        setTimeout("finishTest()", 50);
+    }
+
+    function textChangeOperation() {
+        // this should trigger a live region change for a text change.
+        document.getElementById("innerlive").innerText = "changed text";
+        document.body.offsetHeight;
+    }
+
+    function newElementOperation() {
+        // this should trigger a live region change for a new element.
+        document.getElementById("liveregion1").innerHTML += "new text element";
+        document.body.offsetHeight;
+    }
+
+    function alternativeChangeOperation() {
+        // this should also trigger a live region change because its a text alternative change. 
+        document.getElementById("image").setAttribute('alt', "new image text");
+        document.body.offsetHeight;
+    }
+
+    function removeElementOperation() {
+        // this should trigger a live region change for a removed element.
+        document.getElementById("liveregion2").removeChild(document.getElementById("image")); 
+        document.body.offsetHeight;
+    }
+
+    function finishTest() {
+        // We should get a total of two live region changes.
+        liveRegion1.removeNotificationListener();
+        liveRegion2.removeNotificationListener();
+        shouldBe("liveRegionChangeCount", "2");
+        finishJSTest();
+    }
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

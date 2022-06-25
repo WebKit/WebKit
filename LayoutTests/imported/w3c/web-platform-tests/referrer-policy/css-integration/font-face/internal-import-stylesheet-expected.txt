@@ -1,0 +1,5 @@
+Check that resources from stylesheets (imported from internal stylesheets) are loaded with the referrer and referrer policy from from the imported style sheet.
+
+
+FAIL Font from imported stylesheet (internal). assert_equals: expected "http://127.0.0.1:8800/common/security-features/subresource/stylesheet.py?id=a0d1a15b-ee5b-492d-b4ba-acceda1b7517&type=font" but got "http://localhost:8800/"
+

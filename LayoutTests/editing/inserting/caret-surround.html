@@ -1,0 +1,25 @@
+<html>
+<head>
+<script>
+function testonload() {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    caretrange = document.caretRangeFromPoint();
+    button.style.setProperty("content", "url()");
+    button.autofocus = true;
+    caretrange.surroundContents(textarea);
+}
+function togglehandler() {
+    textarea.selectionStart = 0;
+}
+</script>
+</head>
+<body onload=testonload()>This tests that we do not hit an assertion while unfocusing.
+<textarea id="textarea">PASS</textarea>
+<details ontoggle="togglehandler()" open="true">
+<img src="empty"></img>
+<button id="button"></button>
+</details>
+</body>
+</html>

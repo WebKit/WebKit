@@ -1,0 +1,2 @@
+Exception: SyntaxError: Invalid unicode escape in identifier: '\u{134071'
+at unicode_6_identifier_Blue524737.js:6

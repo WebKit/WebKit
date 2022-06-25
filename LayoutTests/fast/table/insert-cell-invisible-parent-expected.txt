@@ -1,0 +1,1 @@
+Tests if a newly-inserted cell is properly added when parent element is not visible. Test passes if WebKit does not crash. PASS

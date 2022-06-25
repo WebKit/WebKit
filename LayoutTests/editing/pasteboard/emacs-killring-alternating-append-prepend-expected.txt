@@ -1,0 +1,4 @@
+Test for bug 151300: Backwards delete by word incorrectly appends deleted text to kill ring, should be prepend.
+
+one two three
+Expected result: one two three

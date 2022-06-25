@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<body>
+    <script src=/resources/testharness.js></script>
+    <script src=/resources/testharnessreport.js></script>
+    <script src=/common/get-host-info.sub.js></script>
+    <script>
+function withIFrame(url, allow) {
+    return new Promise(resolve => {
+        let frame = document.createElement('iframe');
+        frame.src = url;
+        frame.allow = allow;
+        frame.onload = () => { resolve(frame); };
+        document.body.appendChild(frame);
+    });
+}
+
+var crossDomain = get_host_info().HTTPS_REMOTE_ORIGIN;
+function runTestInIFrame(allow, crossOrigin)
+{
+    return new Promise(async resolve => {
+        window.addEventListener('message', function handler(event) {
+            resolve(event.data);
+            window.removeEventListener('message', handler);
+            iframe.remove();
+        });
+        let url = location.pathname + "#test";
+        if (crossOrigin)
+            url = crossDomain + url;
+        const iframe = await withIFrame(url, allow);
+    });
+}
+
+async function doTest()
+{
+    let results = { };
+    try {
+        await navigator.mediaDevices.getUserMedia({audio : true});
+        results.audio = true;
+    } catch (e) {
+        results.audio = false;
+    }
+    try {
+        await navigator.mediaDevices.getUserMedia({video : true});
+        results.video = true;
+    } catch (e) {
+        results.video = false;
+    }
+    try {
+        await navigator.mediaDevices.getUserMedia({audio : true, video : true});
+        results.audioVideo = true;
+    } catch (e) {
+        results.audioVideo = false;
+    }
+    return results;
+}
+
+if (location.hash == "#test") {
+    doTest().then(data => {
+        parent.postMessage(data, '*');
+    }, error => {
+        parent.postMessage('error', '*');
+    });
+} else {
+    var gum_tests = [
+        { allow: "camera 'none'", results: { audio: true, video: false, audioVideo: false } },
+        { allow: "camera 'none'", results: { audio: false, video: false, audioVideo: false }, crossOrigin: true },
+        { allow: "microphone 'none'", results: { audio: false, video: true, audioVideo: false } },
+        { allow: "microphone 'none';camera 'none'", results: { audio: false, video: false, audioVideo: false } },
+        { allow: "camera *;microphone 'none'", results: { audio: false, video: true, audioVideo: false } },
+        { allow: "camera *;microphone 'none'", results: { audio: false, video: true, audioVideo: false }, crossOrigin: true },
+        { allow: "camera 'none';microphone *", results: { audio: true, video: false, audioVideo: false } },
+        { allow: "microphone *; microphone 'none'", results: { audio: false, video: true, audioVideo: false } },
+        { allow: "microphone *; microphone ' none'", results: { audio: true, video: true, audioVideo: true } },
+        { allow: "microphone *; microphone none", results: { audio: true, video: true, audioVideo: true } },
+        { allow: "microphone *; camera 'self'", results: { audio: true, video: true, audioVideo: true } },
+        { allow: "microphone *; camera 'self'", results: { audio: true, video: false, audioVideo: false }, crossOrigin: true },
+        { allow: "microphone *; camera http:/example.org self", results: { audio: true, video: false, audioVideo: false } },
+        { allow: "microphone *; camera http:/example.org 'self'", results: { audio: true, video: true, audioVideo: true } },
+        { allow: "microphone *; camera http:/example.org 'self'", results: { audio: true, video: false, audioVideo: false }, crossOrigin: true },
+        { allow: "microphone " + crossDomain, results: { audio: false, video: true, audioVideo: false } },
+        { allow: "microphone " + crossDomain, results: { audio: true, video: false, audioVideo: false }, crossOrigin: true },
+        { allow: "microphone 'self' " + crossDomain, results: { audio: true, video: true, audioVideo: true } },
+    ];
+
+    for (let gum_test of gum_tests) {
+        promise_test(async (test) => {
+            const results = await runTestInIFrame(gum_test.allow, gum_test.crossOrigin);
+            assert_equals(results.audio, gum_test.results.audio, "audio");
+            assert_equals(results.video, gum_test.results.video, "video");
+            assert_equals(results.audioVideo, gum_test.results.audioVideo, "audioVideo");
+        }, "\"" + gum_test.allow + "\" - " + (gum_test.crossOrigin ? "cross origin iframe" : "same origin iframe"));
+    }
+}
+  </script>
+</body>
+

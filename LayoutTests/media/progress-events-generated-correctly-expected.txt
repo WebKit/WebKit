@@ -1,0 +1,8 @@
+Test that progress events are generated during loading of media resource.
+
+EVENT(canplaythrough)
+EVENT(playing)
+EVENT(ended)
+EXPECTED (progressCount > '1') OK
+END OF TEST
+

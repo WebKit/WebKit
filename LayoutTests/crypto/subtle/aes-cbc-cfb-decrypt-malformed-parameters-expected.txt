@@ -1,0 +1,16 @@
+CONSOLE MESSAGE: AES-CBC and AES-CTR do not provide authentication by default, and implementing it manually can result in minor, but serious mistakes. We recommended using authenticated encryption like AES-GCM to protect against chosen-ciphertext attacks.
+Test decrypting using AES-CBC/AES-CFB with malformed parameters
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS crypto.subtle.decrypt({name: "aes-cbc", iv: asciiToUint8Array("")}, key, cipherText) rejected promise  with OperationError: The operation failed for an operation-specific reason.
+PASS crypto.subtle.decrypt({name: "aes-cbc", iv: asciiToUint8Array("j")}, key, cipherText) rejected promise  with OperationError: The operation failed for an operation-specific reason.
+PASS crypto.subtle.decrypt({name: "aes-cbc", iv: asciiToUint8Array("jnOw99oOZFLIEPMrd")}, key, cipherText) rejected promise  with OperationError: The operation failed for an operation-specific reason.
+PASS crypto.subtle.decrypt({name: "aes-cfb-8", iv: asciiToUint8Array("")}, key, cipherText) rejected promise  with OperationError: The operation failed for an operation-specific reason.
+PASS crypto.subtle.decrypt({name: "aes-cfb-8", iv: asciiToUint8Array("j")}, key, cipherText) rejected promise  with OperationError: The operation failed for an operation-specific reason.
+PASS crypto.subtle.decrypt({name: "aes-cfb-8", iv: asciiToUint8Array("jnOw99oOZFLIEPMrd")}, key, cipherText) rejected promise  with OperationError: The operation failed for an operation-specific reason.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

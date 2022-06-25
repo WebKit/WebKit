@@ -1,0 +1,3 @@
+
+PASS PannerNode AudioParam automation works properly
+

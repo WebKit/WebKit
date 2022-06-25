@@ -1,0 +1,19 @@
+Test that we can change currentTime when readyState is HAVE_NOTHING, the new value is returned, and a seek is done when readyState increases to HAVE_METADATA.
+
+
+EXPECTED (video.readyState == '0') OK
+EXPECTED (video.currentTime == '0') OK
+RUN(video.currentTime = 2)
+EXPECTED (video.readyState == '0') OK
+EXPECTED (video.currentTime == '2') OK
+EVENT(loadedmetadata)
+EXPECTED (video.readyState >= video.HAVE_METADATA == 'true') OK
+EVENT(seeked)
+RUN(video.play())
+EVENT(playing)
+EXPECTED (video.readyState >= video.HAVE_CURRENT_DATA == 'true') OK
+EVENT(timeupdate)
+EXPECTED (video.currentTime > 2 == 'true') OK
+EXPECTED (video.readyState >= video.HAVE_FUTURE_DATA == 'true') OK
+END OF TEST
+

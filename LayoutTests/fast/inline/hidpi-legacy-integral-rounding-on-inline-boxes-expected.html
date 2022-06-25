@@ -1,0 +1,12 @@
+<!DOCTYPE html><!-- webkit-test-runner [ InlineFormattingContextIntegrationEnabled=false ] -->
+<style>
+div {
+  padding-top: 1.5px;
+}
+</style>
+
+PASS if no content jump
+<div>when<span style="font-size: 10px;">this</span></div>
+<div>and<span style="line-height: 10px;">this</span></div>
+<div>and<span style="vertical-align: top">this</span></div>
+text is selected

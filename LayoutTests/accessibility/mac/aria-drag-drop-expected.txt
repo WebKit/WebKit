@@ -1,0 +1,17 @@
+This tests that the ARIA drag and drop attributes work as intended.
+
+PASS: accessibilityController.accessibleElementById('dropeffect-div').ariaDropEffects === 'copy,move'
+PASS: initiallyGrabbedDiv.ariaIsGrabbed === true
+PASS: initiallyUngrabbedDiv.ariaIsGrabbed === false
+PASS: initiallyGrabbedDiv.isAttributeSettable('AXGrabbed') === true
+PASS: initiallyUngrabbedDiv.isAttributeSettable('AXGrabbed') === true
+
+Setting aria-grabbed false for element #initially-grabbed-div.
+PASS: initiallyGrabbedDiv.ariaIsGrabbed === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+drop
+grab
+grab

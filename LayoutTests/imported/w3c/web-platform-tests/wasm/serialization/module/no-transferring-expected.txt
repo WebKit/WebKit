@@ -1,0 +1,5 @@
+
+PASS Trying to transfer a WebAssembly.Module to this window throws
+PASS Trying to transfer a WebAssembly.Module to a worker throws
+PASS Trying to transfer a WebAssembly.Module through a MessagePort throws
+

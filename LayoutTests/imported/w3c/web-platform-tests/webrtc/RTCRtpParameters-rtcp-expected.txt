@@ -1,0 +1,4 @@
+
+FAIL setParameters() with modified rtcp.cname should reject with InvalidModificationError assert_not_equals: Expect sender param.rtcp.cname to be set got disallowed value undefined
+FAIL setParameters() with modified rtcp.reducedSize should reject with InvalidModificationError assert_not_equals: Expect sender param.rtcp.cname to be set got disallowed value undefined
+

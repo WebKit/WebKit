@@ -1,0 +1,14 @@
+
+This tests that we report the correct selection-related states.
+
+PASS accessibilityController.accessibleElementById("selectElement").isMultiSelectable is true
+PASS accessibilityController.accessibleElementById("selectElement").childAtIndex(0).isSelectable is true
+PASS accessibilityController.accessibleElementById("selectElement").childAtIndex(0).isSelected is true
+PASS accessibilityController.accessibleElementById("selectElement").childAtIndex(1).isSelectable is true
+PASS accessibilityController.accessibleElementById("selectElement").childAtIndex(1).isSelected is false
+PASS accessibilityController.accessibleElementById("selectElement").childAtIndex(2).isSelectable is false
+PASS accessibilityController.accessibleElementById("selectElement").childAtIndex(2).isSelected is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

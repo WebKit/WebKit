@@ -1,0 +1,81 @@
+<!DOCTYPE>
+
+<html>
+<head>
+  <style>
+    .box {
+      height: 100px;
+      width: 100px;
+      margin: 50px;
+      border: 1px solid black;
+      text-align: center;
+      padding: 20px;
+      background-repeat: no-repeat;
+      -webkit-transition-duration: 1s;
+      -webkit-transition-timing-function: linear;
+      -webkit-transition-property: -webkit-box-shadow, text-shadow;
+    }
+    
+    #box {
+      -webkit-box-shadow: 0 -20px 10px red, 0 20px 10px blue;
+      text-shadow: 0 -20px 10px red, 0 20px 10px blue;
+    }
+    
+    #box.final {
+      -webkit-box-shadow: 0 20px 10px red, 0 -20px 10px blue;
+      text-shadow: 0 20px 10px red, 0 -20px 10px blue;
+    }
+
+    /* Mismatched layers */
+    #box2 {
+      -webkit-box-shadow: 0 -20px 10px red, 0 20px 10px blue;
+      text-shadow: 0 -20px 10px red, 0 20px 10px blue;
+    }
+    
+    #box2.final {
+      -webkit-box-shadow: 0 -20px 10px red;
+      text-shadow: 0 -20px 10px red;
+    }
+
+    #box3 {
+      -webkit-box-shadow: 0 20px 10px blue;
+      text-shadow: 0 20px 10px blue;
+    }
+    
+    #box3.final {
+      -webkit-box-shadow: 0 -20px 10px red, 0 20px 10px blue;
+      text-shadow: 0 -20px 10px red, 0 20px 10px blue;
+    }
+
+  </style>
+  <script src="resources/transition-test-helpers.js"></script>
+  <script type="text/javascript">
+
+    const expectedValues = [
+      // [time, element-id, property, expected-value, tolerance]
+      [0.5, 'box', '-webkit-box-shadow', [0, 0, 0, 0], 4],
+      [0.5, 'box2', '-webkit-box-shadow', [0, -20, 0, 10], 4],
+      [0.5, 'box3', '-webkit-box-shadow', [0, 0, 0, 10], 4],
+    ];
+  
+    function setupTest()
+    {
+      document.getElementById('box').className = 'box final';
+      document.getElementById('box2').className = 'box final';
+      document.getElementById('box3').className = 'box final';
+    }
+  
+    runTransitionTest(expectedValues, setupTest, usePauseAPI);
+  </script>
+</head>
+<body>
+
+  <div id="box" class="box">BOX</div>
+  <div id="box2" class="box">BOX</div>
+  <div id="box3" class="box">BOX</div>
+
+  <div id="result">
+  </div>
+
+</body>
+</html>

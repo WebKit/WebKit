@@ -1,0 +1,11 @@
+An ARIA menu item
+An ARIA option
+This tests that having elements with ARIA role 'option' or 'menuitem' as children of something of Group role does not crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

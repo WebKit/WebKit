@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script type="text/javascript" src="resources/audio-testing.js"></script>
+<script src="resources/audio-file-utils.js"></script>
+<body>
+<script>
+description("Test that decoding an WAV isn't incorrectly receiving silence at the end");
+
+window.jsTestIsAsync = true;
+
+var context = new window.AudioContext({ sampleRate: 44100 });
+var request = new XMLHttpRequest();
+request.open("GET", 'pinknoise.wav', true);
+request.responseType = "arraybuffer";
+
+request.onload = function() {
+    context.decodeAudioData(request.response, (buffer) => {
+        testPassed("Successfully decoded content");
+        // File is exactly 4s @ 44100Hz
+        if (buffer.length === 176400)
+          testPassed("Decoding returned the right number of frames.");
+        else {
+          testFailed("Decoding returned the wrong number of frames: " + buffer.length);
+          finishJSTest();
+          return;
+        }
+        // convert to 32 bits float WAV.
+        const wavData = createAudioData(buffer, true /* asFloat */);
+        context.decodeAudioData(wavData.buffer, (buffer) => {
+            if (buffer.length === 176400)
+                testPassed("Decoding returned the right number of frames.");
+            else {
+                testFailed("Decoding returned the wrong number of frames: " + buffer.length);
+                finishJSTest();
+                return;
+            }
+            const decodedData = buffer.getChannelData(0);
+            let consecutiveSilent = 0
+            for (const sample of decodedData) {
+                if (sample == 0 && ++consecutiveSilent > 3) {
+                    testFailed("Found silence content.");
+                    break;
+                } else if (sample)
+                    consecutiveSilent = 0
+            }
+            if (!consecutiveSilent)
+                testPassed("All frames got decoded with no silence.");
+            finishJSTest();
+        }, () => {
+            testFailed("Failed to decode intermediary file");
+            finishJSTest();
+        });
+      }, () => {
+        testFailed("Failed to decode file");
+        finishJSTest();
+      });
+}
+request.send();
+
+</script>
+</body>
+</html>

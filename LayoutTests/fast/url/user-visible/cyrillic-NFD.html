@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description("Test IDN behavior decomposed forms of Cyrillic domain name tags.");
+
+function test(url)
+{
+    var domURL = new URL(url);
+    return internals.userVisibleString(domURL);
+}
+
+shouldBe("test('http://спецодежда.онла\u0439н/')", "'http://спецодежда.онлайн/'");
+shouldBe("test('http://спецодежда.онла\u0438\u0306н/')", "'http://спецодежда.онлайн/'");
+shouldBe("test('http://ж1-2.бг/')", "'http://ж1-2.бг/'");
+shouldBe("test('http://жabc.бг/')", "'http://xn--abc-udd.xn--90ae/'");
+shouldBe("test('http://abc.бг/')", "'http://abc.xn--90ae/'");
+shouldBe("test('http://ы.бг/')", "'http://xn--01a.xn--90ae/'");
+shouldBe("test('http://э.бг/')", "'http://xn--21a.xn--90ae/'");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

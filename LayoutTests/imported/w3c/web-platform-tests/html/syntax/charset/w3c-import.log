@@ -1,0 +1,64 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/README.md
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/after-1kb-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/after-1kb.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/after-bogus-after-1kb-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/after-bogus-after-1kb.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/after-bogus-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/after-bogus.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/after-head-after-1kb-crlf-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/after-head-after-1kb-crlf.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/after-head-after-1kb-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/after-head-after-1kb.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/after-head-in-1kb-crlf-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/after-head-in-1kb-crlf.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/after-head-in-1kb-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/after-head-in-1kb.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/baseline-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/baseline.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/document-write-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/document-write.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/in-comment-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/in-comment.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/in-noscript-after-template-after-1kb-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/in-noscript-after-template-after-1kb.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/in-object-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/in-object.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/in-script-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/in-script.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/in-style-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/in-style.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/in-svg-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/in-svg-in-cdata-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/in-svg-in-cdata.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/in-svg.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/in-template-after-1kb-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/in-template-after-1kb.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/in-template-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/in-template.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/in-title-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/in-title.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/ncr-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/ncr.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/non-ascii-in-comment-before-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/non-ascii-in-comment-before.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/non-ascii-in-title-before-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/non-ascii-in-title-before.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/with-inheritance.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/without-inheritance.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/charset/xhr.html

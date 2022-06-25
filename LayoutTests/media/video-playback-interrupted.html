@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="media-file.js"></script>
+<script src="video-test.js"></script>
+<script>
+function didResolvePromise()
+{
+    logResult(true, "Promise resolved.");
+    testExpected("video.paused", false);
+
+    // Wait some time before ending the test towards ensuring that we ended the session interruption.
+    endTestLater();
+}
+
+function didRejectPromise(error)
+{
+    logResult(Failed, "Expected promise to be resolved. Was rejected with error " + error);
+
+    // Wait some time before ending the test towards ensuring that we ended the session interruption.
+    endTestLater();
+}
+
+function runTest()
+{
+    if (!window.internals) {
+        failTest("This test must be run in DumpRenderTree or WebKitTestRunner.");
+        return;
+    }
+    findMediaElement();
+    run('internals.setMediaSessionRestrictions("videoaudio", "InterruptedPlaybackNotPermitted")');
+    run('video.src = findMediaFile("video", "content/test")');
+    testExpected("video.paused", true);
+    run('internals.beginMediaSessionInterruption("System")');
+    run("video.play().then(didResolvePromise).catch(didRejectPromise)");
+    run('internals.endMediaSessionInterruption("MayResumePlaying")');
+}
+
+window.onload = runTest;
+</script>
+</head>
+<body>
+<video></video>
+</body>
+</html>

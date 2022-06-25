@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+var passphrase = "coldwater";
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("RuntimeManager.activeExecutionContext");
+
+    suite.addTestCase({
+        name: "InitialScriptExecutionContext",
+        description: "Test that the initial value of activeExecutionContext is the main context.",
+        test(resolve, reject) {
+            InspectorTest.expectThat(WI.runtimeManager.activeExecutionContext === WI.mainTarget.executionContext, "The initial active execution context should be the main execution context.");
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "ScriptExecutionContextMainContext",
+        description: "Test that evaluateInInspectedWindow works when activeExecutionContext is the main execution context.",
+        test(resolve, reject) {
+            WI.runtimeManager.evaluateInInspectedWindow("passphrase", {objectGroup: "test"}, (remoteObject, wasThrown, savedResultIndex) => {
+                InspectorTest.log("Passphrase in selected frame: " + remoteObject.value);
+                InspectorTest.expectEqual(remoteObject.value, "coldwater", "The passphrase should match the phrase defined in the main frame.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "ScriptExecutionContextMainFrameContext",
+        description: "Test that evaluateInInspectedWindow works when activeExecutionContext is the main frame execution context. This is equivalent to the main context.",
+        test(resolve, reject) {
+            WI.runtimeManager.activeExecutionContext = WI.networkManager.mainFrame.pageExecutionContext;
+            WI.runtimeManager.evaluateInInspectedWindow("passphrase", {objectGroup: "test"}, (remoteObject, wasThrown, savedResultIndex) => {
+                InspectorTest.log("Passphrase in selected frame: " + remoteObject.value);
+                InspectorTest.expectEqual(remoteObject.value, "coldwater", "The passphrase should match the phrase defined in the main frame.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "ScriptExecutionContextSubFrame",
+        description: "Test that evaluateInInspectedWindow works when activeExecutionContext is a subframe context.",
+        test(resolve, reject) {
+            let mainFrame = WI.networkManager.mainFrame;
+            let subframes = WI.networkManager.frames.filter((frame) => frame !== mainFrame);
+            InspectorTest.expectEqual(subframes.length, 1, "The test page should only have one sub-frame.");
+
+            WI.runtimeManager.activeExecutionContext = subframes[0].pageExecutionContext;
+            WI.runtimeManager.evaluateInInspectedWindow("passphrase", {objectGroup: "test"}, (remoteObject, wasThrown, savedResultIndex) => {
+                InspectorTest.log("Passphrase in selected frame: " + remoteObject.value);
+                InspectorTest.expectEqual(remoteObject.value, "rosewater", "The passphrase should match the phrase defined in the subframe.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "ScriptExecutionContextMainFrameAgain",
+        description: "Test that evaluateInInspectedWindow works when activeExecutionContext switches back to the main frame execution context.",
+        test(resolve, reject) {
+            let mainFrame = WI.networkManager.mainFrame;
+
+            WI.runtimeManager.activeExecutionContext = mainFrame.pageExecutionContext;
+            WI.runtimeManager.evaluateInInspectedWindow("passphrase", {objectGroup: "test"}, (remoteObject, wasThrown, savedResultIndex) => {
+                InspectorTest.log("Passphrase in selected frame: " + remoteObject.value);
+                InspectorTest.expectEqual(remoteObject.value, "coldwater", "The passphrase should match the phrase defined in the main frame.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "ScriptExecutionContextRemoveSubframe",
+        description: "Test that evaluateInInspectedWindow works when the activeExecutionContext is destroyed and reverts to the top-level context.",
+        test(resolve, reject) {
+            let mainFrame = WI.networkManager.mainFrame;
+            let subframes = WI.networkManager.frames.filter((frame) => frame !== mainFrame);
+            InspectorTest.expectEqual(subframes.length, 1, "The test page should only have one sub-frame.");
+
+            // Set the execution context to the subframe so we can switch away from it when the frame is detached.
+            WI.runtimeManager.activeExecutionContext = subframes[0].pageExecutionContext;
+            let activeExecutionContextId = WI.runtimeManager.activeExecutionContext.id;
+
+            // Force-override the contextId, otherwise we won't be able to access the iframe's DOM element when evaluating in the iframe execution context.
+            let expression = `document.getElementById("subframe").remove();`;
+            let objectGroup = "test";
+            let contextId = WI.RuntimeManager.TopLevelExecutionContextIdentifier;
+            RuntimeAgent.evaluate.invoke({expression, objectGroup, contextId}, () => {
+                InspectorTest.expectEqual(WI.networkManager.frames.length, 1, "The test page should now have no sub-frames.");
+                InspectorTest.expectEqual(WI.runtimeManager.activeExecutionContext.id, activeExecutionContextId, "When a selected non-top-level execution context is removed, the active execution context should not change, as that is handled by the UI.");
+                resolve();
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body>
+<iframe id="subframe" src="resources/change-execution-context-identifier-subframe.html" onload="runTest()"></iframe>
+<p>Test that RuntimeManager.evaluateInInspectedWindow respects the selected execution context.</p>
+</body>
+</html>

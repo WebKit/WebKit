@@ -1,0 +1,19 @@
+<html>
+<head>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+window.onload = function() {
+    document.designMode = 'on';
+    document.execCommand('selectAll');
+    document.execCommand('indent');
+}
+</script>
+<style>
+* {
+    -webkit-appearance: checkbox;
+}
+</style>
+</head>
+<body>Pass if no assert in debug.<div>foo</div></body>
+</html>

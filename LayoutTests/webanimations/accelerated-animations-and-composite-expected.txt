@@ -1,0 +1,15 @@
+
+PASS Setting 'composite' to 'add' should prevent acceleration
+PASS Setting 'composite' to 'add' on a keyframe should prevent acceleration
+PASS Setting 'composite' to 'add' on an animation further up the stack should prevent lower animations in the stack from being accelerated
+PASS Setting 'composite' to 'add' on an animation lower down the stack should allow replace animations further up the stack to be accelerated
+PASS Setting 'composite' to 'add' on an animation lower down the stack should prevent replace animations with an implicity keyframe further up the stack to be accelerated
+PASS Setting 'composite' to 'add' on an animation lower down the stack targeting a property that isn't accelerated should allow replace animations with implicit keyframes further up the stack to be accelerated
+PASS Dynamically setting 'composite' on an effect should toggle acceleration
+PASS Dynamically setting 'composite' on a keyframe should toggle acceleration
+PASS Dynamically setting 'composite' to 'add' on an animation further up the stack should toggle acceleration on lower animations in the stack
+PASS Dynamically setting 'composite' to 'add' on an animation lower down the stack should toggle acceleration but always allow replace animations further up the stack to be accelerated
+PASS Dynamically setting 'composite' to 'add' on an animation lower down the stack should toggle acceleration on replace animations with an implicity keyframe further up the stack
+PASS Dynamically setting 'composite' to 'add' on an animation lower down the stack targeting a property that isn't accelerated shouldn't prevent acceleration of animations with implicit keyframes further up the stack to be accelerated
+PASS Adding a composing effect on top of an existing replace effect should prevent both effects from running accelerated
+

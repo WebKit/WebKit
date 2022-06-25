@@ -1,0 +1,13 @@
+<script>
+  onload = () => {
+      if (window.testRunner)
+          testRunner.dumpAsText();
+      document.documentElement.removeChild(document.head);
+      let input = document.createElement('input');
+      document.documentElement.appendChild(input);
+      getSelection().setBaseAndExtent(input, 0, input, 0);
+      document.body.innerHTML = "<object><object><object><object><div></div></object></object></object></object>";
+      getSelection().modify('move', 'backward', 'sentence');
+      document.body.innerHTML = "This test passes if it does not crash.";
+  };
+</script>

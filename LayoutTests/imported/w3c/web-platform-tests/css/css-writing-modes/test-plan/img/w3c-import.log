@@ -1,0 +1,30 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/test-plan/img/figure-over_and_under-fail.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/test-plan/img/figure-over_and_under-pass.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/test-plan/img/figure-rendering-tcu.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/test-plan/img/figure-tcufont.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/test-plan/img/heavy_h.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/test-plan/img/heavy_h_rotated.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/test-plan/img/over_and_under.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/test-plan/img/pointing_right.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/test-plan/img/pointing_up.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/test-plan/img/square_black.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/test-plan/img/square_blank.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/test-plan/img/stripe_double.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/test-plan/img/stripe_quad.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/test-plan/img/stripe_triple.svg

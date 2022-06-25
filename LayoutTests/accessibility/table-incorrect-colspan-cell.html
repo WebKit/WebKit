@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<table id="table" border="1" cellspacing="1">
+<tbody><tr><td><table border="1" width="100%"><tbody>
+<tr><td>Home</td>
+<td>Help</td>
+<td>Login</td></tr></tbody></table>
+</td></tr><tr><td colspan="4">
+<input type="text"></td>
+<td colspan="2" id="tablecell">Tip us on news</td>
+</tr></tbody></table>
+
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests the rowRange and columnRange attributes of table cells in a table with colspans that are invalid.");
+
+    function parseRangeString(string) {
+       string = string.replace(/({|})/, "");
+       var nums = string.split(",");
+       return new Array(parseInt(nums[0]), parseInt(nums[1]));
+    }
+
+    if (window.accessibilityController) {
+        var table = accessibilityController.accessibleElementById("table");
+        var rowCount = table.rowCount;
+        var columnCount = table.columnCount;
+        debug("Table: Rows: " + rowCount + ", Columns: " + columnCount);
+        for (var row = 0; row < rowCount; row++) {
+            for (var col = 0; col < columnCount; col++) {
+                var tableCell = table.cellForColumnAndRow(col, row);
+                if (!tableCell || !tableCell.isValid)
+                    continue;
+
+                var rowIndexRange = tableCell.rowIndexRange();
+                var colIndexRange = tableCell.columnIndexRange();
+                debug("[Table cell at row: " + row + ", column: " + col + "] Row range: " + rowIndexRange + ", Column range: " + colIndexRange);
+                var rowInfo = parseRangeString(rowIndexRange);
+                var colInfo = parseRangeString(colIndexRange);
+                for (var subrow = rowInfo[0]; subrow < rowInfo[0] + rowInfo[1]; subrow++) {
+                    for (var subcol = colInfo[0]; subcol < colInfo[0] + colInfo[1]; subcol++) {
+                        var testTableCell = table.cellForColumnAndRow(subcol, subrow);
+                        if (!testTableCell || !testTableCell.isValid)
+                            continue;
+
+                        var same = tableCell.isEqual(testTableCell);
+                        var passed = same ? "PASSED" : "FAILED";
+                        debug("\t" + passed + " Cell is same cell at (" + subrow + ", " + subcol + ")");
+                    }
+                }
+            }
+        }
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

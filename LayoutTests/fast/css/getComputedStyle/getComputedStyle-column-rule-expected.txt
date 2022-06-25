@@ -1,0 +1,51 @@
+Test to make sure -webkit-column-rule property returns CSSValueList properly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS computedStyle.getPropertyValue('-webkit-column-rule') is "1px dotted rgb(0, 0, 0)"
+PASS computedStyle.getPropertyCSSValue('-webkit-column-rule').toString() is "[object CSSValueList]"
+PASS computedStyle.getPropertyCSSValue('-webkit-column-rule').cssText is "1px dotted rgb(0, 0, 0)"
+PASS computedStyle.getPropertyCSSValue('-webkit-column-rule').length is 3
+PASS computedStyle.getPropertyCSSValue('-webkit-column-rule').item(0).getFloatValue(CSSPrimitiveValue.CSS_PX) is 1
+PASS computedStyle.getPropertyCSSValue('-webkit-column-rule').item(1).getStringValue() is "dotted"
+PASS computedStyle.getPropertyCSSValue('-webkit-column-rule').item(2).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS computedStyle.getPropertyCSSValue('-webkit-column-rule').item(2).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS computedStyle.getPropertyCSSValue('-webkit-column-rule').item(2).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS computedStyle.getPropertyValue('-webkit-column-rule') is "0px none rgb(255, 0, 0)"
+PASS computedStyle.getPropertyCSSValue('-webkit-column-rule').toString() is "[object CSSValueList]"
+PASS computedStyle.getPropertyCSSValue('-webkit-column-rule').cssText is "0px none rgb(255, 0, 0)"
+PASS computedStyle.getPropertyCSSValue('-webkit-column-rule').length is 3
+PASS computedStyle.getPropertyCSSValue('-webkit-column-rule').item(0).getFloatValue(CSSPrimitiveValue.CSS_PX) is 0
+PASS computedStyle.getPropertyCSSValue('-webkit-column-rule').item(1).getStringValue() is "none"
+PASS computedStyle.getPropertyCSSValue('-webkit-column-rule').item(2).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
+PASS computedStyle.getPropertyCSSValue('-webkit-column-rule').item(2).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS computedStyle.getPropertyCSSValue('-webkit-column-rule').item(2).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS computedStyle.getPropertyValue('-webkit-column-rule') is "3px dashed rgb(255, 0, 0)"
+PASS computedStyle.getPropertyCSSValue('-webkit-column-rule').toString() is "[object CSSValueList]"
+PASS computedStyle.getPropertyCSSValue('-webkit-column-rule').cssText is "3px dashed rgb(255, 0, 0)"
+PASS computedStyle.getPropertyCSSValue('-webkit-column-rule').length is 3
+PASS computedStyle.getPropertyCSSValue('-webkit-column-rule').item(0).getFloatValue(CSSPrimitiveValue.CSS_PX) is 3
+PASS computedStyle.getPropertyCSSValue('-webkit-column-rule').item(1).getStringValue() is "dashed"
+PASS computedStyle.getPropertyCSSValue('-webkit-column-rule').item(2).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
+PASS computedStyle.getPropertyCSSValue('-webkit-column-rule').item(2).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS computedStyle.getPropertyCSSValue('-webkit-column-rule').item(2).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS computedStyle.getPropertyValue('-webkit-column-rule') is "0px none rgb(0, 0, 255)"
+PASS computedStyle.getPropertyCSSValue('-webkit-column-rule').toString() is "[object CSSValueList]"
+PASS computedStyle.getPropertyCSSValue('-webkit-column-rule').cssText is "0px none rgb(0, 0, 255)"
+PASS computedStyle.getPropertyCSSValue('-webkit-column-rule').length is 3
+PASS computedStyle.getPropertyCSSValue('-webkit-column-rule').item(0).getFloatValue(CSSPrimitiveValue.CSS_PX) is 0
+PASS computedStyle.getPropertyCSSValue('-webkit-column-rule').item(1).getStringValue() is "none"
+PASS computedStyle.getPropertyCSSValue('-webkit-column-rule').item(2).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS computedStyle.getPropertyCSSValue('-webkit-column-rule').item(2).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS computedStyle.getPropertyCSSValue('-webkit-column-rule').item(2).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
+PASS computedStyle.getPropertyValue('-webkit-column-rule') is "0px hidden rgb(0, 0, 255)"
+PASS computedStyle.getPropertyCSSValue('-webkit-column-rule').toString() is "[object CSSValueList]"
+PASS computedStyle.getPropertyCSSValue('-webkit-column-rule').cssText is "0px hidden rgb(0, 0, 255)"
+PASS computedStyle.getPropertyCSSValue('-webkit-column-rule').length is 3
+PASS computedStyle.getPropertyCSSValue('-webkit-column-rule').item(0).getFloatValue(CSSPrimitiveValue.CSS_PX) is 0
+PASS computedStyle.getPropertyCSSValue('-webkit-column-rule').item(1).getStringValue() is "hidden"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

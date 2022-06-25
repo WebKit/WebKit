@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+
+<input type="text" id="textfield" value="textfield text">
+<br>
+<textarea id="textarea">text area text</textarea>
+outside text
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests that the select text mechanism will not return results outside of a text input control.");
+    
+    if (window.accessibilityController) {
+        var textfield = accessibilityController.accessibleElementById("textfield");
+        var windowSelection = window.getSelection();
+
+        document.getElementById("textfield").focus();
+        document.getElementById("textfield").setSelectionRange(0, 0);
+
+        // Try to select text inside the text field.
+        result = textfield.selectTextWithCriteria("AXSelectTextAmbiguityResolutionClosestToSelection", "textfield");
+        shouldBe("result", "'textfield'");
+        shouldBe("document.getElementById('textfield').selectionStart", "0");
+        shouldBe("document.getElementById('textfield').selectionEnd", "9");
+
+        document.getElementById("textfield").setSelectionRange(0, 0);
+
+        // Try to select text outside the focused text field. It should fail.
+        result = textfield.selectTextWithCriteria("AXSelectTextAmbiguityResolutionClosestToSelection", "outside");
+        shouldBe("result", "''");
+        shouldBe("document.getElementById('textfield').selectionStart", "0");
+        shouldBe("document.getElementById('textfield').selectionEnd", "0");
+
+        // Do the same for text area
+        document.getElementById("textarea").focus();
+        document.getElementById("textarea").setSelectionRange(0, 0);
+
+        var textarea = accessibilityController.accessibleElementById("textarea");
+
+        // Try to select text inside the text field.
+        result = textarea.selectTextWithCriteria("AXSelectTextAmbiguityResolutionClosestToSelection", "text area");
+        shouldBe("result", "'text area'");
+        shouldBe("document.getElementById('textarea').selectionStart", "0");
+        shouldBe("document.getElementById('textarea').selectionEnd", "9");
+
+        document.getElementById("textarea").setSelectionRange(0, 0);
+
+        // Try to select text outside the focused text field. It should fail.
+        result = textarea.selectTextWithCriteria("AXSelectTextAmbiguityResolutionClosestToSelection", "outside");
+        shouldBe("result", "''");
+        shouldBe("document.getElementById('textarea').selectionStart", "0");
+        shouldBe("document.getElementById('textarea').selectionEnd", "0");
+    }
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

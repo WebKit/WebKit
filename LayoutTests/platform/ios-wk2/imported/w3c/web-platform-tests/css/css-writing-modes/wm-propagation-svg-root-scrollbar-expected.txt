@@ -1,0 +1,5 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (-1200,0) size 2000x100 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRoot {svg} at (-1200,0) size 0x0
+    RenderSVGContainer {g} at (-1200,0) size 0x0

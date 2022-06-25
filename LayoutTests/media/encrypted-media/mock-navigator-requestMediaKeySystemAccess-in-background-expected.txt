@@ -1,0 +1,13 @@
+RUN(internals.initializeMockMediaSource())
+RUN(mock = internals.registerMockCDM())
+RUN(mock.supportedDataTypes = ["mock"])
+RUN(capabilities.initDataTypes = ["mock"])
+RUN(capabilities.videoCapabilities = [{ contentType: 'video/mock; codecs="mock"' }] )
+
+Call navigator.requestMediaKeySystemAccess() in a background tab
+RUN(promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", [capabilities]))
+
+Switch the tab to foreground
+Promise resolved OK
+END OF TEST
+

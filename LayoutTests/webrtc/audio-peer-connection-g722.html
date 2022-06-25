@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Testing G722 webrtc support</title>
+    <script src="../resources/testharness.js"></script>
+    <script src="../resources/testharnessreport.js"></script>
+    <script src ="routines.js"></script>
+    <script>
+var context = new AudioContext();
+var remoteStream;
+
+promise_test(async (test) => {
+    const stream = await navigator.mediaDevices.getUserMedia({audio: true});
+    remoteStream = await new Promise((resolve, reject) => {
+        createConnections((firstConnection) => {
+            firstConnection.addTrack(stream.getAudioTracks()[0], stream);
+        }, (secondConnection) => {
+            secondConnection.ontrack = (event) => { resolve(event.streams[0]); };
+        }, { observeOffer : (offer) => {
+            offer.sdp = setCodec(offer.sdp, "722");
+            return offer;
+        }
+        });
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+
+    const result = await doHumAnalysis(remoteStream, true);
+    assert_true(result, "heard hum bip bop");
+}, "Basic G722 audio playback through a peer connection");
+
+promise_test(async (test) => {
+    remoteStream.getAudioTracks()[0].enabled = false;
+    const result = await doHumAnalysis(remoteStream, false);
+    assert_true(result, "did not hear hum");
+}, "Mute remote track");
+
+promise_test(async (test) => {
+    remoteStream.getAudioTracks()[0].enabled = true;
+    const result = await doHumAnalysis(remoteStream, true);
+    assert_true(result, "heard hum");
+    context.close();
+}, "Unmute remote track");
+    </script>
+</head>
+<body>
+</body>
+</html>

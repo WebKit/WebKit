@@ -1,0 +1,11 @@
+
+RUN(video.src = URL.createObjectURL(mediaSource))
+EVENT(sourceopen)
+RUN(mediaSource.duration = loader.duration())
+RUN(sourceBuffer = mediaSource.addSourceBuffer(loader.type()))
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(update)
+EXPECTED (internals.mediaUsageState(video).hasVideo == 'true') OK
+EXPECTED (internals.mediaUsageState(video).hasAudio == 'true') OK
+END OF TEST
+

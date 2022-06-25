@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'report-to'.
+
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'report-to'.
+
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'report-to'.
+
+CONSOLE MESSAGE: Refused to load https://127.0.0.1:9443/reporting/resources/fail.png because it does not appear in the img-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load https://localhost:9443/reporting/resources/fail.png because it does not appear in the img-src directive of the Content Security Policy.
+
+
+FAIL Reports were sent in two requests. assert_equals: expected 2 but got 0
+

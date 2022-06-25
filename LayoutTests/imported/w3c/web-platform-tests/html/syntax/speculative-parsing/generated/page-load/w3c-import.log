@@ -1,0 +1,69 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/base-href-script-src.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/image-src.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/img-data-src.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/img-src-crossorigin.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/img-src-loading-lazy.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/img-src-referrerpolicy-no-referrer.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/img-src.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/img-srcset.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/link-no-rel.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/link-rel-alternate-stylesheet.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/link-rel-preload-as-font-crossorigin.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/link-rel-preload-as-image.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/link-rel-preload-as-script.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/link-rel-preload-as-style.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/link-rel-stylesheet-crossorigin.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/link-rel-stylesheet-disabled.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/link-rel-stylesheet-integrity.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/link-rel-stylesheet-nomatch-media.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/link-rel-stylesheet-referrerpolicy-no-referrer.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/link-rel-stylesheet-type-text-css.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/link-rel-stylesheet-unsupported-type.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/link-rel-stylesheet.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/math-font-face-script-src.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/math-font-script-src.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/math-script-src.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/meta-charset-script-src.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/meta-csp-img-src-asterisk.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/meta-csp-img-src-none.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/meta-referrer-no-referrer-img-src.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/meta-viewport-link-stylesheet-media.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/picture-source-br-img.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/picture-source-no-img.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/picture-source-nomatch-media.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/picture-source-unsupported-type.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/script-src-async.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/script-src-crossorigin.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/script-src-defer.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/script-src-integrity.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/script-src-module.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/script-src-nomodule.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/script-src-referrerpolicy-no-referrer.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/script-src-type-application-ecmascript.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/script-src-unsupported-type.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/script-src.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/svg-image-href.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/svg-image-src.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/svg-image-xlinkhref.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/svg-script-href.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/svg-script-src.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/svg-script-xlinkhref.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/template-script-src.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/video-poster.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/xmp-script-src.tentative.html

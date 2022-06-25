@@ -1,0 +1,5 @@
+
+FAIL Feature-Policy header: autoplay "none" has no effect on the top level document. Can't find variable: simulateGesture
+FAIL Feature-Policy header: autoplay "none" disallows same-origin iframes. Can't find variable: simulateGesture
+FAIL Feature-Policy header: autoplay "none" disallows cross-origin iframes. Can't find variable: simulateGesture
+

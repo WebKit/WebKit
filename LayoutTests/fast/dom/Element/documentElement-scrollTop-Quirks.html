@@ -1,0 +1,24 @@
+<html>
+    <head>
+        <style>
+            div {
+                height: 9999px;
+                width:9999px;
+            }
+        </style>
+        <script src="../../../resources/js-test-pre.js"></script>
+        <script>
+            function runTest() {
+                description('Tests that for non-standard mode document.documentElement.scrollTop returns the scroll top as 0');
+
+                document.documentElement.scrollTop = 500;
+                shouldBe("document.documentElement.scrollTop","0");
+                isSuccessfullyParsed();
+            }
+        </script>
+    </head>
+    <body onload="runTest()">
+        <div></div>
+        <script src="../../../resources/js-test-post.js"></script>
+    </body>
+</html>

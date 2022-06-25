@@ -1,0 +1,10 @@
+
+Test <video> element initial resize event.
+
+EXPECTED (video.videoWidth == '0') OK
+EXPECTED (video.videoHeight == '0') OK
+EVENT(resize)
+EXPECTED (video.videoWidth == '320') OK
+EXPECTED (video.videoHeight == '240') OK
+END OF TEST
+

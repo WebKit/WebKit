@@ -1,0 +1,7 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (10,11) size 104x12
+    RenderSVGText {text} at (10,11) size 104x12 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 104x12
+        chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 26 width 103.59: "This line should be green."

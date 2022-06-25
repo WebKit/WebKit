@@ -1,0 +1,171 @@
+# Copyright (c) 2018 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+rtc_source_set("gain_control_interface") {
+  sources = [ "gain_control.h" ]
+}
+
+rtc_library("agc") {
+  sources = [
+    "agc_manager_direct.cc",
+    "agc_manager_direct.h",
+  ]
+  configs += [ "..:apm_debug_dump" ]
+  deps = [
+    ":clipping_predictor",
+    ":clipping_predictor_evaluator",
+    ":gain_control_interface",
+    ":gain_map",
+    ":level_estimation",
+    "..:apm_logging",
+    "..:audio_buffer",
+    "..:audio_frame_view",
+    "../../../common_audio",
+    "../../../common_audio:common_audio_c",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:gtest_prod",
+    "../../../rtc_base:logging",
+    "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base:safe_minmax",
+    "../../../system_wrappers:field_trial",
+    "../../../system_wrappers:metrics",
+    "../vad",
+  ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+}
+
+rtc_library("clipping_predictor") {
+  sources = [
+    "clipping_predictor.cc",
+    "clipping_predictor.h",
+  ]
+  deps = [
+    ":clipping_predictor_level_buffer",
+    ":gain_map",
+    "..:api",
+    "..:audio_frame_view",
+    "../../../common_audio",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:logging",
+    "../../../rtc_base:safe_minmax",
+  ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+}
+
+rtc_library("clipping_predictor_evaluator") {
+  sources = [
+    "clipping_predictor_evaluator.cc",
+    "clipping_predictor_evaluator.h",
+  ]
+  deps = [
+    "../../../rtc_base:checks",
+    "../../../rtc_base:logging",
+  ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+}
+
+rtc_library("clipping_predictor_level_buffer") {
+  sources = [
+    "clipping_predictor_level_buffer.cc",
+    "clipping_predictor_level_buffer.h",
+  ]
+  deps = [
+    "../../../rtc_base:checks",
+    "../../../rtc_base:logging",
+    "../../../rtc_base:rtc_base_approved",
+  ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+}
+
+rtc_library("level_estimation") {
+  sources = [
+    "agc.cc",
+    "agc.h",
+    "loudness_histogram.cc",
+    "loudness_histogram.h",
+    "utility.cc",
+    "utility.h",
+  ]
+  deps = [
+    "../../../rtc_base:checks",
+    "../vad",
+  ]
+}
+
+rtc_library("legacy_agc") {
+  visibility = [
+    ":*",
+    "..:*",
+  ]  # Only targets in this file and in
+     # audio_processing can depend on
+     # this.
+
+  sources = [
+    "legacy/analog_agc.cc",
+    "legacy/analog_agc.h",
+    "legacy/digital_agc.cc",
+    "legacy/digital_agc.h",
+    "legacy/gain_control.h",
+  ]
+
+  deps = [
+    "../../../common_audio",
+    "../../../common_audio:common_audio_c",
+    "../../../common_audio/third_party/ooura:fft_size_256",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:rtc_base_approved",
+    "../../../system_wrappers",
+  ]
+
+  if (rtc_build_with_neon) {
+    if (current_cpu != "arm64") {
+      # Enable compilation for the NEON instruction set.
+      suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
+      cflags = [ "-mfpu=neon" ]
+    }
+  }
+}
+
+rtc_source_set("gain_map") {
+  sources = [ "gain_map_internal.h" ]
+}
+
+if (rtc_include_tests) {
+  rtc_library("agc_unittests") {
+    testonly = true
+    sources = [
+      "agc_manager_direct_unittest.cc",
+      "clipping_predictor_evaluator_unittest.cc",
+      "clipping_predictor_level_buffer_unittest.cc",
+      "clipping_predictor_unittest.cc",
+      "loudness_histogram_unittest.cc",
+      "mock_agc.h",
+    ]
+    configs += [ "..:apm_debug_dump" ]
+
+    deps = [
+      ":agc",
+      ":clipping_predictor",
+      ":clipping_predictor_evaluator",
+      ":clipping_predictor_level_buffer",
+      ":gain_control_interface",
+      ":level_estimation",
+      "..:mocks",
+      "../../../rtc_base:checks",
+      "../../../rtc_base:rtc_base_approved",
+      "../../../rtc_base:safe_conversions",
+      "../../../test:field_trial",
+      "../../../test:fileutils",
+      "../../../test:test_support",
+      "//testing/gtest",
+    ]
+    absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+  }
+}

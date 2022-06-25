@@ -1,0 +1,22 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+
+<style>
+::-webkit-scrollbar {
+  background: red;
+}
+
+#item {
+  width: 0;
+  height: 100px;
+  overflow: auto;
+}
+
+#child {
+  height: 200px;
+}
+</style>
+
+<div id="item">
+  <div id="child">
+  </div>
+</div>

@@ -1,0 +1,16 @@
+The green boxes should all be 100x100.
+
+Section B of flex base size + transferred size suggestion:
+
+Section B of flex base size + transferred size suggestion, with box-sizing: border-box:
+
+content size suggestion
+
+content size suggestion
+
+
+PASS img 1
+PASS img 2
+PASS img 3
+PASS img 4
+

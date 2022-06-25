@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<script src='../resources/testharness.js'></script>
+<script src='../resources/testharnessreport.js'></script>
+<script>
+promise_test(async (test) => {
+    let pc = new RTCPeerConnection({iceServers:[{urls:['stun:foo.com', 'stun:blabla.local']}]});
+    let promise = new Promise(resolve => pc.onicecandidateerror = resolve);
+    let configuration = pc.getConfiguration();
+
+    assert_equals(configuration.iceServers[0].urls.length, 1);
+    assert_equals(configuration.iceServers[0].urls[0], 'stun:foo.com');
+
+    const event = await promise;
+    assert_equals(event.url, 'stun:blabla.local');
+    assert_equals(event.errorCode, 701);
+}, "RTCPeerConnection and local STUN server");
+
+promise_test(async (test) => {
+    let pc = new RTCPeerConnection({iceServers:[{username: 'test', credential: 'test', urls:['turn:foo.com', 'turn:blabla.local']}]});
+    let promise = new Promise(resolve => pc.onicecandidateerror = resolve);
+    let configuration = pc.getConfiguration();
+
+    assert_equals(configuration.iceServers[0].urls.length, 1);
+    assert_equals(configuration.iceServers[0].urls[0], 'turn:foo.com');
+
+    const event = await promise;
+    assert_equals(event.url, 'turn:blabla.local');
+    assert_equals(event.errorCode, 701);
+}, "RTCPeerConnection and local TURN server");
+
+test(() => {
+    let string509 = '';
+    for (let cptr = 0; cptr < 509; ++cptr)
+        string509 += 'a';
+
+    new RTCPeerConnection({iceServers:[{username: 'test', credential: string509, urls:['turn:foo.com']}]});
+    new RTCPeerConnection({iceServers:[{username: string509, credential: 'test', urls:['turn:foo.com']}]});
+
+    let string510 = string509 + 'a';
+
+    assert_throws_js(TypeError, () => new RTCPeerConnection({iceServers:[{username: 'test', credential: string510, urls:['turn:foo.com']}]}));
+    assert_throws_js(TypeError, () => new RTCPeerConnection({iceServers:[{username: string510, credential: 'test', urls:['turn:foo.com']}]}));
+}, "RTCPeerConnection and big TURN username/credential");
+</script>

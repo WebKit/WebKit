@@ -1,0 +1,17 @@
+Tests that Request initiatorNode is set correctly.
+
+
+
+== Running test suite: WI.Resource.initiatorNode
+-- Running test case: WI.Resource.initiatorNode.posterPNG
+PASS: Resource should have an initiatorNode
+PASS: Resource initiatorNode should match video node id
+
+-- Running test case: WI.Resource.initiatorNode.sourceMP4
+PASS: Resource should have an initiatorNode
+PASS: Resource initiatorNode should match video node id
+
+-- Running test case: WI.Resource.initiatorNode.trackVTT
+PASS: Resource should have an initiatorNode
+PASS: Resource initiatorNode should match video node id
+

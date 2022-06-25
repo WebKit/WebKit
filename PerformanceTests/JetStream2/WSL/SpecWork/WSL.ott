@@ -1,0 +1,803 @@
+metavar x, y, z, f ::=
+indexvar i, j, k, n, m ::=
+
+grammar
+td :: top_level_decl_ ::= {{com top-level declaration}}
+    | tx f <( tparam0 , .. , tparamk )> ( tx0 x0 , .. , txm xm ) { s0 .. sn } :: :: func_decl
+    | typedef x <( tparam0 , .. , tparamk )> = tx ; :: :: typedef
+
+tparam :: type_parameter_ ::= {{com type parameter}}
+    | tx x :: :: constexpr
+    | x : y0 + .. + yn :: :: type_variable
+
+s :: stmt_ ::= {{com statement}}
+    | if ( e ) s :: :: if_then {{com Desugared}}
+    | while ( e ) s :: :: while {{com Desugared}}
+    | for ( eOrVDecls ; eOrNothing ; eOrNothing' ) s :: :: for {{com Desugared}}
+    | tx vdecl0 , .. , vdecln ; :: :: multi_vdecls {{com partly desugared}}
+    | ; :: :: empty {{com Desugared}}
+    | if ( e ) s else s' :: :: if
+    | do s while ( e ) ; :: :: do_while
+    | switch ( e ) { sc0 : sblock0 .. scn : sblockn } :: :: switch
+    | break ; :: :: break
+    | continue ; :: :: continue
+    | fallthrough ; :: :: fallthrough
+    | return e ; :: :: return
+    | return ; :: :: return_void
+    | trap ; :: :: trap
+    | { blockAnnot s0 .. sn } :: :: block
+    | e ; :: :: effectful_expr
+    | tval x : sid ; :: :: resolved_vdecl {{com post-monomorphisation variable declaration}}
+    | Loop ( s , s' ) :: :: loop_construct {{com Special, only during execution}}
+    | Cases ( s0 , .. , sn ) :: :: cases_construct {{com Special, only during execution}}
+    | Join ( s ) :: :: join_construct {{com Special, only during execution}}
+
+sc :: switch_case_ ::=
+    | case rval :: :: case
+    | default :: :: default
+
+sblock :: switch_block_ ::=
+    | s0 .. sn :: :: statements
+
+vdecl :: variable_declaration_ ::=
+    | x :: :: uninitialized
+    | x = e :: :: initialized
+
+eOrVDecls :: expr_or_vdecl_ ::=
+    | e :: :: expr
+    | tx vdecl0 , .. , vdecln :: :: vdecl
+    | :: :: nothing
+
+eOrNothing :: expr_or_nothing_ ::=
+    | e :: :: expr
+    | :: :: nothing
+
+blockAnnot :: block_annotation_ ::=
+    | R :: :: exec_env {{tex _{[[R]]} }}
+    | :: :: nothing
+
+e :: expr_ ::= {{com expression}}
+    | ( e ) :: :: parens
+    | e , e' :: :: comma
+    | e || e' :: :: or {{tex [[e]]\:{||}\:[[e']]}}
+    | e && e' :: :: and {{tex [[e]]\:{\&\&}\:[[e']]}}
+    | e0 ? e1 : e2 :: :: ternary {{tex [[e0]]\:{?}\:[[e1]]:[[e2]]}}
+    | ! e :: :: not {{tex \:![[e]]}}
+    | e == e' :: :: equals_operator
+    | e != e' :: :: not_equals_operator {{com Desugared}} {{tex [[e]]\;!\mkern-\thickmuskip=[[e']]}}
+    | e = e' :: :: assignment
+    | x :: :: variable_name
+    | * e :: :: ptr_deref
+    | & e :: :: address_taking
+    | @ e :: :: array_reference_making
+    | e [ e' stride ] :: :: array_index {{tex [[e]] [ [[e']] ]_{[[stride]]} }}
+    | x <( targ0 , .. , targm )> ( e0 , .. , en ) :: :: call
+    | fid <( rv0 , .. , rvn )> ( e0 , .. , em ) :: :: resolved_call {{com post-monomorphisation, calls are resolved, and pure type arguments are gone}}
+    | val :: :: val {{com only during exec, except literals}}
+    | Call s :: :: call_construct {{com only during exec}}
+    | JoinExpr ( e ) :: :: join_construct {{com only during exec}}
+
+val :: val_ ::=
+    | rval :: :: rval
+    | LVal ( addr ) :: :: lval
+
+stride :: stride_ ::=
+    | k :: :: stride {{com stride annotation added during monomorphisation}}
+    | :: :: nothing {{com no stride annotation}}
+
+addr :: addr_ ::=
+    | addr + i * k :: :: add_multiple_stride
+    | sid :: :: sid
+
+targ :: type_argument_ ::= {{com type argument}}
+    | x :: :: ident {{com either a type or a constexpr}}
+    | tx :: :: type {{com a type that is not just an identifier}}
+    | x . y :: :: enum_value {{com a field of an enum, for a constexpr type parameter}}
+
+G {{tex \Gamma}} , Gglobal {{tex \Gamma_{global} }} :: env_ ::= {{com typing environment}}
+    | G [ x -> envMapping ] :: :: update {{com $\Gamma$ with the mapping for x replaced by envMapping}}
+    | { x0 -> envMapping0 , .. , xn -> envMappingn } :: :: set
+
+envMapping :: env_mapping_ ::= 
+    | t :: :: var {{com $x$ is of type $\tau$}}
+    | SyntaxTypedef ( <( tparam0 , .. , tparamn )> -> tx ) :: :: typedef_syntax {{com resolved before local typing}}
+    | Typedef ( <( tparam0 , .. , tparamn )> -> tval ) :: :: typedef
+    | Func { sig0 , .. , sign } :: :: func {{com $x$ is a function whose signatures are $sig0$ to $sign$}}
+    | SyntaxFunc { sigx0 , .. , sigxn } :: :: func_syntax
+    | Nothing :: :: nothing {{tex \emptyset}} {{com to remove $x$ from $\Gamma$}}
+    | Protocol namedSigs :: :: protocol
+    % TODO: I now believe that this is wrong, and that protocols should live in their own namespace.
+    % Otherwise it is impossible to refer to a protocol as both a type variable (aka Self) and as a constraint on other type variables, when defining its signatures
+
+namedSigs :: named_signatures_ ::=
+    | { x0 -> sig0 , .. , xn -> sign } :: :: explicit
+    | U namedSigs0 .. namedSigsn :: :: union
+
+sigx :: signature_syntax_ ::=
+    | <( tparamAnon0 , .. , tparamAnonm )> ( tx0 , .. , txn ) -> tx :: :: sigx
+
+sig :: signature_ ::=
+    | <( tparamAnon0 , .. , tparamAnonm )> ( tval0 , .. , tvaln ) -> tval :: :: sig
+    % TODO: fix these tparamAnanon, they are clearly wrong.
+
+tparamAnon :: tparam_anon_ ::=
+    | t :: :: constexpr
+    | { y0 , .. , yn } :: :: tvar 
+
+B :: behaviour_ ::= {{com statement behaviour}}
+    | { b0 , .. , bn } :: :: set
+    | B + B' :: :: union {{tex [[B]] \cup [[B']]}}
+    | B \ B' :: :: difference {{tex [[B]] \backslash [[B']]}}
+    | U B0 .. Bn :: :: big_union
+    | ( B ) :: :: parens
+
+b :: single_behaviour_ ::=
+    | Return t :: :: return
+    | Break :: :: break
+    | Continue :: :: continue
+    | Fallthrough :: :: fallthrough
+    | Nothing :: :: Nothing
+
+t {{tex \tau}} :: type_ ::= {{com type}}
+    | LVal ( tval ) :: :: lval {{com left value}}
+    | tval :: :: tval
+tval {{tex {\tau^{val} } }} :: type_value_ ::=
+    | Ptr ( tval ) :: :: ptr {{com pointer}}
+    | Ref ( tval ) :: :: array_ref {{com array reference}}
+    | [ tval ] :: :: array {{com array}}
+    | bool :: :: bool
+    | uint32 :: :: uint32 {{tex \textbf{uint32} }}
+    | void :: :: void
+    | TVar tid namedSigs :: :: tvar
+tx {{tex {\tau^{syntax} } }} :: type_syntactic_ ::= {{com syntactic type}}
+    | x <( targ0 , .. , targm )> :: :: base
+    | tx * addressSpace :: :: ptr
+    | tx [] addressSpace :: :: array_ref 
+    | tx [ i ] :: :: array_fixed_size
+addressSpace :: address_space_ ::=
+    | thread :: :: thread
+    | threadgroup :: :: threadgroup
+    | device :: :: device
+    | constant :: :: constant
+tid :: type_identifier_ ::=
+
+rval, rv :: rval_ ::=
+    | { x0 : rval0 ; .. ; xn : rvaln } :: :: struct
+    | [ rval0 , .. , rvaln ] :: :: array
+    | Ptr ( addr ) :: :: ptr 
+    | Ref ( addr , j ) :: :: ref {{com Reference to array of size j}}
+    | null :: :: lit_null
+    | true :: :: lit_true
+    | false :: :: lit_false
+    | uint :: :: lit_uint {{com unsigned integer literal}}
+    | TrapValue :: :: trap {{com Special, represents a caught error (e.g. out-of-bounds access)}}
+    | Void :: :: void {{com Special, the return value of a void function call}}
+
+R {{tex \rho}}, Rout {{tex \rho_{out} }} :: exec_env_ ::= {{com execution environment}}
+    | R [ x0 -> val0 , .. , xn -> valn ] :: :: update_with_vals
+    | Empty :: :: empty {{tex \emptyset}}
+
+E :: memory_event_ ::= {{com memory event}}
+    | :: :: nothing
+    | addr <- rval :: :: store {{com store}}
+    | addr -> rval :: :: load {{com load}}
+    | Sequence ( E0 , .. , En ) :: :: multiple_events
+
+fid :: function_identifier_ ::=
+
+S :: stack_event_ ::= {{com stack event}}
+    | :: :: nothing
+    | push ( rval ) :: :: push
+    | pop ( ) :: :: pop
+
+terminals :: terminals_ ::=
+    | U :: :: big_union {{tex \bigcup}}
+    | |- :: :: vdash {{tex \vdash}}
+    | <- :: :: load {{tex \leftarrow}}
+    | -> :: :: mapsto {{tex \mapsto}}
+    | --> :: :: desugars {{tex \leadsto}}
+    | <( :: :: generic_open {{tex {<} }} % For removing extraneous spaces around '<' and '>' when they are used in that position.
+    | )> :: :: generic_close {{tex {>} }}
+    | in :: :: in {{tex \in}}
+    | \/ :: :: math_or {{tex \vee}}
+    | /\ :: :: math_and {{tex \wedge}}
+    | <= :: :: math_lesser_equal {{tex \leq}}
+    | >= :: :: math_greater_equal {{tex \geq}}
+
+formula :: formula_ ::=
+    | judgement :: :: judgement
+    | formula0 /\ .. /\ formulan :: :: several_formula
+    | formula \/ formula' :: :: or
+    | n > 0 :: :: int_positive
+    | x -> envMapping in G :: :: env_mapping_exists
+    | x not in G :: :: env_mapping_missing {{tex [[x]] \not\in [[G]]}}
+    | G |- isIntegerOrEnum ( t ) :: :: is_integer
+    | G |- sc0 .. scn fully covers t :: :: full_switch_coverage % TODO: make it explicit
+    | s != s' :: :: stmt_not_eq {{tex [[s]] \neq [[s']]}}
+    | b in B :: :: behaviour_in {{tex [[b]] \in [[B]]}}
+    | b not in B :: :: behaviour_not_in {{tex [[b]] \not\in [[B]]}}
+    | G = G' :: :: typing_env_eq
+    | B = B' :: :: behaviour_eq
+    | namedSigs = namedSigs' :: :: named_signature_eq
+    | sig = sig' :: :: sig_eq
+    | e = e' :: :: expr_eq
+    | e != e' :: :: expr_neq {{tex [[e]] \neq [[e']]}}
+    | exists i . formula :: :: exists_int
+    | tid = makeFresh()  :: :: make_fresh_tid
+    | i = uint :: :: uint_to_indexvar
+    | i <= n :: :: indexvar_leq
+    | i >= n :: :: indexvar_geq
+    | i < n :: :: indexvar_lesser
+    | x -> val in R :: :: val_in_env
+    | fid -> <( x0 , .. , xn )> ( y0 : addr0 , .. , ym : addrm ) { s0 .. sk } :: :: fid_resolving
+    | E = E' :: :: event_eq
+    | R = R' :: :: exec_env_eq
+    | s = s' :: :: stmt_eq
+    | rv not in sc0 .. scn :: :: rval_not_in_cases % TODO: fix typesetting
+    | s = { sblock } :: :: block_from_switch_block
+    | rv = Default ( tval ) :: :: default_value
+    | s is a terminator :: :: stmt_is_terminator
+
+defns
+desugaring :: '' ::=
+defn
+s --> s' :: :: desugaring_stmt :: '' {{com Desugaring statements}} by
+
+    ----------------------------- :: if_then
+    if (e) s --> if (e) s else {}
+
+    -------- :: empty_stmt
+    ; --> {}
+
+    -------------------------------------- :: while
+    while (e) s --> if (e) do s while (e);
+
+    -------------------------------------------------------------------------- :: for_empty_cond
+    for (eOrVDecls ; ; eOrNothing) s --> for (eOrVDecls ; true ; eOrNothing) s
+
+    --------------------------------------------------------------------------- :: for_empty_incr
+    for (eOrVDecls ; e ; ) s --> for (eOrVDecls ; e ; null) s
+
+    ------------------------------------------------ :: for_init_expr
+    for (e ; e' ; e'') s --> {e; while(e') {s e'';}}
+
+    ------------------------------------------------ :: for_init_empty
+    for ( ; e' ; e'') s --> while(e') {s e'';}
+
+    ------------------------------------------------------------------------------------------ :: for_init_vdecls
+    for (tx vdecl0 , .. , vdecln ; e' ; e'') s --> {tx vdecl0 , .. , vdecln; while(e') {s e'';}}
+
+    k > 0
+    -------------------------------------------------------------------------------------- :: multiple_vdecls
+    { s0..sn tx vdecl0, vdecl1, .., vdeclk; s'0..s'm} --> {s0..sn tx vdecl0; tx vdecl1, .., vdeclk; s'0..s'm}
+
+    ------------------------------------------------------------- :: initialized_vdecl
+    { s0..sn tx x = e; s'0..s'm} --> {s0..sn tx x; x = e; s'0..s'm}
+
+% TODO: replace foo(e0,..,en) by foo<>(e0,..,en)
+% Both in expressions, and in top-level declarations
+% TODO: also desugar syntactic types that have an addressSpace as a prefix.
+% Also make it an error to have an addressSpace and neither array ref nor ptr.
+defn
+e --> e' :: :: desugaring_expr :: '' {{com Desugaring expressions}} by
+    
+    ----------------------- :: not_equals_operator
+    e != e' --> ! (e == e')
+
+%defns
+%gather :: '' ::=
+%defn
+%G = gather ( td0 .. tdn ) :: :: gather :: '' by
+%
+%    G = gather (td0..tdk)
+%    x -> SyntaxFunc{sigx0, .., sigxi} in G
+%    G' = G[x -> SyntaxFunc{sigx0, .., sigxi, <( )>(tx0, .., txn) -> tx}]
+%    -------------------------------------------------------------------- :: func_overload
+%    G' = gather(tx x <( )> (tx0 x0, .., txn xn) {s0 .. sm} td0..tdk)
+% 
+%    G = gather (td0..tdk)
+%    x not in G
+%    G' = G[x ->SyntaxFunc{<()>(tx0, .., txn) -> tx}]
+%    ---------------------------------------------------------------- :: func_no_overload
+%    G' = gather(tx x <( )> (tx0 x0, .., txn xn) {s0 .. sm} td0..tdk)
+% 
+%    G = gather (td0..tdk)
+%    x not in G
+%    G' = G[x -> SyntaxTypedef(<()> -> tx)]
+%    ------------------------------------------ :: typedef
+%    G' = gather(typedef x <()> = tx; td0..tdk)
+%    % TODO: add rules for the other kinds of top-level declaration, as well as the base case for an empty file
+%    % the base case needs to add typedefs for bool/uint32 at the very least
+
+defns
+reduce_type :: '' ::=
+defn
+G |- tx : tval :: :: syntax :: '' {{com Evaluating types}} {{tex [[G]] [[|-]] [[tx]] \Downarrow [[tval]]}} by
+
+    x -> Typedef (<( )> -> tval) in G
+    ------------------------------- :: basic_typedef
+    G |- x <( )> : tval
+
+    G |- tx : tval
+    ------------------------- :: array
+    G |- tx [i] : [tval]
+
+    G |- tx : tval
+    ---------------------------------------- :: ref
+    G |- tx [] addressSpace : Ref(tval)
+
+    G |- tx : tval
+    --------------------------------------- :: ptr
+    G |- tx * addressSpace : Ptr(tval)
+
+defns
+well_formed :: '' ::=
+defn
+G |- well_formed ( td ) :: :: top_level :: '' by
+
+    G |- tx : tval
+    G |- {s0..sn} : {Return tval}
+    ---------------------------------- :: func_trivial
+    G |- well_formed(tx f<()>() {s0..sn})
+
+    G |- tx0 : tval
+    G[x0 -> LVal(tval)] |- well_formed (tx f<()>(tx1 x1, .., txm xm) {s0..sn})
+    -------------------------------------------------------------------- :: func_param
+    G |- well_formed (tx f<()>(tx0 x0, tx1 x1, .., txm xm) {s0..sn})
+
+    G |- tx' : tval'
+    G[x -> tval'] |- well_formed (tx f<(tparam0, .., tparamk)> (tx0 x0, .., txm xm) {s0..sn}) 
+    ---------------------------------------------------------------------------------------- :: func_constexpr
+    G |- well_formed (tx f<(tx' x, tparam0, .., tparamk)> (tx0 x0, .., txm xm) {s0..sn}) 
+
+    y0 -> Protocol namedSigs0 in G /\ .. /\ yi -> Protocol namedSigsi in G
+    namedSigs = U namedSigs0 .. namedSigsi
+    tid = makeFresh()
+    G[x -> TVar tid namedSigs] |- well_formed (tx f<(tparam0, .., tparamk)> (tx0 x0, .., txm xm) {s0..sn})
+    ------------------------------------------------------------------------------------------------------ :: func_tvar
+    G |- well_formed (tx f<(x : y0 + .. + yi, tparam0, .., tparamk)> (tx0 x0, .., txm xm) {s0..sn}) 
+    % TODO: maybe add some check here that the different protocols are not incompatible.
+    % Can we even have incompatible protocols?
+
+defns
+typing :: '' ::=
+defn
+G |- s : B :: :: typing_statement :: '' {{com Validating statements' behaviours}} by
+
+    G |- e : bool
+    G |- s : B
+    G |- s' : B'
+    ------------------------------ :: if
+    G |- if (e) s else s' : B + B'
+
+    G |- e : bool
+    G |- s : B
+    ---------------------------------------------------------- :: do_while
+    G |- do s while (e); : (B \ {Break, Continue}) + {Nothing}
+    % Note: we could make this rule a bit more precise in the cases where we know that s always return/trap/break.. but such a piece of code is almost certainly a bug.
+
+    G |- e : t
+    G |- isIntegerOrEnum(t)
+    G |- sc0: t /\ .. /\ G |- scn: t
+    G |- sc0 .. scn fully covers t
+    G |- sblock0: B0 /\ .. /\ G |- sblockn: Bn
+    Nothing not in B0 /\ .. /\  Nothing not in Bn
+    B = U B0 .. Bn
+    --------------------------------------------------------------------------- :: switch
+    G |- switch (e) {sc0: sblock0 .. scn : sblockn } : B \ {Break, Fallthrough}
+
+    --------------------- :: break
+    G |- break; : {Break}
+
+    --------------------------- :: continue
+    G |- continue; : {Continue}
+
+    --------------------------------- :: fallthrough
+    G |- fallthrough; : {Fallthrough}
+
+    G |- e : t
+    --------------------------- :: return
+    G |- return e; : {Return t}
+
+    ----------------------------- :: return_void
+    G |- return ; : {Return void}
+
+    ----------------------- :: trap
+    G |- trap; : {Return t}
+
+    ------------------- :: empty_block
+    G |- {} : {Nothing}
+
+    G[x -> Nothing] |- tx : tval
+    G[x -> LVal(tval)] |- {s0 .. sn} : B
+    s0 != tx' x; /\../\ sn != tx' x;
+    --------------------------------- :: variable_decl
+    G |- {tx x; s0 .. sn} : B
+    % Note: we remove x from the environment before reducing tx, to avoid a situation where x is required in the definition of tx, which gets rather weird with multiple declarations
+    % (see email from 20/06/2018).
+    % Note: there is a minor ambiguity between this rule and the next two, but it is harmless as the next two rules both fail in the next step
+    % if they are applied where s is a variable declaration.
+    % Note: the second premise prevents redeclaration of a variable in the same scope it was declared in.
+    % Implemented naively it takes O(n**2) to check, but can easily be optimized.
+
+    G |- s : B
+    ------------ :: trivial_block
+    G |- {s} : B
+
+    G |- s : B
+    G |- {s1 .. sn} : B'
+    n > 0
+    Nothing in B
+    -------------------------------------- :: block
+    G |- {s s1 .. sn} : (B \ {Nothing}) + B'
+    % Note: the last premise forbids trivially dead code. It is optional and could be removed with no consequences on the rest of the language.
+
+    G |- e : t
+    ------------------- :: expr
+    G |- e; : {Nothing}
+
+defn
+G |- sc : t :: :: typing_switch_case :: '' by
+
+    G |- rval : t
+    --------------- :: case
+    G |- case rval : t
+
+    ---------------- :: default
+    G |- default : t
+
+defn
+G |- sblock : B :: :: typing_switch_block :: '' by
+
+    G |- { s0 .. sn } : B
+    --------------------- :: switch_block
+    G |- s0 .. sn : B
+
+defn
+G |- e : t :: :: typing_expr :: '' {{com Typing expressions}} by
+    ------------------- :: null_lit_array_ref
+    G |- null : Ref (tval)
+
+    ------------------- :: null_lit_ptr
+    G |- null : Ptr (tval)
+
+    ---------------- :: literal_true
+    G |- true : bool
+
+    ----------------- :: literal_false
+    G |- false : bool
+
+    G |- e : t
+    ------------ :: parens
+    G |- (e) : t
+
+    G |- e : t
+    G |- e' : t'
+    --------------- :: comma
+    G |- e, e' : t'
+
+    G |- e : bool
+    G |- e' : bool
+    ------------------- :: or
+    G |- e || e' : bool
+
+    G |- e : bool
+    G |- e' : bool
+    ------------------- :: and
+    G |- e && e' : bool
+
+    G |- e0 : bool
+    G |- e1 : t
+    G |- e2 : t
+    --------------------- :: ternary
+    G |- e0 ? e1 : e2 : t
+
+    G |- e : bool
+    -------------- :: not
+    G |- !e : bool
+
+    G |- e : LVal(tval)
+    G |- e' : tval
+    ----------------- :: assignment
+    G |- e = e' : tval
+
+    x -> t in G
+    ----------- :: variable_name
+    G |- x : t
+
+    G |- e : LVal(tval)
+    ---------------- :: lval_access
+    G |- e : tval
+
+    G |- e : LVal(tval)
+    ---------------- :: address_taking
+    G |- &e : Ptr(tval)
+    % can the unary operator & be overloaded?
+    % It seems that no
+
+    G |- e : Ptr(tval)
+    ----------------- :: ptr_deref
+    G |- *e : LVal(tval)
+    % can the unary operator * be overloaded?
+    % It seems that no
+
+    % Note: We currently do not have any special interaction between pointers and array references in these rules
+    
+    G |- e : LVal(tval)
+    ---------------- :: take_ref_lval
+    G |- @e : Ref(tval)
+    % Note: in the execution rules, the behaviour depends on whether that LVal points to an array, but here we don't need to track it.
+
+    G |- e : LVal([tval])
+    G |- e' : uint32
+    -------------------- :: array_index_lval
+    G |- e[e'] : LVal(tval)
+
+    G |- e : [tval]
+    G |- e' : uint32
+    ---------------- :: array_index_rval
+    G |- e[e'] : tval
+    % There is a choice between applying array_index_lval and then lval_access, or lval_access and then array_index_rval.
+    % It is not problematic, because the rules are confluent, so either choice leads to the same result.
+    % TODO: should we refuse during validation the case where e' is a constant that falls out of the bounds of e ?
+    % I think it should be an allowed behaviour but not required of the implementation.
+
+    G |- e : Ref(tval)
+    G |- e' : uint32
+    -------------------- :: array_ref_index
+    G |- e[e'] : LVal(tval)
+
+    G |- e0 : tval0 /\../\ G |- en : tvaln
+    x -> Func{sig0, .., sigk} in G
+    exists i . sigi = <( )> (tval0, .., tvaln) -> tval
+    -------------------------------------------------- :: call_no_targ
+    G |- x <( )> (e0, .., en) : tval
+
+defns
+exec :: '' ::=
+defn
+R |- e -> e' ; E ; S :: :: exec_expr :: '' {{com Small-step reduction on expressions}} {{tex [[R]] \vdash [[e]] \xrightarrow[ [[S]] ]{[[E]]} [[e']]}} by
+
+    ------------------------------------------- :: and_true
+    R |- true && e -> JoinExpr(e) ;; push(true)
+
+    --------------------------- :: and_false
+    R |- false && e -> false ;;
+
+    R |- e0 -> e0' ; E ; S
+    ---------------------------------- :: and_reduce
+    R |- e0 && e1 -> e0' && e1 ; E ; S
+
+    e != LVal(addr)
+    R |- e -> e' ; E ; S
+    --------------------------------------- :: join_expr_reduce
+    R |- JoinExpr(e) -> JoinExpr(e'); E ; S
+
+    ---------------------------------- :: join_expr_elim
+    R |- JoinExpr(val) -> val; ; pop()
+
+    ------------------------- :: or_true
+    R |- true || e -> true ;;
+
+    --------------------------------------------- :: or_false
+    R |- false || e -> JoinExpr(e) ;; push(false)
+
+    R |- e0 -> e0' ; E ; S
+    ---------------------------------- :: or_reduce
+    R |- e0 || e1 -> e0' || e1 ; E ; S
+
+    ------------------------------------------------- :: ternary_true
+    R |- true ? e1 : e2 -> JoinExpr(e1) ;; push(true)
+
+    --------------------------------------------------- :: ternary_false
+    R |- false ? e1 : e2 -> JoinExpr(e2) ;; push(false)
+
+    R |- e0 -> e0' ; E ; S
+    ------------------------------------------ :: ternary_reduce
+    R |- e0 ? e1 : e2 -> e0' ? e1 : e2 ; E ; S
+
+    ---------------------- :: comma_next
+    R |- rval, e1 -> e1 ;;
+
+    R |- e0 -> e0' ; E ; S
+    ------------------------------ :: comma_reduce
+    R |- e0, e1 -> e0', e1 ; E ; S
+
+    ------------------ :: parens_exec
+    R |- ( e ) -> e ;;
+
+    ----------------------- :: not_true
+    R |- ! true -> false ;;
+
+    ----------------------- :: not_false
+    R |- ! false -> true ;;
+
+    --------------------------------- :: deref_ptr
+    R |- * Ptr(addr) -> LVal(addr) ;;
+
+    R |- e -> e' ; E ; S
+    ------------------------ :: deref_reduce
+    R |- * e -> * e' ; E ; S
+
+    e != LVal(addr)
+    R |- e -> e' ; E ; S
+    ------------------------ :: take_ptr_reduce
+    R |- & e -> & e' ; E ; S
+
+    -------------------------------- :: take_ptr_lval
+    R |- & LVal(addr) -> Ptr(addr);;
+
+    % TODO: add the '@' operator. It is tricky, because the monomorphisation pass must annotate it with the resulting size of the reference, basically by rerunning the type checking.
+
+    % TODO: do we want to eliminate the next few rules, and instead put them into the definition of operator[] on the default types?
+    % it would allow for nicer interaction with protocols.
+    e0 != LVal(addr)
+    R |- e0 -> e0' ; E ; S
+    -------------------------------- :: array_left_reduce
+    R |- e0 [e1] -> e0' [e1] ; E ; S
+
+    e0 = LVal(addr) \/ e0 = [rval0, .., rvaln] \/ e0 = Ref(addr, j)
+    R |- e1 -> e1' ; E ; S
+    --------------------------------------------------------------- :: array_right_reduce
+    R |- e0 [e1] -> e0 [e1'] ; E ; S
+    
+    i = uint
+    i <= n
+    ------------------------------------------ :: array_lit_access
+    R |- [rval0, .., rvaln] [uint] -> rvali ;;
+
+    i = uint
+    ----------------------------------------------- :: array_unchecked
+    R |- LVal(addr) [uint k] -> LVal(addr + i*k) ;;
+    % TODO: we will have to add a check either here, or in the local typechecking phase, or in the monomorphisation phase.
+
+    i = uint
+    i < j
+    ------------------------------------------------- :: array_ref_access_valid
+    R |- Ref(addr, j) [uint k] -> LVal(addr + i*k) ;;
+
+    i = uint
+    i >= j
+    ------------------------------------------ :: array_ref_access_invalid
+    R |- Ref(addr, j) [uint k] -> TrapValue ;;
+
+    x -> val in R
+    ---------------- :: environment_access
+    R |- x -> val ;;
+
+    --------------------------------------- :: load
+    R |- LVal(addr) -> rval ; addr -> rval;
+
+    e0 != LVal(addr)
+    R |- e0 -> e0' ; E ; S
+    -------------------------------- :: assign_left_reduce
+    R |- e0 = e1 -> e0' = e1 ; E ; S
+
+    R |- e1 -> e1' ; E ; S
+    ------------------------------------------------ :: assign_right_reduce
+    R |- LVal(addr) = e1 -> LVal(addr) = e1' ; E ; S
+
+    ---------------------------------------------- :: assign_execute
+    R |- LVal(addr) = rval -> rval ; addr <- rval;
+
+    R |- e -> e' ; E ; S
+    ---------------------------------------------------------------------------------------------------------------------- :: call_reduce
+    R |- fid<(rv0, .., rvn)>(rv'0, .., rv'm, e, e0, .., ek) -> fid<(rv0, .., rvn)>(rv'0, .., rv'm, e', e0, .., ek) ; E ; S
+
+    fid -> <(x0, .., xn)>(y0:addr0, .., ym:addrm) {s0 .. sk}
+    E = Sequence(addr0 <- rv'0, .., addrm <- rv'm)
+    R' = R[x0 -> rv0, .., xn -> rvn]
+    R'' = R'[y0 -> LVal(addr0), .., ym -> LVal(addrm)]
+    -------------------------------------------------------------------- :: call_resolve
+    R |- fid<(rv0, .., rvn)>(rv'0, .., rv'm) -> Call {R'' s0 .. sk} ; E;
+
+    R |- s -> s' ; E ; S
+    ------------------------------ :: call_construct_reduce
+    R |- Call s -> Call s' ; E ; S
+
+    --------------------------------- :: call_return
+    R |- Call return rval; -> rval ;;
+
+    ---------------------------- :: call_return_void
+    R |- Call return; -> Void ;;
+
+    ------------------------- :: call_end_function
+    R |- Call {R'} -> Void ;;
+
+defn
+R |- s -> s' ; E ; S :: :: exec_stmt :: '' {{com Small-step reduction on statements}} {{tex [[R]] \vdash [[s]] \xrightarrow[ [[S]] ]{[[E]]} [[s']]}} by
+
+    ----------------------------- :: block_annotate
+    R |- {s0..sn} -> {R s0..sn};;
+
+    R |- s -> s' ; E ; S
+    --------------------------------------------- :: block_reduce
+    Rout |- {R s s1..sn} -> {R s' s1..sn} ; E ; S
+
+    --------------------------------------- :: block_next_stmt
+    Rout |- {R {R'} s1..sn} -> {R s1..sn};;
+
+    s = break; \/ s = continue; \/ s = fallthrough; \/ s = return rval; \/ s = return; \/ s = trap;
+    ----------------------------------------------------------------------------------------------- :: block_terminator
+    Rout |- {R s s1..sn} -> s;;
+
+    R' = R[x -> LVal(sid)]
+    rv = Default(tval)
+    ------------------------------------------------------------ :: block_vdecl
+    Rout |- {R tval x : sid; s1..sn} -> {R' s1..sn} ; sid <- rv;
+
+    R |- e -> e' ; E ; S
+    ---------------------- :: effectful_expr_reduce
+    R |- e; -> e'; ; E ; S
+
+    ------------------- :: effectful_expr_elim
+    R |- rval; -> {} ;;
+
+    R |- e -> e' ; E ; S
+    ------------------------------------ :: return_reduce
+    R |- return e; -> return e'; ; E ; S
+
+    R |- e -> e' ; E ; S
+    -------------------------------------------------- :: if_reduce
+    R |- if (e) s else s' -> if (e') s else s' ; E ; S
+
+    ------------------------------------------------- :: if_true
+    R |- if (true) s else s' -> Join(s) ;; push(true)
+    
+    ---------------------------------------------------- :: if_false
+    R |- if (false) s else s' -> Join(s') ;; push(false)
+
+    R |- s -> s' ; E ; S
+    -------------------------------- :: join_reduce
+    R |- Join(s) -> Join(s') ; E ; S
+
+    s = {R'} \/ s is a terminator
+    ----------------------------- :: join_elim
+    R |- Join(s) -> s ;; pop()
+
+    -------------------------------------------------------------- :: do_while_loop
+    R |- do s while(e); -> Loop(s, if(e) do s while(e); else {});;
+
+    R |- s1 -> s1' ; E ; S
+    ------------------------------------------ :: loop_reduce
+    R |- Loop(s1, s2) -> Loop(s1', s2) ; E ; S
+
+    ----------------------------- :: loop_break
+    R |- Loop(break;, s2) -> {};;
+
+    s1 = {R'} \/ s1 = continue;
+    --------------------------- :: loop_next_iteration
+    R |- Loop(s1, s2) -> s2;;
+    
+    s1 = fallthrough; \/ s1 = return; \/ s1 = return rval; \/ s1 = trap;
+    -------------------------------------------------------------------- :: loop_other_terminator
+    R |- Loop(s1, s2) -> s1;;
+
+    R |- e -> e' ; E ; S
+    ---------------------------------------------------------------------------------------------- :: switch_reduce
+    R |- switch(e) {sc0:sblock0 .. scn:sblockn} -> switch(e') {sc0:sblock0 .. scn:sblockn} ; E ; S
+
+%TODO: the next two rules don't fit on the page. I should find a way to compact them. Maybe with the </xi//i/> notation? 
+    s = {sblock} /\ s0 = {sblock'0} /\ .. /\ sm = {sblock'm}
+    ------------------------------------------------------------------------------------------------------------------------------- :: switch_case_found
+    R |- switch(rv) {sc0:sblock0 .. scn:sblockn case rv: sblock sc'0:sblock'0 .. sc'm:sblock'm} -> Cases(s, s0, .., sm) ;; push(rv)
+
+    rv not in sc0 .. scn
+    rv not in sc'0 .. sc'm
+    s = {sblock} /\ s0 = {sblock'0} /\ .. /\ sm = {sblock'm}
+    ------------------------------------------------------------------------------------------------------------------------------- :: switch_default
+    R |- switch(rv) {sc0:sblock0 .. scn:sblockn default: sblock sc'0:sblock'0 .. sc'm:sblock'm} -> Cases(s, s0, .., sm) ;; push(rv)
+
+    R |- s -> s' ; E ; S
+    ------------------------------------------------------ :: cases_reduce
+    R |- Cases(s, s0, .., sn) -> Cases(s', s0, .., sn) ; E ; S
+
+    ----------------------------------------------------------- :: cases_fallthrough
+    R |- Cases(fallthrough;, s0, .., sn) -> Cases(s0, .., sn);;
+
+    --------------------------------------------- :: cases_break
+    R |- Cases(break;, s0, .., sn) -> {} ;; pop()
+
+    s = continue; \/ s = return; \/ s = return rval; \/ s = trap;
+    ------------------------------------------------------------- :: cases_other_terminator
+    R |- Cases(s, s0, .., sn) -> s ;; pop()

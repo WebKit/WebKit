@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+    .offscreen {
+        position:relative;
+        top:9999px;
+    }
+</style>
+<title>Search Predicate Element Count</title>
+</head>
+<body>
+
+<div id="container">
+<p id="start">Start</p>
+<!-- Headings. -->
+<h1>Heading 1</h1>
+<h2>Heading 2</h2>
+<h3>Heading 3</h3>
+<h4>Heading 4</h4>
+<h5 class="offscreen">Heading 5</h5>
+<h6 class="offscreen">Heading 6</h6>
+<br>
+<!-- Tables. -->
+<table border="1">
+<tr><th>A</th><th>B</th></tr>
+<tr><td>C</td><td>D</td></tr>
+</table>
+<table border="1">
+<tr><th>W</th><th>X</th></tr>
+<tr><td>Y</td><td>Z</td></tr>
+</table>
+<br>
+<!-- Links. -->
+<a href="#">Link 1</a>
+<a href="#">Link 2</a>
+<a href="#">Link 3</a>
+<br>
+<!-- Images. -->
+<img alt="Cake" src="resources/cake.png">
+<img alt="Cake" src="resources/cake.png">
+<img alt="Cake" src="resources/cake.png">
+<img alt="Cake" src="resources/cake.png">
+<br>
+
+<!-- Buttons. -->
+<input type="submit" value="Submit">
+<button>Button</button>
+<div role="button">Role button</div>
+<!-- The following two are popup buttons. -->
+<button aria-haspopup="menu">Button with aria-haspopup</button>
+<div role="button" aria-haspopup="menu">Role button with aria-haspopup</div>
+<!-- The following two are toggle buttons. -->
+<button aria-pressed="false">Button with aria-pressed</button>
+<div role="button" aria-pressed="false">Role button with aria-pressed</div>
+<br>
+
+<!-- Non-button controls. -->
+<div role="checkbox">Role checkbox</div>
+<div role="radio">Role radio</div>
+<div role="searchbox">Role searchbox</div>
+<div role="switch">Role switch</div>
+<div role="textbox">Role textbox</div>
+<div role="combobox">Role combobox</div>
+<div role="listbox">Role listbox</div>
+<div role="slider">Role slider</div>
+<textarea>Textarea</textarea>
+
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests that search predicate based element count results are accurate.");
+    
+    if (window.accessibilityController) {
+        document.getElementById("container").focus();
+        var containerElement = accessibilityController.focusedElement;
+        var startElement = accessibilityController.accessibleElementById("start");
+        
+        // Tables.
+        var tableCount = containerElement.uiElementCountForSearchPredicate(startElement, true, "AXTableSearchKey", "", false);
+        shouldBe("tableCount", "2");
+        
+        // Links.
+        var linkCount = containerElement.uiElementCountForSearchPredicate(startElement, true, "AXLinkSearchKey", "", false);
+        shouldBe("linkCount", "3");
+        
+        // Images.
+        var imageCount = containerElement.uiElementCountForSearchPredicate(startElement, true, "AXGraphicSearchKey", "", false);
+        shouldBe("imageCount", "4");
+
+        // Buttons.
+        var buttonCount = containerElement.uiElementCountForSearchPredicate(startElement, true, "AXButtonSearchKey", "", false);
+        shouldBe("buttonCount", "7");
+
+        // Form controls include buttons, checkboxes, etc, so the count should be the sum of buttons and other controls.
+        var controlCount = containerElement.uiElementCountForSearchPredicate(startElement, true, "AXControlSearchKey", "", false);
+        shouldBe("controlCount", "16");
+
+        // Headings.
+        var headingCount = containerElement.uiElementCountForSearchPredicate(startElement, true, "AXHeadingSearchKey", "", false);
+        shouldBe("headingCount", "6");
+
+        // Onscreen
+        var onscreenCount = containerElement.uiElementCountForSearchPredicate(startElement, true, "AXHeadingSearchKey", "", false);
+        shouldBe("onscreenCount", "6");
+
+        // Offscreen
+        var offscreenCount = containerElement.uiElementCountForSearchPredicate(startElement, true, "AXHeadingSearchKey", "", true);
+        shouldBe("offscreenCount", "4");
+
+        // Hide superfluous text.
+        document.getElementById("container").style.display = "none";
+    }
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

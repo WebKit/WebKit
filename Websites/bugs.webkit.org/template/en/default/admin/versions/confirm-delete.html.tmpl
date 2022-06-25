@@ -1,0 +1,89 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # product: object; Bugzilla::Product object representing the product to
+  #               which the version belongs.
+  # version: object; Bugzilla::Version object representing the
+  #                    version the user wants to delete.
+  #%]
+
+[% title = BLOCK %]Delete Version of Product '[% product.name FILTER html %]'
+  [% END %]
+
+[% PROCESS global/header.html.tmpl
+  title = title
+  style_urls = ['skins/standard/admin.css']
+%]
+
+<table id="admin_table">
+  <tr class="column_header">
+    <th>Field</th>
+    <th>Value</th>
+  </tr>
+  <tr>
+    <td>Version</td>
+    <td>[% version.name FILTER html %]</td>
+  </tr>
+  <tr>
+    <td>Version of Product</td>
+    <td>[% product.name FILTER html %]</td>
+  </tr>
+  <tr>
+    <td>[% terms.Bugs %]</td>
+    <td>
+      [% IF version.bug_count %]
+        <a title="List of [% terms.bugs %] targetted at version '
+                  [%- version.name FILTER html %]'"
+           href="buglist.cgi?version=[% version.name FILTER uri %]&amp;product=
+                 [%- product.name FILTER uri %]">
+                 [%- version.bug_count FILTER none %]</a>
+      [% ELSE %]
+        None
+      [% END %]
+    </td>
+  </tr>
+</table>
+
+<h2>Confirmation</h2>
+
+[% IF version.bug_count %]
+  <p class="confirmation">
+  Sorry, there
+  [% IF version.bug_count > 1 %] 
+    are [% version.bug_count FILTER none %] outstanding [% terms.bugs %]
+  [% ELSE %]
+    is [% version.bug_count FILTER none %] outstanding [% terms.bug %]
+  [% END %]
+
+  for this version. You must move
+
+  [% IF version.bug_count > 1 %]
+     those [% terms.bugs %] 
+  [% ELSE %]
+     that [% terms.bug %]
+  [% END %]
+  to another version before this version can be deleted.
+  </p>
+[% ELSE %]
+
+  <p>Do you really want to delete this version?</p>
+  
+  <form method="post" action="editversions.cgi">
+    <input type="submit" id="delete" value="Yes, delete">
+    <input type="hidden" name="action" value="delete">
+    <input type="hidden" name="product" value="[% product.name FILTER html %]">
+    <input type="hidden" name="version" value="[% version.name FILTER html %]">
+    <input type="hidden" name="token" value="[% token FILTER html %]">
+  </form>
+
+[% END %]
+
+[% PROCESS admin/versions/footer.html.tmpl %]
+
+[% PROCESS global/footer.html.tmpl %] 

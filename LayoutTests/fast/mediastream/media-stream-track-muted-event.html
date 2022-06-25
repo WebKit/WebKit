@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Muted attribute and events.</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+    <script>
+    promise_test(async (test) => {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true});
+        if (!window.internals)
+            return;
+        const track = stream.getTracks()[0];
+        assert_false(track.muted, "muted 1");
+
+        internals.setMediaStreamTrackMuted(track, true);
+        assert_false(track.muted, "muted 2");
+        await  new Promise(resolve => track.onmute = resolve);
+        assert_true(track.muted, "muted 3");
+
+
+        internals.setMediaStreamTrackMuted(track, false);
+        assert_true(track.muted, "muted 4");
+        await  new Promise(resolve => track.onunmute = resolve);
+        assert_false(track.muted, "muted 5");
+    }, "Muted attribute value should not change before the corresponding event is fired");
+
+    </script>
+</body>
+</html>

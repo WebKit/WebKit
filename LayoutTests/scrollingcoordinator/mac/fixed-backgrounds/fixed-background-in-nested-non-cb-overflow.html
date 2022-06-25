@@ -1,0 +1,69 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <title>Scrolling tree should show slow-repaint reasons on the overflow and root nodes</title>
+    <style>
+        
+        .outer.scroller {
+            opacity: 0.9;
+        }
+        .scroller {
+            background-color: silver;
+            border: 1px solid black;
+            padding: 10px;
+            width: 400px;
+            height: 300px;
+            overflow: scroll;
+        }
+        
+        .scroller .scroller {
+            position: absolute;
+            margin-top: 100px;
+            width: 350px;
+            height: 300px;
+        }
+        
+        .scrolling-content {
+            height: 1000px;
+        }
+        
+        .fixed-background {
+            margin-top: 100px;
+            width: 400px;
+            height: 300px;
+            background-image: linear-gradient(green, blue);
+            background-attachment: fixed;
+        }
+        .filler {
+            width: 100px;
+            height: 250px;
+        }
+    </style>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        window.addEventListener('load', () => {
+            if (window.internals)
+                document.getElementById('scrollingTree').innerText = window.internals.scrollingTreeAsText() + "\n";
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="outer scroller">
+        <div class="scrolling-content">
+            Outer scrolling content
+            <div class="scroller">
+                <div class="scrolling-content">
+                    Inner scrolling content
+                    <div class="fixed-background">
+                        Fixed background
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <pre id="scrollingTree"></pre>
+</body>
+</html>

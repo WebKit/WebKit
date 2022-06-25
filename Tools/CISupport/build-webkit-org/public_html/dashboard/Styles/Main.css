@@ -1,0 +1,305 @@
+/*
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+* {
+    box-sizing: border-box;
+    -webkit-user-select: none;
+    -webkit-user-drag: none;
+    cursor: default;
+}
+
+*:link {
+    cursor: pointer;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+div.cellButton, div.accessibilityButton, div.platformFamilyToggleButton {
+    font-family: "HelveticaNeue-Light", sans-serif;
+    font-size: 12px;
+    color: rgb(185, 175, 125);
+    cursor: pointer;
+}
+
+div.cellButton.hide, div.accessibilityButton.hide {
+    display: none;
+    position: absolute;
+    bottom: 2px;
+    right: 4px;
+}
+
+div.cellButton.unhide, div.accessibilityButton.unhide, div.platformFamilyToggleButton.unhide {
+    display: none;
+}
+
+.settings-visible div.cellButton.hide, .settings-visible div.cellButton.unhide,
+.settings-visible div.accessibilityButton.hide, .settings-visible div.accessibilityButton.unhide,
+.settings-visible div.platformFamilyToggleButton.hide, .settings-visible div.platformFamilyToggleButton.unhide,
+.settings-visible div.settingsWrapper.hide, .settings-visible div.settingsWrapper {
+    display: block;
+}
+
+.hidden {
+    display: none;
+}
+
+.settings {
+    position: fixed;
+    top: 5px;
+    left: 5px;
+    width: 35px;
+    height: 35px;
+    background-color: rgb(166, 158, 130);
+    -webkit-mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 250"><path d="M213,144v-39h-21.055c-1.476-5-3.51-10.085-6.051-14.668l14.673-14.697l-27.578-27.589l-14.521,14.665 C153.885,60.17,149,58.13,144,56.654V36h-39v20.654c-5,1.476-10.186,3.51-14.769,6.051L75.484,48.033L47.869,75.609l14.652,14.723 C59.981,94.915,57.929,100,56.453,105H36v39h20.453c1.476,5,3.511,9.985,6.051,14.569l-14.672,14.646l27.577,27.565l14.822-14.679 c4.583,2.541,9.769,4.569,14.769,6.045V213h39v-20.854c5-1.476,9.885-3.51,14.468-6.051l14.597,14.672l27.541-27.576l-14.691-14.623 c2.54-4.583,4.556-9.568,6.031-14.568H213z M124.199,164.9c-22.367,0-40.5-18.133-40.5-40.5s18.133-40.5,40.5-40.5 s40.5,18.133,40.5,40.5S146.566,164.9,124.199,164.9z"/></svg>');
+    cursor: pointer;
+}
+
+.settings:hover {
+    background-color: rgb(185, 175, 125);
+}
+
+.settings-visible .settings {
+    background-color: rgb(76, 151, 61);
+}
+
+body {
+    background-color: rgb(233, 231, 223);
+    text-align: center;
+    margin: 50px 25px 50px 25px;
+}
+
+table.queue-grid {
+    border-spacing: 0;
+    border-collapse: collapse;
+    display: inline-table;
+}
+
+table.queue-grid tr.headers th {
+    font-family: "HelveticaNeue-UltraLight", sans-serif;
+    font-size: 30px;
+    font-weight: normal;
+    text-transform: lowercase;
+    color: rgb(145, 135, 95);
+}
+
+table.queue-grid tr:nth-child(odd):not(.headers) td {
+    border-top: 1px solid rgb(211, 207, 191);
+    border-bottom: 1px solid rgb(211, 207, 191);
+}
+
+table.queue-grid tr th:not(:last-child),
+table.queue-grid tr td:not(:last-child) {
+    border-right: 1px solid rgb(211, 207, 191);
+}
+
+table.queue-grid tr:nth-child(odd):not(.headers) td {
+    background-color: rgb(229, 226, 217);
+}
+
+table.queue-grid tr:nth-child(odd):not(.headers) td:first-child {
+    background-color: transparent;
+    background: -webkit-linear-gradient(left, rgba(229, 226, 217, 0), rgb(229, 226, 217));
+}
+
+table.queue-grid tr:nth-child(odd):not(.headers) td:last-child {
+    background-color: transparent;
+    background: -webkit-linear-gradient(right, rgba(229, 226, 217, 0), rgb(229, 226, 217));
+}
+
+table.queue-grid td {
+    height: 200px;
+    width: 200px;
+    vertical-align: top;
+}
+
+table.queue-grid td.logo {
+    position: relative;
+}
+
+table.queue-grid td.logo::before {
+    display: block;
+    content: "";
+    width: 200px;
+    height: 0;
+}
+
+table.queue-grid tr.platform td.logo::before {
+    font-family: "HelveticaNeue-UltraLight", sans-serif;
+    font-size: 24px;
+    font-weight: normal;
+    letter-spacing: 2px;
+    text-shadow: 4px 4px 6px rgba(150, 150, 150, 1);
+    color: rgb(145, 135, 95);
+    position: absolute;
+    bottom: 24px;
+    left: 0px;
+    z-index: 2;
+}
+
+table.queue-grid td.logo img.ring {
+    content: url(../Images/PlatformRing.png);
+    width: 160px;
+    height: 163px;
+    position: absolute;
+    top: 20px;
+    left: 18px;
+}
+
+table.queue-grid td.logo img.logo {
+    width: 144px;
+    height: 144px;
+    position: absolute;
+    top: 29px;
+    left: 26px;
+    -webkit-clip-path: circle(72px at center);
+    clip-path: circle(72px at center);
+}
+
+table.queue-grid tr.platform.windows-10 td.logo::before {
+    content: "Windows 10";
+}
+
+table.queue-grid tr.platform.wincairo-windows-10 td.logo::before {
+    content: "WinCairo";
+}
+
+table.queue-grid tr.platform.ios-simulator-15 img.logo {
+    background: linear-gradient(155deg, #b1a8ed 16%,#aa3daa 50%);
+    content: url(../Images/IOS15Simulator.png);
+}
+
+table.queue-grid tr.platform.ios-15 img.logo {
+    background: linear-gradient(155deg, #b1a8ed 16%,#aa3daa 50%);
+    content: url(../Images/IOS15.png);
+}
+
+table.queue-grid tr.platform.tvos-simulator-15 img.logo {
+    background: linear-gradient(155deg, #b1a8ed 16%,#aa3daa 50%);
+    content: url(../Images/TvOS15Simulator.png);
+}
+
+table.queue-grid tr.platform.tvos-15 img.logo {
+    background: linear-gradient(155deg, #b1a8ed 16%,#aa3daa 50%);
+    content: url(../Images/TvOS15.png);
+}
+
+table.queue-grid tr.platform.watchos-simulator-8 img.logo {
+    background: linear-gradient(155deg, #b1a8ed 16%,#aa3daa 50%);
+    content: url(../Images/WatchOSSimulator8.png);
+}
+
+table.queue-grid tr.platform.watchos-8 img.logo {
+    background: linear-gradient(155deg, #b1a8ed 16%,#aa3daa 50%);
+    content: url(../Images/WatchOS8.png);
+}
+
+table.queue-grid tr.platform.macos-bigsur img.logo {
+    content: url(../Images/BigSur.png);
+}
+
+table.queue-grid tr.platform.macos-monterey img.logo {
+    content: url(../Images/Monterey.png);
+}
+
+table.queue-grid tr.platform.wincairo-windows-10 img.logo {
+    content: url(../Images/Windows10.png);
+}
+
+table.queue-grid tr.platform.windows-10 img.logo {
+    content: url(../Images/Windows10.png);
+}
+
+table.queue-grid tr.platform.windows-7 img.logo {
+    content: url(../Images/Windows7.png);
+}
+
+table.queue-grid tr.platform.linux-gtk img.logo {
+    content: url(../Images/GTK.png);
+}
+
+table.queue-grid tr.platform.linux-wpe img.logo {
+    content: url(../Images/WPE.png);
+}
+
+table.queue-grid tr.platform.linux-jsconly img.logo {
+    content: url(../Images/SquirrelFish.png);
+}
+
+table.queue-grid tr.platform.playstation img.logo {
+    content: url(../Images/PlayStation.png);
+}
+
+.popover-tracking:hover {
+    text-shadow: 0px 0px 3px rgba(0, 0, 0, 0.2)
+}
+
+div.settingsWrapper.hide {
+    display: none;
+}
+
+div.settingsWrapper {
+    position: fixed;
+    width: 100%;
+    height: 45px;
+    top: 0px;
+    left: 50px;
+    background-color: rgb(233, 231, 223);
+    z-index: 2;
+}
+
+div.familyToggleWrapper {
+    position: inherit;
+    display: block;
+    left: 50px;
+    top: 13.5px;
+}
+
+div.platformFamilyToggleButton {
+    float: left;
+    padding-left: 5px;
+    padding-right: 5px;
+    text-decoration: line-through;
+}
+
+div.platformFamilyToggleButton:not(:last-child) {
+    border-right: 1px solid rgb(211, 207, 191);
+}
+
+div.familyShown {
+    text-decoration: none;
+    font-weight: bold;
+}
+
+div.accessibilityButton {
+    position: inherit;
+    top: 13.5px;
+    right: 8.5px;
+}

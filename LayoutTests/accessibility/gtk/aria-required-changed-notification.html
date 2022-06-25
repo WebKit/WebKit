@@ -1,0 +1,39 @@
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="textbox1" role="textbox" aria-required="false" tabindex="0"></div>
+<div id="textbox2" role="textbox" aria-required="true" tabindex="0"></div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+window.jsTestIsAsync = true;
+description("This tests that changing the aria-required value results in a state-changed notification.");
+
+if (window.testRunner && window.accessibilityController) {
+    accessibilityController.addNotificationListener(function(element, notification, state) {
+        if (notification != "AXRequiredStatusChanged")
+            return;
+        debug(notification + " " + (state == "1") + " on " + element.stringAttributeValue("html-id"));
+    });
+
+    var element = document.getElementById("textbox1");
+    element.focus();
+    debug("Setting aria-required to true on textbox1.");
+    element.setAttribute("aria-required", "true");
+
+    element = document.getElementById("textbox2");
+    element.focus();
+    debug("Setting aria-required to false on textbox2.");
+    element.setAttribute("aria-required", "false");
+
+    window.setTimeout(function() {
+        accessibilityController.removeNotificationListener();
+        finishJSTest();
+    }, 0);
+}
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

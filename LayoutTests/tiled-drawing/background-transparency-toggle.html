@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        body {
+            background-color: white;
+            height: 1000px;
+        }
+        
+        body.transparent {
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function documentLoaded()
+        {
+            window.setTimeout(doTest, 0);
+        }
+        
+        function appendLayerDump()
+        {
+            if (window.internals)
+                document.getElementById('output').textContent += window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_TILE_CACHES);
+        }
+
+        function doTest()
+        {
+            if (window.internals)
+                internals.setViewBaseBackgroundColor('transparent');
+            appendLayerDump();
+
+            document.body.classList.add('transparent');
+            appendLayerDump();
+
+            document.body.classList.remove('transparent');
+            appendLayerDump();
+
+            if (window.internals)
+                internals.setViewBaseBackgroundColor('white');
+
+            document.body.classList.add('transparent');
+            appendLayerDump();
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        window.addEventListener('load', documentLoaded, false);
+    </script>
+</head>
+<body>
+
+<p>Page tiles should be transparent if the body's background has alpha.</p>
+<div id="test"></div>
+<pre id="output"></pre>
+
+</body>
+</html>

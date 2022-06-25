@@ -1,0 +1,82 @@
+
+-----------------------------------------------------
+EXPRESSION: Person = class Person { constructor(name){} get fullName(){} methodName(p1, p2){} }; Person
+{
+  "_type": "function",
+  "_subtype": "class",
+  "_objectId": "<filtered>",
+  "_description": "class Person",
+  "_classPrototype": {
+    "_type": "object",
+    "_objectId": "<filtered>",
+    "_description": "Person"
+  },
+  "_functionDescription": "class Person { constructor(name){} get fullName(){} methodName(p1, p2){} }"
+}
+
+-----------------------------------------------------
+EXPRESSION: Person.prototype.methodName
+{
+  "_type": "function",
+  "_objectId": "<filtered>",
+  "_description": "function methodName(p1, p2){}"
+}
+
+-----------------------------------------------------
+EXPRESSION: new Person
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Person",
+  "_preview": {
+    "_type": "object",
+    "_description": "Person",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: Alpha = class A { methodA(){} }; Beta = class B extends Alpha { methodB(){} }; Beta
+{
+  "_type": "function",
+  "_subtype": "class",
+  "_objectId": "<filtered>",
+  "_description": "class B",
+  "_classPrototype": {
+    "_type": "object",
+    "_objectId": "<filtered>",
+    "_description": "B"
+  },
+  "_functionDescription": "class B extends Alpha { methodB(){} }"
+}
+
+-----------------------------------------------------
+EXPRESSION: [Beta]
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Array",
+  "_size": 1,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "array",
+    "_description": "Array",
+    "_lossless": false,
+    "_overflow": false,
+    "_size": 1,
+    "_properties": [
+      {
+        "_name": "0",
+        "_type": "function",
+        "_subtype": "class",
+        "_value": "class B"
+      }
+    ],
+    "_entries": null
+  }
+}
+

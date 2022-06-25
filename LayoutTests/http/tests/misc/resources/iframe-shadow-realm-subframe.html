@@ -1,0 +1,10 @@
+<body>
+    <script>
+     onload = async function ()
+     {
+         var sr = new ShadowRealm();
+         var bloop_val = await sr.importValue("./iframe-shadow-realm.js", "bloop");
+         window.parent.postMessage(bloop_val, "*");
+     }
+    </script>
+</body>

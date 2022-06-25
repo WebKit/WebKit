@@ -1,0 +1,258 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # chart: Chart object representing the currently assembled chart.
+  # category: hash (keyed by category) of hashes (keyed by subcategory) of
+  #           hashes (keyed by name), with value being the series_id of the
+  #           series. Contains details of all series the user can see.
+  #%]
+
+[% PROCESS global/header.html.tmpl 
+  title = "Create Chart"
+  style_urls = ['skins/standard/buglist.css']
+%]
+
+[% PROCESS "reports/series-common.html.tmpl" 
+  donames = 1 
+%]
+
+<script type="text/javascript">
+[%# This function takes necessary action on selection of a subcategory %]
+function subcatSelected() {
+  var cat = document.chartform.category.value;
+  var subcat = document.chartform.subcategory.value;
+  var names = series[cat][subcat];
+  
+  var namewidget = document.chartform.name;
+
+  namewidget.options.length = 0;
+  var i = 0;
+
+  for (x in names) {
+    namewidget.options[i] = new Option(x, names[x]);
+    i++;
+  }
+
+  namewidget.disabled = false;
+  namewidget.options[0].selected = true;
+  
+  checkNewState();
+}
+</script>
+  
+[% gttext = "Grand Total" %]
+
+<form method="get" action="chart.cgi" name="chartform">
+
+  <table id="create_chart">
+    [% IF NOT category OR category.size == 0 %]
+      <tr>
+        <td>
+          <i>No data sets exist, or none are visible to you.</i>
+        </td>
+      </tr>
+    [% ELSE %]
+      <tr>
+        <th><label for="category">Category</label></th>
+        <th></th>
+        <th><label for="subcategory">Sub-category</label></th>
+        <th></th>
+        <th><label for="name" accesskey="N">Name</label></th>
+        <th></th>
+      </tr>
+      <tr>
+
+        [% PROCESS series_select sel = { name => 'category', 
+                                         size => 5,
+                                         onchange = "catSelected();
+                                                     subcatSelected();" } %]
+
+        <td>
+          <noscript>
+            <input type="submit" name="action-assemble" value="Update --&gt;"
+                   id="action-assemble">
+          </noscript>
+        </td>
+
+        [% PROCESS series_select sel = { name => 'subcategory', 
+                                         size => 5,
+                                         onchange = "subcatSelected()" } %]
+
+        <td>
+          <noscript>
+            <input type="submit" name="action-assemble" value="Update --&gt;"
+                   id="action-assemble2">
+          </noscript>
+        </td>
+
+        [% PROCESS series_select sel = { name => 'name',
+                                         size => 5,
+                                         multiple => 1,
+                                         # We want to use the series ID as value,
+                                         # not its name.
+                                         value_in_hash => 1 } %]
+
+        <td>
+          <input type="submit" name="action-add" value="Add To List"
+                 id="action-add"><br>
+        </td>
+      </tr>
+    [% END %]
+  </table>
+
+  <h3>List Of Data Sets To Plot</h3>
+
+  [% IF chart.lines.size %]
+    <table id="edit_charts">
+      <tr>
+        <th>Select</th>
+        <th>Label</th>
+        <th></th>
+        <th>Data Set</th>
+        <th></th>
+      </tr>
+
+      [%# The external loop has two counters; one which keeps track of where we
+        #  are in the old labels array, and one which keeps track of the new
+        #  indexes for the form elements. They are different if chart.lines has
+        #  empty slots in it. 
+        #%]
+      [% labelidx = 0 %]
+      [% newidx = 0 %]
+      
+      [% FOREACH line = chart.lines %]
+        [% IF NOT line %]
+          [%# chart.lines has an empty slot, so chart.labels will too. We
+            # increment labelidx only to keep the labels in sync with the data.
+            #%]
+          [% labelidx = labelidx + 1 %]
+          [% NEXT %]
+        [% END %]
+
+        [% FOREACH series = line %]
+          <tr>
+            [% IF loop.first %]
+              <td class="center" rowspan="[% line.size %]">
+                <input type="checkbox" value="1" name="select[% newidx %]">
+              </td>
+              <td rowspan="[% line.size %]">
+                <input type="text" size="20" name="label[% newidx %]"
+                       value="[% (chart.labels.$labelidx OR series.name) 
+                                                               FILTER html %]">
+              </td>
+            [% END %]
+
+            <td>
+              [% "{" IF line.size > 1 %]
+            </td>
+
+            <td>
+              [% series.category FILTER html %] / 
+              [%+ series.subcategory FILTER html %] /
+              [%+ series.name FILTER html %]
+              <input type="hidden" name="line[% newidx %]" 
+                     value="[% series.series_id %]">
+            </td>
+
+            <td>
+              [% IF user.id == series.creator_id OR user.in_group("admin") %]
+               <a href="chart.cgi?action=edit&amp;series_id=
+                       [% series.series_id %]">Edit</a> |
+               <a href="chart.cgi?action=confirm-delete&amp;series_id=
+                       [%- series.series_id %]">Delete</a> |
+              [% END %]
+              <a href="buglist.cgi?cmdtype=dorem&amp;namedcmd=
+                [% series.category FILTER uri %]%20/%20
+                [% series.subcategory FILTER uri %]%20/%20
+                [% series.name FILTER uri -%]&amp;series_id=
+                [% series.series_id %]&amp;remaction=runseries">Run Search</a>
+            </td>
+          </tr>
+        [% END %]
+        [% labelidx = labelidx + 1 %]
+        [% newidx = newidx + 1 %]
+      [% END %]
+
+      [% IF chart.gt %]
+        <tr>
+          <td class="center">
+            <input type="checkbox" value="1" name="select65536">
+            <input type="hidden" value="1" name="gt">
+          </td>
+          <td>
+            <input type="text" size="20" name="labelgt"
+                   value="[% (chart.labelgt OR gttext) FILTER html %]">
+          </td>
+          <td></td>
+          <td>
+            <i>[% gttext FILTER html %]</i>
+          </td>
+          <td></td>
+        </tr>
+      [% END %]
+      <tr>
+        <td colspan="6">&nbsp;</td>
+      </tr>
+
+      <tr>
+        <td>
+          <input type="submit" id="action-sum" name="action-sum" value="Sum"><br>
+          <input type="submit" id="action-remove" name="action-remove" value="Remove">
+        </td>
+
+        <td class="right">
+          <label for="cumulate"><b>Cumulate</b></label>:
+          <input type="checkbox" name="cumulate" id="cumulate" value="1"
+          [% " checked" IF chart.cumulate %]>
+        </td>
+
+        <td></td>
+        <td>
+          <label for="datefrom"><b>Date Range</b></label>:
+          <input type="text" size="12" name="datefrom" id="datefrom"
+            placeholder="YYYY-MM-DD"
+            value="[% time2str("%Y-%m-%d", chart.datefrom) IF chart.datefrom%]">
+          <label for="dateto"><b>to</b></label>
+          <input type="text" size="12" name="dateto" id="dateto"
+            placeholder="YYYY-MM-DD"
+            value="[% time2str("%Y-%m-%d", chart.dateto) IF chart.dateto %]">
+        </td>
+
+        <td>
+          <input type="submit" name="action-wrap" value="Chart This List"
+                 id="action-wrap">
+        </td>
+      </tr>
+    </table>
+  [% ELSE %]
+  <p><i>None</i></p>
+  [% END %]  
+</form>
+
+[% IF user.in_group('editbugs') %]
+  <h3>Create New Data Set</h3>
+  <p>
+    You can either create a new data set based on one of your saved searches
+    or start with a clean slate.
+  </p>
+
+  <form action="chart.cgi" id="create_series" name="create_series" method="GET">
+    <input type="hidden" name="action" value="convert_search">
+    <label for="series_from_search">Based on:</label>
+    <select id="series_from_search" name="series_from_search">
+      <option value="">(Clean slate)</option>
+      [% FOREACH q = user.queries %]
+        <option value="[% q.name FILTER html %]">[% q.name FILTER html %]</option>
+      [% END %]
+    </select>
+    <input id="submit_create" type="submit" value="Create a new data set">
+  </form>
+[% END %]                 
+
+[% PROCESS global/footer.html.tmpl %]

@@ -1,0 +1,10 @@
+Out of memory
+This test makes sure we don't crash when throwing an error with a very large message
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

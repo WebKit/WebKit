@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+function createSimpleGETRequest()
+{
+    let request = new XMLHttpRequest;
+    request.open("GET", "resources/url?query=true", true);
+    request.send();
+}
+
+function createGETRequestWithSpecialURL()
+{
+    let request = new XMLHttpRequest;
+    request.open("GET", "resources/url'with$special{1..20}chars[] .html", true);
+    request.send();
+}
+
+function createGETRequestWithSpecialCharsInHeaders()
+{
+    let request = new XMLHttpRequest;
+    request.open("GET", "resources/url", true);
+    request.setRequestHeader("X-Custom1", "test1");
+    request.setRequestHeader("X-Custom2'%", "\'Test'\'1\\'2");
+    request.setRequestHeader("X-Custom3", "\'${PWD}");
+    request.send();
+}
+
+function createGETRequestWithUTF8()
+{
+    let request = new XMLHttpRequest;
+    request.open("GET", "resources/url?utf8=👍", true);
+    request.send();
+}
+
+function createPOSTRequestWithURLEncodedData()
+{
+    let request = new XMLHttpRequest;
+    request.open("POST", "resources/url", true);
+    request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    request.send("lorem=ipsum&$dolor='sit'&amet={1..20}");
+}
+
+function createPOSTRequestWithUTF8()
+{
+    let request = new XMLHttpRequest;
+    request.open("POST", "resources/url?utf8=👍", true);
+    request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    request.send("🌨=⛄️");
+}
+
+function createPUTRequestWithJSON()
+{
+    let request = new XMLHttpRequest;
+    request.open("PUT", "resources/url", true);
+    request.setRequestHeader("Content-Type", "application/json");
+    request.send("{\"update\":\"now\"}");
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("WI.Resource.prototype.generateFetchCode");
+
+    [
+        {name: "SimpleURL", expression: `createSimpleGETRequest()`},
+        {name: "SpecialURL", expression: `createGETRequestWithSpecialURL()`},
+        {name: "SpecialHeaders", expression: `createGETRequestWithSpecialCharsInHeaders()`},
+        {name: "URLUTF8", expression: `createGETRequestWithUTF8()`},
+        {name: "POSTRequestURLEncodedData", expression: `createPOSTRequestWithURLEncodedData()`},
+        {name: "POSTRequestURLUTF8", expression: `createPOSTRequestWithUTF8()`},
+        {name: "PUTRequestWithJSON", expression: `createPUTRequestWithJSON()`},
+
+        {name: "ReferrerPolicy.EmptyString", expression: `fetch("resources/url", {referrerPolicy: ""})`},
+        {name: "ReferrerPolicy.NoReferrer", expression: `fetch("resources/url", {referrerPolicy: "no-referrer"})`},
+
+        {name: "Integrity.Invalid", expression: `fetch("resources/data.txt?integrity=invalid", {integrity: "INVALID"})`},
+        {name: "Integrity.Valid", expression: `fetch("resources/data.txt?integrity=valid", {integrity: "sha256-qQCuhmp5o0z/of299BZBz6a+CBJGM2TPN53xY1PHXS8="})`},
+    ].forEach(({name, expression}) => {
+        suite.addTestCase({
+            name: "WI.Resource.prototype.generateFetchCode." + name,
+            async test() {
+                let [resourceWasAddedEvent] = await Promise.all([
+                    WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded),
+                    InspectorTest.evaluateInPage(expression),
+                ]);
+
+                let resource = resourceWasAddedEvent.data.resource;
+
+                let fetchCode = resource.generateFetchCode();
+
+                // Strip inconsistent headers.
+                fetchCode = fetchCode.replace(/\s+"Accept-Language": ".+?",\n/, "\n");
+                fetchCode = fetchCode.replace(/("User-Agent": )(".+?")(,?\n)/, "$1<filtered>$3");
+
+                InspectorTest.log(fetchCode);
+            },
+        });
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests that "Copy as fetch" returns valid JS.</p>
+</body>
+</html>

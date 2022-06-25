@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+description("Tests exception cases for PannerNode API.");
+
+let context = new OfflineAudioContext(2, 10, 44100);
+let panner = new PannerNode(context);
+
+const forbiddenValues = ["NaN", "Infinity", "-Infinity"];
+
+for (let forbiddenValue of forbiddenValues) {
+    shouldThrowErrorName("panner.setPosition(" + forbiddenValue + ", 1, 1)", "TypeError");
+    shouldThrowErrorName("panner.setOrientation(" + forbiddenValue + ", 1, 1)", "TypeError");
+    shouldThrowErrorName("panner.setPosition(1, " + forbiddenValue + ", 1)", "TypeError");
+    shouldThrowErrorName("panner.setOrientation(1, " + forbiddenValue + ", 1)", "TypeError");
+    shouldThrowErrorName("panner.setPosition(1, 1, " + forbiddenValue + ")", "TypeError");
+    shouldThrowErrorName("panner.setOrientation(1, 1, " + forbiddenValue + ")", "TypeError");
+}
+
+</script>
+</body>
+</html>

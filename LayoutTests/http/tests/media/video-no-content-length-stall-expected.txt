@@ -1,0 +1,5 @@
+Live audios (no Content-Length, loaded as they are generated) shouldn't trigger end-of-stream if future data isn't available immediately.
+
+EVENT(ended)
+EXPECTED (video.currentTime > 6 == 'true') OK
+

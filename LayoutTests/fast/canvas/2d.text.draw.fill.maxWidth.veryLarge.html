@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<head>
+<style>
+@font-face {
+  font-family: Ahem;
+  src: url('../../resources/Ahem.ttf');
+}
+</style>
+</head>
+<body>
+<p>On success, there should only be a green rectangle.</p>
+<canvas id="c" class="output" width="100" height="100"><p class="fallback">FAIL (fallback content)</p></canvas>
+<div id="console"></div>
+
+<script>
+function drawCanvas(ctx) {
+  ctx.fillStyle = '#0f0';
+  ctx.fillRect(0,0,100,100);
+  ctx.fillStyle = '#f00';
+  ctx.fillText("X", -100, 100, 200);
+}
+
+function doDeferredTest() {
+  drawCanvas(ctx);
+
+  // Check that the letter rendered appropriately
+  var renderedCorrectly = true;
+
+  // Check that there is only a green rectangle
+  var imageData = ctx.getImageData(50,50,1,1);
+  if (imageData.data[0] != 0) renderedCorrectly = false;
+  if (imageData.data[1] != 255) renderedCorrectly = false;
+  if (imageData.data[2] != 0) renderedCorrectly = false;
+  if (imageData.data[3] != 255) renderedCorrectly = false;
+
+  if (renderedCorrectly)
+    document.getElementById("console").innerHTML = "TEST PASSED";
+  else
+    document.getElementById("console").innerHTML = "TEST FAILED";
+
+  if (window.testRunner)
+    testRunner.notifyDone();
+}
+
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+
+var canvas = document.getElementById('c');
+var ctx = canvas.getContext("2d");
+ctx.font = "100px Ahem";
+
+// Kick off loading of the font
+ctx.fillText(" ", 0, 0);
+
+// Wait for the font to load, then run
+setTimeout(function() {
+  doDeferredTest();
+}, 50);
+</script>
+</body>
+</html>

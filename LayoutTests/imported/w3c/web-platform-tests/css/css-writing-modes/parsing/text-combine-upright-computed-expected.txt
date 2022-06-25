@@ -1,0 +1,4 @@
+
+PASS Property text-combine-upright value 'none'
+PASS Property text-combine-upright value 'all'
+

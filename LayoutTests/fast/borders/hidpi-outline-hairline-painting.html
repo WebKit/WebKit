@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests hairline outline painting</title>
+<style>
+  div {
+    position: absolute;
+    height: 5px;
+    width: 5px;
+    left: 10px;
+    top: 10px;
+    outline: solid 0px green;
+    outline-offset: 0px;
+  }
+</style>
+</head>
+<body>
+<p id="container"></p>
+<script>
+  var container = document.getElementById("container");
+  var leftPos = 10;
+  var width = 0.1;
+  for (var i = 0; i <= 10; ++i) {
+    var e = document.createElement("div");
+    e.style.left = leftPos + "px";
+    e.style.outlineWidth = width + "px";
+    e.style.outlineOffset = width + "px";
+    container.appendChild(e);
+    width += 0.1;
+    leftPos += 15;
+  }
+  leftPos = 10;
+  width = 0.8;
+  for (var i = 0; i <= 6; ++i) {
+    var e = document.createElement("div");
+    e.style.left = leftPos + "px";
+    e.style.top = "25px";
+    e.style.outlineWidth = width + "px";
+    e.style.outlineOffset = width + "px";
+    e.style.outlineStyle = "double";
+    container.appendChild(e);
+    width += 0.1;
+    leftPos += 15;
+  }
+</script>
+</body>
+</html>

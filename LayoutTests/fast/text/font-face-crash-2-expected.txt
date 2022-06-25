@@ -1,0 +1,1 @@
+This test makes sure that if we construct two JSFontFaces for the same FontFace, and call "loaded" on both of them, that there is no ASSERT.

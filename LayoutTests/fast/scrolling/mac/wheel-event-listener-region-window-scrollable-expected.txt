@@ -1,0 +1,19 @@
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 785.00 2000.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 785.00 2000.00)
+      (contentsOpaque 1)
+      (drawsContent 1)
+      (backgroundColor #C0C0C0)
+      (event region
+        (rect (0,0) width=785 height=2000)
+      (wheel event listener region
+        (rect (0,0) width=785 height=2000)
+      )
+      )
+    )
+  )
+)
+

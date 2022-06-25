@@ -1,0 +1,56 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script src="resources/breakpoint.js"></script>
+<script>
+function test()
+{
+    InspectorProtocol.eventHandler["Debugger.scriptParsed"] = function(messageObject)
+    {
+        if (/resources\/breakpoint\.js$/.test(messageObject.params.url)) {
+            ProtocolTest.log("Found breakpoint.js");
+            var breakpoint = {
+                location: {
+                    scriptId: messageObject.params.scriptId,
+                    lineNumber: 8,
+                    columnNumber: 0
+                },
+                options: {
+                    autoContinue: true,
+                    condition: "this.will.cause.exception",
+                    action: [
+                        {type: "log", data: "FAIL: The breakpoint action should not be executed if the condition had an exception."}
+                    ]
+                }
+            };
+            InspectorProtocol.sendCommand("Debugger.setBreakpoint", breakpoint, InspectorProtocol.checkForError);
+            InspectorProtocol.sendCommand("Debugger.setPauseOnExceptions", {state: "all"}, InspectorProtocol.checkForError);
+            InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "breakpointWithCondition(1,2)"}, function() {
+                ProtocolTest.log("PASS: The debugger should not pause on the exception inside the condition.");
+                completeTest();
+            });
+        }
+    }
+
+    InspectorProtocol.eventHandler["Debugger.paused"] = function(messageObject)
+    {
+        ProtocolTest.log("FAIL: Paused in debugger: reason = \"" + messageObject.params.reason + "\"");
+        completeTest();
+    }
+
+    function completeTest()
+    {
+        // Reset the pauseOnException state before ending the test.
+        InspectorProtocol.sendCommand("Debugger.setPauseOnExceptions", {state: "none"});
+        ProtocolTest.completeTest();
+    }
+
+    InspectorProtocol.sendCommand("Debugger.enable", {});
+    InspectorProtocol.sendCommand("Debugger.setBreakpointsActive", {active: true});
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>The debugger should not pause on exceptions thrown while executing the breakpoint conditions.</p>
+</body>
+</html>

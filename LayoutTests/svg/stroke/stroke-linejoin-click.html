@@ -1,0 +1,37 @@
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+    }
+    rect {
+        fill: none;
+        stroke-width: 6;
+        stroke-linejoin: round;
+        stroke: green;
+        width: 100px;
+        height: 100px;
+    }
+</style>
+<body>
+    <svg>
+        <rect x="10" y="10"/>
+    </svg>
+    <script>
+        function moveRect(rect) {
+            var x = parseFloat(rect.getAttribute("x"));
+            var y = parseFloat(rect.getAttribute("y"));
+            rect.setAttribute('x', x + 10);
+            rect.setAttribute('y', y + 10);
+        }
+
+        (function() {
+            var element = document.elementFromPoint(10, 10);
+            if (element instanceof SVGRectElement)
+                moveRect(element);
+
+            element = document.elementFromPoint(20, 20);
+            if (element instanceof SVGRectElement)
+                moveRect(element);
+        })();
+    </script>
+</body>

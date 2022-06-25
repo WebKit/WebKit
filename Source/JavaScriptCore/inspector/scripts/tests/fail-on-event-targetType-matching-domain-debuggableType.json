@@ -1,0 +1,8 @@
+[
+{
+    "domain": "Domain",
+    "debuggableTypes": ["javascript"],
+    "commands": [{"name": "Command"}],
+    "events": [{"name": "Event", "targetTypes": ["worker"]}]
+}
+]

@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<iframe aria-hidden="true" id="iframe" src="resources/cake.png" width="400" height="500" scrolling="auto" frameborder="1">fall back content</iframe>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("This tests that aria-hidden will affect the visibility of the web area and scroll view.");
+
+if (window.accessibilityController) {
+    jsTestIsAsync = true;
+
+    // Get the iframe reference.
+    document.getElementById("body").focus();
+    var body = accessibilityController.focusedElement;
+
+    window.onload = function() {
+        shouldBe("body.childrenCount", "3");
+        shouldBe("body.childAtIndex(0).childrenCount", "0");
+
+        document.getElementById("iframe").setAttribute("aria-hidden", "false");
+    
+        document.getElementById("iframe").contentWindow.document.body.offsetWidth;
+        document.body.offsetWidth;
+
+        shouldBe("body.childrenCount", "4");
+        shouldBe("body.childAtIndex(0).childAtIndex(0).childAtIndex(0).role", "'AXRole: AXWebArea'");
+
+        finishJSTest();
+    }
+} else
+    testFailed("This test relies on accessibilityController, please use run-webkit-tests to run it.")
+
+successfullyParsed = true;
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

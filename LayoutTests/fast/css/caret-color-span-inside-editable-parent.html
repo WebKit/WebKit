@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#test-container {
+    height: 50px;
+    width: 50px;
+    overflow: hidden;
+}
+
+#test {
+    background-color: white;
+    color: red;
+    transform-origin: left top;
+    transform: scale(50, 50);
+    font-size: 10px; /* Needed for the caret to render in Firefox. */
+}
+
+#test > span {
+    background-color: inherit;
+    caret-color: green;
+}
+</style>
+</head>
+<body>
+<p>This tests that the text insertion point color represents the caret-color of the inner-most focused element regardless whether the background color of the inner-most focused element cannot be visibly differentiated from the background color of its root editable element.</p>
+<div id="test-container">
+    <div id="test" contenteditable="true">
+        <span>&nbsp;<!-- Needed for the caret to render in Firefox. --></span>
+    </div>
+</div>
+<script>
+document.getElementById("test").focus();
+window.getSelection().modify("move", "left", "character"); // Place the caret at the start of the <span>.
+</script>
+</body>
+</html>

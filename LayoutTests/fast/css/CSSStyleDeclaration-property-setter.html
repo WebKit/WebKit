@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Test that setting CSS properties via CSSStyleDeclaration behaves as expected");
+
+var div = document.createElement("div");
+shouldBeEqualToString("div.style.cssText", "");
+evalAndLog("div.style.backgroundColor = 'red'");
+shouldBeEqualToString("div.style.cssText", "background-color: red;");
+shouldBeEqualToString("div.style.getPropertyValue('background-color')", "red");
+shouldBe("div.style.length", "1");
+
+debug("");
+// Setting to empty string should delete the property.
+evalAndLog("div.style.backgroundColor = ''");
+shouldBeEqualToString("div.style.cssText", "");
+shouldBeEqualToString("div.style.getPropertyValue('background-color')", "");
+shouldBe("div.style.length", "0");
+
+debug("");
+evalAndLog("div.style.backgroundColor = 'red'");
+shouldBeEqualToString("div.style.cssText", "background-color: red;");
+shouldBeEqualToString("div.style.getPropertyValue('background-color')", "red");
+shouldBe("div.style.length", "1");
+
+debug("");
+// Setting to null should delete the property (null is treated as the empty string).
+evalAndLog("div.style.backgroundColor = null");
+shouldBeEqualToString("div.style.cssText", "");
+shouldBeEqualToString("div.style.getPropertyValue('background-color')", "");
+shouldBe("div.style.length", "0");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

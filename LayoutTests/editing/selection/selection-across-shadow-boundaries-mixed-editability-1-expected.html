@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests selecting content starting in an editable element to a shadow tree.<br>
+To manually test, select "hello world" below by a mouse drag from "h" to "d". WebKit should only select "hello".</p>
+<div id="container" contenteditable>hello <div>world</div></div>
+<script>
+container.focus();
+getSelection().setBaseAndExtent(container, 0, container, 1);
+</script>
+</body>
+</html>

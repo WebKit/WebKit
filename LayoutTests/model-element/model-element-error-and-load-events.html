@@ -1,0 +1,52 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>&lt;model> load and error events</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="resources/model-element-test-utils.js"></script>
+<body>
+<script>
+'use strict';
+
+const model_load_test = (expectedEvent, executor, description) => {
+    promise_test(t => {
+        return new Promise((resolve, reject) => {
+            const [model, source] = createModelAndSource(t);
+
+            const handleEvent = event => {
+                if (event.type === "load")
+                    assert_true(model.complete, `model.complete is true upon receiving the "load" event.`);
+                else if (event.type === "error")
+                    assert_false(model.complete, `model.complete is false upon receiving the "error" event.`);
+
+                if (event.type === expectedEvent)
+                    resolve();
+                else
+                    reject(`received unexpected event: ${event.type}`);
+            }
+
+            assert_false(model.complete, "model.complete is false before the load is initiated.");
+
+            model.addEventListener("load", handleEvent);
+            model.addEventListener("error", handleEvent);
+
+            executor(source);
+        });
+    }, description);
+};
+
+model_load_test("error", source => {
+    source.src = "resources/heart.usdz";
+    source.remove();
+}, `<model> dispatches an "error" event when its resource load is aborted before completion.`);
+
+model_load_test("error", source => {
+    source.src = "resources/does-not-exist.usdz";
+}, `<model> dispatches an "error" event when its specified resource does not exist.`);
+
+model_load_test("load", source => {
+    source.src = "resources/cube.usdz";
+}, `<model> dispatches a "load" event when its resource is successfully loaded.`);
+
+</script>
+</body>

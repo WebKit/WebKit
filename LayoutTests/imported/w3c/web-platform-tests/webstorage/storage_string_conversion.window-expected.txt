@@ -1,0 +1,4 @@
+
+FAIL localStorage only stores strings assert_equals: expected "function(){}" but got "function (){}"
+FAIL sessionStorage only stores strings assert_equals: expected "function(){}" but got "function (){}"
+

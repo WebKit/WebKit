@@ -1,0 +1,45 @@
+<html> 
+<head>
+
+<style>
+body {
+    font-size: 24px; 
+}
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+}
+div {
+    border: 2px solid blue; 
+    padding: 12px; 
+}
+
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    for (i = 0; i < 5; i++)
+        moveSelectionForwardByCharacterCommand();
+    insertParagraphCommand();
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body contenteditable id="root" style="word-wrap: break-word; -khtml-nbsp-mode: space; -khtml-line-break: after-white-space;">
+
+Test inserting paragraphs: should see a blue box with "bar" in it, and two blank lines between "foo" and "bar".
+
+<div style="border: none; height: 12px"></div>
+
+<span id="test">foo</span><br><br>bar
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

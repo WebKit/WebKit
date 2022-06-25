@@ -1,0 +1,28 @@
+# DEPS file for unit tests.
+
+vars = {
+  'chromium_git': 'https://chromium.googlesource.com',
+
+  # This is updated compared to the DEPS file.
+  'depot_tools_revision': '1206a353e40abb70d8454eb9af53db0ad10b713c',
+}
+
+deps = {
+  'src/third_party/depot_tools':
+    Var('chromium_git') + '/chromium/tools/depot_tools.git' + '@' +  Var('depot_tools_revision'),
+
+  'src/buildtools/linux64': {
+    'packages': [
+      {
+        'package': 'gn/gn/linux-amd64',
+        'version': 'git_revision:new-revision',
+      }
+    ],
+    'dep_type': 'cipd',
+    'condition': 'checkout_linux',
+  },
+
+  # Script expects to find these markers.
+  # === ANDROID_DEPS Generated Code Start ===
+  # === ANDROID_DEPS Generated Code End ===
+}

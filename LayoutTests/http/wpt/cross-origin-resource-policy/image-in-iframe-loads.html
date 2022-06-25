@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+    <script src="/common/get-host-info.sub.js"></script>
+</head>
+<body>
+    <script>
+const host = get_host_info();
+const remoteBaseURL = host.HTTP_REMOTE_ORIGIN + window.location.pathname.replace(/\/[^\/]*$/, '/') ;
+const localBaseURL = host.HTTP_ORIGIN + window.location.pathname.replace(/\/[^\/]*$/, '/') ;
+
+function with_iframe(url) {
+  return new Promise(function(resolve) {
+      var frame = document.createElement('iframe');
+      frame.src = url;
+      frame.onload = function() { resolve(frame); };
+      document.body.appendChild(frame);
+    });
+}
+
+promise_test(async() => {
+    let message = new Promise((resolve) => {
+        window.addEventListener("message", (event) => { resolve(event.data) });
+    });
+    await with_iframe(localBaseURL + "/resources/iframeImage.html");
+    assert_equals(await message, "ok", "loading same origin image should succeed");
+
+    message = new Promise((resolve) => {
+        window.addEventListener("message", (event) => { resolve(event.data) });
+    });
+    await with_iframe(remoteBaseURL + "/resources/iframeImage.html");
+    assert_equals(await message, "ko", "loading not same origin image should succeed");
+}, "Ensure CORP checks in case image is cached");
+    </script>
+</body>
+</html>

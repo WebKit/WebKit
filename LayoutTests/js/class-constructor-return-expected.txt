@@ -1,0 +1,95 @@
+Tests for ES6 class constructor return values
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Base class
+PASS (new BaseNoReturn) instanceof BaseNoReturn
+PASS (new BaseReturnImplicit) instanceof BaseReturnImplicit
+PASS (new BaseReturnImplicit) !== undefined
+PASS (new BaseReturnUndefined) instanceof BaseReturnUndefined
+PASS (new BaseReturnUndefined) !== undefined
+PASS (new BaseReturnThis) instanceof BaseReturnThis
+PASS (new BaseReturnObject) instanceof BaseReturnObject
+PASS typeof (new BaseReturnObject) === "object"
+PASS (new BaseReturnObject2) instanceof BaseReturnObject
+PASS (new BaseReturnObject2) === globalVariable
+PASS (new BaseReturnString) instanceof BaseReturnString
+PASS typeof (new BaseReturnString) !== "string"
+PASS (new BaseReturnNumber) instanceof BaseReturnNumber
+PASS typeof (new BaseReturnNumber) !== "number"
+PASS (new BaseReturnNull) instanceof BaseReturnNull
+PASS (new BaseReturnNull) !== null
+PASS (new BaseReturnSymbol) instanceof BaseReturnSymbol
+PASS (new BaseReturnSymbol) !== globalSymbol
+PASS (new BaseThrow)
+
+Function constructor (non-class)
+PASS (new FunctionNoReturn) instanceof FunctionNoReturn
+PASS (new FunctionReturnImplicit) instanceof FunctionReturnImplicit
+PASS (new FunctionReturnImplicit) !== undefined
+PASS (new FunctionReturnUndefined) instanceof FunctionReturnUndefined
+PASS (new FunctionReturnUndefined) !== undefined
+PASS (new FunctionReturnThis) instanceof FunctionReturnThis
+PASS (new FunctionReturnObject) instanceof FunctionReturnObject
+PASS typeof (new FunctionReturnObject) === "object"
+PASS (new FunctionReturnObject2) instanceof FunctionReturnObject
+PASS (new FunctionReturnObject2) === globalVariable
+PASS (new FunctionReturnString) instanceof FunctionReturnString
+PASS typeof (new FunctionReturnString) !== "string"
+PASS (new FunctionReturnNumber) instanceof FunctionReturnNumber
+PASS typeof (new FunctionReturnNumber) !== "number"
+PASS (new FunctionReturnNull) instanceof FunctionReturnNull
+PASS (new FunctionReturnNull) !== null
+PASS (new FunctionReturnSymbol) instanceof FunctionReturnSymbol
+PASS (new FunctionReturnSymbol) !== globalSymbol
+PASS (new FunctionThrow)
+
+Derived class calling super()
+PASS (new DerivedNoReturn) instanceof DerivedNoReturn
+PASS (new DerivedReturnImplicit) instanceof DerivedReturnImplicit
+PASS (new DerivedReturnImplicit) !== undefined
+PASS (new DerivedReturnUndefined) instanceof DerivedReturnUndefined
+PASS (new DerivedReturnUndefined) !== undefined
+PASS (new DerivedReturnThis) instanceof DerivedReturnThis
+PASS (new DerivedReturnObject) instanceof DerivedReturnObject
+PASS typeof (new DerivedReturnObject) === "object"
+PASS (new DerivedReturnObject2) instanceof DerivedReturnObject2
+PASS (new DerivedReturnObject2) === globalVariable
+PASS (new DerivedReturnString)
+PASS (new DerivedReturnNumber)
+PASS (new DerivedReturnNull)
+PASS (new DerivedReturnSymbol)
+PASS (new DerivedThrow)
+
+Derived class not calling super()
+PASS (new DerivedNoSuperNoReturn)
+PASS (new DerivedNoSuperReturnImplicit)
+PASS (new DerivedNoSuperReturnUndefined)
+PASS (new DerivedNoSuperReturnThis)
+PASS (new DerivedNoSuperReturnObject)
+PASS (new DerivedNoSuperReturnObject2)
+PASS (new DerivedNoSuperReturnString)
+PASS (new DerivedNoSuperReturnNumber)
+PASS (new DerivedNoSuperReturnNull)
+PASS (new DerivedNoSuperReturnSymbol)
+PASS (new DerivedNoSuperThrow)
+
+Derived class with default constructor and base class returning different values
+PASS (new DerivedDefaultConstructorWithBaseNoReturn) instanceof DerivedDefaultConstructorWithBaseNoReturn
+PASS (new DerivedDefaultConstructorWithBaseReturnImplicit) instanceof DerivedDefaultConstructorWithBaseReturnImplicit
+PASS (new DerivedDefaultConstructorWithBaseReturnUndefined) instanceof DerivedDefaultConstructorWithBaseReturnUndefined
+PASS (new DerivedDefaultConstructorWithBaseReturnObject) instanceof DerivedDefaultConstructorWithBaseReturnObject
+PASS typeof (new DerivedDefaultConstructorWithBaseReturnObject) === "object"
+PASS (new DerivedDefaultConstructorWithBaseReturnObject2) instanceof DerivedDefaultConstructorWithBaseReturnObject2
+PASS (new DerivedDefaultConstructorWithBaseReturnObject2) === globalVariable
+PASS (new DerivedDefaultConstructorWithBaseReturnThis) instanceof DerivedDefaultConstructorWithBaseReturnThis
+PASS (new DerivedDefaultConstructorWithBaseReturnString) instanceof DerivedDefaultConstructorWithBaseReturnString
+PASS (new DerivedDefaultConstructorWithBaseReturnNumber) instanceof DerivedDefaultConstructorWithBaseReturnNumber
+PASS (new DerivedDefaultConstructorWithBaseReturnNull) instanceof DerivedDefaultConstructorWithBaseReturnNull
+PASS (new DerivedDefaultConstructorWithBaseReturnSymbol) instanceof DerivedDefaultConstructorWithBaseReturnSymbol
+PASS (new DerivedDefaultConstructorWithBaseThrow)
+PASS successfullyParsed
+
+TEST COMPLETE
+

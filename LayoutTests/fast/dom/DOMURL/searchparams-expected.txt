@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: PASS
+CONSOLE MESSAGE: PASS
+CONSOLE MESSAGE: PASS
+CONSOLE MESSAGE: PASS
+CONSOLE MESSAGE: PASS threw exception TypeError: Cannot convert a symbol to a string.
+

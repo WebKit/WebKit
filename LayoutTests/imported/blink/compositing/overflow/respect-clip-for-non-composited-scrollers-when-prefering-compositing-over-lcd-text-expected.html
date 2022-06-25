@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<style>
+#scroller {
+  width: 100px;
+  height: 100px;
+  border: 1px solid black;
+  overflow: scroll;
+  border-radius: 1px;
+}
+
+#scrolled {
+  width: 60px;
+  height: 300px;
+  border: 1px solid black;
+  background: papayawhip;
+}
+
+#composited {
+  width: 10px;
+  height: 10px;
+  will-change: transform;
+  background: green;
+  border: 2px solid orange;
+}
+</style>
+<div id="scroller">
+  <div id="scrolled"></div>
+  <div id="composited"></div>
+</div>
+<script>
+if (window.internals)
+  internals.settings.setPreferCompositingToLCDTextEnabled(false);
+</script>

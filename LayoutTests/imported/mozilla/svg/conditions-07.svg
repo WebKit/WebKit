@@ -1,0 +1,39 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg id="svg-root" width="100%" height="100%"
+  xmlns="http://www.w3.org/2000/svg"
+  xmlns:xlink="http://www.w3.org/1999/xlink" onload="runtest()">
+  <title>Test conditional processing DOM interface for foreignObject</title>
+  <defs>
+    <script>
+      function runtest() {
+        try {
+          var f1 = document.getElementById("f1");
+          var i0 = f1.requiredFeatures.getItem(0);
+
+          if(i0 != "this.is.a.bogus.feature.string") {
+            return;
+          }
+          f1.removeAttribute("requiredFeatures");
+        } catch(e) {
+          var f = document.getElementById("fail");
+          f.setAttribute("fill", "red");
+        }
+      }
+    </script>
+  </defs>
+
+  <rect width="100%" height="100%" fill="lime"/>
+  <!-- background images -->
+  <rect x="100" y="100" width="100" height="100" fill="red"/>
+
+  <!-- tests -->
+  <foreignObject id="f1" x="100" y="100" width="100" height="100" requiredFeatures="this.is.a.bogus.feature.string">
+    <svg>
+      <rect width="100%" height="100%" fill="lime"/>
+    </svg>
+  </foreignObject>
+  <rect id="fail" width="100%" height="100%" fill="none"/>
+</svg>

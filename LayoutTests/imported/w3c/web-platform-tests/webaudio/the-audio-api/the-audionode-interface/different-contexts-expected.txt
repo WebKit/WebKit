@@ -1,0 +1,34 @@
+
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "setup"
+PASS Executing "Test 1"
+PASS Executing "Test 2"
+PASS Executing "Test 3"
+PASS Executing "Test 4"
+PASS Audit report
+PASS > [setup] Contexts for testing
+PASS   c1 = new AudioContext() did not throw an exception.
+PASS   c2 = new AudioContext() did not throw an exception.
+PASS < [setup] All assertions passed. (total 2 assertions)
+PASS > [Test 1] Connect nodes between contexts
+PASS   Test 1: g1 = new GainNode(c1) did not throw an exception.
+PASS   Test 1: g2 = new GainNode(c2) did not throw an exception.
+PASS   Test 1: g2.connect(g1) threw InvalidAccessError: "Source and destination nodes belong to different audio contexts".
+PASS < [Test 1] All assertions passed. (total 3 assertions)
+PASS > [Test 2] Connect AudioParam between contexts
+PASS   Test 2: g1 = new GainNode(c1) did not throw an exception.
+PASS   Test 2: g2 = new GainNode(c2) did not throw an exception.
+PASS   Test 2: g2.connect(g1.gain) threw InvalidAccessError: "Node and AudioParam belong to different audio contexts".
+PASS < [Test 2] All assertions passed. (total 3 assertions)
+PASS > [Test 3] Disconnect nodes between contexts
+PASS   Test 3: g1 = new GainNode(c1) did not throw an exception.
+PASS   Test 3: g2 = new GainNode(c2) did not throw an exception.
+PASS   Test 3: g2.disconnect(g1) threw InvalidAccessError: "The given destination is not connected".
+PASS < [Test 3] All assertions passed. (total 3 assertions)
+PASS > [Test 4] Disconnect AudioParam between contexts
+PASS   Test 4: g1 = new GainNode(c1) did not throw an exception.
+PASS   Test 4: g2 = new GainNode(c2) did not throw an exception.
+PASS   Test 4: g2.connect(g1.gain) threw InvalidAccessError: "The given destination is not connected".
+PASS < [Test 4] All assertions passed. (total 3 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully.
+

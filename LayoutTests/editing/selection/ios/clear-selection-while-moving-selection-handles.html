@@ -1,0 +1,48 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+body {
+    margin: 0;
+    font-size: 18px;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    let target = document.getElementById("target");
+    await UIHelper.longPressElement(target);
+    await UIHelper.waitForSelectionToAppear();
+    let grabberRect = await UIHelper.getSelectionEndGrabberViewRect();
+    let grabberLocationX = grabberRect.left + (grabberRect.width / 2);
+    let grabberLocationY = grabberRect.top + (grabberRect.height / 2);
+
+    selectionChangeCount = 0;
+    document.addEventListener("selectionchange", () => {
+        ++selectionChangeCount;
+        if (selectionChangeCount > 5 && getSelection().rangeCount)
+            getSelection().removeAllRanges();
+    });
+
+    await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder()
+        .begin(grabberLocationX, grabberLocationY)
+        .move(10, grabberLocationY, 1)
+        .end(10, grabberLocationY)
+        .takeResult());
+
+    testPassed("Did not crash");
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
+    <span id="target">nonumyeirmodtempor</span> invidunt ut labore et dolore magna aliquyam erat,
+    sed diam voluptua.
+    <p>This test verifies that programmatically clearing the text selection while interacting with selection handles does not cause a crash.</p>
+</body>
+</html>

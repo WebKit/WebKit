@@ -1,0 +1,7 @@
+
+PASS Property list-style value 'none'
+PASS Property list-style value 'inside'
+PASS Property list-style value 'url("https://localhost/")'
+PASS Property list-style value 'square'
+PASS Property list-style value 'inside url("https://localhost/") square'
+

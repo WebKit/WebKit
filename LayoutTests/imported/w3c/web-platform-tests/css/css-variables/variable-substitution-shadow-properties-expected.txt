@@ -1,0 +1,4 @@
+
+PASS box-shadow
+PASS text-shadow
+box-shadow text-shadow

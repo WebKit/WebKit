@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<body>
+<style>
+.box {
+    display: block;
+    width: 100px;
+    height: 25px;
+}
+defined-element { background: red; color: green; }
+defined-element:defined { background: green; }
+defined-element:not(:defined) { color: red; }
+
+defined-element div { background: red; color: green; }
+defined-element:defined div { background: green; }
+defined-element:not(:defined) div { color: red; }
+
+defined-element + .sibling { background: red; color: green; }
+defined-element:defined + .sibling { background: green; }
+defined-element:not(:defined) + .sibling { color: red; }
+
+defined-element#foo { background: red; color: green; }
+defined-element#foo:defined { background: green; }
+defined-element#foo:not(:defined) { color: red; }
+
+</style>
+<p>Test passes if you see a single 100px by 100px green box below.</p>
+<defined-element class="box">FAIL</defined-element>
+<defined-element class="box"><div>FAIL</div></defined-element>
+<div class="sibling box">FAIL</div>
+<defined-element id="foo" class="box">FAIL</defined-element>
+<script>
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+setTimeout(() => {
+    customElements.define('defined-element', class extends HTMLElement {});
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, 0);
+
+</script>
+</body>
+</html>

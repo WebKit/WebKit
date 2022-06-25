@@ -1,0 +1,8 @@
+Test
+
+PASS cqi respond when selected container changes type (inline-size -> none)
+PASS cqb respond when selected container changes type (size -> none)
+PASS cqb respond when intermediate container changes type (inline-size -> size)
+PASS cqi respond when selected container changes inline-size
+PASS cqb respond when selected container changes block-size
+

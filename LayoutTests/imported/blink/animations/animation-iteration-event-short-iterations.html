@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tests that iteration events are fired when the duration is very short.</title>
+  <style>
+    #box {
+      position: relative;
+      left: 100px;
+      top: 10px;
+      height: 100px;
+      width: 100px;
+      -webkit-animation-duration: 0.001s;
+      -webkit-animation-name: anim;
+      background-color: #999;
+      -webkit-animation-iteration-count: 10;
+    }
+    @-webkit-keyframes anim {
+        from { left: 200px; }
+        to   { left: 300px; }
+    }
+  </style>
+  <script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function fail() {
+      document.getElementById('result').innerHTML = 'FAIL: Got ' + count + ' webkitAnimationCount events';
+    }  
+
+    var count = 0;
+    onload = function()
+    {
+        document.addEventListener('webkitAnimationIteration', function() {
+          ++count;
+        }, false);
+
+        document.addEventListener('webkitAnimationEnd', function() {
+            // We collapse all iteration events that occur within a single
+            // frame into a single event. See http://crbug.com/275263.
+            if (count < 10)
+                document.getElementById('result').innerHTML = 'PASS: Got a reasonable number of webkitAnimationCount events';
+            else
+                fail();
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, false);
+
+        // Animation begins once we append the DOM node to the document.
+        var boxNode = document.createElement('div');
+        boxNode.id = 'box';
+        document.body.appendChild(boxNode);
+    }
+  </script>
+</head>
+<body>
+Tests that iteration events are fired when the duration is very short.
+<pre id="result">FAIL: No webkitAnimationEnd event received</pre>
+</body>
+</html>

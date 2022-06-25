@@ -1,0 +1,7 @@
+Tests that an active wheel event handler on the window remains active.
+PASS windowScrollEventCount is 0
+PASS defaultPrevented is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

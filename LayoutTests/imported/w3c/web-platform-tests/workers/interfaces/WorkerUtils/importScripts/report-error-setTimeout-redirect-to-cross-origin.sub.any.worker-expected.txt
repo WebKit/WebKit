@@ -1,0 +1,10 @@
+
+FAIL WorkerGlobalScope error event: error assert_equals: e.error should be a DOMException expected function "function DOMException() {
+    [native code]
+}" but got function "function Error() {
+    [native code]
+}"
+PASS WorkerGlobalScope error event: message
+PASS WorkerGlobalScope error event: filename
+PASS WorkerGlobalScope error event: lineno
+

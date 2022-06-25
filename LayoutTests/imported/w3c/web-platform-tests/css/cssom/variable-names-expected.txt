@@ -1,0 +1,8 @@
+
+PASS custom property '--a'
+FAIL custom property '--a;b' assert_equals: appears on specified style (after serialization/re-parsing) expected 1 but got 0
+PASS custom property '---'
+FAIL custom property '--\' assert_equals: appears on specified style (after serialization/re-parsing) expected 1 but got 0
+PASS custom property '--ab'
+PASS custom property '--0'
+

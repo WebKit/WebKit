@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script>
+promise_test(async (t) => {
+    if (!window.internals)
+        return;
+    internals.setMediaSessionRestrictions("WebAudio", "backgroundprocessplaybackrestricted");
+
+    // Regular context who is setting its destination upfront, it should be interrupted/uninterrupted following background interruptions.
+    var context1 = new AudioContext;
+    // Context who is setting its destination to a media stream track then to the default destination. It should not be interrupted until its destination changes.
+    var context2 = new AudioContext;
+    // Context who is setting its destination to a media stream track. It should not be interrupted.
+    var context3 = new AudioContext;
+    // Context who is created while in the background, its destination as a media stream track then the default destination. It should not be interrupted until its destination changes.
+    var context4 = new AudioContext;
+
+    t.add_cleanup(() => {
+        context1.close();
+        context2.close();
+        context3.close();
+        context4.close();
+    });
+
+    var source1 = context1.createConstantSource();
+    source1.connect(context1.destination);
+
+    var source2 = context2.createConstantSource();
+    var destination2 = context2.createMediaStreamDestination();
+    source2.connect(destination2);
+
+    var source3 = context3.createConstantSource();
+    var destination3 = context3.createMediaStreamDestination();
+    source3.connect(destination3);
+
+    let stateChangePromise = new Promise((resolve, reject) => {
+        context1.onstatechange = resolve;
+        setTimeout(() => reject("start promise timed out"), 5000);
+    });
+
+    source1.start();
+    source2.start();
+    source3.start();
+
+    await stateChangePromise;
+    await new Promise(resolve => setTimeout(resolve, 10));
+
+    assert_equals(context1.state, "running", "test1a");
+    assert_equals(context2.state, "running", "test1b");
+    assert_equals(context3.state, "running", "test1c");
+
+    stateChangePromise = new Promise((resolve, reject) => {
+        context1.onstatechange = resolve;
+        setTimeout(() => reject("context1 interruption promise timed out"), 5000);
+    })
+    internals.applicationDidEnterBackground(false);
+
+    await stateChangePromise;
+    await new Promise(resolve => setTimeout(resolve, 10));
+
+    assert_equals(context1.state, "interrupted", "test2a");
+    assert_equals(context2.state, "running", "test2b");
+    assert_equals(context3.state, "running", "test2c");
+
+    var source4 = context4.createConstantSource();
+    var destination4 = context4.createMediaStreamDestination();
+    source4.connect(destination4);
+
+    stateChangePromise = new Promise((resolve, reject) => {
+        context2.onstatechange = resolve;
+        setTimeout(() => reject("context2 interruption promise timed out"), 5000);
+    });
+    source2.connect(context2.destination);
+
+    await stateChangePromise;
+    await new Promise(resolve => setTimeout(resolve, 10));
+
+    assert_equals(context1.state, "interrupted", "test3a");
+    assert_equals(context2.state, "interrupted", "test3b");
+    assert_equals(context3.state, "running", "test3c");
+    assert_equals(context4.state, "running", "test3d");
+
+    stateChangePromise = new Promise((resolve, reject) => {
+        context4.onstatechange = resolve;
+        setTimeout(() => reject("context4 interruption promise timed out"), 5000);
+    });
+    source4.connect(context4.destination);
+
+    await stateChangePromise;
+    await new Promise(resolve => setTimeout(resolve, 10));
+
+    assert_equals(context1.state, "interrupted", "test4q");
+    assert_equals(context2.state, "interrupted", "test4b");
+    assert_equals(context3.state, "running", "test4c");
+    assert_equals(context4.state, "interrupted", "test4d");
+
+    stateChangePromise = new Promise((resolve, reject) => {
+        context2.onstatechange = resolve;
+        setTimeout(() => reject("context2 uninterruption promise timed out"), 5000);
+    });
+    internals.applicationWillEnterForeground(false);
+
+    await stateChangePromise;
+    await new Promise(resolve => setTimeout(resolve, 10));
+
+    assert_equals(context1.state, "running", "test5a");
+    assert_equals(context2.state, "running", "test5b");
+    assert_equals(context3.state, "running", "test5c");
+    assert_equals(context4.state, "running", "test5d");
+}, "Tests that media session interruption does not cause AudioContext interruption for AudioContext that do not output audio");
+</script>
+</html>

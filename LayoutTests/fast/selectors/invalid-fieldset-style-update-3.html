@@ -1,0 +1,183 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+:matches(#with-renderer, #without-renderer) * {
+    background-color: rgb(1, 2, 3);
+}
+:matches(#with-renderer, #without-renderer) :invalid {
+    background-color: rgb(4, 5, 6);
+}
+</style>
+</head>
+<body>
+    <template id="test-source">
+        <fieldset class="fieldset1">
+        </fieldset>
+        <fieldset class="fieldset2" disabled>
+        </fieldset>
+    </template>
+    <div id="with-renderer"></div>
+    <div id="without-renderer" style="display:none;"></div>
+</body>
+<script>
+description('Test style update for :invalid applied on a fieldset.');
+
+var withRenderer = document.getElementById("with-renderer");
+var withoutRenderer = document.getElementById("without-renderer");
+var source = document.getElementById("test-source").content;
+
+withRenderer.appendChild(source.cloneNode(true));
+withoutRenderer.appendChild(source.cloneNode(true));
+
+function testStyleAtId(rootId, matchedClass) {
+    var allElements = document.getElementById(rootId).querySelectorAll('*');
+    for (var i = 0; i < allElements.length; ++i) {
+        var expectedStyle = matchedClass.indexOf(allElements[i].className) >= 0 ? 'rgb(4, 5, 6)' : 'rgb(1, 2, 3)';
+        shouldBeEqualToString('getComputedStyle(document.getElementById("' + rootId + '").querySelector(".' + allElements[i].className + '")).backgroundColor', expectedStyle);
+    }
+}
+
+function testStyle(matchedClass) {
+    testStyleAtId('with-renderer', matchedClass);
+    testStyleAtId('without-renderer', matchedClass);
+}
+
+function modifyTree(updateFunction) {
+    updateFunction(withRenderer);
+    updateFunction(withoutRenderer);
+}
+
+debug('');
+debug('Initial state');
+testStyle([]);
+
+debug('');
+debug("Add input1 to fieldset1.");
+modifyTree(function(root) {
+    var input1 = document.createElement('input');
+    input1.className = 'input1';
+    root.querySelector('.fieldset1').appendChild(input1);
+});
+testStyle([]);
+
+debug('');
+debug("Add input2 to fieldset1.");
+modifyTree(function(root) {
+    var input2 = document.createElement('input');
+    input2.className = 'input2';
+    input2.setAttribute('required', '');
+    root.querySelector('.fieldset1').appendChild(input2);
+});
+testStyle(['fieldset1', 'input2']);
+
+debug('');
+debug("Add input3 to fieldset1.");
+modifyTree(function(root) {
+    var input3 = document.createElement('input');
+    input3.className = 'input3';
+    input3.setAttribute('required', '');
+    input3.value = "valid";
+    root.querySelector('.fieldset1').appendChild(input3);
+});
+testStyle(['fieldset1', 'input2']);
+
+debug('');
+debug("Add input4 to fieldset2.");
+modifyTree(function(root) {
+    var input4 = document.createElement('input');
+    input4.className = 'input4';
+    root.querySelector('.fieldset2').appendChild(input4);
+});
+testStyle(['fieldset1', 'input2']);
+
+debug('');
+debug("Add input5 to fieldset2.");
+modifyTree(function(root) {
+    var input5 = document.createElement('input');
+    input5.className = 'input5';
+    input5.setAttribute('required', '');
+    root.querySelector('.fieldset2').appendChild(input5);
+});
+testStyle(['fieldset1', 'input2']);
+
+debug('');
+debug("Add input6 to fieldset2.");
+modifyTree(function(root) {
+    var input6 = document.createElement('input');
+    input6.className = 'input6';
+    input6.setAttribute('required', '');
+    input6.value = "valid"
+    root.querySelector('.fieldset2').appendChild(input6);
+});
+testStyle(['fieldset1', 'input2']);
+
+debug('');
+debug("Enable fieldset2.");
+modifyTree(function(root) {
+    root.querySelector('.fieldset2').removeAttribute('disabled');
+});
+testStyle(['fieldset1', 'input2', 'fieldset2', 'input5']);
+
+debug('');
+debug("Disable fieldset1.");
+modifyTree(function(root) {
+    root.querySelector('.fieldset1').setAttribute('disabled', '');
+});
+testStyle(['fieldset2', 'input5']);
+
+debug('');
+debug("Remove input1");
+modifyTree(function(root) {
+    var input = root.querySelector('.input1');
+    input.parentNode.removeChild(input);
+});
+testStyle(['fieldset2', 'input5']);
+
+debug('');
+debug("Remove input2");
+modifyTree(function(root) {
+    var input = root.querySelector('.input2');
+    input.parentNode.removeChild(input);
+});
+testStyle(['fieldset2', 'input5']);
+
+debug('');
+debug("Remove input3");
+modifyTree(function(root) {
+    var input = root.querySelector('.input3');
+    input.parentNode.removeChild(input);
+});
+testStyle(['fieldset2', 'input5']);
+
+debug('');
+debug("Remove input4");
+modifyTree(function(root) {
+    var input = root.querySelector('.input4');
+    input.parentNode.removeChild(input);
+});
+testStyle(['fieldset2', 'input5']);
+
+debug('');
+debug("Remove input5");
+modifyTree(function(root) {
+    var input = root.querySelector('.input5');
+    input.parentNode.removeChild(input);
+});
+testStyle([]);
+
+debug('');
+debug("Remove input6");
+modifyTree(function(root) {
+    var input = root.querySelector('.input6');
+    input.parentNode.removeChild(input);
+});
+testStyle([]);
+
+
+// Remove the content otherwise it will appear in the results.
+withRenderer.style.display = 'none';
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

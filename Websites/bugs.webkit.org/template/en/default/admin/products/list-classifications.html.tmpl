@@ -1,0 +1,59 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # classifications: array of hashes having the following properties:
+  #   - name: string; The name of the classification
+  #   - description: string; The classification description (html allowed)
+  #   - product_count: number; The number of products in this classification
+  #
+  #%]
+
+[% PROCESS global/header.html.tmpl
+  title = "Select Classification"
+  style_urls = ['skins/standard/admin.css']
+%]
+
+[% columns = [
+     { 
+       name => "name"
+       heading => "Edit products of..."
+       contentlink => 'editproducts.cgi?classification=%%name%%'
+     },
+     { 
+       name => "description"
+       heading => "Description"
+       allow_html_content => 1
+     },
+     { 
+       name => "product_count"
+       class => "right"
+       heading => "Product Count"
+     }
+   ]
+%]
+
+[% IF user.in_group('editcomponents') %]
+  [% columns.push({
+       heading => "Action..."
+       content => "Add product"
+       contentlink => 'editproducts.cgi?action=add&amp;classification=%%name%%' })
+  %]
+[% END %]
+
+[% Hook.process('before_table') %]
+
+[% PROCESS admin/table.html.tmpl
+     columns = columns
+     data = classifications
+%]
+
+[%# No need for the standard edit products footer, as we have an 'add'
+    link in the table %]
+
+[% PROCESS global/footer.html.tmpl %]

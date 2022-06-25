@@ -1,0 +1,22 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayoutFormattingContextEnabled=true InlineFormattingContextIntegrationEnabled=false ] -->
+<style>
+table {
+    font-size: 10px;
+    border-spacing: 0px;
+    padding: 30px;
+    border: 10px solid green;
+}
+
+td {
+    outline: 1px solid red;
+}
+</style>
+<table>
+<tr><td style="width: 22px"></td><td>iiiiiiii iiiiiiii</td></tr>
+<tr><td style="width: 22px"></td><td style="width: 22px; height: 20px;">iiiiiiii</td></tr>
+</table>
+
+<table>
+<tr><td style="width: 22px"></td><td>iiiiiiii iiiiiiii</td></tr>
+<tr><td style="width: 22px"></td><td style="height: 20px;">iiiiiiii</td></tr>
+</table>

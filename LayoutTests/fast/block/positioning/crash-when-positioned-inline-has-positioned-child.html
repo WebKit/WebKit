@@ -1,0 +1,16 @@
+Pass if no assert in debug.
+<div id=wrapper><span id=container style="position: relative;"><span style="position: absolute;"></span></span><div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+document.getElementById("container").innerText;
+document.getElementById("container").setAttribute("style","-webkit-justify-self: stretch;");
+if (window.testRunner)
+    testRunner.waitUntilDone();
+setTimeout(function() { 
+ var element = document.getElementById("wrapper");
+ element.parentNode.removeChild(element);
+  if (window.testRunner)
+      testRunner.notifyDone();
+  }, 0);
+</script>

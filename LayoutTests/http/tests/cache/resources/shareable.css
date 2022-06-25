@@ -1,0 +1,4 @@
+#foo { color: red }
+#bar { color: blue }
+#test1 { background-image:url(/resources/square100.png) }
+#test2 { background-image:url(../disk-cache/resources/generate-response.cgi?Content-Type=image/png&Cache-Control=max-age=100) }

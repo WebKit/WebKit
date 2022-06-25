@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .container {
+            height: 100px;
+            width: 500px;
+            margin: 4px;
+            border: 1px solid black;
+        }
+        .box {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            background-color: green;
+        }
+        
+        /* For manual testing. */
+        .container:hover .box {
+            animation-play-state: running;
+        }
+        
+        .mover {
+            animation: move 1s linear -0.5s paused;
+        }
+        
+        .slider {
+            animation: slide 1s linear -0.5s paused;
+        }
+        
+        @keyframes move {
+            from { left: 0; }
+            to   { left: 400px; }
+        }
+
+        @keyframes slide {
+            from { transform: translate3d(0, 0, 0); }
+            to   { transform: translate3d(400px, 0, 0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="mover box"></div>
+    </div>
+    <div class="container">
+        <div class="slider box"></div>
+    </div>
+</body>
+</html>

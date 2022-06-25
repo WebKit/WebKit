@@ -1,0 +1,12 @@
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpPolicyDelegateCallbacks();
+    testRunner.queueLoad("resources/programatically-navigate-to-notify-done.html");
+}
+
+</script>
+This page navigates to a 2nd page with the "should open external URLs" flag set to false.<br>
+That page then programatically redirects to a 3rd page.<br>
+During the navigation from the 2nd page to the 3rd page the flag should still be false, because no user gesture was involved.<br>

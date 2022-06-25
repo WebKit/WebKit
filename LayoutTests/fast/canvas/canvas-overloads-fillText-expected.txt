@@ -1,0 +1,15 @@
+Test the behavior of CanvasRenderingContext2D.fillText() when called with different numbers of arguments.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS ctx.fillText() threw exception TypeError: Not enough arguments.
+PASS ctx.fillText('moo') threw exception TypeError: Not enough arguments.
+PASS ctx.fillText('moo',0) threw exception TypeError: Not enough arguments.
+PASS ctx.fillText('moo',0,0) is undefined
+PASS ctx.fillText('moo',0,0,0) is undefined
+PASS ctx.fillText('moo',0,0,0,0) is undefined
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

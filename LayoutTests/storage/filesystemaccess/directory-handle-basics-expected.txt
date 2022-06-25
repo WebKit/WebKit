@@ -1,0 +1,20 @@
+This test checks basic funtionalities of FileSystemDirectoryHandle.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS rootHandle.name is ""
+PASS rootHandle.kind is "directory"
+PASS dirHandle.name is "dir"
+PASS dirHandle.kind is "directory"
+PASS isSameEntry is false
+PASS fileHandle.name is "file"
+PASS fileHandle.kind is "file"
+PASS handleNames.length is 2
+PASS handleNames[0] is "dir"
+PASS handleNames[1] is "file"
+PASS createError.toString() is "NotFoundError: The object can not be found here."
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

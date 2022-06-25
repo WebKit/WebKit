@@ -1,0 +1,13 @@
+<script src="../../resources/js-test-pre.js"></script>
+<div id=test></div>
+<script>
+testRunner.addUserStyleSheet("@media (prefers-dark-interface) { #test { color: green } }", true);
+testRunner.addUserStyleSheet("@media not screen and (prefers-dark-interface) { #test { color: green } }", true);
+
+shouldBeEqualToString("getComputedStyle(test).color", "rgb(0, 0, 0)");
+internals.setUseSystemAppearance(true);
+shouldBeEqualToString("getComputedStyle(test).color", "rgb(0, 128, 0)");
+internals.setUseSystemAppearance(false);
+shouldBeEqualToString("getComputedStyle(test).color", "rgb(0, 0, 0)");
+</script>
+<script src="../../resources/js-test-post.js"></script>

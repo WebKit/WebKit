@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+    font-family: "WebAhem";
+    src: url("../../resources/Ahem.ttf") format(truetype);
+}
+* {
+    font: 50px WebAhem;
+}
+</style>
+</head>
+<body>
+<div style="font: 16px serif;">This test makes sure that a crash doesn't occur when focusing an input element styled with a web font. The test is successful if there is no crash.</div>
+<input id="i" type="text" placeholder="asdf">
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+window.setTimeout(function() {
+    var inputElement = document.getElementById("i");
+    inputElement.focus();
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, 0);
+</script>
+</body>
+</html>

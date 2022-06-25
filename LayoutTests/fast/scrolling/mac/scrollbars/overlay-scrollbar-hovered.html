@@ -1,0 +1,61 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ MockScrollbarsEnabled=false ] -->
+<html>
+<head>
+    <style>
+        body {
+            height: 1000px;
+        }
+    </style>
+    <script src="../../../../resources/js-test-pre.js"></script>
+    <script src="../../../../resources/ui-helper.js"></script>
+    
+    <script>
+        jsTestIsAsync = true;
+        
+        window.internals.setUsesOverlayScrollbars(true);
+
+        async function doTest()
+        {
+            description('Test hover over overlay scrollbar');
+            if (!window.internals)
+                return;
+            
+            debug('Document');
+            debug(internals.verticalScrollbarState());
+            
+            let windowWidth = window.innerWidth;
+
+            debug('Hovering vertical scrollbar should show expanded scrollbar');
+            await UIHelper.mouseWheelScrollAt(windowWidth - 8, 10);
+            await UIHelper.waitForCondition(() => {
+                let state = internals.verticalScrollbarState();
+                let expanded = state.indexOf('expanded') != -1;
+                if (expanded)
+                    testPassed('Scrollbar state: ' + state);
+                return expanded;
+            });
+
+            debug('Unhovering vertical scrollbar should hide it');
+            await UIHelper.moveMouseAndWaitForFrame(windowWidth - 20, 10);
+            await UIHelper.moveMouseAndWaitForFrame(windowWidth - 25, 10);
+            await UIHelper.waitForCondition(() => {
+                let state = internals.verticalScrollbarState();
+                let thumbHidden = state.indexOf('visible_thumb') == -1;
+                let trackHidden = state.indexOf('visible_track') == -1;
+                if (thumbHidden && trackHidden)
+                    testPassed('Thumb and track hidden');
+                return thumbHidden && trackHidden;
+            });
+
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+            doTest();
+        }, false);
+    </script>
+</head>
+<body>
+    <script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

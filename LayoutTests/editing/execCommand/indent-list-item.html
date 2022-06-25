@@ -1,0 +1,19 @@
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+</script>
+<div id="description">This test uses the execCommand to Outdent the text below.</div>
+<br>
+<div contenteditable="true">
+<ul>
+<li>Foo</li>
+<li id="item1">Bar</li>
+<li>Baz</li>
+</ul>
+</div>
+<script>
+var s = window.getSelection();
+var p1 = document.getElementById("item1");
+s.setPosition(p1, 0);
+document.execCommand("Indent", false, "");
+</script>

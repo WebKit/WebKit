@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+ <head>
+  <title>CSS Test: Inheriting 'top' changes from relpos grandparent</title>
+  <link rel="author" title="Boris Zbarsky" href="mailto:bzbarsky@mit.edu">
+  <link rel="reviewer" title="Elika J. Etemad" href="http://fantasai.inkedblade.net/contact">
+  <link rel="help" href="http://www.w3.org/TR/CSS21/cascade.html#value-def-inherit">
+  <link rel="help" href="http://www.w3.org/TR/CSS21/visuren.html#position-props">
+  <link rel="help" href="http://www.w3.org/TR/CSS21/visuren.html#propdef-position">
+  <meta name="flags" content="dom">
+  <meta name="assert" content="The position of a positioned element which inherits its 'top' value from its relatively positioned grandparent changes when the grandparent's 'top' value is changed.">
+  <style type="text/css">
+    .testDiv { position: absolute; width: 100px; height: 100px; }
+    #green { top: 4em; background: green; }
+    #red { top: inherit; background: red; }
+    #parent { top: inherit; position: relative; }
+    #grandparent { position: relative; }
+  </style>
+  <script type="text/javascript">
+    window.onload = function() {
+      document.body.offsetWidth;
+      document.getElementById("grandparent").style.top = "2em";
+    }
+  </script>
+ </head>
+ <body>
+   <p>There should be no red.</p>
+   <div id="grandparent">
+     <div id="parent">
+       <div id="red" class="testDiv"></div>
+     </div>
+     <div id="green" class="testDiv"></div>
+   </div>
+ </body>
+</html>

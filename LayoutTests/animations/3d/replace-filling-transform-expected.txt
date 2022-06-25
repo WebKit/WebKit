@@ -1,0 +1,1 @@
+PASS - final state was matrix(1, 0, 0, 1, 50, 200)

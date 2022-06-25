@@ -1,0 +1,16 @@
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function crash()
+{
+    /* Ensure we have no frame when the exception is thrown. */
+    var iframe = parent.document.getElementById("iframe");
+    iframe.parentNode.removeChild(iframe);
+    
+    /* Throw an exception. */
+    throw "crash";
+}
+
+crash();
+</script>

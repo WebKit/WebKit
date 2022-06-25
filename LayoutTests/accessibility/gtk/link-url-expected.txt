@@ -1,0 +1,12 @@
+Verify exposure of the URL of links.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+test1 : AXURL: https://webkit.org/
+test2 : AXURL: LayoutTests/accessibility/gtk/link-url.html
+test3 : AXURL: (null)
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

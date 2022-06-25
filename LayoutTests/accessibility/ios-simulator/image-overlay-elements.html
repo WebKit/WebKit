@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<style>
+img {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+</style>
+</head>
+<body>
+
+<img id="image1" src="../resources/green-400x400.png"></img>
+
+<script>
+    window.jsTestIsAsync = true;
+
+    addEventListener("load", () => {
+        image = document.querySelector("img");
+        internals.installImageOverlay(image, [
+            {
+                topLeft : new DOMPointReadOnly(0, 0),
+                topRight : new DOMPointReadOnly(1, 0),
+                bottomRight : new DOMPointReadOnly(1, 0.5),
+                bottomLeft : new DOMPointReadOnly(0, 0.5),
+                children: [
+                    {
+                        text : "hello",
+                        topLeft : new DOMPointReadOnly(0, 0),
+                        topRight : new DOMPointReadOnly(1, 0),
+                        bottomRight : new DOMPointReadOnly(1, 0.5),
+                        bottomLeft : new DOMPointReadOnly(0, 0.5),
+                    }
+                ],
+            },
+            {
+                topLeft : new DOMPointReadOnly(0, 0.5),
+                topRight : new DOMPointReadOnly(1, 0.5),
+                bottomRight : new DOMPointReadOnly(1, 1),
+                bottomLeft : new DOMPointReadOnly(0, 1),
+                children: [
+                    {
+                        text : "world",
+                        topLeft : new DOMPointReadOnly(0, 0.5),
+                        topRight : new DOMPointReadOnly(1, 0.5),
+                        bottomRight : new DOMPointReadOnly(1, 1),
+                        bottomLeft : new DOMPointReadOnly(0, 1),
+                    }
+                ],
+            }
+        ]);
+
+        runTest();
+    });
+
+    function runTest() {
+        if (window.accessibilityController) {
+            setTimeout(async () => {
+                var axImage = accessibilityController.accessibleElementById("image1");
+                await waitFor(() => {
+                    axImageOverlayElements = axImage.imageOverlayElements;
+                    return axImageOverlayElements.length == 2;
+                });
+                shouldBe("axImageOverlayElements.length", "2");
+
+                for (let axElement of axImageOverlayElements) {
+                    let textMarkerRange = axElement.textMarkerRangeForElement(axElement);
+                    debug(axElement.stringForTextMarkerRange(textMarkerRange));
+                }
+
+                finishJSTest();
+            }, 0);
+        }
+    }
+</script>
+</body>
+</html>

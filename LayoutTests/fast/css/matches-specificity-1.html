@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+<head>
+<style>
+    /* The following 3 rules should all have the same specificity when matching <target>. They should be be applied in order. */
+    foo, bar, target {
+        background-color: red;
+        color: red;
+    }
+    :matches(foo, bar, target) {
+        background-color: green;
+        color: blue;
+    }
+    foo, bar, target {
+        color: white;
+    }
+    * {
+        background-color: white;
+        color: black;
+    }
+</style>
+</head>
+<body>
+    <p>This test the specificity of :matches() with static specificity. The test passes if the text "target" is displayed white on green background.</p>
+    <target>Target</target>
+</body>
+</html>

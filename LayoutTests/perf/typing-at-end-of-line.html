@@ -1,0 +1,32 @@
+<body>
+<script src="../resources/magnitude-perf.js"></script>
+<script>
+document.designMode = 'on';
+
+function placeSelectionAfterFirstBr()
+{
+    var children = document.body.childNodes;
+    for (var i = 0, len = children.length; i < len; i++) {
+        if (children[i].localName == 'br') {
+            window.getSelection().setBaseAndExtent(document.body, i, document.body, i);
+            return;
+        }
+    }
+}
+
+function setupFunction(magnitude)
+{
+    document.body.innerHTML = new Array(magnitude + 1).join('a<br>');
+    placeSelectionAfterFirstBr();
+}
+
+function test(magnitude)
+{
+    if (window.eventSender)
+        eventSender.keyDown('z');
+}
+
+Magnitude.description("Tests that typing at the end of a line where the line-breaks are all BRs is linear in the number of lines.");
+Magnitude.run(setupFunction, test, Magnitude.LINEAR);
+</script>
+</body>

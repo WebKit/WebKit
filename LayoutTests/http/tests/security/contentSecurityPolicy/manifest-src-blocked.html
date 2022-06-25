@@ -1,0 +1,16 @@
+<meta http-equiv="Content-Security-Policy" content="manifest-src 'none'">
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+</script>
+<link rel="manifest" href="manifest.test/manifest.json">
+<script>
+    if (window.testRunner) {
+        testRunner.getApplicationManifestThen(function() {
+            alert("Pass");
+            testRunner.notifyDone();
+        });
+    }
+</script>

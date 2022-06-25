@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+<style>
+    .before:before { content:"before "; }
+    .after:after { content:" after"; }
+</style>
+</head>
+<body id="body">
+<div id="content">
+  <label for="test1" class="before">test 1</label> <input id="test1"/><br />
+  <label for="test2" class="after">test 2</label> <input id="test2"/><br />
+  <label for="test3" class="before after">test 3</label> <input id="test3"/><br />
+  <label for="test4" id="test4" class="before after">test 4</label><br />
+  <label for="test5">test 5 <input value="input value"/></label> <input id="test5"/><br />
+  <label for="test6" class="before after">test 6 <input value="input value"/></label> <input id="test6"/>
+</div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("This tests the accessible text alternatives results for labels with pseudo elements.");
+    if (window.accessibilityController) {
+        for (var i = 1; i <= 6; i++) {
+            var element = document.getElementById("test" + i);
+            var axElement = accessibilityController.accessibleElementById("test" + i);
+            debug(platformTextAlternatives(axElement, true) + "\n");
+        }
+        document.getElementById("content").style.visibility = "hidden";
+    }
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>
+

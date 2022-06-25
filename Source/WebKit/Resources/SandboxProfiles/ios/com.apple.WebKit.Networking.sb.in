@@ -1,0 +1,823 @@
+; Copyright (C) 2014-2022 Apple Inc. All rights reserved.
+;
+; Redistribution and use in source and binary forms, with or without
+; modification, are permitted provided that the following conditions
+; are met:
+; 1. Redistributions of source code must retain the above copyright
+; notice, this list of conditions and the following disclaimer.
+; 2. Redistributions in binary form must reproduce the above copyright
+; notice, this list of conditions and the following disclaimer in the
+; documentation and/or other materials provided with the distribution.
+;
+; THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+; THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+; PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+; BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+; CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+; SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+; INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+; CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+; THE POSSIBILITY OF SUCH DAMAGE.
+
+(version 1)
+(deny default (with partial-symbolication))
+(deny nvram*)
+(deny system-privilege)
+(allow system-audit file-read-metadata)
+
+;; We can remove the catch once we no longer need to support iOS 15 (or earlier))
+(catch (lambda)
+    (import "dyld-support.sb"))
+
+(allow system-privilege (with grant)
+    (require-all
+        (privilege-id PRIV_NET_PRIVILEGED_SOCKET_DELEGATE)
+        (require-entitlement "com.apple.private.network.socket-delegate")))
+
+;; Silence spurious logging due to rdar://20117923 and rdar://72366475
+(deny system-privilege (privilege-id PRIV_GLOBAL_PROC_INFO) (with no-report))
+
+;;;
+;;; The following rules were originally contained in 'common.sb'. We are duplicating them here so we can
+;;; remove unneeded sandbox extensions.
+;;;
+
+(import "util.sb")
+
+(define-once (allow-read-and-issue-generic-extensions . filters)
+    (allow file-read*
+           (apply require-any filters))
+    (allow file-issue-extension
+        (require-all
+            ;; APP_SANDBOX_READ - default for sandbox_issue_extension() & sandbox_issue_fs_extension().
+            (extension-class "com.apple.app-sandbox.read")
+            (apply require-any filters))))
+
+(define-once (allow-read-write-and-issue-generic-extensions . filters)
+    (allow file-read* file-write* 
+           (apply require-any filters))
+    (allow file-read-metadata
+           (apply require-any filters))
+    (allow file-issue-extension
+        (require-all
+            (extension-class "com.apple.app-sandbox.read-write" "com.apple.app-sandbox.read")
+            (apply require-any filters))))
+
+(define-once (allow-network-common)
+    ;; <rdar://problem/8645367>
+    (allow system-socket (require-all (socket-domain AF_SYSTEM) (socket-protocol 2)))
+    (allow network-outbound
+           (control-name "com.apple.netsrc"))
+
+    (allow sysctl-read
+           (sysctl-name-prefix "net.routetable."))
+
+    ;; <rdar://problem/10642881>
+    (allow file-read*
+           (literal "/private/var/preferences/com.apple.networkd.plist"))
+
+    ;; <rdar://problem/27580907>
+    (allow file-read*
+           (literal "/private/var/Managed Preferences/mobile/com.apple.SystemConfiguration.plist"))
+
+    ;; <rdar://problem/13679154>
+    (deny file-read* 
+           (literal "/private/var/preferences/com.apple.NetworkStatistics.plist"))
+
+    ;; <rdar://problem/15711661>
+    (allow mach-lookup 
+           (global-name "com.apple.nesessionmanager"))
+
+    ;; <rdar://problem/7693463>
+    (deny system-socket (socket-domain AF_ROUTE))
+
+    (if gizmo?
+        (with-filter
+            (require-any
+                (require-entitlement "com.apple.security.network.client")
+                (require-entitlement "com.apple.security.network.server"))
+            (allow network-outbound (literal "/private/var/run/mDNSResponder"))
+            (allow mach-lookup (global-name "com.apple.dnssd.service"))) ;; <rdar://problem/55562091>
+        (begin
+            (allow network-outbound (literal "/private/var/run/mDNSResponder"))
+            (allow mach-lookup (global-name "com.apple.dnssd.service")))) ;; <rdar://problem/55562091>
+
+    (deny mach-lookup 
+           (global-name "com.apple.SystemConfiguration.helper")
+           (global-name "com.apple.SystemConfiguration.SCNetworkReachability")
+           (global-name "com.apple.SystemConfiguration.DNSConfiguration")
+           (global-name "com.apple.SystemConfiguration.PPPController"))
+    ;; <rdar://problem/10962803>
+    ;; <rdar://problem/13238730>
+    (allow mach-lookup 
+           (global-name "com.apple.SystemConfiguration.configd")
+           (global-name "com.apple.SystemConfiguration.NetworkInformation"))
+
+    ;; <rdar://problem/11792470>
+    ;; <rdar://problem/13305819>
+    (deny mach-lookup 
+           (global-name "com.apple.commcenter.xpc")
+           (global-name "com.apple.commcenter.cupolicy.xpc"))
+
+    (deny mach-lookup 
+           (global-name "com.apple.securityd")
+           (global-name "com.apple.symptomsd"))
+    (allow mach-lookup
+           (global-name "com.apple.trustd"))
+    (deny file-read* 
+           (literal "/private/var/preferences/com.apple.security.plist"))
+
+    ;; <rdar://problem/13301795>
+    (allow mach-lookup 
+           (global-name "com.apple.usymptomsd")
+           (global-name "com.apple.symptoms.symptomsd.managed_events")) ; <rdar://problem/32768772>
+
+    (with-filter (entitlement-is-present "com.apple.private.networkextension.configuration")
+           (allow file-read*  (literal "/private/var/preferences/com.apple.networkextension.plist")))
+
+    (allow file-read* 
+        (literal "/private/var/preferences/com.apple.networkextension.uuidcache.plist")
+        (prefix "/private/var/db/com.apple.networkextension.")
+    )
+
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+    (allow file-read* (literal "/private/var/Managed Preferences/mobile/com.apple.webcontentfilter.plist"))
+#endif
+
+    (allow mach-lookup
+           (global-name "com.apple.AppSSO.service-xpc"))
+    (deny ipc-posix-shm-read-data 
+           (ipc-posix-name "/com.apple.AppSSO.version"))
+
+    ;; <rdar://problem/30452093>
+    (multipath-tcp))
+
+(define-once (network-client . filters)
+    (allow-network-common)
+
+    ;; <rdar://problem/9193431>
+    (deny mach-lookup 
+           (global-name "com.apple.networkd"))
+
+    ;; <rdar://problem/20094008>
+    ;; <rdar://problem/24689958>
+    (with-filter (require-any
+                   (require-entitlement "com.apple.networkd.advisory_socket")
+                   (require-entitlement "com.apple.networkd.disable_opportunistic")
+                   (require-entitlement "com.apple.networkd.modify_settings")
+                   (require-entitlement "com.apple.networkd.persistent_interface")
+                   (require-entitlement "com.apple.networkd_privileged"))
+        (deny mach-lookup 
+               (global-name "com.apple.networkd_privileged")))
+
+    ;; <rdar://problem/20201593>
+    (deny mach-lookup 
+        (global-name "com.apple.ak.anisette.xpc")
+        (global-name "com.apple.ak.auth.xpc"))
+
+    ;; <rdar://problem/15897781>
+    (deny mach-lookup 
+           (global-name "com.apple.nsurlsessiond"))
+    (allow file-issue-extension
+        (require-all
+            (executable-bundle)
+            (extension-class "com.apple.nsurlsessiond.readonly")))
+
+    ;; <rdar://problem/20617514>
+    (when gizmo?
+        (allow mach-lookup
+            (global-name "com.apple.nsurlsessiond.NSURLSessionProxyService")
+            (global-name "com.apple.sharingd.NSURLSessionProxyService")))
+
+    ;; <rdar://problem/15608009>
+    (deny mach-lookup 
+           (global-name "com.apple.nsurlstorage-cache"))
+
+    ;; <rdar://86781432>
+    (allow mach-lookup
+           (global-name "com.apple.cfnetwork.AuthBrokerAgent"))
+    ;; <rdar://problem/10423007>
+    (allow mach-lookup 
+           (global-name "com.apple.cfnetwork.cfnetworkagent"))
+
+    ;; <rdar://problem/12620714>
+    (deny file-write-create (with no-report)
+          (home-prefix "/Library/Logs/CrashReporter/CFNetwork_"))
+
+    (deny mach-lookup 
+           (global-name "com.apple.cookied"))
+
+    ;; <rdar://problem/17910466>
+    (allow mach-lookup
+           (global-name "com.apple.accountsd.accountmanager"))
+
+    ;; GSS-API
+    (allow mach-lookup
+           (global-name "com.apple.GSSCred"))
+
+    ;; <rdar://problem/17853959>
+    (mobile-keybag-access)
+
+    (allow mach-lookup
+           (global-name "com.apple.nehelper"))
+
+    (allow mach-lookup
+           (global-name "com.apple.appstored.xpc.request"))
+
+    ;; <rdar://89031731>
+    (allow mach-lookup
+        (global-name "com.apple.networkserviceproxy.fetch-token"))
+           
+    (allow-well-known-system-group-container-literal-read
+           "/systemgroup.com.apple.nsurlstoragedresources/Library/dafsaData.bin")
+
+    ;; <rdar://problem/33277999>
+    (mobile-preferences-read "com.apple.CFNetwork")
+
+    (if (null? filters)
+        (allow network-outbound)
+    ; else
+        (allow network-outbound (apply require-any filters))))
+
+(define-once (multipath-tcp)
+    (allow system-socket (socket-domain 39)))
+
+(define-once (managed-configuration-read-public)
+    (allow file-read*
+           (well-known-system-group-container-subpath "/systemgroup.com.apple.configurationprofiles/Library/ConfigurationProfiles/PublicInfo")
+           (front-user-home-subpath "/Library/ConfigurationProfiles/PublicInfo")
+           (front-user-home-subpath "/Library/UserConfigurationProfiles/PublicInfo"))
+    (deny mach-lookup 
+           (global-name "com.apple.managedconfiguration.profiled.public")))
+
+(define-once (allow-preferences-common)
+    (allow file-read-metadata 
+           (home-literal "")
+           (home-literal "/Library/Preferences")))
+
+(define-once (mobile-preferences-read . domains)
+    (allow-preferences-common)
+    (for-each (lambda (domain)
+        (begin
+            (allow user-preference-read (preference-domain domain))
+            (allow file-read* 
+                (home-literal (string-append "/Library/Preferences/" domain ".plist")))))
+        domains))
+
+(define-once (mobile-keybag-access)
+    (allow iokit-open
+        (iokit-user-client-class "AppleKeyStoreUserClient") ;; Needed by NSURLCache
+))
+
+(define-once (internal-debugging-support)
+        ;; <rdar://problem/8379706>
+        ;; <rdar://problem/12868101>
+        ;; <rdar://problem/22766887>
+        ;; <rdar://problem/22880365>
+        (allow file-read* file-map-executable
+               (subpath "/Developer"))
+
+        ;; <rdar://problem/7674121>
+        ;; <rdar://problem/9151290>
+        (allow ipc-posix-shm
+               (ipc-posix-name-prefix "stack-logs")
+               (ipc-posix-name-prefix "OA-")
+               (ipc-posix-name-prefix "/FSM-"))
+
+        (with-filter (system-attribute apple-internal)
+            ;; <rdar://problem/8565035>
+            ;; <rdar://problem/23857452>
+            ;; <rdar://problem/72317112>
+            (allow file-read* file-map-executable
+                   (subpath "/AppleInternal")
+                   (subpath "/usr/local/lib")
+                   (subpath "/usr/appleinternal/lib")))
+            (with-elevated-precedence
+                (allow file-read* file-map-executable file-issue-extension
+                   (front-user-home-subpath "/XcodeBuiltProducts")))
+
+        ;; <rdar://problem/8107758>
+        (allow file-read* file-map-executable
+               (subpath "/System/Library/Frameworks")
+               (subpath "/System/Library/PrivateFrameworks"))
+
+        ;; <rdar://problem/11455762>
+        (allow mach-lookup
+               (global-name "com.apple.hangtracerd"))
+        ;; <rdar://problem/32544921>
+        (mobile-preferences-read "com.apple.hangtracer")
+
+        ;; <rdar://problem/9090627>
+        (allow mach-lookup
+             (global-name "com.apple.osanalytics.osanalyticshelper")))
+
+(define required-etc-files
+  (literal "/private/etc/hosts"
+           "/private/etc/passwd"
+           "/private/etc/services"))
+
+(define-once (allow-multi-instance-xpc-services)
+    ;; <rdar://problem/46716068>
+    (deny mach-lookup
+           (with message "Create a radar and set it as a blocker to rdar://problem/48527566")
+           (xpc-service-name "com.apple.WebKit.Networking"
+                             "com.apple.WebKit.WebContent")
+))
+
+(deny file-map-executable)
+(deny file-write-mount file-write-unmount)
+(allow file-read-metadata 
+    (vnode-type DIRECTORY))
+
+(with-elevated-precedence
+    ;; System files.
+    (allow file-read*
+        (subpath "/usr/lib"
+                 "/usr/share"
+                 "/private/var/db/timezone"
+                 "/private/var/preferences/Logging"))
+
+    (allow-read-and-issue-generic-extensions
+         (subpath "/Library/RegionFeatures"
+                  "/System/Library"))
+    
+    (allow file-map-executable
+        (subpath "/System/Library")
+        (subpath "/usr/lib"))
+
+    (allow file-read-metadata 
+        (vnode-type SYMLINK))
+
+    (allow user-preference-read (preference-domain "kCFPreferencesAnyApplication"))
+    (allow file-read*
+           (front-user-home-literal "/Library/Preferences/.GlobalPreferences.plist")
+           (front-user-home-literal "/Library/Preferences/.GlobalPreferences_m.plist"))
+
+    (allow file-read*
+           (literal "/private/var/Managed Preferences/mobile/.GlobalPreferences.plist"))
+    (allow managed-preference-read (preference-domain "kCFPreferencesAnyApplication"))
+
+    (deny file-read-metadata 
+        (home-literal "/Library/Caches/powerlog.launchd"))
+
+    (allow-read-and-issue-generic-extensions (executable-bundle))
+    (allow file-map-executable  (executable-bundle))
+
+    (deny file-read-data file-issue-extension file-map-executable
+        (require-all
+            (executable-bundle)
+            (regex #"/[^/]+/SC_Info/")))
+
+    (with-filter (global-name-prefix "")
+        (deny mach-lookup 
+               (extension "com.apple.security.exception.mach-lookup.global-name")))
+    (with-filter (local-name-prefix "")
+        (deny mach-lookup 
+               (extension "com.apple.security.exception.mach-lookup.local-name"))
+    )
+    (allow managed-preference-read
+           (extension "com.apple.security.exception.managed-preference.read-only"))
+    (allow user-preference-read
+           (extension "com.apple.security.exception.shared-preference.read-only"))
+    (allow sysctl-read
+           (extension "com.apple.security.exception.sysctl.read-only"))
+    (allow sysctl-read sysctl-write
+           (extension "com.apple.security.exception.sysctl.read-write"))
+
+    (allow file-issue-extension
+          (require-all
+              (extension-class "com.apple.nsurlstorage.extension-cache")
+              (extension "com.apple.security.exception.files.home-relative-path.read-write")
+              (require-any
+                  (prefix "/private/var/root/Library/Caches/")
+                  (front-user-home-prefix "/Library/Caches/"))))
+
+    (with-filter (require-entitlement "com.apple.security.exception.process-info")
+        (allow process-info-pidinfo process-info-pidfdinfo process-info-pidfileportinfo process-info-rusage process-info-codesignature)
+        (allow sysctl-read 
+               (sysctl-name-prefix "kern.proc.")
+               (sysctl-name-prefix "kern.procargs2."))))
+
+(with-filter (system-attribute apple-internal)
+    (internal-debugging-support)
+)
+
+(allow file-read*
+    required-etc-files)
+
+(allow file-read* (with message "Allowing read access to root")
+    (literal "/"))
+
+(allow mach-lookup
+    (global-name "com.apple.logd")
+    (global-name "com.apple.logd.events"))
+
+(allow mach-lookup 
+    (global-name "com.apple.runningboard")) ;; Needed by process assertion code (ProcessTaskStateObserver).
+
+(allow-multi-instance-xpc-services)
+
+(allow system-sched
+    (require-entitlement "com.apple.private.kernel.override-cpumon"))
+
+(with-filter (system-attribute apple-internal)
+    (allow sysctl-read
+           (sysctl-name "kern.dtrace.dof_mode"))
+    (allow sysctl-read sysctl-write
+           (sysctl-name "vm.footprint_suspend")))
+
+;; Needed by WebKit LOG macros and ASL logging.
+(deny file-read-metadata 
+       (literal "/private/var/run/syslog"))
+
+;; ObjC map_images needs to send logging data to syslog. <rdar://problem/39778918>
+(with-filter (system-attribute apple-internal)
+    (allow network-outbound
+       (literal "/private/var/run/syslog")
+    )
+)
+
+(allow mach-lookup
+    (global-name "com.apple.system.notification_center"))
+(allow ipc-posix-shm-read*
+    (ipc-posix-name "apple.shm.notification_center")) ;; Needed by os_log_create
+
+(deny mach-lookup 
+    (global-name "com.apple.distributed_notifications@1v3"))
+
+(managed-configuration-read-public)
+
+(deny mach-lookup 
+    (global-name "com.apple.ctkd.token-client"))
+
+(deny system-info (with no-report)
+    (info-type "net.link.addr"))
+
+(allow mach-lookup
+    (global-name "com.apple.system.libinfo.muser"))
+
+(allow mach-task-name (target self))
+
+(deny process-info*)
+(allow process-info-pidinfo)
+(allow process-info-pidfdinfo (target self))
+(allow process-info-pidfileportinfo (target self))
+(allow process-info-setcontrol (target self))
+(allow process-info-dirtycontrol (target self))
+(allow process-info-rusage (target self))
+(allow process-info-codesignature (target self))
+
+;;;
+;;; End rules originally copied from 'common.sb'
+;;;
+
+(deny mach-lookup (xpc-service-name-prefix ""))
+
+(deny lsopen)
+
+(deny sysctl* )
+(allow sysctl-read
+    (sysctl-name
+        "hw.activecpu"
+#if PLATFORM(WATCHOS)
+        "hw.cpu64bit_capable"
+#endif
+        "hw.machine"
+        "hw.memsize"
+        "hw.ncpu"
+        "hw.pagesize_compat"
+        "kern.bootargs"
+        "kern.hostname"
+        "kern.maxfilesperproc"
+        "kern.osproductversion"
+        "kern.osrelease"
+        "kern.ostype"
+        "kern.osvariant_status"
+        "kern.osversion"
+        "kern.secure_kernel"
+        "kern.version"
+        "vm.footprint_suspend")
+    (sysctl-name-prefix "kern.proc.pid.")
+)
+
+;; Access to client's cache folder & re-vending to CFNetwork.
+;; FIXME: Remove the webkit specific extension classes <rdar://problem/17755931>
+(allow file-issue-extension (require-all
+    (extension "com.apple.app-sandbox.read-write")
+    (extension-class "com.apple.nsurlstorage.extension-cache")))
+
+;; App sandbox extensions
+(allow file-read* file-write* (extension "com.apple.app-sandbox.read-write"))
+(allow file-read* (extension "com.apple.app-sandbox.read"))
+
+;; FIXME: <rdar://problem/17909681> SSO expects to be able to walk the parent
+;; bundle to find Info plists, so we jump through a few hoops here to provide
+;; enough access to make it possible.
+
+;; IOKit user clients
+(deny iokit-open 
+       (iokit-user-client-class "RootDomainUserClient") ;; Needed by PowerObserver
+)
+
+;; Various services required by CFNetwork and other frameworks
+(deny mach-lookup 
+       (global-name "com.apple.PowerManagement.control"))
+
+(network-client (remote tcp) (remote udp))
+
+;; allow 3rd party applications to access nsurlstoraged's top level domain data cache
+(allow-well-known-system-group-container-subpath-read
+    "/systemgroup.com.apple.nsurlstoragedresources/Library/dafsaData.bin")
+
+(allow file-read-data
+    (literal "/usr/local/lib/log") ; <rdar://problem/36629495>
+)
+
+;; Security framework
+(deny mach-lookup
+    (global-name "com.apple.ocspd")
+    (global-name "com.apple.securityd"))
+
+;; PassKit framework
+(allow mach-lookup
+    (global-name "com.apple.passd.in-app-payment")
+    (global-name "com.apple.passd.library"))
+
+(deny mach-lookup 
+    (global-name "com.apple.FileCoordination")
+    (global-name "com.apple.dmd.policy"))
+
+(allow mach-lookup 
+    (global-name "com.apple.siri.context.service")
+    (global-name "com.apple.ctcategories.service"))
+
+(deny file-write-create
+      (vnode-type SYMLINK))
+
+;; FIXME should be removed when <rdar://problem/30498072> is fixed.
+(allow network* 
+    (local udp)
+    (remote udp)
+    (local tcp)
+    (remote tcp))
+
+;;; <rdar://problem/9876970>
+(deny network-outbound
+      (remote tcp "localhost:62078"))
+
+;; Various services required by system frameworks
+(allow mach-lookup 
+    (global-name "com.apple.lsd.mapdb"))
+
+(with-filter (system-attribute apple-internal)
+    (allow mach-lookup
+        (global-name "com.apple.diagnosticd")
+        (global-name "com.apple.aggregated")
+        (global-name "com.apple.analyticsd")))
+
+;; For reporting progress for active downloads <rdar://problem/44405661>
+(allow mach-lookup
+    (global-name "com.apple.ProgressReporting"))
+
+ ;; <rdar://problem/47598758>
+(allow mach-lookup 
+    (global-name "com.apple.nesessionmanager.content-filter"))
+
+;; Access to ContainerManager
+(allow mach-lookup 
+    (global-name "com.apple.containermanagerd"))
+(allow ipc-posix-sem-open
+    (ipc-posix-name "containermanagerd.fb_check"))
+
+(allow file-read*
+    (literal "/dev/urandom"))
+
+(if (system-attribute apple-internal)
+    (allow file-read* file-write-data file-ioctl 
+        (literal "/dev/dtracehelper"))
+; else
+    (deny (with no-log) file-read* file-write-data file-ioctl
+        (literal "/dev/dtracehelper"))
+)
+
+(allow mach-lookup (with telemetry) (global-name "com.apple.webkit.adattributiond.service"))
+
+;; Access to MobileGestalt
+(deny mach-lookup 
+    (global-name "com.apple.mobilegestalt.xpc"))
+(allow file-read*
+    (well-known-system-group-container-literal "/systemgroup.com.apple.mobilegestaltcache/Library/Caches/com.apple.MobileGestalt.plist"))
+(allow iokit-get-properties
+    (iokit-property "IORegistryEntryPropertyKeys"))
+
+;; Needed for TCC.
+(allow mach-lookup
+    (global-name "com.apple.tccd"))
+
+(when (defined? 'syscall-unix)
+    (deny syscall-unix (with telemetry))
+    (allow syscall-unix (syscall-number
+        SYS___channel_get_info
+        SYS___channel_open
+        SYS___channel_sync
+        SYS___disable_threadsignal
+        SYS___mac_syscall
+        SYS___pthread_kill
+        SYS___pthread_sigmask
+        SYS___semwait_signal
+        SYS_abort_with_payload
+        SYS_access
+        SYS_bind
+        SYS_bsdthread_create
+        SYS_bsdthread_ctl
+        SYS_bsdthread_register
+        SYS_bsdthread_terminate
+        SYS_change_fdguard_np
+        SYS_chdir
+        SYS_close
+        SYS_close_nocancel
+        SYS_connect
+        SYS_connect_nocancel
+        SYS_csops
+        SYS_csops_audittoken
+        SYS_dup
+        SYS_dup2
+        SYS_exit
+        SYS_fcntl
+        SYS_fcntl_nocancel
+        SYS_ffsctl
+        SYS_fileport_makefd
+        SYS_fsgetpath
+        SYS_fstat64
+        SYS_fstat64_extended
+        SYS_fstatat64
+        SYS_fstatfs64
+        SYS_fsync
+        SYS_ftruncate
+        SYS_getattrlist
+        SYS_getdirentries64
+        SYS_getegid
+        SYS_getentropy
+        SYS_geteuid
+        SYS_getfsstat64
+        SYS_getgid
+        SYS_getpid
+        SYS_getrlimit
+        SYS_getsockname
+        SYS_getsockopt
+        SYS_gettid
+        SYS_gettimeofday
+        SYS_getuid
+        SYS_guarded_close_np
+        SYS_guarded_open_dprotected_np
+        SYS_guarded_open_np
+        SYS_guarded_pwrite_np
+        SYS_ioctl
+        SYS_iopolicysys
+        SYS_issetugid
+        SYS_kdebug_trace64
+        SYS_kdebug_trace_string
+        SYS_kdebug_typefilter
+        SYS_kevent
+        SYS_kevent_id
+        SYS_kevent_qos
+        SYS_kqueue
+        SYS_link
+        SYS_listxattr
+        SYS_lseek
+        SYS_lstat64
+        SYS_lstat64_extended
+        SYS_madvise
+        SYS_memorystatus_control
+        SYS_mkdir
+        SYS_mkdirat
+        SYS_mmap
+        SYS_mprotect
+        SYS_msync
+        SYS_munmap
+        SYS_necp_client_action
+        SYS_necp_open
+        SYS_objc_bp_assist_cfg_np
+        SYS_open
+        SYS_open_dprotected_np
+        SYS_open_nocancel
+        SYS_openat
+        SYS_os_fault_with_payload
+        SYS_pathconf
+        SYS_persona
+        SYS_pipe
+        SYS_pread
+        SYS_pread_nocancel
+        SYS_proc_info
+        SYS_pselect
+        SYS_psynch_cvbroad
+        SYS_psynch_cvclrprepost
+        SYS_psynch_cvsignal
+        SYS_psynch_cvwait
+        SYS_psynch_mutexdrop
+        SYS_psynch_mutexwait
+        SYS_psynch_rw_rdlock
+        SYS_psynch_rw_unlock
+        SYS_pwrite_nocancel
+        SYS_read
+        SYS_read_nocancel
+        SYS_readlink
+        SYS_recvfrom
+        SYS_recvfrom_nocancel
+        SYS_recvmsg
+        SYS_rename
+        SYS_rmdir
+        SYS_select
+        SYS_select_nocancel
+        SYS_sem_close
+        SYS_sem_open
+        SYS_sendmsg
+        SYS_sendmsg_nocancel
+        SYS_sendto
+        SYS_sendto_nocancel
+        SYS_setattrlistat
+        SYS_setrlimit
+        SYS_setsockopt
+        SYS_setxattr
+        SYS_shared_region_check_np
+        SYS_shm_open
+        SYS_shutdown
+        SYS_sigaction
+        SYS_sigaltstack
+        SYS_sigprocmask
+        SYS_socket
+        SYS_socketpair
+        SYS_stat64
+        SYS_statfs64
+        SYS_sysctl
+        SYS_sysctlbyname
+        SYS_thread_selfid
+        SYS_ulock_wait
+        SYS_ulock_wake
+        SYS_unlink
+        SYS_workq_kernreturn
+        SYS_workq_open
+        SYS_write
+        SYS_write_nocancel
+        SYS_writev)))
+
+(when (defined? 'SYS_map_with_linking_np)
+    (allow syscall-unix (syscall-number SYS_map_with_linking_np)))
+
+(when (defined? 'syscall-mach)
+    (deny syscall-mach (with telemetry))
+    (allow syscall-mach
+        (machtrap-number
+            MSC__kernelrpc_mach_port_allocate_trap
+            MSC__kernelrpc_mach_port_construct_trap
+            MSC__kernelrpc_mach_port_deallocate_trap
+            MSC__kernelrpc_mach_port_destruct_trap
+            MSC__kernelrpc_mach_port_extract_member_trap
+            MSC__kernelrpc_mach_port_guard_trap
+            MSC__kernelrpc_mach_port_insert_member_trap
+            MSC__kernelrpc_mach_port_insert_right_trap
+            MSC__kernelrpc_mach_port_mod_refs_trap
+            MSC__kernelrpc_mach_port_request_notification_trap
+            MSC__kernelrpc_mach_port_type_trap
+            MSC__kernelrpc_mach_port_unguard_trap
+            MSC__kernelrpc_mach_vm_allocate_trap
+            MSC__kernelrpc_mach_vm_deallocate_trap
+            MSC__kernelrpc_mach_vm_map_trap
+            MSC__kernelrpc_mach_vm_protect_trap
+            MSC__kernelrpc_mach_vm_purgable_control_trap
+            MSC_host_create_mach_voucher_trap
+            MSC_host_self_trap
+            MSC_mach_generate_activity_id
+            MSC_mach_msg_trap
+            MSC_mach_reply_port
+            MSC_mach_timebase_info_trap
+            MSC_mach_voucher_extract_attr_recipe_trap
+            MSC_mk_timer_arm
+            MSC_mk_timer_cancel
+            MSC_mk_timer_create
+            MSC_mk_timer_destroy
+            MSC_semaphore_signal_trap
+            MSC_semaphore_wait_trap
+            MSC_syscall_thread_switch
+            MSC_task_self_trap
+            MSC_thread_get_special_reply_port)))
+
+(when (defined? 'mach-kernel-endpoint)
+    (allow mach-kernel-endpoint
+        (apply-message-filter
+            (allow mach-message-send (with report) ))))
+
+#if ENABLE(SYSTEM_CONTENT_PATH_SANDBOX_RULES)
+#include <WebKitAdditions/SystemContentSandbox-ios.defs>
+
+(allow file-read* file-test-existence
+    (apply subpath file-read-existence-secondary-paths))
+
+(allow file-map-executable
+    (apply subpath secondary-framework-and-dylib-paths))
+
+(allow-read-and-issue-generic-extensions
+    (apply subpath issue-extension-secondary-paths))
+#endif

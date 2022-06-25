@@ -1,0 +1,27 @@
+
+PASS Empty module without imports argument
+PASS Empty module with undefined imports argument
+PASS Empty module with empty imports argument
+PASS getter order for imports object
+PASS imports
+PASS imports with empty module names
+PASS imports with empty names
+PASS exports with empty name: function
+PASS exports with empty name: table
+PASS exports with empty name: global
+PASS No imports
+PASS exports and imports
+PASS i64 exports and imports
+PASS import with i32-returning function
+PASS import with function that takes and returns i32
+PASS import with i64-returning function
+PASS import with function that takes and returns i64
+PASS import with i32-taking function
+PASS import with i64-taking function
+PASS export i64-returning function
+PASS i32 mutable WebAssembly.Global import
+PASS i64 mutable WebAssembly.Global import
+PASS Multiple i64 arguments
+PASS stray argument
+PASS Synchronous options handling
+

@@ -1,0 +1,19 @@
+
+PASS Setting binaryType to 'blob' should succeed
+PASS Setting binaryType to 'arraybuffer' should succeed
+FAIL Setting invalid binaryType 'jellyfish' should throw SyntaxError assert_throws_dom: function "() => {
+      dc.binaryType = binaryType;
+    }" threw object "TypeMismatchError: The type of an object was incompatible with the expected type of the parameter associated to the object." that is not a DOMException SyntaxError: property "code" is equal to 17, expected 12
+FAIL Setting invalid binaryType 'arraybuffer ' should throw SyntaxError assert_throws_dom: function "() => {
+      dc.binaryType = binaryType;
+    }" threw object "TypeMismatchError: The type of an object was incompatible with the expected type of the parameter associated to the object." that is not a DOMException SyntaxError: property "code" is equal to 17, expected 12
+FAIL Setting invalid binaryType '' should throw SyntaxError assert_throws_dom: function "() => {
+      dc.binaryType = binaryType;
+    }" threw object "TypeMismatchError: The type of an object was incompatible with the expected type of the parameter associated to the object." that is not a DOMException SyntaxError: property "code" is equal to 17, expected 12
+FAIL Setting invalid binaryType 'null' should throw SyntaxError assert_throws_dom: function "() => {
+      dc.binaryType = binaryType;
+    }" threw object "TypeMismatchError: The type of an object was incompatible with the expected type of the parameter associated to the object." that is not a DOMException SyntaxError: property "code" is equal to 17, expected 12
+FAIL Setting invalid binaryType 'undefined' should throw SyntaxError assert_throws_dom: function "() => {
+      dc.binaryType = binaryType;
+    }" threw object "TypeMismatchError: The type of an object was incompatible with the expected type of the parameter associated to the object." that is not a DOMException SyntaxError: property "code" is equal to 17, expected 12
+

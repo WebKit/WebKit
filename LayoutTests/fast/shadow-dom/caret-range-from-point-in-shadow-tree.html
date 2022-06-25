@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="test"><span><i><br></i></span></div>
+<div id="console"></div>
+<script src="../../resources/js-test.js"></script>
+<style>
+#test { padding-left: 10px; border: solid 1px; }
+#test > span { border-left: solid 1px green; }
+</style>
+<script>
+
+let host = document.querySelector('#test > span');
+let shadowRoot = host.attachShadow({mode: 'closed'});
+shadowRoot.innerHTML = '<b><br></b>';
+
+function markup(node) { return node.innerHTML.replace(/</g, '&lt;'); }
+
+debug(`host: ${markup(host)}, shadowRoot: ${markup(shadowRoot)}`);
+evalAndLog('range = document.caretRangeFromPoint(host.parentNode.offsetLeft + 1, host.parentNode.offsetTop + 1)');
+shouldBe('range.startContainer', 'host');
+shouldBe('range.startOffset', '0');
+shouldBe('range.startContainer', 'range.endContainer');
+shouldBe('range.startOffset', 'range.endOffset');
+
+debug('')
+debug(`host: ${markup(host)}, shadowRoot: ${markup(shadowRoot)}`);
+evalAndLog('range = document.caretRangeFromPoint(host.parentNode.offsetLeft + 100, host.parentNode.offsetTop + 1)');
+shouldBe('range.startContainer', 'host');
+shouldBe('range.startOffset', '0');
+shouldBe('range.startContainer', 'range.endContainer');
+shouldBe('range.startOffset', 'range.endOffset');
+
+debug('');
+shadowRoot.innerHTML = 'hi';
+debug(`host: ${markup(host)}, shadowRoot: ${markup(shadowRoot)}`);
+evalAndLog('range = document.caretRangeFromPoint(host.parentNode.offsetLeft + 1, host.parentNode.offsetTop + 1)');
+shouldBe('range.startContainer', 'host');
+shouldBe('range.startOffset', '0');
+shouldBe('range.startContainer', 'range.endContainer');
+shouldBe('range.startOffset', 'range.endOffset');
+
+debug('');
+evalAndLog('range = document.caretRangeFromPoint(host.parentNode.offsetLeft + 100, host.parentNode.offsetTop + 1)');
+shouldBe('range.startContainer', 'host');
+shouldBe('range.startOffset', '0');
+shouldBe('range.startContainer', 'range.endContainer');
+shouldBe('range.startOffset', 'range.endOffset');
+
+debug('');
+shadowRoot.innerHTML = '<slot></slot>';
+debug(`host: ${markup(host)}, shadowRoot: ${markup(shadowRoot)}`);
+evalAndLog('range = document.caretRangeFromPoint(host.parentNode.offsetLeft + 1, host.parentNode.offsetTop + 1)');
+shouldNotBe('range.startContainer', 'null');
+shouldBe('range.startContainer', 'host.querySelector("i")');
+shouldBe('range.startOffset', '0');
+shouldBe('range.startContainer', 'range.endContainer');
+shouldBe('range.startOffset', 'range.endOffset');
+
+debug('');
+evalAndLog('range = document.caretRangeFromPoint(host.parentNode.offsetLeft + 100, host.parentNode.offsetTop + 1)');
+shouldNotBe('range.startContainer', 'null');
+shouldBe('range.startContainer', 'host.querySelector("i")');
+shouldBe('range.startOffset', '0');
+shouldBe('range.startContainer', 'range.endContainer');
+shouldBe('range.startOffset', 'range.endOffset');
+
+debug('');
+host.innerHTML = 'hi';
+shadowRoot.innerHTML = '<slot></slot>';
+debug(`host: ${markup(host)}, shadowRoot: ${markup(shadowRoot)}`);
+evalAndLog('range = document.caretRangeFromPoint(host.parentNode.offsetLeft + 1, host.parentNode.offsetTop + 1)');
+shouldBe('range.startContainer', 'host.firstChild');
+shouldBe('range.startOffset', '0');
+shouldBe('range.startContainer', 'range.endContainer');
+shouldBe('range.startOffset', 'range.endOffset');
+
+debug('');
+debug(`host: ${markup(host)}, shadowRoot: ${markup(shadowRoot)}`);
+evalAndLog('range = document.caretRangeFromPoint(host.parentNode.offsetLeft + 100, host.parentNode.offsetTop + 1)');
+shouldBe('range.startContainer', 'host.firstChild');
+shouldBe('range.startOffset', '2');
+shouldBe('range.startContainer', 'range.endContainer');
+shouldBe('range.startOffset', 'range.endOffset');
+
+debug('');
+host.innerHTML = 'bye';
+shadowRoot.innerHTML = '<span id="inner-host"></span>';
+let innerHost = shadowRoot.getElementById('inner-host');
+let innerShadowRoot = innerHost.attachShadow({mode: 'closed'});
+innerShadowRoot.innerHTML = 'hi';
+debug(`host: ${markup(host)}, shadowRoot: ${markup(shadowRoot)}, innerShadowRoot: ${markup(innerShadowRoot)}`);
+evalAndLog('range = document.caretRangeFromPoint(host.parentNode.offsetLeft + 1, host.parentNode.offsetTop + 1)');
+shouldBe('range.startContainer', 'host');
+shouldBe('range.startOffset', '0');
+shouldBe('range.startContainer', 'range.endContainer');
+shouldBe('range.startOffset', 'range.endOffset');
+
+debug('');
+debug(`host: ${markup(host)}, shadowRoot: ${markup(shadowRoot)}, innerShadowRoot: ${markup(innerShadowRoot)}`);
+evalAndLog('range = document.caretRangeFromPoint(host.parentNode.offsetLeft + 100, host.parentNode.offsetTop + 1)');
+shouldBe('range.startContainer', 'host');
+shouldBe('range.startOffset', '0');
+shouldBe('range.startContainer', 'range.endContainer');
+shouldBe('range.startOffset', 'range.endOffset');
+
+debug('');
+shadowRoot.innerHTML = '<span id="inner-host" style="margin-left: 10px; border-left: solid 1px blue;">hi</span>';
+innerHost = shadowRoot.getElementById('inner-host');
+innerShadowRoot = innerHost.attachShadow({mode: 'closed'});
+innerShadowRoot.innerHTML = '<slot></slot>';
+debug(`host: ${markup(host)}, shadowRoot: ${markup(shadowRoot)}, innerShadowRoot: ${markup(innerShadowRoot)}`);
+evalAndLog('range = document.caretRangeFromPoint(host.parentNode.offsetLeft + 15, host.parentNode.offsetTop + 1)');
+shouldBe('range.startContainer', 'host');
+shouldBe('range.startOffset', '0');
+shouldBe('range.startContainer', 'range.endContainer');
+shouldBe('range.startOffset', 'range.endOffset');
+
+debug('');
+debug(`host: ${markup(host)}, shadowRoot: ${markup(shadowRoot)}, innerShadowRoot: ${markup(innerShadowRoot)}`);
+evalAndLog('range = document.caretRangeFromPoint(host.parentNode.offsetLeft + 100, host.parentNode.offsetTop + 1)');
+shouldBe('range.startContainer', 'host');
+shouldBe('range.startOffset', '0');
+shouldBe('range.startContainer', 'range.endContainer');
+shouldBe('range.startOffset', 'range.endOffset');
+
+debug('');
+shadowRoot.innerHTML = '<span id="inner-host" style="margin-left: 10px; border-left: solid 1px blue;"><slot></slot></span>';
+innerHost = shadowRoot.getElementById('inner-host');
+innerShadowRoot = innerHost.attachShadow({mode: 'closed'});
+innerShadowRoot.innerHTML = '<slot></slot>';
+debug(`host: ${markup(host)}, shadowRoot: ${markup(shadowRoot)}, innerShadowRoot: ${markup(innerShadowRoot)}`);
+evalAndLog('range = document.caretRangeFromPoint(host.parentNode.offsetLeft + 15, host.parentNode.offsetTop + 1)');
+shouldBe('range.startContainer', 'host.firstChild');
+shouldBe('range.startOffset', '0');
+shouldBe('range.startContainer', 'range.endContainer');
+shouldBe('range.startOffset', 'range.endOffset');
+
+debug('');
+debug(`host: ${markup(host)}, shadowRoot: ${markup(shadowRoot)}, innerShadowRoot: ${markup(innerShadowRoot)}`);
+evalAndLog('range = document.caretRangeFromPoint(host.parentNode.offsetLeft + 100, host.parentNode.offsetTop + 1)');
+shouldBe('range.startContainer', 'host.firstChild');
+shouldBe('range.startOffset', '3');
+shouldBe('range.startContainer', 'range.endContainer');
+shouldBe('range.startOffset', 'range.endOffset');
+
+</script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+
+
+Tests that disallowed form actions are blocked with GET and redirects.
+
+
+PASS Expecting logs: ["violated-directive=form-action","TEST COMPLETE"]
+">

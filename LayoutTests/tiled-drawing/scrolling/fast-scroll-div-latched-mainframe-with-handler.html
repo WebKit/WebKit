@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.scrollable_region {
+    width: 680px;
+}
+
+.scrolled-content {
+    height: 1036px;
+    width: 100%;
+    background-image: repeating-linear-gradient(silver, white 120px);
+}
+</style>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+    window.jsTestIsAsync = true;
+
+    var divTarget;
+    var pageScrollPositionBefore;
+    var divScrollPositionBefore;
+    var continueCount = 5;
+
+    var wheelCount = 0;
+    function onScrollWheel(evt)
+    {
+        wheelCount = wheelCount + 1;
+    }
+
+    function onPageScroll()
+    {
+        if (document.scrollingElement.scrollTop >= 70)
+            checkForScroll();
+    }
+
+    let didCheckForScroll = false;
+    function checkForScroll()
+    {
+        if (didCheckForScroll)
+            return;
+        didCheckForScroll = true;
+
+        // The div should not have scrolled at all.
+        var pageScrollPositionAfter = document.scrollingElement.scrollTop;
+        var divScrollPositionAfter = divTarget.scrollTop;
+
+        if (divScrollPositionBefore != divScrollPositionAfter)
+            testFailed("Scrollable div consumed wheel events.");
+        else
+            testPassed("Scrollable div did not receive wheel events.");
+
+        if (window.internals) {
+            document.getElementById('layers').innerText = internals.layerTreeAsText(document,
+                internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS | internals.LAYER_TREE_INCLUDES_TILE_CACHES);
+        }
+
+        finishJSTest();
+    }
+
+    async function scrollTest()
+    {
+        pageScrollPositionBefore = document.scrollingElement.scrollTop;
+
+        divTarget = document.getElementById('target');
+
+        divScrollPositionBefore = divTarget.scrollTop;
+
+        // Scroll the #source until we reach the #target.
+        const startPosX = Math.round(divTarget.offsetLeft) + 20;
+        const startPosY = Math.round(divTarget.offsetTop) - 42;
+
+        debug("Mouse moved to (" + startPosX + ", " + startPosY + ")");
+
+        const events = [
+            {
+                type : "wheel",
+                viewX : startPosX,
+                viewY : startPosY,
+                deltaY : -10,
+                phase : "began"
+            },
+            {
+                type : "wheel",
+                deltaY : -10,
+                phase : "changed"
+            },
+            {
+                type : "wheel",
+                deltaY : -10,
+                phase : "changed"
+            },
+            {
+                type : "wheel",
+                phase : "ended"
+            },
+            {
+                type : "wheel",
+                deltaY : -10,
+                momentumPhase : "began"
+            },
+            {
+                type : "wheel",
+                deltaY : -40,
+                momentumPhase : "changed"
+            },
+            {
+                type : "wheel",
+                momentumPhase : "ended"
+            }
+        ];
+
+        await UIHelper.mouseWheelSequence({ events: events });
+        checkForScroll();
+        // We should finish via the scroll event; this will fire in the case of failure when the page doesn't scroll.
+    }
+
+    function setupTopLevel()
+    {
+        if (window.eventSender) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+            setTimeout(scrollTest, 0);
+        } else {
+            var messageLocation = document.getElementById('parent');
+            var message = document.createElement('div');
+            message.innerHTML = "<p>This test is better run under DumpRenderTree. To manually test it, place the mouse pointer<br/>"
+                + "at the top of the page, and then use the mouse wheel or a two-finger swipe to scroll the<br/>"
+                + "down past the div.<br/><br/>"
+                + "The scrollable region should not scroll.</p>";
+            messageLocation.appendChild(message);
+        }
+    }
+
+    window.addEventListener('load', () => {
+        document.addEventListener("mousewheel", onScrollWheel);
+        window.addEventListener("scroll", onPageScroll);
+        setupTopLevel();
+    }, false);
+</script>
+</head>
+<body>
+<div id="parent" style="height: 2000px; width: 2000px;">
+    <div id="source" style="height: 100px; width: 500px;">
+        Put mouse here and flick downwards
+    </div>
+    <div class="scrollable_region">
+        <h3>Scrollable Region</h3>
+        <div id="target" style='overflow-y: auto; overflow-x: hidden; height: 350px;'>
+            <div class="scrolled-content">Scrolled content</div>
+        </div>
+    </div>
+</div>
+<div id="console"></div>
+<script>
+description("Tests that a scrollable div doesn't consume wheel events when scroll is latched to main frame.");
+</script>
+<pre id="layers">Layer tree goes here</p>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

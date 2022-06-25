@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Request clone</title>
+    <meta name="help" href="https://fetch.spec.whatwg.org/#request">
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+  </head>
+  <body>
+    <script src="/common/get-host-info.sub.js"></script>
+    <script>
+
+function testResponseOpacity(response, testName)
+{
+    test(() => {
+        assert_equals(response.type, "opaque", testName + " type");
+        assert_equals(response.status, 0, testName + " status");
+        assert_equals(response.statusText, "", testName + " statusText");
+        assert_equals(response.url, "", testName + " url");
+        assert_false(response.redirected, testName + " redirected");
+        assert_true(response.headers.values().next().done, testName + " headers");
+        assert_equals(response.body, null, testName + " opaque response body should be null");
+    }, testName);
+}
+
+promise_test(async function() {
+    var request = new Request(get_host_info().HTTP_REMOTE_ORIGIN, { mode: "no-cors" });
+    var response = await fetch(request);
+
+    testResponseOpacity(response, "fetched response");
+
+    var clone = response.clone();
+
+    testResponseOpacity(clone, "cloned response");
+    var buffer = await clone.arrayBuffer();
+    assert_equals(buffer.byteLength, 0, "cloned opaque response buffer should be null");
+
+    // WK1 does not support Cache API yet.
+    if (!self.caches) {
+        test(() => {
+        }, "cached response");
+        return;
+    }
+
+    var cache = await self.caches.open("test");
+    await cache.put(request, response);
+    var cached = await cache.match(request.url);
+
+    testResponseOpacity(cached, "cached response")
+    buffer = await cached.arrayBuffer();
+    assert_equals(buffer.byteLength, 0, "cached opaque response buffer should be null");
+
+}, "Check opaque response can be cloned and cached correctly");
+    </script>
+  </body>
+</html>

@@ -1,0 +1,88 @@
+<style>
+
+div {
+    background-color: rebeccapurple;
+    width: 100px;
+    height: 100px;
+}
+
+#first {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
+#second {
+    position: absolute;
+    top: 200px;
+    left: 200px;
+}
+
+.animate-class {
+    animation: 1s linear 0s 1 normal scale;
+}
+
+.first-letter::first-letter {
+    color:red;
+}
+
+@keyframes scale {
+    0% {
+        transform: scale(0);
+    }
+
+    10% {
+        transform: scale(1);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+</style>
+<script>
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+window.onload = async function() {
+    let shadowRoot = document.body.attachShadow({ mode: "open" });
+
+    // Put a named slot and assign an element to it.
+    shadowRoot.innerHTML = `<slot name="first"></slot>`;
+    let firstElement = document.body.appendChild(document.createElement("div"));
+    firstElement.slot = "first";
+    firstElement.id = "first";
+
+    await new Promise(resolve => requestAnimationFrame(resolve));
+
+    // Create another named slot and assign another element to it.
+    let secondSlot = shadowRoot.appendChild(document.createElement("slot"));
+    secondSlot.name = "second";
+
+    // Start animation in the seconds slot.
+    let secondElement = document.body.appendChild(document.createElement("div"));
+    secondElement.slot = "second";
+    secondElement.className = "animate-class";
+    secondElement.id = "second";
+
+    const animation = secondElement.getAnimations()[0];
+
+    await animation.ready;
+
+    await new Promise(resolve => requestAnimationFrame(resolve));
+    await new Promise(resolve => requestAnimationFrame(resolve));
+
+    firstElement.remove();
+
+    // Wait until animation has progressed some before snapshotting the test result.
+    while (animation.currentTime < 100)
+        await new Promise(resolve => requestAnimationFrame(resolve));
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+</script>
+

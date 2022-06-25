@@ -1,0 +1,106 @@
+# Copyright(c) 2020 The WebRTC project authors.All Rights Reserved.
+#
+# Use of this source code is governed by a BSD - style license
+# that can be found in the LICENSE file in the root of the source
+# tree.An additional intellectual property rights grant can be found
+# in the file PATENTS.All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+
+rtc_library("voip_core") {
+  sources = [
+    "voip_core.cc",
+    "voip_core.h",
+  ]
+  deps = [
+    ":audio_channel",
+    "..:audio",
+    "../../api:scoped_refptr",
+    "../../api/audio_codecs:audio_codecs_api",
+    "../../api/task_queue",
+    "../../api/voip:voip_api",
+    "../../modules/audio_device:audio_device_api",
+    "../../modules/audio_mixer:audio_mixer_impl",
+    "../../modules/audio_processing:api",
+    "../../modules/utility:utility",
+    "../../rtc_base:criticalsection",
+    "../../rtc_base:logging",
+    "../../rtc_base/synchronization:mutex",
+  ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+}
+
+rtc_library("audio_channel") {
+  sources = [
+    "audio_channel.cc",
+    "audio_channel.h",
+  ]
+  deps = [
+    ":audio_egress",
+    ":audio_ingress",
+    "../../api:transport_api",
+    "../../api/audio_codecs:audio_codecs_api",
+    "../../api/task_queue",
+    "../../api/voip:voip_api",
+    "../../modules/audio_device:audio_device_api",
+    "../../modules/rtp_rtcp",
+    "../../modules/rtp_rtcp:rtp_rtcp_format",
+    "../../modules/utility",
+    "../../rtc_base:criticalsection",
+    "../../rtc_base:logging",
+    "../../rtc_base:refcount",
+    "../../rtc_base:rtc_base_approved",
+  ]
+}
+
+rtc_library("audio_ingress") {
+  sources = [
+    "audio_ingress.cc",
+    "audio_ingress.h",
+  ]
+  deps = [
+    "..:audio",
+    "../../api:array_view",
+    "../../api:rtp_headers",
+    "../../api:scoped_refptr",
+    "../../api:transport_api",
+    "../../api/audio:audio_mixer_api",
+    "../../api/audio_codecs:audio_codecs_api",
+    "../../api/voip:voip_api",
+    "../../modules/audio_coding",
+    "../../modules/rtp_rtcp",
+    "../../modules/rtp_rtcp:rtp_rtcp_format",
+    "../../modules/utility",
+    "../../rtc_base:criticalsection",
+    "../../rtc_base:logging",
+    "../../rtc_base:safe_minmax",
+    "../../rtc_base:timeutils",
+    "../../rtc_base/synchronization:mutex",
+    "../utility:audio_frame_operations",
+  ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+}
+
+rtc_library("audio_egress") {
+  sources = [
+    "audio_egress.cc",
+    "audio_egress.h",
+  ]
+  deps = [
+    "..:audio",
+    "../../api:sequence_checker",
+    "../../api/audio_codecs:audio_codecs_api",
+    "../../api/task_queue",
+    "../../call:audio_sender_interface",
+    "../../modules/audio_coding",
+    "../../modules/rtp_rtcp",
+    "../../modules/rtp_rtcp:rtp_rtcp_format",
+    "../../rtc_base:logging",
+    "../../rtc_base:rtc_task_queue",
+    "../../rtc_base:timeutils",
+    "../../rtc_base/synchronization:mutex",
+    "../../rtc_base/system:no_unique_address",
+    "../utility:audio_frame_operations",
+  ]
+}

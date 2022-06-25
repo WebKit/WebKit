@@ -1,0 +1,103 @@
+<!--
+Copyright (c) 2019 The Khronos Group Inc.
+Use of this source code is governed by an MIT-style license that can be
+found in the LICENSE.txt file.
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Float constant expression corner cases</title>
+<link rel="stylesheet" href="../../../webgl_test_files/resources/js-test-style.css"/>
+<script src="../../../webgl_test_files/js/js-test-pre.js"></script>
+<script src="../../../webgl_test_files/js/webgl-test-utils.js"></script>
+<script src="../../../webgl_test_files/js/glsl-conformance-test.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script id="fshaderPositiveDivisionByZeroIsInfinite" type="x-shader/x-fragment">#version 300 es
+precision highp float;
+out vec4 my_FragColor;
+uniform float u; // Assumed to have the default value 0.0
+void main()
+{
+    // Positive non-zero division by zero should produce infinity.
+    // GLSL ES 3.00.6 4.5.1 Range and Precision
+    // "However, dividing a non-zero by 0 results in the appropriately signed IEEE Inf:
+    // If both positive and negative zeros are implemented, the correctly signed Inf will be
+    // generated, otherwise positive Inf is generated."
+    float f = 1. / 0.;
+    f = u == 0. ? f : 1.;
+    bool correct = isinf(f) && sign(f) > 0.;
+    my_FragColor = vec4(0.0, correct ? 1. : 0., 0.0, 1.0);
+}
+</script>
+<script id="fshaderNegativeDivisionByZeroIsInfinite" type="x-shader/x-fragment">#version 300 es
+precision highp float;
+out vec4 my_FragColor;
+uniform float u; // Assumed to have the default value 0.0
+void main()
+{
+    // Negative non-zero division by zero should produce negative infinity if supported,
+    // othervies infinity.
+    // GLSL ES 3.00.6 4.5.1 Range and Precision
+    // "However, dividing a non-zero by 0 results in the appropriately signed IEEE Inf:
+    // If both positive and negative zeros are implemented, the correctly signed Inf will be
+    // generated, otherwise positive Inf is generated."
+    float f = -1. / 0.;
+    f = u == 0. ? f : 1.;
+    bool supportsNegativeZeros = sign(-0.) < 0.;
+    bool correct = isinf(f) && (sign(f) < 0. || !supportsNegativeZeros);
+    my_FragColor = vec4(0., correct ? 1. : 0., 0., 1.);
+}
+</script>
+
+<script id="fshaderZeroDivisionByZeroIsNan" type="x-shader/x-fragment">#version 300 es
+precision highp float;
+out vec4 my_FragColor;
+uniform float u; // Assumed to have the default value 0.0
+void main()
+{
+    // Non-zero division by zero should produce infinity.
+    // GLSL ES 3.00.6 4.5.1 Range and Precision
+    // "NaNs are not required to be generated. Support for signaling NaNs is not required and
+    // exceptions are never raised. Operations and built-in functions that operate on a NaN are not
+    // required to return a NaN as the result. However if NaNs are generated, isnan() should return
+    // the correct value."
+    float f = 0. / 0.;
+    f = u == 0. ? f : 1.;
+    bool nanWasGenerated = !(f <= 0. || 0. <= f);
+    bool correct = isnan(f) || !nanWasGenerated;
+    my_FragColor = vec4(0., correct ? 1. : 0., 0., 1.);
+}
+</script>
+
+<script type="text/javascript">
+"use strict";
+description();
+
+GLSLConformanceTester.runRenderTests([
+{
+  fShaderId: 'fshaderPositiveDivisionByZeroIsInfinite',
+  fShaderSuccess: true,
+  linkSuccess: true,
+  passMsg: "Positive floats divided by zero should produce infinity."
+},
+{
+  fShaderId: 'fshaderNegativeDivisionByZeroIsInfinite',
+  fShaderSuccess: true,
+  linkSuccess: true,
+  passMsg: "Negative floats divided by zero should produce infinity of correct sign."
+},
+{
+  fShaderId: 'fshaderZeroDivisionByZeroIsNan',
+  fShaderSuccess: true,
+  linkSuccess: true,
+  passMsg: "Float zero divided by zero should maybe produce NaN."
+}
+], 2);
+</script>
+</body>
+</html>

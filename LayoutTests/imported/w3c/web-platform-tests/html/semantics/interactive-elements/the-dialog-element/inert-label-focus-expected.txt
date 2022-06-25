@@ -1,0 +1,4 @@
+Label for Submit
+
+PASS Tests focusing of an inert label for a non-inert target.
+

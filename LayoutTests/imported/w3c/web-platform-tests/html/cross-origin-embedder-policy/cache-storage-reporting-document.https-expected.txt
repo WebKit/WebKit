@@ -1,0 +1,10 @@
+
+FAIL COEP support on document. promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new frame.contentWindow.ReportingObserver((reports) => {
+      observer.disconnect();
+      resolve(reports.map(r => r.toJSON()));
+    })')"
+FAIL COEP-Report-Only support on document. promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new frame.contentWindow.ReportingObserver((reports) => {
+      observer.disconnect();
+      resolve(reports.map(r => r.toJSON()));
+    })')"
+

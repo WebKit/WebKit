@@ -1,0 +1,102 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-005-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-006-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-007-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-007.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-008-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-009-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-009.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-010-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-010.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-011-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-011.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-012-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-012.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-013-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-013.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-014-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-014.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-101-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-101.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-102-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-102.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-103-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-103.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-104-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-104.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-105-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-105.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-106-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-106.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-107-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-107.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-108-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-108.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-109-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-109.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-110-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-110.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-111-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-111.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-112-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-112.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-113-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-113.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-114-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-114.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-115-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-115.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-116-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-116.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-117-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-117.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-118-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-118.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-119-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-119.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-120-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-120.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-121-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-121.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-122-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-122.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-123-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-123.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-124-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-124.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-125-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-125.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-126-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-126.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-127-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-127.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-128-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-128.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-129-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-boundary/word-boundary-129.html

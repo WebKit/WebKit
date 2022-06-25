@@ -1,0 +1,23 @@
+<html>
+<head>
+<script>
+function startTest() {
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+        testRunner.dumpTitleChanges();
+    }
+
+    document.title = 'New non-empty title';
+    internals.queueTask("DOMManipulation", () => endTest())
+}
+
+function endTest() {
+    document.title = '';
+    internals.queueTask("DOMManipulation", () => testRunner.notifyDone())
+}
+</script>
+</head>
+<body onload='startTest();'>
+</body>
+</html>

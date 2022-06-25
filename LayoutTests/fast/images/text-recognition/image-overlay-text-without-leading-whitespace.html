@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<style>
+img {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+</style>
+</head>
+<body>
+<img src="../resources/green-400x400.png"></img>
+<input></input>
+<script>
+addEventListener("load", () => {
+    const image = document.querySelector("img");
+    internals.installImageOverlay(image, [
+        {
+            topLeft : new DOMPointReadOnly(0, 0),
+            topRight : new DOMPointReadOnly(1, 0),
+            bottomRight : new DOMPointReadOnly(1, 0.5),
+            bottomLeft : new DOMPointReadOnly(0, 0.5),
+            children: [
+                {
+                    text : "foo",
+                    topLeft : new DOMPointReadOnly(0, 0),
+                    topRight : new DOMPointReadOnly(0.3, 0),
+                    bottomRight : new DOMPointReadOnly(0.3, 0.5),
+                    bottomLeft : new DOMPointReadOnly(0, 0.5),
+                },
+                {
+                    text : "bar",
+                    topLeft : new DOMPointReadOnly(0.3, 0),
+                    topRight : new DOMPointReadOnly(0.7, 0),
+                    bottomRight : new DOMPointReadOnly(0.7, 0.5),
+                    bottomLeft : new DOMPointReadOnly(0.3, 0.5),
+                    hasLeadingWhitespace: false,
+                },
+                {
+                    text : "baz",
+                    topLeft : new DOMPointReadOnly(0.7, 0),
+                    topRight : new DOMPointReadOnly(1, 0),
+                    bottomRight : new DOMPointReadOnly(1, 0.5),
+                    bottomLeft : new DOMPointReadOnly(0.7, 0.5),
+                    hasLeadingWhitespace: true,
+                }
+            ],
+        }
+    ]);
+
+    getSelection().selectAllChildren(internals.shadowRoot(image).getElementById("image-overlay"));
+    testRunner.execCommand("Copy");
+
+    input = document.querySelector("input");
+    input.focus();
+    testRunner.execCommand("Paste");
+
+    shouldBeEqualToString("input.value", "foobar baz");
+});
+</script>
+</body>
+</html>

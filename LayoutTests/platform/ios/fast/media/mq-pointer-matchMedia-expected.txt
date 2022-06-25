@@ -1,0 +1,19 @@
+Test the pointer media feature with machMedia.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+window.matchMedia("(pointer)").matches = true
+window.matchMedia("(pointer: fine)").matches = false
+window.matchMedia("(pointer: coarse)").matches = true
+window.matchMedia("(pointer: none)").matches = false
+window.matchMedia("(pointer: Fine)").matches = false
+window.matchMedia("(pointer: Coarse)").matches = true
+window.matchMedia("(pointer: None)").matches = false
+window.matchMedia("(Pointer: fine)").matches = false
+window.matchMedia("(Pointer: coarse)").matches = true
+window.matchMedia("(Pointer: none)").matches = false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

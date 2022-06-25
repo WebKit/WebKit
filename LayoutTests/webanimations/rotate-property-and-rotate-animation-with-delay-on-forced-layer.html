@@ -1,0 +1,36 @@
+<style>
+
+div {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100px;
+    height: 100px;
+    background-color: black;
+
+    will-change: rotate;
+    rotate: 180deg;
+
+    animation-name: rotate;
+    animation-delay: 1000s;
+    animation-duration: 1000s;
+}
+
+div::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 50%;
+    background-color: gray;
+}
+
+@keyframes rotate {
+    from { rotate: 90deg }
+    to { rotate: 90deg }
+}
+    
+</style>
+<div></div>
+<script src="resources/wait-until-animations-are-committed.js"></script>

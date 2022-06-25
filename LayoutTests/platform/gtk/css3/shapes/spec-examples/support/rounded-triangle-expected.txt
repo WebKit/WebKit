@@ -1,0 +1,6 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 200x200
+  RenderSVGRoot {svg} at (0,18) size 179x182
+    RenderSVGContainer {g} at (0,18) size 179x182
+      RenderSVGPath {path} at (0,18) size 179x182 [fill={[type=SOLID] [color=#AED8E6]}] [data="M 167.405 164.386 C 186.707 183.974 180 200 152.5 200 L 50 200 C 22.5 200 0 177.5 0 150 L 0 44.5 C 0 17 15.792 10.526 35.094 30.114 L 167.405 164.386 Z"]

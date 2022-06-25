@@ -1,0 +1,24 @@
+
+Tests that wheel events still go to the innermost scroller even if latching skips it. Also tests that wheel events don't propagate between frames.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Start with main frame scrolled, iframe scrolled, overflow scrolled to top
+PASS iframeTarget.contentWindow.pageYOffset is 100
+PASS overflowInIframeElement.scrollTop is 0
+PASS window.pageYOffset is 20
+PASS mainFrameWheelEventCount is 0
+PASS iframeWindowWheelEventCount is 0
+PASS overflowInIframeWheelEventCount is 0
+After scroll
+FAIL iframeTarget.contentWindow.pageYOffset should be 0. Was 100.
+FAIL overflowInIframeElement.scrollTop should be 0. Was 210.
+PASS window.pageYOffset is 20
+PASS mainFrameWheelEventCount is 0
+FAIL iframeWindowWheelEventCount should be 2. Was 3.
+FAIL overflowInIframeWheelEventCount should be 2. Was 3.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

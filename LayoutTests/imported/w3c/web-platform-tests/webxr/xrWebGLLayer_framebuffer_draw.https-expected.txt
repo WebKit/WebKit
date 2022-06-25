@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: WebGL: INVALID_FRAMEBUFFER_OPERATION: clear: An opaque framebuffer is considered incomplete outside of a requestAnimationFrame
+CONSOLE MESSAGE: WebGL: INVALID_FRAMEBUFFER_OPERATION: clear: An opaque framebuffer is considered incomplete outside of a requestAnimationFrame
+CONSOLE MESSAGE: WebGL: INVALID_FRAMEBUFFER_OPERATION: drawArrays: An opaque framebuffer is considered incomplete outside of a requestAnimationFrame
+CONSOLE MESSAGE: WebGL: INVALID_FRAMEBUFFER_OPERATION: drawElements: An opaque framebuffer is considered incomplete outside of a requestAnimationFrame
+
+PASS Ensure a WebGL layer's framebuffer can only be drawn to inside a XR frame - webgl
+FAIL Ensure a WebGL layer's framebuffer can only be drawn to inside a XR frame - webgl2 assert_implements: webgl2 not supported. undefined
+

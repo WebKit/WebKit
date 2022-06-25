@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+html {
+    background-color: white;
+}
+html:nth-child(n of *), html:nth-child(n of :not(notThere)), html:nth-child(odd of *), html:nth-child(odd of :not(notThere)), html:nth-child(even of *), html:nth-child(even of :not(notThere)) {
+    background-color: red;
+}
+</style>
+</head>
+<body>
+<div id="test-tree"></div>
+</body>
+<script>
+description('In addition to the testing for previous siblings, ":nth-child(An+B of selectorList)" must also test there is a parent element.');
+
+shouldBeEqualToString('getComputedStyle(document.querySelector("html")).backgroundColor', 'rgb(255, 255, 255)');
+
+shouldBeNull('document.querySelector("html:nth-child(n of *), html:nth-child(n of :not(notThere)), html:nth-child(odd of *), html:nth-child(odd of :not(notThere)), html:nth-child(even of *), html:nth-child(even of :not(notThere))")');
+
+debug("#test-tree initially match when it is attached to the document");
+var testTree = document.getElementById("test-tree");
+
+shouldBe('document.querySelector("#test-tree:nth-child(n of *)")', 'document.getElementById("test-tree")');
+shouldBeTrue('testTree.matches("#test-tree:nth-child(n of *)")');
+
+testTree.parentElement.removeChild(testTree);
+
+debug("After detaching #test-tree, :nth-child() no longer matches because it does not have a parent element.");
+shouldBeNull('document.querySelector("#test-tree:nth-child(n of *)")', 'document.getElementById("test-tree")');
+shouldBeFalse('testTree.matches("#test-tree:nth-child(n of *)")');
+shouldBeTrue('testTree.matches("#test-tree")');
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

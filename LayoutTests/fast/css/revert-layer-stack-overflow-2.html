@@ -1,0 +1,11 @@
+<style>
+@layer l0 {
+    div { color: revert-layer; }
+}
+div { color: revert-layer }
+</style>
+<div>This test passes if it doesn't crash</div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>

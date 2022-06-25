@@ -1,0 +1,7 @@
+
+RUN(video.canPlayType('audio/mp4; codecs="mp4a.40.2"'))
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(source.addSourceBuffer('audio/mp4; codecs="mp4a.40.2"'))
+END OF TEST
+

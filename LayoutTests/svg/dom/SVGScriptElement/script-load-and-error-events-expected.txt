@@ -1,0 +1,2 @@
+Test load and error event handling with SVGScriptElement
+PASS

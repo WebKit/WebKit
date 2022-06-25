@@ -1,0 +1,10 @@
+
+PASS __Secure: secure origin: Should not set 'Path=/;'
+PASS __Secure: secure origin: Should set 'Secure;Path=/;'
+PASS __Secure: secure origin: Should not set 'Path=/;MaxAge=10'
+PASS __Secure: secure origin: Should set 'Secure;Path=/;MaxAge=10'
+PASS __Secure: secure origin: Should not set 'Path=/;HttpOnly'
+PASS __Secure: secure origin: Should set 'Secure;Path=/;HttpOnly'
+PASS __Secure: secure origin: Should not set 'Path=/;domain=127.0.0.1'
+FAIL __Secure: secure origin: Should set 'Secure;Path=/;domain=127.0.0.1' assert_equals: expected (string) "0.26261606557964934" but got (undefined) undefined
+

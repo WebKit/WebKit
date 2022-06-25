@@ -1,0 +1,17 @@
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    window.testRunner.dumpAsText();
+    window.testRunner.dumpChildFramesAsText();
+    testRunner.waitUntilDone();
+    window.testRunner.addUserStyleSheet("#thinger { display:none; }", false);
+}
+</script>
+</head>
+<body>
+2 thingers should appear on this page. Otherwise the test has failed.
+<Div id="thinger">thinger</div>
+<iframe src="resources/frame1.html"></iframe>
+</body>
+</html>

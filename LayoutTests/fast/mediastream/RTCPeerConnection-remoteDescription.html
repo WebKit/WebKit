@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <script>
+            description("Tests RTCPeerConnection remoteDescription.");
+
+            var pc = null;
+
+            function requestFailed2()
+            {
+                testPassed('requestFailed was called.');
+
+                shouldBeEqualToString('pc.remoteDescription.type', "offer");
+                shouldBeEqualToString('pc.remoteDescription.sdp', "remote");
+                pc.close();
+                shouldBeEqualToString('pc.remoteDescription.type', "offer");
+                shouldBeEqualToString('pc.remoteDescription.sdp', "remote");
+
+                finishJSTest();
+            }
+
+            function requestSucceeded2()
+            {
+                testFailed('requestSucceeded was called.');
+                finishJSTest();
+            }
+
+            function requestFailed1()
+            {
+                testFailed('requestFailed was called.');
+                finishJSTest();
+            }
+
+            function requestSucceeded1()
+            {
+                testPassed('requestSucceeded was called.');
+
+                sessionDescription = new RTCSessionDescription({type:"answer", sdp:"local"});
+                shouldNotThrow('pc.setRemoteDescription(sessionDescription).then(requestSucceeded2, requestFailed2);');
+            }
+
+            pc = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
+            var sessionDescription = new RTCSessionDescription({type:"offer", sdp:"remote"});
+            shouldNotThrow('pc.setRemoteDescription(sessionDescription).then(requestSucceeded1, requestFailed1);');
+
+
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

@@ -1,0 +1,12 @@
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+</script>
+<style>
+@keyframes frames {
+    from { transform: translate(-10px, -10px)  }
+    to { transform: rotate(-90deg)  }
+}
+div { animation: frames 0.1s forwards }
+</style>
+<div onanimationend="if (window.testRunner) testRunner.notifyDone()">This should animate sideways</div>

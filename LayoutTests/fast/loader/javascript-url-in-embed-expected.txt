@@ -1,0 +1,3 @@
+This tests that javascript: urls in an embed tag do not get executed.
+
+

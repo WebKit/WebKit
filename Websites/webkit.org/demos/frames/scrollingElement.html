@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width">
+  </head>
+  <body>
+    <h1>scrollingElement</h1>
+
+    <p>The iframe below is in no-quirks mode. Per the <a href="https://drafts.csswg.org/cssom-view/#extension-to-the-element-interface">CSSOM View Module</a>, one has to use the root element (i.e. <code>document.documentElement</code>) in order to scroll its view. However, the behaviors of browsers have historically been inconsistent. When available, the new <a href="https://drafts.csswg.org/cssom-view/#dom-document-scrollingelement">document.scrollingElement</a> property gives you the DOM element to use in your browser without having to go with browser sniffing or similar.</p>
+
+    <p><iframe style="width: 300px; height: 50px;"></iframe></p>
+    <p id="output"></p>
+
+    <script>
+        var frame = document.querySelector("iframe");
+
+        frame.onload = function() {
+            var frameWindow = frame.contentWindow;
+            var output = document.getElementById("output");
+            output.innerText += "The value of document.scrollingElement in your browser is ";
+            if (!frameWindow.document.scrollingElement)
+                output.innerText += " undefined";
+            else if (frameWindow.document.scrollingElement === frameWindow.document.documentElement)
+                output.innerText += " document.documentElement";
+            else if (frameWindow.document.scrollingElement === frameWindow.document.body)
+                output.innerText += " document.body";
+            else
+                output.innerText += " ???";
+            output.innerText += "\n\n";
+
+            output.innerText += "In order to scroll the iframe in your browser, the scroll* properties can be used on ";
+            frameWindow.document.documentElement.scrollLeft = 50;
+            if (frameWindow.document.documentElement.scrollLeft === 50)
+                output.innerText += " document.documentElement"
+            else {
+                frameWindow.document.body.scrollLeft = 25;
+                if (frameWindow.document.body.scrollLeft === 25)
+                    output.innerText += " document.body"
+                else
+                    output.innerText += " ???";
+            }
+        }
+
+        frame.srcdoc = "<!DOCTYPE html><div style='width: 600px; height: 1px;'>"
+    </script>
+  </body>
+</html>

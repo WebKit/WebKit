@@ -1,0 +1,9 @@
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpPolicyDelegateCallbacks();
+    testRunner.queueLoad("resources/notify-done.html");
+}
+</script>
+This test dumps the NavigationPolicy passed to the decidePolicyForNavigationAction delegate call.<br>
+It only makes sense to run this in WebKitTestRunner.

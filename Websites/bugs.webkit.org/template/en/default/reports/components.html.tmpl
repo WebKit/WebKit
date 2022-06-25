@@ -1,0 +1,78 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # product: object. The product for which we want to display component
+  # descriptions.
+  #%]
+
+[% title = BLOCK %]
+  Components for [% product.name FILTER html %]
+[% END %]
+
+[% PROCESS global/header.html.tmpl 
+  style_urls = ['skins/standard/buglist.css']
+  title = title
+%]
+
+[% IF Param("useqacontact") %]
+  [% numcols = 3 %]
+[% ELSE %]
+  [% numcols = 2 %]
+[% END %]
+
+<h1>[% product.name FILTER html %]</h1>
+
+<div id="product_desc">[% product.description FILTER html_light %]</div>
+<p>Select a component to see open [% terms.bugs %] in that component.</p>
+
+<table id="component_table">
+  <tr>
+    <th>Component</th>
+    <th>Default Assignee</th>
+    [% IF Param("useqacontact") %]
+      <th>Default QA Contact</th>
+    [% END %]
+  </tr>
+
+  [% FOREACH comp = product.components %]
+    [% INCLUDE describe_comp %]
+  [% END %]
+</table>
+
+[% PROCESS global/footer.html.tmpl %]
+
+[%############################################################################%]
+[%# BLOCK for components                                                      %]
+[%############################################################################%]
+
+[% BLOCK describe_comp %]
+  <tr id="[% comp.name FILTER html %]">
+    <td rowspan="2" class="component_name">
+      <a href="buglist.cgi?product=
+               [%- product.name FILTER uri %]&amp;component=
+               [%- comp.name FILTER uri %]&amp;resolution=---">
+      [% comp.name FILTER html %]</a>
+    </td>
+    <td class="component_assignee">
+      [% INCLUDE global/user.html.tmpl who = comp.default_assignee %]
+    </td>
+    [% IF Param("useqacontact") %]
+      <td class="component_qa_contact">
+        [% IF comp.default_qa_contact %]
+          [% INCLUDE global/user.html.tmpl who = comp.default_qa_contact %]
+        [% END %]
+      </td>
+    [% END %]
+  </tr>
+  <tr>
+    <td colspan="[% numcols - 1 %]" class="component_description">
+      [% comp.description FILTER html_light %]
+    </td>
+  </tr>
+[% END %]

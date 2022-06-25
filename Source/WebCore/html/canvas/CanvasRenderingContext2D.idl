@@ -1,0 +1,92 @@
+/*
+ * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+[
+    CustomIsReachable,
+    JSGenerateToJSObject,
+    JSCustomMarkFunction,
+    CallTracer=InspectorCanvasCallTracer,
+    Exposed=Window
+] interface CanvasRenderingContext2D {
+    // back-reference to the canvas
+    readonly attribute HTMLCanvasElement canvas;
+
+    CanvasRenderingContext2DSettings getContextAttributes();
+
+    // Non-standard legacy aliases (Compositing).
+    [ImplementedAs=setGlobalAlpha] undefined setAlpha(optional unrestricted float alpha = NaN);
+    [ImplementedAs=setGlobalCompositeOperation] undefined setCompositeOperation(optional DOMString compositeOperation);
+
+    // Non-standard functionality (CanvasDrawImage).
+    undefined drawImageFromRect(HTMLImageElement image,
+        optional unrestricted float sx = 0, optional unrestricted float sy = 0, optional unrestricted float sw = 0, optional unrestricted float sh = 0,
+        optional unrestricted float dx = 0, optional unrestricted float dy = 0, optional unrestricted float dw = 0, optional unrestricted float dh = 0,
+        optional DOMString compositeOperation = "");
+
+    // Non-standard legacy aliases (CanvasFillStrokeStyles).
+    undefined setStrokeColor(DOMString color, optional unrestricted float alpha);
+    undefined setStrokeColor(unrestricted float grayLevel, optional unrestricted float alpha = 1);
+    undefined setStrokeColor(unrestricted float r, unrestricted float g, unrestricted float b, unrestricted float a);
+    undefined setFillColor(DOMString color, optional unrestricted float alpha);
+    undefined setFillColor(unrestricted float grayLevel, optional unrestricted float alpha = 1);
+    undefined setFillColor(unrestricted float r, unrestricted float g, unrestricted float b, unrestricted float a);
+
+    // Non-standard functionality (CanvasImageData).
+    readonly attribute float webkitBackingStorePixelRatio; // Always returns 1.
+
+    // Non-standard legacy alias (CanvasImageSmoothing).
+    [ImplementedAs=imageSmoothingEnabled] attribute boolean webkitImageSmoothingEnabled;
+
+    // Non-standard legacy aliases (CanvasPathDrawingStyles).
+    undefined setLineWidth(optional unrestricted float width = NaN);
+    undefined setLineCap(optional DOMString cap);
+    undefined setLineJoin(optional DOMString join);
+    undefined setMiterLimit(optional unrestricted float limit = NaN);
+    attribute sequence<unrestricted double> webkitLineDash;
+    [ImplementedAs=lineDashOffset] attribute unrestricted double webkitLineDashOffset;
+
+    // Non-standard legacy aliases (CanvasShadowStyles).
+    undefined setShadow(unrestricted float width, unrestricted float height, unrestricted float blur, optional DOMString color, optional unrestricted float alpha);
+    undefined setShadow(unrestricted float width, unrestricted float height, unrestricted float blur, unrestricted float grayLevel, optional unrestricted float alpha = 1);
+    undefined setShadow(unrestricted float width, unrestricted float height, unrestricted float blur, unrestricted float r, unrestricted float g, unrestricted float b, unrestricted float a);
+    undefined clearShadow();
+};
+
+CanvasRenderingContext2D includes CanvasState;
+CanvasRenderingContext2D includes CanvasTransform;
+CanvasRenderingContext2D includes CanvasCompositing;
+CanvasRenderingContext2D includes CanvasImageSmoothing;
+CanvasRenderingContext2D includes CanvasFillStrokeStyles;
+CanvasRenderingContext2D includes CanvasShadowStyles;
+CanvasRenderingContext2D includes CanvasFilters;
+CanvasRenderingContext2D includes CanvasRect;
+CanvasRenderingContext2D includes CanvasDrawPath;
+CanvasRenderingContext2D includes CanvasUserInterface;
+CanvasRenderingContext2D includes CanvasText;
+CanvasRenderingContext2D includes CanvasDrawImage;
+CanvasRenderingContext2D includes CanvasImageData;
+CanvasRenderingContext2D includes CanvasPathDrawingStyles;
+CanvasRenderingContext2D includes CanvasTextDrawingStyles;
+CanvasRenderingContext2D includes CanvasPath;

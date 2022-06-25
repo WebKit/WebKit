@@ -1,0 +1,7 @@
+
+PASS Redirects done from within a service-worker should not be exposed to client ResourceTiming
+PASS Connection info from within a service-worker should not be exposed to client ResourceTiming
+PASS requestStart should never be before fetchStart
+FAIL Delay from within service-worker (after internal fetching) should be accessible through `responseStart` assert_equals: expected "responseStart" but got "after"
+FAIL Delay from within service-worker (before internal fetching) should be measured before responseStart in the client ResourceTiming entry assert_equals: expected "responseStart" but got "startTime"
+

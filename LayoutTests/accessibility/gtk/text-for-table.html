@@ -1,0 +1,21 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<table id="content" border=1><tr><td>foo</td><td>bar</td></tr></table>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("This tests the ability to get element text for a specified range. No text should be obtainable for tables which should not implement the text interface.");
+    if (window.accessibilityController) {
+        document.getElementById("body").focus();
+        var webArea = accessibilityController.focusedElement;
+        var table = webArea.childAtIndex(0);
+        shouldBe("table.stringForRange(0, -1)", "''");
+    }
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

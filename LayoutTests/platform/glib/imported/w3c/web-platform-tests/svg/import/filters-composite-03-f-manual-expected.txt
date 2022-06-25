@@ -1,0 +1,32 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (165,48) size 454x454
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGResourceFilter {filter} [id="composite-ident"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        RenderSVGResourceFilter {filter} [id="composite-negative"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        RenderSVGResourceFilter {filter} [id="composite-mixed"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        RenderSVGResourceFilter {filter} [id="composite-clamped"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+      RenderSVGContainer {g} at (166,50) size 201x200 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,30.00)}]
+        RenderSVGRect {rect} at (166,50) size 201x200 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=120.00] [height=120.00]
+        RenderSVGRect {rect} at (183,66) size 167x168 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#FF0000]}] [x=10.00] [y=10.00] [width=100.00] [height=100.00]
+          [filter="composite-ident"] RenderSVGResourceFilter {filter} at (10,10) size 100x100
+      RenderSVGContainer {g} at (415,48) size 204x204 [transform={m=((1.00,0.00)(0.00,1.00)) t=(250.00,30.00)}]
+        RenderSVGRect {rect} at (433,66) size 167x168 [fill={[type=SOLID] [color=#00FF00]}] [x=10.00] [y=10.00] [width=100.00] [height=100.00]
+          [filter="composite-negative"] RenderSVGResourceFilter {filter} at (10,10) size 100x100
+        RenderSVGRect {rect} at (415,48) size 204x204 [stroke={[type=SOLID] [color=#7FFF7F] [stroke width=12.00]}] [x=5.00] [y=5.00] [width=110.00] [height=110.00]
+      RenderSVGContainer {g} at (165,298) size 204x204 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,180.00)}]
+        RenderSVGRect {rect} at (183,316) size 167x168 [stroke={[type=SOLID] [color=#202A25]}] [fill={[type=SOLID] [color=#2B110C]}] [x=10.00] [y=10.00] [width=100.00] [height=100.00]
+          [filter="composite-mixed"] RenderSVGResourceFilter {filter} at (10,10) size 100x100
+        RenderSVGRect {rect} at (165,298) size 204x204 [stroke={[type=SOLID] [color=#666666] [stroke width=12.00]}] [x=5.00] [y=5.00] [width=110.00] [height=110.00]
+      RenderSVGContainer {g} at (415,298) size 204x204 [transform={m=((1.00,0.00)(0.00,1.00)) t=(250.00,180.00)}]
+        RenderSVGRect {rect} at (433,316) size 167x168 [stroke={[type=SOLID] [color=#00007F]}] [fill={[type=SOLID] [color=#007F00]}] [x=10.00] [y=10.00] [width=100.00] [height=100.00]
+          [filter="composite-clamped"] RenderSVGResourceFilter {filter} at (10,10) size 100x100
+        RenderSVGRect {rect} at (415,298) size 204x204 [stroke={[type=SOLID] [color=#00FFFF] [stroke width=12.00]}] [x=5.00] [y=5.00] [width=110.00] [height=110.00]
+    RenderSVGContainer {g} at (16,518) size 380x60
+      RenderSVGText {text} at (10,311) size 228x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 228x36
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 227.40: "$Revision: 1.4 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

@@ -1,0 +1,12 @@
+This tests model elements have basic accessibility support
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Model description: AXDescription: Heart
+PASS model.role is 'AXRole: AXGroup'
+PASS model.subrole is 'AXSubrole: AXModel'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

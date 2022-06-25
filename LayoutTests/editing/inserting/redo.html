@@ -1,0 +1,12 @@
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+</script>
+<div id="test" contenteditable="true"></div>
+
+<script>
+window.getSelection().setPosition(document.getElementById("test"), 0);
+document.execCommand("InsertText", false, "The caret should be at the end of this sentence.");
+document.execCommand("Undo");
+document.execCommand("Redo");
+</script>

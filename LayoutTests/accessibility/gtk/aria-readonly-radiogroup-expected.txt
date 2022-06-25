@@ -1,0 +1,12 @@
+This verifies ARIA radio buttons base their readonly value on the containing radio group.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+test1 AXValue is settable: : true
+test2 AXValue is settable: : false
+test3 AXValue is settable: : true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

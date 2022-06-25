@@ -1,0 +1,20 @@
+
+FAIL Container relative unit cqw is not computationally independent assert_throws_dom: function "() => {
+        CSS.registerProperty({ name: '--x', inherits: false, syntax: '<length>', initialValue: `1${unit}` });
+      }" did not throw
+FAIL Container relative unit cqh is not computationally independent assert_throws_dom: function "() => {
+        CSS.registerProperty({ name: '--x', inherits: false, syntax: '<length>', initialValue: `1${unit}` });
+      }" threw object "InvalidModificationError: This property has already been registered." that is not a DOMException SyntaxError: property "code" is equal to 13, expected 12
+FAIL Container relative unit cqi is not computationally independent assert_throws_dom: function "() => {
+        CSS.registerProperty({ name: '--x', inherits: false, syntax: '<length>', initialValue: `1${unit}` });
+      }" threw object "InvalidModificationError: This property has already been registered." that is not a DOMException SyntaxError: property "code" is equal to 13, expected 12
+FAIL Container relative unit cqb is not computationally independent assert_throws_dom: function "() => {
+        CSS.registerProperty({ name: '--x', inherits: false, syntax: '<length>', initialValue: `1${unit}` });
+      }" threw object "InvalidModificationError: This property has already been registered." that is not a DOMException SyntaxError: property "code" is equal to 13, expected 12
+FAIL Container relative unit cqmin is not computationally independent assert_throws_dom: function "() => {
+        CSS.registerProperty({ name: '--x', inherits: false, syntax: '<length>', initialValue: `1${unit}` });
+      }" threw object "InvalidModificationError: This property has already been registered." that is not a DOMException SyntaxError: property "code" is equal to 13, expected 12
+FAIL Container relative unit cqmax is not computationally independent assert_throws_dom: function "() => {
+        CSS.registerProperty({ name: '--x', inherits: false, syntax: '<length>', initialValue: `1${unit}` });
+      }" threw object "InvalidModificationError: This property has already been registered." that is not a DOMException SyntaxError: property "code" is equal to 13, expected 12
+

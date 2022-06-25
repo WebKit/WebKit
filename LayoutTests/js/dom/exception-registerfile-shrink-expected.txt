@@ -1,0 +1,9 @@
+Test for REGRESSION(r60392): Registerfile can be unwound too far following an exception. If the test doesn't crash, you pass.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

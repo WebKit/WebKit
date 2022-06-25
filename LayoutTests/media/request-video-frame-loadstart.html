@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>request-video-frame-loadstart</title>
+    <script src="video-test.js"></script>
+    <script src="media-file.js"></script>
+    <script>
+    window.addEventListener('load', async event => {
+        findMediaElement();
+
+        let videoFramePromise = new Promise((resolve, reject) => {
+            consoleWrite('RUN(video.requestVideoFrameCallback(callback))');
+            video.requestVideoFrameCallback(resolve);
+        });
+
+        run('video.src = findMediaFile("video", "content/test")');
+
+        await shouldResolve(videoFramePromise);
+
+        endTest();
+    });
+    </script>
+</head>
+<body>
+    <video muted></video>
+</body>
+</html>

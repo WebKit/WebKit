@@ -1,0 +1,3 @@
+
+PASS Measurement should be related to textAlignment
+

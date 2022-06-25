@@ -1,0 +1,8 @@
+
+FAIL Normalizing a <number> returns a number CSSUnitValue Not implemented Error
+FAIL Normalizing a <percentage> returns a percent CSSUnitValue Not implemented Error
+FAIL Normalizing a <dimension> returns a CSSUnitValue with the correct unit Not implemented Error
+FAIL Normalizing a <number> with a unitless zero returns 0 Not implemented Error
+FAIL Normalizing a <calc> returns simplified expression Not implemented Error
+PASS Normalizing a <dimension> with a unitless zero returns 0px
+

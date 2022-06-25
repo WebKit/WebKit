@@ -1,0 +1,4 @@
+
+FAIL Verify write and read clipboard given text: Clipboard write text -> read text test promise_test: Unhandled rejection with value: object "Error: unimplemented"
+FAIL Verify write and read clipboard given text: non-Latin1 text encoding test データ promise_test: Unhandled rejection with value: object "Error: unimplemented"
+

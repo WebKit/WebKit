@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function load() {
+    window.animation = document.body.animate([], {id: "OldName"});
+
+    runTest();
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Animation.nameChanged");
+
+    suite.addTestCase({
+        name: "Animation.nameChanged.NewString",
+        description: "Should send the new name to the frontend when `Animation.prototype.set id` is called.",
+        async test() {
+            let animations = Array.from(WI.animationManager.animationCollection);
+            InspectorTest.assert(animations.length === 1, "There should only be one animation.");
+
+            let animation = animations[0];
+            if (!animation) {
+                throw `Missing animation.`;
+                return;
+            }
+
+            InspectorTest.assert(animation.animationType === WI.Animation.Type.WebAnimation, "Animation should be a web animation.");
+
+            InspectorTest.expectEqual(animation.displayName, "OldName", "Animation should have the name 'OldName'.");
+
+            InspectorTest.log("Changing name...\n");
+            await Promise.all([
+                animation.awaitEvent(WI.Animation.Event.NameChanged),
+                InspectorTest.evaluateInPage(`window.animation.id = "NewName"`),
+            ]);
+
+            InspectorTest.expectEqual(animation.displayName, "NewName", "Animation should have the name 'NewName'.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="load()">
+    <p>Tests for the Animation.nameChanged event.</p>
+</body>
+</html>

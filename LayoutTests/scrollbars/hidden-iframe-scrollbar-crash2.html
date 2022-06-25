@@ -1,0 +1,31 @@
+<style>
+::-webkit-scrollbar {
+  background:#f0ebe2
+}
+::-webkit-scrollbar-thumb:vertical {
+  -webkit-border-image:url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAPCAYAAADtc08vAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAAOTQAADpwB3vacVwAAAAd0SU1FB9oFEhUeDmSV9s4AAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAABoUlEQVQoz62Ty05TURSGv717zj4HoUk1qabAgYZWUkO0Rk0IiWFiookjn0CfyVdg6BvITB00TkzFC1VabC1yEYJgaWjP2RcnSBBx0OA3WVnJWv8a/OsXnOJT9YX7sbNOt7OHTvoA+CokncmSi4qMF8ri5Pxx8+Vjxa01a/ieIpcvcTE7hgqG0FoTH3bY391me7OFtZqZ2/dIZ7LiWKC+9NK1Gu+ZKJaZnL6J0THWaKzRJHEPazTGWqQQHPzcp7lS5c78I9KZrPAqiwturVkjKsyQn76FsQk4x184i9aaIFRMFK+z9Po5ADKJ+6Q8n6lrc3DG3mmstQyPpJEpj/VWzck4jokKZQYh6ffIRUW22itIqzWXx6YGEnDOEg4Ns7e7wbkRi8+eursPn6CCCzhjMC7BGY215k8Xjlz5XVU4wnL1FVJ6Ht+/rQ52VUh6h10yl3JIpRTtxtuBBPwgZKNd50p0FemrAKMTVpcrJ/7y30gp6R50sEYzOlkScu7+YzGeL9FufKD5+Q1SpkCcoSQknh/Q78V8rb/jxuyD/5iF86TxF8VV4SSfiBybAAAAAElFTkSuQmCC') 7 0 7 0 / 7px 0 7px 0 round;background:url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAJCAYAAAA7KqwyAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAAOTQAADpwB3vacVwAAAAd0SU1FB9oFEhUgGNGEWOIAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAAAWElEQVQoz2PcsbL/v3tYPsO/f/8Y/v/9y/Dv/x+Gf38h+O/f3wy/f36Hsv+g0JxcfAxnj25jYGHAAi6d3IVNmEFWUQNDDKsBeuZuOF2ADpgYKASjXqCCFwDpmWlwnmaGdAAAAABJRU5ErkJggg==') left center no-repeat, url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAABCAYAAADXeS5fAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAAOTQAADpwB3vacVwAAAAd0SU1FB9oFEhUfFffrDmMAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAAAQElEQVQI11XFsRFAUBRE0Ss0AlWpQB1qUYcGjAak6jH/v90VO8kZrmPPsm4kJhJKJypsYRW9vViFVL/Haea5Tz6Sain0ymD28wAAAABJRU5ErkJggg==');
+}
+</style>
+
+<script>
+function load()
+{
+    var iframe = document.getElementById("iframe");
+    var win = iframe.contentWindow;
+    var img = win.document.getElementById("i");
+    img.src = "resizer.png";
+}
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+</script>
+
+<body>
+<iframe id="iframe" src="resources/hidden-iframe-scrollbar-crash2.html" width="50px" onload="load()"></iframe>
+
+<p>This tests to make sure that an iframe with custom scrollbars that starts
+an image load and is hidden before the image load is complete doesn't crash
+when the image load completes.  The test passes if it does not crash.</p>
+</body>

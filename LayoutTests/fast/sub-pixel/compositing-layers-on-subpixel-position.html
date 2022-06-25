@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that we properly position render layers when composition is introduced.</title>
+<style>
+  div {
+    background-color: black;
+    position: absolute;
+  }
+  .parent {
+    background-color: red;
+    -webkit-transform: translateZ(0);
+  }
+</style>
+</head>
+<body>
+<p id="container"></p>
+<script>
+  var childPos = -2;
+  function createGrid(topPos, leftPos) {
+    var container = document.getElementById("container");
+    localTopPos = topPos;
+    localLeftPos = leftPos;
+    for (var i = 0; i < 10; ++i, localTopPos = localTopPos + 7) {
+      localLeftPos = leftPos;
+      for (var j = 0; j < 10; ++j, localLeftPos = localLeftPos + 7, childPos = childPos < 2 ? childPos + 0.1 : -2) {
+        var outer = document.createElement("div");
+        outer.className = "parent";
+        outer.style.top = localTopPos + "px";
+        outer.style.left = localLeftPos + "px";
+        outer.style.width = "4px";
+        outer.style.height = "4px";
+
+        var inner = document.createElement("div");
+        inner.style.top = childPos + "px";
+        inner.style.left = childPos + "px";
+        inner.style.width = "2px";
+        inner.style.height = "2px";
+
+        outer.appendChild(inner);
+        container.appendChild(outer);
+      }
+    }
+  }
+
+  for (var i = 0; i < 10; ++i)
+    createGrid(i * 0.1, i * 70.1);
+</script>
+
+</body>
+</html>

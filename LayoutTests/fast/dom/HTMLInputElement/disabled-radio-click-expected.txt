@@ -1,0 +1,14 @@
+Make sure that the onclick handler is not called when the user clicks on a disabled radio button, or when calling click() on such element.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+* Testing input.click()
+PASS clickHandlerCallCount is 0
+* Testing user click
+PASS clickHandlerCallCount is 0
+PASS clickHandlerCallCount is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

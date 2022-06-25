@@ -1,0 +1,569 @@
+/*
+ * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary form, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ * 3.  Neither the name of Apple Inc. ("Apple") nor the names of
+ *     its contributors may be used to endorse or promote products derived
+ *     from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+// This IDL file is for testing the bindings code generator and for tracking
+// changes in its output.
+
+enum TestEnumType { "", "enumValue1", "EnumValue2", "EnumValue3" };
+enum TestEnumTrailingComma { "enumValue1", "enumValue2", };
+
+// Leading underscore on an enum should be removed.
+enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };
+
+[ImplementedAs=AlternateEnumName] enum TestEnumTypeWithAlternateImplementationName { "enumValue1", "EnumValue2" };
+
+[Conditional=Condition1] enum TestEnumA { "A" };
+[Conditional=Condition1&Condition2] enum TestEnumB { "B" };
+[Conditional=Condition1|Condition2] enum TestEnumC { "C" };
+
+enum TestObjKind { "quick", "dead" };
+enum ObjSize { "small", "much-much-larger" };
+enum TestConfidence { "high", "kinda-low" };
+
+[
+    InterfaceName=TestObject,
+    Exposed=(Window,Worker)
+] interface TestObj {
+    [CallWith=CurrentDocument] constructor(TestCallbackInterface testCallback, TestCallbackFunction testCallbackFunction);
+
+    // Attributes
+    readonly attribute long            readOnlyLongAttr;
+    readonly attribute DOMString       readOnlyStringAttr;
+    readonly attribute TestObj         readOnlyTestObjAttr;
+    static readonly attribute long     staticReadOnlyLongAttr;
+    static attribute DOMString         staticStringAttr;
+    static readonly attribute TestSubObjConstructor TestSubObj;
+    [CallWith=CurrentDocument] static readonly attribute TestObj testStaticReadonlyObj;
+    attribute TestEnumType enumAttr;
+    attribute byte byteAttr;
+    attribute octet octetAttr;
+    [Unscopable] attribute short shortAttr;
+    attribute [Clamp] short clampedShortAttr;
+    attribute [EnforceRange] short enforceRangeShortAttr;
+    attribute unsigned short unsignedShortAttr;
+    attribute long longAttr;
+    attribute long long longLongAttr;
+    attribute unsigned long long unsignedLongLongAttr;
+    attribute DOMString stringAttr;
+    attribute USVString usvstringAttr;
+    attribute TestObj testObjAttr;
+    attribute TestObj? testNullableObjAttr;
+    [LegacyLenientThis] attribute TestObj lenientTestObjAttr;
+    [LegacyUnforgeable] readonly attribute DOMString unforgeableAttr;
+    attribute [LegacyNullToEmptyString] DOMString stringAttrTreatingNullAsEmptyString;
+    attribute [LegacyNullToEmptyString] USVString usvstringAttrTreatingNullAsEmptyString;
+    attribute [LegacyNullToEmptyString] ByteString byteStringAttrTreatingNullAsEmptyString;
+    attribute record<DOMString, long> stringLongRecordAttr;
+    attribute record<USVString, long> usvstringLongRecordAttr;
+    attribute record<ByteString, long> usvstringLongRecordAttr;
+    attribute record<DOMString, TestObj> stringObjRecordAttr;
+    attribute record<DOMString, TestObj?> stringNullableObjRecordAttr;
+    attribute record<DOMString, VoidCallback> stringVoidCallbackRecordAttr;
+    attribute TestDictionary dictionaryAttr;
+    attribute TestDictionary? nullableDictionaryAttr;
+    attribute (DOMString or [Clamp] long) annotatedTypeInUnionAttr;
+    attribute sequence<[Clamp] long> annotatedTypeInSequenceAttr;
+
+    attribute TestEnumTypeWithAlternateImplementationName implementationEnumAttr;
+
+    [SecureContext, ContextAllowsMediaDevices] readonly attribute MediaDevices mediaDevices;
+
+    // WK_ucfirst, WK_lcfirst exceptional cases.
+    attribute TestObj                  XMLObjAttr;
+    attribute boolean                  create;
+
+    // Reflected DOM attributes
+    [Reflect] attribute DOMString reflectedStringAttr;
+    [Reflect] attribute USVString reflectedUSVStringAttr;
+    [Reflect] attribute long reflectedIntegralAttr;
+    [Reflect] attribute unsigned long reflectedUnsignedIntegralAttr;
+    [Reflect] attribute boolean reflectedBooleanAttr;
+    [Reflect] attribute Element reflectedElementAttr;
+    [Reflect] attribute FrozenArray<Element> reflectedElementsArrayAttr;
+    [Reflect, URL] attribute DOMString reflectedURLAttr;
+    [Reflect, URL] attribute USVString reflectedUSVURLAttr;
+    [Reflect=customContentStringAttr] attribute DOMString reflectedStringAttr;
+    [Reflect=customContentIntegralAttr] attribute long reflectedCustomIntegralAttr;
+    [Reflect=customContentBooleanAttr] attribute boolean reflectedCustomBooleanAttr;
+    [Reflect=customContentURLAttr, URL] attribute DOMString reflectedCustomURLAttr;
+
+    // [EnabledAtRuntime] attributes and operations.
+    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeatureEnabled&TestFeature1Enabled] attribute DOMString enabledAtRuntimeAttribute;
+    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeatureEnabled] undefined enabledAtRuntimeOperation(DOMString testParam);
+    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeatureEnabled] undefined enabledAtRuntimeOperation(long testParam);
+    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeatureEnabled] static undefined enabledAtRuntimeOperationStatic(long testParam);
+    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeatureEnabled] static attribute DOMString enabledAtRuntimeAttributeStatic;
+
+    [EnabledForWorld=someWorld, EnabledAtRuntime=TestFeatureEnabled] undefined enabledInSpecificWorldWhenRuntimeFeatureEnabled(long testParam);
+    [EnabledForWorld=someWorld] undefined worldSpecificMethod(long testParam);
+
+    // [SecureContext] attributes and operations; will not be exposed to a non-secure context.
+    // From <https://w3c.github.io/webappsec-secure-contexts/#integration-idl> (Editor's Draft, 17 November 2016)
+    [SecureContext] Promise<double> calculateSecretResult();
+    [SecureContext] boolean getSecretBoolean();
+    [Conditional=TEST_FEATURE, SecureContext, EnabledAtRuntime=TestFeatureEnabled] boolean testFeatureGetSecretBoolean();
+
+    // TypedArray attribute
+    attribute Float32Array typedArrayAttr;
+
+    iterable<DOMString>;
+
+    // Methods
+    [Unscopable] undefined undefinedMethod();
+    undefined undefinedMethodWithArgs(long longArg, DOMString strArg, TestObj objArg);
+    byte byteMethod();
+    byte byteMethodWithArgs(byte byteArg, DOMString strArg, TestObj objArg);
+    octet octetMethod();
+    octet octetMethodWithArgs(octet octetArg, DOMString strArg, TestObj objArg);
+    long longMethod();
+    long longMethodWithArgs(long longArg, DOMString strArg, TestObj objArg);
+    TestObj objMethod();
+    TestObj objMethodWithArgs(long longArg, DOMString strArg, TestObj objArg);
+    [LegacyUnforgeable] long unforgeableMethod();
+    undefined methodWithArgTreatingNullAsEmptyString([LegacyNullToEmptyString] DOMString arg);
+    undefined methodWithXPathNSResolverParameter(XPathNSResolver resolver);
+
+    // Nullable String return values.
+    DOMString? nullableStringMethod();
+    static DOMString? nullableStringStaticMethod();
+    getter DOMString? nullableStringSpecialMethod(unsigned long index);
+
+    undefined methodWithEnumArg(TestEnumType enumArg);
+    undefined methodWithStandaloneEnumArg(TestStandaloneEnumeration enumArg);
+    undefined methodWithOptionalEnumArg(optional TestEnumType enumArg);
+    undefined methodWithOptionalEnumArgAndDefaultValue(optional TestEnumType enumArg = "EnumValue1");
+
+    undefined methodWithUSVStringArg(USVString str);
+    undefined methodWithNullableUSVStringArg(USVString? str);
+    undefined methodWithUSVStringArgTreatingNullAsEmptyString([LegacyNullToEmptyString] USVString str);
+
+    undefined methodWithByteStringArg(ByteString str);
+    undefined methodWithNullableByteStringArg(ByteString? str);
+    undefined methodWithByteStringArgTreatingNullAsEmptyString([LegacyNullToEmptyString] ByteString str);
+
+    undefined serializedValue(SerializedScriptValue serializedArg);
+
+    undefined methodWithRecord(record<DOMString, long> recordParameter);
+
+    // 'Custom' extended attribute
+    [Custom] attribute long            customAttr;
+    [Custom] undefined customMethod();
+    [Custom] undefined customMethodWithArgs(long longArg, DOMString strArg, TestObj objArg);
+
+    // 'JSBuiltin' extended attribute
+    [Conditional=Condition3, JSBuiltin] undefined jsBuiltinMethod();
+    [Conditional=Condition3, JSBuiltin] undefined jsBuiltinMethodWithArgs(long longArg, DOMString strArg, TestObj objArg);
+    [Conditional=Condition4, JSBuiltin] attribute TestObj jsBuiltinAttribute;
+    [Conditional=Condition4, JSBuiltin] readonly attribute TestObj jsBuiltinReadOnlyAttribute;
+
+    // Private extended attribute
+    [PrivateIdentifier] DOMString privateMethod(DOMString argument);
+    [PrivateIdentifier, PublicIdentifier] DOMString publicAndPrivateMethod(DOMString argument);
+
+    undefined addEventListener(DOMString type, EventListener listener, optional boolean useCapture = false);
+    undefined removeEventListener(DOMString type, EventListener listener, optional boolean useCapture = false);
+    attribute EventHandler onfoo;
+    [ImplementedAs=onfoo] attribute EventHandler onwebkitfoo;
+
+    // 'CallWith' extended attribute
+    [CallWith=CurrentGlobalObject] undefined withCurrentGlobalObjectVoid();
+    [CallWith=RelevantGlobalObject] undefined withRelevantGlobalObjectVoid();
+    [CallWith=CurrentGlobalObject] TestObj withCurrentGlobalObjectObj();
+    [CallWith=CurrentScriptExecutionContext] undefined withCurrentScriptExecutionContext();
+    [CallWith=RelevantScriptExecutionContext] undefined withRelevantScriptExecutionContext();
+    [CallWith=CurrentScriptExecutionContext&CurrentGlobalObject] undefined withCurrentScriptExecutionContextAndGlobalObject();
+    [CallWith=  CurrentScriptExecutionContext  &  CurrentGlobalObject  ] TestObj withCurrentScriptExecutionContextAndGlobalObjectWithSpaces();
+    [CallWith=CurrentDocument] undefined withCurrentDocumentArgument();
+    [CallWith=RelevantDocument] undefined withRelevantDocumentArgument();
+    [CallWith=IncumbentDocument] undefined withCallerDocumentArgument();
+    [CallWith=IncumbentWindow] undefined withCallerWindowArgument();
+
+    [CallWith=CurrentGlobalObject] attribute long withCurrentGlobalObjectAttribute;
+    [CallWith=CurrentGlobalObject, SetterCallWith=ActiveWindow&FirstWindow] attribute long withCallWithAndSetterCallWithAttribute;
+    [SetterCallWith=IncumbentWindow&FirstWindow] attribute DOMString withSetterCallWithAttribute;
+
+    // Optional parameters.
+    undefined    methodWithOptionalArg(optional long opt);
+    undefined    methodWithOptionalArgAndDefaultValue(optional long opt = 666);
+    undefined    methodWithNonOptionalArgAndOptionalArg(long nonOpt, optional long opt);
+    undefined    methodWithNonOptionalArgAndTwoOptionalArgs(long nonOpt, optional long opt1, optional long opt2);
+    undefined    methodWithOptionalString(optional DOMString str);
+    undefined    methodWithOptionalUSVString(optional USVString str);
+    undefined    methodWithOptionalAtomString(optional [AtomString] DOMString str);
+    undefined    methodWithOptionalStringAndDefaultValue(optional DOMString str = "foo");
+    undefined    methodWithOptionalAtomStringAndDefaultValue(optional [AtomString] DOMString str = "foo");
+    undefined    methodWithOptionalStringIsNull(optional DOMString str = null);
+    undefined    methodWithOptionalStringIsUndefined(optional DOMString str = "undefined");
+    undefined    methodWithOptionalAtomStringIsNull(optional [AtomString] DOMString str = null);
+    undefined    methodWithOptionalStringIsEmptyString(optional DOMString str = "");
+    undefined    methodWithOptionalUSVStringIsEmptyString(optional USVString str = "");
+    undefined    methodWithOptionalAtomStringIsEmptyString(optional [AtomString] DOMString str = "");
+    undefined    methodWithOptionalDoubleIsNaN(optional unrestricted double number = NaN);
+    undefined    methodWithOptionalFloatIsNaN(optional unrestricted float number = NaN);
+    undefined    methodWithOptionalLongLong(optional long long number);
+    undefined    methodWithOptionalLongLongIsZero(optional long long number = 0);
+    undefined    methodWithOptionalUnsignedLongLong(optional unsigned long long number);
+    undefined    methodWithOptionalUnsignedLongLongIsZero(optional unsigned long long number = 0);
+    undefined    methodWithOptionalSequence(optional sequence<DOMString> array);
+    undefined    methodWithOptionalSequenceIsEmpty(optional sequence<DOMString> array = []);
+    undefined    methodWithOptionalBoolean(optional boolean b);
+    undefined    methodWithOptionalBooleanIsFalse(optional boolean b = false);
+    undefined    methodWithOptionalAny(optional any a);
+    undefined    methodWithOptionalObject(optional object a);
+    undefined    methodWithOptionalWrapper(optional TestObj obj);
+    undefined    methodWithOptionalNullableWrapper(optional TestObj? obj);
+    undefined    methodWithOptionalNullableWrapperIsNull(optional TestObj? obj = null);
+    undefined    methodWithOptionalXPathNSResolver(optional XPathNSResolver? resolver);
+    undefined    methodWithOptionalRecord(optional record<DOMString, long>? record = null);
+    undefined    methodWithOptionalPromise(optional Promise<undefined> promise);
+
+    // Callback interface parameters.
+    undefined    methodWithCallbackInterfaceArg(TestCallbackInterface callback);
+    undefined    methodWithNullableCallbackInterfaceArg(TestCallbackInterface? callback);
+    undefined    methodWithNonCallbackInterfaceArgAndCallbackInterfaceArg(long nonCallback, TestCallbackInterface callback);
+    undefined    methodWithOptionalCallbackInterfaceArg(optional TestCallbackInterface callback);
+    undefined    methodWithOptionalNullableCallbackInterfaceArg(optional TestCallbackInterface? callback);
+
+    // Callback function parameters.
+    undefined    methodWithCallbackFunctionArg(TestCallbackFunction callback);
+    undefined    methodWithNullableCallbackFunctionArg(TestCallbackFunction? callback);
+    undefined    methodWithNonCallbackArgAndCallbackFunctionArg(long nonCallback, TestCallbackFunction callback);
+    undefined    methodWithOptionalCallbackFunctionArg(optional TestCallbackFunction callback);
+    undefined    methodWithOptionalNullableCallbackFunctionArg(optional TestCallbackFunction? callback);
+
+    // static methods with 'Callback' extended attribute
+    static undefined    staticMethodWithCallbackAndOptionalArg(optional TestCallbackInterface? callback);
+    static undefined    staticMethodWithCallbackArg(TestCallbackInterface callback);
+
+    // 'Conditional' extended attribute
+    [Conditional=Condition1] attribute long conditionalAttr1;
+    [Conditional=Condition1&Condition2] attribute long conditionalAttr2;
+    [Conditional=Condition1|Condition2] attribute long conditionalAttr3;
+
+    // 'Conditional' extended method
+    [Conditional=Condition1] DOMString conditionalMethod1();
+    [Conditional=Condition1&Condition2] undefined conditionalMethod2();
+    [Conditional=Condition1|Condition2] undefined conditionalMethod3();
+
+    [Conditional=Condition1] attribute TestObjectAConstructor conditionalAttr4;
+    [Conditional=Condition1&Condition2] attribute TestObjectBConstructor conditionalAttr5;
+    [Conditional=Condition1|Condition2] attribute TestObjectCConstructor conditionalAttr6;
+
+    [Conditional=Condition1] const unsigned short CONDITIONAL_CONST = 0;
+
+    [CachedAttribute] readonly attribute any cachedAttribute1;
+    [CachedAttribute] readonly attribute any cachedAttribute2;
+    [CachedAttribute, Conditional=CONDITION] readonly attribute any cachedAttribute3;
+
+    attribute any anyAttribute;
+    attribute object objectAttribute;
+
+    // Overloads
+    undefined    overloadedMethod(TestObj? objArg, DOMString strArg);
+    undefined    overloadedMethod(TestObj? objArg, optional long longArg);
+    undefined    overloadedMethod(DOMString strArg);
+    undefined    overloadedMethod(long longArg);
+    undefined    overloadedMethod(TestCallbackInterface callback);
+    undefined    overloadedMethod(DOMStringList? listArg);
+    undefined    overloadedMethod(sequence<DOMString>? arrayArg);
+    undefined    overloadedMethod(TestObj objArg);
+    undefined    overloadedMethod(WindowProxy window);
+    undefined    overloadedMethod(sequence<DOMString> arrayArg);
+    undefined    overloadedMethod(sequence<unsigned long> arrayArg);
+    undefined    overloadedMethod(DOMString strArg);
+
+    // FIXME: Implement support for overloaded functions with variadic arguments.
+    undefined    overloadedMethod(Blob... blobArgs);
+
+    undefined overloadedMethodWithOptionalParameter(DOMString strArg, optional TestObj? objArg = null);
+    undefined overloadedMethodWithOptionalParameter(TestObj? objArg, optional long longArg);
+
+    undefined overloadedMethodWithDistinguishingUnion((TestObj or TestNode) objectOrNode);
+    undefined overloadedMethodWithDistinguishingUnion(long value);
+
+    undefined overloadedMethodWith2DistinguishingUnions((TestObj or TestNode) objectOrNode);
+    undefined overloadedMethodWith2DistinguishingUnions((TestInterface or DOMString or long) value);
+
+    undefined overloadedMethodWithNonDistinguishingUnion((TestObj or TestNode) objectOrNode, TestObj object);
+    undefined overloadedMethodWithNonDistinguishingUnion((TestObj or TestNode) objectOrNode, TestNode node);
+
+    undefined overloadWithNullableUnion((TestObj or TestNode)? objectOrNode);
+    undefined overloadWithNullableUnion(long index);
+
+    undefined overloadWithOptionalUnion(optional (DOMString or boolean) objectOrNode = true);
+    undefined overloadWithOptionalUnion(long index);
+
+    undefined overloadWithNullableNonDistinguishingParameter(TestObj? obj, TestNode node);
+    undefined overloadWithNullableNonDistinguishingParameter(TestNode? node, long index);
+
+    // Class methods within JavaScript (like what's used for IDBKeyRange).
+    static undefined classMethod();
+    static long classMethodWithOptional(optional long arg);
+    [Custom] static undefined classMethod2(long arg);
+
+    // Static method with conditional on overloaded methods
+    [Conditional=Condition1] static undefined overloadedMethod1(long arg);
+    [Conditional=Condition1] static undefined overloadedMethod1(DOMString type);
+
+    undefined classMethodWithClamp([Clamp] unsigned short objArgsShort, [Clamp] unsigned long objArgsLong);
+    undefined classMethodWithClampOnOptional(optional [Clamp] long objArgsLong = 0);
+    undefined classMethodWithEnforceRange([EnforceRange] unsigned short objArgsShort, [EnforceRange] unsigned long objArgsLong);
+    undefined classMethodWithEnforceRangeOnOptional(optional [EnforceRange] long objArgsLong = 0);
+
+    undefined methodWithUnsignedLongSequence(sequence<unsigned long> unsignedLongSequence);
+    sequence<DOMString> stringArrayFunction(sequence<DOMString> values);
+    DOMStringList domStringListFunction(DOMStringList values);
+
+    undefined operationWithOptionalUnionParameter(optional (DOMString or sequence<unrestricted double>) optionalUnion);
+
+    undefined methodWithAndWithoutNullableSequence(sequence<unsigned long> arrayArg, sequence<unsigned long>? nullableArrayArg);
+
+    Element? getElementById([RequiresExistingAtomString] DOMString elementId);
+
+    [CheckSecurityForNode] readonly attribute Document contentDocument;
+    [CheckSecurityForNode] Document getSVGDocument();
+
+    undefined convert1(TestNode value);
+    undefined convert2(TestNode? value);
+    undefined convert3(DOMString value);
+    undefined convert4(DOMString? value);
+
+    attribute SVGPoint mutablePoint;
+    SVGPoint mutablePointFunction();
+
+    [ImplementedAs=banana] undefined orange();
+    [ImplementedAs=blueberry] attribute long strawberry;
+
+    // ObjectiveC reserved words.
+    readonly attribute long      description;
+    attribute long               id;
+    readonly attribute DOMString hash;
+
+    // Check constants and enums.
+    const unsigned short CONST_VALUE_0 = 0;
+    const unsigned short CONST_VALUE_1 = 1;
+    const unsigned short CONST_VALUE_2 = 2;
+    const unsigned short CONST_VALUE_4 = 4;
+    const unsigned short CONST_VALUE_8 = 8;
+    const short CONST_VALUE_9 = -1;
+    const unsigned short CONST_VALUE_11 = 0xffffffff;
+    const unsigned short CONST_VALUE_12 = 0x01;
+    const unsigned short CONST_VALUE_13 = 0X20;
+    const unsigned short CONST_VALUE_14 = 0x1abc;
+    [ImplementedAs=CONST_IMPL] const unsigned short CONST_JAVASCRIPT = 15;
+
+    [Replaceable] readonly attribute long replaceableAttribute;
+
+    undefined variadicStringMethod(DOMString head, DOMString... tail);
+    undefined variadicDoubleMethod(unrestricted double head, unrestricted double... tail);
+    undefined variadicNodeMethod(Node head, Node... tail);
+    undefined variadicUnionMethod(DOMString head, (Node or DOMString)... tail);
+
+    // Nullable attributes.
+    readonly attribute unrestricted double? nullableDoubleAttribute;
+    readonly attribute long? nullableLongAttribute;
+    readonly attribute boolean? nullableBooleanAttribute;
+    readonly attribute DOMString? nullableStringAttribute;
+
+    attribute long? nullableLongSettableAttribute;
+    attribute DOMString? nullableStringSettableAttribute;
+    attribute USVString? nullableUSVStringSettableAttribute;
+    attribute ByteString? nullableByteStringSettableAttribute;
+
+    // Identifiers with a leading underscore, which should be removed.
+    const unsigned short               _readonly = 0;
+    readonly attribute DOMString       _attribute;
+    attribute _optional                attributeWithReservedEnumType;
+    undefined _any(unrestricted float a, long b);
+
+    readonly attribute Promise<undefined> testReadOnlyVoidPromiseAttribute;
+    readonly attribute Promise<TestNode> testReadOnlyPromiseAttribute;
+
+    // Promise function
+    Promise<undefined> testPromiseFunction();
+    Promise<undefined> testPromiseFunctionWithFloatArgument(float a);
+    Promise<undefined> testPromiseFunctionWithOptionalIntArgument(optional long a);
+    Promise<undefined> testPromiseOverloadedFunction(float a);
+    Promise<undefined> testPromiseOverloadedFunction(FetchRequest request);
+    static Promise<undefined> testStaticPromiseFunction();
+    [Custom] Promise<undefined> testCustomPromiseFunction();
+    [Custom] static Promise<undefined> testStaticCustomPromiseFunction();
+    [Custom, ReturnsOwnPromise] Promise<undefined> testCustomReturnsOwnPromiseFunction();
+    [ReturnsOwnPromise, PromiseProxy] Promise<undefined> testReturnsOwnPromiseAndPromiseProxyFunction();
+
+    // PutForwards
+    [PutForwards=name] readonly attribute TestNode putForwardsAttribute;
+    [PutForwards=name] readonly attribute TestNode? putForwardsNullableAttribute;
+
+    // Overloading with conditionals.
+    [Conditional=CONDITION1] undefined conditionalOverload(DOMString str);
+    [Conditional=CONDITION2] undefined conditionalOverload(long a);
+
+    undefined singleConditionalOverload(DOMString str);
+    [Conditional=CONDITION] undefined singleConditionalOverload(long a);
+
+    undefined attachShadowRoot(TestDictionary init);
+    undefined operationWithExternalDictionaryParameter(TestStandaloneDictionary dict);
+
+    stringifier attribute USVString stringifierAttribute;
+
+    undefined bufferSourceParameter(BufferSource data);
+
+    Node testReturnValueOptimization([ReturnValue] Node a, Node b);
+
+    [Exposed=Window] attribute long conditionallyExposedToWindowAttribute;
+    [Exposed=Worker] attribute long conditionallyExposedToWorkerAttribute;
+    [Exposed=(Worker, Window)] attribute long conditionallyExposedToWindowAndWorkerAttribute;
+    [Exposed=Window] undefined conditionallyExposedToWindowFunction();
+    [Exposed=Worker] undefined conditionallyExposedToWorkerFunction();
+    [Exposed=(Window, Worker)] undefined conditionallyExposedToWindowAndWorkerFunction();
+
+    [ImplementedAs=leadingHyphenAttribute] attribute DOMString -leading-hyphen-attribute;
+    [ImplementedAs=trailingHyphenAttribute] attribute DOMString trailing-hyphen-attribute-;
+    attribute DOMString _leading_underscore_attribute; // NOTE: IDL removes the leading underscore so this is interpreted as "leading_underscore_attribute"
+    attribute DOMString __double_leading_underscore_attribute; // NOTE: IDL removes the leading underscore so this is interpreted as "_double_leading_underscore_attribute"
+    attribute DOMString trailing_underscore_attribute_;
+
+    [ImplementedAs=leadingHyphenFunction] undefined -leading-hyphen-function();
+    [ImplementedAs=trailingHyphenFunction] undefined trailing-hyphen-function-();
+    undefined _leading_underscore_function(); // NOTE: WebIDL removes the leading underscore so this is interpreted as "leading_underscore_function"
+    undefined __double_leading_underscore_function(); // NOTE: WebIDL removes the leading underscore so this is interpreted as "_double_leading_underscore_function"
+    undefined trailing_underscore_function_();
+
+    boolean encodeInto([AllowShared] Uint8Array destination);
+    boolean bigInt64(BigInt64Array destination);
+    boolean bigUint64(BigUint64Array destination);
+    boolean bigInt64AllowShared([AllowShared] BigInt64Array destination);
+    boolean bigUint64AllowShared([AllowShared] BigUint64Array destination);
+
+    [SetterCallWith=LegacyActiveWindowForAccessor&FirstWindow] attribute USVString search;
+};
+
+// The following comments should not generate any code.
+// TestObj includes TestMixinInterface;
+/* TestObj includes TestMixinInterface; */
+
+typedef any AnyTypedef;
+
+[
+    JSGenerateToJSObject
+] dictionary TestDictionary {
+    TestEnumType enumerationValueWithoutDefault;
+    TestEnumType enumerationValueWithDefault = "enumValue1";
+    TestEnumType enumerationValueWithEmptyStringDefault = "";
+    DOMString stringWithDefault = "defaultString";
+    DOMString stringWithoutDefault;
+    DOMString? nullableStringWithDefault = null;
+    [LegacyNullToEmptyString] DOMString stringTreatNullAsEmptyString;
+    boolean booleanWithDefault = false;
+    boolean booleanWithoutDefault;
+    sequence<DOMString> sequenceOfStrings;
+    double restrictedDouble;
+    unrestricted double unrestrictedDouble;
+    double restrictedDoubleWithDefault = 0;
+    unrestricted double unrestrictedDoubleWithDefault = 0;
+    float restrictedFloat;
+    unrestricted float unrestrictedFloat;
+    float restrictedFloatWithDefault = 0;
+    unrestricted float unrestrictedFloatWithDefault = 0;
+    [Clamp] byte smallIntegerClamped;
+    byte smallIntegerWithDefault;
+    [EnforceRange] octet smallUnsignedIntegerEnforcedRange;
+    octet smallUnsignedIntegerWithDefault = 0;
+    long integer;
+    long integerWithDefault = 0;
+    unsigned long unsignedInteger;
+    unsigned long unsignedIntegerWithDefault = 0;
+    long long largeInteger;
+    long long largeIntegerWithDefault = 0;
+    unsigned long long unsignedLargeInteger;
+    unsigned long long unsignedLargeIntegerWithDefault = 0;
+    long? nullableIntegerWithDefault = null;
+    Node? nullableNode = null;
+    TestEnumType? nullableEnum = null;
+    any anyValue;
+    any anyValueWithNullDefault = null;
+    [ImplementedAs=foo] any fooAlias;
+    [ImplementedAs=fooWithDefault] any fooWithDefaultAlias = 0;
+    AnyTypedef anyTypedefValue;
+    TestDictionaryThatShouldTolerateNull dictionaryMember;
+    (long or Node) unionMember;
+    (long or Node)? nullableUnionMember = null;
+    BufferSource bufferSourceValue;
+    required BufferSource requiredBufferSourceValue;
+    (DOMString or [Clamp] long) annotatedTypeInUnionMember;
+    sequence<[Clamp] long> annotatedTypeInSequenceMember;
+};
+
+dictionary TestDictionaryThatShouldNotTolerateNull {
+    required TestEnumType requiredEnumerationValue;
+    boolean booleanWithoutDefault;
+    required Node nonNullableNode;
+    required TestDictionary requiredDictionaryMember;
+};
+
+dictionary TestDictionaryThatShouldTolerateNull {
+    TestEnumType enumerationValue;
+    boolean booleanWithoutDefault;
+};
+
+[
+    ImplementedAs=AlternateDictionaryName
+] dictionary TestDictionaryWithAlternateImplementationName {
+    TestEnumType enumerationValue;
+    boolean booleanWithoutDefault;
+};
+
+dictionary ParentDictionary {
+    boolean parentMember2;
+    boolean parentMember1;
+};
+
+dictionary ChildDictionary : ParentDictionary {
+    boolean childMember2;
+    boolean childMember1;
+};
+
+[
+    Conditional=Condition1
+] dictionary TestConditionalDictionaryA {
+    DOMString stringWithoutDefault;
+};
+
+[
+    Conditional=Condition1&Condition2
+] dictionary TestConditionalDictionaryB {
+    DOMString stringWithoutDefault;
+};
+
+[
+    Conditional=Condition1|Condition2
+] dictionary TestConditionalDictionaryC {
+    DOMString stringWithoutDefault;
+};

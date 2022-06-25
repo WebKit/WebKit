@@ -1,0 +1,2 @@
+#include "asan.xcconfig"
+#include "ubsan.xcconfig"

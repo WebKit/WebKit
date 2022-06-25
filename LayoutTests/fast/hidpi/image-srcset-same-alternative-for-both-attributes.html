@@ -1,0 +1,25 @@
+<html>
+<head>
+<script>
+    window.targetScaleFactor = 1;
+</script>
+<script src="../../resources/srcset-helper.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    function runTest()
+    {
+        if (internals)
+            shouldBeFalse('internals.isPreloaded("resources/green-200-px-square.png")');
+        shouldBeTrue('document.getElementById("foo").clientWidth==100');
+    }
+</script>
+</head>
+
+<body id="body">
+    <div>This test passes if this img tag below is a blue square when the scale factor is 1. It ensures that when both source attributes has the same input alternative always the one from srcset is choosen</div>
+    <img id="foo" src="resources/green-200-px-square.png" srcset="resources/blue-100-px-square.png 1x">
+</body>
+</html>

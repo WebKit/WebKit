@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Invalid URL
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Eligibility (BroadcastChannel) Test timed out
+NOTRUN Eligibility (BroadcastChannel closed in the pagehide event)
+

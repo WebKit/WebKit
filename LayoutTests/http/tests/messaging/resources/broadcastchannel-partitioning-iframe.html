@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+function isSameOriginAsTop()
+{
+    try {
+        return self.origin == top.origin;
+    } catch (e) {
+        return false;
+    }
+}
+
+let bc = new BroadcastChannel("broadcastchannel-partitioning");
+
+if (location.origin == "http://127.0.0.1:8000") {
+    if (isSameOriginAsTop())
+        bc.postMessage("same-origin-iframe-under-same-origin-popup");
+    else
+        bc.postMessage("same-origin-iframe-under-cross-origin-popup");
+} else {
+    if (isSameOriginAsTop())
+        bc.postMessage("cross-origin-iframe-under-cross-origin-popup");
+    else
+        bc.postMessage("cross-origin-iframe-under-same-origin-popup");
+}
+</script>
+</body>
+</html>

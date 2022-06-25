@@ -1,0 +1,59 @@
+/*
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+[
+    Conditional=MODEL_ELEMENT,
+    EnabledBySetting=ModelElementEnabled,
+    ExportToWrappedFunction,
+    Exposed=Window,
+    JSGenerateToNativeObject
+] interface HTMLModelElement : HTMLElement {
+    [URL] readonly attribute USVString currentSrc;
+
+    readonly attribute boolean complete;
+    readonly attribute Promise<HTMLModelElement> ready;
+
+    [Reflect] attribute boolean interactive;
+
+    undefined enterFullscreen();
+
+    [Conditional=ARKIT_INLINE_PREVIEW_CAMERA_TRANSFORM] Promise<HTMLModelElementCamera> getCamera();
+    [Conditional=ARKIT_INLINE_PREVIEW_CAMERA_TRANSFORM] Promise<undefined> setCamera(HTMLModelElementCamera camera);
+
+    [Conditional=ARKIT_INLINE_PREVIEW_ANIMATIONS_CONTROL] Promise<boolean> isPlayingAnimation();
+    [Conditional=ARKIT_INLINE_PREVIEW_ANIMATIONS_CONTROL] Promise<undefined> playAnimation();
+    [Conditional=ARKIT_INLINE_PREVIEW_ANIMATIONS_CONTROL] Promise<undefined> pauseAnimation();
+
+    [Conditional=ARKIT_INLINE_PREVIEW_ANIMATIONS_CONTROL] Promise<boolean> isLoopingAnimation();
+    [Conditional=ARKIT_INLINE_PREVIEW_ANIMATIONS_CONTROL] Promise<undefined> setIsLoopingAnimation(boolean looping);
+
+    [Conditional=ARKIT_INLINE_PREVIEW_ANIMATIONS_CONTROL] Promise<double> animationDuration();
+    [Conditional=ARKIT_INLINE_PREVIEW_ANIMATIONS_CONTROL] Promise<double> animationCurrentTime();
+    [Conditional=ARKIT_INLINE_PREVIEW_ANIMATIONS_CONTROL] Promise<undefined> setAnimationCurrentTime(double currentTime);
+
+    [Conditional=ARKIT_INLINE_PREVIEW_AUDIO_CONTROL] Promise<boolean> hasAudio();
+    [Conditional=ARKIT_INLINE_PREVIEW_AUDIO_CONTROL] Promise<boolean> isMuted();
+    [Conditional=ARKIT_INLINE_PREVIEW_AUDIO_CONTROL] Promise<undefined> setIsMuted(boolean isMuted);
+};

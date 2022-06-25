@@ -1,0 +1,7 @@
+Tests that an <img> with a .mp4 source where that .mp4 has an edit list will correctly decode.
+RUN(img = new Image())
+RUN(img.src = 'content/video-as-img.mp4')
+RUN(promise = img.decode())
+Promise resolved OK
+END OF TEST
+

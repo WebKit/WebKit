@@ -1,0 +1,18 @@
+Tests that the first parameter to Element.getElementsByTagNameNS() is nullable
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.body.getElementsByTagName('a')[0].namespaceURI is null
+PASS document.body.getElementsByTagNameNS(null, 'a')[0].id is "testAnchor"
+PASS document.body.getElementsByTagNameNS(undefined, 'a')[0].id is "testAnchor"
+PASS document.getElementsByTagNameNS(null, 'a')[0].id is "testAnchor"
+PASS document.getElementsByTagNameNS(undefined, 'a')[0].id is "testAnchor"
+PASS document.body.getElementsByTagNameNS('null', 'a').length is 0
+PASS document.body.getElementsByTagNameNS('undefined', 'a').length is 0
+PASS document.getElementsByTagNameNS('null', 'a').length is 0
+PASS document.getElementsByTagNameNS('undefined', 'a').length is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

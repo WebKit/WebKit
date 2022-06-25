@@ -1,0 +1,6 @@
+
+FAIL ask-for-reset when removing option assert_equals: expected (string) "4" but got (undefined) undefined
+FAIL ask-for-reset when inserting option assert_false: expected false got true
+FAIL ask-for-reset when changing selectedness of option assert_equals: expected (string) "0" but got (undefined) undefined
+FAIL ask-for-reset for form assert_equals: First non-disabled option should be selected. expected (string) "one" but got (undefined) undefined
+

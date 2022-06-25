@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<title>drawImage ImageBitmap test</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/html/canvas/resources/canvas-tests.js"></script>
+<script src="common.js"></script>
+<link rel="stylesheet" href="/common/canvas-tests.css">
+<body>
+<script>
+// The resources/target-blue-dot.png image is a 9x9 bitmap with a #00ff00 background
+// and a single #0000ff pixel right in the middle (at 4,4).
+
+(function() {
+    promise_test(function() {
+        return new Promise(function(resolve, reject) {
+            let img = new Image();
+            img.onload = function() { resolve(img); };
+            img.src = "resources/target-blue-dot.png";
+        }).then(function(img) {
+            return createImageBitmap(img);
+        }).then(function(imageBitmap) {
+            let [canvas, ctx] = create9x9CanvasWith2dContext();
+            ctx.drawImage(imageBitmap, 0, 0);
+            _assertPixel(canvas, 0,0, 0,255,0,255, "0,0", "0,255,0,255");
+            _assertPixel(canvas, 4,3, 0,255,0,255, "4,3", "0,255,0,255");
+            _assertPixel(canvas, 3,4, 0,255,0,255, "3,4", "0,255,0,255");
+            _assertPixel(canvas, 4,4, 0,0,255,255, "4,4", "0,0,255,255"); // Target blue dot.
+            _assertPixel(canvas, 5,4, 0,255,0,255, "5,4", "0,255,0,255");
+            _assertPixel(canvas, 4,5, 0,255,0,255, "4,5", "0,255,0,255");
+        });
+    }, "drawImage of ImageBitmap from HTMLImageElement");
+
+    promise_test(function() {
+        return new Promise(function(resolve, reject) {
+            let canvas = create9x9CanvasWithTargetImage();
+            resolve(createImageBitmap(canvas));
+        }).then(function(imageBitmap) {
+            let [canvas, ctx] = create9x9CanvasWith2dContext();
+            ctx.drawImage(imageBitmap, 0, 0);
+            _assertPixel(canvas, 0,0, 0,255,0,255, "0,0", "0,255,0,255");
+            _assertPixel(canvas, 4,3, 0,255,0,255, "4,3", "0,255,0,255");
+            _assertPixel(canvas, 3,4, 0,255,0,255, "3,4", "0,255,0,255");
+            _assertPixel(canvas, 4,4, 0,0,255,255, "4,4", "0,0,255,255"); // Target blue dot.
+            _assertPixel(canvas, 5,4, 0,255,0,255, "5,4", "0,255,0,255");
+            _assertPixel(canvas, 4,5, 0,255,0,255, "4,5", "0,255,0,255");
+        });
+    }, "drawImage of ImageBitmap from HTMLCanvasElement");
+
+    promise_test(function() {
+        return new Promise(function(resolve, reject) {
+            let img = new Image();
+            img.onload = function() { resolve(img); };
+            img.src = "resources/target-blue-dot.png";
+        }).then(function(img) {
+            return createImageBitmap(img);
+        }).then(function(imageBitmap) {
+            let [canvas, ctx] = create9x9CanvasWith2dContext();
+            ctx.drawImage(imageBitmap, 0, 0, 5, 5, 0, 0, 5, 5);
+            _assertPixel(canvas, 0,0, 0,255,0,255, "0,0", "0,255,0,255");
+            _assertPixel(canvas, 4,3, 0,255,0,255, "4,3", "0,255,0,255");
+            _assertPixel(canvas, 3,4, 0,255,0,255, "3,4", "0,255,0,255");
+            _assertPixel(canvas, 4,4, 0,0,255,255, "4,4", "0,0,255,255"); // Target blue dot.
+            _assertPixel(canvas, 5,4, 0,0,0,0, "5,4", "0,0,0,0"); // Didn't draw into these parts.
+            _assertPixel(canvas, 4,5, 0,0,0,0, "4,5", "0,0,0,0");
+        });
+    }, "drawImage of ImageBitmap from HTMLImageElement with cropping");
+
+    promise_test(function() {
+        return new Promise(function(resolve, reject) {
+            let img = new Image();
+            img.onload = function() { resolve(img); };
+            img.src = "resources/target-blue-dot.png";
+        }).then(function(img) {
+            return createImageBitmap(img);
+        }).then(function(imageBitmap) {
+            let [canvas, ctx] = create9x9CanvasWith2dContext();
+            ctx.drawImage(imageBitmap, 2, 2, 5, 5, 0, 0, 5, 5);
+            _assertPixel(canvas, 0,0, 0,255,0,255, "0,0", "0,255,0,255");
+            _assertPixel(canvas, 2,1, 0,255,0,255, "2,1", "0,255,0,255");
+            _assertPixel(canvas, 1,2, 0,255,0,255, "1,2", "0,255,0,255");
+            _assertPixel(canvas, 2,2, 0,0,255,255, "2,2", "0,0,255,255");
+            _assertPixel(canvas, 3,2, 0,255,0,255, "3,2", "0,255,0,255");
+            _assertPixel(canvas, 2,3, 0,255,0,255, "2,3", "0,255,0,255");
+            _assertPixel(canvas, 8,8, 0,0,0,0, "8,8", "0,0,0,0");
+        });
+    }, "drawImage of ImageBitmap from HTMLImageElement with cropping and different origin");
+
+    promise_test(function() {
+        return new Promise(function(resolve, reject) {
+            let img = new Image();
+            img.onload = function() { resolve(img); };
+            img.src = "resources/target-blue-dot.png";
+        }).then(function(img) {
+            return createImageBitmap(img);
+        }).then(function(imageBitmap) {
+            let [canvas, ctx] = create9x9CanvasWith2dContext();
+            ctx.drawImage(imageBitmap, 2, 2, 5, 5, 2, 2, 5, 5);
+            _assertPixel(canvas, 0,0, 0,0,0,0, "0,0", "0,0,0,0"); // Didn't draw here.
+            _assertPixel(canvas, 4,3, 0,255,0,255, "4,3", "0,255,0,255");
+            _assertPixel(canvas, 3,4, 0,255,0,255, "3,4", "0,255,0,255");
+            _assertPixel(canvas, 4,4, 0,0,255,255, "4,4", "0,0,255,255"); // Target blue dot.
+            _assertPixel(canvas, 5,4, 0,255,0,255, "5,4", "0,255,0,255");
+            _assertPixel(canvas, 4,5, 0,255,0,255, "4,5", "0,255,0,255");
+            _assertPixel(canvas, 8,8, 0,0,0,0, "8,8", "0,0,0,0");
+        });
+    }, "drawImage of ImageBitmap from HTMLImageElement with cropping and different non-zero origin");
+
+    // TODO: Add tests for tainted origin.
+    // TODO: Add tests with different blending.
+
+    promise_test(function(t) {
+        return new Promise(function(resolve, reject) {
+            let img = new Image();
+            img.onload = function() { resolve(img); };
+            img.src = "resources/target-blue-dot.png";
+        }).then(function(img) {
+            return createImageBitmap(img);
+        }).then(function(imageBitmap) {
+            imageBitmap.close();
+            let [canvas, ctx] = create9x9CanvasWith2dContext();
+            assert_throws_dom("InvalidStateError", function () {
+                ctx.drawImage(imageBitmap, 0, 0);
+            }, "A closed ImageBitmap can't be drawn.");
+        });
+    }, "drawImage throws with InvalidStateError if the ImageBitmap is closed");
+
+    promise_test(function(t) {
+        return new Promise(function(resolve, reject) {
+            let img = new Image();
+            img.onload = function() { resolve(img); };
+            img.src = "resources/target-blue-dot.png";
+        }).then(function(img) {
+            return createImageBitmap(img);
+        }).then(function(imageBitmap) {
+            let [canvas, ctx] = create9x9CanvasWith2dContext();
+            ctx.drawImage(imageBitmap, 0, 0, 0, 0, 0, 0, 9, 9);
+            _assertPixel(canvas, 0,0, 0,0,0,0, "8,8", "0,0,0,0");
+            _assertPixel(canvas, 4,4, 0,0,0,0, "8,8", "0,0,0,0");
+            _assertPixel(canvas, 8,8, 0,0,0,0, "8,8", "0,0,0,0");
+        });
+    }, "drawImage does not draw if the source rectangle of the ImageBitmap is empty");
+})();
+</script>
+</body>
+</html>

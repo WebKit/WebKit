@@ -1,0 +1,19 @@
+This test ensures that changing the context does not crash.
+<canvas id="canvas"></canvas><br />
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+var canvas = document.getElementById("canvas");
+var ctx1 = canvas.getContext("2d");
+var ctx2 = canvas.getContext("");
+ctx1.save();
+
+canvas.parentNode.removeChild(canvas);
+
+if (window.GCController)
+    GCController.collect();
+    
+ctx1.save();
+
+</script>

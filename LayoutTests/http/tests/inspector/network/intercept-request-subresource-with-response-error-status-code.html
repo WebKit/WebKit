@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Network.interceptRequestWithResponse");
+
+    suite.addTestCase({
+        name: "Network.interceptRequestWithResponse.Subresource.StatusCode.Error",
+        description: "Subresource uses request interception with response",
+        async test() {
+            let localResourceOverride = WI.LocalResourceOverride.create("http://127.0.0.1:8000/inspector/network/resources/override.js", WI.LocalResourceOverride.InterceptType.ResponseSkippingNetwork, {
+                responseMIMEType: "text/javascript",
+                responseContent: `alert("FAIL");`,
+                responseBase64Encoded: false,
+                responseStatusCode: 418,
+                responseStatusText: "PASS",
+                responseHeaders: {},
+            });
+            WI.networkManager.addLocalResourceOverride(localResourceOverride);
+
+            let [messageAddedEvent] = await Promise.all([
+                WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded),
+                InspectorTest.reloadPage({ignoreCache: false, revalidateAllResources: true}),
+            ]);
+
+            let {message} = messageAddedEvent.data;
+            InspectorTest.log(message.messageText);
+
+            WI.networkManager.removeLocalResourceOverride(localResourceOverride);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test request interception with response that has an error status code for the subresource load.</p>
+<script src="resources/override.js"></script>
+</body>
+</html>

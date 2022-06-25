@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <script>
+        var image = new Image;
+                
+        function drawFrame(expectedFrame) {
+            return new Promise((resolve) => {
+                let canvas = document.getElementById("canvas");
+                let context = canvas.getContext("2d");
+                context.drawImage(image, 0, 0, canvas.width, canvas.height);
+                shouldBe("internals.imageFrameIndex(image)", expectedFrame.toString());
+                setTimeout(() => {
+                    resolve(expectedFrame + 1);
+                }, 30);
+            });
+        }
+
+        function drawImage(frameCount, expectedFrame) {
+            let promise = drawFrame(expectedFrame);
+            for (let frame = 1; frame < frameCount; ++frame) {
+                promise = promise.then((expectedFrame) => {
+                    return drawFrame(expectedFrame);
+                });
+            }
+            return promise;
+        }
+
+        function loadImage(src, frameCount) {
+            return new Promise((resolve) => {
+                image.onload = (() => {
+                    if (window.internals) {
+                        internals.setImageFrameDecodingDuration(image, 0.020);
+                        internals.settings.setAnimatedImageDebugCanvasDrawingEnabled(true);
+                    }
+                    drawImage(Math.ceil(frameCount / 2), 0).then(() => {
+                        internals.resetImageAnimation(image);
+                        debug("The animation of the image was reset.");
+                        drawImage(frameCount, 0).then(resolve);
+                    });
+                });
+                image.src = src;
+            });
+        }
+
+        (function() {
+            if (window.internals)
+                internals.clearMemoryCache();
+
+            description("Ensure the image animation is played in order after the animation is reset.");
+            jsTestIsAsync = true;
+                
+            loadImage("resources/animated-red-green-blue.gif", 3).then(() => {
+                finishJSTest();
+            });
+        })();
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

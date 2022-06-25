@@ -1,0 +1,67 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body onload="run()">
+<svg id="svg" xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+    <circle id="c1" cx="60" cy="60" r="50" fill="none" stroke="black" stroke-width="20"/>
+</svg>
+<p id="description"></p>
+<div id="console"></div>
+<script type="text/javascript">
+<![CDATA[
+window.enablePixelTesting = false;
+window.jsTestIsAsync = true;
+var c1 = document.getElementById("c1");
+
+function run() {
+    description("Test SVGGeometryElement APIs for circle.");
+
+    debug("");
+    debug("Test isPointInFill()");
+    shouldBeFalse("c1.isPointInFill({})", "false");
+    shouldBeTrue("c1.isPointInFill({x: 109, y: 60})");
+    shouldBeFalse("c1.isPointInFill({x: 111, y: 60})");
+    shouldBeTrue("c1.isPointInFill({x: 60, y: 109})");
+    shouldBeFalse("c1.isPointInFill({x: 60, y: 111})");
+    shouldBeTrue("c1.isPointInFill({x: 11, y: 60})");
+    shouldBeFalse("c1.isPointInFill({x: 9, y: 60})");
+    shouldBeTrue("c1.isPointInFill({x: 60, y: 11})");
+    shouldBeFalse("c1.isPointInFill({x: 60, y: 9})");
+
+    debug("");
+    debug("Test isPointInStroke()");
+    shouldBeFalse("c1.isPointInStroke({})");
+    shouldBeTrue("c1.isPointInStroke({x: 101, y: 60})");
+    shouldBeFalse("c1.isPointInStroke({x: 99, y: 60})");
+    shouldBeTrue("c1.isPointInStroke({x: 60, y: 101})");
+    shouldBeFalse("c1.isPointInStroke({x: 60, y: 99})");
+    shouldBeTrue("c1.isPointInStroke({x: 19, y: 60})");
+    shouldBeFalse("c1.isPointInStroke({x: 21, y: 60})");
+    shouldBeTrue("c1.isPointInStroke({x: 60, y: 19})");
+    shouldBeFalse("c1.isPointInStroke({x: 60, y: 21})");
+
+    debug("");
+    debug("Test getTotalLength()");
+    shouldBeCloseTo("c1.getTotalLength()", Math.PI * 100, 0.1);
+
+    debug("");
+    debug("Test getPointAtLength()");
+    shouldBeCloseTo("c1.getPointAtLength(0).x", 110, 0.1);
+    shouldBeCloseTo("c1.getPointAtLength(0).y", 60, 0.1);
+    shouldBeCloseTo("c1.getPointAtLength(Math.PI * 100 / 4).x", 60, 0.1);
+    shouldBeCloseTo("c1.getPointAtLength(Math.PI * 100 / 4).y", 110, 0.1);
+    shouldBeCloseTo("c1.getPointAtLength(Math.PI * 100 / 2).x", 10, 0.1);
+    shouldBeCloseTo("c1.getPointAtLength(Math.PI * 100 / 2).y", 60, 0.1);
+    shouldBeCloseTo("c1.getPointAtLength(Math.PI * 100 / 8).x", 95.35, 1);
+    shouldBeCloseTo("c1.getPointAtLength(Math.PI * 100 / 8).y", 95.35, 1);
+    shouldBeCloseTo("c1.getPointAtLength(Math.PI * 100 * 2).x", 110, 0.1);
+    shouldBeCloseTo("c1.getPointAtLength(Math.PI * 100 * 2).y", 60, 0.1);
+
+    finishJSTest();
+}
+]]>
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+Tests that the parameter to TextTrack.addCue() / removeCue() is not nullable.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS track.addCue(null) threw exception TypeError: Argument 1 ('cue') to TextTrack.addCue must be an instance of TextTrackCue.
+PASS track.removeCue(null) threw exception TypeError: Argument 1 ('cue') to TextTrack.removeCue must be an instance of TextTrackCue.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

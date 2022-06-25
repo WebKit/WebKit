@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+    <video id='video' autoplay playsinline muted></video>
+    <script>
+    promise_test(async (t) => {
+        video.srcObject = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        await video.play();
+
+        if (!window.internals)
+            return;
+
+        assert_true(internals.isPlayerMuted(video), "test1");
+
+        internals.setPageMuted("capturedevices");
+        await new Promise(resolve => video.srcObject.getAudioTracks()[0].onmute = resolve);
+
+        assert_true(internals.isPlayerMuted(video), "test2");
+
+        internals.setPageMuted("");
+        await new Promise(resolve => video.srcObject.getAudioTracks()[0].onunmute = resolve);
+
+        assert_true(internals.isPlayerMuted(video), "test3");
+    }, "Muting then unmuting a page should not change media element muted state if HTMLMediaElement.muted is true");
+    </script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+Blocked access to external URL https://www1.localhost:9443/cookies/resources/list.py
+CONSOLE MESSAGE: Fetch API cannot load https://www1.localhost:9443/cookies/resources/list.py due to access control checks.
+
+Harness Error (TIMEOUT), message = null
+
+PASS No domain attribute => available via `document.cookie`
+PASS No domain attribute => sent with same-origin requests.
+TIMEOUT No domain attribute => not sent with subdomain requests. Test timed out
+

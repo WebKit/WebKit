@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: Refused to load https://localhost:9443/common/blank.html?pipe=header(x-frame-options,%20deny) because it does not appear in the frame-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load https://localhost:9443/common/blank.html because it does not appear in the frame-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load https://localhost:9443/common/blank.html because it does not appear in the frame-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to display 'https://localhost:9443/common/blank.html?pipe=header(x-frame-options,%20deny)' in a frame because it set 'X-Frame-Options' to 'deny'.
+
+PASS CSP check precedes X-Frame-Options check
+PASS CSP check precedes COEP check - CSP header first
+PASS CSP check precedes COEP check - COEP header first
+FAIL COEP check precedes X-Frame-Options check assert_equals: expected (string) "coep" but got (object) null
+

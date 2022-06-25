@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<a href="#first-link">more</a><BR>
+<div id="hidden-div" style="visibility: hidden; left: 0px;"><a href="#second-link">hello</a></div>
+    
+<script>
+    description("This test ensures that document links appropriately respect a link's visibility.")
+
+    function numberOfSubstringOccurences(string, substring) {
+        return string.split(substring).length - 1;
+    }
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        var webarea, initialDocumentLinks, finalDocumentLinks;
+        setTimeout(async function() {
+            webarea = accessibilityController.rootElement.childAtIndex(0);
+            initialDocumentLinks = webarea.attributesOfDocumentLinks();
+            shouldBeTrue("initialDocumentLinks.includes('#first-link')")
+            shouldBeFalse("initialDocumentLinks.includes('#second-link')")
+            shouldBe("numberOfSubstringOccurences(initialDocumentLinks, 'AXRole: AXLink')", "1")
+ 
+            document.getElementById("hidden-div").style.visibility = "visible";
+            await waitFor(() => {
+                finalDocumentLinks = webarea.attributesOfDocumentLinks();
+                return finalDocumentLinks && initialDocumentLinks != finalDocumentLinks;
+            });
+            shouldBeTrue("finalDocumentLinks.includes('#first-link')")
+            shouldBeTrue("finalDocumentLinks.includes('#second-link')")
+            shouldBe("numberOfSubstringOccurences(finalDocumentLinks, 'AXRole: AXLink')", "2")
+
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>
+

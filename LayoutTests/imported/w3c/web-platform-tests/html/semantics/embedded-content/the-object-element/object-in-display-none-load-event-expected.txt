@@ -1,0 +1,15 @@
+
+Test that an object in a display:none subtree does not block the load event
+
+
+
+  async_test(t => {
+    window.onload = t.step_func_done();
+    document.documentElement.offsetTop;
+  }, "Load event triggered on window");
+
+
+
+
+PASS Load event triggered on window
+

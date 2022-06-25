@@ -1,0 +1,6 @@
+
+PASS Perfect negotiation setup connects
+PASS Perfect negotiation setup connects with roles reversed
+PASS Perfect negotiation glare
+PASS Perfect negotiation glare with roles reversed
+

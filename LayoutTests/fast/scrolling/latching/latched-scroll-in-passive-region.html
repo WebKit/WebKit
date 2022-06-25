@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    body {
+        height: 3000px;
+    }
+    </style>
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+    jsTestIsAsync = true;
+
+    let wheelEventHandlerCount = 0;
+    async function scrollTest()
+    {
+        window.addEventListener('wheel', (event) => {
+            ++wheelEventHandlerCount;
+            event.preventDefault();
+        }, { passive: true });
+
+        await UIHelper.renderingUpdate();
+
+        eventSender.mouseMoveTo(100, 10);
+        eventSender.monitorWheelEvents();
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'began', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'changed', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'begin');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
+        
+        await UIHelper.renderingUpdate();
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
+        await UIHelper.renderingUpdate();
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
+        await UIHelper.renderingUpdate();
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
+        await UIHelper.renderingUpdate();
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
+        await UIHelper.renderingUpdate();
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, 'none', 'continue');
+        await UIHelper.renderingUpdate();
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
+
+        await UIHelper.waitForScrollCompletion();
+
+        shouldBeTrue('wheelEventHandlerCount > 4');
+
+        finishJSTest();
+    }
+
+    window.addEventListener('load', () => {
+        description("Tests that a gesture in the passive wheel event region dispatches more than one wheel event");
+        scrollTest();
+    }, false);
+</script>
+</head>
+<body>
+    <div id="wheel-handler-region"></div>
+    <div id="console"></div>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

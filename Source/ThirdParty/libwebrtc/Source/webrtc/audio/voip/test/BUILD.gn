@@ -1,0 +1,98 @@
+# Copyright(c) 2020 The WebRTC project authors.All Rights Reserved.
+#
+# Use of this source code is governed by a BSD - style license
+# that can be found in the LICENSE file in the root of the source
+# tree.An additional intellectual property rights grant can be found
+# in the file PATENTS.All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+if (rtc_include_tests) {
+  rtc_source_set("mock_task_queue") {
+    testonly = true
+    visibility = [ "*" ]
+    sources = [ "mock_task_queue.h" ]
+    deps = [
+      "../../../api/task_queue:task_queue",
+      "../../../test:test_support",
+    ]
+  }
+
+  if (!build_with_chromium) {
+    rtc_library("voip_core_unittests") {
+      testonly = true
+      sources = [ "voip_core_unittest.cc" ]
+      deps = [
+        "..:voip_core",
+        "../../../api/audio_codecs:builtin_audio_decoder_factory",
+        "../../../api/audio_codecs:builtin_audio_encoder_factory",
+        "../../../api/task_queue:default_task_queue_factory",
+        "../../../modules/audio_device:mock_audio_device",
+        "../../../modules/audio_processing:mocks",
+        "../../../modules/utility:mock_process_thread",
+        "../../../test:audio_codec_mocks",
+        "../../../test:mock_transport",
+        "../../../test:test_support",
+      ]
+    }
+  }
+
+  rtc_library("audio_channel_unittests") {
+    testonly = true
+    sources = [ "audio_channel_unittest.cc" ]
+    deps = [
+      ":mock_task_queue",
+      "..:audio_channel",
+      "../../../api:transport_api",
+      "../../../api/audio_codecs:builtin_audio_decoder_factory",
+      "../../../api/audio_codecs:builtin_audio_encoder_factory",
+      "../../../api/task_queue:task_queue",
+      "../../../modules/audio_mixer:audio_mixer_impl",
+      "../../../modules/audio_mixer:audio_mixer_test_utils",
+      "../../../modules/rtp_rtcp:rtp_rtcp",
+      "../../../modules/rtp_rtcp:rtp_rtcp_format",
+      "../../../modules/utility",
+      "../../../rtc_base:logging",
+      "../../../test:mock_transport",
+      "../../../test:test_support",
+    ]
+  }
+
+  rtc_library("audio_ingress_unittests") {
+    testonly = true
+    sources = [ "audio_ingress_unittest.cc" ]
+    deps = [
+      "..:audio_egress",
+      "..:audio_ingress",
+      "../../../api:transport_api",
+      "../../../api/audio_codecs:builtin_audio_decoder_factory",
+      "../../../api/audio_codecs:builtin_audio_encoder_factory",
+      "../../../api/task_queue:default_task_queue_factory",
+      "../../../modules/audio_mixer:audio_mixer_test_utils",
+      "../../../modules/rtp_rtcp:rtp_rtcp",
+      "../../../rtc_base:logging",
+      "../../../rtc_base:rtc_event",
+      "../../../test:mock_transport",
+      "../../../test:test_support",
+    ]
+  }
+
+  rtc_library("audio_egress_unittests") {
+    testonly = true
+    sources = [ "audio_egress_unittest.cc" ]
+    deps = [
+      "..:audio_egress",
+      "../../../api:transport_api",
+      "../../../api/audio_codecs:builtin_audio_encoder_factory",
+      "../../../api/task_queue:default_task_queue_factory",
+      "../../../modules/audio_mixer:audio_mixer_test_utils",
+      "../../../modules/rtp_rtcp:rtp_rtcp",
+      "../../../modules/rtp_rtcp:rtp_rtcp_format",
+      "../../../rtc_base:logging",
+      "../../../rtc_base:rtc_event",
+      "../../../test:mock_transport",
+      "../../../test:test_support",
+    ]
+  }
+}

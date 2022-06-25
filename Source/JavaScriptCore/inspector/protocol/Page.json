@@ -1,0 +1,390 @@
+{
+    "domain": "Page",
+    "description": "Actions and events related to the inspected page belong to the page domain.",
+    "debuggableTypes": ["itml", "page", "web-page"],
+    "targetTypes": ["itml", "page"],
+    "types": [
+        {
+            "id": "Setting",
+            "type": "string",
+            "description": "List of settings able to be overridden by WebInspector.",
+            "enum": [
+                "PrivateClickMeasurementDebugModeEnabled",
+                "AuthorAndUserStylesEnabled",
+                "ICECandidateFilteringEnabled",
+                "ITPDebugModeEnabled",
+                "ImagesEnabled",
+                "MediaCaptureRequiresSecureConnection",
+                "MockCaptureDevicesEnabled",
+                "NeedsSiteSpecificQuirks",
+                "ScriptEnabled",
+                "ShowDebugBorders",
+                "ShowRepaintCounter",
+                "WebRTCEncryptionEnabled",
+                "WebSecurityEnabled"
+            ]
+        },
+        {
+            "id": "ResourceType",
+            "type": "string",
+            "enum": ["Document", "StyleSheet", "Image", "Font", "Script", "XHR", "Fetch", "Ping", "Beacon", "WebSocket", "EventSource", "Other"],
+            "description": "Resource type as it was perceived by the rendering engine."
+        },
+        {
+            "id": "CoordinateSystem",
+            "type": "string",
+            "enum": ["Viewport", "Page"],
+            "description": "Coordinate system used by supplied coordinates."
+        },
+        {
+            "id": "CookieSameSitePolicy",
+            "type": "string",
+            "enum": ["None", "Lax", "Strict"],
+            "description": "Same-Site policy of a cookie."
+        },
+        {
+            "id": "Appearance",
+            "type": "string",
+            "condition": "(defined(ENABLE_DARK_MODE_CSS) && ENABLE_DARK_MODE_CSS) || (defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT)",
+            "enum": ["Light", "Dark"],
+            "description": "Page appearance name."
+        },
+        {
+            "id": "Frame",
+            "type": "object",
+            "description": "Information about the Frame on the page.",
+            "properties": [
+                { "name": "id", "type": "string", "description": "Frame unique identifier." },
+                { "name": "parentId", "type": "string", "optional": true, "description": "Parent frame identifier." },
+                { "name": "loaderId", "$ref": "Network.LoaderId", "description": "Identifier of the loader associated with this frame." },
+                { "name": "name", "type": "string", "optional": true, "description": "Frame's name as specified in the tag." },
+                { "name": "url", "type": "string", "description": "Frame document's URL." },
+                { "name": "securityOrigin", "type": "string", "description": "Frame document's security origin." },
+                { "name": "mimeType", "type": "string", "description": "Frame document's mimeType as determined by the browser." }
+            ]
+        },
+        {
+            "id": "FrameResource",
+            "type": "object",
+            "properties": [
+                { "name": "url", "type": "string", "description": "Resource URL." },
+                { "name": "type", "$ref": "ResourceType", "description": "Type of this resource." },
+                { "name": "mimeType", "type": "string", "description": "Resource mimeType as determined by the browser." },
+                { "name": "failed", "type": "boolean", "optional": true, "description": "True if the resource failed to load." },
+                { "name": "canceled", "type": "boolean", "optional": true, "description": "True if the resource was canceled during loading." },
+                { "name": "sourceMapURL", "type": "string", "optional": true, "description": "URL of source map associated with this resource (if any)." },
+                { "name": "targetId", "type": "string", "optional": true, "description": "Identifier for the context of where the load originated. In general this is the target identifier. For Workers this will be the workerId." }
+            ]
+        },
+        {
+            "id": "FrameResourceTree",
+            "type": "object",
+            "description": "Information about the Frame hierarchy along with their cached resources.",
+            "properties": [
+                { "name": "frame", "$ref": "Frame", "description": "Frame information for this tree item." },
+                { "name": "childFrames", "type": "array", "optional": true, "items": { "$ref": "FrameResourceTree" }, "description": "Child frames." },
+                { "name": "resources", "type": "array", "items": { "$ref": "FrameResource" }, "description": "Information about frame resources." }
+            ]
+        },
+        {
+            "id": "SearchResult",
+            "type": "object",
+            "description": "Search result for resource.",
+            "properties": [
+                { "name": "url", "type": "string", "description": "Resource URL." },
+                { "name": "frameId", "$ref": "Network.FrameId", "description": "Resource frame id." },
+                { "name": "matchesCount", "type": "number", "description": "Number of matches in the resource content." },
+                { "name": "requestId", "$ref": "Network.RequestId", "optional": true, "description": "Network request id." }
+            ]
+        },
+        {
+            "id": "Cookie",
+            "type": "object",
+            "description": "Cookie object",
+            "properties": [
+                { "name": "name", "type": "string", "description": "Cookie name." },
+                { "name": "value", "type": "string", "description": "Cookie value." },
+                { "name": "domain", "type": "string", "description": "Cookie domain." },
+                { "name": "path", "type": "string", "description": "Cookie path." },
+                { "name": "expires", "type": "number", "description": "Cookie expires." },
+                { "name": "session", "type": "boolean", "description": "True in case of session cookie." },
+                { "name": "httpOnly", "type": "boolean", "description": "True if cookie is http-only." },
+                { "name": "secure", "type": "boolean", "description": "True if cookie is secure." },
+                { "name": "sameSite", "$ref": "CookieSameSitePolicy", "description": "Cookie Same-Site policy." }
+            ]
+        }
+    ],
+    "commands": [
+        {
+            "name": "enable",
+            "description": "Enables page domain notifications."
+        },
+        {
+            "name": "disable",
+            "description": "Disables page domain notifications."
+        },
+        {
+            "name": "reload",
+            "description": "Reloads the main frame of the inspected page.",
+            "parameters": [
+                { "name": "ignoreCache", "type": "boolean", "optional": true, "description": "If true, the page is reloaded from its origin without using cached resources." },
+                { "name": "revalidateAllResources", "type": "boolean", "optional": true, "description": "If true, all cached subresources will be revalidated when the main resource loads. Otherwise, only expired cached subresources will be revalidated (the default behavior for most WebKit clients)." }
+            ]
+        },
+        {
+            "name": "navigate",
+            "description": "Navigates current page to the given URL.",
+            "targetTypes": ["page"],
+            "parameters": [
+                { "name": "url", "type": "string", "description": "URL to navigate the page to." }
+            ]
+        },
+        {
+            "name": "overrideUserAgent",
+            "description": "Override's the user agent of the inspected page",
+            "targetTypes": ["page"],
+            "parameters": [
+                { "name": "value", "type": "string", "optional": true, "description": "Value to override the user agent with. If this value is not provided, the override is removed. Overrides are removed when Web Inspector closes/disconnects." }
+            ]
+        },
+        {
+            "name": "overrideSetting",
+            "description": "Allows the frontend to override the inspected page's settings.",
+            "targetTypes": ["page"],
+            "parameters": [
+                { "name": "setting", "$ref": "Setting" },
+                { "name": "value", "type": "boolean", "optional": true, "description": "Value to override the setting with. If this value is not provided, the override is removed. Overrides are removed when Web Inspector closes/disconnects." }
+            ]
+        },
+        {
+            "name": "getCookies",
+            "description": "Returns all browser cookies. Depending on the backend support, will return detailed cookie information in the <code>cookies</code> field.",
+            "targetTypes": ["page"],
+            "returns": [
+                { "name": "cookies", "type": "array", "items": { "$ref": "Cookie"}, "description": "Array of cookie objects." }
+            ]
+        },
+        {
+            "name": "setCookie",
+            "description": "Sets a new browser cookie with the given name, domain, and path.",
+            "targetTypes": ["page"],
+            "parameters": [
+                { "name": "cookie", "$ref": "Cookie" }
+            ]
+        },
+        {
+            "name": "deleteCookie",
+            "description": "Deletes browser cookie with given name, domain, and path.",
+            "targetTypes": ["page"],
+            "parameters": [
+                { "name": "cookieName", "type": "string", "description": "Name of the cookie to remove." },
+                { "name": "url", "type": "string", "description": "URL to match cookie domain and path." }
+            ]
+        },
+        {
+            "name": "getResourceTree",
+            "description": "Returns present frame / resource tree structure.",
+            "returns": [
+                { "name": "frameTree", "$ref": "FrameResourceTree", "description": "Present frame / resource tree structure." }
+            ]
+        },
+        {
+            "name": "getResourceContent",
+            "description": "Returns content of the given resource.",
+            "parameters": [
+                { "name": "frameId", "$ref": "Network.FrameId", "description": "Frame id to get resource for." },
+                { "name": "url", "type": "string", "description": "URL of the resource to get content for." }
+            ],
+            "returns": [
+                { "name": "content", "type": "string", "description": "Resource content." },
+                { "name": "base64Encoded", "type": "boolean", "description": "True, if content was served as base64." }
+            ]
+        },
+        {
+            "name": "setBootstrapScript",
+            "targetTypes": ["page"],
+            "parameters": [
+                { "name": "source", "type": "string", "optional": true, "description": "If `source` is provided (and not empty), it will be injected into all future global objects as soon as they're created. Omitting `source` will stop this from happening." }
+            ]
+        },
+        {
+            "name": "searchInResource",
+            "description": "Searches for given string in resource content.",
+            "targetTypes": ["page"],
+            "parameters": [
+                { "name": "frameId", "$ref": "Network.FrameId", "description": "Frame id for resource to search in." },
+                { "name": "url", "type": "string", "description": "URL of the resource to search in." },
+                { "name": "query", "type": "string", "description": "String to search for." },
+                { "name": "caseSensitive", "type": "boolean", "optional": true, "description": "If true, search is case sensitive." },
+                { "name": "isRegex", "type": "boolean", "optional": true, "description": "If true, treats string parameter as regex." },
+                { "name": "requestId", "$ref": "Network.RequestId", "optional": true, "description": "Request id for resource to search in." }
+            ],
+            "returns": [
+                { "name": "result", "type": "array", "items": { "$ref": "GenericTypes.SearchMatch" }, "description": "List of search matches." }
+            ]
+        },
+        {
+            "name": "searchInResources",
+            "description": "Searches for given string in frame / resource tree structure.",
+            "targetTypes": ["page"],
+            "parameters": [
+                { "name": "text", "type": "string", "description": "String to search for." },
+                { "name": "caseSensitive", "type": "boolean", "optional": true, "description": "If true, search is case sensitive." },
+                { "name": "isRegex", "type": "boolean", "optional": true, "description": "If true, treats string parameter as regex." }
+            ],
+            "returns": [
+                { "name": "result", "type": "array", "items": { "$ref": "SearchResult" }, "description": "List of search results." }
+            ]
+        },
+        {
+            "name": "setShowRulers",
+            "description": "Requests that backend draw rulers in the inspector overlay",
+            "condition": "!(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)",
+            "targetTypes": ["page"],
+            "parameters": [
+                { "name": "result", "type": "boolean", "description": "True for showing rulers" }
+            ]
+        },
+        {
+            "name": "setShowPaintRects",
+            "description": "Requests that backend shows paint rectangles",
+            "targetTypes": ["page"],
+            "parameters": [
+                { "name": "result", "type": "boolean", "description": "True for showing paint rectangles" }
+            ]
+        },
+        {
+            "name": "setEmulatedMedia",
+            "description": "Emulates the given media for CSS media queries.",
+            "targetTypes": ["page"],
+            "parameters": [
+                { "name": "media", "type": "string", "description": "Media type to emulate. Empty string disables the override." }
+            ]
+        },
+        {
+            "name": "setForcedAppearance",
+            "description": "Forces the given appearance for the page.",
+            "condition": "(defined(ENABLE_DARK_MODE_CSS) && ENABLE_DARK_MODE_CSS) || (defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT)",
+            "targetTypes": ["page"],
+            "parameters": [
+                { "name": "appearance", "$ref": "Appearance", "optional": true }
+            ]
+        },
+        {
+            "name": "snapshotNode",
+            "description": "Capture a snapshot of the specified node that does not include unrelated layers.",
+            "targetTypes": ["page"],
+            "parameters": [
+                { "name": "nodeId", "$ref": "DOM.NodeId", "description": "Id of the node to snapshot." }
+            ],
+            "returns": [
+                { "name": "dataURL", "type": "string", "description": "Base64-encoded image data (PNG)." }
+            ]
+        },
+        {
+            "name": "snapshotRect",
+            "description": "Capture a snapshot of the page within the specified rectangle and coordinate system.",
+            "targetTypes": ["page"],
+            "parameters": [
+                { "name": "x", "type": "integer", "description": "X coordinate" },
+                { "name": "y", "type": "integer", "description": "Y coordinate" },
+                { "name": "width", "type": "integer", "description": "Rectangle width" },
+                { "name": "height", "type": "integer", "description": "Rectangle height" },
+                { "name": "coordinateSystem", "$ref": "CoordinateSystem", "description": "Indicates the coordinate system of the supplied rectangle." }
+            ],
+            "returns": [
+                { "name": "dataURL", "type": "string", "description": "Base64-encoded image data (PNG)." }
+            ]
+        },
+        {
+            "name": "archive",
+            "description": "Grab an archive of the page.",
+            "condition": "(defined(ENABLE_WEB_ARCHIVE) && ENABLE_WEB_ARCHIVE) && (defined(USE_CF) && USE_CF)",
+            "targetTypes": ["page"],
+            "returns": [
+                { "name": "data", "type": "string", "description": "Base64-encoded web archive." }
+            ]
+        },
+        {
+            "name": "setScreenSizeOverride",
+            "description": "Overrides screen size exposed to DOM and used in media queries for testing with provided values.",
+            "condition": "!(defined(WTF_PLATFORM_COCOA) && WTF_PLATFORM_COCOA)",
+            "targetTypes": ["page"],
+            "parameters": [
+                { "name": "width", "type": "integer", "description": "Screen width", "optional": true },
+                { "name": "height", "type": "integer", "description": "Screen height", "optional": true }
+            ]
+        }
+    ],
+    "events": [
+        {
+            "name": "domContentEventFired",
+            "targetTypes": ["page"],
+            "parameters": [
+                { "name": "timestamp", "type": "number" }
+            ]
+        },
+        {
+            "name": "loadEventFired",
+            "targetTypes": ["page"],
+            "parameters": [
+                { "name": "timestamp", "type": "number" }
+            ]
+        },
+        {
+            "name": "frameNavigated",
+            "description": "Fired once navigation of the frame has completed. Frame is now associated with the new loader.",
+            "parameters": [
+                { "name": "frame", "$ref": "Frame", "description": "Frame object." }
+            ]
+        },
+        {
+            "name": "frameDetached",
+            "description": "Fired when frame has been detached from its parent.",
+            "targetTypes": ["page"],
+            "parameters": [
+                { "name": "frameId", "$ref": "Network.FrameId", "description": "Id of the frame that has been detached." }
+            ]
+        },
+        {
+            "name": "frameStartedLoading",
+            "description": "Fired when frame has started loading.",
+            "parameters": [
+                { "name": "frameId", "$ref": "Network.FrameId", "description": "Id of the frame that has started loading." }
+            ]
+        },
+        {
+            "name": "frameStoppedLoading",
+            "description": "Fired when frame has stopped loading.",
+            "parameters": [
+                { "name": "frameId", "$ref": "Network.FrameId", "description": "Id of the frame that has stopped loading." }
+            ]
+        },
+        {
+            "name": "frameScheduledNavigation",
+            "description": "Fired when frame schedules a potential navigation.",
+            "targetTypes": ["page"],
+            "parameters": [
+                { "name": "frameId", "$ref": "Network.FrameId", "description": "Id of the frame that has scheduled a navigation." },
+                { "name": "delay", "type": "number", "description": "Delay (in seconds) until the navigation is scheduled to begin. The navigation is not guaranteed to start." }
+            ]
+        },
+        {
+            "name": "frameClearedScheduledNavigation",
+            "description": "Fired when frame no longer has a scheduled navigation.",
+            "targetTypes": ["page"],
+            "parameters": [
+                { "name": "frameId", "$ref": "Network.FrameId", "description": "Id of the frame that has cleared its scheduled navigation." }
+            ]
+        },
+        {
+            "name": "defaultAppearanceDidChange",
+            "description": "Fired when page's default appearance changes, even if there is a forced appearance.",
+            "condition": "(defined(ENABLE_DARK_MODE_CSS) && ENABLE_DARK_MODE_CSS) || (defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT)",
+            "targetTypes": ["page"],
+            "parameters": [
+                { "name": "appearance", "$ref": "Appearance", "description": "Name of the appearance that is active (not considering any forced appearance.)" }
+            ]
+        }
+    ]
+}

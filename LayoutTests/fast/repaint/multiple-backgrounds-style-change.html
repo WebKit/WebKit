@@ -1,0 +1,74 @@
+<html>
+<head>
+    <style>
+        .box {
+            height: 200px;
+            width: 200px;
+            border: 1px solid black;
+            background-repeat: no-repeat;
+            background-size: 100px 100px;
+            background-position: 0 0, 100px 100px;
+        }
+        
+        .apply-images {
+            background-image: url('../images/resources/green-256x256.jpg'), url('../images/resources/dice.png');
+        }
+
+        .composited {
+            -webkit-transform: translate3d(0, 0, 0);
+        }
+        
+        .composited.changed {
+            -webkit-transform: translate3d(50px, 50px, 0);
+        }
+    </style>
+<script>jsTestIsAsync = true;</script>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+    description("Tests that a transform change on an element with multiple background images doesn't cause a repaint.");
+    function startTrackingRepaints()
+    {
+        if (window.internals)
+            window.internals.startTrackingRepaints();
+        document.getElementById('test').classList.add('changed');
+        setTimeout(logRepaints, 0)
+    }
+
+    function logRepaints()
+    {
+        layerTreeAsText =  window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_REPAINT_RECTS);
+        window.internals.stopTrackingRepaints();
+        shouldBeTrue("layerTreeAsText.indexOf('(repaint rects') == -1");
+
+        finishJSTest();
+    }
+    
+    var loadedRemaining = 2;
+    function imageLoaded()
+    {
+        if (!--loadedRemaining) {
+            document.getElementById('test').classList.add('apply-images');
+            setTimeout(startTrackingRepaints, 0);
+        }
+    }
+
+    function doTest()
+    {
+        // We have to know that the images to be used by CSS are loaded to avoid spurious repaints later.
+        var firstImage = new Image();
+        firstImage.onload = imageLoaded;
+        firstImage.src = '../images/resources/green-256x256.jpg';
+
+        var secondImage = new Image();
+        secondImage.onload = imageLoaded;
+        secondImage.src = '../images/resources/dice.png';
+    }
+
+    window.addEventListener('load', doTest, false);
+</script>
+</head>
+<body>
+    <div id="test" class="composited box">
+    </div>
+<script src="../../resources/js-test-post.js"></script>
+</html>

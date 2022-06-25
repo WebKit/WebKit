@@ -1,0 +1,46 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+layer at (10,9) size 460x292
+  RenderSVGContainer {g} at (-1,0) size 462x292
+layer at (60,9) size 322x45
+  RenderSVGText {text} at (50,0) size 323x45 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 323x45
+      chunk 1 text run 1 at (60.00,45.00) startOffset 0 endOffset 18 width 322.44: "Event bubbling - a"
+layer at (10,60) size 460x241
+  RenderSVGContainer {g} at (-1,-1) size 462x242
+layer at (10,60) size 460x120
+  RenderSVGRect {rect} at (-1,-1) size 462x122 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [x=10.00] [y=60.00] [width=460.00] [height=120.00]
+layer at (10,180) size 460x120
+  RenderSVGRect {rect} at (-1,-1) size 462x122 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [x=10.00] [y=180.00] [width=460.00] [height=120.00]
+layer at (20,70) size 415x221
+  RenderSVGContainer {g} at (0,0) size 415x220
+layer at (20,70) size 100x220
+  RenderSVGContainer {g} at (0,0) size 100x220
+layer at (20,70) size 100x100
+  RenderSVGEllipse {circle} at (0,0) size 100x100 [fill={[type=SOLID] [color=#000000]}] [cx=70.00] [cy=120.00] [r=50.00]
+layer at (20,190) size 100x100
+  RenderSVGEllipse {circle} at (0,0) size 100x100 [fill={[type=SOLID] [color=#000000]}] [cx=70.00] [cy=240.00] [r=50.00]
+layer at (150,74) size 285x44
+  RenderSVGText {text} at (130,3) size 285x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 285x45
+      chunk 1 text run 1 at (150.00,110.00) startOffset 0 endOffset 18 width 284.55: "Pointer in circle,"
+layer at (150,114) size 262x44
+  RenderSVGText {text} at (130,43) size 263x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 263x45
+      chunk 1 text run 1 at (150.00,150.00) startOffset 0 endOffset 16 width 262.30: "circle turns red"
+layer at (150,194) size 285x44
+  RenderSVGText {text} at (130,123) size 285x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 285x45
+      chunk 1 text run 1 at (150.00,230.00) startOffset 0 endOffset 18 width 284.55: "Pointer in circle,"
+layer at (150,234) size 280x44
+  RenderSVGText {text} at (130,163) size 281x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 281x45
+      chunk 1 text run 1 at (150.00,270.00) startOffset 0 endOffset 17 width 280.12: "circle turns blue"
+layer at (10,304) size 263x46
+  RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 264x46
+      chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.2 $"
+layer at (1,1) size 478x358
+  RenderSVGRect {rect} at (-1,-1) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

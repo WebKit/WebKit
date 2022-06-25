@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>AllowShared TypedArray in WebGL</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+</head>
+<body>
+<canvas width="100" height="100"></canvas>
+<script>
+test(() => {
+    const canvas = document.querySelectorAll('canvas')[0];
+    const gl = canvas.getContext("webgl2");
+    const buffer = gl.createBuffer();
+    const bufferData = new Float32Array(new SharedArrayBuffer(1024 * 1024))
+    for (var i = 0; i < 1e4; ++i)
+        gl.uniformMatrix4fv(null, true, bufferData);
+}, `WebGL2 AllowShared uniformMatrix4fv`);
+</script>
+</body>
+</html>

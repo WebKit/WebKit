@@ -1,0 +1,10 @@
+PASS inputBounds.top is >= screenHeight
+PASS inputBounds.height is 0
+PASS document.activeElement is field
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+Verifies that an input field cannot force the web view to become first responder after the web view resigns first responder using platform API. To manually test, focus the text field and hit the 'Done' button on the keyboard; the keyboard should not pop back up.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

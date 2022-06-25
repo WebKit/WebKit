@@ -1,0 +1,39 @@
+Test DOMJIT documentElement accessor works.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS (
+            function testHTMLDocument(element, result)
+            {
+                for (var i = 0; i < 1e4; ++i) {
+                    if (element.documentElement !== result)
+                        return false;
+                }
+                return true;
+            }
+        )(target, result) is true
+PASS (
+            function testXMLDocument(element, result)
+            {
+                for (var i = 0; i < 1e4; ++i) {
+                    if (element.documentElement !== result)
+                        return false;
+                }
+                return true;
+            }
+        )(target, result) is true
+PASS (
+            function testNull(element, result)
+            {
+                for (var i = 0; i < 1e4; ++i) {
+                    if (element.documentElement !== result)
+                        return false;
+                }
+                return true;
+            }
+        )(target, result) is true
+

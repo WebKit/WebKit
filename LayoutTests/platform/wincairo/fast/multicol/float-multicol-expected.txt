@@ -1,0 +1,235 @@
+layer at (0,0) size 785x827
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x827
+  RenderBlock {HTML} at (0,0) size 785x827
+layer at (8,8) size 769x811
+  RenderBody {BODY} at (8,8) size 769x811
+    RenderMultiColumnSet at (0,0) size 769x811
+layer at (8,8) size 769x811
+  RenderMultiColumnFlowThread at (0,0) size 769x811
+    RenderBlock {DIV} at (0,19) size 769x28 [bgcolor=#00FFFF]
+      RenderBlock (floating) {DIV} at (4,4) size 386x493 [bgcolor=#FFFF00]
+        RenderImage {IMG} at (0,0) size 133x70
+        RenderText {#text} at (133,0) size 378x99
+          text run at (133,0) width 239: "You've already downloaded a build. All"
+          text run at (133,20) width 245: "you have to do is use it as your everyday"
+          text run at (133,40) width 225: "browser and mail/news reader. If you"
+          text run at (133,60) width 213: "downloaded a build with Talkback,"
+          text run at (0,80) width 181: "please turn it on when it asks. "
+        RenderBlock (floating) {DIV} at (306,80) size 79x412 [bgcolor=#FF0000]
+          RenderBlock {P} at (0,16) size 78x20
+            RenderText {#text} at (0,0) size 70x19
+              text run at (0,0) width 70: "Hola hola 1"
+          RenderBlock {P} at (0,52) size 78x20
+            RenderText {#text} at (0,0) size 70x19
+              text run at (0,0) width 70: "Hola hola 2"
+          RenderBlock {P} at (0,88) size 78x20
+            RenderText {#text} at (0,0) size 70x19
+              text run at (0,0) width 70: "Hola hola 3"
+          RenderBlock {P} at (0,124) size 78x20
+            RenderText {#text} at (0,0) size 70x19
+              text run at (0,0) width 70: "Hola hola 4"
+          RenderBlock {P} at (0,160) size 78x20
+            RenderText {#text} at (0,0) size 70x19
+              text run at (0,0) width 70: "Hola hola 5"
+          RenderBlock {P} at (0,196) size 78x20
+            RenderText {#text} at (0,0) size 70x19
+              text run at (0,0) width 70: "Hola hola 6"
+          RenderBlock {P} at (0,232) size 78x20
+            RenderText {#text} at (0,0) size 70x19
+              text run at (0,0) width 70: "Hola hola 7"
+          RenderBlock {P} at (0,268) size 78x20
+            RenderText {#text} at (0,0) size 70x19
+              text run at (0,0) width 70: "Hola hola 8"
+          RenderBlock {P} at (0,304) size 78x20
+            RenderText {#text} at (0,0) size 70x19
+              text run at (0,0) width 70: "Hola hola 9"
+          RenderBlock {P} at (0,340) size 78x20
+            RenderText {#text} at (0,0) size 78x19
+              text run at (0,0) width 78: "Hola hola 10"
+          RenderBlock {P} at (0,376) size 78x20
+            RenderText {#text} at (0,0) size 78x19
+              text run at (0,0) width 78: "Hola hola 11"
+        RenderText {#text} at (181,80) size 290x79
+          text run at (181,80) width 104: "Talkback reports"
+          text run at (0,100) width 290: "give us really valuable data on which crashes are"
+          text run at (0,120) width 259: "the most serious, and how often people are"
+          text run at (0,140) width 113: "encountering them."
+      RenderBlock (floating) {DIV} at (691,0) size 78x340 [bgcolor=#FF00FF]
+        RenderBlock {P} at (0,16) size 78x20
+          RenderText {#text} at (0,0) size 78x19
+            text run at (0,0) width 78: "Hello Kitty 1"
+        RenderBlock {P} at (0,52) size 78x20
+          RenderText {#text} at (0,0) size 78x19
+            text run at (0,0) width 78: "Hello Kitty 2"
+        RenderBlock {P} at (0,88) size 78x20
+          RenderText {#text} at (0,0) size 78x19
+            text run at (0,0) width 78: "Hello Kitty 3"
+        RenderBlock {P} at (0,124) size 78x20
+          RenderText {#text} at (0,0) size 78x19
+            text run at (0,0) width 78: "Hello Kitty 4"
+        RenderBlock {P} at (0,160) size 78x20
+          RenderText {#text} at (0,0) size 78x19
+            text run at (0,0) width 78: "Hello Kitty 5"
+        RenderBlock {P} at (0,196) size 78x20
+          RenderText {#text} at (0,0) size 78x19
+            text run at (0,0) width 78: "Hello Kitty 6"
+        RenderBlock {P} at (0,232) size 78x20
+          RenderText {#text} at (0,0) size 78x19
+            text run at (0,0) width 78: "Hello Kitty 7"
+        RenderBlock {P} at (0,268) size 78x20
+          RenderText {#text} at (0,0) size 78x19
+            text run at (0,0) width 78: "Hello Kitty 8"
+        RenderBlock {P} at (0,304) size 78x20
+          RenderText {#text} at (0,0) size 78x19
+            text run at (0,0) width 78: "Hello Kitty 9"
+      RenderBlock {H2} at (0,0) size 769x27
+        RenderText {#text} at (394,0) size 261x26
+          text run at (394,0) width 261: "What Needs To Be Done?"
+    RenderBlock (floating) {DIV} at (394,66) size 79x413 [bgcolor=#808080]
+      RenderBlock {P} at (0,16) size 78x20
+        RenderText {#text} at (0,0) size 70x19
+          text run at (0,0) width 70: "Hola hola 1"
+      RenderBlock {P} at (0,52) size 78x20
+        RenderText {#text} at (0,0) size 70x19
+          text run at (0,0) width 70: "Hola hola 2"
+      RenderBlock {P} at (0,88) size 78x20
+        RenderText {#text} at (0,0) size 70x19
+          text run at (0,0) width 70: "Hola hola 3"
+      RenderBlock {P} at (0,124) size 78x20
+        RenderText {#text} at (0,0) size 70x19
+          text run at (0,0) width 70: "Hola hola 4"
+      RenderBlock {P} at (0,160) size 78x20
+        RenderText {#text} at (0,0) size 70x19
+          text run at (0,0) width 70: "Hola hola 5"
+      RenderBlock {P} at (0,196) size 78x20
+        RenderText {#text} at (0,0) size 70x19
+          text run at (0,0) width 70: "Hola hola 6"
+      RenderBlock {P} at (0,232) size 78x20
+        RenderText {#text} at (0,0) size 70x19
+          text run at (0,0) width 70: "Hola hola 7"
+      RenderBlock {P} at (0,268) size 78x20
+        RenderText {#text} at (0,0) size 70x19
+          text run at (0,0) width 70: "Hola hola 8"
+      RenderBlock {P} at (0,304) size 78x20
+        RenderText {#text} at (0,0) size 70x19
+          text run at (0,0) width 70: "Hola hola 9"
+      RenderBlock {P} at (0,340) size 78x20
+        RenderText {#text} at (0,0) size 78x19
+          text run at (0,0) width 78: "Hola hola 10"
+      RenderBlock {P} at (0,376) size 78x20
+        RenderText {#text} at (0,0) size 78x19
+          text run at (0,0) width 78: "Hola hola 11"
+    RenderBlock {DL} at (0,66) size 769x569
+      RenderBlock {DT} at (0,0) size 769x20
+        RenderText {#text} at (472,0) size 77x19
+          text run at (472,0) width 77: "Report Bugs"
+      RenderBlock {DD} at (40,36) size 729x280
+        RenderBlock {P} at (0,0) size 729x280
+          RenderText {#text} at (432,0) size 219x99
+            text run at (432,0) width 219: "You've already downloaded a build."
+            text run at (432,20) width 164: "All you have to do is use it "
+            text run at (595,20) width 18: "as "
+            text run at (612,20) width 28: "your"
+            text run at (432,40) width 199: "everyday browser and mail/news"
+            text run at (432,60) width 206: "reader. If you downloaded a build"
+            text run at (432,80) width 30: "with "
+            text run at (461,80) width 66: "Talkback, "
+          RenderInline {EM} at (0,0) size 105x19
+            RenderText {#text} at (526,80) size 105x19
+              text run at (526,80) width 45: "please "
+              text run at (570,80) width 61: "turn it on"
+          RenderText {#text} at (432,100) size 215x159
+            text run at (432,100) width 215: "when it asks. Talkback reports give"
+            text run at (432,120) width 137: "us really valuable data "
+            text run at (568,120) width 55: "on which"
+            text run at (432,140) width 200: "crashes are the most serious, and"
+            text run at (432,160) width 31: "how "
+            text run at (462,160) width 179: "often people are encountering"
+            text run at (432,180) width 188: "them. And all you have to do is"
+            text run at (432,200) width 75: "click \"OK\". "
+            text run at (506,200) width 126: "If you find something"
+            text run at (432,220) width 201: "you think is a bug, check to see if"
+            text run at (432,240) width 92: "it's not already "
+          RenderInline {A} at (0,0) size 80x19 [color=#0000EE]
+            RenderText {#text} at (523,240) size 80x19
+              text run at (523,240) width 80: "known about"
+          RenderText {#text} at (602,240) size 201x39
+            text run at (602,240) width 31: ", and"
+            text run at (432,260) width 72: "then please "
+            text run at (503,260) width 64: "follow the "
+          RenderInline {A} at (0,0) size 158x19 [color=#0000EE]
+            RenderText {#text} at (566,260) size 158x19
+              text run at (566,260) width 158: "bug submission procedure"
+          RenderText {#text} at (723,260) size 5x19
+            text run at (723,260) width 5: "."
+      RenderBlock (floating) {DIV} at (472,332) size 79x412 [bgcolor=#008000]
+        RenderBlock {P} at (0,16) size 78x20
+          RenderText {#text} at (0,0) size 70x19
+            text run at (0,0) width 70: "Hola hola 1"
+        RenderBlock {P} at (0,52) size 78x20
+          RenderText {#text} at (0,0) size 70x19
+            text run at (0,0) width 70: "Hola hola 2"
+        RenderBlock {P} at (0,88) size 78x20
+          RenderText {#text} at (0,0) size 70x19
+            text run at (0,0) width 70: "Hola hola 3"
+        RenderBlock {P} at (0,124) size 78x20
+          RenderText {#text} at (0,0) size 70x19
+            text run at (0,0) width 70: "Hola hola 4"
+        RenderBlock {P} at (0,160) size 78x20
+          RenderText {#text} at (0,0) size 70x19
+            text run at (0,0) width 70: "Hola hola 5"
+        RenderBlock {P} at (0,196) size 78x20
+          RenderText {#text} at (0,0) size 70x19
+            text run at (0,0) width 70: "Hola hola 6"
+        RenderBlock {P} at (0,232) size 78x20
+          RenderText {#text} at (0,0) size 70x19
+            text run at (0,0) width 70: "Hola hola 7"
+        RenderBlock {P} at (0,268) size 78x20
+          RenderText {#text} at (0,0) size 70x19
+            text run at (0,0) width 70: "Hola hola 8"
+        RenderBlock {P} at (0,304) size 78x20
+          RenderText {#text} at (0,0) size 70x19
+            text run at (0,0) width 70: "Hola hola 9"
+        RenderBlock {P} at (0,340) size 78x20
+          RenderText {#text} at (0,0) size 78x19
+            text run at (0,0) width 78: "Hola hola 10"
+        RenderBlock {P} at (0,376) size 78x20
+          RenderText {#text} at (0,0) size 78x19
+            text run at (0,0) width 78: "Hola hola 11"
+      RenderBlock {DT} at (0,332) size 769x20
+        RenderText {#text} at (550,0) size 111x19
+          text run at (550,0) width 111: "Quality Assurance"
+      RenderBlock {DD} at (40,368) size 729x200
+        RenderBlock {P} at (0,0) size 729x200
+          RenderInline {A} at (0,0) size 72x19 [color=#0000EE]
+            RenderText {#text} at (510,0) size 72x19
+              text run at (510,0) width 72: "Mozilla QA"
+          RenderText {#text} at (581,0) size 40x19
+            text run at (581,0) width 5: " "
+            text run at (585,0) width 36: "has a "
+          RenderInline {A} at (0,0) size 30x19 [color=#0000EE]
+            RenderText {#text} at (620,0) size 30x19
+              text run at (620,0) width 30: "page"
+          RenderText {#text} at (649,0) size 219x199
+            text run at (649,0) width 5: " "
+            text run at (653,0) width 76: "dedicated to"
+            text run at (510,20) width 203: "ways to get involved with helping."
+            text run at (510,40) width 123: "This doesn't involve "
+            text run at (632,40) width 82: "knowing how"
+            text run at (510,60) width 214: "to code, although a little knowledge"
+            text run at (510,80) width 162: "of HTML is helpful. Being "
+            text run at (671,80) width 51: "involved"
+            text run at (510,100) width 70: "with QA is "
+            text run at (579,100) width 148: "good for people wanting"
+            text run at (510,120) width 150: "to get more familiar with "
+            text run at (659,120) width 49: "Mozilla,"
+            text run at (510,140) width 206: "and there's a strong community. A"
+            text run at (510,160) width 169: "particularly good way to get"
+            text run at (510,180) width 55: "involved "
+            text run at (564,180) width 78: "is to join the "
+          RenderInline {A} at (0,0) size 67x19 [color=#0000EE]
+            RenderText {#text} at (641,180) size 67x19
+              text run at (641,180) width 67: "BugAThon"
+          RenderText {#text} at (707,180) size 5x19
+            text run at (707,180) width 5: "."

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .container {
+            width: 100px;
+            height: 100px;
+            margin: 10px;
+            border: 2px solid gray;
+            display: inline-block;
+            position: relative;
+        }
+        .box {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background-image: url('resources/checker.png');
+            background-repeat: no-repeat;
+        }
+        
+        .repeat .box {
+            background-repeat: repeat;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <div class="container">
+            <div class="box" style="background-position: 0 0"></div>
+        </div>
+        <div class="container">
+            <div class="box" style="background-position: 10px 20px"></div>
+        </div>
+        <div class="container">
+            <div class="box" style="background-position: 10% 50%"></div>
+        </div>
+        <div class="container">
+            <div class="box" style="background-position: top 10% left 50%"></div>
+        </div>
+        <div class="container">
+            <div class="box" style="background-position: right 10% bottom 50%"></div>
+        </div>
+        <div class="container">
+            <div class="box" style="background-position: center right"></div>
+        </div>
+    </div>
+    <div class="repeat">
+        <div class="container">
+            <div class="box" style="background-position: 0 0"></div>
+        </div>
+        <div class="container">
+            <div class="box" style="background-position: 10px 20px"></div>
+        </div>
+        <div class="container">
+            <div class="box" style="background-position: 10% 50%"></div>
+        </div>
+        <div class="container">
+            <div class="box" style="background-position: top 10% left 50%"></div>
+        </div>
+        <div class="container">
+            <div class="box" style="background-position: right 10% bottom 50%"></div>
+        </div>
+        <div class="container">
+            <div class="box" style="background-position: center right"></div>
+        </div>
+    </div>
+    <div>
+        <div class="container">
+            <div class="box" style="background-position: 0 0"></div>
+        </div>
+        <div class="container">
+            <div class="box" style="background-position: 10px 20px"></div>
+        </div>
+        <div class="container">
+            <div class="box" style="background-position: 10% 50%"></div>
+        </div>
+        <div class="container">
+            <div class="box" style="background-position: top 10% left 50%"></div>
+        </div>
+        <div class="container">
+            <div class="box" style="background-position: right 10% bottom 50%"></div>
+        </div>
+        <div class="container">
+            <div class="box" style="background-position: center right"></div>
+        </div>
+    </div>
+
+</body>
+</html>

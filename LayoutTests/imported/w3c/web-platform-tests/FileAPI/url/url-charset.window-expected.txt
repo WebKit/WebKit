@@ -1,0 +1,4 @@
+
+FAIL Blob charset should override any auto-detected charset. assert_equals: expected "UTF-8" but got "windows-1252"
+FAIL Blob charset should override <meta charset>. assert_equals: expected "UTF-8" but got "windows-1252"
+

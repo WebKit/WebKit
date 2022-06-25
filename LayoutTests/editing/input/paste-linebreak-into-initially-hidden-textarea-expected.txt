@@ -1,0 +1,4 @@
+This tests pasting into a textarea that starts with a line break that didn't initially have a renderer (display: none). WebKit should still be able to paste text with line breaks.
+
+
+PASS

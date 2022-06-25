@@ -1,0 +1,23 @@
+This test ensures that an aria-hidden display:contents element behaves as expected.
+
+Testing element #main
+AXRole: AXGroup
+computedRoleString: main
+AXSubrole: AXLandmarkMain
+
+Testing element #list
+AXRole: AXList
+computedRoleString: list
+AXSubrole: AXContentList
+
+Testing element #paragraph
+AXRole: AXGroup
+computedRoleString: paragraph
+
+Hiding #main with aria-hidden='true'.
+PASS: All elements are now hidden.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

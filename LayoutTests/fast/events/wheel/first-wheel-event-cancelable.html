@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            height: 5000px;
+        }
+        
+        #target {
+            width: 200px;
+            height: 200px;
+            background-color: silver;
+            margin: 20px;
+        }
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        var jsTestIsAsync = true;
+
+        let wheelEventCount = 0;
+        let windowScrollEventCount = 0;
+
+        let firstWasCancelable;
+        let firstWasCanceled;
+        let secondWasCancelable;
+        let secondWasCanceled;
+
+        async function testScroll()
+        {
+            await UIHelper.mouseWheelScrollAt(100, 100);
+            shouldBe('windowScrollEventCount', '0');
+
+            shouldBeTrue('firstWasCancelable');
+            shouldBeTrue('firstWasCanceled');
+
+            shouldBeTrue('secondWasCancelable');
+            shouldBeTrue('secondWasCanceled');
+
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+            description('Tests preventDefault on the first event results in the rest of the events being cancelable')
+            let target = document.getElementById('target');
+
+            target.addEventListener('wheel', (event) => {
+                if (!wheelEventCount) {
+                    firstWasCancelable = event.cancelable;
+                    event.preventDefault();
+                    firstWasCanceled = event.defaultPrevented;
+                } else if (wheelEventCount == 1) {
+                    secondWasCancelable = event.cancelable;
+                    event.preventDefault();
+                    secondWasCanceled = event.defaultPrevented;
+                }
+                ++wheelEventCount;
+            });
+
+            window.addEventListener('scroll', () => {
+                ++windowScrollEventCount;
+            }, false);
+
+            setTimeout(testScroll, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <div id="target"></div>
+    <div id="console"></div>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

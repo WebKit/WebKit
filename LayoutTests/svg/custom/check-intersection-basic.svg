@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" onload="runTest()">
+<script xlink:href="../../resources/js-test.js"/>
+<rect id="box" class="width50" x="10" y="10" height="50" fill="blue" />
+<text x="10" y="60"></text>
+<style>
+.width20 { width: 20px; }
+.width50 { width: 50px; }
+</style>
+<script>
+
+description('Tests SVGSVGElement.checkIntersection');
+
+function createRect(x, y, width, height) {
+    const rect = document.documentElement.createSVGRect();
+    rect.x = x;
+    rect.y = y;
+    rect.width = width;
+    rect.height = height;
+    return rect;
+}
+
+function runTest() {
+    window.box = document.getElementById("box");
+
+    shouldBeTrue('rectOfBox = createRect(10, 10, 50, 50); document.documentElement.checkIntersection(box, rectOfBox)');
+    shouldBeTrue('document.documentElement.checkEnclosure(box, rectOfBox)');
+
+    shouldBeTrue('rectInBox = createRect(20, 20, 20, 20); document.documentElement.checkIntersection(box, rectInBox)');
+    shouldBeFalse('document.documentElement.checkEnclosure(box, rectInBox)');
+
+    shouldBeTrue('boxExtendingUp = createRect(10, 0, 50, 60); document.documentElement.checkIntersection(box, boxExtendingUp)');
+    shouldBeTrue('document.documentElement.checkEnclosure(box, boxExtendingUp)');
+
+    shouldBeTrue('boxExtendingDown = createRect(10, 10, 50, 60); document.documentElement.checkIntersection(box, boxExtendingDown)');
+    shouldBeTrue('document.documentElement.checkEnclosure(box, boxExtendingDown)');
+
+    shouldBeTrue('boxExtendingLeft = createRect(0, 10, 60, 50); document.documentElement.checkIntersection(box, boxExtendingLeft)');
+    shouldBeTrue('document.documentElement.checkEnclosure(box, boxExtendingLeft)');
+
+    shouldBeTrue('boxExtendingRight = createRect(10, 10, 60, 50); document.documentElement.checkIntersection(box, boxExtendingRight)');
+    shouldBeTrue('document.documentElement.checkEnclosure(box, boxExtendingRight)');
+
+    shouldBeTrue('boxShrinkingTop = createRect(10, 20, 50, 40); document.documentElement.checkIntersection(box, boxShrinkingTop)');
+    shouldBeFalse('document.documentElement.checkEnclosure(box, boxShrinkingTop)');
+
+    shouldBeTrue('boxShrinkingBottom = createRect(10, 10, 50, 40); document.documentElement.checkIntersection(box, boxShrinkingBottom)');
+    shouldBeFalse('document.documentElement.checkEnclosure(box, boxShrinkingBottom)');
+
+    shouldBeTrue('boxShrinkingLeft = createRect(20, 10, 40, 50); document.documentElement.checkIntersection(box, boxShrinkingLeft)');
+    shouldBeFalse('document.documentElement.checkEnclosure(box, boxShrinkingLeft)');
+
+    shouldBeTrue('boxShrinkingRight = createRect(10, 10, 40, 50); document.documentElement.checkIntersection(box, boxShrinkingRight)');
+    shouldBeFalse('document.documentElement.checkEnclosure(box, boxShrinkingRight)');
+
+    shouldBeTrue('upperLeftCornerBox = createRect(5, 5, 20, 20); document.documentElement.checkIntersection(box, upperLeftCornerBox)');
+    shouldBeFalse('document.documentElement.checkEnclosure(box, upperLeftCornerBox)');
+
+    shouldBeTrue('upperRightCornerBox = createRect(45, 5, 20, 20); document.documentElement.checkIntersection(box, upperRightCornerBox)');
+    shouldBeFalse('document.documentElement.checkEnclosure(box, upperRightCornerBox)');
+
+    shouldBeFalse('boxOnTop = createRect(10, 5, 50, 5); document.documentElement.checkIntersection(box, boxOnTop)');
+    shouldBeFalse('document.documentElement.checkEnclosure(box, boxOnTop)');
+
+    shouldBeFalse('boxOnBottom = createRect(60, 5, 50, 5); document.documentElement.checkIntersection(box, boxOnBottom)');
+    shouldBeFalse('document.documentElement.checkEnclosure(box, boxOnBottom)');
+
+    shouldBeFalse('boxOnLeft = createRect(5, 10, 5, 50); document.documentElement.checkIntersection(box, boxOnLeft)');
+    shouldBeFalse('document.documentElement.checkEnclosure(box, boxOnLeft)');
+
+    shouldBeFalse('boxOnRight = createRect(60, 10, 5, 50); document.documentElement.checkIntersection(box, boxOnRight)');
+    shouldBeFalse('document.documentElement.checkEnclosure(box, boxOnRight)');
+
+    shouldBeFalse('box.setAttribute("class", "width20"); document.documentElement.checkIntersection(box, upperRightCornerBox)');
+    shouldBeTrue('narrowBox = createRect(10, 10, 20, 50); document.documentElement.checkEnclosure(box, narrowBox)');
+
+    shouldBeTrue('box.setAttribute("class", "width50"); document.documentElement.checkIntersection(box, upperRightCornerBox)');
+    shouldBeFalse('document.documentElement.checkEnclosure(box, narrowBox)');
+
+    finishJSTest()
+}
+
+var successfullyParsed = true;
+
+</script>
+</svg>
+

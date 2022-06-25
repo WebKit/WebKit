@@ -1,0 +1,10 @@
+[
+    {
+        "trigger": {
+            "url-filter": "count"
+        },
+        "action": {
+            "type": "block"
+        }
+    }
+]

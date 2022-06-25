@@ -1,0 +1,12 @@
+Blocked access to external URL https://www1.localhost:9443/payment-request/allowpayment/echo-PaymentRequest.html?iframe
+Blocked access to external URL https://www1.localhost:9443/payment-request/allowpayment/echo-PaymentRequest.html?frame
+Blocked access to external URL https://www1.localhost:9443/payment-request/allowpayment/echo-PaymentRequest.html?object
+Blocked access to external URL https://www1.localhost:9443/payment-request/allowpayment/echo-PaymentRequest.html?embed
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT iframe Test timed out
+TIMEOUT frame Test timed out
+TIMEOUT object Test timed out
+TIMEOUT embed Test timed out
+

@@ -1,0 +1,16 @@
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT sharedworker-connect-src Test timed out
+PASS Same-origin 'fetch()' in http: without CSP
+PASS Same-origin XHR in http: without CSP
+PASS Cross-origin 'fetch()' in http: without CSP
+PASS Cross-origin XHR in http: without CSP
+PASS Same-origin => cross-origin 'fetch()' in http: without CSP
+PASS Same-origin 'fetch()' in http: with connect-src 'self'
+PASS Same-origin XHR in http: with connect-src 'self'
+TIMEOUT Cross-origin 'fetch()' in http: with connect-src 'self' Test timed out
+NOTRUN Cross-origin XHR in http: with connect-src 'self'
+NOTRUN Same-origin => cross-origin 'fetch()' in http: with connect-src 'self'
+NOTRUN Reports match in http: with connect-src 'self'
+

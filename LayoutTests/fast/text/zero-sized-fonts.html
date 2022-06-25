@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body style="text-rendering: optimizeLegibility;">
+This test makes sure that 0-sized fonts have 0-sized advances. The green rectangle below's height should be less than 30 pixels.
+<div id="sample" style="font-size: 0; width: 970px; background: green;"><div style="display: inline-block; width: 320px; height: 20px; font-size: 16px; background: green;"></div> <div style="display: inline-block; width: 648px; height: 10px; font-size: 16px; background: green;"></div></div>
+<script>
+shouldBeTrue("document.getElementById('sample').getBoundingClientRect().height < 30");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

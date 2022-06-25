@@ -1,0 +1,3 @@
+
+PASS putImageData() with zero-sized dirty rectangle puts nothing
+

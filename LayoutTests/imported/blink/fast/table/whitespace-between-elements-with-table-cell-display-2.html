@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<style>
+input { display:table-cell; width:50px; height: 50px; margin:0; border:none; padding: 0; background:transparent; }
+</style>
+<p>crbug.com/515771: Form elements with a table cell display should not allow whitespace between them. </p>
+<p>There should only be green below.</p>
+<div style="display:table;">
+    <div style="display:table-column; background:green;"></div>
+    <div style="display:table-column; background:red;"></div>
+    <div style="display:table-column; background:salmon;"></div>
+    <div style="display:table-column; background:red;"></div>
+    <input>
+    <input>
+    <input>
+    <input>
+</div>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/dump-as-markup.js"></script>
+</head>
+<body>
+    <div contenteditable id="editor">
+        <p>foo bar baz</p>
+        <iframe srcdoc="<body contenteditable>foo bar baz
+            <iframe srcdoc='<body contenteditable>bar</body>'></iframe>
+            <input value='foo bar baz'></input></body>"></iframe>
+        <iframe srcdoc="<iframe srcdoc='<body contenteditable>bar</body>'></iframe>
+            <iframe srcdoc='<input value=bar>'></iframe>
+            <div contenteditable>foo bar bar</div><textarea>foo bar bar</textarea>"></iframe>
+        <input value='foo bar baz'>
+    </div>
+</body>
+<script>
+Markup.waitUntilDone();
+Markup.description("Verifies that find and replace can be used to replace words in different frames on the same page, as well as inside text fields. This test requires WebKitTestRunner.");
+
+addEventListener("load", () => {
+    testRunner.findStringMatchesInPage("bar", []);
+    testRunner.replaceFindMatchesAtIndices([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], "hello", false);
+    Markup.dump("editor", "After replacing 'bar' with 'hello'");
+
+    testRunner.findStringMatchesInPage("foo", []);
+    testRunner.replaceFindMatchesAtIndices([0], "world", false);
+    Markup.dump("editor", "After replacing the first occurrence of 'foo' with 'world'");
+
+    Markup.notifyDone();
+});
+</script>
+</html>

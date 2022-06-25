@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        function seekToBeginningAndFinishTest() {
+            document.querySelector("#test-video").currentTime = 0;
+            // The media controls should be updated on the next runloop.
+            setTimeout(function() {
+                window.webkit.messageHandlers.testHandler.postMessage("ended");
+            }, 0);
+        }
+
+        function seekToEnd() {
+            document.querySelector("#test-video").currentTime = document.querySelector("#test-video").duration - 0.1;
+        }
+    </script>
+</head>
+<body>
+    <video id="test-video" autoplay onended=seekToBeginningAndFinishTest() onplaying=seekToEnd() style="width: 800px; height: 600px;" src="large-video-with-audio.mp4"></video>
+</body>
+</html>

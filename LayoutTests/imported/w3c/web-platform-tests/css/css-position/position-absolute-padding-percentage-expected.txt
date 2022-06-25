@@ -1,0 +1,4 @@
+
+PASS absolute positioned element should resolve padding left+right against container padding-box width
+PASS absolute positioned element should resolve padding top+bottom against container padding-box width
+

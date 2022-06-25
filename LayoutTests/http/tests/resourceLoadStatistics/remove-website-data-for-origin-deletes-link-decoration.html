@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="resources/util.js"></script>
+</head>
+<body onload="setTimeout('runTest()', 0)">
+<div id="output"></div>
+<script>
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    }
+
+    function navigateCrossOrigin() {
+        document.location.href = destinationOrigin + "/resourceLoadStatistics/remove-website-data-for-origin-deletes-link-decoration.html?link=decoration";
+    }
+
+    const host = "localhost";
+    const destinationOrigin = "http://localhost:8000";
+    const prevalentResourceOrigin = "http://127.0.0.1:8000";
+    function runTest() {
+        if (document.location.origin === prevalentResourceOrigin) {
+            setEnableFeature(true, function () {
+                testRunner.setStatisticsPrevalentResource(prevalentResourceOrigin, true, function() {
+                    if (!testRunner.isStatisticsPrevalentResource(prevalentResourceOrigin))
+                        testFailed("Host did not get set as prevalent resource.");
+                    testRunner.statisticsUpdateCookieBlocking(navigateCrossOrigin);
+                });
+
+            });
+        } else {
+            testRunner.clearStatisticsDataForDomain(host);
+            testRunner.dumpResourceLoadStatistics();
+            setEnableFeature(false, function () {
+                testRunner.notifyDone();
+            });
+        }
+    }
+</script>
+</body>
+</html>

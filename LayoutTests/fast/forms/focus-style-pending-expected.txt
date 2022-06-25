@@ -1,0 +1,3 @@
+Test that focus() sets input focus correctly even when there are pending stylesheet loads.
+
+PASS

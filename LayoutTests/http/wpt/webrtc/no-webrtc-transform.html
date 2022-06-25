@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="/resources/testharness.js"></script>
+        <script src="/resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <script>
+promise_test(async (test) => {
+    if (window.internals)
+        internals.settings.setWebRTCEncodedTransformEnabled(true);
+
+    const worker = new Worker('no-transform.js');
+    const data = await new Promise(resolve => worker.onmessage = (event) => resolve(event.data));
+    assert_equals(data, "on");
+}, "RTCRtpScriptTransformer if insertable stream flag is on");
+
+promise_test(async (test) => {
+    if (window.internals)
+        internals.settings.setWebRTCEncodedTransformEnabled(false);
+
+    const worker = new Worker('no-transform.js');
+    const data = await new Promise(resolve => worker.onmessage = (event) => resolve(event.data));
+    assert_equals(data, "off");
+}, "no RTCRtpScriptTransformer if insertable stream flag is off");
+        </script>
+    </body>
+</html>

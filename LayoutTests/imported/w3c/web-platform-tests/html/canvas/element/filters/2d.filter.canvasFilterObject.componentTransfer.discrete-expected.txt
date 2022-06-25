@@ -1,0 +1,6 @@
+2d.filter.canvasFilterObject.componentTransfer.discrete
+Test pixels on CanvasFilter() componentTransfer with discrete type
+Actual output:
+
+FAIL Test pixels on CanvasFilter() componentTransfer with discrete type Can't find variable: CanvasFilter
+

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <script>
+            description("This tests checks that all of the input values for stroke-width parse correctly.");
+
+            function test(value)
+            {
+                var div = document.createElement("div");
+                div.setAttribute("style", value);
+                document.body.appendChild(div);
+
+                var result = div.style.getPropertyValue("stroke-width");
+                
+                document.body.removeChild(div);
+                return result;
+            }
+
+            function testComputedStyle(value)
+            {
+                var div = document.createElement("div");
+                div.setAttribute("style", value);
+                document.body.appendChild(div);
+
+                var result = window.getComputedStyle(div).strokeWidth;
+                document.body.removeChild(div);
+                return result;
+            }
+
+            function testComputedStyleInherited(value)
+            {
+                var div = document.createElement("div");
+                div.setAttribute("style", value);
+
+                var div2 = document.createElement("div");
+                div.appendChild(div2);
+                
+                document.body.appendChild(div);
+
+                var result = window.getComputedStyle(div2).strokeWidth;
+                document.body.removeChild(div);
+                return result;
+            }
+
+            shouldBe('testComputedStyleInherited("stroke-width: 4px;")', '"4px"');
+            shouldBe('testComputedStyleInherited("stroke-width: 0.01em;")', '"0.01em"');
+            shouldBe('testComputedStyleInherited("stroke-width: 10%;")', '"10%"');
+
+            shouldBe('testComputedStyle(";")', '"1px"');
+            shouldBe('test("stroke-width: 4px;")', '"4px"');
+            shouldBe('test("stroke-width: 0.01em;")', '"0.01em"');
+            shouldBe('test("stroke-width: 10%;")', '"10%"');
+            
+            shouldBeEqualToString('test("stroke-width: 4;")', '4px');
+            shouldBeEqualToString('test("stroke-width: em;")', '');
+            shouldBeEqualToString('test("stroke-width: %;")', '');
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

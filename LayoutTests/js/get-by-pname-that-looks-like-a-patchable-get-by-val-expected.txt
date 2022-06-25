@@ -1,0 +1,10 @@
+Tests that using get_by_pname in a way that appears like a get_by_val that can be patched does not cause the patching machinery to crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS foo() is 300
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,175 @@
+<html>
+    <head>
+        <style>
+            div {
+                height: 9999px;
+                width: 9999px;
+            }
+        </style>
+        <script src="../../../resources/js-test-pre.js"></script>
+        <script>
+            jsTestIsAsync = true;
+
+            function runTest() {
+                description('Test the "scrollLeft" properties on the body element in quirks mode.');
+
+                debug("Initial values");
+                shouldBe("document.body.scrollLeft", "0");
+                shouldBe("document.body.scrollTop", "0");
+                shouldBe("document.documentElement.scrollLeft", "0");
+                shouldBe("document.documentElement.scrollTop", "0");
+                shouldBe("window.scrollX", "0");
+                shouldBe("window.scrollY", "0");
+
+                debug("");
+                debug("Let set the scrollLeft value on the main body element (document.body), in quirks mode, this should change the main frame's scroll position.");
+                shouldBe("document.body.scrollLeft = 42", "42");
+                shouldBe("document.body.scrollLeft", "42");
+                shouldBe("document.body.scrollTop", "0");
+                shouldBe("document.documentElement.scrollLeft", "0");
+                shouldBe("document.documentElement.scrollTop", "0");
+                shouldBe("window.scrollX", "42");
+                shouldBe("window.scrollY", "0");
+
+                debug("");
+                debug("Change scrollX, this should have no effect on the horizontal scrolling");
+                shouldBe("window.scrollBy(0, 21)", "undefined");
+                shouldBe("document.body.scrollLeft", "42");
+                shouldBe("document.body.scrollTop", "21");
+                shouldBe("document.documentElement.scrollLeft", "0");
+                shouldBe("document.documentElement.scrollTop", "0");
+                shouldBe("window.scrollX", "42");
+                shouldBe("window.scrollY", "21");
+
+                debug("");
+                debug("Now we create a body element, completely detached from the DOM tree. This should not change the scroll position in any way.");
+                floatingBody = document.createElement('body');
+                shouldBe("floatingBody.scrollLeft", "0");
+                shouldBe("floatingBody.scrollTop", "0");
+                shouldBe("document.body.scrollLeft", "42");
+                shouldBe("document.body.scrollTop", "21");
+                shouldBe("document.documentElement.scrollLeft", "0");
+                shouldBe("document.documentElement.scrollTop", "0");
+                shouldBe("window.scrollX", "42");
+                shouldBe("window.scrollY", "21");
+
+                debug("");
+                debug("Setting the scroll position on that detached body element should not affect the main frame since it is not the first body element of the document.");
+                shouldBe("floatingBody.scrollLeft = 654", "654");
+                shouldBe("floatingBody.scrollLeft", "0");
+                shouldBe("floatingBody.scrollTop", "0");
+                shouldBe("document.body.scrollLeft", "42");
+                shouldBe("document.body.scrollTop", "21");
+                shouldBe("document.documentElement.scrollLeft", "0");
+                shouldBe("document.documentElement.scrollTop", "0");
+                shouldBe("window.scrollX", "42");
+                shouldBe("window.scrollY", "21");
+
+                secondSiblingBody = document.createElement('body');
+                document.documentElement.appendChild(secondSiblingBody);
+                debug("");
+                debug("We add a new body element after the first body element, this should have no impact on the state.");
+                shouldBe("secondSiblingBody.scrollLeft", "0");
+                shouldBe("secondSiblingBody.scrollTop", "0");
+                shouldBe("document.body.scrollLeft", "42");
+                shouldBe("document.body.scrollTop", "21");
+                shouldBe("document.documentElement.scrollLeft", "0");
+                shouldBe("document.documentElement.scrollTop", "0");
+                shouldBe("window.scrollX", "42");
+                shouldBe("window.scrollY", "21");
+
+                debug("");
+                debug("Setting a \"scrollTop\" on secondSiblingBody should not affect the main frame.");
+                shouldBe("secondSiblingBody.scrollLeft = 987", "987");
+                shouldBe("secondSiblingBody.scrollLeft", "0");
+                shouldBe("secondSiblingBody.scrollTop", "0");
+                shouldBe("document.body.scrollLeft", "42");
+                shouldBe("document.body.scrollTop", "21");
+                shouldBe("document.documentElement.scrollLeft", "0");
+                shouldBe("document.documentElement.scrollTop", "0");
+                shouldBe("window.scrollX", "42");
+                shouldBe("window.scrollY", "21");
+
+                bodyChildOfMainBody = document.createElement('body');
+                document.body.appendChild(bodyChildOfMainBody);
+                debug("");
+                debug("We add a new body element inside the first body element, this should have no impact on the state.");
+                shouldBe("bodyChildOfMainBody.scrollLeft", "0");
+                shouldBe("bodyChildOfMainBody.scrollTop", "0");
+                shouldBe("document.body.scrollLeft", "42");
+                shouldBe("document.body.scrollTop", "21");
+                shouldBe("document.documentElement.scrollLeft", "0");
+                shouldBe("document.documentElement.scrollTop", "0");
+                shouldBe("window.scrollX", "42");
+                shouldBe("window.scrollY", "21");
+
+                debug("");
+                debug("Setting a \"scrollTop\" on bodyChildOfMainBody should not affect the main frame.");
+                shouldBe("bodyChildOfMainBody.scrollLeft = 57", "57");
+                shouldBe("bodyChildOfMainBody.scrollLeft", "0");
+                shouldBe("bodyChildOfMainBody.scrollTop", "0");
+                shouldBe("document.body.scrollLeft", "42");
+                shouldBe("document.body.scrollTop", "21");
+                shouldBe("document.documentElement.scrollLeft", "0");
+                shouldBe("document.documentElement.scrollTop", "0");
+                shouldBe("window.scrollX", "42");
+                shouldBe("window.scrollY", "21");
+
+                debug("");
+                debug("Now we insert a new body element *before* the existing one. It will replace the existing element as the first body element of the document.");
+                oldBodyElement = document.body;
+                newMainBody = document.createElement('body');
+                document.documentElement.insertBefore(newMainBody, oldBodyElement);
+                shouldBeTrue("document.body === newMainBody");
+                shouldBeTrue("document.body !== oldBodyElement");
+
+                debug("Since we are in quirks mode, the new body element gets the scroll position from the frame, and the old one lose its scroll position.");
+                shouldBe("oldBodyElement.scrollLeft", "0");
+                shouldBe("oldBodyElement.scrollTop", "0");
+                shouldBe("document.body.scrollLeft", "42");
+                shouldBe("document.body.scrollTop", "21");
+                shouldBe("document.documentElement.scrollLeft", "0");
+                shouldBe("document.documentElement.scrollTop", "0");
+                shouldBe("window.scrollX", "42");
+                shouldBe("window.scrollY", "21");
+
+                debug("");
+                debug("Scrolling that new body should work as expected.");
+                shouldBe("document.body.scrollLeft = 68", "68");
+                shouldBe("oldBodyElement.scrollLeft = 894", "894");
+
+                shouldBe("oldBodyElement.scrollLeft", "0");
+                shouldBe("oldBodyElement.scrollTop", "0");
+                shouldBe("document.body.scrollLeft", "68");
+                shouldBe("document.body.scrollTop", "21");
+                shouldBe("document.documentElement.scrollLeft", "0");
+                shouldBe("document.documentElement.scrollTop", "0");
+                shouldBe("window.scrollX", "68");
+                shouldBe("window.scrollY", "21");
+
+                debug("");
+                debug("Scrolling the main frame should not require a renderer.");
+                shouldBe("document.body.style.display = 'none'", "'none'");
+                shouldBe("document.body.scrollLeft = 54", "54");
+                shouldBe("oldBodyElement.scrollLeft", "0");
+                shouldBe("oldBodyElement.scrollTop", "0");
+                shouldBe("document.body.scrollLeft", "54");
+                shouldBe("document.body.scrollTop", "21");
+                shouldBe("document.documentElement.scrollLeft", "0");
+                shouldBe("document.documentElement.scrollTop", "0");
+                shouldBe("window.scrollX", "54");
+                shouldBe("window.scrollY", "21");
+
+                // Finally, let's clear the state to make this simpler for manual testing.
+                newMainBody.parentNode.removeChild(newMainBody);
+                window.scrollTo(0, 0);
+
+                finishJSTest();
+            }
+        </script>
+    </head>
+    <body onload="runTest()">
+        <div></div>
+        <script src="../../../resources/js-test-post.js"></script>
+    </body>
+</html>

@@ -1,0 +1,10 @@
+
+PASS DOMString:
+PASS DOMString: 0x61 0x62 0x63 0x0 0x64 0x65 0x66
+PASS DOMString: 0xD800
+PASS DOMString: 0xDC00
+PASS DOMString: 0xDC00 0xD800
+PASS DOMString: 0xFFFF
+PASS Resource names that are not valid UTF-16 are not mangled
+PASS Names cannot start with "-"
+

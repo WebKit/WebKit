@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Programmatic scrolling of iframe</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+        if (window.internals)
+            internals.settings.setAsyncFrameScrollingEnabled(true);
+
+        function runTest() {
+            // This checks scrolling outside the limit of the frame.
+            document.getElementById("scrollAboveYLimit").contentWindow.window.scrollBy(0, 200);
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+     </script>
+    <style>
+        iframe {
+            float: left;
+            background: linear-gradient(135deg, red, orange);
+            border: 0;
+            height: 100px;
+            width: 100px;
+            overflow: none;
+        }
+    </style>
+  </head>
+  <body>
+    <p>This test passes if you see a green square.</p>
+    <div style="position: absolute; top: 3em; width: 100px; height: 100px; background: green;">
+        <iframe id="scrollAboveYLimit" scrolling="yes" srcdoc="
+            <body style='margin: 0; width: 200px; height: 200px'>
+                <div style='position: absolute; width: 200px; height: 200px; background: green;'></div>
+            </body>" onload="runTest()">
+        </iframe>
+    </div>
+  </body>
+</html>

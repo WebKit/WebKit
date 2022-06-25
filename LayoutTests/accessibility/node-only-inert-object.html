@@ -1,0 +1,31 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<button inert id="button" style="display:contents">Click me</button>
+
+<script>
+    var testOutput = "This test ensures that a node-only object (e.g. one with display:contents) that is inert is ignored.\n\n";
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        testOutput += expect("accessibilityController.accessibleElementById('button')", "null");
+
+        testOutput += "\nRemoving inert from #button\n";
+        document.getElementById("button").removeAttribute("inert");
+        setTimeout(async function() {
+            await waitFor(() => accessibilityController.accessibleElementById("button"));
+            testOutput += expect("accessibilityController.accessibleElementById('button').role.includes('Button')", "true");
+
+            debug(testOutput);
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>

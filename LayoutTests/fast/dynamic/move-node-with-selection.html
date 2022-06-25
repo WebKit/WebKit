@@ -1,0 +1,12 @@
+<div id="dest"></div>
+<div id="t">
+Lorem ipsum
+</div>
+<script type="text/javascript">
+    var t = document.getElementById('t');
+    var dest = document.getElementById('dest');
+
+    window.getSelection().setBaseAndExtent(t.childNodes[0], 4, t.childNodes[0], 8);
+    t.style.display="inline";
+    dest.appendChild(t);
+</script>

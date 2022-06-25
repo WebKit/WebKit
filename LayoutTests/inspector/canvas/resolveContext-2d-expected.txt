@@ -1,0 +1,12 @@
+Tests for the Canvas.resolveContext command for 2D contexts.
+
+
+== Running test suite: Canvas.resolveContext2D
+-- Running test case: Canvas.resolveContext2D.validIdentifier
+PASS: Payload should have type "object".
+PASS: Payload should have className "CanvasRenderingContext2D".
+
+-- Running test case: Canvas.resolveContext.invalidIdentifier
+PASS: Should produce an error.
+Error: Missing canvas for given canvasId
+

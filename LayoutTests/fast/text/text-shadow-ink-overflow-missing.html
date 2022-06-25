@@ -1,0 +1,26 @@
+<style>
+.wrapper {
+  position: relative;
+  font-family: Ahem;
+}
+
+.shadow {
+  position: relative;
+  z-index: 1;
+  font-size: 20px;
+  text-shadow: 0px 100px 1px black;
+}
+
+.absolute {
+  position: absolute;
+  left: 0;
+  top: 0;
+  will-change: transform;
+}
+</style>
+
+<div class="wrapper">
+  <div class="shadow">PASS if this line is doubled.</div>
+  <div class="absolute"></div>
+</div>
+

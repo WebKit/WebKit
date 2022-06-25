@@ -1,0 +1,6 @@
+
+PASS XRFrame.getPose works for immersive sessions - webgl
+FAIL XRFrame.getPose works for immersive sessions - webgl2 assert_implements: webgl2 not supported. undefined
+PASS XRFrame.getPose works for non-immersive sessions - webgl
+FAIL XRFrame.getPose works for non-immersive sessions - webgl2 assert_implements: webgl2 not supported. undefined
+

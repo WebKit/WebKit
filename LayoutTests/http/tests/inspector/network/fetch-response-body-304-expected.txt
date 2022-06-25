@@ -1,0 +1,64 @@
+Tests for getting the content of Fetch requests with the "304 Not Modified" response status.
+
+
+== Running test suite: Network.getResponseBody.Fetch304
+-- Running test setup.
+-- Running test case: Network.getResponseBody.Fetch304.PHP304NotCached
+PASS: Resource should be Fetch type.
+PASS: MIME type should be empty.
+PASS: Status code should be 304.
+PASS: responseSource should be WI.Resource.ResponseSource.Network
+PASS: Text content should be undefined.
+
+-- Running test case: Network.getResponseBody.Fetch304.PHP200NotCached
+PASS: Resource should be Fetch type.
+PASS: Should see caching header.
+PASS: MIME type should be 'text/plain'.
+PASS: Status code should be 200.
+PASS: responseSource should be WI.Resource.ResponseSource.Network
+PASS: Text content should be 'Plain text resource.'.
+
+-- Running test case: Network.getResponseBody.Fetch304.PHP200Cached
+PASS: Resource should be Fetch type.
+PASS: MIME type should be 'text/plain'.
+PASS: Status code should be 200.
+PASS: responseSource should be WI.Resource.ResponseSource.DiskCache
+PASS: Text content should be 'Plain text resource.'.
+
+-- Running test case: Network.getResponseBody.Fetch304.PHP304Cached
+PASS: Resource should be Fetch type.
+PASS: MIME type should be 'text/plain'.
+PASS: Status code should be 200.
+PASS: responseSource should be WI.Resource.ResponseSource.DiskCache
+PASS: Text content should be 'Plain text resource.'.
+
+-- Running test setup.
+-- Running test case: Network.getResponseBody.Fetch304.File304NotCached
+PASS: Resource should be Fetch type.
+PASS: MIME type should be empty.
+PASS: Status code should be 304.
+PASS: responseSource should be WI.Resource.ResponseSource.Network
+PASS: Text content should be undefined.
+
+-- Running test case: Network.getResponseBody.Fetch304.File200NotCached
+PASS: Resource should be Fetch type.
+PASS: Should see caching header.
+PASS: MIME type should be 'text/plain'.
+PASS: Status code should be 200.
+PASS: responseSource should be WI.Resource.ResponseSource.Network
+PASS: Text content should be 'Plain text resource.'.
+
+-- Running test case: Network.getResponseBody.Fetch304.File200Cached
+PASS: Resource should be Fetch type.
+PASS: MIME type should be 'text/plain'.
+PASS: Status code should be 200.
+PASS: responseSource should be WI.Resource.ResponseSource.DiskCache
+PASS: Text content should be 'Plain text resource.'.
+
+-- Running test case: Network.getResponseBody.Fetch304.File304Cached
+PASS: Resource should be Fetch type.
+PASS: MIME type should be 'text/plain'.
+PASS: Status code should be 200.
+PASS: responseSource should be WI.Resource.ResponseSource.DiskCache
+PASS: Text content should be 'Plain text resource.'.
+

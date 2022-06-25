@@ -1,0 +1,23 @@
+This tests forward deleting in an empty table cell. The cursor shouldn't move.
+| "\n"
+| <table>
+|   border="1"
+|   "\n"
+|   <tbody>
+|     "\n"
+|     <tr>
+|       <td>
+|         "1"
+|       <td>
+|         "2"
+|     "\n"
+|     <tr>
+|       <td>
+|         "3"
+|       <td>
+|         id="fourth"
+|         <#selection-caret>
+|         <br>
+|     "\n"
+|   "\n"
+| "\n"

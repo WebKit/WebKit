@@ -1,0 +1,19 @@
+This test checks that we resolve unknown named grid lines considering that all the implicit lines have the unknown names.
+
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS

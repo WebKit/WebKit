@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<style>
+    body {
+        height: 5000px;
+    }
+</style>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+window.jsTestIsAsync = true;
+var widthDelta;
+
+function runTest() {
+    description("This test checks that the layout viewport rect's width is correctly updated when the window is resized.");
+    addEventListener("resize", resizeHandler);
+
+    widthDelta = window.outerWidth - window.internals.layoutViewportRect().width;
+    resizeTo(600, 500);
+}
+
+function resizeHandler() {
+    shouldEvaluateTo("window.internals.layoutViewportRect().width", 600 - widthDelta);
+    finishJSTest();
+}
+
+</script>
+<body onload="runTest()">
+<script src="../../../resources/js-test-post.js"></script>
+</body>

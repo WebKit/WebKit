@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+</style>
+</head>
+<body>
+This test makes sure that positioned elements do not intersect with RTL scrollbars. The test passes if you see the word "Test" below (and its not clipped at all).
+<div style="overflow: hidden; width: 85px; height: 85px;">
+<div id="scrollme" dir="rtl" style="position: relative; overflow: auto; width: 100px; height: 100px; left: -15px;">
+<div style="position: absolute; top: 200px; right: 250px; font-family: Ahem">Test</div>
+</div>
+</div>
+<script>
+var scrollme = document.getElementById("scrollme");
+scrollme.scrollTop = 400;
+scrollme.scrollLeft = -400;
+</script>
+</body>
+</html>

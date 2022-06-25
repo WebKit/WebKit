@@ -1,0 +1,51 @@
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description(":visited inside :-webkit-any should not be effective.");
+jsTestIsAsync = true;
+
+if (window.testRunner)
+    window.testRunner.keepWebHistory();
+
+var count = 0;
+function finish()
+{
+    if (++count === 2)
+        finishJSTest();
+}
+
+function compareStyles()
+{
+    if (window.internals) {
+        oneStyle = internals.computedStyleIncludingVisitedInfo(document.getElementById("one").firstChild);
+        twoStyle = internals.computedStyleIncludingVisitedInfo(document.getElementById("two"));
+        shouldBecomeEqualToString("oneStyle.color", "rgb(0, 128, 0)", finish);
+        shouldBecomeEqualToString("twoStyle.color", "rgb(0, 128, 0)", finish);
+    }
+}
+</script>
+<style>
+a { color: green; }
+#one :-webkit-any(:visited) {
+    color: red;
+}
+#one + :-webkit-any(:visited) + a {
+    color: red;
+}
+</style>
+</head>
+<body onload="compareStyles()">
+<iframe src="resources/dummy.html" style="display:none"></iframe>
+
+<p>One and Two links should be green:</p>
+<div>
+<p id="one"><a href="resources/dummy.html">One</a></p>
+<a href="resources/dummy.html">and</a>
+<a id="two"href="resources/dummy.html">Two</a>
+</div>
+
+<div id=console></div>
+</body>
+<script src="../../resources/js-test-post.js"></script>
+</html>

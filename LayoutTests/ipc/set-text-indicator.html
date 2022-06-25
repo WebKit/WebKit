@@ -1,0 +1,10 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<html>
+Test passes if it does not crash.
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+if (window.IPC)
+    IPC.sendMessage('UI', IPC.webPageProxyID, IPC.messages.WebPageProxy_SetTextIndicator.name, [{type: 'float', value: 598}, {type: 'float', value: 352}, {type: 'float', value: 597}, {type: 'float', value: 948}, {type: 'float', value: 0}, {type: 'float', value: 942}, {type: 'float', value: 233}, {type: 'float', value: 310}, {type: 'Vector', value: [[{type: 'float', value: 0}, {type: 'float', value: 0}, {type: 'float', value: 0}, {type: 'float', value: 0}]]}, {type: 'float', value: 927}, {type: 'float', value: 705}, {type: 'float', value: 498}, {type: 'float', value: 830}, {type: 'float', value: 58}, {type: 'bool', value: 1}, {type: 'float', value: 341}, {type: 'float', value: 1204}, {type: 'float', value: 1292}, {type: 'float', value: 1074}, {type: 'uint8_t', value: 2}, {type: 'uint8_t', value: 2}, {type: 'uint16_t', value: 1}, {type: 'bool', value: 0}, {type: 'bool', value: 0}, {type: 'bool', value: 0}, {type: 'uint64_t', value: 1}]);
+</script>
+</html>

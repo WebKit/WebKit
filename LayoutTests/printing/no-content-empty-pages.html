@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script src="resources/paged-media-test-utils.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<div id="sandbox"></div>
+<script>
+description("Test for no-content empty pages");
+
+function test()
+{
+    // Only one page break should happen at the same position.
+    createBlockWithRatioToPageHeight("page1-1", 0).style.pageBreakBefore = "always";
+    createBlockWithRatioToPageHeight("page1-2", 0).style.pageBreakBefore = "always";
+    createBlockWithRatioToPageHeight("page1-3", 0).style.pageBreakBefore = "always";
+    createBlockWithRatioToPageHeight("page1-last", 0.1);
+
+    pageNumberForElementShouldBe("page1-1", 1);
+    pageNumberForElementShouldBe("page1-last", 1);
+
+    document.body.removeChild(document.getElementById("sandbox"));
+}
+
+var successfullyParsed = true;
+</script>
+<script>runPrintingTest(test);</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

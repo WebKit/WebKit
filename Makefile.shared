@@ -1,0 +1,163 @@
+SCRIPTS_PATH ?= ../Tools/Scripts
+
+XCODE_OPTIONS = `perl -I$(SCRIPTS_PATH) -Mwebkitdirs -e 'print XcodeOptionString()' -- $(BUILD_WEBKIT_OPTIONS)` $${COLOR_DIAGNOSTICS_ARG} $(ARGS)
+ifeq (ON,$(ENABLE_LLVM_PROFILE_GENERATION))
+	XCODE_OPTIONS += ENABLE_LLVM_PROFILE_GENERATION=ENABLE_LLVM_PROFILE_GENERATION
+endif
+
+ifeq ($(USE_WORKSPACE),YES)
+SCHEME ?= $(notdir $(CURDIR))
+WORKSPACE_PATH ?= $(dir $(lastword $(MAKEFILE_LIST)))WebKit.xcworkspace
+XCODE_TARGET = -workspace $(WORKSPACE_PATH) -scheme "$(SCHEME)"
+XCODE_OPTIONS += WK_VALIDATE_DEPENDENCIES=YES_ERROR
+else
+USE_WORKSPACE =
+endif
+
+ifneq (,$(SDKROOT))
+	ifneq (,$(OVERRIDE_SDKROOT))
+		ifneq (default,$(OVERRIDE_SDKROOT))
+			XCODE_OPTIONS := $(XCODE_OPTIONS) SDKROOT=$(OVERRIDE_SDKROOT)
+		endif
+		OVERRIDE_SDKROOT =
+	else
+		XCODE_OPTIONS := $(XCODE_OPTIONS) SDKROOT=$(SDKROOT)
+	endif
+endif
+
+ifneq (,$(ARCHS))
+	ifneq (,$(OVERRIDE_ARCHS))
+		ifneq (default,$(OVERRIDE_ARCHS))
+			XCODE_OPTIONS := $(XCODE_OPTIONS) ARCHS="$(OVERRIDE_ARCHS)"
+			XCODE_OPTIONS += ONLY_ACTIVE_ARCH=NO
+		endif
+		OVERRIDE_ARCHS =
+	else
+		XCODE_OPTIONS := $(XCODE_OPTIONS) ARCHS="$(ARCHS)"
+		XCODE_OPTIONS += ONLY_ACTIVE_ARCH=NO
+	endif
+endif
+
+ifneq (,$(SDK_VARIANT))
+	XCODE_OPTIONS += SDK_VARIANT="$(SDK_VARIANT)"
+endif
+
+ifeq (, $(findstring WK_USE_CCACHE, $(ARGS)))
+	ifneq (, $(shell which ccache))
+		XCODE_OPTIONS += WK_USE_CCACHE=YES
+	endif
+endif
+
+ifneq (,$(EXPORT_COMPILE_COMMANDS))
+		XCODE_OPTIONS += OTHER_CFLAGS='$$(inherited) -gen-cdb-fragment-path $$(BUILT_PRODUCTS_DIR)/compile_commands'
+		XCODE_OPTIONS += GCC_PRECOMPILE_PREFIX_HEADER=NO
+		XCODE_OPTIONS += CLANG_ENABLE_MODULE_DEBUGGING=NO
+		XCODE_OPTIONS += COMPILER_INDEX_STORE_ENABLE=NO
+endif
+
+DEFAULT_VERBOSITY := $(shell defaults read org.webkit.BuildConfiguration BuildTranscriptVerbosity 2>/dev/null || echo "default")
+VERBOSITY ?= $(DEFAULT_VERBOSITY)
+
+ifeq ($(VERBOSITY),default)
+OUTPUT_FILTER = cat
+XCODE_OPTIONS += -hideShellScriptEnvironment
+else
+ifeq ($(VERBOSITY),noisy)
+OUTPUT_FILTER = cat
+else
+OUTPUT_FILTER = $(SCRIPTS_PATH)/filter-build-webkit
+endif
+endif
+
+ifeq ($(ASAN),YES)
+CONFIG_OPTIONS += --asan
+else
+ifeq ($(ASAN),NO)
+CONFIG_OPTIONS += --no-asan
+endif
+endif
+
+ifeq ($(TSAN),YES)
+CONFIG_OPTIONS += --tsan
+else
+ifeq ($(TSAN),NO)
+CONFIG_OPTIONS += --no-tsan
+endif
+endif
+
+ifeq ($(UBSAN),YES)
+CONFIG_OPTIONS += --ubsan
+else
+ifeq ($(UBSAN),NO)
+CONFIG_OPTIONS += --no-ubsan
+endif
+endif
+
+ifeq ($(WK_LTO_MODE),full)
+CONFIG_OPTIONS += --lto-mode=full
+else ifeq ($(WK_LTO_MODE),thin)
+CONFIG_OPTIONS += --lto-mode=thin
+else ifeq ($(WK_LTO_MODE),none)
+CONFIG_OPTIONS += --lto-mode=none
+endif
+
+export DSYMUTIL_NUM_THREADS = $(shell sysctl -n hw.activecpu)
+
+# Run xcodebuild with the same PATH with which the Xcode IDE runs, to mitigate unnecessary rebuilds due to PATH differences.
+# See <rdar://problem/16466196>.
+export PATH = $(shell getconf PATH)
+
+
+define set_webkit_configuration
+	$(SCRIPTS_PATH)/set-webkit-configuration $1 $(CONFIG_OPTIONS)
+endef
+
+define invoke_xcode
+	( \
+		[[ -t 1 ]] && COLOR_DIAGNOSTICS_ARG="COLOR_DIAGNOSTICS=YES"; \
+		echo; \
+		echo "===== BUILDING $(if $(USE_WORKSPACE),$(SCHEME),$(notdir $(CURDIR))) ====="; \
+		echo; \
+		$1 xcodebuild $2 $(OTHER_OPTIONS) $(XCODE_TARGET) $(XCODE_OPTIONS) $3 | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} \
+	)
+endef
+
+all:
+	@$(call set_webkit_configuration,)
+	@$(call invoke_xcode,,,GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) $$(inherited)')
+
+debug d: force
+	@$(call set_webkit_configuration,--debug)
+	@$(call invoke_xcode,,,GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) $$(inherited)')
+
+release r: force
+	@$(call set_webkit_configuration,--release)
+	@$(call invoke_xcode,,,GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) $$(inherited)')
+
+release+assert ra: force
+	@$(call set_webkit_configuration,--release)
+	@$(call invoke_xcode,,,GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) ASSERT_ENABLED=1 $$(inherited)')
+
+testing t: force
+	@$(call set_webkit_configuration,--debug --force-optimization-level=O3)
+	@$(call invoke_xcode,,,GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) $$(inherited)')
+
+analyze:
+	@$(call set_webkit_configuration,--debug)
+	@$(call invoke_xcode,$(PATH_TO_SCAN_BUILD),build analyze,GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) $$(inherited)')
+
+clean:
+ifndef XCODE_TARGET
+	@$(call invoke_xcode,,,-alltargets clean)
+else
+	@$(call invoke_xcode,,,clean)
+endif
+
+installsrc:
+ifndef XCODE_TARGET
+	@$(call invoke_xcode,,,-alltargets installsrc SRCROOT="$(SRCROOT)$(PATH_FROM_ROOT)")
+else
+	@$(call invoke_xcode,,,installsrc SRCROOT="$(SRCROOT)$(PATH_FROM_ROOT)")
+endif
+
+force: ;

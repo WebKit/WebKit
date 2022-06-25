@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 347x18
+          text run at (0,0) width 347: "Focus the field, focus away, then focus the field again."
+      RenderBlock {DIV} at (0,34) size 784x23
+        RenderTextControl {INPUT} at (2,2) size 147x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+layer at (13,47) size 141x13
+  RenderBlock {DIV} at (3,3) size 141x13 [color=#A9A9A9]
+    RenderText {#text} at (0,0) size 62x13
+      text run at (0,0) width 62: "Placeholder"
+layer at (13,47) size 141x13
+  RenderBlock {DIV} at (3,3) size 141x13
+caret: position 0 of child 1 {DIV} of {#document-fragment} of child 1 {INPUT} of child 3 {DIV} of body

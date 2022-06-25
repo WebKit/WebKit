@@ -1,0 +1,16 @@
+To manually test this, ensure that typing or attempting to delete text via the Delete key does not change the DOM.
+
+initially:
+| "<#selection-caret>def"
+
+after attempting to type (typing is allowed):
+| "abc<#selection-caret>def"
+
+after attempting to type (typing is prohibited):
+| "abc<#selection-caret>def"
+
+after attempting to delete (deleting is prohibited):
+| "abc<#selection-caret>def"
+
+after attempting to delete (deleting is allowed):
+| "a<#selection-caret>ef"

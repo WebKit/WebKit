@@ -1,0 +1,10 @@
+layer at (0,0) size 808x636
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x636
+  RenderBlock {HTML} at (0,0) size 800x636
+    RenderBody {BODY} at (8,8) size 784x620
+      RenderBlock {DIV} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 710x19
+          text run at (0,0) width 710: "This tests that putting an inline element (such as a span) inside of an element doesn't cause an assertion failure."
+      RenderBlock {DIV} at (0,20) size 784x600
+        RenderFrameSet {FRAMESET} at (0,0) size 800x600

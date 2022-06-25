@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+  margin: 0;
+}
+
+.animated {
+  -webkit-animation: test 1s;
+}
+
+@-webkit-keyframes test {
+  from {
+    padding: 0;
+  }
+  to {
+    padding: 0;
+  }
+}
+</style>
+</head>
+<body>
+<ul><li>Test</li></ul>
+</body>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+
+if (window.internals) {
+  document.body.offsetHeight;
+  let layoutCountBefore = internals.layoutCount;
+  // This should not trigger layout.
+  document.body.classList.add('animated');
+  document.body.offsetHeight;
+  let layoutCountAfter = internals.layoutCount;
+
+  let pre = document.createElement('pre');
+  document.body.appendChild(pre);
+  pre.innerHTML = "Number of layouts triggered: " + (layoutCountAfter - layoutCountBefore);
+}
+</script>
+</html>

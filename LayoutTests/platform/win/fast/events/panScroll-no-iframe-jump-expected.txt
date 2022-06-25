@@ -1,0 +1,4 @@
+
+Test for bug 32399 This tests that pan scrolling doesn't jump out of an iFrame if the action begins in an iFrame that cannot scroll.
+
+Success! Div with overflow was not scrolled

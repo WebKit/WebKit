@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Token elements</title>
+    <meta charset="utf-8"/>
+  </head>
+  <body>
+    <!-- Note: This test requires a font with Mathematical Alphanumeric Symbols. -->
+
+    <p>Following elements should use a regular font: 
+      <math>
+        <mn>1</mn>
+        <mo>&#x2207;</mo>
+        <mtext>text</mtext>
+        <ms>&amp;</ms>
+        <mi>sin</mi>
+      </math>
+    </p>
+    <p>Following elements should be in italic: 
+      <!-- FIXME: we add a new line to workaround a width/spacing bug. -->
+      <math>
+        <mi>x</mi>
+      </math><br/>
+      <math>
+        <mi>&#x20;&#x9;&#xD;&#xA;x&#x20;&#x9;&#xD;&#xA;</mi>
+      </math>
+    </p>
+  </body>
+</html>

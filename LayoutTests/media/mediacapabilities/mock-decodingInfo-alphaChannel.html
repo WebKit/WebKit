@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src=../video-test.js></script>
+    <script type="text/javascript">
+    var promise;
+    var info;
+
+    async function doTest()
+    {
+        if (!window.internals) {
+            failTest("Internals is required for this test.")
+            return;
+        }
+
+        run('internals.enableMockMediaCapabilities()');
+        run('internals.settings.setMediaCapabilitiesExtensionsEnabled(true)');
+
+        run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', video: { contentType: 'video/mp4; codecs=\"mock-with-alpha\"', height: 720, bitrate: 1000, width: 1280, framerate: 24.5 }});");
+        info = await shouldResolve(promise);
+        testExpected('info.supported', true);
+        testExpected('info.supportedConfiguration.video.alphaChannel', null);
+
+        run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', video: { contentType: 'video/mp4; codecs=\"mock-with-alpha\"', height: 720, bitrate: 1000, width: 1280, framerate: 24.5, alphaChannel: false }});");
+        info = await shouldResolve(promise);
+        testExpected('info.supported', true);
+        testExpected('info.supportedConfiguration.video.alphaChannel', false);
+
+        run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', video: { contentType: 'video/mp4; codecs=\"mock-with-alpha\"', height: 720, bitrate: 1000, width: 1280, framerate: 24.5, alphaChannel: true }});");
+        info = await shouldResolve(promise);
+        testExpected('info.supported', true);
+        testExpected('info.supportedConfiguration.video.alphaChannel', true);
+
+        run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', video: { contentType: 'video/mp4; codecs=\"mock-without-alpha\"', height: 720, bitrate: 1000, width: 1280, framerate: 24.5, alphaChannel: false }});");
+        info = await shouldResolve(promise);
+        testExpected('info.supported', true);
+        testExpected('info.supportedConfiguration.video.alphaChannel', false);
+
+        run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', video: { contentType: 'video/mp4; codecs=\"mock-without-alpha\"', height: 720, bitrate: 1000, width: 1280, framerate: 24.5, alphaChannel: true }});");
+        info = await shouldResolve(promise);
+        testExpected('info.supported', false);
+        testExpected('info.supportedConfiguration.video.alphaChannel', true);
+
+
+        endTest();
+    }
+    </script>
+</head>
+<body onload="doTest()" />
+</html>

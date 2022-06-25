@@ -1,0 +1,5 @@
+
+PASS Setup worker
+PASS Validate worker gets right request after navigation
+PASS Validate worker gets right request after post navigation
+

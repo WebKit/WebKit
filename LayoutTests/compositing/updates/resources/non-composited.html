@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<head>
+    <style>
+        div {
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border: 1px solid black;
+        }
+        
+        .container {
+            position: absolute;
+            z-index: 0;
+        }
+        
+        #middle {
+            position: relative;
+        }
+        
+        #child {
+            position: relative;
+        }
+        img {
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        container
+        <div id="middle">
+            middle
+            <div id="child">
+            </div>
+            <img id="image">
+        </div>
+    </div>
+</body>
+</html>

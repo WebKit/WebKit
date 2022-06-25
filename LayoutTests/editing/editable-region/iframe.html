@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<body style="height: 4096px">
+<iframe id="testFrame" height="300" srcdoc="
+<style>
+.scroller {
+    margin-top: 400px;
+    width: 300px;
+    height: 300px;
+    overflow: scroll;
+    border: 1px solid black;
+}
+.contents {
+    width: 500px;
+    height: 500px;
+}
+.editable {
+    -webkit-user-modify: read-write;
+    border: 2px solid blue;
+}   
+</style>
+<p>iframe</p>
+<div class='editable box' style='margin-top: 250px;'>
+</div>
+<div class='scroller' style='margin-top: 50px;'>
+    <div class='contents'>
+        Overflow scroll in iframe
+        <div class='editable box' style='margin-top: 50px;'>
+        </div>
+    </div>
+</div>
+<script>
+window.parent.scrollIFrameAndDumpRegions();
+</script>
+">
+</iframe>
+<pre id="results"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+if (window.internals) {
+    internals.settings.setAsyncFrameScrollingEnabled(true);
+    internals.settings.setEditableRegionEnabled(true);
+}
+
+function scrollIFrameAndDumpRegions()
+{
+    testFrame.contentWindow.scrollTo(0, 200);
+    if (window.internals)
+       results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+   if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% PROCESS global/header.html.tmpl
+  title = "Reclassify products"
+  style_urls = ['skins/standard/admin.css']
+%]
+
+<form method=post action="editclassifications.cgi">
+  <table id="admin_table_edit">
+    <tr>
+      <th>Classification:</th>
+      <td colspan=3>[% classification.name FILTER html %]</td>
+    </tr>
+    <tr>
+      <th>Description:</th>
+      <td colspan=3>
+        [% IF classification.description %]
+          [% classification.description FILTER html_light %]
+        [% ELSE %]
+          <span class="warning">description missing</span>
+        [% END %]
+      </td>
+    </tr>
+    <tr>
+      <th>Sortkey:</th>
+      <td colspan=3>[% classification.sortkey FILTER html %]</td>
+    </tr>
+    <tr>
+      <th>Products:</th>
+      <td>Other Classifications</td>
+      <td></td>
+      <td>This Classification</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>
+        <select name="prodlist" id="prodlist" multiple="multiple" size="20">
+        [% FOREACH class = classifications %]
+          [% IF class.id != classification.id %]
+            [% FOREACH product = class.products %]
+              <option value="[% product.name FILTER html %]">
+                [[% class.name FILTER html %]]&nbsp;[% product.name FILTER html %]
+              </option>
+            [% END %]
+          [% END %]
+        [% END %]
+        </select>
+      </td>
+
+      <td>
+        <input type=submit value="     Add &gt;&gt;  " name="add_products"><br><br>
+        <input type=submit value="&lt;&lt; Remove" name="remove_products">
+      </td>
+
+      <td rowspan=2 class="max-width">
+        <select name="myprodlist" id="myprodlist" multiple="multiple" size="20">
+          [% FOREACH product = classification.products %]
+            <option value="[% product.name FILTER html %]">
+              [% product.name FILTER html %]
+            </option>
+          [% END %]
+        </select>
+      </td>
+    </tr>
+  </table>
+
+  <input type=hidden name="action" value="reclassify">
+  <input type=hidden name="classification" value="[% classification.name FILTER html %]">
+  <input type="hidden" name="token" value="[% token FILTER html %]">
+</form>
+
+[% PROCESS admin/classifications/footer.html.tmpl %]
+
+[% PROCESS global/footer.html.tmpl %]

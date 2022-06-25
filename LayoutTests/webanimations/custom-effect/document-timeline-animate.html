@@ -1,0 +1,17 @@
+<!doctype html>
+<meta charset=utf-8>
+<title>CustomEffect</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<body>
+<script>
+'use strict';
+
+test(t => {
+    const id = "custom-animation-id";
+    const animation = document.timeline.animate(progress => { }, { duration: 1, id });
+    assert_equals(animation.id, id);
+}, "document.timeline.animate() allows to set the animation's id.");
+
+</script>
+</body>

@@ -1,0 +1,34 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+<div id="content">
+  <math id="math">
+    <semantics>
+      <csymbol>Content MathML</csymbol>
+      <annotation-xml encoding="image/svg+xml">
+        <svg height="30" width="75">
+          <text x="0" y="15" transform="rotate(30 20,40)">SVG</text>
+        </svg> 
+      </annotation-xml>
+    </semantics>
+    <mtext><span>HTML</span></mtext>
+  </math>
+</div>
+<p id="description"></p>
+<pre id="tree"></pre>
+<div id="console"></div>
+<script>
+    description("This verifies the expected roles and values are exposed for foreign content in MathML.");
+
+    if (window.accessibilityController) {
+        dumpAccessibilityTree(accessibilityController.accessibleElementById("math"), null, 0, false, false, true);
+        document.getElementById("content").style.visibility = "hidden";
+    }
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+Bug 139856: Hidden aria table crash.
+
+This test PASSES if it does not CRASH.
+
+

@@ -1,0 +1,4 @@
+اختبر
+
+FAIL Slots: Directionality assert_equals: expected "rtl" but got "ltr"
+

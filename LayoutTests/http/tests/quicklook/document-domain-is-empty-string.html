@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="resources/tap-run-test-hyperlink.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+}
+</script>
+</head>
+<body>
+<iframe src="resources/document-domain-is-empty-string.docx" onload="runTest(this)"></iframe>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/ui-helper.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id=description></div>
+<input type=file id=fileTarget></div>
+<div id=console></div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+description("Test that bundles are automatically zipped when accessed via FileReader. To test manually, please select a bundle in the \"Choose File\" input below.");
+jsTestIsAsync = true;
+
+window.onload = function()
+{
+    var fileTarget = document.getElementById("fileTarget");
+
+    fileTarget.addEventListener("change", onchange, true);
+
+    if (!window.UIHelper || !window.testRunner)
+        return;
+
+    var x = fileTarget.offsetLeft + fileTarget.offsetWidth / 2;
+    var y = fileTarget.offsetTop + fileTarget.offsetHeight / 2
+    
+    testRunner.setOpenPanelFiles(["resources/document.rtfd"]);
+    UIHelper.activateAt(x, y);
+}
+
+function onchange(event)
+{
+    file = event.target.files.item(0);
+    // We used to report 102 for the size of this file, which presumably was directory node size.
+    // Archive is 528 bytes on a system I test with.
+    shouldBeTrue("file.size > 400");
+    reader = new FileReader;
+    reader.readAsText(file.slice(0, 2));
+    reader.onloadend = function() {
+        shouldBe("reader.result", "'PK'");
+        finishJSTest();
+    }
+}
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

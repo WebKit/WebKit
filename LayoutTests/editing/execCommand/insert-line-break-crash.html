@@ -1,0 +1,22 @@
+<script>
+  if (window.testRunner)
+    window.testRunner.dumpAsText();
+  onload = () => {
+    document.designMode = 'on';
+    document.execCommand('SelectAll');
+    getSelection().modify('move', 'right', 'word');
+    queueMicrotask(() => {
+      document.execCommand('Delete');
+      document.write("Test passes if it does not crash.");
+    });
+    document.execCommand('InsertLineBreak');
+  };
+</script>
+<body>
+  <a href="#">
+    <b>
+      <iframe></iframe>
+      <input></input>
+    </b>
+  </a>
+</body>

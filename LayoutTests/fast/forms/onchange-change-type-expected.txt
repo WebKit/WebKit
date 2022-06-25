@@ -1,0 +1,7 @@
+This tests that onchange is not fired after a form field's type changes.
+
+Should fire change event when type does not change.
+PASS true is true
+Should *not* fire change event when type does not change.
+PASS false is false
+

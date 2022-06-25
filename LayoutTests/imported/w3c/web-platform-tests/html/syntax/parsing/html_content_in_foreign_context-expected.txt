@@ -1,0 +1,3 @@
+
+FAIL HTML namespace nodes should exit foreign contexts assert_equals: The /p tag did not exit the svg expected Element node <div><svg><p></p></svg></div> but got Element node <svg><p></p></svg>
+

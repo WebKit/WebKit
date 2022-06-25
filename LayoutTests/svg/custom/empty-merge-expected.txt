@@ -1,0 +1,16 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 240x121
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGResourceFilter {filter} [id="MyFilter1"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [feMerge mergeNodes="1"]
+          [SourceGraphic]
+      RenderSVGResourceFilter {filter} [id="MyFilter2"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [feMerge mergeNodes="1"]
+          [feOffset dx="0.00" dy="0.00"]
+            [SourceGraphic]
+    RenderSVGRect {rect} at (0,0) size 121x121 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=10.00] [width=100.00] [height=100.00]
+      [filter="MyFilter1"] RenderSVGResourceFilter {filter} at (0,0) size 120x120
+    RenderSVGRect {rect} at (120,0) size 120x121 [fill={[type=SOLID] [color=#008000]}] [x=130.00] [y=10.00] [width=100.00] [height=100.00]
+      [filter="MyFilter2"] RenderSVGResourceFilter {filter} at (120,0) size 120x120

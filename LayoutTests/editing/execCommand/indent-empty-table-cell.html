@@ -1,0 +1,17 @@
+<p>This tests for a crash when indenting an empty TD.</p>
+<div contenteditable="true">
+<table>
+  <tbody>
+    <tr>
+      <td id ="indent"></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<script>
+if (window.testRunner)
+    window.testRunner.dumpAsText();
+indent = document.getElementById("indent");
+window.getSelection().setPosition(indent, 0);
+document.execCommand("indent");
+</script>

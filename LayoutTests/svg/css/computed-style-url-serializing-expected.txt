@@ -1,0 +1,15 @@
+Test url serializing of SVG presentation attributes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.defaultView.getComputedStyle(rect, null).mask is "url(\"#reference\") 0% 0% / auto repeat border-box border-box add match-source"
+PASS document.defaultView.getComputedStyle(rect, null).markerStart is "url(\"#reference\")"
+PASS document.defaultView.getComputedStyle(rect, null).markerMid is "url(\"#reference\")"
+PASS document.defaultView.getComputedStyle(rect, null).markerEnd is "url(\"#reference\")"
+PASS document.defaultView.getComputedStyle(rect, null).fill is "url(\"#reference\")"
+PASS document.defaultView.getComputedStyle(rect, null).stroke is "url(\"#reference\")"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

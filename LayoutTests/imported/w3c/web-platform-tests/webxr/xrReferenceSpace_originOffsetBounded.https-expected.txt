@@ -1,0 +1,4 @@
+
+PASS Updating XRBoundedReferenceSpace origin offset updates view, input matrices, and bounds geometry. - webgl
+PASS Updating XRBoundedReferenceSpace origin offset updates view, input matrices, and bounds geometry. - webgl2
+

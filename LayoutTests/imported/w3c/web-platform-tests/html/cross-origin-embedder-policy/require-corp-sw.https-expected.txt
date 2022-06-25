@@ -1,0 +1,8 @@
+
+PASS Set up global state
+PASS fetch() to 'CORP: cross-origin' response should succeed.
+PASS fetch() to no CORP response should not succeed.
+PASS importScripts() fails for a script with no corp.
+PASS importScripts() succeeds for a script with corp: cross-origin.
+PASS Clean up global state
+

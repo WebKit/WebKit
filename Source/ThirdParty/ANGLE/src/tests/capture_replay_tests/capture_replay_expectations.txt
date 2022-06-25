@@ -1,0 +1,203 @@
+#
+# Copyright 2020 The ANGLE Project Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+#
+# Test are entered like
+# BUG PLATFORMS : test-name = handling/result
+#
+#  PLATFORMS is optional and lists the platforms the expectation / run disabling happens
+#
+# Valid values for "handling/result" are
+#
+#   NOT_RUN : the is expceted to be skipped by the end2end_tests program
+#
+#   FAIL : the test is expected to fail
+#
+#   FLAKY : the tests is flaky, but we still run it
+#
+#   TIMEOUT : the test is expected to time out
+#
+#   COMPILE_FAIL : the compilation of the capture_replay exec is expected to fail
+#
+#   CRASH : the test is expected to crash
+#
+# For test batches that run more than one test TIMEOUT, COMPILE_FAIL, and CRASH
+# will have to be set for all tests that run a batch, because one test that fails
+# with one of these outcomes will bring down the whole batch.
+#
+
+# We don't support the Capture/Replay on OpenGL yet
+
+6345 : *OpenGL = SKIP_FOR_CAPTURE
+
+# ES2
+
+5822 : ExternalWrapTest.ClampToEdge/* = CRASH
+5822 : ExternalWrapTest.MirroredRepeat/* = CRASH
+5822 : ExternalWrapTest.NoWrap/* = CRASH
+5822 : ExternalWrapTest.Repeat/* = CRASH
+
+6267 : FramebufferTest.MultiContextNoRenderingFeedbackLoops/* = SKIP_FOR_CAPTURE
+
+6286 : ImageTest.Deletion/* = FAIL
+6286 : ImageTest.MipLevels/* = FAIL
+
+6286 : ImageTest.Source2DTarget2D/* = FAIL
+6286 : ImageTest.Source2DTargetExternal/* = FAIL
+6286 : ImageTest.SourceCubeTarget2D/* = FAIL
+5822 : ImageTest.SourceCubeTargetExternal/* = FAIL
+
+6180 : GLSLTest_ES3.GLVertexIDIntegerTextureDrawElementsU8Line/* = NOT_RUN
+6180 : GLSLTest_ES3.GLVertexIDIntegerTextureDrawElementsU8LineIds/* = NOT_RUN
+
+6286 : ImageTest.SourceRenderbufferTargetTexture/* = FAIL
+6286 : ImageTest.SourceRenderbufferTargetTextureExternal/* = FAIL
+6286 : ImageTest.UpdatedData/* = FAIL
+
+6180 : PbufferTest.BindTexImage/* = FAIL
+6180 : PbufferTest.BindTexImageAfterTexImage/* = FAIL
+6180 : PbufferTest.ClearAndBindTexImageSrgb/* = FAIL
+6180 : PbufferTest.ClearAndBindTexImageSrgbSkipDecode/* = FAIL
+6180 : PbufferTest.Clearing/* = FAIL
+6180 : PbufferTest.TextureSizeReset/* = FAIL
+
+
+6221 : VulkanExternalImageTest.ShouldClearOpaqueFdWithSemaphores/* = TIMEOUT
+6221 : VulkanExternalImageTest.ShouldClearOpaqueFdWithSemaphoresMutableNoStorage/* = TIMEOUT
+6221 : VulkanExternalImageTest.ShouldClearOpaqueFdWithSemaphoresNoStorage/* = TIMEOUT
+6221 : VulkanExternalImageTest.ShouldClearOpaqueFdWithSemaphoresWithFlags/* = TIMEOUT
+6221 : VulkanExternalImageTest.ShouldDrawOpaqueFdWithSemaphores/* = TIMEOUT
+6221 : VulkanExternalImageTest.WaitSemaphoresRetainsContentOpaqueFd/* = TIMEOUT
+
+6267 : WebGLCompatibilityTest.MultiContextNoRenderingFeedbackLoops/* = SKIP_FOR_CAPTURE
+
+6180 WIN : WebGLCompatibilityTest.DrawElementsBufferOutOfBoundsInVertexBuffer/* = FLAKY
+
+6654 : UniformTest.UnusedStructInlineUniform/* = SKIP_FOR_CAPTURE
+6654 : UniformTest.UnusedStructInlineUniformWithSampler/* = SKIP_FOR_CAPTURE
+
+# Fails because of unsupported combined depth/stencil GetImage.
+4688 ASAN : DepthStencilTest.DepthOnlyEmulatedWithPacked/* = FAIL
+
+# Skipped in end2end tests
+6336 : GetImageTest.InconsistentTexture2D/* = NOT_RUN
+
+# ES3
+6180 : BlitFramebufferTest.BlitDepthStencilPixelByPixel/* = NOT_RUN
+6180 : GLSLTest_ES3.UnsuccessfulRelinkWithBindAttribLocation/* = NOT_RUN
+3886 : ComputeShaderTest.BindImageTexture3D/* = NOT_RUN
+
+# This test only exists on Win64
+6180 WIN : BufferDataOverflowTest.VertexBufferIntegerOverflow/* = NOT_RUN
+
+6286 : ImageRespecificationTest.ImageTarget2DOESSwitch/* = FAIL
+6286 : ImageTest.Source2DTarget2DArray/ES3* = FAIL
+6286 : ImageTestES3.Source2DTarget2DTargetTextureRespecifyLevel/* = FAIL
+6286 : ImageTestES3.Source2DTargetExternalESSL3/* = FAIL
+6286 : ImageTestES3.SourceRenderbufferTargetTextureExternalESSL3/* = FAIL
+6512 : RobustResourceInitTestES3.BindTexImage/* = FAIL
+6180 WIN : TransformFeedbackTest.DrawWithoutTransformFeedbackThenWith/* = FLAKY
+6180 : TransformFeedbackTest.TransformFeedbackQueryPausedDrawThenResume/* = FLAKY
+6513 : TransformFeedbackTest.MultiContext/* = FLAKY
+6180 WIN : TransformFeedbackTest.BufferOutOfMemory/* = FLAKY
+6180 : VertexAttributeTestES3.DrawWithUnalignedData/* = FLAKY
+
+# Skip because crashes
+6313 : CopyTextureTestES3.InvalidateBlitThenBlend1000Layers/* = CRASH
+6313 : CopyTextureTestES3.InvalidateBlitThenBlend3Layers/* = CRASH
+6314 : FramebufferTest_ES3.AttachmentsWithUnequalDimensions/* = CRASH
+6314 : FramebufferTest_ES3.ChangeAttachmentThenInvalidateAndDraw/* = CRASH
+6314 : FramebufferTest_ES3.RenderAndInvalidateImmutableTextureWithBeyondMaxLevel/* = CRASH
+6180 : ImageTestES3.SourceCubeTargetExternalESSL3/* = FAIL
+6334 : MipmapTestES3.GenerateMipmapBaseLevelOutOfRangeImmutableTexture/* = CRASH
+6334 : Texture2DTestES3.ImmutableTextureBaseLevelOutOfRange/* = CRASH
+6399 : Texture2DTestES3.TexStorage2DCycleThroughYuvSourcesNoData/* = CRASH
+6334 : Texture2DTestES3.TextureBaseLevelGreaterThanMaxLevel/* = CRASH
+6399 : Texture2DTestES3.TexStorage2DSimultaneousUseOfMultipleYuvSourcesNoData/* = CRASH
+6400 : Texture2DTestES3.TextureCompletenessChangesWithBaseLevel/* = CRASH
+6399 : Texture2DTestES3.TexStorage2DLargeYuvTextureCount/* = CRASH
+6335 DEBUG : VulkanExternalImageTest.ShouldImportSemaphoreOpaqueFd/* = CRASH
+
+
+# Skip because Timeout
+
+# ES3 Flaky
+6510 : FenceSyncTest.BasicOperations/* = FLAKY
+6510 : FenceSyncTest.BasicQueries/* = FLAKY
+6510 : FenceSyncTest.IsSync/* = FLAKY
+6510 : FenceSyncTest.Errors/* = FLAKY
+6510 : FenceSyncTest.MultipleFenceDraw/* = FLAKY
+6510 : FenceSyncTest.NullLength/* = FLAKY
+
+# Fails after recent colorspace CL.
+6578 : ImageTest.Source2DTarget2D_Colorspace/* = FAIL
+6578 : ImageTest.Source2DTargetExternal_Colorspace/* = FAIL
+6578 : ImageTest.SourceCubeTargetExternal_Colorspace/* = FAIL
+6578 : ImageTest.SourceCubeTarget2D_Colorspace/* = FAIL
+6578 : ImageTest.SourceRenderbufferTargetTextureExternal_Colorspace/* = FAIL
+6578 : ImageTest.SourceRenderbufferTargetTexture_Colorspace/* = FAIL
+6578 : ImageTest.Source2DTarget2DArray_Colorspace/ES3* = FAIL
+6578 : ImageTest.Source2DTarget2D_Colorspace/* = FAIL
+6578 : ImageTest.Source2DTargetExternal_Colorspace/* = FAIL
+6578 : ImageTest.SourceCubeTarget2D_Colorspace/* = FAIL
+6578 : ImageTest.SourceCubeTargetExternal_Colorspace/* = FAIL
+6578 : ImageTest.SourceRenderbufferTargetTextureExternal_Colorspace/* = FAIL
+6578 : ImageTest.SourceRenderbufferTargetTexture_Colorspace/* = FAIL
+6578 : ImageTestES3.Source2DTargetExternalESSL3_Colorspace/* = FAIL
+6578 : ImageTestES3.SourceCubeTargetExternalESSL3_Colorspace/* = FAIL
+6578 : ImageTestES3.SourceRenderbufferTargetTextureExternalESSL3_Colorspace/* = FAIL
+
+6631 : MultithreadingTest.MultiContextCreateAndDeleteResources/* = CRASH
+6631 WIN : MultithreadingTestES3.MultithreadFenceDraw/* = CRASH
+6631 WIN : MultithreadingTestES3.MultithreadFenceTexImage/* = CRASH
+6631 : MultithreadingTest.MultiContextDrawWithSwapBuffers/* = CRASH
+
+# Marking this as NOT_RUN because we don't want it to run as it uses multiple contexts
+6752 : OcclusionQueriesNoSurfaceTestES3.SwitchingContextsWithQuery/* = NOT_RUN
+
+# ES3_1
+6180 : ProgramPipelineTest31.VerifyPpoLinkErrorSignalledCorrectly/* = FAIL
+
+# ES3_1 Crashed
+6180 : EGLMultiContextTest.ComputeShaderOkayWithRendering/* = CRASH
+6180 : EGLMultiContextTest.TestContextDestroySimple/* = CRASH
+
+# ES3_1 gtest skips
+6180 : GLSLTest_ES31.InterpolateAtWithSwizzle/* = NOT_RUN
+6180 : GLSLTest_ES31.VaryingTessellationSampleInAndOut/* = NOT_RUN
+6180 : GeometryShaderTest.LayeredFramebufferPreRenderClear2DArrayColor/* = NOT_RUN
+6180 : GeometryShaderTest.LayeredFramebufferPreRenderClear3DColor/* = NOT_RUN
+
+6663 : Texture2DTest.UploadThenFSThenNewRPThenFSThenVS/* = NOT_RUN
+6663 : Texture2DTest.UploadThenFSThenNewRPThenVS/* = NOT_RUN
+6663 : Texture2DTest.UploadThenFSThenNewRPThenVSThenFS/* = NOT_RUN
+6663 : Texture2DTest.UploadThenFSThenVS/* = NOT_RUN
+6663 : Texture2DTest.UploadThenFSThenVSThenNewRPThenFS/*  = NOT_RUN
+
+6741 : VulkanImageTest.* = SKIP_FOR_CAPTURE
+
+6941 : Texture2DTestES3RobustInit.TextureCOMPRESSEDRGB8A1ETC2/* = NOT_RUN
+6941 : Texture2DTestES3RobustInit.TextureCOMPRESSEDSRGB8A1ETC2/* = NOT_RUN
+
+6926 : Texture2DTestES3.TextureRGBUpdateWithPBO/ES3_Vulkan* = NOT_RUN
+
+6875 : TransformFeedbackTest.SpanMultipleRenderPasses/* = NOT_RUN
+
+7112 : TransformFeedbackTest.BaseInstance/* = NOT_RUN
+
+# GLES 3.2 tests that fail because of missing features
+5366 : GeometryShaderTestES32.MaxGeometryImageUniforms/* = CRASH
+5366 : ProgramPipelineTest32.MaxGeometryImageUniforms/* = CRASH
+
+7088 : VulkanPerformanceCounterTest* = SKIP_FOR_CAPTURE
+
+7111 : ImageTestES3.Source2DTarget2DStorageOrphan/* = FAIL
+
+7291 : BlitFramebufferTest.Blit3D/* = SKIP_FOR_CAPTURE
+7291 : BlitFramebufferTest.Blit3DTo2DArray/* = SKIP_FOR_CAPTURE
+7291 : BlitFramebufferTest.Blit2DArrayTo3D/* = SKIP_FOR_CAPTURE
+
+7357 : FramebufferTest_ES3.FramebufferConditionalFeedbackLoop/* = SKIP_FOR_CAPTURE
+
+7373 : FramebufferTest_ES3.SurfaceDimensionsChangeAndFragCoord/* = SKIP_FOR_CAPTURE

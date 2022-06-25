@@ -1,0 +1,48 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true IOSFormControlRefreshEnabled=true ] -->
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <script src="../../../../../resources/js-test.js"></script>
+        <script src="../../../../../resources/ui-helper.js"></script>
+    </head>
+<body>
+<select id="select">
+    <optgroup>
+        <option>January</option>
+        <option>February</option>
+        <option>March</option>
+        <option>April</option>
+        <option>May</option>
+        <option>June</option>
+        <option>July</option>
+        <option>August</option>
+        <option>September</option>
+        <option>October</option>
+        <option>November</option>
+        <option>December</option>
+    </optgroup>
+</select>
+</body>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("This test verifies that selecting an option when all options are in a single optgroup works as expected.");
+
+    shouldBeEqualToString("select.value", "January");
+    await UIHelper.activateElement(select);
+    await UIHelper.waitForContextMenuToShow();
+    await UIHelper.selectFormAccessoryPickerRow(3);
+    await UIHelper.waitForContextMenuToHide();
+    shouldBeEqualToString("select.value", "April");
+
+    await UIHelper.activateElement(select);
+    await UIHelper.waitForContextMenuToShow();
+    await UIHelper.selectFormAccessoryPickerRow(9);
+    await UIHelper.waitForContextMenuToHide();
+    shouldBeEqualToString("select.value", "October");
+
+    finishJSTest();
+});
+</script>
+</html>

@@ -1,0 +1,61 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/multiple-report-policies.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/multiple-report-policies.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/post-redirect-stacktrace.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/post-redirect-stacktrace.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-and-enforce.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-and-enforce.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-blocked-data-uri.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-blocked-data-uri.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-blocked-uri-cross-origin.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-blocked-uri-cross-origin.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-blocked-uri.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-blocked-uri.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-clips-sample.https.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-cross-origin-no-cookies.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-cross-origin-no-cookies.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-frame-ancestors-with-x-frame-options.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-frame-ancestors.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-multiple-violations-01.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-multiple-violations-01.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-multiple-violations-02.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-multiple-violations-02.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-only-in-meta.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-only-in-meta.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-only-unsafe-eval.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-only-unsafe-eval.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-original-url-on-mixed-content-frame.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-original-url-on-mixed-content-frame.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-original-url.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-original-url.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-same-origin-with-cookies.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-same-origin-with-cookies.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-strips-fragment.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-uri-effective-directive.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-uri-effective-directive.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-uri-from-child-frame.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-uri-from-inline-javascript.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-uri-from-inline-javascript.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-uri-from-javascript.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-uri-from-javascript.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-uri-multiple-reversed.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-uri-multiple-reversed.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-uri-multiple.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-uri-multiple.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-uri-scheme-relative.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-uri-scheme-relative.html.sub.headers

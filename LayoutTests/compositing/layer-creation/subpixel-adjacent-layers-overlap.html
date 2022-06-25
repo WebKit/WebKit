@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+        }
+        .box {
+            height: 200px;
+            width: 200px;
+            background-color: silver;
+            position: relative;
+        }
+        .composited {
+            -webkit-transform: translateZ(0);
+        }
+        
+        p {
+            height: 12.345px; /* Subpixel height */
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        function runTest()
+        {
+            if (window.testRunner)
+              document.getElementById('layers').innerText = window.internals.layerTreeAsText(document);
+        }
+        window.addEventListener('load', runTest, false);
+    </script>
+</head>
+<body>
+<p>Here is some text</p>
+<div class="composited box">
+</div>
+<div class="box">
+</div>
+<pre id="layers"></pre>
+</body>
+</html>

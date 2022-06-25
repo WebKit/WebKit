@@ -1,0 +1,11 @@
+Name: Autoconf M4 macros used by Bison
+Short Name: m4sugar
+URL: https://www.gnu.org/software/autoconf/
+Version: unknown
+License: GPL
+License File: LICENSE
+Security critical: no
+
+Description:
+Bison uses M4 to generate its output, and uses the utility M4 macros in this
+directory.

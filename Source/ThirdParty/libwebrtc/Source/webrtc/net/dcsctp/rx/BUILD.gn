@@ -1,0 +1,126 @@
+# Copyright (c) 2021 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+rtc_library("data_tracker") {
+  deps = [
+    "../../../api:array_view",
+    "../../../rtc_base",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:rtc_base_approved",
+    "../common:sequence_numbers",
+    "../packet:chunk",
+    "../packet:data",
+    "../public:socket",
+    "../timer",
+  ]
+  sources = [
+    "data_tracker.cc",
+    "data_tracker.h",
+  ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/algorithm:container",
+    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+rtc_source_set("reassembly_streams") {
+  deps = [
+    "../../../api:array_view",
+    "../common:sequence_numbers",
+    "../packet:chunk",
+    "../packet:data",
+    "../public:socket",
+    "../public:types",
+  ]
+  sources = [ "reassembly_streams.h" ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
+}
+
+rtc_library("traditional_reassembly_streams") {
+  deps = [
+    ":reassembly_streams",
+    "../../../api:array_view",
+    "../../../rtc_base",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:rtc_base_approved",
+    "../common:sequence_numbers",
+    "../packet:chunk",
+    "../packet:data",
+    "../public:types",
+  ]
+  sources = [
+    "traditional_reassembly_streams.cc",
+    "traditional_reassembly_streams.h",
+  ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/algorithm:container",
+    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+rtc_library("reassembly_queue") {
+  deps = [
+    ":reassembly_streams",
+    ":traditional_reassembly_streams",
+    "../../../api:array_view",
+    "../../../rtc_base",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:rtc_base_approved",
+    "../common:internal_types",
+    "../common:sequence_numbers",
+    "../common:str_join",
+    "../packet:chunk",
+    "../packet:data",
+    "../packet:parameter",
+    "../public:socket",
+    "../public:types",
+  ]
+  sources = [
+    "reassembly_queue.cc",
+    "reassembly_queue.h",
+  ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_library("dcsctp_rx_unittests") {
+    testonly = true
+
+    deps = [
+      ":data_tracker",
+      ":reassembly_queue",
+      ":reassembly_streams",
+      ":traditional_reassembly_streams",
+      "../../../api:array_view",
+      "../../../rtc_base:checks",
+      "../../../rtc_base:gunit_helpers",
+      "../../../rtc_base:rtc_base_approved",
+      "../../../test:test_support",
+      "../common:handover_testing",
+      "../common:sequence_numbers",
+      "../packet:chunk",
+      "../packet:data",
+      "../public:types",
+      "../testing:data_generator",
+      "../timer",
+    ]
+    absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+    sources = [
+      "data_tracker_test.cc",
+      "reassembly_queue_test.cc",
+      "traditional_reassembly_streams_test.cc",
+    ]
+  }
+}

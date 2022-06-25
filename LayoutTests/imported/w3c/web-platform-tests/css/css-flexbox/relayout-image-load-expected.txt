@@ -1,0 +1,6 @@
+
+PASS #test 1
+Test passes if a green 100x100 image is rendered.
+
+ 
+

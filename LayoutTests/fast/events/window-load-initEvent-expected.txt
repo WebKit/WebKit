@@ -1,0 +1,45 @@
+Tests the behavior of dispatchEvent() on a Window
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+* Received load event
+PASS testEvent.type is "load"
+PASS testEvent.bubbles is false
+PASS testEvent.cancelable is false
+PASS testEvent.composed is false
+PASS testEvent.isTrusted is true
+PASS testEvent.eventPhase is Event.AT_TARGET
+PASS testEvent.target is window.document
+PASS testEvent.currentTarget is window
+PASS testEvent.cancelBubble is false
+testEvent.initEvent('foo', true, true)
+PASS testEvent.type is "load"
+PASS testEvent.bubbles is false
+PASS testEvent.cancelable is false
+PASS testEvent.isTrusted is true
+testEvent.stopPropagation()
+PASS testEvent.cancelBubble is true
+* Event is no longer being dispatched
+PASS testEvent.type is "load"
+PASS testEvent.bubbles is false
+PASS testEvent.cancelable is false
+PASS testEvent.composed is false
+PASS testEvent.isTrusted is true
+PASS testEvent.eventPhase is Event.NONE
+PASS testEvent.target is window.document
+PASS testEvent.currentTarget is null
+PASS testEvent.cancelBubble is false
+testEvent.initEvent('bar', true, true)
+PASS testEvent.type is "bar"
+PASS testEvent.bubbles is true
+PASS testEvent.cancelable is true
+PASS testEvent.composed is false
+PASS testEvent.isTrusted is false
+PASS testEvent.eventPhase is Event.NONE
+PASS testEvent.target is null
+PASS testEvent.currentTarget is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

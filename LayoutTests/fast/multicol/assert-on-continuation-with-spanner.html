@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+<head>
+<title>This tests that we can insert element when beforeChild has a spanner placeholder</title>
+<style>
+#spanner {
+    column-span: all;
+}
+
+.multicol {
+    display: inline-block;
+    -webkit-columns: 80px 5;
+}
+</style>
+</head>
+<body>
+PASS if no crash or assert in debug.
+<div class=multicol><span><span id=inner></span><div id=spanner></div>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+setTimeout(function() {
+    inner.style.content = "close-quote";
+    spanner.style.float = "left";
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, 0);
+</script>
+</body>
+</html>

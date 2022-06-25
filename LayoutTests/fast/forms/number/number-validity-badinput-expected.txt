@@ -1,0 +1,34 @@
+A number input fields with a bad input string should make validity.badInput true and have :invalid style.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Initial state. The elment has no value.
+PASS colorOf(number) is not invalidStyleColor
+PASS number.validity.badInput is false
+Type '-'. The element becomes badInput.
+PASS colorOf(number) is invalidStyleColor
+PASS number.validity.valid is false
+PASS number.validity.badInput is true
+PASS number.value is ""
+Type '1' additionally. The element becomes valid.
+PASS colorOf(number) is not invalidStyleColor
+PASS number.validity.badInput is false
+PASS number.value is "-1"
+Type 'a' additionally. The element becomes badInput again.
+PASS colorOf(number) is invalidStyleColor
+PASS number.validity.badInput is true
+PASS number.value is ""
+The element losts focus. The element state should not be changed.
+PASS colorOf(number) is invalidStyleColor
+PASS number.validity.badInput is true
+PASS document.getSelection().toString() is "-1a"
+PASS number.value is ""
+The element losts a renderer. The element state should not be changed.
+PASS number.style.display = "none"; number.validity.badInput is true
+A bad input should be cleared by value="".
+PASS number.value = ""; document.execCommand("SelectAll"); document.getSelection().toString() is ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

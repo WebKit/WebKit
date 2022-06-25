@@ -1,0 +1,25 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<script>
+function debug(str) {
+    var c = document.getElementById('console')
+    c.appendChild(document.createTextNode(str + '\n'));
+}
+
+function runTests() {
+    if (window.testRunner) testRunner.dumpAsText();
+    
+    var parser = new DOMParser();
+    parser.test = "test"
+}
+
+</script>
+</head>
+<body onload="runTests();">
+This creates a DOMParser object and tries to assign it to a variable. If the test is successful, it should not crash. 
+<pre id="console">
+</pre>
+</body>
+</html>

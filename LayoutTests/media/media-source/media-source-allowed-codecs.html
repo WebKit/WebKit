@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-allowed-codecs</title>
+    <script src="../video-test.js"></script>
+    <script src="media-source-loader.js"></script>
+    <script>
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    window.addEventListener('load', async event => {
+        if (!window.internals) {
+            failTest('Requires window.internals');
+            return;
+        }
+
+        video = document.createElement('video');
+
+        run('internals.settings.setAllowedMediaVideoCodecIDs(null)');
+        testExpected('MediaSource.isTypeSupported("video/mp4; codecs=avc1")', true);
+        testExpected('MediaSource.isTypeSupported("video/mp4; codecs=mp4v")', true);
+
+        run('internals.settings.setAllowedMediaVideoCodecIDs("avc1")');
+        run('internals.settings.setAllowedMediaAudioCodecIDs("aac ")');
+        run('internals.settings.setAllowedMediaCodecTypes("avc1,mp4a.40")');
+
+        testExpected('MediaSource.isTypeSupported("video/mp4; codecs=avc1")', true);
+        testExpected('MediaSource.isTypeSupported("video/mp4; codecs=mp4v")', false);
+
+        mediaSource = new MediaSource();
+        video.srcObject = mediaSource;
+        await waitFor(mediaSource, 'sourceopen');
+
+        run('sourceBuffer = mediaSource.addSourceBuffer("video/mp4; codecs=avc1")');
+        testException('sourceBuffer.changeType("video/mp4; codecs=mp4v")', '"NotSupportedError: The operation is not supported."');
+
+        run('internals.settings.setAllowedMediaVideoCodecIDs("vp09")');
+        run('internals.settings.setAllowedMediaAudioCodecIDs("opus")');
+        run('internals.settings.setAllowedMediaCodecTypes("vp09,opus")');
+
+        testExpected('MediaSource.isTypeSupported("video/mp4; codecs=avc1")', false);
+
+        testException('mediaSource.addSourceBuffer("video/mp4; codecs=avc1")', '"NotSupportedError: The operation is not supported."');
+
+        run('internals.settings.setAllowedMediaVideoCodecIDs("avc1")');
+        run('internals.settings.setAllowedMediaAudioCodecIDs("aac ")');
+        run('internals.settings.setAllowedMediaCodecTypes("avc1,mp4a.40")');
+
+        loader = new MediaSourceLoader('content/test-fragmented-manifest.json');
+        await loaderPromise(loader);
+
+        waitForEventAndFail('error');
+
+        run('mediaSource.removeSourceBuffer(sourceBuffer)')
+        run('mediaSource.duration = loader.duration()');
+        run('sourceBuffer = mediaSource.addSourceBuffer(loader.type())');
+        run('sourceBuffer.appendBuffer(loader.initSegment())');
+        await waitFor(sourceBuffer, 'update');
+
+        consoleWrite('Append a media segment.')
+        run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
+        await waitFor(sourceBuffer, 'update');
+
+        run('video.playbackRate = 0.01');
+        run('video.play()');
+        await waitFor(video, 'playing');
+
+        endTest();
+    });
+    </script>
+</head>
+<body>
+</body>
+</html>

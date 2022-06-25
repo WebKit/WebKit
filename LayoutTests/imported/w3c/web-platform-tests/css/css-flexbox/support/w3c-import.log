@@ -1,0 +1,67 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/100x100-blue.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/100x100-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/10x10-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/1x1-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/1x1-lime.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/1x1-maroon.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/1x1-navy.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/1x1-red.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/1x1-white.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/200x200-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/20x50-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/300x150-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/40x20-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/60x60-gg-rr.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/60x60-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/README
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/a-green.css
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/b-green.css
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/c-red.css
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/cat.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/flexbox.css
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/import-green.css
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/import-red.css
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/large-green-rectangle.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/pattern-grg-rgr-grg.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/pattern-grg-rrg-rgg.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/pattern-rgr-grg-rgr.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/pattern-tr.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/ruler-h-50px.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/ruler-v-100px.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/ruler-v-50px.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/scrollbars.js
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/solidblue.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/square-purple.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/square-teal.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/square-white.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/swatch-blue.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/swatch-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/swatch-lime.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/swatch-orange.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/swatch-red.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/swatch-teal.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/swatch-white.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/swatch-yellow.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/test-bl.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/test-br.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/test-inner-half-size.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/test-outer.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/test-style.css
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/test-tl.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/support/test-tr.png

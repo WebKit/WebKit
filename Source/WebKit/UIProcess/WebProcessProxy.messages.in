@@ -1,0 +1,92 @@
+# Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+messages -> WebProcessProxy LegacyReceiver {
+    UpdateBackForwardItem(struct WebKit::BackForwardListItemState backForwardListItemState)
+    DidDestroyFrame(WebCore::FrameIdentifier frameID) 
+
+    DidDestroyUserGestureToken(uint64_t userGestureTokenID) 
+
+    ShouldTerminate() -> (bool shouldTerminate) Synchronous
+
+    EnableSuddenTermination()
+    DisableSuddenTermination()
+
+    GetNetworkProcessConnection() -> (struct WebKit::NetworkProcessConnectionInfo connectionInfo) Synchronous
+
+#if ENABLE(GPU_PROCESS)
+    CreateGPUProcessConnection(IPC::Attachment connectionIdentifier, struct WebKit::GPUProcessConnectionParameters parameters)
+#endif
+
+    SetIsHoldingLockedFiles(bool isHoldingLockedFiles)
+
+    DidExceedActiveMemoryLimit()
+    DidExceedInactiveMemoryLimit()
+    DidExceedCPULimit()
+
+    StopResponsivenessTimer()
+    DidReceiveBackgroundResponsivenessPing()
+
+    MemoryPressureStatusChanged(bool isUnderMemoryPressure)
+    DidExceedInactiveMemoryLimitWhileActive()
+
+    DidCollectPrewarmInformation(WebCore::RegistrableDomain domain, struct WebCore::PrewarmInformation prewarmInformation)
+
+#if PLATFORM(COCOA)
+    CacheMediaMIMETypes(Vector<String> types)
+#endif
+
+#if PLATFORM(MAC)
+    RequestHighPerformanceGPU()
+    ReleaseHighPerformanceGPU()
+#endif
+
+#if HAVE(CVDISPLAYLINK)
+    StartDisplayLink(WebKit::DisplayLinkObserverID observerID, uint32_t displayID, unsigned preferredFramesPerSecond)
+    StopDisplayLink(WebKit::DisplayLinkObserverID observerID, uint32_t displayID)
+    SetDisplayLinkPreferredFramesPerSecond(WebKit::DisplayLinkObserverID observerID, uint32_t displayID, unsigned preferredFramesPerSecond);
+#endif
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    SendMessageToWebContext(struct WebKit::UserMessage userMessage)
+    SendMessageToWebContextWithReply(struct WebKit::UserMessage userMessage) -> (struct WebKit::UserMessage replyMessage)
+#endif
+
+    DidCreateSleepDisabler(WebCore::SleepDisablerIdentifier identifier, String reason, bool display)
+    DidDestroySleepDisabler(WebCore::SleepDisablerIdentifier identifier)
+
+    CreateSpeechRecognitionServer(WebCore::PageIdentifier identifier)
+    DestroySpeechRecognitionServer(WebCore::PageIdentifier identifier)
+
+    SystemBeep()
+    
+#if PLATFORM(MAC)
+    IsAXAuthenticated(audit_token_t auditToken) -> (bool authenticated) Synchronous
+#endif
+
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+    SetCaptionDisplayMode(WebCore::CaptionUserPreferences::CaptionDisplayMode mode)
+    SetCaptionLanguage(String language)
+#endif
+
+    GetNotifications(URL registrationURL, String tag) -> (Vector<WebCore::NotificationData> result)
+}

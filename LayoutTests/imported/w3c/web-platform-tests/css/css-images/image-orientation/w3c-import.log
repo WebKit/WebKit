@@ -1,0 +1,58 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+mask-image
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-background-image-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-background-image.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-background-properties-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-background-properties.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-border-image-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-border-image.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-default-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-default.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-from-image-composited-dynamic1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-from-image-composited-dynamic1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-from-image-composited-dynamic2-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-from-image-composited-dynamic2.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-from-image-composited-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-from-image-composited.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-from-image-computed-style.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-from-image-content-images-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-from-image-content-images.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-from-image-dynamic1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-from-image-dynamic1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-from-image-dynamic2-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-from-image-dynamic2.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-from-image-embedded-content-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-from-image-embedded-content.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-from-image-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-from-image.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-list-style-image-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-list-style-image.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-mask-image-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-mask-image.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-none-computed-style.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-none-content-images-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-none-content-images.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-none-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-none-image-document-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-none-image-document.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-none.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/svg-image-orientation-aspect-ratio-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/svg-image-orientation-aspect-ratio.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/svg-image-orientation-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/svg-image-orientation-none-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/svg-image-orientation-none.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-orientation/svg-image-orientation.html

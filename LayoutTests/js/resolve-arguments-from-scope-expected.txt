@@ -1,0 +1,309 @@
+Tests that doing repeated resolves of 'arguments' from some nested scope doesn't crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS foo(42)[0] is 42
+PASS foo(42).length is 1
+PASS foo(42, 23)[1] is 23
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

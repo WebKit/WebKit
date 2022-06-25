@@ -1,0 +1,9 @@
+Tests correctness of function calls when the function is overwritten.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Passed some tests silently.
+
+TEST COMPLETE
+

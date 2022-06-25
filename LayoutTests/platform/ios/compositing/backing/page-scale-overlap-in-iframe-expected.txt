@@ -1,0 +1,80 @@
+
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 1635.00)
+  (backingStoreAttached 1)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 1635.00)
+      (contentsOpaque 1)
+      (backingStoreAttached 1)
+      (children 1
+        (GraphicsLayer
+          (position 8.00 8.00)
+          (bounds 302.00 152.00)
+          (drawsContent 1)
+          (backingStoreAttached 1)
+          (children 1
+            (GraphicsLayer
+              (position 1.00 1.00)
+              (backingStoreAttached 0)
+              (children 1
+                (GraphicsLayer
+                  (anchor 0.00 0.00)
+                  (bounds 300.00 150.00)
+                  (backingStoreAttached 1)
+                  (children 1
+                    (GraphicsLayer
+                      (anchor 0.00 0.00)
+                      (backingStoreAttached 0)
+                      (children 1
+                        (GraphicsLayer
+                          (anchor 0.00 0.00)
+                          (bounds 300.00 150.00)
+                          (backingStoreAttached 1)
+                          (children 1
+                            (GraphicsLayer
+                              (bounds 300.00 150.00)
+                              (drawsContent 1)
+                              (backingStoreAttached 1)
+                              (children 2
+                                (GraphicsLayer
+                                  (bounds 300.00 150.00)
+                                  (backingStoreAttached 1)
+                                  (children 1
+                                    (GraphicsLayer
+                                      (bounds 300.00 150.00)
+                                      (backingStoreAttached 1)
+                                    )
+                                  )
+                                )
+                                (GraphicsLayer
+                                  (bounds 300.00 150.00)
+                                  (backingStoreAttached 1)
+                                  (children 1
+                                    (GraphicsLayer
+                                      (position 0.00 109.00)
+                                      (bounds 300.00 41.00)
+                                      (contentsOpaque 1)
+                                      (drawsContent 1)
+                                      (backingStoreAttached 1)
+                                    )
+                                  )
+                                )
+                              )
+                            )
+                          )
+                        )
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+

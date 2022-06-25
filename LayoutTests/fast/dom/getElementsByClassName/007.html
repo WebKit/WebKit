@@ -1,0 +1,11 @@
+<!doctype html>
+<html>
+ <head>
+  <title>document.getElementsByClassName(): multiple classes</title>
+  <script src="resources/common.js"></script>
+ </head>
+ <body class="a b">
+  <p id="r">FAIL (script did not run)</p>
+  <script> t(document.getElementsByClassName("b\t\f\n\na\rb"), [document.body]) </script>
+ </body>
+</html>

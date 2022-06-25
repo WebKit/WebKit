@@ -1,0 +1,14 @@
+CONSOLE MESSAGE: ReferenceError: Can't find variable: wp_test
+
+Harness Error (FAIL), message = ReferenceError: Can't find variable: wp_test
+
+Description
+
+This test validates that the performance.measure() method is working properly when navigation timing attributes are used in place of mark names. This test creates the following measures to test this method:
+
+"measure_nav_start_no_end": created using a measure() call with a navigation timing attribute provided as the startMark and nothing provided as the endMark
+"measure_nav_start_mark_end": created using a measure() call with a navigation timing attribute provided as the startMark and a mark name provided as the endMark
+"measure_mark_start_nav_end": created using a measure() call with a mark name provided as the startMark and a navigation timing attribute provided as the endMark
+"measure_nav_start_nav_end":created using a measure() call with a navigation timing attribute provided as both the startMark and endMark
+After creating each measure, the existence of these measures is validated by calling performance.getEntriesByName() with each measure name
+

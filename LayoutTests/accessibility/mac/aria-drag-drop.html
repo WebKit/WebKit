@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="dropeffect-div" tabindex=0 aria-dropeffect="copy move" role="button" aria-label="drop">drop</div>
+<div id="initially-grabbed-div" tabindex=0 aria-grabbed=true role="button" aria-label="grab1">grab</div>
+<div id="initially-ungrabbed-div" tabindex=0 aria-grabbed=false role="button" aria-label="grab2">grab</div>
+
+<script>
+    var testOutput = "This tests that the ARIA drag and drop attributes work as intended.\n\n";
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        testOutput += expect("accessibilityController.accessibleElementById('dropeffect-div').ariaDropEffects", "'copy,move'");
+
+        var initiallyGrabbedDiv = accessibilityController.accessibleElementById("initially-grabbed-div");
+        var initiallyUngrabbedDiv = accessibilityController.accessibleElementById("initially-ungrabbed-div");
+        testOutput += expect("initiallyGrabbedDiv.ariaIsGrabbed", "true");
+        testOutput += expect("initiallyUngrabbedDiv.ariaIsGrabbed", "false");
+        testOutput += expect("initiallyGrabbedDiv.isAttributeSettable('AXGrabbed')", "true");
+        testOutput += expect("initiallyUngrabbedDiv.isAttributeSettable('AXGrabbed')", "true");
+
+        testOutput += "\nSetting aria-grabbed false for element #initially-grabbed-div.\n";
+        document.getElementById("initially-grabbed-div").setAttribute("aria-grabbed", "false");
+        setTimeout(async function() {
+            await waitFor(() => !initiallyGrabbedDiv.ariaIsGrabbed );
+            testOutput += expect("initiallyGrabbedDiv.ariaIsGrabbed", "false");
+
+            debug(testOutput);
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>
+

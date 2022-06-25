@@ -1,0 +1,19 @@
+
+FAIL Test input element with text type assert_false: The willValidate attribute should be false if element has datalist parent. expected false got true
+FAIL Test input element with search type assert_false: The willValidate attribute should be false if element has datalist parent. expected false got true
+FAIL Test input element with tel type assert_false: The willValidate attribute should be false if element has datalist parent. expected false got true
+FAIL Test input element with url type assert_false: The willValidate attribute should be false if element has datalist parent. expected false got true
+FAIL Test input element with email type assert_false: The willValidate attribute should be false if element has datalist parent. expected false got true
+FAIL Test input element with password type assert_false: The willValidate attribute should be false if element has datalist parent. expected false got true
+FAIL Test input element with datetime-local type assert_false: The willValidate attribute should be false if element has datalist parent. expected false got true
+FAIL Test input element with date type assert_false: The willValidate attribute should be false if element has datalist parent. expected false got true
+FAIL Test input element with month type assert_false: The willValidate attribute should be false if element has datalist parent. expected false got true
+FAIL Test input element with week type assert_false: The willValidate attribute should be false if element has datalist parent. expected false got true
+FAIL Test input element with time type assert_false: The willValidate attribute should be false if element has datalist parent. expected false got true
+FAIL Test input element with color type assert_false: The willValidate attribute should be false if element has datalist parent. expected false got true
+FAIL Test input element with file type assert_false: The willValidate attribute should be false if element has datalist parent. expected false got true
+FAIL Test input element with submit type assert_false: The willValidate attribute should be false if element has datalist parent. expected false got true
+FAIL Test button element with submit type assert_false: The willValidate attribute should be false if element has datalist parent. expected false got true
+FAIL Test select element assert_false: The willValidate attribute should be false if element has datalist parent. expected false got true
+FAIL Test textarea element assert_false: The willValidate attribute should be false if element has datalist parent. expected false got true
+

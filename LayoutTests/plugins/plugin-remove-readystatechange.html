@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<body>
+<!-- FIXME: Don't use Flash, it may not be installed on the machine where this test is run.
+     It is not trivial to switch from Flash to TestNetscapePlugin, because we need to be loading
+     a resource in this test. -->
+<embed id="viewer" src="resources/simple_blank.swf"></embed>
+<div>
+This test passes if it does not trip an assert in debug builds.
+It ensures a readystatechange event can't get dispatched until after a plugin is fully removed.
+</div>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+document.addEventListener('readystatechange', function() {
+    if (document.readyState == "complete") {
+        try {
+            document.body.appendChild(document.getElementById('viewer'));
+        }
+        catch (e) {
+            alert('PASS: element could not be re-appended');
+        }
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+});
+
+window.addEventListener('DOMContentLoaded', function() {
+    // This test relies on removing the embed element while it is actively loading.
+    // There's no observable event that creates the exact right timing for that.
+    // As of this writing, after DOMContentLoaded, then next layout is the right time.
+    // Here we evaluate document.body.offsetLeft to trigger that layout. But really,
+    // this is a race condition, nothing guarantees that the load starts at that moment,
+    // and we might have to revise this test again in the future.
+    document.body.offsetLeft;
+    document.body.removeChild(document.getElementById('viewer'));
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("Test the parsing of the -webkit-image-set function.");
+
+function jsWrapperClass(node)
+{
+    if (!node)
+        return "[null]";
+    var string = Object.prototype.toString.apply(node);
+    return string.substr(8, string.length - 9);
+}
+
+function shouldBeType(expression, className)
+{
+    shouldBe("jsWrapperClass(" + expression + ")", "'" + className + "'");
+    shouldBe("jsWrapperClass(" + expression + ".__proto__)", "'" + className + "'");
+    shouldBe("jsWrapperClass(" + expression + ".constructor)", "'Function'");
+}
+
+// These have to be global for the test helpers to see them.
+var imageSetRule, subRule;
+
+function testImageSetRule(description, property, rule, expectedLength, expectedTexts, propName = "-webkit-image-set")
+{
+    debug("");
+    debug(description + " : " + rule);
+
+    var div = document.createElement("div");
+    div.setAttribute("style", property + ": " + propName + "(" + rule + ")");
+    document.body.appendChild(div);
+
+    imageSetRule = div.style.getPropertyCSSValue(property);
+    shouldBeType("imageSetRule", "CSSValueList");
+
+    if (imageSetRule) {
+        if (jsWrapperClass(imageSetRule[0]) == "CSSValueList") {
+            // The content property returns a CSSValueList anyway, so to get to the 
+            // imageSet CSS value list, we have to look at the first entry in the 
+            // content value list.
+            imageSetRule = imageSetRule[0];
+        }
+    }
+
+    shouldBe("imageSetRule.length", function() { return expectedLength; });
+
+    if (imageSetRule) {
+        for (var i = 0; i < expectedLength; i++) {
+            string = imageSetRule[i];
+            if (i % 2 == 0) {
+                subRule = string.cssText.split('#')[1].replace('"', "");
+                subRule = subRule.split(')')[0];
+                shouldBe("subRule", "'" + expectedTexts[i] + "'");
+            } else {
+                subRule = string;
+                shouldBe("subRule.cssText", "'" + expectedTexts[i] + "'");
+            }
+        }
+    }
+
+    document.body.removeChild(div);
+}
+
+testImageSetRule("Single value for background-image",
+                "background-image",
+                "url('#a') 1x", 2,
+                ["a", "1x"]);
+
+testImageSetRule("Multiple values for background-image",
+                "background-image",
+                "url('#a') 1x, url('#b') 2x", 4,
+                ["a", "1x", "b", "2x"]);
+
+testImageSetRule("Single value for background-image without url() function",
+                "background-image",
+                "'#a' 1x", 2,
+                ["a", "1x"], "image-set");
+
+testImageSetRule("Multiple values for background-image without url() function",
+                "background-image",
+                "'#a' 1x, '#b' 2x", 4,
+                ["a", "1x", "b", "2x"], "image-set");
+
+testImageSetRule("Mix values with and without url() function",
+                "background-image",
+                "'#a' 1x, url('#b') 2x", 4,
+                ["a", "1x", "b", "2x"], "image-set");
+
+testImageSetRule("Multiple values for background-image, out of order",
+                "background-image",
+                "url('#c') 3x, url('#b') 2x, url('#a') 1x", 6,
+                ["c", "3x", "b", "2x", "a", "1x"]);
+
+testImageSetRule("Single value for content",
+                "content",
+                "url('#a') 1x", 2,
+                ["a", "1x"]);
+
+testImageSetRule("Multiple values for content",
+                "content",
+                "url('#a') 1x, url('#b') 2x", 4,
+                ["a", "1x", "b", "2x"]);
+
+testImageSetRule("Single value for border-image-source",
+                "border-image-source",
+                "url('#a') 1x", 2,
+                ["a", "1x"]);
+
+testImageSetRule("Multiple values for border-image-source",
+                "border-image-source",
+                "url('#a') 1x, url('#b') 2x", 4,
+                ["a", "1x", "b", "2x"]);
+
+testImageSetRule("Single value for -webkit-mask-box-image",
+                "-webkit-mask-box-image",
+                "url('#a') 1x", 2,
+                ["a", "1x"]);
+
+testImageSetRule("Multiple values for -webkit-mask-box-image",
+                "-webkit-mask-box-image",
+                "url('#a') 1x, url('#b') 2x", 4,
+                ["a", "1x", "b", "2x"]);
+
+testImageSetRule("Single value with dppx",
+                "background-image",
+                "url('#a') 1dppx", 2,
+                ["a", "1dppx"]);
+
+testImageSetRule("Single value with dpi",
+                "background-image",
+                "url('#a') 192dpi", 2,
+                ["a", "192dpi"]);
+
+testImageSetRule("Single value with dpcm",
+                "background-image",
+                "url('#a') 102dpcm", 2,
+                ["a", "102dpcm"]);
+
+testImageSetRule("Multiple values with dpi, dppx and x",
+                "background-image",
+                "url('#a') 1x, url('#b') 2dppx, url('#c') 250dpi", 6,
+                ["a", "1x", "b", "2dppx", "c", "250dpi"]);
+
+successfullyParsed = true;
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

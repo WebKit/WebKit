@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<script type="text/javascript">
+  if (window.testRunner)
+      testRunner.dumpAsText();
+  console.log('The test PASS if it does not crash.')
+  requestAnimationFrame(function() {
+      document.documentElement.addEventListener("DOMNodeRemoved", function() {
+          document.execCommand("SelectAll");
+          window.getSelection().
+              getRangeAt(0).surroundContents(document.head.firstElementChild);
+          document.body.insertAdjacentHTML('beforeend', "");
+      }, {once: true});
+      document.documentElement.innerHTML = '';
+
+      window.getSelection().deleteFromDocument();
+      document.documentElement.appendChild(document.documentElement.cloneNode());
+      var oElement = document.documentElement.firstElementChild;
+      oElement.contentEditable = true;
+
+      document.documentElement.addEventListener("DOMNodeRemoved", function() {
+          var el = document.documentElement.firstElementChild;
+          document.documentElement.appendChild(el);
+          el = document.importNode(el);
+          document.documentElement.appendChild(el);
+          el.insertAdjacentHTML('beforeend', "<svg></svg><svg></svg>[");
+      }, {once: true});
+      document.documentElement.
+          replaceChild(document.createElement('div'), oElement);
+
+      document.documentElement.appendChild(oElement);
+      window.getSelection().collapseToStart();
+      try {
+          window.getSelection().getRangeAt(0).
+              surroundContents(document.documentElement.firstElementChild);
+      } catch (e) {}
+      document.execCommand('InsertOrderedList');
+      oElement = document.documentElement.firstElementChild;
+      oElement.insertAdjacentText('afterend', '0');
+      document.documentElement.appendChild(document.importNode(oElement));
+
+      document.addEventListener("DOMNodeRemoved", function() {
+          document.execCommand('InsertParagraph');
+      }, {once: true});
+      oElement.outerHTML = "";
+  })
+</script>

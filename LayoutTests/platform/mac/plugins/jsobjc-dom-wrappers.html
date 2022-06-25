@@ -1,0 +1,45 @@
+<html>
+<head><title> wrappers.html </title>
+<style>
+    BODY { font-family: 'Lucida Grande'; width: 90%; padding: 10px; }
+    .box { border: 1px solid gray; background-color: #EEE; margin: 10px; }
+</style>
+<script>
+function print(message) {
+    var paragraph = document.createElement('p');
+    paragraph.appendChild(document.createTextNode(message));
+    document.getElementById('console').appendChild(paragraph);
+}
+function check(exp, value) {
+    var obj = eval(exp);
+    var name = objc.classNameOfObject_(obj);
+    var result = (name == value) ? 'PASS' : 'FAIL';
+    print('' + exp + ' == ' + value + ' ? -> ' + result);
+}
+function test() {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    if (!window.objCPlugin)
+        return print('FAIL - no objCPlugin');
+    objCPlugin.removeBridgeRestrictions_(window);
+    if (!window.objc)
+        return print('FAIL - no window.objc');
+    
+    check('document.childNodes', 'DOMNodeList');
+    check('document.body.attributes', 'DOMNamedNodeMap');
+    check('document.styleSheets', 'DOMStyleSheetList');
+    check('document.styleSheets[0]', 'DOMCSSStyleSheet');
+    check('document.styleSheets[0].media', 'DOMMediaList');
+    check('document.styleSheets[0].cssRules', 'DOMCSSRuleList');
+    check('document.styleSheets[0].cssRules[0]', 'DOMCSSStyleRule');
+    check('document.styleSheets[0].cssRules[0].style', 'DOMCSSStyleDeclaration');
+    check('document.styleSheets[0].cssRules[0].style.getPropertyCSSValue("font-family")', 'DOMCSSValueList');
+    check('document.styleSheets[0].cssRules[0].style.getPropertyCSSValue("width")', 'DOMCSSPrimitiveValue');
+    
+}
+</script>
+</head>
+<body onload="test();">
+<div id='console'/>
+</body>
+</html>

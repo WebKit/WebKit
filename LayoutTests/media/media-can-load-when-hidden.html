@@ -1,0 +1,24 @@
+<html>
+    <head>
+        <style>
+            video {display:none; background-color: yellow; width: 320px; height: 240px;}
+        </style>
+    </head>
+    <body onload="start()">
+
+        <video controls ></video>
+
+        <p>Test HTMLMediaElement to be sure that the video is getting loaded even if the element
+        is hidden.</p>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script>
+            function start()
+            {
+                video = document.getElementsByTagName('video')[0];
+                waitForEvent('durationchange', function() { endTest(); });
+                video.src = findMediaFile("video", "content/test");
+            }
+        </script>
+    </body>
+</html>

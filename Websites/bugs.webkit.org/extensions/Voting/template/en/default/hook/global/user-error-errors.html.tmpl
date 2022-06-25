@@ -1,0 +1,43 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% IF error == "voting_must_be_nonnegative" %]
+    [% title = "Votes Must Be Non-negative" %]
+    [% admindocslinks = {'voting.html' => 'Setting up the voting feature'} %]
+    Only use non-negative numbers for your [% terms.bug %] votes.
+
+[% ELSIF error == "voting_product_illegal_votes" %]
+    [% title = "Votes Must Be Non-negative" %]
+    [% admindocslinks = {'voting.html' => 'Setting up the voting feature'} %]
+    '[% votes FILTER html %]' is an invalid value for the
+    <em>
+    [% IF field == "votesperuser" %]
+      Votes Per User
+    [% ELSIF field == "maxvotesperbug" %]
+      Maximum Votes Per [% terms.Bug %]
+    [% ELSIF field == "votestoconfirm" %]
+      Votes To Confirm
+    [% END %]
+    </em> field, which should contain a non-negative number.
+
+[% ELSIF error == "voting_too_many_votes_for_bug" %]
+    [% title = "Illegal Vote" %]
+    [% admindocslinks = {'voting.html' => 'Setting up the voting feature'} %]
+    You may only use at most [% max FILTER html %] votes for a single
+    [%+ terms.bug %] in the
+    <em>[% product FILTER html %]</em> product, but you are trying to
+    use [% votes FILTER html %].
+
+[% ELSIF error == "voting_too_many_votes_for_product" %]
+    [% title = "Illegal Vote" %]
+    [% admindocslinks = {'voting.html' => 'Setting up the voting feature'} %]
+    You tried to use [% votes FILTER html %] votes in the
+    <em>[% product FILTER html %]</em> product, which exceeds the maximum of
+    [%+ max FILTER html %] votes for this product.
+
+[% END %]

@@ -1,0 +1,5 @@
+
+This tests that it's possible to control an embed that is nested inside an object with a span tag in between.
+plugin object is: [object HTMLEmbedElement]
+SUCCESS
+

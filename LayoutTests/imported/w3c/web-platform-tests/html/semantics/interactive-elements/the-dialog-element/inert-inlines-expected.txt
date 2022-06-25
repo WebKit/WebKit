@@ -1,0 +1,9 @@
+To test manually, click on all the "Click me"s. The test fails if you see red.
+
+Click me Click me
+Click meeee
+Click me
+Click meeee
+
+PASS Tests that inert inlines do not receive mouse events.
+

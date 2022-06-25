@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<!--
+  This page was created to help debug and study webrtc issues such as
+  bandwidth estimation problems. It allows one to easily launch a test
+  case that establishs a connection between 2 peer connections
+-->
+<html>
+<head>
+<title>Loopback test</title>
+
+<!-- In order to plot graphs, this tools uses google visualization API which is
+     loaded via goog.load provided by google api. -->
+<script src="//www.google.com/jsapi"></script>
+
+<!-- This file is included to allow loopback_test.js instantiate a
+     RTCPeerConnection on a browser and version agnostic way. -->
+<script src="adapter.js"></script>
+
+<!-- Provides class StatTracker used by loopback_test.js to keep track of
+     RTCPeerConnection stats -->
+<script src="stat_tracker.js"></script>
+
+<!-- Provides LoopbackTest class which has the core logic for the test itself.
+     Such as: create 2 peer connections, establish a call, filter turn
+     candidates, constraint video bitrate etc.
+  -->
+<script src="loopback_test.js"></script>
+
+<style>
+#chart {
+  height: 400px;
+}
+
+#control-range {
+  height: 100px;
+}
+</style>
+</head>
+<body>
+<div id="test-launcher">
+  <p>Duration (s): <input id="duration" type="text"></p>
+  <p>Max video bitrate (kbps): <input id="max-video-bitrate" type="text"></p>
+  <p>Peer connection constraints: <input id="pc-constraints" type="text"></p>
+  <p>Force TURN: <input id="force-turn" type="checkbox" checked></p>
+  <p><input id="launcher-button" type="button" value="Run test">
+  <div id="test-status" style="display:none"></div>
+  <div id="dashboard">
+    <div id="control-category"></div>
+    <div id="chart"></div>
+    <div id="control-range"></div>
+  </div>
+</div>
+<script>
+google.load('visualization', '1.0', {'packages':['controls']});
+
+var durationInput = document.getElementById('duration');
+var maxVideoBitrateInput = document.getElementById('max-video-bitrate');
+var forceTurnInput = document.getElementById('force-turn');
+var launcherButton = document.getElementById('launcher-button');
+var autoModeInput = document.createElement('input');
+var testStatus = document.getElementById('test-status');
+var pcConstraintsInput = document.getElementById('pc-constraints');
+
+launcherButton.onclick = start;
+
+// Load parameters from the url if present. This allows one to link to
+// a specific test configuration and is used to automatically pass parameters
+// for scripts such as record-test.sh
+function getURLParameter(name, default_value) {
+  var search =
+      RegExp('(^\\?|&)' + name + '=' + '(.+?)(&|$)').exec(location.search);
+  if (search)
+    return decodeURI(search[2]);
+  else
+    return default_value;
+}
+
+durationInput.value = getURLParameter('duration', 10);
+maxVideoBitrateInput.value = getURLParameter('max-video-bitrate', 2000);
+forceTurnInput.checked = (getURLParameter('force-turn', 'true') === 'true');
+autoModeInput.checked = (getURLParameter('auto-mode', 'false') === 'true');
+pcConstraintsInput.value = getURLParameter('pc-constraints', '');
+
+if (autoModeInput.checked) start();
+
+function start() {
+  var durationMs = parseInt(durationInput.value) * 1000;
+  var maxVideoBitrateKbps = parseInt(maxVideoBitrateInput.value);
+  var forceTurn = forceTurnInput.checked;
+  var autoClose = autoModeInput.checked;
+  var pcConstraints = pcConstraintsInput.value == "" ?
+                      null : JSON.parse(pcConstraintsInput.value);
+
+  var updateStatusInterval;
+  var testFinished = false;
+  function updateStatus() {
+    if (testFinished) {
+      testStatus.innerHTML = 'Test finished';
+      if (updateStatusInterval) {
+	clearInterval(updateStatusInterval);
+        updateStatusInterval = null;
+      }
+    } else {
+      if (!updateStatusInterval) {
+        updateStatusInterval = setInterval(updateStatus, 1000);
+        testStatus.innerHTML = 'Running';
+      }
+      testStatus.innerHTML += '.';
+    }
+  }
+
+  if (!(isFinite(maxVideoBitrateKbps) && maxVideoBitrateKbps > 0)) {
+    // TODO(andresp): Get a better way to show errors than alert.
+    alert("Invalid max video bitrate");
+    return;
+  }
+
+  if (!(isFinite(durationMs) && durationMs > 0)) {
+    alert("Invalid duration");
+    return;
+  }
+
+  durationInput.disabled = true;
+  forceTurnInput.disabled = true;
+  maxVideoBitrateInput.disabled = true;
+  launcherButton.style.display = 'none';
+  testStatus.style.display = 'block';
+
+  getUserMedia({audio:true, video:true},
+                gotStream, function() {});
+
+  function gotStream(stream) {
+    updateStatus();
+    var test = new LoopbackTest(stream, durationMs,
+                                forceTurn,
+                                pcConstraints,
+                                maxVideoBitrateKbps);
+    test.run(onTestFinished.bind(test));
+  }
+
+  function onTestFinished() {
+    testFinished = true;
+    updateStatus();
+    if (autoClose) {
+      window.close();
+    } else {
+      plotStats(this.getResults());
+    }
+  }
+}
+
+function plotStats(data) {
+  var dashboard = new google.visualization.Dashboard(
+      document.getElementById('dashboard'));
+
+  var chart = new google.visualization.ChartWrapper({
+      'containerId': 'chart',
+      'chartType': 'LineChart',
+      'options': { 'pointSize': 0, 'lineWidth': 1, 'interpolateNulls': true },
+    });
+
+  var rangeFilter = new google.visualization.ControlWrapper({
+     'controlType': 'ChartRangeFilter',
+     'containerId': 'control-range',
+     'options': {
+       'filterColumnIndex': 0,
+       'ui': {
+         'chartType': 'ScatterChart',
+         'chartOptions': {
+           'hAxis': {'baselineColor': 'none'}
+         },
+         'chartView': {
+           'columns': [0, 1]
+         },
+         'minRangeSize': 1000 // 1 second
+       }
+     },
+   });
+
+  // Create a table with the columns of the dataset.
+  var columnsTable = new google.visualization.DataTable();
+  columnsTable.addColumn('number', 'columnIndex');
+  columnsTable.addColumn('string', 'columnLabel');
+  var initState = {selectedValues: []};
+  for (var i = 1; i < data.getNumberOfColumns(); i++) {
+    columnsTable.addRow([i, data.getColumnLabel(i)]);
+    initState.selectedValues.push(data.getColumnLabel(i));
+  }
+
+  var columnFilter = new google.visualization.ControlWrapper({
+    controlType: 'CategoryFilter',
+    containerId: 'control-category',
+    dataTable: columnsTable,
+    options: {
+      filterColumnLabel: 'columnLabel',
+      ui: {
+        label: '',
+        allowNone: false,
+        selectedValuesLayout: 'aside'
+      }
+    },
+    state: initState
+  });
+  google.visualization.events.addListener(columnFilter, 'statechange',
+    function () {
+      var state = columnFilter.getState();
+      var row;
+      var columnIndices = [0];
+      for (var i = 0; i < state.selectedValues.length; i++) {
+        row = columnsTable.getFilteredRows([{
+            column: 1,
+            value: state.selectedValues[i]}])[0];
+        columnIndices.push(columnsTable.getValue(row, 0));
+      }
+      // Sort the indices into their original order
+      columnIndices.sort(function (a, b) { return (a - b); });
+      chart.setView({columns: columnIndices});
+      chart.draw();
+    });
+
+  columnFilter.draw();
+  dashboard.bind([rangeFilter], [chart]);
+  dashboard.draw(data);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+.compass {
+    --icon-length: 48px;
+    --scaled-icon-length: calc(6 * var(--icon-length));
+    height: var(--scaled-icon-length);
+    width: var(--scaled-icon-length);
+    background-color: blue;
+    background-repeat: no-repeat;
+    background-size: cover;
+}

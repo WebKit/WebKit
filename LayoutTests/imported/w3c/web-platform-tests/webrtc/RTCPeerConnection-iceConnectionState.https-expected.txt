@@ -1,0 +1,14 @@
+
+PASS Initial iceConnectionState should be new
+PASS Closing the connection should set iceConnectionState to closed
+PASS connection with one data channel should eventually have connected or completed connection state
+PASS connection with one data channel should eventually have connected connection state
+PASS connection with audio track should eventually have connected connection state
+PASS connection with audio and video tracks should eventually have connected connection state
+PASS ICE can connect in a recvonly usecase
+PASS iceConnectionState changes at the right time, with bundle policy balanced
+PASS iceConnectionState changes at the right time, with bundle policy max-bundle
+PASS iceConnectionState changes at the right time, with bundle policy max-compat
+PASS Responder ICE connection state behaves as expected
+PASS Closing a PeerConnection should not fire iceconnectionstatechange event
+

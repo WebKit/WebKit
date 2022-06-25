@@ -1,0 +1,29 @@
+CONSOLE MESSAGE: Web Inspector blocked http://127.0.0.1:8000/inspector/network/resources/override.txt#General from loading
+CONSOLE MESSAGE: Web Inspector blocked http://127.0.0.1:8000/inspector/network/resources/override.txt#AccessControl from loading
+CONSOLE MESSAGE: Fetch API cannot load http://127.0.0.1:8000/inspector/network/resources/override.txt#AccessControl due to access control checks.
+CONSOLE MESSAGE: Web Inspector blocked http://127.0.0.1:8000/inspector/network/resources/override.txt#Cancellation from loading
+CONSOLE MESSAGE: Web Inspector blocked http://127.0.0.1:8000/inspector/network/resources/override.txt#Timeout from loading
+Test request interception with response.
+
+
+== Running test suite: Network.interceptRequestWithError
+-- Running test case: Network.interceptRequestWithError.ResourceErrorType.General
+Creating Local Resource Override for: http://127.0.0.1:8000/inspector/network/resources/override.txt
+Triggering load...
+Resource with url 'http://127.0.0.1:8000/inspector/network/resources/override.txt#General' failed to load with error 'Blocked by Web Inspector'.
+
+-- Running test case: Network.interceptRequestWithError.ResourceErrorType.AccessControl
+Creating Local Resource Override for: http://127.0.0.1:8000/inspector/network/resources/override.txt
+Triggering load...
+Resource with url 'http://127.0.0.1:8000/inspector/network/resources/override.txt#AccessControl' failed to load with error 'Blocked by Web Inspector'.
+
+-- Running test case: Network.interceptRequestWithError.ResourceErrorType.Cancellation
+Creating Local Resource Override for: http://127.0.0.1:8000/inspector/network/resources/override.txt
+Triggering load...
+Resource with url 'http://127.0.0.1:8000/inspector/network/resources/override.txt#Cancellation' failed to load with error 'Blocked by Web Inspector'.
+
+-- Running test case: Network.interceptRequestWithError.ResourceErrorType.Timeout
+Creating Local Resource Override for: http://127.0.0.1:8000/inspector/network/resources/override.txt
+Triggering load...
+Resource with url 'http://127.0.0.1:8000/inspector/network/resources/override.txt#Timeout' failed to load with error 'Blocked by Web Inspector'.
+

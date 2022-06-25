@@ -1,0 +1,34 @@
+<!doctype html>
+<style>
+.animated {
+  -webkit-animation: test 10ms;
+  -webkit-animation-delay: -10ms;
+}
+@-webkit-keyframes test {
+  0% {}
+}
+</style>
+<div id="test">FAIL</div>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+onload = function() {
+  // This test covers a specific regression where an on-demand timing update
+  // that was triggered after an animation received a start time could cause
+  // CSS Animation and Transition events to not be fired on the subseuquent
+  // animation-frame timing update.
+  test.classList.add('animated');
+  test.addEventListener('webkitAnimationStart', function() {
+    document.documentElement.textContent = 'PASS';
+    if (window.testRunner)
+      testRunner.notifyDone();
+  });
+  requestAnimationFrame(function() {
+    setTimeout(function() {
+      getComputedStyle(test).left;
+    });
+  });
+}
+</script>

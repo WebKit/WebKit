@@ -1,0 +1,15 @@
+Make sure directly-composited animated GIFs properly get suspended / resumed based on visibility inside viewport.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS isImageAnimated() became true
+Scroll down so that the image is no longer visible
+PASS isImageAnimated() became false
+Animation was paused, scroll up so that the image is visible again
+PASS isImageAnimated() became true
+PASS internals.imageFrameIndex(testImage) became different from frameIndexImageWasPausedAt
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

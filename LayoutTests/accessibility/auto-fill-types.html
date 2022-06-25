@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<input type="text" value="hello" id="textfield">
+
+<script>
+
+    description("This tests that the auto-filled buttons show up.");
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        var textField, axTextField, contactsButton, credentialsButton;
+        setTimeout(async function() {
+            textField = document.getElementById("textfield");
+            axTextField = accessibilityController.accessibleElementById("textfield");
+            debug("Initial auto-fill available: " + axTextField.boolAttributeValue("AXValueAutofillAvailable"));
+            debug("Auto-fill type: " + axTextField.stringAttributeValue("AXValueAutofillType"));
+
+            window.internals.setShowAutoFillButton(document.getElementById("textfield"), "Contacts");
+            // Wait for contacts autofill button to render.
+            await waitFor(() => {
+                contactsButton = axTextField.childAtIndex(1);
+                return contactsButton && axTextField.stringAttributeValue("AXValueAutofillType") === "contacts";
+            });
+            debug("Contact button role: " + contactsButton.role);
+            debug("Contact button label: " + contactsButton.description);
+            debug("Auto-fill type: " + axTextField.stringAttributeValue("AXValueAutofillType"));
+
+            window.internals.setShowAutoFillButton(document.getElementById("textfield"), "Credentials");
+            // Wait for credentials autofill button to render.
+            await waitFor(() => {
+                credentialsButton = axTextField.childAtIndex(1);
+                return credentialsButton && axTextField.stringAttributeValue("AXValueAutofillType") === "credentials";
+            });
+            debug("Credentials button role: " + credentialsButton.role);
+            debug("Credentials button label: " + credentialsButton.description);
+            debug("Auto-fill type: " + axTextField.stringAttributeValue("AXValueAutofillType"));
+
+            debug("Post auto-fill available: " + axTextField.boolAttributeValue("AXValueAutofillAvailable"));
+
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>
+

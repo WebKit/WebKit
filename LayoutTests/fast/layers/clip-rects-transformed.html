@@ -1,0 +1,17 @@
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+</script>
+<p>
+    Test 1/2 for <i><a href="rdar://problem/7398987">rdar://problem/7398987</a>
+    Assertion failure in RenderLayer::updateClipRects when a plug-in&rsquo;s
+    enclosing layer is enclosed by a transformed layer</i>.
+</p>
+<p>
+    This test should not cause an assertion faliure.
+</p>
+<div style="-webkit-transform: translateX(100px);">
+    <div style="position: absolute; overflow: hidden;">
+        <embed type="application/x-webkit-test-netscape">
+    </div>
+</div>

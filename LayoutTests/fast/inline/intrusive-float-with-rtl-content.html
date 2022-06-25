@@ -1,0 +1,95 @@
+<style>
+body {
+  font-family: Ahem;
+  font-size: 20px;
+  position: relative;
+}
+
+.container {
+  width: 100px;
+  height: 20px;
+  background-color: green;
+}
+
+.floatBox {
+  float: left;
+  width: 20px;
+  height: 20px;
+  background-color: green;
+}
+
+.content {
+  direction: rtl;
+  color: red;
+}
+
+.ref {
+    position: absolute;
+    top: 0px;
+    color: green;
+    white-space: pre;
+}
+</style>
+<div class=container>
+  <div class=floatBox></div>
+  <div class=content>X</div>
+</div>
+<div class=ref>    X</div>
+
+<div class=container>
+  <div class=floatBox style="float: right;"></div>
+  <div class=content>X</div>
+</div>
+<div class=ref style="top: 20px;">   X </div>
+
+<div class=container>
+  <div class=floatBox style="float: right; width: 40px;"></div>
+  <div class=content>X</div>
+</div>
+<div class=ref style="top: 40px;">  X  </div>
+
+<div class=container>
+  <div class=floatBox></div>
+  <div class=floatBox style="float: right; width: 60px;"></div>
+  <div class=content>X</div>
+</div>
+<div class=ref style="top: 60px;"> X   </div>
+
+<div class=container style="height: 40px;">
+  <div class=floatBox></div>
+  <div class=floatBox style="float: right; width: 80px;"></div>
+  <div class=content>X</div>
+</div>
+<div class=ref style="top: 100px;">    X</div>
+
+<div class=container>
+  <div class=floatBox style="float: right;"></div>
+  <div class=content style="border-right: 20px solid green;">X</div>
+</div>
+<div class=ref style="top: 120px;">   X </div>
+
+<div class=container>
+  <div class=floatBox style="float: right;"></div>
+  <div class=content style="border-right: 40px solid green;">X</div>
+</div>
+<div class=ref style="top: 140px;">  X  </div>
+
+<div class=container>
+  <div class=floatBox style="float: right;"></div>
+  <div class=content style="border-left: 40px solid green; border-right: 40px solid green;">X</div>
+</div>
+<div class=ref style="top: 160px;">  X  </div>
+
+<div class=container>
+  <div class=floatBox></div>
+  <div class=floatBox style="float: right; width: 20px;"></div>
+  <div class=content>X</div>
+</div>
+<div class=ref style="top: 180px;">   X </div>
+
+<div class=container>
+  <div class=floatBox style="width: 40px;"></div>
+  <div class=floatBox style="float: right; width: 40px;"></div>
+  <div class=content>X</div>
+</div>
+<div class=ref style="top: 200px;">  X  </div>

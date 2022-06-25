@@ -1,0 +1,41 @@
+Test basic creation of a PaymentRequest object with an Apple Pay AMS UI payment method.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Testing PaymentRequest
+
+PASS new PaymentRequest(null, null) threw exception TypeError: Value is not a sequence.
+PASS new PaymentRequest([validPaymentMethod()], validPaymentDetails()) did not throw exception.
+
+Testing ApplePayAMSUIRequest.engagementRequest
+
+SETUP: paymentMethod = validPaymentMethod(); delete paymentMethod.data.engagementRequest
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: Member ApplePayAMSUIRequest.engagementRequest is required and must be a JSON-serializable object.
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.engagementRequest = ''
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: Member ApplePayAMSUIRequest.engagementRequest is required and must be a JSON-serializable object.
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.engagementRequest = 'invalid'
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: Member ApplePayAMSUIRequest.engagementRequest is required and must be a JSON-serializable object.
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.engagementRequest = null
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: Member ApplePayAMSUIRequest.engagementRequest is required and must be a JSON-serializable object.
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.engagementRequest = 7
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: Member ApplePayAMSUIRequest.engagementRequest is required and must be a JSON-serializable object.
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.engagementRequest = [ ]
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: Member ApplePayAMSUIRequest.engagementRequest is required and must be a JSON-serializable object.
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.engagementRequest = false
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) threw exception TypeError: Member ApplePayAMSUIRequest.engagementRequest is required and must be a JSON-serializable object.
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.engagementRequest = { }
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()) did not throw exception.
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

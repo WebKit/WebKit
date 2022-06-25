@@ -1,0 +1,15 @@
+CONSOLE MESSAGE: TypeError: div1.requestPointerLock is not a function. (In 'div1.requestPointerLock()', 'div1.requestPointerLock' is undefined)
+Pointer Events pointer lock test
+
+Follow the test instructions with mouse. If you don't have the device skip it.
+
+Test Description: This test checks that we do not set the pointer capture when any element in the page gets a pointer lock.
+Press left button down on the green rectangle and hold it.
+Move the mouse inside the green rectangle.
+Test passes if the pointer capture is not set when the green rectangle gets the pointer lock.
+
+
+Harness Error (FAIL), message = TypeError: div1.requestPointerLock is not a function. (In 'div1.requestPointerLock()', 'div1.requestPointerLock' is undefined)
+
+FAIL mouse no pointercapture while pointerlock assert_equals: Pointer is unlocked expected 2 but got 0
+

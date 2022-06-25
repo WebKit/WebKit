@@ -1,0 +1,46 @@
+Test SVGGeometryElement APIs for circle.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Test isPointInFill()
+PASS c1.isPointInFill({}) is false
+PASS c1.isPointInFill({x: 109, y: 60}) is true
+PASS c1.isPointInFill({x: 111, y: 60}) is false
+PASS c1.isPointInFill({x: 60, y: 109}) is true
+PASS c1.isPointInFill({x: 60, y: 111}) is false
+PASS c1.isPointInFill({x: 11, y: 60}) is true
+PASS c1.isPointInFill({x: 9, y: 60}) is false
+PASS c1.isPointInFill({x: 60, y: 11}) is true
+PASS c1.isPointInFill({x: 60, y: 9}) is false
+
+Test isPointInStroke()
+PASS c1.isPointInStroke({}) is false
+PASS c1.isPointInStroke({x: 101, y: 60}) is true
+PASS c1.isPointInStroke({x: 99, y: 60}) is false
+PASS c1.isPointInStroke({x: 60, y: 101}) is true
+PASS c1.isPointInStroke({x: 60, y: 99}) is false
+PASS c1.isPointInStroke({x: 19, y: 60}) is true
+PASS c1.isPointInStroke({x: 21, y: 60}) is false
+PASS c1.isPointInStroke({x: 60, y: 19}) is true
+PASS c1.isPointInStroke({x: 60, y: 21}) is false
+
+Test getTotalLength()
+PASS c1.getTotalLength() is within 0.1 of 314.1592653589793
+
+Test getPointAtLength()
+PASS c1.getPointAtLength(0).x is within 0.1 of 110
+PASS c1.getPointAtLength(0).y is within 0.1 of 60
+PASS c1.getPointAtLength(Math.PI * 100 / 4).x is within 0.1 of 60
+PASS c1.getPointAtLength(Math.PI * 100 / 4).y is within 0.1 of 110
+PASS c1.getPointAtLength(Math.PI * 100 / 2).x is within 0.1 of 10
+PASS c1.getPointAtLength(Math.PI * 100 / 2).y is within 0.1 of 60
+PASS c1.getPointAtLength(Math.PI * 100 / 8).x is within 1 of 95.35
+PASS c1.getPointAtLength(Math.PI * 100 / 8).y is within 1 of 95.35
+PASS c1.getPointAtLength(Math.PI * 100 * 2).x is within 0.1 of 110
+PASS c1.getPointAtLength(Math.PI * 100 * 2).y is within 0.1 of 60
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

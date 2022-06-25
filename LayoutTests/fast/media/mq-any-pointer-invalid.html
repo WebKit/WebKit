@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<style id="target-style"></style>
+
+<script>
+    description("Test invalid input with the any-pointer media feature.")
+
+    var testCases = [
+        "any-pointer:",
+        "any-pointer: ",
+        "any-pointer: WebKit",
+        "any-pointer: pointer",
+        "any-pointer: hover",
+        "any-pointer: portrait",
+        "any-pointer: \\\"None\\\"",
+        "any-pointer: 'None'",
+    ];
+
+    var targetStyle = document.getElementById('target-style');
+    for (var testCase of testCases) {
+        var testString = 'window.matchMedia("(' + testCase + ')").matches';
+        shouldBeFalse('window.matchMedia("(' + testCase + ')").matches');
+
+        targetStyle.innerText = "@media " + testCase + " { }";
+        shouldBe("document.styleSheets[1].cssRules[0].media.length", "1");
+    }
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

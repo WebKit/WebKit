@@ -1,0 +1,6 @@
+include_rules = [
+  "+system_wrappers", 
+  # Avoid directly using field_trial. Instead use WebRtcKeyValueConfig.
+  "-system_wrappers/include/field_trial.h",  
+  "+logging/rtc_event_log"
+]

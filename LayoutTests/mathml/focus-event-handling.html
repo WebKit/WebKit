@@ -1,0 +1,102 @@
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/ui-helper.js"></script>
+</head>
+<body>
+
+<math style="background-color: green">
+  <mspace id="space1" width="100px" depth="50px" height="50px"/>
+  <mrow id="row">
+    <mspace id="space2" width="100px" depth="50px" height="50px"/>
+  </mrow>
+  <mfrac id="fraction">
+    <mspace width="100px" depth="50px"/>
+    <mspace width="100px" depth="50px"/>
+  </mfrac>
+  <mtext id="text" style="font-size:20px">TEST</mtext>
+</math>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    var focusSeen = "";
+    var blurSeen = "";
+
+    var spaceElement = document.getElementById("space1");
+    var rowElement = document.getElementById("row");
+    var fractionElement = document.getElementById("fraction");
+    var textElement = document.getElementById("text");
+
+    function clearFocusSeen()
+    {
+        focusSeen = "";
+        blurSeen = "";
+    }
+
+    function focusHandler(evt)
+    {
+        focusSeen = evt.target.getAttribute('id');
+    }
+
+    function blurHandler(evt)
+    {
+        blurSeen = evt.target.getAttribute('id');
+    }
+
+    addEventListener("load", async () => {
+        description("Test whether focus and blur events are dispatched and seen in the focus/blur event handlers: ");
+
+        spaceElement.tabIndex = 0;
+        spaceElement.addEventListener("focus", focusHandler, false);
+        spaceElement.addEventListener("blur", blurHandler, false);
+        rowElement.tabIndex = 0;
+        rowElement.addEventListener("focus", focusHandler, false);
+        rowElement.addEventListener("blur", blurHandler, false);
+        fractionElement.tabIndex = 0;
+        fractionElement.addEventListener("focus", focusHandler, false);
+        fractionElement.addEventListener("blur", blurHandler, false);
+        textElement.tabIndex = 0;
+        textElement.addEventListener("focus", focusHandler, false);
+        textElement.addEventListener("blur", blurHandler, false);
+
+        // cause focus and blur
+        await UIHelper.activateAt(50, 50);
+        await UIHelper.activateAt(150, 250);
+        shouldBeEqualToString('focusSeen', 'space1');
+        shouldBeEqualToString('blurSeen', 'space1');
+
+        clearFocusSeen();
+
+        // cause focus and blur
+        await UIHelper.activateAt(150, 50);
+        await UIHelper.activateAt(150, 250);
+        shouldBeEqualToString('focusSeen', 'row');
+        shouldBeEqualToString('blurSeen', 'row');
+
+        clearFocusSeen();
+
+        // cause focus and blur
+        await UIHelper.activateAt(250, 50);
+        await UIHelper.activateAt(150, 250);
+        shouldBeEqualToString('focusSeen', 'fraction');
+        shouldBeEqualToString('blurSeen', 'fraction');
+
+        clearFocusSeen();
+
+        // cause focus and blur
+        await UIHelper.activateAt(350, 50);
+        await UIHelper.activateAt(150, 250);
+        shouldBeEqualToString('focusSeen', 'text');
+        shouldBeEqualToString('blurSeen', 'text');
+        successfullyParsed = true;
+
+        testRunner.notifyDone();
+    });
+</script>
+</body>
+</html>

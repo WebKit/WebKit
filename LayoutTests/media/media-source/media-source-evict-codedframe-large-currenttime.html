@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-evict-codedframe-large-currenttime</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var initSegment;
+
+    function bufferedRanges() {
+        var bufferedRanges = '[ ';
+        var timeRanges = sourceBuffer.buffered;
+        for (var i = 0 ; i < timeRanges.length ; i++) {
+            if (i)
+                bufferedRanges += ', ';
+            bufferedRanges += timeRanges.start(i) + '...' + timeRanges.end(i);
+        }
+        bufferedRanges += ' ]';
+        return bufferedRanges;
+    }
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    window.addEventListener('load', async() => {
+        findMediaElement();
+        source = new MediaSource();
+
+        const videoSource = document.createElement('source');
+        videoSource.type = 'video/mock; codecs=mock';
+        videoSource.src = URL.createObjectURL(source);
+        video.appendChild(videoSource);
+
+        await waitFor(source, 'sourceopen');
+        sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock");
+        initSegment = makeAInit(350, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]);
+        sourceBuffer.appendBuffer(initSegment);
+        await waitFor(sourceBuffer, 'updateend');
+        waitFor(sourceBuffer, 'error');
+
+        var offset = 200000000;
+        var firstPts = 0 + offset;
+        var lastPts = 55 + offset;
+
+        internals.settings.setMaximumSourceBufferSize(4000);
+
+        for (var pts = firstPts; pts <= lastPts; pts++) {
+            sourceBuffer.appendBuffer(makeASample(pts, pts, 1, 1, 1, SAMPLE_FLAG.SYNC, 1));
+            await waitFor(sourceBuffer, 'updateend', true);
+        }
+        testExpected('bufferedRanges()', '[ 200000000...200000056 ]', '==');
+
+        video.currentTime = 40 + offset;
+        testExpected('video.currentTime', 40 + offset, '==');
+
+        sourceBuffer.addEventListener('updateend', function() {
+            testExpected('bufferedRanges()', '[ 200000010...200000057 ]', '==');
+            endTest();
+        });
+
+        setTimeout(function() {
+            consoleWrite('* Timeout: taking too long to evict coded frames.');
+            failTest();
+        }, 50);
+
+        sourceBuffer.appendBuffer(makeASample(lastPts + 1, lastPts + 1, 1, 1, 1, SAMPLE_FLAG.SYNC, 1));
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

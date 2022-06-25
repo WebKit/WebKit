@@ -1,0 +1,30 @@
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(msg) {
+    document.getElementById("logger").innerHTML += msg + "<br>";
+}
+
+window.onload = function()
+{
+    log("Adding state objects in iframe");
+    try {
+        for( var i = 0; i < 75; ++i ) {
+            history.replaceState(0, 0, i.toString());
+            log("Successfully added item: " + i);
+        }
+    } catch (e) {
+        log("Expected exception: " + e);
+        if (window.testRunner)
+            testRunner.notifyDone();    
+    }
+}
+
+</script>
+<body>
+<div id="logger"></div>
+</body>

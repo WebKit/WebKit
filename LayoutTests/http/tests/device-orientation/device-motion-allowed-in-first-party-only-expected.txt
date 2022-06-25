@@ -1,0 +1,14 @@
+Received device orientation & motion access request for top level origin "http://127.0.0.1:8000", with frame origin "http://127.0.0.1:8000".
+CONSOLE MESSAGE: No device motion events will be fired, reason: Permission to use the API was not yet requested.
+Received device orientation & motion access request for top level origin "http://127.0.0.1:8000", with frame origin "http://localhost:8000".
+Tests that giving device motion permission in the main frame does not give access to third-party iframes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS result is "granted"
+PASS e.data is "denied"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that floating elments are cleaned up properly.</title>
+<style>
+  :last-child {float:left;}
+</style>
+</head>
+
+<body>
+PASS, if no crash or ASSERT in debug.
+<br>
+<br>
+<br>
+<article>
+<pre></pre>
+<br>
+<content>
+<br>
+<select></select>
+<script>
+document.body.contentEditable = "true";
+document.execCommand("SelectAll");
+document.execCommand("StrikeThrough");
+if (window.testRunner)
+	testRunner.dumpAsText();
+</script>
+BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBAAAAAAAAAAAAAAAAAAAAAA
+</body>
+</html>

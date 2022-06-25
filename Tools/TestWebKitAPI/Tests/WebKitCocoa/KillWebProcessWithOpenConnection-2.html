@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<script>
+var request = window.indexedDB.open("TestIndexedDB");
+request.onsuccess = (event) => {
+    db = event.target.result;
+    var secondRequest = window.indexedDB.open("TestIndexedDB", db.version + 1);
+    secondRequest.onsuccess = (event) => {
+        window.webkit.messageHandlers.testHandler.postMessage("Second Open Succeeded");
+    }
+    secondRequest.onerror = () => {
+        window.webkit.messageHandlers.testHandler.postMessage("Second Open Failed: " + secondRequest.error);
+    }
+}
+request.onerror = () => {
+    window.webkit.messageHandlers.testHandler.postMessage("First Open Failed: " + request.error);
+}
+</script>

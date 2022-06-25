@@ -1,0 +1,2 @@
+This tests that the NP_Deallocate function of an NPObject isn't called before the NP_Shutdown function.
+SUCCESS

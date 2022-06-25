@@ -1,0 +1,64 @@
+<!-- webkit-test-runner [ CaptureAudioInGPUProcessEnabled=true CaptureVideoInGPUProcessEnabled=true ] -->
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>iOS specific constraints of one active capture source at a time</title>
+        <script src="../../../resources/testharness.js"></script>
+        <script src="../../../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <script>
+
+async function waitForTrackEnded(track)
+{
+    if (track.readyState === "ended")
+        return;
+
+    return new Promise((resolve, reject) => { track.onended = resolve; setTimeout(() => reject("waitForTrackEnded timed out for track " + track.kind), 5000); });
+}
+
+async function getOtherMicrophoneDevice(track)
+{
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    for (let device of devices) {
+        if (device.kind === "audioinput" && track.kind === "audio" && device.deviceId !== track.getSettings().deviceId)
+             return device.deviceId;
+    }
+    return "";
+}
+
+promise_test((test) => {
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(true);
+
+    var firstStream;
+    var audioTrack;
+    var videoTrack;
+    return navigator.mediaDevices.getUserMedia({ audio: true, video: { facingMode: { exact: ['user'] } } }).then(async (stream) => {
+        firstStream = stream;
+        audioTrack = firstStream.getAudioTracks()[0];
+        videoTrack = firstStream.getVideoTracks()[0];
+
+        assert_equals(audioTrack.readyState, "live", "audio track is live");
+        assert_equals(videoTrack.readyState, "live", "video track is live");
+
+        const newMicrophoneDeviceId = await getOtherMicrophoneDevice(audioTrack);
+        return navigator.mediaDevices.getUserMedia({ audio: { deviceId : newMicrophoneDeviceId} });
+    }).then(async (stream) => {
+        await waitForTrackEnded(audioTrack);
+
+        assert_equals(audioTrack.readyState, "ended", "audio track is ended");
+        assert_equals(videoTrack.readyState, "live", "video track is live");
+
+        return navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: ["environment"] } } });
+    }).then(async (stream) => {
+        await waitForTrackEnded(videoTrack);
+
+        assert_equals(audioTrack.readyState, "ended", "audio track is ended, second check");
+        assert_equals(videoTrack.readyState, "ended", "video track is ended");
+    });
+}, "Testing successive getUserMedia calls");
+        </script>
+    </body>
+</html>

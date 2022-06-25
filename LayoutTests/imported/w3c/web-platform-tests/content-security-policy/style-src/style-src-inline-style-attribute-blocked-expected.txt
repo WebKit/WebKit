@@ -1,0 +1,4 @@
+
+PASS Inline style attribute should not be applied without 'unsafe-inline'
+PASS Should fire a securitypolicyviolation event
+Lorem ipsum

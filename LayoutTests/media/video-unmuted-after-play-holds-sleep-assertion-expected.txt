@@ -1,0 +1,11 @@
+
+RUN(video.src = findMediaFile("video", "content/test"))
+EVENT(canplaythrough)
+RUN(video.play())
+EVENT(playing)
+EXPECTED (internals.elementIsBlockingDisplaySleep(video) == 'false') OK
+RUN(video.muted = false)
+EVENT(volumechange)
+EXPECTED (internals.elementIsBlockingDisplaySleep(video) == 'true') OK
+END OF TEST
+

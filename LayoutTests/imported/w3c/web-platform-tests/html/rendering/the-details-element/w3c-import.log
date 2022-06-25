@@ -1,0 +1,60 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/details-after-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/details-after.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/details-before-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/details-before.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/details-blockification.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/details-display-property-is-ignored-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/details-display-property-is-ignored-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/details-display-property-is-ignored.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/details-page-break-after-1-print-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/details-page-break-after-1-print.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/details-page-break-after-2-print-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/details-page-break-after-2-print.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/details-page-break-before-1-print-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/details-page-break-before-1-print.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/details-page-break-before-2-print-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/details-page-break-before-2-print.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/details-two-pages-print-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/empty-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/single-summary.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/summary-display-flex-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/summary-display-flex-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/summary-display-flex.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/summary-display-grid-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/summary-display-grid-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/summary-display-grid.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/summary-display-inline-flex-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/summary-display-inline-flex-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/summary-display-inline-flex.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/summary-display-inline-grid-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/summary-display-inline-grid-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/summary-display-inline-grid.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/summary-display-list-item-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/summary-display-list-item-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/summary-display-list-item-001.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/summary-display-list-item-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/summary-display-list-item-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/summary-display-list-item-002.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/summary-in-ol-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/summary-in-ol-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/summary-in-ol.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/summary-text-decoration-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/summary-text-decoration-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/summary-text-decoration.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/the-details-element/two-summaries-removal-crash.html

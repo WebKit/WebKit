@@ -1,0 +1,43 @@
+<html>
+<head>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        function log(msg)
+        {
+            document.getElementById('console').appendChild(document.createTextNode(msg + "\n"));
+        }
+
+        function testToDataURL()
+        {
+            testMIMEType(document.getElementById("zero-Zero"), "0x0");
+            testMIMEType(document.getElementById("zero-oneHundred"), "0x100");
+            testMIMEType(document.getElementById("oneHundred-zero"), "100x0");
+        }
+
+        function testMIMEType(canvas, description)
+        {
+            var ctx = canvas.getContext("2d");
+
+            // draw into canvas
+            ctx.fillStyle = "rgb(200,0,0)";
+            ctx.fillRect(10, 10, 55, 50);
+            ctx.fillStyle = "rgba(0, 0, 200, 0.5)";
+            ctx.fillRect(30, 30, 55, 50);
+
+            var dataURL = canvas.toDataURL();
+            if (dataURL == "data:,")
+                log("PASS: Canvas of size " + description + " created data: url with no content - '" + dataURL + "'.");
+            else
+                log("FAIL: Canvas of size " + description + " did not create a data: url with no content - '" + dataURL + "'.");
+        }
+    </script>
+</head>
+<body onload="testToDataURL();">
+    <canvas id="zero-Zero" width="0" height="0"></canvas>
+    <canvas id="zero-oneHundred" width="0" height="100"></canvas>
+    <canvas id="oneHundred-zero" width="100" height="0"></canvas>
+    <pre id='console'></pre>
+</body>
+</html>

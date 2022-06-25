@@ -1,0 +1,13 @@
+Please enter a start time for the meeting:   Invalid meeting time! The meeting time must be between 9:00 AM and 5:00 PM.
+This verifies the exposure of aria-errormessage.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS errorMessages.length is 2
+PASS errorMessages[0].description is 'AXLabel: Invalid meeting time!'
+PASS errorMessages[1].description is 'AXLabel: The meeting time must be between 9:00 AM and 5:00 PM.'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

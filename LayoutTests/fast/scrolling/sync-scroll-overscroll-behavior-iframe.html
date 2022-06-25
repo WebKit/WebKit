@@ -1,0 +1,85 @@
+<!doctype html>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="resources/overscroll-behavior-support.js"></script>
+<link rel="help" href="https://drafts.csswg.org/css-overscroll-behavior">
+<style>
+    .scrolling {
+        overflow: scroll;
+    }
+    .scrollContent {
+        width: 300px;
+        height: 300px;
+        background: linear-gradient(135deg, red, blue);
+    }
+    #root {
+        width: 200px;
+        height: 200px;
+    }
+    #scroller {
+        width: 100px;
+        height: 100px;
+        overscroll-behavior-y: auto;
+    }
+</style>
+<div id='root' class="scrolling">
+    <iframe id='scroller' srcdoc="<html><div style='width: 300px; height: 300px;'></div></html>
+        "></iframe>
+    <div class="scrollContent"></div>
+</div>
+
+<script>
+    const root = document.getElementById('root');
+    const scroller = document.getElementById('scroller');
+    var overscrollDatas = [["auto", "auto", true, true],
+                            ["contain", "auto", false, true],
+                            ["none", "auto", false, true],
+                            ["auto", "contain", true, false],
+                            ["contain", "contain", false, false],
+                            ["none", "contain", false, false],
+                            ["auto", "none", true, false],
+                            ["contain", "none", false, false],
+                            ["none", "none", false, false]];
+    function resetTest() {
+        // Try various methods to ensure the element position is reset immediately.
+        scroller.contentWindow.scrollX = 300;
+        scroller.contentWindow.scrollY = 300;
+        scroller.contentWindow.scrollTo(300, 300);
+        root.scrollLeft = 0;
+        root.scrollTop = 0;
+        root.scrollTo(0, 0);
+    }
+
+    function overscrollBehaviorTest() {
+        overscrollDatas.forEach(([overscrollX, overscrollY, propagateX, propagateY]) => {
+            promise_test(() => {
+                resetTest();
+                var target = scroller.contentWindow.document.getElementsByTagName("html")[0];
+                target.style.overscrollBehaviorX = overscrollX;
+                target.style.overscrollBehaviorY = overscrollY;
+                var x = scroller.clientWidth / 2;
+                var y = scroller.clientHeight / 2;
+                var delta = getDeltas("right");
+                return mouseWheelScrollAndWait(x, y, delta.X, delta.Y, delta.X, delta.Y).then(() => {
+                    assert_equals(root.scrollLeft > 0, propagateX, 'Propagate horizontal scroll');
+                });
+            }, 'Iframe horizontal scroll test with overscroll-behavior: ' + overscrollX + ' ' + overscrollY + '.');
+
+            promise_test(() => {
+                resetTest();
+                var target = scroller.contentWindow.document.getElementsByTagName("html")[0];
+                target.style.overscrollBehaviorX = overscrollX;
+                target.style.overscrollBehaviorY = overscrollY;
+
+                var x = scroller.clientWidth / 2;
+                var y = scroller.clientHeight / 2;
+                var delta = getDeltas("down");
+                return mouseWheelScrollAndWait(x, y, delta.X, delta.Y, delta.X, delta.Y).then(() => {
+                    assert_equals(root.scrollTop > 0, propagateY, 'Propagate vertical scroll');
+                });
+            }, 'Iframe vertical scroll test with overscroll-behavior: ' + overscrollX + ' ' + overscrollY + '.');
+        });
+    }
+
+    scroller.addEventListener("load", overscrollBehaviorTest);
+</script>

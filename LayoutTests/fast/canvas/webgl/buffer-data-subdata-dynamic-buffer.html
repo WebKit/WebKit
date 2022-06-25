@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="resources/webgl-test.js"> </script>
+</head>
+<body>
+<canvas id="example" width="40" height="40" style="width: 40px; height: 40px;"></canvas>
+<div id="description"></div>
+<div id="console"></div>
+<script id="vshader" type="x-shader/x-vertex">
+#ifdef GL_ES
+precision highp float;
+#endif
+attribute vec4 vPosition;
+void main()
+{
+    gl_Position = vPosition;
+}
+</script>
+
+<script id="fshader" type="x-shader/x-fragment">
+#ifdef GL_ES
+precision highp float;
+#endif
+void main()
+{
+    gl_FragColor = vec4(0, 1, 0, 1);
+}
+</script>
+
+<script>
+function init()
+{
+    if (window.initNonKhronosFramework)
+        window.initNonKhronosFramework(false);
+
+    debug("Checks that update-draws of bufferSubData are respected");
+    debug("");
+
+    if (window.internals)
+        internals.settings.setWebGL2Enabled(true);
+    gl = initWebGL("example", "vshader", "fshader", [ "vPosition", "index" ],
+                   [ 1, 1, 1, 1 ], 1, null, true);
+
+    gl.disable(gl.DEPTH_TEST);
+    gl.disable(gl.BLEND);
+
+     // Vertex buffer data lower left triangle
+    // 2     
+    //
+    // o    1
+    var vertexData1 = new Float32Array([-1, -1, 1, -1, -1, 1]);
+    //Vertex buffer data upper right triangle
+    // 2      1
+    //
+    //        0
+    var vertexData2 = new Float32Array([ 1., -1., 1., 1., -1., 1.]);
+    
+    var vertexObject = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexObject);
+    shouldBe("gl.getError()", "gl.NO_ERROR")
+    gl.bufferData(gl.ARRAY_BUFFER, vertexData1, gl.DYNAMIC_DRAW);
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+    gl.enableVertexAttribArray(0);
+    gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    gl.bufferData(gl.ARRAY_BUFFER, vertexData2, gl.DYNAMIC_DRAW);
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    gl.flush();
+    checkGreenValue(0, 0, 255, "top-left of canvas should be green.");
+    checkGreenValue(0, 39, 255, "bottom-left of canvas should be green.");
+    checkGreenValue(39, 0, 255, "Top-right of canvas should be green.");
+    checkGreenValue(39, 39, 255, "bottom-right of canvas should be green.");
+    gl.deleteBuffer(vertexObject);
+
+    function checkGreenValue(x, y, value, msg) {
+        
+        var buf = new Uint8Array(4);
+        gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, buf);
+        if (buf[1] != value || buf[3] != 255) {
+            debug('expected: green channel should = ' + value + ' but was = ' + buf[2] + '.');
+            testFailed(msg);
+            return;
+        }
+        testPassed(msg);
+    }
+}
+
+init();
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

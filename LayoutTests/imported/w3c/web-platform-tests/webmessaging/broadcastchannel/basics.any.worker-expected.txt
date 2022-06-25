@@ -1,0 +1,8 @@
+
+PASS postMessage results in correct event
+PASS messages are delivered in port creation order
+PASS messages aren't delivered to a closed port
+PASS messages aren't delivered to a port closed after calling postMessage.
+PASS closing and creating channels during message delivery works correctly
+PASS Closing a channel in onmessage prevents already queued tasks from firing onmessage events
+

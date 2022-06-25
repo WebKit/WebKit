@@ -1,0 +1,20 @@
+
+FAIL "width=401" should set width of opened window assert_equals: expected 401 but got 980
+FAIL " width = 401" should set width of opened window assert_equals: expected 401 but got 980
+FAIL "width==401" should set width of opened window assert_equals: expected 401 but got 980
+FAIL "\nwidth= 401" should set width of opened window assert_equals: expected 401 but got 980
+FAIL ",width=401,," should set width of opened window assert_equals: expected 401 but got 980
+FAIL "WIDTH=401" should set width of opened window assert_equals: expected 401 but got 980
+FAIL "height=402" should set height of opened window assert_equals: expected 402 but got 735
+FAIL " height = 402" should set height of opened window assert_equals: expected 402 but got 735
+FAIL "height==402" should set height of opened window assert_equals: expected 402 but got 735
+FAIL "\nheight= 402" should set height of opened window assert_equals: expected 402 but got 735
+FAIL ",height=402,," should set height of opened window assert_equals: expected 402 but got 735
+FAIL "HEIGHT=402" should set height of opened window assert_equals: expected 402 but got 735
+FAIL "height=402,width=401" should set height and width of opened window assert_equals: expected 402 but got 735
+FAIL " height = 402 , width = 401 ," should set height and width of opened window assert_equals: expected 402 but got 735
+FAIL "height==402 width = 401" should set height and width of opened window assert_equals: expected 402 but got 735
+FAIL "\nheight= 402,,width=\n401" should set height and width of opened window assert_equals: expected 402 but got 735
+FAIL ",height=402,,width==401" should set height and width of opened window assert_equals: expected 402 but got 735
+FAIL "HEIGHT=402, WIDTH=401" should set height and width of opened window assert_equals: expected 402 but got 735
+

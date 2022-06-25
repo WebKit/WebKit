@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js-test-resources/js-test-pre.js"></script>
+<script>
+function runTest() {
+    origSize = internals.memoryCacheSize();
+
+    let postFetch = fetch('resources/echo-cacheable.cgi', { method: 'POST' });
+    let putFetch = fetch('resources/echo-cacheable.cgi', { method: 'PUT' });
+    let deleteFetch = fetch('resources/echo-cacheable.cgi', { method: 'DELETE' });
+
+    Promise.all([postFetch, putFetch, deleteFetch])
+        .then(vals => {
+            shouldBeTrue("origSize === internals.memoryCacheSize()");
+        })
+        .catch(reason => {
+            testFailed(String(reason));
+        })
+        .finally(finishJSTest);
+}
+</script>
+</head>
+<body onload="runTest()">
+<script>
+description("This test makes sure that only GET requests end up in the memory cache.");
+jsTestIsAsync = true;
+</script>
+<script src="../../js-test-resources/js-test-post.js"></script>
+</body>
+</html>

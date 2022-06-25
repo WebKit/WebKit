@@ -1,0 +1,11 @@
+Verify the user-agent string does not have the 'Simulator' device name.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS User agent platform should be "iPhone" or "iPad".
+PASS User agent does not contain "Simulator".
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

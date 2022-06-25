@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script>
+jsTestIsAsync = true;
+
+let subframe;
+async function compositionDidUpdate() {
+    await new Promise(requestAnimationFrame);
+    subframe.remove();
+    testPassed("Removed the subframe");
+    finishJSTest();
+}
+
+addEventListener("load", () => {
+    subframe = document.querySelector("iframe");
+    subframe.contentDocument.body.focus();
+    if (window.textInputController)
+        textInputController.setMarkedText("hello", 0, 5);
+});
+</script>
+</head>
+<body>
+<iframe srcdoc="
+    <style>body, html { width: 100%; height: 100%; }</style>
+    <body contenteditable></body>
+    <script>document.body.addEventListener('compositionupdate', () => parent.compositionDidUpdate());</script>"></iframe>
+<p>Typing in the above <code>iframe</code> using an input method should not trigger a crash.</p>
+</body>
+</html>

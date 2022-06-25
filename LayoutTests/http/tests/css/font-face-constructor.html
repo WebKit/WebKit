@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/js-test-pre.js"></script>
+<script src="/resources/payment-request.js"></script>
+</head>
+<body>
+<script>
+
+description("Test Font Face constructor");
+
+window.jsTestIsAsync = true;
+async function runTests() {
+    try{
+        var testFontFace = new FontFace('TestFontFace', 'invalid');
+        shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { weight: '100a 200' }, { stretch: 'semi-expanded expanded' })).status","error");
+        shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { weight: '100a 200' }, { stretch: 'semi-expanded expanded' })).style","normal");
+        shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { weight: '100a 200' }, { stretch: 'semi-expanded expanded' })).weight","normal");
+        shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { weight: '100a 200' }, { stretch: 'semi-expanded expanded' })).stretch","normal");
+        shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { weight: '100a 200' })).unicodeRange","U+0-10FFFF");
+        shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { weight: '100a 200' })).featureSettings","normal");
+        shouldBeEqualToString("(new FontFace('asdf', 'url(notreal)', { weight: '100a 200' })).display","auto");
+        document.fonts.add(testFontFace);
+        debug("PASS: Did not throw");
+        
+    } catch (e) {
+        debug("Fail: Exception thrown: " + e);
+    }
+
+    debug("Good");
+
+    finishJSTest();
+}
+
+runTests();
+</script>
+<script src="/resources/js-test-post.js"></script>
+<div style="font-family: TestFontFace;">a</div>
+</body>
+</html>
+

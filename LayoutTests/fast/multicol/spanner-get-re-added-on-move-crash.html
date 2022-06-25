@@ -1,0 +1,49 @@
+<style>
+*:read-write {
+  -webkit-transform: skewX(180deg);
+  display: table-caption;
+  position: relative;
+  column-count: 2;
+}
+
+span {
+  list-style-image: url(data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOxAAADsQBlSsOGwAAABh0RVh0U29mdHdhcmUAUGFpbnQuTkVUIHYzLjIyt5EXfQAAAU5JREFUeF7t07ENACAMxMDA/jsDBTtcY6TUlmx+zcx510MGNuKG/QYKgL9CAQqADWB8CygANoDxLaAA2ADGt4ACYAMY3wIKgA1gfAsoADaA8S2gANgAxreAAmADGN8CCoANYHwLKAA2gPEtoADYAMa3gAJgAxjfAgqADWB8CygANoDxLaAA2ADGt4ACYAMY3wIKgA1gfAsoADaA8S2gANgAxreAAmADGN8CCoANYHwLKAA2gPEtoADYAMa3gAJgAxjfAgqADWB8CygANoDxLaAA2ADGt4ACYAMY3wIKgA1gfAsoADaA8S2gANgAxreAAmADGN8CCoANYHwLKAA2gPEtoADYAMa3gAJgAxjfAgqADWB8CygANoDxLaAA2ADGt4ACYAMY3wIKgA1gfAsoADaA8S2gANgAxreAAmADGN8CCoANYHwLKAA2gPEtAAe4i54BvwLfXFAAAAAASUVORK5CYII=);
+}
+
+* {
+  position: fixed;
+  column-span: all;
+}
+
+#gradient {
+  display: table;
+}
+</style>
+
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+
+let callPrepend = true;
+
+function func() {
+  if (callPrepend) {
+    callPrepend = false;
+    fobject.prepend(gradient);
+  }
+  image.insertAdjacentHTML("beforebegin", fobject.outerHTML);
+  document.designMode = "off";
+}
+
+function runTest() {
+  document.documentElement.onselectstart = func;
+  document.designMode = "on";
+  document.execCommand("selectAll", false, null);
+}
+
+</script>
+
+<body onload="runTest()">
+<div></div>PASS if no crash in release.
+<svg><linearGradient id=gradient></linearGradient><foreignObject id=fobject></foreignObject><image id=image></svg>
+<span style="display: contents"><details ontoggle="func()" contenteditable="false" open="">

@@ -1,0 +1,11 @@
+Test backtracking with a long sequence of direct sibling relations.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.querySelectorAll("li+div+li+blockquote+li~span").length is 1
+PASS document.querySelectorAll("li+div+li+blockquote+li~span")[0].id is "target"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

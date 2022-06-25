@@ -1,0 +1,89 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script src="resources/property-descriptor-utilities.js"></script>
+<script>
+if (window.internals)
+    window.internals.settings.setUnhandledPromiseRejectionToConsoleEnabled(false);
+
+function test()
+{
+    let suite = ProtocolTest.createAsyncSuite("Runtime.getProperties.internalProperties");
+
+    function addTestCase({name, expression}) {
+        suite.addTestCase({
+            name,
+            async test() {
+                ProtocolTest.log(`Evaluating expression...`);
+                let evaluateResponse = await InspectorProtocol.awaitCommand({
+                    method: "Runtime.evaluate",
+                    params: {expression},
+                });
+                InspectorProtocol.checkForError(evaluateResponse);
+                ProtocolTest.assert(!evaluateResponse.wasThrown);
+
+                ProtocolTest.log("Getting internal properties...");
+                let {internalProperties} = await InspectorProtocol.awaitCommand({
+                    method: "Runtime.getProperties",
+                    params: {
+                        objectId: evaluateResponse.result.objectId,
+                    },
+                });
+
+                ProtocolTest.newline();
+
+                async function dump({name, value}, indentSize) {
+                    if (name === "__proto__")
+                        return;
+
+                    let indentLog = " ".repeat(indentSize);
+                    let nameLog = name + ": ";
+
+                    if (value.type !== "object") {
+                        ProtocolTest.log(indentLog + nameLog + ProtocolTest.PropertyDescriptorUtilities.stringifyRemoteObject(value));
+                        return;
+                    }
+
+                    ProtocolTest.log(indentLog + nameLog + (value.subtype === "array" ? "[" : "{"));
+
+                    let {properties} = await InspectorProtocol.awaitCommand({
+                        method: "Runtime.getProperties",
+                        params: {
+                            objectId: value.objectId,
+                            ownProperties: true,
+                        },
+                    });
+                    for (let property of properties)
+                        await dump(property, indentSize + 2);
+
+                    ProtocolTest.log(indentLog + (value.subtype === "array" ? "]" : "}"));
+                }
+
+                for (let internalProperty of internalProperties)
+                    await dump(internalProperty, 2);
+            },
+        });
+    }
+
+    addTestCase({
+        name: "Runtime.getProperties.internalProperties.EventTarget",
+        expression: `(function() {
+let x = new EventTarget;
+x.addEventListener("eventBubbleActiveMulti", function callbackBubbleActiveMulti() {});
+x.addEventListener("eventCapturePassiveOnce", function callbackCapturePassiveOnce() {}, {
+    capture: true,
+    passive: true,
+    once: true,
+});
+return x;
+        })()`,
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onLoad="runTest()">
+<p>Tests for the Runtime.getProperties command.</p>
+</body>
+</html>

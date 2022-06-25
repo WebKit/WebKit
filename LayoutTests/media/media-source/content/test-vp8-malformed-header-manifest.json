@@ -1,0 +1,9 @@
+{
+	"url": "content/test-vp8-malformed-header.webm",
+	"type": "video/webm; codecs=\"vp08.0.10.8\"",
+	"init": { "offset": 0, "size": 3441 },
+	"duration": 32.48,
+	"media": [ 
+		{ "offset": 3959, "size": 216196, "timestamp": 0, "duration": 32.48}
+	]
+}

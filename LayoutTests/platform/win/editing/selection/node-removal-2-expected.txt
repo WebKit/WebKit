@@ -1,0 +1,27 @@
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > DIV > BODY > HTML > #document to 7 of #text > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > P > BODY > HTML > #document to 7 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 748x36
+          text run at (0,0) width 678: "This tests behavior when a node that serves as the start or end of a selection is removed from the document. "
+          text run at (678,0) width 70: "Ideally, we"
+          text run at (0,18) width 650: "would just adjust the selection when an endpoint is removed, for now, we just blow away the selection."
+      RenderBlock {P} at (0,52) size 784x36
+        RenderText {#text} at (0,0) size 771x36
+          text run at (0,0) width 475: "This test creates a selection that ends inside of a node that will be removed. "
+          text run at (475,0) width 172: "Then the node is removed. "
+          text run at (647,0) width 124: "Then a Select All is"
+          text run at (0,18) width 64: "executed. "
+          text run at (64,18) width 253: "The entire document should be selected."
+      RenderBlock {DIV} at (0,104) size 784x18
+        RenderText {#text} at (0,0) size 35x18
+          text run at (0,0) width 35: "hello "
+        RenderText {#text} at (35,0) size 42x18
+          text run at (35,0) width 42: "world!"
+selection start: position 0 of child 0 {#text} of child 1 {P} of body
+selection end:   position 7 of child 1 {#text} of child 5 {DIV} of body

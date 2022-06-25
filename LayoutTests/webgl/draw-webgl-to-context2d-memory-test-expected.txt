@@ -1,0 +1,37 @@
+This test checking that drawing WebGL canvas to Context2D canvas with drawImage does not use unbounded amount of memory.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+TEST COMPLETE: 27 PASS, 0 FAIL
+
+PASS drawImage: Should be [64, 128, 192, 255]
+PASS drawImage: Should be [64, 128, 192, 255]
+PASS drawImage: Should be [64, 128, 192, 255]
+PASS drawImage: Should be [64, 128, 192, 255]
+PASS drawImage: Should be [64, 128, 192, 255]
+PASS drawImage: Should be [64, 128, 192, 255]
+PASS drawImage: Should be [64, 128, 192, 255]
+PASS drawImage: Should be [64, 128, 192, 255]
+PASS drawImage: Should be [64, 128, 192, 255]
+PASS drawImage: Should be [64, 128, 192, 255]
+PASS drawImage: Should be [64, 128, 192, 255]
+PASS drawImage: Should be [64, 128, 192, 255]
+PASS drawImage: Should be [64, 128, 192, 255]
+PASS drawImage: Should be [64, 128, 192, 255]
+PASS drawImage: Should be [64, 128, 192, 255]
+PASS drawImage: Should be [64, 128, 192, 255]
+PASS drawImage: Should be [64, 128, 192, 255]
+PASS drawImage: Should be [64, 128, 192, 255]
+PASS drawImage: Should be [64, 128, 192, 255]
+PASS drawImage: Should be [64, 128, 192, 255]
+PASS drawImage: Should be [64, 128, 192, 255]
+PASS drawImage: Should be [64, 128, 192, 255]
+PASS drawImage: Should be [64, 128, 192, 255]
+PASS drawImage: Should be [64, 128, 192, 255]
+PASS drawImage: Should be [64, 128, 192, 255]
+PASS getError was expected value: NO_ERROR :
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

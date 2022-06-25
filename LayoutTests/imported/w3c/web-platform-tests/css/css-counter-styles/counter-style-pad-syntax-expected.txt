@@ -1,0 +1,11 @@
+
+PASS @counter-style 'pad: 10' is invalid
+PASS @counter-style 'pad: "X"' is invalid
+PASS @counter-style 'pad: 0 "X"' is valid
+PASS @counter-style 'pad: 10 "X"' is valid
+PASS @counter-style 'pad: "X" 10' is valid
+PASS @counter-style 'pad: -1 "X"' is invalid
+PASS @counter-style 'pad: "X" -1' is invalid
+PASS @counter-style 'pad: 10 "X" "Y"' is invalid
+PASS @counter-style 'pad: 10 10 "X"' is invalid
+

@@ -1,0 +1,19 @@
+include_rules = [
+  "+system_wrappers",
+  "+third_party/libyuv",
+]
+
+specific_include_rules = {
+  "desktop_frame_cgimage\.h": [
+    "+sdk/objc",
+  ],
+  "desktop_frame_iosurface\.h": [
+    "+sdk/objc",
+  ],
+  "desktop_frame_provider\.h": [
+    "+sdk/objc",
+  ],
+  "screen_capturer_mac\.mm": [
+    "+sdk/objc",
+  ],
+}

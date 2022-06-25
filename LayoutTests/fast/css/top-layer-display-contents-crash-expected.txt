@@ -1,0 +1,3 @@
+This test PASS if it does not CRASH.
+
+TEXT_CHILD

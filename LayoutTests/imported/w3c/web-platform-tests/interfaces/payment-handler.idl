@@ -1,0 +1,97 @@
+// GENERATED CONTENT - DO NOT EDIT
+// Content was automatically extracted by Reffy into webref
+// (https://github.com/w3c/webref)
+// Source: Payment Handler API (https://w3c.github.io/payment-handler/)
+
+partial interface ServiceWorkerRegistration {
+  [SameObject] readonly attribute PaymentManager paymentManager;
+};
+
+[SecureContext, Exposed=(Window,Worker)]
+interface PaymentManager {
+  [SameObject] readonly attribute PaymentInstruments instruments;
+  attribute DOMString userHint;
+};
+
+[SecureContext, Exposed=(Window,Worker)]
+interface PaymentInstruments {
+  Promise<boolean> delete(DOMString instrumentKey);
+  Promise<any> get(DOMString instrumentKey);
+  Promise<sequence<DOMString>>  keys();
+  Promise<boolean> has(DOMString instrumentKey);
+  Promise<undefined> set(DOMString instrumentKey, PaymentInstrument details);
+  Promise<undefined> clear();
+};
+
+dictionary PaymentInstrument {
+  required DOMString name;
+  sequence<ImageObject> icons;
+  DOMString method;
+  object capabilities;
+};
+
+dictionary ImageObject {
+    required USVString src;
+    DOMString sizes;
+    DOMString type;
+};
+
+partial interface ServiceWorkerGlobalScope {
+  attribute EventHandler oncanmakepayment;
+};
+
+[Exposed=ServiceWorker]
+interface CanMakePaymentEvent : ExtendableEvent {
+  constructor(DOMString type, optional CanMakePaymentEventInit eventInitDict = {});
+  readonly attribute USVString topOrigin;
+  readonly attribute USVString paymentRequestOrigin;
+  readonly attribute FrozenArray<PaymentMethodData> methodData;
+  undefined respondWith(Promise<boolean> canMakePaymentResponse);
+};
+
+dictionary CanMakePaymentEventInit : ExtendableEventInit {
+  USVString topOrigin;
+  USVString paymentRequestOrigin;
+  sequence<PaymentMethodData> methodData;
+};
+
+partial interface ServiceWorkerGlobalScope {
+  attribute EventHandler onpaymentrequest;
+};
+
+dictionary PaymentRequestDetailsUpdate {
+  DOMString error;
+  PaymentCurrencyAmount total;
+  sequence<PaymentDetailsModifier> modifiers;
+  object paymentMethodErrors;
+};
+
+[Exposed=ServiceWorker]
+interface PaymentRequestEvent : ExtendableEvent {
+  constructor(DOMString type, optional PaymentRequestEventInit eventInitDict = {});
+  readonly attribute USVString topOrigin;
+  readonly attribute USVString paymentRequestOrigin;
+  readonly attribute DOMString paymentRequestId;
+  readonly attribute FrozenArray<PaymentMethodData> methodData;
+  readonly attribute object total;
+  readonly attribute FrozenArray<PaymentDetailsModifier> modifiers;
+  readonly attribute DOMString instrumentKey;
+  Promise<WindowClient?> openWindow(USVString url);
+  Promise<PaymentRequestDetailsUpdate?> changePaymentMethod(DOMString methodName, optional object? methodDetails = null);
+  undefined respondWith(Promise<PaymentHandlerResponse> handlerResponsePromise);
+};
+
+dictionary PaymentRequestEventInit : ExtendableEventInit {
+  USVString topOrigin;
+  USVString paymentRequestOrigin;
+  DOMString paymentRequestId;
+  sequence<PaymentMethodData> methodData;
+  PaymentCurrencyAmount total;
+  sequence<PaymentDetailsModifier> modifiers;
+  DOMString instrumentKey;
+};
+
+dictionary PaymentHandlerResponse {
+DOMString methodName;
+object details;
+};

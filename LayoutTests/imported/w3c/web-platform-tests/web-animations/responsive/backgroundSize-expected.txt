@@ -1,0 +1,3 @@
+
+PASS Border image width responsive to font size changes
+

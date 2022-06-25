@@ -1,0 +1,42 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x392
+  RenderBlock {html} at (0,0) size 800x392
+    RenderBody {body} at (8,8) size 784x368
+      RenderBlock {div} at (0,0) size 784x212 [bgcolor=#008000]
+        RenderEmbeddedObject {object} at (0,0) size 208x208 [bgcolor=#FFA500]
+          layer at (0,0) size 208x208
+            RenderView at (0,0) size 208x208
+          layer at (0,0) size 208x208
+            RenderSVGRoot {svg} at (20,20) size 168x168
+              RenderSVGEllipse {circle} at (20,20) size 168x168 [fill={[type=SOLID] [color=#FF0000]}] [cx=25.00] [cy=25.00] [r=20.00]
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {p} at (0,228) size 208x18 [bgcolor=#0000FF]
+        RenderText {#text} at (0,0) size 12x18
+          text run at (0,0) width 12: "hi"
+      RenderBlock {h2} at (0,265) size 784x29
+        RenderText {#text} at (0,0) size 169x28
+          text run at (0,0) width 169: "Expected results"
+      RenderBlock {ul} at (0,313) size 784x55
+        RenderListItem {li} at (40,0) size 744x18
+          RenderListMarker at (-17,0) size 7x18: bullet
+          RenderText {#text} at (0,0) size 29x18
+            text run at (0,0) width 29: "The "
+          RenderInline {code} at (0,0) size 24x15
+            RenderText {#text} at (29,2) size 24x15
+              text run at (29,2) width 24: "div"
+          RenderText {#text} at (53,0) size 242x18
+            text run at (53,0) width 242: " containing the object appears in green"
+        RenderListItem {li} at (40,18) size 744x18
+          RenderListMarker at (-17,0) size 7x18: bullet
+          RenderText {#text} at (0,0) size 29x18
+            text run at (0,0) width 29: "The "
+          RenderInline {code} at (0,0) size 48x15
+            RenderText {#text} at (29,2) size 48x15
+              text run at (29,2) width 48: "object"
+          RenderText {#text} at (77,0) size 270x18
+            text run at (77,0) width 270: " appears in orange. Its height is set at 13em"
+        RenderListItem {li} at (40,36) size 744x18
+          RenderListMarker at (-17,0) size 7x18: bullet
+          RenderText {#text} at (0,0) size 171x18
+            text run at (0,0) width 171: "The blue line is 13em wide"

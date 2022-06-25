@@ -1,0 +1,3 @@
+
+FAIL Meta color-scheme without content attribute has no effect. assert_equals: Root element's color-scheme should be 'normal' expected "normal" but got "auto"
+

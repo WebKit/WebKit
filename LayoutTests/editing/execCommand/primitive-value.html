@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<script>
+
+function primValueTest() {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    document.designMode = 'on';
+    document.execCommand("selectAll");
+    document.execCommand("InsertHTML",false,"This test checks that pasing in a combination of nested blocks where one starts with a text field doesn't crash or fail assertions.<textarea> </textarea> \n<span>x</span>\n");
+    document.execCommand("selectAll");
+    document.execCommand("FontSizeDelta",false,3);
+}
+</script>
+<body onload=primValueTest()>
+</body>
+</html>

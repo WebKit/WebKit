@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .container {
+            position: absolute;
+            top: 200px;
+            left: 100px;
+        }
+        .box {
+            position: relative;
+            left: 110px;
+            height: 400px;
+            width: 300px;
+            background-color: green;
+            transform: translateZ(0);
+        }
+        .clipper {
+            position: absolute;
+            top: 30px;
+            left: 200px;
+            height: 270px;
+            width: 220px;
+            border: 50px solid gray;
+            border-top-width: 230px;
+            border-bottom-width: 260px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="box"></div>
+    </div>
+    <div class="clipper"></div>
+</body>
+</html>

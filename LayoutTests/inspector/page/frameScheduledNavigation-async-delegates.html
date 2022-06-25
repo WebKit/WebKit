@@ -1,0 +1,50 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+
+if (window.testRunner && testRunner.setShouldDecideNavigationPolicyAfterDelay)
+    testRunner.setShouldDecideNavigationPolicyAfterDelay(true);
+
+function load()
+{
+    document.querySelector("iframe").src = "resources/blank.html";
+}
+
+function test()
+{
+    InspectorProtocol.eventHandler["Page.frameScheduledNavigation"] = onScheduled;
+    InspectorProtocol.eventHandler["Page.frameStartedLoading"] = onStarted;
+    InspectorProtocol.eventHandler["Page.frameClearedScheduledNavigation"] = onCleared;
+    InspectorProtocol.sendCommand("Page.enable", {});
+
+    function onScheduled(msg)
+    {
+        ProtocolTest.log("Scheduled navigation with delay " + msg.params.delay);
+    }
+
+    function onStarted(msg)
+    {
+        ProtocolTest.log("Started loading");
+        ProtocolTest.wasStarted = true;
+        if (ProtocolTest.wasCleared)
+            ProtocolTest.completeTest();
+    }
+
+    function onCleared(msg)
+    {
+        ProtocolTest.log("Cleared scheduled navigation");
+        ProtocolTest.wasCleared = true;
+        if (ProtocolTest.wasStarted)
+            ProtocolTest.completeTest();
+    }
+
+    InspectorProtocol.sendCommand("Runtime.evaluate", { "expression": "load()" });
+}
+
+</script>
+</head>
+<body onload="runTest()">
+<iframe>
+</body>
+</html>

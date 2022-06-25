@@ -1,0 +1,9 @@
+Blocked access to external URL http://nonexistent.localhost/
+Blocked access to external URL http://nonexistent.localhost/
+
+
+PASS new embed: nonexistent host
+PASS new embed: X-Frame-Options prevents embedding
+PASS navigating an existing embed: nonexistent host
+PASS navigating an existing embed: X-Frame-Options prevents embedding
+

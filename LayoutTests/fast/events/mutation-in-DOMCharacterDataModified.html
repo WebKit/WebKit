@@ -1,0 +1,12 @@
+foo
+<script type="text/javascript">
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+document.addEventListener("DOMCharacterDataModified", () => {
+    document.body.textContent = "This test passes if it doesn't crash";
+});
+onload = () => {
+    document.body.firstChild.data = "bar";
+};
+</script>

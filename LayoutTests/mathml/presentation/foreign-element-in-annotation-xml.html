@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Foreign content in semantics</title>
+    <script type="text/javascript">
+      if (window.testRunner)
+        testRunner.dumpAsText();
+    </script>
+  </head>
+  <body>
+  
+    <!-- Text is generally not accepted inside MathML elements. -->
+    <p><math>ERROR</math></p>
+    <p><math><mfrac><mi>x</mi>ERROR<mi>y</mi></mfrac></math></p>
+    <p><math><munder><mi>x</mi>ERROR<mi>y</mi></munder></math></p>
+    <p><math><msup><mi>x</mi>ERROR<mi>y</mi></msup></math></p>
+
+    <!-- annotation-xml with HTML encoding accepts flow content. -->
+    <p><math><semantics><csymbol>Content MathML</csymbol><annotation-xml encoding="text/html"><span>span</span></annotation-xml></semantics></math></p>
+    <p><math><semantics><csymbol>Content MathML</csymbol><annotation-xml encoding="text/html"><svg><text>svg</text></svg></annotation-xml></semantics></math></p>
+    <p><math><semantics><csymbol>Content MathML</csymbol><annotation-xml encoding="text/html"><math><mtext>mathml</mtext></math></annotation-xml></semantics></math></p>
+    <p><math><semantics><csymbol>Content MathML</csymbol><annotation-xml encoding="text/html"><div>div</div></annotation-xml></semantics></math></p>
+    <p><math><semantics><csymbol>Content MathML</csymbol><annotation-xml encoding="text/html"><h1>h1</h1></annotation-xml></semantics></math></p>
+    <p><math><semantics><csymbol>Content MathML</csymbol><annotation-xml encoding="text/html"><h2>h2</h2></annotation-xml></semantics></math></p>
+    <p><math><semantics><csymbol>Content MathML</csymbol><annotation-xml encoding="text/html"><h3>h3</h3></annotation-xml></semantics></math></p>
+    <p><math><semantics><csymbol>Content MathML</csymbol><annotation-xml encoding="text/html"><h4>h4</h4></annotation-xml></semantics></math></p>
+    <p><math><semantics><csymbol>Content MathML</csymbol><annotation-xml encoding="text/html"><h5>h5</h5></annotation-xml></semantics></math></p>
+    <p><math><semantics><csymbol>Content MathML</csymbol><annotation-xml encoding="text/html"><h6>h6</h6></annotation-xml></semantics></math></p>
+    <p><math><semantics><csymbol>Content MathML</csymbol><annotation-xml encoding="text/html"><blockquote>blockquote</blockquote></annotation-xml></semantics></math></p>
+
+    <!-- annotation-xml with SVG/MathML encoding only accepts the specified type. -->
+    <p><math><semantics><csymbol>Content MathML</csymbol><annotation-xml encoding="image/svg+xml"><math><mtext>ERROR</mtext></math></annotation-xml></semantics></math></p>
+    <p><math><semantics><csymbol>Content MathML</csymbol><annotation-xml encoding="image/svg+xml"><svg><text>svg</text></svg></annotation-xml></semantics></math></p>
+    <p><math><semantics><csymbol>Content MathML</csymbol><annotation-xml encoding="application/mathml-presentation+xml"><math><mtext>mathml</mtext></math></annotation-xml></semantics></math></p>
+    <p><math><semantics><csymbol>Content MathML</csymbol><annotation-xml encoding="application/mathml-presentation+xml"><svg><text>ERROR</text></svg></annotation-xml></semantics></math></p>
+
+  </body>
+</html>

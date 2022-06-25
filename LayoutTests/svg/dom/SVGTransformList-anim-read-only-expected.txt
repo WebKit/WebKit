@@ -1,0 +1,28 @@
+This test checks the read-only property of SVGTransformList.animVal
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Check SVGAnimatedTransformList.animVal is a readonly SVGTransformList
+PASS transformAnim.appendItem(t) threw exception NoModificationAllowedError: The object can not be modified..
+PASS transformAnim.clear() threw exception NoModificationAllowedError: The object can not be modified..
+PASS transformAnim.initialize(t) threw exception NoModificationAllowedError: The object can not be modified..
+PASS transformAnim.insertItemBefore(t, 0) threw exception NoModificationAllowedError: The object can not be modified..
+PASS transformAnim.replaceItem(t, 0) threw exception NoModificationAllowedError: The object can not be modified..
+PASS transformAnim.removeItem(0) threw exception NoModificationAllowedError: The object can not be modified..
+PASS transformAnim(0) = t threw exception ReferenceError: Left side of assignment is not a reference..
+
+Check items of SVGAnimatedTransformList.animVal are readonly SVGTransform
+PASS t.setScale(2, 2) threw exception NoModificationAllowedError: The object can not be modified..
+PASS t.setMatrix(m) threw exception NoModificationAllowedError: The object can not be modified..
+PASS m.b = 2 threw exception NoModificationAllowedError: The object can not be modified..
+
+Check detached items from SVGAnimatedTransformList.animVal are not readonly SVGTransform
+PASS t.setScale(2, 2) did not throw exception.
+PASS t.setMatrix(m) did not throw exception.
+PASS m.b = 2 did not throw exception.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,5 @@
+
+FAIL Test that the UA provided shadow root can be replaced promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL Test that the UA provided shadow root can be replaced using declarative shadow DOM assert_equals: expected (boolean) false but got (undefined) undefined
+FAIL Test that only the UA provided shadow root can be replaced The operation is not supported.
+

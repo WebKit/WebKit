@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+<head>
+<style>
+target, Target, TARGET {
+    width: 100px;
+    height: 100px;
+    display: block;
+    float: left;
+    background-color: white;
+    color: white;
+    border: none;
+}
+target {
+    background-color: red;
+}
+Target {
+    border: 2px solid blue;
+}
+TARGET {
+    color: green;
+}
+</style>
+</head>
+<body>
+    <p>Test styling of elements using their local name. Matching the name should be case-insensitive for HTML, case-sensitive for XML.</p>
+    <div id="test-cases">
+        <target>Target</target>
+        <Target>Target</Target>
+        <TARGET>Target</TARGET>
+        <xml xmlns="https://www.webkit.org/awesome">
+            <target>Target</target>
+            <Target>Target</Target>
+            <TARGET>Target</TARGET>
+        </xml>
+    </div>
+</body>
+<script>
+    var xmlDocument = new DOMParser().parseFromString('<xml xmlns="https://www.webkit.org/awesome"><target>Target</target><Target>Target</Target><TARGET>Target</TARGET></xml>', 'text/xml');
+    var testCases = document.getElementById("test-cases");
+    testCases.appendChild(document.importNode(xmlDocument.documentElement, true));
+</script>
+</html>

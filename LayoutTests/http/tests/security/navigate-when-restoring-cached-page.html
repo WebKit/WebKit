@@ -1,0 +1,98 @@
+<!-- webkit-test-runner [ UsesBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<p>This test passes if it does not print an ALERT with "secret data".</p>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+
+function createURL(data, type = 'text/html') {
+  return URL.createObjectURL(new Blob([data], {type: type}));
+}
+
+victim_url = 'http://localhost:8000/security/resources/navigate-when-restoring-cached-page-victim.html?' + Math.random();
+
+cache_frame = document.body.appendChild(document.createElement('iframe'));
+cache_frame.style.display = 'none';
+cache_frame.src = victim_url;
+
+function runTest()
+{
+  if (window.testRunner && !testRunner.isWebKit2 && !window.internals) {
+    // This test does not run (times out) on WebKit1 and requires internals API.
+    testRunner.notifyDone();
+    return;
+  }
+
+  showModalDialog(createURL(`
+    <script>
+      onmessage = e => {
+        w.close();
+        if (window.testRunner)
+          testRunner.abortModal();
+        alert(e.data);
+        if (window.testRunner)
+          testRunner.notifyDone();
+      }
+      
+      ${createURL}
+      
+      w = open('about:blank');
+      if (w == null) {
+        alert('coudn\\'t open enough windows, try again');
+        close();
+        if (window.testRunner) {
+          testRunner.abortModal();
+          testRunner.notifyDone();
+        }
+      }
+      w.history.pushState('', '');
+      
+      cached_doc = w.document;
+      setTimeout(() => {
+        w.location = 'about:blank';
+        interval_id = setInterval(() => {
+          if (cached_doc == w.document)
+            return;
+          
+          clearInterval(interval_id);
+
+          if (w.internals)
+            w.internals.preventDocumentFromEnteringBackForwardCache();
+
+          child_frame = w.document.body.appendChild(document.createElement('iframe'));
+          child_frame.contentWindow.onunload = () => {
+            child_frame.contentWindow.onunload = null;
+            
+            a = w.document.createElement('a');
+            a.href = '${victim_url}';
+            a.click();
+
+            showModalDialog(createURL('<script>timeout = 100; setInterval(() => { if (!--timeout || opener.child_loaded) { close(); if (window.testRunner) testRunner.abortModal(); } }, 1)</sc' + 'ript>'));
+
+            if (!window.child_loaded && window.testRunner) {
+              testRunner.abortModal();
+              testRunner.notifyDone();
+            }
+          }
+          
+          w.history.back();
+        }, 0);
+      }, 0); 
+    </scr` + `ipt>`));
+}
+
+onload = function() {
+  setTimeout(() => {
+    if (window.internals)
+      internals.withUserGesture(runTest);
+    else
+      onclick = runTest;
+  }, 0);
+}
+</script>
+</body>
+</html>

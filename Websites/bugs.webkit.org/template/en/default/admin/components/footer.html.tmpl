@@ -1,0 +1,42 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # comp: object; Bugzilla::Component object representing the component 
+  # product: object; Bugzilla::Product object representing the product to
+  #               which the component belongs.
+  #%]
+
+<hr>
+
+<p>
+Edit 
+
+[% IF comp && !no_edit_component_link %]
+  component <a 
+  title="Edit Component '[% comp.name FILTER html %]'"
+  href="editcomponents.cgi?action=edit&amp;product=
+  [%- product.name FILTER uri %]&amp;component=[% comp.name FILTER uri %]">
+   '[% comp.name FILTER html %]'</a> 
+  or edit
+[% END %]
+
+[% IF !no_edit_other_components_link %]
+other components of product <a 
+  title="Choose a component from product '[% product.name FILTER html %]' to edit"
+  href="editcomponents.cgi?product=
+  [%- product.name FILTER uri %]">'[% product.name FILTER html %]'</a>, 
+  or edit 
+[% END %]
+
+product <a 
+  title="Edit Product '[% product.name FILTER html %]'"
+  href="editproducts.cgi?action=edit&amp;product=
+  [%- product.name FILTER uri %]">'[% product.name FILTER html %]'</a>.
+
+</p>

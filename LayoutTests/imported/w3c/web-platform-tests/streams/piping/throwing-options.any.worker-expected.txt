@@ -1,0 +1,10 @@
+
+PASS pipeTo should stop after getting preventAbort throws
+PASS pipeThrough should stop after getting preventAbort throws
+PASS pipeTo should stop after getting preventCancel throws
+PASS pipeThrough should stop after getting preventCancel throws
+PASS pipeTo should stop after getting preventClose throws
+PASS pipeThrough should stop after getting preventClose throws
+PASS pipeTo should stop after getting signal throws
+PASS pipeThrough should stop after getting signal throws
+

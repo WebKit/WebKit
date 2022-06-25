@@ -1,0 +1,5 @@
+This test checks that grid items' 'order' dynamic updates recomputes the positions of automatically placed grid items.
+PASS
+PASS
+PASS
+PASS

@@ -1,0 +1,19 @@
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 1
+        (GraphicsLayer
+          (position 0.00 150.00)
+          (bounds 402.00 52.00)
+          (contentsVisible 0)
+          (backdrop layer 0.00, 0.00 402.00 x 52.00 hidden)
+        )
+      )
+    )
+  )
+)
+

@@ -1,0 +1,49 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="UTF-8">
+<script src="../../js-test-resources/js-test-pre.js"></script>
+</head>
+<body onload="test()">
+This tests for proper execution order of module scripts with the async attribute.<hr>
+<div id="console"></div>
+<script type="text/javascript">
+var jsTestIsAsync = true;
+var log = [];
+
+function debug(msg)
+{
+    log.push(msg);
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    debug('DOMContentLoaded');
+}, false);
+
+function test()
+{
+    var expectedOrderings = [
+        [ "async", "external", "inline", "DOMContentLoaded", "slowAsync" ],
+        [ "external", "async", "inline", "DOMContentLoaded", "slowAsync" ],
+        [ "external", "inline", "async", "DOMContentLoaded", "slowAsync" ],
+        [ "external", "inline", "DOMContentLoaded", "async", "slowAsync" ],
+    ];
+    var results = "PASS";
+    if (!expectedOrderings.find((expected) => JSON.stringify(expected) == JSON.stringify(log)))
+        results = `FAIL: Expected one of ${JSON.stringify(expectedOrderings)}, Actual=${JSON.stringify(logs)}`;
+    document.getElementById("console").innerHTML = results;
+    finishJSTest();
+}
+
+</script>
+<script type="module" src="http://127.0.0.1:8000/misc/resources/slow-async-script.cgi" async="ASYNC"></script>
+<script type="module" src="http://127.0.0.1:8000/misc/resources/async-script.js" async="ASYNC"></script>
+<script src="http://127.0.0.1:8000/misc/resources/external-script.js"></script>
+<script>
+debug("inline");
+</script>
+<script src="../../js-test-resources/js-test-post.js"></script>
+</body>
+</html>
+
+

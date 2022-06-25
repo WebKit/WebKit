@@ -1,0 +1,50 @@
+<html>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test-pre.js"></script>
+<body>
+    
+    <div id="result"></div>
+    
+    <textarea name="area1" id="area1" rows="5" cols="40">
+line 1
+line 2
+line 3
+    </textarea>
+
+<script>
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+        var area1 = document.getElementById("area1");
+        area1.focus();
+
+        setTimeout(async function() {
+            var textArea = accessibilityController.focusedElement;
+
+            // accessibilityController runs its code on a secondary thread without
+            // explicit synchronization, so changes show up at unpredictable times.
+
+            textArea.setSelectedTextRange(4, 0);
+            await waitFor(() => {
+                return textArea.selectedTextRange == "{4, 0}";
+            });
+            debug("PASS: textArea.selectedTextRange is {4, 0}");
+
+            textArea.setSelectedTextRange(8, 2);
+            await waitFor(() => {
+                return textArea.selectedTextRange == "{8, 2}";
+            });
+            debug("PASS: textArea.selectedTextRange is {8, 2}");
+
+            textArea.setSelectedTextRange(100, 0);
+            await waitFor(() => {
+                return textArea.selectedTextRange == "{25, 0}";
+            });
+            debug("PASS: textArea.selectedTextRange is {25, 0}");
+
+            finishJSTest();
+        }, 0);
+    }
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

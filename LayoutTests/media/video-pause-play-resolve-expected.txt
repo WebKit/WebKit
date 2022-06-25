@@ -1,0 +1,10 @@
+
+RUN(mediaElement.src = findMediaFile('video', 'content/test'))
+EVENT(canplaythrough)
+RUN(promise = video.play())
+Promise resolved OK
+RUN(video.pause())
+RUN(promise = video.play())
+Promise resolved OK
+END OF TEST
+

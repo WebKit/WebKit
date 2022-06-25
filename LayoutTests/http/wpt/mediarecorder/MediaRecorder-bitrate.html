@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+<head>
+    <title>MediaRecorder bitrate</title>
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+promise_test(async (t) => {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio : true });
+
+    let recorder = new MediaRecorder(stream, { bitsPerSecond : 1000000 });
+    assert_equals(recorder.audioBitsPerSecond, 100000, "test 1");
+
+    recorder = new MediaRecorder(stream, { bitsPerSecond : 10000 });
+    assert_equals(recorder.audioBitsPerSecond, 8000, "test 2");
+
+    recorder = new MediaRecorder(stream, { bitsPerSecond : 1000 });
+    assert_equals(recorder.audioBitsPerSecond, 8000, "test 3");
+}, "audio bitrate");
+
+promise_test(async (t) => {
+    const stream = await navigator.mediaDevices.getUserMedia({ video : true });
+
+    let recorder = new MediaRecorder(stream, { bitsPerSecond : 1000000 });
+    assert_equals(recorder.videoBitsPerSecond, 900000, "test 1");
+
+    recorder = new MediaRecorder(stream, { bitsPerSecond : 100000 });
+    assert_equals(recorder.videoBitsPerSecond, 90000, "test 2");
+
+    recorder = new MediaRecorder(stream, { bitsPerSecond : 10000 });
+    assert_equals(recorder.videoBitsPerSecond, 80000, "test 3");
+}, "video bitrate");
+
+promise_test(async (t) => {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio : true, video : true });
+
+    let recorder = new MediaRecorder(stream, { bitsPerSecond : 1000000 });
+    assert_equals(recorder.audioBitsPerSecond, 100000, "test 1");
+    assert_equals(recorder.videoBitsPerSecond, 900000, "test 2");
+
+    recorder = new MediaRecorder(stream, { bitsPerSecond : 200000 });
+    assert_equals(recorder.audioBitsPerSecond, 20000, "test 3");
+    assert_equals(recorder.videoBitsPerSecond, 180000, "test 4");
+
+    recorder = new MediaRecorder(stream, { bitsPerSecond : 88000 });
+    assert_equals(recorder.audioBitsPerSecond, 8800, "test 5");
+    assert_equals(recorder.videoBitsPerSecond, 80000, "test 6");
+
+    recorder = new MediaRecorder(stream, { bitsPerSecond : 50000 });
+    assert_equals(recorder.audioBitsPerSecond, 8000, "test 7");
+    assert_equals(recorder.videoBitsPerSecond, 80000, "test 8");
+}, "audio video bitrate");
+</script>
+</body>
+</html>

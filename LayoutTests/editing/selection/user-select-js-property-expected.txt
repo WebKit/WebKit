@@ -1,0 +1,17 @@
+Test setting CSSStyleDeclaration.webkitUserSelect and userSelect
+
+editable
+uneditable
+
+PASS user-select-js-property
+PASS 'userSelect' in style
+PASS 'webkitUserSelect' in style
+PASS userSelect of '#foo { user-select: none; }' should be 'none'
+PASS webkitUserSelect of '#foo { user-select: none; }' should be 'none'
+PASS userSelect of '#bar { user-select: none; }' should be 'none'
+PASS webkitUserSelect of '#bar { user-select: none; }' should be 'none'
+PASS userSelect of 'user-select:none' should be 'none'
+PASS webkitUserSelect of 'user-select:none' should be 'none'
+PASS userSelect of '-webkit-user-select:none' should be 'none'
+PASS webkitUserSelect of '-webkit-user-select:none' should be 'none'
+

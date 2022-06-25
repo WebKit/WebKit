@@ -1,0 +1,24 @@
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+
+function runTest() {
+    var frame = frames[0];
+    var sel = frame.getSelection();
+    var doc = frame.document;
+    
+    sel.setPosition(doc.body, 0);
+    doc.execCommand("InsertText", false, "foo bar baz");
+    sel.modify("extend", "backward", "word");
+    doc.execCommand("Copy");
+    doc.execCommand("Delete");
+    doc.execCommand("Paste");
+    if (window.testRunner)
+        window.testRunner.notifyDone();
+}
+
+if (window.testRunner)
+    window.testRunner.waitUntilDone();
+</script>
+<p>This tests copy/delete/paste inside an editable iframe.  You should see 'foo bar baz' below.</p>
+<iframe src="../resources/contenteditable-iframe-src.html" onload="runTest();"></iframe>

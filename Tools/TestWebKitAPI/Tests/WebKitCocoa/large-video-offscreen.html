@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        video {
+            width: 480px;
+            height: 320px;
+            position: absolute;
+        }
+        .offscreen {
+            top: -320px;
+        }
+    </style>
+    <script>
+        function moveVideoOffscreen() {
+            document.querySelector("video").classList.add("offscreen");
+            setTimeout(function() {
+                try {
+                    window.webkit.messageHandlers.testHandler.postMessage("moved");
+                } catch(e) {
+                }
+            }, 0);
+        }
+    </script>
+</head>
+<body>
+    <video autoplay onplaying=moveVideoOffscreen()><source src="large-video-with-audio.mp4"></video>
+</body>
+<html>

@@ -1,0 +1,16 @@
+<html>
+<head>
+<body>
+<embed id="testPlugin" type="application/x-webkit-test-netscape" src="data:text/plain," test="null-npp-getvalue-pointer">
+</embed>
+
+<div>
+    This tests that we don't crash when the plugin passes 0 for its NPP_GetValue pointer.
+</div>
+<script>
+  if (window.testRunner)
+      testRunner.dumpAsText();
+</script>
+</body>
+</html>
+

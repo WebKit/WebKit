@@ -1,0 +1,8 @@
+{
+    "angle": {
+        "exclusions": [
+            "DEPS",
+            "infra/specs/.*"
+        ]
+    }
+}

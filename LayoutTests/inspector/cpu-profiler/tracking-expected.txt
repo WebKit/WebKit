@@ -1,0 +1,14 @@
+Tests that CPUProfiler.startTracking and CPUProfiler.stopTracking trigger trackingStart, trackingUpdate, and trackingComplete events with expected data.
+
+
+== Running test suite: CPUProfiler.Tracking
+-- Running test case: CPUProfiler.Tracking.StartAndStopTrackingWithEvent
+CPUProfiler.trackingStart
+PASS: Should have a timestamp when starting.
+CPUProfiler.trackingUpdate
+PASS: Should have an event object.
+PASS: Event should have a timestamp.
+PASS: Event should have a usage.
+PASS: usage should be greater than or equal to zero.
+CPUProfiler.trackingComplete
+

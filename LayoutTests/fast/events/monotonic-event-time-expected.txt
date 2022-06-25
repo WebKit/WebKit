@@ -1,0 +1,13 @@
+This test checks if DOM event timestamps are monotonically increasing when leaping forward.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS lastTimeStamp < event.timeStamp is true
+PASS lastTimeStamp < event.timeStamp is true
+PASS lastTimeStamp < event.timeStamp is true
+PASS lastTimeStamp < event.timeStamp is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

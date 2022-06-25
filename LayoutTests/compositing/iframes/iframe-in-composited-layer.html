@@ -1,0 +1,25 @@
+<!--
+    This is a test for
+    <i><a href="https://bugs.webkit.org/show_bug.cgi?id=38427">https://bugs.webkit.org/show_bug.cgi?id=38427</a>
+    <rdar://problem/7932072> Iframes in composited layers don&rsquo;t repaint correctly (affects Yahoo! Mail with Flash Player 10.1)</i>.
+<-->
+<div style="-webkit-transform: translateZ(0); width: 400px; height: 400px; background-color: lightyellow;">
+    <iframe id="frame" style="width: 380px; height: 380px; border: solid; margin: 7px" src="data:text/html,
+        <html style='height: 900px; width: 900px; position: relative;'>
+            <body>
+                <div style='position: absolute; width: 100px; height: 100px; background-color: red; left: 0; top: 0;'></div>
+                <div style='position: absolute; width: 100px; height: 100px; background-color: green; right: 0; bottom: 0;'></div>
+            </body>
+        </html>
+    "></iframe>
+</div>
+<script>
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    setTimeout(function() {
+        document.getElementById("frame").contentWindow.scrollTo(600, 600);
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 200);
+</script>

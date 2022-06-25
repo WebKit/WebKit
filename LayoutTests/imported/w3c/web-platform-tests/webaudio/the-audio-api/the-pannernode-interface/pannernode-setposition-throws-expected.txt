@@ -1,0 +1,8 @@
+
+PASS setPosition x
+PASS setPosition y
+PASS setPosition z
+PASS setOrientation x
+PASS setOrientation y
+PASS setOrientation z
+

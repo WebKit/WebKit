@@ -1,0 +1,4 @@
+
+PASS e.style['text-combine-upright'] = "none" should set the property value
+PASS e.style['text-combine-upright'] = "all" should set the property value
+

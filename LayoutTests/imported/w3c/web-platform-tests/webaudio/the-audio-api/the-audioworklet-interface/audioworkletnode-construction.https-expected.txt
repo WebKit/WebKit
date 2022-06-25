@@ -1,0 +1,14 @@
+
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "construction-before-module-loading"
+PASS Executing "construction-after-module-loading"
+PASS Audit report
+PASS > [construction-before-module-loading]
+PASS   Creating a node before loading a module should throw. threw InvalidStateError: "No ScriptProcessor was registered with this name".
+PASS < [construction-before-module-loading] All assertions passed. (total 1 assertions)
+PASS > [construction-after-module-loading]
+PASS   "dummyWorkletNode" is an instance of AudioWorkletNode is true.
+PASS   Unregistered name "foobar" must throw an exception. threw InvalidStateError: "No ScriptProcessor was registered with this name".
+PASS < [construction-after-module-loading] All assertions passed. (total 2 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully.
+

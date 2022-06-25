@@ -1,0 +1,56 @@
+<!DOCTYPE html><!-- webkit-test-runner [ LayoutFormattingContextEnabled=true InlineFormattingContextIntegrationEnabled=false ] -->
+<style>
+td {
+  height: 10px;
+  background-color: blue;
+  padding: 0px;
+}
+
+table {
+  border-spacing: 0px;
+}
+
+body {
+  background-color: white;
+}
+
+td:nth-child(odd) {
+  background-color: green;
+}
+</style>
+<div style="width: 500px;">
+<table>
+<tr><td style="width: 10px;"></td><td style="width: 10%;"></td></tr>
+<tr><td style="width: 10%;"></td><td style="width: 10px;"></td></tr>
+</table>
+<table>
+<tr><td style="width: 100px;"></td><td style="width: 100%;"></td></tr>
+<tr><td style="width: 100%;"></td><td style="width: 100px;"></td></tr>
+</table>
+<table>
+<tr><td style="width: 80px;"></td><td style="width: 200px;"></td></tr>
+<tr><td style="width: 10%;"></td><td style="width: 80%;"></td></tr>
+</table>
+<table>
+<tr><td style="width: 80px;"></td><td style="width: 10%;"></td></tr>
+<tr><td style="width: 100%;"></td><td style="width: 200px;"></td></tr>
+</table>
+<table>
+<tr><td style="width: 1000px;"></td><td style="width: 1000%;"></td></tr>
+<tr><td style="width: 1%;"></td><td style="width: 1px;"></td></tr>
+</table>
+<table>
+<tr><td style="width: 250px;"></td><td style="width: 50%;"></td></tr>
+<tr><td style="width: 500px;"></td><td style="width: 0%;"></td></tr>
+</table>
+<table>
+<tr><td style="width: 100px;"></td><td style="width: 10%;"></td></tr>
+<tr><td style="width: 200px;"></td><td style="width: 20%;"></td></tr>
+<tr><td style="width: 300px;"></td><td style="width: 30%;"></td></tr>
+</table>
+<table>
+<tr><td style="width: 100px;"></td><td style="width: 10%;"></td></tr>
+<tr><td style="width: 200%;"></td><td style="width: 200px;"></td></tr>
+<tr><td style="width: 300px;"></td><td style="width: 30%;"></td></tr>
+</table>
+</div>

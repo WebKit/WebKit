@@ -1,0 +1,111 @@
+# Copyright (c) 2020 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+rtc_source_set("scalable_video_controller") {
+  sources = [
+    "scalable_video_controller.h",
+    "scalable_video_controller_no_layering.cc",
+    "scalable_video_controller_no_layering.h",
+  ]
+  deps = [
+    "../../../api/transport/rtp:dependency_descriptor",
+    "../../../api/video:video_bitrate_allocation",
+    "../../../common_video/generic_frame_descriptor",
+    "../../../rtc_base:checks",
+  ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/container:inlined_vector",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+rtc_source_set("scalability_structures") {
+  sources = [
+    "create_scalability_structure.cc",
+    "create_scalability_structure.h",
+    "scalability_structure_full_svc.cc",
+    "scalability_structure_full_svc.h",
+    "scalability_structure_key_svc.cc",
+    "scalability_structure_key_svc.h",
+    "scalability_structure_l2t2_key_shift.cc",
+    "scalability_structure_l2t2_key_shift.h",
+    "scalability_structure_simulcast.cc",
+    "scalability_structure_simulcast.h",
+  ]
+  deps = [
+    ":scalable_video_controller",
+    "../../../api/transport/rtp:dependency_descriptor",
+    "../../../api/video:video_bitrate_allocation",
+    "../../../common_video/generic_frame_descriptor",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:logging",
+  ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/base:core_headers",
+    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+rtc_source_set("svc_rate_allocator") {
+  sources = [
+    "svc_rate_allocator.cc",
+    "svc_rate_allocator.h",
+  ]
+  deps = [
+    ":scalability_structures",
+    "../../../api/video:video_bitrate_allocation",
+    "../../../api/video:video_bitrate_allocator",
+    "../../../api/video:video_codec_constants",
+    "../../../api/video_codecs:video_codecs_api",
+    "../../../rtc_base:checks",
+    "../../../rtc_base/experiments:stable_target_rate_experiment",
+  ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/container:inlined_vector" ]
+}
+
+if (rtc_include_tests) {
+  rtc_source_set("scalability_structure_tests") {
+    testonly = true
+    sources = [
+      "scalability_structure_full_svc_unittest.cc",
+      "scalability_structure_key_svc_unittest.cc",
+      "scalability_structure_l2t2_key_shift_unittest.cc",
+      "scalability_structure_test_helpers.cc",
+      "scalability_structure_test_helpers.h",
+      "scalability_structure_unittest.cc",
+    ]
+    deps = [
+      ":scalability_structures",
+      ":scalable_video_controller",
+      "..:chain_diff_calculator",
+      "..:frame_dependencies_calculator",
+      "../../../api:array_view",
+      "../../../api/transport/rtp:dependency_descriptor",
+      "../../../api/video:video_bitrate_allocation",
+      "../../../api/video:video_frame_type",
+      "../../../common_video/generic_frame_descriptor",
+      "../../../test:test_support",
+    ]
+    absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+  }
+
+  rtc_source_set("svc_rate_allocator_tests") {
+    testonly = true
+    sources = [ "svc_rate_allocator_unittest.cc" ]
+    deps = [
+      ":svc_rate_allocator",
+      "..:webrtc_vp9_helpers",
+      "../../../rtc_base:checks",
+      "../../../test:field_trial",
+      "../../../test:test_support",
+    ]
+  }
+}

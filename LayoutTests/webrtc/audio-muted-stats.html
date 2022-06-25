@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing basic video exchange from offerer to receiver</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <script src ="routines.js"></script>
+        <script>
+function getOutboundRTPStats(connection)
+{
+    return connection.getStats().then((report) => {
+        var stats;
+        report.forEach((statItem) => {
+            if (statItem.type === "outbound-rtp") {
+                stats = statItem;
+            }
+        });
+        return stats;
+    });
+}
+
+function checkOutboundBytesSentIncreased(firstConnection, statsFirstConnection, count)
+{
+    return getOutboundRTPStats(firstConnection).then((stats) => {
+       if (stats.bytesSent > statsFirstConnection.bytesSent)
+            return;
+        if (++count === 50)
+            return Promise.reject("checking outbound stats bytes sent increasing timed out");
+        return waitFor(50).then(() => {
+            return checkOutboundBytesSentIncreased(firstConnection, statsFirstConnection, count)
+        });
+    });
+}
+
+var track, firstConnection;
+promise_test((test) => {
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(true);
+
+    return navigator.mediaDevices.getUserMedia({ audio: true}).then((stream) => {
+	track = stream.getAudioTracks()[0];
+        return new Promise((resolve, reject) => {
+            createConnections((connection) => {
+                firstConnection = connection;
+                firstConnection.addTrack(track, stream);
+            }, (connection) => {
+                connection.ontrack = resolve;
+            });
+            setTimeout(() => reject("Test timed out"), 5000);
+        });
+    }).then(() => {
+        return getOutboundRTPStats(firstConnection);
+    }).then((stats) => {
+        statsFirstConnection = stats;
+        return checkOutboundBytesSentIncreased(firstConnection, statsFirstConnection, 0);
+    }).then(() => {
+	track.enabled = false;
+        // Let's wait a little bit so that audio is disabled.
+	return waitFor(100);
+    }).then((stats) => {
+        return getOutboundRTPStats(firstConnection);
+    }).then((stats) => {
+        statsFirstConnection = stats;
+        return checkOutboundBytesSentIncreased(firstConnection, statsFirstConnection, 0);
+    });
+}, "Audio silent data being sent in case track is muted");
+        </script>
+    </body>
+</html>

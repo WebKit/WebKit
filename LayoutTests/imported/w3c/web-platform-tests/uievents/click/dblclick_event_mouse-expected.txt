@@ -1,0 +1,5 @@
+Double-click on the green box with the left mouse button.
+
+
+PASS dblclick event for the mouse pointer type
+

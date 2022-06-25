@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="content">
+
+  <div id="test0" role="table" selected-expected-value="false">
+    <div id="test1" role="row" selected-expected-value="true">
+      <div id="test2" role="columnheader" selected-expected-value="false">X</div>
+      <div id="test3" role="columnheader" selected-expected-value="false">X</div>
+    </div>
+    <div id="test4" role="row" selected-expected-value="true">
+      <div id="test5" role="rowheader" selected-expected-value="true">X</div>
+      <div id="test6" role="cell" selected-expected-value="true">X</div>
+    </div>
+  </div>
+
+  <div id="test7" role="grid" selected-expected-value="false">
+    <div id="test8" role="row" selected-expected-value="true">
+      <div id="test9" role="columnheader" selected-expected-value="false">X</div>
+      <div role="columnheader">X</div>
+    </div>
+    <div id="test10" role="row" selected-expected-value="true">
+      <div id="test11" role="rowheader" selected-expected-value="true">X</div>
+      <div id="test12" role="gridcell" selected-expected-value="true">X</div>
+    </div>
+  </div>
+
+  <div id="test13" role="treegrid" selected-expected-value="true">
+    <div id="test14" role="row" selected-expected-value="true">
+      <div id="test15" role="columnheader" selected-expected-value="false">X</div>
+      <div id="test16" role="gridcell" selected-expected-value="true">X</div>
+      <div id="test17" role="rowheader" selected-expected-value="true">X</div>
+    </div>
+  </div>
+
+  <ul id="test18" role="tree" selected-expected-value="true">
+      <li id="test19" role="treeitem" selected-expected-value="true">tree item</li>
+  </ul>
+
+  <ul id="test20" role="tablist" selected-expected-value="true">
+  <li id="test21" role="tab" tabindex="-1" selected-expected-value="true">Crust</li>
+  </ul>
+
+  <div id="test22" role="menuitemradio" aria-checked="true" selected-expected-value="true">Item one</div>
+  <div id="test23" role="menuitemcheckbox" aria-checked="false" selected-expected-value="true">Item four</div>
+  <div id="test24" role="menuitem" selected-expected-value="true">Item five</div>
+
+  <input id="test25" type="radio" selected-expected-value="false">
+  <input id="test26" type="checkbox" selected-expected-value="false"/>
+  <input id="test27" type="text" role="combobox" selected-expected-value="false">
+
+</div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("This tests that the accessibility Selected attribute can be settable only on certain elements.");
+    if (window.accessibilityController) {
+          for (var i = 0; i <= 27; i++) {
+              var axElement = accessibilityController.accessibleElementById("test" + i);
+              shouldBe("axElement.isAttributeSettable('AXSelected')", document.getElementById("test" + i).getAttribute("selected-expected-value"));
+          }
+          
+          document.getElementById("content").style.visibility = "hidden";
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

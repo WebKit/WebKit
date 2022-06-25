@@ -1,0 +1,40 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (147,20) size 506x194
+      RenderSVGText {text} at (88,12) size 304x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 303x23
+          chunk 1 (middle anchor) text run 1 at (88.80,30.00) startOffset 0 endOffset 36 width 302.40: "fill=\"freeze\" with discrete calcMode"
+      RenderSVGContainer {g} at (217,154) size 363x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,100.00)}]
+        RenderSVGContainer {g} at (217,187) size 83x27 [transform={m=((1.00,0.00)(0.00,1.00)) t=(80.00,25.00)}]
+          RenderSVGText {text} at (-50,-13) size 50x16 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 50x16
+              chunk 1 (end anchor) text run 1 at (-49.20,0.00) startOffset 0 endOffset 8 width 49.20: "discrete"
+        RenderSVGContainer {g} at (394,154) size 186x26 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,5.00)}]
+          RenderSVGText {text} at (-14,-13) size 28x16 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 27x16
+              chunk 1 (middle anchor) text run 1 at (-13.20,0.00) startOffset 0 endOffset 4 width 26.40: "> 2s"
+          RenderSVGText {text} at (62,-13) size 36x16 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 35x16
+              chunk 1 (middle anchor) text run 1 at (62.60,0.00) startOffset 0 endOffset 5 width 34.80: "0s-2s"
+        RenderSVGContainer {g} at (405,189) size 156x22 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,20.00)}]
+          RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+            RenderSVGRect {rect} at (405,189) size 23x22 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
+          RenderSVGContainer {g} at (405,189) size 156x22
+            RenderSVGContainer {use} at (405,189) size 23x22
+              RenderSVGRect {rect} at (405,189) size 23x22 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
+            RenderSVGContainer {use} at (539,189) size 22x22 [transform={m=((1.00,0.00)(0.00,1.00)) t=(80.00,0.00)}]
+              RenderSVGRect {rect} at (539,189) size 22x22 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
+            RenderSVGRect {rect} at (539,189) size 22x22 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CC0066]}] [x=74.00] [y=-6.00] [width=12.00] [height=12.00]
+    RenderSVGContainer {g} at (16,518) size 380x60
+      RenderSVGText {text} at (10,311) size 228x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 228x36
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 227.40: "$Revision: 1.5 $"
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGContainer {g} at (0,0) size 800x38
+      RenderSVGRect {rect} at (0,0) size 800x36 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [x=1.00] [y=1.00] [width=478.00] [height=20.00]
+      RenderSVGText {text} at (206,0) size 68x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 68x23
+          chunk 1 (middle anchor) text run 1 at (206.40,18.00) startOffset 0 endOffset 5 width 67.20: "DRAFT"

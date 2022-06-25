@@ -1,0 +1,141 @@
+# Copyright (c) 2014 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+
+group("audio_mixer") {
+  deps = [
+    ":audio_frame_manipulator",
+    ":audio_mixer_impl",
+  ]
+}
+
+rtc_library("audio_mixer_impl") {
+  visibility = [ "*" ]
+  sources = [
+    "audio_mixer_impl.cc",
+    "audio_mixer_impl.h",
+    "default_output_rate_calculator.cc",
+    "default_output_rate_calculator.h",
+    "frame_combiner.cc",
+    "frame_combiner.h",
+    "output_rate_calculator.h",
+  ]
+
+  public = [
+    "audio_mixer_impl.h",
+    "default_output_rate_calculator.h",  # For creating a mixer with limiter
+                                         # disabled.
+    "frame_combiner.h",
+  ]
+
+  configs += [ "../audio_processing:apm_debug_dump" ]
+
+  deps = [
+    ":audio_frame_manipulator",
+    "../../api:array_view",
+    "../../api:rtp_packet_info",
+    "../../api:scoped_refptr",
+    "../../api/audio:audio_frame_api",
+    "../../api/audio:audio_mixer_api",
+    "../../audio/utility:audio_frame_operations",
+    "../../common_audio",
+    "../../rtc_base:checks",
+    "../../rtc_base:rtc_base_approved",
+    "../../rtc_base:safe_conversions",
+    "../../rtc_base/synchronization:mutex",
+    "../../system_wrappers",
+    "../../system_wrappers:metrics",
+    "../audio_processing:api",
+    "../audio_processing:apm_logging",
+    "../audio_processing:audio_frame_view",
+    "../audio_processing/agc2:fixed_digital",
+  ]
+}
+
+rtc_library("audio_frame_manipulator") {
+  visibility = [
+    ":*",
+    "../../modules:*",
+  ]
+
+  sources = [
+    "audio_frame_manipulator.cc",
+    "audio_frame_manipulator.h",
+  ]
+
+  deps = [
+    "../../api/audio:audio_frame_api",
+    "../../audio/utility:audio_frame_operations",
+    "../../rtc_base:checks",
+    "../../rtc_base:rtc_base_approved",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_library("audio_mixer_test_utils") {
+    testonly = true
+
+    sources = [
+      "gain_change_calculator.cc",
+      "gain_change_calculator.h",
+      "sine_wave_generator.cc",
+      "sine_wave_generator.h",
+    ]
+
+    deps = [
+      ":audio_frame_manipulator",
+      ":audio_mixer_impl",
+      "../../api:array_view",
+      "../../api/audio:audio_frame_api",
+      "../../rtc_base:checks",
+      "../../rtc_base:rtc_base_approved",
+    ]
+  }
+
+  rtc_library("audio_mixer_unittests") {
+    testonly = true
+
+    sources = [
+      "audio_frame_manipulator_unittest.cc",
+      "audio_mixer_impl_unittest.cc",
+      "frame_combiner_unittest.cc",
+    ]
+    absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+    deps = [
+      ":audio_frame_manipulator",
+      ":audio_mixer_impl",
+      ":audio_mixer_test_utils",
+      "../../api:array_view",
+      "../../api:rtp_packet_info",
+      "../../api/audio:audio_mixer_api",
+      "../../api/units:timestamp",
+      "../../audio/utility:audio_frame_operations",
+      "../../rtc_base:checks",
+      "../../rtc_base:rtc_base_approved",
+      "../../rtc_base:task_queue_for_test",
+      "../../test:test_support",
+    ]
+  }
+
+  if (!build_with_chromium) {
+    rtc_executable("audio_mixer_test") {
+      testonly = true
+      sources = [ "audio_mixer_test.cc" ]
+
+      deps = [
+        ":audio_mixer_impl",
+        "../../api/audio:audio_mixer_api",
+        "../../common_audio",
+        "../../rtc_base:stringutils",
+        "//third_party/abseil-cpp/absl/flags:flag",
+        "//third_party/abseil-cpp/absl/flags:parse",
+      ]
+    }
+  }
+}

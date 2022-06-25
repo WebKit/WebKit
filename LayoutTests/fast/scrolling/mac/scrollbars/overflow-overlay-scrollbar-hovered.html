@@ -1,0 +1,83 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ MockScrollbarsEnabled=false AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        body {
+            height: 1000px;
+        }
+        .scroller {
+            margin: 10px;
+            width: 200px;
+            height: 200px;
+            border: 1px solid black;
+            overflow: auto;
+        }
+        .contents {
+            width: 100%;
+            height: 200%;
+        }
+    </style>
+    <script src="../../../../resources/js-test-pre.js"></script>
+    <script src="../../../../resources/ui-helper.js"></script>
+    
+    <script>
+        jsTestIsAsync = true;
+
+        if (window.internals)
+            internals.setUsesOverlayScrollbars(true);
+
+        async function doTest()
+        {
+            description('Test hover over overlay scrollbar');
+            if (!window.internals) {
+                finishJSTest();                
+                return;
+            }
+            
+            const scroller = document.querySelector('.scroller');
+            const scrollerBounds = scroller.getBoundingClientRect();
+            const x = scrollerBounds.right - 8;
+            const y = scrollerBounds.top + 10;
+
+            debug('Initial state');
+            debug(internals.verticalScrollbarState(scroller));
+
+            debug('Hovering vertical scrollbar should show expanded scrollbar');
+            await UIHelper.mouseWheelScrollAt(x, y);
+            await UIHelper.waitForCondition(() => {
+                let state = internals.verticalScrollbarState(scroller);
+                let enabled = state.indexOf('enabled') != -1;
+                let expanded = state.indexOf('expanded') != -1;
+                if (enabled && expanded)
+                    testPassed('Scrollbar is enabled and expanded');
+                return expanded;
+            });
+
+            debug('Unhovering vertical scrollbar should hide it');
+            await UIHelper.moveMouseAndWaitForFrame(x - 10, y);
+            await UIHelper.moveMouseAndWaitForFrame(x - 20, y);
+            await UIHelper.waitForCondition(() => {
+                let state = internals.verticalScrollbarState(scroller);
+                let thumbHidden = state.indexOf('visible_thumb') == -1;
+                let trackHidden = state.indexOf('visible_track') == -1;
+                if (thumbHidden && trackHidden)
+                    testPassed('Thumb and track hidden');
+                return thumbHidden && trackHidden;
+            });
+
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+            doTest();
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="scroller">
+        <div class="contents"></div>
+    </div>
+    <div id="console"></div>
+    <script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

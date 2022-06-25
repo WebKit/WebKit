@@ -1,0 +1,114 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ScrollAnimatorEnabled=false ] -->
+<html>
+    <head>
+        <style>
+            body {
+                margin: 0;
+                overflow: hidden;
+            }
+
+            #container {
+                width: 300px;
+                height: 300px;
+                position: absolute;
+                top: 0;
+                left: 0;
+                overflow-x: auto;
+                overflow-y: hidden;
+                scroll-snap-type: x proximity;
+                direction: rtl;
+            }
+
+            .drawer {
+                width: 900px;
+                height: 100%;
+            }
+
+            .area {
+                height: 300px;
+                width: 300px;
+                float: left;
+                scroll-snap-align: start;
+            }
+
+            .rtl {
+                direction: rtl;
+            }
+            .ltr {
+                direction: ltr;
+            }
+        </style>
+        <script src="../../../resources/js-test.js"></script>
+        <script src="../../../resources/ui-helper.js"></script>
+        <script>
+        window.jsTestIsAsync = true;
+
+        async function runTest()
+        {
+            try {
+                await UIHelper.delayFor(0);
+
+                eventSender.mouseMoveTo(150, 150);
+                eventSender.mouseDown();
+                eventSender.mouseUp();
+
+                let targetElement = document.getElementById("container");
+                expectTrue(0 == targetElement.scrollLeft, "scroll origin is 0");
+
+                eventSender.keyDown("leftArrow");
+                eventSender.keyDown("leftArrow");
+
+                let scrollPositionBetweenFirstAndSecondSnapPoint = targetElement.scrollLeft < 0 && targetElement.scrollLeft  > -300;
+                expectTrue(scrollPositionBetweenFirstAndSecondSnapPoint, "arrow keys allow escaping first snap position");
+
+                eventSender.keyDown("rightArrow");
+                expectTrue(targetElement.scrollLeft == 0, "right arrow key snapped back to first snap position");
+
+                // Move to the second scroll snap position.
+                targetElement.scrollLeft = -300;
+                await UIHelper.delayFor(0);
+
+                eventSender.keyDown("leftArrow");
+                eventSender.keyDown("leftArrow");
+                let scrollPositionBetweenSecondAndThirdSnapPoint = targetElement.scrollLeft < -300 && targetElement.scrollLeft  > -600;
+                expectTrue(scrollPositionBetweenSecondAndThirdSnapPoint, "left arrow keys allow escaping second snap position");
+
+                eventSender.keyDown("rightArrow");
+                expectTrue(targetElement.scrollLeft == -300, "right arrow key snapped back to second snap position");
+
+                eventSender.keyDown("rightArrow");
+                eventSender.keyDown("rightArrow");
+                scrollPositionBetweenFirstAndSecondSnapPoint = targetElement.scrollLeft < 0 && targetElement.scrollLeft  > -300;
+                expectTrue(scrollPositionBetweenFirstAndSecondSnapPoint, "right arrow keys allow escaping second snap position");
+
+                eventSender.keyDown("leftArrow");
+                expectTrue(targetElement.scrollLeft == -300, "left arrow key snapped back to second snap position");
+            } catch (e) {
+                console.log(e);
+            } finally {
+                finishJSTest();
+            }
+        }
+
+        function run() {
+            if (!window.eventSender) {
+                write("To manually test, verify that scrolling near one of the boundaries between the colored boxes");
+                write("snaps to the edge of the nearest colored box, but scrolling somewhere near the middle of two");
+                write("boxes does not cause the scroll offset to snap.");
+                return;
+            }
+            runTest();
+        }
+        </script>
+    </head>
+    <body onload=run()>
+        <div id="container">
+            <div class="drawer">
+                <div class="area rtl" style="background-color: red;"></div>
+                <div class="area ltr" style="background-color: blue;"></div>
+                <div class="area rtl" style="background-color: aqua;"></div>
+            </div>
+        </div>
+        <div id="output"></div>
+    </body>
+</html>

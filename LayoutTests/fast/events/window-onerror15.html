@@ -1,0 +1,27 @@
+<html>
+<head>
+<script src="resources/window-onerror.js">
+</script>
+</head>
+<body>
+<p>Test that error is treated as handled when preventDefault is called on the
+error event.<a href="https://bugs.webkit.org/show_bug.cgi?id=67119">Bug 67119</a>.</p>
+<div id="console"></div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function log(msg) {
+    document.getElementById("console").innerHTML += msg + "<br>";
+}
+
+window.addEventListener("error", function(e) {
+  log("Error event listener invoked. Error should *not* be printed in console.");
+  log("DONE.");
+  e.preventDefault();
+}, true);
+
+throw "An Error";
+</script>
+</body>
+</html>

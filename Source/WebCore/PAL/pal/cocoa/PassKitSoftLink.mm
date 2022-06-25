@@ -1,0 +1,149 @@
+/*
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+
+#if USE(PASSKIT)
+
+#import "PassKitSPI.h"
+#import <wtf/SoftLinking.h>
+
+SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PAL_EXPORT)
+
+#if PLATFORM(MAC)
+
+SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL_WITH_EXPORT(PAL, PassKitCore, PKPaymentSetupConfiguration, PAL_EXPORT)
+SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL_WITH_EXPORT(PAL, PassKitCore, PKPaymentSetupFeature, PAL_EXPORT)
+SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL_WITH_EXPORT(PAL, PassKitCore, PKPaymentSetupRequest, PAL_EXPORT)
+
+#else // PLATFORM(MAC)
+
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKPaymentSetupConfiguration, PAL_EXPORT)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKPaymentSetupFeature, PAL_EXPORT)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKPaymentSetupRequest, PAL_EXPORT)
+
+#endif // PLATFORM(MAC)
+
+#if HAVE(PASSKIT_INSTALLMENTS)
+SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL_WITH_EXPORT(PAL, PassKitCore, PKPaymentInstallmentConfiguration, PAL_EXPORT)
+SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL_WITH_EXPORT(PAL, PassKitCore, PKPaymentInstallmentItem, PAL_EXPORT)
+#endif
+
+#if HAVE(PASSKIT_RECURRING_SUMMARY_ITEM)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKRecurringPaymentSummaryItem, PAL_EXPORT)
+#endif
+
+#if HAVE(PASSKIT_RECURRING_PAYMENTS)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKRecurringPaymentRequest, PAL_EXPORT)
+#endif
+
+#if HAVE(PASSKIT_DEFERRED_SUMMARY_ITEM)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKDeferredPaymentSummaryItem, PAL_EXPORT)
+#endif
+
+#if HAVE(PASSKIT_AUTOMATIC_RELOAD_SUMMARY_ITEM)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKAutomaticReloadPaymentSummaryItem, PAL_EXPORT)
+#endif
+
+#if HAVE(PASSKIT_AUTOMATIC_RELOAD_PAYMENTS)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKAutomaticReloadPaymentRequest, PAL_EXPORT)
+#endif
+
+#if HAVE(PASSKIT_MULTI_MERCHANT_PAYMENTS)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKPaymentTokenContext, PAL_EXPORT)
+#endif
+
+#if HAVE(PASSKIT_DEFAULT_SHIPPING_METHOD)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKShippingMethods, PAL_EXPORT)
+#endif
+
+#if HAVE(PASSKIT_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKDateComponentsRange, PAL_EXPORT)
+#endif
+
+#if HAVE(PASSKIT_COUPON_CODE)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKPaymentRequestCouponCodeUpdate, PAL_EXPORT)
+#endif
+
+#if HAVE(PASSKIT_PAYMENT_ORDER_DETAILS)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKPaymentOrderDetails, PAL_EXPORT)
+#endif
+
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKContact, PAL_EXPORT)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKPassLibrary, PAL_EXPORT)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKPayment, PAL_EXPORT)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKPaymentMerchantSession, PAL_EXPORT)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKPaymentMethod, PAL_EXPORT)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKPaymentRequest, PAL_EXPORT)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKPaymentSummaryItem, PAL_EXPORT)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKShippingMethod, PAL_EXPORT)
+
+SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKCanMakePaymentsWithMerchantIdentifierAndDomain, void, (NSString *identifier, NSString *domain, PKCanMakePaymentsCompletion completion), (identifier, domain, completion), PAL_EXPORT)
+SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, PassKitCore, PKDrawApplePayButtonWithCornerRadius, void, (CGContextRef context, CGRect drawRect, CGFloat scale, CGFloat cornerRadius, PKPaymentButtonType type, PKPaymentButtonStyle style, NSString *languageCode), (context, drawRect, scale, cornerRadius, type, style, languageCode))
+
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKPaymentAuthorizationResult, PAL_EXPORT)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKPaymentRequestPaymentMethodUpdate, PAL_EXPORT)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKPaymentRequestShippingContactUpdate, PAL_EXPORT)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKPaymentRequestShippingMethodUpdate, PAL_EXPORT)
+
+SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKApplePayButtonDefaultCornerRadius, CGFloat, PAL_EXPORT)
+SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKContactFieldEmailAddress, PKContactField, PAL_EXPORT)
+SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKContactFieldName, PKContactField, PAL_EXPORT)
+SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKContactFieldPhoneNumber, PKContactField, PAL_EXPORT)
+SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKContactFieldPhoneticName, PKContactField, PAL_EXPORT)
+SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKContactFieldPostalAddress, PKContactField, PAL_EXPORT)
+SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKPaymentErrorContactFieldUserInfoKey, PKPaymentErrorKey, PAL_EXPORT)
+SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKPassKitErrorDomain, NSString *, PAL_EXPORT)
+SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKPaymentErrorDomain, NSString *, PAL_EXPORT)
+SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKPaymentErrorPostalAddressUserInfoKey, PKPaymentErrorKey, PAL_EXPORT)
+
+SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKCanMakePaymentsWithMerchantIdentifierDomainAndSourceApplication, void, (NSString *identifier, NSString *domain, NSString *sourceApplicationSecondaryIdentifier, PKCanMakePaymentsCompletion completion), (identifier, domain, sourceApplicationSecondaryIdentifier, completion), PAL_EXPORT)
+
+#if HAVE(PASSKIT_MODULARIZATION)
+SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(PAL, PassKitUI, PAL_EXPORT)
+#if PLATFORM(MAC)
+SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(PAL, PassKitMacHelper, PAL_EXPORT)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitMacHelper, PKPaymentAuthorizationViewController, PAL_EXPORT)
+SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL_WITH_EXPORT(PAL, PassKitUI, PKPaymentSetupController, PAL_EXPORT)
+#endif
+#if PLATFORM(IOS_FAMILY)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitUI, PKPaymentAuthorizationController, PAL_EXPORT)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitUI, PKPaymentAuthorizationViewController, PAL_EXPORT)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitUI, PKPaymentSetupController, PAL_EXPORT)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitUI, PKPaymentSetupViewController, PAL_EXPORT)
+#endif
+#else // HAVE(PASSKIT_MODULARIZATION)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKPaymentAuthorizationViewController, PAL_EXPORT)
+#if PLATFORM(MAC)
+SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL_WITH_EXPORT(PAL, PassKitCore, PKPaymentSetupController, PAL_EXPORT)
+#endif
+#if PLATFORM(IOS_FAMILY)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKPaymentAuthorizationController, PAL_EXPORT)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKPaymentSetupController, PAL_EXPORT)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, PassKitCore, PKPaymentSetupViewController, PAL_EXPORT)
+#endif
+#endif // HAVE(PASSKIT_MODULARIZATION)
+
+#endif // USE(PASSKIT)

@@ -1,0 +1,29 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # This template has no interface. However, you must fulfill the interface to
+  # global/useful-links.html.tmpl.
+  #%]
+
+      [% Hook.process('main-end') %]
+    </div>
+
+    <div id="footer">
+      <div class="intro">[% Hook.process('intro') %]</div>
+
+      [% PROCESS "global/useful-links.html.tmpl" %]
+
+      <div class="outro">[% Hook.process('outro') %]</div>
+    </div>
+
+    [% Hook.process("end") %]
+    <!-- WEBKIT_CHANGES -->
+    <script defer src="/committers-autocomplete.js"></script>
+  </body>
+</html>

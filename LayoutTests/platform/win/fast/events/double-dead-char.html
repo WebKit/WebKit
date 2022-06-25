@@ -1,0 +1,23 @@
+<body>
+    <p>Test for <a href="rdar://problem/5535636">rdar://problem/5535636</a>:
+    Have to press 4 times instead of 2 times to get the expected result of ^^
+    with German keyboard.
+</p>
+<div contenteditable id=ce></div>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        document.getElementById("ce").focus();
+
+        eventSender.dispatchMessage(eventSender.WM_KEYDOWN, 220 /* VK_OEM_5 */, 0x00290001);
+        eventSender.dispatchMessage(eventSender.WM_DEADCHAR, 94 /* '^' */, 0x00290001);
+        eventSender.dispatchMessage(eventSender.WM_KEYUP, 220, 0xc0290001);
+        eventSender.dispatchMessage(eventSender.WM_KEYDOWN, 220, 0x00290001);
+        eventSender.dispatchMessage(eventSender.WM_CHAR, 94, 0x00290001);
+        eventSender.dispatchMessage(eventSender.WM_CHAR, 94, 0x00290001);
+        eventSender.dispatchMessage(eventSender.WM_KEYUP, 220, 0xc0290001);
+    } else
+        document.write("To test manually, switch to German keyboard layout, and press circumflex key two times " +
+            "(on my MBP with Russian physical keyboard, it is located to the left of 1).");
+</script>
+</body>

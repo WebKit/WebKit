@@ -1,0 +1,8 @@
+
+RUN(mediaElement.src = findMediaFile("video", "content/test"))
+RUN(mediaElement.play())
+EVENT(playing)
+RUN(mediaElement.play().then(promiseResolved).catch(failTest))
+Promise resolved. OK
+END OF TEST
+

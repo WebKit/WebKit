@@ -1,0 +1,6 @@
+Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/echo-as-json.py
+Blocked access to external URL https://www.127.0.0.1:9443/fetch/metadata/resources/echo-as-json.py
+
+FAIL Same-site fetch with preflight promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Cross-site fetch with preflight promise_test: Unhandled rejection with value: object "TypeError: Type error"
+

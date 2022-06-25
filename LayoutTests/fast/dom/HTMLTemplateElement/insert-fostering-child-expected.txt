@@ -1,0 +1,12 @@
+Test inserting a fostering child into HTMLTemplateElement
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS template.firstChild is table
+PASS template.content.lastChild is svg
+PASS svg.nextSibling is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

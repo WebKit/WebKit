@@ -1,0 +1,140 @@
+#!/usr/bin/env python3
+
+# Copyright (C) 2022 Apple Inc.  All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer. 
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution. 
+# 3.  Neither the name of Apple Inc. ("Apple") nor the names of
+#     its contributors may be used to endorse or promote products derived
+#     from this software without specific prior written permission. 
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import argparse
+import json
+import os
+import pathlib
+import shutil
+import subprocess
+import sys
+import tempfile
+
+argumentParser = argparse.ArgumentParser(description="Import the WebGPU CTS.")
+argumentParser.add_argument("--cts-checkout-dir", type=pathlib.Path, required=False, help="Path to a prebuilt CTS checkout directory")
+arguments = argumentParser.parse_args()
+
+def generateTests(ctsCheckoutDir):
+    print("Generating tests...")
+    print("CTS Checkout dir: " + ctsCheckoutDir.as_posix())
+    sourcePath = pathlib.Path(ctsCheckoutDir, "out-wpt")
+    print("Source path: " + sourcePath.as_posix())
+    if not sourcePath.is_dir():
+        print("Source path is not a directory")
+        sys.exit(1)
+
+    wptDestinationPath = pathlib.Path(sys.argv[0], "..", "..", "..", "LayoutTests", "http", "tests").resolve()
+    if not wptDestinationPath.is_dir():
+        print("Could not find WPT at " + wptDestinationPath.as_posix())
+        sys.exit(1)
+    destinationPath = pathlib.Path(wptDestinationPath, "webgpu")
+    print("Destination path: " + destinationPath.as_posix())
+
+    shutil.copytree(sourcePath, destinationPath, dirs_exist_ok=True)
+    commonDestinationPath = pathlib.Path(destinationPath, "common")
+    if pathlib.Path(ctsCheckoutDir, "out", "common", "util").is_dir() and not pathlib.Path(destinationPath, "common", "util").is_dir():
+        shutil.copytree(pathlib.Path(ctsCheckoutDir, "out", "common"), pathlib.Path(destinationPath, "common"), dirs_exist_ok=True)
+
+    listing = ""
+    with open(pathlib.Path(sourcePath, "webgpu", "listing.js"), "r") as file:
+        listing = file.read()
+    listing += """
+        for (let o of listing) {
+            console.log(JSON.stringify(o.file));
+        };
+    """
+    listingJSONObjects = subprocess.run(["node", "--input-type=module"], input=listing, capture_output=True, text=True).stdout.split("\n")
+    for listingJSONObject in listingJSONObjects:
+        if len(listingJSONObject) == 0:
+            continue
+        listing = json.loads(listingJSONObject)
+        if len(listing) == 0:
+            continue
+        jsSubpath = listing[:]
+        jsSubpath[-1] += ".spec.js"
+        jsPath = pathlib.Path(destinationPath, "webgpu", *jsSubpath)
+        if not jsPath.is_file():
+            continue
+        htmlSubpath = listing[:]
+        htmlSubpath[-1] += ".html"
+        htmlPath = pathlib.Path(destinationPath, "webgpu", *htmlSubpath)
+        with open(htmlPath, "w") as htmlFile:
+            htmlFile.write("""
+                <script>
+                    if (window.testRunner)
+                        testRunner.waitUntilDone();
+                    window.location.href = "/webgpu/cts.https.html?q=webgpu:{}:*";
+                </script>
+            """.format(",".join(listing)))
+        # FIXME: Import reftests
+        reftestsPath = pathlib.Path(destinationPath, "webgpu", "web_platform", "reftests")
+        if reftestsPath.is_dir():
+            shutil.rmtree(reftestsPath)
+
+def checkoutAndBuildInTemporaryDirectory(continuation):
+    try:
+        subprocess.run(["npm", "--version"], capture_output=True)
+    except:
+        print("It looks like npm is not installed. Please install it from https://nodejs.org/.")
+        sys.exit(1)
+
+    with tempfile.TemporaryDirectory() as temporaryDirectory:
+        checkoutFolder = "CTS"
+        checkoutDirectory = os.path.join(temporaryDirectory, checkoutFolder)
+        print("Checking out the CTS into " + checkoutDirectory)
+        result = subprocess.run(["git", "clone", "git@github.com:gpuweb/cts.git", checkoutFolder], cwd=temporaryDirectory)
+        if result.returncode != 0:
+            print("Could not checkout repository.")
+            sys.exit(1)
+        result = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True, cwd=checkoutDirectory)
+        if result.returncode != 0:
+            print("Could not determine git checkout commit.")
+            sys.exit(1)
+        print("Checked out git hash " + result.stdout.rstrip() + ".")
+        print("Installing CTS dependencies...")
+        result = subprocess.run(["npm", "ci"], cwd=checkoutDirectory)
+        if result.returncode != 0:
+            print("Could not install dependencies.")
+            sys.exit(1)
+        print("Building test suite...")
+        result = subprocess.run(["npm", "test"], cwd=checkoutDirectory)
+        if result.returncode != 0:
+            print("Could not build test suite.")
+            sys.exit(1)
+        continuation(pathlib.Path(checkoutDirectory))
+
+if arguments.cts_checkout_dir is None:
+    print("You didn't specify --cts-checkout-dir on the command line.")
+    response = input("Would you like this script to checkout and build one in a temporary directory? [y/N] ")
+    if response.lower() == "y":
+        checkoutAndBuildInTemporaryDirectory(generateTests)
+    else:
+        sys.exit(1)
+else:
+    generateTests(arguments.cts_checkout_dir)
+    

@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<p>Validity state depends on whether form element is in data list. Test passes if it does not hit validity assertion in a debug build.</p>
+<datalist>
+    <a>
+        <form>
+            <select required=""></select>
+    </a>
+</datalist>

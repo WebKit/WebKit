@@ -1,0 +1,39 @@
+From b60090fcd490bd3b13b09f6609d30e08256cc06d Mon Sep 17 00:00:00 2001
+From: ChangSeok Oh <changseok@gatech.edu>
+Date: Fri, 22 May 2020 04:06:49 -0400
+Subject: [PATCH] build fix to make gcc 10 happy.
+
+---
+ src/gallium/auxiliary/util/u_debug_stack.c  | 2 +-
+ src/gallium/auxiliary/util/u_debug_symbol.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/gallium/auxiliary/util/u_debug_stack.c b/src/gallium/auxiliary/util/u_debug_stack.c
+index 6ddacdb362f..6a66628fd55 100644
+--- a/src/gallium/auxiliary/util/u_debug_stack.c
++++ b/src/gallium/auxiliary/util/u_debug_stack.c
+@@ -46,7 +46,7 @@
+ #include "os/os_thread.h"
+ #include "u_hash_table.h"
+ 
+-struct util_hash_table* symbols_hash;
++static struct util_hash_table* symbols_hash;
+ static mtx_t symbols_mutex = _MTX_INITIALIZER_NP;
+ 
+ static unsigned hash_ptr(void* p)
+diff --git a/src/gallium/auxiliary/util/u_debug_symbol.c b/src/gallium/auxiliary/util/u_debug_symbol.c
+index 84760430489..c38401c5bdd 100644
+--- a/src/gallium/auxiliary/util/u_debug_symbol.c
++++ b/src/gallium/auxiliary/util/u_debug_symbol.c
+@@ -270,7 +270,7 @@ debug_symbol_print(const void *addr)
+    debug_printf("\t%s\n", buf);
+ }
+ 
+-struct util_hash_table* symbols_hash;
++static struct util_hash_table* symbols_hash;
+ static mtx_t symbols_mutex = _MTX_INITIALIZER_NP;
+ 
+ static unsigned hash_ptr(void* p)
+-- 
+2.26.2
+

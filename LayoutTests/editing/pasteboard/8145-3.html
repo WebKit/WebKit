@@ -1,0 +1,16 @@
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+</script>
+<p>This tests a change made with the fix for 8145.  The paragraph separator inserted to prevent nesting blocks from the fragment to paste inside the block where the paste occured was not being inserted when the fragment had an interchange newline at the end.</p>
+<div id="test" style="border: 1px solid black;" contenteditable="true"></div>
+
+<script>
+var s = window.getSelection();
+var p = document.getElementById("test");
+p.innerHTML = "<div>foo</div>";
+s.setPosition(p, 0);
+s.modify("move", "forward", "character");
+var html = "<div>bar</div>baz<br class='Apple-interchange-newline'>";
+document.execCommand("InsertHTML", false, html);
+</script>

@@ -1,0 +1,3 @@
+
+PASS coop-navigate-same-origin-csp-sandbox
+

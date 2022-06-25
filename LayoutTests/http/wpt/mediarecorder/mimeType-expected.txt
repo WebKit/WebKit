@@ -1,0 +1,12 @@
+
+PASS MediaRecorder.isTypeSupported - 'auDio/mp4'
+PASS MediaRecorder.isTypeSupported - 'video/mp4'
+PASS MediaRecorder.isTypeSupported - 'audio/MP4;codecs=" avc1.4d002a   ,mp4a.40.1"'
+PASS MediaRecorder.isTypeSupported - 'video/mp4;codecs="AVC1.4d002a,   mp4a.40.1"'
+PASS MediaRecorder.isTypeSupported - 'video/mp4;codecs="mP4a.40.1"'
+PASS MediaRecorder.isTypeSupported - 'audio/mp4;codecs="avc1.4d002a, opus"'
+PASS MediaRecorder.isTypeSupported - 'audio/mp4;codecs="opus"'
+PASS MediaRecorder.isTypeSupported - 'audio/webm'
+PASS MediaRecorder.isTypeSupported - 'video/webm'
+PASS MediaRecorder mimeType
+

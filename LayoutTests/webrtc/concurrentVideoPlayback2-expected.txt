@@ -1,0 +1,8 @@
+
+
+PASS Basic audio/video exchange
+PASS Play regular video content should not pause MediaStream backed video elements
+PASS Play regular video content should not pause MediaStream backed video elements but should pause not MediaStream backed video elements
+PASS Restart regular video content should not pause MediaStream backed video elements but should pause not MediaStream backed video elements
+PASS Pause/play MediaStream backed video elements should not change regular video content
+

@@ -1,0 +1,15 @@
+
+FAIL slotchange event must not fire synchronously. tTree.s1.assign is not a function. (In 'tTree.s1.assign(tTree.c1)', 'tTree.s1.assign' is undefined)
+FAIL slotchange event should not fire when assignments do not change assignedNodes. tTree.s1.assign is not a function. (In 'tTree.s1.assign()', 'tTree.s1.assign' is undefined)
+FAIL slotchange event should not fire when same node is assigned. tTree.s1.assign is not a function. (In 'tTree.s1.assign(tTree.c1, tTree.c2)', 'tTree.s1.assign' is undefined)
+FAIL Fire slotchange event when slot's assigned nodes changes. tTree.s1.assign is not a function. (In 'tTree.s1.assign(tTree.c1)', 'tTree.s1.assign' is undefined)
+FAIL Fire slotchange event on previous slot and new slot when node is reassigned. tTree.s1.assign is not a function. (In 'tTree.s1.assign(tTree.c1)', 'tTree.s1.assign' is undefined)
+FAIL Fire slotchange event on node assignment and when assigned node is removed. tTree.s1.assign is not a function. (In 'tTree.s1.assign(tTree.c1)', 'tTree.s1.assign' is undefined)
+FAIL Fire slotchange event when order of assigned nodes changes. tTree.s1.assign is not a function. (In 'tTree.s1.assign(tTree.c1, tTree.c2)', 'tTree.s1.assign' is undefined)
+FAIL Fire slotchange event when assigned node is removed. tTree.s1.assign is not a function. (In 'tTree.s1.assign(tTree.c1)', 'tTree.s1.assign' is undefined)
+FAIL Fire slotchange event when removing a slot from Shadows Root that changes its assigned nodes. tTree.s1.assign is not a function. (In 'tTree.s1.assign(tTree.c1)', 'tTree.s1.assign' is undefined)
+FAIL No slotchange event when adding or removing an empty slot. assert_equals: expected 0 but got 1
+FAIL No slotchange event when adding another slotable. assert_equals: expected 0 but got 1
+FAIL Fire slotchange event when assign node to nested slot, ensure event bubbles ups. tTree.s3.assign is not a function. (In 'tTree.s3.assign(tTree.s1)', 'tTree.s3.assign' is undefined)
+FAIL Signal a slot change should be done in tree order. promise_test: Unhandled rejection with value: object "TypeError: tTree.s1.assign is not a function. (In 'tTree.s1.assign(tTree.c1)', 'tTree.s1.assign' is undefined)"
+

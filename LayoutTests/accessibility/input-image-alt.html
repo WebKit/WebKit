@@ -1,0 +1,27 @@
+<html>
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body id="body">
+
+    <input type="image" alt="Submit" src="resources/cake.png" width=100 height=100 id="image1">
+    
+    <p id="description"></p>
+    <div id="console"></div>
+     
+    <script>
+        if (window.accessibilityController) {
+            description("This test makes sure that an input image returns its alt tag as the accessible name");
+
+            var image1 = document.getElementById("image1").focus();
+            var img = accessibilityController.focusedElement;
+            shouldBeEqualToString("platformValueForW3CName(img)", "Submit");
+        }
+    </script>
+
+<script src="../resources/js-test-post.js"></script>
+
+</body> 
+</html>

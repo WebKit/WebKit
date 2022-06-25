@@ -1,0 +1,51 @@
+namespace="MathML"
+namespaceURI="http://www.w3.org/1998/Math/MathML"
+guardFactoryWith="ENABLE(MATHML)"
+fallbackInterfaceName="MathMLUnknownElement"
+fallbackJSInterfaceName="MathMLElement"
+
+annotation interfaceName=MathMLAnnotationElement, JSInterfaceName=MathMLElement
+annotation-xml interfaceName=MathMLAnnotationElement, JSInterfaceName=MathMLElement
+maction interfaceName=MathMLSelectElement, JSInterfaceName=MathMLElement
+math
+mfrac interfaceName=MathMLFractionElement, JSInterfaceName=MathMLElement
+mfenced interfaceName=MathMLRowElement, JSInterfaceName=MathMLElement
+msubsup interfaceName=MathMLScriptsElement, JSInterfaceName=MathMLElement
+merror interfaceName=MathMLRowElement, JSInterfaceName=MathMLElement
+mpadded interfaceName=MathMLPaddedElement, JSInterfaceName=MathMLElement
+mphantom interfaceName=MathMLRowElement, JSInterfaceName=MathMLElement
+mrow interfaceName=MathMLRowElement, JSInterfaceName=MathMLElement
+mstyle interfaceName=MathMLRowElement, JSInterfaceName=MathMLElement
+mover interfaceName=MathMLUnderOverElement, JSInterfaceName=MathMLElement
+munder interfaceName=MathMLUnderOverElement, JSInterfaceName=MathMLElement
+munderover interfaceName=MathMLUnderOverElement, JSInterfaceName=MathMLElement
+msqrt interfaceName=MathMLRootElement, JSInterfaceName=MathMLElement
+mroot interfaceName=MathMLRootElement, JSInterfaceName=MathMLElement
+mi interfaceName=MathMLTokenElement, JSInterfaceName=MathMLElement
+mn interfaceName=MathMLTokenElement, JSInterfaceName=MathMLElement
+mo interfaceName=MathMLOperatorElement, JSInterfaceName=MathMLElement
+mtext interfaceName=MathMLTokenElement, JSInterfaceName=MathMLElement
+ms interfaceName=MathMLTokenElement, JSInterfaceName=MathMLElement
+mspace interfaceName=MathMLSpaceElement, JSInterfaceName=MathMLElement
+msub interfaceName=MathMLScriptsElement, JSInterfaceName=MathMLElement
+msup interfaceName=MathMLScriptsElement, JSInterfaceName=MathMLElement
+mtable interfaceName=MathMLPresentationElement, JSInterfaceName=MathMLElement
+mtr interfaceName=MathMLPresentationElement, JSInterfaceName=MathMLElement
+mtd interfaceName=MathMLPresentationElement, JSInterfaceName=MathMLElement
+mmultiscripts interfaceName=MathMLScriptsElement, JSInterfaceName=MathMLElement
+mprescripts interfaceName=MathMLPresentationElement, JSInterfaceName=MathMLElement
+menclose interfaceName=MathMLMencloseElement, JSInterfaceName=MathMLElement
+none interfaceName=MathMLPresentationElement, JSInterfaceName=MathMLElement
+semantics interfaceName=MathMLSelectElement, JSInterfaceName=MathMLElement
+
+maligngroup interfaceName=MathMLPresentationElement, JSInterfaceName=MathMLElement
+malignmark interfaceName=MathMLPresentationElement, JSInterfaceName=MathMLElement
+mglyph interfaceName=MathMLPresentationElement, JSInterfaceName=MathMLElement
+mlabeledtr interfaceName=MathMLPresentationElement, JSInterfaceName=MathMLElement
+mlongdiv interfaceName=MathMLPresentationElement, JSInterfaceName=MathMLElement
+mscarries interfaceName=MathMLPresentationElement, JSInterfaceName=MathMLElement
+mscarry interfaceName=MathMLPresentationElement, JSInterfaceName=MathMLElement
+msgroup interfaceName=MathMLPresentationElement, JSInterfaceName=MathMLElement
+msline interfaceName=MathMLPresentationElement, JSInterfaceName=MathMLElement
+msrow interfaceName=MathMLPresentationElement, JSInterfaceName=MathMLElement
+mstack interfaceName=MathMLPresentationElement, JSInterfaceName=MathMLElement

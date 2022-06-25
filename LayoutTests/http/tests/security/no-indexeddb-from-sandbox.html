@@ -1,0 +1,19 @@
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<iframe sandbox="allow-scripts allow-modals"
+    src="data:text/html,
+         <script>
+             var db = window.webkitIndexedDB;
+             try {
+                 db.open('test');
+                 console.log('FAIL: db.open() should throw a SECURITY_ERR in a sandbox.');
+             } catch (e) {
+                 if (e.code === DOMException.SECURITY_ERR)
+                     console.log('PASS: db.open() threw a SECURITY_ERR!');
+                 else
+                     console.log('FAIL: db.open() threw a ' + e.name);
+             }
+         </script>"
+     ></iframe>

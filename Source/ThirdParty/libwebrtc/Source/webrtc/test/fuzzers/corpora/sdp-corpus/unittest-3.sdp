@@ -1,0 +1,13 @@
+m=application 9 RTP/SAVPF 101
+c=IN IP4 0.0.0.0
+a=rtcp:9 IN IP4 0.0.0.0
+a=ice-ufrag:ufrag_data
+a=ice-pwd:pwd_data
+a=mid:data_content_name
+a=sendrecv
+a=crypto:1 AES_CM_128_HMAC_SHA1_80 inline:FvLcvU2P3ZWmQxgPAgcDu7Zl9vftYElFOjEzhWs5
+a=rtpmap:101 google-data/90000
+a=ssrc:10 cname:data_channel_cname
+a=ssrc:10 msid:data_channel data_channeld0
+a=ssrc:10 mslabel:data_channel
+a=ssrc:10 label:data_channeld0

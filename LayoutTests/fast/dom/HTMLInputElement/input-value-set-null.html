@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+description("Checks that setting input.value to null sets the input value to the empty string.");
+
+var input = document.createElement("input");
+evalAndLog("input.defaultValue = 'defaultValue'");
+
+shouldBeEqualToString("input.value", "defaultValue");
+
+// HTMLInputElement.value treats null as the empty String so this should set the value to "".
+evalAndLog("input.value = null");
+shouldBeEqualToString("input.value", "");
+</script>
+<script src="../../../resources/js-test-post.js"></script>

@@ -1,0 +1,15 @@
+This tests Range.getBoundingClientRects and getClientRects positions when unscaled, scaled, and panned.
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+unscaled
+PASS rectString(getSelection().getRangeAt(0).getBoundingClientRect()) is "(0,0 1500x1500)"
+PASS rectStrings(getSelection().getRangeAt(0).getClientRects()) is "(100,100 100x100) (0,0 1500x1500)"
+
+scaled and panned
+PASS rectString(getSelection().getRangeAt(0).getBoundingClientRect()) is "(-10,-10 1500x1500)"
+PASS rectStrings(getSelection().getRangeAt(0).getClientRects()) is "(90,90 100x100) (-10,-10 1500x1500)"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

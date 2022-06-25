@@ -1,0 +1,29 @@
+<html>
+    <head>
+        <style>
+            div {
+                height: 9999px;
+                width:9999px;
+            }
+        </style>
+        <script src="../../../resources/js-test-pre.js"></script>
+        <script>
+            function runTest() {
+                description('Tests that for quirks mode document.body.scrollTop returns the scroll top value');
+
+                setTimeout(function() {
+                    window.scrollTo(0,500);
+                    shouldBe("window.pageYOffset","500");
+                    shouldBe("document.body.scrollTop","500");
+                    shouldBe("document.documentElement.scrollTop","0");
+                    finishJSTest();
+                }, 0);
+            }
+            var jsTestIsAsync = true;
+        </script>
+    </head>
+    <body onload="runTest()">
+        <div></div>
+        <script src="../../../resources/js-test-post.js"></script>
+    </body>
+</html>

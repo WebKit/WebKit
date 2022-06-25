@@ -1,0 +1,40 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 442x18
+        text run at (0,0) width 442: "This tests that a scrollbar will appear when text overflows the textarea "
+      RenderBR {BR} at (442,14) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+layer at (10,28) size 179x94 clip at (11,29) size 162x92 scrollHeight 137
+  RenderTextControl {TEXTAREA} at (2,20) size 179x94 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (3,3) size 160x135
+      RenderText {#text} at (0,0) size 8x60
+        text run at (0,0) width 8: "1"
+        text run at (8,0) width 0: " "
+        text run at (0,15) width 8: "2"
+        text run at (8,15) width 0: " "
+        text run at (0,30) width 8: "3"
+        text run at (8,30) width 0: " "
+        text run at (0,45) width 8: "4"
+        text run at (8,45) width 0: " "
+      RenderText {#text} at (0,60) size 8x15
+        text run at (0,60) width 8: "5"
+      RenderText {#text} at (8,60) size 0x15
+        text run at (8,60) width 0: " "
+      RenderText {#text} at (0,75) size 8x15
+        text run at (0,75) width 8: "6"
+      RenderText {#text} at (8,75) size 0x15
+        text run at (8,75) width 0: " "
+      RenderText {#text} at (0,90) size 8x15
+        text run at (0,90) width 8: "7"
+      RenderText {#text} at (8,90) size 0x15
+        text run at (8,90) width 0: " "
+      RenderText {#text} at (0,105) size 8x15
+        text run at (0,105) width 8: "8"
+      RenderText {#text} at (8,105) size 0x15
+        text run at (8,105) width 0: " "
+      RenderText {#text} at (0,120) size 0x15
+        text run at (0,120) width 0: " "
+caret: position 0 of child 9 {#text} of child 0 {DIV} of {#document-fragment} of child 3 {TEXTAREA} of body

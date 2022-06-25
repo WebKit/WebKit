@@ -1,0 +1,48 @@
+This test makes sure that the CSS Font Loading API plays nicely with modifying @font-face rules with the CSSOM.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS item1.getBoundingClientRect().width is 48
+PASS item2.getBoundingClientRect().width is not 48
+PASS item3.getBoundingClientRect().width is not 48
+PASS item4.getBoundingClientRect().width is not 48
+PASS item5.getBoundingClientRect().width is not 48
+PASS item6.getBoundingClientRect().width is not 48
+PASS item1.getBoundingClientRect().width is 48
+PASS item2.getBoundingClientRect().width is 48
+PASS item3.getBoundingClientRect().width is not 48
+PASS item4.getBoundingClientRect().width is not 48
+PASS item5.getBoundingClientRect().width is not 48
+PASS item6.getBoundingClientRect().width is not 48
+PASS item1.getBoundingClientRect().width is 48
+PASS item2.getBoundingClientRect().width is 48
+PASS item3.getBoundingClientRect().width is 48
+PASS item4.getBoundingClientRect().width is not 48
+PASS item5.getBoundingClientRect().width is not 48
+PASS item6.getBoundingClientRect().width is not 48
+PASS item1.getBoundingClientRect().width is 48
+PASS item2.getBoundingClientRect().width is 48
+PASS item3.getBoundingClientRect().width is not 48
+PASS item4.getBoundingClientRect().width is not 48
+PASS item5.getBoundingClientRect().width is not 48
+PASS item6.getBoundingClientRect().width is not 48
+PASS connectedFontFace.family is "WebFont2"
+PASS connectedFontFace.family is "WebFont5"
+PASS item1.getBoundingClientRect().width is 48
+PASS item2.getBoundingClientRect().width is not 48
+PASS item3.getBoundingClientRect().width is not 48
+PASS item4.getBoundingClientRect().width is not 48
+PASS item5.getBoundingClientRect().width is 48
+PASS item6.getBoundingClientRect().width is not 48
+PASS styleSheet.cssRules[0].style.fontFamily is "WebFont6"
+PASS item1.getBoundingClientRect().width is 48
+PASS item2.getBoundingClientRect().width is not 48
+PASS item3.getBoundingClientRect().width is not 48
+PASS item4.getBoundingClientRect().width is not 48
+PASS item5.getBoundingClientRect().width is not 48
+PASS item6.getBoundingClientRect().width is 48
+PASS successfullyParsed is true
+
+TEST COMPLETE
+l l l l l l

@@ -1,0 +1,19 @@
+Tests basic functionality of WI.ObjectStore.
+
+
+== Running test suite: WI.ObjectStore
+-- Running test case: WI.ObjectStore.InitiallyNull
+PASS: The database should initially be null/closed.
+
+-- Running test case: WI.ObjectStore.prototype._resolveKeyPath.Exists
+{"object":{"a":1},"key":["a"],"value":1}
+[]
+
+-- Running test case: WI.ObjectStore.prototype._resolveKeyPath.MissingPart
+{"object":{"sub.a":0,"a":1,"b":2},"key":"sub.a","value":0}
+[]
+
+-- Running test case: WI.ObjectStore.prototype._resolveKeyPath.MissingWhole
+{"object":{"a":1,"b":2},"key":"sub.a"}
+[]
+

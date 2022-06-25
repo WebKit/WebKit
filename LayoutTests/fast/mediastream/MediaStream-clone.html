@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+        <script src="./resources/getUserMedia-helper.js"></script>
+        <script>
+            var mediaStream;
+            var newMediaStream;
+            var track;
+            var newTrack;
+
+            function checkTracks(track1, track2) {
+                track = track1;
+                newTrack = track2;
+                debug("check tracks");
+                shouldNotBe('track.id', 'newTrack.id');
+                shouldBe('track.kind', 'newTrack.kind');
+                shouldBe('track.label', 'newTrack.label');
+                shouldBe('track.readyState', 'newTrack.readyState');
+                shouldBe('track.enabled', 'newTrack.enabled');
+                shouldBe('track.muted', 'newTrack.muted');
+                debug("done");
+            }
+
+            function gotStream(stream) {
+                mediaStream = stream;
+                debug("");
+
+                // Since we don't have any guarantees on the order from getAudio/VideoTracks(), we
+                // can't have a stream with more than one track of each kind.
+                shouldBe('mediaStream.getAudioTracks().length', '1');
+                shouldBe('mediaStream.getVideoTracks().length', '1');
+
+                evalAndLog("newMediaStream = mediaStream.clone()");
+
+                shouldNotBe('mediaStream.id', 'newMediaStream.id');
+
+                checkTracks(mediaStream.getAudioTracks()[0], newMediaStream.getAudioTracks()[0]);
+                checkTracks(mediaStream.getVideoTracks()[0], newMediaStream.getVideoTracks()[0]);
+
+                finishJSTest();
+            }
+
+            function start() {
+                getUserMedia("allow", {audio:true, video:true}, gotStream);
+            }
+
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+        </script>
+    </head>
+    <body onload="start()">
+        <p id="description"></p>
+        <div id="console"></div>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

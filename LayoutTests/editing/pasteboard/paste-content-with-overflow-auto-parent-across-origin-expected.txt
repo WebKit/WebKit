@@ -1,0 +1,16 @@
+This tests copying and pasting content with "overflow: auto" would not strip its content.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS markup.includes("secret") is false
+PASS markup.includes("Start</div>") is true
+PASS markup.includes("Content</p>") is true
+PASS markup.includes("End</span>") is true
+PASS editor.querySelector("div").textContent is "Start"
+PASS editor.querySelector("p").textContent is "Content"
+PASS editor.querySelector("span").textContent is "End"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

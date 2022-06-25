@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div style="font: 19px system-ui">
+<div><span id="one" style="font-weight: 100;">Hello, World</span></div>
+<div><span id="two" style="font-weight: 200;">Hello, World</span></div>
+<div><span id="three" style="font-weight: 300;">Hello, World</span></div>
+<div><span id="four" style="font-weight: 400;">Hello, World</span></div>
+<div><span id="five" style="font-weight: 500;">Hello, World</span></div>
+<div><span id="six" style="font-weight: 600;">Hello, World</span></div>
+<div><span id="seven" style="font-weight: 700;">Hello, World</span></div>
+<div><span id="eight" style="font-weight: 800;">Hello, World</span></div>
+<div><span id="nine" style="font-weight: 900;">Hello, World</span></div>
+</div>
+<script>
+description("This test makes sure that extra-heavy weights of the system font can be achieved.");
+var one = document.getElementById("one");
+var two = document.getElementById("two");
+var three = document.getElementById("three");
+var four = document.getElementById("four");
+var five = document.getElementById("five");
+var six = document.getElementById("six");
+var seven = document.getElementById("seven");
+var eight = document.getElementById("eight");
+var nine = document.getElementById("nine");
+shouldNotBe("four.offsetWidth", "three.offsetWidth");
+shouldNotBe("five.offsetWidth", "four.offsetWidth");
+shouldNotBe("six.offsetWidth", "five.offsetWidth");
+shouldNotBe("eight.offsetWidth", "seven.offsetWidth");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

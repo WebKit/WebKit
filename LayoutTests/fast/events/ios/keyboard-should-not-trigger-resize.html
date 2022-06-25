@@ -1,0 +1,66 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+
+<head>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <script id="ui-script" type="text/plain">
+        (function() {
+            uiController.didShowKeyboardCallback = function() {
+                uiController.didHideKeyboardCallback = function() {
+                    uiController.uiScriptComplete();
+                }
+                uiController.typeCharacterUsingHardwareKeyboard("a", function() { });
+            }
+            uiController.singleTapAtPoint(50, 25, function() {});
+        })();
+    </script>
+
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function getUIScript()
+        {
+            return document.getElementById("ui-script").text;
+        }
+
+        function runTest()
+        {
+            if (!window.testRunner || !testRunner.runUIScript)
+                return;
+
+            window.onresize = function() {
+                debug("Received unexpected onresize event! window.innerHeight = " + window.innerHeight);
+            }
+
+            testRunner.runUIScript(getUIScript(), function(result) {
+                debug("After hiding the keyboard, window.innerHeight = " + window.innerHeight);
+                testRunner.notifyDone();
+            });
+        }
+
+        function handleInput()
+        {
+            debug("After showing the keyboard, window.innerHeight = " + window.innerHeight);
+            document.getElementById("textfield").blur();
+        }
+    </script>
+    <style>
+    input {
+        width: 100px;
+        height: 50px;
+    }
+    </style>
+</head>
+
+<body style="margin: 0;" onload="runTest()">
+    <input id="textfield" style="width: 100px; height: 50px;" oninput="handleInput()">
+    <div id="console"></div>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ScrollAnimatorEnabled=false ] -->
+<html>
+    <head>
+        <style>
+        .box {
+            width: 200px;
+            height: 200px;
+        }
+
+        .gallery {
+            overflow: scroll;
+        }
+        </style>
+        <script src="../../resources/js-test.js"></script>
+        <script src="../../resources/ui-helper.js"></script>
+        <script>
+        window.jsTestIsAsync = true;
+
+        function clickOnElement(targetElement) {
+            var clientRect = targetElement.getBoundingClientRect();
+            eventSender.mouseMoveTo(clientRect.x + 5, clientRect.y + 5);
+            eventSender.mouseDown();
+        }
+
+        async function runTests()
+        {
+            try {
+                var container = document.getElementById("container");
+
+                clickOnElement(container);
+                await UIHelper.keyDown("pageDown");
+
+                expectTrue(container.scrollTop != 0, "paging moved container");
+                let defaultPagePosition = container.scrollTop;
+                let pageProportion = container.scrollTop / container.clientHeight;
+
+                container.scrollTop = 0;
+                container.style.scrollPaddingTop = "10px";
+                await UIHelper.keyDown("pageDown");
+
+                let expected = (container.clientHeight - 10) * pageProportion;
+                expectTrue(container.scrollTop != 0, "paging moved padded container");
+                shouldBeCloseTo("container.scrollTop", expected, 1);
+
+                container.scrollTop = 0;
+                container.style.scrollPaddingTop = "0px";
+                container.style.scrollPaddingBottom = "10px";
+                await UIHelper.keyDown("pageDown");
+
+                expectTrue(container.scrollTop != 0, "paging moved padded container");
+                shouldBeCloseTo("container.scrollTop", expected, 1);
+
+                container.scrollTop = 0;
+                container.style.scrollPaddingTop = "10px";
+                container.style.scrollPaddingBottom = "10px";
+                await UIHelper.keyDown("pageDown");
+
+                expected = (container.clientHeight - 20) * pageProportion;
+                expectTrue(container.scrollTop != 0, "paging moved padded container");
+                shouldBeCloseTo("container.scrollTop", expected, 1);
+            } catch (e) {
+                console.log(e);
+            } finally {
+                finishJSTest();
+            }
+        }
+
+        function onLoad()
+        {
+            if (window.eventSender) {
+                runTests();
+            } else {
+                var console = document.getElementById('console');
+                console.innerText = "This test cannot be run manually."
+            }
+        }
+        </script>
+    </head>
+    <body onload="onLoad();">
+        <div id="console"></div>
+        <div id="container" class="box" style="overflow: scroll;">
+            <div class="box" style="background: green;"></div>
+            <div class="box" style="background: red;"></div>
+            <div class="box" style="background: pink;"></div>
+            <div class="box" style="background: yellow;"></div>
+            <div class="box" style="background: orange;"></div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,100 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% INCLUDE global/header.html.tmpl
+   title = "Edit Workflow"
+   style_urls = ['skins/standard/admin.css']
+%]
+
+<script type="text/javascript">
+<!--
+  function toggle_cell(cell) {
+    if (cell.checked)
+      cell.parentNode.className = "checked";
+    else
+      cell.parentNode.className = "";
+  }
+//-->
+</script>
+
+<p>
+  This page allows you to define which status transitions are valid in your workflow.
+  For compatibility with older versions of Bugzilla, reopening [% terms.abug %]
+  will only display either [% display_value("bug_status", "UNCONFIRMED") FILTER html %] or
+  [%+ display_value("bug_status", "REOPENED") FILTER html %] (if allowed by your workflow) but not
+  both. The decision depends on whether the [% terms.bug %] has ever been confirmed or not.
+  So it is a good idea to allow both transitions and let Bugzilla select the
+  correct one.
+</p>
+
+<form id="workflow_form" method="POST" action="editworkflow.cgi">
+<table id="workflow">
+  <tr>
+    <th colspan="2">&nbsp;</th>
+    <th colspan="[% statuses.size FILTER html %]" class="title">To</th>
+  </tr>
+
+  <tr>
+    <th rowspan="[% statuses.size + 2 FILTER html %]" class="title">From</th>
+    <th>&nbsp;</th>
+    [% FOREACH status = statuses %]
+      <th class="[% status.is_open ? "open-status" : "closed-status" %] center">
+        [% display_value("bug_status", status.name) FILTER html %]
+      </th>
+    [% END %]
+  </tr>
+
+  [%# This defines the entry point in the workflow %]
+  [% p = [{id => 0, name => "{Start}", is_open => 1}] %]
+  [% FOREACH status = p.merge(statuses) %]
+    <tr class="highlight">
+      <th class="[% status.is_open ? "open-status" : "closed-status" %]">
+        [% display_value("bug_status", status.name) FILTER html %]
+      </th>
+
+      [% FOREACH new_status = statuses %]
+        [% IF status.id != new_status.id %]
+          [% checked = workflow.${status.id}.${new_status.id}.defined ? 1 : 0 %]
+          [% mandatory = (status.id && new_status.name == Param("duplicate_or_move_bug_status")) ? 1 : 0 %]
+          <td class="[% "checked" IF checked || mandatory %]"
+              title="From [% status.name FILTER html %] to [% new_status.name FILTER html %]">
+            <input type="checkbox" name="w_[% status.id %]_[% new_status.id %]"
+                   id="w_[% status.id %]_[% new_status.id %]" onclick="toggle_cell(this)"
+                   [%+ "checked='checked'" IF checked || mandatory %]
+                   [%+ "disabled='disabled'" IF mandatory %]>
+          </td>
+        [% ELSE %]
+          <td class="forbidden">&nbsp;</td>
+        [% END %]
+      [% END %]
+    </tr>
+  [% END %]
+</table>
+
+<p>
+  When [% terms.abug %] is marked as a duplicate of another one or is moved
+  to another installation, the [% terms.bug %] status is automatically set to
+  <b>[% display_value("bug_status", Param("duplicate_or_move_bug_status")) FILTER html %]</b>. All transitions to
+  this [% terms.bug %] status must then be valid (this is the reason why you cannot edit
+  them above).<br>
+  Note: you can change this setting by visiting the
+  <a href="editparams.cgi?section=bugchange#duplicate_or_move_bug_status">Parameters</a>
+  page and editing the <i>duplicate_or_move_bug_status</i> parameter.
+</p>
+
+<p class="center">
+  <input type="hidden" name="action" value="update">
+  <input type="hidden" name="token" value="[% token FILTER html %]">
+  <input type="submit" id="update_workflow" value="Commit Changes"> -
+  <a href="editworkflow.cgi">Cancel Changes</a> -
+  <a href="editworkflow.cgi?action=edit_comment">View Comments Required on Status Transitions</a>
+</p>
+
+</form>
+
+[% INCLUDE global/footer.html.tmpl %]

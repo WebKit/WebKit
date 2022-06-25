@@ -1,0 +1,40 @@
+Tests for DOM breakpoints.
+
+
+== Running test suite: DOMBreakpoint
+-- Running test case: DOMBreakpoint.Basic
+Adding "subtree-modified:1,HTML,1,BODY,1,DIV,0,DIV" DOM Breakpoint...
+PASS: Breakpoint should not be disabled.
+PASS: Breakpoint should have node identifier.
+PASS: Breakpoint URL should match document URL.
+-- Running test teardown.
+
+-- Running test case: DOMBreakpoint.RemoveAllBreakpointsForNode
+Adding "subtree-modified:1,HTML,1,BODY,1,DIV,1,DIV" DOM Breakpoint...
+Adding "attribute-modified:1,HTML,1,BODY,1,DIV,1,DIV" DOM Breakpoint...
+Adding "node-removed:1,HTML,1,BODY,1,DIV,1,DIV" DOM Breakpoint...
+PASS: Should have 3 breakpoints.
+Removing all breakpoints for #multiple-breakpoints-test...
+PASS: Should remove all breakpoints.
+-- Running test teardown.
+
+-- Running test case: DOMBreakpoint.SetBreakpointWithInvalidNodeId
+Setting breakpoint...
+PASS: Should produce an exception.
+Error: Missing node for given nodeId
+
+-- Running test case: DOMBreakpoint.SetBreakpointWithInvalidType
+Setting breakpoint...
+PASS: Should produce an exception.
+Error: Unknown type: custom-breakpoint-type
+
+-- Running test case: DOMBreakpoint.RemoveBreakpointWithInvalidNodeId
+Removing breakpoint...
+PASS: Should produce an exception.
+Error: Missing node for given nodeId
+
+-- Running test case: DOMBreakpoint.RemoveBreakpointWithInvalidType
+Removing breakpoint...
+PASS: Should produce an exception.
+Error: Unknown type: custom-breakpoint-type
+

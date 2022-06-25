@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests that WebKit doesn't crash when there is an non-flattened iframe inside a flattened iframe.</p>
+<div id="container"></div>
+<script>
+
+if (window.testRunner && window.internals) {
+    testRunner.dumpAsText();
+    internals.settings.setFrameFlattening("FullyEnabled");
+}
+
+const container = document.getElementById('container');
+const outerIFrame = document.createElement('iframe');
+container.appendChild(outerIFrame);
+
+const innerIFrame = document.createElement('iframe');
+innerIFrame.setAttribute('scrolling', 'no');
+innerIFrame.style.width = '100px';
+innerIFrame.style.height = '100px';
+
+outerIFrame.contentDocument.body.appendChild(innerIFrame);
+
+let content = '';
+for (let i = 0; i < 50; i++)
+    content += `some text ${i}<br>`;
+
+innerIFrame.contentDocument.body.innerHTML = content;
+
+document.body.getBoundingClientRect();
+container.textContent = 'PASS. WebKit did not crash.';
+
+</script>
+</body>
+</html>

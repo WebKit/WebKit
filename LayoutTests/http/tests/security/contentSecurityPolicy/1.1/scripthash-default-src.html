@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <title>Script Hash allow hash in default-src</title>
+    <script src="/js-test-resources/testharness.js"></script>
+    <script src="/js-test-resources/testharnessreport.js"></script>
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'sha256-A7dZlEcghOvAkdYV+nU04H7pce8leeIgdm9pe/PRrNY='">
+    </head>
+    <script>
+        setup({ single_test: true });
+        done();
+    </script>
+</html>

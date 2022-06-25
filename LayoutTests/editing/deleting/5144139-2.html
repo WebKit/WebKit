@@ -1,0 +1,27 @@
+<style>
+/* Force font fallback on Windows to match Mac OS X */
+@font-face {
+    font-family: 'times';
+    src: local('Symbol');
+    unicode-range: U+21D2;
+}
+
+@font-face {
+    font-family: 'times';
+    src: local('Lucida Grande');
+    unicode-range: U+21E3;
+}
+</style>
+<p>This tests to see that deleting a selection that starts just before a table and ends inside the table does not insert a placeholder br unnecessarily.  You should see two ToDos, one empty.  The caret should be just before the second.</p>
+<div contenteditable="true" id="div">
+<table contenteditable="false"><tr><td>&#x21D2;</td><td contenteditable="true">ToDo Content</td><td>&#x21E3;</td></tr></table>
+<table contenteditable="false" id="start"><tr><td>&#x21D2;</td><td contenteditable="true" id="end">ToDo Content</td><td>&#x21E3;</td></tr></table>
+</div>
+
+<script>
+var start = document.getElementById("start");
+var end = document.getElementById("end");
+var sel = window.getSelection();
+sel.setBaseAndExtent(start, 0, end, end.childNodes.length);
+document.execCommand("Delete");
+</script>

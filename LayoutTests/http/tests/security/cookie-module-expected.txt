@@ -1,0 +1,44 @@
+PASS did load script with origin http://127.0.0.1:8000.
+
+PASS did load script with origin http://127.0.0.1:8000.
+
+PASS did not load script with origin https://127.0.0.1:8443.
+
+PASS did not load script with origin http://localhost:8000.
+
+PASS did load script with origin http://127.0.0.1:8000.
+
+PASS did load script with origin http://127.0.0.1:8000.
+
+PASS did not load script with origin https://127.0.0.1:8443.
+
+PASS did not load script with origin http://localhost:8000.
+
+PASS did load script with origin http://127.0.0.1:8000.
+
+PASS did load script with origin http://127.0.0.1:8000.
+
+PASS did not load script with origin https://127.0.0.1:8443.
+
+PASS did not load script with origin http://localhost:8000.
+
+PASS did not load script with origin http://127.0.0.1:8000.
+
+PASS did not load script with origin http://127.0.0.1:8000.
+
+PASS did not load script with origin https://127.0.0.1:8443.
+
+PASS did not load script with origin http://localhost:8000.
+
+PASS did load script with origin http://127.0.0.1:8000.
+
+PASS did load script with origin http://127.0.0.1:8000.
+
+PASS did load script with origin https://127.0.0.1:8443.
+
+PASS did not load script with origin http://localhost:8000.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

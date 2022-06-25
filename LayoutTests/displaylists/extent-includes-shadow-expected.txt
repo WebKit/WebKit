@@ -1,0 +1,15 @@
+
+(save)
+(set-state
+  (change-flags [drop-shadow])
+  (drop-shadow
+    (shadow-offset width=10 height=20)
+    (shadow-blur 12.00)
+    (shadow-color #000000)
+    (shadows-use-legacy-radius 0)))
+(fill-composited-rect
+  (rect at (50,50) size 100x100)
+  (color #0000FF)
+  (composite-operation source-over)
+  (blend-mode normal) extent at (43,50) size 134x137)
+(restore)

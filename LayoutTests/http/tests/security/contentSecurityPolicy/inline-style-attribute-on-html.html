@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html style="background-color: blue;">
+<head>
+<meta http-equiv="Content-Security-Policy" content="style-src 'none'; script-src 'unsafe-inline'">
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</head>
+<body>
+<p>Even though this page has a CSP policy the blocks inline style, the style
+attribute on the HTML element still takes effect because it preceeds the meta
+element.</p>
+<script>
+document.write(document.documentElement.style.length > 0 ? 'PASS' : 'FAIL');
+</script>
+</body>
+</html>
