@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #import "config.h"
 #import "MemoryRelease.h"
 
+#import "FontCache.h"
 #import "FontFamilySpecificationCoreText.h"
 #import "GCController.h"
 #import "HTMLNameCache.h"
@@ -33,7 +34,6 @@
 #import "LayerPool.h"
 #import "LocaleCocoa.h"
 #import "SubimageCacheWithTimer.h"
-#import "SystemFontDatabaseCoreText.h"
 #import <notify.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
 
@@ -47,7 +47,7 @@ namespace WebCore {
 
 void platformReleaseMemory(Critical)
 {
-    SystemFontDatabaseCoreText::singleton().clear();
+    FontCache::invalidateAllFontCaches(FontCache::ShouldRunInvalidationCallback::No);
     clearFontFamilySpecificationCoreTextCache();
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST)

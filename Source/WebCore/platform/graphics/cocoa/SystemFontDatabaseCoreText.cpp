@@ -130,15 +130,20 @@ Vector<RetainPtr<CTFontDescriptorRef>> SystemFontDatabaseCoreText::cascadeList(c
     }).iterator->value;
 }
 
+void SystemFontDatabase::platformInvalidate()
+{
+    SystemFontDatabaseCoreText::singleton().clear();
+}
+
 void SystemFontDatabaseCoreText::clear()
 {
+    // Don't call this directly. Instead, you should be calling FontCache::invalidateAllFontCaches().
     m_systemFontCache.clear();
     m_serifFamilies.clear();
     m_sansSeriferifFamilies.clear();
     m_cursiveFamilies.clear();
     m_fantasyFamilies.clear();
     m_monospaceFamilies.clear();
-    SystemFontDatabase::clear();
 }
 
 RetainPtr<CTFontRef> SystemFontDatabaseCoreText::createFontByApplyingWeightWidthItalicsAndFallbackBehavior(CTFontRef font, CGFloat weight, CGFloat width, bool italic, float size, AllowUserInstalledFonts allowUserInstalledFonts, CFStringRef design)

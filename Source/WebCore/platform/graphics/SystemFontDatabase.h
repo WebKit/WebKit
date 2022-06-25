@@ -74,12 +74,15 @@ public:
     float systemFontShorthandSize(FontShorthand);
     FontSelectionValue systemFontShorthandWeight(FontShorthand);
 
-    WEBCORE_EXPORT void clear();
-
 protected:
     SystemFontDatabase();
 
 private:
+    friend class FontCache;
+
+    void invalidate();
+    void platformInvalidate();
+
     struct SystemFontShorthandInfo {
         AtomString family;
         float size;

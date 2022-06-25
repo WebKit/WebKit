@@ -795,13 +795,13 @@ static float stretchFromCoreTextTraits(CFDictionaryRef traits)
 }
 #endif
 
-static void invalidateFontCache();
-
 static void fontCacheRegisteredFontsChangedNotificationCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void *, CFDictionaryRef)
 {
     ASSERT_UNUSED(observer, isMainThread() && observer == &FontCache::forCurrentThread());
 
-    invalidateFontCache();
+    ensureOnMainThread([] {
+        FontCache::invalidateAllFontCaches();
+    });
 }
 
 void FontCache::platformInit()
@@ -1292,20 +1292,15 @@ static FontLookup platformFontLookupWithFamily(const AtomString& family, FontSel
     return { nullptr };
 }
 
-static void invalidateFontCache()
+void FontCache::platformInvalidate()
 {
-    ensureOnMainThread([] {
-        // FIXME: Workers need to access SystemFontDatabaseCoreText.
-        SystemFontDatabaseCoreText::singleton().clear();
-        // FIXME: Workers need to access FontFamilySpecificationCoreTextCache.
-        clearFontFamilySpecificationCoreTextCache();
+    // FIXME: Workers need to access SystemFontDatabaseCoreText.
+    // FIXME: Workers need to access FontFamilySpecificationCoreTextCache.
+    clearFontFamilySpecificationCoreTextCache();
 
-        // FIXME: Workers need to access FontDatabase.
-        FontDatabase::singletonAllowingUserInstalledFonts().clear();
-        FontDatabase::singletonDisallowingUserInstalledFonts().clear();
-
-        FontCache::invalidateAllFontCaches();
-    });
+    // FIXME: Workers need to access FontDatabase.
+    FontDatabase::singletonAllowingUserInstalledFonts().clear();
+    FontDatabase::singletonDisallowingUserInstalledFonts().clear();
 }
 
 static RetainPtr<CTFontRef> fontWithFamilySpecialCase(const AtomString& family, const FontDescription& fontDescription, float size, AllowUserInstalledFonts allowUserInstalledFonts)

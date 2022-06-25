@@ -105,6 +105,7 @@ public:
     float systemFontShorthandSize(FontShorthand);
     FontSelectionValue systemFontShorthandWeight(FontShorthand);
 
+protected:
     void clear();
 
 private:

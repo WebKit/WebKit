@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2008 Alp Toker <alp@atoker.com>
  * Copyright (C) 2010 Igalia S.L.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -675,5 +676,9 @@ String buildVariationSettings(FT_Face face, const FontDescription& fontDescripti
     return builder.toString();
 }
 #endif // ENABLE(VARIATION_FONTS)
+
+void FontCache::platformInvalidate()
+{
+}
 
 }

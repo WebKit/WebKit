@@ -442,9 +442,7 @@ void Page::firstTimeInitialization()
     platformStrategies()->loaderStrategy()->addOnlineStateChangeListener(&networkStateChanged);
 
     FontCache::registerFontCacheInvalidationCallback([] {
-        forEachPage([](auto& page) {
-            page.setNeedsRecalcStyleInAllFrames();
-        });
+        updateStyleForAllPagesAfterGlobalChangeInEnvironment();
     });
 }
 

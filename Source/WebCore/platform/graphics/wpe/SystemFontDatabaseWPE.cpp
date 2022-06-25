@@ -45,4 +45,8 @@ auto SystemFontDatabase::platformSystemFontShorthandInfo(FontShorthand) -> Syste
     return { WebKitFontFamilyNames::standardFamily, 16, normalWeightValue() };
 }
 
+void SystemFontDatabase::platformInvalidate()
+{
+}
+
 } // namespace WebCore

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2008 Torch Mobile, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -321,9 +321,19 @@ public:
     void removeClient(FontSelector&);
 
     unsigned short generation() const { return m_generation; }
-    WEBCORE_EXPORT void invalidate();
     static void registerFontCacheInvalidationCallback(Function<void()>&&);
-    WEBCORE_EXPORT static void invalidateAllFontCaches();
+
+    // The invalidation callback runs a style recalc on the page.
+    // If we're invalidating because of memory pressure, we shouldn't run a style recalc.
+    // A style recalc would just allocate a bunch of the memory that we're trying to release.
+    // On the other hand, if we're invalidating because the set of installed fonts changed,
+    // or if some accessibility text settings were altered, we should run a style recalc
+    // so the user can immediately see the effect of the new environment.
+    enum class ShouldRunInvalidationCallback : bool {
+        No,
+        Yes
+    };
+    WEBCORE_EXPORT static void invalidateAllFontCaches(ShouldRunInvalidationCallback = ShouldRunInvalidationCallback::Yes);
 
     WEBCORE_EXPORT size_t fontCount();
     WEBCORE_EXPORT size_t inactiveFontCount();
@@ -362,6 +372,9 @@ public:
     static void prewarmGlobally();
 
 private:
+    void invalidate();
+    void platformInvalidate();
+
     WEBCORE_EXPORT void purgeInactiveFontDataIfNeeded();
     void pruneUnreferencedEntriesFromFontCascadeCache();
     void pruneSystemFallbackFonts();
