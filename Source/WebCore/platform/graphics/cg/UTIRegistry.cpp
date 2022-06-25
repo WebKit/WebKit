@@ -58,6 +58,9 @@ const MemoryCompactLookupOnlyRobinHoodHashSet<String>& defaultSupportedImageType
             "com.google.webp"_s,
             "org.webmproject.webp"_s,
 #endif
+#if HAVE(AVIF)
+            "public.avif"_s,
+#endif
         };
 
         auto systemSupportedCFImageTypes = adoptCF(CGImageSourceCopyTypeIdentifiers());

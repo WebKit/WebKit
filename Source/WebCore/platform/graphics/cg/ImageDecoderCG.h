@@ -73,6 +73,9 @@ public:
     WEBCORE_EXPORT static void enableDecodingHEIC();
     static bool decodingHEICEnabled();
 
+    WEBCORE_EXPORT static void enableDecodingAVIF();
+    static bool decodingAVIFEnabled();
+
     WEBCORE_EXPORT static void disableHardwareAcceleratedDecoding();
     static bool hardwareAcceleratedDecodingDisabled();
 
@@ -81,6 +84,7 @@ private:
     mutable EncodedDataStatus m_encodedDataStatus { EncodedDataStatus::Unknown };
     RetainPtr<CGImageSourceRef> m_nativeDecoder;
     static bool s_enableDecodingHEIC;
+    static bool s_enableDecodingAVIF;
     static bool s_hardwareAcceleratedDecodingDisabled;
 };
 

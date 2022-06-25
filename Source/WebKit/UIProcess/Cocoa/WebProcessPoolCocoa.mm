@@ -402,9 +402,11 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
         if (auto trustdExtensionHandle = SandboxExtension::createHandleForMachLookup("com.apple.trustd.agent"_s, std::nullopt))
             parameters.trustdExtensionHandle = WTFMove(*trustdExtensionHandle);
         parameters.enableDecodingHEIC = true;
+        parameters.enableDecodingAVIF = true;
     }
 #else
     parameters.enableDecodingHEIC = true;
+    parameters.enableDecodingAVIF = true;
 #endif // PLATFORM(MAC)
 #endif // HAVE(VIDEO_RESTRICTED_DECODING)
 
