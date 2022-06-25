@@ -191,6 +191,16 @@ Vector<uint8_t> buildClientDataJsonHash(const ArrayBuffer& clientDataJson)
     return crypto->computeHash();
 }
 
+Vector<uint8_t> encodeRawPublicKey(const Vector<uint8_t>& x, const Vector<uint8_t>& y)
+{
+    Vector<uint8_t> rawKey;
+    rawKey.reserveInitialCapacity(1 + x.size() + y.size());
+    rawKey.uncheckedAppend(0x04);
+    rawKey.appendVector(x);
+    rawKey.appendVector(y);
+    return rawKey;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUTHN)

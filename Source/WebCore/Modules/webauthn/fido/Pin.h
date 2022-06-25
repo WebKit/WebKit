@@ -84,9 +84,6 @@ constexpr int64_t kProtocolVersion = 1;
 // encodeCOSEPublicKey takes a raw ECDH256 public key and returns it as a COSE structure.
 WEBCORE_EXPORT cbor::CBORValue::MapValue encodeCOSEPublicKey(const Vector<uint8_t>& key);
 
-// encodeRawPublicKey takes X & Y and returns them as a 0x04 || X || Y byte array.
-WEBCORE_EXPORT Vector<uint8_t> encodeRawPublicKey(const Vector<uint8_t>& X, const Vector<uint8_t>& Y);
-
 // validateAndConvertToUTF8 convert the input to a UTF8 CString if it is a syntactically valid PIN.
 WEBCORE_EXPORT std::optional<CString> validateAndConvertToUTF8(const String& pin);
 

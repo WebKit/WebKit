@@ -42,6 +42,8 @@ public:
     ArrayBuffer* attestationObject() const { return m_attestationObject.ptr(); }
     const Vector<AuthenticatorTransport>& getTransports() const { return m_transports; }
     RefPtr<ArrayBuffer> getAuthenticatorData() const;
+    RefPtr<ArrayBuffer> getPublicKey() const;
+    int64_t getPublicKeyAlgorithm() const;
 
 private:
     AuthenticatorAttestationResponse(Ref<ArrayBuffer>&&, Ref<ArrayBuffer>&&, AuthenticatorAttachment, Vector<AuthenticatorTransport>&&);

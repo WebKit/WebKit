@@ -43,6 +43,7 @@
 #include "CryptoKeyHMAC.h"
 #include "DeviceResponseConverter.h"
 #include "WebAuthenticationConstants.h"
+#include "WebAuthenticationUtils.h"
 #include <pal/crypto/CryptoDigest.h>
 
 namespace fido {
@@ -68,16 +69,6 @@ static Vector<uint8_t> makePinAuth(const CryptoKeyHMAC& key, const Vector<uint8_
     auto pinAuth = result.releaseReturnValue();
     pinAuth.shrink(16);
     return pinAuth;
-}
-
-Vector<uint8_t> encodeRawPublicKey(const Vector<uint8_t>& x, const Vector<uint8_t>& y)
-{
-    Vector<uint8_t> rawKey;
-    rawKey.reserveInitialCapacity(1 + x.size() + y.size());
-    rawKey.uncheckedAppend(0x04);
-    rawKey.appendVector(x);
-    rawKey.appendVector(y);
-    return rawKey;
 }
 
 std::optional<CString> validateAndConvertToUTF8(const String& pin)
