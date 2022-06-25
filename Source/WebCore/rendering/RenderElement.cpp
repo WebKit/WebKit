@@ -587,7 +587,7 @@ RenderPtr<RenderObject> RenderElement::detachRendererInternal(RenderObject& rend
     return RenderPtr<RenderObject>(&renderer);
 }
 
-static RenderLayer* findNextLayer(const RenderElement& currRenderer, RenderLayer& parentLayer, const RenderObject* siblingToTraverseFrom, bool checkParent = true)
+static RenderLayer* findNextLayer(const RenderElement& currRenderer, const RenderLayer& parentLayer, const RenderObject* siblingToTraverseFrom, bool checkParent = true)
 {
     // Step 1: If our layer is a child of the desired parent, then return our layer.
     auto* ourLayer = currRenderer.hasLayer() ? downcast<RenderLayerModelObject>(currRenderer).layer() : nullptr;
@@ -618,7 +618,7 @@ static RenderLayer* findNextLayer(const RenderElement& currRenderer, RenderLayer
     return nullptr;
 }
 
-static RenderLayer* layerNextSiblingRespectingTopLayer(const RenderElement& renderer, RenderLayer& parentLayer)
+static RenderLayer* layerNextSiblingRespectingTopLayer(const RenderElement& renderer, const RenderLayer& parentLayer)
 {
     ASSERT_IMPLIES(isInTopLayerOrBackdrop(renderer.style(), renderer.element()), renderer.hasLayer());
 

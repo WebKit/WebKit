@@ -831,7 +831,7 @@ public:
 
     Element* enclosingElement() const;
 
-    static Vector<RenderLayer*> topLayerRenderLayers(RenderView&);
+    static Vector<RenderLayer*> topLayerRenderLayers(const RenderView&);
 
     bool establishesTopLayer() const;
     void establishesTopLayerWillChange();
