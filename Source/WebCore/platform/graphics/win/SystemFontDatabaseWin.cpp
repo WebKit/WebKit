@@ -85,4 +85,8 @@ auto SystemFontDatabase::platformSystemFontShorthandInfo(FontShorthand fontShort
     return { logFont.lfFaceName, size, weight };
 }
 
+void SystemFontDatabase::platformInvalidate()
+{
+}
+
 } // namespace WebCore

@@ -62,4 +62,8 @@ auto SystemFontDatabase::platformSystemFontShorthandInfo(FontShorthand) -> Syste
     return result;
 }
 
+void SystemFontDatabase::platformInvalidate()
+{
+}
+
 } // namespace WebCore

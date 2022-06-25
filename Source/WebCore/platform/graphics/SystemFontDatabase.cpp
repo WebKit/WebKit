@@ -53,10 +53,11 @@ FontSelectionValue SystemFontDatabase::systemFontShorthandWeight(FontShorthand f
     return systemFontShorthandInfo(fontShorthand).weight;
 }
 
-void SystemFontDatabase::clear()
+void SystemFontDatabase::invalidate()
 {
     for (auto& item : m_systemFontShorthandCache)
         item.reset();
+    platformInvalidate();
 }
 
 } // namespace WebCore
