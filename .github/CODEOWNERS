@@ -83,3 +83,8 @@
 /Source/WebCore/Modules/mediacontrols @dcrousso
 /Source/WebCore/Modules/modern-media-controls @dcrousso
 /LayoutTests/media/modern-media-controls @dcrousso
+
+# ================================================================================
+
+Source/WebCore/animation @graouts
+Source/WebCore/Modules/model-element @graouts
