@@ -1183,6 +1183,7 @@ void HTMLMediaElement::prepareForLoad()
     m_haveFiredLoadedData = false;
     m_completelyLoaded = false;
     m_havePreparedToPlay = false;
+    setCurrentSrc(URL());
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     m_failedToPlayToWirelessTarget = false;
