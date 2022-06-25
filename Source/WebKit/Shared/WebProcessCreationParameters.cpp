@@ -164,6 +164,7 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << trustdExtensionHandle;
 #endif
     encoder << enableDecodingHEIC;
+    encoder << enableDecodingAVIF;
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -455,6 +456,12 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     if (!enableDecodingHEIC)
         return false;
     parameters.enableDecodingHEIC = *enableDecodingHEIC;
+    
+    std::optional<bool> enableDecodingAVIF;
+    decoder >> enableDecodingAVIF;
+    if (!enableDecodingAVIF)
+        return false;
+    parameters.enableDecodingAVIF = *enableDecodingAVIF;
 #endif
 
 #if PLATFORM(IOS_FAMILY)
