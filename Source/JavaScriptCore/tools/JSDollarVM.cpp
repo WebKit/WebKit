@@ -79,6 +79,10 @@
 #include "WasmStreamingParser.h"
 #endif
 
+#if PLATFORM(COCOA)
+#include <wtf/cocoa/CrashReporter.h>
+#endif
+
 using namespace JSC;
 
 IGNORE_WARNINGS_BEGIN("frame-address")
@@ -2203,6 +2207,9 @@ static JSC_DECLARE_HOST_FUNCTION(functionResetJITSizeStatistics);
 #endif
 
 static JSC_DECLARE_HOST_FUNCTION(functionEnsureArrayStorage);
+#if PLATFORM(COCOA)
+static JSC_DECLARE_HOST_FUNCTION(functionSetCrashLogMessage);;
+#endif
 
 const ClassInfo JSDollarVM::s_info = { "DollarVM"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDollarVM) };
 
@@ -3912,6 +3919,23 @@ JSC_DEFINE_HOST_FUNCTION(functionEnsureArrayStorage, (JSGlobalObject* globalObje
     return JSValue::encode(jsUndefined());
 }
 
+
+#if PLATFORM(COCOA)
+JSC_DEFINE_HOST_FUNCTION(functionSetCrashLogMessage, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    String message = callFrame->argument(0).toWTFString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    WTF::setCrashLogMessage(message.utf8().data());
+
+    return JSValue::encode(jsUndefined());
+}
+#endif
+
 constexpr unsigned jsDollarVMPropertyAttributes = PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::DontDelete;
 
 void JSDollarVM::finishCreation(VM& vm)
@@ -4084,6 +4108,10 @@ void JSDollarVM::finishCreation(VM& vm)
 #endif
 
     addFunction(vm, "ensureArrayStorage"_s, functionEnsureArrayStorage, 1);
+
+#if PLATFORM(COCOA)
+    addFunction(vm, "setCrashLogMessage"_s, functionSetCrashLogMessage, 1);
+#endif
 
     m_objectDoingSideEffectPutWithoutCorrectSlotStatusStructureID.set(vm, this, ObjectDoingSideEffectPutWithoutCorrectSlotStatus::createStructure(vm, globalObject, jsNull()));
 }
