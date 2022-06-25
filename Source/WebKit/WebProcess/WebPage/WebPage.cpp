@@ -6200,19 +6200,19 @@ void WebPage::deleteSurrounding(int64_t offset, unsigned characterCount)
     targetFrame->selection().setSelection(VisibleSelection(selectionRange));
     targetFrame->editor().deleteSelectionWithSmartDelete(false);
     targetFrame->editor().setIgnoreSelectionChanges(false);
-    sendEditorStateUpdate([] { });
+    sendEditorStateUpdate();
 }
 
 #endif
 
 void WebPage::didApplyStyle()
 {
-    sendEditorStateUpdate([] { });
+    sendEditorStateUpdate();
 }
 
 void WebPage::didChangeContents()
 {
-    sendEditorStateUpdate([] { });
+    sendEditorStateUpdate();
 }
 
 void WebPage::didScrollSelection()
@@ -6409,26 +6409,26 @@ void WebPage::focusedElementDidChangeInputMode(WebCore::Element& element, WebCor
 
 void WebPage::didUpdateComposition()
 {
-    sendEditorStateUpdate([] { });
+    sendEditorStateUpdate();
 }
 
 void WebPage::didEndUserTriggeredSelectionChanges()
 {
     Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
     if (!frame->editor().ignoreSelectionChanges())
-        sendEditorStateUpdate([] { });
+        sendEditorStateUpdate();
 }
 
 void WebPage::discardedComposition()
 {
     send(Messages::WebPageProxy::CompositionWasCanceled());
-    sendEditorStateUpdate([] { });
+    sendEditorStateUpdate();
 }
 
 void WebPage::canceledComposition()
 {
     send(Messages::WebPageProxy::CompositionWasCanceled());
-    sendEditorStateUpdate([] { });
+    sendEditorStateUpdate();
 }
 
 void WebPage::navigateServiceWorkerClient(ScriptExecutionContextIdentifier documentIdentifier, const URL& url, CompletionHandler<void(bool)>&& callback)
@@ -6825,13 +6825,11 @@ void WebPage::reportUsedFeatures()
     m_loaderClient->featuresUsedInPage(*this, namedFeatures);
 }
 
-void WebPage::sendEditorStateUpdate(CompletionHandler<void()>&& completionHandler)
+void WebPage::sendEditorStateUpdate()
 {
     Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
-    if (frame->editor().ignoreSelectionChanges() || !frame->document() || !frame->document()->hasLivingRenderTree()) {
-        completionHandler();
+    if (frame->editor().ignoreSelectionChanges() || !frame->document() || !frame->document()->hasLivingRenderTree())
         return;
-    }
 
     m_pendingEditorStateUpdateStatus = PendingEditorStateUpdateStatus::NotScheduled;
 
@@ -6839,7 +6837,7 @@ void WebPage::sendEditorStateUpdate(CompletionHandler<void()>&& completionHandle
     // If that is the case, just send what we have (i.e. don't include post-layout data) and wait until the
     // next layer tree commit to compute and send the complete EditorState over.
     auto state = editorState();
-    sendWithAsyncReply(Messages::WebPageProxy::EditorStateChanged(state), WTFMove(completionHandler));
+    send(Messages::WebPageProxy::EditorStateChanged(state));
     if (state.isMissingPostLayoutData && !shouldAvoidComputingPostLayoutDataForEditorState())
         scheduleFullEditorStateUpdate();
 }
@@ -6921,7 +6919,7 @@ void WebPage::flushPendingEditorStateUpdate()
     if (frame->editor().ignoreSelectionChanges())
         return;
 
-    sendEditorStateUpdate([] { });
+    sendEditorStateUpdate();
 }
 
 void WebPage::updateWebsitePolicies(WebsitePoliciesData&& websitePolicies)

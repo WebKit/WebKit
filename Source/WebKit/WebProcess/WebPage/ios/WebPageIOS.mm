@@ -2418,24 +2418,20 @@ void WebPage::prepareSelectionForContextMenuWithLocationInView(IntPoint point, C
     if (!hitNode)
         return completionHandler(false, { });
 
+    auto sendEditorStateAndCallCompletionHandler = [this, completionHandler = WTFMove(completionHandler)](RevealItem&& item) mutable {
+        layoutIfNeeded();
+        sendEditorStateUpdate();
+        completionHandler(true, WTFMove(item));
+    };
+
     if (is<HTMLImageElement>(*hitNode) && hitNode->hasEditableStyle()) {
         auto range = makeRangeSelectingNode(*hitNode);
-        if (range && frame->selection().setSelectedRange(range, Affinity::Upstream, FrameSelection::ShouldCloseTyping::Yes, UserTriggered)) {
-            layoutIfNeeded();
-            sendEditorStateUpdate([] { });
-            return completionHandler(true, { });
-        }
+        if (range && frame->selection().setSelectedRange(range, Affinity::Upstream, FrameSelection::ShouldCloseTyping::Yes, UserTriggered))
+            return sendEditorStateAndCallCompletionHandler({ });
     }
 
     frame->eventHandler().selectClosestContextualWordOrLinkFromHitTestResult(result, DontAppendTrailingWhitespace);
-    sendEditorStateUpdate([weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)] () mutable {
-        RefPtr strongThis = weakThis.get();
-        if (!strongThis) {
-            completionHandler(true, { });
-            return;
-        }
-        completionHandler(true, { strongThis->revealItemForCurrentSelection() });
-    });
+    sendEditorStateAndCallCompletionHandler(revealItemForCurrentSelection());
 }
 #endif
 
@@ -3292,7 +3288,7 @@ InteractionInformationAtPosition WebPage::positionInformation(const InteractionI
 
 void WebPage::requestPositionInformation(const InteractionInformationRequest& request)
 {
-    sendEditorStateUpdate([] { });
+    sendEditorStateUpdate();
     send(Messages::WebPageProxy::DidReceivePositionInformation(positionInformation(request)));
 }
 
