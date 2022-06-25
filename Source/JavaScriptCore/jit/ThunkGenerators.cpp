@@ -1515,7 +1515,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> remoteFunctionCallGenerator(VM& vm)
         jit.loadValue(CCallHelpers::addressFor(virtualRegisterForArgumentIncludingThis(0)).indexedBy(GPRInfo::regT1, CCallHelpers::TimesEight), valueRegs);
 
         CCallHelpers::JumpList valueIsPrimitive;
-        valueIsPrimitive.append(jit.branchIfNotCell(valueRegs));
+        valueIsPrimitive.append(jit.branchIfNotCell(valueRegs, DoNotHaveTagRegisters));
         valueIsPrimitive.append(jit.branchIfNotObject(valueRegs.payloadGPR()));
 
         jit.storePtr(GPRInfo::regT1, jit.addressFor(loopIndex));
@@ -1594,7 +1594,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> remoteFunctionCallGenerator(VM& vm)
     constexpr JSValueRegs resultRegs = JSRInfo::returnValueJSR;
 
     CCallHelpers::JumpList resultIsPrimitive;
-    resultIsPrimitive.append(jit.branchIfNotCell(resultRegs));
+    resultIsPrimitive.append(jit.branchIfNotCell(resultRegs, DoNotHaveTagRegisters));
     resultIsPrimitive.append(jit.branchIfNotObject(resultRegs.payloadGPR()));
 
     jit.loadCell(CCallHelpers::addressFor(CallFrameSlot::callee), GPRInfo::regT2);
