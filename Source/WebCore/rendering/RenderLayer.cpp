@@ -3958,7 +3958,7 @@ Element* RenderLayer::enclosingElement() const
     return nullptr;
 }
 
-Vector<RenderLayer*> RenderLayer::topLayerRenderLayers(RenderView& renderView)
+Vector<RenderLayer*> RenderLayer::topLayerRenderLayers(const RenderView& renderView)
 {
     Vector<RenderLayer*> layers;
     auto topLayerElements = renderView.document().topLayerElements();
@@ -3968,10 +3968,10 @@ Vector<RenderLayer*> RenderLayer::topLayerRenderLayers(RenderView& renderView)
             continue;
 
         auto backdropRenderer = renderer->backdropRenderer();
-        if (backdropRenderer && backdropRenderer->hasLayer())
+        if (backdropRenderer && backdropRenderer->hasLayer() && backdropRenderer->layer()->parent())
             layers.append(backdropRenderer->layer());
 
-        if (renderer->hasLayer())
+        if (renderer->hasLayer() && downcast<RenderLayerModelObject>(*renderer).layer()->parent())
             layers.append(downcast<RenderLayerModelObject>(*renderer).layer());
     }
     return layers;
