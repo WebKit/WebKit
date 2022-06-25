@@ -317,7 +317,12 @@ LayoutRect RenderMenuList::controlClipRect(const LayoutPoint& additionalOffset) 
 
 void RenderMenuList::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
-    maxLogicalWidth = shouldApplySizeContainment() ? theme().minimumMenuListSize(style()) : std::max(m_optionsWidth, theme().minimumMenuListSize(style()));
+    maxLogicalWidth = theme().minimumMenuListSize(style());
+    if (shouldApplySizeContainment()) {
+        if (auto width = explicitIntrinsicInnerLogicalWidth())
+            maxLogicalWidth = std::max(width.value(), maxLogicalWidth);
+    } else
+        maxLogicalWidth = std::max(LayoutUnit(m_optionsWidth), maxLogicalWidth);
     maxLogicalWidth += m_innerBlock->paddingLeft() + m_innerBlock->paddingRight();
     if (!style().width().isPercentOrCalculated())
         minLogicalWidth = maxLogicalWidth;

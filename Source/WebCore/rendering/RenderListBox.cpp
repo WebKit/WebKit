@@ -206,7 +206,14 @@ void RenderListBox::scrollToRevealSelection()
 
 void RenderListBox::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
-    maxLogicalWidth = shouldApplySizeContainment() ? 2 * optionsSpacingHorizontal : m_optionsWidth + 2 * optionsSpacingHorizontal;
+    if (shouldApplySizeContainment()) {
+        if (auto width = explicitIntrinsicInnerLogicalWidth())
+            maxLogicalWidth = width.value();
+        else
+            maxLogicalWidth = 2 * optionsSpacingHorizontal;
+    } else
+        maxLogicalWidth = 2 * optionsSpacingHorizontal + m_optionsWidth;
+
     if (m_vBar)
         maxLogicalWidth += m_vBar->width();
     if (!style().width().isPercentOrCalculated())
@@ -263,6 +270,12 @@ LayoutUnit RenderListBox::listHeight() const
 RenderBox::LogicalExtentComputedValues RenderListBox::computeLogicalHeight(LayoutUnit, LayoutUnit logicalTop) const
 {
     LayoutUnit height = itemHeight() * size() - rowSpacing;
+
+    if (shouldApplySizeContainment()) {
+        if (auto explicitIntrinsicHeight = explicitIntrinsicInnerLogicalHeight())
+            height = explicitIntrinsicHeight.value();
+    }
+
     cacheIntrinsicContentLogicalHeightForFlexItem(height);
     height += verticalBorderAndPaddingExtent();
     return RenderBox::computeLogicalHeight(height, logicalTop);

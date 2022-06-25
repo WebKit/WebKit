@@ -3099,8 +3099,11 @@ void RenderBox::updateLogicalHeight()
         // We need the exact width of border and padding here, yet we can't use borderAndPadding* interfaces.
         // Because these interfaces evetually call borderAfter/Before, and RenderBlock::borderBefore
         // adds extra border to fieldset by adding intrinsicBorderForFieldset which is not needed here.
+        LayoutUnit intrinsicHeight;
+        if (auto height = explicitIntrinsicInnerLogicalHeight())
+            intrinsicHeight = height.value();
         auto borderAndPadding = RenderBox::borderBefore() + RenderBox::paddingBefore() + RenderBox::borderAfter() + RenderBox::paddingAfter();
-        setLogicalHeight(borderAndPadding + scrollbarLogicalHeight());
+        setLogicalHeight(intrinsicHeight + borderAndPadding + scrollbarLogicalHeight());
     }
 
     cacheIntrinsicContentLogicalHeightForFlexItem(contentLogicalHeight());
@@ -3241,7 +3244,12 @@ LayoutUnit RenderBox::computeLogicalHeightWithoutLayout() const
     // FIXME:: We should probably return something other than just
     // border + padding, but for now we have no good way to do anything else
     // without layout, so we just use that.
-    LogicalExtentComputedValues computedValues = computeLogicalHeight(borderAndPaddingLogicalHeight(), 0_lu);
+    auto estimatedHeight = borderAndPaddingLogicalHeight();
+    if (shouldApplySizeContainment()) {
+        if (auto height = explicitIntrinsicInnerLogicalHeight())
+            estimatedHeight += height.value() + scrollbarLogicalHeight();
+    }
+    LogicalExtentComputedValues computedValues = computeLogicalHeight(estimatedHeight, 0_lu);
     return computedValues.m_extent;
 }
 
@@ -5556,6 +5564,38 @@ LayoutBoxExtent RenderBox::scrollPaddingForViewportRect(const LayoutRect& viewpo
 LayoutUnit synthesizedBaselineFromBorderBox(const RenderBox& box, LineDirectionMode direction)
 {
     return direction == HorizontalLine ? box.height() : box.width();
+}
+
+bool RenderBox::hasExplicitIntrinsicInnerWidth() const
+{
+    ASSERT(shouldApplySizeContainment());
+    return style().containIntrinsicWidthType() != ContainIntrinsicSizeType::None;
+}
+
+std::optional<LayoutUnit> RenderBox::explicitIntrinsicInnerWidth() const
+{
+    if (!hasExplicitIntrinsicInnerWidth())
+        return std::nullopt;
+
+    auto width = style().containIntrinsicWidth();
+    ASSERT(width.has_value());
+    return std::optional<LayoutUnit>(width.value().value());
+}
+
+bool RenderBox::hasExplicitIntrinsicInnerHeight() const
+{
+    ASSERT(shouldApplySizeContainment());
+    return style().containIntrinsicHeightType() != ContainIntrinsicSizeType::None;
+}
+
+std::optional<LayoutUnit> RenderBox::explicitIntrinsicInnerHeight() const
+{
+    if (!hasExplicitIntrinsicInnerHeight())
+        return std::nullopt;
+
+    auto height = style().containIntrinsicHeight();
+    ASSERT(height.has_value());
+    return std::optional<LayoutUnit>(height.value().value());
 }
 
 } // namespace WebCore

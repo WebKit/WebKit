@@ -815,6 +815,9 @@ static bool rareNonInheritedDataChangeRequiresLayout(const StyleRareNonInherited
     if (first.scrollSnapType != second.scrollSnapType)
         return true;
 
+    if (first.containIntrinsicWidth != second.containIntrinsicWidth || first.containIntrinsicHeight != second.containIntrinsicHeight)
+        return true;
+
     return false;
 }
 
