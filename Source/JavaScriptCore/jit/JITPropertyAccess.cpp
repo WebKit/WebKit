@@ -1439,11 +1439,46 @@ void JIT::emitSlow_op_has_private_brand(const JSInstruction*, Vector<SlowCaseEnt
     emitHasPrivateSlow(AccessType::HasPrivateBrand);
 }
 
-void JIT::emit_op_resolve_scope(const JSInstruction* currentInstruction)
+#define RESOLVE_SCOPE_CODE_REF(thunk)                                              \
+    do {                                                                           \
+        switch (profiledResolveType) {                                             \
+        case ClosureVar:                                                           \
+            code = vm().getCTIStub(thunk<ClosureVar>);                             \
+            break;                                                                 \
+        case ClosureVarWithVarInjectionChecks:                                     \
+            code = vm().getCTIStub(thunk<ClosureVarWithVarInjectionChecks>);       \
+            break;                                                                 \
+        case GlobalVar:                                                            \
+            code = vm().getCTIStub(thunk<GlobalVar>);                              \
+            break;                                                                 \
+        case GlobalProperty:                                                       \
+            code = vm().getCTIStub(thunk<GlobalProperty>);                         \
+            break;                                                                 \
+        case GlobalLexicalVar:                                                     \
+            code = vm().getCTIStub(thunk<GlobalLexicalVar>);                       \
+            break;                                                                 \
+        case GlobalVarWithVarInjectionChecks:                                      \
+            code = vm().getCTIStub(thunk<GlobalVarWithVarInjectionChecks>);        \
+            break;                                                                 \
+        case GlobalPropertyWithVarInjectionChecks:                                 \
+            code = vm().getCTIStub(thunk<GlobalPropertyWithVarInjectionChecks>);   \
+            break;                                                                 \
+        case GlobalLexicalVarWithVarInjectionChecks:                               \
+            code = vm().getCTIStub(thunk<GlobalLexicalVarWithVarInjectionChecks>); \
+            break;                                                                 \
+        default:                                                                   \
+            code = vm().getCTIStub(thunk<GlobalVar>);                              \
+            break;                                                                 \
+        }                                                                          \
+    } while (false)
+
+template <typename BytecodeOpcode>
+ALWAYS_INLINE void JIT::emit_op_resolve_scope_helper(const JSInstruction* currentInstruction)
 {
-    auto bytecode = currentInstruction->as<OpResolveScope>();
+    auto bytecode = currentInstruction->as<BytecodeOpcode>();
     ResolveType profiledResolveType = bytecode.metadata(m_profiledCodeBlock).m_resolveType;
-    VirtualRegister dst = bytecode.m_dst;
+    bool isOpResolveScope = std::is_same<BytecodeOpcode, OpResolveScope>::value;
+    VirtualRegister dst = isOpResolveScope ? currentInstruction->as<OpResolveScope>().m_dst : currentInstruction->as<OpResolveAndGetFromScope>().m_resolvedScope;
     VirtualRegister scope = bytecode.m_scope;
 
     uint32_t bytecodeOffset = m_bytecodeIndex.offset();
@@ -1454,7 +1489,7 @@ void JIT::emit_op_resolve_scope(const JSInstruction* currentInstruction)
     // resolve type.
 
     if (profiledResolveType == ModuleVar)
-        loadPtrFromMetadata(bytecode, OpResolveScope::Metadata::offsetOfLexicalEnvironment(), returnValueGPR);
+        loadPtrFromMetadata(bytecode, BytecodeOpcode::Metadata::offsetOfLexicalEnvironment(), returnValueGPR);
     else {
         uint32_t metadataOffset = m_profiledCodeBlock->metadataTable()->offsetInMetadataTable(bytecode);
 
@@ -1467,24 +1502,10 @@ void JIT::emit_op_resolve_scope(const JSInstruction* currentInstruction)
         move(TrustedImm32(bytecodeOffset), bytecodeOffsetGPR);
 
         MacroAssemblerCodeRef<JITThunkPtrTag> code;
-        if (profiledResolveType == ClosureVar)
-            code = vm().getCTIStub(generateOpResolveScopeThunk<ClosureVar>);
-        else if (profiledResolveType == ClosureVarWithVarInjectionChecks)
-            code = vm().getCTIStub(generateOpResolveScopeThunk<ClosureVarWithVarInjectionChecks>);
-        else if (profiledResolveType == GlobalVar)
-            code = vm().getCTIStub(generateOpResolveScopeThunk<GlobalVar>);
-        else if (profiledResolveType == GlobalProperty)
-            code = vm().getCTIStub(generateOpResolveScopeThunk<GlobalProperty>);
-        else if (profiledResolveType == GlobalLexicalVar)
-            code = vm().getCTIStub(generateOpResolveScopeThunk<GlobalLexicalVar>);
-        else if (profiledResolveType == GlobalVarWithVarInjectionChecks)
-            code = vm().getCTIStub(generateOpResolveScopeThunk<GlobalVarWithVarInjectionChecks>);
-        else if (profiledResolveType == GlobalPropertyWithVarInjectionChecks)
-            code = vm().getCTIStub(generateOpResolveScopeThunk<GlobalPropertyWithVarInjectionChecks>);
-        else if (profiledResolveType == GlobalLexicalVarWithVarInjectionChecks)
-            code = vm().getCTIStub(generateOpResolveScopeThunk<GlobalLexicalVarWithVarInjectionChecks>);
+        if (isOpResolveScope)
+            RESOLVE_SCOPE_CODE_REF(generateOpResolveScopeThunk);
         else
-            code = vm().getCTIStub(generateOpResolveScopeThunk<GlobalVar>);
+            RESOLVE_SCOPE_CODE_REF(generateOpRGSResolveScopeThunk);
 
         emitNakedNearCall(code.retaggedCode<NoPtrTag>());
     }
@@ -1493,8 +1514,13 @@ void JIT::emit_op_resolve_scope(const JSInstruction* currentInstruction)
     emitPutVirtualRegister(dst, returnValueJSR);
 }
 
+void JIT::emit_op_resolve_scope(const JSInstruction* currentInstruction)
+{
+    emit_op_resolve_scope_helper<OpResolveScope>(currentInstruction);
+}
+
 template <ResolveType profiledResolveType, typename BytecodeOpcode>
-MacroAssemblerCodeRef<JITThunkPtrTag> JIT::generateOpResolveScopeThunkHelper(VM& vm, bool resolveAndGetFromScopePair)
+ALWAYS_INLINE MacroAssemblerCodeRef<JITThunkPtrTag> JIT::generateOpResolveScopeThunkHelper(VM& vm)
 {
     // The thunk generated by this function can only work with the LLInt / Baseline JIT because
     // it makes assumptions about the right globalObject being available from CallFrame::codeBlock().
@@ -1625,7 +1651,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::generateOpResolveScopeThunkHelper(VM&
     jit.ret();
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
-    auto generator = resolveAndGetFromScopePair ? slow_op_rgs_get_from_scopeGenerator : slow_op_resolve_scopeGenerator;
+    ThunkGenerator generator = std::is_same<BytecodeOpcode, OpResolveScope>::value ? slow_op_resolve_scopeGenerator : slow_op_rgs_get_from_scopeGenerator;
     patchBuffer.link(slowCase, CodeLocationLabel(vm.getCTIStub(generator).retaggedCode<NoPtrTag>()));
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "resolve_scope thunk");
 }
@@ -1633,10 +1659,11 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::generateOpResolveScopeThunkHelper(VM&
 template <ResolveType profiledResolveType>
 MacroAssemblerCodeRef<JITThunkPtrTag> JIT::generateOpResolveScopeThunk(VM& vm)
 {
-    return generateOpResolveScopeThunkHelper<profiledResolveType, OpResolveScope>(vm, false);
+    return generateOpResolveScopeThunkHelper<profiledResolveType, OpResolveScope>(vm);
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_resolve_scopeGenerator_helper(VM& vm, bool resolveAndGetFromScopePair) {
+template <typename BytecodeOpcode>
+ALWAYS_INLINE MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_resolve_scopeGenerator_helper(VM& vm) {
     // The thunk generated by this function can only work with the LLInt / Baseline JIT because
     // it makes assumptions about the right globalObject being available from CallFrame::codeBlock().
     // DFG/FTL may inline functions belonging to other globalObjects, which may not match
@@ -1668,7 +1695,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_resolve_scopeGenerator_helper
     Jump exceptionCheck = jit.jump();
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
-    auto operationFunction = resolveAndGetFromScopePair ? operationRGSResolveScope : operationResolveScopeForBaseline;
+    auto operationFunction = std::is_same<BytecodeOpcode, OpResolveScope>::value ? operationResolveScopeForBaseline : operationRGSResolveScope;
     patchBuffer.link(operation, FunctionPtr<OperationPtrTag>(operationFunction));
     patchBuffer.link(exceptionCheck, CodeLocationLabel(vm.getCTIStub(checkExceptionGenerator).retaggedCode<NoPtrTag>()));
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_resolve_scope");
@@ -1676,14 +1703,46 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_resolve_scopeGenerator_helper
 
 MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_resolve_scopeGenerator(VM& vm)
 {
-    return slow_op_resolve_scopeGenerator_helper(vm, false);
+    return slow_op_resolve_scopeGenerator_helper<OpResolveScope>(vm);
 }
 
-void JIT::emit_op_get_from_scope(const JSInstruction* currentInstruction)
+#define GET_FROM_SCOPE_CODE_REF(thunk)                                             \
+    do {                                                                           \
+        switch (profiledResolveType) {                                             \
+        case ClosureVar:                                                           \
+            code = vm().getCTIStub(thunk<ClosureVar>);                             \
+            break;                                                                 \
+        case ClosureVarWithVarInjectionChecks:                                     \
+            code = vm().getCTIStub(thunk<ClosureVarWithVarInjectionChecks>);       \
+            break;                                                                 \
+        case GlobalVar:                                                            \
+            code = vm().getCTIStub(thunk<GlobalVar>);                              \
+            break;                                                                 \
+        case GlobalVarWithVarInjectionChecks:                                      \
+            code = vm().getCTIStub(thunk<GlobalVarWithVarInjectionChecks>);        \
+            break;                                                                 \
+        case GlobalProperty:                                                       \
+            code = vm().getCTIStub(thunk<GlobalProperty>);                         \
+            break;                                                                 \
+        case GlobalLexicalVar:                                                     \
+            code = vm().getCTIStub(thunk<GlobalLexicalVar>);                       \
+            break;                                                                 \
+        case GlobalLexicalVarWithVarInjectionChecks:                               \
+            code = vm().getCTIStub(thunk<GlobalLexicalVarWithVarInjectionChecks>); \
+            break;                                                                 \
+        default:                                                                   \
+            code = vm().getCTIStub(thunk<GlobalVar>);                              \
+            break;                                                                 \
+        }                                                                          \
+    } while (false)
+
+template <typename BytecodeOpcode>
+ALWAYS_INLINE void JIT::emit_op_get_from_scope_helper(const JSInstruction* currentInstruction)
 {
-    auto bytecode = currentInstruction->as<OpGetFromScope>();
+    auto bytecode = currentInstruction->as<BytecodeOpcode>();
     VirtualRegister dst = bytecode.m_dst;
-    VirtualRegister scope = bytecode.m_scope;
+    bool isOpGetFromScope = std::is_same<BytecodeOpcode, OpGetFromScope>::value;
+    VirtualRegister scope = isOpGetFromScope ? currentInstruction->as<OpGetFromScope>().m_scope : currentInstruction->as<OpResolveAndGetFromScope>().m_resolvedScope;
     ResolveType profiledResolveType = bytecode.metadata(m_profiledCodeBlock).m_getPutInfo.resolveType();
 
     uint32_t bytecodeOffset = m_bytecodeIndex.offset();
@@ -1701,35 +1760,27 @@ void JIT::emit_op_get_from_scope(const JSInstruction* currentInstruction)
     move(TrustedImm32(bytecodeOffset), bytecodeOffsetGPR);
 
     MacroAssemblerCodeRef<JITThunkPtrTag> code;
-    if (profiledResolveType == ClosureVar)
-        code = vm().getCTIStub(generateOpGetFromScopeThunk<ClosureVar>);
-    else if (profiledResolveType == ClosureVarWithVarInjectionChecks)
-        code = vm().getCTIStub(generateOpGetFromScopeThunk<ClosureVarWithVarInjectionChecks>);
-    else if (profiledResolveType == GlobalVar)
-        code = vm().getCTIStub(generateOpGetFromScopeThunk<GlobalVar>);
-    else if (profiledResolveType == GlobalVarWithVarInjectionChecks)
-        code = vm().getCTIStub(generateOpGetFromScopeThunk<GlobalVarWithVarInjectionChecks>);
-    else if (profiledResolveType == GlobalProperty)
-        code = vm().getCTIStub(generateOpGetFromScopeThunk<GlobalProperty>);
-    else if (profiledResolveType == GlobalLexicalVar)
-        code = vm().getCTIStub(generateOpGetFromScopeThunk<GlobalLexicalVar>);
-    else if (profiledResolveType == GlobalLexicalVarWithVarInjectionChecks)
-        code = vm().getCTIStub(generateOpGetFromScopeThunk<GlobalLexicalVarWithVarInjectionChecks>);
+    if (isOpGetFromScope)
+        GET_FROM_SCOPE_CODE_REF(generateOpGetFromScopeThunk);
     else
-        code = vm().getCTIStub(generateOpGetFromScopeThunk<GlobalVar>);
-
+        GET_FROM_SCOPE_CODE_REF(generateOpRGSGetFromScopeThunk);
     emitNakedNearCall(code.retaggedCode<NoPtrTag>());
     emitPutVirtualRegister(dst, returnValueJSR);
 }
 
+void JIT::emit_op_get_from_scope(const JSInstruction* currentInstruction)
+{
+    emit_op_get_from_scope_helper<OpGetFromScope>(currentInstruction);
+}
+
 template <ResolveType profiledResolveType>
-MacroAssemblerCodeRef<JITThunkPtrTag> JIT::generateOpGetFromScopeThunk(VM& vm) 
-{ 
-    return generateOpGetFromScopeThunkHelper<profiledResolveType, OpGetFromScope>(vm, false);
+MacroAssemblerCodeRef<JITThunkPtrTag> JIT::generateOpGetFromScopeThunk(VM& vm)
+{
+    return generateOpGetFromScopeThunkHelper<profiledResolveType, OpGetFromScope>(vm);
 }
 
 template <ResolveType profiledResolveType, typename BytecodeOpcode>
-MacroAssemblerCodeRef<JITThunkPtrTag> JIT::generateOpGetFromScopeThunkHelper(VM& vm, bool resolveAndGetFromScopePair)
+ALWAYS_INLINE MacroAssemblerCodeRef<JITThunkPtrTag> JIT::generateOpGetFromScopeThunkHelper(VM& vm)
 {
     // The thunk generated by this function can only work with the LLInt / Baseline JIT because
     // it makes assumptions about the right globalObject being available from CallFrame::codeBlock().
@@ -1859,18 +1910,18 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::generateOpGetFromScopeThunkHelper(VM&
     jit.ret();
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
-    auto generator = resolveAndGetFromScopePair ? slow_op_rgs_resolve_scopeGenerator : slow_op_get_from_scopeGenerator;
+    ThunkGenerator generator = std::is_same<BytecodeOpcode, OpResolveScope>::value ? slow_op_get_from_scopeGenerator : slow_op_rgs_resolve_scopeGenerator;
     patchBuffer.link(slowCase, CodeLocationLabel(vm.getCTIStub(generator).retaggedCode<NoPtrTag>()));
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "get_from_scope thunk");
 }
 
 MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_get_from_scopeGenerator(VM& vm)
 {
-    return slow_op_get_from_scopeGenerator_helper<OpGetFromScope>(vm, false);
+    return slow_op_get_from_scopeGenerator_helper<OpGetFromScope>(vm);
 }
 
 template<typename BytecodeOpcode>
-MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_get_from_scopeGenerator_helper(VM& vm, bool resolveAndGetFromScopePair)
+ALWAYS_INLINE MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_get_from_scopeGenerator_helper(VM& vm)
 {
     // The thunk generated by this function can only work with the LLInt / Baseline JIT because
     // it makes assumptions about the right globalObject being available from CallFrame::codeBlock().
@@ -1917,7 +1968,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_get_from_scopeGenerator_helpe
     Jump jumpToHandler = jit.jump();
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    auto operationFunction = resolveAndGetFromScopePair ? operationRGSGetFromScope : operationGetFromScope;
+    auto operationFunction = std::is_same<BytecodeOpcode, OpResolveScope>::value ? operationGetFromScope : operationRGSGetFromScope;
     patchBuffer.link(operation, FunctionPtr<OperationPtrTag>(operationFunction));
     auto handler = vm.getCTIStub(popThunkStackPreservesAndHandleExceptionGenerator);
     patchBuffer.link(jumpToHandler, CodeLocationLabel(handler.retaggedCode<NoPtrTag>()));
@@ -1926,112 +1977,30 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_get_from_scopeGenerator_helpe
 
 void JIT::emit_op_resolve_and_get_from_scope(const JSInstruction* currentInstruction)
 {
-    auto bytecode = currentInstruction->as<OpResolveAndGetFromScope>();
-    ResolveType profiledResolveType = bytecode.metadata(m_profiledCodeBlock).m_resolveType;
-    VirtualRegister dst = bytecode.m_dst;
-    VirtualRegister scope = bytecode.m_scope;
-    VirtualRegister resolvedScope = bytecode.m_resolvedScope;
-
-    uint32_t bytecodeOffset = m_bytecodeIndex.offset();
-    ASSERT(BytecodeIndex(bytecodeOffset) == m_bytecodeIndex);
-    ASSERT(m_unlinkedCodeBlock->instructionAt(m_bytecodeIndex) == currentInstruction);
-
-    if (profiledResolveType == ModuleVar)
-        loadPtrFromMetadata(bytecode, OpResolveAndGetFromScope::Metadata::offsetOfLexicalEnvironment(), returnValueGPR);
-    else {
-        uint32_t metadataOffset = m_profiledCodeBlock->metadataTable()->offsetInMetadataTable(bytecode);
-
-        using BaselineJITRegisters::ResolveScope::metadataGPR;
-        using BaselineJITRegisters::ResolveScope::scopeGPR;
-        using BaselineJITRegisters::ResolveScope::bytecodeOffsetGPR;
-
-        emitGetVirtualRegisterPayload(scope, scopeGPR);
-        addPtr(TrustedImm32(metadataOffset), s_metadataGPR, metadataGPR);
-        move(TrustedImm32(bytecodeOffset), bytecodeOffsetGPR);
-
-        MacroAssemblerCodeRef<JITThunkPtrTag> code;
-        if (profiledResolveType == ClosureVar)
-            code = vm().getCTIStub(generateOpRGSResolveScopeThunk<ClosureVar>);
-        else if (profiledResolveType == ClosureVarWithVarInjectionChecks)
-            code = vm().getCTIStub(generateOpRGSResolveScopeThunk<ClosureVarWithVarInjectionChecks>);
-        else if (profiledResolveType == GlobalVar)
-            code = vm().getCTIStub(generateOpRGSResolveScopeThunk<GlobalVar>);
-        else if (profiledResolveType == GlobalProperty)
-            code = vm().getCTIStub(generateOpRGSResolveScopeThunk<GlobalProperty>);
-        else if (profiledResolveType == GlobalLexicalVar)
-            code = vm().getCTIStub(generateOpRGSResolveScopeThunk<GlobalLexicalVar>);
-        else if (profiledResolveType == GlobalVarWithVarInjectionChecks)
-            code = vm().getCTIStub(generateOpRGSResolveScopeThunk<GlobalVarWithVarInjectionChecks>);
-        else if (profiledResolveType == GlobalPropertyWithVarInjectionChecks)
-            code = vm().getCTIStub(generateOpRGSResolveScopeThunk<GlobalPropertyWithVarInjectionChecks>);
-        else if (profiledResolveType == GlobalLexicalVarWithVarInjectionChecks)
-            code = vm().getCTIStub(generateOpRGSResolveScopeThunk<GlobalLexicalVarWithVarInjectionChecks>);
-        else
-            code = vm().getCTIStub(generateOpRGSResolveScopeThunk<GlobalVar>);
-
-        emitNakedNearCall(code.retaggedCode<NoPtrTag>());
-    }
-
-    boxCell(returnValueGPR, returnValueJSR);
-    emitPutVirtualRegister(resolvedScope, returnValueJSR);
-
-
-
-
-    profiledResolveType = bytecode.metadata(m_profiledCodeBlock).m_getPutInfo.resolveType();
-
-    uint32_t metadataOffset = m_profiledCodeBlock->metadataTable()->offsetInMetadataTable(bytecode);
-
-    using BaselineJITRegisters::GetFromScope::metadataGPR;
-    using BaselineJITRegisters::GetFromScope::scopeGPR;
-    using BaselineJITRegisters::GetFromScope::bytecodeOffsetGPR;
-
-    emitGetVirtualRegisterPayload(resolvedScope, scopeGPR);
-    addPtr(TrustedImm32(metadataOffset), s_metadataGPR, metadataGPR);
-    move(TrustedImm32(bytecodeOffset), bytecodeOffsetGPR);
-
-    MacroAssemblerCodeRef<JITThunkPtrTag> code;
-    if (profiledResolveType == ClosureVar)
-        code = vm().getCTIStub(generateOpRGSGetFromScopeThunk<ClosureVar>);
-    else if (profiledResolveType == ClosureVarWithVarInjectionChecks)
-        code = vm().getCTIStub(generateOpRGSGetFromScopeThunk<ClosureVarWithVarInjectionChecks>);
-    else if (profiledResolveType == GlobalVar)
-        code = vm().getCTIStub(generateOpRGSGetFromScopeThunk<GlobalVar>);
-    else if (profiledResolveType == GlobalVarWithVarInjectionChecks)
-        code = vm().getCTIStub(generateOpRGSGetFromScopeThunk<GlobalVarWithVarInjectionChecks>);
-    else if (profiledResolveType == GlobalProperty)
-        code = vm().getCTIStub(generateOpRGSGetFromScopeThunk<GlobalProperty>);
-    else if (profiledResolveType == GlobalLexicalVar)
-        code = vm().getCTIStub(generateOpRGSGetFromScopeThunk<GlobalLexicalVar>);
-    else if (profiledResolveType == GlobalLexicalVarWithVarInjectionChecks)
-        code = vm().getCTIStub(generateOpRGSGetFromScopeThunk<GlobalLexicalVarWithVarInjectionChecks>);
-    else
-        code = vm().getCTIStub(generateOpRGSGetFromScopeThunk<GlobalVar>);
-
-    emitNakedNearCall(code.retaggedCode<NoPtrTag>());
-    emitPutVirtualRegister(dst, returnValueJSR);
+    emit_op_resolve_scope_helper<OpResolveAndGetFromScope>(currentInstruction);
+    emit_op_get_from_scope_helper<OpResolveAndGetFromScope>(currentInstruction);
 }
 
 template <ResolveType profiledResolveType>
 MacroAssemblerCodeRef<JITThunkPtrTag> JIT::generateOpRGSResolveScopeThunk(VM& vm)
 {
-    return generateOpResolveScopeThunkHelper<profiledResolveType, OpResolveAndGetFromScope>(vm, true);
+    return generateOpResolveScopeThunkHelper<profiledResolveType, OpResolveAndGetFromScope>(vm);
 }
 
 template <ResolveType profiledResolveType>
 MacroAssemblerCodeRef<JITThunkPtrTag> JIT::generateOpRGSGetFromScopeThunk(VM& vm)
 {
-    return generateOpGetFromScopeThunkHelper<profiledResolveType, OpResolveAndGetFromScope>(vm, true);
+    return generateOpGetFromScopeThunkHelper<profiledResolveType, OpResolveAndGetFromScope>(vm);
 }
 
 MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_rgs_get_from_scopeGenerator(VM& vm)
 {
-    return slow_op_resolve_scopeGenerator_helper(vm, true);
+    return slow_op_resolve_scopeGenerator_helper<OpResolveAndGetFromScope>(vm);
 }
 
 MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_rgs_resolve_scopeGenerator(VM& vm)
 {
-    return slow_op_get_from_scopeGenerator_helper<OpResolveAndGetFromScope>(vm, true);
+    return slow_op_get_from_scopeGenerator_helper<OpResolveAndGetFromScope>(vm);
 }
 
 void JIT::emit_op_put_to_scope(const JSInstruction* currentInstruction)

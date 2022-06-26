@@ -603,7 +603,11 @@ namespace JSC {
         void emitSlow_op_put_private_name(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_sub(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
 
+        template <typename BytecodeOpcode>
+        ALWAYS_INLINE void emit_op_resolve_scope_helper(const JSInstruction*);
         void emit_op_resolve_scope(const JSInstruction*);
+        template <typename BytecodeOpcode>
+        ALWAYS_INLINE void emit_op_get_from_scope_helper(const JSInstruction*);
         void emit_op_get_from_scope(const JSInstruction*);
         void emit_op_resolve_and_get_from_scope(const JSInstruction*);
         void emit_op_put_to_scope(const JSInstruction*);
@@ -671,19 +675,20 @@ namespace JSC {
         static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_get_private_name_callSlowOperationThenCheckExceptionGenerator(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_get_from_scopeGenerator(VM&);
         template<typename BytecodeOpcode>
-        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_get_from_scopeGenerator_helper(VM&, bool);
+        ALWAYS_INLINE static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_get_from_scopeGenerator_helper(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_resolve_scopeGenerator(VM&);
-        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_resolve_scopeGenerator_helper(VM&, bool);
+        template<typename BytecodeOpcode>
+        ALWAYS_INLINE static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_resolve_scopeGenerator_helper(VM&);
         template <ResolveType>
         static MacroAssemblerCodeRef<JITThunkPtrTag> generateOpGetFromScopeThunk(VM&);
         template <ResolveType, typename BytecodeOpcode>
-        static MacroAssemblerCodeRef<JITThunkPtrTag> generateOpGetFromScopeThunkHelper(VM&, bool);
+        ALWAYS_INLINE static MacroAssemblerCodeRef<JITThunkPtrTag> generateOpGetFromScopeThunkHelper(VM&);
         template <ResolveType>
         static MacroAssemblerCodeRef<JITThunkPtrTag> generateOpResolveScopeThunk(VM&);
         template <ResolveType, typename BytecodeOpcode>
-        static MacroAssemblerCodeRef<JITThunkPtrTag> generateOpResolveScopeThunkHelper(VM&, bool);
-        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_rgs_get_from_scopeGenerator(VM& vm);
+        ALWAYS_INLINE static MacroAssemblerCodeRef<JITThunkPtrTag> generateOpResolveScopeThunkHelper(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_rgs_resolve_scopeGenerator(VM& vm);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_rgs_get_from_scopeGenerator(VM& vm);
         template <ResolveType>
         static MacroAssemblerCodeRef<JITThunkPtrTag> generateOpRGSResolveScopeThunk(VM& vm);
         template <ResolveType>
