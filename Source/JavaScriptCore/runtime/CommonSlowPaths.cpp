@@ -140,7 +140,7 @@ namespace JSC {
     RETURN_WITH_PROFILING(value, { })
 
 #define RETURN_WITH_DESTINATION_AND_SECOND(destinaiton, value, second) \
-    RETURN_WITH_SECOND_AND_PROFILING_CUSTOM(destinaiton, value, second, { })
+    RETURN_WITH_SECOND_AND_PROFILING_CUSTOM(destinaiton, value, second, {})
 
 #define RETURN_PROFILED(value__) \
     RETURN_WITH_PROFILING(value__, PROFILE_VALUE(returnValue__))
@@ -1144,16 +1144,20 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_resolve_scope_for_hoisting_func_decl_in_ev
     RETURN(resolvedScope);
 }
 
-JSC_DEFINE_COMMON_SLOW_PATH(slow_path_resolve_scope)
+template<typename BytecodeOpcode>
+ALWAYS_INLINE SlowPathReturnType commonSlowPathResolveScopeHelper(CallFrame* callFrame, const JSInstruction* pc)
 {
     BEGIN();
-    auto bytecode = pc->as<OpResolveScope>();
+    auto bytecode = pc->as<BytecodeOpcode>();
     auto& metadata = bytecode.metadata(codeBlock);
     const Identifier& ident = codeBlock->identifier(bytecode.m_var);
     JSScope* scope = callFrame->uncheckedR(bytecode.m_scope).Register::scope();
     JSObject* resolvedScope = JSScope::resolve(globalObject, scope, ident);
+    bool isOpResolveScope = std::is_same<BytecodeOpcode, OpResolveScope>::value;
+    VirtualRegister dst = isOpResolveScope ? pc->as<BytecodeOpcode>().m_dst : pc->as<OpResolveAndGetFromScope>().m_resolvedScope;
     // Proxy can throw an error here, e.g. Proxy in with statement's @unscopables.
-    CHECK_EXCEPTION_WITH_RETURN_SECOND(callFrame);
+    CallFrame* returnSecond = isOpResolveScope ? callFrame : nullptr;
+    CHECK_EXCEPTION_WITH_RETURN_SECOND(returnSecond);
 
     ResolveType resolveType = metadata.m_resolveType;
 
@@ -1168,7 +1172,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_resolve_scope)
         if (resolvedScope->isGlobalObject()) {
             JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(resolvedScope);
             bool hasProperty = globalObject->hasProperty(globalObject, ident);
-            CHECK_EXCEPTION_WITH_RETURN_SECOND(callFrame);
+            CHECK_EXCEPTION_WITH_RETURN_SECOND(returnSecond);
             if (hasProperty) {
                 ConcurrentJSLocker locker(codeBlock->m_lock);
                 metadata.m_resolveType = needsVarInjectionChecks(resolveType) ? GlobalPropertyWithVarInjectionChecks : GlobalProperty;
@@ -1187,53 +1191,17 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_resolve_scope)
         break;
     }
 
-    RETURN_WITH_DESTINATION_AND_SECOND(bytecode.m_dst, resolvedScope, callFrame);
+    RETURN_WITH_DESTINATION_AND_SECOND(dst, resolvedScope, returnSecond);
+}
+
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_resolve_scope)
+{
+    return commonSlowPathResolveScopeHelper<OpResolveScope>(callFrame, pc);
 }
 
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_rgs_resolve_scope)
 {
-    BEGIN();
-    auto bytecode = pc->as<OpResolveAndGetFromScope>();
-    auto& metadata = bytecode.metadata(codeBlock);
-    const Identifier& ident = codeBlock->identifier(bytecode.m_var);
-    JSScope* scope = callFrame->uncheckedR(bytecode.m_scope).Register::scope();
-    JSObject* resolvedScope = JSScope::resolve(globalObject, scope, ident);
-    // Proxy can throw an error here, e.g. Proxy in with statement's @unscopables.
-    CHECK_EXCEPTION_WITH_RETURN_SECOND(nullptr);
-
-    ResolveType resolveType = metadata.m_resolveType;
-
-    // ModuleVar does not keep the scope register value alive in DFG.
-    ASSERT(resolveType != ModuleVar);
-
-    switch (resolveType) {
-    case GlobalProperty:
-    case GlobalPropertyWithVarInjectionChecks:
-    case UnresolvedProperty:
-    case UnresolvedPropertyWithVarInjectionChecks: {
-        if (resolvedScope->isGlobalObject()) {
-            JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(resolvedScope);
-            bool hasProperty = globalObject->hasProperty(globalObject, ident);
-            CHECK_EXCEPTION_WITH_RETURN_SECOND(nullptr);
-            if (hasProperty) {
-                ConcurrentJSLocker locker(codeBlock->m_lock);
-                metadata.m_resolveType = needsVarInjectionChecks(resolveType) ? GlobalPropertyWithVarInjectionChecks : GlobalProperty;
-                metadata.m_globalObject.set(vm, codeBlock, globalObject);
-                metadata.m_globalLexicalBindingEpoch = globalObject->globalLexicalBindingEpoch();
-            }
-        } else if (resolvedScope->isGlobalLexicalEnvironment()) {
-            JSGlobalLexicalEnvironment* globalLexicalEnvironment = jsCast<JSGlobalLexicalEnvironment*>(resolvedScope);
-            ConcurrentJSLocker locker(codeBlock->m_lock);
-            metadata.m_resolveType = needsVarInjectionChecks(resolveType) ? GlobalLexicalVarWithVarInjectionChecks : GlobalLexicalVar;
-            metadata.m_globalLexicalEnvironment.set(vm, codeBlock, globalLexicalEnvironment);
-        }
-        break;
-    }
-    default:
-        break;
-    }
-
-    RETURN_WITH_DESTINATION_AND_SECOND(bytecode.m_resolvedScope, resolvedScope, nullptr);
+    return commonSlowPathResolveScopeHelper<OpResolveAndGetFromScope>(callFrame, pc);
 }
 
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_create_rest)

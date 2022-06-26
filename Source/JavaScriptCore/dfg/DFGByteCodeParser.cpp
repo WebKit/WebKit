@@ -4314,7 +4314,7 @@ bool ByteCodeParser::needsDynamicLookup(ResolveType type, OpcodeID opcode)
 
         // We only track our heuristic through resolve_scope since resolve_scope will
         // dominate unresolved gets/puts on that scope.
-        if (opcode != op_resolve_scope)
+        if (opcode != op_resolve_scope) //TODO: add isResolveScope
             return true;
 
         if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, InadequateCoverage)) {
@@ -7712,6 +7712,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
         case op_resolve_scope: {
             auto bytecode = currentInstruction->as<OpResolveScope>();
             auto& metadata = bytecode.metadata(codeBlock);
+            VirtualRegister scope = bytecode.m_scope;
+            VirtualRegister dst = bytecode.m_dst;
 
             ResolveType resolveType;
             unsigned depth;
@@ -7746,7 +7748,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
             if (needsDynamicLookup(resolveType, op_resolve_scope)) {
                 unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.m_var];
-                set(bytecode.m_dst, addToGraph(ResolveScope, OpInfo(identifierNumber), get(bytecode.m_scope)));
+                set(dst, addToGraph(ResolveScope, OpInfo(identifierNumber), get(scope)));
                 NEXT_OPCODE(op_resolve_scope);
             }
 
@@ -7770,21 +7772,21 @@ void ByteCodeParser::parseBlock(unsigned limit)
             case GlobalLexicalVarWithVarInjectionChecks: {
                 RELEASE_ASSERT(constantScope);
                 RELEASE_ASSERT(constantScope == JSScope::constantScopeForCodeBlock(resolveType, m_inlineStackTop->m_codeBlock));
-                set(bytecode.m_dst, weakJSConstant(constantScope));
-                addToGraph(Phantom, get(bytecode.m_scope));
+                set(dst, weakJSConstant(constantScope));
+                addToGraph(Phantom, get(scope));
                 break;
             }
             case ModuleVar: {
                 // Since the value of the "scope" virtual register is not used in LLInt / baseline op_resolve_scope with ModuleVar,
                 // we need not to keep it alive by the Phantom node.
                 // Module environment is already strongly referenced by the CodeBlock.
-                set(bytecode.m_dst, weakJSConstant(lexicalEnvironment));
+                set(dst, weakJSConstant(lexicalEnvironment));
                 break;
             }
             case ResolvedClosureVar:
             case ClosureVar:
             case ClosureVarWithVarInjectionChecks: {
-                Node* localBase = get(bytecode.m_scope);
+                Node* localBase = get(scope);
                 addToGraph(Phantom, localBase); // OSR exit cannot handle resolve_scope on a DCE'd scope.
                 
                 // We have various forms of constant folding here. This is necessary to avoid
@@ -7793,26 +7795,26 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 if (symbolTable) {
                     if (JSScope* scope = symbolTable->singleton().inferredValue()) {
                         m_graph.watchpoints().addLazily(symbolTable);
-                        set(bytecode.m_dst, weakJSConstant(scope));
+                        set(dst, weakJSConstant(scope));
                         break;
                     }
                 }
                 if (JSScope* scope = localBase->dynamicCastConstant<JSScope*>()) {
                     for (unsigned n = depth; n--;)
                         scope = scope->next();
-                    set(bytecode.m_dst, weakJSConstant(scope));
+                    set(dst, weakJSConstant(scope));
                     break;
                 }
                 for (unsigned n = depth; n--;)
                     localBase = addToGraph(SkipScope, localBase);
-                set(bytecode.m_dst, localBase);
+                set(dst, localBase);
                 break;
             }
             case UnresolvedProperty:
             case UnresolvedPropertyWithVarInjectionChecks: {
-                addToGraph(Phantom, get(bytecode.m_scope));
+                addToGraph(Phantom, get(scope));
                 addToGraph(ForceOSRExit);
-                set(bytecode.m_dst, addToGraph(JSConstant, OpInfo(m_constantNull)));
+                set(dst, addToGraph(JSConstant, OpInfo(m_constantNull)));
                 break;
             }
             case Dynamic:
@@ -7999,7 +8001,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_get_from_scope);
         }
 
-        case op_resolve_and_get_from_scope: {
+        case op_resolve_and_get_from_scope: { //TODO: Refactor
             auto bytecode = currentInstruction->as<OpResolveAndGetFromScope>();
             auto& metadata = bytecode.metadata(codeBlock);
             VirtualRegister scope = bytecode.m_scope;

@@ -2795,11 +2795,11 @@ macro varInjectionCheck(slowPath, scratch)
     bbeq WatchpointSet::m_state[scratch], IsInvalidated, slowPath
 end
 
-llintOpWithMetadata(op_resolve_scope, OpResolveScope, macro (size, get, dispatch, metadata, return)
+macro resolveScopeHelper(opcodeStruct, get, dispatch, metadata, return, callSlowPath, slowPath)
     metadata(t5, t0)
 
     macro getConstantScope(dst)
-        loadp OpResolveScope::Metadata::m_constantScope[t5], dst
+        loadp %opcodeStruct%::Metadata::m_constantScope[t5], dst
     end
 
     macro returnConstantScope()
@@ -2808,12 +2808,12 @@ llintOpWithMetadata(op_resolve_scope, OpResolveScope, macro (size, get, dispatch
     end
 
     macro globalLexicalBindingEpochCheck(slowPath, globalObject, scratch)
-        loadi OpResolveScope::Metadata::m_globalLexicalBindingEpoch[t5], scratch
+        loadi %opcodeStruct%::Metadata::m_globalLexicalBindingEpoch[t5], scratch
         bineq JSGlobalObject::m_globalLexicalBindingEpoch[globalObject], scratch, slowPath
     end
 
     macro resolveScope()
-        loadi OpResolveScope::Metadata::m_localScopeDepth[t5], t2
+        loadi %opcodeStruct%::Metadata::m_localScopeDepth[t5], t2
         get(m_scope, t0)
         loadq [cfr, t0, 8], t0
         btiz t2, .resolveScopeLoopEnd
@@ -2827,7 +2827,7 @@ llintOpWithMetadata(op_resolve_scope, OpResolveScope, macro (size, get, dispatch
         return(t0)
     end
 
-    loadi OpResolveScope::Metadata::m_resolveType[t5], t0
+    loadi %opcodeStruct%::Metadata::m_resolveType[t5], t0
 
 #rGlobalProperty:
     bineq t0, GlobalProperty, .rGlobalVar
@@ -2874,50 +2874,53 @@ llintOpWithMetadata(op_resolve_scope, OpResolveScope, macro (size, get, dispatch
     resolveScope()
 
 .rDynamic:
-    callSlowPath(_slow_path_resolve_scope)
+    callSlowPath(slowPath)
     dispatch()
+end
+
+llintOpWithMetadata(op_resolve_scope, OpResolveScope, macro (size, get, dispatch, metadata, return)
+    resolveScopeHelper(OpResolveScope, get, dispatch, metadata, return, callSlowPath, _slow_path_resolve_scope)
 end)
 
 
-macro loadWithStructureCheck(opcodeStruct, get, slowPath)
-    get(m_scope, t0)
-    loadq [cfr, t0, 8], t0
+macro loadWithStructureCheck(opcodeStruct, fieldName, get, slowPath)
+    loadVariable(get, fieldName, t0)
     loadStructureWithScratch(t0, t2, t1)
     loadp %opcodeStruct%::Metadata::m_structure[t5], t1
     bpneq t2, t1, slowPath
 end
 
-llintOpWithMetadata(op_get_from_scope, OpGetFromScope, macro (size, get, dispatch, metadata, return)
+macro getFromScopeHelper(opcodeStruct, get, dispatch, metadata, return, callSlowPath, slowPath, fieldName)
     metadata(t5, t0)
 
     macro getProperty()
-        loadp OpGetFromScope::Metadata::m_operand[t5], t1
+        loadp %opcodeStruct%::Metadata::m_operand[t5], t1
         loadPropertyAtVariableOffset(t1, t0, t2)
-        valueProfile(OpGetFromScope, m_profile, t5, t2)
+        valueProfile(opcodeStruct, m_profile, t5, t2)
         return(t2)
     end
 
     macro getGlobalVar(tdzCheckIfNecessary)
-        loadp OpGetFromScope::Metadata::m_operand[t5], t0
+        loadp %opcodeStruct%::Metadata::m_operand[t5], t0
         loadq [t0], t0
         tdzCheckIfNecessary(t0)
-        valueProfile(OpGetFromScope, m_profile, t5, t0)
+        valueProfile(opcodeStruct, m_profile, t5, t0)
         return(t0)
     end
 
     macro getClosureVar()
-        loadp OpGetFromScope::Metadata::m_operand[t5], t1
+        loadp %opcodeStruct%::Metadata::m_operand[t5], t1
         loadq JSLexicalEnvironment_variables[t0, t1, 8], t0
-        valueProfile(OpGetFromScope, m_profile, t5, t0)
+        valueProfile(opcodeStruct, m_profile, t5, t0)
         return(t0)
     end
 
-    loadi OpGetFromScope::Metadata::m_getPutInfo + GetPutInfo::m_operand[t5], t0
+    loadi %opcodeStruct%::Metadata::m_getPutInfo + GetPutInfo::m_operand[t5], t0
     andi ResolveTypeMask, t0
 
 #gGlobalProperty:
     bineq t0, GlobalProperty, .gGlobalVar
-    loadWithStructureCheck(OpGetFromScope, get, .gDynamic) # This structure check includes lexical binding epoch check since when the epoch is changed, scope will be changed too.
+    loadWithStructureCheck(opcodeStruct, fieldName, get, .gDynamic) # This structure check includes lexical binding epoch check since when the epoch is changed, scope will be changed too.
     getProperty()
 
 .gGlobalVar:
@@ -2933,12 +2936,12 @@ llintOpWithMetadata(op_get_from_scope, OpGetFromScope, macro (size, get, dispatc
 
 .gClosureVar:
     bineq t0, ClosureVar, .gGlobalPropertyWithVarInjectionChecks
-    loadVariable(get, m_scope, t0)
+    loadVariable(get, fieldName, t0)
     getClosureVar()
 
 .gGlobalPropertyWithVarInjectionChecks:
     bineq t0, GlobalPropertyWithVarInjectionChecks, .gGlobalVarWithVarInjectionChecks
-    loadWithStructureCheck(OpGetFromScope, get, .gDynamic) # This structure check includes lexical binding epoch check since when the epoch is changed, scope will be changed too.
+    loadWithStructureCheck(opcodeStruct, fieldName, get, .gDynamic) # This structure check includes lexical binding epoch check since when the epoch is changed, scope will be changed too.
     getProperty()
 
 .gGlobalVarWithVarInjectionChecks:
@@ -2957,193 +2960,37 @@ llintOpWithMetadata(op_get_from_scope, OpGetFromScope, macro (size, get, dispatc
 .gClosureVarWithVarInjectionChecks:
     bineq t0, ClosureVarWithVarInjectionChecks, .gDynamic
     varInjectionCheck(.gDynamic, t2)
-    loadVariable(get, m_scope, t0)
+    loadVariable(get, fieldName, t0)
     getClosureVar()
 
 .gDynamic:
-    callSlowPath(_llint_slow_path_get_from_scope)
+    callSlowPath(slowPath)
     dispatch()
+end
+
+llintOpWithMetadata(op_get_from_scope, OpGetFromScope, macro (size, get, dispatch, metadata, return)
+    getFromScopeHelper(OpGetFromScope, get, dispatch, metadata, return, callSlowPath, _llint_slow_path_get_from_scope, m_scope)
 end)
 
 llintOpWithMetadata(op_resolve_and_get_from_scope, OpResolveAndGetFromScope, macro (size, get, dispatch, metadata, return)
-    metadata(t5, t0)
-
     macro gotoGetFromScope(valueReg)
         storeVariable(get, m_resolvedScope, valueReg, t1)
         jmp .gFromScope
     end
 
-    macro callSlowPathMy(slowPath)
+    macro callSlowPathRGSResolveScope(slowPath)
         prepareStateForCCall()
         move cfr, a0
         move PC, a1
         cCall2(slowPath)
         restoreStateAfterCCall()
         bpneq r1, CallerFrame, .gFromScope
-        dispatch()
     end
 
-    macro getConstantScope(dst)
-        loadp OpResolveAndGetFromScope::Metadata::m_constantScope[t5], dst
-    end
-
-    macro returnConstantScope()
-        getConstantScope(t0)
-        gotoGetFromScope(t0)
-    end
-
-    macro globalLexicalBindingEpochCheck(slowPath, globalObject, scratch)
-        loadi OpResolveAndGetFromScope::Metadata::m_globalLexicalBindingEpoch[t5], scratch
-        bineq JSGlobalObject::m_globalLexicalBindingEpoch[globalObject], scratch, slowPath
-    end
-
-    macro resolveScope()
-        loadi OpResolveAndGetFromScope::Metadata::m_localScopeDepth[t5], t2
-        get(m_scope, t0)
-        loadq [cfr, t0, 8], t0
-        btiz t2, .resolveScopeLoopEnd
-
-    .resolveScopeLoop:
-        loadp JSScope::m_next[t0], t0
-        subi 1, t2
-        btinz t2, .resolveScopeLoop
-
-    .resolveScopeLoopEnd:
-        gotoGetFromScope(t0)
-    end
-
-    loadi OpResolveAndGetFromScope::Metadata::m_resolveType[t5], t0
-
-#rGlobalProperty:
-    bineq t0, GlobalProperty, .rGlobalVar
-    getConstantScope(t0)
-    globalLexicalBindingEpochCheck(.rDynamic, t0, t2)
-    gotoGetFromScope(t0)
-
-.rGlobalVar:
-    bineq t0, GlobalVar, .rGlobalLexicalVar
-    returnConstantScope()
-
-.rGlobalLexicalVar:
-    bineq t0, GlobalLexicalVar, .rClosureVar
-    returnConstantScope()
-
-.rClosureVar:
-    bineq t0, ClosureVar, .rModuleVar
-    resolveScope()
-
-.rModuleVar:
-    bineq t0, ModuleVar, .rGlobalPropertyWithVarInjectionChecks
-    returnConstantScope()
-
-.rGlobalPropertyWithVarInjectionChecks:
-    bineq t0, GlobalPropertyWithVarInjectionChecks, .rGlobalVarWithVarInjectionChecks
-    varInjectionCheck(.rDynamic, t2)
-    getConstantScope(t0)
-    globalLexicalBindingEpochCheck(.rDynamic, t0, t2)
-    gotoGetFromScope(t0)
-
-.rGlobalVarWithVarInjectionChecks:
-    bineq t0, GlobalVarWithVarInjectionChecks, .rGlobalLexicalVarWithVarInjectionChecks
-    varInjectionCheck(.rDynamic, t2)
-    returnConstantScope()
-
-.rGlobalLexicalVarWithVarInjectionChecks:
-    bineq t0, GlobalLexicalVarWithVarInjectionChecks, .rClosureVarWithVarInjectionChecks
-    varInjectionCheck(.rDynamic, t2)
-    returnConstantScope()
-
-.rClosureVarWithVarInjectionChecks:
-    bineq t0, ClosureVarWithVarInjectionChecks, .rDynamic
-    varInjectionCheck(.rDynamic, t2)
-    resolveScope()
-
-.rDynamic:
-    callSlowPathMy(_slow_path_rgs_resolve_scope)
+    resolveScopeHelper(OpResolveAndGetFromScope, get, dispatch, metadata, gotoGetFromScope, callSlowPathRGSResolveScope, _slow_path_rgs_resolve_scope)
 
 .gFromScope:
-    metadata(t5, t0)
-
-    macro getProperty()
-        loadp OpResolveAndGetFromScope::Metadata::m_operand[t5], t1
-        loadPropertyAtVariableOffset(t1, t0, t2)
-        valueProfile(OpResolveAndGetFromScope, m_profile, t5, t2)
-        return(t2)
-    end
-
-    macro getGlobalVar(tdzCheckIfNecessary)
-        loadp OpResolveAndGetFromScope::Metadata::m_operand[t5], t0
-        loadq [t0], t0
-        tdzCheckIfNecessary(t0)
-        valueProfile(OpResolveAndGetFromScope, m_profile, t5, t0)
-        return(t0)
-    end
-
-    macro getClosureVar()
-        loadp OpResolveAndGetFromScope::Metadata::m_operand[t5], t1
-        loadq JSLexicalEnvironment_variables[t0, t1, 8], t0
-        valueProfile(OpResolveAndGetFromScope, m_profile, t5, t0)
-        return(t0)
-    end
-
-    macro loadWithStructureCheckMy(opcodeStruct, get, slowPath)
-        loadVariable(get, m_resolvedScope, t0)
-        loadStructureWithScratch(t0, t2, t1)
-        loadp %opcodeStruct%::Metadata::m_structure[t5], t1
-        bpneq t2, t1, slowPath
-    end
-
-    loadi OpResolveAndGetFromScope::Metadata::m_getPutInfo + GetPutInfo::m_operand[t5], t0
-    andi ResolveTypeMask, t0
-
-#gGlobalProperty:
-    bineq t0, GlobalProperty, .gGlobalVar
-    loadWithStructureCheckMy(OpResolveAndGetFromScope, get, .gDynamic)
-    getProperty()
-
-.gGlobalVar:
-    bineq t0, GlobalVar, .gGlobalLexicalVar
-    getGlobalVar(macro(v) end)
-
-.gGlobalLexicalVar:
-    bineq t0, GlobalLexicalVar, .gClosureVar
-    getGlobalVar(
-        macro (value)
-            bqeq value, ValueEmpty, .gDynamic
-        end)
-
-.gClosureVar:
-    bineq t0, ClosureVar, .gGlobalPropertyWithVarInjectionChecks
-    loadVariable(get, m_resolvedScope, t0)
-    getClosureVar()
-
-.gGlobalPropertyWithVarInjectionChecks:
-    bineq t0, GlobalPropertyWithVarInjectionChecks, .gGlobalVarWithVarInjectionChecks
-    loadWithStructureCheckMy(OpResolveAndGetFromScope, get, .gDynamic)
-    getProperty()
-
-.gGlobalVarWithVarInjectionChecks:
-    bineq t0, GlobalVarWithVarInjectionChecks, .gGlobalLexicalVarWithVarInjectionChecks
-    varInjectionCheck(.gDynamic, t2)
-    getGlobalVar(macro(v) end)
-
-.gGlobalLexicalVarWithVarInjectionChecks:
-    bineq t0, GlobalLexicalVarWithVarInjectionChecks, .gClosureVarWithVarInjectionChecks
-    varInjectionCheck(.gDynamic, t2)
-    getGlobalVar(
-        macro (value)
-            bqeq value, ValueEmpty, .gDynamic
-        end)
-
-.gClosureVarWithVarInjectionChecks:
-    bineq t0, ClosureVarWithVarInjectionChecks, .gDynamic
-    varInjectionCheck(.gDynamic, t2)
-    loadVariable(get, m_resolvedScope, t0)
-    getClosureVar()
-
-.gDynamic:
-    callSlowPath(_llint_slow_path_rgs_get_from_scope)
-    dispatch()
+    getFromScopeHelper(OpResolveAndGetFromScope, get, dispatch, metadata, return, callSlowPath, _llint_slow_path_rgs_get_from_scope, m_resolvedScope)
 end)
 
 llintOpWithMetadata(op_put_to_scope, OpPutToScope, macro (size, get, dispatch, metadata, return)
@@ -3207,7 +3054,7 @@ llintOpWithMetadata(op_put_to_scope, OpPutToScope, macro (size, get, dispatch, m
 
 .pGlobalProperty:
     bineq t0, GlobalProperty, .pGlobalVar
-    loadWithStructureCheck(OpPutToScope, get, .pDynamic) # This structure check includes lexical binding epoch check since when the epoch is changed, scope will be changed too.
+    loadWithStructureCheck(OpPutToScope, m_scope, get, .pDynamic) # This structure check includes lexical binding epoch check since when the epoch is changed, scope will be changed too.
     putProperty()
     writeBarrierOnOperands(size, get, m_scope, m_value)
     dispatch()
@@ -3235,7 +3082,7 @@ llintOpWithMetadata(op_put_to_scope, OpPutToScope, macro (size, get, dispatch, m
 
 .pGlobalPropertyWithVarInjectionChecks:
     bineq t0, GlobalPropertyWithVarInjectionChecks, .pGlobalVarWithVarInjectionChecks
-    loadWithStructureCheck(OpPutToScope, get, .pDynamic) # This structure check includes lexical binding epoch check since when the epoch is changed, scope will be changed too.
+    loadWithStructureCheck(OpPutToScope, m_scope, get, .pDynamic) # This structure check includes lexical binding epoch check since when the epoch is changed, scope will be changed too.
     putProperty()
     writeBarrierOnOperands(size, get, m_scope, m_value)
     dispatch()

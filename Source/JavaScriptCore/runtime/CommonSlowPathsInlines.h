@@ -96,7 +96,7 @@ inline void tryCachePutToScopeGlobal(
     }
 }
 
-inline void tryCacheGetFromScopeGlobal(
+inline void tryCacheGetFromScopeGlobal( //TODO: use pc instead of metadata
     JSGlobalObject* globalObject, CodeBlock* codeBlock, VM& vm, auto& metadata, JSObject* scope, PropertySlot& slot, const Identifier& ident)
 {
     ResolveType resolveType = metadata.m_getPutInfo.resolveType();
