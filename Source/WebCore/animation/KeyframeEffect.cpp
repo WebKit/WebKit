@@ -32,6 +32,7 @@
 #include "CSSKeyframeRule.h"
 #include "CSSPropertyAnimation.h"
 #include "CSSPropertyNames.h"
+#include "CSSPropertyParser.h"
 #include "CSSSelector.h"
 #include "CSSStyleDeclaration.h"
 #include "CSSTimingFunctionValue.h"
@@ -78,7 +79,6 @@ String KeyframeEffect::CSSPropertyIDToIDLAttributeName(CSSPropertyID cssProperty
 {
     // https://drafts.csswg.org/web-animations-1/#animation-property-name-to-idl-attribute-name
     // 1. If property follows the <custom-property-name> production, return property.
-    // FIXME: We don't handle custom properties yet.
 
     // 2. If property refers to the CSS float property, return the string "cssFloat".
     if (cssPropertyId == CSSPropertyFloat)
@@ -96,7 +96,6 @@ static inline CSSPropertyID IDLAttributeNameToAnimationPropertyName(const AtomSt
 {
     // https://drafts.csswg.org/web-animations-1/#idl-attribute-name-to-animation-property-name
     // 1. If attribute conforms to the <custom-property-name> production, return attribute.
-    // FIXME: We don't handle custom properties yet.
 
     // 2. If attribute is the string "cssFloat", then return an animation property representing the CSS float property.
     if (idlAttributeName == "cssFloat"_s)
@@ -108,6 +107,9 @@ static inline CSSPropertyID IDLAttributeNameToAnimationPropertyName(const AtomSt
 
     // 4. Otherwise, return the result of applying the IDL attribute to CSS property algorithm [CSSOM] to attribute.
     auto cssPropertyId = CSSStyleDeclaration::getCSSPropertyIDFromJavaScriptPropertyName(idlAttributeName);
+
+    if (cssPropertyId == CSSPropertyInvalid && isCustomPropertyName(idlAttributeName))
+        return CSSPropertyCustom;
 
     // We need to check that converting the property back to IDL form yields the same result such that a property passed
     // in non-IDL form is rejected, for instance "font-size".
@@ -271,10 +273,14 @@ static inline ExceptionOr<KeyframeEffect::KeyframeLikeObject> processKeyframeLik
         RETURN_IF_EXCEPTION(scope, Exception { TypeError });
 
         // 4. Calculate the normalized property name as the result of applying the IDL attribute name to animation property name algorithm to property name.
-        auto cssPropertyID = IDLAttributeNameToAnimationPropertyName(animationProperties[i].string());
+        auto propertyName = animationProperties[i].string();
+        auto cssPropertyID = IDLAttributeNameToAnimationPropertyName(propertyName);
 
         // 5. Add a property to to keyframe output with normalized property name as the property name, and property values as the property value.
-        keyframeOuput.propertiesAndValues.append({ cssPropertyID, propertyValues });
+        if (cssPropertyID == CSSPropertyCustom)
+            keyframeOuput.propertiesAndValues.append({ cssPropertyID, propertyName, propertyValues });
+        else
+            keyframeOuput.propertiesAndValues.append({ cssPropertyID, emptyAtom(), propertyValues });
     }
 
     // 7. Return keyframe output.
@@ -335,7 +341,11 @@ static inline ExceptionOr<void> processIterableKeyframes(JSGlobalObject& lexical
             // there should only ever be a single value for a given property.
             ASSERT(propertyAndValue.values.size() == 1);
             auto stringValue = propertyAndValue.values[0];
-            if (keyframeOutput.style->setProperty(cssPropertyId, stringValue, false, parserContext))
+            if (cssPropertyId == CSSPropertyCustom) {
+                auto customProperty = propertyAndValue.customProperty;
+                if (keyframeOutput.style->setCustomProperty(&document, customProperty, stringValue, false, parserContext))
+                    keyframeOutput.customStyleStrings.set(customProperty, stringValue);
+            } else if (keyframeOutput.style->setProperty(cssPropertyId, stringValue, false, parserContext))
                 keyframeOutput.styleStrings.set(cssPropertyId, stringValue);
         }
 
@@ -373,7 +383,11 @@ static inline ExceptionOr<void> processPropertyIndexedKeyframes(JSGlobalObject& 
             // 1. Let k be a new keyframe with a null keyframe offset.
             KeyframeEffect::ParsedKeyframe k;
             // 2. Add the property-value pair, property name → v, to k.
-            if (k.style->setProperty(propertyName, v, false, parserContext))
+            if (propertyName == CSSPropertyCustom) {
+                auto customProperty = m.customProperty;
+                if (k.style->setCustomProperty(&document, customProperty, v, false, parserContext))
+                    k.customStyleStrings.set(customProperty, v);
+            } else if (k.style->setProperty(propertyName, v, false, parserContext))
                 k.styleStrings.set(propertyName, v);
             // 3. Append k to property keyframes.
             propertyKeyframes.append(WTFMove(k));
@@ -411,6 +425,11 @@ static inline ExceptionOr<void> processPropertyIndexedKeyframes(JSGlobalObject& 
             previousKeyframe.style->mergeAndOverrideOnConflict(keyframe.style);
             for (auto& [property, value] : keyframe.styleStrings)
                 previousKeyframe.styleStrings.set(property, value);
+        }
+        if (keyframe.customStyleStrings.size()) {
+            previousKeyframe.style->mergeAndOverrideOnConflict(keyframe.style);
+            for (auto& [customProperty, value] : keyframe.customStyleStrings)
+                previousKeyframe.customStyleStrings.set(customProperty, value);
         }
         // Since we've processed this keyframe, we can remove it and keep i the same
         // so that we process the next keyframe in the next loop iteration.
@@ -569,6 +588,7 @@ void KeyframeEffect::copyPropertiesFromSource(Ref<KeyframeEffect>&& source)
         parsedKeyframe.offset = sourceParsedKeyframe.offset;
         parsedKeyframe.composite = sourceParsedKeyframe.composite;
         parsedKeyframe.styleStrings = sourceParsedKeyframe.styleStrings;
+        parsedKeyframe.customStyleStrings = sourceParsedKeyframe.customStyleStrings;
         parsedKeyframe.computedOffset = sourceParsedKeyframe.computedOffset;
         parsedKeyframe.timingFunction = sourceParsedKeyframe.timingFunction;
         parsedKeyframe.style = sourceParsedKeyframe.style->mutableCopy();
@@ -693,6 +713,32 @@ auto KeyframeEffect::getKeyframes(Document& document) -> Vector<ComputedKeyframe
             if (cssPropertyId == CSSPropertyCustom)
                 continue;
             addPropertyToKeyframe(cssPropertyId);
+        }
+
+        if (m_blendingKeyframesSource != BlendingKeyframesSource::CSSAnimation) {
+            auto addCustomPropertyToKeyframe = [&](const AtomString& customProperty) {
+                String styleString = emptyString();
+                if (keyframeRule) {
+                    if (auto cssValue = keyframeRule->properties().getCustomPropertyCSSValue(customProperty)) {
+                        if (!cssValue->hasVariableReferences())
+                            styleString = keyframeRule->properties().getCustomPropertyValue(customProperty);
+                    }
+                }
+                if (styleString.isEmpty()) {
+                    if (auto cssValue = styleProperties->getCustomPropertyCSSValue(customProperty)) {
+                        if (!cssValue->hasVariableReferences())
+                            styleString = styleProperties->getCustomPropertyValue(customProperty);
+                    }
+                }
+                if (styleString.isEmpty()) {
+                    if (auto cssValue = computedStyleExtractor.customPropertyValue(customProperty))
+                        styleString = cssValue->cssText();
+                }
+                computedKeyframe.customStyleStrings.set(customProperty, styleString);
+            };
+
+            for (auto customProperty : keyframe.customProperties())
+                addCustomPropertyToKeyframe(customProperty);
         }
 
         computedKeyframes.append(WTFMove(computedKeyframe));

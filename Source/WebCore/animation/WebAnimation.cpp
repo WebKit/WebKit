@@ -1482,6 +1482,9 @@ ExceptionOr<void> WebAnimation::commitStyles()
     auto properties = effect->animatedProperties();
     // 2.5 For each property, property, in targeted properties:
     for (auto property : properties) {
+        // FIXME: handle custom properties (https://bugs.webkit.org/show_bug.cgi?id=242007).
+        if (property == CSSPropertyCustom)
+            continue;
         // 1. Let partialEffectStack be a copy of the effect stack for property on target.
         // 2. If animation's replace state is removed, add all animation effects associated with animation whose effect target is target and which include
         // property as a target property to partialEffectStack.

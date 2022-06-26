@@ -20,7 +20,7 @@ PASS Element.animate() accepts a one property one value property-indexed keyfram
 PASS Element.animate() accepts a one property one non-array value property-indexed keyframes specification
 PASS Element.animate() accepts a one property two value property-indexed keyframes specification where the first value is invalid
 PASS Element.animate() accepts a one property two value property-indexed keyframes specification where the second value is invalid
-FAIL Element.animate() accepts a property-indexed keyframes specification with a CSS variable as the property assert_equals: number of frames expected 2 but got 0
+PASS Element.animate() accepts a property-indexed keyframes specification with a CSS variable as the property
 PASS Element.animate() accepts a property-indexed keyframe with a single offset
 PASS Element.animate() accepts a property-indexed keyframe with an array of offsets
 PASS Element.animate() accepts a property-indexed keyframe with an array of offsets that is too short
@@ -55,7 +55,7 @@ PASS Element.animate() accepts a two property keyframe sequence where one proper
 PASS Element.animate() accepts a one property two keyframe sequence that needs to stringify its values
 PASS Element.animate() accepts a keyframe sequence with a CSS variable reference
 PASS Element.animate() accepts a keyframe sequence with a CSS variable reference in a shorthand property
-FAIL Element.animate() accepts a keyframe sequence with a CSS variable as its property assert_equals: properties on ComputedKeyframe #0 should match expected "--custom,composite,computedOffset,easing,offset" but got "composite,computedOffset,easing,offset"
+PASS Element.animate() accepts a keyframe sequence with a CSS variable as its property
 PASS Element.animate() accepts a keyframe sequence with duplicate values for a given interior offset
 PASS Element.animate() accepts a keyframe sequence with duplicate values for offsets 0 and 1
 PASS Element.animate() accepts a two property four keyframe sequence

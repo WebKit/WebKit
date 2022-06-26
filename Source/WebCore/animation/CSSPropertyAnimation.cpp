@@ -3697,7 +3697,7 @@ void CSSPropertyAnimation::blendCustomProperty(const AtomString& customProperty,
 
 bool CSSPropertyAnimation::isPropertyAnimatable(CSSPropertyID property)
 {
-    return CSSPropertyAnimationWrapperMap::singleton().wrapperForProperty(property);
+    return property == CSSPropertyCustom || CSSPropertyAnimationWrapperMap::singleton().wrapperForProperty(property);
 }
 
 bool CSSPropertyAnimation::isPropertyAdditiveOrCumulative(CSSPropertyID property)

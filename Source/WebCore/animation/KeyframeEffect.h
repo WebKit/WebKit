@@ -40,6 +40,8 @@
 #include "Styleable.h"
 #include "WebAnimationTypes.h"
 #include <wtf/Ref.h>
+#include <wtf/text/AtomString.h>
+#include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
 
@@ -72,6 +74,7 @@ public:
 
     struct PropertyAndValues {
         CSSPropertyID property;
+        AtomString customProperty;
         Vector<String> values;
     };
 
@@ -86,6 +89,7 @@ public:
 
     struct ComputedKeyframe : BaseComputedKeyframe {
         HashMap<CSSPropertyID, String> styleStrings;
+        HashMap<AtomString, String> customStyleStrings;
     };
 
     struct ParsedKeyframe : ComputedKeyframe {

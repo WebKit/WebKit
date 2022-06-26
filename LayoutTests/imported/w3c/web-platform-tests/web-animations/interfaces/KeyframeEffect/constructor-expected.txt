@@ -33,7 +33,7 @@ PASS A KeyframeEffect can be constructed with a one property two value property-
 PASS A KeyframeEffect constructed with a one property two value property-indexed keyframes specification where the first value is invalid roundtrips
 PASS A KeyframeEffect can be constructed with a one property two value property-indexed keyframes specification where the second value is invalid
 PASS A KeyframeEffect constructed with a one property two value property-indexed keyframes specification where the second value is invalid roundtrips
-FAIL A KeyframeEffect can be constructed with a property-indexed keyframes specification with a CSS variable as the property assert_equals: number of frames expected 2 but got 0
+PASS A KeyframeEffect can be constructed with a property-indexed keyframes specification with a CSS variable as the property
 PASS A KeyframeEffect constructed with a property-indexed keyframes specification with a CSS variable as the property roundtrips
 PASS A KeyframeEffect can be constructed with a property-indexed keyframe with a single offset
 PASS A KeyframeEffect constructed with a property-indexed keyframe with a single offset roundtrips
@@ -103,7 +103,7 @@ PASS A KeyframeEffect can be constructed with a keyframe sequence with a CSS var
 PASS A KeyframeEffect constructed with a keyframe sequence with a CSS variable reference roundtrips
 PASS A KeyframeEffect can be constructed with a keyframe sequence with a CSS variable reference in a shorthand property
 PASS A KeyframeEffect constructed with a keyframe sequence with a CSS variable reference in a shorthand property roundtrips
-FAIL A KeyframeEffect can be constructed with a keyframe sequence with a CSS variable as its property assert_equals: properties on ComputedKeyframe #0 should match expected "--custom,composite,computedOffset,easing,offset" but got "composite,computedOffset,easing,offset"
+PASS A KeyframeEffect can be constructed with a keyframe sequence with a CSS variable as its property
 PASS A KeyframeEffect constructed with a keyframe sequence with a CSS variable as its property roundtrips
 PASS A KeyframeEffect can be constructed with a keyframe sequence with duplicate values for a given interior offset
 PASS A KeyframeEffect constructed with a keyframe sequence with duplicate values for a given interior offset roundtrips
