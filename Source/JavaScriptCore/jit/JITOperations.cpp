@@ -2829,7 +2829,7 @@ JSC_DEFINE_JIT_OPERATION(operationSwitchStringWithUnknownKeyType, char*, (JSGlob
     return reinterpret_cast<char*>(result);
 }
 
-ALWAYS_INLINE EncodedJSValue operationResolveScopeForBaselineHelper(VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame, auto& throwScope, CodeBlock* codeBlock, auto& bytecode)
+ALWAYS_INLINE EncodedJSValue operationResolveScopeHelper(VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame, auto& throwScope, CodeBlock* codeBlock, auto& bytecode)
 {
     const Identifier& ident = codeBlock->identifier(bytecode.m_var);
     JSScope* scope = callFrame->uncheckedR(bytecode.m_scope).Register::scope();
@@ -2883,21 +2883,12 @@ JSC_DEFINE_JIT_OPERATION(operationResolveScopeForBaseline, EncodedJSValue, (JSGl
     CodeBlock* codeBlock = callFrame->codeBlock();
 
     auto bytecode = pc->as<OpResolveScope>();
-    return operationResolveScopeForBaselineHelper(vm, globalObject, callFrame, throwScope, codeBlock, bytecode);
+    return operationResolveScopeHelper(vm, globalObject, callFrame, throwScope, codeBlock, bytecode);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationGetFromScope, EncodedJSValue, (JSGlobalObject* globalObject, const JSInstruction* pc))
+ALWAYS_INLINE EncodedJSValue operationGetFromScopeHelper(VM& vm, JSGlobalObject* globalObject, auto& throwScope, CodeBlock* codeBlock, auto& bytecode, JSObject* scope)
 {
-    VM& vm = globalObject->vm();
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-
-    CodeBlock* codeBlock = callFrame->codeBlock();
-
-    auto bytecode = pc->as<OpGetFromScope>();
     const Identifier& ident = codeBlock->identifier(bytecode.m_var);
-    JSObject* scope = jsCast<JSObject*>(callFrame->uncheckedR(bytecode.m_scope).jsValue());
     GetPutInfo& getPutInfo = bytecode.metadata(codeBlock).m_getPutInfo;
 
     // ModuleVar is always converted to ClosureVar for get_from_scope.
@@ -2928,9 +2919,8 @@ JSC_DEFINE_JIT_OPERATION(operationGetFromScope, EncodedJSValue, (JSGlobalObject*
     })));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationResolveAndGetFromScope, EncodedJSValue, (JSGlobalObject* globalObject, const JSInstruction* pc))
+JSC_DEFINE_JIT_OPERATION(operationGetFromScope, EncodedJSValue, (JSGlobalObject* globalObject, const JSInstruction* pc))
 {
-    if (Options::useDebugLog()) dataLogLn("Baseline -------------------------------------------------- operationResolveAndGetFromScope");
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
@@ -2938,53 +2928,13 @@ JSC_DEFINE_JIT_OPERATION(operationResolveAndGetFromScope, EncodedJSValue, (JSGlo
 
     CodeBlock* codeBlock = callFrame->codeBlock();
 
-    auto bytecode = pc->as<OpResolveAndGetFromScope>();
-    
-    const Identifier& ident = codeBlock->identifier(bytecode.m_var);
-    JSScope* scope = callFrame->uncheckedR(bytecode.m_scope).Register::scope();
-    JSObject* resolvedScope = JSScope::resolve(globalObject, scope, ident);
-    // Proxy can throw an error here, e.g. Proxy in with statement's @unscopables.
-    RETURN_IF_EXCEPTION(throwScope, { });
-
-    auto& metadata = bytecode.metadata(codeBlock);
-    ResolveType resolveType = metadata.m_resolveType;
-
-    // ModuleVar does not keep the scope register value alive in DFG.
-    ASSERT(resolveType != ModuleVar);
-
-    switch (resolveType) {
-    case GlobalProperty:
-    case GlobalPropertyWithVarInjectionChecks:
-    case UnresolvedProperty:
-    case UnresolvedPropertyWithVarInjectionChecks: {
-        if (resolvedScope->isGlobalObject()) {
-            JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(resolvedScope);
-            bool hasProperty = globalObject->hasProperty(globalObject, ident);
-            RETURN_IF_EXCEPTION(throwScope, { });
-            if (hasProperty) {
-                ConcurrentJSLocker locker(codeBlock->m_lock);
-                metadata.m_resolveType = needsVarInjectionChecks(resolveType) ? GlobalPropertyWithVarInjectionChecks : GlobalProperty;
-                metadata.m_globalObject.set(vm, codeBlock, globalObject);
-                metadata.m_globalLexicalBindingEpoch = globalObject->globalLexicalBindingEpoch();
-            }
-        } else if (resolvedScope->isGlobalLexicalEnvironment()) {
-            JSGlobalLexicalEnvironment* globalLexicalEnvironment = jsCast<JSGlobalLexicalEnvironment*>(resolvedScope);
-            ConcurrentJSLocker locker(codeBlock->m_lock);
-            metadata.m_resolveType = needsVarInjectionChecks(resolveType) ? GlobalLexicalVarWithVarInjectionChecks : GlobalLexicalVar;
-            metadata.m_globalLexicalEnvironment.set(vm, codeBlock, globalLexicalEnvironment);
-        }
-        break;
-    }
-    default:
-        break;
-    }
-
-    return JSValue::encode(resolvedScope);
+    auto bytecode = pc->as<OpGetFromScope>();
+    JSObject* scope = jsCast<JSObject*>(callFrame->uncheckedR(bytecode.m_scope).jsValue());
+    return operationGetFromScopeHelper(vm, globalObject, throwScope, codeBlock, bytecode, scope);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationResolveAndGetFromScope2, EncodedJSValue, (JSGlobalObject* globalObject, const JSInstruction* pc))
+JSC_DEFINE_JIT_OPERATION(operationRGSResolveScope, EncodedJSValue, (JSGlobalObject* globalObject, const JSInstruction* pc))
 {
-    if (Options::useDebugLog()) dataLogLn("Baseline -------------------------------------------------- operationResolveAndGetFromScope2");
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
@@ -2993,36 +2943,21 @@ JSC_DEFINE_JIT_OPERATION(operationResolveAndGetFromScope2, EncodedJSValue, (JSGl
     CodeBlock* codeBlock = callFrame->codeBlock();
 
     auto bytecode = pc->as<OpResolveAndGetFromScope>();
-    const Identifier& ident = codeBlock->identifier(bytecode.m_var);
-    JSObject* resolvedScope = jsCast<JSObject*>(callFrame->uncheckedR(bytecode.m_resolvedScope).jsValue());
-    GetPutInfo& getPutInfo = bytecode.metadata(codeBlock).m_getPutInfo;
+    return operationResolveScopeHelper(vm, globalObject, callFrame, throwScope, codeBlock, bytecode);
+}
 
-    // ModuleVar is always converted to ClosureVar for get_from_scope.
-    ASSERT(getPutInfo.resolveType() != ModuleVar);
+JSC_DEFINE_JIT_OPERATION(operationRGSGetFromScope, EncodedJSValue, (JSGlobalObject* globalObject, const JSInstruction* pc))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(resolvedScope->getPropertySlot(globalObject, ident, [&] (bool found, PropertySlot& slot) -> JSValue {
-        if (!found) {
-            if (getPutInfo.resolveMode() == ThrowIfNotFound)
-                throwException(globalObject, throwScope, createUndefinedVariableError(globalObject, ident));
-            return jsUndefined();
-        }
+    CodeBlock* codeBlock = callFrame->codeBlock();
 
-        JSValue result = JSValue();
-        if (resolvedScope->isGlobalLexicalEnvironment()) {
-            // When we can't statically prove we need a TDZ check, we must perform the check on the slow path.
-            result = slot.getValue(globalObject, ident);
-            if (result == jsTDZValue()) {
-                throwException(globalObject, throwScope, createTDZError(globalObject));
-                return jsUndefined();
-            }
-        }
-
-        CommonSlowPaths::tryCacheGetFromScopeGlobal(globalObject, codeBlock, vm, bytecode.metadata(codeBlock), resolvedScope, slot, ident);
-
-        if (!result)
-            return slot.getValue(globalObject, ident);
-        return result;
-    })));
+    auto bytecode = pc->as<OpResolveAndGetFromScope>();
+    JSObject* scope = jsCast<JSObject*>(callFrame->uncheckedR(bytecode.m_resolvedScope).jsValue());
+    return operationGetFromScopeHelper(vm, globalObject, throwScope, codeBlock, bytecode, scope);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationPutToScope, void, (JSGlobalObject* globalObject, const JSInstruction* pc))

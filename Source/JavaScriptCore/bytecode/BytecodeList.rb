@@ -1046,10 +1046,10 @@ op :get_from_scope,
 
 op :resolve_and_get_from_scope,
     args: {
-        dst: VirtualRegister, # offset  1
-        scope: VirtualRegister, # offset 2
-        resolvedScope: VirtualRegister, # offset 3
-        var: unsigned, # offset 4
+        dst: VirtualRegister,
+        scope: VirtualRegister,
+        resolvedScope: VirtualRegister,
+        var: unsigned,
         # $begin: :private,
         resolveType: ResolveType,
         getPutInfo: GetPutInfo,
@@ -1057,19 +1057,19 @@ op :resolve_and_get_from_scope,
         offset: unsigned,
     },
     metadata: {
-        getPutInfo: GetPutInfo, # offset 5
-        _0: { #previously offset 6
+        getPutInfo: GetPutInfo,
+        _0: {
             watchpointSet: WatchpointSet.*,
             structure: WriteBarrierBase[Structure],
         },
-        operand: uintptr_t, #offset 7
-        profile: ValueProfile, # offset 8
-        resolveType: ResolveType, # offset 9
-        _1: { # offset 10
+        operand: uintptr_t,
+        profile: ValueProfile,
+        resolveType: ResolveType,
+        _1: {
             localScopeDepth: unsigned,
             globalLexicalBindingEpoch: unsigned,
         },
-        _2: { # offset 11
+        _2: {
              # written during linking
              lexicalEnvironment: WriteBarrierBase[JSCell], # lexicalEnvironment && type == ModuleVar
              symbolTable: WriteBarrierBase[SymbolTable], # lexicalEnvironment && type != ModuleVar
@@ -1089,8 +1089,8 @@ op :resolve_and_get_from_scope,
         tmpResolvedScope: JSValue,
     },
     checkpoints: {
-        cp1: nil,
-        cp2: nil,
+        resolveScope: nil,
+        getFromScope: nil,
     }
 
 op :put_to_scope,

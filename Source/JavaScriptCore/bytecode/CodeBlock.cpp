@@ -1540,7 +1540,6 @@ void CodeBlock::finalizeLLIntInlineCaches()
             symbolTable.clear();
         };
 
-        if (Options::useDebugLog()) dataLogLn("CodeBlock ------------------------------------------------  finalizeLLIntInlineCaches");
         m_metadata->forEach<OpResolveScope>(clearDeadSymbolTable);
         m_metadata->forEach<OpResolveAndGetFromScope>(clearDeadSymbolTable);
 
@@ -3061,7 +3060,6 @@ void CodeBlock::notifyLexicalBindingUpdate()
             break;
         }
         case op_resolve_and_get_from_scope: {
-            if (Options::useDebugLog()) dataLogLn("CodeBlock ------------------------------------------------  notifyLexicalBindingUpdate");
             auto bytecode = instruction->as<OpResolveAndGetFromScope>();
             updateGlobalLexicalBinding(bytecode);
             break;

@@ -1441,7 +1441,6 @@ void JIT::emitSlow_op_has_private_brand(const JSInstruction*, Vector<SlowCaseEnt
 
 void JIT::emit_op_resolve_scope(const JSInstruction* currentInstruction)
 {
-    if (Options::useDebugLog()) dataLog("Baseline  -------------------------------------------- emit_op_resolve_scope\n");
     auto bytecode = currentInstruction->as<OpResolveScope>();
     ResolveType profiledResolveType = bytecode.metadata(m_profiledCodeBlock).m_resolveType;
     VirtualRegister dst = bytecode.m_dst;
@@ -1501,6 +1500,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::generateOpResolveScopeThunkHelper(VM&
     // it makes assumptions about the right globalObject being available from CallFrame::codeBlock().
     // DFG/FTL may inline functions belonging to other globalObjects, which may not match
     // CallFrame::codeBlock().
+
     CCallHelpers jit;
 
     using Metadata = typename BytecodeOpcode::Metadata;
@@ -1668,7 +1668,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_resolve_scopeGenerator_helper
     Jump exceptionCheck = jit.jump();
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
-    auto operationFunction = resolveAndGetFromScopePair ? operationResolveAndGetFromScope : operationResolveScopeForBaseline;
+    auto operationFunction = resolveAndGetFromScopePair ? operationRGSResolveScope : operationResolveScopeForBaseline;
     patchBuffer.link(operation, FunctionPtr<OperationPtrTag>(operationFunction));
     patchBuffer.link(exceptionCheck, CodeLocationLabel(vm.getCTIStub(checkExceptionGenerator).retaggedCode<NoPtrTag>()));
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_resolve_scope");
@@ -1681,7 +1681,6 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_resolve_scopeGenerator(VM& vm
 
 void JIT::emit_op_get_from_scope(const JSInstruction* currentInstruction)
 {
-    if (Options::useDebugLog()) dataLog("Baseline  -------------------------------------------- emit_op_get_from_scope\n");
     auto bytecode = currentInstruction->as<OpGetFromScope>();
     VirtualRegister dst = bytecode.m_dst;
     VirtualRegister scope = bytecode.m_scope;
@@ -1918,7 +1917,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_get_from_scopeGenerator_helpe
     Jump jumpToHandler = jit.jump();
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    auto operationFunction = resolveAndGetFromScopePair ? operationResolveAndGetFromScope2 : operationGetFromScope;
+    auto operationFunction = resolveAndGetFromScopePair ? operationRGSGetFromScope : operationGetFromScope;
     patchBuffer.link(operation, FunctionPtr<OperationPtrTag>(operationFunction));
     auto handler = vm.getCTIStub(popThunkStackPreservesAndHandleExceptionGenerator);
     patchBuffer.link(jumpToHandler, CodeLocationLabel(handler.retaggedCode<NoPtrTag>()));
@@ -1927,8 +1926,6 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_get_from_scopeGenerator_helpe
 
 void JIT::emit_op_resolve_and_get_from_scope(const JSInstruction* currentInstruction)
 {
-    if (Options::useDebugLog()) dataLog("Baseline  -------------------------------------------- emit_op_resolve_and_get_from_scope|resolve scope\n");
-
     auto bytecode = currentInstruction->as<OpResolveAndGetFromScope>();
     ResolveType profiledResolveType = bytecode.metadata(m_profiledCodeBlock).m_resolveType;
     VirtualRegister dst = bytecode.m_dst;
@@ -1978,7 +1975,9 @@ void JIT::emit_op_resolve_and_get_from_scope(const JSInstruction* currentInstruc
     boxCell(returnValueGPR, returnValueJSR);
     emitPutVirtualRegister(resolvedScope, returnValueJSR);
 
-    if (Options::useDebugLog()) dataLog("Baseline  -------------------------------------------- emit_op_resolve_and_get_from_scope|get from scope\n");
+
+
+
     profiledResolveType = bytecode.metadata(m_profiledCodeBlock).m_getPutInfo.resolveType();
 
     uint32_t metadataOffset = m_profiledCodeBlock->metadataTable()->offsetInMetadataTable(bytecode);

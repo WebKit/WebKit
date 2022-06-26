@@ -60,7 +60,6 @@
 #include "bytecode/VirtualRegister.h"
 #include "runtime/GetPutInfo.h"
 #include "wtf/Compiler.h"
-#include "wtf/DataLog.h"
 #include <wtf/BitVector.h>
 #include <wtf/HashSet.h>
 #include <wtf/StdLibExtras.h>
@@ -2513,7 +2512,7 @@ RegisterID* BytecodeGenerator::emitResolveScope(RegisterID* dst, const Variable&
     return nullptr;
 }
 
-ALWAYS_INLINE void BytecodeGenerator::emitOpGetFromScope(RegisterID* dst, RegisterID* scope, unsigned var, GetPutInfo getPutInfo, unsigned localScopeDepth, unsigned offset) {
+ALWAYS_INLINE void BytecodeGenerator::emitGetFromScopeHelper(RegisterID* dst, RegisterID* scope, unsigned var, GetPutInfo getPutInfo, unsigned localScopeDepth, unsigned offset) {
     ASSERT(scope);
 
     auto validResolveAndGetFromScopePair = [&](){
@@ -2549,7 +2548,7 @@ RegisterID* BytecodeGenerator::emitGetFromScope(RegisterID* dst, RegisterID* sco
         
     case VarKind::Scope:
     case VarKind::Invalid: {
-        emitOpGetFromScope(
+        emitGetFromScopeHelper(
             kill(dst),
             scope,
             addConstant(variable.ident()),
@@ -2875,7 +2874,7 @@ void BytecodeGenerator::emitInstallPrivateClassBrand(RegisterID* target)
 
 RegisterID* BytecodeGenerator::emitGetPrivateBrand(RegisterID* dst, RegisterID* scope, bool isStatic)
 {
-    emitOpGetFromScope(
+    emitGetFromScopeHelper(
         kill(dst),
         scope,
         addConstant(isStatic ? propertyNames().builtinNames().privateClassBrandPrivateName() : propertyNames().builtinNames().privateBrandPrivateName()),
