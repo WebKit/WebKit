@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "DFGByteCodeParser.h"
+#include "interpreter/CallFrame.h"
 
 #if ENABLE(DFG_JIT)
 
@@ -4281,7 +4282,7 @@ GetByOffsetMethod ByteCodeParser::promoteToConstant(GetByOffsetMethod method)
 
 bool ByteCodeParser::needsDynamicLookup(ResolveType type, OpcodeID opcode)
 {
-    ASSERT(opcode == op_resolve_scope || opcode == op_get_from_scope || opcode == op_put_to_scope);
+    ASSERT(opcode == op_resolve_scope || opcode == op_get_from_scope || opcode == op_resolve_and_get_from_scope || opcode == op_put_to_scope);
 
     JSGlobalObject* globalObject = m_inlineStackTop->m_codeBlock->globalObject();
     if (needsVarInjectionChecks(type) && globalObject->varInjectionWatchpoint()->hasBeenInvalidated())
@@ -7744,16 +7745,20 @@ void ByteCodeParser::parseBlock(unsigned limit)
             }
 
             if (needsDynamicLookup(resolveType, op_resolve_scope)) {
+                if (Options::useDebugLog()) dataLogLn("DFG ------------------------------------------------  1");
                 unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.m_var];
                 set(bytecode.m_dst, addToGraph(ResolveScope, OpInfo(identifierNumber), get(bytecode.m_scope)));
                 NEXT_OPCODE(op_resolve_scope);
             }
 
             // get_from_scope and put_to_scope depend on this watchpoint forcing OSR exit, so they don't add their own watchpoints.
-            if (needsVarInjectionChecks(resolveType))
+            if (needsVarInjectionChecks(resolveType)) {
+                if (Options::useDebugLog()) dataLogLn("DFG ------------------------------------------------  2");
                 m_graph.watchpoints().addLazily(m_inlineStackTop->m_codeBlock->globalObject()->varInjectionWatchpoint());
+            }
 
             if (resolveType == GlobalProperty || resolveType == GlobalPropertyWithVarInjectionChecks) {
+                if (Options::useDebugLog()) dataLogLn("DFG ------------------------------------------------  3");
                 JSGlobalObject* globalObject = m_inlineStackTop->m_codeBlock->globalObject();
                 unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.m_var];
                 if (!m_graph.watchGlobalProperty(globalObject, identifierNumber))
@@ -7767,6 +7772,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             case GlobalVarWithVarInjectionChecks:
             case GlobalLexicalVar:
             case GlobalLexicalVarWithVarInjectionChecks: {
+                if (Options::useDebugLog()) dataLogLn("DFG ------------------------------------------------  4");
                 RELEASE_ASSERT(constantScope);
                 RELEASE_ASSERT(constantScope == JSScope::constantScopeForCodeBlock(resolveType, m_inlineStackTop->m_codeBlock));
                 set(bytecode.m_dst, weakJSConstant(constantScope));
@@ -7774,6 +7780,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 break;
             }
             case ModuleVar: {
+                if (Options::useDebugLog()) dataLogLn("DFG ------------------------------------------------  5");
                 // Since the value of the "scope" virtual register is not used in LLInt / baseline op_resolve_scope with ModuleVar,
                 // we need not to keep it alive by the Phantom node.
                 // Module environment is already strongly referenced by the CodeBlock.
@@ -7783,6 +7790,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             case ResolvedClosureVar:
             case ClosureVar:
             case ClosureVarWithVarInjectionChecks: {
+                if (Options::useDebugLog()) dataLogLn("DFG ------------------------------------------------  6");
                 Node* localBase = get(bytecode.m_scope);
                 addToGraph(Phantom, localBase); // OSR exit cannot handle resolve_scope on a DCE'd scope.
                 
@@ -7791,12 +7799,14 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
                 if (symbolTable) {
                     if (JSScope* scope = symbolTable->singleton().inferredValue()) {
+                        if (Options::useDebugLog()) dataLogLn("DFG ------------------------------------------------  7");
                         m_graph.watchpoints().addLazily(symbolTable);
                         set(bytecode.m_dst, weakJSConstant(scope));
                         break;
                     }
                 }
                 if (JSScope* scope = localBase->dynamicCastConstant<JSScope*>()) {
+                    if (Options::useDebugLog()) dataLogLn("DFG ------------------------------------------------  8");
                     for (unsigned n = depth; n--;)
                         scope = scope->next();
                     set(bytecode.m_dst, weakJSConstant(scope));
@@ -7809,12 +7819,14 @@ void ByteCodeParser::parseBlock(unsigned limit)
             }
             case UnresolvedProperty:
             case UnresolvedPropertyWithVarInjectionChecks: {
+                if (Options::useDebugLog()) dataLogLn("DFG ------------------------------------------------  9");
                 addToGraph(Phantom, get(bytecode.m_scope));
                 addToGraph(ForceOSRExit);
                 set(bytecode.m_dst, addToGraph(JSConstant, OpInfo(m_constantNull)));
                 break;
             }
             case Dynamic:
+                if (Options::useDebugLog()) dataLogLn("DFG ------------------------------------------------  9.5");
                 RELEASE_ASSERT_NOT_REACHED();
                 break;
             }
@@ -7851,6 +7863,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             }
 
             if (needsDynamicLookup(resolveType, op_get_from_scope)) {
+                if (Options::useDebugLog()) dataLogLn("DFG ------------------------------------------------  10");
                 uint64_t opInfo1 = makeDynamicVarOpInfo(identifierNumber, getPutInfo.operand());
                 SpeculatedType prediction = getPrediction();
                 set(bytecode.m_dst,
@@ -7865,6 +7878,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             switch (resolveType) {
             case GlobalProperty:
             case GlobalPropertyWithVarInjectionChecks: {
+                if (Options::useDebugLog()) dataLogLn("DFG ------------------------------------------------  11");
                 if (!m_graph.watchGlobalProperty(globalObject, identifierNumber))
                     addToGraph(ForceOSRExit);
 
@@ -7874,6 +7888,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 if (status.state() != GetByStatus::Simple
                     || status.numVariants() != 1
                     || status[0].structureSet().size() != 1) {
+                    if (Options::useDebugLog()) dataLogLn("DFG ------------------------------------------------  12");
                     set(bytecode.m_dst, addToGraph(GetByIdFlush, OpInfo(CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_inlineStackTop->m_profiledBlock, uid)), OpInfo(prediction), get(bytecode.m_scope)));
                     break;
                 }
@@ -7888,6 +7903,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             case GlobalVarWithVarInjectionChecks:
             case GlobalLexicalVar:
             case GlobalLexicalVarWithVarInjectionChecks: {
+                if (Options::useDebugLog()) dataLogLn("DFG ------------------------------------------------  13");
                 addToGraph(Phantom, get(bytecode.m_scope));
                 WatchpointSet* watchpointSet;
                 ScopeOffset offset;
@@ -7964,6 +7980,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             case ResolvedClosureVar:
             case ClosureVar:
             case ClosureVarWithVarInjectionChecks: {
+                if (Options::useDebugLog()) dataLogLn("DFG ------------------------------------------------  14");
                 Node* scopeNode = get(bytecode.m_scope);
                 
                 // Ideally we wouldn't have to do this Phantom. But:
@@ -7992,10 +8009,261 @@ void ByteCodeParser::parseBlock(unsigned limit)
             case UnresolvedPropertyWithVarInjectionChecks:
             case ModuleVar:
             case Dynamic:
+                if (Options::useDebugLog()) dataLogLn("DFG ------------------------------------------------  14.5");
                 RELEASE_ASSERT_NOT_REACHED();
                 break;
             }
             NEXT_OPCODE(op_get_from_scope);
+        }
+
+        case op_resolve_and_get_from_scope: {
+            auto bytecode = currentInstruction->as<OpResolveAndGetFromScope>();
+            auto& metadata = bytecode.metadata(codeBlock);
+            VirtualRegister scope = bytecode.m_scope;
+            VirtualRegister resolvedScope = bytecode.m_resolvedScope;
+
+            ResolveType resolveType;
+            unsigned depth;
+            JSScope* constantScope = nullptr;
+            JSCell* lexicalEnvironment = nullptr;
+            SymbolTable* symbolTable = nullptr;
+            {
+                ConcurrentJSLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
+                resolveType = metadata.m_resolveType;
+                depth = metadata.m_localScopeDepth;
+                switch (resolveType) {
+                case GlobalProperty:
+                case GlobalVar:
+                case GlobalPropertyWithVarInjectionChecks:
+                case GlobalVarWithVarInjectionChecks:
+                case GlobalLexicalVar:
+                case GlobalLexicalVarWithVarInjectionChecks:
+                    constantScope = metadata.m_constantScope.get();
+                    break;
+                case ModuleVar:
+                    lexicalEnvironment = metadata.m_lexicalEnvironment.get();
+                    break;
+                case ResolvedClosureVar:
+                case ClosureVar:
+                case ClosureVarWithVarInjectionChecks:
+                    symbolTable = metadata.m_symbolTable.get();
+                    break;
+                default:
+                    break;
+                }
+            }
+
+            auto setResolvedScope = [&] (Node* value) {
+                set(resolvedScope, value);
+                set(Operand::tmp(bytecode.tmpResolvedScope), value);
+            };
+
+            if (needsDynamicLookup(resolveType, op_resolve_and_get_from_scope)) {
+                if (Options::useDebugLog()) dataLogLn("DFG RGS ------------------------------------------------  1");
+                unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.m_var];
+                setResolvedScope(addToGraph(ResolveScope, OpInfo(identifierNumber), get(scope)));
+            } else {
+                // get_from_scope and put_to_scope depend on this watchpoint forcing OSR exit, so they don't add their own watchpoints.
+                if (needsVarInjectionChecks(resolveType)) {
+                    if (Options::useDebugLog()) dataLogLn("DFG RGS ------------------------------------------------  2");
+                    m_graph.watchpoints().addLazily(m_inlineStackTop->m_codeBlock->globalObject()->varInjectionWatchpoint());
+                }
+
+                if (resolveType == GlobalProperty || resolveType == GlobalPropertyWithVarInjectionChecks) {
+                    if (Options::useDebugLog()) dataLogLn("DFG RGS ------------------------------------------------  3");
+                    JSGlobalObject* globalObject = m_inlineStackTop->m_codeBlock->globalObject();
+                    unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.m_var];
+                    if (!m_graph.watchGlobalProperty(globalObject, identifierNumber))
+                        addToGraph(ForceOSRExit);
+                }
+
+                switch (resolveType) {
+                case GlobalProperty:
+                case GlobalVar:
+                case GlobalPropertyWithVarInjectionChecks:
+                case GlobalVarWithVarInjectionChecks:
+                case GlobalLexicalVar:
+                case GlobalLexicalVarWithVarInjectionChecks: {
+                    if (Options::useDebugLog()) dataLogLn("DFG RGS ------------------------------------------------  4");
+                    RELEASE_ASSERT(constantScope);
+                    RELEASE_ASSERT(constantScope == JSScope::constantScopeForCodeBlock(resolveType, m_inlineStackTop->m_codeBlock));
+                    setResolvedScope(weakJSConstant(constantScope));
+                    addToGraph(Phantom, get(scope));
+                    break;
+                }
+                case ModuleVar: {
+                    if (Options::useDebugLog()) dataLogLn("DFG RGS ------------------------------------------------  5");
+                    // Since the value of the "scope" virtual register is not used in LLInt / baseline op_resolve_scope with ModuleVar,
+                    // we need not to keep it alive by the Phantom node.
+                    // Module environment is already strongly referenced by the CodeBlock.
+                    setResolvedScope(weakJSConstant(lexicalEnvironment));
+                    break;
+                }
+                case ResolvedClosureVar:
+                case ClosureVar:
+                case ClosureVarWithVarInjectionChecks: {
+                    if (Options::useDebugLog()) dataLogLn("DFG RGS ------------------------------------------------  6");
+                    Node* localBase = get(scope);
+                    addToGraph(Phantom, localBase); // OSR exit cannot handle resolve_scope on a DCE'd scope.
+
+                    // We have various forms of constant folding here. This is necessary to avoid
+                    // spurious recompiles in dead-but-foldable code.
+
+                    if (symbolTable) {
+                        if (JSScope* scope = symbolTable->singleton().inferredValue()) {
+                            if (Options::useDebugLog()) dataLogLn("DFG RGS ------------------------------------------------  7");
+                            m_graph.watchpoints().addLazily(symbolTable);
+                            setResolvedScope(weakJSConstant(scope));
+                            break;
+                        }
+                    }
+                    if (JSScope* scope = localBase->dynamicCastConstant<JSScope*>()) {
+                        if (Options::useDebugLog()) dataLogLn("DFG RGS ------------------------------------------------  8");
+                        for (unsigned n = depth; n--;)
+                            scope = scope->next();
+                        setResolvedScope(weakJSConstant(scope));
+                        break;
+                    }
+                    for (unsigned n = depth; n--;)
+                        localBase = addToGraph(SkipScope, localBase);
+                    setResolvedScope(localBase);
+                    break;
+                }
+                case UnresolvedProperty:
+                case UnresolvedPropertyWithVarInjectionChecks: {
+                    if (Options::useDebugLog()) dataLogLn("DFG RGS ------------------------------------------------  9");
+                    addToGraph(Phantom, get(scope));
+                    addToGraph(ForceOSRExit);
+                    setResolvedScope(addToGraph(JSConstant, OpInfo(m_constantNull)));
+                    break;
+                }
+                case Dynamic:
+                    if (Options::useDebugLog()) dataLogLn("DFG RGS ------------------------------------------------  9.5");
+                    RELEASE_ASSERT_NOT_REACHED();
+                    break;
+                }
+            }
+
+            progressToNextCheckpoint();
+
+            VirtualRegister dst = bytecode.m_dst;
+            unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.m_var];
+            UniquedStringImpl* uid = m_graph.identifiers()[identifierNumber];
+
+            GetPutInfo getPutInfo(0);
+            Structure* structure = nullptr;
+            WatchpointSet* watchpoints = nullptr;
+            uintptr_t operand;
+            {
+                ConcurrentJSLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
+                getPutInfo = metadata.m_getPutInfo;
+                resolveType = getPutInfo.resolveType();
+                if (resolveType == GlobalVar || resolveType == GlobalVarWithVarInjectionChecks || resolveType == GlobalLexicalVar || resolveType == GlobalLexicalVarWithVarInjectionChecks)
+                    watchpoints = metadata.m_watchpointSet;
+                else if (resolveType != UnresolvedProperty && resolveType != UnresolvedPropertyWithVarInjectionChecks)
+                    structure = metadata.m_structure.get();
+                operand = metadata.m_operand;
+            }
+
+            if (needsDynamicLookup(resolveType, op_resolve_and_get_from_scope)) {
+                if (Options::useDebugLog()) dataLogLn("DFG RGS -----------------------------------------------  10");
+                uint64_t opInfo1 = makeDynamicVarOpInfo(identifierNumber, getPutInfo.operand());
+                SpeculatedType prediction = getPrediction();
+                set(dst, addToGraph(GetDynamicVar, OpInfo(opInfo1), OpInfo(prediction), get(resolvedScope)));
+                NEXT_OPCODE(op_resolve_and_get_from_scope);
+            }
+
+            UNUSED_PARAM(watchpoints); // We will use this in the future. For now we set it as a way of documenting the fact that that's what index 5 is in GlobalVar mode.
+
+            JSGlobalObject* globalObject = m_inlineStackTop->m_codeBlock->globalObject();
+
+            switch (resolveType) {
+            case GlobalProperty:
+            case GlobalPropertyWithVarInjectionChecks: {
+                if (Options::useDebugLog()) dataLogLn("DFG RGS ------------------------------------------------  11");
+                if (!m_graph.watchGlobalProperty(globalObject, identifierNumber))
+                    addToGraph(ForceOSRExit);
+
+                SpeculatedType prediction = getPrediction();
+
+                GetByStatus status = GetByStatus::computeFor(structure, uid);
+                if (status.state() != GetByStatus::Simple
+                    || status.numVariants() != 1
+                    || status[0].structureSet().size() != 1) {
+                    if (Options::useDebugLog()) dataLogLn("DFG GRS ------------------------------------------------  12");
+                    set(dst, addToGraph(GetByIdFlush, OpInfo(CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_inlineStackTop->m_profiledBlock, uid)), OpInfo(prediction), get(resolvedScope)));
+                    break;
+                }
+
+                Node* base = weakJSConstant(globalObject);
+                Node* result = load(prediction, base, identifierNumber, status[0]);
+                addToGraph(Phantom, get(resolvedScope));
+                set(dst, result);
+                break;
+            }
+            case GlobalVar:
+            case GlobalVarWithVarInjectionChecks:
+            case GlobalLexicalVar:
+            case GlobalLexicalVarWithVarInjectionChecks: {
+                if (Options::useDebugLog()) dataLogLn("DFG GRS ------------------------------------------------  13");
+                addToGraph(Phantom, get(resolvedScope));
+                WatchpointSet* watchpointSet;
+                ScopeOffset offset;
+                JSSegmentedVariableObject* scopeObject = jsCast<JSSegmentedVariableObject*>(JSScope::constantScopeForCodeBlock(resolveType, m_inlineStackTop->m_codeBlock));
+                {
+                    ConcurrentJSLocker locker(scopeObject->symbolTable()->m_lock);
+                    SymbolTableEntry entry = scopeObject->symbolTable()->get(locker, uid);
+                    watchpointSet = entry.watchpointSet();
+                    offset = entry.scopeOffset();
+                }
+                if (watchpointSet && watchpointSet->state() == IsWatched) {
+                    WriteBarrier<Unknown>* pointer = bitwise_cast<WriteBarrier<Unknown>*>(operand);
+
+                    ASSERT(scopeObject->findVariableIndex(pointer) == offset);
+
+                    JSValue value = pointer->get();
+                    if (value) {
+                        m_graph.watchpoints().addLazily(watchpointSet);
+                        set(dst, weakJSConstant(value));
+                        break;
+                    }
+                }
+
+                SpeculatedType prediction = getPrediction();
+                NodeType nodeType;
+                if (resolveType == GlobalVar || resolveType == GlobalVarWithVarInjectionChecks)
+                    nodeType = GetGlobalVar;
+                else
+                    nodeType = GetGlobalLexicalVariable;
+                Node* value = addToGraph(nodeType, OpInfo(operand), OpInfo(prediction));
+                if (resolveType == GlobalLexicalVar || resolveType == GlobalLexicalVarWithVarInjectionChecks)
+                    addToGraph(CheckNotEmpty, value);
+                set(dst, value);
+                break;
+            }
+            case ResolvedClosureVar:
+            case ClosureVar:
+            case ClosureVarWithVarInjectionChecks: {
+                if (Options::useDebugLog()) dataLogLn("DFG GRS ------------------------------------------------  14");
+                Node* scopeNode = get(resolvedScope);
+                addToGraph(Phantom, scopeNode);
+                if (JSValue value = m_graph.tryGetConstantClosureVar(scopeNode, ScopeOffset(operand))) {
+                    set(dst, weakJSConstant(value));
+                    break;
+                }
+                SpeculatedType prediction = getPrediction();
+                set(dst, addToGraph(GetClosureVar, OpInfo(operand), OpInfo(prediction), scopeNode));
+                break;
+            }
+            case UnresolvedProperty:
+            case UnresolvedPropertyWithVarInjectionChecks:
+            case ModuleVar:
+            case Dynamic:
+                if (Options::useDebugLog()) dataLogLn("DFG GRS ------------------------------------------------  14.5");
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+            }
+            NEXT_OPCODE(op_resolve_and_get_from_scope);
         }
 
         case op_put_to_scope: {

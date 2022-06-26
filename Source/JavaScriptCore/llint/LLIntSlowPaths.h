@@ -137,6 +137,7 @@ LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_handle_traps);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_debug);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_handle_exception);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_get_from_scope);
+LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_resolve_and_get_from_scope);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_put_to_scope);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_retrieve_and_clear_exception_if_catchable);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_profile_catch);

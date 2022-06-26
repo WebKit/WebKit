@@ -1111,6 +1111,8 @@ namespace JSC {
 
         RegisterID* emitCallIterator(RegisterID* iterator, RegisterID* argument, ThrowableExpressionData*);
 
+        void emitOpGetFromScope(RegisterID* dst, RegisterID* scope, unsigned var, GetPutInfo getPutInfo, unsigned localScopeDepth, unsigned offset);
+
         // Initializes the stack form the parameter; does nothing for the symbol table.
         RegisterID* initializeNextParameter();
         UniquedStringImpl* visibleNameForParameter(DestructuringPatternNode*);

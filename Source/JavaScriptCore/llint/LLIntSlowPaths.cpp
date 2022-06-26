@@ -67,6 +67,9 @@
 #include "SuperSampler.h"
 #include "VMInlines.h"
 #include "VMTrapsInlines.h"
+#include "runtime/JSScope.h"
+#include "wtf/Compiler.h"
+#include "wtf/RawPointer.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StringPrintStream.h>
 
@@ -2144,6 +2147,7 @@ LLINT_SLOW_PATH_DECL(slow_path_handle_exception)
 
 LLINT_SLOW_PATH_DECL(slow_path_get_from_scope)
 {
+    if (Options::useDebugLog()) dataLogLn("------------------------------------------------  LLINT_SLOW_PATH_DECL(slow_path_get_from_scope)");
     LLINT_BEGIN();
     auto bytecode = pc->as<OpGetFromScope>();
     auto& metadata = bytecode.metadata(codeBlock);
@@ -2168,7 +2172,45 @@ LLINT_SLOW_PATH_DECL(slow_path_get_from_scope)
                 return throwException(globalObject, throwScope, createTDZError(globalObject));
         }
 
-        CommonSlowPaths::tryCacheGetFromScopeGlobal(globalObject, codeBlock, vm, bytecode, scope, slot, ident);
+        CommonSlowPaths::tryCacheGetFromScopeGlobal(globalObject, codeBlock, vm, metadata, scope, slot, ident);
+
+        if (!result)
+            return slot.getValue(globalObject, ident);
+        return result;
+    }));
+}
+
+LLINT_SLOW_PATH_DECL(slow_path_resolve_and_get_from_scope)
+{
+    if (Options::useDebugLog()) dataLogLn("------------------------------------------------  LLINT_SLOW_PATH_DECL(slow_path_resolve_and_get_from_scope)");
+    LLINT_BEGIN_NO_SET_PC();
+    codeBlock->bytecodeOffset(pc);
+    callFrame->setCurrentVPC(pc);
+
+    auto bytecode = pc->as<OpResolveAndGetFromScope>();
+    auto& metadata = bytecode.metadata(codeBlock);
+    const Identifier& ident = codeBlock->identifier(bytecode.m_var);
+    JSObject* scope = jsCast<JSObject*>(getNonConstantOperand(callFrame, bytecode.m_resolvedScope));
+
+    // ModuleVar is always converted to ClosureVar for get_from_scope.
+    ASSERT(metadata.m_getPutInfo.resolveType() != ModuleVar);
+
+    LLINT_RETURN(scope->getPropertySlot(globalObject, ident, [&] (bool found, PropertySlot& slot) -> JSValue {
+        if (!found) {
+            if (metadata.m_getPutInfo.resolveMode() == ThrowIfNotFound)
+                return throwException(globalObject, throwScope, createUndefinedVariableError(globalObject, ident));
+            return jsUndefined();
+        }
+
+        JSValue result = JSValue();
+        if (scope->isGlobalLexicalEnvironment()) {
+            // When we can't statically prove we need a TDZ check, we must perform the check on the slow path.
+            result = slot.getValue(globalObject, ident);
+            if (result == jsTDZValue())
+                return throwException(globalObject, throwScope, createTDZError(globalObject));
+        }
+
+        CommonSlowPaths::tryCacheGetFromScopeGlobal(globalObject, codeBlock, vm, metadata, scope, slot, ident);
 
         if (!result)
             return slot.getValue(globalObject, ident);
@@ -2376,6 +2418,43 @@ static void handleIteratorNextCheckpoint(VM& vm, CallFrame* callFrame, JSGlobalO
         valueRegister = iteratorResultObject.get(globalObject, vm.propertyNames->value);
 }
 
+static void handleResolveAndGetFromScopeCheckpoint(VM& vm, CallFrame* callFrame, JSGlobalObject* globalObject, const OpResolveAndGetFromScope& bytecode, CheckpointOSRExitSideState& sideState)
+{
+    if (Options::useDebugLog()) dataLogLn("LLIntSlowPath.cpp ------------------------------------------------  handleResolveAndGetFromScopeCheckpoint ");
+    CodeBlock* codeBlock = callFrame->codeBlock();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    auto& metadata = bytecode.metadata(codeBlock);
+    const Identifier& ident = codeBlock->identifier(bytecode.m_var);
+    JSObject* scope = jsCast<JSObject*>(sideState.tmps[OpResolveAndGetFromScope::tmpResolvedScope]);
+
+    // ModuleVar is always converted to ClosureVar for get_from_scope.
+    ASSERT(metadata.m_getPutInfo.resolveType() != ModuleVar);
+
+    JSValue result = scope->getPropertySlot(globalObject, ident, [&] (bool found, PropertySlot& slot) -> JSValue {
+        if (!found) {
+            if (metadata.m_getPutInfo.resolveMode() == ThrowIfNotFound)
+                return throwException(globalObject, throwScope, createUndefinedVariableError(globalObject, ident));
+            return jsUndefined();
+        }
+
+        JSValue result = JSValue();
+        if (scope->isGlobalLexicalEnvironment()) {
+            // When we can't statically prove we need a TDZ check, we must perform the check on the slow path.
+            result = slot.getValue(globalObject, ident);
+            if (result == jsTDZValue())
+                return throwException(globalObject, throwScope, createTDZError(globalObject));
+        }
+
+        CommonSlowPaths::tryCacheGetFromScopeGlobal(globalObject, codeBlock, vm, metadata, scope, slot, ident);
+
+        if (!result)
+            return slot.getValue(globalObject, ident);
+        return result;
+    });
+
+    callFrame->uncheckedR(bytecode.m_dst) = result;
+}
+
 inline SlowPathReturnType dispatchToNextInstructionDuringExit(ThrowScope& scope, CodeBlock* codeBlock, JSInstructionStream::Ref pc)
 {
     if (scope.exception())
@@ -2500,6 +2579,11 @@ extern "C" SlowPathReturnType llint_slow_path_checkpoint_osr_exit(CallFrame* cal
         break;
     }
 
+    case op_resolve_and_get_from_scope: {
+        handleResolveAndGetFromScopeCheckpoint(vm, callFrame, globalObject, pc->as<OpResolveAndGetFromScope>(), *sideState.get());
+        break;
+    }
+
     default:
         RELEASE_ASSERT_NOT_REACHED();
         break;
@@ -2555,5 +2639,66 @@ extern "C" NO_RETURN_DUE_TO_CRASH void llint_crash()
 {
     CRASH();
 }
+
+
+#define PRINTLO(num) \
+    extern "C" void p##num(); \
+    extern "C" void p##num() { if (Options::useProbe()) dataLogLn("LLInt -------------", num); }
+
+PRINTLO(1)
+PRINTLO(2)
+PRINTLO(3)
+PRINTLO(4)
+PRINTLO(5)
+PRINTLO(6)
+PRINTLO(7)
+PRINTLO(8)
+PRINTLO(9)
+PRINTLO(10)
+PRINTLO(11)
+PRINTLO(12)
+PRINTLO(13)
+PRINTLO(14)
+PRINTLO(15)
+PRINTLO(16)
+PRINTLO(17)
+PRINTLO(18)
+PRINTLO(19)
+PRINTLO(20)
+PRINTLO(21)
+PRINTLO(22)
+PRINTLO(23)
+PRINTLO(24)
+PRINTLO(25)
+PRINTLO(26)
+PRINTLO(27)
+PRINTLO(28)
+PRINTLO(29)
+PRINTLO(30)
+PRINTLO(31)
+PRINTLO(32)
+PRINTLO(33)
+PRINTLO(34)
+PRINTLO(35)
+PRINTLO(36)
+PRINTLO(37)
+PRINTLO(38)
+PRINTLO(39)
+PRINTLO(40)
+PRINTLO(41)
+PRINTLO(42)
+PRINTLO(43)
+
+extern "C" void pResolveScope();
+extern "C" void pResolveScope() { if (Options::useProbe()) dataLogLn("LLInt -------------------------------------------------- ResolveScope"); }
+
+extern "C" void pGetFromScope();
+extern "C" void pGetFromScope() { if (Options::useProbe()) dataLogLn("LLInt -------------------------------------------------- GetFromScope"); }
+
+extern "C" void pResolveAndGetFromscope();
+extern "C" void pResolveAndGetFromscope() { if (Options::useProbe()) dataLogLn("LLInt -------------------------------------------------- ResolveScope ResolveAndGetFromScope"); }
+
+extern "C" void pResolveAndGetFromresolvedScope();
+extern "C" void pResolveAndGetFromresolvedScope() { if (Options::useProbe()) dataLogLn("LLInt -------------------------------------------------- GetFromScope ResolveAndGetFromScope"); }
 
 } } // namespace JSC::LLInt

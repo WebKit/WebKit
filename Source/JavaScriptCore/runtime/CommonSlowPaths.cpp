@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -51,6 +51,7 @@
 #include "ObjectConstructor.h"
 #include "ScopedArguments.h"
 #include "TypeProfilerLog.h"
+#include "wtf/DataLog.h"
 
 namespace JSC {
 
@@ -494,13 +495,13 @@ static void updateArithProfileForUnaryArithOp(UnaryArithProfile& profile, JSValu
         if (!result.isInt32()) {
             if (operand.isInt32())
                 profile.setObservedInt32Overflow();
-            
+
             double doubleVal = result.asNumber();
             if (!doubleVal && std::signbit(doubleVal))
                 profile.setObservedNegZeroDouble();
             else {
                 profile.setObservedNonNegZeroDouble();
-                
+
                 // The Int52 overflow check here intentionally omits 1ll << 51 as a valid negative Int52 value.
                 // Therefore, we will get a false positive if the result is that value. This is intentionally
                 // done to simplify the checking algorithm.
@@ -543,7 +544,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_negate)
             updateArithProfileForUnaryArithOp(profile, result, operand);
         });
     }
-    
+
     JSValue result = jsNumber(-primValue.toNumber(globalObject));
     CHECK_EXCEPTION();
     RETURN_WITH_PROFILING(result, {
@@ -582,7 +583,7 @@ static void updateArithProfileForBinaryArithOp(JSGlobalObject*, CodeBlock* codeB
     else if (result.isBigInt32())
         profile.setObservedBigInt32();
 #endif
-    else 
+    else
         profile.setObservedNonNumeric();
 }
 #else
@@ -1136,6 +1137,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_resolve_scope_for_hoisting_func_decl_in_ev
 
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_resolve_scope)
 {
+    if (Options::useDebugLog()) dataLogLn("-------------------------  JSC_DEFINE_COMMON_SLOW_PATH(slow_path_resolve_scope)");
     BEGIN();
     auto bytecode = pc->as<OpResolveScope>();
     auto& metadata = bytecode.metadata(codeBlock);
@@ -1143,7 +1145,13 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_resolve_scope)
     JSScope* scope = callFrame->uncheckedR(bytecode.m_scope).Register::scope();
     JSObject* resolvedScope = JSScope::resolve(globalObject, scope, ident);
     // Proxy can throw an error here, e.g. Proxy in with statement's @unscopables.
-    CHECK_EXCEPTION();
+    doExceptionFuzzingIfEnabled(globalObject, throwScope, "CommonSlowPaths", pc);   
+    if (UNLIKELY(throwScope.exception())) {
+        if (Options::useDebugLog()) dataLogLn("-------------------------  pc = LLInt::returnToThrow(vm); 1");
+        pc = LLInt::returnToThrow(vm);
+        // END_IMPL();
+        return encodeResult(pc, callFrame);
+    }
 
     ResolveType resolveType = metadata.m_resolveType;
 
@@ -1177,7 +1185,78 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_resolve_scope)
         break;
     }
 
-    RETURN(resolvedScope);
+    JSValue returnValue = resolvedScope;
+    if (UNLIKELY(throwScope.exception())) {
+        if (Options::useDebugLog()) dataLogLn("-------------------------  pc = LLInt::returnToThrow(vm); 2");
+        pc = LLInt::returnToThrow(vm);
+        // END_IMPL();
+        return encodeResult(pc, callFrame);
+    }
+    callFrame->uncheckedR(bytecode.m_dst) = returnValue;
+    return encodeResult(pc, callFrame);
+    // RETURN(resolvedScope);
+}
+
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_resolve_and_get_from_scope)
+{
+    if (Options::useDebugLog()) dataLogLn("-------------------------  JSC_DEFINE_COMMON_SLOW_PATH(slow_path_resolve_and_get_from_scope)");
+    BEGIN();
+    auto bytecode = pc->as<OpResolveAndGetFromScope>();
+    auto& metadata = bytecode.metadata(codeBlock);
+    const Identifier& ident = codeBlock->identifier(bytecode.m_var);
+    JSScope* scope = callFrame->uncheckedR(bytecode.m_scope).Register::scope();
+    JSObject* resolvedScope = JSScope::resolve(globalObject, scope, ident);
+    // Proxy can throw an error here, e.g. Proxy in with statement's @unscopables.
+    doExceptionFuzzingIfEnabled(globalObject, throwScope, "CommonSlowPaths", pc);
+    if (UNLIKELY(throwScope.exception())) {
+        if (Options::useDebugLog()) dataLogLn("-------------------------  pc = LLInt::returnToThrow(vm); 1");
+        pc = LLInt::returnToThrow(vm);
+        // END_IMPL();
+        return encodeResult(pc, nullptr);
+    }
+
+    ResolveType resolveType = metadata.m_resolveType;
+
+    // ModuleVar does not keep the scope register value alive in DFG.
+    ASSERT(resolveType != ModuleVar);
+
+    switch (resolveType) {
+    case GlobalProperty:
+    case GlobalPropertyWithVarInjectionChecks:
+    case UnresolvedProperty:
+    case UnresolvedPropertyWithVarInjectionChecks: {
+        if (resolvedScope->isGlobalObject()) {
+            JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(resolvedScope);
+            bool hasProperty = globalObject->hasProperty(globalObject, ident);
+            CHECK_EXCEPTION();
+            if (hasProperty) {
+                ConcurrentJSLocker locker(codeBlock->m_lock);
+                metadata.m_resolveType = needsVarInjectionChecks(resolveType) ? GlobalPropertyWithVarInjectionChecks : GlobalProperty;
+                metadata.m_globalObject.set(vm, codeBlock, globalObject);
+                metadata.m_globalLexicalBindingEpoch = globalObject->globalLexicalBindingEpoch();
+            }
+        } else if (resolvedScope->isGlobalLexicalEnvironment()) {
+            JSGlobalLexicalEnvironment* globalLexicalEnvironment = jsCast<JSGlobalLexicalEnvironment*>(resolvedScope);
+            ConcurrentJSLocker locker(codeBlock->m_lock);
+            metadata.m_resolveType = needsVarInjectionChecks(resolveType) ? GlobalLexicalVarWithVarInjectionChecks : GlobalLexicalVar;
+            metadata.m_globalLexicalEnvironment.set(vm, codeBlock, globalLexicalEnvironment);
+        }
+        break;
+    }
+    default:
+        break;
+    }
+
+    if (UNLIKELY(throwScope.exception())) {
+        if (Options::useDebugLog()) dataLogLn("-------------------------  pc = LLInt::returnToThrow(vm); 2");
+        pc = LLInt::returnToThrow(vm);
+        // END_IMPL();
+        return encodeResult(pc, nullptr);
+    }
+    callFrame->uncheckedR(bytecode.m_resolvedScope) = resolvedScope;
+    // END_IMPL();
+    return encodeResult(pc, callFrame);
+    // RETURN(resolvedScope);
 }
 
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_create_rest)
@@ -1211,13 +1290,13 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_get_by_val_with_this)
             }
         }
     }
-    
+
     PropertySlot slot(thisValue, PropertySlot::PropertySlot::InternalMethodType::Get);
     if (subscript.isUInt32()) {
         uint32_t i = subscript.asUInt32();
         if (isJSString(baseValue) && asString(baseValue)->canGetIndex(i))
             RETURN_PROFILED(asString(baseValue)->getIndex(globalObject, i));
-        
+
         RETURN_PROFILED(baseValue.get(globalObject, i, slot));
     }
 
@@ -1257,7 +1336,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_put_by_val_with_this)
     JSValue thisValue = GET_C(bytecode.m_thisValue).jsValue();
     JSValue subscript = GET_C(bytecode.m_property).jsValue();
     JSValue value = GET_C(bytecode.m_value).jsValue();
-    
+
     auto property = subscript.toPropertyKey(globalObject);
     CHECK_EXCEPTION();
     PutPropertySlot slot(thisValue, bytecode.m_ecmaMode.isStrict());

@@ -50,6 +50,7 @@ CallLinkInfo::CallType CallLinkInfo::callTypeFor(OpcodeID opcodeID)
     case op_call_eval:
     case op_iterator_open:
     case op_iterator_next:
+    // case op_resolve_and_get_from_scope:
         return Call;
 
     case op_call_varargs:

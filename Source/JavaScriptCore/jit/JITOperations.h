@@ -299,6 +299,8 @@ JSC_DECLARE_JIT_OPERATION(operationSwitchImmWithUnknownKeyType, char*, (VM*, Enc
 JSC_DECLARE_JIT_OPERATION(operationSwitchStringWithUnknownKeyType, char*, (JSGlobalObject*, EncodedJSValue key, size_t tableIndex));
 JSC_DECLARE_JIT_OPERATION(operationResolveScopeForBaseline, EncodedJSValue, (JSGlobalObject*, const JSInstruction* bytecodePC));
 JSC_DECLARE_JIT_OPERATION(operationGetFromScope, EncodedJSValue, (JSGlobalObject*, const JSInstruction* bytecodePC));
+JSC_DECLARE_JIT_OPERATION(operationResolveAndGetFromScope, EncodedJSValue, (JSGlobalObject*, const JSInstruction* bytecodePC));
+JSC_DECLARE_JIT_OPERATION(operationResolveAndGetFromScope2, EncodedJSValue, (JSGlobalObject*, const JSInstruction* bytecodePC));
 JSC_DECLARE_JIT_OPERATION(operationPutToScope, void, (JSGlobalObject*, const JSInstruction* bytecodePC));
 
 JSC_DECLARE_JIT_OPERATION(operationReallocateButterflyToHavePropertyStorageWithInitialCapacity, char*, (VM*, JSObject*));

@@ -2799,20 +2799,24 @@ llintOpWithMetadata(op_resolve_scope, OpResolveScope, macro (size, get, dispatch
     metadata(t5, t0)
 
     macro getConstantScope(dst)
+        probe(macro() call _p1 end) // debug label
         loadp OpResolveScope::Metadata::m_constantScope[t5], dst
     end
 
     macro returnConstantScope()
+        probe(macro() call _p2 end) // debug label
         getConstantScope(t0)
         return(t0)
     end
 
     macro globalLexicalBindingEpochCheck(slowPath, globalObject, scratch)
+        probe(macro() call _p3 end) // debug label
         loadi OpResolveScope::Metadata::m_globalLexicalBindingEpoch[t5], scratch
         bineq JSGlobalObject::m_globalLexicalBindingEpoch[globalObject], scratch, slowPath
     end
 
     macro resolveScope()
+        probe(macro() call _p4 end) // debug label
         loadi OpResolveScope::Metadata::m_localScopeDepth[t5], t2
         get(m_scope, t0)
         loadq [cfr, t0, 8], t0
@@ -2827,31 +2831,38 @@ llintOpWithMetadata(op_resolve_scope, OpResolveScope, macro (size, get, dispatch
         return(t0)
     end
 
+    probe(macro() call _p5 end) // debug label
     loadi OpResolveScope::Metadata::m_resolveType[t5], t0
 
 #rGlobalProperty:
+    probe(macro() call _p6 end) // debug label
     bineq t0, GlobalProperty, .rGlobalVar
     getConstantScope(t0)
     globalLexicalBindingEpochCheck(.rDynamic, t0, t2)
     return(t0)
 
 .rGlobalVar:
+    probe(macro() call _p7 end) // debug label
     bineq t0, GlobalVar, .rGlobalLexicalVar
     returnConstantScope()
 
 .rGlobalLexicalVar:
+    probe(macro() call _p8 end) // debug label
     bineq t0, GlobalLexicalVar, .rClosureVar
     returnConstantScope()
 
 .rClosureVar:
+    probe(macro() call _p9 end) // debug label
     bineq t0, ClosureVar, .rModuleVar
     resolveScope()
 
 .rModuleVar:
+    probe(macro() call _p10 end) // debug label
     bineq t0, ModuleVar, .rGlobalPropertyWithVarInjectionChecks
     returnConstantScope()
 
 .rGlobalPropertyWithVarInjectionChecks:
+    probe(macro() call _p11 end) // debug label
     bineq t0, GlobalPropertyWithVarInjectionChecks, .rGlobalVarWithVarInjectionChecks
     varInjectionCheck(.rDynamic, t2)
     getConstantScope(t0)
@@ -2859,21 +2870,25 @@ llintOpWithMetadata(op_resolve_scope, OpResolveScope, macro (size, get, dispatch
     return(t0)
 
 .rGlobalVarWithVarInjectionChecks:
+    probe(macro() call _p12 end) // debug label
     bineq t0, GlobalVarWithVarInjectionChecks, .rGlobalLexicalVarWithVarInjectionChecks
     varInjectionCheck(.rDynamic, t2)
     returnConstantScope()
 
 .rGlobalLexicalVarWithVarInjectionChecks:
+    probe(macro() call _p13 end) // debug label
     bineq t0, GlobalLexicalVarWithVarInjectionChecks, .rClosureVarWithVarInjectionChecks
     varInjectionCheck(.rDynamic, t2)
     returnConstantScope()
 
 .rClosureVarWithVarInjectionChecks:
+    probe(macro() call _p14 end) // debug label
     bineq t0, ClosureVarWithVarInjectionChecks, .rDynamic
     varInjectionCheck(.rDynamic, t2)
     resolveScope()
 
 .rDynamic:
+    probe(macro() call _p15 end) // debug label
     callSlowPath(_slow_path_resolve_scope)
     dispatch()
 end)
@@ -2891,6 +2906,7 @@ llintOpWithMetadata(op_get_from_scope, OpGetFromScope, macro (size, get, dispatc
     metadata(t5, t0)
 
     macro getProperty()
+        probe(macro() call _p17 end) // debug label
         loadp OpGetFromScope::Metadata::m_operand[t5], t1
         loadPropertyAtVariableOffset(t1, t0, t2)
         valueProfile(OpGetFromScope, m_profile, t5, t2)
@@ -2898,6 +2914,7 @@ llintOpWithMetadata(op_get_from_scope, OpGetFromScope, macro (size, get, dispatc
     end
 
     macro getGlobalVar(tdzCheckIfNecessary)
+        probe(macro() call _p18 end) // debug label
         loadp OpGetFromScope::Metadata::m_operand[t5], t0
         loadq [t0], t0
         tdzCheckIfNecessary(t0)
@@ -2906,25 +2923,30 @@ llintOpWithMetadata(op_get_from_scope, OpGetFromScope, macro (size, get, dispatc
     end
 
     macro getClosureVar()
+        probe(macro() call _p19 end) // debug label
         loadp OpGetFromScope::Metadata::m_operand[t5], t1
         loadq JSLexicalEnvironment_variables[t0, t1, 8], t0
         valueProfile(OpGetFromScope, m_profile, t5, t0)
         return(t0)
     end
 
+    probe(macro() call _p20 end) // debug label
     loadi OpGetFromScope::Metadata::m_getPutInfo + GetPutInfo::m_operand[t5], t0
     andi ResolveTypeMask, t0
 
 #gGlobalProperty:
+    probe(macro() call _p21 end) // debug label
     bineq t0, GlobalProperty, .gGlobalVar
     loadWithStructureCheck(OpGetFromScope, get, .gDynamic) # This structure check includes lexical binding epoch check since when the epoch is changed, scope will be changed too.
     getProperty()
 
 .gGlobalVar:
+    probe(macro() call _p22 end) // debug label
     bineq t0, GlobalVar, .gGlobalLexicalVar
     getGlobalVar(macro(v) end)
 
 .gGlobalLexicalVar:
+    probe(macro() call _p23 end) // debug label
     bineq t0, GlobalLexicalVar, .gClosureVar
     getGlobalVar(
         macro (value)
@@ -2932,21 +2954,25 @@ llintOpWithMetadata(op_get_from_scope, OpGetFromScope, macro (size, get, dispatc
         end)
 
 .gClosureVar:
+    probe(macro() call _p24 end) // debug label
     bineq t0, ClosureVar, .gGlobalPropertyWithVarInjectionChecks
     loadVariable(get, m_scope, t0)
     getClosureVar()
 
 .gGlobalPropertyWithVarInjectionChecks:
+    probe(macro() call _p25 end) // debug label
     bineq t0, GlobalPropertyWithVarInjectionChecks, .gGlobalVarWithVarInjectionChecks
     loadWithStructureCheck(OpGetFromScope, get, .gDynamic) # This structure check includes lexical binding epoch check since when the epoch is changed, scope will be changed too.
     getProperty()
 
 .gGlobalVarWithVarInjectionChecks:
+    probe(macro() call _p26 end) // debug label
     bineq t0, GlobalVarWithVarInjectionChecks, .gGlobalLexicalVarWithVarInjectionChecks
     varInjectionCheck(.gDynamic, t2)
     getGlobalVar(macro(v) end)
 
 .gGlobalLexicalVarWithVarInjectionChecks:
+    probe(macro() call _p27 end) // debug label
     bineq t0, GlobalLexicalVarWithVarInjectionChecks, .gClosureVarWithVarInjectionChecks
     varInjectionCheck(.gDynamic, t2)
     getGlobalVar(
@@ -2955,16 +2981,233 @@ llintOpWithMetadata(op_get_from_scope, OpGetFromScope, macro (size, get, dispatc
         end)
 
 .gClosureVarWithVarInjectionChecks:
+    probe(macro() call _p28 end) // debug label
     bineq t0, ClosureVarWithVarInjectionChecks, .gDynamic
     varInjectionCheck(.gDynamic, t2)
     loadVariable(get, m_scope, t0)
     getClosureVar()
 
 .gDynamic:
+    probe(macro() call _p29 end) // debug label
     callSlowPath(_llint_slow_path_get_from_scope)
     dispatch()
 end)
 
+//----------------------------------------------------------------------------------------------------------------------------------------------------------
+llintOpWithMetadata(op_resolve_and_get_from_scope, OpResolveAndGetFromScope, macro (size, get, dispatch, metadata, return)
+    // get(narrow, OpResolveAndGetFromScope, fieldName, dst)
+    // probe(macro() call _pResolveAndGetFromscope end) // debug label
+    metadata(t5, t0)
+
+    macro gotoGetFromScope(valueReg)
+        storeVariable(get, m_resolvedScope, valueReg, t1)
+        jmp .gFromScope
+    end
+
+    macro callSlowPathMy(slowPath)
+        prepareStateForCCall()
+        move cfr, a0
+        move PC, a1
+        cCall2(slowPath)
+        restoreStateAfterCCall()
+        bpneq r1, CallerFrame, .gFromScope
+        dispatch()
+    end
+
+    macro getConstantScope(dst)
+        probe(macro() call _p1 end) // debug label
+        loadp OpResolveAndGetFromScope::Metadata::m_constantScope[t5], dst
+    end
+
+    macro returnConstantScope()
+        probe(macro() call _p2 end) // debug label
+        getConstantScope(t0)
+        gotoGetFromScope(t0)
+    end
+
+    macro globalLexicalBindingEpochCheck(slowPath, globalObject, scratch)
+        probe(macro() call _p3 end) // debug label
+        loadi OpResolveAndGetFromScope::Metadata::m_globalLexicalBindingEpoch[t5], scratch
+        bineq JSGlobalObject::m_globalLexicalBindingEpoch[globalObject], scratch, slowPath
+    end
+
+    macro resolveScope()
+        probe(macro() call _p4 end) // debug label
+        loadi OpResolveAndGetFromScope::Metadata::m_localScopeDepth[t5], t2
+        get(m_scope, t0)
+        loadq [cfr, t0, 8], t0
+        btiz t2, .resolveScopeLoopEnd
+
+    .resolveScopeLoop:
+        loadp JSScope::m_next[t0], t0
+        subi 1, t2
+        btinz t2, .resolveScopeLoop
+
+    .resolveScopeLoopEnd:
+        gotoGetFromScope(t0)
+    end
+
+    probe(macro() call _p5 end) // debug label
+    loadi OpResolveAndGetFromScope::Metadata::m_resolveType[t5], t0
+
+#rGlobalProperty:
+    probe(macro() call _p6 end) // debug label
+    bineq t0, GlobalProperty, .rGlobalVar
+    getConstantScope(t0)
+    globalLexicalBindingEpochCheck(.rDynamic, t0, t2)
+    gotoGetFromScope(t0)
+
+.rGlobalVar:
+    probe(macro() call _p7 end) // debug label
+    bineq t0, GlobalVar, .rGlobalLexicalVar
+    returnConstantScope()
+
+.rGlobalLexicalVar:
+    probe(macro() call _p8 end) // debug label
+    bineq t0, GlobalLexicalVar, .rClosureVar
+    returnConstantScope()
+
+.rClosureVar:
+    probe(macro() call _p9 end) // debug label
+    bineq t0, ClosureVar, .rModuleVar
+    resolveScope()
+
+.rModuleVar:
+    probe(macro() call _p10 end) // debug label
+    bineq t0, ModuleVar, .rGlobalPropertyWithVarInjectionChecks
+    returnConstantScope()
+
+.rGlobalPropertyWithVarInjectionChecks:
+    probe(macro() call _p11 end) // debug label
+    bineq t0, GlobalPropertyWithVarInjectionChecks, .rGlobalVarWithVarInjectionChecks
+    varInjectionCheck(.rDynamic, t2)
+    getConstantScope(t0)
+    globalLexicalBindingEpochCheck(.rDynamic, t0, t2)
+    gotoGetFromScope(t0)
+
+.rGlobalVarWithVarInjectionChecks:
+    probe(macro() call _p12 end) // debug label
+    bineq t0, GlobalVarWithVarInjectionChecks, .rGlobalLexicalVarWithVarInjectionChecks
+    varInjectionCheck(.rDynamic, t2)
+    returnConstantScope()
+
+.rGlobalLexicalVarWithVarInjectionChecks:
+    probe(macro() call _p13 end) // debug label
+    bineq t0, GlobalLexicalVarWithVarInjectionChecks, .rClosureVarWithVarInjectionChecks
+    varInjectionCheck(.rDynamic, t2)
+    returnConstantScope()
+
+.rClosureVarWithVarInjectionChecks:
+    probe(macro() call _p14 end) // debug label
+    bineq t0, ClosureVarWithVarInjectionChecks, .rDynamic
+    varInjectionCheck(.rDynamic, t2)
+    resolveScope()
+
+.rDynamic:
+    probe(macro() call _p15 end) // debug label
+    // callSlowPath(_slow_path_resolve_and_get_from_scope)
+    callSlowPathMy(_slow_path_resolve_and_get_from_scope)
+
+.gFromScope: // ------------------------------------------------------------------------------------- GET FROM SCOPE
+    // probe(macro() call _pResolveAndGetFromresolvedScope end) // debug label
+
+    metadata(t5, t0) // metadata(narrow, OpResolveAndGetFromScope, t5, t0)
+
+    macro getProperty()
+        probe(macro() call _p17 end) // debug label
+        loadp OpResolveAndGetFromScope::Metadata::m_operand[t5], t1
+        loadPropertyAtVariableOffset(t1, t0, t2)
+        valueProfile(OpResolveAndGetFromScope, m_profile, t5, t2)
+        return(t2)
+    end
+
+    macro getGlobalVar(tdzCheckIfNecessary)
+        probe(macro() call _p18 end) // debug label
+        loadp OpResolveAndGetFromScope::Metadata::m_operand[t5], t0
+        loadq [t0], t0
+        tdzCheckIfNecessary(t0)
+        valueProfile(OpResolveAndGetFromScope, m_profile, t5, t0)
+        return(t0)
+    end
+
+    macro getClosureVar()
+        probe(macro() call _p19 end) // debug label
+        loadp OpResolveAndGetFromScope::Metadata::m_operand[t5], t1
+        loadq JSLexicalEnvironment_variables[t0, t1, 8], t0
+        valueProfile(OpResolveAndGetFromScope, m_profile, t5, t0)
+        return(t0)
+    end
+
+    macro loadWithStructureCheckMy(opcodeStruct, get, slowPath)
+        loadVariable(get, m_resolvedScope, t0)
+        loadStructureWithScratch(t0, t2, t1)
+        loadp %opcodeStruct%::Metadata::m_structure[t5], t1
+        bpneq t2, t1, slowPath
+    end
+
+    probe(macro() call _p20 end) // debug label
+    loadi OpResolveAndGetFromScope::Metadata::m_getPutInfo + GetPutInfo::m_operand[t5], t0
+    andi ResolveTypeMask, t0
+
+#gGlobalProperty:
+    probe(macro() call _p21 end) // debug label
+    bineq t0, GlobalProperty, .gGlobalVar
+    loadWithStructureCheckMy(OpResolveAndGetFromScope, get, .gDynamic)
+    getProperty()
+
+.gGlobalVar:
+    probe(macro() call _p22 end) // debug label
+    bineq t0, GlobalVar, .gGlobalLexicalVar
+    getGlobalVar(macro(v) end)
+
+.gGlobalLexicalVar:
+    probe(macro() call _p23 end) // debug label
+    bineq t0, GlobalLexicalVar, .gClosureVar
+    getGlobalVar(
+        macro (value)
+            bqeq value, ValueEmpty, .gDynamic
+        end)
+
+.gClosureVar:
+    probe(macro() call _p24 end) // debug label
+    bineq t0, ClosureVar, .gGlobalPropertyWithVarInjectionChecks
+    loadVariable(get, m_resolvedScope, t0)
+    getClosureVar()
+
+.gGlobalPropertyWithVarInjectionChecks:
+    probe(macro() call _p25 end) // debug label
+    bineq t0, GlobalPropertyWithVarInjectionChecks, .gGlobalVarWithVarInjectionChecks
+    loadWithStructureCheckMy(OpResolveAndGetFromScope, get, .gDynamic)
+    getProperty()
+
+.gGlobalVarWithVarInjectionChecks:
+    probe(macro() call _p26 end) // debug label
+    bineq t0, GlobalVarWithVarInjectionChecks, .gGlobalLexicalVarWithVarInjectionChecks
+    varInjectionCheck(.gDynamic, t2)
+    getGlobalVar(macro(v) end)
+
+.gGlobalLexicalVarWithVarInjectionChecks:
+    probe(macro() call _p27 end) // debug label
+    bineq t0, GlobalLexicalVarWithVarInjectionChecks, .gClosureVarWithVarInjectionChecks
+    varInjectionCheck(.gDynamic, t2)
+    getGlobalVar(
+        macro (value)
+            bqeq value, ValueEmpty, .gDynamic
+        end)
+
+.gClosureVarWithVarInjectionChecks:
+    probe(macro() call _p28 end) // debug label
+    bineq t0, ClosureVarWithVarInjectionChecks, .gDynamic
+    varInjectionCheck(.gDynamic, t2)
+    loadVariable(get, m_resolvedScope, t0)
+    getClosureVar()
+
+.gDynamic:
+    probe(macro() call _p29 end) // debug label
+    callSlowPath(_llint_slow_path_resolve_and_get_from_scope)
+    dispatch()
+end)
+//----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 llintOpWithMetadata(op_put_to_scope, OpPutToScope, macro (size, get, dispatch, metadata, return)
     macro putProperty()

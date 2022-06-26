@@ -123,6 +123,7 @@ static constexpr unsigned bitWidthForMaxBytecodeStructLength = WTF::getMSBSetCon
     macro(OpCallEval) \
     macro(OpConstruct) \
     macro(OpGetFromScope) \
+    macro(OpResolveAndGetFromScope) \
     macro(OpBitand) \
     macro(OpBitor) \
     macro(OpBitnot) \
