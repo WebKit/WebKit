@@ -51,6 +51,8 @@ public:
     WEBCORE_EXPORT static IOSurfacePool& sharedPool();
     WEBCORE_EXPORT static Ref<IOSurfacePool> create();
 
+    WEBCORE_EXPORT ~IOSurfacePool();
+
     std::unique_ptr<IOSurface> takeSurface(IntSize, const DestinationColorSpace&, IOSurface::Format);
     WEBCORE_EXPORT void addSurface(std::unique_ptr<IOSurface>&&);
 
@@ -96,6 +98,7 @@ private:
 
     void scheduleCollectionTimer() WTF_REQUIRES_LOCK(m_lock);
     void collectionTimerFired();
+    void stopCollectionTimer() WTF_REQUIRES_LOCK(m_lock);
     void collectInUseSurfaces() WTF_REQUIRES_LOCK(m_lock);
     bool markOlderSurfacesPurgeable() WTF_REQUIRES_LOCK(m_lock);
 

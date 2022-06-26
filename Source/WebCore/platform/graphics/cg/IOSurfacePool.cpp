@@ -51,6 +51,11 @@ IOSurfacePool::IOSurfacePool()
 {
 }
 
+IOSurfacePool::~IOSurfacePool()
+{
+    stopCollectionTimer();
+}
+
 IOSurfacePool& IOSurfacePool::sharedPool()
 {
     static LazyNeverDestroyed<IOSurfacePool> pool;
@@ -328,6 +333,12 @@ void IOSurfacePool::scheduleCollectionTimer()
 {
     if (!m_collectionTimer.isActive())
         m_collectionTimer.startRepeating(collectionInterval);
+}
+
+void IOSurfacePool::stopCollectionTimer()
+{
+    if (m_collectionTimer.isActive())
+        m_collectionTimer.stop();
 }
 
 void IOSurfacePool::discardAllSurfaces()
