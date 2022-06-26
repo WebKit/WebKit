@@ -6,7 +6,7 @@ PASS Commits logical properties
 PASS Commits logical properties as physical properties
 PASS Commits values calculated mid-interval
 PASS Commits variable references as their computed values
-FAIL Commits custom variables assert_approx_equals: expected 0.8 +/- 0.0001 but got 0.5
+PASS Commits custom variables
 FAIL Commits em units as pixel values assert_approx_equals: expected 100 +/- 0.0001 but got 0
 FAIL Commits relative line-height assert_equals: line-height is committed as a relative value expected "1.5" but got "15px"
 PASS Commits transforms

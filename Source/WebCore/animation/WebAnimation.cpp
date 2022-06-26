@@ -1478,13 +1478,15 @@ ExceptionOr<void> WebAnimation::commitStyles()
     inlineStyle->setCssText(styledElement.getAttribute(HTMLNames::styleAttr));
 
     auto& keyframeStack = styledElement.ensureKeyframeEffectStack(PseudoId::None);
-    // During iteration resolve() could clear the underlying properties so we use a copy
-    auto properties = effect->animatedProperties();
-    // 2.5 For each property, property, in targeted properties:
-    for (auto property : properties) {
-        // FIXME: handle custom properties (https://bugs.webkit.org/show_bug.cgi?id=242007).
-        if (property == CSSPropertyCustom)
-            continue;
+
+    auto effectAnimatesProperty = [](KeyframeEffect& effect, std::variant<CSSPropertyID, AtomString> property) {
+        return WTF::switchOn(property,
+            [&] (CSSPropertyID propertyId) { return effect.animatedProperties().contains(propertyId); },
+            [&] (AtomString customProperty) { return effect.animatedCustomProperties().contains(customProperty); }
+        );
+    };
+
+    auto commitProperty = [&](std::variant<CSSPropertyID, AtomString> property) {
         // 1. Let partialEffectStack be a copy of the effect stack for property on target.
         // 2. If animation's replace state is removed, add all animation effects associated with animation whose effect target is target and which include
         // property as a target property to partialEffectStack.
@@ -1500,16 +1502,35 @@ ExceptionOr<void> WebAnimation::commitStyles()
         for (const auto& effectInStack : keyframeStack.sortedEffects()) {
             if (effectInStack->animation() != this && !compareAnimationsByCompositeOrder(*effectInStack->animation(), *this))
                 break;
-            if (effectInStack->animatedProperties().contains(property))
+            if (effectAnimatesProperty(*effectInStack, property))
                 effectInStack->animation()->resolve(*animatedStyle, { nullptr });
             if (effectInStack->animation() == this)
                 break;
         }
         if (m_replaceState == ReplaceState::Removed)
             effect->animation()->resolve(*animatedStyle, { nullptr });
-        if (auto cssValue = computedStyleExtractor.valueForPropertyInStyle(*animatedStyle, property, renderer))
-            inlineStyle->setPropertyInternal(property, cssValue->cssText(), false);
+        WTF::switchOn(property,
+            [&] (CSSPropertyID propertyId) {
+                if (auto cssValue = computedStyleExtractor.valueForPropertyInStyle(*animatedStyle, propertyId, renderer))
+                    inlineStyle->setPropertyInternal(propertyId, cssValue->cssText(), false);
+            },
+            [&] (AtomString customProperty) {
+                if (auto cssValue = computedStyleExtractor.customPropertyValue(customProperty))
+                    inlineStyle->setProperty(customProperty, cssValue->cssText(), emptyString());
+            }
+        );
+    };
+
+    // During iteration resolve() could clear the underlying properties so we use a copy
+    auto properties = effect->animatedProperties();
+    // 2.5 For each property, property, in targeted properties:
+    for (auto property : properties) {
+        if (property != CSSPropertyCustom)
+            commitProperty(property);
     }
+    auto customProperties = effect->animatedCustomProperties();
+    for (auto customProperty : customProperties)
+        commitProperty(customProperty);
 
     styledElement.setAttribute(HTMLNames::styleAttr, AtomString { inlineStyle->cssText() });
 

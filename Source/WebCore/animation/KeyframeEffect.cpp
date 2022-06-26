@@ -904,6 +904,21 @@ const HashSet<CSSPropertyID>& KeyframeEffect::animatedProperties()
     return m_animatedProperties;
 }
 
+const HashSet<AtomString>& KeyframeEffect::animatedCustomProperties()
+{
+    if (!m_blendingKeyframes.isEmpty())
+        return m_blendingKeyframes.customProperties();
+
+    if (m_animatedCustomProperties.isEmpty()) {
+        for (auto& keyframe : m_parsedKeyframes) {
+            for (auto keyframeCustomProperty : keyframe.customStyleStrings.keys())
+                m_animatedCustomProperties.add(keyframeCustomProperty);
+        }
+    }
+
+    return m_animatedCustomProperties;
+}
+
 bool KeyframeEffect::animatesProperty(CSSPropertyID property) const
 {
     if (!m_blendingKeyframes.isEmpty())
@@ -949,6 +964,7 @@ void KeyframeEffect::setBlendingKeyframes(KeyframeList& blendingKeyframes)
 
     m_blendingKeyframes = WTFMove(blendingKeyframes);
     m_animatedProperties.clear();
+    m_animatedCustomProperties.clear();
 
     computedNeedsForcedLayout();
     computeStackingContextImpact();
