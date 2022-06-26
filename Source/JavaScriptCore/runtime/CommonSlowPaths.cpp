@@ -140,7 +140,7 @@ namespace JSC {
     RETURN_WITH_PROFILING(value, { })
 
 #define RETURN_WITH_DESTINATION_AND_SECOND(destinaiton, value, second) \
-    RETURN_WITH_SECOND_AND_PROFILING_CUSTOM(destinaiton, value, second, {})
+    RETURN_WITH_SECOND_AND_PROFILING_CUSTOM(destinaiton, value, second, { })
 
 #define RETURN_PROFILED(value__) \
     RETURN_WITH_PROFILING(value__, PROFILE_VALUE(returnValue__))

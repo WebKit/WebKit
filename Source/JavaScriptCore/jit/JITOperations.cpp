@@ -2923,7 +2923,7 @@ ALWAYS_INLINE EncodedJSValue operationGetFromScopeHelper(JSGlobalObject* globalO
             }
         }
 
-        CommonSlowPaths::tryCacheGetFromScopeGlobal(globalObject, codeBlock, vm, bytecode.metadata(codeBlock), scope, slot, ident);
+        CommonSlowPaths::tryCacheGetFromScopeGlobal<BytecodeOpcode>(globalObject, codeBlock, vm, bytecode, scope, slot, ident);
 
         if (!result)
             return slot.getValue(globalObject, ident);

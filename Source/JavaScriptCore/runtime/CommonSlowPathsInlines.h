@@ -96,9 +96,11 @@ inline void tryCachePutToScopeGlobal(
     }
 }
 
-inline void tryCacheGetFromScopeGlobal( //TODO: use pc instead of metadata
-    JSGlobalObject* globalObject, CodeBlock* codeBlock, VM& vm, auto& metadata, JSObject* scope, PropertySlot& slot, const Identifier& ident)
+template <typename BytecodeOpcode>
+inline void tryCacheGetFromScopeGlobal(
+    JSGlobalObject* globalObject, CodeBlock* codeBlock, VM& vm, const BytecodeOpcode& bytecode, JSObject* scope, PropertySlot& slot, const Identifier& ident)
 {
+    auto& metadata = bytecode.metadata(codeBlock);
     ResolveType resolveType = metadata.m_getPutInfo.resolveType();
 
     switch (resolveType) {

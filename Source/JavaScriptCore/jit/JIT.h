@@ -687,12 +687,12 @@ namespace JSC {
         static MacroAssemblerCodeRef<JITThunkPtrTag> generateOpResolveScopeThunk(VM&);
         template <ResolveType, typename BytecodeOpcode>
         ALWAYS_INLINE static MacroAssemblerCodeRef<JITThunkPtrTag> generateOpResolveScopeThunkHelper(VM&);
-        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_rgs_resolve_scopeGenerator(VM& vm);
-        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_rgs_get_from_scopeGenerator(VM& vm);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_rgs_resolve_scopeGenerator(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_rgs_get_from_scopeGenerator(VM&);
         template <ResolveType>
-        static MacroAssemblerCodeRef<JITThunkPtrTag> generateOpRGSResolveScopeThunk(VM& vm);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> generateOpRGSResolveScopeThunk(VM&);
         template <ResolveType>
-        static MacroAssemblerCodeRef<JITThunkPtrTag> generateOpRGSGetFromScopeThunk(VM& vm);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> generateOpRGSGetFromScopeThunk(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> op_enter_handlerGenerator(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> valueIsTruthyGenerator(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> valueIsFalseyGenerator(VM&);

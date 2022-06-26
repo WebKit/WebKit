@@ -2512,7 +2512,8 @@ RegisterID* BytecodeGenerator::emitResolveScope(RegisterID* dst, const Variable&
     return nullptr;
 }
 
-ALWAYS_INLINE void BytecodeGenerator::emitGetFromScopeHelper(RegisterID* dst, RegisterID* scope, unsigned var, GetPutInfo getPutInfo, unsigned localScopeDepth, unsigned offset) {
+ALWAYS_INLINE void BytecodeGenerator::emitGetFromScopeHelper(RegisterID* dst, RegisterID* scope, unsigned var, GetPutInfo getPutInfo, unsigned localScopeDepth, unsigned offset)
+{
     ASSERT(scope);
 
     auto validResolveAndGetFromScopePair = [&](){
