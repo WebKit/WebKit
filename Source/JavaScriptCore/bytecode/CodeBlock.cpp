@@ -3192,6 +3192,8 @@ ValueProfile* CodeBlock::tryGetValueProfileForBytecodeIndex(BytecodeIndex byteco
         return &valueProfileFor(instruction->as<OpIteratorOpen>().metadata(this), bytecodeIndex.checkpoint());
     case op_iterator_next:
         return &valueProfileFor(instruction->as<OpIteratorNext>().metadata(this), bytecodeIndex.checkpoint());
+    case op_resolve_and_get_from_scope:
+        return &valueProfileFor(instruction->as<OpResolveAndGetFromScope>().metadata(this), bytecodeIndex.checkpoint());
 
     default:
         return nullptr;

@@ -97,7 +97,7 @@ static constexpr unsigned maxJSBytecodeStructLength = /* Opcode */ maxJSOpcodeID
 static constexpr unsigned maxWasmBytecodeStructLength = /* Opcode */ maxWasmOpcodeIDWidth + /* Wide32 Opcode */ 1 + /* Operands */ MAX_LENGTH_OF_WASM_IDS * 4;
 static constexpr unsigned maxBytecodeStructLength = std::max(maxJSBytecodeStructLength, maxWasmBytecodeStructLength);
 static constexpr unsigned bitWidthForMaxBytecodeStructLength = WTF::getMSBSetConstexpr(maxBytecodeStructLength) + 1;
-// TODO: wrong
+
 #define FOR_EACH_OPCODE_WITH_VALUE_PROFILE(macro) \
     macro(OpCallVarargs) \
     macro(OpTailCallVarargs) \
@@ -123,7 +123,6 @@ static constexpr unsigned bitWidthForMaxBytecodeStructLength = WTF::getMSBSetCon
     macro(OpCallEval) \
     macro(OpConstruct) \
     macro(OpGetFromScope) \
-    macro(OpResolveAndGetFromScope) \
     macro(OpBitand) \
     macro(OpBitor) \
     macro(OpBitnot) \

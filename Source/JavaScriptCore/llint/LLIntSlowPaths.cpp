@@ -2424,6 +2424,7 @@ static void handleResolveAndGetFromScopeCheckpoint(VM& vm, CallFrame* callFrame,
         return result;
     });
 
+    RETURN_IF_EXCEPTION(throwScope, void());
     callFrame->uncheckedR(bytecode.m_dst) = result;
 }
 
