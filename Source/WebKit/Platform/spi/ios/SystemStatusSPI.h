@@ -28,16 +28,6 @@
 
 #import <SystemStatus/STDynamicActivityAttributionPublisher.h>
 
-NS_ASSUME_NONNULL_BEGIN
-
-@interface STDynamicActivityAttributionPublisher (SetCurrentAttributionWebsiteString)
-
-+ (void)setCurrentAttributionWebsiteString:(NSString *)website auditToken:(audit_token_t)auditToken;
-
-@end
-
-NS_ASSUME_NONNULL_END
-
 #else
 
 NS_ASSUME_NONNULL_BEGIN
@@ -45,7 +35,6 @@ NS_ASSUME_NONNULL_BEGIN
 @interface STDynamicActivityAttributionPublisher : NSObject
 
 + (void)setCurrentAttributionStringWithFormat:(NSString *)format auditToken:(audit_token_t)auditToken;
-+ (void)setCurrentAttributionWebsiteString:(NSString *)website auditToken:(audit_token_t)auditToken;
 
 @end
 
