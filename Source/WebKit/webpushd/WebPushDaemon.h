@@ -33,6 +33,7 @@
 #include "WebPushMessage.h"
 #include <WebCore/ExceptionData.h>
 #include <WebCore/PushSubscriptionData.h>
+#include <WebCore/Timer.h>
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -94,7 +95,7 @@ public:
     void broadcastAllConnectionIdentities();
 
 private:
-    Daemon() = default;
+    Daemon();
 
     CompletionHandler<void(EncodedMessage&&)> createReplySender(WebKit::WebPushD::MessageType, OSObjectPtr<xpc_object_t>&& request);
     void decodeAndHandleMessage(xpc_connection_t, WebKit::WebPushD::MessageType, Span<const uint8_t> encodedMessage, CompletionHandler<void(EncodedMessage&&)>&&);
@@ -106,6 +107,10 @@ private:
     void setPushService(std::unique_ptr<PushService>&&);
     void runAfterStartingPushService(Function<void()>&&);
 
+    void ensureIncomingPushTransaction();
+    void releaseIncomingPushTransaction();
+    void incomingPushTransactionTimerFired();
+
     ClientConnection* toClientConnection(xpc_connection_t);
     HashMap<xpc_connection_t, Ref<ClientConnection>> m_connectionMap;
 
@@ -115,6 +120,9 @@ private:
 
     HashMap<String, Vector<WebKit::WebPushMessage>> m_pushMessages;
     HashMap<String, Deque<PushMessageForTesting>> m_testingPushMessages;
+    
+    WebCore::Timer m_incomingPushTransactionTimer;
+    OSObjectPtr<os_transaction_t> m_incomingPushTransaction;
 };
 
 } // namespace WebPushD

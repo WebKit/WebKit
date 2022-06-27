@@ -48,6 +48,8 @@ using namespace WebKit::WebPushD;
 
 namespace WebPushD {
 
+static constexpr Seconds s_incomingPushTransactionTimeout { 10_s };
+
 namespace MessageInfo {
 
 #define FUNCTION(mf) struct mf { static constexpr auto MemberFunction = &WebPushD::Daemon::mf;
@@ -285,6 +287,11 @@ Daemon& Daemon::singleton()
     return daemon;
 }
 
+Daemon::Daemon()
+    : m_incomingPushTransactionTimer { *this, &Daemon::incomingPushTransactionTimerFired }
+{
+}
+
 void Daemon::startMockPushService()
 {
     auto messageHandler = [this](const String& bundleIdentifier, WebKit::WebPushMessage&& message) {
@@ -328,6 +335,25 @@ void Daemon::runAfterStartingPushService(Function<void()>&& function)
         return;
     }
     function();
+}
+
+void Daemon::ensureIncomingPushTransaction()
+{
+    if (!m_incomingPushTransaction)
+        m_incomingPushTransaction = adoptOSObject(os_transaction_create("com.apple.webkit.webpushd.daemon.incoming-push"));
+    m_incomingPushTransactionTimer.startOneShot(s_incomingPushTransactionTimeout);
+}
+
+void Daemon::releaseIncomingPushTransaction()
+{
+    m_incomingPushTransactionTimer.stop();
+    m_incomingPushTransaction = nullptr;
+}
+
+void Daemon::incomingPushTransactionTimerFired()
+{
+    RELEASE_LOG_ERROR_IF(m_incomingPushTransaction, Push, "UI process failed to fetch push before incoming push transaction timed out.");
+    m_incomingPushTransaction = nullptr;
 }
 
 void Daemon::broadcastDebugMessage(StringView message)
@@ -607,6 +633,8 @@ void Daemon::injectEncryptedPushMessageForTesting(ClientConnection* connection, 
 
 void Daemon::handleIncomingPush(const String& bundleIdentifier, WebKit::WebPushMessage&& message)
 {
+    ensureIncomingPushTransaction();
+
     auto addResult = m_pushMessages.ensure(bundleIdentifier, [] {
         return Vector<WebKit::WebPushMessage> { };
     });
@@ -650,8 +678,10 @@ void Daemon::getPendingPushMessages(ClientConnection* connection, CompletionHand
 
     Vector<WebKit::WebPushMessage> resultMessages;
 
-    if (auto iterator = m_pushMessages.find(hostAppCodeSigningIdentifier); iterator != m_pushMessages.end())
-        std::swap(resultMessages, iterator->value);
+    if (auto iterator = m_pushMessages.find(hostAppCodeSigningIdentifier); iterator != m_pushMessages.end()) {
+        resultMessages = WTFMove(iterator->value);
+        m_pushMessages.remove(iterator);
+    }
 
     auto iterator = m_testingPushMessages.find(hostAppCodeSigningIdentifier);
     if (iterator != m_testingPushMessages.end()) {
@@ -666,6 +696,9 @@ void Daemon::getPendingPushMessages(ClientConnection* connection, CompletionHand
     connection->broadcastDebugMessage(makeString("Fetching ", String::number(resultMessages.size()), " pending push messages"));
 
     replySender(WTFMove(resultMessages));
+    
+    if (m_pushMessages.isEmpty())
+        releaseIncomingPushTransaction();
 }
 
 void Daemon::subscribeToPushService(ClientConnection* connection, const URL& scopeURL, const Vector<uint8_t>& vapidPublicKey, CompletionHandler<void(const Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&)>&& replySender)

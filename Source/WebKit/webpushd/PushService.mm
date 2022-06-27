@@ -65,7 +65,6 @@ void PushService::create(const String& incomingPushServiceName, const String& da
         if (!databaseResult) {
             RELEASE_LOG_ERROR(Push, "Push service initialization failed with database error");
             creationHandler(std::unique_ptr<PushService>());
-            transaction = nullptr;
             return;
         }
 
@@ -81,7 +80,6 @@ void PushService::create(const String& incomingPushServiceName, const String& da
         // date, which APSConnection cares about.
         updateTopicLists(connectionRef, databaseRef, [transaction = WTFMove(transaction), service = WTFMove(service), creationHandler = WTFMove(creationHandler)]() mutable {
             creationHandler(service.moveToUniquePtr());
-            transaction = nullptr;
         });
     });
 }
@@ -651,11 +649,13 @@ void PushService::didReceivePublicToken(Vector<uint8_t>&& token)
 
 void PushService::didReceivePushMessage(NSString* topic, NSDictionary* userInfo, CompletionHandler<void()>&& completionHandler)
 {
+    auto transaction = adoptOSObject(os_transaction_create("com.apple.webkit.webpushd.push-service.incoming-push"));
+
     auto messageResult = makeRawPushMessage(topic, userInfo);
     if (!messageResult)
         return;
 
-    m_database->getRecordByTopic(topic, [this, message = WTFMove(*messageResult), completionHandler = WTFMove(completionHandler)](auto&& recordResult) mutable {
+    m_database->getRecordByTopic(topic, [this, message = WTFMove(*messageResult), completionHandler = WTFMove(completionHandler), transaction = WTFMove(transaction)](auto&& recordResult) mutable {
         if (!recordResult) {
             RELEASE_LOG_ERROR(Push, "Dropping incoming push sent to unknown topic: %{private}s", message.topic.utf8().data());
             completionHandler();

@@ -39,6 +39,7 @@
 #import <pal/spi/cf/CFUtilitiesSPI.h>
 #import <wtf/LogInitialization.h>
 #import <wtf/MainThread.h>
+#import <wtf/OSObjectPtr.h>
 #import <wtf/spi/darwin/XPCSPI.h>
 
 using WebKit::Daemon::EncodedMessage;
@@ -86,6 +87,8 @@ int WebPushDaemonMain(int argc, char** argv)
 {
     @autoreleasepool {
         WTF::initializeMainThread();
+        
+        auto transaction = adoptOSObject(os_transaction_create("com.apple.webkit.webpushd.push-service-main"));
 
 #if ENABLE(CFPREFS_DIRECT_MODE)
         _CFPrefsSetDirectModeEnabled(YES);
