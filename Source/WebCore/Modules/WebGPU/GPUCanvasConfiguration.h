@@ -27,14 +27,10 @@
 
 #include "GPUCanvasCompositingAlphaMode.h"
 #include "GPUDevice.h"
-#include "GPUExtent3DDict.h"
 #include "GPUPredefinedColorSpace.h"
 #include "GPUTextureFormat.h"
 #include "GPUTextureUsage.h"
-#include <cstdint>
-#include <optional>
 #include <pal/graphics/WebGPU/WebGPUCanvasConfiguration.h>
-#include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -52,7 +48,6 @@ struct GPUCanvasConfiguration {
             }),
             WebCore::convertToBacking(colorSpace),
             WebCore::convertToBacking(compositingAlphaMode),
-            size ? std::optional { WebCore::convertToBacking(*size) } : std::nullopt,
         };
     }
 
@@ -62,7 +57,6 @@ struct GPUCanvasConfiguration {
     Vector<GPUTextureFormat> viewFormats;
     GPUPredefinedColorSpace colorSpace { GPUPredefinedColorSpace::SRGB };
     GPUCanvasCompositingAlphaMode compositingAlphaMode { GPUCanvasCompositingAlphaMode::Opaque };
-    std::optional<GPUExtent3D> size;
 };
 
 }

@@ -40,14 +40,7 @@ std::optional<CanvasConfiguration> ConvertToBackingContext::convertToBacking(con
     if (!device)
         return std::nullopt;
 
-    std::optional<Extent3D> size;
-    if (canvasConfiguration.size) {
-        size = convertToBacking(*canvasConfiguration.size);
-        if (!size)
-            return std::nullopt;
-    }
-
-    return { { device, canvasConfiguration.format, canvasConfiguration.usage, canvasConfiguration.viewFormats, canvasConfiguration.colorSpace, canvasConfiguration.compositingAlphaMode, WTFMove(size) } };
+    return { { device, canvasConfiguration.format, canvasConfiguration.usage, canvasConfiguration.viewFormats, canvasConfiguration.colorSpace, canvasConfiguration.compositingAlphaMode } };
 }
 
 std::optional<PAL::WebGPU::CanvasConfiguration> ConvertFromBackingContext::convertFromBacking(const CanvasConfiguration& canvasConfiguration)
@@ -56,14 +49,7 @@ std::optional<PAL::WebGPU::CanvasConfiguration> ConvertFromBackingContext::conve
     if (!device)
         return std::nullopt;
 
-    std::optional<PAL::WebGPU::Extent3D> size;
-    if (canvasConfiguration.size) {
-        size = convertFromBacking(*canvasConfiguration.size);
-        if (!size)
-            return std::nullopt;
-    }
-
-    return { { *device, canvasConfiguration.format, canvasConfiguration.usage, canvasConfiguration.viewFormats, canvasConfiguration.colorSpace, canvasConfiguration.compositingAlphaMode, WTFMove(size) } };
+    return { { *device, canvasConfiguration.format, canvasConfiguration.usage, canvasConfiguration.viewFormats, canvasConfiguration.colorSpace, canvasConfiguration.compositingAlphaMode } };
 }
 
 } // namespace WebKit

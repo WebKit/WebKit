@@ -26,13 +26,10 @@
 #pragma once
 
 #include "WebGPUCanvasCompositingAlphaMode.h"
-#include "WebGPUExtent3D.h"
 #include "WebGPUPredefinedColorSpace.h"
 #include "WebGPUTextureFormat.h"
 #include "WebGPUTextureUsage.h"
-#include <cstdint>
-#include <optional>
-#include <wtf/Ref.h>
+#include <wtf/Vector.h>
 
 namespace PAL::WebGPU {
 
@@ -45,7 +42,6 @@ struct CanvasConfiguration {
     Vector<TextureFormat> viewFormats;
     PredefinedColorSpace colorSpace { PredefinedColorSpace::SRGB };
     CanvasCompositingAlphaMode compositingAlphaMode { CanvasCompositingAlphaMode::Opaque };
-    std::optional<Extent3D> size;
 };
 
 } // namespace PAL::WebGPU

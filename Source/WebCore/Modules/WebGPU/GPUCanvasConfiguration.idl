@@ -27,8 +27,6 @@
 
 // https://bugs.webkit.org/show_bug.cgi?id=232548 These shouldn't need to be here.
 typedef [EnforceRange] unsigned long GPUTextureUsageFlags;
-typedef [EnforceRange] unsigned long GPUIntegerCoordinate;
-typedef (sequence<GPUIntegerCoordinate> or GPUExtent3DDict) GPUExtent3D;
 
 [
     EnabledBySetting=WebGPU
@@ -40,5 +38,4 @@ dictionary GPUCanvasConfiguration {
     sequence<GPUTextureFormat> viewFormats = [];
     GPUPredefinedColorSpace colorSpace = "srgb";
     GPUCanvasCompositingAlphaMode compositingAlphaMode = "opaque";
-    GPUExtent3D size;
 };
