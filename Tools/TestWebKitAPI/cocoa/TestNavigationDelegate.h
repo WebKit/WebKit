@@ -37,7 +37,6 @@
 @property (nonatomic, copy) void (^didStartProvisionalNavigation)(WKWebView *, WKNavigation *);
 @property (nonatomic, copy) void (^didCommitNavigation)(WKWebView *, WKNavigation *);
 @property (nonatomic, copy) void (^didFinishNavigation)(WKWebView *, WKNavigation *);
-@property (nonatomic, copy) void (^didSameDocumentNavigation)(WKWebView *, WKNavigation *);
 @property (nonatomic, copy) void (^renderingProgressDidChange)(WKWebView *, _WKRenderingProgressEvents);
 @property (nonatomic, copy) void (^webContentProcessDidTerminate)(WKWebView *);
 @property (nonatomic, copy) void (^didReceiveAuthenticationChallenge)(WKWebView *, NSURLAuthenticationChallenge *, void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential *));
@@ -45,7 +44,6 @@
 
 - (void)waitForDidStartProvisionalNavigation;
 - (void)waitForDidFinishNavigation;
-- (void)waitForDidFinishNavigationOrSameDocumentNavigation;
 - (void)waitForDidFinishNavigationWithPreferences:(WKWebpagePreferences *)preferences;
 - (NSError *)waitForDidFailProvisionalNavigation;
 
@@ -54,7 +52,6 @@
 @interface WKWebView (TestWebKitAPIExtras)
 - (void)_test_waitForDidStartProvisionalNavigation;
 - (void)_test_waitForDidFinishNavigation;
-- (void)_test_waitForDidFinishNavigationOrSameDocumentNavigation;
 - (void)_test_waitForDidFinishNavigationWithPreferences:(WKWebpagePreferences *)preferences;
 - (void)_test_waitForDidFinishNavigationWithoutPresentationUpdate;
 - (void)_test_waitForDidFailProvisionalNavigation;
