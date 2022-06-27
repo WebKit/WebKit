@@ -443,7 +443,8 @@ using ImageAnalysisRequestIdentifier = ObjectIdentifier<ImageAnalysisRequestIden
     BOOL _showDebugTapHighlightsForFastClicking;
     BOOL _textInteractionDidChangeFocusedElement;
     BOOL _treatAsContentEditableUntilNextEditorStateUpdate;
-    bool _isWaitingOnPositionInformation;
+    BOOL _isWaitingOnPositionInformation;
+    BOOL _isRequestingAutocorrectionContext;
     BOOL _autocorrectionContextNeedsUpdate;
 
     WebCore::PointerID _commitPotentialTapPointerId;
