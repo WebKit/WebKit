@@ -211,7 +211,8 @@ TEST_F(WKContentRuleListStoreTest, Removal)
     TestWebKitAPI::Util::run(&doneRemoving);
 }
 
-TEST_F(WKContentRuleListStoreTest, CrossOriginCookieBlocking)
+// FIXME: webkit.org/b/241653
+TEST_F(WKContentRuleListStoreTest, DISABLED_CrossOriginCookieBlocking)
 {
     using namespace TestWebKitAPI;
 
