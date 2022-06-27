@@ -105,7 +105,7 @@ webkit.org/b/140798 [ Debug ] accessibility/aria-hidden-false-works-in-subtrees.
 
 # The following fail because of missing numerical output support.
 webkit.org/b/140832 accessibility/aria-slider-value-change.html [ Failure ]
-webkit.org/b/140832 accessibility/aria-slider-value.html [ Failure ]
+webkit.org/b/140832 accessibility/aria-slider-value.html [ Skip ] # Timeout
 webkit.org/b/140832 accessibility/progressbar.html [ Failure ]
 webkit.org/b/140832 accessibility/aria-scrollbar-role.html [ Failure ]
 webkit.org/b/140832 accessibility/spinbutton-value.html [ Failure ]
@@ -177,7 +177,6 @@ accessibility/aria-mappings.html [ Failure ]
 accessibility/aria-roles.html [ Failure ]
 accessibility/canvas-description-and-role.html [ Failure ]
 accessibility/disabled-controls-not-focusable.html [ Failure ]
-accessibility/heading-level.html [ Failure ]
 accessibility/help-text.html [ Failure ]
 accessibility/html5-required-attribute.html [ Failure ]
 accessibility/image-link.html [ Failure ]
@@ -230,7 +229,6 @@ accessibility/win/select-element-valuechange-event.html [ Failure ]
 # Unexpected text-only failures tracked in webkit.org/b/172437.
 accessibility/aria-cellspans-with-native-cellspans.html [ Failure ]
 accessibility/aria-grid-column-span.html [ Failure ]
-accessibility/aria-orientation.html [ Failure ]
 accessibility/aria-owns.html [ Failure ]
 accessibility/button-with-aria-haspopup-role.html [ Failure ]
 accessibility/deleting-iframe-destroys-axcache.html [ Failure ]
