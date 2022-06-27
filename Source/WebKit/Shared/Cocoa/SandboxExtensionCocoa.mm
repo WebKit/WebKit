@@ -337,12 +337,13 @@ auto SandboxExtension::createHandleForMachLookup(ASCIILiteral service, std::opti
     // When launchd is blocked in the sandbox, we need to manually enable bootstrapping of new XPC connectons.
     // This is done by unblocking launchd, since launchd access is required when creating Mach connections.
     // Unblocking launchd is done by enabling a sandbox state variable.
-    // In the initial version of this change, Mach bootstrap'ing is enabled unconditionally.
-    if (auditToken) {
-        if (!sandbox_enable_state_flag(ENABLE_MACH_BOOTSTRAP, *auditToken))
-            RELEASE_LOG_FAULT(Sandbox, "Could not enable Mach bootstrap, errno = %d.", errno);
-    } else if (machBootstrapOptions == MachBootstrapOptions::EnableMachBootstrap)
-        RELEASE_LOG_FAULT(Sandbox, "Could not enable Mach bootstrap, no audit token provided.");
+    if (machBootstrapOptions == MachBootstrapOptions::EnableMachBootstrap) {
+        if (auditToken) {
+            if (!sandbox_enable_state_flag(ENABLE_MACH_BOOTSTRAP, *auditToken))
+                RELEASE_LOG_FAULT(Sandbox, "Could not enable Mach bootstrap, errno = %d.", errno);
+        } else
+            RELEASE_LOG_FAULT(Sandbox, "Could not enable Mach bootstrap, no audit token provided.");
+    }
 #endif
 
     return WTFMove(handle);

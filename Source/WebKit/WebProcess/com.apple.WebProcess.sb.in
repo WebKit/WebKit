@@ -2071,6 +2071,9 @@
 (define (mach-bootstrap-message-numbers)
     (message-number 204 207 301 711 800 804))
 
+(define (mach-bootstrap-message-numbers-post-launch)
+    (message-number 207 301 800 804))
+
 (define (allow-mach-bootstrap-with-filter)
     (allow mach-bootstrap
         (apply-message-filter
@@ -2085,7 +2088,9 @@
         (if (require-ancestor-with-entitlement "com.apple.private.security.enable-state-flags")
             (allow mach-bootstrap
                 (apply-message-filter
-                    (allow mach-message-send (with telemetry-backtrace))))
+                    (deny mach-message-send (with telemetry-backtrace))
+                    (allow mach-message-send (with telemetry-backtrace)
+                        (mach-bootstrap-message-numbers-post-launch))))
         ;; else
             (allow-mach-bootstrap-with-filter))
 
