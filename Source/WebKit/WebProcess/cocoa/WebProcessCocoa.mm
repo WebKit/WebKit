@@ -238,8 +238,21 @@ static void softlinkDataDetectorsFrameworks()
 #endif // ENABLE(DATA_DETECTION)
 }
 
+static void initializeXPCConnectionToLogd()
+{
+    // Log a long message to make sure the XPC connection to the log daemon for oversized messages is opened.
+    // This is needed to block launchd after the WebContent process has launched, since access to launchd is
+    // required when opening new XPC connections.
+    char stringWithSpaces[1024];
+    memset(stringWithSpaces, ' ', sizeof(stringWithSpaces));
+    stringWithSpaces[sizeof(stringWithSpaces) - 1] = 0;
+    RELEASE_LOG(Process, "WebProcess::platformInitializeWebProcess %s", stringWithSpaces);
+}
+
 void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
+    initializeXPCConnectionToLogd();
+    
     applyProcessCreationParameters(parameters.auxiliaryProcessParameters);
 
     setQOS(parameters.latencyQOS, parameters.throughputQOS);
