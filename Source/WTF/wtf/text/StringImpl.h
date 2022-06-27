@@ -1184,12 +1184,7 @@ inline size_t StringImpl::maxInternalLength()
 
 template<typename T> inline size_t StringImpl::tailOffset()
 {
-#if COMPILER(MSVC)
-    // MSVC doesn't support alignof yet.
-    return roundUpToMultipleOf<sizeof(T)>(sizeof(StringImpl));
-#else
     return roundUpToMultipleOf<alignof(T)>(offsetof(StringImpl, m_hashAndFlags) + sizeof(StringImpl::m_hashAndFlags));
-#endif
 }
 
 inline bool StringImpl::requiresCopy() const
