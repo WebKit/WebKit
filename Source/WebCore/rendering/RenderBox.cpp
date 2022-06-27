@@ -3230,9 +3230,12 @@ std::optional<LayoutUnit> RenderBox::computeIntrinsicLogicalContentHeightUsing(L
     // FIXME: The CSS sizing spec is considering changing what min-content/max-content should resolve to.
     // If that happens, this code will have to change.
     if (logicalHeightLength.isMinContent() || logicalHeightLength.isMaxContent() || logicalHeightLength.isFitContent() || logicalHeightLength.isLegacyIntrinsic()) {
-        if (intrinsicContentHeight && style().boxSizing() == BoxSizing::BorderBox)
-            return intrinsicContentHeight.value() + borderAndPaddingLogicalHeight();
-        return intrinsicContentHeight;
+        if (intrinsicContentHeight) {
+            if (style().boxSizing() == BoxSizing::BorderBox)
+                return intrinsicContentHeight.value() + borderAndPaddingLogicalHeight();
+            return intrinsicContentHeight.value();
+        }
+        return { };
     }
     if (logicalHeightLength.isFillAvailable())
         return containingBlock()->availableLogicalHeight(ExcludeMarginBorderPadding) - borderAndPadding;
@@ -3242,8 +3245,16 @@ std::optional<LayoutUnit> RenderBox::computeIntrinsicLogicalContentHeightUsing(L
 
 std::optional<LayoutUnit> RenderBox::computeContentAndScrollbarLogicalHeightUsing(SizeType heightType, const Length& height, std::optional<LayoutUnit> intrinsicContentHeight) const
 {
-    if (height.isAuto())
-        return heightType == MinSize ? std::optional<LayoutUnit>(0) : std::nullopt;
+    if (height.isAuto()) {
+        if (heightType != MinSize)
+            return std::nullopt;
+        if (intrinsicContentHeight && isFlexItem() && downcast<RenderFlexibleBox>(parent())->shouldApplyMinBlockSizeAutoForChild(*this)) {
+            if (style().boxSizing() == BoxSizing::BorderBox)
+                return intrinsicContentHeight.value() + borderAndPaddingLogicalHeight();
+            return intrinsicContentHeight.value();
+        }
+        return std::optional<LayoutUnit>(0);
+    }
     // FIXME: The CSS sizing spec is considering changing what min-content/max-content should resolve to.
     // If that happens, this code will have to change.
     if (height.isIntrinsic() || height.isLegacyIntrinsic())
