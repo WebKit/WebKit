@@ -348,11 +348,11 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-#include "FontCacheCoreText.h"
 #include "MediaSessionHelperIOS.h"
 #endif
 
 #if PLATFORM(COCOA)
+#include "FontCacheCoreText.h"
 #include "SystemBattery.h"
 #include "VP9UtilitiesCocoa.h"
 #include <pal/spi/cf/CoreTextSPI.h>
@@ -648,6 +648,10 @@ void Internals::resetToConsistentState(Page& page)
 #if ENABLE(MEDIA_SESSION) && USE(GLIB)
     auto& sessionManager = reinterpret_cast<MediaSessionManagerGLib&>(PlatformMediaSessionManager::sharedManager());
     sessionManager.setDBusNotificationsEnabled(false);
+#endif
+
+#if PLATFORM(COCOA)
+    setOverrideEnhanceTextLegibility(false);
 #endif
 
     TextPainter::setForceUseGlyphDisplayListForTesting(false);

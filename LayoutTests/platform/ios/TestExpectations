@@ -3659,3 +3659,5 @@ webkit.org/b/241048 imported/w3c/web-platform-tests/html/canvas/element/manual/w
 webkit.org/b/241205 fast/forms/textfield-outline.html [ Pass Failure ]
 
 fast/text/bulgarian-system-language-shaping.html [ Pass ]
+
+fast/text/accessibility-bold-system-font [ Pass ]
