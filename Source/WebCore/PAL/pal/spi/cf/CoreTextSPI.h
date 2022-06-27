@@ -155,6 +155,7 @@ CFArrayRef CTFontManagerCreateFontDescriptorsFromData(CFDataRef);
 bool CTFontManagerEnableAllUserFonts(bool postFontChangeNotification);
 
 void CTParagraphStyleSetCompositionLanguage(CTParagraphStyleRef, CTCompositionLanguage);
+CGFloat CTFontGetAccessibilityBoldWeightOfWeight(CGFloat);
 
 extern const CFStringRef kCTFontCSSWeightAttribute;
 extern const CFStringRef kCTFontCSSWidthAttribute;
