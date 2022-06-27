@@ -75,12 +75,20 @@ macro(FIND_GSTREAMER_COMPONENT _component_prefix _pkgconfig_name _library)
     # ${includedir}/gstreamer-1.0 which remains correct. The issue here is that
     # we don't rely on the `Cflags`, cmake fails to generate a proper
     # `.._INCLUDE_DIRS` variable in this case. So we need to do it here...
+
+    # Populate the list initially from the _INCLUDE_DIRS result variable.
+    set(${_component_prefix}_INCLUDE_DIRS ${PC_${_component_prefix}_INCLUDE_DIRS})
+
     set(_include_dir "${PC_${_component_prefix}_INCLUDEDIR}")
     string(REGEX MATCH "(.*)/gstreamer-1.0" _dummy "${_include_dir}")
+
     if ("${CMAKE_MATCH_1}" STREQUAL "")
-        set(${_component_prefix}_INCLUDE_DIRS "${_include_dir}/gstreamer-1.0;${PC_${_component_prefix}_INCLUDE_DIRS}")
-    else ()
-        set(${_component_prefix}_INCLUDE_DIRS "${PC_${_component_prefix}_INCLUDE_DIRS}")
+        find_path(${_component_prefix}_RESOLVED_INCLUDEDIR NAMES "${_include_dir}/gstreamer-1.0")
+        # Only add the resolved path from `_INCLUDEDIR` if found.
+        if (${_component_prefix}_RESOLVED_INCLUDEDIR)
+            list(APPEND ${_component_prefix}_INCLUDE_DIRS
+                 "${${_component_prefix}_RESOLVED_INCLUDEDIR}")
+        endif ()
     endif ()
 
     find_library(${_component_prefix}_LIBRARIES
