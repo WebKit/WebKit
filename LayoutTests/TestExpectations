@@ -5212,6 +5212,5 @@ userscripts/user-script-plugin-document.html [ Skip ]
 # Only some ports automatically relayout if a font is installed while the page is open
 fast/text/install-font-style-recalc.html [ Failure ]
 
-# Temporarily disable accessibility bold tests while it's being reimplemented.
-webkit.org/b/237817 fast/text/accessibility-bold-system-font.html [ Pass Failure ]
-webkit.org/b/237817 fast/text/accessibility-bold-system-font-2.html [ Pass ImageOnlyFailure ]
+# Accessibility bold only exists on iOS.
+fast/text/accessibility-bold-system-font [ Pass Failure ]

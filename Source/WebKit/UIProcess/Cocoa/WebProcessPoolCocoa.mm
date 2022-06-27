@@ -219,6 +219,7 @@ static AccessibilityPreferences accessibilityPreferences()
     preferences.darkenSystemColors = _AXDarkenSystemColorsApp(appId.get());
     preferences.invertColorsEnabled = _AXSInvertColorsEnabledApp(appId.get());
 #endif
+    preferences.enhanceTextLegibilityOverall = _AXSEnhanceTextLegibilityEnabled();
     return preferences;
 }
 

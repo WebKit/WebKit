@@ -35,6 +35,7 @@
 #include "SystemFontDatabaseCoreText.h"
 #include <CoreText/SFNTLayoutTypes.h>
 #include <pal/spi/cf/CoreTextSPI.h>
+#include <pal/spi/cocoa/AccessibilitySupportSPI.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
 #include <wtf/MainThread.h>
@@ -349,7 +350,6 @@ VariationDefaultsMap defaultVariationValues(CTFontRef font, ShouldLocalizeAxisNa
     return result;
 }
 
-#if USE(NON_VARIABLE_SYSTEM_FONT)
 static inline bool fontIsSystemFont(CTFontRef font)
 {
     if (isSystemFont(font))
@@ -358,7 +358,6 @@ static inline bool fontIsSystemFont(CTFontRef font)
     auto name = adoptCF(CTFontCopyPostScriptName(font));
     return fontNameIsSystemFont(name.get());
 }
-#endif
 
 // These values were calculated by performing a linear regression on the CSS weights/widths/slopes and Core Text weights/widths/slopes of San Francisco.
 // FIXME: <rdar://problem/31312602> Get the real values from Core Text.
@@ -566,6 +565,28 @@ static void addAttributesForFontPalettes(CFMutableDictionaryRef attributes, cons
     }
 }
 
+static std::optional<bool>& overrideEnhanceTextLegibility()
+{
+    static NeverDestroyed<std::optional<bool>> overrideEnhanceTextLegibility;
+    return overrideEnhanceTextLegibility.get();
+}
+
+void setOverrideEnhanceTextLegibility(bool override)
+{
+    overrideEnhanceTextLegibility() = override;
+}
+
+static bool& platformShouldEnhanceTextLegibility()
+{
+    static NeverDestroyed<bool> shouldEnhanceTextLegibility = _AXSEnhanceTextLegibilityEnabled();
+    return shouldEnhanceTextLegibility.get();
+}
+
+static inline bool shouldEnhanceTextLegibility()
+{
+    return overrideEnhanceTextLegibility().value_or(platformShouldEnhanceTextLegibility());
+}
+
 RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescription& fontDescription, const FontCreationContext& fontCreationContext, bool applyWeightWidthSlopeVariations)
 {
     if (!originalFont)
@@ -648,6 +669,11 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
             width = std::max(std::min(width, static_cast<float>(widthValue->maximum)), static_cast<float>(widthValue->minimum));
         if (auto slopeValue = fontCreationContext.fontFaceCapabilities().weight)
             slope = std::max(std::min(slope, static_cast<float>(slopeValue->maximum)), static_cast<float>(slopeValue->minimum));
+        if (shouldEnhanceTextLegibility() && fontIsSystemFont(originalFont)) {
+            auto ctWeight = denormalizeCTWeight(weight);
+            ctWeight = CTFontGetAccessibilityBoldWeightOfWeight(ctWeight);
+            weight = normalizeCTWeight(ctWeight);
+        }
         if (needsConversion) {
             weight = denormalizeGXWeight(weight);
             width = denormalizeVariationWidth(width);
@@ -811,6 +837,8 @@ void FontCache::platformInit()
 #if PLATFORM(IOS_FAMILY)
     CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), this, &fontCacheRegisteredFontsChangedNotificationCallback, getUIContentSizeCategoryDidChangeNotificationName(), 0, CFNotificationSuspensionBehaviorDeliverImmediately);
 #endif
+
+    CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), this, &fontCacheRegisteredFontsChangedNotificationCallback, kAXSEnhanceTextLegibilityChangedNotification, nullptr, CFNotificationSuspensionBehaviorDeliverImmediately);
 
 #if PLATFORM(MAC)
     CFNotificationCenterRef center = CFNotificationCenterGetLocalCenter();
@@ -1301,6 +1329,8 @@ void FontCache::platformInvalidate()
     // FIXME: Workers need to access FontDatabase.
     FontDatabase::singletonAllowingUserInstalledFonts().clear();
     FontDatabase::singletonDisallowingUserInstalledFonts().clear();
+
+    platformShouldEnhanceTextLegibility() = _AXSEnhanceTextLegibilityEnabled();
 }
 
 static RetainPtr<CTFontRef> fontWithFamilySpecialCase(const AtomString& family, const FontDescription& fontDescription, float size, AllowUserInstalledFonts allowUserInstalledFonts)

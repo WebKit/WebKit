@@ -74,6 +74,7 @@ void addAttributesForWebFonts(CFMutableDictionaryRef attributes, AllowUserInstal
 RetainPtr<CFSetRef> installedFontMandatoryAttributes(AllowUserInstalledFonts);
 float normalizeCTWeight(float);
 float denormalizeCTWeight(float);
+WEBCORE_EXPORT void setOverrideEnhanceTextLegibility(bool);
 
 CFStringRef getUIContentSizeCategoryDidChangeNotificationName();
 WEBCORE_EXPORT void setContentSizeCategory(const String&);

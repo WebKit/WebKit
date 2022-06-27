@@ -565,8 +565,12 @@ ExceptionOr<void> InternalSettings::setShouldMockBoldSystemFontForAccessibility(
 {
     if (!m_page)
         return Exception { InvalidAccessError };
+    FontCache::invalidateAllFontCaches();
+#if PLATFORM(COCOA)
+    setOverrideEnhanceTextLegibility(should);
+#else
     UNUSED_PARAM(should);
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=237817 Implement this.
+#endif
     return { };
 }
 
