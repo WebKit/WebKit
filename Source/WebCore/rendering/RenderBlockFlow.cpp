@@ -3642,6 +3642,18 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
     repaintLogicalTop = contentBoxTop;
     repaintLogicalBottom = std::max(oldBorderBoxBottom, newBorderBoxBottom);
 
+    auto inflateRepaintTopAndBottomWithInkOverflow = [&] {
+        auto* inlineContent = layoutFormattingContextLineLayout.inlineContent();
+        if (!inlineContent || !inlineContent->hasVisualOverflow())
+            return;
+        for (auto& line : inlineContent->lines) {
+            auto inkOverflow = LayoutRect { line.inkOverflow() };
+            repaintLogicalTop = std::min(repaintLogicalTop, inkOverflow.y());
+            repaintLogicalBottom = std::max(repaintLogicalBottom, inkOverflow.maxY());
+        }
+    };
+    inflateRepaintTopAndBottomWithInkOverflow();
+
     setLogicalHeight(newBorderBoxBottom);
 }
 #endif
