@@ -178,9 +178,6 @@ private:
     bool paintAttachment(const RenderObject&, const PaintInfo&, const IntRect&) override;
 #endif
 
-    bool shouldMockBoldSystemFontForAccessibility() const override { return m_shouldMockBoldSystemFontForAccessibility; }
-    void setShouldMockBoldSystemFontForAccessibility(bool shouldMockBoldSystemFontForAccessibility) override { m_shouldMockBoldSystemFontForAccessibility = shouldMockBoldSystemFontForAccessibility; }
-
 private:
     RenderThemeIOS();
     virtual ~RenderThemeIOS() = default;
@@ -213,7 +210,6 @@ private:
     std::unique_ptr<IOSurface> m_smallBadgeSurface;
 #endif
 
-    bool m_shouldMockBoldSystemFontForAccessibility { false };
 };
 
 }

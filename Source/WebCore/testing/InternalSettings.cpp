@@ -71,7 +71,6 @@ InternalSettings::Backup::Backup(Settings& settings)
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
     , m_shouldDeactivateAudioSession(PlatformMediaSessionManager::shouldDeactivateAudioSession())
 #endif
-    , m_shouldMockBoldSystemFontForAccessibility(RenderTheme::singleton().shouldMockBoldSystemFontForAccessibility())
 {
 }
 
@@ -129,10 +128,6 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
     PlatformMediaSessionManager::setShouldDeactivateAudioSession(m_shouldDeactivateAudioSession);
 #endif
-
-    RenderTheme::singleton().setShouldMockBoldSystemFontForAccessibility(m_shouldMockBoldSystemFontForAccessibility);
-    // FIXME: Call setShouldMockBoldSystemFontForAccessibility() on all workers.
-    FontCache::forCurrentThread().setShouldMockBoldSystemFontForAccessibility(m_shouldMockBoldSystemFontForAccessibility);
 
 #if ENABLE(WEB_AUDIO)
     AudioContext::setDefaultSampleRateForTesting(std::nullopt);
@@ -570,9 +565,8 @@ ExceptionOr<void> InternalSettings::setShouldMockBoldSystemFontForAccessibility(
 {
     if (!m_page)
         return Exception { InvalidAccessError };
-    RenderTheme::singleton().setShouldMockBoldSystemFontForAccessibility(should);
-    // FIXME: Call setShouldMockBoldSystemFontForAccessibility() on all workers.
-    FontCache::forCurrentThread().setShouldMockBoldSystemFontForAccessibility(should);
+    UNUSED_PARAM(should);
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=237817 Implement this.
     return { };
 }
 
