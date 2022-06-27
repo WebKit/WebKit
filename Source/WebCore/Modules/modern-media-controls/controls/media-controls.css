@@ -90,13 +90,17 @@
     display: none;
 }
 
-.media-controls > * {
+.media-controls > *,
+.media-controls::before,
+.media-controls::after {
     /* We always want to avoid showing the text selection magnifier on iOS. */
     user-select: none;
     transition: opacity 0.1s linear;
 }
 
-.media-controls.faded > *:not(.placard) {
+.media-controls.faded > *:not(.placard),
+.media-controls.faded::before,
+.media-controls.faded::after {
     opacity: 0;
     pointer-events: none;
     transition-duration: 0.25s;
