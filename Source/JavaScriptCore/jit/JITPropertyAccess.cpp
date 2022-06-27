@@ -1651,7 +1651,7 @@ ALWAYS_INLINE MacroAssemblerCodeRef<JITThunkPtrTag> JIT::generateOpResolveScopeT
     jit.ret();
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
-    ThunkGenerator generator = std::is_same<BytecodeOpcode, OpResolveScope>::value ? slow_op_resolve_scopeGenerator : slow_op_rgs_get_from_scopeGenerator;
+    ThunkGenerator generator = std::is_same<BytecodeOpcode, OpResolveScope>::value ? slow_op_resolve_scopeGenerator : slow_op_rgs_resolve_scopeGenerator;
     patchBuffer.link(slowCase, CodeLocationLabel(vm.getCTIStub(generator).retaggedCode<NoPtrTag>()));
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "resolve_scope thunk");
 }
@@ -1911,7 +1911,7 @@ ALWAYS_INLINE MacroAssemblerCodeRef<JITThunkPtrTag> JIT::generateOpGetFromScopeT
     jit.ret();
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
-    ThunkGenerator generator = std::is_same<BytecodeOpcode, OpResolveScope>::value ? slow_op_get_from_scopeGenerator : slow_op_rgs_resolve_scopeGenerator;
+    ThunkGenerator generator = std::is_same<BytecodeOpcode, OpGetFromScope>::value ? slow_op_get_from_scopeGenerator : slow_op_rgs_get_from_scopeGenerator;
     patchBuffer.link(slowCase, CodeLocationLabel(vm.getCTIStub(generator).retaggedCode<NoPtrTag>()));
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "get_from_scope thunk");
 }
@@ -1969,7 +1969,7 @@ ALWAYS_INLINE MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_get_from_scopeG
     Jump jumpToHandler = jit.jump();
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    auto operationFunction = std::is_same<BytecodeOpcode, OpResolveScope>::value ? operationGetFromScope : operationRGSGetFromScope;
+    auto operationFunction = std::is_same<BytecodeOpcode, OpGetFromScope>::value ? operationGetFromScope : operationRGSGetFromScope;
     patchBuffer.link(operation, FunctionPtr<OperationPtrTag>(operationFunction));
     auto handler = vm.getCTIStub(popThunkStackPreservesAndHandleExceptionGenerator);
     patchBuffer.link(jumpToHandler, CodeLocationLabel(handler.retaggedCode<NoPtrTag>()));
@@ -1994,12 +1994,12 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::generateOpRGSGetFromScopeThunk(VM& vm
     return generateOpGetFromScopeThunkHelper<profiledResolveType, OpResolveAndGetFromScope>(vm);
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_rgs_get_from_scopeGenerator(VM& vm)
+MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_rgs_resolve_scopeGenerator(VM& vm)
 {
     return slow_op_resolve_scopeGenerator_helper<OpResolveAndGetFromScope>(vm);
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_rgs_resolve_scopeGenerator(VM& vm)
+MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_rgs_get_from_scopeGenerator(VM& vm)
 {
     return slow_op_get_from_scopeGenerator_helper<OpResolveAndGetFromScope>(vm);
 }

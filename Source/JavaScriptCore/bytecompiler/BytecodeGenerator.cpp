@@ -36,7 +36,6 @@
 #include "BuiltinNames.h"
 #include "BytecodeGeneratorBaseInlines.h"
 #include "BytecodeGeneratorification.h"
-#include "BytecodeStructs.h"
 #include "BytecodeUseDef.h"
 #include "CatchScope.h"
 #include "DefinePropertyAttributes.h"
@@ -57,9 +56,6 @@
 #include "UnlinkedModuleProgramCodeBlock.h"
 #include "UnlinkedProgramCodeBlock.h"
 #include "VMTrapsInlines.h"
-#include "bytecode/VirtualRegister.h"
-#include "runtime/GetPutInfo.h"
-#include "wtf/Compiler.h"
 #include <wtf/BitVector.h>
 #include <wtf/HashSet.h>
 #include <wtf/StdLibExtras.h>
@@ -2516,7 +2512,8 @@ ALWAYS_INLINE void BytecodeGenerator::emitGetFromScopeHelper(RegisterID* dst, Re
 {
     ASSERT(scope);
 
-    auto validResolveAndGetFromScopePair = [&](){
+#if USE(JSVALUE64)
+    auto validResolveAndGetFromScopePair = [&]() {
         if (m_lastInstruction->opcodeID() != op_resolve_scope)
             return false;
         auto lastOpcode = m_lastInstruction->as<OpResolveScope>();
@@ -2525,15 +2522,17 @@ ALWAYS_INLINE void BytecodeGenerator::emitGetFromScopeHelper(RegisterID* dst, Re
         return true;
     };
 
-    if (validResolveAndGetFromScopePair() && !Options::useCorrectCode()) {
+    if (validResolveAndGetFromScopePair()) {
         auto lastOpcode = m_lastInstruction->as<OpResolveScope>();
         VirtualRegister prevScope = lastOpcode.m_scope;
         ResolveType prevResolveType = lastOpcode.m_resolveType;
         rewind();
         OpResolveAndGetFromScope::emit(this, dst, prevScope, scope, var, prevResolveType, getPutInfo, localScopeDepth, offset);
-    } else {
-        OpGetFromScope::emit(this, dst, scope, var, getPutInfo, localScopeDepth, offset);
+        return;
     }
+#endif
+
+    OpGetFromScope::emit(this, dst, scope, var, getPutInfo, localScopeDepth, offset);
 }
 
 RegisterID* BytecodeGenerator::emitGetFromScope(RegisterID* dst, RegisterID* scope, const Variable& variable, ResolveMode resolveMode)

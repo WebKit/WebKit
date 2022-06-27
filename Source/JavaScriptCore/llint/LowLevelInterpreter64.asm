@@ -2984,7 +2984,7 @@ llintOpWithMetadata(op_resolve_and_get_from_scope, OpResolveAndGetFromScope, mac
         move PC, a1
         cCall2(slowPath)
         restoreStateAfterCCall()
-        bpneq r1, CallerFrame, .gFromScope
+        bpneq r1, CallerFrame, .gFromScope # r1 == nullptr(0x00) indicates that we need handle the execption cases in the slow path calls.
     end
 
     resolveScopeHelper(OpResolveAndGetFromScope, get, dispatch, metadata, gotoGetFromScope, callSlowPathRGSResolveScope, _slow_path_rgs_resolve_scope)
