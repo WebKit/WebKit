@@ -377,6 +377,11 @@ CSSDocumentation = {
         "syntax": "<single-animation-play-state>#",
         "url": "https://developer.mozilla.org/docs/Web/CSS/animation-play-state"
     },
+    "animation-timeline": {
+        "description": "Specifies the names of one or more @scroll-timeline at-rules to describe the element's scroll animations.",
+        "syntax": "<single-animation-timeline>#",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/animation-timeline"
+    },
     "animation-timing-function": {
         "description": "Describes how the animation will progress over one cycle of its duration.",
         "syntax": "<easing-function>#",
@@ -892,17 +897,12 @@ CSSDocumentation = {
         "syntax": "<color>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/color"
     },
-    "color-adjust": {
-        "description": "The color-adjust property is a non-standard CSS extension that can be used to force printing of background colors and images in browsers based on the WebKit engine.",
-        "syntax": "economy | exact",
-        "url": "https://developer.mozilla.org/docs/Web/CSS/color-adjust"
-    },
     "color-interpolation-filters": {
         "description": "Specifies the color space for imaging operations performed via filter effects."
     },
     "color-scheme": {
         "description": "The color-scheme CSS property allows an element to indicate which color schemes it can comfortably be rendered in.",
-        "syntax": "normal | [ light | dark | <custom-ident> ]+",
+        "syntax": "normal | [ light | dark | <custom-ident> ]+ && only?",
         "url": "https://developer.mozilla.org/docs/Web/CSS/color-scheme"
     },
     "column-count": {
@@ -961,7 +961,7 @@ CSSDocumentation = {
     },
     "content": {
         "description": "Determines which page-based occurrence of a given element is applied to a counter or string value.",
-        "syntax": "normal | none | [ <content-replacement> | <content-list> ] [/ <string> ]?",
+        "syntax": "normal | none | [ <content-replacement> | <content-list> ] [/ [ <string> | <counter> ]+ ]?",
         "url": "https://developer.mozilla.org/docs/Web/CSS/content"
     },
     "content-visibility": {
@@ -971,17 +971,17 @@ CSSDocumentation = {
     },
     "counter-increment": {
         "description": "Manipulate the value of existing counters.",
-        "syntax": "[ <custom-ident> <integer>? ]+ | none",
+        "syntax": "[ <counter-name> <integer>? ]+ | none",
         "url": "https://developer.mozilla.org/docs/Web/CSS/counter-increment"
     },
     "counter-reset": {
         "description": "Property accepts one or more names of counters (identifiers), each one optionally followed by an integer. The integer gives the value that the counter is set to on each occurrence of the element.",
-        "syntax": "[ <custom-ident> <integer>? ]+ | none",
+        "syntax": "[ <counter-name> <integer>? | <reversed-counter-name> <integer>? ]+ | none",
         "url": "https://developer.mozilla.org/docs/Web/CSS/counter-reset"
     },
     "counter-set": {
         "description": "The counter-set CSS property sets a CSS counter to a given value. It manipulates the value of existing counters, and will only create new counters if there isn't already a counter of the given name on the element.",
-        "syntax": "[ <custom-ident> <integer>? ]+ | none",
+        "syntax": "[ <counter-name> <integer>? ]+ | none",
         "url": "https://developer.mozilla.org/docs/Web/CSS/counter-set"
     },
     "cursor": {
@@ -1296,6 +1296,11 @@ CSSDocumentation = {
         "syntax": "<viewport-length>{1,2}",
         "url": "https://developer.mozilla.org/docs/Web/CSS/height"
     },
+    "hyphenate-character": {
+        "description": "A hyphenate character used at the end of a line.",
+        "syntax": "auto | <string>",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/hyphenate-character"
+    },
     "hyphens": {
         "description": "Controls whether hyphenation is allowed to create more break opportunities within a line of text.",
         "syntax": "none | manual | auto",
@@ -1342,6 +1347,10 @@ CSSDocumentation = {
         "description": "Size of an element in the direction specified by 'writing-mode'.",
         "syntax": "<'width'>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/inline-size"
+    },
+    "input-security": {
+        "description": "Enables or disables the obscuring a sensitive test input.",
+        "syntax": "auto | none"
     },
     "inset": {
         "description": "The inset CSS property defines the logical block and inline start and end offsets of an element, which map to physical offsets depending on the element's writing mode, directionality, and text orientation. It corresponds to the top and bottom, or right and left properties depending on the values defined for writing-mode, direction, and text-orientation.",
@@ -1645,7 +1654,7 @@ CSSDocumentation = {
         "url": "https://developer.mozilla.org/docs/Web/CSS/max-inline-size"
     },
     "max-lines": {
-        "description": "The max-liens property forces a break after a set number of lines",
+        "description": "The max-lines property forces a break after a set number of lines",
         "syntax": "none | <integer>"
     },
     "max-width": {
@@ -2000,6 +2009,11 @@ CSSDocumentation = {
     "prefix": {
         "description": "@counter-style descriptor. Specifies a <symbol> that is prepended to the marker representation.",
         "syntax": "<symbol>"
+    },
+    "print-color-adjust": {
+        "description": "Defines what optimization the user agent is allowed to do when adjusting the appearance for an output device.",
+        "syntax": "economy | exact",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/print-color-adjust"
     },
     "quotes": {
         "description": "Specifies quotation marks for any number of embedded quotations.",
@@ -2566,7 +2580,7 @@ CSSDocumentation = {
         "url": "https://developer.mozilla.org/docs/Web/CSS/visibility"
     },
     "white-space": {
-        "description": "Shorthand property for the 'white-space-collapsing' and 'text-wrap' properties.",
+        "description": "Specifies how whitespace is handled in an element.",
         "syntax": "normal | pre | nowrap | pre-wrap | pre-line | break-spaces",
         "url": "https://developer.mozilla.org/docs/Web/CSS/white-space"
     },
