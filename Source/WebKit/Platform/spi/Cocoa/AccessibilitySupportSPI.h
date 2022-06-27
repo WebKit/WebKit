@@ -61,6 +61,7 @@ AXValueState _AXSIncreaseButtonLegibilityApp(CFStringRef appID);
 AXValueState _AXSEnhanceTextLegibilityEnabledApp(CFStringRef appID);
 AXValueState _AXDarkenSystemColorsApp(CFStringRef appID);
 AXValueState _AXSInvertColorsEnabledApp(CFStringRef appID);
+Boolean _AXSEnhanceTextLegibilityEnabled();
 
 void _AXSSetReduceMotionEnabledApp(AXValueState enabled, CFStringRef appID);
 void _AXSSetIncreaseButtonLegibilityApp(AXValueState enabled, CFStringRef appID);

@@ -47,4 +47,7 @@ WTF_EXTERN_C_BEGIN
 AXSIsolatedTreeMode _AXSIsolatedTreeMode(void);
 void _AXSSetIsolatedTreeMode(AXSIsolatedTreeMode);
 
+extern CFStringRef kAXSEnhanceTextLegibilityChangedNotification;
+Boolean _AXSEnhanceTextLegibilityEnabled();
+
 WTF_EXTERN_C_END
