@@ -336,14 +336,16 @@ API::UserScript& webkitUserScriptGetUserScript(WebKitUserScript* userScript)
 
 struct _WebKitUserContentFilter {
     _WebKitUserContentFilter(RefPtr<API::ContentRuleList>&& contentRuleList)
-        : identifier(contentRuleList->name().utf8())
-        , contentRuleList(WTFMove(contentRuleList))
+        : contentRuleList(WTFMove(contentRuleList))
+#if ENABLE(CONTENT_EXTENSIONS)
+        , identifier(this->contentRuleList->name().utf8())
+#endif
         , referenceCount(1)
     {
     }
 
-    CString identifier;
     RefPtr<API::ContentRuleList> contentRuleList;
+    CString identifier;
     int referenceCount;
 };
 

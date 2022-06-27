@@ -386,7 +386,9 @@ void webkit_user_content_manager_add_filter(WebKitUserContentManager* manager, W
 {
     g_return_if_fail(WEBKIT_IS_USER_CONTENT_MANAGER(manager));
     g_return_if_fail(filter);
+#if ENABLE(CONTENT_EXTENSIONS)
     manager->priv->userContentController->addContentRuleList(webkitUserContentFilterGetContentRuleList(filter));
+#endif
 }
 
 /**
@@ -402,7 +404,9 @@ void webkit_user_content_manager_remove_filter(WebKitUserContentManager* manager
 {
     g_return_if_fail(WEBKIT_IS_USER_CONTENT_MANAGER(manager));
     g_return_if_fail(filter);
+#if ENABLE(CONTENT_EXTENSIONS)
     manager->priv->userContentController->removeContentRuleList(webkitUserContentFilterGetContentRuleList(filter).name());
+#endif
 }
 
 /**
@@ -420,7 +424,9 @@ void webkit_user_content_manager_remove_filter_by_id(WebKitUserContentManager* m
 {
     g_return_if_fail(WEBKIT_IS_USER_CONTENT_MANAGER(manager));
     g_return_if_fail(filterId);
+#if ENABLE(CONTENT_EXTENSIONS)
     manager->priv->userContentController->removeContentRuleList(String::fromUTF8(filterId));
+#endif
 }
 
 /**
@@ -434,7 +440,9 @@ void webkit_user_content_manager_remove_filter_by_id(WebKitUserContentManager* m
 void webkit_user_content_manager_remove_all_filters(WebKitUserContentManager* manager)
 {
     g_return_if_fail(WEBKIT_IS_USER_CONTENT_MANAGER(manager));
+#if ENABLE(CONTENT_EXTENSIONS)
     manager->priv->userContentController->removeAllContentRuleLists();
+#endif
 }
 
 WebUserContentControllerProxy* webkitUserContentManagerGetUserContentControllerProxy(WebKitUserContentManager* manager)
