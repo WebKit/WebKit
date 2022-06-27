@@ -108,7 +108,7 @@ void SharedWorkerManager::scriptLoadedSuccessfully(SharedWorkerScriptLoader& loa
         ASSERT(ports.size() == 1);
         auto port = ports[0];
         ASSERT(port);
-        auto event = MessageEvent::create(WTFMove(ports), serializedScriptValue.releaseNonNull(), sourceOrigin, { }, port);
+        auto event = MessageEvent::create(serializedScriptValue.releaseNonNull(), sourceOrigin, { }, port, WTFMove(ports));
         event->initEvent(eventNames().connectEvent, false, false);
 
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(is<SharedWorkerGlobalScope>(scriptExecutionContext));
