@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <script src="../resources/inspector-test.js"></script>
 <script>
-function triggerOverrideLoad(urlSuffix) {
+function triggerOverrideLoad(urlSuffix, headers = {}) {
     let url = "http://127.0.0.1:8000/inspector/network/resources/override.txt";
     if (urlSuffix)
         url += urlSuffix;
-    fetch(url).then(() => {
+    fetch(url, {headers}).then(() => {
         TestPage.dispatchEventToFrontend("LoadComplete");
     });
 }
@@ -214,8 +214,8 @@ function test()
     });
 
     addTestCase({
-        name: "LocalResourceOverride.Headers.Passthrough",
-        description: "Load an override without modifying headers.",
+        name: "LocalResourceOverride.Headers.Empty",
+        description: "Tests request headers interception removing all headers.",
         expression: `triggerOverrideLoad()`,
         overrides: [{
             url: "http://127.0.0.1:8000/inspector/network/resources/override.txt",
@@ -225,6 +225,38 @@ function test()
             responseStatusCode: 200,
             responseStatusText: "OK",
             responseHeaders: {},
+        }]
+    });
+
+    addTestCase({
+        name: "LocalResourceOverride.Headers.Passthrough.Add",
+        description: "Tests request headers passthrough with a new header.",
+        expression: `triggerOverrideLoad()`,
+        overrides: [{
+            url: "http://127.0.0.1:8000/inspector/network/resources/override.txt",
+            responseMIMEType: "text/plain",
+            responseContent: "PASS",
+            responseBase64Encoded: false,
+            responseStatusCode: 200,
+            responseStatusText: "OK",
+            responseHeaders: {"X-Expected": "PASS"},
+            isPassthrough: true,
+        }]
+    });
+
+    addTestCase({
+        name: "LocalResourceOverride.Headers.Passthrough.Replace",
+        description: "Tests request headers passthrough with an overridden header.",
+        expression: `triggerOverrideLoad("", {"X-Expected": "FAIL"})`,
+        overrides: [{
+            url: "http://127.0.0.1:8000/inspector/network/resources/override.txt",
+            responseMIMEType: "text/plain",
+            responseContent: "PASS",
+            responseBase64Encoded: false,
+            responseStatusCode: 200,
+            responseStatusText: "OK",
+            responseHeaders: {"X-Expected": "PASS"},
+            isPassthrough: true,
         }]
     });
 

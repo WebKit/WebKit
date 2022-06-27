@@ -25,7 +25,7 @@
 
 WI.LocalResourceOverride = class LocalResourceOverride extends WI.Object
 {
-    constructor(url, type, localResource, {resourceErrorType, isCaseSensitive, isRegex, disabled} = {})
+    constructor(url, type, localResource, {resourceErrorType, isCaseSensitive, isRegex, isPassthrough, disabled} = {})
     {
         console.assert(url && typeof url === "string", url);
         console.assert(Object.values(WI.LocalResourceOverride.InterceptType).includes(type), type);
@@ -34,6 +34,7 @@ WI.LocalResourceOverride = class LocalResourceOverride extends WI.Object
         console.assert(!resourceErrorType || Object.values(WI.LocalResourceOverride.ResourceErrorType).includes(resourceErrorType), resourceErrorType);
         console.assert(isCaseSensitive === undefined || typeof isCaseSensitive === "boolean", isCaseSensitive);
         console.assert(isRegex === undefined || typeof isRegex === "boolean", isRegex);
+        console.assert(isPassthrough === undefined || typeof isPassthrough === "boolean", isPassthrough);
         console.assert(disabled === undefined || typeof disabled === "boolean", disabled);
 
         super();
@@ -45,6 +46,7 @@ WI.LocalResourceOverride = class LocalResourceOverride extends WI.Object
         this._resourceErrorType = resourceErrorType || WI.LocalResourceOverride.ResourceErrorType.General;
         this._isCaseSensitive = isCaseSensitive !== undefined ? isCaseSensitive : true;
         this._isRegex = isRegex !== undefined ? isRegex : false;
+        this._isPassthrough = isPassthrough !== undefined ? isPassthrough : false;
         this._disabled = disabled !== undefined ? disabled : false;
 
         this._localResource._localResourceOverride = this;
@@ -52,7 +54,7 @@ WI.LocalResourceOverride = class LocalResourceOverride extends WI.Object
 
     // Static
 
-    static create(url, type, {requestURL, requestMethod, requestHeaders, requestData, responseMIMEType, responseContent, responseBase64Encoded, responseStatusCode, responseStatusText, responseHeaders, resourceErrorType, isCaseSensitive, isRegex, disabled} = {})
+    static create(url, type, {requestURL, requestMethod, requestHeaders, requestData, responseMIMEType, responseContent, responseBase64Encoded, responseStatusCode, responseStatusText, responseHeaders, resourceErrorType, isCaseSensitive, isRegex, isPassthrough, disabled} = {})
     {
         let localResource = new WI.LocalResource({
             request: {
@@ -70,7 +72,7 @@ WI.LocalResourceOverride = class LocalResourceOverride extends WI.Object
                 base64Encoded: responseBase64Encoded,
             },
         });
-        return new WI.LocalResourceOverride(url, type, localResource, {resourceErrorType, isCaseSensitive, isRegex, disabled});
+        return new WI.LocalResourceOverride(url, type, localResource, {resourceErrorType, isCaseSensitive, isRegex, isPassthrough, disabled});
     }
 
     static displayNameForNetworkStageOfType(type)
@@ -133,7 +135,7 @@ WI.LocalResourceOverride = class LocalResourceOverride extends WI.Object
 
     static fromJSON(json)
     {
-        let {url, type, localResource: localResourceJSON, resourceErrorType, isCaseSensitive, isRegex, disabled} = json;
+        let {url, type, localResource: localResourceJSON, resourceErrorType, isCaseSensitive, isRegex, isPassthrough, disabled} = json;
 
         let localResource = WI.LocalResource.fromJSON(localResourceJSON);
 
@@ -141,7 +143,7 @@ WI.LocalResourceOverride = class LocalResourceOverride extends WI.Object
         url ??= localResource.url;
         type ??= WI.LocalResourceOverride.InterceptType.Response;
 
-        return new WI.LocalResourceOverride(url, type, localResource, {resourceErrorType, isCaseSensitive, isRegex, disabled});
+        return new WI.LocalResourceOverride(url, type, localResource, {resourceErrorType, isCaseSensitive, isRegex, isPassthrough, disabled});
     }
 
     toJSON(key)
@@ -152,6 +154,7 @@ WI.LocalResourceOverride = class LocalResourceOverride extends WI.Object
             localResource: this._localResource.toJSON(key),
             isCaseSensitive: this._isCaseSensitive,
             isRegex: this._isRegex,
+            isPassthrough: this._isPassthrough,
             disabled: this._disabled,
         };
 
@@ -171,6 +174,7 @@ WI.LocalResourceOverride = class LocalResourceOverride extends WI.Object
     get localResource() { return this._localResource; }
     get isCaseSensitive() { return this._isCaseSensitive; }
     get isRegex() { return this._isRegex; }
+    get isPassthrough() { return this._isPassthrough; }
 
     get urlComponents()
     {

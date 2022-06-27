@@ -33,6 +33,7 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
         this._urlCodeMirror = null;
         this._isCaseSensitiveCheckbox = null;
         this._isRegexCheckbox = null;
+        this._isPassthroughCheckbox = null;
         this._requestURLCodeMirror = null;
         this._methodSelectElement = null;
         this._mimeTypeCodeMirror = null;
@@ -60,6 +61,7 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
             url: this._urlCodeMirror.getValue(),
             isCaseSensitive: !this._isCaseSensitiveCheckbox || this._isCaseSensitiveCheckbox.checked,
             isRegex: !!this._isRegexCheckbox?.checked,
+            isPassthrough: this._isPassthroughCheckbox.checked,
         };
 
         if (!data.url)
@@ -391,19 +393,28 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
             this._headersDataGrid.startEditingNode(newNode);
         });
 
-        let optionsRowElement = null;
+        let optionsRowElement = table.appendChild(document.createElement("tr"));
+        optionsRowElement.className = "options";
+
+        let optionsHeader = optionsRowElement.appendChild(document.createElement("th"));
+
+        let optionsLabel = optionsHeader.appendChild(document.createElement("label"));
+        optionsLabel.textContent = WI.UIString("Options");
+
+        let optionsData = optionsRowElement.appendChild(document.createElement("td"));
+
+        let isPassthroughLabel = optionsData.appendChild(document.createElement("label"));
+        isPassthroughLabel.className = "is-passthrough";
+
+        this._isPassthroughCheckbox = isPassthroughLabel.appendChild(document.createElement("input"));
+        this._isPassthroughCheckbox.type = "checkbox";
+        this._isPassthroughCheckbox.checked = !!localResourceOverride?.isPassthrough;
+
+        let isPassthroughLabelText = isPassthroughLabel.appendChild(document.createTextNode(""));
+
+        let skipNetworkLabel = null;
         if (WI.NetworkManager.supportsOverridingRequestsWithResponses()) {
-            optionsRowElement = table.appendChild(document.createElement("tr"));
-            optionsRowElement.className = "options";
-
-            let optionsHeader = optionsRowElement.appendChild(document.createElement("th"));
-
-            let optionsLabel = optionsHeader.appendChild(document.createElement("label"));
-            optionsLabel.textContent = WI.UIString("Options");
-
-            let optionsData = optionsRowElement.appendChild(document.createElement("td"));
-
-            let skipNetworkLabel = optionsData.appendChild(document.createElement("label"));
+            skipNetworkLabel = optionsData.appendChild(document.createElement("label"));
             skipNetworkLabel.className = "skip-network";
 
             this._skipNetworkCheckbox = skipNetworkLabel.appendChild(document.createElement("input"));
@@ -532,23 +543,28 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
             mimeTypeRow.element.hidden = isRequest || isBlock;
             statusCodeRow.element.hidden = isRequest || isBlock;
             headersRow.hidden = isBlock;
-            if (optionsRowElement)
-                optionsRowElement.hidden = isRequest || isBlock;
+
+            isPassthroughLabel.hidden = isBlock;
+            if (skipNetworkLabel)
+                skipNetworkLabel.hidden = isRequest || isBlock;
+            optionsRowElement.hidden = isPassthroughLabel.hidden && (skipNetworkLabel?.hidden ?? true);
 
             if (isRequest) {
                 this._requestURLCodeMirror.refresh();
 
                 if (contentTypeDataGridNode.parent)
                     this._headersDataGrid.removeChild(contentTypeDataGridNode);
-            }
 
-            if (isResponse) {
+                isPassthroughLabelText.textContent = WI.UIString("Include original request data");
+            } else if (isResponse) {
                 this._mimeTypeCodeMirror.refresh();
                 this._statusCodeCodeMirror.refresh();
                 this._statusTextCodeMirror.refresh();
 
                 if (!contentTypeDataGridNode.parent)
                     this._headersDataGrid.insertChild(contentTypeDataGridNode, 0);
+
+                isPassthroughLabelText.textContent = WI.UIString("Include original repsonse data");
             }
 
             toggleHeadersDataGridVisibility();

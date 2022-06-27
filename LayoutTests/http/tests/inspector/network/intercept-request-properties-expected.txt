@@ -79,7 +79,17 @@ Request details:
   Request Headers:
     X-Value: overridden
 
--- Running test case: Network.interceptRequest.Headers.Passthrough
+-- Running test case: Network.interceptRequest.Headers.Empty
+Triggering load...
+Request details:
+  URI: /inspector/network/resources/intercept-echo.py
+  Response URL: http://127.0.0.1:8000/inspector/network/resources/intercept-echo.py
+  Method: POST
+  Request Headers:
+  Post:
+    value: overridden
+
+-- Running test case: Network.interceptRequest.Headers.Passthrough.Add
 Triggering load...
 Request details:
   URI: /inspector/network/resources/intercept-echo.py
@@ -87,6 +97,19 @@ Request details:
   Method: POST
   Request Headers:
     Content-Type: application/x-www-form-urlencoded
+    X-Expected: PASS
+  Post:
+    value: overridden
+
+-- Running test case: Network.interceptRequest.Headers.Passthrough.Replace
+Triggering load...
+Request details:
+  URI: /inspector/network/resources/intercept-echo.py
+  Response URL: http://127.0.0.1:8000/inspector/network/resources/intercept-echo.py
+  Method: POST
+  Request Headers:
+    Content-Type: application/x-www-form-urlencoded
+    X-Expected: PASS
   Post:
     value: overridden
 

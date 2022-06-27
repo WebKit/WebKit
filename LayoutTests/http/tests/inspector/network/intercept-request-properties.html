@@ -17,13 +17,13 @@ async function fetchData(url)
     }
 }
 
-async function postData(url)
+async function postData(url, headers = {})
 {
+    headers["Content-Type"] = "application/x-www-form-urlencoded"
+
     let response = await fetch(url, {
         method: "POST",
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-        },
+        headers,
         body: "value=original",
     });
     // Eval to accept trailing coma JSON.
@@ -164,12 +164,37 @@ function test()
     });
 
     addTestCase({
-        name: "Network.interceptRequest.Headers.Passthrough",
-        description: "Tests request headers passthrough",
+        name: "Network.interceptRequest.Headers.Empty",
+        description: "Tests request headers interception removing all headers",
         expression: "postData('resources/intercept-echo.py')",
         override: {
             requestMethod: "POST",
             requestData: "value=overridden",
+            requestHeaders: {},
+        },
+    });
+
+    addTestCase({
+        name: "Network.interceptRequest.Headers.Passthrough.Add",
+        description: "Tests request headers passthrough with a new header",
+        expression: "postData('resources/intercept-echo.py')",
+        override: {
+            requestMethod: "POST",
+            requestData: "value=overridden",
+            requestHeaders: { "X-Expected": "PASS" },
+            isPassthrough: true,
+        },
+    });
+
+    addTestCase({
+        name: "Network.interceptRequest.Headers.Passthrough.Replace",
+        description: "Tests request headers passthrough with an overridden header",
+        expression: "postData('resources/intercept-echo.py', {'X-Expected': 'FAIL'})",
+        override: {
+            requestMethod: "POST",
+            requestData: "value=overridden",
+            requestHeaders: { "X-Expected": "PASS" },
+            isPassthrough: true,
         },
     });
 

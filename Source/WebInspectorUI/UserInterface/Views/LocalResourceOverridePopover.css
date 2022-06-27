@@ -47,8 +47,16 @@
     color: hsl(0, 0%, 34%);
 }
 
+.popover .local-resource-override-popover-content > table > tr.options > th {
+    line-height: 17px;
+}
+
 .popover .local-resource-override-popover-content > table > tr > td {
     padding-left: 4px;
+}
+
+.popover .local-resource-override-popover-content > table > tr.options > td > label:not([hidden]) {
+    display: block;
 }
 
 .popover .local-resource-override-popover-content .editor {
@@ -100,10 +108,6 @@
 
 .popover .local-resource-override-popover-content .data-grid tr.header-content-type > :matches(.name-column, .value-column) {
     opacity: 0.5;
-}
-
-.popover .local-resource-override-popover-content .options td {
-    vertical-align: bottom;
 }
 
 .popover .local-resource-override-popover-content .reference-page-link-container {

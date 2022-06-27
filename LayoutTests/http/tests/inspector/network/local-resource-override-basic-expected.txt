@@ -127,7 +127,19 @@ Response Headers:
   X-Expected: PASS
 Content: PASS
 
--- Running test case: LocalResourceOverride.Headers.Passthrough
+-- Running test case: LocalResourceOverride.Headers.Empty
+Creating Local Resource Override for: http://127.0.0.1:8000/inspector/network/resources/override.txt
+Triggering load...
+Resource Loaded:
+URL: http://127.0.0.1:8000/inspector/network/resources/override.txt
+MIME Type: text/plain
+Status: 200 OK
+Response Source: Symbol(inspector-override)
+Response Headers:
+  Content-Type: text/plain
+Content: PASS
+
+-- Running test case: LocalResourceOverride.Headers.Passthrough.Add
 Creating Local Resource Override for: http://127.0.0.1:8000/inspector/network/resources/override.txt
 Triggering load...
 Resource Loaded:
@@ -145,6 +157,28 @@ Response Headers:
   Keep-Alive: <filtered>
   Last-Modified: <filtered>
   Server: <filtered>
+  X-Expected: PASS
+Content: PASS
+
+-- Running test case: LocalResourceOverride.Headers.Passthrough.Replace
+Creating Local Resource Override for: http://127.0.0.1:8000/inspector/network/resources/override.txt
+Triggering load...
+Resource Loaded:
+URL: http://127.0.0.1:8000/inspector/network/resources/override.txt
+MIME Type: text/plain
+Status: 200 OK
+Response Source: Symbol(inspector-override)
+Response Headers:
+  Accept-Ranges: <filtered>
+  Connection: <filtered>
+  Content-Length: 29
+  Content-Type: text/plain
+  Date: <filtered>
+  ETag: <filtered>
+  Keep-Alive: <filtered>
+  Last-Modified: <filtered>
+  Server: <filtered>
+  X-Expected: PASS
 Content: PASS
 
 -- Running test case: LocalResourceOverride.404

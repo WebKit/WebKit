@@ -966,6 +966,9 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             if (localResourceOverride.disabled)
                 continue;
 
+            let isPassthrough = localResourceOverride.isPassthrough;
+            let originalHeaders = isPassthrough ? request.headers : {};
+
             let localResource = localResourceOverride.localResource;
             await localResource.requestContent();
 
@@ -983,9 +986,17 @@ WI.NetworkManager = class NetworkManager extends WI.Object
                 target.NetworkAgent.interceptWithRequest.invoke({
                     requestId,
                     url: localResourceOverride.generateRequestRedirectURL(request.url) ?? undefined,
-                    method: localResource.requestMethod ?? undefined,
-                    headers: !isEmptyObject(localResource.requestHeaders) ? localResource.requestHeaders : undefined,
-                    postData: (WI.HTTPUtilities.RequestMethodsWithBody.has(localResource.requestMethod) && localResource.requestData) ? btoa(localResource.requestData) : undefined,
+                    method: localResource.requestMethod ?? (isPassthrough ? request.method : ""),
+                    headers: {...originalHeaders, ...localResource.requestHeaders},
+                    postData: (function() {
+                        if (!WI.HTTPUtilities.RequestMethodsWithBody.has(localResource.requestMethod))
+                            return undefined;
+                        if (localResource.requestData ?? false)
+                            return btoa(localResource.requestData);
+                        if (isPassthrough)
+                            return request.data;
+                        return "";
+                    })(),
                 });
                 return;
             }
@@ -996,10 +1007,18 @@ WI.NetworkManager = class NetworkManager extends WI.Object
                     requestId,
                     content: revision.content,
                     base64Encoded: !!revision.base64Encoded,
-                    mimeType: revision.mimeType ?? undefined,
+                    mimeType: revision.mimeType ?? "text/plain",
                     status: !isNaN(localResource.statusCode) ? localResource.statusCode : 200,
-                    statusText: !isNaN(localResource.statusCode) ? (localResource.statusText ?? "") : WI.HTTPUtilities.statusTextForStatusCode(200),
-                    headers: localResource.responseHeaders,
+                    statusText: (function() {
+                        if (localResource.statusText ?? false)
+                            return localResource.statusText;
+
+                        if (!isNaN(localResource.statusCode))
+                            return WI.HTTPUtilities.statusTextForStatusCode(localResource.statusCode);
+
+                        return WI.HTTPUtilities.statusTextForStatusCode(200);
+                    })(),
+                    headers: {...originalHeaders, ...localResource.responseHeaders},
                 });
                 return;
             }
@@ -1020,6 +1039,9 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             if (localResourceOverride.disabled)
                 continue;
 
+            let isPassthrough = localResourceOverride.isPassthrough;
+            let originalHeaders = isPassthrough ? response.headers : {};
+
             let localResource = localResourceOverride.localResource;
             await localResource.requestContent();
 
@@ -1032,10 +1054,29 @@ WI.NetworkManager = class NetworkManager extends WI.Object
                     requestId,
                     content: revision.content,
                     base64Encoded: !!revision.base64Encoded,
-                    mimeType: revision.mimeType ?? undefined,
-                    status: !isNaN(localResource.statusCode) ? localResource.statusCode : undefined,
-                    statusText: !isNaN(localResource.statusCode) ? (localResource.statusText ?? "") : undefined,
-                    headers: !isEmptyObject(localResource.responseHeaders) ? localResource.responseHeaders : undefined,
+                    mimeType: revision.mimeType ?? (isPassthrough ? response.mimeType : "text/plain"),
+                    status: (function() {
+                        if (!isNaN(localResource.statusCode))
+                            return localResource.statusCode;
+
+                        if (isPassthrough)
+                            return response.statusCode;
+
+                        return 200;
+                    })(),
+                    statusText: (function() {
+                        if (localResource.statusText ?? false)
+                            return localResource.statusText;
+
+                        if (isPassthrough)
+                            return response.statusText;
+
+                        if (!isNaN(localResource.statusCode))
+                            return WI.HTTPUtilities.statusTextForStatusCode(localResource.statusCode);
+
+                        return WI.HTTPUtilities.statusTextForStatusCode(200);
+                    })(),
+                    headers: {...originalHeaders, ...localResource.responseHeaders},
                 });
                 return;
             }
