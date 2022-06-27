@@ -167,6 +167,13 @@ void GStreamerDataChannelHandler::close()
     g_signal_emit_by_name(m_channel.get(), "close");
 }
 
+std::optional<unsigned short> GStreamerDataChannelHandler::id() const
+{
+    int id;
+    g_object_get(m_channel.get(), "id", &id, nullptr);
+    return id != -1 ? std::make_optional(id) : std::nullopt;
+}
+
 void GStreamerDataChannelHandler::checkState()
 {
     ASSERT(m_clientLock.isHeld());

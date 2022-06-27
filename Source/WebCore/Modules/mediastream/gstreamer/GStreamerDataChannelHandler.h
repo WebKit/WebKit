@@ -52,6 +52,7 @@ private:
     void setClient(RTCDataChannelHandlerClient&, ScriptExecutionContextIdentifier) final;
     bool sendStringData(const CString&) final;
     bool sendRawData(const uint8_t*, size_t) final;
+    std::optional<unsigned short> id() const final;
     void close() final;
 
     void onMessageData(GBytes*);

@@ -891,6 +891,9 @@ webkit.org/b/235885 http/wpt/webrtc/transfer-datachannel-service-worker.https.ht
 webkit.org/b/235885 fast/mediastream/RTCPeerConnection-statsSelector.html [ Skip ]
 webkit.org/b/235885 fast/mediastream/RTCPeerConnection-datachannel.html [ Skip ]
 
+# Expected to pass since bug #242025 was fixed.
+webrtc/datachannel/creation.html [ Pass ]
+
 # The GstWebRTC backend doesn't support transforms yet.
 webkit.org/b/235885 http/wpt/webrtc/audiovideo-script-transform.html [ Skip ]
 webkit.org/b/235885 http/wpt/webrtc/video-script-transform-keyframe-only.html [ Skip ]
