@@ -28,6 +28,7 @@ const Icons = {
     AirplayPlacard  : { name: "airplay-placard", type: "png", label: UIString("AirPlay") },
     Brightness      : { name: "Brightness", type: "svg", label: UIString("Adjust Brightness") },
     Close           : { name: "X", type: "svg", label: UIString("Close") },
+    Ellipsis        : { name: "Ellipsis", type: "svg", label: UIString("More\u2026") },
     EnterFullscreen : { name: "EnterFullscreen", type: "svg", label: UIString("Enter Full Screen") },
     EnterPiP        : { name: "PipIn", type: "svg", label: UIString("Enter Picture in Picture") },
     ExitFullscreen  : { name: "ExitFullscreen", type: "svg", label: UIString("Exit Full Screen") },
