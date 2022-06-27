@@ -43,6 +43,7 @@ depends:
 - sdk/libkate.bst
 - sdk/libmanette.bst
 - sdk/libnotify.bst
+- sdk/libsecret.bst
 - sdk/libsoup3.bst
 - sdk/libusrsctp.bst
 - sdk/libwpe.bst

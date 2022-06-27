@@ -1,8 +1,8 @@
 kind: meson
 sources:
 - kind: tar
-  url: gst_downloads:gstreamer/gstreamer-1.20.2.tar.xz
-  ref: df24e8792691a02dfe003b3833a51f1dbc6c3331ae625d143b17da939ceb5e0a
+  url: gst_downloads:gstreamer/gstreamer-1.20.3.tar.xz
+  ref: 607daf64bbbd5fb18af9d17e21c0d22c4d702fffe83b23cb22d1b1af2ca23a2a
 build-depends:
 - freedesktop-sdk.bst:components/gobject-introspection.bst
 - freedesktop-sdk.bst:public-stacks/buildsystem-meson.bst

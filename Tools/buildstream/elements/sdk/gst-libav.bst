@@ -1,8 +1,8 @@
 kind: meson
 sources:
 - kind: tar
-  url: gst_downloads:gst-libav/gst-libav-1.20.2.tar.xz
-  ref: b5c531dd8413bf771c79dab66b8e389f20b3991f745115133f0fa0b8e32809f9
+  url: gst_downloads:gst-libav/gst-libav-1.20.3.tar.xz
+  ref: 3fedd10560fcdfaa1b6462cbf79a38c4e7b57d7f390359393fc0cef6dbf27dfe
 build-depends:
 - freedesktop-sdk.bst:public-stacks/buildsystem-meson.bst
 - freedesktop-sdk.bst:components/nasm.bst
