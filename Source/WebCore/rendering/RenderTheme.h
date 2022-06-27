@@ -246,9 +246,6 @@ public:
     enum class InnerSpinButtonLayout { Vertical, HorizontalUpLeft, HorizontalUpRight };
     virtual InnerSpinButtonLayout innerSpinButtonLayout(const RenderObject&) const { return InnerSpinButtonLayout::Vertical; }
 
-    virtual bool shouldMockBoldSystemFontForAccessibility() const { return false; }
-    virtual void setShouldMockBoldSystemFontForAccessibility(bool) { }
-
 #if USE(SYSTEM_PREVIEW)
     virtual void paintSystemPreviewBadge(Image&, const PaintInfo&, const FloatRect&);
 #endif

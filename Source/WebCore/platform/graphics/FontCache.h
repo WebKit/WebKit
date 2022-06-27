@@ -359,9 +359,6 @@ public:
 #endif
 
     std::unique_ptr<FontPlatformData> createFontPlatformDataForTesting(const FontDescription&, const AtomString& family);
-    
-    bool shouldMockBoldSystemFontForAccessibility() const { return m_shouldMockBoldSystemFontForAccessibility; }
-    void setShouldMockBoldSystemFontForAccessibility(bool shouldMockBoldSystemFontForAccessibility) { m_shouldMockBoldSystemFontForAccessibility = shouldMockBoldSystemFontForAccessibility; }
 
     struct PrewarmInformation {
         Vector<String> seenFamilies;
@@ -400,8 +397,6 @@ private:
 #endif
 
     Timer m_purgeTimer;
-    
-    bool m_shouldMockBoldSystemFontForAccessibility { false };
 
     HashSet<FontSelector*> m_clients;
     struct FontDataCaches;

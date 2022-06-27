@@ -179,9 +179,6 @@ private:
     bool paintAttachment(const RenderObject&, const PaintInfo&, const IntRect&) override;
 #endif
 
-    bool shouldMockBoldSystemFontForAccessibility() const override { return m_shouldMockBoldSystemFontForAccessibility; }
-    void setShouldMockBoldSystemFontForAccessibility(bool shouldMockBoldSystemFontForAccessibility) override { m_shouldMockBoldSystemFontForAccessibility = shouldMockBoldSystemFontForAccessibility; }
-
 private:
     RenderThemeIOS();
     virtual ~RenderThemeIOS() = default;
@@ -207,8 +204,6 @@ private:
     Color controlTintColor(const RenderStyle&, OptionSet<StyleColorOptions>) const;
 
     void adjustStyleForAlternateFormControlDesignTransition(RenderStyle&, const Element*) const;
-
-    bool m_shouldMockBoldSystemFontForAccessibility { false };
 };
 
 }

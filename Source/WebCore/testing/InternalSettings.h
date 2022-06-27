@@ -174,9 +174,6 @@ private:
 
         // PlatformMediaSessionManager
         bool m_shouldDeactivateAudioSession;
-
-        // RenderTheme/FontCache
-        bool m_shouldMockBoldSystemFontForAccessibility;
     };
 
     Page* m_page;
