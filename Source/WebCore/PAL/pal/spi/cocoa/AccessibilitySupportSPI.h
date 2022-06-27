@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc.  All rights reserved.
+ * Copyright (C) 2020-2022 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,17 +25,14 @@
 
 #pragma once
 
+#include <CoreFoundation/CoreFoundation.h>
+
 #if USE(APPLE_INTERNAL_SDK)
 
 #include <AccessibilitySupport.h>
 
 #else
 
-#include <CoreFoundation/CoreFoundation.h>
-
-WTF_EXTERN_C_BEGIN
-
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 typedef CF_ENUM(int32_t, AXSIsolatedTreeMode)
 {
     AXSIsolatedTreeModeOff = 0,
@@ -43,10 +40,11 @@ typedef CF_ENUM(int32_t, AXSIsolatedTreeMode)
     AXSIsolatedTreeModeSecondaryThread,
 };
 
+#endif
+
+WTF_EXTERN_C_BEGIN
+
 AXSIsolatedTreeMode _AXSIsolatedTreeMode(void);
 void _AXSSetIsolatedTreeMode(AXSIsolatedTreeMode);
-#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
 WTF_EXTERN_C_END
-
-#endif // USE(APPLE_INTERNAL_SDK)
