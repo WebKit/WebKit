@@ -43,8 +43,6 @@ class MediaControls extends LayoutNode
         this.muteButton = new MuteButton(this);
         this.tracksButton = new TracksButton(this);
         this.overflowButton = new OverflowButton(this);
-        this.volumeButton = new VolumeButton(this);
-        this.brightnessButton = new BrightnessButton(this);
 
         this.statusLabel = new StatusLabel(this);
         this.timeControl = new TimeControl(this);
@@ -132,7 +130,6 @@ class MediaControls extends LayoutNode
         this.element.classList.toggle("uses-ltr-user-interface-layout-direction", flag);
 
         this.muteButton.usesLTRUserInterfaceLayoutDirection = this.usesLTRUserInterfaceLayoutDirection;
-        this.volumeButton.usesLTRUserInterfaceLayoutDirection = this.usesLTRUserInterfaceLayoutDirection
     }
 
     get scaleFactor()
@@ -247,10 +244,5 @@ class MediaControls extends LayoutNode
             this.element.classList.toggle("faded", this.faded);
         else
             super.commitProperty(propertyName);
-    }
-
-    get usesSingleMuteAndVolumeButton()
-    {
-        return false;
     }
 }

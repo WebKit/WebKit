@@ -1770,7 +1770,6 @@ MODERN_MEDIA_CONTROLS_STYLE_SHEETS = \
     $(WebCore)/Modules/modern-media-controls/controls/media-controls.css \
     $(WebCore)/Modules/modern-media-controls/controls/media-document.css \
     $(WebCore)/Modules/modern-media-controls/controls/placard.css \
-    $(WebCore)/Modules/modern-media-controls/controls/range-button.css \
     $(WebCore)/Modules/modern-media-controls/controls/slider.css \
     $(WebCore)/Modules/modern-media-controls/controls/status-label.css \
     $(WebCore)/Modules/modern-media-controls/controls/text-tracks.css \
@@ -1861,9 +1860,6 @@ MODERN_MEDIA_CONTROLS_SCRIPTS = \
     $(WebCore)/Modules/modern-media-controls/controls/rewind-button.js \
     $(WebCore)/Modules/modern-media-controls/controls/forward-button.js \
     $(WebCore)/Modules/modern-media-controls/controls/overflow-button.js \
-    $(WebCore)/Modules/modern-media-controls/controls/range-button.js \
-    $(WebCore)/Modules/modern-media-controls/controls/volume-button.js \
-    $(WebCore)/Modules/modern-media-controls/controls/brightness-button.js \
     $(WebCore)/Modules/modern-media-controls/controls/close-button.js \
     $(WebCore)/Modules/modern-media-controls/controls/buttons-container.js \
     $(WebCore)/Modules/modern-media-controls/controls/status-label.js \
@@ -1887,7 +1883,6 @@ MODERN_MEDIA_CONTROLS_SCRIPTS = \
     $(WebCore)/Modules/modern-media-controls/media/media-controller-support.js \
     $(WebCore)/Modules/modern-media-controls/media/airplay-support.js \
     $(WebCore)/Modules/modern-media-controls/media/audio-support.js \
-    $(WebCore)/Modules/modern-media-controls/media/brightness-support.js \
     $(WebCore)/Modules/modern-media-controls/media/close-support.js \
     $(WebCore)/Modules/modern-media-controls/media/controls-visibility-support.js \
     $(WebCore)/Modules/modern-media-controls/media/fullscreen-support.js \
@@ -1907,7 +1902,6 @@ MODERN_MEDIA_CONTROLS_SCRIPTS = \
     $(WebCore)/Modules/modern-media-controls/media/time-control-support.js \
     $(WebCore)/Modules/modern-media-controls/media/tracks-support.js \
     $(WebCore)/Modules/modern-media-controls/media/volume-support.js \
-    $(WebCore)/Modules/modern-media-controls/media/mute-and-volume-support.js \
     $(WebCore)/Modules/modern-media-controls/media/media-document-controller.js \
     $(WebCore)/Modules/modern-media-controls/media/watchos-media-controls-support.js \
     $(WebCore)/Modules/modern-media-controls/media/media-controller.js \

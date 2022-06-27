@@ -458,8 +458,6 @@ $(PROJECT_DIR)/Modules/modern-media-controls/controls/auto-hide-controller.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/background-click-delegate-notifier.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/background-tint.css
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/background-tint.js
-$(PROJECT_DIR)/Modules/modern-media-controls/controls/brightness-button.css
-$(PROJECT_DIR)/Modules/modern-media-controls/controls/brightness-button.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/button.css
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/button.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/buttons-container.css
@@ -494,8 +492,6 @@ $(PROJECT_DIR)/Modules/modern-media-controls/controls/pip-placard.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/placard.css
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/placard.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/play-pause-button.js
-$(PROJECT_DIR)/Modules/modern-media-controls/controls/range-button.css
-$(PROJECT_DIR)/Modules/modern-media-controls/controls/range-button.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/rewind-button.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/scheduler.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/seek-button.js
@@ -510,7 +506,6 @@ $(PROJECT_DIR)/Modules/modern-media-controls/controls/time-control.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/time-label.css
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/time-label.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/tracks-button.js
-$(PROJECT_DIR)/Modules/modern-media-controls/controls/volume-button.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/watchos-activity-indicator.css
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/watchos-activity-indicator.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/watchos-layout-traits.js
@@ -522,14 +517,12 @@ $(PROJECT_DIR)/Modules/modern-media-controls/gesture-recognizers/tap.js
 $(PROJECT_DIR)/Modules/modern-media-controls/main.js
 $(PROJECT_DIR)/Modules/modern-media-controls/media/airplay-support.js
 $(PROJECT_DIR)/Modules/modern-media-controls/media/audio-support.js
-$(PROJECT_DIR)/Modules/modern-media-controls/media/brightness-support.js
 $(PROJECT_DIR)/Modules/modern-media-controls/media/close-support.js
 $(PROJECT_DIR)/Modules/modern-media-controls/media/controls-visibility-support.js
 $(PROJECT_DIR)/Modules/modern-media-controls/media/fullscreen-support.js
 $(PROJECT_DIR)/Modules/modern-media-controls/media/media-controller-support.js
 $(PROJECT_DIR)/Modules/modern-media-controls/media/media-controller.js
 $(PROJECT_DIR)/Modules/modern-media-controls/media/media-document-controller.js
-$(PROJECT_DIR)/Modules/modern-media-controls/media/mute-and-volume-support.js
 $(PROJECT_DIR)/Modules/modern-media-controls/media/mute-support.js
 $(PROJECT_DIR)/Modules/modern-media-controls/media/overflow-support.js
 $(PROJECT_DIR)/Modules/modern-media-controls/media/pip-support.js

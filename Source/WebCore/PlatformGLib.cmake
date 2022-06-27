@@ -1,6 +1,5 @@
 
 set(ModernMediaControlsImageFiles
-    ${WEBCORE_DIR}/Modules/modern-media-controls/images/adwaita/Brightness.svg
     ${WEBCORE_DIR}/Modules/modern-media-controls/images/adwaita/EnterFullscreen.svg
     ${WEBCORE_DIR}/Modules/modern-media-controls/images/adwaita/ExitFullscreen.svg
     ${WEBCORE_DIR}/Modules/modern-media-controls/images/adwaita/Forward.svg
