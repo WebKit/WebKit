@@ -1,10 +1,10 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------
 #
 # SingleHeader/MakeSingleHeader.py
 #
-# Copyright 2020-2021 Apple Inc.
+# Copyright 2020-2022 Apple Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ class HeaderPrefix( object ):
 							'//\n'
 							'// {meta_data}\n'
 							'//\n'
-							'// Copyright 2020-2021 Apple Inc.\n'
+							'// Copyright 2020-2022 Apple Inc.\n'
 							'//\n'
 							'// Licensed under the Apache License, Version 2.0 (the "License");\n'
 							'// you may not use this file except in compliance with the License.\n'

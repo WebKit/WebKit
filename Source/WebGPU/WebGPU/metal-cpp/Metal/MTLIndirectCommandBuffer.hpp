@@ -2,7 +2,7 @@
 //
 // Metal/MTLIndirectCommandBuffer.hpp
 //
-// Copyright 2020-2021 Apple Inc.
+// Copyright 2020-2022 Apple Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@
 
 #include "MTLIndirectCommandBuffer.hpp"
 #include "MTLResource.hpp"
+#include "MTLTypes.hpp"
 
 namespace MTL
 {
@@ -70,12 +71,17 @@ public:
 
     NS::UInteger                                  maxKernelBufferBindCount() const;
     void                                          setMaxKernelBufferBindCount(NS::UInteger maxKernelBufferBindCount);
+
+    bool                                          supportRayTracing() const;
+    void                                          setSupportRayTracing(bool supportRayTracing);
 };
 
 class IndirectCommandBuffer : public NS::Referencing<IndirectCommandBuffer, Resource>
 {
 public:
     NS::UInteger                  size() const;
+
+    MTL::ResourceID               gpuResourceID() const;
 
     void                          reset(NS::Range range);
 
@@ -164,10 +170,27 @@ _MTL_INLINE void MTL::IndirectCommandBufferDescriptor::setMaxKernelBufferBindCou
     Object::sendMessage<void>(this, _MTL_PRIVATE_SEL(setMaxKernelBufferBindCount_), maxKernelBufferBindCount);
 }
 
+// property: supportRayTracing
+_MTL_INLINE bool MTL::IndirectCommandBufferDescriptor::supportRayTracing() const
+{
+    return Object::sendMessageSafe<bool>(this, _MTL_PRIVATE_SEL(supportRayTracing));
+}
+
+_MTL_INLINE void MTL::IndirectCommandBufferDescriptor::setSupportRayTracing(bool supportRayTracing)
+{
+    Object::sendMessage<void>(this, _MTL_PRIVATE_SEL(setSupportRayTracing_), supportRayTracing);
+}
+
 // property: size
 _MTL_INLINE NS::UInteger MTL::IndirectCommandBuffer::size() const
 {
     return Object::sendMessage<NS::UInteger>(this, _MTL_PRIVATE_SEL(size));
+}
+
+// property: gpuResourceID
+_MTL_INLINE MTL::ResourceID MTL::IndirectCommandBuffer::gpuResourceID() const
+{
+    return Object::sendMessage<MTL::ResourceID>(this, _MTL_PRIVATE_SEL(gpuResourceID));
 }
 
 // method: resetWithRange:

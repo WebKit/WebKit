@@ -2,7 +2,7 @@
 //
 // Metal/MTLArgument.hpp
 //
-// Copyright 2020-2021 Apple Inc.
+// Copyright 2020-2022 Apple Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -123,6 +123,20 @@ _MTL_ENUM(NS::UInteger, DataType) {
     DataTypeIntersectionFunctionTable = 116,
     DataTypePrimitiveAccelerationStructure = 117,
     DataTypeInstanceAccelerationStructure = 118,
+};
+
+_MTL_ENUM(NS::Integer, BindingType) {
+    BindingTypeBuffer = 0,
+    BindingTypeThreadgroupMemory = 1,
+    BindingTypeTexture = 2,
+    BindingTypeSampler = 3,
+    BindingTypeImageblockData = 16,
+    BindingTypeImageblock = 17,
+    BindingTypeVisibleFunctionTable = 24,
+    BindingTypePrimitiveAccelerationStructure = 25,
+    BindingTypeInstanceAccelerationStructure = 26,
+    BindingTypeIntersectionFunctionTable = 27,
+    BindingTypeObjectPayload = 34,
 };
 
 _MTL_ENUM(NS::UInteger, ArgumentType) {
@@ -290,6 +304,50 @@ public:
     bool                   isDepthTexture() const;
 
     NS::UInteger           arrayLength() const;
+
+    NS::UInteger           objectPayloadAlignment() const;
+
+    NS::UInteger           objectPayloadDataSize() const;
+};
+
+class Binding : public NS::Referencing<Binding>
+{
+public:
+    NS::String*         name() const;
+    MTL::BindingType    type() const;
+    MTL::ArgumentAccess access() const;
+    NS::UInteger        index() const;
+    bool                used() const;
+    bool                argument() const;
+};
+
+class BufferBinding : public NS::Referencing<BufferBinding, Binding>
+{
+    NS::UInteger        bufferAlignment() const;
+    NS::UInteger        bufferDataSize() const;
+    MTL::DataType       bufferDataType() const;
+    MTL::StructType*    bufferStructType() const;
+    MTL::PointerType*   bufferPointerType() const;
+};
+
+class ThreadgroupBinding : public NS::Referencing<ThreadgroupBinding, Binding>
+{
+    NS::UInteger        threadgroupMemoryAlignment() const;
+    NS::UInteger        threadgroupMemoryDataSize() const;
+};
+
+class TextureBinding : public NS::Referencing<TextureBinding, Binding>
+{
+    MTL::TextureType    textureType() const;
+    MTL::DataType       textureDataType() const;
+    bool                depthTexture() const;
+    NS::UInteger        arrayLength() const;
+};
+
+class ObjectPayloadBinding : public NS::Referencing<ObjectPayloadBinding, Binding>
+{
+    NS::UInteger        objectPayloadAlignment() const;
+    NS::UInteger        objectPayloadDataSize() const;
 };
 
 }
@@ -652,4 +710,130 @@ _MTL_INLINE bool MTL::Argument::isDepthTexture() const
 _MTL_INLINE NS::UInteger MTL::Argument::arrayLength() const
 {
     return Object::sendMessage<NS::UInteger>(this, _MTL_PRIVATE_SEL(arrayLength));
+}
+
+// property: objectPayloadAlignment
+_MTL_INLINE NS::UInteger MTL::Argument::objectPayloadAlignment() const
+{
+    return Object::sendMessage<NS::UInteger>(this, _MTL_PRIVATE_SEL(objectPayloadAlignment));
+}
+
+// property: objectPayloadDataSize
+_MTL_INLINE NS::UInteger MTL::Argument::objectPayloadDataSize() const
+{
+    return Object::sendMessage<NS::UInteger>(this, _MTL_PRIVATE_SEL(objectPayloadDataSize));
+}
+
+// property: name
+_MTL_INLINE NS::String* MTL::Binding::name() const
+{
+    return Object::sendMessage<NS::String*>(this, _MTL_PRIVATE_SEL(name));
+}
+
+// property: type
+_MTL_INLINE MTL::BindingType MTL::Binding::type() const
+{
+    return Object::sendMessage<MTL::BindingType>(this, _MTL_PRIVATE_SEL(type));
+}
+
+// property: access
+_MTL_INLINE MTL::ArgumentAccess MTL::Binding::access() const
+{
+    return Object::sendMessage<MTL::ArgumentAccess>(this, _MTL_PRIVATE_SEL(access));
+}
+
+// property: index
+_MTL_INLINE NS::UInteger MTL::Binding::index() const
+{
+    return Object::sendMessage<NS::UInteger>(this, _MTL_PRIVATE_SEL(index));
+}
+
+// property: used
+_MTL_INLINE bool MTL::Binding::used() const
+{
+    return Object::sendMessage<bool>(this, _MTL_PRIVATE_SEL(isUsed));
+}
+
+// property: argument
+_MTL_INLINE bool MTL::Binding::argument() const
+{
+    return Object::sendMessage<bool>(this, _MTL_PRIVATE_SEL(isArgument));
+}
+
+// property: bufferAlignment
+_MTL_INLINE NS::UInteger MTL::BufferBinding::bufferAlignment() const
+{
+    return Object::sendMessage<NS::UInteger>(this, _MTL_PRIVATE_SEL(bufferAlignment));
+}
+
+// property: bufferDataSize
+_MTL_INLINE NS::UInteger MTL::BufferBinding::bufferDataSize() const
+{
+    return Object::sendMessage<NS::UInteger>(this, _MTL_PRIVATE_SEL(bufferDataSize));
+}
+
+// property: bufferDataType
+_MTL_INLINE MTL::DataType MTL::BufferBinding::bufferDataType() const
+{
+    return Object::sendMessage<MTL::DataType>(this, _MTL_PRIVATE_SEL(bufferDataType));
+}
+
+// property: bufferStructType
+_MTL_INLINE MTL::StructType* MTL::BufferBinding::bufferStructType() const
+{
+    return Object::sendMessage<MTL::StructType*>(this, _MTL_PRIVATE_SEL(bufferStructType));
+}
+
+// property: bufferPointerType
+_MTL_INLINE MTL::PointerType* MTL::BufferBinding::bufferPointerType() const
+{
+    return Object::sendMessage<MTL::PointerType*>(this, _MTL_PRIVATE_SEL(bufferPointerType));
+}
+
+// property: threadgroupMemoryAlignment
+_MTL_INLINE NS::UInteger MTL::ThreadgroupBinding::threadgroupMemoryAlignment() const
+{
+    return Object::sendMessage<NS::UInteger>(this, _MTL_PRIVATE_SEL(threadgroupMemoryAlignment));
+}
+
+// property: threadgroupMemoryDataSize
+_MTL_INLINE NS::UInteger MTL::ThreadgroupBinding::threadgroupMemoryDataSize() const
+{
+    return Object::sendMessage<NS::UInteger>(this, _MTL_PRIVATE_SEL(threadgroupMemoryDataSize));
+}
+
+// property: textureType
+_MTL_INLINE MTL::TextureType MTL::TextureBinding::textureType() const
+{
+    return Object::sendMessage<MTL::TextureType>(this, _MTL_PRIVATE_SEL(textureType));
+}
+
+// property: textureDataType
+_MTL_INLINE MTL::DataType MTL::TextureBinding::textureDataType() const
+{
+    return Object::sendMessage<MTL::DataType>(this, _MTL_PRIVATE_SEL(textureDataType));
+}
+
+// property: depthTexture
+_MTL_INLINE bool MTL::TextureBinding::depthTexture() const
+{
+    return Object::sendMessage<bool>(this, _MTL_PRIVATE_SEL(isDepthTexture));
+}
+
+// property: arrayLength
+_MTL_INLINE NS::UInteger MTL::TextureBinding::arrayLength() const
+{
+    return Object::sendMessage<NS::UInteger>(this, _MTL_PRIVATE_SEL(arrayLength));
+}
+
+// property: objectPayloadAlignment
+_MTL_INLINE NS::UInteger MTL::ObjectPayloadBinding::objectPayloadAlignment() const
+{
+    return Object::sendMessage<NS::UInteger>(this, _MTL_PRIVATE_SEL(objectPayloadAlignment));
+}
+
+// property: objectPayloadDataSize
+_MTL_INLINE NS::UInteger MTL::ObjectPayloadBinding::objectPayloadDataSize() const
+{
+    return Object::sendMessage<NS::UInteger>(this, _MTL_PRIVATE_SEL(objectPayloadDataSize));
 }

@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 //
-// Foundation/NSRange.hpp
+// Foundation/NSSet.hpp
 //
 // Copyright 2020-2022 Apple Inc.
 //
@@ -22,62 +22,66 @@
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-#include "NSDefines.hpp"
-#include "NSTypes.hpp"
+#include "NSObject.hpp"
+#include "NSEnumerator.hpp"
 
-//-------------------------------------------------------------------------------------------------------------------------------------------------------------
+/*****Immutable Set*******/
 
 namespace NS
 {
-struct Range
-{
-    static Range Make(UInteger loc, UInteger len);
+    class Set : public NS::Copying <Set>
+    {
+        public:
+            UInteger count() const;
+            Enumerator<Object>* objectEnumerator() const;
 
-    Range(UInteger loc, UInteger len);
+            static Set* alloc();
 
-    bool     Equal(const Range& range) const;
-    bool     LocationInRange(UInteger loc) const;
-    UInteger Max() const;
+            Set* init();
+            Set* init(const Object* const* pObjects, UInteger count);
+            Set* init(const class Coder* pCoder);
 
-    UInteger location;
-    UInteger length;
-} _NS_PACKED;
+    };
 }
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-_NS_INLINE NS::Range::Range(UInteger loc, UInteger len)
-    : location(loc)
-    , length(len)
+_NS_INLINE NS::UInteger NS::Set::count() const
 {
+    return NS::Object::sendMessage<NS::UInteger>(this, _NS_PRIVATE_SEL(count));
 }
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-_NS_INLINE NS::Range NS::Range::Make(UInteger loc, UInteger len)
+_NS_INLINE NS::Enumerator<NS::Object>* NS::Set::objectEnumerator() const
 {
-    return Range(loc, len);
+    return NS::Object::sendMessage<Enumerator<NS::Object>*>(this, _NS_PRIVATE_SEL(objectEnumerator));
 }
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-_NS_INLINE bool NS::Range::Equal(const Range& range) const
+_NS_INLINE NS::Set* NS::Set::alloc()
 {
-    return (location == range.location) && (length == range.length);
+    return NS::Object::alloc<Set>(_NS_PRIVATE_CLS(NSSet));
 }
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-_NS_INLINE bool NS::Range::LocationInRange(UInteger loc) const
+_NS_INLINE NS::Set* NS::Set::init()
 {
-    return (!(loc < location)) && ((loc - location) < length);
+    return NS::Object::init<Set>();
 }
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-_NS_INLINE NS::UInteger NS::Range::Max() const
+_NS_INLINE NS::Set* NS::Set::init(const Object* const* pObjects, NS::UInteger count)
 {
-    return location + length;
+    return NS::Object::sendMessage<Set*>(this, _NS_PRIVATE_SEL(initWithObjects_count_), pObjects, count);
 }
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+_NS_INLINE NS::Set* NS::Set::init(const class Coder* pCoder)
+{
+    return Object::sendMessage<Set*>(this, _NS_PRIVATE_SEL(initWithCoder_), pCoder);
+}

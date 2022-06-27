@@ -2,7 +2,7 @@
 //
 // Foundation/NSString.hpp
 //
-// Copyright 2020-2021 Apple Inc.
+// Copyright 2020-2022 Apple Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -102,10 +102,13 @@ public:
     const char*    fileSystemRepresentation() const;
 
     String*        stringByAppendingString(const String* pString) const;
-
 };
 
+/// Create an NS::String* from a string literal.
+#define MTLSTR( literal ) (NS::String *)__builtin___CFStringMakeConstantString( "" literal "" )
+
 template< std::size_t _StringLen >
+[[deprecated("please use MTLSTR(str)")]]
 constexpr const String* MakeConstantString( const char ( &str )[_StringLen] )
 {
     return reinterpret_cast< const String* >( __CFStringMakeConstantString( str ) );

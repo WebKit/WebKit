@@ -2,7 +2,7 @@
 //
 // Foundation/Foundation.hpp
 //
-// Copyright 2020-2021 Apple Inc.
+// Copyright 2020-2022 Apple Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -38,6 +38,8 @@
 #include "NSPrivate.hpp"
 #include "NSProcessInfo.hpp"
 #include "NSRange.hpp"
+#include "NSSet.hpp"
+#include "NSSharedPtr.hpp"
 #include "NSString.hpp"
 #include "NSTypes.hpp"
 #include "NSURL.hpp"

@@ -2,7 +2,7 @@
 //
 // Foundation/NSObject.hpp
 //
-// Copyright 2020-2021 Apple Inc.
+// Copyright 2020-2022 Apple Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@
 namespace NS
 {
 template <class _Class, class _Base = class Object>
-class Referencing : public _Base
+class _NS_EXPORT Referencing : public _Base
 {
 public:
     _Class*  retain();
@@ -52,6 +52,11 @@ class Copying : public Referencing<_Class, _Base>
 {
 public:
     _Class* copy() const;
+};
+
+template <class _Class, class _Base = class Object>
+class SecureCoding : public Referencing<_Class, _Base>
+{
 };
 
 class Object : public Referencing<Object, objc_object>
@@ -138,7 +143,7 @@ _NS_INLINE _Class* NS::Copying<_Class, _Base>::copy() const
 template <class _Dst>
 _NS_INLINE _Dst NS::Object::bridgingCast(const void* pObj)
 {
-#if __OBJC__
+#ifdef __OBJC__
     return (__bridge _Dst)pObj;
 #else
     return (_Dst)pObj;

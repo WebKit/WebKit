@@ -2,7 +2,7 @@
 //
 // Metal/MTLHeap.hpp
 //
-// Copyright 2020-2021 Apple Inc.
+// Copyright 2020-2022 Apple Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@
 
 #include <Foundation/Foundation.hpp>
 
+#include "MTLDevice.hpp"
 #include "MTLHeap.hpp"
 #include "MTLResource.hpp"
 
@@ -53,6 +54,9 @@ public:
     MTL::CPUCacheMode            cpuCacheMode() const;
     void                         setCpuCacheMode(MTL::CPUCacheMode cpuCacheMode);
 
+    MTL::SparsePageSize          sparsePageSize() const;
+    void                         setSparsePageSize(MTL::SparsePageSize sparsePageSize);
+
     MTL::HazardTrackingMode      hazardTrackingMode() const;
     void                         setHazardTrackingMode(MTL::HazardTrackingMode hazardTrackingMode);
 
@@ -66,38 +70,46 @@ public:
 class Heap : public NS::Referencing<Heap>
 {
 public:
-    NS::String*             label() const;
-    void                    setLabel(const NS::String* label);
+    NS::String*                  label() const;
+    void                         setLabel(const NS::String* label);
 
-    class Device*           device() const;
+    class Device*                device() const;
 
-    MTL::StorageMode        storageMode() const;
+    MTL::StorageMode             storageMode() const;
 
-    MTL::CPUCacheMode       cpuCacheMode() const;
+    MTL::CPUCacheMode            cpuCacheMode() const;
 
-    MTL::HazardTrackingMode hazardTrackingMode() const;
+    MTL::HazardTrackingMode      hazardTrackingMode() const;
 
-    MTL::ResourceOptions    resourceOptions() const;
+    MTL::ResourceOptions         resourceOptions() const;
 
-    NS::UInteger            size() const;
+    NS::UInteger                 size() const;
 
-    NS::UInteger            usedSize() const;
+    NS::UInteger                 usedSize() const;
 
-    NS::UInteger            currentAllocatedSize() const;
+    NS::UInteger                 currentAllocatedSize() const;
 
-    NS::UInteger            maxAvailableSize(NS::UInteger alignment);
+    NS::UInteger                 maxAvailableSize(NS::UInteger alignment);
 
-    class Buffer*           newBuffer(NS::UInteger length, MTL::ResourceOptions options);
+    class Buffer*                newBuffer(NS::UInteger length, MTL::ResourceOptions options);
 
-    class Texture*          newTexture(const class TextureDescriptor* desc);
+    class Texture*               newTexture(const class TextureDescriptor* desc);
 
-    MTL::PurgeableState     setPurgeableState(MTL::PurgeableState state);
+    MTL::PurgeableState          setPurgeableState(MTL::PurgeableState state);
 
-    MTL::HeapType           type() const;
+    MTL::HeapType                type() const;
 
-    class Buffer*           newBuffer(NS::UInteger length, MTL::ResourceOptions options, NS::UInteger offset);
+    class Buffer*                newBuffer(NS::UInteger length, MTL::ResourceOptions options, NS::UInteger offset);
 
-    class Texture*          newTexture(const class TextureDescriptor* descriptor, NS::UInteger offset);
+    class Texture*               newTexture(const class TextureDescriptor* descriptor, NS::UInteger offset);
+
+    class AccelerationStructure* newAccelerationStructure(NS::UInteger size);
+
+    class AccelerationStructure* newAccelerationStructure(const class AccelerationStructureDescriptor* descriptor);
+
+    class AccelerationStructure* newAccelerationStructure(NS::UInteger size, NS::UInteger offset);
+
+    class AccelerationStructure* newAccelerationStructure(const class AccelerationStructureDescriptor* descriptor, NS::UInteger offset);
 };
 
 }
@@ -145,6 +157,17 @@ _MTL_INLINE MTL::CPUCacheMode MTL::HeapDescriptor::cpuCacheMode() const
 _MTL_INLINE void MTL::HeapDescriptor::setCpuCacheMode(MTL::CPUCacheMode cpuCacheMode)
 {
     Object::sendMessage<void>(this, _MTL_PRIVATE_SEL(setCpuCacheMode_), cpuCacheMode);
+}
+
+// property: sparsePageSize
+_MTL_INLINE MTL::SparsePageSize MTL::HeapDescriptor::sparsePageSize() const
+{
+    return Object::sendMessage<MTL::SparsePageSize>(this, _MTL_PRIVATE_SEL(sparsePageSize));
+}
+
+_MTL_INLINE void MTL::HeapDescriptor::setSparsePageSize(MTL::SparsePageSize sparsePageSize)
+{
+    Object::sendMessage<void>(this, _MTL_PRIVATE_SEL(setSparsePageSize_), sparsePageSize);
 }
 
 // property: hazardTrackingMode
@@ -279,4 +302,28 @@ _MTL_INLINE MTL::Buffer* MTL::Heap::newBuffer(NS::UInteger length, MTL::Resource
 _MTL_INLINE MTL::Texture* MTL::Heap::newTexture(const MTL::TextureDescriptor* descriptor, NS::UInteger offset)
 {
     return Object::sendMessage<MTL::Texture*>(this, _MTL_PRIVATE_SEL(newTextureWithDescriptor_offset_), descriptor, offset);
+}
+
+// method: newAccelerationStructureWithSize:
+_MTL_INLINE MTL::AccelerationStructure* MTL::Heap::newAccelerationStructure(NS::UInteger size)
+{
+    return Object::sendMessage<MTL::AccelerationStructure*>(this, _MTL_PRIVATE_SEL(newAccelerationStructureWithSize_), size);
+}
+
+// method: newAccelerationStructureWithDescriptor:
+_MTL_INLINE MTL::AccelerationStructure* MTL::Heap::newAccelerationStructure(const MTL::AccelerationStructureDescriptor* descriptor)
+{
+    return Object::sendMessage<MTL::AccelerationStructure*>(this, _MTL_PRIVATE_SEL(newAccelerationStructureWithDescriptor_), descriptor);
+}
+
+// method: newAccelerationStructureWithSize:offset:
+_MTL_INLINE MTL::AccelerationStructure* MTL::Heap::newAccelerationStructure(NS::UInteger size, NS::UInteger offset)
+{
+    return Object::sendMessage<MTL::AccelerationStructure*>(this, _MTL_PRIVATE_SEL(newAccelerationStructureWithSize_offset_), size, offset);
+}
+
+// method: newAccelerationStructureWithDescriptor:offset:
+_MTL_INLINE MTL::AccelerationStructure* MTL::Heap::newAccelerationStructure(const MTL::AccelerationStructureDescriptor* descriptor, NS::UInteger offset)
+{
+    return Object::sendMessage<MTL::AccelerationStructure*>(this, _MTL_PRIVATE_SEL(newAccelerationStructureWithDescriptor_offset_), descriptor, offset);
 }

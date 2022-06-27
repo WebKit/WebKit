@@ -2,7 +2,7 @@
 //
 // Metal/MTLCounters.hpp
 //
-// Copyright 2020-2021 Apple Inc.
+// Copyright 2020-2022 Apple Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,33 +30,6 @@
 
 namespace MTL
 {
-
-_MTL_CONST( NS::ErrorDomain, CounterErrorDomain );
-
-using CommonCounter = NS::String*;
-
-_MTL_CONST( CommonCounter, CommonCounterTimestamp );
-_MTL_CONST( CommonCounter, CommonCounterTessellationInputPatches );
-_MTL_CONST( CommonCounter, CommonCounterVertexInvocations );
-_MTL_CONST( CommonCounter, CommonCounterPostTessellationVertexInvocations );
-_MTL_CONST( CommonCounter, CommonCounterClipperInvocations );
-_MTL_CONST( CommonCounter, CommonCounterClipperPrimitivesOut );
-_MTL_CONST( CommonCounter, CommonCounterFragmentInvocations );
-_MTL_CONST( CommonCounter, CommonCounterFragmentsPassed );
-_MTL_CONST( CommonCounter, CommonCounterComputeKernelInvocations );
-_MTL_CONST( CommonCounter, CommonCounterTotalCycles );
-_MTL_CONST( CommonCounter, CommonCounterVertexCycles );
-_MTL_CONST( CommonCounter, CommonCounterTessellationCycles );
-_MTL_CONST( CommonCounter, CommonCounterPostTessellationVertexCycles );
-_MTL_CONST( CommonCounter, CommonCounterFragmentCycles );
-_MTL_CONST( CommonCounter, CommonCounterRenderTargetWriteCycles );
-
-using CommonCounterSet = NS::String*;
-
-_MTL_CONST( CommonCounterSet, CommonCounterSetTimestamp );
-_MTL_CONST( CommonCounterSet, CommonCounterSetStageUtilization );
-_MTL_CONST( CommonCounterSet, CommonCounterSetStatistic );
-
 struct CounterResultTimestamp
 {
     uint64_t timestamp;
@@ -83,6 +56,32 @@ struct CounterResultStatistic
     uint64_t fragmentsPassed;
     uint64_t computeKernelInvocations;
 } _MTL_PACKED;
+
+_MTL_CONST(NS::ErrorDomain, CounterErrorDomain);
+
+using CommonCounter = NS::String*;
+
+_MTL_CONST(CommonCounter, CommonCounterTimestamp);
+_MTL_CONST(CommonCounter, CommonCounterTessellationInputPatches);
+_MTL_CONST(CommonCounter, CommonCounterVertexInvocations);
+_MTL_CONST(CommonCounter, CommonCounterPostTessellationVertexInvocations);
+_MTL_CONST(CommonCounter, CommonCounterClipperInvocations);
+_MTL_CONST(CommonCounter, CommonCounterClipperPrimitivesOut);
+_MTL_CONST(CommonCounter, CommonCounterFragmentInvocations);
+_MTL_CONST(CommonCounter, CommonCounterFragmentsPassed);
+_MTL_CONST(CommonCounter, CommonCounterComputeKernelInvocations);
+_MTL_CONST(CommonCounter, CommonCounterTotalCycles);
+_MTL_CONST(CommonCounter, CommonCounterVertexCycles);
+_MTL_CONST(CommonCounter, CommonCounterTessellationCycles);
+_MTL_CONST(CommonCounter, CommonCounterPostTessellationVertexCycles);
+_MTL_CONST(CommonCounter, CommonCounterFragmentCycles);
+_MTL_CONST(CommonCounter, CommonCounterRenderTargetWriteCycles);
+
+using CommonCounterSet = NS::String*;
+
+_MTL_CONST(CommonCounterSet, CommonCounterSetTimestamp);
+_MTL_CONST(CommonCounterSet, CommonCounterSetStageUtilization);
+_MTL_CONST(CommonCounterSet, CommonCounterSetStatistic);
 
 class Counter : public NS::Referencing<Counter>
 {
@@ -137,27 +136,27 @@ _MTL_ENUM(NS::Integer, CounterSampleBufferError) {
 
 }
 
-_MTL_PRIVATE_DEF_STR( NS::ErrorDomain, CounterErrorDomain );
+_MTL_PRIVATE_DEF_STR(NS::ErrorDomain, CounterErrorDomain);
 
-_MTL_PRIVATE_DEF_STR( MTL::CommonCounter, CommonCounterTimestamp );
-_MTL_PRIVATE_DEF_STR( MTL::CommonCounter, CommonCounterTessellationInputPatches );
-_MTL_PRIVATE_DEF_STR( MTL::CommonCounter, CommonCounterVertexInvocations );
-_MTL_PRIVATE_DEF_STR( MTL::CommonCounter, CommonCounterPostTessellationVertexInvocations );
-_MTL_PRIVATE_DEF_STR( MTL::CommonCounter, CommonCounterClipperInvocations );
-_MTL_PRIVATE_DEF_STR( MTL::CommonCounter, CommonCounterClipperPrimitivesOut );
-_MTL_PRIVATE_DEF_STR( MTL::CommonCounter, CommonCounterFragmentInvocations );
-_MTL_PRIVATE_DEF_STR( MTL::CommonCounter, CommonCounterFragmentsPassed );
-_MTL_PRIVATE_DEF_STR( MTL::CommonCounter, CommonCounterComputeKernelInvocations );
-_MTL_PRIVATE_DEF_STR( MTL::CommonCounter, CommonCounterTotalCycles );
-_MTL_PRIVATE_DEF_STR( MTL::CommonCounter, CommonCounterVertexCycles );
-_MTL_PRIVATE_DEF_STR( MTL::CommonCounter, CommonCounterTessellationCycles );
-_MTL_PRIVATE_DEF_STR( MTL::CommonCounter, CommonCounterPostTessellationVertexCycles );
-_MTL_PRIVATE_DEF_STR( MTL::CommonCounter, CommonCounterFragmentCycles );
-_MTL_PRIVATE_DEF_STR( MTL::CommonCounter, CommonCounterRenderTargetWriteCycles );
+_MTL_PRIVATE_DEF_STR(MTL::CommonCounter, CommonCounterTimestamp);
+_MTL_PRIVATE_DEF_STR(MTL::CommonCounter, CommonCounterTessellationInputPatches);
+_MTL_PRIVATE_DEF_STR(MTL::CommonCounter, CommonCounterVertexInvocations);
+_MTL_PRIVATE_DEF_STR(MTL::CommonCounter, CommonCounterPostTessellationVertexInvocations);
+_MTL_PRIVATE_DEF_STR(MTL::CommonCounter, CommonCounterClipperInvocations);
+_MTL_PRIVATE_DEF_STR(MTL::CommonCounter, CommonCounterClipperPrimitivesOut);
+_MTL_PRIVATE_DEF_STR(MTL::CommonCounter, CommonCounterFragmentInvocations);
+_MTL_PRIVATE_DEF_STR(MTL::CommonCounter, CommonCounterFragmentsPassed);
+_MTL_PRIVATE_DEF_STR(MTL::CommonCounter, CommonCounterComputeKernelInvocations);
+_MTL_PRIVATE_DEF_STR(MTL::CommonCounter, CommonCounterTotalCycles);
+_MTL_PRIVATE_DEF_STR(MTL::CommonCounter, CommonCounterVertexCycles);
+_MTL_PRIVATE_DEF_STR(MTL::CommonCounter, CommonCounterTessellationCycles);
+_MTL_PRIVATE_DEF_STR(MTL::CommonCounter, CommonCounterPostTessellationVertexCycles);
+_MTL_PRIVATE_DEF_STR(MTL::CommonCounter, CommonCounterFragmentCycles);
+_MTL_PRIVATE_DEF_STR(MTL::CommonCounter, CommonCounterRenderTargetWriteCycles);
 
-_MTL_PRIVATE_DEF_STR( MTL::CommonCounterSet, CommonCounterSetTimestamp );
-_MTL_PRIVATE_DEF_STR( MTL::CommonCounterSet, CommonCounterSetStageUtilization );
-_MTL_PRIVATE_DEF_STR( MTL::CommonCounterSet, CommonCounterSetStatistic );
+_MTL_PRIVATE_DEF_STR(MTL::CommonCounterSet, CommonCounterSetTimestamp);
+_MTL_PRIVATE_DEF_STR(MTL::CommonCounterSet, CommonCounterSetStageUtilization);
+_MTL_PRIVATE_DEF_STR(MTL::CommonCounterSet, CommonCounterSetStatistic);
 
 // property: name
 _MTL_INLINE NS::String* MTL::Counter::name() const

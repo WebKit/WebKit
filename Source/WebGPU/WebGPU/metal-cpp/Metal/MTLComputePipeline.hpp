@@ -2,7 +2,7 @@
 //
 // Metal/MTLComputePipeline.hpp
 //
-// Copyright 2020-2021 Apple Inc.
+// Copyright 2020-2022 Apple Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,6 +36,8 @@ public:
     static class ComputePipelineReflection* alloc();
 
     class ComputePipelineReflection*        init();
+
+    NS::Array*                              bindings() const;
 
     NS::Array*                              arguments() const;
 };
@@ -105,6 +107,8 @@ public:
 
     bool                             supportIndirectCommandBuffers() const;
 
+    MTL::ResourceID                  gpuResourceID() const;
+
     class FunctionHandle*            functionHandle(const class Function* function);
 
     class ComputePipelineState*      newComputePipelineState(const NS::Array* functions, NS::Error** error);
@@ -126,6 +130,12 @@ _MTL_INLINE MTL::ComputePipelineReflection* MTL::ComputePipelineReflection::allo
 _MTL_INLINE MTL::ComputePipelineReflection* MTL::ComputePipelineReflection::init()
 {
     return NS::Object::init<MTL::ComputePipelineReflection>();
+}
+
+// property: bindings
+_MTL_INLINE NS::Array* MTL::ComputePipelineReflection::bindings() const
+{
+    return Object::sendMessage<NS::Array*>(this, _MTL_PRIVATE_SEL(bindings));
 }
 
 // property: arguments
@@ -330,6 +340,12 @@ _MTL_INLINE NS::UInteger MTL::ComputePipelineState::imageblockMemoryLength(MTL::
 _MTL_INLINE bool MTL::ComputePipelineState::supportIndirectCommandBuffers() const
 {
     return Object::sendMessageSafe<bool>(this, _MTL_PRIVATE_SEL(supportIndirectCommandBuffers));
+}
+
+// property: gpuResourceID
+_MTL_INLINE MTL::ResourceID MTL::ComputePipelineState::gpuResourceID() const
+{
+    return Object::sendMessage<MTL::ResourceID>(this, _MTL_PRIVATE_SEL(gpuResourceID));
 }
 
 // method: functionHandleWithFunction:

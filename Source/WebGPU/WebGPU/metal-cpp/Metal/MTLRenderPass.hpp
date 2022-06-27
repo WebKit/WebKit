@@ -2,7 +2,7 @@
 //
 // Metal/MTLRenderPass.hpp
 //
-// Copyright 2020-2021 Apple Inc.
+// Copyright 2020-2022 Apple Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,6 +30,20 @@
 
 namespace MTL
 {
+struct ClearColor
+{
+    static ClearColor Make(double red, double green, double blue, double alpha);
+
+    ClearColor() = default;
+
+    ClearColor(double red, double green, double blue, double alpha);
+
+    double red;
+    double green;
+    double blue;
+    double alpha;
+} _MTL_PACKED;
+
 _MTL_ENUM(NS::UInteger, LoadAction) {
     LoadActionDontCare = 0,
     LoadActionLoad = 1,
@@ -50,20 +64,6 @@ _MTL_OPTIONS(NS::UInteger, StoreActionOptions) {
     StoreActionOptionValidMask = 1,
     StoreActionOptionCustomSamplePositions = 1,
 };
-
-struct ClearColor
-{
-    static ClearColor Make(double red, double green, double blue, double alpha);
-
-    ClearColor() = default;
-
-    ClearColor(double red, double green, double blue, double alpha);
-
-    double red;
-    double green;
-    double blue;
-    double alpha;
-} _MTL_PACKED;
 
 class RenderPassAttachmentDescriptor : public NS::Copying<RenderPassAttachmentDescriptor>
 {

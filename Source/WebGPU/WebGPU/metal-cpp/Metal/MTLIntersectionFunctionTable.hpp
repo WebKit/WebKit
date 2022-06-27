@@ -2,7 +2,7 @@
 //
 // Metal/MTLIntersectionFunctionTable.hpp
 //
-// Copyright 2020-2021 Apple Inc.
+// Copyright 2020-2022 Apple Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@
 #include "MTLFunctionHandle.hpp"
 #include "MTLIntersectionFunctionTable.hpp"
 #include "MTLResource.hpp"
+#include "MTLTypes.hpp"
 #include "MTLVisibleFunctionTable.hpp"
 
 namespace MTL
@@ -60,21 +61,23 @@ public:
 class IntersectionFunctionTable : public NS::Referencing<IntersectionFunctionTable, Resource>
 {
 public:
-    void setBuffer(const class Buffer* buffer, NS::UInteger offset, NS::UInteger index);
+    void           setBuffer(const class Buffer* buffer, NS::UInteger offset, NS::UInteger index);
 
-    void setBuffers(const class Buffer* buffers[], const NS::UInteger offsets[], NS::Range range);
+    void           setBuffers(const class Buffer* buffers[], const NS::UInteger offsets[], NS::Range range);
 
-    void setFunction(const class FunctionHandle* function, NS::UInteger index);
+    MTL::ResourceID gpuResourceID() const;
 
-    void setFunctions(const class FunctionHandle* functions[], NS::Range range);
+    void           setFunction(const class FunctionHandle* function, NS::UInteger index);
 
-    void setOpaqueTriangleIntersectionFunction(MTL::IntersectionFunctionSignature signature, NS::UInteger index);
+    void           setFunctions(const class FunctionHandle* functions[], NS::Range range);
 
-    void setOpaqueTriangleIntersectionFunction(MTL::IntersectionFunctionSignature signature, NS::Range range);
+    void           setOpaqueTriangleIntersectionFunction(MTL::IntersectionFunctionSignature signature, NS::UInteger index);
 
-    void setVisibleFunctionTable(const class VisibleFunctionTable* functionTable, NS::UInteger bufferIndex);
+    void           setOpaqueTriangleIntersectionFunction(MTL::IntersectionFunctionSignature signature, NS::Range range);
 
-    void setVisibleFunctionTables(const class VisibleFunctionTable* functionTables[], NS::Range bufferRange);
+    void           setVisibleFunctionTable(const class VisibleFunctionTable* functionTable, NS::UInteger bufferIndex);
+
+    void           setVisibleFunctionTables(const class VisibleFunctionTable* functionTables[], NS::Range bufferRange);
 };
 
 }
@@ -118,6 +121,12 @@ _MTL_INLINE void MTL::IntersectionFunctionTable::setBuffer(const MTL::Buffer* bu
 _MTL_INLINE void MTL::IntersectionFunctionTable::setBuffers(const MTL::Buffer* buffers[], const NS::UInteger offsets[], NS::Range range)
 {
     Object::sendMessage<void>(this, _MTL_PRIVATE_SEL(setBuffers_offsets_withRange_), buffers, offsets, range);
+}
+
+// property: gpuResourceID
+_MTL_INLINE MTL::ResourceID MTL::IntersectionFunctionTable::gpuResourceID() const
+{
+    return Object::sendMessage<MTL::ResourceID>(this, _MTL_PRIVATE_SEL(gpuResourceID));
 }
 
 // method: setFunction:atIndex:

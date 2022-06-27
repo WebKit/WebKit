@@ -277,6 +277,12 @@
 		1C5ACAE6273A55EF0095F8D5 /* RenderBundle.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RenderBundle.mm; sourceTree = "<group>"; };
 		1C5ACAE8273A55FD0095F8D5 /* Sampler.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Sampler.mm; sourceTree = "<group>"; };
 		1C5ACAEA273A560D0095F8D5 /* TextureView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TextureView.mm; sourceTree = "<group>"; };
+		1CAB8D382866D9FD00347F21 /* MTLIOCommandQueue.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLIOCommandQueue.hpp; sourceTree = "<group>"; };
+		1CAB8D392866D9FD00347F21 /* MTLIOCompressor.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLIOCompressor.hpp; sourceTree = "<group>"; };
+		1CAB8D3A2866D9FD00347F21 /* MTLIOCommandBuffer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MTLIOCommandBuffer.hpp; sourceTree = "<group>"; };
+		1CAB8D3B2866DA0E00347F21 /* NSSharedPtr.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = NSSharedPtr.hpp; sourceTree = "<group>"; };
+		1CAB8D3C2866DA0E00347F21 /* NSSet.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = NSSet.hpp; sourceTree = "<group>"; };
+		1CAB8D3D2866DA2D00347F21 /* CAMetalLayer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = CAMetalLayer.hpp; sourceTree = "<group>"; };
 		1CBAB0912718CCA0006080BB /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CC0C8C9273A7D8900D0B481 /* WebGPU.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = WebGPU.modulemap; sourceTree = "<group>"; };
 		1CC0C8CA273A819100D0B481 /* Version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
@@ -438,6 +444,9 @@
 				1C5319F527BDDD6E00CD127E /* MTLIndirectCommandBuffer.hpp */,
 				1C5319CF27BDDD6E00CD127E /* MTLIndirectCommandEncoder.hpp */,
 				1C5319E527BDDD6E00CD127E /* MTLIntersectionFunctionTable.hpp */,
+				1CAB8D3A2866D9FD00347F21 /* MTLIOCommandBuffer.hpp */,
+				1CAB8D382866D9FD00347F21 /* MTLIOCommandQueue.hpp */,
+				1CAB8D392866D9FD00347F21 /* MTLIOCompressor.hpp */,
 				1C5319F227BDDD6E00CD127E /* MTLLibrary.hpp */,
 				1C5319E027BDDD6E00CD127E /* MTLLinkedFunctions.hpp */,
 				1C5319DE27BDDD6E00CD127E /* MTLParallelRenderCommandEncoder.hpp */,
@@ -482,6 +491,8 @@
 				1C531A0D27BDDD6E00CD127E /* NSPrivate.hpp */,
 				1C531A0827BDDD6E00CD127E /* NSProcessInfo.hpp */,
 				1C531A1027BDDD6E00CD127E /* NSRange.hpp */,
+				1CAB8D3C2866DA0E00347F21 /* NSSet.hpp */,
+				1CAB8D3B2866DA0E00347F21 /* NSSharedPtr.hpp */,
 				1C531A0527BDDD6E00CD127E /* NSString.hpp */,
 				1C531A1127BDDD6E00CD127E /* NSTypes.hpp */,
 				1C531A0E27BDDD6E00CD127E /* NSURL.hpp */,
@@ -494,6 +505,7 @@
 			children = (
 				1C531A1F27BDDD6E00CD127E /* CADefines.hpp */,
 				1C531A1E27BDDD6E00CD127E /* CAMetalDrawable.hpp */,
+				1CAB8D3D2866DA2D00347F21 /* CAMetalLayer.hpp */,
 				1C531A1D27BDDD6E00CD127E /* CAPrivate.hpp */,
 				1C531A1C27BDDD6E00CD127E /* QuartzCore.hpp */,
 			);
@@ -752,8 +764,8 @@
 				33EA188227BC25D000A1DD52 /* IdentifierExpression.h in Headers */,
 				338BB2D427B6B66C00E066AB /* Lexer.h in Headers */,
 				33EA188827BC361E00A1DD52 /* LiteralExpressions.h in Headers */,
-				66DC575528627E0B0014CABD /* ParserPrivate.h in Headers */,
 				339B7B1827D7FFA40072BF9A /* Parser.h in Headers */,
+				66DC575528627E0B0014CABD /* ParserPrivate.h in Headers */,
 				33EA187E27BC249000A1DD52 /* ReturnStatement.h in Headers */,
 				33EA187027BC1E8A00A1DD52 /* ShaderModule.h in Headers */,
 				338BB2D227B6B63F00E066AB /* SourceSpan.h in Headers */,

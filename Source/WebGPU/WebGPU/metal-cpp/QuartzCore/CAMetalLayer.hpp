@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 //
-// Foundation/NSDictionary.hpp
+// QuartzCore/CAMetalDrawable.hpp
 //
 // Copyright 2020-2022 Apple Inc.
 //
@@ -22,107 +22,110 @@
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-#include "NSEnumerator.hpp"
-#include "NSObject.hpp"
-#include "NSTypes.hpp"
+#include "../Metal/MTLPixelFormat.hpp"
+#include "../Metal/MTLTexture.hpp"
+#include <CoreGraphics/CGGeometry.h>
+
+#include "CADefines.hpp"
+#include "CAMetalDrawable.hpp"
+#include "CAPrivate.hpp"
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-namespace NS
+namespace CA
 {
-class Dictionary : public NS::Copying<Dictionary>
+
+class MetalLayer : public NS::Referencing<MetalLayer>
 {
 public:
-    static Dictionary* dictionary();
-    static Dictionary* dictionary(const Object* pObject, const Object* pKey);
-    static Dictionary* dictionary(const Object* const* pObjects, const Object* const* pKeys, UInteger count);
+    static class MetalLayer* layer();
 
-    static Dictionary* alloc();
+    MTL::Device*             device() const;
+    void                     setDevice(MTL::Device* device);
 
-    Dictionary*        init();
-    Dictionary*        init(const Object* const* pObjects, const Object* const* pKeys, UInteger count);
-    Dictionary*        init(const class Coder* pCoder);
+    MTL::PixelFormat         pixelFormat() const;
+    void                     setPixelFormat(MTL::PixelFormat pixelFormat);
 
-    template <class _KeyType = Object>
-    Enumerator<_KeyType>* keyEnumerator() const;
+    bool                     framebufferOnly() const;
+    void                     setFramebufferOnly(bool framebufferOnly);
 
-    template <class _Object = Object>
-    _Object* object(const Object* pKey) const;
-    UInteger count() const;
+    CGSize                   drawableSize() const;
+    void                     setDrawableSize(CGSize drawableSize);
+
+    class MetalDrawable*     nextDrawable();
 };
-}
+} // namespace CA
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-_NS_INLINE NS::Dictionary* NS::Dictionary::dictionary()
+_CA_INLINE CA::MetalLayer* CA::MetalLayer::layer()
 {
-    return Object::sendMessage<Dictionary*>(_NS_PRIVATE_CLS(NSDictionary), _NS_PRIVATE_SEL(dictionary));
+    return Object::sendMessage<CA::MetalLayer*>(_CA_PRIVATE_CLS(CAMetalLayer), _CA_PRIVATE_SEL(layer));
 }
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-_NS_INLINE NS::Dictionary* NS::Dictionary::dictionary(const Object* pObject, const Object* pKey)
+_CA_INLINE MTL::Device* CA::MetalLayer::device() const
 {
-    return Object::sendMessage<Dictionary*>(_NS_PRIVATE_CLS(NSDictionary), _NS_PRIVATE_SEL(dictionaryWithObject_forKey_), pObject, pKey);
+    return Object::sendMessage<MTL::Device*>(this, _CA_PRIVATE_SEL(device));
 }
-
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-_NS_INLINE NS::Dictionary* NS::Dictionary::dictionary(const Object* const* pObjects, const Object* const* pKeys, UInteger count)
+_CA_INLINE void CA::MetalLayer::setDevice(MTL::Device* device)
 {
-    return Object::sendMessage<Dictionary*>(_NS_PRIVATE_CLS(NSDictionary), _NS_PRIVATE_SEL(dictionaryWithObjects_forKeys_count_),
-        pObjects, pKeys, count);
+    return Object::sendMessage<void>(this, _CA_PRIVATE_SEL(setDevice_), device);
 }
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-_NS_INLINE NS::Dictionary* NS::Dictionary::alloc()
+_CA_INLINE MTL::PixelFormat CA::MetalLayer::pixelFormat() const
 {
-    return NS::Object::alloc<Dictionary>(_NS_PRIVATE_CLS(NSDictionary));
+    return Object::sendMessage<MTL::PixelFormat>(this,
+        _CA_PRIVATE_SEL(pixelFormat));
 }
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-_NS_INLINE NS::Dictionary* NS::Dictionary::init()
+_CA_INLINE void CA::MetalLayer::setPixelFormat(MTL::PixelFormat pixelFormat)
 {
-    return NS::Object::init<Dictionary>();
+    return Object::sendMessage<void>(this, _CA_PRIVATE_SEL(setPixelFormat_),
+        pixelFormat);
 }
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-_NS_INLINE NS::Dictionary* NS::Dictionary::init(const Object* const* pObjects, const Object* const* pKeys, UInteger count)
+_CA_INLINE bool CA::MetalLayer::framebufferOnly() const
 {
-    return Object::sendMessage<Dictionary*>(this, _NS_PRIVATE_SEL(initWithObjects_forKeys_count_), pObjects, pKeys, count);
+    return Object::sendMessage<bool>(this, _CA_PRIVATE_SEL(framebufferOnly));
 }
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-_NS_INLINE NS::Dictionary* NS::Dictionary::init(const class Coder* pCoder)
+_CA_INLINE void CA::MetalLayer::setFramebufferOnly(bool framebufferOnly)
 {
-    return Object::sendMessage<Dictionary*>(this, _NS_PRIVATE_SEL(initWithCoder_), pCoder);
+    return Object::sendMessage<void>(this, _CA_PRIVATE_SEL(setFramebufferOnly_),
+        framebufferOnly);
 }
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-template <class _KeyType>
-_NS_INLINE NS::Enumerator<_KeyType>* NS::Dictionary::keyEnumerator() const
+_CA_INLINE CGSize CA::MetalLayer::drawableSize() const
 {
-    return Object::sendMessage<Enumerator<_KeyType>*>(this, _NS_PRIVATE_SEL(keyEnumerator));
+    return Object::sendMessage<CGSize>(this, _CA_PRIVATE_SEL(drawableSize));
 }
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-template <class _Object>
-_NS_INLINE _Object* NS::Dictionary::object(const Object* pKey) const
+_CA_INLINE void CA::MetalLayer::setDrawableSize(CGSize drawableSize)
 {
-    return Object::sendMessage<_Object*>(this, _NS_PRIVATE_SEL(objectForKey_), pKey);
+    return Object::sendMessage<void>(this, _CA_PRIVATE_SEL(setDrawableSize_),
+        drawableSize);
 }
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-_NS_INLINE NS::UInteger NS::Dictionary::count() const
+_CA_INLINE CA::MetalDrawable* CA::MetalLayer::nextDrawable()
 {
-    return Object::sendMessage<UInteger>(this, _NS_PRIVATE_SEL(count));
+    return Object::sendMessage<MetalDrawable*>(this,
+        _CA_PRIVATE_SEL(nextDrawable));
 }
-
-//-------------------------------------------------------------------------------------------------------------------------------------------------------------

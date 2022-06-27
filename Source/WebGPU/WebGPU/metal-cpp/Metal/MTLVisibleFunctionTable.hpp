@@ -2,7 +2,7 @@
 //
 // Metal/MTLVisibleFunctionTable.hpp
 //
-// Copyright 2020-2021 Apple Inc.
+// Copyright 2020-2022 Apple Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@
 
 #include "MTLFunctionHandle.hpp"
 #include "MTLResource.hpp"
+#include "MTLTypes.hpp"
 
 namespace MTL
 {
@@ -47,9 +48,11 @@ public:
 class VisibleFunctionTable : public NS::Referencing<VisibleFunctionTable, Resource>
 {
 public:
-    void setFunction(const class FunctionHandle* function, NS::UInteger index);
+    MTL::ResourceID gpuResourceID() const;
 
-    void setFunctions(const class FunctionHandle* functions[], NS::Range range);
+    void            setFunction(const class FunctionHandle* function, NS::UInteger index);
+
+    void            setFunctions(const class FunctionHandle* functions[], NS::Range range);
 };
 
 }
@@ -81,6 +84,12 @@ _MTL_INLINE NS::UInteger MTL::VisibleFunctionTableDescriptor::functionCount() co
 _MTL_INLINE void MTL::VisibleFunctionTableDescriptor::setFunctionCount(NS::UInteger functionCount)
 {
     Object::sendMessage<void>(this, _MTL_PRIVATE_SEL(setFunctionCount_), functionCount);
+}
+
+// property: gpuResourceID
+_MTL_INLINE MTL::ResourceID MTL::VisibleFunctionTable::gpuResourceID() const
+{
+    return Object::sendMessage<MTL::ResourceID>(this, _MTL_PRIVATE_SEL(gpuResourceID));
 }
 
 // method: setFunction:atIndex:

@@ -2,7 +2,7 @@
 //
 // Metal/MTLAccelerationStructure.hpp
 //
-// Copyright 2020-2021 Apple Inc.
+// Copyright 2020-2022 Apple Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@
 #include "MTLAccelerationStructureTypes.hpp"
 #include "MTLResource.hpp"
 #include "MTLStageInputOutputDescriptor.hpp"
+#include "MTLTypes.hpp"
 
 namespace MTL
 {
@@ -77,6 +78,18 @@ public:
 
     NS::String*                                           label() const;
     void                                                  setLabel(const NS::String* label);
+
+    class Buffer*                                         primitiveDataBuffer() const;
+    void                                                  setPrimitiveDataBuffer(const class Buffer* primitiveDataBuffer);
+
+    NS::UInteger                                          primitiveDataBufferOffset() const;
+    void                                                  setPrimitiveDataBufferOffset(NS::UInteger primitiveDataBufferOffset);
+
+    NS::UInteger                                          primitiveDataStride() const;
+    void                                                  setPrimitiveDataStride(NS::UInteger primitiveDataStride);
+
+    NS::UInteger                                          primitiveDataElementSize() const;
+    void                                                  setPrimitiveDataElementSize(NS::UInteger primitiveDataElementSize);
 };
 
 _MTL_ENUM(uint32_t, MotionBorderMode) {
@@ -125,6 +138,9 @@ public:
     NS::UInteger                                                  vertexBufferOffset() const;
     void                                                          setVertexBufferOffset(NS::UInteger vertexBufferOffset);
 
+    MTL::AttributeFormat                                          vertexFormat() const;
+    void                                                          setVertexFormat(MTL::AttributeFormat vertexFormat);
+
     NS::UInteger                                                  vertexStride() const;
     void                                                          setVertexStride(NS::UInteger vertexStride);
 
@@ -139,6 +155,12 @@ public:
 
     NS::UInteger                                                  triangleCount() const;
     void                                                          setTriangleCount(NS::UInteger triangleCount);
+
+    class Buffer*                                                 transformationMatrixBuffer() const;
+    void                                                          setTransformationMatrixBuffer(const class Buffer* transformationMatrixBuffer);
+
+    NS::UInteger                                                  transformationMatrixBufferOffset() const;
+    void                                                          setTransformationMatrixBufferOffset(NS::UInteger transformationMatrixBufferOffset);
 
     static MTL::AccelerationStructureTriangleGeometryDescriptor*  descriptor();
 };
@@ -191,6 +213,9 @@ public:
     NS::Array*                                                          vertexBuffers() const;
     void                                                                setVertexBuffers(const NS::Array* vertexBuffers);
 
+    MTL::AttributeFormat                                                vertexFormat() const;
+    void                                                                setVertexFormat(MTL::AttributeFormat vertexFormat);
+
     NS::UInteger                                                        vertexStride() const;
     void                                                                setVertexStride(NS::UInteger vertexStride);
 
@@ -205,6 +230,12 @@ public:
 
     NS::UInteger                                                        triangleCount() const;
     void                                                                setTriangleCount(NS::UInteger triangleCount);
+
+    class Buffer*                                                       transformationMatrixBuffer() const;
+    void                                                                setTransformationMatrixBuffer(const class Buffer* transformationMatrixBuffer);
+
+    NS::UInteger                                                        transformationMatrixBufferOffset() const;
+    void                                                                setTransformationMatrixBufferOffset(NS::UInteger transformationMatrixBufferOffset);
 
     static MTL::AccelerationStructureMotionTriangleGeometryDescriptor*  descriptor();
 };
@@ -308,7 +339,9 @@ public:
 class AccelerationStructure : public NS::Referencing<AccelerationStructure, Resource>
 {
 public:
-    NS::UInteger size() const;
+    NS::UInteger   size() const;
+
+    MTL::ResourceID gpuResourceID() const;
 };
 
 }
@@ -390,6 +423,50 @@ _MTL_INLINE NS::String* MTL::AccelerationStructureGeometryDescriptor::label() co
 _MTL_INLINE void MTL::AccelerationStructureGeometryDescriptor::setLabel(const NS::String* label)
 {
     Object::sendMessage<void>(this, _MTL_PRIVATE_SEL(setLabel_), label);
+}
+
+// property: primitiveDataBuffer
+_MTL_INLINE MTL::Buffer* MTL::AccelerationStructureGeometryDescriptor::primitiveDataBuffer() const
+{
+    return Object::sendMessage<MTL::Buffer*>(this, _MTL_PRIVATE_SEL(primitiveDataBuffer));
+}
+
+_MTL_INLINE void MTL::AccelerationStructureGeometryDescriptor::setPrimitiveDataBuffer(const MTL::Buffer* primitiveDataBuffer)
+{
+    Object::sendMessage<void>(this, _MTL_PRIVATE_SEL(setPrimitiveDataBuffer_), primitiveDataBuffer);
+}
+
+// property: primitiveDataBufferOffset
+_MTL_INLINE NS::UInteger MTL::AccelerationStructureGeometryDescriptor::primitiveDataBufferOffset() const
+{
+    return Object::sendMessage<NS::UInteger>(this, _MTL_PRIVATE_SEL(primitiveDataBufferOffset));
+}
+
+_MTL_INLINE void MTL::AccelerationStructureGeometryDescriptor::setPrimitiveDataBufferOffset(NS::UInteger primitiveDataBufferOffset)
+{
+    Object::sendMessage<void>(this, _MTL_PRIVATE_SEL(setPrimitiveDataBufferOffset_), primitiveDataBufferOffset);
+}
+
+// property: primitiveDataStride
+_MTL_INLINE NS::UInteger MTL::AccelerationStructureGeometryDescriptor::primitiveDataStride() const
+{
+    return Object::sendMessage<NS::UInteger>(this, _MTL_PRIVATE_SEL(primitiveDataStride));
+}
+
+_MTL_INLINE void MTL::AccelerationStructureGeometryDescriptor::setPrimitiveDataStride(NS::UInteger primitiveDataStride)
+{
+    Object::sendMessage<void>(this, _MTL_PRIVATE_SEL(setPrimitiveDataStride_), primitiveDataStride);
+}
+
+// property: primitiveDataElementSize
+_MTL_INLINE NS::UInteger MTL::AccelerationStructureGeometryDescriptor::primitiveDataElementSize() const
+{
+    return Object::sendMessage<NS::UInteger>(this, _MTL_PRIVATE_SEL(primitiveDataElementSize));
+}
+
+_MTL_INLINE void MTL::AccelerationStructureGeometryDescriptor::setPrimitiveDataElementSize(NS::UInteger primitiveDataElementSize)
+{
+    Object::sendMessage<void>(this, _MTL_PRIVATE_SEL(setPrimitiveDataElementSize_), primitiveDataElementSize);
 }
 
 // static method: alloc
@@ -510,6 +587,17 @@ _MTL_INLINE void MTL::AccelerationStructureTriangleGeometryDescriptor::setVertex
     Object::sendMessage<void>(this, _MTL_PRIVATE_SEL(setVertexBufferOffset_), vertexBufferOffset);
 }
 
+// property: vertexFormat
+_MTL_INLINE MTL::AttributeFormat MTL::AccelerationStructureTriangleGeometryDescriptor::vertexFormat() const
+{
+    return Object::sendMessage<MTL::AttributeFormat>(this, _MTL_PRIVATE_SEL(vertexFormat));
+}
+
+_MTL_INLINE void MTL::AccelerationStructureTriangleGeometryDescriptor::setVertexFormat(MTL::AttributeFormat vertexFormat)
+{
+    Object::sendMessage<void>(this, _MTL_PRIVATE_SEL(setVertexFormat_), vertexFormat);
+}
+
 // property: vertexStride
 _MTL_INLINE NS::UInteger MTL::AccelerationStructureTriangleGeometryDescriptor::vertexStride() const
 {
@@ -563,6 +651,28 @@ _MTL_INLINE NS::UInteger MTL::AccelerationStructureTriangleGeometryDescriptor::t
 _MTL_INLINE void MTL::AccelerationStructureTriangleGeometryDescriptor::setTriangleCount(NS::UInteger triangleCount)
 {
     Object::sendMessage<void>(this, _MTL_PRIVATE_SEL(setTriangleCount_), triangleCount);
+}
+
+// property: transformationMatrixBuffer
+_MTL_INLINE MTL::Buffer* MTL::AccelerationStructureTriangleGeometryDescriptor::transformationMatrixBuffer() const
+{
+    return Object::sendMessage<MTL::Buffer*>(this, _MTL_PRIVATE_SEL(transformationMatrixBuffer));
+}
+
+_MTL_INLINE void MTL::AccelerationStructureTriangleGeometryDescriptor::setTransformationMatrixBuffer(const MTL::Buffer* transformationMatrixBuffer)
+{
+    Object::sendMessage<void>(this, _MTL_PRIVATE_SEL(setTransformationMatrixBuffer_), transformationMatrixBuffer);
+}
+
+// property: transformationMatrixBufferOffset
+_MTL_INLINE NS::UInteger MTL::AccelerationStructureTriangleGeometryDescriptor::transformationMatrixBufferOffset() const
+{
+    return Object::sendMessage<NS::UInteger>(this, _MTL_PRIVATE_SEL(transformationMatrixBufferOffset));
+}
+
+_MTL_INLINE void MTL::AccelerationStructureTriangleGeometryDescriptor::setTransformationMatrixBufferOffset(NS::UInteger transformationMatrixBufferOffset)
+{
+    Object::sendMessage<void>(this, _MTL_PRIVATE_SEL(setTransformationMatrixBufferOffset_), transformationMatrixBufferOffset);
 }
 
 // static method: descriptor
@@ -696,6 +806,17 @@ _MTL_INLINE void MTL::AccelerationStructureMotionTriangleGeometryDescriptor::set
     Object::sendMessage<void>(this, _MTL_PRIVATE_SEL(setVertexBuffers_), vertexBuffers);
 }
 
+// property: vertexFormat
+_MTL_INLINE MTL::AttributeFormat MTL::AccelerationStructureMotionTriangleGeometryDescriptor::vertexFormat() const
+{
+    return Object::sendMessage<MTL::AttributeFormat>(this, _MTL_PRIVATE_SEL(vertexFormat));
+}
+
+_MTL_INLINE void MTL::AccelerationStructureMotionTriangleGeometryDescriptor::setVertexFormat(MTL::AttributeFormat vertexFormat)
+{
+    Object::sendMessage<void>(this, _MTL_PRIVATE_SEL(setVertexFormat_), vertexFormat);
+}
+
 // property: vertexStride
 _MTL_INLINE NS::UInteger MTL::AccelerationStructureMotionTriangleGeometryDescriptor::vertexStride() const
 {
@@ -749,6 +870,28 @@ _MTL_INLINE NS::UInteger MTL::AccelerationStructureMotionTriangleGeometryDescrip
 _MTL_INLINE void MTL::AccelerationStructureMotionTriangleGeometryDescriptor::setTriangleCount(NS::UInteger triangleCount)
 {
     Object::sendMessage<void>(this, _MTL_PRIVATE_SEL(setTriangleCount_), triangleCount);
+}
+
+// property: transformationMatrixBuffer
+_MTL_INLINE MTL::Buffer* MTL::AccelerationStructureMotionTriangleGeometryDescriptor::transformationMatrixBuffer() const
+{
+    return Object::sendMessage<MTL::Buffer*>(this, _MTL_PRIVATE_SEL(transformationMatrixBuffer));
+}
+
+_MTL_INLINE void MTL::AccelerationStructureMotionTriangleGeometryDescriptor::setTransformationMatrixBuffer(const MTL::Buffer* transformationMatrixBuffer)
+{
+    Object::sendMessage<void>(this, _MTL_PRIVATE_SEL(setTransformationMatrixBuffer_), transformationMatrixBuffer);
+}
+
+// property: transformationMatrixBufferOffset
+_MTL_INLINE NS::UInteger MTL::AccelerationStructureMotionTriangleGeometryDescriptor::transformationMatrixBufferOffset() const
+{
+    return Object::sendMessage<NS::UInteger>(this, _MTL_PRIVATE_SEL(transformationMatrixBufferOffset));
+}
+
+_MTL_INLINE void MTL::AccelerationStructureMotionTriangleGeometryDescriptor::setTransformationMatrixBufferOffset(NS::UInteger transformationMatrixBufferOffset)
+{
+    Object::sendMessage<void>(this, _MTL_PRIVATE_SEL(setTransformationMatrixBufferOffset_), transformationMatrixBufferOffset);
 }
 
 // static method: descriptor
@@ -929,4 +1072,10 @@ _MTL_INLINE MTL::InstanceAccelerationStructureDescriptor* MTL::InstanceAccelerat
 _MTL_INLINE NS::UInteger MTL::AccelerationStructure::size() const
 {
     return Object::sendMessage<NS::UInteger>(this, _MTL_PRIVATE_SEL(size));
+}
+
+// property: gpuResourceID
+_MTL_INLINE MTL::ResourceID MTL::AccelerationStructure::gpuResourceID() const
+{
+    return Object::sendMessage<MTL::ResourceID>(this, _MTL_PRIVATE_SEL(gpuResourceID));
 }

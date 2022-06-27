@@ -2,7 +2,7 @@
 //
 // Metal/MTLLinkedFunctions.hpp
 //
-// Copyright 2020-2021 Apple Inc.
+// Copyright 2020-2022 Apple Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -43,8 +43,8 @@ public:
     NS::Array*                    binaryFunctions() const;
     void                          setBinaryFunctions(const NS::Array* binaryFunctions);
 
-    NS::Array*                    groups() const;
-    void                          setGroups(const NS::Array* groups);
+    NS::Dictionary*               groups() const;
+    void                          setGroups(const NS::Dictionary* groups);
 
     NS::Array*                    privateFunctions() const;
     void                          setPrivateFunctions(const NS::Array* privateFunctions);
@@ -93,12 +93,12 @@ _MTL_INLINE void MTL::LinkedFunctions::setBinaryFunctions(const NS::Array* binar
 }
 
 // property: groups
-_MTL_INLINE NS::Array* MTL::LinkedFunctions::groups() const
+_MTL_INLINE NS::Dictionary* MTL::LinkedFunctions::groups() const
 {
-    return Object::sendMessage<NS::Array*>(this, _MTL_PRIVATE_SEL(groups));
+    return Object::sendMessage<NS::Dictionary*>(this, _MTL_PRIVATE_SEL(groups));
 }
 
-_MTL_INLINE void MTL::LinkedFunctions::setGroups(const NS::Array* groups)
+_MTL_INLINE void MTL::LinkedFunctions::setGroups(const NS::Dictionary* groups)
 {
     Object::sendMessage<void>(this, _MTL_PRIVATE_SEL(setGroups_), groups);
 }

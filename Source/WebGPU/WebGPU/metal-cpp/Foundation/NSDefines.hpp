@@ -2,7 +2,7 @@
 //
 // Foundation/NSDefines.hpp
 //
-// Copyright 2020-2021 Apple Inc.
+// Copyright 2020-2022 Apple Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,12 +23,16 @@
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 #define _NS_WEAK_IMPORT __attribute__((weak_import))
+#ifdef METALCPP_SYMBOL_VISIBILITY_HIDDEN
 #define _NS_EXPORT __attribute__((visibility("hidden")))
+#else
+#define _NS_EXPORT __attribute__((visibility("default")))
+#endif // METALCPP_SYMBOL_VISIBILITY_HIDDEN
 #define _NS_EXTERN extern "C" _NS_EXPORT
 #define _NS_INLINE inline __attribute__((always_inline))
 #define _NS_PACKED __attribute__((packed))
 
-#define _NS_CONST(type, name) _NS_EXTERN type const name;
+#define _NS_CONST(type, name) _NS_EXTERN type const name
 #define _NS_ENUM(type, name) enum name : type
 #define _NS_OPTIONS(type, name) \
     using name = type;          \

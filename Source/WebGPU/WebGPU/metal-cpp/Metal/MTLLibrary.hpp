@@ -2,7 +2,7 @@
 //
 // Metal/MTLLibrary.hpp
 //
-// Copyright 2020-2021 Apple Inc.
+// Copyright 2020-2022 Apple Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -85,6 +85,8 @@ _MTL_ENUM(NS::UInteger, FunctionType) {
     FunctionTypeKernel = 3,
     FunctionTypeVisible = 5,
     FunctionTypeIntersection = 6,
+    FunctionTypeMesh = 7,
+    FunctionTypeObject = 8,
 };
 
 class FunctionConstant : public NS::Referencing<FunctionConstant>
@@ -143,6 +145,7 @@ _MTL_ENUM(NS::UInteger, LanguageVersion) {
     LanguageVersion2_2 = 131074,
     LanguageVersion2_3 = 131075,
     LanguageVersion2_4 = 131076,
+    LanguageVersion3_0 = 196608,
 };
 
 _MTL_ENUM(NS::Integer, LibraryType) {
@@ -150,33 +153,41 @@ _MTL_ENUM(NS::Integer, LibraryType) {
     LibraryTypeDynamic = 1,
 };
 
+_MTL_ENUM(NS::Integer, LibraryOptimizationLevel) {
+    LibraryOptimizationLevelDefault = 0,
+    LibraryOptimizationLevelSize = 1,
+};
+
 class CompileOptions : public NS::Copying<CompileOptions>
 {
 public:
-    static class CompileOptions* alloc();
+    static class CompileOptions*  alloc();
 
-    class CompileOptions*        init();
+    class CompileOptions*         init();
 
-    NS::Dictionary*              preprocessorMacros() const;
-    void                         setPreprocessorMacros(const NS::Dictionary* preprocessorMacros);
+    NS::Dictionary*               preprocessorMacros() const;
+    void                          setPreprocessorMacros(const NS::Dictionary* preprocessorMacros);
 
-    bool                         fastMathEnabled() const;
-    void                         setFastMathEnabled(bool fastMathEnabled);
+    bool                          fastMathEnabled() const;
+    void                          setFastMathEnabled(bool fastMathEnabled);
 
-    MTL::LanguageVersion         languageVersion() const;
-    void                         setLanguageVersion(MTL::LanguageVersion languageVersion);
+    MTL::LanguageVersion          languageVersion() const;
+    void                          setLanguageVersion(MTL::LanguageVersion languageVersion);
 
-    MTL::LibraryType             libraryType() const;
-    void                         setLibraryType(MTL::LibraryType libraryType);
+    MTL::LibraryType              libraryType() const;
+    void                          setLibraryType(MTL::LibraryType libraryType);
 
-    NS::String*                  installName() const;
-    void                         setInstallName(const NS::String* installName);
+    NS::String*                   installName() const;
+    void                          setInstallName(const NS::String* installName);
 
-    NS::Array*                   libraries() const;
-    void                         setLibraries(const NS::Array* libraries);
+    NS::Array*                    libraries() const;
+    void                          setLibraries(const NS::Array* libraries);
 
-    bool                         preserveInvariance() const;
-    void                         setPreserveInvariance(bool preserveInvariance);
+    bool                          preserveInvariance() const;
+    void                          setPreserveInvariance(bool preserveInvariance);
+
+    MTL::LibraryOptimizationLevel optimizationLevel() const;
+    void                          setOptimizationLevel(MTL::LibraryOptimizationLevel optimizationLevel);
 };
 
 _MTL_ENUM(NS::UInteger, LibraryError) {
@@ -520,6 +531,17 @@ _MTL_INLINE bool MTL::CompileOptions::preserveInvariance() const
 _MTL_INLINE void MTL::CompileOptions::setPreserveInvariance(bool preserveInvariance)
 {
     Object::sendMessage<void>(this, _MTL_PRIVATE_SEL(setPreserveInvariance_), preserveInvariance);
+}
+
+// property: optimizationLevel
+_MTL_INLINE MTL::LibraryOptimizationLevel MTL::CompileOptions::optimizationLevel() const
+{
+    return Object::sendMessage<MTL::LibraryOptimizationLevel>(this, _MTL_PRIVATE_SEL(optimizationLevel));
+}
+
+_MTL_INLINE void MTL::CompileOptions::setOptimizationLevel(MTL::LibraryOptimizationLevel optimizationLevel)
+{
+    Object::sendMessage<void>(this, _MTL_PRIVATE_SEL(setOptimizationLevel_), optimizationLevel);
 }
 
 _MTL_INLINE void MTL::Library::newFunction(const NS::String* pFunctionName, const FunctionConstantValues* pConstantValues, const std::function<void(Function* pFunction, NS::Error* pError)>& completionHandler)
