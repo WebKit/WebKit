@@ -121,6 +121,8 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {{
     void MultiDrawArraysInstancedANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t> firstsCountsAandInstanceCounts)
     void MultiDrawElementsANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t> countsAndOffsets, uint32_t type)
     void MultiDrawElementsInstancedANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t> countsOffsetsAndInstanceCounts, uint32_t type)
+    void MultiDrawArraysInstancedBaseInstanceANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t, uint32_t> firstsCountsInstanceCountsAndBaseInstances)
+    void MultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t, int32_t, uint32_t> countsOffsetsInstanceCountsBaseVerticesAndBaseInstances, uint32_t type)
     void PaintRenderingResultsToPixelBuffer() -> (std::optional<IPC::PixelBufferReference> returnValue) Synchronous
 {}
 }}

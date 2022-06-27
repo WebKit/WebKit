@@ -1180,9 +1180,11 @@ JS_BINDING_IDLS := \
     $(WebCore)/html/canvas/WebGLDebugShaders.idl \
     $(WebCore)/html/canvas/WebGLDepthTexture.idl \
     $(WebCore)/html/canvas/WebGLDrawBuffers.idl \
+    $(WebCore)/html/canvas/WebGLDrawInstancedBaseVertexBaseInstance.idl \
     $(WebCore)/html/canvas/WebGLFramebuffer.idl \
     $(WebCore)/html/canvas/WebGLLoseContext.idl \
     $(WebCore)/html/canvas/WebGLMultiDraw.idl \
+    $(WebCore)/html/canvas/WebGLMultiDrawInstancedBaseVertexBaseInstance.idl \
     $(WebCore)/html/canvas/WebGLProgram.idl \
     $(WebCore)/html/canvas/WebGLQuery.idl \
     $(WebCore)/html/canvas/WebGLRenderbuffer.idl \

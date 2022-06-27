@@ -2363,6 +2363,24 @@ void RemoteGraphicsContextGLProxy::colorMaskiOES(GCGLuint buf, GCGLboolean red, 
     }
 }
 
+void RemoteGraphicsContextGLProxy::drawArraysInstancedBaseInstanceANGLE(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei instanceCount, GCGLuint baseInstance)
+{
+    if (!isContextLost()) {
+        auto sendResult = send(Messages::RemoteGraphicsContextGL::DrawArraysInstancedBaseInstanceANGLE(mode, first, count, instanceCount, baseInstance));
+        if (!sendResult)
+            markContextLost();
+    }
+}
+
+void RemoteGraphicsContextGLProxy::drawElementsInstancedBaseVertexBaseInstanceANGLE(GCGLenum mode, GCGLsizei count, GCGLenum type, GCGLintptr offset, GCGLsizei instanceCount, GCGLint baseVertex, GCGLuint baseInstance)
+{
+    if (!isContextLost()) {
+        auto sendResult = send(Messages::RemoteGraphicsContextGL::DrawElementsInstancedBaseVertexBaseInstanceANGLE(mode, count, type, static_cast<uint64_t>(offset), instanceCount, baseVertex, baseInstance));
+        if (!sendResult)
+            markContextLost();
+    }
+}
+
 void RemoteGraphicsContextGLProxy::getInternalformativ(GCGLenum target, GCGLenum internalformat, GCGLenum pname, GCGLSpan<GCGLint> params)
 {
     IPC::ArrayReference<int32_t> paramsReply;

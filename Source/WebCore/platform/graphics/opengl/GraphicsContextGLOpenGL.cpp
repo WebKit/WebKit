@@ -3121,6 +3121,22 @@ void GraphicsContextGLOpenGL::colorMaskiOES(GCGLuint, GCGLboolean, GCGLboolean, 
 {
 }
 
+void GraphicsContextGLOpenGL::drawArraysInstancedBaseInstanceANGLE(GCGLenum, GCGLint, GCGLsizei, GCGLsizei, GCGLuint)
+{
+}
+
+void GraphicsContextGLOpenGL::drawElementsInstancedBaseVertexBaseInstanceANGLE(GCGLenum, GCGLsizei, GCGLenum, GCGLintptr, GCGLsizei, GCGLint, GCGLuint)
+{
+}
+
+void GraphicsContextGLOpenGL::multiDrawArraysInstancedBaseInstanceANGLE(GCGLenum, GCGLSpanTuple<const GCGLint, const GCGLsizei, const GCGLsizei, const GCGLuint>)
+{
+}
+
+void GraphicsContextGLOpenGL::multiDrawElementsInstancedBaseVertexBaseInstanceANGLE(GCGLenum, GCGLSpanTuple<const GCGLsizei, const GCGLsizei, const GCGLsizei, const GCGLint, const GCGLuint>, GCGLenum)
+{
+}
+
 bool GraphicsContextGLOpenGL::texImage2DResourceSafe(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, GCGLint unpackAlignment)
 {
     ASSERT(unpackAlignment == 1 || unpackAlignment == 2 || unpackAlignment == 4 || unpackAlignment == 8);

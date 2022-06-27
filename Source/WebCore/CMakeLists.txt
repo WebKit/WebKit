@@ -1840,10 +1840,12 @@ if (ENABLE_WEBGL)
         html/canvas/WebGLDebugShaders.cpp
         html/canvas/WebGLDepthTexture.cpp
         html/canvas/WebGLDrawBuffers.cpp
+        html/canvas/WebGLDrawInstancedBaseVertexBaseInstance.cpp
         html/canvas/WebGLExtension.cpp
         html/canvas/WebGLFramebuffer.cpp
         html/canvas/WebGLLoseContext.cpp
         html/canvas/WebGLMultiDraw.cpp
+        html/canvas/WebGLMultiDrawInstancedBaseVertexBaseInstance.cpp
         html/canvas/WebGLObject.cpp
         html/canvas/WebGLProgram.cpp
         html/canvas/WebGLQuery.cpp
@@ -1904,9 +1906,11 @@ list(APPEND WebCore_IDL_FILES
     html/canvas/WebGLDebugShaders.idl
     html/canvas/WebGLDepthTexture.idl
     html/canvas/WebGLDrawBuffers.idl
+    html/canvas/WebGLDrawInstancedBaseVertexBaseInstance.idl
     html/canvas/WebGLFramebuffer.idl
     html/canvas/WebGLLoseContext.idl
     html/canvas/WebGLMultiDraw.idl
+    html/canvas/WebGLMultiDrawInstancedBaseVertexBaseInstance.idl
     html/canvas/WebGLProgram.idl
     html/canvas/WebGLQuery.idl
     html/canvas/WebGLRenderbuffer.idl

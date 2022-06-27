@@ -1676,6 +1676,18 @@ WebGL2Enabled:
     WebCore:
       default: true
 
+WebGLDraftExtensionsEnabled:
+  type: bool
+  humanReadableName: "WebGL Draft Extensions"
+  humanReadableDescription: "Enable WebGL extensions that are still in draft status"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 WebGLUsingMetal:
   type: bool
   humanReadableName: "WebGL via Metal"

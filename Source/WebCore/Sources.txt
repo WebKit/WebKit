@@ -1402,10 +1402,12 @@ html/canvas/WebGLDebugRendererInfo.cpp
 html/canvas/WebGLDebugShaders.cpp
 html/canvas/WebGLDepthTexture.cpp
 html/canvas/WebGLDrawBuffers.cpp
+html/canvas/WebGLDrawInstancedBaseVertexBaseInstance.cpp
 html/canvas/WebGLExtension.cpp
 html/canvas/WebGLFramebuffer.cpp
 html/canvas/WebGLLoseContext.cpp
 html/canvas/WebGLMultiDraw.cpp
+html/canvas/WebGLMultiDrawInstancedBaseVertexBaseInstance.cpp
 html/canvas/WebGLObject.cpp
 html/canvas/WebGLProgram.cpp
 html/canvas/WebGLQuery.cpp
@@ -4060,9 +4062,11 @@ JSWebGLDebugRendererInfo.cpp
 JSWebGLDebugShaders.cpp
 JSWebGLDepthTexture.cpp
 JSWebGLDrawBuffers.cpp
+JSWebGLDrawInstancedBaseVertexBaseInstance.cpp
 JSWebGLFramebuffer.cpp
 JSWebGLLoseContext.cpp
 JSWebGLMultiDraw.cpp
+JSWebGLMultiDrawInstancedBaseVertexBaseInstance.cpp
 JSWebGLProgram.cpp
 JSWebGLQuery.cpp
 JSWebGLRenderbuffer.cpp

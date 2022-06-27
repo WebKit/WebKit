@@ -57,6 +57,8 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
     void MultiDrawArraysInstancedANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t> firstsCountsAandInstanceCounts)
     void MultiDrawElementsANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t> countsAndOffsets, uint32_t type)
     void MultiDrawElementsInstancedANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t> countsOffsetsAndInstanceCounts, uint32_t type)
+    void MultiDrawArraysInstancedBaseInstanceANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t, uint32_t> firstsCountsInstanceCountsAndBaseInstances)
+    void MultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t, int32_t, uint32_t> countsOffsetsInstanceCountsBaseVerticesAndBaseInstances, uint32_t type)
     void PaintRenderingResultsToPixelBuffer() -> (std::optional<IPC::PixelBufferReference> returnValue) Synchronous
 
     void MoveErrorsToSyntheticErrorList() -> (bool returnValue) Synchronous
@@ -302,6 +304,8 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
     void BlendFunciOES(uint32_t buf, uint32_t src, uint32_t dst)
     void BlendFuncSeparateiOES(uint32_t buf, uint32_t srcRGB, uint32_t dstRGB, uint32_t srcAlpha, uint32_t dstAlpha)
     void ColorMaskiOES(uint32_t buf, bool red, bool green, bool blue, bool alpha)
+    void DrawArraysInstancedBaseInstanceANGLE(uint32_t mode, int32_t first, int32_t count, int32_t instanceCount, uint32_t baseInstance)
+    void DrawElementsInstancedBaseVertexBaseInstanceANGLE(uint32_t mode, int32_t count, uint32_t type, uint64_t offset, int32_t instanceCount, int32_t baseVertex, uint32_t baseInstance)
     void GetInternalformativ(uint32_t target, uint32_t internalformat, uint32_t pname, uint64_t paramsSize) -> (IPC::ArrayReference<int32_t> params) Synchronous
 }
 

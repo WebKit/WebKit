@@ -60,9 +60,11 @@
 #include "WebGLCompressedTextureS3TCsRGB.h"
 #include "WebGLDebugRendererInfo.h"
 #include "WebGLDebugShaders.h"
+#include "WebGLDrawInstancedBaseVertexBaseInstance.h"
 #include "WebGLFramebuffer.h"
 #include "WebGLLoseContext.h"
 #include "WebGLMultiDraw.h"
+#include "WebGLMultiDrawInstancedBaseVertexBaseInstance.h"
 #include "WebGLProgram.h"
 #include "WebGLQuery.h"
 #include "WebGLRenderbuffer.h"
@@ -2552,6 +2554,8 @@ WebGLExtension* WebGL2RenderingContext::getExtension(const String& name)
     if (isContextLostOrPending())
         return nullptr;
 
+    const bool enableDraftExtensions = scriptExecutionContext()->settingsValues().webGLDraftExtensionsEnabled;
+
 #define ENABLE_IF_REQUESTED(type, variable, nameLiteral, canEnable) \
     if (equalIgnoringASCIICase(name, nameLiteral)) { \
         if (!variable) { \
@@ -2582,8 +2586,10 @@ WebGLExtension* WebGL2RenderingContext::getExtension(const String& name)
     ENABLE_IF_REQUESTED(WebGLCompressedTextureS3TCsRGB, m_webglCompressedTextureS3TCsRGB, "WEBGL_compressed_texture_s3tc_srgb"_s, WebGLCompressedTextureS3TCsRGB::supported(*m_context));
     ENABLE_IF_REQUESTED(WebGLDebugRendererInfo, m_webglDebugRendererInfo, "WEBGL_debug_renderer_info"_s, true);
     ENABLE_IF_REQUESTED(WebGLDebugShaders, m_webglDebugShaders, "WEBGL_debug_shaders"_s, WebGLDebugShaders::supported(*m_context));
+    ENABLE_IF_REQUESTED(WebGLDrawInstancedBaseVertexBaseInstance, m_webglDrawInstancedBaseVertexBaseInstance, "WEBGL_draw_instanced_base_vertex_base_instance"_s, WebGLDrawInstancedBaseVertexBaseInstance::supported(*m_context) && enableDraftExtensions);
     ENABLE_IF_REQUESTED(WebGLLoseContext, m_webglLoseContext, "WEBGL_lose_context"_s, true);
     ENABLE_IF_REQUESTED(WebGLMultiDraw, m_webglMultiDraw, "WEBGL_multi_draw"_s, WebGLMultiDraw::supported(*m_context));
+    ENABLE_IF_REQUESTED(WebGLMultiDrawInstancedBaseVertexBaseInstance, m_webglMultiDrawInstancedBaseVertexBaseInstance, "WEBGL_multi_draw_instanced_base_vertex_base_instance"_s, WebGLMultiDrawInstancedBaseVertexBaseInstance::supported(*m_context) && enableDraftExtensions);
     return nullptr;
 }
 
@@ -2596,6 +2602,8 @@ std::optional<Vector<String>> WebGL2RenderingContext::getSupportedExtensions()
 
     if (m_isPendingPolicyResolution)
         return result;
+
+    const bool enableDraftExtensions = scriptExecutionContext()->settingsValues().webGLDraftExtensionsEnabled;
 
 #define APPEND_IF_SUPPORTED(nameLiteral, condition) \
     if (condition) \
@@ -2621,8 +2629,10 @@ std::optional<Vector<String>> WebGL2RenderingContext::getSupportedExtensions()
     APPEND_IF_SUPPORTED("WEBGL_compressed_texture_s3tc_srgb", WebGLCompressedTextureS3TCsRGB::supported(*m_context))
     APPEND_IF_SUPPORTED("WEBGL_debug_renderer_info", true)
     APPEND_IF_SUPPORTED("WEBGL_debug_shaders", WebGLDebugShaders::supported(*m_context))
+    APPEND_IF_SUPPORTED("WEBGL_draw_instanced_base_vertex_base_instance", WebGLDrawInstancedBaseVertexBaseInstance::supported(*m_context) && enableDraftExtensions)
     APPEND_IF_SUPPORTED("WEBGL_lose_context", true)
     APPEND_IF_SUPPORTED("WEBGL_multi_draw", WebGLMultiDraw::supported(*m_context))
+    APPEND_IF_SUPPORTED("WEBGL_multi_draw_instanced_base_vertex_base_instance", WebGLMultiDrawInstancedBaseVertexBaseInstance::supported(*m_context) && enableDraftExtensions)
 
     return result;
 }

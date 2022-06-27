@@ -64,9 +64,11 @@
 #include "JSWebGLDebugShaders.h"
 #include "JSWebGLDepthTexture.h"
 #include "JSWebGLDrawBuffers.h"
+#include "JSWebGLDrawInstancedBaseVertexBaseInstance.h"
 #include "JSWebGLFramebuffer.h"
 #include "JSWebGLLoseContext.h"
 #include "JSWebGLMultiDraw.h"
+#include "JSWebGLMultiDrawInstancedBaseVertexBaseInstance.h"
 #include "JSWebGLProgram.h"
 #include "JSWebGLRenderbuffer.h"
 #include "JSWebGLSampler.h"
@@ -201,8 +203,10 @@ JSValue convertToJSValue(JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject&
         TO_JS(WebGLDebugShaders)
         TO_JS(WebGLDepthTexture)
         TO_JS(WebGLDrawBuffers)
+        TO_JS(WebGLDrawInstancedBaseVertexBaseInstance)
         TO_JS(WebGLLoseContext)
         TO_JS(WebGLMultiDraw)
+        TO_JS(WebGLMultiDrawInstancedBaseVertexBaseInstance)
     }
     ASSERT_NOT_REACHED();
     return jsNull();

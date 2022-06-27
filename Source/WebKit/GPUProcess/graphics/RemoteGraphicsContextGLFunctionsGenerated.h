@@ -1375,6 +1375,16 @@
         assertIsCurrent(workQueue());
         m_context->colorMaskiOES(buf, static_cast<GCGLboolean>(red), static_cast<GCGLboolean>(green), static_cast<GCGLboolean>(blue), static_cast<GCGLboolean>(alpha));
     }
+    void drawArraysInstancedBaseInstanceANGLE(uint32_t mode, int32_t first, int32_t count, int32_t instanceCount, uint32_t baseInstance)
+    {
+        assertIsCurrent(workQueue());
+        m_context->drawArraysInstancedBaseInstanceANGLE(mode, first, count, instanceCount, baseInstance);
+    }
+    void drawElementsInstancedBaseVertexBaseInstanceANGLE(uint32_t mode, int32_t count, uint32_t type, uint64_t offset, int32_t instanceCount, int32_t baseVertex, uint32_t baseInstance)
+    {
+        assertIsCurrent(workQueue());
+        m_context->drawElementsInstancedBaseVertexBaseInstanceANGLE(mode, count, type, static_cast<GCGLintptr>(offset), instanceCount, baseVertex, baseInstance);
+    }
     void getInternalformativ(uint32_t target, uint32_t internalformat, uint32_t pname, uint64_t paramsSize, CompletionHandler<void(IPC::ArrayReference<int32_t>)>&& completionHandler)
     {
         Vector<GCGLint, 4> params(static_cast<size_t>(paramsSize), 0);

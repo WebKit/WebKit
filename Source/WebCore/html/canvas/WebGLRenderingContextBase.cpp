@@ -99,9 +99,11 @@
 #include "WebGLDebugShaders.h"
 #include "WebGLDepthTexture.h"
 #include "WebGLDrawBuffers.h"
+#include "WebGLDrawInstancedBaseVertexBaseInstance.h"
 #include "WebGLFramebuffer.h"
 #include "WebGLLoseContext.h"
 #include "WebGLMultiDraw.h"
+#include "WebGLMultiDrawInstancedBaseVertexBaseInstance.h"
 #include "WebGLProgram.h"
 #include "WebGLRenderbuffer.h"
 #include "WebGLRenderingContext.h"
@@ -4005,8 +4007,10 @@ bool WebGLRenderingContextBase::extensionIsEnabled(const String& name)
     CHECK_EXTENSION(m_webglDebugShaders, "WEBGL_debug_shaders");
     CHECK_EXTENSION(m_webglDepthTexture, "WEBGL_depth_texture");
     CHECK_EXTENSION(m_webglDrawBuffers, "WEBGL_draw_buffers");
+    CHECK_EXTENSION(m_webglDrawInstancedBaseVertexBaseInstance, "WEBGL_draw_instanced_base_vertex_base_instance");
     CHECK_EXTENSION(m_webglLoseContext, "WEBGL_lose_context");
     CHECK_EXTENSION(m_webglMultiDraw, "WEBGL_multi_draw");
+    CHECK_EXTENSION(m_webglMultiDrawInstancedBaseVertexBaseInstance, "WEBGL_multi_draw_instanced_base_vertex_base_instance");
     return false;
 }
 
@@ -8135,8 +8139,10 @@ void WebGLRenderingContextBase::loseExtensions(LostContextMode mode)
     LOSE_EXTENSION(m_webglDebugShaders);
     LOSE_EXTENSION(m_webglDepthTexture);
     LOSE_EXTENSION(m_webglDrawBuffers);
+    LOSE_EXTENSION(m_webglDrawInstancedBaseVertexBaseInstance);
     LOSE_EXTENSION(m_webglLoseContext);
     LOSE_EXTENSION(m_webglMultiDraw);
+    LOSE_EXTENSION(m_webglMultiDrawInstancedBaseVertexBaseInstance);
 }
 
 void WebGLRenderingContextBase::activityStateDidChange(OptionSet<ActivityState::Flag> oldActivityState, OptionSet<ActivityState::Flag> newActivityState)

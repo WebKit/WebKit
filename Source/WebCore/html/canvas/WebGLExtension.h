@@ -71,8 +71,10 @@ public:
         WebGLDebugShadersName,
         WebGLDepthTextureName,
         WebGLDrawBuffersName,
+        WebGLDrawInstancedBaseVertexBaseInstanceName,
         WebGLLoseContextName,
         WebGLMultiDrawName,
+        WebGLMultiDrawInstancedBaseVertexBaseInstanceName,
     };
 
     WebGLRenderingContextBase* context() { return m_context; }

@@ -115,9 +115,11 @@ class WebGLDebugRendererInfo;
 class WebGLDebugShaders;
 class WebGLDepthTexture;
 class WebGLDrawBuffers;
+class WebGLDrawInstancedBaseVertexBaseInstance;
 class WebGLExtension;
 class WebGLLoseContext;
 class WebGLMultiDraw;
+class WebGLMultiDrawInstancedBaseVertexBaseInstance;
 class WebGLObject;
 class WebGLShader;
 class WebGLShaderPrecisionFormat;
@@ -483,7 +485,9 @@ protected:
     friend class WebGLCompressedTextureS3TCsRGB;
     friend class WebGLDebugShaders;
     friend class WebGLDrawBuffers;
+    friend class WebGLDrawInstancedBaseVertexBaseInstance;
     friend class WebGLMultiDraw;
+    friend class WebGLMultiDrawInstancedBaseVertexBaseInstance;
 
     friend class WebGLFramebuffer;
     friend class WebGLObject;
@@ -778,8 +782,10 @@ protected:
     RefPtr<WebGLDebugShaders> m_webglDebugShaders;
     RefPtr<WebGLDepthTexture> m_webglDepthTexture;
     RefPtr<WebGLDrawBuffers> m_webglDrawBuffers;
+    RefPtr<WebGLDrawInstancedBaseVertexBaseInstance> m_webglDrawInstancedBaseVertexBaseInstance;
     RefPtr<WebGLLoseContext> m_webglLoseContext;
     RefPtr<WebGLMultiDraw> m_webglMultiDraw;
+    RefPtr<WebGLMultiDrawInstancedBaseVertexBaseInstance> m_webglMultiDrawInstancedBaseVertexBaseInstance;
 
     bool m_areWebGL2TexImageSourceFormatsAndTypesAdded { false };
     bool m_areOESTextureFloatFormatsAndTypesAdded { false };

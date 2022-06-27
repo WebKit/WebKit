@@ -78,10 +78,58 @@ private:
     const T2* m_data2 { nullptr };
 };
 
+template<typename T0, typename T1, typename T2, typename T3>
+class ArrayReferenceTuple<T0, T1, T2, T3> : public ArrayReferenceTuple<T0, T1, T2> {
+public:
+    ArrayReferenceTuple() = default;
+    ArrayReferenceTuple(const T0* data0, const T1* data1, const T2* data2, const T3* data3, size_t size)
+        : ArrayReferenceTuple<T0, T1, T2>(data0, data1, data2, size)
+        , m_data3(size ? data3 : nullptr)
+    {
+    }
+    template<int I>
+    auto data() const
+    {
+        if constexpr(I == 3)
+            return m_data3;
+        else
+            return ArrayReferenceTuple<T0, T1, T2>::template data<I>();
+    }
+private:
+    const T3* m_data3 { nullptr };
+};
+
+template<typename T0, typename T1, typename T2, typename T3, typename T4>
+class ArrayReferenceTuple<T0, T1, T2, T3, T4> : public ArrayReferenceTuple<T0, T1, T2, T3> {
+public:
+    ArrayReferenceTuple() = default;
+    ArrayReferenceTuple(const T0* data0, const T1* data1, const T2* data2, const T3* data3, const T4* data4, size_t size)
+        : ArrayReferenceTuple<T0, T1, T2, T3>(data0, data1, data2, data3, size)
+        , m_data4(size ? data4 : nullptr)
+    {
+    }
+    template<int I>
+    auto data() const
+    {
+        if constexpr(I == 4)
+            return m_data4;
+        else
+            return ArrayReferenceTuple<T0, T1, T2, T3>::template data<I>();
+    }
+private:
+    const T4* m_data4 { nullptr };
+};
+
 template<typename T0, typename T1>
 ArrayReferenceTuple(const T0*, const T1*, size_t) -> ArrayReferenceTuple<T0, T1>;
 
 template<typename T0, typename T1, typename T2>
 ArrayReferenceTuple(const T0*, const T1*, const T2*, size_t) -> ArrayReferenceTuple<T0, T1, T2>;
+
+template<typename T0, typename T1, typename T2, typename T3>
+ArrayReferenceTuple(const T0*, const T1*, const T2*, const T3*, size_t) -> ArrayReferenceTuple<T0, T1, T2, T3>;
+
+template<typename T0, typename T1, typename T2, typename T3, typename T4>
+ArrayReferenceTuple(const T0*, const T1*, const T2*, const T3*, const T4*, size_t) -> ArrayReferenceTuple<T0, T1, T2, T3, T4>;
 
 }
