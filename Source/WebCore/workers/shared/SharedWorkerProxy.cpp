@@ -90,7 +90,7 @@ void SharedWorkerProxy::postMessageToWorkerGlobalScope(MessageWithMessagePorts&&
     postTaskToWorkerGlobalScope([message = WTFMove(message)](auto& scriptContext) mutable {
         auto& context = downcast<SharedWorkerGlobalScope>(scriptContext);
         auto ports = MessagePort::entanglePorts(scriptContext, WTFMove(message.transferredPorts));
-        context.dispatchEvent(MessageEvent::create(WTFMove(ports), message.message.releaseNonNull()));
+        context.dispatchEvent(MessageEvent::create(message.message.releaseNonNull(), WTFMove(ports)));
     });
 }
 
