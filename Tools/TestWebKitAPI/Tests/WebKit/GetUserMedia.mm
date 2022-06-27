@@ -1127,8 +1127,7 @@ TEST(WebKit2, CapturePermissionWithSystemBlocking)
 #endif
 
 #if PLATFORM(MAC)
-// FIXME webkit.org/b/241984 
-TEST(WebKit2, DISABLED_ConnectedToHardwareConsole)
+TEST(WebKit2, ConnectedToHardwareConsole)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto processPoolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
@@ -1156,7 +1155,6 @@ TEST(WebKit2, DISABLED_ConnectedToHardwareConsole)
     int retryCount = 1000;
     while (--retryCount && cameraCaptureState == WKMediaCaptureStateMuted)
         TestWebKitAPI::Util::spinRunLoop(10);
-    EXPECT_TRUE(!!retryCount);
     EXPECT_TRUE(cameraCaptureState == WKMediaCaptureStateMuted);
 
     // Capture should be unmuted if it was active when the disconnect happened.
