@@ -11,7 +11,7 @@ const layoutDelegate = null;
 const slider = new Slider(layoutDelegate);
 
 shouldBeEqualToString("slider.element.localName", "div");
-shouldBeEqualToString("slider.element.className.trim()", "slider");
+shouldBeEqualToString("slider.element.className.trim()", "slider default");
 shouldBe("slider.children.length", "2");
 shouldBeEqualToString("slider.children[0].element.localName", "div");
 shouldBeEqualToString("slider.children[1].element.localName", "input");
@@ -21,7 +21,7 @@ shouldBeEqualToString("slider.children[1].element.max", "1");
 shouldBeEqualToString("slider.children[1].element.step", "0.001");
 
 const sliderWithCSSClassName = new Slider(layoutDelegate, "foo");
-shouldBeEqualToString("sliderWithCSSClassName.element.className", "slider foo");
+shouldBeEqualToString("sliderWithCSSClassName.element.className", "slider default foo");
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>

@@ -1770,6 +1770,7 @@ MODERN_MEDIA_CONTROLS_STYLE_SHEETS = \
     $(WebCore)/Modules/modern-media-controls/controls/media-controls.css \
     $(WebCore)/Modules/modern-media-controls/controls/media-document.css \
     $(WebCore)/Modules/modern-media-controls/controls/placard.css \
+    $(WebCore)/Modules/modern-media-controls/controls/slider-base.css \
     $(WebCore)/Modules/modern-media-controls/controls/slider.css \
     $(WebCore)/Modules/modern-media-controls/controls/status-label.css \
     $(WebCore)/Modules/modern-media-controls/controls/text-tracks.css \
@@ -1846,6 +1847,7 @@ MODERN_MEDIA_CONTROLS_SCRIPTS = \
     $(WebCore)/Modules/modern-media-controls/controls/background-tint.js \
     $(WebCore)/Modules/modern-media-controls/controls/time-control.js \
     $(WebCore)/Modules/modern-media-controls/controls/time-label.js \
+    $(WebCore)/Modules/modern-media-controls/controls/slider-base.js \
     $(WebCore)/Modules/modern-media-controls/controls/slider.js \
     $(WebCore)/Modules/modern-media-controls/controls/button.js \
     $(WebCore)/Modules/modern-media-controls/controls/play-pause-button.js \

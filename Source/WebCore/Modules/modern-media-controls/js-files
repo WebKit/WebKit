@@ -10,6 +10,7 @@ controls/icon-service.js
 controls/background-tint.js
 controls/time-control.js
 controls/time-label.js
+controls/slider-base.js
 controls/slider.js
 controls/button.js
 controls/play-pause-button.js

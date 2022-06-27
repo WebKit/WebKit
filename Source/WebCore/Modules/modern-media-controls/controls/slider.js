@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2016, 2022 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,93 +23,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Slider extends LayoutNode
+class Slider extends SliderBase
 {
-
     constructor(layoutDelegate, cssClassName = "", knobStyle = Slider.KnobStyle.Circle)
     {
-        super(`<div class="slider ${cssClassName}"></div>`);
+        super(layoutDelegate, `default ${cssClassName}`);
 
-        this._layoutDelegate = layoutDelegate;
-
-        this._container = new LayoutNode(`<div class="custom-slider"></div>`);
         this._primaryFill = new LayoutNode(`<div class="primary fill"></div>`);
         this._trackFill = new LayoutNode(`<div class="track fill"></div>`);
         this._secondaryFill = new LayoutNode(`<div class="secondary fill"></div>`);
         this._knob = new LayoutNode(`<div class="knob ${knobStyle}"></div>`);
-        this._container.children = [this._primaryFill, this._trackFill, this._secondaryFill, this._knob];
+        this.appearanceContainer.children = [this._primaryFill, this._trackFill, this._secondaryFill, this._knob];
 
-        this._input = new LayoutNode(`<input type="range" min="0" max="1" step="0.001" />`);
-        this._input.element.addEventListener("pointerdown", this);
-        this._input.element.addEventListener("input", this);
-        this._input.element.addEventListener("change", this);
-
-        this.value = 0;
         this.height = 16;
-        this.enabled = true;
-        this.isActive = false;
-        this._secondaryValue = 0;
-        this._disabled = false;
         this._knobStyle = knobStyle;
-
-        this._allowsRelativeScrubbing = false;
-        this._startValue = NaN;
-        this._startPosition = NaN;
-
-        this.children = [this._container, this._input];
     }
 
     // Public
-
-    set inputAccessibleLabel(timeValue)
-    {
-        this._input.element.setAttribute("aria-valuetext", formattedStringForDuration(timeValue));
-    }
-
-    get disabled()
-    {
-        return this._disabled;
-    }
-
-    set disabled(flag)
-    {
-        if (this._disabled === flag)
-            return;
-
-        this._disabled = flag;
-        this.markDirtyProperty("disabled");
-    }
-
-    get value()
-    {
-        if (this._value !== undefined)
-            return this._value;
-        return parseFloat(this._input.element.value);
-    }
-
-    set value(value)
-    {
-        if (this.isActive)
-            return;
-
-        this._value = value;
-        this.markDirtyProperty("value");
-        this.needsLayout = true;
-    }
-
-    get secondaryValue()
-    {
-        return this._secondaryValue;
-    }
-
-    set secondaryValue(secondaryValue)
-    {
-        if (this._secondaryValue === secondaryValue)
-            return;
-
-        this._secondaryValue = secondaryValue;
-        this.needsLayout = true;
-    }
 
     get knobStyle()
     {
@@ -130,63 +60,13 @@ class Slider extends LayoutNode
         this.needsLayout = true;
     }
 
-    get allowsRelativeScrubbing()
-    {
-        return this._allowsRelativeScrubbing;
-    }
-
-    set allowsRelativeScrubbing(allowsRelativeScrubbing)
-    {
-        this._allowsRelativeScrubbing = !!allowsRelativeScrubbing;
-
-        this.element.classList.toggle("allows-relative-scrubbing", this._allowsRelativeScrubbing);
-    }
-
     // Protected
-
-    handleEvent(event)
-    {
-        switch (event.type) {
-        case "pointerdown":
-            this._handlePointerdownEvent(event);
-            return;
-
-        case "pointermove":
-            this._handlePointermoveEvent(event);
-            return;
-
-        case "pointerup":
-            this._handlePointerupEvent(event);
-            return;
-
-        case "change":
-        case "input":
-            this._valueDidChange();
-            return;
-        }
-    }
-
-    commitProperty(propertyName)
-    {
-        switch (propertyName) {
-        case "value":
-            this._input.element.value = this._value;
-            delete this._value;
-            break;
-        case "disabled":
-            this.element.classList.toggle("disabled", this._disabled);
-            break;
-        default :
-            super.commitProperty(propertyName);
-            break;
-        }
-    }
 
     commit()
     {
         super.commit();
 
-        let scrubberWidth = (style => {
+        const scrubberWidth = (style => {
             switch (style) {
             case Slider.KnobStyle.Bar:
                 return 4;
@@ -199,7 +79,7 @@ class Slider extends LayoutNode
             return 0;
         })(this._knobStyle);
 
-        let scrubberBorder = (style => {
+        const scrubberBorder = (style => {
             switch (style) {
             case Slider.KnobStyle.Bar:
                 return 1;
@@ -212,7 +92,7 @@ class Slider extends LayoutNode
             return 0;
         })(this._knobStyle);
 
-        let scrubberCenterX = (scrubberWidth / 2) + Math.round((this.width - scrubberWidth) * this.value);
+        const scrubberCenterX = (scrubberWidth / 2) + Math.round((this.width - scrubberWidth) * this.value);
         this._primaryFill.element.style.width = `${scrubberCenterX - (scrubberWidth / 2) - scrubberBorder}px`;
         this._trackFill.element.style.left = `${scrubberCenterX + (scrubberWidth / 2) + scrubberBorder}px`;
         this._secondaryFill.element.style.left = `${scrubberCenterX + (scrubberWidth / 2) + scrubberBorder}px`;
@@ -220,85 +100,6 @@ class Slider extends LayoutNode
         this._knob.element.style.left = `${scrubberCenterX}px`;
     }
 
-    // Private
-
-    _handlePointerdownEvent(event)
-    {
-        this._pointerupTarget = this._interactionEndTarget();
-        this._pointerupTarget.addEventListener("pointerup", this, { capture: true });
-        if (this._allowsRelativeScrubbing)
-            this._pointerupTarget.addEventListener("pointermove", this, { capture: true });
-
-        // We should no longer cache the value since we'll be interacting with the <input>
-        // so the value should be read back from it dynamically.
-        delete this._value;
-
-        if (this._allowsRelativeScrubbing) {
-            this._startValue = parseFloat(this._input.element.value);
-            this._startPosition = this._playbackProgress(event.pageX);
-        }
-
-        if (this.uiDelegate && typeof this.uiDelegate.controlValueWillStartChanging === "function")
-            this.uiDelegate.controlValueWillStartChanging(this);
-
-        this.isActive = true;
-        this._container.element.classList.add("changing");
-
-        this.needsLayout = true;
-    }
-
-    _interactionEndTarget()
-    {
-        const mediaControls = this.parentOfType(MediaControls);
-        if (mediaControls?.layoutTraits.supportsTouches())
-            return mediaControls.element;
-        return (!mediaControls || !mediaControls.layoutTraits.isFullscreen) ? window : mediaControls.element;
-    }
-
-    _valueDidChange()
-    {
-        if (this.uiDelegate && typeof this.uiDelegate.controlValueDidChange === "function")
-            this.uiDelegate.controlValueDidChange(this);
-
-        this.needsLayout = true;
-    }
-
-    _handlePointermoveEvent(event)
-    {
-        if (!this._allowsRelativeScrubbing || isNaN(this._startValue) || isNaN(this._startPosition))
-            return;
-
-        let value = this._startValue + this._playbackProgress(event.pageX) - this._startPosition;
-        this._input.element.value = Math.min(Math.max(0, value), 1);
-        this._valueDidChange();
-    }
-
-    _handlePointerupEvent(event)
-    {
-        this._pointerupTarget.removeEventListener("pointerup", this, { capture: true });
-        this._pointerupTarget.removeEventListener("pointermove", this, { capture: true });
-        delete this._pointerupTarget;
-
-        this._startValue = NaN;
-        this._startPosition = NaN;
-
-        this.isActive = false;
-        this._container.element.classList.remove("changing");
-
-        if (this.uiDelegate && typeof this.uiDelegate.controlValueDidStopChanging === "function")
-            this.uiDelegate.controlValueDidStopChanging(this);
-
-        this.needsLayout = true;
-    }
-
-    _playbackProgress(pageX)
-    {
-        let x = window.webkitConvertPointFromPageToNode(this.element, new WebKitPoint(pageX, 0)).x;
-        if (this._layoutDelegate?.scaleFactor)
-            x *= this._layoutDelegate.scaleFactor;
-
-        return x / this.element.clientWidth;
-    }
 }
 
 Slider.KnobStyle = {
