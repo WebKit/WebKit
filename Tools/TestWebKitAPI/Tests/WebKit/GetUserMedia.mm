@@ -1127,7 +1127,8 @@ TEST(WebKit2, CapturePermissionWithSystemBlocking)
 #endif
 
 #if PLATFORM(MAC)
-TEST(WebKit2, ConnectedToHardwareConsole)
+// FIXME webkit.org/b/241984 
+TEST(WebKit2, DISABLED_ConnectedToHardwareConsole)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto processPoolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
