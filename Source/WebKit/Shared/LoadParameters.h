@@ -93,6 +93,9 @@ struct LoadParameters {
 #endif // PLATFORM(IOS)
 #endif // !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
 #endif
+#if ENABLE(PUBLIC_SUFFIX_LIST)
+    String topPrivatelyControlledDomain;
+#endif
 };
 
 } // namespace WebKit

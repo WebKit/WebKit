@@ -33,6 +33,7 @@ namespace WebCore {
 
 WEBCORE_EXPORT bool isPublicSuffix(StringView domain);
 WEBCORE_EXPORT String topPrivatelyControlledDomain(const String& domain);
+WEBCORE_EXPORT void setTopPrivatelyControlledDomain(const String& domain, const String& topPrivatelyControlledDomain);
 String decodeHostName(const String& domain);
 
 } // namespace WebCore

@@ -81,6 +81,10 @@ String topPrivatelyControlledDomain(const String& domain)
     return topPrivatelyControlledDomainInternal(psl, domainUTF8.data() + position);
 }
 
+void setTopPrivatelyControlledDomain(const String&, const String&)
+{
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(PUBLIC_SUFFIX_LIST)

@@ -42,6 +42,12 @@ bool isPublicSuffix(StringView domain)
     return host && _CFHostIsDomainTopLevel((__bridge CFStringRef)host);
 }
 
+static HashMap<String, String, ASCIICaseInsensitiveHash>& cache()
+{
+    static NeverDestroyed<HashMap<String, String, ASCIICaseInsensitiveHash>> cache;
+    return cache.get();
+}
+
 String topPrivatelyControlledDomain(const String& domain)
 {
     if (domain.isEmpty())
@@ -52,15 +58,13 @@ String topPrivatelyControlledDomain(const String& domain)
     static Lock cacheLock;
     Locker locker { cacheLock };
 
-    static NeverDestroyed<HashMap<String, String, ASCIICaseInsensitiveHash>> cache;
-
     auto isolatedDomain = domain.isolatedCopy();
     
     constexpr auto maximumSizeToPreventUnlimitedGrowth = 128;
-    if (cache.get().size() == maximumSizeToPreventUnlimitedGrowth)
-        cache.get().remove(cache.get().random());
+    if (cache().size() == maximumSizeToPreventUnlimitedGrowth)
+        cache().remove(cache().random());
 
-    return cache.get().ensure(isolatedDomain, [&isolatedDomain] {
+    return cache().ensure(isolatedDomain, [&isolatedDomain] {
         const auto lowercaseDomain = isolatedDomain.convertToASCIILowercase();
         if (lowercaseDomain == "localhost"_s)
             return lowercaseDomain;
@@ -75,6 +79,13 @@ String topPrivatelyControlledDomain(const String& domain)
         }
         return String();
     }).iterator->value.isolatedCopy();
+}
+
+void setTopPrivatelyControlledDomain(const String& domain, const String& topPrivatelyControlledDomain)
+{
+    if (domain.isEmpty())
+        return;
+    cache().set(domain, topPrivatelyControlledDomain);
 }
 
 String decodeHostName(const String& domain)
