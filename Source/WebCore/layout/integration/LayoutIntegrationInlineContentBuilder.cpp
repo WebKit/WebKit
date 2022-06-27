@@ -90,7 +90,7 @@ void InlineContentBuilder::createDisplayLines(Layout::InlineFormattingState& inl
     inlineContent.lines.reserveInitialCapacity(lines.size());
     for (size_t lineIndex = 0; lineIndex < lines.size(); ++lineIndex) {
         auto& line = lines[lineIndex];
-        auto scrollableOverflowRect = FloatRect { line.scrollableOverflow() };
+        auto scrollableOverflowRect = line.scrollableOverflow();
         if (auto overflowWidth = lineOverflowWidth(m_blockFlow, line.contentWidth()); overflowWidth > scrollableOverflowRect.width()) {
             auto overflowValue = overflowWidth - scrollableOverflowRect.width();
             m_blockFlow.style().isLeftToRightDirection() ? scrollableOverflowRect.shiftMaxXEdgeBy(overflowValue) : scrollableOverflowRect.shiftXEdgeBy(-overflowValue);
@@ -126,6 +126,8 @@ void InlineContentBuilder::createDisplayLines(Layout::InlineFormattingState& inl
         }
 
         auto boxCount = boxIndex - firstBoxIndex;
+        if (!inlineContent.hasVisualOverflow() && lineInkOverflowRect != line.scrollableOverflow())
+            inlineContent.setHasVisualOverflow();
         inlineContent.lines.append({ firstBoxIndex, boxCount, FloatRect { line.lineBoxRect() }, line.enclosingTopAndBottom().top, line.enclosingTopAndBottom().bottom, scrollableOverflowRect, lineInkOverflowRect, line.baseline(), line.contentLeft(), line.contentWidth() });
     }
 }

@@ -64,7 +64,10 @@ struct InlineContent : public RefCounted<InlineContent> {
     bool hasMultilinePaintOverlap { false };
 
     bool hasContent() const;
-    
+
+    bool hasVisualOverflow() const { return m_hasVisualOverflow; }
+    void setHasVisualOverflow() { m_hasVisualOverflow = true; }
+
     const Line& lineForBox(const InlineDisplay::Box& box) const { return lines[box.lineIndex()]; }
 
     IteratorRange<const InlineDisplay::Box*> boxesForRect(const LayoutRect&) const;
@@ -96,6 +99,7 @@ private:
 
     using InlineBoxIndexCache = HashMap<CheckedRef<const Layout::Box>, Vector<size_t>>;
     mutable std::unique_ptr<InlineBoxIndexCache> m_inlineBoxIndexCache;
+    bool m_hasVisualOverflow { false };
 };
 
 template<typename Function> void InlineContent::traverseNonRootInlineBoxes(const Layout::Box& layoutBox, Function&& function)
