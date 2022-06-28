@@ -4291,7 +4291,7 @@ bool ByteCodeParser::needsDynamicLookup(ResolveType type, OpcodeID opcode)
     auto isResolveScope = [&]() {
         if (opcode == op_resolve_scope)
             return true;
-        if (opcode == op_resolve_and_get_from_scope && m_currentIndex.checkpoint() == 0)
+        if (opcode == op_resolve_and_get_from_scope && m_currentIndex.checkpoint() == OpResolveAndGetFromScope::resolveScope)
             return true;
         return false;
     };
