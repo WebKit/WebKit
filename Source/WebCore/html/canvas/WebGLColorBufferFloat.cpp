@@ -40,9 +40,11 @@ WebGLColorBufferFloat::WebGLColorBufferFloat(WebGLRenderingContextBase& context)
     context.graphicsContextGL()->ensureExtensionEnabled("GL_CHROMIUM_color_buffer_float_rgba"_s);
     // Optimistically enable RGB floating-point render targets also, if possible.
     context.graphicsContextGL()->ensureExtensionEnabled("GL_CHROMIUM_color_buffer_float_rgb"_s);
+
     // https://github.com/KhronosGroup/WebGL/pull/2830
     // Spec requires EXT_float_blend to be turned on implicitly here.
-    context.graphicsContextGL()->ensureExtensionEnabled("GL_EXT_float_blend"_s);
+    // Enable it both in the backend and in WebKit.
+    context.getExtension("EXT_float_blend"_s);
 }
 
 WebGLColorBufferFloat::~WebGLColorBufferFloat() = default;

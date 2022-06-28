@@ -38,11 +38,14 @@ OESTextureFloat::OESTextureFloat(WebGLRenderingContextBase& context)
     : WebGLExtension(context)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_OES_texture_float"_s);
-    context.graphicsContextGL()->ensureExtensionEnabled("GL_CHROMIUM_color_buffer_float_rgb"_s);
-    context.graphicsContextGL()->ensureExtensionEnabled("GL_CHROMIUM_color_buffer_float_rgba"_s);
+
+    // Spec requires WEBGL_color_buffer_float to be turned on implicitly here.
+    // Enable it both in the backend and in WebKit.
+    context.getExtension("WEBGL_color_buffer_float"_s);
+
     // https://github.com/KhronosGroup/WebGL/pull/2830
     // Spec requires EXT_float_blend to be turned on implicitly here.
-    context.graphicsContextGL()->ensureExtensionEnabled("GL_EXT_float_blend"_s);
+    // It will be implicitly enabled by the WEBGL_color_buffer_float above.
 }
 
 OESTextureFloat::~OESTextureFloat() = default;

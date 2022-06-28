@@ -38,8 +38,10 @@ OESTextureHalfFloat::OESTextureHalfFloat(WebGLRenderingContextBase& context)
     : WebGLExtension(context)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_OES_texture_half_float"_s);
-    // Renderability is implicit when this extension is enabled.
-    context.graphicsContextGL()->ensureExtensionEnabled("GL_EXT_color_buffer_half_float"_s);
+
+    // Spec requires EXT_color_buffer_half_float to be turned on implicitly here.
+    // Enable it both in the backend and in WebKit.
+    context.getExtension("EXT_color_buffer_half_float"_s);
 }
 
 OESTextureHalfFloat::~OESTextureHalfFloat() = default;
