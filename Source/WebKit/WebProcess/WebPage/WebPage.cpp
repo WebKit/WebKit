@@ -225,6 +225,7 @@
 #include <WebCore/PluginDocument.h>
 #include <WebCore/PointerCaptureController.h>
 #include <WebCore/PrintContext.h>
+#include <WebCore/ProcessCapabilities.h>
 #include <WebCore/PromisedAttachmentInfo.h>
 #include <WebCore/Quirks.h>
 #include <WebCore/Range.h>
