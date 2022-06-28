@@ -1169,7 +1169,6 @@ auto LLIntGenerator::addDelegateToUnreachable(ControlType& target, ControlType& 
 
     ControlTry& tryData = std::get<ControlTry>(data);
     m_codeBlock->addExceptionHandler({ HandlerType::Delegate, tryData.m_try->location(), delegateLabel->location(), 0, m_tryDepth, targetDepth });
-    checkConsistency();
     return { };
 }
 
