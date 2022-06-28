@@ -1026,15 +1026,6 @@ void GraphicsLayerCA::setContentsRectClipsDescendants(bool contentsRectClipsDesc
     noteLayerPropertyChanged(ChildrenChanged | ContentsRectsChanged);
 }
 
-void GraphicsLayerCA::setMasksToBoundsRect(const FloatRoundedRect& roundedRect)
-{
-    if (roundedRect == m_masksToBoundsRect)
-        return;
-
-    GraphicsLayer::setMasksToBoundsRect(roundedRect);
-    noteLayerPropertyChanged(MasksToBoundsRectChanged);
-}
-
 void GraphicsLayerCA::setShapeLayerPath(const Path& path)
 {
     // FIXME: need to check for path equality. No bool Path::operator==(const Path&)!.
@@ -2041,9 +2032,6 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
     if (m_uncommittedChanges & ContentsRectsChanged) // Needs to happen before ChildrenChanged
         updateContentsRects();
 
-    if (m_uncommittedChanges & MasksToBoundsRectChanged) // Needs to happen before ChildrenChanged
-        updateMasksToBoundsRect();
-
     if (m_uncommittedChanges & EventRegionChanged)
         updateEventRegion();
 
@@ -2957,26 +2945,6 @@ void GraphicsLayerCA::updateContentsRects()
                 m_layerClones->contentsShapeMaskLayerClones.remove(cloneID);
             else if (shapeMaskLayerClone && !hadShapeMask)
                 m_layerClones->contentsShapeMaskLayerClones.add(cloneID, shapeMaskLayerClone);
-        }
-    }
-}
-
-void GraphicsLayerCA::updateMasksToBoundsRect()
-{
-    updateClippingStrategy(*m_layer, m_shapeMaskLayer, m_masksToBoundsRect);
-
-    if (m_layerClones) {
-        for (auto& clone : m_layerClones->primaryLayerClones) {
-            CloneID cloneID = clone.key;
-            RefPtr<PlatformCALayer> shapeMaskLayerClone = m_layerClones->shapeMaskLayerClones.get(cloneID);
-
-            bool hadShapeMask = shapeMaskLayerClone;
-            updateClippingStrategy(*clone.value, shapeMaskLayerClone, m_masksToBoundsRect);
-
-            if (!shapeMaskLayerClone)
-                m_layerClones->shapeMaskLayerClones.remove(cloneID);
-            else if (!hadShapeMask && shapeMaskLayerClone)
-                m_layerClones->shapeMaskLayerClones.add(cloneID, shapeMaskLayerClone);
         }
     }
 }
@@ -4269,7 +4237,6 @@ const char* GraphicsLayerCA::layerChangeAsString(LayerChange layerChange)
     case LayerChange::ContentsPlatformLayerChanged: return "ContentsPlatformLayerChanged";
     case LayerChange::ContentsColorLayerChanged: return "ContentsColorLayerChanged";
     case LayerChange::ContentsRectsChanged: return "ContentsRectsChanged";
-    case LayerChange::MasksToBoundsRectChanged: return "MasksToBoundsRectChanged";
     case LayerChange::MaskLayerChanged: return "MaskLayerChanged";
     case LayerChange::ReplicatedLayerChanged: return "ReplicatedLayerChanged";
     case LayerChange::ContentsNeedsDisplay: return "ContentsNeedsDisplay";

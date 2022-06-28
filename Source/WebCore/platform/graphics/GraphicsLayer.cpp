@@ -403,11 +403,6 @@ void GraphicsLayer::setMaskLayer(RefPtr<GraphicsLayer>&& layer)
     m_maskLayer = WTFMove(layer);
 }
 
-void GraphicsLayer::setMasksToBoundsRect(const FloatRoundedRect& roundedRect)
-{
-    m_masksToBoundsRect = roundedRect;
-}
-
 Path GraphicsLayer::shapeLayerPath() const
 {
 #if USE(CA)

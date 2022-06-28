@@ -128,7 +128,6 @@ public:
     WEBCORE_EXPORT void setContentsRect(const FloatRect&) override;
     WEBCORE_EXPORT void setContentsClippingRect(const FloatRoundedRect&) override;
     WEBCORE_EXPORT void setContentsRectClipsDescendants(bool) override;
-    WEBCORE_EXPORT void setMasksToBoundsRect(const FloatRoundedRect&) override;
 
     WEBCORE_EXPORT void setShapeLayerPath(const Path&) override;
     WEBCORE_EXPORT void setShapeLayerWindRule(WindRule) override;
@@ -432,7 +431,6 @@ private:
     void updateContentsPlatformLayer();
     void updateContentsColorLayer();
     void updateContentsRects();
-    void updateMasksToBoundsRect();
     void updateEventRegion();
 #if ENABLE(SCROLLING_THREAD)
     void updateScrollingNode();
@@ -553,7 +551,6 @@ private:
         ContentsPlatformLayerChanged            = 1LLU << 16,
         ContentsColorLayerChanged               = 1LLU << 17,
         ContentsRectsChanged                    = 1LLU << 18,
-        MasksToBoundsRectChanged                = 1LLU << 19,
         MaskLayerChanged                        = 1LLU << 20,
         ReplicatedLayerChanged                  = 1LLU << 21,
         ContentsNeedsDisplay                    = 1LLU << 22,

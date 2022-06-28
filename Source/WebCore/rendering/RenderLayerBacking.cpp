@@ -1401,7 +1401,7 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
             return FloatRoundedRect { FloatRect { { }, snappedClippingGraphicsLayer.m_snappedRect.size() } };
         };
 
-        clipLayer->setMasksToBoundsRect(computeMasksToBoundsRect());
+        clipLayer->setContentsClippingRect(computeMasksToBoundsRect());
 
         if (m_childClippingMaskLayer && !m_scrollContainerLayer) {
             m_childClippingMaskLayer->setSize(clipLayer->size());
@@ -2049,6 +2049,7 @@ bool RenderLayerBacking::updateDescendantClippingLayer(bool needsDescendantClip)
         if (!m_childContainmentLayer && !m_isFrameLayerWithTiledBacking) {
             m_childContainmentLayer = createGraphicsLayer("child clipping"_s);
             m_childContainmentLayer->setMasksToBounds(true);
+            m_childContainmentLayer->setContentsRectClipsDescendants(true);
             layersChanged = true;
         }
     } else if (hasClippingLayer()) {

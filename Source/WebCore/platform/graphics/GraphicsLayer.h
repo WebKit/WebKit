@@ -476,11 +476,6 @@ public:
     bool contentsRectClipsDescendants() const { return m_contentsRectClipsDescendants; }
     virtual void setContentsRectClipsDescendants(bool b) { m_contentsRectClipsDescendants = b; }
 
-    // Set a rounded rect that is used to clip this layer and its descendants (implies setting masksToBounds).
-    // Consult supportsRoundedClip() to know whether non-zero radii are supported.
-    FloatRoundedRect maskToBoundsRect() const { return m_masksToBoundsRect; };
-    virtual void setMasksToBoundsRect(const FloatRoundedRect&);
-
     Path shapeLayerPath() const;
     virtual void setShapeLayerPath(const Path&);
 
@@ -774,7 +769,6 @@ protected:
 
     FloatRect m_contentsRect;
     FloatRoundedRect m_contentsClippingRect;
-    FloatRoundedRect m_masksToBoundsRect;
     FloatSize m_contentsTilePhase;
     FloatSize m_contentsTileSize;
     ScalingFilter m_contentsMinificationFilter = ScalingFilter::Linear;
