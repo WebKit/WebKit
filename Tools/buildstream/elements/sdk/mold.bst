@@ -13,4 +13,4 @@ sources:
   checkout-submodules: false
   track-tags: true
   track: main
-  ref: v1.2.1-0-gc8d8f86a52084c96e2663d9f692c51e98c04cc2f
+  ref: v1.3.0-0-ga9a8205be29f36346bfdbfadee8ed147e06aa1f6

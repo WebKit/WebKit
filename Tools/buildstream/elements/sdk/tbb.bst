@@ -27,3 +27,5 @@ sources:
   track-tags: true
   track: master
   ref: v2021.5.0-g3df08fe234f23e732a122809b40eb129ae22733f
+- kind: patch
+  path: patches/tbb-Retry-if-pthread_create-fails-with-EAGAIN.patch
