@@ -59,7 +59,7 @@ RetainPtr<CocoaImageAnalyzerRequest> createImageAnalyzerRequest(CGImageRef, VKAn
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 void requestVisualTranslation(CocoaImageAnalyzer *, NSURL *, const String& source, const String& target, CGImageRef, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&);
-void requestBackgroundRemoval(CGImageRef, CompletionHandler<void(CGImageRef, CGRect)>&&);
+void requestBackgroundRemoval(CGImageRef, CompletionHandler<void(CGImageRef)>&&);
 
 std::pair<RetainPtr<NSData>, RetainPtr<CFStringRef>> imageDataForRemoveBackground(CGImageRef, const String& sourceMIMEType);
 

@@ -184,6 +184,7 @@ NS_ASSUME_NONNULL_END
 
 typedef void (^VKCGImageRemoveBackgroundCompletion)(CGImageRef, CGRect cropRect, NSError *);
 extern void vk_cgImageRemoveBackground(CGImageRef, BOOL cropToFit, VKCGImageRemoveBackgroundCompletion);
+extern void vk_cgImageRemoveBackgroundWithDownsizing(CGImageRef, BOOL canDownsize, BOOL cropToFit, void(^completion)(CGImageRef, NSError *));
 
 #endif
 

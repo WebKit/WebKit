@@ -4762,7 +4762,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
                 return;
             }
 
-            WebKit::requestBackgroundRemoval(cgImage.get(), [sourceMIMEType, context, completion = WTFMove(completion), weakSelf](CGImageRef result, CGRect) mutable {
+            WebKit::requestBackgroundRemoval(cgImage.get(), [sourceMIMEType, context, completion = WTFMove(completion), weakSelf](CGImageRef result) mutable {
                 auto strongSelf = weakSelf.get();
                 if (!strongSelf) {
                     completion();
@@ -10973,7 +10973,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     if (_page->preferences().removeBackgroundEnabled()) {
-        WebKit::requestBackgroundRemoval(image, [weakSelf = WeakObjCPtr<WKContentView>(self), aggregator = aggregator.copyRef()](CGImageRef result, CGRect) mutable {
+        WebKit::requestBackgroundRemoval(image, [weakSelf = WeakObjCPtr<WKContentView>(self), aggregator = aggregator.copyRef()](CGImageRef result) mutable {
             if (auto strongSelf = weakSelf.get())
                 strongSelf->_copySubjectResult = result;
         });
@@ -11051,7 +11051,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
         if (strongSelf->_page->preferences().removeBackgroundEnabled()) {
-            WebKit::requestBackgroundRemoval(cgImage.get(), [weakSelf, aggregator = aggregator.copyRef()](CGImageRef result, CGRect) mutable {
+            WebKit::requestBackgroundRemoval(cgImage.get(), [weakSelf, aggregator = aggregator.copyRef()](CGImageRef result) mutable {
                 if (auto strongSelf = weakSelf.get())
                     strongSelf->_copySubjectResult = result;
             });

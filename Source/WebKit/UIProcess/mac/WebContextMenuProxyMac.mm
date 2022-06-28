@@ -327,7 +327,7 @@ void WebContextMenuProxyMac::appendMarkupItemToControlledImageMenuIfNeeded()
         if (!image)
             return;
 
-        requestBackgroundRemoval(image.get(), [protectedThis = WTFMove(protectedThis), weakMenu = WTFMove(weakMenu)](CGImageRef result, CGRect) {
+        requestBackgroundRemoval(image.get(), [protectedThis = WTFMove(protectedThis), weakMenu = WTFMove(weakMenu)](CGImageRef result) {
             if (!result)
                 return;
 
@@ -690,7 +690,7 @@ void WebContextMenuProxyMac::getContextMenuFromItems(const Vector<WebContextMenu
             if (copySubjectItem) {
                 if (auto image = imageBitmap->makeCGImageCopy()) {
                     protectedThis->m_copySubjectResult = nullptr;
-                    requestBackgroundRemoval(image.get(), [weakPage, protectedThis, copySubjectItem = WTFMove(*copySubjectItem)](auto result, auto) {
+                    requestBackgroundRemoval(image.get(), [weakPage, protectedThis, copySubjectItem = WTFMove(*copySubjectItem)](auto result) {
                         if (!result)
                             return;
 

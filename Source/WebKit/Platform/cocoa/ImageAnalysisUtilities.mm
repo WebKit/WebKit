@@ -285,43 +285,50 @@ void requestVisualTranslation(CocoaImageAnalyzer *analyzer, NSURL *imageURL, con
     }).get()];
 }
 
-void requestBackgroundRemoval(CGImageRef image, CompletionHandler<void(CGImageRef, CGRect normalizedCropRect)>&& completion)
+void requestBackgroundRemoval(CGImageRef image, CompletionHandler<void(CGImageRef)>&& completion)
 {
     if (!PAL::canLoad_VisionKitCore_vk_cgImageRemoveBackground()) {
-        completion(nullptr, CGRectZero);
+        completion(nullptr);
         return;
     }
 
     // FIXME (rdar://88834023): We should find a way to avoid this extra transcoding.
     auto tiffData = transcode(image, (__bridge CFStringRef)UTTypeTIFF.identifier);
     if (![tiffData length]) {
-        completion(nullptr, CGRectZero);
+        completion(nullptr);
         return;
     }
 
     auto transcodedImageSource = adoptCF(CGImageSourceCreateWithData((__bridge CFDataRef)tiffData.get(), nullptr));
     auto transcodedImage = adoptCF(CGImageSourceCreateImageAtIndex(transcodedImageSource.get(), 0, nullptr));
     if (!transcodedImage) {
-        completion(nullptr, CGRectZero);
+        completion(nullptr);
         return;
     }
 
     auto sourceImageSize = CGSizeMake(CGImageGetWidth(transcodedImage.get()), CGImageGetHeight(transcodedImage.get()));
     if (!sourceImageSize.width || !sourceImageSize.height) {
-        completion(nullptr, CGRectZero);
+        completion(nullptr);
         return;
     }
 
-    PAL::softLinkVisionKitCorevk_cgImageRemoveBackground(transcodedImage.get(), YES, makeBlockPtr([sourceImageSize, completion = WTFMove(completion)](CGImageRef result, CGRect cropRect, NSError *error) mutable {
+    auto completionBlock = makeBlockPtr([completion = WTFMove(completion)](CGImageRef result, NSError *error) mutable {
         if (error)
             RELEASE_LOG(ImageAnalysis, "Remove background failed with error: %@", error);
 
-        callOnMainRunLoop([sourceImageSize, cropRect, protectedResult = RetainPtr { result }, completion = WTFMove(completion)]() mutable {
-            FloatRect normalizedCropRect = cropRect;
-            normalizedCropRect.scale(1 / sourceImageSize.width, 1 / sourceImageSize.height);
-            completion(protectedResult.get(), normalizedCropRect);
+        callOnMainRunLoop([protectedResult = RetainPtr { result }, completion = WTFMove(completion)]() mutable {
+            completion(protectedResult.get());
         });
-    }).get());
+    });
+
+    if (PAL::canLoad_VisionKitCore_vk_cgImageRemoveBackgroundWithDownsizing()) {
+        PAL::softLinkVisionKitCorevk_cgImageRemoveBackgroundWithDownsizing(transcodedImage.get(), YES, YES, completionBlock.get());
+        return;
+    }
+
+    PAL::softLinkVisionKitCorevk_cgImageRemoveBackground(transcodedImage.get(), YES, [completionBlock = WTFMove(completionBlock)](CGImageRef image, CGRect, NSError *error) mutable {
+        completionBlock(image, error);
+    });
 }
 
 void setUpAdditionalImageAnalysisBehaviors(PlatformImageAnalysisObject *interactionOrView)

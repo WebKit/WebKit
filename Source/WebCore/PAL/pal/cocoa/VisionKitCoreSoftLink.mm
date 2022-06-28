@@ -40,6 +40,7 @@ SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_AND_IS_OPTIONAL(PAL, VisionKitCore, VKCIm
 SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_AND_IS_OPTIONAL(PAL, VisionKitCore, VKCImageAnalysisInteraction, PAL_EXPORT, true)
 SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_AND_IS_OPTIONAL(PAL, VisionKitCore, VKCImageAnalysisOverlayView, PAL_EXPORT, true)
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(PAL, VisionKitCore, vk_cgImageRemoveBackground, void, (CGImageRef image, BOOL crop, VKCGImageRemoveBackgroundCompletion completion), (image, crop, completion), PAL_EXPORT)
+SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(PAL, VisionKitCore, vk_cgImageRemoveBackgroundWithDownsizing, void, (CGImageRef image, BOOL canDownsize, BOOL cropToFit, void(^completion)(CGImageRef, NSError *)), (image, canDownsize, cropToFit, completion), PAL_EXPORT)
 SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_AND_IS_OPTIONAL(PAL, VisionKitCore, VKCRemoveBackgroundRequestHandler, PAL_EXPORT, true)
 SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_AND_IS_OPTIONAL(PAL, VisionKitCore, VKCRemoveBackgroundRequest, PAL_EXPORT, true)
 SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_AND_IS_OPTIONAL(PAL, VisionKitCore, VKCRemoveBackgroundResult, PAL_EXPORT, true)
