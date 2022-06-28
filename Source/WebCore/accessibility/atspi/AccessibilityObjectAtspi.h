@@ -55,7 +55,8 @@ public:
         Image = 1 << 8,
         Selection = 1 << 9,
         Table = 1 << 10,
-        TableCell = 1 << 11
+        TableCell = 1 << 11,
+        Collection =  1 << 12
     };
     const OptionSet<Interface>& interfaces() const { return m_interfaces; }
 
@@ -223,6 +224,38 @@ private:
     String rowDescription(unsigned) const;
     String columnDescription(unsigned) const;
 
+    struct CollectionMatchRule {
+        CollectionMatchRule(GVariant*);
+
+        bool match(AccessibilityObjectAtspi&);
+        bool matchInterfaces(AccessibilityObjectAtspi&);
+        bool matchStates(AccessibilityObjectAtspi&);
+        bool matchRoles(AccessibilityObjectAtspi&);
+        bool matchAttributes(AccessibilityObjectAtspi&);
+
+        struct {
+            uint64_t value { 0 };
+            uint16_t type { 0 };
+        } states;
+
+        struct {
+            HashMap<String, Vector<String>> value;
+            uint16_t type { 0 };
+        } attributes;
+
+        struct {
+            Vector<unsigned> value;
+            uint16_t type { 0 };
+        } roles;
+
+        struct {
+            Vector<String> value;
+            uint16_t type { 0 };
+        } interfaces;
+    };
+    Vector<RefPtr<AccessibilityObjectAtspi>> matches(CollectionMatchRule&, uint32_t sortOrder, uint32_t maxResultCount, bool traverse);
+    void addMatchesInCanonicalOrder(Vector<RefPtr<AccessibilityObjectAtspi>>&, CollectionMatchRule&, uint32_t maxResultCount, bool traverse);
+
     static OptionSet<Interface> interfacesForObject(AXCoreObject&);
 
     static GDBusInterfaceVTable s_accessibleFunctions;
@@ -237,6 +270,7 @@ private:
     static GDBusInterfaceVTable s_selectionFunctions;
     static GDBusInterfaceVTable s_tableFunctions;
     static GDBusInterfaceVTable s_tableCellFunctions;
+    static GDBusInterfaceVTable s_collectionFunctions;
 
     AXCoreObject* m_coreObject { nullptr };
     OptionSet<Interface> m_interfaces;

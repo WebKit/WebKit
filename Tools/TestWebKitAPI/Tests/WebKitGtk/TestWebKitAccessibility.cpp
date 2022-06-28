@@ -3241,6 +3241,342 @@ static void testTableBasic(AccessibilityTest* test, gconstpointer)
 #endif
 }
 
+static void testCollectionGetMatches(AccessibilityTest* test, gconstpointer)
+{
+    test->showInWindow(800, 600);
+    test->loadHtml(
+        "<html>"
+        "  <body>"
+        "    <h1>Collection</h1>"
+        "    <p>This is <a href='#'>link1</a> and <a href='#'>link2</a> in paragraph</p>"
+        "  </body>"
+        "</html>",
+        nullptr);
+    test->waitUntilLoadFinished();
+
+    auto testApp = test->findTestApplication();
+    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
+
+    auto documentWeb = test->findDocumentWeb(testApp.get());
+    g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
+    g_assert_true(ATSPI_IS_COLLECTION(documentWeb.get()));
+    g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 2);
+
+    auto h1 = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 0, nullptr));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(h1.get()));
+
+    auto p = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 1, nullptr));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(p.get()));
+    g_assert_cmpint(atspi_accessible_get_child_count(p.get(), nullptr), ==, 2);
+
+    auto link1 = adoptGRef(atspi_accessible_get_child_at_index(p.get(), 0, nullptr));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(link1.get()));
+    GUniquePtr<char> text(atspi_text_get_text(ATSPI_TEXT(link1.get()), 0, -1, nullptr));
+    g_assert_cmpstr(text.get(), ==, "link1");
+
+    auto link2 = adoptGRef(atspi_accessible_get_child_at_index(p.get(), 1, nullptr));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(link2.get()));
+    text.reset(atspi_text_get_text(ATSPI_TEXT(link2.get()), 0, -1, nullptr));
+    g_assert_cmpstr(text.get(), ==, "link2");
+
+    // A simple rule based on roles.
+    GArray* roles = g_array_sized_new(FALSE, FALSE, sizeof(int), 1);
+    int linkRole = ATSPI_ROLE_LINK;
+    g_array_prepend_val(roles, linkRole);
+    GRefPtr<AtspiMatchRule> rule = adoptGRef(atspi_match_rule_new(
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        roles, ATSPI_Collection_MATCH_ALL,
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        FALSE));
+    g_array_free(roles, TRUE);
+    GArray* matches = atspi_collection_get_matches(ATSPI_COLLECTION(documentWeb.get()), rule.get(), ATSPI_Collection_SORT_ORDER_CANONICAL, 0, TRUE, nullptr);
+    g_assert_nonnull(matches);
+    g_assert_cmpuint(matches->len, ==, 2);
+    g_assert_true(g_array_index(matches, AtspiAccessible*, 0) == link1.get());
+    g_assert_true(g_array_index(matches, AtspiAccessible*, 1) == link2.get());
+    g_array_free(matches, TRUE);
+
+    // Reverse order.
+    matches = atspi_collection_get_matches(ATSPI_COLLECTION(documentWeb.get()), rule.get(), ATSPI_Collection_SORT_ORDER_REVERSE_CANONICAL, 0, TRUE, nullptr);
+    g_assert_nonnull(matches);
+    g_assert_cmpuint(matches->len, ==, 2);
+    g_assert_true(g_array_index(matches, AtspiAccessible*, 0) == link2.get());
+    g_assert_true(g_array_index(matches, AtspiAccessible*, 1) == link1.get());
+    g_array_free(matches, TRUE);
+
+    // Limit results to 1.
+    matches = atspi_collection_get_matches(ATSPI_COLLECTION(documentWeb.get()), rule.get(), ATSPI_Collection_SORT_ORDER_CANONICAL, 1, TRUE, nullptr);
+    g_assert_nonnull(matches);
+    g_assert_cmpuint(matches->len, ==, 1);
+    g_assert_true(g_array_index(matches, AtspiAccessible*, 0) == link1.get());
+    g_array_free(matches, TRUE);
+
+    // Don't traverse.
+    matches = atspi_collection_get_matches(ATSPI_COLLECTION(documentWeb.get()), rule.get(), ATSPI_Collection_SORT_ORDER_CANONICAL, 0, FALSE, nullptr);
+    g_assert_nonnull(matches);
+    g_assert_cmpuint(matches->len, ==, 0);
+    g_array_free(matches, TRUE);
+
+    matches = atspi_collection_get_matches(ATSPI_COLLECTION(p.get()), rule.get(), ATSPI_Collection_SORT_ORDER_CANONICAL, 0, FALSE, nullptr);
+    g_assert_nonnull(matches);
+    g_assert_cmpuint(matches->len, ==, 2);
+    g_assert_true(g_array_index(matches, AtspiAccessible*, 0) == link1.get());
+    g_assert_true(g_array_index(matches, AtspiAccessible*, 1) == link2.get());
+    g_array_free(matches, TRUE);
+
+    // Rule to match all interfaces.
+    GArray* interfaces = g_array_sized_new(FALSE, FALSE, sizeof(char*), 3);
+    static const char* linkInterface = "hyperlink";
+    static const char* textInterface = "text";
+    g_array_append_val(interfaces, linkInterface);
+    g_array_append_val(interfaces, textInterface);
+    rule = adoptGRef(atspi_match_rule_new(
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        interfaces, ATSPI_Collection_MATCH_ALL,
+        FALSE));
+    matches = atspi_collection_get_matches(ATSPI_COLLECTION(documentWeb.get()), rule.get(), ATSPI_Collection_SORT_ORDER_CANONICAL, 0, TRUE, nullptr);
+    g_assert_nonnull(matches);
+    g_assert_cmpuint(matches->len, ==, 2);
+    g_assert_true(g_array_index(matches, AtspiAccessible*, 0) == link1.get());
+    g_assert_true(g_array_index(matches, AtspiAccessible*, 1) == link2.get());
+    g_array_free(matches, TRUE);
+
+    // Adding table interface to make the match fail.
+    static const char* tableInterface = "table";
+    g_array_append_val(interfaces, tableInterface);
+    rule = adoptGRef(atspi_match_rule_new(
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        interfaces, ATSPI_Collection_MATCH_ALL,
+        FALSE));
+    matches = atspi_collection_get_matches(ATSPI_COLLECTION(documentWeb.get()), rule.get(), ATSPI_Collection_SORT_ORDER_CANONICAL, 0, TRUE, nullptr);
+    g_assert_nonnull(matches);
+    g_assert_cmpuint(matches->len, ==, 0);
+    g_array_free(matches, TRUE);
+
+    // Rule to match any of the interfaces.
+    rule = adoptGRef(atspi_match_rule_new(
+	nullptr, ATSPI_Collection_MATCH_NONE,
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        interfaces, ATSPI_Collection_MATCH_ANY,
+        FALSE));
+    matches = atspi_collection_get_matches(ATSPI_COLLECTION(documentWeb.get()), rule.get(), ATSPI_Collection_SORT_ORDER_CANONICAL, 0, TRUE, nullptr);
+    g_assert_nonnull(matches);
+    g_assert_cmpuint(matches->len, ==, 4);
+    g_assert_true(g_array_index(matches, AtspiAccessible*, 0) == h1.get());
+    g_assert_true(g_array_index(matches, AtspiAccessible*, 1) == p.get());
+    g_assert_true(g_array_index(matches, AtspiAccessible*, 2) == link1.get());
+    g_assert_true(g_array_index(matches, AtspiAccessible*, 3) == link2.get());
+    g_array_free(matches, TRUE);
+
+    // Rule to match none of the interfaces.
+    g_array_remove_range(interfaces, 1, 2);
+    rule = adoptGRef(atspi_match_rule_new(
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        interfaces, ATSPI_Collection_MATCH_NONE,
+        FALSE));
+    matches = atspi_collection_get_matches(ATSPI_COLLECTION(documentWeb.get()), rule.get(), ATSPI_Collection_SORT_ORDER_CANONICAL, 0, TRUE, nullptr);
+    g_assert_nonnull(matches);
+    g_assert_cmpuint(matches->len, ==, 2);
+    g_assert_true(g_array_index(matches, AtspiAccessible*, 0) == h1.get());
+    g_assert_true(g_array_index(matches, AtspiAccessible*, 1) == p.get());
+    g_array_free(matches, TRUE);
+    g_array_free(interfaces, TRUE);
+
+    // Rule to match all states.
+    GRefPtr<AtspiStateSet> set = adoptGRef(atspi_state_set_new(nullptr));
+    atspi_state_set_add(set.get(), ATSPI_STATE_SHOWING);
+    atspi_state_set_add(set.get(), ATSPI_STATE_FOCUSABLE);
+    rule = adoptGRef(atspi_match_rule_new(
+        set.get(), ATSPI_Collection_MATCH_ALL,
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        FALSE));
+    matches = atspi_collection_get_matches(ATSPI_COLLECTION(documentWeb.get()), rule.get(), ATSPI_Collection_SORT_ORDER_CANONICAL, 0, TRUE, nullptr);
+    g_assert_nonnull(matches);
+    g_assert_cmpuint(matches->len, ==, 2);
+    g_assert_true(g_array_index(matches, AtspiAccessible*, 0) == link1.get());
+    g_assert_true(g_array_index(matches, AtspiAccessible*, 1) == link2.get());
+    g_array_free(matches, TRUE);
+
+    // Adding checkable state to make the match fail.
+    atspi_state_set_add(set.get(), ATSPI_STATE_CHECKABLE);
+    rule = adoptGRef(atspi_match_rule_new(
+        set.get(), ATSPI_Collection_MATCH_ALL,
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        FALSE));
+    matches = atspi_collection_get_matches(ATSPI_COLLECTION(documentWeb.get()), rule.get(), ATSPI_Collection_SORT_ORDER_CANONICAL, 0, TRUE, nullptr);
+    g_assert_nonnull(matches);
+    g_assert_cmpuint(matches->len, ==, 0);
+    g_array_free(matches, TRUE);
+
+    // Rule to match any of the states.
+    rule = adoptGRef(atspi_match_rule_new(
+        set.get(), ATSPI_Collection_MATCH_ANY,
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        FALSE));
+    matches = atspi_collection_get_matches(ATSPI_COLLECTION(documentWeb.get()), rule.get(), ATSPI_Collection_SORT_ORDER_CANONICAL, 0, TRUE, nullptr);
+    g_assert_nonnull(matches);
+    g_assert_cmpuint(matches->len, ==, 4);
+    g_assert_true(g_array_index(matches, AtspiAccessible*, 0) == h1.get());
+    g_assert_true(g_array_index(matches, AtspiAccessible*, 1) == p.get());
+    g_assert_true(g_array_index(matches, AtspiAccessible*, 2) == link1.get());
+    g_assert_true(g_array_index(matches, AtspiAccessible*, 3) == link2.get());
+    g_array_free(matches, TRUE);
+
+    // Rule to match none of the states.
+    atspi_state_set_remove(set.get(), ATSPI_STATE_CHECKABLE);
+    atspi_state_set_remove(set.get(), ATSPI_STATE_SHOWING);
+    rule = adoptGRef(atspi_match_rule_new(
+        set.get(), ATSPI_Collection_MATCH_NONE,
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        FALSE));
+    matches = atspi_collection_get_matches(ATSPI_COLLECTION(documentWeb.get()), rule.get(), ATSPI_Collection_SORT_ORDER_CANONICAL, 0, TRUE, nullptr);
+    g_assert_nonnull(matches);
+    g_assert_cmpuint(matches->len, ==, 2);
+    g_assert_true(g_array_index(matches, AtspiAccessible*, 0) == h1.get());
+    g_assert_true(g_array_index(matches, AtspiAccessible*, 1) == p.get());
+    g_array_free(matches, TRUE);
+
+    // Rule to match all roles.
+    roles = g_array_sized_new(FALSE, FALSE, sizeof(int), 2);
+    int headingRole = ATSPI_ROLE_HEADING;
+    g_array_prepend_val(roles, linkRole);
+    g_array_prepend_val(roles, headingRole);
+    rule = adoptGRef(atspi_match_rule_new(
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        roles, ATSPI_Collection_MATCH_ALL,
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        FALSE));
+    matches = atspi_collection_get_matches(ATSPI_COLLECTION(documentWeb.get()), rule.get(), ATSPI_Collection_SORT_ORDER_CANONICAL, 0, TRUE, nullptr);
+    g_assert_nonnull(matches);
+    // No matches when more than one role is given for MATCH_ALL.
+    g_assert_cmpuint(matches->len, ==, 0);
+    g_array_free(matches, TRUE);
+
+    // Rule to match any of the roles.
+    rule = adoptGRef(atspi_match_rule_new(
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        roles, ATSPI_Collection_MATCH_ANY,
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        FALSE));
+    matches = atspi_collection_get_matches(ATSPI_COLLECTION(documentWeb.get()), rule.get(), ATSPI_Collection_SORT_ORDER_CANONICAL, 0, TRUE, nullptr);
+    g_assert_nonnull(matches);
+    g_assert_cmpuint(matches->len, ==, 3);
+    g_assert_true(g_array_index(matches, AtspiAccessible*, 0) == h1.get());
+    g_assert_true(g_array_index(matches, AtspiAccessible*, 1) == link1.get());
+    g_assert_true(g_array_index(matches, AtspiAccessible*, 2) == link2.get());
+    g_array_free(matches, TRUE);
+
+    // Rule to match none of the roles.
+    rule = adoptGRef(atspi_match_rule_new(
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        roles, ATSPI_Collection_MATCH_NONE,
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        FALSE));
+    matches = atspi_collection_get_matches(ATSPI_COLLECTION(documentWeb.get()), rule.get(), ATSPI_Collection_SORT_ORDER_CANONICAL, 0, TRUE, nullptr);
+    g_assert_nonnull(matches);
+    g_assert_cmpuint(matches->len, ==, 1);
+    g_assert_true(g_array_index(matches, AtspiAccessible*, 0) == p.get());
+    g_array_free(matches, TRUE);
+
+    g_array_free(roles, TRUE);
+
+    // Rule to match all attributes.
+    GRefPtr<GHashTable> attributes = adoptGRef(g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free));
+    g_hash_table_insert(attributes.get(), g_strdup("tag"), g_strdup("a"));
+    rule = adoptGRef(atspi_match_rule_new(
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        attributes.get(), ATSPI_Collection_MATCH_ALL,
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        FALSE));
+    matches = atspi_collection_get_matches(ATSPI_COLLECTION(documentWeb.get()), rule.get(), ATSPI_Collection_SORT_ORDER_CANONICAL, 0, TRUE, nullptr);
+    g_assert_nonnull(matches);
+    g_assert_cmpuint(matches->len, ==, 2);
+    g_assert_true(g_array_index(matches, AtspiAccessible*, 0) == link1.get());
+    g_assert_true(g_array_index(matches, AtspiAccessible*, 1) == link2.get());
+    g_array_free(matches, TRUE);
+
+    // Adding level attribute to make the match fail.
+    g_hash_table_insert(attributes.get(), g_strdup("level"), g_strdup("1"));
+    rule = adoptGRef(atspi_match_rule_new(
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        attributes.get(), ATSPI_Collection_MATCH_ALL,
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        FALSE));
+    matches = atspi_collection_get_matches(ATSPI_COLLECTION(documentWeb.get()), rule.get(), ATSPI_Collection_SORT_ORDER_CANONICAL, 0, TRUE, nullptr);
+    g_assert_nonnull(matches);
+    g_assert_cmpuint(matches->len, ==, 0);
+    g_array_free(matches, TRUE);
+
+    // Rule to match any of the attributes.
+    g_hash_table_insert(attributes.get(), g_strdup("level"), g_strdup("1:2:3:4"));
+    rule = adoptGRef(atspi_match_rule_new(
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        attributes.get(), ATSPI_Collection_MATCH_ANY,
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        FALSE));
+    matches = atspi_collection_get_matches(ATSPI_COLLECTION(documentWeb.get()), rule.get(), ATSPI_Collection_SORT_ORDER_CANONICAL, 0, TRUE, nullptr);
+    g_assert_nonnull(matches);
+    g_assert_cmpuint(matches->len, ==, 3);
+    g_assert_true(g_array_index(matches, AtspiAccessible*, 0) == h1.get());
+    g_assert_true(g_array_index(matches, AtspiAccessible*, 1) == link1.get());
+    g_assert_true(g_array_index(matches, AtspiAccessible*, 2) == link2.get());
+    g_array_free(matches, TRUE);
+
+    // Rule to match none of the attributes.
+    rule = adoptGRef(atspi_match_rule_new(
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        attributes.get(), ATSPI_Collection_MATCH_NONE,
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        FALSE));
+    matches = atspi_collection_get_matches(ATSPI_COLLECTION(documentWeb.get()), rule.get(), ATSPI_Collection_SORT_ORDER_CANONICAL, 0, TRUE, nullptr);
+    g_assert_nonnull(matches);
+    g_assert_cmpuint(matches->len, ==, 1);
+    g_assert_true(g_array_index(matches, AtspiAccessible*, 0) == p.get());
+    g_array_free(matches, TRUE);
+
+    // Combined rule to find any focusable elements that implement text.
+    interfaces = g_array_sized_new(FALSE, FALSE, sizeof(char*), 1);
+    g_array_append_val(interfaces, textInterface);
+    set = adoptGRef(atspi_state_set_new(nullptr));
+    atspi_state_set_add(set.get(), ATSPI_STATE_FOCUSABLE);
+    rule = adoptGRef(atspi_match_rule_new(
+        set.get(), ATSPI_Collection_MATCH_ALL,
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        nullptr, ATSPI_Collection_MATCH_NONE,
+        interfaces, ATSPI_Collection_MATCH_ALL,
+        FALSE));
+    g_array_free(interfaces, TRUE);
+    matches = atspi_collection_get_matches(ATSPI_COLLECTION(documentWeb.get()), rule.get(), ATSPI_Collection_SORT_ORDER_CANONICAL, 0, TRUE, nullptr);
+    g_assert_nonnull(matches);
+    g_assert_cmpuint(matches->len, ==, 2);
+    g_assert_true(g_array_index(matches, AtspiAccessible*, 0) == link1.get());
+    g_assert_true(g_array_index(matches, AtspiAccessible*, 1) == link2.get());
+    g_array_free(matches, TRUE);
+}
+
 void beforeAll()
 {
     AccessibilityTest::add("WebKitAccessibility", "accessible/basic-hierarchy", testAccessibleBasicHierarchy);
@@ -3274,6 +3610,7 @@ void beforeAll()
     AccessibilityTest::add("WebKitAccessibility", "selection/listbox", testSelectionListBox);
     AccessibilityTest::add("WebKitAccessibility", "selection/menulist", testSelectionMenuList);
     AccessibilityTest::add("WebKitAccessibility", "table/basic", testTableBasic);
+    AccessibilityTest::add("WebKitAccessibility", "collection/get-matches", testCollectionGetMatches);
 }
 
 void afterAll()

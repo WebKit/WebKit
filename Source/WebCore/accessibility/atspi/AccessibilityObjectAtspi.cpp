@@ -65,7 +65,7 @@ static inline bool roleIsTextType(AccessibilityRole role)
 
 OptionSet<AccessibilityObjectAtspi::Interface> AccessibilityObjectAtspi::interfacesForObject(AXCoreObject& coreObject)
 {
-    OptionSet<Interface> interfaces = { Interface::Accessible, Interface::Component, Interface::Action };
+    OptionSet<Interface> interfaces = { Interface::Accessible, Interface::Component, Interface::Action, Interface::Collection };
 
     RenderObject* renderer = coreObject.isAccessibilityRenderObject() ? coreObject.renderer() : nullptr;
     if (coreObject.roleValue() == AccessibilityRole::StaticText || coreObject.roleValue() == AccessibilityRole::ColorWell)
@@ -506,6 +506,8 @@ bool AccessibilityObjectAtspi::registerObject()
         interfaces.append({ const_cast<GDBusInterfaceInfo*>(&webkit_table_interface), &s_tableFunctions });
     if (m_interfaces.contains(Interface::TableCell))
         interfaces.append({ const_cast<GDBusInterfaceInfo*>(&webkit_table_cell_interface), &s_tableCellFunctions });
+    if (m_interfaces.contains(Interface::Collection))
+        interfaces.append({ const_cast<GDBusInterfaceInfo*>(&webkit_collection_interface), &s_collectionFunctions });
 
     m_path = AccessibilityAtspi::singleton().registerObject(*this, WTFMove(interfaces));
     return true;
@@ -1162,6 +1164,8 @@ void AccessibilityObjectAtspi::buildInterfaces(GVariantBuilder* builder) const
         g_variant_builder_add(builder, "s", webkit_table_interface.name);
     if (m_interfaces.contains(Interface::TableCell))
         g_variant_builder_add(builder, "s", webkit_table_cell_interface.name);
+    if (m_interfaces.contains(Interface::Collection))
+        g_variant_builder_add(builder, "s", webkit_collection_interface.name);
 }
 
 void AccessibilityObjectAtspi::serialize(GVariantBuilder* builder) const

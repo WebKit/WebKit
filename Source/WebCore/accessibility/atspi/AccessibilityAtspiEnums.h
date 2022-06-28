@@ -276,6 +276,24 @@ enum TextGranularityType {
     ParagraphGranularity
 };
 
+enum CollectionMatchType {
+    MatchInvalid,
+    MatchAll,
+    MatchAny,
+    MatchNone,
+    MatchEmpty
+};
+
+enum CollectionSortOrder {
+    SortOrderInvalid,
+    SortOrderCanonical,
+    SortOrderFlow,
+    SortOrderTab,
+    SortOrderReverseCanonical,
+    SortOrderReverseFlow,
+    SortOrderReverseTab
+};
+
 } // namespace Atspi
 } // namespace WebCore
 
