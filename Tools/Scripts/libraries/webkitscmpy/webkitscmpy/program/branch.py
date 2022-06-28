@@ -71,8 +71,8 @@ class Branch(Command):
     @classmethod
     def branch_point(cls, repository):
         cnt = 0
-        commit = None
-        while not commit or cls.editable(commit.branch, repository=repository):
+        commit = repository.commit(include_log=False, include_identifier=False)
+        while cls.editable(commit.branch, repository=repository):
             cnt += 1
             commit = repository.find(argument='HEAD~{}'.format(cnt), include_log=False, include_identifier=False)
             if cnt > 1 or commit.branch != repository.branch or cls.editable(commit.branch, repository=repository):

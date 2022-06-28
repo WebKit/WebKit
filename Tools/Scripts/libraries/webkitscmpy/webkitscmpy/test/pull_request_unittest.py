@@ -292,7 +292,7 @@ class TestDoPullRequest(testing.PathTestCase):
                 args=('pull-request', '-i', 'pr-branch', '-v'),
                 path=self.path,
             ))
-        self.assertEqual(captured.root.log.getvalue(), "Creating the local development branch 'eng/pr-branch'...\n    Found 1 commit...\n")
+        self.assertEqual(captured.root.log.getvalue(), "Creating the local development branch 'eng/pr-branch'...\n")
         self.assertEqual(captured.stderr.getvalue(), 'No modified files\n')
 
     def test_staged(self):
@@ -308,11 +308,9 @@ class TestDoPullRequest(testing.PathTestCase):
         self.assertEqual(
             '\n'.join([line for line in captured.root.log.getvalue().splitlines() if 'Mock process' not in line]),
             """Creating the local development branch 'eng/pr-branch'...
-    Found 1 commit...
 Creating commit...
 Rebasing 'eng/pr-branch' on 'main'...
 Rebased 'eng/pr-branch' on 'main!'
-    Found 1 commit...
 Running pre-PR checks...
 No pre-PR checks to run""")
         self.assertEqual(captured.stdout.getvalue(), "Created the local development branch 'eng/pr-branch'\n")
@@ -333,12 +331,10 @@ No pre-PR checks to run""")
         self.assertEqual(
             '\n'.join([line for line in captured.root.log.getvalue().splitlines() if 'Mock process' not in line]),
             """Creating the local development branch 'eng/pr-branch'...
-    Found 1 commit...
     Adding modified.txt...
 Creating commit...
 Rebasing 'eng/pr-branch' on 'main'...
 Rebased 'eng/pr-branch' on 'main!'
-    Found 1 commit...
 Running pre-PR checks...
 No pre-PR checks to run""")
 
@@ -366,11 +362,9 @@ No pre-PR checks to run""")
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
                 "Creating the local development branch 'eng/pr-branch'...",
-                '    Found 1 commit...',
                 'Creating commit...',
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
-                "    Found 1 commit...",
                 'Running pre-PR checks...',
                 'No pre-PR checks to run',
                 "Pushing 'eng/pr-branch' to 'fork'...",
@@ -403,11 +397,9 @@ No pre-PR checks to run""")
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
                 "Creating the local development branch 'eng/pr-branch'...",
-                '    Found 1 commit...',
                 'Creating commit...',
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
-                "    Found 1 commit...",
                 'Running pre-PR checks...',
                 'No pre-PR checks to run',
                 "Pushing 'eng/pr-branch' to 'fork'...",
@@ -456,7 +448,6 @@ No pre-PR checks to run""")
                 "Amending commit...",
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
-                "    Found 1 commit...",
                 'Running pre-PR checks...',
                 'No pre-PR checks to run',
                 'Checking PR labels for active labels...',
@@ -499,8 +490,6 @@ No pre-PR checks to run""")
                 'Creating commit...',
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
-                '    Found 1 commit...',
-                '    Found 2 commits...',
                 'Running pre-PR checks...',
                 'No pre-PR checks to run',
                 'Checking PR labels for active labels...',
@@ -549,7 +538,6 @@ No pre-PR checks to run""")
                 "Amending commit...",
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
-                "    Found 1 commit...",
                 'Running pre-PR checks...',
                 'No pre-PR checks to run',
                 'Checking PR labels for active labels...',
@@ -613,7 +601,6 @@ No pre-PR checks to run""")
                 "Using committed changes...",
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
-                "    Found 1 commit...",
                 'Running pre-PR checks...',
                 'No pre-PR checks to run',
                 "Pushing 'eng/pr-branch' to 'fork'...",
@@ -667,11 +654,9 @@ No pre-PR checks to run""")
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
                 "Creating the local development branch 'eng/Example-issue-1'...",
-                '    Found 1 commit...',
                 'Creating commit...',
                 "Rebasing 'eng/Example-issue-1' on 'main'...",
                 "Rebased 'eng/Example-issue-1' on 'main!'",
-                "    Found 1 commit...",
                 'Running pre-PR checks...',
                 'No pre-PR checks to run',
                 "Pushing 'eng/Example-issue-1' to 'fork'...",
@@ -725,11 +710,9 @@ No pre-PR checks to run""")
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
                 "Creating the local development branch 'eng/1'...",
-                '    Found 1 commit...',
                 'Creating commit...',
                 "Rebasing 'eng/1' on 'main'...",
                 "Rebased 'eng/1' on 'main!'",
-                "    Found 1 commit...",
                 'Running pre-PR checks...',
                 'No pre-PR checks to run',
                 "Pushing 'eng/1' to 'fork'...",
@@ -793,7 +776,6 @@ No pre-PR checks to run""")
                 "Using committed changes...",
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
-                "    Found 1 commit...",
                 'Running pre-PR checks...',
                 'No pre-PR checks to run',
                 "Pushing 'eng/pr-branch' to 'fork'...",
@@ -829,11 +811,9 @@ No pre-PR checks to run""")
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
                 "Creating the local development branch 'eng/pr-branch'...",
-                '    Found 1 commit...',
                 'Creating commit...',
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
-                "    Found 1 commit...",
                 'Running pre-PR checks...',
                 'No pre-PR checks to run',
                 "Pushing 'eng/pr-branch' to 'origin'...",
@@ -864,11 +844,9 @@ No pre-PR checks to run""")
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
                 "Creating the local development branch 'eng/pr-branch'...",
-                '    Found 1 commit...',
                 'Creating commit...',
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
-                "    Found 1 commit...",
                 'Running pre-PR checks...',
                 'No pre-PR checks to run',
                 "Pushing 'eng/pr-branch' to 'origin'...",
@@ -906,7 +884,6 @@ No pre-PR checks to run""")
                 "Amending commit...",
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
-                "    Found 1 commit...",
                 'Running pre-PR checks...',
                 'No pre-PR checks to run',
                 "Pushing 'eng/pr-branch' to 'origin'...",
@@ -945,8 +922,6 @@ No pre-PR checks to run""")
                 'Creating commit...',
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
-                '    Found 1 commit...',
-                '    Found 2 commits...',
                 'Running pre-PR checks...',
                 'No pre-PR checks to run',
                 "Pushing 'eng/pr-branch' to 'origin'...",
@@ -992,7 +967,6 @@ No pre-PR checks to run""")
                 "Amending commit...",
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
-                "    Found 1 commit...",
                 'Running pre-PR checks...',
                 'No pre-PR checks to run',
                 "Pushing 'eng/pr-branch' to 'origin'...",
@@ -1041,7 +1015,6 @@ No pre-PR checks to run""")
                 "Using committed changes...",
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
-                "    Found 1 commit...",
                 'Running pre-PR checks...',
                 'No pre-PR checks to run',
                 "Pushing 'eng/pr-branch' to 'origin'...",
@@ -1093,7 +1066,6 @@ No pre-PR checks to run""")
                 "Using committed changes...",
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
-                "    Found 1 commit...",
                 'Running pre-PR checks...',
                 'No pre-PR checks to run',
                 "Pushing 'eng/pr-branch' to 'origin'...",

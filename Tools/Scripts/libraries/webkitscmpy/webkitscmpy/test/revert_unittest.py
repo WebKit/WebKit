@@ -65,11 +65,9 @@ class TestRevert(testing.PathTestCase):
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
                 "Creating the local development branch 'eng/pr-branch'...",
-                '    Found 1 commit...',
                 'Reverted d8bce26fa65c6fc8f39c17927abb77f69fab82fc',
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
-                "    Found 1 commit...",
                 'Running pre-PR checks...',
                 'No pre-PR checks to run',
                 "Pushing 'eng/pr-branch' to 'fork'...",
@@ -108,13 +106,11 @@ class TestRevert(testing.PathTestCase):
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
                 "Creating the local development branch 'eng/pr-branch'...",
-                '    Found 1 commit...',
                 'Reverted d8bce26fa65c6fc8f39c17927abb77f69fab82fc',
                 '    Found 1 commit...',
                 'Using committed changes...',
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
-                "    Found 1 commit...",
                 'Running pre-PR checks...',
                 'No pre-PR checks to run',
                 "Pushing 'eng/pr-branch' to 'fork'...",
@@ -179,11 +175,9 @@ index 05e8751..0bf3c85 100644
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
                 "Creating the local development branch 'eng/pr-branch'...",
-                '    Found 1 commit...',
                 'Reverted d8bce26fa65c6fc8f39c17927abb77f69fab82fc',
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
-                "    Found 1 commit...",
                 'Running pre-PR checks...',
                 'No pre-PR checks to run',
                 "Pushing 'eng/pr-branch' to 'fork'...",
@@ -195,7 +189,6 @@ index 05e8751..0bf3c85 100644
                 'Using committed changes...',
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
-                '    Found 1 commit...',
                 'Running pre-PR checks...',
                 'No pre-PR checks to run',
                 'Checking PR labels for active labels...',

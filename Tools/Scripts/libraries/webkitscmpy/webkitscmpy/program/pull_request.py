@@ -280,7 +280,7 @@ class PullRequest(Command):
                 sys.stderr.write("Failed to rebase '{}' on '{},' please resolve conflicts\n".format(repository.branch, branch_point.branch))
                 return 1
             log.info("Rebased '{}' on '{}!'".format(repository.branch, branch_point.branch))
-            branch_point = Branch.branch_point(repository)
+            branch_point = repository.commit(branch=branch_point.branch)
 
         if args.checks is None:
             args.checks = repository.config().get('webkitscmpy.auto-check', 'false') == 'true'
