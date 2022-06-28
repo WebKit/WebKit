@@ -20,23 +20,11 @@ Once your bug is filed, you will receive email when it is updated at each stage 
 
 ## Getting the Code
 
-On Windows, follow the [instructions on our website](https://webkit.org/webkit-on-windows/).
-
-### Cloning the Git SVN Repository
-
-Run the following command to clone WebKit's Git SVN repository:
+Run the following command to clone WebKit's Git repository:
 
 ```
 git clone https://github.com/WebKit/WebKit.git WebKit
 ```
-
-If you want to be able to track Subversion revision from your git checkout, you can run the following command to do so:
-
-```
-Tools/Scripts/git-webkit setup-git-svn
-```
-
-For information about this, and other aspects of using Git with WebKit, read [the wiki page](https://trac.webkit.org/wiki/UsingGitWithWebKit).
 
 ## Building WebKit
 
@@ -124,7 +112,7 @@ Tools/Scripts/build-webkit --wpe --debug
 
 ### Building Windows Port
 
-For building WebKit on Windows, see the [wiki page](https://webkit.org/webkit-on-windows/).
+For building WebKit on Windows, see the [WebKit on Windows page](https://webkit.org/webkit-on-windows/).
 
 ## Running WebKit
 
