@@ -49,8 +49,10 @@ namespace WebKit {
 bool GPUConnectionToWebProcess::setCaptureAttributionString()
 {
 #if HAVE(SYSTEM_STATUS)
-    if (![PAL::getSTDynamicActivityAttributionPublisherClass() respondsToSelector:@selector(setCurrentAttributionStringWithFormat:auditToken:)])
+    if (![PAL::getSTDynamicActivityAttributionPublisherClass() respondsToSelector:@selector(setCurrentAttributionStringWithFormat:auditToken:)]
+        && ![PAL::getSTDynamicActivityAttributionPublisherClass() respondsToSelector:@selector(setCurrentAttributionWebsiteString:auditToken:)]) {
         return true;
+    }
 
     auto auditToken = gpuProcess().parentProcessConnection()->getAuditToken();
     if (!auditToken)
@@ -60,9 +62,12 @@ bool GPUConnectionToWebProcess::setCaptureAttributionString()
     if (!visibleName)
         visibleName = gpuProcess().applicationVisibleName();
 
-    RetainPtr<NSString> formatString = [NSString stringWithFormat:WEB_UI_NSSTRING(@"%@ in %%@", "The domain and application using the camera and/or microphone. The first argument is domain, the second is the application name (iOS only)."), visibleName];
-
-    [PAL::getSTDynamicActivityAttributionPublisherClass() setCurrentAttributionStringWithFormat:formatString.get() auditToken:auditToken.value()];
+    if ([PAL::getSTDynamicActivityAttributionPublisherClass() respondsToSelector:@selector(setCurrentAttributionWebsiteString:auditToken:)])
+        [PAL::getSTDynamicActivityAttributionPublisherClass() setCurrentAttributionWebsiteString:visibleName auditToken:auditToken.value()];
+    else {
+        RetainPtr<NSString> formatString = [NSString stringWithFormat:WEB_UI_NSSTRING(@"%@ in %%@", "The domain and application using the camera and/or microphone. The first argument is domain, the second is the application name (iOS only)."), visibleName];
+        [PAL::getSTDynamicActivityAttributionPublisherClass() setCurrentAttributionStringWithFormat:formatString.get() auditToken:auditToken.value()];
+    }
 #endif
 
     return true;
