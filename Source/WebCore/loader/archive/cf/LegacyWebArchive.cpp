@@ -30,6 +30,7 @@
 #include "LegacyWebArchive.h"
 
 #include "CachedResource.h"
+#include "DeprecatedGlobalSettings.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Editor.h"
@@ -48,7 +49,6 @@
 #include "Logging.h"
 #include "MemoryCache.h"
 #include "Page.h"
-#include "RuntimeEnabledFeatures.h"
 #include "SerializedAttachmentData.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
@@ -470,7 +470,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const SimpleRange& range)
 
 static void addSubresourcesForAttachmentElementsIfNecessary(Frame& frame, const Vector<Node*>& nodes, Vector<Ref<ArchiveResource>>& subresources)
 {
-    if (!RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled())
+    if (!DeprecatedGlobalSettings::attachmentElementEnabled())
         return;
 
     Vector<String> identifiers;

@@ -33,7 +33,7 @@
 typedef double DOMHighResTimeStamp;
 
 [
-    EnabledAtRuntime=PaintTimingEnabled,
+    EnabledByDeprecatedGlobalSetting=PaintTimingEnabled,
     Exposed=Window
 ] interface PerformancePaintTiming : PerformanceEntry {
 };

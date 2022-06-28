@@ -57,6 +57,6 @@
     [CEReactions=NotNeeded, Reflect] attribute [LegacyNullToEmptyString] DOMString border;
 
     // Non-standard
-    [Conditional=ATTACHMENT_ELEMENT, EnabledAtRuntime=AttachmentElementEnabled] readonly attribute DOMString attachmentIdentifier;
+    [Conditional=ATTACHMENT_ELEMENT, EnabledByDeprecatedGlobalSetting=AttachmentElementEnabled] readonly attribute DOMString attachmentIdentifier;
 };
 

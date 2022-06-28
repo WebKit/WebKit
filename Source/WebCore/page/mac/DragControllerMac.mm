@@ -29,6 +29,7 @@
 #if ENABLE(DRAG_SUPPORT)
 
 #import "DataTransfer.h"
+#import "DeprecatedGlobalSettings.h"
 #import "Document.h"
 #import "DocumentFragment.h"
 #import "DragClient.h"
@@ -45,7 +46,6 @@
 #import "PasteboardStrategy.h"
 #import "PlatformStrategies.h"
 #import "Range.h"
-#import "RuntimeEnabledFeatures.h"
 
 #if PLATFORM(IOS_FAMILY)
 #import <MobileCoreServices/MobileCoreServices.h>
@@ -127,7 +127,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         supportedTypes.append(kUTTypePlainText);
         break;
     case DragHandlingMethod::EditRichText:
-        if (RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled()) {
+        if (DeprecatedGlobalSettings::attachmentElementEnabled()) {
             supportedTypes.append(WebArchivePboardType);
             supportedTypes.append(kUTTypeContent);
             supportedTypes.append(kUTTypeItem);

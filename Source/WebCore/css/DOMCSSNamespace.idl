@@ -34,5 +34,5 @@
     [CallWith=CurrentDocument] boolean supports(DOMString property, DOMString value);
     [CallWith=CurrentDocument] boolean supports(DOMString conditionText);
     DOMString escape(DOMString ident);
-    [EnabledAtRuntime=HighlightAPIEnabled, CallWith=CurrentDocument] readonly attribute HighlightRegister highlights;
+    [EnabledByDeprecatedGlobalSetting=HighlightAPIEnabled, CallWith=CurrentDocument] readonly attribute HighlightRegister highlights;
 };

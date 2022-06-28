@@ -26,6 +26,7 @@
 #include "config.h"
 #include "MarkedText.h"
 
+#include "DeprecatedGlobalSettings.h"
 #include "Document.h"
 #include "DocumentMarkerController.h"
 #include "Editor.h"
@@ -35,7 +36,6 @@
 #include "RenderBoxModelObject.h"
 #include "RenderText.h"
 #include "RenderedDocumentMarker.h"
-#include "RuntimeEnabledFeatures.h"
 #include "TextBoxSelectableRange.h"
 #include <algorithm>
 #include <wtf/HashSet.h>
@@ -108,7 +108,7 @@ Vector<MarkedText> MarkedText::collectForHighlights(const RenderText& renderer, 
 {
     Vector<MarkedText> markedTexts;
     HighlightData highlightData;
-    if (RuntimeEnabledFeatures::sharedFeatures().highlightAPIEnabled()) {
+    if (DeprecatedGlobalSettings::highlightAPIEnabled()) {
         auto& parentRenderer = *renderer.parent();
         auto& parentStyle = parentRenderer.style();
         if (auto highlightRegister = renderer.document().highlightRegisterIfExists()) {

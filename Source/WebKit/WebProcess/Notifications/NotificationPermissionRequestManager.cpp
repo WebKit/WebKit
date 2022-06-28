@@ -43,7 +43,7 @@
 
 #if ENABLE(BUILT_IN_NOTIFICATIONS)
 #include "NetworkProcessConnection.h"
-#include <WebCore/RuntimeEnabledFeatures.h>
+#include <WebCore/DeprecatedGlobalSettings.h>
 #endif
 
 namespace WebKit {
@@ -96,7 +96,7 @@ void NotificationPermissionRequestManager::startRequest(const SecurityOriginData
         };
 
 #if ENABLE(BUILT_IN_NOTIFICATIONS)
-        if (WebCore::RuntimeEnabledFeatures::sharedFeatures().builtInNotificationsEnabled() && allowed) {
+        if (WebCore::DeprecatedGlobalSettings::builtInNotificationsEnabled() && allowed) {
             WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NotificationManagerMessageHandler::RequestSystemNotificationPermission(securityOrigin.toString()), WTFMove(innerPermissionHandler), m_page->sessionID().toUInt64());
             return;
         }

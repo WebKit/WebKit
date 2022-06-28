@@ -27,15 +27,15 @@
 #import "AudioSampleDataConverter.h"
 
 #import "AudioSampleBufferList.h"
+#import "DeprecatedGlobalSettings.h"
 #import "Logging.h"
-#import "RuntimeEnabledFeatures.h"
 #import <AudioToolbox/AudioConverter.h>
 #import <pal/cf/AudioToolboxSoftLink.h>
 
 namespace WebCore {
 
 AudioSampleDataConverter::AudioSampleDataConverter()
-    : m_latencyAdaptationEnabled(RuntimeEnabledFeatures::sharedFeatures().webRTCAudioLatencyAdaptationEnabled())
+    : m_latencyAdaptationEnabled(DeprecatedGlobalSettings::webRTCAudioLatencyAdaptationEnabled())
 {
 }
 

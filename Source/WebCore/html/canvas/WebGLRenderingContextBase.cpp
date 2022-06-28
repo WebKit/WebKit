@@ -78,7 +78,6 @@
 #include "OESVertexArrayObject.h"
 #include "Page.h"
 #include "RenderBox.h"
-#include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
 #include "WebCoreOpaqueRoot.h"
 #include "WebGL2RenderingContext.h"

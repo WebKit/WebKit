@@ -33,7 +33,6 @@
 #include "RTCRtpSender.h"
 #include "RealtimeOutgoingAudioSourceGStreamer.h"
 #include "RealtimeOutgoingVideoSourceGStreamer.h"
-#include "RuntimeEnabledFeatures.h"
 #include "ScriptExecutionContext.h"
 
 namespace WebCore {

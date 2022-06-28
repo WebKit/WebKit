@@ -34,11 +34,11 @@
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/Chrome.h>
 #include <WebCore/DOMWrapperWorld.h>
+#include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/InspectorController.h>
 #include <WebCore/InspectorFrontendHost.h>
 #include <WebCore/NotImplemented.h>
-#include <WebCore/RuntimeEnabledFeatures.h>
 #include <WebCore/Settings.h>
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
@@ -56,7 +56,7 @@ Ref<WebInspectorUI> WebInspectorUI::create(WebPage& page)
 void WebInspectorUI::enableFrontendFeatures(WebPage& page)
 {
     // FIXME: These should be enabled in the UIProcess by the preferences for the inspector page's WKWebView.
-    RuntimeEnabledFeatures::sharedFeatures().setImageBitmapEnabled(true);
+    DeprecatedGlobalSettings::setImageBitmapEnabled(true);
 #if ENABLE(WEBGL2)
     page.corePage()->settings().setWebGL2Enabled(true);
 #endif

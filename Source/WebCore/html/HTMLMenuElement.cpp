@@ -25,12 +25,12 @@
 
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "DeprecatedGlobalSettings.h"
 #include "Document.h"
 #include "ElementChildIterator.h"
 #include "HTMLMenuItemElement.h"
 #include "HTMLNames.h"
 #include "Page.h"
-#include "RuntimeEnabledFeatures.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -48,7 +48,7 @@ inline HTMLMenuElement::HTMLMenuElement(const QualifiedName& tagName, Document& 
 Node::InsertedIntoAncestorResult HTMLMenuElement::insertedIntoAncestor(InsertionType type, ContainerNode& ancestor)
 {
     auto result = HTMLElement::insertedIntoAncestor(type, ancestor);
-    if (type.connectedToDocument && RuntimeEnabledFeatures::sharedFeatures().menuItemElementEnabled() && m_isTouchBarMenu) {
+    if (type.connectedToDocument && DeprecatedGlobalSettings::menuItemElementEnabled() && m_isTouchBarMenu) {
         if (auto* page = document().page())
             page->chrome().client().didInsertMenuElement(*this);
     }
@@ -58,7 +58,7 @@ Node::InsertedIntoAncestorResult HTMLMenuElement::insertedIntoAncestor(Insertion
 void HTMLMenuElement::removedFromAncestor(RemovalType type, ContainerNode& ancestor)
 {
     HTMLElement::removedFromAncestor(type, ancestor);
-    if (type.disconnectedFromDocument && RuntimeEnabledFeatures::sharedFeatures().menuItemElementEnabled() && m_isTouchBarMenu) {
+    if (type.disconnectedFromDocument && DeprecatedGlobalSettings::menuItemElementEnabled() && m_isTouchBarMenu) {
         if (auto* page = document().page())
             page->chrome().client().didRemoveMenuElement(*this);
     }
@@ -66,7 +66,7 @@ void HTMLMenuElement::removedFromAncestor(RemovalType type, ContainerNode& ances
 
 void HTMLMenuElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
-    if (name != typeAttr || !RuntimeEnabledFeatures::sharedFeatures().menuItemElementEnabled()) {
+    if (name != typeAttr || !DeprecatedGlobalSettings::menuItemElementEnabled()) {
         HTMLElement::parseAttribute(name, value);
         return;
     }

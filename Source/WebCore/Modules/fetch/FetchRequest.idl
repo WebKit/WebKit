@@ -51,7 +51,7 @@ typedef (FetchRequest or USVString) RequestInfo;
     readonly attribute FetchRequestCache cache;
     readonly attribute FetchRequestRedirect redirect;
     readonly attribute DOMString integrity;
-    [EnabledAtRuntime=FetchAPIKeepAliveEnabled] readonly attribute boolean keepalive;
+    [EnabledByDeprecatedGlobalSetting=FetchAPIKeepAliveEnabled] readonly attribute boolean keepalive;
     // FIXME: Implement 'isReloadNavigation'.
     // readonly attribute boolean isReloadNavigation;
     // FIXME: Implement 'isHistoryNavigation'.

@@ -24,7 +24,7 @@
  */
 
 [
-    EnabledAtRuntime=ImageBitmapEnabled,
+    EnabledByDeprecatedGlobalSetting=ImageBitmapEnabled,
     Exposed=(Window,Worker),
     ReportExtraMemoryCost
 ] interface ImageBitmap {

@@ -22,6 +22,7 @@
 #include "JSDOMWindowCustom.h"
 
 #include "DOMWindowWebDatabase.h"
+#include "DeprecatedGlobalSettings.h"
 #include "Frame.h"
 #include "FrameDestructionObserverInlines.h"
 #include "HTMLDocument.h"
@@ -44,7 +45,6 @@
 #include "JSWindowProxy.h"
 #include "JSWorker.h"
 #include "Location.h"
-#include "RuntimeEnabledFeatures.h"
 #include "ScheduledAction.h"
 #include "Settings.h"
 #include "WebCoreJSClientData.h"
@@ -625,7 +625,7 @@ static inline JSC::EncodedJSValue jsDOMWindowInstanceFunction_openDatabaseBody(J
     auto estimatedSize = convert<IDLUnsignedLong>(*lexicalGlobalObject, callFrame->uncheckedArgument(3));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
-    if (!RuntimeEnabledFeatures::sharedFeatures().webSQLEnabled()) {
+    if (!DeprecatedGlobalSettings::webSQLEnabled()) {
         if (name != "null"_s || version != "null"_s || displayName != "null"_s || estimatedSize)
             propagateException(*lexicalGlobalObject, throwScope, Exception(UnknownError, "Web SQL is deprecated"_s));
         return JSValue::encode(constructEmptyObject(lexicalGlobalObject, castedThis->globalObject()->objectPrototype()));
@@ -647,7 +647,7 @@ JSValue JSDOMWindow::openDatabase(JSC::JSGlobalObject& lexicalGlobalObject) cons
 {
     VM& vm = lexicalGlobalObject.vm();
     StringImpl* name = PropertyName(builtinNames(vm).openDatabasePublicName()).publicName();
-    if (RuntimeEnabledFeatures::sharedFeatures().webSQLEnabled())
+    if (DeprecatedGlobalSettings::webSQLEnabled())
         return JSFunction::create(vm, &lexicalGlobalObject, 4, name, jsDOMWindowInstanceFunction_openDatabase, NoIntrinsic);
 
     return InternalFunction::createFunctionThatMasqueradesAsUndefined(vm, &lexicalGlobalObject, 4, name, jsDOMWindowInstanceFunction_openDatabase);

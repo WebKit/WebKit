@@ -37,6 +37,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSPropertyParserHelpers.h"
 #include "CSSPropertyParserWorkerSafe.h"
+#include "DeprecatedGlobalSettings.h"
 #include "Gradient.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
@@ -47,7 +48,6 @@
 #include "RenderTheme.h"
 #include "RenderWidget.h"
 #include "ResourceLoadObserver.h"
-#include "RuntimeEnabledFeatures.h"
 #include "ScriptDisallowedScope.h"
 #include "Settings.h"
 #include "StyleBuilder.h"
@@ -197,7 +197,7 @@ Ref<TextMetrics> CanvasRenderingContext2D::measureText(const String& text)
 
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
-    if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled()) {
+    if (DeprecatedGlobalSettings::webAPIStatisticsEnabled()) {
         auto& canvas = this->canvas();
         ResourceLoadObserver::shared().logCanvasWriteOrMeasure(canvas.document(), text);
         ResourceLoadObserver::shared().logCanvasRead(canvas.document());
@@ -230,7 +230,7 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, double x, do
 
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
-    if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
+    if (DeprecatedGlobalSettings::webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logCanvasWriteOrMeasure(this->canvas().document(), text);
 
     if (!canDrawText(x, y, fill, maxWidth))

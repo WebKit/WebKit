@@ -49,7 +49,6 @@
 #include "RegistrableDomain.h"
 #include "ResourceLoadObserver.h"
 #include "RuntimeApplicationChecks.h"
-#include "RuntimeEnabledFeatures.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGPathElement.h"
 #include "SVGSVGElement.h"
@@ -381,7 +380,7 @@ bool Quirks::isGoogleMaps() const
 
 bool Quirks::shouldDispatchSimulatedMouseEvents(const EventTarget* target) const
 {
-    if (RuntimeEnabledFeatures::sharedFeatures().mouseEventsSimulationEnabled())
+    if (DeprecatedGlobalSettings::mouseEventsSimulationEnabled())
         return true;
 
     if (!needsQuirks())

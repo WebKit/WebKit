@@ -32,12 +32,12 @@
 #include "ThreadableWebSocketChannel.h"
 
 #include "ContentRuleListResults.h"
+#include "DeprecatedGlobalSettings.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "FrameLoader.h"
 #include "HTTPHeaderValues.h"
 #include "Page.h"
-#include "RuntimeEnabledFeatures.h"
 #include "ScriptExecutionContext.h"
 #include "SocketProvider.h"
 #include "ThreadableWebSocketChannelClientWrapper.h"
@@ -56,7 +56,7 @@ Ref<ThreadableWebSocketChannel> ThreadableWebSocketChannel::create(Document& doc
 #if USE(CURL) || USE(SOUP)
     bool enabled = true;
 #elif HAVE(NSURLSESSION_WEBSOCKET)
-    bool enabled = RuntimeEnabledFeatures::sharedFeatures().isNSURLSessionWebSocketEnabled();
+    bool enabled = DeprecatedGlobalSettings::isNSURLSessionWebSocketEnabled();
 #else
     bool enabled = false;
 #endif

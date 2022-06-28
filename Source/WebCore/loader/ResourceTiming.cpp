@@ -27,9 +27,9 @@
 #include "ResourceTiming.h"
 
 #include "CachedResource.h"
+#include "DeprecatedGlobalSettings.h"
 #include "DocumentLoadTiming.h"
 #include "PerformanceServerTiming.h"
-#include "RuntimeEnabledFeatures.h"
 #include "SecurityOrigin.h"
 #include "ServerTimingParser.h"
 #include <wtf/CrossThreadCopier.h>
@@ -58,7 +58,7 @@ ResourceTiming::ResourceTiming(const URL& url, const String& initiator, const Re
     , m_networkLoadMetrics(networkLoadMetrics)
     , m_isLoadedFromServiceWorker(response.source() == ResourceResponse::Source::ServiceWorker)
 {
-    if (RuntimeEnabledFeatures::sharedFeatures().serverTimingEnabled() && !m_networkLoadMetrics.failsTAOCheck)
+    if (DeprecatedGlobalSettings::serverTimingEnabled() && !m_networkLoadMetrics.failsTAOCheck)
         m_serverTiming = ServerTimingParser::parseServerTiming(response.httpHeaderField(HTTPHeaderName::ServerTiming));
 }
 

@@ -28,13 +28,13 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "DeprecatedGlobalSettings.h"
 #include "DisplayTree.h"
 #include "DisplayTreeBuilder.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "LayoutContainerBox.h"
 #include "Page.h"
-#include "RuntimeEnabledFeatures.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -74,7 +74,7 @@ void View::prepareForDisplay()
         return;
 
     // Workaround for webkit.org/b/219369
-    if (RuntimeEnabledFeatures::sharedFeatures().inlineFormattingContextIntegrationEnabled())
+    if (DeprecatedGlobalSettings::inlineFormattingContextIntegrationEnabled())
         return;
 
     auto treeBuilder = TreeBuilder { deviceScaleFactor() };

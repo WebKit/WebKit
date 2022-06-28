@@ -28,6 +28,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "DeprecatedGlobalSettings.h"
 #include "EventRegion.h"
 #include "FloatingState.h"
 #include "HitTestLocation.h"
@@ -61,7 +62,6 @@
 #include "RenderTextControlMultiLine.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
-#include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
 #include "TextBoxPainter.h"
 #include "TextDecorationPainter.h"
@@ -116,7 +116,7 @@ const LineLayout* LineLayout::containing(const RenderObject& renderer)
 
 bool LineLayout::isEnabled()
 {
-    return RuntimeEnabledFeatures::sharedFeatures().inlineFormattingContextIntegrationEnabled();
+    return DeprecatedGlobalSettings::inlineFormattingContextIntegrationEnabled();
 }
 
 bool LineLayout::canUseFor(const RenderBlockFlow& flow)

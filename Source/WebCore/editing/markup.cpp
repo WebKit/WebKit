@@ -39,6 +39,7 @@
 #include "Comment.h"
 #include "CommonAtomStrings.h"
 #include "ComposedTreeIterator.h"
+#include "DeprecatedGlobalSettings.h"
 #include "DocumentFragment.h"
 #include "DocumentLoader.h"
 #include "DocumentType.h"
@@ -71,7 +72,6 @@
 #include "PasteboardItemInfo.h"
 #include "Range.h"
 #include "RenderBlock.h"
-#include "RuntimeEnabledFeatures.h"
 #include "ScriptWrappableInlines.h"
 #include "Settings.h"
 #include "SocketProvider.h"
@@ -490,7 +490,7 @@ String StyledMarkupAccumulator::textContentRespectingRange(const Text& text)
 void StyledMarkupAccumulator::appendCustomAttributes(StringBuilder& out, const Element& element, Namespaces* namespaces)
 {
 #if ENABLE(ATTACHMENT_ELEMENT)
-    if (!RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled())
+    if (!DeprecatedGlobalSettings::attachmentElementEnabled())
         return;
     
     if (is<HTMLAttachmentElement>(element)) {
@@ -1030,7 +1030,7 @@ String sanitizedMarkupForFragmentInDocument(Ref<DocumentFragment>&& fragment, Do
 static void restoreAttachmentElementsInFragment(DocumentFragment& fragment)
 {
 #if ENABLE(ATTACHMENT_ELEMENT)
-    if (!RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled())
+    if (!DeprecatedGlobalSettings::attachmentElementEnabled())
         return;
 
     // When creating a fragment we must strip the webkit-attachment-path attribute after restoring the File object.

@@ -27,7 +27,7 @@
  */
 
 [
-    EnabledAtRuntime=WebSQLEnabled,
+    EnabledByDeprecatedGlobalSetting=WebSQLEnabled,
     Exposed=Window
 ] interface SQLResultSet {
     readonly attribute SQLResultSetRowList rows;

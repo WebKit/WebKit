@@ -30,6 +30,7 @@
 #include "Screen.h"
 
 #include "DOMWindow.h"
+#include "DeprecatedGlobalSettings.h"
 #include "Document.h"
 #include "FloatRect.h"
 #include "Frame.h"
@@ -38,7 +39,6 @@
 #include "PlatformScreen.h"
 #include "Quirks.h"
 #include "ResourceLoadObserver.h"
-#include "RuntimeEnabledFeatures.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -55,7 +55,7 @@ unsigned Screen::height() const
     auto* frame = this->frame();
     if (!frame)
         return 0;
-    if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
+    if (DeprecatedGlobalSettings::webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logScreenAPIAccessed(*frame->document(), ResourceLoadStatistics::ScreenAPI::Height);
     return static_cast<unsigned>(frame->screenSize().height());
 }
@@ -65,7 +65,7 @@ unsigned Screen::width() const
     auto* frame = this->frame();
     if (!frame)
         return 0;
-    if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
+    if (DeprecatedGlobalSettings::webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logScreenAPIAccessed(*frame->document(), ResourceLoadStatistics::ScreenAPI::Width);
     return static_cast<unsigned>(frame->screenSize().width());
 }
@@ -75,7 +75,7 @@ unsigned Screen::colorDepth() const
     auto* frame = this->frame();
     if (!frame)
         return 0;
-    if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
+    if (DeprecatedGlobalSettings::webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logScreenAPIAccessed(*frame->document(), ResourceLoadStatistics::ScreenAPI::ColorDepth);
     return static_cast<unsigned>(screenDepth(frame->view()));
 }
@@ -85,7 +85,7 @@ unsigned Screen::pixelDepth() const
     auto* frame = this->frame();
     if (!frame)
         return 0;
-    if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
+    if (DeprecatedGlobalSettings::webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logScreenAPIAccessed(*frame->document(), ResourceLoadStatistics::ScreenAPI::PixelDepth);
 
     auto* document = window()->document();
@@ -100,7 +100,7 @@ int Screen::availLeft() const
     auto* frame = this->frame();
     if (!frame)
         return 0;
-    if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
+    if (DeprecatedGlobalSettings::webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logScreenAPIAccessed(*frame->document(), ResourceLoadStatistics::ScreenAPI::AvailLeft);
     return static_cast<int>(screenAvailableRect(frame->view()).x());
 }
@@ -110,7 +110,7 @@ int Screen::availTop() const
     auto* frame = this->frame();
     if (!frame)
         return 0;
-    if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
+    if (DeprecatedGlobalSettings::webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logScreenAPIAccessed(*frame->document(), ResourceLoadStatistics::ScreenAPI::AvailTop);
     return static_cast<int>(screenAvailableRect(frame->view()).y());
 }
@@ -120,7 +120,7 @@ unsigned Screen::availHeight() const
     auto* frame = this->frame();
     if (!frame)
         return 0;
-    if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
+    if (DeprecatedGlobalSettings::webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logScreenAPIAccessed(*frame->document(), ResourceLoadStatistics::ScreenAPI::AvailHeight);
     return static_cast<unsigned>(screenAvailableRect(frame->view()).height());
 }
@@ -130,7 +130,7 @@ unsigned Screen::availWidth() const
     auto* frame = this->frame();
     if (!frame)
         return 0;
-    if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
+    if (DeprecatedGlobalSettings::webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logScreenAPIAccessed(*frame->document(), ResourceLoadStatistics::ScreenAPI::AvailWidth);
     return static_cast<unsigned>(screenAvailableRect(frame->view()).width());
 }

@@ -27,6 +27,7 @@
 
 #if USE(LIBWEBRTC)
 
+#include "DeprecatedGlobalSettings.h"
 #include "EventNames.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSRTCStatsReport.h"
@@ -53,7 +54,6 @@
 #include "RealtimeIncomingVideoSource.h"
 #include "RealtimeOutgoingAudioSource.h"
 #include "RealtimeOutgoingVideoSource.h"
-#include "RuntimeEnabledFeatures.h"
 #include <webrtc/rtc_base/physical_socket_server.h>
 #include <webrtc/p2p/base/basic_packet_socket_factory.h>
 #include <webrtc/p2p/client/basic_port_allocator.h>
@@ -79,7 +79,7 @@ LibWebRTCMediaEndpoint::LibWebRTCMediaEndpoint(LibWebRTCPeerConnectionBackend& p
     ASSERT(isMainThread());
     ASSERT(client.factory());
 
-    if (RuntimeEnabledFeatures::sharedFeatures().webRTCH264SimulcastEnabled())
+    if (DeprecatedGlobalSettings::webRTCH264SimulcastEnabled())
         webrtc::field_trial::InitFieldTrialsFromString("WebRTC-H264Simulcast/Enabled/");
 }
 

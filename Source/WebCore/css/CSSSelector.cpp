@@ -29,8 +29,8 @@
 #include "CSSMarkup.h"
 #include "CSSSelectorList.h"
 #include "CommonAtomStrings.h"
+#include "DeprecatedGlobalSettings.h"
 #include "HTMLNames.h"
-#include "RuntimeEnabledFeatures.h"
 #include "SelectorPseudoTypeMap.h"
 #include <wtf/Assertions.h>
 #include <wtf/StdLibExtras.h>
@@ -285,7 +285,7 @@ CSSSelector::PseudoElementType CSSSelector::parsePseudoElementType(StringView na
             type = PseudoElementWebKitCustom;
     }
 
-    if (type == PseudoElementHighlight && !RuntimeEnabledFeatures::sharedFeatures().highlightAPIEnabled())
+    if (type == PseudoElementHighlight && !DeprecatedGlobalSettings::highlightAPIEnabled())
         return PseudoElementUnknown;
 
     return type;

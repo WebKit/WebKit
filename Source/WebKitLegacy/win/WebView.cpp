@@ -157,7 +157,6 @@
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/ResourceHandleClient.h>
 #include <WebCore/ResourceRequest.h>
-#include <WebCore/RuntimeEnabledFeatures.h>
 #include <WebCore/ScriptController.h>
 #include <WebCore/Scrollbar.h>
 #include <WebCore/ScrollbarTheme.h>
@@ -5011,12 +5010,10 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings.setPluginsEnabled(!!enabled);
 
-    // FIXME: Add preferences for the runtime enabled features.
-
     hr = prefsPrivate->menuItemElementEnabled(&enabled);
     if (FAILED(hr))
         return hr;
-    RuntimeEnabledFeatures::sharedFeatures().setMenuItemElementEnabled(!!enabled);
+    DeprecatedGlobalSettings::setMenuItemElementEnabled(!!enabled);
 
     hr = prefsPrivate->webAnimationsCompositeOperationsEnabled(&enabled);
     if (FAILED(hr))
@@ -5041,7 +5038,7 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     hr = prefsPrivate->fetchAPIKeepAliveEnabled(&enabled);
     if (FAILED(hr))
         return hr;
-    RuntimeEnabledFeatures::sharedFeatures().setFetchAPIKeepAliveEnabled(!!enabled);
+    DeprecatedGlobalSettings::setFetchAPIKeepAliveEnabled(!!enabled);
 
     hr = prefsPrivate->mediaPreloadingEnabled(&enabled);
     if (FAILED(hr))
@@ -5056,7 +5053,7 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     hr = prefsPrivate->webSQLEnabled(&enabled);
     if (FAILED(hr))
         return hr;
-    RuntimeEnabledFeatures::sharedFeatures().setWebSQLEnabled(enabled);
+    DeprecatedGlobalSettings::setWebSQLEnabled(enabled);
 
     hr = prefsPrivate->visualViewportAPIEnabled(&enabled);
     if (FAILED(hr))
@@ -5362,7 +5359,7 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     hr = prefsPrivate->serverTimingEnabled(&enabled);
     if (FAILED(hr))
         return hr;
-    RuntimeEnabledFeatures::sharedFeatures().setServerTimingEnabled(!!enabled);
+    DeprecatedGlobalSettings::setServerTimingEnabled(!!enabled);
 
     hr = prefsPrivate->resizeObserverEnabled(&enabled);
     if (FAILED(hr))

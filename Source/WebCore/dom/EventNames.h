@@ -28,10 +28,6 @@
 #include <functional>
 #include <wtf/text/AtomString.h>
 
-#if ENABLE(TOUCH_EVENTS)
-#include "RuntimeEnabledFeatures.h"
-#endif
-
 namespace WebCore {
 
 #if ENABLE(APPLE_PAY_COUPON_CODE)

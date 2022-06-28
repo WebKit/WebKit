@@ -94,7 +94,7 @@ struct CSSParserContext {
     bool cssTextAlignLastEnabled { false };
     bool cssTextJustifyEnabled { false };
 
-    // RuntimeEnabledFeatures.
+    // DeprecatedGlobalSettings.
 #if ENABLE(ATTACHMENT_ELEMENT)
     bool attachmentEnabled { false };
 #endif

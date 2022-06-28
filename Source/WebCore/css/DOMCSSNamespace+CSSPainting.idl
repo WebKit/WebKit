@@ -25,7 +25,7 @@
 
 // https://drafts.css-houdini.org/css-paint-api-1/#paint-worklet
 [
-    EnabledAtRuntime=CSSPaintingAPIEnabled,
+    EnabledByDeprecatedGlobalSetting=CSSPaintingAPIEnabled,
     Conditional=CSS_PAINTING_API,
     ImplementedBy=DOMCSSPaintWorklet
 ] partial namespace DOMCSSNamespace {

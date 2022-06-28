@@ -49,7 +49,7 @@ typedef unsigned long FramesPerSecond;
 
     attribute DOMString id;
     [ImplementedAs=bindingsEffect] attribute AnimationEffect? effect;
-    [SettingsConditionallyReadWrite=WebAnimationsMutableTimelinesEnabled] attribute AnimationTimeline? timeline;
+    [EnabledConditionallyReadWriteBySetting=WebAnimationsMutableTimelinesEnabled] attribute AnimationTimeline? timeline;
     [ImplementedAs=bindingsStartTime] attribute double? startTime;
     [ImplementedAs=bindingsCurrentTime] attribute double? currentTime;
     attribute double playbackRate;

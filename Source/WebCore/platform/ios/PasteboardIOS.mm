@@ -27,13 +27,13 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "DeprecatedGlobalSettings.h"
 #import "DragData.h"
 #import "Image.h"
 #import "NotImplemented.h"
 #import "PasteboardStrategy.h"
 #import "PlatformPasteboard.h"
 #import "PlatformStrategies.h"
-#import "RuntimeEnabledFeatures.h"
 #import "SharedBuffer.h"
 #import "UTIUtilities.h"
 #import "WebNSAttributedStringExtras.h"
@@ -333,7 +333,7 @@ void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolic
     int numberOfTypes = [types count];
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    bool canReadAttachment = policy == WebContentReadingPolicy::AnyType && RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled();
+    bool canReadAttachment = policy == WebContentReadingPolicy::AnyType && DeprecatedGlobalSettings::attachmentElementEnabled();
 #else
     bool canReadAttachment = false;
 #endif
@@ -396,7 +396,7 @@ void Pasteboard::readRespectingUTIFidelities(PasteboardWebContentReader& reader,
             return;
 
         auto attachmentFilePath = info->pathForHighestFidelityItem();
-        bool canReadAttachment = policy == WebContentReadingPolicy::AnyType && RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled() && !attachmentFilePath.isEmpty();
+        bool canReadAttachment = policy == WebContentReadingPolicy::AnyType && DeprecatedGlobalSettings::attachmentElementEnabled() && !attachmentFilePath.isEmpty();
         auto contentType = info->contentTypeForHighestFidelityItem();
         if (canReadAttachment && prefersAttachmentRepresentation(*info)) {
             readURLAlongsideAttachmentIfNecessary(reader, strategy, contentType, m_pasteboardName, index, context());

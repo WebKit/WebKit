@@ -31,7 +31,7 @@
 #include "config.h"
 #include "PerformanceEntry.h"
 
-#include "RuntimeEnabledFeatures.h"
+#include "DeprecatedGlobalSettings.h"
 
 namespace WebCore {
 
@@ -59,7 +59,7 @@ std::optional<PerformanceEntry::Type> PerformanceEntry::parseEntryTypeString(con
     if (entryType == "resource"_s)
         return std::optional<Type>(Type::Resource);
 
-    if (RuntimeEnabledFeatures::sharedFeatures().paintTimingEnabled()) {
+    if (DeprecatedGlobalSettings::paintTimingEnabled()) {
         if (entryType == "paint"_s)
             return std::optional<Type>(Type::Paint);
     }

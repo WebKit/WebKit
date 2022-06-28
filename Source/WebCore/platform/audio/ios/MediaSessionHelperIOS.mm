@@ -28,9 +28,9 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "DeprecatedGlobalSettings.h"
 #import "Logging.h"
 #import "MediaPlaybackTargetCocoa.h"
-#import "RuntimeEnabledFeatures.h"
 #import "WebCoreThreadRun.h"
 #import <AVFoundation/AVAudioSession.h>
 #import <AVFoundation/AVRouteDetector.h>
@@ -258,7 +258,7 @@ void MediaSessionHelperiOS::providePresentingApplicationPID(int pid)
 
     m_presentedApplicationPID = pid;
 
-    if (RuntimeEnabledFeatures::sharedFeatures().disableMediaExperiencePIDInheritance())
+    if (DeprecatedGlobalSettings::disableMediaExperiencePIDInheritance())
         return;
 
     if (!canLoadAVSystemController_PIDToInheritApplicationStateFrom())

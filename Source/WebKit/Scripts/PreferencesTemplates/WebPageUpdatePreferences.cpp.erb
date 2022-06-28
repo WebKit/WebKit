@@ -33,7 +33,6 @@
 #include "WebPreferencesStore.h"
 #include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/Page.h>
-#include <WebCore/RuntimeEnabledFeatures.h>
 #include <WebCore/Settings.h>
 
 namespace WebKit {
@@ -65,20 +64,6 @@ void WebPage::updatePreferencesGenerated(const WebPreferencesStore& store)
     WebCore::DeprecatedGlobalSettings::set<%= @pref.webcoreNameUpper %>(store.get<%= @pref.typeUpper %>ValueForKey(WebPreferencesKey::<%= @pref.nameLower %>Key()));
 <%- else -%>
     WebCore::DeprecatedGlobalSettings::set<%= @pref.webcoreNameUpper %>(DEFAULT_VALUE_FOR_<%= @pref.name %>);
-<%- end -%>
-<%- if @pref.condition -%>
-#endif
-<%- end -%>
-<%- end -%>
-
-<%- for @pref in @preferencesBoundToRuntimeEnabledFeatures do -%>
-<%- if @pref.condition -%>
-#if <%= @pref.condition %>
-<%- end -%>
-<%- if @pref.exposed -%>
-    WebCore::RuntimeEnabledFeatures::sharedFeatures().set<%= @pref.webcoreNameUpper %>(store.get<%= @pref.typeUpper %>ValueForKey(WebPreferencesKey::<%= @pref.nameLower %>Key()));
-<%- else -%>
-    WebCore::RuntimeEnabledFeatures::sharedFeatures().set<%= @pref.webcoreNameUpper %>(DEFAULT_VALUE_FOR_<%= @pref.name %>);
 <%- end -%>
 <%- if @pref.condition -%>
 #endif

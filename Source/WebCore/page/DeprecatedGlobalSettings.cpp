@@ -28,49 +28,110 @@
 
 #include "AudioSession.h"
 #include "HTMLMediaElement.h"
+#include "MediaPlayer.h"
+#include "PlatformMediaSessionManager.h"
+#include "PlatformScreen.h"
+#include <JavaScriptCore/Options.h>
 #include <wtf/NeverDestroyed.h>
+
+#if PLATFORM(COCOA)
+#include "MediaSessionManagerCocoa.h"
+#endif
 
 namespace WebCore {
 
+DeprecatedGlobalSettings::DeprecatedGlobalSettings()
+{
+#if PLATFORM(WATCHOS)
+    m_isWebSocketEnabled = false;
+#endif
 #if USE(AVFOUNDATION)
-bool DeprecatedGlobalSettings::gAVFoundationEnabled = true;
+    m_AVFoundationEnabled = true;
 #endif
 
 #if USE(GSTREAMER)
-bool DeprecatedGlobalSettings::gGStreamerEnabled = true;
+    m_GStreamerEnabled = true;
 #endif
-
-bool DeprecatedGlobalSettings::gMockScrollbarsEnabled = false;
-bool DeprecatedGlobalSettings::gUsesOverlayScrollbars = false;
-
 #if PLATFORM(WIN)
-bool DeprecatedGlobalSettings::gShouldUseHighResolutionTimers = true;
+    m_shouldUseHighResolutionTimers = true;
 #endif
-    
-bool DeprecatedGlobalSettings::gLowPowerVideoAudioBufferSizeEnabled = false;
-bool DeprecatedGlobalSettings::gResourceLoadStatisticsEnabledEnabled = false;
-bool DeprecatedGlobalSettings::gAllowsAnySSLCertificate = false;
-
 #if PLATFORM(IOS_FAMILY)
-bool DeprecatedGlobalSettings::gNetworkDataUsageTrackingEnabled = false;
-bool DeprecatedGlobalSettings::gShouldOptOutOfNetworkStateObservation = false;
-bool DeprecatedGlobalSettings::gDisableScreenSizeOverride = false;
+    m_networkDataUsageTrackingEnabled = false;
+    m_shouldOptOutOfNetworkStateObservation = false;
+    m_disableScreenSizeOverride = false;
 #endif
+
+    m_mockScrollbarsEnabled = false;
+    m_usesOverlayScrollbars = false;
+    m_lowPowerVideoAudioBufferSizeEnabled = false;
+    m_resourceLoadStatisticsEnabledEnabled = false;
+    m_allowsAnySSLCertificate = false;
+}
+
+DeprecatedGlobalSettings::~DeprecatedGlobalSettings() = default;
+
+DeprecatedGlobalSettings& DeprecatedGlobalSettings::shared()
+{
+    static NeverDestroyed<DeprecatedGlobalSettings> deprecatedGlobalSettings;
+    return deprecatedGlobalSettings;
+}
+
+#if ENABLE(TOUCH_EVENTS)
+bool DeprecatedGlobalSettings::touchEventsEnabled()
+{
+    return shared().m_touchEventsEnabled.value_or(screenHasTouchDevice());
+}
+#endif
+
+#if ENABLE(VORBIS)
+void DeprecatedGlobalSettings::setVorbisDecoderEnabled(bool isEnabled)
+{
+    shared().m_vorbisDecoderEnabled = isEnabled;
+    PlatformMediaSessionManager::setVorbisDecoderEnabled(isEnabled);
+}
+#endif
+
+#if ENABLE(OPUS)
+void DeprecatedGlobalSettings::setOpusDecoderEnabled(bool isEnabled)
+{
+    shared().m_opusDecoderEnabled = isEnabled;
+    PlatformMediaSessionManager::setOpusDecoderEnabled(isEnabled);
+}
+#endif
+
+#if ENABLE(MEDIA_SOURCE) && (HAVE(AVSAMPLEBUFFERVIDEOOUTPUT) || USE(GSTREAMER))
+void DeprecatedGlobalSettings::setMediaSourceInlinePaintingEnabled(bool isEnabled)
+{
+    shared().m_mediaSourceInlinePaintingEnabled = isEnabled;
+#if HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
+    MediaSessionManagerCocoa::setMediaSourceInlinePaintingEnabled(isEnabled);
+#endif
+}
+#endif
+
+#if HAVE(AVCONTENTKEYSPECIFIER)
+void DeprecatedGlobalSettings::setSampleBufferContentKeySessionSupportEnabled(bool enabled)
+{
+    shared().m_sampleBufferContentKeySessionSupportEnabled = enabled;
+    MediaSessionManagerCocoa::setSampleBufferContentKeySessionSupportEnabled(enabled);
+}
+#endif
+
 
 #if PLATFORM(WIN)
 void DeprecatedGlobalSettings::setShouldUseHighResolutionTimers(bool shouldUseHighResolutionTimers)
 {
-    gShouldUseHighResolutionTimers = shouldUseHighResolutionTimers;
+    shared().m_shouldUseHighResolutionTimers = shouldUseHighResolutionTimers;
 }
 #endif
 
 #if USE(AVFOUNDATION)
 void DeprecatedGlobalSettings::setAVFoundationEnabled(bool enabled)
 {
-    if (gAVFoundationEnabled == enabled)
+    if (shared().m_AVFoundationEnabled == enabled)
         return;
 
-    gAVFoundationEnabled = enabled;
+    shared().m_AVFoundationEnabled = enabled;
     HTMLMediaElement::resetMediaEngines();
 }
 #endif
@@ -78,10 +139,10 @@ void DeprecatedGlobalSettings::setAVFoundationEnabled(bool enabled)
 #if USE(GSTREAMER)
 void DeprecatedGlobalSettings::setGStreamerEnabled(bool enabled)
 {
-    if (gGStreamerEnabled == enabled)
+    if (shared().m_GStreamerEnabled == enabled)
         return;
 
-    gGStreamerEnabled = enabled;
+    shared().m_GStreamerEnabled = enabled;
 
 #if ENABLE(VIDEO)
     HTMLMediaElement::resetMediaEngines();
@@ -95,34 +156,34 @@ void DeprecatedGlobalSettings::setGStreamerEnabled(bool enabled)
 // correctly, which may cause the platform to follow dangling pointers.
 void DeprecatedGlobalSettings::setMockScrollbarsEnabled(bool flag)
 {
-    gMockScrollbarsEnabled = flag;
+    shared().m_mockScrollbarsEnabled = flag;
     // FIXME: This should update scroll bars in existing pages.
 }
 
 bool DeprecatedGlobalSettings::mockScrollbarsEnabled()
 {
-    return gMockScrollbarsEnabled;
+    return shared().m_mockScrollbarsEnabled;
 }
 
 void DeprecatedGlobalSettings::setUsesOverlayScrollbars(bool flag)
 {
-    gUsesOverlayScrollbars = flag;
+    shared().m_usesOverlayScrollbars = flag;
     // FIXME: This should update scroll bars in existing pages.
 }
 
 bool DeprecatedGlobalSettings::usesOverlayScrollbars()
 {
-    return gUsesOverlayScrollbars;
+    return shared().m_usesOverlayScrollbars;
 }
 
 void DeprecatedGlobalSettings::setLowPowerVideoAudioBufferSizeEnabled(bool flag)
 {
-    gLowPowerVideoAudioBufferSizeEnabled = flag;
+    shared().m_lowPowerVideoAudioBufferSizeEnabled = flag;
 }
 
 void DeprecatedGlobalSettings::setResourceLoadStatisticsEnabled(bool flag)
 {
-    gResourceLoadStatisticsEnabledEnabled = flag;
+    shared().m_resourceLoadStatisticsEnabledEnabled = flag;
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -138,28 +199,22 @@ unsigned DeprecatedGlobalSettings::audioSessionCategoryOverride()
 
 void DeprecatedGlobalSettings::setNetworkDataUsageTrackingEnabled(bool trackingEnabled)
 {
-    gNetworkDataUsageTrackingEnabled = trackingEnabled;
+    shared().m_networkDataUsageTrackingEnabled = trackingEnabled;
 }
 
 bool DeprecatedGlobalSettings::networkDataUsageTrackingEnabled()
 {
-    return gNetworkDataUsageTrackingEnabled;
-}
-
-static String& sharedNetworkInterfaceNameGlobal()
-{
-    static NeverDestroyed<String> networkInterfaceName;
-    return networkInterfaceName;
+    return shared().m_networkDataUsageTrackingEnabled;
 }
 
 void DeprecatedGlobalSettings::setNetworkInterfaceName(const String& networkInterfaceName)
 {
-    sharedNetworkInterfaceNameGlobal() = networkInterfaceName;
+    shared().m_networkInterfaceName = networkInterfaceName;
 }
 
 const String& DeprecatedGlobalSettings::networkInterfaceName()
 {
-    return sharedNetworkInterfaceNameGlobal();
+    return shared().m_networkInterfaceName;
 }
 #endif
 
@@ -177,12 +232,12 @@ bool DeprecatedGlobalSettings::shouldManageAudioSessionCategory()
 
 void DeprecatedGlobalSettings::setAllowsAnySSLCertificate(bool allowAnySSLCertificate)
 {
-    gAllowsAnySSLCertificate = allowAnySSLCertificate;
+    shared().m_allowsAnySSLCertificate = allowAnySSLCertificate;
 }
 
 bool DeprecatedGlobalSettings::allowsAnySSLCertificate()
 {
-    return gAllowsAnySSLCertificate;
+    return shared().m_allowsAnySSLCertificate;
 }
 
 } // namespace WebCore

@@ -354,7 +354,7 @@ ExceptionOr<void> WebSocket::send(const String& message)
     }
     // FIXME: WebSocketChannel also has a m_bufferedAmount. Remove that one. This one is the correct one accessed by JS.
 #if HAVE(NSURLSESSION_WEBSOCKET)
-    bool shouldSynchronouslyUpdateBufferedAmount = RuntimeEnabledFeatures::sharedFeatures().isNSURLSessionWebSocketEnabled();
+    bool shouldSynchronouslyUpdateBufferedAmount = DeprecatedGlobalSettings::isNSURLSessionWebSocketEnabled();
 #elif PLATFORM(MAC)
     bool shouldSynchronouslyUpdateBufferedAmount = false;
 #else
@@ -379,7 +379,7 @@ ExceptionOr<void> WebSocket::send(ArrayBuffer& binaryData)
         return { };
     }
 #if HAVE(NSURLSESSION_WEBSOCKET)
-    bool shouldSynchronouslyUpdateBufferedAmount = RuntimeEnabledFeatures::sharedFeatures().isNSURLSessionWebSocketEnabled();
+    bool shouldSynchronouslyUpdateBufferedAmount = DeprecatedGlobalSettings::isNSURLSessionWebSocketEnabled();
 #elif PLATFORM(MAC)
     bool shouldSynchronouslyUpdateBufferedAmount = false;
 #else
@@ -405,7 +405,7 @@ ExceptionOr<void> WebSocket::send(ArrayBufferView& arrayBufferView)
         return { };
     }
 #if HAVE(NSURLSESSION_WEBSOCKET)
-    bool shouldSynchronouslyUpdateBufferedAmount = RuntimeEnabledFeatures::sharedFeatures().isNSURLSessionWebSocketEnabled();
+    bool shouldSynchronouslyUpdateBufferedAmount = DeprecatedGlobalSettings::isNSURLSessionWebSocketEnabled();
 #elif PLATFORM(MAC)
     bool shouldSynchronouslyUpdateBufferedAmount = false;
 #else
@@ -430,7 +430,7 @@ ExceptionOr<void> WebSocket::send(Blob& binaryData)
         return { };
     }
 #if HAVE(NSURLSESSION_WEBSOCKET)
-    bool shouldSynchronouslyUpdateBufferedAmount = RuntimeEnabledFeatures::sharedFeatures().isNSURLSessionWebSocketEnabled();
+    bool shouldSynchronouslyUpdateBufferedAmount = DeprecatedGlobalSettings::isNSURLSessionWebSocketEnabled();
 #elif PLATFORM(MAC)
     bool shouldSynchronouslyUpdateBufferedAmount = false;
 #else

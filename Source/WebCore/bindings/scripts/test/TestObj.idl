@@ -113,21 +113,21 @@ enum TestConfidence { "high", "kinda-low" };
     [Reflect=customContentBooleanAttr] attribute boolean reflectedCustomBooleanAttr;
     [Reflect=customContentURLAttr, URL] attribute DOMString reflectedCustomURLAttr;
 
-    // [EnabledAtRuntime] attributes and operations.
-    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeatureEnabled&TestFeature1Enabled] attribute DOMString enabledAtRuntimeAttribute;
-    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeatureEnabled] undefined enabledAtRuntimeOperation(DOMString testParam);
-    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeatureEnabled] undefined enabledAtRuntimeOperation(long testParam);
-    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeatureEnabled] static undefined enabledAtRuntimeOperationStatic(long testParam);
-    [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeatureEnabled] static attribute DOMString enabledAtRuntimeAttributeStatic;
+    // [EnabledByDeprecatedGlobalSetting] attributes and operations.
+    [Conditional=TEST_FEATURE, EnabledByDeprecatedGlobalSetting=TestFeatureEnabled&TestFeature1Enabled] attribute DOMString enabledAtRuntimeAttribute;
+    [Conditional=TEST_FEATURE, EnabledByDeprecatedGlobalSetting=TestFeatureEnabled] undefined enabledAtRuntimeOperation(DOMString testParam);
+    [Conditional=TEST_FEATURE, EnabledByDeprecatedGlobalSetting=TestFeatureEnabled] undefined enabledAtRuntimeOperation(long testParam);
+    [Conditional=TEST_FEATURE, EnabledByDeprecatedGlobalSetting=TestFeatureEnabled] static undefined enabledAtRuntimeOperationStatic(long testParam);
+    [Conditional=TEST_FEATURE, EnabledByDeprecatedGlobalSetting=TestFeatureEnabled] static attribute DOMString enabledAtRuntimeAttributeStatic;
 
-    [EnabledForWorld=someWorld, EnabledAtRuntime=TestFeatureEnabled] undefined enabledInSpecificWorldWhenRuntimeFeatureEnabled(long testParam);
+    [EnabledForWorld=someWorld, EnabledByDeprecatedGlobalSetting=TestFeatureEnabled] undefined enabledInSpecificWorldWhenRuntimeFeatureEnabled(long testParam);
     [EnabledForWorld=someWorld] undefined worldSpecificMethod(long testParam);
 
     // [SecureContext] attributes and operations; will not be exposed to a non-secure context.
     // From <https://w3c.github.io/webappsec-secure-contexts/#integration-idl> (Editor's Draft, 17 November 2016)
     [SecureContext] Promise<double> calculateSecretResult();
     [SecureContext] boolean getSecretBoolean();
-    [Conditional=TEST_FEATURE, SecureContext, EnabledAtRuntime=TestFeatureEnabled] boolean testFeatureGetSecretBoolean();
+    [Conditional=TEST_FEATURE, SecureContext, EnabledByDeprecatedGlobalSetting=TestFeatureEnabled] boolean testFeatureGetSecretBoolean();
 
     // TypedArray attribute
     attribute Float32Array typedArrayAttr;

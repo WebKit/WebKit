@@ -1811,7 +1811,6 @@ page/ResizeObservation.cpp
 page/ResizeObserver.cpp
 page/ResourceUsageOverlay.cpp
 page/ResourceUsageThread.cpp
-page/RuntimeEnabledFeatures.cpp
 page/Screen.cpp
 page/ScrollBehavior.cpp
 page/SecurityOrigin.cpp

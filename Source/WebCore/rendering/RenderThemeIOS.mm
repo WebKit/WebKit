@@ -38,6 +38,7 @@
 #import "ColorCocoa.h"
 #import "ColorTypes.h"
 #import "DateComponents.h"
+#import "DeprecatedGlobalSettings.h"
 #import "Document.h"
 #import "DrawGlyphsRecorder.h"
 #import "File.h"
@@ -77,7 +78,6 @@
 #import "RenderSlider.h"
 #import "RenderStyle.h"
 #import "RenderView.h"
-#import "RuntimeEnabledFeatures.h"
 #import "Settings.h"
 #import "Theme.h"
 #import "UTIUtilities.h"
@@ -1967,7 +1967,7 @@ bool RenderThemeIOS::paintAttachment(const RenderObject& renderer, const PaintIn
 
 String RenderThemeIOS::attachmentStyleSheet() const
 {
-    ASSERT(RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled());
+    ASSERT(DeprecatedGlobalSettings::attachmentElementEnabled());
     return "attachment { appearance: auto; color: -apple-system-blue; }"_s;
 }
 

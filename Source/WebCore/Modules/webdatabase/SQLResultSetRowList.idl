@@ -29,7 +29,7 @@
 typedef (DOMString? or unrestricted double) SQLValue;
 
 [
-    EnabledAtRuntime=WebSQLEnabled,
+    EnabledByDeprecatedGlobalSetting=WebSQLEnabled,
     Exposed=Window
 ] interface SQLResultSetRowList {
     readonly attribute unsigned long length;

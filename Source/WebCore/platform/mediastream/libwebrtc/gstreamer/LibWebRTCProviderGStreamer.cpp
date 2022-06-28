@@ -28,7 +28,6 @@
 
 #if USE(LIBWEBRTC) && USE(GSTREAMER)
 
-#include "RuntimeEnabledFeatures.h"
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {

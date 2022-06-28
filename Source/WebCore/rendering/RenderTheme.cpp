@@ -25,6 +25,7 @@
 #include "ColorBlending.h"
 #include "ColorLuminance.h"
 #include "ControlStates.h"
+#include "DeprecatedGlobalSettings.h"
 #include "Document.h"
 #include "FileList.h"
 #include "FloatConversion.h"
@@ -48,7 +49,6 @@
 #include "RenderMeter.h"
 #include "RenderStyle.h"
 #include "RenderView.h"
-#include "RuntimeEnabledFeatures.h"
 #include "ShadowPseudoIds.h"
 #include "SpinButtonElement.h"
 #include "StringTruncator.h"
@@ -1115,7 +1115,7 @@ bool RenderTheme::paintCapsLockIndicator(const RenderObject&, const PaintInfo&, 
 
 String RenderTheme::attachmentStyleSheet() const
 {
-    ASSERT(RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled());
+    ASSERT(DeprecatedGlobalSettings::attachmentElementEnabled());
     return "attachment { appearance: auto; }"_s;
 }
 
@@ -1139,7 +1139,7 @@ String RenderTheme::colorInputStyleSheet(const Settings&) const
 
 String RenderTheme::dataListStyleSheet() const
 {
-    ASSERT(RuntimeEnabledFeatures::sharedFeatures().dataListElementEnabled());
+    ASSERT(DeprecatedGlobalSettings::dataListElementEnabled());
     return "datalist { display: none; }"_s;
 }
 

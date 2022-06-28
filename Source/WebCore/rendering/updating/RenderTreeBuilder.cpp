@@ -79,7 +79,6 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 #include "FrameView.h"
 #include "FrameViewLayoutContext.h"
-#include "RuntimeEnabledFeatures.h"
 #endif
 
 namespace WebCore {

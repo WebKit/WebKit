@@ -27,6 +27,7 @@
 #import "DragData.h"
 
 #if ENABLE(DRAG_SUPPORT)
+#import "DeprecatedGlobalSettings.h"
 #import "LegacyNSPasteboardTypes.h"
 #import "MIMETypeRegistry.h"
 #import "NotImplemented.h"
@@ -35,7 +36,6 @@
 #import "PasteboardStrategy.h"
 #import "PlatformPasteboard.h"
 #import "PlatformStrategies.h"
-#import "RuntimeEnabledFeatures.h"
 #import "WebCoreNSURLExtras.h"
 #import <wtf/cocoa/NSURLExtras.h>
 
@@ -253,7 +253,7 @@ bool DragData::containsCompatibleContent(DraggingPurpose purpose) const
     if (purpose == DraggingPurpose::ForColorControl)
         return containsColor();
 
-    if (purpose == DraggingPurpose::ForEditing && RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled() && containsFiles())
+    if (purpose == DraggingPurpose::ForEditing && DeprecatedGlobalSettings::attachmentElementEnabled() && containsFiles())
         return true;
 
     auto context = createPasteboardContext();

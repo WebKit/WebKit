@@ -27,6 +27,7 @@
 
 #include "CSSStyleSheet.h"
 #include "ContentType.h"
+#include "DeprecatedGlobalSettings.h"
 #include "DocumentType.h"
 #include "Element.h"
 #include "FTPDirectoryDocument.h"
@@ -46,7 +47,6 @@
 #include "Page.h"
 #include "PluginData.h"
 #include "PluginDocument.h"
-#include "RuntimeEnabledFeatures.h"
 #include "SVGDocument.h"
 #include "SVGNames.h"
 #include "SecurityOrigin.h"
@@ -175,7 +175,7 @@ Ref<Document> DOMImplementation::createDocument(const String& contentType, Frame
 #endif
 
 #if ENABLE(MODEL_ELEMENT)
-    if (MIMETypeRegistry::isUSDMIMEType(contentType) && RuntimeEnabledFeatures::sharedFeatures().modelDocumentEnabled())
+    if (MIMETypeRegistry::isUSDMIMEType(contentType) && DeprecatedGlobalSettings::modelDocumentEnabled())
         return ModelDocument::create(frame, settings, url);
 #endif
 

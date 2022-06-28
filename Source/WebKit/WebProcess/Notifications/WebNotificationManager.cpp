@@ -38,11 +38,11 @@
 #include "WebNotification.h"
 #include "WebNotificationManagerMessages.h"
 #include "WebPageProxyMessages.h"
+#include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/Document.h>
 #include <WebCore/Notification.h>
 #include <WebCore/NotificationData.h>
 #include <WebCore/Page.h>
-#include <WebCore/RuntimeEnabledFeatures.h>
 #include <WebCore/SWContextManager.h>
 #include <WebCore/ScriptExecutionContext.h>
 #include <WebCore/SecurityOrigin.h>
@@ -129,7 +129,7 @@ static bool sendMessage(Notification& notification, WebPage* page, const Functio
         return false;
 
 #if ENABLE(BUILT_IN_NOTIFICATIONS)
-    if (RuntimeEnabledFeatures::sharedFeatures().builtInNotificationsEnabled())
+    if (DeprecatedGlobalSettings::builtInNotificationsEnabled())
         return sendMessage(WebProcess::singleton().ensureNetworkProcessConnection().connection(), WebProcess::singleton().sessionID().toUInt64());
 #endif
 

@@ -30,6 +30,7 @@
 
 #include "CSSValuePool.h"
 #include "CanvasRenderingContext.h"
+#include "DeprecatedGlobalSettings.h"
 #include "Document.h"
 #include "HTMLCanvasElement.h"
 #include "ImageBitmap.h"
@@ -39,7 +40,6 @@
 #include "MIMETypeRegistry.h"
 #include "OffscreenCanvasRenderingContext2D.h"
 #include "PlaceholderRenderingContext.h"
-#include "RuntimeEnabledFeatures.h"
 #include "WorkerGlobalScope.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -78,7 +78,7 @@ bool OffscreenCanvas::enabledForContext(ScriptExecutionContext& context)
 {
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
     if (context.isWorkerGlobalScope())
-        return RuntimeEnabledFeatures::sharedFeatures().offscreenCanvasInWorkersEnabled();
+        return DeprecatedGlobalSettings::offscreenCanvasInWorkersEnabled();
 #endif
 
     ASSERT(context.isDocument());

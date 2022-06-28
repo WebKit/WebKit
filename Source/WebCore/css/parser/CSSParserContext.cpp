@@ -27,10 +27,10 @@
 #include "CSSParserContext.h"
 
 #include "CSSImageValue.h"
+#include "DeprecatedGlobalSettings.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Page.h"
-#include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
 #include <wtf/NeverDestroyed.h>
 
@@ -117,7 +117,7 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , cssTextAlignLastEnabled { document.settings().cssTextAlignLastEnabled() }
     , cssTextJustifyEnabled { document.settings().cssTextJustifyEnabled() }
 #if ENABLE(ATTACHMENT_ELEMENT)
-    , attachmentEnabled { RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled() }
+    , attachmentEnabled { DeprecatedGlobalSettings::attachmentElementEnabled() }
 #endif
 {
 }

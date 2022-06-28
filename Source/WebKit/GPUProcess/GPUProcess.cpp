@@ -49,7 +49,6 @@
 #include <WebCore/MemoryRelease.h>
 #include <WebCore/NowPlayingManager.h>
 #include <WebCore/RuntimeApplicationChecks.h>
-#include <WebCore/RuntimeEnabledFeatures.h>
 #include <wtf/Algorithms.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/LogInitialization.h>
@@ -289,7 +288,7 @@ void GPUProcess::updateGPUProcessPreferences(GPUProcessPreferences&& preferences
 {
 #if ENABLE(MEDIA_SOURCE) && ENABLE(VP9)
     if (updatePreference(m_preferences.webMParserEnabled, preferences.webMParserEnabled))
-        WebCore::RuntimeEnabledFeatures::sharedFeatures().setWebMParserEnabled(*m_preferences.webMParserEnabled);
+        DeprecatedGlobalSettings::setWebMParserEnabled(*m_preferences.webMParserEnabled);
 #endif
 
 #if ENABLE(WEBM_FORMAT_READER)
@@ -309,7 +308,7 @@ void GPUProcess::updateGPUProcessPreferences(GPUProcessPreferences&& preferences
     
 #if ENABLE(MEDIA_SOURCE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
     if (updatePreference(m_preferences.mediaSourceInlinePaintingEnabled, preferences.mediaSourceInlinePaintingEnabled))
-        WebCore::RuntimeEnabledFeatures::sharedFeatures().setMediaSourceInlinePaintingEnabled(*m_preferences.mediaSourceInlinePaintingEnabled);
+        DeprecatedGlobalSettings::setMediaSourceInlinePaintingEnabled(*m_preferences.mediaSourceInlinePaintingEnabled);
 #endif
 
 #if HAVE(AVCONTENTKEYSPECIFIER)

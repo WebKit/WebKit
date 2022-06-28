@@ -33,7 +33,7 @@
 #include "NetworkProcessConnection.h"
 #include "NetworkRTCProviderMessages.h"
 #include "WebProcess.h"
-#include <WebCore/RuntimeEnabledFeatures.h>
+#include <WebCore/DeprecatedGlobalSettings.h>
 #include <wtf/MainThread.h>
 
 namespace WebKit {
@@ -54,8 +54,8 @@ void LibWebRTCSocketFactory::setConnection(RefPtr<IPC::Connection>&& connection)
     if (!m_connection)
         return;
 
-    m_connection->send(Messages::NetworkRTCProvider::SetPlatformTCPSocketsEnabled(RuntimeEnabledFeatures::sharedFeatures().webRTCPlatformTCPSocketsEnabled()), 0);
-    m_connection->send(Messages::NetworkRTCProvider::SetPlatformUDPSocketsEnabled(RuntimeEnabledFeatures::sharedFeatures().webRTCPlatformUDPSocketsEnabled()), 0);
+    m_connection->send(Messages::NetworkRTCProvider::SetPlatformTCPSocketsEnabled(DeprecatedGlobalSettings::webRTCPlatformTCPSocketsEnabled()), 0);
+    m_connection->send(Messages::NetworkRTCProvider::SetPlatformUDPSocketsEnabled(DeprecatedGlobalSettings::webRTCPlatformUDPSocketsEnabled()), 0);
 
     while (!m_pendingMessageTasks.isEmpty())
         m_pendingMessageTasks.takeFirst()(*m_connection);

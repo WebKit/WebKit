@@ -31,7 +31,6 @@
 #include "InspectorInstrumentation.h"
 #include "Performance.h"
 #include "PerformanceObserverEntryList.h"
-#include "RuntimeEnabledFeatures.h"
 #include "WorkerGlobalScope.h"
 
 namespace WebCore {

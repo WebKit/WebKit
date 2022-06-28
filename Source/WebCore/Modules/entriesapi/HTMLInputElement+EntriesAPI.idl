@@ -25,7 +25,7 @@
 
 // https://wicg.github.io/entries-api/#dom-htmlinputelement-webkitdirectory
 [
-    EnabledAtRuntime=DirectoryUploadEnabled,
+    EnabledByDeprecatedGlobalSetting=DirectoryUploadEnabled,
     ImplementedBy=HTMLInputElementEntriesAPI
 ] partial interface HTMLInputElement {
     [Reflect] attribute boolean webkitdirectory;

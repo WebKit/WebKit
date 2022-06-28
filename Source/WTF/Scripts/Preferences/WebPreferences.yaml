@@ -315,7 +315,7 @@ AsynchronousSpellCheckingEnabled:
 
 AttachmentElementEnabled:
   type: bool
-  webcoreBinding: RuntimeEnabledFeatures
+  webcoreBinding: DeprecatedGlobalSettings
   condition: ENABLE(ATTACHMENT_ELEMENT)
   defaultValue:
     WebKitLegacy:
@@ -375,7 +375,7 @@ CSSTransformStyleOptimized3DEnabled:
 # FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely (though we should still set the default value to false when initializing settings).
 CacheAPIEnabled:
   type: bool
-  webcoreBinding: RuntimeEnabledFeatures
+  webcoreBinding: DeprecatedGlobalSettings
   defaultValue:
     WebKitLegacy:
       default: false
@@ -484,7 +484,7 @@ CustomPasteboardDataEnabled:
   type: bool
   humanReadableName: "Custom pasteboard data"
   humanReadableDescription: "Enable custom clipboard types and better security model for clipboard API."
-  webcoreBinding: RuntimeEnabledFeatures
+  webcoreBinding: DeprecatedGlobalSettings
   defaultValue:
     WebKitLegacy:
       default: false
@@ -647,7 +647,7 @@ DirectoryUploadEnabled:
   type: bool
   humanReadableName: "Directory Upload"
   humanReadableDescription: "input.webkitdirectory / dataTransferItem.webkitGetAsEntry()"
-  webcoreBinding: RuntimeEnabledFeatures
+  webcoreBinding: DeprecatedGlobalSettings
   defaultValue:
     WebKitLegacy:
       default: false
@@ -913,7 +913,7 @@ IncompleteImageBorderEnabled:
 IncrementalPDFLoadingEnabled:
   type: bool
   condition: HAVE(INCREMENTAL_PDF_APIS)
-  webcoreBinding: RuntimeEnabledFeatures
+  webcoreBinding: DeprecatedGlobalSettings
   defaultValue:
     WebKitLegacy:
       "PLATFORM(MAC)": true
@@ -1029,7 +1029,7 @@ IsAccessibilityIsolatedTreeEnabled:
   type: bool
   humanReadableName: "Isolated Accessibility Tree Mode"
   humanReadableDescription: "Enable an accessibility hierarchy for VoiceOver that can be accessed on a secondary thread for improved performance"
-  webcoreBinding: RuntimeEnabledFeatures
+  webcoreBinding: DeprecatedGlobalSettings
   condition: ENABLE(ACCESSIBILITY_ISOLATED_TREE)
   defaultValue:
     WebKitLegacy:
@@ -1045,7 +1045,7 @@ ItpDebugModeEnabled:
   type: bool
   humanReadableName: "ITP Debug Mode"
   humanReadableDescription: "Intelligent Tracking Prevention Debug Mode"
-  webcoreBinding: RuntimeEnabledFeatures
+  webcoreBinding: DeprecatedGlobalSettings
   defaultValue:
     WebKitLegacy:
       default: false
@@ -1456,7 +1456,7 @@ MediaVideoCodecIDsAllowedInCaptivePortalMode:
 
 MenuItemElementEnabled:
   type: bool
-  webcoreBinding: RuntimeEnabledFeatures
+  webcoreBinding: DeprecatedGlobalSettings
   defaultValue:
     WebKitLegacy:
       default: false
@@ -2515,7 +2515,7 @@ WebGPU:
 
 WebMFormatReaderEnabled:
   type: bool
-  webcoreBinding: RuntimeEnabledFeatures
+  webcoreBinding: DeprecatedGlobalSettings
   condition: ENABLE(WEBM_FORMAT_READER)
   defaultValue:
     WebKit:
@@ -2524,7 +2524,7 @@ WebMFormatReaderEnabled:
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 WebMParserEnabled:
   type: bool
-  webcoreBinding: RuntimeEnabledFeatures
+  webcoreBinding: DeprecatedGlobalSettings
   condition: ENABLE(MEDIA_SOURCE)
   defaultValue:
     WebKitLegacy:

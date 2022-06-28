@@ -31,6 +31,7 @@
 #import "BlobURL.h"
 #import "CachedResourceLoader.h"
 #import "DOMURL.h"
+#import "DeprecatedGlobalSettings.h"
 #import "Document.h"
 #import "DocumentFragment.h"
 #import "DocumentLoader.h"
@@ -56,7 +57,6 @@
 #import "Quirks.h"
 #import "Range.h"
 #import "RenderView.h"
-#import "RuntimeEnabledFeatures.h"
 #import "SerializedAttachmentData.h"
 #import "Settings.h"
 #import "SocketProvider.h"
@@ -115,7 +115,7 @@ static NSDictionary *attributesForAttributedStringConversion()
         nil]);
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    if (!RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled())
+    if (!DeprecatedGlobalSettings::attachmentElementEnabled())
         [excludedElements addObject:@"object"];
 #endif
 
@@ -208,7 +208,7 @@ static bool shouldReplaceSubresourceURLWithBlobDuringSanitization(const URL& url
 static bool shouldReplaceRichContentWithAttachments()
 {
 #if ENABLE(ATTACHMENT_ELEMENT)
-    return RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled();
+    return DeprecatedGlobalSettings::attachmentElementEnabled();
 #else
     return false;
 #endif
@@ -288,7 +288,7 @@ static void replaceRichContentWithAttachments(Frame& frame, DocumentFragment& fr
         Ref<Element> originalElement;
     };
 
-    ASSERT(RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled());
+    ASSERT(DeprecatedGlobalSettings::attachmentElementEnabled());
     if (subresources.isEmpty())
         return;
 
@@ -397,7 +397,7 @@ RefPtr<DocumentFragment> createFragmentAndAddResources(Frame& frame, NSAttribute
     if (!fragmentAndResources.fragment)
         return nullptr;
 
-    if (!RuntimeEnabledFeatures::sharedFeatures().customPasteboardDataEnabled()) {
+    if (!DeprecatedGlobalSettings::customPasteboardDataEnabled()) {
         if (DocumentLoader* loader = frame.loader().documentLoader()) {
             for (auto& resource : fragmentAndResources.resources)
                 loader->addArchiveResource(resource.copyRef());
@@ -508,7 +508,7 @@ bool WebContentReader::readWebArchive(SharedBuffer& buffer)
     if (!result)
         return false;
     
-    if (!RuntimeEnabledFeatures::sharedFeatures().customPasteboardDataEnabled()) {
+    if (!DeprecatedGlobalSettings::customPasteboardDataEnabled()) {
         fragment = createFragmentFromMarkup(*frame.document(), result->markup, result->mainResource->url().string(), DisallowScriptingAndPluginContent);
         if (DocumentLoader* loader = frame.loader().documentLoader())
             loader->addAllArchiveResources(result->archive.get());
@@ -580,7 +580,7 @@ bool WebContentReader::readHTML(const String& string)
         return false;
 
     String markup;
-    if (RuntimeEnabledFeatures::sharedFeatures().customPasteboardDataEnabled() && shouldSanitize()) {
+    if (DeprecatedGlobalSettings::customPasteboardDataEnabled() && shouldSanitize()) {
         markup = sanitizeMarkup(stringOmittingMicrosoftPrefix, msoListQuirksForMarkup(), WTF::Function<void (DocumentFragment&)> { [] (DocumentFragment& fragment) {
             removeSubresourceURLAttributes(fragment, [] (const URL& url) {
                 return shouldReplaceSubresourceURLWithBlobDuringSanitization(url);
@@ -797,7 +797,7 @@ bool WebContentReader::readFilePath(const String& path, PresentationSize preferr
         fragment = document.createDocumentFragment();
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    if (RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled())
+    if (DeprecatedGlobalSettings::attachmentElementEnabled())
         fragment->appendChild(attachmentForFilePath(frame, path, preferredPresentationSize, contentType));
 #endif
 

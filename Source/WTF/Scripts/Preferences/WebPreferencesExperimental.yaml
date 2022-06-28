@@ -59,7 +59,7 @@ AccessibilityObjectModelEnabled:
   type: bool
   humanReadableName: "Accessibility Object Model"
   humanReadableDescription: "Accessibility Object Model support"
-  webcoreBinding: RuntimeEnabledFeatures
+  webcoreBinding: DeprecatedGlobalSettings
   defaultValue:
     WebKitLegacy:
       default: false
@@ -157,7 +157,7 @@ BuiltInNotificationsEnabled:
   type: bool
   humanReadableName: "Built-In Web Notifications"
   humanReadableDescription: "Enable built-in WebKit managed notifications"
-  webcoreBinding: RuntimeEnabledFeatures
+  webcoreBinding: DeprecatedGlobalSettings
   condition: ENABLE(BUILT_IN_NOTIFICATIONS)
   defaultValue:
     WebCore:
@@ -384,7 +384,7 @@ CSSPaintingAPIEnabled:
   type: bool
   humanReadableName: "CSS Painting API"
   humanReadableDescription: "Enable the CSS Painting API"
-  webcoreBinding: RuntimeEnabledFeatures
+  webcoreBinding: DeprecatedGlobalSettings
   condition: ENABLE(CSS_PAINTING_API)
   defaultValue:
     WebKitLegacy:
@@ -522,7 +522,7 @@ DialogElementEnabled:
 # FIXME: Starting the preference name with "Disable" is inconsistent with most other preferences and should be changed.
 DisableMediaExperiencePIDInheritance:
   type: bool
-  webcoreBinding: RuntimeEnabledFeatures
+  webcoreBinding: DeprecatedGlobalSettings
   humanReadableName: "Disable Media Experience PID Inheritance"
   humanReadableDescription: "Disable Media Experience PID Inheritance"
   condition: HAVE(CELESTIAL)
@@ -578,7 +578,7 @@ FetchAPIKeepAliveEnabled:
   type: bool
   humanReadableName: "Fetch API Request KeepAlive"
   humanReadableDescription: "Enable Fetch API Request KeepAlive"
-  webcoreBinding: RuntimeEnabledFeatures
+  webcoreBinding: DeprecatedGlobalSettings
   defaultValue:
     WebKitLegacy:
       default: true
@@ -689,7 +689,7 @@ HighlightAPIEnabled:
   type: bool
   humanReadableName: "Highlight API"
   humanReadableDescription: "Highlight API support"
-  webcoreBinding: RuntimeEnabledFeatures
+  webcoreBinding: DeprecatedGlobalSettings
   defaultValue:
     WebKitLegacy:
       default: false
@@ -700,7 +700,7 @@ ImageBitmapEnabled:
   type: bool
   humanReadableName: "ImageBitmap"
   humanReadableDescription: "Support for the ImageBitmap APIs"
-  webcoreBinding: RuntimeEnabledFeatures
+  webcoreBinding: DeprecatedGlobalSettings
   defaultValue:
     WebKitLegacy:
       default: true
@@ -777,7 +777,7 @@ IsNSURLSessionWebSocketEnabled:
   type: bool
   humanReadableName: "NSURLSession WebSocket"
   humanReadableDescription: "Use NSURLSession WebSocket API"
-  webcoreBinding: RuntimeEnabledFeatures
+  webcoreBinding: DeprecatedGlobalSettings
   condition: HAVE(NSURLSESSION_WEBSOCKET)
   defaultValue:
     WebKitLegacy:
@@ -957,7 +957,7 @@ MediaSourceInlinePaintingEnabled:
   humanReadableName: "Experimental MediaSource Inline Painting"
   humanReadableDescription: "Experimental MediaSource Inline Painting"
   condition: ENABLE(MEDIA_SOURCE) && (HAVE(AVSAMPLEBUFFERVIDEOOUTPUT) || USE(GSTREAMER))
-  webcoreBinding: RuntimeEnabledFeatures
+  webcoreBinding: DeprecatedGlobalSettings
   defaultValue:
     WebKitLegacy:
       default: false
@@ -970,7 +970,7 @@ ModelDocumentEnabled:
   humanReadableName: "HTML <model> elements for stand-alone document"
   humanReadableDescription: "HTML <model> element for model documents"
   condition: ENABLE(MODEL_ELEMENT)
-  webcoreBinding: RuntimeEnabledFeatures
+  webcoreBinding: DeprecatedGlobalSettings
   defaultValue:
     WebKitLegacy:
       default: false
@@ -997,7 +997,7 @@ OpusDecoderEnabled:
   humanReadableName: "Opus audio decoder"
   humanReadableDescription: "Enable Opus audio decoder"
   condition: ENABLE(OPUS)
-  webcoreBinding: RuntimeEnabledFeatures
+  webcoreBinding: DeprecatedGlobalSettings
   defaultValue:
     WebKitLegacy:
       default: true
@@ -1034,7 +1034,7 @@ PageAtRuleSupportEnabled:
   type: bool
   humanReadableName: "@page CSS at-rule support"
   humanReadableDescription: "Enable @page support"
-  webcoreBinding: RuntimeEnabledFeatures
+  webcoreBinding: DeprecatedGlobalSettings
   defaultValue:
     WebKitLegacy:
       default: false
@@ -1046,7 +1046,7 @@ PaintTimingEnabled:
   type: bool
   humanReadableName: "Paint Timing"
   humanReadableDescription: "Enable PaintTiming API"
-  webcoreBinding: RuntimeEnabledFeatures
+  webcoreBinding: DeprecatedGlobalSettings
   defaultValue:
     WebKitLegacy:
       default: false
@@ -1136,7 +1136,7 @@ PrivateClickMeasurementDebugModeEnabled:
   type: bool
   humanReadableName: "Private Click Measurement Debug Mode"
   humanReadableDescription: "Enable Private Click Measurement Debug Mode"
-  webcoreBinding: RuntimeEnabledFeatures
+  webcoreBinding: DeprecatedGlobalSettings
   defaultValue:
     WebKitLegacy:
       default: false
@@ -1147,7 +1147,7 @@ PrivateClickMeasurementFraudPreventionEnabled:
   type: bool
   humanReadableName: "Private Click Measurement Fraud Prevention"
   humanReadableDescription: "Enable Private Click Measurement Fraud Prevention"
-  webcoreBinding: RuntimeEnabledFeatures
+  webcoreBinding: DeprecatedGlobalSettings
   defaultValue:
     WebKit:
       "HAVE(RSA_BSSA)": true
@@ -1181,7 +1181,7 @@ ReadableByteStreamAPIEnabled:
   type: bool
   humanReadableName: "ReadableByteStream"
   humanReadableDescription: "Enable Readable Byte Streams"
-  webcoreBinding: RuntimeEnabledFeatures
+  webcoreBinding: DeprecatedGlobalSettings
   defaultValue:
     WebKitLegacy:
       default: false
@@ -1337,7 +1337,7 @@ ServerTimingEnabled:
   type: bool
   humanReadableName: "Server Timing"
   humanReadableDescription: "Enable Server Timing API"
-  webcoreBinding: RuntimeEnabledFeatures
+  webcoreBinding: DeprecatedGlobalSettings
   defaultValue:
     WebKitLegacy:
       default: false
@@ -1522,7 +1522,7 @@ UserGesturePromisePropagationEnabled:
   type: bool
   humanReadableName: "UserGesture Promise Propagation"
   humanReadableDescription: "UserGesture Promise Propagation"
-  webcoreBinding: RuntimeEnabledFeatures
+  webcoreBinding: DeprecatedGlobalSettings
   defaultValue:
     WebKitLegacy:
       default: true
@@ -1557,7 +1557,7 @@ VorbisDecoderEnabled:
   humanReadableName: "Vorbis audio decoder"
   humanReadableDescription: "Enable Vorbis audio decoder"
   condition: ENABLE(VORBIS)
-  webcoreBinding: RuntimeEnabledFeatures
+  webcoreBinding: DeprecatedGlobalSettings
   defaultValue:
     WebKitLegacy:
       default: true
@@ -1736,7 +1736,7 @@ WebRTCH264LowLatencyEncoderEnabled:
   type: bool
   humanReadableName: "WebRTC H264 LowLatency encoder"
   humanReadableDescription: "Enable H264 LowLatency encoder"
-  webcoreBinding: RuntimeEnabledFeatures
+  webcoreBinding: DeprecatedGlobalSettings
   condition: ENABLE(WEB_RTC)
   defaultValue:
     WebKitLegacy:
@@ -1761,7 +1761,7 @@ WebRTCPlatformTCPSocketsEnabled:
   type: bool
   humanReadableName: "WebRTC Platform TCP Sockets"
   humanReadableDescription: "Enable WebRTC Platform TCP Sockets"
-  webcoreBinding: RuntimeEnabledFeatures
+  webcoreBinding: DeprecatedGlobalSettings
   condition: ENABLE(WEB_RTC)
   defaultValue:
     WebKit:
@@ -1771,7 +1771,7 @@ WebRTCPlatformUDPSocketsEnabled:
   type: bool
   humanReadableName: "WebRTC Platform UDP Sockets"
   humanReadableDescription: "Enable WebRTC Platform UDP Sockets"
-  webcoreBinding: RuntimeEnabledFeatures
+  webcoreBinding: DeprecatedGlobalSettings
   condition: ENABLE(WEB_RTC)
   defaultValue:
     WebKit:

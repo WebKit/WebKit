@@ -29,6 +29,7 @@
 #include "DOMMimeTypeArray.h"
 #include "DOMPlugin.h"
 #include "DOMPluginArray.h"
+#include "DeprecatedGlobalSettings.h"
 #include "Document.h"
 #include "FeaturePolicy.h"
 #include "Frame.h"
@@ -43,7 +44,6 @@
 #include "PluginData.h"
 #include "Quirks.h"
 #include "ResourceLoadObserver.h"
-#include "RuntimeEnabledFeatures.h"
 #include "ScriptController.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
@@ -72,7 +72,7 @@ String Navigator::appVersion() const
     auto* frame = this->frame();
     if (!frame)
         return String();
-    if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
+    if (DeprecatedGlobalSettings::webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logNavigatorAPIAccessed(*frame->document(), ResourceLoadStatistics::NavigatorAPI::AppVersion);
     return NavigatorBase::appVersion();
 }
@@ -82,7 +82,7 @@ const String& Navigator::userAgent() const
     auto* frame = this->frame();
     if (!frame || !frame->page())
         return m_userAgent;
-    if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
+    if (DeprecatedGlobalSettings::webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logNavigatorAPIAccessed(*frame->document(), ResourceLoadStatistics::NavigatorAPI::UserAgent);
     if (m_userAgent.isNull())
         m_userAgent = frame->loader().userAgent(frame->document()->url());
@@ -279,7 +279,7 @@ void Navigator::initializePluginAndMimeTypeArrays()
 
 DOMPluginArray& Navigator::plugins()
 {
-    if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled()) {
+    if (DeprecatedGlobalSettings::webAPIStatisticsEnabled()) {
         if (auto* frame = this->frame())
             ResourceLoadObserver::shared().logNavigatorAPIAccessed(*frame->document(), ResourceLoadStatistics::NavigatorAPI::Plugins);
     }
@@ -289,7 +289,7 @@ DOMPluginArray& Navigator::plugins()
 
 DOMMimeTypeArray& Navigator::mimeTypes()
 {
-    if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled()) {
+    if (DeprecatedGlobalSettings::webAPIStatisticsEnabled()) {
         if (auto* frame = this->frame())
             ResourceLoadObserver::shared().logNavigatorAPIAccessed(*frame->document(), ResourceLoadStatistics::NavigatorAPI::MimeTypes);
     }
@@ -303,7 +303,7 @@ bool Navigator::cookieEnabled() const
     if (!frame)
         return false;
 
-    if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
+    if (DeprecatedGlobalSettings::webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logNavigatorAPIAccessed(*frame->document(), ResourceLoadStatistics::NavigatorAPI::CookieEnabled);
 
     auto* page = frame->page();

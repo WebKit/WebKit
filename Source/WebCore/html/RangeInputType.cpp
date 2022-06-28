@@ -33,6 +33,7 @@
 #include "RangeInputType.h"
 
 #include "Decimal.h"
+#include "DeprecatedGlobalSettings.h"
 #include "DocumentInlines.h"
 #include "ElementChildIterator.h"
 #include "ElementRareData.h"
@@ -45,7 +46,6 @@
 #include "MouseEvent.h"
 #include "PlatformMouseEvent.h"
 #include "RenderSlider.h"
-#include "RuntimeEnabledFeatures.h"
 #include "ScopedEventQueue.h"
 #include "ShadowPseudoIds.h"
 #include "ShadowRoot.h"
@@ -375,7 +375,7 @@ String RangeInputType::sanitizeValue(const String& proposedValue) const
 bool RangeInputType::shouldRespectListAttribute()
 {
 #if ENABLE(DATALIST_ELEMENT)
-    return RuntimeEnabledFeatures::sharedFeatures().dataListElementEnabled();
+    return DeprecatedGlobalSettings::dataListElementEnabled();
 #else
     return InputType::themeSupportsDataListUI(this);
 #endif

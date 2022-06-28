@@ -1998,7 +1998,7 @@ sub NeedsRuntimeCheck
         return 1 if !IsAlwaysExposedOnInterface($interface->extendedAttributes->{Exposed}, $context->extendedAttributes->{Exposed});
     }
 
-    return $context->extendedAttributes->{EnabledAtRuntime}
+    return $context->extendedAttributes->{EnabledByDeprecatedGlobalSetting}
         || $context->extendedAttributes->{EnabledForContext}
         || $context->extendedAttributes->{EnabledForWorld}
         || $context->extendedAttributes->{EnabledBySetting}
@@ -2011,8 +2011,8 @@ sub NeedsRuntimeReadWriteCheck
 {
     my ($interface, $context) = @_;
     
-    return $context->extendedAttributes->{RuntimeConditionallyReadWrite}
-        || $context->extendedAttributes->{SettingsConditionallyReadWrite}
+    return $context->extendedAttributes->{EnabledConditionallyReadWriteByDeprecatedGlobalSetting}
+        || $context->extendedAttributes->{EnabledConditionallyReadWriteBySetting}
 }
 
 # https://webidl.spec.whatwg.org/#es-operations
@@ -4054,7 +4054,7 @@ sub GenerateRuntimeEnableConditionalStringForExposed
 }
 
 # Returns the conditional string that determines whether a method/attribute is enabled at runtime.
-# A method/attribute is enabled at runtime if either its RuntimeEnabledFeatures function returns
+# A method/attribute is enabled at runtime if either its DeprecatedGlobalSettings function returns
 # true or its EnabledForWorld function returns true (or both).
 # NOTE: Parameter passed in must have an 'extendedAttributes' property.
 # (e.g. IDLInterface, IDLAttribute, IDLOperation, IDLIterable, etc.)
@@ -4097,14 +4097,14 @@ sub GenerateRuntimeEnableConditionalString
         }
     }
 
-    if ($context->extendedAttributes->{SettingsConditionallyReadWrite}) {
-        assert("Must specify value for SettingsConditionallyReadWrite.") if $context->extendedAttributes->{SettingsConditionallyReadWrite} eq "VALUE_IS_MISSING";
+    if ($context->extendedAttributes->{EnabledConditionallyReadWriteBySetting}) {
+        assert("Must specify value for EnabledConditionallyReadWriteBySetting.") if $context->extendedAttributes->{EnabledConditionallyReadWriteBySetting} eq "VALUE_IS_MISSING";
 
         AddToImplIncludes("Document.h");
 
-        assert("SettingsConditionallyReadWrite can only be used by interfaces only exposed to the Window") if $interface->extendedAttributes->{Exposed} && $interface->extendedAttributes->{Exposed} ne "Window";
+        assert("EnabledConditionallyReadWriteBySetting can only be used by interfaces only exposed to the Window") if $interface->extendedAttributes->{Exposed} && $interface->extendedAttributes->{Exposed} ne "Window";
 
-        my @flags = split(/&/, $context->extendedAttributes->{SettingsConditionallyReadWrite});
+        my @flags = split(/&/, $context->extendedAttributes->{EnabledConditionallyReadWriteBySetting});
         foreach my $flag (@flags) {
             push(@conjuncts, "downcast<Document>(jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext())->settingsValues()." . ToMethodName($flag));
         }
@@ -4138,25 +4138,25 @@ sub GenerateRuntimeEnableConditionalString
         }
     }
 
-    if ($context->extendedAttributes->{EnabledAtRuntime}) {
-        assert("Must specify value for EnabledAtRuntime.") if $context->extendedAttributes->{EnabledAtRuntime} eq "VALUE_IS_MISSING";
+    if ($context->extendedAttributes->{EnabledByDeprecatedGlobalSetting}) {
+        assert("Must specify value for EnabledByDeprecatedGlobalSetting.") if $context->extendedAttributes->{EnabledByDeprecatedGlobalSetting} eq "VALUE_IS_MISSING";
 
-        AddToImplIncludes("RuntimeEnabledFeatures.h");
+        AddToImplIncludes("DeprecatedGlobalSettings.h");
 
-        my @flags = split(/&/, $context->extendedAttributes->{EnabledAtRuntime});
+        my @flags = split(/&/, $context->extendedAttributes->{EnabledByDeprecatedGlobalSetting});
         foreach my $flag (@flags) {
-            push(@conjuncts, "RuntimeEnabledFeatures::sharedFeatures()." . ToMethodName($flag) . "()");
+            push(@conjuncts, "DeprecatedGlobalSettings::" . ToMethodName($flag) . "()");
         }
     }
 
-    if ($context->extendedAttributes->{RuntimeConditionallyReadWrite}) {
-        assert("Must specify value for RuntimeConditionallyReadWrite.") if $context->extendedAttributes->{RuntimeConditionallyReadWrite} eq "VALUE_IS_MISSING";
+    if ($context->extendedAttributes->{EnabledConditionallyReadWriteByDeprecatedGlobalSetting}) {
+        assert("Must specify value for EnabledConditionallyReadWriteByDeprecatedGlobalSetting.") if $context->extendedAttributes->{EnabledConditionallyReadWriteByDeprecatedGlobalSetting} eq "VALUE_IS_MISSING";
 
-        AddToImplIncludes("RuntimeEnabledFeatures.h");
+        AddToImplIncludes("DeprecatedGlobalSettings.h");
 
-        my @flags = split(/&/, $context->extendedAttributes->{RuntimeConditionallyReadWrite});
+        my @flags = split(/&/, $context->extendedAttributes->{EnabledConditionallyReadWriteByDeprecatedGlobalSetting});
         foreach my $flag (@flags) {
-            push(@conjuncts, "RuntimeEnabledFeatures::sharedFeatures()." . ToMethodName($flag) . "()");
+            push(@conjuncts, "DeprecatedGlobalSettings::" . ToMethodName($flag) . "()");
         }
     }
 

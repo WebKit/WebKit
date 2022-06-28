@@ -89,14 +89,13 @@ public:
     ForcedAccessibilityValue forcedSupportsHighDynamicRangeValue() const;
     void setForcedSupportsHighDynamicRangeValue(ForcedAccessibilityValue);
 
-    // RuntimeEnabledFeatures.
+    // DeprecatedGlobalSettings.
     ExceptionOr<void> setFetchAPIKeepAliveEnabled(bool);
     ExceptionOr<void> setCustomPasteboardDataEnabled(bool);
 
     bool vp9DecoderEnabled() const;
     bool mediaSourceInlinePaintingEnabled() const;
 
-    // DeprecatedGlobalSettings.
     ExceptionOr<void> setShouldManageAudioSessionCategory(bool);
 
     // CaptionUserPreferences.
@@ -162,11 +161,9 @@ private:
         WebCore::FontLoadTimingOverride m_fontLoadTimingOverride;
         WebCore::FrameFlattening m_frameFlattening;
 
-        // RuntimeEnabledFeatures
+        // DeprecatedGlobalSettings
         bool m_fetchAPIKeepAliveAPIEnabled;
         bool m_customPasteboardDataEnabled;
-
-        // DeprecatedGlobalSettings
         bool m_originalMockScrollbarsEnabled;
 #if USE(AUDIO_SESSION)
         bool m_shouldManageAudioSessionCategory;

@@ -34,7 +34,6 @@
 
 #include "Document.h"
 #include "LinkIconType.h"
-#include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
 #include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>

@@ -29,11 +29,11 @@
 
 #include "AffineTransform.h"
 #include "BitmapImage.h"
+#include "DeprecatedGlobalSettings.h"
 #include "GraphicsContext.h"
 #include "ImageObserver.h"
 #include "Length.h"
 #include "MIMETypeRegistry.h"
-#include "RuntimeEnabledFeatures.h"
 #include "SVGImage.h"
 #include "SharedBuffer.h"
 #include <math.h>
@@ -76,7 +76,7 @@ RefPtr<Image> Image::create(ImageObserver& observer)
     auto url = observer.sourceUrl();
     if (isPDFResource(mimeType, url) || isPostScriptResource(mimeType, url)) {
 #if USE(CG) && !USE(WEBKIT_IMAGE_DECODERS)
-        if (!RuntimeEnabledFeatures::sharedFeatures().arePDFImagesEnabled())
+        if (!DeprecatedGlobalSettings::arePDFImagesEnabled())
             return nullptr;
         return PDFDocumentImage::create(&observer);
 #else

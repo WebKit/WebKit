@@ -27,7 +27,7 @@
     Conditional=ATTACHMENT_ELEMENT,
     JSGenerateToNativeObject,
     ExportMacro=WEBCORE_EXPORT,
-    EnabledAtRuntime=AttachmentElementEnabled,
+    EnabledByDeprecatedGlobalSetting=AttachmentElementEnabled,
     Exposed=Window
 ] interface HTMLAttachmentElement : HTMLElement {
     attribute File? file;

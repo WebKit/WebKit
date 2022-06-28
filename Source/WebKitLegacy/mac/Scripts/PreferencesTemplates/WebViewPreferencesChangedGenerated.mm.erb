@@ -32,7 +32,6 @@
 #import "WebViewData.h"
 #import <WebCore/DeprecatedGlobalSettings.h>
 #import <WebCore/Page.h>
-#import <WebCore/RuntimeEnabledFeatures.h>
 #import <WebCore/Settings.h>
 
 @implementation WebView (WebViewInternalPreferencesChangedGenerated)
@@ -63,20 +62,6 @@
     WebCore::DeprecatedGlobalSettings::set<%= @pref.webcoreNameUpper %>([preferences <%= @pref.preferenceAccessor %>:@"<%= @pref.preferenceKey %>"]);
 <%- else -%>
     WebCore::DeprecatedGlobalSettings::set<%= @pref.webcoreNameUpper %>(DEFAULT_VALUE_FOR_<%= @pref.name %>);
-<%- end -%>
-<%- if @pref.condition -%>
-#endif
-<%- end -%>
-<%- end -%>
-
-<%- for @pref in @preferencesBoundToRuntimeEnabledFeatures.select { |p| !p.opts["webKitLegacyBinding"] } do -%>
-<%- if @pref.condition -%>
-#if <%= @pref.condition %>
-<%- end -%>
-<%- if @pref.exposed -%>
-    WebCore::RuntimeEnabledFeatures::sharedFeatures().set<%= @pref.webcoreNameUpper %>([preferences <%= @pref.preferenceAccessor %>:@"<%= @pref.preferenceKey %>"]);
-<%- else -%>
-    WebCore::RuntimeEnabledFeatures::sharedFeatures().set<%= @pref.webcoreNameUpper %>(DEFAULT_VALUE_FOR_<%= @pref.name %>);
 <%- end -%>
 <%- if @pref.condition -%>
 #endif

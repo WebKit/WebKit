@@ -31,6 +31,7 @@
 #include "CommonAtomStrings.h"
 #include "DataTransferItem.h"
 #include "DataTransferItemList.h"
+#include "DeprecatedGlobalSettings.h"
 #include "DocumentFragment.h"
 #include "DragData.h"
 #include "Editor.h"
@@ -43,7 +44,6 @@
 #include "Image.h"
 #include "PagePasteboardContext.h"
 #include "Pasteboard.h"
-#include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
 #include "StaticPasteboard.h"
 #include "WebContentReader.h"
@@ -178,7 +178,7 @@ String DataTransfer::getDataForItem(Document& document, const String& type) cons
             });
         }
 
-        if (lowercaseType == "text/html"_s && RuntimeEnabledFeatures::sharedFeatures().customPasteboardDataEnabled()) {
+        if (lowercaseType == "text/html"_s && DeprecatedGlobalSettings::customPasteboardDataEnabled()) {
             // If the pasteboard contains files and the page requests 'text/html', we only read from rich text types to prevent file
             // paths from leaking (e.g. from plain text data on the pasteboard) since we sanitize cross-origin markup. However, if
             // custom pasteboard data is disabled, then we can't ensure that the markup we deliver is sanitized, so we fall back to
@@ -194,7 +194,7 @@ String DataTransfer::getDataForItem(Document& document, const String& type) cons
 
 String DataTransfer::readStringFromPasteboard(Document& document, const String& lowercaseType, WebContentReadingPolicy policy) const
 {
-    if (!RuntimeEnabledFeatures::sharedFeatures().customPasteboardDataEnabled())
+    if (!DeprecatedGlobalSettings::customPasteboardDataEnabled())
         return m_pasteboard->readString(lowercaseType);
 
     // StaticPasteboard is only used to stage data written by websites before being committed to the system pasteboard.
@@ -231,7 +231,7 @@ String DataTransfer::getData(Document& document, const String& type) const
 
 bool DataTransfer::shouldSuppressGetAndSetDataToAvoidExposingFilePaths() const
 {
-    if (!forFileDrag() && !RuntimeEnabledFeatures::sharedFeatures().customPasteboardDataEnabled())
+    if (!forFileDrag() && !DeprecatedGlobalSettings::customPasteboardDataEnabled())
         return false;
     return m_pasteboard->fileContentState() == Pasteboard::FileContentState::MayContainFilePaths;
 }
@@ -255,7 +255,7 @@ void DataTransfer::setDataFromItemList(const String& type, const String& data)
     ASSERT(canWriteData());
     RELEASE_ASSERT(is<StaticPasteboard>(*m_pasteboard));
 
-    if (!RuntimeEnabledFeatures::sharedFeatures().customPasteboardDataEnabled()) {
+    if (!DeprecatedGlobalSettings::customPasteboardDataEnabled()) {
         m_pasteboard->writeString(type, data);
         return;
     }
@@ -317,7 +317,7 @@ Vector<String> DataTransfer::types(AddFilesType addFilesType) const
     if (!canReadTypes())
         return { };
     
-    if (!RuntimeEnabledFeatures::sharedFeatures().customPasteboardDataEnabled()) {
+    if (!DeprecatedGlobalSettings::customPasteboardDataEnabled()) {
         auto types = m_pasteboard->typesForLegacyUnsafeBindings();
         ASSERT(!types.contains("Files"_s));
         if (m_pasteboard->fileContentState() != Pasteboard::FileContentState::NoFileOrImageData && addFilesType == AddFilesType::Yes)
@@ -343,7 +343,7 @@ Vector<String> DataTransfer::types(AddFilesType addFilesType) const
 
         if (safeTypes.contains("text/uri-list"_s))
             types.append("text/uri-list"_s);
-        if (safeTypes.contains("text/html"_s) && RuntimeEnabledFeatures::sharedFeatures().customPasteboardDataEnabled())
+        if (safeTypes.contains("text/html"_s) && DeprecatedGlobalSettings::customPasteboardDataEnabled())
             types.append("text/html"_s);
         return types;
     }
@@ -449,7 +449,7 @@ void DataTransfer::commitToPasteboard(Pasteboard& nativePasteboard)
     }
 
     auto customData = staticPasteboard.takeCustomData();
-    if (RuntimeEnabledFeatures::sharedFeatures().customPasteboardDataEnabled()) {
+    if (DeprecatedGlobalSettings::customPasteboardDataEnabled()) {
         customData.setOrigin(m_originIdentifier);
         nativePasteboard.writeCustomData({ customData });
         return;

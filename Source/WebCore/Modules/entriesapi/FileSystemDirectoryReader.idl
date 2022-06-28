@@ -25,7 +25,7 @@
 
 [
     ActiveDOMObject,
-    EnabledAtRuntime=DirectoryUploadEnabled,
+    EnabledByDeprecatedGlobalSetting=DirectoryUploadEnabled,
     Exposed=Window
 ] interface FileSystemDirectoryReader {
     [CallWith=CurrentScriptExecutionContext] undefined readEntries(FileSystemEntriesCallback successCallback, optional ErrorCallback? errorCallback);

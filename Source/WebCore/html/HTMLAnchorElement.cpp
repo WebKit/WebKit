@@ -50,7 +50,6 @@
 #include "RenderImage.h"
 #include "ResourceRequest.h"
 #include "RuntimeApplicationChecks.h"
-#include "RuntimeEnabledFeatures.h"
 #include "SVGImage.h"
 #include "ScriptController.h"
 #include "SecurityOrigin.h"
