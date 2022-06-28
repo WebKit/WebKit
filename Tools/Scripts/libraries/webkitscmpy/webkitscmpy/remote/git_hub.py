@@ -29,6 +29,7 @@ import webkitcorepy
 
 from datetime import datetime
 from requests.auth import HTTPBasicAuth
+from typing import Optional
 from webkitbugspy import User
 from webkitbugspy.github import Tracker
 from webkitcorepy import decorators
@@ -106,23 +107,13 @@ class GitHub(Scm):
                 if not value:
                     raise ValueError("Must define '{}' when creating pull-request".format(key))
 
-            user, _ = self.repository.credentials(required=True)
-            url = '{api_url}/repos/{owner}/{name}/pulls'.format(
-                api_url=self.repository.api_url,
-                owner=self.repository.owner,
-                name=self.repository.name,
+            response = self.repository.create(
+                url='/pulls', headers=dict(Accept=self.repository.ACCEPT_HEADER),
+                data=dict(title=title, body=PullRequest.create_body(body, commits),
+                          base=base or self.repository.default_branch,
+                          head='{}:{}'.format(user, head), draft=draft)
             )
-            response = self.repository.session.post(
-                url, auth=HTTPBasicAuth(*self.repository.credentials(required=True)),
-                headers=dict(Accept=self.repository.ACCEPT_HEADER),
-                json=dict(
-                    title=title,
-                    body=PullRequest.create_body(body, commits),
-                    base=base or self.repository.default_branch,
-                    head='{}:{}'.format(user, head),
-                    draft=draft,
-                ),
-            )
+
             if response.status_code == 422:
                 sys.stderr.write('Validation failed when creating pull request\n')
                 sys.stderr.write('Does a pull request against this branch already exist?\n')
@@ -134,6 +125,7 @@ class GitHub(Scm):
                     sys.stderr.write('Message: {}\n'.format(message))
                 sys.stderr.write(Tracker.REFRESH_TOKEN_PROMPT)
                 return None
+
             result = self.PullRequest(response.json())
 
             issue = result._metadata.get('issue')
@@ -623,7 +615,6 @@ class GitHub(Scm):
             c.order += begin.order
             yield c
 
-
     def find(self, argument, include_log=True, include_identifier=True):
         if not isinstance(argument, six.string_types):
             raise ValueError("Expected 'argument' to be a string, not '{}'".format(type(argument)))
@@ -649,3 +640,61 @@ class GitHub(Scm):
         if not commit_data:
             raise ValueError("'{}' is not an argument recognized by git".format(argument))
         return self.commit(hash=commit_data['sha'], include_log=include_log, include_identifier=include_identifier)
+
+    def create(self, path, data, headers=None):
+        """Send a POST request to the repository's API. Returns requests.Response."""
+        if not headers:
+            headers = {}
+        headers['Accept'] = 'application/vnd.github.v3+json'
+        user, _ = self.credentials(required=True)
+        url = '{api_url}/repos/{owner}/{name}{path}'.format(
+            api_url=self.api_url,
+            owner=self.owner,
+            name=self.name,
+            path=path
+        )
+        return self.session.post(
+            url, auth=HTTPBasicAuth(*self.credentials(required=True)),
+            headers=headers,
+            json=data
+        )
+
+    def create_reference(self, ref_name, sha):
+        """Create a git reference with the nae :ref_name: from the given sha :sha:. Optionally returns dict."""
+        data = {'ref': ref_name, 'sha': sha}
+        response = self.create(path='/git/refs', data=data)
+        if response.status_code == 422:
+            sys.stderr.write('Validation failed when creating reference\n')
+            sys.stderr.write('Does a reference with that name already exist?\n')
+            message = response.json().get('message')
+            if message:
+                sys.stderr.write('Message: {}\n'.format(message))
+            return None
+        elif response.status_code != 201:
+            sys.stderr.write("Request to '{}' returned status code '{}'\n".format(response.url, response.status_code))
+            message = response.json().get('message')
+            if message:
+                sys.stderr.write('Message: {}\n'.format(message))
+            return None
+        return response.json()
+
+    def create_tag(self, tag, sha, message, lightweight_only=False):
+        """Create a tag with the name :tag:, placed at the Git SHA :sha:, with the message :message:.
+        Can specify :lightweight_only: to only create a lightweight tag that cannot be used as a ref in git
+        operations. Optionally returns dict."""
+        data = {'tag': tag, 'object': sha, 'message': message, 'type': 'commit'}
+        response = self.create(path='/git/tags', data=data)
+        if response.status_code == 422:
+            sys.stderr.write('Validation failed when creating tag\n')
+            sys.stderr.write('Does the given object to tag exist?\n')
+            return None
+        elif response.status_code != 201:
+            sys.stderr.write("Request to '{}' returned status code '{}'\n".format(response.url, response.status_code))
+            message = response.json().get('message')
+            if message:
+                sys.stderr.write('Message: {}\n'.format(message))
+            return None
+        if lightweight_only:
+            return response.json()
+        response = self.create_reference(tag, object)
+        return response.json()
