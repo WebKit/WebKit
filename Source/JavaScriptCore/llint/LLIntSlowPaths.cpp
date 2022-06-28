@@ -67,9 +67,6 @@
 #include "SuperSampler.h"
 #include "VMInlines.h"
 #include "VMTrapsInlines.h"
-#include "runtime/JSScope.h"
-#include "wtf/Compiler.h"
-#include "wtf/RawPointer.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StringPrintStream.h>
 
