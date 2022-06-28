@@ -25,9 +25,15 @@
 
 #pragma once
 
-#if ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && !USE(NICOSIA) && USE(ANGLE)
+#if ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && USE(ANGLE)
 
 #include "GraphicsContextGLANGLE.h"
+
+#if USE(NICOSIA)
+namespace Nicosia {
+class GCGLANGLELayer;
+}
+#endif
 
 namespace WebCore {
 
@@ -66,11 +72,20 @@ private:
     GCGLuint m_intermediateTexture { 0 };
 #endif
 
+#if USE(NICOSIA)
+    std::unique_ptr<Nicosia::GCGLANGLELayer> m_nicosiaLayer;
+#else
     std::unique_ptr<TextureMapperGCGLPlatformLayer> m_texmapLayer;
+#endif
 
+#if USE(NICOSIA)
+    friend class Nicosia::GCGLANGLELayer;
+#else
     friend class TextureMapperGCGLPlatformLayer;
+#endif
+
 };
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && !USE(NICOSIA) && USE(ANGLE)
+#endif // ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && USE(ANGLE)

@@ -39,7 +39,11 @@ typedef void *EGLSurface;
 
 namespace WebCore {
 class IntSize;
+#if USE(TEXTURE_MAPPER_DMABUF)
 class GraphicsContextGLGBM;
+#else
+class GraphicsContextGLTextureMapperANGLE;
+#endif
 class PlatformDisplay;
 }
 
@@ -48,14 +52,22 @@ namespace Nicosia {
 class GCGLANGLELayer final : public ContentLayerTextureMapperImpl::Client {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+#if USE(TEXTURE_MAPPER_DMABUF)
     GCGLANGLELayer(WebCore::GraphicsContextGLGBM&);
+#else
+    GCGLANGLELayer(WebCore::GraphicsContextGLTextureMapperANGLE&);
+#endif
     virtual ~GCGLANGLELayer();
 
     ContentLayer& contentLayer() const { return m_contentLayer; }
     void swapBuffersIfNeeded() final;
 
 private:
+#if USE(TEXTURE_MAPPER_DMABUF)
     WebCore::GraphicsContextGLGBM& m_context;
+#else
+    WebCore::GraphicsContextGLTextureMapperANGLE& m_context;
+#endif
     Ref<ContentLayer> m_contentLayer;
 };
 

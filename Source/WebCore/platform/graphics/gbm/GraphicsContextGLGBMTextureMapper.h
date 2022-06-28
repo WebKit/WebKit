@@ -26,7 +26,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && USE(LIBGBM) && USE(ANGLE)
+#if ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && USE(LIBGBM) && USE(ANGLE) && USE(TEXTURE_MAPPER_DMABUF)
 
 #include "GraphicsContextGLGBM.h"
 #include <memory>

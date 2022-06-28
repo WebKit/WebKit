@@ -27,7 +27,7 @@
 #include "config.h"
 #include "GraphicsContextGLTextureMapperANGLE.h"
 
-#if ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && !USE(NICOSIA) && USE(ANGLE)
+#if ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && USE(ANGLE)
 
 #include "ANGLEHeaders.h"
 #include "ANGLEUtilities.h"
@@ -41,6 +41,10 @@
 
 #if USE(GSTREAMER) && ENABLE(MEDIA_STREAM)
 #include "VideoFrameGStreamer.h"
+#endif
+
+#if USE(NICOSIA)
+#include "NicosiaGCGLANGLELayer.h"
 #endif
 
 namespace WebCore {
@@ -240,7 +244,12 @@ bool GraphicsContextGLTextureMapperANGLE::platformInitializeContext()
     }
     eglContextAttributes.append(EGL_NONE);
 
+#if USE(NICOSIA)
+    auto sharingContext = EGL_NO_CONTEXT;
+#else
     auto sharingContext = PlatformDisplay::sharedDisplayForCompositing().sharingGLContext()->platformContext();
+#endif
+
     m_contextObj = EGL_CreateContext(m_displayObj, m_configObj, sharingContext, eglContextAttributes.data());
     if (m_contextObj == EGL_NO_CONTEXT) {
         LOG(WebGL, "EGLContext Initialization failed.");
@@ -256,8 +265,13 @@ bool GraphicsContextGLTextureMapperANGLE::platformInitializeContext()
 
 bool GraphicsContextGLTextureMapperANGLE::platformInitialize()
 {
+#if USE(NICOSIA)
+    m_nicosiaLayer = makeUnique<Nicosia::GCGLANGLELayer>(*this);
+    m_layerContentsDisplayDelegate = PlatformLayerDisplayDelegate::create(&m_nicosiaLayer->contentLayer());
+#else
     m_texmapLayer = makeUnique<TextureMapperGCGLPlatformLayer>(*this);
     m_layerContentsDisplayDelegate = PlatformLayerDisplayDelegate::create(m_texmapLayer.get());
+#endif
 
     bool success = makeContextCurrent();
     ASSERT_UNUSED(success, success);
@@ -381,4 +395,4 @@ void GraphicsContextGLTextureMapperANGLE::prepareForDisplay()
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && !USE(NICOSIA) && USE(ANGLE)
+#endif // ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && USE(ANGLE)
