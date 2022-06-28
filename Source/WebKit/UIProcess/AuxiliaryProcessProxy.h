@@ -230,7 +230,7 @@ uint64_t AuxiliaryProcessProxy::sendWithAsyncReply(T&& message, C&& completionHa
     uint64_t listenerID = IPC::nextAsyncReplyHandlerID();
     encoder.get() << listenerID;
     encoder.get() << message.arguments();
-    sendMessage(WTFMove(encoder), sendOptions, {{ [completionHandler = WTFMove(completionHandler)] (IPC::Decoder* decoder) mutable {
+    sendMessage(WTFMove(encoder), sendOptions, {{ [protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] (IPC::Decoder* decoder) mutable {
         if (decoder && decoder->isValid())
             T::callReply(*decoder, WTFMove(completionHandler));
         else

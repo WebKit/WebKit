@@ -322,10 +322,6 @@ WebProcessPool::~WebProcessPool()
         WebsiteDataStore::forEachWebsiteDataStore([](auto& websiteDataStore) {
             websiteDataStore.removeNetworkProcessReference();
         });
-        if (auto& networkProcess = NetworkProcessProxy::defaultNetworkProcess()) {
-            ASSERT(networkProcess->hasOneRef());
-            networkProcess = nullptr;
-        }
     }
 }
 
