@@ -98,7 +98,7 @@ static void makeResponderFirstResponderIfDescendantOfView(NSWindow *window, NSRe
     if (!self)
         return nil;
     [window setDelegate:self];
-    [window setCollectionBehavior:([window collectionBehavior] | NSWindowCollectionBehaviorFullScreenPrimary)];
+    [window setCollectionBehavior:([window collectionBehavior] | NSWindowCollectionBehaviorFullScreenPrimary | NSWindowCollectionBehaviorStationary)];
 
     // Hide the titlebar during the animation to full screen so that only the WKWebView content is visible.
     window.titlebarAlphaValue = 0;
