@@ -1053,6 +1053,9 @@ inline void BuilderCustom::applyValueFontFamily(BuilderState& builderState, CSSV
         families.reserveInitialCapacity(1);
         families.uncheckedAppend(family);
     } else {
+        auto& valueList = downcast<CSSValueList>(value);
+        families.reserveInitialCapacity(valueList.length());
+        
         for (auto& item : valueList) {
             auto& contentValue = downcast<CSSPrimitiveValue>(item.get());
             AtomString family;
