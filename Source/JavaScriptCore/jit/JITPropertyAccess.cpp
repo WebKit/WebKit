@@ -24,8 +24,6 @@
  */
 
 #include "config.h"
-#include "wtf/Compiler.h"
-#include "wtf/DataLog.h"
 
 #if ENABLE(JIT)
 #include "JIT.h"
@@ -1439,37 +1437,37 @@ void JIT::emitSlow_op_has_private_brand(const JSInstruction*, Vector<SlowCaseEnt
     emitHasPrivateSlow(AccessType::HasPrivateBrand);
 }
 
-#define RESOLVE_SCOPE_CODE_REF(thunk)                                              \
-    do {                                                                           \
-        switch (profiledResolveType) {                                             \
-        case ClosureVar:                                                           \
-            code = vm().getCTIStub(thunk<ClosureVar>);                             \
-            break;                                                                 \
-        case ClosureVarWithVarInjectionChecks:                                     \
-            code = vm().getCTIStub(thunk<ClosureVarWithVarInjectionChecks>);       \
-            break;                                                                 \
-        case GlobalVar:                                                            \
-            code = vm().getCTIStub(thunk<GlobalVar>);                              \
-            break;                                                                 \
-        case GlobalProperty:                                                       \
-            code = vm().getCTIStub(thunk<GlobalProperty>);                         \
-            break;                                                                 \
-        case GlobalLexicalVar:                                                     \
-            code = vm().getCTIStub(thunk<GlobalLexicalVar>);                       \
-            break;                                                                 \
-        case GlobalVarWithVarInjectionChecks:                                      \
-            code = vm().getCTIStub(thunk<GlobalVarWithVarInjectionChecks>);        \
-            break;                                                                 \
-        case GlobalPropertyWithVarInjectionChecks:                                 \
-            code = vm().getCTIStub(thunk<GlobalPropertyWithVarInjectionChecks>);   \
-            break;                                                                 \
-        case GlobalLexicalVarWithVarInjectionChecks:                               \
+#define RESOLVE_SCOPE_CODE_REF(thunk) \
+    do { \
+        switch (profiledResolveType) { \
+        case ClosureVar: \
+            code = vm().getCTIStub(thunk<ClosureVar>); \
+            break; \
+        case ClosureVarWithVarInjectionChecks: \
+            code = vm().getCTIStub(thunk<ClosureVarWithVarInjectionChecks>); \
+            break; \
+        case GlobalVar: \
+            code = vm().getCTIStub(thunk<GlobalVar>); \
+            break; \
+        case GlobalProperty: \
+            code = vm().getCTIStub(thunk<GlobalProperty>); \
+            break; \
+        case GlobalLexicalVar: \
+            code = vm().getCTIStub(thunk<GlobalLexicalVar>); \
+            break; \
+        case GlobalVarWithVarInjectionChecks: \
+            code = vm().getCTIStub(thunk<GlobalVarWithVarInjectionChecks>); \
+            break; \
+        case GlobalPropertyWithVarInjectionChecks: \
+            code = vm().getCTIStub(thunk<GlobalPropertyWithVarInjectionChecks>); \
+            break; \
+        case GlobalLexicalVarWithVarInjectionChecks: \
             code = vm().getCTIStub(thunk<GlobalLexicalVarWithVarInjectionChecks>); \
-            break;                                                                 \
-        default:                                                                   \
-            code = vm().getCTIStub(thunk<GlobalVar>);                              \
-            break;                                                                 \
-        }                                                                          \
+            break; \
+        default: \
+            code = vm().getCTIStub(thunk<GlobalVar>); \
+            break; \
+        } \
     } while (false)
 
 template <typename BytecodeOpcode>
@@ -1707,34 +1705,34 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_resolve_scopeGenerator(VM& vm
     return slow_op_resolve_scopeGenerator_helper<OpResolveScope>(vm);
 }
 
-#define GET_FROM_SCOPE_CODE_REF(thunk)                                             \
-    do {                                                                           \
-        switch (profiledResolveType) {                                             \
-        case ClosureVar:                                                           \
-            code = vm().getCTIStub(thunk<ClosureVar>);                             \
-            break;                                                                 \
-        case ClosureVarWithVarInjectionChecks:                                     \
-            code = vm().getCTIStub(thunk<ClosureVarWithVarInjectionChecks>);       \
-            break;                                                                 \
-        case GlobalVar:                                                            \
-            code = vm().getCTIStub(thunk<GlobalVar>);                              \
-            break;                                                                 \
-        case GlobalVarWithVarInjectionChecks:                                      \
-            code = vm().getCTIStub(thunk<GlobalVarWithVarInjectionChecks>);        \
-            break;                                                                 \
-        case GlobalProperty:                                                       \
-            code = vm().getCTIStub(thunk<GlobalProperty>);                         \
-            break;                                                                 \
-        case GlobalLexicalVar:                                                     \
-            code = vm().getCTIStub(thunk<GlobalLexicalVar>);                       \
-            break;                                                                 \
-        case GlobalLexicalVarWithVarInjectionChecks:                               \
+#define GET_FROM_SCOPE_CODE_REF(thunk) \
+    do { \
+        switch (profiledResolveType) { \
+        case ClosureVar: \
+            code = vm().getCTIStub(thunk<ClosureVar>); \
+            break; \
+        case ClosureVarWithVarInjectionChecks: \
+            code = vm().getCTIStub(thunk<ClosureVarWithVarInjectionChecks>); \
+            break; \
+        case GlobalVar: \
+            code = vm().getCTIStub(thunk<GlobalVar>); \
+            break; \
+        case GlobalVarWithVarInjectionChecks: \
+            code = vm().getCTIStub(thunk<GlobalVarWithVarInjectionChecks>); \
+            break; \
+        case GlobalProperty: \
+            code = vm().getCTIStub(thunk<GlobalProperty>); \
+            break; \
+        case GlobalLexicalVar: \
+            code = vm().getCTIStub(thunk<GlobalLexicalVar>); \
+            break; \
+        case GlobalLexicalVarWithVarInjectionChecks: \
             code = vm().getCTIStub(thunk<GlobalLexicalVarWithVarInjectionChecks>); \
-            break;                                                                 \
-        default:                                                                   \
-            code = vm().getCTIStub(thunk<GlobalVar>);                              \
-            break;                                                                 \
-        }                                                                          \
+            break; \
+        default: \
+            code = vm().getCTIStub(thunk<GlobalVar>); \
+            break; \
+        } \
     } while (false)
 
 template <typename BytecodeOpcode>

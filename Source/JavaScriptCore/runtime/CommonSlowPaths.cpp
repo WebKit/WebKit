@@ -98,12 +98,12 @@ namespace JSC {
 
 #define CHECK_EXCEPTION() CHECK_EXCEPTION_WITH_RETURN_SECOND(callFrame)
 
-#define CHECK_EXCEPTION_WITH_RETURN_SECOND(second) do {                               \
+#define CHECK_EXCEPTION_WITH_RETURN_SECOND(second) do { \
         doExceptionFuzzingIfEnabled(globalObject, throwScope, "CommonSlowPaths", pc); \
-        if (UNLIKELY(throwScope.exception())) {                                       \
-            RETURN_TO_THROW(pc);                                                      \
-            END_IMPL_WITH_RETURN_SECOND(second);                                      \
-        }                                                                             \
+        if (UNLIKELY(throwScope.exception())) { \
+            RETURN_TO_THROW(pc); \
+            END_IMPL_WITH_RETURN_SECOND(second); \
+        } \
     } while (false)
 
 #define END() do {                        \
@@ -127,11 +127,11 @@ namespace JSC {
     RETURN_WITH_SECOND_AND_PROFILING_CUSTOM(result__, value__, callFrame, profilingAction__)
 
 #define RETURN_WITH_SECOND_AND_PROFILING_CUSTOM(result__, value__, second__, profilingAction__) do { \
-        JSValue returnValue__ = (value__);                                                           \
-        CHECK_EXCEPTION_WITH_RETURN_SECOND(callFrame);                                               \
-        GET(result__) = returnValue__;                                                               \
-        profilingAction__;                                                                           \
-        END_IMPL();                                                                                  \
+        JSValue returnValue__ = (value__); \
+        CHECK_EXCEPTION_WITH_RETURN_SECOND(callFrame); \
+        GET(result__) = returnValue__; \
+        profilingAction__; \
+        END_IMPL(); \
     } while (false)
 
 #define RETURN_WITH_PROFILING(value__, profilingAction__) RETURN_WITH_PROFILING_CUSTOM(bytecode.m_dst, value__, profilingAction__)
@@ -1157,6 +1157,8 @@ ALWAYS_INLINE SlowPathReturnType commonSlowPathResolveScopeHelper(CallFrame* cal
     VirtualRegister dst = isOpResolveScope ? pc->as<BytecodeOpcode>().m_dst : pc->as<OpResolveAndGetFromScope>().m_resolvedScope;
     // Proxy can throw an error here, e.g. Proxy in with statement's @unscopables.
     CallFrame* returnSecond = isOpResolveScope ? callFrame : nullptr;
+    // Use the second field of SlowPathReturnType as a flag to indicate whether
+    // the bytecode of OpResolveAndGetFromScope needs to handle the exception cases.
     CHECK_EXCEPTION_WITH_RETURN_SECOND(returnSecond);
 
     ResolveType resolveType = metadata.m_resolveType;
