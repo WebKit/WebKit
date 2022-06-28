@@ -36,12 +36,12 @@ protected:
 public:
     virtual ~AccessibilityMockObject();
     
-    AccessibilityObject* parentObject() const override { return m_parent; }
+    AccessibilityObject* parentObject() const override { return m_parent.get(); }
     virtual void setParent(AccessibilityObject* parent) { m_parent = parent; }
     bool isEnabled() const override { return true; }
 
 protected:
-    AccessibilityObject* m_parent;
+    WeakPtr<AccessibilityObject> m_parent;
 
     // Must be called when the parent object clears its children.
     void detachFromParent() override { m_parent = nullptr; }

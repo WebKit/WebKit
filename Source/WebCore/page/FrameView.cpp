@@ -5319,9 +5319,17 @@ void FrameView::notifyWidgetsInAllFrames(WidgetNotification notification)
     
 AXObjectCache* FrameView::axObjectCache() const
 {
+    AXObjectCache* cache = nullptr;
     if (frame().document())
-        return frame().document()->existingAXObjectCache();
-    return nullptr;
+        cache = frame().document()->existingAXObjectCache();
+
+    // FIXME: We should generally always be using the main-frame cache rather than
+    // using it as a fallback as we do here.
+    if (!cache && !frame().isMainFrame()) {
+        if (auto* mainFrameDocument = frame().mainFrame().document())
+            cache = mainFrameDocument->existingAXObjectCache();
+    }
+    return cache;
 }
 
 #if PLATFORM(IOS_FAMILY)

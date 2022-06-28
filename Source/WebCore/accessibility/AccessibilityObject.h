@@ -73,7 +73,7 @@ struct AccessibilityText {
 
 bool nodeHasPresentationRole(Node*);
 
-class AccessibilityObject : public AXCoreObject {
+class AccessibilityObject : public AXCoreObject, public CanMakeWeakPtr<AccessibilityObject> {
 public:
     virtual ~AccessibilityObject();
 

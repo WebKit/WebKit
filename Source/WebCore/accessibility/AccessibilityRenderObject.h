@@ -51,7 +51,7 @@ class RenderTextControl;
 class RenderView;
 class VisibleSelection;
 
-class AccessibilityRenderObject : public AccessibilityNodeObject, public CanMakeWeakPtr<AccessibilityRenderObject> {
+class AccessibilityRenderObject : public AccessibilityNodeObject {
 public:
     static Ref<AccessibilityRenderObject> create(RenderObject*);
     virtual ~AccessibilityRenderObject();

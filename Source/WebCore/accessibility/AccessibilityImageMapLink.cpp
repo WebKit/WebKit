@@ -55,7 +55,7 @@ Ref<AccessibilityImageMapLink> AccessibilityImageMapLink::create()
 AccessibilityObject* AccessibilityImageMapLink::parentObject() const
 {
     if (m_parent)
-        return m_parent;
+        return m_parent.get();
     
     if (!m_mapElement.get() || !m_mapElement->renderer())
         return nullptr;
