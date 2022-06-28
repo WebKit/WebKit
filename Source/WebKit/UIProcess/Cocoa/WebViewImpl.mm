@@ -148,9 +148,11 @@
 #endif
 
 #if HAVE(TRANSLATION_UI_SERVICES)
+#import <TranslationUIServices/LTUISourceMeta.h>
 #import <TranslationUIServices/LTUITranslationViewController.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(TranslationUIServices)
+SOFT_LINK_CLASS_OPTIONAL(TranslationUIServices, LTUISourceMeta)
 SOFT_LINK_CLASS_OPTIONAL(TranslationUIServices, LTUITranslationViewController)
 #endif
 
@@ -5855,6 +5857,10 @@ void WebViewImpl::handleContextMenuTranslation(const WebCore::TranslationContext
                 insertText(string.string);
         }];
     }
+
+    auto sourceMetadata = adoptNS([allocLTUISourceMetaInstance() init]);
+    [sourceMetadata setOrigin:info.source == WebCore::TranslationContextMenuSource::Image ? LTUISourceMetaOriginImage : LTUISourceMetaOriginUnspecified];
+    [translationViewController setSourceMeta:sourceMetadata.get()];
 
     if (NSEqualSizes([translationViewController preferredContentSize], NSZeroSize))
         [translationViewController setPreferredContentSize:NSMakeSize(400, 400)];

@@ -35,12 +35,14 @@
 namespace WebCore {
 
 enum class TranslationContextMenuMode : bool { NonEditable, Editable };
+enum class TranslationContextMenuSource : bool { Unspecified, Image };
 
 struct TranslationContextMenuInfo {
     String text;
     IntRect selectionBoundsInRootView;
     IntPoint locationInRootView;
     TranslationContextMenuMode mode { TranslationContextMenuMode::NonEditable };
+    TranslationContextMenuSource source { TranslationContextMenuSource::Unspecified };
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<TranslationContextMenuInfo> decode(Decoder&);
@@ -52,6 +54,7 @@ template<class Encoder> void TranslationContextMenuInfo::encode(Encoder& encoder
     encoder << selectionBoundsInRootView;
     encoder << locationInRootView;
     encoder << mode;
+    encoder << source;
 }
 
 template<class Decoder> std::optional<TranslationContextMenuInfo> TranslationContextMenuInfo::decode(Decoder& decoder)
@@ -76,7 +79,12 @@ template<class Decoder> std::optional<TranslationContextMenuInfo> TranslationCon
     if (!mode)
         return std::nullopt;
 
-    return {{ WTFMove(*text), WTFMove(*selectionBoundsInRootView), WTFMove(*locationInRootView), *mode }};
+    std::optional<TranslationContextMenuSource> source;
+    decoder >> source;
+    if (!source)
+        return std::nullopt;
+
+    return { { WTFMove(*text), WTFMove(*selectionBoundsInRootView), WTFMove(*locationInRootView), *mode, *source } };
 }
 
 } // namespace WebCore
@@ -88,6 +96,14 @@ template<> struct EnumTraits<WebCore::TranslationContextMenuMode> {
         WebCore::TranslationContextMenuMode,
         WebCore::TranslationContextMenuMode::NonEditable,
         WebCore::TranslationContextMenuMode::Editable
+    >;
+};
+
+template<> struct EnumTraits<WebCore::TranslationContextMenuSource> {
+    using values = EnumValues<
+        WebCore::TranslationContextMenuSource,
+        WebCore::TranslationContextMenuSource::Unspecified,
+        WebCore::TranslationContextMenuSource::Image
     >;
 };
 

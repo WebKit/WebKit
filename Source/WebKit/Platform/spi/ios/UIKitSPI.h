@@ -634,6 +634,10 @@ typedef enum {
 - (void)selectAll;
 @end
 
+@protocol _UITextInputTranslationSupport <UITextInput>
+@property (nonatomic, readonly, getter=isImageBacked) BOOL imageBacked;
+@end
+
 @interface UITextInputTraits : NSObject <UITextInputTraits, UITextInputTraits_Private, NSCopying>
 - (void)_setColorsToMatchTintColor:(UIColor *)tintColor;
 @end

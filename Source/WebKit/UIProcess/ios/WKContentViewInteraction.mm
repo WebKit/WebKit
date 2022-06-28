@@ -11248,6 +11248,12 @@ constexpr auto analysisTypesForFullscreenVideo = VKAnalysisTypeAll & ~VKAnalysis
 #endif
 }
 
+#pragma mark - _UITextInputTranslationSupport
+
+- (BOOL)isImageBacked
+{
+    return _page && _page->editorState().selectionIsRangeInsideImageOverlay;
+}
 
 @end
 
