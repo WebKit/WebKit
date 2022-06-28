@@ -383,9 +383,13 @@ private:
     bool handleMousePressEventDoubleClick(const MouseEventWithHitTestResults&);
     bool handleMousePressEventTripleClick(const MouseEventWithHitTestResults&);
 
-    KeyboardScrollingAnimator* keyboardScrollingAnimatorForFocusedNode();
-    bool startKeyboardScrolling(KeyboardEvent&);
+    bool beginKeyboardScrollGesture(KeyboardScrollingAnimator*, KeyboardEvent&);
     void stopKeyboardScrolling();
+    bool startKeyboardScrollAnimationOnDocument(KeyboardEvent&);
+    bool startKeyboardScrollAnimationOnRenderBoxLayer(KeyboardEvent&, RenderBox*);
+    bool startKeyboardScrollAnimationOnRenderBoxAndItsAncestors(KeyboardEvent&, RenderBox*);
+    bool startKeyboardScrollAnimationOnEnclosingScrollableContainer(KeyboardEvent&, Node*);
+    bool keyboardScrollRecursively(KeyboardEvent&, Node*);
 
 #if ENABLE(DRAG_SUPPORT)
     bool handleMouseDraggedEvent(const MouseEventWithHitTestResults&, CheckDragHysteresis = ShouldCheckDragHysteresis);

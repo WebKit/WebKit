@@ -1286,6 +1286,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/FileStreamClient.h
     platform/FloatConversion.h
     platform/HostWindow.h
+    platform/KeyboardScrollingAnimator.h
     platform/KeyboardScroll.h
     platform/KeyedCoding.h
     platform/KeypressCommand.h
@@ -1354,14 +1355,17 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/SSLKeyGenerator.h
     platform/ScreenProperties.h
     platform/ScriptExecutionContextIdentifier.h
+    platform/ScrollAnimation.h
     platform/ScrollAnimationMomentum.h
     platform/ScrollAnimator.h
+    platform/ScrollSnapAnimatorState.h
     platform/ScrollTypes.h
     platform/ScrollView.h
     platform/ScrollableArea.h
     platform/Scrollbar.h
     platform/ScrollbarTheme.h
     platform/ScrollbarThemeComposite.h
+    platform/ScrollingEffectsController.h
     platform/SearchPopupMenu.h
     platform/SerializedPlatformDataCue.h
     platform/SerializedPlatformDataCueValue.h

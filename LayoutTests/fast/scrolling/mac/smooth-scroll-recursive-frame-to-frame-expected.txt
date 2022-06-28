@@ -1,0 +1,2 @@
+SUCCESSFUL: keyboard scroll propagated from iframe to main document.
+

@@ -1,0 +1,62 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ EventHandlerDrivenSmoothKeyboardScrollingEnabled=true ] -->
+<html>
+<head>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <style>
+        body {
+            height: 2000px;
+        }
+        .scroller {
+            width: 20%;
+            height: 20%;
+            overflow: scroll;
+            border: 1px solid black;
+            padding: 10px;
+        }
+        #innerDiv1 {
+            height: 400px;
+        }
+        #innerDiv2 {
+            height: 120px;
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function outerScrollerScrolled()
+        {
+            debug("SUCCESSFUL: keyboard scroll propagated from overflow:scroll region to parent overflow:scroll region.");
+            testRunner.notifyDone();
+        }
+
+        async function runTest()
+        {
+            if (!window.testRunner || !testRunner.runUIScript)
+                return;
+
+            var innerScroller = document.getElementById("innerScroller");
+            var outerScroller = document.getElementById("outerScroller");
+            outerScroller.addEventListener("scroll", outerScrollerScrolled);
+            innerScroller.scrollTo(0,10000);
+
+            // Click inside innerScroller
+            await UIHelper.activateAt(30,30);
+
+            await UIHelper.keyDown("downArrow");
+        }
+    </script>
+</head>
+<body onload="runTest()">
+    <div class="scroller" id="outerScroller">
+        <div class="scroller" id="innerScroller">
+            <div id="innerDiv2"></div>
+        </div>
+        <div id="innerDiv1"></div>
+    </div>
+    <script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

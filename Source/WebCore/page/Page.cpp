@@ -2684,6 +2684,11 @@ void Page::whenUnnested(Function<void()>&& callback)
     m_unnestCallback = WTFMove(callback);
 }
 
+void Page::setCurrentKeyboardScrollingAnimator(KeyboardScrollingAnimator* animator)
+{
+    m_currentKeyboardScrollingAnimator = animator;
+}
+
 #if ENABLE(REMOTE_INSPECTOR)
 
 bool Page::remoteInspectionAllowed() const

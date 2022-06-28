@@ -1,0 +1,54 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ EventHandlerDrivenSmoothKeyboardScrollingEnabled=true ] -->
+<html>
+<head>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <style>
+        body {
+            height: 2000px;
+        }
+        #scroller {
+            width: 20%;
+            height: 20%;
+            overflow: scroll;
+            border: 1px solid black;
+            padding: 10px;
+        }
+        #innerDiv {
+            height: 500px;
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function documentScrolled()
+        {
+            debug("SUCCESSFUL: keyboard scroll propagated from overflow:scroll region to main document.");
+            testRunner.notifyDone();
+        }
+
+        async function runTest()
+        {
+            if (!window.testRunner || !testRunner.runUIScript)
+                return;
+
+            var scroller = document.getElementById("scroller");
+            document.addEventListener("scroll", documentScrolled);
+            scroller.scrollTo(0,10000)
+
+            // Click inside scroller
+            await UIHelper.activateAt(30,30);
+            await UIHelper.keyDown("downArrow");
+        }
+    </script>
+</head>
+<body onload="runTest()">
+    <div id="scroller">
+        <div id="innerDiv"></div>
+    </div>
+    <script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

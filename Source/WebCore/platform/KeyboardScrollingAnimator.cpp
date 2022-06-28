@@ -260,8 +260,17 @@ bool KeyboardScrollingAnimator::beginKeyboardScrollGesture(const PlatformKeyboar
     if (!(event.type() == PlatformEvent::RawKeyDown || event.type() == PlatformEvent::Char))
         return false;
 
-    if (m_scrollTriggeringKeyIsPressed)
+    auto scrollableDirections = scrollableDirectionsFromPosition(m_scrollAnimator.currentPosition());
+    auto direction = m_currentKeyboardScroll->direction;
+    if (!scrollableDirections.at(boxSideForDirection(direction))) {
+        m_scrollTriggeringKeyIsPressed = false;
+        m_scrollController.didStopKeyboardScrolling();
+        m_velocity = { };
         return false;
+    }
+
+    if (m_scrollTriggeringKeyIsPressed)
+        return true;
 
     if (m_currentKeyboardScroll->granularity == ScrollGranularity::Document) {
         m_velocity = { };

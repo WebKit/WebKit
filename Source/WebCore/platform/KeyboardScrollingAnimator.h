@@ -33,7 +33,7 @@ namespace WebCore {
 
 class PlatformKeyboardEvent;
 
-class KeyboardScrollingAnimator {
+class KeyboardScrollingAnimator : public CanMakeWeakPtr<KeyboardScrollingAnimator> {
     WTF_MAKE_NONCOPYABLE(KeyboardScrollingAnimator);
     WTF_MAKE_FAST_ALLOCATED;
 public:
