@@ -29,23 +29,46 @@
 
 #include "MediaPlayerPrivate.h"
 #include "PlatformLayer.h"
+#include "SourceBufferParserWebM.h"
+#include "TimeRanges.h"
+#include "WebMResourceClient.h"
+#include <wtf/HashFunctions.h>
+#include <wtf/HashMap.h>
 #include <wtf/LoggerHelper.h>
-#include <wtf/WeakPtr.h>
+#include <wtf/RobinHoodHashMap.h>
+#include <wtf/UniqueRef.h>
+#include <wtf/Vector.h>
+
+OBJC_CLASS AVSampleBufferAudioRenderer;
+OBJC_CLASS AVSampleBufferDisplayLayer;
 
 namespace WebCore {
 
+class AudioTrackPrivateWebM;
+class FragmentedSharedBuffer;
+class MediaDescription;
+class MediaSample;
+class MediaSampleAVFObjC;
+class ResourceError;
+class SharedBuffer;
+class TextTrackRepresentation;
+class TrackBuffer;
+class VideoLayerManagerObjC;
+class VideoTrackPrivateWebM;
+
 class MediaPlayerPrivateWebM
     : public MediaPlayerPrivateInterface
+    , public WebMResourceClientParent
     , private LoggerHelper {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     MediaPlayerPrivateWebM(MediaPlayer*);
     ~MediaPlayerPrivateWebM();
-    
+
     static void registerMediaEngine(MediaEngineRegistrar);
-    
+private:
     void load(const String&) final;
-    
+
 #if ENABLE(MEDIA_SOURCE)
     void load(const URL&, const ContentType&, MediaSourcePrivateClient&) final;
 #endif
@@ -53,65 +76,172 @@ public:
     void load(MediaStreamPrivate&) final;
 #endif
     
+    // WebMResourceClientParent
+    friend class WebMResourceClient;
+    void dataReceived(const SharedBuffer&) final;
+    void loadFailed(const ResourceError&) final;
+    void loadFinished(const FragmentedSharedBuffer&) final;
+
     void cancelLoad() final;
-    
+
     PlatformLayer* platformLayer() const final;
-    
+
+    bool supportsPictureInPicture() const override { return true; }
+    bool supportsFullscreen() const final { return true; }
+
     void play() final;
     void pause() final;
-    
+    bool paused() const final;
+
     FloatSize naturalSize() const final { return m_naturalSize; };
-    
-    bool hasAudio() const final { return m_hasAudio; };
+
     bool hasVideo() const final { return m_hasVideo; };
-    
+    bool hasAudio() const final { return m_hasAudio; };
+
     void setPageIsVisible(bool) final;
-    
+
+    MediaTime timeFudgeFactor() const { return { 1, 10 }; }
     MediaTime currentMediaTime() const final;
     MediaTime durationMediaTime() const final { return m_duration; };
-    
+    MediaTime startTime() const final { return MediaTime::zeroTime(); };
+    MediaTime initialTime() const final { return MediaTime::zeroTime(); };
+
+    void seek(const MediaTime&) final;
     bool seeking() const final { return m_seeking; };
-    
-    bool paused() const final { return m_paused; };
-    
+
+    void setRateDouble(double) final;
+    double rate() const final { return m_rate; }
+    double effectiveRate() const final;
+
+    void setVolume(float) final;
+    void setMuted(bool) final;
+
     MediaPlayer::NetworkState networkState() const final { return m_networkState; };
     MediaPlayer::ReadyState readyState() const final { return m_readyState; };
-    
+
+    std::unique_ptr<PlatformTimeRanges> seekable() const final;
+    MediaTime maxMediaTimeSeekable() const final { return durationMediaTime(); }
+    MediaTime minMediaTimeSeekable() const final { return startTime(); }
     std::unique_ptr<PlatformTimeRanges> buffered() const final;
-    
+
+    void setBufferedRanges(PlatformTimeRanges);
+    void updateBufferedFromTrackBuffers(bool);
+
     bool didLoadingProgress() const final;
-    
+
     void paint(GraphicsContext&, const FloatRect&) final { };
-    
+
     DestinationColorSpace colorSpace() final { return DestinationColorSpace::SRGB(); };
-    
-    bool supportsAcceleratedRendering() const final { return false; };
-    
+
+    void setNaturalSize(FloatSize);
+    void setHasAudio(bool);
+    void setHasVideo(bool);
+    void setDuration(MediaTime);
+    void setNetworkState(MediaPlayer::NetworkState);
+    void setReadyState(MediaPlayer::ReadyState);
+    void characteristicsChanged();
+
+    bool supportsAcceleratedRendering() const final { return true; };
+
+    RetainPtr<PlatformLayer> createVideoFullscreenLayer() final;
+    void setVideoFullscreenLayer(PlatformLayer*, Function<void()>&& completionHandler) final;
+    void setVideoFullscreenFrame(FloatRect) final;
+
+    bool requiresTextTrackRepresentation() const final;
+    void setTextTrackRepresentation(TextTrackRepresentation*) final;
+    void syncTextTrackBounds() final;
+
+    void enqueueSample(Ref<MediaSample>&&, uint64_t);
+    void reenqueSamples(uint64_t);
+    void reenqueueMediaForTime(TrackBuffer&, uint64_t, const MediaTime&);
+    void notifyClientWhenReadyForMoreSamples(uint64_t);
+
+    bool canSetMinimumUpcomingPresentationTime(uint64_t) const;
+    void setMinimumUpcomingPresentationTime(uint64_t, const MediaTime&);
+    void clearMinimumUpcomingPresentationTime(uint64_t);
+
+    bool isReadyForMoreSamples(uint64_t);
+    void didBecomeReadyForMoreSamples(uint64_t);
+    void provideMediaData(uint64_t);
+    void provideMediaData(TrackBuffer&, uint64_t);
+
+    void trackDidChangeSelected(VideoTrackPrivate&, bool);
+    void trackDidChangeEnabled(AudioTrackPrivate&, bool);
+
+    using InitializationSegment = SourceBufferParserWebM::InitializationSegment;
+    void didParseInitializationData(InitializationSegment&&);
+    void didEncounterErrorDuringParsing(int32_t);
+    void didProvideMediaDataForTrackId(Ref<MediaSampleAVFObjC>&&, uint64_t trackId, const String& mediaType);
+
+    void append(SharedBuffer&);
+    void abort();
+
+    void flush();
+#if PLATFORM(IOS_FAMILY)
+    void flushIfNeeded();
+#endif
+    void flushTrack(uint64_t);
+    void flushVideo();
+    void flushAudio(AVSampleBufferAudioRenderer*);
+
+    void addTrackBuffer(uint64_t, RefPtr<MediaDescription>&&);
+
+    void ensureLayer();
+    void addAudioRenderer(uint64_t);
+    void removeAudioRenderer(uint64_t);
+
+    void destroyLayer();
+    void destroyAudioRenderer(RetainPtr<AVSampleBufferAudioRenderer>);
+    void destroyAudioRenderers();
+    void clearTracks();
+
     const Logger& logger() const final { return m_logger.get(); }
     const char* logClassName() const final { return "MediaPlayerPrivateWebM"; }
     const void* logIdentifier() const final { return reinterpret_cast<const void*>(m_logIdentifier); }
     WTFLogChannel& logChannel() const final;
-    
-private:
+
     friend class MediaPlayerFactoryWebM;
+    static bool isAvailable();
     static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>&);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
-    
+
     MediaPlayer* m_player;
-    
+    RetainPtr<AVSampleBufferRenderSynchronizer> m_synchronizer;
+    RetainPtr<id> m_durationObserver;
+    WeakPtr<WebMResourceClient> m_resourceClient;
+
+    Vector<RefPtr<VideoTrackPrivateWebM>> m_videoTracks;
+    Vector<RefPtr<AudioTrackPrivateWebM>> m_audioTracks;
+    HashMap<uint64_t, UniqueRef<TrackBuffer>, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_trackBufferMap;
+    RefPtr<TimeRanges> m_buffered { TimeRanges::create() };
+
+    RetainPtr<AVSampleBufferDisplayLayer> m_displayLayer;
+    HashMap<uint64_t, RetainPtr<AVSampleBufferAudioRenderer>, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_audioRenderers;
+    Ref<SourceBufferParserWebM> m_parser;
+
     MediaPlayer::NetworkState m_networkState { MediaPlayer::NetworkState::Empty };
     MediaPlayer::ReadyState m_readyState { MediaPlayer::ReadyState::HaveNothing };
-    
+
     Ref<const Logger> m_logger;
     const void* m_logIdentifier;
-    
+    std::unique_ptr<VideoLayerManagerObjC> m_videoLayerManager;
+
     FloatSize m_naturalSize;
-    bool m_hasAudio { false };
-    bool m_hasVideo { false };
     MediaTime m_currentTime;
     MediaTime m_duration;
+    double m_rate { 1 };
+
+    uint64_t m_enabledVideoTrackID { notFound };
+    uint32_t m_abortCalled { 0 };
+#if PLATFORM(IOS_FAMILY)
+    bool m_displayLayerWasInterrupted { false };
+#endif
+    bool m_hasAudio { false };
+    bool m_hasVideo { false };
     bool m_seeking { false };
-    bool m_paused { false };
+    bool m_visible { false };
+    bool m_parsingSucceeded { true };
+    bool m_processingInitializationSegment { false };
 };
 
 } // namespace WebCore

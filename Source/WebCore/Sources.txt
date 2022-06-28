@@ -2122,6 +2122,7 @@ platform/graphics/TrackBuffer.cpp
 platform/graphics/TrackPrivateBase.cpp
 platform/graphics/VP9Utilities.cpp
 platform/graphics/VelocityData.cpp
+platform/graphics/WebMResourceClient.cpp
 platform/graphics/WOFFFileFormat.cpp
 platform/graphics/WidthIterator.cpp
 platform/graphics/cpu/arm/filters/FELightingNEON.cpp
