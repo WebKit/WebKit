@@ -35,48 +35,49 @@
 @implementation WGSLLexerTests
 
 - (void)testLexerOnSingleTokens {
-    auto checkSingleToken = [] (const char* string, WGSL::TokenType type) {
+    auto checkSingleToken = [] (const String& string, WGSL::TokenType type) {
         WGSL::Lexer<LChar> lexer(string);
         WGSL::Token result = lexer.lex();
         XCTAssertEqual(result.m_type, type);
         return result;
     };
-    auto checkSingleLiteral = [&] (const char* string, WGSL::TokenType type, double literalValue) {
+    auto checkSingleLiteral = [&] (const String& string, WGSL::TokenType type, double literalValue) {
         WGSL::Token result = checkSingleToken(string, type);
         XCTAssertEqual(result.m_literalValue, literalValue);
     };
 
-    checkSingleToken("", WGSL::TokenType::EndOfFile);
-    checkSingleLiteral("1", WGSL::TokenType::IntegerLiteral, 1);
-    checkSingleLiteral("0", WGSL::TokenType::IntegerLiteral, 0);
-    checkSingleLiteral("142", WGSL::TokenType::IntegerLiteral, 142);
-    checkSingleLiteral("1.1", WGSL::TokenType::DecimalFloatLiteral, 1.1);
-    checkSingleLiteral("0.4", WGSL::TokenType::DecimalFloatLiteral, 0.4);
-    checkSingleLiteral("0123.456", WGSL::TokenType::DecimalFloatLiteral, 0123.456);
-    checkSingleToken("0123", WGSL::TokenType::Invalid);
-    checkSingleLiteral("0123.", WGSL::TokenType::DecimalFloatLiteral, 123);
-    checkSingleLiteral(".456", WGSL::TokenType::DecimalFloatLiteral, 0.456);
-    checkSingleToken(".", WGSL::TokenType::Period);
-    checkSingleLiteral("42f", WGSL::TokenType::DecimalFloatLiteral, 42);
-    checkSingleLiteral("42e0f", WGSL::TokenType::DecimalFloatLiteral, 42);
-    checkSingleLiteral("042e0f", WGSL::TokenType::DecimalFloatLiteral, 42);
-    checkSingleToken("042f", WGSL::TokenType::Invalid);
-    checkSingleLiteral("42e-3", WGSL::TokenType::DecimalFloatLiteral, 42e-3);
-    checkSingleLiteral("42e-a", WGSL::TokenType::IntegerLiteral, 42);
+    checkSingleToken(""_s, WGSL::TokenType::EndOfFile);
+    checkSingleLiteral("1"_s, WGSL::TokenType::IntegerLiteral, 1);
+    checkSingleLiteral("0"_s, WGSL::TokenType::IntegerLiteral, 0);
+    checkSingleLiteral("142"_s, WGSL::TokenType::IntegerLiteral, 142);
+    checkSingleLiteral("1.1"_s, WGSL::TokenType::DecimalFloatLiteral, 1.1);
+    checkSingleLiteral("0.4"_s, WGSL::TokenType::DecimalFloatLiteral, 0.4);
+    checkSingleLiteral("0123.456"_s, WGSL::TokenType::DecimalFloatLiteral, 0123.456);
+    checkSingleToken("0123"_s, WGSL::TokenType::Invalid);
+    checkSingleLiteral("0123."_s, WGSL::TokenType::DecimalFloatLiteral, 123);
+    checkSingleLiteral(".456"_s, WGSL::TokenType::DecimalFloatLiteral, 0.456);
+    checkSingleToken("."_s, WGSL::TokenType::Period);
+    checkSingleLiteral("42f"_s, WGSL::TokenType::DecimalFloatLiteral, 42);
+    checkSingleLiteral("42e0f"_s, WGSL::TokenType::DecimalFloatLiteral, 42);
+    checkSingleLiteral("042e0f"_s, WGSL::TokenType::DecimalFloatLiteral, 42);
+    checkSingleToken("042f"_s, WGSL::TokenType::Invalid);
+    checkSingleLiteral("42e-3"_s, WGSL::TokenType::DecimalFloatLiteral, 42e-3);
+    checkSingleLiteral("42e-a"_s, WGSL::TokenType::IntegerLiteral, 42);
 }
 
 - (void) testLexerOnComputeShader {
-    WGSL::Lexer<LChar> lexer("@block struct B {\n"
-                             "    a: i32;\n"
-                             "}\n"
-                             "\n"
-                             "@group(0) @binding(0)\n"
-                             "var<storage, read_write> x: B;\n"
-                             "\n"
-                             "@stage(compute)\n"
-                             "fn main() {\n"
-                             "    x.a = 42;\n"
-                             "}");
+    WGSL::Lexer<LChar> lexer(
+        "@block struct B {\n"
+        "    a: i32;\n"
+        "}\n"
+        "\n"
+        "@group(0) @binding(0)\n"
+        "var<storage, read_write> x: B;\n"
+        "\n"
+        "@stage(compute)\n"
+        "fn main() {\n"
+        "    x.a = 42;\n"
+        "}"_s);
 
     unsigned lineNumber = 0;
     auto checkNextToken = [&] (WGSL::TokenType type) {
@@ -85,7 +86,7 @@
         XCTAssertEqual(result.m_span.m_line, lineNumber);
         return result;
     };
-    auto checkNextTokenIsIdentifier = [&] (const char* ident) {
+    auto checkNextTokenIsIdentifier = [&] (const String& ident) {
         WGSL::Token result = checkNextToken(WGSL::TokenType::Identifier);
         XCTAssertEqual(result.m_ident, ident);
     };
@@ -96,14 +97,14 @@
 
     // @block struct B {
     checkNextToken(WGSL::TokenType::Attribute);
-    checkNextTokenIsIdentifier("block");
+    checkNextTokenIsIdentifier("block"_s);
     checkNextToken(WGSL::TokenType::KeywordStruct);
-    checkNextTokenIsIdentifier("B");
+    checkNextTokenIsIdentifier("B"_s);
     checkNextToken(WGSL::TokenType::BraceLeft);
 
     // a: i32;
     ++lineNumber;
-    checkNextTokenIsIdentifier("a");
+    checkNextTokenIsIdentifier("a"_s);
     checkNextToken(WGSL::TokenType::Colon);
     checkNextToken(WGSL::TokenType::KeywordI32);
     checkNextToken(WGSL::TokenType::Semicolon);
@@ -115,12 +116,12 @@
     // @group(0) @binding(0)
     lineNumber += 2;
     checkNextToken(WGSL::TokenType::Attribute);
-    checkNextTokenIsIdentifier("group");
+    checkNextTokenIsIdentifier("group"_s);
     checkNextToken(WGSL::TokenType::ParenLeft);
     checkNextTokenIsLiteral(WGSL::TokenType::IntegerLiteral, 0);
     checkNextToken(WGSL::TokenType::ParenRight);
     checkNextToken(WGSL::TokenType::Attribute);
-    checkNextTokenIsIdentifier("binding");
+    checkNextTokenIsIdentifier("binding"_s);
     checkNextToken(WGSL::TokenType::ParenLeft);
     checkNextTokenIsLiteral(WGSL::TokenType::IntegerLiteral, 0);
     checkNextToken(WGSL::TokenType::ParenRight);
@@ -133,32 +134,32 @@
     checkNextToken(WGSL::TokenType::Comma);
     checkNextToken(WGSL::TokenType::KeywordReadWrite);
     checkNextToken(WGSL::TokenType::GT);
-    checkNextTokenIsIdentifier("x");
+    checkNextTokenIsIdentifier("x"_s);
     checkNextToken(WGSL::TokenType::Colon);
-    checkNextTokenIsIdentifier("B");
+    checkNextTokenIsIdentifier("B"_s);
     checkNextToken(WGSL::TokenType::Semicolon);
 
     // @stage(compute)
     lineNumber += 2;
     checkNextToken(WGSL::TokenType::Attribute);
-    checkNextTokenIsIdentifier("stage");
+    checkNextTokenIsIdentifier("stage"_s);
     checkNextToken(WGSL::TokenType::ParenLeft);
-    checkNextTokenIsIdentifier("compute");
+    checkNextTokenIsIdentifier("compute"_s);
     checkNextToken(WGSL::TokenType::ParenRight);
 
     // fn main() {
     ++lineNumber;
     checkNextToken(WGSL::TokenType::KeywordFn);
-    checkNextTokenIsIdentifier("main");
+    checkNextTokenIsIdentifier("main"_s);
     checkNextToken(WGSL::TokenType::ParenLeft);
     checkNextToken(WGSL::TokenType::ParenRight);
     checkNextToken(WGSL::TokenType::BraceLeft);
 
     // x.a = 42;
     ++lineNumber;
-    checkNextTokenIsIdentifier("x");
+    checkNextTokenIsIdentifier("x"_s);
     checkNextToken(WGSL::TokenType::Period);
-    checkNextTokenIsIdentifier("a");
+    checkNextTokenIsIdentifier("a"_s);
     checkNextToken(WGSL::TokenType::Equal);
     checkNextTokenIsLiteral(WGSL::TokenType::IntegerLiteral, 42);
     checkNextToken(WGSL::TokenType::Semicolon);
@@ -170,15 +171,16 @@
 }
 
 - (void) testLexerOnGraphicsShader {
-    WGSL::Lexer<LChar> lexer("@stage(vertex)\n"
-                             "fn vertexShader(@location(0) x: vec4<f32>) -> @builtin(position) vec4<f32> {\n"
-                             "    return x;\n"
-                             "}\n"
-                             "\n"
-                             "@stage(fragment)\n"
-                             "fn fragmentShader() -> @location(0) vec4<f32> {\n"
-                             "    return vec4<f32>(0.4, 0.4, 0.8, 1.0);\n"
-                             "}");
+    WGSL::Lexer<LChar> lexer(
+        "@stage(vertex)\n"
+        "fn vertexShader(@location(0) x: vec4<f32>) -> @builtin(position) vec4<f32> {\n"
+        "    return x;\n"
+        "}\n"
+        "\n"
+        "@stage(fragment)\n"
+        "fn fragmentShader() -> @location(0) vec4<f32> {\n"
+        "    return vec4<f32>(0.4, 0.4, 0.8, 1.0);\n"
+        "}"_s);
 
     unsigned lineNumber = 0;
     auto checkNextToken = [&] (WGSL::TokenType type) {
@@ -187,7 +189,7 @@
         XCTAssertEqual(result.m_span.m_line, lineNumber);
         return result;
     };
-    auto checkNextTokenIsIdentifier = [&] (const char* ident) {
+    auto checkNextTokenIsIdentifier = [&] (const String& ident) {
         WGSL::Token result = checkNextToken(WGSL::TokenType::Identifier);
         XCTAssertEqual(result.m_ident, ident);
     };
@@ -198,35 +200,35 @@
 
     // @stage(vertex)
     checkNextToken(WGSL::TokenType::Attribute);
-    checkNextTokenIsIdentifier("stage");
+    checkNextTokenIsIdentifier("stage"_s);
     checkNextToken(WGSL::TokenType::ParenLeft);
-    checkNextTokenIsIdentifier("vertex");
+    checkNextTokenIsIdentifier("vertex"_s);
     checkNextToken(WGSL::TokenType::ParenRight);
 
     ++lineNumber;
     // fn vertexShader(@location(0) x: vec4<f32>) -> @builtin(position) vec4<f32> {
     checkNextToken(WGSL::TokenType::KeywordFn);
-    checkNextTokenIsIdentifier("vertexShader");
+    checkNextTokenIsIdentifier("vertexShader"_s);
     checkNextToken(WGSL::TokenType::ParenLeft);
     checkNextToken(WGSL::TokenType::Attribute);
-    checkNextTokenIsIdentifier("location");
+    checkNextTokenIsIdentifier("location"_s);
     checkNextToken(WGSL::TokenType::ParenLeft);
     checkNextTokenIsLiteral(WGSL::TokenType::IntegerLiteral, 0);
     checkNextToken(WGSL::TokenType::ParenRight);
-    checkNextTokenIsIdentifier("x");
+    checkNextTokenIsIdentifier("x"_s);
     checkNextToken(WGSL::TokenType::Colon);
-    checkNextTokenIsIdentifier("vec4");
+    checkNextTokenIsIdentifier("vec4"_s);
     checkNextToken(WGSL::TokenType::LT);
     checkNextToken(WGSL::TokenType::KeywordF32);
     checkNextToken(WGSL::TokenType::GT);
     checkNextToken(WGSL::TokenType::ParenRight);
     checkNextToken(WGSL::TokenType::Arrow);
     checkNextToken(WGSL::TokenType::Attribute);
-    checkNextTokenIsIdentifier("builtin");
+    checkNextTokenIsIdentifier("builtin"_s);
     checkNextToken(WGSL::TokenType::ParenLeft);
-    checkNextTokenIsIdentifier("position");
+    checkNextTokenIsIdentifier("position"_s);
     checkNextToken(WGSL::TokenType::ParenRight);
-    checkNextTokenIsIdentifier("vec4");
+    checkNextTokenIsIdentifier("vec4"_s);
     checkNextToken(WGSL::TokenType::LT);
     checkNextToken(WGSL::TokenType::KeywordF32);
     checkNextToken(WGSL::TokenType::GT);
@@ -235,7 +237,7 @@
     // return x;
     ++lineNumber;
     checkNextToken(WGSL::TokenType::KeywordReturn);
-    checkNextTokenIsIdentifier("x");
+    checkNextTokenIsIdentifier("x"_s);
     checkNextToken(WGSL::TokenType::Semicolon);
 
     // }
@@ -245,24 +247,24 @@
     // @stage(fragment)
     lineNumber += 2;
     checkNextToken(WGSL::TokenType::Attribute);
-    checkNextTokenIsIdentifier("stage");
+    checkNextTokenIsIdentifier("stage"_s);
     checkNextToken(WGSL::TokenType::ParenLeft);
-    checkNextTokenIsIdentifier("fragment");
+    checkNextTokenIsIdentifier("fragment"_s);
     checkNextToken(WGSL::TokenType::ParenRight);
 
     // fn fragmentShader() -> @location(0) vec4<f32> {
     ++lineNumber;
     checkNextToken(WGSL::TokenType::KeywordFn);
-    checkNextTokenIsIdentifier("fragmentShader");
+    checkNextTokenIsIdentifier("fragmentShader"_s);
     checkNextToken(WGSL::TokenType::ParenLeft);
     checkNextToken(WGSL::TokenType::ParenRight);
     checkNextToken(WGSL::TokenType::Arrow);
     checkNextToken(WGSL::TokenType::Attribute);
-    checkNextTokenIsIdentifier("location");
+    checkNextTokenIsIdentifier("location"_s);
     checkNextToken(WGSL::TokenType::ParenLeft);
     checkNextTokenIsLiteral(WGSL::TokenType::IntegerLiteral, 0);
     checkNextToken(WGSL::TokenType::ParenRight);
-    checkNextTokenIsIdentifier("vec4");
+    checkNextTokenIsIdentifier("vec4"_s);
     checkNextToken(WGSL::TokenType::LT);
     checkNextToken(WGSL::TokenType::KeywordF32);
     checkNextToken(WGSL::TokenType::GT);
@@ -271,7 +273,7 @@
     // return vec4<f32>(0.4, 0.4, 0.8, 1.0);
     ++lineNumber;
     checkNextToken(WGSL::TokenType::KeywordReturn);
-    checkNextTokenIsIdentifier("vec4");
+    checkNextTokenIsIdentifier("vec4"_s);
     checkNextToken(WGSL::TokenType::LT);
     checkNextToken(WGSL::TokenType::KeywordF32);
     checkNextToken(WGSL::TokenType::GT);

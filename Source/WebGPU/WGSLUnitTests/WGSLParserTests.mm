@@ -24,18 +24,18 @@
  */
 
 #import "config.h"
+#import "Parser.h"
 
 #import "AssignmentStatement.h"
 #import "IdentifierExpression.h"
 #import "Lexer.h"
 #import "LiteralExpressions.h"
-#import "Parser.h"
 #import "ReturnStatement.h"
 #import "StructureAccess.h"
 #import "TypeConversion.h"
 #import "WGSL.h"
-#import <wtf/DataLog.h>
 #import <XCTest/XCTest.h>
+#import <wtf/DataLog.h>
 
 @interface WGSLParserTests : XCTestCase
 
@@ -44,16 +44,18 @@
 @implementation WGSLParserTests
 
 - (void)testParsingStruct {
-    auto shader = WGSL::parseLChar("struct B {\n"
-                        "    a: i32;\n"
-                        "}");
+    auto shader = WGSL::parseLChar(
+        "struct B {\n"
+        "    a: i32;\n"
+        "}"_s);
+
     if (!shader.has_value())
         dataLogLn(shader.error());
     XCTAssert(shader.has_value());
     XCTAssert(!shader->directives().size());
     XCTAssert(shader->structs().size() == 1);
-    XCTAssert(shader->globalVars().size() == 0);
-    XCTAssert(shader->functions().size() == 0);
+    XCTAssert(shader->globalVars().isEmpty());
+    XCTAssert(shader->functions().isEmpty());
     WGSL::AST::StructDecl& str = shader->structs()[0];
     XCTAssert(str.name() == "B"_s);
     XCTAssert(str.attributes().isEmpty());
@@ -66,21 +68,23 @@
 }
 
 - (void)testParsingGlobalVariable {
-    auto shader = WGSL::parseLChar("@group(0) @binding(0)\n"
-                                   "var<storage, read_write> x: B;\n");
+    auto shader = WGSL::parseLChar(
+        "@group(0) @binding(0)\n"
+        "var<storage, read_write> x: B;\n"_s);
+
     if (!shader.has_value())
         dataLogLn(shader.error());
     XCTAssert(shader.has_value());
     XCTAssert(!shader->directives().size());
-    XCTAssert(shader->structs().size() == 0);
+    XCTAssert(shader->structs().isEmpty());
     XCTAssert(shader->globalVars().size() == 1);
-    XCTAssert(shader->functions().size() == 0);
+    XCTAssert(shader->functions().isEmpty());
     WGSL::AST::GlobalVariableDecl& var = shader->globalVars()[0];
     XCTAssert(var.attributes().size() == 2);
     XCTAssert(var.attributes()[0]->isGroup());
-    XCTAssert(downcast<WGSL::AST::GroupAttribute>(var.attributes()[0].get()).group() == 0);
+    XCTAssert(!downcast<WGSL::AST::GroupAttribute>(var.attributes()[0].get()).group());
     XCTAssert(var.attributes()[1]->isBinding());
-    XCTAssert(downcast<WGSL::AST::BindingAttribute>(var.attributes()[1].get()).binding() == 0);
+    XCTAssert(!downcast<WGSL::AST::BindingAttribute>(var.attributes()[1].get()).binding());
     XCTAssert(var.name() == "x"_s);
     XCTAssert(var.maybeQualifier());
     XCTAssert(var.maybeQualifier()->storageClass() == WGSL::AST::StorageClass::Storage);
@@ -93,23 +97,25 @@
 }
 
 - (void)testParsingFunctionDecl {
-    auto shader = WGSL::parseLChar("@stage(compute)\n"
-                                   "fn main() {\n"
-                                   "    x.a = 42i;\n"
-                                   "}");
+    auto shader = WGSL::parseLChar(
+        "@stage(compute)\n"
+        "fn main() {\n"
+        "    x.a = 42i;\n"
+        "}"_s);
+
     if (!shader.has_value())
         dataLogLn(shader.error());
     XCTAssert(shader.has_value());
     XCTAssert(!shader->directives().size());
-    XCTAssert(shader->structs().size() == 0);
-    XCTAssert(shader->globalVars().size() == 0);
+    XCTAssert(shader->structs().isEmpty());
+    XCTAssert(shader->globalVars().isEmpty());
     XCTAssert(shader->functions().size() == 1);
     WGSL::AST::FunctionDecl& func = shader->functions()[0];
     XCTAssert(func.attributes().size() == 1);
     XCTAssert(func.attributes()[0]->isStage());
     XCTAssert(downcast<WGSL::AST::StageAttribute>(func.attributes()[0].get()).stage() == WGSL::AST::StageAttribute::Stage::Compute);
     XCTAssert(func.name() == "main"_s);
-    XCTAssert(func.parameters().size() == 0);
+    XCTAssert(func.parameters().isEmpty());
     XCTAssert(func.returnAttributes().isEmpty());
     XCTAssert(func.maybeReturnType() == nullptr);
     XCTAssert(func.body().statements().size() == 1);
@@ -128,20 +134,22 @@
 }
 
 - (void)testTrivialGraphicsShader {
-    auto shader = WGSL::parseLChar("@stage(vertex)\n"
-                                   "fn vertexShader(@location(0) x: vec4<f32>) -> @builtin(position) vec4<f32> {\n"
-                                   "    return x;\n"
-                                   "}\n\n"
-                                   "@stage(fragment)\n"
-                                   "fn fragmentShader() -> @location(0) vec4<f32> {\n"
-                                   "    return vec4<f32>(0.4, 0.4, 0.8, 1.0);\n"
-                                   "}");
+    auto shader = WGSL::parseLChar(
+        "@stage(vertex)\n"
+        "fn vertexShader(@location(0) x: vec4<f32>) -> @builtin(position) vec4<f32> {\n"
+        "    return x;\n"
+        "}\n\n"
+        "@stage(fragment)\n"
+        "fn fragmentShader() -> @location(0) vec4<f32> {\n"
+        "    return vec4<f32>(0.4, 0.4, 0.8, 1.0);\n"
+        "}"_s);
+
     if (!shader.has_value())
         dataLogLn(shader.error());
     XCTAssert(shader.has_value());
     XCTAssert(!shader->directives().size());
-    XCTAssert(shader->structs().size() == 0);
-    XCTAssert(shader->globalVars().size() == 0);
+    XCTAssert(shader->structs().isEmpty());
+    XCTAssert(shader->globalVars().isEmpty());
     XCTAssert(shader->functions().size() == 2);
 
     {
@@ -154,7 +162,7 @@
         XCTAssert(func.parameters()[0]->name() == "x"_s);
         XCTAssert(func.parameters()[0]->attributes().size() == 1);
         XCTAssert(func.parameters()[0]->attributes()[0]->isLocation());
-        XCTAssert(downcast<WGSL::AST::LocationAttribute>(func.parameters()[0]->attributes()[0].get()).location() == 0);
+        XCTAssert(!downcast<WGSL::AST::LocationAttribute>(func.parameters()[0]->attributes()[0].get()).location());
         XCTAssert(func.parameters()[0]->type().isParameterized());
         WGSL::AST::ParameterizedType& paramType = downcast<WGSL::AST::ParameterizedType>(func.parameters()[0]->type());
         XCTAssert(paramType.base() == WGSL::AST::ParameterizedType::Base::Vec4);
@@ -178,10 +186,10 @@
         XCTAssert(func.attributes()[0]->isStage());
         XCTAssert(downcast<WGSL::AST::StageAttribute>(func.attributes()[0].get()).stage() == WGSL::AST::StageAttribute::Stage::Fragment);
         XCTAssert(func.name() == "fragmentShader"_s);
-        XCTAssert(func.parameters().size() == 0);
+        XCTAssert(func.parameters().isEmpty());
         XCTAssert(func.returnAttributes().size() == 1);
         XCTAssert(func.returnAttributes()[0]->isLocation());
-        XCTAssert(downcast<WGSL::AST::LocationAttribute>(func.returnAttributes()[0].get()).location() == 0);
+        XCTAssert(!downcast<WGSL::AST::LocationAttribute>(func.returnAttributes()[0].get()).location());
         XCTAssert(func.maybeReturnType());
         XCTAssert(func.maybeReturnType()->isParameterized());
         XCTAssert(func.body().statements().size() == 1);
