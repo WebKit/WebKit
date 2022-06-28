@@ -71,6 +71,7 @@ ValueProfile* valueProfileForImpl(BytecodeMetadata& metadata, unsigned checkpoin
         }
     } else if constexpr (BytecodeMetadata::opcodeID == op_resolve_and_get_from_scope) {
         switch (checkpointIndex) {
+        case OpResolveAndGetFromScope::resolveScope: return nullptr;
         case OpResolveAndGetFromScope::getFromScope: return &metadata.m_profile;
         default: RELEASE_ASSERT_NOT_REACHED();
         }
@@ -107,10 +108,10 @@ bool hasValueProfileFor(BytecodeMetadata& metadata, unsigned checkpointIndex)
 }
 
 template<typename BytecodeMetadata>
-ValueProfile& valueProfileFor(BytecodeMetadata& metadata, unsigned checkpointIndex)
+ValueProfile* valueProfileFor(BytecodeMetadata& metadata, unsigned checkpointIndex)
 {
     ASSERT(hasValueProfileFor(metadata, checkpointIndex));
-    return *valueProfileForImpl(metadata, checkpointIndex);
+    return valueProfileForImpl(metadata, checkpointIndex);
 }
 
 template<typename Bytecode>
