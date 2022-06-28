@@ -188,7 +188,8 @@ TEST(VideoControlsManager, VideoControlsManagerMultipleVideosScrollPlayingVideoW
     [webView expectControlsManager:YES afterReceivingMessage:@"scrolled"];
 }
 
-TEST(VideoControlsManager, VideoControlsManagerMultipleVideosScrollPlayingMutedVideoOutOfView)
+// FIXME: Re-enable after webkit.org/b/242043- is resolved 
+TEST(VideoControlsManager, DISABLED_VideoControlsManagerMultipleVideosScrollPlayingMutedVideoOutOfView)
 {
     RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 500, 500));
 
