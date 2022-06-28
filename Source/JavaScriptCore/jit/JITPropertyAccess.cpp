@@ -24,8 +24,6 @@
  */
 
 #include "config.h"
-#include "wtf/Compiler.h"
-#include "wtf/DataLog.h"
 
 #if ENABLE(JIT)
 #include "JIT.h"
