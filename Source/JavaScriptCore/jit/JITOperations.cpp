@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "JITOperations.h"
+#include "wtf/Compiler.h"
 
 #if ENABLE(JIT)
 
@@ -2828,7 +2829,8 @@ JSC_DEFINE_JIT_OPERATION(operationSwitchStringWithUnknownKeyType, char*, (JSGlob
     return reinterpret_cast<char*>(result);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationResolveScopeForBaseline, EncodedJSValue, (JSGlobalObject* globalObject, const JSInstruction* pc))
+template<typename BytecodeOpcode>
+ALWAYS_INLINE EncodedJSValue operationResolveScopeHelper(JSGlobalObject* globalObject, const JSInstruction* pc)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -2837,7 +2839,7 @@ JSC_DEFINE_JIT_OPERATION(operationResolveScopeForBaseline, EncodedJSValue, (JSGl
 
     CodeBlock* codeBlock = callFrame->codeBlock();
 
-    auto bytecode = pc->as<OpResolveScope>();
+    auto bytecode = pc->as<BytecodeOpcode>();
     const Identifier& ident = codeBlock->identifier(bytecode.m_var);
     JSScope* scope = callFrame->uncheckedR(bytecode.m_scope).Register::scope();
     JSObject* resolvedScope = JSScope::resolve(globalObject, scope, ident);
@@ -2880,7 +2882,13 @@ JSC_DEFINE_JIT_OPERATION(operationResolveScopeForBaseline, EncodedJSValue, (JSGl
     return JSValue::encode(resolvedScope);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationGetFromScope, EncodedJSValue, (JSGlobalObject* globalObject, const JSInstruction* pc))
+JSC_DEFINE_JIT_OPERATION(operationResolveScopeForBaseline, EncodedJSValue, (JSGlobalObject* globalObject, const JSInstruction* pc))
+{
+    return operationResolveScopeHelper<OpResolveScope>(globalObject, pc);
+}
+
+template<typename BytecodeOpcode>
+ALWAYS_INLINE EncodedJSValue operationGetFromScopeHelper(JSGlobalObject* globalObject, const JSInstruction* pc)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -2889,9 +2897,10 @@ JSC_DEFINE_JIT_OPERATION(operationGetFromScope, EncodedJSValue, (JSGlobalObject*
 
     CodeBlock* codeBlock = callFrame->codeBlock();
 
-    auto bytecode = pc->as<OpGetFromScope>();
+    auto bytecode = pc->as<BytecodeOpcode>();
     const Identifier& ident = codeBlock->identifier(bytecode.m_var);
-    JSObject* scope = jsCast<JSObject*>(callFrame->uncheckedR(bytecode.m_scope).jsValue());
+    VirtualRegister scopeRegister = std::is_same<BytecodeOpcode, OpGetFromScope>::value ? pc->as<OpGetFromScope>().m_scope : pc->as<OpResolveAndGetFromScope>().m_resolvedScope;
+    JSObject* scope = jsCast<JSObject*>(callFrame->uncheckedR(scopeRegister).jsValue());
     GetPutInfo& getPutInfo = bytecode.metadata(codeBlock).m_getPutInfo;
 
     // ModuleVar is always converted to ClosureVar for get_from_scope.
@@ -2914,12 +2923,27 @@ JSC_DEFINE_JIT_OPERATION(operationGetFromScope, EncodedJSValue, (JSGlobalObject*
             }
         }
 
-        CommonSlowPaths::tryCacheGetFromScopeGlobal(globalObject, codeBlock, vm, bytecode, scope, slot, ident);
+        CommonSlowPaths::tryCacheGetFromScopeGlobal<BytecodeOpcode>(globalObject, codeBlock, vm, bytecode, scope, slot, ident);
 
         if (!result)
             return slot.getValue(globalObject, ident);
         return result;
     })));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationGetFromScope, EncodedJSValue, (JSGlobalObject* globalObject, const JSInstruction* pc))
+{
+    return operationGetFromScopeHelper<OpGetFromScope>(globalObject, pc);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationRGSResolveScope, EncodedJSValue, (JSGlobalObject* globalObject, const JSInstruction* pc))
+{
+    return operationResolveScopeHelper<OpResolveAndGetFromScope>(globalObject, pc);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationRGSGetFromScope, EncodedJSValue, (JSGlobalObject* globalObject, const JSInstruction* pc))
+{
+    return operationGetFromScopeHelper<OpResolveAndGetFromScope>(globalObject, pc);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationPutToScope, void, (JSGlobalObject* globalObject, const JSInstruction* pc))

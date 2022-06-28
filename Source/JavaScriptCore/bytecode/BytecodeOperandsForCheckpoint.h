@@ -69,6 +69,11 @@ ValueProfile* valueProfileForImpl(BytecodeMetadata& metadata, unsigned checkpoin
         case OpIteratorNext::getValue: return &metadata.m_valueProfile;
         default: RELEASE_ASSERT_NOT_REACHED();
         }
+    } else if constexpr (BytecodeMetadata::opcodeID == op_resolve_and_get_from_scope) {
+        switch (checkpointIndex) {
+        case OpResolveAndGetFromScope::getFromScope: return &metadata.m_profile;
+        default: RELEASE_ASSERT_NOT_REACHED();
+        }
     } else 
         return &metadata.m_profile;
 }
