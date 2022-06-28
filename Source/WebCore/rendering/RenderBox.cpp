@@ -677,8 +677,10 @@ LayoutUnit RenderBox::constrainLogicalWidthInFragmentByMinMax(LayoutUnit logical
     const RenderStyle& styleToUse = style();
 
     if (shouldComputeLogicalHeightFromAspectRatio()) {
-        auto [logicalMinWidth, logicalMaxWidth] = computeMinMaxLogicalWidthFromAspectRatio();
-        logicalWidth = std::clamp(logicalWidth, logicalMinWidth, logicalMaxWidth);
+        if (!styleToUse.logicalWidth().isSpecified()) {
+            auto [logicalMinWidth, logicalMaxWidth] = computeMinMaxLogicalWidthFromAspectRatio();
+            logicalWidth = std::clamp(logicalWidth, logicalMinWidth, logicalMaxWidth);
+        }
     }
 
     if (!styleToUse.logicalMaxWidth().isUndefined() && (allowIntrinsic == AllowIntrinsic::Yes || !styleToUse.logicalMaxWidth().isIntrinsic()))
@@ -703,6 +705,7 @@ LayoutUnit RenderBox::constrainLogicalHeightByMinMax(LayoutUnit logicalHeight, s
     auto logicalMinHeight = styleToUse.logicalMinHeight();
     if (logicalMinHeight.isAuto() && shouldComputeLogicalHeightFromAspectRatio() && intrinsicContentHeight && !is<RenderReplaced>(*this) && effectiveOverflowBlockDirection() == Overflow::Visible) {
         auto heightFromAspectRatio = blockSizeFromAspectRatio(horizontalBorderAndPaddingExtent(), verticalBorderAndPaddingExtent(), style().logicalAspectRatio(), style().boxSizingForAspectRatio(), logicalWidth()) - borderAndPaddingLogicalHeight();
+        heightFromAspectRatio = std::min(heightFromAspectRatio, logicalHeight);
         if (firstChild())
             heightFromAspectRatio = std::max(heightFromAspectRatio, *intrinsicContentHeight);
         logicalMinHeight = Length(heightFromAspectRatio, LengthType::Fixed);
