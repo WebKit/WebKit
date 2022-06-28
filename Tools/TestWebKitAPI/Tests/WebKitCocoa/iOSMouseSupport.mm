@@ -437,6 +437,22 @@ TEST(iOSMouseSupport, ShowingContextMenuSelectsEditableText)
 
     TestWebKitAPI::Util::run(&done);
     EXPECT_WK_STREQ("Hello", [webView stringByEvaluatingJavaScript:@"getSelection().toString()"]);
+    EXPECT_FALSE(CGRectIsEmpty([webView _uiTextSelectionRects].firstObject.CGRectValue));
+}
+
+TEST(iOSMouseSupport, ShowingContextMenuSelectsNonEditableText)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    [webView synchronouslyLoadHTMLString:@(largeResponsiveHelloMarkup)];
+
+    __block bool done = false;
+    [[webView wkContentView] prepareSelectionForContextMenuWithLocationInView:CGPointMake(100, 100) completionHandler:^(BOOL, RVItem *) {
+        done = true;
+    }];
+
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_WK_STREQ("Hello", [webView stringByEvaluatingJavaScript:@"getSelection().toString()"]);
+    EXPECT_FALSE(CGRectIsEmpty([webView _uiTextSelectionRects].firstObject.CGRectValue));
 }
 
 #if ENABLE(IOS_TOUCH_EVENTS)

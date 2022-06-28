@@ -7700,6 +7700,9 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
         if (!strongSelf)
             return completionHandler(false, nil);
 
+        if (shouldPresentMenu && ![strongSelf _shouldSuppressSelectionCommands])
+            [strongSelf->_textInteractionAssistant activateSelection];
+
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
         [strongSelf doAfterComputingImageAnalysisResultsForBackgroundRemoval:[completionHandler, shouldPresentMenu, item = RetainPtr { item.item() }]() mutable {
             completionHandler(shouldPresentMenu, item.get());
