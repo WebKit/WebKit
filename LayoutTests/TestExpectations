@@ -3782,6 +3782,7 @@ webgl/1.0.x/conformance/misc/invalid-passed-params.html [ Pass ]
 webgl/1.0.x/conformance/glsl/bugs/character-set.html [ Pass ]
 webgl/1.0.x/conformance/glsl/misc/fragcolor-fragdata-invariant.html [ Pass ]
 webgl/1.0.x/conformance/context/constants-and-properties.html [ Pass ]
+webgl/1.0.x/conformance/extensions/webgl-draw-buffers.html [ Pass ]
 webgl/1.0.x/conformance/extensions/webgl-multi-draw.html [ Pass Slow ]
 
 # Debug builds on slower machines run close to the time out especially with GPUP enabled

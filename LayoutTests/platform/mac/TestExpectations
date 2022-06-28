@@ -523,9 +523,6 @@ webkit.org/b/99221 js/dom/random-array-gc-stress.html [ Pass Timeout ]
 # Expected to fail until WebGL extension implementation lands
 webkit.org/b/98257 fast/canvas/webgl/oes-element-index-uint.html [ Failure Pass ]
 
-# Expected to fail until GL_EXT_draw_buffers works properly for DARWIN. See WebGLDrawBuffers::supported
-webkit.org/b/112486 fast/canvas/webgl/webgl-draw-buffers.html [ Failure Pass ]
-
 webkit.org/b/107356 fast/css/sticky/sticky-top-zoomed.html [ ImageOnlyFailure ]
 
 # Overflowing LayoutUnits cause RenderGeometryMap assertions

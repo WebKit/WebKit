@@ -512,6 +512,40 @@ private:
     bool m_wasEnabled;
 };
 
+class ScopedEnableBackbuffer {
+public:
+    explicit ScopedEnableBackbuffer(GraphicsContextGL& context, GCGLenum backDrawBuffer, bool isWebGL2)
+        : m_context(context)
+        , m_backDrawBufferDisabled(backDrawBuffer == GraphicsContextGL::NONE)
+        , m_isWebGL2(isWebGL2)
+    {
+        ASSERT(backDrawBuffer == GraphicsContextGL::NONE || backDrawBuffer == GraphicsContextGL::BACK);
+        if (m_backDrawBufferDisabled) {
+            GCGLenum value[1] { GraphicsContextGL::COLOR_ATTACHMENT0 };
+            if (m_isWebGL2)
+                m_context.drawBuffers(value);
+            else
+                m_context.drawBuffersEXT(value);
+        }
+    }
+
+    ~ScopedEnableBackbuffer()
+    {
+        if (m_backDrawBufferDisabled) {
+            GCGLenum value[1] { GraphicsContextGL::NONE };
+            if (m_isWebGL2)
+                m_context.drawBuffers(value);
+            else
+                m_context.drawBuffersEXT(value);
+        }
+    }
+
+private:
+    GraphicsContextGL& m_context;
+    const bool m_backDrawBufferDisabled;
+    const bool m_isWebGL2;
+};
+
 #define ADD_VALUES_TO_SET(set, arr) \
     set.add(arr, arr + WTF_ARRAY_LENGTH(arr))
 
@@ -1320,7 +1354,7 @@ bool WebGLRenderingContextBase::clearIfComposited(WebGLRenderingContextBase::Cal
     bool combinedClear = mask && !m_scissorEnabled;
 
     m_context->disable(GraphicsContextGL::SCISSOR_TEST);
-    if (combinedClear && (mask & GraphicsContextGL::COLOR_BUFFER_BIT)) {
+    if (combinedClear && (mask & GraphicsContextGL::COLOR_BUFFER_BIT) && (m_backDrawBuffer != GraphicsContextGL::NONE)) {
         m_context->clearColor(m_colorMask[0] ? m_clearColor[0] : 0,
                               m_colorMask[1] ? m_clearColor[1] : 0,
                               m_colorMask[2] ? m_clearColor[2] : 0,
@@ -1352,6 +1386,7 @@ bool WebGLRenderingContextBase::clearIfComposited(WebGLRenderingContextBase::Cal
         m_context->bindFramebuffer(bindingPoint, 0);
     {
         ScopedDisableRasterizerDiscard disable(this, m_rasterizerDiscardEnabled);
+        ScopedEnableBackbuffer enable(*m_context, m_backDrawBuffer, isWebGL2());
         // If the WebGL 2.0 clearBuffer APIs already have been used to
         // selectively clear some of the buffers, don't destroy those
         // results.
@@ -7936,6 +7971,7 @@ GCGLint WebGLRenderingContextBase::getMaxColorAttachments()
 
 void WebGLRenderingContextBase::setBackDrawBuffer(GCGLenum buf)
 {
+    ASSERT(buf == GraphicsContextGL::NONE || buf == GraphicsContextGL::BACK);
     m_backDrawBuffer = buf;
 }
 

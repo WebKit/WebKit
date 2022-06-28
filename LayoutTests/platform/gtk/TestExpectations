@@ -483,8 +483,8 @@ webkit.org/b/169917 webgl/1.0.3/conformance/glsl/constructors/glsl-construct-ive
 webkit.org/b/169917 webgl/1.0.3/conformance/glsl/constructors/glsl-construct-vec2.html [ Slow ]
 webkit.org/b/169917 webgl/1.0.3/conformance/glsl/misc/shader-varying-packing-restrictions.html [ Slow ]
 # WebGL crashes
-webkit.org/b/169917 fast/canvas/webgl/webgl-draw-buffers.html [ Failure ]
 webkit.org/b/169917 webgl/1.0.3/conformance/extensions/webgl-draw-buffers.html [ Failure ]
+webkit.org/b/169917 webgl/1.0.x/conformance/extensions/webgl-draw-buffers.html [ Failure ]
 
 # WebGL 2.0 still not enabled
 webkit.org/b/166536 webgl/webgl2-rendering-context-defined.html [ Skip ]
