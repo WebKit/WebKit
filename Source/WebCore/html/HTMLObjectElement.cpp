@@ -102,28 +102,33 @@ void HTMLObjectElement::collectPresentationalHintsForAttribute(const QualifiedNa
 void HTMLObjectElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     bool invalidateRenderer = false;
+    bool needsWidgetUpdate = false;
 
     if (name == formAttr)
         formAttributeChanged();
     else if (name == typeAttr) {
         m_serviceType = value.string().left(value.find(';')).convertToASCIILowercase();
         invalidateRenderer = !hasAttributeWithoutSynchronization(classidAttr);
-        setNeedsWidgetUpdate(true);
+        needsWidgetUpdate = true;
     } else if (name == dataAttr) {
         m_url = stripLeadingAndTrailingHTMLSpaces(value);
         invalidateRenderer = !hasAttributeWithoutSynchronization(classidAttr);
-        setNeedsWidgetUpdate(true);
+        needsWidgetUpdate = true;
         updateImageLoaderWithNewURLSoon();
     } else if (name == classidAttr) {
         invalidateRenderer = true;
-        setNeedsWidgetUpdate(true);
+        needsWidgetUpdate = true;
     } else
         HTMLPlugInImageElement::parseAttribute(name, value);
+
+    if (needsWidgetUpdate) {
+        setNeedsWidgetUpdate(true);
+        m_useFallbackContent = false;
+    }
 
     if (!invalidateRenderer || !isConnected() || !renderer())
         return;
 
-    m_useFallbackContent = false;
     scheduleUpdateForAfterStyleResolution();
     invalidateStyleAndRenderersForSubtree();
 }
