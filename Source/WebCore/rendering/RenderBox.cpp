@@ -3277,30 +3277,37 @@ std::optional<LayoutUnit> RenderBox::computeIntrinsicLogicalContentHeightUsing(L
         return { };
     }
     if (logicalHeightLength.isFillAvailable()) {
-        auto* containingBlock = this->containingBlock();
-
         auto canResolveAvailableSpace = [&] {
             // FIXME: We need to find a way to say: yes, the constraint value is set and we can resolve height against it.
             // Until then, this is mostly just guesswork.
-            if (!containingBlock)
-                return false;
-            if (is<RenderView>(containingBlock))
-                return true;
-            auto containingBlockHasSpecifiedSpace = [&] {
-                auto isOrthogonal = WebCore::isOrthogonal(*this, *containingBlock);
-                auto& style = containingBlock->style();
-                if ((!isOrthogonal && style.height().isSpecified()) || (isOrthogonal && style.width().isSpecified()))
+            auto inQuirksMode = document().inQuirksMode();
+            auto containingBlockHasSpecifiedSpace = [&](auto& containingBlock) {
+                auto isOrthogonal = WebCore::isOrthogonal(*this, containingBlock);
+                auto& style = containingBlock.style();
+                auto& logicalHeight = isOrthogonal ? style.width() : style.height();
+                if (logicalHeight.isSpecified())
                     return true;
-                if (containingBlock->isOutOfFlowPositioned()) {
+                if (containingBlock.isOutOfFlowPositioned()) {
                     if ((!isOrthogonal && !style.top().isAuto() && !style.bottom().isAuto()) || (isOrthogonal && !style.left().isAuto() && !style.right().isAuto()))
                         return true;
                 }
                 return false;
             };
-            return containingBlockHasSpecifiedSpace() || containingBlock->hasOverridingLogicalHeight();
+
+            for (auto* ancestor = this->containingBlock(); ancestor; ancestor = ancestor->containingBlock()) {
+                if (ancestor->hasOverridingLogicalHeight() || containingBlockHasSpecifiedSpace(*ancestor))
+                    return true;
+                if (is<RenderView>(ancestor) || (inQuirksMode && (ancestor->isBody() || ancestor->isDocumentElementRenderer())))
+                    return true;
+                // Flexing containers don't need to have specified height in order to provide a resolvable value.
+                if (!ancestor->isFlexItem() && !ancestor->isGridItem() && !is<RenderTableCell>(ancestor))
+                    return false;
+            }
+            ASSERT_NOT_REACHED();
+            return false;
         };
         if (canResolveAvailableSpace())
-            return containingBlock->availableLogicalHeight(ExcludeMarginBorderPadding) - borderAndPadding;
+            return containingBlock()->availableLogicalHeight(ExcludeMarginBorderPadding) - borderAndPadding;
         return { };
     }
     ASSERT_NOT_REACHED();
