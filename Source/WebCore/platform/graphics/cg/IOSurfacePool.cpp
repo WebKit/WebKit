@@ -51,6 +51,13 @@ IOSurfacePool::IOSurfacePool()
 {
 }
 
+IOSurfacePool::~IOSurfacePool()
+{
+    callOnMainRunLoopAndWait([&] {
+        discardAllSurfaces();
+    });
+}
+
 IOSurfacePool& IOSurfacePool::sharedPool()
 {
     static LazyNeverDestroyed<IOSurfacePool> pool;
