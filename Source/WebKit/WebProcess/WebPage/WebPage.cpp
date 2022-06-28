@@ -930,8 +930,10 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         && m_shouldRenderDOMInGPUProcess
         && m_shouldPlayMediaInGPUProcess;
 
-    if (blockIOKit)
+    if (blockIOKit) {
         CFPreferencesGetAppIntegerValue(CFSTR("key"), CFSTR("com.apple.WebKit.WebContent.BlockIOKitInWebContentSandbox"), nullptr);
+        ProcessCapabilities::setHardwareAcceleratedDecodingDisabled(true);
+    }
 #endif
 
     updateThrottleState();

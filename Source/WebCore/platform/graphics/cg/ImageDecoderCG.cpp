@@ -34,13 +34,15 @@
 #include "IntPoint.h"
 #include "IntSize.h"
 #include "Logging.h"
-#include "MediaAccessibilitySoftLink.h"
 #include "MIMETypeRegistry.h"
+#include "ProcessCapabilities.h"
 #include "SharedBuffer.h"
 #include "UTIRegistry.h"
 #include <pal/spi/cg/ImageIOSPI.h>
 #include <ImageIO/ImageIO.h>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
+
+#include "MediaAccessibilitySoftLink.h"
 
 namespace WebCore {
 
@@ -72,11 +74,11 @@ static RetainPtr<CFMutableDictionaryRef> createImageSourceOptions()
     CFDictionarySetValue(options.get(), kCGImageSourceShouldPreferRGB32, kCFBooleanTrue);
     CFDictionarySetValue(options.get(), kCGImageSourceSkipMetadata, kCFBooleanTrue);
 
-    if (ImageDecoderCG::hardwareAcceleratedDecodingDisabled())
+    if (ProcessCapabilities::isHardwareAcceleratedDecodingDisabled())
         CFDictionarySetValue(options.get(), kCGImageSourceUseHardwareAcceleration, kCFBooleanFalse);
 
 #if HAVE(IMAGE_RESTRICTED_DECODING) && USE(APPLE_INTERNAL_SDK)
-    if (ImageDecoderCG::decodingHEICEnabled() || ImageDecoderCG::decodingAVIFEnabled())
+    if (ProcessCapabilities::isHEICDecodingEnabled() || ProcessCapabilities::isAVIFDecodingEnabled())
         CFDictionarySetValue(options.get(), kCGImageSourceEnableRestrictedDecoding, kCFBooleanTrue);
 #endif
 
@@ -267,10 +269,6 @@ void sharedBufferRelease(void* info)
     sharedBuffer->deref();
 }
 #endif
-
-bool ImageDecoderCG::s_enableDecodingHEIC = false;
-bool ImageDecoderCG::s_enableDecodingAVIF = false;
-bool ImageDecoderCG::s_hardwareAcceleratedDecodingDisabled = false;
 
 ImageDecoderCG::ImageDecoderCG(FragmentedSharedBuffer& data, AlphaOption, GammaAndColorProfileOption)
 {
@@ -610,36 +608,6 @@ void ImageDecoderCG::setData(const FragmentedSharedBuffer& data, bool allDataRec
 bool ImageDecoderCG::canDecodeType(const String& mimeType)
 {
     return MIMETypeRegistry::isSupportedImageMIMEType(mimeType);
-}
-
-void ImageDecoderCG::enableDecodingHEIC()
-{
-    s_enableDecodingHEIC = true;
-}
-
-bool ImageDecoderCG::decodingHEICEnabled()
-{
-    return s_enableDecodingHEIC;
-}
-
-void ImageDecoderCG::enableDecodingAVIF()
-{
-    s_enableDecodingAVIF = true;
-}
-
-bool ImageDecoderCG::decodingAVIFEnabled()
-{
-    return s_enableDecodingAVIF;
-}
-
-void ImageDecoderCG::disableHardwareAcceleratedDecoding()
-{
-    s_hardwareAcceleratedDecodingDisabled = true;
-}
-
-bool ImageDecoderCG::hardwareAcceleratedDecodingDisabled()
-{
-    return s_hardwareAcceleratedDecodingDisabled;
 }
 
 }

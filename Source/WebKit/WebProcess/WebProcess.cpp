@@ -2032,14 +2032,7 @@ void WebProcess::setUseGPUProcessForCanvasRendering(bool useGPUProcessForCanvasR
 
 void WebProcess::setUseGPUProcessForDOMRendering(bool useGPUProcessForDOMRendering)
 {
-    if (useGPUProcessForDOMRendering == m_useGPUProcessForDOMRendering)
-        return;
-
     m_useGPUProcessForDOMRendering = useGPUProcessForDOMRendering;
-#if USE(CG)
-    if (m_useGPUProcessForDOMRendering)
-        ImageDecoderCG::disableHardwareAcceleratedDecoding();
-#endif
 }
 
 void WebProcess::setUseGPUProcessForMedia(bool useGPUProcessForMedia)

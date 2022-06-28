@@ -1917,6 +1917,7 @@ platform/PlatformSpeechSynthesizer.cpp
 platform/PlatformStrategies.cpp
 platform/PlatformWheelEvent.cpp
 platform/PreviewConverter.cpp
+platform/ProcessCapabilities.cpp
 platform/ProcessIdentifier.cpp
 platform/ProcessIdentity.cpp
 platform/ReferrerPolicy.cpp

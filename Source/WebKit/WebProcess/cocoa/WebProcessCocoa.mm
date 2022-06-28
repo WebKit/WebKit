@@ -79,6 +79,7 @@
 #import <WebCore/PictureInPictureSupport.h>
 #import <WebCore/PlatformMediaSessionManager.h>
 #import <WebCore/PlatformScreen.h>
+#import <WebCore/ProcessCapabilities.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/RuntimeEnabledFeatures.h>
 #import <WebCore/SWContextManager.h>
@@ -286,12 +287,12 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     OptionSet<VideoDecoderBehavior> videoDecoderBehavior;
     
     if (parameters.enableDecodingHEIC) {
-        ImageDecoderCG::enableDecodingHEIC();
+        ProcessCapabilities::setHEICDecodingEnabled(true);
         videoDecoderBehavior.add(VideoDecoderBehavior::EnableHEIC);
     }
 
     if (parameters.enableDecodingAVIF) {
-        ImageDecoderCG::enableDecodingAVIF();
+        ProcessCapabilities::setAVIFDecodingEnabled(true);
         videoDecoderBehavior.add(VideoDecoderBehavior::EnableAVIF);
     }
 
