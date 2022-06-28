@@ -66,10 +66,13 @@ void Download::resume(const IPC::DataReference& resumeData, const String& path, 
     
 void Download::platformCancelNetworkLoad(CompletionHandler<void(const IPC::DataReference&)>&& completionHandler)
 {
+    ASSERT(isMainRunLoop());
     ASSERT(m_downloadTask);
     [m_downloadTask cancelByProducingResumeData:makeBlockPtr([completionHandler = WTFMove(completionHandler)] (NSData *resumeData) mutable {
-        auto resumeDataReference = resumeData ? IPC::DataReference { static_cast<const uint8_t*>(resumeData.bytes), resumeData.length } : IPC::DataReference { };
-        completionHandler(resumeDataReference);
+        ensureOnMainRunLoop([resumeData = retainPtr(resumeData), completionHandler = WTFMove(completionHandler)] () mutable  {
+            auto resumeDataReference = resumeData ? IPC::DataReference { static_cast<const uint8_t*>([resumeData bytes]), [resumeData length] } : IPC::DataReference { };
+            completionHandler(resumeDataReference);
+        });
     }).get()];
 }
 
