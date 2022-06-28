@@ -30,5 +30,6 @@
     "nfc",
     "ble",
     "internal",
-    "cable"
+    "cable",
+    "hybrid"
 };
