@@ -901,7 +901,7 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
     bool scrollingEnabled = _page->scrollingCoordinatorProxy()->hasScrollableOrZoomedMainFrame() || hasDockedInputView || isZoomed || scrollingNeededToRevealUI;
     [_scrollView _setScrollEnabledInternal:scrollingEnabled];
 
-    if (!layerTreeTransaction.scaleWasSetByUIProcess() && ![_scrollView isZooming] && ![_scrollView isZoomBouncing] && ![_scrollView _isAnimatingZoom] && [_scrollView zoomScale] != layerTreeTransaction.pageScaleFactor()) {
+    if (!layerTreeTransaction.scaleWasSetByUIProcess() && ![_scrollView isZooming] && ![_scrollView isZoomBouncing] && ![_scrollView _isAnimatingZoom] && !WTF::areEssentiallyEqual<float>([_scrollView zoomScale], layerTreeTransaction.pageScaleFactor())) {
         LOG_WITH_STREAM(VisibleRects, stream << " updating scroll view with pageScaleFactor " << layerTreeTransaction.pageScaleFactor());
         [_scrollView setZoomScale:layerTreeTransaction.pageScaleFactor()];
     }
