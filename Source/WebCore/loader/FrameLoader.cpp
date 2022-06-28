@@ -3238,6 +3238,11 @@ void FrameLoader::continueFragmentScrollAfterNavigationPolicy(const ResourceRequ
         setProvisionalDocumentLoader(nullptr);
     }
 
+    if (!UserGestureIndicator::processingUserGesture(m_frame.document())) {
+        if (auto* currentItem = history().currentItem())
+            currentItem->setWasCreatedByJSWithoutUserInteraction(true);
+    }
+
     bool isRedirect = m_quickRedirectComing || policyChecker().loadType() == FrameLoadType::RedirectWithLockedBackForwardList;
     loadInSameDocument(request.url(), nullptr, !isRedirect);
 }
