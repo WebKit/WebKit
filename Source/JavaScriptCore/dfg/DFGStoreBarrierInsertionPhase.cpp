@@ -30,6 +30,7 @@
 
 #include "DFGAbstractInterpreterInlines.h"
 #include "DFGBlockMapInlines.h"
+#include "DFGClobberSet.h"
 #include "DFGDoesGC.h"
 #include "DFGGraph.h"
 #include "DFGInPlaceAbstractState.h"
@@ -401,6 +402,65 @@ private:
                 // (if there is one) could be arbitrarily old.
                 m_node->setEpoch(Epoch());
                 break;
+            }
+
+            {
+                // We need to consider nodes that might leak objects we've allocated into the heap.
+                // Once an object is leaked, we can no longer elide barriers on it.
+                // Let's motivate this requirement with an example:
+                // D@30: JSConstant(Int32: 42)
+                // D@35: GetStack(arg1)
+                // D@21: CheckStructure(Cell:D@35, [%ED:Object])
+                // D@23: GetStack(arg2)
+                // D@25: NewObject()
+                // D@33: PutByOffset(KnownCell:D@25, KnownCell:D@25, Check:Untyped:Kill:D@30, id0{x})
+                // D@34: PutStructure(KnownCell:D@25, %DN:Object -> %Ch:Object)
+                // D@40: PutByOffset(KnownCell:D@35, KnownCell:D@35, Check:Untyped:D@25, id1{p})
+                // D@45: FencedStoreBarrier(Check:KnownCell:Kill:D@35)
+                // <-- P1
+                // D@41: PutByOffset(KnownCell:D@25, KnownCell:D@25, Check:Untyped:Kill:D@23, id2{y})
+                // <-- P2
+                //
+                // Let's say at the program point P1, the barrier @45 didn't fire because @35 is already grey.
+                // Because @35 is grey, at P1, let's say the concurrent marker marks and traces @35, and also
+                // marks and traces @25. So at P1, the concurrent marker blackens @35 and @25.
+                // Now, let's consider program point P2.
+                // If we didn't barrier @25 at P2, we will never see that @25 points to @23, because @25 is already
+                // black. This is because after @25 was allocated, it escaped into the heap (at @40). Once an allocation
+                // escapes into the heap, it can be blackened at any point by the concurrent marker.
+                // So this analysis must mark an allocation that escapes to the heap as being part of the primordial
+                // epoch.
+
+                ClobberSet writes = writeSet(m_graph, m_node);
+                if (writes.overlaps(Heap) || writes.overlaps(Stack)) {
+                    auto escape = [] (Node* node) {
+                        node->setEpoch(Epoch());
+                    };
+
+                    switch (m_node->op()) {
+                    case PutStructure:
+                    case MultiDeleteByOffset:
+                        break;
+
+                    case PutInternalField:
+                        escape(m_node->child2().node());
+                        break;
+                    case PutByOffset:
+                        escape(m_node->child3().node());
+                        break;
+                    case MultiPutByOffset:
+                        escape(m_node->child2().node());
+                        break;
+                    case PutClosureVar:
+                        escape(m_node->child2().node());
+                        break;
+                    default:
+                        m_graph.doToChildren(m_node, [&] (Edge edge) {
+                            escape(edge.node());
+                        });
+                        break;
+                    }
+                }
             }
             
             if (DFGStoreBarrierInsertionPhaseInternal::verbose) {
