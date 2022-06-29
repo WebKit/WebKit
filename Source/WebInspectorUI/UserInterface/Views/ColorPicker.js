@@ -109,7 +109,7 @@ WI.ColorPicker = class ColorPicker extends WI.Object
         let pickedColorCSSString = null;
         try {
             pickedColorCSSString = await InspectorFrontendHost.pickColorFromScreen();
-        } catch (e) {
+        } catch (error) {
             WI.reportInternalError(error);
         }
 
