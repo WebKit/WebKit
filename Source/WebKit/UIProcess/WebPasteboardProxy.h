@@ -106,6 +106,11 @@ private:
     void setPasteboardColor(IPC::Connection&, const String&, const WebCore::Color&, std::optional<WebCore::PageIdentifier>, CompletionHandler<void(int64_t)>&&);
     void setPasteboardStringForType(IPC::Connection&, const String& pasteboardName, const String& pasteboardType, const String&, std::optional<WebCore::PageIdentifier>, CompletionHandler<void(int64_t)>&&);
     void setPasteboardBufferForType(IPC::Connection&, const String& pasteboardName, const String& pasteboardType, RefPtr<WebCore::SharedBuffer>&&, std::optional<WebCore::PageIdentifier>, CompletionHandler<void(int64_t)>&&);
+
+#if ENABLE(IPC_TESTING_API)
+    void testIPCSharedMemory(IPC::Connection&, const String& pasteboardName, const String& pasteboardType, WebKit::SharedMemory::IPCHandle&&, std::optional<WebCore::PageIdentifier>, CompletionHandler<void(int64_t, String)>&&);
+#endif
+
 #endif
 
     void readStringFromPasteboard(IPC::Connection&, size_t index, const String& pasteboardType, const String& pasteboardName, std::optional<WebCore::PageIdentifier>, CompletionHandler<void(String&&)>&&);

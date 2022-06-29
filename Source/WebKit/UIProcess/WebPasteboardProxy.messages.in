@@ -58,6 +58,11 @@ messages -> WebPasteboardProxy NotRefCounted {
     SetPasteboardBufferForType(String pasteboardName, String pasteboardType, RefPtr<WebCore::SharedBuffer> buffer, std::optional<WebCore::PageIdentifier> pageID) -> (int64_t changeCount) Synchronous WantsConnection
     ContainsURLStringSuitableForLoading(String pasteboardName, std::optional<WebCore::PageIdentifier> pageID) -> (bool result) Synchronous WantsConnection
     URLStringSuitableForLoading(String pasteboardName, std::optional<WebCore::PageIdentifier> pageID) -> (String url, String title) Synchronous WantsConnection
+
+#if ENABLE(IPC_TESTING_API)
+    TestIPCSharedMemory(String pasteboardName, String pasteboardType, WebKit::SharedMemory::IPCHandle handle, std::optional<WebCore::PageIdentifier> pageID) -> (int64_t changeCount, String buffer) Synchronous WantsConnection
+#endif
+
 #endif
 
 #if PLATFORM(GTK)

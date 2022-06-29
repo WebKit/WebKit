@@ -46,7 +46,7 @@ static RetainPtr<NSString> promptResult;
 @interface IPCTestingAPIDelegate : NSObject <WKUIDelegate, WKNavigationDelegate>
 - (BOOL)sayHelloWasCalled;
 @end
-    
+
 @implementation IPCTestingAPIDelegate {
     BOOL _didCallSayHello;
 }
@@ -320,10 +320,12 @@ TEST(IPCTestingAPI, CanSendSharedMemory)
 <script>
 const sharedMemory = IPC.createSharedMemory(8);
 sharedMemory.writeBytes(new Uint8Array(Array.from('hello').map((char) => char.charCodeAt(0))));
-const result = IPC.sendSyncMessage('UI', 0, IPC.messages.WebPasteboardProxy_SetPasteboardBufferForType.name, 100, [
-    {type: 'String', value: 'Apple CFPasteboard general'}, {type: 'String', value: 'text/plain'},
-    {type: 'SharedMemory', value: sharedMemory, protection: 'ReadOnly'}, {type: 'bool', value: 1}, {type: 'uint64_t', value: IPC.pageID}]);
-alert(result.arguments.length + ':' + JSON.stringify(result.arguments[0]));
+const result = IPC.sendSyncMessage('UI', 0, IPC.messages.WebPasteboardProxy_TestIPCSharedMemory.name, 100, [
+    {type: 'String', value: 'Apple CFPasteboard general'},
+    {type: 'String', value: 'text/plain'},
+    {type: 'SharedMemory', value: sharedMemory, protection: 'ReadOnly'},
+    {type: 'bool', value: 1}, {type: 'uint64_t', value: IPC.pageID}]);
+alert(result.arguments.length + ':' + JSON.stringify(result.arguments[0]) + ',' + JSON.stringify(result.arguments[1]));
 </script>
 </body>)HTML";
 
@@ -331,7 +333,7 @@ alert(result.arguments.length + ':' + JSON.stringify(result.arguments[0]));
     [webView synchronouslyLoadHTMLString:html];
     TestWebKitAPI::Util::run(&done);
 
-    EXPECT_STREQ([alertMessage UTF8String], "1:{\"type\":\"int64_t\",\"value\":0}");
+    EXPECT_STREQ([alertMessage UTF8String], "2:{\"type\":\"int64_t\",\"value\":8},{\"type\":\"String\",\"value\":\"hello\\u0000\\u0000\\u0000\"}");
 }
 #endif
 
