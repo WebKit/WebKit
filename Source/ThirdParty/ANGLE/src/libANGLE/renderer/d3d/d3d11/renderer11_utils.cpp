@@ -1681,6 +1681,7 @@ void GenerateCaps(ID3D11Device *device,
     extensions->blendFuncExtendedEXT    = true;
     // http://anglebug.com/4926
     extensions->texture3DOES                             = false;
+    extensions->baseInstanceEXT                          = true;
     extensions->baseVertexBaseInstanceANGLE              = true;
     extensions->baseVertexBaseInstanceShaderBuiltinANGLE = true;
     extensions->drawElementsBaseVertexOES                = true;
@@ -2707,4 +2708,29 @@ IndexStorageType ClassifyIndexStorage(const gl::State &glState,
     // Static buffer not available, fall back to streaming.
     return IndexStorageType::Dynamic;
 }
+
+bool SwizzleRequired(const gl::TextureState &textureState)
+{
+    // When sampling stencil, a swizzle is needed to move the stencil channel from G to R.
+    return textureState.swizzleRequired() || textureState.isStencilMode();
+}
+
+gl::SwizzleState GetEffectiveSwizzle(const gl::TextureState &textureState)
+{
+    const gl::SwizzleState &swizzle = textureState.getSwizzleState();
+    if (textureState.isStencilMode())
+    {
+        // Per GL semantics, the stencil value should be in the red channel, while D3D11 formats
+        // leave stencil in the green channel. So copy the stencil value from green to all
+        // components requesting red. Green and blue become zero; alpha becomes one.
+        std::unordered_map<GLenum, GLenum> map = {{GL_RED, GL_GREEN}, {GL_GREEN, GL_ZERO},
+                                                  {GL_BLUE, GL_ZERO}, {GL_ALPHA, GL_ONE},
+                                                  {GL_ZERO, GL_ZERO}, {GL_ONE, GL_ONE}};
+
+        return gl::SwizzleState(map[swizzle.swizzleRed], map[swizzle.swizzleGreen],
+                                map[swizzle.swizzleBlue], map[swizzle.swizzleAlpha]);
+    }
+    return swizzle;
+}
+
 }  // namespace rx

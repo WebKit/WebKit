@@ -375,11 +375,11 @@ Layout sh::GlslLayoutOf(const TType &type,
     }
 }
 
-ANGLE_NO_DISCARD Layout sh::GlslStructLayoutOf(TField const *const *begin,
-                                               TField const *const *end,
-                                               TLayoutBlockStorage storage,
-                                               TLayoutMatrixPacking matrixPacking,
-                                               bool maskArray)
+[[nodiscard]] Layout sh::GlslStructLayoutOf(TField const *const *begin,
+                                            TField const *const *end,
+                                            TLayoutBlockStorage storage,
+                                            TLayoutMatrixPacking matrixPacking,
+                                            bool maskArray)
 {
     ASSERT(storage != TLayoutBlockStorage::EbsUnspecified);
     ASSERT(matrixPacking != TLayoutMatrixPacking::EmpUnspecified);

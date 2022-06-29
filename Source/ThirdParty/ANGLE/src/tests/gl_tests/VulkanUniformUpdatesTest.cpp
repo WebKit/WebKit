@@ -29,7 +29,7 @@ using namespace angle;
 namespace
 {
 
-class VulkanUniformUpdatesTest : public ANGLETest
+class VulkanUniformUpdatesTest : public ANGLETest<>
 {
   protected:
     VulkanUniformUpdatesTest() : mLastContext(nullptr) {}

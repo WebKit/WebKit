@@ -18,7 +18,7 @@ using namespace angle;
 namespace
 {
 
-class EGLSurfacelessContextTest : public ANGLETest
+class EGLSurfacelessContextTest : public ANGLETest<>
 {
   public:
     EGLSurfacelessContextTest() : mDisplay(0) {}
@@ -27,7 +27,7 @@ class EGLSurfacelessContextTest : public ANGLETest
     {
         EGLint dispattrs[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE, GetParam().getRenderer(), EGL_NONE};
         mDisplay           = eglGetPlatformDisplayEXT(
-            EGL_PLATFORM_ANGLE_ANGLE, reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
+                      EGL_PLATFORM_ANGLE_ANGLE, reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
         ASSERT_TRUE(mDisplay != EGL_NO_DISPLAY);
 
         ASSERT_EGL_TRUE(eglInitialize(mDisplay, nullptr, nullptr));

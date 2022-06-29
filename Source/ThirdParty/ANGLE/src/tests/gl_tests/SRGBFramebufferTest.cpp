@@ -18,7 +18,7 @@ constexpr angle::GLColor srgbColor(13, 54, 133, 255);
 namespace angle
 {
 
-class SRGBFramebufferTest : public ANGLETest
+class SRGBFramebufferTest : public ANGLETest<>
 {
   protected:
     SRGBFramebufferTest()

@@ -359,6 +359,10 @@
         "mode": "PrimitiveMode",
         "type": "DrawElementsType"
     },
+    "glDrawElementsInstancedBaseInstance": {
+        "mode": "PrimitiveMode",
+        "type": "DrawElementsType"
+    },
     "glDrawElementsInstancedBaseVertexBaseInstance": {
         "mode": "PrimitiveMode",
         "type": "DrawElementsType"

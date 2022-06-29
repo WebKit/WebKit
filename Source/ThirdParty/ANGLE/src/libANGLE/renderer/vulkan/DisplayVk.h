@@ -30,6 +30,8 @@ class ShareGroupVk : public ShareGroupImpl
     ShareGroupVk();
     void onDestroy(const egl::Display *display) override;
 
+    FramebufferCache &getFramebufferCache() { return mFramebufferCache; }
+
     // PipelineLayoutCache and DescriptorSetLayoutCache can be shared between multiple threads
     // accessing them via shared contexts. The ShareGroup locks around gl entrypoints ensuring
     // synchronous update to the caches.
@@ -60,6 +62,9 @@ class ShareGroupVk : public ShareGroupImpl
     void removeContext(ContextVk *contextVk);
 
   private:
+    // VkFramebuffer caches
+    FramebufferCache mFramebufferCache;
+
     // ANGLE uses a PipelineLayout cache to store compatible pipeline layouts.
     PipelineLayoutCache mPipelineLayoutCache;
 
@@ -167,8 +172,8 @@ class DisplayVk : public DisplayImpl, public vk::Context
     // surfaceType, which would still allow the config to be used for pbuffers.
     virtual void checkConfigSupport(egl::Config *config) = 0;
 
-    ANGLE_NO_DISCARD bool getScratchBuffer(size_t requestedSizeBytes,
-                                           angle::MemoryBuffer **scratchBufferOut) const;
+    [[nodiscard]] bool getScratchBuffer(size_t requestedSizeBytes,
+                                        angle::MemoryBuffer **scratchBufferOut) const;
     angle::ScratchBuffer *getScratchBuffer() const { return &mScratchBuffer; }
 
     void handleError(VkResult result,
@@ -178,6 +183,8 @@ class DisplayVk : public DisplayImpl, public vk::Context
 
     // TODO(jmadill): Remove this once refactor is done. http://anglebug.com/3041
     egl::Error getEGLError(EGLint errorCode);
+
+    void initializeFrontendFeatures(angle::FrontendFeatures *features) const override;
 
     void populateFeatureList(angle::FeatureList *features) override;
 

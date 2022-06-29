@@ -11,7 +11,7 @@
 
 using namespace angle;
 
-class VertexPointerTest : public ANGLETest
+class VertexPointerTest : public ANGLETest<>
 {
   protected:
     VertexPointerTest()

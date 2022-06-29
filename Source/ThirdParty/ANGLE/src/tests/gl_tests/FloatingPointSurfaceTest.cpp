@@ -10,7 +10,7 @@
 
 using namespace angle;
 
-class FloatingPointSurfaceTest : public ANGLETest
+class FloatingPointSurfaceTest : public ANGLETest<>
 {
   protected:
     FloatingPointSurfaceTest()

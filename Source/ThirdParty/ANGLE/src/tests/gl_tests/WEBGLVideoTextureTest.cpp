@@ -13,7 +13,7 @@ using namespace angle;
 namespace
 {
 
-class WEBGLVideoTextureTest : public ANGLETest
+class WEBGLVideoTextureTest : public ANGLETest<>
 {
   protected:
     WEBGLVideoTextureTest()
@@ -27,7 +27,7 @@ class WEBGLVideoTextureTest : public ANGLETest
     }
 };
 
-class WEBGLVideoTextureES300Test : public ANGLETest
+class WEBGLVideoTextureES300Test : public ANGLETest<>
 {
   protected:
     WEBGLVideoTextureES300Test()

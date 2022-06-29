@@ -31,7 +31,7 @@ constexpr char kGreenFragmentShader[] =
     gl_FragColor = vec4(0, 1, 0, 1);
 })";
 
-class SimpleOperationTest : public ANGLETest
+class SimpleOperationTest : public ANGLETest<>
 {
   protected:
     SimpleOperationTest()

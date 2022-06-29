@@ -613,6 +613,12 @@ ANGLE_TRACE_LOADER_EXPORT PFNGLLOSECONTEXTCHROMIUMPROC t_glLoseContextCHROMIUM;
 ANGLE_TRACE_LOADER_EXPORT PFNGLEGLIMAGETARGETTEXSTORAGEEXTPROC t_glEGLImageTargetTexStorageEXT;
 ANGLE_TRACE_LOADER_EXPORT PFNGLEGLIMAGETARGETTEXTURESTORAGEEXTPROC
     t_glEGLImageTargetTextureStorageEXT;
+ANGLE_TRACE_LOADER_EXPORT PFNGLDRAWARRAYSINSTANCEDBASEINSTANCEEXTPROC
+    t_glDrawArraysInstancedBaseInstanceEXT;
+ANGLE_TRACE_LOADER_EXPORT PFNGLDRAWELEMENTSINSTANCEDBASEINSTANCEEXTPROC
+    t_glDrawElementsInstancedBaseInstanceEXT;
+ANGLE_TRACE_LOADER_EXPORT PFNGLDRAWELEMENTSINSTANCEDBASEVERTEXBASEINSTANCEEXTPROC
+    t_glDrawElementsInstancedBaseVertexBaseInstanceEXT;
 ANGLE_TRACE_LOADER_EXPORT PFNGLBINDFRAGDATALOCATIONEXTPROC t_glBindFragDataLocationEXT;
 ANGLE_TRACE_LOADER_EXPORT PFNGLBINDFRAGDATALOCATIONINDEXEDEXTPROC
     t_glBindFragDataLocationIndexedEXT;
@@ -1774,6 +1780,15 @@ void LoadGLES(LoadProc loadProc)
     t_glEGLImageTargetTextureStorageEXT =
         reinterpret_cast<PFNGLEGLIMAGETARGETTEXTURESTORAGEEXTPROC>(
             loadProc("glEGLImageTargetTextureStorageEXT"));
+    t_glDrawArraysInstancedBaseInstanceEXT =
+        reinterpret_cast<PFNGLDRAWARRAYSINSTANCEDBASEINSTANCEEXTPROC>(
+            loadProc("glDrawArraysInstancedBaseInstanceEXT"));
+    t_glDrawElementsInstancedBaseInstanceEXT =
+        reinterpret_cast<PFNGLDRAWELEMENTSINSTANCEDBASEINSTANCEEXTPROC>(
+            loadProc("glDrawElementsInstancedBaseInstanceEXT"));
+    t_glDrawElementsInstancedBaseVertexBaseInstanceEXT =
+        reinterpret_cast<PFNGLDRAWELEMENTSINSTANCEDBASEVERTEXBASEINSTANCEEXTPROC>(
+            loadProc("glDrawElementsInstancedBaseVertexBaseInstanceEXT"));
     t_glBindFragDataLocationEXT =
         reinterpret_cast<PFNGLBINDFRAGDATALOCATIONEXTPROC>(loadProc("glBindFragDataLocationEXT"));
     t_glBindFragDataLocationIndexedEXT = reinterpret_cast<PFNGLBINDFRAGDATALOCATIONINDEXEDEXTPROC>(

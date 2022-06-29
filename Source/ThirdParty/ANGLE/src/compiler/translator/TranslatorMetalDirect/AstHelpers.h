@@ -111,17 +111,17 @@ TIntermTyped &AccessIndex(TIntermTyped &node, const int *index);
 // This returns the original node if the slice is an identity for the node.
 TIntermTyped &SubVector(TIntermTyped &vectorNode, int begin, int end);
 
-// Matches scalar bool, int, uint, float, double.
+// Matches scalar bool, int, uint32_t, float, double.
 bool IsScalarBasicType(const TType &type);
 
-// Matches vector bool, int, uint, float, double.
+// Matches vector bool, int, uint32_t, float, double.
 bool IsVectorBasicType(const TType &type);
 
-// Matches bool, int, uint, float, double.
+// Matches bool, int, uint32_t, float, double.
 // Type does not need to be a scalar.
 bool HasScalarBasicType(const TType &type);
 
-// Matches bool, int, uint, float, double.
+// Matches bool, int, uint32_t, float, double.
 bool HasScalarBasicType(TBasicType type);
 
 // Clones a type.

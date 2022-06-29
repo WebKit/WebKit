@@ -137,8 +137,8 @@ class ResourcesHLSL : angle::NonCopyable
     unsigned int mSRVRegister;
     unsigned int mUAVRegister;
     unsigned int mSamplerCount;
-    unsigned int mReadonlyImageCount;
-    unsigned int mImageCount;
+    unsigned int mReadonlyImageCount = 0;
+    unsigned int mImageCount         = 0;
     StructureHLSL *mStructureHLSL;
     ShShaderOutput mOutputType;
 

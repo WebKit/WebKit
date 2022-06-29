@@ -125,9 +125,9 @@ enum class ClipSpaceOrigin
 };
 
 // Calculate the intersection of two rectangles.  Returns false if the intersection is empty.
-ANGLE_NO_DISCARD bool ClipRectangle(const Rectangle &source,
-                                    const Rectangle &clip,
-                                    Rectangle *intersection);
+[[nodiscard]] bool ClipRectangle(const Rectangle &source,
+                                 const Rectangle &clip,
+                                 Rectangle *intersection);
 // Calculate the smallest rectangle that covers both rectangles.  This rectangle may cover areas
 // not covered by the two rectangles, for example in this situation:
 //
@@ -196,12 +196,15 @@ struct Box
           height(size.height),
           depth(size.depth)
     {}
+    bool valid() const;
     bool operator==(const Box &other) const;
     bool operator!=(const Box &other) const;
     Rectangle toRect() const;
 
     // Whether the Box has offset 0 and the same extents as argument.
     bool coversSameExtent(const Extents &size) const;
+
+    bool contains(const Box &other) const;
 
     int x;
     int y;
@@ -782,7 +785,7 @@ class BlendStateExt final
 
     uint8_t mDrawBufferCount;
 
-    ANGLE_MAYBE_UNUSED uint32_t kUnused = 0;
+    [[maybe_unused]] uint32_t kUnused = 0;
 };
 
 static_assert(sizeof(BlendStateExt) == sizeof(uint64_t) +

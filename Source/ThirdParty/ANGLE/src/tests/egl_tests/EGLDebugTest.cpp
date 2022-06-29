@@ -14,7 +14,7 @@
 
 namespace angle
 {
-class EGLDebugTest : public ANGLETest
+class EGLDebugTest : public ANGLETest<>
 {
   protected:
     void testTearDown() override { eglDebugMessageControlKHR(nullptr, nullptr); }

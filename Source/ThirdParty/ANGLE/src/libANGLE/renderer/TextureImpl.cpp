@@ -192,4 +192,9 @@ GLint TextureImpl::getRequiredExternalTextureImageUnits(const gl::Context *conte
     return 0;
 }
 
+angle::Result TextureImpl::onLabelUpdate(const gl::Context *context)
+{
+    return angle::Result::Continue;
+}
+
 }  // namespace rx

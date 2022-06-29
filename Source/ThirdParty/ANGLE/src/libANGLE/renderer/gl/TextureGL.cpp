@@ -590,6 +590,7 @@ angle::Result TextureGL::setCompressedImage(const gl::Context *context,
         nativegl::GetCompressedTexImageFormat(functions, features, internalFormat);
 
     stateManager->bindTexture(getType(), mTextureID);
+    ANGLE_TRY(stateManager->setPixelUnpackState(context, unpack));
     if (nativegl::UseTexImage2D(getType()))
     {
         ASSERT(size.depth == 1);
@@ -602,6 +603,7 @@ angle::Result TextureGL::setCompressedImage(const gl::Context *context,
     else
     {
         ASSERT(nativegl::UseTexImage3D(getType()));
+
         ANGLE_GL_TRY_ALWAYS_CHECK(
             context, functions->compressedTexImage3D(ToGLenum(target), static_cast<GLint>(level),
                                                      compressedTexImageFormat.internalFormat,

@@ -18,7 +18,7 @@ using namespace angle;
 namespace
 {
 
-class DepthStencilTest : public ANGLETest
+class DepthStencilTest : public ANGLETest<>
 {
   protected:
     DepthStencilTest()
@@ -353,6 +353,66 @@ TEST_P(DepthStencilTestES3, ClearThenDraw)
     EXPECT_PIXEL_COLOR_EQ(kSize - 1, kSize - 1, GLColor::red);
 }
 
+// Test that VK_EXT_load_op_none is working properly when
+// one of the depth / stencil load op is none.
+// This reproduces a deqp failure on ARM: angleproject:7370
+TEST_P(DepthStencilTestES3, LoadStoreOpNoneExtension)
+{
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    GLRenderbuffer colorRbo;
+    glBindRenderbuffer(GL_RENDERBUFFER, colorRbo);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, getWindowWidth(), getWindowHeight());
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorRbo);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    GLRenderbuffer depthStencilBuffer;
+    glBindRenderbuffer(GL_RENDERBUFFER, depthStencilBuffer);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, getWindowWidth(),
+                          getWindowHeight());
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+                              depthStencilBuffer);
+
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ASSERT_GL_NO_ERROR();
+
+    glClearDepthf(1.0f);
+    glClear(GL_DEPTH_BUFFER_BIT);
+    glClearStencil(0.0f);
+    glClear(GL_STENCIL_BUFFER_BIT);
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::black);
+
+    // Draw a red quad, stencil enabled, depth disabled
+    // Depth Load Op: None. Depth Store Op: None.
+    // Stencil Load Op: Load. Stencil Store Op: Store.
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    GLint colorLocation = glGetUniformLocation(program, angle::essl1_shaders::ColorUniform());
+    ASSERT_NE(-1, colorLocation);
+
+    glDisable(GL_BLEND);
+    glEnable(GL_STENCIL_TEST);
+    glStencilFunc(GL_LEQUAL, 0, ~0u);
+    glStencilOp(GL_KEEP, GL_INCR, GL_INCR);
+    glDisable(GL_DITHER);
+    glDisable(GL_DEPTH_TEST);
+
+    glUseProgram(program);
+    glUniform4f(colorLocation, 1.0f, 0.0f, 0.0f, 1.0f);
+    drawQuad(program, "a_position", 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    // Draw a green quad, stencil enabled, depth enabled.
+    // Depth Load Op: Load. Depth Store Op: Store.
+    // Stencil Load Op: Load. Stencil Store Op: Store.
+    glUniform4f(colorLocation, 0.0f, 1.0f, 0.0f, 1.0f);
+    glEnable(GL_DEPTH_TEST);
+    drawQuad(program, "a_position", 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
 void DepthStencilTestES3::compareDepth(uint32_t expected)
 {
     uint32_t pixel;
@@ -679,8 +739,10 @@ ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
     ES3_VULKAN_SWIFTSHADER().enable(Feature::ForceFallbackFormat));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(DepthStencilTestES3);
-ANGLE_INSTANTIATE_TEST_ES3_AND(DepthStencilTestES3,
-                               ES3_VULKAN().enable(Feature::ForceFallbackFormat),
-                               ES3_VULKAN_SWIFTSHADER().enable(Feature::ForceFallbackFormat));
+ANGLE_INSTANTIATE_TEST_ES3_AND(
+    DepthStencilTestES3,
+    ES3_VULKAN().enable(Feature::ForceFallbackFormat),
+    ES3_VULKAN().enable(Feature::DisallowMixedDepthStencilLoadOpNoneAndLoad),
+    ES3_VULKAN_SWIFTSHADER().enable(Feature::ForceFallbackFormat));
 
 }  // anonymous namespace

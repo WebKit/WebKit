@@ -19,7 +19,7 @@
 
 using namespace angle;
 
-class LightsTest : public ANGLETest
+class LightsTest : public ANGLETest<>
 {
   protected:
     LightsTest()

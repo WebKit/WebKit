@@ -9,7 +9,7 @@
 
 using namespace angle;
 
-class MaxTextureSizeTest : public ANGLETest
+class MaxTextureSizeTest : public ANGLETest<>
 {
   protected:
     MaxTextureSizeTest()

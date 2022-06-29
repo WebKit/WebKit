@@ -26,9 +26,9 @@ constexpr const ImmutableString kReturnValueVariableName("angle_return");
 class ArrayReturnValueToOutParameterTraverser : private TIntermTraverser
 {
   public:
-    ANGLE_NO_DISCARD static bool apply(TCompiler *compiler,
-                                       TIntermNode *root,
-                                       TSymbolTable *symbolTable);
+    [[nodiscard]] static bool apply(TCompiler *compiler,
+                                    TIntermNode *root,
+                                    TSymbolTable *symbolTable);
 
   private:
     ArrayReturnValueToOutParameterTraverser(TSymbolTable *symbolTable);

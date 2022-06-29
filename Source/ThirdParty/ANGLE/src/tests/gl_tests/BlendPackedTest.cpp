@@ -9,7 +9,7 @@
 
 using namespace angle;
 
-class BlendPackedTest : public ANGLETest
+class BlendPackedTest : public ANGLETest<>
 {
   protected:
     BlendPackedTest()

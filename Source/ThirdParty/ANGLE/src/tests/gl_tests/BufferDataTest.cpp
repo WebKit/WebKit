@@ -14,7 +14,7 @@
 
 using namespace angle;
 
-class BufferDataTest : public ANGLETest
+class BufferDataTest : public ANGLETest<>
 {
   protected:
     BufferDataTest()
@@ -203,7 +203,7 @@ TEST_P(BufferDataTest, RepeatedDrawDynamicBug)
     EXPECT_GL_NO_ERROR();
 }
 
-class BufferSubDataTest : public ANGLETest
+class BufferSubDataTest : public ANGLETest<>
 {
   protected:
     BufferSubDataTest()
@@ -346,7 +346,7 @@ TEST_P(BufferSubDataTest, SmallVertexDataUpdateAfterDraw)
     EXPECT_PIXEL_COLOR_EQ(getWindowWidth() - 1, 0, GLColor::green);
     EXPECT_PIXEL_COLOR_EQ(getWindowWidth() - 1, getWindowHeight() - 1, GLColor::green);
 }
-class IndexedBufferCopyTest : public ANGLETest
+class IndexedBufferCopyTest : public ANGLETest<>
 {
   protected:
     IndexedBufferCopyTest()
@@ -1719,7 +1719,7 @@ TEST_P(BufferStorageTestES3, PageSharingBuffers)
     EXPECT_GL_NO_ERROR();
 }
 
-class BufferStorageTestES3Threaded : public ANGLETest
+class BufferStorageTestES3Threaded : public ANGLETest<>
 {
   protected:
     BufferStorageTestES3Threaded()
@@ -1927,7 +1927,7 @@ ANGLE_INSTANTIATE_TEST_ES3(BufferStorageTestES3Threaded);
 // The test uses 8 buffers with a size just under 0x2000000 to overflow max uint
 // (with the internal D3D rounding to 16-byte values) and trigger the bug.
 // Only handle this bug on 64-bit Windows for now. Harder to repro on 32-bit.
-class BufferDataOverflowTest : public ANGLETest
+class BufferDataOverflowTest : public ANGLETest<>
 {
   protected:
     BufferDataOverflowTest() {}

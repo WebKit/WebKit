@@ -397,7 +397,7 @@ bool ReplaceClipCullDistanceAssignments::assignANGLEValueToOriginalVariableImpl(
     return RunAtTheEndOfShader(mCompiler, mRoot, assignBlock, mSymbolTable);
 }
 
-ANGLE_NO_DISCARD bool ReplaceClipCullDistanceAssignments::assignOriginalValueToANGLEVariable(
+[[nodiscard]] bool ReplaceClipCullDistanceAssignments::assignOriginalValueToANGLEVariable(
     const GLenum shaderType)
 {
     switch (shaderType)
@@ -424,7 +424,7 @@ ANGLE_NO_DISCARD bool ReplaceClipCullDistanceAssignments::assignOriginalValueToA
     return true;
 }
 
-ANGLE_NO_DISCARD bool ReplaceClipCullDistanceAssignments::assignANGLEValueToOriginalVariable(
+[[nodiscard]] bool ReplaceClipCullDistanceAssignments::assignANGLEValueToOriginalVariable(
     const GLenum shaderType,
     const bool isRedeclared,
     const TIntermTyped *enableFlags,
@@ -466,7 +466,7 @@ ANGLE_NO_DISCARD bool ReplaceClipCullDistanceAssignments::assignANGLEValueToOrig
 
 // Common code to transform gl_ClipDistance and gl_CullDistance.  Comments reference
 // gl_ClipDistance, but are also applicable to gl_CullDistance.
-ANGLE_NO_DISCARD bool ReplaceClipCullDistanceAssignmentsImpl(
+[[nodiscard]] bool ReplaceClipCullDistanceAssignmentsImpl(
     TCompiler *compiler,
     TIntermBlock *root,
     TSymbolTable *symbolTable,
@@ -567,21 +567,21 @@ ANGLE_NO_DISCARD bool ReplaceClipCullDistanceAssignmentsImpl(
 
 }  // anonymous namespace
 
-ANGLE_NO_DISCARD bool ReplaceClipDistanceAssignments(TCompiler *compiler,
-                                                     TIntermBlock *root,
-                                                     TSymbolTable *symbolTable,
-                                                     const GLenum shaderType,
-                                                     const TIntermTyped *clipDistanceEnableFlags)
+[[nodiscard]] bool ReplaceClipDistanceAssignments(TCompiler *compiler,
+                                                  TIntermBlock *root,
+                                                  TSymbolTable *symbolTable,
+                                                  const GLenum shaderType,
+                                                  const TIntermTyped *clipDistanceEnableFlags)
 {
     return ReplaceClipCullDistanceAssignmentsImpl(compiler, root, symbolTable, shaderType,
                                                   clipDistanceEnableFlags, "gl_ClipDistance",
                                                   "ANGLEClipDistance", EvqClipDistance);
 }
 
-ANGLE_NO_DISCARD bool ReplaceCullDistanceAssignments(TCompiler *compiler,
-                                                     TIntermBlock *root,
-                                                     TSymbolTable *symbolTable,
-                                                     const GLenum shaderType)
+[[nodiscard]] bool ReplaceCullDistanceAssignments(TCompiler *compiler,
+                                                  TIntermBlock *root,
+                                                  TSymbolTable *symbolTable,
+                                                  const GLenum shaderType)
 {
     return ReplaceClipCullDistanceAssignmentsImpl(compiler, root, symbolTable, shaderType, nullptr,
                                                   "gl_CullDistance", "ANGLECullDistance",

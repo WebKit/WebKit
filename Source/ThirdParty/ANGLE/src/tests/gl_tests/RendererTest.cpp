@@ -18,7 +18,7 @@ using namespace angle;
 namespace
 {
 
-class RendererTest : public ANGLETest
+class RendererTest : public ANGLETest<>
 {
   protected:
     RendererTest()

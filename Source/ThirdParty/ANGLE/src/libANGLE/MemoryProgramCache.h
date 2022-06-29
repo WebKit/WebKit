@@ -56,9 +56,9 @@ class MemoryProgramCache final : angle::NonCopyable
 
     // Store a binary directly.  TODO(syoussefi): deprecated.  Will be removed once Chrome supports
     // EGL_ANDROID_blob_cache. http://anglebug.com/2516
-    ANGLE_NO_DISCARD bool putBinary(const egl::BlobCache::Key &programHash,
-                                    const uint8_t *binary,
-                                    size_t length);
+    [[nodiscard]] bool putBinary(const egl::BlobCache::Key &programHash,
+                                 const uint8_t *binary,
+                                 size_t length);
 
     // Check the cache, and deserialize and load the program if found. Evict existing hash if load
     // fails.

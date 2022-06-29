@@ -21,7 +21,7 @@ using namespace angle;
 namespace
 {
 
-class D3D11InputLayoutCacheTest : public ANGLETest
+class D3D11InputLayoutCacheTest : public ANGLETest<>
 {
   protected:
     D3D11InputLayoutCacheTest()

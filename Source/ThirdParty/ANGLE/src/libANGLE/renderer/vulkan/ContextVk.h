@@ -29,6 +29,11 @@ struct FeaturesVk;
 
 namespace rx
 {
+namespace vk
+{
+class SyncHelper;
+}  // namespace vk
+
 class ProgramExecutableVk;
 class RendererVk;
 class WindowSurfaceVk;
@@ -248,7 +253,7 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
                                                 GLsizei stride);
 
     // ShareGroup
-    ShareGroupVk *getShareGroupVk() { return mShareGroupVk; }
+    ShareGroupVk *getShareGroup() { return mShareGroupVk; }
     PipelineLayoutCache &getPipelineLayoutCache()
     {
         return mShareGroupVk->getPipelineLayoutCache();
@@ -552,7 +557,7 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     {
         ASSERT(mRenderPassCommands->started());
         mRenderPassCommands->imageWrite(this, level, layerStart, layerCount, aspectFlags,
-                                        imageLayout, vk::AliasingMode::Allowed, image);
+                                        imageLayout, image);
     }
 
     void onColorDraw(gl::LevelIndex level,
@@ -659,16 +664,19 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
 
     angle::Result syncExternalMemory();
 
+    // Either issue a submission or defer it when a sync object is initialized.  If deferred, a
+    // submission will have to be incurred during client wait.
+    angle::Result onSyncObjectInit(vk::SyncHelper *syncHelper, bool isEGLSyncObject);
+    // Called when a sync object is waited on while its submission was deffered in onSyncObjectInit.
+    // It's a no-op if this context doesn't have a pending submission.  Note that due to
+    // mHasDeferredFlush being set, flushing the render pass leads to a submission automatically.
+    angle::Result flushCommandsAndEndRenderPassIfDeferredSyncInit(RenderPassClosureReason reason);
+
     void addCommandBufferDiagnostics(const std::string &commandBufferDiagnostics);
 
     VkIndexType getVkIndexType(gl::DrawElementsType glIndexType) const;
     size_t getVkIndexTypeSize(gl::DrawElementsType glIndexType) const;
     bool shouldConvertUint8VkIndexType(gl::DrawElementsType glIndexType) const;
-
-    ANGLE_INLINE bool isBresenhamEmulationEnabled(const gl::PrimitiveMode mode)
-    {
-        return getFeatures().basicGLLineRasterization.enabled && gl::IsLineMode(mode);
-    }
 
     ProgramExecutableVk *getExecutable() const;
 
@@ -733,15 +741,21 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
         return angle::Result::Continue;
     }
 
-    const angle::PerfMonitorCounterGroups &getPerfMonitorCounters() override;
-
-    void resetPerFramePerfCounters();
-
     angle::Result bindCachedDescriptorPool(
         DescriptorSetIndex descriptorSetIndex,
         const vk::DescriptorSetLayoutDesc &descriptorSetLayoutDesc,
         uint32_t descriptorCountMultiplier,
         vk::DescriptorPoolPointer *poolPointerOut);
+
+    // Put the context in framebuffer fetch mode.  If the permanentlySwitchToFramebufferFetchMode
+    // feature is enabled, this is done on first encounter of framebuffer fetch, and makes the
+    // context use framebuffer-fetch-enabled render passes from here on.
+    angle::Result switchToFramebufferFetchMode(bool hasFramebufferFetch);
+    bool isInFramebufferFetchMode() const { return mIsInFramebufferFetchMode; }
+
+    const angle::PerfMonitorCounterGroups &getPerfMonitorCounters() override;
+
+    void resetPerFramePerfCounters();
 
     // Accumulate cache stats for a specific cache
     void accumulateCacheStats(VulkanCacheType cache, const CacheStats &stats)
@@ -1042,7 +1056,6 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     }
 
     angle::Result invalidateProgramExecutableHelper(const gl::Context *context);
-    angle::Result checkAndUpdateFramebufferFetchStatus(const gl::ProgramExecutable *executable);
 
     void invalidateCurrentDefaultUniforms();
     angle::Result invalidateCurrentTextures(const gl::Context *context, gl::Command command);
@@ -1215,6 +1228,9 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
                                                DirtyBits dirtyBitMask,
                                                RenderPassClosureReason reason);
 
+    // Mark the render pass to be closed on the next draw call.  The render pass is not actually
+    // closed and can be restored with restoreFinishedRenderPass if necessary, for example to append
+    // a resolve attachment.
     void onRenderPassFinished(RenderPassClosureReason reason);
 
     void initIndexTypeMap();
@@ -1455,6 +1471,13 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     // shared-present mode, and the app is unnecessarily calling eglSwapBuffers (which equates
     // glFlush in that mode).
     bool mHasAnyCommandsPendingSubmission;
+
+    // Whether framebuffer fetch is active.  When the permanentlySwitchToFramebufferFetchMode
+    // feature is enabled, if any program uses framebuffer fetch, rendering switches to assuming
+    // framebuffer fetch could happen in any render pass.  This incurs a potential cost due to usage
+    // of the GENERAL layout instead of COLOR_ATTACHMENT_OPTIMAL, but has definite benefits of
+    // avoiding render pass breaks when a framebuffer fetch program is used mid render pass.
+    bool mIsInFramebufferFetchMode;
 
     // The size of copy commands issued between buffers and images. Used to submit the command
     // buffer for the outside render pass.

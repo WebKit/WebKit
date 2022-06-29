@@ -16,7 +16,7 @@ namespace sh
 class TCompiler;
 class TIntermBlock;
 
-ANGLE_NO_DISCARD bool PruneEmptyCases(TCompiler *compiler, TIntermBlock *root);
+[[nodiscard]] bool PruneEmptyCases(TCompiler *compiler, TIntermBlock *root);
 }  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_TREEOPS_PRUNEEMPTYCASES_H_

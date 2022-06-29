@@ -16,7 +16,7 @@
 
 using namespace angle;
 
-class MatrixMultTest : public ANGLETest
+class MatrixMultTest : public ANGLETest<>
 {
   protected:
     MatrixMultTest()

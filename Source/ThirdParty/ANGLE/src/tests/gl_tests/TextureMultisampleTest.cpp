@@ -29,7 +29,7 @@ static constexpr std::array<SamplePositionsArray, 5> kSamplePositions = {
        0.375f,  0.875f,  0.5f,    0.0625f, 0.25f,   0.125f,  0.125f,  0.75f,
        0.0f,    0.5f,    0.9375f, 0.25f,   0.875f,  0.9375f, 0.0625f, 0.0f}}}};
 
-class TextureMultisampleTest : public ANGLETest
+class TextureMultisampleTest : public ANGLETest<>
 {
   protected:
     TextureMultisampleTest()
@@ -1111,7 +1111,7 @@ TEST_P(TextureMultisampleArrayWebGLTest, IntegerTexelFetch)
     }
 }
 
-class TextureSampleShadingTest : public ANGLETest
+class TextureSampleShadingTest : public ANGLETest<>
 {
   protected:
     TextureSampleShadingTest() {}

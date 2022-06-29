@@ -34,7 +34,7 @@ void TexImageCubeMapFaces(GLint level,
                  type, pixels);
 }
 
-class BaseMipmapTest : public ANGLETest
+class BaseMipmapTest : public ANGLETest<>
 {
   protected:
     void clearAndDrawQuad(GLuint program, GLsizei viewportWidth, GLsizei viewportHeight)

@@ -14,6 +14,10 @@ import subprocess
 import sys
 import tempfile
 
+# This line is 'magic' in that git-cl looks for it to decide whether to
+# use Python3 instead of Python2 when running the code in this file.
+USE_PYTHON3 = True
+
 # Fragment of a regular expression that matches C/C++ and Objective-C++ implementation files and headers.
 _IMPLEMENTATION_AND_HEADER_EXTENSIONS = r'\.(c|cc|cpp|cxx|mm|h|hpp|hxx)$'
 
@@ -239,7 +243,7 @@ def _CheckCodeGeneration(input_api, output_api):
     code_gen_path = input_api.os_path.join(input_api.PresubmitLocalPath(),
                                            'scripts/run_code_generation.py')
     cmd_name = 'run_code_generation'
-    cmd = [input_api.python_executable, code_gen_path, '--verify-no-dirty']
+    cmd = [input_api.python3_executable, code_gen_path, '--verify-no-dirty']
     test_cmd = input_api.Command(name=cmd_name, cmd=cmd, kwargs={}, message=Msg)
     if input_api.verbose:
         print('Running ' + cmd_name)

@@ -377,9 +377,6 @@ class MemoryBarrierTestBase
     static constexpr char kUniformName[] = "uniformData";
 };
 
-// Can be removed with C++17
-constexpr char MemoryBarrierTestBase::kUniformName[];
-
 bool MemoryBarrierTestBase::hasExtensions(WriteResource writeResource)
 {
     return writeResource != WriteResource::ImageBuffer ||
@@ -3148,7 +3145,7 @@ void MemoryBarrierTestBase::framebufferBitBlitThenImageWrite(ShaderWritePipeline
 }
 
 class MemoryBarrierBufferTest : public MemoryBarrierTestBase,
-                                public ANGLETestWithParam<MemoryBarrierVariationsTestParams>
+                                public ANGLETest<MemoryBarrierVariationsTestParams>
 {
   protected:
     MemoryBarrierBufferTest()
@@ -3163,7 +3160,7 @@ class MemoryBarrierBufferTest : public MemoryBarrierTestBase,
 };
 
 class MemoryBarrierImageTest : public MemoryBarrierTestBase,
-                               public ANGLETestWithParam<MemoryBarrierVariationsTestParams>
+                               public ANGLETest<MemoryBarrierVariationsTestParams>
 {
   protected:
     MemoryBarrierImageTest()
@@ -3177,9 +3174,8 @@ class MemoryBarrierImageTest : public MemoryBarrierTestBase,
     }
 };
 
-class MemoryBarrierImageBufferOnlyTest
-    : public MemoryBarrierTestBase,
-      public ANGLETestWithParam<MemoryBarrierVariationsTestParams>
+class MemoryBarrierImageBufferOnlyTest : public MemoryBarrierTestBase,
+                                         public ANGLETest<MemoryBarrierVariationsTestParams>
 {
   protected:
     MemoryBarrierImageBufferOnlyTest()
@@ -3194,7 +3190,7 @@ class MemoryBarrierImageBufferOnlyTest
 };
 
 class MemoryBarrierImageOnlyTest : public MemoryBarrierTestBase,
-                                   public ANGLETestWithParam<MemoryBarrierVariationsTestParams>
+                                   public ANGLETest<MemoryBarrierVariationsTestParams>
 {
   protected:
     MemoryBarrierImageOnlyTest()
@@ -3209,7 +3205,7 @@ class MemoryBarrierImageOnlyTest : public MemoryBarrierTestBase,
 };
 
 class MemoryBarrierBufferOnlyTest : public MemoryBarrierTestBase,
-                                    public ANGLETestWithParam<MemoryBarrierVariationsTestParams>
+                                    public ANGLETest<MemoryBarrierVariationsTestParams>
 {
   protected:
     MemoryBarrierBufferOnlyTest()

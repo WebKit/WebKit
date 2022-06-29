@@ -333,7 +333,7 @@ class RenderCommandEncoder final : public CommandEncoder
 
     // Restart the encoder so that new commands can be encoded.
     // NOTE: parent CommandBuffer's restart() must be called before this.
-    RenderCommandEncoder &restart(const RenderPassDesc &desc);
+    RenderCommandEncoder &restart(const RenderPassDesc &desc, uint32_t deviceMaxRenderTargets);
 
     RenderCommandEncoder &setRenderPipelineState(id<MTLRenderPipelineState> state);
     RenderCommandEncoder &setTriangleFillMode(MTLTriangleFillMode mode);

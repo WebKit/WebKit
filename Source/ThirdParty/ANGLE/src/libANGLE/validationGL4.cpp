@@ -693,9 +693,9 @@ bool ValidateDrawArraysInstancedBaseInstance(const Context *context,
 
 bool ValidateDrawElementsInstancedBaseInstance(const Context *context,
                                                angle::EntryPoint entryPoint,
-                                               GLenum mode,
+                                               PrimitiveMode mode,
                                                GLsizei count,
-                                               GLenum type,
+                                               DrawElementsType type,
                                                const void *indices,
                                                GLsizei instancecount,
                                                GLuint baseinstance)

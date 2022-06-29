@@ -36,7 +36,7 @@ using namespace Microsoft::WRL::Wrappers;
 
 const int WINDOWWIDTH = 200, WINDOWHEIGHT = 200;
 
-class EGLDirectCompositionTest : public ANGLETest
+class EGLDirectCompositionTest : public ANGLETest<>
 {
   protected:
     EGLDirectCompositionTest() : mOSWindow(nullptr) {}

@@ -14,7 +14,7 @@ using namespace angle;
 namespace
 {
 
-class TextureRectangleTest : public ANGLETest
+class TextureRectangleTest : public ANGLETest<>
 {
   protected:
     TextureRectangleTest()

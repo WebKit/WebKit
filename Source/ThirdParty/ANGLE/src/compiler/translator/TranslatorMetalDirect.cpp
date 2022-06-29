@@ -192,10 +192,10 @@ class DeclareDefaultUniformsTraverser : public TIntermTraverser
 };
 
 // Declares a new variable to replace gl_DepthRange, its values are fed from a driver uniform.
-ANGLE_NO_DISCARD bool ReplaceGLDepthRangeWithDriverUniform(TCompiler *compiler,
-                                                           TIntermBlock *root,
-                                                           const DriverUniformMetal *driverUniforms,
-                                                           TSymbolTable *symbolTable)
+[[nodiscard]] bool ReplaceGLDepthRangeWithDriverUniform(TCompiler *compiler,
+                                                        TIntermBlock *root,
+                                                        const DriverUniformMetal *driverUniforms,
+                                                        TSymbolTable *symbolTable)
 {
     // Create a symbol reference to "gl_DepthRange"
     const TVariable *depthRangeVar = static_cast<const TVariable *>(
@@ -215,14 +215,14 @@ TIntermSequence *GetMainSequence(TIntermBlock *root)
 }
 
 // Replaces a builtin variable with a version that is rotated and corrects the X and Y coordinates.
-ANGLE_NO_DISCARD bool FlipBuiltinVariable(TCompiler *compiler,
-                                          TIntermBlock *root,
-                                          TIntermSequence *insertSequence,
-                                          TIntermTyped *flipXY,
-                                          TSymbolTable *symbolTable,
-                                          const TVariable *builtin,
-                                          const Name &flippedVariableName,
-                                          TIntermTyped *pivot)
+[[nodiscard]] bool FlipBuiltinVariable(TCompiler *compiler,
+                                       TIntermBlock *root,
+                                       TIntermSequence *insertSequence,
+                                       TIntermTyped *flipXY,
+                                       TSymbolTable *symbolTable,
+                                       const TVariable *builtin,
+                                       const Name &flippedVariableName,
+                                       TIntermTyped *pivot)
 {
     // Create a symbol reference to 'builtin'.
     TIntermSymbol *builtinRef = new TIntermSymbol(builtin);
@@ -269,12 +269,12 @@ ANGLE_NO_DISCARD bool FlipBuiltinVariable(TCompiler *compiler,
     return compiler->validateAST(root);
 }
 
-ANGLE_NO_DISCARD bool InsertFragCoordCorrection(TCompiler *compiler,
-                                                ShCompileOptions compileOptions,
-                                                TIntermBlock *root,
-                                                TIntermSequence *insertSequence,
-                                                TSymbolTable *symbolTable,
-                                                const DriverUniformMetal *driverUniforms)
+[[nodiscard]] bool InsertFragCoordCorrection(TCompiler *compiler,
+                                             ShCompileOptions compileOptions,
+                                             TIntermBlock *root,
+                                             TIntermSequence *insertSequence,
+                                             TSymbolTable *symbolTable,
+                                             const DriverUniformMetal *driverUniforms)
 {
     TIntermTyped *flipXY = driverUniforms->getFlipXY(symbolTable, DriverUniformFlip::Fragment);
     TIntermTyped *pivot  = driverUniforms->getHalfRenderArea();
@@ -324,7 +324,7 @@ void AddSampleMaskDeclaration(TIntermBlock &root, TSymbolTable &symbolTable)
                           TIntermSequence{new TIntermDeclaration{gl_SampleMask}});
 }
 
-ANGLE_NO_DISCARD bool AddFragDataDeclaration(TCompiler &compiler, TIntermBlock &root)
+[[nodiscard]] bool AddFragDataDeclaration(TCompiler &compiler, TIntermBlock &root)
 {
     TSymbolTable &symbolTable = compiler.getSymbolTable();
     const int maxDrawBuffers  = compiler.getResources().MaxDrawBuffers;
@@ -376,9 +376,9 @@ ANGLE_NO_DISCARD bool AddFragDataDeclaration(TCompiler &compiler, TIntermBlock &
     return RunAtTheEndOfShader(&compiler, &root, insertSequence, &symbolTable);
 }
 
-ANGLE_NO_DISCARD bool AppendVertexShaderTransformFeedbackOutputToMain(TCompiler &compiler,
-                                                                      SymbolEnv &mSymbolEnv,
-                                                                      TIntermBlock &root)
+[[nodiscard]] bool AppendVertexShaderTransformFeedbackOutputToMain(TCompiler &compiler,
+                                                                   SymbolEnv &mSymbolEnv,
+                                                                   TIntermBlock &root)
 {
     TSymbolTable &symbolTable = compiler.getSymbolTable();
 
@@ -393,10 +393,10 @@ ANGLE_NO_DISCARD bool AppendVertexShaderTransformFeedbackOutputToMain(TCompiler 
 // manually.
 // This operation performs flipping the gl_Position.y using this expression:
 // gl_Position.y = gl_Position.y * negViewportScaleY
-ANGLE_NO_DISCARD bool AppendVertexShaderPositionYCorrectionToMain(TCompiler *compiler,
-                                                                  TIntermBlock *root,
-                                                                  TSymbolTable *symbolTable,
-                                                                  TIntermTyped *negFlipY)
+[[nodiscard]] bool AppendVertexShaderPositionYCorrectionToMain(TCompiler *compiler,
+                                                               TIntermBlock *root,
+                                                               TSymbolTable *symbolTable,
+                                                               TIntermTyped *negFlipY)
 {
     // Create a symbol reference to "gl_Position"
     const TVariable *position  = BuiltInVariable::gl_Position();
@@ -434,7 +434,7 @@ TranslatorMetalDirect::TranslatorMetalDirect(sh::GLenum type,
 
 // Add sample_mask writing to main, guarded by the function constant
 // kCoverageMaskEnabledName
-ANGLE_NO_DISCARD bool TranslatorMetalDirect::insertSampleMaskWritingLogic(
+[[nodiscard]] bool TranslatorMetalDirect::insertSampleMaskWritingLogic(
     TIntermBlock &root,
     DriverUniformMetal &driverUniforms)
 {
@@ -488,7 +488,7 @@ ANGLE_NO_DISCARD bool TranslatorMetalDirect::insertSampleMaskWritingLogic(
     return RunAtTheEndOfShader(this, &root, ifCall, symbolTable);
 }
 
-ANGLE_NO_DISCARD bool TranslatorMetalDirect::insertRasterizationDiscardLogic(TIntermBlock &root)
+[[nodiscard]] bool TranslatorMetalDirect::insertRasterizationDiscardLogic(TIntermBlock &root)
 {
     // This transformation leaves the tree in an inconsistent state by using a variable that's
     // defined in text, outside of the knowledge of the AST.
@@ -506,14 +506,15 @@ ANGLE_NO_DISCARD bool TranslatorMetalDirect::insertRasterizationDiscardLogic(TIn
     TIntermSymbol *positionRef = new TIntermSymbol(position);
 
     // Create vec4(-3, -3, -3, 1):
-    auto vec4Type             = new TType(EbtFloat, 4);
-    TIntermSequence *vec4Args = new TIntermSequence();
-    vec4Args->push_back(CreateFloatNode(-3.0f, EbpMedium));
-    vec4Args->push_back(CreateFloatNode(-3.0f, EbpMedium));
-    vec4Args->push_back(CreateFloatNode(-3.0f, EbpMedium));
-    vec4Args->push_back(CreateFloatNode(1.0f, EbpMedium));
+    auto vec4Type            = new TType(EbtFloat, 4);
+    TIntermSequence vec4Args = {
+        CreateFloatNode(-3.0f, EbpMedium),
+        CreateFloatNode(-3.0f, EbpMedium),
+        CreateFloatNode(-3.0f, EbpMedium),
+        CreateFloatNode(1.0f, EbpMedium),
+    };
     TIntermAggregate *constVarConstructor =
-        TIntermAggregate::CreateConstructor(*vec4Type, vec4Args);
+        TIntermAggregate::CreateConstructor(*vec4Type, &vec4Args);
 
     // Create the assignment "gl_Position = vec4(-3, -3, -3, 1)"
     TIntermBinary *assignment =
@@ -542,13 +543,13 @@ bool TranslatorMetalDirect::transformDepthBeforeCorrection(TIntermBlock *root,
     TVector<int> swizzleOffsetZ = {2};
     TIntermSwizzle *positionZ   = new TIntermSwizzle(positionRef, swizzleOffsetZ);
 
-    // Create a ref to "depthRange.reserved"
+    // Create a ref to "zscale"
     TIntermTyped *viewportZScale = driverUniforms->getViewportZScale();
 
-    // Create the expression "gl_Position.z * depthRange.reserved".
+    // Create the expression "gl_Position.z * zscale".
     TIntermBinary *zScale = new TIntermBinary(EOpMul, positionZ->deepCopy(), viewportZScale);
 
-    // Create the assignment "gl_Position.z = gl_Position.z * depthRange.reserved"
+    // Create the assignment "gl_Position.z = gl_Position.z * zscale"
     TIntermTyped *positionZLHS = positionZ->deepCopy();
     TIntermBinary *assignment  = new TIntermBinary(TOperator::EOpAssign, positionZLHS, zScale);
 

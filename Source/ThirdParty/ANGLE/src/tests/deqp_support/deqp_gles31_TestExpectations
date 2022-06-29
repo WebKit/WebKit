@@ -112,7 +112,6 @@
 
 // OpenGL/D3D11 Failing Tests
 1442 OPENGL : dEQP-GLES31.functional.shaders.opaque_type_indexing.* = FAIL
-1442 D3D11 : dEQP-GLES31.functional.shaders.opaque_type_indexing.* = FAIL
 1442 OPENGL : dEQP-GLES31.functional.separate_shader.* = SKIP
 1442 D3D11 : dEQP-GLES31.functional.separate_shader.* = SKIP
 1442 OPENGL : dEQP-GLES31.functional.state_query.program.program_separable_get_programiv = FAIL
@@ -125,7 +124,6 @@
 // TODO(xinghua.cao@intel.com): FAIL expectation instead of SKIP should be sufficient for OpenGL, but the
 // test expectations parser doesn't support having FAIL for GL and SKIP for D3D with the same test filter.
 
-1951 D3D11 : dEQP-GLES31.functional.layout_binding.ssbo.* = SKIP
 4330 D3D11 : dEQP-GLES31.functional.program_interface_query.buffer_variable.referenced_by.separable_vertex.* = SKIP
 4329 D3D11 : dEQP-GLES31.functional.program_interface_query.buffer_variable.referenced_by.separable_fragment.* = SKIP
 4329 D3D11 : dEQP-GLES31.functional.program_interface_query.buffer_variable.random.* = SKIP

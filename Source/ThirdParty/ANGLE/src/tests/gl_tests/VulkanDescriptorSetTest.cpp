@@ -21,7 +21,7 @@ using namespace angle;
 namespace
 {
 
-class VulkanDescriptorSetTest : public ANGLETest
+class VulkanDescriptorSetTest : public ANGLETest<>
 {
   protected:
     VulkanDescriptorSetTest() {}

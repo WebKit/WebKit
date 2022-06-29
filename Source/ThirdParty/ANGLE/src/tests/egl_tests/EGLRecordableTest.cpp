@@ -16,7 +16,7 @@ using namespace angle;
 
 namespace angle
 {
-class EGLRecordableTest : public ANGLETest
+class EGLRecordableTest : public ANGLETest<>
 {
   protected:
     EGLRecordableTest() {}

@@ -563,25 +563,25 @@ Name sh::GetTextureTypeName(TBasicType samplerType)
     const TBasicType textureType = GetTextureBasicType(samplerType);
     const char *name;
 
-#define HANDLE_TEXTURE_NAME(baseName)                \
-    do                                               \
-    {                                                \
-        switch (textureType)                         \
-        {                                            \
-            case TBasicType::EbtFloat:               \
-                name = "metal::" baseName "<float>"; \
-                break;                               \
-            case TBasicType::EbtInt:                 \
-                name = "metal::" baseName "<int>";   \
-                break;                               \
-            case TBasicType::EbtUInt:                \
-                name = "metal::" baseName "<uint>";  \
-                break;                               \
-            default:                                 \
-                UNREACHABLE();                       \
-                name = nullptr;                      \
-                break;                               \
-        }                                            \
+#define HANDLE_TEXTURE_NAME(baseName)                   \
+    do                                                  \
+    {                                                   \
+        switch (textureType)                            \
+        {                                               \
+            case TBasicType::EbtFloat:                  \
+                name = "metal::" baseName "<float>";    \
+                break;                                  \
+            case TBasicType::EbtInt:                    \
+                name = "metal::" baseName "<int>";      \
+                break;                                  \
+            case TBasicType::EbtUInt:                   \
+                name = "metal::" baseName "<uint32_t>"; \
+                break;                                  \
+            default:                                    \
+                UNREACHABLE();                          \
+                name = nullptr;                         \
+                break;                                  \
+        }                                               \
     } while (false)
 
     switch (samplerType)

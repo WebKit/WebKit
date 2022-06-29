@@ -11,7 +11,7 @@
 namespace angle
 {
 
-class ActiveTextureCacheTest : public ANGLETest
+class ActiveTextureCacheTest : public ANGLETest<>
 {
   protected:
     ActiveTextureCacheTest()

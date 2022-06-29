@@ -37,6 +37,8 @@ NO_EVENT_MARKER_EXCEPTIONS_LIST = sorted([
 ALIASING_EXCEPTIONS = [
     'glRenderbufferStorageMultisampleEXT',
     'renderbufferStorageMultisampleEXT',
+    'drawArraysInstancedBaseInstanceANGLE',
+    'drawElementsInstancedBaseVertexBaseInstanceANGLE',
 ]
 
 # These are the entry points which potentially are used first by an application

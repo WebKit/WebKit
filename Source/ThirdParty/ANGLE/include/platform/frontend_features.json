@@ -98,6 +98,14 @@
                 "Even if FrameCapture is enabled, enable GL_OES_get_program_binary"
             ],
             "issue": "http://anglebug.com/5658"
+        },
+        {
+            "name": "force_gl_error_checking",
+            "category": "Features",
+            "description": [
+                "Force GL error checking (i.e. prevent applications from disabling error checking"
+            ],
+            "issue": "https://issuetracker.google.com/220069903"
         }
     ]
 }

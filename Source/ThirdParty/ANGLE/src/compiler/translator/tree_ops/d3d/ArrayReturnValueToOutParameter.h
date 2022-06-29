@@ -18,9 +18,9 @@ class TCompiler;
 class TIntermNode;
 class TSymbolTable;
 
-ANGLE_NO_DISCARD bool ArrayReturnValueToOutParameter(TCompiler *compiler,
-                                                     TIntermNode *root,
-                                                     TSymbolTable *symbolTable);
+[[nodiscard]] bool ArrayReturnValueToOutParameter(TCompiler *compiler,
+                                                  TIntermNode *root,
+                                                  TSymbolTable *symbolTable);
 
 }  // namespace sh
 

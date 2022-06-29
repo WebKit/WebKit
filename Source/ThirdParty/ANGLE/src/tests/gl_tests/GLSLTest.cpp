@@ -14,7 +14,7 @@ using namespace angle;
 namespace
 {
 
-class GLSLTest : public ANGLETest
+class GLSLTest : public ANGLETest<>
 {
   protected:
     GLSLTest()
@@ -33,11 +33,11 @@ class GLSLTest : public ANGLETest
 
         if (vectorSize == 1)
         {
-            sprintf(varyingType, "float");
+            snprintf(varyingType, sizeof(varyingType), "float");
         }
         else
         {
-            sprintf(varyingType, "vec%d", vectorSize);
+            snprintf(varyingType, sizeof(varyingType), "vec%d", vectorSize);
         }
 
         return std::string(varyingType);
@@ -49,12 +49,13 @@ class GLSLTest : public ANGLETest
 
         if (arraySize == 1)
         {
-            sprintf(buff, "varying %s v%d;\n", GenerateVaryingType(vectorSize).c_str(), id);
+            snprintf(buff, sizeof(buff), "varying %s v%d;\n",
+                     GenerateVaryingType(vectorSize).c_str(), id);
         }
         else
         {
-            sprintf(buff, "varying %s v%d[%d];\n", GenerateVaryingType(vectorSize).c_str(), id,
-                    arraySize);
+            snprintf(buff, sizeof(buff), "varying %s v%d[%d];\n",
+                     GenerateVaryingType(vectorSize).c_str(), id, arraySize);
         }
 
         return std::string(buff);
@@ -67,15 +68,16 @@ class GLSLTest : public ANGLETest
 
         if (arraySize == 1)
         {
-            sprintf(buff, "\t v%d = %s(1.0);\n", id, GenerateVaryingType(vectorSize).c_str());
+            snprintf(buff, sizeof(buff), "\t v%d = %s(1.0);\n", id,
+                     GenerateVaryingType(vectorSize).c_str());
             returnString += buff;
         }
         else
         {
             for (int i = 0; i < arraySize; i++)
             {
-                sprintf(buff, "\t v%d[%d] = %s(1.0);\n", id, i,
-                        GenerateVaryingType(vectorSize).c_str());
+                snprintf(buff, sizeof(buff), "\t v%d[%d] = %s(1.0);\n", id, i,
+                         GenerateVaryingType(vectorSize).c_str());
                 returnString += buff;
             }
         }
@@ -88,7 +90,7 @@ class GLSLTest : public ANGLETest
         if (arraySize == 1)
         {
             char buff[100];
-            sprintf(buff, "v%d + ", id);
+            snprintf(buff, sizeof(buff), "v%d + ", id);
             return std::string(buff);
         }
         else
@@ -97,7 +99,7 @@ class GLSLTest : public ANGLETest
             for (int i = 0; i < arraySize; i++)
             {
                 char buff[100];
-                sprintf(buff, "v%d[%d] + ", id, i);
+                snprintf(buff, sizeof(buff), "v%d[%d] + ", id, i);
                 returnString += buff;
             }
             return returnString;
@@ -1014,6 +1016,30 @@ void main()
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
 }
 
+// Test that struct with same name can be declared in inner scope.
+TEST_P(GLSLTest, SameNameStructInInnerScope)
+{
+    constexpr char kVS[] = R"(
+void main() {
+    gl_Position = vec4(0);
+})";
+
+    constexpr char kFS[] = R"(
+struct S
+{
+    mediump float f;
+};
+void main()
+{
+    struct S
+    {
+        S n;
+    };
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+}
+
 // Regression test based on WebGL's conformance/glsl/misc/empty-declaration.html
 TEST_P(GLSLTest, StructEmptyDeclaratorBug)
 {
@@ -1027,7 +1053,6 @@ void main() {
 })";
 
     constexpr char kFS[] = R"(precision mediump float;
-precision mediump float;
 void main()
 {
     gl_FragColor = vec4(1.0,0.0,0.0,1.0);
@@ -5044,6 +5069,137 @@ void main(void)
     EXPECT_NEAR(ptr[9], kImage2Data[3], 0.0001f);
 
     glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+}
+
+// Check that imageLoad gives the correct color after clearing the texture -- anglebug.com/7355
+TEST_P(GLSLTest_ES31, ImageLoadAfterClear)
+{
+    ANGLE_GL_PROGRAM(program,
+                     R"(#version 310 es
+precision highp float;
+void main()
+{
+    gl_Position.x = ((gl_VertexID & 1) == 0 ? -1.0 : 1.0);
+    gl_Position.y = ((gl_VertexID & 2) == 0 ? -1.0 : 1.0);
+    gl_Position.zw = vec2(0, 1);
+})",
+
+                     R"(#version 310 es
+precision highp float;
+layout(binding=0, rgba8) readonly highp uniform image2D img;
+out vec4 fragColor;
+void main()
+{
+    ivec2 imgcoord = ivec2(floor(gl_FragCoord.xy));
+    fragColor = vec4(1, 0, 0, 0) + imageLoad(img, imgcoord);
+})");
+    ASSERT_TRUE(program.valid());
+    glUseProgram(program.get());
+
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_2D, tex);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, getWindowWidth(), getWindowHeight());
+    glBindImageTexture(0, tex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
+
+    // Clear the texture to green.
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    glClearColor(0, 1, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_FRAMEBUFFER_BARRIER_BIT);
+
+    // Draw the texture via imageLoad, plus red, into the main framebuffer. Make sure the texture
+    // was still green. (green + red == yellow.)
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::yellow);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Check that the volatile keyword combined with memoryBarrierImage() allow load/store from
+// different aliases of the same image -- anglebug.com/7343
+//
+// ES 3.1 requires most image formats to be either readonly or writeonly. (It appears that this
+// limitation exists due to atomics, since we still have the volatile keyword and the built-in
+// memoryBarrierImage(), which ought to allow us to load and store different aliases of the same
+// image.) To test this, we create two aliases of the same image -- one for reading and one for
+// writing.
+TEST_P(GLSLTest_ES31, AliasedLoadStore)
+{
+
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_2D, tex);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, getWindowWidth(), getWindowHeight());
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0);
+    glClearColor(1, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glMemoryBarrier(GL_FRAMEBUFFER_BARRIER_BIT | GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+
+    ANGLE_GL_PROGRAM(program,
+
+                     R"(#version 310 es
+precision highp float;
+void main()
+{
+    gl_Position.x = ((gl_VertexID & 1) == 0 ? -1.0 : 1.0);
+    gl_Position.y = ((gl_VertexID & 2) == 0 ? -1.0 : 1.0);
+    gl_Position.zw = vec2(0, 1);
+})",
+
+                     R"(#version 310 es
+precision highp float;
+layout(binding=0, rgba8) volatile readonly highp uniform image2D img_r;
+layout(binding=0, rgba8) volatile writeonly highp uniform image2D img_w;
+uniform vec4 drawColor;
+void main()
+{
+    ivec2 coord = ivec2(floor(gl_FragCoord.xy));
+    vec4 oldval = imageLoad(img_r, coord);
+    memoryBarrierImage();
+    imageStore(img_w, coord, oldval + drawColor);
+})");
+
+    ASSERT_TRUE(program.valid());
+    glUseProgram(program.get());
+    GLint drawColorLocation = glGetUniformLocation(program, "drawColor");
+
+    // Tell the driver the binding is GL_READ_WRITE, since it will be referenced by two image2Ds:
+    // one readeonly and one writeonly.
+    glBindImageTexture(0, tex, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glUniform4f(drawColorLocation, 0, 1, 0, 0);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+
+    // Ensure the cleared color was loaded before we stored.
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::yellow);
+
+    ASSERT_GL_NO_ERROR();
+
+    // Now make two draws to ensure the imageStore is coherent.
+    glClear(GL_COLOR_BUFFER_BIT);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glUniform4f(drawColorLocation, 0, 1, 0, 0);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+    glUniform4f(drawColorLocation, 0, 0, 1, 0);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+
+    // Ensure the first imageStore was loaded by the second imageLoad.
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::white);
+
+    ASSERT_GL_NO_ERROR();
 }
 
 // Test that structs containing arrays of samplers work as expected.

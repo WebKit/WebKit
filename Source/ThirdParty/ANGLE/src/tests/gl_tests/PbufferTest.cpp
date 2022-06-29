@@ -10,7 +10,7 @@
 
 using namespace angle;
 
-class PbufferTest : public ANGLETest
+class PbufferTest : public ANGLETest<>
 {
   protected:
     PbufferTest()

@@ -25,7 +25,7 @@ constexpr unsigned int kPollInterval = 100;
 
 }  // anonymous namespace
 
-class ParallelShaderCompileTest : public ANGLETest
+class ParallelShaderCompileTest : public ANGLETest<>
 {
   protected:
     ParallelShaderCompileTest()

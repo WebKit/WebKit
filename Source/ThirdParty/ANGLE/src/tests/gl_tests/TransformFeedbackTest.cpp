@@ -16,7 +16,7 @@ using namespace angle;
 namespace
 {
 
-class TransformFeedbackTestBase : public ANGLETest
+class TransformFeedbackTestBase : public ANGLETest<>
 {
   protected:
     TransformFeedbackTestBase() : mProgram(0), mTransformFeedbackBuffer(0), mTransformFeedback(0)
@@ -1828,8 +1828,9 @@ TEST_P(TransformFeedbackTestES31, CaptureOutboundElement)
 // Test transform feedback names can be specified using array element.
 TEST_P(TransformFeedbackTestES31, DifferentArrayElementVaryings)
 {
-    // Remove this when http://anglebug.com/4140 is fixed.
-    ANGLE_SKIP_TEST_IF(IsVulkan());
+    // When transform feedback extension is used, capturing array elements is not supported.
+    // http://anglebug.com/4140
+    ANGLE_SKIP_TEST_IF(IsVulkan() && !GetParam().isEnabled(Feature::EmulateTransformFeedback));
 
     constexpr char kVS[] =
         "#version 310 es\n"
@@ -1853,6 +1854,72 @@ TEST_P(TransformFeedbackTestES31, DifferentArrayElementVaryings)
 
     std::vector<std::string> tfVaryings;
     tfVaryings.push_back("outAttribs[0]");
+    tfVaryings.push_back("outAttribs[2]");
+
+    mProgram = CompileProgramWithTransformFeedback(kVS, kFS, tfVaryings, GL_INTERLEAVED_ATTRIBS);
+    ASSERT_NE(0u, mProgram);
+
+    glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, mTransformFeedbackBuffer);
+    glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, sizeof(Vector3) * 2 * 6, nullptr, GL_STREAM_DRAW);
+
+    glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, mTransformFeedback);
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, mTransformFeedbackBuffer);
+
+    glUseProgram(mProgram);
+    glBeginTransformFeedback(GL_TRIANGLES);
+    drawQuad(mProgram, "position", 0.5f);
+    glEndTransformFeedback();
+    glUseProgram(0);
+    ASSERT_GL_NO_ERROR();
+
+    const GLvoid *mapPointer =
+        glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(Vector3) * 2 * 6, GL_MAP_READ_BIT);
+    ASSERT_NE(nullptr, mapPointer);
+
+    const auto &quadVertices = GetQuadVertices();
+
+    const Vector3 *vecPointer = static_cast<const Vector3 *>(mapPointer);
+    for (unsigned int vectorIndex = 0; vectorIndex < 3; ++vectorIndex)
+    {
+        unsigned int stream1Index = vectorIndex * 2;
+        unsigned int stream2Index = vectorIndex * 2 + 1;
+        EXPECT_EQ(quadVertices[vectorIndex], vecPointer[stream1Index]);
+        EXPECT_EQ(quadVertices[vectorIndex], vecPointer[stream2Index]);
+    }
+    glUnmapBuffer(GL_TRANSFORM_FEEDBACK_BUFFER);
+
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test transform feedback names can be specified using array element, use non-0 indices
+TEST_P(TransformFeedbackTestES31, DifferentArrayElementVaryingsNonZeroIndex)
+{
+    // When transform feedback extension is used, capturing array elements is not supported.
+    // http://anglebug.com/4140
+    ANGLE_SKIP_TEST_IF(IsVulkan() && !GetParam().isEnabled(Feature::EmulateTransformFeedback));
+
+    constexpr char kVS[] =
+        "#version 310 es\n"
+        "in vec3 position;\n"
+        "out vec3 outAttribs[3];\n"
+        "void main() {"
+        "  outAttribs[0] = vec3(0, 0, 0);\n"
+        "  outAttribs[1] = position;\n"
+        "  outAttribs[2] = position;\n"
+        "  gl_Position = vec4(position, 1);\n"
+        "}";
+
+    constexpr char kFS[] =
+        "#version 310 es\n"
+        "precision mediump float;\n"
+        "out vec4 color;\n"
+        "in vec3 outAttribs[3];\n"
+        "void main() {\n"
+        "  color = vec4(0);\n"
+        "}";
+
+    std::vector<std::string> tfVaryings;
+    tfVaryings.push_back("outAttribs[1]");
     tfVaryings.push_back("outAttribs[2]");
 
     mProgram = CompileProgramWithTransformFeedback(kVS, kFS, tfVaryings, GL_INTERLEAVED_ATTRIBS);
@@ -4224,20 +4291,40 @@ TEST_P(TransformFeedbackTest, BindAndUnbindTransformFeedback)
 }
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(TransformFeedbackTest);
-ANGLE_INSTANTIATE_TEST_ES3(TransformFeedbackTest);
+ANGLE_INSTANTIATE_TEST_ES3_AND(TransformFeedbackTest,
+                               ES3_VULKAN()
+                                   .disable(Feature::SupportsTransformFeedbackExtension)
+                                   .disable(Feature::SupportsGeometryStreamsCapability)
+                                   .enable(Feature::EmulateTransformFeedback));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(TransformFeedbackLifetimeTest);
-ANGLE_INSTANTIATE_TEST_ES3(TransformFeedbackLifetimeTest);
+ANGLE_INSTANTIATE_TEST_ES3_AND(TransformFeedbackLifetimeTest,
+                               ES3_VULKAN()
+                                   .disable(Feature::SupportsTransformFeedbackExtension)
+                                   .disable(Feature::SupportsGeometryStreamsCapability)
+                                   .enable(Feature::EmulateTransformFeedback));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(TransformFeedbackTestES31);
-ANGLE_INSTANTIATE_TEST_ES31(TransformFeedbackTestES31);
+ANGLE_INSTANTIATE_TEST_ES31_AND(TransformFeedbackTestES31,
+                                ES31_VULKAN()
+                                    .disable(Feature::SupportsTransformFeedbackExtension)
+                                    .disable(Feature::SupportsGeometryStreamsCapability)
+                                    .enable(Feature::EmulateTransformFeedback));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(TransformFeedbackTestIOBlocks);
-ANGLE_INSTANTIATE_TEST_ES31(TransformFeedbackTestIOBlocks);
+ANGLE_INSTANTIATE_TEST_ES31_AND(TransformFeedbackTestIOBlocks,
+                                ES31_VULKAN()
+                                    .disable(Feature::SupportsTransformFeedbackExtension)
+                                    .disable(Feature::SupportsGeometryStreamsCapability)
+                                    .enable(Feature::EmulateTransformFeedback));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(TransformFeedbackTestES32);
 ANGLE_INSTANTIATE_TEST_ES32(TransformFeedbackTestES32);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(TransformFeedbackWithDepthBufferTest);
-ANGLE_INSTANTIATE_TEST(TransformFeedbackWithDepthBufferTest, ES3_METAL());
+ANGLE_INSTANTIATE_TEST_ES3_AND(TransformFeedbackWithDepthBufferTest,
+                               ES3_VULKAN()
+                                   .disable(Feature::SupportsTransformFeedbackExtension)
+                                   .disable(Feature::SupportsGeometryStreamsCapability)
+                                   .enable(Feature::EmulateTransformFeedback));
 }  // anonymous namespace

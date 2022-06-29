@@ -24,15 +24,15 @@ class TSymbolTable;
 using InterfaceBlockList = std::vector<sh::InterfaceBlock>;
 
 #ifdef ANGLE_ENABLE_GLSL
-ANGLE_NO_DISCARD bool UseInterfaceBlockFields(TCompiler *compiler,
-                                              TIntermBlock *root,
-                                              const InterfaceBlockList &blocks,
-                                              const TSymbolTable &symbolTable);
+[[nodiscard]] bool UseInterfaceBlockFields(TCompiler *compiler,
+                                           TIntermBlock *root,
+                                           const InterfaceBlockList &blocks,
+                                           const TSymbolTable &symbolTable);
 #else
-ANGLE_NO_DISCARD ANGLE_INLINE bool UseInterfaceBlockFields(TCompiler *compiler,
-                                                           TIntermBlock *root,
-                                                           const InterfaceBlockList &blocks,
-                                                           const TSymbolTable &symbolTable)
+[[nodiscard]] ANGLE_INLINE bool UseInterfaceBlockFields(TCompiler *compiler,
+                                                        TIntermBlock *root,
+                                                        const InterfaceBlockList &blocks,
+                                                        const TSymbolTable &symbolTable)
 {
     UNREACHABLE();
     return false;

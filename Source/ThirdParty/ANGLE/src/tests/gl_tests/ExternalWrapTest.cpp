@@ -15,7 +15,7 @@ constexpr int kPixelThreshold = 1;
 
 namespace angle
 {
-class ExternalWrapTest : public ANGLETest
+class ExternalWrapTest : public ANGLETest<>
 {
   protected:
     ExternalWrapTest() : mProgram(0), mSourceTexture(0), mExternalImage(0), mExternalTexture(0)
@@ -119,9 +119,9 @@ void main()
 
         EGLWindow *window = getEGLWindow();
         EGLint attribs[]  = {
-            EGL_IMAGE_PRESERVED,
-            EGL_TRUE,
-            EGL_NONE,
+             EGL_IMAGE_PRESERVED,
+             EGL_TRUE,
+             EGL_NONE,
         };
         EGLImageKHR image = eglCreateImageKHR(
             window->getDisplay(), window->getContext(), EGL_GL_TEXTURE_2D_KHR,

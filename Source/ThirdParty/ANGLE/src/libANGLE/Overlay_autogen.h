@@ -44,6 +44,14 @@ enum class WidgetId
     VulkanAttemptedSubmissions,
     // Number of times the Vulkan backend actually submitted commands
     VulkanActualSubmissions,
+    // Number of times the Vulkan backend has looked up the pipeline cache
+    VulkanPipelineCacheLookups,
+    // Number of times the Vulkan backend has missed the pipeline cache
+    VulkanPipelineCacheMisses,
+    // Total time spent creating pipelines that missed the cache.
+    VulkanTotalPipelineCacheMissTimeMs,
+    // Total time spent creating pipelines that hit the cache.
+    VulkanTotalPipelineCacheHitTimeMs,
 
     InvalidEnum,
     EnumCount = InvalidEnum,
@@ -66,6 +74,10 @@ enum class WidgetId
     PROC(VulkanUniformDescriptorCacheSize)      \
     PROC(VulkanDescriptorCacheKeySize)          \
     PROC(VulkanAttemptedSubmissions)            \
-    PROC(VulkanActualSubmissions)
+    PROC(VulkanActualSubmissions)               \
+    PROC(VulkanPipelineCacheLookups)            \
+    PROC(VulkanPipelineCacheMisses)             \
+    PROC(VulkanTotalPipelineCacheMissTimeMs)    \
+    PROC(VulkanTotalPipelineCacheHitTimeMs)
 
 }  // namespace gl

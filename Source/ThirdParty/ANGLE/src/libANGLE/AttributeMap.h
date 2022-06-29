@@ -63,9 +63,9 @@ class AttributeMap final
     const_iterator begin() const;
     const_iterator end() const;
 
-    ANGLE_NO_DISCARD bool validate(const ValidationContext *val,
-                                   const egl::Display *display,
-                                   AttributeValidationFunc validationFunc) const;
+    [[nodiscard]] bool validate(const ValidationContext *val,
+                                const egl::Display *display,
+                                AttributeValidationFunc validationFunc) const;
 
     // TODO: remove this and validate at every call site. http://anglebug.com/6671
     void initializeWithoutValidation() const;

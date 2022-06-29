@@ -15,7 +15,7 @@
 
 using namespace angle;
 
-class FogTest : public ANGLETest
+class FogTest : public ANGLETest<>
 {
   protected:
     FogTest()

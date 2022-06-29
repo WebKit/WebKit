@@ -9,6 +9,7 @@
 #include "libANGLE/renderer/glslang_wrapper_utils.h"
 
 #include <array>
+#include <cctype>
 #include <numeric>
 
 #include "common/FixedVector.h"
@@ -248,7 +249,9 @@ void AssignTransformFeedbackEmulationBindings(gl::ShaderType shaderType,
     }
 }
 
-bool IsFirstRegisterOfVarying(const gl::PackedVaryingRegister &varyingReg, bool allowFields)
+bool IsFirstRegisterOfVarying(const gl::PackedVaryingRegister &varyingReg,
+                              bool allowFields,
+                              uint32_t expectArrayIndex)
 {
     const gl::PackedVarying &varying = *varyingReg.packedVarying;
 
@@ -263,8 +266,10 @@ bool IsFirstRegisterOfVarying(const gl::PackedVaryingRegister &varyingReg, bool 
     }
 
     // Similarly, assign array varying locations to the assigned location of the first element.
-    if (varyingReg.varyingArrayIndex != 0 ||
-        (varying.arrayIndex != GL_INVALID_INDEX && varying.arrayIndex != 0))
+    // Transform feedback may capture array elements, so if a specific non-zero element is
+    // requested, accept that only.
+    if (varyingReg.varyingArrayIndex != expectArrayIndex ||
+        (varying.arrayIndex != GL_INVALID_INDEX && varying.arrayIndex != expectArrayIndex))
     {
         return false;
     }
@@ -416,21 +421,10 @@ void AssignVaryingLocations(const GlslangSourceOptions &options,
 {
     uint32_t locationsUsedForEmulation = programInterfaceInfo->locationsUsedForXfbExtension;
 
-    // Substitute layout and qualifier strings for the position varying added for line raster
-    // emulation.
-    if (options.emulateBresenhamLines)
-    {
-        uint32_t lineRasterEmulationPositionLocation = locationsUsedForEmulation++;
-
-        AddLocationInfo(variableInfoMapOut, shaderType, ShaderVariableType::Varying,
-                        sh::vk::kLineRasterEmulationPosition, lineRasterEmulationPositionLocation,
-                        ShaderInterfaceVariableInfo::kInvalid, 0, 0);
-    }
-
     // Assign varying locations.
     for (const gl::PackedVaryingRegister &varyingReg : varyingPacking.getRegisterList())
     {
-        if (!IsFirstRegisterOfVarying(varyingReg, false))
+        if (!IsFirstRegisterOfVarying(varyingReg, false, 0))
         {
             continue;
         }
@@ -628,7 +622,9 @@ void AssignTransformFeedbackQualifiers(const gl::ProgramExecutable &programExecu
         const gl::PackedVarying *originalVarying = nullptr;
         for (const gl::PackedVaryingRegister &varyingReg : varyingPacking.getRegisterList())
         {
-            if (!IsFirstRegisterOfVarying(varyingReg, tfVarying.isShaderIOBlock))
+            const uint32_t arrayIndex =
+                tfVarying.arrayIndex == GL_INVALID_INDEX ? 0 : tfVarying.arrayIndex;
+            if (!IsFirstRegisterOfVarying(varyingReg, tfVarying.isShaderIOBlock, arrayIndex))
             {
                 continue;
             }
@@ -1117,7 +1113,6 @@ class SpirvIDDiscoverer final : angle::NonCopyable
     }
 
     spirv::IdRef floatId() const { return mFloatId; }
-    spirv::IdRef vec2Id() const { return mVec2Id; }
     spirv::IdRef vec4Id() const { return mVec4Id; }
     spirv::IdRef vec4OutTypePointerId() const { return mVec4OutTypePointerId; }
     spirv::IdRef intId() const { return mIntId; }
@@ -1161,7 +1156,6 @@ class SpirvIDDiscoverer final : angle::NonCopyable
     // and swizzles.
     //
     // - mFloatId: id of OpTypeFloat 32
-    // - mVec2Id: id of OpTypeVector %mFloatId 2
     // - mVec4Id: id of OpTypeVector %mFloatId 4
     // - mVec4OutTypePointerId: id of OpTypePointer Output %mVec4Id
     // - mIntId: id of OpTypeInt 32 1
@@ -1173,7 +1167,6 @@ class SpirvIDDiscoverer final : angle::NonCopyable
     // - mOutputPerVertexId: id of OpVariable %mOutputPerVertexTypePointerId Output
     //
     spirv::IdRef mFloatId;
-    spirv::IdRef mVec2Id;
     spirv::IdRef mVec4Id;
     spirv::IdRef mVec4OutTypePointerId;
     spirv::IdRef mIntId;
@@ -1365,12 +1358,7 @@ void SpirvIDDiscoverer::visitTypeVector(spirv::IdResult id,
                                         spirv::IdRef componentId,
                                         spirv::LiteralInteger componentCount)
 {
-    // Only interested in OpTypeVector %mFloatId 2/4 and OpTypeVector %mIntId 4
-    if (componentId == mFloatId && componentCount == 2)
-    {
-        ASSERT(!mVec2Id.valid());
-        mVec2Id = id;
-    }
+    // Only interested in OpTypeVector %mFloatId 4 and OpTypeVector %mIntId 4
     if (componentId == mFloatId && componentCount == 4)
     {
         ASSERT(!mVec4Id.valid());
@@ -1439,12 +1427,6 @@ void SpirvIDDiscoverer::writePendingDeclarations(spirv::Blob *blobOut)
     {
         mFloatId = SpirvTransformerBase::GetNewId(blobOut);
         spirv::WriteTypeFloat(blobOut, mFloatId, spirv::LiteralInteger(32));
-    }
-
-    if (!mVec2Id.valid())
-    {
-        mVec2Id = SpirvTransformerBase::GetNewId(blobOut);
-        spirv::WriteTypeVector(blobOut, mVec2Id, mFloatId, spirv::LiteralInteger(2));
     }
 
     if (!mVec4Id.valid())
@@ -1591,12 +1573,17 @@ class SpirvInactiveVaryingRemover final : angle::NonCopyable
         gl::ShaderType shaderType,
         spirv::IdRefList *interfaceList);
 
+    bool isInactive(spirv::IdRef id) const { return mIsInactiveById[id]; }
+
   private:
     // Each OpTypePointer instruction that defines a type with the Output storage class is
     // duplicated with a similar instruction but which defines a type with the Private storage
     // class.  If inactive varyings are encountered, its type is changed to the Private one.  The
     // following vector maps the Output type id to the corresponding Private one.
     std::vector<spirv::IdRef> mTypePointerTransformedId;
+
+    // Whether a variable has been marked inactive.
+    std::vector<bool> mIsInactiveById;
 };
 
 void SpirvInactiveVaryingRemover::init(size_t indexBound)
@@ -1604,6 +1591,7 @@ void SpirvInactiveVaryingRemover::init(size_t indexBound)
     // Allocate storage for Output type pointer map.  At index i, this vector holds the identical
     // type as %i except for its storage class turned to Private.
     mTypePointerTransformedId.resize(indexBound);
+    mIsInactiveById.resize(indexBound, false);
 }
 
 TransformationState SpirvInactiveVaryingRemover::transformAccessChain(
@@ -1714,6 +1702,8 @@ TransformationState SpirvInactiveVaryingRemover::transformVariable(spirv::IdResu
     ASSERT(mTypePointerTransformedId[typeId].valid());
     spirv::WriteVariable(blobOut, mTypePointerTransformedId[typeId], id, spv::StorageClassPrivate,
                          nullptr);
+
+    mIsInactiveById[id] = true;
 
     return TransformationState::Transformed;
 }
@@ -1933,6 +1923,7 @@ class SpirvTransformFeedbackCodeGenerator final : angle::NonCopyable
                                                spirv::Blob *blobOut);
     void writeTransformFeedbackEmulationOutput(
         const SpirvIDDiscoverer &ids,
+        const SpirvInactiveVaryingRemover &inactiveVaryingRemover,
         const SpirvVaryingPrecisionFixer &varyingPrecisionFixer,
         spirv::IdRef currentFunctionId,
         spirv::Blob *blobOut);
@@ -2383,6 +2374,7 @@ class AccessChainIndexListAppend final : angle::NonCopyable
 
 void SpirvTransformFeedbackCodeGenerator::writeTransformFeedbackEmulationOutput(
     const SpirvIDDiscoverer &ids,
+    const SpirvInactiveVaryingRemover &inactiveVaryingRemover,
     const SpirvVaryingPrecisionFixer &varyingPrecisionFixer,
     spirv::IdRef currentFunctionId,
     spirv::Blob *blobOut)
@@ -2524,7 +2516,8 @@ void SpirvTransformFeedbackCodeGenerator::writeTransformFeedbackEmulationOutput(
             // implementation of intBitsToFloat() and uintBitsToFloat() for non-float types).
             spirv::IdRef varyingTypeId;
             spirv::IdRef varyingTypePtr;
-            const bool isPrivate = varyingPrecisionFixer.isReplaced(varying.baseId);
+            const bool isPrivate = inactiveVaryingRemover.isInactive(varying.baseId) ||
+                                   varyingPrecisionFixer.isReplaced(varying.baseId);
             getVaryingTypeIds(ids, info->componentType, isPrivate, &varyingTypeId, &varyingTypePtr);
 
             for (uint32_t arrayIndex = arrayIndexStart; arrayIndex < arrayIndexEnd; ++arrayIndex)
@@ -2760,28 +2753,17 @@ class SpirvPositionTransformer final : angle::NonCopyable
                                      spirv::Blob *blobOut);
 
   private:
-    void preRotateXY(const SpirvIDDiscoverer &ids,
-                     spirv::IdRef vec2Id,
-                     spirv::IdRef xyId,
-                     spirv::IdRef rotatedXYId,
-                     spirv::Blob *blobOut);
-    void transformZToVulkanClipSpace(const SpirvIDDiscoverer &ids,
-                                     spirv::IdRef zId,
-                                     spirv::IdRef wId,
-                                     spirv::IdRef *correctedZIdOut,
-                                     spirv::Blob *blobOut);
-
     GlslangSpirvOptions mOptions;
 
-    spirv::IdRef mPreRotatePositionFuncId;
+    spirv::IdRef mTransformPositionFuncId;
 };
 
 void SpirvPositionTransformer::visitName(spirv::IdRef id, const spirv::LiteralString &name)
 {
-    if (angle::BeginsWith(name, sh::vk::kPreRotationRotatePositionFunctionName))
+    if (angle::BeginsWith(name, sh::vk::kTransformPositionFunctionName))
     {
-        ASSERT(!mPreRotatePositionFuncId.valid());
-        mPreRotatePositionFuncId = id;
+        ASSERT(!mTransformPositionFuncId.valid());
+        mTransformPositionFuncId = id;
     }
 }
 
@@ -2790,86 +2772,20 @@ void SpirvPositionTransformer::writePositionTransformation(const SpirvIDDiscover
                                                            spirv::IdRef positionId,
                                                            spirv::Blob *blobOut)
 {
-    // In GL the viewport transformation is slightly different - see the GL 2.0 spec section "2.12.1
-    // Controlling the Viewport".  In Vulkan the corresponding spec section is currently "23.4.
-    // Coordinate Transformations".  The following transformation needs to be done:
-    //
-    //     z_vk = 0.5 * (w_gl + z_gl)
-    //
-    // where z_vk is the depth output of a Vulkan geometry-stage shader and z_gl is the same for GL.
-
     // Generate the following SPIR-V for prerotation and depth transformation:
     //
-    //     // Create gl_Position.x and gl_Position.y for transformation, as well as gl_Position.z
-    //     // and gl_Position.w for later.
-    //     %xy = OpVectorShuffle %mVec2Id %Position %position 0 1
-    //     %z = OpCompositeExtract %mFloatId %Position 2
-    //     %w = OpCompositeExtract %mFloatId %Position 3
-    //
-    //     // Transform %xy based on pre-rotation by making a call to the ANGLEPreRotatePositionXY
+    //     // Transform position based on uniforms by making a call to the ANGLETransformPosition
     //     // function that the translator has already provided.
+    //     %transformed = OpFunctionCall %mVec4Id %mTransformPositionFuncId %position
     //
-    //     // Transform %z if necessary, based on the above formula.
-    //     %zPlusW = OpFAdd %mFloatId %z %w
-    //     %correctedZ = OpFMul %mFloatId %zPlusW %mFloatHalfId
-    //
-    //     // Create the rotated gl_Position from the rotated xy and corrected z components.
-    //     %RotatedPosition = OpCompositeConstruct %mVec4Id %rotatedXY %correctedZ %w
     //     // Store the results back in gl_Position
-    //     OpStore %PositionPointer %RotatedPosition
+    //     OpStore %PositionPointer %transformedPosition
     //
-    const spirv::IdRef xyId(SpirvTransformerBase::GetNewId(blobOut));
-    const spirv::IdRef zId(SpirvTransformerBase::GetNewId(blobOut));
-    const spirv::IdRef wId(SpirvTransformerBase::GetNewId(blobOut));
-    const spirv::IdRef rotatedXYId(SpirvTransformerBase::GetNewId(blobOut));
-    const spirv::IdRef rotatedPositionId(SpirvTransformerBase::GetNewId(blobOut));
+    const spirv::IdRef transformedPositionId(SpirvTransformerBase::GetNewId(blobOut));
 
-    spirv::WriteVectorShuffle(blobOut, ids.vec2Id(), xyId, positionId, positionId,
-                              {spirv::LiteralInteger{0}, spirv::LiteralInteger{1}});
-    spirv::WriteCompositeExtract(blobOut, ids.floatId(), zId, positionId,
-                                 {spirv::LiteralInteger{2}});
-    spirv::WriteCompositeExtract(blobOut, ids.floatId(), wId, positionId,
-                                 {spirv::LiteralInteger{3}});
-
-    preRotateXY(ids, ids.vec2Id(), xyId, rotatedXYId, blobOut);
-
-    spirv::IdRef correctedZId;
-    transformZToVulkanClipSpace(ids, zId, wId, &correctedZId, blobOut);
-
-    spirv::WriteCompositeConstruct(blobOut, ids.vec4Id(), rotatedPositionId,
-                                   {rotatedXYId, correctedZId, wId});
-    spirv::WriteStore(blobOut, positionPointerId, rotatedPositionId, nullptr);
-}
-
-void SpirvPositionTransformer::preRotateXY(const SpirvIDDiscoverer &ids,
-                                           spirv::IdRef vec2Id,
-                                           spirv::IdRef xyId,
-                                           spirv::IdRef rotatedXYId,
-                                           spirv::Blob *blobOut)
-{
-    spirv::WriteFunctionCall(blobOut, vec2Id, rotatedXYId, mPreRotatePositionFuncId, {xyId});
-}
-
-void SpirvPositionTransformer::transformZToVulkanClipSpace(const SpirvIDDiscoverer &ids,
-                                                           spirv::IdRef zId,
-                                                           spirv::IdRef wId,
-                                                           spirv::IdRef *correctedZIdOut,
-                                                           spirv::Blob *blobOut)
-{
-    if (!mOptions.transformPositionToVulkanClipSpace)
-    {
-        *correctedZIdOut = zId;
-        return;
-    }
-
-    const spirv::IdRef zPlusWId(SpirvTransformerBase::GetNewId(blobOut));
-    *correctedZIdOut = SpirvTransformerBase::GetNewId(blobOut);
-
-    // %zPlusW = OpFAdd %mFloatId %z %w
-    spirv::WriteFAdd(blobOut, ids.floatId(), zPlusWId, zId, wId);
-
-    // %correctedZ = OpFMul %mFloatId %zPlusW %mFloatHalfId
-    spirv::WriteFMul(blobOut, ids.floatId(), *correctedZIdOut, zPlusWId, ids.floatHalfId());
+    spirv::WriteFunctionCall(blobOut, ids.vec4Id(), transformedPositionId, mTransformPositionFuncId,
+                             {positionId});
+    spirv::WriteStore(blobOut, positionPointerId, transformedPositionId, nullptr);
 }
 
 // A SPIR-V transformer.  It walks the instructions and modifies them as necessary, for example to
@@ -3592,7 +3508,8 @@ TransformationState SpirvTransformer::transformReturn(const uint32_t *instructio
             // Transform feedback emulation is written to a designated function.  Allow its code to
             // be generated if this is the right function.
             mXfbCodeGenerator.writeTransformFeedbackEmulationOutput(
-                mIds, mVaryingPrecisionFixer, mCurrentFunctionId, mSpirvBlobOut);
+                mIds, mInactiveVaryingRemover, mVaryingPrecisionFixer, mCurrentFunctionId,
+                mSpirvBlobOut);
         }
 
         // We only need to process the precision info when returning from the entry point function

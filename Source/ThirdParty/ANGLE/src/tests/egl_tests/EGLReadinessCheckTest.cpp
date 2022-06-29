@@ -15,7 +15,7 @@
 
 using namespace angle;
 
-class EGLReadinessCheckTest : public ANGLETest
+class EGLReadinessCheckTest : public ANGLETest<>
 {};
 
 // Checks the tests are running against ANGLE

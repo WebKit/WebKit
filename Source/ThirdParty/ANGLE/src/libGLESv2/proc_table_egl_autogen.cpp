@@ -300,6 +300,7 @@ const ProcEntry g_procTable[] = {
     {"glDrawArraysInstanced", P(GL_DrawArraysInstanced)},
     {"glDrawArraysInstancedANGLE", P(GL_DrawArraysInstancedANGLE)},
     {"glDrawArraysInstancedBaseInstanceANGLE", P(GL_DrawArraysInstancedBaseInstanceANGLE)},
+    {"glDrawArraysInstancedBaseInstanceEXT", P(GL_DrawArraysInstancedBaseInstanceEXT)},
     {"glDrawArraysInstancedEXT", P(GL_DrawArraysInstancedEXT)},
     {"glDrawBuffers", P(GL_DrawBuffers)},
     {"glDrawBuffersEXT", P(GL_DrawBuffersEXT)},
@@ -310,9 +311,12 @@ const ProcEntry g_procTable[] = {
     {"glDrawElementsIndirect", P(GL_DrawElementsIndirect)},
     {"glDrawElementsInstanced", P(GL_DrawElementsInstanced)},
     {"glDrawElementsInstancedANGLE", P(GL_DrawElementsInstancedANGLE)},
+    {"glDrawElementsInstancedBaseInstanceEXT", P(GL_DrawElementsInstancedBaseInstanceEXT)},
     {"glDrawElementsInstancedBaseVertex", P(GL_DrawElementsInstancedBaseVertex)},
     {"glDrawElementsInstancedBaseVertexBaseInstanceANGLE",
      P(GL_DrawElementsInstancedBaseVertexBaseInstanceANGLE)},
+    {"glDrawElementsInstancedBaseVertexBaseInstanceEXT",
+     P(GL_DrawElementsInstancedBaseVertexBaseInstanceEXT)},
     {"glDrawElementsInstancedBaseVertexEXT", P(GL_DrawElementsInstancedBaseVertexEXT)},
     {"glDrawElementsInstancedBaseVertexOES", P(GL_DrawElementsInstancedBaseVertexOES)},
     {"glDrawElementsInstancedEXT", P(GL_DrawElementsInstancedEXT)},
@@ -947,5 +951,5 @@ const ProcEntry g_procTable[] = {
     {"glWaitSync", P(GL_WaitSync)},
     {"glWeightPointerOES", P(GL_WeightPointerOES)}};
 
-const size_t g_numProcs = 914;
+const size_t g_numProcs = 917;
 }  // namespace egl

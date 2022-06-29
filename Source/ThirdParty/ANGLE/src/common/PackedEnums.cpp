@@ -574,6 +574,17 @@ const char *ShaderTypeToString(ShaderType shaderType)
         {ShaderType::Compute, "Compute"}};
     return kShaderTypeNameMap[shaderType];
 }
+
+bool operator<(const UniformLocation &lhs, const UniformLocation &rhs)
+{
+    return lhs.value < rhs.value;
+}
+
+bool IsEmulatedCompressedFormat(GLenum format)
+{
+    // TODO(anglebug.com/6177): Check for all formats ANGLE will use to emulate a compressed texture
+    return format == GL_RGBA || format == GL_RG || format == GL_RED;
+}
 }  // namespace gl
 
 namespace egl

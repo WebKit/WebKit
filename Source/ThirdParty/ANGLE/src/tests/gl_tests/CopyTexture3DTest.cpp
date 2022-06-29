@@ -13,7 +13,7 @@
 namespace angle
 {
 
-class CopyTexture3DTest : public ANGLETest
+class CopyTexture3DTest : public ANGLETest<>
 {
   protected:
     CopyTexture3DTest()

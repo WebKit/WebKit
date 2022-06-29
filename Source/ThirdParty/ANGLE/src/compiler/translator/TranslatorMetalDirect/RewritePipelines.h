@@ -31,14 +31,14 @@ namespace sh
 //      as a parameter to `main`.
 //    - Inside `main`, map the internal struct to the external struct if they differ and is returned
 //      from `main`.
-ANGLE_NO_DISCARD bool RewritePipelines(TCompiler &compiler,
-                                       TIntermBlock &root,
-                                       const std::vector<sh::ShaderVariable> &inputVaryings,
-                                       const std::vector<sh::ShaderVariable> &outputVariables,
-                                       IdGen &idGen,
-                                       DriverUniform &angleUniformsGlobalInstanceVar,
-                                       SymbolEnv &symbolEnv,
-                                       PipelineStructs &outStructs);
+[[nodiscard]] bool RewritePipelines(TCompiler &compiler,
+                                    TIntermBlock &root,
+                                    const std::vector<sh::ShaderVariable> &inputVaryings,
+                                    const std::vector<sh::ShaderVariable> &outputVariables,
+                                    IdGen &idGen,
+                                    DriverUniform &angleUniformsGlobalInstanceVar,
+                                    SymbolEnv &symbolEnv,
+                                    PipelineStructs &outStructs);
 
 }  // namespace sh
 

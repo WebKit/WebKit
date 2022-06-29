@@ -206,7 +206,7 @@ int GetMaxUniformVectorsForShaderType(GLenum shaderType, const ShBuiltInResource
 namespace
 {
 
-class ANGLE_NO_DISCARD TScopedPoolAllocator
+class [[nodiscard]] TScopedPoolAllocator
 {
   public:
     TScopedPoolAllocator(angle::PoolAllocator *allocator) : mAllocator(allocator)
@@ -224,7 +224,7 @@ class ANGLE_NO_DISCARD TScopedPoolAllocator
     angle::PoolAllocator *mAllocator;
 };
 
-class ANGLE_NO_DISCARD TScopedSymbolTableLevel
+class [[nodiscard]] TScopedSymbolTableLevel
 {
   public:
     TScopedSymbolTableLevel(TSymbolTable *table) : mTable(table)

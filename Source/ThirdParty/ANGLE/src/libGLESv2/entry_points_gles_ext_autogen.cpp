@@ -378,8 +378,8 @@ void GL_APIENTRY GL_DrawArraysInstancedBaseInstanceANGLE(GLenum mode,
                                                                      modePacked, first, count, instanceCount, baseInstance));
         if (isCallValid)
         {
-            context->drawArraysInstancedBaseInstance(modePacked, first, count, instanceCount,
-                                                     baseInstance);
+            context->drawArraysInstancedBaseInstanceANGLE(modePacked, first, count, instanceCount,
+                                                          baseInstance);
         }
         ANGLE_CAPTURE_GL(DrawArraysInstancedBaseInstanceANGLE, isCallValid, context, modePacked,
                          first, count, instanceCount, baseInstance);
@@ -418,7 +418,7 @@ void GL_APIENTRY GL_DrawElementsInstancedBaseVertexBaseInstanceANGLE(GLenum mode
                  modePacked, count, typePacked, indices, instanceCount, baseVertex, baseInstance));
         if (isCallValid)
         {
-            context->drawElementsInstancedBaseVertexBaseInstance(
+            context->drawElementsInstancedBaseVertexBaseInstanceANGLE(
                 modePacked, count, typePacked, indices, instanceCount, baseVertex, baseInstance);
         }
         ANGLE_CAPTURE_GL(DrawElementsInstancedBaseVertexBaseInstanceANGLE, isCallValid, context,
@@ -4255,6 +4255,121 @@ void GL_APIENTRY GL_EGLImageTargetTextureStorageEXT(GLuint texture,
 }
 
 // GL_EXT_YUV_target
+
+// GL_EXT_base_instance
+void GL_APIENTRY GL_DrawArraysInstancedBaseInstanceEXT(GLenum mode,
+                                                       GLint first,
+                                                       GLsizei count,
+                                                       GLsizei instancecount,
+                                                       GLuint baseinstance)
+{
+    Context *context = GetValidGlobalContext();
+    EVENT(context, GLDrawArraysInstancedBaseInstanceEXT,
+          "context = %d, mode = %s, first = %d, count = %d, instancecount = %d, baseinstance = %u",
+          CID(context), GLenumToString(GLenumGroup::PrimitiveType, mode), first, count,
+          instancecount, baseinstance);
+
+    if (context)
+    {
+        PrimitiveMode modePacked                              = PackParam<PrimitiveMode>(mode);
+        std::unique_lock<angle::GlobalMutex> shareContextLock = GetContextLock(context);
+        bool isCallValid                                      = (context->skipValidation() ||
+                            ValidateDrawArraysInstancedBaseInstanceEXT(
+                                                                     context, angle::EntryPoint::GLDrawArraysInstancedBaseInstanceEXT,
+                                                                     modePacked, first, count, instancecount, baseinstance));
+        if (isCallValid)
+        {
+            context->drawArraysInstancedBaseInstance(modePacked, first, count, instancecount,
+                                                     baseinstance);
+        }
+        ANGLE_CAPTURE_GL(DrawArraysInstancedBaseInstanceEXT, isCallValid, context, modePacked,
+                         first, count, instancecount, baseinstance);
+    }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
+}
+
+void GL_APIENTRY GL_DrawElementsInstancedBaseInstanceEXT(GLenum mode,
+                                                         GLsizei count,
+                                                         GLenum type,
+                                                         const void *indices,
+                                                         GLsizei instancecount,
+                                                         GLuint baseinstance)
+{
+    Context *context = GetValidGlobalContext();
+    EVENT(context, GLDrawElementsInstancedBaseInstanceEXT,
+          "context = %d, mode = %s, count = %d, type = %s, indices = 0x%016" PRIxPTR
+          ", instancecount = %d, baseinstance = %u",
+          CID(context), GLenumToString(GLenumGroup::PrimitiveType, mode), count,
+          GLenumToString(GLenumGroup::PrimitiveType, type), (uintptr_t)indices, instancecount,
+          baseinstance);
+
+    if (context)
+    {
+        PrimitiveMode modePacked                              = PackParam<PrimitiveMode>(mode);
+        DrawElementsType typePacked                           = PackParam<DrawElementsType>(type);
+        std::unique_lock<angle::GlobalMutex> shareContextLock = GetContextLock(context);
+        bool isCallValid =
+            (context->skipValidation() ||
+             ValidateDrawElementsInstancedBaseInstanceEXT(
+                 context, angle::EntryPoint::GLDrawElementsInstancedBaseInstanceEXT, modePacked,
+                 count, typePacked, indices, instancecount, baseinstance));
+        if (isCallValid)
+        {
+            context->drawElementsInstancedBaseInstance(modePacked, count, typePacked, indices,
+                                                       instancecount, baseinstance);
+        }
+        ANGLE_CAPTURE_GL(DrawElementsInstancedBaseInstanceEXT, isCallValid, context, modePacked,
+                         count, typePacked, indices, instancecount, baseinstance);
+    }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
+}
+
+void GL_APIENTRY GL_DrawElementsInstancedBaseVertexBaseInstanceEXT(GLenum mode,
+                                                                   GLsizei count,
+                                                                   GLenum type,
+                                                                   const void *indices,
+                                                                   GLsizei instancecount,
+                                                                   GLint basevertex,
+                                                                   GLuint baseinstance)
+{
+    Context *context = GetValidGlobalContext();
+    EVENT(context, GLDrawElementsInstancedBaseVertexBaseInstanceEXT,
+          "context = %d, mode = %s, count = %d, type = %s, indices = 0x%016" PRIxPTR
+          ", instancecount = %d, basevertex = %d, baseinstance = %u",
+          CID(context), GLenumToString(GLenumGroup::PrimitiveType, mode), count,
+          GLenumToString(GLenumGroup::PrimitiveType, type), (uintptr_t)indices, instancecount,
+          basevertex, baseinstance);
+
+    if (context)
+    {
+        PrimitiveMode modePacked                              = PackParam<PrimitiveMode>(mode);
+        DrawElementsType typePacked                           = PackParam<DrawElementsType>(type);
+        std::unique_lock<angle::GlobalMutex> shareContextLock = GetContextLock(context);
+        bool isCallValid =
+            (context->skipValidation() ||
+             ValidateDrawElementsInstancedBaseVertexBaseInstanceEXT(
+                 context, angle::EntryPoint::GLDrawElementsInstancedBaseVertexBaseInstanceEXT,
+                 modePacked, count, typePacked, indices, instancecount, basevertex, baseinstance));
+        if (isCallValid)
+        {
+            context->drawElementsInstancedBaseVertexBaseInstance(
+                modePacked, count, typePacked, indices, instancecount, basevertex, baseinstance);
+        }
+        ANGLE_CAPTURE_GL(DrawElementsInstancedBaseVertexBaseInstanceEXT, isCallValid, context,
+                         modePacked, count, typePacked, indices, instancecount, basevertex,
+                         baseinstance);
+    }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
+}
 
 // GL_EXT_blend_func_extended
 void GL_APIENTRY GL_BindFragDataLocationEXT(GLuint program, GLuint color, const GLchar *name)
@@ -9196,6 +9311,8 @@ void GL_APIENTRY GL_BlitFramebufferNV(GLint srcX0,
 // GL_NV_pixel_buffer_object
 
 // GL_NV_read_depth
+
+// GL_NV_read_depth_stencil
 
 // GL_NV_read_stencil
 

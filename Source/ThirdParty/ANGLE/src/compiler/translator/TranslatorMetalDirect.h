@@ -165,23 +165,23 @@ class TranslatorMetalDirect : public TCompiler
     // Need to collect variables so that RemoveInactiveInterfaceVariables works.
     bool shouldCollectVariables(ShCompileOptions compileOptions) override { return true; }
 
-    ANGLE_NO_DISCARD bool translateImpl(TInfoSinkBase &sink,
-                                        TIntermBlock *root,
-                                        ShCompileOptions compileOptions,
-                                        PerformanceDiagnostics *perfDiagnostics,
-                                        SpecConst *specConst,
-                                        DriverUniformMetal *driverUniforms);
+    [[nodiscard]] bool translateImpl(TInfoSinkBase &sink,
+                                     TIntermBlock *root,
+                                     ShCompileOptions compileOptions,
+                                     PerformanceDiagnostics *perfDiagnostics,
+                                     SpecConst *specConst,
+                                     DriverUniformMetal *driverUniforms);
 
-    ANGLE_NO_DISCARD bool shouldFlattenPragmaStdglInvariantAll() override;
+    [[nodiscard]] bool shouldFlattenPragmaStdglInvariantAll() override;
 
-    ANGLE_NO_DISCARD bool transformDepthBeforeCorrection(TIntermBlock *root,
-                                                         const DriverUniformMetal *driverUniforms);
+    [[nodiscard]] bool transformDepthBeforeCorrection(TIntermBlock *root,
+                                                      const DriverUniformMetal *driverUniforms);
 
-    ANGLE_NO_DISCARD bool appendVertexShaderDepthCorrectionToMain(TIntermBlock *root);
+    [[nodiscard]] bool appendVertexShaderDepthCorrectionToMain(TIntermBlock *root);
 
-    ANGLE_NO_DISCARD bool insertSampleMaskWritingLogic(TIntermBlock &root,
-                                                       DriverUniformMetal &driverUniforms);
-    ANGLE_NO_DISCARD bool insertRasterizationDiscardLogic(TIntermBlock &root);
+    [[nodiscard]] bool insertSampleMaskWritingLogic(TIntermBlock &root,
+                                                    DriverUniformMetal &driverUniforms);
+    [[nodiscard]] bool insertRasterizationDiscardLogic(TIntermBlock &root);
 
     TranslatorMetalReflection translatorMetalReflection = {};
 };

@@ -26,7 +26,7 @@ class TCompiler;
 class TIntermBlock;
 class TSymbolTable;
 
-ANGLE_NO_DISCARD bool RemoveInactiveInterfaceVariables(
+[[nodiscard]] bool RemoveInactiveInterfaceVariables(
     TCompiler *compiler,
     TIntermBlock *root,
     TSymbolTable *symbolTable,

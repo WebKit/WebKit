@@ -11,7 +11,7 @@
 
 using namespace angle;
 
-class TextureTargetEnableTest : public ANGLETest
+class TextureTargetEnableTest : public ANGLETest<>
 {
   protected:
     TextureTargetEnableTest()

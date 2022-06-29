@@ -57,6 +57,7 @@ class Surface;
 class Sync;
 class Thread;
 
+using ContextSet = std::set<gl::Context *>;
 using SurfaceSet = std::set<Surface *>;
 
 struct DisplayState final : private angle::NonCopyable
@@ -65,14 +66,13 @@ struct DisplayState final : private angle::NonCopyable
     ~DisplayState();
 
     EGLLabelKHR label;
+    ContextSet contextSet;
     SurfaceSet surfaceSet;
     std::vector<std::string> featureOverridesEnabled;
     std::vector<std::string> featureOverridesDisabled;
     bool featuresAllDisabled;
     EGLNativeDisplayType displayId;
 };
-
-using ContextSet = std::set<gl::Context *>;
 
 class ShareGroup final : angle::NonCopyable
 {
@@ -349,8 +349,6 @@ class Display final : public LabeledObject,
     AttributeMap mAttributeMap;
 
     ConfigSet mConfigSet;
-
-    ContextSet mContextSet;
 
     typedef std::set<Image *> ImageSet;
     ImageSet mImageSet;

@@ -85,13 +85,13 @@ void CheckPixels(GLint x,
 const GLuint kWidth  = 100;
 const GLuint kHeight = 100;
 
-class EXTBlendFuncExtendedTest : public ANGLETest
+class EXTBlendFuncExtendedTest : public ANGLETest<>
 {};
 
-class EXTBlendFuncExtendedTestES3 : public ANGLETest
+class EXTBlendFuncExtendedTestES3 : public ANGLETest<>
 {};
 
-class EXTBlendFuncExtendedDrawTest : public ANGLETest
+class EXTBlendFuncExtendedDrawTest : public ANGLETest<>
 {
   protected:
     EXTBlendFuncExtendedDrawTest() : mProgram(0)

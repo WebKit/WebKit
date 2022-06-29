@@ -15,7 +15,7 @@ using namespace angle;
 namespace
 {
 
-class WebGLCompressedTextureAvailabilityTest : public ANGLETest
+class WebGLCompressedTextureAvailabilityTest : public ANGLETest<>
 {
   public:
     WebGLCompressedTextureAvailabilityTest() { setWebGLCompatibilityEnabled(true); }

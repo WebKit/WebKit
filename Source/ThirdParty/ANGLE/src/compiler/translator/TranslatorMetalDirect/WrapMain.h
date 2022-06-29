@@ -21,7 +21,7 @@ namespace sh
 //
 // This transformation is useful if the original `main` has multiple return paths because this
 // reduces down to a single path in the new `main`. Nice for inserting cleanup code in `main`.
-ANGLE_NO_DISCARD bool WrapMain(TCompiler &compiler, IdGen &idGen, TIntermBlock &root);
+[[nodiscard]] bool WrapMain(TCompiler &compiler, IdGen &idGen, TIntermBlock &root);
 
 }  // namespace sh
 

@@ -170,7 +170,6 @@ void main()
     //
     // Note that T is params.stretch and O is params.offset.
 
-    // X
     CoordType srcImageCoords = CoordType(gl_FragCoord.xy);  // X
 #if !IsResolve
     srcImageCoords *= params.stretch;                       // TX

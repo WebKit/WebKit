@@ -13,7 +13,7 @@ using namespace angle;
 namespace
 {
 
-class UniformBufferTest : public ANGLETest
+class UniformBufferTest : public ANGLETest<>
 {
   protected:
     UniformBufferTest()
@@ -601,7 +601,7 @@ TEST_P(UniformBufferTest, VeryLargeReadback)
     glUnmapBuffer(GL_UNIFORM_BUFFER);
 }
 
-class UniformBufferTest31 : public ANGLETest
+class UniformBufferTest31 : public ANGLETest<>
 {
   protected:
     UniformBufferTest31()
@@ -1900,7 +1900,7 @@ TEST_P(UniformBufferTest, ManyBlocks)
 // blocks that will be translated to cbuffer type on D3D backend, we will tranlate these
 // uniform blocks to StructuredBuffer for slow fxc compile performance issue with dynamic
 // uniform indexing, angleproject/3682.
-class UniformBlockWithOneLargeArrayMemberTest : public ANGLETest
+class UniformBlockWithOneLargeArrayMemberTest : public ANGLETest<>
 {
   protected:
     UniformBlockWithOneLargeArrayMemberTest()

@@ -27,7 +27,7 @@ const std::array<GLubyte, 16> kBC7BlackData4x4 = {0x20, 0x00, 0x00, 0x00, 0x00, 
                                                   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 }  // anonymous namespace
 
-class BPTCCompressedTextureTest : public ANGLETest
+class BPTCCompressedTextureTest : public ANGLETest<>
 {
   protected:
     BPTCCompressedTextureTest()

@@ -19,9 +19,9 @@ class TCompiler;
 class TIntermNode;
 class TSymbolTable;
 
-ANGLE_NO_DISCARD bool RewriteElseBlocks(TCompiler *compiler,
-                                        TIntermNode *node,
-                                        TSymbolTable *symbolTable);
+[[nodiscard]] bool RewriteElseBlocks(TCompiler *compiler,
+                                     TIntermNode *node,
+                                     TSymbolTable *symbolTable);
 }  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_TREEOPS_D3D_REWRITEELSEBLOCKS_H_

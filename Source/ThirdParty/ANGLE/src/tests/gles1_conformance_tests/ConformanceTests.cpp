@@ -115,7 +115,7 @@ void StateSetup(void);
 #endif
 namespace angle
 {
-class GLES1ConformanceTest : public ANGLETest
+class GLES1ConformanceTest : public ANGLETest<>
 {
   protected:
     GLES1ConformanceTest()

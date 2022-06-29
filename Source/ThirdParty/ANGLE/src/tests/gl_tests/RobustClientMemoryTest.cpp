@@ -15,7 +15,7 @@ namespace angle
 
 constexpr GLsizei kWindowSize = 128;
 
-class RobustClientMemoryTest : public ANGLETest
+class RobustClientMemoryTest : public ANGLETest<>
 {
   protected:
     RobustClientMemoryTest()

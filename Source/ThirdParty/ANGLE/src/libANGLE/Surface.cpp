@@ -617,6 +617,11 @@ bool Surface::isYUV() const
     return false;
 }
 
+bool Surface::isCreatedWithAHB() const
+{
+    return false;
+}
+
 GLuint Surface::getId() const
 {
     UNREACHABLE();

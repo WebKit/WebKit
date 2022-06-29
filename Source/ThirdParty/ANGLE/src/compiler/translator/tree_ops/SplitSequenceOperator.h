@@ -20,10 +20,10 @@ class TCompiler;
 class TIntermNode;
 class TSymbolTable;
 
-ANGLE_NO_DISCARD bool SplitSequenceOperator(TCompiler *compiler,
-                                            TIntermNode *root,
-                                            int patternsToSplitMask,
-                                            TSymbolTable *symbolTable);
+[[nodiscard]] bool SplitSequenceOperator(TCompiler *compiler,
+                                         TIntermNode *root,
+                                         int patternsToSplitMask,
+                                         TSymbolTable *symbolTable);
 
 }  // namespace sh
 

@@ -404,7 +404,7 @@ void CallAddr2Line(const Addr2LineCommandLine &commandLine)
         // Child process executes addr2line
         //
         // See comment in test_utils_posix.cpp::PosixProcess regarding const_cast.
-        execv(commandLine[0], const_cast<char *const *>(commandLine.data()));
+        execvp(commandLine[0], const_cast<char *const *>(commandLine.data()));
         std::cerr << "Error: Child process returned from exevc()" << std::endl;
         _exit(EXIT_FAILURE);  // exec never returns
     }
@@ -442,6 +442,47 @@ const char *ResolveAddress(const MemoryRegionArray &regions,
 
     return address;
 }
+// This is only required when the current CWD does not match the initial CWD and could be replaced
+// by storing the initial CWD state globally. It is only changed in vulkan_icd.cpp.
+std::string RemoveOverlappingPath(const std::string &resolvedModule)
+{
+    // Build path from CWD in case CWD matches executable directory
+    // but relative paths are from initial cwd.
+    const Optional<std::string> &cwd = angle::GetCWD();
+    if (!cwd.valid())
+    {
+        std::cerr << "Error getting CWD to print the backtrace." << std::endl;
+        return resolvedModule;
+    }
+    else
+    {
+        std::string absolutePath = cwd.value();
+        size_t lastPathSepLoc    = resolvedModule.find_last_of(GetPathSeparator());
+        std::string relativePath = resolvedModule.substr(0, lastPathSepLoc);
+
+        // Remove "." from the relativePath path
+        // For example: ./out/LinuxDebug/angle_perftests
+        size_t pos = relativePath.find('.');
+        if (pos != std::string::npos)
+        {
+            // If found then erase it from string
+            relativePath.erase(pos, 1);
+        }
+
+        // Remove the overlapping relative path from the CWD so we can build the full
+        // absolute path.
+        // For example:
+        // absolutePath = /home/timvp/code/angle/out/LinuxDebug
+        // relativePath = /out/LinuxDebug
+        pos = absolutePath.find(relativePath);
+        if (pos != std::string::npos)
+        {
+            // If found then erase it from string
+            absolutePath.erase(pos, relativePath.length());
+        }
+        return absolutePath + GetPathSeparator() + resolvedModule;
+    }
+}
 }  // anonymous namespace
 #        endif  // defined(ANGLE_HAS_ADDR2LINE)
 
@@ -461,12 +502,7 @@ void PrintStackBacktrace()
     // Child process executes addr2line
     constexpr size_t kAddr2LineFixedParametersCount = 6;
     Addr2LineCommandLine commandLineArgs            = {
-        "/usr/bin/addr2line",  // execv requires an absolute path to find addr2line
-        "-s",
-        "-p",
-        "-f",
-        "-C",
-        "-e",
+                   "addr2line", "-s", "-p", "-f", "-C", "-e",
     };
     const char *currentModule = "";
     std::string resolvedModule;
@@ -512,56 +548,59 @@ void PrintStackBacktrace()
         resolvedModule = currentModule = module;
         commandLineArgs.resize(kAddr2LineFixedParametersCount);
 
+        // First check if the a relative path simply resolved to an absolute one from cwd,
+        // for abolute paths this resolves symlinks.
+        char *realPath = realpath(resolvedModule.c_str(), NULL);
+        if (realPath)
+        {
+            resolvedModule = std::string(realPath);
+            free(realPath);
+        }
         // We need an absolute path to get to the executable and all of the various shared objects,
         // but the caller may have used a relative path to launch the executable, so build one up if
         // we don't see a leading '/'.
-        if (resolvedModule.at(0) != GetPathSeparator())
+        else if (resolvedModule.at(0) != GetPathSeparator())
         {
-            const Optional<std::string> &cwd = angle::GetCWD();
-            if (!cwd.valid())
+            // For some modules we receive a relative path from the build directory (executable
+            // directory) instead of the execution directory (current directory). This happens
+            // for libVkLayer_khronos_validation.so. If realpath fails to create an absolute
+            // path, try constructing one from the build directory.
+            // This will resolve paths like `angledata/../libVkLayer_khronos_validation.so` to
+            // `/home/user/angle/out/Debug/libVkLayer_khronos_validation.so`
+            std::string pathFromExecDir =
+                GetExecutableDirectory() + GetPathSeparator() + resolvedModule;
+            realPath = realpath(pathFromExecDir.c_str(), NULL);
+            if (realPath)
             {
-                std::cerr << "Error getting CWD to print the backtrace." << std::endl;
+                resolvedModule = std::string(realPath);
+                free(realPath);
             }
             else
             {
-                std::string absolutePath = cwd.value();
-                size_t lastPathSepLoc    = resolvedModule.find_last_of(GetPathSeparator());
-                std::string relativePath = resolvedModule.substr(0, lastPathSepLoc);
-
-                // Remove "." from the relativePath path
-                // For example: ./out/LinuxDebug/angle_perftests
-                size_t pos = relativePath.find('.');
-                if (pos != std::string::npos)
+                // Try removing overlapping path as a last resort.
+                // This will resolve `./out/Debug/angle_end2end_tests` to
+                // `/home/user/angle/out/Debug/angle_end2end_tests` when CWD is
+                // `/home/user/angle/out/Debug`, which is caused by ScopedVkLoaderEnvironment.
+                // This is required for printing traces during RendererVk init.
+                // Since we do not store the initial CWD globally we need to reconstruct here
+                // by removing the overlapping path.
+                std::string removeOverlappingPath = RemoveOverlappingPath(resolvedModule);
+                realPath                          = realpath(removeOverlappingPath.c_str(), NULL);
+                if (realPath)
                 {
-                    // If found then erase it from string
-                    relativePath.erase(pos, 1);
+                    resolvedModule = std::string(realPath);
+                    free(realPath);
                 }
-
-                // Remove the overlapping relative path from the CWD so we can build the full
-                // absolute path.
-                // For example:
-                // absolutePath = /home/timvp/code/angle/out/LinuxDebug
-                // relativePath = /out/LinuxDebug
-                pos = absolutePath.find(relativePath);
-                if (pos != std::string::npos)
+                else
                 {
-                    // If found then erase it from string
-                    absolutePath.erase(pos, relativePath.length());
+                    WARN() << "Could not resolve path for module with relative path "
+                           << resolvedModule;
                 }
-                resolvedModule = absolutePath + GetPathSeparator() + resolvedModule;
             }
         }
-
-        // Check if this is a symlink. We assume the symlinks are relative to the target.
-        constexpr size_t kBufSize = 1000;
-        char linkBuf[kBufSize]    = {};
-        ssize_t readLinkRet       = readlink(resolvedModule.c_str(), linkBuf, kBufSize);
-        if (readLinkRet != -1)
+        else
         {
-            ASSERT(strchr(linkBuf, '/') == nullptr);
-            size_t lastSlash = resolvedModule.rfind('/');
-            ASSERT(lastSlash != std::string::npos);
-            resolvedModule = resolvedModule.substr(0, lastSlash + 1) + linkBuf;
+            WARN() << "Could not resolve path for module with absolute path " << resolvedModule;
         }
 
         const char *resolvedAddress =

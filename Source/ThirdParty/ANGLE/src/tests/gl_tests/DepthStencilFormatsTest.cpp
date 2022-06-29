@@ -22,7 +22,7 @@ struct ReadbackTestParam
     int stencilBits;
 };
 
-class DepthStencilFormatsTestBase : public ANGLETest
+class DepthStencilFormatsTestBase : public ANGLETest<>
 {
   protected:
     DepthStencilFormatsTestBase()
@@ -1125,7 +1125,7 @@ ANGLE_INSTANTIATE_TEST_ES2(DepthStencilFormatsTest);
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(DepthStencilFormatsTestES3);
 ANGLE_INSTANTIATE_TEST_ES3(DepthStencilFormatsTestES3);
 
-class TinyDepthStencilWorkaroundTest : public ANGLETest
+class TinyDepthStencilWorkaroundTest : public ANGLETest<>
 {
   public:
     TinyDepthStencilWorkaroundTest()

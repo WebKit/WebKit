@@ -13,7 +13,7 @@
 namespace angle
 {
 
-class TextureFilteringHintTest : public ANGLETest
+class TextureFilteringHintTest : public ANGLETest<>
 {
   protected:
     TextureFilteringHintTest()

@@ -135,24 +135,6 @@ class Std140BlockLayoutEncoderFactory : public gl::CustomBlockLayoutEncoderFacto
   public:
     sh::BlockLayoutEncoder *makeEncoder() override { return new sh::Std140BlockEncoder(); }
 };
-
-void SetupDefaultPipelineState(const ContextVk *contextVk,
-                               size_t outputVariablesCount,
-                               gl::PrimitiveMode mode,
-                               vk::GraphicsPipelineDesc *graphicsPipelineDescOut)
-{
-    graphicsPipelineDescOut->initDefaults(contextVk);
-    graphicsPipelineDescOut->setTopology(mode);
-    graphicsPipelineDescOut->setRenderPassSampleCount(1);
-
-    constexpr angle::FormatID kDefaultColorAttachmentFormat = angle::FormatID::R8G8B8A8_UNORM;
-    for (size_t colorAttachmentIndex = 0; colorAttachmentIndex < outputVariablesCount;
-         colorAttachmentIndex++)
-    {
-        graphicsPipelineDescOut->setRenderPassColorAttachmentFormat(colorAttachmentIndex,
-                                                                    kDefaultColorAttachmentFormat);
-    }
-}
 }  // anonymous namespace
 
 // ProgramVk implementation.
@@ -184,12 +166,13 @@ std::unique_ptr<rx::LinkEvent> ProgramVk::load(const gl::Context *context,
 
     reset(contextVk);
 
-    return mExecutable.load(contextVk, mState.getExecutable(), stream);
+    return mExecutable.load(contextVk, mState.getExecutable(), mState.isSeparable(), stream);
 }
 
 void ProgramVk::save(const gl::Context *context, gl::BinaryOutputStream *stream)
 {
-    mExecutable.save(stream);
+    ContextVk *contextVk = vk::GetImpl(context);
+    mExecutable.save(contextVk, mState.isSeparable(), stream);
 }
 
 void ProgramVk::setBinaryRetrievableHint(bool retrievable)
@@ -231,7 +214,7 @@ std::unique_ptr<LinkEvent> ProgramVk::link(const gl::Context *context,
     // Compile the shaders.
     const gl::ProgramExecutable &programExecutable = mState.getExecutable();
     angle::Result status                           = mExecutable.mOriginalShaderInfo.initShaders(
-        programExecutable.getLinkedShaderStages(), spirvBlobs, mExecutable.mVariableInfoMap);
+                                  programExecutable.getLinkedShaderStages(), spirvBlobs, mExecutable.mVariableInfoMap);
     if (status != angle::Result::Continue)
     {
         return std::make_unique<LinkEventDone>(status);
@@ -246,49 +229,18 @@ std::unique_ptr<LinkEvent> ProgramVk::link(const gl::Context *context,
     // TODO(jie.a.chen@intel.com): Parallelize linking.
     // http://crbug.com/849576
     status = mExecutable.createPipelineLayout(contextVk, programExecutable, nullptr);
-
-    // Create pipeline with default state
-    if ((status == angle::Result::Continue) &&
-        contextVk->getFeatures().createPipelineDuringLink.enabled)
+    if (status != angle::Result::Continue)
     {
-        status = createGraphicsPipelineWithDefaultState(context);
+        return std::make_unique<LinkEventDone>(status);
     }
 
+    // Warm up the pipeline cache by creating a few placeholder pipelines.  This is not done for
+    // separable programs, and is deferred to when the program pipeline is finalized.
+    if (!mState.isSeparable())
+    {
+        status = mExecutable.warmUpPipelineCache(contextVk, programExecutable);
+    }
     return std::make_unique<LinkEventDone>(status);
-}
-
-angle::Result ProgramVk::createGraphicsPipelineWithDefaultState(const gl::Context *context)
-{
-    const gl::ProgramExecutable &glExecutable = mState.getExecutable();
-
-    // NOOP if -
-    // 1. Program is separable
-    // 2. Program has a compute shader
-    // 3. Program has greater than 3 output variables
-    bool isProgramSeperable = mState.isSeparable();
-    bool hasComputeShader   = glExecutable.hasLinkedShaderStage(gl::ShaderType::Compute);
-    if (isProgramSeperable || hasComputeShader || glExecutable.getOutputVariables().size() > 3)
-    {
-        return angle::Result::Continue;
-    }
-
-    ContextVk *contextVk                    = vk::GetImpl(context);
-    const vk::GraphicsPipelineDesc *descPtr = nullptr;
-    vk::PipelineHelper *pipeline            = nullptr;
-    vk::GraphicsPipelineDesc graphicsPipelineDesc;
-
-    // It is only at drawcall time that we will have complete information required to build the
-    // graphics pipeline descriptor. Use the most "commonly seen" state values and create the
-    // pipeline. This attempts to improve shader binary cache hits in the underlying ICD since it is
-    // common for the same shader to be used across different pipelines.
-    gl::PrimitiveMode mode = (glExecutable.hasLinkedShaderStage(gl::ShaderType::TessControl) ||
-                              glExecutable.hasLinkedShaderStage(gl::ShaderType::TessEvaluation))
-                                 ? gl::PrimitiveMode::Patches
-                                 : gl::PrimitiveMode::TriangleStrip;
-    SetupDefaultPipelineState(contextVk, glExecutable.getOutputVariables().size(), mode,
-                              &graphicsPipelineDesc);
-    return mExecutable.getGraphicsPipeline(contextVk, mode, graphicsPipelineDesc, glExecutable,
-                                           &descPtr, &pipeline);
 }
 
 void ProgramVk::linkResources(const gl::ProgramLinkedResources &resources)

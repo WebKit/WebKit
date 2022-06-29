@@ -16,7 +16,7 @@ using namespace angle;
 namespace
 {
 
-class ProvokingVertexTest : public ANGLETest
+class ProvokingVertexTest : public ANGLETest<>
 {
   protected:
     ProvokingVertexTest()

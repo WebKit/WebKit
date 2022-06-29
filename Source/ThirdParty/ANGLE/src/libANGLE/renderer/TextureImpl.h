@@ -210,7 +210,7 @@ class TextureImpl : public FramebufferAttachmentObjectImpl
     virtual angle::Result bindTexImage(const gl::Context *context, egl::Surface *surface) = 0;
     virtual angle::Result releaseTexImage(const gl::Context *context)                     = 0;
 
-    virtual void onLabelUpdate() {}
+    virtual angle::Result onLabelUpdate(const gl::Context *context);
 
     // Override if accurate native memory size information is available
     virtual GLint getMemorySize() const;

@@ -14,7 +14,7 @@
 
 using namespace angle;
 
-class TimerQueriesTest : public ANGLETest
+class TimerQueriesTest : public ANGLETest<>
 {
   protected:
     TimerQueriesTest() : mProgram(0), mProgramCostly(0)

@@ -90,6 +90,11 @@ std::vector<VkFormat> GetVkFormatsWithDrmModifiers(const RendererVk *rendererVk)
 // Returns a list of supported DRM formats
 std::vector<EGLint> GetDrmFormats(const RendererVk *rendererVk)
 {
+    if (!rendererVk->getFeatures().supportsExternalMemoryDmaBufAndModifiers.enabled)
+    {
+        return {};  // No formats supported
+    }
+
     std::unordered_set<EGLint> drmFormatsSet;
     for (VkFormat vkFormat : GetVkFormatsWithDrmModifiers(rendererVk))
     {

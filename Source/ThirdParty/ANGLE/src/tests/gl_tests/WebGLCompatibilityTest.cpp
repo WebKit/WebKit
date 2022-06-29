@@ -53,7 +53,7 @@ constexpr const char *FloatingPointTextureExtensions[] = {
 namespace angle
 {
 
-class WebGLCompatibilityTest : public ANGLETest
+class WebGLCompatibilityTest : public ANGLETest<>
 {
   protected:
     WebGLCompatibilityTest()

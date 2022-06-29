@@ -62,7 +62,7 @@ angle::Result CheckLinkStatus(const gl::Context *context,
     return angle::Result::Continue;
 }
 
-class ANGLE_NO_DISCARD ScopedGLState : angle::NonCopyable
+class [[nodiscard]] ScopedGLState : angle::NonCopyable
 {
   public:
     enum
@@ -1165,7 +1165,7 @@ angle::Result BlitGL::initializeResources(const gl::Context *context)
     {
         ANGLE_GL_TRY(context, mFunctions->genVertexArrays(1, &mVAO));
         mVAOState     = new VertexArrayStateGL(defaultVAOState->attributes.size(),
-                                           defaultVAOState->bindings.size());
+                                               defaultVAOState->bindings.size());
         mOwnsVAOState = true;
         ANGLE_TRY(setVAOState(context));
         ANGLE_TRY(initializeVAOState(context));

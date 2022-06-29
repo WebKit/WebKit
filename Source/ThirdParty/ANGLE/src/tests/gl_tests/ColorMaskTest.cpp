@@ -11,7 +11,7 @@
 
 namespace angle
 {
-class ColorMaskTest : public ANGLETest
+class ColorMaskTest : public ANGLETest<>
 {
   protected:
     ColorMaskTest() : mProgram(0)

@@ -34,7 +34,7 @@ struct TestIdentifier
     static bool ParseFromString(const std::string &str, TestIdentifier *idOut);
 
     bool valid() const { return !testName.empty(); }
-    void sprintfName(char *outBuffer) const;
+    void snprintfName(char *outBuffer, size_t maxLen) const;
 
     std::string testSuiteName;
     std::string testName;
@@ -127,6 +127,7 @@ class TestSuite
 {
   public:
     TestSuite(int *argc, char **argv);
+    TestSuite(int *argc, char **argv, std::function<void()> registerTestsCallback);
     ~TestSuite();
 
     int run();
@@ -167,6 +168,7 @@ class TestSuite
     void startWatchdog();
     void dumpTestExpectationsErrorMessages();
     int getSlowTestTimeout() const;
+    void writeOutputFiles(bool interrupted);
 
     static TestSuite *mInstance;
 
@@ -206,8 +208,11 @@ class TestSuite
     HistogramWriter mHistogramWriter;
     std::string mTestArtifactDirectory;
     GPUTestExpectationsParser mTestExpectationsParser;
+
+    class TestEventListener;
 };
 
+std::string ReplaceDashesWithQuestionMark(std::string dashesString);
 bool GetTestResultsFromFile(const char *fileName, TestResults *resultsOut);
 }  // namespace angle
 

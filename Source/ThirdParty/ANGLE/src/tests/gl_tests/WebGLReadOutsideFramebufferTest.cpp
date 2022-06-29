@@ -138,7 +138,7 @@ class PixelRect
 namespace angle
 {
 
-class WebGLReadOutsideFramebufferTest : public ANGLETest
+class WebGLReadOutsideFramebufferTest : public ANGLETest<>
 {
   public:
     // Read framebuffer to 'pixelsOut' via glReadPixels.

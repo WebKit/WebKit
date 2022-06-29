@@ -15,7 +15,7 @@
 
 using namespace angle;
 
-class EGLBufferAgeTest : public ANGLETest
+class EGLBufferAgeTest : public ANGLETest<>
 {
   public:
     EGLBufferAgeTest() : mDisplay(EGL_NO_DISPLAY) {}
@@ -24,7 +24,7 @@ class EGLBufferAgeTest : public ANGLETest
     {
         EGLint dispattrs[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE, GetParam().getRenderer(), EGL_NONE};
         mDisplay           = eglGetPlatformDisplayEXT(
-            EGL_PLATFORM_ANGLE_ANGLE, reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
+                      EGL_PLATFORM_ANGLE_ANGLE, reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
         EXPECT_TRUE(mDisplay != EGL_NO_DISPLAY);
         EXPECT_EGL_TRUE(eglInitialize(mDisplay, nullptr, nullptr));
         mMajorVersion       = GetParam().majorVersion;
@@ -48,18 +48,18 @@ class EGLBufferAgeTest : public ANGLETest
         EGLint count         = 0;
         EGLint clientVersion = mMajorVersion == 3 ? EGL_OPENGL_ES3_BIT : EGL_OPENGL_ES2_BIT;
         EGLint attribs[]     = {EGL_RED_SIZE,
-                            8,
-                            EGL_GREEN_SIZE,
-                            8,
-                            EGL_BLUE_SIZE,
-                            8,
-                            EGL_ALPHA_SIZE,
-                            0,
-                            EGL_RENDERABLE_TYPE,
-                            clientVersion,
-                            EGL_SURFACE_TYPE,
-                            EGL_WINDOW_BIT,
-                            EGL_NONE};
+                                8,
+                                EGL_GREEN_SIZE,
+                                8,
+                                EGL_BLUE_SIZE,
+                                8,
+                                EGL_ALPHA_SIZE,
+                                0,
+                                EGL_RENDERABLE_TYPE,
+                                clientVersion,
+                                EGL_SURFACE_TYPE,
+                                EGL_WINDOW_BIT,
+                                EGL_NONE};
 
         result = eglChooseConfig(mDisplay, attribs, config, 1, &count);
         EXPECT_EGL_TRUE(result && (count > 0));
@@ -114,22 +114,22 @@ class EGLBufferAgeTest_MSAA : public EGLBufferAgeTest
         EGLint count         = 0;
         EGLint clientVersion = mMajorVersion == 3 ? EGL_OPENGL_ES3_BIT : EGL_OPENGL_ES2_BIT;
         EGLint attribs[]     = {EGL_RED_SIZE,
-                            8,
-                            EGL_GREEN_SIZE,
-                            8,
-                            EGL_BLUE_SIZE,
-                            8,
-                            EGL_ALPHA_SIZE,
-                            8,
-                            EGL_RENDERABLE_TYPE,
-                            clientVersion,
-                            EGL_SAMPLE_BUFFERS,
-                            1,
-                            EGL_SAMPLES,
-                            4,
-                            EGL_SURFACE_TYPE,
-                            EGL_WINDOW_BIT,
-                            EGL_NONE};
+                                8,
+                                EGL_GREEN_SIZE,
+                                8,
+                                EGL_BLUE_SIZE,
+                                8,
+                                EGL_ALPHA_SIZE,
+                                8,
+                                EGL_RENDERABLE_TYPE,
+                                clientVersion,
+                                EGL_SAMPLE_BUFFERS,
+                                1,
+                                EGL_SAMPLES,
+                                4,
+                                EGL_SURFACE_TYPE,
+                                EGL_WINDOW_BIT,
+                                EGL_NONE};
 
         result = eglChooseConfig(mDisplay, attribs, config, 1, &count);
         EXPECT_EGL_TRUE(result && (count > 0));
@@ -148,26 +148,26 @@ class EGLBufferAgeTest_MSAA_DS : public EGLBufferAgeTest
         EGLint count         = 0;
         EGLint clientVersion = mMajorVersion == 3 ? EGL_OPENGL_ES3_BIT : EGL_OPENGL_ES2_BIT;
         EGLint attribs[]     = {EGL_RED_SIZE,
-                            8,
-                            EGL_GREEN_SIZE,
-                            8,
-                            EGL_BLUE_SIZE,
-                            8,
-                            EGL_ALPHA_SIZE,
-                            8,
-                            EGL_DEPTH_SIZE,
-                            8,
-                            EGL_STENCIL_SIZE,
-                            8,
-                            EGL_RENDERABLE_TYPE,
-                            clientVersion,
-                            EGL_SAMPLE_BUFFERS,
-                            1,
-                            EGL_SAMPLES,
-                            4,
-                            EGL_SURFACE_TYPE,
-                            EGL_WINDOW_BIT,
-                            EGL_NONE};
+                                8,
+                                EGL_GREEN_SIZE,
+                                8,
+                                EGL_BLUE_SIZE,
+                                8,
+                                EGL_ALPHA_SIZE,
+                                8,
+                                EGL_DEPTH_SIZE,
+                                8,
+                                EGL_STENCIL_SIZE,
+                                8,
+                                EGL_RENDERABLE_TYPE,
+                                clientVersion,
+                                EGL_SAMPLE_BUFFERS,
+                                1,
+                                EGL_SAMPLES,
+                                4,
+                                EGL_SURFACE_TYPE,
+                                EGL_WINDOW_BIT,
+                                EGL_NONE};
 
         result = eglChooseConfig(mDisplay, attribs, config, 1, &count);
         EXPECT_EGL_TRUE(result && (count > 0));
@@ -497,18 +497,18 @@ TEST_P(EGLBufferAgeTest, BufferPreserved)
     EGLint count         = 0;
     EGLint clientVersion = mMajorVersion == 3 ? EGL_OPENGL_ES3_BIT : EGL_OPENGL_ES2_BIT;
     EGLint attribs[]     = {EGL_RED_SIZE,
-                        8,
-                        EGL_GREEN_SIZE,
-                        8,
-                        EGL_BLUE_SIZE,
-                        8,
-                        EGL_ALPHA_SIZE,
-                        0,
-                        EGL_RENDERABLE_TYPE,
-                        clientVersion,
-                        EGL_SURFACE_TYPE,
-                        EGL_WINDOW_BIT | EGL_SWAP_BEHAVIOR_PRESERVED_BIT,
-                        EGL_NONE};
+                            8,
+                            EGL_GREEN_SIZE,
+                            8,
+                            EGL_BLUE_SIZE,
+                            8,
+                            EGL_ALPHA_SIZE,
+                            0,
+                            EGL_RENDERABLE_TYPE,
+                            clientVersion,
+                            EGL_SURFACE_TYPE,
+                            EGL_WINDOW_BIT | EGL_SWAP_BEHAVIOR_PRESERVED_BIT,
+                            EGL_NONE};
 
     EXPECT_EGL_TRUE(eglChooseConfig(mDisplay, attribs, &config, 1, &count));
     // Skip if no configs, this indicates EGL_BUFFER_PRESERVED is not supported.

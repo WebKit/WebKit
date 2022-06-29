@@ -116,9 +116,6 @@
     void viewportArrayv(GLuint first, GLsizei count, const GLfloat *v);                            \
     void viewportIndexedf(GLuint index, GLfloat x, GLfloat y, GLfloat w, GLfloat h);               \
     void viewportIndexedfv(GLuint index, const GLfloat *v);                                        \
-    void drawElementsInstancedBaseInstance(GLenum mode, GLsizei count, GLenum type,                \
-                                           const void *indices, GLsizei instancecount,             \
-                                           GLuint baseinstance);                                   \
     void drawTransformFeedbackInstanced(GLenum mode, TransformFeedbackID idPacked,                 \
                                         GLsizei instancecount);                                    \
     void drawTransformFeedbackStreamInstanced(GLenum mode, TransformFeedbackID idPacked,           \

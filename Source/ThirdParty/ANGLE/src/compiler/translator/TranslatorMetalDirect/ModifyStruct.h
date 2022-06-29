@@ -64,7 +64,7 @@ class ModifyStructConfig
     // Struct fields are modified.
     Predicate::Func recurseStruct = Predicate::False;
 
-    // Vector and scalar bool fields are promoted to uint fields.
+    // Vector and scalar bool fields are promoted to uint32_t fields.
     Predicate::Func promoteBoolToUint = Predicate::False;
 
     // Creates a new structure where scalar or vector fields are saturated vectors.

@@ -66,6 +66,7 @@ class DriverUniform
     TIntermTyped *getAdvancedBlendEquation() const;
     TIntermTyped *getNumSamples() const;
     TIntermTyped *getClipDistancesEnabled() const;
+    TIntermTyped *getTransformDepth() const;
 
     virtual TIntermTyped *getViewport() const { return nullptr; }
     virtual TIntermTyped *getXfbBufferOffsets() const { return nullptr; }

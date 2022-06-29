@@ -11,7 +11,7 @@
 
 using namespace angle;
 
-class DXT1CompressedTextureTest : public ANGLETest
+class DXT1CompressedTextureTest : public ANGLETest<>
 {
   protected:
     DXT1CompressedTextureTest()
@@ -598,6 +598,7 @@ TEST_P(DXT1CompressedTextureTestWebGL2, InitializeTextureContents)
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(DXT1CompressedTextureTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(DXT1CompressedTextureTestES3);
-ANGLE_INSTANTIATE_TEST_ES3(DXT1CompressedTextureTestES3);
+ANGLE_INSTANTIATE_TEST_ES3_AND(DXT1CompressedTextureTestES3,
+                               ES3_VULKAN().enable(angle::Feature::ForceRobustResourceInit));
 
 ANGLE_INSTANTIATE_TEST_ES3(DXT1CompressedTextureTestWebGL2);

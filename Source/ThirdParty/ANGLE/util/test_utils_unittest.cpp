@@ -93,9 +93,9 @@ TEST(TestUtils, MAYBE_CreateAndDeleteTemporaryFile)
     EXPECT_GE(retval, 0);
 
     // Test ReadEntireFileToString
-    char actualString[kMaxPath];
-    EXPECT_TRUE(ReadEntireFileToString(path, actualString, kMaxPath));
-    EXPECT_EQ(strcmp(actualString, kOutputString), 0);
+    std::string actualString;
+    EXPECT_TRUE(ReadEntireFileToString(path, &actualString));
+    EXPECT_EQ(strcmp(actualString.c_str(), kOutputString), 0);
 
     // Delete the temporary file.
     EXPECT_TRUE(angle::DeleteSystemFile(path));
@@ -121,9 +121,9 @@ TEST(TestUtils, MAYBE_CreateAndDeleteFileInTempDir)
     EXPECT_GE(retval, 0);
 
     // Test ReadEntireFileToString
-    char actualString[kMaxPath];
-    EXPECT_TRUE(ReadEntireFileToString(path, actualString, kMaxPath));
-    EXPECT_EQ(strcmp(actualString, kOutputString), 0);
+    std::string actualString;
+    EXPECT_TRUE(ReadEntireFileToString(path, &actualString));
+    EXPECT_EQ(strcmp(actualString.c_str(), kOutputString), 0);
 
     // Delete the temporary file.
     EXPECT_TRUE(angle::DeleteSystemFile(path));

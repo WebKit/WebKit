@@ -14,7 +14,7 @@ using namespace angle;
 namespace
 {
 
-class GeometryShaderTest : public ANGLETest
+class GeometryShaderTest : public ANGLETest<>
 {
   protected:
     GeometryShaderTest()
@@ -91,10 +91,10 @@ class GeometryShaderTest : public ANGLETest
         std::min({kColor0Layers, kColor1Layers, kDepthStencilLayers});
 };
 
-class GeometryShaderTestES3 : public ANGLETest
+class GeometryShaderTestES3 : public ANGLETest<>
 {};
 
-class GeometryShaderTestES32 : public ANGLETest
+class GeometryShaderTestES32 : public ANGLETest<>
 {};
 
 // Verify that Geometry Shader cannot be created in an OpenGL ES 3.0 context.

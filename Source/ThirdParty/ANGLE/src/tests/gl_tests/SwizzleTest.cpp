@@ -13,7 +13,7 @@ using namespace angle;
 namespace
 {
 
-class SwizzleTest : public ANGLETest
+class SwizzleTest : public ANGLETest<>
 {
   protected:
     SwizzleTest()

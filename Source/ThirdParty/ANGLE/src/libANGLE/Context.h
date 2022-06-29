@@ -488,10 +488,10 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
 
     rx::ContextImpl *getImplementation() const { return mImplementation.get(); }
 
-    ANGLE_NO_DISCARD bool getScratchBuffer(size_t requestedSizeBytes,
-                                           angle::MemoryBuffer **scratchBufferOut) const;
-    ANGLE_NO_DISCARD bool getZeroFilledBuffer(size_t requstedSizeBytes,
-                                              angle::MemoryBuffer **zeroBufferOut) const;
+    [[nodiscard]] bool getScratchBuffer(size_t requestedSizeBytes,
+                                        angle::MemoryBuffer **scratchBufferOut) const;
+    [[nodiscard]] bool getZeroFilledBuffer(size_t requstedSizeBytes,
+                                           angle::MemoryBuffer **zeroBufferOut) const;
     angle::ScratchBuffer *getScratchBuffer() const;
 
     angle::Result prepareForCopyImage();
@@ -832,7 +832,7 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
     bool mIsDestroyed;
 };
 
-class ANGLE_NO_DISCARD ScopedContextRef
+class [[nodiscard]] ScopedContextRef
 {
   public:
     ScopedContextRef(Context *context) : mContext(context)

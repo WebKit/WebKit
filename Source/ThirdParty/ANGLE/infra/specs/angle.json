@@ -977,6 +977,7 @@
       }
     ]
   },
+  "linux-amd": {},
   "linux-intel": {
     "gtest_tests": [
       {
@@ -3722,7 +3723,7 @@
       }
     ]
   },
-  "mac-exp-amd": {
+  "mac-exp-intel": {
     "gtest_tests": [
       {
         "args": [
@@ -3742,10 +3743,8 @@
             {
               "cpu": "x86-64",
               "display_attached": "1",
-              "gpu": "1002:6821",
-              "hidpi": "1",
-              "os": "Mac-12.1",
-              "pool": "chromium.tests.gpu"
+              "gpu": "8086:3e9b",
+              "os": "Mac-12.4"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
@@ -3771,10 +3770,8 @@
             {
               "cpu": "x86-64",
               "display_attached": "1",
-              "gpu": "1002:6821",
-              "hidpi": "1",
-              "os": "Mac-12.1",
-              "pool": "chromium.tests.gpu"
+              "gpu": "8086:3e9b",
+              "os": "Mac-12.4"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
@@ -3800,10 +3797,8 @@
             {
               "cpu": "x86-64",
               "display_attached": "1",
-              "gpu": "1002:6821",
-              "hidpi": "1",
-              "os": "Mac-12.1",
-              "pool": "chromium.tests.gpu"
+              "gpu": "8086:3e9b",
+              "os": "Mac-12.4"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
@@ -3829,10 +3824,8 @@
             {
               "cpu": "x86-64",
               "display_attached": "1",
-              "gpu": "1002:6821",
-              "hidpi": "1",
-              "os": "Mac-12.1",
-              "pool": "chromium.tests.gpu"
+              "gpu": "8086:3e9b",
+              "os": "Mac-12.4"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
@@ -3858,10 +3851,8 @@
             {
               "cpu": "x86-64",
               "display_attached": "1",
-              "gpu": "1002:6821",
-              "hidpi": "1",
-              "os": "Mac-12.1",
-              "pool": "chromium.tests.gpu"
+              "gpu": "8086:3e9b",
+              "os": "Mac-12.4"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com",
@@ -3889,10 +3880,8 @@
             {
               "cpu": "x86-64",
               "display_attached": "1",
-              "gpu": "1002:6821",
-              "hidpi": "1",
-              "os": "Mac-12.1",
-              "pool": "chromium.tests.gpu"
+              "gpu": "8086:3e9b",
+              "os": "Mac-12.4"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com",
@@ -3920,10 +3909,8 @@
             {
               "cpu": "x86-64",
               "display_attached": "1",
-              "gpu": "1002:6821",
-              "hidpi": "1",
-              "os": "Mac-12.1",
-              "pool": "chromium.tests.gpu"
+              "gpu": "8086:3e9b",
+              "os": "Mac-12.4"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com",
@@ -3948,10 +3935,8 @@
             {
               "cpu": "x86-64",
               "display_attached": "1",
-              "gpu": "1002:6821",
-              "hidpi": "1",
-              "os": "Mac-12.1",
-              "pool": "chromium.tests.gpu"
+              "gpu": "8086:3e9b",
+              "os": "Mac-12.4"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
@@ -3983,7 +3968,7 @@
               "cpu": "x86-64",
               "display_attached": "1",
               "gpu": "8086:3e9b",
-              "os": "Mac-11.5.2"
+              "os": "Mac-11.5.2|Mac-12.4"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
@@ -4010,7 +3995,7 @@
               "cpu": "x86-64",
               "display_attached": "1",
               "gpu": "8086:3e9b",
-              "os": "Mac-11.5.2"
+              "os": "Mac-11.5.2|Mac-12.4"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
@@ -4037,7 +4022,7 @@
               "cpu": "x86-64",
               "display_attached": "1",
               "gpu": "8086:3e9b",
-              "os": "Mac-11.5.2"
+              "os": "Mac-11.5.2|Mac-12.4"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
@@ -4064,7 +4049,7 @@
               "cpu": "x86-64",
               "display_attached": "1",
               "gpu": "8086:3e9b",
-              "os": "Mac-11.5.2"
+              "os": "Mac-11.5.2|Mac-12.4"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
@@ -4091,7 +4076,7 @@
               "cpu": "x86-64",
               "display_attached": "1",
               "gpu": "8086:3e9b",
-              "os": "Mac-11.5.2"
+              "os": "Mac-11.5.2|Mac-12.4"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com",
@@ -4120,7 +4105,7 @@
               "cpu": "x86-64",
               "display_attached": "1",
               "gpu": "8086:3e9b",
-              "os": "Mac-11.5.2"
+              "os": "Mac-11.5.2|Mac-12.4"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com",
@@ -4149,7 +4134,7 @@
               "cpu": "x86-64",
               "display_attached": "1",
               "gpu": "8086:3e9b",
-              "os": "Mac-11.5.2"
+              "os": "Mac-11.5.2|Mac-12.4"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com",
@@ -4175,7 +4160,7 @@
               "cpu": "x86-64",
               "display_attached": "1",
               "gpu": "8086:3e9b",
-              "os": "Mac-11.5.2"
+              "os": "Mac-11.5.2|Mac-12.4"
             }
           ],
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
@@ -5731,7 +5716,7 @@
           "hard_timeout": 900,
           "io_timeout": 900,
           "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com",
-          "shards": 4
+          "shards": 6
         },
         "test": "angle_end2end_tests",
         "test_id_prefix": "ninja://src/tests:angle_end2end_tests/",

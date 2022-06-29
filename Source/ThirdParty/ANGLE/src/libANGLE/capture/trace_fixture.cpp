@@ -34,7 +34,7 @@ void LoadBinaryData(const char *fileName)
     }
     char pathBuffer[1000] = {};
 
-    sprintf(pathBuffer, "%s/%s", gBinaryDataDir.c_str(), fileName);
+    snprintf(pathBuffer, sizeof(pathBuffer), "%s/%s", gBinaryDataDir.c_str(), fileName);
     FILE *fp = fopen(pathBuffer, "rb");
     if (fp == 0)
     {
@@ -125,6 +125,9 @@ GLuint *gShaderProgramMap;
 GLuint *gTextureMap;
 GLuint *gTransformFeedbackMap;
 GLuint *gVertexArrayMap;
+
+ClientBufferMap gClientBufferMap;
+EGLImageMap gEGLImageMap;
 
 void SetBinaryDataDecompressCallback(DecompressCallback callback)
 {
@@ -325,6 +328,46 @@ void SetTextureID(GLuint id)
     SetResourceID(gTextureMap, id);
 }
 
+void UpdateClientBuffer(EGLClientBuffer key, EGLClientBuffer data)
+{
+    gClientBufferMap[key] = data;
+}
+
+EGLClientBuffer GetClientBuffer(EGLenum target, uint64_t key)
+{
+    switch (target)
+    {
+        case EGL_GL_TEXTURE_2D:
+        case EGL_GL_TEXTURE_CUBE_MAP_POSITIVE_X:
+        case EGL_GL_TEXTURE_CUBE_MAP_NEGATIVE_X:
+        case EGL_GL_TEXTURE_CUBE_MAP_POSITIVE_Y:
+        case EGL_GL_TEXTURE_CUBE_MAP_NEGATIVE_Y:
+        case EGL_GL_TEXTURE_CUBE_MAP_POSITIVE_Z:
+        case EGL_GL_TEXTURE_CUBE_MAP_NEGATIVE_Z:
+        case EGL_GL_TEXTURE_3D:
+        {
+            GLuint64 id = gTextureMap[key];
+            return reinterpret_cast<EGLClientBuffer>(id);
+        }
+        case EGL_GL_RENDERBUFFER:
+        {
+            GLuint64 id = gRenderbufferMap[key];
+            return reinterpret_cast<EGLClientBuffer>(id);
+        }
+        default:
+        {
+            const auto &iData = gClientBufferMap.find(reinterpret_cast<EGLClientBuffer>(key));
+            return iData != gClientBufferMap.end() ? iData->second : nullptr;
+        }
+    }
+}
+
+GLeglImageOES GetEGLImage(uintptr_t key)
+{
+    auto iData = gEGLImageMap.find(key);
+    return iData != gEGLImageMap.end() ? iData->second : nullptr;
+}
+
 void ValidateSerializedState(const char *serializedState, const char *fileName, uint32_t line)
 {
     if (gValidateSerializedStateCallback)
@@ -332,3 +375,8 @@ void ValidateSerializedState(const char *serializedState, const char *fileName, 
         gValidateSerializedStateCallback(serializedState, fileName, line);
     }
 }
+
+ANGLE_REPLAY_EXPORT PFNEGLCREATEIMAGEPROC r_eglCreateImage;
+ANGLE_REPLAY_EXPORT PFNEGLCREATEIMAGEKHRPROC r_eglCreateImageKHR;
+ANGLE_REPLAY_EXPORT PFNEGLDESTROYIMAGEPROC r_eglDestroyImage;
+ANGLE_REPLAY_EXPORT PFNEGLDESTROYIMAGEKHRPROC r_eglDestroyImageKHR;

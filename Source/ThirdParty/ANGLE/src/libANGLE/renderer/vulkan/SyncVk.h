@@ -38,18 +38,21 @@ class SyncHelper : public vk::Resource
 
     virtual void releaseToRenderer(RendererVk *renderer);
 
-    virtual angle::Result initialize(ContextVk *contextVk, bool isEglSyncObject);
+    virtual angle::Result initialize(ContextVk *contextVk, bool isEGLSyncObject);
     virtual angle::Result clientWait(Context *context,
                                      ContextVk *contextVk,
                                      bool flushCommands,
                                      uint64_t timeout,
                                      VkResult *outResult);
     virtual angle::Result serverWait(ContextVk *contextVk);
-    virtual angle::Result getStatus(Context *context, bool *signaled) const;
+    virtual angle::Result getStatus(Context *context, ContextVk *contextVk, bool *signaled);
     virtual angle::Result dupNativeFenceFD(Context *context, int *fdOut) const
     {
         return angle::Result::Stop;
     }
+
+  private:
+    angle::Result submitSyncIfDeferred(ContextVk *contextVk, RenderPassClosureReason reason);
 };
 
 // Implementation of sync types: EGLSync(EGL_SYNC_ANDROID_NATIVE_FENCE_ANDROID).
@@ -68,7 +71,7 @@ class SyncHelperNativeFence : public SyncHelper
                              uint64_t timeout,
                              VkResult *outResult) override;
     angle::Result serverWait(ContextVk *contextVk) override;
-    angle::Result getStatus(Context *context, bool *signaled) const override;
+    angle::Result getStatus(Context *context, ContextVk *contextVk, bool *signaled) override;
     angle::Result dupNativeFenceFD(Context *context, int *fdOut) const override;
 
   private:

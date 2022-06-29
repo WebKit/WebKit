@@ -22,10 +22,10 @@ class TSymbolTable;
 // This flags all samplers which are statically accessed by a texelFetch invokation- that is, the
 // sampler is used as a direct argument to the call to texelFetch. Dynamic accesses, or accesses
 // with any amount of indirection, are not counted.
-ANGLE_NO_DISCARD bool FlagSamplersForTexelFetch(TCompiler *compiler,
-                                                TIntermBlock *root,
-                                                TSymbolTable *symbolTable,
-                                                std::vector<sh::ShaderVariable> *uniforms);
+[[nodiscard]] bool FlagSamplersForTexelFetch(TCompiler *compiler,
+                                             TIntermBlock *root,
+                                             TSymbolTable *symbolTable,
+                                             std::vector<sh::ShaderVariable> *uniforms);
 }  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_TREEOPS_VULKAN_FLAGSAMPLERSWITHTEXELFETCH_H_

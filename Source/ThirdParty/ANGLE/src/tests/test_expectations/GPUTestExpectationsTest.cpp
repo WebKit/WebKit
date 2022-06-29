@@ -13,7 +13,7 @@
 namespace angle
 {
 
-class GPUTestConfigTest : public ANGLETest
+class GPUTestConfigTest : public ANGLETest<>
 {
   protected:
     GPUTestConfigTest() {}

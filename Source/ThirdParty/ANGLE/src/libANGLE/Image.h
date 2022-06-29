@@ -52,6 +52,7 @@ class ImageSibling : public gl::FramebufferAttachmentObject
                       GLenum binding,
                       const gl::ImageIndex &imageIndex) const override;
     bool isYUV() const override;
+    bool isCreatedWithAHB() const override;
     bool hasProtectedContent() const override;
 
   protected:
@@ -168,6 +169,7 @@ class Image final : public RefCountObject, public LabeledObject
     bool isRenderable(const gl::Context *context) const;
     bool isTexturable(const gl::Context *context) const;
     bool isYUV() const;
+    bool isCreatedWithAHB() const;
     // Returns true only if the eglImage contains a complete cubemap
     bool isCubeMap() const;
     size_t getWidth() const;

@@ -128,7 +128,7 @@ def _use_adb(test_suite):
 
 def run_wrapper(test_suite, cmd_args, args, env, stdoutfile):
     if _use_adb(args.test_suite):
-        return android_helper.RunTests(test_suite, cmd_args, stdoutfile)[0]
+        return android_helper.RunTests(cmd_args, stdoutfile)[0]
 
     cmd = [get_binary_name(test_suite)] + cmd_args
 
@@ -454,10 +454,6 @@ def main():
             sys.exit(1)
         args.shard_count = int(env.pop('GTEST_TOTAL_SHARDS'))
         args.shard_index = int(env.pop('GTEST_SHARD_INDEX'))
-
-    # The harness currently uploads all traces in a batch, which is very slow.
-    # TODO: Reduce lag from trace uploads and remove this. http://anglebug.com/6854
-    env['DEVICE_TIMEOUT_MULTIPLIER'] = '20'
 
     results = {
         'tests': {},

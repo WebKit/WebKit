@@ -32,9 +32,9 @@ class TranslatorHLSL : public TCompiler
     const std::set<std::string> *getUsedImage2DFunctionNames() const;
 
   protected:
-    ANGLE_NO_DISCARD bool translate(TIntermBlock *root,
-                                    ShCompileOptions compileOptions,
-                                    PerformanceDiagnostics *perfDiagnostics) override;
+    [[nodiscard]] bool translate(TIntermBlock *root,
+                                 ShCompileOptions compileOptions,
+                                 PerformanceDiagnostics *perfDiagnostics) override;
     bool shouldFlattenPragmaStdglInvariantAll() override;
 
     // collectVariables needs to be run always so registers can be assigned.

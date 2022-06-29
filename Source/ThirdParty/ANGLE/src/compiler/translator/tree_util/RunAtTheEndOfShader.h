@@ -19,10 +19,10 @@ class TIntermBlock;
 class TIntermNode;
 class TSymbolTable;
 
-ANGLE_NO_DISCARD bool RunAtTheEndOfShader(TCompiler *compiler,
-                                          TIntermBlock *root,
-                                          TIntermNode *codeToRun,
-                                          TSymbolTable *symbolTable);
+[[nodiscard]] bool RunAtTheEndOfShader(TCompiler *compiler,
+                                       TIntermBlock *root,
+                                       TIntermNode *codeToRun,
+                                       TSymbolTable *symbolTable);
 
 }  // namespace sh
 

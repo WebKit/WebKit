@@ -11,7 +11,7 @@
 
 using namespace angle;
 
-class IncompleteTextureTest : public ANGLETest
+class IncompleteTextureTest : public ANGLETest<>
 {
   protected:
     IncompleteTextureTest()
@@ -60,7 +60,7 @@ void main()
     GLint mTextureUniformLocation;
 };
 
-class IncompleteTextureTestES3 : public ANGLETest
+class IncompleteTextureTestES3 : public ANGLETest<>
 {
   protected:
     IncompleteTextureTestES3()
@@ -93,7 +93,7 @@ class IncompleteTextureTestES3 : public ANGLETest
     GLFramebuffer mFramebuffer;
 };
 
-class IncompleteTextureTestES31 : public ANGLETest
+class IncompleteTextureTestES31 : public ANGLETest<>
 {
   protected:
     IncompleteTextureTestES31()

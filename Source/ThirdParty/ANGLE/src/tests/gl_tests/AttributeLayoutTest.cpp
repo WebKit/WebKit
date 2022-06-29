@@ -226,7 +226,7 @@ void PrepareTestCase(const TestCase &tc)
         a.enable(i++);
 }
 
-class AttributeLayoutTest : public ANGLETest
+class AttributeLayoutTest : public ANGLETest<>
 {
   protected:
     AttributeLayoutTest()

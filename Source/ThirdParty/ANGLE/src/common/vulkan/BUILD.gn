@@ -5,6 +5,10 @@
 import("//build_overrides/swiftshader.gni")
 import("../../../gni/angle.gni")
 
+if (angle_use_wayland) {
+  import("//build_overrides/wayland.gni")
+}
+
 declare_args() {
   angle_use_custom_libvulkan = !is_android && !is_fuchsia && !is_ggp
 }
@@ -30,7 +34,7 @@ if (angle_enable_vulkan || angle_build_vulkan_system_info) {
       defines = [ "ANGLE_SHARED_LIBVULKAN=1" ]
     }
     if (angle_use_wayland) {
-      include_dirs = [ "$angle_wayland_dir/src" ]
+      include_dirs = [ "$wayland_dir/src" ]
     }
     configs = [ "$angle_root:angle_vulkan_wayland_config" ]
   }

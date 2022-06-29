@@ -14,7 +14,7 @@
 namespace sh
 {
 
-ANGLE_NO_DISCARD bool TransposeRowMajorMatricies(TCompiler &compiler, TIntermBlock &root);
+[[nodiscard]] bool TransposeRowMajorMatricies(TCompiler &compiler, TIntermBlock &root);
 
 }  // namespace sh
 

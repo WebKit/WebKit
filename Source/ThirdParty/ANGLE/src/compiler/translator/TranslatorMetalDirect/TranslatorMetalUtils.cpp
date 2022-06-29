@@ -31,7 +31,7 @@ const char *getBasicMetalString(const TType *t)
         case EbtInt:
             return "int";
         case EbtUInt:
-            return "uint";
+            return "uint32_t";
         case EbtBool:
             return "bool";
         case EbtYuvCscStandardEXT:
@@ -101,13 +101,13 @@ const char *getBasicMetalString(const TType *t)
         case EbtIImage2D:
             return "texture2d<int>";
         case EbtUImage2D:
-            return "texture2d<uint>";
+            return "texture2d<uint32_t>";
         case EbtImage3D:
             return "texture3d";
         case EbtIImage3D:
             return "texture3d<int>";
         case EbtUImage3D:
-            return "texture3d<uint>";
+            return "texture3d<uint32_t>";
         case EbtImage2DArray:
             if (t->isUnsizedArray())
             {
@@ -129,7 +129,7 @@ const char *getBasicMetalString(const TType *t)
         case EbtUImage2DArray:
             if (t->isUnsizedArray())
             {
-                return "array_ref<texture2d<uint>>";
+                return "array_ref<texture2d<uint32_t>>";
             }
             else
             {
@@ -140,7 +140,7 @@ const char *getBasicMetalString(const TType *t)
         case EbtIImageCube:
             return "texturecube<int>";
         case EbtUImageCube:
-            return "texturecube<uint>";
+            return "texturecube<uint32_t>";
         case EbtImageCubeArray:
             if (t->isUnsizedArray())
             {
@@ -162,7 +162,7 @@ const char *getBasicMetalString(const TType *t)
         case EbtUImageCubeArray:
             if (t->isUnsizedArray())
             {
-                return "array_ref<texturecube<uint>>";
+                return "array_ref<texturecube<uint32_t>>";
             }
             else
             {

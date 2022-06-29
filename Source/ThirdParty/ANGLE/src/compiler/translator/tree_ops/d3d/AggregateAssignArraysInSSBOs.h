@@ -15,9 +15,9 @@ class TCompiler;
 class TIntermBlock;
 class TSymbolTable;
 
-ANGLE_NO_DISCARD bool AggregateAssignArraysInSSBOs(TCompiler *compiler,
-                                                   TIntermBlock *root,
-                                                   TSymbolTable *symbolTable);
+[[nodiscard]] bool AggregateAssignArraysInSSBOs(TCompiler *compiler,
+                                                TIntermBlock *root,
+                                                TSymbolTable *symbolTable);
 }  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_TREEOPS_D3D_AGGREGATEASSIGNARRAYSINSSBOS_H_

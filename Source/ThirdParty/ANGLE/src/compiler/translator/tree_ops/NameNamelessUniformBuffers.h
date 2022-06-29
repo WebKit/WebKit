@@ -24,9 +24,9 @@ class TCompiler;
 class TIntermBlock;
 class TSymbolTable;
 
-ANGLE_NO_DISCARD bool NameNamelessUniformBuffers(TCompiler *compiler,
-                                                 TIntermBlock *root,
-                                                 TSymbolTable *symbolTable);
+[[nodiscard]] bool NameNamelessUniformBuffers(TCompiler *compiler,
+                                              TIntermBlock *root,
+                                              TSymbolTable *symbolTable);
 }  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_TREEOPS_NAMENAMELESSUNIFORMBUFFERS_H_

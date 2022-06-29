@@ -20,9 +20,9 @@ class TCompiler;
 class TIntermNode;
 class TSymbolTable;
 
-ANGLE_NO_DISCARD bool SeparateExpressionsReturningArrays(TCompiler *compiler,
-                                                         TIntermNode *root,
-                                                         TSymbolTable *symbolTable);
+[[nodiscard]] bool SeparateExpressionsReturningArrays(TCompiler *compiler,
+                                                      TIntermNode *root,
+                                                      TSymbolTable *symbolTable);
 }  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_TREEOPS_D3D_SEPARATEEXPRESSIONSRETURNINGARRAYS_H_

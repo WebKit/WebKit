@@ -61,11 +61,14 @@ void Overlay::enableOverlayWidgetsFromEnvironment()
 
     for (const std::pair<const char *, WidgetId> &widgetName : kWidgetNames)
     {
-        if (std::find(enabledWidgets.begin(), enabledWidgets.end(), widgetName.first) !=
-            enabledWidgets.end())
+        for (const std::string &enabledWidget : enabledWidgets)
         {
-            mState.mOverlayWidgets[widgetName.second]->enabled = true;
-            ++mState.mEnabledWidgetCount;
+            if (angle::NamesMatchWithWildcard(enabledWidget.c_str(), widgetName.first))
+            {
+                mState.mOverlayWidgets[widgetName.second]->enabled = true;
+                ++mState.mEnabledWidgetCount;
+                break;
+            }
         }
     }
 }

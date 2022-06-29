@@ -98,7 +98,7 @@ struct PerfMonitorCounter
     ~PerfMonitorCounter();
 
     std::string name;
-    uint32_t value;
+    uint64_t value;
 };
 using PerfMonitorCounters = std::vector<PerfMonitorCounter>;
 
@@ -127,7 +127,7 @@ struct PerfMonitorTriplet
 {
     uint32_t group;
     uint32_t counter;
-    uint32_t value;
+    uint64_t value;
 };
 
 #define ANGLE_VK_PERF_COUNTERS_X(FN)               \
@@ -166,6 +166,10 @@ struct PerfMonitorTriplet
     FN(depthAttachmentResolves)                    \
     FN(stencilAttachmentResolves)                  \
     FN(readOnlyDepthStencilRenderPasses)           \
+    FN(pipelineCreationCacheHits)                  \
+    FN(pipelineCreationCacheMisses)                \
+    FN(pipelineCreationTotalCacheHitsDurationNs)   \
+    FN(pipelineCreationTotalCacheMissesDurationNs) \
     FN(descriptorSetAllocations)                   \
     FN(descriptorSetCacheTotalSize)                \
     FN(descriptorSetCacheKeySizeBytes)             \
@@ -181,9 +185,10 @@ struct PerfMonitorTriplet
     FN(buffersGhosted)                             \
     FN(vertexArraySyncStateCalls)                  \
     FN(allocateNewBufferBlockCalls)                \
-    FN(dynamicBufferAllocations)
+    FN(dynamicBufferAllocations)                   \
+    FN(framebufferCacheSize)
 
-#define ANGLE_DECLARE_PERF_COUNTER(COUNTER) uint32_t COUNTER;
+#define ANGLE_DECLARE_PERF_COUNTER(COUNTER) uint64_t COUNTER;
 
 struct VulkanPerfCounters
 {
@@ -550,34 +555,11 @@ size_t FormatStringIntoVector(const char *fmt, va_list vararg, std::vector<char>
 #    define ANGLE_MACRO_STRINGIFY(x) ANGLE_STRINGIFY(x)
 #endif
 
-// Detect support for C++17 [[nodiscard]]
-#if !defined(__has_cpp_attribute)
-#    define __has_cpp_attribute(name) 0
-#endif  // !defined(__has_cpp_attribute)
-
-#if __has_cpp_attribute(nodiscard)
-#    define ANGLE_NO_DISCARD [[nodiscard]]
-#else
-#    define ANGLE_NO_DISCARD
-#endif  // __has_cpp_attribute(nodiscard)
-
-#if __has_cpp_attribute(maybe_unused)
-#    define ANGLE_MAYBE_UNUSED [[maybe_unused]]
-#else
-#    define ANGLE_MAYBE_UNUSED
-#endif  // __has_cpp_attribute(maybe_unused)
-
-#if __has_cpp_attribute(require_constant_initialization)
-#    define ANGLE_REQUIRE_CONSTANT_INIT [[require_constant_initialization]]
+#if __has_cpp_attribute(clang::require_constant_initialization)
+#    define ANGLE_REQUIRE_CONSTANT_INIT [[clang::require_constant_initialization]]
 #else
 #    define ANGLE_REQUIRE_CONSTANT_INIT
 #endif  // __has_cpp_attribute(require_constant_initialization)
-
-#if __has_cpp_attribute(clang::fallthrough)
-#    define ANGLE_FALLTHROUGH [[clang::fallthrough]]
-#else
-#    define ANGLE_FALLTHROUGH
-#endif
 
 // Compiler configs.
 inline bool IsASan()

@@ -23,9 +23,7 @@ class TCompiler;
 class TIntermBlock;
 class TSymbolTable;
 
-ANGLE_NO_DISCARD bool PruneNoOps(TCompiler *compiler,
-                                 TIntermBlock *root,
-                                 TSymbolTable *symbolTable);
+[[nodiscard]] bool PruneNoOps(TCompiler *compiler, TIntermBlock *root, TSymbolTable *symbolTable);
 }  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_TREEOPS_PRUNENOOPS_H_

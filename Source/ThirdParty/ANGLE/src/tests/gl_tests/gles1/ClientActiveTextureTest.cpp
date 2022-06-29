@@ -15,7 +15,7 @@
 
 using namespace angle;
 
-class ClientActiveTextureTest : public ANGLETest
+class ClientActiveTextureTest : public ANGLETest<>
 {
   protected:
     ClientActiveTextureTest()

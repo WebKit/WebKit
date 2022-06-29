@@ -22,7 +22,7 @@
 namespace angle
 {
 
-class ExternalBufferTestES31 : public ANGLETest
+class ExternalBufferTestES31 : public ANGLETest<>
 {
   protected:
     ExternalBufferTestES31()

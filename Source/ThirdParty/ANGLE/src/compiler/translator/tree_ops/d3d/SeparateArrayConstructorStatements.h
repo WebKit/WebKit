@@ -19,7 +19,7 @@ namespace sh
 class TCompiler;
 class TIntermBlock;
 
-ANGLE_NO_DISCARD bool SeparateArrayConstructorStatements(TCompiler *compiler, TIntermBlock *root);
+[[nodiscard]] bool SeparateArrayConstructorStatements(TCompiler *compiler, TIntermBlock *root);
 }  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_TREEOPS_D3D_SEPARATEARRAYCONSTRUCTORSTATEMENTS_H_

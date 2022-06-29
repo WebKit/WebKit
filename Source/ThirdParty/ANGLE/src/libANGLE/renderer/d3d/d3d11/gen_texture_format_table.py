@@ -149,6 +149,11 @@ def get_blit_srv_format(angle_format):
     return angle_format["srvFormat"] if "srvFormat" in angle_format else "DXGI_FORMAT_UNKNOWN"
 
 
+def get_stencil_srv_format(angle_format):
+    return angle_format[
+        "stencilSRVFormat"] if "stencilSRVFormat" in angle_format else "DXGI_FORMAT_UNKNOWN"
+
+
 format_entry_template = """{space}{{
 {space}    static constexpr Format info({internalFormat},
 {space}                                 angle::FormatID::{formatName},
@@ -158,6 +163,7 @@ format_entry_template = """{space}{{
 {space}                                 {rtvFormat},
 {space}                                 {dsvFormat},
 {space}                                 {blitSRVFormat},
+{space}                                 {stencilSRVFormat},
 {space}                                 {swizzleFormat},
 {space}                                 {initializer});
 {space}    return info;
@@ -174,6 +180,7 @@ split_format_entry_template = """{space}    {condition}
 {space}                                     {rtvFormat},
 {space}                                     {dsvFormat},
 {space}                                     {blitSRVFormat},
+{space}                                     {stencilSRVFormat},
 {space}                                     {swizzleFormat},
 {space}                                     {initializer});
 {space}        return info;
@@ -202,6 +209,7 @@ def json_to_table_data(internal_format, format_name, prefix, json):
 
     # Derived values.
     parsed["blitSRVFormat"] = get_blit_srv_format(parsed)
+    parsed["stencilSRVFormat"] = get_stencil_srv_format(parsed)
     parsed["swizzleFormat"] = get_swizzle_format_id(internal_format, parsed)
     parsed["initializer"] = angle_format.get_internal_format_initializer(
         internal_format, parsed["formatName"])

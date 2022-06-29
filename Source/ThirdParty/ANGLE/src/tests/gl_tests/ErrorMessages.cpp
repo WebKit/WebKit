@@ -55,7 +55,7 @@ static void GL_APIENTRY Callback(GLenum source,
 namespace angle
 {
 
-class ErrorMessagesTest : public ANGLETest
+class ErrorMessagesTest : public ANGLETest<>
 {
   protected:
     ErrorMessagesTest()

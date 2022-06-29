@@ -27,33 +27,32 @@ class TranslatorVulkan : public TCompiler
     TranslatorVulkan(sh::GLenum type, ShShaderSpec spec);
 
   protected:
-    ANGLE_NO_DISCARD bool translate(TIntermBlock *root,
-                                    ShCompileOptions compileOptions,
-                                    PerformanceDiagnostics *perfDiagnostics) override;
+    [[nodiscard]] bool translate(TIntermBlock *root,
+                                 ShCompileOptions compileOptions,
+                                 PerformanceDiagnostics *perfDiagnostics) override;
     bool shouldFlattenPragmaStdglInvariantAll() override;
 
     // Subclass can call this method to transform the AST before writing the final output.
     // See TranslatorMetal.cpp.
-    ANGLE_NO_DISCARD bool translateImpl(TInfoSinkBase &sink,
-                                        TIntermBlock *root,
-                                        ShCompileOptions compileOptions,
-                                        PerformanceDiagnostics *perfDiagnostics,
-                                        SpecConst *specConst,
-                                        DriverUniform *driverUniforms);
+    [[nodiscard]] bool translateImpl(TInfoSinkBase &sink,
+                                     TIntermBlock *root,
+                                     ShCompileOptions compileOptions,
+                                     PerformanceDiagnostics *perfDiagnostics,
+                                     SpecConst *specConst,
+                                     DriverUniform *driverUniforms);
 
     void writeExtensionBehavior(ShCompileOptions compileOptions, TInfoSinkBase &sink);
 
     // Give subclass such as TranslatorMetal a chance to do depth transform before
     // TranslatorVulkan apply its own transform.
-    ANGLE_NO_DISCARD virtual bool transformDepthBeforeCorrection(
-        TIntermBlock *root,
-        const DriverUniform *driverUniforms)
+    [[nodiscard]] virtual bool transformDepthBeforeCorrection(TIntermBlock *root,
+                                                              const DriverUniform *driverUniforms)
     {
         return true;
     }
 
     // Generate SPIR-V out of intermediate GLSL through glslang.
-    ANGLE_NO_DISCARD bool compileToSpirv(const TInfoSinkBase &glsl);
+    [[nodiscard]] bool compileToSpirv(const TInfoSinkBase &glsl);
 };
 
 }  // namespace sh

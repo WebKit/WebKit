@@ -25,9 +25,9 @@ class TCompiler;
 class TIntermNode;
 class TSymbolTable;
 
-ANGLE_NO_DISCARD bool ExpandIntegerPowExpressions(TCompiler *compiler,
-                                                  TIntermNode *root,
-                                                  TSymbolTable *symbolTable);
+[[nodiscard]] bool ExpandIntegerPowExpressions(TCompiler *compiler,
+                                               TIntermNode *root,
+                                               TSymbolTable *symbolTable);
 
 }  // namespace sh
 

@@ -26,7 +26,7 @@ namespace sh
 class TCompiler;
 class TIntermNode;
 
-ANGLE_NO_DISCARD bool SeparateArrayInitialization(TCompiler *compiler, TIntermNode *root);
+[[nodiscard]] bool SeparateArrayInitialization(TCompiler *compiler, TIntermNode *root);
 }  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_TREEOPS_D3D_SEPARATEARRAYINITIALIZATION_H_

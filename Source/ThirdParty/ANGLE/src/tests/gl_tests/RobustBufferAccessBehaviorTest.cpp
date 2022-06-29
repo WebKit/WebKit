@@ -19,7 +19,7 @@ using namespace angle;
 namespace
 {
 
-class RobustBufferAccessBehaviorTest : public ANGLETest
+class RobustBufferAccessBehaviorTest : public ANGLETest<>
 {
   protected:
     RobustBufferAccessBehaviorTest()

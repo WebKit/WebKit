@@ -31,9 +31,9 @@ class TCompiler;
 class TIntermBlock;
 class TSymbolTable;
 
-ANGLE_NO_DISCARD bool SeparateStructFromUniformDeclarations(TCompiler *compiler,
-                                                            TIntermBlock *root,
-                                                            TSymbolTable *symbolTable);
+[[nodiscard]] bool SeparateStructFromUniformDeclarations(TCompiler *compiler,
+                                                         TIntermBlock *root,
+                                                         TSymbolTable *symbolTable);
 }  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_TREEOPS_SEPARATESTRUCTFROMUNIFORMDECLARATIONS_H_

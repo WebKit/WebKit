@@ -25,10 +25,10 @@ void GlslangInitialize();
 void GlslangFinalize();
 
 // Generate SPIR-V out of intermediate GLSL through glslang.
-ANGLE_NO_DISCARD bool GlslangCompileToSpirv(const ShBuiltInResources &resources,
-                                            sh::GLenum shaderType,
-                                            const std::string &shaderSource,
-                                            angle::spirv::Blob *spirvBlobOut);
+[[nodiscard]] bool GlslangCompileToSpirv(const ShBuiltInResources &resources,
+                                         sh::GLenum shaderType,
+                                         const std::string &shaderSource,
+                                         angle::spirv::Blob *spirvBlobOut);
 #else
 ANGLE_INLINE void GlslangInitialize() {}
 ANGLE_INLINE void GlslangFinalize() {}

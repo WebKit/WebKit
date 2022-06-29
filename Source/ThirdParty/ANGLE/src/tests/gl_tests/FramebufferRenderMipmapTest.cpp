@@ -8,7 +8,7 @@
 
 using namespace angle;
 
-class FramebufferRenderMipmapTest : public ANGLETest
+class FramebufferRenderMipmapTest : public ANGLETest<>
 {
   protected:
     FramebufferRenderMipmapTest()

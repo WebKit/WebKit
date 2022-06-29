@@ -419,8 +419,7 @@ angle::Result GlslangTransformSpirvCode(const gl::ShaderBitSet &linkedShaderStag
     for (const gl::ShaderType shaderType : linkedShaderStages)
     {
         GlslangSpirvOptions options;
-        options.shaderType                         = shaderType;
-        options.transformPositionToVulkanClipSpace = true;
+        options.shaderType = shaderType;
         options.isTransformFeedbackStage =
             shaderType == gl::ShaderType::Vertex && isTransformFeedbackEnabled;
         options.isTransformFeedbackEmulated = true;

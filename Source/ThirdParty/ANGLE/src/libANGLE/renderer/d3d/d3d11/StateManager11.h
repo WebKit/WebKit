@@ -312,10 +312,16 @@ class StateManager11 final : angle::NonCopyable
     void setShaderResourceInternal(gl::ShaderType shaderType,
                                    UINT resourceSlot,
                                    const SRVType *srv);
+
+    struct UAVList
+    {
+        UAVList(size_t size) : data(size) {}
+        std::vector<ID3D11UnorderedAccessView *> data;
+        int highestUsed = -1;
+    };
+
     template <typename UAVType>
-    void setUnorderedAccessViewInternal(gl::ShaderType shaderType,
-                                        UINT resourceSlot,
-                                        const UAVType *uav);
+    void setUnorderedAccessViewInternal(UINT resourceSlot, const UAVType *uav, UAVList *uavList);
 
     void unsetConflictingView(gl::PipelineType pipeline, ID3D11View *view, bool isRenderTarget);
     void unsetConflictingSRVs(gl::PipelineType pipeline,
@@ -375,8 +381,15 @@ class StateManager11 final : angle::NonCopyable
     angle::Result setTextureForImage(const gl::Context *context,
                                      gl::ShaderType type,
                                      int index,
-                                     bool readonly,
                                      const gl::ImageUnit &imageUnit);
+    angle::Result getUAVsForRWImages(const gl::Context *context,
+                                     gl::ShaderType shaderType,
+                                     UAVList *uavList);
+    angle::Result getUAVForRWImage(const gl::Context *context,
+                                   gl::ShaderType type,
+                                   int index,
+                                   const gl::ImageUnit &imageUnit,
+                                   UAVList *uavList);
 
     void handleMultiviewDrawFramebufferChange(const gl::Context *context);
 
@@ -394,16 +407,21 @@ class StateManager11 final : angle::NonCopyable
     angle::Result applyUniforms(const gl::Context *context);
     angle::Result applyUniformsForShader(const gl::Context *context, gl::ShaderType shaderType);
 
-    angle::Result syncShaderStorageBuffersForShader(const gl::Context *context,
-                                                    gl::ShaderType shaderType);
+    angle::Result getUAVsForShaderStorageBuffers(const gl::Context *context,
+                                                 gl::ShaderType shaderType,
+                                                 UAVList *uavList);
 
     angle::Result syncUniformBuffers(const gl::Context *context);
     angle::Result syncUniformBuffersForShader(const gl::Context *context,
                                               gl::ShaderType shaderType);
-    angle::Result syncAtomicCounterBuffers(const gl::Context *context);
-    angle::Result syncAtomicCounterBuffersForShader(const gl::Context *context,
-                                                    gl::ShaderType shaderType);
-    angle::Result syncShaderStorageBuffers(const gl::Context *context);
+    angle::Result getUAVsForAtomicCounterBuffers(const gl::Context *context,
+                                                 gl::ShaderType shaderType,
+                                                 UAVList *uavList);
+    angle::Result getUAVsForShader(const gl::Context *context,
+                                   gl::ShaderType shaderType,
+                                   UAVList *uavList);
+    angle::Result syncUAVsForGraphics(const gl::Context *context);
+    angle::Result syncUAVsForCompute(const gl::Context *context);
     angle::Result syncTransformFeedbackBuffers(const gl::Context *context);
 
     // These are currently only called internally.
@@ -412,6 +430,7 @@ class StateManager11 final : angle::NonCopyable
     void invalidateConstantBuffer(unsigned int slot);
     void invalidateProgramAtomicCounterBuffers();
     void invalidateProgramShaderStorageBuffers();
+    void invalidateImageBindings();
 
     // Called by the Framebuffer11 directly.
     void processFramebufferInvalidation(const gl::Context *context);
@@ -456,16 +475,16 @@ class StateManager11 final : angle::NonCopyable
         // DIRTY_BIT_SHADERS and DIRTY_BIT_TEXTURE_AND_SAMPLER_STATE should be dealt before
         // DIRTY_BIT_PROGRAM_UNIFORM_BUFFERS for update image layers.
         DIRTY_BIT_SHADERS,
-        // DIRTY_BIT_GRAPHICS_SRVUAV_STATE and DIRTY_BIT_COMPUTE_SRVUAV_STATE should be lower
+        // DIRTY_BIT_GRAPHICS_SRV_STATE and DIRTY_BIT_COMPUTE_SRV_STATE should be lower
         // bits than DIRTY_BIT_TEXTURE_AND_SAMPLER_STATE.
-        DIRTY_BIT_GRAPHICS_SRVUAV_STATE,
-        DIRTY_BIT_COMPUTE_SRVUAV_STATE,
+        DIRTY_BIT_GRAPHICS_SRV_STATE,
+        DIRTY_BIT_GRAPHICS_UAV_STATE,
+        DIRTY_BIT_COMPUTE_SRV_STATE,
+        DIRTY_BIT_COMPUTE_UAV_STATE,
         DIRTY_BIT_TEXTURE_AND_SAMPLER_STATE,
         DIRTY_BIT_PROGRAM_UNIFORMS,
         DIRTY_BIT_DRIVER_UNIFORMS,
         DIRTY_BIT_PROGRAM_UNIFORM_BUFFERS,
-        DIRTY_BIT_PROGRAM_ATOMIC_COUNTER_BUFFERS,
-        DIRTY_BIT_PROGRAM_SHADER_STORAGE_BUFFERS,
         DIRTY_BIT_CURRENT_VALUE_ATTRIBS,
         DIRTY_BIT_TRANSFORM_FEEDBACK,
         DIRTY_BIT_VERTEX_BUFFERS_AND_INPUT_LAYOUT,

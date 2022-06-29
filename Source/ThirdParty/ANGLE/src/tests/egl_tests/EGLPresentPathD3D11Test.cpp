@@ -14,7 +14,7 @@
 
 using namespace angle;
 
-class EGLPresentPathD3D11 : public ANGLETest
+class EGLPresentPathD3D11 : public ANGLETest<>
 {
   protected:
     EGLPresentPathD3D11()

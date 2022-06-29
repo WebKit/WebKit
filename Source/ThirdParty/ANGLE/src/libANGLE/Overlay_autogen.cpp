@@ -152,7 +152,7 @@ void Overlay::initOverlayWidgets()
     }
 
     {
-        RunningHistogram *widget = new RunningHistogram(100);
+        RunningGraph *widget = new RunningGraph(100);
         {
             const int32_t fontSize = GetFontSize(0, kLargeFont);
             const int32_t offsetX  = -50;
@@ -160,7 +160,7 @@ void Overlay::initOverlayWidgets()
             const int32_t width    = 6 * static_cast<uint32_t>(widget->runningValues.size());
             const int32_t height   = 100;
 
-            widget->type          = WidgetType::RunningHistogram;
+            widget->type          = WidgetType::RunningGraph;
             widget->fontSize      = fontSize;
             widget->coords[0]     = offsetX - width;
             widget->coords[1]     = offsetY;
@@ -671,6 +671,153 @@ void Overlay::initOverlayWidgets()
             widget->description.color[3]      = 1.0f;
             widget->description.matchToWidget = nullptr;
         }
+    }
+
+    {
+        RunningGraph *widget = new RunningGraph(60);
+        {
+            const int32_t fontSize = GetFontSize(0, kLargeFont);
+            const int32_t offsetX  = -50;
+            const int32_t offsetY  = -50;
+            const int32_t width    = 5 * static_cast<uint32_t>(widget->runningValues.size());
+            const int32_t height   = 100;
+
+            widget->type          = WidgetType::RunningGraph;
+            widget->fontSize      = fontSize;
+            widget->coords[0]     = offsetX - width;
+            widget->coords[1]     = offsetY - height;
+            widget->coords[2]     = offsetX;
+            widget->coords[3]     = offsetY;
+            widget->color[0]      = 0.0f;
+            widget->color[1]      = 1.0f;
+            widget->color[2]      = 0.0f;
+            widget->color[3]      = 0.39215686274509803f;
+            widget->matchToWidget = nullptr;
+        }
+        mState.mOverlayWidgets[WidgetId::VulkanPipelineCacheLookups].reset(widget);
+        {
+            const int32_t fontSize = GetFontSize(kFontMipSmall, kLargeFont);
+            const int32_t offsetX =
+                mState.mOverlayWidgets[WidgetId::VulkanPipelineCacheLookups]->coords[0];
+            const int32_t offsetY =
+                mState.mOverlayWidgets[WidgetId::VulkanPipelineCacheLookups]->coords[1];
+            const int32_t width  = 45 * (kFontGlyphWidth >> fontSize);
+            const int32_t height = (kFontGlyphHeight >> fontSize);
+
+            widget->description.type          = WidgetType::Text;
+            widget->description.fontSize      = fontSize;
+            widget->description.coords[0]     = offsetX;
+            widget->description.coords[1]     = offsetY - height;
+            widget->description.coords[2]     = std::min(offsetX + width, -1);
+            widget->description.coords[3]     = offsetY;
+            widget->description.color[0]      = 0.0f;
+            widget->description.color[1]      = 0.7843137254901961f;
+            widget->description.color[2]      = 0.29411764705882354f;
+            widget->description.color[3]      = 1.0f;
+            widget->description.matchToWidget = nullptr;
+        }
+    }
+
+    {
+        RunningGraph *widget = new RunningGraph(60);
+        {
+            const int32_t fontSize = GetFontSize(0, kLargeFont);
+            const int32_t offsetX =
+                mState.mOverlayWidgets[WidgetId::VulkanPipelineCacheLookups]->coords[0];
+            const int32_t offsetY =
+                mState.mOverlayWidgets[WidgetId::VulkanPipelineCacheLookups]->coords[1];
+            const int32_t width  = 5 * static_cast<uint32_t>(widget->runningValues.size());
+            const int32_t height = 100;
+
+            widget->type      = WidgetType::RunningGraph;
+            widget->fontSize  = fontSize;
+            widget->coords[0] = offsetX;
+            widget->coords[1] = offsetY;
+            widget->coords[2] = std::min(offsetX + width, -1);
+            widget->coords[3] = std::min(offsetY + height, -1);
+            widget->color[0]  = 1.0f;
+            widget->color[1]  = 0.0f;
+            widget->color[2]  = 0.0f;
+            widget->color[3]  = 0.7843137254901961f;
+            widget->matchToWidget =
+                mState.mOverlayWidgets[WidgetId::VulkanPipelineCacheLookups].get();
+        }
+        mState.mOverlayWidgets[WidgetId::VulkanPipelineCacheMisses].reset(widget);
+        {
+            const int32_t fontSize = GetFontSize(kFontMipSmall, kLargeFont);
+            const int32_t offsetX  = mState.mOverlayWidgets[WidgetId::VulkanPipelineCacheLookups]
+                                        ->getDescriptionWidget()
+                                        ->coords[0];
+            const int32_t offsetY = mState.mOverlayWidgets[WidgetId::VulkanPipelineCacheLookups]
+                                        ->getDescriptionWidget()
+                                        ->coords[1];
+            const int32_t width  = 45 * (kFontGlyphWidth >> fontSize);
+            const int32_t height = (kFontGlyphHeight >> fontSize);
+
+            widget->description.type          = WidgetType::Text;
+            widget->description.fontSize      = fontSize;
+            widget->description.coords[0]     = offsetX;
+            widget->description.coords[1]     = offsetY - height;
+            widget->description.coords[2]     = std::min(offsetX + width, -1);
+            widget->description.coords[3]     = offsetY;
+            widget->description.color[0]      = 0.7843137254901961f;
+            widget->description.color[1]      = 0.0f;
+            widget->description.color[2]      = 0.29411764705882354f;
+            widget->description.color[3]      = 1.0f;
+            widget->description.matchToWidget = nullptr;
+        }
+    }
+
+    {
+        Count *widget = new Count;
+        {
+            const int32_t fontSize = GetFontSize(kFontMipSmall, kLargeFont);
+            const int32_t offsetX =
+                mState.mOverlayWidgets[WidgetId::VulkanPipelineCacheMisses]->coords[0];
+            const int32_t offsetY =
+                mState.mOverlayWidgets[WidgetId::VulkanPipelineCacheMisses]->coords[3];
+            const int32_t width  = 45 * (kFontGlyphWidth >> fontSize);
+            const int32_t height = (kFontGlyphHeight >> fontSize);
+
+            widget->type          = WidgetType::Count;
+            widget->fontSize      = fontSize;
+            widget->coords[0]     = offsetX;
+            widget->coords[1]     = offsetY;
+            widget->coords[2]     = std::min(offsetX + width, -1);
+            widget->coords[3]     = std::min(offsetY + height, -1);
+            widget->color[0]      = 1.0f;
+            widget->color[1]      = 0.0f;
+            widget->color[2]      = 0.0f;
+            widget->color[3]      = 1.0f;
+            widget->matchToWidget = nullptr;
+        }
+        mState.mOverlayWidgets[WidgetId::VulkanTotalPipelineCacheMissTimeMs].reset(widget);
+    }
+
+    {
+        Count *widget = new Count;
+        {
+            const int32_t fontSize = GetFontSize(kFontMipSmall, kLargeFont);
+            const int32_t offsetX =
+                mState.mOverlayWidgets[WidgetId::VulkanTotalPipelineCacheMissTimeMs]->coords[0];
+            const int32_t offsetY =
+                mState.mOverlayWidgets[WidgetId::VulkanTotalPipelineCacheMissTimeMs]->coords[3];
+            const int32_t width  = 45 * (kFontGlyphWidth >> fontSize);
+            const int32_t height = (kFontGlyphHeight >> fontSize);
+
+            widget->type          = WidgetType::Count;
+            widget->fontSize      = fontSize;
+            widget->coords[0]     = offsetX;
+            widget->coords[1]     = offsetY;
+            widget->coords[2]     = std::min(offsetX + width, -1);
+            widget->coords[3]     = std::min(offsetY + height, -1);
+            widget->color[0]      = 0.0f;
+            widget->color[1]      = 1.0f;
+            widget->color[2]      = 0.0f;
+            widget->color[3]      = 1.0f;
+            widget->matchToWidget = nullptr;
+        }
+        mState.mOverlayWidgets[WidgetId::VulkanTotalPipelineCacheHitTimeMs].reset(widget);
     }
 }
 

@@ -550,6 +550,12 @@ class FlatUnorderedSet final
         mData.push_back(value);
     }
 
+    void remove(T value)
+    {
+        ASSERT(contains(value));
+        mData.remove_and_permute(value);
+    }
+
     bool contains(T needle) const
     {
         for (T value : mData)

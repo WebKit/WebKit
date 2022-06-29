@@ -52,7 +52,7 @@ bool AreEmptyBlocks(const TIntermSequence *statements)
 class PruneEmptyCasesTraverser : private TIntermTraverser
 {
   public:
-    ANGLE_NO_DISCARD static bool apply(TCompiler *compiler, TIntermBlock *root);
+    [[nodiscard]] static bool apply(TCompiler *compiler, TIntermBlock *root);
 
   private:
     PruneEmptyCasesTraverser();

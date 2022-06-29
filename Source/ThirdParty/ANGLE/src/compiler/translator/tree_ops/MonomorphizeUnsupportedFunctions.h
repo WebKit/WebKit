@@ -28,10 +28,10 @@ namespace sh
 class TIntermBlock;
 class TSymbolTable;
 
-ANGLE_NO_DISCARD bool MonomorphizeUnsupportedFunctions(TCompiler *compiler,
-                                                       TIntermBlock *root,
-                                                       TSymbolTable *symbolTable,
-                                                       ShCompileOptions compileOptions);
+[[nodiscard]] bool MonomorphizeUnsupportedFunctions(TCompiler *compiler,
+                                                    TIntermBlock *root,
+                                                    TSymbolTable *symbolTable,
+                                                    ShCompileOptions compileOptions);
 }  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_TREEOPS_VULKAN_MONOMORPHIZEUNSUPPORTEDFUNCTIONS_H_

@@ -1435,10 +1435,11 @@ void GenerateCaps(const FunctionsGL *functions,
                                      functions->isAtLeastGLES(gl::Version(3, 0)) ||
                                      functions->hasGLESExtension("GL_OES_fbo_render_mipmap");
     extensions->textureBorderClampOES =
-        functions->standard == STANDARD_GL_DESKTOP ||
-        functions->hasGLESExtension("GL_OES_texture_border_clamp") ||
-        functions->hasGLESExtension("GL_EXT_texture_border_clamp") ||
-        functions->hasGLESExtension("GL_NV_texture_border_clamp");
+        !features.disableTextureClampToBorder.enabled &&
+        (functions->standard == STANDARD_GL_DESKTOP ||
+         functions->hasGLESExtension("GL_OES_texture_border_clamp") ||
+         functions->hasGLESExtension("GL_EXT_texture_border_clamp") ||
+         functions->hasGLESExtension("GL_NV_texture_border_clamp"));
     extensions->multiDrawIndirectEXT = true;
     extensions->instancedArraysANGLE = functions->isAtLeastGL(gl::Version(3, 1)) ||
                                        (functions->hasGLExtension("GL_ARB_instanced_arrays") &&
@@ -1693,6 +1694,13 @@ void GenerateCaps(const FunctionsGL *functions,
         functions->hasGLESExtension("GL_OES_draw_elements_base_vertex") ||
         functions->hasGLESExtension("GL_EXT_draw_elements_base_vertex");
 
+    // EXT_base_instance
+    extensions->baseInstanceEXT = functions->isAtLeastGL(gl::Version(3, 2)) ||
+                                  functions->isAtLeastGLES(gl::Version(3, 2)) ||
+                                  functions->hasGLESExtension("GL_OES_draw_elements_base_vertex") ||
+                                  functions->hasGLESExtension("GL_EXT_draw_elements_base_vertex") ||
+                                  functions->hasGLESExtension("GL_EXT_base_instance");
+
     // ANGLE_base_vertex_base_instance_shader_builtin
     extensions->baseVertexBaseInstanceShaderBuiltinANGLE = extensions->baseVertexBaseInstanceANGLE;
 
@@ -1881,12 +1889,13 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
     bool isGetSystemInfoSuccess =
         GetSystemInfoVendorIDAndDeviceID(functions, &systemInfo, &vendor, &device);
 
-    bool isAMD      = IsAMD(vendor);
-    bool isIntel    = IsIntel(vendor);
-    bool isNvidia   = IsNvidia(vendor);
-    bool isQualcomm = IsQualcomm(vendor);
-    bool isVMWare   = IsVMWare(vendor);
-    bool hasAMD     = systemInfo.hasAMDGPU();
+    bool isAMD         = IsAMD(vendor);
+    bool isIntel       = IsIntel(vendor);
+    bool isNvidia      = IsNvidia(vendor);
+    bool isQualcomm    = IsQualcomm(vendor);
+    bool isVMWare      = IsVMWare(vendor);
+    bool hasAMD        = systemInfo.hasAMDGPU();
+    bool isImagination = IsPowerVR(vendor);
 
     std::array<int, 3> mesaVersion = {0, 0, 0};
     bool isMesa                    = IsMesa(functions, &mesaVersion);
@@ -2220,6 +2229,9 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
     // https://anglebug.com/5536
     ANGLE_FEATURE_CONDITION(features, alwaysUnbindFramebufferTexture2D,
                             isNvidia && (IsWindows() || IsLinux()));
+
+    // https://anglebug.com/7405
+    ANGLE_FEATURE_CONDITION(features, disableTextureClampToBorder, isImagination);
 }
 
 void InitializeFrontendFeatures(const FunctionsGL *functions, angle::FrontendFeatures *features)

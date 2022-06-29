@@ -103,7 +103,7 @@ class ReplaceShadowingVariablesTraverser : public TIntermTraverser
         return true;
     }
     // Perform replacement of vars for any deferred replacements that were identified
-    ANGLE_NO_DISCARD bool executeReplacements(TCompiler *compiler)
+    [[nodiscard]] bool executeReplacements(TCompiler *compiler)
     {
         for (DeferredReplacementBlock &replace : mReplacements)
         {
@@ -126,9 +126,9 @@ class ReplaceShadowingVariablesTraverser : public TIntermTraverser
 }  // anonymous namespace
 
 // Replaces every occurrence of a variable with another variable.
-ANGLE_NO_DISCARD bool ReplaceShadowingVariables(TCompiler *compiler,
-                                                TIntermBlock *root,
-                                                TSymbolTable *symbolTable)
+[[nodiscard]] bool ReplaceShadowingVariables(TCompiler *compiler,
+                                             TIntermBlock *root,
+                                             TSymbolTable *symbolTable)
 {
     ReplaceShadowingVariablesTraverser traverser(symbolTable);
     root->traverse(&traverser);

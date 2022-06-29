@@ -127,6 +127,7 @@ std::shared_ptr<WaitableCompileEvent> ShaderMtl::compile(const gl::Context *cont
     }
     // If compiling through SPIR-V
     compileOptions |= SH_ADD_VULKAN_XFB_EMULATION_SUPPORT_CODE;
+    compileOptions |= SH_ADD_VULKAN_DEPTH_CORRECTION;
     // If compiling through SPIR-V.  This path outputs text, so cannot use the direct SPIR-V gen
     // path unless fixed.
     compileOptions |= SH_GENERATE_SPIRV_THROUGH_GLSLANG;

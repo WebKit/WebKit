@@ -10,7 +10,7 @@
 
 using namespace angle;
 
-class LineLoopTest : public ANGLETest
+class LineLoopTest : public ANGLETest<>
 {
   protected:
     LineLoopTest()
@@ -321,7 +321,7 @@ TEST_P(LineLoopTest, DISABLED_DrawArraysWithLargeCount)
     EXPECT_GL_NO_ERROR();
 }
 
-class LineLoopPrimitiveRestartTest : public ANGLETest
+class LineLoopPrimitiveRestartTest : public ANGLETest<>
 {
   protected:
     LineLoopPrimitiveRestartTest()

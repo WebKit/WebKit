@@ -29,9 +29,9 @@ class TCompiler;
 class TIntermNode;
 class TSymbolTable;
 
-ANGLE_NO_DISCARD bool RewriteExpressionsWithShaderStorageBlock(TCompiler *compiler,
-                                                               TIntermNode *root,
-                                                               TSymbolTable *symbolTable);
+[[nodiscard]] bool RewriteExpressionsWithShaderStorageBlock(TCompiler *compiler,
+                                                            TIntermNode *root,
+                                                            TSymbolTable *symbolTable);
 }  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_TREEOPS_D3D_REWRITE_EXPRESSIONS_WITH_SHADER_STORAGE_BLOCK_H_

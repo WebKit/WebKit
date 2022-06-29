@@ -471,7 +471,7 @@ angle::Result DmaBufImageSiblingVkLinux::initWithFormat(DisplayVk *displayVk,
         displayVk, actualImageFormatID, &externalMemoryImageCreateInfo, &imageFormatListCreateInfo,
         &imageListFormatsStorage, &createFlags);
 
-    if (!mutableFormat)
+    if (mutableFormat == MutableFormat::NotAllowed)
     {
         createFlags &= ~VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT;
         // When mutable format bit is not set, viewFormatCount must be 0 or 1.

@@ -27,8 +27,8 @@ constexpr uint32_t kCountY                  = 8;
 constexpr int kBoxCount                     = kCountX * kCountY;
 constexpr uint32_t kIndexPatternRepeatCount = 3;
 constexpr std::array<GLfloat, 2> kTileSize  = {
-    1.f / static_cast<GLfloat>(kCountX),
-    1.f / static_cast<GLfloat>(kCountY),
+     1.f / static_cast<GLfloat>(kCountX),
+     1.f / static_cast<GLfloat>(kCountY),
 };
 constexpr std::array<uint32_t, 2> kTilePixelSize  = {kWidth / kCountX, kHeight / kCountY};
 constexpr std::array<GLfloat, 2> kQuadRadius      = {0.25f * kTileSize[0], 0.25f * kTileSize[1]};
@@ -94,7 +94,7 @@ std::string DrawBaseVertexVariantsTestPrint(
 
 // These tests check correctness of variants of baseVertex draw calls from different extensions
 
-class DrawBaseVertexVariantsTest : public ANGLETestWithParam<DrawBaseVertexVariantsTestParams>
+class DrawBaseVertexVariantsTest : public ANGLETest<DrawBaseVertexVariantsTestParams>
 {
   protected:
     DrawBaseVertexVariantsTest()

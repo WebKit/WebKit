@@ -458,7 +458,7 @@ class SPIRVBuilder : angle::NonCopyable
     void writeExtensions(spirv::Blob *blob);
     void writeSourceExtensions(spirv::Blob *blob);
 
-    ANGLE_MAYBE_UNUSED TCompiler *mCompiler;
+    [[maybe_unused]] TCompiler *mCompiler;
     ShCompileOptions mCompileOptions;
     gl::ShaderType mShaderType;
 

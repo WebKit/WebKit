@@ -38,80 +38,70 @@ inline T ToObjC(const T p)
     return p;
 }
 
-inline MTLStencilDescriptor *ToObjC(const StencilDesc &desc)
+inline AutoObjCPtr<MTLStencilDescriptor *> ToObjC(const StencilDesc &desc)
 {
-    MTLStencilDescriptor *objCDesc = [[MTLStencilDescriptor alloc] init];
-
-    ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, stencilFailureOperation);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, depthFailureOperation);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, depthStencilPassOperation);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, stencilCompareFunction);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, readMask);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, writeMask);
-
-    return [objCDesc ANGLE_MTL_AUTORELEASE];
+    auto objCDesc = adoptObjCObj<MTLStencilDescriptor>([[MTLStencilDescriptor alloc] init]);
+    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, stencilFailureOperation);
+    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, depthFailureOperation);
+    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, depthStencilPassOperation);
+    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, stencilCompareFunction);
+    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, readMask);
+    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, writeMask);
+    return objCDesc;
 }
 
-MTLDepthStencilDescriptor *ToObjC(const DepthStencilDesc &desc)
+inline AutoObjCPtr<MTLDepthStencilDescriptor *> ToObjC(const DepthStencilDesc &desc)
 {
-    MTLDepthStencilDescriptor *objCDesc = [[MTLDepthStencilDescriptor alloc] init];
-
-    ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, backFaceStencil);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, frontFaceStencil);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, depthCompareFunction);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, depthWriteEnabled);
-
-    return [objCDesc ANGLE_MTL_AUTORELEASE];
+    auto objCDesc =
+        adoptObjCObj<MTLDepthStencilDescriptor>([[MTLDepthStencilDescriptor alloc] init]);
+    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, backFaceStencil);
+    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, frontFaceStencil);
+    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, depthCompareFunction);
+    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, depthWriteEnabled);
+    return objCDesc;
 }
 
-MTLSamplerDescriptor *ToObjC(const SamplerDesc &desc)
+inline AutoObjCPtr<MTLSamplerDescriptor *> ToObjC(const SamplerDesc &desc)
 {
-    MTLSamplerDescriptor *objCDesc = [[MTLSamplerDescriptor alloc] init];
-
-    ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, rAddressMode);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, sAddressMode);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, tAddressMode);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, minFilter);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, magFilter);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, mipFilter);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, maxAnisotropy);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, compareFunction);
-
-    return [objCDesc ANGLE_MTL_AUTORELEASE];
+    auto objCDesc = adoptObjCObj<MTLSamplerDescriptor>([[MTLSamplerDescriptor alloc] init]);
+    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, rAddressMode);
+    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, sAddressMode);
+    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, tAddressMode);
+    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, minFilter);
+    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, magFilter);
+    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, mipFilter);
+    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, maxAnisotropy);
+    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, compareFunction);
+    return objCDesc;
 }
 
-MTLVertexAttributeDescriptor *ToObjC(const VertexAttributeDesc &desc)
+inline AutoObjCPtr<MTLVertexAttributeDescriptor *> ToObjC(const VertexAttributeDesc &desc)
 {
-    MTLVertexAttributeDescriptor *objCDesc = [[MTLVertexAttributeDescriptor alloc] init];
-
-    ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, format);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, offset);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, bufferIndex);
-
+    auto objCDesc = adoptObjCObj([[MTLVertexAttributeDescriptor alloc] init]);
+    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, format);
+    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, offset);
+    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, bufferIndex);
     ASSERT(desc.bufferIndex >= kVboBindingIndexStart);
-
-    return [objCDesc ANGLE_MTL_AUTORELEASE];
+    return objCDesc;
 }
 
-MTLVertexBufferLayoutDescriptor *ToObjC(const VertexBufferLayoutDesc &desc)
+inline AutoObjCPtr<MTLVertexBufferLayoutDescriptor *> ToObjC(const VertexBufferLayoutDesc &desc)
 {
-    MTLVertexBufferLayoutDescriptor *objCDesc = [[MTLVertexBufferLayoutDescriptor alloc] init];
-
-    ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, stepFunction);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, stepRate);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, stride);
-
-    return [objCDesc ANGLE_MTL_AUTORELEASE];
+    auto objCDesc = adoptObjCObj([[MTLVertexBufferLayoutDescriptor alloc] init]);
+    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, stepFunction);
+    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, stepRate);
+    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, stride);
+    return objCDesc;
 }
 
-MTLVertexDescriptor *ToObjC(const VertexDesc &desc)
+inline AutoObjCPtr<MTLVertexDescriptor *> ToObjC(const VertexDesc &desc)
 {
-    MTLVertexDescriptor *objCDesc = [[MTLVertexDescriptor alloc] init];
+    auto objCDesc = adoptObjCObj<MTLVertexDescriptor>([[MTLVertexDescriptor alloc] init]);
     [objCDesc reset];
 
     for (uint8_t i = 0; i < desc.numAttribs; ++i)
     {
-        [objCDesc.attributes setObject:ToObjC(desc.attributes[i]) atIndexedSubscript:i];
+        [objCDesc.get().attributes setObject:ToObjC(desc.attributes[i]) atIndexedSubscript:i];
     }
 
     for (uint8_t i = 0; i < desc.numBufferLayouts; ++i)
@@ -120,61 +110,60 @@ MTLVertexDescriptor *ToObjC(const VertexDesc &desc)
         // If we don't set this slot, it will apparently be disabled by metal runtime.
         if (desc.layouts[i].stepFunction != kVertexStepFunctionInvalid)
         {
-            [objCDesc.layouts setObject:ToObjC(desc.layouts[i]) atIndexedSubscript:i];
+            [objCDesc.get().layouts setObject:ToObjC(desc.layouts[i]) atIndexedSubscript:i];
         }
     }
 
-    return [objCDesc ANGLE_MTL_AUTORELEASE];
+    return objCDesc;
 }
 
-MTLRenderPipelineColorAttachmentDescriptor *ToObjC(const RenderPipelineColorAttachmentDesc &desc)
+inline AutoObjCPtr<MTLRenderPipelineColorAttachmentDescriptor *> ToObjC(
+    const RenderPipelineColorAttachmentDesc &desc)
 {
-    MTLRenderPipelineColorAttachmentDescriptor *objCDesc =
-        [[MTLRenderPipelineColorAttachmentDescriptor alloc] init];
-
-    ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, pixelFormat);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, writeMask);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, alphaBlendOperation);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, rgbBlendOperation);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, destinationAlphaBlendFactor);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, destinationRGBBlendFactor);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, sourceAlphaBlendFactor);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, sourceRGBBlendFactor);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, blendingEnabled);
-
-    return [objCDesc ANGLE_MTL_AUTORELEASE];
+    auto objCDesc = adoptObjCObj([[MTLRenderPipelineColorAttachmentDescriptor alloc] init]);
+    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, pixelFormat);
+    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, writeMask);
+    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, alphaBlendOperation);
+    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, rgbBlendOperation);
+    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, destinationAlphaBlendFactor);
+    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, destinationRGBBlendFactor);
+    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, sourceAlphaBlendFactor);
+    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, sourceRGBBlendFactor);
+    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, blendingEnabled);
+    return objCDesc;
 }
 
-MTLRenderPipelineDescriptor *ToObjC(id<MTLFunction> vertexShader,
-                                    id<MTLFunction> fragmentShader,
-                                    const RenderPipelineDesc &desc)
+AutoObjCPtr<MTLRenderPipelineDescriptor *> CreateMTLRenderPipelineDescriptor(
+    id<MTLFunction> vertexShader,
+    id<MTLFunction> fragmentShader,
+    const RenderPipelineDesc &desc)
 {
-    MTLRenderPipelineDescriptor *objCDesc = [[MTLRenderPipelineDescriptor alloc] init];
+    auto objCDesc = adoptObjCObj([[MTLRenderPipelineDescriptor alloc] init]);
     [objCDesc reset];
 
-    ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, vertexDescriptor);
+    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, vertexDescriptor);
 
     for (uint8_t i = 0; i < desc.outputDescriptor.numColorAttachments; ++i)
     {
-        [objCDesc.colorAttachments setObject:ToObjC(desc.outputDescriptor.colorAttachments[i])
-                          atIndexedSubscript:i];
+        [objCDesc.get().colorAttachments setObject:ToObjC(desc.outputDescriptor.colorAttachments[i])
+                                atIndexedSubscript:i];
     }
-    ANGLE_OBJC_CP_PROPERTY(objCDesc, desc.outputDescriptor, depthAttachmentPixelFormat);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc, desc.outputDescriptor, stencilAttachmentPixelFormat);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc, desc.outputDescriptor, sampleCount);
+    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc.outputDescriptor, depthAttachmentPixelFormat);
+    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc.outputDescriptor, stencilAttachmentPixelFormat);
+    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc.outputDescriptor, sampleCount);
 
 #if ANGLE_MTL_PRIMITIVE_TOPOLOGY_CLASS_AVAILABLE
-    ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, inputPrimitiveTopology);
+    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, inputPrimitiveTopology);
 #endif
-    ANGLE_OBJC_CP_PROPERTY(objCDesc, desc, alphaToCoverageEnabled);
+    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, alphaToCoverageEnabled);
 
     // rasterizationEnabled will be true for both EmulatedDiscard & Enabled.
-    objCDesc.rasterizationEnabled = desc.rasterizationEnabled();
+    objCDesc.get().rasterizationEnabled = desc.rasterizationEnabled();
 
-    objCDesc.vertexFunction   = vertexShader;
-    objCDesc.fragmentFunction = objCDesc.rasterizationEnabled ? fragmentShader : nil;
+    objCDesc.get().vertexFunction   = vertexShader;
+    objCDesc.get().fragmentFunction = objCDesc.get().rasterizationEnabled ? fragmentShader : nil;
 
-    return [objCDesc ANGLE_MTL_AUTORELEASE];
+    return objCDesc;
 }
 
 id<MTLTexture> ToObjC(const TextureRef &texture)
@@ -775,7 +764,7 @@ void RenderPassDesc::populateRenderPipelineOutputDesc(const BlendDescArray &blen
     }
 
     // Reset the unused output slots to ensure consistent hash value
-    for (uint32_t i = this->numColorAttachments; i < kMaxRenderTargets; ++i)
+    for (uint32_t i = this->numColorAttachments; i < outputDescriptor.colorAttachments.size(); ++i)
     {
         outputDescriptor.colorAttachments[i].reset();
     }
@@ -831,15 +820,18 @@ bool RenderPassDesc::operator==(const RenderPassDesc &other) const
 }
 
 // Convert to Metal object
-void RenderPassDesc::convertToMetalDesc(MTLRenderPassDescriptor *objCDesc) const
+void RenderPassDesc::convertToMetalDesc(MTLRenderPassDescriptor *objCDesc,
+                                        uint32_t deviceMaxRenderTargets) const
 {
+    ASSERT(deviceMaxRenderTargets <= kMaxRenderTargets);
+
     ANGLE_MTL_OBJC_SCOPE
     {
         for (uint32_t i = 0; i < numColorAttachments; ++i)
         {
             ToObjC(colorAttachments[i], objCDesc.colorAttachments[i]);
         }
-        for (uint32_t i = numColorAttachments; i < kMaxRenderTargets; ++i)
+        for (uint32_t i = numColorAttachments; i < deviceMaxRenderTargets; ++i)
         {
             // Inactive render target
             objCDesc.colorAttachments[i].texture     = nil;
@@ -853,6 +845,19 @@ void RenderPassDesc::convertToMetalDesc(MTLRenderPassDescriptor *objCDesc) const
         ToObjC(depthAttachment, objCDesc.depthAttachment);
         ToObjC(stencilAttachment, objCDesc.stencilAttachment);
     }
+    for (uint32_t i = numColorAttachments; i < kMaxRenderTargets; ++i)
+    {
+        // Inactive render target
+        objCDesc.colorAttachments[i].texture     = nil;
+        objCDesc.colorAttachments[i].level       = 0;
+        objCDesc.colorAttachments[i].slice       = 0;
+        objCDesc.colorAttachments[i].depthPlane  = 0;
+        objCDesc.colorAttachments[i].loadAction  = MTLLoadActionDontCare;
+        objCDesc.colorAttachments[i].storeAction = MTLStoreActionDontCare;
+    }
+
+    ToObjC(depthAttachment, objCDesc.depthAttachment);
+    ToObjC(stencilAttachment, objCDesc.stencilAttachment);
 }
 
 // RenderPipelineCache implementation
@@ -1058,8 +1063,7 @@ AutoObjCPtr<id<MTLRenderPipelineState>> RenderPipelineCache::createRenderPipelin
 
         const mtl::ContextDevice &metalDevice = context->getMetalDevice();
 
-        // Convert to Objective-C desc:
-        AutoObjCObj<MTLRenderPipelineDescriptor> objCDesc = ToObjC(vertShader, fragShader, desc);
+        auto objCDesc = CreateMTLRenderPipelineDescriptor(vertShader, fragShader, desc);
 
         if (!ValidateRenderPipelineState(objCDesc, context, metalDevice))
         {
@@ -1069,15 +1073,14 @@ AutoObjCPtr<id<MTLRenderPipelineState>> RenderPipelineCache::createRenderPipelin
         // Special attribute slot for default attribute
         if (insertDefaultAttribLayout)
         {
-            MTLVertexBufferLayoutDescriptor *defaultAttribLayoutObjCDesc =
-                [[MTLVertexBufferLayoutDescriptor alloc] init];
-            defaultAttribLayoutObjCDesc.stepFunction = MTLVertexStepFunctionConstant;
-            defaultAttribLayoutObjCDesc.stepRate     = 0;
-            defaultAttribLayoutObjCDesc.stride       = kDefaultAttributeSize * kMaxVertexAttribs;
+            auto defaultAttribLayoutObjCDesc = adoptObjCObj<MTLVertexBufferLayoutDescriptor>(
+                [[MTLVertexBufferLayoutDescriptor alloc] init]);
+            defaultAttribLayoutObjCDesc.get().stepFunction = MTLVertexStepFunctionConstant;
+            defaultAttribLayoutObjCDesc.get().stepRate     = 0;
+            defaultAttribLayoutObjCDesc.get().stride = kDefaultAttributeSize * kMaxVertexAttribs;
 
-            [objCDesc.get().vertexDescriptor.layouts
-                         setObject:[defaultAttribLayoutObjCDesc ANGLE_MTL_AUTORELEASE]
-                atIndexedSubscript:kDefaultAttribsBindingIndex];
+            [objCDesc.get().vertexDescriptor.layouts setObject:defaultAttribLayoutObjCDesc
+                                            atIndexedSubscript:kDefaultAttribsBindingIndex];
         }
         // Create pipeline state
         NSError *err  = nil;
@@ -1310,49 +1313,43 @@ AutoObjCPtr<id<MTLDepthStencilState>> StateCache::getDepthStencilState(
     const mtl::ContextDevice &device,
     const DepthStencilDesc &desc)
 {
-    ANGLE_MTL_OBJC_SCOPE
+    auto ite = mDepthStencilStates.find(desc);
+    if (ite == mDepthStencilStates.end())
     {
-        auto ite = mDepthStencilStates.find(desc);
-        if (ite == mDepthStencilStates.end())
+        auto re = mDepthStencilStates.insert(
+            std::make_pair(desc, device.newDepthStencilStateWithDescriptor(ToObjC(desc))));
+        if (!re.second)
         {
-            auto re = mDepthStencilStates.insert(
-                std::make_pair(desc, device.newDepthStencilStateWithDescriptor(ToObjC(desc))));
-            if (!re.second)
-            {
-                return nil;
-            }
-
-            ite = re.first;
+            return nil;
         }
 
-        return ite->second;
+        ite = re.first;
     }
+
+    return ite->second;
 }
 
 AutoObjCPtr<id<MTLSamplerState>> StateCache::getSamplerState(const mtl::ContextDevice &device,
                                                              const SamplerDesc &desc)
 {
-    ANGLE_MTL_OBJC_SCOPE
+    auto ite = mSamplerStates.find(desc);
+    if (ite == mSamplerStates.end())
     {
-        auto ite = mSamplerStates.find(desc);
-        if (ite == mSamplerStates.end())
+        auto objCDesc = ToObjC(desc);
+        if (!mFeatures.allowRuntimeSamplerCompareMode.enabled)
         {
-            AutoObjCObj<MTLSamplerDescriptor> objCDesc = ToObjC(desc);
-            if (!mFeatures.allowRuntimeSamplerCompareMode.enabled)
-            {
-                // Runtime sampler compare mode is not supported, fallback to never.
-                objCDesc.get().compareFunction = MTLCompareFunctionNever;
-            }
-            auto re = mSamplerStates.insert(
-                std::make_pair(desc, device.newSamplerStateWithDescriptor(objCDesc)));
-            if (!re.second)
-                return nil;
-
-            ite = re.first;
+            // Runtime sampler compare mode is not supported, fallback to never.
+            objCDesc.get().compareFunction = MTLCompareFunctionNever;
         }
+        auto re = mSamplerStates.insert(
+            std::make_pair(desc, device.newSamplerStateWithDescriptor(objCDesc)));
+        if (!re.second)
+            return nil;
 
-        return ite->second;
+        ite = re.first;
     }
+
+    return ite->second;
 }
 
 AutoObjCPtr<id<MTLSamplerState>> StateCache::getNullSamplerState(ContextMtl *context)

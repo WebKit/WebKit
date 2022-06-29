@@ -11,7 +11,7 @@
 namespace angle
 {
 
-class CopyCompressedTextureTest : public ANGLETest
+class CopyCompressedTextureTest : public ANGLETest<>
 {
   protected:
     CopyCompressedTextureTest()

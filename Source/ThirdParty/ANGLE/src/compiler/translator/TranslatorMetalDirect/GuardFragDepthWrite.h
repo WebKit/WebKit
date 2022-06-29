@@ -14,7 +14,7 @@
 namespace sh
 {
 
-ANGLE_NO_DISCARD bool GuardFragDepthWrite(TCompiler &compiler, TIntermBlock &root);
+[[nodiscard]] bool GuardFragDepthWrite(TCompiler &compiler, TIntermBlock &root);
 
 }  // namespace sh
 

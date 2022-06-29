@@ -17,7 +17,7 @@ namespace sh
 class TCompiler;
 class TIntermBlock;
 
-ANGLE_NO_DISCARD bool AddDefaultReturnStatements(TCompiler *compiler, TIntermBlock *root);
+[[nodiscard]] bool AddDefaultReturnStatements(TCompiler *compiler, TIntermBlock *root);
 
 }  // namespace sh
 

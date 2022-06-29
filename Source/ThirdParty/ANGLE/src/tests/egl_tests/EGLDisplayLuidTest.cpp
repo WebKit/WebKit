@@ -11,7 +11,7 @@
 
 using namespace angle;
 
-class EGLDisplayLuidTest : public ANGLETest
+class EGLDisplayLuidTest : public ANGLETest<>
 {
   protected:
     EGLDisplayLuidTest() : mDisplay(EGL_NO_DISPLAY) {}

@@ -1136,9 +1136,15 @@ angle::Result ContextMtl::syncState(const gl::Context *context,
             case gl::State::DIRTY_BIT_COLOR_MASK:
             {
                 const gl::BlendStateExt &blendStateExt = glState.getBlendStateExt();
-                for (size_t i = 0; i < mBlendDescArray.size(); i++)
+                size_t i                               = 0;
+                for (; i < blendStateExt.getDrawBufferCount(); i++)
                 {
                     mBlendDescArray[i].updateWriteMask(blendStateExt.getColorMaskIndexed(i));
+                    mWriteMaskArray[i] = mBlendDescArray[i].writeMask;
+                }
+                for (; i < mBlendDescArray.size(); i++)
+                {
+                    mBlendDescArray[i].updateWriteMask(0);
                     mWriteMaskArray[i] = mBlendDescArray[i].writeMask;
                 }
                 invalidateRenderPipeline();
@@ -1398,7 +1404,7 @@ ProgramImpl *ContextMtl::createProgram(const gl::ProgramState &state)
 // Framebuffer creation
 FramebufferImpl *ContextMtl::createFramebuffer(const gl::FramebufferState &state)
 {
-    return new FramebufferMtl(state, false, nullptr);
+    return new FramebufferMtl(state, this, false, nullptr);
 }
 
 // Texture creation
@@ -1762,7 +1768,7 @@ mtl::RenderCommandEncoder *ContextMtl::getRenderPassCommandEncoder(const mtl::Re
     endEncoding(false);
 
     ensureCommandBufferReady();
-    mRenderPassesSinceFlush++;
+    ++mRenderPassesSinceFlush;
 
     // Need to re-apply everything on next draw call.
     mDirtyBits.set();
@@ -1773,7 +1779,7 @@ mtl::RenderCommandEncoder *ContextMtl::getRenderPassCommandEncoder(const mtl::Re
         ANGLE_MTL_OBJC_SCOPE
         {
             MTLRenderPassDescriptor *objCDesc = [MTLRenderPassDescriptor renderPassDescriptor];
-            desc.convertToMetalDesc(objCDesc);
+            desc.convertToMetalDesc(objCDesc, getNativeCaps().maxColorAttachments);
             NSUInteger maxSize = mtl::GetMaxRenderTargetSizeForDeviceInBytes(metalDevice);
             NSUInteger renderTargetSize =
                 ComputeTotalSizeUsedForMTLRenderPassDescriptor(objCDesc, this, metalDevice);
@@ -1788,7 +1794,7 @@ mtl::RenderCommandEncoder *ContextMtl::getRenderPassCommandEncoder(const mtl::Re
             }
         }
     }
-    return &mRenderEncoder.restart(desc);
+    return &mRenderEncoder.restart(desc, getNativeCaps().maxColorAttachments);
 }
 
 // Utilities to quickly create render command encoder to a specific texture:

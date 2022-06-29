@@ -112,13 +112,13 @@ class Subject : NonCopyable
     void onStateChange(SubjectMessage message) const;
     bool hasObservers() const;
     void resetObservers();
+    ANGLE_INLINE size_t getObserversCount() const { return mObservers.size(); }
 
     ANGLE_INLINE void addObserver(ObserverBindingBase *observer)
     {
         ASSERT(!IsInContainer(mObservers, observer));
         mObservers.push_back(observer);
     }
-
     ANGLE_INLINE void removeObserver(ObserverBindingBase *observer)
     {
         ASSERT(IsInContainer(mObservers, observer));

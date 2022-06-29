@@ -620,6 +620,14 @@
                 "Force unbind framebufferTexture2D before binding renderbuffer to work around driver bug."
             ],
             "issue": "https://anglebug.com/5536"
+        },
+        {
+            "name": "disable_texture_clamp_to_border",
+            "category": "Workarounds",
+            "description": [
+                "Imagination devices generate INVALID_ENUM when setting the texture border color."
+            ],
+            "issue": "https://anglebug.com/7405"
         }
     ]
 }

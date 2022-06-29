@@ -654,6 +654,11 @@ EXPORTS
 
     ; GL_EXT_YUV_target
 
+    ; GL_EXT_base_instance
+    glDrawArraysInstancedBaseInstanceEXT
+    glDrawElementsInstancedBaseInstanceEXT
+    glDrawElementsInstancedBaseVertexBaseInstanceEXT
+
     ; GL_EXT_blend_func_extended
     glBindFragDataLocationEXT
     glBindFragDataLocationIndexedEXT
@@ -965,6 +970,8 @@ EXPORTS
     ; GL_NV_pixel_buffer_object
 
     ; GL_NV_read_depth
+
+    ; GL_NV_read_depth_stencil
 
     ; GL_NV_read_stencil
 

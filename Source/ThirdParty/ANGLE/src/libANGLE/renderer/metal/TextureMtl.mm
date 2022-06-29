@@ -635,6 +635,7 @@ TextureMtl::~TextureMtl() = default;
 void TextureMtl::onDestroy(const gl::Context *context)
 {
     releaseTexture(true);
+    mBoundSurface = nullptr;
 }
 
 void TextureMtl::releaseTexture(bool releaseImages)
@@ -834,6 +835,13 @@ angle::Result TextureMtl::onBaseMaxLevelsChanged(const gl::Context *context)
     // Release native texture but keep old image definitions so that it can be recreated from old
     // image definitions with different base level
     releaseTexture(false, true);
+
+    // If texture was bound to a pbuffer, we need to rebind the pbuffer's native texture
+    // since we have just released its reference by calling releaseTexture above.
+    if (mBoundSurface)
+    {
+        ANGLE_TRY(bindTexImage(context, mBoundSurface));
+    }
 
     // Tell context to rebind textures
     contextMtl->invalidateCurrentTextures();
@@ -1385,6 +1393,7 @@ angle::Result TextureMtl::bindTexImage(const gl::Context *context, egl::Surface 
 {
     releaseTexture(true);
 
+    mBoundSurface  = surface;
     auto pBuffer   = GetImplAs<OffscreenSurfaceMtl>(surface);
     mNativeTexture = pBuffer->getColorTexture();
     mFormat        = pBuffer->getColorFormat();
@@ -1400,6 +1409,7 @@ angle::Result TextureMtl::bindTexImage(const gl::Context *context, egl::Surface 
 angle::Result TextureMtl::releaseTexImage(const gl::Context *context)
 {
     releaseTexture(true);
+    mBoundSurface = nullptr;
     return angle::Result::Continue;
 }
 
@@ -1901,8 +1911,8 @@ angle::Result TextureMtl::convertAndSetPerSliceSubImage(const gl::Context *conte
         LoadImageFunctionInfo loadFunctionInfo = mFormat.textureLoadFunctions
                                                      ? mFormat.textureLoadFunctions(type)
                                                      : LoadImageFunctionInfo();
-        const angle::Format &dstFormat = angle::Format::Get(mFormat.actualFormatId);
-        const size_t dstRowPitch       = dstFormat.pixelBytes * mtlArea.size.width;
+        const angle::Format &dstFormat         = angle::Format::Get(mFormat.actualFormatId);
+        const size_t dstRowPitch               = dstFormat.pixelBytes * mtlArea.size.width;
 
         // Check if original image data is compressed:
         if (mFormat.intendedAngleFormat().isBlock)
@@ -2131,7 +2141,7 @@ angle::Result TextureMtl::copySubImageWithDraw(const gl::Context *context,
 
     blitParams.dstTextureSize = imageRtt.getTexture()->size(imageRtt.getLevelIndex());
     blitParams.dstRect        = gl::Rectangle(modifiedDestOffset.x, modifiedDestOffset.y,
-                                       clippedSourceArea.width, clippedSourceArea.height);
+                                              clippedSourceArea.width, clippedSourceArea.height);
     blitParams.dstScissorRect = blitParams.dstRect;
 
     blitParams.enabledBuffers.set(0);
@@ -2349,4 +2359,4 @@ angle::Result TextureMtl::copySubTextureCPU(const gl::Context *context,
     return angle::Result::Continue;
 }
 
-}
+}  // namespace rx

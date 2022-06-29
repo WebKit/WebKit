@@ -19,7 +19,7 @@ using namespace angle;
 namespace
 {
 
-class ReadPixelsTest : public ANGLETest
+class ReadPixelsTest : public ANGLETest<>
 {
   protected:
     ReadPixelsTest()
@@ -504,7 +504,7 @@ TEST_P(ReadPixelsPBOTest, UseAsUBOThenUpdateThenReadFromFBO)
     const std::array<GLColor, 4> kInitialData = {GLColor::red, GLColor::red, GLColor::red,
                                                  GLColor::red};
     const std::array<GLColor, 4> kUpdateData  = {GLColor::white, GLColor::white, GLColor::white,
-                                                GLColor::white};
+                                                 GLColor::white};
 
     GLBuffer buffer;
     glBindBuffer(GL_UNIFORM_BUFFER, buffer);
@@ -778,7 +778,7 @@ TEST_P(ReadPixelsMultisampleTest, BasicClear)
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 }
 
-class ReadPixelsTextureTest : public ANGLETest
+class ReadPixelsTextureTest : public ANGLETest<>
 {
   public:
     ReadPixelsTextureTest() : mFBO(0), mTexture(0)

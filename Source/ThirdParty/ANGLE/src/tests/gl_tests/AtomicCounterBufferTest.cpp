@@ -15,7 +15,7 @@ using namespace angle;
 namespace
 {
 
-class AtomicCounterBufferTest : public ANGLETest
+class AtomicCounterBufferTest : public ANGLETest<>
 {
   protected:
     AtomicCounterBufferTest()

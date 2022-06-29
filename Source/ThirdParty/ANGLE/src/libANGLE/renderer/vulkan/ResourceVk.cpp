@@ -225,5 +225,13 @@ void ResourceUseList::releaseResourceUsesAndUpdateSerials(Serial serial)
 
     mResourceUses.clear();
 }
+
+void ResourceUseList::clearCommandBuffer(CommandBufferID commandBufferID)
+{
+    for (SharedResourceUse &use : mResourceUses)
+    {
+        use.clearCommandBuffer(commandBufferID);
+    }
+}
 }  // namespace vk
 }  // namespace rx

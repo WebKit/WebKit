@@ -36,7 +36,7 @@ angle::Result FenceNVVk::test(const gl::Context *context, GLboolean *outFinished
 {
     ContextVk *contextVk = vk::GetImpl(context);
     bool signaled        = false;
-    ANGLE_TRY(mFenceSync.getStatus(contextVk, &signaled));
+    ANGLE_TRY(mFenceSync.getStatus(contextVk, contextVk, &signaled));
 
     ASSERT(outFinished);
     *outFinished = signaled ? GL_TRUE : GL_FALSE;

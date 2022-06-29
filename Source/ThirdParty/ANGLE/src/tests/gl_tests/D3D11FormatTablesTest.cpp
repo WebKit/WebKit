@@ -26,7 +26,7 @@ using namespace angle;
 namespace
 {
 
-class D3D11FormatTablesTest : public ANGLETest
+class D3D11FormatTablesTest : public ANGLETest<>
 {};
 
 // This test enumerates all GL formats - for each, it queries the D3D support for
@@ -139,7 +139,7 @@ TEST_P(D3D11FormatTablesTest, TestFormatSupport)
                 {
                     UINT qualityCount    = 0;
                     bool sampleSuccess   = SUCCEEDED(device->CheckMultisampleQualityLevels(
-                        renderFormat, sampleCount, &qualityCount));
+                          renderFormat, sampleCount, &qualityCount));
                     GLuint expectedCount = (!sampleSuccess || qualityCount == 0) ? 0 : 1;
                     EXPECT_EQ(expectedCount, textureInfo.sampleCounts.count(sampleCount))
                         << " for " << gl::FmtHex(internalFormat);

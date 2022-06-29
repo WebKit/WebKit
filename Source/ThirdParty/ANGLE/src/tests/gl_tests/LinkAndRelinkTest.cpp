@@ -15,13 +15,13 @@ using namespace angle;
 namespace
 {
 
-class LinkAndRelinkTest : public ANGLETest
+class LinkAndRelinkTest : public ANGLETest<>
 {
   protected:
     LinkAndRelinkTest() {}
 };
 
-class LinkAndRelinkTestES31 : public ANGLETest
+class LinkAndRelinkTestES31 : public ANGLETest<>
 {
   protected:
     LinkAndRelinkTestES31() {}

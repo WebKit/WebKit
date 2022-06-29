@@ -15,7 +15,7 @@ using namespace angle;
 namespace
 {
 
-class DrawElementsTest : public ANGLETest
+class DrawElementsTest : public ANGLETest<>
 {
   protected:
     DrawElementsTest() : mProgram(0u)

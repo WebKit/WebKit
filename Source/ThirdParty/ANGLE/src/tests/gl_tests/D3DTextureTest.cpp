@@ -19,7 +19,7 @@
 namespace angle
 {
 
-class D3DTextureTest : public ANGLETest
+class D3DTextureTest : public ANGLETest<>
 {
   protected:
     D3DTextureTest()

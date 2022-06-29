@@ -21,9 +21,9 @@ class TranslatorGLSL : public TCompiler
     void initBuiltInFunctionEmulator(BuiltInFunctionEmulator *emu,
                                      ShCompileOptions compileOptions) override;
 
-    ANGLE_NO_DISCARD bool translate(TIntermBlock *root,
-                                    ShCompileOptions compileOptions,
-                                    PerformanceDiagnostics *perfDiagnostics) override;
+    [[nodiscard]] bool translate(TIntermBlock *root,
+                                 ShCompileOptions compileOptions,
+                                 PerformanceDiagnostics *perfDiagnostics) override;
     bool shouldFlattenPragmaStdglInvariantAll() override;
     bool shouldCollectVariables(ShCompileOptions compileOptions) override;
 

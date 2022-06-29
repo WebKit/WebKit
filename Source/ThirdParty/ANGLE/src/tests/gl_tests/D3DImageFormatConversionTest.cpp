@@ -15,7 +15,7 @@ using namespace angle;
 namespace
 {
 
-class D3DImageFormatConversionTest : public ANGLETest
+class D3DImageFormatConversionTest : public ANGLETest<>
 {
   protected:
     D3DImageFormatConversionTest()

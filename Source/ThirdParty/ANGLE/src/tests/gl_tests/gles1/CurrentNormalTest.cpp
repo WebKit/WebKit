@@ -17,7 +17,7 @@
 
 using namespace angle;
 
-class CurrentNormalTest : public ANGLETest
+class CurrentNormalTest : public ANGLETest<>
 {
   protected:
     CurrentNormalTest()

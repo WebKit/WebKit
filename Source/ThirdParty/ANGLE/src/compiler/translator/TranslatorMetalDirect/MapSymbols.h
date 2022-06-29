@@ -17,10 +17,9 @@ namespace sh
 
 // Maps TIntermSymbol nodes to TIntermNode nodes.
 // The parent function of a symbol is provided to the mapping when applicable.
-ANGLE_NO_DISCARD bool MapSymbols(
-    TCompiler &compiler,
-    TIntermBlock &root,
-    std::function<TIntermNode &(const TFunction *, TIntermSymbol &)> map);
+[[nodiscard]] bool MapSymbols(TCompiler &compiler,
+                              TIntermBlock &root,
+                              std::function<TIntermNode &(const TFunction *, TIntermSymbol &)> map);
 
 }  // namespace sh
 

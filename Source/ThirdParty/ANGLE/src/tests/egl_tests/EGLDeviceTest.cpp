@@ -22,7 +22,7 @@
 
 using namespace angle;
 
-class EGLDeviceCreationTest : public ANGLETest
+class EGLDeviceCreationTest : public ANGLETest<>
 {
   protected:
     EGLDeviceCreationTest()
@@ -326,7 +326,7 @@ TEST_P(EGLDeviceCreationTest, AnyD3D9Device)
     EXPECT_EGL_ERROR(EGL_BAD_ATTRIBUTE);
 }
 
-class EGLDeviceQueryTest : public ANGLETest
+class EGLDeviceQueryTest : public ANGLETest<>
 {
   protected:
     EGLDeviceQueryTest() {}

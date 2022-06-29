@@ -15,7 +15,7 @@
 
 using namespace angle;
 
-class ContextNoErrorTest : public ANGLETest
+class ContextNoErrorTest : public ANGLETest<>
 {
   protected:
     ContextNoErrorTest() : mNaughtyTexture(0) { setNoErrorEnabled(true); }

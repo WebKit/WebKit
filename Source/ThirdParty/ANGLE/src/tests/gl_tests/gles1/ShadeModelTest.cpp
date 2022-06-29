@@ -15,7 +15,7 @@
 
 using namespace angle;
 
-class ShadeModelTest : public ANGLETest
+class ShadeModelTest : public ANGLETest<>
 {
   protected:
     ShadeModelTest()

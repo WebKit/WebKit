@@ -98,8 +98,7 @@ ReadResult ReadFromFile(int fd, std::string *out)
 void ReadEntireFile(int fd, std::string *out)
 {
     while (ReadFromFile(fd, out) == ReadResult::GotData)
-    {
-    }
+    {}
 }
 
 class PosixProcess : public Process
@@ -340,8 +339,8 @@ void Sleep(unsigned int milliseconds)
     {
         long milliseconds_long = milliseconds;
         timespec sleepTime     = {
-            .tv_sec  = milliseconds_long / 1000,
-            .tv_nsec = (milliseconds_long % 1000) * 1000000,
+                .tv_sec  = milliseconds_long / 1000,
+                .tv_nsec = (milliseconds_long % 1000) * 1000000,
         };
 
         nanosleep(&sleepTime, nullptr);
@@ -420,7 +419,7 @@ bool GetTempDir(char *tempDirOut, uint32_t maxDirNameLen)
 bool CreateTemporaryFileInDir(const char *dir, char *tempFileNameOut, uint32_t maxFileNameLen)
 {
     std::string tempFile = TempFileName();
-    sprintf(tempFileNameOut, "%s/%s", dir, tempFile.c_str());
+    snprintf(tempFileNameOut, maxFileNameLen, "%s/%s", dir, tempFile.c_str());
     int fd = mkstemp(tempFileNameOut);
     close(fd);
     return fd != -1;

@@ -201,34 +201,16 @@ class UnmangledEntry
     uint16_t mGLSLVersion;
 };
 
-template <>
+template <size_t ESSLExtCount>
 constexpr UnmangledEntry::UnmangledEntry(const char *name,
-                                         const std::array<TExtension, 1> &esslExtensions,
+                                         const std::array<TExtension, ESSLExtCount> &esslExtensions,
                                          TExtension glslExtension,
                                          int esslVersion,
                                          int glslVersion,
                                          Shader shaderType)
     : mName(name),
-      mESSLExtensions{esslExtensions[0], TExtension::UNDEFINED},
-      mGLSLExtension(glslExtension),
-      mShaderType(static_cast<uint8_t>(shaderType)),
-      mESSLVersion(esslVersion < 0 ? std::numeric_limits<uint16_t>::max()
-                                   : static_cast<uint16_t>(esslVersion)),
-      mGLSLVersion(glslVersion < 0 ? std::numeric_limits<uint16_t>::max()
-                                   : static_cast<uint16_t>(glslVersion))
-{}
-
-// Note: Until C++17, std::array functions are not constexpr, so the constructor is necessarily
-// duplicated.
-template <>
-constexpr UnmangledEntry::UnmangledEntry(const char *name,
-                                         const std::array<TExtension, 2> &esslExtensions,
-                                         TExtension glslExtension,
-                                         int esslVersion,
-                                         int glslVersion,
-                                         Shader shaderType)
-    : mName(name),
-      mESSLExtensions{esslExtensions[0], esslExtensions[1]},
+      mESSLExtensions{(ESSLExtCount >= 1) ? esslExtensions[0] : TExtension::UNDEFINED,
+                      (ESSLExtCount >= 2) ? esslExtensions[1] : TExtension::UNDEFINED},
       mGLSLExtension(glslExtension),
       mShaderType(static_cast<uint8_t>(shaderType)),
       mESSLVersion(esslVersion < 0 ? std::numeric_limits<uint16_t>::max()

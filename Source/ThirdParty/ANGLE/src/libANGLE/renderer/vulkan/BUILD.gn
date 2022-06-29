@@ -266,6 +266,7 @@ angle_source_set("angle_vk_mem_alloc_wrapper") {
     "$angle_root/src/common/vulkan:angle_vulkan_headers",
     "$angle_vulkan_memory_allocator_dir",
   ]
+  include_dirs = [ "$angle_vulkan_memory_allocator_dir/include" ]
   configs += [ "$angle_root:angle_no_cfi_unrelated_cast" ]
   sources = [
     "vk_mem_alloc_wrapper.cpp",
@@ -277,6 +278,7 @@ angle_source_set("angle_vk_mem_alloc_wrapper") {
       "-Wno-missing-field-initializers",
       "-Wno-suggest-destructor-override",
       "-Wno-suggest-override",
+      "-Wno-inconsistent-missing-destructor-override",
     ]
   }
 }

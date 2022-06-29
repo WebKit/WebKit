@@ -30,13 +30,15 @@ enum class ANGLEFeature
     Unknown,
 };
 
-class VulkanPerformanceCounterTest : public ANGLETest
+class VulkanPerformanceCounterTest : public ANGLETest<>
 {
   protected:
     VulkanPerformanceCounterTest()
         : mLoadOpNoneSupport(ANGLEFeature::Unknown),
           mStoreOpNoneSupport(ANGLEFeature::Unknown),
-          mPreferDrawOverClearAttachments(ANGLEFeature::Unknown)
+          mPreferDrawOverClearAttachments(ANGLEFeature::Unknown),
+          mSupportsPipelineCreationFeedback(ANGLEFeature::Unknown),
+          mWarmUpPipelineCacheAtLink(ANGLEFeature::Unknown)
     {
         // Depth/Stencil required for SwapShouldInvalidate*.
         // Also RGBA8 is required to avoid the clear for emulated alpha.
@@ -103,12 +105,23 @@ class VulkanPerformanceCounterTest : public ANGLETest
             {
                 mPreferDrawOverClearAttachments = isSupported;
             }
+            else if (strcmp(featureName,
+                            GetFeatureName(Feature::SupportsPipelineCreationFeedback)) == 0)
+            {
+                mSupportsPipelineCreationFeedback = isSupported;
+            }
+            else if (strcmp(featureName, GetFeatureName(Feature::WarmUpPipelineCacheAtLink)) == 0)
+            {
+                mWarmUpPipelineCacheAtLink = isSupported;
+            }
         }
 
         // Make sure feature renames are caught
         ASSERT_NE(mLoadOpNoneSupport, ANGLEFeature::Unknown);
         ASSERT_NE(mStoreOpNoneSupport, ANGLEFeature::Unknown);
         ASSERT_NE(mPreferDrawOverClearAttachments, ANGLEFeature::Unknown);
+        ASSERT_NE(mSupportsPipelineCreationFeedback, ANGLEFeature::Unknown);
+        ASSERT_NE(mWarmUpPipelineCacheAtLink, ANGLEFeature::Unknown);
 
         // Impossible to have LOAD_OP_NONE but not STORE_OP_NONE
         ASSERT_FALSE(mLoadOpNoneSupport == ANGLEFeature::Supported &&
@@ -196,12 +209,12 @@ class VulkanPerformanceCounterTest : public ANGLETest
     }
 
     void setExpectedCountersForDepthOps(const angle::VulkanPerfCounters &counters,
-                                        uint32_t incrementalRenderPasses,
-                                        uint32_t incrementalDepthLoadOpClears,
-                                        uint32_t incrementalDepthLoadOpLoads,
-                                        uint32_t incrementalDepthLoadOpNones,
-                                        uint32_t incrementalDepthStoreOpStores,
-                                        uint32_t incrementalDepthStoreOpNones,
+                                        uint64_t incrementalRenderPasses,
+                                        uint64_t incrementalDepthLoadOpClears,
+                                        uint64_t incrementalDepthLoadOpLoads,
+                                        uint64_t incrementalDepthLoadOpNones,
+                                        uint64_t incrementalDepthStoreOpStores,
+                                        uint64_t incrementalDepthStoreOpNones,
                                         angle::VulkanPerfCounters *expected)
     {
         expected->renderPasses       = counters.renderPasses + incrementalRenderPasses;
@@ -213,11 +226,11 @@ class VulkanPerformanceCounterTest : public ANGLETest
     }
 
     void setExpectedCountersForStencilOps(const angle::VulkanPerfCounters &counters,
-                                          uint32_t incrementalStencilLoadOpClears,
-                                          uint32_t incrementalStencilLoadOpLoads,
-                                          uint32_t incrementalStencilLoadOpNones,
-                                          uint32_t incrementalStencilStoreOpStores,
-                                          uint32_t incrementalStencilStoreOpNones,
+                                          uint64_t incrementalStencilLoadOpClears,
+                                          uint64_t incrementalStencilLoadOpLoads,
+                                          uint64_t incrementalStencilLoadOpNones,
+                                          uint64_t incrementalStencilStoreOpStores,
+                                          uint64_t incrementalStencilStoreOpNones,
                                           angle::VulkanPerfCounters *expected)
     {
         expected->stencilLoadOpClears =
@@ -231,12 +244,12 @@ class VulkanPerformanceCounterTest : public ANGLETest
     }
 
     void setExpectedCountersForColorOps(const angle::VulkanPerfCounters &counters,
-                                        uint32_t incrementalRenderPasses,
-                                        uint32_t incrementalColorLoadOpClears,
-                                        uint32_t incrementalColorLoadOpLoads,
-                                        uint32_t incrementalColorLoadOpNones,
-                                        uint32_t incrementalColorStoreOpStores,
-                                        uint32_t incrementalColorStoreOpNones,
+                                        uint64_t incrementalRenderPasses,
+                                        uint64_t incrementalColorLoadOpClears,
+                                        uint64_t incrementalColorLoadOpLoads,
+                                        uint64_t incrementalColorLoadOpNones,
+                                        uint64_t incrementalColorStoreOpStores,
+                                        uint64_t incrementalColorStoreOpNones,
                                         angle::VulkanPerfCounters *expected)
     {
         expected->renderPasses       = counters.renderPasses + incrementalRenderPasses;
@@ -258,10 +271,10 @@ class VulkanPerformanceCounterTest : public ANGLETest
     //
     // For the sake of validation, it's unknown if NONE is turned into LOAD/STORE or DONT_CARE.  So
     // validation allows variations there.
-    void compareOpLoadAndNone(uint32_t expectedLoads,
-                              uint32_t actualLoads,
-                              uint32_t expectedNones,
-                              uint32_t actualNones)
+    void compareOpLoadAndNone(uint64_t expectedLoads,
+                              uint64_t actualLoads,
+                              uint64_t expectedNones,
+                              uint64_t actualNones)
     {
         if (mLoadOpNoneSupport == ANGLEFeature::Supported)
         {
@@ -275,10 +288,10 @@ class VulkanPerformanceCounterTest : public ANGLETest
             EXPECT_GE(expectedLoads + expectedNones, actualLoads);
         }
     }
-    void compareOpStoreAndNone(uint32_t expectedStores,
-                               uint32_t actualStores,
-                               uint32_t expectedNones,
-                               uint32_t actualNones)
+    void compareOpStoreAndNone(uint64_t expectedStores,
+                               uint64_t actualStores,
+                               uint64_t expectedNones,
+                               uint64_t actualNones)
     {
         if (mStoreOpNoneSupport == ANGLEFeature::Supported &&
             mLoadOpNoneSupport == ANGLEFeature::Supported)
@@ -336,8 +349,8 @@ class VulkanPerformanceCounterTest : public ANGLETest
 
     void setAndIncrementDepthStencilLoadCountersForOpsTest(
         const angle::VulkanPerfCounters &counters,
-        uint32_t incrementalDepthLoadOpLoads,
-        uint32_t incrementalStencilLoadOpLoads,
+        uint64_t incrementalDepthLoadOpLoads,
+        uint64_t incrementalStencilLoadOpLoads,
         angle::VulkanPerfCounters *expected)
     {
         expected->depthLoadOpLoads   = counters.depthLoadOpLoads + incrementalDepthLoadOpLoads;
@@ -352,12 +365,12 @@ class VulkanPerformanceCounterTest : public ANGLETest
     }
 
     void setExpectedCountersForUnresolveResolveTest(const angle::VulkanPerfCounters &counters,
-                                                    uint32_t incrementalColorAttachmentUnresolves,
-                                                    uint32_t incrementalDepthAttachmentUnresolves,
-                                                    uint32_t incrementalStencilAttachmentUnresolves,
-                                                    uint32_t incrementalColorAttachmentResolves,
-                                                    uint32_t incrementalDepthAttachmentResolves,
-                                                    uint32_t incrementalStencilAttachmentResolves,
+                                                    uint64_t incrementalColorAttachmentUnresolves,
+                                                    uint64_t incrementalDepthAttachmentUnresolves,
+                                                    uint64_t incrementalStencilAttachmentUnresolves,
+                                                    uint64_t incrementalColorAttachmentResolves,
+                                                    uint64_t incrementalDepthAttachmentResolves,
+                                                    uint64_t incrementalStencilAttachmentResolves,
                                                     angle::VulkanPerfCounters *expected)
     {
         expected->colorAttachmentUnresolves =
@@ -390,7 +403,7 @@ class VulkanPerformanceCounterTest : public ANGLETest
         EXPECT_EQ(expected.stencilAttachmentResolves, counters.stencilAttachmentResolves);
     }
 
-    void compareClearAttachmentsCounter(uint32_t expected, uint32_t actual)
+    void compareClearAttachmentsCounter(uint64_t expected, uint64_t actual)
     {
         if (mPreferDrawOverClearAttachments == ANGLEFeature::Supported)
         {
@@ -404,6 +417,9 @@ class VulkanPerformanceCounterTest : public ANGLETest
 
     void maskedFramebufferFetchDraw(const GLColor &clearColor, GLBuffer &buffer);
     void maskedFramebufferFetchDrawVerify(const GLColor &expectedColor, GLBuffer &buffer);
+
+    void saveAndReloadBinary(GLProgram *original, GLProgram *reloaded);
+    void testPipelineCacheIsWarm(GLProgram *program, GLColor color);
 
     angle::VulkanPerfCounters getPerfCounters()
     {
@@ -421,6 +437,8 @@ class VulkanPerformanceCounterTest : public ANGLETest
     ANGLEFeature mLoadOpNoneSupport;
     ANGLEFeature mStoreOpNoneSupport;
     ANGLEFeature mPreferDrawOverClearAttachments;
+    ANGLEFeature mSupportsPipelineCreationFeedback;
+    ANGLEFeature mWarmUpPipelineCacheAtLink;
 };
 
 class VulkanPerformanceCounterTest_ES31 : public VulkanPerformanceCounterTest
@@ -561,7 +579,7 @@ TEST_P(VulkanPerformanceCounterTest, NewTextureDoesNotBreakRenderPass)
     glDrawArrays(GL_TRIANGLES, 0, 6);
     ASSERT_GL_NO_ERROR();
 
-    uint32_t expectedRenderPassCount = getPerfCounters().renderPasses;
+    uint64_t expectedRenderPassCount = getPerfCounters().renderPasses;
 
     // Step 2: Introduce a new 2D Texture with the same Program and Framebuffer.
     GLTexture newTexture;
@@ -573,7 +591,7 @@ TEST_P(VulkanPerformanceCounterTest, NewTextureDoesNotBreakRenderPass)
     glDrawArrays(GL_TRIANGLES, 0, 6);
     ASSERT_GL_NO_ERROR();
 
-    uint32_t actualRenderPassCount = getPerfCounters().renderPasses;
+    uint64_t actualRenderPassCount = getPerfCounters().renderPasses;
     EXPECT_EQ(expectedRenderPassCount, actualRenderPassCount);
 }
 
@@ -585,9 +603,9 @@ TEST_P(VulkanPerformanceCounterTest, SubmittingOutsideCommandBufferDoesNotBreakR
     // http://anglebug.com/6354
 
     size_t kMaxBufferToImageCopySize     = 64 * 1024 * 1024;
-    uint32_t kNumSubmits                 = 2;
-    uint32_t expectedRenderPassCount     = getPerfCounters().renderPasses + 1;
-    uint32_t expectedSubmitCommandsCount = getPerfCounters().vkQueueSubmitCallsTotal + kNumSubmits;
+    uint64_t kNumSubmits                 = 2;
+    uint64_t expectedRenderPassCount     = getPerfCounters().renderPasses + 1;
+    uint64_t expectedSubmitCommandsCount = getPerfCounters().vkQueueSubmitCallsTotal + kNumSubmits;
 
     // Step 1: Set up a simple 2D texture.
     GLTexture texture;
@@ -671,7 +689,7 @@ TEST_P(VulkanPerformanceCounterTest, SampleFromRGBTextureDoesNotBreakRenderPass)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    uint32_t expectedRenderPassCount = getPerfCounters().renderPasses + 1;
+    uint64_t expectedRenderPassCount = getPerfCounters().renderPasses + 1;
 
     // First draw with textureRGBA which should start the renderpass
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -684,7 +702,7 @@ TEST_P(VulkanPerformanceCounterTest, SampleFromRGBTextureDoesNotBreakRenderPass)
     drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
     ASSERT_GL_NO_ERROR();
 
-    uint32_t actualRenderPassCount = getPerfCounters().renderPasses;
+    uint64_t actualRenderPassCount = getPerfCounters().renderPasses;
     EXPECT_EQ(expectedRenderPassCount, actualRenderPassCount);
 }
 
@@ -714,7 +732,7 @@ TEST_P(VulkanPerformanceCounterTest, RenderToRGBTextureDoesNotBreakRenderPass)
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
     ASSERT_GL_NO_ERROR();
 
-    uint32_t expectedRenderPassCount = getPerfCounters().renderPasses + 1;
+    uint64_t expectedRenderPassCount = getPerfCounters().renderPasses + 1;
 
     // Draw into FBO
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
@@ -724,7 +742,7 @@ TEST_P(VulkanPerformanceCounterTest, RenderToRGBTextureDoesNotBreakRenderPass)
     glUniform4fv(colorUniformLocation, 1, GLColor::blue.toNormalizedVector().data());
     drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
 
-    uint32_t actualRenderPassCount = getPerfCounters().renderPasses;
+    uint64_t actualRenderPassCount = getPerfCounters().renderPasses;
     EXPECT_EQ(expectedRenderPassCount, actualRenderPassCount);
 }
 
@@ -770,14 +788,14 @@ TEST_P(VulkanPerformanceCounterTest, ChangingMaxLevelHitsDescriptorCache)
     glDrawArrays(GL_TRIANGLES, 0, 6);
     ASSERT_GL_NO_ERROR();
 
-    uint32_t expectedWriteDescriptorSetCount = getPerfCounters().writeDescriptorSets;
+    uint64_t expectedWriteDescriptorSetCount = getPerfCounters().writeDescriptorSets;
 
     // Step 3: Change max level back to original value and verify we hit the cache.
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 1);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     ASSERT_GL_NO_ERROR();
 
-    uint32_t actualWriteDescriptorSetCount = getPerfCounters().writeDescriptorSets;
+    uint64_t actualWriteDescriptorSetCount = getPerfCounters().writeDescriptorSets;
     EXPECT_EQ(expectedWriteDescriptorSetCount, actualWriteDescriptorSetCount);
 }
 
@@ -816,7 +834,7 @@ TEST_P(VulkanPerformanceCounterTest, IndependentBufferCopiesShareSingleBarrier)
     glBufferData(GL_COPY_WRITE_BUFFER, sizeof(srcDataB[0]) * 2, nullptr, GL_DYNAMIC_COPY);
 
     // We expect that ANGLE generate zero additional command buffers.
-    uint32_t expectedFlushCount = getPerfCounters().flushedOutsideRenderPassCommandBuffers;
+    uint64_t expectedFlushCount = getPerfCounters().flushedOutsideRenderPassCommandBuffers;
 
     // Step 2: Do the two copies.
     glBindBuffer(GL_COPY_READ_BUFFER, srcA);
@@ -831,7 +849,7 @@ TEST_P(VulkanPerformanceCounterTest, IndependentBufferCopiesShareSingleBarrier)
 
     ASSERT_GL_NO_ERROR();
 
-    uint32_t actualFlushCount = getPerfCounters().flushedOutsideRenderPassCommandBuffers;
+    uint64_t actualFlushCount = getPerfCounters().flushedOutsideRenderPassCommandBuffers;
     EXPECT_EQ(expectedFlushCount, actualFlushCount);
 }
 
@@ -936,7 +954,7 @@ TEST_P(VulkanPerformanceCounterTest, ReadOnlyDepthStencilFeedbackLoopUsesSingleR
     glDrawArrays(GL_TRIANGLES, 0, 6);
     ASSERT_GL_NO_ERROR();
 
-    uint32_t expectedRenderPassCount = getPerfCounters().renderPasses + 1;
+    uint64_t expectedRenderPassCount = getPerfCounters().renderPasses + 1;
 
     // Start new RenderPass with depth write disabled and no loop.
     glBindFramebuffer(GL_FRAMEBUFFER, depthAndColorFBO);
@@ -969,7 +987,7 @@ TEST_P(VulkanPerformanceCounterTest, ReadOnlyDepthStencilFeedbackLoopUsesSingleR
     glDrawArrays(GL_TRIANGLES, 0, 6);
     ASSERT_GL_NO_ERROR();
 
-    uint32_t actualRenderPassCount = getPerfCounters().renderPasses;
+    uint64_t actualRenderPassCount = getPerfCounters().renderPasses;
     EXPECT_EQ(expectedRenderPassCount, actualRenderPassCount);
 
     // Do a final write to depth to make sure we can switch out of read-only mode.
@@ -1286,6 +1304,55 @@ TEST_P(VulkanPerformanceCounterTest_ES31, ColorMaskedFramebufferFetchDrawThenCle
     compareColorOpCounters(getPerfCounters(), expected);
     compareClearAttachmentsCounter(expected.colorClearAttachments,
                                    getPerfCounters().colorClearAttachments);
+}
+
+// Test that masked draw after a framebuffer fetch render pass doesn't load color.
+//
+// - Scenario: framebuffer fetch render pass, mask color, normal draw
+TEST_P(VulkanPerformanceCounterTest_ES31, FramebufferFetchRenderPassThenColorMaskedDraw)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_shader_framebuffer_fetch_non_coherent"));
+    initANGLEFeatures();
+
+    angle::VulkanPerfCounters expected;
+
+    // Expect rpCount+1, color(Clears+0, Loads+1, LoadNones+0, Stores+0, StoreNones+1)
+    setExpectedCountersForColorOps(getPerfCounters(), 1, 0, 1, 0, 0, 1, &expected);
+
+    GLFramebuffer framebuffer;
+    GLTexture texture;
+    setupForColorOpsTest(&framebuffer, &texture);
+
+    GLBuffer buffer;
+    const GLColor kClearColor(40, 70, 100, 150);
+    maskedFramebufferFetchDraw(kClearColor, buffer);
+
+    EXPECT_EQ(expected.renderPasses, getPerfCounters().renderPasses);
+
+    // Break the render pass and check how many loads and stores were actually done
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, kClearColor, 1);
+
+    maskedFramebufferFetchDrawVerify(kClearColor, buffer);
+    compareColorOpCounters(getPerfCounters(), expected);
+
+    // Start another render pass, and don't use framebuffer fetch.  Color is masked, so it should be
+    // neither loaded nor stored.
+
+    // Expect rpCount+1, color(Clears+0, Loads+0, LoadNones+1, Stores+0, StoreNones+1)
+    setExpectedCountersForColorOps(getPerfCounters(), 1, 0, 0, 1, 0, 1, &expected);
+
+    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_EQ(expected.renderPasses, getPerfCounters().renderPasses);
+
+    // Break the render pass and check how many loads and stores were actually done
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, kClearColor, 1);
+    compareColorOpCounters(getPerfCounters(), expected);
 }
 
 // Tests that clear after unused depth/stencil is optimized to use loadOp
@@ -2477,11 +2544,11 @@ TEST_P(VulkanPerformanceCounterTest, SwapShouldInvalidateDepthAfterClear)
     drawQuad(redProgram, essl1_shaders::PositionAttrib(), 0.5f);
     ASSERT_GL_NO_ERROR();
 
-    uint32_t expectedDepthClears = getPerfCounters().depthLoadOpClears;
+    uint64_t expectedDepthClears = getPerfCounters().depthLoadOpClears;
 
     swapBuffers();
 
-    uint32_t actualDepthClears = getPerfCounters().depthLoadOpClears;
+    uint64_t actualDepthClears = getPerfCounters().depthLoadOpClears;
     EXPECT_EQ(expectedDepthClears, actualDepthClears);
 }
 
@@ -2501,7 +2568,7 @@ TEST_P(VulkanPerformanceCounterTest, MaskedColorClearDoesNotBreakRenderPass)
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
     ASSERT_GL_NO_ERROR();
 
-    uint32_t expectedRenderPassCount = getPerfCounters().renderPasses + 1;
+    uint64_t expectedRenderPassCount = getPerfCounters().renderPasses + 1;
 
     // Mask color channels and clear the framebuffer multiple times.
     glClearColor(0.25f, 0.25f, 0.25f, 0.25f);
@@ -2520,7 +2587,7 @@ TEST_P(VulkanPerformanceCounterTest, MaskedColorClearDoesNotBreakRenderPass)
     glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_TRUE);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    uint32_t actualRenderPassCount = getPerfCounters().renderPasses;
+    uint64_t actualRenderPassCount = getPerfCounters().renderPasses;
     EXPECT_EQ(expectedRenderPassCount, actualRenderPassCount);
 
     EXPECT_PIXEL_NEAR(0, 0, 63, 127, 255, 191, 1);
@@ -2550,7 +2617,7 @@ TEST_P(VulkanPerformanceCounterTest, MaskedClearDoesNotBreakRenderPass)
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
     ASSERT_GL_NO_ERROR();
 
-    uint32_t expectedRenderPassCount = getPerfCounters().renderPasses + 1;
+    uint64_t expectedRenderPassCount = getPerfCounters().renderPasses + 1;
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_STENCIL_TEST);
@@ -2614,9 +2681,9 @@ TEST_P(VulkanPerformanceCounterTest, ClearThenScissoredDraw)
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
     initANGLEFeatures();
 
-    uint32_t expectedRenderPassCount = getPerfCounters().renderPasses + 1;
-    uint32_t expectedDepthClears     = getPerfCounters().depthLoadOpClears + 1;
-    uint32_t expectedStencilClears   = getPerfCounters().stencilLoadOpClears + 1;
+    uint64_t expectedRenderPassCount = getPerfCounters().renderPasses + 1;
+    uint64_t expectedDepthClears     = getPerfCounters().depthLoadOpClears + 1;
+    uint64_t expectedStencilClears   = getPerfCounters().stencilLoadOpClears + 1;
 
     constexpr GLsizei kSize = 64;
 
@@ -2706,7 +2773,7 @@ TEST_P(VulkanPerformanceCounterTest, ScissoredClearDoesNotBreakRenderPass)
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
     ASSERT_GL_NO_ERROR();
 
-    uint32_t expectedRenderPassCount = getPerfCounters().renderPasses + 1;
+    uint64_t expectedRenderPassCount = getPerfCounters().renderPasses + 1;
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_STENCIL_TEST);
@@ -2814,7 +2881,7 @@ TEST_P(VulkanPerformanceCounterTest, DrawbufferChangeWithAllColorMaskDisabled)
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
     ASSERT_GL_NO_ERROR();
 
-    uint32_t expectedRenderPassCount = getPerfCounters().renderPasses + 1;
+    uint64_t expectedRenderPassCount = getPerfCounters().renderPasses + 1;
 
     // Draw into FBO
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
@@ -2837,7 +2904,7 @@ TEST_P(VulkanPerformanceCounterTest, DrawbufferChangeWithAllColorMaskDisabled)
     glUniform4fv(colorUniformLocation, 1, GLColor::red.toNormalizedVector().data());
     drawQuad(program, essl1_shaders::PositionAttrib(), 0.7f);
 
-    uint32_t actualRenderPassCount = getPerfCounters().renderPasses;
+    uint64_t actualRenderPassCount = getPerfCounters().renderPasses;
     EXPECT_EQ(expectedRenderPassCount, actualRenderPassCount);
 }
 
@@ -2847,7 +2914,7 @@ TEST_P(VulkanPerformanceCounterTest, InRenderpassFlushShouldNotBreakRenderpass)
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
     initANGLEFeatures();
 
-    uint32_t expectedRenderPassCount = getPerfCounters().renderPasses + 1;
+    uint64_t expectedRenderPassCount = getPerfCounters().renderPasses + 1;
 
     GLTexture texture;
     glBindTexture(GL_TEXTURE_2D, texture);
@@ -2866,7 +2933,7 @@ TEST_P(VulkanPerformanceCounterTest, InRenderpassFlushShouldNotBreakRenderpass)
     drawQuad(greenProgram, essl1_shaders::PositionAttrib(), 0.5f);
     ASSERT_GL_NO_ERROR();
 
-    uint32_t actualRenderPassCount = getPerfCounters().renderPasses;
+    uint64_t actualRenderPassCount = getPerfCounters().renderPasses;
     EXPECT_EQ(expectedRenderPassCount, actualRenderPassCount);
 }
 
@@ -2879,10 +2946,10 @@ TEST_P(VulkanPerformanceCounterTest, DepthStencilTextureClearAndLoad)
     // TODO: http://anglebug.com/5329 Flaky test
     ANGLE_SKIP_TEST_IF(IsWindows() && IsAMD() && IsVulkan());
 
-    uint32_t expectedDepthClearCount   = getPerfCounters().depthLoadOpClears + 1;
-    uint32_t expectedDepthLoadCount    = getPerfCounters().depthLoadOpLoads + 3;
-    uint32_t expectedStencilClearCount = getPerfCounters().stencilLoadOpClears + 1;
-    uint32_t expectedStencilLoadCount  = getPerfCounters().stencilLoadOpLoads + 3;
+    uint64_t expectedDepthClearCount   = getPerfCounters().depthLoadOpClears + 1;
+    uint64_t expectedDepthLoadCount    = getPerfCounters().depthLoadOpLoads + 3;
+    uint64_t expectedStencilClearCount = getPerfCounters().stencilLoadOpClears + 1;
+    uint64_t expectedStencilLoadCount  = getPerfCounters().stencilLoadOpLoads + 3;
 
     constexpr GLsizei kSize = 6;
 
@@ -2995,10 +3062,10 @@ TEST_P(VulkanPerformanceCounterTest, RenderToTextureDepthStencilTextureShouldNot
 
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_multisampled_render_to_texture2"));
 
-    uint32_t expectedDepthClearCount   = getPerfCounters().depthLoadOpClears + 1;
-    uint32_t expectedDepthLoadCount    = getPerfCounters().depthLoadOpLoads;
-    uint32_t expectedStencilClearCount = getPerfCounters().stencilLoadOpClears + 1;
-    uint32_t expectedStencilLoadCount  = getPerfCounters().stencilLoadOpLoads;
+    uint64_t expectedDepthClearCount   = getPerfCounters().depthLoadOpClears + 1;
+    uint64_t expectedDepthLoadCount    = getPerfCounters().depthLoadOpLoads;
+    uint64_t expectedStencilClearCount = getPerfCounters().stencilLoadOpClears + 1;
+    uint64_t expectedStencilLoadCount  = getPerfCounters().stencilLoadOpLoads;
 
     constexpr GLsizei kSize = 6;
 
@@ -3486,7 +3553,7 @@ TEST_P(VulkanPerformanceCounterTest, ReadOnlyDepthBufferLayout)
     // here to end the renderpass.
     glFinish();
 
-    uint32_t actualReadOnlyDepthStencilCount = getPerfCounters().readOnlyDepthStencilRenderPasses;
+    uint64_t actualReadOnlyDepthStencilCount = getPerfCounters().readOnlyDepthStencilRenderPasses;
     EXPECT_EQ(expected.readOnlyDepthStencilRenderPasses, actualReadOnlyDepthStencilCount);
     compareDepthStencilOpCounters(getPerfCounters(), expected);
 
@@ -3596,7 +3663,7 @@ TEST_P(VulkanPerformanceCounterTest, ClearAfterClearDoesNotBreakRenderPass)
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
     initANGLEFeatures();
 
-    uint32_t expectedRenderPassCount = getPerfCounters().renderPasses + 1;
+    uint64_t expectedRenderPassCount = getPerfCounters().renderPasses + 1;
 
     constexpr GLsizei kSize = 6;
 
@@ -3760,7 +3827,7 @@ TEST_P(VulkanPerformanceCounterTest, ScissorDoesNotBreakRenderPass)
     glClear(GL_COLOR_BUFFER_BIT);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::black);
 
-    uint32_t expectedRenderPassCount = getPerfCounters().renderPasses + 1;
+    uint64_t expectedRenderPassCount = getPerfCounters().renderPasses + 1;
 
     // This test starts with a small scissor and gradually grows it and issues draw calls and
     // various kinds of clears:
@@ -4066,7 +4133,7 @@ void main()
 
     GLsizei offset = 0;
 
-    uint32_t expectedShaderResourcesCacheMisses = 0;
+    uint64_t expectedShaderResourcesCacheMisses = 0;
 
     for (int iteration = 0; iteration < kIterations; ++iteration)
     {
@@ -4107,7 +4174,7 @@ void main()
     EXPECT_EQ(expectedData, actualData);
 
     // Check for unnecessary descriptor set allocations.
-    uint32_t actualShaderResourcesCacheMisses =
+    uint64_t actualShaderResourcesCacheMisses =
         getPerfCounters().shaderResourcesDescriptorSetCacheMisses;
     EXPECT_EQ(expectedShaderResourcesCacheMisses, actualShaderResourcesCacheMisses);
 }
@@ -4327,8 +4394,8 @@ TEST_P(VulkanPerformanceCounterTest_MSAA, SwapShouldResolveWithSubpass)
     // Expect rpCount+1, color(Clears+1, Loads+0, LoadNones+0, Stores+1, StoreNones+0)
     setExpectedCountersForColorOps(getPerfCounters(), 1, 1, 0, 0, 1, 0, &expected);
 
-    uint32_t expectedResolvesSubpass = getPerfCounters().swapchainResolveInSubpass + 1;
-    uint32_t expectedResolvesOutside = getPerfCounters().swapchainResolveOutsideSubpass;
+    uint64_t expectedResolvesSubpass = getPerfCounters().swapchainResolveInSubpass + 1;
+    uint64_t expectedResolvesOutside = getPerfCounters().swapchainResolveOutsideSubpass;
 
     // Clear color.
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -4363,8 +4430,8 @@ TEST_P(VulkanPerformanceCounterTest_MSAA, SwapAfterDrawToDifferentFBOsShouldReso
     // Expect rpCount+1, color(Clears+1, Loads+0, LoadNones+0, Stores+2, StoreNones+0)
     setExpectedCountersForColorOps(getPerfCounters(), 1, 1, 0, 0, 2, 0, &expected);
 
-    uint32_t expectedResolvesSubpass = getPerfCounters().swapchainResolveInSubpass;
-    uint32_t expectedResolvesOutside = getPerfCounters().swapchainResolveOutsideSubpass + 1;
+    uint64_t expectedResolvesSubpass = getPerfCounters().swapchainResolveInSubpass;
+    uint64_t expectedResolvesOutside = getPerfCounters().swapchainResolveOutsideSubpass + 1;
 
     // Create a framebuffer to clear.
     GLTexture color;
@@ -4415,8 +4482,8 @@ TEST_P(VulkanPerformanceCounterTest_MSAA, ResolveWhenRenderPassNotEntireArea)
     // Expect rpCount+1, color(Clears+0, Loads+1, LoadNones+0, Stores+2, StoreNones+0)
     setExpectedCountersForColorOps(getPerfCounters(), 1, 0, 1, 0, 2, 0, &expected);
 
-    uint32_t expectedResolvesSubpass = getPerfCounters().swapchainResolveInSubpass;
-    uint32_t expectedResolvesOutside = getPerfCounters().swapchainResolveOutsideSubpass + 1;
+    uint64_t expectedResolvesSubpass = getPerfCounters().swapchainResolveInSubpass;
+    uint64_t expectedResolvesOutside = getPerfCounters().swapchainResolveOutsideSubpass + 1;
 
     // Create a framebuffer to clear.
     GLTexture color;
@@ -4506,7 +4573,7 @@ TEST_P(VulkanPerformanceCounterTest, UniformUpdatesHitDescriptorSetCache)
 
     ASSERT_GL_NO_ERROR();
 
-    uint32_t expectedCacheMisses = getPerfCounters().uniformsAndXfbDescriptorSetCacheMisses;
+    uint64_t expectedCacheMisses = getPerfCounters().uniformsAndXfbDescriptorSetCacheMisses;
     EXPECT_GT(expectedCacheMisses, 0u);
 
     // Second pass: ensure all the uniforms are cached.
@@ -4523,7 +4590,7 @@ TEST_P(VulkanPerformanceCounterTest, UniformUpdatesHitDescriptorSetCache)
 
     ASSERT_GL_NO_ERROR();
 
-    uint32_t actualCacheMisses = getPerfCounters().uniformsAndXfbDescriptorSetCacheMisses;
+    uint64_t actualCacheMisses = getPerfCounters().uniformsAndXfbDescriptorSetCacheMisses;
     EXPECT_EQ(expectedCacheMisses, actualCacheMisses);
 }
 
@@ -4604,7 +4671,7 @@ void main()
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 
     // This is actually suboptimal, and ideally only one render pass should be necessary.
-    uint32_t expectedRenderPassCount = getPerfCounters().renderPasses + 2;
+    uint64_t expectedRenderPassCount = getPerfCounters().renderPasses + 2;
 
     glDrawArrays(GL_TRIANGLES, 0, 6);
     ASSERT_GL_NO_ERROR();
@@ -4635,7 +4702,7 @@ void main()
     glDrawArrays(GL_TRIANGLES, 0, 6);
     ASSERT_GL_NO_ERROR();
 
-    uint32_t actualRenderPassCount = getPerfCounters().renderPasses;
+    uint64_t actualRenderPassCount = getPerfCounters().renderPasses;
     EXPECT_EQ(expectedRenderPassCount, actualRenderPassCount);
 }
 
@@ -4726,7 +4793,7 @@ void main()
     // Currently, we can ensure the first of "FS sample + CS image load" in one
     // render pass, but will start new render pass if following the last FS operations,
     // which need to be optimized further.
-    uint32_t expectedRenderPassCount = getPerfCounters().renderPasses + 2;
+    uint64_t expectedRenderPassCount = getPerfCounters().renderPasses + 2;
 
     // Now this texture owns none layout transition
     glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -4749,7 +4816,7 @@ void main()
     glDrawArrays(GL_TRIANGLES, 0, 6);
     ASSERT_GL_NO_ERROR();
 
-    uint32_t actualRenderPassCount = getPerfCounters().renderPasses;
+    uint64_t actualRenderPassCount = getPerfCounters().renderPasses;
     EXPECT_EQ(expectedRenderPassCount, actualRenderPassCount);
 }
 
@@ -4819,7 +4886,7 @@ outData = texture(tex, vec2(x, y));
 
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     ASSERT_GL_NO_ERROR();
-    uint32_t expectedRenderPassCount = getPerfCounters().renderPasses + 1;
+    uint64_t expectedRenderPassCount = getPerfCounters().renderPasses + 1;
 
     // Step 2: sample this texture through compute
     GLBuffer ssbo;
@@ -4843,7 +4910,7 @@ outData = texture(tex, vec2(x, y));
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     ASSERT_GL_NO_ERROR();
 
-    uint32_t actualRenderPassCount = getPerfCounters().renderPasses;
+    uint64_t actualRenderPassCount = getPerfCounters().renderPasses;
     EXPECT_EQ(expectedRenderPassCount, actualRenderPassCount);
 }
 
@@ -4983,7 +5050,7 @@ TEST_P(VulkanPerformanceCounterTest, InceptionScissorClears)
     // Clear small concentric squares using scissor.
     std::vector<GLColor> expectedColors;
     // TODO(syoussefi): verify this
-    ANGLE_MAYBE_UNUSED uint32_t numScissoredClears = 0;
+    [[maybe_unused]] uint64_t numScissoredClears = 0;
     for (GLuint index = 0; index < (kSize - 1) / 2; index++)
     {
         // Do the first clear without the scissor.
@@ -5039,7 +5106,7 @@ TEST_P(VulkanPerformanceCounterTest, Depth16Scissored)
     glEnable(GL_SCISSOR_TEST);
     constexpr int kNumSteps = 13;
     // TODO(syoussefi): verify this
-    ANGLE_MAYBE_UNUSED uint32_t numScissoredClears = 0;
+    [[maybe_unused]] uint64_t numScissoredClears = 0;
     for (int ndx = 1; ndx < kNumSteps; ndx++)
     {
         float perc = static_cast<float>(ndx) / static_cast<float>(kNumSteps);
@@ -5099,7 +5166,7 @@ TEST_P(VulkanPerformanceCounterTest, DrawThenInceptionScissorClears)
 
     // Draw small concentric squares using scissor.
     // TODO(syoussefi): verify this
-    ANGLE_MAYBE_UNUSED uint32_t numScissoredClears = 0;
+    [[maybe_unused]] uint64_t numScissoredClears = 0;
     // All clears are to a scissored render area.
     for (GLuint index = 1; index < (kSize - 1) / 2; index++)
     {
@@ -5315,8 +5382,8 @@ TEST_P(VulkanPerformanceCounterTest, VerifySubmitCounters)
 {
     initANGLEFeatures();
 
-    uint32_t expectedVkQueueSubmitCount      = getPerfCounters().vkQueueSubmitCallsTotal;
-    uint32_t expectedCommandQueueSubmitCount = getPerfCounters().commandQueueSubmitCallsTotal;
+    uint64_t expectedVkQueueSubmitCount      = getPerfCounters().vkQueueSubmitCallsTotal;
+    uint64_t expectedCommandQueueSubmitCount = getPerfCounters().commandQueueSubmitCallsTotal;
 
     // One submission coming from clear and read back
     ++expectedVkQueueSubmitCount;
@@ -5348,7 +5415,7 @@ TEST_P(VulkanPerformanceCounterTest, UnnecessaryFlushDoesntCauseSubmission)
     initANGLEFeatures();
 
     swapBuffers();
-    uint32_t expectedVkQueueSubmitCalls = getPerfCounters().vkQueueSubmitCallsTotal;
+    uint64_t expectedVkQueueSubmitCalls = getPerfCounters().vkQueueSubmitCallsTotal;
 
     glFlush();
     glFlush();
@@ -5384,7 +5451,7 @@ TEST_P(VulkanPerformanceCounterTest, SyncWihtoutCommandsDoesntCauseSubmission)
     initANGLEFeatures();
 
     swapBuffers();
-    uint32_t expectedVkQueueSubmitCalls = getPerfCounters().vkQueueSubmitCallsTotal;
+    uint64_t expectedVkQueueSubmitCalls = getPerfCounters().vkQueueSubmitCallsTotal;
 
     glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 
@@ -5408,7 +5475,7 @@ TEST_P(VulkanPerformanceCounterTest_SingleBuffer, SwapBuffersAfterFlushIgnored)
 
     // Swap buffers so mode switch takes effect.
     swapBuffers();
-    uint32_t expectedCommandQueueSubmitCalls = getPerfCounters().commandQueueSubmitCallsTotal;
+    uint64_t expectedCommandQueueSubmitCalls = getPerfCounters().commandQueueSubmitCallsTotal;
 
     // Further swap buffers should be ineffective.
     swapBuffers();
@@ -5543,6 +5610,404 @@ void main() {
 
     GLuint actualCacheMisses = getPerfCounters().shaderResourcesDescriptorSetCacheMisses;
     EXPECT_EQ(expectedCacheMisses, actualCacheMisses);
+}
+
+// Test modifying texture size and render to it does not cause VkFramebuffer cache explode
+TEST_P(VulkanPerformanceCounterTest, ResizeFBOAttachedTexture)
+{
+    ANGLE_GL_PROGRAM(blueProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+
+    int32_t framebufferCacheSizeBefore = getPerfCounters().framebufferCacheSize;
+    GLTexture texture;
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    for (GLint texWidth = 1; texWidth <= 10; texWidth++)
+    {
+        for (GLint texHeight = 1; texHeight <= 10; texHeight++)
+        {
+            // Allocate texture
+            glBindTexture(GL_TEXTURE_2D, texture);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texWidth, texHeight, 0, GL_RGBA,
+                         GL_UNSIGNED_BYTE, nullptr);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+            ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+            // Draw to FBO backed by the texture
+            glUseProgram(blueProgram);
+            drawQuad(blueProgram.get(), std::string(essl1_shaders::PositionAttrib()), 0.0f);
+            ASSERT_GL_NO_ERROR();
+            EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+        }
+    }
+    int32_t framebufferCacheSizeAfter    = getPerfCounters().framebufferCacheSize;
+    int32_t framebufferCacheSizeIncrease = framebufferCacheSizeAfter - framebufferCacheSizeBefore;
+    printf("\tframebufferCacheCountIncrease:%u\n", framebufferCacheSizeIncrease);
+    // We should not cache obsolete VkImages. Only current VkImage should be cached.
+    EXPECT_EQ(framebufferCacheSizeIncrease, 1);
+}
+
+// Test calling glTexParameteri(GL_TEXTURE_SWIZZLE_*) on a texture that attached to FBO with the
+// same value did not cause VkFramebuffer cache explode
+TEST_P(VulkanPerformanceCounterTest, SetTextureSwizzleWithSameValueOnFBOAttachedTexture)
+{
+    ANGLE_GL_PROGRAM(blueProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+    ANGLE_GL_PROGRAM(textureProgram, essl1_shaders::vs::Texture2D(),
+                     essl1_shaders::fs::Texture2D());
+
+    // Allocate texture
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 16, 16, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_R, GL_RED);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_G, GL_GREEN);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_B, GL_BLUE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_A, GL_ALPHA);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    int32_t framebufferCacheSizeBefore = getPerfCounters().framebufferCacheSize;
+    for (GLint loop = 0; loop < 10; loop++)
+    {
+        // Draw to FBO
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+        glUseProgram(blueProgram);
+        drawQuad(blueProgram.get(), std::string(essl1_shaders::PositionAttrib()), 0.0f);
+
+        // Sample from texture
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glClearColor(1, 0, 0, 1);
+        glClear(GL_COLOR_BUFFER_BIT);
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_R, GL_RED);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_G, GL_GREEN);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_B, GL_BLUE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_A, GL_ALPHA);
+        drawQuad(textureProgram.get(), std::string(essl1_shaders::PositionAttrib()), 0.0f);
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+    }
+    // Now make fbo current and read out cache size and verify it does not grow just because of
+    // swizzle update even though there is no actual change.
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glUseProgram(blueProgram);
+    drawQuad(blueProgram.get(), std::string(essl1_shaders::PositionAttrib()), 0.0f);
+    ASSERT_GL_NO_ERROR();
+    int32_t framebufferCacheSizeAfter    = getPerfCounters().framebufferCacheSize;
+    int32_t framebufferCacheSizeIncrease = framebufferCacheSizeAfter - framebufferCacheSizeBefore;
+    // This should not cause frame buffer cache increase.
+    EXPECT_EQ(framebufferCacheSizeIncrease, 1);
+}
+
+// Test calling glTexParameteri(GL_TEXTURE_SWIZZLE_*) on a texture that attached to FBO with
+// different value did not cause VkFramebuffer cache explode
+TEST_P(VulkanPerformanceCounterTest, SetTextureSwizzleWithDifferentValueOnFBOAttachedTexture)
+{
+    ANGLE_GL_PROGRAM(blueProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+    ANGLE_GL_PROGRAM(textureProgram, essl1_shaders::vs::Texture2D(),
+                     essl1_shaders::fs::Texture2D());
+
+    // Allocate texture
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 16, 16, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_R, GL_RED);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_G, GL_GREEN);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_B, GL_BLUE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_A, GL_ALPHA);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    GLColor expectedColors[] = {GLColor::black,   GLColor::black,  GLColor::blue,  GLColor::black,
+                                GLColor::black,   GLColor::blue,   GLColor::green, GLColor::green,
+                                GLColor::cyan,    GLColor::black,  GLColor::black, GLColor::blue,
+                                GLColor::black,   GLColor::black,  GLColor::blue,  GLColor::green,
+                                GLColor::green,   GLColor::cyan,   GLColor::red,   GLColor::red,
+                                GLColor::magenta, GLColor::red,    GLColor::red,   GLColor::magenta,
+                                GLColor::yellow,  GLColor::yellow, GLColor::white};
+    int32_t framebufferCacheSizeBefore = getPerfCounters().framebufferCacheSize;
+    int loop                           = 0;
+    for (GLenum swizzle_R = GL_RED; swizzle_R <= GL_BLUE; swizzle_R++)
+    {
+        for (GLenum swizzle_G = GL_RED; swizzle_G <= GL_BLUE; swizzle_G++)
+        {
+            for (GLenum swizzle_B = GL_RED; swizzle_B <= GL_BLUE; swizzle_B++)
+            {
+                // Draw to FBO
+                glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+                glUseProgram(blueProgram);
+                drawQuad(blueProgram.get(), std::string(essl1_shaders::PositionAttrib()), 0.0f);
+
+                // Sample from texture
+                glBindFramebuffer(GL_FRAMEBUFFER, 0);
+                glClearColor(1, 0, 0, 1);
+                glClear(GL_COLOR_BUFFER_BIT);
+                glBindTexture(GL_TEXTURE_2D, texture);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_R, swizzle_R);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_G, swizzle_G);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_B, swizzle_B);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_A, GL_ALPHA);
+                drawQuad(textureProgram.get(), std::string(essl1_shaders::PositionAttrib()), 0.0f);
+                EXPECT_PIXEL_COLOR_EQ(0, 0, expectedColors[loop]);
+                loop++;
+            }
+        }
+    }
+    // Now make fbo current and read out cache size and verify it does not grow just because of
+    // swizzle update even though there is no actual change.
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glUseProgram(blueProgram);
+    drawQuad(blueProgram.get(), std::string(essl1_shaders::PositionAttrib()), 0.0f);
+    ASSERT_GL_NO_ERROR();
+    int32_t framebufferCacheSizeAfter    = getPerfCounters().framebufferCacheSize;
+    int32_t framebufferCacheSizeIncrease = framebufferCacheSizeAfter - framebufferCacheSizeBefore;
+    // This should not cause frame buffer cache increase.
+    EXPECT_EQ(framebufferCacheSizeIncrease, 1);
+}
+
+void VulkanPerformanceCounterTest::saveAndReloadBinary(GLProgram *original, GLProgram *reloaded)
+{
+    GLint programLength = 0;
+    GLint writtenLength = 0;
+    GLenum binaryFormat = 0;
+
+    // Get the binary out of the program and delete it.
+    glGetProgramiv(*original, GL_PROGRAM_BINARY_LENGTH_OES, &programLength);
+    EXPECT_GL_NO_ERROR();
+
+    std::vector<uint8_t> binary(programLength);
+    glGetProgramBinaryOES(*original, programLength, &writtenLength, &binaryFormat, binary.data());
+    EXPECT_GL_NO_ERROR();
+
+    original->reset();
+
+    // Reload the binary into another program
+    reloaded->makeEmpty();
+    glProgramBinaryOES(*reloaded, binaryFormat, binary.data(), writtenLength);
+    EXPECT_GL_NO_ERROR();
+
+    GLint linkStatus;
+    glGetProgramiv(*reloaded, GL_LINK_STATUS, &linkStatus);
+    EXPECT_NE(linkStatus, 0);
+}
+
+void VulkanPerformanceCounterTest::testPipelineCacheIsWarm(GLProgram *program, GLColor color)
+{
+    glUseProgram(*program);
+    GLint colorUniformLocation =
+        glGetUniformLocation(*program, angle::essl1_shaders::ColorUniform());
+    ASSERT_NE(-1, colorUniformLocation);
+    ASSERT_GL_NO_ERROR();
+
+    GLuint expectedCacheHits   = getPerfCounters().pipelineCreationCacheHits + 1;
+    GLuint expectedCacheMisses = getPerfCounters().pipelineCreationCacheMisses;
+
+    glUniform4fv(colorUniformLocation, 1, color.toNormalizedVector().data());
+    drawQuad(*program, essl1_shaders::PositionAttrib(), 0.5f);
+
+    EXPECT_EQ(getPerfCounters().pipelineCreationCacheHits, expectedCacheHits);
+    EXPECT_EQ(getPerfCounters().pipelineCreationCacheMisses, expectedCacheMisses);
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, color);
+}
+
+// Verifies that the pipeline cache is warmed up at link time with reasonable defaults.
+TEST_P(VulkanPerformanceCounterTest, PipelineCacheIsWarmedUpAtLinkTime)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
+    initANGLEFeatures();
+
+    // Test is only valid when pipeline creation feedback is available
+    ANGLE_SKIP_TEST_IF(mSupportsPipelineCreationFeedback != ANGLEFeature::Supported ||
+                       mWarmUpPipelineCacheAtLink != ANGLEFeature::Supported);
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Passthrough(), essl1_shaders::fs::UniformColor());
+
+    testPipelineCacheIsWarm(&program, GLColor::red);
+}
+
+// Verifies that the pipeline cache is reloaded correctly through glProgramBinary.
+TEST_P(VulkanPerformanceCounterTest, PipelineCacheIsRestoredWithProgramBinary)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
+    initANGLEFeatures();
+
+    // Test is only valid when pipeline creation feedback is available
+    ANGLE_SKIP_TEST_IF(mSupportsPipelineCreationFeedback != ANGLEFeature::Supported ||
+                       mWarmUpPipelineCacheAtLink != ANGLEFeature::Supported);
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Passthrough(), essl1_shaders::fs::UniformColor());
+    GLProgram reloadedProgram;
+    saveAndReloadBinary(&program, &reloadedProgram);
+
+    testPipelineCacheIsWarm(&reloadedProgram, GLColor::green);
+}
+
+// Verifies that the pipeline cache is reloaded correctly through glProgramBinary twice.
+TEST_P(VulkanPerformanceCounterTest, PipelineCacheIsRestoredWithProgramBinaryTwice)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
+    initANGLEFeatures();
+
+    // Test is only valid when pipeline creation feedback is available
+    ANGLE_SKIP_TEST_IF(mSupportsPipelineCreationFeedback != ANGLEFeature::Supported ||
+                       mWarmUpPipelineCacheAtLink != ANGLEFeature::Supported);
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Passthrough(), essl1_shaders::fs::UniformColor());
+    GLProgram reloadedProgram;
+    GLProgram twiceReloadedProgram;
+    saveAndReloadBinary(&program, &reloadedProgram);
+    saveAndReloadBinary(&reloadedProgram, &twiceReloadedProgram);
+
+    testPipelineCacheIsWarm(&twiceReloadedProgram, GLColor::blue);
+}
+
+// Test calling glEGLImageTargetTexture2DOES repeatedly with same arguments will not leak
+// DescriptorSets. This is the same usage pattern surafceflinger is doing with notification shades
+// except with AHB.
+TEST_P(VulkanPerformanceCounterTest, Source2DAndRepeatedlyRespecifyTarget2DWithSameParameter)
+{
+    EGLWindow *window = getEGLWindow();
+    EGLDisplay dpy    = window->getDisplay();
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_EGL_image") ||
+                       !IsEGLDisplayExtensionEnabled(dpy, "EGL_KHR_image_base") ||
+                       !IsEGLDisplayExtensionEnabled(dpy, "EGL_KHR_gl_texture_2D_image"));
+
+    ANGLE_GL_PROGRAM(textureProgram, essl1_shaders::vs::Texture2D(),
+                     essl1_shaders::fs::Texture2D());
+
+    // Create a source 2D texture
+    GLTexture sourceTexture;
+    glBindTexture(GL_TEXTURE_2D, sourceTexture);
+    GLubyte kLinearColor[] = {132, 55, 219, 255};
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 static_cast<void *>(&kLinearColor));
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+    // Create an eglImage from the source texture
+    constexpr EGLint kDefaultAttribs[] = {EGL_IMAGE_PRESERVED, EGL_TRUE, EGL_NONE};
+    EGLClientBuffer clientBuffer =
+        reinterpret_cast<EGLClientBuffer>(static_cast<size_t>(sourceTexture.get()));
+    EGLImageKHR image = eglCreateImageKHR(window->getDisplay(), window->getContext(),
+                                          EGL_GL_TEXTURE_2D_KHR, clientBuffer, kDefaultAttribs);
+    ASSERT_EGL_SUCCESS();
+
+    // Create the target in a loop
+    GLTexture targetTexture;
+    constexpr size_t kMaxLoop = 2;
+    GLint textureDescriptorSetCacheTotalSizeBefore =
+        getPerfCounters().textureDescriptorSetCacheTotalSize;
+    for (size_t loop = 0; loop < kMaxLoop; loop++)
+    {
+        //  Create a target texture from the image
+        glBindTexture(GL_TEXTURE_2D, targetTexture);
+        glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, image);
+
+        // Disable mipmapping
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+        // Draw a quad with the target texture
+        glBindTexture(GL_TEXTURE_2D, targetTexture);
+        drawQuad(textureProgram.get(), std::string(essl1_shaders::PositionAttrib()), 0.0f);
+        // Expect that the rendered quad's color is the same as the reference color with a tolerance
+        // of 1
+        EXPECT_PIXEL_NEAR(0, 0, kLinearColor[0], kLinearColor[1], kLinearColor[2], kLinearColor[3],
+                          1);
+    }
+    GLint textureDescriptorSetCacheTotalSizeIncrease =
+        getPerfCounters().textureDescriptorSetCacheTotalSize -
+        textureDescriptorSetCacheTotalSizeBefore;
+
+    // We don't expect descriptorSet cache to keep growing
+    EXPECT_EQ(1, textureDescriptorSetCacheTotalSizeIncrease);
+
+    // Clean up
+    eglDestroyImageKHR(window->getDisplay(), image);
+}
+
+// Test create, use and then destroy a texture does not increase number of DescriptoprSets.
+// DesriptorSet should be destroyed promptly. We are seeing this type of usage pattern in
+// surfaceflinger, except that the texture is created from AHB (and AHB keeps changing as well).
+TEST_P(VulkanPerformanceCounterTest, CreateDestroyTextureDoesNotIncreaseDescriptporSetCache)
+{
+    ANGLE_GL_PROGRAM(textureProgram, essl1_shaders::vs::Texture2D(),
+                     essl1_shaders::fs::Texture2D());
+
+    // Respecify texture in a loop
+    GLubyte kLinearColor[]    = {132, 55, 219, 255};
+    constexpr size_t kMaxLoop = 2;
+    GLint textureDescriptorSetCacheTotalSizeBefore =
+        getPerfCounters().textureDescriptorSetCacheTotalSize;
+    for (size_t loop = 0; loop < kMaxLoop; loop++)
+    {
+        // Create a 2D texture
+        GLTexture sourceTexture;
+        glBindTexture(GL_TEXTURE_2D, sourceTexture);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                     static_cast<void *>(&kLinearColor));
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        ASSERT_GL_NO_ERROR();
+
+        drawQuad(textureProgram.get(), std::string(essl1_shaders::PositionAttrib()), 0.0f);
+        // Expect that the rendered quad's color is the same as the reference color with a tolerance
+        // of 1
+        EXPECT_PIXEL_NEAR(0, 0, kLinearColor[0], kLinearColor[1], kLinearColor[2], kLinearColor[3],
+                          1);
+    }
+    GLint textureDescriptorSetCacheTotalSizeIncrease =
+        getPerfCounters().textureDescriptorSetCacheTotalSize -
+        textureDescriptorSetCacheTotalSizeBefore;
+
+    // We don't expect descriptorSet cache to keep growing
+    EXPECT_EQ(0, textureDescriptorSetCacheTotalSizeIncrease);
+}
+
+// Test that post-render-pass-to-swapchain glFenceSync followed by eglSwapBuffers incurs only a
+// single submission.
+TEST_P(VulkanPerformanceCounterTest, FenceThenSwapBuffers)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
+    initANGLEFeatures();
+
+    angle::VulkanPerfCounters expected;
+
+    // Expect rpCount+1, depth(Clears+0, Loads+0, LoadNones+0, Stores+0, StoreNones+0),
+    setExpectedCountersForDepthOps(getPerfCounters(), 1, 0, 0, 0, 0, 0, &expected);
+    expected.vkQueueSubmitCallsTotal = getPerfCounters().vkQueueSubmitCallsTotal + 1;
+
+    // Start a render pass and render to the surface.  Enable depth write so the depth/stencil image
+    // is written to.
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_ALWAYS);
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f);
+    ASSERT_GL_NO_ERROR();
+
+    // Issue a fence
+    glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+
+    EXPECT_EQ(getPerfCounters().renderPasses, expected.renderPasses);
+
+    // Swap buffers.  The depth/stencil attachment's storeOp should be optimized to DONT_CARE.  This
+    // would not have been possible if the previous glFenceSync caused a submission.
+    swapBuffers();
+
+    EXPECT_EQ(getPerfCounters().vkQueueSubmitCallsTotal, expected.vkQueueSubmitCallsTotal);
+    compareDepthOpCounters(getPerfCounters(), expected);
 }
 
 ANGLE_INSTANTIATE_TEST(VulkanPerformanceCounterTest, ES3_VULKAN(), ES3_VULKAN_SWIFTSHADER());

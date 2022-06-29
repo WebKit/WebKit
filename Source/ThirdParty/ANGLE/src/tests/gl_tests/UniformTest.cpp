@@ -16,7 +16,7 @@ using namespace angle;
 namespace
 {
 
-class SimpleUniformTest : public ANGLETest
+class SimpleUniformTest : public ANGLETest<>
 {
   protected:
     SimpleUniformTest()
@@ -312,7 +312,7 @@ void main() {
     }
 }
 
-class UniformTest : public ANGLETest
+class UniformTest : public ANGLETest<>
 {
   protected:
     UniformTest() : mProgram(0), mUniformFLocation(-1), mUniformILocation(-1), mUniformBLocation(-1)
@@ -679,7 +679,7 @@ TEST_P(UniformTest, BooleanArrayUniformStateQuery)
     ASSERT_GL_NO_ERROR();
 }
 
-class UniformTestES3 : public ANGLETest
+class UniformTestES3 : public ANGLETest<>
 {
   protected:
     UniformTestES3() : mProgram(0) {}
@@ -1153,7 +1153,7 @@ TEST_P(UniformTestES3, BooleanUniformAsIfAndForCondition)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
-class UniformTestES31 : public ANGLETest
+class UniformTestES31 : public ANGLETest<>
 {
   protected:
     UniformTestES31() : mProgram(0) {}

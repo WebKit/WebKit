@@ -19,7 +19,7 @@
 
 using namespace angle;
 
-class EGLDisplaySelectionTest : public ANGLETest
+class EGLDisplaySelectionTest : public ANGLETest<>
 {
   public:
     void testSetUp() override { (void)GetSystemInfo(&mSystemInfo); }

@@ -13,7 +13,7 @@
 
 using namespace angle;
 
-class ClipDistanceTest : public ANGLETest
+class ClipDistanceTest : public ANGLETest<>
 {
   protected:
     ClipDistanceTest()

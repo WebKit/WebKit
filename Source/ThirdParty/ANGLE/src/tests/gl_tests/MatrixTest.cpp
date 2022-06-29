@@ -15,7 +15,7 @@ using namespace angle;
 namespace
 {
 
-class MatrixTest31 : public ANGLETest
+class MatrixTest31 : public ANGLETest<>
 {
   protected:
     MatrixTest31()

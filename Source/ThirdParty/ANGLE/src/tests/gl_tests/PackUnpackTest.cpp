@@ -14,7 +14,7 @@ using namespace angle;
 namespace
 {
 
-class PackUnpackTest : public ANGLETest
+class PackUnpackTest : public ANGLETest<>
 {
   protected:
     PackUnpackTest()

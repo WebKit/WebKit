@@ -14,7 +14,7 @@
 // in Chromium.
 namespace angle
 {
-void InitTestHarness(int *argc, char **argv);
+int RunGLCTSTests(int *argc, char **argv);
 }  // namespace angle
 
 int main(int argc, char **argv)
@@ -25,7 +25,5 @@ int main(int argc, char **argv)
     angle::InitMetalFileAPIHooking(argc, argv);
 #endif
 
-    angle::InitTestHarness(&argc, argv);
-    angle::TestSuite testSuite(&argc, argv);
-    return testSuite.run();
+    return angle::RunGLCTSTests(&argc, argv);
 }

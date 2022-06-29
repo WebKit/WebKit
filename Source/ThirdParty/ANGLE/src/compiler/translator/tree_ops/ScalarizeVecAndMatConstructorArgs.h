@@ -20,9 +20,9 @@ class TCompiler;
 class TIntermBlock;
 class TSymbolTable;
 
-ANGLE_NO_DISCARD bool ScalarizeVecAndMatConstructorArgs(TCompiler *compiler,
-                                                        TIntermBlock *root,
-                                                        TSymbolTable *symbolTable);
+[[nodiscard]] bool ScalarizeVecAndMatConstructorArgs(TCompiler *compiler,
+                                                     TIntermBlock *root,
+                                                     TSymbolTable *symbolTable);
 }  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_TREEOPS_SCALARIZEVECANDMATCONSTRUCTORARGS_H_

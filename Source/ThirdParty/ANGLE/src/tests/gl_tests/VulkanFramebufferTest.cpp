@@ -28,7 +28,7 @@ using namespace angle;
 namespace
 {
 
-class VulkanFramebufferTest : public ANGLETest
+class VulkanFramebufferTest : public ANGLETest<>
 {
   protected:
     rx::ContextVk *hackANGLE() const

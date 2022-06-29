@@ -21,7 +21,7 @@ constexpr uint8_t kUNormZero    = 0x00;
 constexpr uint8_t kUNormHalf    = 0x7F;
 constexpr uint8_t kUNormFull    = 0xFF;
 
-class GetImageTest : public ANGLETest
+class GetImageTest : public ANGLETest<>
 {
   public:
     GetImageTest()
@@ -35,7 +35,7 @@ class GetImageTest : public ANGLETest
     }
 };
 
-class GetImageTestNoExtensions : public ANGLETest
+class GetImageTestNoExtensions : public ANGLETest<>
 {
   public:
     GetImageTestNoExtensions() { setExtensionsEnabled(false); }
@@ -370,7 +370,7 @@ TEST_P(GetImageTest, GetTexImageLuminance)
 
     constexpr GLColorR kMediumLuminance = GLColorR(kUNormHalf);
     std::vector<GLColorR> expectedData  = {kMediumLuminance, kMediumLuminance, kMediumLuminance,
-                                          kMediumLuminance};
+                                           kMediumLuminance};
 
     glViewport(0, 0, kSmallSize, kSmallSize);
 
@@ -712,13 +712,6 @@ const CompressionExtension kCompressionExtensions[] = {
                                              true, true},
 };
 // clang-format on
-
-bool IsFormatEmulated(GLenum target)
-{
-    GLint readFormat;
-    glGetTexParameteriv(target, GL_IMPLEMENTATION_COLOR_READ_FORMAT, &readFormat);
-    return readFormat == GL_RGBA || readFormat == GL_RG || readFormat == GL_RED;
-}
 
 // Basic GetCompressedTexImage.
 TEST_P(GetImageTest, CompressedTexImage)

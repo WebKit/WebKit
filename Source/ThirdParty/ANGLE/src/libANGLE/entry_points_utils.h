@@ -92,8 +92,10 @@ constexpr ANGLE_INLINE ReturnType GetDefaultReturnValue()
 
 #if ANGLE_CAPTURE_ENABLED
 #    define ANGLE_CAPTURE_GL(Func, ...) CaptureCallToFrameCapture(Capture##Func, __VA_ARGS__)
+#    define ANGLE_CAPTURE_EGL(Func, ...) CaptureCallToCaptureEGL(Capture##Func, __VA_ARGS__)
 #else
 #    define ANGLE_CAPTURE_GL(...)
+#    define ANGLE_CAPTURE_EGL(...)
 #endif  // ANGLE_CAPTURE_ENABLED
 
 #define EGL_EVENT(EP, FMT, ...) EVENT(nullptr, EGL##EP, FMT, ##__VA_ARGS__)

@@ -82,7 +82,7 @@ class TextureStorage11 : public TextureStorage
                                GLint maxLevel,
                                const d3d11::SharedSRV **outSRV);
     angle::Result generateSwizzles(const gl::Context *context,
-                                   const gl::SwizzleState &swizzleTarget);
+                                   const gl::TextureState &textureState);
     void markLevelDirty(int mipLevel);
     void markDirty();
 
@@ -161,9 +161,16 @@ class TextureStorage11 : public TextureStorage
     virtual angle::Result getSwizzleRenderTarget(const gl::Context *context,
                                                  int mipLevel,
                                                  const d3d11::RenderTargetView **outRTV) = 0;
+
+    enum class SRVType
+    {
+        Sample,
+        Blit,
+        Stencil
+    };
     angle::Result getSRVLevel(const gl::Context *context,
                               int mipLevel,
-                              bool blitSRV,
+                              SRVType srvType,
                               const d3d11::SharedSRV **outSRV);
 
     // Get a version of a depth texture with only depth information, not stencil.
@@ -276,6 +283,7 @@ class TextureStorage11 : public TextureStorage
 
     gl::TexLevelArray<d3d11::SharedSRV> mLevelSRVs;
     gl::TexLevelArray<d3d11::SharedSRV> mLevelBlitSRVs;
+    gl::TexLevelArray<d3d11::SharedSRV> mLevelStencilSRVs;
 };
 
 class TextureStorage11_2D : public TextureStorage11

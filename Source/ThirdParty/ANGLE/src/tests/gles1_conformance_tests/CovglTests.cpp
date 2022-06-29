@@ -156,7 +156,7 @@ void ProbeEnumANGLE(void)
 
 namespace angle
 {
-class GLES1CovglTest : public ANGLETest
+class GLES1CovglTest : public ANGLETest<>
 {
   protected:
     GLES1CovglTest()

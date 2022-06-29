@@ -15,7 +15,7 @@
 
 using namespace angle;
 
-class CurrentColorTest : public ANGLETest
+class CurrentColorTest : public ANGLETest<>
 {
   protected:
     CurrentColorTest()

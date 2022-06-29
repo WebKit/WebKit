@@ -25,9 +25,9 @@ class TCompiler;
 class TIntermNode;
 class TSymbolTable;
 
-ANGLE_NO_DISCARD bool RecordConstantPrecision(TCompiler *compiler,
-                                              TIntermNode *root,
-                                              TSymbolTable *symbolTable);
+[[nodiscard]] bool RecordConstantPrecision(TCompiler *compiler,
+                                           TIntermNode *root,
+                                           TSymbolTable *symbolTable);
 }  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_TREEOPS_RECORDCONSTANTPRECISION_H_

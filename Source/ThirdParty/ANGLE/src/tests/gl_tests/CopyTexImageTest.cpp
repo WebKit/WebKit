@@ -10,7 +10,7 @@
 namespace angle
 {
 
-class CopyTexImageTest : public ANGLETest
+class CopyTexImageTest : public ANGLETest<>
 {
   protected:
     CopyTexImageTest()
@@ -278,11 +278,6 @@ class CopyTexImageTest : public ANGLETest
                                                          {1.0f, 0.75f, 0.5f, 0.25f},
                                                          {0.5f, 0.25f, 1.0f, 0.75f}};
 };
-
-// Until C++17, need to redundantly declare the constexpr members outside the class (only the
-// arrays, because the others are already const-propagated and not needed by the linker).
-constexpr uint32_t CopyTexImageTest::kFboSizes[];
-constexpr GLfloat CopyTexImageTest::kFboColors[][4];
 
 TEST_P(CopyTexImageTest, RGBAToRGB)
 {

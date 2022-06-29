@@ -338,7 +338,7 @@ void InitConstantBufferDesc(D3D11_BUFFER_DESC *constantBufferDescription, size_t
 
 // Helper class for RAII patterning.
 template <typename T>
-class ANGLE_NO_DISCARD ScopedUnmapper final : angle::NonCopyable
+class [[nodiscard]] ScopedUnmapper final : angle::NonCopyable
 {
   public:
     ScopedUnmapper(T *object) : mObject(object) {}
@@ -469,6 +469,9 @@ IndexStorageType ClassifyIndexStorage(const gl::State &glState,
                                       gl::DrawElementsType elementType,
                                       gl::DrawElementsType destElementType,
                                       unsigned int offset);
+
+bool SwizzleRequired(const gl::TextureState &textureState);
+gl::SwizzleState GetEffectiveSwizzle(const gl::TextureState &textureState);
 
 }  // namespace rx
 

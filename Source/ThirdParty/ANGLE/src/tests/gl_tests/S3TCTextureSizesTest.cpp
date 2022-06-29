@@ -20,7 +20,7 @@ std::array<uint8_t, 72> k12x12DXT1Data = {
     0x44, 0x45, 0x40, 0x55, 0x0f, 0x00, 0xef, 0x03, 0x44, 0x45, 0x40, 0x55,
 };
 
-class S3TCTextureSizesTest : public ANGLETest
+class S3TCTextureSizesTest : public ANGLETest<>
 {
   protected:
     S3TCTextureSizesTest()

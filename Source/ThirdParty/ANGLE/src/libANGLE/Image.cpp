@@ -138,6 +138,11 @@ bool ImageSibling::isYUV() const
     return mTargetOf.get() && mTargetOf->isYUV();
 }
 
+bool ImageSibling::isCreatedWithAHB() const
+{
+    return mTargetOf.get() && mTargetOf->isCreatedWithAHB();
+}
+
 bool ImageSibling::hasProtectedContent() const
 {
     return mTargetOf.get() && mTargetOf->hasProtectedContent();
@@ -421,6 +426,11 @@ bool Image::isTexturable(const gl::Context *context) const
 bool Image::isYUV() const
 {
     return mState.yuv;
+}
+
+bool Image::isCreatedWithAHB() const
+{
+    return mState.target == EGL_NATIVE_BUFFER_ANDROID;
 }
 
 bool Image::isCubeMap() const

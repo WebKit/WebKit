@@ -22,9 +22,9 @@ namespace sh
 // This rewrite functionality introduces temporaries that serve as proxies to be passed to the
 // out/inout parameters as needed. The corresponding expressions get populated with their
 // proxies after the function call.
-ANGLE_NO_DISCARD bool RewriteUnaddressableReferences(TCompiler &compiler,
-                                                     TIntermBlock &root,
-                                                     SymbolEnv &symbolEnv);
+[[nodiscard]] bool RewriteUnaddressableReferences(TCompiler &compiler,
+                                                  TIntermBlock &root,
+                                                  SymbolEnv &symbolEnv);
 
 }  // namespace sh
 

@@ -108,14 +108,14 @@ Currently, to enable overlay items an environment variable is used. For example:
 On Desktop:
 
 ```commandline
-$ export ANGLE_OVERLAY=FPS:VulkanSecondaryCommandBufferPoolWaste
+$ export ANGLE_OVERLAY=FPS:Vulkan*PipelineCache*
 $ ./hello_triangle --use-angle=vulkan
 ```
 
 On Android:
 
 ```
-$ adb shell setprop debug.angle.overlay FPS:VulkanSecondaryCommandBufferPoolWaste
+$ adb shell setprop debug.angle.overlay FPS:Vulkan*PipelineCache*
 $ ./hello_triangle --use-angle=vulkan
 ```
 

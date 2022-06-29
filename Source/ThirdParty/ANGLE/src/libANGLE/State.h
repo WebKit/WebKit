@@ -125,6 +125,8 @@ class State : angle::NonCopyable
 
     bool isWebGL1() const { return (isWebGL() && mClientVersion.major == 2); }
 
+    bool isGLES1() const { return mClientVersion < ES_2_0; }
+
     const TextureCaps &getTextureCap(GLenum internalFormat) const
     {
         return mTextureCaps.get(internalFormat);

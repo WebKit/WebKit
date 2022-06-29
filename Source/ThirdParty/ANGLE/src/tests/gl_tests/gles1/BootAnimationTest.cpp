@@ -21,7 +21,7 @@ using namespace angle;
 // The results of each frame of the animation are compared against expected values
 // The original source of the boot animation can be found here:
 // https://android.googlesource.com/platform/frameworks/base/+/refs/heads/master/cmds/bootanimation/BootAnimation.cpp#422
-class BootAnimationTest : public ANGLETest
+class BootAnimationTest : public ANGLETest<>
 {
   protected:
     BootAnimationTest()

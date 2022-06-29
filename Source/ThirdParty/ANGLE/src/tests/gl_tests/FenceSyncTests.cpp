@@ -9,7 +9,7 @@
 
 using namespace angle;
 
-class FenceNVTest : public ANGLETest
+class FenceNVTest : public ANGLETest<>
 {
   protected:
     FenceNVTest()
@@ -24,7 +24,7 @@ class FenceNVTest : public ANGLETest
     }
 };
 
-class FenceSyncTest : public ANGLETest
+class FenceSyncTest : public ANGLETest<>
 {
   public:
     static constexpr uint32_t kSize = 1024;

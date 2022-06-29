@@ -17,10 +17,80 @@ using namespace angle;
 namespace
 {
 
+struct FormatInfo
+{
+    GLenum internalFormat;
+    GLenum format;
+    GLenum sizedFormat;
+    bool issRGB;
+    struct
+    {
+        GLsizei x, y;
+    } blockSize;
+};
+
+// List of compressed texture formats (table 8.17)
+const FormatInfo compressedFormats[] = {
+    // ETC (table C.2)
+    // internalFormat, format, sizedFormat, issRGB, blockSize
+    {GL_COMPRESSED_R11_EAC, GL_RED, GL_R8, false, {4, 4}},
+    {GL_COMPRESSED_SIGNED_R11_EAC, GL_RED, GL_R8, false, {4, 4}},
+    {GL_COMPRESSED_RG11_EAC, GL_RG, GL_RG8, false, {4, 4}},
+    {GL_COMPRESSED_SIGNED_RG11_EAC, GL_RG, GL_RG8, false, {4, 4}},
+    {GL_COMPRESSED_RGB8_ETC2, GL_RGB, GL_RGB8, false, {4, 4}},
+    {GL_COMPRESSED_SRGB8_ETC2, GL_RGB, GL_SRGB8, true, {4, 4}},
+    {GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2, GL_RGBA, GL_RGBA8, false, {4, 4}},
+    {GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2, GL_RGBA, GL_SRGB8_ALPHA8, true, {4, 4}},
+    {GL_COMPRESSED_RGBA8_ETC2_EAC, GL_RGBA, GL_RGBA8, false, {4, 4}},
+    {GL_COMPRESSED_SRGB8_ALPHA8_ETC2_EAC, GL_RGBA, GL_SRGB8_ALPHA8, true, {4, 4}},
+    // ASTC (table C.1)
+    // internalFormat, format, sizedFormat, issRGB, blockSize
+    {GL_COMPRESSED_RGBA_ASTC_4x4, GL_RGBA, GL_RGBA8, false, {4, 4}},
+    {GL_COMPRESSED_RGBA_ASTC_5x4, GL_RGBA, GL_RGBA8, false, {5, 4}},
+    {GL_COMPRESSED_RGBA_ASTC_5x5, GL_RGBA, GL_RGBA8, false, {5, 5}},
+    {GL_COMPRESSED_RGBA_ASTC_6x5, GL_RGBA, GL_RGBA8, false, {6, 5}},
+    {GL_COMPRESSED_RGBA_ASTC_6x6, GL_RGBA, GL_RGBA8, false, {6, 6}},
+    {GL_COMPRESSED_RGBA_ASTC_8x5, GL_RGBA, GL_RGBA8, false, {8, 5}},
+    {GL_COMPRESSED_RGBA_ASTC_8x6, GL_RGBA, GL_RGBA8, false, {8, 6}},
+    {GL_COMPRESSED_RGBA_ASTC_8x8, GL_RGBA, GL_RGBA8, false, {8, 8}},
+    {GL_COMPRESSED_RGBA_ASTC_10x5, GL_RGBA, GL_RGBA8, false, {10, 5}},
+    {GL_COMPRESSED_RGBA_ASTC_10x6, GL_RGBA, GL_RGBA8, false, {10, 6}},
+    {GL_COMPRESSED_RGBA_ASTC_10x8, GL_RGBA, GL_RGBA8, false, {10, 8}},
+    {GL_COMPRESSED_RGBA_ASTC_10x10, GL_RGBA, GL_RGBA8, false, {10, 10}},
+    {GL_COMPRESSED_RGBA_ASTC_12x10, GL_RGBA, GL_RGBA8, false, {12, 10}},
+    {GL_COMPRESSED_RGBA_ASTC_12x12, GL_RGBA, GL_RGBA8, false, {12, 12}},
+    {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_4x4, GL_RGBA, GL_SRGB8_ALPHA8, true, {4, 4}},
+    {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x4, GL_RGBA, GL_SRGB8_ALPHA8, true, {5, 4}},
+    {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x5, GL_RGBA, GL_SRGB8_ALPHA8, true, {5, 5}},
+    {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x5, GL_RGBA, GL_SRGB8_ALPHA8, true, {6, 5}},
+    {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x6, GL_RGBA, GL_SRGB8_ALPHA8, true, {6, 6}},
+    {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x5, GL_RGBA, GL_SRGB8_ALPHA8, true, {8, 5}},
+    {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x6, GL_RGBA, GL_SRGB8_ALPHA8, true, {8, 6}},
+    {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x8, GL_RGBA, GL_SRGB8_ALPHA8, true, {8, 8}},
+    {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x5, GL_RGBA, GL_SRGB8_ALPHA8, true, {10, 5}},
+    {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x6, GL_RGBA, GL_SRGB8_ALPHA8, true, {10, 6}},
+    {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x8, GL_RGBA, GL_SRGB8_ALPHA8, true, {10, 8}},
+    {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x10, GL_RGBA, GL_SRGB8_ALPHA8, true, {10, 10}},
+    {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_12x10, GL_RGBA, GL_SRGB8_ALPHA8, true, {12, 10}},
+    {GL_COMPRESSED_SRGB8_ALPHA8_ASTC_12x12, GL_RGBA, GL_SRGB8_ALPHA8, true, {12, 12}},
+};
+
+const FormatInfo *getCompressedFormatInfo(GLenum format)
+{
+    for (const FormatInfo &item : compressedFormats)
+    {
+        if (item.internalFormat == format)
+        {
+            return &item;
+        }
+    }
+    return nullptr;
+}
+
 using FormatDesc                  = std::pair<GLenum, GLsizei>;
 using CompressedTextureTestParams = std::tuple<angle::PlatformParameters, FormatDesc>;
 
-class CompressedTextureFormatsTest : public ANGLETestWithParam<CompressedTextureTestParams>
+class CompressedTextureFormatsTest : public ANGLETest<CompressedTextureTestParams>
 {
   public:
     CompressedTextureFormatsTest(const std::string ext1,
@@ -66,6 +136,20 @@ class CompressedTextureFormatsTest : public ANGLETestWithParam<CompressedTexture
 
         glCompressedTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 4, 4, format, size, data);
         EXPECT_GL_ERROR(mSupportsUpdates ? GL_NO_ERROR : GL_INVALID_OPERATION);
+
+        const FormatInfo *formatInfo = getCompressedFormatInfo(format);
+        if (formatInfo)
+        {
+            // Try offset which is not aligned with block size. This operation is not supported
+            // in OpenGL ES.
+            glCompressedTexSubImage2D(GL_TEXTURE_2D, 0, formatInfo->blockSize.x - 2, 0, 4, 4,
+                                      formatInfo->internalFormat, size, data);
+            EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+            glCompressedTexSubImage2D(GL_TEXTURE_2D, 0, 0, formatInfo->blockSize.y - 2, 4, 4,
+                                      formatInfo->internalFormat, size, data);
+            EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+        }
     }
 
     void checkSubImage3D(GLenum target, GLenum format, GLsizei size)

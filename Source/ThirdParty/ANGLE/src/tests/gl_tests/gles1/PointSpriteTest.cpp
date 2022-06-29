@@ -15,7 +15,7 @@
 
 using namespace angle;
 
-class PointSpriteTest : public ANGLETest
+class PointSpriteTest : public ANGLETest<>
 {
   protected:
     PointSpriteTest()

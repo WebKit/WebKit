@@ -255,10 +255,6 @@ namespace sh
 using Resources = ShBuiltInResources;
 using TableBase = TSymbolTableBase;
 
-// Since some of the BuiltInId declarations are used outside of constexpr expressions, we need to
-// have these definitions without an initializer. C++17 should eventually remove the need for this.
-{builtin_id_definitions}
-
 const int TSymbolTable::kLastBuiltInId = {last_builtin_id};
 
 namespace BuiltInName
@@ -1245,9 +1241,6 @@ class SymbolsData:
         # Declarations of symbol unique ids
         self.builtin_id_declarations = []
 
-        # Definitions of symbol unique ids needed for those ids used outside of constexpr expressions.
-        self.builtin_id_definitions = []
-
         # Declarations of name string variables
         self.name_declarations = set()
 
@@ -1715,9 +1708,6 @@ def process_single_function(shader_type, group_name, function_props, symbols, va
         template_builtin_id_declaration = '    static constexpr const TSymbolUniqueId {human_readable_name} = TSymbolUniqueId({id});'
         symbols.builtin_id_declarations.append(
             template_builtin_id_declaration.format(**template_args))
-        template_builtin_id_definition = 'constexpr const TSymbolUniqueId BuiltInId::{human_readable_name};'
-        symbols.builtin_id_definitions.append(
-            template_builtin_id_definition.format(**template_args))
 
         parameters_list = []
         for param in parameters:
@@ -1889,8 +1879,6 @@ def process_single_variable(shader_type, variable_name, props, symbols, variable
 
     template_builtin_id_declaration = '    static constexpr const TSymbolUniqueId {name_with_suffix} = TSymbolUniqueId({id});'
     symbols.builtin_id_declarations.append(template_builtin_id_declaration.format(**template_args))
-    template_builtin_id_definition = 'constexpr const TSymbolUniqueId BuiltInId::{name_with_suffix};'
-    symbols.builtin_id_definitions.append(template_builtin_id_definition.format(**template_args))
 
     template_name_declaration = 'constexpr const ImmutableString {name}("{name}");'
     symbols.name_declarations.add(template_name_declaration.format(**template_args))
@@ -2128,8 +2116,6 @@ def generate_files(essl_only, args, functions_txt_filename, variables_json_filen
             os.path.basename(__file__),
         'builtin_id_declarations':
             '\n'.join(symbols.builtin_id_declarations),
-        'builtin_id_definitions':
-            '\n'.join(symbols.builtin_id_definitions),
         'last_builtin_id':
             id_counter - 1,
         'name_declarations':

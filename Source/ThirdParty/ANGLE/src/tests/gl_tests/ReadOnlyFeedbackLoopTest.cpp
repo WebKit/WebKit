@@ -12,7 +12,7 @@
 
 using namespace angle;
 
-class ReadOnlyFeedbackLoopTest : public ANGLETest
+class ReadOnlyFeedbackLoopTest : public ANGLETest<>
 {
   protected:
     ReadOnlyFeedbackLoopTest()

@@ -4,6 +4,10 @@
 
 import("../../../gni/angle.gni")
 
+if (angle_use_wayland) {
+  import("//build_overrides/wayland.gni")
+}
+
 config("volk_config") {
   include_dirs = [ "." ]
 }
@@ -17,6 +21,6 @@ source_set("volk") {
   configs += [ "$angle_root:angle_no_cfi_icall" ]
   public_deps = [ "$angle_vulkan_headers_dir:vulkan_headers" ]
   if (angle_use_wayland) {
-    include_dirs = [ "$angle_wayland_dir/src" ]
+    include_dirs = [ "$wayland_dir/src" ]
   }
 }

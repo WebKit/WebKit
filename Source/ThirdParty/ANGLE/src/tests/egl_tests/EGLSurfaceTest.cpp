@@ -32,7 +32,7 @@ using namespace angle;
 namespace
 {
 
-class EGLSurfaceTest : public ANGLETest
+class EGLSurfaceTest : public ANGLETest<>
 {
   protected:
     EGLSurfaceTest()
@@ -385,7 +385,7 @@ class EGLFloatSurfaceTest : public EGLSurfaceTest
     GLuint mProgram;
 };
 
-class EGLSingleBufferTest : public ANGLETest
+class EGLSingleBufferTest : public ANGLETest<>
 {
   protected:
     EGLSingleBufferTest() {}

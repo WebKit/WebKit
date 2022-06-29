@@ -187,7 +187,7 @@ std::vector<GLColor> UncompressDXTIntoSubRegion(int width,
     return dest;
 }
 
-class RobustResourceInitTest : public ANGLETest
+class RobustResourceInitTest : public ANGLETest<>
 {
   protected:
     constexpr static int kWidth  = 128;

@@ -11,7 +11,7 @@
 
 using namespace angle;
 
-class FramebufferObjectTest : public ANGLETest
+class FramebufferObjectTest : public ANGLETest<>
 {
   protected:
     FramebufferObjectTest()

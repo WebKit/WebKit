@@ -29,7 +29,7 @@ void AddIntegerValue(CFMutableDictionaryRef dictionary, const CFStringRef key, i
     CFRelease(number);
 }
 
-class ANGLE_NO_DISCARD ScopedIOSurfaceRef : angle::NonCopyable
+class [[nodiscard]] ScopedIOSurfaceRef : angle::NonCopyable
 {
   public:
     explicit ScopedIOSurfaceRef(IOSurfaceRef surface) : mSurface(surface) {}
@@ -131,7 +131,7 @@ ScopedIOSurfaceRef CreateSinglePlaneIOSurface(int width,
 
 }  // anonymous namespace
 
-class IOSurfaceClientBufferTest : public ANGLETest
+class IOSurfaceClientBufferTest : public ANGLETest<>
 {
   protected:
     EGLint getTextureTarget() const
@@ -293,15 +293,16 @@ class IOSurfaceClientBufferTest : public ANGLETest
         B = 4,
         A = 8,
     };
-    void doSampleTest(const ScopedIOSurfaceRef &ioSurface,
-                      EGLint width,
-                      EGLint height,
-                      EGLint plane,
-                      GLenum internalFormat,
-                      GLenum type,
-                      void *data,
-                      size_t dataSize,
-                      int mask)
+    void doSampleTestWithExtraSteps(const ScopedIOSurfaceRef &ioSurface,
+                                    EGLint width,
+                                    EGLint height,
+                                    EGLint plane,
+                                    GLenum internalFormat,
+                                    GLenum type,
+                                    void *data,
+                                    size_t dataSize,
+                                    int mask,
+                                    const std::function<void()> &extraStepsBeforeSample)
     {
         // Write the data to the IOSurface
         IOSurfaceLock(ioSurface.get(), 0, nullptr);
@@ -318,11 +319,30 @@ class IOSurfaceClientBufferTest : public ANGLETest
         bindIOSurfaceToTexture(ioSurface, width, height, plane, internalFormat, type, &pbuffer,
                                &texture);
 
+        if (extraStepsBeforeSample)
+        {
+            extraStepsBeforeSample();
+        }
+
         doSampleTestWithTexture(texture, mask);
 
         EGLBoolean result = eglDestroySurface(mDisplay, pbuffer);
         EXPECT_EGL_TRUE(result);
         EXPECT_EGL_SUCCESS();
+    }
+
+    void doSampleTest(const ScopedIOSurfaceRef &ioSurface,
+                      EGLint width,
+                      EGLint height,
+                      EGLint plane,
+                      GLenum internalFormat,
+                      GLenum type,
+                      void *data,
+                      size_t dataSize,
+                      int mask)
+    {
+        doSampleTestWithExtraSteps(ioSurface, width, height, plane, internalFormat, type, data,
+                                   dataSize, mask, nullptr);
     }
 
     void doSampleTestWithTexture(const GLTexture &texture, int mask)
@@ -546,6 +566,9 @@ TEST_P(IOSurfaceClientBufferTest, RenderToR16IOSurface)
 
     // This test only works on ES3 since it requires an integer texture.
     ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+
+    // TODO(http://anglebug.com/7445): Fails with Metal backend.
+    ANGLE_SKIP_TEST_IF(IsMetal());
 
     // HACK(cwallez@chromium.org) 'L016' doesn't seem to be an official pixel format but it works
     // sooooooo let's test using it
@@ -1165,6 +1188,24 @@ TEST_P(IOSurfaceClientBufferTest, MakeCurrent)
     EXPECT_EGL_SUCCESS();
 }
 
+// Test reading from BGRX8888 IOSurfaces with bound texture's base/max level set to zero.
+// This to verify that changing base/level shouldn't delete the binding.
+// bug: https://bugs.chromium.org/p/chromium/issues/detail?id=1337324
+TEST_P(IOSurfaceClientBufferTest, ReadFromBGRX8888IOSurfaceWithTexBaseMaxLevelSetToZero)
+{
+    ANGLE_SKIP_TEST_IF(!hasIOSurfaceExt());
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+
+    ScopedIOSurfaceRef ioSurface = CreateSinglePlaneIOSurface(1, 1, 'BGRA', 4);
+
+    GLColor color(3, 2, 1, 4);
+    doSampleTestWithExtraSteps(ioSurface, 1, 1, 0, GL_RGB, GL_UNSIGNED_BYTE, &color, sizeof(color),
+                               R | G | B, /* extra steps */ [this] {
+                                   glTexParameteri(getGLTextureTarget(), GL_TEXTURE_BASE_LEVEL, 0);
+                                   glTexParameteri(getGLTextureTarget(), GL_TEXTURE_MAX_LEVEL, 0);
+                               });
+}
+
 // TODO(cwallez@chromium.org): Test setting width and height to less than the IOSurface's work as
 // expected.
 
@@ -1173,4 +1214,5 @@ ANGLE_INSTANTIATE_TEST(IOSurfaceClientBufferTest,
                        ES3_OPENGL(),
                        ES2_VULKAN_SWIFTSHADER(),
                        ES3_VULKAN_SWIFTSHADER(),
-                       ES2_METAL());
+                       ES2_METAL(),
+                       ES3_METAL());

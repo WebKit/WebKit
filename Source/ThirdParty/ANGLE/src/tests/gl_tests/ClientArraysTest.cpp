@@ -13,7 +13,7 @@
 namespace angle
 {
 
-class ClientArraysTest : public ANGLETest
+class ClientArraysTest : public ANGLETest<>
 {
   protected:
     ClientArraysTest()

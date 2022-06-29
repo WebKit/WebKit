@@ -18,7 +18,7 @@ using namespace angle;
 
 static constexpr int kWindowSize = 64;
 
-class DXTSRGBCompressedTextureTest : public ANGLETest
+class DXTSRGBCompressedTextureTest : public ANGLETest<>
 {
   protected:
     DXTSRGBCompressedTextureTest()

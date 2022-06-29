@@ -11,7 +11,7 @@
 # 1 "temp_master_source.metal"
 # 1 "<built-in>" 1
 # 1 "<built-in>" 3
-# 433 "<built-in>" 3
+# 451 "<built-in>" 3
 # 1 "<command line>" 1
 # 1 "<built-in>" 2
 # 1 "temp_master_source.metal" 2
@@ -68,6 +68,10 @@ constant bool kColorOutputAvailable0 = kNumColorOutputs > 0;
 constant bool kColorOutputAvailable1 = kNumColorOutputs > 1;
 constant bool kColorOutputAvailable2 = kNumColorOutputs > 2;
 constant bool kColorOutputAvailable3 = kNumColorOutputs > 3;
+constant bool kColorOutputAvailable4 = kNumColorOutputs > 4;
+constant bool kColorOutputAvailable5 = kNumColorOutputs > 5;
+constant bool kColorOutputAvailable6 = kNumColorOutputs > 6;
+constant bool kColorOutputAvailable7 = kNumColorOutputs > 7;
 
 namespace rx
 {
@@ -84,8 +88,12 @@ struct MultipleColorOutputs
     vec<T, 4> color1 [[color(1), function_constant(kColorOutputAvailable1)]];
     vec<T, 4> color2 [[color(2), function_constant(kColorOutputAvailable2)]];
     vec<T, 4> color3 [[color(3), function_constant(kColorOutputAvailable3)]];
+    vec<T, 4> color4 [[color(4), function_constant(kColorOutputAvailable4)]];
+    vec<T, 4> color5 [[color(5), function_constant(kColorOutputAvailable5)]];
+    vec<T, 4> color6 [[color(6), function_constant(kColorOutputAvailable6)]];
+    vec<T, 4> color7 [[color(7), function_constant(kColorOutputAvailable7)]];
 };
-# 61 "./common.h"
+# 69 "./common.h"
 template <typename T>
 static inline MultipleColorOutputs<T> toMultipleColorOutputs(vec<T, 4> color)
 {
@@ -95,6 +103,10 @@ static inline MultipleColorOutputs<T> toMultipleColorOutputs(vec<T, 4> color)
     do { if (kColorOutputAvailable1) { re.color1 = color; } } while (0);
     do { if (kColorOutputAvailable2) { re.color2 = color; } } while (0);
     do { if (kColorOutputAvailable3) { re.color3 = color; } } while (0);
+    do { if (kColorOutputAvailable4) { re.color4 = color; } } while (0);
+    do { if (kColorOutputAvailable5) { re.color5 = color; } } while (0);
+    do { if (kColorOutputAvailable6) { re.color6 = color; } } while (0);
+    do { if (kColorOutputAvailable7) { re.color7 = color; } } while (0);
 
     return re;
 }

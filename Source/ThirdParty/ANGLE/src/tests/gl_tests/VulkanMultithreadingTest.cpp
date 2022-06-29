@@ -22,7 +22,7 @@ namespace angle
 constexpr char kExtensionName[] = "GL_ANGLE_get_image";
 static constexpr int kSize      = 256;
 
-class VulkanMultithreadingTest : public ANGLETest
+class VulkanMultithreadingTest : public ANGLETest<>
 {
   protected:
     VulkanMultithreadingTest()

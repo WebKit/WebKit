@@ -7,6 +7,9 @@ import("gni/angle.gni")
 if (angle_enable_vulkan) {
   import("//build_overrides//vulkan_headers.gni")
 }
+if (angle_use_wayland) {
+  import("//build_overrides/wayland.gni")
+}
 if (angle_has_build) {
   import("//build/config/linux/pkg_config.gni")
   import("//build/config/sanitizers/sanitizers.gni")
@@ -110,7 +113,17 @@ config("internal_config") {
     "src",
   ]
 
-  defines = []
+  # Handle breaking changes in VulkanMemoryAllocator.
+  angle_vma_version_define = "ANGLE_VMA_VERSION="
+  if (defined(angle_vma_version)) {
+    angle_vma_version_define += angle_vma_version
+  } else {
+    # Default to 2.3.0. This can be bumped and include guards removed when all
+    # clients have migrated to 3.x.
+    angle_vma_version_define += 2003000
+  }
+
+  defines = [ angle_vma_version_define ]
 
   if (is_win) {
     defines += [ "ANGLE_IS_WIN" ]
@@ -1034,7 +1047,7 @@ angle_source_set("angle_gl_enum_utils") {
 
 if (angle_use_wayland) {
   config("angle_wayland_config") {
-    if (!defined(use_system_libwayland) || use_system_libwayland) {
+    if (use_system_libwayland) {
       libs = [
         "wayland-client",
         "wayland-egl",
@@ -1042,23 +1055,19 @@ if (angle_use_wayland) {
     }
 
     include_dirs = [
-      "$angle_wayland_dir/egl",
-      "$angle_wayland_dir/src",
-
-      # In case we are building with chromium, we need to take into account the case
-      # where wayland-egl-backend.h is not installed in the system include directories
-      "//third_party/wayland/src/egl",
+      "$wayland_dir/egl",
+      "$wayland_dir/src",
     ]
   }
 
   group("angle_wayland") {
     public_configs = [ ":angle_wayland_config" ]
 
-    if (defined(use_system_libwayland) && !use_system_libwayland) {
-      # Use chromium third-party targets
+    if (!use_system_libwayland) {
+      # Use third-party targets
       public_deps = [
-        "//third_party/wayland:wayland_client",
-        "//third_party/wayland:wayland_egl",
+        "$wayland_gn_dir:wayland_client",
+        "$wayland_gn_dir:wayland_egl",
       ]
     }
   }

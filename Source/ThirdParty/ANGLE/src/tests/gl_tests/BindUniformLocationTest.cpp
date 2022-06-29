@@ -16,7 +16,7 @@ using namespace angle;
 namespace
 {
 
-class BindUniformLocationTest : public ANGLETest
+class BindUniformLocationTest : public ANGLETest<>
 {
   protected:
     BindUniformLocationTest()

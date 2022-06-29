@@ -133,6 +133,7 @@ class FramebufferAttachment final
     bool isAttached() const { return mType != GL_NONE; }
     bool isRenderable(const Context *context) const;
     bool isYUV() const;
+    bool isCreatedWithAHB() const;
 
     Renderbuffer *getRenderbuffer() const;
     Texture *getTexture() const;
@@ -217,6 +218,7 @@ class FramebufferAttachmentObject : public angle::Subject, public angle::Observe
                               GLenum binding,
                               const ImageIndex &imageIndex) const                          = 0;
     virtual bool isYUV() const                                                             = 0;
+    virtual bool isCreatedWithAHB() const                                                  = 0;
     virtual bool hasProtectedContent() const                                               = 0;
 
     virtual void onAttach(const Context *context, rx::Serial framebufferSerial) = 0;
@@ -292,6 +294,12 @@ inline bool FramebufferAttachment::isYUV() const
 {
     ASSERT(mResource);
     return mResource->isYUV();
+}
+
+inline bool FramebufferAttachment::isCreatedWithAHB() const
+{
+    ASSERT(mResource);
+    return mResource->isCreatedWithAHB();
 }
 
 }  // namespace gl

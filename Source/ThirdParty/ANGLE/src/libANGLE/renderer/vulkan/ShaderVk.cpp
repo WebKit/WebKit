@@ -50,11 +50,6 @@ std::shared_ptr<WaitableCompileEvent> ShaderVk::compile(const gl::Context *conte
         compileOptions |= SH_CLAMP_POINT_SIZE;
     }
 
-    if (contextVk->getFeatures().basicGLLineRasterization.enabled)
-    {
-        compileOptions |= SH_ADD_BRESENHAM_LINE_RASTER_EMULATION;
-    }
-
     if (contextVk->getFeatures().emulateAdvancedBlendEquations.enabled)
     {
         compileOptions |= SH_ADD_ADVANCED_BLEND_EQUATIONS_EMULATION;
@@ -76,9 +71,14 @@ std::shared_ptr<WaitableCompileEvent> ShaderVk::compile(const gl::Context *conte
     }
 
     // Let compiler use specialized constant for pre-rotation.
-    if (!contextVk->getFeatures().forceDriverUniformOverSpecConst.enabled)
+    if (!contextVk->getFeatures().preferDriverUniformOverSpecConst.enabled)
     {
         compileOptions |= SH_USE_SPECIALIZATION_CONSTANT;
+    }
+
+    if (!contextVk->getFeatures().supportsDepthClipControl.enabled)
+    {
+        compileOptions |= SH_ADD_VULKAN_DEPTH_CORRECTION;
     }
 
     if (contextVk->getFeatures().supportsTransformFeedbackExtension.enabled)

@@ -19,10 +19,10 @@ constexpr char kVertexArrayObjLabel[]     = "vertexarray";
 constexpr char kQueryObjLabel[]           = "query";
 constexpr char kProgramPipelineObjLabel[] = "programpipeline";
 constexpr GLenum kObjectTypes[]           = {GL_BUFFER_OBJECT_EXT,           GL_SHADER_OBJECT_EXT,
-                                   GL_PROGRAM_OBJECT_EXT,          GL_QUERY_OBJECT_EXT,
-                                   GL_PROGRAM_PIPELINE_OBJECT_EXT, GL_VERTEX_ARRAY_OBJECT_EXT};
+                                             GL_PROGRAM_OBJECT_EXT,          GL_QUERY_OBJECT_EXT,
+                                             GL_PROGRAM_PIPELINE_OBJECT_EXT, GL_VERTEX_ARRAY_OBJECT_EXT};
 
-class DebugTest : public ANGLETest
+class DebugTest : public ANGLETest<>
 {
   protected:
     DebugTest() : mDebugExtensionAvailable(false)

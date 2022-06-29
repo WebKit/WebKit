@@ -323,12 +323,9 @@ bool ValidateGetCompressedTexImageANGLE(const Context *context,
         return false;
     }
 
-    // Check if format is emulated
-    // TODO(anglebug.com/6177): Check here for all the formats that ANGLE will use to emulate a
-    // compressed texture
-    GLenum implFormat = texture->getImplementationColorReadFormat(context);
-    if (implFormat == GL_RGBA || implFormat == GL_RG || implFormat == GL_RED)
+    if (texture->isCompressedFormatEmulated(context, target, level))
     {
+        // TODO (anglebug.com/7464): We can't currently read back from an emulated format
         context->validationError(entryPoint, GL_INVALID_OPERATION, kInvalidEmulatedFormat);
         return false;
     }
@@ -534,6 +531,62 @@ bool ValidateMultiDrawElementsIndirectEXT(const Context *context,
     }
 
     return true;
+}
+
+bool ValidateDrawArraysInstancedBaseInstanceEXT(const Context *context,
+                                                angle::EntryPoint entryPoint,
+                                                PrimitiveMode mode,
+                                                GLint first,
+                                                GLsizei count,
+                                                GLsizei instanceCount,
+                                                GLuint baseInstance)
+{
+    if (!context->getExtensions().baseInstanceEXT)
+    {
+        context->validationError(entryPoint, GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+
+    return ValidateDrawArraysInstancedBase(context, entryPoint, mode, first, count, instanceCount);
+}
+
+bool ValidateDrawElementsInstancedBaseInstanceEXT(const Context *context,
+                                                  angle::EntryPoint entryPoint,
+                                                  PrimitiveMode mode,
+                                                  GLsizei count,
+                                                  DrawElementsType type,
+                                                  void const *indices,
+                                                  GLsizei instancecount,
+                                                  GLuint baseinstance)
+{
+    if (!context->getExtensions().baseInstanceEXT)
+    {
+        context->validationError(entryPoint, GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+
+    return ValidateDrawElementsInstancedBase(context, entryPoint, mode, count, type, indices,
+                                             instancecount);
+}
+
+bool ValidateDrawElementsInstancedBaseVertexBaseInstanceEXT(const Context *context,
+                                                            angle::EntryPoint entryPoint,
+                                                            PrimitiveMode mode,
+                                                            GLsizei count,
+                                                            DrawElementsType typePacked,
+                                                            const void *indices,
+                                                            GLsizei instancecount,
+                                                            GLint basevertex,
+                                                            GLuint baseinstance)
+{
+    if (!context->getExtensions().baseInstanceEXT)
+    {
+        context->validationError(entryPoint, GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+
+    return ValidateDrawElementsInstancedBase(context, entryPoint, mode, count, typePacked, indices,
+                                             instancecount);
 }
 
 bool ValidateDrawElementsBaseVertexOES(const Context *context,

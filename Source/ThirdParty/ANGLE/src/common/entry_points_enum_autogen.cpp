@@ -986,6 +986,8 @@ const char *GetEntryPointName(EntryPoint ep)
             return "glDrawArraysInstancedBaseInstance";
         case EntryPoint::GLDrawArraysInstancedBaseInstanceANGLE:
             return "glDrawArraysInstancedBaseInstanceANGLE";
+        case EntryPoint::GLDrawArraysInstancedBaseInstanceEXT:
+            return "glDrawArraysInstancedBaseInstanceEXT";
         case EntryPoint::GLDrawArraysInstancedEXT:
             return "glDrawArraysInstancedEXT";
         case EntryPoint::GLDrawBuffer:
@@ -1010,12 +1012,16 @@ const char *GetEntryPointName(EntryPoint ep)
             return "glDrawElementsInstancedANGLE";
         case EntryPoint::GLDrawElementsInstancedBaseInstance:
             return "glDrawElementsInstancedBaseInstance";
+        case EntryPoint::GLDrawElementsInstancedBaseInstanceEXT:
+            return "glDrawElementsInstancedBaseInstanceEXT";
         case EntryPoint::GLDrawElementsInstancedBaseVertex:
             return "glDrawElementsInstancedBaseVertex";
         case EntryPoint::GLDrawElementsInstancedBaseVertexBaseInstance:
             return "glDrawElementsInstancedBaseVertexBaseInstance";
         case EntryPoint::GLDrawElementsInstancedBaseVertexBaseInstanceANGLE:
             return "glDrawElementsInstancedBaseVertexBaseInstanceANGLE";
+        case EntryPoint::GLDrawElementsInstancedBaseVertexBaseInstanceEXT:
+            return "glDrawElementsInstancedBaseVertexBaseInstanceEXT";
         case EntryPoint::GLDrawElementsInstancedBaseVertexEXT:
             return "glDrawElementsInstancedBaseVertexEXT";
         case EntryPoint::GLDrawElementsInstancedBaseVertexOES:

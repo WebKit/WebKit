@@ -20,7 +20,7 @@ using namespace angle;
 
 using TextureCoord = std::array<float, 4>;
 
-class CurrentTextureCoordsTest : public ANGLETest
+class CurrentTextureCoordsTest : public ANGLETest<>
 {
   protected:
     CurrentTextureCoordsTest()

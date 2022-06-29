@@ -13,7 +13,7 @@
 namespace angle
 {
 
-class MemorySizeTest : public ANGLETest
+class MemorySizeTest : public ANGLETest<>
 {
   protected:
     MemorySizeTest()

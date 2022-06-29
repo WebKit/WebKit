@@ -8,7 +8,7 @@
 
 using namespace angle;
 
-class BlendMinMaxTest : public ANGLETest
+class BlendMinMaxTest : public ANGLETest<>
 {
   protected:
     BlendMinMaxTest()

@@ -979,6 +979,32 @@ bool ValidateEGLImageTargetTextureStorageEXT(const Context *context,
 
 // GL_EXT_YUV_target
 
+// GL_EXT_base_instance
+bool ValidateDrawArraysInstancedBaseInstanceEXT(const Context *context,
+                                                angle::EntryPoint entryPoint,
+                                                PrimitiveMode modePacked,
+                                                GLint first,
+                                                GLsizei count,
+                                                GLsizei instancecount,
+                                                GLuint baseinstance);
+bool ValidateDrawElementsInstancedBaseInstanceEXT(const Context *context,
+                                                  angle::EntryPoint entryPoint,
+                                                  PrimitiveMode modePacked,
+                                                  GLsizei count,
+                                                  DrawElementsType typePacked,
+                                                  const void *indices,
+                                                  GLsizei instancecount,
+                                                  GLuint baseinstance);
+bool ValidateDrawElementsInstancedBaseVertexBaseInstanceEXT(const Context *context,
+                                                            angle::EntryPoint entryPoint,
+                                                            PrimitiveMode modePacked,
+                                                            GLsizei count,
+                                                            DrawElementsType typePacked,
+                                                            const void *indices,
+                                                            GLsizei instancecount,
+                                                            GLint basevertex,
+                                                            GLuint baseinstance);
+
 // GL_EXT_blend_func_extended
 bool ValidateBindFragDataLocationEXT(const Context *context,
                                      angle::EntryPoint entryPoint,
@@ -2017,6 +2043,8 @@ bool ValidateBlitFramebufferNV(const Context *context,
 // GL_NV_pixel_buffer_object
 
 // GL_NV_read_depth
+
+// GL_NV_read_depth_stencil
 
 // GL_NV_read_stencil
 

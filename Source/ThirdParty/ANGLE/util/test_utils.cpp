@@ -37,7 +37,7 @@ bool GetFileSize(const char *filePath, uint32_t *sizeOut)
     return true;
 }
 
-bool ReadEntireFileToString(const char *filePath, char *contentsOut, uint32_t maxLen)
+bool ReadEntireFileToString(const char *filePath, std::string *contentsOut)
 {
     std::ifstream stream(filePath);
     if (!stream)
@@ -45,15 +45,12 @@ bool ReadEntireFileToString(const char *filePath, char *contentsOut, uint32_t ma
         return false;
     }
 
-    std::string contents;
-
     stream.seekg(0, std::ios::end);
-    contents.reserve(static_cast<unsigned int>(stream.tellg()));
+    contentsOut->reserve(static_cast<unsigned int>(stream.tellg()));
     stream.seekg(0, std::ios::beg);
 
-    contents.assign((std::istreambuf_iterator<char>(stream)), std::istreambuf_iterator<char>());
+    contentsOut->assign((std::istreambuf_iterator<char>(stream)), std::istreambuf_iterator<char>());
 
-    strncpy(contentsOut, contents.c_str(), maxLen);
     return true;
 }
 

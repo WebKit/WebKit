@@ -518,8 +518,9 @@ angle::Result VertexArrayVk::syncState(const gl::Context *context,
     const std::vector<gl::VertexAttribute> &attribs = mState.getVertexAttributes();
     const std::vector<gl::VertexBinding> &bindings  = mState.getVertexBindings();
 
-    for (size_t dirtyBit : dirtyBits)
+    for (auto iter = dirtyBits.begin(), endIter = dirtyBits.end(); iter != endIter; ++iter)
     {
+        size_t dirtyBit = *iter;
         switch (dirtyBit)
         {
             case gl::VertexArray::DIRTY_BIT_ELEMENT_ARRAY_BUFFER:
@@ -558,12 +559,17 @@ angle::Result VertexArrayVk::syncState(const gl::Context *context,
 
                 ANGLE_VERTEX_INDEX_CASES(ANGLE_VERTEX_DIRTY_ATTRIB_FUNC)
 
+// Since BINDING already implies DATA and ATTRIB change, we remove these here to avoid redundant
+// processing.
 #define ANGLE_VERTEX_DIRTY_BINDING_FUNC(INDEX)                                          \
     case gl::VertexArray::DIRTY_BIT_BINDING_0 + INDEX:                                  \
         for (size_t attribIndex : bindings[INDEX].getBoundAttributesMask())             \
         {                                                                               \
             ANGLE_TRY(syncDirtyAttrib(contextVk, attribs[attribIndex], bindings[INDEX], \
                                       attribIndex, false));                             \
+            iter.resetLaterBit(gl::VertexArray::DIRTY_BIT_BUFFER_DATA_0 + attribIndex); \
+            iter.resetLaterBit(gl::VertexArray::DIRTY_BIT_ATTRIB_0 + attribIndex);      \
+            (*attribBits)[attribIndex].reset();                                         \
         }                                                                               \
         (*bindingBits)[INDEX].reset();                                                  \
         break;
@@ -574,6 +580,8 @@ angle::Result VertexArrayVk::syncState(const gl::Context *context,
     case gl::VertexArray::DIRTY_BIT_BUFFER_DATA_0 + INDEX:                               \
         ANGLE_TRY(syncDirtyAttrib(contextVk, attribs[INDEX],                             \
                                   bindings[attribs[INDEX].bindingIndex], INDEX, false)); \
+        iter.resetLaterBit(gl::VertexArray::DIRTY_BIT_ATTRIB_0 + INDEX);                 \
+        (*attribBits)[INDEX].reset();                                                    \
         break;
 
                 ANGLE_VERTEX_INDEX_CASES(ANGLE_VERTEX_DIRTY_BUFFER_DATA_FUNC)

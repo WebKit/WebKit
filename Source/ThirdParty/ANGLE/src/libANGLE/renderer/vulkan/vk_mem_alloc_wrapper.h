@@ -15,6 +15,7 @@
 VK_DEFINE_HANDLE(VmaAllocator)
 VK_DEFINE_HANDLE(VmaAllocation)
 VK_DEFINE_HANDLE(VmaPool)
+VK_DEFINE_NON_DISPATCHABLE_HANDLE(VmaVirtualAllocation)
 VK_DEFINE_HANDLE(VmaVirtualBlock)
 
 namespace vma
@@ -54,7 +55,9 @@ void DestroyAllocator(VmaAllocator allocator);
 
 VkResult CreatePool(VmaAllocator allocator,
                     uint32_t memoryTypeIndex,
+#if ANGLE_VMA_VERSION < 3000000
                     bool buddyAlgorithm,
+#endif  // ANGLE_VMA_VERSION < 3000000
                     VkDeviceSize blockSize,
                     VmaPool *pPool);
 void DestroyPool(VmaAllocator allocator, VmaPool pool);
@@ -106,10 +109,14 @@ void DestroyVirtualBlock(VmaVirtualBlock virtualBlock);
 VkResult VirtualAllocate(VmaVirtualBlock virtualBlock,
                          VkDeviceSize size,
                          VkDeviceSize alignment,
+                         VmaVirtualAllocation *pAllocation,
                          VkDeviceSize *pOffset);
-void VirtualFree(VmaVirtualBlock virtualBlock, VkDeviceSize offset);
+void VirtualFree(VmaVirtualBlock virtualBlock,
+                 VmaVirtualAllocation allocation,
+                 VkDeviceSize offset);
 VkBool32 IsVirtualBlockEmpty(VmaVirtualBlock virtualBlock);
 void GetVirtualAllocationInfo(VmaVirtualBlock virtualBlock,
+                              VmaVirtualAllocation allocation,
                               VkDeviceSize offset,
                               VkDeviceSize *sizeOut,
                               void **pUserDataOut);

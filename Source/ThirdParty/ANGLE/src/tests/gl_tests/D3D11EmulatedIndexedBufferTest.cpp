@@ -23,7 +23,7 @@ using namespace angle;
 namespace
 {
 
-class D3D11EmulatedIndexedBufferTest : public ANGLETest
+class D3D11EmulatedIndexedBufferTest : public ANGLETest<>
 {
   protected:
     void testSetUp() override
@@ -112,7 +112,7 @@ class D3D11EmulatedIndexedBufferTest : public ANGLETest
     {
         ID3D11Buffer *emulatedBuffer = nullptr;
         angle::Result error          = mSourceBuffer->getEmulatedIndexedBuffer(
-            mContext, srcData, mTranslatedAttribute, 0, &emulatedBuffer);
+                     mContext, srcData, mTranslatedAttribute, 0, &emulatedBuffer);
         ASSERT_EQ(angle::Result::Continue, error);
         ASSERT_TRUE(emulatedBuffer != nullptr);
         compareContents(emulatedBuffer);

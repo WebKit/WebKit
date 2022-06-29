@@ -23,7 +23,7 @@ namespace
 const EGLint contextAttribs[] = {EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE};
 }
 
-class EGLWaylandTest : public ANGLETest
+class EGLWaylandTest : public ANGLETest<>
 {
   public:
     std::vector<EGLint> getDisplayAttributes() const

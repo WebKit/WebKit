@@ -14,7 +14,7 @@ using namespace angle;
 namespace
 {
 
-class ObjectAllocationTest : public ANGLETest
+class ObjectAllocationTest : public ANGLETest<>
 {
   protected:
     ObjectAllocationTest() {}

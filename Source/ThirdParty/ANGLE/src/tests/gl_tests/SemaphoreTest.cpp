@@ -13,7 +13,7 @@
 namespace angle
 {
 
-class SemaphoreTest : public ANGLETest
+class SemaphoreTest : public ANGLETest<>
 {
   protected:
     SemaphoreTest()

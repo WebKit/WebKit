@@ -212,9 +212,28 @@ void ValidateAST::visitStructOrInterfaceBlockDeclaration(const TType &type,
 
     // Make sure the structure or interface block is not doubly defined.
     ImmutableString typeName("");
-    const TFieldListCollection *structOrBlock = getStructOrInterfaceBlock(type, &typeName);
+    const TFieldListCollection *namedStructOrBlock = getStructOrInterfaceBlock(type, &typeName);
 
-    if (structOrBlock)
+    // Recurse the fields of the structure or interface block and check members of structure type.
+    // This is done before visiting the struct itself, because if the fields refer to a struct with
+    // the same name, they would be referencing the struct declared in an outer scope.
+    {
+        // Note that structOrBlock was previously only set for named structures, so make sure
+        // nameless structs are also recursed.
+        const TFieldListCollection *structOrBlock = namedStructOrBlock;
+        if (structOrBlock == nullptr)
+        {
+            structOrBlock = type.getStruct();
+        }
+        ASSERT(structOrBlock != nullptr);
+
+        for (const TField *field : structOrBlock->fields())
+        {
+            visitStructUsage(*field->type(), field->line());
+        }
+    }
+
+    if (namedStructOrBlock)
     {
         ASSERT(!typeName.empty());
         // Structures are not allowed to be doubly defined
@@ -252,22 +271,8 @@ void ValidateAST::visitStructOrInterfaceBlockDeclaration(const TType &type,
         else
         {
             // First encounter.
-            mStructsAndBlocksByName.back()[typeName] = structOrBlock;
+            mStructsAndBlocksByName.back()[typeName] = namedStructOrBlock;
         }
-    }
-
-    // Recurse the fields of the structure or interface block and check members of structure type.
-    // Note that structOrBlock was previously only set for named structures, so make sure nameless
-    // structs are also recursed.
-    if (structOrBlock == nullptr)
-    {
-        structOrBlock = type.getStruct();
-    }
-    ASSERT(structOrBlock != nullptr);
-
-    for (const TField *field : structOrBlock->fields())
-    {
-        visitStructUsage(*field->type(), field->line());
     }
 }
 

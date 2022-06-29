@@ -18,7 +18,7 @@ namespace sh
 class TCompiler;
 class TIntermNode;
 
-ANGLE_NO_DISCARD bool BreakVariableAliasingInInnerLoops(TCompiler *compiler, TIntermNode *root);
+[[nodiscard]] bool BreakVariableAliasingInInnerLoops(TCompiler *compiler, TIntermNode *root);
 
 }  // namespace sh
 

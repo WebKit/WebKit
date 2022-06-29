@@ -15,10 +15,10 @@ namespace sh
 {
 
 // Adds explicit type casts into the AST where casting is done implicitly.
-ANGLE_NO_DISCARD bool AddExplicitTypeCasts(TCompiler &compiler,
-                                           TIntermBlock &root,
-                                           SymbolEnv &symbolEnv,
-                                           bool needsExplicitBoolCasts);
+[[nodiscard]] bool AddExplicitTypeCasts(TCompiler &compiler,
+                                        TIntermBlock &root,
+                                        SymbolEnv &symbolEnv,
+                                        bool needsExplicitBoolCasts);
 
 }  // namespace sh
 

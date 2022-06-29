@@ -42,18 +42,17 @@ class TranslatorMetal : public TranslatorVulkan
     TranslatorMetal(sh::GLenum type, ShShaderSpec spec);
 
   protected:
-    ANGLE_NO_DISCARD bool translate(TIntermBlock *root,
-                                    ShCompileOptions compileOptions,
-                                    PerformanceDiagnostics *perfDiagnostics) override;
+    [[nodiscard]] bool translate(TIntermBlock *root,
+                                 ShCompileOptions compileOptions,
+                                 PerformanceDiagnostics *perfDiagnostics) override;
 
-    ANGLE_NO_DISCARD bool transformDepthBeforeCorrection(
-        TIntermBlock *root,
-        const DriverUniform *driverUniforms) override;
+    [[nodiscard]] bool transformDepthBeforeCorrection(TIntermBlock *root,
+                                                      const DriverUniform *driverUniforms) override;
 
-    ANGLE_NO_DISCARD bool insertSampleMaskWritingLogic(TInfoSinkBase &sink,
-                                                       TIntermBlock *root,
-                                                       const DriverUniformMetal *driverUniforms);
-    ANGLE_NO_DISCARD bool insertRasterizerDiscardLogic(TInfoSinkBase &sink, TIntermBlock *root);
+    [[nodiscard]] bool insertSampleMaskWritingLogic(TInfoSinkBase &sink,
+                                                    TIntermBlock *root,
+                                                    const DriverUniformMetal *driverUniforms);
+    [[nodiscard]] bool insertRasterizerDiscardLogic(TInfoSinkBase &sink, TIntermBlock *root);
 };
 
 }  // namespace sh

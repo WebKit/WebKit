@@ -97,7 +97,7 @@ GLColor32F SliceFormatColor32F(GLenum format, GLColor32F full)
     }
 }
 
-class TexCoordDrawTest : public ANGLETest
+class TexCoordDrawTest : public ANGLETest<>
 {
   protected:
     TexCoordDrawTest() : ANGLETest(), mProgram(0), mFramebuffer(0), mFramebufferColorTexture(0)
@@ -471,7 +471,7 @@ class Texture2DTestES3RobustInit : public Texture2DTestES3
     Texture2DTestES3RobustInit() : Texture2DTestES3() { setRobustResourceInit(true); }
 };
 
-class Texture2DBaseMaxTestES3 : public ANGLETest
+class Texture2DBaseMaxTestES3 : public ANGLETest<>
 {
   protected:
     static constexpr size_t kMip0Size   = 13;
@@ -928,7 +928,7 @@ class TextureCubeTest : public TexCoordDrawTest
     GLint mTextureCubeUniformLocation;
 };
 
-class TextureCubeTestES3 : public ANGLETest
+class TextureCubeTestES3 : public ANGLETest<>
 {
   protected:
     TextureCubeTestES3() {}
@@ -1843,6 +1843,86 @@ class ETC1CompressedTextureTest : public Texture2DTest
     void testTearDown() override { Texture2DTest::testTearDown(); }
 };
 
+class Texture2DTestES31 : public Texture2DTest
+{
+  protected:
+    Texture2DTestES31() : Texture2DTest() {}
+
+    void TestSampleStencilFromDepthStencil(GLenum format, bool swizzle);
+};
+
+void Texture2DTestES31::TestSampleStencilFromDepthStencil(GLenum format, bool swizzle)
+{
+    constexpr GLsizei kSize = 4;
+
+    // Set up a color texture.
+    GLTexture colorTexture;
+    glBindTexture(GL_TEXTURE_2D, colorTexture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kSize, kSize);
+    ASSERT_GL_NO_ERROR();
+
+    // Set up a depth/stencil texture to be sampled as stencil.
+    GLTexture depthStencilTexture;
+    glBindTexture(GL_TEXTURE_2D, depthStencilTexture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, format, kSize, kSize);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_STENCIL_TEXTURE_MODE, GL_STENCIL_INDEX);
+    if (swizzle)
+    {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_R, GL_ALPHA);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_G, GL_BLUE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_B, GL_GREEN);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_A, GL_RED);
+    }
+    ASSERT_GL_NO_ERROR();
+
+    constexpr char kFS[] =
+        R"(#version 300 es
+precision mediump float;
+uniform highp usampler2D stencilTex;
+out vec4 color;
+void main()
+{
+    color = vec4(texelFetch(stencilTex, ivec2(0, 0), 0)) / 255.0f;
+})";
+
+    // Clear stencil to 42.
+    GLFramebuffer clearFBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, clearFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D,
+                           depthStencilTexture, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    glClearDepthf(0.42f);
+    glClearStencil(42);
+    glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    ASSERT_GL_NO_ERROR();
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, depthStencilTexture);
+    EXPECT_GL_ERROR(GL_NO_ERROR);
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    GLint stencilTexLocation = glGetUniformLocation(program, "stencilTex");
+    ASSERT_NE(-1, stencilTexLocation);
+    ASSERT_GL_NO_ERROR();
+
+    glUseProgram(program);
+    glUniform1i(stencilTexLocation, 0);
+
+    GLFramebuffer drawFBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, drawFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTexture, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ASSERT_GL_NO_ERROR();
+
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.95f);
+    ASSERT_GL_NO_ERROR();
+
+    GLColor expected = swizzle ? GLColor(1, 0, 0, 42) : GLColor(42, 0, 0, 1);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, expected);
+}
+
 TEST_P(Texture2DTest, NegativeAPISubImage)
 {
     glBindTexture(GL_TEXTURE_2D, mTexture2D);
@@ -1911,6 +1991,157 @@ TEST_P(Texture2DTest, ZeroSizedUploads)
 
     glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixel);
     EXPECT_GL_NO_ERROR();
+}
+
+// Test that interleaved superseded updates work as expected
+TEST_P(Texture2DTest, InterleavedSupersedingTextureUpdates)
+{
+    constexpr uint32_t kTexWidth  = 3840;
+    constexpr uint32_t kTexHeight = 2160;
+    constexpr uint32_t kBpp       = 4;
+
+    // Create the texture
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, mTexture2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kTexWidth, kTexHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 nullptr);
+    EXPECT_GL_ERROR(GL_NO_ERROR);
+
+    // 1. One big upload followed by many small identical uploads
+    // Update the entire texture
+    std::vector<GLubyte> fullTextureData(kTexWidth * kTexHeight * kBpp, 128);
+    constexpr GLColor kFullTextureColor = GLColor(128u, 128u, 128u, 128u);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kTexWidth, kTexHeight, GL_RGBA, GL_UNSIGNED_BYTE,
+                    fullTextureData.data());
+
+    // Make a number of identical updates to the right half of the texture
+    std::vector<GLubyte> rightHalfData(kTexWidth * kTexHeight * kBpp, 201);
+    constexpr GLColor kRightHalfColor = GLColor(201u, 201u, 201u, 201u);
+    for (uint32_t iteration = 0; iteration < 10; iteration++)
+    {
+        glTexSubImage2D(GL_TEXTURE_2D, 0, kTexWidth / 2, 0, kTexWidth / 2, kTexHeight, GL_RGBA,
+                        GL_UNSIGNED_BYTE, rightHalfData.data());
+    }
+
+    setUpProgram();
+    glUseProgram(mProgram);
+    glUniform1i(mTexture2DUniformLocation, 0);
+    drawQuad(mProgram, "position", 0.5f);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(1 * getWindowWidth() / 4, getWindowHeight() / 2, kFullTextureColor);
+    EXPECT_PIXEL_COLOR_EQ(3 * getWindowWidth() / 4, getWindowHeight() / 2, kRightHalfColor);
+
+    // 2. Some small uploads followed by one big upload followed by many identical uploads
+    // Clear the entire texture
+    std::vector<GLubyte> zeroTextureData(kTexWidth * kTexHeight * kBpp, 255);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kTexWidth, kTexHeight, GL_RGBA, GL_UNSIGNED_BYTE,
+                    zeroTextureData.data());
+
+    // Update the top left quadrant of the texture
+    std::vector<GLubyte> topLeftQuadrantData(kTexWidth * kTexHeight * kBpp, 128);
+    constexpr GLColor kTopLeftQuandrantTextureColor = GLColor(128u, 128u, 128u, 128u);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, kTexHeight / 2, kTexWidth / 2, kTexHeight / 2, GL_RGBA,
+                    GL_UNSIGNED_BYTE, topLeftQuadrantData.data());
+
+    // Update the top right quadrant of the texture
+    std::vector<GLubyte> topRightQuadrantData(kTexWidth * kTexHeight * kBpp, 156);
+    constexpr GLColor kTopRightQuadrantTextureColor = GLColor(156u, 156u, 156u, 156u);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, kTexWidth / 2, kTexHeight / 2, kTexWidth / 2, kTexHeight / 2,
+                    GL_RGBA, GL_UNSIGNED_BYTE, topRightQuadrantData.data());
+
+    // Update the bottom half of the texture
+    std::vector<GLubyte> bottomHalfTextureData(kTexWidth * kTexHeight * kBpp, 187);
+    constexpr GLColor kBottomHalfTextureColor = GLColor(187u, 187u, 187u, 187u);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kTexWidth, kTexHeight / 2, GL_RGBA, GL_UNSIGNED_BYTE,
+                    bottomHalfTextureData.data());
+
+    // Make a number of identical updates to the bottom right quadrant of the texture
+    std::vector<GLubyte> bottomRightQuadrantData(kTexWidth * kTexHeight * kBpp, 201);
+    constexpr GLColor kBottomRightQuadrantColor = GLColor(201u, 201u, 201u, 201u);
+    for (uint32_t iteration = 0; iteration < 10; iteration++)
+    {
+        glTexSubImage2D(GL_TEXTURE_2D, 0, kTexWidth / 2, 0, kTexWidth / 2, kTexHeight / 2, GL_RGBA,
+                        GL_UNSIGNED_BYTE, bottomRightQuadrantData.data());
+    }
+
+    setUpProgram();
+    glUseProgram(mProgram);
+    glUniform1i(mTexture2DUniformLocation, 0);
+    drawQuad(mProgram, "position", 0.5f);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, getWindowHeight() - 1, kTopLeftQuandrantTextureColor);
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() - 1, getWindowHeight() - 1,
+                          kTopRightQuadrantTextureColor);
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 4, getWindowHeight() / 4, kBottomHalfTextureColor);
+    EXPECT_PIXEL_COLOR_EQ(3 * getWindowWidth() / 4, getWindowHeight() / 4,
+                          kBottomRightQuadrantColor);
+
+    // 3. Many small uploads folloed by one big upload
+    // Clear the entire texture
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kTexWidth, kTexHeight, GL_RGBA, GL_UNSIGNED_BYTE,
+                    zeroTextureData.data());
+
+    // Make a number of small updates to different parts of the texture
+    std::vector<std::pair<GLint, GLint>> xyOffsets = {
+        {1, 4}, {128, 34}, {1208, 1090}, {2560, 2022}};
+    constexpr GLColor kRandomColor = GLColor(55u, 128u, 201u, 255u);
+    for (const std::pair<GLint, GLint> &xyOffset : xyOffsets)
+    {
+        glTexSubImage2D(GL_TEXTURE_2D, 0, xyOffset.first, xyOffset.second, 1, 1, GL_RGBA,
+                        GL_UNSIGNED_BYTE, kRandomColor.data());
+    }
+
+    // Update the entire texture
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kTexWidth, kTexHeight, GL_RGBA, GL_UNSIGNED_BYTE,
+                    fullTextureData.data());
+
+    setUpProgram();
+    glUseProgram(mProgram);
+    glUniform1i(mTexture2DUniformLocation, 0);
+    drawQuad(mProgram, "position", 0.5f);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth() - 1, getWindowHeight() - 1, kFullTextureColor);
+}
+
+// Test that repeated calls to glTexSubImage2D with superseding updates works
+TEST_P(Texture2DTest, ManySupersedingTextureUpdates)
+{
+    constexpr uint32_t kTexWidth  = 3840;
+    constexpr uint32_t kTexHeight = 2160;
+    constexpr uint32_t kBpp       = 4;
+    std::vector<GLubyte> data(kTexWidth * kTexHeight * kBpp, 0);
+
+    // Create the texture
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, mTexture2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kTexWidth, kTexHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 nullptr);
+    EXPECT_GL_ERROR(GL_NO_ERROR);
+
+    // Make a large number of superseding updates
+    for (uint32_t width = kTexWidth / 2, height = kTexHeight / 2;
+         width < kTexWidth && height < kTexHeight; width++, height++)
+    {
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE,
+                        data.data());
+    }
+
+    // Upload different color to the whole texture thus superseding all prior updates.
+    std::vector<GLubyte> supersedingData(kTexWidth * kTexHeight * kBpp, 128);
+    constexpr GLColor kGray = GLColor(128u, 128u, 128u, 128u);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kTexWidth, kTexHeight, GL_RGBA, GL_UNSIGNED_BYTE,
+                    supersedingData.data());
+
+    setUpProgram();
+    glUseProgram(mProgram);
+    glUniform1i(mTexture2DUniformLocation, 0);
+    drawQuad(mProgram, "position", 0.5f);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, kGray);
 }
 
 TEST_P(Texture2DTest, DefineMultipleLevelsWithoutMipmapping)
@@ -2853,6 +3084,20 @@ TEST_P(Texture2DTestES3, TexImageWithDepthPBO)
     ASSERT_GL_NO_ERROR();
 
     EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, GLColor::red);
+}
+
+// Test that sampling stencil from a DEPTH24_STENCIL8 texture works.
+TEST_P(Texture2DTestES31, TexSampleStencilFromDepth24Stencil8)
+{
+    TestSampleStencilFromDepthStencil(GL_DEPTH24_STENCIL8, false);
+    TestSampleStencilFromDepthStencil(GL_DEPTH24_STENCIL8, true);
+}
+
+// Test that sampling stencil from a DEPTH32F_STENCIL8 texture works.
+TEST_P(Texture2DTestES31, TexSampleStencilFromDepth32fStencil8)
+{
+    TestSampleStencilFromDepthStencil(GL_DEPTH32F_STENCIL8, false);
+    TestSampleStencilFromDepthStencil(GL_DEPTH32F_STENCIL8, true);
 }
 
 // Test that glTexSubImage2D combined with a PBO works properly when glTexStorage2D has
@@ -6920,7 +7165,7 @@ TEST_P(TextureBorderClampIntegerTestES3, TextureBorderClampIntegerUnsigned2)
 
 // ~GL_OES_texture_border_clamp
 
-class TextureLimitsTest : public ANGLETest
+class TextureLimitsTest : public ANGLETest<>
 {
   protected:
     struct RGBA8
@@ -9918,6 +10163,87 @@ TEST_P(PBOCompressedTextureTest, PBOCompressedSubImageWithUnpackRowLength)
     runCompressedSubImage();
 }
 
+class PBOCompressedTexture3DTest : public ANGLETest<>
+{
+  protected:
+    PBOCompressedTexture3DTest() {}
+};
+
+// Test that uses glCompressedTexSubImage3D combined with a PBO
+TEST_P(PBOCompressedTexture3DTest, 2DArray)
+{
+    // We use GetTexImage to determine if the internal texture format is emulated
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ANGLE_get_image"));
+
+    const GLuint width  = 4u;
+    const GLuint height = 4u;
+    const GLuint depth  = 1u;
+
+    setWindowWidth(width);
+    setWindowHeight(height);
+
+    // Setup primary texture as a 2DArray holding ETC2 data
+    GLTexture texture2DArray;
+    glBindTexture(GL_TEXTURE_2D_ARRAY, texture2DArray);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_COMPRESSED_RGB8_ETC2, width, height, depth);
+
+    // If the format emulated, we can't transfer it from a PBO
+    ANGLE_SKIP_TEST_IF(IsFormatEmulated(GL_TEXTURE_2D_ARRAY));
+
+    // Set up a VS that simply passes through position and texcord
+    const char kVS[] = R"(#version 300 es
+in vec4 position;
+out vec3 texCoord;
+
+void main()
+{
+    gl_Position = vec4(position.xy, 0.0, 1.0);
+    texCoord = vec3(position.xy * 0.5 + vec2(0.5), 0.0);
+})";
+
+    // and FS that pulls from the 2DArray, writing out color
+    const char kFS[] = R"(#version 300 es
+precision mediump float;
+uniform highp sampler2DArray tex2DArray;
+in vec3 texCoord;
+out vec4 fragColor;
+
+void main()
+{
+    fragColor = texture(tex2DArray, texCoord);
+})";
+
+    // Compile the shaders and create the program
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    ASSERT_GL_NO_ERROR();
+
+    // Setup PBO and fill it with a red
+    GLBuffer pbo;
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pbo);
+    glBufferData(GL_PIXEL_UNPACK_BUFFER, width * height * depth / 2u, kCompressedImageETC2,
+                 GL_STATIC_DRAW);
+    ASSERT_GL_NO_ERROR();
+
+    // Write PBO to texture2DArray
+    glCompressedTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, 0, width, height, depth,
+                              GL_COMPRESSED_RGB8_ETC2, width * height * depth / 2u, nullptr);
+
+    ASSERT_GL_NO_ERROR();
+
+    // Draw using PBO updated texture
+    glUseProgram(program);
+    glUniform1i(glGetUniformLocation(program, "tex2DArray"), 0);
+    glBindTexture(GL_TEXTURE_2D_ARRAY, texture2DArray);
+    drawQuad(program, "position", 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    // Verify the texture now contains data from the PBO
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2, getWindowHeight() / 2, GLColor::red);
+    ASSERT_GL_NO_ERROR();
+}
+
 // Test using ETC1_RGB8 with subimage updates
 TEST_P(ETC1CompressedTextureTest, ETC1CompressedSubImage)
 {
@@ -10161,7 +10487,7 @@ TEST_P(ETC1CompressedTextureTest, ETC1ShrinkThenGrowMaxLevels)
     ASSERT_GL_NO_ERROR();
 }
 
-class TextureBufferTestES31 : public ANGLETest
+class TextureBufferTestES31 : public ANGLETest<>
 {
   protected:
     TextureBufferTestES31() {}
@@ -10385,7 +10711,7 @@ TEST_P(TextureBufferTestES31, TestErrorWhenNotEnabled)
     ASSERT_GL_ERROR(GL_INVALID_ENUM);
 }
 
-class CopyImageTestES31 : public ANGLETest
+class CopyImageTestES31 : public ANGLETest<>
 {
   protected:
     CopyImageTestES31() {}
@@ -10458,7 +10784,7 @@ void main()
     glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 }
 
-class TextureChangeStorageUploadTest : public ANGLETest
+class TextureChangeStorageUploadTest : public ANGLETest<>
 {
   protected:
     TextureChangeStorageUploadTest()
@@ -10523,7 +10849,7 @@ TEST_P(TextureChangeStorageUploadTest, Basic)
     EXPECT_GL_NO_ERROR();
 }
 
-class ExtraSamplerCubeShadowUseTest : public ANGLETest
+class ExtraSamplerCubeShadowUseTest : public ANGLETest<>
 {
   protected:
     ExtraSamplerCubeShadowUseTest() : ANGLETest() {}
@@ -10675,6 +11001,7 @@ ANGLE_INSTANTIATE_TEST_ES3(Texture3DIntegerTestES3);
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(Texture2DDepthTest);
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(PBOCompressedTextureTest);
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(ETC1CompressedTextureTest);
+ANGLE_INSTANTIATE_TEST_ES3(PBOCompressedTexture3DTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(TextureBufferTestES31);
 ANGLE_INSTANTIATE_TEST_ES31(TextureBufferTestES31);
@@ -10685,5 +11012,7 @@ ANGLE_INSTANTIATE_TEST_ES31(CopyImageTestES31);
 ANGLE_INSTANTIATE_TEST_ES3(TextureChangeStorageUploadTest);
 
 ANGLE_INSTANTIATE_TEST_ES3(ExtraSamplerCubeShadowUseTest);
+
+ANGLE_INSTANTIATE_TEST_ES31(Texture2DTestES31);
 
 }  // anonymous namespace

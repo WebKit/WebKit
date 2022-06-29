@@ -18,9 +18,9 @@ class TCompiler;
 class TIntermBlock;
 class TSymbolTable;
 
-ANGLE_NO_DISCARD bool EmulateFragColorData(TCompiler *compiler,
-                                           TIntermBlock *root,
-                                           TSymbolTable *symbolTable);
+[[nodiscard]] bool EmulateFragColorData(TCompiler *compiler,
+                                        TIntermBlock *root,
+                                        TSymbolTable *symbolTable);
 }  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_TREEOPS_VULKAN_EMULATEFRAGCOLORDATA_H_

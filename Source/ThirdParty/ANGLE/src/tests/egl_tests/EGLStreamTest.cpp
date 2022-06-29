@@ -45,7 +45,7 @@ bool CheckP010TextureSupport(ID3D11Device *device)
     return CheckTextureSupport(device, DXGI_FORMAT_P010);
 }
 
-class EGLStreamTest : public ANGLETest
+class EGLStreamTest : public ANGLETest<>
 {
   protected:
     EGLStreamTest()
@@ -378,7 +378,7 @@ TEST_P(EGLStreamTest, StreamConsumerGLTextureYUVDeletionTest)
     ASSERT_EGL_SUCCESS();
 }
 
-class D3D11TextureStreamSamplingTest : public ANGLETest
+class D3D11TextureStreamSamplingTest : public ANGLETest<>
 {
   protected:
     void testSetUp() override

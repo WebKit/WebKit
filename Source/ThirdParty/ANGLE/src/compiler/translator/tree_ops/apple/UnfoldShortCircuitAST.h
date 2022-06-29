@@ -19,9 +19,9 @@ class TCompiler;
 class TIntermBlock;
 
 #if defined(ANGLE_ENABLE_GLSL) && defined(ANGLE_ENABLE_APPLE_WORKAROUNDS)
-ANGLE_NO_DISCARD bool UnfoldShortCircuitAST(TCompiler *compiler, TIntermBlock *root);
+[[nodiscard]] bool UnfoldShortCircuitAST(TCompiler *compiler, TIntermBlock *root);
 #else
-ANGLE_NO_DISCARD ANGLE_INLINE bool UnfoldShortCircuitAST(TCompiler *compiler, TIntermBlock *root)
+[[nodiscard]] ANGLE_INLINE bool UnfoldShortCircuitAST(TCompiler *compiler, TIntermBlock *root)
 {
     UNREACHABLE();
     return false;

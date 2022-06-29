@@ -955,12 +955,6 @@ enum class BufferAccess
     Write,
 };
 
-enum class AliasingMode
-{
-    Allowed,
-    Disallowed,
-};
-
 // Stores clear value In packed attachment index
 class PackedClearValuesArray final
 {
@@ -1086,12 +1080,11 @@ class CommandBufferHelperCommon : angle::NonCopyable
     void bufferWrite(ContextVk *contextVk,
                      VkAccessFlags writeAccessType,
                      PipelineStage writeStage,
-                     AliasingMode aliasingMode,
                      BufferHelper *buffer);
 
     bool usesBuffer(const BufferHelper &buffer) const;
     bool usesBufferForWrite(const BufferHelper &buffer) const;
-    size_t getUsedBuffersCount() const { return mUsedBuffers.size(); }
+    size_t getUsedBuffersCount() const { return mUsedBufferCount; }
 
     void executeBarriers(const angle::FeaturesVk &features, PrimaryCommandBuffer *primary);
 
@@ -1108,12 +1101,15 @@ class CommandBufferHelperCommon : angle::NonCopyable
 
     bool hasGLMemoryBarrierIssued() const { return mHasGLMemoryBarrierIssued; }
 
-    ResourceUseList &&releaseResourceUseList() { return std::move(mResourceUseList); }
+    ResourceUseList &&releaseResourceUseList();
 
     void retainResource(Resource *resource);
 
     void retainReadOnlyResource(ReadWriteResource *readWriteResource);
     void retainReadWriteResource(ReadWriteResource *readWriteResource);
+
+    void assignID(CommandBufferID id) { mID = id; }
+    CommandBufferID releaseID();
 
     // Dumping the command stream is disabled by default.
     static constexpr bool kEnableCommandStreamDiagnostics = false;
@@ -1137,7 +1133,6 @@ class CommandBufferHelperCommon : angle::NonCopyable
                         uint32_t layerCount,
                         VkImageAspectFlags aspectFlags,
                         ImageLayout imageLayout,
-                        AliasingMode aliasingMode,
                         ImageHelper *image);
 
     void updateImageLayoutAndBarrier(Context *context,
@@ -1146,6 +1141,9 @@ class CommandBufferHelperCommon : angle::NonCopyable
                                      ImageLayout imageLayout);
 
     void addCommandDiagnosticsCommon(std::ostringstream *out);
+
+    // Identifies the command buffer.
+    CommandBufferID mID;
 
     // Allocator used by this class. Using a pool allocator per CBH to avoid threading issues
     //  that occur w/ shared allocator between multiple CBHs.
@@ -1169,10 +1167,8 @@ class CommandBufferHelperCommon : angle::NonCopyable
     bool mHasGLMemoryBarrierIssued;
 
     // Tracks resources used in the command buffer.
-    // For Buffers, we track the read/write access type so we can enable simultaneous reads.
-    static constexpr uint32_t kFlatMapSize = 16;
-    angle::FlatUnorderedMap<BufferSerial, BufferAccess, kFlatMapSize> mUsedBuffers;
     vk::ResourceUseList mResourceUseList;
+    uint32_t mUsedBufferCount;
 };
 
 class OutsideRenderPassCommandBufferHelper final : public CommandBufferHelperCommon
@@ -1204,7 +1200,6 @@ class OutsideRenderPassCommandBufferHelper final : public CommandBufferHelperCom
                     uint32_t layerCount,
                     VkImageAspectFlags aspectFlags,
                     ImageLayout imageLayout,
-                    AliasingMode aliasingMode,
                     ImageHelper *image);
 
     angle::Result flushToPrimary(Context *context, PrimaryCommandBuffer *primary);
@@ -1254,7 +1249,6 @@ class RenderPassCommandBufferHelper final : public CommandBufferHelperCommon
                     uint32_t layerCount,
                     VkImageAspectFlags aspectFlags,
                     ImageLayout imageLayout,
-                    AliasingMode aliasingMode,
                     ImageHelper *image);
 
     void colorImagesDraw(gl::LevelIndex level,
@@ -1404,6 +1398,8 @@ class RenderPassCommandBufferHelper final : public CommandBufferHelperCommon
                                               PackedAttachmentIndex packedAttachmentIndex);
     void finalizeDepthStencilImageLayoutAndLoadStore(Context *context);
 
+    void retainImage(ImageHelper *imageHelper);
+
     // When using Vulkan secondary command buffers, each subpass must be recorded in a separate
     // command buffer.  Currently ANGLE produces render passes with at most 2 subpasses.  Once
     // framebuffer-fetch is appropriately implemented to use subpasses, this array must be made
@@ -1434,13 +1430,9 @@ class RenderPassCommandBufferHelper final : public CommandBufferHelperCommon
     // Keep track of the depth/stencil attachment index
     PackedAttachmentIndex mDepthStencilAttachmentIndex;
 
-    // Tracks resources used in the command buffer.
-    // Images have unique layouts unlike buffers therefore we can't support simultaneous reads with
-    // different layout.
-    angle::FlatUnorderedSet<ImageSerial, kFlatMapSize> mRenderPassUsedImages;
-
     // This can be used to track implicit image layout transition.
     // Tracks the read images involved with barrier.
+    static constexpr uint32_t kFlatMapSize = 16;
     angle::FlatUnorderedSet<ImageSerial, kFlatMapSize> mRenderPassImagesWithLayoutTransition;
 
     // Array size of mColorAttachments
@@ -1473,9 +1465,12 @@ class CommandBufferRecycler
 
     angle::Result getCommandBufferHelper(Context *context,
                                          CommandPool *commandPool,
+                                         CommandBufferHandleAllocator *freeCommandBuffers,
                                          CommandBufferHelperT **commandBufferHelperOut);
 
-    void recycleCommandBufferHelper(VkDevice device, CommandBufferHelperT **commandBuffer);
+    void recycleCommandBufferHelper(VkDevice device,
+                                    CommandBufferHandleAllocator *freeCommandBuffers,
+                                    CommandBufferHelperT **commandBuffer);
 
     void resetCommandBuffer(CommandBufferT &&commandBuffer);
 
@@ -2378,6 +2373,16 @@ class ImageHelper final : public Resource, public angle::Subject
 
     void appendSubresourceUpdate(gl::LevelIndex level, SubresourceUpdate &&update);
     void prependSubresourceUpdate(gl::LevelIndex level, SubresourceUpdate &&update);
+
+    enum class PruneReason
+    {
+        MemoryOptimization,
+        MinimizeWorkBeforeFlush
+    };
+    void pruneSupersededUpdatesForLevel(ContextVk *contextVk,
+                                        const gl::LevelIndex level,
+                                        const PruneReason reason);
+
     // Whether there are any updates in [start, end).
     bool hasStagedUpdatesInLevels(gl::LevelIndex levelStart, gl::LevelIndex levelEnd) const;
 
@@ -2474,6 +2479,7 @@ class ImageHelper final : public Resource, public angle::Subject
     uint32_t mLevelCount;
 
     std::vector<std::vector<SubresourceUpdate>> mSubresourceUpdates;
+    VkDeviceSize mTotalStagedBufferUpdateSize;
 
     // Optimization for repeated clear with the same value. If this pointer is not null, the entire
     // image it has been cleared to the specified clear value. If another clear call is made with
@@ -2490,7 +2496,7 @@ class ImageHelper final : public Resource, public angle::Subject
 
 ANGLE_INLINE bool RenderPassCommandBufferHelper::usesImage(const ImageHelper &image) const
 {
-    return mRenderPassUsedImages.contains(image.getImageSerial());
+    return image.usedByCommandBuffer(mID);
 }
 
 ANGLE_INLINE bool RenderPassCommandBufferHelper::isImageWithLayoutTransition(
@@ -2838,6 +2844,7 @@ class FramebufferHelper : public Resource
     FramebufferHelper &operator=(FramebufferHelper &&other);
 
     angle::Result init(ContextVk *contextVk, const VkFramebufferCreateInfo &createInfo);
+    void destroy(RendererVk *rendererVk);
     void release(ContextVk *contextVk);
 
     bool valid() { return mFramebuffer.valid(); }
@@ -2878,8 +2885,9 @@ class ShaderProgramHelper : angle::NonCopyable
     ANGLE_INLINE angle::Result getGraphicsPipeline(
         ContextVk *contextVk,
         RenderPassCache *renderPassCache,
-        const PipelineCache &pipelineCache,
+        PipelineCacheAccess *pipelineCache,
         const PipelineLayout &pipelineLayout,
+        PipelineSource source,
         const GraphicsPipelineDesc &pipelineDesc,
         const gl::AttributesMask &activeAttribLocationsMask,
         const gl::ComponentTypeMask &programAttribsTypeMask,
@@ -2895,18 +2903,19 @@ class ShaderProgramHelper : angle::NonCopyable
         return mGraphicsPipelines.getPipeline(
             contextVk, pipelineCache, *compatibleRenderPass, pipelineLayout,
             activeAttribLocationsMask, programAttribsTypeMask, missingOutputsMask, mShaders,
-            mSpecializationConstants, pipelineDesc, descPtrOut, pipelineOut);
+            mSpecializationConstants, source, pipelineDesc, descPtrOut, pipelineOut);
     }
 
     angle::Result getComputePipeline(Context *context,
+                                     PipelineCacheAccess *pipelineCache,
                                      const PipelineLayout &pipelineLayout,
+                                     PipelineSource source,
                                      PipelineHelper **pipelineOut);
 
   private:
     ShaderAndSerialMap mShaders;
     GraphicsPipelineCache mGraphicsPipelines;
 
-    // We should probably use PipelineHelper here so we can remove PipelineAndSerial.
     PipelineHelper mComputePipeline;
 
     // Specialization constants, currently only used by the graphics queue.

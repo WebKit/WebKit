@@ -161,13 +161,52 @@ class OverlayWidget:
         self.negative_alignment = [False, False]
 
 
+def get_relative_coord_widget(coord, widgets_so_far):
+    if not isinstance(coord, str):
+        return None
+
+    coord_split = coord.split('.')
+    widget = widgets_so_far[coord_split[0]]
+    if len(coord_split) > 3:
+        widget = widget.description
+
+    return widget
+
+
+def parse_relative_coord(coord):
+
+    # The input coordinate (widget.coord[axis]) is either:
+    #
+    # - a number
+    # - other_widget.edge.mode:
+    #   * edge is in {left, right} or {top, bottom} based on axis
+    #   * mode is in {align, adjacent}
+    # - other_widget.desc.edge.mode: this is similar to other_widget.edge.mode, except
+    #                                it refers to a graph widget's description widget
+    #
+    # This function parses the last two possibilities.
+    if not isinstance(coord, str):
+        return None, None, None
+
+    coord_split = coord.split('.')
+    coords_expr = 'mState.mOverlayWidgets[WidgetId::' + coord_split[0] + ']'
+    if len(coord_split) > 3:
+        assert len(coord_split) == 4 and coord_split[1] == 'desc'
+        coords_expr += '->getDescriptionWidget()'
+    coords_expr += '->coords'
+
+    edge = coord_split[-2]
+    mode = coord_split[-1]
+
+    return coords_expr, edge, mode
+
+
 def is_negative_coord(coords, axis, widgets_so_far):
 
-    if isinstance(coords[axis], str):
-        coord_split = coords[axis].split('.')
-        # The coordinate is in the form other_widget.edge.mode
+    other_widget = get_relative_coord_widget(coords[axis], widgets_so_far)
+    if other_widget is not None:
         # We simply need to know if other_widget's coordinate is negative or not.
-        return widgets_so_far[coord_split[0]].negative_alignment[axis]
+        return other_widget.negative_alignment[axis]
 
     return coords[axis] < 0
 
@@ -189,28 +228,29 @@ def get_offset_helper(widget, axis, smaller_coord_side):
     #
     # The input coordinate (widget.coord[axis]) is either:
     #
-    # - a number: in this case, the offset is that number, and its sign determines whether this refers to the left or right edge of the bounding box.
-    # - other_widget.edge.mode: this has multiple possibilities:
-    #   * edge=left, mode=align: the offset is other_widget.left, the edge is left.
-    #   * edge=left, mode=adjacent: the offset is other_widget.left, the edge is right.
-    #   * edge=right, mode=align: the offset is other_widget.right, the edge is right.
-    #   * edge=right, mode=adjacent: the offset is other_widget.right, the edge is left.
+    # - a number: in this case, the offset is that number, and its sign
+    #             determines whether this refers to the left or right edge of
+    #             the bounding box.
+    # - other_widget[.desc].edge.mode: this has multiple possibilities:
+    #   * edge=left, mode=align: the offset is other_widget[.desc].left, the edge is left.
+    #   * edge=left, mode=adjacent: the offset is other_widget[.desc].left, the edge is right.
+    #   * edge=right, mode=align: the offset is other_widget[.desc].right, the edge is right.
+    #   * edge=right, mode=adjacent: the offset is other_widget[.desc].right, the edge is left.
     #
     # The case for the Y axis is similar, with the edge values being top or bottom.
 
     coord = widget.coords[axis]
-    if not isinstance(coord, str):
+
+    other_coords_expr, relative_edge, relative_mode = parse_relative_coord(coord)
+    if other_coords_expr is None:
         is_left = coord >= 0
         return coord, is_left
 
-    coord_split = coord.split('.')
+    is_left = relative_edge == smaller_coord_side
+    is_align = relative_mode == 'align'
 
-    is_left = coord_split[1] == smaller_coord_side
-    is_align = coord_split[2] == 'align'
-
-    other_widget_coords = 'mState.mOverlayWidgets[WidgetId::' + coord_split[0] + ']->coords'
     other_widget_coord_index = axis + (0 if is_left else 2)
-    offset = other_widget_coords + '[' + str(other_widget_coord_index) + ']'
+    offset = other_coords_expr + '[' + str(other_widget_coord_index) + ']'
 
     return offset, is_left == is_align
 

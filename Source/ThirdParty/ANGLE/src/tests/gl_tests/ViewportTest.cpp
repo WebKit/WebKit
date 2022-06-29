@@ -12,7 +12,7 @@ using namespace angle;
 namespace
 {
 
-class ViewportTest : public ANGLETest
+class ViewportTest : public ANGLETest<>
 {
   protected:
     ViewportTest()

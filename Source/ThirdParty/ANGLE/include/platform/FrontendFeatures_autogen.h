@@ -86,6 +86,11 @@ struct FrontendFeatures : FeatureSetBase
         "enableProgramBinaryForCapture", FeatureCategory::FrontendFeatures,
         "Even if FrameCapture is enabled, enable GL_OES_get_program_binary", &members,
         "http://anglebug.com/5658"};
+
+    FeatureInfo forceGlErrorChecking = {
+        "forceGlErrorChecking", FeatureCategory::FrontendFeatures,
+        "Force GL error checking (i.e. prevent applications from disabling error checking",
+        &members, "https://issuetracker.google.com/220069903"};
 };
 
 inline FrontendFeatures::FrontendFeatures()  = default;

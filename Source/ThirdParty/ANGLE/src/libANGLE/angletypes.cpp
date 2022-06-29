@@ -839,6 +839,11 @@ void ExtendRectangle(const Rectangle &source, const Rectangle &extend, Rectangle
     extended->height = y1 - y0;
 }
 
+bool Box::valid() const
+{
+    return width != 0 && height != 0 && depth != 0;
+}
+
 bool Box::operator==(const Box &other) const
 {
     return (x == other.x && y == other.y && z == other.z && width == other.width &&
@@ -860,6 +865,12 @@ bool Box::coversSameExtent(const Extents &size) const
 {
     return x == 0 && y == 0 && z == 0 && width == size.width && height == size.height &&
            depth == size.depth;
+}
+
+bool Box::contains(const Box &other) const
+{
+    return x <= other.x && y <= other.y && z <= other.z && x + width >= other.x + other.width &&
+           y + height >= other.y + other.height && z + depth >= other.z + other.depth;
 }
 
 bool operator==(const Offset &a, const Offset &b)

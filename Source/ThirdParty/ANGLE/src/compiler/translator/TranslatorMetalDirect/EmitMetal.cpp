@@ -555,6 +555,22 @@ static const char *GetOperatorString(TOperator op,
         case TOperator::EOpIntBitsToFloat:
         case TOperator::EOpUintBitsToFloat:
         {
+#define RETURN_AS_TYPE_SCALAR()             \
+    do                                      \
+        switch (resultType.getBasicType())  \
+        {                                   \
+            case TBasicType::EbtInt:        \
+                return "as_type<int>";      \
+            case TBasicType::EbtUInt:       \
+                return "as_type<uint32_t>"; \
+            case TBasicType::EbtFloat:      \
+                return "as_type<float>";    \
+            default:                        \
+                UNIMPLEMENTED();            \
+                return "TOperator_TODO";    \
+        }                                   \
+    while (false)
+
 #define RETURN_AS_TYPE(post)                     \
     do                                           \
         switch (resultType.getBasicType())       \
@@ -573,7 +589,7 @@ static const char *GetOperatorString(TOperator op,
 
             if (resultType.isScalar())
             {
-                RETURN_AS_TYPE("");
+                RETURN_AS_TYPE_SCALAR();
             }
             else if (resultType.isVector())
             {
@@ -597,6 +613,7 @@ static const char *GetOperatorString(TOperator op,
             }
 
 #undef RETURN_AS_TYPE
+#undef RETURN_AS_TYPE_SCALAR
         }
 
         case TOperator::EOpPackUnorm2x16:
@@ -779,7 +796,7 @@ void GenMetalTraverser::emitPostQualifier(const EmitVariableDeclarationConfig &e
     {
         case TQualifier::EvqPosition:
             isInvariant = decl.type().isInvariant();
-            ANGLE_FALLTHROUGH;
+            [[fallthrough]];
         case TQualifier::EvqFragCoord:
             mOut << " [[position]]";
             break;
@@ -872,9 +889,20 @@ void GenMetalTraverser::emitBareTypeName(const TType &type, const EmitTypeConfig
         case TBasicType::EbtBool:
         case TBasicType::EbtFloat:
         case TBasicType::EbtInt:
-        case TBasicType::EbtUInt:
         {
             mOut << type.getBasicString();
+            break;
+        }
+        case TBasicType::EbtUInt:
+        {
+            if (type.isScalar())
+            {
+                mOut << "uint32_t";
+            }
+            else
+            {
+                mOut << type.getBasicString();
+            }
         }
         break;
 

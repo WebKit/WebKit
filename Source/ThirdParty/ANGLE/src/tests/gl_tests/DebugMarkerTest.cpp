@@ -14,7 +14,7 @@ using namespace angle;
 namespace
 {
 
-class DebugMarkerTest : public ANGLETest
+class DebugMarkerTest : public ANGLETest<>
 {
   protected:
     DebugMarkerTest()

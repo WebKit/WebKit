@@ -14,7 +14,7 @@ using namespace angle;
 
 namespace
 {
-class DifferentStencilMasksTest : public ANGLETest
+class DifferentStencilMasksTest : public ANGLETest<>
 {
   protected:
     DifferentStencilMasksTest() : mProgram(0)

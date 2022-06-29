@@ -19,7 +19,7 @@ using namespace angle;
 namespace
 {
 
-class StateChangeTest : public ANGLETest
+class StateChangeTest : public ANGLETest<>
 {
   protected:
     StateChangeTest()
@@ -1322,7 +1322,7 @@ std::string StateChangeTestWebGL2Print(
 // State change test verifying both ES3 and WebGL2 specific behaviors.
 // Test is parameterized to allow execution with and without WebGL validation.
 // Note that this can not inherit from StateChangeTest due to the need to use ANGLETestWithParam.
-class StateChangeTestWebGL2 : public ANGLETestWithParam<StateChangeTestWebGL2Params>
+class StateChangeTestWebGL2 : public ANGLETest<StateChangeTestWebGL2Params>
 {
   protected:
     StateChangeTestWebGL2()
@@ -1616,7 +1616,7 @@ TEST_P(LineLoopStateChangeTest, DrawElementsThenDrawElements)
 
 // Simple state change tests, primarily focused on basic object lifetime and dependency management
 // with back-ends that don't support that automatically (i.e. Vulkan).
-class SimpleStateChangeTest : public ANGLETest
+class SimpleStateChangeTest : public ANGLETest<>
 {
   protected:
     static constexpr int kWindowSize = 64;
@@ -5327,7 +5327,7 @@ void main()
     gl_FragColor = vColor;
 })";
 
-class ValidationStateChangeTest : public ANGLETest
+class ValidationStateChangeTest : public ANGLETest<>
 {
   protected:
     ValidationStateChangeTest()
@@ -5347,10 +5347,10 @@ class WebGL2ValidationStateChangeTest : public ValidationStateChangeTest
     WebGL2ValidationStateChangeTest() { setWebGLCompatibilityEnabled(true); }
 };
 
-class ValidationStateChangeTestES31 : public ANGLETest
+class ValidationStateChangeTestES31 : public ANGLETest<>
 {};
 
-class WebGLComputeValidationStateChangeTest : public ANGLETest
+class WebGLComputeValidationStateChangeTest : public ANGLETest<>
 {
   public:
     WebGLComputeValidationStateChangeTest() { setWebGLCompatibilityEnabled(true); }
@@ -6935,7 +6935,7 @@ TEST_P(SimpleStateChangeTestES3, BindingSameBuffer)
     EXPECT_EQ(colors0, colors1);
 }
 
-class ImageRespecificationTest : public ANGLETest
+class ImageRespecificationTest : public ANGLETest<>
 {
   protected:
     ImageRespecificationTest()
@@ -8033,7 +8033,7 @@ TEST_P(SimpleStateChangeTestES3, DrawFlushThenBlit)
     ASSERT_GL_NO_ERROR();
 }
 
-class VertexAttribArrayStateChangeTest : public ANGLETest
+class VertexAttribArrayStateChangeTest : public ANGLETest<>
 {
   protected:
     VertexAttribArrayStateChangeTest()

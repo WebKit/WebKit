@@ -16,7 +16,7 @@ namespace sh
 class TCompiler;
 class TIntermNode;
 
-ANGLE_NO_DISCARD bool RewriteUnaryMinusOperatorInt(TCompiler *compiler, TIntermNode *root);
+[[nodiscard]] bool RewriteUnaryMinusOperatorInt(TCompiler *compiler, TIntermNode *root);
 
 }  // namespace sh
 

@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <algorithm>
+#include <cctype>
 #include <fstream>
 #include <sstream>
 
@@ -313,28 +314,28 @@ std::vector<std::string> GetCachedStringsFromEnvironmentVarOrAndroidProperty(
     return SplitString(environment, separator, TRIM_WHITESPACE, SPLIT_WANT_NONEMPTY);
 }
 
-// reference name can have *.
-bool NamesMatchWithWildcard(const char *ref, const char *testName)
+// glob can have * as wildcard
+bool NamesMatchWithWildcard(const char *glob, const char *name)
 {
-    // Find the first * in ref.
-    const char *firstWildcard = strchr(ref, '*');
+    // Find the first * in glob.
+    const char *firstWildcard = strchr(glob, '*');
 
     // If there are no wildcards, match the strings precisely.
     if (firstWildcard == nullptr)
     {
-        return strcmp(ref, testName) == 0;
+        return strcmp(glob, name) == 0;
     }
 
     // Otherwise, match up to the wildcard first.
-    size_t preWildcardLen = firstWildcard - ref;
-    if (strncmp(ref, testName, preWildcardLen) != 0)
+    size_t preWildcardLen = firstWildcard - glob;
+    if (strncmp(glob, name, preWildcardLen) != 0)
     {
         return false;
     }
 
-    const char *postWildcardRef = ref + preWildcardLen + 1;
+    const char *postWildcardRef = glob + preWildcardLen + 1;
 
-    // As a small optimization, if the wildcard is the last character in ref, accept the match
+    // As a small optimization, if the wildcard is the last character in glob, accept the match
     // already.
     if (postWildcardRef[0] == '\0')
     {
@@ -342,9 +343,9 @@ bool NamesMatchWithWildcard(const char *ref, const char *testName)
     }
 
     // Try to match the wildcard with a number of characters.
-    for (size_t matchSize = 0; testName[matchSize] != '\0'; ++matchSize)
+    for (size_t matchSize = 0; name[matchSize] != '\0'; ++matchSize)
     {
-        if (NamesMatchWithWildcard(postWildcardRef, testName + matchSize))
+        if (NamesMatchWithWildcard(postWildcardRef, name + matchSize))
         {
             return true;
         }

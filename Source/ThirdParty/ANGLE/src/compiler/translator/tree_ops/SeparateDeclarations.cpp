@@ -28,9 +28,9 @@ namespace
 class SeparateDeclarationsTraverser : private TIntermTraverser
 {
   public:
-    ANGLE_NO_DISCARD static bool apply(TCompiler *compiler,
-                                       TIntermNode *root,
-                                       TSymbolTable *symbolTable);
+    [[nodiscard]] static bool apply(TCompiler *compiler,
+                                    TIntermNode *root,
+                                    TSymbolTable *symbolTable);
 
   private:
     SeparateDeclarationsTraverser(TSymbolTable *symbolTable);
@@ -174,7 +174,7 @@ void SeparateDeclarationsTraverser::separateDeclarator(TIntermSequence *sequence
     newType->makeArrays(asSymbol->getType().getArraySizes());
 
     TVariable *replacementVar        = new TVariable(mSymbolTable, asSymbol->getName(), newType,
-                                              asSymbol->variable().symbolType());
+                                                     asSymbol->variable().symbolType());
     TIntermSymbol *replacementSymbol = new TIntermSymbol(replacementVar);
     TIntermTyped *replacement        = replacementSymbol;
     if (initializer)

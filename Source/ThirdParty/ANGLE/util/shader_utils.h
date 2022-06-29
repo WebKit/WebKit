@@ -54,7 +54,7 @@ ANGLE_UTIL_EXPORT GLuint LoadBinaryProgramES3(const std::vector<uint8_t> &binary
 ANGLE_UTIL_EXPORT void EnableDebugCallback(GLDEBUGPROC callbackChain, const void *userParam);
 
 using CounterNameToIndexMap = std::map<std::string, GLuint>;
-using CounterNameToValueMap = std::map<std::string, GLuint>;
+using CounterNameToValueMap = std::map<std::string, GLuint64>;
 
 ANGLE_UTIL_EXPORT CounterNameToIndexMap BuildCounterNameToIndexMap();
 ANGLE_UTIL_EXPORT angle::VulkanPerfCounters GetPerfCounters(const CounterNameToIndexMap &indexMap);

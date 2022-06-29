@@ -20,9 +20,9 @@ class TCompiler;
 class TIntermBlock;
 class TSymbolTable;
 
-ANGLE_NO_DISCARD bool RemoveUnreferencedVariables(TCompiler *compiler,
-                                                  TIntermBlock *root,
-                                                  TSymbolTable *symbolTable);
+[[nodiscard]] bool RemoveUnreferencedVariables(TCompiler *compiler,
+                                               TIntermBlock *root,
+                                               TSymbolTable *symbolTable);
 
 }  // namespace sh
 

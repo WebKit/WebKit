@@ -13,7 +13,7 @@
 
 using namespace angle;
 
-class EGLDeviceCGLQueryTest : public ANGLETest
+class EGLDeviceCGLQueryTest : public ANGLETest<>
 {
   protected:
     EGLDeviceCGLQueryTest() {}

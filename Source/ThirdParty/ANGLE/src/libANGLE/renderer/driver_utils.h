@@ -33,8 +33,8 @@ enum VendorID : uint32_t
     // Android doesn't have a PCI bus, but all we need is a unique id.
     VENDOR_ID_QUALCOMM = 0x5143,
     VENDOR_ID_SAMSUNG  = 0x144D,
-    VENDOR_ID_VMWARE   = 0x15AD,
     VENDOR_ID_VIVANTE  = 0x9999,
+    VENDOR_ID_VMWARE   = 0x15AD,
 };
 
 enum AndroidDeviceID : uint32_t
@@ -97,11 +97,6 @@ inline bool IsQualcomm(uint32_t vendorId)
     return vendorId == VENDOR_ID_QUALCOMM;
 }
 
-inline bool IsVMWare(uint32_t vendorId)
-{
-    return vendorId == VENDOR_ID_VMWARE;
-}
-
 inline bool IsSamsung(uint32_t vendorId)
 {
     return vendorId == VENDOR_ID_SAMSUNG;
@@ -110,6 +105,11 @@ inline bool IsSamsung(uint32_t vendorId)
 inline bool IsVivante(uint32_t vendorId)
 {
     return vendorId == VENDOR_ID_VIVANTE;
+}
+
+inline bool IsVMWare(uint32_t vendorId)
+{
+    return vendorId == VENDOR_ID_VMWARE;
 }
 
 inline bool IsNexus5X(uint32_t vendorId, uint32_t deviceId)
@@ -184,6 +184,15 @@ inline bool IsWindows()
 inline bool IsLinux()
 {
 #if defined(ANGLE_PLATFORM_LINUX)
+    return true;
+#else
+    return false;
+#endif
+}
+
+inline bool IsChromeOS()
+{
+#if defined(ANGLE_PLATFORM_CHROMEOS)
     return true;
 #else
     return false;

@@ -26,7 +26,7 @@ using namespace angle;
 namespace
 {
 
-class VulkanFormatTablesTest : public ANGLETest
+class VulkanFormatTablesTest : public ANGLETest<>
 {};
 
 struct ParametersToTest

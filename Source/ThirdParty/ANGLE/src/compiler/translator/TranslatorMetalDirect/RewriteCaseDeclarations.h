@@ -43,7 +43,7 @@ namespace sh
 //          break;
 //      }
 //    }
-ANGLE_NO_DISCARD bool RewriteCaseDeclarations(TCompiler &compiler, TIntermBlock &root);
+[[nodiscard]] bool RewriteCaseDeclarations(TCompiler &compiler, TIntermBlock &root);
 
 }  // namespace sh
 

@@ -12,7 +12,7 @@
 
 using namespace angle;
 
-class BuiltinVariableVertexIdTest : public ANGLETest
+class BuiltinVariableVertexIdTest : public ANGLETest<>
 {
   protected:
     BuiltinVariableVertexIdTest()
@@ -198,7 +198,7 @@ TEST_P(BuiltinVariableVertexIdTest, Triangles)
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(BuiltinVariableVertexIdTest);
 ANGLE_INSTANTIATE_TEST_ES3(BuiltinVariableVertexIdTest);
 
-class BuiltinVariableFragDepthClampingFloatRBOTest : public ANGLETest
+class BuiltinVariableFragDepthClampingFloatRBOTest : public ANGLETest<>
 {
   protected:
     void testSetUp() override

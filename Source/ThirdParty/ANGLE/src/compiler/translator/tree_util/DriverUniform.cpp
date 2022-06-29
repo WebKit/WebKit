@@ -354,6 +354,21 @@ TIntermTyped *DriverUniform::getClipDistancesEnabled() const
     return enabledMask;
 }
 
+TIntermTyped *DriverUniform::getTransformDepth() const
+{
+    TIntermTyped *miscRef        = createDriverUniformRef(kMisc);
+    TIntermTyped *transformDepth = new TIntermBinary(
+        EOpBitShiftRight, miscRef, CreateUIntNode(vk::kDriverUniformsMiscTransformDepthOffset));
+    transformDepth = new TIntermBinary(EOpBitwiseAnd, transformDepth,
+                                       CreateUIntNode(vk::kDriverUniformsMiscTransformDepthMask));
+
+    TIntermSequence args = {
+        transformDepth,
+    };
+    return TIntermAggregate::CreateConstructor(*StaticType::GetBasic<EbtBool, EbpUndefined>(),
+                                               &args);
+}
+
 //
 // Class DriverUniformExtended
 //

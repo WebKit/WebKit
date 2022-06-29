@@ -61,7 +61,7 @@ bool ShouldCreateLogMessage(LogSeverity severity)
 #elif defined(ANGLE_ENABLE_ASSERTS)
     return severity == LOG_FATAL || severity == LOG_ERR || severity == LOG_WARN;
 #else
-    return false;
+    return severity == LOG_FATAL || severity == LOG_ERR;
 #endif
 }
 

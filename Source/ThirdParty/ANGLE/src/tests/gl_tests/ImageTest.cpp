@@ -108,7 +108,7 @@ constexpr int AHARDWAREBUFFER_FORMAT_YV12            = 0x32315659;
 
 }  // anonymous namespace
 
-class ImageTest : public ANGLETest
+class ImageTest : public ANGLETest<>
 {
   protected:
     ImageTest()
@@ -3147,6 +3147,221 @@ TEST_P(ImageTestES3, ClearYUVAHB)
 }
 
 #if defined(ANGLE_AHARDWARE_BUFFER_SUPPORT)
+
+// Test glClear on FBO with AHB attachment is applied to the AHB image before we read back
+TEST_P(ImageTestES3, AHBClearAppliedBeforeReadBack)
+{
+    EGLWindow *window = getEGLWindow();
+
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt());
+    ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
+
+    const GLubyte kRed[]   = {255, 0, 0, 255};
+    const GLubyte kBlack[] = {0, 0, 0, 0};
+
+    // Create one image backed by the AHB.
+    AHardwareBuffer *ahb;
+    EGLImageKHR ahbImage;
+    createEGLImageAndroidHardwareBufferSource(1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM,
+                                              kDefaultAHBUsage, kDefaultAttribs, {{kBlack, 4}},
+                                              &ahb, &ahbImage);
+    GLTexture ahbTexture;
+    createEGLImageTargetTexture2D(ahbImage, ahbTexture);
+
+    // Create one framebuffer backed by the AHB.
+    {
+        GLFramebuffer ahbFbo;
+        glBindFramebuffer(GL_FRAMEBUFFER, ahbFbo);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ahbTexture, 0);
+        EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+        // Clear to red
+        glClearColor(1, 0, 0, 1);
+        glClear(GL_COLOR_BUFFER_BIT);
+        glFinish();
+    }
+
+    verifyResultAHB(ahb, {{kRed, 4}});
+
+    eglDestroyImageKHR(window->getDisplay(), ahbImage);
+    destroyAndroidHardwareBuffer(ahb);
+}
+
+// Test that glClear on FBO with AHB attachment is applied to the AHB image before detaching the AHB
+// image from FBO
+TEST_P(ImageTestES3, AHBClearAndDetachBeforeReadback)
+{
+    EGLWindow *window = getEGLWindow();
+
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt());
+    ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
+
+    const GLubyte kRed[]   = {255, 0, 0, 255};
+    const GLubyte kBlack[] = {0, 0, 0, 0};
+
+    // Create one image backed by the AHB.
+    AHardwareBuffer *ahb;
+    EGLImageKHR ahbImage;
+    createEGLImageAndroidHardwareBufferSource(1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM,
+                                              kDefaultAHBUsage, kDefaultAttribs, {{kBlack, 4}},
+                                              &ahb, &ahbImage);
+    GLTexture ahbTexture;
+    createEGLImageTargetTexture2D(ahbImage, ahbTexture);
+
+    // Create one framebuffer backed by the AHB.
+    {
+        GLFramebuffer ahbFbo;
+        glBindFramebuffer(GL_FRAMEBUFFER, ahbFbo);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ahbTexture, 0);
+        EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+        // Clear to red
+        glClearColor(1, 0, 0, 1);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        // Detach the AHB image from the FBO color attachment
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
+        glFinish();
+    }
+
+    verifyResultAHB(ahb, {{kRed, 4}});
+
+    eglDestroyImageKHR(window->getDisplay(), ahbImage);
+    destroyAndroidHardwareBuffer(ahb);
+}
+
+// Test that glClear on FBO with AHB color attachment is applied to the AHB image before implicity
+// unbinding the AHB image from FBO
+TEST_P(ImageTestES3, AHBClearAndAttachAnotherTextureBeforeReadback)
+{
+    EGLWindow *window = getEGLWindow();
+
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt());
+    ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
+
+    const GLubyte kRed[]   = {255, 0, 0, 255};
+    const GLubyte kBlack[] = {0, 0, 0, 0};
+
+    // Create one image backed by the AHB.
+    AHardwareBuffer *ahb;
+    EGLImageKHR ahbImage;
+    createEGLImageAndroidHardwareBufferSource(1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM,
+                                              kDefaultAHBUsage, kDefaultAttribs, {{kBlack, 4}},
+                                              &ahb, &ahbImage);
+    GLTexture ahbTexture;
+    createEGLImageTargetTexture2D(ahbImage, ahbTexture);
+
+    // Create one framebuffer backed by the AHB.
+    {
+        GLFramebuffer ahbFbo;
+        glBindFramebuffer(GL_FRAMEBUFFER, ahbFbo);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ahbTexture, 0);
+        EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+        // Clear to red
+        glClearColor(1, 0, 0, 1);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        // Attach a random texture to the same FBO color attachment slot that AHB image was attached
+        // to, this should implicity detach the AHB image from the FBO.
+        GLTexture newTexture;
+        glBindTexture(GL_TEXTURE_2D, newTexture);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1, 1, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, newTexture, 0);
+        glFinish();
+    }
+
+    verifyResultAHB(ahb, {{kRed, 4}});
+
+    eglDestroyImageKHR(window->getDisplay(), ahbImage);
+    destroyAndroidHardwareBuffer(ahb);
+}
+
+// Test glClear to FBO with AHB color attachment is applied to the AHB image before we switch back
+// to the default FBO
+TEST_P(ImageTestES3, AHBClearAndSwitchToDefaultFBOBeforeReadBack)
+{
+    EGLWindow *window = getEGLWindow();
+
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt());
+    ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
+
+    const GLubyte kRed[]   = {255, 0, 0, 255};
+    const GLubyte kBlack[] = {0, 0, 0, 0};
+
+    // Create one image backed by the AHB.
+    AHardwareBuffer *ahb;
+    EGLImageKHR ahbImage;
+    createEGLImageAndroidHardwareBufferSource(1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM,
+                                              kDefaultAHBUsage, kDefaultAttribs, {{kBlack, 4}},
+                                              &ahb, &ahbImage);
+    GLTexture ahbTexture;
+    createEGLImageTargetTexture2D(ahbImage, ahbTexture);
+
+    // Create one framebuffer backed by the AHB.
+    {
+        GLFramebuffer ahbFbo;
+        glBindFramebuffer(GL_FRAMEBUFFER, ahbFbo);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ahbTexture, 0);
+        EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+        // Clear to red
+        glClearColor(1, 0, 0, 1);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        // Switch to default FBO
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glFinish();
+    }
+
+    verifyResultAHB(ahb, {{kRed, 4}});
+
+    eglDestroyImageKHR(window->getDisplay(), ahbImage);
+    destroyAndroidHardwareBuffer(ahb);
+}
+
+// Test glClear on FBO with AHB color attachment is applied to the AHB image with glClientWaitSync
+TEST_P(ImageTestES3, AHBClearWithGLClientWaitSyncBeforeReadBack)
+{
+    EGLWindow *window = getEGLWindow();
+
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt());
+    ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
+
+    const GLubyte kRed[]   = {255, 0, 0, 255};
+    const GLubyte kBlack[] = {0, 0, 0, 0};
+
+    // Create one image backed by the AHB.
+    AHardwareBuffer *ahb;
+    EGLImageKHR ahbImage;
+    createEGLImageAndroidHardwareBufferSource(1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM,
+                                              kDefaultAHBUsage, kDefaultAttribs, {{kBlack, 4}},
+                                              &ahb, &ahbImage);
+    GLTexture ahbTexture;
+    createEGLImageTargetTexture2D(ahbImage, ahbTexture);
+
+    // Create one framebuffer backed by the AHB.
+    {
+        GLFramebuffer ahbFbo;
+        glBindFramebuffer(GL_FRAMEBUFFER, ahbFbo);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ahbTexture, 0);
+        EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+        // Clear to red
+        glClearColor(1, 0, 0, 1);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        // Create a GLSync object and immediately wait on it
+        GLsync sync = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+        glClientWaitSync(sync, GL_SYNC_FLUSH_COMMANDS_BIT, GL_TIMEOUT_IGNORED);
+    }
+
+    verifyResultAHB(ahb, {{kRed, 4}});
+
+    eglDestroyImageKHR(window->getDisplay(), ahbImage);
+    destroyAndroidHardwareBuffer(ahb);
+}
+
 // Test that RGBX data are preserved when importing from AHB.  Regression test for a bug in the
 // Vulkan backend where the image was cleared due to format emulation.
 TEST_P(ImageTestES3, RGBXAHBImportPreservesData)
@@ -5218,6 +5433,56 @@ TEST_P(ImageTest, DeletedImageWithSameSizeAndFormat)
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, updateData);
 
     ASSERT_GL_NO_ERROR();
+}
+
+// Check that create a source cube texture and then redefine the same target texture with each face
+// of source cube texture renders correctly
+TEST_P(ImageTest, SourceCubeAndSameTargetTextureWithEachCubeFace)
+{
+    EGLWindow *window = getEGLWindow();
+
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt());
+
+    // Create a source cube map texture
+    GLTexture sourceTexture;
+    glBindTexture(GL_TEXTURE_CUBE_MAP, sourceTexture);
+    uint8_t *data     = reinterpret_cast<uint8_t *>(kLinearColorCube);
+    size_t dataStride = sizeof(GLubyte) * 4;
+    for (GLenum faceIdx = 0; faceIdx < 6; faceIdx++)
+    {
+        glTexImage2D(faceIdx + GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GL_RGBA, 1, 1, 0, GL_RGBA,
+                     GL_UNSIGNED_BYTE, data + (faceIdx * dataStride));
+    }
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+
+    EGLImageKHR images[6];
+    GLTexture targetTexture;
+    glBindTexture(GL_TEXTURE_2D, targetTexture);
+
+    for (GLenum faceIdx = 0; faceIdx < 6; faceIdx++)
+    {
+        // Create the Image with EGL_GL_TEXTURE_CUBE_MAP_POSITIVE_X_KHR
+        images[faceIdx] = eglCreateImageKHR(window->getDisplay(), window->getContext(),
+                                            EGL_GL_TEXTURE_CUBE_MAP_POSITIVE_X_KHR + faceIdx,
+                                            reinterpretHelper<EGLClientBuffer>(sourceTexture.get()),
+                                            kDefaultAttribs);
+
+        // Create a target texture from the image
+        glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, images[faceIdx]);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        ASSERT_GL_NO_ERROR();
+        // Expect that the target texture has the same color as the source texture
+        verifyResults2D(targetTexture, &kLinearColorCube[faceIdx * 4]);
+    }
+
+    // Clean up
+    for (GLenum faceIdx = 0; faceIdx < 6; faceIdx++)
+    {
+        eglDestroyImageKHR(window->getDisplay(), images[faceIdx]);
+    }
 }
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(ImageTest);

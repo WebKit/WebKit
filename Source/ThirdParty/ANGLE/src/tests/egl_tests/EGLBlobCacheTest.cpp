@@ -91,7 +91,7 @@ EGLsizeiANDROID GetBlob(const void *key,
 }
 }  // anonymous namespace
 
-class EGLBlobCacheTest : public ANGLETest
+class EGLBlobCacheTest : public ANGLETest<>
 {
   protected:
     EGLBlobCacheTest() : mHasBlobCache(false)

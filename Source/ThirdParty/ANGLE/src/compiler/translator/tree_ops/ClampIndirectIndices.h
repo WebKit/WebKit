@@ -18,9 +18,9 @@ class TCompiler;
 class TIntermNode;
 class TSymbolTable;
 
-ANGLE_NO_DISCARD bool ClampIndirectIndices(TCompiler *compiler,
-                                           TIntermNode *root,
-                                           TSymbolTable *symbolTable);
+[[nodiscard]] bool ClampIndirectIndices(TCompiler *compiler,
+                                        TIntermNode *root,
+                                        TSymbolTable *symbolTable);
 
 }  // namespace sh
 

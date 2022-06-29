@@ -22,7 +22,7 @@ bool ExtEnabled()
 }
 }  // namespace
 
-class RobustFragmentShaderOutputTest : public ANGLETest
+class RobustFragmentShaderOutputTest : public ANGLETest<>
 {
   public:
     RobustFragmentShaderOutputTest() {}

@@ -24,7 +24,7 @@ namespace
 const EGLint contextAttribs[] = {EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE};
 }
 
-class EGLX11VisualHintTest : public ANGLETest
+class EGLX11VisualHintTest : public ANGLETest<>
 {
   public:
     void testSetUp() override { mDisplay = XOpenDisplay(nullptr); }

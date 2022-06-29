@@ -14,7 +14,7 @@
 
 using namespace angle;
 
-class EGLSyncTest : public ANGLETest
+class EGLSyncTest : public ANGLETest<>
 {
   protected:
     bool hasFenceSyncExtension() const

@@ -16,7 +16,7 @@
 
 using namespace angle;
 
-class EGLRobustnessTest : public ANGLETest
+class EGLRobustnessTest : public ANGLETest<>
 {
   public:
     void testSetUp() override

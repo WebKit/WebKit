@@ -12,7 +12,7 @@
 
 using namespace angle;
 
-class OcclusionQueriesTest : public ANGLETest
+class OcclusionQueriesTest : public ANGLETest<>
 {
   protected:
     OcclusionQueriesTest() : mProgram(0), mRNG(1)

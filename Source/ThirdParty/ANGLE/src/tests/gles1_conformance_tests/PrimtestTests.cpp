@@ -28,7 +28,7 @@ extern void DrawPrims(void);
 
 namespace angle
 {
-class GLES1PrimtestTest : public ANGLETest
+class GLES1PrimtestTest : public ANGLETest<>
 {
   protected:
     GLES1PrimtestTest()

@@ -14,7 +14,7 @@
 namespace angle
 {
 
-class WebGLFramebufferTest : public ANGLETest
+class WebGLFramebufferTest : public ANGLETest<>
 {
   protected:
     WebGLFramebufferTest()

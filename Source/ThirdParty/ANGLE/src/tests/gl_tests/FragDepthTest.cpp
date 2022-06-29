@@ -12,7 +12,7 @@
 
 using namespace angle;
 
-class FragDepthTest : public ANGLETest
+class FragDepthTest : public ANGLETest<>
 {
   protected:
     struct FragDepthTestResources

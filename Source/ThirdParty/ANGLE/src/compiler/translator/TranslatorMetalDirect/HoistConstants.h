@@ -16,10 +16,10 @@ namespace sh
 
 // Hoists function-local constants to the global scope if their Metal sizeof meets
 // `minRequiredSize`.
-ANGLE_NO_DISCARD bool HoistConstants(TCompiler &compiler,
-                                     TIntermBlock &root,
-                                     IdGen &idGen,
-                                     size_t minRequiredSize);
+[[nodiscard]] bool HoistConstants(TCompiler &compiler,
+                                  TIntermBlock &root,
+                                  IdGen &idGen,
+                                  size_t minRequiredSize);
 
 }  // namespace sh
 

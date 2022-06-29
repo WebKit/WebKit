@@ -16,7 +16,7 @@ using namespace angle;
 
 namespace angle
 {
-class EGLChooseConfigTest : public ANGLETest
+class EGLChooseConfigTest : public ANGLETest<>
 {
   protected:
     EGLChooseConfigTest() {}

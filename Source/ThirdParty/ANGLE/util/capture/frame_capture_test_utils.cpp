@@ -112,6 +112,7 @@ bool LoadTraceInfoFromJSON(const std::string &traceName,
         meta["IsBindGeneratesResourcesEnabled"].GetBool();
     traceInfoOut->isWebGLCompatibilityEnabled = meta["IsWebGLCompatibilityEnabled"].GetBool();
     traceInfoOut->isRobustResourceInitEnabled = meta["IsRobustResourceInitEnabled"].GetBool();
+    traceInfoOut->initialized                 = true;
 
     return true;
 }

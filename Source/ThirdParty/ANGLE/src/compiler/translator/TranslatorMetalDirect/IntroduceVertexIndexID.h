@@ -13,7 +13,7 @@
 namespace sh
 {
 
-ANGLE_NO_DISCARD bool IntroduceVertexAndInstanceIndex(TCompiler &compiler, TIntermBlock &root);
+[[nodiscard]] bool IntroduceVertexAndInstanceIndex(TCompiler &compiler, TIntermBlock &root);
 
 }  // namespace sh
 

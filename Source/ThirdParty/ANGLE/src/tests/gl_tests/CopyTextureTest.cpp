@@ -13,7 +13,7 @@
 namespace angle
 {
 
-class CopyTextureTest : public ANGLETest
+class CopyTextureTest : public ANGLETest<>
 {
   protected:
     CopyTextureTest()
@@ -192,7 +192,7 @@ std::string CopyTextureVariationsTestPrint(
     return out.str();
 }
 
-class CopyTextureVariationsTest : public ANGLETestWithParam<CopyTextureVariationsTestParams>
+class CopyTextureVariationsTest : public ANGLETest<CopyTextureVariationsTestParams>
 {
   protected:
     CopyTextureVariationsTest()

@@ -9,7 +9,7 @@
 
 using namespace angle;
 
-class DiscardFramebufferEXTTest : public ANGLETest
+class DiscardFramebufferEXTTest : public ANGLETest<>
 {
   protected:
     DiscardFramebufferEXTTest()

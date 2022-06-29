@@ -14,7 +14,7 @@ namespace angle
 constexpr GLColor kLinearColor(64, 127, 191, 255);
 constexpr GLColor kNonlinearColor(13, 54, 133, 255);
 
-class SRGBTextureTest : public ANGLETest
+class SRGBTextureTest : public ANGLETest<>
 {
   protected:
     SRGBTextureTest()

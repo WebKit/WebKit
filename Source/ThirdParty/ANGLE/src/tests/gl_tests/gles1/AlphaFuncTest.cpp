@@ -15,7 +15,7 @@
 
 using namespace angle;
 
-class AlphaFuncTest : public ANGLETest
+class AlphaFuncTest : public ANGLETest<>
 {
   protected:
     AlphaFuncTest()

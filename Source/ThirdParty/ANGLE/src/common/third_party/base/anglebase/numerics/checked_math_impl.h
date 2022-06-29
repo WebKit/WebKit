@@ -58,8 +58,7 @@ struct CheckedAddOp<
     template <typename V>
     static constexpr bool Do(T x, U y, V *result)
     {
-        // TODO(jschuh) Make this "constexpr if" once we're C++17.
-        if (CheckedAddFastOp<T, U>::is_supported)
+        if constexpr (CheckedAddFastOp<T, U>::is_supported)
             return CheckedAddFastOp<T, U>::Do(x, y, result);
 
         // Double the underlying type up to a full machine word.
@@ -78,7 +77,7 @@ struct CheckedAddOp<
 
         Promotion presult = {};
         bool is_valid     = true;
-        if (IsIntegerArithmeticSafe<Promotion, T, U>::value)
+        if constexpr (IsIntegerArithmeticSafe<Promotion, T, U>::value)
         {
             presult = static_cast<Promotion>(x) + static_cast<Promotion>(y);
         }
@@ -127,8 +126,7 @@ struct CheckedSubOp<
     template <typename V>
     static constexpr bool Do(T x, U y, V *result)
     {
-        // TODO(jschuh) Make this "constexpr if" once we're C++17.
-        if (CheckedSubFastOp<T, U>::is_supported)
+        if constexpr (CheckedSubFastOp<T, U>::is_supported)
             return CheckedSubFastOp<T, U>::Do(x, y, result);
 
         // Double the underlying type up to a full machine word.
@@ -147,7 +145,7 @@ struct CheckedSubOp<
 
         Promotion presult = {};
         bool is_valid     = true;
-        if (IsIntegerArithmeticSafe<Promotion, T, U>::value)
+        if constexpr (IsIntegerArithmeticSafe<Promotion, T, U>::value)
         {
             presult = static_cast<Promotion>(x) - static_cast<Promotion>(y);
         }
@@ -199,8 +197,7 @@ struct CheckedMulOp<
     template <typename V>
     static constexpr bool Do(T x, U y, V *result)
     {
-        // TODO(jschuh) Make this "constexpr if" once we're C++17.
-        if (CheckedMulFastOp<T, U>::is_supported)
+        if constexpr (CheckedMulFastOp<T, U>::is_supported)
             return CheckedMulFastOp<T, U>::Do(x, y, result);
 
         using Promotion = typename FastIntegerArithmeticPromotion<T, U>::type;
@@ -214,7 +211,7 @@ struct CheckedMulOp<
 
         Promotion presult = {};
         bool is_valid     = true;
-        if (CheckedMulFastOp<Promotion, Promotion>::is_supported)
+        if constexpr (CheckedMulFastOp<Promotion, Promotion>::is_supported)
         {
             // The fast op may be available with the promoted type.
             is_valid = CheckedMulFastOp<Promotion, Promotion>::Do(x, y, &presult);

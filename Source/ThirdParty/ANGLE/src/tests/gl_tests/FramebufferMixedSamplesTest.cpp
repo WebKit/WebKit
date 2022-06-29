@@ -18,7 +18,7 @@ namespace
 const GLuint kWidth  = 100;
 const GLuint kHeight = 100;
 
-class CHROMIUMFramebufferMixedSamplesTest : public ANGLETest
+class CHROMIUMFramebufferMixedSamplesTest : public ANGLETest<>
 {
   protected:
     enum SetupFBOType

@@ -12,7 +12,7 @@
 
 using namespace angle;
 
-class ShaderNonConstGlobalInitializerTest : public ANGLETest
+class ShaderNonConstGlobalInitializerTest : public ANGLETest<>
 {
   protected:
     ShaderNonConstGlobalInitializerTest() : ANGLETest()

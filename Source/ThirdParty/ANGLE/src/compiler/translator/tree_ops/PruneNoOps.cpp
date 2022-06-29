@@ -41,9 +41,9 @@ bool IsNoOp(TIntermNode *node)
 class PruneNoOpsTraverser : private TIntermTraverser
 {
   public:
-    ANGLE_NO_DISCARD static bool apply(TCompiler *compiler,
-                                       TIntermBlock *root,
-                                       TSymbolTable *symbolTable);
+    [[nodiscard]] static bool apply(TCompiler *compiler,
+                                    TIntermBlock *root,
+                                    TSymbolTable *symbolTable);
 
   private:
     PruneNoOpsTraverser(TSymbolTable *symbolTable);

@@ -15,7 +15,7 @@
 
 using namespace angle;
 
-class KTXCompressedTextureTest : public ANGLETest
+class KTXCompressedTextureTest : public ANGLETest<>
 {
   protected:
     KTXCompressedTextureTest()

@@ -11,7 +11,7 @@
 namespace angle
 {
 
-class BindGeneratesResourceTest : public ANGLETest
+class BindGeneratesResourceTest : public ANGLETest<>
 {
   protected:
     BindGeneratesResourceTest() { setBindGeneratesResource(false); }

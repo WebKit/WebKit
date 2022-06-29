@@ -68,21 +68,21 @@ struct MetalLayoutOfConfig
 
 // Returns the layout of a type if it were to be represented in a Metal program.
 // This deliberately ignores the TLayoutBlockStorage and TLayoutMatrixPacking of any type.
-ANGLE_NO_DISCARD Layout MetalLayoutOf(const TType &type, MetalLayoutOfConfig config = {});
+[[nodiscard]] Layout MetalLayoutOf(const TType &type, MetalLayoutOfConfig config = {});
 
 // Returns the layout of a type if it were to be represented in a GLSL program.
-ANGLE_NO_DISCARD Layout
-GlslLayoutOf(const TType &type,
-             TLayoutBlockStorage storage        = TLayoutBlockStorage::EbsUnspecified,
-             TLayoutMatrixPacking matrixPacking = TLayoutMatrixPacking::EmpUnspecified,
-             bool maskArray                     = false);
+[[nodiscard]] Layout GlslLayoutOf(
+    const TType &type,
+    TLayoutBlockStorage storage        = TLayoutBlockStorage::EbsUnspecified,
+    TLayoutMatrixPacking matrixPacking = TLayoutMatrixPacking::EmpUnspecified,
+    bool maskArray                     = false);
 
 // Returns the layout of a structure if it were to be represented in a GLSL program.
-ANGLE_NO_DISCARD Layout GlslStructLayoutOf(TField const *const *begin,
-                                           TField const *const *end,
-                                           TLayoutBlockStorage storage,
-                                           TLayoutMatrixPacking matrixPacking,
-                                           bool maskArray = false);
+[[nodiscard]] Layout GlslStructLayoutOf(TField const *const *begin,
+                                        TField const *const *end,
+                                        TLayoutBlockStorage storage,
+                                        TLayoutMatrixPacking matrixPacking,
+                                        bool maskArray = false);
 
 }  // namespace sh
 

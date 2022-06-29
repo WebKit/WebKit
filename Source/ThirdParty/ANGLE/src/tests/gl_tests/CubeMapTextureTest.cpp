@@ -9,7 +9,7 @@
 
 using namespace angle;
 
-class CubeMapTextureTest : public ANGLETest
+class CubeMapTextureTest : public ANGLETest<>
 {
   protected:
     CubeMapTextureTest()

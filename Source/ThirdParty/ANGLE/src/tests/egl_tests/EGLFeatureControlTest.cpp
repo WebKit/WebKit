@@ -14,7 +14,7 @@
 
 using namespace angle;
 
-class EGLFeatureControlTest : public ANGLETest
+class EGLFeatureControlTest : public ANGLETest<>
 {
   public:
     void testSetUp() override { mDisplay = EGL_NO_DISPLAY; }
@@ -38,7 +38,7 @@ class EGLFeatureControlTest : public ANGLETest
 
         EGLAttrib dispattrs[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE, GetParam().getRenderer(), EGL_NONE};
         mDisplay              = eglGetPlatformDisplay(EGL_PLATFORM_ANGLE_ANGLE,
-                                         reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
+                                                      reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
         EXPECT_NE(mDisplay, EGL_NO_DISPLAY);
 
         EXPECT_EQ(eglInitialize(mDisplay, nullptr, nullptr), static_cast<EGLBoolean>(EGL_TRUE));
@@ -137,7 +137,7 @@ void EGLFeatureControlTest::testOverrideFeatures(FeatureNameModifier modifyName)
     std::vector<std::string> modifiedNameStorage = std::vector<std::string>();
     std::vector<bool> shouldBe                   = std::vector<bool>();
     std::vector<std::string> testedFeatures      = {
-        // Safe to toggle on GL
+             // Safe to toggle on GL
         angle::GetFeatureName(angle::Feature::AddAndTrueToLoopCondition),
         angle::GetFeatureName(angle::Feature::ClampFragDepth),
         // Safe to toggle on GL and Vulkan
@@ -176,12 +176,12 @@ void EGLFeatureControlTest::testOverrideFeatures(FeatureNameModifier modifyName)
 
     // Create a new display with these overridden features.
     EGLAttrib dispattrs[]   = {EGL_PLATFORM_ANGLE_TYPE_ANGLE,
-                             GetParam().getRenderer(),
-                             EGL_FEATURE_OVERRIDES_ENABLED_ANGLE,
-                             reinterpret_cast<EGLAttrib>(enabled.data()),
-                             EGL_FEATURE_OVERRIDES_DISABLED_ANGLE,
-                             reinterpret_cast<EGLAttrib>(disabled.data()),
-                             EGL_NONE};
+                               GetParam().getRenderer(),
+                               EGL_FEATURE_OVERRIDES_ENABLED_ANGLE,
+                               reinterpret_cast<EGLAttrib>(enabled.data()),
+                               EGL_FEATURE_OVERRIDES_DISABLED_ANGLE,
+                               reinterpret_cast<EGLAttrib>(disabled.data()),
+                               EGL_NONE};
     EGLDisplay dpy_override = eglGetPlatformDisplay(
         EGL_PLATFORM_ANGLE_ANGLE, reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
     ASSERT_EGL_SUCCESS();

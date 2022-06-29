@@ -233,8 +233,11 @@
 3240 D3D11 : dEQP-GLES2.functional.texture.vertex.cube.wrap.mirror_repeat = FAIL
 3240 D3D11 : dEQP-GLES2.functional.texture.vertex.cube.wrap.mirror_mirror = FAIL
 
-// Failures on newer NVIDIA drivers (411.95) and passes on older drivers (388.16).
-2976 VULKAN NVIDIA : dEQP-GLES2.functional.shaders.invariance.* = FAIL
+// Failures on some NVIDIA drivers (411.95), passing on older drivers (388.16) and newer ones.
+2976 VULKAN LINUX NVIDIA : dEQP-GLES2.functional.shaders.invariance.*.common_subexpression_0 = FAIL
+2976 VULKAN LINUX NVIDIA : dEQP-GLES2.functional.shaders.invariance.lowp.subexpression_precision_lowp = FAIL
+2976 VULKAN LINUX NVIDIA : dEQP-GLES2.functional.shaders.invariance.lowp.subexpression_precision_mediump = FAIL
+2976 VULKAN LINUX NVIDIA : dEQP-GLES2.functional.shaders.invariance.mediump.subexpression_precision_lowp = FAIL
 // Fails on 431.02 NVIDIA driver
 3748 VULKAN WIN NVIDIA : dEQP-GLES2.functional.fbo.render.repeated_clear.* = FAIL
 
@@ -284,6 +287,7 @@
 6466 MAC METAL INTEL : dEQP-GLES2.functional.texture.vertex.cube.filtering.nearest_mipmap_linear* = FAIL
 6466 MAC METAL INTEL : dEQP-GLES2.functional.texture.vertex.cube.filtering.nearest_mipmap_nearest_linear* = FAIL
 6466 MAC METAL INTEL : dEQP-GLES2.functional.texture.vertex.cube.wrap.* = FAIL
+7451 MAC METAL INTEL : dEQP-GLES2.functional.shaders.builtin_variable.pointcoord = FAIL
 
 6297 MAC METAL : dEQP-GLES2.functional.attribute_location.bind_aliasing.cond* = FAIL
 

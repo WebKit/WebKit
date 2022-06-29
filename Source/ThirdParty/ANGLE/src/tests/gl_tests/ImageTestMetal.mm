@@ -25,7 +25,7 @@ constexpr char kBaseExt[]                     = "EGL_KHR_image_base";
 constexpr char kDeviceMtlExt[]                = "EGL_ANGLE_device_metal";
 constexpr char kEGLMtlImageNativeTextureExt[] = "EGL_ANGLE_metal_texture_client_buffer";
 constexpr EGLint kDefaultAttribs[]            = {
-    EGL_NONE,
+               EGL_NONE,
 };
 }  // anonymous namespace
 
@@ -118,7 +118,7 @@ ScopeMetalTextureRef CreateMetalTexture2D(id<MTLDevice> deviceMtl,
     }
 }
 
-class ImageTestMetal : public ANGLETest
+class ImageTestMetal : public ANGLETest<>
 {
   protected:
     ImageTestMetal()

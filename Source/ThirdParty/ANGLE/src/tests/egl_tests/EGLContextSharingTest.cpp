@@ -31,7 +31,7 @@ EGLBoolean SafeDestroyContext(EGLDisplay display, EGLContext &context)
     return result;
 }
 
-class EGLContextSharingTest : public ANGLETest
+class EGLContextSharingTest : public ANGLETest<>
 {
   public:
     EGLContextSharingTest() : mContexts{EGL_NO_CONTEXT, EGL_NO_CONTEXT}, mTexture(0) {}
@@ -105,18 +105,18 @@ class EGLContextSharingTestNoFixture : public EGLContextSharingTest
         EGLint count         = 0;
         EGLint clientVersion = mMajorVersion == 3 ? EGL_OPENGL_ES3_BIT : EGL_OPENGL_ES2_BIT;
         EGLint attribs[]     = {EGL_RED_SIZE,
-                            8,
-                            EGL_GREEN_SIZE,
-                            8,
-                            EGL_BLUE_SIZE,
-                            8,
-                            EGL_ALPHA_SIZE,
-                            8,
-                            EGL_RENDERABLE_TYPE,
-                            clientVersion,
-                            EGL_SURFACE_TYPE,
-                            EGL_WINDOW_BIT | EGL_PBUFFER_BIT,
-                            EGL_NONE};
+                                8,
+                                EGL_GREEN_SIZE,
+                                8,
+                                EGL_BLUE_SIZE,
+                                8,
+                                EGL_ALPHA_SIZE,
+                                8,
+                                EGL_RENDERABLE_TYPE,
+                                clientVersion,
+                                EGL_SURFACE_TYPE,
+                                EGL_WINDOW_BIT | EGL_PBUFFER_BIT,
+                                EGL_NONE};
 
         result = eglChooseConfig(mDisplay, attribs, config, 1, &count);
         EXPECT_EGL_TRUE(result && (count > 0));
@@ -724,7 +724,7 @@ TEST_P(EGLContextSharingTestNoFixture, EglTerminateMultiThreaded)
 
     EGLint dispattrs[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE, GetParam().getRenderer(), EGL_NONE};
     mDisplay           = eglGetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE,
-                                        reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
+                                                  reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
     EXPECT_TRUE(mDisplay != EGL_NO_DISPLAY);
     EXPECT_EGL_TRUE(eglInitialize(mDisplay, nullptr, nullptr));
 
@@ -842,7 +842,7 @@ TEST_P(EGLContextSharingTestNoFixture, EglDestoryContextManyTimesSameContext)
 {
     EGLint dispattrs[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE, GetParam().getRenderer(), EGL_NONE};
     mDisplay           = eglGetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE,
-                                        reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
+                                                  reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
     EXPECT_TRUE(mDisplay != EGL_NO_DISPLAY);
     EXPECT_EGL_TRUE(eglInitialize(mDisplay, nullptr, nullptr));
 
@@ -978,7 +978,7 @@ TEST_P(EGLContextSharingTestNoFixture, EglTerminateMultipleTimes)
 
     EGLint dispattrs[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE, GetParam().getRenderer(), EGL_NONE};
     mDisplay           = eglGetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE,
-                                        reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
+                                                  reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
     EXPECT_TRUE(mDisplay != EGL_NO_DISPLAY);
     EXPECT_EGL_TRUE(eglInitialize(mDisplay, nullptr, nullptr));
 
@@ -1021,7 +1021,7 @@ TEST_P(EGLContextSharingTestNoFixture, SwapBuffersShared)
 {
     EGLint dispattrs[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE, GetParam().getRenderer(), EGL_NONE};
     mDisplay           = eglGetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE,
-                                        reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
+                                                  reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
     EXPECT_TRUE(mDisplay != EGL_NO_DISPLAY);
     EXPECT_EGL_TRUE(eglInitialize(mDisplay, nullptr, nullptr));
 

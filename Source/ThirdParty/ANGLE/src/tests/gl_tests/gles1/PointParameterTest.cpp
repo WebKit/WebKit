@@ -15,7 +15,7 @@
 
 using namespace angle;
 
-class PointParameterTest : public ANGLETest
+class PointParameterTest : public ANGLETest<>
 {
   protected:
     PointParameterTest()

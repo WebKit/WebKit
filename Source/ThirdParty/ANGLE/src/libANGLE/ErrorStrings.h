@@ -163,6 +163,7 @@ MSG kFramebufferIncompleteAttachmentWebGLDepthBufferHasStencilBits = "Framebuffe
 MSG kFramebufferIncompleteAttachmentWebGLDepthStencilNoDepthOrStencilBits = "Framebuffer is incomplete: Depth stencil attachment has no depth bits or no stencil bits.";
 MSG kFramebufferIncompleteAttachmentWebGLStencilBufferHasDepthBits = "Framebuffer is incomplete: Stencil attachment has depth bits.";
 MSG kFramebufferIncompleteAttachmentZeroSize = "Framebuffer is incomplete: Attachment has zero size.";
+MSG kFramebufferIncompleteColorBitsUsedExceedsMaxColorBitsSupported = "Framebuffer is incomplete: The total number of color bits exceeds the number of output bits supported.";
 MSG kFramebufferIncompleteDefaultZeroSize = "Framebuffer is incomplete: No attachments and default size is zero.";
 MSG kFramebufferIncompleteDepthAndStencilBuffersNotTheSame = "Framebuffer is incomplete: Depth and stencil attachments are not the same.";
 MSG kFramebufferIncompleteDepthStencilInColorBuffer = "Framebuffer is incomplete: Depth stencil texture in color attachment.";

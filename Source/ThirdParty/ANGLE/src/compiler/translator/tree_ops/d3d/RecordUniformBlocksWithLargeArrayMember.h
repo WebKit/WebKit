@@ -19,7 +19,7 @@ namespace sh
 {
 class TIntermNode;
 
-ANGLE_NO_DISCARD bool RecordUniformBlocksWithLargeArrayMember(
+[[nodiscard]] bool RecordUniformBlocksWithLargeArrayMember(
     TIntermNode *root,
     std::map<int, const TInterfaceBlock *> &uniformBlockOptimizedMap,
     std::set<std::string> &slowCompilingUniformBlockSet);

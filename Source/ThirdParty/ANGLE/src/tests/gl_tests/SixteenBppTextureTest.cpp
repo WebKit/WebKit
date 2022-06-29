@@ -33,7 +33,7 @@ R5G6B5 Convert565(const GLColor &glColor)
     return rgb565;
 }
 
-class SixteenBppTextureTest : public ANGLETest
+class SixteenBppTextureTest : public ANGLETest<>
 {
   protected:
     SixteenBppTextureTest()

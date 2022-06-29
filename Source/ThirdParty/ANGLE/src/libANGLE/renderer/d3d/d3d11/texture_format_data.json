@@ -315,7 +315,8 @@
   "D24_UNORM_S8_UINT": {
     "FL10Plus": {
       "texFormat": "DXGI_FORMAT_R24G8_TYPELESS",
-      "srvFormat": "DXGI_FORMAT_R24_UNORM_X8_TYPELESS"
+      "srvFormat": "DXGI_FORMAT_R24_UNORM_X8_TYPELESS",
+      "stencilSRVFormat": "DXGI_FORMAT_X24_TYPELESS_G8_UINT"
     },
     "FL9_3": {
       "texFormat": "DXGI_FORMAT_D24_UNORM_S8_UINT"
@@ -331,6 +332,7 @@
   "D32_FLOAT_S8X24_UINT": {
     "texFormat": "DXGI_FORMAT_R32G8X24_TYPELESS",
     "srvFormat": "DXGI_FORMAT_R32_FLOAT_X8X24_TYPELESS",
+    "stencilSRVFormat": "DXGI_FORMAT_X32_TYPELESS_G8X24_UINT",
     "dsvFormat": "DXGI_FORMAT_D32_FLOAT_S8X24_UINT",
     "channels": "ds",
     "bits": {

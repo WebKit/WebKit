@@ -20,14 +20,14 @@ class TIntermBlock;
 class TSymbolTable;
 class TVariable;
 
-ANGLE_NO_DISCARD bool ReplaceArrayOfMatrixVarying(TCompiler *compiler,
-                                                  TIntermBlock *root,
-                                                  TSymbolTable *symbolTable,
-                                                  const TVariable *varying);
+[[nodiscard]] bool ReplaceArrayOfMatrixVarying(TCompiler *compiler,
+                                               TIntermBlock *root,
+                                               TSymbolTable *symbolTable,
+                                               const TVariable *varying);
 
-ANGLE_NO_DISCARD bool ReplaceArrayOfMatrixVaryings(TCompiler *compiler,
-                                                   TIntermBlock *root,
-                                                   TSymbolTable *symbolTable);
+[[nodiscard]] bool ReplaceArrayOfMatrixVaryings(TCompiler *compiler,
+                                                TIntermBlock *root,
+                                                TSymbolTable *symbolTable);
 }  // namespace sh
 
 #endif

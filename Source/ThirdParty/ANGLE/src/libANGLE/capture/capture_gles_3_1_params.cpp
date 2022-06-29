@@ -85,7 +85,8 @@ void CaptureGetFramebufferParameteriv_params(const State &glState,
                                              GLint *params,
                                              ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    // All glGetFramebufferParameteriv queries write back one single value.
+    paramCapture->readBufferSizeBytes = sizeof(GLint);
 }
 
 void CaptureGetMultisamplefv_val(const State &glState,

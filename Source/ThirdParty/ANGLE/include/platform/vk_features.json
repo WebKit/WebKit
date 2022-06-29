@@ -441,6 +441,15 @@
             "issue": "http://anglebug.com/5371"
         },
         {
+            "name": "disallow_mixed_depth_stencil_load_op_none_and_load",
+            "category": "Workarounds",
+            "description": [
+                "Disallow use of LOAD_OP_NONE for only one of the depth or stencil aspects of a ",
+                "depth/stencil attachment"
+            ],
+            "issue": "http://anglebug.com/7370"
+        },
+        {
             "name": "supports_depth_clip_control",
             "category": "Features",
             "description": [
@@ -590,12 +599,12 @@
             "issue": "http://anglebug.com/4889"
         },
         {
-            "name": "force_driver_uniform_over_spec_const",
-            "category": "Workarounds",
+            "name": "prefer_driver_uniform_over_spec_const",
+            "category": "Features",
             "description": [
-                "Forces using driver uniforms instead of specialization constants."
+                "Prefer using driver uniforms instead of specialization constants."
             ],
-            "issue": "http://issuetracker.google.com/173636783"
+            "issue": "http://anglebug.com/7406"
         },
         {
             "name": "expose_non_conformant_extensions_and_versions",
@@ -661,6 +670,22 @@
             "issue": "http://anglebug.com/6692"
         },
         {
+            "name": "supports_pipeline_creation_cache_control",
+            "category": "Features",
+            "description": [
+                "VkDevice supports VK_EXT_pipeline_creation_cache_control extension"
+            ],
+            "issue": "http://anglebug.com/5881"
+        },
+        {
+            "name": "supports_pipeline_creation_feedback",
+            "category": "Features",
+            "description": [
+                "VkDevice supports VK_EXT_pipeline_creation_feedback extension"
+            ],
+            "issue": "http://anglebug.com/5881"
+        },
+        {
             "name": "supports_surface_capabilities2_extension",
             "category": "Features",
             "description": [
@@ -718,6 +743,14 @@
             ]
         },
         {
+            "name": "permanently_switch_to_framebuffer_fetch_mode",
+            "category": "Features",
+            "description": [
+                "Whether the context should permanently switch to framebuffer fetch mode on first",
+                "encounter"
+            ]
+        },
+        {
             "name": "supports_lock_surface_extension",
             "category": "Features",
             "description": [
@@ -728,8 +761,8 @@
             "name": "swapbuffers_on_flush_or_finish_with_single_buffer",
             "category": "Features",
             "description": [
-                "Bypass deferredFlush with calling swapbuffers on flush or finish when in Shared Present ",
-                "mode"
+                "Bypass deferredFlush with calling swapbuffers on flush or finish when in Shared ",
+                "Present mode"
             ],
             "issue": "http://anglebug.com/6878"
         },
@@ -782,12 +815,12 @@
             "issue": "http://anglebug.com/5901"
         },
         {
-            "name": "create_pipeline_during_link",
+            "name": "warm_up_pipeline_cache_at_link",
             "category": "Features",
             "description": [
-                "Create pipeline with default state during glLinkProgram"
+                "Warm up the Vulkan pipeline cache at link time"
             ],
-            "issue": "http://anglebug.com/7046"
+            "issue": "http://anglebug.com/5881"
         },
         {
             "name": "prefer_device_local_memory_host_visible",
@@ -845,6 +878,13 @@
                 "VkDevice supports VK_EXT_image_2d_view_of_3d"
             ],
             "issue": "https://anglebug.com/7320"
+        },
+        {
+            "name": "prefer_linear_filter_for_YUV",
+            "category": "Features",
+            "description": [
+                "Prefer to use VK_FILTER_LINEAR for VkSamplerYcbcrConversion"
+            ]
         }
     ]
 }

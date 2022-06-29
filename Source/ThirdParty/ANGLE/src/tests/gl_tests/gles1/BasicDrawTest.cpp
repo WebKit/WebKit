@@ -14,7 +14,7 @@
 
 using namespace angle;
 
-class BasicDrawTest : public ANGLETest
+class BasicDrawTest : public ANGLETest<>
 {
   protected:
     BasicDrawTest()

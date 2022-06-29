@@ -70,7 +70,7 @@ void ResetSecondaryCommandBuffers(VkDevice device,
 }
 
 template <>
-ANGLE_MAYBE_UNUSED void ResetSecondaryCommandBuffers<std::vector<VulkanSecondaryCommandBuffer>>(
+[[maybe_unused]] void ResetSecondaryCommandBuffers<std::vector<VulkanSecondaryCommandBuffer>>(
     VkDevice device,
     vk::CommandPool *commandPool,
     std::vector<VulkanSecondaryCommandBuffer> *commandBuffers)

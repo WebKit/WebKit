@@ -13,6 +13,7 @@
 #include "test_utils/angle_test_configs.h"
 #include "test_utils/gl_raii.h"
 #include "util/EGLWindow.h"
+#include "util/test_utils.h"
 
 using namespace angle;
 
@@ -30,7 +31,7 @@ EGLBoolean SafeDestroyContext(EGLDisplay display, EGLContext &context)
     return result;
 }
 
-class EGLMultiContextTest : public ANGLETest
+class EGLMultiContextTest : public ANGLETest<>
 {
   public:
     EGLMultiContextTest() : mContexts{EGL_NO_CONTEXT, EGL_NO_CONTEXT}, mTexture(0) {}
@@ -59,18 +60,18 @@ class EGLMultiContextTest : public ANGLETest
         EGLint count         = 0;
         EGLint clientVersion = EGL_OPENGL_ES3_BIT;
         EGLint attribs[]     = {EGL_RED_SIZE,
-                            8,
-                            EGL_GREEN_SIZE,
-                            8,
-                            EGL_BLUE_SIZE,
-                            8,
-                            EGL_ALPHA_SIZE,
-                            8,
-                            EGL_RENDERABLE_TYPE,
-                            clientVersion,
-                            EGL_SURFACE_TYPE,
-                            EGL_WINDOW_BIT | EGL_PBUFFER_BIT,
-                            EGL_NONE};
+                                8,
+                                EGL_GREEN_SIZE,
+                                8,
+                                EGL_BLUE_SIZE,
+                                8,
+                                EGL_ALPHA_SIZE,
+                                8,
+                                EGL_RENDERABLE_TYPE,
+                                clientVersion,
+                                EGL_SURFACE_TYPE,
+                                EGL_WINDOW_BIT | EGL_PBUFFER_BIT,
+                                EGL_NONE};
 
         result = eglChooseConfig(dpy, attribs, config, 1, &count);
         EXPECT_EGL_TRUE(result && (count > 0));
@@ -102,6 +103,19 @@ class EGLMultiContextTest : public ANGLETest
         EXPECT_TRUE(result);
         return result;
     }
+
+    enum class FenceTest
+    {
+        ClientWait,
+        ServerWait,
+        GetStatus,
+    };
+    enum class FlushMethod
+    {
+        Flush,
+        Finish,
+    };
+    void testFenceWithOpenRenderPass(FenceTest test, FlushMethod flushMethod);
 
     EGLContext mContexts[2];
     GLuint mTexture;
@@ -382,6 +396,174 @@ TEST_P(EGLMultiContextTest, RepeatedEglInitAndTerminate)
         thread.join();
     }
 }
+
+// Test that thread B can wait on thread A's sync before thread A flushes it, and wakes up after
+// that.  Note that only validatity of the fence operations are tested here.  The test could
+// potentially be enhanced with EGL images similarly to how
+// MultithreadingTestES3::testFenceWithOpenRenderPass tests correctness of synchronization through
+// a shared texture.
+void EGLMultiContextTest::testFenceWithOpenRenderPass(FenceTest test, FlushMethod flushMethod)
+{
+    ANGLE_SKIP_TEST_IF(!platformSupportsMultithreading());
+
+    constexpr uint32_t kWidth  = 100;
+    constexpr uint32_t kHeight = 200;
+
+    EGLSyncKHR sync = EGL_NO_SYNC_KHR;
+
+    std::mutex mutex;
+    std::condition_variable condVar;
+
+    enum class Step
+    {
+        Start,
+        Thread0CreateFence,
+        Thread1WaitFence,
+        Finish,
+        Abort,
+    };
+    Step currentStep = Step::Start;
+
+    auto thread0 = [&](EGLDisplay dpy, EGLSurface surface, EGLContext context) {
+        ThreadSynchronization<Step> threadSynchronization(&currentStep, &mutex, &condVar);
+
+        ASSERT_TRUE(threadSynchronization.waitForStep(Step::Start));
+
+        EXPECT_EGL_TRUE(eglMakeCurrent(dpy, surface, surface, context));
+
+        // Issue a draw
+        ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+        drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f);
+        ASSERT_GL_NO_ERROR();
+
+        // Issue a fence.  A render pass is currently open, but it should be closed in the Vulkan
+        // backend.
+        sync = eglCreateSyncKHR(dpy, EGL_SYNC_FENCE_KHR, nullptr);
+        EXPECT_NE(sync, EGL_NO_SYNC_KHR);
+
+        // Wait for thread 1 to wait on it.
+        threadSynchronization.nextStep(Step::Thread0CreateFence);
+        ASSERT_TRUE(threadSynchronization.waitForStep(Step::Thread1WaitFence));
+
+        // Wait a little to give thread 1 time to wait on the sync object before flushing it.
+        angle::Sleep(500);
+        switch (flushMethod)
+        {
+            case FlushMethod::Flush:
+                glFlush();
+                break;
+            case FlushMethod::Finish:
+                glFinish();
+                break;
+        }
+
+        ASSERT_TRUE(threadSynchronization.waitForStep(Step::Finish));
+
+        EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, GLColor::red);
+
+        // Clean up
+        EXPECT_EGL_TRUE(eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+    };
+
+    auto thread1 = [&](EGLDisplay dpy, EGLSurface surface, EGLContext context) {
+        ThreadSynchronization<Step> threadSynchronization(&currentStep, &mutex, &condVar);
+
+        EXPECT_EGL_TRUE(eglMakeCurrent(dpy, surface, surface, context));
+
+        // Wait for thread 0 to create the fence object.
+        ASSERT_TRUE(threadSynchronization.waitForStep(Step::Thread0CreateFence));
+
+        // Test access to the fence object
+        threadSynchronization.nextStep(Step::Thread1WaitFence);
+
+        constexpr GLuint64 kTimeout = 2'000'000'000;  // 2 seconds
+        EGLint result               = EGL_CONDITION_SATISFIED_KHR;
+        switch (test)
+        {
+            case FenceTest::ClientWait:
+                result = eglClientWaitSyncKHR(dpy, sync, 0, kTimeout);
+                break;
+            case FenceTest::ServerWait:
+                ASSERT_TRUE(eglWaitSyncKHR(dpy, sync, 0));
+                break;
+            case FenceTest::GetStatus:
+            {
+                EGLint value;
+                EXPECT_EGL_TRUE(eglGetSyncAttribKHR(dpy, sync, EGL_SYNC_STATUS_KHR, &value));
+                if (value != EGL_SIGNALED_KHR)
+                {
+                    result = eglClientWaitSyncKHR(dpy, sync, 0, kTimeout);
+                }
+                break;
+            }
+        }
+        ASSERT_TRUE(result == EGL_CONDITION_SATISFIED_KHR);
+
+        // Issue a draw
+        ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+        drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f);
+        ASSERT_GL_NO_ERROR();
+
+        EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, GLColor::green);
+
+        // Clean up
+        EXPECT_EGL_TRUE(eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+
+        threadSynchronization.nextStep(Step::Finish);
+    };
+
+    std::array<LockStepThreadFunc, 2> threadFuncs = {
+        std::move(thread0),
+        std::move(thread1),
+    };
+
+    RunLockStepThreads(getEGLWindow(), threadFuncs.size(), threadFuncs.data());
+
+    ASSERT_NE(currentStep, Step::Abort);
+}
+
+// Test that thread B can wait on thread A's sync before thread A flushes it, and wakes up after
+// that.
+TEST_P(EGLMultiContextTest, ThreadBClientWaitBeforeThreadASyncFlush)
+{
+    testFenceWithOpenRenderPass(FenceTest::ClientWait, FlushMethod::Flush);
+}
+
+// Test that thread B can wait on thread A's sync before thread A flushes it, and wakes up after
+// that.
+TEST_P(EGLMultiContextTest, ThreadBServerWaitBeforeThreadASyncFlush)
+{
+    testFenceWithOpenRenderPass(FenceTest::ServerWait, FlushMethod::Flush);
+}
+
+// Test that thread B can wait on thread A's sync before thread A flushes it, and wakes up after
+// that.
+TEST_P(EGLMultiContextTest, ThreadBGetStatusBeforeThreadASyncFlush)
+{
+    testFenceWithOpenRenderPass(FenceTest::GetStatus, FlushMethod::Flush);
+}
+
+// Test that thread B can wait on thread A's sync before thread A flushes it, and wakes up after
+// that.
+TEST_P(EGLMultiContextTest, ThreadBClientWaitBeforeThreadASyncFinish)
+{
+    testFenceWithOpenRenderPass(FenceTest::ClientWait, FlushMethod::Finish);
+}
+
+// Test that thread B can wait on thread A's sync before thread A flushes it, and wakes up after
+// that.
+TEST_P(EGLMultiContextTest, ThreadBServerWaitBeforeThreadASyncFinish)
+{
+    testFenceWithOpenRenderPass(FenceTest::ServerWait, FlushMethod::Finish);
+}
+
+// Test that thread B can wait on thread A's sync before thread A flushes it, and wakes up after
+// that.
+TEST_P(EGLMultiContextTest, ThreadBGetStatusBeforeThreadASyncFinish)
+{
+    testFenceWithOpenRenderPass(FenceTest::GetStatus, FlushMethod::Finish);
+}
+
 }  // anonymous namespace
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EGLMultiContextTest);

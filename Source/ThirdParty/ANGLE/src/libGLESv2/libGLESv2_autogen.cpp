@@ -3908,6 +3908,39 @@ void GL_APIENTRY glEGLImageTargetTextureStorageEXT(GLuint texture,
 
 // GL_EXT_YUV_target
 
+// GL_EXT_base_instance
+void GL_APIENTRY glDrawArraysInstancedBaseInstanceEXT(GLenum mode,
+                                                      GLint first,
+                                                      GLsizei count,
+                                                      GLsizei instancecount,
+                                                      GLuint baseinstance)
+{
+    return GL_DrawArraysInstancedBaseInstanceEXT(mode, first, count, instancecount, baseinstance);
+}
+
+void GL_APIENTRY glDrawElementsInstancedBaseInstanceEXT(GLenum mode,
+                                                        GLsizei count,
+                                                        GLenum type,
+                                                        const void *indices,
+                                                        GLsizei instancecount,
+                                                        GLuint baseinstance)
+{
+    return GL_DrawElementsInstancedBaseInstanceEXT(mode, count, type, indices, instancecount,
+                                                   baseinstance);
+}
+
+void GL_APIENTRY glDrawElementsInstancedBaseVertexBaseInstanceEXT(GLenum mode,
+                                                                  GLsizei count,
+                                                                  GLenum type,
+                                                                  const void *indices,
+                                                                  GLsizei instancecount,
+                                                                  GLint basevertex,
+                                                                  GLuint baseinstance)
+{
+    return GL_DrawElementsInstancedBaseVertexBaseInstanceEXT(
+        mode, count, type, indices, instancecount, basevertex, baseinstance);
+}
+
 // GL_EXT_blend_func_extended
 void GL_APIENTRY glBindFragDataLocationEXT(GLuint program, GLuint color, const GLchar *name)
 {
@@ -5108,6 +5141,8 @@ void GL_APIENTRY glBlitFramebufferNV(GLint srcX0,
 // GL_NV_pixel_buffer_object
 
 // GL_NV_read_depth
+
+// GL_NV_read_depth_stencil
 
 // GL_NV_read_stencil
 

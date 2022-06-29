@@ -276,6 +276,7 @@
 // Slow tests
 5755 SWIFTSHADER : KHR-GLES31.core.arrays_of_arrays.SizedDeclarationsPrimitive = TIMEOUT
 6295 : KHR-GLES31.core.arrays_of_arrays.ConstructorsAndUnsizedDeclConstructors1 = TIMEOUT
+6295 : KHR-GLES31.core.arrays_of_arrays.ConstructorsAndUnsizedDeclConstructorSizing1 = TIMEOUT
 
 // ASAN Test bugs.
 6678 ASAN : KHR-GLES31.core.draw_indirect.negative-noVAO-arrays = SKIP

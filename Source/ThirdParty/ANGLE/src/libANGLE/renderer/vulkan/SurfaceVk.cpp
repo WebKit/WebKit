@@ -419,7 +419,11 @@ angle::Result GetPresentModes(DisplayVk *displayVk,
 
 SurfaceVk::SurfaceVk(const egl::SurfaceState &surfaceState) : SurfaceImpl(surfaceState) {}
 
-SurfaceVk::~SurfaceVk() = default;
+SurfaceVk::~SurfaceVk()
+{
+    mColorRenderTarget.destroy();
+    mDepthStencilRenderTarget.destroy();
+}
 
 angle::Result SurfaceVk::getAttachmentRenderTarget(const gl::Context *context,
                                                    GLenum binding,
@@ -1398,7 +1402,11 @@ angle::Result WindowSurfaceVk::createSwapChain(vk::Context *context,
 
     if (samples > 1)
     {
-        const VkImageUsageFlags usage = kSurfaceVkColorImageUsageFlags;
+        VkImageUsageFlags usage = kSurfaceVkColorImageUsageFlags;
+        if (NeedsInputAttachmentUsage(renderer->getFeatures()))
+        {
+            usage |= VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT;
+        }
 
         // Create a multisampled image that will be rendered to, and then resolved to a swapchain
         // image.  The actual VkImage is created with rotated coordinates to make it easier to do
@@ -1532,6 +1540,9 @@ angle::Result WindowSurfaceVk::checkForOutOfDateSwapchain(ContextVk *contextVk,
 void WindowSurfaceVk::releaseSwapchainImages(ContextVk *contextVk)
 {
     RendererVk *renderer = contextVk->getRenderer();
+
+    mColorRenderTarget.release(contextVk);
+    mDepthStencilRenderTarget.release(contextVk);
 
     if (mDepthStencilImage.valid())
     {
@@ -2437,7 +2448,7 @@ void WindowSurfaceVk::updateOverlay(ContextVk *contextVk) const
         overlay->getTextWidget(gl::WidgetId::VulkanLastValidationMessage)
             ->set(std::move(lastValidationMessage));
         overlay->getCountWidget(gl::WidgetId::VulkanValidationMessageCount)
-            ->add(validationMessageCount);
+            ->set(validationMessageCount);
     }
 
     contextVk->updateOverlayOnPresent();

@@ -17,7 +17,7 @@
 
 using namespace angle;
 
-class MaterialsTest : public ANGLETest
+class MaterialsTest : public ANGLETest<>
 {
   protected:
     MaterialsTest()

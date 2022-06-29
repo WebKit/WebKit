@@ -18,130 +18,21 @@ using namespace angle;
 namespace
 {
 
-using MultisampleTestParams = std::tuple<angle::PlatformParameters, bool>;
-
-std::string PrintToStringParamName(const ::testing::TestParamInfo<MultisampleTestParams> &info)
-{
-    ::std::stringstream ss;
-    ss << std::get<0>(info.param);
-    if (std::get<1>(info.param))
-    {
-        ss << "__NoStoreAndResolve";
-    }
-    return ss.str();
-}
-
-class MultisampleTest : public ANGLETestWithParam<MultisampleTestParams>
+class MultisampleTest : public ANGLETest<>
 {
   protected:
-    void testSetUp() override
+    MultisampleTest()
     {
-        const angle::PlatformParameters platform = ::testing::get<0>(GetParam());
-        std::vector<const char *> disabledFeatures;
-        if (::testing::get<1>(GetParam()))
-        {
-            disabledFeatures.push_back("allow_msaa_store_and_resolve");
-        }
-        disabledFeatures.push_back(nullptr);
-
-        // Get display.
-        EGLAttrib dispattrs[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE, platform.getRenderer(),
-                                 EGL_FEATURE_OVERRIDES_DISABLED_ANGLE,
-                                 reinterpret_cast<EGLAttrib>(disabledFeatures.data()), EGL_NONE};
-        mDisplay              = eglGetPlatformDisplay(EGL_PLATFORM_ANGLE_ANGLE,
-                                         reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
-        ASSERT_TRUE(mDisplay != EGL_NO_DISPLAY);
-
-        ASSERT_TRUE(eglInitialize(mDisplay, nullptr, nullptr) == EGL_TRUE);
-
-        // Nexus 5X and 6P fail to eglMakeCurrent with a config they advertise they support.
-        // http://anglebug.com/3464
-        ANGLE_SKIP_TEST_IF(IsNexus5X());
-
-        // Find a config that uses RGBA8 and allows 4x multisampling.
-        const EGLint configAttributes[] = {EGL_SURFACE_TYPE,
-                                           EGL_WINDOW_BIT,
-                                           EGL_RED_SIZE,
-                                           8,
-                                           EGL_GREEN_SIZE,
-                                           8,
-                                           EGL_BLUE_SIZE,
-                                           8,
-                                           EGL_ALPHA_SIZE,
-                                           8,
-                                           EGL_DEPTH_SIZE,
-                                           24,
-                                           EGL_STENCIL_SIZE,
-                                           8,
-                                           EGL_SAMPLE_BUFFERS,
-                                           1,
-                                           EGL_SAMPLES,
-                                           4,
-                                           EGL_NONE};
-
-        EGLint configCount;
-        EGLConfig multisampledConfig;
-        EGLint ret =
-            eglChooseConfig(mDisplay, configAttributes, &multisampledConfig, 1, &configCount);
-        mMultisampledConfigExists = ret && configCount > 0;
-
-        if (!mMultisampledConfigExists)
-        {
-            return;
-        }
-
-        // Create a window, context and surface if multisampling is possible.
-        mOSWindow = OSWindow::New();
-        mOSWindow->initialize("MultisampleTest", kWindowWidth, kWindowHeight);
-        setWindowVisible(mOSWindow, true);
-
-        EGLint contextAttributes[] = {
-            EGL_CONTEXT_MAJOR_VERSION_KHR,
-            platform.majorVersion,
-            EGL_CONTEXT_MINOR_VERSION_KHR,
-            platform.minorVersion,
-            EGL_NONE,
-        };
-
-        mContext =
-            eglCreateContext(mDisplay, multisampledConfig, EGL_NO_CONTEXT, contextAttributes);
-        ASSERT_TRUE(mContext != EGL_NO_CONTEXT);
-
-        mSurface = eglCreateWindowSurface(mDisplay, multisampledConfig,
-                                          mOSWindow->getNativeWindow(), nullptr);
-        ASSERT_EGL_SUCCESS();
-
-        eglMakeCurrent(mDisplay, mSurface, mSurface, mContext);
-        ASSERT_EGL_SUCCESS();
-    }
-
-    void testTearDown() override
-    {
-        if (mSurface)
-        {
-            eglSwapBuffers(mDisplay, mSurface);
-        }
-
-        eglMakeCurrent(mDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-
-        if (mSurface)
-        {
-            eglDestroySurface(mDisplay, mSurface);
-            ASSERT_EGL_SUCCESS();
-        }
-
-        if (mContext != EGL_NO_CONTEXT)
-        {
-            eglDestroyContext(mDisplay, mContext);
-            ASSERT_EGL_SUCCESS();
-        }
-
-        if (mOSWindow)
-        {
-            OSWindow::Delete(&mOSWindow);
-        }
-
-        eglTerminate(mDisplay);
+        setWindowWidth(kWindowWidth);
+        setWindowHeight(kWindowHeight);
+        setConfigRedBits(8);
+        setConfigGreenBits(8);
+        setConfigBlueBits(8);
+        setConfigAlphaBits(8);
+        setConfigDepthBits(24);
+        setConfigStencilBits(8);
+        setSamples(4);
+        setMultisampleEnabled(true);
     }
 
     void prepareVertexBuffer(GLBuffer &vertexBuffer,
@@ -158,12 +49,6 @@ class MultisampleTest : public ANGLETestWithParam<MultisampleTestParams>
   protected:
     static constexpr int kWindowWidth  = 16;
     static constexpr int kWindowHeight = 8;
-
-    OSWindow *mOSWindow            = nullptr;
-    EGLDisplay mDisplay            = EGL_NO_DISPLAY;
-    EGLContext mContext            = EGL_NO_CONTEXT;
-    EGLSurface mSurface            = EGL_NO_SURFACE;
-    bool mMultisampledConfigExists = false;
 };
 
 class MultisampleTestES3 : public MultisampleTest
@@ -172,7 +57,6 @@ class MultisampleTestES3 : public MultisampleTest
 // Test point rendering on a multisampled surface.  GLES2 section 3.3.1.
 TEST_P(MultisampleTest, Point)
 {
-    ANGLE_SKIP_TEST_IF(!mMultisampledConfigExists);
     // http://anglebug.com/3470
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsNVIDIAShield() && IsOpenGLES());
     // http://anglebug.com/5727
@@ -233,7 +117,6 @@ void main()
 // Test line rendering on a multisampled surface.  GLES2 section 3.4.4.
 TEST_P(MultisampleTest, Line)
 {
-    ANGLE_SKIP_TEST_IF(!mMultisampledConfigExists);
     ANGLE_SKIP_TEST_IF(IsARM64() && IsWindows() && IsD3D());
     // http://anglebug.com/5727
     ANGLE_SKIP_TEST_IF(IsOzone());
@@ -281,7 +164,6 @@ TEST_P(MultisampleTest, Line)
 // Test polygon rendering on a multisampled surface.  GLES2 section 3.5.3.
 TEST_P(MultisampleTest, Triangle)
 {
-    ANGLE_SKIP_TEST_IF(!mMultisampledConfigExists);
     // http://anglebug.com/3470
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsNVIDIAShield() && IsOpenGLES());
     // http://anglebug.com/5727
@@ -324,7 +206,6 @@ TEST_P(MultisampleTest, Triangle)
 // interruption.
 TEST_P(MultisampleTest, ContentPresevedAfterInterruption)
 {
-    ANGLE_SKIP_TEST_IF(!mMultisampledConfigExists);
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_rgb8_rgba8"));
     // http://anglebug.com/3470
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsNVIDIAShield() && IsOpenGLES());
@@ -407,7 +288,6 @@ TEST_P(MultisampleTest, ContentPresevedAfterInterruption)
 // Test that alpha to coverage is enabled works properly along with early fragment test.
 TEST_P(MultisampleTest, AlphaToSampleCoverage)
 {
-    ANGLE_SKIP_TEST_IF(!mMultisampledConfigExists);
     // http://anglebug.com/5727
     ANGLE_SKIP_TEST_IF(IsOzone());
 
@@ -452,8 +332,6 @@ TEST_P(MultisampleTest, AlphaToSampleCoverage)
 // Test that resolve from multisample default framebuffer works.
 TEST_P(MultisampleTestES3, ResolveToFBO)
 {
-    ANGLE_SKIP_TEST_IF(!mMultisampledConfigExists);
-
     GLTexture resolveTexture;
     glBindTexture(GL_TEXTURE_2D, resolveTexture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kWindowWidth, kWindowHeight, 0, GL_RGBA,
@@ -487,7 +365,7 @@ TEST_P(MultisampleTestES3, ResolveToFBO)
     EXPECT_PIXEL_COLOR_NEAR(kWindowWidth / 2, kWindowHeight / 2, kResult, 1);
 }
 
-class MultisampleResolveTest : public ANGLETest
+class MultisampleResolveTest : public ANGLETest<>
 {
   protected:
     static const GLColor kEXPECTED_R8;
@@ -1110,46 +988,23 @@ TEST_P(MultisampleResolveTest, DrawAndResolveMultipleTimes)
     EXPECT_PIXEL_RECT_EQ(width / 2, height / 2, width / 4, height / 4, GLColor(255, 255, 128, 255));
 }
 
-ANGLE_INSTANTIATE_TEST_COMBINE_1(MultisampleTest,
-                                 PrintToStringParamName,
-                                 testing::Values(false),
-                                 WithNoFixture(ES2_D3D11()),
-                                 WithNoFixture(ES3_D3D11()),
-                                 WithNoFixture(ES31_D3D11()),
-                                 WithNoFixture(ES2_METAL()),
-                                 WithNoFixture(ES2_OPENGL()),
-                                 WithNoFixture(ES3_OPENGL()),
-                                 WithNoFixture(ES31_OPENGL()),
-                                 WithNoFixture(ES2_OPENGLES()),
-                                 WithNoFixture(ES3_OPENGLES()),
-                                 WithNoFixture(ES31_OPENGLES()),
-                                 WithNoFixture(ES2_VULKAN()),
-                                 WithNoFixture(ES3_VULKAN()),
-                                 WithNoFixture(ES31_VULKAN()));
-
-namespace store_and_resolve_feature_off
-{
-// Simulate missing msaa auto resolve feature in Metal.
-ANGLE_INSTANTIATE_TEST_COMBINE_1(MultisampleTest,
-                                 PrintToStringParamName,
-                                 testing::Values(true),
-                                 WithNoFixture(ES2_METAL()));
-}  // namespace store_and_resolve_feature_off
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND_ES31_AND(
+    MultisampleTest,
+    ES3_VULKAN().enable(Feature::EmulatedPrerotation90),
+    ES3_VULKAN().enable(Feature::EmulatedPrerotation180),
+    ES3_VULKAN().enable(Feature::EmulatedPrerotation270),
+    // Simulate missing msaa auto resolve feature in Metal.
+    ES2_METAL().disable(Feature::AllowMultisampleStoreAndResolve));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(MultisampleTestES3);
-ANGLE_INSTANTIATE_TEST_COMBINE_1(MultisampleTestES3,
-                                 PrintToStringParamName,
-                                 testing::Values(false),
-                                 WithNoFixture(ES3_D3D11()),
-                                 WithNoFixture(ES31_D3D11()),
-                                 WithNoFixture(ES3_OPENGL()),
-                                 WithNoFixture(ES31_OPENGL()),
-                                 WithNoFixture(ES3_OPENGLES()),
-                                 WithNoFixture(ES31_OPENGLES()),
-                                 WithNoFixture(ES3_VULKAN()),
-                                 WithNoFixture(ES31_VULKAN()),
-                                 WithNoFixture(ES3_METAL()));
+ANGLE_INSTANTIATE_TEST_ES3_AND_ES31_AND(MultisampleTestES3,
+                                        ES3_VULKAN().enable(Feature::EmulatedPrerotation90),
+                                        ES3_VULKAN().enable(Feature::EmulatedPrerotation180),
+                                        ES3_VULKAN().enable(Feature::EmulatedPrerotation270));
 
-ANGLE_INSTANTIATE_TEST_ES3(MultisampleResolveTest);
+ANGLE_INSTANTIATE_TEST_ES3_AND(MultisampleResolveTest,
+                               ES3_VULKAN().enable(Feature::EmulatedPrerotation90),
+                               ES3_VULKAN().enable(Feature::EmulatedPrerotation180),
+                               ES3_VULKAN().enable(Feature::EmulatedPrerotation270));
 
 }  // anonymous namespace

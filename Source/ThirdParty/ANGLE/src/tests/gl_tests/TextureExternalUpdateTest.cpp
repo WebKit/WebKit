@@ -12,7 +12,7 @@
 namespace angle
 {
 
-class TextureExternalUpdateTest : public ANGLETest
+class TextureExternalUpdateTest : public ANGLETest<>
 {};
 
 // Test basic usage of glInvalidateTextureANGLE

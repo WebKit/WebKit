@@ -981,6 +981,33 @@ angle::CallCapture CaptureEGLImageTargetTextureStorageEXT(const State &glState,
 
 // GL_EXT_YUV_target
 
+// GL_EXT_base_instance
+angle::CallCapture CaptureDrawArraysInstancedBaseInstanceEXT(const State &glState,
+                                                             bool isCallValid,
+                                                             PrimitiveMode modePacked,
+                                                             GLint first,
+                                                             GLsizei count,
+                                                             GLsizei instancecount,
+                                                             GLuint baseinstance);
+angle::CallCapture CaptureDrawElementsInstancedBaseInstanceEXT(const State &glState,
+                                                               bool isCallValid,
+                                                               PrimitiveMode modePacked,
+                                                               GLsizei count,
+                                                               DrawElementsType typePacked,
+                                                               const void *indices,
+                                                               GLsizei instancecount,
+                                                               GLuint baseinstance);
+angle::CallCapture CaptureDrawElementsInstancedBaseVertexBaseInstanceEXT(
+    const State &glState,
+    bool isCallValid,
+    PrimitiveMode modePacked,
+    GLsizei count,
+    DrawElementsType typePacked,
+    const void *indices,
+    GLsizei instancecount,
+    GLint basevertex,
+    GLuint baseinstance);
+
 // GL_EXT_blend_func_extended
 angle::CallCapture CaptureBindFragDataLocationEXT(const State &glState,
                                                   bool isCallValid,
@@ -2037,6 +2064,8 @@ angle::CallCapture CaptureBlitFramebufferNV(const State &glState,
 // GL_NV_pixel_buffer_object
 
 // GL_NV_read_depth
+
+// GL_NV_read_depth_stencil
 
 // GL_NV_read_stencil
 
@@ -4097,6 +4126,26 @@ void CaptureEGLImageTargetTextureStorageEXT_attrib_list(const State &glState,
                                                         GLeglImageOES image,
                                                         const GLint *attrib_list,
                                                         angle::ParamCapture *paramCapture);
+void CaptureDrawElementsInstancedBaseInstanceEXT_indices(const State &glState,
+                                                         bool isCallValid,
+                                                         PrimitiveMode modePacked,
+                                                         GLsizei count,
+                                                         DrawElementsType typePacked,
+                                                         const void *indices,
+                                                         GLsizei instancecount,
+                                                         GLuint baseinstance,
+                                                         angle::ParamCapture *paramCapture);
+void CaptureDrawElementsInstancedBaseVertexBaseInstanceEXT_indices(
+    const State &glState,
+    bool isCallValid,
+    PrimitiveMode modePacked,
+    GLsizei count,
+    DrawElementsType typePacked,
+    const void *indices,
+    GLsizei instancecount,
+    GLint basevertex,
+    GLuint baseinstance,
+    angle::ParamCapture *paramCapture);
 void CaptureBindFragDataLocationEXT_name(const State &glState,
                                          bool isCallValid,
                                          ShaderProgramID programPacked,

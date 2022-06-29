@@ -14,7 +14,7 @@
 
 using namespace angle;
 
-class DrawTextureTest : public ANGLETest
+class DrawTextureTest : public ANGLETest<>
 {
   protected:
     DrawTextureTest()
@@ -141,12 +141,12 @@ TEST_P(DrawTextureTest, ColorArrayDifferentTypes)
     constexpr GLfloat kVertexPtrData[]    = {-1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 1.0f};
     constexpr GLfloat kTexCoordPtrData[]  = {0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f};
     constexpr GLubyte kGLubyteData[]      = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
-                                        0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+                                             0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
     constexpr GLfloat kGLfloatData[]      = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
-                                        1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+                                             1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
     constexpr GLfixed kGLfixedData[]      = {0x10000, 0x10000, 0x10000, 0x10000, 0x10000, 0x10000,
-                                        0x10000, 0x10000, 0x10000, 0x10000, 0x10000, 0x10000,
-                                        0x10000, 0x10000, 0x10000, 0x10000};
+                                             0x10000, 0x10000, 0x10000, 0x10000, 0x10000, 0x10000,
+                                             0x10000, 0x10000, 0x10000, 0x10000};
 
     // We check a pixel coordinate at the border of where linear interpolation starts as
     // we fail to get correct interpolated values when we do not normalize the GLbyte values.

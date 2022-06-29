@@ -13,7 +13,7 @@
 namespace angle
 {
 
-class GetTexLevelParameterTest : public ANGLETest
+class GetTexLevelParameterTest : public ANGLETest<>
 {
   protected:
     GetTexLevelParameterTest()

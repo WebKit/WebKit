@@ -13,7 +13,7 @@
 namespace angle
 {
 
-class ShadingRateQcomTest : public ANGLETest
+class ShadingRateQcomTest : public ANGLETest<>
 {
   protected:
     ShadingRateQcomTest()

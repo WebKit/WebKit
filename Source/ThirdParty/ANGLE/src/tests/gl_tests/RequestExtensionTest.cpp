@@ -15,7 +15,7 @@
 namespace angle
 {
 
-class RequestExtensionTest : public ANGLETest
+class RequestExtensionTest : public ANGLETest<>
 {
   protected:
     RequestExtensionTest() { setExtensionsEnabled(false); }

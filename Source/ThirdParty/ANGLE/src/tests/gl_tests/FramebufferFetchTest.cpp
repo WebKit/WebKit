@@ -266,7 +266,7 @@ void main (void)
     o_color3 += u_color;
 })";
 
-class FramebufferFetchES31 : public ANGLETest
+class FramebufferFetchES31 : public ANGLETest<>
 {
   protected:
     static constexpr GLuint kMaxColorBuffer = 4u;
@@ -2052,6 +2052,20 @@ void main (void)
     render(fetchPositionLocation, false);
     EXPECT_PIXEL_COLOR_EQ(kViewportWidth / 2, kViewportHeight / 2, GLColor::yellow);
     ASSERT_GL_NO_ERROR();
+}
+
+// Verify that calling glFramebufferFetchBarrierEXT without an open render pass is ok.
+TEST_P(FramebufferFetchES31, BarrierBeforeDraw)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_shader_framebuffer_fetch") ||
+                       !IsGLExtensionEnabled("GL_EXT_shader_framebuffer_fetch_non_coherent"));
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+
+    glFramebufferFetchBarrierEXT();
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f);
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(FramebufferFetchES31);

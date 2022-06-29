@@ -14,7 +14,7 @@
 
 using namespace angle;
 
-class PixmapTest : public ANGLETest
+class PixmapTest : public ANGLETest<>
 {
   protected:
     PixmapTest()

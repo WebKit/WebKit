@@ -63,7 +63,7 @@ class Name
 
 constexpr Name kBaseInstanceName = Name("baseInstance");
 
-ANGLE_NO_DISCARD bool ExpressionContainsName(const Name &name, TIntermTyped &node);
+[[nodiscard]] bool ExpressionContainsName(const Name &name, TIntermTyped &node);
 
 }  // namespace sh
 

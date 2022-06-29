@@ -1507,13 +1507,19 @@ angle::Result UtilsVk::setupComputeProgram(
     size_t pushConstantsSize,
     vk::OutsideRenderPassCommandBufferHelper *commandBufferHelper)
 {
+    RendererVk *renderer = contextVk->getRenderer();
+
     ASSERT(function >= Function::ComputeStartIndex);
 
     const vk::BindingPointer<vk::PipelineLayout> &pipelineLayout = mPipelineLayouts[function];
 
-    vk::PipelineHelper *pipeline;
     program->setShader(gl::ShaderType::Compute, csShader);
-    ANGLE_TRY(program->getComputePipeline(contextVk, pipelineLayout.get(), &pipeline));
+
+    vk::PipelineHelper *pipeline;
+    PipelineCacheAccess pipelineCache;
+    ANGLE_TRY(renderer->getPipelineCache(&pipelineCache));
+    ANGLE_TRY(program->getComputePipeline(contextVk, &pipelineCache, pipelineLayout.get(),
+                                          PipelineSource::Utils, &pipeline));
     commandBufferHelper->retainResource(pipeline);
 
     vk::OutsideRenderPassCommandBuffer *commandBuffer = &commandBufferHelper->getCommandBuffer();
@@ -1564,12 +1570,12 @@ angle::Result UtilsVk::setupGraphicsProgram(ContextVk *contextVk,
     // This value is not used but is passed to getGraphicsPipeline to avoid a nullptr check.
     const vk::GraphicsPipelineDesc *descPtr;
     vk::PipelineHelper *helper;
-    vk::PipelineCache *pipelineCache = nullptr;
+    PipelineCacheAccess pipelineCache;
     ANGLE_TRY(renderer->getPipelineCache(&pipelineCache));
-    ANGLE_TRY(program->getGraphicsPipeline(contextVk, &contextVk->getRenderPassCache(),
-                                           *pipelineCache, pipelineLayout.get(), *pipelineDesc,
-                                           gl::AttributesMask(), gl::ComponentTypeMask(),
-                                           gl::DrawBufferMask(), &descPtr, &helper));
+    ANGLE_TRY(program->getGraphicsPipeline(
+        contextVk, &contextVk->getRenderPassCache(), &pipelineCache, pipelineLayout.get(),
+        PipelineSource::Utils, *pipelineDesc, gl::AttributesMask(), gl::ComponentTypeMask(),
+        gl::DrawBufferMask(), &descPtr, &helper));
     contextVk->getStartedRenderPassCommands().retainResource(helper);
     commandBuffer->bindGraphicsPipeline(helper->getPipeline());
 
@@ -2421,39 +2427,29 @@ angle::Result UtilsVk::blitResolveImpl(ContextVk *contextVk,
     switch (params.rotation)
     {
         case SurfaceRotation::Identity:
-            break;
         case SurfaceRotation::Rotated90Degrees:
-            shaderParams.rotateXY = 1;
             break;
         case SurfaceRotation::Rotated180Degrees:
-            if (isResolve)
-            {
-                shaderParams.offset.resolve[0] += params.rotatedOffsetFactor[0];
-                shaderParams.offset.resolve[1] += params.rotatedOffsetFactor[1];
-            }
-            else
-            {
-                shaderParams.offset.blit[0] += params.rotatedOffsetFactor[0];
-                shaderParams.offset.blit[1] += params.rotatedOffsetFactor[1];
-            }
-            break;
         case SurfaceRotation::Rotated270Degrees:
             if (isResolve)
             {
-                shaderParams.offset.resolve[0] += params.rotatedOffsetFactor[0];
-                shaderParams.offset.resolve[1] += params.rotatedOffsetFactor[1];
+                // Align the offset with minus 1, or the sample position near the edge will be
+                // wrong.
+                shaderParams.offset.resolve[0] += params.rotatedOffsetFactor[0] - 1;
+                shaderParams.offset.resolve[1] += params.rotatedOffsetFactor[1] - 1;
             }
             else
             {
                 shaderParams.offset.blit[0] += params.rotatedOffsetFactor[0];
                 shaderParams.offset.blit[1] += params.rotatedOffsetFactor[1];
             }
-            shaderParams.rotateXY = 1;
             break;
         default:
             UNREACHABLE();
             break;
     }
+
+    shaderParams.rotateXY = IsRotatedAspectRatio(params.rotation);
 
     bool blitColor   = srcColorView != nullptr;
     bool blitDepth   = srcDepthView != nullptr;
@@ -2681,41 +2677,29 @@ angle::Result UtilsVk::stencilBlitResolveNoShaderExport(ContextVk *contextVk,
     switch (params.rotation)
     {
         case SurfaceRotation::Identity:
-            break;
         case SurfaceRotation::Rotated90Degrees:
-            shaderParams.rotateXY = 1;
             break;
         case SurfaceRotation::Rotated180Degrees:
+        case SurfaceRotation::Rotated270Degrees:
             if (isResolve)
             {
                 // Align the offset with minus 1, or the sample position near the edge will be
                 // wrong.
                 shaderParams.offset.resolve[0] += params.rotatedOffsetFactor[0] - 1;
-                shaderParams.offset.resolve[1] += params.rotatedOffsetFactor[1];
-            }
-            else
-            {
-                shaderParams.offset.blit[0] += params.rotatedOffsetFactor[0] - 1;
-                shaderParams.offset.blit[1] += params.rotatedOffsetFactor[1];
-            }
-            break;
-        case SurfaceRotation::Rotated270Degrees:
-            if (isResolve)
-            {
-                shaderParams.offset.resolve[0] += params.rotatedOffsetFactor[0] - 1;
                 shaderParams.offset.resolve[1] += params.rotatedOffsetFactor[1] - 1;
             }
             else
             {
-                shaderParams.offset.blit[0] += params.rotatedOffsetFactor[0] - 1;
-                shaderParams.offset.blit[1] += params.rotatedOffsetFactor[1] - 1;
+                shaderParams.offset.blit[0] += params.rotatedOffsetFactor[0];
+                shaderParams.offset.blit[1] += params.rotatedOffsetFactor[1];
             }
-            shaderParams.rotateXY = 1;
             break;
         default:
             UNREACHABLE();
             break;
     }
+
+    shaderParams.rotateXY = IsRotatedAspectRatio(params.rotation);
 
     // Linear sampling is only valid with color blitting.
     ASSERT(!params.linear);

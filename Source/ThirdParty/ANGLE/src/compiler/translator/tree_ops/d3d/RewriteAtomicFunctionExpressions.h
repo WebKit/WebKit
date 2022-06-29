@@ -33,10 +33,10 @@ class TCompiler;
 class TIntermNode;
 class TSymbolTable;
 
-ANGLE_NO_DISCARD bool RewriteAtomicFunctionExpressions(TCompiler *compiler,
-                                                       TIntermNode *root,
-                                                       TSymbolTable *symbolTable,
-                                                       int shaderVersion);
+[[nodiscard]] bool RewriteAtomicFunctionExpressions(TCompiler *compiler,
+                                                    TIntermNode *root,
+                                                    TSymbolTable *symbolTable,
+                                                    int shaderVersion);
 }  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_TREEOPS_D3D_REWRITE_ATOMIC_FUNCTION_EXPRESSIONS_H_

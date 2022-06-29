@@ -29,7 +29,7 @@ void main()
 })";
 }  // namespace
 
-class PBOExtensionTest : public ANGLETest
+class PBOExtensionTest : public ANGLETest<>
 {
   protected:
     PBOExtensionTest()

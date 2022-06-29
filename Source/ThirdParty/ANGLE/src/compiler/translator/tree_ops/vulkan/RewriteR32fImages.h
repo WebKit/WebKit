@@ -18,9 +18,9 @@ class TCompiler;
 class TIntermBlock;
 class TSymbolTable;
 
-ANGLE_NO_DISCARD bool RewriteR32fImages(TCompiler *compiler,
-                                        TIntermBlock *root,
-                                        TSymbolTable *symbolTable);
+[[nodiscard]] bool RewriteR32fImages(TCompiler *compiler,
+                                     TIntermBlock *root,
+                                     TSymbolTable *symbolTable);
 }  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_TREEOPS_VULKAN_REWRITER32FIMAGES_H_

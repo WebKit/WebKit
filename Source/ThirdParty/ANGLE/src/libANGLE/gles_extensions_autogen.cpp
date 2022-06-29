@@ -39,6 +39,7 @@ const ExtensionInfoMap &GetExtensionInfoMap()
 
         // GLES 2.0 extension strings
         // --------------------------
+        map["GL_EXT_base_instance"] = enableableExtension(&Extensions::baseInstanceEXT);
         map["GL_KHR_blend_equation_advanced"] = esOnlyExtension(&Extensions::blendEquationAdvancedKHR);
         map["GL_EXT_blend_func_extended"] = enableableExtension(&Extensions::blendFuncExtendedEXT);
         map["GL_EXT_blend_minmax"] = enableableExtension(&Extensions::blendMinmaxEXT);
@@ -125,6 +126,7 @@ const ExtensionInfoMap &GetExtensionInfoMap()
         map["GL_EXT_protected_textures"] = enableableExtension(&Extensions::protectedTexturesEXT);
         map["GL_EXT_pvrtc_sRGB"] = enableableExtension(&Extensions::pvrtcSRGBEXT);
         map["GL_NV_read_depth"] = enableableExtension(&Extensions::readDepthNV);
+        map["GL_NV_read_depth_stencil"] = enableableExtension(&Extensions::readDepthStencilNV);
         map["GL_EXT_read_format_bgra"] = enableableExtension(&Extensions::readFormatBgraEXT);
         map["GL_NV_read_stencil"] = enableableExtension(&Extensions::readStencilNV);
         map["GL_OES_rgb8_rgba8"] = enableableExtension(&Extensions::rgb8Rgba8OES);

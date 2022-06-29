@@ -10,7 +10,7 @@
 
 using namespace angle;
 
-class EGLQueryContextTest : public ANGLETest
+class EGLQueryContextTest : public ANGLETest<>
 {
   public:
     void testSetUp() override
@@ -19,7 +19,7 @@ class EGLQueryContextTest : public ANGLETest
 
         EGLint dispattrs[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE, GetParam().getRenderer(), EGL_NONE};
         mDisplay           = eglGetPlatformDisplayEXT(
-            EGL_PLATFORM_ANGLE_ANGLE, reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
+                      EGL_PLATFORM_ANGLE_ANGLE, reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
         EXPECT_TRUE(mDisplay != EGL_NO_DISPLAY);
         EXPECT_TRUE(eglInitialize(mDisplay, nullptr, nullptr) != EGL_FALSE);
 

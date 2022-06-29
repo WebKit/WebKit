@@ -449,6 +449,11 @@ struct FeaturesGL : FeatureSetBase
         "alwaysUnbindFramebufferTexture2D", FeatureCategory::OpenGLWorkarounds,
         "Force unbind framebufferTexture2D before binding renderbuffer to work around driver bug.",
         &members, "https://anglebug.com/5536"};
+
+    FeatureInfo disableTextureClampToBorder = {
+        "disableTextureClampToBorder", FeatureCategory::OpenGLWorkarounds,
+        "Imagination devices generate INVALID_ENUM when setting the texture border color.",
+        &members, "https://anglebug.com/7405"};
 };
 
 inline FeaturesGL::FeaturesGL()  = default;

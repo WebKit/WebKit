@@ -13,7 +13,7 @@
 namespace angle
 {
 
-class SamplersTest : public ANGLETest
+class SamplersTest : public ANGLETest<>
 {
   protected:
     SamplersTest() {}

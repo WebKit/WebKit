@@ -24,14 +24,14 @@ class TIntermTyped;
 // at the end of shader re-assign the values of this global variable to gl_SampleMask and
 // gl_SampleMaskIn. This to solve the problem which the non constant index is used for the unsized
 // array problem.
-ANGLE_NO_DISCARD bool RewriteSampleMask(TCompiler *compiler,
-                                        TIntermBlock *root,
-                                        TSymbolTable *symbolTable,
-                                        const TIntermTyped *numSamplesUniform);
+[[nodiscard]] bool RewriteSampleMask(TCompiler *compiler,
+                                     TIntermBlock *root,
+                                     TSymbolTable *symbolTable,
+                                     const TIntermTyped *numSamplesUniform);
 
-ANGLE_NO_DISCARD bool RewriteSampleMaskIn(TCompiler *compiler,
-                                          TIntermBlock *root,
-                                          TSymbolTable *symbolTable);
+[[nodiscard]] bool RewriteSampleMaskIn(TCompiler *compiler,
+                                       TIntermBlock *root,
+                                       TSymbolTable *symbolTable);
 
 }  // namespace sh
 

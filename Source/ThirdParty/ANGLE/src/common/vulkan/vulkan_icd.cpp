@@ -47,15 +47,15 @@ namespace vk
 namespace
 {
 
-ANGLE_MAYBE_UNUSED const std::string WrapICDEnvironment(const char *icdEnvironment)
+[[maybe_unused]] const std::string WrapICDEnvironment(const char *icdEnvironment)
 {
     // The libraries are bundled into the module directory
     std::string ret = ConcatenatePath(angle::GetModuleDirectory(), icdEnvironment);
     return ret;
 }
 
-ANGLE_MAYBE_UNUSED constexpr char kLoaderLayersPathEnv[] = "VK_LAYER_PATH";
-ANGLE_MAYBE_UNUSED constexpr char kLayerEnablesEnv[]     = "VK_LAYER_ENABLES";
+[[maybe_unused]] constexpr char kLoaderLayersPathEnv[] = "VK_LAYER_PATH";
+[[maybe_unused]] constexpr char kLayerEnablesEnv[]     = "VK_LAYER_ENABLES";
 
 constexpr char kLoaderICDFilenamesEnv[]              = "VK_ICD_FILENAMES";
 constexpr char kANGLEPreferredDeviceEnv[]            = "ANGLE_PREFERRED_DEVICE";

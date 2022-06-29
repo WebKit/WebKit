@@ -11,7 +11,7 @@
 namespace angle
 {
 
-class SyncQueriesTest : public ANGLETest
+class SyncQueriesTest : public ANGLETest<>
 {
   protected:
     SyncQueriesTest()

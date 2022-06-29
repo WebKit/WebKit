@@ -34,7 +34,7 @@ enum Vendor
 };
 }  // namespace
 
-class InstancingTest : public ANGLETest
+class InstancingTest : public ANGLETest<>
 {
   protected:
     InstancingTest()

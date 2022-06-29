@@ -10,7 +10,7 @@
 
 namespace angle
 {
-class ContextLostTest : public ANGLETest
+class ContextLostTest : public ANGLETest<>
 {
   protected:
     ContextLostTest()
@@ -118,7 +118,7 @@ TEST_P(ContextLostTest, ParallelCompileReadyQuery)
     EXPECT_GLENUM_EQ(linkStatus, 0xBADF00D);
 }
 
-class ContextLostSkipValidationTest : public ANGLETest
+class ContextLostSkipValidationTest : public ANGLETest<>
 {
   protected:
     ContextLostSkipValidationTest()

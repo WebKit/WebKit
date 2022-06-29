@@ -13,7 +13,7 @@
 
 using namespace angle;
 
-class ClientStateEnable : public ANGLETest
+class ClientStateEnable : public ANGLETest<>
 {
   protected:
     ClientStateEnable()

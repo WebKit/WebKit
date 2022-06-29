@@ -14,7 +14,7 @@ using namespace angle;
 namespace
 {
 
-class ETCTextureTest : public ANGLETest
+class ETCTextureTest : public ANGLETest<>
 {
   protected:
     ETCTextureTest() : mTexture(0u)
@@ -111,6 +111,56 @@ TEST_P(ETCTextureTest, ETC2RGB8Validation)
     {
         EXPECT_GL_ERROR(GL_INVALID_ENUM);
     }
+}
+
+// Tests a cube map array texture with compressed ETC2 RGB8 format
+TEST_P(ETCTextureTest, ETC2RGB8_CubeMapValidation)
+{
+    ANGLE_SKIP_TEST_IF(!(IsGLExtensionEnabled("GL_EXT_texture_cube_map_array") &&
+                         (getClientMajorVersion() >= 3 && getClientMinorVersion() > 1)));
+
+    constexpr GLsizei kInvalidTextureWidth  = 8;
+    constexpr GLsizei kInvalidTextureHeight = 8;
+    constexpr GLsizei kCubemapFaceCount     = 6;
+    const std::vector<GLubyte> kInvalidTextureData(
+        kInvalidTextureWidth * kInvalidTextureHeight * kCubemapFaceCount, 0);
+
+    glBindTexture(GL_TEXTURE_CUBE_MAP, mTexture);
+    EXPECT_GL_NO_ERROR();
+
+    glCompressedTexImage3D(GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_RGB, kInvalidTextureWidth,
+                           kInvalidTextureHeight, kCubemapFaceCount, 0, kInvalidTextureData.size(),
+                           kInvalidTextureData.data());
+    EXPECT_GL_ERROR(GL_INVALID_ENUM);
+
+    constexpr GLenum kFormat = GL_COMPRESSED_RGB8_ETC2;
+
+    std::vector<GLubyte> arrayData;
+
+    constexpr GLuint kWidth       = 4u;
+    constexpr GLuint kHeight      = 4u;
+    constexpr GLuint kDepth       = 6u;
+    constexpr GLuint kPixelBytes  = 8u;
+    constexpr GLuint kBlockWidth  = 4u;
+    constexpr GLuint kBlockHeight = 4u;
+
+    constexpr GLuint kNumBlocksWide = (kWidth + kBlockWidth - 1u) / kBlockWidth;
+    constexpr GLuint kNumBlocksHigh = (kHeight + kBlockHeight - 1u) / kBlockHeight;
+    constexpr GLuint kBytes         = kNumBlocksWide * kNumBlocksHigh * kPixelBytes * kDepth;
+
+    arrayData.reserve(kBytes);
+
+    glCompressedTexImage3D(GL_TEXTURE_CUBE_MAP_ARRAY, 0, kFormat, kWidth, kHeight, kDepth, 0,
+                           kBytes, arrayData.data());
+    EXPECT_GL_NO_ERROR();
+
+    glCompressedTexSubImage3D(GL_TEXTURE_CUBE_MAP_ARRAY, 0, 0, 0, 0, kInvalidTextureWidth,
+                              kInvalidTextureHeight, kDepth, GL_RGB, kInvalidTextureData.size(),
+                              kInvalidTextureData.data());
+    glCompressedTexSubImage3D(GL_TEXTURE_CUBE_MAP_ARRAY, 0, 0, 0, 0, kInvalidTextureWidth,
+                              kInvalidTextureHeight, kDepth, GL_RGB, kInvalidTextureData.size(),
+                              kInvalidTextureData.data());
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 }
 
 // Tests a texture with ETC2 SRGB8 lossy decode format

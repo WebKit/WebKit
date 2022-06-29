@@ -15,7 +15,7 @@ using namespace angle;
 namespace
 {
 
-class ProgramPipelineTest : public ANGLETest
+class ProgramPipelineTest : public ANGLETest<>
 {
   protected:
     ProgramPipelineTest()

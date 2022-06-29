@@ -20,12 +20,12 @@ class TSymbolTable;
 class SpecConst;
 class DriverUniform;
 
-ANGLE_NO_DISCARD bool RewriteDfdy(TCompiler *compiler,
-                                  TIntermBlock *root,
-                                  TSymbolTable *symbolTable,
-                                  int shaderVersion,
-                                  SpecConst *specConst,
-                                  const DriverUniform *driverUniforms);
+[[nodiscard]] bool RewriteDfdy(TCompiler *compiler,
+                               TIntermBlock *root,
+                               TSymbolTable *symbolTable,
+                               int shaderVersion,
+                               SpecConst *specConst,
+                               const DriverUniform *driverUniforms);
 
 }  // namespace sh
 

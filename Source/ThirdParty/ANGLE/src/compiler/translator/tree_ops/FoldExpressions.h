@@ -20,9 +20,9 @@ class TCompiler;
 class TIntermBlock;
 class TDiagnostics;
 
-ANGLE_NO_DISCARD bool FoldExpressions(TCompiler *compiler,
-                                      TIntermBlock *root,
-                                      TDiagnostics *diagnostics);
+[[nodiscard]] bool FoldExpressions(TCompiler *compiler,
+                                   TIntermBlock *root,
+                                   TDiagnostics *diagnostics);
 
 }  // namespace sh
 

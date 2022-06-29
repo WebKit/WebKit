@@ -22,8 +22,8 @@ EXIT_FAILURE = 1
 
 TEST_SUITE = 'angle_end2end_tests'
 BUILDERS = [
-    'angle/ci/android-arm64-test', 'angle/ci/linux-test', 'angle/ci/win-test',
-    'angle/ci/win-x86-test'
+    'angle/ci/android-arm64-test', 'angle/ci/android-arm64-exp-test', 'angle/ci/linux-test',
+    'angle/ci/win-test', 'angle/ci/win-x86-test'
 ]
 SWARMING_SERVER = 'chromium-swarm.appspot.com'
 
@@ -50,13 +50,15 @@ BOT_OS_NAME_MAP = {LINUX: 'linux', WINDOWS_10: 'win10'}
 
 # Devices
 PIXEL_4 = 'flame'
-DEVICES_TYPES = [PIXEL_4]
-DEVICE_NAME_MAP = {PIXEL_4: 'pixel_4'}
+PIXEL_6 = 'oriole'
+DEVICES_TYPES = [PIXEL_4, PIXEL_6]
+DEVICE_NAME_MAP = {PIXEL_4: 'pixel_4', PIXEL_6: 'pixel_6'}
 
 # Device OSes
 ANDROID_11 = 'R'
-DEVICE_OSES = [ANDROID_11]
-DEVICE_OS_NAME_MAP = {ANDROID_11: 'android_11'}
+ANDROID_13 = 'T'
+DEVICE_OSES = [ANDROID_11, ANDROID_13]
+DEVICE_OS_NAME_MAP = {ANDROID_11: 'android_11', ANDROID_13: 'android_13'}
 
 # Result names
 INFO_FILES = [

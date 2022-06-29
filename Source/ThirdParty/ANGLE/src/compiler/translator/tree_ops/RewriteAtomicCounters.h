@@ -19,10 +19,10 @@ class TIntermTyped;
 class TSymbolTable;
 class TVariable;
 
-ANGLE_NO_DISCARD bool RewriteAtomicCounters(TCompiler *compiler,
-                                            TIntermBlock *root,
-                                            TSymbolTable *symbolTable,
-                                            const TIntermTyped *acbBufferOffsets);
+[[nodiscard]] bool RewriteAtomicCounters(TCompiler *compiler,
+                                         TIntermBlock *root,
+                                         TSymbolTable *symbolTable,
+                                         const TIntermTyped *acbBufferOffsets);
 }  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_TREEOPS_REWRITEATOMICCOUNTERS_H_

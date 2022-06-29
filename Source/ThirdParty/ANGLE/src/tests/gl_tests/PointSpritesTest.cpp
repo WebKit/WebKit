@@ -24,7 +24,7 @@ constexpr char kVertexShaderSource[] =
 
 constexpr GLfloat kMinMaxPointSize = 1.0f;
 
-class PointSpritesTest : public ANGLETest
+class PointSpritesTest : public ANGLETest<>
 {
   protected:
     const int windowWidth  = 256;

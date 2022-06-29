@@ -19,7 +19,7 @@ enum class UpdateType
     FullUpdate,
 };
 
-class IndexBufferOffsetTest : public ANGLETest
+class IndexBufferOffsetTest : public ANGLETest<>
 {
   protected:
     IndexBufferOffsetTest()

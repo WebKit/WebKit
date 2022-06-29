@@ -137,7 +137,7 @@ DestT Pack1010102(std::array<SrcT, 4> input)
     }
 }
 
-class VertexAttributeTest : public ANGLETest
+class VertexAttributeTest : public ANGLETest<>
 {
   protected:
     VertexAttributeTest() : mProgram(0), mTestAttrib(-1), mExpectedAttrib(-1), mBuffer(0)

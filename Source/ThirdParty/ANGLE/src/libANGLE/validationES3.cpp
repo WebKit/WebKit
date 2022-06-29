@@ -2861,11 +2861,6 @@ bool ValidateCompressedTexSubImage3D(const Context *context,
     }
 
     const InternalFormat &formatInfo = GetSizedInternalFormatInfo(format);
-    if (!formatInfo.compressed)
-    {
-        context->validationError(entryPoint, GL_INVALID_ENUM, kInvalidCompressedFormat);
-        return false;
-    }
 
     GLuint blockSize = 0;
     if (!formatInfo.computeCompressedImageSize(Extents(width, height, depth), &blockSize))
@@ -2887,10 +2882,27 @@ bool ValidateCompressedTexSubImage3D(const Context *context,
         return false;
     }
 
-    if (!data)
+    if (!formatInfo.compressed)
     {
-        context->validationError(entryPoint, GL_INVALID_VALUE, kPixelDataNull);
+        context->validationError(entryPoint, GL_INVALID_ENUM, kInvalidCompressedFormat);
         return false;
+    }
+
+    if (data == nullptr)
+    {
+        if (context->getState().getTargetBuffer(BufferBinding::PixelUnpack) == nullptr)
+        {
+            // If data is null, we need an unpack buffer to read from
+            context->validationError(entryPoint, GL_INVALID_VALUE, kPixelDataNull);
+            return false;
+        }
+
+        if (context->getTextureByTarget(target)->isCompressedFormatEmulated(context, target, level))
+        {
+            // TODO (anglebug.com/7464): Can't populate from a buffer using emulated format
+            context->validationError(entryPoint, GL_INVALID_VALUE, kInvalidEmulatedFormat);
+            return false;
+        }
     }
 
     return true;
@@ -3858,11 +3870,8 @@ bool ValidateDrawArraysInstancedBaseInstanceANGLE(const Context *context,
         context->validationError(entryPoint, GL_INVALID_OPERATION, kExtensionNotEnabled);
         return false;
     }
-    if (!ValidateDrawArraysInstancedBase(context, entryPoint, mode, first, count, instanceCount))
-    {
-        return false;
-    }
-    return true;
+
+    return ValidateDrawArraysInstancedBase(context, entryPoint, mode, first, count, instanceCount);
 }
 
 bool ValidateDrawElementsInstancedBaseVertexBaseInstanceANGLE(const Context *context,
@@ -3880,12 +3889,9 @@ bool ValidateDrawElementsInstancedBaseVertexBaseInstanceANGLE(const Context *con
         context->validationError(entryPoint, GL_INVALID_OPERATION, kExtensionNotEnabled);
         return false;
     }
-    if (!ValidateDrawElementsInstancedBase(context, entryPoint, mode, count, type, indices,
-                                           instanceCount))
-    {
-        return false;
-    }
-    return true;
+
+    return ValidateDrawElementsInstancedBase(context, entryPoint, mode, count, type, indices,
+                                             instanceCount);
 }
 
 bool ValidateMultiDrawArraysInstancedBaseInstanceANGLE(const Context *context,

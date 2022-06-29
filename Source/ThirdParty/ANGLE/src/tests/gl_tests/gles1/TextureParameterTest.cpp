@@ -15,7 +15,7 @@
 
 using namespace angle;
 
-class TextureParameterTest : public ANGLETest
+class TextureParameterTest : public ANGLETest<>
 {
   protected:
     TextureParameterTest()

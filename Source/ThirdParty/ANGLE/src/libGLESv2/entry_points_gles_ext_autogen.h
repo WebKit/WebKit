@@ -735,6 +735,27 @@ ANGLE_EXPORT void GL_APIENTRY GL_EGLImageTargetTextureStorageEXT(GLuint texture,
 
 // GL_EXT_YUV_target
 
+// GL_EXT_base_instance
+ANGLE_EXPORT void GL_APIENTRY GL_DrawArraysInstancedBaseInstanceEXT(GLenum mode,
+                                                                    GLint first,
+                                                                    GLsizei count,
+                                                                    GLsizei instancecount,
+                                                                    GLuint baseinstance);
+ANGLE_EXPORT void GL_APIENTRY GL_DrawElementsInstancedBaseInstanceEXT(GLenum mode,
+                                                                      GLsizei count,
+                                                                      GLenum type,
+                                                                      const void *indices,
+                                                                      GLsizei instancecount,
+                                                                      GLuint baseinstance);
+ANGLE_EXPORT void GL_APIENTRY
+GL_DrawElementsInstancedBaseVertexBaseInstanceEXT(GLenum mode,
+                                                  GLsizei count,
+                                                  GLenum type,
+                                                  const void *indices,
+                                                  GLsizei instancecount,
+                                                  GLint basevertex,
+                                                  GLuint baseinstance);
+
 // GL_EXT_blend_func_extended
 ANGLE_EXPORT void GL_APIENTRY GL_BindFragDataLocationEXT(GLuint program,
                                                          GLuint color,
@@ -1392,6 +1413,8 @@ ANGLE_EXPORT void GL_APIENTRY GL_BlitFramebufferNV(GLint srcX0,
 // GL_NV_pixel_buffer_object
 
 // GL_NV_read_depth
+
+// GL_NV_read_depth_stencil
 
 // GL_NV_read_stencil
 

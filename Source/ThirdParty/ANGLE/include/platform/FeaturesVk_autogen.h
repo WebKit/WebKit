@@ -341,6 +341,12 @@ struct FeaturesVk : FeatureSetBase
         "VkDevice supports VK_EXT_load_store_op_none extension.", &members,
         "http://anglebug.com/5371"};
 
+    FeatureInfo disallowMixedDepthStencilLoadOpNoneAndLoad = {
+        "disallowMixedDepthStencilLoadOpNoneAndLoad", FeatureCategory::VulkanWorkarounds,
+        "Disallow use of LOAD_OP_NONE for only one of the depth or stencil aspects of a "
+        "depth/stencil attachment",
+        &members, "http://anglebug.com/7370"};
+
     FeatureInfo supportsDepthClipControl = {
         "supportsDepthClipControl", FeatureCategory::VulkanFeatures,
         "VkDevice supports VK_EXT_depth_clip_control extension.", &members,
@@ -449,10 +455,10 @@ struct FeaturesVk : FeatureSetBase
         "generateSPIRVThroughGlslang", FeatureCategory::VulkanFeatures,
         "Translate SPIR-V through glslang.", &members, "http://anglebug.com/4889"};
 
-    FeatureInfo forceDriverUniformOverSpecConst = {
-        "forceDriverUniformOverSpecConst", FeatureCategory::VulkanWorkarounds,
-        "Forces using driver uniforms instead of specialization constants.", &members,
-        "http://issuetracker.google.com/173636783"};
+    FeatureInfo preferDriverUniformOverSpecConst = {
+        "preferDriverUniformOverSpecConst", FeatureCategory::VulkanFeatures,
+        "Prefer using driver uniforms instead of specialization constants.", &members,
+        "http://anglebug.com/7406"};
 
     FeatureInfo exposeNonConformantExtensionsAndVersions = {
         "exposeNonConformantExtensionsAndVersions", FeatureCategory::VulkanWorkarounds,
@@ -493,6 +499,16 @@ struct FeaturesVk : FeatureSetBase
     FeatureInfo supportsHostQueryReset = {"supportsHostQueryReset", FeatureCategory::VulkanFeatures,
                                           "VkDevice supports VK_EXT_host_query_reset extension",
                                           &members, "http://anglebug.com/6692"};
+
+    FeatureInfo supportsPipelineCreationCacheControl = {
+        "supportsPipelineCreationCacheControl", FeatureCategory::VulkanFeatures,
+        "VkDevice supports VK_EXT_pipeline_creation_cache_control extension", &members,
+        "http://anglebug.com/5881"};
+
+    FeatureInfo supportsPipelineCreationFeedback = {
+        "supportsPipelineCreationFeedback", FeatureCategory::VulkanFeatures,
+        "VkDevice supports VK_EXT_pipeline_creation_feedback extension", &members,
+        "http://anglebug.com/5881"};
 
     FeatureInfo supportsSurfaceCapabilities2Extension = {
         "supportsSurfaceCapabilities2Extension",
@@ -547,6 +563,14 @@ struct FeaturesVk : FeatureSetBase
         &members,
     };
 
+    FeatureInfo permanentlySwitchToFramebufferFetchMode = {
+        "permanentlySwitchToFramebufferFetchMode",
+        FeatureCategory::VulkanFeatures,
+        "Whether the context should permanently switch to framebuffer fetch mode on first"
+        "encounter",
+        &members,
+    };
+
     FeatureInfo supportsLockSurfaceExtension = {
         "supportsLockSurfaceExtension",
         FeatureCategory::VulkanFeatures,
@@ -556,8 +580,8 @@ struct FeaturesVk : FeatureSetBase
 
     FeatureInfo swapbuffersOnFlushOrFinishWithSingleBuffer = {
         "swapbuffersOnFlushOrFinishWithSingleBuffer", FeatureCategory::VulkanFeatures,
-        "Bypass deferredFlush with calling swapbuffers on flush or finish when in Shared Present "
-        "mode",
+        "Bypass deferredFlush with calling swapbuffers on flush or finish when in Shared "
+        "Present mode",
         &members, "http://anglebug.com/6878"};
 
     FeatureInfo emulateDithering = {"emulateDithering", FeatureCategory::VulkanFeatures,
@@ -589,10 +613,9 @@ struct FeaturesVk : FeatureSetBase
                                         "Retain debug info in SPIR-V blob.", &members,
                                         "http://anglebug.com/5901"};
 
-    FeatureInfo createPipelineDuringLink = {
-        "createPipelineDuringLink", FeatureCategory::VulkanFeatures,
-        "Create pipeline with default state during glLinkProgram", &members,
-        "http://anglebug.com/7046"};
+    FeatureInfo warmUpPipelineCacheAtLink = {
+        "warmUpPipelineCacheAtLink", FeatureCategory::VulkanFeatures,
+        "Warm up the Vulkan pipeline cache at link time", &members, "http://anglebug.com/5881"};
 
     FeatureInfo preferDeviceLocalMemoryHostVisible = {
         "preferDeviceLocalMemoryHostVisible", FeatureCategory::VulkanFeatures,
@@ -628,6 +651,13 @@ struct FeaturesVk : FeatureSetBase
     FeatureInfo supportsImage2dViewOf3d = {
         "supportsImage2dViewOf3d", FeatureCategory::VulkanFeatures,
         "VkDevice supports VK_EXT_image_2d_view_of_3d", &members, "https://anglebug.com/7320"};
+
+    FeatureInfo preferLinearFilterForYUV = {
+        "preferLinearFilterForYUV",
+        FeatureCategory::VulkanFeatures,
+        "Prefer to use VK_FILTER_LINEAR for VkSamplerYcbcrConversion",
+        &members,
+    };
 };
 
 inline FeaturesVk::FeaturesVk()  = default;

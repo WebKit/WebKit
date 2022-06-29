@@ -19,7 +19,7 @@
 
 using namespace angle;
 
-class EGLPrintEGLinfoTest : public ANGLETest
+class EGLPrintEGLinfoTest : public ANGLETest<>
 {
   protected:
     EGLPrintEGLinfoTest() {}
@@ -79,8 +79,6 @@ TEST_P(EGLPrintEGLinfoTest, PrintEGLInfo)
 {
     std::cout << "    EGL Information:" << std::endl;
     std::cout << "\tVendor: " << GetEGLString(mDisplay, EGL_VENDOR) << std::endl;
-    std::cout << "\tVersion (EGL_NO_DISPLAY): " << GetEGLString(EGL_NO_DISPLAY, EGL_VERSION)
-              << std::endl;
     std::cout << "\tVersion: " << GetEGLString(mDisplay, EGL_VERSION) << std::endl;
     std::cout << "\tClient APIs: " << GetEGLString(mDisplay, EGL_CLIENT_APIS) << std::endl;
 

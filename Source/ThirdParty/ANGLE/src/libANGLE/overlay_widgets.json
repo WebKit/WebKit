@@ -19,14 +19,16 @@
         "            - 'top', 'bottom': valid for y",
         "           <mode> is one of:",
         "            - 'align': the requested value is used",
-        "            - 'adjacent': the value is calculated such that two widgets become adjacent",
+        "            - 'adjacent': the value is calculated such that two widgets become adjacent.",
+        "           Optionally, Widget2.desc.<edge>.<mode> can be used to align with a graph's",
+        "           implicit text widget",
         " - font: for Text widgets, one of 'large' or 'small'",
         " - length: for Text widgets, maximum number of characters for this widget",
         " - bar_width: for Graph widgets, size of each graph bar.",
         " - height: for Graph widgets, the height of the graph.",
         " - match_to: a reference to another widget",
-        " - text: for Graph widgets, data for the attached Text widget.  This is a map with the same",
-        "         Text keys as above except type, which is implicitly Text."
+        " - description: for Graph widgets, data for the attached Text widget.  This is a map with",
+        "         the same Text keys as above except type, which is implicitly Text."
     ],
     "widgets": [
         {
@@ -74,7 +76,7 @@
         {
             "name": "VulkanRenderPassBufferCount",
             "comment": "Number of buffers used in RenderPasses (Count).",
-            "type": "RunningHistogram(100)",
+            "type": "RunningGraph(100)",
             "color": [255, 200, 75, 200],
             "coords": [-50, 100],
             "bar_width": 6,
@@ -256,6 +258,60 @@
                 "font": "small",
                 "length": 45
             }
+        },
+        {
+            "name": "VulkanPipelineCacheLookups",
+            "comment": "Number of times the Vulkan backend has looked up the pipeline cache",
+            "type": "RunningGraph(60)",
+            "color": [0, 255, 0, 100],
+            "coords": [-50, -50],
+            "bar_width": 5,
+            "height": 100,
+            "description": {
+                "color": [0, 200, 75, 255],
+                "coords": ["VulkanPipelineCacheLookups.left.align",
+                           "VulkanPipelineCacheLookups.top.adjacent"],
+                "font": "small",
+                "length": 45
+            }
+        },
+        {
+            "name": "VulkanPipelineCacheMisses",
+            "comment": "Number of times the Vulkan backend has missed the pipeline cache",
+            "type": "RunningGraph(60)",
+            "color": [255, 0, 0, 200],
+            "coords": ["VulkanPipelineCacheLookups.left.align",
+                       "VulkanPipelineCacheLookups.top.align"],
+            "bar_width": 5,
+            "height": 100,
+            "match_to": "VulkanPipelineCacheLookups",
+            "description": {
+                "color": [200, 0, 75, 255],
+                "coords": ["VulkanPipelineCacheLookups.desc.left.align",
+                           "VulkanPipelineCacheLookups.desc.top.adjacent"],
+                "font": "small",
+                "length": 45
+            }
+        },
+        {
+            "name": "VulkanTotalPipelineCacheMissTimeMs",
+            "comment": "Total time spent creating pipelines that missed the cache.",
+            "type": "Count",
+            "color": [255, 0, 0, 255],
+            "coords": ["VulkanPipelineCacheMisses.left.align",
+                       "VulkanPipelineCacheMisses.bottom.adjacent"],
+            "font": "small",
+            "length": 45
+        },
+        {
+            "name": "VulkanTotalPipelineCacheHitTimeMs",
+            "comment": "Total time spent creating pipelines that hit the cache.",
+            "type": "Count",
+            "color": [0, 255, 0, 255],
+            "coords": ["VulkanTotalPipelineCacheMissTimeMs.left.align",
+                       "VulkanTotalPipelineCacheMissTimeMs.bottom.adjacent"],
+            "font": "small",
+            "length": 45
         }
     ]
 }

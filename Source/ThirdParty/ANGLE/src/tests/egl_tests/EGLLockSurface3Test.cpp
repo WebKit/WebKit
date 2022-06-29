@@ -23,7 +23,7 @@ using namespace angle;
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EGLLockSurface3Test);
 
-class EGLLockSurface3Test : public ANGLETest
+class EGLLockSurface3Test : public ANGLETest<>
 {
   public:
     EGLLockSurface3Test() : mDisplay(EGL_NO_DISPLAY) {}
@@ -34,7 +34,7 @@ class EGLLockSurface3Test : public ANGLETest
 
         EGLint dispattrs[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE, GetParam().getRenderer(), EGL_NONE};
         mDisplay           = eglGetPlatformDisplayEXT(
-            EGL_PLATFORM_ANGLE_ANGLE, reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
+                      EGL_PLATFORM_ANGLE_ANGLE, reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
         EXPECT_NE(mDisplay, EGL_NO_DISPLAY);
         EXPECT_EGL_TRUE(eglInitialize(mDisplay, nullptr, nullptr));
     }
@@ -191,18 +191,18 @@ TEST_P(EGLLockSurface3Test, AttributeTest)
 
     EGLint clientVersion = mMajorVersion == 3 ? EGL_OPENGL_ES3_BIT : EGL_OPENGL_ES2_BIT;
     EGLint attribs[]     = {EGL_RED_SIZE,
-                        8,
-                        EGL_GREEN_SIZE,
-                        8,
-                        EGL_BLUE_SIZE,
-                        8,
-                        EGL_ALPHA_SIZE,
-                        8,
-                        EGL_RENDERABLE_TYPE,
-                        clientVersion,
-                        EGL_SURFACE_TYPE,
-                        (EGL_PBUFFER_BIT | EGL_LOCK_SURFACE_BIT_KHR),
-                        EGL_NONE};
+                            8,
+                            EGL_GREEN_SIZE,
+                            8,
+                            EGL_BLUE_SIZE,
+                            8,
+                            EGL_ALPHA_SIZE,
+                            8,
+                            EGL_RENDERABLE_TYPE,
+                            clientVersion,
+                            EGL_SURFACE_TYPE,
+                            (EGL_PBUFFER_BIT | EGL_LOCK_SURFACE_BIT_KHR),
+                            EGL_NONE};
     EGLint count         = 0;
     EGLConfig config     = EGL_NO_CONFIG_KHR;
     EXPECT_EGL_TRUE(eglChooseConfig(mDisplay, attribs, &config, 1, &count));
@@ -313,18 +313,18 @@ TEST_P(EGLLockSurface3Test, PbufferSurfaceReadWriteTest)
 
     EGLint clientVersion = mMajorVersion == 3 ? EGL_OPENGL_ES3_BIT : EGL_OPENGL_ES2_BIT;
     EGLint attribs[]     = {EGL_RED_SIZE,
-                        8,
-                        EGL_GREEN_SIZE,
-                        8,
-                        EGL_BLUE_SIZE,
-                        8,
-                        EGL_ALPHA_SIZE,
-                        8,
-                        EGL_RENDERABLE_TYPE,
-                        clientVersion,
-                        EGL_SURFACE_TYPE,
-                        (EGL_PBUFFER_BIT | EGL_LOCK_SURFACE_BIT_KHR),
-                        EGL_NONE};
+                            8,
+                            EGL_GREEN_SIZE,
+                            8,
+                            EGL_BLUE_SIZE,
+                            8,
+                            EGL_ALPHA_SIZE,
+                            8,
+                            EGL_RENDERABLE_TYPE,
+                            clientVersion,
+                            EGL_SURFACE_TYPE,
+                            (EGL_PBUFFER_BIT | EGL_LOCK_SURFACE_BIT_KHR),
+                            EGL_NONE};
     EGLint count         = 0;
     EGLConfig config     = EGL_NO_CONFIG_KHR;
     EXPECT_EGL_TRUE(eglChooseConfig(mDisplay, attribs, &config, 1, &count));
@@ -392,18 +392,18 @@ TEST_P(EGLLockSurface3Test, PbufferSurfaceReadWriteDeferredCleaarTest)
 
     EGLint clientVersion = mMajorVersion == 3 ? EGL_OPENGL_ES3_BIT : EGL_OPENGL_ES2_BIT;
     EGLint attribs[]     = {EGL_RED_SIZE,
-                        8,
-                        EGL_GREEN_SIZE,
-                        8,
-                        EGL_BLUE_SIZE,
-                        8,
-                        EGL_ALPHA_SIZE,
-                        8,
-                        EGL_RENDERABLE_TYPE,
-                        clientVersion,
-                        EGL_SURFACE_TYPE,
-                        (EGL_PBUFFER_BIT | EGL_LOCK_SURFACE_BIT_KHR),
-                        EGL_NONE};
+                            8,
+                            EGL_GREEN_SIZE,
+                            8,
+                            EGL_BLUE_SIZE,
+                            8,
+                            EGL_ALPHA_SIZE,
+                            8,
+                            EGL_RENDERABLE_TYPE,
+                            clientVersion,
+                            EGL_SURFACE_TYPE,
+                            (EGL_PBUFFER_BIT | EGL_LOCK_SURFACE_BIT_KHR),
+                            EGL_NONE};
     EGLint count         = 0;
     EGLConfig config     = EGL_NO_CONFIG_KHR;
     EXPECT_EGL_TRUE(eglChooseConfig(mDisplay, attribs, &config, 1, &count));

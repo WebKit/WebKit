@@ -19,7 +19,7 @@ const GLint kWidth  = 64;
 const GLint kHeight = 64;
 
 // test drawing with GL_MULTISAMPLE_EXT enabled/disabled.
-class EXTMultisampleCompatibilityTest : public ANGLETest
+class EXTMultisampleCompatibilityTest : public ANGLETest<>
 {
 
   protected:
@@ -279,7 +279,7 @@ TEST_P(EXTMultisampleCompatibilityTest, DrawAlphaOneAndResolve)
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(EXTMultisampleCompatibilityTest);
 
-class MultisampleCompatibilityTest : public ANGLETest
+class MultisampleCompatibilityTest : public ANGLETest<>
 {
 
   protected:

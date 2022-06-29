@@ -13,7 +13,7 @@ using namespace angle;
 
 namespace
 {
-class MultisampledRenderToTextureTest : public ANGLETest
+class MultisampledRenderToTextureTest : public ANGLETest<>
 {
   protected:
     MultisampledRenderToTextureTest()

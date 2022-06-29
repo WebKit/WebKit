@@ -20,21 +20,21 @@ class TIntermTyped;
 class TSymbolTable;
 class TVariable;
 
-ANGLE_NO_DISCARD bool ReplaceVariable(TCompiler *compiler,
-                                      TIntermBlock *root,
-                                      const TVariable *toBeReplaced,
-                                      const TVariable *replacement);
-ANGLE_NO_DISCARD bool ReplaceVariableWithTyped(TCompiler *compiler,
-                                               TIntermBlock *root,
-                                               const TVariable *toBeReplaced,
-                                               const TIntermTyped *replacement);
+[[nodiscard]] bool ReplaceVariable(TCompiler *compiler,
+                                   TIntermBlock *root,
+                                   const TVariable *toBeReplaced,
+                                   const TVariable *replacement);
+[[nodiscard]] bool ReplaceVariableWithTyped(TCompiler *compiler,
+                                            TIntermBlock *root,
+                                            const TVariable *toBeReplaced,
+                                            const TIntermTyped *replacement);
 
 using VariableReplacementMap = angle::HashMap<const TVariable *, const TIntermTyped *>;
 
 // Replace a set of variables with their corresponding expression.
-ANGLE_NO_DISCARD bool ReplaceVariables(TCompiler *compiler,
-                                       TIntermBlock *root,
-                                       const VariableReplacementMap &variableMap);
+[[nodiscard]] bool ReplaceVariables(TCompiler *compiler,
+                                    TIntermBlock *root,
+                                    const VariableReplacementMap &variableMap);
 
 // Find all declarators, and replace the TVariable they are declaring with a duplicate.  This is
 // used to support deepCopy of TIntermBlock and TIntermLoop nodes that include declarations.

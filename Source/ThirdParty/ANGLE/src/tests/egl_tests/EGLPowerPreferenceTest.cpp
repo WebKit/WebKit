@@ -20,7 +20,7 @@
 
 using namespace angle;
 
-class EGLPowerPreferenceTest : public ANGLETest
+class EGLPowerPreferenceTest : public ANGLETest<>
 {
   public:
     void testSetUp() override { (void)GetSystemInfo(&mSystemInfo); }

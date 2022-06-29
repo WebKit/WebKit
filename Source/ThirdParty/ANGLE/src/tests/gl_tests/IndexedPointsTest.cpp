@@ -9,7 +9,7 @@
 using namespace angle;
 
 template <typename IndexType, GLenum IndexTypeName>
-class IndexedPointsTest : public ANGLETest
+class IndexedPointsTest : public ANGLETest<>
 {
   protected:
     IndexedPointsTest()

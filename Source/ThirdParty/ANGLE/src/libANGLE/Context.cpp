@@ -4119,6 +4119,11 @@ void Context::initCaps()
             ANGLE_LIMIT_CAP(mState.mCaps.maxShaderStorageBlocks[shaderType],
                             maxShaderStorageBufferBindings);
         }
+
+        // Pixel 4 only supports GL_MAX_SAMPLES of 4
+        constexpr GLint maxSamples = 4;
+        INFO() << "Limiting GL_MAX_SAMPLES to " << maxSamples;
+        ANGLE_LIMIT_CAP(mState.mCaps.maxSamples, maxSamples);
     }
 
     // Disable support for OES_get_program_binary
@@ -6760,6 +6765,26 @@ void Context::drawArraysInstancedBaseInstance(PrimitiveMode mode,
     MarkTransformFeedbackBufferUsage(this, count, 1);
 }
 
+void Context::drawArraysInstancedBaseInstanceANGLE(PrimitiveMode mode,
+                                                   GLint first,
+                                                   GLsizei count,
+                                                   GLsizei instanceCount,
+                                                   GLuint baseInstance)
+{
+    drawArraysInstancedBaseInstance(mode, first, count, instanceCount, baseInstance);
+}
+
+void Context::drawElementsInstancedBaseInstance(PrimitiveMode mode,
+                                                GLsizei count,
+                                                DrawElementsType type,
+                                                const void *indices,
+                                                GLsizei instanceCount,
+                                                GLuint baseInstance)
+{
+    drawElementsInstancedBaseVertexBaseInstance(mode, count, type, indices, instanceCount, 0,
+                                                baseInstance);
+}
+
 void Context::drawElementsInstancedBaseVertexBaseInstance(PrimitiveMode mode,
                                                           GLsizei count,
                                                           DrawElementsType type,
@@ -6793,6 +6818,18 @@ void Context::drawElementsInstancedBaseVertexBaseInstance(PrimitiveMode mode,
 
     ANGLE_CONTEXT_TRY(mImplementation->drawElementsInstancedBaseVertexBaseInstance(
         this, mode, count, type, indices, instanceCount, baseVertex, baseInstance));
+}
+
+void Context::drawElementsInstancedBaseVertexBaseInstanceANGLE(PrimitiveMode mode,
+                                                               GLsizei count,
+                                                               DrawElementsType type,
+                                                               const GLvoid *indices,
+                                                               GLsizei instanceCount,
+                                                               GLint baseVertex,
+                                                               GLuint baseInstance)
+{
+    drawElementsInstancedBaseVertexBaseInstance(mode, count, type, indices, instanceCount,
+                                                baseVertex, baseInstance);
 }
 
 void Context::multiDrawArraysInstancedBaseInstance(PrimitiveMode mode,
@@ -9192,7 +9229,7 @@ void Context::getFramebufferParameterivMESA(GLenum target, GLenum pname, GLint *
 
 bool Context::isGLES1() const
 {
-    return mState.getClientVersion() < Version(2, 0);
+    return mState.isGLES1();
 }
 
 void Context::onSubjectStateChange(angle::SubjectIndex index, angle::SubjectMessage message)
@@ -9705,9 +9742,9 @@ void ErrorSet::handleError(GLenum errorCode,
     ASSERT(errorCode != GL_NO_ERROR);
     mErrors.insert(errorCode);
 
-    mContext->getState().getDebug().insertMessage(GL_DEBUG_SOURCE_API, GL_DEBUG_TYPE_ERROR,
-                                                  errorCode, GL_DEBUG_SEVERITY_HIGH, message,
-                                                  gl::LOG_WARN, angle::EntryPoint::GLInvalid);
+    mContext->getState().getDebug().insertMessage(
+        GL_DEBUG_SOURCE_API, GL_DEBUG_TYPE_ERROR, errorCode, GL_DEBUG_SEVERITY_HIGH,
+        std::move(formattedMessage), gl::LOG_WARN, angle::EntryPoint::GLInvalid);
 }
 
 void ErrorSet::validationError(angle::EntryPoint entryPoint, GLenum errorCode, const char *message)

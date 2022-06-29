@@ -16,7 +16,7 @@
 
 using namespace angle;
 
-class EGLAndroidFrameBufferTargetTest : public ANGLETest
+class EGLAndroidFrameBufferTargetTest : public ANGLETest<>
 {
   protected:
     EGLAndroidFrameBufferTargetTest() {}

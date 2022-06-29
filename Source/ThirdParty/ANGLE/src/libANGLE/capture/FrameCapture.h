@@ -281,6 +281,20 @@ using BufferMapStatusMap = std::map<GLuint, bool>;
 using FenceSyncSet   = std::set<GLsync>;
 using FenceSyncCalls = std::map<GLsync, std::vector<CallCapture>>;
 
+// For default uniforms, we need to track which ones are dirty, and the series of calls to reset.
+// Each program has unique default uniforms, and each uniform has one or more locations in the
+// default buffer. For reset efficiency, we track only the uniforms dirty by location, per program.
+
+// A set of all default uniforms (per program) that were modified during the run
+using DefaultUniformLocationsSet = std::set<gl::UniformLocation>;
+using DefaultUniformLocationsPerProgramMap =
+    std::map<gl::ShaderProgramID, DefaultUniformLocationsSet>;
+
+// A map of programs which maps to locations and their reset calls
+using DefaultUniformCallsPerLocationMap = std::map<gl::UniformLocation, std::vector<CallCapture>>;
+using DefaultUniformCallsPerProgramMap =
+    std::map<gl::ShaderProgramID, DefaultUniformCallsPerLocationMap>;
+
 using ResourceSet   = std::set<GLuint>;
 using ResourceCalls = std::map<GLuint, std::vector<CallCapture>>;
 
@@ -362,6 +376,16 @@ class ResourceTracker final : angle::NonCopyable
     FenceSyncSet &getFenceSyncsToRegen() { return mFenceSyncsToRegen; }
     void setDeletedFenceSync(GLsync sync);
 
+    DefaultUniformLocationsPerProgramMap &getDefaultUniformsToReset()
+    {
+        return mDefaultUniformsToReset;
+    }
+    DefaultUniformCallsPerLocationMap &getDefaultUniformResetCalls(gl::ShaderProgramID id)
+    {
+        return mDefaultUniformResetCalls[id];
+    }
+    void setModifiedDefaultUniform(gl::ShaderProgramID programID, gl::UniformLocation location);
+
     TrackedResource &getTrackedResource(ResourceIDType type)
     {
         return mTrackedResources[static_cast<uint32_t>(type)];
@@ -391,6 +415,11 @@ class ResourceTracker final : angle::NonCopyable
     // Fence syncs to regen are a list of starting fence sync objects that were deleted and need to
     // be regen'ed.
     FenceSyncSet mFenceSyncsToRegen;
+
+    // Default uniforms that were modified during the run
+    DefaultUniformLocationsPerProgramMap mDefaultUniformsToReset;
+    // Calls per default uniform to return to original state
+    DefaultUniformCallsPerProgramMap mDefaultUniformResetCalls;
 
     TrackedResourceArray mTrackedResources;
 };
@@ -427,6 +456,32 @@ using SurfaceParamsMap = std::map<gl::ContextID, SurfaceParams>;
 
 using CallVector = std::vector<std::vector<CallCapture> *>;
 
+// A map from API entry point to calls
+using CallResetMap = std::map<angle::EntryPoint, std::vector<CallCapture>>;
+
+// StateResetHelper provides a simple way to track whether an entry point has been called during the
+// trace, along with the reset calls to get it back to starting state.  This is useful for things
+// that are one dimensional, like context bindings or context state.
+class StateResetHelper final : angle::NonCopyable
+{
+  public:
+    StateResetHelper();
+    ~StateResetHelper();
+
+    const std::set<angle::EntryPoint> &getDirtyEntryPoints() const { return mDirtyEntryPoints; }
+    void setEntryPointDirty(EntryPoint entryPoint) { mDirtyEntryPoints.insert(entryPoint); }
+
+    CallResetMap &getResetCalls() { return mResetCalls; }
+    const CallResetMap &getResetCalls() const { return mResetCalls; }
+
+  private:
+    // Dirty state per entry point
+    std::set<angle::EntryPoint> mDirtyEntryPoints;
+
+    // Reset calls per API entry point
+    CallResetMap mResetCalls;
+};
+
 class FrameCapture final : angle::NonCopyable
 {
   public:
@@ -436,10 +491,15 @@ class FrameCapture final : angle::NonCopyable
     std::vector<CallCapture> &getSetupCalls() { return mSetupCalls; }
     void clearSetupCalls() { mSetupCalls.clear(); }
 
+    StateResetHelper &getStateResetHelper() { return mStateResetHelper; }
+    const StateResetHelper &getStateResetHelper() const { return mStateResetHelper; }
+
     void reset();
 
   private:
     std::vector<CallCapture> mSetupCalls;
+
+    StateResetHelper mStateResetHelper;
 };
 
 // Page range inside a coherent buffer
@@ -583,6 +643,7 @@ class FrameCaptureShared final : angle::NonCopyable
                             bool coherent);
 
     void trackTextureUpdate(const gl::Context *context, const CallCapture &call);
+    void trackDefaultUniformUpdate(const gl::Context *context, const CallCapture &call);
 
     const std::string &getShaderSource(gl::ShaderProgramID id) const;
     void setShaderSource(gl::ShaderProgramID id, std::string sources);
@@ -692,7 +753,8 @@ class FrameCaptureShared final : angle::NonCopyable
     void writeJSON(const gl::Context *context);
     void writeCppReplayIndexFiles(const gl::Context *context, bool writeResetContextCall);
     void writeMainContextCppReplay(const gl::Context *context,
-                                   const std::vector<CallCapture> &setupCalls);
+                                   const std::vector<CallCapture> &setupCalls,
+                                   const StateResetHelper &StateResetHelper);
 
     void captureClientArraySnapshot(const gl::Context *context,
                                     size_t vertexCount,
@@ -1061,6 +1123,10 @@ template <>
 void WriteParamValueReplay<ParamType::TEGLSetBlobFuncANDROID>(std::ostream &os,
                                                               const CallCapture &call,
                                                               EGLSetBlobFuncANDROID value);
+template <>
+void WriteParamValueReplay<ParamType::TEGLClientBuffer>(std::ostream &os,
+                                                        const CallCapture &call,
+                                                        EGLClientBuffer value);
 
 // General fallback for any unspecific type.
 template <ParamType ParamT, typename T>

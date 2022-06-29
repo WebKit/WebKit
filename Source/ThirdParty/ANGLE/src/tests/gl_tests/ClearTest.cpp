@@ -16,7 +16,7 @@ using namespace angle;
 
 namespace
 {
-class ClearTestBase : public ANGLETest
+class ClearTestBase : public ANGLETest<>
 {
   protected:
     ClearTestBase()
@@ -100,7 +100,7 @@ class ClearTestES3 : public ClearTestBase
     }
 };
 
-class ClearTestRGB : public ANGLETest
+class ClearTestRGB : public ANGLETest<>
 {
   protected:
     ClearTestRGB()
@@ -209,8 +209,7 @@ std::string MaskedScissoredClearVariationsTestPrint(
     return out.str();
 }
 
-class MaskedScissoredClearTestBase
-    : public ANGLETestWithParam<MaskedScissoredClearVariationsTestParams>
+class MaskedScissoredClearTestBase : public ANGLETest<MaskedScissoredClearVariationsTestParams>
 {
   protected:
     MaskedScissoredClearTestBase()

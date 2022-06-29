@@ -6,3 +6,9 @@ License File: LICENSE
 
 Description:
 A C/C++ header for parsing and evaluation of arithmetic expressions.
+
+Description of the patches:
+
+- 0001-remove-sprintf.patch
+
+  This patch removes uses of sprintf() and replaces them with snprintf().

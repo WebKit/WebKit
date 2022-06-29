@@ -14,6 +14,9 @@
 #include "libANGLE/EGLSync.h"
 #include "libANGLE/Surface.h"
 #include "libANGLE/Thread.h"
+#include "libANGLE/capture/capture_egl.h"
+#include "libANGLE/capture/frame_capture_utils_autogen.h"
+#include "libANGLE/capture/gl_enum_utils_autogen.h"
 #include "libANGLE/queryutils.h"
 #include "libANGLE/validationEGL.h"
 #include "libGLESv2/global_state.h"
@@ -61,7 +64,7 @@ EGLBoolean BindTexImage(Thread *thread, Display *display, Surface *eglSurface, E
                          GetDisplayIfValid(display), EGL_FALSE);
 
     gl::Context *context = thread->getContext();
-    if (context)
+    if (context && !context->isContextLost())
     {
         gl::TextureType type =
             egl_gl::EGLTextureTargetToTextureType(eglSurface->getTextureTarget());
@@ -153,6 +156,8 @@ EGLImage CreateImage(Thread *thread,
         thread->setError(error, "eglCreateImage", GetDisplayIfValid(display));
         return EGL_NO_IMAGE;
     }
+
+    ANGLE_CAPTURE_EGL(EGLCreateImage, thread, target, buffer, attributes, image);
 
     thread->setSuccess();
     return static_cast<EGLImage>(image);
@@ -292,6 +297,8 @@ EGLBoolean DestroyImage(Thread *thread, Display *display, Image *img)
     ANGLE_EGL_TRY_RETURN(thread, display->prepareForCall(), "eglDestroyImage",
                          GetDisplayIfValid(display), EGL_FALSE);
     display->destroyImage(img);
+
+    ANGLE_CAPTURE_EGL(EGLDestroyImage, thread, display, img);
 
     thread->setSuccess();
     return EGL_TRUE;
@@ -578,15 +585,18 @@ EGLBoolean ReleaseTexImage(Thread *thread, Display *display, Surface *eglSurface
 {
     ANGLE_EGL_TRY_RETURN(thread, display->prepareForCall(), "eglReleaseTexImage",
                          GetDisplayIfValid(display), EGL_FALSE);
-    gl::Texture *texture = eglSurface->getBoundTexture();
-
-    if (texture)
+    gl::Context *context = thread->getContext();
+    if (context && !context->isContextLost())
     {
-        ANGLE_EGL_TRY_RETURN(thread, eglSurface->releaseTexImage(thread->getContext(), buffer),
-                             "eglReleaseTexImage", GetSurfaceIfValid(display, eglSurface),
-                             EGL_FALSE);
-    }
+        gl::Texture *texture = eglSurface->getBoundTexture();
 
+        if (texture)
+        {
+            ANGLE_EGL_TRY_RETURN(thread, eglSurface->releaseTexImage(thread->getContext(), buffer),
+                                 "eglReleaseTexImage", GetSurfaceIfValid(display, eglSurface),
+                                 EGL_FALSE);
+        }
+    }
     thread->setSuccess();
     return EGL_TRUE;
 }

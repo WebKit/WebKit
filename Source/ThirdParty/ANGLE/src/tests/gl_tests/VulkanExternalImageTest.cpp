@@ -186,7 +186,7 @@ struct FuchsiaTraits
 
 }  // namespace
 
-class VulkanExternalImageTest : public ANGLETest
+class VulkanExternalImageTest : public ANGLETest<>
 {
   protected:
     VulkanExternalImageTest()
@@ -227,7 +227,7 @@ void RunShouldImportMemoryTest(VkImageCreateFlags createFlags,
 
     VkExtent3D extent = {1, 1, 1};
     VkResult result   = Traits::CreateImage2D(&helper, format, createFlags, usageFlags, nullptr,
-                                            extent, &image, &deviceMemory, &deviceMemorySize);
+                                              extent, &image, &deviceMemory, &deviceMemorySize);
     EXPECT_EQ(result, VK_SUCCESS);
 
     typename Traits::Handle memoryHandle = Traits::InvalidHandle();
@@ -337,7 +337,7 @@ void RunShouldClearTest(bool useMemoryObjectFlags,
 
     VkExtent3D extent = {1, 1, 1};
     VkResult result   = Traits::CreateImage2D(&helper, format, createFlags, usageFlags, nullptr,
-                                            extent, &image, &deviceMemory, &deviceMemorySize);
+                                              extent, &image, &deviceMemory, &deviceMemorySize);
     EXPECT_EQ(result, VK_SUCCESS);
 
     typename Traits::Handle memoryHandle = Traits::InvalidHandle();
@@ -706,7 +706,7 @@ void RunShouldClearWithSemaphoresTest(bool useMemoryObjectFlags,
         };
         constexpr uint32_t textureBarriersCount = std::extent<decltype(barrierTextures)>();
         const GLenum textureSrcLayouts[]        = {
-            GL_LAYOUT_GENERAL_EXT,
+                   GL_LAYOUT_GENERAL_EXT,
         };
         constexpr uint32_t textureSrcLayoutsCount = std::extent<decltype(textureSrcLayouts)>();
         static_assert(textureBarriersCount == textureSrcLayoutsCount,
@@ -942,7 +942,7 @@ void VulkanExternalImageTest::runShouldDrawTest(bool isSwiftshader, bool enableD
         };
         constexpr uint32_t textureBarriersCount = std::extent<decltype(barrierTextures)>();
         const GLenum textureSrcLayouts[]        = {
-            GL_LAYOUT_GENERAL_EXT,
+                   GL_LAYOUT_GENERAL_EXT,
         };
         constexpr uint32_t textureSrcLayoutsCount = std::extent<decltype(textureSrcLayouts)>();
         static_assert(textureBarriersCount == textureSrcLayoutsCount,
@@ -1094,7 +1094,7 @@ void VulkanExternalImageTest::runWaitSemaphoresRetainsContentTest(bool isSwiftsh
         };
         constexpr uint32_t textureBarriersCount = std::extent<decltype(barrierTextures)>();
         const GLenum textureSrcLayouts[]        = {
-            GL_LAYOUT_GENERAL_EXT,
+                   GL_LAYOUT_GENERAL_EXT,
         };
         constexpr uint32_t textureSrcLayoutsCount = std::extent<decltype(textureSrcLayouts)>();
         static_assert(textureBarriersCount == textureSrcLayoutsCount,

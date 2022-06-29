@@ -27,9 +27,6 @@ class SpecConst
     SpecConst(TSymbolTable *symbolTable, ShCompileOptions compileOptions, GLenum shaderType);
     virtual ~SpecConst();
 
-    // Line rasterizaton emulation
-    TIntermSymbol *getLineRasterEmulation();
-
     // Flip/rotation
     // Returns a boolean: should X and Y be swapped?
     TIntermTyped *getSwapXY();
@@ -47,7 +44,6 @@ class SpecConst
     TSymbolTable *mSymbolTable;
     ShCompileOptions mCompileOptions;
 
-    TVariable *mLineRasterEmulationVar;
     TVariable *mSurfaceRotationVar;
     TVariable *mDitherVar;
 

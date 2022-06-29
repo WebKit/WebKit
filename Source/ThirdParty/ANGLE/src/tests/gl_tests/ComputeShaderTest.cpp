@@ -15,7 +15,7 @@ using namespace angle;
 namespace
 {
 
-class ComputeShaderTest : public ANGLETest
+class ComputeShaderTest : public ANGLETest<>
 {
   protected:
     ComputeShaderTest() {}
@@ -83,7 +83,7 @@ class ComputeShaderTest : public ANGLETest
     }
 };
 
-class ComputeShaderTestES3 : public ANGLETest
+class ComputeShaderTestES3 : public ANGLETest<>
 {
   protected:
     ComputeShaderTestES3() {}

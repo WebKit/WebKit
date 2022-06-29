@@ -22,7 +22,6 @@ GlslangSourceOptions GlslangWrapperVk::CreateSourceOptions(const angle::Features
         features.supportsTransformFeedbackExtension.enabled;
     options.supportsTransformFeedbackEmulation = features.emulateTransformFeedback.enabled;
     options.enableTransformFeedbackEmulation   = options.supportsTransformFeedbackEmulation;
-    options.emulateBresenhamLines              = features.basicGLLineRasterization.enabled;
 
     return options;
 }

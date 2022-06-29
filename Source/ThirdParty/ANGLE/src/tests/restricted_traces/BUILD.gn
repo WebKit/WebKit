@@ -8,6 +8,12 @@ import("../../../gni/angle.gni")
 
 angle_trace_library("angle_restricted_traces") {
   json_path = "restricted_traces.json"
+  if (angle_restricted_traces != []) {
+    trace_list = angle_restricted_traces
+  } else {
+    _trace_json = read_file(json_path, "json")
+    trace_list = _trace_json.traces
+  }
 }
 
 group("goldctl") {

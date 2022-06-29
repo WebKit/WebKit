@@ -586,11 +586,8 @@ class PipelineCache final : public WrappedObject<PipelineCache, VkPipelineCache>
     void destroy(VkDevice device);
 
     VkResult init(VkDevice device, const VkPipelineCacheCreateInfo &createInfo);
-    VkResult getCacheData(VkDevice device, size_t *cacheSize, void *cacheData);
-    VkResult merge(VkDevice device,
-                   VkPipelineCache dstCache,
-                   uint32_t srcCacheCount,
-                   const VkPipelineCache *srcCaches);
+    VkResult getCacheData(VkDevice device, size_t *cacheSize, void *cacheData) const;
+    VkResult merge(VkDevice device, uint32_t srcCacheCount, const VkPipelineCache *srcCaches) const;
 };
 
 class DescriptorSetLayout final : public WrappedObject<DescriptorSetLayout, VkDescriptorSetLayout>
@@ -687,8 +684,11 @@ class VirtualBlock final : public WrappedObject<VirtualBlock, VmaVirtualBlock>
     void destroy(VkDevice device);
     VkResult init(VkDevice device, vma::VirtualBlockCreateFlags flags, VkDeviceSize size);
 
-    VkResult allocate(VkDeviceSize size, VkDeviceSize alignment, VkDeviceSize *offsetOut);
-    void free(VkDeviceSize offset);
+    VkResult allocate(VkDeviceSize size,
+                      VkDeviceSize alignment,
+                      VmaVirtualAllocation *allocationOut,
+                      VkDeviceSize *offsetOut);
+    void free(VmaVirtualAllocation allocation, VkDeviceSize offset);
     void calculateStats(vma::StatInfo *pStatInfo) const;
 };
 
@@ -1731,17 +1731,16 @@ ANGLE_INLINE VkResult PipelineCache::init(VkDevice device,
 }
 
 ANGLE_INLINE VkResult PipelineCache::merge(VkDevice device,
-                                           VkPipelineCache dstCache,
                                            uint32_t srcCacheCount,
-                                           const VkPipelineCache *srcCaches)
+                                           const VkPipelineCache *srcCaches) const
 {
     ASSERT(valid());
-    return vkMergePipelineCaches(device, dstCache, srcCacheCount, srcCaches);
+    return vkMergePipelineCaches(device, mHandle, srcCacheCount, srcCaches);
 }
 
 ANGLE_INLINE VkResult PipelineCache::getCacheData(VkDevice device,
                                                   size_t *cacheSize,
-                                                  void *cacheData)
+                                                  void *cacheData) const
 {
     ASSERT(valid());
 
@@ -1998,14 +1997,15 @@ ANGLE_INLINE VkResult VirtualBlock::init(VkDevice device,
 
 ANGLE_INLINE VkResult VirtualBlock::allocate(VkDeviceSize size,
                                              VkDeviceSize alignment,
+                                             VmaVirtualAllocation *allocationOut,
                                              VkDeviceSize *offsetOut)
 {
-    return vma::VirtualAllocate(mHandle, size, alignment, offsetOut);
+    return vma::VirtualAllocate(mHandle, size, alignment, allocationOut, offsetOut);
 }
 
-ANGLE_INLINE void VirtualBlock::free(VkDeviceSize offset)
+ANGLE_INLINE void VirtualBlock::free(VmaVirtualAllocation allocation, VkDeviceSize offset)
 {
-    vma::VirtualFree(mHandle, offset);
+    vma::VirtualFree(mHandle, allocation, offset);
 }
 
 ANGLE_INLINE void VirtualBlock::calculateStats(vma::StatInfo *pStatInfo) const

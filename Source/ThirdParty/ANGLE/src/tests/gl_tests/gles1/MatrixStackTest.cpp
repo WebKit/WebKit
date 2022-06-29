@@ -13,7 +13,7 @@
 
 using namespace angle;
 
-class MatrixStackTest : public ANGLETest
+class MatrixStackTest : public ANGLETest<>
 {
   protected:
     MatrixStackTest()

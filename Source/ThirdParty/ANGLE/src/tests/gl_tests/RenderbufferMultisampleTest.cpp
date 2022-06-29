@@ -14,7 +14,7 @@ using namespace angle;
 namespace
 {
 
-class RenderbufferMultisampleTest : public ANGLETest
+class RenderbufferMultisampleTest : public ANGLETest<>
 {
   protected:
     RenderbufferMultisampleTest()

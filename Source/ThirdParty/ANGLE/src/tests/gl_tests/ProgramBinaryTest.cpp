@@ -17,7 +17,7 @@
 
 using namespace angle;
 
-class ProgramBinaryTest : public ANGLETest
+class ProgramBinaryTest : public ANGLETest<>
 {
   protected:
     ProgramBinaryTest()
@@ -1005,10 +1005,9 @@ TEST_P(ProgramBinaryES3Test, ArrayOfStructContainingArrayOfSamplers)
 }
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ProgramBinaryES3Test);
-ANGLE_INSTANTIATE_TEST_ES3_AND(ProgramBinaryES3Test,
-                               ES3_VULKAN().enable(Feature::CreatePipelineDuringLink));
+ANGLE_INSTANTIATE_TEST_ES3(ProgramBinaryES3Test);
 
-class ProgramBinaryES31Test : public ANGLETest
+class ProgramBinaryES31Test : public ANGLETest<>
 {
   protected:
     ProgramBinaryES31Test()
@@ -1237,10 +1236,9 @@ TEST_P(ProgramBinaryES31Test, ImageTextureBinding)
 }
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ProgramBinaryES31Test);
-ANGLE_INSTANTIATE_TEST_ES31_AND(ProgramBinaryES31Test,
-                                ES31_VULKAN().enable(Feature::CreatePipelineDuringLink));
+ANGLE_INSTANTIATE_TEST_ES31(ProgramBinaryES31Test);
 
-class ProgramBinaryTransformFeedbackTest : public ANGLETest
+class ProgramBinaryTransformFeedbackTest : public ANGLETest<>
 {
   protected:
     ProgramBinaryTransformFeedbackTest()
@@ -1350,8 +1348,7 @@ TEST_P(ProgramBinaryTransformFeedbackTest, GetTransformFeedbackVarying)
 }
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ProgramBinaryTransformFeedbackTest);
-ANGLE_INSTANTIATE_TEST_ES3_AND(ProgramBinaryTransformFeedbackTest,
-                               ES3_VULKAN().enable(Feature::CreatePipelineDuringLink));
+ANGLE_INSTANTIATE_TEST_ES3(ProgramBinaryTransformFeedbackTest);
 
 // For the ProgramBinariesAcrossPlatforms tests, we need two sets of params:
 // - a set to save the program binary
@@ -1593,7 +1590,5 @@ ANGLE_INSTANTIATE_TEST(ProgramBinariesAcrossPlatforms,
                        PlatformsWithLinkResult(ES3_VULKAN(),  ES3_VULKAN(),  true ), // Loading + reloading binary should work
                        PlatformsWithLinkResult(ES31_VULKAN(), ES31_VULKAN(), true ), // Loading + reloading binary should work
                        PlatformsWithLinkResult(ES3_VULKAN(),  ES31_VULKAN(), false), // Switching to newer client version shouldn't work with Vulkan
-                       PlatformsWithLinkResult(ES2_VULKAN().enable(Feature::CreatePipelineDuringLink), ES2_VULKAN().enable(Feature::CreatePipelineDuringLink),true), // Loading + reloading binary with compiling shaders at link time should work
-                       PlatformsWithLinkResult(ES3_VULKAN().enable(Feature::CreatePipelineDuringLink), ES3_VULKAN().enable(Feature::CreatePipelineDuringLink),true), // Loading + reloading binary with compiling shaders at link time should work
                       );
 // clang-format on

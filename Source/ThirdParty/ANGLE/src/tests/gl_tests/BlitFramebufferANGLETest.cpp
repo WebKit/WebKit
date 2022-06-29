@@ -11,7 +11,7 @@ using namespace angle;
 
 namespace
 {
-class BlitFramebufferANGLETest : public ANGLETest
+class BlitFramebufferANGLETest : public ANGLETest<>
 {
   protected:
     BlitFramebufferANGLETest()
@@ -1479,7 +1479,7 @@ TEST_P(BlitFramebufferANGLETest, Errors)
 // TODO(geofflang): Fix the dependence on glBlitFramebufferANGLE without checks and assuming the
 // default framebuffer is BGRA to enable the GL and GLES backends. (http://anglebug.com/1289)
 
-class BlitFramebufferTest : public ANGLETest
+class BlitFramebufferTest : public ANGLETest<>
 {
   protected:
     BlitFramebufferTest()

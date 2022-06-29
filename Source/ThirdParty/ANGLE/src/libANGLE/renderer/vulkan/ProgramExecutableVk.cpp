@@ -8,6 +8,7 @@
 
 #include "libANGLE/renderer/vulkan/ProgramExecutableVk.h"
 
+#include "common/string_utils.h"
 #include "libANGLE/renderer/glslang_wrapper_utils.h"
 #include "libANGLE/renderer/vulkan/BufferVk.h"
 #include "libANGLE/renderer/vulkan/DisplayVk.h"
@@ -69,12 +70,11 @@ bool ValidateTransformedSpirV(const gl::ShaderBitSet &linkedShaderStages,
     for (gl::ShaderType shaderType : linkedShaderStages)
     {
         GlslangSpirvOptions options;
-        options.shaderType                         = shaderType;
-        options.negativeViewportSupported          = false;
-        options.transformPositionToVulkanClipSpace = true;
-        options.removeDebugInfo                    = true;
-        options.isLastPreFragmentStage             = shaderType == lastPreFragmentStage;
-        options.isTransformFeedbackStage           = shaderType == lastPreFragmentStage;
+        options.shaderType                = shaderType;
+        options.negativeViewportSupported = false;
+        options.removeDebugInfo           = true;
+        options.isLastPreFragmentStage    = shaderType == lastPreFragmentStage;
+        options.isTransformFeedbackStage  = shaderType == lastPreFragmentStage;
 
         angle::spirv::Blob transformed;
         if (GlslangWrapperVk::TransformSpirV(options, variableInfoMap, spirvBlobs[shaderType],
@@ -84,6 +84,133 @@ bool ValidateTransformedSpirV(const gl::ShaderBitSet &linkedShaderStages,
         }
     }
     return true;
+}
+
+uint32_t GetInterfaceBlockArraySize(const std::vector<gl::InterfaceBlock> &blocks,
+                                    uint32_t bufferIndex)
+{
+    const gl::InterfaceBlock &block = blocks[bufferIndex];
+
+    if (!block.isArray)
+    {
+        return 1;
+    }
+
+    ASSERT(block.arrayElement == 0);
+
+    // Search consecutively until all array indices of this block are visited.
+    uint32_t arraySize;
+    for (arraySize = 1; bufferIndex + arraySize < blocks.size(); ++arraySize)
+    {
+        const gl::InterfaceBlock &nextBlock = blocks[bufferIndex + arraySize];
+
+        if (nextBlock.arrayElement != arraySize)
+        {
+            break;
+        }
+
+        // It's unexpected for an array to start at a non-zero array size, so we can always rely on
+        // the sequential `arrayElement`s to belong to the same block.
+        ASSERT(nextBlock.name == block.name);
+        ASSERT(nextBlock.isArray);
+    }
+
+    return arraySize;
+}
+
+void SetupDefaultPipelineState(const ContextVk *contextVk,
+                               const gl::ProgramExecutable &glExecutable,
+                               gl::PrimitiveMode mode,
+                               vk::GraphicsPipelineDesc *graphicsPipelineDescOut)
+{
+    graphicsPipelineDescOut->initDefaults(contextVk);
+    graphicsPipelineDescOut->setTopology(mode);
+    graphicsPipelineDescOut->setRenderPassSampleCount(1);
+    graphicsPipelineDescOut->setRenderPassFramebufferFetchMode(glExecutable.usesFramebufferFetch());
+
+    const std::vector<sh::ShaderVariable> &outputVariables   = glExecutable.getOutputVariables();
+    const std::vector<gl::VariableLocation> &outputLocations = glExecutable.getOutputLocations();
+
+    for (const gl::VariableLocation &outputLocation : outputLocations)
+    {
+        if (outputLocation.arrayIndex == 0 && outputLocation.used() && !outputLocation.ignored)
+        {
+            const sh::ShaderVariable &outputVar = outputVariables[outputLocation.index];
+
+            if (angle::BeginsWith(outputVar.name, "gl_") && outputVar.name != "gl_FragColor")
+            {
+                continue;
+            }
+
+            uint32_t location = 0;
+            if (outputVar.location != -1)
+            {
+                location = outputVar.location;
+            }
+
+            GLenum type            = gl::VariableComponentType(outputVar.type);
+            angle::FormatID format = angle::FormatID::R8G8B8A8_UNORM;
+            if (type == GL_INT)
+            {
+                format = angle::FormatID::R8G8B8A8_SINT;
+            }
+            else if (type == GL_UNSIGNED_INT)
+            {
+                format = angle::FormatID::R8G8B8A8_UINT;
+            }
+
+            graphicsPipelineDescOut->setRenderPassColorAttachmentFormat(location, format);
+        }
+    }
+
+    for (const sh::ShaderVariable &outputVar : outputVariables)
+    {
+        if (outputVar.name == "gl_FragColor" || outputVar.name == "gl_FragData")
+        {
+            size_t arraySize = outputVar.isArray() ? outputVar.getOutermostArraySize() : 1;
+            for (size_t arrayIndex = 0; arrayIndex < arraySize; ++arrayIndex)
+            {
+                graphicsPipelineDescOut->setRenderPassColorAttachmentFormat(
+                    arrayIndex, angle::FormatID::R8G8B8A8_UNORM);
+            }
+        }
+    }
+}
+
+void GetPipelineCacheData(ContextVk *contextVk,
+                          const vk::PipelineCache &pipelineCache,
+                          angle::MemoryBuffer *cacheDataOut)
+{
+    ASSERT(pipelineCache.valid() || contextVk->getState().isGLES1() ||
+           !contextVk->getFeatures().warmUpPipelineCacheAtLink.enabled);
+    if (!pipelineCache.valid())
+    {
+        return;
+    }
+
+    // Extract the pipeline data.  If failed, or empty, it's simply not stored on disk.
+    size_t pipelineCacheSize = 0;
+    VkResult result =
+        pipelineCache.getCacheData(contextVk->getDevice(), &pipelineCacheSize, nullptr);
+    if (result != VK_SUCCESS || pipelineCacheSize == 0)
+    {
+        return;
+    }
+
+    std::vector<uint8_t> pipelineCacheData(pipelineCacheSize);
+    result = pipelineCache.getCacheData(contextVk->getDevice(), &pipelineCacheSize,
+                                        pipelineCacheData.data());
+    if (result != VK_SUCCESS && result != VK_INCOMPLETE)
+    {
+        return;
+    }
+
+    // Compress it.
+    if (!egl::CompressBlobCacheData(pipelineCacheData.size(), pipelineCacheData.data(),
+                                    cacheDataOut))
+    {
+        cacheDataOut->clear();
+    }
 }
 }  // namespace
 
@@ -190,13 +317,6 @@ angle::Result ProgramInfo::initProgram(ContextVk *contextVk,
     options.isTransformFeedbackEmulated = contextVk->getFeatures().emulateTransformFeedback.enabled;
     options.negativeViewportSupported   = contextVk->getFeatures().supportsNegativeViewport.enabled;
 
-    if (isLastPreFragmentStage)
-    {
-        options.transformPositionToVulkanClipSpace =
-            optionBits.enableDepthCorrection &&
-            !contextVk->getFeatures().supportsDepthClipControl.enabled;
-    }
-
     ANGLE_TRY(GlslangWrapperVk::TransformSpirV(options, variableInfoMap, originalSpirvBlob,
                                                &transformedSpirvBlob));
     ANGLE_TRY(vk::InitShaderAndSerial(contextVk, &mShaders[shaderType].get(),
@@ -205,8 +325,6 @@ angle::Result ProgramInfo::initProgram(ContextVk *contextVk,
 
     mProgramHelper.setShader(shaderType, &mShaders[shaderType]);
 
-    mProgramHelper.setSpecializationConstant(sh::vk::SpecializationConstantId::LineRasterEmulation,
-                                             optionBits.enableLineRasterEmulation);
     mProgramHelper.setSpecializationConstant(sh::vk::SpecializationConstantId::SurfaceRotation,
                                              optionBits.surfaceRotation);
 
@@ -236,9 +354,12 @@ ProgramExecutableVk::ProgramExecutableVk()
     }
 }
 
-ProgramExecutableVk::~ProgramExecutableVk() {}
+ProgramExecutableVk::~ProgramExecutableVk()
+{
+    ASSERT(!mPipelineCache.valid());
+}
 
-void ProgramExecutableVk::reset(ContextVk *contextVk)
+void ProgramExecutableVk::resetLayout(ContextVk *contextVk)
 {
     for (auto &descriptorSetLayout : mDescriptorSetLayouts)
     {
@@ -251,7 +372,6 @@ void ProgramExecutableVk::reset(ContextVk *contextVk)
     mDescriptorSets.fill(VK_NULL_HANDLE);
     mEmptyDescriptorSets.fill(VK_NULL_HANDLE);
     mNumDefaultUniformDescriptors = 0;
-    mTransformOptions             = {};
 
     for (vk::RefCountedDescriptorPoolBinding &binding : mDescriptorPoolBindings)
     {
@@ -275,8 +395,50 @@ void ProgramExecutableVk::reset(ContextVk *contextVk)
     contextVk->onProgramExecutableReset(this);
 }
 
+void ProgramExecutableVk::reset(ContextVk *contextVk)
+{
+    resetLayout(contextVk);
+
+    if (mPipelineCache.valid())
+    {
+        mPipelineCache.destroy(contextVk->getDevice());
+    }
+}
+
+angle::Result ProgramExecutableVk::initializePipelineCache(
+    ContextVk *contextVk,
+    const std::vector<uint8_t> &compressedPipelineData)
+{
+    ASSERT(!mPipelineCache.valid());
+
+    angle::MemoryBuffer uncompressedData;
+    if (!egl::DecompressBlobCacheData(compressedPipelineData.data(), compressedPipelineData.size(),
+                                      &uncompressedData))
+    {
+        return angle::Result::Stop;
+    }
+
+    VkPipelineCacheCreateInfo pipelineCacheCreateInfo = {};
+    pipelineCacheCreateInfo.sType           = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
+    pipelineCacheCreateInfo.initialDataSize = uncompressedData.size();
+    pipelineCacheCreateInfo.pInitialData    = uncompressedData.data();
+
+    if (contextVk->getFeatures().supportsPipelineCreationCacheControl.enabled)
+    {
+        pipelineCacheCreateInfo.flags |= VK_PIPELINE_CACHE_CREATE_EXTERNALLY_SYNCHRONIZED_BIT_EXT;
+    }
+
+    ANGLE_VK_TRY(contextVk, mPipelineCache.init(contextVk->getDevice(), pipelineCacheCreateInfo));
+
+    // Merge the pipeline cache into RendererVk's.
+    // TODO(http://anglebug.com/7369): When VK_EXT_graphics_pipeline_library is supported, do not
+    // merge into RendererVk's cache.  |mPipelineCache| will continue to be used in that case.
+    return contextVk->getRenderer()->mergeIntoPipelineCache(mPipelineCache);
+}
+
 std::unique_ptr<rx::LinkEvent> ProgramExecutableVk::load(ContextVk *contextVk,
                                                          const gl::ProgramExecutable &glExecutable,
+                                                         bool isSeparable,
                                                          gl::BinaryInputStream *stream)
 {
     gl::ShaderMap<ShaderInterfaceVariableInfoMap::VariableTypeToInfoMap> data;
@@ -357,6 +519,25 @@ std::unique_ptr<rx::LinkEvent> ProgramExecutableVk::load(ContextVk *contextVk,
         requiredBufferSize[shaderType] = stream->readInt<size_t>();
     }
 
+    if (!isSeparable)
+    {
+        size_t compressedPipelineDataSize = 0;
+        stream->readInt<size_t>(&compressedPipelineDataSize);
+
+        std::vector<uint8_t> compressedPipelineData(compressedPipelineDataSize);
+        if (compressedPipelineDataSize > 0)
+        {
+            stream->readBytes(compressedPipelineData.data(), compressedPipelineDataSize);
+
+            // Initialize the pipeline cache based on cached data.
+            angle::Result status = initializePipelineCache(contextVk, compressedPipelineData);
+            if (status != angle::Result::Continue)
+            {
+                return std::make_unique<LinkEventDone>(status);
+            }
+        }
+    }
+
     // Initialize and resize the mDefaultUniformBlocks' memory
     angle::Result status = resizeUniformBlockMemory(contextVk, glExecutable, requiredBufferSize);
     if (status != angle::Result::Continue)
@@ -368,7 +549,9 @@ std::unique_ptr<rx::LinkEvent> ProgramExecutableVk::load(ContextVk *contextVk,
     return std::make_unique<LinkEventDone>(status);
 }
 
-void ProgramExecutableVk::save(gl::BinaryOutputStream *stream)
+void ProgramExecutableVk::save(ContextVk *contextVk,
+                               bool isSeparable,
+                               gl::BinaryOutputStream *stream)
 {
     const gl::ShaderMap<ShaderInterfaceVariableInfoMap::VariableTypeToInfoMap> &data =
         mVariableInfoMap.getData();
@@ -449,6 +632,20 @@ void ProgramExecutableVk::save(gl::BinaryOutputStream *stream)
     {
         stream->writeInt(mDefaultUniformBlocks[shaderType]->uniformData.size());
     }
+
+    // Compress and save mPipelineCache.  Separable programs cannot warm up the cache until
+    // VK_EXT_graphics_pipeline_library is supported.
+    if (!isSeparable)
+    {
+        angle::MemoryBuffer cacheData;
+        GetPipelineCacheData(contextVk, mPipelineCache, &cacheData);
+
+        stream->writeInt(cacheData.size());
+        if (cacheData.size() > 0)
+        {
+            stream->writeBytes(cacheData.data(), cacheData.size());
+        }
+    }
 }
 
 void ProgramExecutableVk::clearVariableInfoMap()
@@ -456,36 +653,100 @@ void ProgramExecutableVk::clearVariableInfoMap()
     mVariableInfoMap.clear();
 }
 
-uint32_t GetInterfaceBlockArraySize(const std::vector<gl::InterfaceBlock> &blocks,
-                                    uint32_t bufferIndex)
+angle::Result ProgramExecutableVk::warmUpPipelineCache(ContextVk *contextVk,
+                                                       const gl::ProgramExecutable &glExecutable)
 {
-    const gl::InterfaceBlock &block = blocks[bufferIndex];
-
-    if (!block.isArray)
+    // The cache warm up is skipped for GLES1 for two reasons:
+    //
+    // - Since GLES1 shaders are limited, the individual programs don't necessarily add new
+    //   pipelines, but rather it's draw time state that controls that.  Since the programs are
+    //   generated at draw time, it's just as well to let the pipelines be created using the
+    //   renderer's shared cache.
+    // - Individual GLES1 tests are long, and this adds a considerable overhead to those tests
+    if (contextVk->getState().isGLES1())
     {
-        return 1;
+        return angle::Result::Continue;
     }
 
-    ASSERT(block.arrayElement == 0);
-
-    // Search consecutively until all array indices of this block are visited.
-    uint32_t arraySize;
-    for (arraySize = 1; bufferIndex + arraySize < blocks.size(); ++arraySize)
+    if (!contextVk->getFeatures().warmUpPipelineCacheAtLink.enabled)
     {
-        const gl::InterfaceBlock &nextBlock = blocks[bufferIndex + arraySize];
-
-        if (nextBlock.arrayElement != arraySize)
-        {
-            break;
-        }
-
-        // It's unexpected for an array to start at a non-zero array size, so we can always rely on
-        // the sequential `arrayElement`s to belong to the same block.
-        ASSERT(nextBlock.name == block.name);
-        ASSERT(nextBlock.isArray);
+        return angle::Result::Continue;
     }
 
-    return arraySize;
+    // Initialize the pipeline cache
+    ASSERT(!mPipelineCache.valid());
+
+    VkPipelineCacheCreateInfo pipelineCacheCreateInfo = {};
+    pipelineCacheCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
+
+    if (contextVk->getFeatures().supportsPipelineCreationCacheControl.enabled)
+    {
+        pipelineCacheCreateInfo.flags |= VK_PIPELINE_CACHE_CREATE_EXTERNALLY_SYNCHRONIZED_BIT_EXT;
+    }
+
+    ANGLE_VK_TRY(contextVk, mPipelineCache.init(contextVk->getDevice(), pipelineCacheCreateInfo));
+
+    // No synchronization necessary when accessing the program executable's cache as there is no
+    // access to it from other threads at this point.
+    PipelineCacheAccess pipelineCache;
+    pipelineCache.init(&mPipelineCache, nullptr);
+
+    // Create a set of pipelines.  Ideally, that would be the entire set of possible pipelines so
+    // there would be none created at draw time.  This is gated on the removal of some
+    // specialization constants and adoption of VK_EXT_graphics_pipeline_library.
+    const bool isCompute = glExecutable.hasLinkedShaderStage(gl::ShaderType::Compute);
+    if (isCompute)
+    {
+        // There is no state associated with compute programs, so only one pipeline needs creation
+        // to warm up the cache.
+        vk::PipelineHelper *pipeline = nullptr;
+        return getComputePipeline(contextVk, &pipelineCache, PipelineSource::WarmUp, glExecutable,
+                                  &pipeline);
+    }
+
+    const vk::GraphicsPipelineDesc *descPtr = nullptr;
+    vk::PipelineHelper *pipeline            = nullptr;
+    vk::GraphicsPipelineDesc graphicsPipelineDesc;
+
+    // It is only at drawcall time that we will have complete information required to build the
+    // graphics pipeline descriptor. Use the most "commonly seen" state values and create the
+    // pipeline.
+    gl::PrimitiveMode mode = (glExecutable.hasLinkedShaderStage(gl::ShaderType::TessControl) ||
+                              glExecutable.hasLinkedShaderStage(gl::ShaderType::TessEvaluation))
+                                 ? gl::PrimitiveMode::Patches
+                                 : gl::PrimitiveMode::TriangleStrip;
+    SetupDefaultPipelineState(contextVk, glExecutable, mode, &graphicsPipelineDesc);
+
+    // Variations that definitely matter:
+    //
+    // - PreRotation: It's a boolean specialization constant
+    // - Depth correction: It's a SPIR-V transformation
+    //
+    // There are a number of states that are not currently dynamic (and may never be, such as sample
+    // shading), but pre-creating shaders for them is impractical.  Most such state is likely unused
+    // by most applications, but variations can be added here for certain apps that are known to
+    // benefit from it.
+    ProgramTransformOptions transformOptions = {};
+
+    angle::FixedVector<bool, 2> surfaceRotationVariations = {false};
+    if (contextVk->getFeatures().enablePreRotateSurfaces.enabled &&
+        !contextVk->getFeatures().preferDriverUniformOverSpecConst.enabled)
+    {
+        surfaceRotationVariations.push_back(true);
+    }
+
+    const gl::DrawBufferMask shaderOutMask = glExecutable.getActiveOutputVariablesMask();
+    for (bool rotation : surfaceRotationVariations)
+    {
+        transformOptions.surfaceRotation = rotation;
+
+        ANGLE_TRY(getGraphicsPipelineImpl(contextVk, transformOptions, mode, shaderOutMask,
+                                          &pipelineCache, PipelineSource::WarmUp,
+                                          graphicsPipelineDesc, glExecutable, &descPtr, &pipeline));
+    }
+
+    // Merge the cache with RendererVk's
+    return contextVk->getRenderer()->mergeIntoPipelineCache(mPipelineCache);
 }
 
 void ProgramExecutableVk::addInterfaceBlockDescriptorSetDesc(
@@ -735,28 +996,21 @@ angle::Result ProgramExecutableVk::addTextureDescriptorSetDesc(
     return angle::Result::Continue;
 }
 
-angle::Result ProgramExecutableVk::getGraphicsPipeline(ContextVk *contextVk,
-                                                       gl::PrimitiveMode mode,
-                                                       const vk::GraphicsPipelineDesc &desc,
-                                                       const gl::ProgramExecutable &glExecutable,
-                                                       const vk::GraphicsPipelineDesc **descPtrOut,
-                                                       vk::PipelineHelper **pipelineOut)
+angle::Result ProgramExecutableVk::getGraphicsPipelineImpl(
+    ContextVk *contextVk,
+    ProgramTransformOptions transformOptions,
+    gl::PrimitiveMode mode,
+    gl::DrawBufferMask framebufferMask,
+    PipelineCacheAccess *pipelineCache,
+    PipelineSource source,
+    const vk::GraphicsPipelineDesc &desc,
+    const gl::ProgramExecutable &glExecutable,
+    const vk::GraphicsPipelineDesc **descPtrOut,
+    vk::PipelineHelper **pipelineOut)
 {
-    const gl::State &glState         = contextVk->getState();
-    RendererVk *renderer             = contextVk->getRenderer();
-    vk::PipelineCache *pipelineCache = nullptr;
-
     ASSERT(glExecutable.hasLinkedShaderStage(gl::ShaderType::Vertex));
 
-    mTransformOptions.enableLineRasterEmulation = contextVk->isBresenhamEmulationEnabled(mode);
-    mTransformOptions.surfaceRotation           = desc.getSurfaceRotation();
-    mTransformOptions.enableDepthCorrection     = !glState.isClipControlDepthZeroToOne();
-    mTransformOptions.removeTransformFeedbackEmulation =
-        contextVk->getFeatures().emulateTransformFeedback.enabled &&
-        !glState.isTransformFeedbackActiveUnpaused();
-
-    // This must be called after mTransformOptions have been set.
-    ProgramInfo &programInfo                  = getGraphicsProgramInfo();
+    ProgramInfo &programInfo                  = getGraphicsProgramInfo(transformOptions);
     const gl::ShaderBitSet linkedShaderStages = glExecutable.getLinkedShaderStages();
     gl::ShaderType lastPreFragmentStage       = gl::GetLastPreFragmentStage(linkedShaderStages);
 
@@ -767,14 +1021,14 @@ angle::Result ProgramExecutableVk::getGraphicsPipeline(ContextVk *contextVk,
     {
         ANGLE_TRY(initGraphicsShaderProgram(
             contextVk, shaderType, shaderType == lastPreFragmentStage, isTransformFeedbackProgram,
-            mTransformOptions, &programInfo, mVariableInfoMap));
+            transformOptions, &programInfo, mVariableInfoMap));
     }
 
     vk::ShaderProgramHelper *shaderProgram = programInfo.getShaderProgram();
     ASSERT(shaderProgram);
 
     // Dither is part of specialization constant, but does not have its own dedicated
-    // programInfo entry. We pick the programInfo entry based on the mTransformOptions and then
+    // programInfo entry. We pick the programInfo entry based on the transformOptions and then
     // update the dither specialization constant. It will go through desc matching and if
     // spec constant does not match, it will recompile pipeline program.
     shaderProgram->setSpecializationConstant(sh::vk::SpecializationConstantId::Dither,
@@ -785,29 +1039,54 @@ angle::Result ProgramExecutableVk::getGraphicsPipeline(ContextVk *contextVk,
         glExecutable.getNonBuiltinAttribLocationsMask();
 
     // Calculate missing shader outputs.
-    const gl::DrawBufferMask &shaderOutMask = glExecutable.getActiveOutputVariablesMask();
-    gl::DrawBufferMask framebufferMask      = glState.getDrawFramebuffer()->getDrawBufferMask();
-    gl::DrawBufferMask missingOutputsMask   = ~shaderOutMask & framebufferMask;
+    const gl::DrawBufferMask shaderOutMask = glExecutable.getActiveOutputVariablesMask();
+    gl::DrawBufferMask missingOutputsMask  = ~shaderOutMask & framebufferMask;
 
-    ANGLE_TRY(renderer->getPipelineCache(&pipelineCache));
     return shaderProgram->getGraphicsPipeline(
-        contextVk, &contextVk->getRenderPassCache(), *pipelineCache, getPipelineLayout(), desc,
-        activeAttribLocations, glExecutable.getAttributesTypeMask(), missingOutputsMask, descPtrOut,
-        pipelineOut);
+        contextVk, &contextVk->getRenderPassCache(), pipelineCache, getPipelineLayout(), source,
+        desc, activeAttribLocations, glExecutable.getAttributesTypeMask(), missingOutputsMask,
+        descPtrOut, pipelineOut);
+}
+
+angle::Result ProgramExecutableVk::getGraphicsPipeline(ContextVk *contextVk,
+                                                       gl::PrimitiveMode mode,
+                                                       PipelineCacheAccess *pipelineCache,
+                                                       PipelineSource source,
+                                                       const vk::GraphicsPipelineDesc &desc,
+                                                       const gl::ProgramExecutable &glExecutable,
+                                                       const vk::GraphicsPipelineDesc **descPtrOut,
+                                                       vk::PipelineHelper **pipelineOut)
+{
+    const gl::State &glState = contextVk->getState();
+
+    ProgramTransformOptions transformOptions = {};
+
+    transformOptions.surfaceRotation = desc.getSurfaceRotation();
+    transformOptions.removeTransformFeedbackEmulation =
+        contextVk->getFeatures().emulateTransformFeedback.enabled &&
+        !glState.isTransformFeedbackActiveUnpaused();
+
+    const gl::DrawBufferMask framebufferMask = glState.getDrawFramebuffer()->getDrawBufferMask();
+
+    return getGraphicsPipelineImpl(contextVk, transformOptions, mode, framebufferMask,
+                                   pipelineCache, source, desc, glExecutable, descPtrOut,
+                                   pipelineOut);
 }
 
 angle::Result ProgramExecutableVk::getComputePipeline(ContextVk *contextVk,
+                                                      PipelineCacheAccess *pipelineCache,
+                                                      PipelineSource source,
+                                                      const gl::ProgramExecutable &glExecutable,
                                                       vk::PipelineHelper **pipelineOut)
 {
-    const gl::State &glState                  = contextVk->getState();
-    const gl::ProgramExecutable *glExecutable = glState.getProgramExecutable();
-    ASSERT(glExecutable && glExecutable->hasLinkedShaderStage(gl::ShaderType::Compute));
+    ASSERT(glExecutable.hasLinkedShaderStage(gl::ShaderType::Compute));
 
     ANGLE_TRY(initComputeProgram(contextVk, &mComputeProgramInfo, mVariableInfoMap));
 
     vk::ShaderProgramHelper *shaderProgram = mComputeProgramInfo.getShaderProgram();
     ASSERT(shaderProgram);
-    return shaderProgram->getComputePipeline(contextVk, getPipelineLayout(), pipelineOut);
+    return shaderProgram->getComputePipeline(contextVk, pipelineCache, getPipelineLayout(), source,
+                                             pipelineOut);
 }
 
 angle::Result ProgramExecutableVk::createPipelineLayout(
@@ -818,7 +1097,7 @@ angle::Result ProgramExecutableVk::createPipelineLayout(
     gl::TransformFeedback *transformFeedback = contextVk->getState().getCurrentTransformFeedback();
     const gl::ShaderBitSet &linkedShaderStages = glExecutable.getLinkedShaderStages();
 
-    reset(contextVk);
+    resetLayout(contextVk);
 
     // Store a reference to the pipeline and descriptor set layouts. This will create them if they
     // don't already exist in the cache.
@@ -953,6 +1232,18 @@ angle::Result ProgramExecutableVk::createPipelineLayout(
 
     mDynamicUniformDescriptorOffsets.clear();
     mDynamicUniformDescriptorOffsets.resize(glExecutable.getLinkedShaderStageCount(), 0);
+
+    // If the program uses framebuffer fetch and this is the first time this happens, switch the
+    // context to "framebuffer fetch mode".  In this mode, all render passes assume framebuffer
+    // fetch may be used, so they are prepared to accept a program that uses input attachments.
+    // This is done only when a program with framebuffer fetch is created to avoid potential
+    // performance impact on applications that don't use this extension.  If other contexts in the
+    // share group use this program, they will lazily switch to this mode.
+    if (contextVk->getFeatures().permanentlySwitchToFramebufferFetchMode.enabled &&
+        glExecutable.usesFramebufferFetch())
+    {
+        ANGLE_TRY(contextVk->switchToFramebufferFetchMode(true));
+    }
 
     return angle::Result::Continue;
 }

@@ -26,7 +26,7 @@ std::pair<EGLint, EGLint> GetCurrentContextVersion()
 }
 }  // anonymous namespace
 
-class EGLBackwardsCompatibleContextTest : public ANGLETest
+class EGLBackwardsCompatibleContextTest : public ANGLETest<>
 {
   public:
     EGLBackwardsCompatibleContextTest() : mDisplay(0) {}
@@ -35,7 +35,7 @@ class EGLBackwardsCompatibleContextTest : public ANGLETest
     {
         EGLint dispattrs[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE, GetParam().getRenderer(), EGL_NONE};
         mDisplay           = eglGetPlatformDisplayEXT(
-            EGL_PLATFORM_ANGLE_ANGLE, reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
+                      EGL_PLATFORM_ANGLE_ANGLE, reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
         ASSERT_TRUE(mDisplay != EGL_NO_DISPLAY);
 
         ASSERT_EGL_TRUE(eglInitialize(mDisplay, nullptr, nullptr));

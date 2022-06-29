@@ -28,16 +28,16 @@ class TIntermTyped;
 // to a function.
 // Furthermore, at the end shader, some disabled gl_ClipDistance[i] can be skipped from the
 // assignment.
-ANGLE_NO_DISCARD bool ReplaceClipDistanceAssignments(TCompiler *compiler,
-                                                     TIntermBlock *root,
-                                                     TSymbolTable *symbolTable,
-                                                     const GLenum shaderType,
-                                                     const TIntermTyped *clipDistanceEnableFlags);
+[[nodiscard]] bool ReplaceClipDistanceAssignments(TCompiler *compiler,
+                                                  TIntermBlock *root,
+                                                  TSymbolTable *symbolTable,
+                                                  const GLenum shaderType,
+                                                  const TIntermTyped *clipDistanceEnableFlags);
 
-ANGLE_NO_DISCARD bool ReplaceCullDistanceAssignments(TCompiler *compiler,
-                                                     TIntermBlock *root,
-                                                     TSymbolTable *symbolTable,
-                                                     const GLenum shaderType);
+[[nodiscard]] bool ReplaceCullDistanceAssignments(TCompiler *compiler,
+                                                  TIntermBlock *root,
+                                                  TSymbolTable *symbolTable,
+                                                  const GLenum shaderType);
 }  // namespace sh
 
 #endif

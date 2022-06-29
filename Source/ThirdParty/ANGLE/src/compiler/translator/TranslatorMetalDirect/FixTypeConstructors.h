@@ -12,9 +12,9 @@
 
 namespace sh
 {
-ANGLE_NO_DISCARD bool FixTypeConstructors(TCompiler &compiler,
-                                          SymbolEnv &SymbolEnv,
-                                          TIntermBlock &root);
+[[nodiscard]] bool FixTypeConstructors(TCompiler &compiler,
+                                       SymbolEnv &SymbolEnv,
+                                       TIntermBlock &root);
 
 }  // namespace sh
 

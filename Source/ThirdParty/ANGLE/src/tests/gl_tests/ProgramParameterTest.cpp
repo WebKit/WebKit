@@ -13,7 +13,7 @@ using namespace angle;
 namespace
 {
 
-class ProgramParameterTest : public ANGLETest
+class ProgramParameterTest : public ANGLETest<>
 {
   protected:
     ProgramParameterTest()

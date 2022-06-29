@@ -18,7 +18,7 @@ namespace sh
 using FunctionToDefinition = std::unordered_map<const TFunction *, TIntermFunctionDefinition *>;
 
 // Maps functions to their corresponding definitions.
-ANGLE_NO_DISCARD FunctionToDefinition MapFunctionsToDefinitions(TIntermBlock &root);
+[[nodiscard]] FunctionToDefinition MapFunctionsToDefinitions(TIntermBlock &root);
 
 }  // namespace sh
 

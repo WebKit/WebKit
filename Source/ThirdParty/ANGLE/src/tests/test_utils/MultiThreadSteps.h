@@ -3,17 +3,23 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
-// EGLMultiContextTest.cpp:
+// MultiThreadSteps.h:
 //   Synchronization help for tests that use multiple threads.
+
+#include "gl_raii.h"
 
 #include <atomic>
 #include <condition_variable>
+#include <functional>
 #include <mutex>
 #include <thread>
 
+class EGLWindow;
+
+namespace angle
+{
 namespace
 {
-
 // The following class is used by tests that need multiple threads that coordinate their actions
 // via an enum of "steps".  This enum is the template type E.  The enum must have at least the
 // following values:
@@ -73,7 +79,7 @@ class ThreadSynchronization
             std::unique_lock<std::mutex> lock(*mMutex);
             *mCurrentStep = newStep;
         }
-        mCondVar->notify_one();
+        mCondVar->notify_all();
     }
 
   private:
@@ -82,3 +88,7 @@ class ThreadSynchronization
     std::condition_variable *mCondVar;
 };
 }  // anonymous namespace
+
+using LockStepThreadFunc = std::function<void(EGLDisplay, EGLSurface, EGLContext)>;
+void RunLockStepThreads(EGLWindow *window, size_t threadCount, LockStepThreadFunc threadFuncs[]);
+}  // namespace angle

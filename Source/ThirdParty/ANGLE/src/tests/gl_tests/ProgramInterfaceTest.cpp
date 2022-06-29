@@ -36,7 +36,7 @@ std::string ProgramInterfaceTestPrint(
     return out.str();
 }
 
-class ProgramInterfaceTestES31 : public ANGLETestWithParam<ProgramInterfaceTestParams>
+class ProgramInterfaceTestES31 : public ANGLETest<ProgramInterfaceTestParams>
 {
   protected:
     ProgramInterfaceTestES31()

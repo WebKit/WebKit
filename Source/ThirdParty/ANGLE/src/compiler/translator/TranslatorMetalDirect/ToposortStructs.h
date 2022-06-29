@@ -17,10 +17,10 @@ namespace sh
 
 // Does a toposort on structs based on type dependencies.
 // Struct type declarations are moved to the top of the root block.
-ANGLE_NO_DISCARD bool ToposortStructs(TCompiler &compiler,
-                                      SymbolEnv &symbolEnv,
-                                      TIntermBlock &root,
-                                      ProgramPreludeConfig &ppc);
+[[nodiscard]] bool ToposortStructs(TCompiler &compiler,
+                                   SymbolEnv &symbolEnv,
+                                   TIntermBlock &root,
+                                   ProgramPreludeConfig &ppc);
 
 }  // namespace sh
 

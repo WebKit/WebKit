@@ -21,7 +21,7 @@ void TestCacheProgram(PlatformMethods *platform,
                       size_t programSize,
                       const uint8_t *programBytes);
 
-class EGLProgramCacheControlTest : public ANGLETest
+class EGLProgramCacheControlTest : public ANGLETest<>
 {
   public:
     void onCache(const ProgramKeyType &key, size_t programSize, const uint8_t *programBytes)

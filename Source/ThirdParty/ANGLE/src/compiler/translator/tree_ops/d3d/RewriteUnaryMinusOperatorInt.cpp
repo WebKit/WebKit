@@ -19,7 +19,7 @@ namespace
 class Traverser : public TIntermTraverser
 {
   public:
-    ANGLE_NO_DISCARD static bool Apply(TCompiler *compiler, TIntermNode *root);
+    [[nodiscard]] static bool Apply(TCompiler *compiler, TIntermNode *root);
 
   private:
     Traverser();

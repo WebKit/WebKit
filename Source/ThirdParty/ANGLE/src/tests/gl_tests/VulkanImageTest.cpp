@@ -21,7 +21,7 @@ constexpr GLuint kHeight = 64u;
 constexpr GLuint kWhite  = 0xffffffff;
 constexpr GLuint kRed    = 0xff0000ff;
 
-class VulkanImageTest : public ANGLETest
+class VulkanImageTest : public ANGLETest<>
 {
   protected:
     VulkanImageTest() { setRobustResourceInit(true); }
@@ -356,8 +356,8 @@ TEST_P(VulkanImageTest, ClientBuffer)
 
     VkResult result = VK_SUCCESS;
     result          = helper.createImage2D(VK_FORMAT_R8G8B8A8_UNORM, 0, kDefaultImageUsageFlags,
-                                  {kWidth, kHeight, 1}, &vkImage, &vkDeviceMemory, &deviceSize,
-                                  &imageCreateInfo);
+                                           {kWidth, kHeight, 1}, &vkImage, &vkDeviceMemory, &deviceSize,
+                                           &imageCreateInfo);
     EXPECT_EQ(result, VK_SUCCESS);
     EXPECT_EQ(imageCreateInfo.sType, VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO);
 

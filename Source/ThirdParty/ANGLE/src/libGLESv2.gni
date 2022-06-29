@@ -531,6 +531,7 @@ libangle_mac_sources = [
 # The frame capture headers are always visible to libANGLE.
 libangle_sources += [
   "src/libANGLE/capture/FrameCapture.h",
+  "src/libANGLE/capture/capture_egl.h",
   "src/libANGLE/capture/capture_gles_1_0_autogen.h",
   "src/libANGLE/capture/capture_gles_2_0_autogen.h",
   "src/libANGLE/capture/capture_gles_3_0_autogen.h",
@@ -545,6 +546,7 @@ libangle_sources += [
 
 libangle_capture_sources = [
   "src/libANGLE/capture/FrameCapture.cpp",
+  "src/libANGLE/capture/capture_egl.cpp",
   "src/libANGLE/capture/capture_gles_1_0_autogen.cpp",
   "src/libANGLE/capture/capture_gles_1_0_params.cpp",
   "src/libANGLE/capture/capture_gles_2_0_autogen.cpp",

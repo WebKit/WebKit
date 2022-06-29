@@ -11,7 +11,7 @@ using namespace angle;
 namespace
 {
 
-class UnpackAlignmentTest : public ANGLETest
+class UnpackAlignmentTest : public ANGLETest<>
 {
   protected:
     UnpackAlignmentTest()

@@ -14,7 +14,7 @@ using namespace angle;
 
 constexpr int kPixelColorThreshhold = 8;
 
-class ShaderInterpTest : public ANGLETest
+class ShaderInterpTest : public ANGLETest<>
 {
   protected:
     ShaderInterpTest() : ANGLETest()

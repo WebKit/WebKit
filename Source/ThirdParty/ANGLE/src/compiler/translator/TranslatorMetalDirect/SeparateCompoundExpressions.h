@@ -37,10 +37,10 @@ namespace sh
 //        auto _3 = _1[_2] + 1; // Index operator remains in (+) expr here.
 //        foo(_3);
 //
-ANGLE_NO_DISCARD bool SeparateCompoundExpressions(TCompiler &compiler,
-                                                  SymbolEnv &symbolEnv,
-                                                  IdGen &idGen,
-                                                  TIntermBlock &root);
+[[nodiscard]] bool SeparateCompoundExpressions(TCompiler &compiler,
+                                               SymbolEnv &symbolEnv,
+                                               IdGen &idGen,
+                                               TIntermBlock &root);
 
 }  // namespace sh
 

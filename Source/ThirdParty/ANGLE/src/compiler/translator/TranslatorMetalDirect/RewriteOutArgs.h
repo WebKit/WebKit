@@ -26,7 +26,7 @@ namespace sh
 //    foo(_1, _2);
 //    z = _1;
 //    w = _2;
-ANGLE_NO_DISCARD bool RewriteOutArgs(TCompiler &compiler, TIntermBlock &root, SymbolEnv &symbolEnv);
+[[nodiscard]] bool RewriteOutArgs(TCompiler &compiler, TIntermBlock &root, SymbolEnv &symbolEnv);
 
 }  // namespace sh
 

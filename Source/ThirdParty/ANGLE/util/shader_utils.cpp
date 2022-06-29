@@ -16,17 +16,6 @@
 
 namespace
 {
-bool ReadEntireFile(const std::string &filePath, std::string *contentsOut)
-{
-    constexpr uint32_t kMaxBufferSize = 2000;
-    char buffer[kMaxBufferSize]       = {};
-    if (!angle::ReadEntireFileToString(filePath.c_str(), buffer, kMaxBufferSize) ||
-        strlen(buffer) == 0)
-        return false;
-    *contentsOut = buffer;
-    return true;
-}
-
 GLuint CompileProgramInternal(const char *vsSource,
                               const char *tcsSource,
                               const char *tesSource,
@@ -139,7 +128,7 @@ void KHRONOS_APIENTRY DebugMessageCallback(GLenum source,
 void GetPerfCounterValue(const CounterNameToIndexMap &counterIndexMap,
                          std::vector<angle::PerfMonitorTriplet> &triplets,
                          const char *name,
-                         GLuint *counterOut)
+                         GLuint64 *counterOut)
 {
     auto iter = counterIndexMap.find(name);
     ASSERT(iter != counterIndexMap.end());
@@ -200,7 +189,7 @@ GLuint CompileShader(GLenum type, const char *source)
 GLuint CompileShaderFromFile(GLenum type, const std::string &sourcePath)
 {
     std::string source;
-    if (!ReadEntireFile(sourcePath, &source))
+    if (!angle::ReadEntireFileToString(sourcePath.c_str(), &source))
     {
         std::cerr << "Error reading shader file: " << sourcePath << "\n";
         return 0;
@@ -318,14 +307,14 @@ GLuint CompileProgramWithTESS(const char *vsSource,
 GLuint CompileProgramFromFiles(const std::string &vsPath, const std::string &fsPath)
 {
     std::string vsSource;
-    if (!ReadEntireFile(vsPath, &vsSource))
+    if (!angle::ReadEntireFileToString(vsPath.c_str(), &vsSource))
     {
         std::cerr << "Error reading shader: " << vsPath << "\n";
         return 0;
     }
 
     std::string fsSource;
-    if (!ReadEntireFile(fsPath, &fsSource))
+    if (!angle::ReadEntireFileToString(fsPath.c_str(), &fsSource))
     {
         std::cerr << "Error reading shader: " << fsPath << "\n";
         return 0;
@@ -468,7 +457,7 @@ angle::VulkanPerfCounters GetPerfCounters(const CounterNameToIndexMap &indexMap)
     return counters;
 }
 
-CounterNameToIndexMap BuildCounterNameToValueMap()
+CounterNameToValueMap BuildCounterNameToValueMap()
 {
     CounterNameToIndexMap indexMap                     = BuildCounterNameToIndexMap();
     std::vector<angle::PerfMonitorTriplet> perfResults = GetPerfMonitorTriplets();

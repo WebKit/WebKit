@@ -54,6 +54,14 @@
           'gtest_tests': 'android_vulkan_gtests',
         },
       },
+      'linux-amd': {
+        'os_type': 'linux',
+        'mixins': [
+          'linux_amd_rx_5500_xt',
+        ],
+        'test_suites': {
+        },
+      },
       'linux-intel': {
         'os_type': 'linux',
         'mixins': [
@@ -154,10 +162,10 @@
           'gtest_tests': 'mac_amd_and_intel_gtests',
         },
       },
-      'mac-exp-amd': {
+      'mac-exp-intel': {
         'os_type': 'mac',
         'mixins': [
-          'mac_retina_amd_gpu_experimental',
+          'mac_mini_intel_gpu_experimental',
         ],
         'test_suites': {
           'gtest_tests': 'mac_amd_and_intel_gtests',

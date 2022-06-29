@@ -76,7 +76,7 @@ bool CompressedSubTextureFormatRequiresExactSize(GLenum internalFormat)
     // Compressed sub textures have additional formats that requires exact size.
     // ES 3.1, Section 8.7, Page 171
     return CompressedTextureFormatRequiresExactSize(internalFormat) ||
-           IsETC2EACFormat(internalFormat);
+           IsETC2EACFormat(internalFormat) || IsASTC2DFormat(internalFormat);
 }
 
 bool DifferenceCanOverflow(GLint a, GLint b)

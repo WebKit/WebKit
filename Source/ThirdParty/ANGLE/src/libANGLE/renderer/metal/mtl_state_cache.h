@@ -217,15 +217,14 @@ struct RenderPipelineOutputDesc
 
     void updateEnabledDrawBuffers(gl::DrawBufferMask enabledBuffers);
 
-    RenderPipelineColorAttachmentDesc colorAttachments[kMaxRenderTargets];
+    std::array<RenderPipelineColorAttachmentDesc, kMaxRenderTargets> colorAttachments;
 
     // Use uint16_t instead of MTLPixelFormat to compact space
     uint16_t depthAttachmentPixelFormat : 16;
     uint16_t stencilAttachmentPixelFormat : 16;
 
-    static_assert(kMaxRenderTargets <= 4, "kMaxRenderTargets must be <= 4");
-    uint8_t numColorAttachments : 3;
-    uint8_t sampleCount : 5;
+    uint8_t numColorAttachments;
+    uint8_t sampleCount;
 };
 
 // Some SDK levels don't declare MTLPrimitiveTopologyClass. Needs to do compile time check here:
@@ -383,11 +382,12 @@ struct RenderPassStencilAttachmentDesc : public RenderPassAttachmentDesc
 //
 struct RenderPassDesc
 {
-    RenderPassColorAttachmentDesc colorAttachments[kMaxRenderTargets];
+    std::array<RenderPassColorAttachmentDesc, kMaxRenderTargets> colorAttachments;
     RenderPassDepthAttachmentDesc depthAttachment;
     RenderPassStencilAttachmentDesc stencilAttachment;
 
-    void convertToMetalDesc(MTLRenderPassDescriptor *objCDesc) const;
+    void convertToMetalDesc(MTLRenderPassDescriptor *objCDesc,
+                            uint32_t deviceMaxRenderTargets) const;
 
     // This will populate the RenderPipelineOutputDesc with default blend state and
     // MTLColorWriteMaskAll

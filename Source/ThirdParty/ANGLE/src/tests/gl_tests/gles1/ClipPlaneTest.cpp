@@ -15,7 +15,7 @@
 
 using namespace angle;
 
-class ClipPlaneTest : public ANGLETest
+class ClipPlaneTest : public ANGLETest<>
 {
   protected:
     ClipPlaneTest()

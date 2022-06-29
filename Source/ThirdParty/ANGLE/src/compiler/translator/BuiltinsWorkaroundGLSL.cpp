@@ -92,10 +92,10 @@ bool TBuiltinsWorkaroundGLSL::visitDeclaration(Visit, TIntermDeclaration *node)
 
 }  // anonymous namespace
 
-ANGLE_NO_DISCARD bool ShaderBuiltinsWorkaround(TCompiler *compiler,
-                                               TIntermBlock *root,
-                                               TSymbolTable *symbolTable,
-                                               ShCompileOptions compileOptions)
+[[nodiscard]] bool ShaderBuiltinsWorkaround(TCompiler *compiler,
+                                            TIntermBlock *root,
+                                            TSymbolTable *symbolTable,
+                                            ShCompileOptions compileOptions)
 {
     TBuiltinsWorkaroundGLSL builtins(symbolTable, compileOptions);
     root->traverse(&builtins);

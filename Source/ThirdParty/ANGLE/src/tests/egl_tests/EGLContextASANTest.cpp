@@ -33,7 +33,7 @@ EGLBoolean SafeDestroyContext(EGLDisplay display, EGLContext &context)
     return result;
 }
 
-class EGLContextASANTest : public ANGLETest
+class EGLContextASANTest : public ANGLETest<>
 {
   public:
     EGLContextASANTest() {}

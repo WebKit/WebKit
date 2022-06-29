@@ -31,7 +31,7 @@ std::string PrintToStringParamName(const ::testing::TestParamInfo<QueryObjectTes
     return ss.str();
 }
 
-class QueryObjectTest : public ANGLETestWithParam<QueryObjectTestParams>
+class QueryObjectTest : public ANGLETest<QueryObjectTestParams>
 {
   protected:
     QueryObjectTest() : mQueryObjectName(0), mQueryResult(false)
