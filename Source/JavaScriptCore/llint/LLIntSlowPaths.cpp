@@ -67,6 +67,9 @@
 #include "SuperSampler.h"
 #include "VMInlines.h"
 #include "VMTrapsInlines.h"
+#include "runtime/JSScope.h"
+#include "wtf/Compiler.h"
+#include "wtf/RawPointer.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StringPrintStream.h>
 
@@ -2142,13 +2145,15 @@ LLINT_SLOW_PATH_DECL(slow_path_handle_exception)
     LLINT_END_IMPL();
 }
 
-LLINT_SLOW_PATH_DECL(slow_path_get_from_scope)
+template<typename BytecodeOpcode>
+ALWAYS_INLINE SlowPathReturnType llintSlowPathGetFromScopeHelper(CallFrame* callFrame, const JSInstruction* pc)
 {
     LLINT_BEGIN();
-    auto bytecode = pc->as<OpGetFromScope>();
+    auto bytecode = pc->as<BytecodeOpcode>();
     auto& metadata = bytecode.metadata(codeBlock);
     const Identifier& ident = codeBlock->identifier(bytecode.m_var);
-    JSObject* scope = jsCast<JSObject*>(getNonConstantOperand(callFrame, bytecode.m_scope));
+    VirtualRegister scopeRegister = std::is_same<BytecodeOpcode, OpGetFromScope>::value ? pc->as<OpGetFromScope>().m_scope : pc->as<OpResolveAndGetFromScope>().m_resolvedScope;
+    JSObject* scope = jsCast<JSObject*>(getNonConstantOperand(callFrame, scopeRegister));
 
     // ModuleVar is always converted to ClosureVar for get_from_scope.
     ASSERT(metadata.m_getPutInfo.resolveType() != ModuleVar);
@@ -2168,12 +2173,22 @@ LLINT_SLOW_PATH_DECL(slow_path_get_from_scope)
                 return throwException(globalObject, throwScope, createTDZError(globalObject));
         }
 
-        CommonSlowPaths::tryCacheGetFromScopeGlobal(globalObject, codeBlock, vm, bytecode, scope, slot, ident);
+        CommonSlowPaths::tryCacheGetFromScopeGlobal<BytecodeOpcode>(globalObject, codeBlock, vm, bytecode, scope, slot, ident);
 
         if (!result)
             return slot.getValue(globalObject, ident);
         return result;
     }));
+}
+
+LLINT_SLOW_PATH_DECL(slow_path_get_from_scope)
+{
+    return llintSlowPathGetFromScopeHelper<OpGetFromScope>(callFrame, pc);
+}
+
+LLINT_SLOW_PATH_DECL(slow_path_rgs_get_from_scope)
+{
+    return llintSlowPathGetFromScopeHelper<OpResolveAndGetFromScope>(callFrame, pc);
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_put_to_scope)
@@ -2376,6 +2391,43 @@ static void handleIteratorNextCheckpoint(VM& vm, CallFrame* callFrame, JSGlobalO
         valueRegister = iteratorResultObject.get(globalObject, vm.propertyNames->value);
 }
 
+static void handleResolveAndGetFromScopeCheckpoint(VM& vm, CallFrame* callFrame, JSGlobalObject* globalObject, const OpResolveAndGetFromScope& bytecode, CheckpointOSRExitSideState& sideState)
+{
+    CodeBlock* codeBlock = callFrame->codeBlock();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    auto& metadata = bytecode.metadata(codeBlock);
+    const Identifier& ident = codeBlock->identifier(bytecode.m_var);
+    JSObject* scope = jsCast<JSObject*>(sideState.tmps[OpResolveAndGetFromScope::tmpResolvedScope]);
+
+    // ModuleVar is always converted to ClosureVar for get_from_scope.
+    ASSERT(metadata.m_getPutInfo.resolveType() != ModuleVar);
+
+    JSValue result = scope->getPropertySlot(globalObject, ident, [&] (bool found, PropertySlot& slot) -> JSValue {
+        if (!found) {
+            if (metadata.m_getPutInfo.resolveMode() == ThrowIfNotFound)
+                return throwException(globalObject, throwScope, createUndefinedVariableError(globalObject, ident));
+            return jsUndefined();
+        }
+
+        JSValue result = JSValue();
+        if (scope->isGlobalLexicalEnvironment()) {
+            // When we can't statically prove we need a TDZ check, we must perform the check on the slow path.
+            result = slot.getValue(globalObject, ident);
+            if (result == jsTDZValue())
+                return throwException(globalObject, throwScope, createTDZError(globalObject));
+        }
+
+        CommonSlowPaths::tryCacheGetFromScopeGlobal<OpResolveAndGetFromScope>(globalObject, codeBlock, vm, bytecode, scope, slot, ident);
+
+        if (!result)
+            return slot.getValue(globalObject, ident);
+        return result;
+    });
+
+    RETURN_IF_EXCEPTION(throwScope, void());
+    callFrame->uncheckedR(bytecode.m_dst) = result;
+}
+
 inline SlowPathReturnType dispatchToNextInstructionDuringExit(ThrowScope& scope, CodeBlock* codeBlock, JSInstructionStream::Ref pc)
 {
     if (scope.exception())
@@ -2497,6 +2549,11 @@ extern "C" SlowPathReturnType llint_slow_path_checkpoint_osr_exit(CallFrame* cal
     }
     case op_iterator_next: {
         handleIteratorNextCheckpoint(vm, callFrame, globalObject, pc->as<OpIteratorNext>(), *sideState.get());
+        break;
+    }
+
+    case op_resolve_and_get_from_scope: {
+        handleResolveAndGetFromScopeCheckpoint(vm, callFrame, globalObject, pc->as<OpResolveAndGetFromScope>(), *sideState.get());
         break;
     }
 

@@ -190,6 +190,10 @@ Bitmap<maxNumCheckpointTmps> tmpLivenessForCheckpoint(const CodeBlock& codeBlock
         result.set(OpIteratorNext::nextResult);
         return result;
     }
+    case op_resolve_and_get_from_scope: {
+        result.set(OpResolveAndGetFromScope::tmpResolvedScope);
+        return result;
+    }
     default:
         break;
     }
