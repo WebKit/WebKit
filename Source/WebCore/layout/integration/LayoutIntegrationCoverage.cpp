@@ -679,12 +679,20 @@ bool canUseForFlexLayout(const RenderFlexibleBox& flexBox)
     if (!flexBox.document().settings().flexFormattingContextIntegrationEnabled())
         return false;
 
+    if (!flexBox.firstInFlowChild())
+        return false;
+
     auto& flexBoxStyle = flexBox.style();
+    if (flexBoxStyle.display() != DisplayType::Flex && flexBoxStyle.display() != DisplayType::InlineFlex) {
+        // FIXME: Find out why we constrcut RenderFlexibleBoxes for non-flex content.
+        return false;
+    }
     if (!flexBoxStyle.isHorizontalWritingMode() || !flexBoxStyle.isLeftToRightDirection())
         return false;
     if (flexBoxStyle.flexWrap() == FlexWrap::Reverse)
         return false;
-    if (flexBoxStyle.alignItems().position() == ItemPosition::Baseline)
+    auto alignItemValue = flexBoxStyle.alignItems().position();
+    if (alignItemValue == ItemPosition::Baseline || alignItemValue == ItemPosition::LastBaseline || alignItemValue == ItemPosition::SelfStart || alignItemValue == ItemPosition::SelfEnd)
         return false;
     if (flexBoxStyle.alignContent().position() != ContentPosition::Normal || flexBoxStyle.alignContent().distribution() != ContentDistribution::Default || flexBoxStyle.alignContent().overflow() != OverflowAlignment::Default)
         return false;
@@ -692,7 +700,7 @@ bool canUseForFlexLayout(const RenderFlexibleBox& flexBox)
         return false;
 
     for (auto& flexItem : childrenOfType<RenderElement>(flexBox)) {
-        if (!is<RenderBox>(flexItem))
+        if (!is<RenderBlock>(flexItem))
             return false;
         if (flexItem.isFloating() || flexItem.isOutOfFlowPositioned())
             return false;
@@ -702,6 +710,9 @@ bool canUseForFlexLayout(const RenderFlexibleBox& flexBox)
         if (!flexItemStyle.maxWidth().isUndefined() || !flexItemStyle.maxHeight().isUndefined())
             return false;
         if (flexItem.hasIntrinsicAspectRatio() || flexItemStyle.hasAspectRatio())
+            return false;
+        auto alignSelfValue = flexItemStyle.alignSelf().position();
+        if (alignSelfValue == ItemPosition::Baseline || alignSelfValue == ItemPosition::LastBaseline || alignSelfValue == ItemPosition::SelfStart || alignSelfValue == ItemPosition::SelfEnd)
             return false;
     }
     return true;
