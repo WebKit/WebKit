@@ -56,6 +56,10 @@ void CodeBlock::forEachValueProfile(const Functor& func)
             func(metadata.m_doneProfile, false);
             func(metadata.m_valueProfile, false);
         });
+
+        m_metadata->forEach<OpResolveAndGetFromScope>([&] (auto& metadata) {
+            func(metadata.m_profile, false);
+        });
     }   
 }
 

@@ -2508,6 +2508,33 @@ RegisterID* BytecodeGenerator::emitResolveScope(RegisterID* dst, const Variable&
     return nullptr;
 }
 
+ALWAYS_INLINE void BytecodeGenerator::emitGetFromScopeHelper(RegisterID* dst, RegisterID* scope, unsigned var, GetPutInfo getPutInfo, unsigned localScopeDepth, unsigned offset)
+{
+    ASSERT(scope);
+
+#if USE(JSVALUE64)
+    auto validResolveAndGetFromScopePair = [&]() {
+        if (m_lastInstruction->opcodeID() != op_resolve_scope)
+            return false;
+        auto lastOpcode = m_lastInstruction->as<OpResolveScope>();
+        if (lastOpcode.m_dst != scope || lastOpcode.m_var != var || lastOpcode.m_localScopeDepth != localScopeDepth)
+            return false;
+        return true;
+    };
+
+    if (validResolveAndGetFromScopePair()) {
+        auto lastOpcode = m_lastInstruction->as<OpResolveScope>();
+        VirtualRegister prevScope = lastOpcode.m_scope;
+        ResolveType prevResolveType = lastOpcode.m_resolveType;
+        rewind();
+        OpResolveAndGetFromScope::emit(this, dst, prevScope, scope, var, prevResolveType, getPutInfo, localScopeDepth, offset);
+        return;
+    }
+#endif
+
+    OpGetFromScope::emit(this, dst, scope, var, getPutInfo, localScopeDepth, offset);
+}
+
 RegisterID* BytecodeGenerator::emitGetFromScope(RegisterID* dst, RegisterID* scope, const Variable& variable, ResolveMode resolveMode)
 {
     switch (variable.offset().kind()) {
@@ -2521,8 +2548,7 @@ RegisterID* BytecodeGenerator::emitGetFromScope(RegisterID* dst, RegisterID* sco
         
     case VarKind::Scope:
     case VarKind::Invalid: {
-        OpGetFromScope::emit(
-            this,
+        emitGetFromScopeHelper(
             kill(dst),
             scope,
             addConstant(variable.ident()),
@@ -2848,9 +2874,7 @@ void BytecodeGenerator::emitInstallPrivateClassBrand(RegisterID* target)
 
 RegisterID* BytecodeGenerator::emitGetPrivateBrand(RegisterID* dst, RegisterID* scope, bool isStatic)
 {
-    ASSERT(scope);
-    OpGetFromScope::emit(
-        this,
+    emitGetFromScopeHelper(
         kill(dst),
         scope,
         addConstant(isStatic ? propertyNames().builtinNames().privateClassBrandPrivateName() : propertyNames().builtinNames().privateBrandPrivateName()),
