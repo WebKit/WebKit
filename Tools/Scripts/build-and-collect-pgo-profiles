@@ -10,15 +10,17 @@ DisplayHelp() {
     echo "  -b <directory>  Base directory in which output files are stored. Default: /Volumes/WebKit/BenchmarkProfiles/."
     echo "  -a <app>        Path to Safari.app to generate profiles for. If not specified, the script will build WebKit."
     echo "  -d <directory>  Path to build directory. Use seperately from -a."
+    echo "  -y              Use for automated collection. No user input."
 }
 
 BASE="/Volumes/WebKit/BenchmarkProfiles/"
 
-while getopts "b:a:d:h" flag; do
+while getopts "b:a:d:yh" flag; do
     case "${flag}" in
         b) BASE=${OPTARG};;
         a) APP=${OPTARG};;
         d) BUILD=${OPTARG};;
+        n) NINPUT=true ;;
         h)
           DisplayHelp
           exit;;
@@ -35,7 +37,7 @@ if [ ! -z $APP ] && [ ! -z $BUILD ] ; then
     exit
 fi
 
-while true; do
+while ! "$NINPUT" ; do
     read -p "Have you read the source of this script, and do you understand that it is potentially destructive? [y/N]" yn
     case $yn in
         [Yy]* ) break;;
