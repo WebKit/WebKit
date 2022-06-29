@@ -156,6 +156,7 @@ private:
     PartialResult WARN_UNUSED_RETURN parseFunctionIndex(uint32_t&);
     PartialResult WARN_UNUSED_RETURN parseExceptionIndex(uint32_t&);
     PartialResult WARN_UNUSED_RETURN parseBranchTarget(uint32_t&);
+    PartialResult WARN_UNUSED_RETURN parseDelegateTarget(uint32_t&, uint32_t);
 
     struct TableInitImmediates {
         unsigned elementIndex;
@@ -606,6 +607,22 @@ auto FunctionParser<Context>::parseBranchTarget(uint32_t& resultTarget) -> Parti
     uint32_t target;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(target), "can't get br / br_if's target");
     WASM_PARSER_FAIL_IF(target >= m_controlStack.size(), "br / br_if's target ", target, " exceeds control stack size ", m_controlStack.size());
+    resultTarget = target;
+    return { };
+}
+
+template<typename Context>
+auto FunctionParser<Context>::parseDelegateTarget(uint32_t& resultTarget, uint32_t unreachableBlocks) -> PartialResult
+{
+    // Right now, control stack includes try-delegate block, and delegate needs to specify outer scope.
+    uint32_t target;
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(target), "can't get delegate target");
+    Checked<uint32_t, RecordOverflow> controlStackSize { m_controlStack.size() };
+    if (unreachableBlocks)
+        controlStackSize += (unreachableBlocks - 1); // The first block is in the control stack already.
+    controlStackSize -= 1; // delegate target does not include the current block.
+    WASM_PARSER_FAIL_IF(controlStackSize.hasOverflowed(), "invalid control stack size");
+    WASM_PARSER_FAIL_IF(target >= controlStackSize.value(), "delegate target ", target, " exceeds control stack size ", controlStackSize.value());
     resultTarget = target;
     return { };
 }
@@ -1473,7 +1490,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_PARSER_FAIL_IF(m_controlStack.size() == 1, "can't use delegate at the top-level of a function");
 
         uint32_t target;
-        WASM_FAIL_IF_HELPER_FAILS(parseBranchTarget(target));
+        WASM_FAIL_IF_HELPER_FAILS(parseDelegateTarget(target, /* unreachableBlocks */ 0));
 
         ControlEntry controlEntry = m_controlStack.takeLast();
         WASM_VALIDATOR_FAIL_IF(!ControlType::isTry(controlEntry.controlData), "delegate isn't associated to a try");
@@ -1726,7 +1743,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         WASM_PARSER_FAIL_IF(m_controlStack.size() == 1, "can't use delegate at the top-level of a function");
 
         uint32_t target;
-        WASM_FAIL_IF_HELPER_FAILS(parseBranchTarget(target));
+        WASM_FAIL_IF_HELPER_FAILS(parseDelegateTarget(target, m_unreachableBlocks));
 
         if (m_unreachableBlocks == 1) {
             ControlEntry controlEntry = m_controlStack.takeLast();
