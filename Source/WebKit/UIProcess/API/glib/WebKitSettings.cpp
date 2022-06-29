@@ -171,6 +171,7 @@ enum {
     PROP_ENABLE_JAVASCRIPT_MARKUP,
     PROP_ENABLE_MEDIA,
     PROP_MEDIA_CONTENT_TYPES_REQUIRING_HARDWARE_SUPPORT,
+    PROP_ENABLE_WEBRTC,
     N_PROPERTIES,
 };
 
@@ -192,9 +193,6 @@ static void webKitSettingsConstructed(GObject* object)
 #if ENABLE(MEDIA_STREAM)
     prefs->setMediaDevicesEnabled(true);
     prefs->setMediaStreamEnabled(true);
-#if ENABLE(WEB_RTC)
-    prefs->setPeerConnectionEnabled(true);
-#endif
 #endif
 
     // FIXME: Expose API for this when this feature is officially non-experimental.
@@ -399,6 +397,9 @@ static void webKitSettingsSetProperty(GObject* object, guint propId, const GValu
     case PROP_MEDIA_CONTENT_TYPES_REQUIRING_HARDWARE_SUPPORT:
         webkit_settings_set_media_content_types_requiring_hardware_support(settings, g_value_get_string(value));
         break;
+    case PROP_ENABLE_WEBRTC:
+        webkit_settings_set_enable_webrtc(settings, g_value_get_boolean(value));
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
         break;
@@ -594,6 +595,9 @@ static void webKitSettingsGetProperty(GObject* object, guint propId, GValue* val
         break;
     case PROP_MEDIA_CONTENT_TYPES_REQUIRING_HARDWARE_SUPPORT:
         g_value_set_string(value, webkit_settings_get_media_content_types_requiring_hardware_support(settings));
+        break;
+    case PROP_ENABLE_WEBRTC:
+        g_value_set_boolean(value, webkit_settings_get_enable_webrtc(settings));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -1558,6 +1562,25 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             _("List of media content types requiring hardware support."),
             nullptr, // A null string forces the default value.
             readWriteConstructParamFlags);
+
+    /**
+     * WebKitSettings:enable-webrtc:
+     *
+     * Enable WebRTC support for loaded pages.
+     *
+     * Enabling this setting implies that [property@Settings:enable-media-stream]
+     * will be enabled as well.
+     *
+     * See also https://www.w3.org/TR/webrtc/
+     *
+     * Since: 2.38
+     */
+    sObjProperties[PROP_ENABLE_WEBRTC] = g_param_spec_boolean(
+        "enable-webrtc",
+        _("Enable WebRTC"),
+        _("Whether WebRTC content should be handled"),
+        FALSE,
+        readWriteConstructParamFlags);
 
     g_object_class_install_properties(gObjectClass, N_PROPERTIES, sObjProperties);
 }
@@ -3263,8 +3286,50 @@ void webkit_settings_set_enable_media_stream(WebKitSettings* settings, gboolean 
 
     priv->preferences->setMediaDevicesEnabled(enabled);
     priv->preferences->setMediaStreamEnabled(enabled);
-    priv->preferences->setPeerConnectionEnabled(enabled);
     g_object_notify_by_pspec(G_OBJECT(settings), sObjProperties[PROP_ENABLE_MEDIA_STREAM]);
+}
+
+/**
+ * webkit_settings_get_enable_webrtc:
+ * @settings: a #WebKitSettings
+ *
+ * Get the [property@Settings:enable-webrtc] property.
+ *
+ * Returns: %TRUE If WebRTC support is enabled or %FALSE otherwise.
+ *
+ * Since: 2.38
+ */
+gboolean webkit_settings_get_enable_webrtc(WebKitSettings* settings)
+{
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
+
+    return settings->priv->preferences->peerConnectionEnabled();
+}
+
+/**
+ * webkit_settings_set_enable_webrtc:
+ * @settings: a #WebKitSettings
+ * @enabled: Value to be set
+ *
+ * Set the [property@Settings:enable-webrtc] property.
+ *
+ * Setting this property to %TRUE implies the media-stream web-setting will also be enabled.
+ *
+ * Since: 2.38
+ */
+void webkit_settings_set_enable_webrtc(WebKitSettings* settings, gboolean enabled)
+{
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
+
+    WebKitSettingsPrivate* priv = settings->priv;
+    bool currentValue = priv->preferences->peerConnectionEnabled();
+    if (currentValue == enabled)
+        return;
+
+    if (enabled)
+        webkit_settings_set_enable_media_stream(settings, enabled);
+    priv->preferences->setPeerConnectionEnabled(enabled);
+    g_object_notify_by_pspec(G_OBJECT(settings), sObjProperties[PROP_ENABLE_WEBRTC]);
 }
 
 /**

@@ -472,6 +472,13 @@ WEBKIT_API void
 webkit_settings_set_media_content_types_requiring_hardware_support (WebKitSettings *settings,
                                                                     const gchar *content_types);
 
+WEBKIT_API gboolean
+webkit_settings_get_enable_webrtc                              (WebKitSettings *settings);
+
+WEBKIT_API void
+webkit_settings_set_enable_webrtc                              (WebKitSettings *settings,
+                                                                gboolean enabled);
+
 G_END_DECLS
 
 #endif /* WebKitSettings_h */
