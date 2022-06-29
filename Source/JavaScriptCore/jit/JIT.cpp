@@ -451,6 +451,7 @@ void JIT::privateCompileMainPass()
 
         DEFINE_OP(op_resolve_scope)
         DEFINE_OP(op_get_from_scope)
+        DEFINE_OP(op_resolve_and_get_from_scope)
         DEFINE_OP(op_put_to_scope)
         DEFINE_OP(op_get_from_arguments)
         DEFINE_OP(op_put_to_arguments)

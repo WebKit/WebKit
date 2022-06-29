@@ -96,8 +96,9 @@ inline void tryCachePutToScopeGlobal(
     }
 }
 
+template <typename BytecodeOpcode>
 inline void tryCacheGetFromScopeGlobal(
-    JSGlobalObject* globalObject, CodeBlock* codeBlock, VM& vm, OpGetFromScope& bytecode, JSObject* scope, PropertySlot& slot, const Identifier& ident)
+    JSGlobalObject* globalObject, CodeBlock* codeBlock, VM& vm, const BytecodeOpcode& bytecode, JSObject* scope, PropertySlot& slot, const Identifier& ident)
 {
     auto& metadata = bytecode.metadata(codeBlock);
     ResolveType resolveType = metadata.m_getPutInfo.resolveType();

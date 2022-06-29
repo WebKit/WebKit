@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "DFGByteCodeParser.h"
+#include "interpreter/CallFrame.h"
 
 #if ENABLE(DFG_JIT)
 
@@ -4281,11 +4282,19 @@ GetByOffsetMethod ByteCodeParser::promoteToConstant(GetByOffsetMethod method)
 
 bool ByteCodeParser::needsDynamicLookup(ResolveType type, OpcodeID opcode)
 {
-    ASSERT(opcode == op_resolve_scope || opcode == op_get_from_scope || opcode == op_put_to_scope);
+    ASSERT(opcode == op_resolve_scope || opcode == op_get_from_scope || opcode == op_resolve_and_get_from_scope || opcode == op_put_to_scope);
 
     JSGlobalObject* globalObject = m_inlineStackTop->m_codeBlock->globalObject();
     if (needsVarInjectionChecks(type) && globalObject->varInjectionWatchpoint()->hasBeenInvalidated())
         return true;
+
+    auto isResolveScope = [&]() {
+        if (opcode == op_resolve_scope)
+            return true;
+        if (opcode == op_resolve_and_get_from_scope && m_currentIndex.checkpoint() == 0)
+            return true;
+        return false;
+    };
 
     switch (type) {
     case GlobalVar:
@@ -4313,7 +4322,7 @@ bool ByteCodeParser::needsDynamicLookup(ResolveType type, OpcodeID opcode)
 
         // We only track our heuristic through resolve_scope since resolve_scope will
         // dominate unresolved gets/puts on that scope.
-        if (opcode != op_resolve_scope)
+        if (!isResolveScope())
             return true;
 
         if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, InadequateCoverage)) {
@@ -5462,6 +5471,284 @@ void ByteCodeParser::parseBlock(unsigned limit)
         if (target)
             return target;
         return codeBlock->outOfLineJumpOffset(m_currentInstruction);
+    };
+
+    auto resolveScopeHelper = [&](auto& bytecode, VirtualRegister dst, auto set) {
+        auto& metadata = bytecode.metadata(codeBlock);
+        ResolveType resolveType;
+        unsigned depth;
+        JSScope* constantScope = nullptr;
+        JSCell* lexicalEnvironment = nullptr;
+        SymbolTable* symbolTable = nullptr;
+        {
+            ConcurrentJSLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
+            resolveType = metadata.m_resolveType;
+            depth = metadata.m_localScopeDepth;
+            switch (resolveType) {
+            case GlobalProperty:
+            case GlobalVar:
+            case GlobalPropertyWithVarInjectionChecks:
+            case GlobalVarWithVarInjectionChecks:
+            case GlobalLexicalVar:
+            case GlobalLexicalVarWithVarInjectionChecks:
+                constantScope = metadata.m_constantScope.get();
+                break;
+            case ModuleVar:
+                lexicalEnvironment = metadata.m_lexicalEnvironment.get();
+                break;
+            case ResolvedClosureVar:
+            case ClosureVar:
+            case ClosureVarWithVarInjectionChecks:
+                symbolTable = metadata.m_symbolTable.get();
+                break;
+            default:
+                break;
+            }
+        }
+
+        if (needsDynamicLookup(resolveType, op_resolve_scope)) {
+            unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.m_var];
+            set(dst, addToGraph(ResolveScope, OpInfo(identifierNumber), get(bytecode.m_scope)));
+            return;
+        }
+
+        // get_from_scope and put_to_scope depend on this watchpoint forcing OSR exit, so they don't add their own watchpoints.
+        if (needsVarInjectionChecks(resolveType))
+            m_graph.watchpoints().addLazily(m_inlineStackTop->m_codeBlock->globalObject()->varInjectionWatchpoint());
+
+        if (resolveType == GlobalProperty || resolveType == GlobalPropertyWithVarInjectionChecks) {
+            JSGlobalObject* globalObject = m_inlineStackTop->m_codeBlock->globalObject();
+            unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.m_var];
+            if (!m_graph.watchGlobalProperty(globalObject, identifierNumber))
+                addToGraph(ForceOSRExit);
+        }
+
+        switch (resolveType) {
+        case GlobalProperty:
+        case GlobalVar:
+        case GlobalPropertyWithVarInjectionChecks:
+        case GlobalVarWithVarInjectionChecks:
+        case GlobalLexicalVar:
+        case GlobalLexicalVarWithVarInjectionChecks: {
+            RELEASE_ASSERT(constantScope);
+            RELEASE_ASSERT(constantScope == JSScope::constantScopeForCodeBlock(resolveType, m_inlineStackTop->m_codeBlock));
+            set(dst, weakJSConstant(constantScope));
+            addToGraph(Phantom, get(bytecode.m_scope));
+            break;
+        }
+        case ModuleVar: {
+            // Since the value of the "scope" virtual register is not used in LLInt / baseline op_resolve_scope with ModuleVar,
+            // we need not to keep it alive by the Phantom node.
+            // Module environment is already strongly referenced by the CodeBlock.
+            set(dst, weakJSConstant(lexicalEnvironment));
+            break;
+        }
+        case ResolvedClosureVar:
+        case ClosureVar:
+        case ClosureVarWithVarInjectionChecks: {
+            Node* localBase = get(bytecode.m_scope);
+            addToGraph(Phantom, localBase); // OSR exit cannot handle resolve_scope on a DCE'd scope.
+
+            // We have various forms of constant folding here. This is necessary to avoid
+            // spurious recompiles in dead-but-foldable code.
+
+            if (symbolTable) {
+                if (JSScope* scope = symbolTable->singleton().inferredValue()) {
+                    m_graph.watchpoints().addLazily(symbolTable);
+                    set(dst, weakJSConstant(scope));
+                    break;
+                }
+            }
+            if (JSScope* scope = localBase->dynamicCastConstant<JSScope*>()) {
+                for (unsigned n = depth; n--;)
+                    scope = scope->next();
+                set(dst, weakJSConstant(scope));
+                break;
+            }
+            for (unsigned n = depth; n--;)
+                localBase = addToGraph(SkipScope, localBase);
+            set(dst, localBase);
+            break;
+        }
+        case UnresolvedProperty:
+        case UnresolvedPropertyWithVarInjectionChecks: {
+            addToGraph(Phantom, get(bytecode.m_scope));
+            addToGraph(ForceOSRExit);
+            set(dst, addToGraph(JSConstant, OpInfo(m_constantNull)));
+            break;
+        }
+        case Dynamic:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+    };
+
+    auto getFromScopeHelper = [&](auto& bytecode, VirtualRegister scope) {
+        auto& metadata = bytecode.metadata(codeBlock);
+        unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.m_var];
+        UniquedStringImpl* uid = m_graph.identifiers()[identifierNumber];
+
+        ResolveType resolveType;
+        GetPutInfo getPutInfo(0);
+        Structure* structure = nullptr;
+        WatchpointSet* watchpoints = nullptr;
+        uintptr_t operand;
+        {
+            ConcurrentJSLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
+            getPutInfo = metadata.m_getPutInfo;
+            resolveType = getPutInfo.resolveType();
+            if (resolveType == GlobalVar || resolveType == GlobalVarWithVarInjectionChecks || resolveType == GlobalLexicalVar || resolveType == GlobalLexicalVarWithVarInjectionChecks)
+                watchpoints = metadata.m_watchpointSet;
+            else if (resolveType != UnresolvedProperty && resolveType != UnresolvedPropertyWithVarInjectionChecks)
+                structure = metadata.m_structure.get();
+            operand = metadata.m_operand;
+        }
+
+        if (needsDynamicLookup(resolveType, op_get_from_scope)) {
+            uint64_t opInfo1 = makeDynamicVarOpInfo(identifierNumber, getPutInfo.operand());
+            SpeculatedType prediction = getPrediction();
+            set(bytecode.m_dst,
+                addToGraph(GetDynamicVar, OpInfo(opInfo1), OpInfo(prediction), get(scope)));
+            return;
+        }
+
+        UNUSED_PARAM(watchpoints); // We will use this in the future. For now we set it as a way of documenting the fact that that's what index 5 is in GlobalVar mode.
+
+        JSGlobalObject* globalObject = m_inlineStackTop->m_codeBlock->globalObject();
+
+        switch (resolveType) {
+        case GlobalProperty:
+        case GlobalPropertyWithVarInjectionChecks: {
+            if (!m_graph.watchGlobalProperty(globalObject, identifierNumber))
+                addToGraph(ForceOSRExit);
+
+            SpeculatedType prediction = getPrediction();
+
+            GetByStatus status = GetByStatus::computeFor(structure, uid);
+            if (status.state() != GetByStatus::Simple
+                || status.numVariants() != 1
+                || status[0].structureSet().size() != 1) {
+                set(bytecode.m_dst, addToGraph(GetByIdFlush, OpInfo(CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_inlineStackTop->m_profiledBlock, uid)), OpInfo(prediction), get(scope)));
+                break;
+            }
+
+            Node* base = weakJSConstant(globalObject);
+            Node* result = load(prediction, base, identifierNumber, status[0]);
+            addToGraph(Phantom, get(scope));
+            set(bytecode.m_dst, result);
+            break;
+        }
+        case GlobalVar:
+        case GlobalVarWithVarInjectionChecks:
+        case GlobalLexicalVar:
+        case GlobalLexicalVarWithVarInjectionChecks: {
+            addToGraph(Phantom, get(scope));
+            WatchpointSet* watchpointSet;
+            ScopeOffset offset;
+            JSSegmentedVariableObject* scopeObject = jsCast<JSSegmentedVariableObject*>(JSScope::constantScopeForCodeBlock(resolveType, m_inlineStackTop->m_codeBlock));
+            {
+                ConcurrentJSLocker locker(scopeObject->symbolTable()->m_lock);
+                SymbolTableEntry entry = scopeObject->symbolTable()->get(locker, uid);
+                watchpointSet = entry.watchpointSet();
+                offset = entry.scopeOffset();
+            }
+            if (watchpointSet && watchpointSet->state() == IsWatched) {
+                // This has a fun concurrency story. There is the possibility of a race in two
+                // directions:
+                //
+                // We see that the set IsWatched, but in the meantime it gets invalidated: this is
+                // fine because if we saw that it IsWatched then we add a watchpoint. If it gets
+                // invalidated, then this compilation is invalidated. Note that in the meantime we
+                // may load an absurd value from the global object. It's fine to load an absurd
+                // value if the compilation is invalidated anyway.
+                //
+                // We see that the set IsWatched, but the value isn't yet initialized: this isn't
+                // possible because of the ordering of operations.
+                //
+                // Here's how we order operations:
+                //
+                // Main thread stores to the global object: always store a value first, and only
+                // after that do we touch the watchpoint set. There is a fence in the touch, that
+                // ensures that the store to the global object always happens before the touch on the
+                // set.
+                //
+                // Compilation thread: always first load the state of the watchpoint set, and then
+                // load the value. The WatchpointSet::state() method does fences for us to ensure
+                // that the load of the state happens before our load of the value.
+                //
+                // Finalizing compilation: this happens on the main thread and synchronously checks
+                // validity of all watchpoint sets.
+                //
+                // We will only perform optimizations if the load of the state yields IsWatched. That
+                // means that at least one store would have happened to initialize the original value
+                // of the variable (that is, the value we'd like to constant fold to). There may be
+                // other stores that happen after that, but those stores will invalidate the
+                // watchpoint set and also the compilation.
+
+                // Note that we need to use the operand, which is a direct pointer at the global,
+                // rather than looking up the global by doing variableAt(offset). That's because the
+                // internal data structures of JSSegmentedVariableObject are not thread-safe even
+                // though accessing the global itself is. The segmentation involves a vector spine
+                // that resizes with malloc/free, so if new globals unrelated to the one we are
+                // reading are added, we might access freed memory if we do variableAt().
+                WriteBarrier<Unknown>* pointer = bitwise_cast<WriteBarrier<Unknown>*>(operand);
+
+                ASSERT(scopeObject->findVariableIndex(pointer) == offset);
+
+                JSValue value = pointer->get();
+                if (value) {
+                    m_graph.watchpoints().addLazily(watchpointSet);
+                    set(bytecode.m_dst, weakJSConstant(value));
+                    break;
+                }
+            }
+
+            SpeculatedType prediction = getPrediction();
+            NodeType nodeType;
+            if (resolveType == GlobalVar || resolveType == GlobalVarWithVarInjectionChecks)
+                nodeType = GetGlobalVar;
+            else
+                nodeType = GetGlobalLexicalVariable;
+            Node* value = addToGraph(nodeType, OpInfo(operand), OpInfo(prediction));
+            if (resolveType == GlobalLexicalVar || resolveType == GlobalLexicalVarWithVarInjectionChecks)
+                addToGraph(CheckNotEmpty, value);
+            set(bytecode.m_dst, value);
+            break;
+        }
+        case ResolvedClosureVar:
+        case ClosureVar:
+        case ClosureVarWithVarInjectionChecks: {
+            Node* scopeNode = get(scope);
+
+            // Ideally we wouldn't have to do this Phantom. But:
+            //
+            // For the constant case: we must do it because otherwise we would have no way of knowing
+            // that the scope is live at OSR here.
+            //
+            // For the non-constant case: GetClosureVar could be DCE'd, but baseline's implementation
+            // won't be able to handle an Undefined scope.
+            addToGraph(Phantom, scopeNode);
+
+            // Constant folding in the bytecode parser is important for performance. This may not
+            // have executed yet. If it hasn't, then we won't have a prediction. Lacking a
+            // prediction, we'd otherwise think that it has to exit. Then when it did execute, we
+            // would recompile. But if we can fold it here, we avoid the exit.
+            if (JSValue value = m_graph.tryGetConstantClosureVar(scopeNode, ScopeOffset(operand))) {
+                set(bytecode.m_dst, weakJSConstant(value));
+                break;
+            }
+            SpeculatedType prediction = getPrediction();
+            set(bytecode.m_dst,
+                addToGraph(GetClosureVar, OpInfo(operand), OpInfo(prediction), scopeNode));
+            break;
+        }
+        case UnresolvedProperty:
+        case UnresolvedPropertyWithVarInjectionChecks:
+        case ModuleVar:
+        case Dynamic:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
     };
 
     while (true) {
@@ -7710,114 +7997,10 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_resolve_scope: {
             auto bytecode = currentInstruction->as<OpResolveScope>();
-            auto& metadata = bytecode.metadata(codeBlock);
-
-            ResolveType resolveType;
-            unsigned depth;
-            JSScope* constantScope = nullptr;
-            JSCell* lexicalEnvironment = nullptr;
-            SymbolTable* symbolTable = nullptr;
-            {
-                ConcurrentJSLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
-                resolveType = metadata.m_resolveType;
-                depth = metadata.m_localScopeDepth;
-                switch (resolveType) {
-                case GlobalProperty:
-                case GlobalVar:
-                case GlobalPropertyWithVarInjectionChecks:
-                case GlobalVarWithVarInjectionChecks:
-                case GlobalLexicalVar:
-                case GlobalLexicalVarWithVarInjectionChecks:
-                    constantScope = metadata.m_constantScope.get();
-                    break;
-                case ModuleVar:
-                    lexicalEnvironment = metadata.m_lexicalEnvironment.get();
-                    break;
-                case ResolvedClosureVar:
-                case ClosureVar:
-                case ClosureVarWithVarInjectionChecks:
-                    symbolTable = metadata.m_symbolTable.get();
-                    break;
-                default:
-                    break;
-                }
-            }
-
-            if (needsDynamicLookup(resolveType, op_resolve_scope)) {
-                unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.m_var];
-                set(bytecode.m_dst, addToGraph(ResolveScope, OpInfo(identifierNumber), get(bytecode.m_scope)));
-                NEXT_OPCODE(op_resolve_scope);
-            }
-
-            // get_from_scope and put_to_scope depend on this watchpoint forcing OSR exit, so they don't add their own watchpoints.
-            if (needsVarInjectionChecks(resolveType))
-                m_graph.watchpoints().addLazily(m_inlineStackTop->m_codeBlock->globalObject()->varInjectionWatchpoint());
-
-            if (resolveType == GlobalProperty || resolveType == GlobalPropertyWithVarInjectionChecks) {
-                JSGlobalObject* globalObject = m_inlineStackTop->m_codeBlock->globalObject();
-                unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.m_var];
-                if (!m_graph.watchGlobalProperty(globalObject, identifierNumber))
-                    addToGraph(ForceOSRExit);
-            }
-
-            switch (resolveType) {
-            case GlobalProperty:
-            case GlobalVar:
-            case GlobalPropertyWithVarInjectionChecks:
-            case GlobalVarWithVarInjectionChecks:
-            case GlobalLexicalVar:
-            case GlobalLexicalVarWithVarInjectionChecks: {
-                RELEASE_ASSERT(constantScope);
-                RELEASE_ASSERT(constantScope == JSScope::constantScopeForCodeBlock(resolveType, m_inlineStackTop->m_codeBlock));
-                set(bytecode.m_dst, weakJSConstant(constantScope));
-                addToGraph(Phantom, get(bytecode.m_scope));
-                break;
-            }
-            case ModuleVar: {
-                // Since the value of the "scope" virtual register is not used in LLInt / baseline op_resolve_scope with ModuleVar,
-                // we need not to keep it alive by the Phantom node.
-                // Module environment is already strongly referenced by the CodeBlock.
-                set(bytecode.m_dst, weakJSConstant(lexicalEnvironment));
-                break;
-            }
-            case ResolvedClosureVar:
-            case ClosureVar:
-            case ClosureVarWithVarInjectionChecks: {
-                Node* localBase = get(bytecode.m_scope);
-                addToGraph(Phantom, localBase); // OSR exit cannot handle resolve_scope on a DCE'd scope.
-                
-                // We have various forms of constant folding here. This is necessary to avoid
-                // spurious recompiles in dead-but-foldable code.
-
-                if (symbolTable) {
-                    if (JSScope* scope = symbolTable->singleton().inferredValue()) {
-                        m_graph.watchpoints().addLazily(symbolTable);
-                        set(bytecode.m_dst, weakJSConstant(scope));
-                        break;
-                    }
-                }
-                if (JSScope* scope = localBase->dynamicCastConstant<JSScope*>()) {
-                    for (unsigned n = depth; n--;)
-                        scope = scope->next();
-                    set(bytecode.m_dst, weakJSConstant(scope));
-                    break;
-                }
-                for (unsigned n = depth; n--;)
-                    localBase = addToGraph(SkipScope, localBase);
-                set(bytecode.m_dst, localBase);
-                break;
-            }
-            case UnresolvedProperty:
-            case UnresolvedPropertyWithVarInjectionChecks: {
-                addToGraph(Phantom, get(bytecode.m_scope));
-                addToGraph(ForceOSRExit);
-                set(bytecode.m_dst, addToGraph(JSConstant, OpInfo(m_constantNull)));
-                break;
-            }
-            case Dynamic:
-                RELEASE_ASSERT_NOT_REACHED();
-                break;
-            }
+            auto resolveScopeSet = [this](VirtualRegister dst, Node* value) {
+                set(dst, value);
+            };
+            resolveScopeHelper(bytecode, bytecode.m_dst, resolveScopeSet);
             NEXT_OPCODE(op_resolve_scope);
         }
         case op_resolve_scope_for_hoisting_func_decl_in_eval: {
@@ -7830,172 +8013,20 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_get_from_scope: {
             auto bytecode = currentInstruction->as<OpGetFromScope>();
-            auto& metadata = bytecode.metadata(codeBlock);
-            unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.m_var];
-            UniquedStringImpl* uid = m_graph.identifiers()[identifierNumber];
-
-            ResolveType resolveType;
-            GetPutInfo getPutInfo(0);
-            Structure* structure = nullptr;
-            WatchpointSet* watchpoints = nullptr;
-            uintptr_t operand;
-            {
-                ConcurrentJSLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
-                getPutInfo = metadata.m_getPutInfo;
-                resolveType = getPutInfo.resolveType();
-                if (resolveType == GlobalVar || resolveType == GlobalVarWithVarInjectionChecks || resolveType == GlobalLexicalVar || resolveType == GlobalLexicalVarWithVarInjectionChecks)
-                    watchpoints = metadata.m_watchpointSet;
-                else if (resolveType != UnresolvedProperty && resolveType != UnresolvedPropertyWithVarInjectionChecks)
-                    structure = metadata.m_structure.get();
-                operand = metadata.m_operand;
-            }
-
-            if (needsDynamicLookup(resolveType, op_get_from_scope)) {
-                uint64_t opInfo1 = makeDynamicVarOpInfo(identifierNumber, getPutInfo.operand());
-                SpeculatedType prediction = getPrediction();
-                set(bytecode.m_dst,
-                    addToGraph(GetDynamicVar, OpInfo(opInfo1), OpInfo(prediction), get(bytecode.m_scope)));
-                NEXT_OPCODE(op_get_from_scope);
-            }
-
-            UNUSED_PARAM(watchpoints); // We will use this in the future. For now we set it as a way of documenting the fact that that's what index 5 is in GlobalVar mode.
-
-            JSGlobalObject* globalObject = m_inlineStackTop->m_codeBlock->globalObject();
-
-            switch (resolveType) {
-            case GlobalProperty:
-            case GlobalPropertyWithVarInjectionChecks: {
-                if (!m_graph.watchGlobalProperty(globalObject, identifierNumber))
-                    addToGraph(ForceOSRExit);
-
-                SpeculatedType prediction = getPrediction();
-
-                GetByStatus status = GetByStatus::computeFor(structure, uid);
-                if (status.state() != GetByStatus::Simple
-                    || status.numVariants() != 1
-                    || status[0].structureSet().size() != 1) {
-                    set(bytecode.m_dst, addToGraph(GetByIdFlush, OpInfo(CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_inlineStackTop->m_profiledBlock, uid)), OpInfo(prediction), get(bytecode.m_scope)));
-                    break;
-                }
-
-                Node* base = weakJSConstant(globalObject);
-                Node* result = load(prediction, base, identifierNumber, status[0]);
-                addToGraph(Phantom, get(bytecode.m_scope));
-                set(bytecode.m_dst, result);
-                break;
-            }
-            case GlobalVar:
-            case GlobalVarWithVarInjectionChecks:
-            case GlobalLexicalVar:
-            case GlobalLexicalVarWithVarInjectionChecks: {
-                addToGraph(Phantom, get(bytecode.m_scope));
-                WatchpointSet* watchpointSet;
-                ScopeOffset offset;
-                JSSegmentedVariableObject* scopeObject = jsCast<JSSegmentedVariableObject*>(JSScope::constantScopeForCodeBlock(resolveType, m_inlineStackTop->m_codeBlock));
-                {
-                    ConcurrentJSLocker locker(scopeObject->symbolTable()->m_lock);
-                    SymbolTableEntry entry = scopeObject->symbolTable()->get(locker, uid);
-                    watchpointSet = entry.watchpointSet();
-                    offset = entry.scopeOffset();
-                }
-                if (watchpointSet && watchpointSet->state() == IsWatched) {
-                    // This has a fun concurrency story. There is the possibility of a race in two
-                    // directions:
-                    //
-                    // We see that the set IsWatched, but in the meantime it gets invalidated: this is
-                    // fine because if we saw that it IsWatched then we add a watchpoint. If it gets
-                    // invalidated, then this compilation is invalidated. Note that in the meantime we
-                    // may load an absurd value from the global object. It's fine to load an absurd
-                    // value if the compilation is invalidated anyway.
-                    //
-                    // We see that the set IsWatched, but the value isn't yet initialized: this isn't
-                    // possible because of the ordering of operations.
-                    //
-                    // Here's how we order operations:
-                    //
-                    // Main thread stores to the global object: always store a value first, and only
-                    // after that do we touch the watchpoint set. There is a fence in the touch, that
-                    // ensures that the store to the global object always happens before the touch on the
-                    // set.
-                    //
-                    // Compilation thread: always first load the state of the watchpoint set, and then
-                    // load the value. The WatchpointSet::state() method does fences for us to ensure
-                    // that the load of the state happens before our load of the value.
-                    //
-                    // Finalizing compilation: this happens on the main thread and synchronously checks
-                    // validity of all watchpoint sets.
-                    //
-                    // We will only perform optimizations if the load of the state yields IsWatched. That
-                    // means that at least one store would have happened to initialize the original value
-                    // of the variable (that is, the value we'd like to constant fold to). There may be
-                    // other stores that happen after that, but those stores will invalidate the
-                    // watchpoint set and also the compilation.
-                    
-                    // Note that we need to use the operand, which is a direct pointer at the global,
-                    // rather than looking up the global by doing variableAt(offset). That's because the
-                    // internal data structures of JSSegmentedVariableObject are not thread-safe even
-                    // though accessing the global itself is. The segmentation involves a vector spine
-                    // that resizes with malloc/free, so if new globals unrelated to the one we are
-                    // reading are added, we might access freed memory if we do variableAt().
-                    WriteBarrier<Unknown>* pointer = bitwise_cast<WriteBarrier<Unknown>*>(operand);
-                    
-                    ASSERT(scopeObject->findVariableIndex(pointer) == offset);
-                    
-                    JSValue value = pointer->get();
-                    if (value) {
-                        m_graph.watchpoints().addLazily(watchpointSet);
-                        set(bytecode.m_dst, weakJSConstant(value));
-                        break;
-                    }
-                }
-                
-                SpeculatedType prediction = getPrediction();
-                NodeType nodeType;
-                if (resolveType == GlobalVar || resolveType == GlobalVarWithVarInjectionChecks)
-                    nodeType = GetGlobalVar;
-                else
-                    nodeType = GetGlobalLexicalVariable;
-                Node* value = addToGraph(nodeType, OpInfo(operand), OpInfo(prediction));
-                if (resolveType == GlobalLexicalVar || resolveType == GlobalLexicalVarWithVarInjectionChecks)
-                    addToGraph(CheckNotEmpty, value);
-                set(bytecode.m_dst, value);
-                break;
-            }
-            case ResolvedClosureVar:
-            case ClosureVar:
-            case ClosureVarWithVarInjectionChecks: {
-                Node* scopeNode = get(bytecode.m_scope);
-                
-                // Ideally we wouldn't have to do this Phantom. But:
-                //
-                // For the constant case: we must do it because otherwise we would have no way of knowing
-                // that the scope is live at OSR here.
-                //
-                // For the non-constant case: GetClosureVar could be DCE'd, but baseline's implementation
-                // won't be able to handle an Undefined scope.
-                addToGraph(Phantom, scopeNode);
-                
-                // Constant folding in the bytecode parser is important for performance. This may not
-                // have executed yet. If it hasn't, then we won't have a prediction. Lacking a
-                // prediction, we'd otherwise think that it has to exit. Then when it did execute, we
-                // would recompile. But if we can fold it here, we avoid the exit.
-                if (JSValue value = m_graph.tryGetConstantClosureVar(scopeNode, ScopeOffset(operand))) {
-                    set(bytecode.m_dst, weakJSConstant(value));
-                    break;
-                }
-                SpeculatedType prediction = getPrediction();
-                set(bytecode.m_dst,
-                    addToGraph(GetClosureVar, OpInfo(operand), OpInfo(prediction), scopeNode));
-                break;
-            }
-            case UnresolvedProperty:
-            case UnresolvedPropertyWithVarInjectionChecks:
-            case ModuleVar:
-            case Dynamic:
-                RELEASE_ASSERT_NOT_REACHED();
-                break;
-            }
+            getFromScopeHelper(bytecode, bytecode.m_scope);
             NEXT_OPCODE(op_get_from_scope);
+        }
+
+        case op_resolve_and_get_from_scope: {
+            auto bytecode = currentInstruction->as<OpResolveAndGetFromScope>();
+            auto setResolvedScope = [&] (VirtualRegister resolvedScope, Node* value) {
+                set(resolvedScope, value);
+                set(Operand::tmp(bytecode.tmpResolvedScope), value);
+            };
+            resolveScopeHelper(bytecode, bytecode.m_resolvedScope, setResolvedScope);
+            progressToNextCheckpoint();
+            getFromScopeHelper(bytecode, bytecode.m_resolvedScope);
+            NEXT_OPCODE(op_resolve_and_get_from_scope);
         }
 
         case op_put_to_scope: {

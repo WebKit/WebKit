@@ -256,6 +256,7 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, const J
     case op_has_private_brand:
     case op_get_scope:
     case op_get_from_scope:
+    case op_resolve_and_get_from_scope:
     case op_get_property_enumerator:
     case op_new_func:
     case op_new_func_exp:
