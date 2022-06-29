@@ -131,13 +131,8 @@ public:
         friend class StackVisitor;
     };
 
-    enum Status {
-        Continue = 0,
-        Done = 1
-    };
-
     // StackVisitor::visit() expects a Functor that implements the following method:
-    //     Status operator()(StackVisitor&) const;
+    //     IterationStatus operator()(StackVisitor&) const;
 
     enum EmptyEntryFrameAction {
         ContinueIfTopEntryFrameIsEmpty,
