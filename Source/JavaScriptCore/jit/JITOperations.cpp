@@ -2829,7 +2829,7 @@ JSC_DEFINE_JIT_OPERATION(operationSwitchStringWithUnknownKeyType, char*, (JSGlob
 }
 
 template<typename Bytecode>
-ALWAYS_INLINE EncodedJSValue operationResolveScopeHelper(JSGlobalObject* globalObject, const JSInstruction* pc, VM& vm, CallFrame* callFrame, ThrowScope& throwScope)
+ALWAYS_INLINE EncodedJSValue operationResolveScopeHelper(JSGlobalObject* globalObject, const JSInstruction* pc, VM& vm, CallFrame* callFrame, ThrowScope& throwScope, ResolveType (*getMetadataResolveType)(Bytecode::Metadata metadata), void (*setMetadataResolveType)(auto& metadata, ResolveType resolveType))
 {
     CodeBlock* codeBlock = callFrame->codeBlock();
     auto bytecode = pc->as<Bytecode>();
@@ -2840,7 +2840,7 @@ ALWAYS_INLINE EncodedJSValue operationResolveScopeHelper(JSGlobalObject* globalO
     RETURN_IF_EXCEPTION(throwScope, { });
 
     auto& metadata = bytecode.metadata(codeBlock);
-    ResolveType resolveType = metadata.m_resolveType;
+    ResolveType resolveType = getMetadataResolveType(metadata);
 
     // ModuleVar does not keep the scope register value alive in DFG.
     ASSERT(resolveType != ModuleVar);
@@ -2856,14 +2856,14 @@ ALWAYS_INLINE EncodedJSValue operationResolveScopeHelper(JSGlobalObject* globalO
             RETURN_IF_EXCEPTION(throwScope, { });
             if (hasProperty) {
                 ConcurrentJSLocker locker(codeBlock->m_lock);
-                metadata.m_resolveType = needsVarInjectionChecks(resolveType) ? GlobalPropertyWithVarInjectionChecks : GlobalProperty;
+                setMetadataResolveType(metadata, needsVarInjectionChecks(resolveType) ? GlobalPropertyWithVarInjectionChecks : GlobalProperty);
                 metadata.m_globalObject.set(vm, codeBlock, globalObject);
                 metadata.m_globalLexicalBindingEpoch = globalObject->globalLexicalBindingEpoch();
             }
         } else if (resolvedScope->isGlobalLexicalEnvironment()) {
             JSGlobalLexicalEnvironment* globalLexicalEnvironment = jsCast<JSGlobalLexicalEnvironment*>(resolvedScope);
             ConcurrentJSLocker locker(codeBlock->m_lock);
-            metadata.m_resolveType = needsVarInjectionChecks(resolveType) ? GlobalLexicalVarWithVarInjectionChecks : GlobalLexicalVar;
+            setMetadataResolveType(metadata, needsVarInjectionChecks(resolveType) ? GlobalLexicalVarWithVarInjectionChecks : GlobalLexicalVar);
             metadata.m_globalLexicalEnvironment.set(vm, codeBlock, globalLexicalEnvironment);
         }
         break;
@@ -2881,7 +2881,13 @@ JSC_DEFINE_JIT_OPERATION(operationResolveScopeForBaseline, EncodedJSValue, (JSGl
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     ThrowScope throwScope = DECLARE_THROW_SCOPE(vm);
-    return operationResolveScopeHelper<OpResolveScope>(globalObject, pc, vm, callFrame, throwScope);
+    auto getMetadataResolveType = [] (auto& metadata) -> ResolveType {
+        return metadata.m_getPutInfo.resolveType();
+    };
+    auto setMetadataResolveType = [] (auto& metadata, ResolveType resolveType) {
+        metadata.m_getPutInfo.setResolveType(resolveType);
+    };
+    return operationResolveScopeHelper<OpResolveScope>(globalObject, pc, vm, callFrame, throwScope, getMetadataResolveType, setMetadataResolveType);
 }
 
 template<typename Bytecode>
@@ -2937,7 +2943,8 @@ JSC_DEFINE_JIT_OPERATION(operationRGSResolveScope, EncodedJSValue, (JSGlobalObje
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     ThrowScope throwScope = DECLARE_THROW_SCOPE(vm);
-    return operationResolveScopeHelper<OpResolveAndGetFromScope>(globalObject, pc, vm, callFrame, throwScope);
+    ResolveType metadataResolveType = pc->as<OpResolveAndGetFromScope>().metadata(callFrame->codeBlock()).m_getPutInfo.resolveType();
+    return operationResolveScopeHelper<OpResolveAndGetFromScope>(globalObject, pc, vm, callFrame, throwScope, metadataResolveType);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationRGSGetFromScope, EncodedJSValue, (JSGlobalObject* globalObject, const JSInstruction* pc))

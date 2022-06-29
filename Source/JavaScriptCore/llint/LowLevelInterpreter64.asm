@@ -2795,7 +2795,7 @@ macro varInjectionCheck(slowPath, scratch)
     bbeq WatchpointSet::m_state[scratch], IsInvalidated, slowPath
 end
 
-macro resolveScopeHelper(opcodeStruct, get, dispatch, metadata, return, callSlowPath, slowPath)
+macro resolveScopeHelper(opcodeStruct, get, dispatch, metadata, return, callSlowPath, slowPath, loadMetadataResolveType)
     metadata(t5, t0)
 
     macro getConstantScope(dst)
@@ -2827,7 +2827,7 @@ macro resolveScopeHelper(opcodeStruct, get, dispatch, metadata, return, callSlow
         return(t0)
     end
 
-    loadi %opcodeStruct%::Metadata::m_resolveType[t5], t0
+    loadMetadataResolveType(t5, t0)
 
 #rGlobalProperty:
     bineq t0, GlobalProperty, .rGlobalVar
@@ -2879,7 +2879,11 @@ macro resolveScopeHelper(opcodeStruct, get, dispatch, metadata, return, callSlow
 end
 
 llintOpWithMetadata(op_resolve_scope, OpResolveScope, macro (size, get, dispatch, metadata, return)
-    resolveScopeHelper(OpResolveScope, get, dispatch, metadata, return, callSlowPath, _slow_path_resolve_scope)
+    macro loadMetadataResolveType(meta, dst)
+        loadi OpResolveScope::Metadata::m_resolveType[meta], dst
+    end
+
+    resolveScopeHelper(OpResolveScope, get, dispatch, metadata, return, callSlowPath, _slow_path_resolve_scope, loadMetadataResolveType)
 end)
 
 
@@ -2987,7 +2991,12 @@ llintOpWithMetadata(op_resolve_and_get_from_scope, OpResolveAndGetFromScope, mac
         bpneq r1, CallerFrame, .gFromScope # r1 == nullptr(0x00) indicates that we need handle the execption cases in the slow path calls.
     end
 
-    resolveScopeHelper(OpResolveAndGetFromScope, get, dispatch, metadata, gotoGetFromScope, callSlowPathRGSResolveScope, _slow_path_rgs_resolve_scope)
+    macro loadMetadataResolveType(meta, dst)
+        loadi OpResolveAndGetFromScope::Metadata::m_getPutInfo + GetPutInfo::m_operand[meta], dst
+        andi ResolveTypeMask, dst
+    end
+
+    resolveScopeHelper(OpResolveAndGetFromScope, get, dispatch, metadata, gotoGetFromScope, callSlowPathRGSResolveScope, _slow_path_rgs_resolve_scope, loadMetadataResolveType)
 
 .gFromScope:
     getFromScopeHelper(OpResolveAndGetFromScope, get, dispatch, metadata, return, callSlowPath, _llint_slow_path_rgs_get_from_scope, m_resolvedScope)

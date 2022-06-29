@@ -467,13 +467,13 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         break; \
     }
 
-    auto linkResolveScope = [&](auto& bytecode, auto& metadata, ResolveType resolveType) {
+    auto linkResolveScope = [&](auto& bytecode, auto& metadata, ResolveType resolveType, ResolveType& metadataResolveType, auto setMetadataResolveType) {
         const Identifier& ident = identifier(bytecode.m_var);
         RELEASE_ASSERT(resolveType != ResolvedClosureVar);
 
         ResolveOp op = JSScope::abstractResolve(m_globalObject.get(), bytecode.m_localScopeDepth, scope, ident, Get, resolveType, InitializationMode::NotInitialization);
 
-        metadata.m_resolveType = op.type;
+        setMetadataResolveType(metadata, op.type);
         metadata.m_localScopeDepth = op.depth;
         if (op.lexicalEnvironment) {
             if (op.type == ModuleVar) {
@@ -586,7 +586,10 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
 
         case op_resolve_scope: {
             INITIALIZE_METADATA(OpResolveScope)
-            linkResolveScope(bytecode, metadata, bytecode.m_resolveType);
+            auto setMetadataResolveType = [](auto& metadata, ResolveType resolveType) {
+                metadata.m_resolveType = resolveType;
+            };
+            linkResolveScope(bytecode, metadata, bytecode.m_resolveType, setMetadataResolveType);
             break;
         }
 
@@ -598,7 +601,10 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
 
         case op_resolve_and_get_from_scope: {
             INITIALIZE_METADATA(OpResolveAndGetFromScope)
-            linkResolveScope(bytecode, metadata, bytecode.m_getPutInfo.resolveType());
+            auto setMetadataResolveType = [](auto& metadata, ResolveType resolveType) {
+                metadata.m_getPutInfo.setResolveType(resolveType);
+            };
+            linkResolveScope(bytecode, metadata, bytecode.m_getPutInfo.resolveType(), setMetadataResolveType);
             linkGetFromScope(instruction, bytecode, metadata);
             break;
         }
@@ -3038,9 +3044,7 @@ void CodeBlock::notifyLexicalBindingUpdate()
         return symbolTable->contains(locker, uid);
     };
 
-    auto updateGlobalLexicalBinding = [&] (auto& bytecode) {
-        auto& metadata = bytecode.metadata(this);
-        ResolveType originalResolveType = metadata.m_resolveType;
+    auto updateGlobalLexicalBinding = [&] (auto& bytecode, auto& metadata, ResolveType originalResolveType) {
         if (originalResolveType == GlobalProperty || originalResolveType == GlobalPropertyWithVarInjectionChecks) {
             const Identifier& ident = identifier(bytecode.m_var);
             if (isShadowed(ident.impl()))
@@ -3056,12 +3060,14 @@ void CodeBlock::notifyLexicalBindingUpdate()
         switch (opcodeID) {
         case op_resolve_scope: {
             auto bytecode = instruction->as<OpResolveScope>();
-            updateGlobalLexicalBinding(bytecode);
+            auto& metadata = bytecode.metadata(this);
+            updateGlobalLexicalBinding(bytecode, metadata, metadata.m_resolveType);
             break;
         }
         case op_resolve_and_get_from_scope: {
             auto bytecode = instruction->as<OpResolveAndGetFromScope>();
-            updateGlobalLexicalBinding(bytecode);
+            auto& metadata = bytecode.metadata(this);
+            updateGlobalLexicalBinding(bytecode, metadata, metadata.m_getPutInfo.resolveType());
             break;
         }
         default:

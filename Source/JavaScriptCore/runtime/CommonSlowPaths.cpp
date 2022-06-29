@@ -1147,7 +1147,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_resolve_scope_for_hoisting_func_decl_in_ev
 }
 
 template<typename Bytecode>
-ALWAYS_INLINE SlowPathReturnType commonSlowPathResolveScopeHelper(CallFrame* callFrame, const JSInstruction* pc)
+ALWAYS_INLINE SlowPathReturnType commonSlowPathResolveScopeHelper(CallFrame* callFrame, const JSInstruction* pc, ResolveType (*getMetadataResolveType)(typename Bytecode::Metadata& metadata), void (*setMetadataResolveType)(typename Bytecode::Metadata& metadata, ResolveType resolveType))
 {
     BEGIN();
     auto bytecode = pc->as<Bytecode>();
@@ -1163,8 +1163,6 @@ ALWAYS_INLINE SlowPathReturnType commonSlowPathResolveScopeHelper(CallFrame* cal
     // the bytecode of OpResolveAndGetFromScope needs to handle the exception cases.
     CHECK_EXCEPTION_WITH_RETURN_SECOND(returnSecond);
 
-    ResolveType resolveType = metadata.m_resolveType;
-
     // ModuleVar does not keep the scope register value alive in DFG.
     ASSERT(resolveType != ModuleVar);
 
@@ -1179,14 +1177,14 @@ ALWAYS_INLINE SlowPathReturnType commonSlowPathResolveScopeHelper(CallFrame* cal
             CHECK_EXCEPTION_WITH_RETURN_SECOND(returnSecond);
             if (hasProperty) {
                 ConcurrentJSLocker locker(codeBlock->m_lock);
-                metadata.m_resolveType = needsVarInjectionChecks(resolveType) ? GlobalPropertyWithVarInjectionChecks : GlobalProperty;
+                setMetadataResolveType(metadata, needsVarInjectionChecks(resolveType) ? GlobalPropertyWithVarInjectionChecks : GlobalProperty);
                 metadata.m_globalObject.set(vm, codeBlock, globalObject);
                 metadata.m_globalLexicalBindingEpoch = globalObject->globalLexicalBindingEpoch();
             }
         } else if (resolvedScope->isGlobalLexicalEnvironment()) {
             JSGlobalLexicalEnvironment* globalLexicalEnvironment = jsCast<JSGlobalLexicalEnvironment*>(resolvedScope);
             ConcurrentJSLocker locker(codeBlock->m_lock);
-            metadata.m_resolveType = needsVarInjectionChecks(resolveType) ? GlobalLexicalVarWithVarInjectionChecks : GlobalLexicalVar;
+            setMetadataResolveType(metadata, needsVarInjectionChecks(resolveType) ? GlobalLexicalVarWithVarInjectionChecks : GlobalLexicalVar);
             metadata.m_globalLexicalEnvironment.set(vm, codeBlock, globalLexicalEnvironment);
         }
         break;
@@ -1200,12 +1198,24 @@ ALWAYS_INLINE SlowPathReturnType commonSlowPathResolveScopeHelper(CallFrame* cal
 
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_resolve_scope)
 {
-    return commonSlowPathResolveScopeHelper<OpResolveScope>(callFrame, pc);
+    auto getMetadataResolveType = [] (auto& metadata) -> ResolveType {
+        return metadata.m_resolveType;
+    };
+    auto setMetadataResolveType = [] (auto& metadata, ResolveType resolveType) {
+        metadata.m_resolveType = resolveType;
+    };
+    return commonSlowPathResolveScopeHelper<OpResolveScope>(callFrame, pc, getMetadataResolveType, setMetadataResolveType);
 }
 
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_rgs_resolve_scope)
 {
-    return commonSlowPathResolveScopeHelper<OpResolveAndGetFromScope>(callFrame, pc);
+    auto getMetadataResolveType = [] (auto& metadata) -> ResolveType {
+        return metadata.m_getPutInfo.resolveType();
+    };
+    auto setMetadataResolveType = [] (auto& metadata, ResolveType resolveType) {
+        metadata.m_getPutInfo.setResolveType(resolveType);
+    };
+    return commonSlowPathResolveScopeHelper<OpResolveAndGetFromScope>(callFrame, pc, getMetadataResolveType);
 }
 
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_create_rest)

@@ -605,7 +605,7 @@ namespace JSC {
         void emitSlow_op_sub(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
 
         template <typename Bytecode>
-        ALWAYS_INLINE void emit_op_resolve_scope_helper(const JSInstruction*, VirtualRegister);
+        ALWAYS_INLINE void emit_op_resolve_scope_helper(const JSInstruction*, VirtualRegister, ResolveType);
         void emit_op_resolve_scope(const JSInstruction*);
         template <typename Bytecode>
         ALWAYS_INLINE void emit_op_get_from_scope_helper(const JSInstruction*, VirtualRegister);

@@ -1471,10 +1471,9 @@ void JIT::emitSlow_op_has_private_brand(const JSInstruction*, Vector<SlowCaseEnt
     } while (false)
 
 template <typename Bytecode>
-ALWAYS_INLINE void JIT::emit_op_resolve_scope_helper(const JSInstruction* currentInstruction, VirtualRegister dst)
+ALWAYS_INLINE void JIT::emit_op_resolve_scope_helper(const JSInstruction* currentInstruction, VirtualRegister dst, ResolveType profiledResolveType)
 {
     auto bytecode = currentInstruction->as<Bytecode>();
-    ResolveType profiledResolveType = bytecode.metadata(m_profiledCodeBlock).m_resolveType;
     VirtualRegister scope = bytecode.m_scope;
 
     uint32_t bytecodeOffset = m_bytecodeIndex.offset();
@@ -1512,7 +1511,8 @@ ALWAYS_INLINE void JIT::emit_op_resolve_scope_helper(const JSInstruction* curren
 
 void JIT::emit_op_resolve_scope(const JSInstruction* currentInstruction)
 {
-    emit_op_resolve_scope_helper<OpResolveScope>(currentInstruction, currentInstruction->as<OpResolveScope>().m_dst);
+    ResolveType profiledResolveType = currentInstruction->as<OpResolveScope>().metadata(m_profiledCodeBlock).m_resolveType;
+    emit_op_resolve_scope_helper<OpResolveScope>(currentInstruction, currentInstruction->as<OpResolveScope>().m_dst, profiledResolveType);
 }
 
 template <ResolveType profiledResolveType, typename Bytecode>
@@ -1968,7 +1968,8 @@ ALWAYS_INLINE MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_get_from_scopeG
 
 void JIT::emit_op_resolve_and_get_from_scope(const JSInstruction* currentInstruction)
 {
-    emit_op_resolve_scope_helper<OpResolveAndGetFromScope>(currentInstruction, currentInstruction->as<OpResolveAndGetFromScope>().m_resolvedScope);
+    ResolveType profiledResolveType = currentInstruction->as<OpResolveAndGetFromScope>().metadata(m_profiledCodeBlock).m_getPutInfo.resolveType();
+    emit_op_resolve_scope_helper<OpResolveAndGetFromScope>(currentInstruction, currentInstruction->as<OpResolveAndGetFromScope>().m_resolvedScope, profiledResolveType);
     emit_op_get_from_scope_helper<OpResolveAndGetFromScope>(currentInstruction, currentInstruction->as<OpResolveAndGetFromScope>().m_resolvedScope);
 }
 

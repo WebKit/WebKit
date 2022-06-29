@@ -5473,8 +5473,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
         return codeBlock->outOfLineJumpOffset(m_currentInstruction);
     };
 
-    auto resolveScopeHelper = [&](auto& bytecode, VirtualRegister dst, auto set) {
-        auto& metadata = bytecode.metadata(codeBlock);
+    auto resolveScopeHelper = [&](auto& bytecode, auto& metadata, ResolveType metadataResolveType, VirtualRegister dst, auto set) {
         ResolveType resolveType;
         unsigned depth;
         JSScope* constantScope = nullptr;
@@ -5482,7 +5481,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
         SymbolTable* symbolTable = nullptr;
         {
             ConcurrentJSLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
-            resolveType = metadata.m_resolveType;
+            resolveType = metadataResolveType;
             depth = metadata.m_localScopeDepth;
             switch (resolveType) {
             case GlobalProperty:
@@ -5583,8 +5582,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
         }
     };
 
-    auto getFromScopeHelper = [&](auto& bytecode, VirtualRegister scope) {
-        auto& metadata = bytecode.metadata(codeBlock);
+    auto getFromScopeHelper = [&](auto& bytecode, auto& metadata, VirtualRegister scope) {
         unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.m_var];
         UniquedStringImpl* uid = m_graph.identifiers()[identifierNumber];
 
@@ -7997,10 +7995,13 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_resolve_scope: {
             auto bytecode = currentInstruction->as<OpResolveScope>();
+            auto& metadata = bytecode.metadata(codeBlock);
+
             auto resolveScopeSet = [this](VirtualRegister dst, Node* value) {
                 set(dst, value);
             };
-            resolveScopeHelper(bytecode, bytecode.m_dst, resolveScopeSet);
+
+            resolveScopeHelper(bytecode, bytecode, bytecode.m_dst, metadata.m_resolveType, resolveScopeSet);
             NEXT_OPCODE(op_resolve_scope);
         }
         case op_resolve_scope_for_hoisting_func_decl_in_eval: {
@@ -8013,19 +8014,22 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_get_from_scope: {
             auto bytecode = currentInstruction->as<OpGetFromScope>();
-            getFromScopeHelper(bytecode, bytecode.m_scope);
+            auto& metadata = bytecode.metadata(codeBlock);
+            getFromScopeHelper(bytecode, metadata, bytecode.m_scope);
             NEXT_OPCODE(op_get_from_scope);
         }
 
         case op_resolve_and_get_from_scope: {
             auto bytecode = currentInstruction->as<OpResolveAndGetFromScope>();
+            auto& metadata = bytecode.metadata(codeBlock);
+
             auto setResolvedScope = [&] (VirtualRegister resolvedScope, Node* value) {
                 set(resolvedScope, value);
                 set(Operand::tmp(bytecode.tmpResolvedScope), value);
             };
-            resolveScopeHelper(bytecode, bytecode.m_resolvedScope, setResolvedScope);
+            resolveScopeHelper(bytecode, metadata, metadata.m_getPutInfo.resolveType(), bytecode.m_resolvedScope, setResolvedScope);
             progressToNextCheckpoint();
-            getFromScopeHelper(bytecode, bytecode.m_resolvedScope);
+            getFromScopeHelper(bytecode, metadata, bytecode.m_resolvedScope);
             NEXT_OPCODE(op_resolve_and_get_from_scope);
         }
 

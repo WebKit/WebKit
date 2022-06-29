@@ -1063,7 +1063,6 @@ op :resolve_and_get_from_scope,
         },
         operand: uintptr_t,
         profile: ValueProfile,
-        resolveType: ResolveType,
         _1: {
             localScopeDepth: unsigned,
             globalLexicalBindingEpoch: unsigned,
