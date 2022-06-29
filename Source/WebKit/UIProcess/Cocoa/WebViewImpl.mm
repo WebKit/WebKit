@@ -4331,7 +4331,7 @@ bool WebViewImpl::performDragOperation(id <NSDraggingInfo> draggingInfo)
 {
     WebCore::IntPoint client([m_view convertPoint:draggingInfo.draggingLocation fromView:nil]);
     WebCore::IntPoint global(WebCore::globalPoint(draggingInfo.draggingLocation, [m_view window]));
-    WebCore::DragData *dragData = new WebCore::DragData(draggingInfo, client, global, coreDragOperationMask(draggingInfo.draggingSourceOperationMask), applicationFlagsForDrag(m_view.getAutoreleased(), draggingInfo), WebCore::anyDragDestinationAction(), m_page->webPageID());
+    auto dragData = Box<WebCore::DragData>::create(draggingInfo, client, global, coreDragOperationMask(draggingInfo.draggingSourceOperationMask), applicationFlagsForDrag(m_view.getAutoreleased(), draggingInfo), WebCore::anyDragDestinationAction(), m_page->webPageID());
 
     NSArray *types = draggingInfo.draggingPasteboard.types;
     SandboxExtension::Handle sandboxExtensionHandle;
@@ -4343,31 +4343,24 @@ bool WebViewImpl::performDragOperation(id <NSDraggingInfo> draggingInfo)
         // guaranteed that the count of UTIs equals the count of files, since some clients only write
         // unique UTIs.
         NSArray *files = [draggingInfo.draggingPasteboard propertyListForType:WebCore::legacyFilesPromisePasteboardType()];
-        if (![files isKindOfClass:[NSArray class]]) {
-            delete dragData;
+        if (![files isKindOfClass:[NSArray class]])
             return false;
-        }
 
         NSString *dropDestinationPath = FileSystem::createTemporaryDirectory(@"WebKitDropDestination");
-        if (!dropDestinationPath) {
-            delete dragData;
+        if (!dropDestinationPath)
             return false;
-        }
 
         size_t fileCount = files.count;
-        Vector<String> *fileNames = new Vector<String>;
+        auto fileNames = Box<Vector<String>>::create();
         NSURL *dropDestination = [NSURL fileURLWithPath:dropDestinationPath isDirectory:YES];
         String pasteboardName = draggingInfo.draggingPasteboard.name;
-        [draggingInfo enumerateDraggingItemsWithOptions:0 forView:m_view.getAutoreleased() classes:@[[NSFilePromiseReceiver class]] searchOptions:@{ } usingBlock:^(NSDraggingItem *draggingItem, NSInteger idx, BOOL *stop) {
-            NSFilePromiseReceiver *item = draggingItem.item;
-            NSDictionary *options = @{ };
-
-            RetainPtr<NSOperationQueue> queue = adoptNS([NSOperationQueue new]);
-            [item receivePromisedFilesAtDestination:dropDestination options:options operationQueue:queue.get() reader:^(NSURL *fileURL, NSError *errorOrNil) {
+        [draggingInfo enumerateDraggingItemsWithOptions:0 forView:m_view.getAutoreleased() classes:@[ NSFilePromiseReceiver.class ] searchOptions:@{ } usingBlock:[&](NSDraggingItem *draggingItem, NSInteger idx, BOOL *stop) {
+            auto queue = adoptNS([NSOperationQueue new]);
+            [draggingItem.item receivePromisedFilesAtDestination:dropDestination options:@{ } operationQueue:queue.get() reader:[this, fileNames, fileCount, dragData, pasteboardName](NSURL *fileURL, NSError *errorOrNil) {
                 if (errorOrNil)
                     return;
 
-                RunLoop::main().dispatch([this, path = RetainPtr<NSString>(fileURL.path), fileNames, fileCount, dragData, pasteboardName] {
+                RunLoop::main().dispatch([this, path = RetainPtr { fileURL.path }, fileNames, fileCount, dragData, pasteboardName] {
                     fileNames->append(path.get());
                     if (fileNames->size() == fileCount) {
                         SandboxExtension::Handle sandboxExtensionHandle;
@@ -4376,8 +4369,6 @@ bool WebViewImpl::performDragOperation(id <NSDraggingInfo> draggingInfo)
                         m_page->createSandboxExtensionsIfNeeded(*fileNames, sandboxExtensionHandle, sandboxExtensionForUpload);
                         dragData->setFileNames(*fileNames);
                         m_page->performDragOperation(*dragData, pasteboardName, WTFMove(sandboxExtensionHandle), WTFMove(sandboxExtensionForUpload));
-                        delete dragData;
-                        delete fileNames;
                     }
                 });
             }];
@@ -4388,10 +4379,8 @@ bool WebViewImpl::performDragOperation(id <NSDraggingInfo> draggingInfo)
 
     if ([types containsObject:WebCore::legacyFilenamesPasteboardType()]) {
         NSArray *files = [draggingInfo.draggingPasteboard propertyListForType:WebCore::legacyFilenamesPasteboardType()];
-        if (![files isKindOfClass:[NSArray class]]) {
-            delete dragData;
+        if (![files isKindOfClass:[NSArray class]])
             return false;
-        }
 
         m_page->createSandboxExtensionsIfNeeded(makeVector<String>(files), sandboxExtensionHandle, sandboxExtensionForUpload);
     }
@@ -4399,7 +4388,6 @@ bool WebViewImpl::performDragOperation(id <NSDraggingInfo> draggingInfo)
     String draggingPasteboardName = draggingInfo.draggingPasteboard.name;
     m_page->grantAccessToCurrentPasteboardData(draggingPasteboardName);
     m_page->performDragOperation(*dragData, draggingPasteboardName, WTFMove(sandboxExtensionHandle), WTFMove(sandboxExtensionForUpload));
-    delete dragData;
 
     return true;
 }
