@@ -1736,6 +1736,10 @@ void RenderLayerCompositor::layerStyleChanged(StyleDifference diff, RenderLayer&
                 // For RenderWidgets this is necessary to get iframe layers hooked up in response to scheduleInvalidateStyleAndLayerComposition().
                 layer.setNeedsCompositingConfigurationUpdate();
             }
+            // If we're changing to/from 0 opacity, then we need to reconfigure the layer since we try to
+            // skip backing store allocation for opacity:0.
+            if (oldStyle && oldStyle->opacity() != newStyle.opacity() && (!oldStyle->opacity() || !newStyle.opacity()))
+                layer.setNeedsCompositingConfigurationUpdate();
         }
         if (oldStyle && recompositeChangeRequiresGeometryUpdate(*oldStyle, newStyle)) {
             // FIXME: transform changes really need to trigger layout. See RenderElement::adjustStyleDifference().

@@ -149,6 +149,30 @@ bool Styleable::computeAnimationExtent(LayoutRect& bounds) const
     return true;
 }
 
+bool Styleable::mayHaveNonZeroOpacity() const
+{
+    auto* renderer = this->renderer();
+    if (!renderer)
+        return false;
+
+    if (renderer->style().opacity() != 0.0f)
+        return true;
+
+    if (renderer->style().willChange() && renderer->style().willChange()->containsProperty(CSSPropertyOpacity))
+        return true;
+
+    auto* effectStack = keyframeEffectStack();
+    if (!effectStack || !effectStack->hasEffects())
+        return false;
+
+    for (const auto& effect : effectStack->sortedEffects()) {
+        if (effect->animatesProperty(CSSPropertyOpacity))
+            return true;
+    }
+
+    return false;
+}
+
 bool Styleable::isRunningAcceleratedTransformAnimation() const
 {
     auto* effectStack = keyframeEffectStack();

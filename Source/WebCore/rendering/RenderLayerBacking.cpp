@@ -2856,6 +2856,11 @@ bool RenderLayerBacking::containsPaintedContent(PaintedContentsInfo& contentsInf
     if (contentsInfo.isDirectlyCompositedImage())
         return false;
 
+    if (auto styleable = Styleable::fromRenderer(renderer())) {
+        if (!styleable->mayHaveNonZeroOpacity())
+            return false;
+    }
+
     // FIXME: we could optimize cases where the image, video or canvas is known to fill the border box entirely,
     // and set background color on the layer in that case, instead of allocating backing store and painting.
 #if ENABLE(VIDEO)

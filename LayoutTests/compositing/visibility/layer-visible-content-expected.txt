@@ -22,7 +22,6 @@
         (GraphicsLayer
           (bounds 800.00 16.00)
           (opacity 0.00)
-          (drawsContent 1)
         )
       )
     )
