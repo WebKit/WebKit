@@ -2517,7 +2517,7 @@ ALWAYS_INLINE void BytecodeGenerator::emitGetFromScopeHelper(RegisterID* dst, Re
         if (m_lastInstruction->opcodeID() != op_resolve_scope)
             return false;
         auto lastOpcode = m_lastInstruction->as<OpResolveScope>();
-        if (lastOpcode.m_dst != scope || lastOpcode.m_var != var || lastOpcode.m_localScopeDepth != localScopeDepth)
+        if (lastOpcode.m_dst != scope || lastOpcode.m_var != var || lastOpcode.m_resolveType != getPutInfo.resolveType() || lastOpcode.m_localScopeDepth != localScopeDepth)
             return false;
         return true;
     };
@@ -2525,9 +2525,8 @@ ALWAYS_INLINE void BytecodeGenerator::emitGetFromScopeHelper(RegisterID* dst, Re
     if (validResolveAndGetFromScopePair()) {
         auto lastOpcode = m_lastInstruction->as<OpResolveScope>();
         VirtualRegister prevScope = lastOpcode.m_scope;
-        ResolveType prevResolveType = lastOpcode.m_resolveType;
         rewind();
-        OpResolveAndGetFromScope::emit(this, dst, prevScope, scope, var, prevResolveType, getPutInfo, localScopeDepth, offset);
+        OpResolveAndGetFromScope::emit(this, dst, prevScope, scope, var, getPutInfo, localScopeDepth, offset);
         return;
     }
 #endif

@@ -467,11 +467,11 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         break; \
     }
 
-    auto linkOpResolveScope = [&](auto& bytecode, auto& metadata) {
+    auto linkResolveScope = [&](auto& bytecode, auto& metadata, ResolveType resolveType) {
         const Identifier& ident = identifier(bytecode.m_var);
-        RELEASE_ASSERT(bytecode.m_resolveType != ResolvedClosureVar);
+        RELEASE_ASSERT(resolveType != ResolvedClosureVar);
 
-        ResolveOp op = JSScope::abstractResolve(m_globalObject.get(), bytecode.m_localScopeDepth, scope, ident, Get, bytecode.m_resolveType, InitializationMode::NotInitialization);
+        ResolveOp op = JSScope::abstractResolve(m_globalObject.get(), bytecode.m_localScopeDepth, scope, ident, Get, resolveType, InitializationMode::NotInitialization);
 
         metadata.m_resolveType = op.type;
         metadata.m_localScopeDepth = op.depth;
@@ -491,7 +491,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
             metadata.m_globalObject.clear();
     };
 
-    auto linkOpGetFromScope = [&](auto& instruction, auto& bytecode, auto& metadata) {
+    auto linkGetFromScope = [&](auto& instruction, auto& bytecode, auto& metadata) {
         link_profile(instruction, bytecode, metadata);
         metadata.m_watchpointSet = nullptr;
 
@@ -586,20 +586,20 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
 
         case op_resolve_scope: {
             INITIALIZE_METADATA(OpResolveScope)
-            linkOpResolveScope(bytecode, metadata);
+            linkResolveScope(bytecode, metadata, bytecode.m_resolveType);
             break;
         }
 
         case op_get_from_scope: {
             INITIALIZE_METADATA(OpGetFromScope)
-            linkOpGetFromScope(instruction, bytecode, metadata);
+            linkGetFromScope(instruction, bytecode, metadata);
             break;
         }
 
         case op_resolve_and_get_from_scope: {
             INITIALIZE_METADATA(OpResolveAndGetFromScope)
-            linkOpResolveScope(bytecode, metadata);
-            linkOpGetFromScope(instruction, bytecode, metadata);
+            linkResolveScope(bytecode, metadata, bytecode.m_getPutInfo.resolveType());
+            linkGetFromScope(instruction, bytecode, metadata);
             break;
         }
 
