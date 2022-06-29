@@ -5321,4 +5321,4 @@ fast/attachment/attachment-image-controls-basic.html [ Skip ]
 fast/text/bulgarian-system-language-shaping.html [ ImageOnlyFailure ]
 
 # Accessibility bold only exists on iOS.
-fast/text/accessibility-bold-system-font [ Pass Failure ]
+fast/text/accessibility-bold-system-font [ Skip ]
