@@ -29,17 +29,37 @@ class Slider extends SliderBase
     {
         super(layoutDelegate, `default ${cssClassName}`);
 
-        this._primaryFill = new LayoutNode(`<div class="primary fill"></div>`);
-        this._trackFill = new LayoutNode(`<div class="track fill"></div>`);
-        this._secondaryFill = new LayoutNode(`<div class="secondary fill"></div>`);
+        this._primaryFill = new LayoutNode(`<div class="primary"></div>`);
+        this._trackFill = new LayoutNode(`<div class="track"></div>`);
+        this._secondaryFill = new LayoutNode(`<div class="secondary"></div>`);
+
+        let fillContainer = new LayoutNode(`<div class="fill"></div>`);
+        fillContainer.children = [this._primaryFill, this._trackFill, this._secondaryFill];
+
         this._knob = new LayoutNode(`<div class="knob ${knobStyle}"></div>`);
-        this.appearanceContainer.children = [this._primaryFill, this._trackFill, this._secondaryFill, this._knob];
+
+        this.appearanceContainer.children = [fillContainer, this._knob];
 
         this.height = 16;
+        this._secondaryValue = 0;
         this._knobStyle = knobStyle;
     }
 
     // Public
+
+    get secondaryValue()
+    {
+        return this._secondaryValue;
+    }
+
+    set secondaryValue(secondaryValue)
+    {
+        if (this._secondaryValue === secondaryValue)
+            return;
+
+        this._secondaryValue = secondaryValue;
+        this.needsLayout = true;
+    }
 
     get knobStyle()
     {

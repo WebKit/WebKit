@@ -38,16 +38,6 @@
     pointer-events: none;
 }
 
-.slider.allows-relative-scrubbing > .appearance {
-    transition-property: top, height;
-    transition-duration: 0.5s;
-}
-
-.slider.allows-relative-scrubbing > .appearance.changing {
-    top: 0.5px;
-    height: 15px;
-}
-
 .slider > input {
     top: 0;
     margin: 0;
