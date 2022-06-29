@@ -79,10 +79,14 @@ class LinuxBrowserDriver(BrowserDriver):
                     main_browser_process.kill()
                     for browser_child in browser_children:
                         if browser_child.is_running():
-                            _log.info('Killing still alive {browser_name} child with pid {browser_pid} and cmd: {browser_cmd}'.format(
-                                       browser_name=self.browser_name, browser_pid=browser_child.pid,
-                                       browser_cmd=' '.join(browser_child.cmdline()).strip() or browser_child.name()))
-                            browser_child.kill()
+                            try:
+                                browser_child.kill()
+                                _log.info('Killed still alive {browser_name} child with pid {browser_pid} and cmd: {browser_cmd}'.format(
+                                          browser_name=self.browser_name, browser_pid=browser_child.pid,
+                                          browser_cmd=' '.join(browser_child.cmdline()).strip() or browser_child.name()))
+                            except psutil.NoSuchProcess:
+                                # There can be a race condition where the child ends in the interval between the is_running() and kill() calls.
+                                pass
                 else:
                     _log.info('Killing browser {browser_name} with pid {browser_pid}'.format(
                                browser_name=self.browser_name, browser_pid=self._browser_process.pid))
