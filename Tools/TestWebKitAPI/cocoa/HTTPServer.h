@@ -87,6 +87,7 @@ public:
     NSURLRequest *requestWithLocalhost(StringView path = "/"_s) const;
     size_t totalRequests() const;
     void cancel();
+    void terminateAllConnections(CompletionHandler<void()>&&);
 
     void addResponse(String&& path, HTTPResponse&&);
     void setResponse(String&& path, HTTPResponse&&);

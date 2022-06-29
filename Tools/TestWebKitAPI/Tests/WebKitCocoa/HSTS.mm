@@ -140,29 +140,26 @@ TEST(HSTS, CrossOriginRedirect)
     EXPECT_EQ(httpServer.totalRequests(), 1u);
 }
 
-// FIXME: Re-enable after webkit.org/b/242017 is resolved
-TEST(HSTS, DISABLED_Preconnect)
+TEST(HSTS, Preconnect)
 {
-    bool firstConnectionTerminated { false };
-    bool secondConnectionReceived { false };
-    HTTPServer server([&secondConnectionReceived, &firstConnectionTerminated, connectionCount = 0] (Connection connection) mutable {
-        if (!connectionCount++) {
-            connection.receiveHTTPRequest([connection, &firstConnectionTerminated] (Vector<char>) {
+    bool responseSent { false };
+    bool preconnectSuccessful { false };
+    HTTPServer server([&preconnectSuccessful, &responseSent] (Connection connection) mutable {
+        if (!responseSent) {
+            connection.receiveHTTPRequest([connection, &responseSent] (Vector<char>) {
                 auto response =
                 "HTTP/1.1 200 OK\r\n"
                 "Content-Length: 3\r\n"
                 "Strict-Transport-Security: max-age=31536000\r\n"
                 "\r\n"
                 "hi!"_s;
-                connection.send(response, [connection, &firstConnectionTerminated] () mutable {
-                    connection.terminate([&firstConnectionTerminated] {
-                        firstConnectionTerminated = true;
-                    });
+                connection.send(response, [connection, &responseSent] () mutable {
+                    responseSent = true;
                 });
             });
             return;
         }
-        secondConnectionReceived = true;
+        preconnectSuccessful = true;
     }, HTTPServer::Protocol::HttpsProxy);
 
     auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
@@ -179,10 +176,16 @@ TEST(HSTS, DISABLED_Preconnect)
     };
 
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/"]]];
-    TestWebKitAPI::Util::run(&firstConnectionTerminated);
+    TestWebKitAPI::Util::run(&responseSent);
+
+    bool cancelledAllConnections { false };
+    server.terminateAllConnections([&] {
+        cancelledAllConnections = true;
+    });
+    TestWebKitAPI::Util::run(&cancelledAllConnections);
 
     [webView _preconnectToServer:[NSURL URLWithString:@"http://example.com/"]];
-    TestWebKitAPI::Util::run(&secondConnectionReceived);
+    TestWebKitAPI::Util::run(&preconnectSuccessful);
 }
 
 #endif // HAVE(CFNETWORK_NSURLSESSION_HSTS_WITH_UNTRUSTED_ROOT)
