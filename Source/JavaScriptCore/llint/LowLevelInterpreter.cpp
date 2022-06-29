@@ -478,8 +478,17 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
 // Define the opcode dispatch mechanism when using an ASM loop:
 //
 
-// We're disabling this for now because of a suspected linker issue.
+#if PLATFORM(MAC) \
+    || (PLATFORM(MACCATALYST) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 160000) \
+    || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 160000) \
+    || (PLATFORM(APPLETV) && __TV_OS_VERSION_MIN_REQUIRED >= 160000) \
+    || (PLATFORM(WATCHOS) && __WATCH_OS_VERSION_MIN_REQUIRED >= 90000)
+// Except for Mac, this requires a newer linker in order to work. Linkers from
+// older SDKs would hang. ref: rdar://93876735
+#define OFFLINE_ASM_USE_ALT_ENTRY 1
+#else
 #define OFFLINE_ASM_USE_ALT_ENTRY 0
+#endif
 
 #if COMPILER(CLANG)
 
