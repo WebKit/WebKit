@@ -874,7 +874,10 @@ class Git(Scm):
             name = match.group('name')
             username = name.split('/')[0]
             repo_name = rmt.name if '/' not in name else name.split('/', 1)[-1]
-            name = username + repo_name[len(rmt.name):]
+            if username == rmt.credentials(required=False)[0]:
+                name = 'fork' + repo_name[len(rmt.name):]
+            else:
+                name = username + repo_name[len(rmt.name):]
 
             if not self.url(name):
                 url = self.url()
