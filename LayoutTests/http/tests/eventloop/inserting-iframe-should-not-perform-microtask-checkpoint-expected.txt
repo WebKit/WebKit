@@ -1,0 +1,34 @@
+This tests inserting an empty iframe after scheduling a microtask.
+WebKit should not perform a microtask checkpoint.
+
+
+empty
+begin inserting iframe
+load event
+end inserting iframe
+microtask
+
+about:blank
+begin inserting iframe
+load event
+end inserting iframe
+microtask
+
+hello.html
+begin inserting iframe
+end inserting iframe
+microtask
+load event
+
+data URL
+begin inserting iframe
+end inserting iframe
+microtask
+load event
+
+srcdoc
+begin inserting iframe
+end inserting iframe
+microtask
+load event
+

@@ -2034,6 +2034,7 @@ bool DocumentLoader::maybeLoadEmpty()
         }
     }
 
+    SetForScope isInFinishedLoadingOfEmptyDocument { m_isInFinishedLoadingOfEmptyDocument, true };
     finishedLoading();
     return true;
 }
