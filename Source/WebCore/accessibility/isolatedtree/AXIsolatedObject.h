@@ -671,8 +671,9 @@ inline T AXIsolatedObject::propertyValue(AXPropertyName propertyName) const
 {
     auto value = m_propertyMap.get(propertyName);
     return WTF::switchOn(value,
-        [] (T& typedValue) -> T { return typedValue; },
-        [] (auto&) { return T(); }
+        [] (T& typedValue) { return typedValue; },
+        [] (auto&) { ASSERT_NOT_REACHED();
+            return T(); }
     );
 }
 

@@ -250,8 +250,6 @@ void AXIsolatedObject::initializeProperties(Ref<AXCoreObject> coreObject, IsRoot
         setProperty(AXPropertyName::ColumnCount, object.columnCount());
         setProperty(AXPropertyName::RowCount, object.rowCount());
         setObjectVectorProperty(AXPropertyName::Cells, object.cells());
-        setObjectVectorProperty(AXPropertyName::ColumnHeaders, object.columnHeaders());
-        setObjectVectorProperty(AXPropertyName::RowHeaders, object.rowHeaders());
         setObjectVectorProperty(AXPropertyName::VisibleRows, object.visibleRows());
         setObjectProperty(AXPropertyName::HeaderContainer, object.headerContainer());
         setProperty(AXPropertyName::AXColumnCount, object.axColumnCount());
@@ -2316,7 +2314,7 @@ void AXIsolatedObject::setIsIgnoredFromParentDataForChild(AXCoreObject*)
 
 AXCoreObject::AccessibilityChildrenVector AXIsolatedObject::columnHeaders()
 {
-    return const_cast<AXIsolatedObject*>(this)->getOrRetrievePropertyValue<AXCoreObject::AccessibilityChildrenVector>(AXPropertyName::ColumnHeaders);
+    return tree()->objectsForIDs(const_cast<AXIsolatedObject*>(this)->getOrRetrievePropertyValue<Vector<AXID>>(AXPropertyName::ColumnHeaders));
 }
 
 String AXIsolatedObject::innerHTML() const
@@ -2331,7 +2329,7 @@ String AXIsolatedObject::outerHTML() const
 
 AXCoreObject::AccessibilityChildrenVector AXIsolatedObject::rowHeaders()
 {
-    return const_cast<AXIsolatedObject*>(this)->getOrRetrievePropertyValue<AXCoreObject::AccessibilityChildrenVector>(AXPropertyName::RowHeaders);
+    return tree()->objectsForIDs(const_cast<AXIsolatedObject*>(this)->getOrRetrievePropertyValue<Vector<AXID>>(AXPropertyName::RowHeaders));
 }
 
 // FIXME: Rather than lazily retrieving this property, we should make it performant enough to retrieve up-front in AXIsolatedObject::initializeProperties.

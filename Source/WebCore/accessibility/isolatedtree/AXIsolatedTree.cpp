@@ -253,7 +253,6 @@ void AXIsolatedTree::queueChange(const NodeChange& nodeChange)
 
     AXID parentID = nodeChange.isolatedObject->parent();
     if (parentID.isValid()) {
-        ASSERT_WITH_MESSAGE(m_nodeMap.contains(parentID), "node map should've contained parentID: %s", parentID.loggingString().utf8().data());
         auto siblingsIDs = m_nodeMap.get(parentID).childrenIDs;
         m_pendingChildrenUpdates.append({ parentID, WTFMove(siblingsIDs) });
     }
