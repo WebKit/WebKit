@@ -114,7 +114,7 @@ void AuthenticatorCoordinator::create(const Document& document, const PublicKeyC
     const auto& callerOrigin = document.securityOrigin();
     auto* frame = document.frame();
     ASSERT(frame);
-    // The following implements https://www.w3.org/TR/webauthn/#createCredential as of 5 December 2017.
+    // The following implements https://www.w3.org/TR/webauthn-2/#createCredential as of 28 June 2022.
     // Step 1, 3, 16 are handled by the caller.
     // Step 2.
     if (scope != WebAuthn::Scope::SameOrigin) {
@@ -122,15 +122,21 @@ void AuthenticatorCoordinator::create(const Document& document, const PublicKeyC
         return;
     }
 
-    // Step 5. Skipped since SecurityOrigin doesn't have the concept of "opaque origin".
-    // Step 6. The effective domain may be represented in various manners, such as a domain or an ip address.
+    // Step 5.
+    if (options.user.id.length() < 1 || options.user.id.length() > 64) {
+        promise.reject(Exception { TypeError, "The length options.user.id must be between 1-64 bytes."_s });
+        return;
+    }
+
+    // Step 6. Skipped since SecurityOrigin doesn't have the concept of "opaque origin".
+    // Step 7. The effective domain may be represented in various manners, such as a domain or an ip address.
     // Only the domain format of host is permitted in WebAuthN.
     if (URL::hostIsIPAddress(callerOrigin.domain())) {
         promise.reject(Exception { SecurityError, "The effective domain of the document is not a valid domain."_s });
         return;
     }
 
-    // Step 7.
+    // Step 8.
     if (!options.rp.id.isEmpty() && !callerOrigin.isMatchingRegistrableDomainSuffix(options.rp.id)) {
         promise.reject(Exception { SecurityError, "The provided RP ID is not a registrable domain suffix of the effective domain of the document."_s });
         return;
@@ -138,7 +144,7 @@ void AuthenticatorCoordinator::create(const Document& document, const PublicKeyC
     if (options.rp.id.isEmpty())
         options.rp.id = callerOrigin.domain();
 
-    // Step 8-10.
+    // Step 9-11.
     // Most of the jobs are done by bindings.
     if (options.pubKeyCredParams.isEmpty()) {
         options.pubKeyCredParams.append({ PublicKeyCredentialType::PublicKey, COSE::ES256 });
@@ -153,15 +159,15 @@ void AuthenticatorCoordinator::create(const Document& document, const PublicKeyC
         }
     }
 
-    // Step 11-12.
+    // Step 12-13.
     // Only Google Legacy AppID Support Extension is supported.
     options.extensions = AuthenticationExtensionsClientInputs { String(), processGoogleLegacyAppIdSupportExtension(options.extensions, options.rp.id), options.extensions && options.extensions->credProps };
 
-    // Step 13-15.
+    // Step 14-16.
     auto clientDataJson = buildClientDataJson(ClientDataType::Create, options.challenge, callerOrigin, scope);
     auto clientDataJsonHash = buildClientDataJsonHash(clientDataJson);
 
-    // Step 4, 17-21.
+    // Step 4, 18-22.
     if (!m_client) {
         promise.reject(Exception { UnknownError, "Unknown internal error."_s });
         return;
