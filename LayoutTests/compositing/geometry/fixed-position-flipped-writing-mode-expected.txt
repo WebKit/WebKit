@@ -17,8 +17,6 @@
           (position 0.00 13.00)
           (bounds 5000.00 15.00)
           (opacity 0.00)
-          (usingTiledLayer 1)
-          (drawsContent 1)
         )
       )
     )
