@@ -6217,9 +6217,9 @@ void Document::finishedParsing()
     }
 
     // FIXME: Schedule a task to fire DOMContentLoaded event instead. See webkit.org/b/82931
-    if (auto* documentLoader = loader(); documentLoader && documentLoader->isInFinishedLoadingOfEmptyDocument())
-        ; // Don't perform a microtask checkpoint when inserting an iframe.
-    else
+    auto* documentLoader = loader();
+    bool isInMiddleOfInitializingIframe = documentLoader && documentLoader->isInFinishedLoadingOfEmptyDocument();
+    if (!isInMiddleOfInitializingIframe)
         eventLoop().performMicrotaskCheckpoint();
     dispatchEvent(Event::create(eventNames().DOMContentLoadedEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
 
