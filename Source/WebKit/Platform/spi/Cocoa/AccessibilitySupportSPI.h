@@ -26,18 +26,16 @@
 #pragma once
 
 #if USE(APPLE_INTERNAL_SDK)
-
 #include <AccessibilitySupport.h>
+#endif
 
-#else
-
+#if !USE(APPLE_INTERNAL_SDK) || !HAVE(APP_SPECIFIC_ACCESSIBILITY_SETTINGS)
 typedef enum {
     AXValueStateInvalid = -2,
     AXValueStateEmpty = -1,
     AXValueStateOff,
     AXValueStateOn
 } AXValueState;
-
 #endif
 
 WTF_EXTERN_C_BEGIN
@@ -69,10 +67,8 @@ void _AXSSetEnhanceTextLegibilityEnabledApp(AXValueState enabled, CFStringRef ap
 void _AXSSetDarkenSystemColorsApp(AXValueState enabled, CFStringRef appID);
 void _AXSInvertColorsSetEnabledApp(AXValueState enabled, CFStringRef appID);
 
-#if PLATFORM(IOS_FAMILY) && ENABLE(FULL_KEYBOARD_ACCESS)
 extern CFStringRef kAXSFullKeyboardAccessEnabledNotification;
 Boolean _AXSFullKeyboardAccessEnabled();
-#endif
 
 extern CFStringRef kAXSAccessibilityPreferenceDomain;
 
