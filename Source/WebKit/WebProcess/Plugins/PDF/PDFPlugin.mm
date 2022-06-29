@@ -239,13 +239,18 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return [[self parent] accessibilityAttributeValue:NSAccessibilityTopLevelUIElementAttribute];
     if ([attribute isEqualToString:NSAccessibilityWindowAttribute])
         return [[self parent] accessibilityAttributeValue:NSAccessibilityWindowAttribute];
-    if ([attribute isEqualToString:NSAccessibilitySizeAttribute])
-        return [NSValue valueWithSize:_pdfPlugin->boundsOnScreen().size()];
+    if ([attribute isEqualToString:NSAccessibilitySizeAttribute]) {
+        return [NSValue valueWithSize:WebCore::Accessibility::retrieveValueFromMainThread<WebCore::IntSize>([protectedSelf = retainPtr(self)] {
+            return protectedSelf.get().pdfPlugin->boundsOnScreen().size();
+        })];
+    }
     if ([attribute isEqualToString:NSAccessibilityEnabledAttribute])
         return [[self parent] accessibilityAttributeValue:NSAccessibilityEnabledAttribute];
-    if ([attribute isEqualToString:NSAccessibilityPositionAttribute])
-        return [NSValue valueWithPoint:_pdfPlugin->boundsOnScreen().location()];
-
+    if ([attribute isEqualToString:NSAccessibilityPositionAttribute]) {
+        return [NSValue valueWithPoint:WebCore::Accessibility::retrieveValueFromMainThread<WebCore::IntPoint>([protectedSelf = retainPtr(self)] {
+            return protectedSelf.get().pdfPlugin->boundsOnScreen().location();
+        })];
+    }
     if ([attribute isEqualToString:NSAccessibilityChildrenAttribute])
         return @[ _pdfLayerController ];
     if ([attribute isEqualToString:NSAccessibilityRoleAttribute])
@@ -264,7 +269,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     if ([attribute isEqualToString:NSAccessibilityBoundsForRangeParameterizedAttribute]) {
         NSRect boundsInPDFViewCoordinates = [[_pdfLayerController accessibilityBoundsForRangeAttributeForParameter:parameter] rectValue];
-        NSRect boundsInScreenCoordinates = _pdfPlugin->convertFromPDFViewToScreen(boundsInPDFViewCoordinates);
+        NSRect boundsInScreenCoordinates = WebCore::Accessibility::retrieveValueFromMainThread<NSRect>([protectedSelf = retainPtr(self), boundsInPDFViewCoordinates] {
+            return protectedSelf.get().pdfPlugin->convertFromPDFViewToScreen(boundsInPDFViewCoordinates);
+        });
         return [NSValue valueWithRect:boundsInScreenCoordinates];
     }
 
