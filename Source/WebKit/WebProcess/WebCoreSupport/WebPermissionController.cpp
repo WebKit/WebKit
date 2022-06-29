@@ -105,7 +105,8 @@ void WebPermissionController::tryProcessingRequests()
 
         currentRequest.isWaitingForReply = true;
         m_page->sendWithAsyncReply(Messages::WebPageProxy::QueryPermission(currentRequest.origin, currentRequest.descriptor), [this, weakThis = WeakPtr { *this }](auto state, bool shouldCache) {
-            if (!weakThis)
+            RefPtr protectedThis { weakThis.get() };
+            if (!protectedThis)
                 return;
 
             auto takenRequest = m_requests.takeFirst();
