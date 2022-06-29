@@ -72,9 +72,20 @@ Code::Code(Procedure& proc)
             all.exclude(RegisterSet::stackRegisters());
             all.exclude(RegisterSet::reservedHardwareRegisters());
 #if CPU(ARM)
+            // Unfortunately, the extra registers provided by the neon/vfpv3
+            // extensions can't be used by Air right now, because they are
+            // invalid as f32 operands, and Air doesn't know about anything
+            // other than a single class of FP registers.
+#if CPU(ARM_NEON) || CPU(ARM_VFP_V3_D32)
+            if (bank == FP) {
+                for (auto reg = ARMRegisters::d16; reg <= ARMRegisters::d31; reg = MacroAssembler::nextFPRegister(reg)) {
+                    all.clear(reg);
+                }
+            }
+#endif
             // Our use of DisallowMacroScratchRegisterUsage is not quite right, so for now...
             all.exclude(RegisterSet::macroScratchRegisters());
-#endif
+#endif // CPU(ARM)
             RegisterSet calleeSave = RegisterSet::vmCalleeSaveRegisters();
             all.forEach(
                 [&] (Reg reg) {
