@@ -16132,7 +16132,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DSTROOT)$(LAUNCHD_PLIST_INSTALL_PATH)/$(LAUNCHD_PLIST_FILE_NAME)",
+				"$(LAUNCHD_PLIST_OUTPUT_FILE)",
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
@@ -16153,7 +16153,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DSTROOT)$(LAUNCHD_PLIST_INSTALL_PATH)/$(LAUNCHD_PLIST_FILE_NAME)",
+				"$(LAUNCHD_PLIST_OUTPUT_FILE)",
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
