@@ -140,7 +140,8 @@ TEST(HSTS, CrossOriginRedirect)
     EXPECT_EQ(httpServer.totalRequests(), 1u);
 }
 
-TEST(HSTS, Preconnect)
+// FIXME: Re-enable after webkit.org/b/242017 is resolved
+TEST(HSTS, DISABLED_Preconnect)
 {
     bool firstConnectionTerminated { false };
     bool secondConnectionReceived { false };
