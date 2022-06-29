@@ -141,7 +141,8 @@ TEST(AutocorrectionTests, AutocorrectionContextDoesNotIncludeNewlineInTextField)
     EXPECT_EQ(0U, [contextAfterTyping contextAfterSelection].length);
 }
 
-TEST(AutocorrectionTests, AutocorrectionContextBeforeAndAfterEditing)
+// FIXME: Re-enable after webkit.org/b/242128 is resolved
+TEST(AutocorrectionTests, DISABLED_AutocorrectionContextBeforeAndAfterEditing)
 {
     auto webView = adoptNS([[TestWKWebView alloc] init]);
     auto inputDelegate = adoptNS([[TestInputDelegate alloc] init]);
