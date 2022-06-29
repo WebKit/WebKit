@@ -718,6 +718,12 @@ public:
     WEBCORE_EXPORT URL completeURL(const String&, ForceUTF8 = ForceUTF8::No) const final;
     URL completeURL(const String&, const URL& baseURLOverride, ForceUTF8 = ForceUTF8::No) const;
 
+    bool shouldMaskURLForBindings(const URL&) const;
+    bool hasURLsToMaskForBindings() const;
+    const URL& maskedURLForBindingsIfNeeded(const URL&) const;
+    const AtomString& maskedURLStringForBindings() const;
+    const URL& maskedURLForBindings() const;
+
     String userAgent(const URL&) const final;
 
     void disableEval(const String& errorMessage) final;

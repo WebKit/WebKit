@@ -1013,7 +1013,7 @@ String sanitizedMarkupForFragmentInDocument(Ref<DocumentFragment>&& fragment, Do
 
     // SerializeComposedTree::No because there can't be a shadow tree in the pasted fragment.
     auto result = serializePreservingVisualAppearanceInternal(firstPositionInNode(bodyElement.get()), lastPositionInNode(bodyElement.get()), nullptr,
-        ResolveURLs::YesExcludingLocalFileURLsForPrivacy, SerializeComposedTree::No, AnnotateForInterchange::Yes, ConvertBlocksToInlines::No,  StandardFontFamilySerializationMode::Strip, msoListMode);
+        ResolveURLs::YesExcludingURLsForPrivacy, SerializeComposedTree::No, AnnotateForInterchange::Yes, ConvertBlocksToInlines::No, StandardFontFamilySerializationMode::Strip, msoListMode);
 
     if (msoListMode != MSOListMode::Preserve)
         return result;

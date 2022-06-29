@@ -5645,6 +5645,41 @@ URL Document::completeURL(const String& url, ForceUTF8 forceUTF8) const
     return completeURL(url, m_baseURL, forceUTF8);
 }
 
+bool Document::shouldMaskURLForBindings(const URL& url) const
+{
+    auto* page = this->page();
+    if (UNLIKELY(!page))
+        return false;
+    return page->shouldMaskURLForBindings(url);
+}
+
+bool Document::hasURLsToMaskForBindings() const
+{
+    auto* page = this->page();
+    if (UNLIKELY(!page))
+        return false;
+    return page->hasURLsToMaskForBindings();
+}
+
+const URL& Document::maskedURLForBindingsIfNeeded(const URL& url) const
+{
+    if (UNLIKELY(shouldMaskURLForBindings(url)))
+        return maskedURLForBindings();
+    return url;
+}
+
+const AtomString& Document::maskedURLStringForBindings() const
+{
+    static MainThreadNeverDestroyed<const AtomString> url("webkit-masked-url://hidden/"_s);
+    return url;
+}
+
+const URL& Document::maskedURLForBindings() const
+{
+    static MainThreadNeverDestroyed<URL> url(maskedURLStringForBindings().string());
+    return url;
+}
+
 void Document::setBackForwardCacheState(BackForwardCacheState state)
 {
     if (m_backForwardCacheState == state)

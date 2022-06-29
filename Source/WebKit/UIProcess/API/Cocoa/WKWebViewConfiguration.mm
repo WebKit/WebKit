@@ -962,6 +962,23 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
     _pageConfiguration->setCORSDisablingPatterns(makeVector<String>(patterns));
 }
 
+- (NSSet<NSString *> *)_maskedURLSchemes
+{
+    const auto& schemes = _pageConfiguration->maskedURLSchemes();
+    NSMutableSet<NSString *> *set = [NSMutableSet setWithCapacity:schemes.size()];
+    for (const auto& scheme : schemes)
+        [set addObject:scheme];
+    return set;
+}
+
+- (void)_setMaskedURLSchemes:(NSSet<NSString *> *)schemes
+{
+    HashSet<String> set;
+    for (NSString *scheme in schemes)
+        set.add(scheme);
+    _pageConfiguration->setMaskedURLSchemes(WTFMove(set));
+}
+
 - (void)_setLoadsFromNetwork:(BOOL)loads
 {
     _pageConfiguration->setAllowedNetworkHosts(loads ? std::nullopt : std::optional { MemoryCompactLookupOnlyRobinHoodHashSet<String> { } });

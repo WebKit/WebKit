@@ -657,6 +657,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         synchronizeCORSDisablingPatternsWithNetworkProcess();
     pageConfiguration.corsDisablingPatterns = parseAndAllowAccessToCORSDisablingPatterns(m_corsDisablingPatterns);
 
+    pageConfiguration.maskedURLSchemes = parameters.maskedURLSchemes;
     pageConfiguration.userScriptsShouldWaitUntilNotification = parameters.userScriptsShouldWaitUntilNotification;
     pageConfiguration.loadsSubresources = parameters.loadsSubresources;
     pageConfiguration.allowedNetworkHosts = parameters.allowedNetworkHosts;

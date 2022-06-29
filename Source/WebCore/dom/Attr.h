@@ -44,7 +44,7 @@ public:
     bool specified() const { return true; }
     Element* ownerElement() const { return m_element; }
 
-    WEBCORE_EXPORT const AtomString& value() const;
+    WEBCORE_EXPORT AtomString value() const;
     WEBCORE_EXPORT void setValue(const AtomString&);
 
     const QualifiedName& qualifiedName() const { return m_name; }

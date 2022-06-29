@@ -82,6 +82,7 @@ enum class AnimationImpact;
 enum class EventHandling : uint8_t;
 enum class EventProcessing : uint8_t;
 enum class IsSyntheticClick : bool { No, Yes };
+enum class ResolveURLs : uint8_t { No, NoExcludingURLsForPrivacy, Yes, YesExcludingURLsForPrivacy };
 enum class SelectionRestorationMode : uint8_t;
 
 struct GetAnimationsOptions;
@@ -110,6 +111,7 @@ public:
 
     WEBCORE_EXPORT bool hasAttribute(const QualifiedName&) const;
     WEBCORE_EXPORT const AtomString& getAttribute(const QualifiedName&) const;
+    AtomString getAttributeForBindings(const QualifiedName&, ResolveURLs = ResolveURLs::NoExcludingURLsForPrivacy) const;
     template<typename... QualifiedNames>
     inline const AtomString& getAttribute(const QualifiedName&, const QualifiedNames&...) const;
     WEBCORE_EXPORT void setAttribute(const QualifiedName&, const AtomString& value);
@@ -148,6 +150,8 @@ public:
 
     WEBCORE_EXPORT const AtomString& getAttribute(const AtomString& qualifiedName) const;
     WEBCORE_EXPORT const AtomString& getAttributeNS(const AtomString& namespaceURI, const AtomString& localName) const;
+    AtomString getAttributeForBindings(const AtomString& qualifiedName, ResolveURLs = ResolveURLs::NoExcludingURLsForPrivacy) const;
+    inline AtomString getAttributeNSForBindings(const AtomString& namespaceURI, const AtomString& localName, ResolveURLs = ResolveURLs::NoExcludingURLsForPrivacy) const;
 
     WEBCORE_EXPORT ExceptionOr<void> setAttribute(const AtomString& qualifiedName, const AtomString& value);
     static ExceptionOr<QualifiedName> parseAttributeName(const AtomString& namespaceURI, const AtomString& qualifiedName);
@@ -423,10 +427,12 @@ public:
 
     virtual bool isURLAttribute(const Attribute&) const { return false; }
     virtual bool attributeContainsURL(const Attribute& attribute) const { return isURLAttribute(attribute); }
-    virtual String completeURLsInAttributeValue(const URL& base, const Attribute&) const;
+    String resolveURLStringIfNeeded(const String& urlString, ResolveURLs = ResolveURLs::Yes, const URL& base = URL()) const;
+    virtual String completeURLsInAttributeValue(const URL& base, const Attribute&, ResolveURLs = ResolveURLs::Yes) const;
     virtual bool isHTMLContentAttribute(const Attribute&) const { return false; }
 
     WEBCORE_EXPORT URL getURLAttribute(const QualifiedName&) const;
+    inline URL getURLAttributeForBindings(const QualifiedName&) const;
     URL getNonEmptyURLAttribute(const QualifiedName&) const;
 
     virtual const AtomString& imageSourceURL() const;
@@ -730,6 +736,9 @@ private:
 
     void synchronizeAttribute(const QualifiedName&) const;
     void synchronizeAttribute(const AtomString& localName) const;
+
+    inline const Attribute* getAttributeInternal(const QualifiedName&) const;
+    inline const Attribute* getAttributeInternal(const AtomString& qualifiedName) const;
 
     void updateName(const AtomString& oldName, const AtomString& newName);
     void updateNameForTreeScope(TreeScope&, const AtomString& oldName, const AtomString& newName);

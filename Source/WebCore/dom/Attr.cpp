@@ -122,10 +122,10 @@ CSSStyleDeclaration* Attr::style()
     return &m_style->ensureCSSStyleDeclaration();
 }
 
-const AtomString& Attr::value() const
+AtomString Attr::value() const
 {
     if (m_element)
-        return m_element->getAttribute(qualifiedName());
+        return m_element->getAttributeForBindings(qualifiedName());
     return m_standaloneValue;
 }
 

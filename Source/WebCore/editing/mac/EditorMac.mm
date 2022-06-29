@@ -269,7 +269,7 @@ void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElemen
         pasteboardImage.dataInWebArchiveFormat = imageInWebArchiveFormat(imageElement);
 
     if (auto imageRange = makeRangeSelectingNode(imageElement))
-        pasteboardImage.dataInHTMLFormat = serializePreservingVisualAppearance(VisibleSelection { *imageRange }, ResolveURLs::YesExcludingLocalFileURLsForPrivacy, SerializeComposedTree::Yes);
+        pasteboardImage.dataInHTMLFormat = serializePreservingVisualAppearance(VisibleSelection { *imageRange }, ResolveURLs::YesExcludingURLsForPrivacy, SerializeComposedTree::Yes);
 
     pasteboardImage.url.url = url;
     pasteboardImage.url.title = title;

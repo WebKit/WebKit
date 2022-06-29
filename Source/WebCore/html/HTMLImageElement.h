@@ -130,6 +130,9 @@ public:
 
     void loadDeferredImage();
 
+    AtomString srcsetForBindings() const;
+    void setSrcsetForBindings(const AtomString&);
+
     const AtomString& loadingForBindings() const;
     void setLoadingForBindings(const AtomString&);
 
@@ -176,7 +179,7 @@ private:
 
     bool isURLAttribute(const Attribute&) const override;
     bool attributeContainsURL(const Attribute&) const override;
-    String completeURLsInAttributeValue(const URL& base, const Attribute&) const override;
+    String completeURLsInAttributeValue(const URL& base, const Attribute&, ResolveURLs = ResolveURLs::Yes) const override;
 
     bool isDraggableIgnoringAttributes() const final { return true; }
 

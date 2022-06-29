@@ -233,19 +233,7 @@ void MarkupAccumulator::serializeNodesWithNamespaces(Node& targetNode, Serialize
 
 String MarkupAccumulator::resolveURLIfNeeded(const Element& element, const String& urlString) const
 {
-    switch (m_resolveURLs) {
-    case ResolveURLs::Yes:
-        return element.document().completeURL(urlString).string();
-
-    case ResolveURLs::YesExcludingLocalFileURLsForPrivacy:
-        if (!element.document().url().isLocalFile())
-            return element.document().completeURL(urlString).string();
-        break;
-
-    case ResolveURLs::No:
-        break;
-    }
-    return urlString;
+    return element.resolveURLStringIfNeeded(urlString, m_resolveURLs);
 }
 
 void MarkupAccumulator::startAppendingNode(const Node& node, Namespaces* namespaces)

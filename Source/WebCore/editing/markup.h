@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "Element.h"
 #include "ExceptionOr.h"
 #include "FloatSize.h"
 #include "FragmentScriptingPermission.h"
@@ -70,7 +71,6 @@ bool isPlainTextMarkup(Node*);
 // These methods are used by HTMLElement & ShadowRoot to replace the children with respected fragment/text.
 ExceptionOr<void> replaceChildrenWithFragment(ContainerNode&, Ref<DocumentFragment>&&);
 
-enum class ResolveURLs : uint8_t { No, Yes, YesExcludingLocalFileURLsForPrivacy };
 enum class ConvertBlocksToInlines : uint8_t { No, Yes };
 enum class SerializeComposedTree : uint8_t { No, Yes };
 WEBCORE_EXPORT String serializePreservingVisualAppearance(const SimpleRange&, Vector<Node*>* = nullptr, AnnotateForInterchange = AnnotateForInterchange::No, ConvertBlocksToInlines = ConvertBlocksToInlines::No, ResolveURLs = ResolveURLs::No);

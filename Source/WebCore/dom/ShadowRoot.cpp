@@ -177,7 +177,7 @@ StyleSheetList& ShadowRoot::styleSheets()
 
 String ShadowRoot::innerHTML() const
 {
-    return serializeFragment(*this, SerializedNodes::SubtreesOfChildren);
+    return serializeFragment(*this, SerializedNodes::SubtreesOfChildren, nullptr, ResolveURLs::NoExcludingURLsForPrivacy);
 }
 
 ExceptionOr<void> ShadowRoot::setInnerHTML(const String& markup)

@@ -87,6 +87,7 @@ typedef NS_ENUM(NSUInteger, _WKContentSecurityPolicyModeForExtension) {
 
 @property (nonatomic, readonly) WKWebsiteDataStore *_websiteDataStoreIfExists WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
 @property (nonatomic, copy, setter=_setCORSDisablingPatterns:) NSArray<NSString *> *_corsDisablingPatterns WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
+@property (nonatomic, copy, setter=_setMaskedURLSchemes:) NSSet<NSString *> *_maskedURLSchemes WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 @property (nonatomic, setter=_setDeferrableUserScriptsShouldWaitUntilNotification:) BOOL _deferrableUserScriptsShouldWaitUntilNotification WK_API_AVAILABLE(macos(11.0), ios(14.0));
 @property (nonatomic, setter=_setCrossOriginAccessControlCheckEnabled:) BOOL _crossOriginAccessControlCheckEnabled WK_API_AVAILABLE(macos(11.0), ios(14.0));
 

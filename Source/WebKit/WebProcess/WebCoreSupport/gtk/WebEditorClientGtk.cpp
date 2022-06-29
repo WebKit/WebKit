@@ -145,7 +145,7 @@ void WebEditorClient::updateGlobalSelection(Frame* frame)
     PasteboardWebContent pasteboardContent;
     pasteboardContent.canSmartCopyOrDelete = false;
     pasteboardContent.text = plainText(*range);
-    pasteboardContent.markup = serializePreservingVisualAppearance(frame->selection().selection(), ResolveURLs::YesExcludingLocalFileURLsForPrivacy);
+    pasteboardContent.markup = serializePreservingVisualAppearance(frame->selection().selection(), ResolveURLs::YesExcludingURLsForPrivacy);
     Pasteboard::createForGlobalSelection(PagePasteboardContext::create(frame->pageID()))->write(pasteboardContent);
 }
 

@@ -139,6 +139,7 @@ public:
     RefPtr<DeviceOrientationUpdateProvider> deviceOrientationUpdateProvider;
 #endif
     Vector<UserContentURLPattern> corsDisablingPatterns;
+    HashSet<String> maskedURLSchemes;
     UniqueRef<SpeechRecognitionProvider> speechRecognitionProvider;
     UniqueRef<MediaRecorderProvider> mediaRecorderProvider;
 

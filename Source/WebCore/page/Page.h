@@ -920,6 +920,8 @@ public:
     void forEachFrame(const Function<void(Frame&)>&);
 
     bool shouldDisableCorsForRequestTo(const URL&) const;
+    bool shouldMaskURLForBindings(const URL&) const;
+    bool hasURLsToMaskForBindings() const { return !m_maskedURLSchemes.isEmpty(); }
 
     WEBCORE_EXPORT void injectUserStyleSheet(UserStyleSheet&);
     WEBCORE_EXPORT void removeInjectedUserStyleSheet(UserStyleSheet&);
@@ -1294,6 +1296,7 @@ private:
 #endif
 
     Vector<UserContentURLPattern> m_corsDisablingPatterns;
+    HashSet<String> m_maskedURLSchemes;
     Vector<UserStyleSheet> m_userStyleSheetsPendingInjection;
     std::optional<MemoryCompactLookupOnlyRobinHoodHashSet<String>> m_allowedNetworkHosts;
     bool m_isTakingSnapshotsForApplicationSuspension { false };

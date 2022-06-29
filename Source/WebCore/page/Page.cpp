@@ -337,6 +337,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_deviceOrientationUpdateProvider(WTFMove(pageConfiguration.deviceOrientationUpdateProvider))
 #endif
     , m_corsDisablingPatterns(WTFMove(pageConfiguration.corsDisablingPatterns))
+    , m_maskedURLSchemes(WTFMove(pageConfiguration.maskedURLSchemes))
     , m_allowedNetworkHosts(WTFMove(pageConfiguration.allowedNetworkHosts))
     , m_loadsSubresources(pageConfiguration.loadsSubresources)
     , m_shouldRelaxThirdPartyCookieBlocking(pageConfiguration.shouldRelaxThirdPartyCookieBlocking)
@@ -3754,6 +3755,13 @@ bool Page::shouldDisableCorsForRequestTo(const URL& url) const
     return WTF::anyOf(m_corsDisablingPatterns, [&] (const auto& pattern) {
         return pattern.matches(url);
     });
+}
+
+bool Page::shouldMaskURLForBindings(const URL& url) const
+{
+    if (m_maskedURLSchemes.isEmpty())
+        return false;
+    return m_maskedURLSchemes.contains<StringViewHashTranslator>(url.protocol());
 }
 
 void Page::revealCurrentSelection()

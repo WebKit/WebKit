@@ -3991,7 +3991,7 @@ static inline JSValue jsTestObj_reflectedURLAttrGetter(JSGlobalObject& lexicalGl
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLAtomStringAdaptor<IDLDOMString>>(lexicalGlobalObject, throwScope, impl.getURLAttribute(WebCore::HTMLNames::reflectedurlattrAttr))));
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLAtomStringAdaptor<IDLDOMString>>(lexicalGlobalObject, throwScope, impl.getURLAttributeForBindings(WebCore::HTMLNames::reflectedurlattrAttr))));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestObj_reflectedURLAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -4022,7 +4022,7 @@ static inline JSValue jsTestObj_reflectedUSVURLAttrGetter(JSGlobalObject& lexica
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLAtomStringAdaptor<IDLUSVString>>(lexicalGlobalObject, throwScope, impl.getURLAttribute(WebCore::HTMLNames::reflectedusvurlattrAttr))));
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLAtomStringAdaptor<IDLUSVString>>(lexicalGlobalObject, throwScope, impl.getURLAttributeForBindings(WebCore::HTMLNames::reflectedusvurlattrAttr))));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestObj_reflectedUSVURLAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -4146,7 +4146,7 @@ static inline JSValue jsTestObj_reflectedCustomURLAttrGetter(JSGlobalObject& lex
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLAtomStringAdaptor<IDLDOMString>>(lexicalGlobalObject, throwScope, impl.getURLAttribute(WebCore::HTMLNames::customContentURLAttrAttr))));
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLAtomStringAdaptor<IDLDOMString>>(lexicalGlobalObject, throwScope, impl.getURLAttributeForBindings(WebCore::HTMLNames::customContentURLAttrAttr))));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestObj_reflectedCustomURLAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))

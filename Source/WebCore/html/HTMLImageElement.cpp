@@ -578,7 +578,7 @@ bool HTMLImageElement::attributeContainsURL(const Attribute& attribute) const
         || HTMLElement::attributeContainsURL(attribute);
 }
 
-String HTMLImageElement::completeURLsInAttributeValue(const URL& base, const Attribute& attribute) const
+String HTMLImageElement::completeURLsInAttributeValue(const URL& base, const Attribute& attribute, ResolveURLs resolveURLs) const
 {
     if (attribute.name() == srcsetAttr) {
         Vector<ImageCandidate> imageCandidates = parseImageCandidatesFromSrcsetAttribute(StringView(attribute.value()));
@@ -586,7 +586,7 @@ String HTMLImageElement::completeURLsInAttributeValue(const URL& base, const Att
         for (const auto& candidate : imageCandidates) {
             if (&candidate != &imageCandidates[0])
                 result.append(", ");
-            result.append(URL(base, candidate.string.toString()).string());
+            result.append(resolveURLStringIfNeeded(candidate.string.toString(), resolveURLs, base));
             if (candidate.density != UninitializedDescriptor)
                 result.append(' ', candidate.density, 'x');
             if (candidate.resourceWidth != UninitializedDescriptor)
@@ -594,7 +594,8 @@ String HTMLImageElement::completeURLsInAttributeValue(const URL& base, const Att
         }
         return result.toString();
     }
-    return HTMLElement::completeURLsInAttributeValue(base, attribute);
+
+    return HTMLElement::completeURLsInAttributeValue(base, attribute, resolveURLs);
 }
 
 bool HTMLImageElement::matchesUsemap(const AtomStringImpl& name) const
@@ -847,6 +848,16 @@ bool HTMLImageElement::virtualHasPendingActivity() const
 size_t HTMLImageElement::pendingDecodePromisesCountForTesting() const
 {
     return m_imageLoader->pendingDecodePromisesCountForTesting();
+}
+
+AtomString HTMLImageElement::srcsetForBindings() const
+{
+    return getAttributeForBindings(srcsetAttr);
+}
+
+void HTMLImageElement::setSrcsetForBindings(const AtomString& value)
+{
+    setAttributeWithoutSynchronization(srcsetAttr, value);
 }
 
 const AtomString& HTMLImageElement::loadingForBindings() const

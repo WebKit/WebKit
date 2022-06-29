@@ -40,8 +40,8 @@
     [DOMJIT=ReadDOM] boolean hasAttributes();
     [SameObject] readonly attribute NamedNodeMap attributes;
     sequence<DOMString> getAttributeNames();
-    [DOMJIT=ReadDOM] DOMString? getAttribute([AtomString] DOMString qualifiedName);
-    DOMString? getAttributeNS([AtomString] DOMString? namespaceURI, [AtomString] DOMString localName);
+    [DOMJIT=ReadDOM, ImplementedAs=getAttributeForBindings] DOMString? getAttribute([AtomString] DOMString qualifiedName);
+    [ImplementedAs=getAttributeNSForBindings] DOMString? getAttributeNS([AtomString] DOMString? namespaceURI, [AtomString] DOMString localName);
     [CEReactions] undefined setAttribute([AtomString] DOMString qualifiedName, [AtomString] DOMString value);
     [CEReactions] undefined setAttributeNS([AtomString] DOMString? namespaceURI, [AtomString] DOMString qualifiedName, [AtomString] DOMString value);
     [CEReactions, ImplementedAs=removeAttributeForBindings] undefined removeAttribute([AtomString] DOMString qualifiedName);

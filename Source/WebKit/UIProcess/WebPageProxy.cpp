@@ -8505,6 +8505,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 
     parameters.overriddenMediaType = m_overriddenMediaType;
     parameters.corsDisablingPatterns = corsDisablingPatterns();
+    parameters.maskedURLSchemes = m_configuration->maskedURLSchemes();
     parameters.userScriptsShouldWaitUntilNotification = m_configuration->userScriptsShouldWaitUntilNotification();
     parameters.allowedNetworkHosts = m_configuration->allowedNetworkHosts();
     parameters.loadsSubresources = m_configuration->loadsSubresources();

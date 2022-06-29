@@ -29,7 +29,7 @@
 ] interface HTMLImageElement : HTMLElement {
     [CEReactions=NotNeeded, Reflect] attribute DOMString alt;
     [CEReactions=NotNeeded, Reflect, URL] attribute USVString src;
-    [CEReactions=NotNeeded, Reflect] attribute USVString srcset;
+    [CEReactions=NotNeeded, ImplementedAs=srcsetForBindings] attribute [AtomString] USVString srcset;
     [CEReactions=NotNeeded, Reflect] attribute DOMString sizes;
     [CEReactions=NotNeeded] attribute [AtomString] DOMString? crossOrigin;
     [CEReactions=NotNeeded, Reflect] attribute DOMString useMap;

@@ -509,7 +509,7 @@ void Pasteboard::writeSelection(const SimpleRange& selectedRange, bool canSmartC
     // Put CF_HTML format on the pasteboard 
     if (::OpenClipboard(m_owner)) {
         Vector<char> data;
-        // FIXME: Use ResolveURLs::YesExcludingLocalFileURLsForPrivacy.
+        // FIXME: Use ResolveURLs::YesExcludingURLsForPrivacy.
         markupToCFHTML(serializePreservingVisualAppearance(frame.selection().selection()),
             selectedRange.start.container->document().url().string(), data);
         HGLOBAL cbData = createGlobalData(data);

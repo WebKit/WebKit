@@ -149,6 +149,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << oldPageID;
     encoder << overriddenMediaType;
     encoder << corsDisablingPatterns;
+    encoder << maskedURLSchemes;
     encoder << loadsSubresources;
     encoder << allowedNetworkHosts;
     encoder << userScriptsShouldWaitUntilNotification;
@@ -503,6 +504,12 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
     if (!corsDisablingPatterns)
         return std::nullopt;
     parameters.corsDisablingPatterns = WTFMove(*corsDisablingPatterns);
+
+    std::optional<HashSet<String>> maskedURLSchemes;
+    decoder >> maskedURLSchemes;
+    if (!maskedURLSchemes)
+        return std::nullopt;
+    parameters.maskedURLSchemes = WTFMove(*maskedURLSchemes);
 
     std::optional<bool> loadsSubresources;
     decoder >> loadsSubresources;

@@ -1101,7 +1101,7 @@ sub GetterExpression
 
     my $functionName;
     if ($attribute->extendedAttributes->{"URL"}) {
-        $functionName = "getURLAttribute";
+        $functionName = "getURLAttributeForBindings";
     } elsif ($attributeType->name eq "boolean") {
         $functionName = "hasAttributeWithoutSynchronization";
     } elsif ($attributeType->name eq "long") {
