@@ -658,7 +658,9 @@
 
 (allow mach-lookup
     (require-all
+#if HAVE(POWERLOG_TASK_MODE_QUERY)
         (extension "com.apple.webkit.extension.mach")
+#endif
         (global-name "com.apple.powerlog.plxpclogger.xpc")))
 
 (with-filter (system-attribute apple-internal)
