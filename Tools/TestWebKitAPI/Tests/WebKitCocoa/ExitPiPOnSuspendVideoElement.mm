@@ -55,7 +55,8 @@
 
 namespace TestWebKitAPI {
 
-TEST(PictureInPicture, ExitPiPOnSuspendVideoElement)
+// FIXME: Re-enable after webkit.org/b/242014 is resolved
+TEST(PictureInPicture, DISABLED_ExitPiPOnSuspendVideoElement)
 {
     if (!WebCore::supportsPictureInPicture())
         return;
