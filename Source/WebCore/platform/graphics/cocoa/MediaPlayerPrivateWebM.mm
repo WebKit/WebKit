@@ -77,6 +77,7 @@ MediaPlayerPrivateWebM::MediaPlayerPrivateWebM(MediaPlayer* player)
     , m_videoLayerManager(makeUnique<VideoLayerManagerObjC>(m_logger, m_logIdentifier))
 {
     ALWAYS_LOG(LOGIDENTIFIER);
+    m_parser->setLogger(m_logger, m_logIdentifier);
 }
 
 MediaPlayerPrivateWebM::~MediaPlayerPrivateWebM()
