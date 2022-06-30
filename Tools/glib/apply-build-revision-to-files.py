@@ -65,7 +65,7 @@ def get_build_revision():
                 revision_from_git = get_revision_from_most_recent_git_commit()
                 if revision_from_git:
                     revision = revision_from_git
-        elif os.path.isdir('.git'):
+        elif os.path.isdir('.git') or os.path.isfile('.git'):
             revision_from_git = get_revision_from_most_recent_git_commit()
             if revision_from_git:
                 revision = revision_from_git
