@@ -262,9 +262,13 @@
             )
 #endif
         )
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 130000
         (deny (with telemetry)
-            iokit-external-trap
-        )
+            iokit-external-trap)
+#else
+        (allow
+            iokit-external-trap)
+#endif
     )
 )
 
