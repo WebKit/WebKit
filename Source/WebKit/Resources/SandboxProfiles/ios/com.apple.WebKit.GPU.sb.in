@@ -675,6 +675,7 @@
 (deny file-write-create (vnode-type SYMLINK))
 (deny file-read-xattr file-write-xattr (xattr-prefix "com.apple.security.private."))
 
+#if HAVE(AGX_COMPILER_SERVICE)
 (allow iokit-open
     (require-all
         (extension "com.apple.webkit.extension.iokit")
@@ -689,6 +690,7 @@
             "IOAccelContext2"
             "IOAccelDevice2"
             "IOAccelSharedUserClient2")))
+#endif // HAVE(AGX_COMPILER_SERVICE)
 
 (deny mach-lookup (with no-log)
     (xpc-service-name "com.apple.audio.toolbox.reporting.service")

@@ -1017,6 +1017,7 @@
         (global-name
             "com.apple.iconservices")))
 
+#if HAVE(AGX_COMPILER_SERVICE)
 (allow iokit-open
     (require-all
         (extension "com.apple.webkit.extension.iokit")
@@ -1039,6 +1040,7 @@
     (require-all
         (extension "com.apple.webkit.extension.mach")
         (xpc-service-name-prefix "com.apple.AGXCompilerService")))
+#endif // HAVE(AGX_COMPILER_SERVICE)
 
 (media-capture-support)
 
