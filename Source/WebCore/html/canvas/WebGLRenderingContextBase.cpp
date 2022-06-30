@@ -4714,8 +4714,19 @@ void WebGLRenderingContextBase::renderbufferStorageImpl(GCGLenum target, GCGLsiz
     case GraphicsContextGL::RGB565:
     case GraphicsContextGL::STENCIL_INDEX8:
     case GraphicsContextGL::SRGB8_ALPHA8_EXT:
+    case GraphicsContextGL::RGB16F:
+    case GraphicsContextGL::RGBA16F:
+    case GraphicsContextGL::RGBA32F:
         if (internalformat == GraphicsContextGL::SRGB8_ALPHA8_EXT && !m_extsRGB) {
-            synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid internalformat");
+            synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "EXT_sRGB not enabled");
+            return;
+        }
+        if ((internalformat == GraphicsContextGL::RGB16F || internalformat == GraphicsContextGL::RGBA16F) && !m_extColorBufferHalfFloat) {
+            synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "EXT_color_buffer_half_float not enabled");
+            return;
+        }
+        if (internalformat == GraphicsContextGL::RGBA32F && !m_webglColorBufferFloat) {
+            synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "WEBGL_color_buffer_float not enabled");
             return;
         }
         m_context->renderbufferStorage(target, internalformat, width, height);
