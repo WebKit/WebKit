@@ -459,6 +459,7 @@ public:
     bool isContinuingLoadAfterProvisionalLoadStarted() const { return m_isContinuingLoadAfterProvisionalLoadStarted; }
     void setIsContinuingLoadAfterProvisionalLoadStarted(bool isContinuingLoadAfterProvisionalLoadStarted) { m_isContinuingLoadAfterProvisionalLoadStarted = isContinuingLoadAfterProvisionalLoadStarted; }
 
+    bool isInFinishedLoadingOfEmptyDocument() const { return m_isInFinishedLoadingOfEmptyDocument; }
 #if ENABLE(CONTENT_FILTERING)
     bool contentFilterWillHandleProvisionalLoadFailure(const ResourceError&);
     void contentFilterHandleProvisionalLoadFailure(const ResourceError&);
@@ -604,6 +605,7 @@ private:
     bool m_isClientRedirect { false };
     bool m_isLoadingMultipartContent { false };
     bool m_isContinuingLoadAfterProvisionalLoadStarted { false };
+    bool m_isInFinishedLoadingOfEmptyDocument { false };
 
     // FIXME: Document::m_processingLoadEvent and DocumentLoader::m_wasOnloadDispatched are roughly the same
     // and should be merged.

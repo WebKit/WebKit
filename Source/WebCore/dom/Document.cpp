@@ -6252,7 +6252,10 @@ void Document::finishedParsing()
     }
 
     // FIXME: Schedule a task to fire DOMContentLoaded event instead. See webkit.org/b/82931
-    eventLoop().performMicrotaskCheckpoint();
+    auto* documentLoader = loader();
+    bool isInMiddleOfInitializingIframe = documentLoader && documentLoader->isInFinishedLoadingOfEmptyDocument();
+    if (!isInMiddleOfInitializingIframe)
+        eventLoop().performMicrotaskCheckpoint();
     dispatchEvent(Event::create(eventNames().DOMContentLoadedEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
 
     if (!m_eventTiming.domContentLoadedEventEnd) {

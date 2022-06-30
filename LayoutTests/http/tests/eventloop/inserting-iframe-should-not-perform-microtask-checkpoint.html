@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests inserting an empty iframe after scheduling a microtask.<br>
+WebKit should not perform a microtask checkpoint.</p>
+<pre id="log"></pre>
+<script>
+let logCount = 0;
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+const testCases = [
+    {name: 'empty', test: (iframe) => {}},
+    {name: 'about:blank', test: (iframe) => iframe.src = 'about:blank'},
+    {name: 'hello.html', test: (iframe) => iframe.src = 'resources/hello.html'},
+    {name: 'data URL', test: (iframe) => iframe.src = 'data:text/html,<!DOCTYPE html>data'},
+    {name: 'srcdoc', test: (iframe) => iframe.srcdoc = '<!DOCTYPE html>srcdoc'},
+]
+
+function test(name, testFunction) {
+    function log(message) {
+        document.getElementById('log').textContent += `${message}\n`;
+    }
+
+    return new Promise((resolve) => {
+        document.getElementById('log').textContent += `\n${name}\n`;
+
+        queueMicrotask(() => {
+            log('microtask');
+        });
+
+        const iframe = document.createElement("iframe");
+        iframe.onload = () => {
+            log('load event');
+            setTimeout(nextTest);
+        }
+        testFunction(iframe);
+        log('begin inserting iframe');
+        document.body.appendChild(iframe);
+        log('end inserting iframe');
+    });
+}
+
+onload = nextTest;
+
+let testIndex = 0;
+function nextTest() {
+    if (testIndex >= testCases.length) {
+        if (window.testRunner)
+            testRunner.notifyDone();
+        return;
+    }
+    test(testCases[testIndex].name, testCases[testIndex].test);
+    testIndex++;
+}
+
+</script>
+</body>
+</html>
