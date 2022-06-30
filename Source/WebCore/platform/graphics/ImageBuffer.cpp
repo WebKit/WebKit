@@ -28,7 +28,6 @@
 #include "config.h"
 #include "ImageBuffer.h"
 
-#include "BitmapImage.h"
 #include "GraphicsContext.h"
 #include "HostWindow.h"
 #include "PlatformImageBuffer.h"
@@ -122,48 +121,14 @@ FloatRect ImageBuffer::clampedRect(const FloatRect& rect)
     return FloatRect(rect.location(), clampedSize(rect.size()));
 }
 
-RefPtr<NativeImage> ImageBuffer::sinkIntoNativeImage(RefPtr<ImageBuffer> source)
+RefPtr<NativeImage> ImageBuffer::sinkIntoNativeImage(RefPtr<ImageBuffer> imageBuffer)
 {
-    if (!source)
-        return nullptr;
-    return source->sinkIntoNativeImage();
+    return imageBuffer->sinkIntoNativeImage();
 }
 
-RefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyBehavior, PreserveResolution preserveResolution) const
+RefPtr<Image> ImageBuffer::sinkIntoImage(RefPtr<ImageBuffer> imageBuffer, PreserveResolution preserveResolution)
 {
-    RefPtr<NativeImage> image;
-    if (resolutionScale() == 1 || preserveResolution == PreserveResolution::Yes)
-        image = copyNativeImage(copyBehavior);
-    else {
-        auto copyBuffer = context().createImageBuffer(logicalSize(), 1.f, colorSpace());
-        if (!copyBuffer)
-            return nullptr;
-        copyBuffer->context().drawImageBuffer(const_cast<ImageBuffer&>(*this), FloatPoint { }, CompositeOperator::Copy);
-        image = ImageBuffer::sinkIntoNativeImage(WTFMove(copyBuffer));
-    }
-    if (!image)
-        return nullptr;
-    return BitmapImage::create(image.releaseNonNull());
-}
-
-RefPtr<Image> ImageBuffer::sinkIntoImage(RefPtr<ImageBuffer> source, PreserveResolution preserveResolution)
-{
-    if (!source)
-        return nullptr;
-    RefPtr<NativeImage> image;
-    if (source->resolutionScale() == 1 || preserveResolution == PreserveResolution::Yes)
-        image = sinkIntoNativeImage(WTFMove(source));
-    else {
-        auto copySize = source->logicalSize();
-        auto copyBuffer = source->context().createImageBuffer(copySize, 1.f, source->colorSpace());
-        if (!copyBuffer)
-            return nullptr;
-        drawConsuming(WTFMove(source), copyBuffer->context(), FloatRect { { }, copySize }, FloatRect { 0, 0, -1, -1 }, CompositeOperator::Copy);
-        image = ImageBuffer::sinkIntoNativeImage(WTFMove(copyBuffer));
-    }
-    if (!image)
-        return nullptr;
-    return BitmapImage::create(image.releaseNonNull());
+    return imageBuffer->sinkIntoImage(preserveResolution);
 }
 
 void ImageBuffer::drawConsuming(RefPtr<ImageBuffer> imageBuffer, GraphicsContext& context, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)

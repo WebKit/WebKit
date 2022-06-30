@@ -60,6 +60,11 @@ RefPtr<NativeImage> ImageBufferBackend::sinkIntoNativeImage()
     return copyNativeImage(DontCopyBackingStore);
 }
 
+RefPtr<Image> ImageBufferBackend::sinkIntoImage(PreserveResolution preserveResolution)
+{
+    return copyImage(DontCopyBackingStore, preserveResolution);
+}
+
 void ImageBufferBackend::convertToLuminanceMask()
 {
     PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, colorSpace() };
