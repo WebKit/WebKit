@@ -398,7 +398,7 @@ void RemoteRenderingBackend::prepareBuffersForDisplay(Vector<PrepareBackingStore
     for (unsigned i = 0; i < swapBuffersInput.size(); ++i)
         prepareLayerBuffersForDisplay(swapBuffersInput[i], outputData[i]);
 
-    completionHandler(outputData);
+    completionHandler(WTFMove(outputData));
 }
 
 // This is the GPU Process version of RemoteLayerBackingStore::prepareBuffers().
