@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003-2021 Apple Inc.
+ * Copyright (C) 2003-2022 Apple Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -226,7 +226,7 @@ static void fillVectorWithVerticalGlyphPositions(Vector<CGPoint, 256>& positions
     // 3. Record a new position as the local origin of the next glyph
     // 4. Go to 2
     // However, for vertical text, we can't get away with this because the glyph origins are not on the baseline.
-    // This is what the "vertical translation for a glyph" is. It contains this vector:
+    // This is what the "vertical translation for a glyph" is for. It contains this vector:
     // +---A--------B-------------+
     // |           /              |
     // |          /               |
@@ -263,15 +263,17 @@ static void fillVectorWithVerticalGlyphPositions(Vector<CGPoint, 256>& positions
     // is at the point labeled B in the above diagram, in user coordinates.
     auto position = CGPointMake(point.x(), point.y() + ascentDelta);
 
+    static const auto constantSyntheticTextMatrixOmittingOblique = computeBaseVerticalTextMatrix(computeBaseOverallTextMatrix(std::nullopt)); // See fillVectorWithVerticalGlyphPositions(), which describes what this is.
+
     for (unsigned i = 0; i < count; ++i) {
         // The "translations" parameter is in the "synthetic-oblique-less text coordinate system" and we want to add it to the position in the user
         // coordinate system. Luckily, the text matrix (or, at least the version of the text matrix that doesn't include synthetic oblique) does exactly
         // this. So, we just create the synthetic-oblique-less text matrix, and run the translation through it. This gives us the translation in user
         // coordinates.
-        auto translation = CGSizeApplyAffineTransform(translations[i], computeBaseVerticalTextMatrix(computeBaseOverallTextMatrix(std::nullopt)));
+        auto translationInUserCoordinates = CGSizeApplyAffineTransform(translations[i], constantSyntheticTextMatrixOmittingOblique);
 
         // Now we can add the position in user coordinates with the translation in user coordinates.
-        auto positionInUserCoordinates = CGPointMake(position.x + translation.width, position.y + translation.height);
+        auto positionInUserCoordinates = CGPointMake(position.x + translationInUserCoordinates.width, position.y + translationInUserCoordinates.height);
 
         // And then put it back in font coordinates for submission to Core Text. Yay!
         positions[i] = CGPointApplyAffineTransform(positionInUserCoordinates, transform);

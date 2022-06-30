@@ -237,16 +237,56 @@ void DrawGlyphsRecorder::recordEndLayer(CGRenderingStateRef, CGGStateRef gstate)
     m_owner.endTransparencyLayer();
 }
 
-static Vector<CGSize> computeAdvancesFromPositions(const CGPoint positions[], size_t count, const CGAffineTransform& textMatrix)
+struct AdvancesAndInitialPosition {
+    Vector<CGSize> advances;
+    CGPoint initialPosition;
+};
+
+static AdvancesAndInitialPosition computeHorizontalAdvancesFromPositions(const CGPoint positions[], size_t count, const CGAffineTransform& textMatrix)
 {
-    Vector<CGSize> result;
+    // This function needs to be the inverse of fillVectorWithHorizontalGlyphPositions().
+
+    ASSERT(count); // Because we say "positions[0]" below.
+
+    AdvancesAndInitialPosition result;
+    result.advances.reserveInitialCapacity(count);
+    result.initialPosition = CGPointApplyAffineTransform(positions[0], textMatrix);
     for (size_t i = 0; i < count - 1; ++i) {
         auto nextPosition = positions[i + 1];
         auto currentPosition = positions[i];
         auto advance = CGSizeMake(nextPosition.x - currentPosition.x, nextPosition.y - currentPosition.y);
-        result.append(CGSizeApplyAffineTransform(advance, textMatrix));
+        result.advances.uncheckedAppend(CGSizeApplyAffineTransform(advance, textMatrix));
     }
-    result.constructAndAppend(CGSizeMake(0, 0));
+    result.advances.uncheckedConstructAndAppend(CGSizeZero);
+    return result;
+}
+
+static AdvancesAndInitialPosition computeVerticalAdvancesFromPositions(const CGSize translations[], const CGPoint positions[], unsigned count, float ascentDelta, AffineTransform textMatrix)
+{
+    // This function needs to be the inverse of fillVectorWithVerticalGlyphPositions().
+
+    ASSERT(count); // Because we say "positions[0]" below.
+
+    auto constantSyntheticTextMatrixOmittingOblique = computeBaseVerticalTextMatrix(computeBaseOverallTextMatrix(std::nullopt)); // See fillVectorWithVerticalGlyphPositions(), which describes what this is.
+
+    auto transformPoint = [&](CGPoint position, CGSize translation) -> CGPoint {
+        auto positionInUserCoordinates = CGPointApplyAffineTransform(position, textMatrix);
+        auto translationInUserCoordinates = CGSizeApplyAffineTransform(translation, constantSyntheticTextMatrixOmittingOblique);
+        return CGPointMake(positionInUserCoordinates.x - translationInUserCoordinates.width, positionInUserCoordinates.y - translationInUserCoordinates.height);
+    };
+
+    AdvancesAndInitialPosition result;
+    result.advances.reserveInitialCapacity(count);
+    result.initialPosition = transformPoint(positions[0], translations[0]);
+    CGPoint previousPosition = result.initialPosition;
+    result.initialPosition.y -= ascentDelta;
+
+    for (size_t i = 1; i < count; ++i) {
+        auto currentPosition = transformPoint(positions[i], translations[i]);
+        result.advances.uncheckedConstructAndAppend(CGSizeMake(currentPosition.x - previousPosition.x, currentPosition.y - previousPosition.y));
+        previousPosition = currentPosition;
+    }
+    result.advances.uncheckedAppend(CGSizeZero);
     return result;
 }
 
@@ -298,21 +338,17 @@ void DrawGlyphsRecorder::recordDrawGlyphs(CGRenderingStateRef, CGGStateRef gstat
     // `FontCascade::drawGlyphs` we need to recalculate the original advances from the resulting
     // positions by inverting the operations applied to the original advances.
     auto textMatrix = m_originalTextMatrix;
-    auto initialPenPosition = textMatrix.mapPoint(positions[0]);
 
+    AdvancesAndInitialPosition advances;
     if (font->platformData().orientation() == FontOrientation::Vertical) {
-        // Keep this in sync as the inverse of `fillVectorWithVerticalGlyphPositions`.
-        // FIXME: Use rotateLeftTransform(), as fillVectorWithVerticalGlyphPositions() does, instead of using transposedSize().
-        CGSize translation;
-        CTFontGetVerticalTranslationsForGlyphs(font->platformData().ctFont(), glyphs, &translation, 1);
-
-        initialPenPosition += FloatSize(translation).transposedSize();
-
+        Vector<CGSize, 256> translations(count);
+        CTFontGetVerticalTranslationsForGlyphs(font->platformData().ctFont(), glyphs, translations.data(), count);
         auto ascentDelta = font->fontMetrics().floatAscent(IdeographicBaseline) - font->fontMetrics().floatAscent();
-        initialPenPosition.move(0, -ascentDelta);
-    }
+        advances = computeVerticalAdvancesFromPositions(translations.data(), positions, count, ascentDelta, textMatrix);
+    } else
+        advances = computeHorizontalAdvancesFromPositions(positions, count, textMatrix);
 
-    m_owner.drawGlyphsAndCacheResources(font, glyphs, computeAdvancesFromPositions(positions, count, textMatrix).data(), count, initialPenPosition, m_smoothingMode);
+    m_owner.drawGlyphsAndCacheResources(font, glyphs, advances.advances.data(), count, advances.initialPosition, m_smoothingMode);
 
     m_owner.concatCTM(inverseCTMFixup);
 }
