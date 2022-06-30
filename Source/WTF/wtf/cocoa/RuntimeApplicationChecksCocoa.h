@@ -95,6 +95,7 @@ enum class SDKAlignedBehavior {
     WKContentViewDoesNotOverrideKeyCommands,
     WKWebsiteDataStoreInitReturningNil,
     UIBackForwardSkipsHistoryItemsWithoutUserGesture,
+    UserSelectAllDoesNotAffectEditability,
 
     NumberOfBehaviors
 };

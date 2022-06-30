@@ -42,6 +42,9 @@
 #include "HashTools.h"
 #include "StyleColor.h"
 #include "StylePropertyShorthand.h"
+#if PLATFORM(COCOA)
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#endif
 
 namespace WebCore {
 
@@ -827,8 +830,17 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         return valueID == CSSValueAuto || valueID == CSSValueNone || valueID == CSSValueElement;
     case CSSPropertyWebkitUserModify: // read-only | read-write
         return valueID == CSSValueReadOnly || valueID == CSSValueReadWrite || valueID == CSSValueReadWritePlaintextOnly;
-    case CSSPropertyUserSelect: // auto | none | text | all
+    case CSSPropertyWebkitUserSelect: // auto | none | text | all
         return valueID == CSSValueAuto || valueID == CSSValueNone || valueID == CSSValueText || valueID == CSSValueAll;
+    case CSSPropertyUserSelect: // auto | none | text | all
+        if (valueID == CSSValueAll) {
+#if PLATFORM(COCOA)
+            return linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::UserSelectAllDoesNotAffectEditability);
+#else
+            return true;
+#endif
+        }
+        return valueID == CSSValueAuto || valueID == CSSValueNone || valueID == CSSValueText;
     case CSSPropertyWritingMode:
         // Note that horizontal-bt is not supported by the unprefixed version of
         // the property, only by the -webkit- version.
@@ -992,6 +1004,7 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyWebkitTextZoom:
     case CSSPropertyWebkitUserDrag:
     case CSSPropertyWebkitUserModify:
+    case CSSPropertyWebkitUserSelect:
     case CSSPropertyUserSelect:
     case CSSPropertyWhiteSpace:
     case CSSPropertyWordBreak:
