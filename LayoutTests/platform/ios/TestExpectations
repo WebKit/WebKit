@@ -3557,8 +3557,6 @@ webkit.org/b/214465 imported/w3c/web-platform-tests/css/mediaqueries/mq-gamut-00
 
 webkit.org/b/237694 [ Debug ] webgl/1.0.3/conformance/uniforms/uniform-samplers-test.html [ Timeout Pass ]
 
-webkit.org/b/233284 http/wpt/cross-origin-opener-policy/single-request-to-server.html [ Pass Failure ]
-
 [ Release ] editing/spelling/toggle-spellchecking.html [ Failure Pass ]
 pointerevents/mouse/pointer-event-basic-properties.html [ Timeout ]
 imported/w3c/web-platform-tests/workers/semantics/multiple-workers/004.html [ Failure Pass ]

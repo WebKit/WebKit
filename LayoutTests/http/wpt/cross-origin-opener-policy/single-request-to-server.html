@@ -13,8 +13,7 @@ async_test((t) => {
     let w = open("resources/single-request-to-server-popup.py?token=" + token());
     bc.onmessage = t.step_func((event) => {
         assert_equals(event.data, "not_already_loaded");
-        assert_true(w.closed, "Should switch browsing context group");
-        t.done();
+        t.step_wait_func_done(() => w.closed);
     });
 }, "Make sure we make a single request to the HTTP server when switching browsing context group");
 </script>
