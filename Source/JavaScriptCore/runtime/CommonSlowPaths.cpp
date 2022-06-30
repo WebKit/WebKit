@@ -86,7 +86,9 @@ namespace JSC {
         return encodeResult(first, second);        \
     } while (false)
 
-#define END_IMPL() RETURN_TWO(pc, callFrame)
+#define END_IMPL() END_IMPL_WITH_RETURN_SECOND(callFrame)
+
+#define END_IMPL_WITH_RETURN_SECOND(second) RETURN_TWO(pc, second)
 
 #define THROW(exceptionToThrow) do {                        \
         throwException(globalObject, throwScope, exceptionToThrow); \
@@ -94,12 +96,15 @@ namespace JSC {
         END_IMPL();                                         \
     } while (false)
 
-#define CHECK_EXCEPTION() do {                    \
-        doExceptionFuzzingIfEnabled(globalObject, throwScope, "CommonSlowPaths", pc);   \
-        if (UNLIKELY(throwScope.exception())) {   \
-            RETURN_TO_THROW(pc);            \
-            END_IMPL();                           \
-        }                                         \
+#define CHECK_EXCEPTION() CHECK_EXCEPTION_WITH_RETURN_SECOND(callFrame)
+
+#define CHECK_EXCEPTION_WITH_RETURN_SECOND(second)                                    \
+    do {                                                                              \
+        doExceptionFuzzingIfEnabled(globalObject, throwScope, "CommonSlowPaths", pc); \
+        if (UNLIKELY(throwScope.exception())) {                                       \
+            RETURN_TO_THROW(pc);                                                      \
+            END_IMPL_WITH_RETURN_SECOND(second);                                      \
+        }                                                                             \
     } while (false)
 
 #define END() do {                        \
@@ -119,18 +124,25 @@ namespace JSC {
         END_IMPL();                                         \
     } while (false)
 
-#define RETURN_WITH_PROFILING_CUSTOM(result__, value__, profilingAction__) do { \
-        JSValue returnValue__ = (value__);  \
-        CHECK_EXCEPTION();                  \
-        GET(result__) = returnValue__;              \
-        profilingAction__;                  \
-        END_IMPL();                         \
+#define RETURN_WITH_PROFILING_CUSTOM(result__, value__, profilingAction__) \
+    RETURN_WITH_SECOND_AND_PROFILING_CUSTOM(result__, value__, callFrame, profilingAction__)
+
+#define RETURN_WITH_SECOND_AND_PROFILING_CUSTOM(result__, value__, second__, profilingAction__) \
+    do {                                                                                        \
+        JSValue returnValue__ = (value__);                                                      \
+        CHECK_EXCEPTION_WITH_RETURN_SECOND(callFrame);                                          \
+        GET(result__) = returnValue__;                                                          \
+        profilingAction__;                                                                      \
+        END_IMPL();                                                                             \
     } while (false)
 
 #define RETURN_WITH_PROFILING(value__, profilingAction__) RETURN_WITH_PROFILING_CUSTOM(bytecode.m_dst, value__, profilingAction__)
 
 #define RETURN(value) \
     RETURN_WITH_PROFILING(value, { })
+
+#define RETURN_WITH_DESTINATION_AND_SECOND(destinaiton, value, second) \
+    RETURN_WITH_SECOND_AND_PROFILING_CUSTOM(destinaiton, value, second, { })
 
 #define RETURN_PROFILED(value__) \
     RETURN_WITH_PROFILING(value__, PROFILE_VALUE(returnValue__))
@@ -1134,18 +1146,22 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_resolve_scope_for_hoisting_func_decl_in_ev
     RETURN(resolvedScope);
 }
 
-JSC_DEFINE_COMMON_SLOW_PATH(slow_path_resolve_scope)
+template<typename Bytecode>
+ALWAYS_INLINE SlowPathReturnType commonSlowPathResolveScopeHelper(CallFrame* callFrame, const JSInstruction* pc, ResolveType (*getMetadataResolveType)(typename Bytecode::Metadata& metadata), void (*setMetadataResolveType)(typename Bytecode::Metadata& metadata, ResolveType resolveType))
 {
     BEGIN();
-    auto bytecode = pc->as<OpResolveScope>();
+    auto bytecode = pc->as<Bytecode>();
     auto& metadata = bytecode.metadata(codeBlock);
     const Identifier& ident = codeBlock->identifier(bytecode.m_var);
     JSScope* scope = callFrame->uncheckedR(bytecode.m_scope).Register::scope();
     JSObject* resolvedScope = JSScope::resolve(globalObject, scope, ident);
+    bool isOpResolveScope = std::is_same<Bytecode, OpResolveScope>::value;
+    VirtualRegister dst = isOpResolveScope ? pc->as<Bytecode>().m_dst : pc->as<OpResolveAndGetFromScope>().m_resolvedScope;
     // Proxy can throw an error here, e.g. Proxy in with statement's @unscopables.
-    CHECK_EXCEPTION();
-
-    ResolveType resolveType = metadata.m_resolveType;
+    CallFrame* returnSecond = isOpResolveScope ? callFrame : nullptr;
+    // Use the second field of SlowPathReturnType as a flag to indicate whether
+    // the bytecode of OpResolveAndGetFromScope needs to handle the exception cases.
+    CHECK_EXCEPTION_WITH_RETURN_SECOND(returnSecond);
 
     // ModuleVar does not keep the scope register value alive in DFG.
     ASSERT(resolveType != ModuleVar);
@@ -1158,17 +1174,17 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_resolve_scope)
         if (resolvedScope->isGlobalObject()) {
             JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(resolvedScope);
             bool hasProperty = globalObject->hasProperty(globalObject, ident);
-            CHECK_EXCEPTION();
+            CHECK_EXCEPTION_WITH_RETURN_SECOND(returnSecond);
             if (hasProperty) {
                 ConcurrentJSLocker locker(codeBlock->m_lock);
-                metadata.m_resolveType = needsVarInjectionChecks(resolveType) ? GlobalPropertyWithVarInjectionChecks : GlobalProperty;
+                setMetadataResolveType(metadata, needsVarInjectionChecks(resolveType) ? GlobalPropertyWithVarInjectionChecks : GlobalProperty);
                 metadata.m_globalObject.set(vm, codeBlock, globalObject);
                 metadata.m_globalLexicalBindingEpoch = globalObject->globalLexicalBindingEpoch();
             }
         } else if (resolvedScope->isGlobalLexicalEnvironment()) {
             JSGlobalLexicalEnvironment* globalLexicalEnvironment = jsCast<JSGlobalLexicalEnvironment*>(resolvedScope);
             ConcurrentJSLocker locker(codeBlock->m_lock);
-            metadata.m_resolveType = needsVarInjectionChecks(resolveType) ? GlobalLexicalVarWithVarInjectionChecks : GlobalLexicalVar;
+            setMetadataResolveType(metadata, needsVarInjectionChecks(resolveType) ? GlobalLexicalVarWithVarInjectionChecks : GlobalLexicalVar);
             metadata.m_globalLexicalEnvironment.set(vm, codeBlock, globalLexicalEnvironment);
         }
         break;
@@ -1177,7 +1193,29 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_resolve_scope)
         break;
     }
 
-    RETURN(resolvedScope);
+    RETURN_WITH_DESTINATION_AND_SECOND(dst, resolvedScope, returnSecond);
+}
+
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_resolve_scope)
+{
+    auto getMetadataResolveType = [] (auto& metadata) -> ResolveType {
+        return metadata.m_resolveType;
+    };
+    auto setMetadataResolveType = [] (auto& metadata, ResolveType resolveType) {
+        metadata.m_resolveType = resolveType;
+    };
+    return commonSlowPathResolveScopeHelper<OpResolveScope>(callFrame, pc, getMetadataResolveType, setMetadataResolveType);
+}
+
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_rgs_resolve_scope)
+{
+    auto getMetadataResolveType = [] (auto& metadata) -> ResolveType {
+        return metadata.m_getPutInfo.resolveType();
+    };
+    auto setMetadataResolveType = [] (auto& metadata, ResolveType resolveType) {
+        metadata.m_getPutInfo.setResolveType(resolveType);
+    };
+    return commonSlowPathResolveScopeHelper<OpResolveAndGetFromScope>(callFrame, pc, getMetadataResolveType);
 }
 
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_create_rest)

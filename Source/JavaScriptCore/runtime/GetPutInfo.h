@@ -248,6 +248,7 @@ public:
 
     void dump(PrintStream&) const;
 
+    void setResolveType(ResolveType resolveType) { m_operand = (m_operand & (~typeBits)) | resolveType; }
 private:
     Operand m_operand { 0 };
 
