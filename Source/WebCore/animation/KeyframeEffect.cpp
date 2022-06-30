@@ -538,10 +538,11 @@ ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(JSGlobalObject& lexicalG
                 keyframeEffectOptions.direction
             };
 
-            if (document.settings().webAnimationsIterationCompositeEnabled()) {
+            if (document.settings().webAnimationsCompositeOperationsEnabled())
                 keyframeEffect->setComposite(keyframeEffectOptions.composite);
+
+            if (document.settings().webAnimationsIterationCompositeEnabled())
                 keyframeEffect->setIterationComposite(keyframeEffectOptions.iterationComposite);
-            }
         }
         auto updateTimingResult = keyframeEffect->updateTiming(timing);
         if (updateTimingResult.hasException())
