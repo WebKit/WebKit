@@ -132,17 +132,21 @@ Vector<Ref<NetworkProcessProxy>> NetworkProcessProxy::allNetworkProcesses()
     });
 }
 
-RefPtr<NetworkProcessProxy>& NetworkProcessProxy::defaultNetworkProcess()
+WeakPtr<NetworkProcessProxy>& NetworkProcessProxy::defaultNetworkProcess()
 {
-    static NeverDestroyed<RefPtr<NetworkProcessProxy>> process;
-    return process.get();
+    static NeverDestroyed<WeakPtr<NetworkProcessProxy>> networkProcess;
+    return networkProcess.get();
 }
 
 Ref<NetworkProcessProxy> NetworkProcessProxy::ensureDefaultNetworkProcess()
 {
-    if (!defaultNetworkProcess())
-        defaultNetworkProcess() = NetworkProcessProxy::create();
-    return *defaultNetworkProcess();
+    auto& networkProcess = defaultNetworkProcess();
+    if (networkProcess)
+        return Ref { *networkProcess };
+
+    auto newNetworkProcess = NetworkProcessProxy::create();
+    networkProcess = newNetworkProcess.get();
+    return newNetworkProcess;
 }
 
 void NetworkProcessProxy::terminate()

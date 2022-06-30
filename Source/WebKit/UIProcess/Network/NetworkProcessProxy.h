@@ -120,7 +120,7 @@ public:
     using OpenerDomain = WebCore::RegistrableDomain;
 
     static Ref<NetworkProcessProxy> ensureDefaultNetworkProcess();
-    static RefPtr<NetworkProcessProxy>& defaultNetworkProcess();
+    static WeakPtr<NetworkProcessProxy>& defaultNetworkProcess();
     static Ref<NetworkProcessProxy> create() { return adoptRef(*new NetworkProcessProxy); }
     ~NetworkProcessProxy();
 

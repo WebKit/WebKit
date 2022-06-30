@@ -313,16 +313,6 @@ WebProcessPool::~WebProcessPool()
 
         process->shutDown();
     }
-
-    if (processPools().isEmpty()) {
-        WebsiteDataStore::forEachWebsiteDataStore([](auto& websiteDataStore) {
-            websiteDataStore.removeNetworkProcessReference();
-        });
-        if (auto& networkProcess = NetworkProcessProxy::defaultNetworkProcess()) {
-            ASSERT(networkProcess->hasOneRef());
-            networkProcess = nullptr;
-        }
-    }
 }
 
 void WebProcessPool::initializeClient(const WKContextClientBase* client)
