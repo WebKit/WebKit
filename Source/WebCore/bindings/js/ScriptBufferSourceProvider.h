@@ -62,12 +62,12 @@ public:
         if (!m_contiguousBuffer && (!m_containsOnlyASCII || *m_containsOnlyASCII))
             m_contiguousBuffer = m_scriptBuffer.buffer()->makeContiguous();
         if (!m_containsOnlyASCII) {
-            m_containsOnlyASCII = charactersAreAllASCII(m_contiguousBuffer->data(), m_scriptBuffer.buffer()->size());
+            m_containsOnlyASCII = charactersAreAllASCII(m_contiguousBuffer->data(), m_contiguousBuffer->size());
             if (*m_containsOnlyASCII)
-                m_scriptHash = StringHasher::computeHashAndMaskTop8Bits(m_contiguousBuffer->data(), m_scriptBuffer.buffer()->size());
+                m_scriptHash = StringHasher::computeHashAndMaskTop8Bits(m_contiguousBuffer->data(), m_contiguousBuffer->size());
         }
         if (*m_containsOnlyASCII)
-            return { m_contiguousBuffer->data(), static_cast<unsigned>(m_scriptBuffer.buffer()->size()) };
+            return { m_contiguousBuffer->data(), static_cast<unsigned>(m_contiguousBuffer->size()) };
 
         if (!m_cachedScriptString) {
             m_cachedScriptString = m_scriptBuffer.toString();
