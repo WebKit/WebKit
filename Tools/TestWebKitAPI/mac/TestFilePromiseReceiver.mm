@@ -86,6 +86,15 @@ static NSString *fileNameWithNumericSuffix(NSString *fileName, NSUInteger suffix
     return [NSString stringWithFormat:@"%@ %zu.%@", fileName.stringByDeletingPathExtension, suffix, fileName.pathExtension];
 }
 
+static NSURL *writeToWebLoc(NSURL *webURL, NSURL *destinationDirectory, NSError **outError)
+{
+    auto components = adoptNS([webURL.absoluteString componentsSeparatedByCharactersInSet:NSCharacterSet.letterCharacterSet.invertedSet].mutableCopy);
+    [components removeObject:@""];
+    NSString *fileName = [[components componentsJoinedByString:@"-"] stringByAppendingPathExtension:@"webloc"];
+    NSURL *destinationURL = [NSURL fileURLWithPath:fileName relativeToURL:destinationDirectory];
+    return [@{ @"URL" : webURL.absoluteString } writeToURL:destinationURL error:outError] ? destinationURL : nil;
+}
+
 static NSURL *copyFile(NSURL *sourceURL, NSURL *destinationDirectory, NSError **outError)
 {
     NSUInteger suffix = 0;
@@ -108,7 +117,11 @@ static NSURL *copyFile(NSURL *sourceURL, NSURL *destinationDirectory, NSError **
     for (NSURL *sourceURL in [_dragAndDropSimulator externalPromisedFiles]) {
         [queue addOperationWithBlock:^{
             NSError *error = nil;
-            NSURL *destination = copyFile(sourceURL, destinationDirectory, &error);
+            NSURL *destination = nil;
+            if (sourceURL.isFileURL)
+                destination = copyFile(sourceURL, destinationDirectory, &error);
+            else
+                destination = writeToWebLoc(sourceURL, destinationDirectory, &error);
             if (destination) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [_destinationURLs addObject:destination];

@@ -116,6 +116,29 @@ TEST(DragAndDropTests, DragPromisedImageFileIntoFileUpload)
     EXPECT_EQ(1, [webView stringByEvaluatingJavaScript:@"filecount.textContent"].integerValue);
 }
 
+TEST(DragAndDropTests, ReadURLWhenDroppingPromisedWebLoc)
+{
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400)]);
+    auto *webView = [simulator webView];
+    [webView synchronouslyLoadTestPageNamed:@"dump-datatransfer-types"];
+
+    [simulator writePromisedWebLoc:[NSURL URLWithString:@"https://webkit.org/"]];
+    [simulator runFrom:CGPointMake(0, 0) to:CGPointMake(375, 375)];
+
+    NSString *s = [webView stringByEvaluatingJavaScript:@"output.value"];
+    BOOL success = TestWebKitAPI::Util::jsonMatchesExpectedValues(s, @{
+        @"dragover" : @{
+            @"Files": @"",
+            @"text/uri-list": @""
+        },
+        @"drop": @{
+            @"Files": @"",
+            @"text/uri-list": @"https://webkit.org/"
+        }
+    });
+    EXPECT_TRUE(success);
+}
+
 TEST(DragAndDropTests, DragImageFileIntoFileUpload)
 {
     auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400)]);

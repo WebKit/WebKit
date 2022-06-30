@@ -4391,7 +4391,6 @@ bool WebViewImpl::performDragOperation(id <NSDraggingInfo> draggingInfo)
     }
 
     String draggingPasteboardName = draggingInfo.draggingPasteboard.name;
-    m_page->grantAccessToCurrentPasteboardData(draggingPasteboardName);
     m_page->performDragOperation(*dragData, draggingPasteboardName, WTFMove(sandboxExtensionHandle), WTFMove(sandboxExtensionForUpload));
 
     return true;

@@ -9666,7 +9666,6 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
         WebKit::SandboxExtension::Handle sandboxExtensionHandle;
         Vector<WebKit::SandboxExtension::Handle> sandboxExtensionForUpload;
         auto dragPasteboardName = WebCore::Pasteboard::nameOfDragPasteboard();
-        retainedSelf->_page->grantAccessToCurrentPasteboardData(dragPasteboardName);
         retainedSelf->_page->createSandboxExtensionsIfNeeded(filenames, sandboxExtensionHandle, sandboxExtensionForUpload);
         retainedSelf->_page->performDragOperation(capturedDragData, dragPasteboardName, WTFMove(sandboxExtensionHandle), WTFMove(sandboxExtensionForUpload));
         if (shouldSnapshotView) {

@@ -2760,6 +2760,9 @@ void WebPageProxy::dragExited(DragData& dragData, const String& dragStorageName)
 
 void WebPageProxy::performDragOperation(DragData& dragData, const String& dragStorageName, SandboxExtension::Handle&& sandboxExtensionHandle, Vector<SandboxExtension::Handle>&& sandboxExtensionsForUpload)
 {
+#if PLATFORM(COCOA)
+    grantAccessToCurrentPasteboardData(dragStorageName);
+#endif
     performDragControllerAction(DragControllerAction::PerformDragOperation, dragData, dragStorageName, WTFMove(sandboxExtensionHandle), WTFMove(sandboxExtensionsForUpload));
 }
 

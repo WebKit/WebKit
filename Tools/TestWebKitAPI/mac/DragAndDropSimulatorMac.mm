@@ -393,6 +393,15 @@ static BOOL getFilePathsAndTypeIdentifiers(NSArray<NSURL *> *fileURLs, NSArray<N
     return YES;
 }
 
+- (void)writePromisedWebLoc:(NSURL *)url
+{
+    _externalPromisedFiles = @[ url ];
+    _externalDragPasteboard = NSPasteboard.pasteboardWithUniqueName;
+    [_externalDragPasteboard declareTypes:@[ NSFilesPromisePboardType, NSPasteboardTypeURL ] owner:nil];
+    [_externalDragPasteboard setPropertyList:@[ @"com.apple.web-internet-location" ] forType:NSFilesPromisePboardType];
+    [_externalDragPasteboard setString:url.absoluteString forType:NSPasteboardTypeURL];
+}
+
 - (void)writePromisedFiles:(NSArray<NSURL *> *)fileURLs
 {
     NSArray *paths = nil;

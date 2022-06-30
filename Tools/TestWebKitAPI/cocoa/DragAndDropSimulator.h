@@ -125,6 +125,8 @@ typedef NSDictionary<NSNumber *, NSValue *> *ProgressToCGPointValueMap;
 
 #if PLATFORM(MAC)
 
+- (void)writePromisedWebLoc:(NSURL *)url;
+
 @property (nonatomic, readonly) id <NSDraggingInfo> draggingInfo;
 @property (nonatomic, readonly) NSPoint initialDragImageLocationInView;
 @property (nonatomic, readonly) NSDragOperation currentDragOperation;
