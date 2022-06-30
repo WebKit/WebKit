@@ -77,8 +77,6 @@ struct Styleable {
     // we were unable to cheaply compute its effect on the extent.
     bool computeAnimationExtent(LayoutRect&) const;
 
-    bool mayHaveNonZeroOpacity() const;
-
     bool isRunningAcceleratedTransformAnimation() const;
 
     bool runningAnimationsAreAllAccelerated() const;
