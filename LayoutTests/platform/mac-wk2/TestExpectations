@@ -1724,3 +1724,5 @@ webkit.org/b/241283 fast/animation/request-animation-frame-throttling-detached-i
 [ Ventura+ ] http/tests/workers/service/getnotifications.html [ Pass ]
 
 webkit.org/b/242164 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/navigation-timing.https.html [ Failure ]
+
+webkit.org/b/242138 imported/w3c/web-platform-tests/css/css-transforms/huge-length-tiny-scale.html [ Pass Crash ImageOnlyFailure ]
