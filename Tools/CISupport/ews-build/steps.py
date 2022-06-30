@@ -4825,6 +4825,7 @@ class ValidateCommitMessage(steps.ShellSequence, ShellMixin, AddToLogMixin):
         'Rubber-stamped by',
         'Rubber stamped by',
         'Unreviewed',
+        'Versioning.',
     )
     RE_CHANGELOG = br'^(\+\+\+)\s+(.*ChangeLog.*)'
     BY_RE = re.compile(r'.+\s+by\s+(.+)$')
@@ -4878,7 +4879,7 @@ class ValidateCommitMessage(steps.ShellSequence, ShellMixin, AddToLogMixin):
                 '\\|'.join(self.REVIEWED_STRINGS),
             ), "git log {} ^{} | grep '\\({}\\)' || true".format(
                 head_ref, base_ref,
-                '\\|'.join(self.REVIEWED_STRINGS[:-1]),
+                '\\|'.join(self.REVIEWED_STRINGS[:3]),
             ),
         ]
         for command in commands:

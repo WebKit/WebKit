@@ -5827,7 +5827,7 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
             + 0, ExpectShell(workdir='wkdir',
                         logEnviron=False,
                         timeout=60,
-                        command=['/bin/sh', '-c', "git log HEAD ^origin/main | grep -q '\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\|Unreviewed\\)' || echo 'No reviewer information in commit message'"])
+                        command=['/bin/sh', '-c', "git log HEAD ^origin/main | grep -q '\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\|Unreviewed\\|Versioning.\\)' || echo 'No reviewer information in commit message'"])
             + 0, ExpectShell(workdir='wkdir',
                         logEnviron=False,
                         timeout=60,
@@ -5852,7 +5852,7 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
             + 0, ExpectShell(workdir='wkdir',
                 logEnviron=False,
                         timeout=60,
-                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q '\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\|Unreviewed\\)' || echo 'No reviewer information in commit message'"])
+                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q '\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\|Unreviewed\\|Versioning.\\)' || echo 'No reviewer information in commit message'"])
             + 0, ExpectShell(workdir='wkdir',
                         logEnviron=False,
                         timeout=60,
@@ -5877,7 +5877,7 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
             + 0, ExpectShell(workdir='wkdir',
                 logEnviron=False,
                         timeout=60,
-                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q '\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\|Unreviewed\\)' || echo 'No reviewer information in commit message'"])
+                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q '\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\|Unreviewed\\|Versioning.\\)' || echo 'No reviewer information in commit message'"])
             + 0, ExpectShell(workdir='wkdir',
                         logEnviron=False,
                         timeout=60,
@@ -5921,7 +5921,7 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
             + 0, ExpectShell(workdir='wkdir',
                         logEnviron=False,
                         timeout=60,
-                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q '\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\|Unreviewed\\)' || echo 'No reviewer information in commit message'"])
+                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q '\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\|Unreviewed\\|Versioning.\\)' || echo 'No reviewer information in commit message'"])
             + 0, ExpectShell(workdir='wkdir',
                         logEnviron=False,
                         timeout=60,
@@ -5948,7 +5948,7 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
             + 0, ExpectShell(workdir='wkdir',
                 logEnviron=False,
                         timeout=60,
-                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q '\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\|Unreviewed\\)' || echo 'No reviewer information in commit message'"])
+                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q '\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\|Unreviewed\\|Versioning.\\)' || echo 'No reviewer information in commit message'"])
             + 0, ExpectShell(workdir='wkdir',
                         logEnviron=False,
                         timeout=60,
@@ -5973,7 +5973,7 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
             + 0, ExpectShell(workdir='wkdir',
                 logEnviron=False,
                         timeout=60,
-                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q '\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\|Unreviewed\\)' || echo 'No reviewer information in commit message'"])
+                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q '\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\|Unreviewed\\|Versioning.\\)' || echo 'No reviewer information in commit message'"])
             + 0, ExpectShell(workdir='wkdir',
                         logEnviron=False,
                         timeout=60,
@@ -5999,7 +5999,7 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
             + 0, ExpectShell(workdir='wkdir',
                 logEnviron=False,
                         timeout=60,
-                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q '\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\|Unreviewed\\)' || echo 'No reviewer information in commit message'"])
+                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q '\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\|Unreviewed\\|Versioning.\\)' || echo 'No reviewer information in commit message'"])
             + 0, ExpectShell(workdir='wkdir',
                         logEnviron=False,
                         timeout=60,
