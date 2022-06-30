@@ -79,7 +79,7 @@ static std::optional<WebCore::ClientOrigin> readOriginFromFile(const String& fil
     return origin;
 }
 
-static void writeOriginToFileIfNecessary(const String& filePath, const WebCore::ClientOrigin& origin)
+static void writeOriginToFile(const String& filePath, const WebCore::ClientOrigin& origin)
 {
     if (filePath.isEmpty() || FileSystem::fileExists(filePath))
         return;
@@ -244,14 +244,31 @@ static String originFilePath(const String& directory)
     return FileSystem::pathByAppendingComponent(directory, OriginStorageManager::originFileIdentifier());
 }
 
+void NetworkStorageManager::writeOriginToFileIfNecessary(const WebCore::ClientOrigin& origin, StorageAreaBase* storageArea)
+{
+    auto* manager = m_localOriginStorageManagers.get(origin);
+    if (!manager || manager->didWriteOriginToFile())
+        return;
+
+    auto originDirectory = originDirectoryPath(m_path, origin, m_salt);
+    if (originDirectory.isEmpty())
+        return;
+
+    if (storageArea) {
+        if (storageArea->type() != StorageAreaBase::Type::SQLite || storageArea->isEmpty())
+            return;
+    }
+
+    writeOriginToFile(originFilePath(originDirectory), origin);
+    manager->markDidWriteOriginToFile();
+}
+
 OriginStorageManager& NetworkStorageManager::localOriginStorageManager(const WebCore::ClientOrigin& origin, ShouldWriteOriginFile shouldWriteOriginFile)
 {
     ASSERT(!RunLoop::isMain());
 
-    return *m_localOriginStorageManagers.ensure(origin, [&] {
+    auto& originStorageManager = *m_localOriginStorageManagers.ensure(origin, [&] {
         auto originDirectory = originDirectoryPath(m_path, origin, m_salt);
-        if (!originDirectory.isEmpty() && shouldWriteOriginFile == ShouldWriteOriginFile::Yes)
-            writeOriginToFileIfNecessary(originFilePath(originDirectory), origin);
         auto localStoragePath = LocalStorageManager::localStorageFilePath(m_customLocalStoragePath, origin);
         auto idbStoragePath = IDBStorageManager::idbStorageOriginDirectory(m_customIDBStoragePath, origin);
         auto cacheStoragePath = CacheStorage::Engine::storagePath(m_customCacheStoragePath, origin);
@@ -261,6 +278,11 @@ OriginStorageManager& NetworkStorageManager::localOriginStorageManager(const Web
         };
         return makeUnique<OriginStorageManager>(quota, WTFMove(increaseQuotaFunction), WTFMove(originDirectory), WTFMove(localStoragePath), WTFMove(idbStoragePath), WTFMove(cacheStoragePath), m_shouldUseCustomPaths);
     }).iterator->value;
+
+    if (shouldWriteOriginFile == ShouldWriteOriginFile::Yes)
+        writeOriginToFileIfNecessary(origin);
+
+    return originStorageManager;
 }
 
 bool NetworkStorageManager::removeOriginStorageManagerIfPossible(const WebCore::ClientOrigin& origin)
@@ -772,17 +794,8 @@ void NetworkStorageManager::connectToStorageArea(IPC::Connection& connection, We
     ASSERT(!RunLoop::isMain());
 
     auto connectionIdentifier = connection.uniqueID();
-    bool willCreateOriginStorageManager = !m_localOriginStorageManagers.contains(origin);
-    // Avoid delay in replying sync message by writing origin file after replying message.
+    // StorageArea may be connected due to LocalStorage prewarming, so do not write origin file eagerly.
     auto& originStorageManager = localOriginStorageManager(origin, ShouldWriteOriginFile::No);
-    auto writeOriginFile = makeScopeExit([&] {
-        if (!willCreateOriginStorageManager)
-            return;
-
-        if (auto originDirectory = originDirectoryPath(m_path, origin, m_salt); !originDirectory.isEmpty())
-            writeOriginToFileIfNecessary(originFilePath(originDirectory), origin);
-    });
-
     StorageAreaIdentifier resultIdentifier;
     switch (type) {
     case WebCore::StorageType::Local:
@@ -795,8 +808,11 @@ void NetworkStorageManager::connectToStorageArea(IPC::Connection& connection, We
         resultIdentifier = originStorageManager.sessionStorageManager(*m_storageAreaRegistry).connectToSessionStorageArea(connectionIdentifier, sourceIdentifier, origin, namespaceIdentifier);
     }
 
-    if (auto storageArea = m_storageAreaRegistry->getStorageArea(resultIdentifier))
-        return completionHandler(resultIdentifier, storageArea->allItems(), StorageAreaBase::nextMessageIdentifier());
+    if (auto storageArea = m_storageAreaRegistry->getStorageArea(resultIdentifier)) {
+        completionHandler(resultIdentifier, storageArea->allItems(), StorageAreaBase::nextMessageIdentifier());
+        writeOriginToFileIfNecessary(origin, storageArea);
+        return;
+    }
 
     return completionHandler(resultIdentifier, HashMap<String, String> { }, StorageAreaBase::nextMessageIdentifier());
 }
@@ -857,33 +873,44 @@ void NetworkStorageManager::setItem(IPC::Connection& connection, StorageAreaIden
     ASSERT(!RunLoop::isMain());
 
     bool hasQuotaError = false;
-    if (auto storageArea = m_storageAreaRegistry->getStorageArea(identifier)) {
-        auto result = storageArea->setItem(connection.uniqueID(), implIdentifier, String { key }, WTFMove(value), WTFMove(urlString));
-        if (!result)
-            hasQuotaError = (result.error() == StorageError::QuotaExceeded);
-    }
+    auto storageArea = m_storageAreaRegistry->getStorageArea(identifier);
+    if (!storageArea)
+        return completionHandler(hasQuotaError);
 
+    auto result = storageArea->setItem(connection.uniqueID(), implIdentifier, WTFMove(key), WTFMove(value), WTFMove(urlString));
+    if (!result)
+        hasQuotaError = (result.error() == StorageError::QuotaExceeded);
     completionHandler(hasQuotaError);
+
+    writeOriginToFileIfNecessary(storageArea->origin(), storageArea);
 }
 
 void NetworkStorageManager::removeItem(IPC::Connection& connection, StorageAreaIdentifier identifier, StorageAreaImplIdentifier implIdentifier, String&& key, String&& urlString, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
-    if (auto storageArea = m_storageAreaRegistry->getStorageArea(identifier))
-        storageArea->removeItem(connection.uniqueID(), implIdentifier, WTFMove(key), WTFMove(urlString));
-
+    auto storageArea = m_storageAreaRegistry->getStorageArea(identifier);
+    if (!storageArea)
+        return completionHandler();
+    
+    storageArea->removeItem(connection.uniqueID(), implIdentifier, WTFMove(key), WTFMove(urlString));
     completionHandler();
+
+    writeOriginToFileIfNecessary(storageArea->origin(), storageArea);
 }
 
 void NetworkStorageManager::clear(IPC::Connection& connection, StorageAreaIdentifier identifier, StorageAreaImplIdentifier implIdentifier, String&& urlString, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
-    if (auto storageArea = m_storageAreaRegistry->getStorageArea(identifier))
-        storageArea->clear(connection.uniqueID(), implIdentifier, WTFMove(urlString));
+    auto storageArea = m_storageAreaRegistry->getStorageArea(identifier);
+    if (!storageArea)
+        return completionHandler();
 
+    storageArea->clear(connection.uniqueID(), implIdentifier, WTFMove(urlString));
     completionHandler();
+
+    writeOriginToFileIfNecessary(storageArea->origin(), storageArea);
 }
 
 void NetworkStorageManager::openDatabase(IPC::Connection& connection, const WebCore::IDBRequestData& requestData)

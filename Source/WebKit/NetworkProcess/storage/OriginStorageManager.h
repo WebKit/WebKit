@@ -65,6 +65,8 @@ public:
     OptionSet<WebsiteDataType> fetchDataTypesInList(OptionSet<WebsiteDataType>);
     void deleteData(OptionSet<WebsiteDataType>, WallTime);
     void moveData(OptionSet<WebsiteDataType>, const String& localStoragePath, const String& idbStoragePath);
+    bool didWriteOriginToFile() const { return m_didWriteOriginToFile; }
+    void markDidWriteOriginToFile() { m_didWriteOriginToFile = true; }
 
 private:
     enum class StorageBucketMode : bool;
@@ -81,6 +83,7 @@ private:
     RefPtr<QuotaManager> m_quotaManager;
     bool m_persisted { false };
     bool m_shouldUseCustomPaths;
+    bool m_didWriteOriginToFile { false };
 };
 
 } // namespace WebKit
