@@ -147,7 +147,9 @@ PAS_NEVER_INLINE PAS_NO_RETURN static void pas_crash_with_info_impl(uint64_t rea
 
 #else
 
-PAS_NEVER_INLINE PAS_NO_RETURN static void pas_crash_with_info_impl(uint64_t, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t) { __builtin_trap(); }
+PAS_IGNORE_WARNINGS_BEGIN("unused-parameter")
+PAS_NEVER_INLINE PAS_NO_RETURN static void pas_crash_with_info_impl(uint64_t reason, uint64_t misc1, uint64_t misc2, uint64_t misc3, uint64_t misc4, uint64_t misc5, uint64_t misc6) { __builtin_trap(); }
+PAS_IGNORE_WARNINGS_END
 
 #endif
 
