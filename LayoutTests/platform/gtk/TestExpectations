@@ -457,6 +457,7 @@ webkit.org/b/169917 webgl/webgl-vertex-array-object-defined.html [ Failure ]
 webkit.org/b/169917 webgl/1.0.3/conformance/more/functions/readPixelsBadArgs.html [ Failure ]
 webkit.org/b/169917 webgl/1.0.3/conformance/more/functions/texImage2DHTML.html [ Failure ]
 webkit.org/b/169917 webgl/1.0.3/conformance/more/functions/texSubImage2DHTML.html [ Failure ]
+webkit.org/b/169917 webgl/1.0.x/conformance/programs/program-test.html [ Failure ]
 # WebGL flaky tests
 webkit.org/b/169917 webgl/1.0.3/conformance/extensions/oes-vertex-array-object.html [ Failure ]
 webkit.org/b/169917 webgl/1.0.3/conformance/textures/texture-formats-test.html [ Failure ]
