@@ -86,7 +86,6 @@ public:
 
     const RuleDataVector* idRules(const AtomString& key) const { return m_idRules.get(key); }
     const RuleDataVector* classRules(const AtomString& key) const { return m_classRules.get(key); }
-    const RuleDataVector* attributeRules(const AtomString& key, bool isHTMLName) const;
     const RuleDataVector* tagRules(const AtomString& key, bool isHTMLName) const;
     const RuleDataVector* shadowPseudoElementRules(const AtomString& key) const { return m_shadowPseudoElementRules.get(key); }
     const RuleDataVector* linkPseudoClassRules() const { return &m_linkPseudoClassRules; }
@@ -103,7 +102,6 @@ public:
 
     unsigned ruleCount() const { return m_ruleCount; }
 
-    bool hasAttributeRules() const { return !m_attributeLocalNameRules.isEmpty(); }
     bool hasShadowPseudoElementRules() const { return !m_shadowPseudoElementRules.isEmpty(); }
     bool hasHostPseudoClassRulesMatchingInShadowTree() const { return m_hasHostPseudoClassRulesMatchingInShadowTree; }
 
@@ -170,8 +168,6 @@ private:
 
     AtomRuleMap m_idRules;
     AtomRuleMap m_classRules;
-    AtomRuleMap m_attributeLocalNameRules;
-    AtomRuleMap m_attributeCanonicalLocalNameRules;
     AtomRuleMap m_tagLocalNameRules;
     AtomRuleMap m_tagLowercaseLocalNameRules;
     AtomRuleMap m_shadowPseudoElementRules;
@@ -203,16 +199,14 @@ private:
     bool m_hasViewportDependentMediaQueries { false };
 };
 
-inline const RuleSet::RuleDataVector* RuleSet::attributeRules(const AtomString& key, bool isHTMLName) const
-{
-    auto& rules = isHTMLName ? m_attributeCanonicalLocalNameRules : m_attributeLocalNameRules;
-    return rules.get(key);
-}
-
 inline const RuleSet::RuleDataVector* RuleSet::tagRules(const AtomString& key, bool isHTMLName) const
 {
-    auto& rules = isHTMLName ? m_tagLowercaseLocalNameRules : m_tagLocalNameRules;
-    return rules.get(key);
+    const AtomRuleMap* tagRules;
+    if (isHTMLName)
+        tagRules = &m_tagLowercaseLocalNameRules;
+    else
+        tagRules = &m_tagLocalNameRules;
+    return tagRules->get(key);
 }
 
 inline CascadeLayerPriority RuleSet::cascadeLayerPriorityForIdentifier(CascadeLayerIdentifier identifier) const
@@ -246,6 +240,7 @@ inline Vector<const FilteredContainerQuery*> RuleSet::containerQueriesFor(const 
 
     return queries;
 }
+
 
 } // namespace Style
 } // namespace WebCore
