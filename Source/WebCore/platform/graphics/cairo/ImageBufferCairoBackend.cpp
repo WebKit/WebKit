@@ -45,6 +45,12 @@
 
 namespace WebCore {
 
+RefPtr<Image> ImageBufferCairoBackend::copyImage(BackingStoreCopy copyBehavior, PreserveResolution) const
+{
+    // BitmapImage will release the passed in surface on destruction
+    return BitmapImage::create(copyNativeImage(copyBehavior));
+}
+
 void ImageBufferCairoBackend::clipToMask(GraphicsContext& destContext, const FloatRect& destRect)
 {
     if (auto image = copyNativeImage(DontCopyBackingStore))

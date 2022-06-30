@@ -153,6 +153,11 @@ RefPtr<NativeImage> ImageBufferShareableBitmapBackend::copyNativeImage(BackingSt
     return NativeImage::create(m_bitmap->createPlatformImage(copyBehavior));
 }
 
+RefPtr<Image> ImageBufferShareableBitmapBackend::copyImage(BackingStoreCopy, PreserveResolution) const
+{
+    return m_bitmap->createImage();
+}
+
 RefPtr<PixelBuffer> ImageBufferShareableBitmapBackend::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect, const ImageBufferAllocator& allocator) const
 {
     return ImageBufferBackend::getPixelBuffer(outputFormat, srcRect, m_bitmap->data(), allocator);
