@@ -20,7 +20,7 @@ while getopts "b:a:d:yh" flag; do
         b) BASE=${OPTARG};;
         a) APP=${OPTARG};;
         d) BUILD=${OPTARG};;
-        n) NINPUT=true ;;
+        y) NINPUT=true ;;
         h)
           DisplayHelp
           exit;;
