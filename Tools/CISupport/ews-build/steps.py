@@ -4554,7 +4554,7 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
                         UpdateWorkingDirectory(),
                         CheckOutPullRequest(),
                         AddReviewerToCommitMessage(),
-                        ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True),
+                        ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, verifyObsolete=False),
                         Canonicalize(),
                         PushCommitToWebKitRepo(),
                     ])
