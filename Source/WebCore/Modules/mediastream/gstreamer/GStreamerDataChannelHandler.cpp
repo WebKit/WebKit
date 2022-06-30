@@ -102,6 +102,9 @@ GStreamerDataChannelHandler::GStreamerDataChannelHandler(GRefPtr<GstWebRTCDataCh
     g_signal_connect_swapped(m_channel.get(), "notify::ready-state", G_CALLBACK(+[](GStreamerDataChannelHandler* handler) {
         handler->readyStateChanged();
     }), this);
+    g_signal_connect_swapped(m_channel.get(), "notify::buffered-amount", G_CALLBACK(+[](GStreamerDataChannelHandler* handler) {
+        handler->bufferedAmountChanged();
+    }), this);
     g_signal_connect_swapped(m_channel.get(), "on-message-data", G_CALLBACK(+[](GStreamerDataChannelHandler* handler, GBytes* bytes) {
         handler->onMessageData(bytes);
     }), this);
@@ -110,10 +113,6 @@ GStreamerDataChannelHandler::GStreamerDataChannelHandler(GRefPtr<GstWebRTCDataCh
     }), this);
     g_signal_connect_swapped(m_channel.get(), "on-error", G_CALLBACK(+[](GStreamerDataChannelHandler* handler, GError* error) {
         handler->onError(error);
-    }), this);
-    g_signal_connect_swapped(m_channel.get(), "on-buffered-amount-low", G_CALLBACK(+[](GStreamerDataChannelHandler* handler) {
-        // FIXME: We should pass the amount delta from webrtcbin to the WebCore handler.
-        handler->onBufferedAmountLow();
     }), this);
 }
 
@@ -224,6 +223,35 @@ void GStreamerDataChannelHandler::readyStateChanged()
     checkState();
 }
 
+void GStreamerDataChannelHandler::bufferedAmountChanged()
+{
+    Locker locker { m_clientLock };
+
+    uint64_t bufferedAmount;
+    g_object_get(m_channel.get(), "buffered-amount", &bufferedAmount, nullptr);
+
+    GST_DEBUG("New buffered amount on channel %p: %" G_GUINT64_FORMAT " old: %" G_GUINT64_FORMAT, m_channel.get(), bufferedAmount, m_cachedBufferedAmount ? *m_cachedBufferedAmount : -1);
+
+    if (m_cachedBufferedAmount && (*m_cachedBufferedAmount >= bufferedAmount)) {
+        GST_DEBUG("Buffered amount getting low on channel %p", m_channel.get());
+        if (!m_client) {
+            GST_DEBUG("No client yet on channel %p", m_channel.get());
+            return;
+        }
+
+        auto bufferedAmount = m_client.value()->bufferedAmount();
+        uint64_t amount = std::min(*m_cachedBufferedAmount - bufferedAmount, bufferedAmount);
+        postTask([client = m_client, amount] {
+            if (!client)
+                return;
+
+            client.value()->bufferedAmountIsDecreasing(amount);
+        });
+    }
+
+    m_cachedBufferedAmount = bufferedAmount;
+}
+
 void GStreamerDataChannelHandler::onMessageData(GBytes* bytes)
 {
     Locker locker { m_clientLock };
@@ -285,21 +313,6 @@ void GStreamerDataChannelHandler::onError(GError* error)
         if (!rtcError)
             rtcError = RTCError::create(RTCError::Init { RTCErrorDetailType::DataChannelFailure, { }, { }, { }, { } }, { });
         client.value()->didDetectError(rtcError.releaseNonNull());
-    });
-}
-
-void GStreamerDataChannelHandler::onBufferedAmountLow()
-{
-    Locker locker { m_clientLock };
-    if (!m_client)
-        return;
-
-    postTask([client = m_client] {
-        if (!client)
-            return;
-
-        // FIXME: Pass amount to handler instead of 0.
-        client.value()->bufferedAmountIsDecreasing(0);
     });
 }
 

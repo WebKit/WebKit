@@ -45,6 +45,7 @@ public:
     virtual void didReceiveRawData(const uint8_t*, size_t) = 0;
     virtual void didDetectError(Ref<RTCError>&&) = 0;
     virtual void bufferedAmountIsDecreasing(size_t) = 0;
+    virtual size_t bufferedAmount() const { return 0; }
 };
 
 } // namespace WebCore

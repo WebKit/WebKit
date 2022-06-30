@@ -67,7 +67,7 @@ public:
 
     const String& label() const { return m_label; }
     RTCDataChannelState readyState() const {return m_readyState; }
-    size_t bufferedAmount() const { return m_bufferedAmount; }
+    size_t bufferedAmount() const final { return m_bufferedAmount; }
     size_t bufferedAmountLowThreshold() const { return m_bufferedAmountLowThreshold; }
     void setBufferedAmountLowThreshold(size_t value) { m_bufferedAmountLowThreshold = value; }
 

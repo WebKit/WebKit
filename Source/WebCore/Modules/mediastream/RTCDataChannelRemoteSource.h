@@ -53,6 +53,7 @@ private:
     void didReceiveRawData(const uint8_t* data, size_t size) final { m_connection->didReceiveRawData(m_identifier, data, size); }
     void didDetectError(Ref<RTCError>&& error) final { m_connection->didDetectError(m_identifier, error->errorDetail(), error->message()); }
     void bufferedAmountIsDecreasing(size_t amount) final { m_connection->bufferedAmountIsDecreasing(m_identifier, amount); }
+    size_t bufferedAmount() const final { return 0; }
 
     RTCDataChannelIdentifier m_identifier;
     UniqueRef<RTCDataChannelHandler> m_handler;
