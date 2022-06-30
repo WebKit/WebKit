@@ -64,6 +64,7 @@ public:
             : m_throttler(&throttler)
             , m_name(name)
         {
+            ASSERT(isMainRunLoop());
             if (!throttler.addActivity(*this)) {
                 m_throttler = nullptr;
                 return;
@@ -77,6 +78,7 @@ public:
 
         ~Activity()
         {
+            ASSERT(isMainRunLoop());
             if (isValid())
                 invalidate();
         }

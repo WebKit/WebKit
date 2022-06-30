@@ -54,6 +54,7 @@ ProcessThrottler::~ProcessThrottler()
 
 bool ProcessThrottler::addActivity(ForegroundActivity& activity)
 {
+    ASSERT(isMainRunLoop());
     if (!m_allowsActivities) {
         if (!activity.isQuietActivity())
             PROCESSTHROTTLER_RELEASE_LOG("addActivity: not allowed to add foreground activity %s", activity.name().characters());
@@ -67,6 +68,7 @@ bool ProcessThrottler::addActivity(ForegroundActivity& activity)
 
 bool ProcessThrottler::addActivity(BackgroundActivity& activity)
 {
+    ASSERT(isMainRunLoop());
     if (!m_allowsActivities) {
         if (!activity.isQuietActivity())
             PROCESSTHROTTLER_RELEASE_LOG("addActivity: not allowed to add background activity %s", activity.name().characters());
@@ -80,18 +82,21 @@ bool ProcessThrottler::addActivity(BackgroundActivity& activity)
 
 void ProcessThrottler::removeActivity(ForegroundActivity& activity)
 {
+    ASSERT(isMainRunLoop());
     m_foregroundActivities.remove(&activity);
     updateAssertionIfNeeded();
 }
 
 void ProcessThrottler::removeActivity(BackgroundActivity& activity)
 {
+    ASSERT(isMainRunLoop());
     m_backgroundActivities.remove(&activity);
     updateAssertionIfNeeded();
 }
 
 void ProcessThrottler::invalidateAllActivities()
 {
+    ASSERT(isMainRunLoop());
     PROCESSTHROTTLER_RELEASE_LOG("invalidateAllActivities: BEGIN (foregroundActivityCount: %u, backgroundActivityCount: %u)", m_foregroundActivities.size(), m_backgroundActivities.size());
     while (!m_foregroundActivities.isEmpty())
         (*m_foregroundActivities.begin())->invalidate();
