@@ -207,6 +207,7 @@ void MediaPlayerPrivateWebM::loadFinished(const FragmentedSharedBuffer& fragment
     }
     
     updateBufferedFromTrackBuffers(true);
+    updateDurationFromTrackBuffers();
     setReadyState(MediaPlayer::ReadyState::HaveEnoughData);
     setNetworkState(MediaPlayer::NetworkState::Idle);
     if (m_hasVideo)
@@ -366,6 +367,18 @@ void MediaPlayerPrivateWebM::updateBufferedFromTrackBuffers(bool ended)
     }
 
     setBufferedRanges(WTFMove(intersectionRanges));
+}
+
+void MediaPlayerPrivateWebM::updateDurationFromTrackBuffers()
+{
+    MediaTime highestEndTime = MediaTime::zeroTime();
+    for (auto& trackBuffer : m_trackBufferMap.values()) {
+        if (!trackBuffer->highestPresentationTimestamp())
+            continue;
+        highestEndTime = std::max(highestEndTime, trackBuffer->highestPresentationTimestamp());
+    }
+    
+    setDuration(WTFMove(highestEndTime));
 }
 
 bool MediaPlayerPrivateWebM::didLoadingProgress() const
@@ -807,6 +820,12 @@ void MediaPlayerPrivateWebM::didProvideMediaDataForTrackId(Ref<MediaSampleAVFObj
         return;
 
     auto sample = WTFMove(originalSample);
+
+    MediaTime microsecond(1, 1000000);
+    if (!trackBuffer->roundedTimestampOffset().isValid())
+        trackBuffer->setRoundedTimestampOffset(-sample->presentationTime(), sample->presentationTime().timeScale(), microsecond);
+        
+    sample->offsetTimestampsBy(trackBuffer->roundedTimestampOffset());
     trackBuffer->samples().addSample(sample);
 
     DecodeOrderSampleMap::KeyType decodeKey(sample->decodeTime(), sample->presentationTime());
@@ -814,11 +833,14 @@ void MediaPlayerPrivateWebM::didProvideMediaDataForTrackId(Ref<MediaSampleAVFObj
 
     trackBuffer->setLastDecodeTimestamp(sample->decodeTime());
     trackBuffer->setLastFrameDuration(sample->duration());
-
-    // Eliminate small gaps between buffered ranges by coalescing
-    // disjoint ranges separated by less than a "fudge factor".
+    
     auto presentationTimestamp = sample->presentationTime();
     auto presentationEndTime = presentationTimestamp + sample->duration();
+    if (trackBuffer->highestPresentationTimestamp().isInvalid() || presentationEndTime > trackBuffer->highestPresentationTimestamp())
+        trackBuffer->setHighestPresentationTimestamp(presentationEndTime);
+    
+    // Eliminate small gaps between buffered ranges by coalescing
+    // disjoint ranges separated by less than a "fudge factor".
     auto nearestToPresentationStartTime = trackBuffer->buffered().nearest(presentationTimestamp);
     if (nearestToPresentationStartTime.isValid() && (presentationTimestamp - nearestToPresentationStartTime).isBetween(MediaTime::zeroTime(), timeFudgeFactor()))
         presentationTimestamp = nearestToPresentationStartTime;

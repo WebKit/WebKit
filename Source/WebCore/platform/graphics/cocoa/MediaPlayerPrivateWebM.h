@@ -126,6 +126,7 @@ private:
 
     void setBufferedRanges(PlatformTimeRanges);
     void updateBufferedFromTrackBuffers(bool);
+    void updateDurationFromTrackBuffers();
 
     bool didLoadingProgress() const final;
 
