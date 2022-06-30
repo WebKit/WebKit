@@ -5321,7 +5321,7 @@ fast/attachment/attachment-image-controls-basic.html [ Skip ]
 fast/text/bulgarian-system-language-shaping.html [ ImageOnlyFailure ]
 
 # Accessibility bold only exists on iOS.
-fast/text/accessibility-bold-system-font [ Skip ]
+fast/text/accessibility-bold-system-font [ Pass Failure ImageOnlyFailure ]
 
 # ReadableByteStream has a crash bug (ReadableByteStream is not enabled).
 imported/w3c/web-platform-tests/streams/readable-byte-streams/respond-after-enqueue.any.html [ Skip ]

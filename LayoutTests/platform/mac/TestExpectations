@@ -2293,7 +2293,3 @@ webkit.org/b/227845 [ Debug ] webaudio/audioworket-out-of-memory.html [ Pass Tim
 webkit.org/b/240989 http/tests/media/hls/hls-webvtt-flashing.html [ Pass Failure ]
 
 [ Monterey+ ] fast/text/bulgarian-system-language-shaping.html [ Pass ]
-
-webkit.org/b/242139 fast/text/accessibility-bold-system-font/accessibility-bold-system-font-2.html [ ImageOnlyFailure ]
-webkit.org/b/242139 fast/text/accessibility-bold-system-font/accessibility-bold-system-font.html [ Failure ]
-webkit.org/b/242139 [ BigSur ] fast/text/accessibility-bold-system-font/accessibility-bold-system-font-3.html [ ImageOnlyFailure ]

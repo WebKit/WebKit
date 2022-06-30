@@ -3660,8 +3660,6 @@ webkit.org/b/241205 fast/forms/textfield-outline.html [ Pass Failure ]
 fast/text/bulgarian-system-language-shaping.html [ Pass ]
 
 # Accessibility bold only exists on iOS.
-webkit.org/b/242139 fast/text/accessibility-bold-system-font/accessibility-bold-system-font.html [ Failure ]
-webkit.org/b/242139 fast/text/accessibility-bold-system-font/accessibility-bold-system-font-2.html [ ImageOnlyFailure ]
-fast/text/accessibility-bold-system-font/accessibility-bold-system-font-3.html [ Pass ]
+fast/text/accessibility-bold-system-font [ Pass ]
 
 webkit.org/b/242164 imported/w3c/web-platform-tests/service-workers/service-worker/navigation-timing.https.html [ Failure ]
