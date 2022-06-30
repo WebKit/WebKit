@@ -901,12 +901,56 @@ bool UIScriptControllerIOS::mayContainEditableElementsInRect(unsigned x, unsigne
     return [webView() _mayContainEditableElementsInRect:[webView() convertRect:contentRect fromView:platformContentView()]];
 }
 
-static UIDeviceOrientation toUIDeviceOrientation(DeviceOrientation* orientation)
+void UIScriptControllerIOS::simulateRotation(DeviceOrientation* orientation, JSValueRef callback)
 {
-    if (!orientation)
-        return UIDeviceOrientationPortrait;
-        
-    switch (*orientation) {
+    if (!orientation) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    webView().usesSafariLikeRotation = NO;
+    simulateRotation(*orientation, callback);
+}
+
+void UIScriptControllerIOS::simulateRotationLikeSafari(DeviceOrientation* orientation, JSValueRef callback)
+{
+    if (!orientation) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    webView().usesSafariLikeRotation = YES;
+    simulateRotation(*orientation, callback);
+}
+
+#if HAVE(UI_WINDOW_SCENE_GEOMETRY_PREFERENCES)
+
+static RetainPtr<UIWindowSceneGeometryPreferences> toWindowSceneGeometryPreferences(DeviceOrientation orientation)
+{
+    UIInterfaceOrientationMask orientations = 0;
+    switch (orientation) {
+    case DeviceOrientation::Portrait:
+        orientations = UIInterfaceOrientationMaskPortrait;
+        break;
+    case DeviceOrientation::PortraitUpsideDown:
+        orientations = UIInterfaceOrientationMaskPortraitUpsideDown;
+        break;
+    case DeviceOrientation::LandscapeLeft:
+        orientations = UIInterfaceOrientationMaskLandscapeLeft;
+        break;
+    case DeviceOrientation::LandscapeRight:
+        orientations = UIInterfaceOrientationMaskLandscapeRight;
+        break;
+    }
+    ASSERT(orientation);
+    return adoptNS([[UIWindowSceneGeometryPreferencesIOS alloc] initWithInterfaceOrientations:orientations]);
+}
+
+#else
+
+static UIDeviceOrientation toUIDeviceOrientation(DeviceOrientation orientation)
+{
+    switch (orientation) {
     case DeviceOrientation::Portrait:
         return UIDeviceOrientationPortrait;
     case DeviceOrientation::PortraitUpsideDown:
@@ -916,40 +960,28 @@ static UIDeviceOrientation toUIDeviceOrientation(DeviceOrientation* orientation)
     case DeviceOrientation::LandscapeRight:
         return UIDeviceOrientationLandscapeRight;
     }
-    
+    ASSERT_NOT_REACHED();
     return UIDeviceOrientationPortrait;
 }
 
-void UIScriptControllerIOS::simulateRotation(DeviceOrientation* orientation, JSValueRef callback)
-{
-    TestRunnerWKWebView *webView = this->webView();
-    webView.usesSafariLikeRotation = NO;
-    
-    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
-    
-    webView.rotationDidEndCallback = makeBlockPtr([this, strongThis = Ref { *this }, callbackID] {
-        if (!m_context)
-            return;
-        m_context->asyncTaskComplete(callbackID);
-    }).get();
-    
-    [[UIDevice currentDevice] setOrientation:toUIDeviceOrientation(orientation) animated:YES];
-}
+#endif // HAVE(UI_WINDOW_SCENE_GEOMETRY_PREFERENCES)
 
-void UIScriptControllerIOS::simulateRotationLikeSafari(DeviceOrientation* orientation, JSValueRef callback)
+void UIScriptControllerIOS::simulateRotation(DeviceOrientation orientation, JSValueRef callback)
 {
-    TestRunnerWKWebView *webView = this->webView();
-    webView.usesSafariLikeRotation = YES;
-    
-    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
-    
-    webView.rotationDidEndCallback = makeBlockPtr([this, strongThis = Ref { *this }, callbackID] {
+    auto callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+    webView().rotationDidEndCallback = makeBlockPtr([this, strongThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
     }).get();
-    
+
+#if HAVE(UI_WINDOW_SCENE_GEOMETRY_PREFERENCES)
+    [webView().window.windowScene requestGeometryUpdateWithPreferences:toWindowSceneGeometryPreferences(orientation).get() errorHandler:^(NSError *error) {
+        NSLog(@"Failed to simulate rotation with error: %@", error);
+    }];
+#else
     [[UIDevice currentDevice] setOrientation:toUIDeviceOrientation(orientation) animated:YES];
+#endif
 }
 
 void UIScriptControllerIOS::setDidStartFormControlInteractionCallback(JSValueRef callback)

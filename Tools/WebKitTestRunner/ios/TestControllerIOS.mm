@@ -159,6 +159,36 @@ static _WKDragInteractionPolicy dragInteractionPolicy(const TestOptions& options
     return _WKDragInteractionPolicyDefault;
 }
 
+static void restorePortraitOrientationIfNeeded(PlatformWebView* platformWebView, Seconds timeoutDuration)
+{
+#if HAVE(UI_WINDOW_SCENE_GEOMETRY_PREFERENCES)
+    if (!platformWebView)
+        return;
+
+    auto *scene = platformWebView->platformView().window.windowScene;
+    if (scene.effectiveGeometry.interfaceOrientation == UIInterfaceOrientationPortrait)
+        return;
+
+    auto geometryPreferences = adoptNS([[UIWindowSceneGeometryPreferencesIOS alloc] initWithInterfaceOrientations:UIInterfaceOrientationMaskPortrait]);
+    [scene requestGeometryUpdateWithPreferences:geometryPreferences.get() errorHandler:^(NSError *error) {
+        NSLog(@"Failed to restore portrait orientation with error: %@.", error);
+    }];
+
+    auto startTime = MonotonicTime::now();
+    while ([NSRunLoop.currentRunLoop runMode:NSDefaultRunLoopMode beforeDate:NSDate.distantPast]) {
+        if (scene.effectiveGeometry.interfaceOrientation == UIInterfaceOrientationPortrait)
+            break;
+
+        if (MonotonicTime::now() - startTime >= timeoutDuration)
+            break;
+    }
+#else
+    UNUSED_PARAM(platformWebView);
+    UNUSED_PARAM(timeoutDuration);
+    [[UIDevice currentDevice] setOrientation:UIDeviceOrientationPortrait animated:NO];
+#endif
+}
+
 bool TestController::platformResetStateToConsistentValues(const TestOptions& options)
 {
     cocoaResetStateToConsistentValues(options);
@@ -166,9 +196,10 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
     [UIKeyboardImpl.activeInstance setCorrectionLearningAllowed:NO];
     [pasteboardConsistencyEnforcer() clearPasteboard];
     [[UIApplication sharedApplication] _cancelAllTouches];
-    [[UIDevice currentDevice] setOrientation:UIDeviceOrientationPortrait animated:NO];
     [[UIScreen mainScreen] _setScale:2.0];
     [[HIDEventGenerator sharedHIDEventGenerator] resetActiveModifiers];
+
+    restorePortraitOrientationIfNeeded(mainWebView(), m_currentInvocation->shortTimeout());
 
     // Ensures that only the UCB is on-screen when showing the keyboard, if the hardware keyboard is attached.
     TIPreferencesController *textInputPreferences = [getTIPreferencesControllerClass() sharedPreferencesController];
@@ -268,7 +299,7 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
         UIViewController *webViewController = [[webView window] rootViewController];
 
         MonotonicTime waitEndTime = MonotonicTime::now() + m_currentInvocation->shortTimeout();
-        
+
         bool hasPresentedViewController = !![webViewController presentedViewController];
         while (hasPresentedViewController && MonotonicTime::now() < waitEndTime) {
             [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]];
