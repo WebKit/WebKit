@@ -16,7 +16,8 @@
     if (window.accessibilityController) {
         window.jsTestIsAsync = true;
 
-        testOutput += expect("accessibilityController.accessibleElementById('dropeffect-div').ariaDropEffects", "'copy,move'");
+        var dropeffectDiv = accessibilityController.accessibleElementById("dropeffect-div");
+        testOutput += expect("dropeffectDiv.ariaDropEffects", "'copy,move'");
 
         var initiallyGrabbedDiv = accessibilityController.accessibleElementById("initially-grabbed-div");
         var initiallyUngrabbedDiv = accessibilityController.accessibleElementById("initially-ungrabbed-div");
@@ -28,8 +29,13 @@
         testOutput += "\nSetting aria-grabbed false for element #initially-grabbed-div.\n";
         document.getElementById("initially-grabbed-div").setAttribute("aria-grabbed", "false");
         setTimeout(async function() {
-            await waitFor(() => !initiallyGrabbedDiv.ariaIsGrabbed );
+            await waitFor(() => !initiallyGrabbedDiv.ariaIsGrabbed);
             testOutput += expect("initiallyGrabbedDiv.ariaIsGrabbed", "false");
+
+            testOutput += "\nSetting aria-dropeffect of #dropeffect-div to 'move'.\n";
+            document.getElementById("dropeffect-div").setAttribute("aria-dropeffect", "move");
+            await waitFor(() => dropeffectDiv.ariaDropEffects === "move");
+            testOutput += expect("dropeffectDiv.ariaDropEffects", "'move'");
 
             debug(testOutput);
             finishJSTest();

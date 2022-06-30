@@ -35,6 +35,7 @@ class HTMLTablePartElement : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLTablePartElement);
 public:
     RefPtr<const HTMLTableElement> findParentTable() const;
+    bool isHTMLTablePartElement() const override { return true; }
 
 protected:
     HTMLTablePartElement(const QualifiedName& tagName, Document& document)
@@ -47,3 +48,8 @@ protected:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::HTMLTablePartElement)
+    static bool isType(const WebCore::Element& element) { return element.isHTMLTablePartElement(); }
+    static bool isType(const WebCore::Node& node) { return is<WebCore::Element>(node) && isType(downcast<WebCore::Element>(node)); }
+SPECIALIZE_TYPE_TRAITS_END()

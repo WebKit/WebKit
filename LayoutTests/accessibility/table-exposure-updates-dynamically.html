@@ -1,12 +1,12 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test.js"></script>
 <script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
 </head>
 <body>
 
-<table id="table" aria-rowcount="1">
+<table id="table">
     <tr>
         <td id="cellOne">x</td>
         <td>x</td>
@@ -22,25 +22,41 @@
         return cell;
     }
 
+    function roleById(id) {
+        const axElement = accessibilityController.accessibleElementById(id);
+        if (!axElement)
+            return "AXRole: null AXUIElement";
+        return axElement.role;
+    }
+
+    async function verifyAttributeChange(targetId, attributeName, newValue) {
+        // We clean up at the end of this function by removing the attribute, so ensure it didn't exist to start with.
+        if (document.getElementById(targetId).hasAttribute(attributeName))
+            debug(`FAIL: #${targetId} already had attribute ${attributeName}`);
+
+        const initialTableRole = roleById("table");
+        const initialCellRole = roleById("cellOne");
+        testOutput += `\nBefore updating attribute ${attributeName} of #${targetId} to ${newValue}, #table ${initialTableRole}, #cellOne ${initialCellRole}.\n`;
+        document.getElementById(targetId).setAttribute(attributeName, newValue);
+        await waitFor(() => roleById("table") !== initialTableRole && roleById("cellOne") !== initialCellRole);
+        testOutput += `After updating attribute ${attributeName} of #${targetId} to ${newValue}, #table ${roleById("table")}, #cellOne ${roleById("cellOne")}.\n`;
+
+        document.getElementById(targetId).removeAttribute(attributeName);
+        await waitFor(() => roleById("table") === initialTableRole && roleById("cellOne") === initialCellRole);
+    }
+
     if (window.accessibilityController) {
         window.jsTestIsAsync = true;
 
-        const table = accessibilityController.accessibleElementById("table");
-        const cellOne = accessibilityController.accessibleElementById("cellOne");
-        testOutput += "Initial table state has aria-rowcount, so it should be a data table.\n";
-        testOutput += `#table ${table.role}\n`;
-        testOutput += `#cellOne ${cellOne.role}\n`;
-
-        testOutput += "\nRemoving aria-rowcount. Based on this table's contents, it should now become a layout table.\n";
-        document.getElementById("table").removeAttribute("aria-rowcount");
         setTimeout(async function() {
-            await waitFor(() => {
-                return !cellOne.role.includes("Cell") && !table.role.includes("Table");
-            });
-            testOutput += `#table ${table.role}\n`;
-            testOutput += `#cellOne ${cellOne.role}\n`;
+            await verifyAttributeChange("table", "aria-rowcount", "1");
+            await verifyAttributeChange("table", "aria-colcount", "10");
+            await verifyAttributeChange("cellOne", "aria-colindex", "1");
+            await verifyAttributeChange("cellOne", "aria-rowindex", "1");
+            await verifyAttributeChange("cellOne", "aria-colspan", "1");
+            await verifyAttributeChange("cellOne", "aria-rowspan", "1");
 
-            testOutput += "\nAdding a lot of rows which should cause the table to become an accessibility data table.\n";
+            testOutput += `\nBefore adding 20 rows, state is #table ${roleById("table")} #cellOne ${roleById("cellOne")}.\n`;
             for (let i = 0; i < 20; i++) {
                 const row = document.getElementById("table").insertRow(-1);
                 row.appendChild(createCell());
@@ -48,12 +64,13 @@
             }
 
             await waitFor(() => {
-                return table.childrenCount >= 20 &&
-                    cellOne.role.includes("Cell") &&
-                    table.role.includes("Table");
+                const table = accessibilityController.accessibleElementById("table");
+                return table &&
+                    table.childrenCount >= 20 &&
+                    roleById("cellOne").includes("Cell") &&
+                    roleById("table").includes("Table");
             });
-            testOutput += `#table ${table.role}\n`;
-            testOutput += `#cellOne ${cellOne.role}\n`;
+            testOutput += `After adding 20 rows, state is #table ${roleById("table")} #cellOne ${roleById("cellOne")}.\n`;
 
             document.getElementById("table").style.visibility = "hidden";
             debug(testOutput);

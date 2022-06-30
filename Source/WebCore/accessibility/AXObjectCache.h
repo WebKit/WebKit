@@ -279,9 +279,13 @@ public:
         AXAutocorrectionOccured,
         AXCheckedStateChanged,
         AXChildrenChanged,
+        AXColumnCountChanged,
+        AXColumnIndexChanged,
+        AXColumnSpanChanged,
         AXCurrentStateChanged,
         AXDescribedByChanged,
         AXDisabledStateChanged,
+        AXDropEffectChanged,
         AXFocusedUIElementChanged,
         AXFrameLoadComplete,
         AXGrabbedStateChanged,
@@ -297,6 +301,8 @@ public:
         AXPageScrolled,
         AXPlaceholderChanged,
         AXPositionInSetChanged,
+        AXRowIndexChanged,
+        AXRowSpanChanged,
         AXSelectedChildrenChanged,
         AXSelectedStateChanged,
         AXSelectedTextChanged,
@@ -377,6 +383,7 @@ public:
 #endif
     void deferRecomputeIsIgnoredIfNeeded(Element*);
     void deferRecomputeIsIgnored(Element*);
+    void deferRecomputeTableIsExposed(Element*);
     void deferTextChangedIfNeeded(Node*);
     void deferSelectedChildrenChangedIfNeeded(Element&);
     void performDeferredCacheUpdate();

@@ -104,8 +104,28 @@
 
         document.getElementById("grid").setAttribute("aria-rowcount", "60");
         setTimeout(async function() {
-            await waitFor(() => { return grid.numberAttributeValue('AXARIARowCount') === 60 });
+            await waitFor(() => grid.numberAttributeValue('AXARIARowCount') === 60);
             testOutput += "PASS: #grid AXARIARowCount dynamically changed to 60.\n";
+
+            document.getElementById("grid").setAttribute("aria-colcount", "30");
+            await waitFor(() => grid.numberAttributeValue('AXARIAColumnCount') === 30);
+            testOutput += "PASS: #grid AXARIAColumnCount dynamically changed to 30.\n";
+
+            document.getElementById("cell1").setAttribute("aria-colindex", "4");
+            await waitFor(() => cell1.numberAttributeValue('AXARIAColumnIndex') === 4);
+            testOutput += "PASS: #cell1 AXARIAColumnIndex dynamically changed to 4.\n";
+
+            document.getElementById("cell1").setAttribute("aria-rowindex", "10");
+            await waitFor(() => cell1.numberAttributeValue('AXARIARowIndex') === 10);
+            testOutput += "PASS: #cell1 AXARIARowIndex dynamically changed to 10.\n";
+
+            document.getElementById("cell2").setAttribute("aria-rowspan", "1");
+            await waitFor(() => cell2.rowIndexRange() === "{1, 1}");
+            testOutput += "PASS: After dynamic aria-rowspan change, #cell2 row range changed to {1, 1}.\n";
+
+            document.getElementById("cell5").setAttribute("aria-colspan", "1");
+            await waitFor(() => cell5.columnIndexRange() === "{2, 1}");
+            testOutput += "PASS: After dynamic aria-colspan change, #cell5 column range changed to {2, 1}.\n";
 
             debug(testOutput);
             finishJSTest();

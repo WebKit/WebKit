@@ -1,16 +1,26 @@
 This test ensures a table's "exposed" state (whether it is an accessibility data table, vs. just a layout table) updates in response to dynamic page changes.
 
-Initial table state has aria-rowcount, so it should be a data table.
-#table Table
-#cellOne Cell
 
-Removing aria-rowcount. Based on this table's contents, it should now become a layout table.
-#table Unknown
-#cellOne TextGroup
+Before updating attribute aria-rowcount of #table to 1, #table AXRole: null AXUIElement, #cellOne TextGroup.
+After updating attribute aria-rowcount of #table to 1, #table Table, #cellOne Cell.
 
-Adding a lot of rows which should cause the table to become an accessibility data table.
-#table Table
-#cellOne Cell
+Before updating attribute aria-colcount of #table to 10, #table AXRole: null AXUIElement, #cellOne TextGroup.
+After updating attribute aria-colcount of #table to 10, #table Table, #cellOne Cell.
+
+Before updating attribute aria-colindex of #cellOne to 1, #table AXRole: null AXUIElement, #cellOne TextGroup.
+After updating attribute aria-colindex of #cellOne to 1, #table Table, #cellOne Cell.
+
+Before updating attribute aria-rowindex of #cellOne to 1, #table AXRole: null AXUIElement, #cellOne TextGroup.
+After updating attribute aria-rowindex of #cellOne to 1, #table Table, #cellOne Cell.
+
+Before updating attribute aria-colspan of #cellOne to 1, #table AXRole: null AXUIElement, #cellOne TextGroup.
+After updating attribute aria-colspan of #cellOne to 1, #table Table, #cellOne Cell.
+
+Before updating attribute aria-rowspan of #cellOne to 1, #table AXRole: null AXUIElement, #cellOne TextGroup.
+After updating attribute aria-rowspan of #cellOne to 1, #table Table, #cellOne Cell.
+
+Before adding 20 rows, state is #table AXRole: null AXUIElement #cellOne TextGroup.
+After adding 20 rows, state is #table Table #cellOne Cell.
 
 PASS successfullyParsed is true
 

@@ -15,6 +15,11 @@ PASS: cell3.rowIndexRange() === '{1, 2}'
 PASS: cell6.rowIndexRange() === '{0, 2}'
 PASS: cell7.rowIndexRange() === '{0, 2}'
 PASS: #grid AXARIARowCount dynamically changed to 60.
+PASS: #grid AXARIAColumnCount dynamically changed to 30.
+PASS: #cell1 AXARIAColumnIndex dynamically changed to 4.
+PASS: #cell1 AXARIARowIndex dynamically changed to 10.
+PASS: After dynamic aria-rowspan change, #cell2 row range changed to {1, 1}.
+PASS: After dynamic aria-colspan change, #cell5 column range changed to {2, 1}.
 
 PASS successfullyParsed is true
 

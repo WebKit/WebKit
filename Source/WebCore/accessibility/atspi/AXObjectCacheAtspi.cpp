@@ -223,6 +223,18 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* coreObject, AXNotific
         break;
     case AXPlaceholderChanged:
         break;
+    case AXColumnCountChanged:
+        break;
+    case AXColumnIndexChanged:
+        break;
+    case AXColumnSpanChanged:
+        break;
+    case AXRowIndexChanged:
+        break;
+    case AXRowSpanChanged:
+        break;
+    case AXDropEffectChanged:
+        break;
     }
 }
 

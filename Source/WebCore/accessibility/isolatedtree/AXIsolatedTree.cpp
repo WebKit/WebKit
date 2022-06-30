@@ -392,6 +392,12 @@ void AXIsolatedTree::updateNodeProperty(AXCoreObject& axObject, AXPropertyName p
         propertyMap.set(AXPropertyName::ARIATreeRows, axIDs(ariaTreeRows));
         break;
     }
+    case AXPropertyName::AXColumnCount:
+        propertyMap.set(AXPropertyName::AXColumnCount, axObject.axColumnCount());
+        break;
+    case AXPropertyName::AXColumnIndex:
+        propertyMap.set(AXPropertyName::AXColumnIndex, axObject.axColumnIndex());
+        break;
     case AXPropertyName::CanSetFocusAttribute:
         propertyMap.set(AXPropertyName::CanSetFocusAttribute, axObject.canSetFocusAttribute());
         break;
@@ -438,6 +444,9 @@ void AXIsolatedTree::updateNodeProperty(AXCoreObject& axObject, AXPropertyName p
         break;
     case AXPropertyName::ReadOnlyValue:
         propertyMap.set(AXPropertyName::ReadOnlyValue, axObject.readOnlyValue().isolatedCopy());
+        break;
+    case AXPropertyName::AXRowIndex:
+        propertyMap.set(AXPropertyName::AXRowIndex, axObject.axRowIndex());
         break;
     case AXPropertyName::SetSize:
         propertyMap.set(AXPropertyName::SetSize, axObject.setSize());
