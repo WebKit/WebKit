@@ -49,6 +49,11 @@
     return _navigation->originalRequest().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody);
 }
 
+- (BOOL)_isUserInitiated
+{
+    return _navigation->wasUserInitiated();
+}
+
 #if PLATFORM(IOS_FAMILY)
 
 - (WKContentMode)effectiveContentMode

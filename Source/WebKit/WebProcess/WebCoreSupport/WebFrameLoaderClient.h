@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "SameDocumentNavigationType.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/FrameLoaderClient.h>
 #include <pal/SessionID.h>
@@ -112,6 +113,7 @@ private:
     void dispatchDidPushStateWithinPage() final;
     void dispatchDidReplaceStateWithinPage() final;
     void dispatchDidPopStateWithinPage() final;
+    void didSameDocumentNavigationForFrameViaJSHistoryAPI(SameDocumentNavigationType);
     void dispatchWillClose() final;
     void dispatchDidStartProvisionalLoad() final;
     void dispatchDidReceiveTitle(const WebCore::StringWithDirection&) final;

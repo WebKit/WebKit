@@ -441,55 +441,40 @@ void WebFrameLoaderClient::dispatchWillChangeDocument(const URL& currentUrl, con
 #endif
 }
 
-void WebFrameLoaderClient::dispatchDidPushStateWithinPage()
+void WebFrameLoaderClient::didSameDocumentNavigationForFrameViaJSHistoryAPI(SameDocumentNavigationType navigationType)
 {
     WebPage* webPage = m_frame->page();
     if (!webPage)
         return;
 
     RefPtr<API::Object> userData;
-
-    auto navigationID = static_cast<WebDocumentLoader&>(*m_frame->coreFrame()->loader().documentLoader()).navigationID();
 
     // Notify the bundle client.
     webPage->injectedBundleLoaderClient().didSameDocumentNavigationForFrame(*webPage, m_frame, SameDocumentNavigationSessionStatePush, userData);
 
+    NavigationActionData navigationActionData;
+    navigationActionData.userGestureTokenIdentifier = WebProcess::singleton().userGestureTokenIdentifier(UserGestureIndicator::currentUserGesture());
+    navigationActionData.canHandleRequest = true;
+    navigationActionData.treatAsSameOriginNavigation = true;
+
     // Notify the UIProcess.
-    webPage->send(Messages::WebPageProxy::DidSameDocumentNavigationForFrame(m_frame->frameID(), navigationID, SameDocumentNavigationSessionStatePush, m_frame->coreFrame()->document()->url(), UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
+    webPage->send(Messages::WebPageProxy::DidSameDocumentNavigationForFrameViaJSHistoryAPI(m_frame->frameID(), navigationType, m_frame->coreFrame()->document()->url(), navigationActionData, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
+
+}
+
+void WebFrameLoaderClient::dispatchDidPushStateWithinPage()
+{
+    didSameDocumentNavigationForFrameViaJSHistoryAPI(SameDocumentNavigationSessionStatePush);
 }
 
 void WebFrameLoaderClient::dispatchDidReplaceStateWithinPage()
 {
-    WebPage* webPage = m_frame->page();
-    if (!webPage)
-        return;
-
-    RefPtr<API::Object> userData;
-
-    auto navigationID = static_cast<WebDocumentLoader&>(*m_frame->coreFrame()->loader().documentLoader()).navigationID();
-
-    // Notify the bundle client.
-    webPage->injectedBundleLoaderClient().didSameDocumentNavigationForFrame(*webPage, m_frame, SameDocumentNavigationSessionStateReplace, userData);
-
-    // Notify the UIProcess.
-    webPage->send(Messages::WebPageProxy::DidSameDocumentNavigationForFrame(m_frame->frameID(), navigationID, SameDocumentNavigationSessionStateReplace, m_frame->coreFrame()->document()->url(), UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
+    didSameDocumentNavigationForFrameViaJSHistoryAPI(SameDocumentNavigationSessionStateReplace);
 }
 
 void WebFrameLoaderClient::dispatchDidPopStateWithinPage()
 {
-    WebPage* webPage = m_frame->page();
-    if (!webPage)
-        return;
-
-    RefPtr<API::Object> userData;
-
-    auto navigationID = static_cast<WebDocumentLoader&>(*m_frame->coreFrame()->loader().documentLoader()).navigationID();
-
-    // Notify the bundle client.
-    webPage->injectedBundleLoaderClient().didSameDocumentNavigationForFrame(*webPage, m_frame, SameDocumentNavigationSessionStatePop, userData);
-
-    // Notify the UIProcess.
-    webPage->send(Messages::WebPageProxy::DidSameDocumentNavigationForFrame(m_frame->frameID(), navigationID, SameDocumentNavigationSessionStatePop, m_frame->coreFrame()->document()->url(), UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
+    didSameDocumentNavigationForFrameViaJSHistoryAPI(SameDocumentNavigationSessionStatePop);
 }
 
 void WebFrameLoaderClient::dispatchWillClose()

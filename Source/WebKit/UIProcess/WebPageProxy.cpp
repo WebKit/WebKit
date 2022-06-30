@@ -5338,6 +5338,50 @@ void WebPageProxy::didSameDocumentNavigationForFrame(FrameIdentifier frameID, ui
         pageClient().didSameDocumentNavigationForMainFrame(navigationType);
 }
 
+void WebPageProxy::didSameDocumentNavigationForFrameViaJSHistoryAPI(WebCore::FrameIdentifier frameID, uint32_t opaqueSameDocumentNavigationType, URL url, NavigationActionData&& navigationActionData, const UserData& userData)
+{
+    PageClientProtector protector(pageClient());
+
+    WebFrameProxy* frame = m_process->webFrame(frameID);
+    MESSAGE_CHECK(m_process, frame);
+    MESSAGE_CHECK_URL(m_process, url);
+
+    WEBPAGEPROXY_RELEASE_LOG(Loading, "didSameDocumentNavigationForFrameViaJSHistoryAPI: frameID=%" PRIu64 ", isMainFrame=%d, type=%u", frameID.toUInt64(), frame->isMainFrame(), opaqueSameDocumentNavigationType);
+
+    // FIXME: We should message check that navigationID is not zero here, but it's currently zero for some navigations through the back/forward cache.
+    RefPtr<API::Navigation> navigation;
+    if (frame->isMainFrame()) {
+        navigation = navigationState().createLoadRequestNavigation(ResourceRequest(url), m_backForwardList->currentItem());
+        navigation->setLastNavigationAction(WTFMove(navigationActionData));
+    }
+
+    auto transaction = m_pageLoadState.transaction();
+
+    bool isMainFrame = frame->isMainFrame();
+    if (isMainFrame)
+        m_pageLoadState.didSameDocumentNavigation(transaction, url.string());
+
+    if (m_controlledByAutomation) {
+        if (auto* automationSession = process().processPool().automationSession())
+            automationSession->navigationOccurredForFrame(*frame);
+    }
+
+    m_pageLoadState.clearPendingAPIRequest(transaction);
+    frame->didSameDocumentNavigation(url);
+
+    m_pageLoadState.commitChanges();
+
+    SameDocumentNavigationType navigationType = static_cast<SameDocumentNavigationType>(opaqueSameDocumentNavigationType);
+    if (isMainFrame)
+        m_navigationClient->didSameDocumentNavigation(*this, navigation.get(), navigationType, m_process->transformHandlesToObjects(userData.object()).get());
+
+    if (isMainFrame)
+        pageClient().didSameDocumentNavigationForMainFrame(navigationType);
+
+    if (navigation)
+        navigationState().didDestroyNavigation(navigation->navigationID());
+}
+
 void WebPageProxy::didChangeMainDocument(FrameIdentifier frameID)
 {
 #if ENABLE(MEDIA_STREAM)
