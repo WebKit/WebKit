@@ -30,7 +30,7 @@
 
 #include "DFGAbstractInterpreterInlines.h"
 #include "DFGBlockMapInlines.h"
-#include "DFGClobberSet.h"
+#include "DFGClobberize.h"
 #include "DFGDoesGC.h"
 #include "DFGGraph.h"
 #include "DFGInPlaceAbstractState.h"
@@ -205,6 +205,8 @@ private:
         }
 
         bool result = true;
+
+        HashMap<AbstractHeap, Node*> potentialStackEscapes;
         
         for (m_nodeIndex = 0; m_nodeIndex < block->size(); ++m_nodeIndex) {
             m_node = block->at(m_nodeIndex);
@@ -357,8 +359,10 @@ private:
                 break;
             }
             
-            if (doesGC(m_graph, m_node))
+            if (doesGC(m_graph, m_node)) {
                 m_currentEpoch.bump();
+                potentialStackEscapes.clear();
+            }
             
             switch (m_node->op()) {
             case NewObject:
@@ -431,17 +435,47 @@ private:
                 // So this analysis must mark an allocation that escapes to the heap as being part of the primordial
                 // epoch.
 
-                ClobberSet writes = writeSet(m_graph, m_node);
-                if (writes.overlaps(Heap) || writes.overlaps(Stack)) {
-                    auto escape = [] (Node* node) {
+                auto readFunc = [&] (const AbstractHeap& heap) {
+                    if (!heap.overlaps(Stack))
+                        return;
+                    potentialStackEscapes.removeIf([&] (const auto& entry) {
+                        if (entry.key.overlaps(heap)) {
+                            entry.value->setEpoch(Epoch());
+                            return true;
+                        }
+                        return false;
+                    });
+                };
+
+                bool wroteHeapOrStack = false;
+                unsigned numberOfPreciseStackWrites = 0;
+                AbstractHeap preciseStackWrite;
+                auto writeFunc = [&] (const AbstractHeap& heap) {
+                    wroteHeapOrStack |= heap.overlaps(Heap) || heap.overlaps(Stack);
+                    if (heap.kind() == Stack && !heap.payload().isTop()) {
+                        ++numberOfPreciseStackWrites;
+                        preciseStackWrite = heap;
+                    }
+                };
+                clobberize(m_graph, m_node, readFunc, writeFunc, NoOpClobberize());
+
+                if (wroteHeapOrStack) {
+                    auto escape = [&] (Node* node) {
                         node->setEpoch(Epoch());
+                    };
+
+                    auto escapeToTheStack = [&] (Node* node) {
+                        if (node->epoch() == m_currentEpoch) {
+                            RELEASE_ASSERT(!!preciseStackWrite);
+                            RELEASE_ASSERT(numberOfPreciseStackWrites == 1);
+                            potentialStackEscapes.set(preciseStackWrite, node);
+                        }
                     };
 
                     switch (m_node->op()) {
                     case PutStructure:
                     case MultiDeleteByOffset:
                         break;
-
                     case PutInternalField:
                         escape(m_node->child2().node());
                         break;
@@ -453,6 +487,13 @@ private:
                         break;
                     case PutClosureVar:
                         escape(m_node->child2().node());
+                        break;
+                    case NukeStructureAndSetButterfly:
+                        escape(m_node->child2().node());
+                        break;
+                    case SetLocal:
+                    case PutStack:
+                        escapeToTheStack(m_node->child1().node());
                         break;
                     default:
                         m_graph.doToChildren(m_node, [&] (Edge edge) {
@@ -482,6 +523,12 @@ private:
                     break;
                 }
             }
+        }
+
+        {
+            for (auto* node : potentialStackEscapes.values())
+                node->setEpoch(Epoch());
+            potentialStackEscapes.clear();
         }
         
         if (mode == PhaseMode::Global)
