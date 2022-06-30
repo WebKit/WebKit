@@ -603,6 +603,7 @@ private:
     void startObservingPreferenceChanges();
 #endif
 
+    static void registerDisplayConfigurationCallback();
     static void registerHighDynamicRangeChangeCallback();
 
 #if PLATFORM(MAC)

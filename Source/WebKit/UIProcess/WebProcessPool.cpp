@@ -131,10 +131,6 @@
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
-#if PLATFORM(MAC)
-#include <pal/spi/cg/CoreGraphicsSPI.h>
-#endif
-
 #ifndef NDEBUG
 #include <wtf/RefCountedLeakCounter.h>
 #endif
@@ -679,38 +675,15 @@ RefPtr<WebProcessProxy> WebProcessPool::tryTakePrewarmedProcess(WebsiteDataStore
     return std::exchange(m_prewarmedProcess, nullptr).get();
 }
 
-#if PLATFORM(MAC)
-static void displayReconfigurationCallBack(CGDirectDisplayID display, CGDisplayChangeSummaryFlags flags, void *userInfo)
-{
-    RunLoop::main().dispatch([display, flags]() {
-        auto screenProperties = WebCore::collectScreenProperties();
-        for (auto& processPool : WebProcessPool::allProcessPools()) {
-            processPool->sendToAllProcesses(Messages::WebProcess::SetScreenProperties(screenProperties));
-            processPool->sendToAllProcesses(Messages::WebProcess::DisplayConfigurationChanged(display, flags));
-            if (auto gpuProcess = processPool->gpuProcess()) {
-                gpuProcess->displayConfigurationChanged(display, flags);
-                gpuProcess->setScreenProperties(screenProperties);
-            }
-        }
-    });
-}
-
-static void registerDisplayConfigurationCallback()
-{
-    static std::once_flag onceFlag;
-    std::call_once(
-        onceFlag,
-        [] {
-            CGDisplayRegisterReconfigurationCallback(displayReconfigurationCallBack, nullptr);
-        });
-}
-#endif
-
 #if !PLATFORM(MAC)
+void WebProcessPool::registerDisplayConfigurationCallback()
+{
+}
+
 void WebProcessPool::registerHighDynamicRangeChangeCallback()
 {
 }
-#endif
+#endif // !PLATFORM(MAC)
 
 WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebProcessProxy& process, WebsiteDataStore& websiteDataStore)
 {
@@ -917,10 +890,7 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
     process.sendAudioComponentRegistrations();
 #endif
 
-#if PLATFORM(MAC)
     registerDisplayConfigurationCallback();
-#endif
-
     registerHighDynamicRangeChangeCallback();
 }
 

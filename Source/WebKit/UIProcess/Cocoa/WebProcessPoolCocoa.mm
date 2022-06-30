@@ -90,6 +90,7 @@
 #import <QuartzCore/CARemoteLayerServer.h>
 #import <notify.h>
 #import <notify_keys.h>
+#import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/mac/NSApplicationSPI.h>
 #else
 #import "UIKitSPI.h"
@@ -1080,6 +1081,31 @@ void WebProcessPool::notifyPreferencesChanged(const String& domain, const String
 #endif // ENABLE(CFPREFS_DIRECT_MODE)
 
 #if PLATFORM(MAC)
+static void displayReconfigurationCallBack(CGDirectDisplayID display, CGDisplayChangeSummaryFlags flags, void *userInfo)
+{
+    RunLoop::main().dispatch([display, flags]() {
+        auto screenProperties = WebCore::collectScreenProperties();
+        for (auto& processPool : WebProcessPool::allProcessPools()) {
+            processPool->sendToAllProcesses(Messages::WebProcess::SetScreenProperties(screenProperties));
+            processPool->sendToAllProcesses(Messages::WebProcess::DisplayConfigurationChanged(display, flags));
+            if (auto gpuProcess = processPool->gpuProcess()) {
+                gpuProcess->displayConfigurationChanged(display, flags);
+                gpuProcess->setScreenProperties(screenProperties);
+            }
+        }
+    });
+}
+
+void WebProcessPool::registerDisplayConfigurationCallback()
+{
+    static std::once_flag onceFlag;
+    std::call_once(
+        onceFlag,
+        [] {
+            CGDisplayRegisterReconfigurationCallback(displayReconfigurationCallBack, nullptr);
+        });
+}
+
 static void webProcessPoolHighDynamicRangeDidChangeCallback(CMNotificationCenterRef, const void*, CFStringRef notificationName, const void*, CFTypeRef)
 {
     RunLoop::main().dispatch([] {
@@ -1121,7 +1147,6 @@ void WebProcessPool::systemDidWake()
 {
     sendToAllProcesses(Messages::WebProcess::SystemDidWake());
 }
-
-#endif
+#endif // PLATFORM(MAC)
 
 } // namespace WebKit
