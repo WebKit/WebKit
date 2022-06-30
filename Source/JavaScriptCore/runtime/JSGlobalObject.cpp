@@ -879,7 +879,9 @@ void JSGlobalObject::init(VM& vm)
             init.setPrototype(JS ## type ## ArrayPrototype::create(init.vm, init.global, JS ## type ## ArrayPrototype::createStructure(init.vm, init.global, init.global->m_typedArrayProto.get(init.global)))); \
             init.setStructure(JS ## type ## Array::createStructure(init.vm, init.global, init.prototype)); \
             init.setConstructor(JS ## type ## ArrayConstructor::create(init.vm, init.global, JS ## type ## ArrayConstructor::createStructure(init.vm, init.global, init.global->m_typedArraySuperConstructor.get(init.global)), init.prototype, #type "Array"_s)); \
-            init.global->putDirect(init.vm, init.vm.propertyNames->builtinNames().type ## ArrayPrivateName(), init.constructor, static_cast<unsigned>(PropertyAttribute::DontEnum)); \
+        }); \
+    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::type##Array)].initLater([](const Initializer<JSCell>& init) { \
+            init.set(jsCast<JSGlobalObject*>(init.owner)->typedArrayConstructor(TypedArrayType::Type##type)); \
         });
     FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(INIT_TYPED_ARRAY_LATER)
 #undef INIT_TYPED_ARRAY_LATER

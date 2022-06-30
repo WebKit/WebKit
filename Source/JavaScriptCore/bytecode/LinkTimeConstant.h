@@ -123,6 +123,17 @@ class JSGlobalObject;
     v(jsonParse, nullptr) \
     v(jsonStringify, nullptr) \
     v(String, nullptr) \
+    v(Int8Array, nullptr) \
+    v(Uint8Array, nullptr) \
+    v(Uint8ClampedArray, nullptr) \
+    v(Int16Array, nullptr) \
+    v(Uint16Array, nullptr) \
+    v(Int32Array, nullptr) \
+    v(Uint32Array, nullptr) \
+    v(Float32Array, nullptr) \
+    v(Float64Array, nullptr) \
+    v(BigInt64Array, nullptr) \
+    v(BigUint64Array, nullptr) \
 
 
 #define DECLARE_LINK_TIME_CONSTANT(name, code) name,
