@@ -435,6 +435,13 @@ WI.Resource = class Resource extends WI.SourceCode
         return this._mimeType;
     }
 
+    get hasMetadata()
+    {
+        // Some metadata is only collected when Web Inspector is open (e.g. resource timing data, HTTP method, request headers, etc.).
+        // Use `_requestIdentifier` as a general signal since it is always included when metadata is collected.
+        return !!this._requestIdentifier;
+    }
+
     createObjectURL()
     {
         let revision = this.currentRevision;
