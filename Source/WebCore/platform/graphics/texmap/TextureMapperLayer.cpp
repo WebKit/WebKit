@@ -1,5 +1,6 @@
 /*
  Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+ Copyright (C) 2022 Sony Interactive Entertainment Inc.
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Library General Public
@@ -256,14 +257,18 @@ void TextureMapperLayer::paintSelfAndChildren(TextureMapperPaintOptions& options
     if (m_children.isEmpty())
         return;
 
-    bool shouldClip = m_state.masksToBounds && !m_state.preserves3D;
+    bool shouldClip = (m_state.masksToBounds || m_state.contentsRectClipsDescendants) && !m_state.preserves3D;
     if (shouldClip) {
         TransformationMatrix clipTransform;
         clipTransform.translate(options.offset.width(), options.offset.height());
         clipTransform.multiply(options.transform);
         clipTransform.multiply(m_layerTransforms.combined);
-        clipTransform.translate(m_state.boundsOrigin.x(), m_state.boundsOrigin.y());
-        options.textureMapper.beginClip(clipTransform, FloatRoundedRect(layerRect()));
+        if (m_state.contentsRectClipsDescendants)
+            options.textureMapper.beginClip(clipTransform, m_state.contentsClippingRect);
+        else {
+            clipTransform.translate(m_state.boundsOrigin.x(), m_state.boundsOrigin.y());
+            options.textureMapper.beginClip(clipTransform, FloatRoundedRect(layerRect()));
+        }
 
         // If as a result of beginClip(), the clipping area is empty, it means that the intersection of the previous
         // clipping area and the current one don't have any pixels in common. In this case we can skip painting the
@@ -694,6 +699,11 @@ void TextureMapperLayer::setContentsTilePhase(const FloatSize& phase)
 void TextureMapperLayer::setContentsClippingRect(const FloatRoundedRect& contentsClippingRect)
 {
     m_state.contentsClippingRect = contentsClippingRect;
+}
+
+void TextureMapperLayer::setContentsRectClipsDescendants(bool clips)
+{
+    m_state.contentsRectClipsDescendants = clips;
 }
 
 void TextureMapperLayer::setMasksToBounds(bool masksToBounds)

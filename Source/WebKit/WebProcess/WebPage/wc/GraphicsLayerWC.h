@@ -77,6 +77,7 @@ public:
     void setOpacity(float) override;
     void setContentsRect(const WebCore::FloatRect&) override;
     void setContentsClippingRect(const WebCore::FloatRoundedRect&) override;
+    void setContentsRectClipsDescendants(bool) override;
     void setDrawsContent(bool) override;
     void setContentsVisible(bool) override;
     void setBackfaceVisibility(bool) override;

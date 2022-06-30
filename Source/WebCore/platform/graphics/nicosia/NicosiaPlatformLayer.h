@@ -154,6 +154,7 @@ public:
                     bool contentsVisible : 1;
                     bool backfaceVisible : 1;
                     bool masksToBounds : 1;
+                    bool contentsRectClipsDescendants : 1;
                     bool preserves3D : 1;
                 };
                 uint32_t value { 0 };

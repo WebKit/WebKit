@@ -469,6 +469,16 @@ void CoordinatedGraphicsLayer::setContentsClippingRect(const FloatRoundedRect& r
     notifyFlushRequired();
 }
 
+void CoordinatedGraphicsLayer::setContentsRectClipsDescendants(bool clips)
+{
+    if (contentsRectClipsDescendants() == clips)
+        return;
+
+    GraphicsLayer::setContentsRectClipsDescendants(clips);
+    m_nicosia.delta.flagsChanged = true;
+    notifyFlushRequired();
+}
+
 bool GraphicsLayer::supportsContentsTiling()
 {
     return true;
@@ -1011,6 +1021,7 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
                     state.flags.contentsVisible = contentsAreVisible();
                     state.flags.backfaceVisible = backfaceVisibility();
                     state.flags.masksToBounds = masksToBounds();
+                    state.flags.contentsRectClipsDescendants = contentsRectClipsDescendants();
                     state.flags.preserves3D = preserves3D();
                 }
 

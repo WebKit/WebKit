@@ -90,7 +90,7 @@ bool GraphicsLayer::supportsLayerType(Type type)
 
 bool GraphicsLayer::supportsRoundedClip()
 {
-    return false;
+    return true;
 }
 
 bool GraphicsLayer::supportsBackgroundColorContent()

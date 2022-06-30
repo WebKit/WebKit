@@ -123,8 +123,10 @@ std::optional<UpdateInfo> WCScene::update(WCUpateInfo&& update)
             layer->texmapLayer.setPreserves3D(layerUpdate.preserves3D);
         if (layerUpdate.changes & WCLayerChange::ContentsRect)
             layer->texmapLayer.setContentsRect(layerUpdate.contentsRect);
-        if (layerUpdate.changes & WCLayerChange::ContentsClippingRect)
+        if (layerUpdate.changes & WCLayerChange::ContentsClippingRect) {
             layer->texmapLayer.setContentsClippingRect(layerUpdate.contentsClippingRect);
+            layer->texmapLayer.setContentsRectClipsDescendants(layerUpdate.contentsRectClipsDescendants);
+        }
         if (layerUpdate.changes & WCLayerChange::ContentsVisible)
             layer->texmapLayer.setContentsVisible(layerUpdate.contentsVisible);
         if (layerUpdate.changes & WCLayerChange::BackfaceVisibility)

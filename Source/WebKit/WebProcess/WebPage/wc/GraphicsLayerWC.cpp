@@ -356,6 +356,15 @@ void GraphicsLayerWC::setContentsClippingRect(const FloatRoundedRect& value)
     noteLayerPropertyChanged(WCLayerChange::ContentsClippingRect);
 }
 
+void GraphicsLayerWC::setContentsRectClipsDescendants(bool contentsRectClipsDescendants)
+{
+    if (contentsRectClipsDescendants == m_contentsRectClipsDescendants)
+        return;
+
+    GraphicsLayer::setContentsRectClipsDescendants(contentsRectClipsDescendants);
+    noteLayerPropertyChanged(WCLayerChange::ContentsClippingRect);
+}
+
 void GraphicsLayerWC::setDrawsContent(bool value)
 {
     if (value == drawsContent())
@@ -536,8 +545,10 @@ void GraphicsLayerWC::flushCompositingStateForThisLayerOnly()
         update.preserves3D = preserves3D();
     if (update.changes & WCLayerChange::ContentsRect)
         update.contentsRect = contentsRect();
-    if (update.changes & WCLayerChange::ContentsClippingRect)
+    if (update.changes & WCLayerChange::ContentsClippingRect) {
         update.contentsClippingRect = contentsClippingRect();
+        update.contentsRectClipsDescendants = contentsRectClipsDescendants();
+    }
     if (update.changes & WCLayerChange::ContentsVisible)
         update.contentsVisible = contentsAreVisible();
     if (update.changes & WCLayerChange::BackfaceVisibility)

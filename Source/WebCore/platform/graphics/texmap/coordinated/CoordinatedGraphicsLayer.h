@@ -91,6 +91,7 @@ public:
     void setContentsTilePhase(const FloatSize&) override;
     void setContentsTileSize(const FloatSize&) override;
     void setContentsClippingRect(const FloatRoundedRect&) override;
+    void setContentsRectClipsDescendants(bool) override;
     void setContentsToImage(Image*) override;
     void setContentsToSolidColor(const Color&) override;
     void setShowDebugBorder(bool) override;

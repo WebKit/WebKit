@@ -854,9 +854,6 @@ webkit.org/b/210850 compositing/tiling/coverage-adjustment-secondary-quad-mappin
 
 webkit.org/b/210239 fast/canvas/webgl/index-validation-with-subsequent-draws.html [ Failure ]
 
-webkit.org/b/211501 compositing/iframes/border-radius-composited-frame.html [ ImageOnlyFailure ]
-webkit.org/b/211501 compositing/iframes/border-uneven-radius-composited-frame.html [ ImageOnlyFailure ]
-
 # The first one is also crashing for both GTK and WPE debug
 webkit.org/b/211887 [ Release ] fast/canvas/webgl/tex-sub-image-2d-bad-args.html [ Failure ]
 webkit.org/b/211887 webgl/1.0.3/conformance/more/functions/texSubImage2DHTMLBadArgs.html [ Failure ]
@@ -1796,8 +1793,6 @@ webkit.org/b/206264 imported/w3c/web-platform-tests/css/css-multicol/multicol-ga
 webkit.org/b/211981 editing/pasteboard/data-transfer-get-data-on-pasting-html-uses-blob-url.html [ Failure ]
 
 webkit.org/b/212744 compositing/repaint/compositing-toggle-in-overflow-scroll-repaint.html [ Failure ]
-
-webkit.org/b/218111 compositing/clipping/border-radius-async-overflow-stacking.html [ ImageOnlyFailure ]
 
 webkit.org/b/219248 imported/w3c/web-platform-tests/uievents/mouse/mouseevent_move_button.html [ Failure ]
 

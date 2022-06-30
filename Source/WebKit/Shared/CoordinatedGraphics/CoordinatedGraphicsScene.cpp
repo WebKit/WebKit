@@ -339,6 +339,7 @@ void CoordinatedGraphicsScene::updateSceneState()
                             layer.setContentsVisible(layerState.flags.contentsVisible);
                             layer.setBackfaceVisibility(layerState.flags.backfaceVisible);
                             layer.setMasksToBounds(layerState.flags.masksToBounds);
+                            layer.setContentsRectClipsDescendants(layerState.flags.contentsRectClipsDescendants);
                             layer.setPreserves3D(layerState.flags.preserves3D);
                         }
 

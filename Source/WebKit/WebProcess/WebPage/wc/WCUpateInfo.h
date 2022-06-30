@@ -102,6 +102,7 @@ struct WCLayerUpateInfo {
     WebCore::FloatSize size;
     WebCore::FloatPoint boundsOrigin;
     bool masksToBounds;
+    bool contentsRectClipsDescendants;
     bool showDebugBorder;
     bool showRepaintCounter;
     bool contentsVisible;
@@ -154,8 +155,10 @@ struct WCLayerUpateInfo {
             encoder << showRepaintCounter << repaintCount;
         if (changes & WCLayerChange::ContentsRect)
             encoder << contentsRect;
-        if (changes & WCLayerChange::ContentsClippingRect)
+        if (changes & WCLayerChange::ContentsClippingRect) {
             encoder << contentsClippingRect;
+            encoder << contentsRectClipsDescendants;
+        }
         if (changes & WCLayerChange::Opacity)
             encoder << opacity;
         if (changes & WCLayerChange::Background)
@@ -241,6 +244,8 @@ struct WCLayerUpateInfo {
         }
         if (result.changes & WCLayerChange::ContentsClippingRect) {
             if (!decoder.decode(result.contentsClippingRect))
+                return false;
+            if (!decoder.decode(result.contentsRectClipsDescendants))
                 return false;
         }
         if (result.changes & WCLayerChange::Opacity) {

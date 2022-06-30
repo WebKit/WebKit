@@ -77,6 +77,7 @@ public:
     void setContentsTileSize(const FloatSize&);
     void setContentsTilePhase(const FloatSize&);
     void setContentsClippingRect(const FloatRoundedRect&);
+    void setContentsRectClipsDescendants(bool);
     void setFilters(const FilterOperations&);
 
     bool hasFilters() const
@@ -189,6 +190,7 @@ private:
         bool drawsContent : 1;
         bool contentsVisible : 1;
         bool contentsOpaque : 1;
+        bool contentsRectClipsDescendants : 1;
         bool backfaceVisibility : 1;
         bool visible : 1;
         bool showDebugBorders : 1;
@@ -204,6 +206,7 @@ private:
             , drawsContent(false)
             , contentsVisible(true)
             , contentsOpaque(false)
+            , contentsRectClipsDescendants(false)
             , backfaceVisibility(true)
             , visible(true)
             , showDebugBorders(false)
