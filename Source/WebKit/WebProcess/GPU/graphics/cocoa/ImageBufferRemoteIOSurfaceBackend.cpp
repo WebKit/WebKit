@@ -112,18 +112,6 @@ RefPtr<NativeImage> ImageBufferRemoteIOSurfaceBackend::copyNativeImage(BackingSt
     return { };
 }
 
-String ImageBufferRemoteIOSurfaceBackend::toDataURL(const String&, std::optional<double>, PreserveResolution) const
-{
-    RELEASE_ASSERT_NOT_REACHED();
-    return { };
-}
-
-Vector<uint8_t> ImageBufferRemoteIOSurfaceBackend::toData(const String&, std::optional<double>) const
-{
-    RELEASE_ASSERT_NOT_REACHED();
-    return { };
-}
-
 RefPtr<PixelBuffer> ImageBufferRemoteIOSurfaceBackend::getPixelBuffer(const PixelBufferFormat&, const IntRect&, const ImageBufferAllocator&) const
 {
     RELEASE_ASSERT_NOT_REACHED();

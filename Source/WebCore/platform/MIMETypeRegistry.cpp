@@ -39,6 +39,7 @@
 #include <wtf/Vector.h>
 
 #if USE(CG)
+#include "ImageBufferUtilitiesCG.h"
 #include "ImageSourceCG.h"
 #include "UTIRegistry.h"
 #include <ImageIO/ImageIO.h>
@@ -830,6 +831,20 @@ Vector<String> MIMETypeRegistry::allowedFileExtensions(const Vector<String>& mim
         allowedFileExtensions.appendIfNotContains(trimmedExtension(extension));
 
     return allowedFileExtensions;
+}
+
+bool MIMETypeRegistry::isJPEGMIMEType(const String& mimeType)
+{
+#if USE(CG)
+    auto destinationUTI = utiFromImageBufferMIMEType(mimeType);
+    if (!destinationUTI)
+        return false;
+    return CFEqual(destinationUTI.get(), jpegUTI());
+#else
+    return mimeType.substring(sizeof "image") == "jpeg"_s;
+#endif
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 } // namespace WebCore
