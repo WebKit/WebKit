@@ -549,6 +549,25 @@ TEST(FontManagerTests, SetSelectedSystemFontAfterTogglingBold)
     EXPECT_EQ([selectedFontAfterBoldingAgain pointSize], 16.);
 }
 
+TEST(FontManagerTests, ObservingFontPanelShouldNotCrashWhenUnparentingViewTwice)
+{
+    NSFontManager *fontManager = NSFontManager.sharedFontManager;
+    auto webView = webViewForFontManagerTesting(fontManager);
+
+    [webView removeFromSuperview];
+    [webView addToTestWindow];
+    [webView removeFromSuperview];
+    [webView addToTestWindow];
+
+    [webView selectWord:nil];
+    [webView waitForNextPresentationUpdate];
+    [fontManager addFontTrait:menuItemCellForFontAction(NSBoldFontMask).get()];
+    EXPECT_WK_STREQ("700", [webView stylePropertyAtSelectionStart:@"font-weight"]);
+    EXPECT_WK_STREQ("700", [webView stylePropertyAtSelectionEnd:@"font-weight"]);
+    EXPECT_WK_STREQ("Times-Bold", [fontManager selectedFont].fontName);
+
+}
+
 } // namespace TestWebKitAPI
 
 #endif // PLATFORM(MAC)
