@@ -230,6 +230,24 @@ protected:
         }
     }
 
+    String toDataURL(const String& mimeType, std::optional<double> quality, PreserveResolution preserveResolution) const override
+    {
+        if (auto* backend = ensureBackendCreated()) {
+            const_cast<ConcreteImageBuffer&>(*this).flushContext();
+            return backend->toDataURL(mimeType, quality, preserveResolution);
+        }
+        return String();
+    }
+
+    Vector<uint8_t> toData(const String& mimeType, std::optional<double> quality = std::nullopt) const override
+    {
+        if (auto* backend = ensureBackendCreated()) {
+            const_cast<ConcreteImageBuffer&>(*this).flushContext();
+            return backend->toData(mimeType, quality);
+        }
+        return { };
+    }
+
     RefPtr<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect, const ImageBufferAllocator& allocator) const override
     {
         if (auto* backend = ensureBackendCreated()) {

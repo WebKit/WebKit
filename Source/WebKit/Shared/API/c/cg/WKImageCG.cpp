@@ -70,6 +70,7 @@ WKImageRef WKImageCreateFromCGImage(CGImageRef imageRef, WKImageOptions options)
 WKStringRef WKImageCreateDataURLFromImage(CGImageRef imageRef)
 {
     String mimeType { "image/png"_s };
-    auto value = WebCore::dataURL(imageRef, mimeType, { });
+    auto destinationUTI = WebCore::utiFromImageBufferMIMEType(mimeType);
+    auto value = WebCore::dataURL(imageRef, destinationUTI.get(), mimeType, { });
     return WKStringCreateWithUTF8CString(value.utf8().data());
 }
