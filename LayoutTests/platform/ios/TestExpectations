@@ -3663,3 +3663,5 @@ fast/text/bulgarian-system-language-shaping.html [ Pass ]
 webkit.org/b/242139 fast/text/accessibility-bold-system-font/accessibility-bold-system-font.html [ Failure ]
 webkit.org/b/242139 fast/text/accessibility-bold-system-font/accessibility-bold-system-font-2.html [ ImageOnlyFailure ]
 fast/text/accessibility-bold-system-font/accessibility-bold-system-font-3.html [ Pass ]
+
+webkit.org/b/242164 imported/w3c/web-platform-tests/service-workers/service-worker/navigation-timing.https.html [ Failure ]
