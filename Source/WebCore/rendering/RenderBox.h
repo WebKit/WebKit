@@ -731,7 +731,9 @@ protected:
     }
 
     void computePreferredLogicalWidths(const Length& minWidth, const Length& maxWidth, LayoutUnit borderAndPadding);
-
+    
+    bool isAspectRatioDegenerate(double aspectRatio) const { return !aspectRatio || isnan(aspectRatio); }
+    
 private:
     bool replacedMinMaxLogicalHeightComputesAsNone(SizeType) const;
 

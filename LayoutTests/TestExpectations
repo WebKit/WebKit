@@ -4812,9 +4812,6 @@ webkit.org/b/241778 [ Debug ] imported/w3c/web-platform-tests/css/css-contain/co
 # Flaky css-contain test
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/animation-display-lock.html [ Failure Pass ]
 
-# Canvas doesn't get default aspect-ratio for width and height attributes.
-webkit.org/b/217529 imported/w3c/web-platform-tests/css/css-flexbox/canvas-contain-size.html [ ImageOnlyFailure ]
-
 # Multicolumn does not paint the horizontal overflow area of a relative child.
 webkit.org/b/41796 imported/w3c/web-platform-tests/css/css-contain/contain-size-monolithic-002.html [ ImageOnlyFailure ]
 

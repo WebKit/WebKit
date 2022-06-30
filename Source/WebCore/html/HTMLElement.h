@@ -150,6 +150,9 @@ protected:
     void addHTMLColorToStyle(MutableStyleProperties&, CSSPropertyID, const String& color);
 
     void applyAspectRatioFromWidthAndHeightAttributesToStyle(StringView widthAttribute, StringView heightAttribute, MutableStyleProperties&);
+    void applyAspectRatioWithoutDimensionalRulesFromWidthAndHeightAttributesToStyle(StringView widthAttribute, StringView heightAttribute, MutableStyleProperties&);
+    void addParsedWidthAndHeightToAspectRatioList(double width, double height, MutableStyleProperties&);
+    
     void applyAlignmentAttributeToStyle(const AtomString&, MutableStyleProperties&);
     void applyBorderAttributeToStyle(const AtomString&, MutableStyleProperties&);
 
