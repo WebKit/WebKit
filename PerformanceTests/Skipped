@@ -152,8 +152,5 @@ MediaTime/
 [Win] IndexedDB/stress/large-number-of-inserts.html
 [Win] IndexedDB/stress/large-string-keys.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=240767
-Intl/numberformat-create-all-options.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=241729
 Layout/nested-flexbox.html

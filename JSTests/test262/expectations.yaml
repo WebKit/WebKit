@@ -1242,6 +1242,9 @@ test/intl402/PluralRules/prototype/selectRange/prop-desc.js:
 test/intl402/PluralRules/prototype/selectRange/x-greater-than-y-throws.js:
   default: 'Test262Error: Expected a RangeError but got a TypeError'
   strict mode: 'Test262Error: Expected a RangeError but got a TypeError'
+test/intl402/NumberFormat/test-option-useGrouping-extended.js:
+  default: 'Test262Error: "undefined" Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: "undefined" Expected a RangeError to be thrown but no exception was thrown at all'
 test/intl402/Temporal/Duration/compare/relativeto-hour.js:
   default: "TypeError: undefined is not an object (evaluating 'Temporal.ZonedDateTime.from')"
   strict mode: "TypeError: undefined is not an object (evaluating 'Temporal.ZonedDateTime.from')"
