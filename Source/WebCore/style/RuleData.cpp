@@ -80,6 +80,8 @@ static inline MatchBasedOnRuleHash computeMatchBasedOnRuleHash(const CSSSelector
         return MatchBasedOnRuleHash::ClassA;
     if (selector.match() == CSSSelector::Class)
         return MatchBasedOnRuleHash::ClassB;
+    // FIXME: Valueless [attribute] case can be handled here too.
+
     return MatchBasedOnRuleHash::None;
 }
 

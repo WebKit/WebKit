@@ -1,0 +1,9 @@
+<style>
+[data-a]:first-of-type { color: green }
+</style>
+<div id=test data-a data-b data-c>This test passes if it doesn't crash.</div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+test.style.color = "yellow";
+</script>
