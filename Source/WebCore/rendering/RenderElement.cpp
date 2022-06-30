@@ -644,7 +644,7 @@ static void addLayers(const RenderElement& insertedRenderer, RenderElement& curr
             // The special handling of a toplayer/backdrop content may result in trying to insert the associated
             // layer twice as we connect subtrees.
             if (auto* parentLayer = downcast<RenderLayerModelObject>(currentRenderer).layer()->parent()) {
-                ASSERT(parentLayer == currentRenderer.view().layer());
+                ASSERT_UNUSED(parentLayer, parentLayer == currentRenderer.view().layer());
                 return;
             }
             layerToUse = insertedRenderer.view().layer();
