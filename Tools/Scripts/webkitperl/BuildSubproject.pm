@@ -190,7 +190,7 @@ if (isCMakeBuild()) {
 
     # This call only returns if nothing wrong happened
     buildCMakeProjectOrExit(0, undef, $buildTarget, @featureArgs, @cmakeArgs);
-    writeCongrats();
+    writeCongrats("JavaScriptCore");
     exit exitStatus(0);
 }
 
