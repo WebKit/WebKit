@@ -45,6 +45,7 @@ from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.common.version_name_map import INTERNAL_TABLE
 from webkitpy.port.base import Port
 from webkitpy.port.config import apple_additions, clear_cached_configuration
+from webkitpy.port.driver import DriverOutput
 from webkitpy.port.image_diff import ImageDiffer, ImageDiffResult
 from webkitpy.port.server_process_mock import MockServerProcess
 from webkitpy.layout_tests.servers import http_server_base
@@ -280,6 +281,9 @@ class PortTestCase(unittest.TestCase):
         self.assertFalse(port.diff_image(b'foo', b'').passed)
 
     def test_diff_image(self):
+        # FIXME: Can't pretend to run setup for some ports, so just skip this test.
+        if self.disable_setup:
+            return
         port = self.make_port()
         self.proc = None
 
@@ -296,12 +300,13 @@ class PortTestCase(unittest.TestCase):
                 'diff: 100%\n',
                 '#EOF\n'])
             return self.proc
-
-        # FIXME: Can't pretend to run setup for some ports, so just skip this test.
-        if self.disable_setup:
-            return
-
         port._server_process_constructor = make_proc
+        self.test_runner_proc = None
+
+        def make_test_runner_proc(port, nm, cmd, env, target_host, crash_message=None):
+            self.test_runner_proc = MockServerProcess(port, nm, cmd, env, lines=['#EOF', '#EOF'], err_lines=['#EOF'])
+            return self.test_runner_proc
+        port._test_runner_process_constructor = make_test_runner_proc
         port.setup_test_run()
 
         # First test the case of not using the JHBuild wrapper.
@@ -360,18 +365,23 @@ class PortTestCase(unittest.TestCase):
         self.assertEqual(image_differ.diff_image(b'foo', b'bar', tolerance=0.1), ImageDiffResult(passed=False, diff_image=b'test', difference=10, tolerance=0.1, fuzzy_data={'max_difference': 5, 'total_pixels': 13}))
 
     def test_diff_image_crashed(self):
+        # FIXME: Can't pretend to run setup for some ports, so just skip this test.
+        if self.disable_setup:
+            return
+
         port = self.make_port()
         self.proc = None
 
         def make_proc(port, nm, cmd, env, crash_message=None):
             self.proc = MockServerProcess(port, nm, cmd, env, crashed=True)
             return self.proc
-
-        # FIXME: Can't pretend to run setup for some ports, so just skip this test.
-        if self.disable_setup:
-            return
-
         port._server_process_constructor = make_proc
+        self.test_runner_proc = None
+
+        def make_test_runner_proc(port, nm, cmd, env, target_host, crash_message=None):
+            self.test_runner_proc = MockServerProcess(port, nm, cmd, env, lines=['#EOF', '#EOF'], err_lines=['#EOF'])
+            return self.test_runner_proc
+        port._test_runner_process_constructor = make_test_runner_proc
         port.setup_test_run()
         self.assertEqual(port.diff_image(b'foo', b'bar'), ImageDiffResult(passed=False, diff_image=None, difference=0, tolerance=0.1, error_string='ImageDiff crashed\n'))
         port.clean_up_test_run()

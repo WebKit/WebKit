@@ -40,6 +40,7 @@ from webkitpy.common.version_name_map import VersionNameMap
 from webkitpy.port.base import Port
 from webkitpy.port.config import apple_additions, Config
 from webkitpy.port.darwin import DarwinPort
+from webkitpy.port.driver import DriverInput
 
 _log = logging.getLogger(__name__)
 
@@ -328,6 +329,12 @@ class MacPort(DarwinPort):
                 configuration['model'] = match.group('model')
 
         return configuration
+
+    def setup_test_run(self, device_type=None):
+        super(MacPort, self).setup_test_run(device_type)
+        _log.debug('Warming up the runner ...')
+        warmup_driver = self.create_driver(0)
+        warmup_driver.run_test(DriverInput('file:///warmup-does-not-exist', 60000., None, should_run_pixel_test=False), stop_when_done=True)
 
 
 class MacCatalystPort(MacPort):
