@@ -99,7 +99,10 @@ class BenchmarkResults(object):
         unit = cls._unit_from_metric(metric_name)
 
         if not scale_unit:
-            formatted_value = '{mean:.3f}{unit} stdev={delta:.1%}'.format(mean=mean, delta=sample_stdev / mean, unit=unit)
+            delta = 0
+            if mean:
+                delta = sample_stdev / mean
+            formatted_value = '{mean:.3f}{unit} stdev={delta:.1%}'.format(mean=mean, delta=delta, unit=unit)
             if show_iteration_values:
                 formatted_value += ' [' + ', '.join(['{value:.3f}'.format(value=value) for value in values]) + ']'
             return formatted_value
@@ -112,19 +115,28 @@ class BenchmarkResults(object):
 
         base = 1024 if unit == 'B' else 1000
         value_sig_fig = 1 - math.floor(math.log10(sample_stdev / mean)) if sample_stdev else 3
-        SI_magnitude = math.floor(math.log(mean, base))
+        if mean:
+            SI_magnitude = math.floor(math.log(mean, base))
+        else:
+            SI_magnitude = 0
 
         scaling_factor = math.pow(base, -SI_magnitude)
         scaled_mean = mean * scaling_factor
         SI_prefix = cls.SI_prefixes[int(SI_magnitude) + 3]
 
-        non_floating_digits = 1 + math.floor(math.log10(scaled_mean))
+        if scaled_mean:
+            non_floating_digits = 1 + math.floor(math.log10(scaled_mean))
+        else:
+            non_floating_digits = 1
         floating_points_count = max(0, value_sig_fig - non_floating_digits)
 
         def format_scaled(value):
             return ('{value:.' + str(int(floating_points_count)) + 'f}').format(value=value)
 
-        formatted_value = '{mean}{prefix}{unit} stdev={delta:.1%}'.format(mean=format_scaled(scaled_mean), delta=sample_stdev / mean, prefix=SI_prefix, unit=unit)
+        delta = 0
+        if mean:
+            delta = sample_stdev / mean
+        formatted_value = '{mean}{prefix}{unit} stdev={delta:.1%}'.format(mean=format_scaled(scaled_mean), delta=delta, prefix=SI_prefix, unit=unit)
         if show_iteration_values:
             formatted_value += ' [' + ', '.join([format_scaled(value * scaling_factor) for value in values]) + ']'
         return formatted_value
