@@ -96,7 +96,7 @@ class Git(Scm):
                     self._revisions_to_identifiers[self._ordered_revisions[branch][index]] = identifier
                 index -= 1
 
-        def populate(self, branch=None):
+        def populate(self, branch=None, remote=None):
             branch = branch or self.repo.branch
             if not branch:
                 return
@@ -111,6 +111,7 @@ class Git(Scm):
             # If we aren't on the default branch, we will need the default branch to determine when
             # our  branch  intersects with the default branch.
             if not is_default_branch:
+                self.populate(branch=self.repo.default_branch, remote=self.repo.default_remote)
                 self.populate(branch=self.repo.default_branch)
             hashes = []
             revisions = []
@@ -129,7 +130,7 @@ class Git(Scm):
                     kwargs = dict(encoding='utf-8')
                 self._last_populated[branch] = time.time()
                 log = subprocess.Popen(
-                    [self.repo.executable(), 'log', branch, '--no-decorate', '--date=unix', '--'],
+                    [self.repo.executable(), 'log', '{}/{}'.format(remote, branch) if remote else branch, '--no-decorate', '--date=unix', '--'],
                     cwd=self.repo.root_path,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
@@ -375,6 +376,7 @@ class Git(Scm):
         super(Git, self).__init__(path, dev_branches=dev_branches, prod_branches=prod_branches, contributors=contributors, id=id)
         self._branch = None
         self.cache = self.Cache(self) if self.root_path and cached else None
+        self.default_remote = 'origin'
         if not self.root_path:
             raise OSError('Provided path {} is not a git repository'.format(path))
 
@@ -430,12 +432,12 @@ class Git(Scm):
     @decorators.Memoize()
     def default_branch(self):
         for name in ['HEAD', 'main', 'master']:
-            result = run([self.executable(), 'rev-parse', '--symbolic-full-name', 'refs/remotes/origin/{}'.format(name)],
+            result = run([self.executable(), 'rev-parse', '--symbolic-full-name', 'refs/remotes/{}/{}'.format(self.default_remote, name)],
                          cwd=self.path, capture_output=True, encoding='utf-8')
             s = result.stdout.strip()
             if result.returncode == 0 and s:
-                assert s.startswith('refs/remotes/origin/')
-                return s[len('refs/remotes/origin/'):]
+                assert s.startswith('refs/remotes/{}/'.format(self.default_remote))
+                return s[len('refs/remotes/{}/'.format(self.default_remote)):]
 
         candidates = self.branches
         if 'main' in candidates:
@@ -483,7 +485,7 @@ class Git(Scm):
         return result
 
     def url(self, name=None, cached=None):
-        return self.config(cached=cached).get('remote.{}.url'.format(name or 'origin'))
+        return self.config(cached=cached).get('remote.{}.url'.format(name or self.default_remote))
 
     @decorators.Memoize()
     def remote(self, name=None):
@@ -514,7 +516,7 @@ class Git(Scm):
     @decorators.Memoize(cached=False)
     def branches_for(self, hash=None, remote=True):
         branch = run(
-            [self.executable(), 'branch'] + (['--contains', hash] if hash else ['-a']),
+            [self.executable(), 'branch'] + (['--contains', hash, '-a'] if hash else ['-a']),
             cwd=self.root_path,
             capture_output=True,
             encoding='utf-8',
@@ -610,7 +612,13 @@ class Git(Scm):
                 if is_default and parsed_branch_point:
                     raise self.Exception('Cannot provide a branch point for a commit on the default branch')
 
-                base_count = self._commit_count(baseline if is_default else '{}..{}'.format(default_branch, baseline))
+                if is_default:
+                    base_count = self._commit_count(baseline)
+                else:
+                    base_count = min(
+                        self._commit_count('{}..{}'.format(default_branch, baseline)),
+                        self._commit_count('{}/{}..{}'.format(self.default_remote, default_branch, baseline)),
+                    )
 
                 if identifier > base_count:
                     raise self.Exception('Identifier {} cannot be found on the specified branch in the current checkout'.format(identifier))
@@ -665,7 +673,13 @@ class Git(Scm):
 
         # Compute the identifier if the function did not receive one and we were asked to
         if not identifier and include_identifier:
-            identifier = self._commit_count(hash if branch == default_branch else '{}..{}'.format(default_branch, hash))
+            if branch == default_branch:
+                identifier = self._commit_count(hash)
+            else:
+                identifier = min(
+                    self._commit_count('{}..{}'.format(default_branch, hash)),
+                    self._commit_count('{}/{}..{}'.format(self.default_remote, default_branch, hash)),
+                )
 
         # Only compute the branch point we're on something other than the default branch
         if not branch_point and include_identifier and branch != default_branch:
@@ -934,13 +948,14 @@ class Git(Scm):
             ), 'refs/heads/{}...{}'.format(target, head),
         ], cwd=self.root_path, env={'FILTER_BRANCH_SQUELCH_WARNING': '1'}, capture_output=True).returncode
 
-    def fetch(self, branch, remote='origin'):
+    def fetch(self, branch, remote=None):
         return run(
-            [self.executable(), 'fetch', remote, '{}:{}'.format(branch, branch)],
+            [self.executable(), 'fetch', remote or self.default_remote, '{}:{}'.format(branch, branch)],
             cwd=self.root_path,
         ).returncode
 
-    def pull(self, rebase=None, branch=None, remote='origin'):
+    def pull(self, rebase=None, branch=None, remote=None):
+        remote = remote or self.default_remote
         commit = self.commit() if self.is_svn or branch else None
 
         code = 0

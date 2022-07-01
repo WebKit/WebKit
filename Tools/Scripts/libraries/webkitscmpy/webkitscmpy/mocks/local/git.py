@@ -390,7 +390,7 @@ nothing to commit, working tree clean
                     )
                 ) if self.find(args[4]) else mocks.ProcessCompletion(returncode=128),
             ), mocks.Subprocess.Route(
-                self.executable, 'branch', '--contains', re.compile(r'.+'),
+                self.executable, 'branch', '--contains', re.compile(r'.+'), '-a',
                 cwd=self.path,
                 generator=lambda *args, **kwargs: mocks.ProcessCompletion(
                     returncode=0,
