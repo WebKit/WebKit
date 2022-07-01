@@ -255,6 +255,8 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/cache/DOMCache.idl \
     $(WebCore)/Modules/cache/DOMCacheStorage.idl \
     $(WebCore)/Modules/cache/WindowOrWorkerGlobalScope+Caches.idl \
+    $(WebCore)/Modules/compression/CompressionStream.idl \
+    $(WebCore)/Modules/compression/DecompressionStream.idl \
     $(WebCore)/Modules/contact-picker/ContactInfo.idl \
     $(WebCore)/Modules/contact-picker/ContactProperty.idl \
     $(WebCore)/Modules/contact-picker/ContactsManager.idl \
@@ -540,6 +542,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/speech/SpeechRecognitionResultList.idl \
     $(WebCore)/Modules/streams/ByteLengthQueuingStrategy.idl \
     $(WebCore)/Modules/streams/CountQueuingStrategy.idl \
+    $(WebCore)/Modules/streams/GenericTransformStream.idl \
     $(WebCore)/Modules/streams/ReadableByteStreamController.idl \
     $(WebCore)/Modules/streams/ReadableStream.idl \
     $(WebCore)/Modules/streams/ReadableStreamBYOBReader.idl \

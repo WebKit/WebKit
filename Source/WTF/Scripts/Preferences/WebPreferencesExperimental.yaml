@@ -457,6 +457,18 @@ CanvasColorSpaceEnabled:
     WebCore:
       default: false
 
+CompressionStreamEnabled:
+  type: bool
+  humanReadableName: "Compression Stream API"
+  humanReadableDescription: "Enable Compression Stream API"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 ContactPickerAPIEnabled:
   type: bool
   humanReadableName: "Contact Picker API"

@@ -233,6 +233,8 @@ $(PROJECT_DIR)/Modules/cache/CacheQueryOptions.idl
 $(PROJECT_DIR)/Modules/cache/DOMCache.idl
 $(PROJECT_DIR)/Modules/cache/DOMCacheStorage.idl
 $(PROJECT_DIR)/Modules/cache/WindowOrWorkerGlobalScope+Caches.idl
+$(PROJECT_DIR)/Modules/compression/CompressionStream.idl
+$(PROJECT_DIR)/Modules/compression/DecompressionStream.idl
 $(PROJECT_DIR)/Modules/contact-picker/ContactInfo.idl
 $(PROJECT_DIR)/Modules/contact-picker/ContactProperty.idl
 $(PROJECT_DIR)/Modules/contact-picker/ContactsManager.idl
@@ -619,6 +621,7 @@ $(PROJECT_DIR)/Modules/streams/ByteLengthQueuingStrategy.idl
 $(PROJECT_DIR)/Modules/streams/ByteLengthQueuingStrategy.js
 $(PROJECT_DIR)/Modules/streams/CountQueuingStrategy.idl
 $(PROJECT_DIR)/Modules/streams/CountQueuingStrategy.js
+$(PROJECT_DIR)/Modules/streams/GenericTransformStream.idl
 $(PROJECT_DIR)/Modules/streams/ReadableByteStreamController.idl
 $(PROJECT_DIR)/Modules/streams/ReadableByteStreamController.js
 $(PROJECT_DIR)/Modules/streams/ReadableByteStreamInternals.js

@@ -66,6 +66,8 @@ Modules/cache/DOMCacheEngine.cpp
 Modules/cache/DOMCacheStorage.cpp
 Modules/cache/WindowOrWorkerGlobalScopeCaches.cpp
 Modules/cache/WorkerCacheStorageConnection.cpp
+Modules/compression/CompressionStream.cpp
+Modules/compression/DecompressionStream.cpp
 Modules/contact-picker/ContactsManager.cpp
 Modules/contact-picker/NavigatorContacts.cpp
 Modules/cookie-consent/NavigatorCookieConsent.cpp
@@ -3042,6 +3044,7 @@ JSComment.cpp
 JSCompositeOperation.cpp
 JSCompositeOperationOrAuto.cpp
 JSCompositionEvent.cpp
+JSCompressionStream.cpp
 JSComputedEffectTiming.cpp
 JSConstantSourceNode.cpp
 JSConstantSourceOptions.cpp
@@ -3110,6 +3113,7 @@ JSDataTransferItem.cpp
 JSDataTransferItemList.cpp
 JSDatabase.cpp
 JSDatabaseCallback.cpp
+JSDecompressionStream.cpp
 JSDedicatedWorkerGlobalScope.cpp
 JSDelayNode.cpp
 JSDelayOptions.cpp

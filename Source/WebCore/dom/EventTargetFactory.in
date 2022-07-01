@@ -9,6 +9,8 @@ AudioTrackList conditional=VIDEO
 BaseAudioContext conditional=WEB_AUDIO
 BroadcastChannel
 Clipboard
+CompressionStream
+DecompressionStream
 DedicatedWorkerGlobalScope
 DOMApplicationCache
 DOMWindow

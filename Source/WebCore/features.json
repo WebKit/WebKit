@@ -418,6 +418,21 @@
         }
     },
     {
+        "name": "Compression Streams",
+        "status": {
+            "status": "In Development"
+        },
+        "url": "https://wicg.github.io/compression/",
+        "keywords": ["compression", "streams", "compression streams"],
+        "category": "webapps",
+        "description": "Enables compression and decompression of binary, data streams through JavaScript APIs.",
+        "contact": {
+            "name": "Brandon Stewart",
+            "email": "brandonstewart@apple.com",
+            "twitter": "@brandon_stwrt"
+        }
+    },
+    {
         "name": "Content Security Policy Level 2",
         "status": {
             "status": "Supported"

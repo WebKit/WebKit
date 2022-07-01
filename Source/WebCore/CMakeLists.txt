@@ -26,6 +26,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/async-clipboard"
     "${WEBCORE_DIR}/Modules/beacon"
     "${WEBCORE_DIR}/Modules/cache"
+    "${WEBCORE_DIR}/Modules/compression"
     "${WEBCORE_DIR}/Modules/contact-picker"
     "${WEBCORE_DIR}/Modules/cookie-consent"
     "${WEBCORE_DIR}/Modules/credentialmanagement"
@@ -205,6 +206,7 @@ set(WebCore_IDL_INCLUDES
     Modules/WebGPU
     Modules/airplay
     Modules/cache
+    Modules/compression
     Modules/credentialmanagement
     Modules/encryptedmedia/legacy
     Modules/entriesapi
@@ -257,6 +259,9 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/cache/DOMCache.idl
     Modules/cache/DOMCacheStorage.idl
     Modules/cache/WindowOrWorkerGlobalScope+Caches.idl
+
+    Modules/compression/CompressionStream.idl
+    Modules/compression/DecompressionStream.idl
 
     Modules/contact-picker/ContactInfo.idl
     Modules/contact-picker/ContactProperty.idl
@@ -560,6 +565,7 @@ set(WebCore_NON_SVG_IDL_FILES
 
     Modules/streams/ByteLengthQueuingStrategy.idl
     Modules/streams/CountQueuingStrategy.idl
+    Modules/streams/GenericTransformStream.idl
     Modules/streams/ReadableByteStreamController.idl
     Modules/streams/ReadableStream.idl
     Modules/streams/ReadableStreamBYOBReader.idl

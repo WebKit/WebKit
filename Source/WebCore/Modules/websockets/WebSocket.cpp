@@ -36,6 +36,7 @@
 #include "CloseEvent.h"
 #include "ContentSecurityPolicy.h"
 #include "DOMWindow.h"
+#include "DeprecatedGlobalSettings.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventListener.h"
