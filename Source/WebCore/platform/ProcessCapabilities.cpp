@@ -31,8 +31,10 @@ namespace WebCore {
 #if USE(CG)
 static bool s_HEICDecodingEnabled = false;
 static bool s_AVIFDecodingEnabled = false;
-static bool s_hardwareAcceleratedDecodingDisabled = false;
 #endif
+
+static bool s_hardwareAcceleratedDecodingDisabled = false;
+static bool s_canUseAcceleratedBuffers = true;
 
 #if USE(CG)
 void ProcessCapabilities::setHEICDecodingEnabled(bool value)
@@ -54,6 +56,7 @@ bool ProcessCapabilities::isAVIFDecodingEnabled()
 {
     return s_AVIFDecodingEnabled;
 }
+#endif
 
 void ProcessCapabilities::setHardwareAcceleratedDecodingDisabled(bool value)
 {
@@ -64,6 +67,15 @@ bool ProcessCapabilities::isHardwareAcceleratedDecodingDisabled()
 {
     return s_hardwareAcceleratedDecodingDisabled;
 }
-#endif
+
+void ProcessCapabilities::setCanUseAcceleratedBuffers(bool value)
+{
+    s_canUseAcceleratedBuffers = value;
+}
+
+bool ProcessCapabilities::canUseAcceleratedBuffers()
+{
+    return s_canUseAcceleratedBuffers;
+}
 
 } // namespace WebCore

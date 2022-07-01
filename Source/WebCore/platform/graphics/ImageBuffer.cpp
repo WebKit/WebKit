@@ -32,6 +32,7 @@
 #include "GraphicsContext.h"
 #include "HostWindow.h"
 #include "PlatformImageBuffer.h"
+#include "ProcessCapabilities.h"
 
 namespace WebCore {
 
@@ -59,7 +60,7 @@ RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingPurpose 
     if (imageBuffer)
         return imageBuffer;
 
-    if (options.contains(ImageBufferOptions::Accelerated))
+    if (options.contains(ImageBufferOptions::Accelerated) && ProcessCapabilities::canUseAcceleratedBuffers())
         imageBuffer = AcceleratedImageBuffer::create(size, resolutionScale, colorSpace, pixelFormat, purpose, creationContext);
     
     if (!imageBuffer)

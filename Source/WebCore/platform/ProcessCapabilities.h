@@ -36,10 +36,13 @@ public:
 
     WEBCORE_EXPORT static void setAVIFDecodingEnabled(bool);
     static bool isAVIFDecodingEnabled();
+#endif
 
     WEBCORE_EXPORT static void setHardwareAcceleratedDecodingDisabled(bool);
     static bool isHardwareAcceleratedDecodingDisabled();
-#endif
+
+    WEBCORE_EXPORT static void setCanUseAcceleratedBuffers(bool);
+    static bool canUseAcceleratedBuffers();
 };
 
 } // namespace WebCore
