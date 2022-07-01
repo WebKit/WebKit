@@ -56,6 +56,7 @@ PACKAGES=(
     libwayland-dev
     libwebp-dev
     libwoff-dev
+    libxml2-utils
     libxslt1-dev
     ninja-build
     patch
