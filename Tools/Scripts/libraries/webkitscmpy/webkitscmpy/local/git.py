@@ -74,10 +74,7 @@ class Git(Scm):
 
         def _fill(self, branch):
             default_branch = self.repo.default_branch
-            if branch == default_branch:
-                branch_point = None
-            else:
-                branch_point = int(self._hash_to_identifiers[self._ordered_commits[branch][0]].split('@')[0])
+            branch_point = None
 
             index = len(self._ordered_commits[branch]) - 1
             while index:
