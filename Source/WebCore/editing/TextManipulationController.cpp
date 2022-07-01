@@ -38,6 +38,7 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "InputTypeNames.h"
+#include "Logging.h"
 #include "NodeRenderStyle.h"
 #include "NodeTraversal.h"
 #include "PseudoElement.h"
@@ -842,6 +843,11 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
 
     while (lastChildOfCommonAncestorInRange && lastChildOfCommonAncestorInRange->parentNode() != commonAncestor)
         lastChildOfCommonAncestorInRange = lastChildOfCommonAncestorInRange->parentNode();
+
+    if (!lastChildOfCommonAncestorInRange) {
+        RELEASE_LOG_ERROR(TextManipulation, "%p - TextManipulationController::replace lastChildOfCommonAncestorInRange is null", this);
+        return ManipulationFailureType::ContentChanged;
+    }
 
     for (auto node = commonAncestor; node; node = node->parentNode())
         nodesToRemove.remove(*node);
