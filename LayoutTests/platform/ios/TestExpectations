@@ -3675,3 +3675,5 @@ webkit.org/b/242228 http/tests/privateClickMeasurement/attribution-conversion-th
 webkit.org/b/242250 imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/joint_session_history/002.html [ Pass Timeout ]
 
 webkit.org/b/242270 fast/encoding/char-after-fast-path-ascii-decoding.html [ Pass Failure ]
+
+webkit.org/b/242273 fast/events/ios/dragstart-on-image-by-long-pressing.html [ Pass Failure ]
