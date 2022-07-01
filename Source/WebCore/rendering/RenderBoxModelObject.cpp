@@ -1192,15 +1192,11 @@ bool RenderBoxModelObject::fixedBackgroundPaintsInLocalCoordinates() const
     return rootLayer->backing()->backgroundLayerPaintsFixedRootBackground();
 }
 
-static inline LayoutUnit getSpace(LayoutUnit areaSize, LayoutUnit tileSize)
+static inline std::optional<LayoutUnit> getSpace(LayoutUnit areaSize, LayoutUnit tileSize)
 {
-    int numberOfTiles = areaSize / tileSize;
-    LayoutUnit space = -1;
-
-    if (numberOfTiles > 1)
-        space = (areaSize - numberOfTiles * tileSize) / (numberOfTiles - 1);
-
-    return space;
+    if (int numberOfTiles = areaSize / tileSize; numberOfTiles > 1)
+        return (areaSize - numberOfTiles * tileSize) / (numberOfTiles - 1);
+    return std::nullopt;
 }
 
 static LayoutUnit resolveEdgeRelativeLength(const Length& length, Edge edge, LayoutUnit availableSpace, const LayoutSize& areaSize, const LayoutSize& tileSize)
@@ -1343,11 +1339,10 @@ BackgroundImageGeometry RenderBoxModelObject::calculateBackgroundImageGeometry(c
         phase.setWidth(tileSize.width() ? tileSize.width() - fmodf(computedXPosition + left, tileSize.width()) : 0);
         spaceSize.setWidth(0);
     } else if (backgroundRepeatX == FillRepeat::Space && tileSize.width() > 0) {
-        LayoutUnit space = getSpace(positioningAreaSize.width(), tileSize.width());
-        if (space >= 0) {
-            LayoutUnit actualWidth = tileSize.width() + space;
+        if (auto space = getSpace(positioningAreaSize.width(), tileSize.width())) {
+            LayoutUnit actualWidth = tileSize.width() + *space;
             computedXPosition = minimumValueForLength(Length(), availableWidth);
-            spaceSize.setWidth(space);
+            spaceSize.setWidth(*space);
             spaceSize.setHeight(0);
             phase.setWidth(actualWidth ? actualWidth - fmodf((computedXPosition + left), actualWidth) : 0);
         } else
@@ -1368,12 +1363,10 @@ BackgroundImageGeometry RenderBoxModelObject::calculateBackgroundImageGeometry(c
         phase.setHeight(tileSize.height() ? tileSize.height() - fmodf(computedYPosition + top, tileSize.height()) : 0);
         spaceSize.setHeight(0);
     } else if (backgroundRepeatY == FillRepeat::Space && tileSize.height() > 0) {
-        LayoutUnit space = getSpace(positioningAreaSize.height(), tileSize.height());
-
-        if (space >= 0) {
-            LayoutUnit actualHeight = tileSize.height() + space;
+        if (auto space = getSpace(positioningAreaSize.height(), tileSize.height())) {
+            LayoutUnit actualHeight = tileSize.height() + *space;
             computedYPosition = minimumValueForLength(Length(), availableHeight);
-            spaceSize.setHeight(space);
+            spaceSize.setHeight(*space);
             phase.setHeight(actualHeight ? actualHeight - fmodf((computedYPosition + top), actualHeight) : 0);
         } else
             backgroundRepeatY = FillRepeat::NoRepeat;
