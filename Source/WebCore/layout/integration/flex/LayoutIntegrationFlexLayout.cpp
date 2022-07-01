@@ -42,8 +42,8 @@ namespace LayoutIntegration {
 
 FlexLayout::FlexLayout(RenderFlexibleBox& flexBoxRenderer)
     : m_boxTree(flexBoxRenderer)
-    , m_layoutState(flexBoxRenderer.document(), rootLayoutBox(), Layout::LayoutState::FormattingContextIntegrationType::Flex)
-    , m_flexFormattingState(m_layoutState.ensureFlexFormattingState(rootLayoutBox()))
+    , m_layoutState(flexBoxRenderer.document(), flexBox(), Layout::LayoutState::FormattingContextIntegrationType::Flex)
+    , m_flexFormattingState(m_layoutState.ensureFlexFormattingState(flexBox()))
 {
 }
 
@@ -88,9 +88,9 @@ void FlexLayout::updateFormattingRootGeometryAndInvalidate()
         root.setHorizontalMargin({ });
         root.setVerticalMargin({ });
     };
-    updateGeometry(m_layoutState.ensureGeometryForBox(rootLayoutBox()));
+    updateGeometry(m_layoutState.ensureGeometryForBox(flexBox()));
 
-    for (auto& flexItem : Layout::childrenOfType<Layout::Box>(rootLayoutBox()))
+    for (auto& flexItem : Layout::childrenOfType<Layout::Box>(flexBox()))
         m_flexFormattingState.clearIntrinsicWidthConstraints(flexItem);
 }
 
@@ -116,7 +116,7 @@ void FlexLayout::updateStyle(const RenderBlock&, const RenderStyle&)
 
 std::pair<LayoutUnit, LayoutUnit> FlexLayout::computeIntrinsicWidthConstraints()
 {
-    auto flexFormattingContext = Layout::FlexFormattingContext { rootLayoutBox(), m_flexFormattingState };
+    auto flexFormattingContext = Layout::FlexFormattingContext { flexBox(), m_flexFormattingState };
     auto constraints = flexFormattingContext.computedIntrinsicWidthConstraintsForIntegration();
 
     return { constraints.minimum, constraints.maximum };
@@ -124,20 +124,20 @@ std::pair<LayoutUnit, LayoutUnit> FlexLayout::computeIntrinsicWidthConstraints()
 
 void FlexLayout::layout()
 {
-    auto& rootGeometry = m_layoutState.geometryForBox(rootLayoutBox());
+    auto& rootGeometry = m_layoutState.geometryForBox(flexBox());
     auto horizontalConstraints = Layout::HorizontalConstraints { rootGeometry.contentBoxLeft(), rootGeometry.contentBoxWidth() };
     auto availableVerticalSpace = [&] {
         auto verticalSpace = std::optional<LayoutUnit> { }; 
-        auto rootBoxLogicalHeight = rootLayoutBox().style().logicalHeight();
+        auto rootBoxLogicalHeight = flexBox().style().logicalHeight();
         if (rootBoxLogicalHeight.isFixed())
             verticalSpace = LayoutUnit { rootBoxLogicalHeight.value() };
-        auto rootBoxLogicalMinimumHeight = rootLayoutBox().style().logicalMinHeight();
+        auto rootBoxLogicalMinimumHeight = flexBox().style().logicalMinHeight();
         if (rootBoxLogicalMinimumHeight.isFixed())
             verticalSpace = std::max(verticalSpace.value_or(0_lu), LayoutUnit { rootBoxLogicalMinimumHeight.value() });
         return verticalSpace;
     };
     auto constraints = Layout::ConstraintsForFlexContent { { horizontalConstraints, rootGeometry.contentBoxTop() }, availableVerticalSpace() };
-    auto flexFormattingContext = Layout::FlexFormattingContext { rootLayoutBox(), m_flexFormattingState };
+    auto flexFormattingContext = Layout::FlexFormattingContext { flexBox(), m_flexFormattingState };
     flexFormattingContext.layoutInFlowContentForIntegration(constraints);
 
     updateRenderers();
@@ -199,7 +199,7 @@ void FlexLayout::collectOverflow()
 
 LayoutUnit FlexLayout::contentLogicalHeight() const
 {
-    return Layout::FlexFormattingContext { rootLayoutBox(), m_flexFormattingState }.usedContentHeight();
+    return Layout::FlexFormattingContext { flexBox(), m_flexFormattingState }.usedContentHeight();
 }
 
 }

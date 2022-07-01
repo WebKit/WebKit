@@ -66,8 +66,8 @@ public:
 private:
     void updateRenderers() const;
 
-    const Layout::ContainerBox& rootLayoutBox() const { return m_boxTree.rootLayoutBox(); }
-    Layout::ContainerBox& rootLayoutBox() { return m_boxTree.rootLayoutBox(); }
+    const Layout::ContainerBox& flexBox() const { return m_boxTree.rootLayoutBox(); }
+    Layout::ContainerBox& flexBox() { return m_boxTree.rootLayoutBox(); }
 
     const RenderFlexibleBox& flexBoxRenderer() const { return downcast<RenderFlexibleBox>(m_boxTree.rootRenderer()); }
     RenderFlexibleBox& flexBoxRenderer() { return downcast<RenderFlexibleBox>(m_boxTree.rootRenderer()); }
