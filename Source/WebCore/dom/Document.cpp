@@ -4776,6 +4776,8 @@ Element* Document::focusNavigationStartingNode(FocusDirection direction) const
     if (m_focusedElement) {
         if (!m_focusNavigationStartingNode || !m_focusNavigationStartingNode->isDescendantOf(m_focusedElement.get()))
             return m_focusedElement.get();
+        if (m_focusedElement->isRootEditableElement() && m_focusedElement->contains(m_focusNavigationStartingNode.get()))
+            return m_focusedElement.get();
     }
 
     if (!m_focusNavigationStartingNode)
