@@ -99,14 +99,14 @@ ContentSecurityPolicy::ContentSecurityPolicy(URL&& protectedURL, ScriptExecution
 
 ContentSecurityPolicy::~ContentSecurityPolicy() = default;
 
-void ContentSecurityPolicy::copyStateFrom(const ContentSecurityPolicy* other) 
+void ContentSecurityPolicy::copyStateFrom(const ContentSecurityPolicy* other, ShouldMakeIsolatedCopy shouldMakeIsolatedCopy)
 {
     if (m_hasAPIPolicy)
         return;
     ASSERT(m_policies.isEmpty());
     for (auto& policy : other->m_policies)
         didReceiveHeader(policy->header(), policy->headerType(), ContentSecurityPolicy::PolicyFrom::Inherited, String { });
-    m_referrer = other->m_referrer;
+    m_referrer = shouldMakeIsolatedCopy == ShouldMakeIsolatedCopy::Yes ? other->m_referrer.isolatedCopy() : other->m_referrer;
     m_httpStatusCode = other->m_httpStatusCode;
 }
 
@@ -121,10 +121,10 @@ void ContentSecurityPolicy::createPolicyForPluginDocumentFrom(const ContentSecur
     m_httpStatusCode = other.m_httpStatusCode;
 }
 
-void ContentSecurityPolicy::copyUpgradeInsecureRequestStateFrom(const ContentSecurityPolicy& other)
+void ContentSecurityPolicy::copyUpgradeInsecureRequestStateFrom(const ContentSecurityPolicy& other, ShouldMakeIsolatedCopy shouldMakeIsolatedCopy)
 {
     m_upgradeInsecureRequests = other.m_upgradeInsecureRequests;
-    m_insecureNavigationRequestsToUpgrade.add(other.m_insecureNavigationRequestsToUpgrade.begin(), other.m_insecureNavigationRequestsToUpgrade.end());
+    m_insecureNavigationRequestsToUpgrade = shouldMakeIsolatedCopy == ShouldMakeIsolatedCopy::Yes ? crossThreadCopy(other.m_insecureNavigationRequestsToUpgrade) : other.m_insecureNavigationRequestsToUpgrade;
 }
 
 bool ContentSecurityPolicy::allowRunningOrDisplayingInsecureContent(const URL& url)

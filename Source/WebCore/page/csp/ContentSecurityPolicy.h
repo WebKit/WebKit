@@ -76,8 +76,9 @@ public:
     WEBCORE_EXPORT explicit ContentSecurityPolicy(URL&&, ContentSecurityPolicyClient* = nullptr);
     WEBCORE_EXPORT ~ContentSecurityPolicy();
 
-    void copyStateFrom(const ContentSecurityPolicy*);
-    void copyUpgradeInsecureRequestStateFrom(const ContentSecurityPolicy&);
+    enum class ShouldMakeIsolatedCopy : bool { No, Yes };
+    void copyStateFrom(const ContentSecurityPolicy*, ShouldMakeIsolatedCopy = ShouldMakeIsolatedCopy::No);
+    void copyUpgradeInsecureRequestStateFrom(const ContentSecurityPolicy&, ShouldMakeIsolatedCopy = ShouldMakeIsolatedCopy::No);
     void createPolicyForPluginDocumentFrom(const ContentSecurityPolicy&);
 
     void didCreateWindowProxy(JSWindowProxy&) const;
