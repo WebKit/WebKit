@@ -3671,3 +3671,5 @@ webkit.org/b/242225 http/wpt/service-workers/about-blank-iframe.html [ Pass Fail
 webkit.org/b/237569 imported/blink/svg/filters/filter-huge-clamping.svg [ Pass ImageOnlyFailure ]
 
 webkit.org/b/242228 http/tests/privateClickMeasurement/attribution-conversion-through-fetch-keepalive.html [ Pass Failure Timeout ]
+
+webkit.org/b/242250 imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/joint_session_history/002.html [ Pass Timeout ]
