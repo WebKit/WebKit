@@ -154,10 +154,6 @@ else
 endif
 
 installsrc:
-ifndef XCODE_TARGET
-	@$(call invoke_xcode,,,-alltargets installsrc SRCROOT="$(SRCROOT)$(PATH_FROM_ROOT)")
-else
-	@$(call invoke_xcode,,,installsrc SRCROOT="$(SRCROOT)$(PATH_FROM_ROOT)")
-endif
+	xcodebuild installsrc SRCROOT="$(SRCROOT)$(PATH_FROM_ROOT)"
 
 force: ;
