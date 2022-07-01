@@ -1461,17 +1461,6 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'compile-webkit',
             'jscore-test'
         ],
-        'JSCOnly-Linux-ARMv7-Thumb2-SoftFP-Release': [
-            'configure-build',
-            'configuration',
-            'clean-and-update-working-directory',
-            'checkout-specific-revision',
-            'show-identifier',
-            'delete-WebKitBuild-directory',
-            'delete-stale-build-files',
-            'compile-webkit',
-            'jscore-test'
-        ],
         'JSCOnly-Linux-MIPS32el-Release': [
             'configure-build',
             'configuration',
