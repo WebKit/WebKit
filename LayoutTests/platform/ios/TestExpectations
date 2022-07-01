@@ -3663,3 +3663,6 @@ fast/text/accessibility-bold-system-font [ Pass ]
 webkit.org/b/242164 imported/w3c/web-platform-tests/service-workers/service-worker/navigation-timing.https.html [ Failure ]
 
 webkit.org/b/242194 compositing/images/positioned-image-content-rect.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/242225 http/wpt/service-workers/cache-control-request.html [ Pass Failure ]
+webkit.org/b/242225 http/wpt/service-workers/about-blank-iframe.html [ Pass Failure ]
