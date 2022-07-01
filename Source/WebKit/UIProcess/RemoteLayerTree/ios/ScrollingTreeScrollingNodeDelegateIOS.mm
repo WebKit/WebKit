@@ -388,7 +388,11 @@ UIScrollView *ScrollingTreeScrollingNodeDelegateIOS::findActingScrollParent(UISc
     ASSERT(scrollView == this->scrollView());
 
     auto& scrollingCoordinatorProxy = downcast<RemoteScrollingTree>(scrollingTree()).scrollingCoordinatorProxy();
-    return WebKit::findActingScrollParent(scrollView, *scrollingCoordinatorProxy.layerTreeHost());
+    auto host = scrollingCoordinatorProxy.layerTreeHost();
+    if (!host)
+        return nullptr;
+    
+    return WebKit::findActingScrollParent(scrollView, *host);
 }
 
 void ScrollingTreeScrollingNodeDelegateIOS::computeActiveTouchActionsForGestureRecognizer(UIGestureRecognizer* gestureRecognizer)
