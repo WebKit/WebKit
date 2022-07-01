@@ -437,11 +437,17 @@ Type \`help COMMAND\` for help on my individual commands.`,
         dataLogLn("2. Cleaning");
         await this.execInWebKitDirectorySimple("git", ["clean", "-df"]);
 
-        dataLogLn("3. Pulling");
-        await this.execInWebKitDirectorySimple("git", ["pull"]);
+        dataLogLn("3. Fetching");
+        await this.execInWebKitDirectorySimple("git", ["fetch", "origin"]);
 
-        dataLogLn("4. Fetching");
-        await this.execInWebKitDirectorySimple("git", ["svn", "fetch"]);
+        dataLogLn("4. Checkout out origin/main");
+        await this.execInWebKitDirectorySimple("git", ["checkout", "origin/main", "-f"]);
+
+        dataLogLn("5. Deleting local 'main' ref");
+        await this.execInWebKitDirectorySimple("git", ["branch", "-D", "main"]);
+
+        dataLogLn("6. Creating local 'main' ref");
+        await this.execInWebKitDirectorySimple("git", ["checkout", "origin/main", "-b", "main"]);
     }
 
     async generateRevertingPatch(revisions, reason)
@@ -459,7 +465,7 @@ Type \`help COMMAND\` for help on my individual commands.`,
 
         await this.cleanUpWorkingCopy();
 
-        dataLogLn("5. Creating revert patch ", revisions, reason);
+        dataLogLn("7. Creating revert patch ", revisions, reason);
         let results;
         try {
             const webkitPatchPath = path.resolve("BotWebKit", "Tools", "Scripts", "webkit-patch");
