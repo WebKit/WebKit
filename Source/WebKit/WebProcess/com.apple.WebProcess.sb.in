@@ -2061,6 +2061,13 @@
 (with-filter (uid 0)
     (allow syscall-unix (syscall-number SYS_gettid))) ;; Needed for base system, see <rdar://problem/48651255>
 
+#if HAVE(SANDBOX_STATE_FLAGS)
+(if (not (equal? (param "CPU") "arm64"))
+    (with-filter (require-not (state-flag "WebContentProcessLaunched"))
+        (allow syscall-unix
+            (syscall-number SYS_quotactl))))
+#endif
+
 #if HAVE(ADDITIONAL_APPLE_CAMERA_SERVICE)
 (if (equal? (param "CPU") "arm64")
     (with-filter (extension "com.apple.webkit.camera")
