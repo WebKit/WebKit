@@ -962,7 +962,7 @@ MediaSourceInlinePaintingEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      "HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)": true
+      "HAVE(LOW_AV_SAMPLE_BUFFER_PRUNING_INTERVAL)": true
       default: false
 
 ModelDocumentEnabled:

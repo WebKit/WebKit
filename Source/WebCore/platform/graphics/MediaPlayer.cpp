@@ -1104,7 +1104,7 @@ RefPtr<VideoFrame> MediaPlayer::videoFrameForCurrentTime()
 }
 
 
-#if PLATFORM(COCOA) && !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
+#if PLATFORM(COCOA) && !HAVE(LOW_AV_SAMPLE_BUFFER_PRUNING_INTERVAL)
 void MediaPlayer::willBeAskedToPaintGL()
 {
     m_private->willBeAskedToPaintGL();
