@@ -601,12 +601,20 @@ Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parsePostfixExpressio
     return { WTFMove(expr) };
 }
 
+// https://gpuweb.github.io/gpuweb/wgsl/#syntax-primary_expression
+// primary_expression:
+//   | ident
+//   | callable argument_expression_list
+//   | const_literal
+//   | paren_expression
+//   | bitcast less_than type_decl greater_than paren_expression
 template<typename Lexer>
 Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parsePrimaryExpression()
 {
     START_PARSE();
 
     switch (current().m_type) {
+    // paren_expression
     case TokenType::ParenLeft: {
         consume();
         PARSE(expr, Expression);
@@ -615,18 +623,24 @@ Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parsePrimaryExpressio
     }
     case TokenType::Identifier: {
         CONSUME_TYPE_NAMED(ident, Identifier);
-        if (ident.m_ident == "true"_s) {
-            RETURN_NODE_REF(BoolLiteral, true);
-        }
-        if (ident.m_ident == "false"_s) {
-            RETURN_NODE_REF(BoolLiteral, false);
-        }
         if (current().m_type == TokenType::LT || current().m_type == TokenType::ParenLeft) {
             PARSE(type, TypeDeclAfterIdentifier, WTFMove(ident.m_ident), _startOfElementPosition);
             PARSE(arguments, ArgumentExpressionList);
             RETURN_NODE_REF(TypeConversion, WTFMove(type), WTFMove(arguments));
         }
         RETURN_NODE_REF(IdentifierExpression, ident.m_ident);
+    }
+
+    // const_literal
+    case TokenType::LiteralTrue:
+        consume();
+        RETURN_NODE_REF(BoolLiteral, true);
+    case TokenType::LiteralFalse:
+        consume();
+        RETURN_NODE_REF(BoolLiteral, false);
+    case TokenType::IntegerLiteral: {
+        CONSUME_TYPE_NAMED(lit, IntegerLiteral);
+        RETURN_NODE_REF(AbstractIntLiteral, lit.m_literalValue);
     }
     case TokenType::IntegerLiteralSigned: {
         CONSUME_TYPE_NAMED(lit, IntegerLiteralSigned);
@@ -638,12 +652,18 @@ Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parsePrimaryExpressio
     }
     case TokenType::DecimalFloatLiteral: {
         CONSUME_TYPE_NAMED(lit, DecimalFloatLiteral);
-        RETURN_NODE_REF(Float32Literal, lit.m_literalValue);
+        RETURN_NODE_REF(AbstractFloatLiteral, lit.m_literalValue);
     }
-    // FIXME: HexFloatLiteral and IntegerLiteral
+    case TokenType::HexFloatLiteral: {
+        CONSUME_TYPE_NAMED(lit, HexFloatLiteral);
+        RETURN_NODE_REF(AbstractFloatLiteral, lit.m_literalValue);
+    }
+    // TODO: bitcast expression
+
     default:
         break;
     }
+
     FAIL("Expected one of '(', a literal, or an identifier"_s);
 }
 

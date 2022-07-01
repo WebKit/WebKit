@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "Expression.h"
+
 namespace WGSL::AST {
 
 class BoolLiteral final : public Expression {
@@ -36,7 +38,7 @@ public:
     {
     }
 
-    Kind kind() const override { return Kind::BoolLiteral; }
+    Kind kind() const final { return Kind::BoolLiteral; }
     bool value() const { return m_value; }
 
 private:
@@ -52,7 +54,7 @@ public:
     {
     }
 
-    Kind kind() const override { return Kind::Int32Literal; }
+    Kind kind() const final { return Kind::Int32Literal; }
     int32_t value() const { return m_value; }
 
 private:
@@ -68,7 +70,7 @@ public:
     {
     }
 
-    Kind kind() const override { return Kind::Uint32Literal; }
+    Kind kind() const final { return Kind::Uint32Literal; }
     uint32_t value() const { return m_value; }
 
 private:
@@ -84,11 +86,48 @@ public:
     {
     }
 
-    Kind kind() const override { return Kind::Float32Literal; }
+    Kind kind() const final { return Kind::Float32Literal; }
     float value() const { return m_value; }
 
 private:
     float m_value;
+};
+
+// Literal ints without size prefix; these ints are signed 64-bit numbers.
+// https://gpuweb.github.io/gpuweb/wgsl/#abstractint
+class AbstractIntLiteral final : public Expression {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    AbstractIntLiteral(SourceSpan span, int64_t value)
+        : Expression(span)
+        , m_value(value)
+    {
+    }
+
+    Kind kind() const final { return Kind::AbstractIntLiteral; }
+    int64_t value() const { return m_value; }
+
+private:
+    int64_t m_value;
+};
+
+// Literal floats without size prefix; these floats are double-precision
+// floating point numbers.
+// https://gpuweb.github.io/gpuweb/wgsl/#abstractfloat
+class AbstractFloatLiteral final : public Expression {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    AbstractFloatLiteral(SourceSpan span, double value)
+        : Expression(span)
+        , m_value(value)
+    {
+    }
+
+    Kind kind() const final { return Kind::AbstractFloatLiteral; }
+    double value() const { return m_value; }
+
+private:
+    double m_value;
 };
 
 } // namespace WGSL::AST
@@ -97,3 +136,5 @@ SPECIALIZE_TYPE_TRAITS_WGSL_EXPRESSION(BoolLiteral, isBoolLiteral())
 SPECIALIZE_TYPE_TRAITS_WGSL_EXPRESSION(Int32Literal, isInt32Literal())
 SPECIALIZE_TYPE_TRAITS_WGSL_EXPRESSION(Float32Literal, isFloat32Literal())
 SPECIALIZE_TYPE_TRAITS_WGSL_EXPRESSION(Uint32Literal, isUInt32Literal())
+SPECIALIZE_TYPE_TRAITS_WGSL_EXPRESSION(AbstractIntLiteral, isAbstractIntLiteral())
+SPECIALIZE_TYPE_TRAITS_WGSL_EXPRESSION(AbstractFloatLiteral, isAbstractFloatLiteral())

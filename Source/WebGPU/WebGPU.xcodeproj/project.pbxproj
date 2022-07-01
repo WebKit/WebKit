@@ -79,6 +79,7 @@
 		33EA188427BC268600A1DD52 /* StructureAccess.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA188327BC268600A1DD52 /* StructureAccess.h */; };
 		33EA188627BC26DF00A1DD52 /* TypeConversion.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA188527BC26DF00A1DD52 /* TypeConversion.h */; };
 		33EA188827BC361E00A1DD52 /* LiteralExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA188727BC361E00A1DD52 /* LiteralExpressions.h */; };
+		6634666B285F0140002ABE8E /* ConstLiteralTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6634666A285F0140002ABE8E /* ConstLiteralTests.mm */; };
 		66DC575528627E0B0014CABD /* ParserPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 66DC575428627E0B0014CABD /* ParserPrivate.h */; };
 		DD05A35C27BF09C60096EFAB /* libWTF.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = 1CEBD8292716CAE700A5254D /* libWTF.a */; };
 /* End PBXBuildFile section */
@@ -334,6 +335,7 @@
 		33EA188327BC268600A1DD52 /* StructureAccess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StructureAccess.h; sourceTree = "<group>"; };
 		33EA188527BC26DF00A1DD52 /* TypeConversion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TypeConversion.h; sourceTree = "<group>"; };
 		33EA188727BC361E00A1DD52 /* LiteralExpressions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LiteralExpressions.h; sourceTree = "<group>"; };
+		6634666A285F0140002ABE8E /* ConstLiteralTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ConstLiteralTests.mm; sourceTree = "<group>"; };
 		66DC575428627E0B0014CABD /* ParserPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ParserPrivate.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -378,6 +380,7 @@
 		1C023D3D27449070001DB734 /* WGSLUnitTests */ = {
 			isa = PBXGroup;
 			children = (
+				6664847F28596A3E008FB60E /* Parser */,
 				1C023D3E27449070001DB734 /* WGSLLexerTests.mm */,
 				339B7B1C27D80A1C0072BF9A /* WGSLParserTests.mm */,
 			);
@@ -730,6 +733,14 @@
 			path = Expressions;
 			sourceTree = "<group>";
 		};
+		6664847F28596A3E008FB60E /* Parser */ = {
+			isa = PBXGroup;
+			children = (
+				6634666A285F0140002ABE8E /* ConstLiteralTests.mm */,
+			);
+			path = Parser;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -985,6 +996,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6634666B285F0140002ABE8E /* ConstLiteralTests.mm in Sources */,
 				1C023D3F27449070001DB734 /* WGSLLexerTests.mm in Sources */,
 				339B7B1D27D80A1C0072BF9A /* WGSLParserTests.mm in Sources */,
 			);

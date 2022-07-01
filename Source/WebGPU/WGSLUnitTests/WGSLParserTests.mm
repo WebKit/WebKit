@@ -200,10 +200,10 @@
         WGSL::AST::TypeConversion& expr = downcast<WGSL::AST::TypeConversion>(*stmt.maybeExpression());
         XCTAssert(expr.typeDecl()->isParameterized());
         XCTAssert(expr.arguments().size() == 4);
-        XCTAssert(expr.arguments()[0]->isFloat32Literal());
-        XCTAssert(expr.arguments()[1]->isFloat32Literal());
-        XCTAssert(expr.arguments()[2]->isFloat32Literal());
-        XCTAssert(expr.arguments()[3]->isFloat32Literal());
+        XCTAssert(expr.arguments()[0]->isAbstractFloatLiteral());
+        XCTAssert(expr.arguments()[1]->isAbstractFloatLiteral());
+        XCTAssert(expr.arguments()[2]->isAbstractFloatLiteral());
+        XCTAssert(expr.arguments()[3]->isAbstractFloatLiteral());
     }
 }
 
