@@ -145,6 +145,9 @@
 #include "RuntimeApplicationChecks.h"
 #include "VideoFullscreenInterfaceAVKit.h"
 #endif
+#if HAVE(PIP_CONTROLLER)
+#include "VideoFullscreenInterfacePiP.h"
+#endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 #include "RemotePlayback.h"
@@ -7447,7 +7450,7 @@ void HTMLMediaElement::mediaPlayerGetRawCookies(const URL& url, MediaPlayerClien
     auto* page = document().page();
     if (!page)
         completionHandler({ });
-    
+
     Vector<Cookie> cookies;
     page->cookieJar().getRawCookies(document(), url, cookies);
     completionHandler(WTFMove(cookies));

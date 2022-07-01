@@ -45,16 +45,17 @@
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
 
+#if HAVE(PIP_CONTROLLER)
+#include "WebCore/VideoFullscreenInterfacePiP.h"
+typedef WebCore::VideoFullscreenInterfacePiP PlatformVideoFullscreenInterface;
+#else
 #if PLATFORM(IOS_FAMILY)
 #include <WebCore/VideoFullscreenInterfaceAVKit.h>
-#else
-#include <WebCore/VideoFullscreenInterfaceMac.h>
-#endif
-
-#if PLATFORM(IOS_FAMILY)
 typedef WebCore::VideoFullscreenInterfaceAVKit PlatformVideoFullscreenInterface;
 #else
+#include <WebCore/VideoFullscreenInterfaceMac.h>
 typedef WebCore::VideoFullscreenInterfaceMac PlatformVideoFullscreenInterface;
+#endif
 #endif
 
 namespace WebKit {

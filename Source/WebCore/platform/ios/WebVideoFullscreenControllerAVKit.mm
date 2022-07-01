@@ -37,7 +37,11 @@
 #import "RenderVideo.h"
 #import "TimeRanges.h"
 #import "VideoFullscreenChangeObserver.h"
+#if HAVE(PIP_CONTROLLER)
+#import "VideoFullscreenInterfacePiP.h"
+#else
 #import "VideoFullscreenInterfaceAVKit.h"
+#endif
 #import "VideoFullscreenModelVideoElement.h"
 #import "WebCoreThreadRun.h"
 #import <QuartzCore/CoreAnimation.h>
@@ -79,6 +83,12 @@ using namespace WebCore;
 @end
 
 #else
+
+#if HAVE(PIP_CONTROLLER)
+typedef WebCore::VideoFullscreenInterfacePiP PlatformVideoFullscreenInterface;
+#else
+typedef WebCore::VideoFullscreenInterfaceAVKit PlatformVideoFullscreenInterface;
+#endif
 
 static IntRect elementRectInWindow(HTMLVideoElement* videoElement)
 {
@@ -216,7 +226,7 @@ private:
 
     HashSet<PlaybackSessionModelClient*> m_playbackClients;
     HashSet<VideoFullscreenModelClient*> m_fullscreenClients;
-    RefPtr<VideoFullscreenInterfaceAVKit> m_interface;
+    RefPtr<PlatformVideoFullscreenInterface> m_interface;
     RefPtr<VideoFullscreenModelVideoElement> m_fullscreenModel;
     RefPtr<PlaybackSessionModelMediaElement> m_playbackModel;
     RefPtr<HTMLVideoElement> m_videoElement;
@@ -1016,7 +1026,7 @@ void VideoFullscreenControllerContext::setUpFullscreen(HTMLVideoElement& videoEl
         WebThreadLock();
 
         Ref<PlaybackSessionInterfaceAVKit> sessionInterface = PlaybackSessionInterfaceAVKit::create(*this);
-        m_interface = VideoFullscreenInterfaceAVKit::create(sessionInterface.get());
+        m_interface = PlatformVideoFullscreenInterface::create(sessionInterface.get());
         m_interface->setVideoFullscreenChangeObserver(this);
         m_interface->setVideoFullscreenModel(this);
 
@@ -1051,7 +1061,7 @@ void VideoFullscreenControllerContext::requestHideAndExitFullscreen()
 {
     if (!(self = [super init]))
         return nil;
-    
+
     return self;
 }
 

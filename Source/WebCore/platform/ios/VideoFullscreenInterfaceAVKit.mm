@@ -26,9 +26,8 @@
 #import "config.h"
 #import "VideoFullscreenInterfaceAVKit.h"
 
-#if PLATFORM(IOS_FAMILY) && ENABLE(VIDEO_PRESENTATION_MODE)
+#if PLATFORM(IOS_FAMILY) && ENABLE(VIDEO_PRESENTATION_MODE) && !HAVE(PIP_CONTROLLER)
 
-#import "GeometryUtilities.h"
 #import "Logging.h"
 #import "PictureInPictureSupport.h"
 #import "PlaybackSessionInterfaceAVKit.h"
@@ -37,13 +36,12 @@
 #import "VideoFullscreenChangeObserver.h"
 #import "VideoFullscreenModel.h"
 #import "WebAVPlayerController.h"
+#import "WebAVPlayerLayer.h"
 #import <AVFoundation/AVTime.h>
 #import <UIKit/UIKit.h>
 #import <UIKit/UIWindow.h>
 #import <objc/message.h>
 #import <objc/runtime.h>
-#import <pal/spi/cocoa/AVKitSPI.h>
-#import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
@@ -200,217 +198,6 @@ static VideoFullscreenInterfaceAVKit::ExitFullScreenReason convertToExitFullScre
 
 @end
 
-@interface WebAVPlayerLayer : CALayer
-@property (nonatomic, retain) NSString *videoGravity;
-@property (nonatomic, getter=isReadyForDisplay) BOOL readyForDisplay;
-@property (nonatomic, assign) VideoFullscreenInterfaceAVKit* fullscreenInterface;
-@property (nonatomic, retain) AVPlayerController *playerController;
-@property (nonatomic, retain) CALayer *videoSublayer;
-@property (nonatomic, copy, nullable) NSDictionary *pixelBufferAttributes;
-@property CGSize videoDimensions;
-@property CGRect modelVideoLayerFrame;
-- (FloatRect)calculateTargetVideoFrame;
-@end
-
-@implementation WebAVPlayerLayer {
-    RefPtr<VideoFullscreenInterfaceAVKit> _fullscreenInterface;
-    RetainPtr<WebAVPlayerController> _avPlayerController;
-    RetainPtr<CALayer> _videoSublayer;
-    FloatRect _videoSublayerFrame;
-    RetainPtr<NSString> _videoGravity;
-    RetainPtr<NSString> _previousVideoGravity;
-}
-
-- (instancetype)init
-{
-    self = [super init];
-    if (self) {
-        self.masksToBounds = YES;
-        self.allowsHitTesting = NO;
-        _videoGravity = AVLayerVideoGravityResizeAspect;
-        _previousVideoGravity = AVLayerVideoGravityResizeAspect;
-    }
-    return self;
-}
-
-- (void)dealloc
-{
-    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(resolveBounds) object:nil];
-    [_pixelBufferAttributes release];
-    [super dealloc];
-}
-
-- (VideoFullscreenInterfaceAVKit*)fullscreenInterface
-{
-    return _fullscreenInterface.get();
-}
-
-- (void)setFullscreenInterface:(VideoFullscreenInterfaceAVKit*)fullscreenInterface
-{
-    _fullscreenInterface = fullscreenInterface;
-}
-
-- (AVPlayerController *)playerController
-{
-    return (AVPlayerController *)_avPlayerController.get();
-}
-
-- (void)setPlayerController:(AVPlayerController *)playerController
-{
-    ASSERT(!playerController || [playerController isKindOfClass:[WebAVPlayerController class]]);
-    _avPlayerController = (WebAVPlayerController *)playerController;
-}
-
-- (void)setVideoSublayer:(CALayer *)videoSublayer
-{
-    _videoSublayer = videoSublayer;
-}
-
-- (CALayer*)videoSublayer
-{
-    return _videoSublayer.get();
-}
-
-- (FloatRect)calculateTargetVideoFrame
-{
-    FloatRect targetVideoFrame;
-    float videoAspectRatio = self.videoDimensions.width / self.videoDimensions.height;
-
-    if ([AVLayerVideoGravityResize isEqualToString:self.videoGravity])
-        targetVideoFrame = self.bounds;
-    else if ([AVLayerVideoGravityResizeAspect isEqualToString:self.videoGravity])
-        targetVideoFrame = largestRectWithAspectRatioInsideRect(videoAspectRatio, self.bounds);
-    else if ([AVLayerVideoGravityResizeAspectFill isEqualToString:self.videoGravity])
-        targetVideoFrame = smallestRectWithAspectRatioAroundRect(videoAspectRatio, self.bounds);
-    else
-        ASSERT_NOT_REACHED();
-
-    return targetVideoFrame;
-}
-
-- (void)layoutSublayers
-{
-    if ([_videoSublayer superlayer] != self)
-        return;
-
-    [_videoSublayer setPosition:CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds))];
-
-    if (self.videoDimensions.height <= 0 || self.videoDimensions.width <= 0)
-        return;
-
-    FloatRect sourceVideoFrame;
-    FloatRect targetVideoFrame;
-    float videoAspectRatio = self.videoDimensions.width / self.videoDimensions.height;
-
-    if ([AVLayerVideoGravityResize isEqualToString:_previousVideoGravity.get()])
-        sourceVideoFrame = self.modelVideoLayerFrame;
-    else if ([AVLayerVideoGravityResizeAspect isEqualToString:_previousVideoGravity.get()])
-        sourceVideoFrame = largestRectWithAspectRatioInsideRect(videoAspectRatio, self.modelVideoLayerFrame);
-    else if ([AVLayerVideoGravityResizeAspectFill isEqualToString:_previousVideoGravity.get()])
-        sourceVideoFrame = smallestRectWithAspectRatioAroundRect(videoAspectRatio, self.modelVideoLayerFrame);
-    else
-        ASSERT_NOT_REACHED();
-
-    targetVideoFrame = [self calculateTargetVideoFrame];
-
-    UIView *view = (UIView *)[_videoSublayer delegate];
-    CGAffineTransform transform = CGAffineTransformMakeScale(targetVideoFrame.width() / sourceVideoFrame.width(), targetVideoFrame.height() / sourceVideoFrame.height());
-    [view setTransform:transform];
-
-    NSTimeInterval animationDuration = [CATransaction animationDuration];
-    RunLoop::main().dispatch([self, strongSelf = retainPtr(self), targetVideoFrame, animationDuration] {
-        [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(resolveBounds) object:nil];
-
-        _videoSublayerFrame = targetVideoFrame;
-        [self performSelector:@selector(resolveBounds) withObject:nil afterDelay:animationDuration + 0.1];
-    });
-}
-
-- (void)resolveBounds
-{
-    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(resolveBounds) object:nil];
-    
-    if ([_videoSublayer superlayer] != self)
-        return;
-    
-    if (CGRectEqualToRect(self.modelVideoLayerFrame, [self bounds]) && CGAffineTransformIsIdentity([(UIView *)[_videoSublayer delegate] transform]))
-        return;
-    
-    [CATransaction begin];
-    [CATransaction setAnimationDuration:0];
-    [CATransaction setDisableActions:YES];
-
-    self.modelVideoLayerFrame = [self bounds];
-    if (auto* model = _fullscreenInterface->videoFullscreenModel())
-        model->setVideoLayerFrame(_videoSublayerFrame);
-
-    _previousVideoGravity = _videoGravity;
-
-    [(UIView *)[_videoSublayer delegate] setTransform:CGAffineTransformIdentity];
-    
-    [CATransaction commit];
-}
-
-- (void)setVideoGravity:(NSString *)videoGravity
-{
-#if PLATFORM(MACCATALYST)
-    // FIXME<rdar://46011230>: remove this #if once this radar lands.
-    if (!videoGravity)
-        videoGravity = AVLayerVideoGravityResizeAspect;
-#endif
-
-    if ([_videoGravity isEqualToString:videoGravity])
-        return;
-
-    _previousVideoGravity = _videoGravity;
-    _videoGravity = videoGravity;
-
-    if (![_avPlayerController delegate])
-        return;
-
-    MediaPlayerEnums::VideoGravity gravity = MediaPlayerEnums::VideoGravity::ResizeAspect;
-    if (videoGravity == AVLayerVideoGravityResize)
-        gravity = MediaPlayerEnums::VideoGravity::Resize;
-    if (videoGravity == AVLayerVideoGravityResizeAspect)
-        gravity = MediaPlayerEnums::VideoGravity::ResizeAspect;
-    else if (videoGravity == AVLayerVideoGravityResizeAspectFill)
-        gravity = MediaPlayerEnums::VideoGravity::ResizeAspectFill;
-    else
-        ASSERT_NOT_REACHED();
-    
-    if (auto* model = _fullscreenInterface->videoFullscreenModel())
-        model->setVideoLayerGravity(gravity);
-
-    [self setNeedsLayout];
-}
-
-- (NSString *)videoGravity
-{
-    return _videoGravity.get();
-}
-
-- (CGRect)videoRect
-{
-    if (self.videoDimensions.width <= 0 || self.videoDimensions.height <= 0)
-        return self.bounds;
-    
-    float videoAspectRatio = self.videoDimensions.width / self.videoDimensions.height;
-
-    if ([AVLayerVideoGravityResizeAspect isEqualToString:self.videoGravity])
-        return largestRectWithAspectRatioInsideRect(videoAspectRatio, self.bounds);
-    if ([AVLayerVideoGravityResizeAspectFill isEqualToString:self.videoGravity])
-        return smallestRectWithAspectRatioAroundRect(videoAspectRatio, self.bounds);
-
-    return self.bounds;
-}
-
-+ (NSSet *)keyPathsForValuesAffectingVideoRect
-{
-    return [NSSet setWithObjects:@"videoDimensions", @"videoGravity", nil];
-}
-
-@end
-
 @interface WebAVPictureInPicturePlayerLayerView : UIView
 @end
 
@@ -429,7 +216,7 @@ static WebAVPictureInPicturePlayerLayerView *allocWebAVPictureInPicturePlayerLay
         Class metaClass = objc_getMetaClass("WebAVPictureInPicturePlayerLayerView");
         class_addMethod(metaClass, @selector(layerClass), (IMP)WebAVPictureInPicturePlayerLayerView_layerClass, "@@:");
     });
-    
+
     return (WebAVPictureInPicturePlayerLayerView *)[theClass alloc];
 }
 
@@ -554,9 +341,9 @@ static WebAVPlayerLayerView *allocWebAVPlayerLayerViewInstance()
         class_addMethod(theClass, @selector(startRoutingVideoToPictureInPicturePlayerLayerView), (IMP)WebAVPlayerLayerView_startRoutingVideoToPictureInPicturePlayerLayerView, "v@:");
         class_addMethod(theClass, @selector(stopRoutingVideoToPictureInPicturePlayerLayerView), (IMP)WebAVPlayerLayerView_stopRoutingVideoToPictureInPicturePlayerLayerView, "v@:");
         class_addMethod(theClass, @selector(pictureInPicturePlayerLayerView), (IMP)WebAVPlayerLayerView_pictureInPicturePlayerLayerView, "@@:");
-        
+
         class_addIvar(theClass, "_pictureInPicturePlayerLayerView", sizeof(WebAVPictureInPicturePlayerLayerView *), log2(sizeof(WebAVPictureInPicturePlayerLayerView *)), "@");
-        
+
         objc_registerClassPair(theClass);
         Class metaClass = objc_getMetaClass("WebAVPlayerLayerView");
         class_addMethod(metaClass, @selector(layerClass), (IMP)WebAVPlayerLayerView_layerClass, "@@:");
@@ -890,7 +677,7 @@ void VideoFullscreenInterfaceAVKit::videoDimensionsChanged(const FloatSize& vide
 {
     if (videoDimensions.isZero())
         return;
-    
+
     WebAVPlayerLayer *playerLayer = (WebAVPlayerLayer *)[m_playerLayerView playerLayer];
 
     [playerLayer setVideoDimensions:videoDimensions];
@@ -913,6 +700,7 @@ bool VideoFullscreenInterfaceAVKit::pictureInPictureWasStartedWhenEnteringBackgr
     return [m_playerViewController pictureInPictureWasStartedWhenEnteringBackground];
 }
 
+#if PLATFORM(WATCHOS)
 static UIViewController *fallbackViewController(UIView *view)
 {
     for (UIView *currentView = view; currentView; currentView = currentView.superview) {
@@ -934,6 +722,7 @@ UIViewController *VideoFullscreenInterfaceAVKit::presentingViewController()
 
     return controller;
 }
+#endif
 
 void VideoFullscreenInterfaceAVKit::applicationDidBecomeActive()
 {
@@ -1006,7 +795,7 @@ void VideoFullscreenInterfaceAVKit::cleanupFullscreen()
         [m_window setHidden:YES];
         [m_window setRootViewController:nil];
     }
-    
+
     [m_playerViewController setDelegate:nil];
     [m_playerViewController setPlayerController:nil];
 
@@ -1020,11 +809,11 @@ void VideoFullscreenInterfaceAVKit::cleanupFullscreen()
                 WTFLogAlways("-[AVPlayerViewController exitFullScreenAnimated:completionHandler:] failed with error %s", [[error localizedDescription] UTF8String]);
         }];
     }
-    
+
     [[m_playerViewController view] removeFromSuperview];
     if (m_viewController)
         [m_playerViewController removeFromParentViewController];
-    
+
     [m_playerLayerView removeFromSuperview];
     [[m_viewController view] removeFromSuperview];
 
@@ -1078,7 +867,7 @@ void VideoFullscreenInterfaceAVKit::requestHideAndExitFullscreen()
 {
     if (m_currentMode.hasPictureInPicture())
         return;
-    
+
     LOG(Fullscreen, "VideoFullscreenInterfaceAVKit::requestHideAndExitFullscreen(%p)", this);
 
     [m_window setHidden:YES];
@@ -1299,7 +1088,7 @@ bool VideoFullscreenInterfaceAVKit::shouldExitFullscreenWithReason(VideoFullscre
         return false;
     }
 #endif
-    
+
     BOOL finished = reason == ExitFullScreenReason::DoneButtonTapped || reason == ExitFullScreenReason::PinchGestureHandled;
     ASSERT(m_videoFullscreenModel);
     if (m_videoFullscreenModel)
@@ -1590,7 +1379,7 @@ void VideoFullscreenInterfaceAVKit::exitFullscreenHandler(BOOL success, NSError*
 
     if (nextActions.contains(NextAction::NeedsEnterFullScreen))
         doEnterFullscreen();
-    
+
     if (nextActions.contains(NextAction::NeedsExitFullScreen))
         doExitFullscreen();
 }

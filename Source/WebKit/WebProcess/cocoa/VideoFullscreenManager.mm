@@ -244,7 +244,7 @@ bool VideoFullscreenManager::supportsVideoFullscreen(WebCore::HTMLMediaElementEn
     UNUSED_PARAM(mode);
 #if HAVE(AVKIT)
 #if HAVE(UIKIT_WEBKIT_INTERNALS)
-    return mode == HTMLMediaElementEnums::VideoFullscreenModeStandard;
+    return true;
 #else
     return true;
 #endif
@@ -259,9 +259,9 @@ bool VideoFullscreenManager::supportsVideoFullscreen(WebCore::HTMLMediaElementEn
 bool VideoFullscreenManager::supportsVideoFullscreenStandby() const
 {
 #if PLATFORM(IOS_FAMILY) && !HAVE(UIKIT_WEBKIT_INTERNALS)
-    return true;
-#else
     return false;
+#else
+    return true;
 #endif
 }
 

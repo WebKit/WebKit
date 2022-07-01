@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -387,3 +387,32 @@ NS_ASSUME_NONNULL_BEGIN
 NS_ASSUME_NONNULL_END
 #endif // USE(APPLE_INTERNAL_SDK)
 #endif // ENABLE(WIRELESS_PLAYBACK_TARGET) && HAVE(AVROUTEPICKERVIEW)
+
+// AVPictureInPicture SPI
+#if USE(APPLE_INTERNAL_SDK)
+
+#if PLATFORM(IOS_FAMILY)
+#import <AVKit/AVPictureInPictureController_GenericSupport.h>
+#endif
+
+#else
+
+#if PLATFORM(IOS_FAMILY)
+NS_ASSUME_NONNULL_BEGIN
+
+@interface AVPictureInPictureContentViewController : UIViewController
+@property (nonatomic, strong, readonly, nullable) AVPlayerController *playerController;
+@end
+
+@interface AVPictureInPictureControllerContentSource (GenericSupport)
+- (instancetype)initWithSourceView:(UIView *)sourceView contentViewController:(AVPictureInPictureContentViewController *)contentViewController playerController:(__kindof AVPlayerController *)playerController API_AVAILABLE(ios(16.0),tvos(16.0)) API_UNAVAILABLE(macos, watchos);
+@property (nonatomic, weak, readonly) UIView *activeSourceView API_AVAILABLE(ios(16.0),tvos(16.0)) API_UNAVAILABLE(macos, watchos);
+@property (nonatomic, readonly) __kindof AVPictureInPictureContentViewController *activeContentViewController API_AVAILABLE(ios(16.0),tvos(16.0)) API_UNAVAILABLE(macos, watchos);
+@end
+
+NS_ASSUME_NONNULL_END
+
+#endif // PLATFORM(IOS_FAMILY
+
+#endif // USE(APPLE_INTERNAL_SDK)
+
