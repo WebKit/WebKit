@@ -141,6 +141,27 @@ void FlexLayout::layout()
     flexFormattingContext.layoutInFlowContentForIntegration(constraints);
 
     updateRenderers();
+
+    auto relayoutFlexItems = [&] {
+        // Flex items need to be laid out now with their final size (and through setOverridingLogicalWidth/Height)
+        // Note that they may re-size themselves.
+        for (auto& boxAndRenderer : m_boxTree.boxAndRendererList()) {
+            auto& renderer = downcast<RenderBox>(*boxAndRenderer.renderer);
+            auto borderBox = Layout::BoxGeometry::borderBoxRect(m_flexFormattingState.boxGeometry(boxAndRenderer.box.get()));
+
+            // FIXME: This may need a visual vs. logical flip.
+            renderer.setOverridingLogicalWidth(borderBox.width());
+            renderer.setOverridingLogicalHeight(borderBox.height());
+
+            renderer.setChildNeedsLayout(MarkOnlyThis);
+            renderer.layoutIfNeeded();
+            renderer.clearOverridingContentSize();
+
+            renderer.setWidth(borderBox.width());
+            renderer.setHeight(borderBox.height());
+        }
+    };
+    relayoutFlexItems();
 }
 
 void FlexLayout::updateRenderers() const
