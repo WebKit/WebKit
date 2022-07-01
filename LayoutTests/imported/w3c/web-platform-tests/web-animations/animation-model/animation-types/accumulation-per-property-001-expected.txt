@@ -273,7 +273,7 @@ PASS font-variant-position (type: discrete) has testAccumulation function
 PASS font-variant-position: "super" onto "sub"
 PASS font-variant-position: "sub" onto "super"
 PASS font-variation-settings (type: fontVariationSettings) has testAccumulation function
-FAIL font-variation-settings with composite type accumulate assert_equals: The value should be "wght" 2.2 at 250ms expected "\"wght\" 2.2" but got "\"wght\" 1.2"
+FAIL font-variation-settings with composite type accumulate assert_equals: The value should be "wght" 2.2 at 250ms expected "\"wght\" 2.2" but got "\"wght\" 2.1999998"
 PASS font-variation-settings (type: discrete) has testAccumulation function
 PASS font-variation-settings: ""wdth" 5" onto ""wdth" 1, "wght" 1.1"
 FAIL font-variation-settings: ""wdth" 1, "wght" 1.1" onto ""wdth" 5" assert_equals: The value should be "wdth" 1, "wght" 1.1 at 0ms expected "\"wdth\" 1, \"wght\" 1.1" but got "\"wght\" 1.1, \"wdth\" 1"

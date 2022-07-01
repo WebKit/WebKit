@@ -565,11 +565,10 @@ static inline NinePieceImage blendFunc(const NinePieceImage& from, const NinePie
 
 static inline FontVariationSettings blendFunc(const FontVariationSettings& from, const FontVariationSettings& to, const CSSPropertyBlendingContext& context)
 {
-    if (!context.progress)
-        return from;
-
-    if (context.progress == 1.0)
-        return to;
+    if (context.isDiscrete) {
+        ASSERT(!context.progress || context.progress == 1.0);
+        return context.progress ? to : from;
+    }
 
     ASSERT(from.size() == to.size());
     FontVariationSettings result;
