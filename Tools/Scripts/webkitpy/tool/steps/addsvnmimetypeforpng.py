@@ -35,7 +35,7 @@ class AddSvnMimetypeForPng(AbstractStep):
     def __init__(self, tool, options, host=None, scm=None):
         self._tool = tool
         self._options = options
-        self._host = host or SystemHost()
+        self._host = host or SystemHost.get_default()
         self._fs = self._host.filesystem
         self._detector = scm or SCMDetector(self._fs, self._host.executive).detect_scm_system(self._fs.getcwd())
 

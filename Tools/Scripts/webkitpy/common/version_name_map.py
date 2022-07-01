@@ -45,7 +45,7 @@ class VersionNameMap(object):
     def __init__(self, platform=None):
         if platform is None:
             from webkitpy.common.system.systemhost import SystemHost
-            platform = SystemHost().platform
+            platform = SystemHost.get_default().platform
         self.mapping = {}
 
         self.default_system_platform = platform.os_name

@@ -166,7 +166,7 @@ class WinPort(ApplePort):
         return None
 
     def show_results_html_file(self, results_filename):
-        self._run_script('run-safari', [abspath_to_uri(SystemHost().platform, results_filename)])
+        self._run_script('run-safari', [abspath_to_uri(SystemHost.get_default().platform, results_filename)])
 
     def _build_path(self, *comps):
         """Returns the full path to the test driver (DumpRenderTree)."""

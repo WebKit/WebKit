@@ -36,6 +36,8 @@ from webkitcorepy import FileLock
 
 
 class SystemHost(object):
+    _default_system_host = None
+
     def __init__(self):
         self.executive = executive.Executive()
         self.filesystem = filesystem.FileSystem()
@@ -62,3 +64,9 @@ class SystemHost(object):
     @property
     def device_type(self):
         return None
+
+    @staticmethod
+    def get_default():
+        if not SystemHost._default_system_host:
+            SystemHost._default_system_host = SystemHost()
+        return SystemHost._default_system_host

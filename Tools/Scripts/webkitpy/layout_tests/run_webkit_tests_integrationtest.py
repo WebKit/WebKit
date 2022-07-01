@@ -170,7 +170,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         # A real PlatformInfo object is used here instead of a
         # MockPlatformInfo because we need to actually check for
         # Windows and Mac to skip some tests.
-        self._platform = SystemHost().platform
+        self._platform = SystemHost.get_default().platform
 
         # FIXME: Remove this when we fix test-webkitpy to work
         # properly on cygwin (bug 63846).

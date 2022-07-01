@@ -29,7 +29,7 @@ import subprocess
 import sys
 
 from webkitpy.common.system.systemhost import SystemHost
-sys.path.append(SystemHost().path_to_lldb_python_directory())
+sys.path.append(SystemHost.get_default().path_to_lldb_python_directory())
 import lldb
 
 # lldb Python reference:

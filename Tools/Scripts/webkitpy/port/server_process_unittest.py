@@ -106,7 +106,7 @@ class TestServerProcess(unittest.TestCase):
     def serial_test_basic(self):
         # Give -u switch to force stdout and stderr to be unbuffered for Windows
         cmd = [sys.executable, '-uc', 'import sys; print("stdout"); print("again"); {}; sys.stdin.readline();'.format(self.stderr_print)]
-        host = SystemHost()
+        host = SystemHost.get_default()
         factory = PortFactory(host)
         port = factory.get()
         now = time.time()
@@ -141,7 +141,7 @@ class TestServerProcess(unittest.TestCase):
 
     def serial_test_read_after_process_exits(self):
         cmd = [sys.executable, '-uc', 'import sys; print("stdout"); {};'.format(self.stderr_print)]
-        host = SystemHost()
+        host = SystemHost.get_default()
         factory = PortFactory(host)
         port = factory.get()
         now = time.time()
@@ -160,7 +160,7 @@ class TestServerProcess(unittest.TestCase):
     def serial_test_process_crashing(self):
         # Give -u switch to force stdout to be unbuffered for Windows
         cmd = [sys.executable, '-uc', 'import sys; print("stdout 1"); print("stdout 2"); print("stdout 3"); sys.stdin.readline(); sys.exit(1);']
-        host = SystemHost()
+        host = SystemHost.get_default()
         factory = PortFactory(host)
         port = factory.get()
         now = time.time()
@@ -185,7 +185,7 @@ class TestServerProcess(unittest.TestCase):
 
     def serial_test_process_crashing_no_data(self):
         cmd = [sys.executable, '-uc', 'import sys; sys.stdin.readline(); sys.exit(1);']
-        host = SystemHost()
+        host = SystemHost.get_default()
         factory = PortFactory(host)
         port = factory.get()
         now = time.time()

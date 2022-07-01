@@ -37,7 +37,7 @@ from webkitpy.common.system import path
 
 class AbspathTest(unittest.TestCase):
     def platforminfo(self):
-        return SystemHost().platform
+        return SystemHost.get_default().platform
 
     def test_abspath_to_uri_cygwin(self):
         if sys.platform != 'cygwin':

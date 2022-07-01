@@ -31,7 +31,7 @@ from webkitpy.common.version_name_map import VersionNameMap
 class VersionMapTestCase(unittest.TestCase):
 
     def test_default_system_platform(self):
-        host = SystemHost()
+        host = SystemHost.get_default()
         map = VersionNameMap(platform=host.platform)
         self.assertEqual(map.default_system_platform, host.platform.os_name)
 

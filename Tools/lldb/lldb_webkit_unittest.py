@@ -85,7 +85,7 @@ class LLDBDebugSession(object):
 class TestSummaryProviders(unittest.TestCase):
     @classmethod
     def shouldSkip(cls):
-        return not SystemHost().platform.is_mac()
+        return not SystemHost.get_default().platform.is_mac()
 
     @classmethod
     def setUpClass(cls):

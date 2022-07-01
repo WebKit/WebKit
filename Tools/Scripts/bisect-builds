@@ -207,7 +207,7 @@ def get_s3_location_for_revision(url, revision):
 
 
 def host_platform_name():
-    platform = SystemHost().platform
+    platform = SystemHost.get_default().platform
     version_name = VersionNameMap.strip_name_formatting(platform.os_version_name())
     if version_name is None:
         return platform.os_name
