@@ -341,7 +341,7 @@ private:
     void setVideoInlineSizeIfPossible(const WebCore::FloatSize&);
     void nativeImageForCurrentTime(CompletionHandler<void(std::optional<WTF::MachSendRight>&&, WebCore::DestinationColorSpace)>&&);
     void colorSpace(CompletionHandler<void(WebCore::DestinationColorSpace)>&&);
-#if !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
+#if !HAVE(LOW_AV_SAMPLE_BUFFER_PRUNING_INTERVAL)
     void willBeAskedToPaintGL();
 #endif
 #endif
