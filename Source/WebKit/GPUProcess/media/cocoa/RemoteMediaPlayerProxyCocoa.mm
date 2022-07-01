@@ -134,7 +134,7 @@ void RemoteMediaPlayerProxy::colorSpace(CompletionHandler<void(WebCore::Destinat
     completionHandler(m_player->colorSpace());
 }
 
-#if !HAVE(LOW_AV_SAMPLE_BUFFER_PRUNING_INTERVAL)
+#if !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
 void RemoteMediaPlayerProxy::willBeAskedToPaintGL()
 {
     if (m_player)
