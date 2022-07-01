@@ -321,7 +321,13 @@ void GStreamerVideoCapturer::reconfigure()
                 selector->maxHeight = *height;
                 selector->maxFrameRate = *frameRate;
                 selector->mimeType = gst_structure_get_name(structure);
-                selector->format = gst_structure_get_string(structure, "format");
+                selector->format = nullptr;
+                if (gst_structure_has_name(structure, "video/x-raw")) {
+                    if (gst_structure_has_name(structure, "format"))
+                        selector->format = gst_structure_get_string(structure, "format");
+                    else
+                        return TRUE;
+                }
                 return FALSE;
             }
 
@@ -330,7 +336,13 @@ void GStreamerVideoCapturer::reconfigure()
                 selector->maxHeight = *height;
                 selector->maxFrameRate = *frameRate;
                 selector->mimeType = gst_structure_get_name(structure);
-                selector->format = gst_structure_get_string(structure, "format");
+                selector->format = nullptr;
+                if (gst_structure_has_name(structure, "video/x-raw")) {
+                    if (gst_structure_has_name(structure, "format"))
+                        selector->format = gst_structure_get_string(structure, "format");
+                    else
+                        return TRUE;
+                }
             }
 
             return TRUE;
