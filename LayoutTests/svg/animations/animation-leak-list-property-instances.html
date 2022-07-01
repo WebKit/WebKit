@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <script>
  description("This test checks that adding an animation to a SVG element does not leak the whole SVGDocument.")
+ jsTestIsAsync = true;
 
  function addRect()
  {
@@ -37,7 +38,6 @@
          return;
      }
 
-     jsTestIsAsync = true;
      testRunner.dumpAsText();
 
      // One gc() call is not enough and causes flakiness in some platforms.
@@ -56,7 +56,7 @@
          var delta = internals.numberOfLiveNodes() - originalLiveElements;
          shouldBeZero(delta.toString());
          var successfullyParsed = true;
-         testRunner.notifyDone();
+         finishJSTest();
      });
  }
 </script>
