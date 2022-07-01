@@ -25,6 +25,7 @@ import re
 import sublime
 import sublime_plugin
 import subprocess
+import urllib
 import webbrowser
 
 global s_settings
@@ -46,12 +47,12 @@ class Settings(object):
             self._settings.clear_on_change(key)
 
     @property
-    def include_revision(self):
-        return self._get('include_revision', default=True)
+    def match_commit(self):
+        return self._get('match_commit', default=True)
 
-    @include_revision.setter
-    def include_revision(self, value):
-        self._set('include_revision', value)
+    @match_commit.setter
+    def match_commit(self, value):
+        self._set('match_commit', value)
 
     @property
     def automatically_open_in_browser(self):
@@ -80,19 +81,24 @@ class CopyWebKitPermalinkCommand(sublime_plugin.TextCommand):
             return
 
         document_path = self.view.file_name()
-        self._last_svn_info = None
         self._directory_in_checkout = document_path if os.path.isdir(document_path) else os.path.dirname(document_path)
-        self.determine_vcs_from_path(document_path)
 
-        if s_settings.include_revision and not self.path_is_in_webkit_checkout(document_path):
+        if not self.is_git_directory():
             return
+
+        repository_url = self.git_repository_url()
+
+        mode = "blame" if annotate_blame else "blob"
+
+        branch = self.current_git_commit() if s_settings.match_commit else self.current_git_branch()
+
+        path = self.path_relative_to_repository_root_for_path(document_path)
 
         line_number, _ = self.view.rowcol(self.view.sel()[0].begin())  # Zero-based
         line_number = line_number + 1
 
-        path = self.path_relative_to_repository_root_for_path(document_path)
-        revision_info = self.revision_info_for_path(document_path)
-        permalink = self.permalink_for_path(path, line_number, revision_info, annotate_blame)
+        permalink = '{}/{}/{}/{}#L{}'.format(repository_url, mode, branch, urllib.parse.quote(path), line_number)
+        print(permalink)
         sublime.set_clipboard(permalink)
         if s_settings.automatically_open_in_browser:
             webbrowser.open(permalink)
@@ -106,124 +112,38 @@ class CopyWebKitPermalinkCommand(sublime_plugin.TextCommand):
     def description(self):
         return 'Copy WebKit Permalink'
 
-    def determine_vcs_from_path(self, path):
-        if not os.path.isdir(path):
-            path = os.path.dirname(path)
-        self._is_svn = False
-        self._is_git = False
-        self._is_git_svn = False
-        if self.is_svn_directory(path):
-            self._is_svn = True
-            return
-        if self.is_git_svn_directory(path):
-            self._is_git = True
-            self._is_git_svn = True
-            return
-        if self.is_git_directory(path):
-            self._is_git = True
-            return
+    def is_git_directory(self):
+        try:
+            subprocess.check_call(['git', 'rev-parse'], cwd=self._directory_in_checkout)
+        except:
+            return False
+        return True
 
-    def path_is_in_webkit_checkout(self, path):
-        repository_url = self.revision_info_for_path(path).get('repository_url', '')
-        return bool(re.match(r'\w+:\/\/\w+\.webkit.org', repository_url))
+    def git_repository_url(self):
+        assert self.is_git_directory()
 
-    def git_path_relative_to_repository_root_for_path(self, path):
-        return subprocess.check_output(['git', 'ls-tree', '--full-name', '--name-only', 'HEAD', path], cwd=self._directory_in_checkout).decode('utf-8').rstrip()
-
-    def svn_path_relative_to_repository_root_for_path(self, path):
-        return self.svn_info_for_path(path)['path']
+        repository_url = subprocess.check_output(['git', 'remote', 'get-url', 'origin'], cwd=self._directory_in_checkout).decode('utf-8').rstrip()
+        repository_url = re.sub(r'^git@(.+?):(.+?)', r'https://\1/\2', repository_url)
+        repository_url = re.sub(r'\.git$', '', repository_url)
+        return repository_url
 
     def path_relative_to_repository_root_for_path(self, path):
-        if self._is_svn:
-            return self.svn_path_relative_to_repository_root_for_path(path)
-        if self._is_git:
-            return self.git_path_relative_to_repository_root_for_path(path)
-        return ''
+        assert self.is_git_directory()
 
-    def revision_info_for_path(self, path):
-        if s_settings.include_revision:
-            if self._is_svn or self._is_git_svn:
-                return self.svn_revision_info_for_path(path)
-            if self._is_git:
-                return self.git_revision_info_for_path(path)
-        return {}
+        return subprocess.check_output(['git', 'ls-tree', '--full-name', '--name-only', 'HEAD', path], cwd=self._directory_in_checkout).decode('utf-8').rstrip()
 
-    def svn_revision_info_for_path(self, path):
-        svn_info = self.svn_info_for_path(path)
-        return {'branch': svn_info['branch'], 'revision': svn_info['revision'], 'repository_url': svn_info['repositoryRoot']}
+    def current_git_branch(self):
+        assert self.is_git_directory()
 
-    def git_revision_info_for_path(self, path):
-        repository_url = subprocess.check_output(['git', 'remote', 'get-url', 'origin'], cwd=self._directory_in_checkout).decode('utf-8').rstrip()
-        revision = subprocess.check_output(['git', 'log', '-1', '--format', '%H', path], cwd=self._directory_in_checkout).decode('utf-8').rstrip()
+        if not s_settings.match_commit:
+            return 'main'
+
         branch = subprocess.check_output(['git', 'symbolic-ref', '-q', 'HEAD'], cwd=self._directory_in_checkout).decode('utf-8').rstrip()
-        branch = re.sub(r'^refs\/heads\/', '', branch) or 'master'
-        return {branch, revision, repository_url}
+        branch = re.sub(r'^refs\/heads\/', '', branch)
+        return branch or 'main'
 
-    def svn_info_for_path(self, path):
-        if self._last_svn_info and self._last_svn_info['path'] == path:
-            # FIXME: We should also ensure that the checkout directory for the cached SVN info is
-            # the same as the specified checkout directory.
-            return self._last_svn_info
+    def current_git_commit(self):
+        assert self.is_git_directory()
+        assert not s_settings.match_commit
 
-        svn_info_command = ['svn', 'info']
-        if self._is_git_svn:
-            svn_info_command = ['git'] + svn_info_command
-        output = subprocess.check_output(svn_info_command + [path], cwd=self._directory_in_checkout).decode('utf-8').rstrip()
-        if not output:
-            return {}
-
-        temp = {}
-        lines = output.splitlines()
-        for line in lines:
-            key, value = line.split(': ', 1)
-            if key and value:
-                temp[key] = value
-
-        svn_info = {
-            'pathAsURL': temp['URL'],
-            'repositoryRoot': temp['Repository Root'],
-            'revision': temp['Revision'],
-        }
-        branch = svn_info['pathAsURL'].replace(svn_info['repositoryRoot'] + '/', '')
-        branch = branch[0:branch.find('/')]
-        svn_info['branch'] = branch
-
-        # Although tempting to use temp['Path'] we cannot because it is relative to self._directory_in_checkout.
-        # And self._directory_in_checkout may not be the top-level checkout directory. We need to compute the
-        # relative path with respect to the top-level checkout directory.
-        svn_info['path'] = svn_info['pathAsURL'].replace('{}/{}/'.format(svn_info['repositoryRoot'], branch), '')
-
-        self._last_svn_info = svn_info
-
-        return svn_info
-
-    @staticmethod
-    def permalink_for_path(path, line_number, revision_info, annotate_blame):
-        revision = '&rev=' + str(revision_info['revision']) if 'revision' in revision_info else ''
-        line_number = '#L' + str(line_number) if line_number else ''
-        branch = revision_info.get('branch', 'trunk')
-        annotate_blame = '&annotate=blame' if annotate_blame else ''
-        return 'https://trac.webkit.org/browser/{}/{}?{}{}{}'.format(branch, path, revision, annotate_blame, line_number)
-
-    @staticmethod
-    def is_svn_directory(directory):
-        try:
-            subprocess.check_call(['svn', 'info'], cwd=directory)
-        except:
-            return False
-        return True
-
-    @staticmethod
-    def is_git_directory(directory):
-        try:
-            subprocess.check_call(['git', 'rev-parse'], cwd=directory)
-        except:
-            return False
-        return True
-
-    @staticmethod
-    def is_git_svn_directory(directory):
-        try:
-            return bool(subprocess.check_output(['git', 'config', '--get', 'svn-remote.svn.fetch'], cwd=directory, stderr=subprocess.STDOUT).decode('utf-8').rstrip())
-        except:
-            return False
+        return subprocess.check_output(['git', 'log', '-1', '--format=%H'], cwd=self._directory_in_checkout).decode('utf-8').rstrip()
