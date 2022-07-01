@@ -62,7 +62,7 @@ function extractRevision(text)
         if (!candidate)
             continue;
 
-        let match = candidate.match(/^r?(\d+|\d+\@[^:\s]+|[0-9a-f]{8}):?$/);
+        let match = candidate.match(/^r?(\d{5,6}|\d+\@[^:\s]+|[0-9a-f]{6,40}):?$/);
         if (!match)
             return null;
 
@@ -453,12 +453,7 @@ Type \`help COMMAND\` for help on my individual commands.`,
     async generateRevertingPatch(revisions, reason)
     {
         dataLogLn("Reverting ", revisions, reason);
-        let revisionsArgument = revisions.map((revision) => {
-            let number = Number.parseInt(revision, 10);
-            if (!Number.isFinite(number))
-                throw new Error(`Invalid svn revision number "${String(revision)}"`);
-            return number;
-        }).join(" ");
+        let revisionsArgument = revisions.join(" ");
 
         if (reason.startsWith("-"))
             throw new Error(`The revert reason may not begin with - ("${reason}")`);
