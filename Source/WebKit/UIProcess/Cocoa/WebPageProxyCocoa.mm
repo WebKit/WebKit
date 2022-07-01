@@ -337,7 +337,7 @@ RefPtr<WebKit::ShareableBitmap> WebPageProxy::iconForAttachment(const String& fi
 #else
     auto image = RenderThemeMac::iconForAttachment(fileName, contentType, title);
 #endif
-    return convertPlatformImageToBitmap(image.get(), size);
+    return convertPlatformImageToBitmap(image.get(), iconSize);
 }
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
