@@ -942,7 +942,7 @@ static RetainPtr<UIWindowSceneGeometryPreferences> toWindowSceneGeometryPreferen
         orientations = UIInterfaceOrientationMaskLandscapeRight;
         break;
     }
-    ASSERT(orientation);
+    ASSERT(orientations);
     return adoptNS([[UIWindowSceneGeometryPreferencesIOS alloc] initWithInterfaceOrientations:orientations]);
 }
 
