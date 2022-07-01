@@ -2290,6 +2290,9 @@ IDBError SQLiteIDBBackingStore::getAllObjectStoreRecords(const IDBResourceIdenti
 
     auto* objectStoreInfo = infoForObjectStore(getAllRecordsData.objectStoreIdentifier);
     ASSERT(objectStoreInfo);
+    if (!objectStoreInfo)
+        return IDBError { UnknownError, "Failed to look up IDBObjectStoreInfo from identifier"_s };
+
     result = { getAllRecordsData.getAllType, objectStoreInfo->keyPath() };
 
     uint32_t targetResults;
