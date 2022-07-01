@@ -254,7 +254,6 @@ RenderLayerBacking::~RenderLayerBacking()
 #endif
     // Note that m_owningLayer->backing() is null here.
     updateAncestorClipping(false, nullptr);
-    updateChildClippingStrategy(false);
     updateDescendantClippingLayer(false);
     updateOverflowControlsLayers(false, false, false);
     updateForegroundLayer(false);
@@ -602,7 +601,6 @@ void RenderLayerBacking::destroyGraphicsLayers()
     GraphicsLayer::unparentAndClear(m_foregroundLayer);
     GraphicsLayer::unparentAndClear(m_backgroundLayer);
     GraphicsLayer::unparentAndClear(m_childContainmentLayer);
-    GraphicsLayer::unparentAndClear(m_childClippingMaskLayer);
     GraphicsLayer::unparentAndClear(m_scrollContainerLayer);
     GraphicsLayer::unparentAndClear(m_scrolledContentsLayer);
     GraphicsLayer::unparentAndClear(m_graphicsLayer);
@@ -1052,8 +1050,6 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
     if (updateMaskingLayer(renderer().hasMask(), renderer().hasClipPath()))
         layerConfigChanged = true;
 
-    updateChildClippingStrategy(needsDescendantsClippingLayer);
-
     if (m_owningLayer.hasReflection()) {
         if (m_owningLayer.reflectionLayer()->backing()) {
             auto* reflectionLayer = m_owningLayer.reflectionLayer()->backing()->graphicsLayer();
@@ -1391,7 +1387,7 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
         clipLayer->setOffsetFromRenderer(toLayoutSize(clippingBox.location() - snappedClippingGraphicsLayer.m_snapDelta));
 
         auto computeMasksToBoundsRect = [&] {
-            if ((renderer().style().clipPath() || renderer().style().hasBorderRadius()) && !m_childClippingMaskLayer) {
+            if ((renderer().style().clipPath() || renderer().style().hasBorderRadius())) {
                 auto contentsClippingRect = FloatRoundedRect(renderer().style().getRoundedInnerBorderFor(m_owningLayer.rendererBorderBoxRect()));
                 contentsClippingRect.move(LayoutSize(-clipLayer->offsetFromRenderer()));
                 return contentsClippingRect;
@@ -1401,12 +1397,6 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
         };
 
         clipLayer->setContentsClippingRect(computeMasksToBoundsRect());
-
-        if (m_childClippingMaskLayer && !m_scrollContainerLayer) {
-            m_childClippingMaskLayer->setSize(clipLayer->size());
-            m_childClippingMaskLayer->setPosition({ });
-            m_childClippingMaskLayer->setOffsetFromRenderer(clipLayer->offsetFromRenderer());
-        }
     }
 
     if (m_maskLayer)
@@ -1442,12 +1432,6 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
 
         FloatSize oldScrollingLayerOffset = m_scrollContainerLayer->offsetFromRenderer();
         m_scrollContainerLayer->setOffsetFromRenderer(toFloatSize(scrollContainerBox.location()));
-
-        if (m_childClippingMaskLayer) {
-            m_childClippingMaskLayer->setPosition(m_scrollContainerLayer->position());
-            m_childClippingMaskLayer->setSize(m_scrollContainerLayer->size());
-            m_childClippingMaskLayer->setOffsetFromRenderer(toFloatSize(scrollContainerBox.location()));
-        }
 
         bool paddingBoxOffsetChanged = oldScrollingLayerOffset != m_scrollContainerLayer->offsetFromRenderer();
 
@@ -2321,26 +2305,6 @@ bool RenderLayerBacking::updateMaskingLayer(bool hasMask, bool hasClipPath)
     return layerChanged;
 }
 
-void RenderLayerBacking::updateChildClippingStrategy(bool needsDescendantsClippingLayer)
-{
-    auto needsClipMaskLayer = [&] {
-        return needsDescendantsClippingLayer && !GraphicsLayer::supportsRoundedClip() && is<RenderBox>(renderer()) && (renderer().style().hasBorderRadius() || renderer().style().clipPath());
-    };
-
-    auto* clippingLayer = this->clippingLayer();
-    if (needsClipMaskLayer()) {
-        m_childClippingMaskLayer = createGraphicsLayer("child clipping mask"_s);
-        m_childClippingMaskLayer->setDrawsContent(true);
-        m_childClippingMaskLayer->setPaintingPhase({ GraphicsLayerPaintingPhase::ChildClippingMask });
-        if (clippingLayer)
-            clippingLayer->setMaskLayer(m_childClippingMaskLayer.copyRef());
-    } else if (m_childClippingMaskLayer) {
-        if (clippingLayer)
-            clippingLayer->setMaskLayer(nullptr);
-        GraphicsLayer::clear(m_childClippingMaskLayer);
-    }
-}
-
 bool RenderLayerBacking::updateScrollingLayers(bool needsScrollingLayers)
 {
     if (needsScrollingLayers == !!m_scrollContainerLayer)
@@ -2647,7 +2611,7 @@ void RenderLayerBacking::updateRootLayerConfiguration()
 
 void RenderLayerBacking::updatePaintingPhases()
 {
-    // Phases for m_childClippingMaskLayer and m_maskLayer are set elsewhere.
+    // Phases for m_maskLayer are set elsewhere.
     OptionSet<GraphicsLayerPaintingPhase> primaryLayerPhases = { GraphicsLayerPaintingPhase::Background, GraphicsLayerPaintingPhase::Foreground };
     
     if (m_foregroundLayer) {
@@ -3191,9 +3155,6 @@ void RenderLayerBacking::setContentsNeedDisplay(GraphicsLayer::ShouldClipToLayer
     if (m_maskLayer && m_maskLayer->drawsContent())
         m_maskLayer->setNeedsDisplay();
 
-    if (m_childClippingMaskLayer && m_childClippingMaskLayer->drawsContent())
-        m_childClippingMaskLayer->setNeedsDisplay();
-
     if (m_scrolledContentsLayer && m_scrolledContentsLayer->drawsContent())
         m_scrolledContentsLayer->setNeedsDisplay();
 }
@@ -3237,12 +3198,6 @@ void RenderLayerBacking::setContentsNeedDisplayInRect(const LayoutRect& r, Graph
         FloatRect layerDirtyRect = pixelSnappedRectForPainting;
         layerDirtyRect.move(-m_maskLayer->offsetFromRenderer() - m_subpixelOffsetFromRenderer);
         m_maskLayer->setNeedsDisplayInRect(layerDirtyRect, shouldClip);
-    }
-
-    if (m_childClippingMaskLayer && m_childClippingMaskLayer->drawsContent()) {
-        FloatRect layerDirtyRect = r;
-        layerDirtyRect.move(-m_childClippingMaskLayer->offsetFromRenderer());
-        m_childClippingMaskLayer->setNeedsDisplayInRect(layerDirtyRect);
     }
 
     if (m_scrolledContentsLayer && m_scrolledContentsLayer->drawsContent()) {
@@ -3576,7 +3531,6 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
         || graphicsLayer == m_foregroundLayer.get()
         || graphicsLayer == m_backgroundLayer.get()
         || graphicsLayer == m_maskLayer.get()
-        || graphicsLayer == m_childClippingMaskLayer.get()
         || graphicsLayer == m_scrolledContentsLayer.get()) {
 
         if (!graphicsLayer->paintingPhase().contains(GraphicsLayerPaintingPhase::OverflowContents))
@@ -3996,8 +3950,6 @@ double RenderLayerBacking::backingStoreMemoryEstimate() const
         backingMemory += m_backgroundLayer->backingStoreMemoryEstimate();
     if (m_maskLayer)
         backingMemory += m_maskLayer->backingStoreMemoryEstimate();
-    if (m_childClippingMaskLayer)
-        backingMemory += m_childClippingMaskLayer->backingStoreMemoryEstimate();
 
     if (m_scrolledContentsLayer)
         backingMemory += m_scrolledContentsLayer->backingStoreMemoryEstimate();

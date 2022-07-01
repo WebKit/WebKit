@@ -341,11 +341,6 @@ bool GraphicsLayer::supportsBackgroundColorContent()
     return true;
 }
 
-bool GraphicsLayer::supportsRoundedClip()
-{
-    return true;
-}
-
 bool GraphicsLayer::supportsSubpixelAntialiasedLayerText()
 {
 #if PLATFORM(MAC)

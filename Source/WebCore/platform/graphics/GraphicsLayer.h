@@ -630,7 +630,6 @@ public:
     void resetTrackedRepaints();
     void addRepaintRect(const FloatRect&);
 
-    static bool supportsRoundedClip();
     static bool supportsBackgroundColorContent();
     static bool supportsLayerType(Type);
     static bool supportsContentsTiling();

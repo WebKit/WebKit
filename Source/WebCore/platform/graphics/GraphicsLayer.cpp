@@ -88,11 +88,6 @@ bool GraphicsLayer::supportsLayerType(Type type)
     return false;
 }
 
-bool GraphicsLayer::supportsRoundedClip()
-{
-    return true;
-}
-
 bool GraphicsLayer::supportsBackgroundColorContent()
 {
 #if USE(TEXTURE_MAPPER)
