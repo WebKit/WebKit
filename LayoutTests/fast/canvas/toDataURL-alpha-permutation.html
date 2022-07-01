@@ -1,0 +1,57 @@
+<!DOCTYPE html> 
+<html> 
+<head> 
+<script> 
+  function load() {
+      var canvas = document.createElement('canvas');
+      canvas.width = 300;
+      canvas.height = 100;
+      var context = canvas.getContext('2d');
+
+      context.fillStyle = "rgba(255, 0, 0, 1)";
+      context.fillRect(0, 0, context.canvas.width/3, context.canvas.height);
+
+      context.fillStyle = "rgba(255, 0, 0, 0.5)";
+      context.fillRect(context.canvas.width/3, 0, context.canvas.width/3, context.canvas.height);
+
+      context.fillStyle = "rgba(255, 0, 0, 0)";
+      context.fillRect(2*context.canvas.width/3, 0, context.canvas.width/3, context.canvas.height);
+
+      document.getElementById("jpg2dToDataUrl").style.imageRendering = "pixelated";
+      document.getElementById("jpg2dToDataUrl").style.backgroundImage = ["url(", context.canvas.toDataURL("image/jpg"), ")"].join("");
+      document.getElementById("png2dToDataUrl").style.imageRendering = "pixelated";
+      document.getElementById("png2dToDataUrl").style.backgroundImage = ["url(", context.canvas.toDataURL("image/png"), ")"].join("");
+      
+      var canvas = document.createElement('canvas');
+      canvas.width = 300;
+      canvas.height = 100;
+      var gl = canvas.getContext("webgl") 
+      || canvas.getContext("experimental-webgl");
+      
+      gl.enable(gl.SCISSOR_TEST);
+      gl.scissor(0, 0, canvas.width/3, canvas.height);
+      gl.clearColor(1.0, 0, 0.0, 1.0);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+
+      gl.scissor(canvas.width/3, 0, canvas.width/3, canvas.height);
+      gl.clearColor(1.0, 0, 0.0, 0.5);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+
+      gl.scissor(2*canvas.width/3, 0, canvas.width/3, canvas.height);
+      gl.clearColor(1.0, 0.0, 0.0, 0);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+
+      document.getElementById("pngwebglToDataUrl").style.imageRendering = "pixelated";
+      document.getElementById("jpgwebglToDataUrl").style.imageRendering = "pixelated";
+      document.getElementById("jpgwebglToDataUrl").style.backgroundImage = ["url(", gl.canvas.toDataURL("image/jpg"), ")"].join("");
+      document.getElementById("pngwebglToDataUrl").style.backgroundImage = ["url(", gl.canvas.toDataURL("image/png"), ")"].join("");
+}
+</script> 
+</head> 
+<body onload="load()">
+    <div id="jpg2dToDataUrl" style="width:300px;height:100px"></div>
+    <div id="png2dToDataUrl" style="width:300px;height:100px"></div>
+    <div id="jpgwebglToDataUrl" style="width:300px;height:100px"></div>
+    <div id="pngwebglToDataUrl" style="width:300px;height:100px"></div>
+</body> 
+</html> 

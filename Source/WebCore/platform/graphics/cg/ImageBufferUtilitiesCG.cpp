@@ -96,9 +96,13 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
-static bool encode(CGImageRef image, CFStringRef destinationUTI, std::optional<double> quality, const ScopedLambda<PutBytesCallback>& function)
+static bool encode(CGImageRef image, const String& mimeType, std::optional<double> quality, const ScopedLambda<PutBytesCallback>& function)
 {
-    if (!image || !destinationUTI)
+    if (!image)
+        return false;
+
+    auto destinationUTI = utiFromImageBufferMIMEType(mimeType);
+    if (!destinationUTI)
         return false;
 
     CGDataConsumerCallbacks callbacks {
@@ -110,11 +114,12 @@ static bool encode(CGImageRef image, CFStringRef destinationUTI, std::optional<d
     };
 
     auto consumer = adoptCF(CGDataConsumerCreate(const_cast<ScopedLambda<PutBytesCallback>*>(&function), &callbacks));
-    auto destination = adoptCF(CGImageDestinationCreateWithDataConsumer(consumer.get(), destinationUTI, 1, nullptr));
+    auto destination = adoptCF(CGImageDestinationCreateWithDataConsumer(consumer.get(), destinationUTI.get(), 1, nullptr));
     
     auto imageProperties = [&] () -> RetainPtr<CFDictionaryRef> {
-        if (CFEqual(destinationUTI, jpegUTI()) && quality && *quality >= 0.0 && *quality <= 1.0) {
+        if (CFEqual(destinationUTI.get(), jpegUTI()) && quality && *quality >= 0.0 && *quality <= 1.0) {
             // Apply the compression quality to the JPEG image destination.
+            quality = std::max(*quality, 0.0001); // FIXME: Remove once BigSur is unsupported (rdar://80446736)
             auto compressionQuality = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberDoubleType, &*quality));
             const void* key = kCGImageDestinationLossyCompressionQuality;
             const void* value = compressionQuality.get();
@@ -179,14 +184,14 @@ static bool encode(const PixelBuffer& source, const String& mimeType, std::optio
     auto imageSize = source.size();
     auto image = adoptCF(CGImageCreate(imageSize.width(), imageSize.height(), 8, 32, 4 * imageSize.width(), source.format().colorSpace.platformColorSpace(), static_cast<uint32_t>(kCGBitmapByteOrderDefault) | static_cast<uint32_t>(dataAlphaInfo), dataProvider.get(), 0, false, kCGRenderingIntentDefault));
 
-    return encode(image.get(), destinationUTI.get(), quality, function);
+    return encode(image.get(), mimeType, quality, function);
 }
 
-template<typename Source, typename SourceDescription> static Vector<uint8_t> encodeToVector(Source&& source, SourceDescription&& sourceDescription, std::optional<double> quality)
+template<typename Source> static Vector<uint8_t> encodeToVector(Source&& source, const String& mimeType, std::optional<double> quality)
 {
     Vector<uint8_t> result;
 
-    bool success = encode(std::forward<Source>(source), std::forward<SourceDescription>(sourceDescription), quality, scopedLambdaRef<PutBytesCallback>([&] (const void* data, size_t length) {
+    bool success = encode(std::forward<Source>(source), mimeType, quality, scopedLambdaRef<PutBytesCallback>([&] (const void* data, size_t length) {
         result.append(static_cast<const uint8_t*>(data), length);
         return length;
     }));
@@ -196,35 +201,35 @@ template<typename Source, typename SourceDescription> static Vector<uint8_t> enc
     return result;
 }
 
-template<typename Source, typename SourceDescription> static String encodeToDataURL(Source&& source, SourceDescription&& sourceDescription, const String& mimeType, std::optional<double> quality)
+template<typename Source> static String encodeToDataURL(Source&& source, const String& mimeType, std::optional<double> quality)
 {
     // FIXME: This could be done more efficiently with a streaming base64 encoder.
 
-    auto encodedData = encodeToVector(std::forward<Source>(source), std::forward<SourceDescription>(sourceDescription), quality);
+    auto encodedData = encodeToVector(std::forward<Source>(source), mimeType, quality);
     if (encodedData.isEmpty())
         return "data:,"_s;
 
     return makeString("data:", mimeType, ";base64,", base64Encoded(encodedData));
 }
 
-Vector<uint8_t> data(CGImageRef image, CFStringRef destinationUTI, std::optional<double> quality)
+Vector<uint8_t> encodeData(CGImageRef image, const String& mimeType, std::optional<double> quality)
 {
-    return encodeToVector(image, destinationUTI, quality);
+    return encodeToVector(image, mimeType, quality);
 }
 
-Vector<uint8_t> data(const PixelBuffer& pixelBuffer, const String& mimeType, std::optional<double> quality)
+Vector<uint8_t> encodeData(const PixelBuffer& pixelBuffer, const String& mimeType, std::optional<double> quality)
 {
     return encodeToVector(pixelBuffer, mimeType, quality);
 }
 
-String dataURL(CGImageRef image, CFStringRef destinationUTI, const String& mimeType, std::optional<double> quality)
+String dataURL(CGImageRef image, const String& mimeType, std::optional<double> quality)
 {
-    return encodeToDataURL(image, destinationUTI, mimeType, quality);
+    return encodeToDataURL(image, mimeType, quality);
 }
 
 String dataURL(const PixelBuffer& pixelBuffer, const String& mimeType, std::optional<double> quality)
 {
-    return encodeToDataURL(pixelBuffer, mimeType, mimeType, quality);
+    return encodeToDataURL(pixelBuffer, mimeType, quality);
 }
 
 } // namespace WebCore
