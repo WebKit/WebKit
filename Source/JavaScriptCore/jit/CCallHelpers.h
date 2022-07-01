@@ -195,7 +195,7 @@ private:
         }
     }
 
-#if CPU(MIPS) || (CPU(ARM_THUMB2) && !CPU(ARM_HARDFP))
+#if CPU(MIPS)
     template<unsigned NumCrossSources, unsigned NumberOfRegisters>
     ALWAYS_INLINE void setupStubCrossArgs(std::array<GPRReg, NumberOfRegisters> destinations, std::array<FPRReg, NumberOfRegisters> sources) {
         for (unsigned i = 0; i < NumCrossSources; i++) {
@@ -448,7 +448,7 @@ private:
     {
         static_assert(std::is_same<CURRENT_ARGUMENT_TYPE, double>::value, "We should only be passing FPRRegs to a double");
 
-        // MIPS and ARM-hardfp pass FP arguments in FP registers.
+        // MIPS and ARM (hardfp, which we require) pass FP arguments in FP registers.
 #if CPU(MIPS)
         unsigned numberOfFPArgumentRegisters = FPRInfo::numberOfArgumentRegisters;
         unsigned currentFPArgCount = argSourceRegs.argCount(arg);
@@ -459,7 +459,7 @@ private:
             setupArgumentsImpl<OperationType>(updatedArgSourceRegs.addGPRExtraArg().addGPRExtraArg(), args...);
             return;
         }
-#elif CPU(ARM_THUMB2) && CPU(ARM_HARDFP)
+#elif CPU(ARM_THUMB2)
         unsigned numberOfFPArgumentRegisters = FPRInfo::numberOfArgumentRegisters;
         unsigned currentFPArgCount = argSourceRegs.argCount(arg);
 
@@ -470,8 +470,8 @@ private:
         }
 #endif
 
-#if CPU(MIPS) || (CPU(ARM_THUMB2) && !CPU(ARM_HARDFP))
-        // On MIPS and ARM-softfp FP arguments can be passed in GP registers.
+#if CPU(MIPS)
+        // On MIPS arguments can be passed in GP registers.
         unsigned numberOfGPArgumentRegisters = GPRInfo::numberOfArgumentRegisters;
         unsigned currentGPArgCount = argSourceRegs.argCount(GPRInfo::regT0);
         unsigned alignedGPArgCount = roundUpToMultipleOf<2>(currentGPArgCount);
@@ -737,7 +737,7 @@ private:
         static_assert(fprArgsCount<TraitsType>(std::make_index_sequence<TraitsType::arity>()) == numFPRArgs);
 
         setupStubArgs<numGPRSources, GPRReg>(clampArrayToSize<numGPRSources, GPRReg>(argSourceRegs.gprDestinations), clampArrayToSize<numGPRSources, GPRReg>(argSourceRegs.gprSources));
-#if CPU(MIPS) || (CPU(ARM_THUMB2) && !CPU(ARM_HARDFP))
+#if CPU(MIPS)
         setupStubCrossArgs<numCrossSources>(argSourceRegs.crossDestinations, argSourceRegs.crossSources);
 #else
         static_assert(!numCrossSources, "shouldn't be used on this architecture.");

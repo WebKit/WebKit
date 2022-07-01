@@ -1082,15 +1082,6 @@ public:
 #endif
     }
 
-#if CPU(ARM_THUMB2) && !CPU(ARM_HARDFP)
-    JITCompiler::Call appendCallSetResult(const FunctionPtr<CFunctionPtrTag> function, FPRReg result)
-    {
-        JITCompiler::Call call = appendCall(function);
-        if (result != InvalidFPRReg)
-            m_jit.assembler().vmov(result, GPRInfo::returnValueGPR, GPRInfo::returnValueGPR2);
-        return call;
-    }
-#else // CPU(X86_64) || (CPU(ARM_THUMB2) && CPU(ARM_HARDFP)) || CPU(ARM64) || CPU(MIPS)
     JITCompiler::Call appendCallSetResult(const FunctionPtr<CFunctionPtrTag> function, FPRReg result)
     {
         JITCompiler::Call call = appendCall(function);
@@ -1098,7 +1089,6 @@ public:
             m_jit.moveDouble(FPRInfo::returnValueFPR, result);
         return call;
     }
-#endif
 
     void branchDouble(JITCompiler::DoubleCondition cond, FPRReg left, FPRReg right, BasicBlock* destination)
     {

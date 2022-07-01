@@ -108,11 +108,7 @@ public:
     typedef FPRReg RegisterType;
     static constexpr unsigned numberOfRegisters = 8;
 
-#if CPU(ARM_HARDFP)
     static constexpr unsigned numberOfArgumentRegisters = 8;
-#else
-    static constexpr unsigned numberOfArgumentRegisters = 0;
-#endif
 
     // Temporary registers.
     // d8-d15 are callee saved, d15 is use by the MacroAssembler as fpTempRegister.
@@ -136,11 +132,8 @@ public:
     // value is also actually in integer registers, for now
     // we'll return in d0 for simplicity.
     static constexpr FPRReg returnValueFPR = ARMRegisters::d0; // fpRegT0
-
-#if CPU(ARM_HARDFP)
     static constexpr FPRReg argumentFPR0 = ARMRegisters::d0; // fpRegT0
     static constexpr FPRReg argumentFPR1 = ARMRegisters::d1; // fpRegT1
-#endif
 
     // FPRReg mapping is direct, the machine regsiter numbers can
     // be used directly as indices into the FPR RegisterBank.
@@ -161,13 +154,11 @@ public:
         return (unsigned)reg;
     }
 
-#if CPU(ARM_HARDFP)
     static FPRReg toArgumentRegister(unsigned index)
     {
         ASSERT(index < numberOfArgumentRegisters);
         return static_cast<FPRReg>(index);
     }
-#endif
 
     static const char* debugName(FPRReg reg)
     {

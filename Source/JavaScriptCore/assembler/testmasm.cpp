@@ -5527,7 +5527,6 @@ void testStoreBaseIndex()
         CHECK_EQ(array[4], UINT8_MAX - 42);
     }
 
-#if CPU(ARM_HARDFP)
     // storeDouble
     {
         auto test = compile([=](CCallHelpers& jit) {
@@ -5575,7 +5574,6 @@ void testStoreBaseIndex()
         invoke<void>(test, array, static_cast<UCPURegister>(3), 42.0f);
         CHECK_EQ(array[4], 42.0f);
     }
-#endif
 }
 
 static void testCagePreservesPACFailureBit()
