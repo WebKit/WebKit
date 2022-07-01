@@ -666,16 +666,6 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::updateLastPixelBuffer()
     }
 #endif
 
-#if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
-    if ([m_sampleBufferDisplayLayer respondsToSelector:@selector(copyDisplayedPixelBuffer)]) {
-        if (auto pixelBuffer = adoptCF([m_sampleBufferDisplayLayer copyDisplayedPixelBuffer])) {
-            ALWAYS_LOG(LOGIDENTIFIER, "displayed pixelbuffer copied for time ", currentMediaTime());
-            m_lastPixelBuffer = WTFMove(pixelBuffer);
-            return true;
-        }
-    }
-#endif
-
     if (m_sampleBufferDisplayLayer || !m_decompressionSession)
         return false;
 
@@ -735,7 +725,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::paintCurrentFrameInContext(GraphicsCo
     context.drawNativeImage(*image, imageRect.size(), outputRect, imageRect);
 }
 
-#if !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
+#if !HAVE(LOW_AV_SAMPLE_BUFFER_PRUNING_INTERVAL)
 void MediaPlayerPrivateMediaSourceAVFObjC::willBeAskedToPaintGL()
 {
     // We have been asked to paint into a WebGL canvas, so take that as a signal to create
@@ -776,11 +766,11 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::supportsAcceleratedRendering() const
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::shouldEnsureLayer() const
 {
-#if !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
+#if !HAVE(LOW_AV_SAMPLE_BUFFER_PRUNING_INTERVAL)
     if (!m_hasBeenAskedToPaintGL)
         return true;
 #endif
-    return readbackMethod() != VideoOutputReadbackMethod::None;
+    return isVideoOutputAvailable();
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::acceleratedRenderingStateChanged()
@@ -792,25 +782,6 @@ void MediaPlayerPrivateMediaSourceAVFObjC::acceleratedRenderingStateChanged()
         destroyLayer();
         ensureDecompressionSession();
     }
-    updateVideoOutput();
-}
-
-void MediaPlayerPrivateMediaSourceAVFObjC::updateVideoOutput()
-{
-#if HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
-    if (readbackMethod() == VideoOutputReadbackMethod::UseVideoOutput) {
-        if (!m_videoOutput)
-            m_videoOutput = adoptNS([PAL::allocAVSampleBufferVideoOutputInstance() init]);
-        ASSERT(m_videoOutput);
-    } else
-        m_videoOutput = nil;
-
-    if (m_videoOutput == [m_sampleBufferDisplayLayer output])
-        return;
-
-    ALWAYS_LOG(LOGIDENTIFIER, m_videoOutput ? "Setting up" : "Tearing down", " sample buffer video output.");
-    [m_sampleBufferDisplayLayer setOutput:m_videoOutput.get()];
-#endif // HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::notifyActiveSourceBuffersChanged()
@@ -897,6 +868,15 @@ void MediaPlayerPrivateMediaSourceAVFObjC::ensureLayer()
         return;
     }
 
+#if HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
+    ASSERT(!m_videoOutput);
+    if (isVideoOutputAvailable()) {
+        m_videoOutput = adoptNS([PAL::allocAVSampleBufferVideoOutputInstance() init]);
+        ASSERT(m_videoOutput);
+        [m_sampleBufferDisplayLayer setOutput:m_videoOutput.get()];
+    }
+#endif
+
     if ([m_sampleBufferDisplayLayer respondsToSelector:@selector(setPreventsDisplaySleepDuringVideoPlayback:)])
         m_sampleBufferDisplayLayer.get().preventsDisplaySleepDuringVideoPlayback = NO;
 
@@ -966,35 +946,13 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::shouldBePlaying() const
     return m_playing && !seeking() && allRenderersHaveAvailableSamples() && m_readyState >= MediaPlayer::ReadyState::HaveFutureData;
 }
 
-MediaPlayerPrivateMediaSourceAVFObjC::VideoOutputReadbackMethod MediaPlayerPrivateMediaSourceAVFObjC::readbackMethod() const
+bool MediaPlayerPrivateMediaSourceAVFObjC::isVideoOutputAvailable() const
 {
 #if HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
-    if (!MediaSessionManagerCocoa::mediaSourceInlinePaintingEnabled())
-        return VideoOutputReadbackMethod::None;
+    return MediaSessionManagerCocoa::mediaSourceInlinePaintingEnabled() && PAL::getAVSampleBufferVideoOutputClass();
+#else
+    return false;
 #endif
-
-#if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
-    static auto canCopyDisplayedPixelBuffer = [&] {
-        return [PAL::getAVSampleBufferDisplayLayerClass() instancesRespondToSelector:@selector(copyDisplayedPixelBuffer)];
-    }();
-
-    if (canCopyDisplayedPixelBuffer) {
-        if (m_sampleBufferDisplayLayer) {
-            if (!CGRectIsEmpty([m_sampleBufferDisplayLayer bounds]))
-                return VideoOutputReadbackMethod::CopyPixelBufferFromDisplayLayer;
-        } else {
-            if (!m_player->playerContentBoxRect().isEmpty())
-                return VideoOutputReadbackMethod::CopyPixelBufferFromDisplayLayer;
-        }
-    }
-#endif // HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
-
-#if HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
-    if (PAL::getAVSampleBufferVideoOutputClass())
-        return VideoOutputReadbackMethod::UseVideoOutput;
-#endif
-
-    return VideoOutputReadbackMethod::None;
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setHasAvailableVideoFrame(bool flag)
