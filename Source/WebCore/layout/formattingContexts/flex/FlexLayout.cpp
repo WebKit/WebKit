@@ -249,8 +249,10 @@ void FlexLayout::computeLogicalWidthForFlexItems(LogicalFlexItems& flexItems, co
 {
     auto contentLogicalWidth = [&] {
         auto logicalWidth = LayoutUnit { };
-        for (size_t index = lineRange.begin(); index < lineRange.end(); ++index)
-            logicalWidth += flexItems[index].width();
+        for (size_t index = lineRange.begin(); index < lineRange.end(); ++index) {
+            auto flexBasis = flexItems[index].style().flexBasis();
+            logicalWidth += flexBasis.isAuto() ? flexItems[index].width() : LayoutUnit { valueForLength(flexBasis, availableSpace) };
+        }
         return logicalWidth;
     }();
 
