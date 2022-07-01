@@ -49,7 +49,7 @@ RefPtr<WebCore::SharedBuffer> AuxiliaryProcessProxy::fetchAudioComponentServerRe
     if (noErr != AudioComponentFetchServerRegistrations(&registrations) || !registrations)
         return nullptr;
 
-    return WebCore::SharedBuffer::create(registrations);
+    return WebCore::SharedBuffer::create(adoptCF(registrations).get());
 }
 #endif
 
