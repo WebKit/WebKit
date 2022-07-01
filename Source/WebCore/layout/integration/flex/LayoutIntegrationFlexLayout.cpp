@@ -126,10 +126,17 @@ void FlexLayout::layout()
 {
     auto& rootGeometry = m_layoutState.geometryForBox(rootLayoutBox());
     auto horizontalConstraints = Layout::HorizontalConstraints { rootGeometry.contentBoxLeft(), rootGeometry.contentBoxWidth() };
-    auto rootBoxLogicalHeight = rootLayoutBox().style().logicalHeight();
-    auto availableVerticalSpace = std::optional<LayoutUnit> { rootBoxLogicalHeight.isFixed() ? std::make_optional(rootBoxLogicalHeight.value()) : std::nullopt };
-    auto constraints = Layout::ConstraintsForFlexContent { { horizontalConstraints, rootGeometry.contentBoxTop() }, availableVerticalSpace };
-
+    auto availableVerticalSpace = [&] {
+        auto verticalSpace = std::optional<LayoutUnit> { }; 
+        auto rootBoxLogicalHeight = rootLayoutBox().style().logicalHeight();
+        if (rootBoxLogicalHeight.isFixed())
+            verticalSpace = LayoutUnit { rootBoxLogicalHeight.value() };
+        auto rootBoxLogicalMinimumHeight = rootLayoutBox().style().logicalMinHeight();
+        if (rootBoxLogicalMinimumHeight.isFixed())
+            verticalSpace = std::max(verticalSpace.value_or(0_lu), LayoutUnit { rootBoxLogicalMinimumHeight.value() });
+        return verticalSpace;
+    };
+    auto constraints = Layout::ConstraintsForFlexContent { { horizontalConstraints, rootGeometry.contentBoxTop() }, availableVerticalSpace() };
     auto flexFormattingContext = Layout::FlexFormattingContext { rootLayoutBox(), m_flexFormattingState };
     flexFormattingContext.layoutInFlowContentForIntegration(constraints);
 
