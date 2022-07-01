@@ -148,7 +148,6 @@ public:
     WEBCORE_EXPORT bool turnOnIncrementalAutoVacuum();
 
     WEBCORE_EXPORT void setCollationFunction(const String& collationName, Function<int(int, const void*, int, const void*)>&&);
-    void removeCollationFunction(const String& collationName);
 
     // Set this flag to allow access from multiple threads.  Not all multi-threaded accesses are safe!
     // See http://www.sqlite.org/cvstrac/wiki?p=MultiThreading for more info.

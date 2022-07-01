@@ -680,11 +680,6 @@ void SQLiteDatabase::setCollationFunction(const String& collationName, Function<
     sqlite3_create_collation_v2(m_db, collationName.utf8().data(), SQLITE_UTF8, functionObject, callCollationFunction, destroyCollationFunction);
 }
 
-void SQLiteDatabase::removeCollationFunction(const String& collationName)
-{
-    sqlite3_create_collation_v2(m_db, collationName.utf8().data(), SQLITE_UTF8, nullptr, nullptr, nullptr);
-}
-
 void SQLiteDatabase::releaseMemory()
 {
     if (!m_db)
