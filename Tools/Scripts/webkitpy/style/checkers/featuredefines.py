@@ -41,7 +41,7 @@ class FeatureDefinesChecker(object):
         self._file_path = file_path
         self._handle_style_error = handle_style_error
         self._handle_style_error.turn_off_line_filtering()
-        self._host = SystemHost()
+        self._host = SystemHost.get_default()
         self._fs = self._host.filesystem
 
     def check(self, inline=None):

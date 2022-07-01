@@ -66,7 +66,7 @@ class FormatCppFiles(AbstractStep):
     def __init__(self, tool, options, host=None, scm=None):
         self._tool = tool
         self._options = options
-        self._host = host or SystemHost()
+        self._host = host or SystemHost.get_default()
 
     def run(self, state):
         if not self._options.format_cpp_files:

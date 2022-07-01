@@ -299,7 +299,7 @@ class CrashLogsTest(unittest.TestCase):
     DARWIN_MOCK_CRASH_DIRECTORY = '/Users/mock/Library/Logs/DiagnosticReports'
 
     def create_crash_logs_darwin(self):
-        if not SystemHost().platform.is_mac():
+        if not SystemHost.get_default().platform.is_mac():
             return
 
         self.older_mock_crash_report = make_mock_crash_report_darwin('DumpRenderTree', 28528)
@@ -329,7 +329,7 @@ class CrashLogsTest(unittest.TestCase):
         return crash_logs
 
     def test_find_all_log_darwin(self):
-        if not SystemHost().platform.is_mac():
+        if not SystemHost.get_default().platform.is_mac():
             return
 
         crash_logs = self.create_crash_logs_darwin()
@@ -342,7 +342,7 @@ class CrashLogsTest(unittest.TestCase):
                 self.assertTrue(test == "Unknown" or int(test.split("-")[1]) in range(28527, 28531))
 
     def test_duplicate_log_darwin(self):
-        if not SystemHost().platform.is_mac():
+        if not SystemHost.get_default().platform.is_mac():
             return
 
         crash_logs = self.create_crash_logs_darwin()
@@ -356,7 +356,7 @@ class CrashLogsTest(unittest.TestCase):
             self.assertIn(log, expected_logs)
 
     def test_find_log_darwin(self):
-        if not SystemHost().platform.is_mac():
+        if not SystemHost.get_default().platform.is_mac():
             return
 
         crash_logs = self.create_crash_logs_darwin()
@@ -388,7 +388,7 @@ class CrashLogsTest(unittest.TestCase):
         self.assertIn('OSError: No such file or directory', log)
 
     def test_find_log_win(self):
-        if not SystemHost().platform.is_win():
+        if not SystemHost.get_default().platform.is_win():
             return
 
         older_mock_crash_report = make_mock_crash_report_win('DumpRenderTree', 28528)
@@ -425,7 +425,7 @@ class CrashLogsTest(unittest.TestCase):
         self.assertIn('IOError: No such file or directory', log)
 
     def test_get_timestamp_from_logs_darwin(self):
-        if not SystemHost().platform.is_mac():
+        if not SystemHost.get_default().platform.is_mac():
             return
 
         crash_report = make_mock_crash_report_darwin('DumpRenderTree', 28528)

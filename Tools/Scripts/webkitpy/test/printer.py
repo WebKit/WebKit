@@ -59,7 +59,7 @@ class Printer(object):
             log_level = logging.DEBUG
 
         self.meter = MeteredStream(self.stream, (options.verbose == 2),
-            number_of_columns=SystemHost().platform.terminal_width())
+                                   number_of_columns=SystemHost.get_default().platform.terminal_width())
 
         handler = logging.StreamHandler(self.stream)
         # We constrain the level on the handler rather than on the root
