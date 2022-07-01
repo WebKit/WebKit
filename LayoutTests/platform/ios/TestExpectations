@@ -3666,3 +3666,5 @@ webkit.org/b/242194 compositing/images/positioned-image-content-rect.html [ Pass
 
 webkit.org/b/242225 http/wpt/service-workers/cache-control-request.html [ Pass Failure ]
 webkit.org/b/242225 http/wpt/service-workers/about-blank-iframe.html [ Pass Failure ]
+
+webkit.org/b/237569 imported/blink/svg/filters/filter-huge-clamping.svg [ Pass ImageOnlyFailure ]
