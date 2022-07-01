@@ -104,6 +104,11 @@ class MockCheckout(object):
         self._filesystem = MockFileSystem()
 
     def commit_info_for_revision(self, svn_revision):
+        if isinstance(svn_revision, str) and svn_revision.startswith('r'):
+            svn_revision = svn_revision[1:]
+        if isinstance(svn_revision, str) and not svn_revision.isdigit():
+            return None
+        svn_revision = int(svn_revision)
         # There are legacy tests that all expected these revision numbers to map
         # to the same commit description (now mock_revisions[1])
         if svn_revision in [32, 123, 852, 853, 854, 1234, 21654, 21655, 21656]:

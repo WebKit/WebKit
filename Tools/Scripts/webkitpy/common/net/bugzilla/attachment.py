@@ -37,8 +37,8 @@ _log = logging.getLogger(__name__)
 
 class Attachment(object):
     fast_cq_preamble = "[fast-cq] "
-    revert_preamble = "REVERT of r"
-    rollout_preamble = "ROLLOUT of r"
+    revert_preamble = "REVERT of "
+    rollout_preamble = "ROLLOUT of "
 
     def __init__(self, attachment_dictionary, bug):
         self._attachment_dictionary = attachment_dictionary

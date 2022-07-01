@@ -96,7 +96,7 @@ for l in lines[1:]:
 
     def _changelog_data_for_revision(self, revision):
         repo = local.Scm.from_path(self._scm.checkout_root)
-        commit = repo.commit(revision=revision)
+        commit = repo.find(revision)
 
         return {
             "bug_id": parse_bug_id_from_changelog(commit.message),

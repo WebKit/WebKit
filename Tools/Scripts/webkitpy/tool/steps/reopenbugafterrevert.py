@@ -39,7 +39,7 @@ _log = logging.getLogger(__name__)
 class ReopenBugAfterRevert(AbstractStep):
     def run(self, state):
         commit_comment = bug_comment_from_commit_text(self._tool.scm(), state["commit_text"])
-        revision_list = string_utils.join(['r' + str(revision) for revision in state["revision_list"]])
+        revision_list = string_utils.join(state["revision_list"])
         comment_text = "Reverted %s for reason:\n\n%s\n\n%s" % (revision_list, state["reason"], commit_comment)
         bug_ids = state["bug_id_list"]
         if not bug_ids:

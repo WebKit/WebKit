@@ -64,16 +64,21 @@ class AbstractRevertPrepCommandTest(unittest.TestCase):
         command._commit_info = lambda revision: mock_commit_info
 
         state = command._prepare_state(None, ["124 123 125", "Reason"], None)
-        self.assertEqual(123, state["revision"])
-        self.assertEqual([123, 124, 125], state["revision_list"])
+        self.assertEqual('r123', state["revision"])
+        self.assertEqual(['r123', 'r124', 'r125'], state["revision_list"])
 
-        self.assertRaises(ScriptError, command._prepare_state, options=None, args=["125 r122  123", "Reason"], tool=None)
-        self.assertRaises(ScriptError, command._prepare_state, options=None, args=["125 foo 123", "Reason"], tool=None)
+        state = command._prepare_state(None, ["125 r122 123", "Reason"], None)
+        self.assertEqual('r122', state["revision"])
+        self.assertEqual(['r122', 'r123', 'r125'], state["revision_list"])
+
+        state = command._prepare_state(None, ["125 1234@main 123", "Reason"], None)
+        self.assertEqual('r123', state["revision"])
+        self.assertEqual(['r123', 'r125', '1234@main'], state["revision_list"])
 
         command._commit_info = lambda revision: None
         state = command._prepare_state(None, ["124 123 125", "Reason"], None)
-        self.assertEqual(123, state["revision"])
-        self.assertEqual([123, 124, 125], state["revision_list"])
+        self.assertEqual('r123', state["revision"])
+        self.assertEqual(['r123', 'r124', 'r125'], state["revision_list"])
 
 
 class DownloadCommandsTest(CommandsTest):

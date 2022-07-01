@@ -32,6 +32,7 @@ import logging
 import re
 
 from webkitcorepy import string_utils
+from webkitscmpy import local
 
 from webkitpy.common.memoized import memoized
 from webkitpy.common.system.executive import Executive, ScriptError
@@ -248,7 +249,7 @@ class Git(SCM, SVNRepository):
         return changed_files.lstrip().splitlines()
 
     def changed_files_for_revision(self, revision):
-        commit_id = self.git_commit_from_svn_revision(revision)
+        commit_id = self.git_commit_from_string(revision)
         return self._changes_files_for_commit(commit_id)
 
     def revisions_changing_file(self, path, limit=5):
@@ -397,13 +398,12 @@ class Git(SCM, SVNRepository):
             return None
 
     @memoized
-    def git_commit_from_svn_revision(self, svn_revision):
-        git_log = self._run_git(['log', '--no-abbrev-commit', '-1', r'--grep=^\s*git-svn-id:.*@%s ' % svn_revision])
-        git_commit = re.search("^commit (?P<commit>[a-f0-9]{40})", git_log)
-        if not git_commit:
+    def git_commit_from_string(self, argument):
+        commit = local.Git(self.checkout_root).find(argument)
+        if not commit:
             # FIXME: Alternatively we could offer to update the checkout? Or return None?
-            raise ScriptError(message='Failed to find git commit for revision %s, your checkout likely needs an update.' % svn_revision)
-        return str(git_commit.group('commit'))
+            raise ScriptError(message='Failed to find git commit for "%s"' % argument)
+        return commit.hash
 
     @memoized
     def svn_revision_from_git_commit(self, git_commit):
@@ -413,10 +413,10 @@ class Git(SCM, SVNRepository):
     def contents_at_revision(self, path, revision):
         """Returns a byte array (str()) containing the contents
         of path @ revision in the repository."""
-        return self._run_git(["show", "--no-abbrev-commit", "%s:%s" % (self.git_commit_from_svn_revision(revision), path)], decode_output=False)
+        return self._run_git(["show", "--no-abbrev-commit", "%s:%s" % (self.git_commit_from_string(revision), path)], decode_output=False)
 
     def diff_for_revision(self, revision):
-        git_commit = self.git_commit_from_svn_revision(revision)
+        git_commit = self.git_commit_from_string(revision)
         return self.create_patch(git_commit)
 
     def diff_for_file(self, path, log=None):
@@ -426,14 +426,14 @@ class Git(SCM, SVNRepository):
         return self._run_git(['show', '--no-abbrev-commit', 'HEAD:' + self.to_object_name(path)], decode_output=False)
 
     def committer_email_for_revision(self, revision):
-        git_commit = self.git_commit_from_svn_revision(revision)
+        git_commit = self.git_commit_from_string(revision)
         committer_email = self._run_git(["log", "--no-abbrev-commit", "-1", "--pretty=format:%ce", git_commit])
         # Git adds an extra @repository_hash to the end of every committer email, remove it:
         return committer_email.rsplit("@", 1)[0]
 
     def apply_reverse_diff(self, revision):
         # Assume the revision is an svn revision.
-        git_commit = self.git_commit_from_svn_revision(revision)
+        git_commit = self.git_commit_from_string(revision)
         # I think this will always fail due to ChangeLogs.
         self._run_git(['revert', '--no-commit', git_commit], ignore_errors=True)
 

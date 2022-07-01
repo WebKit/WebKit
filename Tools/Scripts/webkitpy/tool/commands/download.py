@@ -308,15 +308,21 @@ class AbstractRevertPrepCommand(AbstractSequencedCommand):
         return commit_info
 
     def _prepare_state(self, options, args, tool):
-        revision_list = []
         description_list = []
         bug_id_list = []
+
+        revisions = []
+        commits = []
         for revision in str(args[0]).split():
             if revision.isdigit():
-                revision_list.append(int(revision))
+                revisions.append(int(revision))
+            elif revision.startswith('r') and revision[1:].isdigit():
+                revisions.append(int(revision[1:]))
             else:
-                raise ScriptError(message="Invalid svn revision number: " + revision)
-        revision_list.sort()
+                commits.append(revision)
+        revisions.sort()
+        commits.sort()
+        revision_list = ['r{}'.format(rev) for rev in revisions] + commits
 
         earliest_revision = revision_list[0]
         state = {
@@ -375,7 +381,7 @@ class CreateRevert(AbstractRevertPrepCommand):
 
     def _prepare_state(self, options, args, tool):
         state = AbstractRevertPrepCommand._prepare_state(self, options, args, tool)
-        state["bug_title"] = "REGRESSION(r%s): %s" % (state["revision"], state["reason"])
+        state["bug_title"] = "REGRESSION(%s): %s" % (state["revision"], state["reason"])
         state["bug_description"] = "%s introduced a regression:\n%s" % (urls.view_revision_url(state["revision"]), state["reason"])
         # FIXME: If we had more context here, we could link to other open bugs
         #        that mention the test that regressed.

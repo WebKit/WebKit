@@ -62,7 +62,7 @@ function extractRevision(text)
         if (!candidate)
             continue;
 
-        let match = candidate.match(/^r?(\d+):?$/);
+        let match = candidate.match(/^r?(\d+|\d+\@[^:\s]+|[0-9a-f]{8}):?$/);
         if (!match)
             return null;
 

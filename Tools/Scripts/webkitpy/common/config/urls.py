@@ -35,7 +35,9 @@ def view_source_url(local_path):
 
 
 def view_revision_url(revision_number):
-    return 'https://commits.webkit.org/r{}'.format(revision_number)
+    if isinstance(revision_number, int) or revision_number.isdigit():
+        return 'https://commits.webkit.org/r{}'.format(revision_number)
+    return 'https://commits.webkit.org/{}'.format(revision_number)
 
 
 def view_identifier_url(identifier):
