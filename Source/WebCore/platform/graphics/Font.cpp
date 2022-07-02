@@ -594,6 +594,7 @@ static SystemFallbackCache& systemFallbackCache()
 
 RefPtr<Font> Font::systemFallbackFontForCharacter(UChar32 character, const FontDescription& description, IsForPlatformFont isForPlatformFont) const
 {
+    // FIXME: https://github.com/w3c/csswg-drafts/issues/7449 This function should never return a web font.
     auto fontAddResult = systemFallbackCache().add(this, CharacterFallbackMap());
 
     if (!character) {

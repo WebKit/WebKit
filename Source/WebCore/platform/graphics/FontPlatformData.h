@@ -224,9 +224,9 @@ public:
 #endif
     };
 
-    const std::optional<CreationData>& creationData() const
+    const CreationData* creationData() const
     {
-        return m_creationData;
+        return m_creationData ? &m_creationData.value() : nullptr;
     }
 
 private:
