@@ -724,6 +724,7 @@ private:
     Timer m_reloadTimer;
     std::unique_ptr<MediaPlayerPrivateInterface> m_private;
     const MediaPlayerFactory* m_currentMediaEngine { nullptr };
+    HashSet<const MediaPlayerFactory*> m_attemptedEngines;
     URL m_url;
     ContentType m_contentType;
     String m_keySystem;
