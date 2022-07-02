@@ -297,7 +297,7 @@ public:
 
     // These methods are implemented by the platform.
     enum class PreferColoredFont : bool { No, Yes };
-    RefPtr<Font> systemFallbackForCharacters(const FontDescription&, const Font* originalFontData, IsForPlatformFont, PreferColoredFont, const UChar* characters, unsigned length);
+    RefPtr<Font> systemFallbackForCharacters(const FontDescription&, const Font& originalFontData, IsForPlatformFont, PreferColoredFont, const UChar* characters, unsigned length);
     Vector<String> systemFontFamilies();
     void platformInit();
 

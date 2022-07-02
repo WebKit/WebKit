@@ -244,7 +244,7 @@ static SystemFallbackCache& systemFallbackCache()
     return cache.get();
 }
 
-RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& description, const Font*, IsForPlatformFont, PreferColoredFont preferColoredFont, const UChar* characters, unsigned length)
+RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& description, const Font&, IsForPlatformFont, PreferColoredFont preferColoredFont, const UChar* characters, unsigned length)
 {
     auto addResult = systemFallbackCache().ensure(FallbackFontDescriptionKey(description, preferColoredFont), [&description, preferColoredFont]() -> std::unique_ptr<CachedFontSet> {
         RefPtr<FcPattern> pattern = adoptRef(FcPatternCreate());

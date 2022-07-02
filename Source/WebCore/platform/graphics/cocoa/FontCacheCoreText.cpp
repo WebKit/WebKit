@@ -1544,9 +1544,9 @@ static RetainPtr<CTFontRef> lookupFallbackFont(CTFontRef font, FontSelectionValu
     return result;
 }
 
-RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& description, const Font* originalFontData, IsForPlatformFont isForPlatformFont, PreferColoredFont, const UChar* characters, unsigned length)
+RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& description, const Font& originalFontData, IsForPlatformFont isForPlatformFont, PreferColoredFont, const UChar* characters, unsigned length)
 {
-    const FontPlatformData& platformData = originalFontData->platformData();
+    const FontPlatformData& platformData = originalFontData.platformData();
 
     auto fullName = String(adoptCF(CTFontCopyFullName(platformData.font())).get());
     if (!fullName.isEmpty())

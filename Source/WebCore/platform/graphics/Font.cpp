@@ -598,7 +598,7 @@ RefPtr<Font> Font::systemFallbackFontForCharacter(UChar32 character, const FontD
 
     if (!character) {
         UChar codeUnit = 0;
-        return FontCache::forCurrentThread().systemFallbackForCharacters(description, this, isForPlatformFont, FontCache::PreferColoredFont::No, &codeUnit, 1);
+        return FontCache::forCurrentThread().systemFallbackForCharacters(description, *this, isForPlatformFont, FontCache::PreferColoredFont::No, &codeUnit, 1);
     }
 
     auto key = CharacterFallbackMapKey { description.computedLocale(), character, isForPlatformFont != IsForPlatformFont::No };
@@ -613,7 +613,7 @@ RefPtr<Font> Font::systemFallbackFontForCharacter(UChar32 character, const FontD
             codeUnits[1] = U16_TRAIL(character);
             codeUnitsLength = 2;
         }
-        auto font = FontCache::forCurrentThread().systemFallbackForCharacters(description, this, isForPlatformFont, FontCache::PreferColoredFont::No, codeUnits, codeUnitsLength).get();
+        auto font = FontCache::forCurrentThread().systemFallbackForCharacters(description, *this, isForPlatformFont, FontCache::PreferColoredFont::No, codeUnits, codeUnitsLength).get();
         if (font)
             font->m_isUsedInSystemFallbackCache = true;
         return font;

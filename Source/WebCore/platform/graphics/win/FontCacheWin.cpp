@@ -235,11 +235,11 @@ static HFONT createMLangFont(IMLangFontLinkType* langFontLink, HDC hdc, DWORD co
     return hfont;
 }
 
-RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& description, const Font* originalFontData, IsForPlatformFont, PreferColoredFont, const UChar* characters, unsigned length)
+RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& description, const Font& originalFontData, IsForPlatformFont, PreferColoredFont, const UChar* characters, unsigned length)
 {
     RefPtr<Font> fontData;
     HWndDC hdc(0);
-    HFONT primaryFont = originalFontData->platformData().hfont();
+    HFONT primaryFont = originalFontData.platformData().hfont();
     HGDIOBJ oldFont = SelectObject(hdc, primaryFont);
     HFONT hfont = 0;
     IMLangFontLinkType* langFontLink = getFontLinkInterface();

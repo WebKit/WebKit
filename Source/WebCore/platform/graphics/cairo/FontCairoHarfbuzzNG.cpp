@@ -138,7 +138,8 @@ const Font* FontCascade::fontForCombiningCharacterSequence(const UChar* original
             return fallbackFont;
     }
 
-    if (auto systemFallback = FontCache::forCurrentThread().systemFallbackForCharacters(m_fontDescription, baseFont, IsForPlatformFont::No, preferColoredFont ? FontCache::PreferColoredFont::Yes : FontCache::PreferColoredFont::No, characters, length)) {
+    const auto& originalFont = fallbackRangesAt(0).fontForFirstRange();
+    if (auto systemFallback = FontCache::forCurrentThread().systemFallbackForCharacters(m_fontDescription, originalFont, IsForPlatformFont::No, preferColoredFont ? FontCache::PreferColoredFont::Yes : FontCache::PreferColoredFont::No, characters, length)) {
         if (systemFallback->canRenderCombiningCharacterSequence(characters, length) && (!preferColoredFont || systemFallback->platformData().isColorBitmapFont()))
             return systemFallback.get();
 
