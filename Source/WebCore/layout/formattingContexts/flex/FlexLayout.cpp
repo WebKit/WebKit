@@ -195,16 +195,13 @@ void FlexLayout::computeLogicalWidthForStretchingFlexItems(LogicalFlexItems& fle
         // don't participate in available space distribution.
         for (size_t index = lineRange.begin(); index < lineRange.end(); ++index) {
             auto& flexItem = flexItems[index];
-            auto& style = flexItem.style();
-            auto baseSize = flexItem.width();
-            if (auto growValue = style.flexGrow()) {
-                auto flexGrow = growValue * baseSize;
-                resolvedItems.append({ flexGrow, flexItem.minimumContentWidth(), flexItem, { } });
-                totalGrowth += flexGrow;
-                totalFlexibleSpace += baseSize;
+            if (auto growValue = flexItem.style().flexGrow()) {
+                resolvedItems.append({ growValue, flexItem.minimumContentWidth(), flexItem, { } });
+                totalGrowth += growValue;
+                totalFlexibleSpace += flexItem.width();
             } else {
                 resolvedItems.append({ { }, flexItem.minimumContentWidth(), flexItem, true });
-                availableSpace -= baseSize;
+                availableSpace -= flexItem.width();
             }
         }
         if (totalGrowth)
