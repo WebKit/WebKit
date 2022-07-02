@@ -1117,3 +1117,57 @@ TEST(WebKit, CreateOriginFileWhenNeeded)
     while (![fileManager fileExistsAtPath:originFile.path])
         TestWebKitAPI::Util::spinRunLoop();
 }
+
+TEST(WKWebsiteDataStoreConfiguration, SameCustomPathForDifferentTypes)
+{
+    auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    auto dataTypes = [NSSet setWithObjects:WKWebsiteDataTypeLocalStorage, WKWebsiteDataTypeIndexedDBDatabases, WKWebsiteDataTypeCookies, nil];
+
+    NSURL *sharedDirectory = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/SamePathForDifferentTypes" stringByExpandingTildeInPath] isDirectory:YES];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    [fileManager removeItemAtURL:sharedDirectory error:nil];
+    websiteDataStoreConfiguration.get()._webSQLDatabaseDirectory = sharedDirectory;
+    websiteDataStoreConfiguration.get()._webStorageDirectory = sharedDirectory;
+    websiteDataStoreConfiguration.get()._indexedDBDatabaseDirectory = sharedDirectory;
+    websiteDataStoreConfiguration.get()._cookieStorageFile = [sharedDirectory URLByAppendingPathComponent:@"Cookies.binarycookies" isDirectory:NO];
+    websiteDataStoreConfiguration.get().generalStorageDirectory = [sharedDirectory URLByAppendingPathComponent:@"Default" isDirectory:YES];
+
+    @autoreleasepool {
+        auto websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
+        auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [configuration setWebsiteDataStore:websiteDataStore.get()];
+        auto messageHandler = adoptNS([[WebsiteDataStoreCustomPathsMessageHandler alloc] init]);
+        [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+        auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+        NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"WebsiteDataStoreCustomPaths" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+        [webView loadRequest:request];
+
+        EXPECT_STREQ([getNextMessage().body UTF8String], "localstorage written");
+        EXPECT_STREQ([getNextMessage().body UTF8String], "cookie written");
+        EXPECT_STREQ([getNextMessage().body UTF8String], "Success opening indexed database");
+
+        // Ensure cookies are written to file.
+        done = false;
+        [websiteDataStore.get().httpCookieStore _flushCookiesToDiskWithCompletionHandler:^{
+            done = true;
+        }];
+        TestWebKitAPI::Util::run(&done);
+
+        done = false;
+        [websiteDataStore fetchDataRecordsOfTypes:dataTypes completionHandler:^(NSArray<WKWebsiteDataRecord *> * records) {
+            EXPECT_EQ([records count], 1u);
+            EXPECT_TRUE([[[records firstObject] dataTypes] isEqualToSet:dataTypes]);
+            done = true;
+        }];
+        TestWebKitAPI::Util::run(&done);
+    }
+
+    auto newWebsiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
+    done = false;
+    [newWebsiteDataStore fetchDataRecordsOfTypes:dataTypes completionHandler:^(NSArray<WKWebsiteDataRecord *> * records) {
+        EXPECT_EQ([records count], 1u);
+        EXPECT_TRUE([[[records firstObject] dataTypes] isEqualToSet:dataTypes]);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
