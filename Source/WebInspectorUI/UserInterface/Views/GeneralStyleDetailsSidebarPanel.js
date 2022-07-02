@@ -128,7 +128,7 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
 
     initialLayout()
     {
-        this._showPanel(this._panel);
+        this.contentView.addSubview(this._panel);
 
         if (this._classListContainerToggledSetting) {
             this._classListContainer = this.element.createChild("div", "class-list-container");
@@ -174,6 +174,8 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
             this._filterBar = new WI.FilterBar;
             this._filterBar.addEventListener(WI.FilterBar.Event.FilterDidChange, this._filterDidChange, this);
             this._filterBar.inputField.addEventListener("keydown", this._handleFilterBarInputFieldKeyDown.bind(this));
+            this.contentView.element.classList.add("has-filter-bar");
+
             optionsContainer.appendChild(this._filterBar.element);
         }
 
@@ -209,14 +211,6 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
     }
 
     // Private
-
-    _showPanel()
-    {
-        this.contentView.addSubview(this._panel);
-        this.contentView.element.classList.toggle("has-filter-bar", !!this._filterBar);
-        if (this._filterBar)
-            this.contentView.element.classList.toggle(WI.GeneralStyleDetailsSidebarPanel.FilterInProgressClassName, this._filterBar.hasActiveFilters());
-    }
 
     _updateClassListContainer()
     {
