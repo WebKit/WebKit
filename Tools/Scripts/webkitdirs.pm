@@ -46,6 +46,7 @@ use List::Util;
 use POSIX;
 use Time::HiRes qw(usleep);
 use VCSUtils;
+use webkitperl::FeatureList qw(getFeatureOptionList);
 
 unless (defined(&decode_json)) {
     eval "use JSON::XS;";
@@ -1053,6 +1054,16 @@ sub XcodeOptions
     push @options, @baseProductDirOption;
     push @options, "ARCHS=$architecture" if $architecture;
     push @options, "SDKROOT=$xcodeSDK" if $xcodeSDK;
+
+    my @features = getFeatureOptionList();
+    foreach (@features) {
+        if (checkForArgumentAndRemoveFromARGV("--no-$_->{option}")) {
+            push @options, "$_->{define}=";
+        } 
+        if (checkForArgumentAndRemoveFromARGV("--$_->{option}")) {
+            push @options, "$_->{define}=$_->{define}";
+        }   
+    }
 
     # When this environment variable is set Tools/Scripts/check-for-weak-vtables-and-externals
     # treats errors as non-fatal when it encounters missing symbols related to coverage.

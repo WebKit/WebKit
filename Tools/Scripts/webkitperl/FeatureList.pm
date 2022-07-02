@@ -187,8 +187,6 @@ my (
     $xsltSupport,
 );
 
-prohibitUnknownPort();
-
 my @features = (
     { option => "3d-rendering", desc => "Toggle 3D rendering support",
       define => "ENABLE_3D_TRANSFORMS", value => \$threeDTransformsSupport },
@@ -571,6 +569,7 @@ my @features = (
 
 sub getFeatureOptionList()
 {
+    prohibitUnknownPort();
     return @features;
 }
 
