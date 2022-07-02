@@ -181,14 +181,15 @@ void FlexLayout::computeLogicalWidthForStretchingFlexItems(LogicalFlexItems& fle
     auto totalFlexibleSpace = LayoutUnit { };
     auto totalGrowth = 0.f;
     auto flexGrowBase = 0.f;
-    struct StrechingFlexItem {
+    struct FlexItem {
         float flexGrow { 0 };
         LayoutUnit minimumSize;
         LayoutUnit flexBasis;
-        LogicalFlexItem& flexItem;
+        LogicalFlexItem& logicalFlexItem;
         bool isFrozen { false };
     };
-    Vector<StrechingFlexItem> stretchingItems;
+    Vector<FlexItem> resolvedItems;
+    resolvedItems.reserveInitialCapacity(flexItems.size());
 
     auto computeTotalGrowthAndFlexibleSpace = [&] {
         // Collect flex items with non-zero flex-grow value. flex-grow: 0 (initial) flex items
@@ -199,18 +200,18 @@ void FlexLayout::computeLogicalWidthForStretchingFlexItems(LogicalFlexItems& fle
             auto baseSize = style.flexBasis().isFixed() ? LayoutUnit { style.flexBasis().value() } : flexItem.width();
             if (auto growValue = style.flexGrow()) {
                 auto flexGrow = growValue * baseSize;
-                stretchingItems.append({ flexGrow, flexItem.minimumContentWidth(), baseSize, flexItem, { } });
+                resolvedItems.append({ flexGrow, flexItem.minimumContentWidth(), baseSize, flexItem, { } });
                 totalGrowth += flexGrow;
                 totalFlexibleSpace += baseSize;
-            } else
+            } else {
+                resolvedItems.append({ { }, flexItem.minimumContentWidth(), baseSize, flexItem, true });
                 availableSpace -= baseSize;
+            }
         }
         if (totalGrowth)
             flexGrowBase = (availableSpace - totalFlexibleSpace) / totalGrowth;
     };
     computeTotalGrowthAndFlexibleSpace();
-    if (!totalGrowth)
-        return;
 
     auto adjustGrowthBase = [&] {
         // This is where we compute how much space the flexing boxes take up if we just
@@ -218,14 +219,16 @@ void FlexLayout::computeLogicalWidthForStretchingFlexItems(LogicalFlexItems& fle
         // Such flex items are removed from the final overflow distribution.
         while (true) {
             auto didFreeze = false;
-            for (auto& stretchingFlex : stretchingItems) {
-                auto flexedSize = stretchingFlex.flexBasis + stretchingFlex.flexGrow * flexGrowBase;
-                if (stretchingFlex.minimumSize >= flexedSize) {
-                    stretchingFlex.isFrozen = true;
+            for (auto& resolvedFlexItem : resolvedItems) {
+                if (resolvedFlexItem.isFrozen)
+                    continue;
+                auto flexedSize = resolvedFlexItem.flexBasis + resolvedFlexItem.flexGrow * flexGrowBase;
+                if (flexedSize && resolvedFlexItem.minimumSize >= flexedSize) {
+                    resolvedFlexItem.isFrozen = true;
                     didFreeze = true;
-                    totalGrowth -= stretchingFlex.flexGrow;
-                    totalFlexibleSpace -= stretchingFlex.flexBasis;
-                    availableSpace -= stretchingFlex.minimumSize;
+                    totalGrowth -= resolvedFlexItem.flexGrow;
+                    totalFlexibleSpace -= resolvedFlexItem.flexBasis;
+                    availableSpace -= resolvedFlexItem.minimumSize;
                 }
             }
             if (!didFreeze)
@@ -236,10 +239,10 @@ void FlexLayout::computeLogicalWidthForStretchingFlexItems(LogicalFlexItems& fle
     adjustGrowthBase();
 
     auto computeLogicalWidth = [&] {
-        // Adjust the total grow width by the overflow value (shrink) except when min content with disagrees.
-        for (auto& stretchingFlex : stretchingItems) {
-            auto flexedSize = LayoutUnit { stretchingFlex.flexBasis + (stretchingFlex.flexGrow * flexGrowBase) };
-            stretchingFlex.flexItem.setWidth(std::max(stretchingFlex.minimumSize, flexedSize));
+        // Adjust the total grow width by the overflow value (shrink) except when min content width disagrees.
+        for (auto& resolvedFlexItem : resolvedItems) {
+            auto flexedSize = LayoutUnit { resolvedFlexItem.flexBasis + (resolvedFlexItem.flexGrow * flexGrowBase) };
+            resolvedFlexItem.logicalFlexItem.setWidth(std::max(resolvedFlexItem.minimumSize, flexedSize));
         }
     };
     computeLogicalWidth();
