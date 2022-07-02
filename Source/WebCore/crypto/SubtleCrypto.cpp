@@ -1120,7 +1120,7 @@ void SubtleCrypto::unwrapKey(JSC::JSGlobalObject& state, KeyFormat format, Buffe
     WeakPtr weakThis { *this };
     auto callback = [index, weakThis, format, importAlgorithm, unwrappedKeyAlgorithm = crossThreadCopyImportParams(*unwrappedKeyAlgorithm), extractable, keyUsagesBitmap](const Vector<uint8_t>& bytes) mutable {
         if (weakThis) {
-            if (auto promise = weakThis->m_pendingPromises.get(index)) {
+            if (RefPtr promise = weakThis->m_pendingPromises.get(index)) {
                 KeyData keyData;
                 switch (format) {
                 case SubtleCrypto::KeyFormat::Spki:
