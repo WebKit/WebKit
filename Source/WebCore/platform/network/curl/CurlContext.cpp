@@ -83,6 +83,7 @@ constexpr const char* EnvironmentVariableReader::sscanTemplate<unsigned>() { ret
 static const ASCIILiteral httpVersion10 { "http/1.0"_s };
 static const ASCIILiteral httpVersion11 { "http/1.1"_s };
 static const ASCIILiteral httpVersion2 { "h2"_s };
+static const ASCIILiteral httpVersion3 { "h3"_s };
 
 // CurlContext -------------------------------------------------------------------
 
@@ -838,6 +839,8 @@ std::optional<NetworkLoadMetrics> CurlHandle::getNetworkLoadMetrics(MonotonicTim
         networkLoadMetrics.protocol = httpVersion11;
     else if (version == CURL_HTTP_VERSION_2)
         networkLoadMetrics.protocol = httpVersion2;
+    else if (version == CURL_HTTP_VERSION_3)
+        networkLoadMetrics.protocol = httpVersion3;
 
     return networkLoadMetrics;
 }
