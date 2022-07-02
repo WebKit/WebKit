@@ -145,7 +145,7 @@ private:
     bool m_isPlaying { false };
     webrtc::AudioTransport* m_audioTransport { nullptr };
     MonotonicTime m_pollingTime;
-    Timer m_logTimer;
+    std::unique_ptr<Timer> m_logTimer;
     int m_timeSpent { 0 };
 
 #if PLATFORM(COCOA)

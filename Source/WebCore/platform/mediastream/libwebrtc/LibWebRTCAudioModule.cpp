@@ -40,12 +40,16 @@ namespace WebCore {
 
 LibWebRTCAudioModule::LibWebRTCAudioModule()
     : m_queue(WorkQueue::create("WebKitWebRTCAudioModule", WorkQueue::QOS::UserInteractive))
-    , m_logTimer(*this, &LibWebRTCAudioModule::logTimerFired)
+    , m_logTimer(makeUnique<Timer>(*this, &LibWebRTCAudioModule::logTimerFired))
 {
+    ASSERT(isMainThread());
 }
 
 LibWebRTCAudioModule::~LibWebRTCAudioModule()
 {
+    callOnMainThreadAndWait([&] {
+        m_logTimer = nullptr;
+    });
 }
 
 int32_t LibWebRTCAudioModule::RegisterAudioCallback(webrtc::AudioTransport* audioTransport)
@@ -65,7 +69,7 @@ int32_t LibWebRTCAudioModule::StartPlayout()
 
     m_isPlaying = true;
     callOnMainThread([this, protectedThis = rtc::scoped_refptr<webrtc::AudioDeviceModule>(this)] {
-        m_logTimer.startRepeating(logTimerInterval);
+        m_logTimer->startRepeating(logTimerInterval);
     });
 
     m_queue->dispatch([this, protectedThis = rtc::scoped_refptr<webrtc::AudioDeviceModule>(this)] {
@@ -84,7 +88,7 @@ int32_t LibWebRTCAudioModule::StopPlayout()
 
     m_isPlaying = false;
     callOnMainThread([this, protectedThis = rtc::scoped_refptr<webrtc::AudioDeviceModule>(this)] {
-        m_logTimer.stop();
+        m_logTimer->stop();
     });
     return 0;
 }
