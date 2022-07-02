@@ -336,11 +336,6 @@ bool GraphicsLayer::supportsLayerType(Type type)
     return false;
 }
 
-bool GraphicsLayer::supportsBackgroundColorContent()
-{
-    return true;
-}
-
 bool GraphicsLayer::supportsSubpixelAntialiasedLayerText()
 {
 #if PLATFORM(MAC)

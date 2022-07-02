@@ -2644,9 +2644,6 @@ void RenderLayerBacking::updatePaintingPhases()
 
 static bool supportsDirectlyCompositedBoxDecorations(const RenderLayerModelObject& renderer)
 {
-    if (!GraphicsLayer::supportsBackgroundColorContent())
-        return false;
-
     const RenderStyle& style = renderer.style();
     if (renderer.hasClip())
         return false;

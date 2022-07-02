@@ -88,15 +88,6 @@ bool GraphicsLayer::supportsLayerType(Type type)
     return false;
 }
 
-bool GraphicsLayer::supportsBackgroundColorContent()
-{
-#if USE(TEXTURE_MAPPER)
-    return true;
-#else
-    return false;
-#endif
-}
-
 bool GraphicsLayer::supportsSubpixelAntialiasedLayerText()
 {
     return false;
