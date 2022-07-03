@@ -323,7 +323,7 @@ void GStreamerVideoCapturer::reconfigure()
                 selector->mimeType = gst_structure_get_name(structure);
                 selector->format = nullptr;
                 if (gst_structure_has_name(structure, "video/x-raw")) {
-                    if (gst_structure_has_name(structure, "format"))
+                    if (gst_structure_has_field(structure, "format"))
                         selector->format = gst_structure_get_string(structure, "format");
                     else
                         return TRUE;
@@ -338,7 +338,7 @@ void GStreamerVideoCapturer::reconfigure()
                 selector->mimeType = gst_structure_get_name(structure);
                 selector->format = nullptr;
                 if (gst_structure_has_name(structure, "video/x-raw")) {
-                    if (gst_structure_has_name(structure, "format"))
+                    if (gst_structure_has_field(structure, "format"))
                         selector->format = gst_structure_get_string(structure, "format");
                     else
                         return TRUE;
