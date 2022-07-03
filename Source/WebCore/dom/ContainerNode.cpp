@@ -362,6 +362,9 @@ static inline bool isChildTypeAllowed(ContainerNode& newParent, Node& child)
 
 static bool containsIncludingHostElements(const Node& possibleAncestor, const Node& node)
 {
+    if (LIKELY(!node.isInShadowTree() && !node.document().templateDocumentHost()))
+        return possibleAncestor.contains(node);
+
     const Node* currentNode = &node;
     do {
         if (currentNode == &possibleAncestor)
@@ -370,8 +373,8 @@ static bool containsIncludingHostElements(const Node& possibleAncestor, const No
         if (!parent) {
             if (auto shadowRoot = dynamicDowncast<ShadowRoot>(currentNode))
                 parent = shadowRoot->host();
-            else if (is<DocumentFragment>(*currentNode) && downcast<DocumentFragment>(*currentNode).isTemplateContent())
-                parent = static_cast<const TemplateContentDocumentFragment*>(currentNode)->host();
+            else if (auto fragment = dynamicDowncast<TemplateContentDocumentFragment>(*currentNode))
+                parent = fragment->host();
         }
         currentNode = parent;
     } while (currentNode);
