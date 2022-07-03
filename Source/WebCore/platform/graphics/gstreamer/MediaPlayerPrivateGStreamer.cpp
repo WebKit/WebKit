@@ -1730,10 +1730,11 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
     GST_LOG_OBJECT(pipeline(), "Message %s received from element %s", GST_MESSAGE_TYPE_NAME(message), GST_MESSAGE_SRC_NAME(message));
     switch (GST_MESSAGE_TYPE(message)) {
     case GST_MESSAGE_ERROR:
+        gst_message_parse_error(message, &err.outPtr(), &debug.outPtr());
+        GST_ERROR_OBJECT(pipeline(), "%s (url=%s) (code=%d)", err->message, m_url.string().utf8().data(), err->code);
+
         if (m_shouldResetPipeline || !m_missingPluginCallbacks.isEmpty() || m_didErrorOccur)
             break;
-        gst_message_parse_error(message, &err.outPtr(), &debug.outPtr());
-        GST_ERROR("Error %d: %s (url=%s)", err->code, err->message, m_url.string().utf8().data());
 
         m_errorMessage = String::fromLatin1(err->message);
 
@@ -1749,7 +1750,7 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
             error = MediaPlayer::NetworkState::FormatError;
         else if (g_error_matches(err.get(), GST_STREAM_ERROR, GST_STREAM_ERROR_TYPE_NOT_FOUND)) {
             // Let the mediaPlayerClient handle the stream error, in this case the HTMLMediaElement will emit a stalled event.
-            GST_ERROR("Decode error, let the Media element emit a stalled event.");
+            GST_ERROR_OBJECT(pipeline(), "Decode error, let the Media element emit a stalled event.");
             m_loadingStalled = true;
             break;
         } else if (err->domain == GST_STREAM_ERROR) {
@@ -1767,6 +1768,10 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
                 m_player->networkStateChanged();
             }
         }
+        break;
+    case GST_MESSAGE_WARNING:
+        gst_message_parse_warning(message, &err.outPtr(), &debug.outPtr());
+        GST_WARNING_OBJECT(pipeline(), "%s (url=%s) (code=%d)", err->message, m_url.string().utf8().data(), err->code);
         break;
     case GST_MESSAGE_EOS: {
         // In some specific cases, an EOS GstEvent can happen right before a seek. The event is translated
