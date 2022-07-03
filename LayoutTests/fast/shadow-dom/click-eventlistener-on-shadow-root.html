@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+<html>
+<body>
+<div id="host">Click here</div>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+description('Test click works when there is an event listner on shadow root.<br>To manually test, click on "Click here" below.');
+jsTestIsAsync = true;
+
+let didClick = false;
+host.addEventListener('click', () => {
+    didClick = true;
+    alert('PASS');
+});
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+let shadowRoot = host.attachShadow({mode: 'closed'});
+shadowRoot.addEventListener('click', () => { });
+shadowRoot.innerHTML = '<span style="border: solid 1px black"><slot></slot></span>';
+
+async function runTest() {
+    if (!window.testRunner)
+        return;
+
+    await UIHelper.activateAt(host.offsetLeft + 5, host.offsetTop + 5);
+
+    shouldBeTrue('didClick');
+
+    finishJSTest();
+}
+
+onload = runTest;
+
+</script>
+</body>
+</html>

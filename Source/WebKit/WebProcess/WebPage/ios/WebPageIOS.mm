@@ -1140,6 +1140,8 @@ void WebPage::commitPotentialTap(OptionSet<WebEvent::Modifier> modifiers, Transa
         bool targetRenders = m_potentialTapNode->renderer();
         if (!targetRenders && is<Element>(m_potentialTapNode))
             targetRenders = downcast<Element>(*m_potentialTapNode).renderOrDisplayContentsStyle();
+        if (!targetRenders && is<ShadowRoot>(m_potentialTapNode))
+            targetRenders = downcast<ShadowRoot>(*m_potentialTapNode).host()->renderOrDisplayContentsStyle();
         invalidTargetForSingleClick = !targetRenders && !is<HTMLAreaElement>(m_potentialTapNode);
     }
     if (invalidTargetForSingleClick) {
