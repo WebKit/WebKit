@@ -3829,8 +3829,8 @@ unsigned Element::rareDataChildIndex() const
 AtomString Element::computeInheritedLanguage() const
 {
     // The language property is inherited, so we iterate over the parents to find the first language.
-    for (auto& element : lineageOfType<Element>(*this)) {
-        if (auto* elementData = element.elementData()) {
+    for (auto* element = this; element; element = element->parentOrShadowHostElement()) {
+        if (auto* elementData = element->elementData()) {
             if (auto* attribute = elementData->findLanguageAttribute())
                 return attribute->value();
         }
