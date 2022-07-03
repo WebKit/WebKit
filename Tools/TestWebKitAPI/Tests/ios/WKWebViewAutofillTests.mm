@@ -101,6 +101,28 @@ TEST(WKWebViewAutoFillTests, UsernameAndPasswordField)
     EXPECT_FALSE([webView acceptsAutoFillLoginCredentials]);
 }
 
+TEST(WKWebViewAutoFillTests, UsernameAndPasswordFieldAcrossShadowBoundaries)
+{
+    auto webView = adoptNS([[AutoFillTestView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadHTMLString:@"<div id=emailHost></div><div id=passwordHost></div><script>"
+        "emailRoot = emailHost.attachShadow({mode: 'closed'}); emailRoot.innerHTML = '<input id=user type=email>';"
+        "passwordRoot = passwordHost.attachShadow({mode: 'closed'}); passwordRoot.innerHTML = '<input id=password type=password>';"
+        "</script>"];
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"emailRoot.querySelector('input').focus()"];
+    EXPECT_TRUE([webView acceptsAutoFillLoginCredentials]);
+
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"passwordRoot.querySelector('input').focus()"];
+    EXPECT_TRUE([webView acceptsAutoFillLoginCredentials]);
+
+    auto credentialSuggestion = [UITextAutofillSuggestion autofillSuggestionWithUsername:@"frederik" password:@"famos"];
+    [[webView _autofillInputView] insertTextSuggestion:credentialSuggestion];
+
+    EXPECT_WK_STREQ("famos", [webView stringByEvaluatingJavaScript:@"passwordRoot.querySelector('input').value"]);
+
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"document.activeElement.blur()"];
+    EXPECT_FALSE([webView acceptsAutoFillLoginCredentials]);
+}
+
 TEST(WKWebViewAutoFillTests, UsernameAndPasswordFieldSeparatedByRadioButton)
 {
     auto webView = adoptNS([[AutoFillTestView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
@@ -167,6 +189,24 @@ TEST(WKWebViewAutoFillTests, AccountCreationPage)
     EXPECT_TRUE([webView acceptsAutoFillLoginCredentials]);
 
     [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"confirm_password.focus()"];
+    EXPECT_TRUE([webView acceptsAutoFillLoginCredentials]);
+}
+
+TEST(WKWebViewAutoFillTests, AccountCreationPageAcrossShadowBoundaries)
+{
+    auto webView = adoptNS([[AutoFillTestView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadHTMLString:@"<div id=emailHost></div><div id=passwordHost></div><div id=confirmHost></div><script>"
+        "emailRoot = emailHost.attachShadow({mode: 'closed'}); emailRoot.innerHTML = '<input id=user type=email>';"
+        "passwordRoot = passwordHost.attachShadow({mode: 'closed'}); passwordRoot.innerHTML = '<input id=password type=password>';"
+        "confirmRoot = confirmHost.attachShadow({mode: 'closed'}); confirmRoot.innerHTML = '<input id=confirm_password type=password>';"
+        "</script>"];
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"emailRoot.querySelector('input').focus()"];
+    EXPECT_TRUE([webView acceptsAutoFillLoginCredentials]);
+
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"passwordRoot.querySelector('input').focus()"];
+    EXPECT_TRUE([webView acceptsAutoFillLoginCredentials]);
+
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"confirmRoot.querySelector('input').focus()"];
     EXPECT_TRUE([webView acceptsAutoFillLoginCredentials]);
 }
 
