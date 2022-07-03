@@ -153,17 +153,21 @@ GStreamerVideoCaptureSource::~GStreamerVideoCaptureSource()
 
 void GStreamerVideoCaptureSource::settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag> settings)
 {
+    bool reconfigure = false;
     if (settings.containsAny({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height })) {
         if (m_deviceType == CaptureDevice::DeviceType::Window || m_deviceType == CaptureDevice::DeviceType::Screen)
             ensureIntrinsicSizeMaintainsAspectRatio();
 
-        m_capturer->setSize(size().width(), size().height());
+        if (m_capturer->setSize(size().width(), size().height()))
+            reconfigure = true;
     }
 
     if (settings.contains(RealtimeMediaSourceSettings::Flag::FrameRate))
-        m_capturer->setFrameRate(frameRate());
+        if (m_capturer->setFrameRate(frameRate()))
+            reconfigure = true;
 
-    m_capturer->reconfigure();
+    if (reconfigure)
+        m_capturer->reconfigure();
 }
 
 void GStreamerVideoCaptureSource::sourceCapsChanged(const GstCaps* caps)
