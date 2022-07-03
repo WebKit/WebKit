@@ -3188,6 +3188,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 
 - (void)_beginAnimatedResizeWithUpdates:(void (^)(void))updateBlock
 {
+    bool hadPendingAnimatedResize = _dynamicViewportUpdateMode != WebKit::DynamicViewportUpdateMode::NotResizing;
     CGRect oldBounds = self.bounds;
     WebCore::FloatRect oldUnobscuredContentRect = _page->unobscuredContentRect();
 
@@ -3261,7 +3262,8 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
         return;
     }
 
-    if (CGRectEqualToRect(oldBounds, newBounds)
+    if (!hadPendingAnimatedResize
+        && CGRectEqualToRect(oldBounds, newBounds)
         && oldViewLayoutSize == newViewLayoutSize
         && oldMinimumUnobscuredSize == newMinimumUnobscuredSize
         && oldMaximumUnobscuredSize == newMaximumUnobscuredSize

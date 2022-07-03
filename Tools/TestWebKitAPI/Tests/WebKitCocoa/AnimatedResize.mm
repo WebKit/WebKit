@@ -88,7 +88,7 @@ static RetainPtr<TestNavigationDelegate> createFirstVisuallyNonEmptyWatchingNavi
     return navigationDelegate;
 }
 
-TEST(WebKit, DISABLED_ResizeWithHiddenContentDoesNotHang)
+TEST(AnimatedResize, DISABLED_ResizeWithHiddenContentDoesNotHang)
 {
     auto webView = createAnimatedResizeWebView();
     [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"blinking-div" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
@@ -112,7 +112,7 @@ TEST(WebKit, DISABLED_ResizeWithHiddenContentDoesNotHang)
     }
 }
 
-TEST(WebKit, AnimatedResizeDoesNotHang)
+TEST(AnimatedResize, AnimatedResizeDoesNotHang)
 {
     auto webView = createAnimatedResizeWebView();
     [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"blinking-div" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
@@ -140,7 +140,7 @@ TEST(WebKit, AnimatedResizeDoesNotHang)
     }
 }
 
-TEST(WebKit, AnimatedResizeBlocksViewportFitChanges)
+TEST(AnimatedResize, AnimatedResizeBlocksViewportFitChanges)
 {
     auto webView = createAnimatedResizeWebView();
     [webView setUIDelegate:webView.get()];
@@ -187,7 +187,7 @@ TEST(WebKit, AnimatedResizeBlocksViewportFitChanges)
     EXPECT_TRUE(didChangeSafeAreaShouldAffectObscuredInsets);
 }
 
-TEST(WebKit, OverrideLayoutSizeChangesDuringAnimatedResizeSucceed)
+TEST(AnimatedResize, OverrideLayoutSizeChangesDuringAnimatedResizeSucceed)
 {
     auto webView = createAnimatedResizeWebView();
     [webView setUIDelegate:webView.get()];
@@ -227,7 +227,7 @@ TEST(WebKit, OverrideLayoutSizeChangesDuringAnimatedResizeSucceed)
     TestWebKitAPI::Util::run(&didReadLayoutSize);
 }
 
-TEST(WebKit, OverrideLayoutSizeIsRestoredAfterProcessRelaunch)
+TEST(AnimatedResize, OverrideLayoutSizeIsRestoredAfterProcessRelaunch)
 {
     auto webView = createAnimatedResizeWebView();
     [webView setUIDelegate:webView.get()];
@@ -258,7 +258,7 @@ TEST(WebKit, OverrideLayoutSizeIsRestoredAfterProcessRelaunch)
     TestWebKitAPI::Util::run(&didReadLayoutSize);
 }
 
-TEST(WebKit, OverrideLayoutSizeIsRestoredAfterChangingDuringProcessRelaunch)
+TEST(AnimatedResize, OverrideLayoutSizeIsRestoredAfterChangingDuringProcessRelaunch)
 {
     auto webView = createAnimatedResizeWebView();
     [webView setUIDelegate:webView.get()];
@@ -291,7 +291,7 @@ TEST(WebKit, OverrideLayoutSizeIsRestoredAfterChangingDuringProcessRelaunch)
     TestWebKitAPI::Util::run(&didReadLayoutSize);
 }
 
-TEST(WebKit, ChangeFrameAndMinimumEffectiveDeviceWidthDuringAnimatedResize)
+TEST(AnimatedResize, ChangeFrameAndMinimumEffectiveDeviceWidthDuringAnimatedResize)
 {
     auto webView = createAnimatedResizeWebView();
     [[webView configuration] preferences]._shouldIgnoreMetaViewport = YES;
@@ -346,7 +346,7 @@ static UIView *immediateSubviewOfClass(UIView *view, Class cls)
     return foundSubview;
 }
 
-TEST(WebKit, ResizeWithContentHiddenCompletes)
+TEST(AnimatedResize, ResizeWithContentHiddenCompletes)
 {
     auto webView = createAnimatedResizeWebView();
     [webView setUIDelegate:webView.get()];
@@ -387,7 +387,7 @@ TEST(WebKit, ResizeWithContentHiddenCompletes)
     EXPECT_FALSE(contentView.hidden);
 }
 
-TEST(WebKit, ResizeWithContentHiddenWithSubsequentNoOpResizeCompletes)
+TEST(AnimatedResize, ResizeWithContentHiddenWithSubsequentNoOpResizeCompletes)
 {
     auto webView = createAnimatedResizeWebView();
     [webView setUIDelegate:webView.get()];
@@ -409,6 +409,8 @@ TEST(WebKit, ResizeWithContentHiddenWithSubsequentNoOpResizeCompletes)
         [webView setFrame:CGRectMake(0, 0, 100, 200)];
     }];
 
+    [webView _endAnimatedResize];
+
     __block bool didReadLayoutSize = false;
     [webView _doAfterNextPresentationUpdate:^{
         [webView evaluateJavaScript:@"[window.innerWidth, window.innerHeight]" completionHandler:^(id value, NSError *error) {
@@ -432,7 +434,7 @@ TEST(WebKit, ResizeWithContentHiddenWithSubsequentNoOpResizeCompletes)
     EXPECT_FALSE(contentView.hidden);
 }
 
-TEST(WebKit, AnimatedResizeBlocksDoAfterNextPresentationUpdate)
+TEST(AnimatedResize, AnimatedResizeBlocksDoAfterNextPresentationUpdate)
 {
     auto webView = createAnimatedResizeWebView();
     [webView setUIDelegate:webView.get()];
@@ -468,7 +470,7 @@ TEST(WebKit, AnimatedResizeBlocksDoAfterNextPresentationUpdate)
     TestWebKitAPI::Util::run(&didGetCommitAfterEndAnimatedResize);
 }
 
-TEST(WebKit, CreateWebPageAfterAnimatedResize)
+TEST(AnimatedResize, CreateWebPageAfterAnimatedResize)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 1024, 768)]);
     [webView synchronouslyLoadTestPageNamed:@"large-red-square-image"];
@@ -494,6 +496,36 @@ TEST(WebKit, CreateWebPageAfterAnimatedResize)
     NSArray<NSNumber *> *dimensions = [webView objectByEvaluatingJavaScript:@"[innerWidth, innerHeight]"];
     EXPECT_EQ(768, dimensions.firstObject.intValue);
     EXPECT_EQ(1024, dimensions.lastObject.intValue);
+}
+
+TEST(AnimatedResize, ResizeWithWithSubsequentNoOpResizeIsNotCancelled)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 1024, 768)]);
+    [webView synchronouslyLoadHTMLString:@"<head><meta name='viewport' content='initial-scale=1'></head>"];
+
+    UIView *scrollView = immediateSubviewOfClass(webView.get(), NSClassFromString(@"WKScrollView"));
+    UIView *contentView = immediateSubviewOfClass(scrollView, NSClassFromString(@"WKContentView"));
+
+    [webView _resizeWhileHidingContentWithUpdates:^{
+        [webView setFrame:CGRectMake(0, 0, 100, 200)];
+    }];
+
+    EXPECT_TRUE(contentView.hidden);
+
+    [webView _resizeWhileHidingContentWithUpdates:^{
+        [webView setFrame:CGRectMake(0, 0, 100, 200)];
+    }];
+
+    // The animated resize shouldn't be cancelled just because we did a no-op resize;
+    // the first one is still in progress at this point.
+    EXPECT_TRUE(contentView.hidden);
+
+    // Eventually we should get a commit that un-hides the content view.
+    while (1) {
+        [webView waitForNextPresentationUpdate];
+        if (!contentView.hidden)
+            break;
+    }
 }
 
 #endif
