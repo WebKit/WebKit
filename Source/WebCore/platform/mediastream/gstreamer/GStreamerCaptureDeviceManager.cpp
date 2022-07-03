@@ -135,8 +135,7 @@ void GStreamerCaptureDeviceManager::refreshCaptureDevices()
 
         switch (deviceType()) {
         case CaptureDevice::DeviceType::Camera: {
-            auto caps = adoptGRef(gst_caps_new_empty_simple("video/x-raw"));
-            gst_device_monitor_add_filter(m_deviceMonitor.get(), "Video/Source", caps.get());
+            gst_device_monitor_add_filter(m_deviceMonitor.get(), "Video/Source", nullptr);
             break;
         }
         case CaptureDevice::DeviceType::Microphone: {
