@@ -174,6 +174,7 @@ FlexLayout::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpa
             auto& flexItemGeometry = formattingState.boxGeometry(*flexItem);
             auto& flexItemStyle = flexItem->style();
             auto logicalSize = LayoutSize { };
+            auto flexBasis = flexItemStyle.flexBasis().isAuto() ? std::nullopt : std::make_optional(valueForLength(flexItemStyle.flexBasis(), constraints.horizontal().logicalWidth));
 
             switch (direction) {
             case FlexDirection::Row:
@@ -185,7 +186,8 @@ FlexLayout::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpa
                     horizontalMargin = { hasAutoMarginStart ? *autoMarginValue : horizontalMargin.start, hasAutoMarginEnd ? *autoMarginValue : horizontalMargin.end };
                     flexItemGeometry.setHorizontalMargin(horizontalMargin);
                 }
-                logicalSize = { flexItemGeometry.marginBoxWidth(), flexItemGeometry.marginBoxHeight() };
+                auto contentBoxLogicalWidth = flexBasis.value_or(flexItemGeometry.contentBoxWidth());
+                logicalSize = { flexItemGeometry.horizontalMarginBorderAndPadding() + contentBoxLogicalWidth, flexItemGeometry.marginBoxHeight() };
                 break;
             }
             case FlexDirection::Column:
@@ -197,7 +199,8 @@ FlexLayout::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpa
                     verticalMargin = { hasAutoMarginBefore ? *autoMarginValue : verticalMargin.before, hasAutoMarginAfter ? *autoMarginValue : verticalMargin.after };
                     flexItemGeometry.setVerticalMargin(verticalMargin);
                 }
-                logicalSize = { flexItemGeometry.marginBoxHeight(), flexItemGeometry.marginBoxWidth() };
+                auto contentBoxLogicalWidth = flexBasis.value_or(flexItemGeometry.contentBoxHeight());
+                logicalSize = { flexItemGeometry.verticalMarginBorderAndPadding() + contentBoxLogicalWidth, flexItemGeometry.marginBoxWidth() };
                 break;
             }
             default:

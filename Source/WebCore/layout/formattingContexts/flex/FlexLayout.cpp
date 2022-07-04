@@ -247,18 +247,12 @@ void FlexLayout::computeLogicalWidthForStretchingFlexItems(LogicalFlexItems& fle
 
 void FlexLayout::computeLogicalWidthForFlexItems(LogicalFlexItems& flexItems, const LineRange& lineRange, LayoutUnit availableSpace)
 {
-    auto adjustedContentLogicalWidth = [&] {
-        // Compute the total logical width and also resolve for flex-basis (which is used to replace width when applicable).
+    auto contentLogicalWidth = [&] {
         auto logicalWidth = LayoutUnit { };
-        for (size_t index = lineRange.begin(); index < lineRange.end(); ++index) {
-            auto& flexItem = flexItems[index];
-            if (auto flexBasis = flexItem.style().flexBasis(); !flexBasis.isAuto())
-                flexItem.setWidth(LayoutUnit { valueForLength(flexBasis, availableSpace) });
-            logicalWidth += flexItem.width();
-        }
+        for (size_t index = lineRange.begin(); index < lineRange.end(); ++index)
+            logicalWidth += flexItems[index].width();
         return logicalWidth;
-    };
-    auto contentLogicalWidth = adjustedContentLogicalWidth();
+    }();
     if (availableSpace > contentLogicalWidth)
         computeLogicalWidthForStretchingFlexItems(flexItems, lineRange, availableSpace);
     else if (availableSpace < contentLogicalWidth)
