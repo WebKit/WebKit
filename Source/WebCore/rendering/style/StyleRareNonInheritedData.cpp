@@ -370,7 +370,7 @@ OptionSet<Containment> StyleRareNonInheritedData::effectiveContainment() const
     auto containment = contain;
 
     switch (static_cast<ContainerType>(containerType)) {
-    case ContainerType::None:
+    case ContainerType::Normal:
         break;
     case ContainerType::Size:
         containment.add({ Containment::Layout, Containment::Style, Containment::Size });

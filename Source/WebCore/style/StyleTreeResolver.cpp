@@ -629,7 +629,7 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderSt
 void TreeResolver::pushParent(Element& element, const RenderStyle& style, Change change, DescendantsToResolve descendantsToResolve)
 {
     scope().selectorMatchingState.selectorFilter.pushParent(&element);
-    if (style.containerType() != ContainerType::None)
+    if (style.containerType() != ContainerType::Normal)
         scope().selectorMatchingState.queryContainers.append(element);
 
     Parent parent(element, style, change, descendantsToResolve);
@@ -816,7 +816,7 @@ void TreeResolver::resolveComposedTree()
         auto* style = element.renderOrDisplayContentsStyle();
         auto change = Change::None;
         auto descendantsToResolve = DescendantsToResolve::None;
-        auto previousContainerType = style ? style->containerType() : ContainerType::None;
+        auto previousContainerType = style ? style->containerType() : ContainerType::Normal;
 
         auto resolutionType = determineResolutionType(element, parent.descendantsToResolve, parent.change);
         if (resolutionType) {
@@ -889,7 +889,7 @@ auto TreeResolver::determineQueryContainerAction(const Element& element, const R
 
     // FIXME: Render tree needs to be updated before proceeding to children also if we have a former query container
     // because container unit resolution for descendants relies on it being up-to-date.
-    if (style->containerType() == ContainerType::None && previousContainerType == ContainerType::None)
+    if (style->containerType() == ContainerType::Normal && previousContainerType == ContainerType::Normal)
         return QueryContainerAction::None;
 
     if (m_resolvedQueryContainers.contains(element))

@@ -2581,7 +2581,7 @@ static inline bool hasValidStyleForProperty(Element& element, CSSPropertyID prop
 
     auto isQueryContainer = [&](Element& element) {
         auto* style = element.renderStyle();
-        return style && style->containerType() != ContainerType::None;
+        return style && style->containerType() != ContainerType::Normal;
     };
 
     bool isInherited = CSSProperty::isInheritedProperty(propertyID) || isImplicitlyInheritedGridOrFlexProperty(propertyID);
@@ -3794,7 +3794,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
                 list->append(cssValuePool.createIdentifierValue(CSSValueNone));
             else
                 list->append(propertyValue(CSSPropertyContainerName, DoNotUpdateLayout).releaseNonNull());
-            if (style.containerType() != ContainerType::None)
+            if (style.containerType() != ContainerType::Normal)
                 list->append(propertyValue(CSSPropertyContainerType, DoNotUpdateLayout).releaseNonNull());
             return list;
         }

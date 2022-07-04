@@ -901,7 +901,7 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         return valueID == CSSValueAuto || valueID == CSSValueNone || valueID == CSSValueAll;
     case CSSPropertyContainerType:
         // FIXME: Support 'style'. It will require parsing the value as a list.
-        return valueID == CSSValueNone || valueID == CSSValueSize || valueID == CSSValueInlineSize;
+        return valueID == CSSValueNormal || valueID == CSSValueSize || valueID == CSSValueInlineSize;
     default:
         ASSERT_NOT_REACHED();
         return false;

@@ -64,12 +64,17 @@ static size_t sizeForImmutableStylePropertiesWithPropertyCount(unsigned count)
 
 static bool isCSSWideValueKeyword(StringView value)
 {
-    return value == "initial"_s || value == "inherit"_s || value == "unset"_s || value == "revert"_s;
+    return value == "initial"_s || value == "inherit"_s || value == "unset"_s || value == "revert"_s || value == "revert-layer"_s;
 }
 
 static bool isNoneValue(const RefPtr<CSSValue>& value)
 {
     return value && value->isPrimitiveValue() && downcast<CSSPrimitiveValue>(value.get())->isValueID() && downcast<CSSPrimitiveValue>(value.get())->valueID() == CSSValueNone;
+}
+
+static bool isNormalValue(const RefPtr<CSSValue>& value)
+{
+    return value && value->isPrimitiveValue() && downcast<CSSPrimitiveValue>(value.get())->isValueID() && downcast<CSSPrimitiveValue>(value.get())->valueID() == CSSValueNormal;
 }
 
 static bool isValueID(const Ref<CSSValue>& value, CSSValueID id)
@@ -265,7 +270,7 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID, Document* doc
         return getShorthandValue(columnsShorthand());
     case CSSPropertyContainer:
         if (auto type = getPropertyCSSValue(CSSPropertyContainerType)) {
-            if (isNoneValue(type)) {
+            if (isNormalValue(type)) {
                 if (auto name = getPropertyCSSValue(CSSPropertyContainerName))
                     return name->cssText();
                 return { };

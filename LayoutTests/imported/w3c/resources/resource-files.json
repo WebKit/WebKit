@@ -696,6 +696,8 @@
         "web-platform-tests/css/css-contain/container-queries/crashtests/table-in-columns-001-crash.html",
         "web-platform-tests/css/css-contain/container-queries/crashtests/table-in-columns-002-crash.html",
         "web-platform-tests/css/css-contain/container-queries/crashtests/table-in-columns-003-crash.html",
+        "web-platform-tests/css/css-contain/container-queries/crashtests/table-in-columns-004-crash.html",
+        "web-platform-tests/css/css-contain/container-queries/crashtests/table-in-columns-005-crash.html",
         "web-platform-tests/css/css-contain/container-queries/display-in-container-ref.html",
         "web-platform-tests/css/css-contain/container-queries/fieldset-legend-change-ref.html",
         "web-platform-tests/css/css-contain/container-queries/flex-in-columns-000-crash.html",

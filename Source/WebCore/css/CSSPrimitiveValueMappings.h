@@ -5576,8 +5576,8 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ContainerType containerTy
 {
     setPrimitiveUnitType(CSSUnitType::CSS_VALUE_ID);
     switch (containerType) {
-    case ContainerType::None:
-        m_value.valueID = CSSValueNone;
+    case ContainerType::Normal:
+        m_value.valueID = CSSValueNormal;
         break;
     case ContainerType::Size:
         m_value.valueID = CSSValueSize;
@@ -5592,8 +5592,8 @@ template<> inline CSSPrimitiveValue::operator ContainerType() const
 {
     ASSERT(isValueID());
     switch (m_value.valueID) {
-    case CSSValueNone:
-        return ContainerType::None;
+    case CSSValueNormal:
+        return ContainerType::Normal;
     case CSSValueSize:
         return ContainerType::Size;
     case CSSValueInlineSize:
@@ -5602,7 +5602,7 @@ template<> inline CSSPrimitiveValue::operator ContainerType() const
         break;
     }
     ASSERT_NOT_REACHED();
-    return ContainerType::None;
+    return ContainerType::Normal;
 }
 
 }

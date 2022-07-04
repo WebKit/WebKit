@@ -1,0 +1,22 @@
+Test1
+Test1
+
+FAIL cqw unit resolves against appropriate container assert_equals: expected "true" but got ""
+FAIL cqh unit resolves against appropriate container assert_equals: expected "true" but got ""
+FAIL cqi unit resolves against appropriate container assert_equals: expected "true" but got ""
+FAIL cqb unit resolves against appropriate container assert_equals: expected "true" but got ""
+FAIL cqmin unit resolves against appropriate container assert_equals: expected "true" but got ""
+FAIL cqmax unit resolves against appropriate container assert_equals: expected "true" but got ""
+FAIL cqw unit resolves against appropriate container (vertical writing-mode on subject) assert_equals: expected "true" but got ""
+FAIL cqh unit resolves against appropriate container (vertical writing-mode on subject) assert_equals: expected "true" but got ""
+FAIL cqi unit resolves against appropriate container (vertical writing-mode on subject) assert_equals: expected "true" but got ""
+FAIL cqb unit resolves against appropriate container (vertical writing-mode on subject) assert_equals: expected "true" but got ""
+FAIL cqmin unit resolves against appropriate container (vertical writing-mode on subject) assert_equals: expected "true" but got ""
+FAIL cqmax unit resolves against appropriate container (vertical writing-mode on subject) assert_equals: expected "true" but got ""
+FAIL cqw unit resolves against appropriate container (vertical writing-mode on container) assert_equals: expected "true" but got ""
+FAIL cqh unit resolves against appropriate container (vertical writing-mode on container) assert_equals: expected "true" but got ""
+FAIL cqi unit resolves against appropriate container (vertical writing-mode on container) assert_equals: expected "true" but got ""
+FAIL cqb unit resolves against appropriate container (vertical writing-mode on container) assert_equals: expected "true" but got ""
+FAIL cqmin unit resolves against appropriate container (vertical writing-mode on container) assert_equals: expected "true" but got ""
+FAIL cqmax unit resolves against appropriate container (vertical writing-mode on container) assert_equals: expected "true" but got ""
+

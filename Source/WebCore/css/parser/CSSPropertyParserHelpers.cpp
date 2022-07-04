@@ -4291,11 +4291,19 @@ AtomString consumeCounterStyleNameInPrelude(CSSParserTokenRange& prelude)
 
 RefPtr<CSSPrimitiveValue> consumeSingleContainerName(CSSParserTokenRange& range)
 {
-    if (range.peek().id() == CSSValueNone)
+    switch (range.peek().id()) {
+    case CSSValueNormal:
+    case CSSValueNone:
+    case CSSValueAuto:
+    case CSSValueAnd:
+    case CSSValueOr:
+    case CSSValueNot:
         return nullptr;
-    if (auto ident = consumeCustomIdent(range))
-        return ident;
-    return nullptr;
+    default:
+        if (auto ident = consumeCustomIdent(range))
+            return ident;
+        return nullptr;
+    }
 }
 
 std::optional<CSSValueID> consumeFontVariantCSS21Raw(CSSParserTokenRange& range)

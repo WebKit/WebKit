@@ -110,6 +110,7 @@
     "web-platform-tests/css/css-color": "import", 
     "web-platform-tests/css/css-conditional": "import", 
     "web-platform-tests/css/css-contain": "import", 
+    "web-platform-tests/css/css-contain/container-queries": "import", 
     "web-platform-tests/css/css-content": "import", 
     "web-platform-tests/css/css-counter-styles": "import", 
     "web-platform-tests/css/css-display": "import", 

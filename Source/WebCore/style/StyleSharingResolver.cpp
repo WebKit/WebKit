@@ -261,7 +261,7 @@ bool SharingResolver::canShareStyleWithElement(const Context& context, const Sty
     if (candidateElement.isLink() && context.elementLinkState != style->insideLink())
         return false;
 
-    if (style->containerType() != ContainerType::None)
+    if (style->containerType() != ContainerType::Normal)
         return false;
 
     if (candidateElement.elementData() != element.elementData()) {

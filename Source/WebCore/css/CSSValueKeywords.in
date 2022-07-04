@@ -1583,7 +1583,7 @@ paint
 #endif
 
 // container-type
-// none
+// normal
 // size
 inline-size
 

@@ -2372,7 +2372,7 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, DimensionsChe
             previousBox = currentBox;
             currentBox = downcast<RenderBox>(currRenderer);
 
-            if (currentBox->style().containerType() != ContainerType::None) {
+            if (currentBox->style().containerType() != ContainerType::Normal) {
                 requireFullLayout = true;
                 break;
             }

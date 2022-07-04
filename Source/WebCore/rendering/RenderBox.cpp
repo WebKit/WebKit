@@ -176,7 +176,7 @@ void RenderBox::willBeDestroyed()
     if (hasInitializedStyle()) {
         if (style().hasSnapPosition())
             view().unregisterBoxWithScrollSnapPositions(*this);
-        if (style().containerType() != ContainerType::None)
+        if (style().containerType() != ContainerType::Normal)
             view().unregisterContainerQueryBox(*this);
     }
 
@@ -297,9 +297,9 @@ void RenderBox::styleWillChange(StyleDifference diff, const RenderStyle& newStyl
             view().unregisterBoxWithScrollSnapPositions(*this);
     }
 
-    if (newStyle.containerType() != ContainerType::None)
+    if (newStyle.containerType() != ContainerType::Normal)
         view().registerContainerQueryBox(*this);
-    else if (oldStyle && oldStyle->containerType() != ContainerType::None)
+    else if (oldStyle && oldStyle->containerType() != ContainerType::Normal)
         view().unregisterContainerQueryBox(*this);
 
     RenderBoxModelObject::styleWillChange(diff, newStyle);

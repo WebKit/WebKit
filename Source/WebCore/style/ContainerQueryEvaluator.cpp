@@ -107,7 +107,7 @@ const Element* ContainerQueryEvaluator::selectContainer(OptionSet<CQ::Axis> axes
             if (axes.contains(CQ::Axis::Block))
                 return false;
             return !axes.contains(principalBox->isHorizontalWritingMode() ? CQ::Axis::Height : CQ::Axis::Width);
-        case ContainerType::None:
+        case ContainerType::Normal:
             return false;
         }
         RELEASE_ASSERT_NOT_REACHED();
@@ -245,7 +245,7 @@ auto ContainerQueryEvaluator::evaluateSizeFeature(const CQ::SizeFeature& sizeFea
             return renderer.shouldApplyInlineSizeContainment();
         case ContainerType::Size:
             return renderer.shouldApplySizeContainment();
-        case ContainerType::None:
+        case ContainerType::Normal:
             return true;
         }
         RELEASE_ASSERT_NOT_REACHED();

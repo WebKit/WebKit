@@ -1718,7 +1718,7 @@ public:
     static OptionSet<Containment> initialContainment() { return OptionSet<Containment> { }; }
     static OptionSet<Containment> strictContainment() { return OptionSet<Containment> { Containment::Size, Containment::Layout, Containment::Paint, Containment::Style }; }
     static OptionSet<Containment> contentContainment() { return OptionSet<Containment> { Containment::Layout, Containment::Paint, Containment::Style }; }
-    static ContainerType initialContainerType() { return ContainerType::None; }
+    static ContainerType initialContainerType() { return ContainerType::Normal; }
     static Vector<AtomString> initialContainerNames() { return { }; }
     static double initialAspectRatioWidth() { return 1.0; }
     static double initialAspectRatioHeight() { return 1.0; }
