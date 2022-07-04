@@ -197,4 +197,22 @@ function elapsedTime(startTimestamp, endTimestamp)
     return result;
 }
 
-export {deepCompare, ErrorDisplay, queryToParams, paramsToQuery, QueryModifier, escapeHTML, linkify, percentage, elapsedTime};
+function toGithubLink(file, suite) {
+    let baseURL = 'https://github.com/WebKit/WebKit/blob/main/';
+    switch (suite) {
+        case 'api-tests':
+            return '#';
+        case 'javascriptcore-tests':
+            return '#';
+        case 'layout-tests':
+            baseURL += 'LayoutTests';
+            break;
+        case 'webkitpy-tests':
+            baseURL += 'Tools/Scripts/libraries/';
+            baseURL += file.split('.')[0] + '/';
+            file = file.replace('.', '/');
+    }
+    return baseURL + '/' + file;
+}
+
+export {deepCompare, ErrorDisplay, queryToParams, paramsToQuery, QueryModifier, escapeHTML, linkify, percentage, elapsedTime, toGithubLink};
