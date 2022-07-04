@@ -881,9 +881,10 @@ void WebPageProxy::launchProcess(const RegistrableDomain& registrableDomain, Pro
     auto& processPool = m_process->processPool();
 
     auto* relatedPage = m_configuration->relatedPage();
-    if (relatedPage && !relatedPage->isClosed())
+    if (relatedPage && !relatedPage->isClosed() && reason == ProcessLaunchReason::InitialProcess) {
         m_process = relatedPage->ensureRunningProcess();
-    else
+        WEBPAGEPROXY_RELEASE_LOG(Loading, "launchProcess: Using process (process=%p, PID=%i) from related page", m_process.ptr(), m_process->processIdentifier());
+    } else
         m_process = processPool.processForRegistrableDomain(m_websiteDataStore.get(), registrableDomain, shouldEnableCaptivePortalMode() ? WebProcessProxy::CaptivePortalMode::Enabled : WebProcessProxy::CaptivePortalMode::Disabled);
 
     m_hasRunningProcess = true;
