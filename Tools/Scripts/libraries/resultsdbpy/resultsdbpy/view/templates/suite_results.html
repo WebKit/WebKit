@@ -175,7 +175,7 @@ ${Drawer([
         for (let suite in view.children) {
             view.children[suite].update();
         }
-    }, true, true),
+    }, true, true, false, true),
     LimitSlider(() => {view.reload()}),
     BranchSelector(() => {
         CommitBank.reload();

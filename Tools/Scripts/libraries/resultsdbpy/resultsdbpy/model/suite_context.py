@@ -92,8 +92,15 @@ class SuiteContext(UploadCallbackContext):
                 run_stats[f'tests_{key}'] = 0
                 run_stats[f'tests_unexpected_{key}'] = 0
 
-            def callback(test, result):
+            details = {
+                'number_of_flaky_tests': 0
+            }
+
+            def callback(test, result, details):
                 run_stats['tests_run'] += 1
+                if (('flakiness_num_tries' in result) and ('flakiness_num_passes' in result) and
+                        result['flakiness_num_passes'] < result['flakiness_num_tries']):
+                    details['number_of_flaky_tests'] += 1
                 actual_results = Expectations.string_to_state_ids(result.get('actual', ''))
                 expected_results = set(Expectations.string_to_state_ids(result.get('expected', '')))
 
@@ -113,7 +120,8 @@ class SuiteContext(UploadCallbackContext):
                     if worst_unexpected_result <= point:
                         run_stats[f'tests_unexpected_{key}'] += 1
 
-            Expectations.iterate_through_nested_results(test_results.get('results'), callback)
+            Expectations.iterate_through_nested_results(test_results.get('results'),
+                                                        lambda test, result: callback(test, result, details))
 
             uuid = self.commit_context.uuid_for_commits(commits)
             ttl = int((uuid // Commit.UUID_MULTIPLIER) + self.ttl_seconds - time.time()) if self.ttl_seconds else None
@@ -125,7 +133,7 @@ class SuiteContext(UploadCallbackContext):
                             table.__table_name__, configuration=configuration, suite=suite,
                             branch=branch, uuid=uuid, ttl=ttl,
                             sdk=configuration.sdk or '?', start_time=timestamp,
-                            details=json.dumps(test_results.get('details', {})),
+                            details=json.dumps(details),
                             stats=json.dumps(run_stats),
                         )
         except Exception as e:

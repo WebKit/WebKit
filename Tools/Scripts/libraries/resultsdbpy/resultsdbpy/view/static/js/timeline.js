@@ -36,6 +36,8 @@ const DEFAULT_LIMIT = 100;
 
 let willFilterExpected = false;
 let showTestTimes = false;
+let showTestFlakiness = false;
+let showNumberOfFlakyTests = false;
 
 const BUG_TRACKER_COLORS = {
     radar: 'var(--purple)',
@@ -692,16 +694,20 @@ class TimelineFromEndpoint {
                 if (!data)
                     return drawDot(context, x, y, true);
 
-                let tag = null;
+                let tag = [];
+                let pushTag = (value, prefix='', suffix='') => {
+                    if (value)
+                        tag.push(prefix + value + suffix);
+                };
                 let color = colorMap.success;
                 let symbol = Expectations.symbolMap.success;
                 if (data.stats) {
                     if (data.start_time)
-                        tag = data.stats[`tests${willFilterExpected ? '_unexpected_' : '_'}failed`];
+                        pushTag(data.stats[`tests${willFilterExpected ? '_unexpected_' : '_'}failed`]);
                     else
-                        tag = data.stats[`worst_tests${willFilterExpected ? '_unexpected_' : '_'}failed`];
+                        pushTag(data.stats[`worst_tests${willFilterExpected ? '_unexpected_' : '_'}failed`]);
                     if (data.stats.worst_tests_run <= 1)
-                        tag = null;
+                        tag = [];
 
                     Expectations.failureTypes.forEach(type => {
                         if (data.stats[`tests${willFilterExpected ? '_unexpected_' : '_'}${type}`] > 0) {
@@ -722,9 +728,16 @@ class TimelineFromEndpoint {
                 }
                 const time = data.time ? Math.round(data.time / 1000) : 0;
                 if (time && showTestTimes)
-                    tag = time;
+                    pushTag(time);
+                if (showTestFlakiness && data.flakiness_num_passes && data.flakiness_num_tries) {
+                    let flakiness = 1 - (data.flakiness_num_passes / data.flakiness_num_tries);
+                    pushTag((100 * flakiness).toFixed(), '', '%');
+                }
+                if (showNumberOfFlakyTests && data.details && data.details.number_of_flaky_tests){
+                    pushTag(data.details.number_of_flaky_tests, 'fl');
+                }
 
-                return drawDot(context, x, y, false, tag ? tag : null, symbol, false, color);
+                return drawDot(context, x, y, false, tag.length ? tag.join('/') : null, symbol, false, color);
             },
         };
 
@@ -1031,7 +1044,7 @@ function LegendLabel(eventStream, filterExpectedText, filterUnexpectedText) {
     return `<div class="label" style="font-size: var(--smallSize)" ref="${ref}"></div>`;
 } 
 
-function Legend(callback=null, plural=false, defaultWillFilterExpected=false) {
+function Legend(callback=null, plural=false, defaultWillFilterExpected=false, flakinessSwitch=false, numberOfFlakySwitch=false) {
     willFilterExpected = defaultWillFilterExpected;
     InvestigateDrawer.willFilterExpected = willFilterExpected;
     let updateLabelEvents = new EventStream();
@@ -1112,7 +1125,28 @@ function Legend(callback=null, plural=false, defaultWillFilterExpected=false) {
                 };
             },
         });
-
+        const showTestFlakinessSwitch = REF.createRef({
+            onElementMount: (element) => {
+                element.onchange = () => {
+                    if (element.checked)
+                        showTestFlakiness = true;
+                    else
+                        showTestFlakiness = false;
+                    callback();
+                };
+            },
+        });
+        const showNumberOfFlakyTestsSwitch = REF.createRef({
+            onElementMount: (element) => {
+                element.onchange = () => {
+                    if (element.checked)
+                        showNumberOfFlakyTests = true;
+                    else
+                        showNumberOfFlakyTests = false;
+                    callback();
+                };
+            },
+        });
         result += `<div class="input">
             <label>Filter expected results</label>
             <label class="switch">
@@ -1125,6 +1159,22 @@ function Legend(callback=null, plural=false, defaultWillFilterExpected=false) {
                 <label>Show test times</label>
                 <label class="switch">
                     <input type="checkbox"${showTestTimes ? ' checked': ''} ref="${showTimesSwitch}">
+                    <span class="slider"></span>
+                </label>
+            </div>`;
+        if (flakinessSwitch)
+            result += `<div class="input">
+                <label>Show test flakiness</label>
+                <label class="switch">
+                    <input type="checkbox"${showTestFlakiness ? ' checked': ''} ref="${showTestFlakinessSwitch}">
+                    <span class="slider"></span>
+                </label>
+            </div>`;
+        if (numberOfFlakySwitch)
+            result += `<div class="input">
+                <label>Number of flakes</label>
+                <label class="switch">
+                    <input type="checkbox"${showNumberOfFlakyTests ? ' checked': ''} ref="${showNumberOfFlakyTestsSwitch}">
                     <span class="slider"></span>
                 </label>
             </div>`;

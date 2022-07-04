@@ -232,7 +232,7 @@ DOM.inject(
             view.ref.state.children.forEach((child) => {
                 child.timeline.update();
             });
-        }, false),
+        }, false, false, true, false),
         LimitSlider(() => {view.reload()}),
         BranchSelector(() => {
             CommitBank.reload();
