@@ -373,7 +373,7 @@ public:
     LayoutUnit logicalHeightForChildForFragmentation(const RenderBox& child) const;
     bool hasNextPage(LayoutUnit logicalOffset, PageBoundaryRule = ExcludePageBoundary) const;
 
-    void updateColumnProgressionFromStyle(RenderStyle&);
+    void updateColumnProgressionFromStyle(const RenderStyle&);
     void updateStylesForColumnChildren();
 
     bool needsLayoutAfterFragmentRangeChange() const override;

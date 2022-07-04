@@ -62,9 +62,6 @@ RenderStyle resolveForDocument(const Document& document)
     documentStyle.setRTLOrdering(document.visuallyOrdered() ? Order::Visual : Order::Logical);
     documentStyle.setZoom(!document.printing() ? renderView.frame().pageZoomFactor() : 1);
     documentStyle.setPageScaleTransform(renderView.frame().frameScaleFactor());
-    FontCascadeDescription documentFontDescription = documentStyle.fontDescription();
-    documentFontDescription.setSpecifiedLocale(document.contentLanguage());
-    documentStyle.setFontDescription(WTFMove(documentFontDescription));
 
     // This overrides any -webkit-user-modify inherited from the parent iframe.
     documentStyle.setUserModify(document.inDesignMode() ? UserModify::ReadWrite : UserModify::ReadOnly);

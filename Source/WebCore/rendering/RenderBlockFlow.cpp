@@ -3906,7 +3906,7 @@ void RenderBlockFlow::setComputedColumnCountAndWidth(int count, LayoutUnit width
     multiColumnFlow()->setProgressionIsReversed(style().columnProgression() == ColumnProgression::Reverse);
 }
 
-void RenderBlockFlow::updateColumnProgressionFromStyle(RenderStyle& style)
+void RenderBlockFlow::updateColumnProgressionFromStyle(const RenderStyle& style)
 {
     if (!multiColumnFlow())
         return;
