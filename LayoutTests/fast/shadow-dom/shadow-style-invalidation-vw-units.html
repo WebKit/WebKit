@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+const iframe = document.createElement('iframe');
+document.body.appendChild(iframe);
+iframe.scrolling = 'no';
+iframe.style = 'border: none; width: 50px; height: 50px; overflow: hidden';
+const doc = iframe.contentDocument;
+doc.head.innerHTML = '<style> head,html,body { padding: 0; margin: 0; }</style>';
+doc.body.innerHTML = `<div style="width: 100vw; height: 50vw; background: green"></div>
+<div style="width: 100px; height: 100px; background: red;"><div id="host"></div></div>`;
+doc.querySelector('#host').attachShadow({mode: 'closed'}).innerHTML = '<style> div { width: 100vw; height: 50vw; background: green; }</style><div></div>';
+
+requestAnimationFrame(() => {
+    iframe.style.width = '100px';
+    iframe.style.height = '100px';
+    setTimeout(() => {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 0);
+});
+
+</script>
+</body>
+</html>

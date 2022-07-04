@@ -4351,17 +4351,7 @@ void Document::evaluateMediaQueriesAndReportChanges()
 
 void Document::updateViewportUnitsOnResize()
 {
-    if (!hasStyleWithViewportUnits())
-        return;
-
-    styleScope().resolver().clearCachedDeclarationsAffectedByViewportUnits();
-
-    // FIXME: Ideally, we should save the list of elements that have viewport units and only iterate over those.
-    for (RefPtr element = ElementTraversal::firstWithin(rootNode()); element; element = ElementTraversal::nextIncludingPseudo(*element)) {
-        auto* renderer = element->renderer();
-        if (renderer && renderer->style().usesViewportUnits())
-            element->invalidateStyle();
-    }
+    styleScope().didChangeViewportSize();
 }
 
 void Document::setNeedsDOMWindowResizeEvent()
