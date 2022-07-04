@@ -112,21 +112,8 @@ bool getVideoSizeAndFormatFromCaps(const GstCaps* caps, WebCore::IntSize& size, 
         return false;
     }
 
-    if (areEncryptedCaps(caps)) {
-        GstStructure* structure = gst_caps_get_structure(caps, 0);
-        format = GST_VIDEO_FORMAT_ENCODED;
-        stride = 0;
-        int width = 0, height = 0;
-        gst_structure_get_int(structure, "width", &width);
-        gst_structure_get_int(structure, "height", &height);
-        if (!gst_structure_get_fraction(structure, "pixel-aspect-ratio", &pixelAspectRatioNumerator, &pixelAspectRatioDenominator)) {
-            pixelAspectRatioNumerator = 1;
-            pixelAspectRatioDenominator = 1;
-        }
-
-        size.setWidth(width);
-        size.setHeight(height);
-    } else {
+    GstStructure* structure = gst_caps_get_structure(caps, 0);
+    if (!areEncryptedCaps(caps) && (!gst_structure_has_name(structure, "video/x-raw") || gst_structure_has_field(structure, "format"))) {
         GstVideoInfo info;
         gst_video_info_init(&info);
         if (!gst_video_info_from_caps(&info, caps))
@@ -138,6 +125,22 @@ bool getVideoSizeAndFormatFromCaps(const GstCaps* caps, WebCore::IntSize& size, 
         pixelAspectRatioNumerator = GST_VIDEO_INFO_PAR_N(&info);
         pixelAspectRatioDenominator = GST_VIDEO_INFO_PAR_D(&info);
         stride = GST_VIDEO_INFO_PLANE_STRIDE(&info, 0);
+    } else {
+        if (areEncryptedCaps(caps))
+            format = GST_VIDEO_FORMAT_ENCODED;
+        else
+            format = GST_VIDEO_FORMAT_UNKNOWN;
+        stride = 0;
+        int width = 0, height = 0;
+        gst_structure_get_int(structure, "width", &width);
+        gst_structure_get_int(structure, "height", &height);
+        if (!gst_structure_get_fraction(structure, "pixel-aspect-ratio", &pixelAspectRatioNumerator, &pixelAspectRatioDenominator)) {
+            pixelAspectRatioNumerator = 1;
+            pixelAspectRatioDenominator = 1;
+        }
+
+        size.setWidth(width);
+        size.setHeight(height);
     }
 
     return true;
@@ -153,12 +156,8 @@ std::optional<FloatSize> getVideoResolutionFromCaps(const GstCaps* caps)
     int width = 0, height = 0;
     int pixelAspectRatioNumerator = 1, pixelAspectRatioDenominator = 1;
 
-    if (areEncryptedCaps(caps)) {
-        GstStructure* structure = gst_caps_get_structure(caps, 0);
-        gst_structure_get_int(structure, "width", &width);
-        gst_structure_get_int(structure, "height", &height);
-        gst_structure_get_fraction(structure, "pixel-aspect-ratio", &pixelAspectRatioNumerator, &pixelAspectRatioDenominator);
-    } else {
+    GstStructure* structure = gst_caps_get_structure(caps, 0);
+    if (!areEncryptedCaps(caps) && (!gst_structure_has_name(structure, "video/x-raw") || gst_structure_has_field(structure, "format"))) {
         GstVideoInfo info;
         gst_video_info_init(&info);
         if (!gst_video_info_from_caps(&info, caps))
@@ -168,6 +167,10 @@ std::optional<FloatSize> getVideoResolutionFromCaps(const GstCaps* caps)
         height = GST_VIDEO_INFO_HEIGHT(&info);
         pixelAspectRatioNumerator = GST_VIDEO_INFO_PAR_N(&info);
         pixelAspectRatioDenominator = GST_VIDEO_INFO_PAR_D(&info);
+    } else {
+        gst_structure_get_int(structure, "width", &width);
+        gst_structure_get_int(structure, "height", &height);
+        gst_structure_get_fraction(structure, "pixel-aspect-ratio", &pixelAspectRatioNumerator, &pixelAspectRatioDenominator);
     }
 
     return std::make_optional(FloatSize(width, height * (static_cast<float>(pixelAspectRatioDenominator) / static_cast<float>(pixelAspectRatioNumerator))));
