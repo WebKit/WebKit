@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Jarred Sumner. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -439,6 +440,18 @@ ALWAYS_INLINE static size_t findInner(const SearchCharacterType* searchCharacter
 template<typename CharacterType, std::enable_if_t<std::is_integral_v<CharacterType>>* = nullptr>
 inline size_t find(const CharacterType* characters, unsigned length, CharacterType matchCharacter, unsigned index = 0)
 {
+    if constexpr (sizeof(CharacterType) == 1) {
+        // For enough long string, we use memchr since it is faster empirically.
+        constexpr unsigned memchrThresholdLength = 16;
+        if (length > index && length - index >= memchrThresholdLength) {
+            auto* result = reinterpret_cast<const CharacterType*>(memchr(characters + index, matchCharacter, length - index));
+            ASSERT(!result || (result - characters) >= index);
+            if (result)
+                return result - characters;
+            return notFound;
+        }
+    }
+
     while (index < length) {
         if (characters[index] == matchCharacter)
             return index;
