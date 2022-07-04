@@ -742,11 +742,11 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
             return selector;
         }
         case CSSSelector::PseudoClassHost: {
-            auto selectorList = makeUnique<CSSSelectorList>();
-            *selectorList = consumeCompoundSelectorList(block);
-            if (selectorList->isEmpty() || !block.atEnd())
+            auto innerSelector = consumeCompoundSelector(block);
+            block.consumeWhitespace();
+            if (!innerSelector || !block.atEnd())
                 return nullptr;
-            selector->setSelectorList(WTFMove(selectorList));
+            selector->adoptSelectorVector(Vector<std::unique_ptr<CSSParserSelector>>::from(WTFMove(innerSelector)));
             return selector;
         }
         case CSSSelector::PseudoClassHas: {
