@@ -973,7 +973,7 @@ void webkit_dom_html_input_element_set_capture_type(WebKitDOMHTMLInputElement* s
     g_return_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLInputElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    auto convertedValue = WTF::AtomString::fromUTF8(value);
     item->setAttributeWithoutSynchronization(WebCore::HTMLNames::captureAttr, convertedValue);
 #else
     UNUSED_PARAM(self);
