@@ -1,3 +1,9 @@
+2022-07-04  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for the 2.36.4 release
+
+        * gtk/NEWS: Add release notes for 2.36.4.
+
 2022-03-08  Youenn Fablet  <youenn@apple.com>
 
         Add a preference to mute video capture in case audio capture gets interrupted

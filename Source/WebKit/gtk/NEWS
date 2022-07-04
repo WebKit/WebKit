@@ -1,4 +1,20 @@
 ================
+WebKitGTK 2.36.4
+================
+
+What's new in WebKitGTK 2.36.4?
+
+  - Fix the new ATSPI accessibility implementation to add the missing
+    Collection interface for the loaded document.
+  - Fix the MediaSession implementation to make the MPRIS object names more
+    sandbox friendly, which plays better with Flatpak and WebKit's own
+    Bubblwrap-based sandboxing.
+  - Fix leaked Web Processes in some particular situations.
+  - Fix the build with media capture support enabled.
+  - Fix cross-compilation when targeting 64-bit ARM.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.36.3
 ================
 
