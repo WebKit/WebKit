@@ -174,7 +174,7 @@ void JSGlobalObjectInspectorController::appendAPIBacktrace(ScriptCallStack& call
 void JSGlobalObjectInspectorController::reportAPIException(JSGlobalObject* globalObject, Exception* exception)
 {
     VM& vm = globalObject->vm();
-    if (vm.isTerminationException(exception))
+    if (vm.isTerminationException(exception) || !m_globalObject.inspectorDebuggable().remoteDebuggingAllowed())
         return;
 
     auto scope = DECLARE_CATCH_SCOPE(vm);
