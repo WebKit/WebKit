@@ -683,14 +683,29 @@ bool canUseForFlexLayout(const RenderFlexibleBox& flexBox)
         return false;
 
     auto& flexBoxStyle = flexBox.style();
-    if (flexBoxStyle.display() != DisplayType::Flex && flexBoxStyle.display() != DisplayType::InlineFlex) {
-        // FIXME: Find out why we constrcut RenderFlexibleBoxes for non-flex content.
+    // FIXME: Needs baseline support.
+    if (flexBoxStyle.display() == DisplayType::InlineFlex)
         return false;
-    }
+
+    // FIXME: Flex subclasses are not supported yet.
+    if (flexBoxStyle.display() != DisplayType::Flex)
+        return false;
+
     if (!flexBoxStyle.isHorizontalWritingMode() || !flexBoxStyle.isLeftToRightDirection())
         return false;
+
+    if (flexBoxStyle.flexDirection() == FlexDirection::Column || flexBoxStyle.flexDirection() == FlexDirection::ColumnReverse)
+        return false;
+
+    if (flexBoxStyle.logicalHeight().isPercent())
+        return false;
+
+    if (flexBoxStyle.overflowY() == Overflow::Scroll || flexBoxStyle.overflowY() == Overflow::Auto)
+        return false;
+
     if (flexBoxStyle.flexWrap() == FlexWrap::Reverse)
         return false;
+
     auto alignItemValue = flexBoxStyle.alignItems().position();
     if (alignItemValue == ItemPosition::Baseline || alignItemValue == ItemPosition::LastBaseline || alignItemValue == ItemPosition::SelfStart || alignItemValue == ItemPosition::SelfEnd)
         return false;
@@ -706,7 +721,32 @@ bool canUseForFlexLayout(const RenderFlexibleBox& flexBox)
             return false;
         if (flexItem.isSVGRootOrLegacySVGRoot())
             return false;
+        // FIXME: No nested flexbox support.
+        if (flexItem.isFlexibleBoxIncludingDeprecated())
+            return false;
+        if (flexItem.isFieldset() || flexItem.isTextControl())
+            return false;
+        if (flexItem.isTable())
+            return false;
         auto& flexItemStyle = flexItem.style();
+        if (!flexItemStyle.isHorizontalWritingMode() || !flexItemStyle.isLeftToRightDirection())
+            return false;
+        if (flexItemStyle.marginLeft().isAuto() && flexItemStyle.marginRight().isAuto())
+            return false;
+        if (!flexItemStyle.height().isFixed())
+            return false;
+        if (!flexItemStyle.flexBasis().isAuto() && !flexItemStyle.flexBasis().isFixed())
+            return false;
+        if (flexItemStyle.flexShrink() > 0 && flexItemStyle.flexShrink() < 1)
+            return false;
+        if (flexItemStyle.flexGrow() > 0 && flexItemStyle.flexGrow() < 1)
+            return false;
+        if (flexItemStyle.containsSize())
+            return false;
+        if (flexItemStyle.overflowX() == Overflow::Scroll || flexItemStyle.overflowY() == Overflow::Scroll)
+            return false;
+        if (flexItemStyle.marginBefore().isAuto() || flexItemStyle.marginAfter().isAuto())
+            return false;
         if (!flexItemStyle.maxWidth().isUndefined() || !flexItemStyle.maxHeight().isUndefined())
             return false;
         if (flexItem.hasIntrinsicAspectRatio() || flexItemStyle.hasAspectRatio())

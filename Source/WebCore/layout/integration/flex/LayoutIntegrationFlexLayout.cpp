@@ -153,6 +153,8 @@ void FlexLayout::layout()
             auto& renderer = downcast<RenderBox>(*boxAndRenderer.renderer);
             auto borderBox = Layout::BoxGeometry::borderBoxRect(m_flexFormattingState.boxGeometry(boxAndRenderer.box.get()));
 
+            renderer.setWidth(LayoutUnit { });
+            renderer.setHeight(LayoutUnit { });
             // FIXME: This may need a visual vs. logical flip.
             renderer.setOverridingLogicalWidth(borderBox.width());
             renderer.setOverridingLogicalHeight(borderBox.height());
