@@ -966,9 +966,14 @@ void MediaPlayerPrivateWebM::ensureLayer()
     m_displayLayer = adoptNS([PAL::allocAVSampleBufferDisplayLayerInstance() init]);
     [m_displayLayer setName:@"MediaPlayerPrivateWebM AVSampleBufferDisplayLayer"];
 
-    ERROR_LOG_IF(!m_displayLayer, LOGIDENTIFIER, "Creating the AVSampleBufferDisplayLayer failed.");
-    if (!m_displayLayer)
+    if (!m_displayLayer) {
+        ERROR_LOG(LOGIDENTIFIER, "Creating the AVSampleBufferDisplayLayer failed.");
+        setNetworkState(MediaPlayer::NetworkState::DecodeError);
         return;
+    }
+    
+    if ([m_displayLayer respondsToSelector:@selector(setPreventsDisplaySleepDuringVideoPlayback:)])
+        m_displayLayer.get().preventsDisplaySleepDuringVideoPlayback = NO;
 
     @try {
         [m_synchronizer addRenderer:m_displayLayer.get()];
