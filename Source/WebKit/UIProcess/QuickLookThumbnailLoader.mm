@@ -28,8 +28,8 @@
 
 #if HAVE(QUICKLOOK_THUMBNAILING)
 
+#import "APIAttachment.h"
 #import <wtf/FileSystem.h>
-
 #import "QuickLookThumbnailingSoftLink.h"
 
 @implementation WKQLThumbnailQueueManager 
@@ -64,15 +64,15 @@
 @implementation WKQLThumbnailLoadOperation {
     RetainPtr<NSURL> _filePath;
     RetainPtr<NSString> _identifier;
-    RetainPtr<NSFileWrapper> _fileWrapper;
+    RefPtr<const API::Attachment> _attachment;
     RetainPtr<CocoaImage> _thumbnail;
     BOOL _shouldWrite;
 }
 
-- (instancetype)initWithAttachment:(NSFileWrapper *)fileWrapper identifier:(NSString *)identifier
+- (instancetype)initWithAttachment:(const API::Attachment&)attachment identifier:(NSString *)identifier
 {
     if (self = [super init]) {
-        _fileWrapper = fileWrapper;
+        _attachment = &attachment;
         _identifier = adoptNS([identifier copy]);
         _shouldWrite = YES;
     }
@@ -95,14 +95,14 @@
     if (_shouldWrite) {
         NSString *temporaryDirectory = FileSystem::createTemporaryDirectory(@"QLTempFileData");
 
-        NSString *filePath = [temporaryDirectory stringByAppendingPathComponent:[_fileWrapper preferredFilename]];
         NSFileWrapperWritingOptions options = 0;
         NSError *error = nil;
-        
-        auto fileURLPath = [NSURL fileURLWithPath:filePath];
 
-        [_fileWrapper writeToURL:fileURLPath options:options originalContentsURL:nil error:&error];
-        _filePath = WTFMove(fileURLPath);
+        _attachment->doWithFileWrapper([&](NSFileWrapper *fileWrapper) {
+            auto fileURLPath = [NSURL fileURLWithPath:[temporaryDirectory stringByAppendingPathComponent:fileWrapper.preferredFilename]];
+            [fileWrapper writeToURL:fileURLPath options:options originalContentsURL:nil error:&error];
+            _filePath = WTFMove(fileURLPath);
+        });
         if (error)
             return;
     }

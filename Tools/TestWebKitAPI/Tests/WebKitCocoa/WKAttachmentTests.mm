@@ -1925,6 +1925,7 @@ TEST(WKAttachmentTestsMac, DraggingAttachmentBackedImagePreservesRangedSelection
 
     [webView waitForImageElementSizeToBecome:CGSizeMake(215, 174)];
 
+    [[webView window] orderFrontRegardless];
     [webView mouseEnterAtPoint:CGPointMake(125, 125)];
     [webView mouseMoveToPoint:CGPointMake(125, 125) withFlags:0];
     [webView mouseDownAtPoint:CGPointMake(125, 125) simulatePressure:NO];

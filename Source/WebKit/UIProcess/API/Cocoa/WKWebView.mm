@@ -2875,7 +2875,7 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
             capturedHandler(true);
     });
 #if HAVE(QUICKLOOK_THUMBNAILING)
-    _page->requestThumbnailWithFileWrapper(fileWrapper, identifier);
+    _page->requestThumbnail(attachment, identifier);
 #endif
     return wrapper(attachment);
 #else

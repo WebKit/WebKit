@@ -300,7 +300,9 @@ void WebPageProxy::platformRegisterAttachment(Ref<API::Attachment>&& attachment,
 
 void WebPageProxy::platformCloneAttachment(Ref<API::Attachment>&& fromAttachment, Ref<API::Attachment>&& toAttachment)
 {
-    toAttachment->setFileWrapper(fromAttachment->fileWrapper());
+    fromAttachment->doWithFileWrapper([&](NSFileWrapper *fileWrapper) {
+        toAttachment->setFileWrapper(fileWrapper);
+    });
 }
 
 static RefPtr<WebKit::ShareableBitmap> convertPlatformImageToBitmap(CocoaImage *image, const WebCore::FloatSize& fittingSize)
@@ -599,7 +601,7 @@ void WebPageProxy::fullscreenVideoTextRecognitionTimerFired()
 
 #if HAVE(QUICKLOOK_THUMBNAILING)
 
-void WebPageProxy::requestThumbnailWithOperation(WKQLThumbnailLoadOperation *operation)
+void WebPageProxy::requestThumbnail(WKQLThumbnailLoadOperation *operation)
 {
     [operation setCompletionBlock:^{
         RunLoop::main().dispatch([this, operation = retainPtr(operation)] {
@@ -610,20 +612,18 @@ void WebPageProxy::requestThumbnailWithOperation(WKQLThumbnailLoadOperation *ope
             this->updateAttachmentThumbnail(identifier, convertedImage);
         });
     }];
-        
+
     [[WKQLThumbnailQueueManager sharedInstance].queue addOperation:operation];
 }
 
-void WebPageProxy::requestThumbnailWithFileWrapper(NSFileWrapper *fileWrapper, const String& identifier)
+void WebPageProxy::requestThumbnail(const API::Attachment& attachment, const String& identifier)
 {
-    auto operation = adoptNS([[WKQLThumbnailLoadOperation alloc] initWithAttachment:fileWrapper identifier:identifier]);
-    requestThumbnailWithOperation(operation.get());
+    requestThumbnail(adoptNS([[WKQLThumbnailLoadOperation alloc] initWithAttachment:attachment identifier:identifier]).get());
 }
 
-void WebPageProxy::requestThumbnailWithPath(const String& identifier, const String& filePath)
+void WebPageProxy::requestThumbnailWithPath(const String& filePath, const String& identifier)
 {
-    auto operation = adoptNS([[WKQLThumbnailLoadOperation alloc] initWithURL:filePath identifier:identifier]);
-    requestThumbnailWithOperation(operation.get());
+    requestThumbnail(adoptNS([[WKQLThumbnailLoadOperation alloc] initWithURL:filePath identifier:identifier]).get());
 }
 
 #endif // HAVE(QUICKLOOK_THUMBNAILING)

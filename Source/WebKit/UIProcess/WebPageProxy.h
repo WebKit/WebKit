@@ -1781,8 +1781,7 @@ public:
 #if HAVE(QUICKLOOK_THUMBNAILING)
     void updateAttachmentThumbnail(const String&, const RefPtr<ShareableBitmap>&);
     void requestThumbnailWithPath(const String&, const String&);
-    void requestThumbnailWithFileWrapper(NSFileWrapper *, const String&);
-    void requestThumbnailWithOperation(WKQLThumbnailLoadOperation *);
+    void requestThumbnail(const API::Attachment&, const String&);
 #endif
     enum class ShouldUpdateAttachmentAttributes : bool { No, Yes };
     ShouldUpdateAttachmentAttributes willUpdateAttachmentAttributes(const API::Attachment&);
@@ -2595,6 +2594,10 @@ private:
     void requestAttachmentIcon(const String& identifier, const String& type, const String& path, const String& title, const WebCore::FloatSize&);
 
     RefPtr<WebKit::ShareableBitmap> iconForAttachment(const String& fileName, const String& contentType, const String& title, WebCore::FloatSize&);
+
+#if HAVE(QUICKLOOK_THUMBNAILING)
+    void requestThumbnail(WKQLThumbnailLoadOperation *);
+#endif
 #endif
 
     void reportPageLoadResult(const WebCore::ResourceError& = { });

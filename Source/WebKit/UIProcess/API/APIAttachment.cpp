@@ -70,10 +70,11 @@ void Attachment::invalidate()
     m_filePath = { };
     m_contentType = { };
     m_webPage.clear();
+    m_insertionState = InsertionState::NotInserted;
 #if PLATFORM(COCOA)
+    Locker locker { m_fileWrapperLock };
     m_fileWrapper.clear();
 #endif
-    m_insertionState = InsertionState::NotInserted;
 }
 
 #if !PLATFORM(COCOA)

@@ -8893,14 +8893,15 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
         NSString *temporaryBlobDirectory = FileSystem::createTemporaryDirectory(@"blobs");
         NSURL *destinationURL = [NSURL fileURLWithPath:[temporaryBlobDirectory stringByAppendingPathComponent:[NSUUID UUID].UUIDString] isDirectory:NO];
 
-        auto attachment = strongSelf->_page->attachmentForIdentifier(info.attachmentIdentifier);
-        if (attachment && attachment->fileWrapper()) {
-            RELEASE_LOG(DragAndDrop, "Drag session: %p delivering promised attachment: %s at path: %@", session.get(), info.attachmentIdentifier.utf8().data(), destinationURL.path);
-            NSError *fileWrapperError = nil;
-            if ([attachment->fileWrapper() writeToURL:destinationURL options:0 originalContentsURL:nil error:&fileWrapperError])
-                callback(destinationURL, nil);
-            else
-                callback(nil, fileWrapperError);
+        if (auto attachment = strongSelf->_page->attachmentForIdentifier(info.attachmentIdentifier); attachment && !attachment->isEmpty()) {
+            attachment->doWithFileWrapper([&](NSFileWrapper *fileWrapper) {
+                RELEASE_LOG(DragAndDrop, "Drag session: %p delivering promised attachment: %s at path: %@", session.get(), info.attachmentIdentifier.utf8().data(), destinationURL.path);
+                NSError *fileWrapperError = nil;
+                if ([fileWrapper writeToURL:destinationURL options:0 originalContentsURL:nil error:&fileWrapperError])
+                    callback(destinationURL, nil);
+                else
+                    callback(nil, fileWrapperError);
+            });
         } else
             callback(nil, [NSError errorWithDomain:WKErrorDomain code:WKErrorWebViewInvalidated userInfo:nil]);
 
@@ -10300,8 +10301,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     if (![utiType length])
         return { };
 
-    auto fileWrapper = retainPtr(attachment->fileWrapper());
-    if (!fileWrapper)
+    if (attachment->isEmpty())
         return { };
 
     auto item = adoptNS([[NSItemProvider alloc] init]);
@@ -10321,11 +10321,13 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
         }
     }
 
-    [item registerDataRepresentationForTypeIdentifier:utiType visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[fileWrapper](void (^completionHandler)(NSData *, NSError *)) -> NSProgress * {
-        if (auto nsData = retainPtr([fileWrapper serializedRepresentation]))
-            completionHandler(nsData.get(), nil);
-        else
-            completionHandler(nil, [NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:nil]);
+    [item registerDataRepresentationForTypeIdentifier:utiType visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[attachment](void (^completionHandler)(NSData *, NSError *)) -> NSProgress * {
+        attachment->doWithFileWrapper([&](NSFileWrapper *fileWrapper) {
+            if (auto nsData = RetainPtr { fileWrapper.serializedRepresentation })
+                completionHandler(nsData.get(), nil);
+            else
+                completionHandler(nil, [NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:nil]);
+        });
         return nil;
     }];
 

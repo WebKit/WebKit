@@ -27,6 +27,10 @@
 
 #import "CocoaImage.h"
 
+namespace API {
+class Attachment;
+}
+
 @interface WKQLThumbnailQueueManager : NSObject
 
 @property (nonatomic, readonly, retain) NSOperationQueue *queue;
@@ -45,7 +49,7 @@
 @property (nonatomic, readonly, copy) NSString *identifier;
 @property (nonatomic, readonly, retain) CocoaImage *thumbnail;
 
-- (instancetype)initWithAttachment:(NSFileWrapper *)fileWrapper identifier:(NSString *)identifier;
+- (instancetype)initWithAttachment:(const API::Attachment&)attachment identifier:(NSString *)identifier;
 - (instancetype)initWithURL:(NSString *)fileURL identifier:(NSString *)identifier;
 
 @end

@@ -10406,9 +10406,10 @@ void WebPageProxy::requestAttachmentIcon(const String& identifier, const String&
     FloatSize size = requestedSize;
     ShareableBitmap::Handle handle;
 #if PLATFORM(MAC)
-    auto attachment = attachmentForIdentifier(identifier);
-    if (attachment && attachment->contentType() == "public.directory"_s) {
-        updateIconForDirectory(attachment->fileWrapper(), attachment->identifier());
+    if (auto attachment = attachmentForIdentifier(identifier); attachment && attachment->contentType() == "public.directory"_s) {
+        attachment->doWithFileWrapper([&](NSFileWrapper *fileWrapper) {
+            updateIconForDirectory(fileWrapper, attachment->identifier());
+        });
         return;
     }
 #endif
@@ -10437,11 +10438,11 @@ void WebPageProxy::insertAttachment(Ref<API::Attachment>&& attachment, Completio
 
 void WebPageProxy::updateAttachmentAttributes(const API::Attachment& attachment, CompletionHandler<void()>&& callback)
 {
-#if HAVE(QUICKLOOK_THUMBNAILING)
-    requestThumbnailWithFileWrapper(attachment.fileWrapper(), attachment.identifier());
-#endif
-
     sendWithAsyncReply(Messages::WebPage::UpdateAttachmentAttributes(attachment.identifier(), attachment.fileSizeForDisplay(), attachment.contentType(), attachment.fileName(), IPC::SharedBufferReference(attachment.enclosingImageData())), WTFMove(callback));
+
+#if HAVE(QUICKLOOK_THUMBNAILING)
+    requestThumbnail(attachment, attachment.identifier());
+#endif
 }
 
 #if HAVE(QUICKLOOK_THUMBNAILING)
@@ -10487,7 +10488,7 @@ void WebPageProxy::registerAttachmentIdentifierFromFilePath(const String& identi
     m_attachmentIdentifierToAttachmentMap.set(identifier, attachment.copyRef());
     platformRegisterAttachment(WTFMove(attachment), filePath);
 #if HAVE(QUICKLOOK_THUMBNAILING)
-    requestThumbnailWithPath(identifier, filePath);
+    requestThumbnailWithPath(filePath, identifier);
 #endif
 }
 
@@ -10510,7 +10511,7 @@ void WebPageProxy::registerAttachmentsFromSerializedData(Vector<WebCore::Seriali
             auto attachment = ensureAttachment(identifier);
             attachment->updateFromSerializedRepresentation(WTFMove(serializedData.data), WTFMove(serializedData.mimeType));
 #if HAVE(QUICKLOOK_THUMBNAILING)
-            requestThumbnailWithFileWrapper(attachment->fileWrapper(), identifier);
+            requestThumbnail(attachment, identifier);
 #endif
         }
     }

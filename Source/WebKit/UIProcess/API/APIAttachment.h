@@ -30,6 +30,8 @@
 #include "APIObject.h"
 #include "GenericCallback.h"
 #include "WKBase.h"
+#include <wtf/Function.h>
+#include <wtf/Lock.h>
 #include <wtf/RefPtr.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
@@ -62,11 +64,9 @@ public:
     bool isValid() const { return !!m_webPage; }
 
 #if PLATFORM(COCOA)
-    NSFileWrapper *fileWrapper() const;
-    void setFileWrapper(NSFileWrapper *fileWrapper) { m_fileWrapper = fileWrapper; }
+    void doWithFileWrapper(Function<void(NSFileWrapper *)>&&) const;
+    void setFileWrapper(NSFileWrapper *);
     void setFileWrapperAndUpdateContentType(NSFileWrapper *, NSString *contentType);
-    void setFileWrapperGenerator(Function<RetainPtr<NSFileWrapper>(void)>&&);
-    void invalidateGeneratedFileWrapper();
     WTF::String utiType() const;
 #endif
     WTF::String mimeType() const;
@@ -99,8 +99,8 @@ private:
     explicit Attachment(const WTF::String& identifier, WebKit::WebPageProxy&);
 
 #if PLATFORM(COCOA)
-    mutable RetainPtr<NSFileWrapper> m_fileWrapper;
-    Function<RetainPtr<NSFileWrapper>(void)> m_fileWrapperGenerator;
+    mutable Lock m_fileWrapperLock;
+    RetainPtr<NSFileWrapper> m_fileWrapper WTF_GUARDED_BY_LOCK(m_fileWrapperLock);
 #endif
     WTF::String m_identifier;
     WTF::String m_filePath;

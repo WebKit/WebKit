@@ -4442,13 +4442,14 @@ void WebViewImpl::writeToURLForFilePromiseProvider(NSFilePromiseProvider *provid
     }
 
     WKPromisedAttachmentContext *info = (WKPromisedAttachmentContext *)userInfo;
-    auto attachment = m_page->attachmentForIdentifier(info.attachmentIdentifier);
-    if (NSFileWrapper *fileWrapper = attachment ? attachment->fileWrapper() : nil) {
+    if (auto attachment = m_page->attachmentForIdentifier(info.attachmentIdentifier)) {
         NSError *attachmentWritingError = nil;
-        if ([fileWrapper writeToURL:fileURL options:0 originalContentsURL:nil error:&attachmentWritingError])
-            completionHandler(nil);
-        else
-            completionHandler(attachmentWritingError);
+        attachment->doWithFileWrapper([&](NSFileWrapper *fileWrapper) {
+            if ([fileWrapper writeToURL:fileURL options:0 originalContentsURL:nil error:&attachmentWritingError])
+                completionHandler(nil);
+            else
+                completionHandler(attachmentWritingError);
+        });
         return;
     }
 
