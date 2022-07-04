@@ -335,6 +335,7 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
                 raise TypeError("Must assign to '{}', not '{}'".format(User, type(assignee)))
             issue._assignee = self.user(name=assignee.name, username=assignee.username, email=assignee.email)
             update_dict['assignees'] = [issue._assignee.username]
+            sys.stderr.write("assignee: {}\nuser: {}\nassignee dict: {}\n".format(assignee, issue._assignee, update_dict['assignees']))
 
         if opened is not None:
             issue._opened = bool(opened)
@@ -403,6 +404,7 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
                 json=update_dict,
                 error_message="Failed to modify '{}'".format(issue)
             )
+            sys.stderr.write("response: {}".format(response))
             if not response:
                 if assignee:
                     issue._assignee = None
