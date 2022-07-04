@@ -1235,11 +1235,9 @@ class Instruction
             $asm.putStr("#error Missing globaladdr implementation")
             $asm.putStr("#endif")
 
-            $asm.deferAction {
+            $asm.deferOSDarwinAction {
                 # On Darwin, also include the .loh directive using the generated labels.
-                $asm.putStr("#if OS(DARWIN)")
                 $asm.puts ".loh AdrpLdrGot Ljsc_llint_loh_adrp_#{uid}, Ljsc_llint_loh_ldr_#{uid}"
-                $asm.putStr("#endif")
             }
 
         when "andf", "andd"

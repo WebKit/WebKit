@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-# Copyright (C) 2011-2021 Apple Inc. All rights reserved.
+# Copyright (C) 2011-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -50,7 +50,7 @@ class Assembler
         @codeOrigin = nil
         @numLocalLabels = 0
         @numGlobalLabels = 0
-        @deferredActions = []
+        @deferredOSDarwinActions = []
         @deferredNextLabelActions = []
         @count = 0
         @debugAnnotationStr = nil
@@ -83,16 +83,20 @@ class Assembler
             putsProcEndIfNeeded
         end
         putsLastComment
-        (@deferredNextLabelActions + @deferredActions).each {
-            | action |
-            action.call()
-        }
+        if not @deferredOSDarwinActions.size.zero?
+            putStr("#if OS(DARWIN)")
+            (@deferredNextLabelActions + @deferredOSDarwinActions).each {
+                | action |
+                action.call()
+            }
+            putStr("#endif // OS(DARWIN)")
+        end
         putStr "OFFLINE_ASM_END" if !$emitWinAsm
         @state = :cpp
     end
     
-    def deferAction(&proc)
-        @deferredActions << proc
+    def deferOSDarwinAction(&proc)
+        @deferredOSDarwinActions << proc
     end
 
     def deferNextLabelAction(&proc)
