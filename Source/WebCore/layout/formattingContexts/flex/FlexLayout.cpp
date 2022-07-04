@@ -345,10 +345,14 @@ void FlexLayout::justifyFlexItems(LogicalFlexItems& flexItems, const LineRange& 
             break;
         case ContentDistribution::SpaceBetween:
             return LayoutUnit { };
-        case ContentDistribution::SpaceAround:
-            return (availableSpace - contentLogicalWidth) / lineRange.distance() / 2;
-        case ContentDistribution::SpaceEvenly:
-            return (availableSpace - contentLogicalWidth) / (lineRange.distance() + 1);
+        case ContentDistribution::SpaceAround: {
+            auto itemCount = availableSpace > contentLogicalWidth ? lineRange.distance() : 1;
+            return (availableSpace - contentLogicalWidth) / itemCount / 2;
+        }
+        case ContentDistribution::SpaceEvenly: {
+            auto gapCount = availableSpace > contentLogicalWidth ? lineRange.distance() + 1 : 2;
+            return (availableSpace - contentLogicalWidth) / gapCount;
+        }
         default:
             ASSERT_NOT_IMPLEMENTED_YET();
             break;
@@ -389,11 +393,11 @@ void FlexLayout::justifyFlexItems(LogicalFlexItems& flexItems, const LineRange& 
         case ContentDistribution::SpaceBetween:
             if (lineRange.distance() == 1)
                 return LayoutUnit { };
-            return (availableSpace - contentLogicalWidth) / (lineRange.distance() - 1);
+            return std::max(0_lu, availableSpace - contentLogicalWidth) / (lineRange.distance() - 1);
         case ContentDistribution::SpaceAround:
-            return (availableSpace - contentLogicalWidth) / lineRange.distance();
+            return std::max(0_lu, availableSpace - contentLogicalWidth) / lineRange.distance();
         case ContentDistribution::SpaceEvenly:
-            return (availableSpace - contentLogicalWidth) / (lineRange.distance() + 1);
+            return std::max(0_lu, availableSpace - contentLogicalWidth) / (lineRange.distance() + 1);
         default:
             ASSERT_NOT_IMPLEMENTED_YET();
             break;
