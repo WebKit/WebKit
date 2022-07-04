@@ -355,17 +355,25 @@ void FlexLayout::justifyFlexItems(LogicalFlexItems& flexItems, const LineRange& 
         }
 
         switch (justifyContent.position()) {
+        // logical alignments
         case ContentPosition::Normal:
-        case ContentPosition::Start:
         case ContentPosition::FlexStart:
-        case ContentPosition::Left:
             return LayoutUnit { };
-        case ContentPosition::End:
         case ContentPosition::FlexEnd:
-        case ContentPosition::Right:
             return availableSpace - contentLogicalWidth;
         case ContentPosition::Center:
             return availableSpace / 2 - contentLogicalWidth / 2;
+        // non-logical alignments
+        case ContentPosition::Left:
+        case ContentPosition::Start:
+            if (flexBoxStyle().flexDirection() == FlexDirection::RowReverse)
+                return availableSpace - contentLogicalWidth;
+            return LayoutUnit { };
+        case ContentPosition::Right:
+        case ContentPosition::End:
+            if (flexBoxStyle().flexDirection() == FlexDirection::RowReverse)
+                return LayoutUnit { };
+            return availableSpace - contentLogicalWidth;
         default:
             ASSERT_NOT_IMPLEMENTED_YET();
             break;
