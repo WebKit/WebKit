@@ -60,7 +60,7 @@ bool SharedVideoFrameWriter::wait(const Function<void(IPC::Semaphore&)>& newSema
         newSemaphoreCallback(m_semaphore.get());
         return true;
     }
-    return !m_isDisabled && m_semaphore->wait();
+    return !m_isDisabled && m_semaphore->waitFor(defaultTimeout);
 }
 
 bool SharedVideoFrameWriter::allocateStorage(size_t size, const Function<void(const SharedMemory::IPCHandle&)>& newMemoryCallback)
@@ -88,6 +88,7 @@ bool SharedVideoFrameWriter::prepareWriting(const SharedVideoFrameInfo& info, co
         RELEASE_LOG_ERROR(WebRTC, "SharedVideoFrameReader::writeBuffer wait failed");
         return false;
     }
+    m_shouldSignalInCaseOfError = true;
 
     size_t size = info.storageSize();
     if (!m_storage || m_storage->size() < size) {
@@ -130,12 +131,16 @@ std::optional<SharedVideoFrame::Buffer> SharedVideoFrameWriter::writeBuffer(CVPi
             return MachSendRight::adopt(IOSurfaceCreateMachPort(surface));
     }
 
+    auto scope = makeScopeExit([this] { signalInCaseOfError(); });
+
     auto info = SharedVideoFrameInfo::fromCVPixelBuffer(pixelBuffer);
     if (!prepareWriting(info, newSemaphoreCallback, newMemoryCallback))
         return { };
 
     if (!info.writePixelBuffer(pixelBuffer, static_cast<uint8_t*>(m_storage->data())))
         return { };
+
+    scope.release();
     return nullptr;
 }
 
@@ -153,15 +158,27 @@ std::optional<SharedVideoFrame::Buffer> SharedVideoFrameWriter::writeBuffer(cons
 
 std::optional<SharedVideoFrame::Buffer> SharedVideoFrameWriter::writeBuffer(webrtc::VideoFrameBuffer& frameBuffer, const Function<void(IPC::Semaphore&)>& newSemaphoreCallback, const Function<void(const SharedMemory::IPCHandle&)>& newMemoryCallback)
 {
+    auto scope = makeScopeExit([this] { signalInCaseOfError(); });
+
     auto info = SharedVideoFrameInfo::fromVideoFrameBuffer(frameBuffer);
     if (!prepareWriting(info, newSemaphoreCallback, newMemoryCallback))
         return { };
 
     if (!info.writeVideoFrameBuffer(frameBuffer, static_cast<uint8_t*>(m_storage->data())))
         return { };
+
+    scope.release();
     return nullptr;
 }
 #endif
+
+void SharedVideoFrameWriter::signalInCaseOfError()
+{
+    if (!m_shouldSignalInCaseOfError)
+        return;
+    m_shouldSignalInCaseOfError = false;
+    m_semaphore->signal();
+}
 
 void SharedVideoFrameWriter::disable()
 {
