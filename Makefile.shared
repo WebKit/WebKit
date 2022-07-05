@@ -1,6 +1,7 @@
 SCRIPTS_PATH ?= ../Tools/Scripts
 
-XCODE_OPTIONS = `perl -I$(SCRIPTS_PATH) -Mwebkitdirs -e 'print XcodeOptionString()' -- $(SDKROOT:%=--sdk %) $(BUILD_WEBKIT_OPTIONS)` $${COLOR_DIAGNOSTICS_ARG} $(ARGS)
+XCODE_OPTIONS = `perl -I$(SCRIPTS_PATH) -Mwebkitdirs -e 'print XcodeOptionString()' -- $(SDKROOT:%=--sdk %) $(BUILD_WEBKIT_OPTIONS)` $(ARGS)
+XCODE_OPTIONS += $(if $(GCC_PREPROCESSOR_DEFINITIONS),GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_DEFINITIONS)')
 ifeq (ON,$(ENABLE_LLVM_PROFILE_GENERATION))
 	XCODE_OPTIONS += ENABLE_LLVM_PROFILE_GENERATION=ENABLE_LLVM_PROFILE_GENERATION
 endif
@@ -9,7 +10,10 @@ ifeq ($(USE_WORKSPACE),YES)
 SCHEME ?= $(notdir $(CURDIR))
 WORKSPACE_PATH ?= $(dir $(lastword $(MAKEFILE_LIST)))WebKit.xcworkspace
 XCODE_TARGET = -workspace $(WORKSPACE_PATH) -scheme "$(SCHEME)"
-XCODE_OPTIONS += WK_VALIDATE_DEPENDENCIES=YES_ERROR
+# FIXME: Move this setting to xcconfigs once all local Xcode builds of WebKit
+# happen in the workspace. When this is only passed on the command line, it
+# invalidates build results made in the IDE (rdar://88135402).
+#XCODE_OPTIONS += WK_VALIDATE_DEPENDENCIES=YES_ERROR
 else
 USE_WORKSPACE =
 endif
@@ -114,7 +118,6 @@ endef
 
 define invoke_xcode
 	( \
-		[[ -t 1 ]] && COLOR_DIAGNOSTICS_ARG="COLOR_DIAGNOSTICS=YES"; \
 		echo; \
 		echo "===== BUILDING $(if $(USE_WORKSPACE),$(SCHEME),$(notdir $(CURDIR))) ====="; \
 		echo; \
@@ -124,27 +127,28 @@ endef
 
 all:
 	@$(call set_webkit_configuration,)
-	@$(call invoke_xcode,,,GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) $$(inherited)')
+	@$(call invoke_xcode,,,)
 
 debug d: force
 	@$(call set_webkit_configuration,--debug)
-	@$(call invoke_xcode,,,GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) $$(inherited)')
+	@$(call invoke_xcode,,,)
 
 release r: force
 	@$(call set_webkit_configuration,--release)
-	@$(call invoke_xcode,,,GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) $$(inherited)')
+	@$(call invoke_xcode,,,)
 
 release+assert ra: force
 	@$(call set_webkit_configuration,--release)
-	@$(call invoke_xcode,,,GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) ASSERT_ENABLED=1 $$(inherited)')
+	@$(call invoke_xcode,,,)
+release+assert ra: override GCC_PREPROCESSOR_DEFINITIONS += ASSERT_ENABLED=1
 
 testing t: force
 	@$(call set_webkit_configuration,--debug --force-optimization-level=O3)
-	@$(call invoke_xcode,,,GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) $$(inherited)')
+	@$(call invoke_xcode,,,)
 
 analyze:
 	@$(call set_webkit_configuration,--debug)
-	@$(call invoke_xcode,$(PATH_TO_SCAN_BUILD),build analyze,GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) $$(inherited)')
+	@$(call invoke_xcode,$(PATH_TO_SCAN_BUILD),build analyze,)
 
 clean:
 ifndef XCODE_TARGET

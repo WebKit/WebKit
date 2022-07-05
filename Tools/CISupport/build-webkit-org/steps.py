@@ -316,16 +316,23 @@ class CompileWebKit(shell.Compile):
 
         if additionalArguments:
             self.setCommand(self.command + additionalArguments)
-        if platform in ('mac', 'ios', 'tvos', 'watchos') and architecture:
-            self.setCommand(self.command + ['ARCHS=' + architecture])
-            self.setCommand(self.command + ['ONLY_ACTIVE_ARCH=NO'])
-        if platform in ('mac', 'ios', 'tvos', 'watchos') and buildOnly:
-            # For build-only bots, the expectation is that tests will be run on separate machines,
-            # so we need to package debug info as dSYMs. Only generating line tables makes
-            # this much faster than full debug info, and crash logs still have line numbers.
-            # Some projects (namely lldbWebKitTester) require full debug info, and may override this.
-            self.setCommand(self.command + ['DEBUG_INFORMATION_FORMAT=dwarf-with-dsym'])
-            self.setCommand(self.command + ['CLANG_DEBUG_INFORMATION_LEVEL=$(WK_OVERRIDE_DEBUG_INFORMATION_LEVEL:default=line-tables-only)'])
+        if platform in ('mac', 'ios', 'tvos', 'watchos'):
+            # FIXME: Once WK_VALIDATE_DEPENDENCIES is set via xcconfigs, it can
+            # be removed here. We can't have build-webkit pass this by default
+            # without invalidating local builds made by Xcode, and we set it
+            # via xcconfigs until all building of Xcode-based webkit is done in
+            # workspaces (rdar://88135402).
+            self.setCommand(self.command + ['WK_VALIDATE_DEPENDENCIES=YES'])
+            if architecture:
+                self.setCommand(self.command + ['ARCHS=' + architecture])
+                self.setCommand(self.command + ['ONLY_ACTIVE_ARCH=NO'])
+            if buildOnly:
+                # For build-only bots, the expectation is that tests will be run on separate machines,
+                # so we need to package debug info as dSYMs. Only generating line tables makes
+                # this much faster than full debug info, and crash logs still have line numbers.
+                # Some projects (namely lldbWebKitTester) require full debug info, and may override this.
+                self.setCommand(self.command + ['DEBUG_INFORMATION_FORMAT=dwarf-with-dsym'])
+                self.setCommand(self.command + ['CLANG_DEBUG_INFORMATION_LEVEL=$(WK_OVERRIDE_DEBUG_INFORMATION_LEVEL:default=line-tables-only)'])
         if platform == 'gtk':
             prefix = os.path.join("/app", "webkit", "WebKitBuild", self.getProperty("configuration").title(), "install")
             self.setCommand(self.command + [f'--prefix={prefix}'])
