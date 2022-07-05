@@ -229,7 +229,12 @@ e.g. \`dry-revert 260220 Ensure it is working after refactoring\`
             try {
                 await this._web.chat.postMessage({
                     channel: event.channel,
-                    text: `<@${event.user}> Preparing revert for ${revisions.map((revision) => `<${escapeForSlackText(`https://trac.webkit.org/r${revision}|r${revision}`)}>`).join(" ")} ...`,
+                    text: `<@${event.user}> Preparing revert for ${revisions.map((revision) => {
+                        let revRepr = revision;
+                        if (revRepr.match(/^\d+$/))
+                            revRepr = `r${revRepr}`;
+                        return `<${escapeForSlackText(`https://commits.webkit.org/${revRepr}|${revRepr}`)}>`;
+                    }).join(" ")} ...`,
                 });
                 let bugId = await this._taskQueue.postOrFailWhenExceedingLimit({
                     command: "revert",
