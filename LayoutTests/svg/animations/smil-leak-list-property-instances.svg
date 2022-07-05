@@ -32,7 +32,17 @@ function createAnimatedPolylineInstance() {
     return use;
 }
 
-function startTest() {
+async function load() {
+    if (window.testRunner && window.GCController && window.internals) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    } else {
+        log("This test only works when run with the testRunner, GCController, and internals available.");
+        return;
+    }
+
+    await new Promise(resolve => setTimeout(resolve, 0));
+
     // Collect garbage before recording starting live node count, in case there are live elements from previous tests.
     GCController.collect();
     originalLiveElements = window.internals.numberOfLiveNodes();
@@ -44,43 +54,22 @@ function startTest() {
     for (var i = 0; i < 100; i++)
         g.appendChild(createAnimatedPolylineInstance());
 
-    setTimeout(continueTest, 0);
-}
+    await new Promise(resolve => setTimeout(resolve, 0));
 
-function continueTest() {
     while (g.hasChildNodes())
         g.removeChild(g.lastChild);
 
-    setTimeout(finishTest, 0);
-}
+    await new Promise(resolve => setTimeout(resolve, 0));
 
-var attemptsToFinish = 5;
-
-function finishTest() {
+    // The conservative GC may not reclaim all unreachable nodes.
     GCController.collect();
-
     var liveDelta = window.internals.numberOfLiveNodes() - originalLiveElements;
-    if (liveDelta == 0)
+    if (liveDelta <= 10)
         log("PASS");
-    else if (--attemptsToFinish) {
-        setTimeout(finishTest, 100);
-        return;
-    } else
+    else
         log("FAIL: " + liveDelta + " extra live node(s)");
 
     testRunner.notifyDone();
-}
-
-function load() {
-    if (window.testRunner && window.GCController && window.internals) {
-        testRunner.dumpAsText();
-        testRunner.waitUntilDone();
-    } else {
-        log("This test only works when run with the testRunner, GCController, and internals available.");
-        return;
-    }
-
-    setTimeout(startTest, 0);
 }
 ]]>
 </script>

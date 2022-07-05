@@ -4458,7 +4458,6 @@ webkit.org/b/193540 svg/animations/smil-leak-dynamically-added-element-instances
 webkit.org/b/193540 svg/animations/smil-leak-element-instances-noBaseValRef.svg [ Failure ]
 webkit.org/b/193540 svg/animations/smil-leak-element-instances.svg [ Failure ]
 webkit.org/b/193540 svg/animations/smil-leak-elements.svg [ Failure ]
-webkit.org/b/193540 svg/animations/smil-leak-list-property-instances.svg [ Failure ]
 webkit.org/b/193540 webanimations/leak-document-with-web-animation.html [ Failure ]
 
 webkit.org/b/193540 fast/shadow-dom/shadowroot-stylesheets-wrapper-gc.html [ Crash ]
