@@ -123,6 +123,11 @@
     padding: 0 3px;
 }
 
+.inline-swatch-variable-popover .CodeMirror-sizer {
+    /* Override min-height set as inline style by CodeMirror which sizes its container disproportionally tall. */
+    min-height: fit-content !important;
+}
+
 @media (prefers-color-scheme: dark) {
     .inline-swatch.box-shadow > svg,
     .inline-swatch.alignment > span {

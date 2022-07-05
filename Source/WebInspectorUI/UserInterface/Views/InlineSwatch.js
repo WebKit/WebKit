@@ -342,7 +342,8 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
                 readOnly: true,
             });
             this._valueEditor.codeMirror.on("update", () => {
-                this._popover.update();
+                const shouldAnimate = false;
+                this._popover.update(shouldAnimate);
             });
             break;
         }
