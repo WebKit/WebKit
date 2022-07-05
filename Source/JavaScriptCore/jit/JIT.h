@@ -96,6 +96,7 @@ namespace JSC {
 
     using FarCallRecord = CallRecord<OperationPtrTag>;
     using NearCallRecord = CallRecord<JSInternalPtrTag>;
+    using OperationFunction = EncodedJSValue (*)(JSGlobalObject*, const JSInstruction*);
 
     struct NearJumpRecord {
         MacroAssembler::Jump from;
@@ -603,8 +604,13 @@ namespace JSC {
         void emitSlow_op_put_private_name(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_sub(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
 
+        template <typename Bytecode>
+        ALWAYS_INLINE void emit_op_resolve_scope_helper(const JSInstruction*, VirtualRegister);
         void emit_op_resolve_scope(const JSInstruction*);
+        template <typename Bytecode>
+        ALWAYS_INLINE void emit_op_get_from_scope_helper(const JSInstruction*, VirtualRegister);
         void emit_op_get_from_scope(const JSInstruction*);
+        void emit_op_resolve_and_get_from_scope(const JSInstruction*);
         void emit_op_put_to_scope(const JSInstruction*);
         void emit_op_get_from_arguments(const JSInstruction*);
         void emit_op_put_to_arguments(const JSInstruction*);
@@ -669,11 +675,25 @@ namespace JSC {
         static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_get_by_val_callSlowOperationThenCheckExceptionGenerator(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_get_private_name_callSlowOperationThenCheckExceptionGenerator(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_get_from_scopeGenerator(VM&);
+        template<typename Bytecode>
+        ALWAYS_INLINE static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_get_from_scopeGenerator_helper(VM&, OperationFunction);
         static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_resolve_scopeGenerator(VM&);
+        template<typename Bytecode>
+        ALWAYS_INLINE static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_resolve_scopeGenerator_helper(VM&, OperationFunction);
         template <ResolveType>
         static MacroAssemblerCodeRef<JITThunkPtrTag> generateOpGetFromScopeThunk(VM&);
+        template <ResolveType, typename Bytecode>
+        ALWAYS_INLINE static MacroAssemblerCodeRef<JITThunkPtrTag> generateOpGetFromScopeThunkHelper(VM&, ThunkGenerator);
         template <ResolveType>
         static MacroAssemblerCodeRef<JITThunkPtrTag> generateOpResolveScopeThunk(VM&);
+        template <ResolveType, typename Bytecode>
+        ALWAYS_INLINE static MacroAssemblerCodeRef<JITThunkPtrTag> generateOpResolveScopeThunkHelper(VM&, ThunkGenerator);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_rgs_resolve_scopeGenerator(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_rgs_get_from_scopeGenerator(VM&);
+        template <ResolveType>
+        static MacroAssemblerCodeRef<JITThunkPtrTag> generateOpRGSResolveScopeThunk(VM&);
+        template <ResolveType>
+        static MacroAssemblerCodeRef<JITThunkPtrTag> generateOpRGSGetFromScopeThunk(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> op_enter_handlerGenerator(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> valueIsTruthyGenerator(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> valueIsFalseyGenerator(VM&);
