@@ -22,11 +22,16 @@
 #if USE(GSTREAMER_WEBRTC)
 
 #include "GRefPtrGStreamer.h"
+#include "GStreamerDataChannelHandler.h"
 #include "GStreamerPeerConnectionBackend.h"
 #include "GStreamerRtpSenderBackend.h"
 #include "GStreamerStatsCollector.h"
 #include "GUniquePtrGStreamer.h"
 #include "RTCRtpReceiver.h"
+
+#define GST_USE_UNSTABLE_API
+#include <gst/webrtc/webrtc.h>
+#undef GST_USE_UNSTABLE_API
 
 #include <wtf/LoggerHelper.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -47,7 +52,7 @@ class GStreamerMediaEndpoint : public ThreadSafeRefCounted<GStreamerMediaEndpoin
 {
 public:
     static Ref<GStreamerMediaEndpoint> create(GStreamerPeerConnectionBackend& peerConnection) { return adoptRef(*new GStreamerMediaEndpoint(peerConnection)); }
-    virtual ~GStreamerMediaEndpoint();
+    ~GStreamerMediaEndpoint() = default;
 
     bool setConfiguration(MediaEndpointConfiguration&);
     void restartIce();
@@ -60,7 +65,6 @@ public:
     void getStats(GstPad*, Ref<DeferredPromise>&&);
 
     std::unique_ptr<RTCDataChannelHandler> createDataChannel(const String&, const RTCDataChannelInit&);
-    void onDataChannel(GstWebRTCDataChannel*);
 
     void addIceCandidate(GStreamerIceCandidate&, PeerConnectionBackend::AddIceCandidateCallback&&);
 
@@ -122,6 +126,9 @@ private:
     void onIceGatheringChange();
     void onIceCandidate(guint sdpMLineIndex, gchararray candidate);
 
+    void prepareDataChannel(GstWebRTCDataChannel*, gboolean isLocal);
+    void onDataChannel(GstWebRTCDataChannel*);
+
     MediaStream& mediaStreamFromRTCStream(String label);
 
     void addRemoteStream(GstPad*);
@@ -179,6 +186,11 @@ private:
     Ref<const Logger> m_logger;
     const void* m_logIdentifier;
 #endif
+
+    UniqueRef<GStreamerDataChannelHandler> findOrCreateIncomingChannelHandler(GRefPtr<GstWebRTCDataChannel>&&);
+
+    using DataChannelHandlerIdentifier = ObjectIdentifier<GstWebRTCDataChannel>;
+    HashMap<DataChannelHandlerIdentifier, UniqueRef<GStreamerDataChannelHandler>> m_incomingDataChannels;
 };
 
 } // namespace WebCore

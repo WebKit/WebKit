@@ -50,7 +50,9 @@
 
 #include <gst/sdp/sdp.h>
 #include <wtf/MainThread.h>
+#include <wtf/ObjectIdentifier.h>
 #include <wtf/Scope.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/StringToIntegerConversion.h>
@@ -80,7 +82,7 @@ GStreamerMediaEndpoint::GStreamerMediaEndpoint(GStreamerPeerConnectionBackend& p
 bool GStreamerMediaEndpoint::initializePipeline()
 {
     static uint32_t nPipeline = 0;
-    auto pipelineName = makeString("webkit-webrt-pipeline-", nPipeline);
+    auto pipelineName = makeString("webkit-webrtc-pipeline-", nPipeline);
     m_pipeline = gst_pipeline_new(pipelineName.ascii().data());
 
     connectSimpleBusMessageCallback(m_pipeline.get(), [this](GstMessage* message) {
@@ -130,18 +132,18 @@ bool GStreamerMediaEndpoint::initializePipeline()
         });
     }), this);
 
+    if (webkitGstCheckVersion(1, 21, 0)) {
+        g_signal_connect_swapped(m_webrtcBin.get(), "prepare-data-channel", G_CALLBACK(+[](GStreamerMediaEndpoint* endPoint, GstWebRTCDataChannel* channel, gboolean isLocal) {
+            endPoint->prepareDataChannel(channel, isLocal);
+        }), this);
+    }
+
     g_signal_connect_swapped(m_webrtcBin.get(), "on-data-channel", G_CALLBACK(+[](GStreamerMediaEndpoint* endPoint, GstWebRTCDataChannel* channel) {
         endPoint->onDataChannel(channel);
     }), this);
 
     gst_bin_add(GST_BIN_CAST(m_pipeline.get()), m_webrtcBin.get());
     return true;
-}
-
-GStreamerMediaEndpoint::~GStreamerMediaEndpoint()
-{
-    if (m_pipeline)
-        teardownPipeline();
 }
 
 void GStreamerMediaEndpoint::teardownPipeline()
@@ -961,15 +963,41 @@ std::unique_ptr<RTCDataChannelHandler> GStreamerMediaEndpoint::createDataChannel
     return WTF::makeUnique<GStreamerDataChannelHandler>(WTFMove(channel));
 }
 
+void GStreamerMediaEndpoint::prepareDataChannel(GstWebRTCDataChannel* dataChannel, gboolean isLocal)
+{
+    if (isLocal || isStopped())
+        return;
+
+    GRefPtr<GstWebRTCDataChannel> channel = dataChannel;
+    GST_DEBUG_OBJECT(m_pipeline.get(), "Setting up data channel %p", channel.get());
+    auto channelHandler = makeUniqueRef<GStreamerDataChannelHandler>(WTFMove(channel));
+    auto identifier = makeObjectIdentifier<GstWebRTCDataChannel>(reinterpret_cast<uintptr_t>(channelHandler->channel()));
+    m_incomingDataChannels.add(identifier, WTFMove(channelHandler));
+}
+
+UniqueRef<GStreamerDataChannelHandler> GStreamerMediaEndpoint::findOrCreateIncomingChannelHandler(GRefPtr<GstWebRTCDataChannel>&& dataChannel)
+{
+    if (!webkitGstCheckVersion(1, 21, 0))
+        return makeUniqueRef<GStreamerDataChannelHandler>(WTFMove(dataChannel));
+
+    auto identifier = makeObjectIdentifier<GstWebRTCDataChannel>(reinterpret_cast<uintptr_t>(dataChannel.get()));
+    auto channelHandler = m_incomingDataChannels.take(identifier);
+    RELEASE_ASSERT(channelHandler);
+    return makeUniqueRefFromNonNullUniquePtr(WTFMove(channelHandler));
+}
+
 void GStreamerMediaEndpoint::onDataChannel(GstWebRTCDataChannel* dataChannel)
 {
     GRefPtr<GstWebRTCDataChannel> channel = dataChannel;
     callOnMainThread([protectedThis = Ref(*this), this, dataChannel = WTFMove(channel)]() mutable {
         if (isStopped())
             return;
-        GST_DEBUG_OBJECT(m_pipeline.get(), "Incoming data channel");
-        auto& connection = m_peerConnectionBackend.connection();
-        connection.dispatchEvent(GStreamerDataChannelHandler::createDataChannelEvent(*connection.document(), WTFMove(dataChannel)));
+
+        GST_DEBUG_OBJECT(m_pipeline.get(), "Incoming data channel %p", dataChannel.get());
+        auto channelHandler = findOrCreateIncomingChannelHandler(WTFMove(dataChannel));
+        auto label = channelHandler->label();
+        auto dataChannelInit = channelHandler->dataChannelInit();
+        m_peerConnectionBackend.newDataChannel(WTFMove(channelHandler), WTFMove(label), WTFMove(dataChannelInit));
     });
 }
 
@@ -983,6 +1011,9 @@ void GStreamerMediaEndpoint::close()
 #if !RELEASE_LOG_DISABLED
     stopLoggingStats();
 #endif
+
+    if (m_pipeline)
+        teardownPipeline();
 }
 
 void GStreamerMediaEndpoint::stop()

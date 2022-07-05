@@ -883,16 +883,28 @@ webkit.org/b/234084 media/track/video-track-configuration.html [ Failure ]
 
 webkit.org/b/237901 media/media-source/media-source-interruption-with-resume-allowing-play.html [ Slow ]
 
-# DataChannel GstWebRTC implementation incomplete
-webkit.org/b/235885 webrtc/datachannel [ Skip ]
-webkit.org/b/235885 http/wpt/webrtc/transfer-datachannel-service-worker.https.html [ Skip ]
+# DataChannel GstWebRTC implementation incomplete, missing stats support.
+webkit.org/b/235885 webrtc/datachannel/datachannel-stats.html [ Skip ]
+webkit.org/b/235885 webrtc/datachannel/getStats-no-prflx-remote-candidate.html [ Skip ]
 webkit.org/b/235885 fast/mediastream/RTCPeerConnection-statsSelector.html [ Skip ]
-webkit.org/b/235885 fast/mediastream/RTCPeerConnection-datachannel.html [ Skip ]
 
-# Expected to pass since bug #242025 was fixed.
-webrtc/datachannel/creation.html [ Pass ]
+# GStreamer's DTLS agent currently generates RSA certificates only. DTLS 1.2 is not supported yet (AFAIK).
+webrtc/datachannel/dtls10.html [ Failure ]
+
+# Too slow with filtering implemented in WebKit. Should be done directly by GstWebRTC.
+webrtc/datachannel/filter-ice-candidate.html [ Skip ]
+webrtc/datachannel/mdns-ice-candidates.html [ Skip ]
+
+# Expected to pass/fail in GStreamer 1.22, and a bit slow for us, creating 256 end-points in a row.
+webkit.org/b/235885 webrtc/datachannel/multiple-connections.html [ Pass Failure Timeout ]
+
+# Expectations for GStreamer 1.20. Remove these when updating to GStreamer 1.22.
+webrtc/datachannel/basic.html [ Pass Failure Timeout ]
+webrtc/datachannel/multi-channel.html [ Failure ]
+webrtc/datachannel/binary.html [ Failure ]
 
 # The GstWebRTC backend doesn't support transforms yet.
+webkit.org/b/235885 http/wpt/webrtc/no-webrtc-transform.html [ Skip ]
 webkit.org/b/235885 http/wpt/webrtc/audiovideo-script-transform.html [ Skip ]
 webkit.org/b/235885 http/wpt/webrtc/video-script-transform-keyframe-only.html [ Skip ]
 webkit.org/b/235885 http/wpt/webrtc/video-script-transform.html [ Skip ]
