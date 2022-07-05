@@ -226,7 +226,8 @@ static RetainPtr<ASCCredentialRequestContext> configureRegistrationRequestContex
         requestTypes &= ~ASCCredentialRequestTypePlatformPublicKeyRegistration;
 
     auto requestContext = adoptNS([allocASCCredentialRequestContextInstance() initWithRequestTypes:requestTypes]);
-    [requestContext setRelyingPartyIdentifier:options.rp.id];
+    ASSERT(options.rp.id);
+    [requestContext setRelyingPartyIdentifier:*options.rp.id];
     setGlobalFrameIDForContext(requestContext, globalFrameID);
 
     auto credentialCreationOptions = adoptNS([allocASCPublicKeyCredentialCreationOptionsInstance() init]);
@@ -235,7 +236,7 @@ static RetainPtr<ASCCredentialRequestContext> configureRegistrationRequestContex
         [credentialCreationOptions setClientDataHash:toNSData(hash).get()];
     else
         [credentialCreationOptions setChallenge:WebCore::toNSData(options.challenge).get()];
-    [credentialCreationOptions setRelyingPartyIdentifier:options.rp.id];
+    [credentialCreationOptions setRelyingPartyIdentifier:*options.rp.id];
     [credentialCreationOptions setUserName:options.user.name];
     [credentialCreationOptions setUserIdentifier:WebCore::toNSData(options.user.id).get()];
     [credentialCreationOptions setUserDisplayName:options.user.displayName];

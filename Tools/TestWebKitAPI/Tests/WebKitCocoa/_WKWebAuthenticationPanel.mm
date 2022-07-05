@@ -1490,7 +1490,7 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMinimun)
 
     EXPECT_WK_STREQ(result.rp.name, "example.com");
     EXPECT_TRUE(result.rp.icon.isNull());
-    EXPECT_TRUE(result.rp.id.isNull());
+    EXPECT_TRUE(!result.rp.id);
 
     EXPECT_WK_STREQ(result.user.name, "jappleseed@example.com");
     EXPECT_TRUE(result.user.icon.isNull());
@@ -1534,7 +1534,7 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximumDefault)
 
     EXPECT_WK_STREQ(result.rp.name, "example.com");
     EXPECT_TRUE(result.rp.icon.isNull());
-    EXPECT_TRUE(result.rp.id.isNull());
+    EXPECT_TRUE(!result.rp.id);
 
     EXPECT_WK_STREQ(result.user.name, "jappleseed@example.com");
     EXPECT_TRUE(result.user.icon.isNull());
@@ -1601,7 +1601,7 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximum1)
 
     EXPECT_WK_STREQ(result.rp.name, "example.com");
     EXPECT_WK_STREQ(result.rp.icon, @"https//www.example.com/icon.jpg");
-    EXPECT_WK_STREQ(result.rp.id, "example.com");
+    EXPECT_WK_STREQ(*result.rp.id, "example.com");
 
     EXPECT_WK_STREQ(result.user.name, "jappleseed@example.com");
     EXPECT_WK_STREQ(result.user.icon, @"https//www.example.com/icon.jpg");
@@ -1671,7 +1671,7 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximum2)
 
     EXPECT_WK_STREQ(result.rp.name, "example.com");
     EXPECT_WK_STREQ(result.rp.icon, @"https//www.example.com/icon.jpg");
-    EXPECT_WK_STREQ(result.rp.id, "example.com");
+    EXPECT_WK_STREQ(*result.rp.id, "example.com");
 
     EXPECT_WK_STREQ(result.user.name, "jappleseed@example.com");
     EXPECT_WK_STREQ(result.user.icon, @"https//www.example.com/icon.jpg");

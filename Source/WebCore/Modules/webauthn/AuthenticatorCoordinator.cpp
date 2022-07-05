@@ -137,12 +137,12 @@ void AuthenticatorCoordinator::create(const Document& document, const PublicKeyC
     }
 
     // Step 8.
-    if (!options.rp.id.isEmpty() && !callerOrigin.isMatchingRegistrableDomainSuffix(options.rp.id)) {
+    if (!options.rp.id)
+        options.rp.id = callerOrigin.domain();
+    else if (!callerOrigin.isMatchingRegistrableDomainSuffix(*options.rp.id)) {
         promise.reject(Exception { SecurityError, "The provided RP ID is not a registrable domain suffix of the effective domain of the document."_s });
         return;
     }
-    if (options.rp.id.isEmpty())
-        options.rp.id = callerOrigin.domain();
 
     // Step 9-11.
     // Most of the jobs are done by bindings.
@@ -161,7 +161,8 @@ void AuthenticatorCoordinator::create(const Document& document, const PublicKeyC
 
     // Step 12-13.
     // Only Google Legacy AppID Support Extension is supported.
-    options.extensions = AuthenticationExtensionsClientInputs { String(), processGoogleLegacyAppIdSupportExtension(options.extensions, options.rp.id), options.extensions && options.extensions->credProps };
+    ASSERT(options.rp.id);
+    options.extensions = AuthenticationExtensionsClientInputs { String(), processGoogleLegacyAppIdSupportExtension(options.extensions, *options.rp.id), options.extensions && options.extensions->credProps };
 
     // Step 14-16.
     auto clientDataJson = buildClientDataJson(ClientDataType::Create, options.challenge, callerOrigin, scope);

@@ -103,7 +103,8 @@ std::optional<Vector<uint8_t>> convertToU2fRegisterCommand(const Vector<uint8_t>
         return std::nullopt;
 
     auto appId = processGoogleLegacyAppIdSupportExtension(request.extensions);
-    return constructU2fRegisterCommand(produceRpIdHash(!appId ? request.rp.id : appId), clientDataHash);
+    ASSERT(request.rp.id);
+    return constructU2fRegisterCommand(produceRpIdHash(!appId ? *request.rp.id : appId), clientDataHash);
 }
 
 std::optional<Vector<uint8_t>> convertToU2fCheckOnlySignCommand(const Vector<uint8_t>& clientDataHash, const PublicKeyCredentialCreationOptions& request, const PublicKeyCredentialDescriptor& keyHandle)
@@ -111,7 +112,8 @@ std::optional<Vector<uint8_t>> convertToU2fCheckOnlySignCommand(const Vector<uin
     if (keyHandle.type != PublicKeyCredentialType::PublicKey)
         return std::nullopt;
 
-    return constructU2fSignCommand(produceRpIdHash(request.rp.id), clientDataHash, keyHandle.id, true /* checkOnly */);
+    ASSERT(request.rp.id);
+    return constructU2fSignCommand(produceRpIdHash(*request.rp.id), clientDataHash, keyHandle.id, true /* checkOnly */);
 }
 
 std::optional<Vector<uint8_t>> convertToU2fSignCommand(const Vector<uint8_t>& clientDataHash, const PublicKeyCredentialRequestOptions& request, const WebCore::BufferSource& keyHandle, bool isAppId)

@@ -50,8 +50,8 @@ static CBORValue convertRpEntityToCBOR(const PublicKeyCredentialCreationOptions:
     rpMap.emplace(CBORValue(kEntityNameMapKey), CBORValue(rpEntity.name));
     if (!rpEntity.icon.isEmpty())
         rpMap.emplace(CBORValue(kIconUrlMapKey), CBORValue(rpEntity.icon));
-    if (!rpEntity.id.isEmpty())
-        rpMap.emplace(CBORValue(kEntityIdMapKey), CBORValue(rpEntity.id));
+    if (rpEntity.id && !rpEntity.id->isEmpty())
+        rpMap.emplace(CBORValue(kEntityIdMapKey), CBORValue(*rpEntity.id));
 
     return CBORValue(WTFMove(rpMap));
 }

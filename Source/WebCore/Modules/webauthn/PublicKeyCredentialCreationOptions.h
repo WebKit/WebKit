@@ -48,7 +48,7 @@ struct PublicKeyCredentialCreationOptions {
     };
 
     struct RpEntity : public Entity {
-        mutable String id;
+        mutable std::optional<String> id;
     };
 
     struct UserEntity : public Entity {

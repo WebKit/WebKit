@@ -157,8 +157,11 @@ static void processGoogleLegacyAppIdSupportExtension(const std::optional<Authent
 
 static String getRpId(const std::variant<PublicKeyCredentialCreationOptions, PublicKeyCredentialRequestOptions>& options)
 {
-    if (std::holds_alternative<PublicKeyCredentialCreationOptions>(options))
-        return std::get<PublicKeyCredentialCreationOptions>(options).rp.id;
+    if (std::holds_alternative<PublicKeyCredentialCreationOptions>(options)) {
+        auto& creationOptions = std::get<PublicKeyCredentialCreationOptions>(options);
+        ASSERT(creationOptions.rp.id);
+        return *creationOptions.rp.id;
+    }
     return std::get<PublicKeyCredentialRequestOptions>(options).rpId;
 }
 
