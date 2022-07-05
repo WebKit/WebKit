@@ -28,19 +28,34 @@ function testImage(testName)
     const data = grabFrameData(10, 325, 250, 1);
 
     var index = 20;
-    assert_true(data[index] < 100, testName + ' 1');
-    assert_true(data[index + 1] < 100, testName + ' 2');
-    assert_true(data[index + 2] < 100, testName + ' 3');
+    const test1 = data[index] < 100;
+    const test2 = data[index + 1] < 100;
+    const test3 = data[index + 2] < 100;
 
     index = 80;
-    assert_true(data[index] > 200, testName + ' 4');
-    assert_true(data[index + 1] > 200, testName + ' 5');
-    assert_true(data[index + 2] > 200, testName + ' 6');
+    const test4 = data[index] > 200;
+    const test5 = data[index + 1] > 200;
+    const test6 = data[index + 2] > 200;
 
     index += 80;
-    assert_true(data[index] > 200, testName + ' 7');
-    assert_true(data[index + 1] > 200, testName + ' 8');
-    assert_true(data[index + 2] < 100, testName + ' 9');
+    const test7 = data[index] > 200;
+    const test8 = data[index + 1] > 200;
+    const test9 = data[index + 2] < 100;
+
+    if (!test1 || !test2 || !test3 || !test4 || !test5 || !test6 || !test7 || !test8 || !test9)
+        console.log(JSON.stringify(data));
+
+    assert_true(test1, testName + '-1');
+    assert_true(test2, testName + '-2');
+    assert_true(test3, testName + '-3');
+
+    assert_true(test4, testName + '-4');
+    assert_true(test5, testName + '-5');
+    assert_true(test6, testName + '-6');
+
+    assert_true(test7, testName + '-7');
+    assert_true(test8, testName + '-8');
+    assert_true(test9, testName + '-9');
 }
 
 var pc1, pc2;
