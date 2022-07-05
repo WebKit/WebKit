@@ -67,10 +67,8 @@ WI.ScreenshotsTimelineOverviewGraph = class ScreenshotsTimelineOverviewGraph ext
         let secondsPerPixel = this.timelineOverview.secondsPerPixel;
 
         for (let record of this._visibleRecords()) {
-            this.element.appendChild(this._imageElementForRecord.getOrInitialize(record, () => {
+            let recordElement = this.element.appendChild(this._imageElementForRecord.getOrInitialize(record, () => {
                 let imageElement = document.createElement("img");
-                imageElement.height = this.height;
-                imageElement.style.left = (record.startTime - this.startTime) / secondsPerPixel + "px";
 
                 imageElement.hidden = true;
                 imageElement.addEventListener("load", (event) => {
@@ -87,6 +85,9 @@ WI.ScreenshotsTimelineOverviewGraph = class ScreenshotsTimelineOverviewGraph ext
 
                 return imageElement;
             }));
+
+            recordElement.style.left = (record.startTime - this.startTime) / secondsPerPixel + "px";
+            recordElement.height = this.height;
         }
 
         if (this._lastSelectedRecordInLayout)
