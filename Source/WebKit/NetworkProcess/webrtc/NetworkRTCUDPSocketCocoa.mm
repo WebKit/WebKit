@@ -288,14 +288,14 @@ void NetworkRTCUDPSocketCocoaConnections::setOption(int, int)
 static inline void processUDPData(RetainPtr<nw_connection_t>&& nwConnection, Ref<NetworkRTCUDPSocketCocoaConnections::ConnectionStateTracker> connectionStateTracker, int errorCode, Function<void(const uint8_t*, size_t)>&& processData)
 {
     auto nwConnectionReference = nwConnection.get();
-    nw_connection_receive(nwConnectionReference, 1, std::numeric_limits<uint32_t>::max(), makeBlockPtr([nwConnection = WTFMove(nwConnection), processData = WTFMove(processData), errorCode, connectionStateTracker = WTFMove(connectionStateTracker)](dispatch_data_t content, nw_content_context_t, bool, nw_error_t error) mutable {
+    nw_connection_receive(nwConnectionReference, 1, std::numeric_limits<uint32_t>::max(), makeBlockPtr([nwConnection = WTFMove(nwConnection), processData = WTFMove(processData), errorCode, connectionStateTracker = WTFMove(connectionStateTracker)](dispatch_data_t content, nw_content_context_t context, bool, nw_error_t error) mutable {
         if (content) {
             dispatch_data_apply(content, makeBlockPtr([&](dispatch_data_t, size_t, const void* data, size_t size) {
                 processData(static_cast<const uint8_t*>(data), size);
                 return true;
             }).get());
         }
-        if (connectionStateTracker->isStopped())
+        if (connectionStateTracker->isStopped() || nw_content_context_get_is_final(context))
             return;
 
         if (error && errorCode != nw_error_get_error_code(error)) {
