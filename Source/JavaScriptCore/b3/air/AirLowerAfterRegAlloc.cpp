@@ -113,7 +113,7 @@ void lowerAfterRegAlloc(Code& code)
     // kind of slop is OK.
     RegisterSet disallowedCalleeSaves;
     if (code.stackIsAllocated()) {
-        disallowedCalleeSaves = RegisterSet::calleeSaveRegisters();
+        disallowedCalleeSaves = RegisterSet::vmCalleeSaveRegisters();
         disallowedCalleeSaves.exclude(code.calleeSaveRegisters());
     }
     
@@ -175,6 +175,9 @@ void lowerAfterRegAlloc(Code& code)
             }
 
             case ColdCCall: {
+#if USE(JSVALUE32_64)
+                UNREACHABLE_FOR_PLATFORM(); // Needs porting when used
+#endif
                 CCallValue* value = inst.origin->as<CCallValue>();
                 Kind oldKind = inst.kind;
 
@@ -186,7 +189,7 @@ void lowerAfterRegAlloc(Code& code)
 
                 RegisterSet preUsed = liveRegs;
                 Vector<Arg> destinations = computeCCallingConvention(code, value);
-                Tmp result = cCallResult(value->type());
+                Tmp result = cCallResult(value, 0);
                 Arg originalResult = result ? inst.args[1] : Arg();
                 
                 Vector<ShufflePair> pairs;

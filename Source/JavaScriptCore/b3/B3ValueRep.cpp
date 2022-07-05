@@ -103,13 +103,25 @@ void ValueRep::emitRestore(AssemblyHelpers& jit, Reg reg) const
             if (isGPR())
                 jit.move(gpr(), reg.gpr());
             else
+#if USE(JSVALUE64)
                 jit.moveDoubleTo64(fpr(), reg.gpr());
+#elif USE(JSVALUE32_64)
+                UNREACHABLE_FOR_PLATFORM();
+#endif
             break;
         case Stack:
+#if USE(JSVALUE64)
             jit.load64(AssemblyHelpers::Address(GPRInfo::callFrameRegister, offsetFromFP()), reg.gpr());
+#elif USE(JSVALUE32_64)
+            UNREACHABLE_FOR_PLATFORM();
+#endif
             break;
         case Constant:
+#if USE(JSVALUE64)
             jit.move(AssemblyHelpers::TrustedImm64(value()), reg.gpr());
+#elif USE(JSVALUE32_64)
+            UNREACHABLE_FOR_PLATFORM();
+#endif
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -122,7 +134,11 @@ void ValueRep::emitRestore(AssemblyHelpers& jit, Reg reg) const
     case LateRegister:
     case Register:
         if (isGPR())
+#if USE(JSVALUE64)
             jit.move64ToDouble(gpr(), reg.fpr());
+#elif USE(JSVALUE32_64)
+            UNREACHABLE_FOR_PLATFORM();
+#endif
         else
             jit.moveDouble(fpr(), reg.fpr());
         break;
@@ -130,8 +146,12 @@ void ValueRep::emitRestore(AssemblyHelpers& jit, Reg reg) const
         jit.loadDouble(AssemblyHelpers::Address(GPRInfo::callFrameRegister, offsetFromFP()), reg.fpr());
         break;
     case Constant:
+#if USE(JSVALUE64)
         jit.move(AssemblyHelpers::TrustedImm64(value()), jit.scratchRegister());
         jit.move64ToDouble(jit.scratchRegister(), reg.fpr());
+#elif USE(JSVALUE32_64)
+        UNREACHABLE_FOR_PLATFORM();
+#endif
         break;
     default:
         RELEASE_ASSERT_NOT_REACHED();

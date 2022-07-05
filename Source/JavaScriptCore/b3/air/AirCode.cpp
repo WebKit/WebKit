@@ -46,8 +46,8 @@ static void defaultPrologueGenerator(CCallHelpers& jit, Code& code)
 {
     jit.emitFunctionPrologue();
     if (code.frameSize()) {
-        AllowMacroScratchRegisterUsageIf allowScratch(jit, isARM64());
-        jit.addPtr(MacroAssembler::TrustedImm32(-code.frameSize()), MacroAssembler::framePointerRegister,  MacroAssembler::stackPointerRegister);
+        AllowMacroScratchRegisterUsageIf allowScratch(jit, isARM64() || isARM());
+        jit.subPtr(MacroAssembler::TrustedImm32(code.frameSize()), MacroAssembler::stackPointerRegister);
     }
     
     jit.emitSave(code.calleeSaveRegisterAtOffsetList());
@@ -71,7 +71,22 @@ Code::Code(Procedure& proc)
             RegisterSet all = bank == GP ? RegisterSet::allGPRs() : RegisterSet::allFPRs();
             all.exclude(RegisterSet::stackRegisters());
             all.exclude(RegisterSet::reservedHardwareRegisters());
-            RegisterSet calleeSave = RegisterSet::calleeSaveRegisters();
+#if CPU(ARM)
+            // Unfortunately, the extra registers provided by the neon/vfpv3
+            // extensions can't be used by Air right now, because they are
+            // invalid as f32 operands, and Air doesn't know about anything
+            // other than a single class of FP registers.
+#if CPU(ARM_NEON) || CPU(ARM_VFP_V3_D32)
+            if (bank == FP) {
+                for (auto reg = ARMRegisters::d16; reg <= ARMRegisters::d31; reg = MacroAssembler::nextFPRegister(reg)) {
+                    all.clear(reg);
+                }
+            }
+#endif
+            // Our use of DisallowMacroScratchRegisterUsage is not quite right, so for now...
+            all.exclude(RegisterSet::macroScratchRegisters());
+#endif // CPU(ARM)
+            RegisterSet calleeSave = RegisterSet::vmCalleeSaveRegisters();
             all.forEach(
                 [&] (Reg reg) {
                     if (!calleeSave.get(reg))
@@ -171,9 +186,9 @@ StackSlot* Code::addStackSlot(uint64_t byteSize, StackSlotKind kind)
     StackSlot* result = m_stackSlots.addNew(byteSize, kind);
     if (m_stackIsAllocated) {
         // FIXME: This is unnecessarily awful. Fortunately, it doesn't run often.
-        unsigned extent = WTF::roundUpToMultipleOf(result->alignment(), frameSize() + byteSize);
+        unsigned extent = WTF::roundUpToMultipleOf(result->alignment(), frameSize() - stackAdjustmentForAlignment() + byteSize);
         result->setOffsetFromFP(-static_cast<ptrdiff_t>(extent));
-        setFrameSize(WTF::roundUpToMultipleOf(stackAlignmentBytes(), extent));
+        setFrameSize(WTF::roundUpToMultipleOf(stackAlignmentBytes(), extent) + stackAdjustmentForAlignment());
     }
     return result;
 }

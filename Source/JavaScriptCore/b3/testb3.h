@@ -92,7 +92,7 @@ inline void usage()
         exit(1);
 }
 
-#if ENABLE(B3_JIT)
+#if ENABLE(B3_JIT) && !CPU(ARM)
 
 using namespace JSC;
 using namespace JSC::B3;

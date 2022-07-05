@@ -144,13 +144,18 @@ static ALWAYS_INLINE CCallHelpers::Address callFrameAddr(CCallHelpers& jit, intp
         return CCallHelpers::Address(GPRInfo::callFrameRegister, offsetFromFP);
     }
 
+    if (isARM()) {
+        // For now, we can just solve this in the macro assembler ...
+        return CCallHelpers::Address(GPRInfo::callFrameRegister, offsetFromFP);
+    }
+
     ASSERT(pinnedExtendedOffsetAddrRegister());
     auto addr = Arg::addr(Air::Tmp(GPRInfo::callFrameRegister), offsetFromFP);
-    if (addr.isValidForm(Width64))
+    if (addr.isValidForm(pointerWidth()))
         return CCallHelpers::Address(GPRInfo::callFrameRegister, offsetFromFP);
     GPRReg reg = *pinnedExtendedOffsetAddrRegister();
     jit.move(CCallHelpers::TrustedImmPtr(offsetFromFP), reg);
-    jit.add64(GPRInfo::callFrameRegister, reg);
+    jit.addPtr(GPRInfo::callFrameRegister, reg);
     return CCallHelpers::Address(reg);
 }
 
@@ -171,7 +176,7 @@ ALWAYS_INLINE void GenerateAndAllocateRegisters::flush(Tmp tmp, Reg reg)
     ASSERT(tmp);
     intptr_t offset = m_map[tmp].spillSlot->offsetFromFP();
     if (tmp.isGP())
-        m_jit->store64(reg.gpr(), callFrameAddr(*m_jit, offset));
+        m_jit->storePtr(reg.gpr(), callFrameAddr(*m_jit, offset));
     else
         m_jit->storeDouble(reg.fpr(), callFrameAddr(*m_jit, offset));
 }
@@ -201,7 +206,7 @@ ALWAYS_INLINE void GenerateAndAllocateRegisters::alloc(Tmp tmp, Reg reg, Arg::Ro
     if (Arg::isAnyUse(role)) {
         intptr_t offset = m_map[tmp].spillSlot->offsetFromFP();
         if (tmp.bank() == GP)
-            m_jit->load64(callFrameAddr(*m_jit, offset), reg.gpr());
+            m_jit->loadPtr(callFrameAddr(*m_jit, offset), reg.gpr());
         else
             m_jit->loadDouble(callFrameAddr(*m_jit, offset), reg.fpr());
     }
@@ -326,7 +331,7 @@ ALWAYS_INLINE bool GenerateAndAllocateRegisters::isDisallowedRegister(Reg reg)
 void GenerateAndAllocateRegisters::prepareForGeneration()
 {
     // We pessimistically assume we use all callee saves.
-    handleCalleeSaves(m_code, RegisterSet::calleeSaveRegisters());
+    handleCalleeSaves(m_code, RegisterSet::vmCalleeSaveRegisters());
     allocateEscapedStackSlots(m_code);
 
     insertBlocksForFlushAfterTerminalPatchpoints();
@@ -467,7 +472,11 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
 
     CompilerTimingScope timingScope("Air", "GenerateAndAllocateRegisters::generate");
 
+#if !CPU(ARM)
+    // On ARM, we still rely on the macro assembler to handle large immediates.
+    // On other platforms, we can use the macro scratch registers.
     DisallowMacroScratchRegisterUsage disallowScratch(*m_jit);
+#endif
 
     buildLiveRanges(*m_liveness);
 
@@ -600,7 +609,7 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
 
             bool needsToGenerate = ([&] () -> bool {
                 // FIXME: We should consider trying to figure out if we can also elide Mov32s
-                if (!(inst.kind.opcode == Move || inst.kind.opcode == MoveDouble))
+                if (!(inst.kind.opcode == Move || inst.kind.opcode == MoveDouble || (is32Bit() && inst.kind.opcode == Move32)))
                     return true;
 
                 ASSERT(inst.args.size() >= 2);

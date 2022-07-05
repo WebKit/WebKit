@@ -27,6 +27,7 @@
 
 #if ENABLE(B3_JIT)
 
+#include "AirCCallingConvention.h"
 #include "AirCode.h"
 #include "AirGenerationContext.h"
 #include "AirInst.h"
@@ -131,26 +132,38 @@ struct CCallCustom : public CommonCustomBase<CCallCustom> {
     template<typename Functor>
     static void forEachArg(Inst& inst, const Functor& functor)
     {
-        Value* value = inst.origin;
+        CCallValue* value = inst.origin->as<CCallValue>();
 
         unsigned index = 0;
 
-        functor(inst.args[index++], Arg::Use, GP, pointerWidth()); // callee
-        
-        if (value->type() != Void) {
-            functor(
-                inst.args[index++], Arg::Def,
+        auto next = [&](Arg::Role role, Bank bank, Width width) {
+            functor(inst.args[index++], role, bank, width);
+        };
+
+        next(Arg::Use, GP, pointerWidth()); // callee
+
+        for (size_t n = cCallResultCount(value); n; --n) {
+            next(
+                Arg::Def,
                 bankForType(value->type()),
-                widthForType(value->type()));
+                is32Bit() && value->type() == Int64 ? Width32 : widthForType(value->type()));
         }
 
         for (unsigned i = 1; i < value->numChildren(); ++i) {
             Value* child = value->child(i);
-            functor(
-                inst.args[index++], Arg::Use,
+#if USE(JSVALUE32_64)
+            if (child->type() == Int64) {
+                next(Arg::Use, GP, Width32);
+                next(Arg::Use, GP, Width32);
+                continue;
+            }
+#endif
+            next(
+                Arg::Use,
                 bankForType(child->type()),
                 widthForType(child->type()));
         }
+        ASSERT(index == inst.args.size());
     }
 
     template<typename... Arguments>
