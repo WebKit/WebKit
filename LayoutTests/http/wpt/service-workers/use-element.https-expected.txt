@@ -1,0 +1,8 @@
+
+
+PASS register service workers
+PASS image1 load
+PASS image2 load
+PASS svg1 load
+PASS svg2 load
+
