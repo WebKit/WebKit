@@ -290,7 +290,7 @@ void MediaStreamTrackPrivate::audioUnitWillStart()
 #if !RELEASE_LOG_DISABLED
 WTFLogChannel& MediaStreamTrackPrivate::logChannel() const
 {
-    return LogWebRTC;
+    return LogMedia;
 }
 #endif
 

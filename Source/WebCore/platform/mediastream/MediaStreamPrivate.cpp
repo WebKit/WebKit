@@ -321,7 +321,7 @@ void MediaStreamPrivate::monitorOrientation(OrientationNotifier& notifier)
 #if !RELEASE_LOG_DISABLED
 WTFLogChannel& MediaStreamPrivate::logChannel() const
 {
-    return LogWebRTC;
+    return LogMedia;
 }
 #endif
 
