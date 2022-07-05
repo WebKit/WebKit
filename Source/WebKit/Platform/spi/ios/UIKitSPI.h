@@ -353,6 +353,10 @@ typedef id<NSCoding, NSCopying> _UITextSearchDocumentIdentifier;
 @property (nonatomic, strong) id<_UITextSearching> searchableObject;
 @end
 
+@interface UIFindInteraction ()
+@property (class, nonatomic, copy, getter=_globalFindBuffer, setter=_setGlobalFindBuffer:) NSString *_globalFindBuffer;
+@end
+
 #endif // HAVE(UIFINDINTERACTION)
 
 typedef enum {

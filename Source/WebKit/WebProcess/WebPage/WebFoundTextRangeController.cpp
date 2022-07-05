@@ -31,6 +31,7 @@
 #include <WebCore/Document.h>
 #include <WebCore/DocumentMarkerController.h>
 #include <WebCore/Editor.h>
+#include <WebCore/FocusController.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/GeometryUtilities.h>
@@ -304,6 +305,13 @@ void WebFoundTextRangeController::setTextIndicatorWithRange(const WebCore::Simpl
     OptionSet options { WebCore::TextIndicatorOption::IncludeMarginIfRangeMatchesSelection, WebCore::TextIndicatorOption::DoNotClipToVisibleRect };
     if (WebCore::ImageOverlay::isInsideOverlay(range))
         options.add({ WebCore::TextIndicatorOption::PaintAllContent, WebCore::TextIndicatorOption::PaintBackgrounds });
+
+#if PLATFORM(IOS_FAMILY)
+    Ref frame = CheckedRef(m_webPage->corePage()->focusController())->focusedOrMainFrame();
+    frame->selection().setUpdateAppearanceEnabled(true);
+    frame->selection().updateAppearance();
+    frame->selection().setUpdateAppearanceEnabled(false);
+#endif
 
     m_textIndicator = WebCore::TextIndicator::createWithRange(range, options, WebCore::TextIndicatorPresentationTransition::None, WebCore::FloatSize(indicatorMargin, indicatorMargin));
 }

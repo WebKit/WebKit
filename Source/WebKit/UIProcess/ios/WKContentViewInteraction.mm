@@ -4107,6 +4107,16 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 
     if (action == @selector(findAndReplace:))
         return self.webView._findInteractionEnabled && self.supportsTextReplacement;
+
+    if (action == @selector(useSelectionForFind:) || action == @selector(_findSelected:)) {
+        if (!self.webView._findInteractionEnabled)
+            return NO;
+
+        if (!editorState.selectionIsRange || !self.selectedText.length)
+            return NO;
+
+        return YES;
+    }
 #endif
 
     return [super canPerformAction:action withSender:sender];
@@ -10454,6 +10464,24 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 - (void)findAndReplaceForWebView:(id)sender
 {
     [self.webView._findInteraction presentFindNavigatorShowingReplace:YES];
+}
+
+- (void)useSelectionForFindForWebView:(id)sender
+{
+    if (!_page->hasSelectedRange())
+        return;
+
+    NSString *selectedText = self.selectedText;
+    if (selectedText.length) {
+        [[self.webView findInteraction] setSearchText:selectedText];
+        UIFindInteraction._globalFindBuffer = selectedText;
+    }
+}
+
+- (void)_findSelectedForWebView:(id)sender
+{
+    [self useSelectionForFindForWebView:sender];
+    [self findForWebView:sender];
 }
 
 - (void)performTextSearchWithQueryString:(NSString *)string usingOptions:(UITextSearchOptions *)options resultAggregator:(id<UITextSearchAggregator>)aggregator
