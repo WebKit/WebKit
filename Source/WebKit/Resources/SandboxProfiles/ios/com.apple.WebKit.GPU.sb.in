@@ -42,7 +42,7 @@
 (import "util.sb")
 
 (define-once (allow-read-and-issue-generic-extensions . filters)
-    (allow file-read* (with telemetry)
+    (allow file-read*
            (apply require-any filters))
     (allow file-issue-extension
         (require-all
@@ -64,7 +64,7 @@
     (allow-preferences-common)
     (for-each (lambda (domain)
         (begin
-            (allow user-preference-read (with telemetry) (preference-domain domain))
+            (allow user-preference-read (preference-domain domain))
             (allow file-read*
                 (home-literal (string-append "/Library/Preferences/" domain ".plist")))))
         domains))
@@ -294,11 +294,11 @@
 
 (deny file-write-mount file-write-unmount)
 
-(allow file-read-metadata (with telemetry)
+(allow file-read-metadata
     (vnode-type DIRECTORY))
 
 (with-elevated-precedence
-    (allow file-read* (with telemetry)
+    (allow file-read*
            (subpath "/usr/lib"
                     "/usr/share"
                     "/private/var/db/timezone"))
@@ -314,16 +314,16 @@
                 (literal "/System/Library/Caches/apticket.der")
                 (subpath "/System/Library/Caches/com.apple.kernelcaches")
                 (subpath "/System/Library/Caches/com.apple.factorydata"))))
-        (deny file-issue-extension file-read* (with telemetry) hw-identifying-paths))
+        (deny file-issue-extension file-read* hw-identifying-paths))
     
-    (allow file-map-executable (with telemetry)
+    (allow file-map-executable
            (subpath "/System/Library")
            (subpath "/usr/lib"))
-    (allow file-read-metadata (with telemetry)
+    (allow file-read-metadata
            (vnode-type SYMLINK))
 
     ;;; <rdar://problem/24144418>
-    (allow file-read* (with telemetry)
+    (allow file-read*
            (subpath "/private/var/preferences/Logging"))
 
     (allow user-preference-read (preference-domain "kCFPreferencesAnyApplication"))
@@ -349,7 +349,7 @@
                 "com.apple.app-sandbox.read"
                 "com.apple.app-sandbox.read-write"
                 "com.apple.sharing.airdrop.readonly")
-            (allow file-read* file-read-metadata (with telemetry))
+            (allow file-read* file-read-metadata)
             (allow file-issue-extension
                    (extension-class "com.apple.app-sandbox.read"
                                     "com.apple.mediaserverd.read"
@@ -384,7 +384,7 @@
 (allow file-read*
     required-etc-files)
 
-(allow file-read* (with telemetry) (with message "Accessing root of filesystem")
+(allow file-read*
     (literal "/"))
 
 (device-access)
@@ -536,7 +536,7 @@
 ;;;
 
 (deny sysctl* (with telemetry))
-(allow sysctl-read (with telemetry)
+(allow sysctl-read
     (sysctl-name
         "hw.activecpu"
         "hw.cachelinesize"
