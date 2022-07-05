@@ -31,6 +31,8 @@
 #include "Font.h"
 #include "FontDescription.h"
 #include "FontCacheFreeType.h"
+#include FT_SFNT_NAMES_H
+#include FT_TRUETYPE_IDS_H
 #include "RefPtrCairo.h"
 #include "RefPtrFontconfig.h"
 #include "UTF16UChar32Iterator.h"
@@ -620,16 +622,44 @@ std::optional<ASCIILiteral> FontCache::platformAlternateFamilyName(const String&
 }
 
 #if ENABLE(VARIATION_FONTS)
-struct VariationDefaults {
-    float defaultValue;
-    float minimumValue;
-    float maximumValue;
-};
+static String fontNameMapName(FT_Face face, unsigned id)
+{
+    auto nameCount = FT_Get_Sfnt_Name_Count(face);
+    if (!nameCount)
+        return { };
 
-typedef HashMap<FontTag, VariationDefaults, FourCharacterTagHash, FourCharacterTagHashTraits> VariationDefaultsMap;
-typedef HashMap<FontTag, float, FourCharacterTagHash, FourCharacterTagHashTraits> VariationsMap;
+    auto decodeName = [](FT_SfntName name) -> String {
+        switch (name.platform_id) {
+        case TT_PLATFORM_MACINTOSH:
+            if (name.encoding_id == TT_MAC_ID_ROMAN)
+                return String(name.string, name.string_len);
+            // FIXME: implement other macintosh encodings.
+            break;
+        case TT_PLATFORM_APPLE_UNICODE:
+        case TT_PLATFORM_ISO:
+        case TT_PLATFORM_MICROSOFT:
+        case TT_PLATFORM_CUSTOM:
+        case TT_PLATFORM_ADOBE:
+            // FIXME: implement these platforms.
+            break;
+        }
 
-static VariationDefaultsMap defaultVariationValues(FT_Face face)
+        return { };
+    };
+
+    for (unsigned i = 0; i < nameCount; ++i) {
+        FT_SfntName name;
+        if (FT_Get_Sfnt_Name(face, i, &name))
+            continue;
+
+        if (name.name_id == id)
+            return decodeName(name);
+    }
+
+    return { };
+}
+
+VariationDefaultsMap defaultVariationValues(FT_Face face, ShouldLocalizeAxisNames shouldLocalizeAxisNames)
 {
     VariationDefaultsMap result;
     FT_MM_Var* ftMMVar;
@@ -643,7 +673,14 @@ static VariationDefaultsMap defaultVariationValues(FT_Face face)
         auto b3 = 0xFF & (tag >> 8);
         auto b4 = 0xFF & (tag >> 0);
         FontTag resultKey = {{ static_cast<char>(b1), static_cast<char>(b2), static_cast<char>(b3), static_cast<char>(b4) }};
-        VariationDefaults resultValues = { narrowPrecisionToFloat(ftMMVar->axis[i].def / 65536.), narrowPrecisionToFloat(ftMMVar->axis[i].minimum / 65536.), narrowPrecisionToFloat(ftMMVar->axis[i].maximum / 65536.) };
+
+        String axisName;
+        if (shouldLocalizeAxisNames == ShouldLocalizeAxisNames::Yes)
+            axisName = fontNameMapName(face, ftMMVar->axis[i].strid);
+        if (axisName.isEmpty())
+            axisName = String::fromUTF8(ftMMVar->axis[i].name);
+
+        VariationDefaults resultValues = { WTFMove(axisName), narrowPrecisionToFloat(ftMMVar->axis[i].def / 65536.), narrowPrecisionToFloat(ftMMVar->axis[i].minimum / 65536.), narrowPrecisionToFloat(ftMMVar->axis[i].maximum / 65536.) };
         result.set(resultKey, resultValues);
     }
     FT_Done_MM_Var(face->glyph->library, ftMMVar);
@@ -652,7 +689,7 @@ static VariationDefaultsMap defaultVariationValues(FT_Face face)
 
 String buildVariationSettings(FT_Face face, const FontDescription& fontDescription)
 {
-    auto defaultValues = defaultVariationValues(face);
+    auto defaultValues = defaultVariationValues(face, ShouldLocalizeAxisNames::No);
     const auto& variations = fontDescription.variationSettings();
 
     VariationsMap variationsToBeApplied;

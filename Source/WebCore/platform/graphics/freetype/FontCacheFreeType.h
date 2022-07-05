@@ -19,12 +19,28 @@
 
 #pragma once
 
+#include "FontTaggedSettings.h"
+#include "ShouldLocalizeAxisNames.h"
+#include <wtf/HashMap.h>
+
 typedef struct FT_FaceRec_* FT_Face;
 
 namespace WebCore {
 class FontDescription;
 
 #if ENABLE(VARIATION_FONTS)
+struct VariationDefaults {
+    String axisName;
+    float defaultValue;
+    float minimumValue;
+    float maximumValue;
+};
+
+typedef HashMap<FontTag, VariationDefaults, FourCharacterTagHash, FourCharacterTagHashTraits> VariationDefaultsMap;
+typedef HashMap<FontTag, float, FourCharacterTagHash, FourCharacterTagHashTraits> VariationsMap;
+
+VariationDefaultsMap defaultVariationValues(FT_Face, ShouldLocalizeAxisNames);
+
 String buildVariationSettings(FT_Face, const FontDescription&);
 #endif
 };
