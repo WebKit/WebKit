@@ -318,9 +318,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     UIImage *doneImage;
     UIImage *startPiPImage;
     UIImage *stopPiPImage;
-    auto fullScreenControlDesignEnabled = self._webView._page->preferences().alternateFullScreenControlDesignEnabled();
+    auto alternateFullScreenControlDesignEnabled = self._webView._page->preferences().alternateFullScreenControlDesignEnabled();
     
-    if (fullScreenControlDesignEnabled) {
+    if (alternateFullScreenControlDesignEnabled) {
         buttonSize = CGSizeMake(38.0, 38.0);
         doneImage = [UIImage systemImageNamed:@"arrow.down.right.and.arrow.up.left"];
         startPiPImage = [UIImage systemImageNamed:@"pip.enter"];
@@ -366,8 +366,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [_pipButton sizeToFit];
     [_pipButton addTarget:self action:@selector(_togglePiPAction:) forControlEvents:UIControlEventTouchUpInside];
 
-    if (fullScreenControlDesignEnabled) {
-        
+    if (alternateFullScreenControlDesignEnabled) {
         UIButtonConfiguration *cancelButtonConfiguration = [UIButtonConfiguration filledButtonConfiguration];
         // FIXME: this color specification should not be necessary.
         cancelButtonConfiguration.baseBackgroundColor = [UIColor colorWithWhite:1.0 alpha:0.15];
@@ -399,10 +398,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self.view addLayoutGuide:_topGuide.get()];
     NSLayoutYAxisAnchor *topAnchor = [_topGuide topAnchor];
     NSLayoutConstraint *stackViewToTopGuideConstraint;
-    if (fullScreenControlDesignEnabled)
+    if (alternateFullScreenControlDesignEnabled)
         stackViewToTopGuideConstraint = [[_stackView topAnchor] constraintEqualToSystemSpacingBelowAnchor:topAnchor multiplier:2];
     else
-        stackViewToTopGuideConstraint = [topAnchor constraintEqualToAnchor:topAnchor];
+        stackViewToTopGuideConstraint = [[_stackView topAnchor] constraintEqualToAnchor:topAnchor];
     _topConstraint = [topAnchor constraintEqualToAnchor:safeArea.topAnchor];
     [NSLayoutConstraint activateConstraints:@[
         _topConstraint.get(),
