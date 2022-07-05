@@ -955,8 +955,6 @@ TEST(AffineTransform, ToTransformationMatrix)
 
 TEST(AffineTransform, MakeMapBetweenRects)
 {
-    WebCore::AffineTransform transform;
-
     WebCore::FloatRect fromRect(10.0f, 10.0f, 100.0f, 100.0f);
     WebCore::FloatRect toRect(70.0f, 70.0f, 200.0f, 50.0f);
 
@@ -968,6 +966,14 @@ TEST(AffineTransform, MakeMapBetweenRects)
     EXPECT_DOUBLE_EQ(0.5, mapBetween.d());
     EXPECT_DOUBLE_EQ(60.0, mapBetween.e());
     EXPECT_DOUBLE_EQ(60.0, mapBetween.f());
+}
+
+TEST(AffineTransform, Constexpr)
+{
+    static constexpr WebCore::AffineTransform transform;
+    UNUSED_VARIABLE(transform);
+    static constexpr WebCore::AffineTransform transform2(1, 2, 3, 4, 5, 6);
+    UNUSED_VARIABLE(transform2);
 }
 
 #if USE(CG)

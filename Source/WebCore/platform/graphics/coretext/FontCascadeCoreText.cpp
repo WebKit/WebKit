@@ -56,7 +56,7 @@ FontCascade::FontCascade(const FontPlatformData& fontData, FontSmoothingMode fon
 
 static const AffineTransform& rotateLeftTransform()
 {
-    static AffineTransform result(0, -1, 1, 0, 0, 0);
+    static constexpr AffineTransform result(0, -1, 1, 0, 0, 0);
     return result;
 }
 
