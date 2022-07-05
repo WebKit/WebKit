@@ -133,10 +133,11 @@ static unsigned simpleSelectorSpecificityInternal(const CSSSelector& simpleSelec
         case CSSSelector::PseudoClassNthLastChild:
         case CSSSelector::PseudoClassHost:
             return CSSSelector::addSpecificities(static_cast<unsigned>(SelectorSpecificityIncrement::ClassB), simpleSelector.selectorList() ? maxSpecificity(*simpleSelector.selectorList()) : 0);
+        case CSSSelector::PseudoClassRelativeScope:
+            return 0;
         default:
-            break;
+            return static_cast<unsigned>(SelectorSpecificityIncrement::ClassB);
         }
-        return static_cast<unsigned>(SelectorSpecificityIncrement::ClassB);
     case CSSSelector::Exact:
     case CSSSelector::Class:
     case CSSSelector::Set:
