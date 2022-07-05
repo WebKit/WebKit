@@ -792,7 +792,7 @@ class TestResultsController
 
     layoutTestURL(testResult)
     {
-        if (this.shouldUseTracLinks())
+        if (this.shouldUseGithubLinks())
             return this.layoutTestsBasePath() + testResult.name;
 
         return this.testToURL(testResult, this.layoutTestsBasePath());
@@ -801,12 +801,9 @@ class TestResultsController
     layoutTestsBasePath()
     {
         let basePath;
-        if (this.shouldUseTracLinks()) {
-            let revision = this.testResults.revision;
-            basePath = 'http://trac.webkit.org';
-            basePath += revision ? ('/export/' + revision) : '/browser';
-            basePath += '/trunk/LayoutTests/';
-        } else
+        if (this.shouldUseGithubLinks())
+            basePath = 'https://github.com/WebKit/WebKit/blob/main/LayoutTests/';
+        else
             basePath = this.testResults.layoutTestsDir() + '/';
 
         return basePath;
@@ -823,14 +820,14 @@ class TestResultsController
         return fullURL;
     }
 
-    shouldUseTracLinks()
+    shouldUseGithubLinks()
     {
         return !this.testResults.layoutTestsDir() || !location.toString().indexOf('file://') == 0;
     }
 
     checkServerIsRunning(event)
     {
-        if (this.shouldUseTracLinks())
+        if (this.shouldUseGithubLinks())
             return;
 
         let url = event.target.href;
@@ -1104,8 +1101,8 @@ class TestResultsController
         let layoutTestsIndex = src.indexOf('LayoutTests');
         let name;
         if (layoutTestsIndex != -1) {
-            let hasTrac = src.indexOf('trac.webkit.org') != -1;
-            let prefix = hasTrac ? 'trac.webkit.org/.../' : '';
+            let hasGithub = src.indexOf('github.com/WebKit/WebKit/') != -1;
+            let prefix = hasGithub ? 'github.com/WebKit/WebKit/.../' : '';
             name = prefix + src.substring(layoutTestsIndex + 'LayoutTests/'.length);
         } else {
             let lastDashIndex = src.lastIndexOf('-pretty');
