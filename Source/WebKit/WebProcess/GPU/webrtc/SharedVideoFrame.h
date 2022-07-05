@@ -77,6 +77,8 @@ public:
     bool isDisabled() const { return m_isDisabled; }
 
 private:
+    static constexpr Seconds defaultTimeout = 3_s;
+
     bool wait(const Function<void(IPC::Semaphore&)>&);
     bool allocateStorage(size_t, const Function<void(const SharedMemory::IPCHandle&)>&);
     bool prepareWriting(const WebCore::SharedVideoFrameInfo&, const Function<void(IPC::Semaphore&)>&, const Function<void(const SharedMemory::IPCHandle&)>&);
@@ -85,11 +87,13 @@ private:
 #if USE(LIBWEBRTC)
     std::optional<SharedVideoFrame::Buffer> writeBuffer(webrtc::VideoFrameBuffer&, const Function<void(IPC::Semaphore&)>&, const Function<void(const SharedMemory::IPCHandle&)>&);
 #endif
+    void signalInCaseOfError();
 
     UniqueRef<IPC::Semaphore> m_semaphore;
     RefPtr<SharedMemory> m_storage;
     bool m_isSemaphoreInUse { false };
     bool m_isDisabled { false };
+    bool m_shouldSignalInCaseOfError { false };
 };
 
 class SharedVideoFrameReader {
