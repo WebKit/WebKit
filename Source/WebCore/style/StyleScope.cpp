@@ -758,6 +758,35 @@ void Scope::didChangeStyleSheetEnvironment()
     scheduleUpdate(UpdateType::ContentsOrInterpretation);
 }
 
+void Scope::didChangeViewportSize()
+{
+    Ref<ContainerNode> rootNode = m_document;
+    if (m_shadowRoot)
+        rootNode = *m_shadowRoot;
+    else {
+        if (!m_document.hasStyleWithViewportUnits())
+            return;
+
+        for (auto* descendantShadowRoot : m_document.inDocumentShadowRoots()) {
+            if (descendantShadowRoot->mode() == ShadowRootMode::UserAgent)
+                continue;
+            descendantShadowRoot->styleScope().didChangeViewportSize();
+        }
+    }
+
+    auto* resolver = resolverIfExists();
+    if (!resolver)
+        return;
+    resolver->clearCachedDeclarationsAffectedByViewportUnits();
+
+    // FIXME: Ideally, we should save the list of elements that have viewport units and only iterate over those.
+    for (RefPtr element = ElementTraversal::firstWithin(rootNode); element; element = ElementTraversal::nextIncludingPseudo(*element)) {
+        auto* renderer = element->renderer();
+        if (renderer && renderer->style().usesViewportUnits())
+            element->invalidateStyle();
+    }
+}
+
 void Scope::invalidateMatchedDeclarationsCache()
 {
     if (!m_shadowRoot) {
