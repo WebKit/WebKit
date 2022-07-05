@@ -31,7 +31,7 @@
      document.getElementById("rootSVG").removeChild(document.getElementById("rect"));
  }
 
- function test()
+ async function test()
  {
      if (!window.internals || !window.GCController) {
          testFailed("This test requires internals and GCController");
@@ -40,24 +40,26 @@
 
      testRunner.dumpAsText();
 
-     // One gc() call is not enough and causes flakiness in some platforms.
-     gc();
      gc();
      var originalLiveElements = internals.numberOfLiveNodes();
 
-     addRect();
-     applyTransform();
-     removeRect();
+     const iterations = 50;
+     for (var i = 0; i < iterations; i++) {
+         addRect();
+         applyTransform();
+         removeRect();
+     }
 
-     requestAnimationFrame(() => {
-         // One gc() call is not enough and causes flakiness in some platforms.
-         gc();
-         gc();
-         var delta = internals.numberOfLiveNodes() - originalLiveElements;
-         shouldBeZero(delta.toString());
-         var successfullyParsed = true;
-         finishJSTest();
-     });
+     await new Promise(resolve => requestAnimationFrame(resolve));
+
+     // The conservative GC may not reclaim all unreachable nodes.
+     gc();
+     var delta = internals.numberOfLiveNodes() - originalLiveElements;
+     if (delta < iterations / 10)
+         testPassed("did not leak");
+     else
+         testFailed(`leaked an unexpected number of nodes: ${delta} leaks in ${iterations} runs`);
+     finishJSTest();
  }
 </script>
 <body onload="test()">

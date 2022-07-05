@@ -4247,7 +4247,6 @@ webkit.org/b/186562 [ Release ] accessibility/accessibility-node-memory-manageme
 webkit.org/b/186562 fast/workers/worker-document-leak.html [ Failure ]
 webkit.org/b/186562 js/dom/line-column-numbers.html [ Failure ]
 webkit.org/b/186562 storage/indexeddb/modern/leak-1.html [ Failure ]
-webkit.org/b/186562 svg/animations/animation-leak-list-property-instances.html [ Failure ]
 webkit.org/b/186562 workers/bomb.html [ Skip ]
 
 webkit.org/b/186807 transitions/transition-to-from-auto.html [ Failure ]
