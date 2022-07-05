@@ -191,6 +191,13 @@ String FontPlatformData::description() const
 }
 #endif
 
+String FontPlatformData::familyName() const
+{
+    FcChar8* family = nullptr;
+    FcPatternGetString(m_pattern.get(), FC_FAMILY, 0, &family);
+    return String::fromUTF8(family);
+}
+
 void FontPlatformData::buildScaledFont(cairo_font_face_t* fontFace)
 {
     ASSERT(m_pattern);
