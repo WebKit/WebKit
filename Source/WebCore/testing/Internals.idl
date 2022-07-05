@@ -51,7 +51,8 @@ enum AutoFillButtonType {
     "Contacts",
     "Credentials",
     "StrongPassword",
-    "CreditCard"
+    "CreditCard",
+    "Loading"
 };
 
 enum UserInterfaceLayoutDirection {

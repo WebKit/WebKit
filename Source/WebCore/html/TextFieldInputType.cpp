@@ -530,6 +530,8 @@ static String autoFillButtonTypeToAccessibilityLabel(AutoFillButtonType autoFill
         return AXAutoFillStrongPasswordLabel();
     case AutoFillButtonType::CreditCard:
         return AXAutoFillCreditCardLabel();
+    case AutoFillButtonType::Loading:
+        return AXAutoFillLoadingLabel();
     case AutoFillButtonType::None:
         ASSERT_NOT_REACHED();
         return { };
@@ -544,6 +546,7 @@ static String autoFillButtonTypeToAutoFillButtonText(AutoFillButtonType autoFill
     case AutoFillButtonType::Contacts:
     case AutoFillButtonType::Credentials:
     case AutoFillButtonType::CreditCard:
+    case AutoFillButtonType::Loading:
         return emptyString();
     case AutoFillButtonType::StrongPassword:
         return autoFillStrongPasswordLabel();
@@ -566,6 +569,8 @@ static AtomString autoFillButtonTypeToAutoFillButtonPseudoClassName(AutoFillButt
         return ShadowPseudoIds::webkitStrongPasswordAutoFillButton();
     case AutoFillButtonType::CreditCard:
         return ShadowPseudoIds::webkitCreditCardAutoFillButton();
+    case AutoFillButtonType::Loading:
+        return ShadowPseudoIds::webkitLoadingAutoFillButton();
     case AutoFillButtonType::None:
         ASSERT_NOT_REACHED();
         return emptyAtom();
@@ -583,6 +588,8 @@ static bool isAutoFillButtonTypeChanged(const AtomString& attribute, AutoFillBut
     if (attribute == ShadowPseudoIds::webkitStrongPasswordAutoFillButton() && autoFillButtonType != AutoFillButtonType::StrongPassword)
         return true;
     if (attribute == ShadowPseudoIds::webkitCreditCardAutoFillButton() && autoFillButtonType != AutoFillButtonType::CreditCard)
+        return true;
+    if (attribute == ShadowPseudoIds::webkitLoadingAutoFillButton() && autoFillButtonType != AutoFillButtonType::Loading)
         return true;
     return false;
 }

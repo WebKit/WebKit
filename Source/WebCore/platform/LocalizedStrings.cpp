@@ -852,6 +852,11 @@ String AXAutoFillCreditCardLabel()
     return WEB_UI_STRING("credit card AutoFill", "Label for the credit card AutoFill button inside a text field.");
 }
 
+String AXAutoFillLoadingLabel()
+{
+    return WEB_UI_STRING("loading AutoFill", "Label for the loading AutoFill button inside a text field.");
+}
+
 String autoFillStrongPasswordLabel()
 {
     return WEB_UI_STRING("Strong Password", "Label for strong password.");

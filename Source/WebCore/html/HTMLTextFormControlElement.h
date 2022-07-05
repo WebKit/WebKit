@@ -36,7 +36,7 @@ class VisiblePosition;
 
 struct SimpleRange;
 
-enum class AutoFillButtonType : uint8_t { None, Credentials, Contacts, StrongPassword, CreditCard };
+enum class AutoFillButtonType : uint8_t { None, Credentials, Contacts, StrongPassword, CreditCard, Loading };
 enum TextFieldSelectionDirection { SelectionHasNoDirection, SelectionHasForwardDirection, SelectionHasBackwardDirection };
 enum TextFieldEventBehavior { DispatchNoEvent, DispatchChangeEvent, DispatchInputAndChangeEvent };
 enum TextControlSetValueSelection { SetSelectionToEnd, Clamp, DoNotSet };

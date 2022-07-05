@@ -41,6 +41,7 @@ enum {
     kWKAutoFillButtonTypeContacts,
     kWKAutoFillButtonTypeStrongPassword,
     kWKAutoFillButtonTypeCreditCard,
+    kWKAutoFillButtonTypeLoading,
 };
 typedef uint8_t WKAutoFillButtonType;
 

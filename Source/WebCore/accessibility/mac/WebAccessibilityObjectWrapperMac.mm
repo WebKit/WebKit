@@ -2495,6 +2495,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             return @"strong password";
         case AutoFillButtonType::CreditCard:
             return @"credit card";
+        case AutoFillButtonType::Loading:
+            return @"loading";
         }
     }
 

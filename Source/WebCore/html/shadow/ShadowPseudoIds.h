@@ -40,6 +40,7 @@ const AtomString& placeholder();
 const AtomString& webkitContactsAutoFillButton();
 const AtomString& webkitCredentialsAutoFillButton();
 const AtomString& webkitCreditCardAutoFillButton();
+const AtomString& webkitLoadingAutoFillButton();
 const AtomString& webkitStrongPasswordAutoFillButton();
 
 const AtomString& webkitCapsLockIndicator();

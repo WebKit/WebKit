@@ -1285,6 +1285,9 @@
 /* Label for the credit card AutoFill button inside a text field. */
 "credit card AutoFill" = "credit card AutoFill";
 
+/* Label for the loading AutoFill button inside a text field. */
+"loading AutoFill" = "loading AutoFill";
+
 /* The less good value description for a meter element. */
 "critical value" = "critical value";
 
