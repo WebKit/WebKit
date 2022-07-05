@@ -121,8 +121,6 @@ class GitHub(Base, mocks.Requests):
             )
         issue = self.issues[id]
         if data:
-            if data.get('assignees') and self.users.get(data.get('assignees', [None])[0]):
-                issue['assignee'] = self.users[data['assignees'][0]]
             if data.get('state') == 'opened':
                 issue['opened'] = True
             if data.get('state') == 'closed':
@@ -275,6 +273,34 @@ class GitHub(Base, mocks.Requests):
             assignees=[dict(login=self.users[user.name].username) for user in issue.get('watchers', [])],
         ), url=url)
 
+    def _add_assignees(self, url, id, credentials, data):
+        if id not in self.issues:
+            return mocks.Response(
+                url=url,
+                headers={'Content-Type': 'text/json'},
+                status_code=404,
+                text=json.dumps(dict(message="Not Found")),
+            )
+        issue = self.issues[id]
+
+        if len(data.get('assignees', [])) == 0 or not all(assignee in self.users for assignee in data['assignees']):
+            return mocks.Response(status_code=400, url=url)
+
+        issue['assignee'] = self.users[data['assignees'][0]]
+        issue['assignees'] = data['assignees']
+        self.issues[id] = issue
+
+        return mocks.Response.fromJson(dict(
+            title=issue['title'],
+            body=issue['description'],
+            user=dict(login=self.users[issue['creator'].name].username),
+            created_at=self.time_string(issue['timestamp']),
+            state='opened' if issue['opened'] else 'closed',
+            labels=self._labels_for_issue(issue),
+            assignee=dict(login=issue['assignee'].username),
+            assignees=[dict(login=assignee) for assignee in issue['assignees']],
+        ))
+
     def request(self, method, url, data=None, params=None, auth=None, json=None, **kwargs):
         if not url.startswith('http://') and not url.startswith('https://'):
             return mocks.Response.create404(url)
@@ -317,5 +343,9 @@ class GitHub(Base, mocks.Requests):
         match = re.match(r'{}/issues$'.format(self.api_remote), stripped_url)
         if match and method == 'POST':
             return self._create(url, auth, json)
+
+        match = re.match(r'{}/issues/(?P<id>\d+)/assignees$'.format(self.api_remote), stripped_url)
+        if match and method == 'POST':
+            return self._add_assignees(url, int(match.group('id')), auth, json)
 
         return mocks.Response.create404(url)

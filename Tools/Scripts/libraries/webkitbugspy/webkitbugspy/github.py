@@ -334,7 +334,9 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
             if not isinstance(assignee, User):
                 raise TypeError("Must assign to '{}', not '{}'".format(User, type(assignee)))
             issue._assignee = self.user(name=assignee.name, username=assignee.username, email=assignee.email)
-            update_dict['assignees'] = [issue._assignee.username]
+            assignees = [issue._assignee.username]
+            if self.add_assignees(issue, assignees) != assignees:
+                return None
 
         if opened is not None:
             issue._opened = bool(opened)
@@ -404,13 +406,29 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
                 error_message="Failed to modify '{}'".format(issue)
             )
             if not response:
-                if assignee:
-                    issue._assignee = None
                 if opened is not None:
                     issue._opened = None
                 return None
 
         return self.add_comment(issue, why) if why else issue
+
+    def add_assignees(self, issue, assignees):
+        response = self.request(
+            'issues/{id}/assignees'.format(id=issue.id),
+            method='POST',
+            authenticated=True,
+            json={'assignees': assignees},
+            error_message="Failed to modify '{}'".format(issue)
+        )
+        if not response:
+            issue._assignee = None
+            sys.stderr.write('Could not add any assignee(s) to issue')
+            return []
+        response_assignees = [assignee.get('login') for assignee in response.get('assignees', [])]
+        missed_assignees = [assignee for assignee in assignees if assignee not in response_assignees]
+        if missed_assignees:
+            sys.stderr.write('Could not assign {} to issue'.format(missed_assignees))
+        return response_assignees
 
     def add_comment(self, issue, text):
         data = self.request(
