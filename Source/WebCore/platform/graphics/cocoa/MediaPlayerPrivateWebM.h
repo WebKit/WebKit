@@ -47,6 +47,7 @@ namespace WebCore {
 class AudioTrackPrivateWebM;
 class FragmentedSharedBuffer;
 class MediaDescription;
+class MediaPlaybackTarget;
 class MediaSample;
 class MediaSampleAVFObjC;
 class ResourceError;
@@ -151,6 +152,13 @@ private:
     bool requiresTextTrackRepresentation() const final;
     void setTextTrackRepresentation(TextTrackRepresentation*) final;
     void syncTextTrackBounds() final;
+        
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    bool isCurrentPlaybackTargetWireless() const final;
+    void setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&&) final;
+    void setShouldPlayToPlaybackTarget(bool) final;
+    bool wirelessVideoPlaybackDisabled() const final { return false; }
+#endif
 
     void enqueueSample(Ref<MediaSample>&&, uint64_t);
     void reenqueSamples(uint64_t);
@@ -223,6 +231,10 @@ private:
     MediaPlayer::NetworkState m_networkState { MediaPlayer::NetworkState::Empty };
     MediaPlayer::ReadyState m_readyState { MediaPlayer::ReadyState::HaveNothing };
 
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    RefPtr<MediaPlaybackTarget> m_playbackTarget;
+    bool m_shouldPlayToTarget { false };
+#endif
     Ref<const Logger> m_logger;
     const void* m_logIdentifier;
     std::unique_ptr<VideoLayerManagerObjC> m_videoLayerManager;

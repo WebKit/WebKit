@@ -31,6 +31,7 @@
 #import "AudioTrackPrivateWebM.h"
 #import "FloatSize.h"
 #import "Logging.h"
+#import "MediaPlaybackTarget.h"
 #import "MediaPlayer.h"
 #import "MediaSampleAVFObjC.h"
 #import "NotImplemented.h"
@@ -501,6 +502,35 @@ void MediaPlayerPrivateWebM::setTextTrackRepresentation(TextTrackRepresentation*
     auto* representationLayer = representation ? representation->platformLayer() : nil;
     m_videoLayerManager->setTextTrackRepresentationLayer(representationLayer);
 }
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+void MediaPlayerPrivateWebM::setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&& target)
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    m_playbackTarget = WTFMove(target);
+}
+
+void MediaPlayerPrivateWebM::setShouldPlayToPlaybackTarget(bool shouldPlayToTarget)
+{
+    if (shouldPlayToTarget == m_shouldPlayToTarget)
+        return;
+
+    ALWAYS_LOG(LOGIDENTIFIER, shouldPlayToTarget);
+    m_shouldPlayToTarget = shouldPlayToTarget;
+
+    m_player->currentPlaybackTargetIsWirelessChanged(isCurrentPlaybackTargetWireless());
+}
+
+bool MediaPlayerPrivateWebM::isCurrentPlaybackTargetWireless() const
+{
+    if (!m_playbackTarget)
+        return false;
+
+    auto hasTarget = m_shouldPlayToTarget && m_playbackTarget->hasActiveRoute();
+    INFO_LOG(LOGIDENTIFIER, hasTarget);
+    return hasTarget;
+}
+#endif
 
 void MediaPlayerPrivateWebM::enqueueSample(Ref<MediaSample>&& sample, uint64_t trackId)
 {
