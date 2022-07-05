@@ -219,7 +219,7 @@ public:
         });
     }
 
-    void pushSample(GstSample* sample)
+    void pushSample(GRefPtr<GstSample>&& sample)
     {
         ASSERT(m_src);
         if (!m_src || !m_isObserving)
@@ -229,8 +229,8 @@ public:
         webkitMediaStreamSrcEnsureStreamCollectionPosted(parent);
 
         bool drop = m_enoughData;
-        auto* buffer = gst_sample_get_buffer(sample);
-        auto* caps = gst_sample_get_caps(sample);
+        auto* buffer = gst_sample_get_buffer(sample.get());
+        auto* caps = gst_sample_get_caps(sample.get());
         if (!GST_CLOCK_TIME_IS_VALID(m_firstBufferPts)) {
             m_firstBufferPts = GST_BUFFER_PTS(buffer);
             auto pad = adoptGRef(gst_element_get_static_pad(m_src.get(), "src"));
@@ -251,7 +251,7 @@ public:
             m_needsDiscont = false;
         }
 
-        gst_app_src_push_sample(GST_APP_SRC(m_src.get()), sample);
+        gst_app_src_push_sample(GST_APP_SRC(m_src.get()), sample.get());
     }
 
     void trackStarted(MediaStreamTrackPrivate&) final { };
@@ -309,7 +309,7 @@ public:
 
         if (m_track.enabled()) {
             GST_TRACE_OBJECT(m_src.get(), "Pushing video frame from enabled track");
-            pushSample(gstSample);
+            pushSample(WTFMove(gstSample));
             return;
         }
 
