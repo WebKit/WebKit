@@ -101,7 +101,7 @@
     (allow file-read* (with telemetry)
         (prefix "/private/var/db/CVMS/cvmsCodeSignObj"))
     ;; OpenCL
-    (allow iokit-open (with telemetry)
+    (allow iokit-open
         (iokit-connection "IOAccelerator")
         (iokit-registry-entry-class "IOSurfaceRootUserClient"))
     (deny iokit-open (with telemetry)
@@ -492,15 +492,14 @@
                             "display-scale"))))
 
 (deny mach-lookup (xpc-service-name-prefix ""))
+(allow mach-lookup
+    (xpc-service-name "com.apple.audio.SandboxHelper"))
 (allow mach-lookup (with telemetry)
-    (xpc-service-name "com.apple.audio.SandboxHelper")
     (xpc-service-name "com.apple.coremedia.videodecoder")
-    (xpc-service-name "com.apple.coremedia.videoencoder")
-)
+    (xpc-service-name "com.apple.coremedia.videoencoder"))
 
-(allow mach-lookup (with telemetry)
-    (global-name "com.apple.accessibility.mediaaccessibilityd")
-)
+(allow mach-lookup
+    (global-name "com.apple.accessibility.mediaaccessibilityd"))
 
 ;; Utility functions for home directory relative path filters
 (define (home-regex home-relative-regex)
@@ -521,7 +520,7 @@
 (define (allow-read-write-directory-and-issue-read-write-extensions path)
     (if path
         (begin
-            (allow file-read* file-write* (with telemetry) (subpath path))
+            (allow file-read* file-write* (subpath path))
             (allow file-issue-extension (require-all (extension-class "com.apple.app-sandbox.read") (subpath path)))
             (allow file-issue-extension (require-all (extension-class "com.apple.app-sandbox.read-write") (subpath path))))))
 
@@ -626,7 +625,7 @@
     (allow-read-write-directory-and-issue-read-write-extensions (param "DARWIN_USER_TEMP_DIR")))
 
 ;; IOKit user clients
-(allow iokit-open (with telemetry)
+(allow iokit-open
     (iokit-user-client-class "AppleUpstreamUserClient")
     (iokit-user-client-class "RootDomainUserClient")
     (iokit-user-client-class "IOAudioControlUserClient")
@@ -643,7 +642,7 @@
     (ipc-posix-name-prefix "AudioIO"))
 
 #if HAVE(AUDIO_COMPONENT_SERVER_REGISTRATIONS)
-(deny mach-lookup (with telemetry)
+(deny mach-lookup (with no-log)
     (global-name "com.apple.audio.AudioComponentRegistrar"))
 #else
 (allow mach-lookup
@@ -688,7 +687,7 @@
        (global-name "com.apple.trustd.agent")
        (global-name "com.apple.logd.events"))
 
-(allow mach-lookup (with telemetry)
+(allow mach-lookup
 #if !ENABLE(CFPREFS_DIRECT_MODE)
        (global-name "com.apple.cfprefsd.daemon")
 #endif
@@ -698,7 +697,7 @@
        (global-name "com.apple.tccd"))
 
 ;; <rdar://problem/47268166>
-(allow mach-lookup (with telemetry) (xpc-service-name "com.apple.MTLCompilerService"))
+(allow mach-lookup (xpc-service-name "com.apple.MTLCompilerService"))
 
 (deny mach-lookup (with no-log)
     (global-name "com.apple.CoreServices.coreservicesd")
@@ -752,7 +751,7 @@
 (allow file-read-data (path "/private/var/db/nsurlstoraged/dafsaData.bin"))
 
 #if PLATFORM(MAC)
-(allow mach-lookup (with telemetry)
+(allow mach-lookup
        (global-name "com.apple.system.notification_center"))
 #endif
 
@@ -898,9 +897,8 @@
     (global-name "com.apple.relatived.tempest")
 )
 
-(allow iokit-open (with telemetry)
-    (iokit-user-client-class "AppleAVDUserClient")
-)
+(allow iokit-open
+    (iokit-user-client-class "AppleAVDUserClient"))
 
 (when (equal? (param "CPU") "arm64")
     (allow iokit-open (with telemetry)
