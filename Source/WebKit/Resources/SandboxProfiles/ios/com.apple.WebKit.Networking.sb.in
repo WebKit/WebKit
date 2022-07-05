@@ -800,6 +800,9 @@
             MSC_mk_timer_destroy
             MSC_semaphore_signal_trap
             MSC_semaphore_wait_trap
+#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 160000
+            MSC_swtch_pri
+#endif
             MSC_syscall_thread_switch
             MSC_task_self_trap
             MSC_thread_get_special_reply_port)))
