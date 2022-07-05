@@ -1020,7 +1020,7 @@ webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
 http/tests/paymentrequest/payment-address-attributes-and-toJSON-method.https.html [ DumpJSConsoleLogInStdErr ]
 http/tests/paymentrequest/payment-request-change-shipping-option.https.html [ DumpJSConsoleLogInStdErr ]
 http/tests/paymentrequest/payment-response-retry-method.https.html [ DumpJSConsoleLogInStdErr ]
-http/tests/paymentrequest/updateWith-shippingOptions.https.html [ DumpJSConsoleLogInStdErr ]
+http/tests/paymentrequest/updateWith-shippingOptions.https.html [ DumpJSConsoleLogInStdErr Pass Failure ]
 imported/w3c/web-platform-tests/payment-request/payment-request-constructor.https.sub.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/payment-request/payment-request-shippingOption-attribute.https.html [ DumpJSConsoleLogInStdErr ]
 
