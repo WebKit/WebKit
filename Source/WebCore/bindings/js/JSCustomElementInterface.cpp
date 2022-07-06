@@ -30,6 +30,7 @@
 
 #include "DOMWrapperWorld.h"
 #include "ElementRareData.h"
+#include "EventLoop.h"
 #include "HTMLUnknownElement.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConvertNullable.h"
@@ -57,11 +58,11 @@ JSCustomElementInterface::JSCustomElementInterface(const QualifiedName& name, JS
 
 JSCustomElementInterface::~JSCustomElementInterface() = default;
 
-static RefPtr<Element> constructCustomElementSynchronously(Document&, VM&, JSGlobalObject&, JSObject* constructor, const AtomString& localName);
+static RefPtr<Element> constructCustomElementSynchronously(Document&, VM&, JSGlobalObject&, JSObject* constructor, const AtomString& localName, ParserConstructElementWithEmptyStack);
 
-Ref<Element> JSCustomElementInterface::constructElementWithFallback(Document& document, const AtomString& localName)
+Ref<Element> JSCustomElementInterface::constructElementWithFallback(Document& document, const AtomString& localName, ParserConstructElementWithEmptyStack parserConstructElementWithEmptyStack)
 {
-    if (auto element = tryToConstructCustomElement(document, localName))
+    if (auto element = tryToConstructCustomElement(document, localName, parserConstructElementWithEmptyStack))
         return element.releaseNonNull();
 
     auto element = HTMLUnknownElement::create(QualifiedName(nullAtom(), localName, HTMLNames::xhtmlNamespaceURI), document);
@@ -73,7 +74,7 @@ Ref<Element> JSCustomElementInterface::constructElementWithFallback(Document& do
 
 Ref<Element> JSCustomElementInterface::constructElementWithFallback(Document& document, const QualifiedName& name)
 {
-    if (auto element = tryToConstructCustomElement(document, name.localName())) {
+    if (auto element = tryToConstructCustomElement(document, name.localName(), ParserConstructElementWithEmptyStack::No)) {
         if (!name.prefix().isNull())
             element->setPrefix(name.prefix());
         return element.releaseNonNull();
@@ -86,7 +87,7 @@ Ref<Element> JSCustomElementInterface::constructElementWithFallback(Document& do
     return element;
 }
 
-RefPtr<Element> JSCustomElementInterface::tryToConstructCustomElement(Document& document, const AtomString& localName)
+RefPtr<Element> JSCustomElementInterface::tryToConstructCustomElement(Document& document, const AtomString& localName, ParserConstructElementWithEmptyStack parserConstructElementWithEmptyStack)
 {
     if (!canInvokeCallback())
         return nullptr;
@@ -105,7 +106,7 @@ RefPtr<Element> JSCustomElementInterface::tryToConstructCustomElement(Document& 
     ASSERT(lexicalGlobalObject);
     if (!lexicalGlobalObject)
         return nullptr;
-    auto element = constructCustomElementSynchronously(document, vm, *lexicalGlobalObject, m_constructor.get(), localName);
+    auto element = constructCustomElementSynchronously(document, vm, *lexicalGlobalObject, m_constructor.get(), localName, parserConstructElementWithEmptyStack);
     EXCEPTION_ASSERT(!!scope.exception() == !element);
     if (!element) {
         auto* exception = scope.exception();
@@ -119,7 +120,7 @@ RefPtr<Element> JSCustomElementInterface::tryToConstructCustomElement(Document& 
 
 // https://dom.spec.whatwg.org/#concept-create-element
 // 6. 1. If the synchronous custom elements flag is set
-static RefPtr<Element> constructCustomElementSynchronously(Document& document, VM& vm, JSGlobalObject& lexicalGlobalObject, JSObject* constructor, const AtomString& localName)
+static RefPtr<Element> constructCustomElementSynchronously(Document& document, VM& vm, JSGlobalObject& lexicalGlobalObject, JSObject* constructor, const AtomString& localName, ParserConstructElementWithEmptyStack parserConstructElementWithEmptyStack)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
     auto constructData = JSC::getConstructData(constructor);
@@ -134,6 +135,9 @@ static RefPtr<Element> constructCustomElementSynchronously(Document& document, V
     JSValue newElement = construct(&lexicalGlobalObject, constructor, constructData, args);
     InspectorInstrumentation::didCallFunction(&document);
     RETURN_IF_EXCEPTION(scope, nullptr);
+
+    if (parserConstructElementWithEmptyStack == ParserConstructElementWithEmptyStack::Yes)
+        document.eventLoop().performMicrotaskCheckpoint();
 
     ASSERT(!newElement.isEmpty());
     HTMLElement* wrappedElement = JSHTMLElement::toWrapped(vm, newElement);

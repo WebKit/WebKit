@@ -230,7 +230,8 @@ void HTMLDocumentParser::runScriptsForPausedTreeBuilder()
 
             CustomElementReactionStack reactionStack(document()->globalObject());
             auto& elementInterface = constructionData->elementInterface.get();
-            auto newElement = elementInterface.constructElementWithFallback(*document(), constructionData->name);
+            auto newElement = elementInterface.constructElementWithFallback(*document(), constructionData->name,
+                m_scriptRunner && !m_scriptRunner->isExecutingScript() ? ParserConstructElementWithEmptyStack::Yes : ParserConstructElementWithEmptyStack::No);
             m_treeBuilder->didCreateCustomOrFallbackElement(WTFMove(newElement), *constructionData);
         }
         return;

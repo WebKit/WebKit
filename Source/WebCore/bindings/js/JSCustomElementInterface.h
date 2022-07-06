@@ -51,6 +51,8 @@ class JSDOMGlobalObject;
 class MathMLElement;
 class SVGElement;
 
+enum class ParserConstructElementWithEmptyStack { No, Yes };
+
 class JSCustomElementInterface : public RefCounted<JSCustomElementInterface>, public ActiveDOMCallback {
 public:
     static Ref<JSCustomElementInterface> create(const QualifiedName& name, JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
@@ -58,7 +60,7 @@ public:
         return adoptRef(*new JSCustomElementInterface(name, callback, globalObject));
     }
 
-    Ref<Element> constructElementWithFallback(Document&, const AtomString&);
+    Ref<Element> constructElementWithFallback(Document&, const AtomString&, ParserConstructElementWithEmptyStack = ParserConstructElementWithEmptyStack::No);
     Ref<Element> constructElementWithFallback(Document&, const QualifiedName&);
 
     void upgradeElement(Element&);
@@ -96,7 +98,7 @@ public:
 private:
     JSCustomElementInterface(const QualifiedName&, JSC::JSObject* callback, JSDOMGlobalObject*);
 
-    RefPtr<Element> tryToConstructCustomElement(Document&, const AtomString&);
+    RefPtr<Element> tryToConstructCustomElement(Document&, const AtomString&, ParserConstructElementWithEmptyStack);
 
     void invokeCallback(Element&, JSC::JSObject* callback, const Function<void(JSC::JSGlobalObject*, JSDOMGlobalObject*, JSC::MarkedArgumentBuffer&)>& addArguments = [](JSC::JSGlobalObject*, JSDOMGlobalObject*, JSC::MarkedArgumentBuffer&) { });
 
