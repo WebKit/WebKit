@@ -82,6 +82,18 @@ String convertEnumerationToString(MediaPlayerPrivateMediaSourceAVFObjC::SeekStat
     ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
     return values[static_cast<size_t>(enumerationValue)];
 }
+
+#if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
+
+static bool isCopyDisplayedPixelBufferAvailable()
+{
+    static auto result = [] {
+        return [PAL::getAVSampleBufferDisplayLayerClass() instancesRespondToSelector:@selector(copyDisplayedPixelBuffer)];
+    }();
+    return MediaSessionManagerCocoa::mediaSourceInlinePaintingEnabled() && result;
+}
+
+#endif // HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
     
 #pragma mark -
 #pragma mark MediaPlayerPrivateMediaSourceAVFObjC
@@ -655,11 +667,10 @@ RefPtr<NativeImage> MediaPlayerPrivateMediaSourceAVFObjC::nativeImageForCurrentT
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::updateLastPixelBuffer()
 {
-#if HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
-    if (m_videoOutput) {
-        CMTime outputTime;
-        if (auto pixelBuffer = adoptCF([m_videoOutput copyPixelBufferForSourceTime:PAL::toCMTime(currentMediaTime()) sourceTimeForDisplay:&outputTime])) {
-            ALWAYS_LOG(LOGIDENTIFIER, "new pixelbuffer found for time ", PAL::toMediaTime(outputTime));
+#if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
+    if (isCopyDisplayedPixelBufferAvailable()) {
+        if (auto pixelBuffer = adoptCF([m_sampleBufferDisplayLayer copyDisplayedPixelBuffer])) {
+            ALWAYS_LOG(LOGIDENTIFIER, "displayed pixelbuffer copied for time ", currentMediaTime());
             m_lastPixelBuffer = WTFMove(pixelBuffer);
             return true;
         }
@@ -725,7 +736,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::paintCurrentFrameInContext(GraphicsCo
     context.drawNativeImage(*image, imageRect.size(), outputRect, imageRect);
 }
 
-#if !HAVE(LOW_AV_SAMPLE_BUFFER_PRUNING_INTERVAL)
+#if !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
 void MediaPlayerPrivateMediaSourceAVFObjC::willBeAskedToPaintGL()
 {
     // We have been asked to paint into a WebGL canvas, so take that as a signal to create
@@ -766,14 +777,29 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::supportsAcceleratedRendering() const
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::shouldEnsureLayer() const
 {
-#if !HAVE(LOW_AV_SAMPLE_BUFFER_PRUNING_INTERVAL)
-    if (!m_hasBeenAskedToPaintGL)
-        return true;
+#if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
+    return isCopyDisplayedPixelBufferAvailable() && [&] {
+        if (m_sampleBufferDisplayLayer)
+            return !CGRectIsEmpty([m_sampleBufferDisplayLayer bounds]);
+        return !m_player->playerContentBoxRect().isEmpty();
+    }();
+#else
+    return !m_hasBeenAskedToPaintGL;
 #endif
-    return isVideoOutputAvailable();
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::playerContentBoxRectChanged(const LayoutRect& newRect)
+{
+    if (!m_sampleBufferDisplayLayer && !newRect.isEmpty())
+        updateDisplayLayerAndDecompressionSession();
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::acceleratedRenderingStateChanged()
+{
+    updateDisplayLayerAndDecompressionSession();
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::updateDisplayLayerAndDecompressionSession()
 {
     if (shouldEnsureLayer()) {
         destroyDecompressionSession();
@@ -868,15 +894,6 @@ void MediaPlayerPrivateMediaSourceAVFObjC::ensureLayer()
         return;
     }
 
-#if HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
-    ASSERT(!m_videoOutput);
-    if (isVideoOutputAvailable()) {
-        m_videoOutput = adoptNS([PAL::allocAVSampleBufferVideoOutputInstance() init]);
-        ASSERT(m_videoOutput);
-        [m_sampleBufferDisplayLayer setOutput:m_videoOutput.get()];
-    }
-#endif
-
     if ([m_sampleBufferDisplayLayer respondsToSelector:@selector(setPreventsDisplaySleepDuringVideoPlayback:)])
         m_sampleBufferDisplayLayer.get().preventsDisplaySleepDuringVideoPlayback = NO;
 
@@ -944,15 +961,6 @@ void MediaPlayerPrivateMediaSourceAVFObjC::destroyDecompressionSession()
 bool MediaPlayerPrivateMediaSourceAVFObjC::shouldBePlaying() const
 {
     return m_playing && !seeking() && allRenderersHaveAvailableSamples() && m_readyState >= MediaPlayer::ReadyState::HaveFutureData;
-}
-
-bool MediaPlayerPrivateMediaSourceAVFObjC::isVideoOutputAvailable() const
-{
-#if HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
-    return MediaSessionManagerCocoa::mediaSourceInlinePaintingEnabled() && PAL::getAVSampleBufferVideoOutputClass();
-#else
-    return false;
-#endif
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setHasAvailableVideoFrame(bool flag)

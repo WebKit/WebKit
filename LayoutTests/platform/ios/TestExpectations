@@ -3677,3 +3677,6 @@ webkit.org/b/242250 imported/w3c/web-platform-tests/html/browsers/history/the-hi
 webkit.org/b/242270 fast/encoding/char-after-fast-path-ascii-decoding.html [ Pass Failure ]
 
 webkit.org/b/242273 fast/events/ios/dragstart-on-image-by-long-pressing.html [ Pass Failure ]
+
+# Requires platform support (see rdar://94324932).
+http/tests/media/media-source/mediasource-rvfc.html [ Timeout ]

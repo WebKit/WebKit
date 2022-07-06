@@ -1136,7 +1136,13 @@ void RemoteMediaPlayerProxy::stopVideoFrameMetadataGathering()
 
 void RemoteMediaPlayerProxy::playerContentBoxRectChanged(const WebCore::LayoutRect& contentRect)
 {
+    if (m_playerContentBoxRect == contentRect)
+        return;
+
     m_playerContentBoxRect = contentRect;
+
+    if (m_player)
+        m_player->playerContentBoxRectChanged(contentRect);
 }
 
 #if !RELEASE_LOG_DISABLED

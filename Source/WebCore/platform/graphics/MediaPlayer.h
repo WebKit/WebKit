@@ -474,7 +474,7 @@ public:
     bool copyVideoTextureToPlatformTexture(GraphicsContextGL*, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY);
 #endif
 
-#if PLATFORM(COCOA) && !HAVE(LOW_AV_SAMPLE_BUFFER_PRUNING_INTERVAL)
+#if PLATFORM(COCOA) && !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
     void willBeAskedToPaintGL();
 #endif
 

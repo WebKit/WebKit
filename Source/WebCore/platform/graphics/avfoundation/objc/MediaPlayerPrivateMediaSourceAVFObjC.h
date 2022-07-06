@@ -41,7 +41,6 @@ OBJC_CLASS AVAsset;
 OBJC_CLASS AVSampleBufferAudioRenderer;
 OBJC_CLASS AVSampleBufferDisplayLayer;
 OBJC_CLASS AVSampleBufferRenderSynchronizer;
-OBJC_CLASS AVSampleBufferVideoOutput;
 OBJC_CLASS AVStreamSession;
 
 typedef struct OpaqueCMTimebase* CMTimebaseRef;
@@ -222,7 +221,7 @@ private:
     bool updateLastImage();
     void paint(GraphicsContext&, const FloatRect&) override;
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) override;
-#if PLATFORM(COCOA) && !HAVE(LOW_AV_SAMPLE_BUFFER_PRUNING_INTERVAL)
+#if PLATFORM(COCOA) && !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
     void willBeAskedToPaintGL() final;
 #endif
     RefPtr<VideoFrame> videoFrameForCurrentTime() final;
@@ -232,6 +231,10 @@ private:
     // called when the rendering system flips the into or out of accelerated rendering mode.
     void acceleratedRenderingStateChanged() override;
     void notifyActiveSourceBuffersChanged() override;
+
+    void playerContentBoxRectChanged(const LayoutRect&) final;
+
+    void updateDisplayLayerAndDecompressionSession();
 
     // NOTE: Because the only way for MSE to recieve data is through an ArrayBuffer provided by
     // javascript running in the page, the video will, by necessity, always be CORS correct and
@@ -267,8 +270,6 @@ private:
     void destroyDecompressionSession();
 
     bool shouldBePlaying() const;
-
-    bool isVideoOutputAvailable() const;
 
     bool setCurrentTimeDidChangeCallback(MediaPlayer::CurrentTimeDidChangeCallback&&) final;
 
@@ -310,9 +311,6 @@ private:
     RefPtr<MediaSourcePrivateAVFObjC> m_mediaSourcePrivate;
     RetainPtr<AVAsset> m_asset;
     RetainPtr<AVSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
-#if HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
-    RetainPtr<AVSampleBufferVideoOutput> m_videoOutput;
-#endif
 
     struct AudioRendererProperties {
         bool hasAudibleSample { false };
@@ -346,7 +344,7 @@ private:
     bool m_seeking;
     SeekState m_seekCompleted { SeekCompleted };
     mutable bool m_loadingProgressed;
-#if !HAVE(LOW_AV_SAMPLE_BUFFER_PRUNING_INTERVAL)
+#if !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
     bool m_hasBeenAskedToPaintGL { false };
 #endif
     bool m_hasAvailableVideoFrame { false };

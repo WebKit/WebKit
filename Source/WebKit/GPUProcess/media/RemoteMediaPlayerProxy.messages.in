@@ -125,7 +125,7 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
 #if PLATFORM(COCOA)
     NativeImageForCurrentTime() -> (std::optional<MachSendRight> sendRight, WebCore::DestinationColorSpace colorSpace) Synchronous
     ColorSpace() -> (WebCore::DestinationColorSpace colorSpace) Synchronous
-#if !HAVE(LOW_AV_SAMPLE_BUFFER_PRUNING_INTERVAL)
+#if !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
     void WillBeAskedToPaintGL()
 #endif
 #endif

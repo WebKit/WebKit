@@ -5158,7 +5158,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSourceHelper(TexImageFuncti
             && type == GraphicsContextGL::UNSIGNED_BYTE
             && !level) {
             if (auto player = video->player()) {
-#if PLATFORM(COCOA) && !HAVE(LOW_AV_SAMPLE_BUFFER_PRUNING_INTERVAL)
+#if PLATFORM(COCOA) && !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
                 player->willBeAskedToPaintGL();
 #endif
                 if (m_context->copyTextureFromMedia(*player, texture->object(), target, level, internalformat, format, type, m_unpackPremultiplyAlpha, m_unpackFlipY)) {
