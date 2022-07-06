@@ -1176,23 +1176,25 @@ void UIDelegate::UIClient::promptForDisplayCapturePermission(WebPageProxy& page,
     ASSERT(request.canPromptForGetDisplayMedia());
 
     auto checker = CompletionHandlerCallChecker::create(delegate, @selector(_webView:requestDisplayCapturePermissionForOrigin:initiatedByFrame:withSystemAudio:decisionHandler:));
-    auto decisionHandler = makeBlockPtr([protectedRequest = Ref { request }, checker = WTFMove(checker)](WKDisplayCapturePermissionDecision decision) {
+    auto decisionHandler = makeBlockPtr([protectedRequest = Ref { request }, checker = WTFMove(checker)](WKDisplayCapturePermissionDecision decision) mutable {
         if (checker->completionHandlerHasBeenCalled())
             return;
         checker->didCallCompletionHandler();
 
-        switch (decision) {
-        case WKDisplayCapturePermissionDecisionScreenPrompt:
-            protectedRequest->promptForGetDisplayMedia(UserMediaPermissionRequestProxy::UserMediaDisplayCapturePromptType::Screen);
-            break;
-        case WKDisplayCapturePermissionDecisionWindowPrompt: {
-            protectedRequest->promptForGetDisplayMedia(UserMediaPermissionRequestProxy::UserMediaDisplayCapturePromptType::Window);
-            break;
-        }
-        case WKDisplayCapturePermissionDecisionDeny:
-            protectedRequest->deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);
-            break;
-        }
+        ensureOnMainRunLoop([protectedRequest = WTFMove(protectedRequest), decision]() {
+            switch (decision) {
+            case WKDisplayCapturePermissionDecisionScreenPrompt:
+                protectedRequest->promptForGetDisplayMedia(UserMediaPermissionRequestProxy::UserMediaDisplayCapturePromptType::Screen);
+                break;
+            case WKDisplayCapturePermissionDecisionWindowPrompt: {
+                protectedRequest->promptForGetDisplayMedia(UserMediaPermissionRequestProxy::UserMediaDisplayCapturePromptType::Window);
+                break;
+            }
+            case WKDisplayCapturePermissionDecisionDeny:
+                protectedRequest->deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);
+                break;
+            }
+        });
     });
 
     std::optional<WebCore::FrameIdentifier> mainFrameID;
@@ -1229,25 +1231,27 @@ void UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebPageProx
     // FIXME: Provide a specific delegate for display capture.
     if (!request.requiresDisplayCapture() && respondsToRequestMediaCapturePermission) {
         auto checker = CompletionHandlerCallChecker::create(delegate, @selector(webView:requestMediaCapturePermissionForOrigin:initiatedByFrame:type:decisionHandler:));
-        auto decisionHandler = makeBlockPtr([protectedRequest = Ref { request }, checker = WTFMove(checker)](WKPermissionDecision decision) {
+        auto decisionHandler = makeBlockPtr([protectedRequest = Ref { request }, checker = WTFMove(checker)](WKPermissionDecision decision) mutable {
             if (checker->completionHandlerHasBeenCalled())
                 return;
             checker->didCallCompletionHandler();
 
-            switch (decision) {
-            case WKPermissionDecisionPrompt:
-                protectedRequest->promptForGetUserMedia();
-                break;
-            case WKPermissionDecisionGrant: {
-                const String& videoDeviceUID = protectedRequest->requiresVideoCapture() ? protectedRequest->videoDeviceUIDs().first() : String();
-                const String& audioDeviceUID = protectedRequest->requiresAudioCapture() ? protectedRequest->audioDeviceUIDs().first() : String();
-                protectedRequest->allow(audioDeviceUID, videoDeviceUID);
-                break;
-            }
-            case WKPermissionDecisionDeny:
-                protectedRequest->deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);
-                break;
-            }
+            ensureOnMainRunLoop([protectedRequest = WTFMove(protectedRequest), decision] {
+                switch (decision) {
+                case WKPermissionDecisionPrompt:
+                    protectedRequest->promptForGetUserMedia();
+                    break;
+                case WKPermissionDecisionGrant: {
+                    const String& videoDeviceUID = protectedRequest->requiresVideoCapture() ? protectedRequest->videoDeviceUIDs().first() : String();
+                    const String& audioDeviceUID = protectedRequest->requiresAudioCapture() ? protectedRequest->audioDeviceUIDs().first() : String();
+                    protectedRequest->allow(audioDeviceUID, videoDeviceUID);
+                    break;
+                }
+                case WKPermissionDecisionDeny:
+                    protectedRequest->deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);
+                    break;
+                }
+            });
         });
 
         std::optional<WebCore::FrameIdentifier> mainFrameID;

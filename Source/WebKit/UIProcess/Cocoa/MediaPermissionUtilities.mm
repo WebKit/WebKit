@@ -190,6 +190,8 @@ static NSString *doNotAllowButtonText(MediaPermissionReason reason)
 
 void alertForPermission(WebPageProxy& page, MediaPermissionReason reason, const WebCore::SecurityOriginData& origin, CompletionHandler<void(bool)>&& completionHandler)
 {
+    ASSERT(isMainRunLoop());
+
 #if PLATFORM(IOS_FAMILY)
     if (reason == MediaPermissionReason::DeviceOrientation) {
         if (auto& userPermissionHandler = page.deviceOrientationUserPermissionHandlerForTesting())
