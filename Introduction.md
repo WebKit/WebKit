@@ -728,8 +728,8 @@ such as [postMessage](https://developer.mozilla.org/en-US/docs/Web/API/Window/po
 ## JavaScript Wrappers and IDL files
 
 In addition to typical C++ translation units (.cpp) and C++ header files (.cpp) along with some Objective-C and Objective-C++ files,
-[WebCore](https://github.com/WebKit/WebKit/tree/main/Source/WebCore) contains hundreds of [Web IDL](https://heycam.github.io/webidl/) (.idl) files.
-[Web IDL](https://heycam.github.io/webidl/) is an [interface description language](https://en.wikipedia.org/wiki/Interface_description_language)
+[WebCore](https://github.com/WebKit/WebKit/tree/main/Source/WebCore) contains hundreds of [Web IDL](https://webidl.spec.whatwg.org) (.idl) files.
+[Web IDL](https://webidl.spec.whatwg.org) is an [interface description language](https://en.wikipedia.org/wiki/Interface_description_language)
 and it's used to define the shape and the behavior of JavaScript API implemented in WebKit.
 
 When building WebKit, a [perl script](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/bindings/scripts/CodeGeneratorJS.pm)
@@ -742,7 +742,7 @@ are called **JS DOM binding code** and implements JavaScript API for objects and
 For example, C++ implementation of [Node](https://developer.mozilla.org/en-US/docs/Web/API/Node)
 is [Node class](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/dom/Node.h)
 and its JavaScript interface is implemented by `JSNode` class.
-The class declartion and most of definitions are auto-generated
+The class declaration and most of definitions are auto-generated
 at `WebKitBuild/Debug/DerivedSources/WebCore/JSNode.h` and `WebKitBuild/Debug/DerivedSources/WebCore/JSNode.cpp` for debug builds.
 It also has some custom, manually written, bindings code in
 [Source/WebCore/bindings/js/JSNodeCustom.cpp](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/bindings/js/JSNodeCustom.cpp).
@@ -775,11 +775,15 @@ which has an inline pointer to the JS wrapper for the main world if one was alre
 ### Adding new JavaScript API
 
 To introduce a new JavaScript API in [WebCore](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/), 
-first identify the directory under which to implement this new API, and introduce corresponding Web IDL files.
+first identify the directory under which to implement this new API, and introduce corresponding Web IDL files (e.g., "dom/SomeAPI.idl").
+
 New IDL files should be listed in [Source/WebCore/DerivedSources.make](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/DerivedSources.make)
-so that the aforementioned perl script can generate corresponding JS*.cpp and JS*.h filies.
+so that the aforementioned perl script can generate corresponding JS*.cpp and JS*.h files.
 Add these newly generated JS*.cpp files to [Source/WebCore/Sources.txt](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/Sources.txt)
 in order for them to be compiled.
+
+Also, add the new IDL file(s) to [Source/WebCore/CMakeLists.txt](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/CMakeLists.txt).
+
 Remember to add these files to [WebCore's Xcode project](https://github.com/WebKit/WebKit/tree/main/Source/WebCore/WebCore.xcodeproj) as well.
 
 For example, [this commit](https://github.com/WebKit/WebKit/commit/cbda68a29beb3da90d19855882c5340ce06f1546)
