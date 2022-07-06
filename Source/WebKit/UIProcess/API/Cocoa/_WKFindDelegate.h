@@ -35,4 +35,7 @@
 - (void)_webView:(WKWebView *)webView didFindMatches:(NSUInteger)matches forString:(NSString *)string withMatchIndex:(NSInteger)matchIndex;
 - (void)_webView:(WKWebView *)webView didFailToFindString:(NSString *)string;
 
+- (void)_webView:(WKWebView *)webView didAddLayerForFindOverlay:(CALayer *)layer;
+- (void)_webViewDidRemoveLayerForFindOverlay:(WKWebView *)webView;
+
 @end

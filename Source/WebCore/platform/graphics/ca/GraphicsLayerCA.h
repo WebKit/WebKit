@@ -342,7 +342,8 @@ private:
     void setVisibleAndCoverageRects(const VisibleAndCoverageRects&);
     
     bool recursiveVisibleRectChangeRequiresFlush(const CommitState&, const TransformState&) const;
-    
+
+    bool isTiledBackingLayer() const { return type() == Type::TiledBacking; }
     bool isPageTiledBackingLayer() const { return type() == Type::PageTiledBacking; }
 
     // Used to track the path down the tree for replica layers.

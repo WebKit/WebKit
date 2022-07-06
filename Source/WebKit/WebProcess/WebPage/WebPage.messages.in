@@ -339,6 +339,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     DidEndTextSearchOperation();
 
     RequestRectForFoundTextRange(struct WebKit::WebFoundTextRange range) -> (WebCore::FloatRect rect)
+    AddLayerForFindOverlay() -> (WebCore::GraphicsLayer::PlatformLayerID findLayerID)
+    RemoveLayerForFindOverlay() -> ()
     
     AddMIMETypeWithCustomContentProvider(String mimeType)
 

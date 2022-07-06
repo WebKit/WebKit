@@ -251,6 +251,7 @@ public:
     enum class Type : uint8_t {
         Normal,
         PageTiledBacking,
+        TiledBacking,
         ScrollContainer,
         ScrolledContents,
         Shape
@@ -424,7 +425,7 @@ public:
     virtual void setBackfaceVisibility(bool b) { m_backfaceVisibility = b; }
 
     float opacity() const { return m_opacity; }
-    virtual void setOpacity(float opacity) { m_opacity = opacity; }
+    WEBCORE_EXPORT virtual void setOpacity(float opacity) { m_opacity = opacity; }
 
     const FilterOperations& filters() const { return m_filters; }
     // Returns true if filter can be rendered by the compositor.

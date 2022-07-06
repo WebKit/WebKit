@@ -31,6 +31,7 @@
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/_WKFindDelegate.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 
@@ -357,6 +358,58 @@ TEST(WebKit, FindTextInImageOverlay)
     _finishedScrolling = true;
 }
 
+@end
+
+@interface TestFindDelegate : NSObject<_WKFindDelegate>
+@property (nonatomic, copy) void (^didAddLayerForFindOverlayHandler)(void);
+@property (nonatomic, copy) void (^didRemoveLayerForFindOverlayHandler)(void);
+@end
+
+@implementation TestFindDelegate {
+    BlockPtr<void()> _didAddLayerForFindOverlayHandler;
+    BlockPtr<void()> _didRemoveLayerForFindOverlayHandler;
+}
+
+- (void)setDidAddLayerForFindOverlayHandler:(void (^)(void))didAddLayerForFindOverlayHandler
+{
+    _didAddLayerForFindOverlayHandler = makeBlockPtr(didAddLayerForFindOverlayHandler);
+}
+
+- (void (^)(void))didAddLayerForFindOverlayHandler
+{
+    return _didAddLayerForFindOverlayHandler.get();
+}
+
+- (void)setDidRemoveLayerForFindOverlayHandler:(void (^)(void))didRemoveLayerForFindOverlayHandler
+{
+    _didRemoveLayerForFindOverlayHandler = makeBlockPtr(didRemoveLayerForFindOverlayHandler);
+}
+
+- (void (^)(void))didRemoveLayerForFindOverlayHandler
+{
+    return _didRemoveLayerForFindOverlayHandler.get();
+}
+
+- (void)_webView:(WKWebView *)webView didAddLayerForFindOverlay:(CALayer *)layer
+{
+    if (_didAddLayerForFindOverlayHandler)
+        _didAddLayerForFindOverlayHandler();
+}
+
+- (void)_webViewDidRemoveLayerForFindOverlay:(WKWebView *)webView
+{
+    if (_didRemoveLayerForFindOverlayHandler)
+        _didRemoveLayerForFindOverlayHandler();
+}
+
+@end
+
+@interface TestTextSearchOptions : NSObject
+@property (nonatomic) _UITextSearchMatchMethod wordMatchMethod;
+@property (nonatomic) NSStringCompareOptions stringCompareOptions;
+@end
+
+@implementation TestTextSearchOptions
 @end
 
 @interface TestSearchAggregator : NSObject <UITextSearchAggregator>
@@ -709,6 +762,48 @@ TEST(WebKit, CannotHaveMultipleFindOverlays)
     [webView waitForNextPresentationUpdate];
     [webView waitForNextPresentationUpdate];
 
+    EXPECT_EQ(overlayCount(webView.get()), 1U);
+}
+
+TEST(WebKit, FindOverlaySPI)
+{
+    auto findDelegate = adoptNS([[TestFindDelegate alloc] init]);
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)]);
+    [webView _setFindDelegate:findDelegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"lots-of-text" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+    [webView _test_waitForDidFinishNavigation];
+
+    bool done = false;
+    [findDelegate setDidAddLayerForFindOverlayHandler:[&done] {
+        done = true;
+    }];
+    [webView _addLayerForFindOverlay];
+
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_NOT_NULL([webView _layerForFindOverlay]);
+
+    done = false;
+    [findDelegate setDidAddLayerForFindOverlayHandler:nil];
+    [findDelegate setDidRemoveLayerForFindOverlayHandler:[&done] {
+        done = true;
+    }];
+
+    [webView _removeLayerForFindOverlay];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_NULL([webView _layerForFindOverlay]);
+
+    done = false;
+    [findDelegate setDidAddLayerForFindOverlayHandler:[&done] {
+        done = true;
+    }];
+
+    [webView _addLayerForFindOverlay];
+    [webView _addLayerForFindOverlay];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_NOT_NULL([webView _layerForFindOverlay]);
     EXPECT_EQ(overlayCount(webView.get()), 1U);
 }
 

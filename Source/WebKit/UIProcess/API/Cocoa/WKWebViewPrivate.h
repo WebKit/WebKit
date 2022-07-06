@@ -509,7 +509,12 @@ typedef NS_OPTIONS(NSUInteger, WKDisplayCaptureSurfaces) {
 @property (nonatomic, readonly) _UIFindInteraction *_findInteraction WK_API_AVAILABLE(ios(16.0));
 @property (nonatomic, readwrite, setter=_setFindInteractionEnabled:) BOOL _findInteractionEnabled WK_API_AVAILABLE(ios(16.0));
 
+@property (nonatomic, readonly) CALayer *_layerForFindOverlay WK_API_AVAILABLE(ios(16.0));
+
 - (void)_requestRectForFoundTextRange:(UITextRange *)ranges completionHandler:(void (^)(CGRect))completionHandler WK_API_AVAILABLE(ios(16.0));
+
+- (void)_addLayerForFindOverlay WK_API_AVAILABLE(ios(16.0));
+- (void)_removeLayerForFindOverlay WK_API_AVAILABLE(ios(16.0));
 #endif
 
 #endif

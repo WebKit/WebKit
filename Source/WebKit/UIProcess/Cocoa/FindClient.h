@@ -49,6 +49,9 @@ private:
     virtual void didCountStringMatches(WebPageProxy*, const String&, uint32_t matchCount);
     virtual void didFindString(WebPageProxy*, const String&, const Vector<WebCore::IntRect>&, uint32_t matchCount, int32_t matchIndex, bool didWrapAround);
     virtual void didFailToFindString(WebPageProxy*, const String&);
+
+    virtual void didAddLayerForFindOverlay(WebKit::WebPageProxy*, CALayer *);
+    virtual void didRemoveLayerForFindOverlay(WebKit::WebPageProxy*);
     
     WKWebView *m_webView;
     WeakObjCPtr<id <_WKFindDelegate>> m_delegate;
@@ -57,6 +60,8 @@ private:
         bool webviewDidCountStringMatches : 1;
         bool webviewDidFindString : 1;
         bool webviewDidFailToFindString : 1;
+        bool webviewDidAddLayerForFindOverlay : 1;
+        bool webviewDidRemoveLayerForFindOverlay : 1;
     } m_delegateMethods;
 };
     

@@ -4914,6 +4914,17 @@ void WebPage::requestRectForFoundTextRange(const WebFoundTextRange& range, Compl
     foundTextRangeController().requestRectForFoundTextRange(range, WTFMove(completionHandler));
 }
 
+void WebPage::addLayerForFindOverlay(CompletionHandler<void(WebCore::GraphicsLayer::PlatformLayerID)>&& completionHandler)
+{
+    foundTextRangeController().addLayerForFindOverlay(WTFMove(completionHandler));
+}
+
+void WebPage::removeLayerForFindOverlay(CompletionHandler<void()>&& completionHandler)
+{
+    foundTextRangeController().removeLayerForFindOverlay();
+    completionHandler();
+}
+
 void WebPage::getImageForFindMatch(uint32_t matchIndex)
 {
     findController().getImageForFindMatch(matchIndex);

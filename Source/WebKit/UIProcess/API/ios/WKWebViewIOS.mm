@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "APIFindClient.h"
 #import "FrontBoardServicesSPI.h"
 #import "NativeWebWheelEvent.h"
 #import "NavigationState.h"
@@ -746,6 +747,9 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView, AllowPageBac
     _commitDidRestoreScrollPosition = NO;
 
     _avoidsUnsafeArea = YES;
+
+    _pendingFindLayerID = 0;
+    _committedFindLayerID = 0;
 }
 
 - (void)_processWillSwap
@@ -1019,6 +1023,14 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
 
     if (WebKit::RemoteLayerTreeScrollingPerformanceData* scrollPerfData = _page->scrollingPerformanceData())
         scrollPerfData->didCommitLayerTree([self visibleRectInViewCoordinates]);
+
+    if (_pendingFindLayerID) {
+        CALayer *layer = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).remoteLayerTreeHost().layerForID(_pendingFindLayerID);
+        if (layer.superlayer) {
+            _committedFindLayerID = std::exchange(_pendingFindLayerID, 0);
+            _page->findClient().didAddLayerForFindOverlay(_page.get(), layer);
+        }
+    }
 }
 
 - (void)_layerTreeCommitComplete
@@ -3715,6 +3727,47 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     if ([self _searchableObject] == _contentView.get())
         [_contentView didEndTextSearchOperation];
+}
+
+- (void)_addLayerForFindOverlay
+{
+    if (!_page || _pendingFindLayerID || _committedFindLayerID)
+        return;
+
+    _page->addLayerForFindOverlay([weakSelf = WeakObjCPtr<WKWebView>(self)] (WebCore::GraphicsLayer::PlatformLayerID layerID) {
+        auto strongSelf = weakSelf.get();
+        if (strongSelf)
+            strongSelf->_pendingFindLayerID = layerID;
+    });
+}
+
+- (void)_removeLayerForFindOverlay
+{
+    if (!_page)
+        return;
+
+    if (!_pendingFindLayerID && !_committedFindLayerID)
+        return;
+
+    _pendingFindLayerID = 0;
+    _committedFindLayerID = 0;
+
+    _page->removeLayerForFindOverlay([weakSelf = WeakObjCPtr<WKWebView>(self)] {
+        auto strongSelf = weakSelf.get();
+        if (!strongSelf)
+            return;
+
+        if (auto* page = strongSelf->_page.get())
+            page->findClient().didRemoveLayerForFindOverlay(page);
+    });
+}
+
+- (CALayer *)_layerForFindOverlay
+{
+    if (!_page || !_committedFindLayerID)
+        return nil;
+
+    return downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).remoteLayerTreeHost().layerForID(_committedFindLayerID);
 }
 
 #endif // HAVE(UIFINDINTERACTION)

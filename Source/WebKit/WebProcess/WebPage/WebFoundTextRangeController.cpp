@@ -188,6 +188,25 @@ void WebFoundTextRangeController::didEndTextSearchOperation()
         m_webPage->corePage()->pageOverlayController().uninstallPageOverlay(*m_findPageOverlay, WebCore::PageOverlay::FadeMode::Fade);
 }
 
+void WebFoundTextRangeController::addLayerForFindOverlay(CompletionHandler<void(WebCore::GraphicsLayer::PlatformLayerID)>&& completionHandler)
+{
+    if (!m_findPageOverlay) {
+        m_findPageOverlay = WebCore::PageOverlay::create(*this, WebCore::PageOverlay::OverlayType::Document, WebCore::PageOverlay::AlwaysTileOverlayLayer::Yes);
+        m_webPage->corePage()->pageOverlayController().installPageOverlay(*m_findPageOverlay, WebCore::PageOverlay::FadeMode::DoNotFade);
+        m_findPageOverlay->layer().setOpacity(0);
+    }
+
+    completionHandler(m_findPageOverlay->layer().primaryLayerID());
+
+    m_findPageOverlay->setNeedsDisplay();
+}
+
+void WebFoundTextRangeController::removeLayerForFindOverlay()
+{
+    if (m_findPageOverlay)
+        m_webPage->corePage()->pageOverlayController().uninstallPageOverlay(*m_findPageOverlay, WebCore::PageOverlay::FadeMode::DoNotFade);
+}
+
 void WebFoundTextRangeController::requestRectForFoundTextRange(const WebFoundTextRange& range, CompletionHandler<void(WebCore::FloatRect)>&& completionHandler)
 {
     auto simpleRange = simpleRangeFromFoundTextRange(range);

@@ -323,6 +323,7 @@ bool GraphicsLayer::supportsLayerType(Type type)
     case Type::PageTiledBacking:
     case Type::ScrollContainer:
     case Type::ScrolledContents:
+    case Type::TiledBacking:
         return true;
     case Type::Shape:
 #if PLATFORM(COCOA)
@@ -442,6 +443,9 @@ void GraphicsLayerCA::initialize(Type layerType)
         break;
     case Type::Shape:
         platformLayerType = PlatformCALayer::LayerType::LayerTypeShapeLayer;
+        break;
+    case Type::TiledBacking:
+        platformLayerType = PlatformCALayer::LayerType::LayerTypeTiledBackingLayer;
         break;
     }
     m_layer = createPlatformCALayer(platformLayerType, this);
@@ -1619,6 +1623,7 @@ bool GraphicsLayerCA::adjustCoverageRect(VisibleAndCoverageRects& rects, const F
         }
         break;
     case Type::Normal:
+    case Type::TiledBacking:
         if (m_layer->usesTiledBackingLayer())
             coverageRect = tiledBacking()->adjustTileCoverageRect(coverageRect, oldVisibleRect, rects.visibleRect, size() != m_sizeAtLastCoverageRectUpdate);
         break;
@@ -4361,6 +4366,9 @@ void GraphicsLayerCA::setCustomAppearance(CustomAppearance customAppearance)
 
 bool GraphicsLayerCA::requiresTiledLayer(float pageScaleFactor) const
 {
+    if (isTiledBackingLayer())
+        return true;
+
     if (!m_drawsContent || isPageTiledBackingLayer() || !allowsTiling())
         return false;
 

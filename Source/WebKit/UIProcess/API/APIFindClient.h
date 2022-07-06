@@ -26,7 +26,10 @@
 #ifndef APIFindClient_h
 #define APIFindClient_h
 
+#include <WebCore/PlatformLayer.h>
 #include <wtf/text/WTFString.h>
+
+OBJC_CLASS CALayer;
 
 namespace WebCore {
 class IntRect;
@@ -46,6 +49,9 @@ public:
     virtual void didCountStringMatches(WebKit::WebPageProxy*, const WTF::String&, uint32_t) { }
     virtual void didFindString(WebKit::WebPageProxy*, const WTF::String&, const Vector<WebCore::IntRect>& matchRects, uint32_t, int32_t, bool didWrapAround) { }
     virtual void didFailToFindString(WebKit::WebPageProxy*, const WTF::String&) { }
+
+    virtual void didAddLayerForFindOverlay(WebKit::WebPageProxy*, PlatformLayer*) { }
+    virtual void didRemoveLayerForFindOverlay(WebKit::WebPageProxy*) { }
 };
 
 } // namespace API

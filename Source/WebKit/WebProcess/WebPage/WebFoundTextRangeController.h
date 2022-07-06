@@ -28,6 +28,7 @@
 #include "WebFindOptions.h"
 #include "WebFoundTextRange.h"
 #include <WebCore/FindOptions.h>
+#include <WebCore/GraphicsLayer.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/PageOverlay.h>
 #include <WebCore/SimpleRange.h>
@@ -63,6 +64,9 @@ public:
 
     void didBeginTextSearchOperation();
     void didEndTextSearchOperation();
+
+    void addLayerForFindOverlay(CompletionHandler<void(WebCore::GraphicsLayer::PlatformLayerID)>&&);
+    void removeLayerForFindOverlay();
 
     void requestRectForFoundTextRange(const WebFoundTextRange&, CompletionHandler<void(WebCore::FloatRect)>&&);
 

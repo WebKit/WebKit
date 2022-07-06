@@ -4442,6 +4442,16 @@ void WebPageProxy::requestRectForFoundTextRange(const WebFoundTextRange& range, 
     sendWithAsyncReply(Messages::WebPage::RequestRectForFoundTextRange(range), WTFMove(callbackFunction));
 }
 
+void WebPageProxy::addLayerForFindOverlay(CompletionHandler<void(WebCore::GraphicsLayer::PlatformLayerID)>&& callbackFunction)
+{
+    sendWithAsyncReply(Messages::WebPage::AddLayerForFindOverlay(), WTFMove(callbackFunction));
+}
+
+void WebPageProxy::removeLayerForFindOverlay(CompletionHandler<void()>&& callbackFunction)
+{
+    sendWithAsyncReply(Messages::WebPage::RemoveLayerForFindOverlay(), WTFMove(callbackFunction));
+}
+
 void WebPageProxy::getImageForFindMatch(int32_t matchIndex)
 {
     send(Messages::WebPage::GetImageForFindMatch(matchIndex));

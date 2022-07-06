@@ -167,6 +167,9 @@ class ViewGestureController;
     RetainPtr<UIFindInteraction> _findInteraction;
 #endif
 
+    WebCore::GraphicsLayer::PlatformLayerID _pendingFindLayerID;
+    WebCore::GraphicsLayer::PlatformLayerID _committedFindLayerID;
+
     RetainPtr<_WKRemoteObjectRegistry> _remoteObjectRegistry;
 
     std::optional<CGSize> _viewLayoutSizeOverride;

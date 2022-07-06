@@ -370,6 +370,9 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     _allowsLinkPreview = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::LinkPreviewEnabledByDefault);
     _findInteractionEnabled = NO;
 
+    _pendingFindLayerID = 0;
+    _committedFindLayerID = 0;
+
     auto fastClickingEnabled = []() {
         if (NSNumber *enabledValue = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitFastClickingDisabled"])
             return enabledValue.boolValue;

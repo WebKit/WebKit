@@ -47,6 +47,8 @@ void FindClient::setDelegate(id <_WKFindDelegate> delegate)
     m_delegateMethods.webviewDidCountStringMatches = [delegate respondsToSelector:@selector(_webView:didCountMatches:forString:)];
     m_delegateMethods.webviewDidFindString = [delegate respondsToSelector:@selector(_webView:didFindMatches:forString:withMatchIndex:)];
     m_delegateMethods.webviewDidFailToFindString = [delegate respondsToSelector:@selector(_webView:didFailToFindString:)];
+    m_delegateMethods.webviewDidAddLayerForFindOverlay = [delegate respondsToSelector:@selector(_webView:didAddLayerForFindOverlay:)];
+    m_delegateMethods.webviewDidRemoveLayerForFindOverlay = [delegate respondsToSelector:@selector(_webViewDidRemoveLayerForFindOverlay:)];
 }
     
 void FindClient::didCountStringMatches(WebPageProxy*, const String& string, uint32_t matchCount)
@@ -65,6 +67,18 @@ void FindClient::didFailToFindString(WebPageProxy*, const String& string)
 {
     if (m_delegateMethods.webviewDidFailToFindString)
         [m_delegate.get() _webView:m_webView didFailToFindString:string];
+}
+
+void FindClient::didAddLayerForFindOverlay(WebKit::WebPageProxy*, PlatformLayer* layer)
+{
+    if (m_delegateMethods.webviewDidAddLayerForFindOverlay)
+        [m_delegate _webView:m_webView didAddLayerForFindOverlay:layer];
+}
+
+void FindClient::didRemoveLayerForFindOverlay(WebKit::WebPageProxy*)
+{
+    if (m_delegateMethods.webviewDidRemoveLayerForFindOverlay)
+        [m_delegate _webViewDidRemoveLayerForFindOverlay:m_webView];
 }
 
 } // namespace WebKit
