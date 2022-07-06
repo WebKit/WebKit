@@ -7280,11 +7280,25 @@
             ],
             "status": "non-standard"
         },
+        "-webkit-user-select": {
+            "codegen-properties": {
+                "related-property": "user-select"
+            },
+            "inherited": true,
+            "values": [
+                "none",
+                "auto",
+                "text",
+                "all",
+                {
+                    "value": "contain",
+                    "status": "unimplemented"
+                }
+            ]
+        },
         "user-select": {
             "codegen-properties": {
-                "aliases": [
-                    "-webkit-user-select"
-                ]
+                "related-property": "-webkit-user-select"
             },
             "inherited": true,
             "values": [

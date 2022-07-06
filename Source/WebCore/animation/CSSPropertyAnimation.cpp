@@ -3651,6 +3651,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
 #endif
         case CSSPropertyWebkitUserDrag:
         case CSSPropertyWebkitUserModify:
+        case CSSPropertyWebkitUserSelect:
         case CSSPropertyUserSelect:
             continue;
         default:

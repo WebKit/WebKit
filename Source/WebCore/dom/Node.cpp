@@ -95,6 +95,10 @@
 #include "ContentChangeObserver.h"
 #endif
 
+#if PLATFORM(COCOA)
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(Node);
@@ -756,8 +760,10 @@ static Node::Editability computeEditabilityFromComputedStyle(const RenderStyle& 
 
     // Elements with user-select: all style are considered atomic
     // therefore non editable.
-    if (treatment == Node::UserSelectAllIsAlwaysNonEditable && style.effectiveUserSelect() == UserSelect::All)
+#if PLATFORM(COCOA)
+    if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::UserSelectAllDoesNotAffectEditability) && treatment == Node::UserSelectAllIsAlwaysNonEditable && style.effectiveUserSelect() == UserSelect::All)
         return Node::Editability::ReadOnly;
+#endif
 
     if (pageIsEditable == PageIsEditable::Yes)
         return Node::Editability::CanEditRichly;
