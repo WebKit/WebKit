@@ -1,28 +1,31 @@
 <!DOCTYPE html>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <script>
 
 description('Tests that we do not hold on to any nodes');
-
-gc();
 
 function numberOfLiveNodes() {
     return window.internals && window.internals.numberOfLiveNodes && window.internals.numberOfLiveNodes();
 }
 
+gc();
 var beforeCount = numberOfLiveNodes();
 
-var f = document.createElement('form');
-var i = f.appendChild(document.createElement('input'));
-i.setAttribute('onclick', '');
-f.removeChild(i);
-f = null;
-i = null;
+const iterations = 100;
+for (var j = 0; j < iterations; j++) {
+    var f = document.documentElement.appendChild(document.createElement('form'));
+    var i = f.appendChild(document.createElement('input'));
+    i.setAttribute('onclick', '');
+    i.remove();
+    f.remove();
+}
+
+// The conservative GC may not reclaim all unreachable nodes.
 gc();
-
-var afterCount = numberOfLiveNodes();
-
-shouldBe('afterCount - beforeCount', '0');
+var delta = numberOfLiveNodes() - beforeCount;
+if (delta < iterations / 2)
+    testPassed("did not leak");
+else
+    testFailed(`leaked an unexpected number of nodes: ${delta} leaks in ${iterations} runs`);
 
 </script>
-<script src="../../resources/js-test-post.js"></script>

@@ -802,7 +802,6 @@ platform/ios/ios/fast/coordinates/touch-event-zoomed.html
 platform/ios/ios/fast/coordinates/touch-event.html
 
 # Flaky tests:
-fast/dom/inline-event-attributes-release.html [ Failure Pass ]
 fast/text/align-center-rtl-spill.html [ Failure Pass ]
 fast/text/atsui-kerning-and-ligatures.html [ Failure Pass ]
 fast/text/atsui-multiple-renderers.html [ Failure Pass ]
