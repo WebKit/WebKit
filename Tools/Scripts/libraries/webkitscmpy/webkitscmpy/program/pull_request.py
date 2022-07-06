@@ -256,7 +256,7 @@ class PullRequest(Command):
         for line in commit.message.split():
             tracker = Tracker.from_string(line)
             if tracker:
-                tracker.add_comment('Reverted by {}'.format(pr.link))
+                tracker.add_comment('Reverted by {}'.format(pr.url))
                 tracker.set(opened=True)
                 continue
         return 0
