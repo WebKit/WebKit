@@ -273,8 +273,9 @@ private:
         }
         
         variable->setIsLoadedFrom(true);
-        node->children.setChild1(Edge(addPhi<operandKind>(node->origin, variable, idx)));
-        m_block->variablesAtHead.atFor<operandKind>(idx) = node;
+        Node* phi = addPhi<operandKind>(node->origin, variable, idx);
+        node->children.setChild1(Edge(phi));
+        m_block->variablesAtHead.atFor<operandKind>(idx) = phi;
         m_block->variablesAtTail.atFor<operandKind>(idx) = node;
     }
 
@@ -325,7 +326,7 @@ private:
             // The rules for threaded CPS form:
             // 
             // Head variable: describes what is live at the head of the basic block.
-            // Head variable links may refer to Flush, PhantomLocal, Phi, or SetArgumentDefinitely/SetArgumentMaybe.
+            // Head variable links may refer to Phi or SetArgumentDefinitely/SetArgumentMaybe.
             // SetArgumentDefinitely/SetArgumentMaybe may only appear in the root block.
             //
             // Tail variable: the last thing that happened to the variable in the block.

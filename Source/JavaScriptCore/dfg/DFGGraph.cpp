@@ -530,7 +530,11 @@ void Graph::dumpBlockHeader(PrintStream& out, const char* prefixStr, BasicBlock*
             ASSERT(phiNode->op() == Phi);
             if (!phiNode->shouldGenerate() && phiNodeDumpMode == DumpLivePhisOnly)
                 continue;
-            out.print(" D@", phiNode->index(), "<", phiNode->operand(), ",", phiNode->refCount(), ">->(");
+
+            out.print(" D@", phiNode->index(), "<", phiNode->operand(), ",", phiNode->refCount());
+            if (toCString(NodeFlagsDump(phiNode->flags())) != "<empty>")
+                out.print(", ", NodeFlagsDump(phiNode->flags()));
+            out.print(">->(");
             if (phiNode->child1()) {
                 out.print("D@", phiNode->child1()->index());
                 if (phiNode->child2()) {
