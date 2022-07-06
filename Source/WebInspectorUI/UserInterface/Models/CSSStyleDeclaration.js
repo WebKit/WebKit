@@ -358,7 +358,7 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
                     let variableTokens = tokens.slice(startIndex, i + 1);
                     startIndex = NaN;
 
-                    let variableNameIndex = variableTokens.findIndex((token) => token.value.startsWith("--") && /\bvariable-2\b/.test(token.type));
+                    let variableNameIndex = variableTokens.findIndex((token) => WI.CSSProperty.isVariable(token.value) && /\bvariable-2\b/.test(token.type));
                     if (variableNameIndex === -1)
                         continue;
 

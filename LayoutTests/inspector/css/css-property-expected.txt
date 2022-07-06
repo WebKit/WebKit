@@ -8,6 +8,8 @@ PASS: "background-repeat" should have at least 1 count.
 PASS: "background-repeat-x" should not be counted.
 PASS: "background-repeat-y" should not be counted.
 PASS: "background-repeat-invalid" should not be counted.
+PASS: "--foo" should not be counted.
+PASS: "--bar" should not be counted.
 
 Sorted by usage:
 [

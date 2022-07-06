@@ -17,6 +17,8 @@ function test() {
             InspectorTest.expectThat(!("background-repeat-x" in WI.CSSProperty._cachedNameCounts), `"background-repeat-x" should not be counted.`);
             InspectorTest.expectThat(!("background-repeat-y" in WI.CSSProperty._cachedNameCounts), `"background-repeat-y" should not be counted.`);
             InspectorTest.expectThat(!("background-repeat-invalid" in WI.CSSProperty._cachedNameCounts), `"background-repeat-invalid" should not be counted.`);
+            InspectorTest.expectThat(!("--foo" in WI.CSSProperty._cachedNameCounts), `"--foo" should not be counted.`);
+            InspectorTest.expectThat(!("--bar" in WI.CSSProperty._cachedNameCounts), `"--bar" should not be counted.`);
 
             InspectorTest.newline();
 
@@ -300,6 +302,8 @@ function test() {
         background-repeat: repeat;
         background-repeat-x: repeat;
         background-repeat-invalid: repeat;
+        --foo: red;
+        --bar: blue;
         /* background-color: black; */
         /* Not a CSS property */
         /* foo:bar; foo:baz; */
