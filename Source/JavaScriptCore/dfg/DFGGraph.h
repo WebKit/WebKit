@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1088,8 +1088,8 @@ public:
     StackCheck m_stackChecker;
     VM& m_vm;
     Plan& m_plan;
-    CodeBlock* m_codeBlock;
-    CodeBlock* m_profiledBlock;
+    CodeBlock* const m_codeBlock;
+    CodeBlock* const m_profiledBlock;
 
     Vector<RefPtr<BasicBlock>, 8> m_blocks;
     Vector<BasicBlock*, 1> m_roots;

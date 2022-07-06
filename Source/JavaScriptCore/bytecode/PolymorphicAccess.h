@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -202,7 +202,7 @@ struct AccessGenerationState {
     {
     }
     VM& m_vm;
-    JSGlobalObject* m_globalObject;
+    JSGlobalObject* const m_globalObject;
     CCallHelpers* jit { nullptr };
     ScratchRegisterAllocator* allocator;
     ScratchRegisterAllocator::PreservedState preservedReusedRegisterState;
@@ -216,7 +216,7 @@ struct AccessGenerationState {
     JSValueRegs valueRegs;
     GPRReg scratchGPR { InvalidGPRReg };
     FPRReg scratchFPR { InvalidFPRReg };
-    ECMAMode m_ecmaMode { ECMAMode::sloppy() };
+    const ECMAMode m_ecmaMode { ECMAMode::sloppy() };
     std::unique_ptr<WatchpointsOnStructureStubInfo> watchpoints;
     Vector<StructureID> weakStructures;
     Bag<OptimizingCallLinkInfo> m_callLinkInfos;

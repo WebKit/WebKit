@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -59,7 +59,7 @@ public:
 
 protected:
     JSC::MarkedArgumentBuffer m_arguments;
-    JSC::JSGlobalObject* m_globalObject;
+    JSC::JSGlobalObject* const m_globalObject;
 
 private:
     // MarkedArgumentBuffer must be stack allocated, so prevent heap

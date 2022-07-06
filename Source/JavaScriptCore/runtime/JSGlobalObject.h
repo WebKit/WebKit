@@ -292,7 +292,7 @@ private:
 
     // m_vm must be a pointer (instead of a reference) because the JSCLLIntOffsetsExtractor
     // cannot handle it being a reference.
-    VM* m_vm;
+    VM* const m_vm;
 
 // Our hashtable code-generator tries to access these properties, so we make them public.
 // However, we'd like it better if they could be protected.
@@ -421,7 +421,6 @@ public:
     FunctionStructures m_builtinFunctions;
     FunctionStructures m_ordinaryFunctions;
 
-    PropertyOffset m_functionNameOffset;
     WriteBarrierStructureID m_shadowRealmObjectStructure;
     WriteBarrierStructureID m_regExpStructure;
 
@@ -863,7 +862,6 @@ public:
     Structure* customGetterFunctionStructure() const { return m_customGetterFunctionStructure.get(this); }
     Structure* customSetterFunctionStructure() const { return m_customSetterFunctionStructure.get(this); }
     Structure* nativeStdFunctionStructure() const { return m_nativeStdFunctionStructure.get(this); }
-    PropertyOffset functionNameOffset() const { return m_functionNameOffset; }
     Structure* numberObjectStructure() const { return m_numberObjectStructure.get(this); }
     Structure* regExpStructure() const { return m_regExpStructure.get(); }
     Structure* shadowRealmStructure() const { return m_shadowRealmObjectStructure.get(); }

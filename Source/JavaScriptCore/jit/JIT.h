@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -959,8 +959,8 @@ namespace JSC {
         bool m_shouldEmitProfiling;
         BytecodeIndex m_loopOSREntryBytecodeIndex;
 
-        CodeBlock* m_profiledCodeBlock { nullptr };
-        UnlinkedCodeBlock* m_unlinkedCodeBlock { nullptr };
+        CodeBlock* const m_profiledCodeBlock { nullptr };
+        UnlinkedCodeBlock* const m_unlinkedCodeBlock { nullptr };
 
         MathICHolder m_mathICs;
         RefPtr<BaselineJITCode> m_jitCode;

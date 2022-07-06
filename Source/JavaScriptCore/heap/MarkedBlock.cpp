@@ -62,9 +62,8 @@ MarkedBlock::Handle* MarkedBlock::tryCreate(Heap& heap, AlignedMemoryAllocator* 
 MarkedBlock::Handle::Handle(Heap& heap, AlignedMemoryAllocator* alignedMemoryAllocator, void* blockSpace)
     : m_alignedMemoryAllocator(alignedMemoryAllocator)
     , m_weakSet(heap.vm())
+    , m_block(new (NotNull, blockSpace) MarkedBlock(heap.vm(), *this))
 {
-    m_block = new (NotNull, blockSpace) MarkedBlock(heap.vm(), *this);
-    
     heap.didAllocateBlock(blockSize);
 }
 

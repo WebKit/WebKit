@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -913,8 +913,8 @@ private:
     template<typename Func>
     void forEachStructureStubInfo(Func);
 
-    unsigned m_numCalleeLocals;
-    unsigned m_numVars;
+    const unsigned m_numCalleeLocals;
+    const unsigned m_numVars;
     unsigned m_numParameters;
     unsigned m_numberOfArgumentsToSkip { 0 };
     uint32_t m_osrExitCounter { 0 };
@@ -934,9 +934,9 @@ private:
     WriteBarrier<ScriptExecutable> m_ownerExecutable;
     // m_vm must be a pointer (instead of a reference) because the JSCLLIntOffsetsExtractor
     // cannot handle it being a reference.
-    VM* m_vm;
+    VM* const m_vm;
 
-    const void* m_instructionsRawPointer { nullptr };
+    const void* const m_instructionsRawPointer { nullptr };
     SentinelLinkedList<CallLinkInfo, PackedRawSentinelNode<CallLinkInfo>> m_incomingCalls;
 #if ENABLE(JIT)
     SentinelLinkedList<PolymorphicCallNode, PackedRawSentinelNode<PolymorphicCallNode>> m_incomingPolymorphicCalls;

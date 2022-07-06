@@ -76,11 +76,11 @@ JIT::JIT(VM& vm, CodeBlock* codeBlock, BytecodeIndex loopOSREntryBytecodeIndex)
     , m_canBeOptimized(false)
     , m_shouldEmitProfiling(false)
     , m_loopOSREntryBytecodeIndex(loopOSREntryBytecodeIndex)
+    , m_profiledCodeBlock(codeBlock)
+    , m_unlinkedCodeBlock(codeBlock->unlinkedCodeBlock())
 {
     auto globalObjectConstant = addToConstantPool(JITConstantPool::Type::GlobalObject);
     ASSERT_UNUSED(globalObjectConstant, globalObjectConstant == s_globalObjectConstant);
-    m_profiledCodeBlock = codeBlock;
-    m_unlinkedCodeBlock = codeBlock->unlinkedCodeBlock();
 }
 
 JIT::~JIT()

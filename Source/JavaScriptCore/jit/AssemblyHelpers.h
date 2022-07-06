@@ -1955,8 +1955,8 @@ public:
 protected:
     void copyCalleeSavesToEntryFrameCalleeSavesBufferImpl(GPRReg calleeSavesBuffer);
 
-    CodeBlock* m_codeBlock;
-    CodeBlock* m_baselineCodeBlock;
+    CodeBlock* const m_codeBlock;
+    CodeBlock* const m_baselineCodeBlock;
 };
 
 } // namespace JSC

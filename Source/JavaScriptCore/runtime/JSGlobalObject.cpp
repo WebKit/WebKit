@@ -1896,7 +1896,7 @@ private:
     IterationStatus visit(JSObject*);
 
     Vector<JSObject*>& m_foundObjects;
-    JSGlobalObject* m_globalObject { nullptr }; // Only used for SingleBadTimeGlobal mode.
+    JSGlobalObject* const m_globalObject { nullptr }; // Only used for SingleBadTimeGlobal mode.
     HashSet<JSGlobalObject*>* m_globalObjects { nullptr }; // Only used for BadTimeGlobalGraph mode;
     bool m_needsMultiGlobalsScan { false };
 };

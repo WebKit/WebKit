@@ -78,7 +78,7 @@ private:
     
     void dumpDisassembly(PrintStream&, LinkBuffer&, MacroAssembler::Label from, MacroAssembler::Label to);
     
-    CodeBlock* m_codeBlock;
+    CodeBlock* const m_codeBlock;
     MacroAssembler::Label m_startOfCode;
     Vector<MacroAssembler::Label> m_labelForBytecodeIndexInMainPath;
     Vector<MacroAssembler::Label> m_labelForBytecodeIndexInSlowPath;

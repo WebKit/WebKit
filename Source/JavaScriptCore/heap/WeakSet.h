@@ -76,7 +76,7 @@ private:
     DoublyLinkedList<WeakBlock> m_blocks;
     // m_vm must be a pointer (instead of a reference) because the JSCLLIntOffsetsExtractor
     // cannot handle it being a reference.
-    VM* m_vm;
+    VM* const m_vm;
 };
 
 inline WeakSet::WeakSet(VM& vm)

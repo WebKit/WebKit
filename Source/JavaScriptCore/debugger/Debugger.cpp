@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2008-2021 Apple Inc. All rights reserved.
+ *  Copyright (C) 2008-2022 Apple Inc. All rights reserved.
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
  *
@@ -703,7 +703,7 @@ public:
     }
 
 private:
-    JSGlobalObject* m_globalObject;
+    JSGlobalObject* const m_globalObject;
 };
 
 void Debugger::clearDebuggerRequests(JSGlobalObject* globalObject)

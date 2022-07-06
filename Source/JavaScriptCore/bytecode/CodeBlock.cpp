@@ -263,7 +263,7 @@ public:
     }
     
 private:
-    CodeBlock* m_codeBlock;
+    CodeBlock* const m_codeBlock;
     const Identifier& m_ident;
 };
 
@@ -2350,8 +2350,8 @@ public:
     bool didRecurse() const { return m_didRecurse; }
 
 private:
-    CallFrame* m_startCallFrame;
-    CodeBlock* m_codeBlock;
+    CallFrame* const m_startCallFrame;
+    CodeBlock* const m_codeBlock;
     mutable unsigned m_depthToCheck;
     mutable bool m_foundStartCallFrame;
     mutable bool m_didRecurse;

@@ -110,7 +110,7 @@ private:
     DECLARE_VISIT_CHILDREN;
 
     Ref<Wasm::Instance> m_instance;
-    VM* m_vm;
+    VM* const m_vm;
 
     WriteBarrier<JSGlobalObject> m_globalObject;
     WriteBarrier<JSWebAssemblyModule> m_module;

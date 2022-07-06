@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1123,9 +1123,9 @@ private:
 
     bool needsDynamicLookup(ResolveType, OpcodeID);
 
-    VM* m_vm;
-    CodeBlock* m_codeBlock;
-    CodeBlock* m_profiledBlock;
+    VM* const m_vm;
+    CodeBlock* const m_codeBlock;
+    CodeBlock* const m_profiledBlock;
     Graph& m_graph;
 
     // The current block being generated.
@@ -1139,16 +1139,16 @@ private:
     // True if it's OK to OSR exit right now.
     bool m_exitOK { false };
 
-    FrozenValue* m_constantUndefined;
-    FrozenValue* m_constantNull;
-    FrozenValue* m_constantNaN;
-    FrozenValue* m_constantOne;
+    FrozenValue* const m_constantUndefined;
+    FrozenValue* const m_constantNull;
+    FrozenValue* const m_constantNaN;
+    FrozenValue* const m_constantOne;
     Vector<Node*, 16> m_constants;
 
     HashMap<InlineCallFrame*, Vector<ArgumentPosition*>, WTF::DefaultHash<InlineCallFrame*>, WTF::NullableHashTraits<InlineCallFrame*>> m_inlineCallFrameToArgumentPositions;
 
     // The number of arguments passed to the function.
-    unsigned m_numArguments;
+    const unsigned m_numArguments;
     // The number of locals (vars + temporaries) used by the bytecode for the function.
     unsigned m_numLocals;
     // The max number of temps used for forwarding data to an OSR exit checkpoint.
@@ -1163,10 +1163,10 @@ private:
     unsigned m_numPassedVarArgs;
 
     struct InlineStackEntry {
-        ByteCodeParser* m_byteCodeParser;
+        ByteCodeParser* const m_byteCodeParser;
         
-        CodeBlock* m_codeBlock;
-        CodeBlock* m_profiledBlock;
+        CodeBlock* const m_codeBlock;
+        CodeBlock* const m_profiledBlock;
         InlineCallFrame* m_inlineCallFrame;
         
         ScriptExecutable* executable() { return m_codeBlock->ownerExecutable(); }
@@ -1205,7 +1205,7 @@ private:
         // Pointers to the argument position trackers for this slice of code.
         Vector<ArgumentPosition*> m_argumentPositions;
         
-        InlineStackEntry* m_caller;
+        InlineStackEntry* const m_caller;
         
         InlineStackEntry(
             ByteCodeParser*,
@@ -1265,7 +1265,7 @@ private:
     Vector<DelayedSetLocal, 2> m_setLocalQueue;
 
     const JSInstruction* m_currentInstruction;
-    bool m_hasDebuggerEnabled;
+    const bool m_hasDebuggerEnabled;
     bool m_hasAnyForceOSRExits { false };
 };
 

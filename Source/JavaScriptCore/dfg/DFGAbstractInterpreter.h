@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -256,7 +256,7 @@ private:
     
     bool handleConstantDivOp(Node*);
 
-    CodeBlock* m_codeBlock;
+    CodeBlock* const m_codeBlock;
     Graph& m_graph;
     VM& m_vm;
     AbstractStateType& m_state;
