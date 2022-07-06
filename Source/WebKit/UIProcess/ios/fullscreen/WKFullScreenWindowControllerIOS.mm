@@ -45,11 +45,7 @@
 #import <WebCore/GeometryUtilities.h>
 #import <WebCore/IntRect.h>
 #import <WebCore/LocalizedStrings.h>
-#if HAVE(PIP_CONTROLLER)
-#import <WebCore/VideoFullscreenInterfacePiP.h>
-#else
 #import <WebCore/VideoFullscreenInterfaceAVKit.h>
-#endif
 #import <WebCore/VideoFullscreenModel.h>
 #import <WebCore/ViewportArguments.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
@@ -135,7 +131,7 @@ struct WKWebViewState {
         webView.scrollView.maximumZoomScale = _savedMaximumZoomScale;
         webView.scrollView.bouncesZoom = _savedBouncesZoom;
     }
-
+    
     void store(WKWebView* webView)
     {
         _savedPageScale = [webView _pageScale];
@@ -594,17 +590,17 @@ static const NSTimeInterval kAnimationDuration = 0.2;
 
         [CATransaction begin];
         [CATransaction setDisableActions:YES];
-
+        
         [[_webViewPlaceholder layer] setContents:(id)[snapshotImage CGImage]];
         WebKit::replaceViewWithView(webView.get(), _webViewPlaceholder.get());
-
+        
         [webView setAutoresizingMask:(UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight)];
         [webView setFrame:[_window bounds]];
         [webView _overrideLayoutParametersWithMinimumLayoutSize:[_window bounds].size maximumUnobscuredSizeOverride:[_window bounds].size];
         [_window insertSubview:webView.get() atIndex:0];
         [webView setNeedsLayout];
         [webView layoutIfNeeded];
-
+        
         if (auto* manager = self._manager)
             manager->setAnimatingFullScreen(true);
 
@@ -644,7 +640,7 @@ static const NSTimeInterval kAnimationDuration = 0.2;
     _initialFrame = initialFrame;
     _finalFrame = finalFrame;
     _originalWindowFrame = [[_fullscreenViewController view] frame];
-
+    
     _initialFrame.size = WebKit::sizeExpandedToSize(_initialFrame.size, CGSizeMake(1, 1));
     _finalFrame.size = WebKit::sizeExpandedToSize(_finalFrame.size, CGSizeMake(1, 1));
     _initialFrame = WebKit::safeInlineRect(_initialFrame, [_rootViewController view].frame.size);
@@ -780,7 +776,7 @@ static const NSTimeInterval kAnimationDuration = 0.2;
 
     _initialFrame = initialFrame;
     _finalFrame = finalFrame;
-
+    
     _initialFrame.size = WebKit::sizeExpandedToSize(_initialFrame.size, CGSizeMake(1, 1));
     _finalFrame.size = WebKit::sizeExpandedToSize(_finalFrame.size, CGSizeMake(1, 1));
     _finalFrame = WebKit::safeInlineRect(_finalFrame, [_rootViewController view].frame.size);
@@ -1168,7 +1164,7 @@ static const NSTimeInterval kAnimationDuration = 0.2;
             [_fullscreenViewController setAnimating:NO];
         else
             [self _completedExitFullScreen];
-
+        
         _interactiveDismissTransitionCoordinator = nil;
 #else
         [self _completedExitFullScreen];
