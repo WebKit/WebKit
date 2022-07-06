@@ -92,6 +92,7 @@ static RetainPtr<NSURL> clientRedirectDestinationURL;
 static bool didChangeCaptivePortalMode;
 static bool captivePortalModeBeforeChange;
 static bool captivePortalModeAfterChange;
+static unsigned crashCount = 0;
 
 @interface CaptivePortalModeKVO : NSObject {
 @public
@@ -222,6 +223,7 @@ static bool captivePortalModeAfterChange;
 
 - (void)webViewWebContentProcessDidTerminate:(WKWebView *)webView
 {
+    ++crashCount;
     [webView reload];
 }
 
@@ -8466,3 +8468,112 @@ TEST(ProcessSwap, ContentModeInCaseOfPSONThenCoopProcessSwap)
     done = false;
 }
 #endif // PLATFORM(IOS_FAMILY)
+
+TEST(WebProcessCache, ReusedCrashedCachedWebProcess)
+{
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().usesWebProcessCache = YES;
+    processPoolConfiguration.get().processSwapsOnNavigationWithinSameNonHTTPFamilyProtocol = YES;
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+
+    auto webView1 = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 800) configuration:webViewConfiguration.get()]);
+    [webView1 setNavigationDelegate:delegate.get()];
+    auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 800) configuration:webViewConfiguration.get()]);
+    [webView2 setNavigationDelegate:delegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
+
+    done = false;
+    [webView1 loadRequest:request];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    done = false;
+    [webView2 loadRequest:request];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto cachedProcessPID = [webView1 _webProcessIdentifier];
+    EXPECT_NE([webView1 _webProcessIdentifier], [webView2 _webProcessIdentifier]);
+
+    [webView1 _close];
+    webView1 = nil;
+
+    // There should now be a process for apple.com in the process cache.
+    while ([processPool _processCacheSize] != 1)
+        TestWebKitAPI::Util::sleep(0.1);
+
+    crashCount = 0;
+    done = false;
+    kill([webView2 _webProcessIdentifier], 9);
+    kill(cachedProcessPID, 9);
+
+    // Intentional hang to delay processing of crash notifications.
+    sleep(1);
+
+    // View should reload due to crash.
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_EQ(crashCount, 1u);
+}
+
+TEST(WebProcessCache, ReusedCrashedBackForwardSuspendedWebProcess)
+{
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().usesWebProcessCache = YES;
+    processPoolConfiguration.get().processSwapsOnNavigationWithinSameNonHTTPFamilyProtocol = YES;
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 800) configuration:webViewConfiguration.get()]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
+
+    done = false;
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto firstWebProcessPID = [webView _webProcessIdentifier];
+
+    // We force a proces-swap via client API.
+    delegate->decidePolicyForNavigationAction = ^(WKNavigationAction *, void (^decisionHandler)(WKNavigationActionPolicy)) {
+        decisionHandler(_WKNavigationActionPolicyAllowInNewProcess);
+    };
+
+    done = false;
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main2.html"]];
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto secondWebProcessPID = [webView _webProcessIdentifier];
+    EXPECT_NE(firstWebProcessPID, secondWebProcessPID);
+
+    crashCount = 0;
+    done = false;
+    kill(secondWebProcessPID, 9);
+    kill(firstWebProcessPID, 9);
+
+    // Intentional hang to delay processing of crash notifications.
+    sleep(1);
+
+    // View should reload due to crash.
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_EQ(crashCount, 1u);
+}

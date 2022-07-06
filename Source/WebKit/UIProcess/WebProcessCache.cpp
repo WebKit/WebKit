@@ -160,11 +160,14 @@ RefPtr<WebProcessProxy> WebProcessCache::takeProcess(const WebCore::RegistrableD
 
     auto process = it->value->takeProcess();
     m_processesPerRegistrableDomain.remove(it);
-    WEBPROCESSCACHE_RELEASE_LOG("takeProcess: Taking process from WebProcess cache (size=%u, capacity=%u)", process->processIdentifier(), size(), capacity());
+    WEBPROCESSCACHE_RELEASE_LOG("takeProcess: Taking process from WebProcess cache (size=%u, capacity=%u, processWasTerminated=%d)", process->processIdentifier(), size(), capacity(), process->wasTerminated());
 
     ASSERT(!process->pageCount());
     ASSERT(!process->provisionalPageCount());
     ASSERT(!process->suspendedPageCount());
+
+    if (process->wasTerminated())
+        return nullptr;
 
     return process;
 }
