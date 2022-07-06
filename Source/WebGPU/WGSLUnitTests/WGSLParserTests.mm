@@ -27,12 +27,12 @@
 #import "Parser.h"
 
 #import "AssignmentStatement.h"
+#import "CallableExpression.h"
 #import "IdentifierExpression.h"
 #import "Lexer.h"
 #import "LiteralExpressions.h"
 #import "ReturnStatement.h"
 #import "StructureAccess.h"
-#import "TypeConversion.h"
 #import "WGSL.h"
 #import <XCTest/XCTest.h>
 #import <wtf/DataLog.h>
@@ -196,14 +196,14 @@
         XCTAssert(func.body().statements()[0]->isReturn());
         WGSL::AST::ReturnStatement& stmt = downcast<WGSL::AST::ReturnStatement>(func.body().statements()[0].get());
         XCTAssert(stmt.maybeExpression());
-        XCTAssert(stmt.maybeExpression()->isTypeConversion());
-        WGSL::AST::TypeConversion& expr = downcast<WGSL::AST::TypeConversion>(*stmt.maybeExpression());
-        XCTAssert(expr.typeDecl()->isParameterized());
+        XCTAssert(stmt.maybeExpression()->isCallableExpression());
+        WGSL::AST::CallableExpression& expr = downcast<WGSL::AST::CallableExpression>(*stmt.maybeExpression());
+        XCTAssert(expr.target().isParameterized());
         XCTAssert(expr.arguments().size() == 4);
-        XCTAssert(expr.arguments()[0]->isAbstractFloatLiteral());
-        XCTAssert(expr.arguments()[1]->isAbstractFloatLiteral());
-        XCTAssert(expr.arguments()[2]->isAbstractFloatLiteral());
-        XCTAssert(expr.arguments()[3]->isAbstractFloatLiteral());
+        XCTAssert(expr.arguments()[0].get().isAbstractFloatLiteral());
+        XCTAssert(expr.arguments()[1].get().isAbstractFloatLiteral());
+        XCTAssert(expr.arguments()[2].get().isAbstractFloatLiteral());
+        XCTAssert(expr.arguments()[3].get().isAbstractFloatLiteral());
     }
 }
 

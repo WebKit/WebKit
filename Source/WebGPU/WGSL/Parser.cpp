@@ -30,10 +30,10 @@
 
 #include "AST/Attribute.h"
 #include "AST/Expression.h"
+#include "AST/Expressions/CallableExpression.h"
 #include "AST/Expressions/IdentifierExpression.h"
 #include "AST/Expressions/LiteralExpressions.h"
 #include "AST/Expressions/StructureAccess.h"
-#include "AST/Expressions/TypeConversion.h"
 #include "AST/GlobalDecl.h"
 #include "AST/Statement.h"
 #include "AST/Statements/AssignmentStatement.h"
@@ -626,7 +626,7 @@ Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parsePrimaryExpressio
         if (current().m_type == TokenType::LT || current().m_type == TokenType::ParenLeft) {
             PARSE(type, TypeDeclAfterIdentifier, WTFMove(ident.m_ident), _startOfElementPosition);
             PARSE(arguments, ArgumentExpressionList);
-            RETURN_NODE_REF(TypeConversion, WTFMove(type), WTFMove(arguments));
+            RETURN_NODE_REF(CallableExpression, WTFMove(type), WTFMove(arguments));
         }
         RETURN_NODE_REF(IdentifierExpression, ident.m_ident);
     }

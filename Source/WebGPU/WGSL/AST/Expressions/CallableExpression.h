@@ -32,26 +32,41 @@
 
 namespace WGSL::AST {
 
-// May be converted to a function call during validation, as we can't tell the difference during parsing.
-class TypeConversion final : public Expression {
+// A CallableExpression expresses a "function" call, which consists of a target to be called,
+// and a list of arguments. The target does not necesserily have to be a function identifier,
+// but can also be a type, in which the whole call is a type conversion expression. The exact
+// kind of expression can only be resolved during semantic analysis.
+class CallableExpression final : public Expression {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    TypeConversion(SourceSpan span, UniqueRef<TypeDecl>&& typeDecl, Vector<UniqueRef<Expression>>&& arguments)
+    CallableExpression(SourceSpan span, UniqueRef<TypeDecl>&& target, Vector<UniqueRef<Expression>>&& arguments)
         : Expression(span)
-        , m_typeDecl(WTFMove(typeDecl))
+        , m_target(WTFMove(target))
         , m_arguments(WTFMove(arguments))
     {
     }
 
-    Kind kind() const override { return Kind::TypeConversion; }
-    UniqueRef<TypeDecl>& typeDecl() { return m_typeDecl; }
-    Vector<UniqueRef<Expression>>& arguments() { return m_arguments; }
+    Kind kind() const override { return Kind::CallableExpression; }
+    const TypeDecl& target() const { return m_target; }
+    Vector<std::reference_wrapper<const Expression>> arguments() const 
+    {
+        Vector<std::reference_wrapper<const Expression>> arguments;
+
+        for (const auto& argument : m_arguments)
+            arguments.append(std::cref(argument.get()));
+
+        return arguments;
+    }
 
 private:
-    UniqueRef<TypeDecl> m_typeDecl;
+    // If m_target is a NamedType, it could either be a:
+    //   * Type that does not accept parameters (bool, i32, u32, ...)
+    //   * Identifier that refers to a type alias.
+    //   * Identifier that refers to a function.
+    UniqueRef<TypeDecl> m_target;
     Vector<UniqueRef<Expression>> m_arguments;
 };
 
 } // namespace WGSL::AST
 
-SPECIALIZE_TYPE_TRAITS_WGSL_EXPRESSION(TypeConversion, isTypeConversion())
+SPECIALIZE_TYPE_TRAITS_WGSL_EXPRESSION(CallableExpression, isCallableExpression())

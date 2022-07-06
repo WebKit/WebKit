@@ -42,7 +42,7 @@ public:
         AbstractFloatLiteral,
         Identifier,
         StructureAccess,
-        TypeConversion,
+        CallableExpression,
     };
 
     Expression(SourceSpan span)
@@ -61,7 +61,7 @@ public:
     bool isAbstractFloatLiteral() const { return kind() == Kind::AbstractFloatLiteral; }
     bool isIdentifier() const { return kind() == Kind::Identifier; }
     bool isStructureAccess() const { return kind() == Kind::StructureAccess; }
-    bool isTypeConversion() const { return kind() == Kind::TypeConversion; }
+    bool isCallableExpression() const { return kind() == Kind::CallableExpression; }
 };
 
 } // namespace WGSL::AST
