@@ -5926,7 +5926,8 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
             traits.smartQuotesType = UITextSmartQuotesTypeNo;
         if ([traits respondsToSelector:@selector(setSmartDashesType:)])
             traits.smartDashesType = UITextSmartDashesTypeNo;
-        traits.spellCheckingType = UITextSpellCheckingTypeNo;
+        if ([traits respondsToSelector:@selector(setSpellCheckingType:)])
+            traits.spellCheckingType = UITextSpellCheckingTypeNo;
     }
 
     switch (_focusedElementInformation.inputMode) {
