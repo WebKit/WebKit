@@ -97,6 +97,12 @@ class PullRequest(Command):
             help='Explicitly enable or disable automatic pre-flight checks',
             action=arguments.NoAction,
         )
+        parser.add_argument(
+            '-o', '--open',
+            dest='open', default=None,
+            help='Automatically open the PR after creating it.',
+            action=arguments.NoAction,
+        )
 
     @classmethod
     def create_commit(cls, args, repository, **kwargs):
@@ -432,6 +438,9 @@ class PullRequest(Command):
 
         if pr.url:
             print(pr.url)
+
+            if args.open:
+                Terminal.open_url(pr.url)
 
         if callback:
             return callback(pr)
