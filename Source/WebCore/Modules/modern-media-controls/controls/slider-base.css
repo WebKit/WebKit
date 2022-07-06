@@ -56,7 +56,7 @@
 
 .ios .slider > input {
     /* Make sure we don't show any UI as we drag the scrubber on iOS. */
-    user-select: none !important;
+    -webkit-user-select: none !important;
     -webkit-touch-callout: none !important;
     -webkit-tap-highlight-color: transparent;
 }

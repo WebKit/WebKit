@@ -46,7 +46,7 @@
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
-    user-select: text;
+    -webkit-user-select: text;
     cursor: default;
 }
 

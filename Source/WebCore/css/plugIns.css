@@ -68,7 +68,7 @@ embed::-webkit-snapshotted-plugin-content > .snapshot-overlay > .snapshot-label,
 object::-webkit-snapshotted-plugin-content > .snapshot-overlay > .snapshot-label
 {
     color: black;
-    user-select: none;
+    -webkit-user-select: none;
 }
 
 embed::-webkit-snapshotted-plugin-content > .snapshot-overlay > .snapshot-label > div,

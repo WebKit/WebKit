@@ -94,7 +94,7 @@
 
 .content-view.audit-test.manager-editing > header :is(.name, .description)[contenteditable] {
     border: 1px solid var(--border-color);
-    user-select: text;
+    -webkit-user-select: text;
     outline-offset: var(--focus-ring-outline-offset);
 }
 

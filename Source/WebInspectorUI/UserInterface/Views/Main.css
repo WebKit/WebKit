@@ -51,7 +51,7 @@ body {
 
     overflow: hidden;
 
-    user-select: none;
+    -webkit-user-select: none;
     -webkit-user-drag: none;
 
     cursor: default;
@@ -266,7 +266,7 @@ body.docked:matches(.right, .left) #navigation-sidebar.collapsed > .resizer {
     color: var(--link-text-color);
     text-decoration: underline;
     cursor: pointer;
-    user-select: none;
+    -webkit-user-select: none;
 }
 
 .go-to-link:not(.dont-float) {
@@ -427,7 +427,7 @@ body[dir=rtl] [dir=ltr] .go-to-arrow {
     margin-top: -2px;
     margin-left: -4px;
 
-    user-select: none;
+    -webkit-user-select: none;
     pointer-events: none;
 
     animation-name: bouncy-highlight-animation;

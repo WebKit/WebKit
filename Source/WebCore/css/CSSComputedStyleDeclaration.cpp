@@ -3901,7 +3901,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
 #endif
         case CSSPropertyWebkitUserDrag:
             return cssValuePool.createValue(style.userDrag());
-        case CSSPropertyUserSelect:
+        case CSSPropertyWebkitUserSelect:
             return cssValuePool.createValue(style.userSelect());
         case CSSPropertyBorderBottomLeftRadius:
             return borderRadiusCornerValue(style.borderBottomLeftRadius(), style);

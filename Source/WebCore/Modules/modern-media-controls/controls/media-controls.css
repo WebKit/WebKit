@@ -94,7 +94,7 @@
 .media-controls::before,
 .media-controls::after {
     /* We always want to avoid showing the text selection magnifier on iOS. */
-    user-select: none;
+    -webkit-user-select: none;
     transition: opacity 0.1s linear;
 }
 

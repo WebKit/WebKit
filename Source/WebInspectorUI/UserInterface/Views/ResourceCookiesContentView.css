@@ -33,5 +33,5 @@
 }
 
 .resource-cookies .table > .header {
-    user-select: none;
+    -webkit-user-select: none;
 }

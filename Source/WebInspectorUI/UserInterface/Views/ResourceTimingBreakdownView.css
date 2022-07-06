@@ -25,7 +25,7 @@
 
 .waterfall-popover-content .resource-timing-breakdown {
     margin: 5px;
-    user-select: text;
+    -webkit-user-select: text;
 }
 
 .resource-timing-breakdown > table > tr > td.label {

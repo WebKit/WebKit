@@ -321,7 +321,6 @@ PASS transition-property
 PASS transition-timing-function
 PASS translate
 PASS unicode-bidi
-PASS user-select
 PASS vector-effect
 PASS vertical-align
 PASS visibility
@@ -392,4 +391,5 @@ PASS -webkit-text-stroke-width
 PASS -webkit-text-zoom
 PASS -webkit-user-drag
 PASS -webkit-user-modify
+PASS -webkit-user-select
 

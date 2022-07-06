@@ -25,6 +25,6 @@ PASS Property outline-width has initial value 3px
 PASS Property outline-width does not inherit
 PASS Property resize has initial value none
 PASS Property resize does not inherit
-FAIL Property user-select has initial value auto assert_equals: expected "auto" but got "text"
-FAIL Property user-select does not inherit assert_not_equals: got disallowed value "none"
+FAIL Property user-select has initial value auto assert_true: user-select doesn't seem to be supported in the computed style expected true got false
+FAIL Property user-select does not inherit assert_true: expected true got false
 

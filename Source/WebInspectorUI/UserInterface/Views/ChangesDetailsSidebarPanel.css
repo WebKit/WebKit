@@ -33,7 +33,7 @@
     font: 11px Menlo, monospace;
     color: var(--text-color-secondary);
     background-color: var(--background-color-content);
-    user-select: text;
+    -webkit-user-select: text;
 }
 
 .sidebar > .panel.changes-panel .css-rule + .css-rule {

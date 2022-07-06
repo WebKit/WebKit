@@ -33,7 +33,7 @@ button {
     justify-content: center;
     background-color: transparent !important;
     appearance: none;
-    user-select: none;
+    -webkit-user-select: none;
     -webkit-tap-highlight-color: transparent;
 }
 

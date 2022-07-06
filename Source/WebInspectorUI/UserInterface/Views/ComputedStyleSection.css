@@ -26,7 +26,7 @@
 .computed-style-section {
     padding-bottom: var(--computed-style-section-vertical-padding);
     color: var(--text-color-tertiary);
-    user-select: text;
+    -webkit-user-select: text;
 
     --computed-style-section-vertical-padding: 3px;
 }

@@ -29,7 +29,7 @@ div#image-controls {
     display: inline-block;
     position: relative;
     color: transparent;
-    user-select: none;
+    -webkit-user-select: none;
     pointer-events: none;
 }
 

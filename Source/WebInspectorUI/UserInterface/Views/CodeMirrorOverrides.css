@@ -82,7 +82,7 @@
 }
 
 .CodeMirror-linewidget {
-    user-select: text;
+    -webkit-user-select: text;
 }
 
 .CodeMirror .CodeMirror-placeholder {

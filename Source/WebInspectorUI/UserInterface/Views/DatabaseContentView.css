@@ -74,7 +74,7 @@
     width: 10px;
     height: 10px;
     margin-top: -5px;
-    user-select: none;
+    -webkit-user-select: none;
 }
 
 .database-user-query {
@@ -90,7 +90,7 @@
 
 .database-query-text {
     color: hsl(209, 100%, 50%);
-    user-select: text;
+    -webkit-user-select: text;
 }
 
 .database-query-result {
@@ -102,11 +102,11 @@
 
 .database-query-result.error {
     color: red;
-    user-select: text;
+    -webkit-user-select: text;
 }
 
 .database-query-result.no-results {
-    user-select: text;
+    -webkit-user-select: text;
 }
 
 .database-query-result.error::before {

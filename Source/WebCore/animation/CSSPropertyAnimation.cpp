@@ -3651,7 +3651,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
 #endif
         case CSSPropertyWebkitUserDrag:
         case CSSPropertyWebkitUserModify:
-        case CSSPropertyUserSelect:
+        case CSSPropertyWebkitUserSelect:
             continue;
         default:
             auto resolvedProperty = CSSProperty::resolveDirectionAwareProperty(property, RenderStyle::initialDirection(), RenderStyle::initialWritingMode());

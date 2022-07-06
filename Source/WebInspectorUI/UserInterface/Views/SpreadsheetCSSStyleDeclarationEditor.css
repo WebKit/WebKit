@@ -29,7 +29,7 @@
     font-family: Menlo, monospace;
     font-size: 11px;
     color: var(--text-color-tertiary);
-    user-select: text;
+    -webkit-user-select: text;
 
     --background-color-selected: var(--selected-text-background-color);
     --border-color-selected: var(--selected-background-color);

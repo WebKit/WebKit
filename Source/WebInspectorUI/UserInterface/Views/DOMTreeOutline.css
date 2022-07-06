@@ -48,7 +48,7 @@
 }
 
 .tree-outline.dom.non-selectable {
-    user-select: text;
+    -webkit-user-select: text;
 }
 
 .tree-outline.dom li .selection-area {

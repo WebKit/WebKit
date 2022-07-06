@@ -390,8 +390,6 @@ rect: style.getPropertyValue(transition-timing-function) : ease
 rect: style.getPropertyCSSValue(transition-timing-function) : [object CSSValueList]
 rect: style.getPropertyValue(unicode-bidi) : normal
 rect: style.getPropertyCSSValue(unicode-bidi) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(user-select) : text
-rect: style.getPropertyCSSValue(user-select) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(vector-effect) : none
 rect: style.getPropertyCSSValue(vector-effect) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(vertical-align) : baseline
@@ -506,6 +504,8 @@ rect: style.getPropertyValue(-webkit-user-drag) : auto
 rect: style.getPropertyCSSValue(-webkit-user-drag) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-user-modify) : read-only
 rect: style.getPropertyCSSValue(-webkit-user-modify) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-user-select) : text
+rect: style.getPropertyCSSValue(-webkit-user-select) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(align-content) : normal
 g: style.getPropertyCSSValue(align-content) : [object CSSValueList]
 g: style.getPropertyValue(align-items) : normal
@@ -898,8 +898,6 @@ g: style.getPropertyValue(transition-timing-function) : ease
 g: style.getPropertyCSSValue(transition-timing-function) : [object CSSValueList]
 g: style.getPropertyValue(unicode-bidi) : normal
 g: style.getPropertyCSSValue(unicode-bidi) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(user-select) : text
-g: style.getPropertyCSSValue(user-select) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(vector-effect) : none
 g: style.getPropertyCSSValue(vector-effect) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(vertical-align) : baseline
@@ -1014,4 +1012,6 @@ g: style.getPropertyValue(-webkit-user-drag) : auto
 g: style.getPropertyCSSValue(-webkit-user-drag) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-user-modify) : read-only
 g: style.getPropertyCSSValue(-webkit-user-modify) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-user-select) : text
+g: style.getPropertyCSSValue(-webkit-user-select) : [object CSSPrimitiveValue]
 

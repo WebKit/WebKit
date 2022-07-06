@@ -71,7 +71,7 @@
     text-align: center;
     text-rendering: optimizeLegibility;
 
-    user-select: text;
+    -webkit-user-select: text;
     cursor: text;
 }
 

@@ -54,7 +54,7 @@
 }
 
 .local-resource-override-label-view > div > .url {
-    user-select: text;
+    -webkit-user-select: text;
 }
 
 @media (prefers-color-scheme: dark) {

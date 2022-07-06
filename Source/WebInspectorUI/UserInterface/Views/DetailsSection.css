@@ -240,7 +240,7 @@ body[dir=rtl] .details-section > .header::before {
     word-break: break-all;
     word-wrap: break-word;
     cursor: text;
-    user-select: text;
+    -webkit-user-select: text;
 }
 
 .details-section > .content > .group > .row.simple > .value .go-to-arrow {
@@ -260,7 +260,7 @@ body[dir=rtl] .details-section > .header::before {
 }
 
 .details-section > .content > .group > .row.text {
-    user-select: text;
+    -webkit-user-select: text;
 }
 
 .details-section > .content > .group > .row.properties:not(.empty) {

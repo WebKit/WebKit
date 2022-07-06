@@ -71,14 +71,14 @@ audio::-webkit-media-controls-panel {
     min-height: 25px;
     height: 25px;
     line-height: 25px;
-    user-select: none;
+    -webkit-user-select: none;
     -webkit-user-drag: element;
     background-color: transparent;
 
     display: flex;
     flex-direction: row;
     align-items: center;
-    user-select: none;
+    -webkit-user-select: none;
 
     direction: ltr;
 
@@ -402,7 +402,7 @@ audio::-webkit-media-controls-closed-captions-container {
 video::-webkit-media-controls-closed-captions-container .list,
 audio::-webkit-media-controls-closed-captions-container .list {
     display: block;
-    user-select: none;
+    -webkit-user-select: none;
 }
 
 video::-webkit-media-controls-closed-captions-container h3,
@@ -557,7 +557,7 @@ video::-webkit-media-controls-current-time-display,
 video::-webkit-media-controls-time-remaining-display,
 audio::-webkit-media-controls-current-time-display,
 audio::-webkit-media-controls-time-remaining-display {
-    user-select: none;
+    -webkit-user-select: none;
     flex: 0 0 0;
     display: flex;
     cursor: default;
@@ -628,7 +628,7 @@ audio::-webkit-media-controls-timeline-container {
     display: flex;
     flex-direction: row;
     align-items: center;
-    user-select: none;
+    -webkit-user-select: none;
     flex: 1 1 0;
     min-width: 0;
     position: relative;
@@ -894,7 +894,7 @@ video::-webkit-media-text-track-container {
     text-indent: 0;
     text-decoration: none;
     pointer-events: none;
-    user-select: none;
+    -webkit-user-select: none;
 
     flex: 1 1;
 
@@ -1048,7 +1048,7 @@ audio::-webkit-media-controls-wireless-playback-text {
     position: absolute;
     width: 100%;
     top: calc(.5 * (100% - 25px) + (.5 * (90px + 42pt) - 42pt));
-    user-select: none;
+    -webkit-user-select: none;
     margin: 0px;
     height: 42pt;
 }

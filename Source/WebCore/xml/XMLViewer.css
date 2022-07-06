@@ -74,7 +74,7 @@ div.collapsible > div.hidden {
 }
 
 .button {
-    user-select: none;
+    -webkit-user-select: none;
     cursor: pointer;
     display: inline-block;
     margin-left: -10px;

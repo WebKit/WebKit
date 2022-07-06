@@ -114,7 +114,7 @@
 .timeline-view.cpu > .content > .overview .legend {
     padding-inline-start: 20px;
     text-align: start;
-    user-select: text;
+    -webkit-user-select: text;
 }
 
 .timeline-view.cpu > .content > .overview .legend .row {
@@ -288,7 +288,7 @@ body[dir=rtl] .timeline-view.cpu :matches(.area-chart, .stacked-area-chart) .mar
 .timeline-view.cpu > .content > .overview > .chart > .container.stats {
     padding: 0 5px;
     white-space: nowrap;
-    user-select: text;
+    -webkit-user-select: text;
 }
 
 .timeline-view.cpu > .content > .overview > .chart > .container.stats > table {

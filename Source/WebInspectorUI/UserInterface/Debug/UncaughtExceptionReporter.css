@@ -123,6 +123,6 @@ body[dir=rtl] .uncaught-exception-sheet h2 > img {
 .uncaught-exception-sheet li {
     margin-bottom: 20px;
     word-break: break-word;
-    user-select: text;
+    -webkit-user-select: text;
     white-space: pre;
 }
