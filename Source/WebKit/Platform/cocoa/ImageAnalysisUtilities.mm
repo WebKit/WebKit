@@ -312,11 +312,13 @@ void requestBackgroundRemoval(CGImageRef image, CompletionHandler<void(CGImageRe
         return;
     }
 
-    auto completionBlock = makeBlockPtr([completion = WTFMove(completion)](CGImageRef result, NSError *error) mutable {
+    auto startTime = MonotonicTime::now();
+    auto completionBlock = makeBlockPtr([completion = WTFMove(completion), startTime](CGImageRef result, NSError *error) mutable {
         if (error)
             RELEASE_LOG(ImageAnalysis, "Remove background failed with error: %@", error);
 
-        callOnMainRunLoop([protectedResult = RetainPtr { result }, completion = WTFMove(completion)]() mutable {
+        callOnMainRunLoop([protectedResult = RetainPtr { result }, completion = WTFMove(completion), startTime]() mutable {
+            RELEASE_LOG(ImageAnalysis, "Remove background finished in %.0f ms (found subject? %d)", (MonotonicTime::now() - startTime).milliseconds(), !!protectedResult);
             completion(protectedResult.get());
         });
     });
