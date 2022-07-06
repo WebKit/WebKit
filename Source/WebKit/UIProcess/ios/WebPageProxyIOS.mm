@@ -92,6 +92,16 @@ void WebPageProxy::platformInitialize()
 {
 }
 
+PlatformDisplayID WebPageProxy::generateDisplayIDFromPageID() const
+{
+    // In order to ensure that we get a unique DisplayRefreshMonitor per-DrawingArea (necessary because DisplayRefreshMonitor
+    // is driven by that class), give each page a unique DisplayID derived from WebPage's unique ID.
+    // FIXME: While using the high end of the range of DisplayIDs makes a collision with real, non-RemoteLayerTreeDrawingArea
+    // DisplayIDs less likely, it is not entirely safe to have a RemoteLayerTreeDrawingArea and TiledCoreAnimationDrawingArea
+    // coeexist in the same process.
+    return std::numeric_limits<uint32_t>::max() - webPageID().toUInt64();
+}
+
 String WebPageProxy::userAgentForURL(const URL&)
 {
     return userAgent();

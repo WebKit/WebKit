@@ -1008,6 +1008,13 @@ void WebPageProxy::swapToProvisionalPage(std::unique_ptr<ProvisionalPageProxy> p
 
     finishAttachingToWebProcess(ProcessLaunchReason::ProcessSwap);
 
+#if PLATFORM(IOS_FAMILY)
+    // On iOS, the displayID is derived from the webPageID.
+    m_displayID = generateDisplayIDFromPageID();
+    // FIXME: We may want to send WindowScreenDidChange on non-iOS platforms too.
+    send(Messages::WebPage::WindowScreenDidChange(*m_displayID, std::nullopt));
+#endif
+
 #if PLATFORM(COCOA)
     auto accessibilityToken = provisionalPage->takeAccessibilityToken();
     if (!accessibilityToken.isEmpty())

@@ -1119,9 +1119,15 @@ public:
     float deviceScaleFactor() const;
     void setIntrinsicDeviceScaleFactor(float);
     void setCustomDeviceScaleFactor(float);
+
+    void accessibilitySettingsDidChange();
+
     void windowScreenDidChange(WebCore::PlatformDisplayID, std::optional<unsigned> nominalFramesPerSecond);
     std::optional<WebCore::PlatformDisplayID> displayId() const { return m_displayID; }
-    void accessibilitySettingsDidChange();
+
+#if PLATFORM(IOS_FAMILY)
+    WebCore::PlatformDisplayID generateDisplayIDFromPageID() const;
+#endif
 
     void setUseFixedLayout(bool);
     void setFixedLayoutSize(const WebCore::IntSize&);
