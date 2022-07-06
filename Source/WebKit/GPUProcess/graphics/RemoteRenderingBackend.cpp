@@ -119,14 +119,11 @@ void RemoteRenderingBackend::stopListeningForIPC()
     ASSERT(RunLoop::isMain());
     m_streamConnection->invalidate();
 
-    // This item is dispatched to the WorkQueue before calling stopAndWaitForCompletion() such that it will process it last, after any existing work.
-    m_workQueue->dispatch([&] {
+    // This item is dispatched to the WorkQueue such that it will process it last, after any existing work.
+    m_workQueue->stopAndWaitForCompletion([&] {
         // Make sure we destroy the ResourceCache on the WorkQueue since it gets populated on the WorkQueue.
-        // Make sure rendering resource request is released after destroying the cache.
         m_remoteResourceCache = { m_gpuConnectionToWebProcess->webProcessIdentifier() };
-        m_renderingResourcesRequest = { };
     });
-    m_workQueue->stopAndWaitForCompletion();
 
     m_streamConnection->stopReceivingMessages(Messages::RemoteRenderingBackend::messageReceiverName(), m_renderingBackendIdentifier.toUInt64());
 
@@ -180,7 +177,6 @@ void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, Ren
 void RemoteRenderingBackend::createImageBufferWithQualifiedIdentifier(const FloatSize& logicalSize, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, QualifiedRenderingResourceIdentifier imageBufferResourceIdentifier)
 {
     ASSERT(!RunLoop::isMain());
-    ASSERT(renderingMode == RenderingMode::Accelerated || renderingMode == RenderingMode::Unaccelerated);
 
     RefPtr<ImageBuffer> imageBuffer;
 

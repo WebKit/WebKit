@@ -49,7 +49,7 @@ public:
     void removeStreamConnection(StreamServerConnection&);
 
     void dispatch(WTF::Function<void()>&&) final;
-    void stopAndWaitForCompletion();
+    void stopAndWaitForCompletion(WTF::Function<void()>&& cleanupFunction = nullptr);
 
     void wakeUp();
 
@@ -69,6 +69,7 @@ private:
     mutable Lock m_lock;
     RefPtr<Thread> m_processingThread WTF_GUARDED_BY_LOCK(m_lock);
     Deque<Function<void()>> m_functions WTF_GUARDED_BY_LOCK(m_lock);
+    WTF::Function<void()> m_cleanupFunction WTF_GUARDED_BY_LOCK(m_lock);
     HashCountedSet<Ref<StreamServerConnection>> m_connections WTF_GUARDED_BY_LOCK(m_lock);
     friend void assertIsCurrent(const StreamConnectionWorkQueue&);
 };

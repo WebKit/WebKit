@@ -79,14 +79,15 @@ void StreamConnectionWorkQueue::removeStreamConnection(StreamServerConnection& c
     wakeUp();
 }
 
-void StreamConnectionWorkQueue::stopAndWaitForCompletion()
+void StreamConnectionWorkQueue::stopAndWaitForCompletion(WTF::Function<void()>&& cleanupFunction)
 {
-    m_shouldQuit = true;
     RefPtr<Thread> processingThread;
     {
         Locker locker { m_lock };
+        m_cleanupFunction = WTFMove(cleanupFunction);
         processingThread = WTFMove(m_processingThread);
     }
+    m_shouldQuit = true;
     if (!processingThread)
         return;
     ASSERT(Thread::current().uid() != processingThread->uid());
@@ -111,6 +112,11 @@ void StreamConnectionWorkQueue::startProcessingThread()
             processStreams();
             if (m_shouldQuit) {
                 processStreams();
+                {
+                    Locker locker { m_lock };
+                    if (m_cleanupFunction)
+                        m_cleanupFunction();
+                }
                 return;
             }
             m_wakeUpSemaphore.wait();
