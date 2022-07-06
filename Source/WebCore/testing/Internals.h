@@ -485,6 +485,7 @@ public:
 
     void setForceUseGlyphDisplayListForTesting(bool enabled);
     ExceptionOr<String> cachedGlyphDisplayListsForTextNode(Node&, unsigned short flags);
+    void clearGlyphDisplayListCacheForTesting();
 
     ExceptionOr<void> garbageCollectDocumentResources() const;
 

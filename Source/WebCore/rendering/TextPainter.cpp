@@ -230,6 +230,11 @@ void TextPainter::setForceUseGlyphDisplayListForTesting(bool enabled)
     forceUseGlyphDisplayListForTesting = enabled;
 }
 
+void TextPainter::clearGlyphDisplayListCacheForTesting()
+{
+    GlyphDisplayListCache::singleton().clear();
+}
+
 String TextPainter::cachedGlyphDisplayListsForTextNodeAsText(Text& textNode, OptionSet<DisplayList::AsTextFlag> flags)
 {
     if (!textNode.renderer())

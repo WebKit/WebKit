@@ -78,6 +78,7 @@ public:
     static bool shouldUseGlyphDisplayList(const PaintInfo&);
     WEBCORE_EXPORT static void setForceUseGlyphDisplayListForTesting(bool);
     WEBCORE_EXPORT static String cachedGlyphDisplayListsForTextNodeAsText(Text&, OptionSet<DisplayList::AsTextFlag>);
+    WEBCORE_EXPORT static void clearGlyphDisplayListCacheForTesting();
 
 private:
     template<typename LayoutRun>

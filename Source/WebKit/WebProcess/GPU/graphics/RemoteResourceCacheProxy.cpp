@@ -196,6 +196,8 @@ void RemoteResourceCacheProxy::clearImageBufferBackends()
 
 void RemoteResourceCacheProxy::clearDecomposedGlyphsMap()
 {
+    for (auto& decomposedGlyphs : m_decomposedGlyphs.values())
+        decomposedGlyphs->removeObserver(*this);
     m_decomposedGlyphs.clear();
 }
 

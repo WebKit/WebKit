@@ -620,6 +620,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
 
     undefined setForceUseGlyphDisplayListForTesting(boolean enabled);
     DOMString cachedGlyphDisplayListsForTextNode(Node node, optional unsigned short flags = 0);
+    undefined clearGlyphDisplayListCacheForTesting();
 
     undefined garbageCollectDocumentResources();
 

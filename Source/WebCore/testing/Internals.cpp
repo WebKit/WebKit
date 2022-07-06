@@ -3271,6 +3271,11 @@ void Internals::setForceUseGlyphDisplayListForTesting(bool enabled)
     TextPainter::setForceUseGlyphDisplayListForTesting(enabled);
 }
 
+void Internals::clearGlyphDisplayListCacheForTesting()
+{
+    TextPainter::clearGlyphDisplayListCacheForTesting();
+}
+
 ExceptionOr<String> Internals::cachedGlyphDisplayListsForTextNode(Node& node, unsigned short flags)
 {
     Document* document = contextDocument();
