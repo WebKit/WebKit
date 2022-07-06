@@ -55,7 +55,6 @@
 #include "WebSWClientConnection.h"
 #include "WebSWClientConnectionMessages.h"
 #include "WebSWContextManagerConnection.h"
-#include "WebSWContextManagerConnectionMessages.h"
 #include "WebServiceWorkerProvider.h"
 #include "WebSharedWorkerContextManagerConnection.h"
 #include "WebSharedWorkerContextManagerConnectionMessages.h"
@@ -165,18 +164,6 @@ void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IP
         return;
     }
 
-#if ENABLE(SERVICE_WORKER)
-    if (decoder.messageReceiverName() == Messages::WebSWClientConnection::messageReceiverName()) {
-        serviceWorkerConnection().didReceiveMessage(connection, decoder);
-        return;
-    }
-    if (decoder.messageReceiverName() == Messages::WebSWContextManagerConnection::messageReceiverName()) {
-        ASSERT(SWContextManager::singleton().connection());
-        if (auto* contextManagerConnection = SWContextManager::singleton().connection())
-            static_cast<WebSWContextManagerConnection&>(*contextManagerConnection).didReceiveMessage(connection, decoder);
-        return;
-    }
-#endif
     if (decoder.messageReceiverName() == Messages::WebSharedWorkerObjectConnection::messageReceiverName()) {
         sharedWorkerConnection().didReceiveMessage(connection, decoder);
         return;
@@ -201,15 +188,6 @@ void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IP
 
 bool NetworkProcessConnection::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
 {
-#if ENABLE(SERVICE_WORKER)
-    if (decoder.messageReceiverName() == Messages::WebSWContextManagerConnection::messageReceiverName()) {
-        ASSERT(SWContextManager::singleton().connection());
-        if (auto* contextManagerConnection = SWContextManager::singleton().connection())
-            return static_cast<WebSWContextManagerConnection&>(*contextManagerConnection).didReceiveSyncMessage(connection, decoder, replyEncoder);
-        return false;
-    }
-#endif
-
 #if ENABLE(APPLE_PAY_REMOTE_UI)
     if (decoder.messageReceiverName() == Messages::WebPaymentCoordinator::messageReceiverName()) {
         if (auto webPage = WebProcess::singleton().webPage(makeObjectIdentifier<PageIdentifierType>(decoder.destinationID())))
@@ -315,8 +293,10 @@ WebIDBConnectionToServer& NetworkProcessConnection::idbConnectionToServer()
 #if ENABLE(SERVICE_WORKER)
 WebSWClientConnection& NetworkProcessConnection::serviceWorkerConnection()
 {
-    if (!m_swConnection)
+    if (!m_swConnection) {
         m_swConnection = WebSWClientConnection::create();
+        m_swConnection->establishConnection();
+    }
     return *m_swConnection;
 }
 #endif

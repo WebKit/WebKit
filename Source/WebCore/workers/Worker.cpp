@@ -263,6 +263,7 @@ void Worker::postTaskToWorkerGlobalScope(Function<void(ScriptExecutionContext&)>
 
 void Worker::forEachWorker(const Function<Function<void(ScriptExecutionContext&)>()>& callback)
 {
+    ASSERT(isMainThread());
     for (auto* worker : allWorkers().values())
         worker->postTaskToWorkerGlobalScope(callback());
 }

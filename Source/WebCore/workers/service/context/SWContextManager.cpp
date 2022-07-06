@@ -97,24 +97,6 @@ RefPtr<ServiceWorkerThreadProxy> SWContextManager::serviceWorkerThreadProxyFromB
     return result;
 }
 
-void SWContextManager::fireInstallEvent(ServiceWorkerIdentifier identifier)
-{
-    auto* serviceWorker = serviceWorkerThreadProxy(identifier);
-    if (!serviceWorker)
-        return;
-
-    serviceWorker->fireInstallEvent();
-}
-
-void SWContextManager::fireActivateEvent(ServiceWorkerIdentifier identifier)
-{
-    auto* serviceWorker = serviceWorkerThreadProxy(identifier);
-    if (!serviceWorker)
-        return;
-
-    serviceWorker->fireActivateEvent();
-}
-
 void SWContextManager::firePushEvent(ServiceWorkerIdentifier identifier, std::optional<Vector<uint8_t>>&& data, CompletionHandler<void(bool)>&& callback)
 {
     auto* serviceWorker = serviceWorkerThreadProxy(identifier);
@@ -138,8 +120,10 @@ void SWContextManager::firePushSubscriptionChangeEvent(ServiceWorkerIdentifier i
 void SWContextManager::fireNotificationEvent(ServiceWorkerIdentifier identifier, NotificationData&& data, NotificationEventType eventType, CompletionHandler<void(bool)>&& callback)
 {
     auto* serviceWorker = serviceWorkerThreadProxy(identifier);
-    if (!serviceWorker)
+    if (!serviceWorker) {
+        callback(false);
         return;
+    }
 
     serviceWorker->fireNotificationEvent(WTFMove(data), eventType, WTFMove(callback));
 }
