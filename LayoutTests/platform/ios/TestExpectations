@@ -1274,7 +1274,6 @@ webkit.org/b/178487 compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Fa
 webkit.org/b/178487 compositing/rtl/rtl-iframe-fixed-overflow.html [ Failure ]
 webkit.org/b/178487 compositing/video/video-object-fit.html [ Failure ]
 webkit.org/b/178487 compositing/masks/compositing-clip-path-on-subpixel-position.html [ ImageOnlyFailure ]
-webkit.org/b/178487 compositing/overlap-blending/nested-overlap-overflow.html [ ImageOnlyFailure ]
 webkit.org/b/178487 compositing/video/video-clip-change-src.html [ ImageOnlyFailure ]
 
 # CSS tests to triage
