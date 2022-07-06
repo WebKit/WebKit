@@ -4768,6 +4768,8 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('buildername', 'Style-EWS')
 
         self.expectRemoteCommands(
+            ExpectShell(command=['/bin/sh', '-c', 'rm .git/identifiers.json || true'], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout=''),
             ExpectShell(command=['/bin/sh', '-c', 'git rebase --abort || true'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
             ExpectShell(command=['/bin/sh', '-c', 'git am --abort || true'], workdir='wkdir', timeout=300, logEnviron=False) + 0
@@ -4796,6 +4798,8 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('platform', 'wincairo')
 
         self.expectRemoteCommands(
+            ExpectShell(command=['sh', '-c', 'rm .git/identifiers.json || exit 0'], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout=''),
             ExpectShell(command=['sh', '-c', 'git rebase --abort || exit 0'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
             ExpectShell(command=['sh', '-c', 'git am --abort || exit 0'], workdir='wkdir', timeout=300, logEnviron=False) + 0
@@ -4823,6 +4827,8 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('buildername', 'Commit-Queue')
 
         self.expectRemoteCommands(
+            ExpectShell(command=['/bin/sh', '-c', 'rm .git/identifiers.json || true'], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout=''),
             ExpectShell(command=['/bin/sh', '-c', 'git rebase --abort || true'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
             ExpectShell(command=['/bin/sh', '-c', 'git am --abort || true'], workdir='wkdir', timeout=300, logEnviron=False) + 0
@@ -4850,6 +4856,8 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('buildername', 'Commit-Queue')
 
         self.expectRemoteCommands(
+            ExpectShell(command=['/bin/sh', '-c', 'rm .git/identifiers.json || true'], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout=''),
             ExpectShell(command=['/bin/sh', '-c', 'git rebase --abort || true'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
             ExpectShell(command=['/bin/sh', '-c', 'git am --abort || true'], workdir='wkdir', timeout=300, logEnviron=False) + 0
@@ -4878,6 +4886,8 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('basename', 'safari-612-branch')
 
         self.expectRemoteCommands(
+            ExpectShell(command=['/bin/sh', '-c', 'rm .git/identifiers.json || true'], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout=''),
             ExpectShell(command=['/bin/sh', '-c', 'git rebase --abort || true'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
             ExpectShell(command=['/bin/sh', '-c', 'git am --abort || true'], workdir='wkdir', timeout=300, logEnviron=False) + 0

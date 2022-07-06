@@ -4454,6 +4454,7 @@ class CleanGitRepo(steps.ShellSequence, ShellMixin):
         branch = self.getProperty('basename', self.default_branch)
         self.commands = []
         for command in [
+            self.shell_command('rm .git/identifiers.json || {}'.format(self.shell_exit_0())),
             self.shell_command('git rebase --abort || {}'.format(self.shell_exit_0())),
             self.shell_command('git am --abort || {}'.format(self.shell_exit_0())),
             ['git', 'clean', '-f', '-d'],  # Remove any left-over layout test results, added files, etc.
