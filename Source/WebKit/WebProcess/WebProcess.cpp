@@ -595,10 +595,6 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 #endif
     SharedWorkerProvider::setSharedProvider(WebSharedWorkerProvider::singleton());
 
-#if ENABLE(WEBASSEMBLY)
-    JSC::Wasm::enableFastMemory();
-#endif
-
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION) && !RELEASE_LOG_DISABLED
     WebResourceLoadObserver::setShouldLogUserInteraction(parameters.shouldLogUserInteraction);
 #endif

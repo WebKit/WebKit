@@ -25,11 +25,12 @@
 
 #include "config.h"
 #include "WasmMemory.h"
-#include "WasmInstance.h"
 
 #if ENABLE(WEBASSEMBLY)
 
 #include "Options.h"
+#include "WasmFaultSignalHandler.h"
+#include "WasmInstance.h"
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/DataLog.h>
 #include <wtf/Gigacage.h>
@@ -301,10 +302,10 @@ MemoryHandle::MemoryHandle(void* memory, size_t size, size_t mappedCapacity, Pag
     , m_initial(initial)
     , m_maximum(maximum)
 {
-#if ASSERT_ENABLED
     if (sharingMode == MemorySharingMode::Default && mode == MemoryMode::BoundsChecking)
         ASSERT(mappedCapacity == size);
-#endif
+    else
+        activateSignalingMemory();
 }
 
 MemoryHandle::~MemoryHandle()
