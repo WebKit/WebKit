@@ -75,6 +75,8 @@ public:
         return Base::parseAndValidateModule(m_source.data(), m_source.size());
     }
 
+    static bool planGeneratesLoopOSREntrypoints(const ModuleInformation&);
+
 private:
     bool prepareImpl() final;
     void compileFunction(uint32_t functionIndex) final;

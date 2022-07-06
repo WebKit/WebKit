@@ -188,7 +188,7 @@ WASM_SLOW_PATH_DECL(loop_osr)
     unsigned loopOSREntryBytecodeOffset = callee->bytecodeOffset(pc);
     const auto& osrEntryData = tierUpCounter.osrEntryDataForLoop(loopOSREntryBytecodeOffset);
 
-    if (Options::wasmLLIntTiersUpToBBQ()) {
+    if (Options::wasmLLIntTiersUpToBBQ() && Wasm::BBQPlan::planGeneratesLoopOSREntrypoints(instance->module().moduleInformation())) {
         if (!jitCompileAndSetHeuristics(callee, instance))
             WASM_RETURN_TWO(nullptr, nullptr);
 
