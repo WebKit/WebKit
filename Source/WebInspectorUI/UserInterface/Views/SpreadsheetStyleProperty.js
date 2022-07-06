@@ -371,7 +371,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
     spreadsheetTextFieldInitialCompletionIndex(textField, completions)
     {
         if (textField === this._nameTextField && WI.settings.experimentalCSSSortPropertyNameAutocompletionByUsage.value)
-            return completions.minIndex(WI.CSSProperty.sortByPropertyNameUsageCount);
+            return WI.CSSProperty.indexOfCompletionForMostUsedPropertyName(completions);
         return 0;
     }
 

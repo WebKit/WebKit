@@ -124,4 +124,8 @@ WI.QueryResult = class QueryResult
         ranges.push(new WI.TextRange(0, startIndex, 0, endIndex + 1));
         return ranges;
     }
+
+    // Testing
+
+    set rankForTesting(rank) { this._rank = rank; }
 };

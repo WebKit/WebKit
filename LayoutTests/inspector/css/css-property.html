@@ -18,12 +18,36 @@ function test() {
             InspectorTest.expectThat(!("background-repeat-y" in WI.CSSProperty._cachedNameCounts), `"background-repeat-y" should not be counted.`);
             InspectorTest.expectThat(!("background-repeat-invalid" in WI.CSSProperty._cachedNameCounts), `"background-repeat-invalid" should not be counted.`);
 
+            InspectorTest.newline();
+
             const counts = [99, 1, 100, 0, 101, 150, 50, 200];
             let seenProperty = (count) => `Fake Property ${count} Seen`;
             let unseenProperty = (count) => `Fake Property ${count} Unseen`;
+            let createQueryResults = (count, rank) => {
+                let unseen = new WI.QueryResult(unseenProperty(count), ["not reached"]);
+                unseen.rankForTesting = rank;
+
+                let seen = new WI.QueryResult(seenProperty(count), ["not reached"]);
+                seen.rankForTesting = rank;
+
+                return [unseen, seen];
+            }
             for (const count of counts)
                 WI.CSSProperty._cachedNameCounts[seenProperty(count)] = count;
+
+            InspectorTest.log("Sorted by usage:");
             InspectorTest.json(counts.flatMap((count) => [unseenProperty(count), seenProperty(count)]).sort(WI.CSSProperty.sortByPropertyNameUsageCount))
+
+            {
+                let completions = counts.flatMap((count) => createQueryResults(count, count % 2));
+                InspectorTest.log(`Initially selected completion when ranked by \`count % 2\`: "${completions[WI.CSSProperty.indexOfCompletionForMostUsedPropertyName(completions)].value}"`);
+            }
+
+            {
+                let completions = counts.flatMap((count) => createQueryResults(count, count % 3));
+                InspectorTest.log(`Initially selected completion when ranked by \`count % 3\`: "${completions[WI.CSSProperty.indexOfCompletionForMostUsedPropertyName(completions)].value}"`);
+            }
+
             for (const count of counts)
                 delete WI.CSSProperty._cachedNameCounts[seenProperty(count)];
         }

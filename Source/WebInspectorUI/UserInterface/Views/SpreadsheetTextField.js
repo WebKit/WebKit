@@ -463,7 +463,7 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
         this._suggestionsView.selectedIndex = NaN;
         if (this._completionPrefix) {
             if (this._delegate?.spreadsheetTextFieldInitialCompletionIndex)
-                this._suggestionsView.selectedIndex = this._delegate.spreadsheetTextFieldInitialCompletionIndex(this, completions.map((completion) => WI.CSSCompletions.getCompletionText(completion)));
+                this._suggestionsView.selectedIndex = this._delegate.spreadsheetTextFieldInitialCompletionIndex(this, completions);
             else
                 this._suggestionsView.selectNext();
         } else

@@ -112,6 +112,25 @@ WI.CSSProperty = class CSSProperty extends WI.Object
         return 0;
     }
 
+    static indexOfCompletionForMostUsedPropertyName(completions)
+    {
+        let highestRankCompletions = completions;
+        if (highestRankCompletions.every((completion) => completion instanceof WI.QueryResult)) {
+            let highestRankValue = -1;
+            for (let completion of completions) {
+                if (completion.rank > highestRankValue) {
+                    highestRankValue = completion.rank;
+                    highestRankCompletions = [];
+                }
+
+                if (completion.rank === highestRankValue)
+                    highestRankCompletions.push(completion);
+            }
+        }
+        let mostUsedHighestRankCompletion = highestRankCompletions.min((a, b) => WI.CSSProperty.sortByPropertyNameUsageCount(WI.CSSCompletions.getCompletionText(a), WI.CSSCompletions.getCompletionText(b)));
+        return completions.indexOf(mostUsedHighestRankCompletion);
+    }
+
     static _initializePropertyNameCounts()
     {
         if (WI.CSSProperty._cachedNameCounts)

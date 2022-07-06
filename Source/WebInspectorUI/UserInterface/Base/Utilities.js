@@ -1592,6 +1592,14 @@ function simpleGlobStringToRegExp(globString, regExpFlags)
     return new RegExp(regexString, regExpFlags);
 }
 
+Object.defineProperty(Array.prototype, "min",
+{
+    value(comparator)
+    {
+        return this[this.minIndex(comparator)];
+    },
+});
+
 Object.defineProperty(Array.prototype, "minIndex",
 {
     value(comparator)
@@ -1602,9 +1610,9 @@ Object.defineProperty(Array.prototype, "minIndex",
         }
         comparator = comparator || defaultComparator;
 
-        let minIndex = 0;
-        for (let i = 1; i < this.length; ++i) {
-            if (comparator(this[minIndex], this[i]) > 0)
+        let minIndex = -1;
+        for (let i = 0; i < this.length; ++i) {
+            if (minIndex === -1 || comparator(this[minIndex], this[i]) > 0)
                 minIndex = i;
         }
         return minIndex;

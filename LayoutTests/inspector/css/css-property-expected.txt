@@ -8,6 +8,8 @@ PASS: "background-repeat" should have at least 1 count.
 PASS: "background-repeat-x" should not be counted.
 PASS: "background-repeat-y" should not be counted.
 PASS: "background-repeat-invalid" should not be counted.
+
+Sorted by usage:
 [
   "Fake Property 200 Seen",
   "Fake Property 150 Seen",
@@ -26,6 +28,8 @@ PASS: "background-repeat-invalid" should not be counted.
   "Fake Property 50 Seen",
   "Fake Property 200 Unseen"
 ]
+Initially selected completion when ranked by `count % 2`: "Fake Property 101 Seen"
+Initially selected completion when ranked by `count % 3`: "Fake Property 200 Seen"
 
 -- Running test case: CSSProperty.prototype.get valid
 PASS: "background-repeat" is a valid property.
