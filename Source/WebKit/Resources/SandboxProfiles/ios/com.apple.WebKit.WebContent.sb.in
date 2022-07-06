@@ -919,7 +919,7 @@
     (home-subpath "/Library/Preferences/")
     (with no-log))
 
-(deny mach-lookup (with no-log) (with telemetry)
+(deny mach-lookup (with no-log)
     (global-name "com.apple.containermanagerd")
 )
 
@@ -1087,6 +1087,7 @@
         SYS_close_nocancel
         SYS_csops ;; used by Corefoundation initialization
         SYS_csops_audittoken ;; used by WK to get entitlments
+        SYS_dup
         SYS_exit
         SYS_faccessat ;; <rdar://problem/56998930>
         SYS_fcntl
@@ -1098,6 +1099,7 @@
         SYS_fsetxattr ;; <rdar://problem/49795964>
         SYS_fstat64
         SYS_fstat64_extended ;; <rdar://problem/61310019>
+        SYS_fstatat64
         SYS_fstatfs64
         SYS_ftruncate
         SYS_getattrlist ;; xpc_realpath and directory enumeration
@@ -1169,9 +1171,7 @@
 
 (define (syscall-unix-rarely-in-use)
     (syscall-number
-        SYS_dup
         SYS_fgetxattr
-        SYS_fstatat64
         SYS_fsync
         SYS_getattrlistbulk ;; xpc_realpath and directory enumeration
         SYS_getgid
