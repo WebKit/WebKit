@@ -192,11 +192,10 @@ RefPtr<Image> ImageBuffer::sinkIntoImage(RefPtr<ImageBuffer> source, PreserveRes
     if (source->resolutionScale() == 1 || preserveResolution == PreserveResolution::Yes)
         image = sinkIntoNativeImage(WTFMove(source));
     else {
-        auto copySize = source->logicalSize();
-        auto copyBuffer = source->context().createImageBuffer(copySize, 1.f, source->colorSpace());
+        auto copyBuffer = source->context().createImageBuffer(source->logicalSize(), 1.f, source->colorSpace());
         if (!copyBuffer)
             return nullptr;
-        drawConsuming(WTFMove(source), copyBuffer->context(), FloatRect { { }, copySize }, FloatRect { 0, 0, -1, -1 }, CompositeOperator::Copy);
+        copyBuffer->context().drawConsumingImageBuffer(WTFMove(source), FloatRect { { }, copyBuffer->logicalSize() }, CompositeOperator::Copy);
         image = ImageBuffer::sinkIntoNativeImage(WTFMove(copyBuffer));
     }
     if (!image)

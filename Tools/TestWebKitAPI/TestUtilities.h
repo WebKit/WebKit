@@ -28,6 +28,8 @@
 #include "Test.h"
 #include "WTFStringUtilities.h"
 #include <WebCore/Color.h>
+#include <WebCore/FloatRect.h>
+#include <WebCore/FloatSize.h>
 #include <wtf/text/TextStream.h>
 
 namespace TestWebKitAPI {
@@ -40,6 +42,20 @@ namespace TestWebKitAPI {
 namespace WebCore {
 
 inline std::ostream& operator<<(std::ostream& os, const WebCore::Color& value)
+{
+    TextStream s { TextStream::LineMode::SingleLine };
+    s << value;
+    return os << s.release();
+}
+
+inline std::ostream& operator<<(std::ostream& os, const WebCore::FloatSize& value)
+{
+    TextStream s { TextStream::LineMode::SingleLine };
+    s << value;
+    return os << s.release();
+}
+
+inline std::ostream& operator<<(std::ostream& os, const WebCore::FloatRect& value)
 {
     TextStream s { TextStream::LineMode::SingleLine };
     s << value;

@@ -42,8 +42,57 @@ static ::testing::AssertionResult imageBufferPixelIs(Color expected, ImageBuffer
     auto frontPixelBuffer = imageBuffer.getPixelBuffer(format, { x, y, 1, 1 });
     auto got = Color { SRGBA<uint8_t> { frontPixelBuffer->item(0), frontPixelBuffer->item(1), frontPixelBuffer->item(2), frontPixelBuffer->item(3) } };
     if (got != expected)
-        return ::testing::AssertionFailure() << "color is not expected. Got: " << got << ", expected: " << expected << ".";
+        return ::testing::AssertionFailure() << "color is not expected at (" << x << ", " << y << "). Got: " << got << ", expected: " << expected << ".";
     return ::testing::AssertionSuccess();
+}
+namespace {
+struct TestPattern {
+    FloatRect unitRect;
+    Color color;
+};
+
+}
+static TestPattern g_testPattern[] = {
+    { { 0.0f, 0.0f, 0.5f, 0.5f }, Color::magenta },
+    { { 0.5f, 0.0f, 0.5f, 0.5f }, Color::yellow },
+    { { 0.0f, 0.5f, 0.5f, 0.5f }, Color::lightGray },
+    { { 0.5f, 0.5f, 0.5f, 0.5f }, Color::transparentBlack },
+};
+
+static ::testing::AssertionResult hasTestPattern(ImageBuffer& buffer)
+{
+    // Test pattern draws fractional pixels when deviceScaleFactor is < 1.
+    // For now, account this by sampling somewhere where the fractional pixels
+    // are guaranteed to not exist (4 logical pixels inwards of the pattern
+    // borders).
+    static constexpr float fuzz = 4.0f;
+
+    for (auto pattern : g_testPattern) {
+        auto rect = pattern.unitRect;
+        rect.scale(buffer.logicalSize());
+        rect = enclosingIntRect(rect);
+        auto p1 = rect.minXMinYCorner();
+        p1.move(fuzz, fuzz);
+        auto result = imageBufferPixelIs(pattern.color, buffer, p1.x(), p1.y());
+        if (!result)
+            return result;
+        p1 = rect.maxXMaxYCorner();
+        p1.move(-fuzz, -fuzz);
+        result = imageBufferPixelIs(pattern.color, buffer, p1.x() - 1, p1.y() - 1);
+        if (!result)
+            return result;
+    }
+    return ::testing::AssertionSuccess();
+}
+
+static void drawTestPattern(ImageBuffer& buffer)
+{
+    for (auto pattern : g_testPattern) {
+        auto rect = pattern.unitRect;
+        rect.scale(buffer.logicalSize());
+        rect = enclosingIntRect(rect);
+        buffer.context().fillRect(rect, pattern.color);
+    }
 }
 
 // Tests that the specialized image buffer constructors construct the expected type of object.
@@ -73,7 +122,7 @@ TEST(ImageBufferTests, ImageBufferSubPixelDrawing)
     float scale = 1.91326535;
     auto frontImageBuffer = ImageBuffer::create(logicalSize, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat, { ImageBufferOptions::Accelerated });
     auto backImageBuffer = ImageBuffer::create(logicalSize, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat, { ImageBufferOptions::Accelerated });
-    
+
     auto strokeRect = FloatRect { { }, logicalSize };
     strokeRect.inflate(-0.5);
     auto fillRect = strokeRect;
@@ -87,7 +136,7 @@ TEST(ImageBufferTests, ImageBufferSubPixelDrawing)
 
     frontContext.setStrokeColor(Color::red);
     frontContext.strokeRect(strokeRect, 1);
-    
+
     frontContext.fillRect(fillRect, Color::green);
 
     for (int i = 0; i < 1000; ++i) {
@@ -162,4 +211,84 @@ TEST(ImageBufferTests, DISABLED_DrawImageBufferDoesNotReferenceExtraMemory)
     lastFootprint = initialFootprint;
     EXPECT_TRUE(memoryFootprintChangedBy(lastFootprint, 0, footprintError));
 }
+
+enum class TestImageBufferOptions {
+    Accelerated, NoOptions
+};
+
+void PrintTo(TestImageBufferOptions value, ::std::ostream* o)
+{
+    if (value == TestImageBufferOptions::Accelerated)
+        *o << "Accelerated";
+    else if (value == TestImageBufferOptions::NoOptions)
+        *o << "NoOptions";
+    else
+        *o << "Unknown";
+}
+
+enum class TestPreserveResolution {
+    No,
+    Yes
+};
+
+void PrintTo(TestPreserveResolution value, ::std::ostream* o)
+{
+    if (value == TestPreserveResolution::No)
+        *o << "PreserveResolution_No";
+    else if (value == TestPreserveResolution::Yes)
+        *o << "PreserveResolution_Yes";
+    else
+        *o << "Unknown";
+}
+
+// ImageBuffer test fixture for tests that are variant to the image buffer device scale factor, options and the operation argument of preserving resolution
+class PreserveResolutionOperationTest : public testing::TestWithParam<std::tuple<float, TestImageBufferOptions, TestPreserveResolution>> {
+public:
+    float deviceScaleFactor() const { return std::get<0>(GetParam()); }
+    OptionSet<ImageBufferOptions> imageBufferOptions() const
+    {
+        auto testOptions = std::get<1>(GetParam());
+        if (testOptions == TestImageBufferOptions::Accelerated)
+            return ImageBufferOptions::Accelerated;
+        return { };
+    }
+    PreserveResolution operationPreserveResolution()
+    {
+        if (std::get<2>(GetParam()) == TestPreserveResolution::No)
+            return PreserveResolution::No;
+        return PreserveResolution::Yes;
+    }
+};
+
+// Test that ImageBuffer::sinkIntoImage() returns Image that contains the ImageBuffer contents and
+// that the returned Image is of expected size.
+TEST_P(PreserveResolutionOperationTest, SinkIntoImageWorks)
+{
+    FloatSize testSize { 50, 57 };
+    auto buffer = ImageBuffer::create(testSize, RenderingPurpose::Unspecified, deviceScaleFactor(), DestinationColorSpace::SRGB(), PixelFormat::BGRA8, imageBufferOptions());
+    ASSERT_NE(buffer, nullptr);
+    auto verifyBuffer = ImageBuffer::create(buffer->logicalSize(), RenderingPurpose::Unspecified, 1.f, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    ASSERT_NE(verifyBuffer, nullptr);
+    drawTestPattern(*buffer);
+
+    auto image = ImageBuffer::sinkIntoImage(WTFMove(buffer), operationPreserveResolution());
+    ASSERT_NE(image, nullptr);
+
+    if (operationPreserveResolution() == PreserveResolution::Yes)
+        EXPECT_EQ(image->size(), expandedIntSize(testSize.scaled(deviceScaleFactor())));
+    else
+        EXPECT_EQ(image->size(), testSize);
+    verifyBuffer->context().drawImage(*image, FloatRect { { }, verifyBuffer->logicalSize() }, CompositeOperator::Copy);
+    EXPECT_TRUE(hasTestPattern(*verifyBuffer));
+}
+
+INSTANTIATE_TEST_SUITE_P(ImageBufferTests,
+    PreserveResolutionOperationTest,
+    testing::Combine(
+        testing::Values(0.5f, 1.f, 2.f),
+        testing::Values(TestImageBufferOptions::NoOptions, TestImageBufferOptions::Accelerated),
+        testing::Values(TestPreserveResolution::No, TestPreserveResolution::Yes)),
+    TestParametersToStringFormatter());
+
+
 }
