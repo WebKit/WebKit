@@ -93,7 +93,7 @@ void initialize()
 
 #if !USE(SYSTEM_MALLOC)
 #if BUSE(LIBPAS)
-        if (Options::libpasSavengeContinuously())
+        if (Options::libpasScavengeContinuously())
             pas_scavenger_disable_shut_down();
 #endif
 #endif
