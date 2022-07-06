@@ -51,6 +51,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/HTMLQuoteElement.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/HTMLSelectElement.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/HTMLSlotElement.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/HTMLSourceElement.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/HTMLStyleElement.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/HTMLTableCellElement.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/HTMLTableColElement.html

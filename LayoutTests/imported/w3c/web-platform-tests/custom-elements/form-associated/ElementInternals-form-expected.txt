@@ -3,7 +3,4 @@ CONSOLE MESSAGE: TypeError: this.attachInternals is not a function. (In 'this.at
 
 Harness Error (FAIL), message = TypeError: this.attachInternals is not a function. (In 'this.attachInternals()', 'this.attachInternals' is undefined)
 
-FAIL LABEL association assert_equals: expected Element node <my-control></my-control> but got null
-FAIL LABEL click assert_equals: expected 1 but got 0
-FAIL ElementInternals.labels should throw NotSupportedError if the target element is not a form-associated custom element element.attachInternals is not a function. (In 'element.attachInternals()', 'element.attachInternals' is undefined)
 

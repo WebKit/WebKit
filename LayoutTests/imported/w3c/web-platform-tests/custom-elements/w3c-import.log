@@ -36,6 +36,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/perform-microtask-checkpoint-before-construction.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/prevent-extensions-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/pseudo-class-defined-print-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/pseudo-class-defined-print-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/pseudo-class-defined-print.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/pseudo-class-defined.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/range-and-constructors.html

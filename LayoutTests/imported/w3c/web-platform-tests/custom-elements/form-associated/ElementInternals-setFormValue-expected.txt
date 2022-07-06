@@ -113,4 +113,5 @@ FAIL Newline normalization - \r\n in FormData filename (urlencoded) promise_test
 FAIL Newline normalization - \r\n in FormData filename (formdata) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
 FAIL Newline normalization - \n\r in FormData filename (urlencoded) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
 FAIL Newline normalization - \n\r in FormData filename (formdata) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'this.internals_.setFormValue')"
+FAIL ElementInternals.setFormValue() should throw NotSupportedError if the target element is not a form-associated custom element element.attachInternals is not a function. (In 'element.attachInternals()', 'element.attachInternals' is undefined)
 
