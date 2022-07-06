@@ -469,7 +469,6 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
     willDismissPopover()
     {
-        this._valueElement.classList.remove(WI.Popover.IgnoreAutoDismissClassName);
         this._cssDocumentationPopover = null;
     }
 
@@ -581,8 +580,6 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
     {
         this._cssDocumentationPopover ??= new WI.CSSDocumentationPopover(this._property, this);
         this._cssDocumentationPopover.show(this._nameElement);
-        if (this._isEditable())
-            this._valueElement.classList.add(WI.Popover.IgnoreAutoDismissClassName);
     }
 
     _createInlineSwatch(type, contents, valueObject)
