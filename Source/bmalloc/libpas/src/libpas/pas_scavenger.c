@@ -49,6 +49,7 @@
 #include <unistd.h>
 
 static const bool verbose = false;
+static bool is_shut_down_enabled = true;
 
 bool pas_scavenger_is_enabled = true;
 bool pas_scavenger_eligibility_notification_has_been_deferred = false;
@@ -320,7 +321,7 @@ static void* scavenger_thread_main(void* arg)
                have to. */
             if (pas_scavenger_current_state != pas_scavenger_state_polling)
                 pas_scavenger_current_state = pas_scavenger_state_polling;
-        } else {
+        } else if (PAS_LIKELY(is_shut_down_enabled)) {
             double absolute_timeout_in_milliseconds_for_deep_pre_sleep;
             
             if (pas_scavenger_current_state == pas_scavenger_state_polling) {
@@ -352,19 +353,21 @@ static void* scavenger_thread_main(void* arg)
             }
         }
         
-        while (get_time_in_milliseconds() < absolute_timeout_in_milliseconds_for_period_sleep
-               && !pas_scavenger_should_suspend_count) {
-            timed_wait(&data->cond, &data->lock,
-                       absolute_timeout_in_milliseconds_for_period_sleep);
+        if (PAS_LIKELY(is_shut_down_enabled)) {
+            while (get_time_in_milliseconds() < absolute_timeout_in_milliseconds_for_period_sleep
+                   && !pas_scavenger_should_suspend_count) {
+                timed_wait(&data->cond, &data->lock,
+                           absolute_timeout_in_milliseconds_for_period_sleep);
+            }
+
+            should_shut_down |= !!pas_scavenger_should_suspend_count;
+
+            if (should_shut_down) {
+                pas_scavenger_current_state = pas_scavenger_state_no_thread;
+                pthread_cond_broadcast(&data->cond);
+            }
         }
 
-        should_shut_down |= !!pas_scavenger_should_suspend_count;
-        
-        if (should_shut_down) {
-            pas_scavenger_current_state = pas_scavenger_state_no_thread;
-            pthread_cond_broadcast(&data->cond);
-        }
-        
         pthread_mutex_unlock(&data->lock);
         
         if (should_shut_down) {
@@ -574,6 +577,13 @@ void pas_scavenger_perform_synchronous_operation(
         return;
     }
     PAS_ASSERT(!"Should not be reached");
+}
+
+void pas_scavenger_disable_shut_down(void)
+{
+    pas_scavenger_suspend();
+    is_shut_down_enabled = false;
+    pas_scavenger_resume();
 }
 
 #endif /* LIBPAS_ENABLED */

@@ -121,6 +121,9 @@ typedef enum {
 PAS_API void pas_scavenger_perform_synchronous_operation(
     pas_scavenger_synchronous_operation_kind kind);
 
+/* This is for debugging purpose only. */
+PAS_API void pas_scavenger_disable_shut_down(void);
+
 PAS_END_EXTERN_C;
 
 #endif /* PAS_SCAVENGER_H */

@@ -48,6 +48,13 @@
 #include <wtf/Threading.h>
 #include <wtf/threads/Signals.h>
 
+#if !USE(SYSTEM_MALLOC)
+#include <bmalloc/BPlatform.h>
+#if BUSE(LIBPAS)
+#include <bmalloc/pas_scavenger.h>
+#endif
+#endif
+
 namespace JSC {
 
 static_assert(sizeof(bool) == 1, "LLInt and JIT assume sizeof(bool) is always 1 when touching it directly from assembly code.");
@@ -83,6 +90,13 @@ void initialize()
             StructureAlignedMemoryAllocator::initializeStructureAddressSpace();
         }
         Options::finalize();
+
+#if !USE(SYSTEM_MALLOC)
+#if BUSE(LIBPAS)
+        if (Options::libpasSavengeContinuously())
+            pas_scavenger_disable_shut_down();
+#endif
+#endif
 
         JITOperationList::populatePointersInJavaScriptCore();
 

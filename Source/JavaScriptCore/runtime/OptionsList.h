@@ -536,6 +536,7 @@ bool canUseWebAssemblyFastMemory();
     v(Bool, useDataICSharing, false, Normal, nullptr) \
     v(Bool, useLLIntICs, true, Normal, "Use property and call ICs in LLInt code.") \
     v(Bool, useBaselineJITCodeSharing, is64Bit(), Normal, nullptr) \
+    v(Bool, libpasSavengeContinuously, false, Normal, nullptr) \
     \
     /* Feature Flags */\
     \
