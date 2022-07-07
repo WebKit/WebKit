@@ -74,7 +74,7 @@ public:
     void seekCompleted() final;
     void setTimeFudgeFactor(const MediaTime&) final;
 
-    MediaTime duration() const { return m_client->duration(); }
+    MediaTime duration() const { return m_client ? m_client->duration() : MediaTime(); }
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
