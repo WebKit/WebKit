@@ -2060,14 +2060,14 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         }).get()];
 
         RunLoop::main().dispatchAfter(1_s, [weakSelf = WeakObjCPtr<WKWebView>(self), didInvalidateResizeAssertions] {
-            auto strongSelf = weakSelf.get();
-            WKWEBVIEW_RELEASE_LOG("WKWebview %p next visible content rect update took too long; clearing resize assertions", strongSelf.get());
-            if (!strongSelf)
-                return;
-
             if (*didInvalidateResizeAssertions)
                 return;
 
+            auto strongSelf = weakSelf.get();
+            if (!strongSelf)
+                return;
+
+            WKWEBVIEW_RELEASE_LOG("WKWebView %p next visible content rect update took too long; clearing resize assertions", strongSelf.get());
             [strongSelf _invalidateResizeAssertions];
 
             *didInvalidateResizeAssertions = true;
