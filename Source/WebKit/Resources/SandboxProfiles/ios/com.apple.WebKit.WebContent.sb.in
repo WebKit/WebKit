@@ -246,9 +246,8 @@
             (xpc-service-name "com.apple.MTLCompilerService")
         )
     )
-    ;; This is just for logging. Remove when GPU process is enabled by default.
+    ;; Remove when GPU process is enabled by default.
     (allow mach-lookup
-        (with telemetry)
         (require-all
             (require-not (extension "com.apple.webkit.extension.mach"))
             (xpc-service-name "com.apple.MTLCompilerService")
@@ -923,27 +922,23 @@
     (global-name "com.apple.containermanagerd")
 )
 
-(deny mach-lookup (with telemetry)
-    (global-name "com.apple.mobilegestalt.xpc")
-)
+(deny mach-lookup
+    (global-name "com.apple.mobilegestalt.xpc"))
 
 (deny mach-lookup (with no-log)
     (xpc-service-name "com.apple.audio.toolbox.reporting.service")
 )
 
-(allow iokit-open (with telemetry-backtrace)
+(allow iokit-open
     (require-all
         (require-not (extension "com.apple.webkit.extension.iokit"))
         (iokit-user-client-class "IOSurfaceRootUserClient")))
 
-(deny iokit-open (with telemetry)
+(deny iokit-open
     (require-all
         (require-not (extension "com.apple.webkit.extension.iokit"))
         (iokit-user-client-class
-            "IOSurfaceAcceleratorClient"
-        )
-    )
-)
+            "IOSurfaceAcceleratorClient")))
 
 (deny iokit-open (with no-log)
     (iokit-user-client-class
@@ -1171,6 +1166,8 @@
 
 (define (syscall-unix-rarely-in-use)
     (syscall-number
+        SYS___pthread_sigmask
+        SYS___semwait_signal
         SYS_fgetxattr
         SYS_fsync
         SYS_getattrlistbulk ;; xpc_realpath and directory enumeration
@@ -1181,6 +1178,7 @@
         SYS_open_dprotected_np
         SYS_openat_nocancel
         SYS_pread_nocancel
+        SYS_psynch_rw_wrlock
         SYS_rmdir
         SYS_sendto
         SYS_setrlimit
@@ -1190,6 +1188,7 @@
         SYS_sigreturn
 #endif
         SYS_thread_selfusage
+        SYS_umask
         SYS_unlink
         SYS_write
         SYS_writev))
@@ -1197,14 +1196,11 @@
 (define (syscall-unix-rarely-in-use-need-backtrace)
     (syscall-number
         SYS___pthread_kill
-        SYS___pthread_sigmask
-        SYS___semwait_signal
 #if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
         SYS_necp_client_action
         SYS_necp_open
 #endif
-        SYS_psynch_rw_wrlock
-        SYS_umask))
+        ))
 
 (when (defined? 'syscall-unix)
     (deny syscall-unix (with telemetry) (with send-signal SIGKILL))
@@ -1223,10 +1219,10 @@
             (syscall-unix-only-in-use-during-launch)))
 #endif
 
-    (allow syscall-unix (with telemetry)
+    (allow syscall-unix
         (syscall-unix-rarely-in-use))
 
-    (allow syscall-unix (with report) (with telemetry-backtrace)
+    (allow syscall-unix (with report)
         (syscall-unix-rarely-in-use-need-backtrace))
 )
 
@@ -1267,7 +1263,7 @@
             F_SETFL ;; CMCapture uses when camera is enabled
             F_SETNOSIGPIPE)) ;; CMCapture uses when camera is enabled
 
-    (allow system-fcntl (with telemetry-backtrace)
+    (allow system-fcntl
         (fcntl-command
             F_GETLK
             F_OFD_SETLK))
@@ -1534,7 +1530,7 @@
     )
 )
 
-(deny darwin-notification-post (with no-log) (with telemetry))
+(deny darwin-notification-post (with no-log))
 (allow darwin-notification-post
     (notification-name
         "_AXNotification_AXSClassicInvertColorsPreference"
