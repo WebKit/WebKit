@@ -102,11 +102,6 @@ class LayoutTraits
     {
         throw "Derived class must implement this function.";
     }
-
-    additionalControlScaleFactor()
-    {
-        return 1;
-    }
 }
 
 LayoutTraits.Mode = {
