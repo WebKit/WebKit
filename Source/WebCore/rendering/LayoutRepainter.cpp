@@ -30,20 +30,30 @@
 
 namespace WebCore {
 
-LayoutRepainter::LayoutRepainter(RenderElement& renderer, bool checkForRepaint)
+LayoutRepainter::LayoutRepainter(RenderElement& renderer, bool checkForRepaint, RepaintOutlineBounds repaintOutlineBounds)
     : m_renderer(renderer)
     , m_checkForRepaint(checkForRepaint)
+    , m_repaintOutlineBounds(repaintOutlineBounds == RepaintOutlineBounds::Yes)
 {
-    if (m_checkForRepaint) {
-        m_repaintContainer = m_renderer.containerForRepaint().renderer;
-        m_oldBounds = m_renderer.clippedOverflowRectForRepaint(m_repaintContainer);
-        m_oldOutlineBox = m_renderer.outlineBoundsForRepaint(m_repaintContainer);
-    }
+    if (!m_checkForRepaint)
+        return;
+
+    m_repaintContainer = m_renderer.containerForRepaint().renderer;
+    m_oldBounds = m_renderer.clippedOverflowRectForRepaint(m_repaintContainer);
+
+    if (m_repaintOutlineBounds)
+        m_oldOutlineBounds = m_renderer.outlineBoundsForRepaint(m_repaintContainer);
 }
 
 bool LayoutRepainter::repaintAfterLayout()
 {
-    return m_checkForRepaint ? m_renderer.repaintAfterLayoutIfNeeded(m_repaintContainer, m_oldBounds, m_oldOutlineBox) : false;
+    if (!m_checkForRepaint)
+        return false;
+
+    auto newBounds = m_renderer.clippedOverflowRectForRepaint(m_repaintContainer);
+    auto newOutlineBounds = m_repaintOutlineBounds ? nullptr : &m_oldOutlineBounds;
+
+    return m_renderer.repaintAfterLayoutIfNeeded(m_repaintContainer, m_oldBounds, m_oldOutlineBounds, &newBounds, newOutlineBounds);
 }
 
 } // namespace WebCore

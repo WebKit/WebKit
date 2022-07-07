@@ -144,7 +144,7 @@ void RenderSVGShape::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
 
-    LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
+    LayoutRepainter repainter(*this, checkForRepaintDuringLayout(), RepaintOutlineBounds::No);
     if (m_needsShapeUpdate) {
         // FIXME: [LBSE] Upstream SVGLengthContext changes
         // graphicsElement().updateLengthContext();
