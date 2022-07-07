@@ -63,6 +63,8 @@ static std::optional<MediaCapabilitiesInfo> computeMediaCapabilitiesInfo(const M
     if (configuration.video) {
         auto& videoConfiguration = configuration.video.value();
         MediaEngineSupportParameters parameters { };
+        parameters.allowedMediaContainerTypes = configuration.allowedMediaContainerTypes;
+        parameters.allowedMediaCodecTypes = configuration.allowedMediaCodecTypes;
 
         switch (configuration.type) {
         case MediaDecodingType::File:
@@ -136,6 +138,9 @@ static std::optional<MediaCapabilitiesInfo> computeMediaCapabilitiesInfo(const M
         MediaEngineSupportParameters parameters { };
         parameters.type = ContentType(configuration.audio.value().contentType);
         parameters.isMediaSource = configuration.type == MediaDecodingType::MediaSource;
+        parameters.allowedMediaContainerTypes = configuration.allowedMediaContainerTypes;
+        parameters.allowedMediaCodecTypes = configuration.allowedMediaCodecTypes;
+
         if (MediaPlayer::supportsType(parameters) != MediaPlayer::SupportsType::IsSupported)
             return std::nullopt;
 

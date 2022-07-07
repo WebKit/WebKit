@@ -906,6 +906,10 @@ webkit.org/b/236298 imported/w3c/web-platform-tests/css/css-ui/text-overflow-022
 # Requires support for xHE-HAAC audio codec
 webkit.org/b/239750 media/media-source/media-mp4-xhe-aac.html [ Skip ]
 
+# Requires unsupported captive portal codec and container restrictions
+webkit.org/b/242145 media/mediacapabilities/mediacapabilities-allowed-codecs.html [ Skip ]
+webkit.org/b/242145 media/mediacapabilities/mediacapabilities-allowed-containers.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #////////////////////////////////////////////////////////////////////////////////////////

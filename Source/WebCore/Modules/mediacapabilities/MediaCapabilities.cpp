@@ -176,6 +176,9 @@ static void gatherDecodingInfo(Document& document, MediaDecodingConfiguration&& 
     if (!document.settings().mediaCapabilitiesExtensionsEnabled() && configuration.video)
         configuration.video.value().alphaChannel.reset();
 
+    configuration.allowedMediaContainerTypes = document.settings().allowedMediaContainerTypes();
+    configuration.allowedMediaCodecTypes = document.settings().allowedMediaCodecTypes();
+
 #if ENABLE(VP9)
     configuration.canExposeVP9 = document.settings().vp9DecoderEnabled();
 #endif

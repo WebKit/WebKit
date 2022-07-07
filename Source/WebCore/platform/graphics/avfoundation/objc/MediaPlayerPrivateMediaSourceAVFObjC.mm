@@ -32,6 +32,7 @@
 #import "AVAssetTrackUtilities.h"
 #import "AVStreamDataParserMIMETypeCache.h"
 #import "CDMSessionAVStreamSession.h"
+#import "ContentTypeUtilities.h"
 #import "GraphicsContext.h"
 #import "IOSurface.h"
 #import "Logging.h"
@@ -270,6 +271,9 @@ MediaPlayer::SupportsType MediaPlayerPrivateMediaSourceAVFObjC::supportsTypeAndC
 {
     // This engine does not support non-media-source sources.
     if (!parameters.isMediaSource)
+        return MediaPlayer::SupportsType::IsNotSupported;
+
+    if (!contentTypeMeetsContainerAndCodecTypeRequirements(parameters.type, parameters.allowedMediaContainerTypes, parameters.allowedMediaCodecTypes))
         return MediaPlayer::SupportsType::IsNotSupported;
 
     auto supported = SourceBufferParser::isContentTypeSupported(parameters.type);

@@ -1,0 +1,26 @@
+RUN(internals.settings.setAllowedMediaCodecTypes(null))
+RUN(promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', video: { contentType: 'video/mp4; codecs="avc1"', height: 720, bitrate: 1000, width: 1280, framerate: 24.5 } });)
+Promise resolved OK
+EXPECTED (info.supported == 'true') OK
+RUN(internals.settings.setAllowedMediaCodecTypes("unkn,none"))
+RUN(promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', video: { contentType: 'video/mp4; codecs="avc1"', height: 720, bitrate: 1000, width: 1280, framerate: 24.5 } });)
+Promise resolved OK
+EXPECTED (info.supported == 'false') OK
+RUN(promise = navigator.mediaCapabilities.decodingInfo({ type: 'media-source', video: { contentType: 'video/mp4; codecs="avc1"', height: 720, bitrate: 1000, width: 1280, framerate: 24.5 } });)
+Promise resolved OK
+EXPECTED (info.supported == 'false') OK
+RUN(internals.settings.setAllowedMediaCodecTypes("avc1,mp4a.40"))
+RUN(promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', audio: { contentType: 'audio/mp3', channels: '2', bitrate: 1000, samplerate: 44100 } });)
+Promise resolved OK
+EXPECTED (info.supported == 'false') OK
+RUN(promise = navigator.mediaCapabilities.decodingInfo({ type: 'media-source', audio: { contentType: 'audio/mp3', channels: '2', bitrate: 1000, samplerate: 44100 } });)
+Promise resolved OK
+EXPECTED (info.supported == 'false') OK
+RUN(promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', video: { contentType: 'video/mp4; codecs="avc1"', height: 720, bitrate: 1000, width: 1280, framerate: 24.5 } });)
+Promise resolved OK
+EXPECTED (info.supported == 'true') OK
+RUN(promise = navigator.mediaCapabilities.decodingInfo({ type: 'media-source', video: { contentType: 'video/mp4; codecs="avc1"', height: 720, bitrate: 1000, width: 1280, framerate: 24.5 } });)
+Promise resolved OK
+EXPECTED (info.supported == 'true') OK
+END OF TEST
+
