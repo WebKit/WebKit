@@ -9,4 +9,5 @@ PASS Aborting from a listener does not call future listeners
 PASS Adding then aborting a listener in another listener does not call it
 PASS Aborting from a nested listener should remove it
 PASS Passing null as the signal should throw
+PASS Passing null as the signal should throw (listener is also null)
 

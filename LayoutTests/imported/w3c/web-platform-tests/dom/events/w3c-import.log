@@ -89,6 +89,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/focus-event-document-move.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/keypress-dispatch-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/legacy-pre-activation-behavior.window.js
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/passive-by-default.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/relatedTarget.window.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/replace-event-listener-null-browsing-context-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/shadow-relatedTarget.html

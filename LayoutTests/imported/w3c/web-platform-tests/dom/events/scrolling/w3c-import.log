@@ -22,6 +22,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/overscroll-event-fired-to-scrolled-element.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/overscroll-event-fired-to-window.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/scroll_support.js
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-after-sequence-of-scrolls.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-after-snap.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-programmatic-scroll.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-for-scrollIntoView.html
@@ -30,3 +31,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-to-scrolled-element.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-to-window.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-for-user-scroll.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-not-fired-after-removing-scroller.tentative.html

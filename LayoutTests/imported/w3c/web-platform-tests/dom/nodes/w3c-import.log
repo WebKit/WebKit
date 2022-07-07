@@ -55,6 +55,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-createElement.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-createElementNS.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-createElementNS.js
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-createEvent-touchevent.window.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-createEvent.https.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-createEvent.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Document-createProcessingInstruction-xhtml.xhtml
@@ -205,8 +206,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Text-wholeText.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/adoption.window.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/append-on-Document.html
-/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/aria-attribute-reflection.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/aria-element-reflection.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/attributes-namednodemap.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/attributes.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/attributes.js

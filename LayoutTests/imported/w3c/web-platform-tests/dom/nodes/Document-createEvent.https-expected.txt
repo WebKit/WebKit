@@ -133,6 +133,13 @@ PASS uievents should be an alias for UIEvent.
 PASS createEvent('uievents') should be initialized correctly.
 PASS UIEVENTS should be an alias for UIEvent.
 PASS createEvent('UIEVENTS') should be initialized correctly.
+NOTRUN TouchEvent should be an alias for TouchEvent. 'expose legacy touch event APIs'
+NOTRUN createEvent('TouchEvent') should be initialized correctly. 'expose legacy touch event APIs'
+NOTRUN touchevent should be an alias for TouchEvent. 'expose legacy touch event APIs'
+NOTRUN createEvent('touchevent') should be initialized correctly. 'expose legacy touch event APIs'
+NOTRUN TOUCHEVENT should be an alias for TouchEvent. 'expose legacy touch event APIs'
+NOTRUN createEvent('TOUCHEVENT') should be initialized correctly. 'expose legacy touch event APIs'
+PASS Should throw NOT_SUPPORTED_ERR for pluralized legacy event interface "TouchEvents"
 PASS Should throw NOT_SUPPORTED_ERR for unrecognized arguments
 PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "AnimationEvent"
 PASS Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "AnimationEvents"
@@ -267,8 +274,6 @@ PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "SyncEvent"
 PASS Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "SyncEvents"
 PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "TimeEvent"
 PASS Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "TimeEvents"
-PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "TouchEvent"
-PASS Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "TouchEvents"
 PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "TrackEvent"
 PASS Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "TrackEvents"
 PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "TransitionEvent"

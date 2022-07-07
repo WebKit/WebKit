@@ -59,6 +59,8 @@ PASS Node member must be removed: getUserData
 PASS Node member must be removed: setUserData
 PASS Node member must be removed: rootNode
 PASS Window member must be removed: attachEvent
+PASS Window member must be removed: content
+PASS Window member must be removed: sidebar
 PASS Event should not have this constant: MOUSEDOWN
 PASS Event should not have this constant: MOUSEUP
 PASS Event should not have this constant: MOUSEOVER
