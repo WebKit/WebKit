@@ -576,6 +576,27 @@ TEST_F(PeerConnectionSimulcastTests, SimulcastAudioRejected) {
               ElementsAre(Field("rid", &RtpEncodingParameters::rid, Eq(""))));
 }
 
+// Check that modifying the offer to remove simulcast and at the same
+// time leaving in a RID line does not cause an exception.
+TEST_F(PeerConnectionSimulcastTests, SimulcastSldModificationRejected) {
+  auto local = CreatePeerConnectionWrapper();
+  auto remote = CreatePeerConnectionWrapper();
+  auto layers = CreateLayers({"1", "2", "3"}, true);
+  AddTransceiver(local.get(), layers);
+  auto offer = local->CreateOffer();
+  std::string as_string;
+  EXPECT_TRUE(offer->ToString(&as_string));
+  auto simulcast_marker = "a=rid:3 send\r\na=simulcast:send 1;2;3\r\n";
+  auto pos = as_string.find(simulcast_marker);
+  EXPECT_NE(pos, std::string::npos);
+  as_string.erase(pos, strlen(simulcast_marker));
+  SdpParseError parse_error;
+  auto modified_offer =
+      CreateSessionDescription(SdpType::kOffer, as_string, &parse_error);
+  EXPECT_TRUE(modified_offer);
+  EXPECT_TRUE(local->SetLocalDescription(std::move(modified_offer)));
+}
+
 #if RTC_METRICS_ENABLED
 //
 // Checks the logged metrics when simulcast is not used.
