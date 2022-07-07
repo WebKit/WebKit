@@ -26,108 +26,106 @@
 #pragma once
 
 #include "ASTNode.h"
+#include "Expression.h"
 #include <wtf/TypeCasts.h>
+#include <wtf/UniqueRef.h>
+#include <wtf/text/StringView.h>
 
 namespace WGSL::AST {
 
 class TypeDecl : public ASTNode {
     WTF_MAKE_FAST_ALLOCATED;
-
 public:
     enum class Kind : uint8_t {
         Named,
-        Parameterized,
+        Array,
+        Vec,
     };
 
-    TypeDecl(SourceSpan span)
+    TypeDecl(SourceSpan span, Kind kind)
         : ASTNode(span)
+        , m_kind(kind)
     {
     }
 
-    virtual ~TypeDecl() {}
+    virtual ~TypeDecl() { }
 
-    virtual Kind kind() const = 0;
-    bool isNamed() const { return kind() == Kind::Named; }
-    bool isParameterized() const { return kind() == Kind::Parameterized; }
+    Kind kind() const { return m_kind; }
+
+    bool isNamed() const { return m_kind == Kind::Named; }
+    bool isArray() const { return m_kind == Kind::Array; }
+    bool isVec() const { return m_kind == Kind::Vec; }
+
+private:
+    Kind m_kind;
 };
 
+// NamedType represents types that take no parameters
+// (like u32, i32, f32, f16, bool), and identifier types that
+// refers to a type alias or struct name.
 class NamedType final : public TypeDecl {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     NamedType(SourceSpan span, StringView&& name)
-        : TypeDecl(span)
+        : TypeDecl(span, TypeDecl::Kind::Named)
         , m_name(WTFMove(name))
     {
     }
 
-    Kind kind() const override { return Kind::Named; }
     const StringView& name() const { return m_name; }
 
 private:
     StringView m_name;
 };
 
-class ParameterizedType : public TypeDecl {
+// VecType represents a vec2/vec3/vec4 vector of elements.
+// https://gpuweb.github.io/gpuweb/wgsl/#vector-types
+class VecType : public TypeDecl {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    enum class Base {
-        Vec2,
-        Vec3,
-        Vec4,
-        Mat2x2,
-        Mat2x3,
-        Mat2x4,
-        Mat3x2,
-        Mat3x3,
-        Mat3x4,
-        Mat4x2,
-        Mat4x3,
-        Mat4x4
-    };
-
-    ParameterizedType(SourceSpan span, Base base, UniqueRef<TypeDecl>&& elementType)
-        : TypeDecl(span)
-        , m_base(base)
+    VecType(SourceSpan span, UniqueRef<TypeDecl> elementType, uint8_t size)
+        : TypeDecl(span, TypeDecl::Kind::Vec)
         , m_elementType(WTFMove(elementType))
+        , m_size(size)
     {
     }
 
-    static std::optional<Base> stringViewToKind(StringView& view)
-    {
-        if (view == "vec2"_s)
-            return Base::Vec2;
-        if (view == "vec3"_s)
-            return Base::Vec3;
-        if (view == "vec4"_s)
-            return Base::Vec4;
-        if (view == "mat2x2"_s)
-            return Base::Mat2x2;
-        if (view == "mat2x3"_s)
-            return Base::Mat2x3;
-        if (view == "mat2x4"_s)
-            return Base::Mat2x4;
-        if (view == "mat3x2"_s)
-            return Base::Mat3x2;
-        if (view == "mat3x3"_s)
-            return Base::Mat3x3;
-        if (view == "mat3x4"_s)
-            return Base::Mat3x4;
-        if (view == "mat4x2"_s)
-            return Base::Mat4x2;
-        if (view == "mat4x3"_s)
-            return Base::Mat4x3;
-        if (view == "mat4x4"_s)
-            return Base::Mat4x4;
-        return std::nullopt;
-    }
-
-    Kind kind() const override { return Kind::Parameterized; }
-    Base base() const { return m_base; }
-    TypeDecl& elementType() { return m_elementType; }
+    const TypeDecl& elementType() const { return m_elementType; }
+    uint8_t size() const { return m_size; }
 
 private:
-    Base m_base;
     UniqueRef<TypeDecl> m_elementType;
+    uint8_t m_size;
+};
+
+// ArrayType represents an array of elements. An array can be fixed-sized if the
+// size is specified as an expression, or runtime-sized otherwise.
+// https://gpuweb.github.io/gpuweb/wgsl/#array-types
+class ArrayType: public TypeDecl {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    // Constructor for runtime-sized array without size expression.
+    ArrayType(SourceSpan span, UniqueRef<TypeDecl> elementType)
+        : TypeDecl(span, TypeDecl::Kind::Array)
+        , m_elementType(WTFMove(elementType))
+        , m_sizeExpression()
+    {
+    }
+
+    // Constructor for fixed-sized array with size expression.
+    ArrayType(SourceSpan span, UniqueRef<TypeDecl> elementType, UniqueRef<Expression> sizeExpression)
+        : TypeDecl(span, TypeDecl::Kind::Array)
+        , m_elementType(WTFMove(elementType))
+        , m_sizeExpression(sizeExpression.moveToUniquePtr())
+    {
+    }
+
+    const TypeDecl& elementType() const { return m_elementType; }
+    const Expression* maybeSizeExpression() const { return m_sizeExpression.get(); }
+
+private:
+    UniqueRef<TypeDecl> m_elementType;
+    std::unique_ptr<Expression> m_sizeExpression;
 };
 
 } // namespace WGSL::AST
@@ -138,4 +136,5 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WGSL::AST::ToValueTypeName) \
 SPECIALIZE_TYPE_TRAITS_END()
 
 SPECIALIZE_TYPE_TRAITS_WGSL_TYPE(NamedType, isNamed())
-SPECIALIZE_TYPE_TRAITS_WGSL_TYPE(ParameterizedType, isParameterized())
+SPECIALIZE_TYPE_TRAITS_WGSL_TYPE(ArrayType, isArray())
+SPECIALIZE_TYPE_TRAITS_WGSL_TYPE(VecType, isVec())

@@ -211,7 +211,7 @@
     checkNextToken(WGSL::TokenType::ParenRight);
     checkNextTokenIsIdentifier("x"_s);
     checkNextToken(WGSL::TokenType::Colon);
-    checkNextTokenIsIdentifier("vec4"_s);
+    checkNextToken(WGSL::TokenType::KeywordVec4);
     checkNextToken(WGSL::TokenType::LT);
     checkNextToken(WGSL::TokenType::KeywordF32);
     checkNextToken(WGSL::TokenType::GT);
@@ -222,7 +222,7 @@
     checkNextToken(WGSL::TokenType::ParenLeft);
     checkNextTokenIsIdentifier("position"_s);
     checkNextToken(WGSL::TokenType::ParenRight);
-    checkNextTokenIsIdentifier("vec4"_s);
+    checkNextToken(WGSL::TokenType::KeywordVec4);
     checkNextToken(WGSL::TokenType::LT);
     checkNextToken(WGSL::TokenType::KeywordF32);
     checkNextToken(WGSL::TokenType::GT);
@@ -255,7 +255,7 @@
     checkNextToken(WGSL::TokenType::ParenLeft);
     checkNextTokenIsLiteral(WGSL::TokenType::IntegerLiteral, 0);
     checkNextToken(WGSL::TokenType::ParenRight);
-    checkNextTokenIsIdentifier("vec4"_s);
+    checkNextToken(WGSL::TokenType::KeywordVec4);
     checkNextToken(WGSL::TokenType::LT);
     checkNextToken(WGSL::TokenType::KeywordF32);
     checkNextToken(WGSL::TokenType::GT);
@@ -264,7 +264,7 @@
     // return vec4<f32>(0.4, 0.4, 0.8, 1.0);
     ++lineNumber;
     checkNextToken(WGSL::TokenType::KeywordReturn);
-    checkNextTokenIsIdentifier("vec4"_s);
+    checkNextToken(WGSL::TokenType::KeywordVec4);
     checkNextToken(WGSL::TokenType::LT);
     checkNextToken(WGSL::TokenType::KeywordF32);
     checkNextToken(WGSL::TokenType::GT);

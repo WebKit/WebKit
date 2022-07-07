@@ -80,7 +80,9 @@
 		33EA188827BC361E00A1DD52 /* LiteralExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA188727BC361E00A1DD52 /* LiteralExpressions.h */; };
 		6634666B285F0140002ABE8E /* ConstLiteralTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6634666A285F0140002ABE8E /* ConstLiteralTests.mm */; };
 		664C92FD286A66090008D143 /* IOSurface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 664C92FC286A66090008D143 /* IOSurface.framework */; };
+		6664848328597C4C008FB60E /* PrimaryExpressionTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6664848228597C4C008FB60E /* PrimaryExpressionTests.mm */; };
 		66DC575528627E0B0014CABD /* ParserPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 66DC575428627E0B0014CABD /* ParserPrivate.h */; };
+		66E09AB1285AE0BB002A4276 /* TypeDeclTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 66E09AB0285AE0BB002A4276 /* TypeDeclTests.mm */; };
 		DD05A35C27BF09C60096EFAB /* libWTF.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = 1CEBD8292716CAE700A5254D /* libWTF.a */; };
 /* End PBXBuildFile section */
 
@@ -337,7 +339,9 @@
 		33EA188727BC361E00A1DD52 /* LiteralExpressions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LiteralExpressions.h; sourceTree = "<group>"; };
 		6634666A285F0140002ABE8E /* ConstLiteralTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ConstLiteralTests.mm; sourceTree = "<group>"; };
 		664C92FC286A66090008D143 /* IOSurface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOSurface.framework; path = System/Library/Frameworks/IOSurface.framework; sourceTree = SDKROOT; };
+		6664848228597C4C008FB60E /* PrimaryExpressionTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PrimaryExpressionTests.mm; sourceTree = "<group>"; };
 		66DC575428627E0B0014CABD /* ParserPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ParserPrivate.h; sourceTree = "<group>"; };
+		66E09AB0285AE0BB002A4276 /* TypeDeclTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TypeDeclTests.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -739,6 +743,8 @@
 		6664847F28596A3E008FB60E /* Parser */ = {
 			isa = PBXGroup;
 			children = (
+				6664848228597C4C008FB60E /* PrimaryExpressionTests.mm */,
+				66E09AB0285AE0BB002A4276 /* TypeDeclTests.mm */,
 				6634666A285F0140002ABE8E /* ConstLiteralTests.mm */,
 			);
 			path = Parser;
@@ -1002,6 +1008,8 @@
 				6634666B285F0140002ABE8E /* ConstLiteralTests.mm in Sources */,
 				1C023D3F27449070001DB734 /* WGSLLexerTests.mm in Sources */,
 				339B7B1D27D80A1C0072BF9A /* WGSLParserTests.mm in Sources */,
+				6664848328597C4C008FB60E /* PrimaryExpressionTests.mm in Sources */,
+				66E09AB1285AE0BB002A4276 /* TypeDeclTests.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

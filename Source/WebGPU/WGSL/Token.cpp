@@ -51,6 +51,8 @@ String toString(TokenType type)
         return "ReservedWord"_s;
     case TokenType::KeywordStruct:
         return "struct"_s;
+    case TokenType::KeywordArray:
+        return "array"_s;
     case TokenType::KeywordFn:
         return "fn"_s;
     case TokenType::KeywordFunction:
@@ -69,6 +71,12 @@ String toString(TokenType type)
         return "uniform"_s;
     case TokenType::KeywordVar:
         return "var"_s;
+    case TokenType::KeywordVec2:
+        return "vec2"_s;
+    case TokenType::KeywordVec3:
+        return "vec3"_s;
+    case TokenType::KeywordVec4:
+        return "vec4"_s;
     case TokenType::KeywordWorkgroup:
         return "workgroup"_s;
     case TokenType::KeywordWrite:

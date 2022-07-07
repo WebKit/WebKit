@@ -23,10 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "Parser.h"
-#include "ParserPrivate.h"
-
 #include "config.h"
+#include "Parser.h"
 
 #include "AST/Attribute.h"
 #include "AST/Expression.h"
@@ -41,12 +39,13 @@
 #include "AST/Statements/ReturnStatement.h"
 #include "AST/StructureDecl.h"
 #include "Lexer.h"
+#include "ParserPrivate.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WGSL {
 
 #define START_PARSE() \
-    auto _startOfElementPosition = m_lexer.currentPosition();
+    auto _startOfElementPosition = currentStartSourcePosition()
 
 #define CURRENT_SOURCE_SPAN() \
     SourceSpan(_startOfElementPosition, m_lexer.currentPosition())
@@ -133,6 +132,11 @@ Expected<Token, TokenType> Parser<Lexer>::consumeType(TokenType type)
 {
     if (current().m_type == type) {
         Expected<Token, TokenType> result = { m_current };
+        // Explaining this: the current position is at the end of the current token,
+        // and also the start position of the next token.
+        // When we lex another token, then this current position() becomes the start position
+        // of the current token.
+        m_currentStartSourcePosition = m_lexer.currentPosition();
         m_current = m_lexer.lex();
         return result;
     }
@@ -142,6 +146,11 @@ Expected<Token, TokenType> Parser<Lexer>::consumeType(TokenType type)
 template<typename Lexer>
 void Parser<Lexer>::consume()
 {
+    // Explaining this: the current position is at the end of the current token,
+    // and also the start position of the next token.
+    // When we lex another token, then this current position() becomes the start position
+    // of the current token.
+    m_currentStartSourcePosition = m_lexer.currentPosition();
     m_current = m_lexer.lex();
 }
 
@@ -285,45 +294,105 @@ Expected<AST::StructMember, Error> Parser<Lexer>::parseStructMember()
     RETURN_NODE(StructMember, name.m_ident, WTFMove(type), WTFMove(attributes));
 }
 
+// https://gpuweb.github.io/gpuweb/wgsl/#syntax-type_decl
+// type_decl :
+//   | ident
+//   | bool
+//   | float32
+//   | float16
+//   | int32
+//   | uint32
+//   | vec_prefix less_than type_decl greater_than
+//   | mat_prefix less_than type_decl greater_than
+//   | pointer less_than address_space comma type_decl ( comma access_mode ) ? greater_than
+//   | array_type_decl
+//   | atomic less_than type_decl greater_than
+//   | texture_sampler_types
 template<typename Lexer>
 Expected<UniqueRef<AST::TypeDecl>, Error> Parser<Lexer>::parseTypeDecl()
 {
     START_PARSE();
 
-    if (current().m_type == TokenType::KeywordI32) {
-        consume();
-        RETURN_NODE_REF(NamedType, StringView { "i32"_s });
-    }
-    if (current().m_type == TokenType::KeywordF32) {
-        consume();
-        RETURN_NODE_REF(NamedType, StringView { "f32"_s });
-    }
-    if (current().m_type == TokenType::KeywordU32) {
-        consume();
-        RETURN_NODE_REF(NamedType, StringView { "u32"_s });
-    }
-    if (current().m_type == TokenType::KeywordBool) {
-        consume();
-        RETURN_NODE_REF(NamedType, StringView { "bool"_s });
-    }
-    if (current().m_type == TokenType::Identifier) {
-        CONSUME_TYPE_NAMED(name, Identifier);
-        return parseTypeDeclAfterIdentifier(WTFMove(name.m_ident), _startOfElementPosition);
+    switch (current().m_type) {
+    case TokenType::Identifier: {
+        CONSUME_TYPE_NAMED(ident, Identifier);
+        RETURN_NODE_REF(NamedType, WTFMove(ident.m_ident));
     }
 
-    FAIL("Tried parsing a type and it did not start with an identifier"_s);
-}
+    case TokenType::KeywordBool:
+        consume();
+        RETURN_NODE_REF(NamedType, "bool"_s);
 
-template<typename Lexer>
-Expected<UniqueRef<AST::TypeDecl>, Error> Parser<Lexer>::parseTypeDeclAfterIdentifier(StringView&& name, SourcePosition _startOfElementPosition)
-{
-    if (auto kind = AST::ParameterizedType::stringViewToKind(name)) {
+    case TokenType::KeywordF32:
+        consume();
+        RETURN_NODE_REF(NamedType, "f32"_s);
+
+    // TODO: float16
+
+    case TokenType::KeywordI32:
+        consume();
+        RETURN_NODE_REF(NamedType, "i32"_s);
+
+    case TokenType::KeywordU32:
+        consume();
+        RETURN_NODE_REF(NamedType, "u32"_s);
+
+    case TokenType::KeywordVec2:
+    case TokenType::KeywordVec3:
+    case TokenType::KeywordVec4: {
+        uint8_t size = 0;
+        switch (current().m_type) {
+        case TokenType::KeywordVec2:
+            size = 2;
+            break;
+        case TokenType::KeywordVec3:
+            size = 3;
+            break;
+        case TokenType::KeywordVec4:
+            size = 4;
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+
+        consume();
+
         CONSUME_TYPE(LT);
         PARSE(elementType, TypeDecl);
         CONSUME_TYPE(GT);
-        RETURN_NODE_REF(ParameterizedType, *kind, WTFMove(elementType));
+
+        RETURN_NODE_REF(VecType, WTFMove(elementType), size);
     }
-    RETURN_NODE_REF(NamedType, WTFMove(name));
+
+    // TODO: matrix
+    // TODO: ptr<>
+
+    // array_type_decl :
+    //   | array less_than type_decl ( comma element_count_expression ) ? greater_than
+    case TokenType::KeywordArray: {
+        consume();
+
+        CONSUME_TYPE(LT);
+        PARSE(elementType, TypeDecl);
+
+        if (current().m_type == TokenType::Comma) {
+            CONSUME_TYPE(Comma);
+            PARSE(sizeExpression, Expression);
+            CONSUME_TYPE(GT);
+            RETURN_NODE_REF(ArrayType, WTFMove(elementType), WTFMove(sizeExpression));
+        }
+
+        CONSUME_TYPE(GT);
+        RETURN_NODE_REF(ArrayType, WTFMove(elementType));
+    }
+
+    // TODO: atomic
+    // TODO: texture types
+
+    default:
+        FAIL("Unable to parse type declaration"_s);
+    }
 }
 
 template<typename Lexer>
@@ -622,15 +691,6 @@ Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parsePrimaryExpressio
         CONSUME_TYPE(ParenRight);
         return { WTFMove(expr) };
     }
-    case TokenType::Identifier: {
-        CONSUME_TYPE_NAMED(ident, Identifier);
-        if (current().m_type == TokenType::LT || current().m_type == TokenType::ParenLeft) {
-            PARSE(type, TypeDeclAfterIdentifier, WTFMove(ident.m_ident), _startOfElementPosition);
-            PARSE(arguments, ArgumentExpressionList);
-            RETURN_NODE_REF(CallableExpression, WTFMove(type), WTFMove(arguments));
-        }
-        RETURN_NODE_REF(IdentifierExpression, ident.m_ident);
-    }
 
     // const_literal
     case TokenType::LiteralTrue:
@@ -659,13 +719,55 @@ Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parsePrimaryExpressio
         CONSUME_TYPE_NAMED(lit, HexFloatLiteral);
         RETURN_NODE_REF(AbstractFloatLiteral, lit.m_literalValue);
     }
+
+    // Token represents a type, therefore the whole expression must be parsed as a
+    // type cast.
+    case TokenType::KeywordBool:
+    case TokenType::KeywordF32:
+    case TokenType::KeywordI32:
+    case TokenType::KeywordU32:
+    // FIXME: support omitting element type in vec2/vec3/vec4 type casts.
+    // e.g: "vec2(1.0, 1,0)" instead of "vec2<f32>(1.0, 1.0)"
+    case TokenType::KeywordVec2:
+    case TokenType::KeywordVec3:
+    case TokenType::KeywordVec4:
+    case TokenType::KeywordArray: {
+        PARSE(type, TypeDecl);
+        PARSE(arguments, ArgumentExpressionList);
+        RETURN_NODE_REF(CallableExpression, WTFMove(type), WTFMove(arguments));
+    }
+
+    // The identifier could either represent a
+    //   * type name, in which case this is a type cast,
+    //   * function name, in which case this is a function call.
+    // Therefore after the identifier, what follows must either be nothing or the argument list.
+    // It's illegal to specify type parameters after the type name, like this:
+    // ```
+    // type YetAnotherArray = array;
+    // var a: YetAnotherArray<i32, 10>.
+    // ```
+    case TokenType::Identifier: {
+        CONSUME_TYPE_NAMED(ident, Identifier);
+
+        // If there's a left parentheses, what follows must be an argument list.
+        // Therefore the whole expression is a callable expression.
+        if (current().m_type == TokenType::ParenLeft) {
+            auto target = makeUniqueRef<AST::NamedType>(CURRENT_SOURCE_SPAN(), WTFMove(ident.m_ident));
+            PARSE(arguments, ArgumentExpressionList);
+            RETURN_NODE_REF(CallableExpression, WTFMove(target), WTFMove(arguments));
+        }
+
+        // Otherwise, it's just an identifier.
+        RETURN_NODE_REF(IdentifierExpression, ident.m_ident);
+    }
+
     // TODO: bitcast expression
 
     default:
         break;
     }
 
-    FAIL("Expected one of '(', a literal, or an identifier"_s);
+    FAIL("Expected one of '(', a literal, a type declaration, or an identifier"_s);
 }
 
 template<typename Lexer>

@@ -199,6 +199,8 @@ Token Lexer<T>::lex()
                 return makeToken(TokenType::LiteralTrue);
             if (view == "false"_s)
                 return makeToken(TokenType::LiteralFalse);
+            if (view == "array"_s)
+                return makeToken(TokenType::KeywordArray);
             if (view == "bool"_s)
                 return makeToken(TokenType::KeywordBool);
             if (view == "i32"_s)
@@ -227,6 +229,12 @@ Token Lexer<T>::lex()
                 return makeToken(TokenType::KeywordUniform);
             if (view == "var"_s)
                 return makeToken(TokenType::KeywordVar);
+            if (view == "vec2"_s)
+                return makeToken(TokenType::KeywordVec2);
+            if (view == "vec3"_s)
+                return makeToken(TokenType::KeywordVec3);
+            if (view == "vec4"_s)
+                return makeToken(TokenType::KeywordVec4);
             if (view == "workgroup"_s)
                 return makeToken(TokenType::KeywordWorkgroup);
             if (view == "write"_s)

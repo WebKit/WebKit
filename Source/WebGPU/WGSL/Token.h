@@ -50,6 +50,7 @@ enum class TokenType: uint32_t {
     Identifier,
 
     ReservedWord,
+    KeywordArray,
     KeywordFn,
     KeywordFunction,
     KeywordPrivate,
@@ -60,6 +61,9 @@ enum class TokenType: uint32_t {
     KeywordStruct,
     KeywordUniform,
     KeywordVar,
+    KeywordVec2,
+    KeywordVec3,
+    KeywordVec4,
     KeywordWorkgroup,
     KeywordWrite,
     KeywordI32,

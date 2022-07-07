@@ -37,6 +37,7 @@ public:
     Parser(Lexer& lexer)
         : m_lexer(lexer)
         , m_current(lexer.lex())
+        , m_currentStartSourcePosition()
     {
     }
 
@@ -77,10 +78,13 @@ private:
     Expected<Token, TokenType> consumeType(TokenType);
     void consume();
 
-    Token& current() { return m_current; }
+    const Token& current() const { return m_current; }
+    SourcePosition currentStartSourcePosition() const { return m_currentStartSourcePosition; }
 
     Lexer& m_lexer;
     Token m_current;
+    // The source position where m_current starts;
+    SourcePosition m_currentStartSourcePosition;
 };
 
 } // namespace WGSL
