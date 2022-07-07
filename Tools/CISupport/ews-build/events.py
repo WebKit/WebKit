@@ -158,7 +158,7 @@ class Events(service.BuildbotService):
             "type": self.type_prefix + "build",
             "status": "started",
             "hostname": self.master_hostname,
-            "patch_id": self.extractProperty(build, 'patch_id'),
+            "patch_id": self.extractProperty(build, 'patch_id') or self.extractProperty(build, 'github.head.sha'),
             "build_id": build.get('buildid'),
             "builder_id": build.get('builderid'),
             "number": build.get('number'),
@@ -209,17 +209,13 @@ class Events(service.BuildbotService):
         build['description'] = builder.get('description', '?')
 
         if self.extractProperty(build, 'github.number'):
-            return self.buildFinishedGitHub(build)
-
-        patch_id = self.extractProperty(build, 'patch_id')
-        if not patch_id:
-            return
+            self.buildFinishedGitHub(build)
 
         data = {
             "type": self.type_prefix + "build",
             "status": "finished",
             "hostname": self.master_hostname,
-            "patch_id": self.extractProperty(build, 'patch_id'),
+            "patch_id": self.extractProperty(build, 'patch_id') or self.extractProperty(build, 'github.head.sha'),
             "build_id": build.get('buildid'),
             "builder_id": build.get('builderid'),
             "number": build.get('number'),
