@@ -1,4 +1,4 @@
-# Copyright (C) 2020 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -50,11 +50,10 @@ class Status(View):
             return {}
 
         statuses = {}
-        if patch.sent_to_buildbot:
-            for queue in StatusBubble.ALL_QUEUES:
-                status = self._build_status(patch, queue)
-                if status:
-                    statuses[queue] = status
+        for queue in StatusBubble.ALL_QUEUES:
+            status = self._build_status(patch, queue)
+            if status:
+                statuses[queue] = status
 
         if patch.sent_to_commit_queue:
             cq_status = self._build_status(patch, 'commit')
