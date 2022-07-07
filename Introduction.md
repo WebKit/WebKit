@@ -107,7 +107,7 @@ This will allow you to run various tools you by name instead of typing the full 
 
 ### Updating checkouts
 
-There is a script to update a WebKit checkout: `Tools/Scripts/update-webkit`. This script will automatically merge change logs mentioned below.
+There is a script to update a WebKit checkout: `Tools/Scripts/update-webkit`.
 
 ### Building WebKit
 
@@ -286,7 +286,7 @@ These days, uploading a patch on [bugs.webkit.org](https://bugs.webkit.org/) tri
 
 For any bug fix or a feature addition, there should be a new test demonstrating the behavior change caused by the code change.
 If no such test can be written in a reasonable manner (e.g. the fix for a hard-to-reproduce race condition),
-then the reason writing a tests is impractical should be explained in the accompanying change log.
+then the reason writing a tests is impractical should be explained in the accompanying commit message.
 
 Any patch which introduces new test failures or performance regressions may be reverted.
 It’s in your interest to wait for the Early Warning System to fully build and test your patch on all relevant platforms.
@@ -296,37 +296,51 @@ It’s in your interest to wait for the Early Warning System to fully build and 
 Commit messages serve as change logs, providing historical documentation for all changes to the WebKit project.
 Running `git-webkit setup` configures your git hooks to properly generate commit messages.
 
-The first line contains the date, your full name, and your email address.
-Use this to write up a brief summary of the changes you’ve made.
-Don’t worry about the “Reviewed by NOBODY (OOPS!)” line, the person landing your patch will fill this in.
-There is one ChangeLog per top-level directory.
-
-A typical change log entry before being submitted to [bugs.webkit.org](https://bugs.webkit.org/) looks like this:
+The first line shall contain a short description of the commit message (this should be the same as the Summary field in Bugzilla).
+On the next line, enter the Bugzilla URL. 
+Below the "Reviewed by" line, enter a detailed description of your changes. 
+There will be a list of files and functions modified at the bottom of the commit message.
+You are encouraged to add comments here as well. (See the commit below for reference).
+Do not worry about the “Reviewed by NOBODY (OOPS!)” line, GitHub will update this field upon merging.
 
 ```
-2012-10-04  Enrica Casucci  <e•••••@apple.com>
+Allow downsampling when invoking Remove Background or Copy Subject
+https://bugs.webkit.org/show_bug.cgi?id=242048
 
-        Font::glyphDataAndPageForCharacter doesn't account for text orientation when using systemFallback on a cold cache.
-        https://bugs.webkit.org/show_bug.cgi?id=98452.
+Reviewed by NOBODY (OOPS!).
 
-        Reviewed by NOBODY (OOPS!).
+Soft-link `vk_cgImageRemoveBackgroundWithDownsizing` from VisionKitCore, and call into it to perform
+background removal when performing Remove Background or Copy Subject, if available. On recent builds
+of Ventura and iOS 16, VisionKit will automatically reject hi-res (> 12MP) images from running
+through subject analysis; for clients such as WebKit, this new SPI allows us to opt into
+downsampling these large images, instead of failing outright.
 
-        The text orientation was considered only when there is a cache hit.
-        This change moves the logic to handle text orientation to a separate
-        inline function that is called also when the glyph is added to the cache.
+* Source/WebCore/PAL/pal/cocoa/VisionKitCoreSoftLink.h:
+* Source/WebCore/PAL/pal/cocoa/VisionKitCoreSoftLink.mm:
+* Source/WebCore/PAL/pal/spi/cocoa/VisionKitCoreSPI.h:
+* Source/WebKit/Platform/cocoa/ImageAnalysisUtilities.h:
+* Source/WebKit/Platform/cocoa/ImageAnalysisUtilities.mm:
+(WebKit::requestBackgroundRemoval):
 
-        Test: fast/text/vertical-rl-rtl-linebreak.html
+Refactor the code so that we call `vk_cgImageRemoveBackgroundWithDownsizing` if it's available, and
+otherwise fall back to `vk_cgImageRemoveBackground`.
 
-        * platform/graphics/FontFastPath.cpp:
-        (WebCore::applyTextOrientationForCharacter): Added.
-        (WebCore::Font::glyphDataAndPageForCharacter): Modified to use the new function in
-        both cases of cold and warm cache.
+* Source/WebKit/UIProcess/ios/WKContentViewInteraction.mm:
+(-[WKContentView doAfterComputingImageAnalysisResultsForBackgroundRemoval:]):
+(-[WKContentView _completeImageAnalysisRequestForContextMenu:requestIdentifier:hasTextResults:]):
+(-[WKContentView imageAnalysisGestureDidTimeOut:]):
+* Source/WebKit/UIProcess/mac/WebContextMenuProxyMac.mm:
+(WebKit::WebContextMenuProxyMac::appendMarkupItemToControlledImageMenuIfNeeded):
+(WebKit::WebContextMenuProxyMac::getContextMenuFromItems):
+
+Additionally, remove the `cropRect` completion handler argument, since the new SPI function no
+longer provides this information. The `cropRect` argument was also unused after removing support for
+revealing the subject, in `249582@main`.
 ```
 
-
-The “No new tests. (OOPS!)” line appears if `git webkit commit` did not detect the addition of new tests.
+The “No new tests. (OOPS!)” line will appear if `git webkit commit` did not detect the addition of new tests.
 If your patch does not require test cases (or test cases are not possible), remove this line and explain why you didn’t write tests.
-Otherwise all changes require test cases which should be mentioned in the ChangeLog.
+Otherwise all changes require test cases which should be mentioned in the commit message.
 
 ## WebKit’s Build System
 
