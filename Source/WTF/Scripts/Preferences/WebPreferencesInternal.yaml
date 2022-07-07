@@ -1039,6 +1039,19 @@ WebRTCH264SimulcastEnabled:
     WebKit:
       default: true
 
+WebRTCH265CodecEnabled:
+  type: bool
+  condition: ENABLE(WEB_RTC)
+  humanReadableName: "WebRTC H265 codec"
+  humanReadableDescription: "Enable WebRTC H265 codec"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 WebRTCMDNSICECandidatesEnabled:
   type: bool

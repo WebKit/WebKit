@@ -1756,19 +1756,6 @@ WebRTCH264LowLatencyEncoderEnabled:
     WebKit:
       default: true
 
-WebRTCH265CodecEnabled:
-  type: bool
-  condition: ENABLE(WEB_RTC)
-  humanReadableName: "WebRTC H265 codec"
-  humanReadableDescription: "Enable WebRTC H265 codec"
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
 WebRTCPlatformTCPSocketsEnabled:
   type: bool
   humanReadableName: "WebRTC Platform TCP Sockets"
