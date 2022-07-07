@@ -53,7 +53,7 @@ Filing a new bug, fixing a bug, or adding a new feature.
 There are three different kinds of contributors in the WebKit project.
 
  * Contributor - This category encompasses everyone. Anyone who files a bug or contributes a code change or reviews a code change is considered as a contributor
- * Committer - A committer is someone who has write access to [WebKit's subversion repository](https://svn.webkit.org/repository/webkit/).
+ * Committer - A committer is someone who has write access to [WebKit's repository](https://github.com/WebKit/WebKit).
  * Reviewer - A reviewer is someone who has the right to review and approve code changes other contributors proposed.
 
 See [Commit and Review Policy](https://webkit.org/commit-and-review-policy/) for more details on how to become a committer or a reviewer.
@@ -77,24 +77,8 @@ To [file a new WebKit bug](https://bugs.webkit.org/enter_bug.cgi), see [reportin
 
 To edit an existing bug, you may need [editbug-bits](https://webkit.org/bugzilla-bits/).
 
-### Code Reviews in bugs.webkit.org
-
-We also use [bugs.webkit.org](https://bugs.webkit.org/) to upload & review code changes to WebKit.
-You can post a code change with `Tools/Scripts/webkit-patch upload`.
-Note that the `webkit-patch` script only looks for changes below current directory,
-so generally you should change the current directory to the top-level directory of a WebKit first.
-
-When a patch is posted on [bugs.webkit.org](https://bugs.webkit.org/) requesting a formal code review (r? flag is set),
-The Early Warning System (a.k.a. EWS) will automatically build and run tests against your code change.
-This allows contributors to find build or test failures before committing code changes to the WebKit’s primary Subversion repository.
-
-Once a patch is approved by a reviewer (r+ flag is set),
-then the patch can be either committed directly into the Subversion repository by a WebKit committer, 
-who has write access to the Subversion repository,
-or via the commit queue which can be requested by setting cq? flag and approved by any WebKit committer by setting cq+.
-
-The Subversion commit message should be created by `Tools/Scripts/commit-log-editor` based on the change log entries.
-`Tools/Scripts/webkit-patch land` does this automatically.
+### Code review
+Code reviews are done on GitHub when a pull request is made. See [Submitting a pull request](#submitting-a-pull-request).
 
 ### Security Bugs in bugs.webkit.org
 
@@ -128,6 +112,50 @@ There is a script to update a WebKit checkout: `Tools/Scripts/update-webkit`. Th
 ### Building WebKit
 
 [See Building WebKit](https://github.com/WebKit/webkit/blob/master/ReadMe.md#building-webkit)
+
+### Getting setup to contribute
+
+If you've followed the steps above, get setup to contribute by running:
+
+```Bash
+git webkit setup
+```
+
+The `setup` checks that your environment is optimally configured to contribute, and may prompt you for some additional information.
+
+### Submitting a pull request
+
+Firstly, please make sure you [file a bug](https://bugs.webkit.org) for the thing you are adding or fixing! Or, find a bug that you think is relevant to the fix you are making.
+
+Assuming you are working off "main" branch, once your patch is working and [tests are passing](#correctness-testing-in-webkit), simply run:
+
+```Bash
+git webkit pr --issue <your bug number here>
+```
+
+That will pull down the details from [bugs.webkit.org](https://bugs.webkit.org), create a new git branch, and generate a commit message for you.
+If necessary, please add additional details describing what you've added, modified, or fixed.
+
+Once your pull request is on GitHub, the Early Warning System (a.k.a. EWS) will automatically build and run tests against your code change.
+This allows contributors to find build or test failures before committing code changes to the WebKit’s repository.
+
+Note, if you'd like to submit a draft pull request, you can do so by running:
+
+```Bash
+git webkit pr --draft
+```
+
+## Addressing review feedback
+
+After you receive review feedback on GitHub, you should collaborate with the reviewer to address the feedback.
+
+Once done, you can update your pull request to include the changes by again simply running:
+
+```Bash
+git webkit pr
+```
+
+That will replace your old pull request with a new one with the new changes, while also updating the pull request's description with your current commit message.
 
 ### Fixing mysterious build or runtime errors after Xcode upgrades
 
@@ -263,20 +291,16 @@ then the reason writing a tests is impractical should be explained in the accomp
 Any patch which introduces new test failures or performance regressions may be reverted.
 It’s in your interest to wait for the Early Warning System to fully build and test your patch on all relevant platforms.
 
-### ChangeLog Files
+### Commit messages
 
-ChangeLogs are simple text files which provide historical documentation for all changes to the WebKit project.
-All patches require an entry to the ChangeLog.
+Commit messages serve as change logs, providing historical documentation for all changes to the WebKit project.
+Running `git-webkit setup` configures your git hooks to properly generate commit messages.
 
 The first line contains the date, your full name, and your email address.
 Use this to write up a brief summary of the changes you’ve made.
 Don’t worry about the “Reviewed by NOBODY (OOPS!)” line, the person landing your patch will fill this in.
 There is one ChangeLog per top-level directory.
-If you changed code and tests you will need to edit at least two ChangeLogs.
-`Tools/Scripts/prepare-ChangeLog` script will create stub entries for ChangeLog files based on code changes you made in your Git or Subversion checkouts.
 
-You should edit these stubs to describe your change, including the full URL to the bug (example entry, note that you can use `--bug` flag).
-(You should set `EMAIL_ADDRESS` and `CHANGE_LOG_NAME` in your environment if you will be running this script frequently.)
 A typical change log entry before being submitted to [bugs.webkit.org](https://bugs.webkit.org/) looks like this:
 
 ```
@@ -300,7 +324,7 @@ A typical change log entry before being submitted to [bugs.webkit.org](https://b
 ```
 
 
-The “No new tests. (OOPS!)” line appears if `prepare-ChangeLog` did not detect the addition of new tests.
+The “No new tests. (OOPS!)” line appears if `git webkit commit` did not detect the addition of new tests.
 If your patch does not require test cases (or test cases are not possible), remove this line and explain why you didn’t write tests.
 Otherwise all changes require test cases which should be mentioned in the ChangeLog.
 
