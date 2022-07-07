@@ -4853,10 +4853,8 @@ ScrollingNodeID RenderLayerCompositor::updateScrollingNodeForScrollingProxyRole(
 {
     auto* scrollingCoordinator = this->scrollingCoordinator();
     auto* clippingStack = layer.backing()->ancestorClippingStack();
-    if (!clippingStack) {
-        ASSERT_NOT_REACHED();
+    if (!clippingStack)
         return treeState.parentNodeID.value_or(0);
-    }
 
     ScrollingNodeID nodeID = 0;
     for (auto& entry : clippingStack->stack()) {
