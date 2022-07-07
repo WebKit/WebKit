@@ -66,7 +66,7 @@ public:
     virtual void setPlayingOnSecondScreen(bool) = 0;
     virtual void sendRemoteCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument&) { };
 
-    enum ExternalPlaybackTargetType { TargetTypeNone, TargetTypeAirPlay, TargetTypeTVOut };
+    enum class ExternalPlaybackTargetType { TargetTypeNone, TargetTypeAirPlay, TargetTypeTVOut };
 
     virtual double playbackStartedTime() const = 0;
     virtual double duration() const = 0;
@@ -127,6 +127,15 @@ public:
 } // namespace WebCore
 
 namespace WTF {
+
+template<> struct EnumTraits<WebCore::PlaybackSessionModel::ExternalPlaybackTargetType> {
+    using values = EnumValues<
+        WebCore::PlaybackSessionModel::ExternalPlaybackTargetType,
+        WebCore::PlaybackSessionModel::ExternalPlaybackTargetType::TargetTypeNone,
+        WebCore::PlaybackSessionModel::ExternalPlaybackTargetType::TargetTypeAirPlay,
+        WebCore::PlaybackSessionModel::ExternalPlaybackTargetType::TargetTypeTVOut
+    >;
+};
 
 template<> struct EnumTraits<WebCore::PlaybackSessionModel::PlaybackState> {
     using values = EnumValues<
