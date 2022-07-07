@@ -689,7 +689,8 @@ bool CSSProperty::isDirectionAwareProperty(CSSPropertyID id)
 {
     switch (id) {
 EOF
-for my $logicalPropertyGroup (sort values %logicalPropertyGroups) {
+for my $groupName (sort keys %logicalPropertyGroups) {
+    my $logicalPropertyGroup = $logicalPropertyGroups{$groupName};
     for my $name (sort values %{ $logicalPropertyGroup->{"logical"} }) {
         print GPERF "    case CSSPropertyID::CSSProperty" . $nameToId{$name} . ":\n";
     }
@@ -707,7 +708,8 @@ bool CSSProperty::isInLogicalPropertyGroup(CSSPropertyID id)
     switch (id) {
 EOF
 
-for my $logicalPropertyGroup (sort values %logicalPropertyGroups) {
+for my $groupName (sort keys %logicalPropertyGroups) {
+    my $logicalPropertyGroup = $logicalPropertyGroups{$groupName};
     for my $kind ("logical", "physical") {
         for my $name (sort values %{ $logicalPropertyGroup->{$kind} }) {
             print GPERF "    case CSSPropertyID::CSSProperty" . $nameToId{$name} . ":\n";
@@ -727,7 +729,8 @@ bool CSSProperty::areInSameLogicalPropertyGroupWithDifferentMappingLogic(CSSProp
     switch (id1) {
 EOF
 
-for my $logicalPropertyGroup (sort values %logicalPropertyGroups) {
+for my $groupName (sort keys %logicalPropertyGroups) {
+    my $logicalPropertyGroup = $logicalPropertyGroups{$groupName};
     my $logical = $logicalPropertyGroup->{"logical"};
     my $physical = $logicalPropertyGroup->{"physical"};
     for my $first ($logical, $physical) {
@@ -762,7 +765,8 @@ CSSPropertyID CSSProperty::resolveDirectionAwareProperty(CSSPropertyID propertyI
     switch (propertyID) {
 EOF
 
-for my $logicalPropertyGroup (sort values %logicalPropertyGroups) {
+for my $groupName (sort keys %logicalPropertyGroups) {
+    my $logicalPropertyGroup = $logicalPropertyGroups{$groupName};
     for my $resolver (sort keys %{ $logicalPropertyGroup->{"logical"} }) {
         my $name = $logicalPropertyGroup->{"logical"}->{$resolver};
         my $kind = $logicalPropertyGroup->{"kind"};
@@ -789,8 +793,10 @@ CSSPropertyID CSSProperty::unresolvePhysicalProperty(CSSPropertyID propertyID, T
     switch (propertyID) {
 EOF
 
-for my $logicalPropertyGroup (values %logicalPropertyGroups) {
-    while (my ($resolver, $name) = each %{ $logicalPropertyGroup->{"physical"} }) {
+for my $groupName (sort keys %logicalPropertyGroups) {
+    my $logicalPropertyGroup = $logicalPropertyGroups{$groupName};
+    for my $resolver (sort keys %{ $logicalPropertyGroup->{"physical"} }) {
+        my $name = $logicalPropertyGroup->{"physical"}->{$resolver};
         my $kind = $logicalPropertyGroup->{"kind"};
         my $kindId = nameToId($kind);
         my $resolverEnum = "Box" . $kindId . "::" . nameToId($resolver);
