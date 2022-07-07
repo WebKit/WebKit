@@ -254,7 +254,7 @@ bool pas_local_allocator_stop(
        before doing the work to stop the local_allocator.
 
        However, if the client thread is already in the process of executing pas_local_allocator_stop,
-       gets the past pas_local_allocator_scavenger_data_is_stopped check , and then, gets suspended by
+       gets past the pas_local_allocator_scavenger_data_is_stopped check, and then, gets suspended by
        the scavenger before setting the is_in_use flag, the scavenger can stop the local_allocator
        after the client already checked and thinks it is not stopped yet. When the client thread
        resumes from suspension, it will be unhappy to find that the local_allocator is already

@@ -137,7 +137,7 @@
 # You can assume that ft1-ft5 or fa1-fa3 are never fr, and that ftX is never
 # faY if X != Y.
 
-# Do not put any code after this.
+# Do not put any code before this.
 global _llintPCRangeStart
 _llintPCRangeStart:
     # This break instruction is needed so that the synthesized llintPCRangeStart# label

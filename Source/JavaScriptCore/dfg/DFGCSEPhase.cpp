@@ -679,7 +679,7 @@ public:
         
         m_preOrder = m_graph.blocksInPreOrder();
         
-        // First figure out what gets clobbered by blocks. Node that this uses the preOrder list
+        // First figure out what gets clobbered by blocks. Note that this uses the preOrder list
         // for convenience only.
         for (unsigned i = m_preOrder.size(); i--;) {
             m_block = m_preOrder[i];
@@ -689,7 +689,7 @@ public:
         }
         
         // Based on my experience doing this before, what follows might have to be made iterative.
-        // Right now it doesn't have to be iterative because everything is dominator-bsed. But when
+        // Right now it doesn't have to be iterative because everything is dominator-based. But when
         // validation is enabled, we check if iterating would find new CSE opportunities.
 
         bool changed = iterate();
