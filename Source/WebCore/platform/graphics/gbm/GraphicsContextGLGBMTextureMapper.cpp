@@ -34,11 +34,6 @@
 
 namespace WebCore {
 
-RefPtr<GraphicsContextGL> createWebProcessGraphicsContextGL(const GraphicsContextGLAttributes& attributes)
-{
-    return GraphicsContextGLGBMTextureMapper::create(GraphicsContextGLAttributes(attributes));
-}
-
 RefPtr<GraphicsContextGLGBMTextureMapper> GraphicsContextGLGBMTextureMapper::create(GraphicsContextGLAttributes&& attributes)
 {
     auto context = adoptRef(*new GraphicsContextGLGBMTextureMapper(WTFMove(attributes)));

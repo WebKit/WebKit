@@ -94,6 +94,10 @@ protected:
     GraphicsContextGLGBM(WebCore::GraphicsContextGLAttributes&&);
 
 private:
+    bool isDMABufSupportedInPlatform(const char* displayExtensions);
+
+    void allocateDrawBufferObject();
+
     EGLExtensions m_eglExtensions;
     Swapchain m_swapchain;
 

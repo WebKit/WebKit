@@ -31,6 +31,7 @@
 
 #if USE(NICOSIA) && USE(TEXTURE_MAPPER) && USE(LIBGBM) && USE(ANGLE)
 
+#include "GraphicsContextGLFallback.h"
 #include "GraphicsContextGLGBM.h"
 #include "ImageBuffer.h"
 #include "Logging.h"
@@ -50,11 +51,11 @@ using namespace WebCore;
 void GCGLANGLELayer::swapBuffersIfNeeded()
 {
     auto& proxy = downcast<Nicosia::ContentLayerTextureMapperImpl>(contentLayer().impl()).proxy();
-    auto size = m_context.getInternalFramebufferSize();
 
 #if USE(TEXTURE_MAPPER_DMABUF)
     if (is<TextureMapperPlatformLayerProxyDMABuf>(proxy)) {
-        auto& swapchain = m_context.swapchain();
+        RELEASE_ASSERT(m_contextType == ContextType::Gbm);
+        auto& swapchain = static_cast<GraphicsContextGLGBM&>(m_context).swapchain();
         auto bo = WTFMove(swapchain.displayBO);
         if (bo) {
             Locker locker { proxy.lock() };
@@ -73,36 +74,51 @@ void GCGLANGLELayer::swapBuffersIfNeeded()
     }
 #endif
 
-    // Fallback path, read back texture to main memory
-    RefPtr<WebCore::ImageBuffer> imageBuffer = ImageBuffer::create(size, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
-    if (!imageBuffer)
-        return;
-    m_context.paintRenderingResultsToCanvas(*imageBuffer.get());
-
-    auto flags = m_context.contextAttributes().alpha ? BitmapTexture::SupportsAlpha : BitmapTexture::NoFlag;
     {
-        Locker locker { proxy.lock() };
+        // Fallback path, read back texture to main memory
         ASSERT(is<TextureMapperPlatformLayerProxyGL>(proxy));
-        std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer = downcast<TextureMapperPlatformLayerProxyGL>(proxy).getAvailableBuffer(size, m_context.m_internalColorFormat);
-        if (!layerBuffer) {
-            auto texture = BitmapTextureGL::create(TextureMapperContextAttributes::get(), flags, m_context.m_internalColorFormat);
-            layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(WTFMove(texture), flags);
-        }
+        RELEASE_ASSERT(m_contextType == ContextType::Fallback);
 
-        layerBuffer->textureGL().setPendingContents(ImageBuffer::sinkIntoImage(WTFMove(imageBuffer)));
-        downcast<TextureMapperPlatformLayerProxyGL>(proxy).pushNextBuffer(WTFMove(layerBuffer));
+        auto& context = static_cast<GraphicsContextGLFallback&>(m_context);
+        auto size = context.getInternalFramebufferSize();
+        RefPtr<WebCore::ImageBuffer> imageBuffer = ImageBuffer::create(size, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+        if (!imageBuffer)
+            return;
+
+        context.paintRenderingResultsToCanvas(*imageBuffer.get());
+
+        auto flags = context.contextAttributes().alpha ? BitmapTexture::SupportsAlpha : BitmapTexture::NoFlag;
+        auto proxyOperation = [&proxy, size, flags, imageBuffer = WTFMove(imageBuffer)] () mutable {
+
+            Locker locker { proxy.lock() };
+            if (!proxy.isActive())
+                return;
+
+            std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer = downcast<TextureMapperPlatformLayerProxyGL>(proxy).getAvailableBuffer(size, GL_DONT_CARE);
+            if (!layerBuffer) {
+                auto texture = BitmapTextureGL::create(TextureMapperContextAttributes::get(), flags, GL_DONT_CARE);
+                layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(WTFMove(texture), flags);
+            }
+
+            layerBuffer->textureGL().setPendingContents(ImageBuffer::sinkIntoImage(WTFMove(imageBuffer)));
+            downcast<TextureMapperPlatformLayerProxyGL>(proxy).pushNextBuffer(WTFMove(layerBuffer));
+        };
+
+        downcast<TextureMapperPlatformLayerProxyGL>(proxy).scheduleUpdateOnCompositorThread([proxyOperation] () mutable { proxyOperation(); });
     }
 }
 
-#if USE(TEXTURE_MAPPER_DMABUF)
-using PlatformLayerProxyType = TextureMapperPlatformLayerProxyDMABuf;
-#else
-using PlatformLayerProxyType = TextureMapperPlatformLayerProxyGL;
-#endif
+GCGLANGLELayer::GCGLANGLELayer(GraphicsContextGLFallback& context)
+    : m_contextType(ContextType::Fallback)
+    , m_context(context)
+    , m_contentLayer(Nicosia::ContentLayer::create(Nicosia::ContentLayerTextureMapperImpl::createFactory(*this, adoptRef(*new TextureMapperPlatformLayerProxyGL))))
+{
+}
 
 GCGLANGLELayer::GCGLANGLELayer(GraphicsContextGLGBM& context)
-    : m_context(context)
-    , m_contentLayer(Nicosia::ContentLayer::create(Nicosia::ContentLayerTextureMapperImpl::createFactory(*this, adoptRef(*new PlatformLayerProxyType))))
+    : m_contextType(ContextType::Gbm)
+    , m_context(context)
+    , m_contentLayer(Nicosia::ContentLayer::create(Nicosia::ContentLayerTextureMapperImpl::createFactory(*this, adoptRef(*new TextureMapperPlatformLayerProxyDMABuf))))
 {
 }
 

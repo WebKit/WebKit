@@ -1,4 +1,6 @@
 /*
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Google Inc. All rights reserved.
  * Copyright (C) 2022 Metrological Group B.V.
  * Copyright (C) 2022 Igalia S.L.
  *
@@ -11,93 +13,77 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
- * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
- * THE POSSIBILITY OF SUCH DAMAGE.
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
-#include "GraphicsContextGLGBM.h"
+#include "GraphicsContextGLFallback.h"
 
-#if ENABLE(WEBGL) && USE(LIBGBM) && USE(ANGLE)
+#if ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && USE(ANGLE)
 
 #include "ANGLEHeaders.h"
-#include "DMABufEGLUtilities.h"
 #include "Logging.h"
 #include "PixelBuffer.h"
+#include "PlatformLayerDisplayDelegate.h"
 
-#if ENABLE(MEDIA_STREAM)
-#include "VideoFrame.h"
+#if USE(GSTREAMER) && ENABLE(MEDIA_STREAM)
+#include "VideoFrameGStreamer.h"
 #endif
+
+#include "NicosiaGCGLANGLELayer.h"
 
 namespace WebCore {
 
-RefPtr<GraphicsContextGLGBM> GraphicsContextGLGBM::create(GraphicsContextGLAttributes&& attributes)
+RefPtr<GraphicsContextGLFallback> GraphicsContextGLFallback::create(GraphicsContextGLAttributes&& attributes)
 {
-    auto context = adoptRef(*new GraphicsContextGLGBM(WTFMove(attributes)));
+    auto context = adoptRef(*new GraphicsContextGLFallback(WTFMove(attributes)));
     if (!context->initialize())
         return nullptr;
     return context;
 }
 
-GraphicsContextGLGBM::GraphicsContextGLGBM(GraphicsContextGLAttributes&& attributes)
+GraphicsContextGLFallback::GraphicsContextGLFallback(GraphicsContextGLAttributes&& attributes)
     : GraphicsContextGLANGLE(WTFMove(attributes))
-{ }
-
-GraphicsContextGLGBM::~GraphicsContextGLGBM() = default;
-
-RefPtr<GraphicsLayerContentsDisplayDelegate> GraphicsContextGLGBM::layerContentsDisplayDelegate()
 {
-    return { };
 }
 
-#if ENABLE(MEDIA_STREAM)
-RefPtr<VideoFrame> GraphicsContextGLGBM::paintCompositedResultsToVideoFrame()
+GraphicsContextGLFallback::~GraphicsContextGLFallback() = default;
+
+RefPtr<GraphicsLayerContentsDisplayDelegate> GraphicsContextGLFallback::layerContentsDisplayDelegate()
 {
-    return { };
+    return m_layerContentsDisplayDelegate;
 }
-#endif
 
 #if ENABLE(VIDEO)
-bool GraphicsContextGLGBM::copyTextureFromMedia(MediaPlayer&, PlatformGLObject, GCGLenum, GCGLint, GCGLenum, GCGLenum, GCGLenum, bool, bool)
+bool GraphicsContextGLFallback::copyTextureFromMedia(MediaPlayer&, PlatformGLObject, GCGLenum, GCGLint, GCGLenum, GCGLenum, GCGLenum, bool, bool)
 {
+    // FIXME: Implement copy-free (or at least, software copy-free) texture transfer via dmabuf.
     return false;
 }
 #endif
 
-void GraphicsContextGLGBM::setContextVisibility(bool)
+#if ENABLE(MEDIA_STREAM)
+RefPtr<VideoFrame> GraphicsContextGLFallback::paintCompositedResultsToVideoFrame()
 {
+#if USE(GSTREAMER)
+    if (auto pixelBuffer = readCompositedResults())
+        return VideoFrameGStreamer::createFromPixelBuffer(pixelBuffer.releaseNonNull(), VideoFrameGStreamer::CanvasContentType::WebGL, VideoFrameGStreamer::Rotation::UpsideDown, MediaTime::invalidTime(), { }, 30, true, { });
+#endif
+    return nullptr;
 }
+#endif
 
-void GraphicsContextGLGBM::prepareForDisplay()
-{
-    if (m_layerComposited || !makeContextCurrent())
-        return;
-
-    prepareTexture();
-    markLayerComposited();
-
-    m_swapchain.displayBO = WTFMove(m_swapchain.drawBO);
-    allocateDrawBufferObject();
-}
-
-bool GraphicsContextGLGBM::isDMABufSupportedInPlatform(const char* displayExtensions)
-{
-    return (strstr(displayExtensions, "EGL_MESA_platform_surfaceless") || strstr(displayExtensions, "EGL_KHR_surfaceless_context"))
-        && (strstr(displayExtensions, "EGL_KHR_image_base") || strstr(displayExtensions, "EGL_KHR_image"))
-        && strstr(displayExtensions, "EGL_EXT_image_dma_buf_import")
-        && strstr(displayExtensions, "EGL_EXT_image_dma_buf_import_modifiers");
-}
-
-bool GraphicsContextGLGBM::platformInitializeContext()
+bool GraphicsContextGLFallback::platformInitializeContext()
 {
 #if ENABLE(WEBGL2)
     m_isForWebGL2 = contextAttributes().webGLVersion == GraphicsContextGLWebGLVersion::WebGL2;
@@ -122,12 +108,7 @@ bool GraphicsContextGLGBM::platformInitializeContext()
     LOG(WebGL, "ANGLE initialised Major: %d Minor: %d", majorVersion, minorVersion);
 
     const char* displayExtensions = EGL_QueryString(m_displayObj, EGL_EXTENSIONS);
-    LOG(WebGL, "Extensions: %s\n", displayExtensions);
-
-    if (!isDMABufSupportedInPlatform(displayExtensions)) {
-        LOG(WebGL, "Warning: GL images could not be created using DMABuf buffers backend, we fallback to common GL images, they require a copy, that causes a performance penalty.");
-        return false;
-    }
+    LOG(WebGL, "Extensions: %s", displayExtensions);
 
     EGLint configAttributes[] = {
         EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
@@ -184,7 +165,9 @@ bool GraphicsContextGLGBM::platformInitializeContext()
     }
     eglContextAttributes.append(EGL_NONE);
 
-    m_contextObj = EGL_CreateContext(m_displayObj, m_configObj, EGL_NO_CONTEXT, eglContextAttributes.data());
+    auto sharingContext = EGL_NO_CONTEXT;
+
+    m_contextObj = EGL_CreateContext(m_displayObj, m_configObj, sharingContext, eglContextAttributes.data());
     if (m_contextObj == EGL_NO_CONTEXT) {
         LOG(WebGL, "EGLContext Initialization failed.");
         return false;
@@ -193,16 +176,15 @@ bool GraphicsContextGLGBM::platformInitializeContext()
         LOG(WebGL, "ANGLE makeContextCurrent failed.");
         return false;
     }
-
-    if (strstr(displayExtensions, "EGL_EXT_image_dma_buf_import_modifiers"))
-        m_eglExtensions.EXT_image_dma_buf_import_modifiers = true;
-
     LOG(WebGL, "Got EGLContext");
     return true;
 }
 
-bool GraphicsContextGLGBM::platformInitialize()
+bool GraphicsContextGLFallback::platformInitialize()
 {
+    m_nicosiaLayer = makeUnique<Nicosia::GCGLANGLELayer>(*this);
+    m_layerContentsDisplayDelegate = PlatformLayerDisplayDelegate::create(&m_nicosiaLayer->contentLayer());
+
     bool success = makeContextCurrent();
     ASSERT_UNUSED(success, success);
 
@@ -248,7 +230,7 @@ bool GraphicsContextGLGBM::platformInitialize()
     return GraphicsContextGLANGLE::platformInitialize();
 }
 
-void GraphicsContextGLGBM::prepareTexture()
+void GraphicsContextGLFallback::prepareTexture()
 {
     ASSERT(!m_layerComposited);
 
@@ -256,13 +238,17 @@ void GraphicsContextGLGBM::prepareTexture()
         resolveMultisamplingIfNecessary();
 
     GL_Flush();
+
+    if (m_state.boundDrawFBO != m_fbo)
+        GL_BindFramebuffer(GraphicsContextGL::FRAMEBUFFER, m_state.boundDrawFBO);
 }
 
-bool GraphicsContextGLGBM::reshapeDisplayBufferBacking()
+void GraphicsContextGLFallback::setContextVisibility(bool)
 {
-    m_swapchain = Swapchain(platformDisplay());
-    allocateDrawBufferObject();
+}
 
+bool GraphicsContextGLFallback::reshapeDisplayBufferBacking()
+{
     auto attrs = contextAttributes();
     const auto size = getInternalFramebufferSize();
     const int width = size.width();
@@ -279,70 +265,15 @@ bool GraphicsContextGLGBM::reshapeDisplayBufferBacking()
     return true;
 }
 
-void GraphicsContextGLGBM::allocateDrawBufferObject()
+void GraphicsContextGLFallback::prepareForDisplay()
 {
-    if (!m_swapchain.swapchain || m_swapchain.drawBO)
+    if (m_layerComposited || !makeContextCurrent())
         return;
 
-    auto size = getInternalFramebufferSize();
-    m_swapchain.drawBO = m_swapchain.swapchain->getBuffer(
-        GBMBufferSwapchain::BufferDescription {
-            .format = DMABufFormat::create(uint32_t(contextAttributes().alpha ? DMABufFormat::FourCC::ARGB8888 : DMABufFormat::FourCC::XRGB8888)),
-            .width = std::clamp<uint32_t>(size.width(), 0, UINT_MAX),
-            .height = std::clamp<uint32_t>(size.height(), 0, UINT_MAX),
-            .flags = GBMBufferSwapchain::BufferDescription::NoFlags,
-        });
-
-    GLenum textureTarget = drawingBufferTextureTarget();
-    ScopedRestoreTextureBinding restoreBinding(drawingBufferTextureTargetQueryForDrawingTarget(textureTarget), textureTarget, textureTarget != TEXTURE_RECTANGLE_ARB);
-
-    auto result = m_swapchain.images.ensure(m_swapchain.drawBO->handle(),
-        [&] {
-            auto dmabufObject = m_swapchain.drawBO->createDMABufObject(0);
-            auto attributes = DMABufEGLUtilities::constructEGLCreateImageAttributes(dmabufObject, 0,
-                DMABufEGLUtilities::PlaneModifiersUsage { static_cast<GraphicsContextGLGBM&>(*this).eglExtensions().EXT_image_dma_buf_import_modifiers });
-            return EGL_CreateImageKHR(m_swapchain.platformDisplay, EGL_NO_CONTEXT, EGL_LINUX_DMA_BUF_EXT, (EGLClientBuffer)nullptr, attributes.data());
-        });
-
-    GL_BindTexture(textureTarget, m_texture);
-    GL_EGLImageTargetTexture2DOES(textureTarget, result.iterator->value);
-
-    // If just created, the dmabuf has to be cleared to provide a zeroed-out buffer.
-    // Current color-clear and framebuffer state has to be preserved and re-established after this.
-    if (result.isNewEntry) {
-        GCGLuint boundFBO { 0 };
-        GL_GetIntegerv(GL_FRAMEBUFFER_BINDING, reinterpret_cast<GCGLint*>(&boundFBO));
-
-        GCGLuint targetFBO = contextAttributes().antialias ? m_multisampleFBO : m_fbo;
-        if (targetFBO != boundFBO)
-            GL_BindFramebuffer(GL_FRAMEBUFFER, targetFBO);
-
-        std::array<float, 4> clearColor { 0, 0, 0, 0 };
-        GL_GetFloatv(GL_COLOR_CLEAR_VALUE, clearColor.data());
-
-        GL_ClearColor(0, 0, 0, 0);
-        GL_Clear(GL_COLOR_BUFFER_BIT);
-
-        GL_ClearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
-
-        if (targetFBO != boundFBO)
-            GL_BindFramebuffer(GL_FRAMEBUFFER, boundFBO);
-    }
-}
-
-GraphicsContextGLGBM::Swapchain::Swapchain(GCGLDisplay platformDisplay)
-    : platformDisplay(platformDisplay)
-    , swapchain(adoptRef(new GBMBufferSwapchain(GBMBufferSwapchain::BufferSwapchainSize::Four)))
-{ }
-
-GraphicsContextGLGBM::Swapchain::~Swapchain()
-{
-    for (EGLImageKHR image : images.values()) {
-        if (image != EGL_NO_IMAGE_KHR)
-            EGL_DestroyImageKHR(platformDisplay, image);
-    }
+    prepareTexture();
+    markLayerComposited();
 }
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGL) && USE(LIBGBM) && USE(ANGLE)
+#endif // ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && USE(ANGLE)
