@@ -211,8 +211,19 @@ TEST_F(WKContentRuleListStoreTest, Removal)
     TestWebKitAPI::Util::run(&doneRemoving);
 }
 
-// FIXME: webkit.org/b/241653
-TEST_F(WKContentRuleListStoreTest, DISABLED_CrossOriginCookieBlocking)
+#if CPU(ARM64) && defined(NDEBUG)
+NEVER_INLINE TestWebKitAPI::HTTPResponse setCookieAlertResponse()
+{
+    // FIXME: This is exactly equivalent code, but the code below crashes on release builds on arm64e.
+    // See rdar://95391568
+    HashMap<String, String> headerFields;
+    headerFields.reserveInitialCapacity(1);
+    headerFields.add("Set-Cookie"_s, "testCookie=42; Path=/; SameSite=None; Secure"_s);
+    return { WTFMove(headerFields), "<script>alert('hi')</script>"_s };
+}
+#endif
+
+TEST_F(WKContentRuleListStoreTest, CrossOriginCookieBlocking)
 {
     using namespace TestWebKitAPI;
 
@@ -226,13 +237,8 @@ TEST_F(WKContentRuleListStoreTest, DISABLED_CrossOriginCookieBlocking)
                 auto path = HTTPServer::parsePath(request);
                 auto response = [&] {
                     if (path == "/com"_s) {
-#if CPU(ARM64E) && defined(NDEBUG)
-                        // FIXME: This is exactly equivalent code, but the code below crashes on release builds on arm64e.
-                        // See rdar://95391568
-                        HashMap<String, String> headerFields;
-                        headerFields.reserveInitialCapacity(1);
-                        headerFields.add("Set-Cookie"_s, "testCookie=42; Path=/; SameSite=None; Secure"_s);
-                        return HTTPResponse(WTFMove(headerFields), "<script>alert('hi')</script>"_s);
+#if CPU(ARM64) && defined(NDEBUG)
+                        return setCookieAlertResponse();
 #else
                         return HTTPResponse({ { "Set-Cookie"_s, "testCookie=42; Path=/; SameSite=None; Secure"_s } }, "<script>alert('hi')</script>"_s);
 #endif
