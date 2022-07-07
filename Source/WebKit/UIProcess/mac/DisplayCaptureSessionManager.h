@@ -57,7 +57,7 @@ private:
     void alertForGetDisplayMedia(WebPageProxy&, const WebCore::SecurityOriginData&, CompletionHandler<void(DisplayCaptureSessionManager::CaptureSessionType)>&&);
     void showWindowPicker(WebPageProxy&, const WebCore::SecurityOriginData&, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);
     void showScreenPicker(WebPageProxy&, const WebCore::SecurityOriginData&, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);
-    std::optional<WebCore::CaptureDevice> deviceSelectedForTesting(WebCore::CaptureDevice::DeviceType);
+    std::optional<WebCore::CaptureDevice> deviceSelectedForTesting(WebCore::CaptureDevice::DeviceType, unsigned);
 #endif
 
     std::optional<unsigned> m_indexOfDeviceSelectedForTesting;

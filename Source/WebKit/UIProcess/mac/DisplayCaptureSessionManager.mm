@@ -178,14 +178,12 @@ void DisplayCaptureSessionManager::alertForGetDisplayMedia(WebPageProxy& page, c
     }];
 }
 
-std::optional<WebCore::CaptureDevice> DisplayCaptureSessionManager::deviceSelectedForTesting(WebCore::CaptureDevice::DeviceType deviceType)
+std::optional<WebCore::CaptureDevice> DisplayCaptureSessionManager::deviceSelectedForTesting(WebCore::CaptureDevice::DeviceType deviceType, unsigned indexOfDeviceSelectedForTesting)
 {
-    ASSERT(m_indexOfDeviceSelectedForTesting);
-
     unsigned index = 0;
     for (auto& device : WebCore::RealtimeMediaSourceCenter::singleton().displayCaptureFactory().displayCaptureDeviceManager().captureDevices()) {
         if (device.enabled() && device.type() == deviceType) {
-            if (index == m_indexOfDeviceSelectedForTesting.value())
+            if (index == indexOfDeviceSelectedForTesting)
                 return { device };
             ++index;
         }
@@ -196,8 +194,8 @@ std::optional<WebCore::CaptureDevice> DisplayCaptureSessionManager::deviceSelect
 
 void DisplayCaptureSessionManager::showWindowPicker(WebPageProxy& page, const WebCore::SecurityOriginData& origin, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&& completionHandler)
 {
-    if (m_indexOfDeviceSelectedForTesting) {
-        completionHandler(deviceSelectedForTesting(WebCore::CaptureDevice::DeviceType::Window));
+    if (m_indexOfDeviceSelectedForTesting || page.preferences().mockCaptureDevicesEnabled()) {
+        completionHandler(deviceSelectedForTesting(WebCore::CaptureDevice::DeviceType::Window, m_indexOfDeviceSelectedForTesting.value_or(0)));
         return;
     }
 
@@ -229,8 +227,8 @@ void DisplayCaptureSessionManager::showWindowPicker(WebPageProxy& page, const We
 
 void DisplayCaptureSessionManager::showScreenPicker(WebPageProxy& page, const WebCore::SecurityOriginData&, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&& completionHandler)
 {
-    if (m_indexOfDeviceSelectedForTesting) {
-        completionHandler(deviceSelectedForTesting(WebCore::CaptureDevice::DeviceType::Screen));
+    if (m_indexOfDeviceSelectedForTesting || page.preferences().mockCaptureDevicesEnabled()) {
+        completionHandler(deviceSelectedForTesting(WebCore::CaptureDevice::DeviceType::Screen, m_indexOfDeviceSelectedForTesting.value_or(0)));
         return;
     }
 
