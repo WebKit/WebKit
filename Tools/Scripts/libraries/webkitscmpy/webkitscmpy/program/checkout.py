@@ -39,7 +39,7 @@ class Checkout(Command):
         parser.add_argument(
             'argument', nargs=1,
             type=str, default=None,
-            help='String representation of a commit or branch to be normalized',
+            help='String representation of a commit, branch or pull request (pr-#) to apply locally',
         )
         parser.add_argument(
             '--remote', dest='remote', type=str, default=None,
