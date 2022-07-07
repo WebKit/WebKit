@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2020 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -32,7 +32,7 @@ _log = logging.getLogger(__name__)
 
 
 class Patch(models.Model):
-    patch_id = models.IntegerField(primary_key=True)
+    patch_id = models.TextField(primary_key=True)
     bug_id = models.IntegerField()
     obsolete = models.BooleanField(default=False)
     sent_to_buildbot = models.BooleanField(default=False)
@@ -63,11 +63,9 @@ class Patch(models.Model):
 
     @classmethod
     def is_valid_patch_id(cls, patch_id):
-        if not patch_id or patch_id < 1:
+        if not patch_id:
             _log.warn('Invalid patch id: {}'.format(patch_id))
             return False
-        if type(patch_id) != int:
-            _log.warn('Data type mismatch for patch_id, expected: int, found: {}, id: {}'.format(type(patch_id), patch_id))
             return False
         return True
 

@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2021 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -364,7 +364,6 @@ class StatusBubble(View):
     @xframe_options_exempt
     def get(self, request, patch_id):
         hide_icons = request.GET.get('hide_icons', False)
-        patch_id = int(patch_id)
         patch = Patch.get_patch(patch_id)
         bubbles, show_submit_to_ews, show_failure_to_apply, show_retry = self._build_bubbles_for_patch(patch, hide_icons)
 

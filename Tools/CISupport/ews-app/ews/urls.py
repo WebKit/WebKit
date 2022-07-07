@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -39,8 +39,8 @@ urlpatterns = [
     url(r'^retry/$', RetryPatch.as_view(), name='retrypatch'),
     # ex: /status/5
     url(r'^status/(?P<patch_id>[0-9]+)/$', Status.as_view(), name='status'),
-    # ex: /status-bubble/5
-    url(r'^status-bubble/(?P<patch_id>[0-9]+)/$', StatusBubble.as_view(), name='statusbubble'),
+    # ex: /status-bubble/5 , /status-bubble/ac980a0f
+    url(r'^status-bubble/(?P<patch_id>[a-fA-F0-9]+)/$', StatusBubble.as_view(), name='statusbubble'),
     # ex: /submit-to-ews/
     url(r'^submit-to-ews/$', SubmitToEWS.as_view(), name='submittoews'),
 ]

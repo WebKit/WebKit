@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -54,6 +54,7 @@ class Build(models.Model):
     @classmethod
     def save_build(cls, patch_id, hostname, build_id, builder_id, builder_name, builder_display_name, number, result, state_string, started_at, complete_at=None):
         if not Build.is_valid_result(patch_id, build_id, builder_id, number, result, state_string, started_at, complete_at):
+            _log.warn('Invalid build data for change: {}. Skipped saving build.'.format(patch_id))
             return ERR_UNEXPECTED
 
         if state_string is None:
@@ -76,8 +77,8 @@ class Build(models.Model):
 
     @classmethod
     def update_build(cls, build, patch_id, uid, builder_id, builder_name, builder_display_name, number, result, state_string, started_at, complete_at):
-        if build.patch_id != patch_id:
-            _log.error('patch_id {} does not match with patch_id {}. Ignoring new data.'.format(build.patch_id, patch_id))
+        if str(build.patch_id) != str(patch_id):
+            _log.error('existing patch_id {} of type {} does not match with new patch_id {} of type {}. Ignoring new data.'.format(build.patch_id, type(build.patch_id), patch_id, type(patch_id)))
             return ERR_UNEXPECTED
         if build.uid != uid:
             _log.error('uid {} does not match with uid {}. Ignoring new data.'.format(build.uid, uid))
@@ -114,7 +115,7 @@ class Build(models.Model):
 
     @classmethod
     def is_valid_result(cls, patch_id, build_id, builder_id, number, result, state_string, started_at, complete_at=None):
-        if not (util.is_valid_id(patch_id) and util.is_valid_id(build_id) and util.is_valid_id(builder_id) and util.is_valid_id(number)):
+        if not (util.is_valid_id(build_id) and util.is_valid_id(builder_id) and util.is_valid_id(number)):
             return False
 
         return True
