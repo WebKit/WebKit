@@ -447,7 +447,7 @@ void FileInputType::didCreateFileList(Ref<FileList>&& fileList, RefPtr<Icon>&& i
     ASSERT(!allowsDirectories() || m_directoryFileListCreator);
     m_directoryFileListCreator = nullptr;
 
-    setFiles(WTFMove(fileList), icon ? RequestIcon::Yes : RequestIcon::No, WasSetByJavaScript::No);
+    setFiles(WTFMove(fileList), icon ? RequestIcon::No : RequestIcon::Yes, WasSetByJavaScript::No);
     if (icon && !m_fileList->isEmpty() && element())
         iconLoaded(WTFMove(icon));
 }
