@@ -64,24 +64,12 @@ class Assembler
         @outp.puts ""
         putStr "OFFLINE_ASM_BEGIN" if !$emitWinAsm
 
-        if !$emitWinAsm
-            putStr "OFFLINE_ASM_GLOBAL_LABEL(llintPCRangeStart)"
-        else
-            putsProc("llintPCRangeStart", "")
-            putsProcEndIfNeeded
-        end
         @state = :asm
         SourceFile.outputDotFileList(@outp) if $enableDebugAnnotations
     end
     
     def leaveAsm
         putsProcEndIfNeeded if $emitWinAsm
-        if !$emitWinAsm
-            putStr "OFFLINE_ASM_GLOBAL_LABEL(llintPCRangeEnd)"
-        else
-            putsProc("llintPCRangeEnd", "")
-            putsProcEndIfNeeded
-        end
         putsLastComment
         if not @deferredOSDarwinActions.size.zero?
             putStr("#if OS(DARWIN)")

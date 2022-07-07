@@ -137,8 +137,14 @@
 # You can assume that ft1-ft5 or fa1-fa3 are never fr, and that ftX is never
 # faY if X != Y.
 
-# First come the common protocols that both interpreters use. Note that each
-# of these must have an ASSERT() in LLIntData.cpp
+# Do not put any code after this.
+global _llintPCRangeStart
+_llintPCRangeStart:
+    # This break instruction is needed so that the synthesized llintPCRangeStart# label
+    # doesn't point to the exact same location as vmEntryToJavaScript which comes after it.
+    # Otherwise, libunwind will report vmEntryToJavaScript as llintPCRangeStart in
+    # stack traces.
+    break
 
 # Work-around for the fact that the toolchain's awareness of armv7k / armv7s
 # results in a separate slab in the fat binary, yet the offlineasm doesn't know
@@ -147,6 +153,9 @@ if ARMv7k
 end
 if ARMv7s
 end
+
+# First come the common protocols that both interpreters use. Note that each
+# of these must have an ASSERT() in LLIntData.cpp
 
 # These declarations must match interpreter/JSStack.h.
 
@@ -1669,13 +1678,6 @@ macro doReturn()
     end
 end
 
-# This break instruction is needed so that the synthesized llintPCRangeStart label
-# doesn't point to the exact same location as vmEntryToJavaScript which comes after it.
-# Otherwise, libunwind will report vmEntryToJavaScript as llintPCRangeStart in
-# stack traces.
-
-    break
-
 # stub to call into JavaScript or Native functions
 # EncodedJSValue vmEntryToJavaScript(void* code, VM* vm, ProtoCallFrame* protoFrame)
 # EncodedJSValue vmEntryToNativeFunction(void* code, VM* vm, ProtoCallFrame* protoFrame)
@@ -2721,9 +2723,11 @@ end
 
 global _wasmLLIntPCRangeStart
 _wasmLLIntPCRangeStart:
+    break # FIXME: rdar://96556827
 wasmScope()
 global _wasmLLIntPCRangeEnd
 _wasmLLIntPCRangeEnd:
+    break # FIXME: rdar://96556827
 
 else
 
@@ -2759,3 +2763,8 @@ _wasm_trampoline_wasm_call_ref_no_tls_wide32:
 end
 
 include? LowLevelInterpreterAdditions
+
+global _llintPCRangeEnd
+_llintPCRangeEnd:
+    break # FIXME: rdar://96556827
+# Do not put any code after this.
