@@ -30,7 +30,7 @@
 
 #include <Metal/Metal.h>
 
-#include <Metal/Metal.hpp>
+// #include <Metal/Metal.hpp>
 
 #include <wtf/Assertions.h>
 
