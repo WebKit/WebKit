@@ -15,6 +15,8 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/untriaged/shadow-trees/shadow-root-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/untriaged/shadow-trees/shadow-root-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/untriaged/shadow-trees/shadow-root-001.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/untriaged/shadow-trees/shadow-root-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/untriaged/shadow-trees/shadow-root-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/untriaged/shadow-trees/shadow-root-002.html

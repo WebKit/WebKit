@@ -1,6 +1,5 @@
 
-FAIL attachShadow can take slotAssignment parameter. assert_throws_js: others should throw exception function "() => {
-    tTree.host3.attachShadow({ mode: 'open', slotAssignment: 'exceptional' })}" did not throw
+FAIL attachShadow can take slotAssignment parameter. assert_equals: slotAssignment should return "manual" expected (string) "manual" but got (undefined) undefined
 FAIL slot.attach() should take variadic not sequence. tTree.s1.assign is not a function. (In 'tTree.s1.assign(c1,c2)', 'tTree.s1.assign' is undefined)
 FAIL Imperative slot API can assign nodes in manual slot assignment. assert_equals: expected null but got Element node <slot id="s1"></slot>
 FAIL Order of slottables is preserved in manual slot assignment. tTree.s1.assign is not a function. (In 'tTree.s1.assign(tTree.c2, tTree.c3, tTree.c1)', 'tTree.s1.assign' is undefined)

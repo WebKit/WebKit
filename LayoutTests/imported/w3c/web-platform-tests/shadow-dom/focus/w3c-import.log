@@ -20,6 +20,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/click-focus-delegatesFocus-click.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/click-focus-delegatesFocus-tabindex-varies.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/click-focus-delegatesFocus-tabindex-zero.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/focus-autofocus.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/focus-method-delegatesFocus-nested-browsing-context.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/focus-method-delegatesFocus.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/focus-pseudo-matches-on-shadow-host.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/focus-pseudo-on-shadow-host-1-expected.xht
@@ -34,6 +36,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-negative.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-slot-one.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-varying-delegatesFocus.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-varying-tabindex-2.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-varying-tabindex-3.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-varying-tabindex.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-zero-delegatesFocus.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus/focus-tabindex-order-shadow-zero-host-negative.html

@@ -31,8 +31,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/Slottable-mixin.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/accesskey.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/capturing-and-bubbling-event-listeners-across-shadow-trees.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/directionality-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/directionality-001.tentative-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/directionality-001.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/directionality-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/directionality-002.tentative-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/directionality-002.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/event-composed-path-after-dom-mutation.html
@@ -52,6 +54,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/imperative-slot-api-slotchange.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/imperative-slot-api.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/imperative-slot-assign-not-slotable-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/imperative-slot-fallback-clear.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/imperative-slot-initial-fallback.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/imperative-slot-layout-invalidation-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/imperative-slot-layout-invalidation-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/imperative-slot-layout-invalidation-001.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/innerHTML-setter.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/input-element-list.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/input-type-radio.html
@@ -62,6 +69,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/nested-slot-remove-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/offsetParent-across-shadow-boundaries.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/scroll-to-the-fragment-in-shadow-tree.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/slot-dir-attach-child-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/slotchange-customelements.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/slotchange-event.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/slotchange.html

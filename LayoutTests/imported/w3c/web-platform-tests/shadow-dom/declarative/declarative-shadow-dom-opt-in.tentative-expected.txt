@@ -22,7 +22,7 @@ PASS innerHTML on a <caption>
 PASS innerHTML on a <cite>
 PASS innerHTML on a <code>
 PASS innerHTML on a <col>
-PASS innerHTML on a <command>
+PASS innerHTML on a <data>
 PASS innerHTML on a <datalist>
 PASS innerHTML on a <dd>
 PASS innerHTML on a <del>
@@ -47,7 +47,6 @@ PASS innerHTML on a <h5>
 PASS innerHTML on a <h6>
 PASS innerHTML on a <head>
 PASS innerHTML on a <header>
-PASS innerHTML on a <hgroup>
 PASS innerHTML on a <hr>
 PASS innerHTML on a <html>
 PASS innerHTML on a <i>
@@ -55,11 +54,11 @@ PASS innerHTML on a <img>
 PASS innerHTML on a <input>
 PASS innerHTML on a <ins>
 PASS innerHTML on a <kbd>
-PASS innerHTML on a <keygen>
 PASS innerHTML on a <label>
 PASS innerHTML on a <legend>
 PASS innerHTML on a <li>
 PASS innerHTML on a <link>
+PASS innerHTML on a <main>
 PASS innerHTML on a <map>
 PASS innerHTML on a <mark>
 PASS innerHTML on a <menu>
@@ -82,11 +81,14 @@ PASS innerHTML on a <ruby>
 PASS innerHTML on a <s>
 PASS innerHTML on a <samp>
 PASS innerHTML on a <section>
+PASS innerHTML on a <slot>
 PASS innerHTML on a <small>
 PASS innerHTML on a <source>
 PASS innerHTML on a <span>
 PASS innerHTML on a <strong>
 PASS innerHTML on a <sub>
+PASS innerHTML on a <sup>
+PASS innerHTML on a <summary>
 PASS innerHTML on a <table>
 PASS innerHTML on a <tbody>
 PASS innerHTML on a <td>

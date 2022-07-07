@@ -479,6 +479,7 @@ fast/dom/navigator-detached-no-crash.html [ DumpJSConsoleLogInStdErr ]
 webaudio/audioworket-out-of-memory.html [ DumpJSConsoleLogInStdErr ]
 
 webkit.org/b/202495 imported/w3c/web-platform-tests/shadow-dom/directionality-002.tentative.html [ ImageOnlyFailure ]
+webkit.org/b/242376 imported/w3c/web-platform-tests/shadow-dom/imperative-slot-layout-invalidation-001.html [ ImageOnlyFailure ]
 
 # Newly imported WPT tests that are timing out.
 imported/w3c/web-platform-tests/clipboard-apis/feature-policy/clipboard-read/clipboard-read-disabled-by-feature-policy.tentative.https.sub.html [ Skip ]

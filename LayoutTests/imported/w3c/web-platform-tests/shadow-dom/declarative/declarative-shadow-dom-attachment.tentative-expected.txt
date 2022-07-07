@@ -11,6 +11,7 @@ FAIL Declarative Shadow DOM as a child of <h4>, with mode=open, delegatesFocus=f
 FAIL Declarative Shadow DOM as a child of <h5>, with mode=open, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
 FAIL Declarative Shadow DOM as a child of <h6>, with mode=open, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
 FAIL Declarative Shadow DOM as a child of <header>, with mode=open, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
+FAIL Declarative Shadow DOM as a child of <main>, with mode=open, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
 FAIL Declarative Shadow DOM as a child of <nav>, with mode=open, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
 FAIL Declarative Shadow DOM as a child of <p>, with mode=open, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
 FAIL Declarative Shadow DOM as a child of <section>, with mode=open, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
@@ -32,7 +33,7 @@ PASS Declarative Shadow DOM as a child of <cite>, with mode=open, delegatesFocus
 PASS Declarative Shadow DOM as a child of <code>, with mode=open, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <col>, with mode=open, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <colgroup>, with mode=open, delegatesFocus=false. Should be disallowed.
-PASS Declarative Shadow DOM as a child of <command>, with mode=open, delegatesFocus=false. Should be disallowed.
+PASS Declarative Shadow DOM as a child of <data>, with mode=open, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <datalist>, with mode=open, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <dd>, with mode=open, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <del>, with mode=open, delegatesFocus=false. Should be disallowed.
@@ -48,7 +49,6 @@ PASS Declarative Shadow DOM as a child of <figcaption>, with mode=open, delegate
 PASS Declarative Shadow DOM as a child of <figure>, with mode=open, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <form>, with mode=open, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <head>, with mode=open, delegatesFocus=false. Should be disallowed.
-PASS Declarative Shadow DOM as a child of <hgroup>, with mode=open, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <hr>, with mode=open, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <html>, with mode=open, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <i>, with mode=open, delegatesFocus=false. Should be disallowed.
@@ -57,7 +57,6 @@ PASS Declarative Shadow DOM as a child of <img>, with mode=open, delegatesFocus=
 PASS Declarative Shadow DOM as a child of <input>, with mode=open, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <ins>, with mode=open, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <kbd>, with mode=open, delegatesFocus=false. Should be disallowed.
-PASS Declarative Shadow DOM as a child of <keygen>, with mode=open, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <label>, with mode=open, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <legend>, with mode=open, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <li>, with mode=open, delegatesFocus=false. Should be disallowed.
@@ -84,11 +83,14 @@ PASS Declarative Shadow DOM as a child of <s>, with mode=open, delegatesFocus=fa
 PASS Declarative Shadow DOM as a child of <samp>, with mode=open, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <script>, with mode=open, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <select>, with mode=open, delegatesFocus=false. Should be disallowed.
+PASS Declarative Shadow DOM as a child of <slot>, with mode=open, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <small>, with mode=open, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <source>, with mode=open, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <strong>, with mode=open, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <style>, with mode=open, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <sub>, with mode=open, delegatesFocus=false. Should be disallowed.
+PASS Declarative Shadow DOM as a child of <sup>, with mode=open, delegatesFocus=false. Should be disallowed.
+PASS Declarative Shadow DOM as a child of <summary>, with mode=open, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <table>, with mode=open, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <tbody>, with mode=open, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <td>, with mode=open, delegatesFocus=false. Should be disallowed.
@@ -117,6 +119,7 @@ FAIL Declarative Shadow DOM as a child of <h4>, with mode=closed, delegatesFocus
 FAIL Declarative Shadow DOM as a child of <h5>, with mode=closed, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
 FAIL Declarative Shadow DOM as a child of <h6>, with mode=closed, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
 FAIL Declarative Shadow DOM as a child of <header>, with mode=closed, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
+FAIL Declarative Shadow DOM as a child of <main>, with mode=closed, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
 FAIL Declarative Shadow DOM as a child of <nav>, with mode=closed, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
 FAIL Declarative Shadow DOM as a child of <p>, with mode=closed, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
 FAIL Declarative Shadow DOM as a child of <section>, with mode=closed, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
@@ -138,7 +141,7 @@ PASS Declarative Shadow DOM as a child of <cite>, with mode=closed, delegatesFoc
 PASS Declarative Shadow DOM as a child of <code>, with mode=closed, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <col>, with mode=closed, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <colgroup>, with mode=closed, delegatesFocus=false. Should be disallowed.
-PASS Declarative Shadow DOM as a child of <command>, with mode=closed, delegatesFocus=false. Should be disallowed.
+PASS Declarative Shadow DOM as a child of <data>, with mode=closed, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <datalist>, with mode=closed, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <dd>, with mode=closed, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <del>, with mode=closed, delegatesFocus=false. Should be disallowed.
@@ -154,7 +157,6 @@ PASS Declarative Shadow DOM as a child of <figcaption>, with mode=closed, delega
 PASS Declarative Shadow DOM as a child of <figure>, with mode=closed, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <form>, with mode=closed, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <head>, with mode=closed, delegatesFocus=false. Should be disallowed.
-PASS Declarative Shadow DOM as a child of <hgroup>, with mode=closed, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <hr>, with mode=closed, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <html>, with mode=closed, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <i>, with mode=closed, delegatesFocus=false. Should be disallowed.
@@ -163,7 +165,6 @@ PASS Declarative Shadow DOM as a child of <img>, with mode=closed, delegatesFocu
 PASS Declarative Shadow DOM as a child of <input>, with mode=closed, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <ins>, with mode=closed, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <kbd>, with mode=closed, delegatesFocus=false. Should be disallowed.
-PASS Declarative Shadow DOM as a child of <keygen>, with mode=closed, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <label>, with mode=closed, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <legend>, with mode=closed, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <li>, with mode=closed, delegatesFocus=false. Should be disallowed.
@@ -190,11 +191,14 @@ PASS Declarative Shadow DOM as a child of <s>, with mode=closed, delegatesFocus=
 PASS Declarative Shadow DOM as a child of <samp>, with mode=closed, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <script>, with mode=closed, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <select>, with mode=closed, delegatesFocus=false. Should be disallowed.
+PASS Declarative Shadow DOM as a child of <slot>, with mode=closed, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <small>, with mode=closed, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <source>, with mode=closed, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <strong>, with mode=closed, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <style>, with mode=closed, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <sub>, with mode=closed, delegatesFocus=false. Should be disallowed.
+PASS Declarative Shadow DOM as a child of <sup>, with mode=closed, delegatesFocus=false. Should be disallowed.
+PASS Declarative Shadow DOM as a child of <summary>, with mode=closed, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <table>, with mode=closed, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <tbody>, with mode=closed, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <td>, with mode=closed, delegatesFocus=false. Should be disallowed.
@@ -223,6 +227,7 @@ PASS Declarative Shadow DOM as a child of <h4>, with mode=invalid, delegatesFocu
 PASS Declarative Shadow DOM as a child of <h5>, with mode=invalid, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <h6>, with mode=invalid, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <header>, with mode=invalid, delegatesFocus=false. Should be disallowed.
+PASS Declarative Shadow DOM as a child of <main>, with mode=invalid, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <nav>, with mode=invalid, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <p>, with mode=invalid, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <section>, with mode=invalid, delegatesFocus=false. Should be disallowed.
@@ -244,7 +249,7 @@ PASS Declarative Shadow DOM as a child of <cite>, with mode=invalid, delegatesFo
 PASS Declarative Shadow DOM as a child of <code>, with mode=invalid, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <col>, with mode=invalid, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <colgroup>, with mode=invalid, delegatesFocus=false. Should be disallowed.
-PASS Declarative Shadow DOM as a child of <command>, with mode=invalid, delegatesFocus=false. Should be disallowed.
+PASS Declarative Shadow DOM as a child of <data>, with mode=invalid, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <datalist>, with mode=invalid, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <dd>, with mode=invalid, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <del>, with mode=invalid, delegatesFocus=false. Should be disallowed.
@@ -260,7 +265,6 @@ PASS Declarative Shadow DOM as a child of <figcaption>, with mode=invalid, deleg
 PASS Declarative Shadow DOM as a child of <figure>, with mode=invalid, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <form>, with mode=invalid, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <head>, with mode=invalid, delegatesFocus=false. Should be disallowed.
-PASS Declarative Shadow DOM as a child of <hgroup>, with mode=invalid, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <hr>, with mode=invalid, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <html>, with mode=invalid, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <i>, with mode=invalid, delegatesFocus=false. Should be disallowed.
@@ -269,7 +273,6 @@ PASS Declarative Shadow DOM as a child of <img>, with mode=invalid, delegatesFoc
 PASS Declarative Shadow DOM as a child of <input>, with mode=invalid, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <ins>, with mode=invalid, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <kbd>, with mode=invalid, delegatesFocus=false. Should be disallowed.
-PASS Declarative Shadow DOM as a child of <keygen>, with mode=invalid, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <label>, with mode=invalid, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <legend>, with mode=invalid, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <li>, with mode=invalid, delegatesFocus=false. Should be disallowed.
@@ -296,11 +299,14 @@ PASS Declarative Shadow DOM as a child of <s>, with mode=invalid, delegatesFocus
 PASS Declarative Shadow DOM as a child of <samp>, with mode=invalid, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <script>, with mode=invalid, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <select>, with mode=invalid, delegatesFocus=false. Should be disallowed.
+PASS Declarative Shadow DOM as a child of <slot>, with mode=invalid, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <small>, with mode=invalid, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <source>, with mode=invalid, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <strong>, with mode=invalid, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <style>, with mode=invalid, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <sub>, with mode=invalid, delegatesFocus=false. Should be disallowed.
+PASS Declarative Shadow DOM as a child of <sup>, with mode=invalid, delegatesFocus=false. Should be disallowed.
+PASS Declarative Shadow DOM as a child of <summary>, with mode=invalid, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <table>, with mode=invalid, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <tbody>, with mode=invalid, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <td>, with mode=invalid, delegatesFocus=false. Should be disallowed.
@@ -329,6 +335,7 @@ FAIL Declarative Shadow DOM as a child of <h4>, with mode=open, delegatesFocus=t
 FAIL Declarative Shadow DOM as a child of <h5>, with mode=open, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
 FAIL Declarative Shadow DOM as a child of <h6>, with mode=open, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
 FAIL Declarative Shadow DOM as a child of <header>, with mode=open, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
+FAIL Declarative Shadow DOM as a child of <main>, with mode=open, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
 FAIL Declarative Shadow DOM as a child of <nav>, with mode=open, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
 FAIL Declarative Shadow DOM as a child of <p>, with mode=open, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
 FAIL Declarative Shadow DOM as a child of <section>, with mode=open, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
@@ -350,7 +357,7 @@ PASS Declarative Shadow DOM as a child of <cite>, with mode=open, delegatesFocus
 PASS Declarative Shadow DOM as a child of <code>, with mode=open, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <col>, with mode=open, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <colgroup>, with mode=open, delegatesFocus=true. Should be disallowed.
-PASS Declarative Shadow DOM as a child of <command>, with mode=open, delegatesFocus=true. Should be disallowed.
+PASS Declarative Shadow DOM as a child of <data>, with mode=open, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <datalist>, with mode=open, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <dd>, with mode=open, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <del>, with mode=open, delegatesFocus=true. Should be disallowed.
@@ -366,7 +373,6 @@ PASS Declarative Shadow DOM as a child of <figcaption>, with mode=open, delegate
 PASS Declarative Shadow DOM as a child of <figure>, with mode=open, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <form>, with mode=open, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <head>, with mode=open, delegatesFocus=true. Should be disallowed.
-PASS Declarative Shadow DOM as a child of <hgroup>, with mode=open, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <hr>, with mode=open, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <html>, with mode=open, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <i>, with mode=open, delegatesFocus=true. Should be disallowed.
@@ -375,7 +381,6 @@ PASS Declarative Shadow DOM as a child of <img>, with mode=open, delegatesFocus=
 PASS Declarative Shadow DOM as a child of <input>, with mode=open, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <ins>, with mode=open, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <kbd>, with mode=open, delegatesFocus=true. Should be disallowed.
-PASS Declarative Shadow DOM as a child of <keygen>, with mode=open, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <label>, with mode=open, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <legend>, with mode=open, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <li>, with mode=open, delegatesFocus=true. Should be disallowed.
@@ -402,11 +407,14 @@ PASS Declarative Shadow DOM as a child of <s>, with mode=open, delegatesFocus=tr
 PASS Declarative Shadow DOM as a child of <samp>, with mode=open, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <script>, with mode=open, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <select>, with mode=open, delegatesFocus=true. Should be disallowed.
+PASS Declarative Shadow DOM as a child of <slot>, with mode=open, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <small>, with mode=open, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <source>, with mode=open, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <strong>, with mode=open, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <style>, with mode=open, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <sub>, with mode=open, delegatesFocus=true. Should be disallowed.
+PASS Declarative Shadow DOM as a child of <sup>, with mode=open, delegatesFocus=true. Should be disallowed.
+PASS Declarative Shadow DOM as a child of <summary>, with mode=open, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <table>, with mode=open, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <tbody>, with mode=open, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <td>, with mode=open, delegatesFocus=true. Should be disallowed.
@@ -435,6 +443,7 @@ FAIL Declarative Shadow DOM as a child of <h4>, with mode=closed, delegatesFocus
 FAIL Declarative Shadow DOM as a child of <h5>, with mode=closed, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
 FAIL Declarative Shadow DOM as a child of <h6>, with mode=closed, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
 FAIL Declarative Shadow DOM as a child of <header>, with mode=closed, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
+FAIL Declarative Shadow DOM as a child of <main>, with mode=closed, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
 FAIL Declarative Shadow DOM as a child of <nav>, with mode=closed, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
 FAIL Declarative Shadow DOM as a child of <p>, with mode=closed, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
 FAIL Declarative Shadow DOM as a child of <section>, with mode=closed, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
@@ -456,7 +465,7 @@ PASS Declarative Shadow DOM as a child of <cite>, with mode=closed, delegatesFoc
 PASS Declarative Shadow DOM as a child of <code>, with mode=closed, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <col>, with mode=closed, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <colgroup>, with mode=closed, delegatesFocus=true. Should be disallowed.
-PASS Declarative Shadow DOM as a child of <command>, with mode=closed, delegatesFocus=true. Should be disallowed.
+PASS Declarative Shadow DOM as a child of <data>, with mode=closed, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <datalist>, with mode=closed, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <dd>, with mode=closed, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <del>, with mode=closed, delegatesFocus=true. Should be disallowed.
@@ -472,7 +481,6 @@ PASS Declarative Shadow DOM as a child of <figcaption>, with mode=closed, delega
 PASS Declarative Shadow DOM as a child of <figure>, with mode=closed, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <form>, with mode=closed, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <head>, with mode=closed, delegatesFocus=true. Should be disallowed.
-PASS Declarative Shadow DOM as a child of <hgroup>, with mode=closed, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <hr>, with mode=closed, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <html>, with mode=closed, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <i>, with mode=closed, delegatesFocus=true. Should be disallowed.
@@ -481,7 +489,6 @@ PASS Declarative Shadow DOM as a child of <img>, with mode=closed, delegatesFocu
 PASS Declarative Shadow DOM as a child of <input>, with mode=closed, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <ins>, with mode=closed, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <kbd>, with mode=closed, delegatesFocus=true. Should be disallowed.
-PASS Declarative Shadow DOM as a child of <keygen>, with mode=closed, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <label>, with mode=closed, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <legend>, with mode=closed, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <li>, with mode=closed, delegatesFocus=true. Should be disallowed.
@@ -508,11 +515,14 @@ PASS Declarative Shadow DOM as a child of <s>, with mode=closed, delegatesFocus=
 PASS Declarative Shadow DOM as a child of <samp>, with mode=closed, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <script>, with mode=closed, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <select>, with mode=closed, delegatesFocus=true. Should be disallowed.
+PASS Declarative Shadow DOM as a child of <slot>, with mode=closed, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <small>, with mode=closed, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <source>, with mode=closed, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <strong>, with mode=closed, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <style>, with mode=closed, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <sub>, with mode=closed, delegatesFocus=true. Should be disallowed.
+PASS Declarative Shadow DOM as a child of <sup>, with mode=closed, delegatesFocus=true. Should be disallowed.
+PASS Declarative Shadow DOM as a child of <summary>, with mode=closed, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <table>, with mode=closed, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <tbody>, with mode=closed, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <td>, with mode=closed, delegatesFocus=true. Should be disallowed.
@@ -541,6 +551,7 @@ PASS Declarative Shadow DOM as a child of <h4>, with mode=invalid, delegatesFocu
 PASS Declarative Shadow DOM as a child of <h5>, with mode=invalid, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <h6>, with mode=invalid, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <header>, with mode=invalid, delegatesFocus=true. Should be disallowed.
+PASS Declarative Shadow DOM as a child of <main>, with mode=invalid, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <nav>, with mode=invalid, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <p>, with mode=invalid, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <section>, with mode=invalid, delegatesFocus=true. Should be disallowed.
@@ -562,7 +573,7 @@ PASS Declarative Shadow DOM as a child of <cite>, with mode=invalid, delegatesFo
 PASS Declarative Shadow DOM as a child of <code>, with mode=invalid, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <col>, with mode=invalid, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <colgroup>, with mode=invalid, delegatesFocus=true. Should be disallowed.
-PASS Declarative Shadow DOM as a child of <command>, with mode=invalid, delegatesFocus=true. Should be disallowed.
+PASS Declarative Shadow DOM as a child of <data>, with mode=invalid, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <datalist>, with mode=invalid, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <dd>, with mode=invalid, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <del>, with mode=invalid, delegatesFocus=true. Should be disallowed.
@@ -578,7 +589,6 @@ PASS Declarative Shadow DOM as a child of <figcaption>, with mode=invalid, deleg
 PASS Declarative Shadow DOM as a child of <figure>, with mode=invalid, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <form>, with mode=invalid, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <head>, with mode=invalid, delegatesFocus=true. Should be disallowed.
-PASS Declarative Shadow DOM as a child of <hgroup>, with mode=invalid, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <hr>, with mode=invalid, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <html>, with mode=invalid, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <i>, with mode=invalid, delegatesFocus=true. Should be disallowed.
@@ -587,7 +597,6 @@ PASS Declarative Shadow DOM as a child of <img>, with mode=invalid, delegatesFoc
 PASS Declarative Shadow DOM as a child of <input>, with mode=invalid, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <ins>, with mode=invalid, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <kbd>, with mode=invalid, delegatesFocus=true. Should be disallowed.
-PASS Declarative Shadow DOM as a child of <keygen>, with mode=invalid, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <label>, with mode=invalid, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <legend>, with mode=invalid, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <li>, with mode=invalid, delegatesFocus=true. Should be disallowed.
@@ -614,11 +623,14 @@ PASS Declarative Shadow DOM as a child of <s>, with mode=invalid, delegatesFocus
 PASS Declarative Shadow DOM as a child of <samp>, with mode=invalid, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <script>, with mode=invalid, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <select>, with mode=invalid, delegatesFocus=true. Should be disallowed.
+PASS Declarative Shadow DOM as a child of <slot>, with mode=invalid, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <small>, with mode=invalid, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <source>, with mode=invalid, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <strong>, with mode=invalid, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <style>, with mode=invalid, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <sub>, with mode=invalid, delegatesFocus=true. Should be disallowed.
+PASS Declarative Shadow DOM as a child of <sup>, with mode=invalid, delegatesFocus=true. Should be disallowed.
+PASS Declarative Shadow DOM as a child of <summary>, with mode=invalid, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <table>, with mode=invalid, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <tbody>, with mode=invalid, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <td>, with mode=invalid, delegatesFocus=true. Should be disallowed.

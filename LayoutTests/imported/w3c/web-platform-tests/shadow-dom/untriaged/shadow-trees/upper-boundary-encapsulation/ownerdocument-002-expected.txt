@@ -12,6 +12,7 @@ PASS ownerDocument property of any elements in a shadow tree should match the do
 PASS ownerDocument property of any elements in a shadow tree should match the document of the shadow host, when the host is a "h5" element.
 PASS ownerDocument property of any elements in a shadow tree should match the document of the shadow host, when the host is a "h6" element.
 PASS ownerDocument property of any elements in a shadow tree should match the document of the shadow host, when the host is a "header" element.
+PASS ownerDocument property of any elements in a shadow tree should match the document of the shadow host, when the host is a "main" element.
 PASS ownerDocument property of any elements in a shadow tree should match the document of the shadow host, when the host is a "nav" element.
 PASS ownerDocument property of any elements in a shadow tree should match the document of the shadow host, when the host is a "p" element.
 PASS ownerDocument property of any elements in a shadow tree should match the document of the shadow host, when the host is a "section" element.
