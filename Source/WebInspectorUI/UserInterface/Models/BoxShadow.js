@@ -140,7 +140,7 @@ WI.BoxShadow = class BoxShadow
             if (value)
                 return null;
             unit = "px";
-        } else if (!WI.CSSCompletions.lengthUnits.has(unit))
+        } else if (!WI.CSSProperty.lengthUnits.has(unit))
             return null;
 
         return {unit, value};

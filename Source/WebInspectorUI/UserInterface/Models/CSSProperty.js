@@ -155,6 +155,91 @@ WI.CSSProperty = class CSSProperty extends WI.Object
         });
     }
 
+    static suffixToBalanceValue(value)
+    {
+        const State = {
+            Data: 0,
+            SingleQuoteString: 1,
+            DoubleQuoteString: 2,
+            Comment: 3
+        };
+
+        let state = State.Data;
+        let unclosedParenthesisCount = 0;
+        let trailingBackslash = false;
+        let length = value.length;
+
+        for (let i = 0; i < length; ++i) {
+            switch (value[i]) {
+            case "'":
+                if (state === State.Data)
+                    state = State.SingleQuoteString;
+                else if (state === State.SingleQuoteString)
+                    state = State.Data;
+                break;
+
+            case "\"":
+                if (state === State.Data)
+                    state = State.DoubleQuoteString;
+                else if (state === State.DoubleQuoteString)
+                    state = State.Data;
+                break;
+
+            case "(":
+                if (state === State.Data)
+                    ++unclosedParenthesisCount;
+                break;
+
+            case ")":
+                if (state === State.Data && unclosedParenthesisCount)
+                    --unclosedParenthesisCount;
+                break;
+
+            case "/":
+                if (state === State.Data) {
+                    if (value[i + 1] === "*")
+                        state = State.Comment;
+                }
+                break;
+
+            case "\\":
+                if (i === length - 1)
+                    trailingBackslash = true;
+                else
+                    ++i; // Skip next character.
+                break;
+
+            case "*":
+                if (state === State.Comment) {
+                    if (value[i + 1] === "/")
+                        state = State.Data;
+                }
+                break;
+            }
+        }
+
+        let suffix = "";
+
+        if (trailingBackslash)
+            suffix += "\\";
+
+        switch (state) {
+        case State.SingleQuoteString:
+            suffix += "'";
+            break;
+        case State.DoubleQuoteString:
+            suffix += "\"";
+            break;
+        case State.Comment:
+            suffix += "*/";
+            break;
+        }
+
+        suffix += ")".repeat(unclosedParenthesisCount);
+
+        return suffix;
+    }
+
     // Public
 
     get ownerStyle()
@@ -375,7 +460,7 @@ WI.CSSProperty = class CSSProperty extends WI.Object
 
         this._markModified();
 
-        let suffix = WI.CSSCompletions.completeUnbalancedValue(value);
+        let suffix = WI.CSSProperty.suffixToBalanceValue(value);
         if (suffix)
             value += suffix;
 
@@ -652,6 +737,43 @@ WI.CSSProperty = class CSSProperty extends WI.Object
 
 WI.CSSProperty._cachedNameCounts = null;
 WI.CSSProperty._storedNameCountsQueue = null;
+WI.CSSProperty.lengthUnits = new Set([
+    "ch",
+    "cm",
+    "dvb",
+    "dvh",
+    "dvi",
+    "dvmax",
+    "dvmin",
+    "dvw",
+    "em",
+    "ex",
+    "in",
+    "lvb",
+    "lvh",
+    "lvi",
+    "lvmax",
+    "lvmin",
+    "lvw",
+    "mm",
+    "pc",
+    "pt",
+    "px",
+    "q",
+    "rem",
+    "svb",
+    "svh",
+    "svi",
+    "svmax",
+    "svmin",
+    "svw",
+    "vb",
+    "vh",
+    "vi",
+    "vmax",
+    "vmin",
+    "vw",
+]);
 
 WI.CSSProperty.Event = {
     Changed: "css-property-changed",

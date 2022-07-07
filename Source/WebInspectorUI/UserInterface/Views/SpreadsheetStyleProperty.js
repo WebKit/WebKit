@@ -1005,8 +1005,8 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         if (!selection.rangeCount || selection.getRangeAt(0).endOffset !== text.length)
             return;
 
-        let unbalancedCharacters = WI.CSSCompletions.completeUnbalancedValue(text);
-        if (unbalancedCharacters)
+        let suffix = WI.CSSProperty.suffixToBalanceValue(text);
+        if (suffix)
             return;
 
         event.preventDefault();

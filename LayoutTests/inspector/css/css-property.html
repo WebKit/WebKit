@@ -261,6 +261,62 @@ function test() {
         }
     });
 
+    suite.addTestCase({
+        name: "CSSProperty.suffixToBalanceValue",
+        test(resolve, reject) {
+            function log(cssValue) {
+                let suffix = WI.CSSProperty.suffixToBalanceValue(cssValue);
+                InspectorTest.log(cssValue + "|" + suffix);
+            }
+
+            log(`url(`);
+            log(`url()`);
+            log(`rgb(1`);
+            log(`rgb(1,2,3)`);
+            log(`calc(var(--foo`);
+
+            log(`'`);
+            log(`''`);
+            log(`'foo`);
+            log(`'foo'`);
+
+            log(`"`);
+            log(`""`);
+            log(`"bar`);
+            log(`"bar"`);
+
+            log(`/*`);
+            log(`/**/`);
+            log(`/* "foo */`);
+            log(`/* 'foo */`);
+            log(`/* (foo */`);
+
+            log(`('foo"`);
+            log(`('foo")`);
+            log(`("bar"')`);
+            log(`("bar")`);
+
+            log(`'(`);
+            log(`'(foo`);
+            log(`"(`);
+            log(`"(bar`);
+
+            log(`\\`);
+            log(`\\\\`);
+            log(`\\\\\\`);
+
+            log(`"\\"`);
+            log(`'\\'`);
+            log(`(\\)`);
+            log(`/*\\*/`);
+
+            log(`radial-gradient(ellipse closest-corner at var(--v) var(--h), hsl(198, 100%, 20%) 0%, hsla(204, 100%, 20%, 0) 100%)`);
+            log(`"Helvetica Neue", 'Source Code Pro', "Comic Sans", 'PT Mono'`);
+
+            resolve();
+        }
+    });
+
     WI.domManager.requestDocument((documentNode) => {
         documentNode.querySelector("div#x", (contentNodeId) => {
             if (contentNodeId) {
