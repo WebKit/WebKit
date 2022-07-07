@@ -26,6 +26,7 @@
 
 #include "Document.h"
 #include "ElementInlines.h"
+#include "EventLoop.h"
 #include "FocusController.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -143,7 +144,20 @@ void HTMLFrameElementBase::didFinishInsertingNode()
 
     if (!renderer())
         invalidateStyleAndRenderersForSubtree();
-    openURL();
+
+    auto work = [this, weakThis = WeakPtr { *this }] {
+        if (!weakThis)
+            return;
+        Ref<HTMLFrameElementBase> protectedThis { *this };
+        m_openingURLAfterInserting = true;
+        if (isConnected())
+            openURL();
+        m_openingURLAfterInserting = false;
+    };
+    if (!m_openingURLAfterInserting)
+        work();
+    else
+        document().eventLoop().queueTask(TaskSource::DOMManipulation, WTFMove(work));
 }
 
 void HTMLFrameElementBase::didAttachRenderers()

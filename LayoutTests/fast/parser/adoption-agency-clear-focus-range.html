@@ -19,12 +19,12 @@ function didLoadIframe() {
         range.selectNode(span.firstChild);
     } else if (callCount == 3) {
         setTimeout(() => {
-            let activeElementResult = (document.activeElement == document.body) ? 'PASS' : `FAIL - it was set on ${document.activeElement}`;
-            let rangeStartResult = (range.startContainer == document.querySelector('p')) ? 'PASS' : `FAIL - it was set on ${range.startContainer}`;
+            let activeElementResult = (document.activeElement == span) ? 'PASS' : `FAIL - it was set on ${document.activeElement}`;
+            let rangeStartResult = (range.startContainer == span) ? 'PASS' : `FAIL - it was set on ${range.startContainer}`;
 
             document.documentElement.innerHTML = `<body>
-            Active Element must be moved to body: ${activeElementResult}<br>
-            range.startContainer must be moved to p: ${rangeStartResult}<br>`;
+            Active Element must be moved to span: ${activeElementResult}<br>
+            range.startContainer must be moved to span: ${rangeStartResult}<br>`;
 
             if (window.testRunner)
                 testRunner.notifyDone();

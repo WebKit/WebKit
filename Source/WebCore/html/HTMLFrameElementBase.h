@@ -74,6 +74,7 @@ private:
     bool isHTMLContentAttribute(const Attribute&) const final;
 
     AtomString m_frameURL;
+    bool m_openingURLAfterInserting { false };
 };
 
 } // namespace WebCore
