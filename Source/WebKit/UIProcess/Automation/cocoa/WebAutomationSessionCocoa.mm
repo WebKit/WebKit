@@ -28,6 +28,7 @@
 
 #if PLATFORM(COCOA)
 
+#import "ViewSnapshotStore.h"
 #import <wtf/FileSystem.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -39,13 +40,8 @@
 namespace WebKit {
 using namespace WebCore;
 
-std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const ShareableBitmap::Handle& imageDataHandle)
+static std::optional<String> getBase64EncodedPNGData(const RetainPtr<CGImageRef>&& cgImage)
 {
-    auto bitmap = ShareableBitmap::create(imageDataHandle, SharedMemory::Protection::ReadOnly);
-    if (!bitmap)
-        return std::nullopt;
-
-    RetainPtr<CGImageRef> cgImage = bitmap->makeCGImage();
     RetainPtr<NSMutableData> imageData = adoptNS([[NSMutableData alloc] init]);
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     RetainPtr<CGImageDestinationRef> destination = adoptCF(CGImageDestinationCreateWithData((CFMutableDataRef)imageData.get(), kUTTypePNG, 1, 0));
@@ -57,6 +53,25 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     CGImageDestinationFinalize(destination.get());
 
     return String([imageData base64EncodedStringWithOptions:0]);
+}
+
+
+std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const ShareableBitmap::Handle& imageDataHandle)
+{
+    auto bitmap = ShareableBitmap::create(imageDataHandle, SharedMemory::Protection::ReadOnly);
+    if (!bitmap)
+        return std::nullopt;
+
+    return getBase64EncodedPNGData(bitmap->makeCGImage());
+}
+
+std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const ViewSnapshot& snapshot)
+{
+    auto* snapshotSurface = snapshot.surface();
+    if (!snapshotSurface)
+        return std::nullopt;
+
+    return getBase64EncodedPNGData(snapshotSurface->createImage());
 }
 
 std::optional<String> WebAutomationSession::platformGenerateLocalFilePathForRemoteFile(const String& remoteFilePath, const String& base64EncodedFileContents)
