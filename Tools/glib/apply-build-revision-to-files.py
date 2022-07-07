@@ -30,7 +30,7 @@ def get_build_revision():
     try:
         repository = local.Scm.from_path(str(WEBKIT_TOP_LEVEL), contributors=None)
         return str(repository.find("HEAD", include_log=False))
-    except (local.Scm.Exception, TypeError, OSError):
+    except (local.Scm.Exception, TypeError, OSError, KeyError):
         # This may happen with shallow checkouts whose HEAD has been
         # modified; there is no origin reference anymore, and git
         # will fail - let's pretend that this is not a repo at all
