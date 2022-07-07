@@ -131,7 +131,7 @@ bool pas_local_view_cache_stop(pas_local_view_cache* cache,
        before doing the work to stop the local_view_cache.
 
        However, if the client thread is already in the process of executing pas_local_view_cache_stop,
-       gets passed the pas_local_allocator_scavenger_data_is_stopped check, and then, gets suspended by
+       gets the past pas_local_allocator_scavenger_data_is_stopped check, and then, gets suspended by
        the scavenger before setting the is_in_use flag, the scavenger can stop the local_view_cache
        after the client already checked and thinks it is not stopped yet. When the client thread
        resumes from suspension, it will be unhappy to find that the local_view_cache is already
@@ -141,7 +141,7 @@ bool pas_local_view_cache_stop(pas_local_view_cache* cache,
        is_in_use flag.
 
        If the re-check shows that the local_view_cache is already stopped, then pas_local_view_cache_stop
-       can return early like first pas_local_allocator_scavenger_data_is_stopped check. This is
+       can return early like the first pas_local_allocator_scavenger_data_is_stopped check. This is
        fine to do because the caller expects this as a possible outcome.
 
        Before returning early due to the re-check, we also need to clear the is_in_use flag.

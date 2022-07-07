@@ -77,10 +77,16 @@ static PAS_ALWAYS_INLINE void pas_local_allocator_commit_if_necessary_impl(pas_l
        And then we end up in here.
     
        Therefore, we cannot assert that is_in_use is true. But, when we return from here, it must be true. */
-    if (PAS_LIKELY(allocator->scavenger_data.kind == pas_local_allocator_allocator_kind))
+    if (PAS_LIKELY(allocator->scavenger_data.kind == pas_local_allocator_allocator_kind)) {
+        /* This is safe. Once is_in_use = true is set, the scavenger will not stop this local allocator.
+         * Whenever the scavenger stops a local allocator, it first checks if is_in_use is false and then sets scavenger_data.kind to
+         * non pas_local_allocator_allocator_kind. If we set is_in_use = true before and kind is pas_local_allocator_allocator_kind,
+         * it ensures that (1) this allocator is not stopped and (2) this allocator will not be stopped until we put is_in_use = false */
         return;
+    }
 
     if (config.kind == pas_heap_config_kind_pas_utility) {
+        /* This is safe. We never stop local allocators for pas_heap_config_kind_pas_utility. */
         allocator->scavenger_data.kind = pas_local_allocator_allocator_kind;
         return;
     }

@@ -242,6 +242,40 @@ bool pas_local_allocator_stop(
     allocator->scavenger_data.is_in_use = true;
     pas_compiler_fence();
 
+    /* The scavenger thread may race with the client thread on calling pas_local_allocator_stop.
+       The scavenger will first suspend the client thread before checking the is_in_use flag.
+       If is_in_use is set, the scavenger will not call pas_local_allocator_scavenger_data_stop, and move on.
+       If is_in_use is not set, the scavenger will call pas_local_allocator_scavenger_data_stop,
+       which in turn calls pas_local_allocator_stop to stop the local_allocator.
+
+       Normally, if the scavenger has already completed its call to pas_local_allocator_stop
+       before the client calls it, pas_local_allocator_stop will just return early for the client.
+       This is because pas_local_allocator_stop first check pas_local_allocator_scavenger_data_is_stopped
+       before doing the work to stop the local_allocator.
+
+       However, if the client thread is already in the process of executing pas_local_allocator_stop,
+       gets the past pas_local_allocator_scavenger_data_is_stopped check , and then, gets suspended by
+       the scavenger before setting the is_in_use flag, the scavenger can stop the local_allocator
+       after the client already checked and thinks it is not stopped yet. When the client thread
+       resumes from suspension, it will be unhappy to find that the local_allocator is already
+       stopped, and corrupt data structures.
+
+       The fix is to re-check pas_local_allocator_scavenger_data_is_stopped after setting the
+       is_in_use flag.
+
+       If the re-check shows that the local_allocator is already stopped, then pas_local_allocator_stop
+       can return early like the first pas_local_allocator_scavenger_data_is_stopped check. This is
+       fine to do because the caller expects this as a possible outcome.
+
+       Before returning early due to the re-check, we also need to clear the is_in_use flag.
+       The is_in_use flag is meant to be set like with an RAII scope. Hence, it is correct and
+       required that we also clear it here before we return.
+    */
+    if (pas_local_allocator_scavenger_data_is_stopped(&allocator->scavenger_data)) {
+        allocator->scavenger_data.is_in_use = false;
+        return true;
+    }
+
     result = stop_impl(allocator, page_lock_mode, heap_lock_hold_mode);
 
     if (result) {

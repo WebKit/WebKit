@@ -104,6 +104,11 @@ void pas_local_allocator_scavenger_data_commit_if_necessary_slow(
         
         done = false;
         
+        /* Taking scavenger_lock ensures that this page will not be decommitted while we
+         * change data->kind below to indicate that we're keeping the page.
+         * Since data->kind is set to pas_local_allocator_decommitted_kind before decommit,
+         * if it is not pas_local_allocator_decommitted_kind by this point, this allocator is not
+         * decommited. */
         pas_lock_lock_conditionally(&cache->node->scavenger_lock, scavenger_lock_hold_mode);
         pas_lock_testing_assert_held(&cache->node->scavenger_lock);
         switch (data->kind) {
