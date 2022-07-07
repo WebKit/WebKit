@@ -102,6 +102,11 @@ function mac_process_gpu_entitlements()
             plistbuddy Add :com.apple.security.cs.jit-write-allowlist bool YES
         fi
 
+        if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 120000 ))
+        then
+            plistbuddy add :com.apple.coreaudio.allow-vorbis-decode bool YES
+        fi
+
         if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 130000 ))
         then
             plistbuddy Add :com.apple.private.gpu-restricted bool YES
