@@ -625,7 +625,7 @@ VideoFullscreenInterfaceAVKit::~VideoFullscreenInterfaceAVKit()
 {
     WebAVPlayerController* playerController = this->playerController();
     if (playerController && playerController.externalPlaybackActive)
-        externalPlaybackChanged(false, PlaybackSessionModel::TargetTypeNone, emptyString());
+        externalPlaybackChanged(false, PlaybackSessionModel::ExternalPlaybackTargetType::TargetTypeNone, emptyString());
     if (m_videoFullscreenModel)
         m_videoFullscreenModel->removeClient(*this);
 }

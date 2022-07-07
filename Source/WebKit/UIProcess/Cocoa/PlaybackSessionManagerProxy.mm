@@ -460,12 +460,9 @@ void PlaybackSessionManagerProxy::legibleMediaSelectionIndexChanged(PlaybackSess
     ensureModel(contextId).legibleMediaSelectionIndexChanged(selectedIndex);
 }
 
-void PlaybackSessionManagerProxy::externalPlaybackPropertiesChanged(PlaybackSessionContextIdentifier contextId, bool enabled, uint32_t targetType, String localizedDeviceName)
+void PlaybackSessionManagerProxy::externalPlaybackPropertiesChanged(PlaybackSessionContextIdentifier contextId, bool enabled, WebCore::PlaybackSessionModel::ExternalPlaybackTargetType targetType, String localizedDeviceName)
 {
-    PlaybackSessionModel::ExternalPlaybackTargetType type = static_cast<PlaybackSessionModel::ExternalPlaybackTargetType>(targetType);
-    ASSERT(type == PlaybackSessionModel::TargetTypeAirPlay || type == PlaybackSessionModel::TargetTypeTVOut || type == PlaybackSessionModel::TargetTypeNone);
-
-    ensureModel(contextId).externalPlaybackChanged(enabled, type, localizedDeviceName);
+    ensureModel(contextId).externalPlaybackChanged(enabled, targetType, localizedDeviceName);
 }
 
 void PlaybackSessionManagerProxy::wirelessVideoPlaybackDisabledChanged(PlaybackSessionContextIdentifier contextId, bool disabled)

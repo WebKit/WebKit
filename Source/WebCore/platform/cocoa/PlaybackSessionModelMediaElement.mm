@@ -584,18 +584,18 @@ bool PlaybackSessionModelMediaElement::externalPlaybackEnabled() const
 PlaybackSessionModel::ExternalPlaybackTargetType PlaybackSessionModelMediaElement::externalPlaybackTargetType() const
 {
     if (!m_mediaElement || !m_mediaElement->mediaControlsHost())
-        return TargetTypeNone;
+        return ExternalPlaybackTargetType::TargetTypeNone;
 
     switch (m_mediaElement->mediaControlsHost()->externalDeviceType()) {
     default:
         ASSERT_NOT_REACHED();
-        return TargetTypeNone;
+        return ExternalPlaybackTargetType::TargetTypeNone;
     case MediaControlsHost::DeviceType::None:
-        return TargetTypeNone;
+        return ExternalPlaybackTargetType::TargetTypeNone;
     case MediaControlsHost::DeviceType::Airplay:
-        return TargetTypeAirPlay;
+        return ExternalPlaybackTargetType::TargetTypeAirPlay;
     case MediaControlsHost::DeviceType::Tvout:
-        return TargetTypeTVOut;
+        return ExternalPlaybackTargetType::TargetTypeTVOut;
     }
 }
 

@@ -983,7 +983,7 @@ bool VideoFullscreenControllerContext::externalPlaybackEnabled() const
 PlaybackSessionModel::ExternalPlaybackTargetType VideoFullscreenControllerContext::externalPlaybackTargetType() const
 {
     ASSERT(isUIThread());
-    return m_playbackModel ? m_playbackModel->externalPlaybackTargetType() : TargetTypeNone;
+    return m_playbackModel ? m_playbackModel->externalPlaybackTargetType() : ExternalPlaybackTargetType::TargetTypeNone;
 }
 
 String VideoFullscreenControllerContext::externalPlaybackLocalizedDeviceName() const

@@ -211,9 +211,9 @@ void PlaybackSessionInterfaceAVKit::legibleMediaSelectionOptionsChanged(const Ve
 void PlaybackSessionInterfaceAVKit::externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType targetType, const String& localizedDeviceName)
 {
     AVPlayerControllerExternalPlaybackType externalPlaybackType = AVPlayerControllerExternalPlaybackTypeNone;
-    if (enabled && targetType == PlaybackSessionModel::TargetTypeAirPlay)
+    if (enabled && targetType == PlaybackSessionModel::ExternalPlaybackTargetType::TargetTypeAirPlay)
         externalPlaybackType = AVPlayerControllerExternalPlaybackTypeAirPlay;
-    else if (enabled && targetType == PlaybackSessionModel::TargetTypeTVOut)
+    else if (enabled && targetType == PlaybackSessionModel::ExternalPlaybackTargetType::TargetTypeTVOut)
         externalPlaybackType = AVPlayerControllerExternalPlaybackTypeTVOut;
 
     WebAVPlayerController* playerController = m_playerController.get();

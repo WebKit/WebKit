@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -169,7 +169,7 @@ private:
     Vector<WebCore::MediaSelectionOption> m_legibleMediaSelectionOptions;
     uint64_t m_legibleMediaSelectedIndex { 0 };
     bool m_externalPlaybackEnabled { false };
-    PlaybackSessionModel::ExternalPlaybackTargetType m_externalPlaybackTargetType { PlaybackSessionModel::TargetTypeNone };
+    PlaybackSessionModel::ExternalPlaybackTargetType m_externalPlaybackTargetType { PlaybackSessionModel::ExternalPlaybackTargetType::TargetTypeNone };
     String m_externalPlaybackLocalizedDeviceName;
     bool m_wirelessVideoPlaybackDisabled { false };
     bool m_muted { false };
@@ -221,7 +221,7 @@ private:
     void legibleMediaSelectionOptionsChanged(PlaybackSessionContextIdentifier, Vector<WebCore::MediaSelectionOption> options, uint64_t selectedIndex);
     void audioMediaSelectionIndexChanged(PlaybackSessionContextIdentifier, uint64_t selectedIndex);
     void legibleMediaSelectionIndexChanged(PlaybackSessionContextIdentifier, uint64_t selectedIndex);
-    void externalPlaybackPropertiesChanged(PlaybackSessionContextIdentifier, bool enabled, uint32_t targetType, String localizedDeviceName);
+    void externalPlaybackPropertiesChanged(PlaybackSessionContextIdentifier, bool enabled, WebCore::PlaybackSessionModel::ExternalPlaybackTargetType, String localizedDeviceName);
     void wirelessVideoPlaybackDisabledChanged(PlaybackSessionContextIdentifier, bool);
     void durationChanged(PlaybackSessionContextIdentifier, double duration);
     void playbackStartedTimeChanged(PlaybackSessionContextIdentifier, double playbackStartedTime);
