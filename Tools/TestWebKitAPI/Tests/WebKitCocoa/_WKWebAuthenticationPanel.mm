@@ -1490,7 +1490,7 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMinimun)
 
     EXPECT_WK_STREQ(result.rp.name, "example.com");
     EXPECT_TRUE(result.rp.icon.isNull());
-    EXPECT_TRUE(!result.rp.id);
+    EXPECT_TRUE(result.rp.id && result.rp.id->isNull());
 
     EXPECT_WK_STREQ(result.user.name, "jappleseed@example.com");
     EXPECT_TRUE(result.user.icon.isNull());
@@ -1534,7 +1534,7 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximumDefault)
 
     EXPECT_WK_STREQ(result.rp.name, "example.com");
     EXPECT_TRUE(result.rp.icon.isNull());
-    EXPECT_TRUE(!result.rp.id);
+    EXPECT_TRUE(result.rp.id && result.rp.id->isNull());
 
     EXPECT_WK_STREQ(result.user.name, "jappleseed@example.com");
     EXPECT_TRUE(result.user.icon.isNull());
