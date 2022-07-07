@@ -45,6 +45,7 @@ class SliderBase extends LayoutNode
         this.enabled = true;
         this.isActive = false;
         this._disabled = false;
+        this._secondaryValue = 0;
 
         this._allowsRelativeScrubbing = false;
         this._startValue = NaN;
@@ -88,6 +89,20 @@ class SliderBase extends LayoutNode
 
         this._value = value;
         this.markDirtyProperty("value");
+        this.needsLayout = true;
+    }
+
+    get secondaryValue()
+    {
+        return this._secondaryValue;
+    }
+
+    set secondaryValue(secondaryValue)
+    {
+        if (this._secondaryValue === secondaryValue)
+            return;
+
+        this._secondaryValue = secondaryValue;
         this.needsLayout = true;
     }
 

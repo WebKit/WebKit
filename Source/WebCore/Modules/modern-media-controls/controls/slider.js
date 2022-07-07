@@ -41,25 +41,10 @@ class Slider extends SliderBase
         this.appearanceContainer.children = [fillContainer, this._knob];
 
         this.height = 16;
-        this._secondaryValue = 0;
         this._knobStyle = knobStyle;
     }
 
     // Public
-
-    get secondaryValue()
-    {
-        return this._secondaryValue;
-    }
-
-    set secondaryValue(secondaryValue)
-    {
-        if (this._secondaryValue === secondaryValue)
-            return;
-
-        this._secondaryValue = secondaryValue;
-        this.needsLayout = true;
-    }
 
     get knobStyle()
     {
@@ -116,7 +101,7 @@ class Slider extends SliderBase
         this._primaryFill.element.style.width = `${scrubberCenterX - (scrubberWidth / 2) - scrubberBorder}px`;
         this._trackFill.element.style.left = `${scrubberCenterX + (scrubberWidth / 2) + scrubberBorder}px`;
         this._secondaryFill.element.style.left = `${scrubberCenterX + (scrubberWidth / 2) + scrubberBorder}px`;
-        this._secondaryFill.element.style.right = `${(1 - this._secondaryValue) * 100}%`;
+        this._secondaryFill.element.style.right = `${(1 - this.secondaryValue) * 100}%`;
         this._knob.element.style.left = `${scrubberCenterX}px`;
     }
 
