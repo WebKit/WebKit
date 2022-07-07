@@ -2448,8 +2448,9 @@ void FrameView::scrollToFocusedElementInternal()
         return;
 
     document->updateLayoutIgnorePendingStylesheets();
-    if (!m_shouldScrollToFocusedElement)
+    if (!m_shouldScrollToFocusedElement || m_delayedScrollToFocusedElementTimer.isActive())
         return; // Updating the layout may have ran scripts.
+
     m_shouldScrollToFocusedElement = false;
 
     RefPtr focusedElement = document->focusedElement();
