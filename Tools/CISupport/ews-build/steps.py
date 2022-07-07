@@ -4563,6 +4563,8 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
                         AddReviewerToCommitMessage(),
                         ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, verifyObsolete=False),
                         Canonicalize(),
+                        PushPullRequestBranch(),
+                        UpdatePullRequest(),
                         PushCommitToWebKitRepo(),
                     ])
                 else:
@@ -4575,8 +4577,6 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
                         AddReviewerToCommitMessage(),
                         ValidateChange(addURLs=False, verifycqplus=True),
                         Canonicalize(),
-                        PushPullRequestBranch(),
-                        UpdatePullRequest(),
                         PushCommitToWebKitRepo(),
                     ])
                 return rc
