@@ -82,4 +82,4 @@ TAPI_VERIFY_MODE = Pedantic;
 
 USE_RECURSIVE_SCRIPT_INPUTS_IN_SCRIPT_PHASES = YES;
 
-OTHER_LDFLAGS = $(inherited) $(SOURCE_VERSION_LDFLAGS) -Xlinker -no_inits;
+OTHER_LDFLAGS = $(inherited) $(SOURCE_VERSION_LDFLAGS) -Xlinker -no_warn_inits;
