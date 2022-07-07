@@ -423,12 +423,22 @@ bool AVVideoCaptureSource::setupSession()
 
 #if ENABLE(APP_PRIVACY_REPORT)
     auto identity = RealtimeMediaSourceCenter::singleton().identity();
+    if (!identity) {
+        ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "RealtimeMediaSourceCenter::identity() returned null!");
+        return false;
+    }
+
     if (identity && [PAL::getAVCaptureSessionClass() instancesRespondToSelector:@selector(initWithAssumedIdentity:)])
         m_session = adoptNS([PAL::allocAVCaptureSessionInstance() initWithAssumedIdentity:identity.get()]);
-    else
-#else
-        m_session = adoptNS([PAL::allocAVCaptureSessionInstance() init]);
+
+    if (!m_session)
 #endif
+        m_session = adoptNS([PAL::allocAVCaptureSessionInstance() init]);
+
+    if (!m_session) {
+        ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "failed to allocate AVCaptureSession");
+        return false;
+    }
 
 #if PLATFORM(IOS_FAMILY)
     PAL::AVCaptureSessionSetAuthorizedToUseCameraInMultipleForegroundAppLayout(m_session.get());

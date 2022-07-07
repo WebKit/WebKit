@@ -28,6 +28,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#import "Logging.h"
 #import "MediaPermissionUtilities.h"
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/RealtimeMediaSourceCenter.h>
@@ -79,17 +80,23 @@ void GPUConnectionToWebProcess::setTCCIdentity()
 {
 #if !PLATFORM(MACCATALYST)
     auto auditToken = gpuProcess().parentProcessConnection()->getAuditToken();
-    if (!auditToken)
+    if (!auditToken) {
+        RELEASE_LOG_ERROR(WebRTC, "getAuditToken returned null");
         return;
+    }
 
     NSError *error = nil;
     auto bundleProxy = [LSBundleProxy bundleProxyWithAuditToken:*auditToken error:&error];
-    if (error)
+    if (error) {
+        RELEASE_LOG_ERROR(WebRTC, "-[LSBundleProxy bundleProxyWithAuditToken:error:] failed with error %s", [[error localizedDescription] UTF8String]);
         return;
+    }
 
     auto identity = adoptOSObject(tcc_identity_create(TCC_IDENTITY_CODE_BUNDLE_ID, [bundleProxy.bundleIdentifier UTF8String]));
-    if (!identity)
+    if (!identity) {
+        RELEASE_LOG_ERROR(WebRTC, "tcc_identity_create returned null");
         return;
+    }
 
     WebCore::RealtimeMediaSourceCenter::singleton().setIdentity(WTFMove(identity));
 #endif // !PLATFORM(MACCATALYST)
