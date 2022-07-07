@@ -98,7 +98,7 @@
 
 - (void)testParsingFunctionDecl {
     auto shader = WGSL::parseLChar(
-        "@stage(compute)\n"
+        "@compute\n"
         "fn main() {\n"
         "    x.a = 42i;\n"
         "}"_s);
@@ -135,11 +135,11 @@
 
 - (void)testTrivialGraphicsShader {
     auto shader = WGSL::parseLChar(
-        "@stage(vertex)\n"
+        "@vertex\n"
         "fn vertexShader(@location(0) x: vec4<f32>) -> @builtin(position) vec4<f32> {\n"
         "    return x;\n"
         "}\n\n"
-        "@stage(fragment)\n"
+        "@fragment\n"
         "fn fragmentShader() -> @location(0) vec4<f32> {\n"
         "    return vec4<f32>(0.4, 0.4, 0.8, 1.0);\n"
         "}"_s);

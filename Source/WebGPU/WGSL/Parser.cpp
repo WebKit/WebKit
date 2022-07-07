@@ -208,6 +208,7 @@ Expected<UniqueRef<AST::Attribute>, Error> Parser<Lexer>::parseAttribute()
 
     CONSUME_TYPE(Attribute);
     CONSUME_TYPE_NAMED(ident, Identifier);
+
     if (ident.m_ident == "group"_s) {
         CONSUME_TYPE(ParenLeft);
         // FIXME: should more kinds of literals be accepted here?
@@ -215,6 +216,7 @@ Expected<UniqueRef<AST::Attribute>, Error> Parser<Lexer>::parseAttribute()
         CONSUME_TYPE(ParenRight);
         RETURN_NODE_REF(GroupAttribute, id.m_literalValue);
     }
+
     if (ident.m_ident == "binding"_s) {
         CONSUME_TYPE(ParenLeft);
         // FIXME: should more kinds of literals be accepted here?
@@ -222,18 +224,7 @@ Expected<UniqueRef<AST::Attribute>, Error> Parser<Lexer>::parseAttribute()
         CONSUME_TYPE(ParenRight);
         RETURN_NODE_REF(BindingAttribute, id.m_literalValue);
     }
-    if (ident.m_ident == "stage"_s) {
-        CONSUME_TYPE(ParenLeft);
-        CONSUME_TYPE_NAMED(stage, Identifier);
-        CONSUME_TYPE(ParenRight);
-        if (stage.m_ident == "compute"_s)
-            RETURN_NODE_REF(StageAttribute, AST::StageAttribute::Stage::Compute);
-        if (stage.m_ident == "vertex"_s)
-            RETURN_NODE_REF(StageAttribute, AST::StageAttribute::Stage::Vertex);
-        if (stage.m_ident == "fragment"_s)
-            RETURN_NODE_REF(StageAttribute, AST::StageAttribute::Stage::Fragment);
-        FAIL("Invalid stage attribute, the only options are 'compute', 'vertex', 'fragment'."_s);
-    }
+
     if (ident.m_ident == "location"_s) {
         CONSUME_TYPE(ParenLeft);
         // FIXME: should more kinds of literals be accepted here?
@@ -241,13 +232,23 @@ Expected<UniqueRef<AST::Attribute>, Error> Parser<Lexer>::parseAttribute()
         CONSUME_TYPE(ParenRight);
         RETURN_NODE_REF(LocationAttribute, id.m_literalValue);
     }
+
     if (ident.m_ident == "builtin"_s) {
         CONSUME_TYPE(ParenLeft);
         CONSUME_TYPE_NAMED(name, Identifier);
         CONSUME_TYPE(ParenRight);
         RETURN_NODE_REF(BuiltinAttribute, name.m_ident);
     }
-    FAIL("Unknown attribute, the only supported attributes are 'group', 'binding', 'stage'."_s);
+
+    // https://gpuweb.github.io/gpuweb/wgsl/#pipeline-stage-attributes
+    if (ident.m_ident == "vertex"_s)
+        RETURN_NODE_REF(StageAttribute, AST::StageAttribute::Stage::Vertex);
+    if (ident.m_ident == "compute"_s)
+        RETURN_NODE_REF(StageAttribute, AST::StageAttribute::Stage::Compute);
+    if (ident.m_ident == "fragment"_s)
+        RETURN_NODE_REF(StageAttribute, AST::StageAttribute::Stage::Fragment);
+
+    FAIL("Unknown attribute. Supported attributes are 'group', 'binding', 'location', 'builtin', 'vertex', 'compute', 'fragment'."_s);
 }
 
 template<typename Lexer>

@@ -74,7 +74,7 @@
         "@group(0) @binding(0)\n"
         "var<storage, read_write> x: B;\n"
         "\n"
-        "@stage(compute)\n"
+        "@compute\n"
         "fn main() {\n"
         "    x.a = 42;\n"
         "}"_s);
@@ -139,13 +139,10 @@
     checkNextTokenIsIdentifier("B"_s);
     checkNextToken(WGSL::TokenType::Semicolon);
 
-    // @stage(compute)
+    // @compute
     lineNumber += 2;
     checkNextToken(WGSL::TokenType::Attribute);
-    checkNextTokenIsIdentifier("stage"_s);
-    checkNextToken(WGSL::TokenType::ParenLeft);
     checkNextTokenIsIdentifier("compute"_s);
-    checkNextToken(WGSL::TokenType::ParenRight);
 
     // fn main() {
     ++lineNumber;
@@ -172,12 +169,12 @@
 
 - (void) testLexerOnGraphicsShader {
     WGSL::Lexer<LChar> lexer(
-        "@stage(vertex)\n"
+        "@vertex\n"
         "fn vertexShader(@location(0) x: vec4<f32>) -> @builtin(position) vec4<f32> {\n"
         "    return x;\n"
         "}\n"
         "\n"
-        "@stage(fragment)\n"
+        "@fragment\n"
         "fn fragmentShader() -> @location(0) vec4<f32> {\n"
         "    return vec4<f32>(0.4, 0.4, 0.8, 1.0);\n"
         "}"_s);
@@ -198,12 +195,9 @@
         XCTAssertEqual(result.m_literalValue, literalValue);
     };
 
-    // @stage(vertex)
+    // @vertex
     checkNextToken(WGSL::TokenType::Attribute);
-    checkNextTokenIsIdentifier("stage"_s);
-    checkNextToken(WGSL::TokenType::ParenLeft);
     checkNextTokenIsIdentifier("vertex"_s);
-    checkNextToken(WGSL::TokenType::ParenRight);
 
     ++lineNumber;
     // fn vertexShader(@location(0) x: vec4<f32>) -> @builtin(position) vec4<f32> {
@@ -244,13 +238,10 @@
     ++lineNumber;
     checkNextToken(WGSL::TokenType::BraceRight);
 
-    // @stage(fragment)
+    // @fragment
     lineNumber += 2;
     checkNextToken(WGSL::TokenType::Attribute);
-    checkNextTokenIsIdentifier("stage"_s);
-    checkNextToken(WGSL::TokenType::ParenLeft);
     checkNextTokenIsIdentifier("fragment"_s);
-    checkNextToken(WGSL::TokenType::ParenRight);
 
     // fn fragmentShader() -> @location(0) vec4<f32> {
     ++lineNumber;
