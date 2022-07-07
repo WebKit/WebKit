@@ -22,6 +22,8 @@
 
 from __future__ import unicode_literals
 
+import logging
+
 from django.http import JsonResponse
 from django.views import View
 from ews.common.buildbot import Buildbot
@@ -29,6 +31,7 @@ from ews.models.patch import Patch
 from ews.views.statusbubble import StatusBubble
 import ews.config as config
 
+_log = logging.getLogger(__name__)
 
 class Status(View):
     def _build_status(self, patch, queue):
@@ -44,7 +47,7 @@ class Status(View):
 
     def _build_statuses_for_patch(self, patch):
         if not patch:
-            return []
+            return {}
 
         statuses = {}
         if patch.sent_to_buildbot:
@@ -61,7 +64,8 @@ class Status(View):
         return statuses
 
     def get(self, request, patch_id):
-        patch_id = int(patch_id)
         patch = Patch.get_patch(patch_id)
+        if not patch:
+            _log.info('No patch found for id: {}'.format(patch_id))
         response_data = self._build_statuses_for_patch(patch)
         return JsonResponse(response_data)
