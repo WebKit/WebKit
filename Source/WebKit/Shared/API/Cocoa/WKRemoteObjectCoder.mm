@@ -984,13 +984,13 @@ static NSInvocation *decodeInvocation(WKRemoteObjectDecoder *decoder)
     return invocation;
 }
 
-static NSString *decodeString(WKRemoteObjectDecoder *decoder)
+static RetainPtr<NSString> decodeString(WKRemoteObjectDecoder *decoder)
 {
     API::String* string = decoder->_currentDictionary->get<API::String>(stringKey);
     if (!string)
         [NSException raise:NSInvalidUnarchiveOperationException format:@"String missing"];
 
-    return string->string();
+    return string->stringView().createNSString();
 }
 
 static id decodeObject(WKRemoteObjectDecoder *decoder)
@@ -1011,13 +1011,13 @@ static id decodeObject(WKRemoteObjectDecoder *decoder)
         return decodeInvocation(decoder);
 
     if (objectClass == [NSString class])
-        return decodeString(decoder);
+        return decodeString(decoder).autorelease();
     
     if (objectClass == [NSError class])
         return decodeError(decoder).autorelease();
 
     if (objectClass == [NSMutableString class])
-        return [NSMutableString stringWithString:decodeString(decoder)];
+        return [NSMutableString stringWithString:decodeString(decoder).get()];
 
     return decodeObjCObject(decoder, objectClass).autorelease();
 }
