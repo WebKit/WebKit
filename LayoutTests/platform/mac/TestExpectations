@@ -2295,3 +2295,5 @@ webkit.org/b/242249 [ BigSur+ ] webanimations/accelerated-animation-after-forwar
 
 # Requires platform support (see rdar://94324932).
 [ BigSur Monterey ] http/tests/media/media-source/mediasource-rvfc.html [ Timeout ]
+
+webkit.org/b/242481 fast/css/direct-adjacent-style-sharing-3.html [ Pass ImageOnlyFailure ]
