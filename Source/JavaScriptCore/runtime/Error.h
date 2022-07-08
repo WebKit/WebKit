@@ -66,7 +66,7 @@ JS_EXPORT_PRIVATE JSObject* createError(JSGlobalObject*, ErrorType, const String
 JS_EXPORT_PRIVATE JSObject* createError(JSGlobalObject*, ErrorTypeWithExtension, const String&);
 
 std::unique_ptr<Vector<StackFrame>> getStackTrace(JSGlobalObject*, VM&, JSObject*, bool useCurrentFrame);
-std::tuple<CodeBlock*, BytecodeIndex> getBytecodeIndex(VM&, CallFrame*);
+void getBytecodeIndex(VM&, CallFrame*, Vector<StackFrame>*, CallFrame*&, BytecodeIndex&);
 bool getLineColumnAndSource(VM&, Vector<StackFrame>* stackTrace, unsigned& line, unsigned& column, String& sourceURL);
 bool addErrorInfo(VM&, Vector<StackFrame>*, JSObject*);
 JS_EXPORT_PRIVATE void addErrorInfo(JSGlobalObject*, JSObject*, bool);
