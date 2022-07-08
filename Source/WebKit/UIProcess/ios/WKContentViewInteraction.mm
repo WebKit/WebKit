@@ -10038,7 +10038,7 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
     if (!_page->hasRunningProcess())
         return;
 
-    auto event = gestureRecognizer.lastMouseEvent;
+    auto event = gestureRecognizer.takeLastMouseEvent;
     if (!event)
         return;
 

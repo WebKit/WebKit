@@ -35,7 +35,7 @@
 #endif
 
 - (std::optional<CGPoint>)lastMouseLocation;
-- (WebKit::NativeWebMouseEvent *)lastMouseEvent;
+- (std::unique_ptr<WebKit::NativeWebMouseEvent>)takeLastMouseEvent;
 
 - (UITouch *)mouseTouch;
 

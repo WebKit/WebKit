@@ -90,9 +90,9 @@ static String pointerTypeForUITouchType(UITouchType)
     return touch == _currentTouch && touch._isPointerTouch;
 }
 
-- (WebKit::NativeWebMouseEvent *)lastMouseEvent
+- (std::unique_ptr<WebKit::NativeWebMouseEvent>)takeLastMouseEvent
 {
-    return _lastEvent.get();
+    return std::exchange(_lastEvent, nullptr);
 }
 
 - (std::optional<CGPoint>)lastMouseLocation
