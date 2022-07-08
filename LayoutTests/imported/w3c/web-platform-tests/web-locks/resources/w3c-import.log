@@ -15,7 +15,10 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/web-locks/resources/helpers.js
+/LayoutTests/imported/w3c/web-platform-tests/web-locks/resources/iframe-parent.html
 /LayoutTests/imported/w3c/web-platform-tests/web-locks/resources/iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/web-locks/resources/parentworker.js
+/LayoutTests/imported/w3c/web-platform-tests/web-locks/resources/partitioned-parent.html
 /LayoutTests/imported/w3c/web-platform-tests/web-locks/resources/service-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/web-locks/resources/sw-controlled-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/web-locks/resources/worker.js

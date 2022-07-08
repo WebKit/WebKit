@@ -5314,6 +5314,9 @@ http/tests/webgpu [ Failure ImageOnlyFailure Pass Timeout ]
 # Only some ports automatically relayout if a font is installed while the page is open
 fast/text/install-font-style-recalc.html [ Failure ]
 
+# These tests have been timing out since their import.
+imported/w3c/web-platform-tests/web-locks/bfcache
+
 webkit.org/b/239533 [ Debug ] editing/inserting/insert-list-user-select-none-crash.html [ Skip ]
 
 # Mismatching line wrapping when -webkit-hyphen is auto.

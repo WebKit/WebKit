@@ -1,0 +1,22 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/web-locks/bfcache/abort.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/web-locks/bfcache/held.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/web-locks/bfcache/helpers.js
+/LayoutTests/imported/w3c/web-platform-tests/web-locks/bfcache/release-across-thread.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/web-locks/bfcache/release.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/web-locks/bfcache/sharedworker-multiple.tentative.https.html

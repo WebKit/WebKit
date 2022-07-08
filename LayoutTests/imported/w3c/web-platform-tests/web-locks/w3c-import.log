@@ -26,8 +26,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/web-locks/mode-exclusive.tentative.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/web-locks/mode-mixed.tentative.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/web-locks/mode-shared.tentative.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/web-locks/non-fully-active.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/web-locks/non-secure-context.tentative.any.js
 /LayoutTests/imported/w3c/web-platform-tests/web-locks/opaque-origin.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/web-locks/partitioned-web-locks.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/web-locks/query-empty.tentative.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/web-locks/query-ordering.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/web-locks/query.tentative.https.any.js

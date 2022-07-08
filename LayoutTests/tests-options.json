@@ -4139,6 +4139,21 @@
     "imported/w3c/web-platform-tests/web-animations/timing-model/timelines/update-and-send-events.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/web-locks/bfcache/abort.tentative.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/web-locks/bfcache/held.tentative.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/web-locks/bfcache/release-across-thread.tentative.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/web-locks/bfcache/release.tentative.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/web-locks/bfcache/sharedworker-multiple.tentative.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/test-analyser-minimum.html": [
         "slow"
     ],
