@@ -73,6 +73,7 @@ public:
     OptionSet<WebsiteDataType> fetchDataTypesInList(OptionSet<WebsiteDataType>);
     void deleteData(OptionSet<WebsiteDataType>, WallTime);
     void moveData(OptionSet<WebsiteDataType>, const String& localStoragePath, const String& idbStoragePath);
+    void deleteEmptyDirectory();
     String resolvedLocalStoragePath();
     String resolvedIDBStoragePath();
     String resolvedPath(WebsiteDataType);
@@ -362,6 +363,22 @@ void OriginStorageManager::StorageBucket::moveData(OptionSet<WebsiteDataType> ty
     }
 }
 
+void OriginStorageManager::StorageBucket::deleteEmptyDirectory()
+{
+    if (m_shouldUseCustomPaths) {
+        FileSystem::deleteEmptyDirectory(m_customLocalStoragePath);
+        FileSystem::deleteEmptyDirectory(m_customIDBStoragePath);
+    } else {
+        auto localStoragePath = typeStoragePath(StorageType::LocalStorage);
+        FileSystem::deleteEmptyDirectory(localStoragePath);
+        auto idbStoragePath = typeStoragePath(StorageType::IndexedDB);
+        FileSystem::deleteEmptyDirectory(idbStoragePath);
+    }
+
+    auto fileSystemStoragePath = typeStoragePath(StorageType::FileSystem);
+    FileSystem::deleteEmptyDirectory(fileSystemStoragePath);
+}
+
 String OriginStorageManager::StorageBucket::resolvedLocalStoragePath()
 {
     if (!m_resolvedLocalStoragePath.isNull())
@@ -573,6 +590,16 @@ void OriginStorageManager::moveData(OptionSet<WebsiteDataType> types, const Stri
     ASSERT(!RunLoop::isMain());
 
     defaultBucket().moveData(types, localStoragePath, idbStoragePath);
+}
+
+void OriginStorageManager::deleteEmptyDirectory()
+{
+    ASSERT(!RunLoop::isMain());
+
+    if (m_path.isEmpty())
+        return;
+
+    defaultBucket().deleteEmptyDirectory();
 }
 
 } // namespace WebKit

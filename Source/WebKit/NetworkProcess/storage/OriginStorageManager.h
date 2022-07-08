@@ -51,6 +51,7 @@ public:
     void connectionClosed(IPC::Connection::UniqueID);
     bool persisted() const { return m_persisted; }
     void setPersisted(bool value);
+    const String& path() const { return m_path; }
     QuotaManager& quotaManager();
     FileSystemStorageManager& fileSystemStorageManager(FileSystemStorageHandleRegistry&);
     LocalStorageManager& localStorageManager(StorageAreaRegistry&);
@@ -67,6 +68,7 @@ public:
     void moveData(OptionSet<WebsiteDataType>, const String& localStoragePath, const String& idbStoragePath);
     bool didWriteOriginToFile() const { return m_didWriteOriginToFile; }
     void markDidWriteOriginToFile() { m_didWriteOriginToFile = true; }
+    void deleteEmptyDirectory();
 
 private:
     enum class StorageBucketMode : bool;

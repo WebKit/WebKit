@@ -91,7 +91,7 @@ static void writeOriginToFile(const String& filePath, const WebCore::ClientOrigi
     });
 
     if (!FileSystem::isHandleValid(originFileHandle)) {
-        LOG_ERROR("writeOriginToFileIfNecessary: Failed to open origin file '%s'", filePath.utf8().data());
+        LOG_ERROR("writeOriginToFile: Failed to open origin file '%s'", filePath.utf8().data());
         return;
     }
 
@@ -100,12 +100,64 @@ static void writeOriginToFile(const String& filePath, const WebCore::ClientOrigi
     FileSystem::writeToFile(originFileHandle, encoder.buffer(), encoder.bufferSize());
 }
 
-static void deleteOriginFileIfNecessary(const String& filePath)
+static String encode(const String& string, FileSystem::Salt salt)
 {
-    auto parentPath = FileSystem::parentPath(filePath);
-    auto children = FileSystem::listDirectory(parentPath);
-    if (children.size() == 1)
-        FileSystem::deleteFile(filePath);
+    auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
+    auto utf8String = string.utf8();
+    crypto->addBytes(utf8String.data(), utf8String.length());
+    crypto->addBytes(salt.data(), salt.size());
+    auto hash = crypto->computeHash();
+    return base64URLEncodeToString(hash.data(), hash.size());
+}
+
+static String originDirectoryPath(const String& rootPath, const WebCore::ClientOrigin& origin, FileSystem::Salt salt)
+{
+    if (rootPath.isEmpty())
+        return emptyString();
+
+    auto encodedTopOrigin = encode(origin.topOrigin.toString(), salt);
+    auto encodedOpeningOrigin = encode(origin.clientOrigin.toString(), salt);
+    return FileSystem::pathByAppendingComponents(rootPath, { encodedTopOrigin, encodedOpeningOrigin });
+}
+
+static String originFilePath(const String& directory)
+{
+    if (directory.isEmpty())
+        return emptyString();
+
+    return FileSystem::pathByAppendingComponent(directory, OriginStorageManager::originFileIdentifier());
+}
+
+static bool isEmptyOriginDirectory(const String& directory)
+{
+    auto children = FileSystem::listDirectory(directory);
+    if (children.isEmpty())
+        return true;
+
+    if (children.size() >= 2)
+        return false;
+
+    HashSet<String> invalidFileNames {
+        OriginStorageManager::originFileIdentifier()
+#if PLATFORM(COCOA)
+        , ".DS_Store"_s
+#endif
+    };
+    return WTF::allOf(children, [&] (auto& child) {
+        return invalidFileNames.contains(child);
+    });
+}
+
+static void deleteEmptyOriginDirectory(const String& directory)
+{
+    if (directory.isEmpty())
+        return;
+
+    if (isEmptyOriginDirectory(directory))
+        FileSystem::deleteFile(originFilePath(directory));
+
+    FileSystem::deleteEmptyDirectory(directory);
+    FileSystem::deleteEmptyDirectory(FileSystem::parentPath(directory));
 }
 
 static WeakHashSet<NetworkStorageManager>& allNetworkStorageManagers()
@@ -207,41 +259,18 @@ void NetworkStorageManager::stopReceivingMessageFromConnection(IPC::Connection& 
         m_localOriginStorageManagers.removeIf([&](auto& entry) {
             auto& manager = entry.value;
             manager->connectionClosed(connection);
-            return !manager->isActive();
+            bool shouldRemove = !manager->isActive();
+            if (shouldRemove) {
+                manager->deleteEmptyDirectory();
+                deleteEmptyOriginDirectory(manager->path());
+            }
+            return shouldRemove;
         });
 
         RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), connection] {
             protectedThis->m_temporaryBlobPathsByConnection.remove(connection);
         });
     });
-}
-
-static String encode(const String& string, FileSystem::Salt salt)
-{
-    auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
-    auto utf8String = string.utf8();
-    crypto->addBytes(utf8String.data(), utf8String.length());
-    crypto->addBytes(salt.data(), salt.size());
-    auto hash = crypto->computeHash();
-    return base64URLEncodeToString(hash.data(), hash.size());
-}
-
-static String originDirectoryPath(const String& rootPath, const WebCore::ClientOrigin& origin, FileSystem::Salt salt)
-{
-    if (rootPath.isEmpty())
-        return emptyString();
-
-    auto encodedTopOrigin = encode(origin.topOrigin.toString(), salt);
-    auto encodedOpeningOrigin = encode(origin.clientOrigin.toString(), salt);
-    return FileSystem::pathByAppendingComponents(rootPath, { encodedTopOrigin, encodedOpeningOrigin });
-}
-
-static String originFilePath(const String& directory)
-{
-    if (directory.isEmpty())
-        return emptyString();
-
-    return FileSystem::pathByAppendingComponent(directory, OriginStorageManager::originFileIdentifier());
 }
 
 void NetworkStorageManager::writeOriginToFileIfNecessary(const WebCore::ClientOrigin& origin, StorageAreaBase* storageArea)
@@ -255,7 +284,7 @@ void NetworkStorageManager::writeOriginToFileIfNecessary(const WebCore::ClientOr
         return;
 
     if (storageArea) {
-        if (storageArea->type() != StorageAreaBase::Type::SQLite || storageArea->isEmpty())
+        if (isEmptyOriginDirectory(originDirectory))
             return;
     }
 
@@ -291,24 +320,15 @@ bool NetworkStorageManager::removeOriginStorageManagerIfPossible(const WebCore::
     if (iterator == m_localOriginStorageManagers.end())
         return true;
 
-    if (iterator->value->isActive())
+    auto& manager = iterator->value;
+    if (manager->isActive())
         return false;
+
+    manager->deleteEmptyDirectory();
+    deleteEmptyOriginDirectory(manager->path());
 
     m_localOriginStorageManagers.remove(iterator);
     return true;
-}
-
-void NetworkStorageManager::deleteOriginDirectoryIfPossible(const WebCore::ClientOrigin& origin)
-{
-    bool isEmpty = localOriginStorageManager(origin).isEmpty();
-    bool removed = removeOriginStorageManagerIfPossible(origin);
-    if (!removed || !isEmpty)
-        return;
-
-    auto originDirectory = originDirectoryPath(m_path, origin, m_salt);
-    auto filePath = originFilePath(originDirectory);
-    deleteOriginFileIfNecessary(filePath);
-    FileSystem::deleteEmptyDirectory(originDirectory);
 }
 
 void NetworkStorageManager::persisted(const WebCore::ClientOrigin& origin, CompletionHandler<void(bool)>&& completionHandler)
@@ -587,7 +607,7 @@ HashSet<WebCore::ClientOrigin> NetworkStorageManager::deleteDataOnDisk(OptionSet
             deletedOrigins.add(origin);
             localOriginStorageManager(origin).deleteData(types, modifiedSinceTime);
         }
-        deleteOriginDirectoryIfPossible(origin);
+        removeOriginStorageManagerIfPossible(origin);
     }
 
     return deletedOrigins;

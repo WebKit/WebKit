@@ -106,6 +106,7 @@ static void runWebsiteDataStoreCustomPaths(ShouldEnableProcessPrewarming shouldE
     EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:defaultResourceLoadStatisticsPath.path]);
 
     auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    websiteDataStoreConfiguration.get().shouldUseCustomStoragePaths = true;
     websiteDataStoreConfiguration.get()._indexedDBDatabaseDirectory = idbPath;
     websiteDataStoreConfiguration.get()._webStorageDirectory = localStoragePath;
     websiteDataStoreConfiguration.get()._cookieStorageFile = cookieStorageFile;
@@ -1170,4 +1171,77 @@ TEST(WKWebsiteDataStoreConfiguration, SameCustomPathForDifferentTypes)
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
+}
+
+TEST(WebKit, DeleteEmptyOriginDirectoryWhenFetchData)
+{
+    NSURL *generalStorageDirectory = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/Default" stringByExpandingTildeInPath] isDirectory:YES];
+    NSURL *topOriginDirectory = [generalStorageDirectory URLByAppendingPathComponent:@"YUn_wgR51VLVo9lc5xiivAzZ8TMmojoa0IbW323qibs"];
+    NSURL *originDirectory = [topOriginDirectory URLByAppendingPathComponent:@"YUn_wgR51VLVo9lc5xiivAzZ8TMmojoa0IbW323qibs"];
+    NSURL *resourceSalt = [[NSBundle mainBundle] URLForResource:@"general-storage-directory" withExtension:@"salt" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *resourceOriginFile = [[NSBundle mainBundle] URLForResource:@"general-storage-directory" withExtension:@"origin" subdirectory:@"TestWebKitAPI.resources"];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    [fileManager removeItemAtURL:generalStorageDirectory error:nil];
+    [fileManager createDirectoryAtURL:generalStorageDirectory withIntermediateDirectories:YES attributes:nil error:nil];
+    [fileManager copyItemAtURL:resourceSalt toURL:[generalStorageDirectory URLByAppendingPathComponent:@"salt"] error:nil];
+    [fileManager createDirectoryAtURL:originDirectory withIntermediateDirectories:YES attributes:nil error:nil];
+    [fileManager copyItemAtURL:resourceOriginFile toURL:[originDirectory URLByAppendingPathComponent:@"origin"] error:nil];
+
+    auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    [fileManager removeItemAtURL:websiteDataStoreConfiguration.get()._webStorageDirectory error:nil];
+    websiteDataStoreConfiguration.get().shouldUseCustomStoragePaths = false;
+    websiteDataStoreConfiguration.get().generalStorageDirectory = generalStorageDirectory;
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
+    done = false;
+    [dataStore fetchDataRecordsOfTypes:[NSSet setWithObjects:WKWebsiteDataTypeLocalStorage, nil] completionHandler:^(NSArray<WKWebsiteDataRecord *> * records) {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_FALSE([fileManager fileExistsAtPath:originDirectory.path]);
+    EXPECT_FALSE([fileManager fileExistsAtPath:topOriginDirectory.path]);
+}
+
+TEST(WebKit, DeleteEmptyOriginDirectoryWhenOriginIsGone)
+{
+    NSURL *generalStorageDirectory = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/Default" stringByExpandingTildeInPath] isDirectory:YES];
+    NSURL *topOriginDirectory = [generalStorageDirectory URLByAppendingPathComponent:@"YUn_wgR51VLVo9lc5xiivAzZ8TMmojoa0IbW323qibs"];
+    NSURL *originDirectory = [topOriginDirectory URLByAppendingPathComponent:@"YUn_wgR51VLVo9lc5xiivAzZ8TMmojoa0IbW323qibs"];
+    NSURL *resourceSalt = [[NSBundle mainBundle] URLForResource:@"general-storage-directory" withExtension:@"salt" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *resourceOriginFile = [[NSBundle mainBundle] URLForResource:@"general-storage-directory" withExtension:@"origin" subdirectory:@"TestWebKitAPI.resources"];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    [fileManager removeItemAtURL:generalStorageDirectory error:nil];
+    [fileManager createDirectoryAtURL:generalStorageDirectory withIntermediateDirectories:YES attributes:nil error:nil];
+    [fileManager copyItemAtURL:resourceSalt toURL:[generalStorageDirectory URLByAppendingPathComponent:@"salt"] error:nil];
+    [fileManager createDirectoryAtURL:originDirectory withIntermediateDirectories:YES attributes:nil error:nil];
+    // Baked origin file webkit.org.
+    [fileManager copyItemAtURL:resourceOriginFile toURL:[originDirectory URLByAppendingPathComponent:@"origin"] error:nil];
+
+    auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    [fileManager removeItemAtURL:websiteDataStoreConfiguration.get()._webStorageDirectory error:nil];
+    websiteDataStoreConfiguration.get().shouldUseCustomStoragePaths = false;
+    websiteDataStoreConfiguration.get().generalStorageDirectory = generalStorageDirectory;
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:dataStore.get()];
+    auto handler = adoptNS([[WebsiteDataStoreCustomPathsMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    NSString *htmlString = @"<script> \
+        localStorage.getItem('testkey'); \
+        window.webkit.messageHandlers.testHandler.postMessage('done'); \
+        </script>";
+    receivedScriptMessage = false;
+    [webView loadHTMLString:htmlString baseURL:[NSURL URLWithString:@"https://webkit.org"]];
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    auto pid = [webView _webProcessIdentifier];
+    EXPECT_NE(pid, 0);
+
+    // Ensure webkit.org is gone.
+    receivedScriptMessage = false;
+    [webView loadHTMLString:htmlString baseURL:[NSURL URLWithString:@"https://apple.com"]];
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    kill(pid, SIGKILL);
+    while ([fileManager fileExistsAtPath:originDirectory.path])
+        TestWebKitAPI::Util::spinRunLoop();
+    EXPECT_FALSE([fileManager fileExistsAtPath:topOriginDirectory.path]);
 }

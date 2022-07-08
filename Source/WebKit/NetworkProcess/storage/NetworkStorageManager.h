@@ -106,7 +106,6 @@ private:
     enum class ShouldWriteOriginFile : bool { No, Yes };
     OriginStorageManager& localOriginStorageManager(const WebCore::ClientOrigin&, ShouldWriteOriginFile = ShouldWriteOriginFile::Yes);
     bool removeOriginStorageManagerIfPossible(const WebCore::ClientOrigin&);
-    void deleteOriginDirectoryIfPossible(const WebCore::ClientOrigin&);
 
     void forEachOriginDirectory(const Function<void(const String&)>&);
     HashSet<WebCore::ClientOrigin> getAllOrigins();
