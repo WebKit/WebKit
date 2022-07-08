@@ -59,7 +59,6 @@ public:
     void finalizeRenderingUpdate();
 
     void remoteResourceCacheWasDestroyed();
-    void releaseAllRemoteFonts();
     void releaseMemory();
     
     unsigned imagesCount() const { return m_nativeImages.size(); }

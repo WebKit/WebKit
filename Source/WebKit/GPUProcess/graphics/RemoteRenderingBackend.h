@@ -119,8 +119,8 @@ private:
     void cacheNativeImage(const ShareableBitmap::Handle&, WebCore::RenderingResourceIdentifier);
     void cacheDecomposedGlyphs(Ref<WebCore::DecomposedGlyphs>&&);
     void cacheFont(Ref<WebCore::Font>&&);
-    void deleteAllFonts();
-    void releaseRemoteResource(WebCore::RenderingResourceIdentifier);
+    void releaseAllResources();
+    void releaseResource(WebCore::RenderingResourceIdentifier);
     void finalizeRenderingUpdate(RenderingUpdateID);
     void markSurfacesVolatile(MarkSurfacesAsVolatileRequestIdentifier, const Vector<WebCore::RenderingResourceIdentifier>&);
     void prepareBuffersForDisplay(Vector<PrepareBackingStoreBuffersInputData> swapBuffersInput, CompletionHandler<void(const Vector<PrepareBackingStoreBuffersOutputData>&)>&&);
@@ -130,7 +130,7 @@ private:
     void getShareableBitmapForImageBufferWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier, WebCore::PreserveResolution, CompletionHandler<void(ShareableBitmap::Handle&&)>&&);
     void cacheNativeImageWithQualifiedIdentifier(const ShareableBitmap::Handle&, QualifiedRenderingResourceIdentifier);
     void cacheDecomposedGlyphsWithQualifiedIdentifier(Ref<WebCore::DecomposedGlyphs>&&, QualifiedRenderingResourceIdentifier);
-    void releaseRemoteResourceWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier);
+    void releaseResourceWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier);
     void cacheFontWithQualifiedIdentifier(Ref<WebCore::Font>&&, QualifiedRenderingResourceIdentifier);
 
     void prepareLayerBuffersForDisplay(const PrepareBackingStoreBuffersInputData&, PrepareBackingStoreBuffersOutputData&);

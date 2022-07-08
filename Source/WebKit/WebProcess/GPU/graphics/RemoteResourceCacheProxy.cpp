@@ -154,8 +154,8 @@ void RemoteResourceCacheProxy::releaseNativeImage(RenderingResourceIdentifier re
 
 void RemoteResourceCacheProxy::clearNativeImageMap()
 {
-    for (auto& nativeImageState : m_nativeImages.values())
-        nativeImageState->removeObserver(*this);
+    for (auto& nativeImage : m_nativeImages.values())
+        nativeImage->removeObserver(*this);
     m_nativeImages.clear();
 }
 
@@ -169,12 +169,6 @@ void RemoteResourceCacheProxy::releaseDecomposedGlyphs(RenderingResourceIdentifi
     bool removed = m_decomposedGlyphs.remove(renderingResourceIdentifier);
     RELEASE_ASSERT(removed);
     m_remoteRenderingBackendProxy.releaseRemoteResource(renderingResourceIdentifier);
-}
-
-void RemoteResourceCacheProxy::releaseAllRemoteFonts()
-{
-    for (auto& fontState : m_fonts)
-        m_remoteRenderingBackendProxy.releaseRemoteResource(fontState.key);
 }
 
 void RemoteResourceCacheProxy::clearFontMap()
@@ -246,9 +240,10 @@ void RemoteResourceCacheProxy::remoteResourceCacheWasDestroyed()
 
 void RemoteResourceCacheProxy::releaseMemory()
 {
-    releaseAllRemoteFonts();
+    clearNativeImageMap();
     clearFontMap();
-    m_remoteRenderingBackendProxy.deleteAllFonts();
+    clearDecomposedGlyphsMap();
+    m_remoteRenderingBackendProxy.releaseAllRemoteResources();
 }
 
 } // namespace WebKit

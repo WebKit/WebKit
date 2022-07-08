@@ -51,8 +51,8 @@ public:
 
     std::optional<WebCore::SourceImage> cachedSourceImage(QualifiedRenderingResourceIdentifier) const;
 
-    void deleteAllFonts();
-    bool releaseRemoteResource(QualifiedRenderingResourceIdentifier);
+    void releaseAllResources();
+    bool releaseResource(QualifiedRenderingResourceIdentifier);
 
 private:
     QualifiedResourceHeap m_resourceHeap;

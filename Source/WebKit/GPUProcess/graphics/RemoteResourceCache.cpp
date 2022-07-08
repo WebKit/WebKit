@@ -85,12 +85,12 @@ DecomposedGlyphs* RemoteResourceCache::cachedDecomposedGlyphs(QualifiedRendering
     return m_resourceHeap.getDecomposedGlyphs(renderingResourceIdentifier);
 }
 
-void RemoteResourceCache::deleteAllFonts()
+void RemoteResourceCache::releaseAllResources()
 {
-    m_resourceHeap.deleteAllFonts();
+    m_resourceHeap.releaseAllResources();
 }
 
-bool RemoteResourceCache::releaseRemoteResource(QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
+bool RemoteResourceCache::releaseResource(QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
 {
     if (m_resourceHeap.removeImageBuffer(renderingResourceIdentifier)
         || m_resourceHeap.removeNativeImage(renderingResourceIdentifier)
