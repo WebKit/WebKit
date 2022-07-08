@@ -42,6 +42,7 @@
 #import <WebCore/SecurityOriginData.h>
 #import <WebCore/SocketStreamHandleImpl.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
+#import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/CallbackAggregator.h>
 #import <wtf/FileSystem.h>
@@ -254,6 +255,12 @@ const String& NetworkProcess::uiProcessBundleIdentifier() const
         m_uiProcessBundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
 
     return m_uiProcessBundleIdentifier;
+}
+
+void NetworkProcess::setApplicationName(const String& applicationName, audit_token_t auditToken)
+{
+    auto asn = adoptCF(_LSCopyLSASNForAuditToken(kLSDefaultSessionID, auditToken));
+    _LSSetApplicationInformationItem(kLSDefaultSessionID, asn.get(), _kLSDisplayNameKey, applicationName.createCFString().get(), nullptr);
 }
 
 } // namespace WebKit
