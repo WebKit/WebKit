@@ -175,8 +175,10 @@ inline void DOMPromiseProxy<IDLType>::resolve(typename IDLType::StorageType valu
     ASSERT(!m_valueOrException);
 
     m_valueOrException = ExceptionOr<Value> { std::forward<typename IDLType::StorageType>(value) };
-    for (auto& deferredPromise : m_deferredPromises)
-        deferredPromise->template resolve<IDLType>(m_valueOrException->returnValue());
+    auto deferredPromisesCopy = m_deferredPromises;
+    auto returnValueCopy = m_valueOrException->returnValue();
+    for (auto& deferredPromise : deferredPromisesCopy)
+        deferredPromise->template resolve<IDLType>(returnValueCopy);
 }
 
 template<>
@@ -185,8 +187,10 @@ inline void DOMPromiseProxy<IDLAny>::resolve(typename IDLAny::StorageType value)
     ASSERT(!m_valueOrException);
 
     m_valueOrException = ExceptionOr<Value> { std::forward<typename IDLAny::StorageType>(value) };
-    for (auto& deferredPromise : m_deferredPromises)
-        deferredPromise->resolveWithJSValue(m_valueOrException->returnValue().get());
+    auto deferredPromisesCopy = m_deferredPromises;
+    auto returnValueCopy = m_valueOrException->returnValue();
+    for (auto& deferredPromise : deferredPromisesCopy)
+        deferredPromise->resolveWithJSValue(returnValueCopy.get());
 }
 
 template<typename IDLType>
@@ -195,8 +199,10 @@ inline void DOMPromiseProxy<IDLType>::resolveWithNewlyCreated(typename IDLType::
     ASSERT(!m_valueOrException);
 
     m_valueOrException = ExceptionOr<Value> { std::forward<typename IDLType::StorageType>(value) };
-    for (auto& deferredPromise : m_deferredPromises)
-        deferredPromise->template resolveWithNewlyCreated<IDLType>(m_valueOrException->returnValue());
+    auto deferredPromisesCopy = m_deferredPromises;
+    auto returnValueCopy = m_valueOrException->returnValue();
+    for (auto& deferredPromise : deferredPromisesCopy)
+        deferredPromise->template resolveWithNewlyCreated<IDLType>(returnValueCopy);
 }
 
 template<typename IDLType>
@@ -205,8 +211,10 @@ inline void DOMPromiseProxy<IDLType>::reject(Exception exception, RejectAsHandle
     ASSERT(!m_valueOrException);
 
     m_valueOrException = ExceptionOr<Value> { WTFMove(exception) };
-    for (auto& deferredPromise : m_deferredPromises)
-        deferredPromise->reject(m_valueOrException->exception(), rejectAsHandled);
+    auto deferredPromisesCopy = m_deferredPromises;
+    auto exceptionCopy = m_valueOrException->exception();
+    for (auto& deferredPromise : deferredPromisesCopy)
+        deferredPromise->reject(exceptionCopy, rejectAsHandled);
 }
 
 
@@ -253,7 +261,8 @@ inline void DOMPromiseProxy<IDLUndefined>::resolve()
 {
     ASSERT(!m_valueOrException);
     m_valueOrException = ExceptionOr<void> { };
-    for (auto& deferredPromise : m_deferredPromises)
+    auto deferredPromisesCopy = m_deferredPromises;
+    for (auto& deferredPromise : deferredPromisesCopy)
         deferredPromise->resolve();
 }
 
@@ -261,8 +270,10 @@ inline void DOMPromiseProxy<IDLUndefined>::reject(Exception exception, RejectAsH
 {
     ASSERT(!m_valueOrException);
     m_valueOrException = ExceptionOr<void> { WTFMove(exception) };
-    for (auto& deferredPromise : m_deferredPromises)
-        deferredPromise->reject(m_valueOrException->exception(), rejectAsHandled);
+    auto deferredPromisesCopy = m_deferredPromises;
+    auto exceptionCopy = m_valueOrException->exception();
+    for (auto& deferredPromise : deferredPromisesCopy)
+        deferredPromise->reject(exceptionCopy, rejectAsHandled);
 }
 
 // MARK: - DOMPromiseProxyWithResolveCallback<IDLType> implementation
@@ -326,7 +337,8 @@ inline void DOMPromiseProxyWithResolveCallback<IDLType>::resolve(typename IDLTyp
     ASSERT(!m_valueOrException);
 
     m_valueOrException = ExceptionOr<void> { };
-    for (auto& deferredPromise : m_deferredPromises)
+    auto deferredPromisesCopy = m_deferredPromises;
+    for (auto& deferredPromise : deferredPromisesCopy)
         deferredPromise->template resolve<IDLType>(value);
 }
 
@@ -336,7 +348,8 @@ inline void DOMPromiseProxyWithResolveCallback<IDLType>::resolveWithNewlyCreated
     ASSERT(!m_valueOrException);
 
     m_valueOrException = ExceptionOr<void> { };
-    for (auto& deferredPromise : m_deferredPromises)
+    auto deferredPromisesCopy = m_deferredPromises;
+    for (auto& deferredPromise : deferredPromisesCopy)
         deferredPromise->template resolveWithNewlyCreated<IDLType>(value);
 }
 
@@ -346,8 +359,10 @@ inline void DOMPromiseProxyWithResolveCallback<IDLType>::reject(Exception except
     ASSERT(!m_valueOrException);
 
     m_valueOrException = ExceptionOr<void> { WTFMove(exception) };
-    for (auto& deferredPromise : m_deferredPromises)
-        deferredPromise->reject(m_valueOrException->exception(), rejectAsHandled);
+    auto deferredPromisesCopy = m_deferredPromises;
+    auto exceptionCopy = m_valueOrException->exception();
+    for (auto& deferredPromise : deferredPromisesCopy)
+        deferredPromise->reject(exceptionCopy, rejectAsHandled);
 }
 
 }
