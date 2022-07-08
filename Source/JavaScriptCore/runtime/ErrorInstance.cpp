@@ -236,7 +236,7 @@ void ErrorInstance::computeErrorInfo(VM& vm)
     ASSERT(!m_errorInfoMaterialized);
 
     if (m_stackTrace && !m_stackTrace->isEmpty()) {
-        getLineColumnAndSource(m_stackTrace.get(), m_line, m_column, m_sourceURL);
+        getLineColumnAndSource(vm, m_stackTrace.get(), m_line, m_column, m_sourceURL);
         m_stackString = Interpreter::stackTraceAsString(vm, *m_stackTrace.get());
         m_stackTrace = nullptr;
     }

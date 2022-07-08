@@ -176,7 +176,7 @@ void getBytecodeIndex(VM& vm, CallFrame* startCallFrame, Vector<StackFrame>* sta
         bytecodeIndex = stackTrace->at(stackIndex).bytecodeIndex();
 }
 
-bool getLineColumnAndSource(Vector<StackFrame>* stackTrace, unsigned& line, unsigned& column, String& sourceURL)
+bool getLineColumnAndSource(VM& vm, Vector<StackFrame>* stackTrace, unsigned& line, unsigned& column, String& sourceURL)
 {
     line = 0;
     column = 0;
@@ -189,7 +189,7 @@ bool getLineColumnAndSource(Vector<StackFrame>* stackTrace, unsigned& line, unsi
         StackFrame& frame = stackTrace->at(i);
         if (frame.hasLineAndColumnInfo()) {
             frame.computeLineAndColumn(line, column);
-            sourceURL = frame.sourceURL();
+            sourceURL = frame.sourceURL(vm);
             return true;
         }
     }
@@ -206,7 +206,7 @@ bool addErrorInfo(VM& vm, Vector<StackFrame>* stackTrace, JSObject* obj)
         unsigned line;
         unsigned column;
         String sourceURL;
-        getLineColumnAndSource(stackTrace, line, column, sourceURL);
+        getLineColumnAndSource(vm, stackTrace, line, column, sourceURL);
         obj->putDirect(vm, vm.propertyNames->line, jsNumber(line));
         obj->putDirect(vm, vm.propertyNames->column, jsNumber(column));
         if (!sourceURL.isEmpty())

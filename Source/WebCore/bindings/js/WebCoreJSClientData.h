@@ -123,6 +123,8 @@ public:
         m_worldSet.remove(&world);
     }
 
+    virtual String overrideSourceURL(const JSC::StackFrame&, const String& originalSourceURL) const;
+
     JSHeapData& heapData() { return *m_heapData; }
 
     WebCoreBuiltinNames& builtinNames() { return m_builtinNames; }
