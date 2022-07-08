@@ -8469,7 +8469,8 @@ TEST(ProcessSwap, ContentModeInCaseOfPSONThenCoopProcessSwap)
 }
 #endif // PLATFORM(IOS_FAMILY)
 
-TEST(WebProcessCache, ReusedCrashedCachedWebProcess)
+// FIXME: Re-enable after webkit.org/b/242527 is resolved
+TEST(WebProcessCache, DISABLED_ReusedCrashedCachedWebProcess)
 {
     auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
     processPoolConfiguration.get().usesWebProcessCache = YES;
