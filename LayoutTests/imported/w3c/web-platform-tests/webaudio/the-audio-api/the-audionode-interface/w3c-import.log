@@ -20,6 +20,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audionode-interface/audionode-connect-return-value.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audionode-interface/audionode-disconnect-audioparam.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audionode-interface/audionode-disconnect.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audionode-interface/audionode-iframe.window.js
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audionode-interface/audionode.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audionode-interface/channel-mode-interp-basic.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audionode-interface/different-contexts.html

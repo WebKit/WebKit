@@ -27,6 +27,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-equalpower-stereo.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-equalpower.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-rolloff-clamping.html
-/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/pannernode-basic.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/pannernode-basic.window.js
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/pannernode-setposition-throws.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/test-pannernode-automation.html

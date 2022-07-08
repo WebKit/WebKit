@@ -1,0 +1,3 @@
+
+PASS Call a constructor from iframe page and then destroy the iframe
+
