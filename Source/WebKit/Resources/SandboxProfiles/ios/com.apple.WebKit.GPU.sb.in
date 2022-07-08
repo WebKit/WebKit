@@ -457,8 +457,8 @@
 
 (allow mach-task-name (with telemetry) (target self))
 
-(allow process-info* (with telemetry))
-(allow process-info-pidinfo (target self))
+(deny process-info*)
+(allow process-info-pidinfo)
 (allow process-info-pidfdinfo (target self))
 (allow process-info-pidfileportinfo (target self))
 (allow process-info-setcontrol (target self))
