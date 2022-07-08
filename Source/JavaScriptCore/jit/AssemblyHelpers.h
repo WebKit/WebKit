@@ -53,6 +53,9 @@ typedef void (*V_DebugOperation_EPP)(CallFrame*, void*, void*);
 
 class AssemblyHelpers : public MacroAssembler {
 public:
+    static const char* DISASSEMBLER_COMMENT;
+    static constexpr uint64_t DISASSEMBLER_COMMENT_MASK = 0xFFFFFF;
+
     AssemblyHelpers(CodeBlock* codeBlock)
         : m_codeBlock(codeBlock)
         , m_baselineCodeBlock(codeBlock ? codeBlock->baselineAlternative() : nullptr)
@@ -1352,6 +1355,7 @@ public:
     void jitAssertArgumentCountSane();
     inline void jitAssertNoException(VM& vm) { jitReleaseAssertNoException(vm); }
     void jitAssertCodeBlockOnCallFrameWithType(GPRReg scratchGPR, JITType);
+    void jitAssertCodeBlockMatchesCurrentCalleeCodeBlockOnCallFrame(GPRReg scratchGPR, GPRReg scratchGPR2, bool isConstructor);
     void jitAssertCodeBlockOnCallFrameIsOptimizingJIT(GPRReg scratchGPR);
 #else
     void jitAssertIsInt32(GPRReg) { }
@@ -1940,6 +1944,8 @@ public:
         return branchPtr(cond, left, right);
 #endif
     }
+
+    void comment(const char* const &);
 
 #if USE(JSVALUE64)
     void wangsInt64Hash(GPRReg inputAndResult, GPRReg scratch);

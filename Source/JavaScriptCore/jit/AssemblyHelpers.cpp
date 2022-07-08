@@ -45,6 +45,22 @@
 
 namespace JSC {
 
+const char* AssemblyHelpers::DISASSEMBLER_COMMENT = "All disassembly comments should be allocated within log_2(DISASSEMBLER_COMMENT_MASK) bits of this";
+
+void AssemblyHelpers::comment(const char* const &comment)
+{
+    uint64_t asInt = reinterpret_cast<uint64_t>(reinterpret_cast<const void*>(comment));
+    uint64_t baseAsInt = reinterpret_cast<uint64_t>(reinterpret_cast<const void*>(DISASSEMBLER_COMMENT));
+    baseAsInt = baseAsInt & (~DISASSEMBLER_COMMENT_MASK);
+    uint32_t data = static_cast<uint32_t>(asInt & DISASSEMBLER_COMMENT_MASK);
+    uint64_t reconstructedData = static_cast<uint64_t>(data) | baseAsInt;
+    RELEASE_ASSERT(reconstructedData == asInt);
+
+    Jump cont = branch32(Equal, dataTempRegister, dataTempRegister);
+    breakpoint(data);
+    cont.link(this);
+}
+
 AssemblyHelpers::Jump AssemblyHelpers::branchIfFastTypedArray(GPRReg baseGPR)
 {
     return branch32(
@@ -213,6 +229,7 @@ void AssemblyHelpers::jitAssertArgumentCountSane()
 
 void AssemblyHelpers::jitAssertCodeBlockOnCallFrameWithType(GPRReg scratchGPR, JITType type)
 {
+    comment("jitAssertCodeBlockOnCallFrameWithType");
     emitGetFromCallFrameHeaderPtr(CallFrameSlot::codeBlock, scratchGPR);
     loadPtr(Address(scratchGPR, CodeBlock::jitCodeOffset()), scratchGPR);
     load8(Address(scratchGPR, JITCode::offsetOfJITType()), scratchGPR);

@@ -29,6 +29,7 @@
 
 #include "A64DOpcode.h"
 
+#include "AssemblyHelpers.h"
 #include "Disassembler.h"
 #include "ExecutableAllocator.h"
 #include "GPRInfo.h"
@@ -637,8 +638,23 @@ const char* A64OpcodeExceptionGeneration::format()
             }
             break;
         case 0x1: // BRK
-            if (!ll())
+            if (!ll()) {
                 opname = "brk";
+
+                if (immediate16() != 0xc471) {
+                    uint64_t baseAsInt = reinterpret_cast<uint64_t>(reinterpret_cast<const void*>(AssemblyHelpers::DISASSEMBLER_COMMENT));
+                    baseAsInt = baseAsInt & (~AssemblyHelpers::DISASSEMBLER_COMMENT_MASK);
+                    uint64_t reconstructedData = static_cast<uint64_t>(immediate16()) | baseAsInt;
+                    const char* comment = reinterpret_cast<const char*>(reconstructedData);
+
+                    appendString("; ");
+                    appendString(comment);
+                    appendString("\t\t (encoded as brk ");
+                    appendUnsignedHexImmediate(immediate16());
+                    appendString(")");
+                    return m_formatBuffer;
+                }
+            }
             break;
         case 0x2: // HLT
             if (!ll())
