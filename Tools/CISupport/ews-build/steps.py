@@ -676,18 +676,6 @@ class CheckOutSpecificRevision(shell.ShellCommand):
         return shell.ShellCommand.start(self)
 
 
-class GitResetHard(shell.ShellCommand):
-    name = 'git-reset-hard'
-    descriptionDone = ['Performed git reset --hard']
-
-    def __init__(self, **kwargs):
-        super(GitResetHard, self).__init__(logEnviron=False, **kwargs)
-
-    def start(self):
-        self.setCommand(['git', 'reset', 'HEAD~10', '--hard'])
-        return shell.ShellCommand.start(self)
-
-
 class FetchBranches(shell.ShellCommand):
     name = 'fetch-branch-references'
     descriptionDone = ['Updated branch information']
