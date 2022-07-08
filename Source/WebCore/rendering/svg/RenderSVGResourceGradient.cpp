@@ -107,6 +107,19 @@ static inline AffineTransform clipToTextMask(GraphicsContext& context, RefPtr<Im
 }
 #endif
 
+GradientData::Inputs RenderSVGResourceGradient::computeInputs(RenderElement& renderer, OptionSet<RenderSVGResourceMode> resourceMode)
+{
+    std::optional<FloatRect> objectBoundingBox;
+    if (gradientUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
+        objectBoundingBox = renderer.objectBoundingBox();
+
+    float textPaintingScale = 1;
+    if (resourceMode.contains(RenderSVGResourceMode::ApplyToText))
+        textPaintingScale = computeTextPaintingScale(renderer);
+
+    return { objectBoundingBox, textPaintingScale };
+}
+
 bool RenderSVGResourceGradient::applyResource(RenderElement& renderer, const RenderStyle& style, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode)
 {
     ASSERT(context);
@@ -126,40 +139,39 @@ bool RenderSVGResourceGradient::applyResource(RenderElement& renderer, const Ren
 
     // Spec: When the geometry of the applicable element has no width or height and objectBoundingBox is specified,
     // then the given effect (e.g. a gradient or a filter) will be ignored.
-    FloatRect objectBoundingBox = renderer.objectBoundingBox();
-    if (gradientUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX && objectBoundingBox.isEmpty())
+    auto inputs = computeInputs(renderer, resourceMode);
+    if (inputs.objectBoundingBox && inputs.objectBoundingBox->isEmpty())
         return false;
 
     bool isPaintingText = resourceMode.contains(RenderSVGResourceMode::ApplyToText);
 
-    auto& gradientData = m_gradientMap.ensure(&renderer, [&]() -> GradientData {
-        auto gradient = buildGradient(style);
+    auto& gradientData = *m_gradientMap.ensure(&renderer, [&]() {
+        return makeUnique<GradientData>();
+    }).iterator->value;
 
-        AffineTransform userspaceTransform;
+    if (gradientData.invalidate(inputs)) {
+        gradientData.gradient = buildGradient(style);
+        ASSERT(gradientData.userspaceTransform.isIdentity());
 
         // CG platforms will handle the gradient space transform for text after applying the
         // resource, so don't apply it here. For non-CG platforms, we want the text bounding
         // box applied to the gradient space transform now, so the gradient shader can use it.
-        if (gradientUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX && !objectBoundingBox.isEmpty()
+        if (gradientData.inputs.objectBoundingBox
 #if USE(CG)
             && !isPaintingText
 #endif
         ) {
-            userspaceTransform.translate(objectBoundingBox.location());
-            userspaceTransform.scale(objectBoundingBox.size());
+            gradientData.userspaceTransform.translate(gradientData.inputs.objectBoundingBox->location());
+            gradientData.userspaceTransform.scale(gradientData.inputs.objectBoundingBox->size());
         }
 
-        userspaceTransform *= gradientTransform();
-        if (isPaintingText) {
-            // Depending on font scaling factor, we may need to rescale the gradient here since
-            // text painting removes the scale factor from the context.
-            AffineTransform additionalTextTransform;
-            if (shouldTransformOnTextPainting(renderer, additionalTextTransform))
-                userspaceTransform *= additionalTextTransform;
-        }
+        gradientData.userspaceTransform *= gradientTransform();
 
-        return { WTFMove(gradient), userspaceTransform };
-    }).iterator->value;
+        // Depending on font scaling factor, we may need to rescale the gradient here since
+        // text painting removes the scale factor from the context.
+        if (gradientData.inputs.textPaintingScale != 1)
+            gradientData.userspaceTransform.scale(gradientData.inputs.textPaintingScale);
+    }
 
     // Draw gradient
     context->save();
@@ -203,7 +215,7 @@ void RenderSVGResourceGradient::postApplyResource(RenderElement& renderer, Graph
         if (m_savedContext) {
             auto gradientData = m_gradientMap.find(&renderer);
             if (gradientData != m_gradientMap.end()) {
-                auto& gradient = *gradientData->value.gradient;
+                auto& gradient = *gradientData->value->gradient;
 
                 // Restore on-screen drawing context
                 context = std::exchange(m_savedContext, nullptr);

@@ -38,7 +38,7 @@ public:
 
     bool isSVGResourceContainer() const final { return true; }
 
-    static bool shouldTransformOnTextPainting(const RenderElement&, AffineTransform&);
+    static float computeTextPaintingScale(const RenderElement&);
     static AffineTransform transformOnNonScalingStroke(RenderObject*, const AffineTransform& resourceTransform);
 
     void idChanged();

@@ -79,6 +79,16 @@ SVGResources* SVGResourcesCache::cachedResourcesForRenderer(const RenderElement&
     return resourcesCacheFromRenderer(renderer).m_cache.get(&renderer);
 }
 
+static bool hasPaintResourceRequiringRemovalOnClientLayoutChange(RenderSVGResource* resource)
+{
+    return resource && resource->resourceType() == PatternResourceType;
+}
+
+static bool hasResourcesRequiringRemovalOnClientLayoutChange(SVGResources& resources)
+{
+    return resources.clipper() || resources.masker() || resources.filter() || hasPaintResourceRequiringRemovalOnClientLayoutChange(resources.fill()) || hasPaintResourceRequiringRemovalOnClientLayoutChange(resources.stroke());
+}
+
 void SVGResourcesCache::clientLayoutChanged(RenderElement& renderer)
 {
     auto* resources = SVGResourcesCache::cachedResourcesForRenderer(renderer);
@@ -87,7 +97,7 @@ void SVGResourcesCache::clientLayoutChanged(RenderElement& renderer)
 
     // Invalidate the resources if either the RenderElement itself changed,
     // or we have filter resources, which could depend on the layout of children.
-    if (renderer.selfNeedsLayout())
+    if (renderer.selfNeedsLayout() && hasResourcesRequiringRemovalOnClientLayoutChange(*resources))
         resources->removeClientFromCache(renderer, false);
 }
 

@@ -31,6 +31,32 @@ namespace WebCore {
 
 class GraphicsContext;
 
+struct GradientData {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
+    struct Inputs {
+        bool operator==(const Inputs& other) const { return objectBoundingBox == other.objectBoundingBox && textPaintingScale == other.textPaintingScale; }
+        bool operator!=(const Inputs& other) const { return !(*this == other); }
+
+        std::optional<FloatRect> objectBoundingBox;
+        float textPaintingScale = 1;
+    };
+
+    bool invalidate(const Inputs& inputs)
+    {
+        if (this->inputs != inputs) {
+            gradient = nullptr;
+            userspaceTransform = AffineTransform();
+            this->inputs = inputs;
+        }
+        return !gradient;
+    }
+
+    RefPtr<Gradient> gradient;
+    AffineTransform userspaceTransform;
+    Inputs inputs;
+};
+
 class RenderSVGResourceGradient : public RenderSVGResourceContainer {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGResourceGradient);
 public:
@@ -52,16 +78,14 @@ protected:
 private:
     void element() const = delete;
 
+    GradientData::Inputs computeInputs(RenderElement&, OptionSet<RenderSVGResourceMode>);
+
     virtual SVGUnitTypes::SVGUnitType gradientUnits() const = 0;
     virtual AffineTransform gradientTransform() const = 0;
     virtual bool collectGradientAttributes() = 0;
     virtual Ref<Gradient> buildGradient(const RenderStyle&) const = 0;
 
-    struct GradientData {
-        RefPtr<Gradient> gradient;
-        AffineTransform userspaceTransform;
-    };
-    HashMap<RenderObject*, GradientData> m_gradientMap;
+    HashMap<RenderObject*, std::unique_ptr<GradientData>> m_gradientMap;
 
 #if USE(CG)
     GraphicsContext* m_savedContext { nullptr };
