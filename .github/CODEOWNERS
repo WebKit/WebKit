@@ -88,3 +88,75 @@
 
 Source/WebCore/animation @graouts
 Source/WebCore/Modules/model-element @graouts
+
+# ================================================================================
+
+/Source/WebKit/UIProcess/API/glib @carlosgcampos
+/Source/WebKit/UIProcess/API/gtk @carlosgcampos
+/Source/WebKit/UIProcess/API/gtk3 @carlosgcampos
+/Source/WebKit/UIProcess/API/gtk4 @carlosgcampos
+/Source/WebKit/UIProcess/API/wpe @carlosgcampos
+/Source/WebKit/Shared/API/glib @carlosgcampos
+/Source/WebKit/WebProcess/InjectedBundle/API/glib @carlosgcampos
+/Source/WebKit/WebProcess/InjectedBundle/API/gtk @carlosgcampos
+/Source/WebKit/WebProcess/InjectedBundle/API/wpe @carlosgcampos
+/Tools/TestWebKitAPI/glib @carlosgcampos
+/Tools/TestWebKitAPI/gtk @carlosgcampos
+/Tools/TestWebKitAPI/Tests/WebKitGLib @carlosgcampos
+/Tools/TestWebKitAPI/Tests/WebKitGtk @carlosgcampos
+
+# ================================================================================
+
+/Source/JavaScriptCore/API/glib @carlosgcampos
+/Tools/TestWebKitAPI/Tests/JavaScriptCore/glib @carlosgcampos
+
+# ================================================================================
+
+/Source/WebDriver @carlosgcampos
+/Source/WebKit/UIProcess/Automation/cairo @carlosgcampos
+/Source/WebKit/UIProcess/Automation/gtk @carlosgcampos
+/Source/WebKit/UIProcess/Automation/libwpe @carlosgcampos
+/WebDriverTests @carlosgcampos
+/Tools/Scripts/webkitpy/webdriver_tests @carlosgcampos
+
+# ================================================================================
+
+/Source/JavaScriptCore/inspector/remote/glib @carlosgcampos
+/Source/WebKit/UIProcess/Inspector/glib @carlosgcampos
+/Source/WebKit/UIProcess/Inspector/gtk	@carlosgcampos
+/Source/WebKit/WebProcess/Inspector/gtk @carlosgcampos
+
+# ================================================================================
+
+/Source/WebKit/UIProcess/glib @carlosgcampos
+/Source/WebKit/UIProcess/gtk @carlosgcampos
+/Source/WebKit/Shared/glib @carlosgcampos
+/Source/WebKit/Shared/gtk @carlosgcampos
+/Source/WebKit/WebProcess/glib @carlosgcampos
+/Source/WebKit/WebProcess/gtk @carlosgcampos
+/Source/WebKit/WebProcess/WebPage/glib @carlosgcampos
+/Source/WebKit/WebProcess/WebPage/gtk @carlosgcampos
+
+# ================================================================================
+
+/Source/WebCore/platform/adwaita @carlosgcampos
+/Source/WebCore/platform/gtk @carlosgcampos
+/Source/WebCore/platform/glib @carlosgcampos
+/Source/WTF/wtf/glib @carlosgcampos
+
+# ================================================================================
+
+/Source/WebCore/platform/graphics/cairo @carlosgcampos
+/Source/WebCore/platform/graphics/harfbuzz @carlosgcampos
+/Source/WebCore/platform/graphics/freetype @carlosgcampos
+/Source/WebCore/platform/graphics/gtk @carlosgcampos
+
+# ================================================================================
+
+/Source/WebCore/loader/soup @carlosgcampos
+/Source/WebCore/platform/network/glib @carlosgcampos
+/Source/WebCore/platform/network/soup @carlosgcampos
+/Source/WebKit/NetworkProcess/Cookies/soup @carlosgcampos
+/Source/WebKit/NetworkProcess/soup @carlosgcampos
+/Source/WebKit/UIProcess/soup @carlosgcampos
+/Source/WebKit/WebProcess/WebCoreSupport/soup @carlosgcampos
