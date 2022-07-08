@@ -29,9 +29,12 @@
 #if ENABLE(MEDIA_STREAM) && ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
 
 #include "AudioMediaStreamTrackRendererInternalUnitIdentifier.h"
+#include "GPUProcessConnection.h"
 #include "IPCSemaphore.h"
 #include "RemoteAudioMediaStreamTrackRendererInternalUnitManagerMessages.h"
 #include "SharedMemory.h"
+#include "SharedRingBufferStorage.h"
+#include "WebProcess.h"
 #include <WebCore/AudioMediaStreamTrackRendererInternalUnit.h>
 #include <WebCore/AudioMediaStreamTrackRendererUnit.h>
 #include <WebCore/AudioSampleBufferList.h>
@@ -62,7 +65,7 @@ private:
     void setAudioOutputDevice(const String&) final;
 
     void initialize(const WebCore::CAAudioStreamDescription&, size_t frameChunkSize);
-    void storageChanged(SharedMemory*, const CAAudioStreamDescription&, size_t);
+    void storageChanged(SharedMemory*, const WebCore::CAAudioStreamDescription&, size_t);
 
     void stopThread();
     void startThread();
@@ -182,16 +185,16 @@ void AudioMediaStreamTrackRendererInternalUnitManager::Proxy::start()
 
     m_numberOfFrames = m_description->sampleRate() * 2;
     m_ringBuffer.reset();
-    m_ringBuffer = makeUnique<CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>(std::bind(&AudioMediaStreamTrackRendererInternalUnitManager::Proxy::storageChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
+    m_ringBuffer = makeUnique<WebCore::CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>(std::bind(&AudioMediaStreamTrackRendererInternalUnitManager::Proxy::storageChanged, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
     m_ringBuffer->allocate(m_description->streamDescription(), m_numberOfFrames);
 
-    m_buffer = makeUnique<WebAudioBufferList>(*m_description, m_numberOfFrames);
+    m_buffer = makeUnique<WebCore::WebAudioBufferList>(*m_description, m_numberOfFrames);
     m_buffer->setSampleCount(m_frameChunkSize);
 
     startThread();
 }
 
-void AudioMediaStreamTrackRendererInternalUnitManager::Proxy::storageChanged(SharedMemory* memory, const CAAudioStreamDescription& format, size_t frameCount)
+void AudioMediaStreamTrackRendererInternalUnitManager::Proxy::storageChanged(SharedMemory* memory, const WebCore::CAAudioStreamDescription& format, size_t frameCount)
 {
     if (!frameCount)
         return;
@@ -260,7 +263,7 @@ void AudioMediaStreamTrackRendererInternalUnitManager::Proxy::startThread()
             m_renderCallback(m_frameChunkSize, bufferList, m_writeOffset, mach_absolute_time(), flags);
 
             if (flags == kAudioUnitRenderAction_OutputIsSilence)
-                AudioSampleBufferList::zeroABL(bufferList, static_cast<size_t>(m_frameChunkSize * m_description->bytesPerFrame()));
+                WebCore::AudioSampleBufferList::zeroABL(bufferList, static_cast<size_t>(m_frameChunkSize * m_description->bytesPerFrame()));
 
             m_ringBuffer->store(&bufferList, m_frameChunkSize, m_writeOffset);
             m_writeOffset += m_frameChunkSize;

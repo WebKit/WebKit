@@ -27,16 +27,12 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "Encoder.h"
 #include "Logging.h"
 #include "RemoteDisplayListRecorderProxy.h"
 #include "RemoteRenderingBackendMessages.h"
 #include "RemoteRenderingBackendProxy.h"
-#include "SharedMemory.h"
+#include "ThreadSafeRemoteImageBufferFlusher.h"
 #include <WebCore/ConcreteImageBuffer.h>
-#include <WebCore/DisplayList.h>
-#include <WebCore/DisplayListItems.h>
-#include <WebCore/MIMETypeRegistry.h>
 #include <wtf/Condition.h>
 #include <wtf/Lock.h>
 #include <wtf/SystemTracing.h>
@@ -44,23 +40,17 @@
 namespace WebKit {
 
 class RemoteRenderingBackend;
-template<typename BackendType> class ThreadSafeRemoteImageBufferFlusher;
 
-template<typename BackendType>
-class RemoteImageBufferProxy : public WebCore::ConcreteImageBuffer<BackendType> {
-    using BaseConcreteImageBuffer = WebCore::ConcreteImageBuffer<BackendType>;
-    using BaseConcreteImageBuffer::m_backend;
-    using BaseConcreteImageBuffer::canMapBackingStore;
-    using BaseConcreteImageBuffer::m_renderingResourceIdentifier;
-    using BaseConcreteImageBuffer::resolutionScale;
-
+class RemoteImageBufferProxy : public WebCore::ConcreteImageBuffer {
 public:
+    template<typename BackendType>
     static RefPtr<RemoteImageBufferProxy> create(const WebCore::FloatSize& size, float resolutionScale, const WebCore::DestinationColorSpace& colorSpace, WebCore::PixelFormat pixelFormat, WebCore::RenderingPurpose purpose, RemoteRenderingBackendProxy& remoteRenderingBackendProxy)
     {
         auto parameters = WebCore::ImageBufferBackend::Parameters { size, resolutionScale, colorSpace, pixelFormat, purpose };
         if (BackendType::calculateSafeBackendSize(parameters).isEmpty())
             return nullptr;
-        return adoptRef(new RemoteImageBufferProxy(parameters, remoteRenderingBackendProxy));
+        auto info = populateBackendInfo<BackendType>(parameters);
+        return adoptRef(new RemoteImageBufferProxy(parameters, info, remoteRenderingBackendProxy));
     }
 
     ~RemoteImageBufferProxy()
@@ -91,10 +81,10 @@ public:
     }
 
 protected:
-    RemoteImageBufferProxy(const WebCore::ImageBufferBackend::Parameters& parameters, RemoteRenderingBackendProxy& remoteRenderingBackendProxy)
-        : BaseConcreteImageBuffer(parameters)
+    RemoteImageBufferProxy(const WebCore::ImageBufferBackend::Parameters& parameters, const WebCore::ImageBufferBackend::Info& info, RemoteRenderingBackendProxy& remoteRenderingBackendProxy)
+        : ConcreteImageBuffer(parameters, info)
         , m_remoteRenderingBackendProxy(remoteRenderingBackendProxy)
-        , m_remoteDisplayList(*this, remoteRenderingBackendProxy, { { }, BaseConcreteImageBuffer::logicalSize() }, BaseConcreteImageBuffer::baseTransform())
+        , m_remoteDisplayList(*this, remoteRenderingBackendProxy, { { }, ConcreteImageBuffer::logicalSize() }, ConcreteImageBuffer::baseTransform())
     {
         ASSERT(m_remoteRenderingBackendProxy);
         m_remoteRenderingBackendProxy->remoteResourceCacheProxy().cacheImageBuffer(*this);
@@ -182,7 +172,7 @@ protected:
             return { };
 
         if (canMapBackingStore())
-            return BaseConcreteImageBuffer::copyNativeImage(copyBehavior);
+            return ConcreteImageBuffer::copyNativeImage(copyBehavior);
 
         const_cast<RemoteImageBufferProxy*>(this)->flushDrawingContext();
         auto bitmap = m_remoteRenderingBackendProxy->getShareableBitmap(m_renderingResourceIdentifier, WebCore::PreserveResolution::Yes);
@@ -229,7 +219,7 @@ protected:
         m_needsFlush = false;
         didFlush(m_sentFlushIdentifier);
         prepareForBackingStoreChange();
-        BaseConcreteImageBuffer::clearBackend();
+        ConcreteImageBuffer::clearBackend();
     }
 
     WebCore::GraphicsContext& context() const final
@@ -321,7 +311,7 @@ protected:
 
     std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher> createFlusher() final
     {
-        return WTF::makeUnique<ThreadSafeRemoteImageBufferFlusher<BackendType>>(*this);
+        return WTF::makeUnique<ThreadSafeRemoteImageBufferFlusher>(*this);
     }
 
     void prepareForBackingStoreChange()
@@ -342,26 +332,6 @@ protected:
     WeakPtr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
     RemoteDisplayListRecorderProxy m_remoteDisplayList;
     bool m_needsFlush { false };
-};
-
-template<typename BackendType>
-class ThreadSafeRemoteImageBufferFlusher final : public WebCore::ThreadSafeImageBufferFlusher {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    ThreadSafeRemoteImageBufferFlusher(RemoteImageBufferProxy<BackendType>& imageBuffer)
-        : m_imageBuffer(imageBuffer)
-        , m_targetFlushIdentifier(imageBuffer.lastSentFlushIdentifier())
-    {
-    }
-
-    void flush() final
-    {
-        m_imageBuffer->waitForDidFlushOnSecondaryThread(m_targetFlushIdentifier);
-    }
-
-private:
-    Ref<RemoteImageBufferProxy<BackendType>> m_imageBuffer;
-    WebCore::GraphicsContextFlushIdentifier m_targetFlushIdentifier;
 };
 
 } // namespace WebKit

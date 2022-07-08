@@ -53,6 +53,7 @@ class IOSurfacePool;
 class Image;
 class NativeImage;
 class PixelBuffer;
+class ProcessIdentity;
 
 enum class PreserveResolution : uint8_t {
     No,
@@ -95,6 +96,14 @@ public:
 
         template<typename Encoder> void encode(Encoder&) const;
         template<typename Decoder> static std::optional<Parameters> decode(Decoder&);
+    };
+
+    struct Info {
+        RenderingMode renderingMode;
+        bool canMapBackingStore;
+        AffineTransform baseTransform;
+        size_t memoryCost;
+        size_t externalMemoryCost;
     };
 
     WEBCORE_EXPORT virtual ~ImageBufferBackend();
@@ -151,6 +160,8 @@ public:
     virtual void ensureNativeImagesHaveCopiedBackingStore() { }
 
     virtual ImageBufferBackendSharing* toBackendSharing() { return nullptr; }
+
+    virtual void setOwnershipIdentity(const ProcessIdentity&) { }
 
 protected:
     WEBCORE_EXPORT ImageBufferBackend(const Parameters&);

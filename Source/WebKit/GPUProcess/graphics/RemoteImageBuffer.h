@@ -33,30 +33,34 @@
 
 namespace WebKit {
 
-template<typename BackendType>
-class RemoteImageBuffer : public WebCore::ConcreteImageBuffer<BackendType> {
-    using BaseConcreteImageBuffer = WebCore::ConcreteImageBuffer<BackendType>;
-    using BaseConcreteImageBuffer::context;
-    using BaseConcreteImageBuffer::m_backend;
-
+class RemoteImageBuffer : public WebCore::ConcreteImageBuffer {
 public:
-    static auto create(const WebCore::FloatSize& size, float resolutionScale, const WebCore::DestinationColorSpace& colorSpace, WebCore::PixelFormat pixelFormat, WebCore::RenderingPurpose purpose, RemoteRenderingBackend& remoteRenderingBackend, QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
+    template<typename BackendType>
+    static RefPtr<RemoteImageBuffer> create(const WebCore::FloatSize& size, float resolutionScale, const WebCore::DestinationColorSpace& colorSpace, WebCore::PixelFormat pixelFormat, WebCore::RenderingPurpose purpose, RemoteRenderingBackend& remoteRenderingBackend, QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
     {
         auto context = ImageBuffer::CreationContext { nullptr
 #if HAVE(IOSURFACE)
             , &remoteRenderingBackend.ioSurfacePool()
 #endif
         };
-        return BaseConcreteImageBuffer::template create<RemoteImageBuffer>(size, resolutionScale, colorSpace, pixelFormat, purpose, context, remoteRenderingBackend, renderingResourceIdentifier);
+        
+        auto imageBuffer = ConcreteImageBuffer::create<BackendType, RemoteImageBuffer>(size, resolutionScale, colorSpace, pixelFormat, purpose, context, remoteRenderingBackend, renderingResourceIdentifier);
+        if (!imageBuffer)
+            return nullptr;
+
+        auto backend = static_cast<BackendType*>(imageBuffer->backend());
+        ASSERT(backend);
+
+        remoteRenderingBackend.didCreateImageBufferBackend(backend->createBackendHandle(), renderingResourceIdentifier, *imageBuffer->m_remoteDisplayList.get());
+        return imageBuffer;
     }
 
-    RemoteImageBuffer(const WebCore::ImageBufferBackend::Parameters& parameters, std::unique_ptr<BackendType>&& backend, RemoteRenderingBackend& remoteRenderingBackend, QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
-        : BaseConcreteImageBuffer(parameters, WTFMove(backend), renderingResourceIdentifier.object())
+    RemoteImageBuffer(const WebCore::ImageBufferBackend::Parameters& parameters, const WebCore::ImageBufferBackend::Info& info, std::unique_ptr<ImageBufferBackend>&& backend, RemoteRenderingBackend& remoteRenderingBackend, QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
+        : ConcreteImageBuffer(parameters, info, WTFMove(backend), renderingResourceIdentifier.object())
         , m_renderingResourceIdentifier(renderingResourceIdentifier)
         , m_remoteDisplayList({ RemoteDisplayListRecorder::create(*this, renderingResourceIdentifier, renderingResourceIdentifier.processIdentifier(), remoteRenderingBackend) })
         , m_renderingResourcesRequest(ScopedRenderingResourcesRequest::acquire())
     {
-        remoteRenderingBackend.didCreateImageBufferBackend(m_backend->createBackendHandle(), renderingResourceIdentifier, *m_remoteDisplayList.get());
     }
 
     ~RemoteImageBuffer()

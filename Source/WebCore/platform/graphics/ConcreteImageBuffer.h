@@ -34,50 +34,64 @@
 
 namespace WebCore {
 
-template<typename BackendType>
 class ConcreteImageBuffer : public ImageBuffer {
 public:
-    template<typename ImageBufferType = ConcreteImageBuffer, typename... Arguments>
+    template<typename BackendType, typename ImageBufferType = ConcreteImageBuffer, typename... Arguments>
     static RefPtr<ImageBufferType> create(const FloatSize& size, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, RenderingPurpose purpose, const CreationContext& creationContext, Arguments&&... arguments)
     {
         auto parameters = ImageBufferBackend::Parameters { size, resolutionScale, colorSpace, pixelFormat, purpose };
         auto backend = BackendType::create(parameters, creationContext);
         if (!backend)
             return nullptr;
-        return create<ImageBufferType>(parameters, WTFMove(backend), std::forward<Arguments>(arguments)...);
+        auto backendInfo = populateBackendInfo<BackendType>(parameters);
+        return create<ImageBufferType>(parameters, backendInfo, WTFMove(backend), std::forward<Arguments>(arguments)...);
     }
 
-    template<typename ImageBufferType = ConcreteImageBuffer, typename... Arguments>
+    template<typename BackendType, typename ImageBufferType = ConcreteImageBuffer, typename... Arguments>
     static RefPtr<ImageBufferType> create(const FloatSize& size, const GraphicsContext& context, RenderingPurpose purpose, Arguments&&... arguments)
     {
         auto parameters = ImageBufferBackend::Parameters { size, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, purpose };
         auto backend = BackendType::create(parameters, context);
         if (!backend)
             return nullptr;
-        return create<ImageBufferType>(parameters, WTFMove(backend), std::forward<Arguments>(arguments)...);
+        auto backendInfo = populateBackendInfo<BackendType>(parameters);
+        return create<ImageBufferType>(parameters, backendInfo, WTFMove(backend), std::forward<Arguments>(arguments)...);
     }
 
     template<typename ImageBufferType = ConcreteImageBuffer, typename... Arguments>
-    static RefPtr<ImageBufferType> create(const ImageBufferBackend::Parameters& parameters, std::unique_ptr<BackendType>&& backend, Arguments&&... arguments)
+    static RefPtr<ImageBufferType> create(const ImageBufferBackend::Parameters& parameters, const ImageBufferBackend::Info& backendInfo, std::unique_ptr<ImageBufferBackend>&& backend, Arguments&&... arguments)
     {
-        return adoptRef(new ImageBufferType(parameters, WTFMove(backend), std::forward<Arguments>(arguments)...));
+        return adoptRef(new ImageBufferType(parameters, backendInfo, WTFMove(backend), std::forward<Arguments>(arguments)...));
     }
 
-    RenderingMode renderingMode() const override { return BackendType::renderingMode; }
-    bool canMapBackingStore() const override { return BackendType::canMapBackingStore; }
+    template<typename BackendType>
+    static ImageBufferBackend::Info populateBackendInfo(const ImageBufferBackend::Parameters& parameters)
+    {
+        return {
+            BackendType::renderingMode,
+            BackendType::canMapBackingStore,
+            BackendType::calculateBaseTransform(parameters, BackendType::isOriginAtBottomLeftCorner),
+            BackendType::calculateMemoryCost(parameters),
+            BackendType::calculateExternalMemoryCost(parameters)
+        };
+    }
+
+    RenderingMode renderingMode() const override { return m_backendInfo.renderingMode; }
+    bool canMapBackingStore() const override { return m_backendInfo.canMapBackingStore; }
 
 protected:
-    ConcreteImageBuffer(const ImageBufferBackend::Parameters& parameters, std::unique_ptr<BackendType>&& backend = nullptr, RenderingResourceIdentifier renderingResourceIdentifier = RenderingResourceIdentifier::generate())
+    ConcreteImageBuffer(const ImageBufferBackend::Parameters& parameters, const ImageBufferBackend::Info& backendInfo, std::unique_ptr<ImageBufferBackend>&& backend = nullptr, RenderingResourceIdentifier renderingResourceIdentifier = RenderingResourceIdentifier::generate())
         : m_parameters(parameters)
+        , m_backendInfo(backendInfo)
         , m_backend(WTFMove(backend))
         , m_renderingResourceIdentifier(renderingResourceIdentifier)
     {
     }
 
-    void setBackend(std::unique_ptr<ImageBufferBackend>&& backend) override
+    void setBackend(std::unique_ptr<ImageBufferBackend>&& backend) final
     {
         ASSERT(!m_backend);
-        m_backend = std::unique_ptr<BackendType> { static_cast<BackendType*>(backend.release()) };
+        m_backend = WTFMove(backend);
     }
 
     void clearBackend() override { m_backend = nullptr; }
@@ -116,20 +130,9 @@ protected:
         return { };
     }
 
-    AffineTransform baseTransform() const override
-    {
-        return BackendType::calculateBaseTransform(m_parameters, BackendType::isOriginAtBottomLeftCorner);
-    }
-
-    size_t memoryCost() const override
-    {
-        return BackendType::calculateMemoryCost(m_parameters);
-    }
-
-    size_t externalMemoryCost() const override
-    {
-        return BackendType::calculateExternalMemoryCost(m_parameters);
-    }
+    AffineTransform baseTransform() const override { return m_backendInfo.baseTransform; }
+    size_t memoryCost() const override { return m_backendInfo.memoryCost; }
+    size_t externalMemoryCost() const override { return m_backendInfo.externalMemoryCost; }
 
     RefPtr<NativeImage> copyNativeImage(BackingStoreCopy copyBehavior = CopyBackingStore) const override
     {
@@ -330,7 +333,8 @@ protected:
     }
 
     ImageBufferBackend::Parameters m_parameters;
-    std::unique_ptr<BackendType> m_backend;
+    ImageBufferBackend::Info m_backendInfo;
+    std::unique_ptr<ImageBufferBackend> m_backend;
     RenderingResourceIdentifier m_renderingResourceIdentifier;
 };
 

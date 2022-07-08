@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc.  All rights reserved.
+ * Copyright (C) 2022 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,13 +27,24 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "PlatformImageBufferShareableBackend.h"
-#include "RemoteImageBuffer.h"
+#include <WebCore/GraphicsContextFlushIdentifier.h>
+#include <WebCore/ImageBufferBackend.h>
 
 namespace WebKit {
 
-using UnacceleratedRemoteImageBuffer = RemoteImageBuffer<UnacceleratedImageBufferShareableBackend>;
-using AcceleratedRemoteImageBuffer = RemoteImageBuffer<AcceleratedImageBufferShareableMappedBackend>;
+class RemoteImageBufferProxy;
+
+class ThreadSafeRemoteImageBufferFlusher final : public WebCore::ThreadSafeImageBufferFlusher {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    ThreadSafeRemoteImageBufferFlusher(RemoteImageBufferProxy&);
+
+    void flush() final;
+
+private:
+    Ref<RemoteImageBufferProxy> m_imageBuffer;
+    WebCore::GraphicsContextFlushIdentifier m_targetFlushIdentifier;
+};
 
 } // namespace WebKit
 

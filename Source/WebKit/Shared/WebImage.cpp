@@ -43,7 +43,7 @@ RefPtr<WebImage> WebImage::create(const IntSize& size, ImageOptions options, con
     }
 
     if (options & ImageOptionsShareable) {
-        auto buffer = ConcreteImageBuffer<ImageBufferShareableBitmapBackend>::create(size, 1, colorSpace, PixelFormat::BGRA8, RenderingPurpose::ShareableSnapshot, { });
+        auto buffer = ConcreteImageBuffer::create<ImageBufferShareableBitmapBackend>(size, 1, colorSpace, PixelFormat::BGRA8, RenderingPurpose::ShareableSnapshot, { });
         if (!buffer)
             return nullptr;
         return WebImage::create(buffer.releaseNonNull());
@@ -61,9 +61,12 @@ RefPtr<WebImage> WebImage::create(const ImageBufferBackend::Parameters& paramete
     if (!backend)
         return nullptr;
     
-    auto buffer = ConcreteImageBuffer<ImageBufferShareableBitmapBackend>::create(parameters, WTFMove(backend));
+    auto info = ConcreteImageBuffer::populateBackendInfo<ImageBufferShareableBitmapBackend>(parameters);
+
+    auto buffer = ConcreteImageBuffer::create(parameters, info, WTFMove(backend));
     if (!buffer)
         return nullptr;
+
     return WebImage::create(buffer.releaseNonNull());
 }
 

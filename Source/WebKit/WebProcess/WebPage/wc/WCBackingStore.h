@@ -26,7 +26,8 @@
 #pragma once
 
 #include "ImageBufferBackendHandle.h"
-#include "PlatformRemoteImageBufferProxy.h"
+#include "ImageBufferBackendHandleSharing.h"
+#include <WebCore/ImageBuffer.h>
 
 namespace WebKit {
 

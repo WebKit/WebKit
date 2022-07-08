@@ -32,26 +32,22 @@
 namespace WebCore {
 namespace DisplayList {
 
-template<typename BackendType>
-class ImageBuffer final : public ConcreteImageBuffer<BackendType> {
-    using BaseConcreteImageBuffer = ConcreteImageBuffer<BackendType>;
-    using BaseConcreteImageBuffer::truncatedLogicalSize;
-    using BaseConcreteImageBuffer::logicalSize;
-    using BaseConcreteImageBuffer::baseTransform;
-
+class ImageBuffer final : public ConcreteImageBuffer {
 public:
+    template<typename BackendType>
     static auto create(const FloatSize& size, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, RenderingPurpose purpose, const WebCore::ImageBuffer::CreationContext& creationContext)
     {
-        return BaseConcreteImageBuffer::template create<ImageBuffer>(size, resolutionScale, colorSpace, pixelFormat, purpose, creationContext);
+        return ConcreteImageBuffer::create<BackendType, ImageBuffer>(size, resolutionScale, colorSpace, pixelFormat, purpose, creationContext);
     }
 
+    template<typename BackendType>
     static auto create(const FloatSize& size, const GraphicsContext& context, RenderingPurpose purpose)
     {
-        return BaseConcreteImageBuffer::template create<ImageBuffer>(size, context, purpose);
+        return ConcreteImageBuffer::create<BackendType, ImageBuffer>(size, context, purpose);
     }
 
-    ImageBuffer(const ImageBufferBackend::Parameters& parameters, std::unique_ptr<BackendType>&& backend)
-        : BaseConcreteImageBuffer(parameters, WTFMove(backend))
+    ImageBuffer(const ImageBufferBackend::Parameters& parameters, const ImageBufferBackend::Info& info, std::unique_ptr<ImageBufferBackend>&& backend)
+        : ConcreteImageBuffer(parameters, info, WTFMove(backend))
         , m_drawingContext(logicalSize(), baseTransform())
         , m_writingClient(makeUnique<InMemoryDisplayList::WritingClient>())
         , m_readingClient(makeUnique<InMemoryDisplayList::ReadingClient>())
@@ -60,8 +56,8 @@ public:
         m_drawingContext.displayList().setItemBufferReadingClient(m_readingClient.get());
     }
 
-    ImageBuffer(const ImageBufferBackend::Parameters& parameters)
-        : BaseConcreteImageBuffer(parameters)
+    ImageBuffer(const ImageBufferBackend::Parameters& parameters, const ImageBufferBackend::Info& info)
+        : ConcreteImageBuffer(parameters, info)
         , m_drawingContext(logicalSize(), baseTransform())
         , m_writingClient(makeUnique<InMemoryDisplayList::WritingClient>())
         , m_readingClient(makeUnique<InMemoryDisplayList::ReadingClient>())
@@ -85,13 +81,13 @@ public:
     void flushDrawingContext() final
     {
         if (!m_drawingContext.displayList().isEmpty())
-            m_drawingContext.replayDisplayList(BaseConcreteImageBuffer::context());
+            m_drawingContext.replayDisplayList(ConcreteImageBuffer::context());
     }
 
     void clearBackend() final
     {
         m_drawingContext.displayList().clear();
-        BaseConcreteImageBuffer::clearBackend();
+        ConcreteImageBuffer::clearBackend();
     }
 
 protected:

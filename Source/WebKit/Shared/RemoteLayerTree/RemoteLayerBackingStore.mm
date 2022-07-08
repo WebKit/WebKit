@@ -30,7 +30,7 @@
 #import "CGDisplayListImageBufferBackend.h"
 #import "Logging.h"
 #import "PlatformCALayerRemote.h"
-#import "PlatformRemoteImageBufferProxy.h"
+#import "PlatformImageBufferShareableBackend.h"
 #import "RemoteLayerBackingStoreCollection.h"
 #import "RemoteLayerTreeContext.h"
 #import "RemoteLayerTreeLayers.h"
