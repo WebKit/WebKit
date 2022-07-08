@@ -1475,7 +1475,7 @@ TEST(WebAuthenticationPanel, LAGetAssertionMultipleOrder)
 
 #endif // USE(APPLE_INTERNAL_SDK) || PLATFORM(IOS)
 
-TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMinimun)
+TEST(WebAuthenticationPanel, DISABLED_PublicKeyCredentialCreationOptionsMinimun)
 {
     uint8_t identifier[] = { 0x01, 0x02, 0x03, 0x04 };
     NSData *nsIdentifier = [NSData dataWithBytes:identifier length:sizeof(identifier)];
@@ -1510,7 +1510,7 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMinimun)
     EXPECT_EQ(result.extensions->googleLegacyAppidSupport, false);
 }
 
-TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximumDefault)
+TEST(WebAuthenticationPanel, DISABLED_PublicKeyCredentialCreationOptionsMaximumDefault)
 {
     uint8_t identifier[] = { 0x01, 0x02, 0x03, 0x04 };
     NSData *nsIdentifier = [NSData dataWithBytes:identifier length:sizeof(identifier)];
