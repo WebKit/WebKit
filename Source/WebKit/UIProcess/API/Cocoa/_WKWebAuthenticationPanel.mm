@@ -470,6 +470,70 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
 #endif
 }
 
++ (void)setNameForLocalCredentialWithGroupAndID:(NSString *)group credential:(NSData *)credentialID name:(NSString *)name
+{
+#if ENABLE(WEB_AUTHN)
+    auto query = adoptNS([[NSMutableDictionary alloc] init]);
+    [query setDictionary:@{
+        (__bridge id)kSecClass: bridge_id_cast(kSecClassKey),
+        (__bridge id)kSecReturnAttributes: @YES,
+        (__bridge id)kSecAttrApplicationLabel: credentialID,
+        (__bridge id)kSecReturnPersistentRef : bridge_id_cast(kCFBooleanTrue),
+        (__bridge id)kSecAttrSynchronizable: (id)kSecAttrSynchronizableAny,
+        (__bridge id)kSecUseDataProtectionKeychain: @YES
+    }];
+    updateQueryForGroupIfNecessary(query.get(), group);
+
+    CFTypeRef attributesArrayRef = nullptr;
+    OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query.get(), &attributesArrayRef);
+    if (status && status != errSecItemNotFound) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    auto attributes = adoptNS((__bridge NSDictionary *)attributesArrayRef);
+    auto decodedResponse = cbor::CBORReader::read(vectorFromNSData(attributes.get()[bridge_id_cast(kSecAttrApplicationTag)]));
+    if (!decodedResponse || !decodedResponse->isMap()) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    auto& previousUserMap = decodedResponse->getMap();
+
+    bool nameSet = false;
+    cbor::CBORValue::MapValue updatedUserMap;
+    for (auto it = previousUserMap.begin(); it != previousUserMap.end(); ++it) {
+        if (it->first.isString() && it->first.getString() == fido::kEntityNameMapKey) {
+            if (name)
+                updatedUserMap[it->first.clone()] = cbor::CBORValue(String(name));
+            nameSet = true;
+        } else
+            updatedUserMap[it->first.clone()] = it->second.clone();
+    }
+    if (!nameSet && name)
+        updatedUserMap[cbor::CBORValue(fido::kEntityNameMapKey)] = cbor::CBORValue(String(name));
+    updatedUserMap[cbor::CBORValue(WebCore::userEntityLastModifiedKey)] = cbor::CBORValue((int64_t)WallTime::now().secondsSinceEpoch().value());
+    auto updatedTag = cbor::CBORWriter::write(cbor::CBORValue(WTFMove(updatedUserMap)));
+
+    auto secAttrApplicationTag = adoptNS([[NSData alloc] initWithBytes:updatedTag->data() length:updatedTag->size()]);
+
+    NSDictionary *updateParams = @{
+        (__bridge id)kSecAttrApplicationTag: secAttrApplicationTag.get(),
+    };
+
+    [query setDictionary:@{
+        (__bridge id)kSecValuePersistentRef: [attributes objectForKey:bridge_id_cast(kSecValuePersistentRef)],
+        (__bridge id)kSecClass: bridge_id_cast(kSecClassKey),
+        (__bridge id)kSecAttrSynchronizable: (id)kSecAttrSynchronizableAny,
+    }];
+    updateQueryForGroupIfNecessary(query.get(), group);
+
+    status = SecItemUpdate((__bridge CFDictionaryRef)query.get(), (__bridge CFDictionaryRef)updateParams);
+    if (status && status != errSecItemNotFound) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+#endif
+}
+
 #if ENABLE(WEB_AUTHN)
 static void createNSErrorFromWKErrorIfNecessary(NSError **error, WKErrorCode errorCode)
 {

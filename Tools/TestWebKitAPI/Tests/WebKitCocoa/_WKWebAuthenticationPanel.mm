@@ -2307,6 +2307,44 @@ TEST(WebAuthenticationPanel, UpdateCredentialDisplayName)
     cleanUpKeychain("example.com"_s);
 }
 
+TEST(WebAuthenticationPanel, UpdateCredentialName)
+{
+    reset();
+    cleanUpKeychain("example.com"_s);
+
+    ASSERT_TRUE(addKeyToKeychain(testES256PrivateKeyBase64, "example.com"_s, testUserEntityBundleBase64));
+
+    auto *credentials = [_WKWebAuthenticationPanel getAllLocalAuthenticatorCredentialsWithAccessGroup:@"com.apple.TestWebKitAPI"];
+    EXPECT_NOT_NULL(credentials);
+    EXPECT_EQ([credentials count], 1lu);
+
+    EXPECT_NOT_NULL([credentials firstObject]);
+    EXPECT_WK_STREQ([credentials firstObject][_WKLocalAuthenticatorCredentialNameKey], "John");
+    EXPECT_NULL([credentials firstObject][_WKLocalAuthenticatorCredentialDisplayNameKey]);
+
+    [_WKWebAuthenticationPanel setNameForLocalCredentialWithGroupAndID:nil credential:[credentials firstObject][_WKLocalAuthenticatorCredentialIDKey] name:@"Jill"];
+
+    credentials = [_WKWebAuthenticationPanel getAllLocalAuthenticatorCredentialsWithAccessGroup:@"com.apple.TestWebKitAPI"];
+    EXPECT_NOT_NULL(credentials);
+    EXPECT_EQ([credentials count], 1lu);
+
+    EXPECT_NOT_NULL([credentials firstObject]);
+    EXPECT_WK_STREQ([credentials firstObject][_WKLocalAuthenticatorCredentialNameKey], "Jill");
+    EXPECT_NULL([credentials firstObject][_WKLocalAuthenticatorCredentialDisplayNameKey]);
+
+    [_WKWebAuthenticationPanel setNameForLocalCredentialWithGroupAndID:nil credential:[credentials firstObject][_WKLocalAuthenticatorCredentialIDKey] name: @"Something Different"];
+
+    credentials = [_WKWebAuthenticationPanel getAllLocalAuthenticatorCredentialsWithAccessGroup:@"com.apple.TestWebKitAPI"];
+    EXPECT_NOT_NULL(credentials);
+    EXPECT_EQ([credentials count], 1lu);
+
+    EXPECT_NOT_NULL([credentials firstObject]);
+    EXPECT_WK_STREQ([credentials firstObject][_WKLocalAuthenticatorCredentialNameKey], "Something Different");
+    EXPECT_NULL([credentials firstObject][_WKLocalAuthenticatorCredentialDisplayNameKey]);
+
+    cleanUpKeychain("example.com"_s);
+}
+
 TEST(WebAuthenticationPanel, ExportImportCredential)
 {
     reset();
