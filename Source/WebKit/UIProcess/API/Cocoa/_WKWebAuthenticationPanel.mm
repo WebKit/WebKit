@@ -650,7 +650,6 @@ static WebCore::PublicKeyCredentialCreationOptions::RpEntity publicKeyCredential
     WebCore::PublicKeyCredentialCreationOptions::RpEntity result;
     result.name = rpEntity.name;
     result.icon = rpEntity.icon;
-    ASSERT(rpEntity.identifier);
     result.id = rpEntity.identifier;
 
     return result;
