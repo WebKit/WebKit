@@ -79,6 +79,29 @@ class TestFind(testing.PathTestCase):
             ))
         self.assertEqual(captured.stdout.getvalue(), '4@trunk | r6 | 6th commit\n')
 
+    def test_basic_github_remote(self):
+        with OutputCapture() as captured, mocks.remote.GitHub():
+            self.assertEqual(0, program.main(
+                args=('-C', 'https://github.example.com/WebKit/WebKit', 'find', 'bae5d1e90999', '-q'),
+                path=self.path,
+            ))
+        self.assertEqual(captured.stdout.getvalue(), '4@main | bae5d1e90999 | 8th commit\n')
+
+    def test_basic_bitbucket_remote(self):
+        with OutputCapture() as captured, mocks.remote.BitBucket():
+            self.assertEqual(0, program.main(
+                args=('-C', 'https://bitbucket.example.com/projects/WEBKIT/repos/webkit', 'find', 'bae5d1e90999', '-q'),
+                path=self.path,
+            ))
+        self.assertEqual(captured.stdout.getvalue(), '4@main | bae5d1e90999 | 8th commit\n')
+
+        with OutputCapture() as captured, mocks.remote.BitBucket():
+            self.assertEqual(0, program.main(
+                args=('-C', 'https://bitbucket.example.com/WEBKIT/webkit', 'find', 'bae5d1e90999', '-q'),
+                path=self.path,
+            ))
+        self.assertEqual(captured.stdout.getvalue(), '4@main | bae5d1e90999 | 8th commit\n')
+
     def test_branch_tilde(self):
         with OutputCapture() as captured, mocks.local.Git(self.path, git_svn=True), mocks.local.Svn(), MockTime:
             self.assertEqual(0, program.main(

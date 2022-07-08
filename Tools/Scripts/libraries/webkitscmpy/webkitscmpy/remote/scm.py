@@ -60,7 +60,7 @@ class Scm(ScmBase):
         from webkitscmpy import remote
 
         if 'bitbucket' in url or 'stash' in url:
-            match = re.match(r'(?P<protocol>https?)://(?P<host>.+)/(?P<project>.+)/(?P<repo>.+)', url)
+            match = re.match(r'(?P<protocol>https?)://(?P<host>[^/]+)/(projects/)?(?P<project>[^/]+)/(repos/)?(?P<repo>[^/]+)', url)
             url = '{}://{}/projects/{}/repos/{}'.format(
                 match.group('protocol'),
                 match.group('host'),
