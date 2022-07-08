@@ -85,7 +85,7 @@ static std::optional<Vector<uint8_t>> constructU2fSignCommand(const Vector<uint8
 
 bool isConvertibleToU2fRegisterCommand(const PublicKeyCredentialCreationOptions& request)
 {
-    if (request.authenticatorSelection && (request.authenticatorSelection->userVerification == UserVerificationRequirement::Required || request.authenticatorSelection->requireResidentKey))
+    if (request.authenticatorSelection && (request.authenticatorSelection->userVerification() == UserVerificationRequirement::Required || request.authenticatorSelection->requireResidentKey))
         return false;
     if (request.pubKeyCredParams.findIf([](auto& item) { return item.alg == COSE::ES256; }) == notFound)
         return false;
@@ -94,7 +94,7 @@ bool isConvertibleToU2fRegisterCommand(const PublicKeyCredentialCreationOptions&
 
 bool isConvertibleToU2fSignCommand(const PublicKeyCredentialRequestOptions& request)
 {
-    return (request.userVerification != UserVerificationRequirement::Required) && !request.allowCredentials.isEmpty();
+    return (request.userVerification() != UserVerificationRequirement::Required) && !request.allowCredentials.isEmpty();
 }
 
 std::optional<Vector<uint8_t>> convertToU2fRegisterCommand(const Vector<uint8_t>& clientDataHash, const PublicKeyCredentialCreationOptions& request)

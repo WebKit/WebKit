@@ -36,7 +36,7 @@ namespace WebCore {
 struct PublicKeyCredentialDescriptor {
     PublicKeyCredentialType type;
     BufferSource id;
-    Vector<AuthenticatorTransport> transports;
+    Vector<String> transports;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<PublicKeyCredentialDescriptor> decode(Decoder&);

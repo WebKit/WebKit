@@ -65,11 +65,15 @@ struct PublicKeyCredentialCreationOptions {
     };
 
     struct AuthenticatorSelectionCriteria {
-        std::optional<AuthenticatorAttachment> authenticatorAttachment;
+        std::optional<String> authenticatorAttachmentString;
+        WEBCORE_EXPORT std::optional<AuthenticatorAttachment> authenticatorAttachment() const;
+
         // residentKey replaces requireResidentKey, see: https://www.w3.org/TR/webauthn-2/#dictionary-authenticatorSelection
-        std::optional<ResidentKeyRequirement> residentKey;
+        std::optional<String> residentKeyString;
+        WEBCORE_EXPORT std::optional<ResidentKeyRequirement> residentKey() const;
         bool requireResidentKey { false };
-        UserVerificationRequirement userVerification { UserVerificationRequirement::Preferred };
+        String userVerificationString { "preferred"_s };
+        WEBCORE_EXPORT UserVerificationRequirement userVerification() const;
 
         template<class Encoder> void encode(Encoder&) const;
         template<class Decoder> static std::optional<AuthenticatorSelectionCriteria> decode(Decoder&);
@@ -84,7 +88,8 @@ struct PublicKeyCredentialCreationOptions {
     std::optional<unsigned> timeout;
     Vector<PublicKeyCredentialDescriptor> excludeCredentials;
     std::optional<AuthenticatorSelectionCriteria> authenticatorSelection;
-    AttestationConveyancePreference attestation;
+    String attestationString;
+    WEBCORE_EXPORT AttestationConveyancePreference attestation() const;
     mutable std::optional<AuthenticationExtensionsClientInputs> extensions;
 
     template<class Encoder> void encode(Encoder&) const;
@@ -113,7 +118,7 @@ std::optional<PublicKeyCredentialCreationOptions::Parameters> PublicKeyCredentia
 template<class Encoder>
 void PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria::encode(Encoder& encoder) const
 {
-    encoder << authenticatorAttachment << requireResidentKey << userVerification << residentKey;
+    encoder << authenticatorAttachmentString << requireResidentKey << userVerificationString << residentKeyString;
 }
 
 template<class Decoder>
@@ -121,11 +126,11 @@ std::optional<PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria
 {
     PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria result;
 
-    std::optional<std::optional<AuthenticatorAttachment>> authenticatorAttachment;
-    decoder >> authenticatorAttachment;
-    if (!authenticatorAttachment)
+    std::optional<std::optional<String>> authenticatorAttachmentString;
+    decoder >> authenticatorAttachmentString;
+    if (!authenticatorAttachmentString)
         return std::nullopt;
-    result.authenticatorAttachment = WTFMove(*authenticatorAttachment);
+    result.authenticatorAttachmentString = WTFMove(*authenticatorAttachmentString);
 
     std::optional<bool> requireResidentKey;
     decoder >> requireResidentKey;
@@ -133,14 +138,14 @@ std::optional<PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria
         return std::nullopt;
     result.requireResidentKey = *requireResidentKey;
 
-    if (!decoder.decode(result.userVerification))
+    if (!decoder.decode(result.userVerificationString))
         return std::nullopt;
 
-    std::optional<std::optional<ResidentKeyRequirement>> residentKey;
-    decoder >> residentKey;
-    if (!residentKey)
+    std::optional<std::optional<String>> residentKeyString;
+    decoder >> residentKeyString;
+    if (!residentKeyString)
         return std::nullopt;
-    result.residentKey = *residentKey;
+    result.residentKeyString = *residentKeyString;
 
     return result;
 }
@@ -151,7 +156,7 @@ void PublicKeyCredentialCreationOptions::encode(Encoder& encoder) const
 {
     encoder << rp.id << rp.name << rp.icon;
     encoder << user.id;
-    encoder << user.displayName << user.name << user.icon << pubKeyCredParams << timeout << excludeCredentials << authenticatorSelection << attestation << extensions;
+    encoder << user.displayName << user.name << user.icon << pubKeyCredParams << timeout << excludeCredentials << authenticatorSelection << attestationString << extensions;
     encoder << static_cast<uint64_t>(challenge.length());
     encoder.encodeFixedLengthData(challenge.data(), challenge.length(), 1);
 }
@@ -192,11 +197,11 @@ std::optional<PublicKeyCredentialCreationOptions> PublicKeyCredentialCreationOpt
         return std::nullopt;
     result.authenticatorSelection = WTFMove(*authenticatorSelection);
 
-    std::optional<AttestationConveyancePreference> attestation;
-    decoder >> attestation;
-    if (!attestation)
+    std::optional<String> attestationString;
+    decoder >> attestationString;
+    if (!attestationString)
         return std::nullopt;
-    result.attestation = WTFMove(*attestation);
+    result.attestationString = WTFMove(*attestationString);
 
     std::optional<std::optional<AuthenticationExtensionsClientInputs>> extensions;
     decoder >> extensions;

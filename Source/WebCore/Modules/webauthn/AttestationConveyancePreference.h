@@ -28,6 +28,7 @@
 #if ENABLE(WEB_AUTHN)
 
 #include <wtf/Forward.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -36,6 +37,10 @@ enum class AttestationConveyancePreference {
     Indirect,
     Direct
 };
+
+WEBCORE_EXPORT AttestationConveyancePreference toAttestationConveyancePreference(String& preference);
+
+WEBCORE_EXPORT String toString(AttestationConveyancePreference);
 
 } // namespace WebCore
 

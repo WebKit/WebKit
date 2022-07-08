@@ -42,8 +42,10 @@ struct PublicKeyCredentialRequestOptions {
     std::optional<unsigned> timeout;
     mutable String rpId;
     Vector<PublicKeyCredentialDescriptor> allowCredentials;
-    UserVerificationRequirement userVerification { UserVerificationRequirement::Preferred };
-    std::optional<AuthenticatorAttachment> authenticatorAttachment;
+    String userVerificationString { "preferred"_s };
+    WEBCORE_EXPORT UserVerificationRequirement userVerification() const;
+    std::optional<String> authenticatorAttachmentString;
+    WEBCORE_EXPORT std::optional<AuthenticatorAttachment> authenticatorAttachment() const;
     mutable std::optional<AuthenticationExtensionsClientInputs> extensions;
 
     template<class Encoder> void encode(Encoder&) const;
@@ -56,7 +58,7 @@ struct PublicKeyCredentialRequestOptions {
 template<class Encoder>
 void PublicKeyCredentialRequestOptions::encode(Encoder& encoder) const
 {
-    encoder << timeout << rpId << allowCredentials << userVerification << extensions;
+    encoder << timeout << rpId << allowCredentials << userVerificationString << authenticatorAttachmentString << extensions;
     encoder << static_cast<uint64_t>(challenge.length());
     encoder.encodeFixedLengthData(challenge.data(), challenge.length(), 1);
 }
@@ -77,11 +79,17 @@ std::optional<PublicKeyCredentialRequestOptions> PublicKeyCredentialRequestOptio
     if (!decoder.decode(result.allowCredentials))
         return std::nullopt;
 
-    std::optional<UserVerificationRequirement> userVerification;
-    decoder >> userVerification;
-    if (!userVerification)
+    std::optional<String> userVerificationString;
+    decoder >> userVerificationString;
+    if (!userVerificationString)
         return std::nullopt;
-    result.userVerification = WTFMove(*userVerification);
+    result.userVerificationString = WTFMove(*userVerificationString);
+
+    std::optional<std::optional<String>> authenticatorAttachmentString;
+    decoder >> authenticatorAttachmentString;
+    if (!authenticatorAttachmentString)
+        return std::nullopt;
+    result.authenticatorAttachmentString = WTFMove(*authenticatorAttachmentString);
 
     std::optional<std::optional<AuthenticationExtensionsClientInputs>> extensions;
     decoder >> extensions;
