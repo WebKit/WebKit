@@ -58,7 +58,6 @@
 #import <WebCore/ColorCocoa.h>
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/IOSurfacePool.h>
-#import <WebCore/LocalCurrentTraitCollection.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
@@ -536,22 +535,27 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView, AllowPageBac
     if (!webView.opaque)
         return WebCore::Color::transparentBlack;
 
+    WebCore::Color color;
+    auto computeScrollViewBackgroundColor = [&]() {
+        color = baseScrollViewBackgroundColor(webView, allowPageBackgroundColorOverride);
+
+        if (!color.isValid() && webView->_contentView)
+            color = WebCore::roundAndClampToSRGBALossy([webView->_contentView backgroundColor].CGColor);
+
+        if (!color.isValid()) {
 #if HAVE(OS_DARK_MODE_SUPPORT)
-    WebCore::LocalCurrentTraitCollection localTraitCollection(webView.traitCollection);
-#endif
-
-    WebCore::Color color = baseScrollViewBackgroundColor(webView, allowPageBackgroundColorOverride);
-
-    if (!color.isValid() && webView->_contentView)
-        color = WebCore::roundAndClampToSRGBALossy([webView->_contentView backgroundColor].CGColor);
-
-    if (!color.isValid()) {
-#if HAVE(OS_DARK_MODE_SUPPORT)
-        color = WebCore::roundAndClampToSRGBALossy(UIColor.systemBackgroundColor.CGColor);
+            color = WebCore::roundAndClampToSRGBALossy(UIColor.systemBackgroundColor.CGColor);
 #else
-        color = WebCore::Color::white;
+            color = WebCore::Color::white;
 #endif
-    }
+        }
+    };
+
+#if HAVE(OS_DARK_MODE_SUPPORT)
+    [webView.traitCollection performAsCurrentTraitCollection:computeScrollViewBackgroundColor];
+#else
+    computeScrollViewBackgroundColor();
+#endif
 
     return color;
 }

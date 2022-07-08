@@ -51,30 +51,20 @@ LocalCurrentTraitCollection::LocalCurrentTraitCollection(bool useDarkAppearance,
 {
 #if HAVE(OS_DARK_MODE_SUPPORT)
     m_savedTraitCollection = [PAL::getUITraitCollectionClass() currentTraitCollection];
-    m_usingDarkAppearance = useDarkAppearance;
-    m_usingElevatedUserInterfaceLevel = useElevatedUserInterfaceLevel;
 
-    auto userInterfaceStyleTrait = [PAL::getUITraitCollectionClass() traitCollectionWithUserInterfaceStyle:m_usingDarkAppearance ? UIUserInterfaceStyleDark : UIUserInterfaceStyleLight];
-    auto backgroundLevelTrait = [PAL::getUITraitCollectionClass() traitCollectionWithUserInterfaceLevel:m_usingElevatedUserInterfaceLevel ? UIUserInterfaceLevelElevated : UIUserInterfaceLevelBase];
+    auto userInterfaceStyleTrait = [PAL::getUITraitCollectionClass() traitCollectionWithUserInterfaceStyle:useDarkAppearance ? UIUserInterfaceStyleDark : UIUserInterfaceStyleLight];
+    auto backgroundLevelTrait = [PAL::getUITraitCollectionClass() traitCollectionWithUserInterfaceLevel:useElevatedUserInterfaceLevel ? UIUserInterfaceLevelElevated : UIUserInterfaceLevelBase];
+
+    // FIXME: <rdar://problem/96607991> `-[UITraitCollection currentTraitCollection]` is not guaranteed
+    // to return a useful set of traits in cases where it has not been explicitly set. Ideally, this
+    // method should also take in a base, full-specified trait collection from the view hierarchy, to be
+    // used when building the new trait collection.
     auto newTraitCollection = adjustedTraitCollection([PAL::getUITraitCollectionClass() traitCollectionWithTraitsFromCollections:@[ m_savedTraitCollection.get(), userInterfaceStyleTrait, backgroundLevelTrait ]]);
 
     [PAL::getUITraitCollectionClass() setCurrentTraitCollection:newTraitCollection];
 #else
     UNUSED_PARAM(useDarkAppearance);
     UNUSED_PARAM(useElevatedUserInterfaceLevel);
-#endif
-}
-
-LocalCurrentTraitCollection::LocalCurrentTraitCollection(UITraitCollection *traitCollection)
-{
-#if HAVE(OS_DARK_MODE_SUPPORT)
-    m_savedTraitCollection = [PAL::getUITraitCollectionClass() currentTraitCollection];
-    m_usingDarkAppearance = traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark;
-    m_usingElevatedUserInterfaceLevel = traitCollection.userInterfaceLevel == UIUserInterfaceLevelElevated;
-
-    [PAL::getUITraitCollectionClass() setCurrentTraitCollection:traitCollection];
-#else
-    UNUSED_PARAM(traitCollection);
 #endif
 }
 
