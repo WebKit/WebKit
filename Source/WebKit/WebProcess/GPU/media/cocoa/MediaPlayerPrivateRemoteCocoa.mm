@@ -56,7 +56,7 @@ void MediaPlayerPrivateRemote::pushVideoFrameMetadata(WebCore::VideoFrameMetadat
     m_videoFrameGatheredWithVideoFrameMetadata = WTFMove(videoFrame);
 }
 
-RefPtr<NativeImage> MediaPlayerPrivateRemote::nativeImageForCurrentTime()
+RefPtr<NativeImage> MediaPlayerPrivateRemote::nativeImageForCurrentTime(std::optional<DestinationColorSpace> colorSpace)
 {
     if (readyState() < MediaPlayer::ReadyState::HaveCurrentData)
         return { };
@@ -65,7 +65,7 @@ RefPtr<NativeImage> MediaPlayerPrivateRemote::nativeImageForCurrentTime()
     if (!videoFrame)
         return nullptr;
 
-    return WebProcess::singleton().ensureGPUProcessConnection().videoFrameObjectHeapProxy().getNativeImage(*videoFrame);
+    return WebProcess::singleton().ensureGPUProcessConnection().videoFrameObjectHeapProxy().getNativeImage(*videoFrame, colorSpace);
 }
 
 WebCore::DestinationColorSpace MediaPlayerPrivateRemote::colorSpace()

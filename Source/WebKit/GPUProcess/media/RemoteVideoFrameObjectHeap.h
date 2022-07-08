@@ -66,12 +66,12 @@ private:
 #if PLATFORM(COCOA)
     void getVideoFrameBuffer(RemoteVideoFrameReadReference&&, bool canSendIOSurface);
     void pixelBuffer(RemoteVideoFrameReadReference&&, CompletionHandler<void(RetainPtr<CVPixelBufferRef>)>&&);
-    void convertFrameBuffer(SharedVideoFrame&&, CompletionHandler<void(WebCore::DestinationColorSpace)>&&);
+    void convertFrameBuffer(SharedVideoFrame&&, std::optional<WebCore::DestinationColorSpace>&&, CompletionHandler<void(WebCore::DestinationColorSpace)>&&);
     void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
     void setSharedVideoFrameMemory(const SharedMemory::IPCHandle&);
 #endif
 
-    void createPixelConformerIfNeeded();
+    void createPixelConformerIfNeeded(std::optional<WebCore::DestinationColorSpace>);
 
     const Ref<IPC::Connection> m_connection;
     ThreadSafeObjectHeap<RemoteVideoFrameIdentifier, RefPtr<WebCore::VideoFrame>> m_heap;

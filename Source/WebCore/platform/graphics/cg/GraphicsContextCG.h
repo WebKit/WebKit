@@ -130,6 +130,8 @@ public:
     void didUpdateState(GraphicsContextState&) final;
 
     virtual bool canUseShadowBlur() const;
+    
+    std::optional<DestinationColorSpace> getColorSpace() const final;
 
 #if OS(WINDOWS)
     GraphicsContextPlatformPrivate* deprecatedPrivateContext() const final;

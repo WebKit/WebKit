@@ -65,16 +65,13 @@ unsigned ImageBufferCGBackend::calculateBytesPerRow(const IntSize& backendSize)
 RetainPtr<CGColorSpaceRef> ImageBufferCGBackend::contextColorSpace(const GraphicsContext& context)
 {
 #if PLATFORM(COCOA)
-    CGContextRef cgContext = context.platformContext();
-
-    if (CGContextGetType(cgContext) == kCGContextTypeBitmap)
-        return CGBitmapContextGetColorSpace(cgContext);
-    
-    return adoptCF(CGContextCopyDeviceColorSpace(cgContext));
+    std::optional<DestinationColorSpace> colorSpace = context.getColorSpace();
+    if (colorSpace)
+        return colorSpace->platformColorSpace();
 #else
     UNUSED_PARAM(context);
-    return nullptr;
 #endif
+    return nullptr;
 }
 
 void ImageBufferCGBackend::clipToMask(GraphicsContext& destContext, const FloatRect& destRect)

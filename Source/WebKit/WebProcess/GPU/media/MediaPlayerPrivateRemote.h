@@ -39,6 +39,7 @@
 #include "TextTrackPrivateRemote.h"
 #include "TrackPrivateRemoteIdentifier.h"
 #include "VideoTrackPrivateRemote.h"
+#include <WebCore/DestinationColorSpace.h>
 #include <WebCore/MediaPlayerPrivate.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/VideoFrame.h>
@@ -299,7 +300,7 @@ private:
     void willBeAskedToPaintGL() final;
 #endif
     RefPtr<WebCore::VideoFrame> videoFrameForCurrentTime() final;
-    RefPtr<WebCore::NativeImage> nativeImageForCurrentTime() final;
+    RefPtr<WebCore::NativeImage> nativeImageForCurrentTime(std::optional<WebCore::DestinationColorSpace>) final;
     WebCore::DestinationColorSpace colorSpace() final;
 #if PLATFORM(COCOA)
     bool shouldGetNativeImageForCanvasDrawing() const final { return false; }

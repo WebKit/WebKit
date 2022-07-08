@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "DestinationColorSpace.h"
 #include <wtf/RetainPtr.h>
 
 typedef struct CGColorSpace *CGColorSpaceRef;
@@ -41,6 +42,7 @@ public:
     WEBCORE_EXPORT RetainPtr<CVPixelBufferRef> convert(CVPixelBufferRef);
     WEBCORE_EXPORT RetainPtr<CGImageRef> createImageFromPixelBuffer(CVPixelBufferRef);
     static WEBCORE_EXPORT RetainPtr<CGImageRef> imageFrom32BGRAPixelBuffer(RetainPtr<CVPixelBufferRef>&&, CGColorSpaceRef);
+    WEBCORE_EXPORT void setDestinationColorSpace(std::optional<DestinationColorSpace>);
 
 private:
     RetainPtr<VTPixelBufferConformerRef> m_pixelConformer;

@@ -56,6 +56,7 @@ SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(WebCore, CoreVideo, CVPixelBufferGetIO
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CoreVideo, CVImageBufferCreateColorSpaceFromAttachments, CGColorSpaceRef, (CFDictionaryRef attachments), (attachments))
 
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(WebCore, CoreVideo, kCVPixelBufferPixelFormatTypeKey, CFStringRef, WEBCORE_EXPORT)
+SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(WebCore, CoreVideo, kCVImageBufferICCProfileKey, CFStringRef, WEBCORE_EXPORT)
 SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, CoreVideo, kCVPixelBufferCGBitmapContextCompatibilityKey, CFStringRef)
 SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, CoreVideo, kCVPixelBufferCGImageCompatibilityKey, CFStringRef)
 SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, CoreVideo, kCVPixelBufferIOSurfaceOpenGLESFBOCompatibilityKey, CFStringRef)

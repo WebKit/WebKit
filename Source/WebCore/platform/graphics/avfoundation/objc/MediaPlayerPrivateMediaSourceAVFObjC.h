@@ -216,7 +216,7 @@ private:
 
     bool didLoadingProgress() const override;
 
-    RefPtr<NativeImage> nativeImageForCurrentTime() override;
+    RefPtr<NativeImage> nativeImageForCurrentTime(std::optional<DestinationColorSpace>) override;
     bool updateLastPixelBuffer();
     bool updateLastImage();
     void paint(GraphicsContext&, const FloatRect&) override;

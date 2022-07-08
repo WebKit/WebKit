@@ -181,6 +181,8 @@ public:
     // FIXME: Can this be a GraphicsContextCG constructor parameter? Or just be read off the context?
     virtual void setIsAcceleratedContext(bool) = 0;
 #endif
+    
+    virtual std::optional<DestinationColorSpace> getColorSpace() const { return std::nullopt; }
 
     virtual RenderingMode renderingMode() const { return RenderingMode::Unaccelerated; }
 

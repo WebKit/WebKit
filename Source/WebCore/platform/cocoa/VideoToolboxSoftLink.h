@@ -122,3 +122,6 @@ SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, VideoToolbox, VTPixelBufferConformerIsCon
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, VideoToolbox, VTPixelBufferConformerCopyConformedPixelBuffer, OSStatus, (VTPixelBufferConformerRef conformer, CVPixelBufferRef sourceBuffer, Boolean ensureModifiable, CVPixelBufferRef* conformedBufferOut), (conformer, sourceBuffer, ensureModifiable, conformedBufferOut))
 #define VTPixelBufferConformerCopyConformedPixelBuffer softLink_VideoToolbox_VTPixelBufferConformerCopyConformedPixelBuffer
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(WebCore, VideoToolbox, VTRegisterSupplementalVideoDecoderIfAvailable, void, (CMVideoCodecType codecType), (codecType))
+
+SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, VideoToolbox, VTPixelBufferConformerSetColorProperties, OSStatus, (VTPixelBufferConformerRef conformer, CFDictionaryRef attributes), (conformer, attributes));
+#define VTPixelBufferConformerSetColorProperties softLink_VideoToolbox_VTPixelBufferConformerSetColorProperties

@@ -372,6 +372,19 @@ void GraphicsContextCG::drawNativeImage(NativeImage& nativeImage, const FloatSiz
     LOG_WITH_STREAM(Images, stream << "GraphicsContextCG::drawNativeImage " << image.get() << " size " << imageSize << " into " << destRect << " took " << (MonotonicTime::now() - startTime).milliseconds() << "ms");
 }
 
+std::optional<DestinationColorSpace> GraphicsContextCG::getColorSpace() const
+{
+    auto context = platformContext();
+#if HAVE(IOSURFACE)
+    if (CGContextGetType(context) == kCGContextTypeIOSurface)
+        return DestinationColorSpace(CGIOSurfaceContextGetColorSpace(context));
+#endif
+    if (CGContextGetType(context) == kCGContextTypeBitmap)
+        return DestinationColorSpace(CGBitmapContextGetColorSpace(context));
+
+    return DestinationColorSpace(adoptCF(CGContextCopyDeviceColorSpace(context)));
+}
+
 static void drawPatternCallback(void* info, CGContextRef context)
 {
     CGImageRef image = (CGImageRef)info;

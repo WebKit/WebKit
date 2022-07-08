@@ -80,3 +80,5 @@ SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(WebCore, VideoToolbox, kVTDolbyVisionDeco
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, VideoToolbox, VTPixelBufferConformerCreateWithAttributes, OSStatus, (CFAllocatorRef allocator, CFDictionaryRef attributes, VTPixelBufferConformerRef* conformerOut), (allocator, attributes, conformerOut));
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, VideoToolbox, VTPixelBufferConformerIsConformantPixelBuffer, Boolean, (VTPixelBufferConformerRef conformer, CVPixelBufferRef pixBuf), (conformer, pixBuf))
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, VideoToolbox, VTPixelBufferConformerCopyConformedPixelBuffer, OSStatus, (VTPixelBufferConformerRef conformer, CVPixelBufferRef sourceBuffer, Boolean ensureModifiable, CVPixelBufferRef* conformedBufferOut), (conformer, sourceBuffer, ensureModifiable, conformedBufferOut))
+
+SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, VideoToolbox, VTPixelBufferConformerSetColorProperties, OSStatus, (VTPixelBufferConformerRef conformer, CFDictionaryRef attributes), (conformer, attributes));

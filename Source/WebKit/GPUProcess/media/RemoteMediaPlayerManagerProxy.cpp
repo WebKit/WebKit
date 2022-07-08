@@ -202,7 +202,7 @@ ShareableBitmap::Handle RemoteMediaPlayerManagerProxy::bitmapImageForCurrentTime
     if (!player)
         return { };
 
-    auto image = player->nativeImageForCurrentTime();
+    auto image = player->nativeImageForCurrentTime(std::nullopt);
     if (!image)
         return { };
 

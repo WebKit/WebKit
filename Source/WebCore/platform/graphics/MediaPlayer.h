@@ -479,7 +479,7 @@ public:
 #endif
 
     RefPtr<VideoFrame> videoFrameForCurrentTime();
-    RefPtr<NativeImage> nativeImageForCurrentTime();
+    RefPtr<NativeImage> nativeImageForCurrentTime(std::optional<DestinationColorSpace>);
     DestinationColorSpace colorSpace();
     bool shouldGetNativeImageForCanvasDrawing() const;
 

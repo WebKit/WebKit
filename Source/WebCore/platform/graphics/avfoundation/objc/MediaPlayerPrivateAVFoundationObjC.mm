@@ -2687,7 +2687,7 @@ bool MediaPlayerPrivateAVFoundationObjC::videoOutputHasAvailableFrame()
     return m_videoOutput->hasImageForTime(PAL::toMediaTime([m_avPlayerItem currentTime]));
 }
 
-void MediaPlayerPrivateAVFoundationObjC::updateLastImage(UpdateType type)
+void MediaPlayerPrivateAVFoundationObjC::updateLastImage(UpdateType type, std::optional<DestinationColorSpace> colorSpace)
 {
     if (!m_avPlayerItem || readyState() < MediaPlayer::ReadyState::HaveCurrentData)
         return;
@@ -2698,6 +2698,9 @@ void MediaPlayerPrivateAVFoundationObjC::updateLastImage(UpdateType type)
 
     if (type == UpdateType::UpdateSynchronously && !m_lastImage && !videoOutputHasAvailableFrame())
         waitForVideoOutputMediaDataWillChange();
+    
+    if (m_lastImage && colorSpace && m_lastImage->colorSpace() != *colorSpace)
+        m_lastImage = nullptr;
 
     // Calls to copyPixelBufferForItemTime:itemTimeForDisplay: may return nil if the pixel buffer
     // for the requested time has already been retrieved. In this case, the last valid image (if any)
@@ -2709,6 +2712,7 @@ void MediaPlayerPrivateAVFoundationObjC::updateLastImage(UpdateType type)
         NSDictionary *attributes = @{ (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA) };
         m_pixelBufferConformer = makeUnique<PixelBufferConformerCV>((__bridge CFDictionaryRef)attributes);
     }
+    m_pixelBufferConformer->setDestinationColorSpace(colorSpace);
 
     MonotonicTime start = MonotonicTime::now();
 
@@ -2719,7 +2723,7 @@ void MediaPlayerPrivateAVFoundationObjC::updateLastImage(UpdateType type)
 
 void MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(GraphicsContext& context, const FloatRect& outputRect)
 {
-    updateLastImage(UpdateType::UpdateSynchronously);
+    updateLastImage(UpdateType::UpdateSynchronously, context.getColorSpace());
     if (!m_lastImage)
         return;
 
@@ -2743,9 +2747,9 @@ RefPtr<VideoFrame> MediaPlayerPrivateAVFoundationObjC::videoFrameForCurrentTime(
     return VideoFrameCV::create(currentMediaTime(), false, VideoFrame::Rotation::None, RetainPtr { m_lastPixelBuffer });
 }
 
-RefPtr<NativeImage> MediaPlayerPrivateAVFoundationObjC::nativeImageForCurrentTime()
+RefPtr<NativeImage> MediaPlayerPrivateAVFoundationObjC::nativeImageForCurrentTime(std::optional<DestinationColorSpace> colorSpace)
 {
-    updateLastImage(UpdateType::UpdateSynchronously);
+    updateLastImage(UpdateType::UpdateSynchronously, colorSpace);
     return m_lastImage;
 }
 

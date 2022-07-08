@@ -327,12 +327,12 @@ bool HTMLVideoElement::shouldGetNativeImageForCanvasDrawing() const
     return player()->shouldGetNativeImageForCanvasDrawing();
 }
 
-RefPtr<NativeImage> HTMLVideoElement::nativeImageForCurrentTime()
+RefPtr<NativeImage> HTMLVideoElement::nativeImageForCurrentTime(std::optional<DestinationColorSpace> colorSpace)
 {
     if (!player())
         return nullptr;
 
-    return player()->nativeImageForCurrentTime();
+    return player()->nativeImageForCurrentTime(colorSpace);
 }
 
 ExceptionOr<void> HTMLVideoElement::webkitEnterFullscreen()

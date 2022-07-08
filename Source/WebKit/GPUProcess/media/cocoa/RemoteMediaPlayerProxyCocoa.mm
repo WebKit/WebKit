@@ -103,7 +103,7 @@ void RemoteMediaPlayerProxy::nativeImageForCurrentTime(CompletionHandler<void(st
         return;
     }
 
-    auto nativeImage = m_player->nativeImageForCurrentTime();
+    auto nativeImage = m_player->nativeImageForCurrentTime(std::nullopt);
     if (!nativeImage) {
         completionHandler(std::nullopt, DestinationColorSpace::SRGB());
         return;

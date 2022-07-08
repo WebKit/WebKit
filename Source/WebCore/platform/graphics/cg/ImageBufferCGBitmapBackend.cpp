@@ -96,7 +96,7 @@ std::unique_ptr<ImageBufferCGBitmapBackend> ImageBufferCGBitmapBackend::create(c
 
 std::unique_ptr<ImageBufferCGBitmapBackend> ImageBufferCGBitmapBackend::create(const Parameters& parameters, const GraphicsContext& context)
 {
-    if (auto cgColorSpace = context.hasPlatformContext() ? contextColorSpace(context) : nullptr) {
+    if (auto cgColorSpace = contextColorSpace(context)) {
         auto overrideParameters = parameters;
         overrideParameters.colorSpace = DestinationColorSpace { cgColorSpace };
 

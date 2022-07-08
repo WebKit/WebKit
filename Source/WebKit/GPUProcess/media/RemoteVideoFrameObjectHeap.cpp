@@ -140,10 +140,12 @@ void RemoteVideoFrameObjectHeap::pixelBuffer(RemoteVideoFrameReadReference&& rea
     completionHandler(WTFMove(pixelBuffer));
 }
 
-void RemoteVideoFrameObjectHeap::convertFrameBuffer(SharedVideoFrame&& sharedVideoFrame, CompletionHandler<void(WebCore::DestinationColorSpace)>&& callback)
+void RemoteVideoFrameObjectHeap::convertFrameBuffer(SharedVideoFrame&& sharedVideoFrame, std::optional<WebCore::DestinationColorSpace>&& colorSpace, CompletionHandler<void(WebCore::DestinationColorSpace)>&& callback)
 {
     DestinationColorSpace destinationColorSpace { DestinationColorSpace::SRGB().platformColorSpace() };
-    auto scope = makeScopeExit([&callback, &destinationColorSpace] { callback(destinationColorSpace); });
+    auto scope = makeScopeExit([&callback, &destinationColorSpace] {
+        callback(destinationColorSpace);
+    });
 
     RefPtr<VideoFrame> frame;
     if (std::holds_alternative<RemoteVideoFrameReadReference>(sharedVideoFrame.buffer))
@@ -157,15 +159,16 @@ void RemoteVideoFrameObjectHeap::convertFrameBuffer(SharedVideoFrame&& sharedVid
     }
 
     RetainPtr<CVPixelBufferRef> buffer = frame->pixelBuffer();
-    destinationColorSpace = DestinationColorSpace(createCGColorSpaceForCVPixelBuffer(buffer.get()));
 
-    createPixelConformerIfNeeded();
+    createPixelConformerIfNeeded(colorSpace);
     auto convertedBuffer = m_pixelBufferConformer->convert(buffer.get());
     if (!convertedBuffer) {
         RELEASE_LOG_ERROR(WebRTC, "RemoteVideoFrameObjectHeap::convertFrameBuffer conformer failed");
         m_connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::NewConvertedVideoFrameBuffer { { } }, 0);
         return;
     }
+    
+    destinationColorSpace = DestinationColorSpace(createCGColorSpaceForCVPixelBuffer(convertedBuffer.get()));
 
     bool canSendIOSurface = false;
     auto result = m_sharedVideoFrameWriter.writeBuffer(convertedBuffer.get(),

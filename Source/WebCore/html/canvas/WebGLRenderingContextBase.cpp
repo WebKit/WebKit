@@ -6019,7 +6019,7 @@ RefPtr<Image> WebGLRenderingContextBase::videoFrameToImage(HTMLVideoElement* vid
     // native RGB color space. For now, we make sure to paint into an
     // ImageBuffer with a matching color space, to avoid the conversion.
 #if USE(AVFOUNDATION)
-    auto nativeImage = video->nativeImageForCurrentTime();
+    auto nativeImage = video->nativeImageForCurrentTime(std::nullopt);
     // Currently we might be missing an image due to MSE not being able to provide the first requested frame.
     // https://bugs.webkit.org/show_bug.cgi?id=228997
     if (nativeImage) {

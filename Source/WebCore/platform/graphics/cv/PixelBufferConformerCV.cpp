@@ -44,6 +44,16 @@ PixelBufferConformerCV::PixelBufferConformerCV(CFDictionaryRef attributes)
     m_pixelConformer = adoptCF(conformer);
 }
 
+void PixelBufferConformerCV::setDestinationColorSpace(std::optional<DestinationColorSpace> colorSpace)
+{
+    auto data = colorSpace ? adoptCF(CGColorSpaceCopyICCData(colorSpace->platformColorSpace())) : nullptr;
+    CFTypeRef keys[] = { kCVImageBufferICCProfileKey };
+    CFTypeRef values[] = { data.get() };
+    auto attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    
+    VTPixelBufferConformerSetColorProperties(m_pixelConformer.get(), attributes.get());
+}
+
 struct CVPixelBufferInfo {
     RetainPtr<CVPixelBufferRef> pixelBuffer;
     int lockCount { 0 };
@@ -162,7 +172,7 @@ RetainPtr<CGImageRef> PixelBufferConformerCV::createImageFromPixelBuffer(CVPixel
         buffer = adoptCF(outputBuffer);
     }
 
-    auto colorSpace = createCGColorSpaceForCVPixelBuffer(rawBuffer);
+    auto colorSpace = createCGColorSpaceForCVPixelBuffer(buffer.get());
     return imageFrom32BGRAPixelBuffer(WTFMove(buffer), colorSpace.get());
 }
 

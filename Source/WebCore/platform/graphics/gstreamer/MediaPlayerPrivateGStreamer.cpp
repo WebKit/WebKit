@@ -3713,7 +3713,7 @@ bool MediaPlayerPrivateGStreamer::copyVideoTextureToPlatformTexture(GraphicsCont
     return m_videoTextureCopier->copyVideoTextureToPlatformTexture(*layerBuffer.get(), size, outputTexture, outputTarget, level, internalFormat, format, type, flipY, m_videoSourceOrientation, premultiplyAlpha);
 }
 
-RefPtr<NativeImage> MediaPlayerPrivateGStreamer::nativeImageForCurrentTime()
+RefPtr<NativeImage> MediaPlayerPrivateGStreamer::nativeImageForCurrentTime(std::optional<DestinationColorSpace>)
 {
     return nullptr;
 }

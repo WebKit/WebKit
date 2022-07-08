@@ -1121,9 +1121,9 @@ void MediaPlayer::willBeAskedToPaintGL()
 }
 #endif
 
-RefPtr<NativeImage> MediaPlayer::nativeImageForCurrentTime()
+RefPtr<NativeImage> MediaPlayer::nativeImageForCurrentTime(std::optional<DestinationColorSpace> colorSpace)
 {
-    return m_private->nativeImageForCurrentTime();
+    return m_private->nativeImageForCurrentTime(colorSpace);
 }
 
 DestinationColorSpace MediaPlayer::colorSpace()

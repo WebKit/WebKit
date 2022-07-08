@@ -75,7 +75,7 @@ RefPtr<ShareableBitmap> createShareableBitmap(RenderImage& renderImage, CreateSh
     if (is<RenderVideo>(renderImage)) {
         auto& renderVideo = downcast<RenderVideo>(renderImage);
         Ref video = renderVideo.videoElement();
-        auto image = video->nativeImageForCurrentTime();
+        auto image = video->nativeImageForCurrentTime(std::nullopt);
         if (!image)
             return { };
 

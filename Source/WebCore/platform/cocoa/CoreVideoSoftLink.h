@@ -79,6 +79,8 @@ SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreVideo, CVImageBufferCreateColorSpaceF
 
 SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, CoreVideo, kCVPixelBufferPixelFormatTypeKey, CFStringRef)
 #define kCVPixelBufferPixelFormatTypeKey get_CoreVideo_kCVPixelBufferPixelFormatTypeKey()
+SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, CoreVideo, kCVImageBufferICCProfileKey, CFStringRef)
+#define kCVImageBufferICCProfileKey get_CoreVideo_kCVImageBufferICCProfileKey()
 SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, CoreVideo, kCVPixelBufferWidthKey, CFStringRef)
 #define kCVPixelBufferWidthKey get_CoreVideo_kCVPixelBufferWidthKey()
 SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, CoreVideo, kCVPixelBufferHeightKey, CFStringRef)

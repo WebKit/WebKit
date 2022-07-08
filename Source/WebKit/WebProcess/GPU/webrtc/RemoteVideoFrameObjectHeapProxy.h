@@ -27,6 +27,7 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
+#include <WebCore/DestinationColorSpace.h>
 #include <wtf/Ref.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -50,7 +51,7 @@ public:
 
 #if PLATFORM(COCOA)
     void getVideoFrameBuffer(const RemoteVideoFrameProxy& proxy, bool canUseIOSurface, RemoteVideoFrameObjectHeapProxyProcessor::Callback&& callback) { m_processor->getVideoFrameBuffer(proxy, canUseIOSurface, WTFMove(callback)); }
-    RefPtr<WebCore::NativeImage> getNativeImage(const WebCore::VideoFrame& frame)  { return m_processor->getNativeImage(frame); }
+    RefPtr<WebCore::NativeImage> getNativeImage(const WebCore::VideoFrame& frame, std::optional<WebCore::DestinationColorSpace> colorSpace)  { return m_processor->getNativeImage(frame, colorSpace); }
 #endif
 
 private:

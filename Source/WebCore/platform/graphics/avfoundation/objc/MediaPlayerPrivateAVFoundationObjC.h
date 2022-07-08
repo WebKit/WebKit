@@ -259,7 +259,7 @@ private:
     void paintWithImageGenerator(GraphicsContext&, const FloatRect&);
 
     enum class UpdateType { UpdateSynchronously, UpdateAsynchronously };
-    void updateLastImage(UpdateType type = UpdateType::UpdateAsynchronously);
+    void updateLastImage(UpdateType type = UpdateType::UpdateAsynchronously, std::optional<DestinationColorSpace> colorSpace = std::nullopt);
 
     void createVideoOutput();
     void destroyVideoOutput();
@@ -267,7 +267,7 @@ private:
     bool videoOutputHasAvailableFrame();
     void paintWithVideoOutput(GraphicsContext&, const FloatRect&);
     RefPtr<VideoFrame> videoFrameForCurrentTime() final;
-    RefPtr<NativeImage> nativeImageForCurrentTime() final;
+    RefPtr<NativeImage> nativeImageForCurrentTime(std::optional<DestinationColorSpace>) final;
     DestinationColorSpace colorSpace() final;
     void waitForVideoOutputMediaDataWillChange();
 

@@ -268,7 +268,7 @@ void RemoteMediaPlayerManager::setUseGPUProcess(bool useGPUProcess)
             return WebProcess::singleton().ensureGPUProcessConnection().sampleBufferDisplayLayerManager().createLayer(client);
         });
         WebCore::MediaPlayerPrivateMediaStreamAVFObjC::setNativeImageCreator([](auto& videoFrame) {
-            return WebProcess::singleton().ensureGPUProcessConnection().videoFrameObjectHeapProxy().getNativeImage(videoFrame);
+            return WebProcess::singleton().ensureGPUProcessConnection().videoFrameObjectHeapProxy().getNativeImage(videoFrame, std::nullopt);
         });
     }
 #endif

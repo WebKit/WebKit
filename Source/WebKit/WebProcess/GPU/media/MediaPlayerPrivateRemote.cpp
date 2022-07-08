@@ -1008,7 +1008,7 @@ void MediaPlayerPrivateRemote::paintCurrentFrameInContext(GraphicsContext& conte
     if (context.paintingDisabled())
         return;
 
-    auto nativeImage = nativeImageForCurrentTime();
+    auto nativeImage = nativeImageForCurrentTime(std::nullopt);
     if (!nativeImage)
         return;
 
@@ -1054,7 +1054,7 @@ RefPtr<WebCore::VideoFrame> MediaPlayerPrivateRemote::videoFrameForCurrentTime()
 }
 
 #if !PLATFORM(COCOA)
-RefPtr<NativeImage> MediaPlayerPrivateRemote::nativeImageForCurrentTime()
+RefPtr<NativeImage> MediaPlayerPrivateRemote::nativeImageForCurrentTime(std::optional<DestinationColorSpace> colorSpace)
 {
     notImplemented();
     return nullptr;

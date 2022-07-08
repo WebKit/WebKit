@@ -130,7 +130,7 @@ void RemoteVideoFrameObjectHeapProxyProcessor::newConvertedVideoFrameBuffer(std:
     m_conversionSemaphore.signal();
 }
 
-RefPtr<NativeImage> RemoteVideoFrameObjectHeapProxyProcessor::getNativeImage(const WebCore::VideoFrame& videoFrame)
+RefPtr<NativeImage> RemoteVideoFrameObjectHeapProxyProcessor::getNativeImage(const WebCore::VideoFrame& videoFrame, std::optional<DestinationColorSpace> colorSpace)
 {
     auto& connection = WebProcess::singleton().ensureGPUProcessConnection().connection();
 
@@ -144,7 +144,7 @@ RefPtr<NativeImage> RemoteVideoFrameObjectHeapProxyProcessor::getNativeImage(con
         return nullptr;
 
     DestinationColorSpace destinationColorSpace { DestinationColorSpace::SRGB().platformColorSpace() };
-    auto result = connection.sendSync(Messages::RemoteVideoFrameObjectHeap::ConvertFrameBuffer { *frame }, Messages::RemoteVideoFrameObjectHeap::ConvertFrameBuffer::Reply { destinationColorSpace }, 0, GPUProcessConnection::defaultTimeout);
+    auto result = connection.sendSync(Messages::RemoteVideoFrameObjectHeap::ConvertFrameBuffer { *frame, colorSpace }, Messages::RemoteVideoFrameObjectHeap::ConvertFrameBuffer::Reply { destinationColorSpace }, 0, GPUProcessConnection::defaultTimeout);
     if (!result) {
         m_sharedVideoFrameWriter.disable();
         return nullptr;

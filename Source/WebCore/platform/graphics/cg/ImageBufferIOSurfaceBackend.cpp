@@ -74,16 +74,6 @@ size_t ImageBufferIOSurfaceBackend::calculateExternalMemoryCost(const Parameters
     return calculateMemoryCost(parameters);
 }
 
-RetainPtr<CGColorSpaceRef> ImageBufferIOSurfaceBackend::contextColorSpace(const GraphicsContext& context)
-{
-    CGContextRef cgContext = context.platformContext();
-
-    if (CGContextGetType(cgContext) == kCGContextTypeIOSurface)
-        return CGIOSurfaceContextGetColorSpace(cgContext);
-    
-    return ImageBufferCGBackend::contextColorSpace(context);
-}
-
 std::unique_ptr<ImageBufferIOSurfaceBackend> ImageBufferIOSurfaceBackend::create(const Parameters& parameters, const ImageBuffer::CreationContext& creationContext)
 {
     IntSize backendSize = calculateSafeBackendSize(parameters);
@@ -105,7 +95,7 @@ std::unique_ptr<ImageBufferIOSurfaceBackend> ImageBufferIOSurfaceBackend::create
 
 std::unique_ptr<ImageBufferIOSurfaceBackend> ImageBufferIOSurfaceBackend::create(const Parameters& parameters, const GraphicsContext& context)
 {
-    if (auto cgColorSpace = context.hasPlatformContext() ? contextColorSpace(context) : nullptr) {
+    if (auto cgColorSpace = contextColorSpace(context)) {
         auto overrideParameters = parameters;
         overrideParameters.colorSpace = DestinationColorSpace { cgColorSpace };
 

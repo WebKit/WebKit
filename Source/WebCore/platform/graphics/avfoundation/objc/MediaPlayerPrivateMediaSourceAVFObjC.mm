@@ -663,7 +663,7 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::didLoadingProgress() const
     return loadingProgressed;
 }
 
-RefPtr<NativeImage> MediaPlayerPrivateMediaSourceAVFObjC::nativeImageForCurrentTime()
+RefPtr<NativeImage> MediaPlayerPrivateMediaSourceAVFObjC::nativeImageForCurrentTime(std::optional<DestinationColorSpace>)
 {
     updateLastImage();
     return m_lastImage;
@@ -731,7 +731,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::paintCurrentFrameInContext(GraphicsCo
     if (context.paintingDisabled())
         return;
 
-    auto image = nativeImageForCurrentTime();
+    auto image = nativeImageForCurrentTime(context.getColorSpace());
     if (!image)
         return;
 

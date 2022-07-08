@@ -1658,7 +1658,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(HTMLVideoElement& vide
 
 #if USE(CG)
     if (c->hasPlatformContext() && video.shouldGetNativeImageForCanvasDrawing()) {
-        if (auto image = video.nativeImageForCurrentTime()) {
+        if (auto image = video.nativeImageForCurrentTime(colorSpace())) {
             c->drawNativeImage(*image, FloatSize(video.videoWidth(), video.videoHeight()), dstRect, srcRect);
 
             didDraw(repaintEntireCanvas, dstRect);
@@ -1982,7 +1982,7 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(H
     bool originClean = canvasBase().originClean();
 
 #if USE(CG)
-    if (auto nativeImage = videoElement.nativeImageForCurrentTime())
+    if (auto nativeImage = videoElement.nativeImageForCurrentTime(colorSpace()))
         return RefPtr<CanvasPattern> { CanvasPattern::create({ nativeImage.releaseNonNull() }, repeatX, repeatY, originClean) };
 #endif
 

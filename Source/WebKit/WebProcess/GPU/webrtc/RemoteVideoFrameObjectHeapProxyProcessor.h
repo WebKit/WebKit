@@ -62,7 +62,7 @@ public:
 
     using Callback = Function<void(RetainPtr<CVPixelBufferRef>&&)>;
     void getVideoFrameBuffer(const RemoteVideoFrameProxy&, bool canUseIOSurfce, Callback&&);
-    RefPtr<WebCore::NativeImage> getNativeImage(const WebCore::VideoFrame&);
+    RefPtr<WebCore::NativeImage> getNativeImage(const WebCore::VideoFrame&, std::optional<WebCore::DestinationColorSpace>);
 
 private:
     explicit RemoteVideoFrameObjectHeapProxyProcessor(GPUProcessConnection&);

@@ -1,0 +1,8 @@
+When HDR samples are painted to SDR canvas contexts without color correction, the resulting colors are are washed out or 'crushed' to their most extreme possible values; the 100% color sections of this SMPTE pattern should be rendered as different colors than the 75% color sections.
+Pixels at 342,45 were different than pixels at 342,360 OK
+Pixels at 448,45 were different than pixels at 448,360 OK
+Pixels at 552,45 were different than pixels at 552,360 OK
+Pixels at 656,45 were different than pixels at 656,360 OK
+Pixels at 760,45 were different than pixels at 760,360 OK
+END OF TEST
+

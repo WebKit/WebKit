@@ -187,7 +187,7 @@ public:
 #endif
 
     virtual RefPtr<VideoFrame> videoFrameForCurrentTime() { return nullptr; }
-    virtual RefPtr<NativeImage> nativeImageForCurrentTime() { return nullptr; }
+    virtual RefPtr<NativeImage> nativeImageForCurrentTime(std::optional<DestinationColorSpace>) { return nullptr; }
     virtual DestinationColorSpace colorSpace() = 0;
     virtual bool shouldGetNativeImageForCanvasDrawing() const { return true; }
 

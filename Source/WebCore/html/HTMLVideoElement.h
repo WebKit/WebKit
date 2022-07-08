@@ -80,7 +80,7 @@ public:
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&);
 
     bool shouldGetNativeImageForCanvasDrawing() const;
-    WEBCORE_EXPORT RefPtr<NativeImage> nativeImageForCurrentTime();
+    WEBCORE_EXPORT RefPtr<NativeImage> nativeImageForCurrentTime(std::optional<DestinationColorSpace>);
     std::optional<DestinationColorSpace> colorSpace() const;
 
     WEBCORE_EXPORT bool shouldDisplayPosterImage() const;
