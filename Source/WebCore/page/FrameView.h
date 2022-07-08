@@ -890,6 +890,8 @@ private:
 
     void didFinishProhibitingScrollingWhenChangingContentSize() final;
 
+    bool shouldUpdateContentSizeAfterSizeChange() final;
+
     // ScrollableArea.
     float pageScaleFactor() const override;
     void didStartScrollAnimation() final;

@@ -1,0 +1,52 @@
+
+<!DOCTYPE html>
+<head>
+<style>
+    html {
+        font-size: 16px;
+    }
+
+    div {
+        width: 200px;
+        height: 150px;
+    }
+
+    iframe {
+        height: 100%;
+        width: 100%;
+        border: 0;
+    }
+</style>
+</head>
+<body>
+    <div id="renderContainer">
+        <iframe src="./resources/scrollbar-iframe.html"></iframe>
+    </div>
+</body>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+let timerID;
+let scrollbarStatus;
+let container = document.getElementById("renderContainer");
+window.addEventListener("message", (event) => {
+    if (scrollbarStatus == 'off') {
+        container.innerText = "FAIL iframe shouldn't resize after scrollbar is off";
+        window.clearTimeout(timerID);
+        testRunner.notifyDone();
+    }
+
+    let data = event.data;
+    scrollbarStatus = data.width < 200 ? 'on' : 'off';
+    if (data.width == 200) {
+        scrollbarStatus = 'off';
+        timerID = setTimeout(() => {
+            container.innerText = "PASS iframe doesn't resize after scrollbar is off";
+            testRunner.notifyDone();
+        }, 500);
+    }
+    container.style.height = data.height + "px";
+}, false);
+</script>

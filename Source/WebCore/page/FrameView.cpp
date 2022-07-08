@@ -5859,6 +5859,19 @@ bool FrameView::isVisibleToHitTesting() const
     return isVisibleToHitTest;
 }
 
+bool FrameView::shouldUpdateContentSizeAfterSizeChange()
+{
+    if (frame().isMainFrame())
+        return false;
+
+    // If widget's size is changed, renderView's layout size is dirty, so as to the contentsSize of scrollView.
+    // In that case, RenderView needs layout, and scrollView should updateContentsSize.
+    if (RenderView* renderView = this->renderView())
+        renderView->setNeedsLayout();
+
+    return true;
+}
+
 } // namespace WebCore
 
 #undef PAGE_ID

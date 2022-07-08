@@ -1120,9 +1120,13 @@ void ScrollView::setFrameRect(const IntRect& newRect)
     Widget::setFrameRect(newRect);
     frameRectsChanged();
 
+    bool sizeChanged = !m_useFixedLayout && oldRect.size() != newRect.size();
+    if (sizeChanged && shouldUpdateContentSizeAfterSizeChange())
+        updateContentsSize();
+
     updateScrollbars(scrollPosition());
-    
-    if (!m_useFixedLayout && oldRect.size() != newRect.size())
+
+    if (sizeChanged)
         availableContentSizeChanged(AvailableSizeChangeReason::AreaSizeChanged);
 }
 

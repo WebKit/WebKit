@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<style>
+    html {
+        font-size: 16px;
+    }
+</style>
+<div>
+    <p>The following text breaks to 3 lines when scrollbar is on, otherwise, 2 lines.</p>
+    <div>hello hello offff a aa hello he hello hello off aa a he a a</div>
+    <div>other text </div>
+    <div>other text </div>
+    <div>other text </div>
+    <div>other text </div>
+    <div>other text </div>
+    <div>other text </div>
+    <div>other text </div>
+    <div>other text </div>
+    <div>other text </div>
+    <div>other text </div>
+    <div>other text </div>
+
+</div>
+<script>
+    var width;
+    var height;
+    var ro = new ResizeObserver(entries => {
+        for (let entry of entries) {
+            const cr = entry.contentRect;
+            width = cr.width;
+            height = cr.height;
+            const message = {
+                width: width,
+                height: height
+            };
+            window.parent.postMessage(message, '*');
+        }
+    });
+    ro.observe(document.getElementsByTagName("html")[0]);
+</script>

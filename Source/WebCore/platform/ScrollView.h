@@ -456,6 +456,8 @@ protected:
 
     virtual void didFinishProhibitingScrollingWhenChangingContentSize() = 0;
 
+    virtual bool shouldUpdateContentSizeAfterSizeChange() { return false; }
+
 #if PLATFORM(COCOA) && defined __OBJC__
 public:
     WEBCORE_EXPORT NSView* documentView() const;
