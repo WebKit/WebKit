@@ -465,6 +465,10 @@
         (iokit-property "acoustic-id") ;; <rdar://problem/65290967>
     ))
 
+(with-filter (iokit-registry-entry-class "IOService")
+    (allow iokit-get-properties
+        (iokit-property "supports-advanced-vp-chatflavor")))
+
 (if (equal? (param "CPU") "arm64")
     (with-filter (iokit-registry-entry-class "IOService")
         (allow iokit-get-properties
