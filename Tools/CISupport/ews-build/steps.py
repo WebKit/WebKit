@@ -60,6 +60,7 @@ GITHUB_URL = 'https://github.com/'
 GITHUB_PROJECTS = ['WebKit/WebKit', 'apple/WebKit', 'WebKit/WebKit-security']
 HASH_LENGTH_TO_DISPLAY = 8
 DEFAULT_BRANCH = 'main'
+LAYOUT_TESTS_URL = '{}{}/blob/{}/LayoutTests/'.format(GITHUB_URL, GITHUB_PROJECTS[0], DEFAULT_BRANCH)
 
 
 class BufferLogHeaderObserver(logobserver.BufferLogObserver):
@@ -3282,12 +3283,13 @@ class ReRunWebKitTests(RunWebKitTests):
         try:
             builder_name = self.getProperty('buildername', '')
             worker_name = self.getProperty('workername', '')
+            test_url = '{}{}'.format(LAYOUT_TESTS_URL, test_name)
             build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
             history_url = '{}?suite=layout-tests&test={}'.format(RESULTS_DB_URL, test_name)
 
             email_subject = 'Flaky test: {}'.format(test_name)
-            email_text = 'Test {} flaked in {}\n\nBuilder: {}'.format(test_name, build_url, builder_name)
-            email_text = 'Flaky test: {}\n\nBuild: {}\n\nBuilder: {}\n\nWorker: {}\n\nHistory: {}'.format(test_name, build_url, builder_name, worker_name, history_url)
+            email_text = 'Test <a href="{}">{}</a> flaked in {}\n\nBuilder: {}'.format(test_url, test_name, build_url, builder_name)
+            email_text = 'Flaky test: <a href="{}">{}</a>\n\nBuild: {}\n\nBuilder: {}\n\nWorker: {}\n\nHistory: {}'.format(test_url, test_name, build_url, builder_name, worker_name, history_url)
             send_email_to_bot_watchers(email_subject, email_text, builder_name, 'flaky-{}'.format(test_name))
         except Exception as e:
             # Catching all exceptions here to ensure that failure to send email doesn't impact the build
@@ -3426,11 +3428,12 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin, GitHubMixin)
         try:
             builder_name = self.getProperty('buildername', '')
             worker_name = self.getProperty('workername', '')
+            test_url = '{}{}'.format(LAYOUT_TESTS_URL, test_name)
             build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
             history_url = '{}?suite=layout-tests&test={}'.format(RESULTS_DB_URL, test_name)
 
             email_subject = 'Flaky test: {}'.format(test_name)
-            email_text = 'Flaky test: {}\n\nBuild: {}\n\nBuilder: {}\n\nWorker: {}\n\nHistory: {}'.format(test_name, build_url, builder_name, worker_name, history_url)
+            email_text = 'Flaky test: <a href="{}">{}</a>\n\nBuild: {}\n\nBuilder: {}\n\nWorker: {}\n\nHistory: {}'.format(test_url, test_name, build_url, builder_name, worker_name, history_url)
             if step_str:
                 email_text += '\nThis test was flaky on the steps: {}'.format(step_str)
             send_email_to_bot_watchers(email_subject, email_text, builder_name, 'flaky-{}'.format(test_name))
@@ -3441,11 +3444,12 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin, GitHubMixin)
         try:
             builder_name = self.getProperty('buildername', '')
             worker_name = self.getProperty('workername', '')
+            test_url = '{}{}'.format(LAYOUT_TESTS_URL, test_name)
             build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
             history_url = '{}?suite=layout-tests&test={}'.format(RESULTS_DB_URL, test_name)
 
             email_subject = 'Pre-existing test failure: {}'.format(test_name)
-            email_text = 'Test {} failed on clean tree run in {}.\n\nBuilder: {}\n\nWorker: {}\n\nHistory: {}'.format(test_name, build_url, builder_name, worker_name, history_url)
+            email_text = 'Test <a href="{}">{}</a> failed on clean tree run in {}.\n\nBuilder: {}\n\nWorker: {}\n\nHistory: {}'.format(test_url, test_name, build_url, builder_name, worker_name, history_url)
             send_email_to_bot_watchers(email_subject, email_text, builder_name, 'preexisting-{}'.format(test_name))
         except Exception as e:
             print('Error in sending email for pre-existing failure: {}'.format(e))
@@ -3488,8 +3492,9 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin, GitHubMixin)
             build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
             test_names_string = ''
             for test_name in sorted(test_names):
+                test_url = '{}{}'.format(LAYOUT_TESTS_URL, test_name)
                 history_url = '{}?suite=layout-tests&test={}'.format(RESULTS_DB_URL, test_name)
-                test_names_string += '\n- {} (<a href="{}">test history</a>)'.format(test_name, history_url)
+                test_names_string += '\n- <a href="{}">{}</a> (<a href="{}">test history</a>)'.format(test_url, test_name, history_url)
 
             pluralSuffix = 's' if len(test_names) > 1 else ''
             email_subject = 'Layout test failure for {}: {}'.format(change_string, title)
@@ -3805,8 +3810,9 @@ class AnalyzeLayoutTestsResultsRedTree(AnalyzeLayoutTestsResults):
             email_text += '  - Builder : {}\n'.format(builder_name)
             email_text += '  - Worker : {}\n'.format(worker_name)
             for test_name in sorted(test_names):
+                test_url = '{}{}'.format(LAYOUT_TESTS_URL, test_name)
                 history_url = '{}?suite=layout-tests&test={}'.format(RESULTS_DB_URL, test_name)
-                email_text += '\n- {} (<a href="{}">test history</a>)'.format(test_name, history_url)
+                email_text += '\n- <a href="{}">{}</a> (<a href="{}">test history</a>)'.format(test_url, test_name, history_url)
             send_email_to_bot_watchers(email_subject, email_text, builder_name, 'preexisting-{}'.format(test_name))
         except Exception as e:
             print('Error in sending email for flaky failure: {}'.format(e))
@@ -3826,11 +3832,12 @@ class AnalyzeLayoutTestsResultsRedTree(AnalyzeLayoutTestsResults):
             flaky_number = 0
             for test_name in test_names_steps_dict:
                 flaky_number += 1
+                test_url = '{}{}'.format(LAYOUT_TESTS_URL, test_name)
                 history_url = '{}?suite=layout-tests&test={}'.format(RESULTS_DB_URL, test_name)
                 number_steps_flaky = len(test_names_steps_dict[test_name])
                 pluralstepSuffix = 's' if number_steps_flaky > 1 else ''
                 step_names_str = '"{}"'.format('", "'.join(test_names_steps_dict[test_name]))
-                email_text += '\nFlaky #{}\n  - Test name: {}\n  - Flaky on step{}: {}\n  - History: {}\n'.format(flaky_number, test_name, pluralstepSuffix, step_names_str, history_url)
+                email_text += '\nFlaky #{}\n  - Test name: <a href="{}">{}</a>\n  - Flaky on step{}: {}\n  - History: {}\n'.format(flaky_number, test_url, test_name, pluralstepSuffix, step_names_str, history_url)
             send_email_to_bot_watchers(email_subject, email_text, builder_name, 'flaky-{}'.format(worker_name))
         except Exception as e:
             print('Error in sending email for flaky failure: {}'.format(e))
