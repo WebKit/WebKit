@@ -510,6 +510,9 @@ fast/events/ghostly-mousemoves-in-subframe.html [ Skip ]
 # WK1 does not filter response headers.
 http/wpt/loading/redirect-headers.html [ Skip ]
 
+# No shared worker implementation for WK1
+http/wpt/shared-workers [ Skip ]
+
 # No service worker implementation for WK1
 http/tests/appcache/main-resource-redirect-with-sw.html [ Skip ]
 http/tests/cache-storage [ Skip ]

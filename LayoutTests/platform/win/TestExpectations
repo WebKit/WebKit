@@ -3958,6 +3958,9 @@ webkit.org/b/174801 fast/text/line-height-minimumFontSize-zoom.html [ ImageOnlyF
 webkit.org/b/174801 fast/text/line-height-minimumFontSize-autosize.html [ Failure ]
 webkit.org/b/174801 fast/text/line-height-minimumFontSize.html [ Failure ]
 
+# No shared worker implementation for WK1
+http/wpt/shared-workers [ Skip ]
+
 # No service worker implementation for WK1
 http/tests/appcache/main-resource-redirect-with-sw.html [ Skip ]
 http/tests/cache-storage [ Skip ]

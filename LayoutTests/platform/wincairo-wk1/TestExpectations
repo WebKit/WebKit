@@ -306,6 +306,9 @@ http/tests/multipart/multipart-wait-before-boundary.html [ Timeout ]
 [ Release ] http/tests/misc/redirect-to-external-url.html [ Failure ]
 [ Debug ] http/tests/misc/redirect-to-external-url.html [ Skip ]
 
+# No shared worker implementation for WK1
+http/wpt/shared-workers [ Skip ]
+
 # Skip Service Workers in WK1
 http/tests/workers/service [ Skip ]
 http/wpt/push-api [ Skip ]
