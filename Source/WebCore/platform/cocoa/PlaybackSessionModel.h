@@ -98,6 +98,7 @@ public:
     virtual double volume() const = 0;
     virtual bool isPictureInPictureSupported() const = 0;
     virtual bool isPictureInPictureActive() const = 0;
+    virtual bool hasControls() const = 0;
 };
 
 class PlaybackSessionModelClient {

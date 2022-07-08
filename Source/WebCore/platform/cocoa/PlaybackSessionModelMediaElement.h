@@ -103,6 +103,7 @@ public:
     double volume() const final;
     bool isPictureInPictureSupported() const final;
     bool isPictureInPictureActive() const final;
+    bool hasControls() const final;
 
 private:
     WEBCORE_EXPORT PlaybackSessionModelMediaElement();

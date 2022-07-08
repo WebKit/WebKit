@@ -147,6 +147,7 @@ private:
     double volume() const final { return m_volume; }
     bool isPictureInPictureSupported() const final { return m_pictureInPictureSupported; }
     bool isPictureInPictureActive() const final { return m_pictureInPictureActive; }
+    bool hasControls() const final { return m_hasControls; }
 
     PlaybackSessionManagerProxy* m_manager;
     PlaybackSessionContextIdentifier m_contextId;
@@ -176,6 +177,7 @@ private:
     double m_volume { 0 };
     bool m_pictureInPictureSupported { false };
     bool m_pictureInPictureActive { false };
+    bool m_hasControls { false };
 };
 
 class PlaybackSessionManagerProxy : public RefCounted<PlaybackSessionManagerProxy>, private IPC::MessageReceiver {

@@ -634,6 +634,11 @@ bool PlaybackSessionModelMediaElement::isPictureInPictureActive() const
     return (m_mediaElement->fullscreenMode() & HTMLMediaElementEnums::VideoFullscreenModePictureInPicture) == HTMLMediaElementEnums::VideoFullscreenModePictureInPicture;
 }
 
+bool PlaybackSessionModelMediaElement::hasControls() const
+{
+    return m_mediaElement ? m_mediaElement->controls() : false;
+}
+
 }
 
 #endif

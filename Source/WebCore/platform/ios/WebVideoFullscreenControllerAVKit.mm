@@ -223,6 +223,7 @@ private:
     void failedToEnterPictureInPicture() final;
     void willExitPictureInPicture() final;
     void didExitPictureInPicture() final;
+    bool hasControls() const override;
 
     HashSet<PlaybackSessionModelClient*> m_playbackClients;
     HashSet<VideoFullscreenModelClient*> m_fullscreenClients;
@@ -702,6 +703,11 @@ FloatSize VideoFullscreenControllerContext::videoDimensions() const
 {
     ASSERT(isUIThread());
     return m_fullscreenModel ? m_fullscreenModel->videoDimensions() : FloatSize();
+}
+
+bool VideoFullscreenControllerContext::hasControls() const
+{
+    return false;
 }
 
 #pragma mark - PlaybackSessionModel

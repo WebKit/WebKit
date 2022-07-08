@@ -183,6 +183,18 @@ AllowsAirPlayForMediaPlayback:
     WebCore:
       default: true
 
+AllowsFullscreenButtonsOverrideWithMediaControls:
+  type: bool
+  condition: PLATFORM(IOS_FAMILY)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      "HAVE(UIKIT_WEBKIT_INTERNALS)": true
+      default: false
+    WebCore:
+      default: false
+
 AllowsInlineMediaPlayback:
   type: bool
   webKitLegacyPreferenceKey: WebKitMediaPlaybackAllowsInline

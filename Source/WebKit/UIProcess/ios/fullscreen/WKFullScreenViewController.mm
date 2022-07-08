@@ -236,7 +236,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (auto page = [self._webView _page])
         isPiPEnabled = page->preferences().pictureInPictureAPIEnabled() && page->preferences().allowsPictureInPictureMediaPlayback();
     bool isPiPSupported = playbackSessionModel && playbackSessionModel->isPictureInPictureSupported();
-    [_pipButton setHidden:!isPiPEnabled || !isPiPSupported];
+    bool controlsShouldHideButtons = page->preferences().allowsFullscreenButtonsOverrideWithMediaControls() && playbackSessionModel && playbackSessionModel->hasControls();
+    [_pipButton setHidden:!isPiPEnabled || !isPiPSupported || controlsShouldHideButtons];
+    [_cancelButton setHidden:controlsShouldHideButtons];
 }
 
 - (void)setAnimatingViewAlpha:(CGFloat)alpha
