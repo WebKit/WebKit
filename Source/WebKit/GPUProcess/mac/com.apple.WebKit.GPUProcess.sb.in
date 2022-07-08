@@ -145,6 +145,7 @@
 (deny process-info*)
 (allow process-info-dirtycontrol (target self))
 (allow process-info-pidinfo)
+(allow process-info-rusage (target self))
 (allow process-info-setcontrol (target self))
 (allow process-codesigning-status*)
 
@@ -648,6 +649,9 @@
 (allow mach-lookup
     (global-name "com.apple.audio.AudioComponentRegistrar"))
 #endif
+
+(deny mach-lookup (with no-log)
+    (xpc-service-name "com.apple.audio.toolbox.reporting.service"))
 
 #if !ENABLE(CFPREFS_DIRECT_MODE)
 (allow mach-lookup (with telemetry)
