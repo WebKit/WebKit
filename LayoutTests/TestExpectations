@@ -5339,5 +5339,3 @@ imported/w3c/web-platform-tests/streams/readable-byte-streams/respond-after-enqu
 imported/w3c/web-platform-tests/streams/readable-byte-streams/respond-after-enqueue.any.worker.html [ Skip ]
 streams/readable-byte-stream-controller.html [ Skip ]
 streams/readable-byte-stream-controller-worker.html [ Skip ]
-
-webkit.org/b/242532 imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/bailout-exception-vs-return-origin.sub.window.html [ Failure ]
