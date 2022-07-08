@@ -221,8 +221,13 @@ void JSRemoteFunction::copyNameAndLength(JSGlobalObject* globalObject)
 
     JSValue targetName = m_targetFunction->get(globalObject, vm.propertyNames->name);
     RETURN_IF_EXCEPTION(scope, void());
-    if (targetName.isString())
-        m_nameMayBeNull.set(vm, this, asString(targetName));
+    if (targetName.isString()) {
+        auto* targetString = asString(targetName);
+        targetString->value(globalObject); // Resolving rope.
+        RETURN_IF_EXCEPTION(scope, void());
+        m_nameMayBeNull.set(vm, this, targetString);
+    }
+    ASSERT(!m_nameMayBeNull || !m_nameMayBeNull->isRope());
 }
 
 void JSRemoteFunction::finishCreation(JSGlobalObject* globalObject, VM& vm)
