@@ -260,11 +260,10 @@ class PullRequest(Command):
 
         log.info('Adding comment for reverted commits...')
         for line in commit.message.split():
-            tracker = Tracker.from_string(line)
-            if tracker:
-                tracker.add_comment('Reverted by {}'.format(pr.url))
-                tracker.set(opened=True)
-                continue
+            issue = Tracker.from_string(line)
+            if issue:
+                issue.open(why='Reverted by {}'.format(pr.url))
+                break
         return 0
 
     @classmethod
