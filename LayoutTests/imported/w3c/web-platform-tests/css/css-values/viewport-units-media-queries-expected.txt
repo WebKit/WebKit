@@ -1,0 +1,29 @@
+
+
+PASS @media(width:100vw) applies
+PASS @media(width:100vi) applies
+PASS @media(width:100vmax) applies
+PASS @media(width:100svw) applies
+PASS @media(width:100svi) applies
+PASS @media(width:100svmax) applies
+PASS @media(width:100lvw) applies
+PASS @media(width:100lvi) applies
+PASS @media(width:100lvmax) applies
+PASS @media(width:100dvw) applies
+PASS @media(width:100dvi) applies
+PASS @media(width:100dvmax) applies
+PASS @media(height:100vh) applies
+PASS @media(height:100vb) applies
+PASS @media(height:100vmin) applies
+PASS @media(height:100svh) applies
+PASS @media(height:100svb) applies
+PASS @media(height:100svmin) applies
+PASS @media(height:100lvh) applies
+PASS @media(height:100lvb) applies
+PASS @media(height:100lvmin) applies
+PASS @media(height:100dvh) applies
+PASS @media(height:100dvb) applies
+PASS @media(height:100dvmin) applies
+PASS @media(width:90vw) does not apply
+PASS @media(height:90vh) does not apply
+

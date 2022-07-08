@@ -19,7 +19,7 @@ FAIL 'max(3%, 2%, 1%)' as a computed value should serialize as 'max(3%, 2%, 1%)'
 PASS 'max(3%, 2%, 1%)' as a used value should serialize as '3px'.
 PASS 'min(1%, 2%, 3%) 0px' as a specified value should serialize as 'min(1%, 2%, 3%) 0px'.
 FAIL 'min(1%, 2%, 3%) 0px' as a computed value should serialize as 'min(1%, 2%, 3%) 0px'. assert_equals: 'min(1%, 2%, 3%) 0px' should round-trip exactly in computed values. expected "min(1%, 2%, 3%) 0px" but got "calc(1%) 0px"
-PASS 'calc(min(1%, 2%) + max(3%, 4%) + 10%)' as a specified value should serialize as 'calc(15%)'.
-PASS 'calc(min(1%, 2%) + max(3%, 4%) + 10%)' as a computed value should serialize as '15%'.
+FAIL 'calc(min(1%, 2%) + max(3%, 4%) + 10%)' as a specified value should serialize as 'calc(10% + min(1%, 2%) + max(3%, 4%))'. assert_equals: 'calc(10% + min(1%, 2%) + max(3%, 4%))' should round-trip exactly in specified values. expected "calc(10% + min(1%, 2%) + max(3%, 4%))" but got "calc(15%)"
+FAIL 'calc(min(1%, 2%) + max(3%, 4%) + 10%)' as a computed value should serialize as 'calc(10% + min(1%, 2%) + max(3%, 4%))'. assert_equals: 'calc(10% + min(1%, 2%) + max(3%, 4%))' should round-trip exactly in computed values. expected "calc(10% + min(1%, 2%) + max(3%, 4%))" but got "15%"
 PASS 'calc(min(1%, 2%) + max(3%, 4%) + 10%)' as a used value should serialize as '15px'.
 

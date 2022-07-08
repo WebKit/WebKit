@@ -3425,6 +3425,11 @@ webkit.org/b/203331 imported/w3c/web-platform-tests/css/css-values/attr-px-valid
 webkit.org/b/203333 imported/w3c/web-platform-tests/css/css-values/ch-unit-003.html [ ImageOnlyFailure ]
 webkit.org/b/203333 imported/w3c/web-platform-tests/css/css-values/ch-unit-010.html [ ImageOnlyFailure ]
 webkit.org/b/203338 imported/w3c/web-platform-tests/css/css-values/vh_not_refreshing_on_chrome.html [ ImageOnlyFailure ]
+webkit.org/b/242465 imported/w3c/web-platform-tests/css/css-values/calc-width-table-auto-1.html [ Skip ]
+webkit.org/b/242465 imported/w3c/web-platform-tests/css/css-values/calc-width-table-fixed-1.html [ Skip ]
+webkit.org/b/242466 imported/w3c/web-platform-tests/css/css-values/cap-unit-001.html [ ImageOnlyFailure ]
+webkit.org/b/242467 imported/w3c/web-platform-tests/css/css-values/calc-text-indent-intrinsic-1.html [ ImageOnlyFailure ]
+webkit.org/b/238982 imported/w3c/web-platform-tests/css/css-values/viewport-units-writing-mode-font-size.html [ ImageOnlyFailure ]
 
 # wpt css-sizing failures
 webkit.org/b/203509 imported/w3c/web-platform-tests/css/css-sizing/auto-scrollbar-inside-stf-abspos.html [ ImageOnlyFailure ]

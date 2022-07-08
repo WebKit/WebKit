@@ -6,7 +6,7 @@ PASS calc(round(100,10)) should be used-value-equivalent to 100
 PASS calc(round(up, 101,10)) should be used-value-equivalent to 110
 PASS calc(round(down, 106,10)) should be used-value-equivalent to 100
 PASS calc(round(to-zero,105, 10)) should be used-value-equivalent to 100
-PASS calc(round(to-zero,-105, 10)) should be used-value-equivalent to -100
+FAIL calc(round(to-zero,-105, 10)) should be used-value-equivalent to 100 assert_equals: calc(round(to-zero,-105, 10)) and 100 serialize to the same thing in used values. expected "matrix(100, 0, 0, 100, 0, 0)" but got "matrix(-100, 0, 0, -100, 0, 0)"
 PASS calc(round(-100,10)) should be used-value-equivalent to -100
 PASS calc(round(up, -103,10)) should be used-value-equivalent to -100
 PASS mod(18,5) should be used-value-equivalent to 3

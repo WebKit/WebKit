@@ -18,7 +18,7 @@ test_math_used('calc(round(100,10))', '100', {type:'number'});
 test_math_used('calc(round(up, 101,10))', '110', {type:'number'});
 test_math_used('calc(round(down, 106,10))', '100', {type:'number'});
 test_math_used('calc(round(to-zero,105, 10))', '100', {type:'number'});
-test_math_used('calc(round(to-zero,-105, 10))', '-100', {type:'number'});
+test_math_used('calc(round(to-zero,-105, 10))', '100', {type:'number'});
 test_math_used('calc(round(-100,10))', '-100', {type:'number'});
 test_math_used('calc(round(up, -103,10))', '-100', {type:'number'});
 
