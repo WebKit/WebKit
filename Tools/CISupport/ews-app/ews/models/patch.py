@@ -31,9 +31,12 @@ from ews.config import ERR_EXISTING_PATCH, ERR_INVALID_PATCH_ID, ERR_NON_EXISTIN
 _log = logging.getLogger(__name__)
 
 
+# FIXME: Rename Patch to Change
 class Patch(models.Model):
     patch_id = models.TextField(primary_key=True)
     bug_id = models.IntegerField()
+    pr_id = models.IntegerField(default=-1)
+    pr_project = models.TextField(default='')
     obsolete = models.BooleanField(default=False)
     sent_to_buildbot = models.BooleanField(default=False)
     sent_to_commit_queue = models.BooleanField(default=False)
@@ -44,7 +47,7 @@ class Patch(models.Model):
         return str(self.patch_id)
 
     @classmethod
-    def save_patch(cls, patch_id, bug_id=-1, obsolete=False, sent_to_buildbot=False, sent_to_commit_queue=False):
+    def save_patch(cls, patch_id, bug_id=-1, pr_id=-1, pr_project='', obsolete=False, sent_to_buildbot=False, sent_to_commit_queue=False):
         if not Patch.is_valid_patch_id(patch_id):
             _log.warn('Patch id {} in invalid. Skipped saving.'.format(patch_id))
             return ERR_INVALID_PATCH_ID
@@ -53,7 +56,7 @@ class Patch(models.Model):
             _log.debug('Patch id {} already exists in database. Skipped saving.'.format(patch_id))
             return ERR_EXISTING_PATCH
         Patch(patch_id, bug_id, obsolete, sent_to_buildbot, sent_to_commit_queue).save()
-        _log.info('Saved patch in database, id: {}'.format(patch_id))
+        _log.info('Saved change in database, id: {}, pr_id: {}, pr_project: {}'.format(patch_id, pr_id, pr_project))
         return SUCCESS
 
     @classmethod
