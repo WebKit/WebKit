@@ -316,6 +316,7 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
     {
         this.revealPosition(new WI.SourceCodePosition(lineNumber - 1, 0), {
             textRangeToSelect: new WI.TextRange(lineNumber - 1, 0, lineNumber, 0),
+            preventHighlight: true,
         });
     }
 

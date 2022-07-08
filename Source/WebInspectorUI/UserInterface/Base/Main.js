@@ -1460,7 +1460,7 @@ WI.showLocalResourceOverride = function(localResourceOverride, options = {})
 {
     console.assert(localResourceOverride instanceof WI.LocalResourceOverride);
 
-    let cookie = {};
+    let cookie = {preventHighlight: true};
 
     switch (localResourceOverride.type) {
     case WI.LocalResourceOverride.InterceptType.Response:

@@ -503,7 +503,7 @@ WI.TextEditor = class TextEditor extends WI.View
         delete this._pendingPositionToReveal;
         delete this._pendingRevealPositionOptions;
 
-        let {textRangeToSelect, scrollOffset, forceUnformatted} = options;
+        let {textRangeToSelect, scrollOffset, forceUnformatted, preventHighlight} = options;
 
         console.assert(!textRangeToSelect || textRangeToSelect instanceof WI.TextRange, textRangeToSelect);
         console.assert(!scrollOffset || scrollOffset instanceof WI.Point, scrollOffset);
@@ -546,7 +546,7 @@ WI.TextEditor = class TextEditor extends WI.View
             if (!this.readOnly)
                 this.focus();
 
-            if (textRangeToSelect)
+            if (preventHighlight)
                 return;
 
             // Avoid highlighting the execution line while debugging.
