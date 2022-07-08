@@ -143,18 +143,22 @@ public:
         return remove<WebCore::DecomposedGlyphs>(renderingResourceIdentifier, m_decomposedGlyphsCount);
     }
 
-    void deleteAllFonts()
+    void releaseAllResources()
     {
         checkInvariants();
 
-        if (!m_fontCount)
+        if (!m_nativeImageCount && !m_fontCount && !m_decomposedGlyphsCount)
             return;
 
         m_resources.removeIf([] (const auto& resource) {
-            return std::holds_alternative<Ref<WebCore::Font>>(resource.value);
+            return std::holds_alternative<Ref<WebCore::NativeImage>>(resource.value)
+                || std::holds_alternative<Ref<WebCore::Font>>(resource.value)
+                || std::holds_alternative<Ref<WebCore::DecomposedGlyphs>>(resource.value);
         });
 
+        m_nativeImageCount = 0;
         m_fontCount = 0;
+        m_decomposedGlyphsCount = 0;
 
         checkInvariants();
     }

@@ -349,20 +349,20 @@ void RemoteRenderingBackend::cacheDecomposedGlyphsWithQualifiedIdentifier(Ref<De
     m_remoteResourceCache.cacheDecomposedGlyphs(WTFMove(decomposedGlyphs), decomposedGlyphsIdentifier);
 }
 
-void RemoteRenderingBackend::deleteAllFonts()
+void RemoteRenderingBackend::releaseAllResources()
 {
     ASSERT(!RunLoop::isMain());
-    m_remoteResourceCache.deleteAllFonts();
+    m_remoteResourceCache.releaseAllResources();
 }
 
-void RemoteRenderingBackend::releaseRemoteResource(RenderingResourceIdentifier renderingResourceIdentifier)
+void RemoteRenderingBackend::releaseResource(RenderingResourceIdentifier renderingResourceIdentifier)
 {
     // Immediately turn the RenderingResourceIdentifier (which is error-prone) to a QualifiedRenderingResourceIdentifier,
     // and use a helper function to make sure that don't accidentally use the RenderingResourceIdentifier (because the helper function can't see it).
-    releaseRemoteResourceWithQualifiedIdentifier({ renderingResourceIdentifier, m_gpuConnectionToWebProcess->webProcessIdentifier() });
+    releaseResourceWithQualifiedIdentifier({ renderingResourceIdentifier, m_gpuConnectionToWebProcess->webProcessIdentifier() });
 }
 
-void RemoteRenderingBackend::releaseRemoteResourceWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
+void RemoteRenderingBackend::releaseResourceWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
 {
     ASSERT(!RunLoop::isMain());
     {
@@ -370,7 +370,7 @@ void RemoteRenderingBackend::releaseRemoteResourceWithQualifiedIdentifier(Qualif
         if (auto remoteDisplayList = m_remoteDisplayLists.take(renderingResourceIdentifier))
             remoteDisplayList->clearImageBufferReference();
     }
-    auto success = m_remoteResourceCache.releaseRemoteResource(renderingResourceIdentifier);
+    auto success = m_remoteResourceCache.releaseResource(renderingResourceIdentifier);
     MESSAGE_CHECK(success, "Resource is being released before being cached.");
 }
 

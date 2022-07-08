@@ -253,14 +253,14 @@ void RemoteRenderingBackendProxy::cacheDecomposedGlyphs(Ref<DecomposedGlyphs>&& 
     sendToStream(Messages::RemoteRenderingBackend::CacheDecomposedGlyphs(WTFMove(decomposedGlyphs)));
 }
 
-void RemoteRenderingBackendProxy::deleteAllFonts()
+void RemoteRenderingBackendProxy::releaseAllRemoteResources()
 {
-    sendToStream(Messages::RemoteRenderingBackend::DeleteAllFonts());
+    sendToStream(Messages::RemoteRenderingBackend::ReleaseAllResources());
 }
 
 void RemoteRenderingBackendProxy::releaseRemoteResource(RenderingResourceIdentifier renderingResourceIdentifier)
 {
-    sendToStream(Messages::RemoteRenderingBackend::ReleaseRemoteResource(renderingResourceIdentifier));
+    sendToStream(Messages::RemoteRenderingBackend::ReleaseResource(renderingResourceIdentifier));
 }
 
 auto RemoteRenderingBackendProxy::prepareBuffersForDisplay(const Vector<LayerPrepareBuffersData>& prepareBuffersInput) -> Vector<SwapBuffersResult>

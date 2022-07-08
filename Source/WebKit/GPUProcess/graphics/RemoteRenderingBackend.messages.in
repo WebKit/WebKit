@@ -33,8 +33,8 @@ messages -> RemoteRenderingBackend NotRefCounted Stream {
     CacheNativeImage(WebKit::ShareableBitmap::Handle handle, WebCore::RenderingResourceIdentifier renderingResourceIdentifier) NotStreamEncodable
     CacheFont(Ref<WebCore::Font> font) NotStreamEncodable
     CacheDecomposedGlyphs(Ref<WebCore::DecomposedGlyphs> decomposedGlyphs) NotStreamEncodable
-    DeleteAllFonts()
-    ReleaseRemoteResource(WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
+    ReleaseAllResources()
+    ReleaseResource(WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
 
     PrepareBuffersForDisplay(Vector<WebKit::PrepareBackingStoreBuffersInputData> swapBuffersInput) -> (Vector<WebKit::PrepareBackingStoreBuffersOutputData> swapBuffersOutput) Synchronous NotStreamEncodable NotStreamEncodableReply
 
