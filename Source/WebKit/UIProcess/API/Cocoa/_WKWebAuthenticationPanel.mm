@@ -250,9 +250,10 @@ static fido::AuthenticatorSupportedOptions::UserVerificationAvailability coreUse
 #endif // ENABLE(WEB_AUTHN)
 
 #if ENABLE(WEB_AUTHN)
-static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *accessGroup)
+static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *accessGroup, NSString *byRpId, NSData *byCredentialId)
 {
-    auto query = @{
+    auto query = adoptNS([[NSMutableDictionary alloc] init]);
+    [query setDictionary:@{
         (__bridge id)kSecClass: bridge_id_cast(kSecClassKey),
         (__bridge id)kSecAttrKeyClass: bridge_id_cast(kSecAttrKeyClassPrivate),
         (__bridge id)kSecAttrAccessGroup: accessGroup,
@@ -260,10 +261,14 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
         (__bridge id)kSecMatchLimit: bridge_id_cast(kSecMatchLimitAll),
         (__bridge id)kSecAttrSynchronizable: (id)kSecAttrSynchronizableAny,
         (__bridge id)kSecUseDataProtectionKeychain: @YES
-    };
+    }];
+    if (byRpId)
+        [query setObject:byRpId forKey:bridge_cast(kSecAttrLabel)];
+    if (byCredentialId)
+        [query setObject:byCredentialId forKey:bridge_cast(kSecAttrApplicationLabel)];
 
     CFTypeRef attributesArrayRef = nullptr;
-    OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &attributesArrayRef);
+    OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query.get(), &attributesArrayRef);
     if (status && status != errSecItemNotFound)
         return nullptr;
     auto retainAttributesArray = adoptCF(attributesArrayRef);
@@ -321,7 +326,7 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
 + (NSArray<NSDictionary *> *)getAllLocalAuthenticatorCredentials
 {
 #if ENABLE(WEB_AUTHN)
-    return getAllLocalAuthenticatorCredentialsImpl(@(WebCore::LocalAuthenticatorAccessGroup)).autorelease();
+    return getAllLocalAuthenticatorCredentialsImpl(@(WebCore::LocalAuthenticatorAccessGroup), nil, nil).autorelease();
 #else
     return nullptr;
 #endif
@@ -330,11 +335,48 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
 + (NSArray<NSDictionary *> *)getAllLocalAuthenticatorCredentialsWithAccessGroup:(NSString *)accessGroup
 {
 #if ENABLE(WEB_AUTHN)
-    return getAllLocalAuthenticatorCredentialsImpl(accessGroup).autorelease();
+    return getAllLocalAuthenticatorCredentialsImpl(accessGroup, nil, nil).autorelease();
 #else
     return nullptr;
 #endif
 }
+
++ (NSArray<NSDictionary *> *)getAllLocalAuthenticatorCredentialsWithRPID:(NSString *)rpID
+{
+#if ENABLE(WEB_AUTHN)
+    return getAllLocalAuthenticatorCredentialsImpl(@(WebCore::LocalAuthenticatorAccessGroup), rpID, nil).autorelease();
+#else
+    return nullptr;
+#endif
+}
+
++ (NSArray<NSDictionary *> *)getAllLocalAuthenticatorCredentialsWithCredentialID:(NSData *)credentialID
+{
+#if ENABLE(WEB_AUTHN)
+    return getAllLocalAuthenticatorCredentialsImpl(@(WebCore::LocalAuthenticatorAccessGroup), nil, credentialID).autorelease();
+#else
+    return nullptr;
+#endif
+}
+
++ (NSArray<NSDictionary *> *)getAllLocalAuthenticatorCredentialsWithRPIDAndAccessGroup:(NSString *)accessGroup rpID:(NSString *)rpID
+{
+#if ENABLE(WEB_AUTHN)
+    return getAllLocalAuthenticatorCredentialsImpl(accessGroup, rpID, nil).autorelease();
+#else
+    return nullptr;
+#endif
+}
+
++ (NSArray<NSDictionary *> *)getAllLocalAuthenticatorCredentialsWithCredentialIDAndAccessGroup:(NSString *)accessGroup credentialID:(NSData *)credentialID
+{
+#if ENABLE(WEB_AUTHN)
+    return getAllLocalAuthenticatorCredentialsImpl(accessGroup, nil, credentialID).autorelease();
+#else
+    return nullptr;
+#endif
+}
+
 
 + (void)deleteLocalAuthenticatorCredentialWithID:(NSData *)credentialID
 {

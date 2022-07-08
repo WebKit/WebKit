@@ -123,6 +123,9 @@ WK_CLASS_AVAILABLE(macos(10.15.4), ios(13.4))
 @property (nullable, nonatomic, weak) id <_WKWebAuthenticationPanelDelegate> delegate;
 
 + (NSArray<NSDictionary *> *)getAllLocalAuthenticatorCredentials WK_API_AVAILABLE(macos(12.0), ios(15.0));
++ (NSArray<NSDictionary *> *)getAllLocalAuthenticatorCredentialsWithRPID:(NSString *)rpID WK_API_AVAILABLE(macos(13.0), ios(16.0));
++ (NSArray<NSDictionary *> *)getAllLocalAuthenticatorCredentialsWithCredentialID:(NSData *)credentialID WK_API_AVAILABLE(macos(13.0), ios(16.0));
+
 + (void)deleteLocalAuthenticatorCredentialWithID:(NSData *)credentialID WK_API_AVAILABLE(macos(12.0), ios(15.0));
 + (void)deleteLocalAuthenticatorCredentialWithGroupAndID:(NSString * _Nullable)group credential:(NSData *)credentialID WK_API_AVAILABLE(macos(12.0), ios(15.0));
 + (void)clearAllLocalAuthenticatorCredentials WK_API_AVAILABLE(macos(12.0), ios(15.0));
