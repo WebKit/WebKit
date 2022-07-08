@@ -55,6 +55,8 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
 
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
 
+        const treeItemHeight = 20;
+        this.contentTreeOutline.registerScrollVirtualizer(this.contentView.element, treeItemHeight);
         this.contentTreeOutline.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._treeSelectionDidChange, this);
     }
 
