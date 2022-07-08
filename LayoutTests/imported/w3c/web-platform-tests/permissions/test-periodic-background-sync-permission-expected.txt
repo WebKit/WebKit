@@ -1,3 +1,0 @@
-
-FAIL Test Periodic Background Sync Permission. promise_test: Unhandled rejection with value: object "TypeError: Type error"
-

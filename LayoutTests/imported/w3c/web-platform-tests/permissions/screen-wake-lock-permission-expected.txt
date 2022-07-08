@@ -1,3 +1,0 @@
-
-FAIL Test "screen-wake-lock" Permission. promise_test: Unhandled rejection with value: object "TypeError: Type error"
-

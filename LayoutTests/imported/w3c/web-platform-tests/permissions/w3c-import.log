@@ -15,11 +15,9 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/permissions/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/permissions/all-permissions.html
 /LayoutTests/imported/w3c/web-platform-tests/permissions/feature-policy-permissions-query.html
 /LayoutTests/imported/w3c/web-platform-tests/permissions/idlharness.any.js
-/LayoutTests/imported/w3c/web-platform-tests/permissions/nfc-permission.html
+/LayoutTests/imported/w3c/web-platform-tests/permissions/permissions-cg.https.html
 /LayoutTests/imported/w3c/web-platform-tests/permissions/permissions-query-feature-policy-attribute.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/permissions/permissionsstatus-name.html
-/LayoutTests/imported/w3c/web-platform-tests/permissions/screen-wake-lock-permission.html
-/LayoutTests/imported/w3c/web-platform-tests/permissions/test-background-fetch-permission.html
-/LayoutTests/imported/w3c/web-platform-tests/permissions/test-periodic-background-sync-permission.html

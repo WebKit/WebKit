@@ -238,6 +238,7 @@
         "html/rendering/the-details-element/empty-crash.html",
         "html/rendering/the-details-element/single-summary.html",
         "intersection-observer/observer-in-iframe.html",
+        "permissions/feature-policy-permissions-query.html",
         "shadow-dom/declarative/support/declarative-child-frame.html",
         "shadow-dom/directionality-001-ref.html",
         "shadow-dom/directionality-002-ref.html",

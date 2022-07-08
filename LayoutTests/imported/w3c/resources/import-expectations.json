@@ -38,6 +38,7 @@
     "paint-timing/fcp-only": "import", 
     "paint-timing/resources": "import", 
     "paint-timing/resources/": "import", 
+    "permissions": "import", 
     "resources/testharness.js": "import", 
     "shadow-dom": "import", 
     "streams": "import", 
