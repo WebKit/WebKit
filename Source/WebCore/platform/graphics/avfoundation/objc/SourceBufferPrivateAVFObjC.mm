@@ -863,8 +863,9 @@ void SourceBufferPrivateAVFObjC::trackDidChangeSelected(VideoTrackPrivate& track
         m_parser->setShouldProvideMediaDataForTrackID(true, trackID);
 
         if (m_decompressionSession) {
-            m_decompressionSession->requestMediaDataWhenReady([this, trackID] {
-                didBecomeReadyForMoreSamples(trackID);
+            m_decompressionSession->requestMediaDataWhenReady([weakThis = WeakPtr { *this }, trackID] {
+                if (weakThis)
+                    weakThis->didBecomeReadyForMoreSamples(trackID);
             });
         }
     }
@@ -1458,8 +1459,9 @@ void SourceBufferPrivateAVFObjC::notifyClientWhenReadyForMoreSamples(const AtomS
     auto trackID = parseIntegerAllowingTrailingJunk<uint64_t>(trackIDString).value_or(0);
     if (trackID == m_enabledVideoTrackID) {
         if (m_decompressionSession) {
-            m_decompressionSession->requestMediaDataWhenReady([this, trackID] {
-                didBecomeReadyForMoreSamples(trackID);
+            m_decompressionSession->requestMediaDataWhenReady([weakThis = WeakPtr { *this }, trackID] {
+                if (weakThis)
+                    weakThis->didBecomeReadyForMoreSamples(trackID);
             });
         }
         if (m_displayLayer) {

@@ -689,7 +689,7 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::updateLastPixelBuffer()
     if (!newPixelBuffer)
         return false;
 
-    m_lastPixelBuffer = newPixelBuffer;
+    m_lastPixelBuffer = WTFMove(newPixelBuffer);
 
     if (m_resourceOwner) {
         if (auto surface = CVPixelBufferGetIOSurface(m_lastPixelBuffer.get()))
@@ -808,10 +808,10 @@ void MediaPlayerPrivateMediaSourceAVFObjC::updateDisplayLayerAndDecompressionSes
     if (shouldEnsureLayer()) {
         destroyDecompressionSession();
         ensureLayer();
-    } else {
-        destroyLayer();
-        ensureDecompressionSession();
+        return;
     }
+    destroyLayer();
+    ensureDecompressionSession();
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::notifyActiveSourceBuffersChanged()
