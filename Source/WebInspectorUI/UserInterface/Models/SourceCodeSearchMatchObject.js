@@ -28,11 +28,13 @@ WI.SourceCodeSearchMatchObject = class SourceCodeSearchMatchObject
     constructor(sourceCode, lineText, searchTerm, textRange)
     {
         console.assert(sourceCode instanceof WI.SourceCode);
+        console.assert(textRange instanceof WI.TextRange, textRange)
 
         this._sourceCode = sourceCode;
         this._lineText = lineText;
         this._searchTerm = searchTerm;
-        this._sourceCodeTextRange = sourceCode.createSourceCodeTextRange(textRange);
+        this._textRange = textRange;
+        this._sourceCodeTextRange = null;
     }
 
     // Public
@@ -40,7 +42,14 @@ WI.SourceCodeSearchMatchObject = class SourceCodeSearchMatchObject
     get sourceCode() { return this._sourceCode; }
     get title() { return this._lineText; }
     get searchTerm() { return this._searchTerm; }
-    get sourceCodeTextRange() { return this._sourceCodeTextRange; }
+    get textRange() { return this._textRange; }
+
+    get sourceCodeTextRange()
+    {
+        this._sourceCodeTextRange ??= this._sourceCode.createSourceCodeTextRange(this._textRange);
+
+        return this._sourceCodeTextRange;
+    }
 
     get className()
     {
@@ -52,8 +61,7 @@ WI.SourceCodeSearchMatchObject = class SourceCodeSearchMatchObject
         if (this._sourceCode.url)
             cookie[WI.SourceCodeSearchMatchObject.URLCookieKey] = this._sourceCode.url.hash;
 
-        var textRange = this._sourceCodeTextRange.textRange;
-        cookie[WI.SourceCodeSearchMatchObject.TextRangeKey] = [textRange.startLine, textRange.startColumn, textRange.endLine, textRange.endColumn].join();
+        cookie[WI.SourceCodeSearchMatchObject.TextRangeKey] = [this._textRange.startLine, this._textRange.startColumn, this._textRange.endLine, this._textRange.endColumn].join();
     }
 };
 

@@ -29,12 +29,14 @@ WI.DOMSearchMatchObject = class DOMSearchMatchObject
     {
         console.assert(resource instanceof WI.Resource);
         console.assert(domNode instanceof WI.DOMNode);
+        console.assert(textRange instanceof WI.TextRange, textRange);
 
         this._resource = resource;
         this._domNode = domNode;
         this._title = title;
         this._searchTerm = searchTerm;
-        this._sourceCodeTextRange = resource.createSourceCodeTextRange(textRange);
+        this._textRange = textRange;
+        this._sourceCodeTextRange = null;
     }
 
     // Static
@@ -85,6 +87,8 @@ WI.DOMSearchMatchObject = class DOMSearchMatchObject
 
     // Public
 
+    get textRange() { return this._textRange; }
+
     get resource()
     {
         return this._resource;
@@ -115,6 +119,8 @@ WI.DOMSearchMatchObject = class DOMSearchMatchObject
 
     get sourceCodeTextRange()
     {
+        this._sourceCodeTextRange ??= this._resource.createSourceCodeTextRange(this._textRange);
+
         return this._sourceCodeTextRange;
     }
 
@@ -122,8 +128,7 @@ WI.DOMSearchMatchObject = class DOMSearchMatchObject
     {
         cookie[WI.DOMSearchMatchObject.URLCookieKey] = this._resource.url.hash;
         cookie[WI.DOMSearchMatchObject.TitleKey] = this._title;
-        var textRange = this._sourceCodeTextRange.textRange;
-        cookie[WI.DOMSearchMatchObject.TextRangeKey] = [textRange.startLine, textRange.startColumn, textRange.endLine, textRange.endColumn].join();
+        cookie[WI.DOMSearchMatchObject.TextRangeKey] = [this._textRange.startLine, this._textRange.startColumn, this._textRange.endLine, this._textRange.endColumn].join();
     }
 
     // Private

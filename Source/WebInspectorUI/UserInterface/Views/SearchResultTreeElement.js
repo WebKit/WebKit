@@ -29,21 +29,18 @@ WI.SearchResultTreeElement = class SearchResultTreeElement extends WI.GeneralTre
     {
         console.assert(representedObject instanceof WI.DOMSearchMatchObject || representedObject instanceof WI.SourceCodeSearchMatchObject);
 
-        var title = WI.SearchResultTreeElement.truncateAndHighlightTitle(representedObject.title, representedObject.searchTerm, representedObject.sourceCodeTextRange);
+        var title = WI.SearchResultTreeElement.truncateAndHighlightTitle(representedObject.title, representedObject.searchTerm, representedObject.textRange);
         const subtitle = null;
         super(representedObject.className, title, subtitle, representedObject);
     }
 
     // Static
 
-    static truncateAndHighlightTitle(title, searchTerm, sourceCodeTextRange)
+    static truncateAndHighlightTitle(title, searchTerm, textRange)
     {
         let isRTL = WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL;
         const charactersToShowBeforeSearchMatch = isRTL ? 20 : 15;
         const charactersToShowAfterSearchMatch = isRTL ? 15 : 50;
-
-        // Use the original location, since those line/column offsets match the line text in title.
-        var textRange = sourceCodeTextRange.textRange;
 
         let searchTermIndex = textRange.startColumn;
         let searchTermLength = textRange.endColumn - textRange.startColumn;
