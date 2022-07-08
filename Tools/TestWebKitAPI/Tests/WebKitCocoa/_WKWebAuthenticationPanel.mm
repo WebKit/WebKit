@@ -1956,7 +1956,6 @@ TEST(WebAuthenticationPanel, GetAssertionLA)
     EXPECT_EQ([credentialsBefore count], 1lu);
     EXPECT_NOT_NULL([credentialsBefore firstObject]);
     EXPECT_EQ([[credentialsBefore firstObject][_WKLocalAuthenticatorCredentialLastModificationDateKey] compare:[credentialsBefore firstObject][_WKLocalAuthenticatorCredentialCreationDateKey]], 0);
-    EXPECT_EQ([[credentialsBefore firstObject][_WKLocalAuthenticatorCredentialLastModificationDateKey] compare:[credentialsBefore firstObject][_WKLocalAuthenticatorCredentialLastUsedDateKey]], 0);
     EXPECT_GE([[credentialsBefore firstObject][_WKLocalAuthenticatorCredentialLastModificationDateKey] compare:beforeTime.get()], 0);
 
     uint8_t hash[] = { 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04 };
@@ -1977,9 +1976,7 @@ TEST(WebAuthenticationPanel, GetAssertionLA)
         EXPECT_NOT_NULL(credentialsAfter);
         EXPECT_EQ([credentialsAfter count], 1lu);
         EXPECT_NOT_NULL([credentialsAfter firstObject]);
-        EXPECT_EQ([[credentialsAfter firstObject][_WKLocalAuthenticatorCredentialLastModificationDateKey] compare:[credentialsAfter firstObject][_WKLocalAuthenticatorCredentialCreationDateKey]], 0);
-        EXPECT_LE([[credentialsAfter firstObject][_WKLocalAuthenticatorCredentialLastModificationDateKey] compare:[credentialsAfter firstObject][_WKLocalAuthenticatorCredentialLastUsedDateKey]], 0);
-        EXPECT_GE([[credentialsBefore firstObject][_WKLocalAuthenticatorCredentialLastUsedDateKey] compare:beforeTime.get()], 0);
+        EXPECT_GE([[credentialsAfter firstObject][_WKLocalAuthenticatorCredentialLastModificationDateKey] compare:[credentialsAfter firstObject][_WKLocalAuthenticatorCredentialCreationDateKey]], 0);
         cleanUpKeychain("example.com"_s);
 
         EXPECT_NULL(error);
