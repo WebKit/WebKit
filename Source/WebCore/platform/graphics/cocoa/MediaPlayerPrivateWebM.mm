@@ -30,11 +30,17 @@
 
 #import "AudioTrackPrivateWebM.h"
 #import "FloatSize.h"
+#import "GraphicsContext.h"
+#import "GraphicsContextStateSaver.h"
+#import "IOSurface.h"
 #import "Logging.h"
 #import "MediaPlaybackTarget.h"
 #import "MediaPlayer.h"
 #import "MediaSampleAVFObjC.h"
+#import "MediaSessionManagerCocoa.h"
+#import "NativeImage.h"
 #import "NotImplemented.h"
+#import "PixelBufferConformerCV.h"
 #import "PlatformMediaResourceLoader.h"
 #import "ResourceError.h"
 #import "ResourceRequest.h"
@@ -43,17 +49,20 @@
 #import "SecurityOrigin.h"
 #import "TextTrackRepresentation.h"
 #import "TrackBuffer.h"
-#import "VideoFrame.h"
+#import "VideoFrameCV.h"
 #import "VideoLayerManagerObjC.h"
 #import "VideoTrackPrivateWebM.h"
+#import "WebCoreDecompressionSession.h"
 #import "WebMResourceClient.h"
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
+#import <wtf/MainThread.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/WeakPtr.h>
 
 #pragma mark - Soft Linking
 
+#import "CoreVideoSoftLink.h"
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
@@ -87,14 +96,29 @@ MediaPlayerPrivateWebM::~MediaPlayerPrivateWebM()
 
     if (m_durationObserver)
         [m_synchronizer removeTimeObserver:m_durationObserver.get()];
+    if (m_videoFrameMetadataGatheringObserver)
+        [m_synchronizer removeTimeObserver:m_videoFrameMetadataGatheringObserver.get()];
 
     destroyLayer();
+    destroyDecompressionSession();
     destroyAudioRenderers();
     clearTracks();
 
     cancelLoad();
     abort();
 }
+
+#if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
+
+static bool isCopyDisplayedPixelBufferAvailable()
+{
+    static NeverDestroyed<std::optional<bool>> result;
+    if (!result->has_value())
+        result.get() = [PAL::getAVSampleBufferDisplayLayerClass() instancesRespondToSelector:@selector(copyDisplayedPixelBuffer)];
+    return MediaSessionManagerCocoa::mediaSourceInlinePaintingEnabled() && result.get();
+}
+
+#endif // HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
 
 static HashSet<String, ASCIICaseInsensitiveHash>& mimeTypeCache()
 {
@@ -209,10 +233,7 @@ void MediaPlayerPrivateWebM::loadFinished(const FragmentedSharedBuffer& fragment
     
     updateBufferedFromTrackBuffers(true);
     updateDurationFromTrackBuffers();
-    setReadyState(MediaPlayer::ReadyState::HaveEnoughData);
     setNetworkState(MediaPlayer::NetworkState::Idle);
-    if (m_hasVideo)
-        m_player->firstVideoFrameAvailable();
 }
 
 void MediaPlayerPrivateWebM::cancelLoad()
@@ -259,8 +280,6 @@ void MediaPlayerPrivateWebM::setPageIsVisible(bool visible)
 
     ALWAYS_LOG(LOGIDENTIFIER, visible);
     m_visible = visible;
-    if (visible)
-        ensureLayer();
 }
 
 MediaTime MediaPlayerPrivateWebM::currentMediaTime() const
@@ -387,13 +406,123 @@ bool MediaPlayerPrivateWebM::didLoadingProgress() const
     return false;
 }
 
+RefPtr<NativeImage> MediaPlayerPrivateWebM::nativeImageForCurrentTime()
+{
+    updateLastImage();
+    return m_lastImage;
+}
+
+bool MediaPlayerPrivateWebM::updateLastPixelBuffer()
+{
+#if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
+    if (isCopyDisplayedPixelBufferAvailable()) {
+        if (auto pixelBuffer = adoptCF([m_displayLayer copyDisplayedPixelBuffer])) {
+            ALWAYS_LOG(LOGIDENTIFIER, "displayed pixelbuffer copied for time ", currentMediaTime());
+            m_lastPixelBuffer = WTFMove(pixelBuffer);
+            return true;
+        }
+    }
+#endif
+
+    if (m_displayLayer || !m_decompressionSession)
+        return false;
+
+    auto flags = !m_lastPixelBuffer ? WebCoreDecompressionSession::AllowLater : WebCoreDecompressionSession::ExactTime;
+    auto newPixelBuffer = m_decompressionSession->imageForTime(currentMediaTime(), flags);
+    if (!newPixelBuffer)
+        return false;
+
+    m_lastPixelBuffer = WTFMove(newPixelBuffer);
+
+    if (m_resourceOwner) {
+        if (auto surface = CVPixelBufferGetIOSurface(m_lastPixelBuffer.get()))
+            IOSurface::setOwnershipIdentity(surface, m_resourceOwner);
+    }
+
+    return true;
+}
+
+bool MediaPlayerPrivateWebM::updateLastImage()
+{
+    if (m_isGatheringVideoFrameMetadata) {
+        if (!m_lastPixelBuffer)
+            return false;
+        if (m_sampleCount == m_lastConvertedSampleCount)
+            return false;
+        m_lastConvertedSampleCount = m_sampleCount;
+    } else if (!updateLastPixelBuffer())
+        return false;
+
+    ASSERT(m_lastPixelBuffer);
+
+    if (!m_rgbConformer) {
+        auto attributes = @{ (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA) };
+        m_rgbConformer = makeUnique<PixelBufferConformerCV>((__bridge CFDictionaryRef)attributes);
+    }
+
+    m_lastImage = NativeImage::create(m_rgbConformer->createImageFromPixelBuffer(m_lastPixelBuffer.get()));
+    return true;
+}
+
+void MediaPlayerPrivateWebM::paint(GraphicsContext& context, const FloatRect& rect)
+{
+    paintCurrentFrameInContext(context, rect);
+}
+
+void MediaPlayerPrivateWebM::paintCurrentFrameInContext(GraphicsContext& context, const FloatRect& outputRect)
+{
+    if (context.paintingDisabled())
+        return;
+
+    auto image = nativeImageForCurrentTime();
+    if (!image)
+        return;
+
+    GraphicsContextStateSaver stateSaver(context);
+    FloatRect imageRect { FloatPoint::zero(), image->size() };
+    context.drawNativeImage(*image, imageRect.size(), outputRect, imageRect);
+}
+
+#if !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
+void MediaPlayerPrivateWebM::willBeAskedToPaintGL()
+{
+    // We have been asked to paint into a WebGL canvas, so take that as a signal to create
+    // a decompression session, even if that means the native video can't also be displayed
+    // in page.
+    if (m_hasBeenAskedToPaintGL)
+        return;
+
+    ALWAYS_LOG(LOGIDENTIFIER);
+    m_hasBeenAskedToPaintGL = true;
+    acceleratedRenderingStateChanged();
+}
+#endif
+
+RefPtr<VideoFrame> MediaPlayerPrivateWebM::videoFrameForCurrentTime()
+{
+    if (!m_isGatheringVideoFrameMetadata)
+        updateLastPixelBuffer();
+    if (!m_lastPixelBuffer)
+        return nullptr;
+    return VideoFrameCV::create(currentMediaTime(), false, VideoFrame::Rotation::None, RetainPtr { m_lastPixelBuffer });
+}
+
+DestinationColorSpace MediaPlayerPrivateWebM::colorSpace()
+{
+    updateLastImage();
+    return m_lastImage ? m_lastImage->colorSpace() : DestinationColorSpace::SRGB();
+}
+
 void MediaPlayerPrivateWebM::setNaturalSize(FloatSize size)
 {
-    FloatSize oldSize = m_naturalSize;
+    auto oldSize = m_naturalSize;
     m_naturalSize = size;
     if (oldSize != m_naturalSize) {
-        INFO_LOG(LOGIDENTIFIER, "was ", oldSize.width(), " x ", oldSize.height(), ", is ", size.width(), " x ", size.height());
+        INFO_LOG(LOGIDENTIFIER, "was ", oldSize, ", is ", size);
         m_player->sizeChanged();
+        
+        if (m_readyState < MediaPlayer::ReadyState::HaveMetadata)
+            setReadyState(MediaPlayer::ReadyState::HaveMetadata);
     }
 }
 
@@ -413,6 +542,21 @@ void MediaPlayerPrivateWebM::setHasVideo(bool hasVideo)
 
     m_hasVideo = hasVideo;
     characteristicsChanged();
+}
+
+void MediaPlayerPrivateWebM::setHasAvailableVideoFrame(bool hasAvailableVideoFrame)
+{
+    if (m_hasAvailableVideoFrame == hasAvailableVideoFrame)
+        return;
+
+    ALWAYS_LOG(LOGIDENTIFIER, hasAvailableVideoFrame);
+    m_hasAvailableVideoFrame = hasAvailableVideoFrame;
+
+    if (!m_hasAvailableVideoFrame)
+        return;
+
+    m_player->firstVideoFrameAvailable();
+    setReadyState(MediaPlayer::ReadyState::HaveEnoughData);
 }
 
 void MediaPlayerPrivateWebM::setDuration(MediaTime duration)
@@ -454,6 +598,7 @@ void MediaPlayerPrivateWebM::setNetworkState(MediaPlayer::NetworkState state)
     if (state == m_networkState)
         return;
 
+    ALWAYS_LOG(LOGIDENTIFIER, state);
     m_networkState = state;
     m_player->networkStateChanged();
 }
@@ -463,13 +608,49 @@ void MediaPlayerPrivateWebM::setReadyState(MediaPlayer::ReadyState state)
     if (state == m_readyState)
         return;
 
+    ALWAYS_LOG(LOGIDENTIFIER, state);
     m_readyState = state;
+    
     m_player->readyStateChanged();
 }
 
 void MediaPlayerPrivateWebM::characteristicsChanged()
 {
     m_player->characteristicChanged();
+}
+
+bool MediaPlayerPrivateWebM::shouldEnsureLayer() const
+{
+#if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
+    return isCopyDisplayedPixelBufferAvailable()
+        && ((m_displayLayer && !CGRectIsEmpty([m_displayLayer bounds]))
+            || !m_player->playerContentBoxRect().isEmpty());
+#else
+    return !m_hasBeenAskedToPaintGL;
+#endif
+}
+
+void MediaPlayerPrivateWebM::playerContentBoxRectChanged(const LayoutRect& newRect)
+{
+    if (!m_displayLayer && !newRect.isEmpty())
+        updateDisplayLayerAndDecompressionSession();
+}
+
+void MediaPlayerPrivateWebM::acceleratedRenderingStateChanged()
+{
+    updateDisplayLayerAndDecompressionSession();
+}
+
+void MediaPlayerPrivateWebM::updateDisplayLayerAndDecompressionSession()
+{
+    if (shouldEnsureLayer()) {
+        destroyDecompressionSession();
+        ensureLayer();
+        return;
+    }
+    
+    destroyLayer();
+    ensureDecompressionSession();
 }
 
 RetainPtr<PlatformLayer> MediaPlayerPrivateWebM::createVideoFullscreenLayer()
@@ -479,7 +660,8 @@ RetainPtr<PlatformLayer> MediaPlayerPrivateWebM::createVideoFullscreenLayer()
 
 void MediaPlayerPrivateWebM::setVideoFullscreenLayer(PlatformLayer *videoFullscreenLayer, WTF::Function<void()>&& completionHandler)
 {
-    m_videoLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, WTFMove(completionHandler), nullptr);
+    updateLastImage();
+    m_videoLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, WTFMove(completionHandler), m_lastImage ? m_lastImage->platformImage() : nullptr);
 }
 
 void MediaPlayerPrivateWebM::setVideoFullscreenFrame(FloatRect frame)
@@ -501,6 +683,12 @@ void MediaPlayerPrivateWebM::setTextTrackRepresentation(TextTrackRepresentation*
 {
     auto* representationLayer = representation ? representation->platformLayer() : nil;
     m_videoLayerManager->setTextTrackRepresentationLayer(representationLayer);
+}
+
+String MediaPlayerPrivateWebM::engineDescription() const
+{
+    static NeverDestroyed<String> description(MAKE_STATIC_STRING_IMPL("Cocoa WebM Engine"));
+    return description;
 }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -563,7 +751,13 @@ void MediaPlayerPrivateWebM::enqueueSample(Ref<MediaSample>&& sample, uint64_t t
         FloatSize formatSize = FloatSize(PAL::CMVideoFormatDescriptionGetPresentationDimensions(formatDescription, true, true));
         if (formatSize != m_naturalSize)
             setNaturalSize(formatSize);
+        
+        if (m_decompressionSession)
+            m_decompressionSession->enqueueSample(platformSample.sample.cmSampleBuffer);
 
+        if (!hasAvailableVideoFrame() && !sample->isNonDisplaying())
+            setHasAvailableVideoFrame(true);
+        
         if (!m_displayLayer)
             return;
 
@@ -578,6 +772,9 @@ void MediaPlayerPrivateWebM::enqueueSample(Ref<MediaSample>&& sample, uint64_t t
         ERROR_LOG(logSiteIdentifier, "Expected sample of type '", FourCC(kCMMediaType_Audio), "', got '", FourCC(mediaType), "'. Bailing.");
         return;
     }
+    
+    if (m_readyState < MediaPlayer::ReadyState::HaveEnoughData && m_enabledVideoTrackID == notFound)
+        setReadyState(MediaPlayer::ReadyState::HaveEnoughData);
 
     auto renderer = m_audioRenderers.get(trackId);
     [renderer enqueueSampleBuffer:platformSample.sample.cmSampleBuffer];
@@ -602,6 +799,12 @@ void MediaPlayerPrivateWebM::reenqueueMediaForTime(TrackBuffer& trackBuffer, uin
 void MediaPlayerPrivateWebM::notifyClientWhenReadyForMoreSamples(uint64_t trackId)
 {
     if (trackId == m_enabledVideoTrackID) {
+        if (m_decompressionSession) {
+            m_decompressionSession->requestMediaDataWhenReady([weakThis = WeakPtr { *this }, trackId] {
+                if (weakThis)
+                    weakThis->didBecomeReadyForMoreSamples(trackId);
+            });
+        }
         if (m_displayLayer) {
             WeakPtr weakThis { *this };
             [m_displayLayer requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^{
@@ -648,6 +851,9 @@ bool MediaPlayerPrivateWebM::isReadyForMoreSamples(uint64_t trackId)
         if (m_displayLayerWasInterrupted)
             return false;
 #endif
+        if (m_decompressionSession)
+            return m_decompressionSession->isReadyForMoreMediaData();
+        
         return [m_displayLayer isReadyForMoreMediaData];
     }
 
@@ -661,9 +867,11 @@ void MediaPlayerPrivateWebM::didBecomeReadyForMoreSamples(uint64_t trackId)
 {
     INFO_LOG(LOGIDENTIFIER, trackId);
 
-    if (trackId == m_enabledVideoTrackID)
+    if (trackId == m_enabledVideoTrackID) {
+        if (m_decompressionSession)
+            m_decompressionSession->stopRequestingMediaData();
         [m_displayLayer stopRequestingMediaData];
-    else if (m_audioRenderers.contains(trackId))
+    } else if (m_audioRenderers.contains(trackId))
         [m_audioRenderers.get(trackId) stopRequestingMediaData];
     else
         return;
@@ -673,11 +881,11 @@ void MediaPlayerPrivateWebM::didBecomeReadyForMoreSamples(uint64_t trackId)
 
 void MediaPlayerPrivateWebM::provideMediaData(uint64_t trackId)
 {
-    auto* trackBuffer = m_trackBufferMap.get(trackId);
-    if (!trackBuffer)
+    auto it = m_trackBufferMap.find(trackId);
+    if (it == m_trackBufferMap.end())
         return;
 
-    provideMediaData(*trackBuffer, trackId);
+    provideMediaData(it->value, trackId);
 }
 
 void MediaPlayerPrivateWebM::provideMediaData(TrackBuffer& trackBuffer, uint64_t trackId)
@@ -734,14 +942,23 @@ void MediaPlayerPrivateWebM::trackDidChangeSelected(VideoTrackPrivate& track, bo
     ALWAYS_LOG(LOGIDENTIFIER, "video trackID = ", trackId, ", selected = ", selected);
 
     if (selected) {
-        ensureLayer();
         m_enabledVideoTrackID = trackId;
+        updateDisplayLayerAndDecompressionSession();
+        if (m_decompressionSession) {
+            m_decompressionSession->requestMediaDataWhenReady([weakThis = WeakPtr { *this }, trackId] {
+                if (weakThis)
+                    weakThis->didBecomeReadyForMoreSamples(trackId);
+            });
+        }
         reenqueSamples(trackId);
         return;
     }
     
-    if (m_enabledVideoTrackID == trackId)
+    if (m_enabledVideoTrackID == trackId) {
         m_enabledVideoTrackID = -1;
+        if (m_decompressionSession)
+            m_decompressionSession->stopRequestingMediaData();
+    }
 }
 
 void MediaPlayerPrivateWebM::trackDidChangeEnabled(AudioTrackPrivate& track, bool enabled)
@@ -832,6 +1049,9 @@ void MediaPlayerPrivateWebM::didParseInitializationData(InitializationSegment&& 
             m_player->addAudioTrack(*track);
         }
     }
+    
+    if (m_hasAudio && !m_hasVideo)
+        setReadyState(MediaPlayer::ReadyState::HaveMetadata);
 }
 
 void MediaPlayerPrivateWebM::didEncounterErrorDuringParsing(int32_t code)
@@ -945,9 +1165,15 @@ void MediaPlayerPrivateWebM::flushIfNeeded()
     if (m_videoTracks.size())
         flushVideo();
 
+    // We initiatively enqueue samples instead of waiting for the
+    // media data requests from m_decompressionSession and m_displayLayer.
+    // In addition, we need to enqueue a sync sample (IDR video frame) first.
+    if (m_decompressionSession)
+        m_decompressionSession->stopRequestingMediaData();
     [m_displayLayer stopRequestingMediaData];
 
-    reenqueSamples(m_enabledVideoTrackID);
+    if (m_enabledVideoTrackID != notFound)
+        reenqueSamples(m_enabledVideoTrackID);
 }
 #endif
 
@@ -968,6 +1194,15 @@ void MediaPlayerPrivateWebM::flushVideo()
 {
     DEBUG_LOG(LOGIDENTIFIER);
     [m_displayLayer flush];
+    
+    if (m_decompressionSession) {
+        m_decompressionSession->flush();
+        m_decompressionSession->notifyWhenHasAvailableVideoFrame([weakThis = WeakPtr { *this }, this] {
+            if (weakThis)
+                setHasAvailableVideoFrame(true);
+        });
+    }
+    setHasAvailableVideoFrame(false);
 }
 
 void MediaPlayerPrivateWebM::flushAudio(AVSampleBufferAudioRenderer *renderer)
@@ -1015,16 +1250,36 @@ void MediaPlayerPrivateWebM::ensureLayer()
         return;
     }
 
+    WeakPtr weakThis { *this };
+    [m_displayLayer requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^{
+        if (weakThis)
+            weakThis->didBecomeReadyForMoreSamples(m_enabledVideoTrackID);
+    }];
+    
+    if (m_enabledVideoTrackID != notFound)
+        reenqueSamples(m_enabledVideoTrackID);
+
     m_videoLayerManager->setVideoLayer(m_displayLayer.get(), snappedIntRect(m_player->playerContentBoxRect()).size());
+    m_player->renderingModeChanged();
+}
 
-    if (m_enabledVideoTrackID != notFound) {
-        WeakPtr weakThis { *this };
-        [m_displayLayer requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^{
-            if (weakThis)
-                weakThis->didBecomeReadyForMoreSamples(m_enabledVideoTrackID);
-        }];
-    }
+void MediaPlayerPrivateWebM::ensureDecompressionSession()
+{
+    if (m_decompressionSession)
+        return;
 
+    m_decompressionSession = WebCoreDecompressionSession::createOpenGL();
+    m_decompressionSession->setTimebase([m_synchronizer timebase]);
+    
+    m_decompressionSession->requestMediaDataWhenReady([weakThis = WeakPtr { *this }, this] {
+        if (weakThis)
+            didBecomeReadyForMoreSamples(m_enabledVideoTrackID);
+    });
+    m_decompressionSession->notifyWhenHasAvailableVideoFrame([weakThis = WeakPtr { *this }, this] {
+        if (weakThis)
+            setHasAvailableVideoFrame(true);
+    });
+    
     m_player->renderingModeChanged();
 }
 
@@ -1099,7 +1354,18 @@ void MediaPlayerPrivateWebM::destroyLayer()
     [m_displayLayer flush];
     [m_displayLayer stopRequestingMediaData];
     m_displayLayer = nullptr;
+    setHasAvailableVideoFrame(false);
     m_player->renderingModeChanged();
+}
+
+void MediaPlayerPrivateWebM::destroyDecompressionSession()
+{
+    if (!m_decompressionSession)
+        return;
+    
+    m_decompressionSession->invalidate();
+    m_decompressionSession = nullptr;
+    setHasAvailableVideoFrame(false);
 }
 
 void MediaPlayerPrivateWebM::destroyAudioRenderer(RetainPtr<AVSampleBufferAudioRenderer> renderer)
@@ -1130,6 +1396,49 @@ void MediaPlayerPrivateWebM::clearTracks()
     for (auto& track : m_audioTracks)
         track->setEnabledChangedCallback(nullptr);
     m_audioTracks.clear();
+}
+
+void MediaPlayerPrivateWebM::startVideoFrameMetadataGathering()
+{
+    ASSERT(!m_videoFrameMetadataGatheringObserver || m_synchronizer);
+    m_isGatheringVideoFrameMetadata = true;
+
+    // FIXME: We should use a CADisplayLink to get updates on rendering, for now we emulate with addPeriodicTimeObserverForInterval.
+    m_videoFrameMetadataGatheringObserver = [m_synchronizer addPeriodicTimeObserverForInterval:PAL::CMTimeMake(1, 60) queue:dispatch_get_main_queue() usingBlock:[weakThis = WeakPtr { *this }](CMTime currentTime) {
+        ensureOnMainThread([weakThis, currentTime] {
+            if (weakThis)
+                weakThis->checkNewVideoFrameMetadata(currentTime);
+        });
+    }];
+}
+
+void MediaPlayerPrivateWebM::stopVideoFrameMetadataGathering()
+{
+    m_isGatheringVideoFrameMetadata = false;
+    m_videoFrameMetadata = { };
+
+    ASSERT(m_videoFrameMetadataGatheringObserver);
+    if (m_videoFrameMetadataGatheringObserver)
+        [m_synchronizer removeTimeObserver:m_videoFrameMetadataGatheringObserver.get()];
+    m_videoFrameMetadataGatheringObserver = nil;
+}
+
+void MediaPlayerPrivateWebM::checkNewVideoFrameMetadata(CMTime currentTime)
+{
+    if (!m_player)
+        return;
+
+    if (!updateLastPixelBuffer())
+        return;
+
+    VideoFrameMetadata metadata;
+    metadata.width = m_naturalSize.width();
+    metadata.height = m_naturalSize.height();
+    metadata.presentedFrames = ++m_sampleCount;
+    metadata.presentationTime = PAL::CMTimeGetSeconds(currentTime);
+
+    m_videoFrameMetadata = metadata;
+    m_player->onNewVideoFrameMetadata(WTFMove(metadata), m_lastPixelBuffer.get());
 }
 
 WTFLogChannel& MediaPlayerPrivateWebM::logChannel() const

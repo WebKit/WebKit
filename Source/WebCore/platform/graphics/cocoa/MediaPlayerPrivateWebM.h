@@ -42,6 +42,8 @@
 OBJC_CLASS AVSampleBufferAudioRenderer;
 OBJC_CLASS AVSampleBufferDisplayLayer;
 
+typedef struct __CVBuffer *CVPixelBufferRef;
+
 namespace WebCore {
 
 class AudioTrackPrivateWebM;
@@ -50,12 +52,15 @@ class MediaDescription;
 class MediaPlaybackTarget;
 class MediaSample;
 class MediaSampleAVFObjC;
+class PixelBufferConformerCV;
 class ResourceError;
 class SharedBuffer;
 class TextTrackRepresentation;
 class TrackBuffer;
+class VideoFrame;
 class VideoLayerManagerObjC;
 class VideoTrackPrivateWebM;
+class WebCoreDecompressionSession;
 
 class MediaPlayerPrivateWebM
     : public MediaPlayerPrivateInterface
@@ -87,28 +92,28 @@ private:
 
     PlatformLayer* platformLayer() const final;
 
-    bool supportsPictureInPicture() const override { return true; }
+    bool supportsPictureInPicture() const final { return true; }
     bool supportsFullscreen() const final { return true; }
 
     void play() final;
     void pause() final;
     bool paused() const final;
 
-    FloatSize naturalSize() const final { return m_naturalSize; };
+    FloatSize naturalSize() const final { return m_naturalSize; }
 
-    bool hasVideo() const final { return m_hasVideo; };
-    bool hasAudio() const final { return m_hasAudio; };
+    bool hasVideo() const final { return m_hasVideo; }
+    bool hasAudio() const final { return m_hasAudio; }
 
     void setPageIsVisible(bool) final;
 
     MediaTime timeFudgeFactor() const { return { 1, 10 }; }
     MediaTime currentMediaTime() const final;
-    MediaTime durationMediaTime() const final { return m_duration; };
-    MediaTime startTime() const final { return MediaTime::zeroTime(); };
-    MediaTime initialTime() const final { return MediaTime::zeroTime(); };
+    MediaTime durationMediaTime() const final { return m_duration; }
+    MediaTime startTime() const final { return MediaTime::zeroTime(); }
+    MediaTime initialTime() const final { return MediaTime::zeroTime(); }
 
     void seek(const MediaTime&) final;
-    bool seeking() const final { return m_seeking; };
+    bool seeking() const final { return m_seeking; }
 
     void setRateDouble(double) final;
     double rate() const final { return m_rate; }
@@ -117,8 +122,8 @@ private:
     void setVolume(float) final;
     void setMuted(bool) final;
 
-    MediaPlayer::NetworkState networkState() const final { return m_networkState; };
-    MediaPlayer::ReadyState readyState() const final { return m_readyState; };
+    MediaPlayer::NetworkState networkState() const final { return m_networkState; }
+    MediaPlayer::ReadyState readyState() const final { return m_readyState; }
 
     std::unique_ptr<PlatformTimeRanges> seekable() const final;
     MediaTime maxMediaTimeSeekable() const final { return durationMediaTime(); }
@@ -131,19 +136,32 @@ private:
 
     bool didLoadingProgress() const final;
 
-    void paint(GraphicsContext&, const FloatRect&) final { };
-
-    DestinationColorSpace colorSpace() final { return DestinationColorSpace::SRGB(); };
+    RefPtr<NativeImage> nativeImageForCurrentTime() final;
+    bool updateLastPixelBuffer();
+    bool updateLastImage();
+    void paint(GraphicsContext&, const FloatRect&) final;
+    void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) final;
+#if PLATFORM(COCOA) && !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
+    void willBeAskedToPaintGL() final;
+#endif
+    RefPtr<VideoFrame> videoFrameForCurrentTime() final;
+    DestinationColorSpace colorSpace() final;
 
     void setNaturalSize(FloatSize);
     void setHasAudio(bool);
     void setHasVideo(bool);
+    void setHasAvailableVideoFrame(bool);
+    bool hasAvailableVideoFrame() const final { return m_hasAvailableVideoFrame; }
     void setDuration(MediaTime);
     void setNetworkState(MediaPlayer::NetworkState);
     void setReadyState(MediaPlayer::ReadyState);
     void characteristicsChanged();
 
-    bool supportsAcceleratedRendering() const final { return true; };
+    bool shouldEnsureLayer() const;
+    void playerContentBoxRectChanged(const LayoutRect&) final;
+    bool supportsAcceleratedRendering() const final { return true; }
+    void acceleratedRenderingStateChanged() final;
+    void updateDisplayLayerAndDecompressionSession();
 
     RetainPtr<PlatformLayer> createVideoFullscreenLayer() final;
     void setVideoFullscreenLayer(PlatformLayer*, Function<void()>&& completionHandler) final;
@@ -152,6 +170,9 @@ private:
     bool requiresTextTrackRepresentation() const final;
     void setTextTrackRepresentation(TextTrackRepresentation*) final;
     void syncTextTrackBounds() final;
+        
+    String engineDescription() const final;
+    MediaPlayer::MovieLoadType movieLoadType() const final { return MediaPlayer::MovieLoadType::Download; }
         
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     bool isCurrentPlaybackTargetWireless() const final;
@@ -196,13 +217,22 @@ private:
     void addTrackBuffer(uint64_t, RefPtr<MediaDescription>&&);
 
     void ensureLayer();
+    void ensureDecompressionSession();
     void addAudioRenderer(uint64_t);
     void removeAudioRenderer(uint64_t);
 
     void destroyLayer();
+    void destroyDecompressionSession();
     void destroyAudioRenderer(RetainPtr<AVSampleBufferAudioRenderer>);
     void destroyAudioRenderers();
     void clearTracks();
+        
+    void startVideoFrameMetadataGathering() final;
+    void stopVideoFrameMetadataGathering() final;
+    std::optional<VideoFrameMetadata> videoFrameMetadata() final { return std::exchange(m_videoFrameMetadata, { }); }
+    void setResourceOwner(const ProcessIdentity& resourceOwner) final { m_resourceOwner = resourceOwner; }
+
+    void checkNewVideoFrameMetadata(CMTime);
 
     const Logger& logger() const final { return m_logger.get(); }
     const char* logClassName() const final { return "MediaPlayerPrivateWebM"; }
@@ -217,6 +247,10 @@ private:
     MediaPlayer* m_player;
     RetainPtr<AVSampleBufferRenderSynchronizer> m_synchronizer;
     RetainPtr<id> m_durationObserver;
+    RetainPtr<CVPixelBufferRef> m_lastPixelBuffer;
+    RefPtr<NativeImage> m_lastImage;
+    std::unique_ptr<PixelBufferConformerCV> m_rgbConformer;
+    RefPtr<WebCoreDecompressionSession> m_decompressionSession;
     WeakPtr<WebMResourceClient> m_resourceClient;
 
     Vector<RefPtr<VideoTrackPrivateWebM>> m_videoTracks;
@@ -230,6 +264,9 @@ private:
 
     MediaPlayer::NetworkState m_networkState { MediaPlayer::NetworkState::Empty };
     MediaPlayer::ReadyState m_readyState { MediaPlayer::ReadyState::HaveNothing };
+#if !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
+    bool m_hasBeenAskedToPaintGL { false };
+#endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     RefPtr<MediaPlaybackTarget> m_playbackTarget;
@@ -238,6 +275,12 @@ private:
     Ref<const Logger> m_logger;
     const void* m_logIdentifier;
     std::unique_ptr<VideoLayerManagerObjC> m_videoLayerManager;
+    RetainPtr<id> m_videoFrameMetadataGatheringObserver;
+    bool m_isGatheringVideoFrameMetadata { false };
+    std::optional<VideoFrameMetadata> m_videoFrameMetadata;
+    uint64_t m_lastConvertedSampleCount { 0 };
+    uint64_t m_sampleCount { 0 };
+    ProcessIdentity m_resourceOwner;
 
     FloatSize m_naturalSize;
     MediaTime m_currentTime;
@@ -251,6 +294,7 @@ private:
 #endif
     bool m_hasAudio { false };
     bool m_hasVideo { false };
+    bool m_hasAvailableVideoFrame { false };
     bool m_seeking { false };
     bool m_visible { false };
     bool m_parsingSucceeded { true };
