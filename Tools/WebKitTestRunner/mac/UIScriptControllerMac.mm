@@ -252,6 +252,19 @@ bool UIScriptControllerMac::isWindowContentViewFirstResponder() const
     return [window firstResponder] == [window contentView];
 }
 
+void UIScriptControllerMac::becomeFirstResponder()
+{
+    auto *webView = this->webView();
+    [webView.window makeFirstResponder:webView];
+}
+
+void UIScriptControllerMac::resignFirstResponder()
+{
+    auto *webView = this->webView();
+    if (webView.window.firstResponder == webView)
+        [webView.window makeFirstResponder:nil];
+}
+
 void UIScriptControllerMac::toggleCapsLock(JSValueRef callback)
 {
     m_capsLockOn = !m_capsLockOn;

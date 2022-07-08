@@ -68,16 +68,6 @@ void UIScriptControllerCocoa::setWebViewEditable(bool editable)
     webView()._editable = editable;
 }
 
-void UIScriptControllerCocoa::becomeFirstResponder()
-{
-    [webView() becomeFirstResponder];
-}
-
-void UIScriptControllerCocoa::resignFirstResponder()
-{
-    [webView() resignFirstResponder];
-}
-
 void UIScriptControllerCocoa::doAsyncTask(JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);

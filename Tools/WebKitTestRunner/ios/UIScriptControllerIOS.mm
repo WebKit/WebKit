@@ -1391,6 +1391,16 @@ bool UIScriptControllerIOS::isWebContentFirstResponder() const
     return [webView() _contentViewIsFirstResponder];
 }
 
+void UIScriptControllerIOS::becomeFirstResponder()
+{
+    [webView() becomeFirstResponder];
+}
+
+void UIScriptControllerIOS::resignFirstResponder()
+{
+    [webView() resignFirstResponder];
+}
+
 }
 
 #endif // PLATFORM(IOS_FAMILY)

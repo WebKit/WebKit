@@ -910,6 +910,9 @@ webkit.org/b/239750 media/media-source/media-mp4-xhe-aac.html [ Skip ]
 webkit.org/b/242145 media/mediacapabilities/mediacapabilities-allowed-codecs.html [ Skip ]
 webkit.org/b/242145 media/mediacapabilities/mediacapabilities-allowed-containers.html [ Skip ]
 
+# resignFirstResponder is not implemented on GTK+
+fast/shadow-dom/focus-ring-on-shadow-host.html
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #////////////////////////////////////////////////////////////////////////////////////////

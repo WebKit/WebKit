@@ -1190,16 +1190,20 @@ window.UIHelper = class UIHelper {
 
     static resignFirstResponder()
     {
-        if (!this.isWebKit2())
+        if (!this.isWebKit2()) {
+            testRunner.setMainFrameIsFirstResponder(false);
             return Promise.resolve();
+        }
 
         return new Promise(resolve => testRunner.runUIScript(`uiController.resignFirstResponder()`, resolve));
     }
 
     static becomeFirstResponder()
     {
-        if (!this.isWebKit2())
+        if (!this.isWebKit2()) {
+            testRunner.setMainFrameIsFirstResponder(true);
             return Promise.resolve();
+        }
 
         return new Promise(resolve => testRunner.runUIScript(`uiController.becomeFirstResponder()`, resolve));
     }

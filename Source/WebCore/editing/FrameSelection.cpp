@@ -2146,11 +2146,10 @@ void FrameSelection::focusedOrActiveStateChanged()
     // Because Style::Resolver::checkOneSelector() and
     // RenderTheme::isFocused() check if the frame is active, we have to
     // update style and theme state that depended on those.
-    if (Element* element = m_document->focusedElement()) {
+    for (RefPtr element = m_document->focusedElement(); element; element = element->shadowHost()) {
         element->invalidateStyleForSubtree();
-        if (RenderObject* renderer = element->renderer())
-            if (renderer && renderer->style().hasEffectiveAppearance())
-                renderer->theme().stateChanged(*renderer, ControlStates::States::Focused);
+        if (RenderObject* renderer = element->renderer(); renderer && renderer->style().hasEffectiveAppearance())
+            renderer->theme().stateChanged(*renderer, ControlStates::States::Focused);
     }
 #endif
 }

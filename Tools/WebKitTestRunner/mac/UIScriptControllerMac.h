@@ -54,6 +54,8 @@ private:
     void firstResponderSuppressionForWebView(bool) override;
     void makeWindowContentViewFirstResponder() override;
     bool isWindowContentViewFirstResponder() const override;
+    void becomeFirstResponder() override;
+    void resignFirstResponder() override;
     void toggleCapsLock(JSValueRef) override;
     NSView *platformContentView() const override;
     void clearAllCallbacks() override;
