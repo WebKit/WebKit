@@ -706,6 +706,7 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView, AllowPageBac
     // FIXME: Which ones of these need to be done in the process swap case and which ones in the exit case?
     [self _hidePasswordView];
     [self _cancelAnimatedResize];
+    [self _destroyResizeAnimationView];
 
 #if HAVE(UIKIT_RESIZABLE_WINDOWS)
     [self _invalidateResizeAssertions];
@@ -750,6 +751,8 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView, AllowPageBac
 
     _pendingFindLayerID = 0;
     _committedFindLayerID = 0;
+
+    _liveResizeParameters = std::nullopt;
 }
 
 - (void)_processWillSwap
@@ -2007,12 +2010,28 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 #endif
 }
 
+- (void)_updateLiveResizeTransform
+{
+    CGFloat scale = self.bounds.size.width / _liveResizeParameters->viewWidth;
+    CGAffineTransform transform = CGAffineTransformMakeScale(scale, scale);
+
+    CGPoint newContentOffset = [self _contentOffsetAdjustedForObscuredInset:CGPointMake(_liveResizeParameters->initialScrollPosition.x * scale, _liveResizeParameters->initialScrollPosition.y * scale)];
+    CGPoint currentContentOffset = [_scrollView contentOffset];
+
+    transform.tx = currentContentOffset.x - newContentOffset.x;
+    transform.ty = currentContentOffset.y - newContentOffset.y;
+
+    [_resizeAnimationView setTransform:transform];
+}
+
 - (void)_frameOrBoundsChanged
 {
     CGRect bounds = self.bounds;
     [_scrollView setFrame:bounds];
 
-    if (_dynamicViewportUpdateMode == WebKit::DynamicViewportUpdateMode::NotResizing) {
+    if (_liveResizeParameters)
+        [self _updateLiveResizeTransform];
+    else if (_dynamicViewportUpdateMode == WebKit::DynamicViewportUpdateMode::NotResizing) {
         if (!_viewLayoutSizeOverride)
             [self _dispatchSetViewLayoutSize:[self activeViewLayoutSize:self.bounds]];
         if (!_maximumUnobscuredSizeOverride)
@@ -2403,6 +2422,31 @@ static int32_t activeOrientation(WKWebView *webView)
     return webView->_overridesInterfaceOrientation ? deviceOrientationForUIInterfaceOrientation(webView->_interfaceOrientationOverride) : webView->_page->deviceOrientation();
 }
 
+- (void)_ensureResizeAnimationView
+{
+    if (_resizeAnimationView)
+        return;
+
+    NSUInteger indexOfContentView = [[_scrollView subviews] indexOfObject:_contentView.get()];
+    _resizeAnimationView = adoptNS([[UIView alloc] init]);
+    [_resizeAnimationView layer].name = @"ResizeAnimation";
+    [_scrollView insertSubview:_resizeAnimationView.get() atIndex:indexOfContentView];
+    [_resizeAnimationView addSubview:_contentView.get()];
+    [_resizeAnimationView addSubview:[_contentView unscaledView]];
+}
+
+- (void)_destroyResizeAnimationView
+{
+    if (!_resizeAnimationView)
+        return;
+
+    NSUInteger indexOfResizeAnimationView = [[_scrollView subviews] indexOfObject:_resizeAnimationView.get()];
+    [_scrollView insertSubview:_contentView.get() atIndex:indexOfResizeAnimationView];
+    [_scrollView insertSubview:[_contentView unscaledView] atIndex:indexOfResizeAnimationView + 1];
+    [_resizeAnimationView removeFromSuperview];
+    _resizeAnimationView = nil;
+}
+
 - (void)_cancelAnimatedResize
 {
     WKWEBVIEW_RELEASE_LOG("%p (pageProxyID=%llu) -[WKWebView _cancelAnimatedResize] _dynamicViewportUpdateMode %d", self, _page->identifier().toUInt64(), _dynamicViewportUpdateMode);
@@ -2411,13 +2455,7 @@ static int32_t activeOrientation(WKWebView *webView)
         return;
 
     if (!_customContentView) {
-        if (_resizeAnimationView) {
-            NSUInteger indexOfResizeAnimationView = [[_scrollView subviews] indexOfObject:_resizeAnimationView.get()];
-            [_scrollView insertSubview:_contentView.get() atIndex:indexOfResizeAnimationView];
-            [_scrollView insertSubview:[_contentView unscaledView] atIndex:indexOfResizeAnimationView + 1];
-            [_resizeAnimationView removeFromSuperview];
-            _resizeAnimationView = nil;
-        }
+        [self _destroyResizeAnimationView];
 
         [_contentView setHidden:NO];
         _resizeAnimationTransformAdjustments = CATransform3DIdentity;
@@ -3288,14 +3326,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 
     _resizeAnimationTransformAdjustments = CATransform3DIdentity;
 
-    if (!_resizeAnimationView) {
-        NSUInteger indexOfContentView = [[_scrollView subviews] indexOfObject:_contentView.get()];
-        _resizeAnimationView = adoptNS([[UIView alloc] init]);
-        [_resizeAnimationView layer].name = @"ResizeAnimation";
-        [_scrollView insertSubview:_resizeAnimationView.get() atIndex:indexOfContentView];
-        [_resizeAnimationView addSubview:_contentView.get()];
-        [_resizeAnimationView addSubview:[_contentView unscaledView]];
-    }
+    [self _ensureResizeAnimationView];
 
     CGSize contentSizeInContentViewCoordinates = contentViewBounds.size;
     [_scrollView setMinimumZoomScale:std::min(newViewLayoutSize.width() / contentSizeInContentViewCoordinates.width, [_scrollView minimumZoomScale])];
@@ -3370,6 +3401,42 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     _waitingForEndAnimatedResize = NO;
     if (!_waitingForCommitAfterAnimatedResize)
         [self _didCompleteAnimatedResize];
+}
+
+- (void)_beginLiveResize
+{
+    if (_liveResizeParameters) {
+        RELEASE_LOG_FAULT(Resize, "Error: _beginLiveResize called with an outstanding live resize.");
+        return;
+    }
+
+    WKWEBVIEW_RELEASE_LOG("%p (pageProxyID=%llu) -[WKWebView _beginLiveResize]", self, _page->identifier().toUInt64());
+
+    _liveResizeParameters = { { self.bounds.size.width, self.scrollView.contentOffset } };
+
+    [self _ensureResizeAnimationView];
+}
+
+- (void)_endLiveResize
+{
+    WKWEBVIEW_RELEASE_LOG("%p (pageProxyID=%llu) -[WKWebView _endLiveResize]", self, _page->identifier().toUInt64());
+
+    if (!_liveResizeParameters)
+        return;
+
+    UIView *liveResizeSnapshotView = [self snapshotViewAfterScreenUpdates:NO];
+    [liveResizeSnapshotView setFrame:self.bounds];
+    [self addSubview:liveResizeSnapshotView];
+
+    _liveResizeParameters = std::nullopt;
+
+    ASSERT(_dynamicViewportUpdateMode == WebKit::DynamicViewportUpdateMode::NotResizing);
+    [self _destroyResizeAnimationView];
+    [self _frameOrBoundsChanged];
+
+    [self _doAfterNextPresentationUpdate:^{
+        [liveResizeSnapshotView removeFromSuperview];
+    }];
 }
 
 - (void)_resizeWhileHidingContentWithUpdates:(void (^)(void))updateBlock

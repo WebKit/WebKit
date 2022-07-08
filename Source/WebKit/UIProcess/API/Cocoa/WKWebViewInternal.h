@@ -218,6 +218,12 @@ class ViewGestureController;
     std::optional<CGRect> _frozenVisibleContentRect;
     std::optional<CGRect> _frozenUnobscuredContentRect;
 
+    struct LiveResizeParameters {
+        CGFloat viewWidth;
+        CGPoint initialScrollPosition;
+    };
+    std::optional<LiveResizeParameters> _liveResizeParameters;
+
     BOOL _commitDidRestoreScrollPosition;
     std::optional<WebCore::FloatPoint> _scrollOffsetToRestore;
     WebCore::FloatBoxExtent _obscuredInsetsWhenSaved;
