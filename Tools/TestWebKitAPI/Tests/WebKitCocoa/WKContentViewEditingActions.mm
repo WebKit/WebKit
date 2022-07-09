@@ -77,6 +77,25 @@ TEST(WebKit, InvokeShareWithoutSelection)
     [webView waitForNextPresentationUpdate];
 }
 
+TEST(WebKit, CopyInAutoFilledAndViewablePasswordField)
+{
+    RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 568) configuration:configuration.get()]);
+    auto *contentView = [webView textInputContentView];
+    [webView synchronouslyLoadHTMLString:@"<input type='password' value='hunter2' autofocus /><input type='password' value='hunter2' id='autofill' />"];
+    [webView selectAll:nil];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_FALSE([contentView canPerformAction:@selector(copy:) withSender:nil]);
+
+    [webView objectByEvaluatingJavaScript:@(R"script(
+        let field = document.getElementById('autofill');
+        internals.setAutoFilledAndViewable(field, true);
+        field.select())script")];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_TRUE([contentView canPerformAction:@selector(copy:) withSender:nil]);
+}
+
 #if ENABLE(IMAGE_ANALYSIS)
 
 #if ENABLE(APP_HIGHLIGHTS)
