@@ -2817,14 +2817,14 @@ float RenderStyle::outlineWidth() const
     if (m_backgroundData->outline.style() == BorderStyle::None)
         return 0;
     if (outlineStyleIsAuto() == OutlineIsAuto::On)
-        return std::max(m_backgroundData->outline.width(), RenderTheme::platformFocusRingWidth());
+        return std::max(m_backgroundData->outline.width(), RenderTheme::singleton().platformFocusRingWidth());
     return m_backgroundData->outline.width();
 }
 
 float RenderStyle::outlineOffset() const
 {
     if (outlineStyleIsAuto() == OutlineIsAuto::On)
-        return (m_backgroundData->outline.offset() + RenderTheme::platformFocusRingOffset(outlineWidth()));
+        return (m_backgroundData->outline.offset() + RenderTheme::singleton().platformFocusRingOffset(outlineWidth()));
     return m_backgroundData->outline.offset();
 }
 

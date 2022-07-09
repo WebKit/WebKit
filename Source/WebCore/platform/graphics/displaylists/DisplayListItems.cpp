@@ -32,6 +32,7 @@
 #include "FontCascade.h"
 #include "ImageBuffer.h"
 #include "MediaPlayer.h"
+#include "RenderTheme.h"
 #include "SharedBuffer.h"
 #include <wtf/text/TextStream.h>
 
@@ -41,9 +42,6 @@
 
 namespace WebCore {
 namespace DisplayList {
-
-// Should match RenderTheme::platformFocusRingWidth()
-static const float platformFocusRingWidth = 3;
 
 void Save::apply(GraphicsContext& context) const
 {
@@ -308,7 +306,7 @@ void DrawFocusRingPath::apply(GraphicsContext& context) const
 std::optional<FloatRect> DrawFocusRingPath::localBounds(const GraphicsContext&) const
 {
     FloatRect result = m_path.fastBoundingRect();
-    result.inflate(platformFocusRingWidth);
+    result.inflate(RenderTheme::singleton().platformFocusRingWidth());
     return result;
 }
 
@@ -330,7 +328,7 @@ std::optional<FloatRect> DrawFocusRingRects::localBounds(const GraphicsContext&)
     FloatRect result;
     for (auto& rect : m_rects)
         result.unite(rect);
-    result.inflate(platformFocusRingWidth);
+    result.inflate(RenderTheme::singleton().platformFocusRingWidth());
     return result;
 }
 
