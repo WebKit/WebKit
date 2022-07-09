@@ -131,13 +131,18 @@ void FlexLayout::layout()
     auto& rootGeometry = m_layoutState.geometryForBox(flexBox());
     auto horizontalConstraints = Layout::HorizontalConstraints { rootGeometry.contentBoxLeft(), rootGeometry.contentBoxWidth() };
     auto availableVerticalSpace = [&] {
-        auto verticalSpace = std::optional<LayoutUnit> { }; 
-        auto rootBoxLogicalHeight = flexBox().style().logicalHeight();
-        if (rootBoxLogicalHeight.isFixed())
-            verticalSpace = LayoutUnit { rootBoxLogicalHeight.value() };
-        auto rootBoxLogicalMinimumHeight = flexBox().style().logicalMinHeight();
-        if (rootBoxLogicalMinimumHeight.isFixed())
-            verticalSpace = std::max(verticalSpace.value_or(0_lu), LayoutUnit { rootBoxLogicalMinimumHeight.value() });
+        auto& flexBoxStyle = flexBox().style();
+
+        auto adjustedHeightValue = [&](auto& property) -> std::optional<LayoutUnit> {
+            if (!property.isFixed())
+                return { };
+            auto boxSizingIsContentBox = flexBoxStyle.boxSizing() == BoxSizing::ContentBox;
+            return LayoutUnit { boxSizingIsContentBox ? property.value() : property.value() - rootGeometry.verticalMarginBorderAndPadding() };
+        };
+
+        auto verticalSpace = adjustedHeightValue(flexBoxStyle.logicalHeight());
+        if (auto maximumHeightValue = adjustedHeightValue(flexBoxStyle.logicalMaxHeight()))
+            verticalSpace = verticalSpace ? std::min(*verticalSpace, *maximumHeightValue) : *maximumHeightValue;
         return verticalSpace;
     };
     auto constraints = Layout::ConstraintsForFlexContent { { horizontalConstraints, rootGeometry.contentBoxTop() }, availableVerticalSpace() };
