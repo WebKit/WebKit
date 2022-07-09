@@ -59,14 +59,14 @@ RenderSVGResourceClipper::~RenderSVGResourceClipper() = default;
 void RenderSVGResourceClipper::removeAllClientsFromCache(bool markForInvalidation)
 {
     m_clipBoundaries = { };
-    m_clipper.clear();
+    m_clipperMap.clear();
 
     markAllClientsForInvalidation(markForInvalidation ? LayoutAndBoundariesInvalidation : ParentOnlyInvalidation);
 }
 
 void RenderSVGResourceClipper::removeClientFromCache(RenderElement& client, bool markForInvalidation)
 {
-    m_clipper.remove(&client);
+    m_clipperMap.remove(&client);
 
     markClientForInvalidation(client, markForInvalidation ? BoundariesInvalidation : ParentOnlyInvalidation);
 }
@@ -141,17 +141,8 @@ bool RenderSVGResourceClipper::pathOnlyClipping(GraphicsContext& context, const 
     return true;
 }
 
-bool RenderSVGResourceClipper::applyClippingToContext(GraphicsContext& context, RenderElement& renderer, const FloatRect& objectBoundingBox, const FloatRect& clippedContentBounds, float effectiveZoom)
+ClipperData::Inputs RenderSVGResourceClipper::computeInputs(RenderElement& renderer, const FloatRect& objectBoundingBox, const FloatRect& clippedContentBounds, float effectiveZoom)
 {
-    ClipperData& clipperData = addRendererToClipper(renderer);
-    
-    LOG_WITH_STREAM(SVG, stream << "RenderSVGResourceClipper " << this << " applyClippingToContext: renderer " << &renderer << " objectBoundingBox " << objectBoundingBox << " clippedContentBounds " << clippedContentBounds << " (existing image buffer " << clipperData.imageBuffer.get() << ")");
-
-    AffineTransform animatedLocalTransform = clipPathElement().animatedLocalTransform();
-
-    if (!clipperData.imageBuffer && pathOnlyClipping(context, animatedLocalTransform, objectBoundingBox, effectiveZoom))
-        return true;
-
     AffineTransform absoluteTransform = SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(renderer);
 
     // Ignore 2D rotation, as it doesn't affect the size of the mask.
@@ -160,13 +151,27 @@ bool RenderSVGResourceClipper::applyClippingToContext(GraphicsContext& context, 
     // Determine scale factor for the clipper. The size of intermediate ImageBuffers shouldn't be bigger than kMaxFilterSize.
     ImageBuffer::sizeNeedsClamping(objectBoundingBox.size(), scale);
 
-    if (!clipperData.isValidForGeometry(objectBoundingBox, clippedContentBounds, absoluteTransform)) {
-        // FIXME (149469): This image buffer should not be unconditionally unaccelerated. Making it match the context breaks nested clipping, though.
-        auto maskImage = context.createScaledImageBuffer(clippedContentBounds, scale, DestinationColorSpace::SRGB(), RenderingMode::Unaccelerated); // FIXME
-        if (!maskImage)
-            return false;
+    return { objectBoundingBox, clippedContentBounds, scale, effectiveZoom };
+}
 
-        clipperData = { WTFMove(maskImage), objectBoundingBox, clippedContentBounds, absoluteTransform };
+bool RenderSVGResourceClipper::applyClippingToContext(GraphicsContext& context, RenderElement& renderer, const FloatRect& objectBoundingBox, const FloatRect& clippedContentBounds, float effectiveZoom)
+{
+    auto& clipperData = *m_clipperMap.ensure(&renderer, [&]() {
+        return makeUnique<ClipperData>();
+    }).iterator->value;
+
+    LOG_WITH_STREAM(SVG, stream << "RenderSVGResourceClipper " << this << " applyClippingToContext: renderer " << &renderer << " objectBoundingBox " << objectBoundingBox << " clippedContentBounds " << clippedContentBounds << " (existing image buffer " << clipperData.imageBuffer.get() << ")");
+
+    AffineTransform animatedLocalTransform = clipPathElement().animatedLocalTransform();
+
+    if (!clipperData.imageBuffer && pathOnlyClipping(context, animatedLocalTransform, objectBoundingBox, effectiveZoom))
+        return true;
+
+    if (clipperData.invalidate(computeInputs(renderer, objectBoundingBox, clippedContentBounds, effectiveZoom))) {
+        // FIXME (149469): This image buffer should not be unconditionally unaccelerated. Making it match the context breaks nested clipping, though.
+        clipperData.imageBuffer = context.createScaledImageBuffer(clippedContentBounds, clipperData.inputs.scale, DestinationColorSpace::SRGB(), RenderingMode::Unaccelerated); // FIXME
+        if (!clipperData.imageBuffer)
+            return false;
 
         GraphicsContext& maskContext = clipperData.imageBuffer->context();
         maskContext.concatCTM(animatedLocalTransform);
@@ -193,7 +198,7 @@ bool RenderSVGResourceClipper::applyClippingToContext(GraphicsContext& context, 
     if (!clipperData.imageBuffer)
         return false;
 
-    SVGRenderingContext::clipToImageBuffer(context, clippedContentBounds, scale, clipperData.imageBuffer, true);
+    SVGRenderingContext::clipToImageBuffer(context, clippedContentBounds, clipperData.inputs.scale, clipperData.imageBuffer, true);
     return true;
 }
 
@@ -276,11 +281,6 @@ void RenderSVGResourceClipper::calculateClipContentRepaintRect()
     m_clipBoundaries = clipPathElement().animatedLocalTransform().mapRect(m_clipBoundaries);
 }
 
-RenderSVGResourceClipper::ClipperData& RenderSVGResourceClipper::addRendererToClipper(const RenderObject& object)
-{
-    return m_clipper.add(&object, ClipperData()).iterator->value;
-}
-
 bool RenderSVGResourceClipper::hitTestClipContent(const FloatRect& objectBoundingBox, const FloatPoint& nodeAtPoint)
 {
     FloatPoint point = nodeAtPoint;
@@ -319,7 +319,9 @@ FloatRect RenderSVGResourceClipper::resourceBoundingBox(const RenderObject& obje
 {
     // Resource was not layouted yet. Give back the boundingBox of the object.
     if (selfNeedsLayout()) {
-        addRendererToClipper(object); // For selfNeedsClientInvalidation().
+        m_clipperMap.ensure(&object, [&]() { // For selfNeedsClientInvalidation().
+            return makeUnique<ClipperData>();
+        });
         return object.objectBoundingBox();
     }
     
