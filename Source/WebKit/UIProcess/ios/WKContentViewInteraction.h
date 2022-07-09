@@ -34,6 +34,7 @@
 #import "GestureRecognizerConsistencyEnforcer.h"
 #import "GestureTypes.h"
 #import "IdentifierTypes.h"
+#import "ImageAnalysisUtilities.h"
 #import "InteractionInformationAtPosition.h"
 #import "PasteboardAccessIntent.h"
 #import "SyntheticEditingCommandType.h"
@@ -261,6 +262,13 @@ enum class ProceedWithTextSelectionInImage : bool {
 
 enum ImageAnalysisRequestIdentifierType { };
 using ImageAnalysisRequestIdentifier = ObjectIdentifier<ImageAnalysisRequestIdentifierType>;
+
+struct ImageAnalysisContextMenuActionData {
+    bool hasSelectableText { false };
+    bool hasVisualSearchResults { false };
+    RetainPtr<CGImageRef> copySubjectResult;
+    RetainPtr<UIMenu> machineReadableCodeMenu;
+};
 
 }
 
@@ -522,22 +530,19 @@ using ImageAnalysisRequestIdentifier = ObjectIdentifier<ImageAnalysisRequestIden
     std::optional<WebCore::ElementContext> _elementPendingImageAnalysis;
     Vector<BlockPtr<void(WebKit::ProceedWithTextSelectionInImage)>> _actionsToPerformAfterPendingImageAnalysis;
 #if USE(UICONTEXTMENU)
-#if ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
-    RetainPtr<UIMenu> _contextMenuForMachineReadableCode;
-#endif // ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
     BOOL _contextMenuWasTriggeredByImageAnalysisTimeout;
 #endif // USE(UICONTEXTMENU)
     BOOL _isProceedingWithTextSelectionInImage;
-    RetainPtr<id> _imageAnalyzer;
+    RetainPtr<CocoaImageAnalyzer> _imageAnalyzer;
 #if USE(QUICK_LOOK)
     RetainPtr<QLPreviewController> _visualSearchPreviewController;
     RetainPtr<UIImage> _visualSearchPreviewImage;
     RetainPtr<NSURL> _visualSearchPreviewImageURL;
     RetainPtr<NSString> _visualSearchPreviewTitle;
     CGRect _visualSearchPreviewImageBounds;
-    BOOL _hasSelectableTextInImage;
-    BOOL _hasVisualSearchResults;
 #endif // USE(QUICK_LOOK)
+    BOOL _canUpdateVisibleContextMenuWithImageAnalysisActions;
+    std::optional<WebKit::ImageAnalysisContextMenuActionData> _imageAnalysisContextMenuActionData;
 #endif // ENABLE(IMAGE_ANALYSIS)
     uint32_t _fullscreenVideoImageAnalysisRequestIdentifier;
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
@@ -545,7 +550,6 @@ using ImageAnalysisRequestIdentifier = ObjectIdentifier<ImageAnalysisRequestIden
     RetainPtr<NSMutableSet<UIButton *>> _imageAnalysisActionButtons;
     WebCore::FloatRect _imageAnalysisInteractionBounds;
     std::optional<WebKit::RemoveBackgroundData> _removeBackgroundData;
-    RetainPtr<CGImageRef> _copySubjectResult;
 #endif
 }
 

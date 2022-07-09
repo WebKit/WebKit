@@ -30,6 +30,8 @@
 @class WKActionSheetAssistant;
 @class WKContentView;
 
+UIActionIdentifier elementActionTypeToUIActionIdentifier(_WKElementActionType);
+
 @interface _WKElementAction ()
 
 + (instancetype)_elementActionWithType:(_WKElementActionType)type info:(_WKActivatedElementInfo *)info assistant:(WKActionSheetAssistant *)assistant;
