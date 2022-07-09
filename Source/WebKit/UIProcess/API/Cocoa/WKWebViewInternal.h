@@ -223,6 +223,7 @@ class ViewGestureController;
         CGPoint initialScrollPosition;
     };
     std::optional<LiveResizeParameters> _liveResizeParameters;
+    RetainPtr<id> _endLiveResizeNotificationObserver;
 
     BOOL _commitDidRestoreScrollPosition;
     std::optional<WebCore::FloatPoint> _scrollOffsetToRestore;

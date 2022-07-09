@@ -1057,7 +1057,7 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
 
 - (void)_restorePageScrollPosition:(std::optional<WebCore::FloatPoint>)scrollPosition scrollOrigin:(WebCore::FloatPoint)scrollOrigin previousObscuredInset:(WebCore::FloatBoxExtent)obscuredInsets scale:(double)scale
 {
-    if (_dynamicViewportUpdateMode != WebKit::DynamicViewportUpdateMode::NotResizing) {
+    if (self._shouldDeferGeometryUpdates) {
         // Defer scroll position restoration until after the current resize completes.
         RetainPtr<WKWebView> retainedSelf = self;
         _callbacksDeferredDuringResize.append([retainedSelf, scrollPosition, scrollOrigin, obscuredInsets, scale] {
@@ -1081,7 +1081,7 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
 
 - (void)_restorePageStateToUnobscuredCenter:(std::optional<WebCore::FloatPoint>)center scale:(double)scale
 {
-    if (_dynamicViewportUpdateMode != WebKit::DynamicViewportUpdateMode::NotResizing) {
+    if (self._shouldDeferGeometryUpdates) {
         // Defer scroll position restoration until after the current resize completes.
         RetainPtr<WKWebView> retainedSelf = self;
         _callbacksDeferredDuringResize.append([retainedSelf, center, scale] {
@@ -1198,7 +1198,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (void)_scrollToContentScrollPosition:(WebCore::FloatPoint)scrollPosition scrollOrigin:(WebCore::IntPoint)scrollOrigin animated:(BOOL)animated
 {
-    if (_commitDidRestoreScrollPosition || _dynamicViewportUpdateMode != WebKit::DynamicViewportUpdateMode::NotResizing)
+    if (_commitDidRestoreScrollPosition || self._shouldDeferGeometryUpdates)
         return;
 
     // Don't allow content to do programmatic scrolls for non-scrollable pages when zoomed.
@@ -1592,10 +1592,10 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 #if HAVE(UIKIT_RESIZABLE_WINDOWS)
     if (_page->hasRunningProcess() && self.window)
         _page->setIsWindowResizingEnabled(self._isWindowResizingEnabled);
-#endif
-#if HAVE(UIKIT_RESIZABLE_WINDOWS)
     [self _invalidateResizeAssertions];
 #endif
+    [self _destroyEndLiveResizeObserver];
+    [self _endLiveResize];
 }
 
 #if HAVE(UIKIT_RESIZABLE_WINDOWS)
@@ -2014,6 +2014,40 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 #endif
 }
 
+- (void)_beginAutomaticLiveResizeIfNeeded
+{
+    if (_liveResizeParameters)
+        return;
+
+    if (!self.window)
+        return;
+
+    // FIXME: This should use explicit live resize notifications instead of inferring it,
+    // especially since this means we may do some spurious live resizes.
+    if (self.window.windowScene.activationState != UISceneActivationStateForegroundInactive)
+        return;
+
+    [self _beginLiveResize];
+    
+    _endLiveResizeNotificationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UISceneDidActivateNotification object:self.window.windowScene queue:NSOperationQueue.mainQueue usingBlock:makeBlockPtr([weakSelf = WeakObjCPtr<WKWebView>(self)] (NSNotification *) {
+        auto strongSelf = weakSelf.get();
+        if (!strongSelf)
+            return;
+        
+        [strongSelf _destroyEndLiveResizeObserver];
+        [strongSelf _endLiveResize];
+    }).get()];
+}
+
+- (void)_destroyEndLiveResizeObserver
+{
+    if (!_endLiveResizeNotificationObserver)
+        return;
+
+    [[NSNotificationCenter defaultCenter] removeObserver:_endLiveResizeNotificationObserver.get()];
+    _endLiveResizeNotificationObserver = nil;
+}
+
 - (void)_updateLiveResizeTransform
 {
     CGFloat scale = self.bounds.size.width / _liveResizeParameters->viewWidth;
@@ -2033,9 +2067,13 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     CGRect bounds = self.bounds;
     [_scrollView setFrame:bounds];
 
+    if (_page && _page->preferences().automaticLiveResizeEnabled())
+        [self _beginAutomaticLiveResizeIfNeeded];
+
     if (_liveResizeParameters)
         [self _updateLiveResizeTransform];
-    else if (_dynamicViewportUpdateMode == WebKit::DynamicViewportUpdateMode::NotResizing) {
+    
+    if (!self._shouldDeferGeometryUpdates) {
         if (!_viewLayoutSizeOverride)
             [self _dispatchSetViewLayoutSize:[self activeViewLayoutSize:self.bounds]];
         if (!_maximumUnobscuredSizeOverride)
@@ -2300,6 +2338,11 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
     return contentInsets;
 }
 
+- (BOOL)_shouldDeferGeometryUpdates
+{
+    return _liveResizeParameters || _dynamicViewportUpdateMode != WebKit::DynamicViewportUpdateMode::NotResizing;
+}
+
 - (void)_updateVisibleContentRects
 {
     auto viewStability = _viewStabilityWhenVisibleContentRectUpdateScheduled;
@@ -2329,7 +2372,7 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
     if (!CGRectIsEmpty(_animatedResizeOldBounds))
         [self _cancelAnimatedResize];
 
-    if (_dynamicViewportUpdateMode != WebKit::DynamicViewportUpdateMode::NotResizing
+    if (self._shouldDeferGeometryUpdates
         || (_needsResetViewStateAfterCommitLoadForMainFrame && ![_contentView sizeChangedSinceLastVisibleContentRectUpdate])
         || [_scrollView isZoomBouncing]
         || _currentlyAdjustingScrollViewInsetsForKeyboard) {
@@ -2520,6 +2563,12 @@ static int32_t activeOrientation(WKWebView *webView)
 
     _dynamicViewportUpdateMode = WebKit::DynamicViewportUpdateMode::NotResizing;
     _animatedResizeOldBounds = { };
+
+    [self _didStopDeferringGeometryUpdates];
+}
+
+- (void)_didStopDeferringGeometryUpdates
+{
     [self _scheduleVisibleContentRectUpdate];
 
     CGRect newBounds = self.bounds;
@@ -2745,7 +2794,7 @@ static int32_t activeOrientation(WKWebView *webView)
 
     _avoidsUnsafeArea = avoidsUnsafeArea;
 
-    if ([self _updateScrollViewContentInsetsIfNecessary] && _dynamicViewportUpdateMode == WebKit::DynamicViewportUpdateMode::NotResizing && !_viewLayoutSizeOverride)
+    if ([self _updateScrollViewContentInsetsIfNecessary] && !self._shouldDeferGeometryUpdates && !_viewLayoutSizeOverride)
         [self _dispatchSetViewLayoutSize:[self activeViewLayoutSize:self.bounds]];
 
     [self _updateScrollViewInsetAdjustmentBehavior];
@@ -2815,6 +2864,47 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 - (BOOL)_shouldAvoidSecurityHeuristicScoreUpdates
 {
     return [_contentView _shouldAvoidSecurityHeuristicScoreUpdates];
+}
+
+- (void)_beginLiveResize
+{
+    if (_liveResizeParameters) {
+        RELEASE_LOG_FAULT(Resize, "Error: _beginLiveResize called with an outstanding live resize.");
+        return;
+    }
+
+    if (_dynamicViewportUpdateMode != WebKit::DynamicViewportUpdateMode::NotResizing) {
+        RELEASE_LOG_FAULT(Resize, "Error: _beginLiveResize called during an animated resize.");
+        return;
+    }
+
+    WKWEBVIEW_RELEASE_LOG("%p (pageProxyID=%llu) -[WKWebView _beginLiveResize]", self, _page->identifier().toUInt64());
+
+    _liveResizeParameters = { { self.bounds.size.width, self.scrollView.contentOffset } };
+
+    [self _ensureResizeAnimationView];
+}
+
+- (void)_endLiveResize
+{
+    WKWEBVIEW_RELEASE_LOG("%p (pageProxyID=%llu) -[WKWebView _endLiveResize]", self, _page->identifier().toUInt64());
+
+    if (!_liveResizeParameters)
+        return;
+
+    UIView *liveResizeSnapshotView = [self snapshotViewAfterScreenUpdates:NO];
+    [liveResizeSnapshotView setFrame:self.bounds];
+    [self addSubview:liveResizeSnapshotView];
+
+    _liveResizeParameters = std::nullopt;
+
+    ASSERT(_dynamicViewportUpdateMode == WebKit::DynamicViewportUpdateMode::NotResizing);
+    [self _destroyResizeAnimationView];
+    [self _didStopDeferringGeometryUpdates];
+
+    [self _doAfterNextPresentationUpdate:^{
+        [liveResizeSnapshotView removeFromSuperview];
+    }];    
 }
 
 #if HAVE(UIFINDINTERACTION)
@@ -2928,7 +3018,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 {
     _viewLayoutSizeOverride = viewLayoutSizeOverride;
 
-    if (_dynamicViewportUpdateMode == WebKit::DynamicViewportUpdateMode::NotResizing)
+    if (!self._shouldDeferGeometryUpdates)
         [self _dispatchSetViewLayoutSize:WebCore::FloatSize(viewLayoutSizeOverride)];
 }
 
@@ -2943,7 +3033,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     ASSERT((!self.bounds.size.width || size.width <= self.bounds.size.width) && (!self.bounds.size.height || size.height <= self.bounds.size.height));
     _minimumUnobscuredSizeOverride = size;
 
-    if (_dynamicViewportUpdateMode == WebKit::DynamicViewportUpdateMode::NotResizing)
+    if (!self._shouldDeferGeometryUpdates)
         _page->setMinimumUnobscuredSize(WebCore::FloatSize(size));
 }
 
@@ -2959,7 +3049,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     ASSERT((!self.bounds.size.width || size.width <= self.bounds.size.width) && (!self.bounds.size.height || size.height <= self.bounds.size.height));
     _maximumUnobscuredSizeOverride = size;
 
-    if (_dynamicViewportUpdateMode == WebKit::DynamicViewportUpdateMode::NotResizing) {
+    if (!self._shouldDeferGeometryUpdates) {
         _page->setDefaultUnobscuredSize(WebCore::FloatSize(size));
         _page->setMaximumUnobscuredSize(WebCore::FloatSize(size));
     }
@@ -3042,7 +3132,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     _overridesInterfaceOrientation = YES;
     _interfaceOrientationOverride = interfaceOrientation;
 
-    if (_dynamicViewportUpdateMode == WebKit::DynamicViewportUpdateMode::NotResizing)
+    if (!self._shouldDeferGeometryUpdates)
         [self _dispatchSetDeviceOrientation:deviceOrientationForUIInterfaceOrientation(_interfaceOrientationOverride)];
 }
 
@@ -3247,7 +3337,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     WebCore::FloatRect oldUnobscuredContentRect = _page->unobscuredContentRect();
 
     auto isOldBoundsValid = !CGRectIsEmpty(oldBounds) || !CGRectIsEmpty(_animatedResizeOldBounds);
-    if (![self usesStandardContentView] || !_hasCommittedLoadForMainFrame || !isOldBoundsValid || oldUnobscuredContentRect.isEmpty()) {
+    if (![self usesStandardContentView] || !_hasCommittedLoadForMainFrame || !isOldBoundsValid || oldUnobscuredContentRect.isEmpty() || _liveResizeParameters) {
         if ([_customContentView respondsToSelector:@selector(web_beginAnimatedResizeWithUpdates:)])
             [_customContentView web_beginAnimatedResizeWithUpdates:updateBlock];
         else
@@ -3407,42 +3497,6 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
         [self _didCompleteAnimatedResize];
 }
 
-- (void)_beginLiveResize
-{
-    if (_liveResizeParameters) {
-        RELEASE_LOG_FAULT(Resize, "Error: _beginLiveResize called with an outstanding live resize.");
-        return;
-    }
-
-    WKWEBVIEW_RELEASE_LOG("%p (pageProxyID=%llu) -[WKWebView _beginLiveResize]", self, _page->identifier().toUInt64());
-
-    _liveResizeParameters = { { self.bounds.size.width, self.scrollView.contentOffset } };
-
-    [self _ensureResizeAnimationView];
-}
-
-- (void)_endLiveResize
-{
-    WKWEBVIEW_RELEASE_LOG("%p (pageProxyID=%llu) -[WKWebView _endLiveResize]", self, _page->identifier().toUInt64());
-
-    if (!_liveResizeParameters)
-        return;
-
-    UIView *liveResizeSnapshotView = [self snapshotViewAfterScreenUpdates:NO];
-    [liveResizeSnapshotView setFrame:self.bounds];
-    [self addSubview:liveResizeSnapshotView];
-
-    _liveResizeParameters = std::nullopt;
-
-    ASSERT(_dynamicViewportUpdateMode == WebKit::DynamicViewportUpdateMode::NotResizing);
-    [self _destroyResizeAnimationView];
-    [self _frameOrBoundsChanged];
-
-    [self _doAfterNextPresentationUpdate:^{
-        [liveResizeSnapshotView removeFromSuperview];
-    }];
-}
-
 - (void)_resizeWhileHidingContentWithUpdates:(void (^)(void))updateBlock
 {
     WKWEBVIEW_RELEASE_LOG("%p (pageProxyID=%llu) -[WKWebView _resizeWhileHidingContentWithUpdates:]", self, _page->identifier().toUInt64());
@@ -3469,7 +3523,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 // (to avoid redundant copies for PDFs), once it is no longer in use by internal clients.
 - (void)_snapshotRectAfterScreenUpdates:(BOOL)afterScreenUpdates rectInViewCoordinates:(CGRect)rectInViewCoordinates intoImageOfWidth:(CGFloat)imageWidth completionHandler:(void(^)(CGImageRef))completionHandler
 {
-    if (_dynamicViewportUpdateMode != WebKit::DynamicViewportUpdateMode::NotResizing) {
+    if (self._shouldDeferGeometryUpdates) {
         // Defer snapshotting until after the current resize completes.
         _callbacksDeferredDuringResize.append([retainedSelf = retainPtr(self), afterScreenUpdates, rectInViewCoordinates, imageWidth, completionHandler = makeBlockPtr(completionHandler)] {
             [retainedSelf _snapshotRectAfterScreenUpdates:afterScreenUpdates rectInViewCoordinates:rectInViewCoordinates intoImageOfWidth:imageWidth completionHandler:completionHandler.get()];

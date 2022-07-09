@@ -110,6 +110,17 @@ AsyncOverflowScrollingEnabled:
     WebCore:
       default: false
 
+AutomaticLiveResizeEnabled:
+  type: bool
+  humanReadableName: "Enable Automatic Live Resize"
+  humanReadableDescription: "Automatically synchronize web view resize with painting"
+  webcoreBinding: none
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      "HAVE(UIKIT_WEBKIT_INTERNALS)": true
+      default: false
+
 BlockIOKitInWebContentSandbox:
   type: bool
   humanReadableName: "IOKit blocking in the WebContent sandbox"
