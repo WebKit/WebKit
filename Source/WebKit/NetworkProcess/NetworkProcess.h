@@ -382,6 +382,8 @@ public:
     void getOriginsWithPushAndNotificationPermissions(PAL::SessionID, CompletionHandler<void(const Vector<WebCore::SecurityOriginData>&)>&&);
     void hasPushSubscriptionForTesting(PAL::SessionID, URL&&, CompletionHandler<void(bool)>&&);
 
+    void setApplicationName(const String& applicationName, audit_token_t);
+    
 private:
     void platformInitializeNetworkProcess(const NetworkProcessCreationParameters&);
 

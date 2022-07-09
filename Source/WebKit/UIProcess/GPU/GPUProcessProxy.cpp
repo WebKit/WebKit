@@ -45,6 +45,7 @@
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
 #include "WebProcessProxyMessages.h"
+#include <WebCore/LocalizedStrings.h>
 #include <WebCore/LogInitialization.h>
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
 #include <WebCore/RuntimeApplicationChecks.h>
@@ -475,8 +476,13 @@ void GPUProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
 #endif
 
 #if PLATFORM(COCOA)
-    if (auto networkProcess = NetworkProcessProxy::defaultNetworkProcess())
+    if (auto networkProcess = NetworkProcessProxy::defaultNetworkProcess()) {
         networkProcess->sendXPCEndpointToProcess(*this);
+        String uiProcessName;
+        auto displayName = makeString(WEB_UI_STRING("%s Graphics and Media", "visible name of the GPU process. The argument is the application name."), uiProcessName);
+        auto auditToken = connection()->getAuditToken();
+        networkProcess->send(Messages::NetworkProcess::SetApplicationName(displayName, *auditToken), 0);
+    }
 #endif
 
     beginResponsivenessChecks();
