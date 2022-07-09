@@ -5616,11 +5616,7 @@ void Internals::videoFrameAvailable(VideoFrame& videoFrame, VideoFrameTimeMetada
         if (!videoSettings.width() || !videoSettings.height())
             return;
 
-        auto rgba = videoFrame->getRGBAImageData();
-        if (!rgba)
-            return;
-
-        auto imageData = ImageData::create(rgba.releaseNonNull(), videoSettings.width(), videoSettings.height(), { { PredefinedColorSpace::SRGB } });
+        auto imageData = ImageData::create(videoSettings.width(), videoSettings.height(), { { PredefinedColorSpace::SRGB } });
         if (!imageData.hasException())
             m_nextTrackFramePromise->resolve(imageData.releaseReturnValue());
         else
