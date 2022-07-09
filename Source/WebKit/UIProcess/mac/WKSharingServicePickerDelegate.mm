@@ -185,7 +185,7 @@
 
 - (void)removeBackground
 {
-    _menuProxy->applyMarkupToControlledImage();
+    _menuProxy->removeBackgroundFromControlledImage();
 }
 
 @end

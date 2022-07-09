@@ -6762,7 +6762,7 @@ void WebPage::didCommitLoad(WebFrame* frame)
     updateMockAccessibilityElementAfterCommittingLoad();
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    m_elementsToExcludeFromMarkup.clear();
+    m_elementsToExcludeFromRemoveBackground.clear();
 #endif
 }
 
@@ -8137,7 +8137,7 @@ void WebPage::modelInlinePreviewDidFailToLoad(WebCore::GraphicsLayer::PlatformLa
 void WebPage::shouldAllowRemoveBackground(const ElementContext& context, CompletionHandler<void(bool)>&& completion) const
 {
     auto element = elementForContext(context);
-    completion(element && !m_elementsToExcludeFromMarkup.contains(*element));
+    completion(element && !m_elementsToExcludeFromRemoveBackground.contains(*element));
 }
 
 #endif

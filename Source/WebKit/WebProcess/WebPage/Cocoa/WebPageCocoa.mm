@@ -566,7 +566,7 @@ private:
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
-void WebPage::replaceImageWithMarkupResults(const ElementContext& elementContext, const Vector<String>& types, const IPC::DataReference& data)
+void WebPage::replaceImageForRemoveBackground(const ElementContext& elementContext, const Vector<String>& types, const IPC::DataReference& data)
 {
     Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
     auto element = elementForContext(elementContext);
@@ -600,7 +600,7 @@ void WebPage::replaceImageWithMarkupResults(const ElementContext& elementContext
         if (auto imageRange = makeSimpleRange(WebCore::VisiblePositionRange { position.previous(), position })) {
             for (WebCore::TextIterator iterator { *imageRange, { } }; !iterator.atEnd(); iterator.advance()) {
                 if (RefPtr image = dynamicDowncast<HTMLImageElement>(iterator.node())) {
-                    m_elementsToExcludeFromMarkup.add(*image);
+                    m_elementsToExcludeFromRemoveBackground.add(*image);
                     break;
                 }
             }

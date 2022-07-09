@@ -53,7 +53,7 @@ public:
 
 #if ENABLE(SERVICE_CONTROLS)
     void clearServicesMenu();
-    void applyMarkupToControlledImage();
+    void removeBackgroundFromControlledImage();
 #endif
 
     NSWindow *window() const;
@@ -76,7 +76,7 @@ private:
     void getShareMenuItem(CompletionHandler<void(NSMenuItem *)>&&);
     void showServicesMenu();
     void setupServicesMenu();
-    void appendMarkupItemToControlledImageMenuIfNeeded();
+    void appendRemoveBackgroundItemToControlledImageMenuIfNeeded();
 #endif
 
     NSMenu *platformMenu() const override;

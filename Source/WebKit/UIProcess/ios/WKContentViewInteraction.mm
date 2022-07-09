@@ -4722,7 +4722,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
         auto [elementContext, image, preferredMIMEType] = *data;
         if (auto [data, type] = WebKit::imageDataForRemoveBackground(image.get(), preferredMIMEType.createCFString().get()); data)
-            view->_page->replaceImageWithMarkupResults(elementContext, { String { type.get() } }, { static_cast<const uint8_t*>([data bytes]), [data length] });
+            view->_page->replaceImageForRemoveBackground(elementContext, { String { type.get() } }, { static_cast<const uint8_t*>([data bytes]), [data length] });
     }];
 }
 

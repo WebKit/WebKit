@@ -939,9 +939,9 @@ void WebPageProxy::replaceSelectionWithPasteboardData(const Vector<String>& type
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
-void WebPageProxy::replaceImageWithMarkupResults(const ElementContext& elementContext, const Vector<String>& types, const IPC::DataReference& data)
+void WebPageProxy::replaceImageForRemoveBackground(const ElementContext& elementContext, const Vector<String>& types, const IPC::DataReference& data)
 {
-    send(Messages::WebPage::ReplaceImageWithMarkupResults(elementContext, types, data));
+    send(Messages::WebPage::ReplaceImageForRemoveBackground(elementContext, types, data));
 }
 
 #endif

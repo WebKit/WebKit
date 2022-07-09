@@ -273,7 +273,7 @@ void WebContextMenuProxyMac::setupServicesMenu()
     if (!hasControlledImage)
         [m_menu setShowsStateColumn:YES];
 
-    appendMarkupItemToControlledImageMenuIfNeeded();
+    appendRemoveBackgroundItemToControlledImageMenuIfNeeded();
 
     // Explicitly add a menu item for each telephone number that is in the selection.
     Vector<RetainPtr<NSMenuItem>> telephoneNumberMenuItems;
@@ -304,7 +304,7 @@ void WebContextMenuProxyMac::setupServicesMenu()
         ServicesController::singleton().refreshExistingServices();
 }
 
-void WebContextMenuProxyMac::appendMarkupItemToControlledImageMenuIfNeeded()
+void WebContextMenuProxyMac::appendRemoveBackgroundItemToControlledImageMenuIfNeeded()
 {
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     auto* page = this->page();
@@ -363,7 +363,7 @@ void WebContextMenuProxyMac::clearServicesMenu()
     m_menu = nullptr;
 }
 
-void WebContextMenuProxyMac::applyMarkupToControlledImage()
+void WebContextMenuProxyMac::removeBackgroundFromControlledImage()
 {
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     if (!page())
@@ -377,7 +377,7 @@ void WebContextMenuProxyMac::applyMarkupToControlledImage()
     if (!data)
         return;
 
-    page()->replaceImageWithMarkupResults(*elementContext, { String(type.get()) }, IPC::DataReference(static_cast<const uint8_t*>([data bytes]), [data length]));
+    page()->replaceImageForRemoveBackground(*elementContext, { String(type.get()) }, IPC::DataReference(static_cast<const uint8_t*>([data bytes]), [data length]));
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 }
 
