@@ -272,7 +272,7 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
     }
 }
 
-static UIActionIdentifier elementActionTypeToUIActionIdentifier(_WKElementActionType actionType)
+UIActionIdentifier elementActionTypeToUIActionIdentifier(_WKElementActionType actionType)
 {
     switch (actionType) {
     case _WKElementActionTypeCustom:
