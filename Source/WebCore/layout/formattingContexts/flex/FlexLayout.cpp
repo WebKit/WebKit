@@ -66,13 +66,13 @@ FlexLayout::LineHeightList FlexLayout::computeAvailableLogicalVerticalSpace(cons
 
 LayoutUnit FlexLayout::computeAvailableLogicalHorizontalSpace(const LogicalFlexItems& flexItems, const LogicalConstraints& flexConstraints) const
 {
-    if (flexConstraints.horizontalSpace)
-        return *flexConstraints.horizontalSpace;
+    if (flexConstraints.horizontalSpace.available)
+        return *flexConstraints.horizontalSpace.available;
 
     auto availableSpace = LayoutUnit { };
     for (auto& flexItem : flexItems)
         availableSpace += flexItem.width();
-    return availableSpace;
+    return std::max(availableSpace, flexConstraints.horizontalSpace.minimum.value_or(0_lu));
 }
 
 FlexLayout::WrappingPositions FlexLayout::computeWrappingPositions(const LogicalFlexItems& flexItems, LayoutUnit availableSpace) const
@@ -159,7 +159,7 @@ void FlexLayout::computeLogicalWidthForShrinkingFlexItems(LogicalFlexItems& flex
             }
             if (!didFreeze)
                 break;
-            flexShrinkBase = totalShrink ? (totalFlexibleSpace - availableSpace) / totalShrink : 0.f;
+            flexShrinkBase = totalShrink ? (totalFlexibleSpace - availableSpace) / totalShrink : 1.f;
         }
     };
     adjustShrinkBase();

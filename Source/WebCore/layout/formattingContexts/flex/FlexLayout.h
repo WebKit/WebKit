@@ -80,7 +80,11 @@ public:
     using LogicalFlexItems = Vector<LogicalFlexItem>;
     struct LogicalConstraints {
         std::optional<LayoutUnit> verticalSpace;
-        std::optional<LayoutUnit> horizontalSpace;
+        struct HorizontalSpace {
+            std::optional<LayoutUnit> available; // This is how much space there is for flexing in main axis direction.
+            std::optional<LayoutUnit> minimum; // This is how much space is at least available for flexing in main axis direction.
+        };
+        HorizontalSpace horizontalSpace;
     };
     void layout(const LogicalConstraints&, LogicalFlexItems&);
 

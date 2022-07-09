@@ -304,9 +304,10 @@ void FlexFormattingContext::layoutInFlowContentForIntegration(const ConstraintsF
     auto logicalFlexConstraints = [&] {
         auto flexDirection = root().style().flexDirection();
         auto flexDirectionIsInlineAxis = flexDirection == FlexDirection::Row || flexDirection == FlexDirection::RowReverse;
-        auto logicalVerticalSapce = flexDirectionIsInlineAxis ? constraints.availableVerticalSpace() : std::make_optional(constraints.horizontal().logicalWidth);
-        auto logicalHorizontalSapce = flexDirectionIsInlineAxis ? std::make_optional(constraints.horizontal().logicalWidth) : constraints.availableVerticalSpace();
-        return FlexLayout::LogicalConstraints { logicalVerticalSapce, logicalHorizontalSapce };
+        auto logicalVerticalSpace = flexDirectionIsInlineAxis ? constraints.availableVerticalSpace() : std::make_optional(constraints.horizontal().logicalWidth);
+        auto logicalHorizontalSpace = flexDirectionIsInlineAxis ? std::make_optional(constraints.horizontal().logicalWidth) : constraints.availableVerticalSpace();
+        auto logicalMinimumHorizontalSpace = flexDirectionIsInlineAxis ? std::nullopt : constraints.minimumVerticalSpace();
+        return FlexLayout::LogicalConstraints { logicalVerticalSpace, { logicalHorizontalSpace, logicalMinimumHorizontalSpace } };
     };
 
     flexLayout.layout(logicalFlexConstraints(), logicalFlexItems);
