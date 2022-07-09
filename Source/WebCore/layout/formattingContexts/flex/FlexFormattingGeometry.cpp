@@ -39,6 +39,20 @@ FlexFormattingGeometry::FlexFormattingGeometry(const FlexFormattingContext& flex
 {
 }
 
+bool FlexFormattingGeometry::isMainAxisParallelWithInlineAxes(const ContainerBox& flexBox)
+{
+    ASSERT(flexBox.isFlexBox());
+    auto flexDirection = flexBox.style().flexDirection();
+    return flexDirection == FlexDirection::Row || flexBox.style().flexDirection() == FlexDirection::RowReverse;
+}
+
+bool FlexFormattingGeometry::isReversedToContentDirection(const ContainerBox& flexBox)
+{
+    ASSERT(flexBox.isFlexBox());
+    auto flexDirection = flexBox.style().flexDirection();
+    return flexDirection == FlexDirection::RowReverse || flexDirection == FlexDirection::ColumnReverse;
+}
+
 IntrinsicWidthConstraints FlexFormattingGeometry::intrinsicWidthConstraints(const ContainerBox& flexItem) const
 {
     auto fixedMarginBorderAndPadding = [&](auto& layoutBox) {

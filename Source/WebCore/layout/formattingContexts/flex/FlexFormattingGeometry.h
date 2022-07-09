@@ -43,6 +43,9 @@ public:
 
     IntrinsicWidthConstraints intrinsicWidthConstraints(const ContainerBox&) const;
 
+    static bool isMainAxisParallelWithInlineAxes(const ContainerBox& flexBox);
+    static bool isReversedToContentDirection(const ContainerBox& flexBox);
+
 private:
     const FlexFormattingContext& formattingContext() const { return downcast<FlexFormattingContext>(FormattingGeometry::formattingContext()); }
 };

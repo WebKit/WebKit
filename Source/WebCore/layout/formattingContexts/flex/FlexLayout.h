@@ -39,7 +39,7 @@ namespace Layout {
 // https://www.w3.org/TR/css-flexbox-1/
 class FlexLayout {
 public:
-    FlexLayout(const RenderStyle& flexBoxStyle);
+    FlexLayout(const ContainerBox& flexBox);
 
     struct LogicalFlexItem {
     public:
@@ -101,15 +101,13 @@ private:
     WrappingPositions computeWrappingPositions(const LogicalFlexItems&, LayoutUnit availableSpace) const;
     LayoutUnit computeAvailableLogicalHorizontalSpace(const LogicalFlexItems&, const LogicalConstraints&) const;
 
-    bool isMainAxisParallelWithInlineAxes() const { return m_flexBoxStyle.flexDirection() == FlexDirection::Row || m_flexBoxStyle.flexDirection() == FlexDirection::RowReverse; }
-    bool isReversedToContentDirection() const { return m_flexBoxStyle.flexDirection() == FlexDirection::RowReverse || m_flexBoxStyle.flexDirection() == FlexDirection::ColumnReverse; }
-
     using LineHeightList = Vector<LayoutUnit>;
     LineHeightList computeAvailableLogicalVerticalSpace(const LogicalFlexItems&, const WrappingPositions&, const LogicalConstraints&) const;
 
-    const RenderStyle& flexBoxStyle() const { return m_flexBoxStyle; }
+    const ContainerBox& flexBox() const { return m_flexBox; }
+    const RenderStyle& flexBoxStyle() const { return flexBox().style(); }
 
-    const RenderStyle& m_flexBoxStyle;
+    const ContainerBox& m_flexBox;
 };
 
 inline FlexLayout::LogicalFlexItem::LogicalFlexItem(const FlexRect& marginRect, LengthType widthType, LengthType heightType, IntrinsicWidthConstraints intrinsicWidthConstraints, const ContainerBox& layoutBox)

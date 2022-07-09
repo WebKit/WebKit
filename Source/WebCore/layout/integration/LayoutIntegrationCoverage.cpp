@@ -703,9 +703,6 @@ bool canUseForFlexLayout(const RenderFlexibleBox& flexBox)
     if (flexBoxStyle.overflowY() == Overflow::Scroll || flexBoxStyle.overflowY() == Overflow::Auto)
         return false;
 
-    if (flexBoxStyle.flexWrap() == FlexWrap::Reverse)
-        return false;
-
     auto alignItemValue = flexBoxStyle.alignItems().position();
     if (alignItemValue == ItemPosition::Baseline || alignItemValue == ItemPosition::LastBaseline || alignItemValue == ItemPosition::SelfStart || alignItemValue == ItemPosition::SelfEnd)
         return false;

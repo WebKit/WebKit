@@ -34,8 +34,8 @@
 namespace WebCore {
 namespace Layout {
 
-FlexLayout::FlexLayout(const RenderStyle& flexBoxStyle)
-    : m_flexBoxStyle(flexBoxStyle)
+FlexLayout::FlexLayout(const ContainerBox& flexBox)
+    : m_flexBox(flexBox)
 {
 }
 
@@ -83,7 +83,8 @@ FlexLayout::WrappingPositions FlexLayout::computeWrappingPositions(const Logical
     case FlexWrap::NoWrap:
         wrappingPositions.append(flexItems.size());
         break;
-    case FlexWrap::Wrap: {
+    case FlexWrap::Wrap:
+    case FlexWrap::Reverse: {
         auto accumulatedWidth = LayoutUnit { };
         size_t lastWrapIndex = 0;
         for (size_t index = 0; index < flexItems.size(); ++index) {
@@ -101,7 +102,7 @@ FlexLayout::WrappingPositions FlexLayout::computeWrappingPositions(const Logical
         break;
     }
     default:
-        ASSERT_NOT_IMPLEMENTED_YET();
+        ASSERT_NOT_REACHED();
         break;
     }
     return wrappingPositions;
@@ -352,7 +353,7 @@ void FlexLayout::justifyFlexItems(LogicalFlexItems& flexItems, const LineRange& 
 
         auto positionalAlignment = [&] {
             auto positionalAlignmentValue = justifyContent.position();
-            if (!isMainAxisParallelWithInlineAxes() && (positionalAlignmentValue == ContentPosition::Left || positionalAlignmentValue == ContentPosition::Right))
+            if (!FlexFormattingGeometry::isMainAxisParallelWithInlineAxes(flexBox()) && (positionalAlignmentValue == ContentPosition::Left || positionalAlignmentValue == ContentPosition::Right))
                 positionalAlignmentValue = ContentPosition::Start;
             return positionalAlignmentValue;
         };
@@ -369,12 +370,12 @@ void FlexLayout::justifyFlexItems(LogicalFlexItems& flexItems, const LineRange& 
         // non-logical alignments
         case ContentPosition::Left:
         case ContentPosition::Start:
-            if (isReversedToContentDirection())
+            if (FlexFormattingGeometry::isReversedToContentDirection(flexBox()))
                 return availableSpace - contentLogicalWidth;
             return LayoutUnit { };
         case ContentPosition::Right:
         case ContentPosition::End:
-            if (isReversedToContentDirection())
+            if (FlexFormattingGeometry::isReversedToContentDirection(flexBox()))
                 return LayoutUnit { };
             return availableSpace - contentLogicalWidth;
         default:
