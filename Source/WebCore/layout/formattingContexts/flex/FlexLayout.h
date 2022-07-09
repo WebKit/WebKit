@@ -97,6 +97,9 @@ private:
     WrappingPositions computeWrappingPositions(const LogicalFlexItems&, LayoutUnit availableSpace) const;
     LayoutUnit computeAvailableLogicalHorizontalSpace(const LogicalFlexItems&, const LogicalConstraints&) const;
 
+    bool isMainAxisParallelWithInlineAxes() const { return m_flexBoxStyle.flexDirection() == FlexDirection::Row || m_flexBoxStyle.flexDirection() == FlexDirection::RowReverse; }
+    bool isReversedToContentDirection() const { return m_flexBoxStyle.flexDirection() == FlexDirection::RowReverse || m_flexBoxStyle.flexDirection() == FlexDirection::ColumnReverse; }
+
     using LineHeightList = Vector<LayoutUnit>;
     LineHeightList computeAvailableLogicalVerticalSpace(const LogicalFlexItems&, const WrappingPositions&, const LogicalConstraints&) const;
 

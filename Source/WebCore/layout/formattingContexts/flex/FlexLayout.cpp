@@ -352,7 +352,14 @@ void FlexLayout::justifyFlexItems(LogicalFlexItems& flexItems, const LineRange& 
             break;
         }
 
-        switch (justifyContent.position()) {
+        auto positionalAlignment = [&] {
+            auto positionalAlignmentValue = justifyContent.position();
+            if (!isMainAxisParallelWithInlineAxes() && (positionalAlignmentValue == ContentPosition::Left || positionalAlignmentValue == ContentPosition::Right))
+                positionalAlignmentValue = ContentPosition::Start;
+            return positionalAlignmentValue;
+        };
+
+        switch (positionalAlignment()) {
         // logical alignments
         case ContentPosition::Normal:
         case ContentPosition::FlexStart:
@@ -364,12 +371,12 @@ void FlexLayout::justifyFlexItems(LogicalFlexItems& flexItems, const LineRange& 
         // non-logical alignments
         case ContentPosition::Left:
         case ContentPosition::Start:
-            if (flexBoxStyle().flexDirection() == FlexDirection::RowReverse)
+            if (isReversedToContentDirection())
                 return availableSpace - contentLogicalWidth;
             return LayoutUnit { };
         case ContentPosition::Right:
         case ContentPosition::End:
-            if (flexBoxStyle().flexDirection() == FlexDirection::RowReverse)
+            if (isReversedToContentDirection())
                 return LayoutUnit { };
             return availableSpace - contentLogicalWidth;
         default:
