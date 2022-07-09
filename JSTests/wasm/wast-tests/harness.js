@@ -1,3 +1,4 @@
+//@ skip if $memoryLimited
 asyncTestStart(1);
 let context = {
     env: globalThis,
