@@ -46,24 +46,14 @@ namespace WTF {
 namespace double_conversion {
 
 const DoubleToStringConverter& DoubleToStringConverter::EcmaScriptConverter() {
-  int flags = UNIQUE_ZERO | EMIT_POSITIVE_EXPONENT_SIGN;
-  static DoubleToStringConverter converter(flags,
-                                           "Infinity",
-                                           "NaN",
-                                           'e',
-                                           -6, 21,
-                                           6, 0);
+  constexpr int flags = UNIQUE_ZERO | EMIT_POSITIVE_EXPONENT_SIGN;
+  static constexpr DoubleToStringConverter converter(flags, "Infinity", "NaN", 'e', -6, 21, 6, 0);
   return converter;
 }
 
 const DoubleToStringConverter& DoubleToStringConverter::CSSConverter() {
-  int flags = UNIQUE_ZERO | EMIT_POSITIVE_EXPONENT_SIGN;
-  static DoubleToStringConverter converter(flags,
-                                           "infinity",
-                                           "NaN",
-                                           'e',
-                                           -6, 21,
-                                           6, 0);
+  constexpr int flags = UNIQUE_ZERO | EMIT_POSITIVE_EXPONENT_SIGN;
+  static constexpr DoubleToStringConverter converter(flags, "infinity", "NaN", 'e', -6, 21, 6, 0);
   return converter;
 }
 

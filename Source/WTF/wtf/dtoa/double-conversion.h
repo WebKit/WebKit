@@ -105,7 +105,7 @@ class DoubleToStringConverter {
   //   ToPrecision(230.0, 2) -> "230"
   //   ToPrecision(230.0, 2) -> "230."  with EMIT_TRAILING_DECIMAL_POINT.
   //   ToPrecision(230.0, 2) -> "2.3e2" with EMIT_TRAILING_ZERO_AFTER_POINT.
-  DoubleToStringConverter(int flags,
+  constexpr DoubleToStringConverter(int flags,
                           const char* infinity_symbol,
                           const char* nan_symbol,
                           char exponent_character,
@@ -125,7 +125,7 @@ class DoubleToStringConverter {
             max_trailing_padding_zeroes_in_precision_mode) {
     // When 'trailing zero after the point' is set, then 'trailing point'
     // must be set too.
-    ASSERT(((flags & EMIT_TRAILING_DECIMAL_POINT) != 0) ||
+    ASSERT_UNDER_CONSTEXPR_CONTEXT(((flags & EMIT_TRAILING_DECIMAL_POINT) != 0) ||
         !((flags & EMIT_TRAILING_ZERO_AFTER_POINT) != 0));
   }
 
