@@ -47,16 +47,18 @@ std::optional<ResidentKeyRequirement> PublicKeyCredentialCreationOptions::Authen
         return ResidentKeyRequirement::Required;
     if (residentKeyString == "discouraged"_s)
         return ResidentKeyRequirement::Discouraged;
-    return ResidentKeyRequirement::Preferred;
+    if (residentKeyString == "preferred"_s)
+        return ResidentKeyRequirement::Preferred;
+    return std::nullopt;
 }
 
 UserVerificationRequirement PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria::userVerification() const
 {
     if (userVerificationString == "required"_s)
         return UserVerificationRequirement::Required;
-    if (userVerificationString == "preferred"_s)
-        return UserVerificationRequirement::Preferred;
-    return UserVerificationRequirement::Discouraged;
+    if (userVerificationString == "discouraged"_s)
+        return UserVerificationRequirement::Discouraged;
+    return UserVerificationRequirement::Preferred;
 }
 
 std::optional<AuthenticatorAttachment> PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria::authenticatorAttachment() const
