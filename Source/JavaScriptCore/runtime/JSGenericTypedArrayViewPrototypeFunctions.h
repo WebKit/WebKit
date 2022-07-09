@@ -241,16 +241,26 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncIncludes(VM& vm, JSGl
     scope.assertNoExceptionExceptTermination();
     RELEASE_ASSERT(!thisObject->isDetached());
 
-    if (std::isnan(static_cast<double>(*targetOption))) {
-        for (; index < length; ++index) {
-            if (std::isnan(static_cast<double>(array[index])))
-                return JSValue::encode(jsBoolean(true));
+    if constexpr (ViewClass::Adaptor::isFloat) {
+        if (std::isnan(static_cast<double>(*targetOption))) {
+            for (; index < length; ++index) {
+                if (std::isnan(static_cast<double>(array[index])))
+                    return JSValue::encode(jsBoolean(true));
+            }
         }
-    } else {
-        for (; index < length; ++index) {
-            if (array[index] == targetOption)
-                return JSValue::encode(jsBoolean(true));
+    }
+
+    if constexpr (ViewClass::elementSize == 1 && ViewClass::Adaptor::isInteger) {
+        if (index < length) {
+            auto* result = static_cast<typename ViewClass::ElementType*>(memchr(array + index, targetOption.value(), length - index));
+            return JSValue::encode(jsBoolean(!!result));
         }
+        return JSValue::encode(jsBoolean(false));
+    }
+
+    for (; index < length; ++index) {
+        if (array[index] == targetOption.value())
+            return JSValue::encode(jsBoolean(true));
     }
 
     return JSValue::encode(jsBoolean(false));
@@ -285,8 +295,17 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncIndexOf(VM& vm, JSGlo
     scope.assertNoExceptionExceptTermination();
     RELEASE_ASSERT(!thisObject->isDetached());
 
+    if constexpr (ViewClass::elementSize == 1 && ViewClass::Adaptor::isInteger) {
+        if (index < length) {
+            auto* result = static_cast<typename ViewClass::ElementType*>(memchr(array + index, targetOption.value(), length - index));
+            if (result)
+                return JSValue::encode(jsNumber(result - array));
+        }
+        return JSValue::encode(jsNumber(-1));
+    }
+
     for (; index < length; ++index) {
-        if (array[index] == targetOption)
+        if (array[index] == targetOption.value())
             return JSValue::encode(jsNumber(index));
     }
 
@@ -440,7 +459,7 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncLastIndexOf(VM& vm, J
 
     // We always have at least one iteration, since we checked that length is different from 0 earlier.
     do {
-        if (array[index] == targetOption)
+        if (array[index] == targetOption.value())
             return JSValue::encode(jsNumber(index));
         if (!index)
             break;

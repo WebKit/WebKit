@@ -46,6 +46,9 @@ struct IntegralTypedArrayAdaptor {
     static constexpr TypeArg maxValue = std::numeric_limits<TypeArg>::max();
     static constexpr bool canConvertToJSQuickly = true;
     static constexpr TypedArrayContentType contentType = JSC::contentType(typeValue);
+    static constexpr bool isInteger = true;
+    static constexpr bool isFloat = false;
+    static constexpr bool isBigInt = false;
 
     static JSValue toJSValue(JSGlobalObject*, Type value)
     {
@@ -119,6 +122,9 @@ struct FloatTypedArrayAdaptor {
     static constexpr TypeArg maxValue = std::numeric_limits<TypeArg>::max();
     static constexpr bool canConvertToJSQuickly = true;
     static constexpr TypedArrayContentType contentType = JSC::contentType(typeValue);
+    static constexpr bool isInteger = false;
+    static constexpr bool isFloat = true;
+    static constexpr bool isBigInt = false;
 
     static JSValue toJSValue(JSGlobalObject*, Type value)
     {
@@ -180,6 +186,9 @@ struct BigIntTypedArrayAdaptor {
     static constexpr TypeArg maxValue = std::numeric_limits<TypeArg>::max();
     static constexpr bool canConvertToJSQuickly = false;
     static constexpr TypedArrayContentType contentType = JSC::contentType(typeValue);
+    static constexpr bool isInteger = true;
+    static constexpr bool isFloat = false;
+    static constexpr bool isBigInt = true;
 
     static JSValue toJSValue(JSGlobalObject* globalObject, Type value)
     {
@@ -242,6 +251,9 @@ struct Uint8ClampedAdaptor {
     static constexpr uint8_t maxValue = std::numeric_limits<uint8_t>::max();
     static constexpr bool canConvertToJSQuickly = true;
     static constexpr TypedArrayContentType contentType = JSC::contentType(typeValue);
+    static constexpr bool isInteger = true;
+    static constexpr bool isFloat = false;
+    static constexpr bool isBigInt = false;
 
     static JSValue toJSValue(JSGlobalObject*, uint8_t value)
     {
