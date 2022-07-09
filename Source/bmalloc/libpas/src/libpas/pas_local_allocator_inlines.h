@@ -1074,6 +1074,7 @@ pas_local_allocator_refill_with_known_config(
                          anymore. */
         if (view_cache_result.did_succeed) {
             pas_local_view_cache* view_cache;
+            bool has_view_to_pop;
             
             view_cache = (pas_local_view_cache*)view_cache_result.allocator;
             
@@ -1081,10 +1082,20 @@ pas_local_allocator_refill_with_known_config(
             
             view_cache->scavenger_data.is_in_use = true;
             pas_compiler_fence();
+
+            /* Setting is_in_use = true here is insufficient by itself to prevent the cache from being decommitted.
+               Consider this: just before we set is_in_use to true, the scavenger runs and puts the cache in the
+               "stopped" state. Once the cache is "stopped", the is_in_use flag does not prevent the scavenger from
+               further putting the view_cache in the "decommitted" state. Being in the "decommitted" state gives the
+               scavenger license to decommit the cache. Calling pas_local_view_cache_prepare_to_pop here will ensure
+               that the view_cache is committed. */
+            has_view_to_pop = pas_local_view_cache_prepare_to_pop(view_cache);
+            PAS_TESTING_ASSERT(view_cache->scavenger_data.is_in_use);
             
+            /* pas_local_view_cache_prepare_to_pop ensures view_cache is committed. We mark it after this. */
             pas_local_allocator_scavenger_data_did_use_for_allocation(&view_cache->scavenger_data);
 
-            if (pas_local_view_cache_prepare_to_pop(view_cache)) {
+            if (has_view_to_pop) {
                 new_view = pas_segregated_exclusive_view_as_view(pas_local_view_cache_pop(view_cache));
                 
                 PAS_TESTING_ASSERT(pas_segregated_view_is_some_exclusive(new_view));
@@ -1123,8 +1134,8 @@ pas_local_allocator_refill_with_known_config(
         if (verbose) {
             pas_log("And after will_start got a new view %p, page = %p, boundary = %p\n",
                     new_view,
-                    pas_segregated_view_get_page(new_view),
-                    pas_segregated_view_get_page_boundary(new_view));
+                    new_view ? pas_segregated_view_get_page(new_view) : NULL,
+                    new_view ? pas_segregated_view_get_page_boundary(new_view) : NULL);
         }
     }
 

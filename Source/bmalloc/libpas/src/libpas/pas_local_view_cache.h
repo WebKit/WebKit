@@ -94,8 +94,34 @@ static inline bool pas_local_view_cache_is_empty(pas_local_view_cache* cache)
 
 static inline bool pas_local_view_cache_prepare_to_pop(pas_local_view_cache* cache)
 {
+    /* We would like to ensure that this pas_local_view_cache is committed before we return from this function.
+       To ensure that, we first check if cache->scavenger_data.kind is pas_local_allocator_view_cache_kind i.e.
+       the cache is in an "active" state. If so, then we know that the cache will remain committed because
+       is_in_use is already true, and the state cannot be changed while it is "active" and is_in_use is true.
+
+       Otherwise, if the pas_local_view_cache is not "active", the scavenger could have changed the state to
+       "stopped" before is_in_use was set. Once "stopped", the scavenger may further change it to "decommitted"
+       even if is_in_use is true. Once the cache is in the "decommitted" state, the scavenger may decommit the
+       cache at any time. Hence, if the cache is not in the "active" state, we should assume it is possibly
+       decommitted and need to revive it to the "active" state to ensure that the cache is committed before
+       returning. */
     pas_local_view_cache_state state;
-    
+
+    if (PAS_UNLIKELY(cache->scavenger_data.kind != pas_local_allocator_view_cache_kind)) {
+        /* The kind is either "stopped" or "decommitted" (which can allow the scavenger to decommit this cache at
+           any time). This function is called because the caller wants to use this local_view_cache now. So, we need to
+           commit the cache here to revive it for use. Regardless of whether the kind is "stopped" or "decommitted",
+           the cache is already empty. So, return false to indicate that there's nothing to pop. */
+        pas_local_allocator_scavenger_data_commit_if_necessary_slow(
+            &cache->scavenger_data,
+            pas_local_allocator_scavenger_data_commit_if_necessary_slow_is_in_use_with_no_locks_held_mode,
+            pas_local_allocator_view_cache_kind);
+        return false;
+    }
+
+    /* Because kind is pas_local_allocator_view_cache_kind and is_in_use is already true,
+       this cache will not be decommitted. Safely use it */
+
     PAS_TESTING_ASSERT(cache->bottom_index < cache->capacity
                        || pas_local_view_cache_get_state(cache) == pas_local_view_cache_stopped_state);
     PAS_TESTING_ASSERT(cache->top_index < cache->capacity
