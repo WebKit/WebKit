@@ -31,10 +31,12 @@
 #include "Element.h"
 #include "InspectorInstrumentation.h"
 #include "JSNodeCustom.h"
+#include "Logging.h"
 #include "ResizeObserverEntry.h"
 #include "ResizeObserverOptions.h"
 #include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/AbstractSlotVisitorInlines.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -115,6 +117,9 @@ size_t ResizeObserver::gatherObservations(size_t deeperThan)
             size_t depth = observation->targetElementDepth();
             if (depth > deeperThan) {
                 observation->updateObservationSize(*currentSizes);
+
+                LOG_WITH_STREAM(ResizeObserver, stream << "ResizeObserver " << this << " gatherObservations - recording observation " << observation.get());
+
                 m_activeObservations.append(observation.get());
                 m_activeObservationTargets.append(*observation->target());
                 minObservedDepth = std::min(depth, minObservedDepth);
@@ -127,6 +132,8 @@ size_t ResizeObserver::gatherObservations(size_t deeperThan)
 
 void ResizeObserver::deliverObservations()
 {
+    LOG_WITH_STREAM(ResizeObserver, stream << "ResizeObserver " << this << " deliverObservations");
+
     auto entries = m_activeObservations.map([](auto& observation) {
         ASSERT(observation->target());
         return ResizeObserverEntry::create(observation->target(), observation->computeContentRect(), observation->borderBoxSize(), observation->contentBoxSize());

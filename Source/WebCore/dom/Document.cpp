@@ -8289,6 +8289,7 @@ bool Document::hasResizeObservers()
 
 size_t Document::gatherResizeObservations(size_t deeperThan)
 {
+    LOG_WITH_STREAM(ResizeObserver, stream << "Document " << *this << " gatherResizeObservations");
     size_t minDepth = ResizeObserver::maxElementDepth();
     for (const auto& observer : m_resizeObservers) {
         if (!observer->hasObservations())
@@ -8301,6 +8302,7 @@ size_t Document::gatherResizeObservations(size_t deeperThan)
 
 void Document::deliverResizeObservations()
 {
+    LOG_WITH_STREAM(ResizeObserver, stream << "Document " << *this << " deliverResizeObservations");
     auto observersToNotify = m_resizeObservers;
     for (const auto& observer : observersToNotify) {
         if (!observer || !observer->hasActiveObservations())

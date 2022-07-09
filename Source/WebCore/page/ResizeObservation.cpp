@@ -105,6 +105,8 @@ std::optional<ResizeObservation::BoxSizes> ResizeObservation::elementSizeChanged
 {
     auto currentSizes = computeObservedSizes();
 
+    LOG_WITH_STREAM(ResizeObserver, stream << "ResizeObservation " << this << " elementSizeChanged - new content box " << currentSizes.contentBoxSize);
+
     switch (m_observedBox) {
     case ResizeObserverBoxOptions::BorderBox:
         if (m_lastObservationSizes.borderBoxLogicalSize != currentSizes.borderBoxLogicalSize)
@@ -128,6 +130,15 @@ size_t ResizeObservation::targetElementDepth() const
     }
 
     return depth;
+}
+
+TextStream& operator<<(TextStream& ts, const ResizeObservation& observation)
+{
+    ts.dumpProperty("target", ValueOrNull(observation.target()));
+    ts.dumpProperty("border box", observation.borderBoxSize());
+    ts.dumpProperty("content box", observation.contentBoxSize());
+    ts.dumpProperty("snapped content box", observation.snappedContentBoxSize());
+    return ts;
 }
 
 } // namespace WebCore

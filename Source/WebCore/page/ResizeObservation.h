@@ -32,6 +32,10 @@
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 class Element;
@@ -71,5 +75,7 @@ private:
     BoxSizes m_lastObservationSizes;
     ResizeObserverBoxOptions m_observedBox;
 };
+
+WTF::TextStream& operator<<(WTF::TextStream&, const ResizeObservation&);
 
 } // namespace WebCore
