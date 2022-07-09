@@ -88,16 +88,14 @@ FlexLayout::WrappingPositions FlexLayout::computeWrappingPositions(const Logical
         size_t lastWrapIndex = 0;
         for (size_t index = 0; index < flexItems.size(); ++index) {
             auto flexItemWidth = flexItems[index].width();
-            if (accumulatedWidth + flexItemWidth <= availableSpace) {
+            auto isFlexLineEmpty = index == lastWrapIndex;
+            if (isFlexLineEmpty || accumulatedWidth + flexItemWidth <= availableSpace) {
                 accumulatedWidth += flexItemWidth;
                 continue;
             }
-            auto shouldLetFlexItemOverflow = index == lastWrapIndex;
-            if (!shouldLetFlexItemOverflow)
-                --index;
-            lastWrapIndex = index + 1;
-            wrappingPositions.append(lastWrapIndex);
-            accumulatedWidth = { };
+            accumulatedWidth = flexItemWidth;
+            wrappingPositions.append(index);
+            lastWrapIndex = index;
         }
         wrappingPositions.append(flexItems.size());
         break;
