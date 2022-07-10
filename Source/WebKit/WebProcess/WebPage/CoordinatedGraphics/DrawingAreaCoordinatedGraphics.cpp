@@ -465,7 +465,7 @@ void DrawingAreaCoordinatedGraphics::targetRefreshRateDidChange(unsigned rate)
 {
     UNUSED_PARAM(rate);
 #if !USE(GRAPHICS_LAYER_TEXTURE_MAPPER)
-    if (m_layerTreeHost)
+    if (m_layerTreeHost && !RunLoop::isMain())
         m_layerTreeHost->targetRefreshRateDidChange(rate);
 #endif
 }
