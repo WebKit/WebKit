@@ -218,8 +218,8 @@ PASS document.createElement("section").attachShadow({mode: "open"}) instanceof S
 PASS document.createElement("section").attachShadow({mode: "closed"}) instanceof ShadowRoot is true
 PASS document.createElement("select").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
 PASS document.createElement("select").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
-FAIL document.createElement("slot ").attachShadow({mode: "open"}) should throw a NotSupportedError. Threw a InvalidCharacterError.
-FAIL document.createElement("slot ").attachShadow({mode: "closed"}) should throw a NotSupportedError. Threw a InvalidCharacterError.
+PASS document.createElement("slot").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
+PASS document.createElement("slot").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
 PASS document.createElement("small").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
 PASS document.createElement("small").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
 PASS document.createElement("source").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
@@ -279,7 +279,6 @@ PASS document.createElement("xmp").attachShadow({mode: "closed"}) threw exceptio
 PASS document.createElement("noscript").attachShadow({mode: "open"}) threw exception NotSupportedError: The operation is not supported..
 PASS document.createElement("noscript").attachShadow({mode: "closed"}) threw exception NotSupportedError: The operation is not supported..
 PASS successfullyParsed is true
-Some tests failed.
 
 TEST COMPLETE
 
