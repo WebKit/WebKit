@@ -2970,6 +2970,7 @@
 				DD3DC8D127A4BF8E007E5B61 /* CountingLock.h in Headers */,
 				DD3DC92627A4BF8E007E5B61 /* CPUTime.h in Headers */,
 				DDF3071127C086CC006A526F /* CrashReporter.h in Headers */,
+				93853DD328755A6C00FF4E2B /* EscapedFormsForJSON.h in Headers */,
 				DDF306DC27C08654006A526F /* CrashReporterClientSPI.h in Headers */,
 				DD3DC96D27A4BF8E007E5B61 /* CrossThreadCopier.h in Headers */,
 				DD3DC8F127A4BF8E007E5B61 /* CrossThreadQueue.h in Headers */,
