@@ -911,7 +911,9 @@ webkit.org/b/242145 media/mediacapabilities/mediacapabilities-allowed-codecs.htm
 webkit.org/b/242145 media/mediacapabilities/mediacapabilities-allowed-containers.html [ Skip ]
 
 # resignFirstResponder is not implemented on GTK+
-fast/shadow-dom/focus-ring-on-shadow-host.html
+fast/shadow-dom/focus-ring-on-shadow-host.html [ Skip ]
+fast/shadow-dom/focus-ring-on-shadow-host-focuswithin.html [ Skip ]
+fast/shadow-dom/focus-ring-on-shadow-host-sibling.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.

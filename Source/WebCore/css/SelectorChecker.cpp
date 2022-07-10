@@ -991,7 +991,7 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
         case CSSSelector::PseudoClassFocusVisible:
             return matchesFocusVisiblePseudoClass(element);
         case CSSSelector::PseudoClassFocusWithin:
-            return element.hasFocusWithin();
+            return matchesFocusWithinPseudoClass(element);
         case CSSSelector::PseudoClassHover:
             if (m_strictParsing || element.isLink() || canMatchHoverOrActiveInQuirksMode(context)) {
                 // See the comment in generateElementIsHovered() in SelectorCompiler.

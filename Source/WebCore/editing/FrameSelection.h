@@ -349,6 +349,7 @@ private:
     bool m_caretPaint : 1;
     bool m_isCaretBlinkingSuspended : 1;
     bool m_focused : 1;
+    bool m_isActive : 1;
     bool m_shouldShowBlockCursor : 1;
     bool m_pendingSelectionUpdate : 1;
     bool m_alwaysAlignCursorOnScrollWhenRevealingSelection : 1;

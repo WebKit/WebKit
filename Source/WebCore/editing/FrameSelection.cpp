@@ -57,6 +57,7 @@
 #include "LegacyInlineTextBox.h"
 #include "Logging.h"
 #include "Page.h"
+#include "PseudoClassChangeInvalidation.h"
 #include "Range.h"
 #include "RenderLayer.h"
 #include "RenderLayerScrollableArea.h"
@@ -154,6 +155,11 @@ static inline bool shouldAlwaysUseDirectionalSelection(Document* document)
     return !document || document->editor().behavior().shouldConsiderSelectionAsDirectional();
 }
 
+static inline bool isPageActive(Document* document)
+{
+    return document && document->page() && document->page()->focusController().isActive();
+}
+
 FrameSelection::FrameSelection(Document* document)
     : m_document(document)
     , m_granularity(TextGranularity::CharacterGranularity)
@@ -166,6 +172,7 @@ FrameSelection::FrameSelection(Document* document)
     , m_caretPaint(true)
     , m_isCaretBlinkingSuspended(false)
     , m_focused(document && document->frame() && document->page() && document->page()->focusController().focusedFrame() == document->frame())
+    , m_isActive(isPageActive(document))
     , m_shouldShowBlockCursor(false)
     , m_pendingSelectionUpdate(false)
     , m_alwaysAlignCursorOnScrollWhenRevealingSelection(false)
@@ -2142,28 +2149,40 @@ void FrameSelection::focusedOrActiveStateChanged()
     if (activeAndFocused)
         setSelectionFromNone();
     setCaretVisibility(activeAndFocused ? Visible : Hidden, ShouldUpdateAppearance::Yes);
-
-    // Because Style::Resolver::checkOneSelector() and
-    // RenderTheme::isFocused() check if the frame is active, we have to
-    // update style and theme state that depended on those.
-    for (RefPtr element = m_document->focusedElement(); element; element = element->shadowHost()) {
-        element->invalidateStyleForSubtree();
-        if (RenderObject* renderer = element->renderer(); renderer && renderer->style().hasEffectiveAppearance())
-            renderer->theme().stateChanged(*renderer, ControlStates::States::Focused);
-    }
 #endif
+}
+
+static Vector<Style::PseudoClassChangeInvalidation> invalidateFocusedElementAndShadowIncludingAncestors(Element* focusedElement, bool activeAndFocused)
+{
+    Vector<Style::PseudoClassChangeInvalidation> invalidations;
+    for (RefPtr element = focusedElement; element; element = element->shadowHost()) {
+        invalidations.append({ *element, { { CSSSelector::PseudoClassFocus, activeAndFocused }, { CSSSelector::PseudoClassFocusVisible, activeAndFocused } } });
+        for (auto& lineage : lineageOfType<Element>(*element))
+            invalidations.append({ lineage, CSSSelector::PseudoClassFocusWithin, activeAndFocused });
+    }
+    return invalidations;
 }
 
 void FrameSelection::pageActivationChanged()
 {
+    bool isActive = isPageActive(m_document.get());
+    RefPtr focusedElement = m_document->focusedElement();
+    auto invalidations = invalidateFocusedElementAndShadowIncludingAncestors(focusedElement.get(), m_focused && isActive);
+    m_isActive = isActive;
+
     focusedOrActiveStateChanged();
 }
 
-void FrameSelection::setFocused(bool flag)
+void FrameSelection::setFocused(bool isFocused)
 {
-    if (m_focused == flag)
+    if (m_focused == isFocused)
         return;
-    m_focused = flag;
+
+    bool isActive = isPageActive(m_document.get());
+    RefPtr focusedElement = m_document->focusedElement();
+    auto invalidations = invalidateFocusedElementAndShadowIncludingAncestors(focusedElement.get(), isFocused && isActive);
+    m_focused = isFocused;
+    m_isActive = isActive;
 
     focusedOrActiveStateChanged();
 }

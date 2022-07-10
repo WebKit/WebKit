@@ -989,7 +989,9 @@ webkit.org/b/77568 fast/text/locale-shaping-complex.html [ ImageOnlyFailure ]
 fast/canvas/toDataURL-alpha-permutation.html [ ImageOnlyFailure ]
 
 # resignFirstResponder is not implemented on Windows
-fast/shadow-dom/focus-ring-on-shadow-host.html
+fast/shadow-dom/focus-ring-on-shadow-host.html [ Skip ]
+fast/shadow-dom/focus-ring-on-shadow-host-focuswithin.html [ Skip ]
+fast/shadow-dom/focus-ring-on-shadow-host-sibling.html [ Skip ]
 
 ################################################################################
 ###########    End Missing Functionality Prevents Testing         ##############
