@@ -80,6 +80,7 @@
 #include "JSTestStandaloneDictionary.h"
 #include "JSTestStandaloneEnumeration.h"
 #include "JSTestSubObj.h"
+#include "JSText.h"
 #include "JSVoidCallback.h"
 #include "JSWindowProxy.h"
 #include "JSWorkerGlobalScopeBase.h"
@@ -1685,6 +1686,7 @@ static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_variadicStringMethod
 static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_variadicDoubleMethod);
 static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_variadicNodeMethod);
 static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_variadicUnionMethod);
+static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_variadicUnionElementOrTextMethod);
 static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_any);
 static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_testPromiseFunction);
 static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_testPromiseFunctionWithFloatArgument);
@@ -2417,6 +2419,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "variadicDoubleMethod"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestObjPrototypeFunction_variadicDoubleMethod), (intptr_t) (1) } },
     { "variadicNodeMethod"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestObjPrototypeFunction_variadicNodeMethod), (intptr_t) (1) } },
     { "variadicUnionMethod"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestObjPrototypeFunction_variadicUnionMethod), (intptr_t) (1) } },
+    { "variadicUnionElementOrTextMethod"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestObjPrototypeFunction_variadicUnionElementOrTextMethod), (intptr_t) (0) } },
     { "any"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestObjPrototypeFunction_any), (intptr_t) (2) } },
     { "testPromiseFunction"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestObjPrototypeFunction_testPromiseFunction), (intptr_t) (0) } },
     { "testPromiseFunctionWithFloatArgument"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestObjPrototypeFunction_testPromiseFunctionWithFloatArgument), (intptr_t) (1) } },
@@ -8563,6 +8566,23 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_variadicUnionMethod
 JSC_DEFINE_HOST_FUNCTION(jsTestObjPrototypeFunction_variadicUnionMethod, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunction_variadicUnionMethodBody>(*lexicalGlobalObject, *callFrame, "variadicUnionMethod");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_variadicUnionElementOrTextMethodBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestObj>::ClassParameter castedThis)
+{
+    auto& vm = JSC::getVM(lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(callFrame);
+    auto& impl = castedThis->wrapped();
+    auto nodes = convertVariadicArguments<IDLUnion<IDLInterface<Element>, IDLInterface<Text>>>(*lexicalGlobalObject, *callFrame, 0);
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.variadicUnionElementOrTextMethod(WTFMove(nodes)); })));
+}
+
+JSC_DEFINE_HOST_FUNCTION(jsTestObjPrototypeFunction_variadicUnionElementOrTextMethod, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+{
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunction_variadicUnionElementOrTextMethodBody>(*lexicalGlobalObject, *callFrame, "variadicUnionElementOrTextMethod");
 }
 
 static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_anyBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestObj>::ClassParameter castedThis)
