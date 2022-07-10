@@ -165,6 +165,7 @@ public:
     template<typename CallbackWhenNoException> typename std::invoke_result<CallbackWhenNoException, bool, PropertySlot&>::type getPropertySlot(JSGlobalObject*, PropertyName, PropertySlot&, CallbackWhenNoException) const;
 
     JSValue getIfPropertyExists(JSGlobalObject*, PropertyName);
+    bool noSideEffectMayHaveNonIndexProperty(VM&, PropertyName);
 
 private:
     static bool getOwnPropertySlotImpl(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);

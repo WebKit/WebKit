@@ -92,6 +92,7 @@
 		7AFEC6B11EB22B5900DADE36 /* UUID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AFEC6B01EB22B5900DADE36 /* UUID.cpp */; };
 		8134013815B092FD001FF0B8 /* Base64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8134013615B092FD001FF0B8 /* Base64.cpp */; };
 		8348BA0E21FBC0D500FD3054 /* ObjectIdentifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8348BA0D21FBC0D400FD3054 /* ObjectIdentifier.cpp */; };
+		93853DD328755A6C00FF4E2B /* EscapedFormsForJSON.h in Headers */ = {isa = PBXBuildFile; fileRef = 93853DD228755A6600FF4E2B /* EscapedFormsForJSON.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93934BD318A1E8C300D0D6A1 /* StringViewCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93934BD218A1E8C300D0D6A1 /* StringViewCocoa.mm */; };
 		93934BD518A1F16900D0D6A1 /* StringViewCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93934BD418A1F16900D0D6A1 /* StringViewCF.cpp */; };
 		93B07ED826B8717000A09B34 /* SuspendableWorkQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B07ED726B8715B00A09B34 /* SuspendableWorkQueue.cpp */; };
@@ -1200,6 +1201,7 @@
 		93156C8D262C982200EAE27B /* SortedArrayMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SortedArrayMap.h; sourceTree = "<group>"; };
 		93241657243BC2E50032FAAE /* VectorCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VectorCocoa.h; sourceTree = "<group>"; };
 		933D63191FCB6AB90032ECD6 /* StringHasher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringHasher.h; sourceTree = "<group>"; };
+		93853DD228755A6600FF4E2B /* EscapedFormsForJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EscapedFormsForJSON.h; sourceTree = "<group>"; };
 		93934BD218A1E8C300D0D6A1 /* StringViewCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = StringViewCocoa.mm; sourceTree = "<group>"; };
 		93934BD418A1F16900D0D6A1 /* StringViewCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringViewCF.cpp; sourceTree = "<group>"; };
 		93AC91A718942FC400244939 /* LChar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LChar.h; sourceTree = "<group>"; };
@@ -2395,6 +2397,7 @@
 				0F8F2B9B172F2594007DBDA5 /* ConversionMode.h */,
 				A8A47321151A825B004123FF /* CString.cpp */,
 				A8A47322151A825B004123FF /* CString.h */,
+				93853DD228755A6600FF4E2B /* EscapedFormsForJSON.h */,
 				50DE35F3215BB01500B979C7 /* ExternalStringImpl.cpp */,
 				50DE35F4215BB01500B979C7 /* ExternalStringImpl.h */,
 				26147B0815DDCCDC00DDB907 /* IntegerToStringConversion.h */,
@@ -2889,6 +2892,7 @@
 				DD3DC8D127A4BF8E007E5B61 /* CountingLock.h in Headers */,
 				DD3DC92627A4BF8E007E5B61 /* CPUTime.h in Headers */,
 				DDF3071127C086CC006A526F /* CrashReporter.h in Headers */,
+				93853DD328755A6C00FF4E2B /* EscapedFormsForJSON.h in Headers */,
 				DDF306DC27C08654006A526F /* CrashReporterClientSPI.h in Headers */,
 				DD3DC96D27A4BF8E007E5B61 /* CrossThreadCopier.h in Headers */,
 				DD3DC8F127A4BF8E007E5B61 /* CrossThreadQueue.h in Headers */,

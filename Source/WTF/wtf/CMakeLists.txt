@@ -361,6 +361,7 @@ set(WTF_PUBLIC_HEADERS
     text/CString.h
     text/CodePointIterator.h
     text/ConversionMode.h
+    text/EscapedFormsForJSON.h
     text/ExternalStringImpl.h
     text/IntegerToStringConversion.h
     text/LChar.h

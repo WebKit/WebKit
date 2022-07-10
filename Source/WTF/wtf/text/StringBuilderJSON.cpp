@@ -12,46 +12,11 @@
 #include "config.h"
 #include <wtf/text/StringBuilder.h>
 
+#include <wtf/text/EscapedFormsForJSON.h>
 #include <wtf/text/StringBuilderInternals.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTF {
-
-// This table driven escaping is ported from SpiderMonkey.
-static const constexpr LChar escapedFormsForJSON[0x100] = {
-    'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u',
-    'b', 't', 'n', 'u', 'f', 'r', 'u', 'u',
-    'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u',
-    'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u',
-    0,   0,  '\"', 0,   0,   0,   0,   0,
-    0,   0,   0,   0,   0,   0,   0,   0,
-    0,   0,   0,   0,   0,   0,   0,   0,
-    0,   0,   0,   0,   0,   0,   0,   0,
-    0,   0,   0,   0,   0,   0,   0,   0,
-    0,   0,   0,   0,   0,   0,   0,   0,
-    0,   0,   0,   0,   0,   0,   0,   0,
-    0,   0,   0,   0,  '\\', 0,   0,   0,
-    0,   0,   0,   0,   0,   0,   0,   0,
-    0,   0,   0,   0,   0,   0,   0,   0,
-    0,   0,   0,   0,   0,   0,   0,   0,
-    0,   0,   0,   0,   0,   0,   0,   0,
-    0,   0,   0,   0,   0,   0,   0,   0,
-    0,   0,   0,   0,   0,   0,   0,   0,
-    0,   0,   0,   0,   0,   0,   0,   0,
-    0,   0,   0,   0,   0,   0,   0,   0,
-    0,   0,   0,   0,   0,   0,   0,   0,
-    0,   0,   0,   0,   0,   0,   0,   0,
-    0,   0,   0,   0,   0,   0,   0,   0,
-    0,   0,   0,   0,   0,   0,   0,   0,
-    0,   0,   0,   0,   0,   0,   0,   0,
-    0,   0,   0,   0,   0,   0,   0,   0,
-    0,   0,   0,   0,   0,   0,   0,   0,
-    0,   0,   0,   0,   0,   0,   0,   0,
-    0,   0,   0,   0,   0,   0,   0,   0,
-    0,   0,   0,   0,   0,   0,   0,   0,
-    0,   0,   0,   0,   0,   0,   0,   0,
-    0,   0,   0,   0,   0,   0,   0,   0,
-};
 
 template<typename OutputCharacterType, typename InputCharacterType>
 ALWAYS_INLINE static void appendQuotedJSONStringInternal(OutputCharacterType*& output, const InputCharacterType* input, unsigned length)

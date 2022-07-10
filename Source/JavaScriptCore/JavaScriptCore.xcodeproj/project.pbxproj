@@ -4394,7 +4394,6 @@
 		860295FD26FB552D0078EB62 /* ShadowRealmConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShadowRealmConstructor.cpp; sourceTree = "<group>"; };
 		860295FE26FB552D0078EB62 /* ShadowRealmObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShadowRealmObject.h; sourceTree = "<group>"; };
 		860295FF26FB552D0078EB62 /* ShadowRealmPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShadowRealmPrototype.h; sourceTree = "<group>"; };
-		8604F4F2143A6C4400B295F5 /* ChangeLog */ = {isa = PBXFileReference; lastKnownFileType = text; lineEnding = 0; path = ChangeLog; sourceTree = "<group>"; };
 		8606DDE918DA44AB00A383D0 /* IdentifierInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IdentifierInlines.h; sourceTree = "<group>"; };
 		8612E4CB1522918400C836BE /* MatchResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MatchResult.h; sourceTree = "<group>"; };
 		86158AB2155C8B3F00B45C9C /* PropertyName.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PropertyName.h; sourceTree = "<group>"; };
@@ -5935,7 +5934,6 @@
 			children = (
 				530A63411FA3E31D0026A545 /* Sources.txt */,
 				530A63401FA3E31C0026A545 /* SourcesCocoa.txt */,
-				8604F4F2143A6C4400B295F5 /* ChangeLog */,
 				F68EBB8C0255D4C601FF60F7 /* config.h */,
 				F692A8540255597D01FF60F7 /* create_hash_table */,
 				532631B3218777A5007B8191 /* JavaScriptCore.modulemap */,

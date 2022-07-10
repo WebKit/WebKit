@@ -206,6 +206,32 @@ inline JSValue JSObject::getIfPropertyExists(JSGlobalObject* globalObject, Prope
     return slot.getValue(globalObject, propertyName);
 }
 
+// FIXME: Given the single special purpose this is used for, it's unclear if this needs to be a JSObject member function.
+inline bool JSObject::noSideEffectMayHaveNonIndexProperty(VM& vm, PropertyName propertyName)
+{
+    // This function only supports non-index PropertyNames.
+    ASSERT(!parseIndex(propertyName));
+    ASSERT(propertyName != vm.propertyNames->length);
+    for (auto* object = this; object; object = object->getPrototypeDirect().getObject()) {
+        auto inlineTypeFlags = object->inlineTypeFlags();
+        if (UNLIKELY(TypeInfo::overridesGetOwnPropertySlot(inlineTypeFlags) && object->classInfo() != ArrayPrototype::info()))
+            return true;
+        auto& structure = *object->structureID().decode();
+        unsigned attributes;
+        if (UNLIKELY(isValidOffset(structure.get(vm, propertyName, attributes))))
+            return true;
+        if (TypeInfo::hasStaticPropertyTable(inlineTypeFlags) && !structure.staticPropertiesReified()) {
+            for (auto* ancestorClass = object->classInfo(); ancestorClass; ancestorClass = ancestorClass->parentClass) {
+                if (auto* table = ancestorClass->staticPropHashTable; UNLIKELY(table && table->entry(propertyName)))
+                    return true;
+            }
+        }
+        if (UNLIKELY(structure.typeInfo().overridesGetPrototype()))
+            return true;
+    }
+    return false;
+}
+
 inline bool JSObject::mayInterceptIndexedAccesses()
 {
     return structure()->mayInterceptIndexedAccesses();

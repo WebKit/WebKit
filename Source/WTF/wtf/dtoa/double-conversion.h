@@ -356,9 +356,9 @@ class DoubleToStringConverter {
 
  private:
   // Implementation for ToShortest and ToShortestSingle.
-  bool ToShortestIeeeNumber(double value,
-                            StringBuilder* result_builder,
-                            DtoaMode mode) const;
+  WTF_EXPORT_PRIVATE bool ToShortestIeeeNumber(double value,
+                                               StringBuilder* result_builder,
+                                               DtoaMode mode) const;
 
   // If the value is a special value (NaN or Infinity) constructs the
   // corresponding string using the configured infinity/nan-symbol.
