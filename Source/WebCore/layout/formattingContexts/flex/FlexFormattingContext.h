@@ -59,7 +59,7 @@ private:
     void computeIntrinsicWidthConstraintsForFlexItems();
 
     FlexLayout::LogicalFlexItems convertFlexItemsToLogicalSpace(const ConstraintsForFlexContent&);
-    void setFlexItemsGeometry(const FlexLayout::LogicalFlexItems&, const ConstraintsForFlexContent&);
+    void setFlexItemsGeometry(const FlexLayout::LogicalFlexItems&, const FlexLayout::LogicalFlexItemRects&, const ConstraintsForFlexContent&);
 
     std::optional<LayoutUnit> computedAutoMarginValueForFlexItems(const ConstraintsForFlexContent&);
 
