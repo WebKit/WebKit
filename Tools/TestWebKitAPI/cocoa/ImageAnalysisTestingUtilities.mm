@@ -113,6 +113,7 @@
 @interface TestVKImageAnalysis : NSObject
 - (instancetype)initWithLines:(NSArray<VKWKLineInfo *> *)lines;
 #if HAVE(VK_IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
+@property (nonatomic, readonly) UIMenu *mrcMenu;
 @property (nonatomic, weak) UIViewController *presentingViewControllerForMrcAction;
 #endif
 @end
