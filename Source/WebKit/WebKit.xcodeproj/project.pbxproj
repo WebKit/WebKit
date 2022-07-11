@@ -3393,6 +3393,8 @@
 		1C56557C2745C5A0006300AF /* UnifiedSource101.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource101.cpp; path = "DerivedSources/WebKit/unified-sources/UnifiedSource101.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1C56557D2745C5A1006300AF /* UnifiedSource102.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource102.cpp; path = "DerivedSources/WebKit/unified-sources/UnifiedSource102.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1C56557E2745C5A1006300AF /* UnifiedSource103.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource103.cpp; path = "DerivedSources/WebKit/unified-sources/UnifiedSource103.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1C5A104E287BB1E90034FDA4 /* OverrideLanguages.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OverrideLanguages.cpp; sourceTree = "<group>"; };
+		1C5A104F287BB1E90034FDA4 /* OverrideLanguages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OverrideLanguages.h; sourceTree = "<group>"; };
 		1C739E852347BCF600C621EC /* CoreTextHelpers.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CoreTextHelpers.mm; sourceTree = "<group>"; };
 		1C739E872347BD0F00C621EC /* CoreTextHelpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreTextHelpers.h; sourceTree = "<group>"; };
 		1C77C1951288A872006A742F /* WebInspectorUIProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebInspectorUIProxy.messages.in; sourceTree = "<group>"; };
@@ -11596,6 +11598,8 @@
 				93425898255B534B0059EEDD /* MediaPermissionUtilities.h */,
 				7137BA7E25F1540B00914EE3 /* ModelElementController.cpp */,
 				7137BA7F25F1540C00914EE3 /* ModelElementController.h */,
+				1C5A104E287BB1E90034FDA4 /* OverrideLanguages.cpp */,
+				1C5A104F287BB1E90034FDA4 /* OverrideLanguages.h */,
 				BC6EDAA5111271C600E7678B /* PageClient.h */,
 				1AC75379183A9FDA0072CB15 /* PageLoadState.cpp */,
 				1AC7537A183A9FDB0072CB15 /* PageLoadState.h */,

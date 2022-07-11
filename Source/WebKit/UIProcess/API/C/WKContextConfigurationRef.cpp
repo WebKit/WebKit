@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -145,14 +145,16 @@ void WKContextConfigurationSetIgnoreSynchronousMessagingTimeoutsForTesting(WKCon
     toImpl(configuration)->setIgnoreSynchronousMessagingTimeoutsForTesting(ignore);
 }
 
-WKArrayRef WKContextConfigurationCopyOverrideLanguages(WKContextConfigurationRef configuration)
+WKArrayRef WKContextConfigurationCopyOverrideLanguages(WKContextConfigurationRef)
 {
-    return toAPI(&API::Array::createStringArray(toImpl(configuration)->overrideLanguages()).leakRef());
+    // FIXME: Delete this function.
+    return toAPI(&API::Array::create().leakRef());
 }
 
-void WKContextConfigurationSetOverrideLanguages(WKContextConfigurationRef configuration, WKArrayRef overrideLanguages)
+void WKContextConfigurationSetOverrideLanguages(WKContextConfigurationRef, WKArrayRef)
 {
-    toImpl(configuration)->setOverrideLanguages(toImpl(overrideLanguages)->toStringVector());
+    // Use +[WKWebView _setOverrideLanguagesForTesting:] instead.
+    // FIXME: Delete this function.
 }
 
 bool WKContextConfigurationProcessSwapsOnNavigation(WKContextConfigurationRef configuration)

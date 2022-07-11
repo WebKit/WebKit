@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2020 Apple Inc. All rights reserved.
+// Copyright (C) 2018-2022 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -407,6 +407,7 @@ UIProcess/LegacyGlobalSettings.cpp
 UIProcess/MediaKeySystemPermissionRequestManagerProxy.cpp
 UIProcess/MediaKeySystemPermissionRequestProxy.cpp
 UIProcess/ModelElementController.cpp
+UIProcess/OverrideLanguages.cpp
 UIProcess/PageLoadState.cpp
 UIProcess/ProcessAssertion.cpp
 UIProcess/ProcessThrottler.cpp

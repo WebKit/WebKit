@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -122,6 +122,8 @@ struct WKAppPrivacyReportTestingData {
 - (void)_computePagesForPrinting:(_WKFrameHandle *)handle completionHandler:(void(^)(void))completionHandler WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
 - (void)_setConnectedToHardwareConsoleForTesting:(BOOL)connected;
+
++ (void)_setOverrideLanguagesForTesting:(NSArray<NSString *> *)languages;
 
 @end
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,6 +48,7 @@
 #include "NetworkProcessCreationParameters.h"
 #include "NetworkProcessMessages.h"
 #include "NetworkProcessProxy.h"
+#include "OverrideLanguages.h"
 #include "PerActivityStateCPUUsageSampler.h"
 #include "RemoteWorkerType.h"
 #include "SandboxExtension.h"
@@ -365,13 +366,13 @@ void WebProcessPool::setCustomWebContentServiceBundleIdentifier(const String& cu
 
 void WebProcessPool::setOverrideLanguages(Vector<String>&& languages)
 {
-    m_configuration->setOverrideLanguages(WTFMove(languages));
+    WebKit::setOverrideLanguages(WTFMove(languages));
 
     LOG_WITH_STREAM(Language, stream << "WebProcessPool is setting OverrideLanguages: " << languages);
-    sendToAllProcesses(Messages::WebProcess::UserPreferredLanguagesChanged(m_configuration->overrideLanguages()));
+    sendToAllProcesses(Messages::WebProcess::UserPreferredLanguagesChanged(overrideLanguages()));
 #if USE(SOUP)
     for (auto networkProcess : NetworkProcessProxy::allNetworkProcesses())
-        networkProcess->send(Messages::NetworkProcess::UserPreferredLanguagesChanged(m_configuration->overrideLanguages()), 0);
+        networkProcess->send(Messages::NetworkProcess::UserPreferredLanguagesChanged(overrideLanguages()), 0);
 #endif
 }
 
@@ -792,7 +793,7 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
 #endif
 
     parameters.cacheModel = LegacyGlobalSettings::singleton().cacheModel();
-    parameters.overrideLanguages = configuration().overrideLanguages();
+    parameters.overrideLanguages = overrideLanguages();
     LOG_WITH_STREAM(Language, stream << "WebProcessPool is initializing a new web process with overrideLanguages: " << parameters.overrideLanguages);
 
     parameters.urlSchemesRegisteredAsEmptyDocument = copyToVector(m_schemesToRegisterAsEmptyDocument);

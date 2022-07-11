@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,7 +53,6 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::copy()
     copy->m_ignoreSynchronousMessagingTimeoutsForTesting = this->m_ignoreSynchronousMessagingTimeoutsForTesting;
     copy->m_attrStyleEnabled = this->m_attrStyleEnabled;
     copy->m_shouldThrowExceptionForGlobalConstantRedeclaration = this->m_shouldThrowExceptionForGlobalConstantRedeclaration;
-    copy->m_overrideLanguages = this->m_overrideLanguages;
     copy->m_alwaysRunsAtBackgroundPriority = this->m_alwaysRunsAtBackgroundPriority;
     copy->m_shouldTakeUIBackgroundAssertion = this->m_shouldTakeUIBackgroundAssertion;
     copy->m_shouldCaptureDisplayInUIProcess = this->m_shouldCaptureDisplayInUIProcess;

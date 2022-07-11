@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #import "AudioSessionRoutingArbitratorProxy.h"
 #import "GPUProcessProxy.h"
 #import "MediaSessionCoordinatorProxyPrivate.h"
+#import "OverrideLanguages.h"
 #import "PlaybackSessionManagerProxy.h"
 #import "PrintInfo.h"
 #import "UserMediaProcessManager.h"
@@ -464,6 +465,15 @@
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     WebKit::WindowServerConnection::singleton().hardwareConsoleStateChanged(connected ? WebKit::WindowServerConnection::HardwareConsoleState::Connected : WebKit::WindowServerConnection::HardwareConsoleState::Disconnected);
 #endif
+}
+
++ (void)_setOverrideLanguagesForTesting:(NSArray<NSString *> *)languages
+{
+    Vector<String> internalLanguages;
+    internalLanguages.reserveInitialCapacity(languages.count);
+    for (NSString *language in languages)
+        internalLanguages.uncheckedAppend(language);
+    WebKit::setOverrideLanguages(WTFMove(internalLanguages));
 }
 
 - (void)_createMediaSessionCoordinatorForTesting:(id <_WKMediaSessionCoordinator>)privateCoordinator completionHandler:(void(^)(BOOL))completionHandler

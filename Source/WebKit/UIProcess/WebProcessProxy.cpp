@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,7 @@
 #include "Logging.h"
 #include "NetworkProcessConnectionInfo.h"
 #include "NotificationManagerMessageHandlerMessages.h"
+#include "OverrideLanguages.h"
 #include "ProvisionalPageProxy.h"
 #include "RemoteWorkerType.h"
 #include "ServiceWorkerNotificationHandler.h"
@@ -417,7 +418,7 @@ void WebProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOpt
         launchOptions.extraInitializationData.add<HashTranslatorASCIILiteral>("inspector-process"_s, "1"_s);
 
     LOG(Language, "WebProcessProxy is getting launch options.");
-    auto overrideLanguages = m_processPool->configuration().overrideLanguages();
+    auto overrideLanguages = WebKit::overrideLanguages();
     if (overrideLanguages.isEmpty()) {
         LOG(Language, "overrideLanguages() reports empty. Calling platformOverrideLanguages()");
         overrideLanguages = platformOverrideLanguages();
