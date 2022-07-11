@@ -1395,6 +1395,9 @@ void HTMLInputElement::setShowAutoFillButton(AutoFillButtonType autoFillButtonTy
     m_inputType->updateAutoFillButton();
     updateInnerTextElementEditability();
     invalidateStyleForSubtree();
+
+    if (auto* cache = document().existingAXObjectCache())
+        cache->autofillTypeChanged(this);
 }
 
 FileList* HTMLInputElement::files()

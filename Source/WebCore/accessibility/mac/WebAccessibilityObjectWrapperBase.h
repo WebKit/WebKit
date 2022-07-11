@@ -100,7 +100,6 @@ void AXAttributedStringSetFont(NSMutableAttributedString *, CTFontRef, const NSR
 - (NSArray<NSDictionary *> *)lineRectsAndText;
 
 // These are pre-fixed with base so that AppKit does not end up calling into these directly (bypassing safety checks).
-- (NSString *)baseAccessibilityDescription;
 - (NSString *)baseAccessibilityHelpText;
 - (NSArray<NSString *> *)baseAccessibilitySpeechHint;
 

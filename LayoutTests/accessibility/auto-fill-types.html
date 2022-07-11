@@ -9,41 +9,43 @@
 <input type="text" value="hello" id="textfield">
 
 <script>
-
-    description("This tests that the auto-filled buttons show up.");
+    let output = "This tests that the auto-filled buttons show up.\n";
 
     if (window.accessibilityController) {
         window.jsTestIsAsync = true;
 
-        var textField, axTextField, contactsButton, credentialsButton;
-        setTimeout(async function() {
-            textField = document.getElementById("textfield");
-            axTextField = accessibilityController.accessibleElementById("textfield");
-            debug("Initial auto-fill available: " + axTextField.boolAttributeValue("AXValueAutofillAvailable"));
-            debug("Auto-fill type: " + axTextField.stringAttributeValue("AXValueAutofillType"));
+        let textField = document.getElementById("textfield");
+        let axTextField = accessibilityController.accessibleElementById("textfield");
+        output += `Initial auto-fill available: ${axTextField.boolAttributeValue("AXValueAutofillAvailable")}\n`;
+        output += `Auto-fill type: ${axTextField.stringAttributeValue("AXValueAutofillType")}\n`;
 
-            window.internals.setShowAutoFillButton(document.getElementById("textfield"), "Contacts");
+        window.internals.setShowAutoFillButton(document.getElementById("textfield"), "Contacts");
+        setTimeout(async function() {
+            let contactsButton = null;
             // Wait for contacts autofill button to render.
             await waitFor(() => {
                 contactsButton = axTextField.childAtIndex(1);
                 return contactsButton && axTextField.stringAttributeValue("AXValueAutofillType") === "contacts";
             });
-            debug("Contact button role: " + contactsButton.role);
-            debug("Contact button label: " + contactsButton.description);
-            debug("Auto-fill type: " + axTextField.stringAttributeValue("AXValueAutofillType"));
+            output += `Contact button role: ${contactsButton.role}\n`;
+            output += `Contact button label: ${contactsButton.description}\n`;
+            output += `Auto-fill type: ${axTextField.stringAttributeValue("AXValueAutofillType")}\n`;
 
             window.internals.setShowAutoFillButton(document.getElementById("textfield"), "Credentials");
             // Wait for credentials autofill button to render.
+            let credentialsButton = null;
             await waitFor(() => {
                 credentialsButton = axTextField.childAtIndex(1);
-                return credentialsButton && axTextField.stringAttributeValue("AXValueAutofillType") === "credentials";
+                return credentialsButton && axTextField.stringAttributeValue("AXValueAutofillType") === "credentials"
+                    && credentialsButton.description.includes("password");
             });
-            debug("Credentials button role: " + credentialsButton.role);
-            debug("Credentials button label: " + credentialsButton.description);
-            debug("Auto-fill type: " + axTextField.stringAttributeValue("AXValueAutofillType"));
+            output += `Credentials button role: ${credentialsButton.role}\n`;
+            output += `Credentials button label: ${credentialsButton.description}\n`;
+            output += `Auto-fill type: ${axTextField.stringAttributeValue("AXValueAutofillType")}\n`;
 
-            debug("Post auto-fill available: " + axTextField.boolAttributeValue("AXValueAutofillAvailable"));
+            output += `Post auto-fill available: ${axTextField.boolAttributeValue("AXValueAutofillAvailable")}\n`;
 
+            debug(output);
             finishJSTest();
         }, 0);
     }

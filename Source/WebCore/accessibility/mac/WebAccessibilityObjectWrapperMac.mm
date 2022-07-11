@@ -2090,12 +2090,12 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return backingObject->titleAttributeValue();
     }
 
-    if ([attributeName isEqualToString: NSAccessibilityDescriptionAttribute]) {
+    if ([attributeName isEqualToString:NSAccessibilityDescriptionAttribute]) {
         if (backingObject->isAttachment()) {
             if ([[[self attachmentView] accessibilityAttributeNames] containsObject:NSAccessibilityDescriptionAttribute])
                 return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityDescriptionAttribute];
         }
-        return [self baseAccessibilityDescription];
+        return backingObject->descriptionAttributeValue();
     }
 
     if ([attributeName isEqualToString: NSAccessibilityValueAttribute]) {

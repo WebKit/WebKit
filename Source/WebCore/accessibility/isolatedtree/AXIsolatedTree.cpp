@@ -379,6 +379,7 @@ void AXIsolatedTree::updateNode(AXCoreObject& axObject)
 void AXIsolatedTree::updateNodeProperty(AXCoreObject& axObject, AXPropertyName property)
 {
     AXTRACE("AXIsolatedTree::updateNodeProperty"_s);
+    AXLOG(makeString("Update property ", property, " for objectID ", axObject.objectID().loggingString()));
     ASSERT(isMainThread());
 
     AXPropertyMap propertyMap;
@@ -392,6 +393,11 @@ void AXIsolatedTree::updateNodeProperty(AXCoreObject& axObject, AXPropertyName p
         propertyMap.set(AXPropertyName::ARIATreeRows, axIDs(ariaTreeRows));
         break;
     }
+    case AXPropertyName::ValueAutofillButtonType:
+        propertyMap.set(AXPropertyName::ValueAutofillButtonType, static_cast<int>(axObject.valueAutofillButtonType()));
+        propertyMap.set(AXPropertyName::IsValueAutofillAvailable, axObject.isValueAutofillAvailable());
+        propertyMap.set(AXPropertyName::IsValueAutofilled, axObject.isValueAutofilled());
+        break;
     case AXPropertyName::AXColumnCount:
         propertyMap.set(AXPropertyName::AXColumnCount, axObject.axColumnCount());
         break;

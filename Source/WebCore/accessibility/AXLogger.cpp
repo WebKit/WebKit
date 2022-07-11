@@ -373,6 +373,9 @@ TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notific
     case AXObjectCache::AXNotification::AXAutocorrectionOccured:
         stream << "AXAutocorrectionOccured";
         break;
+    case AXObjectCache::AXNotification::AXAutofillTypeChanged:
+        stream << "AXAutofillTypeChanged";
+        break;
     case AXObjectCache::AXNotification::AXCheckedStateChanged:
         stream << "AXCheckedStateChanged";
         break;

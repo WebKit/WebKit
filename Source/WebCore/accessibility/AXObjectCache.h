@@ -186,6 +186,7 @@ public:
     void childrenChanged(RenderObject*, RenderObject* newChild = nullptr);
     void childrenChanged(AccessibilityObject*);
     void checkedStateChanged(Node*);
+    void autofillTypeChanged(Node*);
     void handleRoleChange(AccessibilityObject*);
     // Called when a node has just been attached, so we can make sure we have the right subclass of AccessibilityObject.
     void updateCacheAfterNodeIsAttached(Node*);
@@ -277,6 +278,7 @@ public:
         AXActiveDescendantChanged,
         AXAriaRoleChanged,
         AXAutocorrectionOccured,
+        AXAutofillTypeChanged,
         AXCheckedStateChanged,
         AXChildrenChanged,
         AXColumnCountChanged,
@@ -485,7 +487,7 @@ private:
     void handleLiveRegionCreated(Node*);
     void handleMenuItemSelected(Node*);
     void handleRowCountChanged(AXCoreObject*, Document*);
-    void handleAttributeChange(const QualifiedName&, Element*);
+    void handleAttributeChange(Element*, const QualifiedName&);
     bool shouldProcessAttributeChange(const QualifiedName&, Element*);
     void selectedChildrenChanged(Node*);
     void selectedChildrenChanged(RenderObject*);
@@ -567,7 +569,7 @@ private:
     WeakHashSet<Element> m_deferredModalChangedList;
     WeakHashSet<Element> m_deferredMenuListChange;
     HashMap<Element*, String> m_deferredTextFormControlValue;
-    HashMap<Element*, QualifiedName> m_deferredAttributeChange;
+    Vector<std::pair<Element*, QualifiedName>> m_deferredAttributeChange;
     Vector<std::pair<Node*, Node*>> m_deferredFocusedNodeChange;
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     bool m_deferredRegenerateIsolatedTree { false };
@@ -630,6 +632,7 @@ inline const Element* AXObjectCache::rootAXEditableElement(const Node*) { return
 inline Node* AXObjectCache::modalNode() { return nullptr; }
 inline void AXObjectCache::attachWrapper(AXCoreObject*) { }
 inline void AXObjectCache::checkedStateChanged(Node*) { }
+inline void AXObjectCache::autofillTypeChanged(Node*) { }
 inline void AXObjectCache::childrenChanged(Node*, Node*) { }
 inline void AXObjectCache::childrenChanged(RenderObject*, RenderObject*) { }
 inline void AXObjectCache::childrenChanged(AccessibilityObject*) { }
@@ -651,7 +654,7 @@ inline void AXObjectCache::handleAriaExpandedChange(Node*) { }
 inline void AXObjectCache::deferModalChange(Element*) { }
 inline void AXObjectCache::handleRoleChange(AccessibilityObject*) { }
 inline void AXObjectCache::deferAttributeChangeIfNeeded(const QualifiedName&, Element*) { }
-inline void AXObjectCache::handleAttributeChange(const QualifiedName&, Element*) { }
+inline void AXObjectCache::handleAttributeChange(Element*, const QualifiedName&) { }
 inline bool AXObjectCache::shouldProcessAttributeChange(const QualifiedName&, Element*) { return false; }
 inline void AXObjectCache::handleFocusedUIElementChanged(Node*, Node*, UpdateModal) { }
 inline void AXObjectCache::handleScrollbarUpdate(ScrollView*) { }

@@ -225,6 +225,13 @@ AXObjectCache::AXObjectCache(Document& document)
     , m_currentModalElement(nullptr)
     , m_performCacheUpdateTimer(*this, &AXObjectCache::performCacheUpdateTimerFired)
 {
+    AXTRACE(makeString("AXObjectCache::AXObjectCache 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
+#ifndef NDEBUG
+    if (m_pageID)
+        AXLOG(makeString("pageID ", m_pageID->loggingString()));
+    else
+        AXLOG("No pageID.");
+#endif
     ASSERT(isMainThread());
 
     // If loading completed before the cache was created, loading progress will have been reset to zero.
@@ -237,6 +244,7 @@ AXObjectCache::AXObjectCache(Document& document)
 
 AXObjectCache::~AXObjectCache()
 {
+    AXTRACE(makeString("AXObjectCache::~AXObjectCache 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
     m_notificationPostTimer.stop();
     m_liveRegionChangedPostTimer.stop();
     m_performCacheUpdateTimer.stop();
@@ -873,7 +881,7 @@ AccessibilityObject* AXObjectCache::create(AccessibilityRole role)
 
 void AXObjectCache::remove(AXID axID)
 {
-    AXTRACE("AXObjectCache::remove"_s);
+    AXTRACE(makeString("AXObjectCache::remove 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
     AXLOG(makeString("AXID ", axID.loggingString()));
 
     if (!axID)
@@ -905,9 +913,12 @@ void AXObjectCache::remove(RenderObject* renderer)
 
 void AXObjectCache::remove(Node& node)
 {
+    AXTRACE(makeString("AXObjectCache::remove 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
     if (is<Element>(node)) {
         m_deferredTextFormControlValue.remove(downcast<Element>(&node));
-        m_deferredAttributeChange.remove(downcast<Element>(&node));
+        m_deferredAttributeChange.removeAllMatching([&node] (const auto& entry) {
+            return entry.first == &node;
+        });
         m_modalElementsSet.remove(downcast<Element>(&node));
         m_deferredRecomputeIsIgnoredList.remove(downcast<Element>(node));
         m_deferredRecomputeTableIsExposedList.remove(downcast<Element>(node));
@@ -985,7 +996,7 @@ AXID AXObjectCache::getAXID(AccessibilityObject* obj)
 
 void AXObjectCache::handleTextChanged(AccessibilityObject* object)
 {
-    AXTRACE("AXObjectCache::handleTextChanged"_s);
+    AXTRACE(makeString("AXObjectCache::handleTextChanged 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
     AXLOG(object);
 
     if (!object)
@@ -1167,7 +1178,7 @@ void AXObjectCache::childrenChanged(AccessibilityObject* object)
 
 void AXObjectCache::notificationPostTimerFired()
 {
-    AXTRACE("AXObjectCache::notificationPostTimerFired"_s);
+    AXTRACE(makeString("AXObjectCache::notificationPostTimerFired 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
     // During LayoutTests, accessibility may be disabled between the time the notifications are queued and the timer fires.
     // Thus check here and return if accessibility is disabled.
     if (!accessibilityEnabled())
@@ -1276,7 +1287,7 @@ void AXObjectCache::postNotification(Node* node, AXNotification notification, Po
 
 void AXObjectCache::postNotification(AXCoreObject* object, Document* document, AXNotification notification, PostTarget postTarget)
 {
-    AXTRACE("AXObjectCache::postNotification"_s);
+    AXTRACE(makeString("AXObjectCache::postNotification 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
     AXLOG(std::make_pair(object, notification));
     ASSERT(isMainThread());
 
@@ -1299,6 +1310,11 @@ void AXObjectCache::postNotification(AXCoreObject* object, Document* document, A
 void AXObjectCache::checkedStateChanged(Node* node)
 {
     postNotification(node, AXObjectCache::AXCheckedStateChanged);
+}
+
+void AXObjectCache::autofillTypeChanged(Node* node)
+{
+    postNotification(node, AXNotification::AXAutofillTypeChanged);
 }
 
 void AXObjectCache::handleMenuItemSelected(Node* node)
@@ -1589,7 +1605,7 @@ void AXObjectCache::postTextStateChangeNotification(const Position& position, co
 
 void AXObjectCache::postTextStateChangeNotification(AccessibilityObject* object, const AXTextStateChangeIntent& intent, const VisibleSelection& selection)
 {
-    AXTRACE("AXObjectCache::postTextStateChangeNotification"_s);
+    AXTRACE(makeString("AXObjectCache::postTextStateChangeNotification 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
     stopCachingComputedObjectAttributes();
 
 #if PLATFORM(COCOA) || USE(ATSPI)
@@ -1621,7 +1637,7 @@ void AXObjectCache::postTextStateChangeNotification(AccessibilityObject* object,
 
 void AXObjectCache::postTextStateChangeNotification(Node* node, AXTextEditType type, const String& text, const VisiblePosition& position)
 {
-    AXTRACE("AXObjectCache::postTextStateChangeNotification"_s);
+    AXTRACE(makeString("AXObjectCache::postTextStateChangeNotification 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
     if (!node || type == AXTextEditTypeUnknown)
         return;
 
@@ -1873,13 +1889,16 @@ void AXObjectCache::handleRoleChange(AccessibilityObject* axObject)
 
 void AXObjectCache::deferAttributeChangeIfNeeded(const QualifiedName& attrName, Element* element)
 {
+    AXTRACE(makeString("AXObjectCache::deferAttributeChangeIfNeeded 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
+
     if (nodeAndRendererAreValid(element) && rendererNeedsDeferredUpdate(*element->renderer())) {
-        m_deferredAttributeChange.add(element, attrName);
+        m_deferredAttributeChange.append({ element, attrName });
         if (!m_performCacheUpdateTimer.isActive())
             m_performCacheUpdateTimer.startOneShot(0_s);
+        AXLOG(makeString("Deferring handling of attribute ", attrName.localName().string(), " for element ", element->debugDescription()));
+        return;
     }
-    else
-        handleAttributeChange(attrName, element);
+    handleAttributeChange(element, attrName);
 }
     
 bool AXObjectCache::shouldProcessAttributeChange(const QualifiedName& attrName, Element* element)
@@ -1900,8 +1919,11 @@ bool AXObjectCache::shouldProcessAttributeChange(const QualifiedName& attrName, 
     return false;
 }
 
-void AXObjectCache::handleAttributeChange(const QualifiedName& attrName, Element* element)
+void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName& attrName)
 {
+    AXTRACE(makeString("AXObjectCache::handleAttributeChange 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
+    AXLOG(makeString("attribute ", attrName.localName().string(), " for element ", element->debugDescription()));
+
     if (!shouldProcessAttributeChange(attrName, element))
         return;
 
@@ -3347,9 +3369,13 @@ void AXObjectCache::prepareForDocumentDestruction(const Document& document)
     filterWeakHashSetForRemoval(m_deferredModalChangedList, document, nodesToRemove);
     filterWeakHashSetForRemoval(m_deferredMenuListChange, document, nodesToRemove);
     filterMapForRemoval(m_deferredTextFormControlValue, document, nodesToRemove);
-    filterMapForRemoval(m_deferredAttributeChange, document, nodesToRemove);
     filterVectorPairForRemoval(m_deferredFocusedNodeChange, document, nodesToRemove);
-    
+
+    for (const auto& entry : m_deferredAttributeChange) {
+        if (entry.first && (!entry.first->isConnected() || &entry.first->document() == &document))
+            nodesToRemove.add(*entry.first);
+    }
+
     for (auto& node : nodesToRemove)
         remove(node);
 }
@@ -3374,6 +3400,8 @@ void AXObjectCache::performCacheUpdateTimerFired()
 
 void AXObjectCache::processDeferredChildrenChangedList()
 {
+    AXTRACE(makeString("AXObjectCache::processDeferredChildrenChangedList 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
+    AXLOG(makeString("ChildrenChangedList size ", m_deferredChildrenChangedList.size()));
     for (auto& child : m_deferredChildrenChangedList)
         handleChildrenChanged(*child);
     m_deferredChildrenChangedList.clear();
@@ -3381,17 +3409,21 @@ void AXObjectCache::processDeferredChildrenChangedList()
 
 void AXObjectCache::performDeferredCacheUpdate()
 {
-    AXTRACE("AXObjectCache::performDeferredCacheUpdate"_s);
-    if (m_performingDeferredCacheUpdate)
+    AXTRACE(makeString("AXObjectCache::performDeferredCacheUpdate 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
+    if (m_performingDeferredCacheUpdate) {
+        AXLOG("Bailing out due to reentrant call.");
         return;
+    }
     SetForScope performingDeferredCacheUpdate(m_performingDeferredCacheUpdate, true);
 
+    AXLOG(makeString("RecomputeTableIsExposedList size ", m_deferredRecomputeTableIsExposedList.computeSize()));
     m_deferredRecomputeTableIsExposedList.forEach([this] (auto& tableElement) {
         if (auto* axTable = dynamicDowncast<AccessibilityTable>(get(&tableElement)))
             axTable->recomputeIsExposable();
     });
     m_deferredRecomputeTableIsExposedList.clear();
 
+    AXLOG(makeString("NodeAddedOrRemovedList size ", m_deferredNodeAddedOrRemovedList.size()));
     for (auto* nodeChild : m_deferredNodeAddedOrRemovedList) {
         handleMenuOpened(nodeChild);
         handleLiveRegionCreated(nodeChild);
@@ -3400,31 +3432,37 @@ void AXObjectCache::performDeferredCacheUpdate()
 
     processDeferredChildrenChangedList();
 
+    AXLOG(makeString("TextChangedList size ", m_deferredTextChangedList.size()));
     for (auto* node : m_deferredTextChangedList)
         handleTextChanged(getOrCreate(node));
     m_deferredTextChangedList.clear();
 
+    AXLOG(makeString("RecomputeIsIgnoredList size ", m_deferredRecomputeIsIgnoredList.computeSize()));
     m_deferredRecomputeIsIgnoredList.forEach([this] (auto& element) {
         if (auto* renderer = element.renderer())
             recomputeIsIgnored(renderer);
     });
     m_deferredRecomputeIsIgnoredList.clear();
 
+    AXLOG(makeString("SelectedChildredChangedList size ", m_deferredSelectedChildredChangedList.computeSize()));
     m_deferredSelectedChildredChangedList.forEach([this] (auto& selectElement) {
         selectedChildrenChanged(&selectElement);
     });
     m_deferredSelectedChildredChangedList.clear();
 
+    AXLOG(makeString("TextFormControlValue size ", m_deferredTextFormControlValue.size()));
     for (auto& deferredFormControlContext : m_deferredTextFormControlValue) {
         auto& textFormControlElement = downcast<HTMLTextFormControlElement>(*deferredFormControlContext.key);
         postTextReplacementNotificationForTextControl(textFormControlElement, deferredFormControlContext.value, textFormControlElement.innerTextValue());
     }
     m_deferredTextFormControlValue.clear();
 
-    for (auto& deferredAttributeChangeContext : m_deferredAttributeChange)
-        handleAttributeChange(deferredAttributeChangeContext.value, deferredAttributeChangeContext.key);
+    AXLOG(makeString("AttributeChange size ", m_deferredAttributeChange.size()));
+    for (const auto& attributeChange : m_deferredAttributeChange)
+        handleAttributeChange(attributeChange.first, attributeChange.second);
     m_deferredAttributeChange.clear();
-    
+
+    AXLOG(makeString("FocusedNodeChange size ", m_deferredFocusedNodeChange.size()));
     for (auto& deferredFocusedChangeContext : m_deferredFocusedNodeChange) {
         // Don't recompute the active modal for each individal focus change, as that could cause a lot of expensive tree rebuilding. Instead, we do it once below.
         handleFocusedUIElementChanged(deferredFocusedChangeContext.first, deferredFocusedChangeContext.second, UpdateModal::No);
@@ -3437,6 +3475,7 @@ void AXObjectCache::performDeferredCacheUpdate()
     bool shouldRecomputeModal = updatedFocusedElement;
     m_deferredFocusedNodeChange.clear();
 
+    AXLOG(makeString("ModalChangedList size ", m_deferredModalChangedList.computeSize()));
     for (auto& element : m_deferredModalChangedList) {
         if (!is<HTMLDialogElement>(element) && !nodeHasRole(&element, "dialog"_s) && !nodeHasRole(&element, "alertdialog"_s))
             continue;
@@ -3463,6 +3502,7 @@ void AXObjectCache::performDeferredCacheUpdate()
             focusCurrentModal();
     }
 
+    AXLOG(makeString("MenuListChange size ", m_deferredMenuListChange.computeSize()));
     m_deferredMenuListChange.forEach([this] (auto& element) {
         handleMenuListValueChanged(element);
     });
@@ -3510,7 +3550,7 @@ void AXObjectCache::updateIsolatedTree(AXCoreObject& object, AXNotification noti
 
 void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObject>, AXNotification>>& notifications)
 {
-    AXTRACE("AXObjectCache::updateIsolatedTree"_s);
+    AXTRACE(makeString("AXObjectCache::updateIsolatedTree 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
 
     if (!m_pageID) {
         AXLOG("No pageID.");
@@ -3542,6 +3582,9 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObjec
             continue;
 
         switch (notification.second) {
+        case AXAutofillTypeChanged:
+            tree->updateNodeProperty(*notification.first, AXPropertyName::ValueAutofillButtonType);
+            break;
         case AXCheckedStateChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::IsChecked);
             break;
@@ -3763,7 +3806,7 @@ AXTreeData AXObjectCache::treeData()
 
     stream << "\nAXObjectTree:\n";
     if (auto* root = get(document().view())) {
-        constexpr OptionSet<AXStreamOptions> options = { AXStreamOptions::ObjectID, AXStreamOptions::ParentID, AXStreamOptions::Role, AXStreamOptions::OuterHTML };
+        constexpr OptionSet<AXStreamOptions> options = { AXStreamOptions::ObjectID, AXStreamOptions::ParentID, AXStreamOptions::Role, AXStreamOptions::IdentifierAttribute, AXStreamOptions::OuterHTML };
         streamSubtree(stream, root, options);
     } else
         stream << "No root!";
@@ -3772,9 +3815,10 @@ AXTreeData AXObjectCache::treeData()
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     if (isIsolatedTreeEnabled()) {
         stream << "\nAXIsolatedTree:\n";
-        if (auto tree = getOrCreateIsolatedTree())
-            streamIsolatedSubtreeOnMainThread(stream, *tree, tree->rootNode()->objectID(), { AXStreamOptions::ObjectID, AXStreamOptions::ParentID });
-        else
+        if (auto tree = getOrCreateIsolatedTree()) {
+            constexpr OptionSet<AXStreamOptions> options = { AXStreamOptions::ObjectID, AXStreamOptions::ParentID };
+            streamSubtree(stream, tree->rootNode(), options);
+        } else
             stream << "No isolated tree!";
         data.isolatedTree = stream.release();
     }
@@ -3908,7 +3952,7 @@ void AXObjectCache::addRelation(AccessibilityObject* origin, AccessibilityObject
 
 void AXObjectCache::updateRelationsIfNeeded()
 {
-    AXTRACE("AXObjectCache::updateRelationsIfNeeded"_s);
+    AXTRACE(makeString("AXObjectCache::updateRelationsIfNeeded 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
 
     if (!m_relationsNeedUpdate)
         return;
