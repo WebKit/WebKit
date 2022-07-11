@@ -1,7 +1,7 @@
 SCRIPTS_PATH ?= ../Tools/Scripts
 
 XCODE_OPTIONS = `perl -I$(SCRIPTS_PATH) -Mwebkitdirs -e 'print XcodeOptionString()' -- $(BUILD_WEBKIT_OPTIONS)` $(ARGS)
-XCODE_OPTIONS += $(if $(GCC_PREPROCESSOR_DEFINITIONS),GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_DEFINITIONS)')
+XCODE_OPTIONS += $(if $(GCC_PREPROCESSOR_ADDITIONS),GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) $$(inherited)')
 ifeq (ON,$(ENABLE_LLVM_PROFILE_GENERATION))
 	XCODE_OPTIONS += ENABLE_LLVM_PROFILE_GENERATION=ENABLE_LLVM_PROFILE_GENERATION
 endif
@@ -140,7 +140,7 @@ release r: force
 release+assert ra: force
 	@$(call set_webkit_configuration,--release)
 	@$(call invoke_xcode,,,)
-release+assert ra: override GCC_PREPROCESSOR_DEFINITIONS += ASSERT_ENABLED=1
+release+assert ra: override GCC_PREPROCESSOR_ADDITIONS += ASSERT_ENABLED=1
 
 testing t: force
 	@$(call set_webkit_configuration,--debug --force-optimization-level=O3)
