@@ -585,10 +585,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeCopy info:elementInfo assistant:self]];
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    if ([_delegate respondsToSelector:@selector(actionSheetAssistantShouldIncludeCopySubjectAction:)] && [_delegate actionSheetAssistantShouldIncludeCopySubjectAction:self]) {
-        // FIXME (rdar://88834304): This should be additionally gated on the relevant VisionKit SPI.
+    if ([_delegate respondsToSelector:@selector(actionSheetAssistantShouldIncludeCopySubjectAction:)] && [_delegate actionSheetAssistantShouldIncludeCopySubjectAction:self])
         [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeCopyCroppedImage info:elementInfo assistant:self]];
-    }
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS)
@@ -856,7 +854,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
 
-static NSArray<UIMenuElement *> *menuElementsFromDefaultActions(RetainPtr<NSArray> defaultElementActions, RetainPtr<_WKActivatedElementInfo> elementInfo)
+static NSMutableArray<UIMenuElement *> *menuElementsFromDefaultActions(RetainPtr<NSArray> defaultElementActions, RetainPtr<_WKActivatedElementInfo> elementInfo)
 {
     if (![defaultElementActions count])
         return nil;
@@ -868,7 +866,7 @@ static NSArray<UIMenuElement *> *menuElementsFromDefaultActions(RetainPtr<NSArra
     return actions;
 }
 
-- (NSArray<UIMenuElement *> *)suggestedActionsForContextMenuWithPositionInformation:(const WebKit::InteractionInformationAtPosition&)positionInformation
+- (NSMutableArray<UIMenuElement *> *)suggestedActionsForContextMenuWithPositionInformation:(const WebKit::InteractionInformationAtPosition&)positionInformation
 {
     auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithInteractionInformationAtPosition:positionInformation userInfo:nil]);
     RetainPtr<NSArray<_WKElementAction *>> defaultActionsFromAssistant = positionInformation.isLink ? [self defaultActionsForLinkSheet:elementInfo.get()] : [self defaultActionsForImageSheet:elementInfo.get()];

@@ -541,7 +541,7 @@ struct ImageAnalysisContextMenuActionData {
     RetainPtr<NSString> _visualSearchPreviewTitle;
     CGRect _visualSearchPreviewImageBounds;
 #endif // USE(QUICK_LOOK)
-    BOOL _canUpdateVisibleContextMenuWithImageAnalysisActions;
+    BOOL _waitingForDynamicImageAnalysisContextMenuActions;
     std::optional<WebKit::ImageAnalysisContextMenuActionData> _imageAnalysisContextMenuActionData;
 #endif // ENABLE(IMAGE_ANALYSIS)
     uint32_t _fullscreenVideoImageAnalysisRequestIdentifier;
