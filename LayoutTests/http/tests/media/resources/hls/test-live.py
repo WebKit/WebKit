@@ -21,15 +21,15 @@ sys.stdout.write(
 
 chunk_duration = 6.0272
 if 'duration' in query.keys():
-    chunk_duration = float(query.get('duration'))
+    chunk_duration = float(query.get('duration')[0])
 
 chunk_count = 4
 if 'count' in query.keys():
-    chunk_count = int(query.get('count'))
+    chunk_count = int(query.get('count')[0])
 
 chunk_url = 'test.ts'
 if 'url' in query.keys():
-    chunk_url = query.get('url')
+    chunk_url = query.get('url')[0]
 
 sys.stdout.write(
     '#EXTM3U\n'
