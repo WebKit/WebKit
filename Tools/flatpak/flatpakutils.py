@@ -744,6 +744,11 @@ class WebkitFlatpak:
         return command and "build-jsc" in os.path.basename(command)
 
     def setup_a11y_proxy(self):
+        # This method might be called more than once, in case of local projects setups for instance.
+        # Overriding the xdg-dbus-proxy process actually leads to process leaks. Ensure the process
+        # is created at most one time.
+        if self.dbus_proxy_process:
+            return []
         try:
             output = subprocess.check_output(("gdbus", "call", "-e", "-d", "org.a11y.Bus", "-o", "/org/a11y/bus", "-m", "org.a11y.Bus.GetAddress"))
             a11y_bus_address = re.findall(br"'([^']+)", output)[0]  # Extract string from output from: ('unix:abstract=0000f',)
