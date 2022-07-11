@@ -715,6 +715,14 @@ Because `WeakHashSet` does not get notified when the referenced object is delete
 the users / owners of `WeakHashSet` are still responsible for deleting the relevant entries from the set.
 Otherwise, WeakHashSet will hold onto `WeakPtrImpl` until `computeSize` is called or rehashing happens.
 
+### WeakHashMap
+
+Like `WeakHashSet`, `WeakHashMap` is a specialized class to map a WeakPtr key with a value.
+Because `WeakHashMap` does not get notified when the referenced object is deleted,
+the users / owners of `WeakHashMap` are still responsible for deleting the relevant entries from the map.
+Otherwise, the memory space used by `WeakPtrImpl` and its value will not be free'ed up until
+next rehash or amortized cleanup cycle arrives (based on the total number of read or write operations).
+
 # Understanding Document Object Model
 
 ## Introduction
