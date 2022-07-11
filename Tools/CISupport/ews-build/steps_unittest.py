@@ -3062,11 +3062,87 @@ class TestUpdateWorkingDirectory(BuildStepMixinAdditions, unittest.TestCase):
     def test_success(self):
         self.setupStep(UpdateWorkingDirectory())
         self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        logEnviron=False,
-                        command=['perl', 'Tools/Scripts/update-webkit'],
-                        )
-            + 0,
+            ExpectShell(
+                workdir='wkdir',
+                logEnviron=False,
+                command=['git', 'checkout', 'remotes/origin/main', '-f'],
+            ) + 0, ExpectShell(workdir='wkdir',
+                logEnviron=False,
+                command=['/bin/sh', '-c', 'git branch -D main || true'],
+            ) + 0, ExpectShell(workdir='wkdir',
+                logEnviron=False,
+                command=['git', 'checkout', '-b', 'main'],
+            ) + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Updated working directory')
+        return self.runStep()
+
+    def test_success_branch(self):
+        self.setupStep(UpdateWorkingDirectory())
+        self.setProperty('github.base.ref', 'safari-xxx-branch')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                logEnviron=False,
+                command=['git', 'checkout', 'remotes/origin/safari-xxx-branch', '-f'],
+            ) + 0, ExpectShell(workdir='wkdir',
+                logEnviron=False,
+                command=['/bin/sh', '-c', 'git branch -D safari-xxx-branch || true'],
+            ) + 0, ExpectShell(workdir='wkdir',
+                logEnviron=False,
+                command=['git', 'checkout', '-b', 'safari-xxx-branch'],
+            ) + 0, ExpectShell(workdir='wkdir',
+                logEnviron=False,
+                command=['/bin/sh', '-c', 'git branch -D main || true'],
+            ) + 0, ExpectShell(workdir='wkdir',
+                logEnviron=False,
+                command=['git', 'branch', '--track', 'main', 'remotes/origin/main'],
+            ) + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Updated working directory')
+        return self.runStep()
+
+    def test_success_remote(self):
+        self.setupStep(UpdateWorkingDirectory())
+        self.setProperty('remote', 'security')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                logEnviron=False,
+                command=['git', 'checkout', 'remotes/security/main', '-f'],
+            ) + 0, ExpectShell(workdir='wkdir',
+                logEnviron=False,
+                command=['/bin/sh', '-c', 'git branch -D main || true'],
+            ) + 0, ExpectShell(workdir='wkdir',
+                logEnviron=False,
+                command=['git', 'checkout', '-b', 'main'],
+            ) + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Updated working directory')
+        return self.runStep()
+
+    def test_success_remote_branch(self):
+        self.setupStep(UpdateWorkingDirectory())
+        self.setProperty('remote', 'security')
+        self.setProperty('github.base.ref', 'safari-xxx-branch')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                logEnviron=False,
+                command=['git', 'checkout', 'remotes/security/safari-xxx-branch', '-f'],
+            ) + 0, ExpectShell(workdir='wkdir',
+                logEnviron=False,
+                command=['/bin/sh', '-c', 'git branch -D safari-xxx-branch || true'],
+            ) + 0, ExpectShell(workdir='wkdir',
+                logEnviron=False,
+                command=['git', 'checkout', '-b', 'safari-xxx-branch'],
+            ) + 0, ExpectShell(workdir='wkdir',
+                logEnviron=False,
+                command=['/bin/sh', '-c', 'git branch -D main || true'],
+            ) + 0, ExpectShell(workdir='wkdir',
+                logEnviron=False,
+                command=['git', 'branch', '--track', 'main', 'remotes/origin/main'],
+            ) + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='Updated working directory')
         return self.runStep()
@@ -3076,7 +3152,7 @@ class TestUpdateWorkingDirectory(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/update-webkit'],
+                        command=['git', 'checkout', 'remotes/origin/main', '-f'],
                         )
             + ExpectShell.log('stdio', stdout='Unexpected failure.')
             + 2,
@@ -4740,15 +4816,13 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
             + ExpectShell.log('stdio', stdout=''),
             ExpectShell(command=['git', 'clean', '-f', '-d'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
-            ExpectShell(command=['git', 'fetch', 'origin'], workdir='wkdir', timeout=300, logEnviron=False) + 0
-            + ExpectShell.log('stdio', stdout=''),
             ExpectShell(command=['git', 'checkout', 'origin/main', '-f'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout='You are in detached HEAD state.'),
             ExpectShell(command=['git', 'branch', '-D', 'main'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout='Deleted branch main (was 57015967fef9).'),
-            ExpectShell(command=['git', 'checkout', 'origin/main', '-b', 'main'], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            ExpectShell(command=['git', 'checkout', '-b', 'main'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout="Switched to a new branch 'main'"),
-            ExpectShell(command=['/bin/sh', '-c', 'git branch | grep -v main | grep -v main | xargs git branch -D || true'], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            ExpectShell(command=['/bin/sh', '-c', 'git branch | grep -v main | xargs git branch -D || true'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
             ExpectShell(command=['/bin/sh', '-c', 'git remote | grep -v origin | xargs -L 1 git remote rm || true'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
@@ -4768,15 +4842,13 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
             + ExpectShell.log('stdio', stdout=''),
             ExpectShell(command=['git', 'clean', '-f', '-d'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
-            ExpectShell(command=['git', 'fetch', 'origin'], workdir='wkdir', timeout=300, logEnviron=False) + 0
-            + ExpectShell.log('stdio', stdout=''),
             ExpectShell(command=['git', 'checkout', 'origin/main', '-f'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout='You are in detached HEAD state.'),
             ExpectShell(command=['git', 'branch', '-D', 'main'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout='Deleted branch main (was 57015967fef9).'),
-            ExpectShell(command=['git', 'checkout', 'origin/main', '-b', 'main'], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            ExpectShell(command=['git', 'checkout', '-b', 'main'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout="Switched to a new branch 'main'"),
-            ExpectShell(command=['sh', '-c', 'git branch | grep -v main | grep -v main | xargs git branch -D || exit 0'], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            ExpectShell(command=['sh', '-c', 'git branch | grep -v main | xargs git branch -D || exit 0'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
             ExpectShell(command=['sh', '-c', 'git remote | grep -v origin | xargs -L 1 git remote rm || exit 0'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
@@ -4795,15 +4867,13 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
             + ExpectShell.log('stdio', stdout=''),
             ExpectShell(command=['git', 'clean', '-f', '-d'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
-            ExpectShell(command=['git', 'fetch', 'origin'], workdir='wkdir', timeout=300, logEnviron=False) + 0
-            + ExpectShell.log('stdio', stdout=''),
             ExpectShell(command=['git', 'checkout', 'origin/master', '-f'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout='You are in detached HEAD state.'),
             ExpectShell(command=['git', 'branch', '-D', 'master'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout='Deleted branch master (was 57015967fef9).'),
-            ExpectShell(command=['git', 'checkout', 'origin/master', '-b', 'master'], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            ExpectShell(command=['git', 'checkout', '-b', 'master'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout="Switched to a new branch 'master'"),
-            ExpectShell(command=['/bin/sh', '-c', 'git branch | grep -v master | grep -v master | xargs git branch -D || true'], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            ExpectShell(command=['/bin/sh', '-c', 'git branch | grep -v master | xargs git branch -D || true'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
             ExpectShell(command=['/bin/sh', '-c', 'git remote | grep -v origin | xargs -L 1 git remote rm || true'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
@@ -4822,15 +4892,13 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
             + ExpectShell.log('stdio', stdout=''),
             ExpectShell(command=['git', 'clean', '-f', '-d'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
-            ExpectShell(command=['git', 'fetch', 'origin'], workdir='wkdir', timeout=300, logEnviron=False) + 128
-            + ExpectShell.log('stdio', stdout='fatal: unable to access https://github.com/WebKit/WebKit.git/: Could not resolve host: github.com'),
-            ExpectShell(command=['git', 'checkout', 'origin/main', '-f'], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            ExpectShell(command=['git', 'checkout', 'origin/main', '-f'], workdir='wkdir', timeout=300, logEnviron=False) + 128
             + ExpectShell.log('stdio', stdout='You are in detached HEAD state.'),
             ExpectShell(command=['git', 'branch', '-D', 'main'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout='Deleted branch main (was 57015967fef9).'),
-            ExpectShell(command=['git', 'checkout', 'origin/main', '-b', 'main'], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            ExpectShell(command=['git', 'checkout', '-b', 'main'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout="Switched to a new branch 'main'"),
-            ExpectShell(command=['/bin/sh', '-c', 'git branch | grep -v main | grep -v main | xargs git branch -D || true'], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            ExpectShell(command=['/bin/sh', '-c', 'git branch | grep -v main | xargs git branch -D || true'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
             ExpectShell(command=['/bin/sh', '-c', 'git remote | grep -v origin | xargs -L 1 git remote rm || true'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
@@ -4850,15 +4918,13 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
             + ExpectShell.log('stdio', stdout=''),
             ExpectShell(command=['git', 'clean', '-f', '-d'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
-            ExpectShell(command=['git', 'fetch', 'origin'], workdir='wkdir', timeout=300, logEnviron=False) + 0
-            + ExpectShell.log('stdio', stdout=''),
-            ExpectShell(command=['git', 'checkout', 'origin/safari-612-branch', '-f'], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            ExpectShell(command=['git', 'checkout', 'origin/main', '-f'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout='You are in detached HEAD state.'),
-            ExpectShell(command=['git', 'branch', '-D', 'safari-612-branch'], workdir='wkdir', timeout=300, logEnviron=False) + 0
-            + ExpectShell.log('stdio', stdout='Deleted branch safari-612-branch (was 57015967fef9).'),
-            ExpectShell(command=['git', 'checkout', 'origin/safari-612-branch', '-b', 'safari-612-branch'], workdir='wkdir', timeout=300, logEnviron=False) + 0
-            + ExpectShell.log('stdio', stdout="Switched to a new branch 'safari-612-branch'"),
-            ExpectShell(command=['/bin/sh', '-c', 'git branch | grep -v main | grep -v safari-612-branch | xargs git branch -D || true'], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            ExpectShell(command=['git', 'branch', '-D', 'main'], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout='Deleted branch main (was 57015967fef9).'),
+            ExpectShell(command=['git', 'checkout', '-b', 'main'], workdir='wkdir', timeout=300, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout="Switched to a new branch 'main'"),
+            ExpectShell(command=['/bin/sh', '-c', 'git branch | grep -v main | xargs git branch -D || true'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
             ExpectShell(command=['/bin/sh', '-c', 'git remote | grep -v origin | xargs -L 1 git remote rm || true'], workdir='wkdir', timeout=300, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
@@ -5549,9 +5615,52 @@ class TestFetchBranches(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=300,
                         logEnviron=False,
-                        command=['git', 'fetch']) +
+                        command=['git', 'fetch', 'origin']) +
             ExpectShell.log('stdio', stdout='   fb192c1de607..afb17ed1708b  main       -> origin/main\n') +
             0,
+        )
+        self.expectOutcome(result=SUCCESS)
+        return self.runStep()
+
+    def test_success_remote(self):
+        GitHub.credentials = lambda user=None: ('webkit-commit-queue', 'password')
+        self.setupStep(FetchBranches())
+        self.setProperty('project', 'WebKit/WebKit-security')
+        self.setProperty('remote', 'security')
+        env = dict(GIT_USER='webkit-commit-queue', GIT_PASSWORD='password')
+
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                logEnviron=False,
+                env=env,
+                command=['git', 'fetch', 'origin'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                logEnviron=False,
+                env=env,
+                command=['git', 'config', 'credential.helper', '!echo_credentials() { sleep 1; echo "username=${GIT_USER}"; echo "password=${GIT_PASSWORD}"; }; echo_credentials'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                logEnviron=False,
+                env=env,
+                command=['/bin/sh', '-c', 'git remote add security https://github.com/WebKit/WebKit-security.git || true'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                logEnviron=False,
+                env=env,
+                command=['git', 'remote', 'set-url', 'security', 'https://github.com/WebKit/WebKit-security.git'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                logEnviron=False,
+                env=env,
+                command=['git', 'fetch', 'security'],
+            ) + 0,
         )
         self.expectOutcome(result=SUCCESS)
         return self.runStep()
@@ -5562,7 +5671,7 @@ class TestFetchBranches(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=300,
                         logEnviron=False,
-                        command=['git', 'fetch']) +
+                        command=['git', 'fetch',  'origin']) +
             ExpectShell.log('stdio', stdout="fatal: unable to access 'https://github.com/WebKit/WebKit/': Could not resolve host: github.com\n") +
             2,
         )

@@ -57,6 +57,7 @@ RESULTS_DB_URL = 'https://results.webkit.org/'
 WithProperties = properties.WithProperties
 Interpolate = properties.Interpolate
 GITHUB_URL = 'https://github.com/'
+# First project is treated as the default
 GITHUB_PROJECTS = ['WebKit/WebKit', 'apple/WebKit', 'WebKit/WebKit-security']
 HASH_LENGTH_TO_DISPLAY = 8
 DEFAULT_BRANCH = 'main'
@@ -574,7 +575,14 @@ class ConfigureBuild(buildstep.BuildStep, AddToLogMixin):
         owners = self.getProperty('owners', [])
         revision = self.getProperty('github.head.sha')
 
-        if self.getProperty('project') != 'WebKit/WebKit':
+        project = self.getProperty('project')
+        if project == GITHUB_PROJECTS[0]:
+            self.setProperty('remote', 'origin')
+            self.setProperty('sensitive', False)
+        elif project in GITHUB_PROJECTS:
+            self.setProperty('remote', project.split('-')[-1] if '-' in project else project.split('/')[0])
+            self.setProperty('sensitive', True)
+        else:
             self.setProperty('sensitive', True)
 
         self.setProperty('change_id', revision[:HASH_LENGTH_TO_DISPLAY], 'ConfigureBuild')
@@ -677,15 +685,36 @@ class CheckOutSpecificRevision(shell.ShellCommand):
         return shell.ShellCommand.start(self)
 
 
-class FetchBranches(shell.ShellCommand):
+class FetchBranches(steps.ShellSequence, ShellMixin):
     name = 'fetch-branch-references'
     descriptionDone = ['Updated branch information']
-    command = ['git', 'fetch']
     flunkOnFailure = False
     haltOnFailure = False
 
     def __init__(self, **kwargs):
         super(FetchBranches, self).__init__(timeout=5 * 60, logEnviron=False, **kwargs)
+
+    def run(self):
+        self.commands = [util.ShellArg(command=['git', 'fetch', 'origin'], logname='stdio')]
+
+        project = self.getProperty('project', GITHUB_PROJECTS[0])
+        remote = self.getProperty('remote', 'origin')
+        if remote != 'origin':
+            for command in [
+                ['git', 'config', 'credential.helper', '!echo_credentials() { sleep 1; echo "username=${GIT_USER}"; echo "password=${GIT_PASSWORD}"; }; echo_credentials'],
+                self.shell_command('git remote add {} {}{}.git || {}'.format(remote, GITHUB_URL, project, self.shell_exit_0())),
+                ['git', 'remote', 'set-url', remote, '{}{}.git'.format(GITHUB_URL, project)],
+                ['git', 'fetch', remote],
+            ]:
+                self.commands.append(util.ShellArg(command=command, logname='stdio', haltOnFailure=True))
+
+            username, access_token = GitHub.credentials(user=GitHub.user_for_queue(self.getProperty('buildername', '')))
+            self.env = dict(
+                GIT_USER=username,
+                GIT_PASSWORD=access_token,
+            )
+
+        return super(FetchBranches, self).run()
 
     def hideStepIf(self, results, step):
         return results == SUCCESS
@@ -776,12 +805,11 @@ class CleanWorkingDirectory(shell.ShellCommand):
         return shell.ShellCommand.start(self)
 
 
-class UpdateWorkingDirectory(shell.ShellCommand):
+class UpdateWorkingDirectory(steps.ShellSequence, ShellMixin):
     name = 'update-working-directory'
     description = ['update-working-directory running']
     flunkOnFailure = True
     haltOnFailure = True
-    command = ['perl', 'Tools/Scripts/update-webkit']
 
     def __init__(self, **kwargs):
         super(UpdateWorkingDirectory, self).__init__(logEnviron=False, **kwargs)
@@ -792,8 +820,25 @@ class UpdateWorkingDirectory(shell.ShellCommand):
         else:
             return {'step': 'Updated working directory'}
 
-    def evaluateCommand(self, cmd):
-        rc = shell.ShellCommand.evaluateCommand(self, cmd)
+    @defer.inlineCallbacks
+    def run(self):
+        remote = self.getProperty('remote', 'origin')
+        base = self.getProperty('github.base.ref', DEFAULT_BRANCH)
+
+        commands = [
+            ['git', 'checkout', 'remotes/{}/{}'.format(remote, base), '-f'],
+            self.shell_command('git branch -D {} || {}'.format(base, self.shell_exit_0())),
+            ['git', 'checkout', '-b', base],
+        ]
+        if base != DEFAULT_BRANCH:
+            commands.append(self.shell_command('git branch -D {} || {}'.format(DEFAULT_BRANCH, self.shell_exit_0())))
+            commands.append(['git', 'branch', '--track', DEFAULT_BRANCH, 'remotes/origin/{}'.format(DEFAULT_BRANCH)])
+
+        self.commands = []
+        for command in commands:
+            self.commands.append(util.ShellArg(command=command, logname='stdio', haltOnFailure=True))
+
+        rc = yield super(UpdateWorkingDirectory, self).run()
         if rc == FAILURE:
             self.build.buildFinished(['Git issue, retrying build'], RETRY)
         return rc
@@ -4446,17 +4491,15 @@ class CleanGitRepo(steps.ShellSequence, ShellMixin):
         self.git_remote = remote
 
     def run(self):
-        branch = self.getProperty('basename', self.default_branch)
         self.commands = []
         for command in [
             self.shell_command('git rebase --abort || {}'.format(self.shell_exit_0())),
             self.shell_command('git am --abort || {}'.format(self.shell_exit_0())),
             ['git', 'clean', '-f', '-d'],  # Remove any left-over layout test results, added files, etc.
-            ['git', 'fetch', self.git_remote],  # Avoid updating the working copy to a stale revision.
-            ['git', 'checkout', '{}/{}'.format(self.git_remote, branch), '-f'],  # Checkout branch from specific remote
-            ['git', 'branch', '-D', '{}'.format(branch)],  # Delete any local cache of the specified branch
-            ['git', 'checkout', '{}/{}'.format(self.git_remote, branch), '-b', '{}'.format(branch)],  # Checkout local instance of branch from remote
-            self.shell_command('git branch | grep -v {} | grep -v {} | xargs git branch -D || {}'.format(self.default_branch, branch, self.shell_exit_0())),
+            ['git', 'checkout', '{}/{}'.format(self.git_remote, self.default_branch), '-f'],  # Checkout branch from specific remote
+            ['git', 'branch', '-D', '{}'.format(self.default_branch)],  # Delete any local cache of the specified branch
+            ['git', 'checkout', '-b', '{}'.format(self.default_branch)],  # Checkout local instance of branch from remote
+            self.shell_command('git branch | grep -v {} | xargs git branch -D || {}'.format(self.default_branch, self.shell_exit_0())),
             self.shell_command('git remote | grep -v {} | xargs -L 1 git remote rm || {}'.format(self.git_remote, self.shell_exit_0())),
         ]:
             self.commands.append(util.ShellArg(command=command, logname='stdio'))
@@ -4552,6 +4595,7 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
                     self.build.addStepsAfterCurrentStep([
                         CleanGitRepo(),
                         CheckOutSource(),
+                        FetchBranches(),
                         UpdateWorkingDirectory(),
                         ShowIdentifier(),
                         CheckOutPullRequest(),
@@ -4566,6 +4610,7 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
                     self.build.addStepsAfterCurrentStep([
                         CleanGitRepo(),
                         CheckOutSource(),
+                        FetchBranches(),
                         UpdateWorkingDirectory(),
                         ShowIdentifier(),
                         CommitPatch(),
