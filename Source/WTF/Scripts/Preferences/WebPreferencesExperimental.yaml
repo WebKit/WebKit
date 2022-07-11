@@ -1515,7 +1515,7 @@ UseGPUProcessForDisplayCapture:
   exposed: [ WebKit ]
   defaultValue:
     WebKit:
-      default: false
+      default: true
 
 UseGPUProcessForWebGLEnabled:
   type: bool
