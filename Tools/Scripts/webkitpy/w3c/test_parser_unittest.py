@@ -218,7 +218,6 @@ class TestParserTest(unittest.TestCase):
         test_info = parser.analyze_test(test_contents=test_html)
         self.assertTrue(test_info['manualtest'], 'test_info is manual')
 
-
     def test_analyze_css_manual_test(self):
         """ Tests analyze_test() using a css manual test """
 
@@ -243,6 +242,21 @@ class TestParserTest(unittest.TestCase):
 """ % flag
             test_info = parser.analyze_test(test_contents=test_html)
             self.assertTrue(test_info['manualtest'], 'test with CSS flag %s should be manual' % flag)
+
+    def test_analyze_crash_test(self):
+        test_html = """<body></body>
+"""
+        test_path = os.path.join(os.path.sep, 'some', 'madeup', 'path')
+        parser = TestParser(options, os.path.join(test_path, 'somefile-crash.html'))
+        test_info = parser.analyze_test(test_contents=test_html)
+
+        self.assertNotEqual(test_info, None)
+        self.assertTrue('test' in test_info.keys())
+        self.assertTrue('crashtest' in test_info.keys())
+        self.assertFalse('reference' in test_info.keys())
+        self.assertFalse('type' in test_info.keys())
+        self.assertFalse('refsupport' in test_info.keys())
+        self.assertFalse('jstest' in test_info.keys())
 
     def test_analyze_pixel_test_all_true(self):
         """ Tests analyze_test() using a test that is neither a reftest or jstest with all=False """
