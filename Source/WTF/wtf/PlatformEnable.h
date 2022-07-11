@@ -890,7 +890,8 @@
 #endif
 #endif
 
-#if !defined(ENABLE_PDFJS) && (PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE))
+// FIXME: Reenable PDFJS by default for Cocoa (https://bugs.webkit.org/show_bug.cgi?id=242263).
+#if !defined(ENABLE_PDFJS) && ( /* PLATFORM(COCOA) || */ PLATFORM(GTK) || PLATFORM(WPE))
 #define ENABLE_PDFJS 1
 #endif
 

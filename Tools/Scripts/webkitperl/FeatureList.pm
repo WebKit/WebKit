@@ -133,6 +133,7 @@ my (
     $orientationEventsSupport,
     $overflowScrollingTouchSupport,
     $paymentRequestSupport,
+    $pdfJS,
     $pdfkitPluginSupport,
     $pictureInPictureAPISupport,
     $pointerLockSupport,
@@ -424,6 +425,9 @@ my @features = (
 
     { option => "payment-request", desc => "Toggle Payment Request support",
       define => "ENABLE_PAYMENT_REQUEST", value => \$paymentRequestSupport },
+
+    { option => "pdfjs", desc => "Toggle PDF.js integration",
+      define => "ENABLE_PDFJS", value => \$pdfJS },
 
     { option => "pdfkit-plugin", desc => "Toggle PDFKit plugin support",
       define => "ENABLE_PDFKIT_PLUGIN", value => \$pdfkitPluginSupport },
