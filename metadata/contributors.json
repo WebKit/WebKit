@@ -2939,6 +2939,14 @@
    },
    {
       "emails" : [
+         "hhjalmarsson@apple.com"
+      ],
+      "github" : "HerculesH",
+      "name" : "Hercules Hjalmarsson",
+      "status" : "committer"
+   },
+   {
+      "emails" : [
          "hclam@google.com",
          "hclam@chromium.org"
       ],
