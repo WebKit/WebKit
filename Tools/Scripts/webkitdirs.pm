@@ -166,6 +166,7 @@ my $portName;
 my $shouldUseGuardMalloc;
 my $shouldNotUseNinja;
 my $xcodeVersion;
+my $configuredXcodeWorkspace;
 
 my $unknownPortProhibited = 0;
 my @originalArgv = @ARGV;
@@ -1012,6 +1013,29 @@ sub argumentsForXcode()
     return @args;
 }
 
+sub determineConfiguredXcodeWorkspace()
+{
+    return if defined $configuredXcodeWorkspace;
+    determineBaseProductDir();
+
+    if (open WORKSPACE, "$baseProductDir/Workspace") {
+        $configuredXcodeWorkspace = <WORKSPACE>;
+        close WORKSPACE;
+        chomp $configuredXcodeWorkspace;
+    }
+}
+
+sub configuredXcodeWorkspace()
+{
+    determineConfiguredXcodeWorkspace();
+    return $configuredXcodeWorkspace;
+}
+
+sub overrideConfiguredXcodeWorkspace($)
+{
+    $configuredXcodeWorkspace = shift;
+}
+
 sub XcodeOptions
 {
     determineBaseProductDir();
@@ -1025,11 +1049,15 @@ sub XcodeOptions
     determineLTOMode();
     if (isAppleCocoaWebKit()) {
       determineXcodeSDK();
+      determineConfiguredXcodeWorkspace();
     }
 
     my @options;
     push @options, "-UseSanitizedBuildSystemEnvironment=YES";
     push @options, "-ShowBuildOperationDuration=YES";
+    if ($configuredXcodeWorkspace && !checkForArgumentAndRemoveFromARGV("--no-use-workspace")) {
+        push @options, ("-workspace", $configuredXcodeWorkspace);
+    }
     push @options, ("-configuration", $configuration);
     if ($asanIsEnabled) {
         my $xcconfig = $ubsanIsEnabled ? "asan+ubsan.xcconfig" : "asan.xcconfig";
@@ -2122,13 +2150,14 @@ sub buildXCodeProject($$@)
     return system "xcodebuild", "-project", "$project.xcodeproj", @extraOptions;
 }
 
-sub buildXCodeWorkspace($$$@)
+sub buildXcodeScheme($$@)
 {
-    my ($workspace, $scheme, $clean, @extraOptions) = @_;
+    my ($scheme, $clean, @extraOptions) = @_;
     if ($clean) {
         push @extraOptions, "clean";
     }
-    return system "xcodebuild", "-workspace", $workspace, "-scheme", $scheme, @extraOptions;
+    
+    return system "xcodebuild", "-scheme", $scheme, @extraOptions;
 }
 
 sub getVisualStudioToolset()

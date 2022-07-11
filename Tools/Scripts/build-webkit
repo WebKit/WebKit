@@ -226,6 +226,12 @@ if ((isAppleWebKit() || isWinCairo() || isPlayStation() || isFTW()) && !-d "WebK
 my @options = ();
 
 if (isAppleCocoaWebKit()) {
+    # Ignore any workspace set by set-webkit-configuration
+    if (!$useWorkspace) {
+        overrideConfiguredXcodeWorkspace("");
+    } else {
+        overrideConfiguredXcodeWorkspace("WebKit.xcworkspace");
+    }
     push @options, XcodeOptions();
 
     sub option($$)
@@ -246,6 +252,7 @@ if (isAppleCocoaWebKit()) {
         "deprecated.\nIf you have a workflow requirement that depends " .
         "on building targets in manual order, please document it in " .
         "https://bugs.webkit.org/show_bug.cgi?id=241295.\n";
+        
         # ANGLE and libwebrtc must come before WebCore
         splice @projects, 0, 0, ("Source/ThirdParty/ANGLE");
         # if (not $archs32bit and (portName() eq Mac or portName() eq iOS or portName() eq watchOS)) {
@@ -361,7 +368,7 @@ if (isAppleWinWebKit() || isWinCairo() || isPlayStation() || isFTW()) {
     # Build, and abort if the build fails.
     if ($useWorkspace) {
         my $scheme = $onlyWebKitProject ? "WebKitLegacy" : "All Modules";
-        $result = buildXCodeWorkspace("WebKit.xcworkspace", $scheme, $clean, @local_options, @ARGV);
+        $result = buildXcodeScheme($scheme, $clean, @local_options, @ARGV);
         if (exitStatus($result)) {
             exit exitStatus($result);
         }

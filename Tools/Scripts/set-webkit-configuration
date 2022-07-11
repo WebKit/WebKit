@@ -28,6 +28,7 @@
 
 use strict;
 use warnings;
+use Cwd qw(realpath);
 use File::Path qw(make_path);
 use File::Spec;
 use FindBin;
@@ -47,6 +48,7 @@ Usage: $programName [options]
   --lto-mode=<mode>                  Set LTO mode: full, thin, or none
   --debug                            Set the default configuration to debug
   --release                          Set the default configuration to release
+  --workspace=<workspace>            Set the default Xcode workspace to build from
   --reset                            Reset configurations
   -h, --help                         Show this message and exit
 EOF
@@ -74,6 +76,10 @@ if (!checkForArgumentAndRemoveFromARGVGettingValue("--force-optimization-level",
     && !checkForArgumentAndRemoveFromARGVGettingValue("--force-opt", \$forceOptimizationLevel)) {
     $forceOptimizationLevel="";
 }
+my $workspace;
+if (!checkForArgumentAndRemoveFromARGVGettingValue("--workspace", \$workspace)) {
+    $workspace="";
+}
 
 if (checkForArgumentAndRemoveFromARGV("-h") || checkForArgumentAndRemoveFromARGV("--help")) {
     printUsage();
@@ -94,6 +100,11 @@ if (!$architecture) {
 my $baseProductDir = baseProductDir();
 if (isAppleCocoaWebKit() && !isCMakeBuild()) {
     markBaseProductDirectoryAsCreatedByXcodeBuildSystem();
+    if ($workspace) {
+        open WORKSPACE, ">", "$baseProductDir/Workspace";
+        print WORKSPACE realpath($workspace);
+        close WORKSPACE;
+    }
 } else {
     make_path($baseProductDir);
 }
@@ -180,6 +191,7 @@ sub printCurrentSettings()
     $result .= " Coverage" if coverageIsEnabled();
     $result .= " LTOMode:" . ltoMode() if ltoMode();
     $result .= " ForceOptimizationLevel:O" . forceOptimizationLevel() if forceOptimizationLevel();
+    $result .= " Workspace:" . configuredXcodeWorkspace() if configuredXcodeWorkspace();
 
     print STDERR $result, "\n";
 }
