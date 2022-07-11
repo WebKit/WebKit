@@ -206,7 +206,8 @@ class CheckoutRoute(AuthedBlueprint):
 
         encoded = json.dumps(commit, cls=Commit.Encoder)
         self.database.set(commit.hash, encoded)
-        self.database.set('r{}'.format(commit.revision), encoded)
+        if commit.revision:
+            self.database.set('r{}'.format(commit.revision), encoded)
         self.database.set(str(commit), encoded)
 
         return commit
