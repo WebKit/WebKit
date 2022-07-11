@@ -4552,8 +4552,8 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
                     self.build.addStepsAfterCurrentStep([
                         CleanGitRepo(),
                         CheckOutSource(),
-                        ShowIdentifier(),
                         UpdateWorkingDirectory(),
+                        ShowIdentifier(),
                         CheckOutPullRequest(),
                         AddReviewerToCommitMessage(),
                         ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, verifyObsolete=False),
@@ -4566,8 +4566,8 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
                     self.build.addStepsAfterCurrentStep([
                         CleanGitRepo(),
                         CheckOutSource(),
-                        ShowIdentifier(),
                         UpdateWorkingDirectory(),
+                        ShowIdentifier(),
                         CommitPatch(),
                         AddReviewerToCommitMessage(),
                         ValidateChange(addURLs=False, verifycqplus=True),
