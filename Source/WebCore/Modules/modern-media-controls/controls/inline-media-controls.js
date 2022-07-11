@@ -86,6 +86,7 @@ class InlineMediaControls extends MediaControls
             return;
 
         this._showsStartButton = flag;
+        this.element.classList.toggle("shows-start-button", flag);
         this.layout();
     }
 
