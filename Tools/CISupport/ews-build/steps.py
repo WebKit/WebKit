@@ -596,7 +596,7 @@ class ConfigureBuild(buildstep.BuildStep, AddToLogMixin):
 
 
 class CheckOutSource(git.Git):
-    name = 'clean-and-update-working-directory'
+    name = 'checkout-source'
     CHECKOUT_DELAY_AND_MAX_RETRIES_PAIR = (0, 2)
     haltOnFailure = False
 
