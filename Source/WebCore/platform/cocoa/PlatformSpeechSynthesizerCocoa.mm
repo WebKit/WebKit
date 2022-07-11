@@ -132,7 +132,10 @@ static float getAVSpeechUtteranceMaximumSpeechRate()
         voiceLanguage = utterance->voice()->lang();
 
     AVSpeechSynthesisVoice *avVoice = nil;
-    if (voiceLanguage)
+    if (utteranceVoice)
+        avVoice = [PAL::getAVSpeechSynthesisVoiceClass() voiceWithIdentifier:utteranceVoice->voiceURI()];
+
+    if (!avVoice)
         avVoice = [PAL::getAVSpeechSynthesisVoiceClass() voiceWithLanguage:voiceLanguage];
 
     AVSpeechUtterance *avUtterance = [PAL::getAVSpeechUtteranceClass() speechUtteranceWithString:utterance->text()];
