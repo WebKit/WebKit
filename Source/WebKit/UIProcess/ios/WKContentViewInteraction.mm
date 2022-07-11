@@ -10761,7 +10761,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     _removeBackgroundData = std::nullopt;
 #endif
-    _canUpdateVisibleContextMenuWithImageAnalysisActions = NO;
+    _waitingForDynamicImageAnalysisContextMenuActions = NO;
     _imageAnalysisContextMenuActionData = std::nullopt;
 }
 
@@ -10785,7 +10785,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     [self uninstallImageAnalysisInteraction];
     _removeBackgroundData = std::nullopt;
 #endif
-    _canUpdateVisibleContextMenuWithImageAnalysisActions = NO;
+    _waitingForDynamicImageAnalysisContextMenuActions = NO;
     _imageAnalysisContextMenuActionData = std::nullopt;
 }
 
@@ -10875,7 +10875,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     _pendingImageAnalysisRequestIdentifier = requestIdentifier;
     _isProceedingWithTextSelectionInImage = NO;
     _elementPendingImageAnalysis = std::nullopt;
-    _canUpdateVisibleContextMenuWithImageAnalysisActions = NO;
+    _waitingForDynamicImageAnalysisContextMenuActions = NO;
     _imageAnalysisContextMenuActionData = std::nullopt;
 
     WebKit::InteractionInformationRequest request { WebCore::roundedIntPoint([gestureRecognizer locationInView:self]) };
@@ -10963,7 +10963,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 - (void)_completeImageAnalysisRequestForContextMenu:(CGImageRef)image requestIdentifier:(WebKit::ImageAnalysisRequestIdentifier)requestIdentifier hasTextResults:(BOOL)hasTextResults
 {
-    _canUpdateVisibleContextMenuWithImageAnalysisActions = YES;
+    _waitingForDynamicImageAnalysisContextMenuActions = YES;
     _imageAnalysisContextMenuActionData = std::nullopt;
     [self _invokeAllActionsToPerformAfterPendingImageAnalysis:WebKit::ProceedWithTextSelectionInImage::No];
 
@@ -10973,19 +10973,37 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     auto weakSelf = WeakObjCPtr<WKContentView>(self);
     auto aggregator = CallbackAggregator::create([weakSelf, data]() mutable {
         auto strongSelf = weakSelf.get();
-        if (!strongSelf || !strongSelf->_canUpdateVisibleContextMenuWithImageAnalysisActions)
+        if (!strongSelf || !strongSelf->_waitingForDynamicImageAnalysisContextMenuActions)
             return;
 
+        strongSelf->_waitingForDynamicImageAnalysisContextMenuActions = NO;
         strongSelf->_imageAnalysisContextMenuActionData = WTFMove(*data);
         [[strongSelf contextMenuInteraction] updateVisibleMenuWithBlock:makeBlockPtr([strongSelf](UIMenu *menu) -> UIMenu * {
+            __block auto indexOfPlaceholder = NSNotFound;
+            __block BOOL foundCopyItem = NO;
+            auto revealImageIdentifier = elementActionTypeToUIActionIdentifier(_WKElementActionTypeRevealImage);
+            auto copyIdentifier = elementActionTypeToUIActionIdentifier(_WKElementActionTypeCopy);
+            [menu.children enumerateObjectsUsingBlock:^(UIMenuElement *child, NSUInteger index, BOOL* stop) {
+                auto *action = dynamic_objc_cast<UIAction>(child);
+                if ([action.identifier isEqualToString:revealImageIdentifier] && (action.attributes & UIMenuElementAttributesHidden))
+                    indexOfPlaceholder = index;
+                else if ([action.identifier isEqualToString:copyIdentifier])
+                    foundCopyItem = YES;
+            }];
+
+            if (indexOfPlaceholder == NSNotFound)
+                return menu;
+
             auto adjustedChildren = adoptNS(menu.children.mutableCopy);
+            auto replacements = adoptNS([NSMutableArray<UIMenuElement *> new]);
+
             auto *elementInfo = [_WKActivatedElementInfo activatedElementInfoWithInteractionInformationAtPosition:strongSelf->_positionInformation userInfo:nil];
             auto addAction = [&](_WKElementActionType action) {
                 auto *elementAction = [_WKElementAction _elementActionWithType:action info:elementInfo assistant:strongSelf->_actionSheetAssistant.get()];
-                [adjustedChildren addObject:[elementAction uiActionForElementInfo:elementInfo]];
+                [replacements addObject:[elementAction uiActionForElementInfo:elementInfo]];
             };
 
-            if ([strongSelf copySubjectResultForImageContextMenu])
+            if (foundCopyItem && [strongSelf copySubjectResultForImageContextMenu])
                 addAction(_WKElementActionTypeCopyCroppedImage);
 
             if ([strongSelf hasSelectableTextForImageContextMenu])
@@ -10995,9 +11013,11 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
                 addAction(_WKElementActionTypeRevealImage);
 
             if (UIMenu *subMenu = [strongSelf machineReadableCodeSubMenuForImageContextMenu])
-                [adjustedChildren addObject:subMenu];
+                [replacements addObject:subMenu];
 
-            return [UIMenu menuWithTitle:menu.title image:menu.image identifier:menu.identifier options:menu.options children:adjustedChildren.get()];
+            RELEASE_LOG(ImageAnalysis, "Dynamically inserting %zu context menu action(s)", [replacements count]);
+            [adjustedChildren replaceObjectsInRange:NSMakeRange(indexOfPlaceholder, 1) withObjectsFromArray:replacements.get()];
+            return [menu menuByReplacingChildren:adjustedChildren.get()];
         }).get()];
     });
 
@@ -11888,6 +11908,21 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
 #endif
 }
 
+- (UIAction *)placeholderForDynamicallyInsertedImageAnalysisActions
+{
+#if ENABLE(IMAGE_ANALYSIS)
+    if (_waitingForDynamicImageAnalysisContextMenuActions) {
+        // FIXME: This placeholder item warrants its own unique item identifier; however, to ensure that internal clients
+        // that already allow image analysis items (e.g. Mail) continue to allow this placeholder item, we reuse an existing
+        // image analysis identifier.
+        RetainPtr placeholder = [UIAction actionWithTitle:@"" image:nil identifier:elementActionTypeToUIActionIdentifier(_WKElementActionTypeRevealImage) handler:^(UIAction *) { }];
+        [placeholder setAttributes:UIMenuElementAttributesHidden];
+        return placeholder.autorelease();
+    }
+#endif // ENABLE(IMAGE_ANALYSIS)
+    return nil;
+}
+
 - (void)continueContextMenuInteraction:(void(^)(UIContextMenuConfiguration *))continueWithContextMenuConfiguration
 {
     if (!self.window)
@@ -11974,9 +12009,6 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
         if (configurationFromWKUIDelegate) {
             strongSelf->_page->startInteractionWithPositionInformation(strongSelf->_positionInformation);
             strongSelf->_contextMenuActionProviderDelegateNeedsOverride = YES;
-#if ENABLE(IMAGE_ANALYSIS)
-            strongSelf->_canUpdateVisibleContextMenuWithImageAnalysisActions = NO;
-#endif
             continueWithContextMenuConfiguration(configurationFromWKUIDelegate);
             return;
         }
@@ -12009,10 +12041,10 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
 
                 RetainPtr<NSArray<_WKElementAction *>> defaultActionsFromAssistant = [strongSelf->_actionSheetAssistant defaultActionsForImageSheet:elementInfo.get()];
                 auto actions = menuElementsFromDefaultActions(defaultActionsFromAssistant, elementInfo);
-#if ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
-                if (UIMenu *menu = [strongSelf machineReadableCodeSubMenuForImageContextMenu])
+                if (auto *placeholder = [strongSelf placeholderForDynamicallyInsertedImageAnalysisActions])
+                    [actions addObject:placeholder];
+                else if (UIMenu *menu = [strongSelf machineReadableCodeSubMenuForImageContextMenu])
                     [actions addObject:menu];
-#endif // ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
                 return [UIMenu menuWithTitle:strongSelf->_positionInformation.title children:actions];
             };
 
@@ -12115,7 +12147,10 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
     if (!_contextMenuActionProviderDelegateNeedsOverride)
         return nil;
 
-    return [_actionSheetAssistant suggestedActionsForContextMenuWithPositionInformation:_positionInformation];
+    auto *suggestedActions = [_actionSheetAssistant suggestedActionsForContextMenuWithPositionInformation:_positionInformation];
+    if (auto *placeholder = self.placeholderForDynamicallyInsertedImageAnalysisActions)
+        [suggestedActions addObject:placeholder];
+    return suggestedActions;
 }
 
 #if HAVE(UI_CONTEXT_MENU_PREVIEW_ITEM_IDENTIFIER)
