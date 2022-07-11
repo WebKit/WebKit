@@ -2796,6 +2796,8 @@ OptionSet<CompositingReason> RenderLayerCompositor::reasonsForCompositing(const 
         if (layer.hasBlendMode())
             reasons.add(CompositingReason::BlendingWithCompositedDescendants);
 #endif
+        if (renderer.hasClipPath())
+            reasons.add(CompositingReason::ClipsCompositingDescendants);
         break;
     case IndirectCompositingReason::Perspective:
         reasons.add(CompositingReason::Perspective);
