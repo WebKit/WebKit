@@ -316,6 +316,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/gamepad/GamepadButton.idl \
     $(WebCore)/Modules/gamepad/GamepadEvent.idl \
     $(WebCore)/Modules/gamepad/Navigator+Gamepad.idl \
+    $(WebCore)/Modules/gamepad/WindowEventHandlers+Gamepad.idl \
     $(WebCore)/Modules/geolocation/Geolocation.idl \
     $(WebCore)/Modules/geolocation/GeolocationCoordinates.idl \
     $(WebCore)/Modules/geolocation/GeolocationPosition.idl \

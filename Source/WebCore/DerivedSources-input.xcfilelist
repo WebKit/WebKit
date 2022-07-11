@@ -294,6 +294,7 @@ $(PROJECT_DIR)/Modules/gamepad/Gamepad.idl
 $(PROJECT_DIR)/Modules/gamepad/GamepadButton.idl
 $(PROJECT_DIR)/Modules/gamepad/GamepadEvent.idl
 $(PROJECT_DIR)/Modules/gamepad/Navigator+Gamepad.idl
+$(PROJECT_DIR)/Modules/gamepad/WindowEventHandlers+Gamepad.idl
 $(PROJECT_DIR)/Modules/geolocation/Coordinates.idl
 $(PROJECT_DIR)/Modules/geolocation/Geolocation.idl
 $(PROJECT_DIR)/Modules/geolocation/GeolocationCoordinates.idl

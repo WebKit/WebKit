@@ -38,6 +38,7 @@ function handleGamepadConnect()
 
 function runTest() {
     addEventListener("gamepadconnected", handleGamepadConnect);
+    window.ongamepadconnected = handleGamepadConnect;
 
     // Connecting the gamepad and changing axis values should *not* make it visible.
     // Only button presses should expose it.

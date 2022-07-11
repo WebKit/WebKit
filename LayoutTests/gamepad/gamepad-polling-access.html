@@ -17,6 +17,18 @@ function finishTest()
         testRunner.notifyDone();
 }
 
+function onconnectedEventHandler(evt)
+{
+    const {length} = navigator.getGamepads();
+    log(`onconnectedgamepad event fired (${length}).`);
+}
+
+function ondisconnectedEventHandler(evt)
+{
+    const {length} = navigator.getGamepads().filter(g => g);
+    log(`ondisconnectedgamepad event fired (${length}).`);
+}
+
 function handleGamepadConnect(evt)
 {
     log("Connecting gamepad:");
@@ -31,6 +43,7 @@ function handleGamepadDisconnect(evt)
     log(navigator.getGamepads());
     testGenerator.next();
 }
+
 
 function logGamepad(gp)
 {
@@ -50,6 +63,9 @@ function logGamepad(gp)
 function* testSteps() {
     addEventListener("gamepadconnected", handleGamepadConnect);
     addEventListener("gamepaddisconnected", handleGamepadDisconnect);
+
+    window.ongamepadconnected = onconnectedEventHandler;
+    window.ongamepaddisconnected = ondisconnectedEventHandler;
 
     log("Initial gamepads length: " + navigator.getGamepads().length);
     log("Connecting 20 different gamepads");

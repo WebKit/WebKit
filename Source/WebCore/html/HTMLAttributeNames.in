@@ -249,6 +249,8 @@ onfocus
 onfocusin
 onfocusout
 onformdata
+ongamepadconnected
+ongamepaddisconnected
 ongesturechange
 ongestureend
 ongesturestart

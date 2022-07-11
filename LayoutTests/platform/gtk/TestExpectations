@@ -1113,6 +1113,7 @@ webkit.org/b/224105 compositing/video/video-clip-change-src.html [ ImageOnlyFail
 
 webkit.org/b/224106 fast/forms/textfield-onchange-without-focus.html [ ImageOnlyFailure Pass ]
 
+webkit.org/b/242370 gamepad/gamepad-event-handlers.html [ Failure ]
 webkit.org/b/224108 gamepad/gamepad-visibility-1.html [ Failure Pass ]
 
 webkit.org/b/224117 intersection-observer/intersection-observer-keeps-js-wrapper-of-target-alive.html [ Failure Pass ]

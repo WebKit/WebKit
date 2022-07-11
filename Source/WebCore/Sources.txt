@@ -4124,6 +4124,7 @@ JSWebXRViewport.cpp
 JSWebXRWebGLLayer.cpp
 JSWheelEvent.cpp
 JSWindowEventHandlers.cpp
+JSWindowEventHandlers+Gamepad.cpp
 JSWindowOrWorkerGlobalScope.cpp
 JSWorker.cpp
 JSWorkerGlobalScope.cpp

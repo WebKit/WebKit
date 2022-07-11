@@ -2876,6 +2876,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWheelEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWheelEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowEventHandlers.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowEventHandlers.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowEventHandlers+Gamepad.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowEventHandlers+Gamepad.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowLocalStorage.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowLocalStorage.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowOrWorkerGlobalScope+Caches.cpp

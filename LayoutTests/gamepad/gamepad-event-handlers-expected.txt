@@ -1,0 +1,13 @@
+ongamepadconnected in [object Window]: true
+Connecting gamepad...
+Received gamepadconnected event on [object Window].
+ongamepaddisconnected in [object Window]: true
+Disconnecting gamepad...
+Received gamepaddisconnected event on [object Window].
+ongamepadconnected in [object HTMLBodyElement]: true
+Connecting gamepad...
+Received gamepadconnected event on [object HTMLBodyElement].
+ongamepaddisconnected in [object HTMLBodyElement]: true
+Disconnecting gamepad...
+Received gamepaddisconnected event on [object HTMLBodyElement].
+

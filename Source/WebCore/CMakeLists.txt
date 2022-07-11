@@ -1466,6 +1466,7 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/gamepad/GamepadButton.idl
     Modules/gamepad/GamepadEvent.idl
     Modules/gamepad/Navigator+Gamepad.idl
+    Modules/gamepad/WindowEventHandlers+Gamepad.idl
 )
 
 if (ENABLE_GAMEPAD)
