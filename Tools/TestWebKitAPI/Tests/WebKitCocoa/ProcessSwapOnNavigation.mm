@@ -8469,8 +8469,10 @@ TEST(ProcessSwap, ContentModeInCaseOfPSONThenCoopProcessSwap)
 }
 #endif // PLATFORM(IOS_FAMILY)
 
-// FIXME: Re-enable after webkit.org/b/242527 is resolved
-TEST(WebProcessCache, DISABLED_ReusedCrashedCachedWebProcess)
+// The WebProcess cache cannot be enabled on devices with too little RAM so we need to disable
+// tests relying on it on iOS. The WebProcess cache is disabled by default on iOS anyway.
+#if !PLATFORM(IOS_FAMILY)
+TEST(WebProcessCache, ReusedCrashedCachedWebProcess)
 {
     auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
     processPoolConfiguration.get().usesWebProcessCache = YES;
@@ -8524,6 +8526,7 @@ TEST(WebProcessCache, DISABLED_ReusedCrashedCachedWebProcess)
 
     EXPECT_EQ(crashCount, 1u);
 }
+#endif
 
 TEST(WebProcessCache, ReusedCrashedBackForwardSuspendedWebProcess)
 {
