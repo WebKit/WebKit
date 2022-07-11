@@ -1845,7 +1845,7 @@ JSC_DEFINE_JIT_OPERATION(operationDebug, void, (VM* vmPointer, int32_t debugHook
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
-    vm.interpreter->debug(callFrame, static_cast<DebugHookType>(debugHookType));
+    vm.interpreter.debug(callFrame, static_cast<DebugHookType>(debugHookType));
 }
 
 #if ENABLE(DFG_JIT)

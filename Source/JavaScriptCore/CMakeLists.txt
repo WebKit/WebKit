@@ -842,6 +842,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     interpreter/CalleeBits.h
     interpreter/EntryFrame.h
     interpreter/FrameTracers.h
+    interpreter/Interpreter.h
     interpreter/Register.h
     interpreter/RegisterInlines.h
     interpreter/ShadowChicken.h

@@ -59,7 +59,6 @@ namespace JSC {
     class FunctionExecutable;
     class JIT;
     class Identifier;
-    class Interpreter;
     class BlockDirectory;
     class Register;
     class StructureChain;
@@ -895,8 +894,6 @@ namespace JSC {
         JITConstantPool::Constant addToConstantPool(JITConstantPool::Type, void* payload = nullptr);
         std::tuple<BaselineUnlinkedStructureStubInfo*, JITConstantPool::Constant> addUnlinkedStructureStubInfo();
         UnlinkedCallLinkInfo* addUnlinkedCallLinkInfo();
-
-        Interpreter* m_interpreter;
 
         Vector<FarCallRecord> m_farCalls;
         Vector<NearCallRecord> m_nearCalls;

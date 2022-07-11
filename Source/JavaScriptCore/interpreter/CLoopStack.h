@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,7 +59,7 @@ namespace JSC {
         void gatherConservativeRoots(ConservativeRoots&, JITStubRoutineSet&, CodeBlockSet&);
         void sanitizeStack();
 
-        inline void* currentStackPointer();
+        inline void* currentStackPointer() const;
         void setCurrentStackPointer(void* sp) { m_currentStackPointer = sp; }
 
         size_t size() const { return highAddress() - lowAddress(); }

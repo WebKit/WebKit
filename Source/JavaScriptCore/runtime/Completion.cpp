@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2019 Apple Inc.
+ *  Copyright (C) 2003-2022 Apple Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -134,7 +134,7 @@ JSValue evaluate(JSGlobalObject* globalObject, const SourceCode& source, JSValue
     if (!thisValue || thisValue.isUndefinedOrNull())
         thisValue = globalObject;
     JSObject* thisObj = jsCast<JSObject*>(thisValue.toThis(globalObject, ECMAMode::sloppy()));
-    JSValue result = vm.interpreter->executeProgram(source, globalObject, thisObj);
+    JSValue result = vm.interpreter.executeProgram(source, globalObject, thisObj);
 
     if (scope.exception()) {
         returnedException = scope.exception();

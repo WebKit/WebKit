@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2021 Igalia S.L.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -116,7 +117,7 @@ JSC_DEFINE_HOST_FUNCTION(evalInRealm, (JSGlobalObject* globalObject, CallFrame* 
     }
     RETURN_IF_EXCEPTION(scope, { });
 
-    JSValue result = vm.interpreter->execute(eval, realmGlobalObject, realmGlobalObject->globalThis(), realmGlobalObject->globalScope());
+    JSValue result = vm.interpreter.execute(eval, realmGlobalObject, realmGlobalObject->globalThis(), realmGlobalObject->globalScope());
     if (UNLIKELY(scope.exception())) {
         scope.clearException();
         return throwVMError(globalObject, scope, createTypeError(globalObject, "Error encountered during evaluation"_s));

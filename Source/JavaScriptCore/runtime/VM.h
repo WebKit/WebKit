@@ -38,12 +38,12 @@
 #include "Heap.h"
 #include "IndexingType.h"
 #include "Integrity.h"
+#include "Interpreter.h"
 #include "Intrinsic.h"
 #include "JSCJSValue.h"
 #include "JSDateMath.h"
 #include "JSLock.h"
 #include "JSONAtomStringCache.h"
-#include "MacroAssemblerCodeRef.h"
 #include "Microtask.h"
 #include "NativeFunction.h"
 #include "NumericStrings.h"
@@ -113,7 +113,6 @@ class FuzzerAgent;
 class HasOwnPropertyCache;
 class HeapAnalyzer;
 class HeapProfiler;
-class Interpreter;
 class IntlCache;
 class JSDestructibleObjectHeapCellType;
 class JSGlobalObject;
@@ -165,14 +164,6 @@ class Signature;
 }
 
 struct EntryFrame;
-
-template<typename> struct BaseInstruction;
-struct JSOpcodeTraits;
-struct WasmOpcodeTraits;
-using JSInstruction = BaseInstruction<JSOpcodeTraits>;
-using WasmInstruction = BaseInstruction<WasmOpcodeTraits>;
-
-using JSOrWasmInstruction = std::variant<const JSInstruction*, const WasmInstruction*>;
 
 class QueuedTask {
     WTF_MAKE_NONCOPYABLE(QueuedTask);
@@ -558,7 +549,6 @@ public:
 
     typedef HashMap<RefPtr<SourceProvider>, RefPtr<SourceProviderCache>> SourceProviderCacheMap;
     SourceProviderCacheMap sourceProviderCacheMap;
-    Interpreter* interpreter { nullptr };
 #if ENABLE(JIT)
     std::unique_ptr<JITThunks> jitStubs;
     MacroAssemblerCodeRef<JITThunkPtrTag> getCTIStub(ThunkGenerator);
@@ -672,12 +662,12 @@ public:
     }
 
     EncodedJSValue encodedHostCallReturnValue { };
-    unsigned varargsLength;
     CallFrame* newCallFrameReturnValue;
     CallFrame* callFrameForCatch { nullptr };
     CalleeBits calleeForWasmCatch;
     void* targetMachinePCForThrow;
     JSOrWasmInstruction targetInterpreterPCForThrow;
+    unsigned varargsLength;
     uint32_t osrExitIndex;
     void* osrExitJumpDestination;
     RegExp* m_executingRegExp { nullptr };
@@ -707,6 +697,7 @@ public:
     bool hasCheckpointOSRSideState() const { return m_checkpointSideState.size(); }
     void scanSideState(ConservativeRoots&) const;
 
+    Interpreter interpreter;
     unsigned disallowVMEntryCount { 0 };
     VMEntryScope* entryScope { nullptr };
 
@@ -723,8 +714,8 @@ public:
 
 #if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
     static constexpr size_t patternContextBufferSize = 8192; // Space allocated to save nested parenthesis context
-    UniqueArray<char> m_regExpPatternContexBuffer;
     Lock m_regExpPatternContextLock;
+    UniqueArray<char> m_regExpPatternContexBuffer;
     char* acquireRegExpPatternContexBuffer() WTF_ACQUIRES_LOCK(m_regExpPatternContextLock);
     void releaseRegExpPatternContexBuffer() WTF_RELEASES_LOCK(m_regExpPatternContextLock);
 #else

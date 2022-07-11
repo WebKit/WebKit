@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,7 +41,7 @@ inline bool CLoopStack::ensureCapacityFor(Register* newTopOfStack)
     return grow(newTopOfStack);
 }
 
-inline void* CLoopStack::currentStackPointer()
+inline void* CLoopStack::currentStackPointer() const
 {
     // One might be tempted to assert that m_currentStackPointer <= m_topCallFrame->topOfFrame()
     // here. That assertion would be incorrect because this function may be called from function

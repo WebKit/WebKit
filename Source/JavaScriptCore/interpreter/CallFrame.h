@@ -33,6 +33,10 @@
 
 namespace JSC  {
 
+template<typename> struct BaseInstruction;
+struct JSOpcodeTraits;
+using JSInstruction = BaseInstruction<JSOpcodeTraits>;
+
     class Arguments;
     class CallFrame;
     class Interpreter;

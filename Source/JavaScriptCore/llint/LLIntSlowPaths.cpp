@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,6 +42,7 @@
 #include "FunctionAllowlist.h"
 #include "FunctionCodeBlock.h"
 #include "GetterSetter.h"
+#include "InterpreterInlines.h"
 #include "JITExceptions.h"
 #include "JITWorklist.h"
 #include "JSAsyncFunction.h"
@@ -569,7 +570,7 @@ LLINT_SLOW_PATH_DECL(stack_check)
 #if ENABLE(C_LOOP)
     Register* topOfFrame = callFrame->topOfFrame();
     if (LIKELY(topOfFrame < reinterpret_cast<Register*>(callFrame))) {
-        ASSERT(!vm.interpreter->cloopStack().containsAddress(topOfFrame));
+        ASSERT(!vm.interpreter.cloopStack().containsAddress(topOfFrame));
         if (LIKELY(vm.ensureStackCapacityFor(topOfFrame)))
             LLINT_RETURN_TWO(pc, 0);
     }
@@ -2129,7 +2130,7 @@ LLINT_SLOW_PATH_DECL(slow_path_debug)
 {
     LLINT_BEGIN();
     auto bytecode = pc->as<OpDebug>();
-    vm.interpreter->debug(callFrame, bytecode.m_debugHookType);
+    vm.interpreter.debug(callFrame, bytecode.m_debugHookType);
     
     LLINT_END();
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Research In Motion Limited. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,11 +29,9 @@
 
 #pragma once
 
-#include "ArgList.h"
 #include "JSCJSValue.h"
-#include "JSObject.h"
+#include "MacroAssemblerCodeRef.h"
 #include "Opcode.h"
-#include "StackAlignment.h"
 #include <variant>
 #include <wtf/HashMap.h>
 
@@ -51,8 +49,18 @@ struct HandlerInfo;
 }
 #endif
 
+template<typename> struct BaseInstruction;
+struct JSOpcodeTraits;
+struct WasmOpcodeTraits;
+using JSInstruction = BaseInstruction<JSOpcodeTraits>;
+using WasmInstruction = BaseInstruction<WasmOpcodeTraits>;
+
+using JSOrWasmInstruction = std::variant<const JSInstruction*, const WasmInstruction*>;
+
+    class ArgList;
     class CodeBlock;
     class EvalExecutable;
+    class Exception;
     class FunctionExecutable;
     class VM;
     class JSFunction;
@@ -63,6 +71,7 @@ struct HandlerInfo;
     class ProgramExecutable;
     class ModuleProgramExecutable;
     class Register;
+    class JSObject;
     class JSScope;
     class SourceCode;
     class StackFrame;
@@ -103,7 +112,7 @@ struct HandlerInfo;
         MacroAssemblerCodePtr<ExceptionHandlerPtrTag> m_nativeCode;
 #endif
 
-        std::variant<const JSInstruction*, const WasmInstruction*> m_catchPCForInterpreter;
+        JSOrWasmInstruction m_catchPCForInterpreter;
     };
 
     class Interpreter {
@@ -114,11 +123,12 @@ struct HandlerInfo;
         friend class VM;
 
     public:
-        Interpreter(VM &);
+        Interpreter();
         ~Interpreter();
         
 #if ENABLE(C_LOOP)
         CLoopStack& cloopStack() { return m_cloopStack; }
+        const CLoopStack& cloopStack() const { return m_cloopStack; }
 #endif
         
         static inline Opcode getOpcode(OpcodeID);
@@ -163,7 +173,7 @@ struct HandlerInfo;
 
         JSValue execute(CallFrameClosure&);
 
-        VM& m_vm;
+        inline VM& vm();
 #if ENABLE(C_LOOP)
         CLoopStack m_cloopStack;
 #endif
@@ -177,20 +187,7 @@ struct HandlerInfo;
 
     JSValue eval(JSGlobalObject*, CallFrame*, ECMAMode);
 
-    inline CallFrame* calleeFrameForVarargs(CallFrame* callFrame, unsigned numUsedStackSlots, unsigned argumentCountIncludingThis)
-    {
-        // We want the new frame to be allocated on a stack aligned offset with a stack
-        // aligned size. Align the size here.
-        argumentCountIncludingThis = WTF::roundUpToMultipleOf(
-            stackAlignmentRegisters(),
-            argumentCountIncludingThis + CallFrame::headerSizeInRegisters) - CallFrame::headerSizeInRegisters;
-
-        // Align the frame offset here.
-        unsigned paddedCalleeFrameOffset = WTF::roundUpToMultipleOf(
-            stackAlignmentRegisters(),
-            numUsedStackSlots + argumentCountIncludingThis + CallFrame::headerSizeInRegisters);
-        return CallFrame::create(callFrame->registers() - paddedCalleeFrameOffset);
-    }
+    inline CallFrame* calleeFrameForVarargs(CallFrame*, unsigned numUsedStackSlots, unsigned argumentCountIncludingThis);
 
     unsigned sizeOfVarargs(JSGlobalObject*, JSValue arguments, uint32_t firstVarArgOffset);
     static constexpr unsigned maxArguments = 0x10000;

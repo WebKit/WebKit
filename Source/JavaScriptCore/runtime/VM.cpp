@@ -227,7 +227,6 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
 
     VMInspector::instance().add(this);
 
-    interpreter = new Interpreter(*this);
     updateSoftReservedZoneSize(Options::softReservedZoneSize());
     setLastStackTop(Thread::current());
 
@@ -444,11 +443,6 @@ VM::~VM()
     JSRunLoopTimer::Manager::shared().unregisterVM(*this);
 
     VMInspector::instance().remove(this);
-
-    delete interpreter;
-#ifndef NDEBUG
-    interpreter = reinterpret_cast<Interpreter*>(0xbbadbeef);
-#endif
 
     delete emptyList;
 
@@ -889,7 +883,7 @@ Exception* VM::throwException(JSGlobalObject* globalObject, Exception* exception
         CRASH();
     }
 
-    interpreter->notifyDebuggerOfExceptionToBeThrown(*this, globalObject, throwOriginFrame, exceptionToThrow);
+    interpreter.notifyDebuggerOfExceptionToBeThrown(*this, globalObject, throwOriginFrame, exceptionToThrow);
 
     setException(exceptionToThrow);
 
@@ -925,7 +919,7 @@ size_t VM::updateSoftReservedZoneSize(size_t softReservedZoneSize)
     size_t oldSoftReservedZoneSize = m_currentSoftReservedZoneSize;
     m_currentSoftReservedZoneSize = softReservedZoneSize;
 #if ENABLE(C_LOOP)
-    interpreter->cloopStack().setSoftReservedZoneSize(softReservedZoneSize);
+    interpreter.cloopStack().setSoftReservedZoneSize(softReservedZoneSize);
 #endif
 
     updateStackLimits();
@@ -1284,7 +1278,7 @@ void sanitizeStackForVM(VM& vm)
 
     RELEASE_ASSERT(stack.contains(vm.lastStackTop()), 0xaa10, vm.lastStackTop(), stack.origin(), stack.end());
 #if ENABLE(C_LOOP)
-    vm.interpreter->cloopStack().sanitizeStack();
+    vm.interpreter.cloopStack().sanitizeStack();
 #else
     sanitizeStackForVMImpl(&vm);
 #endif
@@ -1307,17 +1301,17 @@ size_t VM::committedStackByteCount()
 #if ENABLE(C_LOOP)
 bool VM::ensureStackCapacityForCLoop(Register* newTopOfStack)
 {
-    return interpreter->cloopStack().ensureCapacityFor(newTopOfStack);
+    return interpreter.cloopStack().ensureCapacityFor(newTopOfStack);
 }
 
 bool VM::isSafeToRecurseSoftCLoop() const
 {
-    return interpreter->cloopStack().isSafeToRecurse();
+    return interpreter.cloopStack().isSafeToRecurse();
 }
 
 void* VM::currentCLoopStackPointer() const
 {
-    return interpreter->cloopStack().currentStackPointer();
+    return interpreter.cloopStack().currentStackPointer();
 }
 #endif // ENABLE(C_LOOP)
 

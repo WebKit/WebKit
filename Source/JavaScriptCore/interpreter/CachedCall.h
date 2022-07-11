@@ -52,7 +52,7 @@ namespace JSC {
             if (LIKELY(vm.isSafeToRecurseSoft())) {
                 m_arguments.ensureCapacity(argumentCount);
                 if (LIKELY(!m_arguments.hasOverflowed()))
-                    m_closure = m_interpreter->prepareForRepeatCall(function->jsExecutable(), callFrame, &m_protoCallFrame, function, argumentCount + 1, function->scope(), m_arguments);
+                    m_closure = m_interpreter.prepareForRepeatCall(function->jsExecutable(), callFrame, &m_protoCallFrame, function, argumentCount + 1, function->scope(), m_arguments);
                 else
                     throwOutOfMemoryError(globalObject, scope);
             } else
@@ -64,7 +64,7 @@ namespace JSC {
         { 
             ASSERT(m_valid);
             ASSERT(m_arguments.size() == static_cast<size_t>(m_protoCallFrame.argumentCount()));
-            return m_interpreter->execute(m_closure);
+            return m_interpreter.execute(m_closure);
         }
         void setThis(JSValue v) { m_protoCallFrame.setThisValue(v); }
 
@@ -75,7 +75,7 @@ namespace JSC {
     private:
         bool m_valid;
         VM& m_vm;
-        Interpreter* m_interpreter;
+        Interpreter& m_interpreter;
         VMEntryScope m_entryScope;
         ProtoCallFrame m_protoCallFrame;
         MarkedArgumentBuffer m_arguments;

@@ -344,7 +344,7 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
         void* m_originalStackPointer;
     };
 
-    CLoopStack& cloopStack = vm->interpreter->cloopStack();
+    CLoopStack& cloopStack = vm->interpreter.cloopStack();
     StackPointerScope stackPointerScope(cloopStack);
 
     lr = getOpcode(llint_return_to_host);
