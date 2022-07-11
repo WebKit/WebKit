@@ -1361,7 +1361,8 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
     if (!referrer.isEmpty())
         request.setHTTPReferrer(referrer);
 
-    updateRequestAndAddExtraFields(request, IsMainResource::Yes, newLoadType, ShouldUpdateAppInitiatedValue::Yes, FrameLoader::IsServiceWorkerNavigationLoad::No, &frameLoadRequest.requester());
+    auto willOpenInNewWindow = !targetFrame && !effectiveFrameName.isEmpty() ? WillOpenInNewWindow::Yes : WillOpenInNewWindow::No;
+    updateRequestAndAddExtraFields(request, IsMainResource::Yes, newLoadType, ShouldUpdateAppInitiatedValue::Yes, FrameLoader::IsServiceWorkerNavigationLoad::No, willOpenInNewWindow, &frameLoadRequest.requester());
 
     ASSERT(newLoadType != FrameLoadType::Same);
 
@@ -2913,7 +2914,7 @@ ResourceRequestCachePolicy FrameLoader::defaultRequestCachingPolicy(const Resour
     return ResourceRequestCachePolicy::UseProtocolCachePolicy;
 }
 
-void FrameLoader::updateRequestAndAddExtraFields(ResourceRequest& request, IsMainResource mainResource, FrameLoadType loadType, ShouldUpdateAppInitiatedValue shouldUpdate, IsServiceWorkerNavigationLoad isServiceWorkerNavigationLoad, Document* initiator)
+void FrameLoader::updateRequestAndAddExtraFields(ResourceRequest& request, IsMainResource mainResource, FrameLoadType loadType, ShouldUpdateAppInitiatedValue shouldUpdate, IsServiceWorkerNavigationLoad isServiceWorkerNavigationLoad, WillOpenInNewWindow willOpenInNewWindow, Document* initiator)
 {
     ASSERT(isServiceWorkerNavigationLoad == IsServiceWorkerNavigationLoad::No || mainResource != IsMainResource::Yes);
 
@@ -2924,7 +2925,7 @@ void FrameLoader::updateRequestAndAddExtraFields(ResourceRequest& request, IsMai
     // Don't set the cookie policy URL if it's already been set.
     // But make sure to set it on all requests regardless of protocol, as it has significance beyond the cookie policy (<rdar://problem/6616664>).
     bool isMainResource = mainResource == IsMainResource::Yes;
-    bool isMainFrameMainResource = isMainResource && m_frame.isMainFrame();
+    bool isMainFrameMainResource = isMainResource && (m_frame.isMainFrame() || willOpenInNewWindow == WillOpenInNewWindow::Yes);
     if (request.firstPartyForCookies().isEmpty()) {
         if (isMainFrameMainResource)
             request.setFirstPartyForCookies(request.url());
@@ -3080,7 +3081,11 @@ void FrameLoader::loadPostRequest(FrameLoadRequest&& request, const String& refe
     workingResourceRequest.setHTTPMethod("POST"_s);
     workingResourceRequest.setHTTPBody(inRequest.httpBody());
     workingResourceRequest.setHTTPContentType(contentType);
-    updateRequestAndAddExtraFields(workingResourceRequest, IsMainResource::Yes, loadType, ShouldUpdateAppInitiatedValue::Yes, FrameLoader::IsServiceWorkerNavigationLoad::No, &request.requester());
+
+    auto* targetFrame = formState || frameName.isEmpty() ? nullptr : findFrameForNavigation(frameName);
+
+    auto willOpenInNewWindow = !frameName.isEmpty() && !targetFrame ? WillOpenInNewWindow::Yes : WillOpenInNewWindow::No;
+    updateRequestAndAddExtraFields(workingResourceRequest, IsMainResource::Yes, loadType, ShouldUpdateAppInitiatedValue::Yes, FrameLoader::IsServiceWorkerNavigationLoad::No, willOpenInNewWindow, &request.requester());
 
     if (Document* document = m_frame.document())
         document->contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(workingResourceRequest, ContentSecurityPolicy::InsecureRequestType::Load);
@@ -3091,7 +3096,7 @@ void FrameLoader::loadPostRequest(FrameLoadRequest&& request, const String& refe
 
     if (!frameName.isEmpty()) {
         // The search for a target frame is done earlier in the case of form submission.
-        if (auto* targetFrame = formState ? nullptr : findFrameForNavigation(frameName)) {
+        if (targetFrame) {
             targetFrame->loader().loadWithNavigationAction(workingResourceRequest, WTFMove(action), loadType, WTFMove(formState), allowNavigationToInvalidURL, request.shouldTreatAsContinuingLoad(), WTFMove(completionHandler));
             return;
         }

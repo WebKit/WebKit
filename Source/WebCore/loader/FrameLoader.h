@@ -318,8 +318,9 @@ public:
     bool alwaysAllowLocalWebarchive() const { return m_alwaysAllowLocalWebarchive; }
 
     enum class IsServiceWorkerNavigationLoad : bool { No, Yes };
+    enum class WillOpenInNewWindow : bool { No, Yes };
     // For subresource requests the FrameLoadType parameter has no effect and can be skipped.
-    void updateRequestAndAddExtraFields(ResourceRequest&, IsMainResource, FrameLoadType = FrameLoadType::Standard, ShouldUpdateAppInitiatedValue = ShouldUpdateAppInitiatedValue::Yes, IsServiceWorkerNavigationLoad = IsServiceWorkerNavigationLoad::No, Document* = nullptr);
+    void updateRequestAndAddExtraFields(ResourceRequest&, IsMainResource, FrameLoadType = FrameLoadType::Standard, ShouldUpdateAppInitiatedValue = ShouldUpdateAppInitiatedValue::Yes, IsServiceWorkerNavigationLoad = IsServiceWorkerNavigationLoad::No, WillOpenInNewWindow = WillOpenInNewWindow::No, Document* = nullptr);
 
     void scheduleRefreshIfNeeded(Document&, const String& content, IsMetaRefresh);
 
