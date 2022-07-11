@@ -492,8 +492,6 @@ public:
     void setJavaScriptConfigurationDirectory(String&& directory) { m_javaScriptConfigurationDirectory = directory; }
     const String& javaScriptConfigurationDirectory() const { return m_javaScriptConfigurationDirectory; }
 
-    void setOverrideLanguages(Vector<String>&&);
-
     WebProcessDataStoreParameters webProcessDataStoreParameters(WebProcessProxy&, WebsiteDataStore&);
     
     static void setUseSeparateServiceWorkerProcess(bool);

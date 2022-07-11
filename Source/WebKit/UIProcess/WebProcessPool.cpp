@@ -363,18 +363,6 @@ void WebProcessPool::setCustomWebContentServiceBundleIdentifier(const String& cu
     m_configuration->setCustomWebContentServiceBundleIdentifier(customWebContentServiceBundleIdentifier);
 }
 
-void WebProcessPool::setOverrideLanguages(Vector<String>&& languages)
-{
-    m_configuration->setOverrideLanguages(WTFMove(languages));
-
-    LOG_WITH_STREAM(Language, stream << "WebProcessPool is setting OverrideLanguages: " << languages);
-    sendToAllProcesses(Messages::WebProcess::UserPreferredLanguagesChanged(m_configuration->overrideLanguages()));
-#if USE(SOUP)
-    for (auto networkProcess : NetworkProcessProxy::allNetworkProcesses())
-        networkProcess->send(Messages::NetworkProcess::UserPreferredLanguagesChanged(m_configuration->overrideLanguages()), 0);
-#endif
-}
-
 void WebProcessPool::fullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)
 {
     sendToAllProcesses(Messages::WebProcess::FullKeyboardAccessModeChanged(fullKeyboardAccessEnabled));
