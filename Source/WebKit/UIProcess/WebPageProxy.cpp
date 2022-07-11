@@ -7313,6 +7313,18 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
         m_process->updateTextCheckerState();
         return;
 
+#if PLATFORM(MAC)
+    case ContextMenuItemTagShowFonts:
+        showFontPanel();
+        return;
+    case ContextMenuItemTagStyles:
+        showStylesPanel();
+        return;
+    case ContextMenuItemTagShowColors:
+        showColorPanel();
+        return;
+#endif // PLATFORM(MAC)
+
     case ContextMenuItemTagShowSpellingPanel:
         if (!TextChecker::spellingUIIsShowing())
             advanceToNextMisspelling(true);

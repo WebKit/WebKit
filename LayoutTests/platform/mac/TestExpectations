@@ -2203,7 +2203,6 @@ webkit.org/b/230327 imported/w3c/web-platform-tests/css/css-transforms/crashtest
 [ Monterey+ ] editing/spelling/context-menu-suggestions.html [ Crash ]
 [ Monterey+ ] editing/mac/spelling/disable-automatic-spelling-correction-context-menu-item.html [ Crash ]
 [ Monterey+ ] editing/spelling/spellcheck-input-search-crash.html [ Crash ]
-[ Monterey+ ] editing/mac/style/do-not-crash-when-showing-font-panel.html [ Crash ]
 [ Monterey+ ] editing/selection/empty-cell-right-click.html [ Crash ]
 [ Monterey+ ] editing/selection/minimal-user-select-crash.html [ Crash ]
 [ Monterey+ ] fast/events/context-no-deselect.html [ Crash ]

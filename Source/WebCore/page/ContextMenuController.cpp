@@ -479,17 +479,6 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
     case ContextMenuItemTagCheckGrammarWithSpelling:
         frame->editor().toggleGrammarChecking();
         break;
-#if PLATFORM(COCOA)
-    case ContextMenuItemTagShowFonts:
-        frame->editor().showFontPanel();
-        break;
-    case ContextMenuItemTagStyles:
-        frame->editor().showStylesPanel();
-        break;
-    case ContextMenuItemTagShowColors:
-        frame->editor().showColorPanel();
-        break;
-#endif
 #if USE(APPKIT)
     case ContextMenuItemTagMakeUpperCase:
         frame->editor().uppercaseWord();
@@ -536,6 +525,11 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
     case ContextMenuItemTagDictationAlternative:
         frame->editor().applyDictationAlternative(title);
         break;
+#if PLATFORM(MAC)
+    case ContextMenuItemTagShowFonts:
+    case ContextMenuItemTagStyles:
+    case ContextMenuItemTagShowColors:
+#endif
     case ContextMenuItemTagCopySubject:
     case ContextMenuItemTagLookUpImage:
         // These should be handled at the client layer.

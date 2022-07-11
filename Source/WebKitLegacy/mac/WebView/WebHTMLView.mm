@@ -634,8 +634,24 @@ static std::optional<NSInteger> toTag(WebCore::ContextMenuAction action)
 
 - (void)forwardContextMenuAction:(id)sender
 {
-    if (auto action = toAction([sender tag]))
+    auto action = toAction([sender tag]);
+    if (!action)
+        return;
+
+    switch (*action) {
+    case WebCore::ContextMenuItemTagShowFonts:
+        [[NSFontManager sharedFontManager] orderFrontFontPanel:nil];
+        break;
+    case WebCore::ContextMenuItemTagStyles:
+        [[NSFontManager sharedFontManager] orderFrontStylesPanel:nil];
+        break;
+    case WebCore::ContextMenuItemTagShowColors:
+        [[NSApplication sharedApplication] orderFrontColorPanel:nil];
+        break;
+    default:
         _menuController->contextMenuItemSelected(*action, [sender title]);
+        break;
+    }
 }
 
 @end

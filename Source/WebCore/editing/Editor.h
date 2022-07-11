@@ -380,9 +380,6 @@ public:
     void willWriteSelectionToPasteboard(const std::optional<SimpleRange>&);
     void didWriteSelectionToPasteboard();
 
-    void showFontPanel();
-    void showStylesPanel();
-    void showColorPanel();
     void toggleBold();
     void toggleUnderline();
     WEBCORE_EXPORT void setBaseWritingDirection(WritingDirection);

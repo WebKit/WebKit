@@ -58,18 +58,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-void Editor::showFontPanel()
-{
-}
-
-void Editor::showStylesPanel()
-{
-}
-
-void Editor::showColorPanel()
-{
-}
-
 void Editor::setTextAlignmentForChangedBaseWritingDirection(WritingDirection direction)
 {
     // Note that the passed-in argument is the direction that has been changed to by

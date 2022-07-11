@@ -28,6 +28,7 @@
 
 #if PLATFORM(MAC)
 
+#import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
 #import "TestUIDelegate.h"
@@ -35,6 +36,8 @@
 #import "Utilities.h"
 #import <WebKit/WKMenuItemIdentifiersPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
+#import <wtf/BlockPtr.h>
 
 @interface NSMenu (ContextMenuTests)
 - (NSMenuItem *)itemWithIdentifier:(NSString *)identifier;
@@ -50,6 +53,60 @@
             return item;
     }
     return nil;
+}
+
+@end
+
+using MenuItemFilter = BOOL(^)(NSMenuItem *);
+
+static NSMenuItem *itemMatchingFilter(NSMenu *menu, MenuItemFilter filter)
+{
+    for (NSInteger index = 0; index < menu.numberOfItems; ++index) {
+        auto *item = [menu itemAtIndex:index];
+        if (!item)
+            continue;
+
+        if (filter(item))
+            return item;
+
+        if (item.hasSubmenu) {
+            if (auto *foundItem = itemMatchingFilter(item.submenu, filter))
+                return foundItem;
+        }
+    }
+    return nil;
+}
+
+@interface TestWKWebView (ContextMenuTests)
+
+@end
+
+@implementation TestWKWebView (ContextMenuTests)
+
+- (void)rightClick:(NSPoint)clickLocation andSelectItemMatching:(MenuItemFilter)filter
+{
+    bool selectedItem = false;
+    RetainPtr selectItemTimer = [NSTimer timerWithTimeInterval:0.25 repeats:YES block:[&selectedItem, strongSelf = RetainPtr { self }, filter = makeBlockPtr(filter)](NSTimer *timer) {
+        NSMenu *activeMenu = [strongSelf _activeMenu];
+        if (!activeMenu)
+            return;
+
+        auto *item = itemMatchingFilter(activeMenu, filter.get());
+        if (!item)
+            return;
+
+        auto *itemMenu = item.menu;
+        [itemMenu performActionForItemAtIndex:[itemMenu indexOfItem:item]];
+        [activeMenu cancelTracking];
+        [timer invalidate];
+        selectedItem = true;
+    }];
+
+    [NSRunLoop.mainRunLoop addTimer:selectItemTimer.get() forMode:NSEventTrackingRunLoopMode];
+    [self.window orderFrontRegardless];
+    [self mouseDownAtPoint:NSMakePoint(50, 350) simulatePressure:NO withFlags:0 eventType:NSEventTypeRightMouseDown];
+    [self mouseUpAtPoint:NSMakePoint(50, 350) withFlags:0 eventType:NSEventTypeRightMouseUp];
+    TestWebKitAPI::Util::run(&selectedItem);
 }
 
 @end
@@ -87,33 +144,11 @@ TEST(ContextMenuTests, ProposedMenuContainsSpellingMenu)
 
 TEST(ContextMenuTests, NavigationTypeWhenOpeningLink)
 {
-    auto delegate = adoptNS([[TestUIDelegate alloc] init]);
-
-    __block RetainPtr<NSMenu> proposedMenu;
-    [delegate setGetContextMenuFromProposedMenu:^(NSMenu *menu, _WKContextMenuElementInfo *, id<NSSecureCoding>, void (^completion)(NSMenu *)) {
-        proposedMenu = menu;
-        completion(menu);
-    }];
-
     auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
     [webView setNavigationDelegate:navigationDelegate.get()];
-    [webView setUIDelegate:delegate.get()];
     [webView loadHTMLString:@"<a href='simple.html' style='font-size: 100px;'>Hello world</a>" baseURL:[NSBundle.mainBundle.bundleURL URLByAppendingPathComponent:@"TestWebKitAPI.resources"]];
     [navigationDelegate waitForDidFinishNavigation];
-
-    RetainPtr openLinkTimer = [NSTimer timerWithTimeInterval:0.25 repeats:YES block:^(NSTimer *timer) {
-        if (!proposedMenu)
-            return;
-
-        for (NSInteger index = 0; index < [proposedMenu numberOfItems]; ++index) {
-            if ([[proposedMenu itemAtIndex:index].identifier isEqualToString:_WKMenuItemIdentifierOpenLink])
-                [proposedMenu performActionForItemAtIndex:index];
-        }
-        [proposedMenu cancelTracking];
-        [timer invalidate];
-    }];
-    [NSRunLoop.mainRunLoop addTimer:openLinkTimer.get() forMode:NSEventTrackingRunLoopMode];
 
     __block bool didDecideNavigationPolicy = false;
     [navigationDelegate setDecidePolicyForNavigationAction:^(WKNavigationAction *action, void (^decisionHandler)(WKNavigationActionPolicy)) {
@@ -123,10 +158,29 @@ TEST(ContextMenuTests, NavigationTypeWhenOpeningLink)
         didDecideNavigationPolicy = true;
     }];
 
-    [[webView window] orderFrontRegardless];
-    [webView mouseDownAtPoint:NSMakePoint(50, 350) simulatePressure:NO withFlags:0 eventType:NSEventTypeRightMouseDown];
-    [webView mouseUpAtPoint:NSMakePoint(50, 350) withFlags:0 eventType:NSEventTypeRightMouseUp];
+    [webView rightClick:NSMakePoint(50, 350) andSelectItemMatching:^BOOL(NSMenuItem *item) {
+        return [item.identifier isEqualToString:_WKMenuItemIdentifierOpenLink];
+    }];
     Util::run(&didDecideNavigationPolicy);
+}
+
+static bool calledOrderFrontColorPanel = false;
+static void swizzledOrderFrontColorPanel(id, SEL, id)
+{
+    calledOrderFrontColorPanel = true;
+}
+
+TEST(ContextMenuTests, ShowColorPanel)
+{
+    InstanceMethodSwizzler swizzler { NSApplication.class, @selector(orderFrontColorPanel:), reinterpret_cast<IMP>(swizzledOrderFrontColorPanel) };
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView _setEditable:YES];
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+    [webView rightClick:NSMakePoint(16, 16) andSelectItemMatching:^BOOL(NSMenuItem *item) {
+        return [item.title isEqualToString:@"Show Colors"];
+    }];
+    Util::run(&calledOrderFrontColorPanel);
 }
 
 } // namespace TestWebKitAPI

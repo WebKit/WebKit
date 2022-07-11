@@ -65,25 +65,6 @@
 
 namespace WebCore {
 
-void Editor::showFontPanel()
-{
-    auto* client = this->client();
-    if (!client || !client->canShowFontPanel())
-        return;
-
-    [[NSFontManager sharedFontManager] orderFrontFontPanel:nil];
-}
-
-void Editor::showStylesPanel()
-{
-    [[NSFontManager sharedFontManager] orderFrontStylesPanel:nil];
-}
-
-void Editor::showColorPanel()
-{
-    [[NSApplication sharedApplication] orderFrontColorPanel:nil];
-}
-
 void Editor::pasteWithPasteboard(Pasteboard* pasteboard, OptionSet<PasteOption> options)
 {
     auto range = selectedRange();

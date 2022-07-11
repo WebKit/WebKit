@@ -366,8 +366,6 @@ private:
     void willSetInputMethodState() final { }
     void setInputMethodState(Element*) final { }
 
-    bool canShowFontPanel() const final { return false; }
-
     class EmptyTextCheckerClient final : public TextCheckerClient {
         bool shouldEraseMarkersAfterChangeSelection(TextCheckingType) const final { return true; }
         void ignoreWordInSpellDocument(const String&) final { }

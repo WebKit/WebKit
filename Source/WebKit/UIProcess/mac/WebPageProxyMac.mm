@@ -680,12 +680,29 @@ void WebPageProxy::pdfOpenWithPreview(PDFPluginIdentifier identifier)
 
 #endif // ENABLE(UI_PROCESS_PDF_HUD)
 
-#if PLATFORM(MAC)
 void WebPageProxy::changeUniversalAccessZoomFocus(const WebCore::IntRect& viewRect, const WebCore::IntRect& selectionRect)
 {
     WebCore::changeUniversalAccessZoomFocus(viewRect, selectionRect);
 }
-#endif
+
+void WebPageProxy::showFontPanel()
+{
+    // FIXME (rdar://21577518): Enable the system font panel for all web views, not just editable ones.
+    if (m_isEditable)
+        [[NSFontManager sharedFontManager] orderFrontFontPanel:nil];
+}
+
+void WebPageProxy::showStylesPanel()
+{
+    if (m_isEditable)
+        [[NSFontManager sharedFontManager] orderFrontStylesPanel:nil];
+}
+
+void WebPageProxy::showColorPanel()
+{
+    if (m_isEditable)
+        [[NSApplication sharedApplication] orderFrontColorPanel:nil];
+}
 
 Color WebPageProxy::platformUnderPageBackgroundColor() const
 {

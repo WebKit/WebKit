@@ -1066,6 +1066,12 @@ public:
     void handleTouchEvent(const NativeWebTouchEvent&);
 #endif
 
+#if PLATFORM(MAC)
+    void showFontPanel();
+    void showStylesPanel();
+    void showColorPanel();
+#endif
+
     void cancelPointer(WebCore::PointerID, const WebCore::IntPoint&);
     void touchWithIdentifierWasRemoved(WebCore::PointerID);
 
