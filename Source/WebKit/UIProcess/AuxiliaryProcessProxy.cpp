@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #include "AuxiliaryProcessMessages.h"
 #include "Logging.h"
+#include "OverrideLanguages.h"
 #include "UIProcessLogInitialization.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
@@ -62,6 +63,27 @@ AuxiliaryProcessProxy::~AuxiliaryProcessProxy()
     }
 
     replyToPendingMessages();
+}
+
+void AuxiliaryProcessProxy::populateOverrideLanguagesLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions) const
+{
+    LOG(Language, "WebProcessProxy is getting launch options.");
+    auto overrideLanguages = WebKit::overrideLanguages();
+    if (overrideLanguages.isEmpty()) {
+        LOG(Language, "overrideLanguages() reports empty. Calling platformOverrideLanguages()");
+        overrideLanguages = platformOverrideLanguages();
+    }
+    if (!overrideLanguages.isEmpty()) {
+        StringBuilder languageString;
+        for (size_t i = 0; i < overrideLanguages.size(); ++i) {
+            if (i)
+                languageString.append(',');
+            languageString.append(overrideLanguages[i]);
+        }
+        LOG_WITH_STREAM(Language, stream << "Setting WebProcess's launch OverrideLanguages to " << languageString);
+        launchOptions.extraInitializationData.add<HashTranslatorASCIILiteral>("OverrideLanguages"_s, languageString.toString());
+    } else
+        LOG(Language, "overrideLanguages is still empty. Not setting WebProcess's launch OverrideLanguages.");
 }
 
 void AuxiliaryProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
@@ -100,6 +122,8 @@ void AuxiliaryProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& lau
     if (processCmdPrefix && *processCmdPrefix)
         launchOptions.processCmdPrefix = String::fromUTF8(processCmdPrefix);
 #endif // ENABLE(DEVELOPER_MODE) && (PLATFORM(GTK) || PLATFORM(WPE))
+
+    populateOverrideLanguagesLaunchOptions(launchOptions);
 
     platformGetLaunchOptions(launchOptions);
 }
@@ -435,5 +459,12 @@ std::optional<SandboxExtension::Handle> AuxiliaryProcessProxy::createMobileGesta
     return std::nullopt;
 #endif
 }
+
+#if !PLATFORM(COCOA)
+Vector<String> AuxiliaryProcessProxy::platformOverrideLanguages() const
+{
+    return { };
+}
+#endif
 
 } // namespace WebKit

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -184,6 +184,9 @@ protected:
 private:
     virtual void connectionWillOpen(IPC::Connection&);
     virtual void processWillShutDown(IPC::Connection&) = 0;
+
+    void populateOverrideLanguagesLaunchOptions(ProcessLauncher::LaunchOptions&) const;
+    Vector<String> platformOverrideLanguages() const;
 
     ResponsivenessTimer m_responsivenessTimer;
     Vector<PendingMessage> m_pendingMessages;
