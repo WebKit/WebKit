@@ -3978,7 +3978,7 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
     }
 
     if (action == @selector(copy:)) {
-        if (editorState.isInPasswordField)
+        if (editorState.isInPasswordField && !editorState.selectionIsRangeInAutoFilledAndViewableField)
             return NO;
         return editorState.selectionIsRange;
     }

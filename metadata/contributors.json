@@ -2423,6 +2423,15 @@
    },
    {
       "emails" : [
+         "eryn_wells@apple.com"
+      ],
+      "name" : "Eryn Wells",
+      "nicks" : [
+         "erynofwales"
+      ]
+   },
+   {
+      "emails" : [
          "eustas@chromium.org"
       ],
       "name" : "Eugene Klyuchnikov",

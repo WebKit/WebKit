@@ -1251,6 +1251,7 @@ EditorState WebPage::editorState(ShouldPerformLayout shouldPerformLayout) const
     if (result.selectionIsRange) {
         auto selectionRange = selection.range();
         result.selectionIsRangeInsideImageOverlay = selectionRange && ImageOverlay::isInsideOverlay(*selectionRange);
+        result.selectionIsRangeInAutoFilledAndViewableField = selection.isInAutoFilledAndViewableField();
     }
 
     m_lastEditorStateWasContentEditable = result.isContentEditable ? EditorStateIsContentEditable::Yes : EditorStateIsContentEditable::No;
