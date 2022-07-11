@@ -46,12 +46,15 @@ public:
         LogicalFlexItem(LayoutSize marginBoxSize, LengthType widthType, LengthType heightType, IntrinsicWidthConstraints, const ContainerBox&);
         LogicalFlexItem() = default;
 
-        LayoutUnit width() const { return m_marginBoxSize.value.width(); }
+        LayoutUnit flexBasis() const { return m_marginBoxSize.value.width(); }
+
+        LayoutUnit width() const { return std::min(maximumSize(), std::max(minimumSize(), m_marginBoxSize.value.width())); }
         LayoutUnit height() const { return m_marginBoxSize.value.height(); }
 
         bool isHeightAuto() const { return m_marginBoxSize.heightType == LengthType::Auto; }
 
-        LayoutUnit minimumContentWidth() const { return m_intrinsicWidthConstraints.minimum; }
+        LayoutUnit minimumSize() const { return m_intrinsicWidthConstraints.minimum; }
+        LayoutUnit maximumSize() const { return m_intrinsicWidthConstraints.maximum; }
 
         const RenderStyle& style() const { return m_layoutBox->style(); }
         const ContainerBox& layoutBox() const { return *m_layoutBox; }

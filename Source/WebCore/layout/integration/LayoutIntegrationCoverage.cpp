@@ -744,8 +744,6 @@ bool canUseForFlexLayout(const RenderFlexibleBox& flexBox)
             return false;
         if (flexItemStyle.marginBefore().isAuto() || flexItemStyle.marginAfter().isAuto())
             return false;
-        if (!flexItemStyle.maxWidth().isUndefined() || !flexItemStyle.maxHeight().isUndefined())
-            return false;
         if (flexItem.hasIntrinsicAspectRatio() || flexItemStyle.hasAspectRatio())
             return false;
         auto alignSelfValue = flexItemStyle.alignSelf().position();
