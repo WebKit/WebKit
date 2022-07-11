@@ -28,7 +28,7 @@ WI.SourceCodeSearchMatchObject = class SourceCodeSearchMatchObject
     constructor(sourceCode, lineText, searchTerm, textRange)
     {
         console.assert(sourceCode instanceof WI.SourceCode);
-        console.assert(textRange instanceof WI.TextRange, textRange)
+        console.assert(textRange instanceof WI.TextRange, textRange);
 
         this._sourceCode = sourceCode;
         this._lineText = lineText;
