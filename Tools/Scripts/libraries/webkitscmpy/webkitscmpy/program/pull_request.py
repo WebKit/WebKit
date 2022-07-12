@@ -281,7 +281,7 @@ class PullRequest(Command):
 
         if rebasing:
             log.info("Rebasing '{}' on '{}'...".format(repository.branch, branch_point.branch))
-            if repository.pull(rebase=True, branch=branch_point.branch):
+            if repository.pull(rebase=True, branch=branch_point.branch, remote=source_remote):
                 sys.stderr.write("Failed to rebase '{}' on '{},' please resolve conflicts\n".format(repository.branch, branch_point.branch))
                 return 1
             log.info("Rebased '{}' on '{}!'".format(repository.branch, branch_point.branch))
