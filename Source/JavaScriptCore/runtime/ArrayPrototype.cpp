@@ -174,7 +174,7 @@ static ALWAYS_INLINE JSValue getProperty(JSGlobalObject* globalObject, JSObject*
         return result;
 
     // Don't return undefined if the property is not found.
-    return object->getIfPropertyExists(globalObject, Identifier::from(globalObject->vm(), index));
+    return object->getIfPropertyExists(globalObject, index);
 }
 
 static ALWAYS_INLINE void setLength(JSGlobalObject* globalObject, VM& vm, JSObject* obj, uint64_t value)

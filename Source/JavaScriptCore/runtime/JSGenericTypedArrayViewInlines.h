@@ -338,8 +338,7 @@ bool JSGenericTypedArrayView<Adaptor>::set(
                 return false;
         }
         for (size_t i = safeLength; i < length; ++i) {
-            Identifier ident = Identifier::from(vm, static_cast<uint64_t>(i + objectOffset));
-            JSValue value = object->get(globalObject, ident);
+            JSValue value = object->get(globalObject, static_cast<uint64_t>(i + objectOffset));
             RETURN_IF_EXCEPTION(scope, false);
             bool success = setIndex(globalObject, offset + i, value);
             EXCEPTION_ASSERT(!scope.exception() || !success);
