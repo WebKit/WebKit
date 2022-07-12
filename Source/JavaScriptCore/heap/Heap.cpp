@@ -2282,7 +2282,7 @@ void Heap::pruneStaleEntriesFromWeakGCHashTables()
 
 void Heap::sweepArrayBuffers()
 {
-    m_arrayBuffers.sweep(vm());
+    m_arrayBuffers.sweep(vm(), collectionScope().value_or(CollectionScope::Eden));
 }
 
 void Heap::snapshotUnswept()
