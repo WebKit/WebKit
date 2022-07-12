@@ -146,9 +146,9 @@ bool ContentChangeObserver::isConsideredActionableContent(const Element& candida
         if (is<HTMLIFrameElement>(element))
             return true;
 
-        if (is<HTMLImageElement>(element)) {
+        if (auto imageElement = dynamicDowncast<HTMLImageElement>(element)) {
             // This is required to avoid HTMLImageElement's touch callout override logic. See rdar://problem/48937767.
-            return element.Element::willRespondToMouseClickEvents();
+            return imageElement->willRespondToMouseClickEventsWithEditability(imageElement->computeEditabilityForMouseClickEvents(), HTMLImageElement::IgnoreTouchCallout::Yes);
         }
         bool hasRenderer = element.renderer();
         auto willRespondToMouseClickEvents = element.willRespondToMouseClickEvents();
