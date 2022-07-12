@@ -71,7 +71,7 @@ class StatusBubble(View):
                      '^Printed configuration$', '^Patch contains relevant changes$', '^Deleted .git/index.lock$',
                      '^triggered.*$', '^Found modified ChangeLogs$', '^Created local git commit$', '^Set build summary$',
                      '^Validated commiter$', '^Validated commiter and reviewer$', '^Validated ChangeLog and Reviewer$',
-                     '^Removed flags on bugzilla patch$', '^Checked patch status on other queues$', '^Identifier:.*$',
+                     '^Removed flags on bugzilla patch$', '^Checked change status on other queues$', '^Identifier:.*$',
                      '^Updated branch information$', '^worker .* ready$']
     DAYS_TO_CHECK_QUEUE_POSITION = 0.5
     DAYS_TO_HIDE_BUBBLE = 7

@@ -3085,7 +3085,7 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
         self.incorrectLayoutLines = []
 
     def doStepIf(self, step):
-        return not ((self.getProperty('buildername', '').lower() == 'commit-queue') and
+        return not ((self.getProperty('buildername', '').lower() in ['commit-queue', 'merge-queue']) and
                     (self.getProperty('fast_commit_queue') or self.getProperty('passed_mac_wk2')))
 
     def setLayoutTestCommand(self):
@@ -4732,12 +4732,12 @@ class DetermineLandedIdentifier(shell.ShellCommand):
         return self.getProperty('sensitive', False)
 
 
-class CheckPatchStatusOnEWSQueues(buildstep.BuildStep, BugzillaMixin):
+class CheckStatusOnEWSQueues(buildstep.BuildStep, BugzillaMixin):
     name = 'check-status-on-other-ewses'
-    descriptionDone = ['Checked patch status on other queues']
+    descriptionDone = ['Checked change status on other queues']
 
-    def get_patch_status(self, patch_id, queue):
-        url = '{}status/{}'.format(EWS_URL, patch_id)
+    def get_change_status(self, change_id, queue):
+        url = '{}status/{}'.format(EWS_URL, change_id)
         try:
             response = requests.get(url, timeout=60)
             if response.status_code != 200:
@@ -4752,9 +4752,9 @@ class CheckPatchStatusOnEWSQueues(buildstep.BuildStep, BugzillaMixin):
             return -1
 
     def start(self):
-        patch_id = self.getProperty('patch_id', '')
-        patch_status_on_mac_wk2 = self.get_patch_status(patch_id, 'mac-wk2')
-        if patch_status_on_mac_wk2 == SUCCESS:
+        change_id = self.getProperty('github.head.sha', self.getProperty('patch_id', ''))
+        change_status_on_mac_wk2 = self.get_change_status(change_id, 'mac-wk2')
+        if change_status_on_mac_wk2 == SUCCESS:
             self.setProperty('passed_mac_wk2', True)
         self.finished(SUCCESS)
         return None

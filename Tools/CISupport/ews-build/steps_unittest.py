@@ -44,7 +44,7 @@ import send_email
 
 from steps import (AddReviewerToCommitMessage, AnalyzeAPITestsResults, AnalyzeCompileWebKitResults,
                    AnalyzeJSCTestsResults, AnalyzeLayoutTestsResults, ApplyPatch, ApplyWatchList, ArchiveBuiltProduct, ArchiveTestResults, BugzillaMixin,
-                   Canonicalize, CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance, CheckPatchStatusOnEWSQueues, CheckStyle,
+                   Canonicalize, CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance, CheckStatusOnEWSQueues, CheckStyle,
                    CleanBuild, CleanUpGitIndexLock, CleanGitRepo, CleanWorkingDirectory, ClosePullRequest, CompileJSC, CommitPatch, CompileJSCWithoutChange,
                    CompileWebKit, CompileWebKitWithoutChange, ConfigureBuild, ConfigureBuild, Contributors,
                    DetermineLandedIdentifier, DownloadBuiltProduct, DownloadBuiltProductFromMaster, EWS_BUILD_HOSTNAME, ExtractBuiltProduct, ExtractTestResults,
@@ -1759,10 +1759,20 @@ ts","version":4,"num_passes":42158,"pixel_tests_enabled":false,"date":"11:28AM o
         self.expectOutcome(result=SKIPPED, state_string='Skipped layout-tests in fast-cq mode')
         return self.runStep()
 
-    def test_skip_for_mac_wk2_passed_patch_on_commit_queue(self):
+    def test_skip_for_mac_wk2_passed_change_on_commit_queue(self):
         self.configureStep()
         self.setProperty('patch_id', '1234')
         self.setProperty('buildername', 'Commit-Queue')
+        self.setProperty('fullPlatform', 'mac')
+        self.setProperty('configuration', 'debug')
+        self.setProperty('passed_mac_wk2', True)
+        self.expectOutcome(result=SKIPPED, state_string='Skipped layout-tests')
+        return self.runStep()
+
+    def test_skip_for_mac_wk2_passed_change_on_merge_queue(self):
+        self.configureStep()
+        self.setProperty('github.head.sha', '7496f8ecc4cc8011f19c8cc1bc7b18fe4a88a')
+        self.setProperty('buildername', 'Merge-Queue')
         self.setProperty('fullPlatform', 'mac')
         self.setProperty('configuration', 'debug')
         self.setProperty('passed_mac_wk2', True)
@@ -5228,7 +5238,7 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
         self.assertEqual(list(contributors)[0]['emails'][0], 'aakash_jain@apple.com')
 
 
-class TestCheckPatchStatusOnEWSQueues(BuildStepMixinAdditions, unittest.TestCase):
+class TestCheckStatusOnEWSQueues(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
         return self.setUpBuildStep()
@@ -5237,19 +5247,28 @@ class TestCheckPatchStatusOnEWSQueues(BuildStepMixinAdditions, unittest.TestCase
         return self.tearDownBuildStep()
 
     def test_success(self):
-        CheckPatchStatusOnEWSQueues.get_patch_status = lambda cls, patch_id, queue: SUCCESS
-        self.setupStep(CheckPatchStatusOnEWSQueues())
+        CheckStatusOnEWSQueues.get_change_status = lambda cls, change_id, queue: SUCCESS
+        self.setupStep(CheckStatusOnEWSQueues())
         self.setProperty('patch_id', '1234')
-        self.expectOutcome(result=SUCCESS, state_string='Checked patch status on other queues')
+        self.expectOutcome(result=SUCCESS, state_string='Checked change status on other queues')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('passed_mac_wk2'), True)
+        return rc
+
+    def test_success_hash(self):
+        CheckStatusOnEWSQueues.get_change_status = lambda cls, change_id, queue: SUCCESS
+        self.setupStep(CheckStatusOnEWSQueues())
+        self.setProperty('github.head.sha', '0e5b5facb6445ca7a1feb46cee6322189df5282c')
+        self.expectOutcome(result=SUCCESS, state_string='Checked change status on other queues')
         rc = self.runStep()
         self.assertEqual(self.getProperty('passed_mac_wk2'), True)
         return rc
 
     def test_failure(self):
-        self.setupStep(CheckPatchStatusOnEWSQueues())
+        self.setupStep(CheckStatusOnEWSQueues())
         self.setProperty('patch_id', '1234')
-        CheckPatchStatusOnEWSQueues.get_patch_status = lambda cls, patch_id, queue: FAILURE
-        self.expectOutcome(result=SUCCESS, state_string='Checked patch status on other queues')
+        CheckStatusOnEWSQueues.get_change_status = lambda cls, change_id, queue: FAILURE
+        self.expectOutcome(result=SUCCESS, state_string='Checked change status on other queues')
         rc = self.runStep()
         self.assertEqual(self.getProperty('passed_mac_wk2'), None)
         return rc

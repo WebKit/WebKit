@@ -26,7 +26,7 @@ from buildbot.steps import trigger
 
 from steps import (AddReviewerToCommitMessage, ApplyPatch, ApplyWatchList, Canonicalize, CommitPatch,
                    CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance,
-                   CheckPatchStatusOnEWSQueues, CheckStyle, CleanGitRepo, CompileJSC, CompileWebKit, ConfigureBuild,
+                   CheckStatusOnEWSQueues, CheckStyle, CleanGitRepo, CompileJSC, CompileWebKit, ConfigureBuild,
                    DownloadBuiltProduct, ExtractBuiltProduct, FetchBranches, FindModifiedLayoutTests,
                    InstallGtkDependencies, InstallWpeDependencies, KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, PushPullRequestBranch,
                    RunAPITests, RunBindingsTests, RunBuildWebKitOrgUnitTests, RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS,
@@ -306,8 +306,9 @@ class CommitQueueFactory(factory.BuildFactory):
         self.addStep(KillOldProcesses())
         self.addStep(CompileWebKit(skipUpload=True))
         self.addStep(KillOldProcesses())
+
         self.addStep(ValidateChange(addURLs=False, verifycqplus=True))
-        self.addStep(CheckPatchStatusOnEWSQueues())
+        self.addStep(CheckStatusOnEWSQueues())
         self.addStep(RunWebKitTests())
         self.addStep(ValidateChange(addURLs=False, verifycqplus=True))
 
@@ -341,6 +342,10 @@ class MergeQueueFactory(MergeQueueFactoryBase):
         self.addStep(KillOldProcesses())
         self.addStep(CompileWebKit(skipUpload=True))
         self.addStep(KillOldProcesses())
+
+        self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True))
+        self.addStep(CheckStatusOnEWSQueues())
+        self.addStep(RunWebKitTests())
 
         self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True))
         self.addStep(Canonicalize())
