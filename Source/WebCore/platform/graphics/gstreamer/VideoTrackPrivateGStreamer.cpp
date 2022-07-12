@@ -53,14 +53,20 @@ VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivat
     }
 
     g_signal_connect_swapped(m_stream, "notify::caps", G_CALLBACK(+[](VideoTrackPrivateGStreamer* track) {
-        track->m_taskQueue.enqueueTask([track]() {
+        if (isMainThread())
             track->updateConfigurationFromCaps();
-        });
+        else
+            track->m_taskQueue.enqueueTask([track]() {
+                track->updateConfigurationFromCaps();
+            });
     }), this);
     g_signal_connect_swapped(m_stream, "notify::tags", G_CALLBACK(+[](VideoTrackPrivateGStreamer* track) {
-        track->m_taskQueue.enqueueTask([track]() {
+        if (isMainThread())
             track->updateConfigurationFromTags();
-        });
+        else
+            track->m_taskQueue.enqueueTask([track]() {
+                track->updateConfigurationFromTags();
+            });
     }), this);
 
     updateConfigurationFromCaps();
