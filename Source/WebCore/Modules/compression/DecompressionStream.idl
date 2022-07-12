@@ -26,11 +26,11 @@
 // https://wicg.github.io/compression/#compression-stream
 
 [
-    ActiveDOMObject,
     EnabledBySetting=CompressionStreamEnabled,
-    Exposed=*
-] interface DecompressionStream : EventTarget {
-    [CallWith=CurrentDocument] constructor(DOMString format);
+    Exposed=*,
+    JSBuiltin
+] interface DecompressionStream {
+    constructor(DOMString format);
 };
 
 DecompressionStream includes GenericTransformStream;

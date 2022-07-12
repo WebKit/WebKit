@@ -102,6 +102,8 @@ namespace WebCore {
     macro(Clipboard) \
     macro(ClipboardItem) \
     macro(CompressionStream) \
+    macro(CompressionStreamEncoder) \
+    macro(CompressionStreamTransform) \
     macro(ConstantSourceNode) \
     macro(ContactsManager) \
     macro(ConvolverNode) \
@@ -152,6 +154,8 @@ namespace WebCore {
     macro(DataTransferItem) \
     macro(DataTransferItemList) \
     macro(DecompressionStream) \
+    macro(DecompressionStreamDecoder) \
+    macro(DecompressionStreamTransform) \
     macro(DelayNode) \
     macro(DocumentTimeline) \
     macro(DynamicsCompressorNode) \

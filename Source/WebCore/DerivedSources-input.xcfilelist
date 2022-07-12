@@ -234,7 +234,11 @@ $(PROJECT_DIR)/Modules/cache/DOMCache.idl
 $(PROJECT_DIR)/Modules/cache/DOMCacheStorage.idl
 $(PROJECT_DIR)/Modules/cache/WindowOrWorkerGlobalScope+Caches.idl
 $(PROJECT_DIR)/Modules/compression/CompressionStream.idl
+$(PROJECT_DIR)/Modules/compression/CompressionStream.js
+$(PROJECT_DIR)/Modules/compression/CompressionStreamEncoder.idl
 $(PROJECT_DIR)/Modules/compression/DecompressionStream.idl
+$(PROJECT_DIR)/Modules/compression/DecompressionStream.js
+$(PROJECT_DIR)/Modules/compression/DecompressionStreamDecoder.idl
 $(PROJECT_DIR)/Modules/contact-picker/ContactInfo.idl
 $(PROJECT_DIR)/Modules/contact-picker/ContactProperty.idl
 $(PROJECT_DIR)/Modules/contact-picker/ContactsManager.idl

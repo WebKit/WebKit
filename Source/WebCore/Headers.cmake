@@ -150,8 +150,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/cache/DOMCacheEngine.h
     Modules/cache/RetrieveRecordsOptions.h
 
-    Modules/compression/CompressionStream.h
-    Modules/compression/DecompressionStream.h
+    Modules/compression/CompressionStreamEncoder.h
+    Modules/compression/DecompressionStreamDecoder.h
     Modules/compression/Formats.h
 
     Modules/contact-picker/ContactInfo.h
