@@ -345,7 +345,7 @@ protected:
     bool m_areVolumeAndMuteInitialized { false };
 
 #if USE(TEXTURE_MAPPER_GL)
-    TextureMapperGL::Flags m_textureMapperFlags;
+    TextureMapperGL::Flags m_textureMapperFlags { TextureMapperGL::NoFlag };
 #endif
 
     GRefPtr<GstStreamVolume> m_volumeElement;
