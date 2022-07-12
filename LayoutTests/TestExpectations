@@ -3807,6 +3807,7 @@ webgl/2.0.y/conformance/extensions/webgl-multi-draw.html [ Pass Slow ]
 webgl/2.0.y/conformance/programs/program-test.html [ Pass ]
 webgl/2.0.y/conformance2/context/constants-and-properties-2.html [ Pass ]
 webgl/2.0.y/conformance2/vertex_arrays/vertex-array-object.html [ Pass ]
+webgl/2.0.y/conformance2/transform_feedback/transform_feedback.html [ Pass ]
 webgl/1.0.x/conformance/extensions/oes-vertex-array-object.html [ Pass ]
 
 # Explicitly turn on conformance test until all of webgl/2.0.y is enabled

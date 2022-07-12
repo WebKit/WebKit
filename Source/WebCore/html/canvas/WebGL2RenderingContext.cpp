@@ -2085,11 +2085,20 @@ void WebGL2RenderingContext::deleteTransformFeedback(WebGLTransformFeedback* fee
 
     // We have to short-circuit the deletion process if the transform feedback is
     // active. This requires duplication of some validation logic.
-    if (isContextLostOrPending() && feedbackObject && feedbackObject->validate(contextGroup(), *this)) {
-        if (feedbackObject->isActive()) {
-            synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "deleteTransformFeedback", "attempt to delete an active transform feedback object");
-            return;
-        }
+    if (isContextLostOrPending() || !feedbackObject)
+        return;
+
+    if (!feedbackObject->validate(contextGroup(), *this)) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "delete", "object does not belong to this context");
+        return;
+    }
+
+    if (feedbackObject->isDeleted())
+        return;
+
+    if (feedbackObject->isActive()) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "deleteTransformFeedback", "attempt to delete an active transform feedback object");
+        return;
     }
 
     ASSERT(feedbackObject != m_defaultTransformFeedback);
