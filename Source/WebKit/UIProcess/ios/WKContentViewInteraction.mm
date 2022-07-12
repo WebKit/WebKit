@@ -12041,10 +12041,12 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
 
                 RetainPtr<NSArray<_WKElementAction *>> defaultActionsFromAssistant = [strongSelf->_actionSheetAssistant defaultActionsForImageSheet:elementInfo.get()];
                 auto actions = menuElementsFromDefaultActions(defaultActionsFromAssistant, elementInfo);
+#if ENABLE(IMAGE_ANALYSIS)
                 if (auto *placeholder = [strongSelf placeholderForDynamicallyInsertedImageAnalysisActions])
                     [actions addObject:placeholder];
                 else if (UIMenu *menu = [strongSelf machineReadableCodeSubMenuForImageContextMenu])
                     [actions addObject:menu];
+#endif // ENABLE(IMAGE_ANALYSIS)
                 return [UIMenu menuWithTitle:strongSelf->_positionInformation.title children:actions];
             };
 
