@@ -33,7 +33,6 @@
 #include "IOSurfacePool.h"
 #include "IntRect.h"
 #include "PixelBuffer.h"
-#include "RuntimeApplicationChecks.h"
 #include <CoreGraphics/CoreGraphics.h>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/IsoMallocInlines.h>
@@ -219,13 +218,6 @@ void ImageBufferIOSurfaceBackend::releaseGraphicsContext()
 
 bool ImageBufferIOSurfaceBackend::setVolatile()
 {
-    ASSERT(isInGPUProcess());
-
-    // Volatility of a surface is managed by the GPU process via a single Backend object.
-    // We can safely cache the state and avoid IOKit calls.
-    if (m_volatilityState == VolatilityState::Volatile)
-        return true;
-
     if (m_surface->isInUse())
         return false;
 
@@ -236,16 +228,8 @@ bool ImageBufferIOSurfaceBackend::setVolatile()
 
 SetNonVolatileResult ImageBufferIOSurfaceBackend::setNonVolatile()
 {
-    ASSERT(isInGPUProcess());
-
-    // Volatility of a surface is managed by the GPU process via a single Backend object.
-    // We can safely cache the state and avoid IOKit calls.
-    if (m_volatilityState == VolatilityState::NonVolatile)
-        return m_setNonVolatileResult;
-
     setVolatilityState(VolatilityState::NonVolatile);
-    m_setNonVolatileResult = m_surface->setVolatile(false);
-    return m_setNonVolatileResult;
+    return m_surface->setVolatile(false);
 }
 
 VolatilityState ImageBufferIOSurfaceBackend::volatilityState() const

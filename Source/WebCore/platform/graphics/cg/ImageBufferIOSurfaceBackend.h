@@ -86,7 +86,6 @@ protected:
     mutable bool m_mayHaveOutstandingBackingStoreReferences { false };
     mutable bool m_needsSetupContext { false };
     VolatilityState m_volatilityState { VolatilityState::NonVolatile };
-    SetNonVolatileResult m_setNonVolatileResult { SetNonVolatileResult::Valid };
 
     RefPtr<IOSurfacePool> m_ioSurfacePool;
 };
