@@ -62,14 +62,13 @@
 #include <wtf/Forward.h>
 #include <wtf/Gigacage.h>
 #include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
 #include <wtf/SetForScope.h>
 #include <wtf/StackPointer.h>
 #include <wtf/Stopwatch.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/UniqueArray.h>
+#include <wtf/text/SymbolImpl.h>
 #include <wtf/text/SymbolRegistry.h>
-#include <wtf/text/WTFString.h>
 
 #if ENABLE(REGEXP_TRACING)
 #include <wtf/ListHashSet.h>

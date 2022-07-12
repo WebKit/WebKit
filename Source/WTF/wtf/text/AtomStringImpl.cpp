@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2008, 2013-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
  * Copyright (C) 2012 Google Inc. All rights reserved.
  * Copyright (C) 2015 Yusuke Suzuki<utatane.tea@gmail.com>. All rights reserved.
@@ -442,12 +442,18 @@ Ref<AtomStringImpl> AtomStringImpl::addSlowCase(AtomStringTable& stringTable, St
     return *static_cast<AtomStringImpl*>(addResult.iterator->get());
 }
 
+// When removing a string from the table, we know it's already the one in the table, so no need for a string equality check.
+struct AtomStringTableRemovalHashTranslator {
+    static unsigned hash(AtomStringImpl* string) { return string->hash(); }
+    static bool equal(const AtomStringTable::StringEntry& a, AtomStringImpl* b) { return a.get() == b; }
+};
+
 void AtomStringImpl::remove(AtomStringImpl* string)
 {
     ASSERT(string->isAtom());
     AtomStringTableLocker locker;
     auto& atomStringTable = stringTable();
-    auto iterator = atomStringTable.find(string);
+    auto iterator = atomStringTable.find<AtomStringTableRemovalHashTranslator>(string);
     ASSERT_WITH_MESSAGE(iterator != atomStringTable.end(), "The string being removed is an atom in the string table of an other thread!");
     ASSERT(string == iterator->get());
     atomStringTable.remove(iterator);
