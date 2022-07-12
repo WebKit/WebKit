@@ -51,6 +51,8 @@ public:
     {
     }
 
+    ~ShadowData();
+
     ShadowData(const ShadowData&);
     static std::optional<ShadowData> clone(const ShadowData*);
 
@@ -89,6 +91,8 @@ public:
     void adjustRectForShadow(FloatRect&, int additionalOutlineSize = 0) const;
 
 private:
+    void deleteNextLinkedListWithoutRecursion();
+
     LengthPoint m_location;
     Length m_spread;
     Length m_radius; // This is the "blur radius", or twice the standard deviation of the Gaussian blur.
@@ -97,6 +101,12 @@ private:
     bool m_isWebkitBoxShadow { false };
     std::unique_ptr<ShadowData> m_next;
 };
+
+inline ShadowData::~ShadowData()
+{
+    if (m_next)
+        deleteNextLinkedListWithoutRecursion();
+}
 
 WTF::TextStream& operator<<(WTF::TextStream&, const ShadowData&);
 

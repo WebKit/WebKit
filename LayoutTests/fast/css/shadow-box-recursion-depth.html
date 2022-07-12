@@ -1,0 +1,29 @@
+<body>
+<script src="../../resources/js-test.js"></script>
+<div id="testDiv"></div>
+<script>
+description("This test passes if it doesn't crash.");
+jsTestIsAsync = true;
+
+onload = () => {
+    if (location.search.indexOf("reloaded=") != -1) {
+        finishJSTest();
+        return;
+    }
+
+    let div = document.getElementById("testDiv");
+    let styleString = "box-shadow:";
+    for (let i=0; i<300000; i++) {
+        if (i)
+            styleString += ", ";
+        styleString += "rgba(0, 0, 0, 0.2) -15px -15px inset";
+    }
+    styleString += ", rgba(0, 0, 127, 0.6) 5px 5px 5px inset;";
+    div.setAttribute("style", styleString);
+    document.body.offsetLeft; // Force style recalc
+    setTimeout(() => {
+        location.href += "?reloaded=1";
+    }, 0);
+}
+</script>
+</body>

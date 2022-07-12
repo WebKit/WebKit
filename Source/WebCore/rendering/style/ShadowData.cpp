@@ -38,6 +38,12 @@ ShadowData::ShadowData(const ShadowData& o)
 {
 }
 
+void ShadowData::deleteNextLinkedListWithoutRecursion()
+{
+    // Avoid recursion errors when the linked list is too long.
+    for (auto next = std::exchange(m_next, nullptr); (next = std::exchange(next->m_next, nullptr));) { }
+}
+
 std::optional<ShadowData> ShadowData::clone(const ShadowData* data)
 {
     if (!data)
@@ -47,15 +53,29 @@ std::optional<ShadowData> ShadowData::clone(const ShadowData* data)
 
 bool ShadowData::operator==(const ShadowData& o) const
 {
-    if (!arePointingToEqualData(m_next, o.m_next))
+    auto comparison = [](const auto& a, const auto& b) {
+        return a.m_location == b.m_location
+            && a.m_radius == b.m_radius
+            && a.m_spread == b.m_spread
+            && a.m_style == b.m_style
+            && a.m_color == b.m_color
+            && a.m_isWebkitBoxShadow == b.m_isWebkitBoxShadow;
+    };
+
+    if (!comparison(*this, o))
         return false;
-    
-    return m_location == o.m_location
-        && m_radius == o.m_radius
-        && m_spread == o.m_spread
-        && m_style == o.m_style
-        && m_color == o.m_color
-        && m_isWebkitBoxShadow == o.m_isWebkitBoxShadow;
+
+    // Avoid relying on recursion in case the linked list is very long.
+    auto* next = m_next.get();
+    auto* oNext = o.m_next.get();
+    while (next || oNext) {
+        if (!next || !oNext || !comparison(*next, *oNext))
+            return false;
+        next = next->m_next.get();
+        oNext = oNext->m_next.get();
+    }
+
+    return true;
 }
 
 static inline void calculateShadowExtent(const ShadowData* shadow, LayoutUnit additionalOutlineSize, LayoutUnit& shadowLeft, LayoutUnit& shadowRight, LayoutUnit& shadowTop, LayoutUnit& shadowBottom)
