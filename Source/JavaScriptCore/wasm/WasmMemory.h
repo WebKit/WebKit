@@ -127,6 +127,7 @@ public:
         InvalidGrowSize,
         WouldExceedMaximum,
         OutOfMemory,
+        GrowSharedUnavailable,
     };
     Expected<PageCount, GrowFailReason> grow(PageCount);
     bool fill(uint32_t, uint8_t, uint32_t);

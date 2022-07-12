@@ -494,14 +494,15 @@ bool Memory::addressIsInGrowableOrFastMemory(void* address)
 
 Expected<PageCount, Memory::GrowFailReason> Memory::growShared(PageCount delta)
 {
-#if CPU(ARM)
-    // Shared memory requires signaling memory which is not available on ARMv7
+#if !ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
+    // Shared memory requires signaling memory which is not available on ARMv7 or others
     // yet. In order to get more of the test suite to run, we can still use
     // a shared mmeory by using bounds checking, but we cannot grow it safely
     // in case it's used by multiple threads. Once the signal handler are
     // available, this can be relaxed.
-    RELEASE_ASSERT_NOT_REACHED();
+    return makeUnexpected(GrowFailReason::GrowSharedUnavailable);
 #endif
+
     Wasm::PageCount oldPageCount;
     Wasm::PageCount newPageCount;
     auto result = ([&]() -> Expected<PageCount, Memory::GrowFailReason> {

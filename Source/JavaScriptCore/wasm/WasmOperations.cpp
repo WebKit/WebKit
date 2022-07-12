@@ -661,6 +661,7 @@ JSC_DEFINE_JIT_OPERATION(operationGrowMemory, int32_t, (void* callFrame, Instanc
         case Memory::GrowFailReason::InvalidGrowSize:
         case Memory::GrowFailReason::WouldExceedMaximum:
         case Memory::GrowFailReason::OutOfMemory:
+        case Memory::GrowFailReason::GrowSharedUnavailable:
             return -1;
         }
         RELEASE_ASSERT_NOT_REACHED();

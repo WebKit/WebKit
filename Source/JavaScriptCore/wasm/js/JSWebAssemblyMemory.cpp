@@ -139,6 +139,9 @@ Wasm::PageCount JSWebAssemblyMemory::grow(VM& vm, JSGlobalObject* globalObject, 
         case Wasm::Memory::GrowFailReason::OutOfMemory:
             throwException(globalObject, throwScope, createOutOfMemoryError(globalObject));
             break;
+        case Wasm::Memory::GrowFailReason::GrowSharedUnavailable:
+            throwException(globalObject, throwScope, createRangeError(globalObject, "WebAssembly.Memory.grow for shared memory is unavailable"_s));
+            break;
         }
         return Wasm::PageCount();
     }
