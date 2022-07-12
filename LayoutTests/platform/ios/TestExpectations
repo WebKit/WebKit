@@ -3635,8 +3635,6 @@ platform/ios/fast/scrolling/find-text-in-overflow-node-indicator-position.html
 swipe/main-frame-pinning-requirement.html
 
 
-webkit.org/b/240659 fast/text/isolate-ignore.html [ Crash ]
-
 webkit.org/b/240670 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-move-into-script-disabled-iframe.html [ Pass Crash ]
 
 webkit.org/b/231266 fast/events/ios/rotation/layout-viewport-during-safari-type-rotation.html [ Pass Failure ]
