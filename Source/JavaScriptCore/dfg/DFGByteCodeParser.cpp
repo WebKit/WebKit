@@ -4785,8 +4785,6 @@ void ByteCodeParser::handleGetById(
         return;
     }
 
-    ASSERT(variant.intrinsic() == NoIntrinsic);
-
     // Make a call. We don't try to get fancy with using the smallest operand number because
     // the stack layout phase should compress the stack anyway.
     
