@@ -224,14 +224,10 @@ endif ()
 
 if (USE_GTK4)
     set(WEBKITGTK_API_VERSION 5.0)
-    set(WEBKITGTK_API_DOC_VERSION 5.0)
 elseif (USE_SOUP2)
     set(WEBKITGTK_API_VERSION 4.0)
-    set(WEBKITGTK_API_DOC_VERSION 4.0)
 else ()
     set(WEBKITGTK_API_VERSION 4.1)
-    # No API changes in 4.1, so keep using the same API documentation.
-    set(WEBKITGTK_API_DOC_VERSION 4.0)
 endif ()
 
 if (WEBKITGTK_API_VERSION VERSION_EQUAL "4.0")
