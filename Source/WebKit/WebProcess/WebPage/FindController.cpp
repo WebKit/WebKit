@@ -43,6 +43,7 @@
 #include <WebCore/FrameView.h>
 #include <WebCore/GeometryUtilities.h>
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/ImageAnalysisQueue.h>
 #include <WebCore/ImageOverlay.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageOverlayController.h>
@@ -236,6 +237,10 @@ void FindController::findString(const String& string, OptionSet<FindOptions> opt
 {
 #if ENABLE(PDFKIT_PLUGIN)
     auto* pluginView = mainFramePlugIn();
+#endif
+
+#if ENABLE(IMAGE_ANALYSIS)
+    m_webPage->corePage()->analyzeImagesForFindInPage();
 #endif
 
     WebCore::FindOptions coreOptions = core(options);
