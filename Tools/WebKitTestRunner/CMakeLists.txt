@@ -27,7 +27,6 @@ set(WebKitTestRunner_FRAMEWORKS
     WTF
     WebCore
     WebCoreTestSupport
-    WebKit
 )
 if (NOT USE_SYSTEM_MALLOC)
     list(APPEND WebKitTestRunner_FRAMEWORKS bmalloc)
