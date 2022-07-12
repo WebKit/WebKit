@@ -542,9 +542,9 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         typedef std::pair<ValueType*, bool> LookupType;
         typedef std::pair<LookupType, unsigned> FullLookupType;
 
-        LookupType lookupForWriting(const Key& key) { return lookupForWriting<IdentityTranslatorType>(key); };
+        ValueType* lookupForReinsert(const Key& key) { return lookupForReinsert<IdentityTranslatorType>(key); };
+        template<typename HashTranslator, typename T> ValueType* lookupForReinsert(const T&);
         template<typename HashTranslator, typename T> FullLookupType fullLookupForWriting(const T&);
-        template<typename HashTranslator, typename T> LookupType lookupForWriting(const T&);
 
         template<typename HashTranslator, typename T, typename Extra> void addUniqueForInitialization(T&& key, Extra&&);
 
@@ -731,7 +731,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     template<typename HashTranslator, typename T>
-    inline auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::lookupForWriting(const T& key) -> LookupType
+    inline auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::lookupForReinsert(const T& key) -> ValueType*
     {
         ASSERT(m_table);
         checkKey<HashTranslator>(key);
@@ -750,30 +750,11 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         ++m_stats->numAccesses;
 #endif
 
-        ValueType* deletedEntry = nullptr;
-
         while (true) {
             ValueType* entry = table + i;
-            
-            // we count on the compiler to optimize out this branch
-            if (HashFunctions::safeToCompareToEmptyOrDeleted) {
-                if (isEmptyBucket(*entry))
-                    return LookupType(deletedEntry ? deletedEntry : entry, false);
-                
-                if (HashTranslator::equal(Extractor::extract(*entry), key))
-                    return LookupType(entry, true);
-                
-                if (isDeletedBucket(*entry))
-                    deletedEntry = entry;
-            } else {
-                if (isEmptyBucket(*entry))
-                    return LookupType(deletedEntry ? deletedEntry : entry, false);
-            
-                if (isDeletedBucket(*entry))
-                    deletedEntry = entry;
-                else if (HashTranslator::equal(Extractor::extract(*entry), key))
-                    return LookupType(entry, true);
-            }
+
+            if (isEmptyBucket(*entry))
+                return entry;
 
             ++probeCount;
 
@@ -861,40 +842,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
 
         internalCheckTableConsistency();
 
-        ValueType* table = m_table;
-        unsigned sizeMask = tableSizeMask();
-        unsigned h = HashTranslator::hash(key);
-        unsigned i = h & sizeMask;
-        unsigned probeCount = 0;
-
-#if DUMP_HASHTABLE_STATS
-        ++HashTableStats::numAccesses;
-#endif
-
-#if DUMP_HASHTABLE_STATS_PER_TABLE
-        ++m_stats->numAccesses;
-#endif
-
-        ValueType* entry;
-        while (true) {
-            entry = table + i;
-
-            if (isEmptyBucket(*entry))
-                break;
-
-            ++probeCount;
-
-#if DUMP_HASHTABLE_STATS
-            HashTableStats::recordCollisionAtCount(probeCount);
-#endif
-
-#if DUMP_HASHTABLE_STATS_PER_TABLE
-            m_stats->recordCollisionAtCount(probeCount);
-#endif
-
-            i = (i + probeCount) & sizeMask;
-        }
-
+        Value* entry = lookupForReinsert<HashTranslator>(key);
         HashTranslator::translate(*entry, std::forward<T>(key), std::forward<Extra>(extra));
 
         internalCheckTableConsistency();
@@ -1051,8 +999,8 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
     inline auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::reinsert(ValueType&& entry) -> ValueType*
     {
         ASSERT(m_table);
-        ASSERT(!lookupForWriting(Extractor::extract(entry)).second);
-        ASSERT(!isDeletedBucket(*(lookupForWriting(Extractor::extract(entry)).first)));
+        ASSERT(!isDeletedBucket(*lookupForReinsert(Extractor::extract(entry))));
+        ASSERT(isEmptyBucket(*lookupForReinsert(Extractor::extract(entry))));
 #if DUMP_HASHTABLE_STATS
         ++HashTableStats::numReinserts;
 #endif
@@ -1060,7 +1008,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         ++m_stats->numReinserts;
 #endif
 
-        Value* newEntry = lookupForWriting(Extractor::extract(entry)).first;
+        Value* newEntry = lookupForReinsert(Extractor::extract(entry));
         newEntry->~Value();
         new (NotNull, newEntry) ValueType(WTFMove(entry));
 
