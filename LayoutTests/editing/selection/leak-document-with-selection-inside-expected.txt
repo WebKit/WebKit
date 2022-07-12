@@ -3,10 +3,8 @@ This test asserts that document doesn't leak when a selection is created inside 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS internals.numberOfLiveDocuments() is originalNumberOfLiveDocuments
+PASS Document did not leak
 PASS successfullyParsed is true
 
 TEST COMPLETE
 This test only runs on DumpRenderTree, as it requires existence of window.internals and cross-domain resource access check disabled.
-
-

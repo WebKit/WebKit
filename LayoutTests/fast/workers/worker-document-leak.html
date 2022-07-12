@@ -3,84 +3,50 @@
 <body>
 <p>Verify that creation of a worker does not leak its creating document.</p>
 <div id='console'></div>
-<script src='resources/worker-util.js'></script>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/gc.js"></script>
 <script>
-function log(message)
-{
-    document.getElementById("console").innerHTML += message + "<br>";
-}
-
-if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
-}
+jsTestIsAsync = true;
 
 // Set this number as high as possible without introducing timeouts in debug builds.
 // Reducing it does not require rebaselines.
 var numIterations = 6;
 
-var currentIteration = 0;
-var iframe = null;
-var numLiveAtStart = 0;
-var numLiveAtEnd = 0;
-
+var doneCallback;
+    
 window.onmessage = function(event) {
-    if (event.data == "done") {
-        runOneIteration();
-    }
-};
-
-function startTest()
-{
-    gc();
-    if (window.internals && window.internals.numberOfLiveDocuments) {
-        numLiveAtStart = window.internals.numberOfLiveDocuments();
-        // Depending on which tests ran before this one in DumpRenderTree,
-        // their Document instances may not have been fully cleaned up yet.
-        // When this test is run in isolation, there should be only one
-        // live document at this point.
-        runOneIteration();
-    } else {
-        log("window.internals.numberOfLiveDocuments not available -- no point in running test");
-        finishTest();
+    if (event.data == "done" && doneCallback) {
+        doneCallback();
     }
 }
-
-function runOneIteration() {
-    if (currentIteration < numIterations) {
-        ++currentIteration;
-
-        var createdIframe = false;
-        if (!iframe) {
-            iframe = document.createElement("iframe");
-            createdIframe = true;
+    
+function waitForDoneMessage() {
+    return new Promise(resolve => {
+        doneCallback = () => {
+            doneCallback = null;
+            resolve();
         }
-        iframe.setAttribute("src", "resources/worker-document-leak-iframe.html");
-        if (createdIframe)
-            document.body.appendChild(iframe);
-    } else {
-        finishTest();
-    }
+    });
 }
 
-function finishTest()
-{
-    gc();
-
-    if (window.internals && window.internals.numberOfLiveDocuments) {
-        numLiveAtEnd = window.internals.numberOfLiveDocuments();
-        // Under no circumstances should the number of live documents
-        // at the end be more than 1 greater than the number at the
-        // beginning (because of the iframe).
-        if (numLiveAtEnd > numLiveAtStart + 1) {
-            log("FAIL: leaked documents during test run (started with " + numLiveAtStart + ", ended with " + numLiveAtEnd + ")");
-        } else {
-            log("PASS: did not leak documents during test run");
-        }
+async function startTest() {
+    try {
+        let message = await testDocumentIsNotLeaked(async documentCount => {
+            let frameIdentifiers = [];
+            for (var i = 0; i < documentCount; i++) {
+                let frame = document.body.appendChild(document.createElement("iframe"));
+                frame.src = "resources/worker-document-leak-iframe.html";
+                await waitForDoneMessage()
+                frameIdentifiers.push(internals.documentIdentifier(frame.contentDocument));
+                frame.remove();
+            }
+            return frameIdentifiers;
+        }, { documentCount: numIterations });
+        testPassed(message);
+    } catch (error) {
+        testFailed(error.message);
     }
-
-    if (window.testRunner)
-        testRunner.notifyDone();
+    finishJSTest();
 }
 
 window.onload = startTest;

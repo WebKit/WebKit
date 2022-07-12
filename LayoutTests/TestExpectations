@@ -1922,8 +1922,6 @@ webkit.org/b/61932 [ Debug ] jquery/manipulation.html [ Slow ]
 [ Debug ] jquery/offset.html [ Slow ]
 [ Debug ] jquery/traversing.html [ Slow ]
 
-webkit.org/b/187389 [ Debug ] editing/selection/navigation-clears-editor-state.html [ Slow ]
-
 webkit.org/b/139638 [ Debug ] svg/filters/svg-deeply-nested-crash.html [ Slow ]
 webkit.org/b/112265 svg/filters/feDisplacementMap-filterUnits.svg [ Pass ImageOnlyFailure ]
 webkit.org/b/126420 svg/custom/resource-invalidation-crash.svg [ Failure Pass ]
@@ -2125,8 +2123,6 @@ fast/images/heic-as-background-image.html [ Skip ]
 fast/images/webp-as-image.html [ Skip ]
 fast/images/animated-webp-as-image.html [ Skip ]
 fast/images/animated-webp.html [ Skip ]
-
-webkit.org/b/146182 editing/selection/leak-document-with-selection-inside.html [ Pass Failure ]
 
 # Experimental H265 support.
 webrtc/h265.html [ Pass Failure ]

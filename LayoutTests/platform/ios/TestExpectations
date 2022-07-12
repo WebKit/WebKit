@@ -1836,7 +1836,6 @@ fast/images/animated-gif-body-outside-viewport.html
 fast/images/animated-gif-html-background-image.html
 fast/replaced/frame-removed-during-resize-smaller.html
 fast/workers/worker-close-more.html
-fast/workers/worker-document-leak.html
 fast/workers/worker-lifecycle.html
 fast/block/positioning/vertical-lr/001.html
 fast/body-propagation/overflow/001.html

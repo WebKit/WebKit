@@ -1,49 +1,35 @@
 <!DOCTYPE html>
 <html>
 <body onload="runTest()">
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/gc.js"></script>
 <script>
 description("This test asserts that Document doesn't leak when a CSS Animation is created.");
-
 if (window.internals)
     jsTestIsAsync = true;
 
-gc();
-
-var numberOfLiveDocumentsAfterIframeLoaded = 0;
-
-function runTest() {
+async function runTest() {
     if (!window.internals)
         return;
 
-    var frame = document.body.appendChild(document.createElement("iframe"));
-
-    frame.onload = function() {
-        if (frame.src === 'about:blank')
-            return true;
-
-        gc();
-        setTimeout(function () {
-            numberOfLiveDocumentsAfterIframeLoaded = internals.numberOfLiveDocuments();
-            debug("The iframe has finished loading.");
-
-            frame.remove();
-            frame = null;
-
-            gc();
-            setTimeout(function () {
-                debug("The iframe has been destroyed.");
-                shouldBe("internals.numberOfLiveDocuments()", "numberOfLiveDocumentsAfterIframeLoaded - 1");
-                debug("");
-                finishJSTest();
-            });
+    try {
+        let message = await testDocumentIsNotLeaked(async documentCount => {
+            let frameIdentifiers = [];
+            for (var i = 0; i < documentCount; i++) {
+                let frame = document.body.appendChild(document.createElement("iframe"));
+                frame.src = 'resources/animation-leak-iframe.html';
+                await new Promise(resolve => { frame.onload = resolve; });
+                frameIdentifiers.push(internals.documentIdentifier(frame.contentDocument));
+                frame.remove();
+            }
+            return frameIdentifiers;
         });
+        testPassed(message);
+    } catch (error) {
+        testFailed(error.message);
     }
-
-    frame.src = 'resources/animation-leak-iframe.html';
+    finishJSTest();
 }
-
 </script>
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

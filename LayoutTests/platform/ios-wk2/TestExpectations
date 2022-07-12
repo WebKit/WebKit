@@ -1896,8 +1896,6 @@ webkit.org/b/215110 [ Release ] imported/w3c/web-platform-tests/css/css-animatio
 
 webkit.org/b/215167 imported/mozilla/svg/image/image-filter-01.svg [ ImageOnlyFailure ]
 
-webkit.org/b/215177 [ Release ] editing/selection/navigation-clears-editor-state.html [ Pass Failure ]
-
 webkit.org/b/215192 imported/w3c/web-platform-tests/preload/single-download-preload.html [ Pass Failure ]
 
 webkit.org/b/215204 imported/w3c/web-platform-tests/svg/import/linking-a-10-f-manual.svg [ Pass Failure ]
@@ -2006,8 +2004,6 @@ webkit.org/b/155196 security/contentSecurityPolicy/video-with-file-url-allowed-b
 webkit.org/b/155196 security/contentSecurityPolicy/video-with-file-url-allowed-by-media-src-star.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/227273 fast/css-custom-paint/out-of-memory-while-adding-worklet-module.html [ Pass Failure Timeout DumpJSConsoleLogInStdErr ]
-
-webkit.org/b/226598 animations/leak-document-with-css-animation.html [ Pass Failure ]
 
 webkit.org/b/229338 animations/unprefixed-events.html [ Pass Failure ]
 

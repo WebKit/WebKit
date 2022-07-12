@@ -2,8 +2,8 @@
 <html>
 <body>
 <script src="../../resources/js-test.js"></script>
+<script src="../../resources/gc.js"></script>
 <script>
-
 description('This tests navigating away from a document after setting a selection deletes the document.');
 jsTestIsAsync = true;
 
@@ -22,62 +22,32 @@ function setEditorStates(iframe)
     iframe.contentDocument.execCommand('bold', false, null);
 }
 
-function wait(duration)
-{
-    return new Promise(function (resolve) {
-        setTimeout(resolve, 0);
-    });
-}
-
-var frame;
-var initialDocumentCount;
 async function runTest()
 {
-    initialDocumentCount = internals.numberOfLiveDocuments();
-
-    let frames = [];
-    const count = 200;
-    for (let i = 0; i < count; ++i)
-        frames.push(appendIframe());
-
-    await wait(0); // Make sure the transient document created by inserting an iframe is removed.
-    GCController.collect();
-
-    for (let frame of frames)
-        setEditorStates(frame);
-
-    await wait(0); // Wait for UI update timer to fire.
-
-    let resolved = 0;
-    for (let frame of frames) {
-        frame.src = "resources/select-iframe-focusin-document-crash-frame.html";
-        frame.onload = async () => {
-            ++resolved;
-            if (resolved !== count)
-                return;
-            let before = internals.numberOfLiveDocuments();
-            await wait(0);
-            GCController.collect();
-            let after = internals.numberOfLiveDocuments();
-            let delta = before - after;
-            if (delta > 0.15 * count)
-                debug("PASS freed more than 15% of documents");
-            else
-                debug("FAIL freed less than 15% of documents");
-            finishJSTest();                
-        };
+    try {
+        let message = await testDocumentIsNotLeaked(async documentCount => {
+            let frameIdentifiers = [];
+            for (var i = 0; i < documentCount; i++) {
+                let frame = appendIframe();
+                setEditorStates(frame);
+                frame.src = "resources/select-iframe-focusin-document-crash-frame.html";
+                await new Promise(resolve => { frame.onload = resolve; });
+                frameIdentifiers.push(internals.documentIdentifier(frame.contentDocument));
+                frame.remove();
+            }
+            return frameIdentifiers;
+        });
+        testPassed(message);
+    } catch (error) {
+        testFailed(error.message);
     }
+    finishJSTest();
 }
 
 if (!window.GCController || !window.internals) {
     debug('This test requires GCController and internals');
-} else {
-    // Clear out any lingering documents from the previous tests.
-    GCController.collect();
-    GCController.collect();
+} else
     runTest();
-}
-
 </script>
 </body>
 </html>

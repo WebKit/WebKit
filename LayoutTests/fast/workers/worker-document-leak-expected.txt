@@ -1,4 +1,7 @@
 Verify that creation of a worker does not leak its creating document.
 
-PASS: did not leak documents during test run
+PASS Document did not leak
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

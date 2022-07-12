@@ -4266,7 +4266,6 @@ webkit.org/b/186183 http/tests/security/referrer-policy-header.html [ Skip ]
 webkit.org/b/186183 http/tests/security/referrer-policy-header-multipart.html [ Skip ]
 
 webkit.org/b/186562 [ Release ] accessibility/accessibility-node-memory-management.html [ Failure ]
-webkit.org/b/186562 fast/workers/worker-document-leak.html [ Failure ]
 webkit.org/b/186562 js/dom/line-column-numbers.html [ Failure ]
 webkit.org/b/186562 storage/indexeddb/modern/leak-1.html [ Failure ]
 webkit.org/b/186562 workers/bomb.html [ Skip ]
