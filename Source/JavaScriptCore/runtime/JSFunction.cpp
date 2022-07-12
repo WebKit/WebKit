@@ -516,6 +516,17 @@ String getCalculatedDisplayName(VM& vm, JSObject* object)
     return emptyString();
 }
 
+template<typename... StringTypes>
+ALWAYS_INLINE String makeNameWithOutOfMemoryCheck(JSGlobalObject* globalObject, ThrowScope& throwScope, const char* messagePrefix, StringTypes... strings)
+{
+    String name = tryMakeString(strings...);
+    if (UNLIKELY(!name)) {
+        throwOutOfMemoryError(globalObject, throwScope, makeString(messagePrefix, "name is too long"));
+        return String();
+    }
+    return name;
+}
+
 void JSFunction::setFunctionName(JSGlobalObject* globalObject, JSValue value)
 {
     VM& vm = globalObject->vm();
@@ -534,14 +545,16 @@ void JSFunction::setFunctionName(JSGlobalObject* globalObject, JSValue value)
         SymbolImpl& uid = privateName.uid();
         if (uid.isNullSymbol())
             name = emptyString();
-        else
-            name = makeString('[', String(&uid), ']');
+        else {
+            name = makeNameWithOutOfMemoryCheck(globalObject, scope, "Function ", '[', String(&uid), ']');
+            RETURN_IF_EXCEPTION(scope, void());
+        }
     } else {
         ASSERT(value.isString());
         name = asString(value)->value(globalObject);
         RETURN_IF_EXCEPTION(scope, void());
     }
-    reifyName(vm, globalObject, name);
+    RELEASE_AND_RETURN(scope, (void)reifyName(vm, globalObject, name));
 }
 
 void JSFunction::reifyLength(VM& vm)
@@ -565,7 +578,7 @@ void JSFunction::reifyLength(VM& vm)
     putDirect(vm, identifier, initialValue, initialAttributes);
 }
 
-void JSFunction::reifyName(VM& vm, JSGlobalObject* globalObject)
+JSFunction::PropertyStatus JSFunction::reifyName(VM& vm, JSGlobalObject* globalObject)
 {
     const Identifier& ecmaName = jsExecutable()->ecmaName();
     String name;
@@ -576,11 +589,12 @@ void JSFunction::reifyName(VM& vm, JSGlobalObject* globalObject)
         name = vm.propertyNames->defaultKeyword.string();
     else
         name = ecmaName.string();
-    reifyName(vm, globalObject, name);
+    return reifyName(vm, globalObject, name);
 }
 
-void JSFunction::reifyName(VM& vm, JSGlobalObject* globalObject, String name)
+JSFunction::PropertyStatus JSFunction::reifyName(VM& vm, JSGlobalObject* globalObject, String name)
 {
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     FunctionRareData* rareData = this->ensureRareData(vm);
 
     ASSERT(!hasReifiedName());
@@ -595,14 +609,16 @@ void JSFunction::reifyName(VM& vm, JSGlobalObject* globalObject, String name)
         if (name.find(illegalCharMatcher) != notFound)
             name = String();
     }
-    
+
     if (jsExecutable()->isGetter())
-        name = makeString("get ", name);
+        name = makeNameWithOutOfMemoryCheck(globalObject, throwScope, "Getter ", "get ", name);
     else if (jsExecutable()->isSetter())
-        name = makeString("set ", name);
+        name = makeNameWithOutOfMemoryCheck(globalObject, throwScope, "Setter ", "set ", name);
+    RETURN_IF_EXCEPTION(throwScope, PropertyStatus::Lazy);
 
     rareData->setHasReifiedName();
     putDirect(vm, propID, jsString(vm, WTFMove(name)), initialAttributes);
+    return PropertyStatus::Reified;
 }
 
 JSFunction::PropertyStatus JSFunction::reifyLazyPropertyIfNeeded(VM& vm, JSGlobalObject* globalObject, PropertyName propertyName)
@@ -662,10 +678,8 @@ JSFunction::PropertyStatus JSFunction::reifyLazyLengthIfNeeded(VM& vm, JSGlobalO
 JSFunction::PropertyStatus JSFunction::reifyLazyNameIfNeeded(VM& vm, JSGlobalObject* globalObject, PropertyName propertyName)
 {
     if (propertyName == vm.propertyNames->name) {
-        if (!hasReifiedName()) {
-            reifyName(vm, globalObject);
-            return PropertyStatus::Reified;
-        }
+        if (!hasReifiedName())
+            return reifyName(vm, globalObject);
         return PropertyStatus::Lazy;
     }
     return PropertyStatus::Eager;
@@ -683,7 +697,7 @@ JSFunction::PropertyStatus JSFunction::reifyLazyBoundNameIfNeeded(VM& vm, JSGlob
         return PropertyStatus::Lazy;
 
     if (isBuiltinFunction())
-        reifyName(vm, globalObject);
+        RELEASE_AND_RETURN(scope, reifyName(vm, globalObject));
     else if (this->inherits<JSBoundFunction>()) {
         FunctionRareData* rareData = this->ensureRareData(vm);
         JSString* nameMayBeNull = jsCast<JSBoundFunction*>(this)->nameMayBeNull();

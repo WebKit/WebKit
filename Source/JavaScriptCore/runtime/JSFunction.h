@@ -203,8 +203,8 @@ private:
     bool hasReifiedLength() const;
     bool hasReifiedName() const;
     void reifyLength(VM&);
-    void reifyName(VM&, JSGlobalObject*);
-    void reifyName(VM&, JSGlobalObject*, String name);
+    PropertyStatus reifyName(VM&, JSGlobalObject*);
+    PropertyStatus reifyName(VM&, JSGlobalObject*, String name);
 
     static bool isLazy(PropertyStatus property) { return property == PropertyStatus::Lazy || property == PropertyStatus::Reified; }
     static bool isReified(PropertyStatus property) { return property == PropertyStatus::Reified; }
