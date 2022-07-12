@@ -32,7 +32,7 @@
 #include "RemoteRenderingBackendMessages.h"
 #include "RemoteRenderingBackendProxy.h"
 #include "ThreadSafeRemoteImageBufferFlusher.h"
-#include <WebCore/ConcreteImageBuffer.h>
+#include <WebCore/ImageBuffer.h>
 #include <wtf/Condition.h>
 #include <wtf/Lock.h>
 #include <wtf/SystemTracing.h>
@@ -41,7 +41,7 @@ namespace WebKit {
 
 class RemoteRenderingBackend;
 
-class RemoteImageBufferProxy : public WebCore::ConcreteImageBuffer {
+class RemoteImageBufferProxy : public WebCore::ImageBuffer {
 public:
     template<typename BackendType>
     static RefPtr<RemoteImageBufferProxy> create(const WebCore::FloatSize& size, float resolutionScale, const WebCore::DestinationColorSpace& colorSpace, WebCore::PixelFormat pixelFormat, WebCore::RenderingPurpose purpose, RemoteRenderingBackendProxy& remoteRenderingBackendProxy)
@@ -82,9 +82,9 @@ public:
 
 protected:
     RemoteImageBufferProxy(const WebCore::ImageBufferBackend::Parameters& parameters, const WebCore::ImageBufferBackend::Info& info, RemoteRenderingBackendProxy& remoteRenderingBackendProxy)
-        : ConcreteImageBuffer(parameters, info)
+        : ImageBuffer(parameters, info)
         , m_remoteRenderingBackendProxy(remoteRenderingBackendProxy)
-        , m_remoteDisplayList(*this, remoteRenderingBackendProxy, { { }, ConcreteImageBuffer::logicalSize() }, ConcreteImageBuffer::baseTransform())
+        , m_remoteDisplayList(*this, remoteRenderingBackendProxy, { { }, ImageBuffer::logicalSize() }, ImageBuffer::baseTransform())
     {
         ASSERT(m_remoteRenderingBackendProxy);
         m_remoteRenderingBackendProxy->remoteResourceCacheProxy().cacheImageBuffer(*this);
@@ -172,7 +172,7 @@ protected:
             return { };
 
         if (canMapBackingStore())
-            return ConcreteImageBuffer::copyNativeImage(copyBehavior);
+            return ImageBuffer::copyNativeImage(copyBehavior);
 
         const_cast<RemoteImageBufferProxy*>(this)->flushDrawingContext();
         auto bitmap = m_remoteRenderingBackendProxy->getShareableBitmap(m_renderingResourceIdentifier, WebCore::PreserveResolution::Yes);
@@ -219,7 +219,7 @@ protected:
         m_needsFlush = false;
         didFlush(m_sentFlushIdentifier);
         prepareForBackingStoreChange();
-        ConcreteImageBuffer::clearBackend();
+        ImageBuffer::clearBackend();
     }
 
     WebCore::GraphicsContext& context() const final

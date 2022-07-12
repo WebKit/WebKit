@@ -35,9 +35,9 @@
 #include "WebFrame.h"
 #include "WebPageCreationParameters.h"
 #include "WebProcess.h"
-#include <WebCore/ConcreteImageBuffer.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
+#include <WebCore/ImageBuffer.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -367,7 +367,7 @@ RefPtr<ImageBuffer> DrawingAreaWC::createImageBuffer(FloatSize size)
 {
     if (WebProcess::singleton().shouldUseRemoteRenderingFor(RenderingPurpose::DOM))
         return m_webPage.ensureRemoteRenderingBackendProxy().createImageBuffer(size, RenderingMode::Unaccelerated, RenderingPurpose::DOM, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
-    return ConcreteImageBuffer::create<UnacceleratedImageBufferShareableBackend>(size, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, RenderingPurpose::DOM, nullptr);
+    return ImageBuffer::create<UnacceleratedImageBufferShareableBackend>(size, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, RenderingPurpose::DOM, nullptr);
 }
 
 void DrawingAreaWC::didUpdate()

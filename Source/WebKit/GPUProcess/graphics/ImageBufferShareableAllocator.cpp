@@ -28,7 +28,7 @@
 
 #include "ImageBufferShareableBitmapBackend.h"
 #include "ShareablePixelBuffer.h"
-#include <WebCore/ConcreteImageBuffer.h>
+#include <WebCore/ImageBuffer.h>
 
 #if ENABLE(GPU_PROCESS)
 
@@ -42,7 +42,7 @@ ImageBufferShareableAllocator::ImageBufferShareableAllocator(const ProcessIdenti
 
 RefPtr<ImageBuffer> ImageBufferShareableAllocator::createImageBuffer(const FloatSize& size, const DestinationColorSpace& colorSpace, RenderingMode) const
 {
-    RefPtr<ImageBuffer> imageBuffer = ConcreteImageBuffer::create<ImageBufferShareableBitmapBackend>(size, 1, colorSpace, PixelFormat::BGRA8, RenderingPurpose::Unspecified, { });
+    RefPtr<ImageBuffer> imageBuffer = ImageBuffer::create<ImageBufferShareableBitmapBackend>(size, 1, colorSpace, PixelFormat::BGRA8, RenderingPurpose::Unspecified, { });
     if (!imageBuffer)
         return nullptr;
 

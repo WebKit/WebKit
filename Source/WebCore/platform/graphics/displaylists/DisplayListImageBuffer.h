@@ -25,29 +25,29 @@
 
 #pragma once
 
-#include "ConcreteImageBuffer.h"
 #include "DisplayListDrawingContext.h"
+#include "ImageBuffer.h"
 #include "InMemoryDisplayList.h"
 
 namespace WebCore {
 namespace DisplayList {
 
-class ImageBuffer final : public ConcreteImageBuffer {
+class ImageBuffer final : public WebCore::ImageBuffer {
 public:
     template<typename BackendType>
     static auto create(const FloatSize& size, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, RenderingPurpose purpose, const WebCore::ImageBuffer::CreationContext& creationContext)
     {
-        return ConcreteImageBuffer::create<BackendType, ImageBuffer>(size, resolutionScale, colorSpace, pixelFormat, purpose, creationContext);
+        return WebCore::ImageBuffer::create<BackendType, ImageBuffer>(size, resolutionScale, colorSpace, pixelFormat, purpose, creationContext);
     }
 
     template<typename BackendType>
     static auto create(const FloatSize& size, const GraphicsContext& context, RenderingPurpose purpose)
     {
-        return ConcreteImageBuffer::create<BackendType, ImageBuffer>(size, context, purpose);
+        return WebCore::ImageBuffer::create<BackendType, ImageBuffer>(size, context, purpose);
     }
 
     ImageBuffer(const ImageBufferBackend::Parameters& parameters, const ImageBufferBackend::Info& info, std::unique_ptr<ImageBufferBackend>&& backend)
-        : ConcreteImageBuffer(parameters, info, WTFMove(backend))
+        : WebCore::ImageBuffer(parameters, info, WTFMove(backend))
         , m_drawingContext(logicalSize(), baseTransform())
         , m_writingClient(makeUnique<InMemoryDisplayList::WritingClient>())
         , m_readingClient(makeUnique<InMemoryDisplayList::ReadingClient>())
@@ -57,7 +57,7 @@ public:
     }
 
     ImageBuffer(const ImageBufferBackend::Parameters& parameters, const ImageBufferBackend::Info& info)
-        : ConcreteImageBuffer(parameters, info)
+        : WebCore::ImageBuffer(parameters, info)
         , m_drawingContext(logicalSize(), baseTransform())
         , m_writingClient(makeUnique<InMemoryDisplayList::WritingClient>())
         , m_readingClient(makeUnique<InMemoryDisplayList::ReadingClient>())
@@ -81,13 +81,13 @@ public:
     void flushDrawingContext() final
     {
         if (!m_drawingContext.displayList().isEmpty())
-            m_drawingContext.replayDisplayList(ConcreteImageBuffer::context());
+            m_drawingContext.replayDisplayList(WebCore::ImageBuffer::context());
     }
 
     void clearBackend() final
     {
         m_drawingContext.displayList().clear();
-        ConcreteImageBuffer::clearBackend();
+        WebCore::ImageBuffer::clearBackend();
     }
 
 protected:

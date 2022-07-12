@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "ConcreteImageBuffer.h"
 #include "DisplayListImageBuffer.h"
+#include "ImageBuffer.h"
 
 #if USE(CG)
 #include "ImageBufferCGBitmapBackend.h"
@@ -53,22 +53,22 @@ using AcceleratedImageBufferBackend = UnacceleratedImageBufferBackend;
 #endif
 
 #if HAVE(IOSURFACE)
-class IOSurfaceImageBuffer final : public ConcreteImageBuffer {
+class IOSurfaceImageBuffer final : public ImageBuffer {
 public:
     static auto create(const FloatSize& size, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, RenderingPurpose purpose, const CreationContext& creationContext = { })
     {
-        return ConcreteImageBuffer::create<ImageBufferIOSurfaceBackend, IOSurfaceImageBuffer>(size, resolutionScale, colorSpace, pixelFormat, purpose, creationContext);
+        return ImageBuffer::create<ImageBufferIOSurfaceBackend, IOSurfaceImageBuffer>(size, resolutionScale, colorSpace, pixelFormat, purpose, creationContext);
     }
 
     static auto create(const FloatSize& size, const GraphicsContext& context, RenderingPurpose purpose)
     {
-        return ConcreteImageBuffer::create<ImageBufferIOSurfaceBackend, IOSurfaceImageBuffer>(size, context, purpose);
+        return ImageBuffer::create<ImageBufferIOSurfaceBackend, IOSurfaceImageBuffer>(size, context, purpose);
     }
 
     IOSurface& surface() { return *static_cast<ImageBufferIOSurfaceBackend&>(*m_backend).surface(); }
 
 protected:
-    using ConcreteImageBuffer::ConcreteImageBuffer;
+    using ImageBuffer::ImageBuffer;
 };
 #endif
 

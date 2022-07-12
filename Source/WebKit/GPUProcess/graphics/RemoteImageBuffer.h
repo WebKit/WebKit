@@ -29,11 +29,11 @@
 
 #include "RemoteDisplayListRecorder.h"
 #include "ScopedActiveMessageReceiveQueue.h"
-#include <WebCore/ConcreteImageBuffer.h>
+#include <WebCore/ImageBuffer.h>
 
 namespace WebKit {
 
-class RemoteImageBuffer : public WebCore::ConcreteImageBuffer {
+class RemoteImageBuffer : public WebCore::ImageBuffer {
 public:
     template<typename BackendType>
     static RefPtr<RemoteImageBuffer> create(const WebCore::FloatSize& size, float resolutionScale, const WebCore::DestinationColorSpace& colorSpace, WebCore::PixelFormat pixelFormat, WebCore::RenderingPurpose purpose, RemoteRenderingBackend& remoteRenderingBackend, QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
@@ -44,7 +44,7 @@ public:
 #endif
         };
         
-        auto imageBuffer = ConcreteImageBuffer::create<BackendType, RemoteImageBuffer>(size, resolutionScale, colorSpace, pixelFormat, purpose, context, remoteRenderingBackend, renderingResourceIdentifier);
+        auto imageBuffer = ImageBuffer::create<BackendType, RemoteImageBuffer>(size, resolutionScale, colorSpace, pixelFormat, purpose, context, remoteRenderingBackend, renderingResourceIdentifier);
         if (!imageBuffer)
             return nullptr;
 
@@ -56,7 +56,7 @@ public:
     }
 
     RemoteImageBuffer(const WebCore::ImageBufferBackend::Parameters& parameters, const WebCore::ImageBufferBackend::Info& info, std::unique_ptr<ImageBufferBackend>&& backend, RemoteRenderingBackend& remoteRenderingBackend, QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
-        : ConcreteImageBuffer(parameters, info, WTFMove(backend), renderingResourceIdentifier.object())
+        : ImageBuffer(parameters, info, WTFMove(backend), renderingResourceIdentifier.object())
         , m_renderingResourceIdentifier(renderingResourceIdentifier)
         , m_remoteDisplayList({ RemoteDisplayListRecorder::create(*this, renderingResourceIdentifier, renderingResourceIdentifier.processIdentifier(), remoteRenderingBackend) })
         , m_renderingResourcesRequest(ScopedRenderingResourcesRequest::acquire())
