@@ -273,7 +273,7 @@ void RemoteDisplayListRecorder::drawDecomposedGlyphsWithQualifiedIdentifiers(Qua
     }
 
     RefPtr decomposedGlyphs = resourceCache().cachedDecomposedGlyphs(decomposedGlyphsIdentifier);
-    if (!decomposedGlyphsIdentifier) {
+    if (!decomposedGlyphs) {
         ASSERT_NOT_REACHED();
         return;
     }
