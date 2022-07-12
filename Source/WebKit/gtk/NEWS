@@ -1,4 +1,29 @@
 ================
+WebKitGTK 2.37.1
+================
+
+What's new in WebKitGTK 2.37.1?
+
+  - Add initial implementation of WebRTC using GstWebRTC if GStreamer 1.20 is available,
+    disabled by default via web view settings.
+  - Add new API to set WebView's Content-Security-Policy for web extensions support.
+  - Add new API to run async JavaScript functions.
+  - Expose typed arrays in JavaScriptCore GLib API.
+  - Add support for PDF documents using PDF.js.
+  - Show font name and font variant settings in the inspector.
+  - MediaSession is enabled by default, allowing remote media control using MPRIS.
+  - Modernized media controls UI.
+  - Add Support Google Dynamic Ad Insertion (DAI).
+  - Add support for capturing encoded video streams from a webcam.
+  - Make it possible to use the remote inspector from other browsers using WEBKIT_INSPECTOR_HTTP_SERVER env var.
+  - Add support for IPv6 in the remote inspector.
+  - Update form elements style to match libadwaita.
+  - Fix canvas animations and images with threaded rendering enabled.
+  - Switch to use gi-docgen for API documentation instead of gtk-doc.
+  - Remove the ATK a11y implementation that has been replaced by AT-SPI DBus interfaces.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.35.3
 ================
 
