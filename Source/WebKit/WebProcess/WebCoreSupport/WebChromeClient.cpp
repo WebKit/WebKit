@@ -1469,6 +1469,14 @@ void WebChromeClient::shouldAllowDeviceOrientationAndMotionAccess(Frame& frame, 
 }
 #endif
 
+#if ENABLE(ORIENTATION_EVENTS) && !PLATFORM(IOS_FAMILY)
+int WebChromeClient::deviceOrientation() const
+{
+    notImplemented();
+    return 0;
+}
+#endif
+
 void WebChromeClient::configureLoggingChannel(const String& channelName, WTFLogChannelState state, WTFLogLevel level)
 {
     m_page.configureLoggingChannel(channelName, state, level);
