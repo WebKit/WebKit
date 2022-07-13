@@ -33,7 +33,7 @@ _log = logging.getLogger(__name__)
 
 # FIXME: Rename Patch to Change
 class Patch(models.Model):
-    patch_id = models.TextField(primary_key=True)
+    change_id = models.TextField(primary_key=True)
     bug_id = models.IntegerField()
     pr_id = models.IntegerField(default=-1)
     pr_project = models.TextField(default='')
@@ -44,7 +44,7 @@ class Patch(models.Model):
     modified = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return str(self.patch_id)
+        return str(self.change_id)
 
     @classmethod
     def save_patch(cls, patch_id, bug_id=-1, pr_id=-1, pr_project='', obsolete=False, sent_to_buildbot=False, sent_to_commit_queue=False):
@@ -74,7 +74,7 @@ class Patch(models.Model):
 
     @classmethod
     def is_existing_patch_id(cls, patch_id):
-        return bool(Patch.objects.filter(patch_id=patch_id))
+        return bool(Patch.objects.filter(change_id=patch_id))
 
     @classmethod
     def is_patch_sent_to_buildbot(cls, patch_id, commit_queue=False):
@@ -93,7 +93,7 @@ class Patch(models.Model):
     @classmethod
     def get_patch(cls, patch_id):
         try:
-            return Patch.objects.get(patch_id=patch_id)
+            return Patch.objects.get(change_id=patch_id)
         except:
             return None
 
