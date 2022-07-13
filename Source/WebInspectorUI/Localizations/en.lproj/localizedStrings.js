@@ -865,6 +865,7 @@ localizedStrings["JavaScript"] = "JavaScript";
 localizedStrings["JavaScript & Events"] = "JavaScript & Events";
 localizedStrings["JavaScript Allocations"] = "JavaScript Allocations";
 localizedStrings["JavaScript Context"] = "JavaScript Context";
+localizedStrings["JavaScript execution is paused"] = "JavaScript execution is paused";
 localizedStrings["Jump to Definition"] = "Jump to Definition";
 localizedStrings["Key"] = "Key";
 localizedStrings["Key Path"] = "Key Path";

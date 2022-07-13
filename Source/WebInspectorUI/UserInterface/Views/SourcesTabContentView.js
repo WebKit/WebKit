@@ -47,6 +47,7 @@ WI.SourcesTabContentView = class SourcesTabContentView extends WI.ContentBrowser
         return {
             identifier: SourcesTabContentView.Type,
             image: WI.debuggerManager.paused ? "Images/SourcesPaused.svg" : "Images/Sources.svg",
+            title: WI.debuggerManager.paused ? WI.UIString("JavaScript execution is paused") : "",
             displayName: WI.UIString("Sources", "Sources Tab Name", "Name of Sources Tab"),
         };
     }
@@ -120,11 +121,13 @@ WI.SourcesTabContentView = class SourcesTabContentView extends WI.ContentBrowser
     _handleDebuggerPaused(event)
     {
         this.tabBarItem.image = "Images/SourcesPaused.svg";
+        this.tabBarItem.title = WI.UIString("JavaScript execution is paused");
     }
 
     _handleDebuggerResumed(event)
     {
         this.tabBarItem.image = "Images/Sources.svg";
+        this.tabBarItem.title = "";
     }
 };
 
