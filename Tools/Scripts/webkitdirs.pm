@@ -1,4 +1,4 @@
-# Copyright (C) 2005-2021 Apple Inc. All rights reserved.
+# Copyright (C) 2005-2022 Apple Inc. All rights reserved.
 # Copyright (C) 2009 Google Inc. All rights reserved.
 # Copyright (C) 2011 Research In Motion Limited. All rights reserved.
 # Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
@@ -3324,16 +3324,9 @@ sub runSvnUpdateAndResolveChangeLogs(@)
 
 sub runGitUpdate()
 {
-    # Doing a git fetch first allows setups with svn-remote.svn.fetch = trunk:refs/remotes/origin/master
-    # to perform the rebase much much faster.
-    system("git", "fetch");
-    if (isGitSVNDirectory(".")) {
-        system("git", "svn", "rebase") == 0 or die;
-    } else {
-        # This will die if branch.$BRANCHNAME.merge isn't set, which is
-        # almost certainly what we want.
-        system("git", "pull") == 0 or die;
-    }
+    # This will die if branch.$BRANCHNAME.merge isn't set, which is
+    # almost certainly what we want.
+    system("git", "pull") == 0 or die;
 }
 
 1;

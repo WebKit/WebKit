@@ -1,4 +1,4 @@
-# Copyright (C) 2007-2018 Apple Inc.  All rights reserved.
+# Copyright (C) 2007-2022 Apple Inc.  All rights reserved.
 # Copyright (C) 2009, 2010 Chris Jerdonek (chris.jerdonek@gmail.com)
 # Copyright (C) 2010, 2011 Research In Motion Limited. All rights reserved.
 # Copyright (C) 2012 Daniel Bates (dbates@intudata.com)
@@ -71,8 +71,6 @@ BEGIN {
         &isGit
         &isGitBranchBuild
         &isGitDirectory
-        &isGitSVN
-        &isGitSVNDirectory
         &isSVN
         &isSVNDirectory
         &isSVNVersion16OrNewer
@@ -111,7 +109,6 @@ our @EXPORT_OK;
 
 my $gitRoot;
 my $isGit;
-my $isGitSVN;
 my $isGitBranchBuild;
 my $isSVN;
 my $svnVersion;
@@ -235,26 +232,6 @@ sub isGit()
 
     $isGit = isGitDirectory(".");
     return $isGit;
-}
-
-sub isGitSVNDirectory($)
-{
-    my ($directory) = @_;
-
-    # There doesn't seem to be an officially documented way to determine
-    # if you're in a git-svn checkout. The best suggestions seen so far
-    # all use something like the following:
-    my $output = `git -C \"$directory\" config --get svn-remote.svn.fetch 2>&1`;
-    $isGitSVN = exitStatus($?) == 0 && $output ne "";
-    return $isGitSVN;
-}
-
-sub isGitSVN()
-{
-    return $isGitSVN if defined $isGitSVN;
-
-    $isGitSVN = isGitSVNDirectory(".");
-    return $isGitSVN;
 }
 
 sub gitDirectory()
