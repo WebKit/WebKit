@@ -4947,22 +4947,6 @@ TEST(ProcessSwap, APIControlledProcessSwappingThenBackWithoutDelay)
     runAPIControlledProcessSwappingThenBackTest(WithDelay::No);
 }
 
-static const char* navigateToCrossSiteThenBackFromJSBytes = R"PSONRESOURCE(
-<script>
-onpageshow = function(event) {
-    // Location changes need to happen outside the onload handler to generate history entries.
-    setTimeout(function() {
-      window.location.href = "pson://www.apple.com/main.html";
-    }, 0);
-}
-
-</script>
-)PSONRESOURCE";
-
-static const char* navigateBackFromJSBytes = R"PSONRESOURCE(
-<body onload='history.back()'></body>
-)PSONRESOURCE";
-
 TEST(ProcessSwap, NavigateToCrossSiteThenBackFromJS)
 {
     auto processPoolConfiguration = psonProcessPoolConfiguration();
@@ -4972,8 +4956,6 @@ TEST(ProcessSwap, NavigateToCrossSiteThenBackFromJS)
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webViewConfiguration setProcessPool:processPool.get()];
     auto handler = adoptNS([[PSONScheme alloc] init]);
-    [handler addMappingFromURLString:@"pson://www.webkit.org/main.html" toData:navigateToCrossSiteThenBackFromJSBytes]; // Navigates to "pson://www.apple.com/main.html".
-    [handler addMappingFromURLString:@"pson://www.apple.com/main.html" toData:navigateBackFromJSBytes];
     [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
@@ -4986,10 +4968,14 @@ TEST(ProcessSwap, NavigateToCrossSiteThenBackFromJS)
     done = false;
     auto webkitPID = [webView _webProcessIdentifier];
 
+    [webView evaluateJavaScript:@"location.href = 'pson://www.apple.com/main.html';" completionHandler:nil];
+
     TestWebKitAPI::Util::run(&done);
     done = false;
     auto applePID = [webView _webProcessIdentifier];
     EXPECT_NE(webkitPID, applePID); // Should have process-swapped when going from webkit.org to apple.com.
+
+    [webView evaluateJavaScript:@"history.back();" completionHandler:nil];
 
     // Page now calls history.back() to navigate back to webkit.org.
     TestWebKitAPI::Util::run(&done);
