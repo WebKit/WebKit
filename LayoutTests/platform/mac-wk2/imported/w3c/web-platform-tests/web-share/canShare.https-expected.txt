@@ -3,6 +3,6 @@ PASS canShare() empty and default dictionary
 PASS canShare() url member
 PASS canShare() title member
 PASS canShare() text member
-FAIL canShare() files member assert_false: invalid URL invalidates the share expected false got true
+PASS canShare() files member
 PASS canShare() multiple members
 
