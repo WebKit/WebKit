@@ -814,8 +814,9 @@ bool GPUConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC
 #endif
 #if ENABLE(WEBGL)
     if (decoder.messageReceiverName() == Messages::RemoteGraphicsContextGL::messageReceiverName()) {
-        // Skip messages for already removed receivers.
-        return true;
+        // Invalidate out-of-stream messages for already removed receivers.
+        decoder.markInvalid();
+        return false;
     }
 #endif
 
@@ -900,9 +901,11 @@ bool GPUConnectionToWebProcess::dispatchSyncMessage(IPC::Connection& connection,
     }
 #endif
 #if ENABLE(WEBGL)
-    if (decoder.messageReceiverName() == Messages::RemoteGraphicsContextGL::messageReceiverName())
-        // Skip messages for already removed receivers.
-        return true;
+    if (decoder.messageReceiverName() == Messages::RemoteGraphicsContextGL::messageReceiverName()) {
+        // Invalidate out-of-stream messages for already removed receivers.
+        decoder.markInvalid();
+        return false;
+    }
 #endif
 #if ENABLE(IPC_TESTING_API)
     if (decoder.messageReceiverName() == Messages::IPCTester::messageReceiverName()) {
