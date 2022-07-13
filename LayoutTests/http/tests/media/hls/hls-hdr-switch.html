@@ -30,7 +30,8 @@
                         let context = canvas.getContext('2d');
                         context.drawImage(video, 0, 0, canvas.width, canvas.height);
                         let foundColor = context.getImageData(canvas.width / 2, canvas.height / 2, 1, 1).data;
-                        if (arraysAreApproximatelyEqual(foundColor, color, 25)) {
+                        document.getElementById("debugLog").innerHTML += "Current color: " + foundColor + "<br>";
+                        if (arraysAreApproximatelyEqual(foundColor, color, 70)) {
                             clearInterval(interval);
                             logResult(true, `video became equal to ${ color }`);
                             resolve();
@@ -61,11 +62,13 @@
 
                 await shouldBecomeColor(redColor);
 
+                document.getElementById("debugLog").remove();
                 endTest();
             }
         </script>
     </head>
     <body onload="start()">
         <video id="video" autoplay muted></video>
+        <div id=debugLog>Debug log:<br></div>
     </body>
 </html>
