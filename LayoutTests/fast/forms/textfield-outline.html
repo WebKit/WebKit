@@ -1,14 +1,15 @@
 <html>
     <head>
+        <script type="text/javascript" src="../../resources/ui-helper.js"></script>
         <script>
-        function test()
+        async function test()
         {
             var tf = document.getElementById('tf');
             tf.focus();
             if (window.testRunner) {
-                eventSender.keyDown("a");
-                eventSender.keyDown("b");
-                eventSender.keyDown("c");
+                await UIHelper.keyDown("a");
+                await UIHelper.keyDown("b");
+                await UIHelper.keyDown("c");
             }
         }
         </script>
