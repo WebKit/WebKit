@@ -38,28 +38,29 @@ namespace WebKit {
 
 class GraphicsContextCGDisplayList : public WebCore::GraphicsContextCG {
 public:
-    GraphicsContextCGDisplayList(CGContextRef cgContext, double immutableBaseScaleFactor)
+    GraphicsContextCGDisplayList(CGContextRef cgContext, const CGDisplayListImageBufferBackend::Parameters& parameters)
         : GraphicsContextCG(cgContext)
-        , m_scaleTransform(immutableBaseScaleFactor, 0, 0, immutableBaseScaleFactor, 0, 0)
-        , m_inverseScaleTransform(1. / immutableBaseScaleFactor, 0, 0, 1. / immutableBaseScaleFactor, 0, 0)
     {
+        m_immutableBaseTransform.scale(parameters.resolutionScale, -parameters.resolutionScale);
+        m_immutableBaseTransform.translate(0, -parameters.logicalSize.height());
+        m_inverseImmutableBaseTransform = *m_immutableBaseTransform.inverse();
     }
 
     void setCTM(const WebCore::AffineTransform& transform) final
     {
-        GraphicsContextCG::setCTM(m_inverseScaleTransform * transform);
+        GraphicsContextCG::setCTM(m_inverseImmutableBaseTransform * transform);
     }
 
     WebCore::AffineTransform getCTM(IncludeDeviceScale includeDeviceScale) const final
     {
-        return m_scaleTransform * GraphicsContextCG::getCTM(includeDeviceScale);
+        return m_immutableBaseTransform * GraphicsContextCG::getCTM(includeDeviceScale);
     }
 
     bool canUseShadowBlur() const final { return false; }
 
 private:
-    WebCore::AffineTransform m_scaleTransform;
-    WebCore::AffineTransform m_inverseScaleTransform;
+    WebCore::AffineTransform m_immutableBaseTransform;
+    WebCore::AffineTransform m_inverseImmutableBaseTransform;
 };
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CGDisplayListImageBufferBackend);
@@ -82,7 +83,7 @@ std::unique_ptr<CGDisplayListImageBufferBackend> CGDisplayListImageBufferBackend
     if (!cgContext)
         return nullptr;
 
-    auto context = makeUnique<GraphicsContextCGDisplayList>(cgContext.get(), parameters.resolutionScale);
+    auto context = makeUnique<GraphicsContextCGDisplayList>(cgContext.get(), parameters);
     return std::unique_ptr<CGDisplayListImageBufferBackend>(new CGDisplayListImageBufferBackend(parameters, WTFMove(context)));
 }
 
