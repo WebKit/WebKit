@@ -632,13 +632,14 @@ bool MediaPlayerPrivateWebM::shouldEnsureLayer() const
 
 void MediaPlayerPrivateWebM::playerContentBoxRectChanged(const LayoutRect& newRect)
 {
-    if (!m_displayLayer && !newRect.isEmpty())
+    if (m_hasVideo && !m_displayLayer && !newRect.isEmpty())
         updateDisplayLayerAndDecompressionSession();
 }
 
 void MediaPlayerPrivateWebM::acceleratedRenderingStateChanged()
 {
-    updateDisplayLayerAndDecompressionSession();
+    if (m_hasVideo)
+        updateDisplayLayerAndDecompressionSession();
 }
 
 void MediaPlayerPrivateWebM::updateDisplayLayerAndDecompressionSession()
