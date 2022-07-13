@@ -205,6 +205,12 @@ void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOpt
         [copiedConfiguration _setApplicationManifest:[_WKApplicationManifest applicationManifestFromJSON:text manifestURL:nil documentURL:nil]];
     }
 
+    auto overrideLanguages = options.overrideLanguages();
+    NSMutableArray<NSString *> *overrideLanguagesForAPI = [NSMutableArray arrayWithCapacity:overrideLanguages.size()];
+    for (auto& language : overrideLanguages)
+        [overrideLanguagesForAPI addObject:[NSString stringWithUTF8String:language.c_str()]];
+    [TestRunnerWKWebView _setOverrideLanguagesForTesting:overrideLanguagesForAPI];
+
     m_mainWebView = makeUnique<PlatformWebView>(copiedConfiguration.get(), options);
     finishCreatingPlatformWebView(m_mainWebView.get(), options);
 
@@ -329,12 +335,6 @@ void TestController::cocoaResetStateToConsistentValues(const TestOptions& option
     [globalWebsiteDataStoreDelegateClient() setAllowRaisingQuota:YES];
 
     WebCoreTestSupport::setAdditionalSupportedImageTypesForTesting(String::fromLatin1(options.additionalSupportedImageTypes().c_str()));
-
-    auto overrideLanguages = options.overrideLanguages();
-    NSMutableArray<NSString *> *overrideLanguagesForAPI = [NSMutableArray arrayWithCapacity:overrideLanguages.size()];
-    for (auto& language : overrideLanguages)
-        [overrideLanguagesForAPI addObject:[NSString stringWithUTF8String:language.c_str()]];
-    [TestRunnerWKWebView _setOverrideLanguagesForTesting:overrideLanguagesForAPI];
 }
 
 void TestController::platformWillRunTest(const TestInvocation& testInvocation)
