@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "Element.h"
 #include "ElementData.h"
 #include "HTMLNames.h"

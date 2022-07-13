@@ -27,6 +27,7 @@
 #include "WebCoreJSClientData.h"
 
 #include "DOMGCOutputConstraint.h"
+#include "DocumentInlines.h"
 #include "ExtendedDOMClientIsoSubspaces.h"
 #include "ExtendedDOMIsoSubspaces.h"
 #include "JSAudioWorkletGlobalScope.h"

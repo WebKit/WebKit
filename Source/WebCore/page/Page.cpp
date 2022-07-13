@@ -3757,13 +3757,6 @@ bool Page::shouldDisableCorsForRequestTo(const URL& url) const
     });
 }
 
-bool Page::shouldMaskURLForBindings(const URL& url) const
-{
-    if (m_maskedURLSchemes.isEmpty())
-        return false;
-    return m_maskedURLSchemes.contains<StringViewHashTranslator>(url.protocol());
-}
-
 void Page::revealCurrentSelection()
 {
     CheckedRef(focusController())->focusedOrMainFrame().selection().revealSelection(SelectionRevealMode::Reveal, ScrollAlignment::alignCenterIfNeeded);

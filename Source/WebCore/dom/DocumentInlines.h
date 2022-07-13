@@ -80,6 +80,19 @@ inline bool Document::hasMutationObserversOfType(MutationObserverOptionType type
 
 inline bool Document::isSameOriginAsTopDocument() const { return securityOrigin().isSameOriginAs(topOrigin()); }
 
+inline bool Document::shouldMaskURLForBindings(const URL& urlToMask) const
+{
+    if (LIKELY(urlToMask.protocolIsInHTTPFamily()))
+        return false;
+    return shouldMaskURLForBindingsInternal(urlToMask);
+}
+
+inline const URL& Document::maskedURLForBindingsIfNeeded(const URL& url) const
+{
+    if (UNLIKELY(shouldMaskURLForBindings(url)))
+        return maskedURLForBindings();
+    return url;
+}
 
 // These functions are here because they require the Document class definition and we want to inline them.
 

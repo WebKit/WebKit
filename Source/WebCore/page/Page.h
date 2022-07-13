@@ -920,8 +920,7 @@ public:
     void forEachFrame(const Function<void(Frame&)>&);
 
     bool shouldDisableCorsForRequestTo(const URL&) const;
-    bool shouldMaskURLForBindings(const URL&) const;
-    bool hasURLsToMaskForBindings() const { return !m_maskedURLSchemes.isEmpty(); }
+    const HashSet<String>& maskedURLSchemes() const { return m_maskedURLSchemes; }
 
     WEBCORE_EXPORT void injectUserStyleSheet(UserStyleSheet&);
     WEBCORE_EXPORT void removeInjectedUserStyleSheet(UserStyleSheet&);

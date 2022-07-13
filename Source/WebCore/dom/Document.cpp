@@ -5643,36 +5643,30 @@ URL Document::completeURL(const String& url, ForceUTF8 forceUTF8) const
     return completeURL(url, m_baseURL, forceUTF8);
 }
 
-bool Document::shouldMaskURLForBindings(const URL& url) const
+bool Document::shouldMaskURLForBindingsInternal(const URL& urlToMask) const
 {
+    // Don't mask the URL if it has the same protocol as the document.
+    if (urlToMask.protocolIs(url().protocol()))
+        return false;
+
     auto* page = this->page();
     if (UNLIKELY(!page))
         return false;
-    return page->shouldMaskURLForBindings(url);
-}
 
-bool Document::hasURLsToMaskForBindings() const
-{
-    auto* page = this->page();
-    if (UNLIKELY(!page))
+    auto& maskedURLSchemes = page->maskedURLSchemes();
+    if (maskedURLSchemes.isEmpty())
         return false;
-    return page->hasURLsToMaskForBindings();
+
+    return maskedURLSchemes.contains<StringViewHashTranslator>(urlToMask.protocol());
 }
 
-const URL& Document::maskedURLForBindingsIfNeeded(const URL& url) const
-{
-    if (UNLIKELY(shouldMaskURLForBindings(url)))
-        return maskedURLForBindings();
-    return url;
-}
-
-const AtomString& Document::maskedURLStringForBindings() const
+const AtomString& Document::maskedURLStringForBindings()
 {
     static MainThreadNeverDestroyed<const AtomString> url("webkit-masked-url://hidden/"_s);
     return url;
 }
 
-const URL& Document::maskedURLForBindings() const
+const URL& Document::maskedURLForBindings()
 {
     static MainThreadNeverDestroyed<URL> url(maskedURLStringForBindings().string());
     return url;

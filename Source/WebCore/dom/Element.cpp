@@ -718,21 +718,20 @@ AtomString Element::getAttributeForBindings(const QualifiedName& name, ResolveUR
     if (!attribute)
         return nullAtom();
 
+    if (!attributeContainsURL(*attribute))
+        return attribute->value();
+
     switch (resolveURLs) {
     case ResolveURLs::Yes:
     case ResolveURLs::YesExcludingURLsForPrivacy:
+    case ResolveURLs::NoExcludingURLsForPrivacy:
         return AtomString(completeURLsInAttributeValue(URL(), *attribute, resolveURLs));
 
-    case ResolveURLs::NoExcludingURLsForPrivacy:
-        if (document().hasURLsToMaskForBindings())
-            return AtomString(completeURLsInAttributeValue(URL(), *attribute, resolveURLs));
-        break;
-
     case ResolveURLs::No:
-        break;
+        return attribute->value();
     }
 
-    return attribute->value();
+    ASSERT_NOT_REACHED();
 }
 
 Vector<String> Element::getAttributeNames() const
@@ -1819,21 +1818,20 @@ AtomString Element::getAttributeForBindings(const AtomString& qualifiedName, Res
     if (!attribute)
         return nullAtom();
 
+    if (!attributeContainsURL(*attribute))
+        return attribute->value();
+
     switch (resolveURLs) {
     case ResolveURLs::Yes:
     case ResolveURLs::YesExcludingURLsForPrivacy:
+    case ResolveURLs::NoExcludingURLsForPrivacy:
         return AtomString(completeURLsInAttributeValue(URL(), *attribute, resolveURLs));
 
-    case ResolveURLs::NoExcludingURLsForPrivacy:
-        if (document().hasURLsToMaskForBindings())
-            return AtomString(completeURLsInAttributeValue(URL(), *attribute, resolveURLs));
-        break;
-
     case ResolveURLs::No:
-        break;
+        return attribute->value();
     }
 
-    return attribute->value();
+    ASSERT_NOT_REACHED();
 }
 
 const AtomString& Element::getAttributeNS(const AtomString& namespaceURI, const AtomString& localName) const

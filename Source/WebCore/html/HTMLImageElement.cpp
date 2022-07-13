@@ -581,7 +581,26 @@ bool HTMLImageElement::attributeContainsURL(const Attribute& attribute) const
 String HTMLImageElement::completeURLsInAttributeValue(const URL& base, const Attribute& attribute, ResolveURLs resolveURLs) const
 {
     if (attribute.name() == srcsetAttr) {
+        if (resolveURLs == ResolveURLs::No)
+            return attribute.value();
+
         Vector<ImageCandidate> imageCandidates = parseImageCandidatesFromSrcsetAttribute(StringView(attribute.value()));
+
+        if (resolveURLs == ResolveURLs::NoExcludingURLsForPrivacy) {
+            bool needsToResolveURLs = false;
+            for (const auto& candidate : imageCandidates) {
+                auto urlString = candidate.string.toString();
+                auto completeURL = base.isNull() ? document().completeURL(urlString) : URL(base, urlString);
+                if (document().shouldMaskURLForBindings(completeURL)) {
+                    needsToResolveURLs = true;
+                    break;
+                }
+            }
+
+            if (!needsToResolveURLs)
+                return attribute.value();
+        }
+
         StringBuilder result;
         for (const auto& candidate : imageCandidates) {
             if (&candidate != &imageCandidates[0])
@@ -592,6 +611,7 @@ String HTMLImageElement::completeURLsInAttributeValue(const URL& base, const Att
             if (candidate.resourceWidth != UninitializedDescriptor)
                 result.append(' ', candidate.resourceWidth, 'w');
         }
+
         return result.toString();
     }
 

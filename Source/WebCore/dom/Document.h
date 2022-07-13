@@ -718,11 +718,10 @@ public:
     WEBCORE_EXPORT URL completeURL(const String&, ForceUTF8 = ForceUTF8::No) const final;
     URL completeURL(const String&, const URL& baseURLOverride, ForceUTF8 = ForceUTF8::No) const;
 
-    bool shouldMaskURLForBindings(const URL&) const;
-    bool hasURLsToMaskForBindings() const;
-    const URL& maskedURLForBindingsIfNeeded(const URL&) const;
-    const AtomString& maskedURLStringForBindings() const;
-    const URL& maskedURLForBindings() const;
+    inline bool shouldMaskURLForBindings(const URL&) const;
+    inline const URL& maskedURLForBindingsIfNeeded(const URL&) const;
+    static const AtomString& maskedURLStringForBindings();
+    static const URL& maskedURLForBindings();
 
     String userAgent(const URL&) const final;
 
@@ -1780,6 +1779,8 @@ private:
 
     HttpEquivPolicy httpEquivPolicy() const;
     AXObjectCache* existingAXObjectCacheSlow() const;
+
+    bool shouldMaskURLForBindingsInternal(const URL&) const;
 
     // DOM Cookies caching.
     const String& cachedDOMCookies() const { return m_cachedDOMCookies; }
