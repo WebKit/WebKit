@@ -31,5 +31,6 @@
     "ble",
     "internal",
     "cable",
-    "hybrid"
+    "hybrid",
+    "smart-card"
 };

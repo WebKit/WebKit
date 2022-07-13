@@ -56,6 +56,8 @@ void MockAuthenticatorManager::filterTransports(TransportSet& transports) const
         transports.remove(WebCore::AuthenticatorTransport::Nfc);
     if (!m_testConfiguration.local)
         transports.remove(WebCore::AuthenticatorTransport::Internal);
+    if (!m_testConfiguration.ccid)
+        transports.remove(WebCore::AuthenticatorTransport::SmartCard);
     transports.remove(WebCore::AuthenticatorTransport::Ble);
 }
 

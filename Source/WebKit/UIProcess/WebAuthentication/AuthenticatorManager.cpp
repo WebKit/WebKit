@@ -65,6 +65,8 @@ static AuthenticatorManager::TransportSet collectTransports(const std::optional<
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
         addResult = result.add(AuthenticatorTransport::Ble);
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
+        addResult = result.add(AuthenticatorTransport::SmartCard);
+        ASSERT_UNUSED(addResult, addResult.isNewEntry);
         return result;
     }
 
@@ -79,6 +81,8 @@ static AuthenticatorManager::TransportSet collectTransports(const std::optional<
         addResult = result.add(AuthenticatorTransport::Nfc);
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
         addResult = result.add(AuthenticatorTransport::Ble);
+        ASSERT_UNUSED(addResult, addResult.isNewEntry);
+        addResult = result.add(AuthenticatorTransport::SmartCard);
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
         return result;
     }
@@ -104,6 +108,8 @@ static AuthenticatorManager::TransportSet collectTransports(const Vector<PublicK
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
         addResult = result.add(AuthenticatorTransport::Ble);
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
+        addResult = result.add(AuthenticatorTransport::SmartCard);
+        ASSERT_UNUSED(addResult, addResult.isNewEntry);
     }
 
     for (auto& allowCredential : allowCredentials) {
@@ -112,6 +118,7 @@ static AuthenticatorManager::TransportSet collectTransports(const Vector<PublicK
             result.add(AuthenticatorTransport::Usb);
             result.add(AuthenticatorTransport::Nfc);
             result.add(AuthenticatorTransport::Ble);
+            result.add(AuthenticatorTransport::SmartCard);
 
             break;
         }
@@ -133,6 +140,7 @@ static AuthenticatorManager::TransportSet collectTransports(const Vector<PublicK
             result.remove(AuthenticatorTransport::Usb);
             result.remove(AuthenticatorTransport::Nfc);
             result.remove(AuthenticatorTransport::Ble);
+            result.remove(AuthenticatorTransport::SmartCard);
         }
 
         if (authenticatorAttachment == AuthenticatorAttachment::CrossPlatform)
@@ -175,7 +183,7 @@ static String getUserName(const std::variant<PublicKeyCredentialCreationOptions,
 
 } // namespace
 
-const size_t AuthenticatorManager::maxTransportNumber = 4;
+const size_t AuthenticatorManager::maxTransportNumber = 5;
 
 AuthenticatorManager::AuthenticatorManager()
     : m_requestTimeOutTimer(RunLoop::main(), this, &AuthenticatorManager::timeOutTimerFired)

@@ -33,6 +33,7 @@
 #import "WKMouseDeviceObserver.h"
 #import "WKStylusDeviceObserver.h"
 #import "WebProcessMessages.h"
+#import "WebProcessPool.h"
 
 namespace WebKit {
 

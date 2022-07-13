@@ -587,6 +587,8 @@ UIProcess/RemoteLayerTree/RemoteScrollingTree.cpp
 UIProcess/WebAuthentication/Cocoa/AppAttestInternalSoftLink.mm @no-unify
 UIProcess/WebAuthentication/Cocoa/AuthenticationServicesCoreSoftLink.mm @no-unify
 UIProcess/WebAuthentication/Cocoa/AuthenticatorPresenterCoordinator.mm
+UIProcess/WebAuthentication/Cocoa/CcidConnection.mm
+UIProcess/WebAuthentication/Cocoa/CcidService.mm
 UIProcess/WebAuthentication/Cocoa/HidConnection.mm
 UIProcess/WebAuthentication/Cocoa/HidService.mm
 UIProcess/WebAuthentication/Cocoa/LocalAuthenticationSoftLink.mm @no-unify
@@ -604,6 +606,7 @@ UIProcess/WebAuthentication/Cocoa/WebAuthenticatorCoordinatorProxy.mm
 UIProcess/WebAuthentication/Mock/MockLocalConnection.mm
 UIProcess/WebAuthentication/Mock/MockLocalService.mm
 UIProcess/WebAuthentication/Mock/MockNfcService.mm
+UIProcess/WebAuthentication/Mock/MockCcidService.mm
 
 UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm
 

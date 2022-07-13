@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,42 +27,23 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include <optional>
-#include <wtf/Forward.h>
+#include "CcidService.h"
+#include <WebCore/MockWebAuthenticationConfiguration.h>
 
-namespace WebCore {
+namespace WebKit {
 
-enum class AuthenticatorTransport {
-    Usb,
-    Nfc,
-    Ble,
-    Internal,
-    Cable,
-    Hybrid,
-    SmartCard
+class MockCcidService final : public CcidService {
+public:
+    MockCcidService(Observer&, const WebCore::MockWebAuthenticationConfiguration&);
+
+    RetainPtr<NSData> nextReply();
+
+private:
+    void platformStartDiscovery() final;
+
+    WebCore::MockWebAuthenticationConfiguration m_configuration;
 };
 
-WEBCORE_EXPORT std::optional<AuthenticatorTransport> toAuthenticatorTransport(const String& transport);
-
-WEBCORE_EXPORT String toString(AuthenticatorTransport);
-
-} // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::AuthenticatorTransport> {
-    using values = EnumValues<
-        WebCore::AuthenticatorTransport,
-        WebCore::AuthenticatorTransport::Usb,
-        WebCore::AuthenticatorTransport::Nfc,
-        WebCore::AuthenticatorTransport::Ble,
-        WebCore::AuthenticatorTransport::Internal,
-        WebCore::AuthenticatorTransport::Cable,
-        WebCore::AuthenticatorTransport::Hybrid,
-        WebCore::AuthenticatorTransport::SmartCard
-    >;
-};
-
-} // namespace WTF
+} // namespace WebKit
 
 #endif // ENABLE(WEB_AUTHN)

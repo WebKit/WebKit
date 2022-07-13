@@ -75,6 +75,7 @@
     MockLocalConfiguration local;
     MockHidConfiguration hid;
     MockNfcConfiguration nfc;
+    MockCcidConfiguration ccid;
 };
 
 [
@@ -112,4 +113,10 @@
     sequence<DOMString> payloadBase64;
     boolean multipleTags = false;
     boolean multiplePhysicalTags = false;
+};
+
+[
+    Conditional=WEB_AUTHN,
+] dictionary MockCcidConfiguration {
+    sequence<DOMString> payloadBase64;
 };

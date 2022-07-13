@@ -108,10 +108,18 @@ struct MockWebAuthenticationConfiguration {
         template<class Decoder> static std::optional<NfcConfiguration> decode(Decoder&);
     };
 
+    struct CcidConfiguration {
+        Vector<String> payloadBase64;
+
+        template<class Encoder> void encode(Encoder&) const;
+        template<class Decoder> static std::optional<CcidConfiguration> decode(Decoder&);
+    };
+
     bool silentFailure { false };
     std::optional<LocalConfiguration> local;
     std::optional<HidConfiguration> hid;
     std::optional<NfcConfiguration> nfc;
+    std::optional<CcidConfiguration> ccid;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<MockWebAuthenticationConfiguration> decode(Decoder&);
@@ -205,6 +213,21 @@ std::optional<MockWebAuthenticationConfiguration::HidConfiguration> MockWebAuthe
 }
 
 template<class Encoder>
+void MockWebAuthenticationConfiguration::CcidConfiguration::encode(Encoder& encoder) const
+{
+    encoder << payloadBase64;
+}
+
+template<class Decoder>
+std::optional<MockWebAuthenticationConfiguration::CcidConfiguration> MockWebAuthenticationConfiguration::CcidConfiguration::decode(Decoder& decoder)
+{
+    MockWebAuthenticationConfiguration::CcidConfiguration result;
+    if (!decoder.decode(result.payloadBase64))
+        return std::nullopt;
+    return result;
+}
+
+template<class Encoder>
 void MockWebAuthenticationConfiguration::NfcConfiguration::encode(Encoder& encoder) const
 {
     encoder << error << payloadBase64 << multipleTags << multiplePhysicalTags;
@@ -228,7 +251,7 @@ std::optional<MockWebAuthenticationConfiguration::NfcConfiguration> MockWebAuthe
 template<class Encoder>
 void MockWebAuthenticationConfiguration::encode(Encoder& encoder) const
 {
-    encoder << silentFailure << local << hid << nfc;
+    encoder << silentFailure << local << hid << nfc << ccid;
 }
 
 template<class Decoder>
@@ -259,6 +282,12 @@ std::optional<MockWebAuthenticationConfiguration> MockWebAuthenticationConfigura
     if (!nfc)
         return std::nullopt;
     result.nfc = WTFMove(*nfc);
+
+    std::optional<std::optional<CcidConfiguration>> ccid;
+    decoder >> ccid;
+    if (!ccid)
+        return std::nullopt;
+    result.ccid = WTFMove(*ccid);
 
     return result;
 }

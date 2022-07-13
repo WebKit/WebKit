@@ -141,6 +141,8 @@ const testAssertionMessageApduBase64 =
     "Z51VstuQkuHI2eXh0Ct1gPC0gSx3CWLh5I9a2AEAAABQA1hHMEUCIQCSFTuuBWgB" +
     "4/F0VB7DlUVM09IHPmxe1MzHUwRoCRZbCAIgGKov6xoAx2MEf6/6qNs8OutzhP2C" +
     "QoJ1L7Fe64G9uBeQAA==";
+const testCcidNoUidBase64 = "aIE=";
+const testCcidValidUidBase64 = "CH+d1ZAA";
 
 const RESOURCES_DIR = "/WebKit/webauthn/resources/";
 

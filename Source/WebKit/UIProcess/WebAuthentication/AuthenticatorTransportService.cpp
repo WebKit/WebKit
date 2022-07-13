@@ -28,8 +28,10 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#include "CcidService.h"
 #include "HidService.h"
 #include "LocalService.h"
+#include "MockCcidService.h"
 #include "MockHidService.h"
 #include "MockLocalService.h"
 #include "MockNfcService.h"
@@ -47,6 +49,8 @@ UniqueRef<AuthenticatorTransportService> AuthenticatorTransportService::create(W
         return makeUniqueRef<HidService>(observer);
     case WebCore::AuthenticatorTransport::Nfc:
         return makeUniqueRef<NfcService>(observer);
+    case WebCore::AuthenticatorTransport::SmartCard:
+        return makeUniqueRef<CcidService>(observer);
     default:
         ASSERT_NOT_REACHED();
         return makeUniqueRef<LocalService>(observer);
@@ -62,6 +66,8 @@ UniqueRef<AuthenticatorTransportService> AuthenticatorTransportService::createMo
         return makeUniqueRef<MockHidService>(observer, configuration);
     case WebCore::AuthenticatorTransport::Nfc:
         return makeUniqueRef<MockNfcService>(observer, configuration);
+    case WebCore::AuthenticatorTransport::SmartCard:
+        return makeUniqueRef<MockCcidService>(observer, configuration);
     default:
         ASSERT_NOT_REACHED();
         return makeUniqueRef<MockLocalService>(observer, configuration);

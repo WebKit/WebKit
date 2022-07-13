@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,42 +27,40 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include <optional>
-#include <wtf/Forward.h>
+#include "FidoService.h"
+#include <wtf/RetainPtr.h>
+#include <wtf/RunLoop.h>
 
-namespace WebCore {
+OBJC_CLASS TKSmartCardSlot;
+OBJC_CLASS TKSmartCard;
 
-enum class AuthenticatorTransport {
-    Usb,
-    Nfc,
-    Ble,
-    Internal,
-    Cable,
-    Hybrid,
-    SmartCard
+namespace WebKit {
+
+class CcidConnection;
+
+class CcidService : public FidoService {
+public:
+    explicit CcidService(Observer&);
+    ~CcidService();
+
+    static bool isAvailable();
+
+    void didConnectTag();
+
+    void updateSlots(NSArray *slots);
+    void onValidCard(RetainPtr<TKSmartCard>&&);
+
+private:
+    void startDiscoveryInternal() final;
+    void restartDiscoveryInternal() final;
+
+    virtual void platformStartDiscovery();
+
+    RunLoop::Timer<CcidService> m_restartTimer;
+    RefPtr<CcidConnection> m_connection;
+    HashSet<String> m_slotNames;
 };
 
-WEBCORE_EXPORT std::optional<AuthenticatorTransport> toAuthenticatorTransport(const String& transport);
-
-WEBCORE_EXPORT String toString(AuthenticatorTransport);
-
-} // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::AuthenticatorTransport> {
-    using values = EnumValues<
-        WebCore::AuthenticatorTransport,
-        WebCore::AuthenticatorTransport::Usb,
-        WebCore::AuthenticatorTransport::Nfc,
-        WebCore::AuthenticatorTransport::Ble,
-        WebCore::AuthenticatorTransport::Internal,
-        WebCore::AuthenticatorTransport::Cable,
-        WebCore::AuthenticatorTransport::Hybrid,
-        WebCore::AuthenticatorTransport::SmartCard
-    >;
-};
-
-} // namespace WTF
+} // namespace WebKit
 
 #endif // ENABLE(WEB_AUTHN)
