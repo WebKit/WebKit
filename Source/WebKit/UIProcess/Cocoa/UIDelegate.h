@@ -184,6 +184,7 @@ private:
 #if ENABLE(WEBXR)
         void requestPermissionOnXRSessionFeatures(WebPageProxy&, const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList& /* granted */, const PlatformXR::Device::FeatureList& /* consentRequired */, const PlatformXR::Device::FeatureList& /* consentOptional */, CompletionHandler<void(std::optional<PlatformXR::Device::FeatureList>&&)>&&) final;
         void startXRSession(WebPageProxy&, CompletionHandler<void(RetainPtr<id>)>&&) final;
+        void endXRSession(WebPageProxy&) final;
 #endif
 
         WeakPtr<UIDelegate> m_uiDelegate;
@@ -281,6 +282,7 @@ private:
 #if ENABLE(WEBXR)
         bool webViewRequestPermissionForXRSessionOriginModeAndFeaturesWithCompletionHandler: 1;
         bool webViewStartXRSessionWithCompletionHandler : 1;
+        bool webViewEndXRSession : 1;
 #endif
         bool webViewRequestNotificationPermissionForSecurityOriginDecisionHandler : 1;
         bool webViewRequestCookieConsentWithMoreInfoHandlerDecisionHandler : 1;
