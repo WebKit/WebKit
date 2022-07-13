@@ -1845,6 +1845,9 @@ webkit.org/b/240081 [ Debug ]  webaudio/AudioBuffer/huge-buffer.html [ Pass Slow
 # This test has been timing out on WK1 since IntersectionObserver was enabled.
 intersection-observer/observe-then-disconnect-target.html [ Skip ]
 
+# These tests rely on painting during the test, which DRT doesn't do.
+fast/text/glyph-display-lists [ Skip ]
+
 # rdar://82399990 ([ Catalina EWS ] webgl/2.0.0/* tests are flaky crashing ASSERTION FAILED: !needsLayout() (229580)) Disable webgl tests for mac-wk1
 webgl [ Skip ]
 
