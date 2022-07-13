@@ -80,7 +80,7 @@ static RTCRtpCapabilities gstreamerRtpCapatiblities(const String& kind)
             .sdpFmtpLine = emptyString() });
     } else {
         capabilities.headerExtensions.append({ "urn:3gpp:video-orientation"_s });
-        capabilities.codecs.reserveCapacity(4);
+        capabilities.codecs.reserveCapacity(6);
         capabilities.codecs.uncheckedAppend({ .mimeType = "video/VP8"_s,
             .clockRate = 90000,
             .channels = std::nullopt,
@@ -96,7 +96,11 @@ static RTCRtpCapabilities gstreamerRtpCapatiblities(const String& kind)
         capabilities.codecs.uncheckedAppend({ .mimeType = "video/H264"_s,
             .clockRate = 90000,
             .channels = std::nullopt,
-            .sdpFmtpLine = "packetization-mode=1;profile-level-id=42e01f"_s });
+            .sdpFmtpLine = "level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42e01f"_s });
+        capabilities.codecs.uncheckedAppend({ .mimeType = "video/H264"_s,
+            .clockRate = 90000,
+            .channels = std::nullopt,
+            .sdpFmtpLine = "level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=640c1f"_s });
     }
     return capabilities;
 }

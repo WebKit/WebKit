@@ -1512,8 +1512,7 @@ webkit.org/b/193641 webkit.org/b/235885 webrtc/video-setDirection.html [ Failure
 
 webkit.org/b/194611 http/wpt/webrtc/getUserMedia-processSwapping.html [ Failure ]
 
-webkit.org/b/201267 [ Release ] webrtc/video-h264.html [ Timeout Failure ]
-webkit.org/b/222585 webkit.org/b/235885 [ Debug ] webrtc/video-h264.html [ Crash Failure ]
+[ Debug ] webrtc/video-h264.html [ Slow ]
 
 webkit.org/b/215005 webkit.org/b/218787 webrtc/h264-baseline.html [ Crash Timeout ]
 # h264-high.html is marked as slow in the root expectation
@@ -1526,10 +1525,6 @@ webkit.org/b/216763 webkit.org/b/235885 webrtc/captureCanvas-webrtc-software-h26
 
 webkit.org/b/218221 webrtc/vp9-profile2.html [ Timeout Failure ]
 
-# Release timing out.
-webkit.org/b/219825 [ Release ] webrtc/sframe-keys.html [ Skip ]
-webkit.org/b/219825 [ Debug ] webrtc/sframe-keys.html [ Failure ]
-
 webkit.org/b/224074 webrtc/concurrentVideoPlayback.html [ Timeout Pass ]
 
 webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-removetrack.https.html [ Crash Failure Timeout ]
@@ -1537,8 +1532,6 @@ webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaSt
 webkit.org/b/210385 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-firstframe.https.html [ Failure Crash Pass ]
 
 webkit.org/b/227987 http/tests/media/media-stream/get-display-media-prompt.html [ Timeout Pass ]
-
-webkit.org/b/229055 http/wpt/webrtc/sframe-transform-error.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebRTC-related bugs
@@ -2040,6 +2033,8 @@ webrtc/audio-sframe.html [ Skip ]
 webrtc/sframe-test-vectors.html [ Skip ]
 webrtc/sframe-transform-buffer-source.html [ Skip ]
 webrtc/video-sframe.html [ Skip ]
+webkit.org/b/219825 webrtc/sframe-keys.html [ Skip ]
+webkit.org/b/229055 http/wpt/webrtc/sframe-transform-error.html [ Skip ]
 
 # Depends on HTTP Live Streaming (non-supported in non-Apple ports).
 fast/url/data-url-mediatype.html [ Skip ]
