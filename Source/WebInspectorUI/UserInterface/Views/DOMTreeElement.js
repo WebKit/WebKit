@@ -2056,11 +2056,8 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 
         if (this.representedObject.layoutOverlayShowing)
             this.representedObject.hideLayoutOverlay();
-        else {
-            this.representedObject.showLayoutOverlay({
-                initiator: this.representedObject.layoutContextType === WI.DOMNode.LayoutContextType.Grid ? WI.GridOverlayDiagnosticEventRecorder.Initiator.Badge : null,
-            });
-        }
+        else
+            this.representedObject.showLayoutOverlay();
     }
 
     _layoutBadgeDoubleClicked(event)

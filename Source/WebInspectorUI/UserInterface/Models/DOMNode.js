@@ -606,7 +606,7 @@ WI.DOMNode = class DOMNode extends WI.Object
         target.DOMAgent.highlightNode(WI.DOMManager.buildHighlightConfig(mode), this.id);
     }
 
-    showLayoutOverlay({color, initiator} = {})
+    showLayoutOverlay({color} = {})
     {
         console.assert(!this._destroyed, this);
         if (this._destroyed)
@@ -652,7 +652,7 @@ WI.DOMNode = class DOMNode extends WI.Object
 
         this._layoutOverlayShowing = true;
 
-        this.dispatchEventToListeners(WI.DOMNode.Event.LayoutOverlayShown, {initiator});
+        this.dispatchEventToListeners(WI.DOMNode.Event.LayoutOverlayShown);
 
         console.assert(agentCommandFunction);
         return agentCommandFunction.invoke(agentCommandArguments);

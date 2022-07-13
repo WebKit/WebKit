@@ -110,13 +110,9 @@ WI.NodeOverlayListSection = class NodeOverlayListSection extends WI.View
 
             this._checkboxElementByNodeMap.set(domNode, checkboxElement);
 
-            let initiator;
-            if (domNode.layoutContextType === WI.DOMNode.LayoutContextType.Grid)
-                initiator = WI.GridOverlayDiagnosticEventRecorder.Initiator.Panel;
-
             checkboxElement.addEventListener("change", (event) => {
                 if (checkboxElement.checked)
-                    domNode.showLayoutOverlay({color: swatch?.value, initiator});
+                    domNode.showLayoutOverlay({color: swatch?.value});
                 else
                     domNode.hideLayoutOverlay();
             });
