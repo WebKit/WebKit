@@ -31,8 +31,7 @@ from ews.config import ERR_EXISTING_PATCH, ERR_INVALID_PATCH_ID, ERR_NON_EXISTIN
 _log = logging.getLogger(__name__)
 
 
-# FIXME: Rename Patch to Change
-class Patch(models.Model):
+class Change(models.Model):
     change_id = models.TextField(primary_key=True)
     bug_id = models.IntegerField()
     pr_id = models.IntegerField(default=-1)
@@ -48,21 +47,21 @@ class Patch(models.Model):
 
     @classmethod
     def save_patch(cls, patch_id, bug_id=-1, pr_id=-1, pr_project='', obsolete=False, sent_to_buildbot=False, sent_to_commit_queue=False):
-        if not Patch.is_valid_patch_id(patch_id):
+        if not Change.is_valid_patch_id(patch_id):
             _log.warn('Patch id {} in invalid. Skipped saving.'.format(patch_id))
             return ERR_INVALID_PATCH_ID
 
-        if Patch.is_existing_patch_id(patch_id):
+        if Change.is_existing_patch_id(patch_id):
             _log.debug('Patch id {} already exists in database. Skipped saving.'.format(patch_id))
             return ERR_EXISTING_PATCH
-        Patch(patch_id, bug_id, obsolete, sent_to_buildbot, sent_to_commit_queue).save()
+        Change(patch_id, bug_id, obsolete, sent_to_buildbot, sent_to_commit_queue).save()
         _log.info('Saved change in database, id: {}, pr_id: {}, pr_project: {}'.format(patch_id, pr_id, pr_project))
         return SUCCESS
 
     @classmethod
     def save_patches(cls, patch_id_list):
         for patch_id in patch_id_list:
-            Patch.save_patch(patch_id)
+            Change.save_patch(patch_id)
 
     @classmethod
     def is_valid_patch_id(cls, patch_id):
@@ -74,43 +73,43 @@ class Patch(models.Model):
 
     @classmethod
     def is_existing_patch_id(cls, patch_id):
-        return bool(Patch.objects.filter(change_id=patch_id))
+        return bool(Change.objects.filter(change_id=patch_id))
 
     @classmethod
     def is_patch_sent_to_buildbot(cls, patch_id, commit_queue=False):
         if commit_queue:
-            return Patch._is_patch_sent_to_commit_queue(patch_id)
-        return Patch._is_patch_sent_to_buildbot(patch_id)
+            return Change._is_patch_sent_to_commit_queue(patch_id)
+        return Change._is_patch_sent_to_buildbot(patch_id)
 
     @classmethod
     def _is_patch_sent_to_buildbot(cls, patch_id):
-        return Patch.is_existing_patch_id(patch_id) and Patch.objects.get(pk=patch_id).sent_to_buildbot
+        return Change.is_existing_patch_id(patch_id) and Change.objects.get(pk=patch_id).sent_to_buildbot
 
     @classmethod
     def _is_patch_sent_to_commit_queue(cls, patch_id):
-        return Patch.is_existing_patch_id(patch_id) and Patch.objects.get(pk=patch_id).sent_to_commit_queue
+        return Change.is_existing_patch_id(patch_id) and Change.objects.get(pk=patch_id).sent_to_commit_queue
 
     @classmethod
     def get_patch(cls, patch_id):
         try:
-            return Patch.objects.get(change_id=patch_id)
+            return Change.objects.get(change_id=patch_id)
         except:
             return None
 
     @classmethod
     def set_sent_to_buildbot(cls, patch_id, value, commit_queue=False):
         if commit_queue:
-            return Patch._set_sent_to_commit_queue(patch_id, sent_to_commit_queue=value)
-        return Patch._set_sent_to_buildbot(patch_id, sent_to_buildbot=value)
+            return Change._set_sent_to_commit_queue(patch_id, sent_to_commit_queue=value)
+        return Change._set_sent_to_buildbot(patch_id, sent_to_buildbot=value)
 
     @classmethod
     def _set_sent_to_buildbot(cls, patch_id, sent_to_buildbot=True):
-        if not Patch.is_existing_patch_id(patch_id):
-            Patch.save_patch(patch_id=patch_id, sent_to_buildbot=sent_to_buildbot)
+        if not Change.is_existing_patch_id(patch_id):
+            Change.save_patch(patch_id=patch_id, sent_to_buildbot=sent_to_buildbot)
             _log.info('Patch {} saved to database with sent_to_buildbot={}'.format(patch_id, sent_to_buildbot))
             return SUCCESS
 
-        patch = Patch.objects.get(pk=patch_id)
+        patch = Change.objects.get(pk=patch_id)
         if patch.sent_to_buildbot == sent_to_buildbot:
             _log.warn('Patch {} already has sent_to_buildbot={}'.format(patch_id, sent_to_buildbot))
             return SUCCESS
@@ -122,12 +121,12 @@ class Patch(models.Model):
 
     @classmethod
     def _set_sent_to_commit_queue(cls, patch_id, sent_to_commit_queue=True):
-        if not Patch.is_existing_patch_id(patch_id):
-            Patch.save_patch(patch_id=patch_id, sent_to_commit_queue=sent_to_commit_queue)
+        if not Change.is_existing_patch_id(patch_id):
+            Change.save_patch(patch_id=patch_id, sent_to_commit_queue=sent_to_commit_queue)
             _log.info('Patch {} saved to database with sent_to_commit_queue={}'.format(patch_id, sent_to_commit_queue))
             return SUCCESS
 
-        patch = Patch.objects.get(pk=patch_id)
+        patch = Change.objects.get(pk=patch_id)
         if patch.sent_to_commit_queue == sent_to_commit_queue:
             _log.warn('Patch {} already has sent_to_commit_queue={}'.format(patch_id, sent_to_commit_queue))
             return SUCCESS
@@ -139,10 +138,10 @@ class Patch(models.Model):
 
     @classmethod
     def set_bug_id(cls, patch_id, bug_id):
-        if not Patch.is_existing_patch_id(patch_id):
+        if not Change.is_existing_patch_id(patch_id):
             return ERR_NON_EXISTING_PATCH
 
-        patch = Patch.objects.get(pk=patch_id)
+        patch = Change.objects.get(pk=patch_id)
         if patch.bug_id == bug_id:
             _log.warn('Patch {} already has bug id {} set.'.format(patch_id, bug_id))
             return SUCCESS
@@ -154,10 +153,10 @@ class Patch(models.Model):
 
     @classmethod
     def set_obsolete(cls, patch_id, obsolete=True):
-        if not Patch.is_existing_patch_id(patch_id):
+        if not Change.is_existing_patch_id(patch_id):
             return ERR_NON_EXISTING_PATCH
 
-        patch = Patch.objects.get(pk=patch_id)
+        patch = Change.objects.get(pk=patch_id)
         if patch.obsolete == obsolete:
             _log.warn('Patch {} is already marked with obsolete={}.'.format(patch_id, obsolete))
             return SUCCESS

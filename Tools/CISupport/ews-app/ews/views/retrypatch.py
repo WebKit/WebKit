@@ -31,7 +31,6 @@ from django.views.decorators.clickjacking import xframe_options_exempt
 
 from ews.common.buildbot import Buildbot
 from ews.models.build import Build
-from ews.models.patch import Patch
 from ews.views.statusbubble import StatusBubble
 
 _log = logging.getLogger(__name__)

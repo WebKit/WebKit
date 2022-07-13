@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2020 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -31,7 +31,7 @@ import time
 
 from datetime import datetime, timedelta
 
-from ews.models.patch import Patch
+from ews.models.patch import Change
 from ews.thirdparty.BeautifulSoup import BeautifulSoup, SoupStrainer
 import ews.common.util as util
 import ews.config as config
@@ -102,7 +102,7 @@ class Bugzilla():
 
     @classmethod
     def _fetch_attachment_json(cls, attachment_id):
-        if not Patch.is_valid_patch_id(attachment_id):
+        if not Change.is_valid_patch_id(attachment_id):
             _log.warn('Invalid attachment id: "{}", skipping download.'.format(attachment_id))
             return None
 

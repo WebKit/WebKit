@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2020 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -29,7 +29,7 @@ import time
 from ews.common.bugzilla import Bugzilla
 from ews.common.buildbot import Buildbot
 from ews.config import ERR_BUG_CLOSED, ERR_OBSOLETE_PATCH, ERR_UNABLE_TO_FETCH_PATCH
-from ews.models.patch import Patch
+from ews.models.patch import Change
 from ews.views.statusbubble import StatusBubble
 
 _log = logging.getLogger(__name__)
@@ -64,7 +64,7 @@ class BugzillaPatchFetcher():
             patch_ids = Bugzilla.get_list_of_patches_needing_reviews()
         patch_ids = BugzillaPatchFetcher.filter_valid_patches(patch_ids)
         _log.debug('r? patches: {}'.format(patch_ids))
-        Patch.save_patches(patch_ids)
+        Change.save_patches(patch_ids)
         patches_to_send = self.patches_to_send_to_buildbot(patch_ids)
         _log.info('{} r? patches, {} patches need to be sent to Buildbot: {}'.format(len(patch_ids), len(patches_to_send), patches_to_send))
         return self.send_patches_to_buildbot(patches_to_send)
@@ -73,7 +73,7 @@ class BugzillaPatchFetcher():
         patch_ids_commit_queue = Bugzilla.get_list_of_patches_for_commit_queue()
         patch_ids_commit_queue = BugzillaPatchFetcher.filter_valid_patches(patch_ids_commit_queue)
         _log.debug('cq+ patches: {}'.format(patch_ids_commit_queue))
-        Patch.save_patches(patch_ids_commit_queue)
+        Change.save_patches(patch_ids_commit_queue)
         patches_to_send = self.patches_to_send_to_commit_queue(patch_ids_commit_queue)
         _log.info('{} cq+ patches, {} patches need to be sent to commit queue: {}'.format(len(patch_ids_commit_queue), len(patches_to_send), patches_to_send))
         self.send_patches_to_buildbot(patches_to_send, send_to_commit_queue=True)
@@ -90,7 +90,7 @@ class BugzillaPatchFetcher():
                 continue
             if bz_patch.get('is_obsolete'):
                 _log.warn('Patch {} is obsolete, skipping'.format(patch_id))
-                Patch.set_obsolete(patch_id)
+                Change.set_obsolete(patch_id)
                 if len(patches_to_send) == 1:
                     return ERR_OBSOLETE_PATCH
                 continue
@@ -99,22 +99,22 @@ class BugzillaPatchFetcher():
                 if len(patches_to_send) == 1:
                     return ERR_BUG_CLOSED
                 continue
-            if not send_to_commit_queue and Patch.is_patch_sent_to_buildbot(patch_id):
+            if not send_to_commit_queue and Change.is_patch_sent_to_buildbot(patch_id):
                 _log.error('Patch {} is already sent to buildbot.'.format(patch_id))
                 continue
-            Patch.set_sent_to_buildbot(patch_id, True, commit_queue=send_to_commit_queue)
+            Change.set_sent_to_buildbot(patch_id, True, commit_queue=send_to_commit_queue)
             rc = Buildbot.send_patch_to_buildbot(bz_patch['path'],
                      send_to_commit_queue=send_to_commit_queue,
                      properties=['patch_id={}'.format(patch_id), 'bug_id={}'.format(bz_patch['bug_id']), 'owner={}'.format(bz_patch.get('creator', ''))])
             if rc == 0:
-                Patch.set_bug_id(patch_id, bz_patch['bug_id'])
+                Change.set_bug_id(patch_id, bz_patch['bug_id'])
             else:
                 _log.error('Failed to send patch to buildbot.')
-                Patch.set_sent_to_buildbot(patch_id, False, commit_queue=send_to_commit_queue)
+                Change.set_sent_to_buildbot(patch_id, False, commit_queue=send_to_commit_queue)
                 #FIXME: send an email for this failure
 
     def patches_to_send_to_buildbot(self, patch_ids):
-        return [patch_id for patch_id in patch_ids if not Patch.is_patch_sent_to_buildbot(patch_id)]
+        return [patch_id for patch_id in patch_ids if not Change.is_patch_sent_to_buildbot(patch_id)]
 
     def patches_to_send_to_commit_queue(self, patch_ids):
         if not patch_ids:
@@ -124,7 +124,7 @@ class BugzillaPatchFetcher():
 
         patch_ids_to_send = []
         for patch_id in patch_ids:
-            patch = Patch.get_patch(patch_id)
+            patch = Change.get_patch(patch_id)
             recent_build, _ = StatusBubble().get_latest_build_for_queue(patch, 'commit')
             if not recent_build:
                 patch_ids_to_send.append(patch_id)
@@ -140,4 +140,4 @@ class BugzillaPatchFetcher():
 
     @classmethod
     def filter_valid_patches(cls, patch_ids):
-        return list(filter(lambda p: Patch.is_valid_patch_id(p), patch_ids))
+        return list(filter(lambda p: Change.is_valid_patch_id(p), patch_ids))

@@ -27,7 +27,7 @@ import logging
 from django.http import JsonResponse
 from django.views import View
 from ews.common.buildbot import Buildbot
-from ews.models.patch import Patch
+from ews.models.patch import Change
 from ews.views.statusbubble import StatusBubble
 import ews.config as config
 
@@ -63,7 +63,7 @@ class Status(View):
         return statuses
 
     def get(self, request, patch_id):
-        patch = Patch.get_patch(patch_id)
+        patch = Change.get_patch(patch_id)
         if not patch:
             _log.info('No patch found for id: {}'.format(patch_id))
         response_data = self._build_statuses_for_patch(patch)

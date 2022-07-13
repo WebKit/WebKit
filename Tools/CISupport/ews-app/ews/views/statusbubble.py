@@ -33,7 +33,7 @@ from django.views import View
 from django.views.decorators.clickjacking import xframe_options_exempt
 from ews.common.buildbot import Buildbot
 from ews.models.build import Build
-from ews.models.patch import Patch
+from ews.models.patch import Change
 import ews.config as config
 
 _log = logging.getLogger(__name__)
@@ -71,7 +71,7 @@ class StatusBubble(View):
                      '^Printed configuration$', '^Patch contains relevant changes$', '^Deleted .git/index.lock$',
                      '^triggered.*$', '^Found modified ChangeLogs$', '^Created local git commit$', '^Set build summary$',
                      '^Validated commiter$', '^Validated commiter and reviewer$', '^Validated ChangeLog and Reviewer$',
-                     '^Removed flags on bugzilla patch$', '^Checked change status on other queues$', '^Identifier:.*$',
+                     '^Removed flags on bugzilla patch$', '^Checked patch status on other queues$', '^Identifier:.*$',
                      '^Updated branch information$', '^worker .* ready$']
     DAYS_TO_CHECK_QUEUE_POSITION = 0.5
     DAYS_TO_HIDE_BUBBLE = 7
@@ -280,7 +280,7 @@ class StatusBubble(View):
         return [build for build in patch.build_set.all() if build.builder_display_name == queue]
 
     def find_failed_builds_for_patch(self, patch_id):
-        patch = Patch.get_patch(patch_id)
+        patch = Change.get_patch(patch_id)
         if not patch:
             return []
         failed_builds = []
@@ -316,7 +316,7 @@ class StatusBubble(View):
             return StatusBubble.UNKNOWN_QUEUE_POSITION
 
         sent = 'sent_to_commit_queue' if queue == 'commit' else 'sent_to_buildbot'
-        previously_sent_patches = set(Patch.objects
+        previously_sent_patches = set(Change.objects
                                           .filter(created__gte=from_timestamp)
                                           .filter(**{sent: True})
                                           .filter(obsolete=False)
@@ -364,7 +364,7 @@ class StatusBubble(View):
     @xframe_options_exempt
     def get(self, request, patch_id):
         hide_icons = request.GET.get('hide_icons', False)
-        patch = Patch.get_patch(patch_id)
+        patch = Change.get_patch(patch_id)
         bubbles, show_submit_to_ews, show_failure_to_apply, show_retry = self._build_bubbles_for_patch(patch, hide_icons)
 
         template_values = {

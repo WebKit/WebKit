@@ -27,14 +27,14 @@ import logging
 from django.db import models
 from ews.config import ERR_UNEXPECTED, SUCCESS
 from ews.models.buildbotinstance import BuildbotInstance
-from ews.models.patch import Patch
+from ews.models.patch import Change
 import ews.common.util as util
 
 _log = logging.getLogger(__name__)
 
 
 class Build(models.Model):
-    patch = models.ForeignKey(Patch, on_delete=models.CASCADE, db_constraint=False)
+    change = models.ForeignKey(Change, on_delete=models.CASCADE, db_constraint=False)
     uid = models.TextField(primary_key=True)
     builder_id = models.IntegerField()
     builder_name = models.TextField()
@@ -66,8 +66,8 @@ class Build(models.Model):
             # If the build data is already present in database, update it, e.g.: build complete event.
             return Build.update_build(build, patch_id, uid, builder_id, builder_name, builder_display_name, number, result, state_string, started_at, complete_at)
 
-        if not Patch.is_existing_patch_id(patch_id):
-            Patch.save_patch(patch_id=patch_id, pr_id=pr_id, pr_project=pr_project)
+        if not Change.is_existing_patch_id(patch_id):
+            Change.save_patch(patch_id=patch_id, pr_id=pr_id, pr_project=pr_project)
             _log.info('Received result for unknown patch. Saved patch {} to database'.format(patch_id))
 
         # Save the new build data, e.g.: build start event.

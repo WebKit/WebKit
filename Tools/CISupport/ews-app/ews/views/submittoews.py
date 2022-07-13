@@ -32,7 +32,7 @@ from django.views.decorators.clickjacking import xframe_options_exempt
 
 from ews.config import ERR_BUG_CLOSED, ERR_OBSOLETE_PATCH, ERR_UNABLE_TO_FETCH_PATCH
 from ews.fetcher import BugzillaPatchFetcher
-from ews.models.patch import Patch
+from ews.models.patch import Change
 
 _log = logging.getLogger(__name__)
 
@@ -47,14 +47,14 @@ class SubmitToEWS(View):
             patch_id = request.POST.get('patch_id')
             patch_id = int(patch_id)
         except:
-            return HttpResponse('Invalid patch id provided, should be an integer.')
+            return HttpResponse('Invalid patch id provided, should be an integer. git hashes are not supported.')
 
         _log.info('SubmitToEWS::patch: {}'.format(patch_id))
-        if Patch.is_patch_sent_to_buildbot(patch_id):
+        if Change.is_patch_sent_to_buildbot(patch_id):
             _log.info('SubmitToEWS::patch {} already submitted'.format(patch_id))
             if request.POST.get('next_action') == 'return_to_bubbles':
                 return redirect('/status-bubble/{}'.format(patch_id))
-            return HttpResponse("Patch {} already submitted. Please wait for status-bubbles.".format(patch_id))
+            return HttpResponse("Change {} already submitted. Please wait for status-bubbles.".format(patch_id))
 
         rc = BugzillaPatchFetcher().fetch([patch_id])
         if rc == ERR_UNABLE_TO_FETCH_PATCH:
