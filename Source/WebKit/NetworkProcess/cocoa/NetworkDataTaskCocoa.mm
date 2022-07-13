@@ -122,7 +122,7 @@ void NetworkDataTaskCocoa::applySniffingPoliciesAndBindRequestToInferfaceIfNeede
     if (!boundInterfaceIdentifier.isNull())
         [mutableRequest setBoundInterfaceIdentifier:boundInterfaceIdentifier];
 
-    nsRequest = mutableRequest.autorelease();
+    nsRequest = WTFMove(mutableRequest);
 }
 
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
