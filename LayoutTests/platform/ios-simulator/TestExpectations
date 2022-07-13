@@ -131,3 +131,5 @@ model-element/model-element-ready.html [ Skip ]
 [ arm64 ] webaudio/OfflineAudioContext/bad-buffer-length.html [ Failure ]
 
 webkit.org/b/239990 css3/calc/transitions-dependent.html [ Pass Failure ]
+
+webkit.org/b/227369 [ Release ] http/tests/privateClickMeasurement/store-private-click-measurement-with-source-nonce.html [ Pass Failure ]
