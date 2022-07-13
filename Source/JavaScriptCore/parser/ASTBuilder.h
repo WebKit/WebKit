@@ -635,6 +635,8 @@ public:
         ForOfNode* result = new (m_parserArena) ForOfNode(isForAwait, location, lhs, iter, statements, WTFMove(lexicalVariables));
         result->setLoc(start, end, location.startOffset, location.lineStartOffset);
         setExceptionLocation(result, eStart, eDivot, eEnd);
+        if (isForAwait)
+            usesAwait();
         return result;
     }
     
