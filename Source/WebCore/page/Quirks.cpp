@@ -406,8 +406,6 @@ bool Quirks::shouldDispatchSimulatedMouseEvents(const EventTarget* target) const
 
         if ((host == "desmos.com"_s || host.endsWith(".desmos.com"_s)) && startsWithLettersIgnoringASCIICase(url.path(), "/calculator/"_s))
             return ShouldDispatchSimulatedMouseEvents::Yes;
-        if (host == "figma.com"_s || host.endsWith(".figma.com"_s))
-            return ShouldDispatchSimulatedMouseEvents::Yes;
         if (host == "trello.com"_s || host.endsWith(".trello.com"_s))
             return ShouldDispatchSimulatedMouseEvents::Yes;
         if (host == "airtable.com"_s || host.endsWith(".airtable.com"_s))
