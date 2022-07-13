@@ -880,6 +880,7 @@ http/tests/ssl/media-stream [ Skip ]
 
 http/tests/subresource-integrity [ Skip ]
 http/tests/webarchive [ Skip ]
+http/tests/webgpu [ Skip ]
 http/tests/webrtc [ Skip ]
 http/tests/webshare [ Skip ]
 
@@ -2115,3 +2116,5 @@ fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-in
 fast/css3-text/css3-text-decoration/text-decoration-thicknes-overline-grow-direction.html [ ImageOnlyFailure ]
 fast/css3-text/css3-text-decoration/text-underline-style.html [ ImageOnlyFailure ]
 fast/css3-text/font-synthesis.html [ ImageOnlyFailure ]
+
+fast/css3-text/css3-text-decoration/text-underline-position/underline-visual-overflow-with-subpixel-position.html [ Failure ]
