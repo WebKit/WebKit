@@ -86,7 +86,7 @@ class WPEPortTest(port_testcase.PortTestCase):
         with patch('os.environ', {'WPE_BROWSER': ''}):
             port = self.make_port()
             port._filesystem = MockFileSystem({
-                "/mock-build/Tools/cog-prefix/src/cog-build/cog": "",
+                "/mock-build/Tools/cog-prefix/src/cog-build/launcher/cog": "",
             })
             self.assertEqual(port.browser_name(), "cog")
 

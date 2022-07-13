@@ -27,11 +27,35 @@ if (DEVELOPER_MODE AND ENABLE_COG)
     endif ()
     # TODO Use GIT_REMOTE_UPDATE_STRATEGY with 3.18 to allow switching between
     # conflicting branches without having to delete the repo
+
+    # Convert a few options to their Meson equivalents
+    if (USE_SOUP2)
+        set(COG_MESON_SOUP2 enabled)
+    else ()
+        set(COG_MESON_SOUP2 disabled)
+    endif ()
+
+    string(TOLOWER "${CMAKE_BUILD_TYPE}" COG_MESON_BUILDTYPE)
+    if (COG_MESON_BUILDTYPE STREQUAL "relwithdebinfo")
+        set(COG_MESON_BUILDTYPE debugoptimized)
+    elseif (COG_MESON_BUILDTYPE STREQUAL "minsizerel")
+        set(COG_MESON_BUILDTYPE minsize)
+    elseif (NOT (COG_MESON_BUILDTYPE STREQUAL release OR COG_MESON_BUILDTYPE STREQUAL debug))
+        set(COG_MESON_BUILDTYPE debugoptimized)
+    endif ()
+
     ExternalProject_Add(cog
         GIT_REPOSITORY "${WPE_COG_REPO}"
         GIT_TAG "${WPE_COG_TAG}"
         SOURCE_DIR "${CMAKE_SOURCE_DIR}/Tools/wpe/cog"
-        CMAKE_ARGS "-DCOG_PLATFORM_GTK4=ON" "-DCOG_PLATFORM_HEADLESS=ON" "-DCOG_PLATFORM_X11=ON" "-DUSE_SOUP2=${USE_SOUP2}"
+        BUILD_IN_SOURCE FALSE
+        CONFIGURE_COMMAND
+            meson setup <BINARY_DIR> <SOURCE_DIR>
+            --buildtype ${COG_MESON_BUILDTYPE}
+            -Dsoup2=${COG_MESON_SOUP2}
+            -Dplatforms=drm,headless,gtk4,x11,wayland
+        BUILD_COMMAND
+            meson compile -C <BINARY_DIR>
         INSTALL_COMMAND "")
     ExternalProject_Add_StepDependencies(cog build WebKit)
 endif ()
