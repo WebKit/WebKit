@@ -175,6 +175,8 @@ void RenderTreeUpdater::GeneratedContent::updatePseudoElement(Element& current, 
 
 void RenderTreeUpdater::GeneratedContent::updateBackdropRenderer(RenderElement& renderer)
 {
+    if (!renderer.canHaveGeneratedChildren())
+        return;
     // ::backdrop does not inherit style, hence using the view style as parent style
     auto style = renderer.getCachedPseudoStyle(PseudoId::Backdrop, &renderer.view().style());
 
