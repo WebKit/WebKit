@@ -264,6 +264,8 @@ public:
 
     void addMembersToOpaqueRoots(JSC::AbstractSlotVisitor&) override;
 
+    bool isTransformFeedbackActiveAndNotPaused();
+
 private:
     WebGL2RenderingContext(CanvasBase&, GraphicsContextGLAttributes);
     WebGL2RenderingContext(CanvasBase&, Ref<GraphicsContextGL>&&, GraphicsContextGLAttributes);

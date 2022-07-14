@@ -2285,6 +2285,11 @@ void WebGL2RenderingContext::resumeTransformFeedback()
     m_context->resumeTransformFeedback();
 }
 
+bool WebGL2RenderingContext::isTransformFeedbackActiveAndNotPaused()
+{
+    return m_boundTransformFeedback->isActive() && !m_boundTransformFeedback->isPaused();
+}
+
 bool WebGL2RenderingContext::setIndexedBufferBinding(const char *functionName, GCGLenum target, GCGLuint index, WebGLBuffer* buffer)
 {
     Locker locker { objectGraphLock() };
