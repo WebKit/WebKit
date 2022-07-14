@@ -89,7 +89,11 @@ struct GlobalWindowIdentifierHash {
 template<> struct HashTraits<WebCore::GlobalWindowIdentifier> : GenericHashTraits<WebCore::GlobalWindowIdentifier> {
     static WebCore::GlobalWindowIdentifier emptyValue() { return { }; }
 
-    static void constructDeletedValue(WebCore::GlobalWindowIdentifier& slot) { new (NotNull, &slot.windowIdentifier) WebCore::WindowIdentifier(WTF::HashTableDeletedValue); }
+    static void constructDeletedValue(WebCore::GlobalWindowIdentifier& slot)
+    {
+        new (NotNull, &slot.processIdentifier) WebCore::ProcessIdentifier(WTF::HashTableDeletedValue);
+        new (NotNull, &slot.windowIdentifier) WebCore::WindowIdentifier(WTF::HashTableDeletedValue);
+    }
     static bool isDeletedValue(const WebCore::GlobalWindowIdentifier& slot) { return slot.windowIdentifier.isHashTableDeletedValue(); }
 };
 
