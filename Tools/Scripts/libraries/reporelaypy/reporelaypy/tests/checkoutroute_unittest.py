@@ -124,7 +124,8 @@ class CheckoutRouteUnittest(testing.PathTestCase):
                 redirectors=[Redirector('https://trac.webkit.org')],
             ))
             reference = Commit.Encoder().default(repo.commits['main'][3])
-            reference['message'] = reference['message'].rstrip()
+            del reference['author']
+            del reference['message']
 
             response = client.get('4@main/json')
             self.assertEqual(response.status_code, 200)
