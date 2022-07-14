@@ -84,10 +84,11 @@ AccessibilityOrientation AccessibilitySlider::orientation() const
 void AccessibilitySlider::addChildren()
 {
     ASSERT(!m_childrenInitialized); 
-    
     m_childrenInitialized = true;
 
-    AXObjectCache* cache = m_renderer->document().axObjectCache();
+    auto* cache = axObjectCache();
+    if (!cache)
+        return;
 
     auto& thumb = downcast<AccessibilitySliderThumb>(*cache->create(AccessibilityRole::SliderThumb));
     thumb.setParent(this);
