@@ -88,7 +88,7 @@ std::optional<StreamConnectionBuffer> StreamConnectionBuffer::decode(Decoder& de
     if (dataSize > headerSize() + maximumSize())
         return std::nullopt;
     auto sharedMemory = WebKit::SharedMemory::map(ipcHandle->handle, WebKit::SharedMemory::Protection::ReadWrite);
-    if (sharedMemory->size() < dataSize)
+    if (!sharedMemory || sharedMemory->size() < dataSize)
         return std::nullopt;
     return StreamConnectionBuffer { sharedMemory.releaseNonNull(), dataSize };
 }
