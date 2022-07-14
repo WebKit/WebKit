@@ -263,18 +263,13 @@ bool GraphicsContextGLGBM::reshapeDisplayBufferBacking()
     m_swapchain = Swapchain(platformDisplay());
     allocateDrawBufferObject();
 
-    auto attrs = contextAttributes();
-    const auto size = getInternalFramebufferSize();
-    const int width = size.width();
-    const int height = size.height();
-    GLuint colorFormat = attrs.alpha ? GL_RGBA : GL_RGB;
-    GLenum textureTarget = drawingBufferTextureTarget();
-    GLuint internalColorFormat = textureTarget == GL_TEXTURE_2D ? colorFormat : m_internalColorFormat;
-    ScopedRestoreTextureBinding restoreBinding(drawingBufferTextureTargetQueryForDrawingTarget(textureTarget), textureTarget, textureTarget != TEXTURE_RECTANGLE_ARB);
+    {
+        GLenum textureTarget = drawingBufferTextureTarget();
+        ScopedRestoreTextureBinding restoreBinding(drawingBufferTextureTargetQueryForDrawingTarget(textureTarget), textureTarget, textureTarget != TEXTURE_RECTANGLE_ARB);
 
-    GL_BindTexture(textureTarget, m_texture);
-    GL_TexImage2D(textureTarget, 0, internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
-    GL_FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, textureTarget, m_texture, 0);
+        GL_BindTexture(textureTarget, m_texture);
+        GL_FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, textureTarget, m_texture, 0);
+    }
 
     return true;
 }
@@ -306,28 +301,6 @@ void GraphicsContextGLGBM::allocateDrawBufferObject()
 
     GL_BindTexture(textureTarget, m_texture);
     GL_EGLImageTargetTexture2DOES(textureTarget, result.iterator->value);
-
-    // If just created, the dmabuf has to be cleared to provide a zeroed-out buffer.
-    // Current color-clear and framebuffer state has to be preserved and re-established after this.
-    if (result.isNewEntry) {
-        GCGLuint boundFBO { 0 };
-        GL_GetIntegerv(GL_FRAMEBUFFER_BINDING, reinterpret_cast<GCGLint*>(&boundFBO));
-
-        GCGLuint targetFBO = contextAttributes().antialias ? m_multisampleFBO : m_fbo;
-        if (targetFBO != boundFBO)
-            GL_BindFramebuffer(GL_FRAMEBUFFER, targetFBO);
-
-        std::array<float, 4> clearColor { 0, 0, 0, 0 };
-        GL_GetFloatv(GL_COLOR_CLEAR_VALUE, clearColor.data());
-
-        GL_ClearColor(0, 0, 0, 0);
-        GL_Clear(GL_COLOR_BUFFER_BIT);
-
-        GL_ClearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
-
-        if (targetFBO != boundFBO)
-            GL_BindFramebuffer(GL_FRAMEBUFFER, boundFBO);
-    }
 }
 
 GraphicsContextGLGBM::Swapchain::Swapchain(GCGLDisplay platformDisplay)
