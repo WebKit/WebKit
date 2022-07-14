@@ -246,7 +246,7 @@ const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violat
     if (checkHashes(operativeDirective, hashes)
         || checkNonParserInsertedScripts(operativeDirective, parserInserted)
         || checkNonce(operativeDirective, nonce)
-        || checkSource(operativeDirective, url)
+        || (checkSource(operativeDirective, url) && !strictDynamicIncluded())
         || (url.isEmpty() && checkInline(operativeDirective)))
         return nullptr;
     return operativeDirective;
@@ -413,7 +413,7 @@ const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violat
     if (!operativeDirective
         || operativeDirective->containsAllHashes(subResourceIntegrityDigests)
         || checkNonce(operativeDirective, nonce)
-        || checkSource(operativeDirective, url, didReceiveRedirectResponse))
+        || (checkSource(operativeDirective, url, didReceiveRedirectResponse) && !strictDynamicIncluded()))
         return nullptr;
 
     return operativeDirective;
@@ -663,7 +663,7 @@ void ContentSecurityPolicyDirectiveList::addDirective(ParsedDirective&& directiv
         m_policy.reportUnsupportedDirective(WTFMove(directive.name));
 }
 
-bool ContentSecurityPolicyDirectiveList::strictDynamicIncluded()
+bool ContentSecurityPolicyDirectiveList::strictDynamicIncluded() const
 {
     ContentSecurityPolicySourceListDirective* directive = this->operativeDirectiveScript(m_scriptSrcElem.get(), ContentSecurityPolicyDirectiveNames::scriptSrc);
     return directive && directive->allowNonParserInsertedScripts();
