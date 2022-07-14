@@ -181,6 +181,10 @@ enum class TapHandlingResult : uint8_t;
 @property (nonatomic, readonly) BOOL _isWindowResizingEnabled;
 #endif
 
+#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
+- (NSArray<NSData *> *)_overlayRegions;
+#endif
+
 @end
 
 _WKTapHandlingResult wkTapHandlingResult(WebKit::TapHandlingResult);

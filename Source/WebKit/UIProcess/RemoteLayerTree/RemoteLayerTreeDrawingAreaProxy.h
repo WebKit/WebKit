@@ -60,6 +60,10 @@ public:
 
     CALayer *layerWithIDForTesting(uint64_t) const;
 
+#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
+    void updateOverlayRegionsWithIDs(const HashMap<WebCore::GraphicsLayer::PlatformLayerID, CGRect> &overlayRegions) { m_remoteLayerTreeHost->updateOverlayRegionsWithIDs(overlayRegions); }
+#endif
+
 private:
     void sizeDidChange() final;
     void deviceScaleFactorDidChange() final;
