@@ -55,7 +55,6 @@ void DisplayList::dump() const
 DisplayList::DisplayList(DisplayList&& other)
     : m_resourceHeap(std::exchange(other.m_resourceHeap, { }))
     , m_items(std::exchange(other.m_items, nullptr))
-    , m_drawingItemExtents(std::exchange(other.m_drawingItemExtents, { }))
 {
 }
 
@@ -71,7 +70,6 @@ DisplayList& DisplayList::operator=(DisplayList&& other)
 {
     m_resourceHeap = std::exchange(other.m_resourceHeap, { });
     m_items = std::exchange(other.m_items, nullptr);
-    m_drawingItemExtents = std::exchange(other.m_drawingItemExtents, { });
     return *this;
 }
 
@@ -79,7 +77,6 @@ void DisplayList::clear()
 {
     if (m_items)
         m_items->clear();
-    m_drawingItemExtents.clear();
     m_resourceHeap.clear();
 }
 
@@ -112,14 +109,12 @@ String DisplayList::asText(OptionSet<AsTextFlag> flags) const
     TextStream stream(TextStream::LineMode::MultipleLine, TextStream::Formatting::SVGStyleRect);
 #if !LOG_DISABLED
     for (auto displayListItem : *this) {
-        auto [item, extent, itemSizeInBuffer] = displayListItem.value();
+        auto [item, itemSizeInBuffer] = displayListItem.value();
         if (!shouldDumpForFlags(flags, item))
             continue;
 
         TextStream::GroupScope group(stream);
         dumpItemHandle(stream, item, flags);
-        if (item.isDrawingItem())
-            stream << " extent " << extent;
     }
 #else
     UNUSED_PARAM(flags);
@@ -134,11 +129,9 @@ void DisplayList::dump(TextStream& ts) const
 
 #if !LOG_DISABLED
     for (auto displayListItem : *this) {
-        auto [item, extent, itemSizeInBuffer] = displayListItem.value();
+        auto [item, itemSizeInBuffer] = displayListItem.value();
         TextStream::GroupScope group(ts);
         dumpItemHandle(ts, item, { AsTextFlag::IncludePlatformOperations, AsTextFlag::IncludeResourceIdentifiers });
-        if (item.isDrawingItem())
-            ts << " extent " << extent;
     }
 #endif
 
@@ -168,8 +161,6 @@ void DisplayList::shrinkToFit()
 {
     if (auto* itemBuffer = itemBufferIfExists())
         itemBuffer->shrinkToFit();
-
-    m_drawingItemExtents.shrinkToFit();
 }
 
 void DisplayList::setItemBufferReadingClient(ItemBufferReadingClient* client)
@@ -191,12 +182,6 @@ void DisplayList::forEachItemBuffer(Function<void(const ItemBufferHandle&)>&& ma
 {
     if (m_items)
         m_items->forEachItemBuffer(WTFMove(mapFunction));
-}
-
-void DisplayList::setTracksDrawingItemExtents(bool value)
-{
-    RELEASE_ASSERT(isEmpty());
-    m_tracksDrawingItemExtents = value;
 }
 
 void DisplayList::append(ItemHandle item)

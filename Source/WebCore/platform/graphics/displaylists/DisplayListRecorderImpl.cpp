@@ -174,7 +174,7 @@ void RecorderImpl::recordDrawGlyphs(const Font& font, const GlyphBufferGlyph* gl
 
 void RecorderImpl::recordDrawDecomposedGlyphs(const Font& font, const DecomposedGlyphs& decomposedGlyphs)
 {
-    append<DrawDecomposedGlyphs>(font.renderingResourceIdentifier(), decomposedGlyphs.renderingResourceIdentifier(), decomposedGlyphs.bounds());
+    append<DrawDecomposedGlyphs>(font.renderingResourceIdentifier(), decomposedGlyphs.renderingResourceIdentifier());
 }
 
 void RecorderImpl::recordDrawImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
@@ -424,24 +424,6 @@ static inline float shadowPaintingExtent(float blurRadius)
     // undetectable at around 1.4x the radius.
     const float radiusExtentMultiplier = 1.4;
     return ceilf(blurRadius * radiusExtentMultiplier);
-}
-
-FloatRect RecorderImpl::extentFromLocalBounds(const FloatRect& rect) const
-{
-    FloatRect bounds = rect;
-    auto& state = currentState();
-
-    FloatSize shadowOffset;
-    float shadowRadius;
-    Color shadowColor;
-    if (getShadow(shadowOffset, shadowRadius, shadowColor)) {
-        FloatRect shadowExtent = bounds;
-        shadowExtent.move(shadowOffset);
-        shadowExtent.inflate(shadowPaintingExtent(shadowRadius));
-        bounds.unite(shadowExtent);
-    }
-
-    return intersection(state.clipBounds, state.ctm.mapRect(bounds));
 }
 
 } // namespace DisplayList

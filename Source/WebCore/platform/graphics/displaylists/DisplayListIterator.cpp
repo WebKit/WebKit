@@ -39,25 +39,6 @@ bool DisplayList::Iterator::atEnd() const
     return m_cursor == endCursor;
 }
 
-auto DisplayList::Iterator::updateCurrentDrawingItemExtent(ItemType itemType) -> ExtentUpdateResult
-{
-    auto& extents = m_displayList.m_drawingItemExtents;
-    if (extents.isEmpty())
-        return ExtentUpdateResult::Success;
-
-    if (!isDrawingItem(itemType)) {
-        m_currentExtent = std::nullopt;
-        return ExtentUpdateResult::Success;
-    }
-
-    if (m_drawingItemIndex >= extents.size())
-        return ExtentUpdateResult::Failure;
-
-    m_currentExtent = extents[m_drawingItemIndex];
-    m_drawingItemIndex++;
-    return ExtentUpdateResult::Success;
-}
-
 void DisplayList::Iterator::updateCurrentItem()
 {
     clearCurrentItem();
@@ -73,11 +54,6 @@ void DisplayList::Iterator::updateCurrentItem()
     }
 
     auto itemType = static_cast<ItemType>(rawItemTypeValue);
-    if (UNLIKELY(updateCurrentDrawingItemExtent(itemType) == ExtentUpdateResult::Failure)) {
-        m_isValid = false;
-        return;
-    }
-
     auto remainingCapacityInBuffer = static_cast<uint64_t>(m_currentEndOfBuffer - m_cursor);
     auto paddedSizeOfTypeAndItem = paddedSizeOfTypeAndItemInBytes(itemType);
     m_currentBufferForItem = paddedSizeOfTypeAndItem <= sizeOfFixedBufferForCurrentItem ? m_fixedBufferForCurrentItem : static_cast<uint8_t*>(fastMalloc(paddedSizeOfTypeAndItem));

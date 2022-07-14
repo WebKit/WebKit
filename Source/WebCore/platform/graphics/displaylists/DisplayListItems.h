@@ -28,6 +28,7 @@
 #include "AlphaPremultiplication.h"
 #include "DisplayListItemBufferIdentifier.h"
 #include "DisplayListItemType.h"
+#include "DisplayListResourceHeap.h"
 #include "FloatRoundedRect.h"
 #include "Font.h"
 #include "GlyphBuffer.h"
@@ -565,9 +566,6 @@ public:
 
     WEBCORE_EXPORT void apply(GraphicsContext&, ImageBuffer* sourceImage, FilterResults&);
 
-    std::optional<FloatRect> globalBounds() const { return std::nullopt; }
-    std::optional<FloatRect> localBounds(const GraphicsContext&) const { return m_sourceImageRect; }
-
 private:
     std::optional<RenderingResourceIdentifier> m_sourceImageIdentifier;
     FloatRect m_sourceImageRect;
@@ -589,17 +587,13 @@ public:
     template<class Decoder> static std::optional<DrawGlyphs> decode(Decoder&);
 
     WEBCORE_EXPORT DrawGlyphs(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode);
-    WEBCORE_EXPORT DrawGlyphs(RenderingResourceIdentifier, PositionedGlyphs&&, const FloatRect&);
+    WEBCORE_EXPORT DrawGlyphs(RenderingResourceIdentifier, PositionedGlyphs&&);
 
     WEBCORE_EXPORT void apply(GraphicsContext&, const Font&) const;
-
-    std::optional<FloatRect> globalBounds() const { return std::nullopt; }
-    std::optional<FloatRect> localBounds(const GraphicsContext&) const { return m_bounds; }
 
 private:
     RenderingResourceIdentifier m_fontIdentifier;
     PositionedGlyphs m_positionedGlyphs;
-    FloatRect m_bounds;
 };
 
 template<class Encoder>
@@ -607,7 +601,6 @@ void DrawGlyphs::encode(Encoder& encoder) const
 {
     encoder << m_fontIdentifier;
     encoder << m_positionedGlyphs;
-    encoder << m_bounds;
 }
 
 template<class Decoder>
@@ -623,12 +616,7 @@ std::optional<DrawGlyphs> DrawGlyphs::decode(Decoder& decoder)
     if (!positionedGlyphs)
         return std::nullopt;
 
-    std::optional<FloatRect> bounds;
-    decoder >> bounds;
-    if (!bounds)
-        return std::nullopt;
-
-    return { { *fontIdentifier, WTFMove(*positionedGlyphs), *bounds } };
+    return { { *fontIdentifier, WTFMove(*positionedGlyphs) } };
 }
 
 class DrawDecomposedGlyphs {
@@ -637,10 +625,9 @@ public:
     static constexpr bool isInlineItem = true;
     static constexpr bool isDrawingItem = true;
 
-    DrawDecomposedGlyphs(RenderingResourceIdentifier fontIdentifier, RenderingResourceIdentifier decomposedGlyphsIdentifier, const FloatRect& bounds)
+    DrawDecomposedGlyphs(RenderingResourceIdentifier fontIdentifier, RenderingResourceIdentifier decomposedGlyphsIdentifier)
         : m_fontIdentifier(fontIdentifier)
         , m_decomposedGlyphsIdentifier(decomposedGlyphsIdentifier)
-        , m_bounds(bounds)
     {
     }
 
@@ -649,13 +636,9 @@ public:
 
     WEBCORE_EXPORT void apply(GraphicsContext&, const Font&, const DecomposedGlyphs&) const;
 
-    std::optional<FloatRect> globalBounds() const { return std::nullopt; }
-    std::optional<FloatRect> localBounds(const GraphicsContext&) const { return m_bounds; }
-
 private:
     RenderingResourceIdentifier m_fontIdentifier;
     RenderingResourceIdentifier m_decomposedGlyphsIdentifier;
-    FloatRect m_bounds;
 };
 
 class DrawImageBuffer {
@@ -680,9 +663,6 @@ public:
     bool isValid() const { return m_imageBufferIdentifier.isValid(); }
 
     WEBCORE_EXPORT void apply(GraphicsContext&, ImageBuffer&) const;
-
-    std::optional<FloatRect> globalBounds() const { return std::nullopt; }
-    std::optional<FloatRect> localBounds(const GraphicsContext&) const { return m_destinationRect; }
 
 private:
     RenderingResourceIdentifier m_imageBufferIdentifier;
@@ -714,9 +694,6 @@ public:
 
     WEBCORE_EXPORT void apply(GraphicsContext&, NativeImage&) const;
 
-    std::optional<FloatRect> globalBounds() const { return std::nullopt; }
-    std::optional<FloatRect> localBounds(const GraphicsContext&) const { return m_destinationRect; }
-
 private:
     RenderingResourceIdentifier m_imageIdentifier;
     FloatSize m_imageSize;
@@ -741,9 +718,6 @@ public:
     const FloatRect& destinationRect() const { return m_destinationRect; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
-
-    std::optional<FloatRect> globalBounds() const { return std::nullopt; }
-    std::optional<FloatRect> localBounds(const GraphicsContext&) const { return m_destinationRect; }
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<DrawSystemImage> decode(Decoder&);
@@ -799,9 +773,6 @@ public:
 
     WEBCORE_EXPORT void apply(GraphicsContext&, SourceImage&) const;
 
-    std::optional<FloatRect> globalBounds() const { return std::nullopt; }
-    std::optional<FloatRect> localBounds(const GraphicsContext&) const { return m_destination; }
-
 private:
     RenderingResourceIdentifier m_imageIdentifier;
     FloatRect m_destination;
@@ -827,9 +798,6 @@ public:
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
 
-    std::optional<FloatRect> localBounds(const GraphicsContext&) const { return std::nullopt; }
-    std::optional<FloatRect> globalBounds() const { return std::nullopt; }
-
 private:
     float m_opacity;
 };
@@ -842,10 +810,7 @@ public:
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
 
-    std::optional<FloatRect> localBounds(const GraphicsContext&) const { return std::nullopt; }
-    std::optional<FloatRect> globalBounds() const { return std::nullopt; }
 };
-
 class DrawRect {
 public:
     static constexpr ItemType itemType = ItemType::DrawRect;
@@ -862,9 +827,6 @@ public:
     float borderThickness() const { return m_borderThickness; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
-
-    std::optional<FloatRect> globalBounds() const { return std::nullopt; }
-    std::optional<FloatRect> localBounds(const GraphicsContext&) const { return m_rect; }
 
 private:
     FloatRect m_rect;
@@ -887,9 +849,6 @@ public:
     FloatPoint point2() const { return m_point2; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
-
-    std::optional<FloatRect> globalBounds() const { return std::nullopt; }
-    std::optional<FloatRect> localBounds(const GraphicsContext&) const;
 
 private:
     FloatPoint m_point1;
@@ -915,9 +874,6 @@ public:
     StrokeStyle style() const { return m_style; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
-
-    std::optional<FloatRect> globalBounds() const { return std::nullopt; }
-    std::optional<FloatRect> localBounds(const GraphicsContext&) const;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<DrawLinesForText> decode(Decoder&);
@@ -1013,9 +969,6 @@ public:
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
 
-    std::optional<FloatRect> globalBounds() const { return std::nullopt; }
-    std::optional<FloatRect> localBounds(const GraphicsContext&) const;
-
 private:
     FloatRect m_rect;
     UnderlyingDocumentMarkerLineStyleType m_styleMode { 0 };
@@ -1036,9 +989,6 @@ public:
     FloatRect rect() const { return m_rect; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
-
-    std::optional<FloatRect> globalBounds() const { return std::nullopt; }
-    std::optional<FloatRect> localBounds(const GraphicsContext&) const { return m_rect; }
 
 private:
     FloatRect m_rect;
@@ -1066,9 +1016,6 @@ public:
     template<class Decoder> static std::optional<DrawPath> decode(Decoder&);
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
-
-    std::optional<FloatRect> globalBounds() const { return std::nullopt; }
-    std::optional<FloatRect> localBounds(const GraphicsContext&) const { return m_path.fastBoundingRect(); }
 
 private:
     Path m_path;
@@ -1122,9 +1069,6 @@ public:
     template<class Decoder> static std::optional<DrawFocusRingPath> decode(Decoder&);
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
-
-    std::optional<FloatRect> globalBounds() const { return std::nullopt; }
-    std::optional<FloatRect> localBounds(const GraphicsContext&) const;
 
 private:
     Path m_path;
@@ -1182,9 +1126,6 @@ public:
     const Color& color() const { return m_color; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
-
-    std::optional<FloatRect> globalBounds() const { return std::nullopt; }
-    std::optional<FloatRect> localBounds(const GraphicsContext&) const;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<DrawFocusRingRects> decode(Decoder&);
@@ -1246,9 +1187,6 @@ public:
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
 
-    std::optional<FloatRect> globalBounds() const { return std::nullopt; }
-    std::optional<FloatRect> localBounds(const GraphicsContext&) const { return m_rect; }
-
 private:
     FloatRect m_rect;
 };
@@ -1269,9 +1207,6 @@ public:
     const Color& color() const { return m_color; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
-
-    std::optional<FloatRect> globalBounds() const { return std::nullopt; }
-    std::optional<FloatRect> localBounds(const GraphicsContext&) const { return m_rect; }
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<FillRectWithColor> decode(Decoder&);
@@ -1316,9 +1251,6 @@ public:
     const Gradient& gradient() const { return m_gradient.get(); }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
-
-    std::optional<FloatRect> globalBounds() const { return std::nullopt; }
-    std::optional<FloatRect> localBounds(const GraphicsContext&) const { return m_rect; }
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<FillRectWithGradient> decode(Decoder&);
@@ -1370,9 +1302,6 @@ public:
     BlendMode blendMode() const { return m_blendMode; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
-
-    std::optional<FloatRect> globalBounds() const { return std::nullopt; }
-    std::optional<FloatRect> localBounds(const GraphicsContext&) const { return m_rect; }
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<FillCompositedRect> decode(Decoder&);
@@ -1441,9 +1370,6 @@ public:
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
 
-    std::optional<FloatRect> globalBounds() const { return std::nullopt; }
-    std::optional<FloatRect> localBounds(const GraphicsContext&) const { return m_rect.rect(); }
-
 private:
     FloatRoundedRect m_rect;
     Color m_color;
@@ -1501,9 +1427,6 @@ public:
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
 
-    std::optional<FloatRect> globalBounds() const { return std::nullopt; }
-    std::optional<FloatRect> localBounds(const GraphicsContext&) const { return m_rect; }
-
 private:
     FloatRect m_rect;
     FloatRoundedRect m_roundedHoleRect;
@@ -1554,9 +1477,6 @@ public:
 
     Path path() const { return Path::from({m_lineData}); }
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
-    std::optional<FloatRect> globalBounds() const { return std::nullopt; }
-    std::optional<FloatRect> localBounds(const GraphicsContext&) const { return path().fastBoundingRect(); }
-
 private:
     LineData m_lineData;
 };
@@ -1574,9 +1494,6 @@ public:
 
     Path path() const { return Path::from({m_arcData}); }
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
-    std::optional<FloatRect> globalBounds() const { return std::nullopt; }
-    std::optional<FloatRect> localBounds(const GraphicsContext&) const { return path().fastBoundingRect(); }
-
 private:
     ArcData m_arcData;
 };
@@ -1594,9 +1511,6 @@ public:
 
     Path path() const { return Path::from({m_quadCurveData}); }
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
-    std::optional<FloatRect> globalBounds() const { return std::nullopt; }
-    std::optional<FloatRect> localBounds(const GraphicsContext&) const { return path().fastBoundingRect(); }
-
 private:
     QuadCurveData m_quadCurveData;
 };
@@ -1614,9 +1528,6 @@ public:
 
     Path path() const { return Path::from({m_bezierCurveData}); }
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
-    std::optional<FloatRect> globalBounds() const { return std::nullopt; }
-    std::optional<FloatRect> localBounds(const GraphicsContext&) const { return path().fastBoundingRect(); }
-
 private:
     BezierCurveData m_bezierCurveData;
 };
@@ -1645,9 +1556,6 @@ public:
     template<class Decoder> static std::optional<FillPath> decode(Decoder&);
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
-
-    std::optional<FloatRect> globalBounds() const { return std::nullopt; }
-    std::optional<FloatRect> localBounds(const GraphicsContext&) const { return m_path.fastBoundingRect(); }
 
 private:
     Path m_path;
@@ -1685,9 +1593,6 @@ public:
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
 
-    std::optional<FloatRect> globalBounds() const { return std::nullopt; }
-    std::optional<FloatRect> localBounds(const GraphicsContext&) const { return m_rect; }
-
 private:
     FloatRect m_rect;
 };
@@ -1705,9 +1610,6 @@ public:
     MediaPlayerIdentifier identifier() const { return m_identifier; }
 
     bool isValid() const { return m_identifier.isValid(); }
-
-    std::optional<FloatRect> localBounds(const GraphicsContext&) const { return std::nullopt; }
-    std::optional<FloatRect> globalBounds() const { return { m_destination }; }
 
 private:
     MediaPlayerIdentifier m_identifier;
@@ -1731,9 +1633,6 @@ public:
     float lineWidth() const { return m_lineWidth; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
-
-    std::optional<FloatRect> globalBounds() const { return std::nullopt; }
-    std::optional<FloatRect> localBounds(const GraphicsContext&) const;
 
 private:
     FloatRect m_rect;
@@ -1764,9 +1663,6 @@ public:
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
 
-    std::optional<FloatRect> globalBounds() const { return std::nullopt; }
-    std::optional<FloatRect> localBounds(const GraphicsContext&) const;
-
 private:
     FloatPoint m_start;
     FloatPoint m_end;
@@ -1787,9 +1683,6 @@ public:
 
     Path path() const { return Path::from({m_arcData}); }
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
-    std::optional<FloatRect> globalBounds() const { return std::nullopt; }
-    std::optional<FloatRect> localBounds(const GraphicsContext&) const;
-
 private:
     ArcData m_arcData;
 };
@@ -1807,9 +1700,6 @@ public:
 
     Path path() const { return Path::from({m_quadCurveData}); }
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
-    std::optional<FloatRect> globalBounds() const { return std::nullopt; }
-    std::optional<FloatRect> localBounds(const GraphicsContext&) const;
-
 private:
     QuadCurveData m_quadCurveData;
 };
@@ -1827,9 +1717,6 @@ public:
 
     Path path() const { return Path::from({m_bezierCurveData}); }
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
-    std::optional<FloatRect> globalBounds() const { return std::nullopt; }
-    std::optional<FloatRect> localBounds(const GraphicsContext&) const;
-
 private:
     BezierCurveData m_bezierCurveData;
 };
@@ -1858,9 +1745,6 @@ public:
     template<class Decoder> static std::optional<StrokePath> decode(Decoder&);
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
-
-    std::optional<FloatRect> globalBounds() const { return std::nullopt; }
-    std::optional<FloatRect> localBounds(const GraphicsContext&) const;
 
 private:
     Path m_path;
@@ -1898,9 +1782,6 @@ public:
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
 
-    std::optional<FloatRect> globalBounds() const { return std::nullopt; }
-    std::optional<FloatRect> localBounds(const GraphicsContext&) const;
-
 private:
     FloatRect m_rect;
 };
@@ -1919,9 +1800,6 @@ public:
     const FloatRect& rect() const { return m_rect; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
-
-    std::optional<FloatRect> globalBounds() const { return std::nullopt; }
-    std::optional<FloatRect> localBounds(const GraphicsContext&) const { return m_rect; }
 
 private:
     FloatRect m_rect;

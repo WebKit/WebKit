@@ -33,8 +33,6 @@
 
 namespace WebCore {
 
-class Font;
-
 class DecomposedGlyphs : public ThreadSafeRefCounted<DecomposedGlyphs, WTF::DestructionThread::Main>, public CanMakeWeakPtr<DecomposedGlyphs> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -46,12 +44,11 @@ public:
         Observer() = default;
     };
 
-    static WEBCORE_EXPORT Ref<DecomposedGlyphs> create(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode, RenderingResourceIdentifier = RenderingResourceIdentifier::generate());
-    static WEBCORE_EXPORT Ref<DecomposedGlyphs> create(PositionedGlyphs&&, const FloatRect& bounds, RenderingResourceIdentifier);
+    static WEBCORE_EXPORT Ref<DecomposedGlyphs> create(const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode, RenderingResourceIdentifier = RenderingResourceIdentifier::generate());
+    static WEBCORE_EXPORT Ref<DecomposedGlyphs> create(PositionedGlyphs&&, RenderingResourceIdentifier);
     WEBCORE_EXPORT ~DecomposedGlyphs();
 
     const PositionedGlyphs& positionedGlyphs() const { return m_positionedGlyphs; }
-    const FloatRect& bounds() const { return m_bounds; }
 
     void addObserver(Observer& observer) { m_observers.add(&observer); }
     void removeObserver(Observer& observer) { m_observers.remove(&observer); }
@@ -59,11 +56,10 @@ public:
     RenderingResourceIdentifier renderingResourceIdentifier() const { return m_renderingResourceIdentifier; }
 
 private:
-    DecomposedGlyphs(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode, RenderingResourceIdentifier);
-    DecomposedGlyphs(PositionedGlyphs&&, const FloatRect& bounds, RenderingResourceIdentifier);
+    DecomposedGlyphs(const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode, RenderingResourceIdentifier);
+    DecomposedGlyphs(PositionedGlyphs&&, RenderingResourceIdentifier);
 
     PositionedGlyphs m_positionedGlyphs;
-    FloatRect m_bounds;
     HashSet<Observer*> m_observers;
     RenderingResourceIdentifier m_renderingResourceIdentifier;
 };

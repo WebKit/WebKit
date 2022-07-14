@@ -167,17 +167,15 @@ void DrawFilteredImageBuffer::apply(GraphicsContext& context, ImageBuffer* sourc
     context.drawFilteredImageBuffer(sourceImage, m_sourceImageRect, m_filter, results);
 }
 
-DrawGlyphs::DrawGlyphs(RenderingResourceIdentifier fontIdentifier, PositionedGlyphs&& positionedGlyphs, const FloatRect& bounds)
+DrawGlyphs::DrawGlyphs(RenderingResourceIdentifier fontIdentifier, PositionedGlyphs&& positionedGlyphs)
     : m_fontIdentifier(fontIdentifier)
     , m_positionedGlyphs(WTFMove(positionedGlyphs))
-    , m_bounds(bounds)
 {
 }
 
 DrawGlyphs::DrawGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode smoothingMode)
     : m_fontIdentifier(font.renderingResourceIdentifier())
     , m_positionedGlyphs { { glyphs, count }, { advances, count }, localAnchor, smoothingMode }
-    , m_bounds(m_positionedGlyphs.computeBounds(font))
 {
 }
 
@@ -237,13 +235,6 @@ void DrawRect::apply(GraphicsContext& context) const
     context.drawRect(m_rect, m_borderThickness);
 }
 
-std::optional<FloatRect> DrawLine::localBounds(const GraphicsContext&) const
-{
-    FloatRect bounds;
-    bounds.fitToPoints(m_point1, m_point2);
-    return bounds;
-}
-
 void DrawLine::apply(GraphicsContext& context) const
 {
     context.drawLine(m_point1, m_point2);
@@ -265,29 +256,12 @@ void DrawLinesForText::apply(GraphicsContext& context) const
     context.drawLinesForText(point(), m_thickness, m_widths, m_printing, m_doubleLines, m_style);
 }
 
-std::optional<FloatRect> DrawLinesForText::localBounds(const GraphicsContext&) const
-{
-    // This function needs to return a value equal to or enclosing what GraphicsContext::computeLineBoundsAndAntialiasingModeForText() returns.
-
-    if (!m_widths.size())
-        return FloatRect();
-
-    FloatRect result(point(), FloatSize(m_widths.last(), m_thickness));
-    result.inflate(1); // Account for pixel snapping. FIXME: This isn't perfect, as it doesn't take the CTM into account.
-    return result;
-}
-
 void DrawDotsForDocumentMarker::apply(GraphicsContext& context) const
 {
     context.drawDotsForDocumentMarker(m_rect, {
         static_cast<DocumentMarkerLineStyle::Mode>(m_styleMode),
         m_styleShouldUseDarkAppearance,
     });
-}
-
-std::optional<FloatRect> DrawDotsForDocumentMarker::localBounds(const GraphicsContext&) const
-{
-    return m_rect;
 }
 
 void DrawEllipse::apply(GraphicsContext& context) const
@@ -305,13 +279,6 @@ void DrawFocusRingPath::apply(GraphicsContext& context) const
     context.drawFocusRing(m_path, m_width, m_offset, m_color);
 }
 
-std::optional<FloatRect> DrawFocusRingPath::localBounds(const GraphicsContext&) const
-{
-    FloatRect result = m_path.fastBoundingRect();
-    result.inflate(platformFocusRingWidth);
-    return result;
-}
-
 DrawFocusRingRects::DrawFocusRingRects(const Vector<FloatRect>& rects, float width, float offset, const Color& color)
     : m_rects(rects)
     , m_width(width)
@@ -323,15 +290,6 @@ DrawFocusRingRects::DrawFocusRingRects(const Vector<FloatRect>& rects, float wid
 void DrawFocusRingRects::apply(GraphicsContext& context) const
 {
     context.drawFocusRing(m_rects, m_width, m_offset, m_color);
-}
-
-std::optional<FloatRect> DrawFocusRingRects::localBounds(const GraphicsContext&) const
-{
-    FloatRect result;
-    for (auto& rect : m_rects)
-        result.unite(rect);
-    result.inflate(platformFocusRingWidth);
-    return result;
 }
 
 void FillRect::apply(GraphicsContext& context) const
@@ -412,26 +370,9 @@ PaintFrameForMedia::PaintFrameForMedia(MediaPlayer& player, const FloatRect& des
 }
 #endif
 
-std::optional<FloatRect> StrokeRect::localBounds(const GraphicsContext&) const
-{
-    FloatRect bounds = m_rect;
-    bounds.expand(m_lineWidth, m_lineWidth);
-    return bounds;
-}
-
 void StrokeRect::apply(GraphicsContext& context) const
 {
     context.strokeRect(m_rect, m_lineWidth);
-}
-
-std::optional<FloatRect> StrokePath::localBounds(const GraphicsContext& context) const
-{
-    // FIXME: Need to take stroke thickness into account correctly, via CGPathByStrokingPath().
-    float strokeThickness = context.strokeThickness();
-
-    FloatRect bounds = m_path.fastBoundingRect();
-    bounds.expand(strokeThickness, strokeThickness);
-    return bounds;
 }
 
 void StrokePath::apply(GraphicsContext& context) const
@@ -439,28 +380,9 @@ void StrokePath::apply(GraphicsContext& context) const
     context.strokePath(m_path);
 }
 
-std::optional<FloatRect> StrokeEllipse::localBounds(const GraphicsContext& context) const
-{
-    float strokeThickness = context.strokeThickness();
-
-    FloatRect bounds = m_rect;
-    bounds.expand(strokeThickness, strokeThickness);
-    return bounds;
-}
-
 void StrokeEllipse::apply(GraphicsContext& context) const
 {
     context.strokeEllipse(m_rect);
-}
-
-std::optional<FloatRect> StrokeLine::localBounds(const GraphicsContext& context) const
-{
-    float strokeThickness = context.strokeThickness();
-
-    FloatRect bounds;
-    bounds.fitToPoints(start(), end());
-    bounds.expand(strokeThickness, strokeThickness);
-    return bounds;
 }
 
 void StrokeLine::apply(GraphicsContext& context) const
@@ -477,44 +399,14 @@ void StrokeLine::apply(GraphicsContext& context) const
 
 #if ENABLE(INLINE_PATH_DATA)
 
-std::optional<FloatRect> StrokeArc::localBounds(const GraphicsContext& context) const
-{
-    // FIXME: Need to take stroke thickness into account correctly, via CGPathByStrokingPath().
-    float strokeThickness = context.strokeThickness();
-
-    auto bounds = path().fastBoundingRect();
-    bounds.expand(strokeThickness, strokeThickness);
-    return bounds;
-}
-
 void StrokeArc::apply(GraphicsContext& context) const
 {
     context.strokePath(path());
 }
 
-std::optional<FloatRect> StrokeQuadCurve::localBounds(const GraphicsContext& context) const
-{
-    // FIXME: Need to take stroke thickness into account correctly, via CGPathByStrokingPath().
-    float strokeThickness = context.strokeThickness();
-
-    auto bounds = path().fastBoundingRect();
-    bounds.expand(strokeThickness, strokeThickness);
-    return bounds;
-}
-
 void StrokeQuadCurve::apply(GraphicsContext& context) const
 {
     context.strokePath(path());
-}
-
-std::optional<FloatRect> StrokeBezierCurve::localBounds(const GraphicsContext& context) const
-{
-    // FIXME: Need to take stroke thickness into account correctly, via CGPathByStrokingPath().
-    float strokeThickness = context.strokeThickness();
-
-    auto bounds = path().fastBoundingRect();
-    bounds.expand(strokeThickness, strokeThickness);
-    return bounds;
 }
 
 void StrokeBezierCurve::apply(GraphicsContext& context) const

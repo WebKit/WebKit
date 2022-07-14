@@ -86,9 +86,6 @@ public:
     template<typename T, class... Args> void append(Args&&... args);
     void append(ItemHandle);
 
-    bool tracksDrawingItemExtents() const { return m_tracksDrawingItemExtents; }
-    WEBCORE_EXPORT void setTracksDrawingItemExtents(bool);
-
     class Iterator;
 
     WEBCORE_EXPORT Iterator begin() const;
@@ -97,12 +94,6 @@ public:
 private:
     ItemBuffer* itemBufferIfExists() const { return m_items.get(); }
     WEBCORE_EXPORT ItemBuffer& itemBuffer();
-
-    void addDrawingItemExtent(std::optional<FloatRect>&& extent)
-    {
-        ASSERT(m_tracksDrawingItemExtents);
-        m_drawingItemExtents.append(WTFMove(extent));
-    }
 
     void cacheImageBuffer(WebCore::ImageBuffer& imageBuffer)
     {
@@ -128,8 +119,6 @@ private:
 
     LocalResourceHeap m_resourceHeap;
     std::unique_ptr<ItemBuffer> m_items;
-    Vector<std::optional<FloatRect>> m_drawingItemExtents;
-    bool m_tracksDrawingItemExtents { true };
 };
 
 template<typename T, class... Args>

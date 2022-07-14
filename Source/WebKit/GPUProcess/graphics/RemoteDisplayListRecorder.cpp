@@ -257,14 +257,14 @@ void RemoteDisplayListRecorder::drawGlyphsWithQualifiedIdentifier(DisplayList::D
     handleItem(WTFMove(item), *font);
 }
 
-void RemoteDisplayListRecorder::drawDecomposedGlyphs(RenderingResourceIdentifier fontIdentifier, RenderingResourceIdentifier decomposedGlyphsIdentifier, const FloatRect& bounds)
+void RemoteDisplayListRecorder::drawDecomposedGlyphs(RenderingResourceIdentifier fontIdentifier, RenderingResourceIdentifier decomposedGlyphsIdentifier)
 {
     // Immediately turn the RenderingResourceIdentifier (which is error-prone) to a QualifiedRenderingResourceIdentifier,
     // and use a helper function to make sure that don't accidentally use the RenderingResourceIdentifier (because the helper function can't see it).
-    drawDecomposedGlyphsWithQualifiedIdentifiers({ fontIdentifier, m_webProcessIdentifier }, { decomposedGlyphsIdentifier, m_webProcessIdentifier }, bounds);
+    drawDecomposedGlyphsWithQualifiedIdentifiers({ fontIdentifier, m_webProcessIdentifier }, { decomposedGlyphsIdentifier, m_webProcessIdentifier });
 }
 
-void RemoteDisplayListRecorder::drawDecomposedGlyphsWithQualifiedIdentifiers(QualifiedRenderingResourceIdentifier fontIdentifier, QualifiedRenderingResourceIdentifier decomposedGlyphsIdentifier, const FloatRect& bounds)
+void RemoteDisplayListRecorder::drawDecomposedGlyphsWithQualifiedIdentifiers(QualifiedRenderingResourceIdentifier fontIdentifier, QualifiedRenderingResourceIdentifier decomposedGlyphsIdentifier)
 {
     RefPtr font = resourceCache().cachedFont(fontIdentifier);
     if (!font) {
@@ -278,7 +278,7 @@ void RemoteDisplayListRecorder::drawDecomposedGlyphsWithQualifiedIdentifiers(Qua
         return;
     }
 
-    handleItem(DisplayList::DrawDecomposedGlyphs(fontIdentifier.object(), decomposedGlyphsIdentifier.object(), bounds), *font, *decomposedGlyphs);
+    handleItem(DisplayList::DrawDecomposedGlyphs(fontIdentifier.object(), decomposedGlyphsIdentifier.object()), *font, *decomposedGlyphs);
 }
 
 void RemoteDisplayListRecorder::drawImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destinationRect, const FloatRect& srcRect, const ImagePaintingOptions& options)

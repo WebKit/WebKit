@@ -28,26 +28,24 @@
 
 namespace WebCore {
 
-Ref<DecomposedGlyphs> DecomposedGlyphs::create(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode mode, RenderingResourceIdentifier renderingResourceIdentifier)
+Ref<DecomposedGlyphs> DecomposedGlyphs::create(const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode mode, RenderingResourceIdentifier renderingResourceIdentifier)
 {
-    return adoptRef(*new DecomposedGlyphs(font, glyphs, advances, count, localAnchor, mode, renderingResourceIdentifier));
+    return adoptRef(*new DecomposedGlyphs(glyphs, advances, count, localAnchor, mode, renderingResourceIdentifier));
 }
 
-Ref<DecomposedGlyphs> DecomposedGlyphs::create(PositionedGlyphs&& positionedGlyphs, const FloatRect& bounds, RenderingResourceIdentifier renderingResourceIdentifier)
+Ref<DecomposedGlyphs> DecomposedGlyphs::create(PositionedGlyphs&& positionedGlyphs, RenderingResourceIdentifier renderingResourceIdentifier)
 {
-    return adoptRef(*new DecomposedGlyphs(WTFMove(positionedGlyphs), bounds, renderingResourceIdentifier));
+    return adoptRef(*new DecomposedGlyphs(WTFMove(positionedGlyphs), renderingResourceIdentifier));
 }
 
-DecomposedGlyphs::DecomposedGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode mode, RenderingResourceIdentifier renderingResourceIdentifier)
+DecomposedGlyphs::DecomposedGlyphs(const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode mode, RenderingResourceIdentifier renderingResourceIdentifier)
     : m_positionedGlyphs({ glyphs, count }, { advances, count }, localAnchor, mode)
-    , m_bounds(m_positionedGlyphs.computeBounds(font))
     , m_renderingResourceIdentifier(renderingResourceIdentifier)
 {
 }
 
-DecomposedGlyphs::DecomposedGlyphs(PositionedGlyphs&& positionedGlyphs, const FloatRect& bounds, RenderingResourceIdentifier renderingResourceIdentifier)
+DecomposedGlyphs::DecomposedGlyphs(PositionedGlyphs&& positionedGlyphs, RenderingResourceIdentifier renderingResourceIdentifier)
     : m_positionedGlyphs(WTFMove(positionedGlyphs))
-    , m_bounds(bounds)
     , m_renderingResourceIdentifier(renderingResourceIdentifier)
 {
     ASSERT(m_positionedGlyphs.glyphs.size() == m_positionedGlyphs.advances.size());

@@ -55,7 +55,6 @@ public:
 
     struct Value {
         ItemHandle item;
-        std::optional<FloatRect> extent;
         size_t itemSizeInBuffer { 0 };
     };
 
@@ -65,7 +64,6 @@ public:
             return std::nullopt;
         return {{
             ItemHandle { m_currentBufferForItem },
-            m_currentExtent,
             m_currentItemSizeInBuffer,
         }};
     }
@@ -79,9 +77,6 @@ private:
     WEBCORE_EXPORT void updateCurrentItem();
     WEBCORE_EXPORT void advance();
 
-    enum class ExtentUpdateResult : bool { Failure, Success };
-    ExtentUpdateResult updateCurrentDrawingItemExtent(ItemType);
-
     bool atEnd() const;
 
     ItemBuffer* itemBuffer() const { return m_displayList.itemBufferIfExists(); }
@@ -89,12 +84,10 @@ private:
     const DisplayList& m_displayList;
     uint8_t* m_cursor { nullptr };
     size_t m_readOnlyBufferIndex { 0 };
-    size_t m_drawingItemIndex { 0 };
     uint8_t* m_currentEndOfBuffer { nullptr };
 
     uint8_t m_fixedBufferForCurrentItem[sizeOfFixedBufferForCurrentItem] { 0 };
     uint8_t* m_currentBufferForItem { nullptr };
-    std::optional<FloatRect> m_currentExtent;
     size_t m_currentItemSizeInBuffer { 0 };
     bool m_isValid { true };
 };

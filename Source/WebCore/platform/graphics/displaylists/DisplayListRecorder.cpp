@@ -200,7 +200,7 @@ void Recorder::drawGlyphsAndCacheResources(const Font& font, const GlyphBufferGl
     recordResourceUse(const_cast<Font&>(font));
 
     if (m_drawGlyphsMode == DrawGlyphsMode::DeconstructUsingDrawDecomposedGlyphsCommands) {
-        auto decomposedGlyphs = DecomposedGlyphs::create(font, glyphs, advances, numGlyphs, localAnchor, smoothingMode);
+        auto decomposedGlyphs = DecomposedGlyphs::create(glyphs, advances, numGlyphs, localAnchor, smoothingMode);
         recordResourceUse(decomposedGlyphs.get());
         recordDrawDecomposedGlyphs(font, decomposedGlyphs.get());
         return;

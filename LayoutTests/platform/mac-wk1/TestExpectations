@@ -1088,10 +1088,7 @@ media/video-restricted-invisible-autoplay-not-allowed-source.html [ Skip ]
 media/video-restricted-invisible-autoplay-not-allowed.html [ Skip ]
 
 # <rdar://problem/42736213>
-displaylists/extent-includes-shadow.html [ Failure ]
-displaylists/extent-includes-transforms.html [ Failure ]
 displaylists/layer-dispay-list.html [ Failure ]
-displaylists/replay-skip-clipped-rect.html [ Failure ]
 
 webkit.org/b/184611 compositing/layer-creation/fixed-overlap-extent.html [ Pass Failure ]
 

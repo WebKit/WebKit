@@ -1017,7 +1017,6 @@ std::optional<Ref<Font>> ArgumentCoder<Font>::decode(Decoder& decoder)
 void ArgumentCoder<DecomposedGlyphs>::encode(Encoder& encoder, const DecomposedGlyphs& decomposedGlyphs)
 {
     encoder << decomposedGlyphs.positionedGlyphs();
-    encoder << decomposedGlyphs.bounds();
     encoder << decomposedGlyphs.renderingResourceIdentifier();
 }
 
@@ -1028,17 +1027,12 @@ std::optional<Ref<DecomposedGlyphs>> ArgumentCoder<DecomposedGlyphs>::decode(Dec
     if (!positionedGlyphs)
         return std::nullopt;
 
-    std::optional<FloatRect> bounds;
-    decoder >> bounds;
-    if (!bounds)
-        return std::nullopt;
-
     std::optional<RenderingResourceIdentifier> renderingResourceIdentifier;
     decoder >> renderingResourceIdentifier;
     if (!renderingResourceIdentifier)
         return std::nullopt;
 
-    return DecomposedGlyphs::create(WTFMove(*positionedGlyphs), *bounds, *renderingResourceIdentifier);
+    return DecomposedGlyphs::create(WTFMove(*positionedGlyphs), *renderingResourceIdentifier);
 }
 
 void ArgumentCoder<Cursor>::encode(Encoder& encoder, const Cursor& cursor)

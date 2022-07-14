@@ -200,13 +200,7 @@ ReplayResult Replayer::replay(const FloatRect& initialClip, bool trackReplayList
             break;
         }
 
-        auto [item, extent, itemSizeInBuffer] = displayListItem.value();
-
-        if (!initialClip.isZero() && extent && !extent->intersects(initialClip)) {
-            LOG_WITH_STREAM(DisplayLists, stream << "skipping " << i++ << " " << item);
-            result.numberOfBytesRead += itemSizeInBuffer;
-            continue;
-        }
+        auto [item, itemSizeInBuffer] = displayListItem.value();
 
         LOG_WITH_STREAM(DisplayLists, stream << "applying " << i++ << " " << item);
 
@@ -219,11 +213,8 @@ ReplayResult Replayer::replay(const FloatRect& initialClip, bool trackReplayList
 
         result.numberOfBytesRead += itemSizeInBuffer;
 
-        if (UNLIKELY(trackReplayList)) {
+        if (UNLIKELY(trackReplayList))
             replayList->append(item);
-            if (item.isDrawingItem())
-                replayList->addDrawingItemExtent(WTFMove(extent));
-        }
     }
 
     result.trackedDisplayList = WTFMove(replayList);
