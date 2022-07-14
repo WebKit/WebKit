@@ -106,6 +106,7 @@
 #include "ScriptedAnimationController.h"
 #include "ScrollAnimator.h"
 #include "ScrollSnapOffsetsInfo.h"
+#include "ScrollbarTheme.h"
 #include "ScrollingCoordinator.h"
 #include "Settings.h"
 #include "StyleResolver.h"
@@ -1267,6 +1268,9 @@ void FrameView::adjustScrollbarsForLayout(bool isFirstLayout)
     ScrollbarMode hMode;
     ScrollbarMode vMode;
     calculateScrollbarModesForLayout(hMode, vMode);
+
+    LOG_WITH_STREAM(Layout, stream << "FrameView " << this << " adjustScrollbarsForLayout - first layout " << isFirstLayout << " horizontal scrollbar mode:" << hMode << " vertical scrollbar mode:" << vMode);
+
     if (isFirstLayout && !layoutContext().isLayoutNested()) {
         setScrollbarsSuppressed(true);
         // Set the initial vMode to AlwaysOn if we're auto.
@@ -1306,7 +1310,7 @@ void FrameView::willDoLayout(WeakPtr<RenderElement> layoutRoot)
     LayoutSize newSize = layoutSize();
     if (oldSize != newSize) {
         m_size = newSize;
-        LOG(Layout, "  layout size changed from %.3fx%.3f to %.3fx%.3f", oldSize.width().toFloat(), oldSize.height().toFloat(),     newSize.width().toFloat(), newSize.height().toFloat());
+        LOG_WITH_STREAM(Layout, stream << "  layout size changed from " << oldSize << " to " << newSize);
         layoutContext().setNeedsFullRepaint();
         if (!firstLayout)
             markRootOrBodyRendererDirty();
@@ -1486,6 +1490,19 @@ void FrameView::logMockScrollbarsControllerMessage(const String& message) const
 String FrameView::debugDescription() const
 {
     return makeString("FrameView 0x", hex(reinterpret_cast<uintptr_t>(this), Lowercase), ' ', frame().debugDescription());
+}
+
+bool FrameView::canShowNonOverlayScrollbars() const
+{
+    auto hasCustomScrollbarStyle = [&] {
+        auto element = rootElementForCustomScrollbarPartStyle(PseudoId::Scrollbar);
+        if (!element || !is<RenderBox>(element->renderer()))
+            return false;
+
+        return downcast<RenderBox>(*element->renderer()).style().hasPseudoStyle(PseudoId::Scrollbar);
+    }();
+
+    return canHaveScrollbars() && (hasCustomScrollbarStyle || !ScrollbarTheme::theme().usesOverlayScrollbars());
 }
 
 bool FrameView::styleHidesScrollbarWithOrientation(ScrollbarOrientation orientation) const

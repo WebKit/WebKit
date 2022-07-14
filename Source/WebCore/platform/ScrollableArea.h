@@ -170,7 +170,12 @@ public:
     };
     WEBCORE_EXPORT virtual void availableContentSizeChanged(AvailableSizeChangeReason);
 
+    // This returns information about existing scrollbars, not scrollbars that may be created in future.
     bool hasOverlayScrollbars() const;
+
+    // Returns true if any scrollbars that might be created would be non-overlay scrollbars.
+    WEBCORE_EXPORT virtual bool canShowNonOverlayScrollbars() const;
+
     WEBCORE_EXPORT virtual void setScrollbarOverlayStyle(ScrollbarOverlayStyle);
     ScrollbarOverlayStyle scrollbarOverlayStyle() const { return m_scrollbarOverlayStyle; }
     void invalidateScrollbars();
