@@ -109,6 +109,10 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
             }
 
             CFBundleRef webKitBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebKit"));
+            if (!webKitBundle) {
+                RELEASE_LOG_FAULT(IPC, "XPCServiceEventHandler: Couldn't load bundle with using 'com.apple.WebKit' identifier");
+                return;
+            }
             typedef void (*InitializerFunction)(xpc_connection_t, xpc_object_t, xpc_object_t);
             InitializerFunction initializerFunctionPtr = reinterpret_cast<InitializerFunction>(CFBundleGetFunctionPointerForName(webKitBundle, entryPointFunctionName));
             if (!initializerFunctionPtr) {
