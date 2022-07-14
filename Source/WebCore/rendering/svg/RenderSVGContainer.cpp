@@ -35,6 +35,7 @@
 #include "RenderTreeBuilder.h"
 #include "RenderView.h"
 #include "SVGContainerLayout.h"
+#include "SVGLayerTransformUpdater.h"
 #include "SVGRenderingContext.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
@@ -51,36 +52,6 @@ RenderSVGContainer::RenderSVGContainer(SVGElement& element, RenderStyle&& style)
 }
 
 RenderSVGContainer::~RenderSVGContainer() = default;
-
-// Helper class, move to its own file once utilized in more than one place.
-class SVGLayerTransformUpdater {
-    WTF_MAKE_NONCOPYABLE(SVGLayerTransformUpdater);
-public:
-    SVGLayerTransformUpdater(RenderLayerModelObject& renderer)
-        : m_renderer(renderer)
-    {
-        if (!m_renderer.hasLayer())
-            return;
-
-        m_transformReferenceBox = m_renderer.transformReferenceBoxRect();
-        m_renderer.updateLayerTransform();
-    }
-
-
-    ~SVGLayerTransformUpdater()
-    {
-        if (!m_renderer.hasLayer())
-            return;
-        if (m_renderer.transformReferenceBoxRect() == m_transformReferenceBox)
-            return;
-
-        m_renderer.updateLayerTransform();
-    }
-
-private:
-    RenderLayerModelObject& m_renderer;
-    FloatRect m_transformReferenceBox;
-};
 
 void RenderSVGContainer::layout()
 {
