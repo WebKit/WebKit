@@ -75,6 +75,7 @@ public:
     void echoTwice(ClientConnection*, const String&, CompletionHandler<void(const String&)>&& replySender);
     void requestSystemNotificationPermission(ClientConnection*, const String&, CompletionHandler<void(bool)>&& replySender);
     void getOriginsWithPushAndNotificationPermissions(ClientConnection*, CompletionHandler<void(const Vector<String>&)>&& replySender);
+    void setPushAndNotificationsEnabledForOrigin(ClientConnection*, const String& originString, bool, CompletionHandler<void()>&& replySender);
     void deletePushRegistration(const String&, const String&, CompletionHandler<void()>&&);
     void deletePushAndNotificationRegistration(ClientConnection*, const String& originString, CompletionHandler<void(const String&)>&& replySender);
     void setDebugModeIsEnabled(ClientConnection*, bool);
@@ -82,6 +83,7 @@ public:
     void injectPushMessageForTesting(ClientConnection*, const PushMessageForTesting&, CompletionHandler<void(bool)>&&);
     void injectEncryptedPushMessageForTesting(ClientConnection*, const String&, CompletionHandler<void(bool)>&&);
     void getPendingPushMessages(ClientConnection*, CompletionHandler<void(const Vector<WebKit::WebPushMessage>&)>&& replySender);
+    void getPushTopicsForTesting(OSObjectPtr<xpc_object_t>&&);
     void subscribeToPushService(ClientConnection*, const URL& scopeURL, const Vector<uint8_t>& applicationServerKey, CompletionHandler<void(const Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&)>&& replySender);
     void unsubscribeFromPushService(ClientConnection*, const URL& scopeURL, std::optional<WebCore::PushSubscriptionIdentifier>, CompletionHandler<void(const Expected<bool, WebCore::ExceptionData>&)>&& replySender);
     void getPushSubscription(ClientConnection*, const URL& scopeURL, CompletionHandler<void(const Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&)>&& replySender);
@@ -98,6 +100,7 @@ private:
     Daemon();
 
     CompletionHandler<void(EncodedMessage&&)> createReplySender(WebKit::WebPushD::MessageType, OSObjectPtr<xpc_object_t>&& request);
+    void decodeAndHandleRawXPCMessage(WebKit::WebPushD::RawXPCMessageType, OSObjectPtr<xpc_object_t>&&);
     void decodeAndHandleMessage(xpc_connection_t, WebKit::WebPushD::MessageType, Span<const uint8_t> encodedMessage, CompletionHandler<void(EncodedMessage&&)>&&);
 
     bool canRegisterForNotifications(ClientConnection&);

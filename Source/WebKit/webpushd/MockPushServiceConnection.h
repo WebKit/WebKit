@@ -39,19 +39,25 @@ public:
     void subscribe(const String& topic, const Vector<uint8_t>& vapidPublicKey, SubscribeHandler&&) override;
     void unsubscribe(const String& topic, const Vector<uint8_t>& vapidPublicKey, UnsubscribeHandler&&) override;
 
-    Vector<String> enabledTopics() override;
-    Vector<String> ignoredTopics() override;
-    Vector<String> opportunisticTopics() override;
-    Vector<String> nonWakingTopics() override;
+    Vector<String> enabledTopics() override { return m_enabledTopics; }
+    Vector<String> ignoredTopics() override { return m_ignoredTopics; }
+    Vector<String> opportunisticTopics() override { return m_opportunisticTopics; }
+    Vector<String> nonWakingTopics() override { return m_nonWakingTopics; }
 
-    void setEnabledTopics(Vector<String>&&) override;
-    void setIgnoredTopics(Vector<String>&&) override;
-    void setOpportunisticTopics(Vector<String>&&) override;
-    void setNonWakingTopics(Vector<String>&&) override;
+    void setEnabledTopics(Vector<String>&& enabledTopics) override { m_enabledTopics = enabledTopics; }
+    void setIgnoredTopics(Vector<String>&& ignoredTopics) override { m_ignoredTopics = ignoredTopics; }
+    void setOpportunisticTopics(Vector<String>&& opportunisticTopics) override { m_opportunisticTopics = opportunisticTopics; }
+    void setNonWakingTopics(Vector<String>&& nonWakingTopics) override { m_nonWakingTopics = nonWakingTopics; }
 
     void setTopicLists(TopicLists&&) override;
 
     void setPublicTokenForTesting(Vector<uint8_t>&&) override;
+
+private:
+    Vector<String> m_enabledTopics;
+    Vector<String> m_ignoredTopics;
+    Vector<String> m_opportunisticTopics;
+    Vector<String> m_nonWakingTopics;
 };
 
 } // namespace WebPushD

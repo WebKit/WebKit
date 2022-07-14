@@ -44,11 +44,14 @@
 #import <mach/mach_init.h>
 #import <mach/task.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/OSObjectPtr.h>
+#import <wtf/spi/darwin/XPCSPI.h>
 #import <wtf/text/Base64.h>
 
 #if ENABLE(NOTIFICATIONS) && ENABLE(NOTIFICATION_EVENT) && (PLATFORM(MAC) || PLATFORM(IOS))
 
 using WebKit::WebPushD::MessageType;
+using WebKit::WebPushD::RawXPCMessageType;
 
 static bool alertReceived = false;
 @interface NotificationPermissionDelegate : NSObject<WKUIDelegatePrivate>
@@ -173,11 +176,17 @@ static void cleanUpTestWebPushD(NSURL *tempDir)
     EXPECT_NULL(error);
 }
 
+template <typename T>
+static void addMessageTypeHeaders(xpc_object_t request, T messageType)
+{
+    xpc_dictionary_set_uint64(request, "protocol version", 1);
+    xpc_dictionary_set_uint64(request, "message type", static_cast<uint64_t>(messageType));
+}
+
 static RetainPtr<xpc_object_t> createMessageDictionary(MessageType messageType, const Vector<uint8_t>& message)
 {
     auto dictionary = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
-    xpc_dictionary_set_uint64(dictionary.get(), "protocol version", 1);
-    xpc_dictionary_set_uint64(dictionary.get(), "message type", static_cast<uint64_t>(messageType));
+    addMessageTypeHeaders(dictionary.get(), messageType);
     xpc_dictionary_set_data(dictionary.get(), "encoded message", message.data(), message.size());
     return WTFMove(dictionary);
 }
@@ -200,6 +209,21 @@ void sendMessageToDaemonWaitingForReply(xpc_connection_t connection, MessageType
     });
 
     TestWebKitAPI::Util::run(&done);
+}
+
+static Vector<String> toStringVector(xpc_object_t object)
+{
+    if (xpc_get_type(object) != XPC_TYPE_ARRAY)
+        return { };
+
+    Vector<String> result;
+    for (size_t i = 0; i < xpc_array_get_count(object); i++) {
+        auto element = xpc_array_get_string(object, i);
+        if (!element)
+            return { };
+        result.append(String::fromUTF8(element));
+    }
+    return result;
 }
 
 static void sendConfigurationWithAuditToken(xpc_connection_t connection)
@@ -430,6 +454,19 @@ protected:
         EXPECT_EQ([messages count], 1u);
 
         return [messages objectAtIndex:0];
+    }
+
+    std::pair<Vector<String>, Vector<String>> getPushTopics()
+    {
+        auto connection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service");
+        auto request = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+        addMessageTypeHeaders(request.get(), RawXPCMessageType::GetPushTopicsForTesting);
+        auto reply = xpc_connection_send_message_with_reply_sync(connection.get(), request.get());
+
+        auto enabledTopics = toStringVector(xpc_dictionary_get_value(reply, "enabled"));
+        auto ignoredTopics = toStringVector(xpc_dictionary_get_value(reply, "ignored"));
+
+        return std::make_pair(WTFMove(enabledTopics), WTFMove(ignoredTopics));
     }
 
     RetainPtr<NSURL> m_tempDirectory;
@@ -873,6 +910,78 @@ TEST_F(WebPushDTest, UnsubscribesOnPermissionReset)
     }, 5, @"Timed out waiting for push subscription to be removed.");
 
     ASSERT_FALSE(isSubscribed);
+}
+
+TEST_F(WebPushDTest, IgnoresSubscriptionOnPermissionDenied)
+{
+    static constexpr auto source = R"HTML(
+    <script src="/constants.js"></script>
+    <script>
+    navigator.serviceWorker.register('/sw.js').then(async () => {
+        const registration = await navigator.serviceWorker.ready;
+        let result = null;
+        try {
+            let subscription = await registration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: VALID_SERVER_KEY
+            });
+            result = "Subscribed";
+        } catch (e) {
+            result = "Error: " + e;
+        }
+        window.webkit.messageHandlers.note.postMessage(result);
+    });
+    </script>
+    )HTML"_s;
+
+    __block RetainPtr<id> result = nil;
+    __block bool done = false;
+    [m_notificationMessageHandler setMessageHandler:^(id message) {
+        result = message;
+        done = true;
+    }];
+
+    loadRequest(source, ""_s);
+    TestWebKitAPI::Util::run(&done);
+
+    ASSERT_TRUE([result isEqualToString:@"Subscribed"]);
+    ASSERT_TRUE(hasPushSubscription());
+
+    // Topic should be moved to ignored list after denying permission, but the subscription should still exist.
+    m_notificationProvider->setPermission(m_server->origin(), false);
+
+    bool isIgnored = false;
+    TestWebKitAPI::Util::waitForConditionWithLogging([this, &isIgnored] {
+        auto [enabledTopics, ignoredTopics] = getPushTopics();
+        if (!enabledTopics.size() && ignoredTopics.size()) {
+            isIgnored = true;
+            return true;
+        }
+
+        sleep(1);
+        return false;
+    }, 5, @"Timed out waiting for push subscription to be ignored.");
+
+    ASSERT_TRUE(isIgnored);
+    ASSERT_TRUE(hasPushSubscription());
+
+    // Topic should be moved back to enabled list after allowing permission, and the subscription should still exist.
+    m_notificationProvider->setPermission(m_server->origin(), true);
+
+    bool isEnabled = false;
+    TestWebKitAPI::Util::waitForConditionWithLogging([this, &isEnabled] {
+        auto [enabledTopics, ignoredTopics] = getPushTopics();
+        if (enabledTopics.size() && !ignoredTopics.size()) {
+            isEnabled = true;
+            return true;
+        }
+
+        sleep(1);
+        return false;
+    }, 5, @"Timed out waiting for push subscription to be enabled.");
+
+    ASSERT_TRUE(isEnabled);
+    ASSERT_TRUE(hasPushSubscription());
 }
 
 #if ENABLE(INSTALL_COORDINATION_BUNDLES)

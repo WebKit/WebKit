@@ -27,12 +27,48 @@
 #include "Utilities.h"
 #include <WebCore/PushDatabase.h>
 #include <WebCore/SQLiteDatabase.h>
+#include <algorithm>
 #include <iterator>
 #include <wtf/FileSystem.h>
 
 #if ENABLE(SERVICE_WORKER)
 
 using namespace WebCore;
+
+// Due to argument-dependent lookup, equality operators have to be in the WebCore namespace for gtest to find them.
+namespace WebCore {
+
+static bool operator==(const PushRecord& a, const PushRecord& b)
+{
+    return a.identifier == b.identifier
+        && a.bundleID == b.bundleID
+        && a.securityOrigin == b.securityOrigin
+        && a.scope == b.scope
+        && a.endpoint == b.endpoint
+        && a.topic == b.topic
+        && a.serverVAPIDPublicKey == b.serverVAPIDPublicKey
+        && a.clientPublicKey == b.clientPublicKey
+        && a.clientPrivateKey == b.clientPrivateKey
+        && a.sharedAuthSecret == b.sharedAuthSecret
+        && a.expirationTime == b.expirationTime;
+}
+
+static bool operator==(PushTopics a, PushTopics b)
+{
+    auto lessThan = [](const String& lhs, const String& rhs) {
+        return codePointCompare(lhs, rhs) < 0;
+    };
+
+    std::sort(a.enabledTopics.begin(), a.enabledTopics.end(), lessThan);
+    std::sort(a.ignoredTopics.begin(), a.ignoredTopics.end(), lessThan);
+    std::sort(b.enabledTopics.begin(), b.enabledTopics.end(), lessThan);
+    std::sort(b.ignoredTopics.begin(), b.ignoredTopics.end(), lessThan);
+
+    return a.enabledTopics == b.enabledTopics
+        && a.ignoredTopics == b.ignoredTopics;
+}
+
+}
 
 namespace TestWebKitAPI {
 
@@ -115,10 +151,10 @@ static HashSet<uint64_t> getRowIdentifiersSync(PushDatabase& database)
     return rowIdentifiers;
 }
 
-static Vector<String> getTopicsSync(PushDatabase& database)
+static PushTopics getTopicsSync(PushDatabase& database)
 {
     bool done = false;
-    Vector<String> topics;
+    PushTopics topics;
 
     database.getTopics([&done, &topics](auto&& result) {
         topics = WTFMove(result);
@@ -250,7 +286,7 @@ public:
         return getRowIdentifiersSync(*db);
     }
 
-    Vector<String> getTopics()
+    PushTopics getTopics()
     {
         return getTopicsSync(*db);
     }
@@ -297,6 +333,20 @@ public:
         return count;
     }
 
+    bool setPushesEnabledForOrigin(const String& bundleID, const String& securityOrigin, bool enabled)
+    {
+        bool done = false;
+        bool result = false;
+
+        db->setPushesEnabledForOrigin(bundleID, securityOrigin, enabled, [&done, &result](bool recordsChanged) {
+            result = recordsChanged;
+            done = true;
+        });
+        Util::run(&done);
+
+        return result;
+    }
+
     void SetUp() final
     {
         db = createDatabaseSync(SQLiteDatabase::inMemoryPath());
@@ -307,21 +357,6 @@ public:
         ASSERT_TRUE(insertResult4 = insertRecord(record4));
     }
 };
-
-static bool operator==(const PushRecord& a, const PushRecord& b)
-{
-    return a.identifier == b.identifier
-        && a.bundleID == b.bundleID
-        && a.securityOrigin == b.securityOrigin
-        && a.scope == b.scope
-        && a.endpoint == b.endpoint
-        && a.topic == b.topic
-        && a.serverVAPIDPublicKey == b.serverVAPIDPublicKey
-        && a.clientPublicKey == b.clientPublicKey
-        && a.clientPrivateKey == b.clientPrivateKey
-        && a.sharedAuthSecret == b.sharedAuthSecret
-        && a.expirationTime == b.expirationTime;
-}
 
 TEST_F(PushDatabaseTest, UpdatePublicToken)
 {
@@ -442,7 +477,7 @@ TEST_F(PushDatabaseTest, GetRecordByTopic)
 {
     auto result1 = getRecordByTopic(record1.topic);
     ASSERT_TRUE(result1);
-    EXPECT_TRUE(*result1 == *insertResult1);
+    EXPECT_EQ(*result1, *insertResult1);
 
     auto result2 = getRecordByTopic("foo"_s);
     EXPECT_FALSE(result2);
@@ -452,7 +487,7 @@ TEST_F(PushDatabaseTest, GetRecordByBundleIdentifierAndScope)
 {
     auto result1 = getRecordByBundleIdentifierAndScope(record1.bundleID, record1.scope);
     ASSERT_TRUE(result1);
-    EXPECT_TRUE(*result1 == *insertResult1);
+    EXPECT_EQ(*result1, *insertResult1);
 
     auto result2 = getRecordByBundleIdentifierAndScope(record1.bundleID, "bar"_s);
     EXPECT_FALSE(result2);
@@ -463,7 +498,7 @@ TEST_F(PushDatabaseTest, GetRecordByBundleIdentifierAndScope)
 
 TEST_F(PushDatabaseTest, GetTopics)
 {
-    Vector<String> expected { "topic1"_s, "topic2"_s, "topic3"_s, "topic4"_s };
+    PushTopics expected { { "topic1"_s, "topic2"_s, "topic3"_s, "topic4"_s }, { } };
     EXPECT_EQ(getTopics(), expected);
 }
 
@@ -482,6 +517,26 @@ TEST_F(PushDatabaseTest, IncrementSilentPushCount)
 
     count = incrementSilentPushCount("nonexistent"_s, "nonexistent"_s);
     EXPECT_EQ(count, 0u);
+}
+
+TEST_F(PushDatabaseTest, setPushesEnabledForOrigin)
+{
+    bool result = setPushesEnabledForOrigin("com.apple.Safari"_s, "https://www.apple.com"_s, false);
+    EXPECT_TRUE(result);
+
+    auto topics = getTopics();
+    auto expectedTopics = PushTopics { { "topic1"_s, "topic2"_s }, { "topic3"_s, "topic4"_s } };
+    EXPECT_EQ(topics, expectedTopics);
+
+    result = setPushesEnabledForOrigin("com.apple.Safari"_s, "https://www.apple.com"_s, true);
+    EXPECT_TRUE(result);
+
+    topics = getTopics();
+    expectedTopics = PushTopics { { "topic1"_s, "topic2"_s, "topic3"_s, "topic4"_s }, { } };
+    EXPECT_EQ(topics, expectedTopics);
+
+    result = setPushesEnabledForOrigin("com.apple.nonexistent"_s, "https://www.apple.com"_s, false);
+    EXPECT_FALSE(result);
 }
 
 TEST(PushDatabase, ManyInFlightOps)
@@ -527,7 +582,7 @@ TEST(PushDatabase, ManyInFlightOps)
         ASSERT_TRUE(createResult);
 
         auto topics = getTopicsSync(*createResult);
-        EXPECT_EQ(topics.size(), recordCount);
+        EXPECT_EQ(topics.enabledTopics.size(), recordCount);
     }
 }
 
@@ -627,6 +682,8 @@ TEST(PushDatabase, CanMigrateV2DatabaseToCurrentSchema)
         ASSERT_EQ(rowIdentifiers, (HashSet<uint64_t> { 1, 2, 3, 4 }));
     }
 }
+
+// TODO: add test for enable/disable topics
 
 } // namespace TestWebKitAPI
 

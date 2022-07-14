@@ -210,6 +210,7 @@ void xpc_dictionary_set_value(xpc_object_t, const char* key, xpc_object_t value)
 xpc_type_t xpc_get_type(xpc_object_t);
 const char* xpc_type_get_name(xpc_type_t);
 void xpc_main(xpc_connection_handler_t);
+xpc_object_t xpc_string_create(const char *string);
 const char* xpc_string_get_string_ptr(xpc_object_t);
 os_transaction_t os_transaction_create(const char *description);
 void xpc_transaction_exit_clean(void);

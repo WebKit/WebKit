@@ -65,44 +65,12 @@ void MockPushServiceConnection::unsubscribe(const String&, const Vector<uint8_t>
     handler(true, nil);
 }
 
-Vector<String> MockPushServiceConnection::enabledTopics()
+void MockPushServiceConnection::setTopicLists(TopicLists&& topics)
 {
-    return { };
-}
-
-Vector<String> MockPushServiceConnection::ignoredTopics()
-{
-    return { };
-}
-
-Vector<String> MockPushServiceConnection::opportunisticTopics()
-{
-    return { };
-}
-
-Vector<String> MockPushServiceConnection::nonWakingTopics()
-{
-    return { };
-}
-
-void MockPushServiceConnection::setEnabledTopics(Vector<String>&& topics)
-{
-}
-
-void MockPushServiceConnection::setIgnoredTopics(Vector<String>&& topics)
-{
-}
-
-void MockPushServiceConnection::setOpportunisticTopics(Vector<String>&& topics)
-{
-}
-
-void MockPushServiceConnection::setNonWakingTopics(Vector<String>&& topics)
-{
-}
-
-void MockPushServiceConnection::setTopicLists(TopicLists&& topicLists)
-{
+    setEnabledTopics(WTFMove(topics.enabledTopics));
+    setIgnoredTopics(WTFMove(topics.ignoredTopics));
+    setOpportunisticTopics(WTFMove(topics.opportunisticTopics));
+    setNonWakingTopics(WTFMove(topics.nonWakingTopics));
 }
 
 void MockPushServiceConnection::setPublicTokenForTesting(Vector<uint8_t>&& token)
