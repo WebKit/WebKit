@@ -72,6 +72,13 @@
 /LayoutTests/http/tests/websocket/tests/hybi/inspector @dcrousso @patrickangle
 /LayoutTests/inspector @dcrousso @patrickangle
 
+/Source/WebCore/dom @rniwa
+/LayoutTests/fast/dom @rniwa
+/LayoutTests/fast/events @rniwa
+
+/Source/WebCore/editing @rniwa
+/LayoutTests/editing @rniwa
+
 /Source/WebCore/Modules/apple-pay @dcrousso
 /Source/WebCore/Modules/paymentrequest @dcrousso
 /LayoutTests/http/tests/paymentrequest @dcrousso
