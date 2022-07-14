@@ -161,22 +161,6 @@ void MediaPlayerPrivateWebM::load(const String& url)
     request.setAllowCookies(true);
     request.setFirstPartyForCookies(URL(url));
 
-    ResourceLoaderOptions loaderOptions(
-        SendCallbackPolicy::SendCallbacks,
-        ContentSniffingPolicy::DoNotSniffContent,
-        DataBufferingPolicy::BufferData,
-        StoredCredentialsPolicy::DoNotUse,
-        ClientCredentialPolicy::CannotAskClientForCredentials,
-        FetchOptions::Credentials::Omit,
-        SecurityCheckPolicy::DoSecurityCheck,
-        FetchOptions::Mode::NoCors,
-        CertificateInfoPolicy::DoNotIncludeCertificateInfo,
-        ContentSecurityPolicyImposition::DoPolicyCheck,
-        DefersLoadingPolicy::AllowDefersLoading,
-        CachingPolicy::DisallowCaching
-    );
-    loaderOptions.destination = FetchOptions::Destination::Video;
-
     auto loader = m_player->createResourceLoader();
     m_resourceClient = WebMResourceClient::create(*this, *loader, WTFMove(request));
     
