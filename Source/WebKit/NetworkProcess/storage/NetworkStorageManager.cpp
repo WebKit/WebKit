@@ -54,6 +54,10 @@
 
 namespace WebKit {
 
+#if PLATFORM(IOS_FAMILY)
+static const Seconds defaultBackupExclusionPeriod { 24_h };
+#endif
+
 static std::optional<WebCore::ClientOrigin> readOriginFromFile(const String& filePath)
 {
     ASSERT(!RunLoop::isMain());
@@ -79,10 +83,10 @@ static std::optional<WebCore::ClientOrigin> readOriginFromFile(const String& fil
     return origin;
 }
 
-static void writeOriginToFile(const String& filePath, const WebCore::ClientOrigin& origin)
+static bool writeOriginToFile(const String& filePath, const WebCore::ClientOrigin& origin)
 {
     if (filePath.isEmpty() || FileSystem::fileExists(filePath))
-        return;
+        return false;
 
     FileSystem::makeAllDirectories(FileSystem::parentPath(filePath));
     auto originFileHandle = FileSystem::openFile(filePath, FileSystem::FileOpenMode::ReadWrite);
@@ -92,12 +96,13 @@ static void writeOriginToFile(const String& filePath, const WebCore::ClientOrigi
 
     if (!FileSystem::isHandleValid(originFileHandle)) {
         LOG_ERROR("writeOriginToFile: Failed to open origin file '%s'", filePath.utf8().data());
-        return;
+        return false;
     }
 
     WTF::Persistence::Encoder encoder;
     encoder << origin;
     FileSystem::writeToFile(originFileHandle, encoder.buffer(), encoder.bufferSize());
+    return true;
 }
 
 static String encode(const String& string, FileSystem::Salt salt)
@@ -183,6 +188,9 @@ NetworkStorageManager::NetworkStorageManager(PAL::SessionID sessionID, IPC::Conn
     , m_defaultOriginQuota(defaultOriginQuota)
     , m_defaultThirdPartyOriginQuota(defaultThirdPartyOriginQuota)
     , m_parentConnection(connection)
+#if PLATFORM(IOS_FAMILY)
+    , m_backupExclusionPeriod(defaultBackupExclusionPeriod)
+#endif
 {
     ASSERT(RunLoop::isMain());
 
@@ -200,6 +208,13 @@ NetworkStorageManager::NetworkStorageManager(PAL::SessionID sessionID, IPC::Conn
             auto saltPath = FileSystem::pathByAppendingComponent(m_path, "salt"_s);
             m_salt = valueOrDefault(FileSystem::readOrMakeSalt(saltPath));
         }
+#if PLATFORM(IOS_FAMILY)
+        // Exclude LocalStorage directory to reduce backup traffic. See https://webkit.org/b/168388.
+        if (m_shouldUseCustomPaths && !m_customLocalStoragePath.isEmpty()) {
+            FileSystem::makeAllDirectories(m_customLocalStoragePath);
+            FileSystem::setExcludedFromBackup(m_customLocalStoragePath, true);
+        }
+#endif
     });
 }
 
@@ -273,23 +288,58 @@ void NetworkStorageManager::stopReceivingMessageFromConnection(IPC::Connection& 
     });
 }
 
+#if PLATFORM(IOS_FAMILY)
+
+void NetworkStorageManager::includeOriginInBackupIfNecessary(OriginStorageManager& manager)
+{
+    if (manager.includedInBackup())
+        return;
+
+    auto originFileCreationTimestamp = manager.originFileCreationTimestamp();
+    if (!originFileCreationTimestamp)
+        return;
+
+    if (WallTime::now() - originFileCreationTimestamp.value() < m_backupExclusionPeriod)
+        return;
+    
+    FileSystem::setExcludedFromBackup(manager.path(), false);
+    manager.markIncludedInBackup();
+}
+
+#endif
+
 void NetworkStorageManager::writeOriginToFileIfNecessary(const WebCore::ClientOrigin& origin, StorageAreaBase* storageArea)
 {
     auto* manager = m_localOriginStorageManagers.get(origin);
-    if (!manager || manager->didWriteOriginToFile())
+    if (!manager)
         return;
 
-    auto originDirectory = originDirectoryPath(m_path, origin, m_salt);
+    if (manager->originFileCreationTimestamp()) {
+#if PLATFORM(IOS_FAMILY)
+        includeOriginInBackupIfNecessary(*manager);
+#endif
+        return;
+    }
+
+    auto originDirectory = manager->path();
     if (originDirectory.isEmpty())
         return;
 
-    if (storageArea) {
-        if (isEmptyOriginDirectory(originDirectory))
-            return;
-    }
+    if (storageArea && isEmptyOriginDirectory(originDirectory))
+        return;
 
-    writeOriginToFile(originFilePath(originDirectory), origin);
-    manager->markDidWriteOriginToFile();
+    auto originFile = originFilePath(originDirectory);
+    bool didWrite = writeOriginToFile(originFile, origin);
+    auto timestamp = FileSystem::fileCreationTime(originFile);
+    manager->setOriginFileCreationTimestamp(timestamp);
+#if PLATFORM(IOS_FAMILY)
+    if (didWrite)
+        FileSystem::setExcludedFromBackup(originDirectory, true);
+    else
+        includeOriginInBackupIfNecessary(*manager);
+#else
+    UNUSED_PARAM(didWrite);
+#endif
 }
 
 OriginStorageManager& NetworkStorageManager::localOriginStorageManager(const WebCore::ClientOrigin& origin, ShouldWriteOriginFile shouldWriteOriginFile)
@@ -808,6 +858,20 @@ void NetworkStorageManager::resetQuotaUpdatedBasedOnUsageForTesting(WebCore::Cli
             manager->quotaManager().resetQuotaUpdatedBasedOnUsageForTesting();
     });
 }
+
+#if PLATFORM(IOS_FAMILY)
+
+void NetworkStorageManager::setBackupExclusionPeriodForTesting(Seconds period, CompletionHandler<void()>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+
+    m_queue->dispatch([this, protectedThis = Ref { *this }, period, completionHandler = WTFMove(completionHandler)]() mutable {
+        m_backupExclusionPeriod = period;
+        RunLoop::main().dispatch(WTFMove(completionHandler));
+    });
+}
+
+#endif
 
 void NetworkStorageManager::connectToStorageArea(IPC::Connection& connection, WebCore::StorageType type, StorageAreaMapIdentifier sourceIdentifier, StorageNamespaceIdentifier namespaceIdentifier, const WebCore::ClientOrigin& origin, CompletionHandler<void(StorageAreaIdentifier, HashMap<String, String>, uint64_t)>&& completionHandler)
 {

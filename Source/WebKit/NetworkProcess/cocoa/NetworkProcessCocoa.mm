@@ -32,6 +32,7 @@
 #import "NetworkProcessCreationParameters.h"
 #import "NetworkResourceLoader.h"
 #import "NetworkSessionCocoa.h"
+#import "NetworkStorageManager.h"
 #import "SandboxExtension.h"
 #import "WebCookieManager.h"
 #import <WebCore/NetworkStorageSession.h>
@@ -255,5 +256,16 @@ const String& NetworkProcess::uiProcessBundleIdentifier() const
 
     return m_uiProcessBundleIdentifier;
 }
+
+#if PLATFORM(IOS_FAMILY)
+
+void NetworkProcess::setBackupExclusionPeriodForTesting(PAL::SessionID sessionID, Seconds period, CompletionHandler<void()>&& completionHandler)
+{
+    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+    if (auto* session = networkSession(sessionID))
+        session->storageManager().setBackupExclusionPeriodForTesting(period, [callbackAggregator] { });
+}
+
+#endif
 
 } // namespace WebKit

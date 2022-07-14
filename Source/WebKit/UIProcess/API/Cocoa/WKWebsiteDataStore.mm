@@ -916,4 +916,17 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     });
 }
 
+-(void)_setBackupExclusionPeriodForTesting:(double)seconds completionHandler:(void(^)(void))completionHandler
+{
+#if PLATFORM(IOS_FAMILY)
+    _websiteDataStore->setBackupExclusionPeriodForTesting(Seconds(seconds), [completionHandler = makeBlockPtr(completionHandler)] {
+        completionHandler();
+    });
+#else
+    UNUSED_PARAM(seconds);
+    completionHandler();
+#endif
+}
+
+
 @end

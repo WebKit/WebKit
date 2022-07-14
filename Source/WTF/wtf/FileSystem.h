@@ -134,7 +134,7 @@ WTF_EXPORT_PRIVATE std::optional<FileType> fileType(const String&);
 WTF_EXPORT_PRIVATE std::optional<FileType> fileTypeFollowingSymlinks(const String&);
 
 WTF_EXPORT_PRIVATE void setMetadataURL(const String& path, const String& urlString, const String& referrer = { });
-WTF_EXPORT_PRIVATE bool excludeFromBackup(const String&); // Returns true if successful.
+WTF_EXPORT_PRIVATE bool setExcludedFromBackup(const String&, bool); // Returns true if successful.
 
 WTF_EXPORT_PRIVATE Vector<String> listDirectory(const String& path); // Returns file names, not full paths.
 

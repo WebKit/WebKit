@@ -66,9 +66,13 @@ public:
     OptionSet<WebsiteDataType> fetchDataTypesInList(OptionSet<WebsiteDataType>);
     void deleteData(OptionSet<WebsiteDataType>, WallTime);
     void moveData(OptionSet<WebsiteDataType>, const String& localStoragePath, const String& idbStoragePath);
-    bool didWriteOriginToFile() const { return m_didWriteOriginToFile; }
-    void markDidWriteOriginToFile() { m_didWriteOriginToFile = true; }
     void deleteEmptyDirectory();
+    std::optional<WallTime> originFileCreationTimestamp() const { return m_originFileCreationTimestamp; }
+    void setOriginFileCreationTimestamp(std::optional<WallTime> timestamp) { m_originFileCreationTimestamp = timestamp; }
+#if PLATFORM(IOS_FAMILY)
+    bool includedInBackup() const { return m_includedInBackup; }
+    void markIncludedInBackup() { m_includedInBackup = true; }
+#endif
 
 private:
     enum class StorageBucketMode : bool;
@@ -85,7 +89,10 @@ private:
     RefPtr<QuotaManager> m_quotaManager;
     bool m_persisted { false };
     bool m_shouldUseCustomPaths;
-    bool m_didWriteOriginToFile { false };
+    std::optional<WallTime> m_originFileCreationTimestamp;
+#if PLATFORM(IOS_FAMILY)
+    bool m_includedInBackup { false };
+#endif
 };
 
 } // namespace WebKit

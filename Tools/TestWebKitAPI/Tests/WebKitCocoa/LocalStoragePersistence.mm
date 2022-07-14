@@ -514,15 +514,20 @@ TEST(WKWebView, LocalStorageNoSizeOverflow)
 
 TEST(WKWebView, LocalStorageDirectoryExcludedFromBackup)
 {
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    RetainPtr<NSURL> url = [[[configuration websiteDataStore] _configuration] _webStorageDirectory];
-    // Create a directory and make it not excluded.
-    [[NSFileManager defaultManager] createDirectoryAtURL:url.get() withIntermediateDirectories:YES attributes:nil error:nullptr];
-    [url.get() setResourceValue:@NO forKey:NSURLIsExcludedFromBackupKey error:nil];
+    auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    websiteDataStoreConfiguration.get().shouldUseCustomStoragePaths = true;
+    RetainPtr<NSURL> webStorageDirectory = [websiteDataStoreConfiguration _webStorageDirectory];
+    auto websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
+    
+    // Create WebStorage directory and make it not excluded.
+    [[NSFileManager defaultManager] createDirectoryAtURL:webStorageDirectory.get() withIntermediateDirectories:YES attributes:nil error:nullptr];
+    [webStorageDirectory.get() setResourceValue:@NO forKey:NSURLIsExcludedFromBackupKey error:nil];
     NSNumber *isDirectoryExcluded = nil;
-    EXPECT_TRUE([url.get() getResourceValue:&isDirectoryExcluded forKey:NSURLIsExcludedFromBackupKey error:nil]);
+    EXPECT_TRUE([webStorageDirectory.get() getResourceValue:&isDirectoryExcluded forKey:NSURLIsExcludedFromBackupKey error:nil]);
     EXPECT_FALSE(isDirectoryExcluded.boolValue);
 
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:websiteDataStore.get()];
     auto delegate = adoptNS([[LocalStorageNavigationDelegate alloc] init]);
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView setNavigationDelegate:delegate.get()];
@@ -531,15 +536,15 @@ TEST(WKWebView, LocalStorageDirectoryExcludedFromBackup)
     [webView loadRequest:request];
     TestWebKitAPI::Util::run(&didFinishNavigationBoolean);
 
-    bool finishedRunningScript = false;
+    done = false;
     [webView evaluateJavaScript:@"localStorage.getItem('key');" completionHandler: [&] (id result, NSError *) {
-        finishedRunningScript = true;
+        done = true;
     }];
-    TestWebKitAPI::Util::run(&finishedRunningScript);
+    TestWebKitAPI::Util::run(&done);
 
     // Create new url that has updated value.
-    url = [[[configuration websiteDataStore] _configuration] _webStorageDirectory];
-    EXPECT_TRUE([url.get() getResourceValue:&isDirectoryExcluded forKey:NSURLIsExcludedFromBackupKey error:nil]);
+    webStorageDirectory = [websiteDataStoreConfiguration _webStorageDirectory];
+    EXPECT_TRUE([webStorageDirectory.get() getResourceValue:&isDirectoryExcluded forKey:NSURLIsExcludedFromBackupKey error:nil]);
     EXPECT_TRUE(isDirectoryExcluded.boolValue);
 }
 

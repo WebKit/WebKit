@@ -225,10 +225,10 @@ bool makeSafeToUseMemoryMapForPath(const String& path)
 }
 #endif
 
-bool excludeFromBackup(const String& path)
+bool setExcludedFromBackup(const String& path, bool excluded)
 {
     NSError *error;
-    if (![[NSURL fileURLWithPath:(NSString *)path isDirectory:YES] setResourceValue:@YES forKey:NSURLIsExcludedFromBackupKey error:&error]) {
+    if (![[NSURL fileURLWithPath:(NSString *)path isDirectory:YES] setResourceValue:[NSNumber numberWithBool:excluded] forKey:NSURLIsExcludedFromBackupKey error:&error]) {
         LOG_ERROR("Cannot exclude path '%s' from backup with error '%@'", path.utf8().data(), error.localizedDescription);
         return false;
     }
