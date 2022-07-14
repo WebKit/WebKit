@@ -360,10 +360,7 @@ Modules/webauthn/AuthenticatorAssertionResponse.cpp
 Modules/webauthn/AuthenticatorAttestationResponse.cpp
 Modules/webauthn/AuthenticatorCoordinator.cpp
 Modules/webauthn/AuthenticatorResponse.cpp
-Modules/webauthn/AuthenticatorTransport.cpp
 Modules/webauthn/PublicKeyCredential.cpp
-Modules/webauthn/PublicKeyCredentialCreationOptions.cpp
-Modules/webauthn/PublicKeyCredentialRequestOptions.cpp
 Modules/webauthn/WebAuthenticationUtils.cpp
 Modules/webauthn/apdu/ApduCommand.cpp
 Modules/webauthn/apdu/ApduResponse.cpp
