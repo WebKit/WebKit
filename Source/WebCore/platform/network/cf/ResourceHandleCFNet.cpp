@@ -282,14 +282,16 @@ void ResourceHandle::willSendRequest(ResourceRequest&& request, ResourceResponse
 
     String partition = firstRequest().cachePartition();
 
+    if (auto authorization = d->m_firstRequest.httpHeaderField(HTTPHeaderName::Authorization); !authorization.isNull()
+        && protocolHostAndPortAreEqual(d->m_firstRequest.url(), request.url()))
+        request.setHTTPHeaderField(HTTPHeaderName::Authorization, authorization);
+
     if (!protocolHostAndPortAreEqual(request.url(), redirectResponse.url())) {
         // The network layer might carry over some headers from the original request that
         // we want to strip here because the redirect is cross-origin.
         request.clearHTTPAuthorization();
         request.clearHTTPOrigin();
     } else {
-        if (auto authorization = d->m_firstRequest.httpHeaderField(HTTPHeaderName::Authorization); !authorization.isNull())
-            request.setHTTPHeaderField(HTTPHeaderName::Authorization, authorization);
 
         // Only consider applying authentication credentials if this is actually a redirect and the redirect
         // URL didn't include credentials of its own.

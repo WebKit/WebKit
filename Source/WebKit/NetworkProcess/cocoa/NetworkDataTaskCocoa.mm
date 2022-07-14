@@ -518,7 +518,12 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
     m_password = url.password();
     m_lastHTTPMethod = request.httpMethod();
     request.removeCredentials();
-    
+
+    if (auto authorization = m_firstRequest.httpHeaderField(WebCore::HTTPHeaderName::Authorization); !authorization.isNull()
+        && linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::AuthorizationHeaderOnSameOriginRedirects)
+        && protocolHostAndPortAreEqual(m_firstRequest.url(), request.url()))
+        request.setHTTPHeaderField(WebCore::HTTPHeaderName::Authorization, authorization);
+
     if (!protocolHostAndPortAreEqual(request.url(), redirectResponse.url())) {
         // The network layer might carry over some headers from the original request that
         // we want to strip here because the redirect is cross-origin.
@@ -526,9 +531,6 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
         request.clearHTTPOrigin();
 
     } else {
-        if (auto authorization = m_firstRequest.httpHeaderField(WebCore::HTTPHeaderName::Authorization); !authorization.isNull() && linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::AuthorizationHeaderOnSameOriginRedirects))
-            request.setHTTPHeaderField(WebCore::HTTPHeaderName::Authorization, authorization);
-
 #if USE(CREDENTIAL_STORAGE_WITH_NETWORK_SESSION)
         // Only consider applying authentication credentials if this is actually a redirect and the redirect
         // URL didn't include credentials of its own.
