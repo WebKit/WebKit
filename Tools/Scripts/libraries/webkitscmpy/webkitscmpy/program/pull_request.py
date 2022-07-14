@@ -172,14 +172,23 @@ class PullRequest(Command):
 
     @classmethod
     def pull_request_branch_point(cls, repository, args, **kwargs):
-        # FIXME: We can do better by infering the remote from the branch point, if it's not specified
-        source_remote = args.remote or 'origin'
+        branch_point = Branch.branch_point(repository)
+        source_remote = args.remote
+        if not source_remote:
+            bp_remotes = set(repository.branches_for(hash=branch_point.hash, remote=None).keys())
+            for remote in repository.source_remotes():
+                if remote in bp_remotes:
+                    source_remote = remote
+                    args.remote = remote
+                    break
+        if not source_remote:
+            source_remote = repository.default_remote
 
         if repository.branch is None or repository.branch in repository.DEFAULT_BRANCHES or repository.PROD_BRANCHES.match(repository.branch):
             if Branch.main(
                 args, repository,
                 why="'{}' is not a pull request branch".format(repository.branch),
-                redact=source_remote != 'origin', **kwargs
+                redact=source_remote != repository.default_remote, **kwargs
             ):
                 sys.stderr.write("Abandoning pushing pull-request because '{}' could not be created\n".format(args.issue))
                 return None
@@ -191,7 +200,6 @@ class PullRequest(Command):
             sys.stderr.write("'{}' is not a remote in this repository\n".format(source_remote))
             return None
 
-        branch_point = Branch.branch_point(repository)
         if run([
             repository.executable(), 'branch', '-f',
             branch_point.branch,
@@ -249,7 +257,7 @@ class PullRequest(Command):
 
     @classmethod
     def add_comment_to_reverted_commit_bug_tracker(cls, repository, args, pr, commit):
-        source_remote = args.remote or 'origin'
+        source_remote = args.remote or repository.default_remote
         rmt = repository.remote(name=source_remote)
         if not rmt:
             sys.stderr.write("'{}' doesn't have a recognized remote\n".format(repository.root_path))
@@ -268,8 +276,7 @@ class PullRequest(Command):
 
     @classmethod
     def create_pull_request(cls, repository, args, branch_point, callback=None, unblock=True, update_issue=True):
-        # FIXME: We can do better by inferring the remote from the branch point, if it's not specified
-        source_remote = args.remote or 'origin'
+        source_remote = args.remote or repository.default_remote
         if not repository.config().get('remote.{}.url'.format(source_remote)):
             sys.stderr.write("'{}' is not a remote in this repository\n".format(source_remote))
             return 1
@@ -323,7 +330,7 @@ class PullRequest(Command):
                 pr_issue.set_labels(labels)
 
         if isinstance(remote_repo, remote.GitHub):
-            target = 'fork' if source_remote == 'origin' else '{}-fork'.format(source_remote)
+            target = 'fork' if source_remote == repository.default_remote else '{}-fork'.format(source_remote)
             if not repository.config().get('remote.{}.url'.format(target)):
                 sys.stderr.write("'{}' is not a remote in this repository. Have you run `{} setup` yet?\n".format(
                     source_remote, os.path.basename(sys.argv[0]),
