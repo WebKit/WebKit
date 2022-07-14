@@ -79,12 +79,12 @@
 /Source/WebCore/editing @rniwa
 /LayoutTests/editing @rniwa
 
-/Source/WebCore/Modules/apple-pay @dcrousso
+/Source/WebCore/Modules/applepay @dcrousso
 /Source/WebCore/Modules/paymentrequest @dcrousso
 /LayoutTests/http/tests/paymentrequest @dcrousso
 /LayoutTests/http/tests/ssl/applepay @dcrousso
 
-/Source/WebCore/Modules/apple-pay-ams-ui @dcrousso
+/Source/WebCore/Modules/applepay-ams-ui @dcrousso
 /LayoutTests/http/tests/ssl/applepay-ams-ui @dcrousso
 
 /Source/WebCore/Modules/mediacontrols @dcrousso
