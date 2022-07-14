@@ -28,6 +28,7 @@
 
 #include "ElementInlines.h"
 #include "HTMLFrameOwnerElement.h"
+#include "Logging.h"
 #include "RenderBox.h"
 #include "SVGElement.h"
 

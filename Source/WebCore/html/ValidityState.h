@@ -23,6 +23,7 @@
 #pragma once
 
 #include "FormAssociatedElement.h"
+#include "HTMLElement.h"
 
 namespace WebCore {
 

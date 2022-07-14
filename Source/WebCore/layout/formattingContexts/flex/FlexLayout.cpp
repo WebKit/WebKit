@@ -28,6 +28,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "FlexFormattingContext.h"
 #include "FlexRect.h"
 #include "LayoutContext.h"
 
