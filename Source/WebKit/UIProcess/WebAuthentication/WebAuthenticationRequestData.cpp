@@ -44,11 +44,11 @@ UserVerificationRequirement getUserVerificationRequirement(const std::variant<Pu
 {
     if (std::holds_alternative<PublicKeyCredentialCreationOptions>(options)) {
         if (auto authenticatorSelection = std::get<PublicKeyCredentialCreationOptions>(options).authenticatorSelection)
-            return authenticatorSelection->userVerification();
+            return authenticatorSelection->userVerification;
         return UserVerificationRequirement::Preferred;
     }
 
-    return std::get<PublicKeyCredentialRequestOptions>(options).userVerification();
+    return std::get<PublicKeyCredentialRequestOptions>(options).userVerification;
 }
 
 } // namespace WebKit
