@@ -244,6 +244,13 @@ void RenderLayerModelObject::suspendAnimations(MonotonicTime time)
     layer()->backing()->suspendAnimations(time);
 }
 
+TransformationMatrix* RenderLayerModelObject::layerTransform() const
+{
+    if (hasLayer())
+        return layer()->transform();
+    return nullptr;
+}
+
 void RenderLayerModelObject::updateLayerTransform()
 {
     // Transform-origin depends on box size, so we need to update the layer transform after layout.

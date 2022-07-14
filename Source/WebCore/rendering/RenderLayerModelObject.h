@@ -85,8 +85,9 @@ public:
     virtual void setCurrentSVGLayoutLocation(const LayoutPoint&) { ASSERT_NOT_REACHED(); }
 #endif
 
-    void updateLayerTransform();
+    TransformationMatrix* layerTransform() const;
 
+    virtual void updateLayerTransform();
     virtual void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> = RenderStyle::allTransformOperations) const = 0;
 
 protected:

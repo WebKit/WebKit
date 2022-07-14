@@ -34,6 +34,8 @@ public:
             return;
 
         m_transformReferenceBox = m_renderer.transformReferenceBoxRect();
+        m_layerTransform = m_renderer.layerTransform();
+
         m_renderer.updateLayerTransform();
     }
 
@@ -47,9 +49,22 @@ public:
         m_renderer.updateLayerTransform();
     }
 
+    bool layerTransformChanged() const
+    {
+        auto* layerTransform = m_renderer.layerTransform();
+
+        bool hasTransform = !!layerTransform;
+        bool hadTransform = !!m_layerTransform;
+        if (hasTransform != hadTransform)
+            return true;
+
+        return hasTransform && (*layerTransform != *m_layerTransform);
+    }
+
 private:
     RenderLayerModelObject& m_renderer;
     FloatRect m_transformReferenceBox;
+    TransformationMatrix* m_layerTransform { nullptr };
 };
 
 } // namespace WebCore

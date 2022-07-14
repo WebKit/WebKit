@@ -4,7 +4,7 @@
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2009 Google, Inc.
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
- * Copyright (C) 2020, 2021 Igalia S.L.
+ * Copyright (C) 2020, 2021, 2022 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -47,6 +47,7 @@
 #include "SVGContainerLayout.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGImage.h"
+#include "SVGLayerTransformUpdater.h"
 #include "SVGRenderingContext.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
@@ -156,6 +157,14 @@ LayoutUnit RenderSVGRoot::computeReplacedLogicalHeight(std::optional<LayoutUnit>
     return RenderReplaced::computeReplacedLogicalHeight(estimatedUsedWidth);
 }
 
+bool RenderSVGRoot::updateLayoutSizeIfNeeded()
+{
+    auto previousSize = size();
+    updateLogicalWidth();
+    updateLogicalHeight();
+    return selfNeedsLayout() || (svgSVGElement().hasRelativeLengths() && previousSize != size());
+}
+
 void RenderSVGRoot::layout()
 {
     SetForScope change(m_inLayout, true);
@@ -167,41 +176,46 @@ void RenderSVGRoot::layout()
     // Arbitrary affine transforms are incompatible with RenderLayoutState.
     LayoutStateDisabler layoutStateDisabler(view().frameView().layoutContext());
 
-    bool needsLayout = selfNeedsLayout();
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
 
-    auto previousLogicalSize = size();
-    updateLogicalWidth();
-    updateLogicalHeight();
-    m_isLayoutSizeChanged = needsLayout || (svgSVGElement().hasRelativeLengths() && previousLogicalSize != size());
-
-    auto oldTransform = m_supplementalLocalToParentTransform;
-    computeTransformationMatrices();
-
-    if (oldTransform != m_supplementalLocalToParentTransform)
-        m_didTransformToRootUpdate = true;
-    else if (previousLogicalSize != size())
-        m_didTransformToRootUpdate = true;
-
-    // FIXME: [LBSE] Upstream SVGLengthContext changes
-    // svgSVGElement().updateLengthContext();
-
-    // FIXME: [LBSE] Upstream SVGLayerTransformUpdater
-    // SVGLayerTransformUpdater transformUpdater(*this);
-    updateLayerInformation();
-
+    // Update layer transform before laying out children (SVG needs access to the transform matrices during layout for on-screen text font-size calculations).
+    // Eventually re-update if the transform reference box, relevant for transform-origin, has changed during layout.
+    //
+    // FIXME: LBSE should not repeat the same mistake -- remove the on-screen text font-size hacks that predate the modern solutions to this.
     {
-        SVGContainerLayout containerLayout(*this);
-        containerLayout.layoutChildren(needsLayout || SVGRenderSupport::filtersForceContainerLayout(*this));
+        ASSERT(!m_isLayoutSizeChanged);
+        SetForScope trackLayoutSizeChanges(m_isLayoutSizeChanged, updateLayoutSizeIfNeeded());
 
-        SVGBoundingBoxComputation boundingBoxComputation(*this);
-        m_objectBoundingBox = boundingBoxComputation.computeDecoratedBoundingBox(SVGBoundingBoxComputation::objectBoundingBoxDecoration);
-
-        constexpr auto objectBoundingBoxDecorationWithoutTransformations = SVGBoundingBoxComputation::objectBoundingBoxDecoration | SVGBoundingBoxComputation::DecorationOption::IgnoreTransformations;
-        m_objectBoundingBoxWithoutTransformations = boundingBoxComputation.computeDecoratedBoundingBox(objectBoundingBoxDecorationWithoutTransformations);
-
-        m_strokeBoundingBox = boundingBoxComputation.computeDecoratedBoundingBox(SVGBoundingBoxComputation::strokeBoundingBoxDecoration);
+        ASSERT(!m_didTransformToRootUpdate);
+        SVGLayerTransformUpdater transformUpdater(*this);
+        SetForScope trackTransformChanges(m_didTransformToRootUpdate, transformUpdater.layerTransformChanged());
+        layoutChildren();
     }
+
+    clearOverflow();
+    if (!shouldApplyViewportClip()) {
+        addVisualOverflow(visualOverflowRectEquivalent());
+        addVisualEffectOverflow();
+    }
+
+    invalidateBackgroundObscurationStatus();
+
+    repainter.repaintAfterLayout();
+    clearNeedsLayout();
+}
+
+void RenderSVGRoot::layoutChildren()
+{
+    SVGContainerLayout containerLayout(*this);
+    containerLayout.layoutChildren(selfNeedsLayout() || SVGRenderSupport::filtersForceContainerLayout(*this));
+
+    SVGBoundingBoxComputation boundingBoxComputation(*this);
+    m_objectBoundingBox = boundingBoxComputation.computeDecoratedBoundingBox(SVGBoundingBoxComputation::objectBoundingBoxDecoration);
+
+    constexpr auto objectBoundingBoxDecorationWithoutTransformations = SVGBoundingBoxComputation::objectBoundingBoxDecoration | SVGBoundingBoxComputation::DecorationOption::IgnoreTransformations;
+    m_objectBoundingBoxWithoutTransformations = boundingBoxComputation.computeDecoratedBoundingBox(objectBoundingBoxDecorationWithoutTransformations);
+
+    m_strokeBoundingBox = boundingBoxComputation.computeDecoratedBoundingBox(SVGBoundingBoxComputation::strokeBoundingBoxDecoration);
 
     if (!m_resourcesNeedingToInvalidateClients.isEmpty()) {
         // Invalidate resource clients, which may mark some nodes for layout.
@@ -210,26 +224,9 @@ void RenderSVGRoot::layout()
             SVGResourcesCache::clientStyleChanged(*resource, StyleDifference::Layout, resource->style());
         }
 
-        m_isLayoutSizeChanged = false;
-
-        SVGContainerLayout containerLayout(*this);
+        SetForScope clearLayoutSizeChanged(m_isLayoutSizeChanged, false);
         containerLayout.layoutChildren(false);
     }
-
-    m_isLayoutSizeChanged = false;
-    m_didTransformToRootUpdate = false;
-
-    clearOverflow();
-    if (!shouldApplyViewportClip()) {
-        auto visualOverflowRect = enclosingLayoutRect(m_viewBoxTransform.mapRect(visualOverflowRectEquivalent()));
-        addVisualOverflow(visualOverflowRect);
-        addVisualEffectOverflow();
-    }
-    invalidateBackgroundObscurationStatus();
-
-    repainter.repaintAfterLayout();
-
-    clearNeedsLayout();
 }
 
 bool RenderSVGRoot::shouldApplyViewportClip() const
@@ -388,23 +385,24 @@ void RenderSVGRoot::styleDidChange(StyleDifference diff, const RenderStyle* oldS
     SVGResourcesCache::clientStyleChanged(*this, diff, style());
 }
 
-void RenderSVGRoot::updateLayerInformation()
-{
-    /* FIXME: [LBSE] Upstream SVGRenderSupport changes
-    if (SVGRenderSupport::isRenderingDisabledDueToEmptySVGViewBox(*this))
-        layer()->dirtyAncestorChainVisibleDescendantStatus();
-     */
-}
-
 void RenderSVGRoot::updateFromStyle()
 {
     RenderReplaced::updateFromStyle();
 
-    setHasSVGTransform();
-    setHasTransformRelatedProperty();
-
     if (shouldApplyViewportClip())
         setHasNonVisibleOverflow();
+}
+
+void RenderSVGRoot::updateLayerTransform()
+{
+    RenderReplaced::updateLayerTransform();
+
+    if (!hasLayer())
+        return;
+
+    // An empty viewBox disables the rendering -- dirty the visible descendant status!
+    if (svgSVGElement().hasAttribute(SVGNames::viewBoxAttr) && svgSVGElement().hasEmptyViewBox())
+        layer()->dirtyVisibleContentStatus();
 }
 
 LayoutRect RenderSVGRoot::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
@@ -412,29 +410,7 @@ LayoutRect RenderSVGRoot::clippedOverflowRect(const RenderLayerModelObject* repa
     if (isInsideEntirelyHiddenLayer())
         return { };
 
-    auto repaintRect = LayoutRect(valueOrDefault(m_viewBoxTransform.inverse()).mapRect(borderBoxRect()));
-    return computeRect(repaintRect, repaintContainer, context);
-}
-
-void RenderSVGRoot::computeTransformationMatrices()
-{
-    // Compute SVG viewBox transformation against unscaled viewport.
-    auto viewportSize = currentViewportSize();
-    auto zoom = style().effectiveZoom();
-    if (zoom != 1)
-        viewportSize.scale(1.0 / zoom);
-    m_viewBoxTransform = svgSVGElement().viewBoxToViewTransform(viewportSize.width(), viewportSize.height());
-
-    // Compute total transformation matrix, taking border / padding (for child renderers that don't follow the CSS box model object!) + panning into account.
-    auto panning = svgSVGElement().currentTranslateValue();
-    auto contentLocation = contentBoxLocation();
-
-    m_supplementalLocalToParentTransform.makeIdentity();
-    m_supplementalLocalToParentTransform.translate(panning.x() + contentLocation.x(), panning.y() + contentLocation.y());
-    m_supplementalLocalToParentTransform.scale(zoom);
-
-    if (!m_viewBoxTransform.isIdentity())
-        m_supplementalLocalToParentTransform.multiply(m_viewBoxTransform);
+    return computeRect(borderBoxRect(), repaintContainer, context);
 }
 
 bool RenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
@@ -487,7 +463,7 @@ void RenderSVGRoot::addResourceForClientInvalidation(RenderSVGResourceContainer*
     */
 }
 
-FloatSize RenderSVGRoot::currentViewportSize() const
+FloatSize RenderSVGRoot::computeViewportSize() const
 {
     FloatSize result = contentBoxRect().size();
     result.setWidth(result.width() + verticalScrollbarWidth());
@@ -612,8 +588,7 @@ LayoutRect RenderSVGRoot::overflowClipRect(const LayoutPoint& location, RenderFr
 
 void RenderSVGRoot::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
 {
-    auto localRect = LayoutRect(valueOrDefault(m_supplementalLocalToParentTransform.inverse()).mapRect(borderBoxRect()));
-    rects.append(snappedIntRect(accumulatedOffset, localRect.size()));
+    rects.append(snappedIntRect(accumulatedOffset, borderBoxRect().size()));
 }
 
 void RenderSVGRoot::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
@@ -622,7 +597,7 @@ void RenderSVGRoot::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) cons
     if (fragmentedFlow && fragmentedFlow->absoluteQuadsForBox(quads, wasFixed, this))
         return;
 
-    auto localRect = FloatRect(valueOrDefault(m_supplementalLocalToParentTransform.inverse()).mapRect(borderBoxRect()));
+    FloatRect localRect = borderBoxRect();
     quads.append(localToAbsoluteQuad(localRect, UseTransforms, wasFixed));
 }
 

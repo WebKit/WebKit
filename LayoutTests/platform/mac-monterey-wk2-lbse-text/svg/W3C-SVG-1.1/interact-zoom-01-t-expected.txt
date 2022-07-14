@@ -1,7 +1,7 @@
 layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
-  RenderSVGRoot {svg} at (0,0) size 80x60
+  RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (5,2) size 65x41
   RenderSVGContainer {g} at (0,0) size 66x41
 layer at (5,2) size 65x41
