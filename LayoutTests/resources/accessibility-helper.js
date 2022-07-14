@@ -152,7 +152,7 @@ function expect(expression, expectedValue) {
     const evalExpression = `${expression} === ${expectedValue}`;
     if (eval(evalExpression))
         return `PASS: ${evalExpression}\n`;
-    return `FAIL: ${expression} !== ${expectedValue}\n`;
+    return `FAIL: ${expression} !== ${expectedValue}, was ${eval(expression)}\n`;
 }
 
 async function expectAsyncExpression(expression, expectedValue) {
