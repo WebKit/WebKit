@@ -5053,7 +5053,7 @@ class TestValidateChange(BuildStepMixinAdditions, unittest.TestCase):
         return rc
 
     def test_fast_cq_patches_trigger_fast_cq_mode(self):
-        fast_cq_patch_titles = ('REVERT OF r1234', 'revert of r1234', '[fast-cq]Patch', '[FAST-cq] patch', 'fast-cq-patch', 'FAST-CQ Patch')
+        fast_cq_patch_titles = ('REVERT OF r1234', 'revert of r1234', 'REVERT of 123456@main', '[fast-cq]Patch', '[FAST-cq] patch', 'fast-cq-patch', 'FAST-CQ Patch')
         for fast_cq_patch_title in fast_cq_patch_titles:
             self.setupStep(ValidateChange(verifyBugClosed=False))
             ValidateChange.get_patch_json = lambda x, patch_id: self.get_patch(title=fast_cq_patch_title)

@@ -1217,7 +1217,7 @@ class BugzillaMixin(AddToLogMixin):
     addURLs = False
     bug_open_statuses = ['UNCONFIRMED', 'NEW', 'ASSIGNED', 'REOPENED']
     bug_closed_statuses = ['RESOLVED', 'VERIFIED', 'CLOSED']
-    fast_cq_preambles = ('revert of r', 'fast-cq', '[fast-cq]')
+    fast_cq_preambles = ('revert of ', 'fast-cq', '[fast-cq]')
 
     def fetch_data_from_url_with_authentication_bugzilla(self, url):
         response = None
