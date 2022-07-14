@@ -69,6 +69,14 @@ struct RemovedPushRecord {
     WEBCORE_EXPORT RemovedPushRecord isolatedCopy() &&;
 };
 
+struct PushTopics {
+    Vector<String> enabledTopics;
+    Vector<String> ignoredTopics;
+
+    WEBCORE_EXPORT PushTopics isolatedCopy() const &;
+    WEBCORE_EXPORT PushTopics isolatedCopy() &&;
+};
+
 class PushDatabase {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -86,17 +94,21 @@ public:
     WEBCORE_EXPORT void getRecordByTopic(const String& topic, CompletionHandler<void(std::optional<PushRecord>&&)>&&);
     WEBCORE_EXPORT void getRecordByBundleIdentifierAndScope(const String& bundleID, const String& scope, CompletionHandler<void(std::optional<PushRecord>&&)>&&);
     WEBCORE_EXPORT void getIdentifiers(CompletionHandler<void(HashSet<PushSubscriptionIdentifier>&&)>&&);
-    WEBCORE_EXPORT void getTopics(CompletionHandler<void(Vector<String>&&)>&&);
+    WEBCORE_EXPORT void getTopics(CompletionHandler<void(PushTopics&&)>&&);
 
     WEBCORE_EXPORT void incrementSilentPushCount(const String& bundleID, const String& securityOrigin, CompletionHandler<void(unsigned)>&&);
 
     WEBCORE_EXPORT void removeRecordsByBundleIdentifier(const String& bundleID, CompletionHandler<void(Vector<RemovedPushRecord>&&)>&&);
     WEBCORE_EXPORT void removeRecordsByBundleIdentifierAndSecurityOrigin(const String& bundleID, const String& securityOrigin, CompletionHandler<void(Vector<RemovedPushRecord>&&)>&&);
 
+    WEBCORE_EXPORT void setPushesEnabledForOrigin(const String& bundleID, const String& securityOrigin, bool, CompletionHandler<void(bool recordsChanged)>&&);
+
 private:
     PushDatabase(Ref<WorkQueue>&&, UniqueRef<WebCore::SQLiteDatabase>&&);
     WebCore::SQLiteStatementAutoResetScope cachedStatementOnQueue(ASCIILiteral query);
     void dispatchOnWorkQueue(Function<void()>&&);
+
+    enum class SubscriptionSetState { Enabled, Ignored };
 
     Ref<WorkQueue> m_queue;
     UniqueRef<WebCore::SQLiteDatabase> m_db;

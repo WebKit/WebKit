@@ -43,6 +43,7 @@
 #import <wtf/Span.h>
 #import <wtf/URL.h>
 #import <wtf/WorkQueue.h>
+#import <wtf/spi/darwin/XPCSPI.h>
 
 using namespace WebKit::WebPushD;
 
@@ -66,6 +67,11 @@ END
 FUNCTION(getOriginsWithPushAndNotificationPermissions)
 ARGUMENTS()
 REPLY(const Vector<String>&)
+END
+
+FUNCTION(setPushAndNotificationsEnabledForOrigin)
+ARGUMENTS(String, bool)
+REPLY()
 END
 
 FUNCTION(deletePushAndNotificationRegistration)
@@ -148,6 +154,7 @@ END
 #undef END
 
 #define EMPTY_REPLY(mf) WebPushD::EncodedMessage mf::encodeReply() { return { }; }
+EMPTY_REPLY(setPushAndNotificationsEnabledForOrigin);
 EMPTY_REPLY(setPublicTokenForTesting);
 #undef EMPTY_REPLY
 
@@ -388,8 +395,14 @@ void Daemon::connectionEventHandler(xpc_object_t request)
         // FIXME: Cut off this connection
         return;
     }
+    
+    auto messageTypeValue = xpc_dictionary_get_uint64(request, protocolMessageTypeKey);
+    if (messageTypeValue >= static_cast<uint64_t>(RawXPCMessageType::GetPushTopicsForTesting)) {
+        decodeAndHandleRawXPCMessage(static_cast<RawXPCMessageType>(messageTypeValue), request);
+        return;
+    }
 
-    auto messageType { static_cast<MessageType>(xpc_dictionary_get_uint64(request, protocolMessageTypeKey)) };
+    auto messageType { static_cast<MessageType>(messageTypeValue) };
     size_t dataSize { 0 };
     const void* data = xpc_dictionary_get_data(request, protocolEncodedMessageKey, &dataSize);
     Span<const uint8_t> encodedMessage { static_cast<const uint8_t*>(data), dataSize };
@@ -426,6 +439,15 @@ CompletionHandler<void(EncodedMessage&&)> Daemon::createReplySender(MessageType 
     };
 }
 
+void Daemon::decodeAndHandleRawXPCMessage(RawXPCMessageType messageType, OSObjectPtr<xpc_object_t>&& request)
+{
+    switch (messageType) {
+    case RawXPCMessageType::GetPushTopicsForTesting:
+        getPushTopicsForTesting(WTFMove(request));
+        break;
+    }
+}
+
 void Daemon::decodeAndHandleMessage(xpc_connection_t connection, MessageType messageType, Span<const uint8_t> encodedMessage, CompletionHandler<void(EncodedMessage&&)>&& replySender)
 {
     ASSERT(messageTypeSendsReply(messageType) == !!replySender);
@@ -438,6 +460,9 @@ void Daemon::decodeAndHandleMessage(xpc_connection_t connection, MessageType mes
         break;
     case MessageType::GetOriginsWithPushAndNotificationPermissions:
         handleWebPushDMessageWithReply<MessageInfo::getOriginsWithPushAndNotificationPermissions>(clientConnection, encodedMessage, WTFMove(replySender));
+        break;
+    case MessageType::SetPushAndNotificationsEnabledForOrigin:
+        handleWebPushDMessageWithReply<MessageInfo::setPushAndNotificationsEnabledForOrigin>(clientConnection, encodedMessage, WTFMove(replySender));
         break;
     case MessageType::DeletePushAndNotificationRegistration:
         handleWebPushDMessageWithReply<MessageInfo::deletePushAndNotificationRegistration>(clientConnection, encodedMessage, WTFMove(replySender));
@@ -542,6 +567,23 @@ void Daemon::deletePushRegistration(const String& bundleIdentifier, const String
         m_pushService->removeRecordsForBundleIdentifierAndOrigin(bundleIdentifier, originString, [callback = WTFMove(callback)](auto&&) mutable {
             callback();
         });
+    });
+}
+
+void Daemon::setPushAndNotificationsEnabledForOrigin(ClientConnection* connection, const String& originString, bool enabled, CompletionHandler<void()>&& replySender)
+{
+    if (!canRegisterForNotifications(*connection)) {
+        replySender();
+        return;
+    }
+
+    runAfterStartingPushService([this, bundleIdentifier = connection->hostAppCodeSigningIdentifier(), originString, enabled, replySender = WTFMove(replySender)]() mutable {
+        if (!m_pushService) {
+            replySender();
+            return;
+        }
+
+        m_pushService->setPushesEnabledForBundleIdentifierAndOrigin(bundleIdentifier, originString, enabled, WTFMove(replySender));
     });
 }
 
@@ -699,6 +741,33 @@ void Daemon::getPendingPushMessages(ClientConnection* connection, CompletionHand
     
     if (m_pushMessages.isEmpty())
         releaseIncomingPushTransaction();
+}
+
+static OSObjectPtr<xpc_object_t> toXPCArray(const Vector<String>& elements)
+{
+    auto array = adoptOSObject(xpc_array_create(nullptr, 0));
+    for (auto& element : elements) {
+        auto xpcElement = adoptOSObject(xpc_string_create(element.utf8().data()));
+        xpc_array_append_value(array.get(), xpcElement.get());
+    }
+    return array;
+}
+
+void Daemon::getPushTopicsForTesting(OSObjectPtr<xpc_object_t>&& request)
+{
+    auto connection = adoptOSObject(xpc_dictionary_get_remote_connection(request.get()));
+    auto reply = adoptOSObject(xpc_dictionary_create_reply(request.get()));
+
+    runAfterStartingPushService([this, connection = WTFMove(connection), reply = WTFMove(reply)]() mutable {        
+        if (!m_pushService) {
+            xpc_connection_send_message(connection.get(), reply.get());
+            return;
+        }
+
+        xpc_dictionary_set_value(reply.get(), "enabled", toXPCArray(m_pushService->enabledTopics()).get());
+        xpc_dictionary_set_value(reply.get(), "ignored", toXPCArray(m_pushService->ignoredTopics()).get());
+        xpc_connection_send_message(connection.get(), reply.get());
+    });
 }
 
 void Daemon::subscribeToPushService(ClientConnection* connection, const URL& scopeURL, const Vector<uint8_t>& vapidPublicKey, CompletionHandler<void(const Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&)>&& replySender)

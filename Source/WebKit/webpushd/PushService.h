@@ -57,9 +57,14 @@ public:
     PushServiceConnection& connection() { return m_connection; }
     WebCore::PushDatabase& database() { return m_database; }
 
+    Vector<String> enabledTopics() { return m_connection->enabledTopics(); }
+    Vector<String> ignoredTopics() { return m_connection->ignoredTopics(); }
+
     void getSubscription(const String& bundleIdentifier, const String& scope, CompletionHandler<void(const Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&)>&&);
     void subscribe(const String& bundleIdentifier, const String& scope, const Vector<uint8_t>& vapidPublicKey, CompletionHandler<void(const Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&)>&&);
     void unsubscribe(const String& bundleIdentifier, const String& scope, std::optional<WebCore::PushSubscriptionIdentifier>, CompletionHandler<void(const Expected<bool, WebCore::ExceptionData>&)>&&);
+
+    void setPushesEnabledForBundleIdentifierAndOrigin(const String& bundleIdentifier, const String& securityOrigin, bool, CompletionHandler<void()>&&);
 
     void removeRecordsForBundleIdentifier(const String& bundleIdentifier, CompletionHandler<void(unsigned)>&&);
     void removeRecordsForBundleIdentifierAndOrigin(const String& bundleIdentifier, const String& securityOrigin, CompletionHandler<void(unsigned)>&&);

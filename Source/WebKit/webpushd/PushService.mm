@@ -46,8 +46,10 @@ namespace WebPushD {
 static void updateTopicLists(PushServiceConnection& connection, PushDatabase& database, CompletionHandler<void()> completionHandler)
 {
     database.getTopics([&connection, completionHandler = WTFMove(completionHandler)](auto&& topics) mutable {
-        // FIXME: move topics to ignored list based on user preferences.
-        connection.setEnabledTopics(WTFMove(topics));
+        PushServiceConnection::TopicLists topicLists;
+        topicLists.enabledTopics = WTFMove(topics.enabledTopics);
+        topicLists.ignoredTopics = WTFMove(topics.ignoredTopics);
+        connection.setTopicLists(WTFMove(topicLists));
         completionHandler();
     });
 }
@@ -518,6 +520,20 @@ void PushService::incrementSilentPushCount(const String& bundleIdentifier, const
         removeRecordsImpl(bundleIdentifier, securityOrigin, [handler = WTFMove(handler), silentPushCount](auto&&) mutable {
             handler(silentPushCount);
         });
+    });
+}
+
+void PushService::setPushesEnabledForBundleIdentifierAndOrigin(const String& bundleIdentifier, const String& securityOrigin, bool enabled, CompletionHandler<void()>&& handler)
+{
+    if (bundleIdentifier.isEmpty() || securityOrigin.isEmpty()) {
+        RELEASE_LOG_ERROR(Push, "Ignoring setPushesEnabledForBundleIdentifierAndOrigin request with bundleIdentifier (empty = %d) and securityOrigin (empty = %d)", bundleIdentifier.isEmpty(), securityOrigin.isEmpty());
+        return handler();
+    }
+
+    m_database->setPushesEnabledForOrigin(bundleIdentifier, securityOrigin, enabled, [this, handler = WTFMove(handler)](bool recordsChanged) mutable {
+        if (!recordsChanged)
+            return handler();
+        updateTopicLists(m_connection, m_database, WTFMove(handler));
     });
 }
 

@@ -277,35 +277,33 @@ void WebNotificationManagerProxy::providerDidCloseNotifications(API::Array* glob
     }
 }
 
-void WebNotificationManagerProxy::providerDidUpdateNotificationPolicy(const API::SecurityOrigin* origin, bool allowed)
+static RefPtr<WebsiteDataStore> persistentDataStoreIfExists()
 {
-    LOG(Notifications, "Provider did update notification policy for origin %s to %i", origin->securityOrigin().toString().utf8().data(), allowed);
+    RefPtr<WebsiteDataStore> result;
+    WebsiteDataStore::forEachWebsiteDataStore([&result](WebsiteDataStore& dataStore) {
+        if (dataStore.isPersistent())
+            result = &dataStore;
+    });
+    return result;
+}
 
-    WebProcessPool::sendToAllRemoteWorkerProcesses(Messages::WebNotificationManager::DidUpdateNotificationDecision(origin->securityOrigin().toString(), allowed));
-
-    if (!processPool())
+static void setPushesAndNotificationsEnabledForOrigin(const WebCore::SecurityOriginData& origin, bool enabled)
+{
+    auto dataStore = persistentDataStoreIfExists();
+    if (!dataStore)
         return;
 
-    processPool()->sendToAllProcesses(Messages::WebNotificationManager::DidUpdateNotificationDecision(origin->securityOrigin().toString(), allowed));
+    dataStore->networkProcess().setPushAndNotificationsEnabledForOrigin(dataStore->sessionID(), origin, enabled, []() { });
 }
 
 static void removePushSubscriptionsForOrigins(const Vector<WebCore::SecurityOriginData>& origins)
 {
-    RefPtr<NetworkProcessProxy> networkProcess;
-    auto sessionID = PAL::SessionID::defaultSessionID();
-
-    WebsiteDataStore::forEachWebsiteDataStore([&networkProcess, &sessionID](WebsiteDataStore& dataStore) {
-        if (!networkProcess && dataStore.isPersistent()) {
-            networkProcess = &dataStore.networkProcess();
-            sessionID = dataStore.sessionID();
-        }
-    });
-
-    if (!networkProcess)
+    auto dataStore = persistentDataStoreIfExists();
+    if (!dataStore)
         return;
 
     for (auto& origin : origins)
-        networkProcess->deletePushAndNotificationRegistration(sessionID, origin, [originString = origin.toString()](auto&&) { });
+        dataStore->networkProcess().deletePushAndNotificationRegistration(dataStore->sessionID(), origin, [originString = origin.toString()](auto&&) { });
 }
 
 static Vector<WebCore::SecurityOriginData> apiArrayToSecurityOrigins(API::Array* origins)
@@ -336,6 +334,20 @@ static Vector<String> apiArrayToSecurityOriginStrings(API::Array* origins)
         originStrings.uncheckedAppend(origins->at<API::SecurityOrigin>(i)->securityOrigin().toString());
 
     return originStrings;
+}
+
+void WebNotificationManagerProxy::providerDidUpdateNotificationPolicy(const API::SecurityOrigin* origin, bool enabled)
+{
+    RELEASE_LOG(Notifications, "Provider did update notification policy for origin %" PRIVATE_LOG_STRING " to %d", origin->securityOrigin().toString().utf8().data(), enabled);
+
+    if (this == &sharedServiceWorkerManager()) {
+        setPushesAndNotificationsEnabledForOrigin(origin->securityOrigin(), enabled);
+        WebProcessPool::sendToAllRemoteWorkerProcesses(Messages::WebNotificationManager::DidUpdateNotificationDecision(origin->securityOrigin().toString(), enabled));
+        return;
+    }
+
+    if (processPool())
+        processPool()->sendToAllProcesses(Messages::WebNotificationManager::DidUpdateNotificationDecision(origin->securityOrigin().toString(), enabled));
 }
 
 void WebNotificationManagerProxy::providerDidRemoveNotificationPolicies(API::Array* origins)
