@@ -1239,6 +1239,7 @@ inline bool RenderObject::hasPotentiallyScrollableOverflow() const
 WTF::TextStream& operator<<(WTF::TextStream&, const RenderObject&);
 
 #if ENABLE(TREE_DEBUGGING)
+void printPaintOrderTreeForLiveDocuments();
 void printRenderTreeForLiveDocuments();
 void printLayerTreeForLiveDocuments();
 void printGraphicsLayerTreeForLiveDocuments();

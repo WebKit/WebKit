@@ -1316,7 +1316,8 @@ WTF::TextStream& operator<<(WTF::TextStream&, PaintBehavior);
 #if ENABLE(TREE_DEBUGGING)
 // Outside the WebCore namespace for ease of invocation from lldb.
 void showLayerTree(const WebCore::RenderLayer*);
-void showPaintOrderTree(const WebCore::RenderLayer*);
 void showLayerTree(const WebCore::RenderObject*);
+void showPaintOrderTree(const WebCore::RenderLayer*);
+void showPaintOrderTree(const WebCore::RenderObject*);
 #endif
 

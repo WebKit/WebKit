@@ -6114,4 +6114,11 @@ void showPaintOrderTree(const WebCore::RenderLayer* layer)
     WTFLogAlways("%s", stream.release().utf8().data());
 }
 
+void showPaintOrderTree(const WebCore::RenderObject* renderer)
+{
+    if (!renderer)
+        return;
+    showPaintOrderTree(renderer->enclosingLayer());
+}
+
 #endif

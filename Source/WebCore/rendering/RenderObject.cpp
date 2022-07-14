@@ -2571,6 +2571,18 @@ TextStream& operator<<(TextStream& ts, const RenderObject& renderer)
 
 #if ENABLE(TREE_DEBUGGING)
 
+void printPaintOrderTreeForLiveDocuments()
+{
+    for (const auto* document : Document::allDocuments()) {
+        if (!document->renderView())
+            continue;
+        if (document->frame() && document->frame()->isMainFrame())
+            fprintf(stderr, "----------------------main frame--------------------------\n");
+        fprintf(stderr, "%s", document->url().string().utf8().data());
+        showPaintOrderTree(document->renderView());
+    }
+}
+
 void printRenderTreeForLiveDocuments()
 {
     for (const auto* document : Document::allDocuments()) {
