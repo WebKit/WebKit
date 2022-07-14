@@ -424,7 +424,7 @@ String createTemporaryZipArchive(const String&)
     return { };
 }
 
-bool excludeFromBackup(const String&)
+bool setExcludedFromBackup(const String&, bool)
 {
     return false;
 }

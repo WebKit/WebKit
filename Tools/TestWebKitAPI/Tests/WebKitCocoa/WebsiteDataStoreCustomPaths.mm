@@ -1245,3 +1245,59 @@ TEST(WebKit, DeleteEmptyOriginDirectoryWhenOriginIsGone)
         TestWebKitAPI::Util::spinRunLoop();
     EXPECT_FALSE([fileManager fileExistsAtPath:topOriginDirectory.path]);
 }
+
+#if PLATFORM(IOS_FAMILY)
+
+TEST(WebKit, OriginDirectoryExcludedFromBackup)
+{
+    NSURL *resourceSalt = [[NSBundle mainBundle] URLForResource:@"general-storage-directory" withExtension:@"salt" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *generalStorageDirectory = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/Default" stringByExpandingTildeInPath] isDirectory:YES];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    [fileManager removeItemAtURL:generalStorageDirectory error:nil];
+    [fileManager createDirectoryAtURL:generalStorageDirectory withIntermediateDirectories:YES attributes:nil error:nil];
+    [fileManager copyItemAtURL:resourceSalt toURL:[generalStorageDirectory URLByAppendingPathComponent:@"salt"] error:nil];
+
+    auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    websiteDataStoreConfiguration.get().generalStorageDirectory = generalStorageDirectory;
+    websiteDataStoreConfiguration.get().shouldUseCustomStoragePaths = false;
+    auto websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
+
+    NSString *htmlString = @"<script> \
+        localStorage.setItem('local', 'storage'); \
+        sessionStorage.setItem('session', 'storage'); \
+        window.webkit.messageHandlers.testHandler.postMessage('done'); \
+        </script>";
+    auto handler = adoptNS([[WebsiteDataStoreCustomPathsMessageHandler alloc] init]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
+    [configuration setWebsiteDataStore:websiteDataStore.get()];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    receivedScriptMessage = false;
+    [webView loadHTMLString:htmlString baseURL:[NSURL URLWithString:@"https://webkit.org"]];
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+
+    NSURL *originDirectory = [generalStorageDirectory URLByAppendingPathComponent:@"YUn_wgR51VLVo9lc5xiivAzZ8TMmojoa0IbW323qibs/YUn_wgR51VLVo9lc5xiivAzZ8TMmojoa0IbW323qibs/"];
+    EXPECT_TRUE([fileManager fileExistsAtPath:originDirectory.path]);
+    NSNumber *isDirectoryExcluded = nil;
+    EXPECT_TRUE([originDirectory getResourceValue:&isDirectoryExcluded forKey:NSURLIsExcludedFromBackupKey error:nil]);
+    EXPECT_TRUE(isDirectoryExcluded.boolValue);
+
+    // Set exclusion period to 0 so excluded attribute is updated on next visit.
+    done = false;
+    [websiteDataStore _setBackupExclusionPeriodForTesting:0.0 completionHandler:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    receivedScriptMessage = false;
+    [webView2 loadHTMLString:htmlString baseURL:[NSURL URLWithString:@"https://webkit.org"]];
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+
+    // Create new url that has updated value.
+    originDirectory = [generalStorageDirectory URLByAppendingPathComponent:@"YUn_wgR51VLVo9lc5xiivAzZ8TMmojoa0IbW323qibs/YUn_wgR51VLVo9lc5xiivAzZ8TMmojoa0IbW323qibs/"];
+    EXPECT_TRUE([originDirectory getResourceValue:&isDirectoryExcluded forKey:NSURLIsExcludedFromBackupKey error:nil]);
+    EXPECT_FALSE(isDirectoryExcluded.boolValue);
+}
+
+#endif

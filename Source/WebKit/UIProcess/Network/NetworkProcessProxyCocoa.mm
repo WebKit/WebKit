@@ -115,6 +115,11 @@ void NetworkProcessProxy::removeBackgroundStateObservers()
     [[NSNotificationCenter defaultCenter] removeObserver:m_foregroundObserver.get()];
 }
 
+void NetworkProcessProxy::setBackupExclusionPeriodForTesting(PAL::SessionID sessionID, Seconds period, CompletionHandler<void()>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::NetworkProcess::SetBackupExclusionPeriodForTesting(sessionID, period), WTFMove(completionHandler));
+}
+
 #endif
 
 }

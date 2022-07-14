@@ -386,7 +386,6 @@ String OriginStorageManager::StorageBucket::resolvedLocalStoragePath()
 
     if (m_shouldUseCustomPaths) {
         ASSERT(m_customLocalStoragePath.isEmpty() == m_rootPath.isEmpty());
-        FileSystem::makeAllDirectories(FileSystem::parentPath(m_customLocalStoragePath));
         m_resolvedLocalStoragePath = m_customLocalStoragePath;
     } else if (!m_rootPath.isEmpty()) {
         auto localStorageDirectory = typeStoragePath(StorageType::LocalStorage);
@@ -402,12 +401,6 @@ String OriginStorageManager::StorageBucket::resolvedLocalStoragePath()
         m_resolvedLocalStoragePath = localStoragePath;
     } else
         m_resolvedLocalStoragePath = emptyString();
-
-#if PLATFORM(IOS_FAMILY)
-    // Exclude LocalStorage directory to reduce backup traffic. See https://webkit.org/b/168388.
-    if (!m_resolvedLocalStoragePath.isEmpty())
-        FileSystem::excludeFromBackup(FileSystem::parentPath(m_customLocalStoragePath));
-#endif
 
     return m_resolvedLocalStoragePath;
 }

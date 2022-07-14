@@ -705,6 +705,11 @@ String WebsiteDataStore::defaultContainerTemporaryDirectory()
     return stringByResolvingSymlinksInPath(path);
 }
 
+void WebsiteDataStore::setBackupExclusionPeriodForTesting(Seconds period, CompletionHandler<void()>&& completionHandler)
+{
+    networkProcess().setBackupExclusionPeriodForTesting(m_sessionID, period, WTFMove(completionHandler));
+}
+
 #endif
 
 }

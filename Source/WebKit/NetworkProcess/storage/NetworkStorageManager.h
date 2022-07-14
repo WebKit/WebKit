@@ -98,6 +98,9 @@ public:
     void requestSpace(const WebCore::ClientOrigin&, uint64_t size, CompletionHandler<void(bool)>&&);
     void resetQuotaForTesting(CompletionHandler<void()>&&);
     void resetQuotaUpdatedBasedOnUsageForTesting(WebCore::ClientOrigin&&);
+#if PLATFORM(IOS_FAMILY)
+    void setBackupExclusionPeriodForTesting(Seconds, CompletionHandler<void()>&&);
+#endif
 
 private:
     NetworkStorageManager(PAL::SessionID, IPC::Connection::UniqueID, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, uint64_t defaultOriginQuota, uint64_t defaultThirdPartyOriginQuota, bool shouldUseCustomPaths);
@@ -111,6 +114,9 @@ private:
     HashSet<WebCore::ClientOrigin> getAllOrigins();
     Vector<WebsiteData::Entry> fetchDataFromDisk(OptionSet<WebsiteDataType>);
     HashSet<WebCore::ClientOrigin> deleteDataOnDisk(OptionSet<WebsiteDataType>, WallTime, const Function<bool(const WebCore::ClientOrigin&)>&);
+#if PLATFORM(IOS_FAMILY)
+    void includeOriginInBackupIfNecessary(OriginStorageManager&);
+#endif
 
     // IPC::MessageReceiver (implemented by generated code)
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
@@ -190,6 +196,9 @@ private:
     bool m_shouldUseCustomPaths;
     IPC::Connection::UniqueID m_parentConnection;
     HashMap<IPC::Connection::UniqueID, HashSet<String>> m_temporaryBlobPathsByConnection;
+#if PLATFORM(IOS_FAMILY)
+    Seconds m_backupExclusionPeriod;
+#endif
 };
 
 } // namespace WebKit
