@@ -42,7 +42,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._showingRepresentedObjectCookie = null;
 
         this._table = null;
-        this._nameColumnWidthSetting = new WI.Setting("network-table-content-view-name-column-width", 250);
+        this._nameColumnWidthSetting = new WI.Setting("network-table-content-view-name-column-width", WI.Sidebar.AbsoluteMinimumWidth);
 
         this._selectedObject = null;
         this._detailView = null;
@@ -1136,7 +1136,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._waterfallTimelineRuler.allowsClippedLabels = true;
 
         this._nameColumn = new WI.TableColumn("name", WI.UIString("Name"), {
-            minWidth: WI.Sidebar.AbsoluteMinimumWidth,
+            minWidth: this._nameColumnWidthSetting.defaultValue,
             maxWidth: 500,
             initialWidth: this._nameColumnWidthSetting.value,
             resizeType: WI.TableColumn.ResizeType.Locked,
@@ -1151,14 +1151,14 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._typeColumn = new WI.TableColumn("type", WI.UIString("Type"), {
             minWidth: 70,
             maxWidth: 120,
-            initialWidth: 90,
+            initialWidth: 70,
         });
 
         this._mimeTypeColumn = new WI.TableColumn("mimeType", WI.UIString("MIME Type"), {
             hidden: true,
-            minWidth: 100,
+            minWidth: 50,
             maxWidth: 150,
-            initialWidth: 120,
+            initialWidth: 100,
         });
 
         this._methodColumn = new WI.TableColumn("method", WI.UIString("Method"), {
@@ -1190,10 +1190,9 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         });
 
         this._initiatorColumn = new WI.TableColumn("initiator", WI.UIString("Initiator"), {
-            hidden: true,
             minWidth: 75,
             maxWidth: 175,
-            initialWidth: 125,
+            initialWidth: 100,
         });
 
         this._priorityColumn = new WI.TableColumn("priority", WI.UIString("Priority"), {
@@ -1225,9 +1224,9 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         });
 
         this._transferSizeColumn = new WI.TableColumn("transferSize", WI.UIString("Transfer Size", "Amount of data sent over the network for a single resource"), {
-            minWidth: 100,
+            minWidth: 50,
             maxWidth: 150,
-            initialWidth: 100,
+            initialWidth: 50,
             align: "right",
         });
 
