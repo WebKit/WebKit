@@ -72,13 +72,27 @@ UIScrollView *RemoteScrollingCoordinatorProxy::scrollViewForScrollingNodeID(Scro
     return nil;
 }
 
+#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
+void RemoteScrollingCoordinatorProxy::removeFixedScrollingNodeLayerIDs(const Vector<WebCore::GraphicsLayer::PlatformLayerID>& destroyedLayers)
+{
+    for (auto layerID : destroyedLayers)
+        m_fixedScrollingNodeLayerIDs.remove(layerID);
+}
+#endif // ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
+
 void RemoteScrollingCoordinatorProxy::connectStateNodeLayers(ScrollingStateTree& stateTree, const RemoteLayerTreeHost& layerTreeHost)
 {
     using PlatformLayerID = GraphicsLayer::PlatformLayerID;
 
     for (auto& currNode : stateTree.nodeMap().values()) {
-        if (currNode->hasChangedProperty(ScrollingStateNode::Property::Layer))
-            currNode->setLayer(layerTreeHost.layerForID(PlatformLayerID { currNode->layer() }));
+        if (currNode->hasChangedProperty(ScrollingStateNode::Property::Layer)) {
+            auto platformLayerID = PlatformLayerID { currNode->layer() };
+            currNode->setLayer(layerTreeHost.layerForID(platformLayerID));
+#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
+            if (platformLayerID && currNode->isFixedNode())
+                m_fixedScrollingNodeLayerIDs.add(platformLayerID);
+#endif
+        }
         
         switch (currNode->nodeType()) {
         case ScrollingNodeType::Overflow: {

@@ -548,6 +548,13 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
 
 #endif // HAVE(PEPPER_UI_CORE)
 
+#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
+- (NSArray<NSData *> *)overlayRegions
+{
+    return [_internalDelegate _overlayRegions];
+}
+#endif // ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
+
 @end
 
 #endif // PLATFORM(IOS_FAMILY)
