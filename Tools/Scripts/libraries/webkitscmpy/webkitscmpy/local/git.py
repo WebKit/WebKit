@@ -504,6 +504,19 @@ class Git(Scm):
 
         return None
 
+    def source_remotes(self, cached=None):
+        candidates = [self.default_remote]
+        config = self.config(cached=cached)
+        for candidate in config.keys():
+            if not candidate.startswith('webkitscmpy.remotes'):
+                continue
+            candidate = candidate.split('.')[-1]
+            if candidate in candidates:
+                continue
+            if config.get('remote.{}.url'.format(candidate)):
+                candidates.append(candidate)
+        return candidates
+
     def _commit_count(self, native_parameter):
         revision_count = run(
             [self.executable(), 'rev-list', '--count', '--no-merges', native_parameter],
