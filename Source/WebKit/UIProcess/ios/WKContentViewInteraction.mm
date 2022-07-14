@@ -11784,7 +11784,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
 
     RetainPtr<UIViewController> previewViewController;
 
-    auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithInteractionInformationAtPosition:_positionInformation userInfo:nil]);
+    auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithInteractionInformationAtPosition:_positionInformation isUsingAlternateURLForImage:NO userInfo:nil]);
 
     ASSERT_IMPLIES(_positionInformation.isImage, _positionInformation.image);
     if (_positionInformation.isLink) {
@@ -11965,6 +11965,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
         _contextMenuLegacyMenu = nullptr;
         _contextMenuHasRequestedLegacyData = NO;
         _contextMenuActionProviderDelegateNeedsOverride = NO;
+        _contextMenuIsUsingAlternateURLForImage = NO;
 
         UIContextMenuActionProvider actionMenuProvider = [weakSelf = WeakObjCPtr<WKContentView>(self)] (NSArray<UIMenuElement *> *) -> UIMenu * {
             auto strongSelf = weakSelf.get();
@@ -12032,7 +12033,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
 
             strongSelf->_contextMenuActionProviderDelegateNeedsOverride = NO;
 
-            auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithInteractionInformationAtPosition:strongSelf->_positionInformation userInfo:nil]);
+            auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithInteractionInformationAtPosition:strongSelf->_positionInformation isUsingAlternateURLForImage:strongSelf->_contextMenuIsUsingAlternateURLForImage userInfo:nil]);
 
             UIContextMenuActionProvider actionMenuProvider = [weakSelf, elementInfo] (NSArray<UIMenuElement *> *) -> UIMenu * {
                 auto strongSelf = weakSelf.get();
@@ -12089,6 +12090,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
     });
 
     _contextMenuActionProviderDelegateNeedsOverride = NO;
+    _contextMenuIsUsingAlternateURLForImage = NO;
     _contextMenuElementInfo = wrapper(API::ContextMenuElementInfo::create(_positionInformation, nil));
 
     if (_positionInformation.isImage && _positionInformation.url.isNull() && [uiDelegate respondsToSelector:@selector(_webView:alternateURLFromImage:userInfo:)]) {
@@ -12096,6 +12098,8 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
         NSDictionary *userInfo = nil;
         NSURL *nsURL = [uiDelegate _webView:self.webView alternateURLFromImage:uiImage userInfo:&userInfo];
         _positionInformation.url = nsURL;
+        if (nsURL)
+            _contextMenuIsUsingAlternateURLForImage = YES;
         _contextMenuElementInfo = wrapper(API::ContextMenuElementInfo::create(_positionInformation, userInfo));
     }
 

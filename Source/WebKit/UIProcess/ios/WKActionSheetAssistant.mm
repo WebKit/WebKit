@@ -868,7 +868,7 @@ static NSMutableArray<UIMenuElement *> *menuElementsFromDefaultActions(RetainPtr
 
 - (NSMutableArray<UIMenuElement *> *)suggestedActionsForContextMenuWithPositionInformation:(const WebKit::InteractionInformationAtPosition&)positionInformation
 {
-    auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithInteractionInformationAtPosition:positionInformation userInfo:nil]);
+    auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithInteractionInformationAtPosition:positionInformation isUsingAlternateURLForImage:NO userInfo:nil]);
     RetainPtr<NSArray<_WKElementAction *>> defaultActionsFromAssistant = positionInformation.isLink ? [self defaultActionsForLinkSheet:elementInfo.get()] : [self defaultActionsForImageSheet:elementInfo.get()];
     return menuElementsFromDefaultActions(defaultActionsFromAssistant, elementInfo);
 }
@@ -1022,7 +1022,10 @@ static NSMutableArray<UIMenuElement *> *menuElementsFromDefaultActions(RetainPtr
         [delegate actionSheetAssistant:self performAction:WebKit::SheetAction::Copy];
         break;
     case _WKElementActionTypeOpen:
-        [delegate actionSheetAssistant:self openElementAtLocation:element._interactionLocation];
+        if (element._isUsingAlternateURLForImage)
+            [[UIApplication sharedApplication] openURL:element.URL options:@{ } completionHandler:nil];
+        else
+            [delegate actionSheetAssistant:self openElementAtLocation:element._interactionLocation];
         break;
     case _WKElementActionTypeSaveImage:
         [delegate actionSheetAssistant:self performAction:WebKit::SheetAction::SaveImage];

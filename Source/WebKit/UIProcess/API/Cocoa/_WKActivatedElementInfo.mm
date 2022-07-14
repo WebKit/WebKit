@@ -50,15 +50,16 @@
 #endif
     BOOL _animatedImage;
     BOOL _isImage;
+    BOOL _isUsingAlternateURLForImage;
 }
 
 #if PLATFORM(IOS_FAMILY)
 + (instancetype)activatedElementInfoWithInteractionInformationAtPosition:(const WebKit::InteractionInformationAtPosition&)information userInfo:(NSDictionary *)userInfo
 {
-    return adoptNS([[self alloc] _initWithInteractionInformationAtPosition:information userInfo:userInfo]).autorelease();
+    return adoptNS([[self alloc] _initWithInteractionInformationAtPosition:information isUsingAlternateURLForImage:NO userInfo:userInfo]).autorelease();
 }
 
-- (instancetype)_initWithInteractionInformationAtPosition:(const WebKit::InteractionInformationAtPosition&)information userInfo:(NSDictionary *)userInfo
+- (instancetype)_initWithInteractionInformationAtPosition:(const WebKit::InteractionInformationAtPosition&)information isUsingAlternateURLForImage:(BOOL)isUsingAlternateURLForImage userInfo:(NSDictionary *)userInfo
 {
     if (!(self = [super init]))
         return nil;
@@ -83,6 +84,7 @@
     _ID = information.idAttribute;
     _animatedImage = information.isAnimatedImage;
     _isImage = information.isImage;
+    _isUsingAlternateURLForImage = isUsingAlternateURLForImage;
     _userInfo = userInfo;
     
     return self;
@@ -148,6 +150,11 @@
 - (BOOL)isAnimatedImage
 {
     return _animatedImage;
+}
+
+- (BOOL)_isUsingAlternateURLForImage
+{
+    return _isUsingAlternateURLForImage;
 }
 
 #if PLATFORM(IOS_FAMILY)

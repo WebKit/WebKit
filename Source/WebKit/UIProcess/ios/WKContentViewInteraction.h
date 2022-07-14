@@ -376,6 +376,7 @@ struct ImageAnalysisContextMenuActionData {
     RetainPtr<UIMenu> _contextMenuLegacyMenu;
     BOOL _contextMenuHasRequestedLegacyData;
     BOOL _contextMenuActionProviderDelegateNeedsOverride;
+    BOOL _contextMenuIsUsingAlternateURLForImage;
     BOOL _isDisplayingContextMenuWithAnimation;
 #endif
     RetainPtr<UIPreviewItemController> _previewItemController;
