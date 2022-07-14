@@ -101,6 +101,9 @@ static const unsigned cMaxLayerTreeDepth = 128;
 // About 10 screens of an iPhone 6 Plus. <rdar://problem/44532782>
 static const unsigned cMaxTotalBackdropFilterArea = 1242 * 2208 * 10;
 
+// Don't let a single tiled layer use more than 156MB of memory. On a 3x display with RGB10A8 surfaces, this is about 12 tiles.
+static const unsigned cMaxScaledTiledLayerMemorySize = 1024 * 1024 * 156;
+
 // If we send a duration of 0 to CA, then it will use the default duration
 // of 250ms. So send a very small value instead.
 static const float cAnimationAlmostZeroDuration = 1e-3f;
@@ -1559,6 +1562,46 @@ TransformationMatrix GraphicsLayerCA::transformByApplyingAnchorPoint(const Trans
     return result;
 }
 
+void GraphicsLayerCA::adjustContentsScaleLimitingFactor()
+{
+    if (type() == Type::PageTiledBacking || !m_layer->usesTiledBackingLayer())
+        return;
+
+    float contentsScaleLimitingFactor = 1;
+    auto bounds = FloatRect { m_boundsOrigin, size() };
+    auto tileCoverageRect = intersection(m_coverageRect, bounds);
+    if (!tileCoverageRect.isEmpty()) {
+        const unsigned bytesPerPixel = 4; // FIXME: Use backingStoreBytesPerPixel(), which needs to be plumbed out through TiledBacking.
+        double scaleFactor = deviceScaleFactor() * pageScaleFactor();
+        double memoryEstimate = tileCoverageRect.area() * scaleFactor * scaleFactor * bytesPerPixel;
+        if (memoryEstimate > cMaxScaledTiledLayerMemorySize) {
+            // sqrt because the memory computation is based on area, while contents scale is per-axis.
+            contentsScaleLimitingFactor = std::sqrt(cMaxScaledTiledLayerMemorySize / memoryEstimate);
+
+            const float minFactor = 0.05;
+            const float maxFactor = 1;
+            contentsScaleLimitingFactor = clampTo(contentsScaleLimitingFactor, minFactor, maxFactor);
+
+            // Quantize the value to avoid too many repaints when animating.
+            const float quanitzationFactor = 20;
+            contentsScaleLimitingFactor = std::round(contentsScaleLimitingFactor * quanitzationFactor) / quanitzationFactor;
+        }
+
+        LOG_WITH_STREAM(Tiling, stream << "GraphicsLayerCA " << this << " id " << primaryLayerID() << " " << size() << " adjustContentsScaleLimitingFactor: for coverage area " << tileCoverageRect << " memory " << (memoryEstimate / (1024 * 1024)) << "MP computed contentsScaleLimitingFactor " << contentsScaleLimitingFactor);
+    }
+
+    setContentsScaleLimitingFactor(contentsScaleLimitingFactor);
+}
+
+void GraphicsLayerCA::setContentsScaleLimitingFactor(float factor)
+{
+    if (factor == m_contentsScaleLimitingFactor)
+        return;
+    
+    m_contentsScaleLimitingFactor = factor;
+    noteLayerPropertyChanged(ContentsScaleChanged);
+}
+
 GraphicsLayerCA::VisibleAndCoverageRects GraphicsLayerCA::computeVisibleAndCoverageRect(TransformState& state, bool preserves3D, ComputeVisibleRectFlags flags) const
 {
     FloatPoint position = approximatePosition();
@@ -1673,6 +1716,8 @@ void GraphicsLayerCA::setVisibleAndCoverageRects(const VisibleAndCoverageRects& 
         addUncommittedChanges(CoverageRectChanged);
         m_coverageRect = rects.coverageRect;
     }
+
+    adjustContentsScaleLimitingFactor();
 }
 
 bool GraphicsLayerCA::needsCommit(const CommitState& commitState)
@@ -3966,7 +4011,7 @@ GraphicsLayerCA::LayerMap* GraphicsLayerCA::animatedLayerClones(AnimatedProperty
 
 void GraphicsLayerCA::updateContentsScale(float pageScaleFactor)
 {
-    float contentsScale = pageScaleFactor * deviceScaleFactor();
+    float contentsScale = pageScaleFactor * deviceScaleFactor() * m_contentsScaleLimitingFactor;
 
     if (isPageTiledBackingLayer() && tiledBacking()) {
         float zoomedOutScale = client().zoomedOutPageScaleFactor() * deviceScaleFactor();
@@ -4290,6 +4335,8 @@ void GraphicsLayerCA::dumpAdditionalProperties(TextStream& textStream, OptionSet
         textStream << indent << "(coverage rect " << m_coverageRect.x() << ", " << m_coverageRect.y() << " " << m_coverageRect.width() << " x " << m_coverageRect.height() << ")\n";
         textStream << indent << "(intersects coverage rect " << m_intersectsCoverageRect << ")\n";
         textStream << indent << "(contentsScale " << m_layer->contentsScale() << ")\n";
+        if (m_contentsScaleLimitingFactor != 1)
+            textStream << indent << "(contentsScale limiting factor " << m_contentsScaleLimitingFactor << ")\n";
     }
 
     if (tiledBacking() && (options & LayerTreeAsTextOptions::IncludeTileCaches)) {
@@ -4433,6 +4480,8 @@ void GraphicsLayerCA::changeLayerTypeTo(PlatformCALayer::LayerType newLayerType)
     
     if (isTiledLayer)
         addUncommittedChanges(CoverageRectChanged);
+
+    adjustContentsScaleLimitingFactor();
 
     moveAnimations(oldLayer.get(), m_layer.get());
     

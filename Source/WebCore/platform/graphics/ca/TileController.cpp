@@ -103,14 +103,16 @@ void TileController::setNeedsDisplayInRect(const IntRect& rect)
     updateTileCoverageMap();
 }
 
-void TileController::setContentsScale(float scale)
+void TileController::setContentsScale(float contentsScale)
 {
     ASSERT(owningGraphicsLayer()->isCommittingChanges());
 
     float deviceScaleFactor = owningGraphicsLayer()->platformCALayerDeviceScaleFactor();
     // The scale we get is the product of the page scale factor and device scale factor.
     // Divide by the device scale factor so we'll get the page scale factor.
-    scale /= deviceScaleFactor;
+    float scale = contentsScale / deviceScaleFactor;
+    
+    LOG_WITH_STREAM(Tiling, stream << "TileController " << this << " setContentsScale " << contentsScale << " computed scale " << scale << " (deviceScaleFactor " << deviceScaleFactor << ")");
 
     if (tileGrid().scale() == scale && m_deviceScaleFactor == deviceScaleFactor && !m_hasTilesWithTemporaryScaleFactor)
         return;
@@ -416,7 +418,7 @@ FloatRect TileController::adjustTileCoverageForDesktopPageScrolling(const FloatR
     };
 
     FloatRect coverage = expandRectWithinRect(visibleRect, coverageSize, coverageBounds);
-    LOG_WITH_STREAM(Tiling, stream << "TileController::adjustTileCoverageForDesktopPageScrolling newSize=" << newSize << " mode " << m_tileCoverage << " expanded to " << coverageSize << " bounds with margin " << coverageBounds << " coverage " << coverage);
+    LOG_WITH_STREAM(Tiling, stream << "TileController " << this << " adjustTileCoverageForDesktopPageScrolling newSize=" << newSize << " mode " << m_tileCoverage << " expanded to " << coverageSize << " bounds with margin " << coverageBounds << " coverage " << coverage);
     return unionRect(coverageRect, coverage);
 }
 #endif
@@ -618,6 +620,8 @@ void TileController::tileRevalidationTimerFired()
 void TileController::didRevalidateTiles()
 {
     m_boundsAtLastRevalidate = bounds();
+
+    LOG_WITH_STREAM(Tiling, stream << "TileController " << this << " (bounds " << bounds() << ") didRevalidateTiles - tileCoverageRect " << tileCoverageRect() << " grid extent " << tileGridExtent() << " memory use " << (retainedTileBackingStoreMemory() / (1024 * 1024)) << "MB");
 
     updateTileCoverageMap();
 }
