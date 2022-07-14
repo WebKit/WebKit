@@ -474,7 +474,7 @@ public:
 
     bool hasTransformRelatedProperty() const { return m_bitfields.hasTransformRelatedProperty(); } // Transform, perspective or transform-style: preserve-3d.
     bool hasTransform() const { return hasTransformRelatedProperty() && (style().hasTransform() || style().translate() || style().scale() || style().rotate() || hasSVGTransform()); }
-    bool hasTransformOrPespective() const { return hasTransformRelatedProperty() && (hasTransform() || style().hasPerspective()); }
+    bool hasTransformOrPerspective() const { return hasTransformRelatedProperty() && (hasTransform() || style().hasPerspective()); }
 
     inline bool preservesNewline() const;
 
