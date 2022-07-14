@@ -819,6 +819,11 @@ bool RenderLayerScrollableArea::verticalScrollbarHiddenByStyle() const
     return scrollbarHiddenByStyle(verticalScrollbar());
 }
 
+bool RenderLayerScrollableArea::canShowNonOverlayScrollbars() const
+{
+    return canHaveScrollbars() && !(m_layer.renderBox() && m_layer.renderBox()->canUseOverlayScrollbars());
+}
+
 static inline RenderElement* rendererForScrollbar(RenderLayerModelObject& renderer)
 {
     if (Element* element = renderer.element()) {

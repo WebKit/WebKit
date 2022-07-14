@@ -139,6 +139,8 @@ public:
     bool horizontalScrollbarHiddenByStyle() const final;
     bool verticalScrollbarHiddenByStyle() const final;
 
+    bool canShowNonOverlayScrollbars() const final;
+
     ScrollPosition scrollPosition() const final { return m_scrollPosition; }
 
     Scrollbar* horizontalScrollbar() const final { return m_hBar.get(); }

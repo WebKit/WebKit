@@ -423,7 +423,7 @@ void FrameViewLayoutContext::unscheduleLayout()
 
 #if !LOG_DISABLED
     if (!frame().document()->ownerElement())
-        LOG(Layout, "FrameView %p layout timer unscheduled at %.3fs", this, frame().document()->timeSinceDocumentCreation().value());
+        LOG_WITH_STREAM(Layout, stream << "FrameViewLayoutContext for FrameView " << frame().view() << " layout timer unscheduled at " << frame().document()->timeSinceDocumentCreation().value());
 #endif
 
     m_layoutTimer.stop();
@@ -487,7 +487,7 @@ void FrameViewLayoutContext::layoutTimerFired()
 {
 #if !LOG_DISABLED
     if (!frame().document()->ownerElement())
-        LOG(Layout, "FrameView %p layout timer fired at %.3fs", this, frame().document()->timeSinceDocumentCreation().value());
+        LOG_WITH_STREAM(Layout, stream << "FrameViewLayoutContext for FrameView " << frame().view() << " layout timer fired at " << frame().document()->timeSinceDocumentCreation().value());
 #endif
     layout();
 }

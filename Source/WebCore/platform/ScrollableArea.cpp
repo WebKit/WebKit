@@ -358,6 +358,11 @@ bool ScrollableArea::hasOverlayScrollbars() const
         || (horizontalScrollbar() && horizontalScrollbar()->isOverlayScrollbar());
 }
 
+bool ScrollableArea::canShowNonOverlayScrollbars() const
+{
+    return canHaveScrollbars() && !ScrollbarTheme::theme().usesOverlayScrollbars();
+}
+
 void ScrollableArea::setScrollbarOverlayStyle(ScrollbarOverlayStyle overlayStyle)
 {
     m_scrollbarOverlayStyle = overlayStyle;

@@ -812,6 +812,8 @@ private:
     bool mockScrollbarsControllerEnabled() const final;
     void logMockScrollbarsControllerMessage(const String&) const final;
 
+    bool canShowNonOverlayScrollbars() const final;
+
     bool styleHidesScrollbarWithOrientation(ScrollbarOrientation) const;
     bool horizontalScrollbarHiddenByStyle() const final;
     bool verticalScrollbarHiddenByStyle() const final;

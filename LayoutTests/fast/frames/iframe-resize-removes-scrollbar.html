@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+ <head>
+ <style>
+     #container {
+         width: 200px;
+         height: 320px;
+     }
+
+     iframe {
+         height: 100%;
+         width: 100%;
+         border: 1px solid black;
+     }
+ </style>
+ <script>
+     if (window.testRunner)
+         testRunner.waitUntilDone();
+
+     window.addEventListener('load', () => {
+         setTimeout(() => {
+             const container = document.getElementById('container');
+             container.style.height = '300px';
+             if (window.testRunner)
+                 testRunner.notifyDone();
+         }, 0);
+
+     }, false);
+ </script>
+ </head>
+ <body>
+     <p>The iframe should not gain a vertical scrollbar when the height decreases but remains large enough to show all of the contents.</p>
+     <p>The third line of the iframe contents will wrap if a vertical scrollbar is visible. This test is only valid with non-overlay scrollbars.</p>
+     <div id="container">
+         <iframe srcdoc="
+<style>
+    html {
+         font-size: 20px;
+         line-height: 20px;
+    }
+</style>
+<body>
+    <div>xx</div>
+    <div>xx</div>
+    <div>xxxxxxxxxxxxxxxxx z</div>
+    <div>xx</div>
+    <div>xx</div>
+    <div>xx</div>
+    <div>xx</div>
+    <div>xx</div>
+    <div>xx</div>
+    <div>xx</div>
+    <div>xx</div>
+    <div>xx</div>
+    <div>xx</div>
+    <div>x</div>
+</body>
+    "></iframe>
+     </div>
+ </body>
