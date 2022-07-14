@@ -3285,8 +3285,11 @@ std::optional<LayoutUnit> RenderBox::computeIntrinsicLogicalContentHeightUsing(L
                 auto isOrthogonal = WebCore::isOrthogonal(*this, containingBlock);
                 auto& style = containingBlock.style();
                 auto& logicalHeight = isOrthogonal ? style.width() : style.height();
-                if (logicalHeight.isSpecified())
+                if (logicalHeight.isSpecifiedOrIntrinsic()) {
+                    // FIXME: This should somewhat match the percent height resolution (e.g. instead of providing a definite 'yes' here, we should
+                    // keep climbing the ancestor chain to find a resolvable value.)
                     return true;
+                }
                 if (containingBlock.isOutOfFlowPositioned()) {
                     if ((!isOrthogonal && !style.top().isAuto() && !style.bottom().isAuto()) || (isOrthogonal && !style.left().isAuto() && !style.right().isAuto()))
                         return true;

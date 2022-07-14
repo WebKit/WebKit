@@ -1,0 +1,21 @@
+<style>
+.root {
+  height: 100px;
+}
+
+.container {
+  height: -webkit-fill-available;
+}
+
+.content {
+  height: -webkit-fill-available;
+  background-color: green;
+  width: 100px;
+}
+</style>
+<!-- containing block chain with --fill-available should be resolvable -->
+<div class=root>
+  <div class=container>
+    <div class=content></div>
+  </div>
+</div>
