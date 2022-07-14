@@ -249,6 +249,9 @@ public:
     
     void resetQuota(PAL::SessionID, CompletionHandler<void()>&&);
     void clearStorage(PAL::SessionID, CompletionHandler<void()>&&);
+#if PLATFORM(IOS_FAMILY)
+    void setBackupExclusionPeriodForTesting(PAL::SessionID, Seconds, CompletionHandler<void()>&&);
+#endif
 
     void resourceLoadDidSendRequest(WebPageProxyIdentifier, ResourceLoadInfo&&, WebCore::ResourceRequest&&, std::optional<IPC::FormDataReference>&&);
     void resourceLoadDidPerformHTTPRedirection(WebPageProxyIdentifier, ResourceLoadInfo&&, WebCore::ResourceResponse&&, WebCore::ResourceRequest&&);

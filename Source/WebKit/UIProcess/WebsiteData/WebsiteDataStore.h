@@ -363,6 +363,9 @@ public:
 
     void resetQuota(CompletionHandler<void()>&&);
     void clearStorage(CompletionHandler<void()>&&);
+#if PLATFORM(IOS_FAMILY)
+    void setBackupExclusionPeriodForTesting(Seconds, CompletionHandler<void()>&&);
+#endif
 
 #if ENABLE(APP_BOUND_DOMAINS)
     void hasAppBoundSession(CompletionHandler<void(bool)>&&) const;
