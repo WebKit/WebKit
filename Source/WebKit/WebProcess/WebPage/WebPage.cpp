@@ -6246,14 +6246,15 @@ void WebPage::didChangeSelection(Frame& frame)
     didChangeSelectionOrOverflowScrollPosition();
 
 #if PLATFORM(IOS_FAMILY)
-    if (!m_sendAutocorrectionContextAfterFocusingElement)
+    if (!std::exchange(m_sendAutocorrectionContextAfterFocusingElement, false))
         return;
 
-    if (UNLIKELY(!frame.document() || !frame.document()->hasLivingRenderTree() || frame.selection().isNone()))
-        return;
+    callOnMainRunLoop([protectedThis = Ref { *this }, frame = Ref { frame }] {
+        if (UNLIKELY(!frame->document() || !frame->document()->hasLivingRenderTree() || frame->selection().isNone()))
+            return;
 
-    m_sendAutocorrectionContextAfterFocusingElement = false;
-    preemptivelySendAutocorrectionContext();
+        protectedThis->preemptivelySendAutocorrectionContext();
+    });
 #endif // PLATFORM(IOS_FAMILY)
 }
 
