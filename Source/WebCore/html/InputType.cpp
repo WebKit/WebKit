@@ -248,6 +248,8 @@ bool InputType::isValidValue(const String& value) const
 #endif
     case Type::Text:
         return validateInputType(downcast<TextInputType>(*this), value);
+    default:
+        break;
     }
     ASSERT_NOT_REACHED();
     return false;

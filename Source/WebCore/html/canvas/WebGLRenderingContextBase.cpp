@@ -5404,6 +5404,18 @@ void WebGLRenderingContextBase::texImage3DBase(GCGLenum target, GCGLint level, G
     byteLength = std::min(byteLength, (GCGLsizei) bytesRequired);
     m_context->texImage3D(target, level, internalFormat, width, height, depth, border, format, type, makeGCGLSpan(pixels, byteLength));
 #else
+    UNUSED_PARAM(target);
+    UNUSED_PARAM(level);
+    UNUSED_PARAM(internalFormat);
+    UNUSED_PARAM(width);
+    UNUSED_PARAM(height);
+    UNUSED_PARAM(depth);
+    UNUSED_PARAM(border);
+    UNUSED_PARAM(format);
+    UNUSED_PARAM(type);
+    UNUSED_PARAM(byteLength);
+    UNUSED_PARAM(pixels);
+    
     ASSERT_NOT_REACHED();
 #endif // USE(ANGLE)
 }
@@ -5459,6 +5471,20 @@ void WebGLRenderingContextBase::texSubImage3DBase(GCGLenum target, GCGLint level
     byteLength = std::min(byteLength, (GCGLsizei) bytesRequired);
     m_context->texSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, makeGCGLSpan(pixels, byteLength));
 #else
+    UNUSED_PARAM(target);
+    UNUSED_PARAM(level);
+    UNUSED_PARAM(xoffset);
+    UNUSED_PARAM(yoffset);
+    UNUSED_PARAM(zoffset);
+    UNUSED_PARAM(width);
+    UNUSED_PARAM(height);
+    UNUSED_PARAM(depth);
+    UNUSED_PARAM(internalFormat);
+    UNUSED_PARAM(format);
+    UNUSED_PARAM(type);
+    UNUSED_PARAM(byteLength);
+    UNUSED_PARAM(pixels);
+
     ASSERT_NOT_REACHED();
 #endif
 }

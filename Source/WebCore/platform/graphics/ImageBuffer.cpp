@@ -322,7 +322,7 @@ void ImageBuffer::drawPattern(GraphicsContext& destContext, const FloatRect& des
     FloatRect adjustedSrcRect = srcRect;
     adjustedSrcRect.scale(resolutionScale());
 
-    if (auto* backend = ensureBackendCreated()) {
+    if (ensureBackendCreated()) {
         if (auto image = copyImage(&destContext == &context() ? CopyBackingStore : DontCopyBackingStore))
             image->drawPattern(destContext, destRect, adjustedSrcRect, patternTransform, phase, spacing, options);
     }
