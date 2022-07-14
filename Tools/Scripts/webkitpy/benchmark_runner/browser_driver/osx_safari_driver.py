@@ -45,6 +45,7 @@ class OSXSafariDriver(OSXBrowserDriver):
                 raise Exception('Could not find any framework "{}"'.format(browser_build_path))
 
         elif browser_path:
+            browser_path = os.path.abspath(browser_path)
             safari_binary_path = os.path.join(browser_path, 'Contents/MacOS/Safari')
             if os.path.exists(safari_binary_path):
                 safari_app_path = browser_path
