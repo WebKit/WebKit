@@ -340,7 +340,10 @@ private:
     const FloatRect& coverageRect() const { return m_coverageRect; }
 
     void setVisibleAndCoverageRects(const VisibleAndCoverageRects&);
-    
+
+    void adjustContentsScaleLimitingFactor();
+    void setContentsScaleLimitingFactor(float);
+
     bool recursiveVisibleRectChangeRequiresFlush(const CommitState&, const TransformState&) const;
 
     bool isTiledBackingLayer() const { return type() == Type::TiledBacking; }
@@ -654,6 +657,8 @@ private:
     Vector<FloatRect> m_dirtyRects;
 
     std::unique_ptr<DisplayList::InMemoryDisplayList> m_displayList;
+
+    float m_contentsScaleLimitingFactor { 1 };
 
     ContentsLayerPurpose m_contentsLayerPurpose { ContentsLayerPurpose::None };
     bool m_isCommittingChanges { false };
