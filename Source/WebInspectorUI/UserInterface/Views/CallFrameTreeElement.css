@@ -79,8 +79,7 @@ body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .
     content: "";
     display: inline-block;
     height: 0;
-    margin-top: 2px;
-    vertical-align: middle;
+    margin-bottom: 4px;
     border-bottom: solid 0.5px var(--border-color);
 }
 
