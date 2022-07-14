@@ -40,7 +40,9 @@
 #import <wtf/spi/cocoa/SecuritySPI.h>
 #import <wtf/text/Base64.h>
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 WTF_DECLARE_CF_TYPE_TRAIT(SecACL);
+ALLOW_DEPRECATED_DECLARATIONS_END
 
 namespace WebCore {
 
