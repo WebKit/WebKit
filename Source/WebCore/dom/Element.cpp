@@ -136,6 +136,7 @@
 #include "markup.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/Scope.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/TextStream.h>
 
@@ -2479,10 +2480,12 @@ Node::InsertedIntoAncestorResult Element::insertedIntoAncestor(InsertionType ins
         setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(true);
 #endif
 
-    if (parentNode() == &parentOfInsertedTree) {
-        if (auto* shadowRoot = parentNode()->shadowRoot())
-            shadowRoot->hostChildElementDidChange(*this);
-    }
+    auto hostChildElementDidChange = makeScopeExit([&] () {
+        if (parentNode() == &parentOfInsertedTree) {
+            if (auto* shadowRoot = parentNode()->shadowRoot())
+                shadowRoot->hostChildElementDidChange(*this);
+        }
+    });
 
     if (!parentOfInsertedTree.isInTreeScope())
         return InsertedIntoAncestorResult::Done;
