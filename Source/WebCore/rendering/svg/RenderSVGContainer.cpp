@@ -40,6 +40,7 @@
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/SetForScope.h>
 #include <wtf/StackStats.h>
 
 namespace WebCore {
@@ -60,12 +61,17 @@ void RenderSVGContainer::layout()
 
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout(), RepaintOutlineBounds::No);
 
-    calculateViewport();
-
     // Update layer transform before laying out children (SVG needs access to the transform matrices during layout for on-screen text font-size calculations).
     // Eventually re-update if the transform reference box, relevant for transform-origin, has changed during layout.
+    //
+    // FIXME: LBSE should not repeat the same mistake -- remove the on-screen text font-size hacks that predate the modern solutions to this.
     {
-        SVGLayerTransformUpdater updateTransform(*this);
+        ASSERT(!m_isLayoutSizeChanged);
+        SetForScope trackLayoutSizeChanges(m_isLayoutSizeChanged, updateLayoutSizeIfNeeded());
+
+        ASSERT(!m_didTransformToRootUpdate);
+        SVGLayerTransformUpdater transformUpdater(*this);
+        SetForScope trackTransformChanges(m_didTransformToRootUpdate, transformUpdater.layerTransformChanged() || SVGContainerLayout::transformToRootChanged(parent()));
         layoutChildren();
     }
 
@@ -75,12 +81,6 @@ void RenderSVGContainer::layout()
 
     repainter.repaintAfterLayout();
     clearNeedsLayout();
-}
-
-void RenderSVGContainer::calculateViewport()
-{
-    // FIXME: [LBSE] Upstream SVGLengthContext changes
-    // element().updateLengthContext();
 }
 
 void RenderSVGContainer::layoutChildren()

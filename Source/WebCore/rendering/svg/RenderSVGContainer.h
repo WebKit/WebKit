@@ -37,7 +37,10 @@ public:
     virtual ~RenderSVGContainer();
 
     void paint(PaintInfo&, const LayoutPoint&) override;
+
     bool isObjectBoundingBoxValid() const { return m_objectBoundingBoxValid; }
+    bool isLayoutSizeChanged() const { return m_isLayoutSizeChanged; }
+    bool didTransformToRootUpdate() const { return m_didTransformToRootUpdate; }
 
     FloatRect objectBoundingBox() const final { return m_objectBoundingBox; }
     FloatRect objectBoundingBoxWithoutTransformations() const final { return m_objectBoundingBoxWithoutTransformations; }
@@ -51,15 +54,17 @@ protected:
     bool canHaveChildren() const final { return true; }
 
     void layout() override;
+
     virtual void layoutChildren();
-    bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
-
-    virtual void calculateViewport();
     virtual bool pointIsInsideViewportClip(const FloatPoint&) { return true; }
+    virtual bool updateLayoutSizeIfNeeded() { return false; }
 
+    bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
     bool selfWillPaint();
 
     bool m_objectBoundingBoxValid { false };
+    bool m_isLayoutSizeChanged { false };
+    bool m_didTransformToRootUpdate { false };
     FloatRect m_objectBoundingBox;
     FloatRect m_objectBoundingBoxWithoutTransformations;
     FloatRect m_strokeBoundingBox;

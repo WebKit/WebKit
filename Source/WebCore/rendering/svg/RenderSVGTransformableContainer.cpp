@@ -29,7 +29,6 @@
 #include "SVGElementTypeHelpers.h"
 #include "SVGGElement.h"
 #include "SVGGraphicsElement.h"
-#include "SVGPathData.h"
 #include "SVGUseElement.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -40,6 +39,11 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGTransformableContainer);
 RenderSVGTransformableContainer::RenderSVGTransformableContainer(SVGGraphicsElement& element, RenderStyle&& style)
     : RenderSVGContainer(element, WTFMove(style))
 {
+}
+
+SVGGraphicsElement& RenderSVGTransformableContainer::graphicsElement() const
+{
+    return downcast<SVGGraphicsElement>(RenderSVGContainer::element());
 }
 
 inline SVGUseElement* associatedUseElement(SVGGraphicsElement& element)
@@ -59,11 +63,9 @@ inline SVGUseElement* associatedUseElement(SVGGraphicsElement& element)
     return nullptr;
 }
 
-FloatPoint RenderSVGTransformableContainer::additionalContainerTranslation() const
+FloatSize RenderSVGTransformableContainer::additionalContainerTranslation() const
 {
     if (auto* useElement = associatedUseElement(graphicsElement())) {
-        // FIXME: [LBSE] Upstream SVGLengthContext changes
-        // const auto& lengthContext = useElement->lengthContext();
         SVGLengthContext lengthContext(useElement);
         return { useElement->x().value(lengthContext), useElement->y().value(lengthContext) };
     }
@@ -71,54 +73,29 @@ FloatPoint RenderSVGTransformableContainer::additionalContainerTranslation() con
     return { };
 }
 
-void RenderSVGTransformableContainer::calculateViewport()
-{
-    RenderSVGContainer::calculateViewport();
-
-    // FIXME: [LBSE] Upstream SVGLengthContext changes
-    // if (auto* useElement = associatedUseElement(graphicsElement()))
-    //    useElement->updateLengthContext();
-
-    m_supplementalLocalToParentTransform.makeIdentity();
-
-    auto translation = additionalContainerTranslation();
-    m_supplementalLocalToParentTransform.translate(translation.x(), translation.y());
-
-    m_didTransformToRootUpdate = m_hadTransformUpdate || SVGContainerLayout::transformToRootChanged(parent());
-}
-
-void RenderSVGTransformableContainer::layoutChildren()
-{
-    RenderSVGContainer::layoutChildren();
-    m_didTransformToRootUpdate = false;
-}
-
 void RenderSVGTransformableContainer::updateFromStyle()
 {
     RenderSVGContainer::updateFromStyle();
 
     if (associatedUseElement(graphicsElement())) {
-        setHasSVGTransform();
         setHasTransformRelatedProperty();
+        setHasSVGTransform();
     }
+}
+
+void RenderSVGTransformableContainer::updateLayerTransform()
+{
+    // First update the supplemental layer transform...
+    m_supplementalLayerTransform = AffineTransform::makeTranslation(additionalContainerTranslation());
+
+    // ... before being able to use it in RenderLayerModelObject::updateLayerTransform().
+    RenderSVGContainer::updateLayerTransform();
 }
 
 void RenderSVGTransformableContainer::applyTransform(TransformationMatrix& transform, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const
 {
+    // FIXME: Make use of m_supplementalLayerTransform, to add <use> support.
     applySVGTransform(transform, graphicsElement(), style, boundingBox, options);
-}
-
-void RenderSVGTransformableContainer::styleWillChange(StyleDifference diff, const RenderStyle& newStyle)
-{
-    const RenderStyle* oldStyle = hasInitializedStyle() ? &style() : nullptr;
-    if (oldStyle && oldStyle->transform() != newStyle.transform())
-        setHadTransformUpdate();
-    RenderSVGContainer::styleWillChange(diff, newStyle);
-}
-
-SVGGraphicsElement& RenderSVGTransformableContainer::graphicsElement() const
-{
-    return downcast<SVGGraphicsElement>(RenderSVGContainer::element());
 }
 
 }
