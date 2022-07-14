@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<body onload="run();">
+<svg width="450" height="250">
+    <defs>
+        <clipPath id="c1" x="0" y="0" width="100%" height="100%" clipPathUnits="objectBoundingBox">
+            <rect width="0.5" height="0.5"/>
+        </clipPath>
+        <clipPath id="c2a" clipPathUnits="objectBoundingBox">
+            <rect width="0.5" height="0.5"/>
+        </clipPath>
+        <clipPath id="c2b" clipPathUnits="objectBoundingBox">
+            <rect x="0.5" y="0.5" width="0.5" height="0.5"/>
+        </clipPath>
+        <clipPath id="c3" clipPathUnits="objectBoundingBox">
+            <rect width="0.5" height="0.5"/>
+        </clipPath>
+        <clipPath id="c4" clipPathUnits="objectBoundingBox">
+            <rect width="0.5" height="0.5"/>
+        </clipPath>
+        <clipPath id="c5" clipPathUnits="objectBoundingBox">
+            <rect width="0.5" height="0.5"/>
+        </clipPath>
+        <clipPath id="c6" clipPathUnits="userSpaceOnUse">
+            <rect width="175" height="175"/>
+        </clipPath>
+        <clipPath id="c7" clipPathUnits="objectBoundingBox">
+            <rect width="0.5" height="0.5" visibility="hidden"/>
+        </clipPath>
+        <clipPath id="c8" clipPathUnits="objectBoundingBox">
+            <rect width="0.5" height="0.5"/>
+        </clipPath>
+    </defs>
+
+    <rect id="r1" x="50" y="50" width="50" height="50"/>
+    <rect id="r2" x="150" y="50" width="50" height="50" clip-path="url(#c2a)"/>
+    <rect id="r3" x="250" y="50" width="50" height="50" clip-path="url(#c3)"/>
+    <rect id="r4" x="350" y="50" width="50" height="50" clip-path="url(#c4)"/>
+    <rect id="r5" x="50" y="150" width="50" height="50" clip-path="url(#c5)"/>
+    <rect id="r6" x="150" y="150" width="50" height="50" clip-path="url(#c6)"/>
+    <rect id="r7" x="250" y="150" width="50" height="50" clip-path="url(#c7)"/>
+    <rect id="r8" x="350" y="150" width="50" height="50" clip-path="url(#c8)"/>
+</svg>
+<script>
+function run() {
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        requestAnimationFrame(function() {
+            r1.setAttribute("clip-path", "url(#c1)"); // change from no clipPath to some clipPath
+            r2.setAttribute("clip-path", "url(#c2b)"); // change from one clipPath to another
+            r3.removeAttribute("clip-path"); // change from a clipPath to no clipPath
+            r4.setAttribute("fill", "blue"); // change style of clipPath resource client
+            r5.setAttribute("width", "75"); // change layout of clipPath resource client
+            c6.setAttribute("clipPathUnits", "objectBoundingBox"); // change clipPath attribute
+            c7.firstElementChild.setAttribute("visibility", "visible"); // change style of clipPath contents
+            c8.firstElementChild.setAttribute("width", "1"); // change other attribute of clipPath contents
+            testRunner.notifyDone();
+        });
+    }
+}
+</script>
