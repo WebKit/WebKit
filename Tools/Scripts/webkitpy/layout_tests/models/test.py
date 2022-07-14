@@ -44,6 +44,7 @@ class Test(object):
     is_http_test = attr.ib(default=None, type=bool)
     is_websocket_test = attr.ib(default=None, type=bool)
     is_wpt_test = attr.ib(default=None, type=bool)
+    is_wpt_crash_test = attr.ib(default=None, type=bool)
 
     @property
     def needs_http_server(self):

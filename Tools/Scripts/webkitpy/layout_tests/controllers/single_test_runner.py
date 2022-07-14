@@ -121,6 +121,8 @@ class SingleTestRunner(object):
                 result.type = test_expectations.SKIP
                 return result
             return self._run_reftest()
+        if self._test_input.test.is_wpt_crash_test:
+            return self._run_wpt_crash_test()
         if self._options.reset_results:
             return self._run_rebaseline()
         return self._run_compare_test()
@@ -146,6 +148,23 @@ class SingleTestRunner(object):
             self._add_missing_baselines(test_result, driver_output)
         test_result_writer.write_test_result(self._filesystem, self._port, self._results_directory, self._test_name, driver_output, expected_driver_output, test_result.failures)
         return test_result
+
+    def _run_wpt_crash_test(self):
+        driver_output = self._driver.run_test(self._driver_input(), self._stop_when_done)
+        if self._options.ignore_metrics:
+            driver_output.strip_metrics()
+
+        patterns = self._port.logging_patterns_to_strip()
+        driver_output.strip_patterns(patterns)
+        driver_output.strip_text_start_if_needed(self._port.logging_detectors_to_strip_text_start(self._driver_input().test_name))
+        driver_output.strip_stderror_patterns(self._port.stderr_patterns_to_strip())
+
+        failures = []
+        failures.extend(self._handle_error(driver_output))
+        assert(isinstance(failure, test_failures.FailureCrash) or isinstance(failure, test_failures.FailureTimeout) for failure in failures)
+
+        test_result_writer.write_test_result(self._filesystem, self._port, self._results_directory, self._test_name, driver_output, None, failures)
+        return TestResult(self._test_input, failures, driver_output.test_time, driver_output.has_stderr(), pid=driver_output.pid)
 
     def _run_rebaseline(self):
         driver_output = self._driver.run_test(self._driver_input(), self._stop_when_done)
