@@ -302,7 +302,7 @@ template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::
     if (skipExactlyIgnoringASCIICase(buffer, "'strict-dynamic'"_s)
         && extensionModeAllowsKeywordsForDirective(m_contentSecurityPolicyModeForExtension, m_directiveName)
         && (m_directiveName == ContentSecurityPolicyDirectiveNames::scriptSrc
-            || m_directiveName == ContentSecurityPolicyDirectiveNames::scriptSrcElem)) {
+            || m_directiveName == ContentSecurityPolicyDirectiveNames::scriptSrcElem || m_directiveName == ContentSecurityPolicyDirectiveNames::defaultSrc)) {
         m_allowNonParserInsertedScripts = true;
         m_allowSelf = false;
         m_allowInline = false;

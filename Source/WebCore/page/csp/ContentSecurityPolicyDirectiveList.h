@@ -89,7 +89,7 @@ public:
     // FIXME: Remove this once we teach ContentSecurityPolicyDirectiveList how to log an arbitrary console message.
     const ContentSecurityPolicy& policy() const { return m_policy; }
 
-    bool strictDynamicIncluded();
+    bool strictDynamicIncluded() const;
 
 private:
     void parse(const String&, ContentSecurityPolicy::PolicyFrom);
