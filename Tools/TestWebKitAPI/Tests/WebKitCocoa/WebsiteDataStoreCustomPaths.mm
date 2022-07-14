@@ -1241,7 +1241,7 @@ TEST(WebKit, DeleteEmptyOriginDirectoryWhenOriginIsGone)
     [webView loadHTMLString:htmlString baseURL:[NSURL URLWithString:@"https://apple.com"]];
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     kill(pid, SIGKILL);
-    while ([fileManager fileExistsAtPath:originDirectory.path])
+    while ([fileManager fileExistsAtPath:topOriginDirectory.path])
         TestWebKitAPI::Util::spinRunLoop();
     EXPECT_FALSE([fileManager fileExistsAtPath:topOriginDirectory.path]);
 }
