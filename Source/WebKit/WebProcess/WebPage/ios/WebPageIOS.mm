@@ -2631,13 +2631,19 @@ bool WebPage::applyAutocorrectionInternal(const String& correction, const String
 
 WebAutocorrectionContext WebPage::autocorrectionContext()
 {
+    if (!m_focusedElement)
+        return { };
+
+    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    if (!frame->selection().selection().hasEditableStyle())
+        return { };
+
     String contextBefore;
     String markedText;
     String selectedText;
     String contextAfter;
     EditingRange markedTextRange;
 
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
     VisiblePosition startPosition = frame->selection().selection().start();
     VisiblePosition endPosition = frame->selection().selection().end();
     const unsigned minContextWordCount = 10;
@@ -2711,12 +2717,6 @@ void WebPage::handleAutocorrectionContextRequest()
 
 void WebPage::prepareToRunModalJavaScriptDialog()
 {
-    if (!m_focusedElement)
-        return;
-
-    if (!m_focusedElement->hasEditableStyle() && !is<HTMLTextFormControlElement>(*m_focusedElement))
-        return;
-
     // When a modal dialog is presented while an editable element is focused, UIKit will attempt to request a
     // WebAutocorrectionContext, which triggers synchronous IPC back to the web process, resulting in deadlock.
     // To avoid this deadlock, we preemptively compute and send autocorrection context data to the UI process,
