@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "ReftestFunctions.h"
+#include "WPTFunctions.h"
 
 #include "JSBasics.h"
 
@@ -44,12 +44,13 @@ void sendTestRenderedEvent(JSGlobalContextRef context)
     JSValueUnprotect(context, value);
 }
 
-bool hasReftestWaitAttribute(JSGlobalContextRef context)
+bool hasTestWaitAttribute(JSGlobalContextRef context)
 {
     if (!context)
         return false;
     auto classList = objectProperty(context, JSContextGetGlobalObject(context), { "document", "documentElement", "classList" });
-    return JSValueToBoolean(context, call(context, classList, "contains", { makeValue(context, "reftest-wait") }));
+    return JSValueToBoolean(context, call(context, classList, "contains", { makeValue(context, "reftest-wait") }))
+        || JSValueToBoolean(context, call(context, classList, "contains", { makeValue(context, "test-wait") }));
 }
 
 }

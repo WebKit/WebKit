@@ -36,9 +36,9 @@
 #include "EventSender.h"
 #include "GCController.h"
 #include "JSWrapper.h"
-#include "ReftestFunctions.h"
 #include "TestRunner.h"
 #include "TextInputController.h"
+#include "WPTFunctions.h"
 #include "WebCoreTestSupport.h"
 #include "WorkQueueItem.h"
 #include "WorkQueue.h"
@@ -192,7 +192,7 @@ HRESULT FrameLoadDelegate::didChangeIcons(_In_opt_ IWebView*, _In_opt_ IWebFrame
 static void CALLBACK dumpAfterWaitAttributeIsRemoved(HWND = nullptr, UINT = 0, UINT_PTR = 0, DWORD = 0)
 {
     static UINT_PTR timerID;
-    if (frame && WTR::hasReftestWaitAttribute(frame->globalContext())) {
+    if (frame && WTR::hasTestWaitAttribute(frame->globalContext())) {
         if (!timerID)
             timerID = ::SetTimer(nullptr, 0, 0, dumpAfterWaitAttributeIsRemoved);
     } else {

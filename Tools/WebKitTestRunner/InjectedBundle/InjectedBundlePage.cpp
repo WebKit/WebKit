@@ -28,8 +28,8 @@
 
 #include "ActivateFonts.h"
 #include "InjectedBundle.h"
-#include "ReftestFunctions.h"
 #include "StringFunctions.h"
+#include "WPTFunctions.h"
 #include "WebCoreTestSupport.h"
 #include <cmath>
 #include <JavaScriptCore/JSRetainPtr.h>
@@ -1762,15 +1762,15 @@ String InjectedBundlePage::platformResponseMimeType(WKURLResponseRef)
 }
 #endif
 
-static bool hasReftestWaitAttribute(WKBundlePageRef page)
+static bool hasTestWaitAttribute(WKBundlePageRef page)
 {
     auto frame = WKBundlePageGetMainFrame(page);
-    return frame && hasReftestWaitAttribute(WKBundleFrameGetJavaScriptContext(frame));
+    return frame && hasTestWaitAttribute(WKBundleFrameGetJavaScriptContext(frame));
 }
 
 static void dumpAfterWaitAttributeIsRemoved(WKBundlePageRef page)
 {
-    if (hasReftestWaitAttribute(page)) {
+    if (hasTestWaitAttribute(page)) {
         WKRetain(page);
         // Use a 1ms interval between tries to allow lower priority run loop sources with zero delays to run.
         RunLoop::current().dispatchAfter(1_ms, [page] {

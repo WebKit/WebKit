@@ -6,9 +6,9 @@ set(TestRunnerShared_DIR ${TOOLS_DIR}/TestRunnerShared)
 file(MAKE_DIRECTORY ${TestRunnerShared_DERIVED_SOURCES_DIR})
 
 set(TestRunnerShared_SOURCES
-    ReftestFunctions.cpp
     TestCommand.cpp
     TestFeatures.cpp
+    WPTFunctions.cpp
 
     Bindings/JSBasics.cpp
     Bindings/JSWrapper.cpp

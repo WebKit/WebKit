@@ -38,9 +38,9 @@
 #import "ObjCController.h"
 #import "ObjCPlugin.h"
 #import "ObjCPluginFunction.h"
-#import "ReftestFunctions.h"
 #import "TestRunner.h"
 #import "TextInputController.h"
+#import "WPTFunctions.h"
 #import "WebCoreTestSupport.h"
 #import "WorkQueue.h"
 #import "WorkQueueItem.h"
@@ -142,7 +142,7 @@ IGNORE_WARNINGS_END
 #if PLATFORM(IOS_FAMILY)
     WebThreadLock();
 #endif
-    if (WTR::hasReftestWaitAttribute(mainFrame.globalContext))
+    if (WTR::hasTestWaitAttribute(mainFrame.globalContext))
         [self performSelector:@selector(dumpAfterWaitAttributeIsRemoved:) withObject:nil afterDelay:0];
     else
         dump();

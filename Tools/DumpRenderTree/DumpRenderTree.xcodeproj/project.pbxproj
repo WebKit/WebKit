@@ -78,7 +78,7 @@
 		80045AEE147718E7008290A8 /* AccessibilityNotificationHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 80045AEC147718E7008290A8 /* AccessibilityNotificationHandler.mm */; };
 		8465E2C70FFA8DF2003B8342 /* PixelDumpSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8465E2C60FFA8DF2003B8342 /* PixelDumpSupport.cpp */; };
 		932BB9C3270E273C0094CC33 /* ModifierKeys.mm in Sources */ = {isa = PBXBuildFile; fileRef = 932BB9C2270E273C0094CC33 /* ModifierKeys.mm */; };
-		93C78826250C6D3A00C0AA24 /* ReftestFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93C78824250C6D3900C0AA24 /* ReftestFunctions.cpp */; };
+		93C78826250C6D3A00C0AA24 /* WPTFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93C78824250C6D3900C0AA24 /* WPTFunctions.cpp */; };
 		93C7882E250C717200C0AA24 /* JSBasics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93C78829250C713400C0AA24 /* JSBasics.cpp */; };
 		A1158D581892740C0088C17B /* DumpRenderTreeBrowserView.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1158D56189273EB0088C17B /* DumpRenderTreeBrowserView.mm */; };
 		A1158D59189274360088C17B /* PixelDumpSupportIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1158D57189273EB0088C17B /* PixelDumpSupportIOS.mm */; };
@@ -293,8 +293,8 @@
 		932BB9C2270E273C0094CC33 /* ModifierKeys.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ModifierKeys.mm; sourceTree = "<group>"; };
 		9335435F03D75502008635CE /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9340995408540CAF007F3BC8 /* DumpRenderTree */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DumpRenderTree; sourceTree = BUILT_PRODUCTS_DIR; };
-		93C78824250C6D3900C0AA24 /* ReftestFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReftestFunctions.cpp; sourceTree = "<group>"; };
-		93C78825250C6D3900C0AA24 /* ReftestFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReftestFunctions.h; sourceTree = "<group>"; };
+		93C78824250C6D3900C0AA24 /* WPTFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WPTFunctions.cpp; sourceTree = "<group>"; };
+		93C78825250C6D3900C0AA24 /* WPTFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WPTFunctions.h; sourceTree = "<group>"; };
 		93C78829250C713400C0AA24 /* JSBasics.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSBasics.cpp; sourceTree = "<group>"; };
 		93C7882B250C713400C0AA24 /* JSBasics.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSBasics.h; sourceTree = "<group>"; };
 		A1103B5B1892498F00738C87 /* LayoutTestHelper.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = LayoutTestHelper.xcconfig; path = mac/Configurations/LayoutTestHelper.xcconfig; sourceTree = "<group>"; };
@@ -610,12 +610,12 @@
 				A17A5A2B22A880D80065C5F0 /* spi */,
 				3148A0551E6F90F400D3B316 /* IOSLayoutTestCommunication.cpp */,
 				3148A0561E6F90F400D3B316 /* IOSLayoutTestCommunication.h */,
-				93C78824250C6D3900C0AA24 /* ReftestFunctions.cpp */,
-				93C78825250C6D3900C0AA24 /* ReftestFunctions.h */,
 				7CFF9BC12533BC160008009F /* TestCommand.cpp */,
 				7CFF9BC02533BC160008009F /* TestCommand.h */,
 				7CFF9BBE2533BB240008009F /* TestFeatures.cpp */,
 				7CFF9BBD2533BB240008009F /* TestFeatures.h */,
+				93C78824250C6D3900C0AA24 /* WPTFunctions.cpp */,
+				93C78825250C6D3900C0AA24 /* WPTFunctions.h */,
 			);
 			name = TestRunnerShared;
 			path = ../TestRunnerShared;
@@ -1086,7 +1086,6 @@
 				BCB284D60CFA83D1007E533E /* PixelDumpSupportMac.mm in Sources */,
 				BCA18B660C9B08C200114369 /* PolicyDelegate.mm in Sources */,
 				F4010B7B24DA201F00A876E2 /* PoseAsClass.mm in Sources */,
-				93C78826250C6D3A00C0AA24 /* ReftestFunctions.cpp in Sources */,
 				BCA18B680C9B08C200114369 /* ResourceLoadDelegate.mm in Sources */,
 				7CFF9BC22533BC160008009F /* TestCommand.cpp in Sources */,
 				7CFF9BBF2533BB240008009F /* TestFeatures.cpp in Sources */,
@@ -1104,6 +1103,7 @@
 				F445C68624B2789D00790440 /* UIScriptControllerShared.cpp in Sources */,
 				BC9D90240C97472E0099A4A3 /* WorkQueue.cpp in Sources */,
 				BCA18B260C9B015C00114369 /* WorkQueueItemMac.mm in Sources */,
+				93C78826250C6D3A00C0AA24 /* WPTFunctions.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
