@@ -736,6 +736,7 @@ struct IndexConversionParams
 {
     uint32_t srcOffset;
     uint32_t indexCount;
+    uint32_t maxIndex;
     bool primitiveRestartEnabled;
 };
 
@@ -902,9 +903,9 @@ kernel void genTriFanIndicesFromElements(uint idx [[thread_position_in_grid]],
 
     uint elemIdx = 2 + idx;
 
-    output[3 * idx] = getIndexU32(options.srcOffset, 0, inputU8, inputU16, inputU32);
-    output[3 * idx + 1] = getIndexU32(options.srcOffset, elemIdx - 1, inputU8, inputU16, inputU32);
-    output[3 * idx + 2] = getIndexU32(options.srcOffset, elemIdx, inputU8, inputU16, inputU32);
+    output[3 * idx] = (options.maxIndex > 0) ? getIndexU32(options.srcOffset, 0, inputU8, inputU16, inputU32) : 0;
+    output[3 * idx + 1] = (elemIdx - 1 < options.maxIndex) ? getIndexU32(options.srcOffset, elemIdx - 1, inputU8, inputU16, inputU32) : 0;
+    output[3 * idx + 2] = (elemIdx - 1 < options.maxIndex) ? getIndexU32(options.srcOffset, elemIdx, inputU8, inputU16, inputU32) : 0;
 }
 
 
