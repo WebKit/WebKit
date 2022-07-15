@@ -67,6 +67,10 @@ static RemoteInspector::Client::SessionCapabilities processSessionCapabilities(G
         g_variant_lookup(proxy.get(), "type", "&s", &proxyType);
         capabilities.proxy->type = String::fromUTF8(proxyType);
 
+        const char* autoconfigURL;
+        if (g_variant_lookup(proxy.get(), "autoconfigURL", "&s", &autoconfigURL))
+            capabilities.proxy->autoconfigURL = String::fromUTF8(autoconfigURL);
+
         const char* ftpURL;
         if (g_variant_lookup(proxy.get(), "ftpURL", "&s", &ftpURL))
             capabilities.proxy->ftpURL = String::fromUTF8(ftpURL);

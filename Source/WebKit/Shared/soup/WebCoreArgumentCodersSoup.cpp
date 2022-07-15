@@ -135,10 +135,13 @@ void ArgumentCoder<SoupNetworkProxySettings>::encode(Encoder& encoder, const Sou
 {
     ASSERT(!settings.isEmpty());
     encoder << settings.mode;
-    if (settings.mode != SoupNetworkProxySettings::Mode::Custom)
+    if (settings.mode != SoupNetworkProxySettings::Mode::Custom && settings.mode != SoupNetworkProxySettings::Mode::Auto)
         return;
 
     encoder << settings.defaultProxyURL;
+    if (settings.mode == SoupNetworkProxySettings::Mode::Auto)
+        return;
+
     uint32_t ignoreHostsCount = settings.ignoreHosts ? g_strv_length(settings.ignoreHosts.get()) : 0;
     encoder << ignoreHostsCount;
     if (ignoreHostsCount) {
@@ -153,11 +156,14 @@ bool ArgumentCoder<SoupNetworkProxySettings>::decode(Decoder& decoder, SoupNetwo
     if (!decoder.decode(settings.mode))
         return false;
 
-    if (settings.mode != SoupNetworkProxySettings::Mode::Custom)
+    if (settings.mode != SoupNetworkProxySettings::Mode::Custom && settings.mode != SoupNetworkProxySettings::Mode::Auto)
         return true;
 
     if (!decoder.decode(settings.defaultProxyURL))
         return false;
+
+    if (settings.mode == SoupNetworkProxySettings::Mode::Auto)
+        return !settings.isEmpty();
 
     uint32_t ignoreHostsCount;
     if (!decoder.decode(ignoreHostsCount))

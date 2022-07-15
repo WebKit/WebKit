@@ -33,6 +33,7 @@
 #include "GUniquePtrSoup.h"
 #include "Logging.h"
 #include "SoupVersioning.h"
+#include "WebKitAutoconfigProxyResolver.h"
 #include <glib/gstdio.h>
 #include <libsoup/soup.h>
 #include <pal/crypto/CryptoDigest.h>
@@ -298,6 +299,9 @@ void SoupNetworkSession::setProxySettings(const SoupNetworkProxySettings& settin
             g_simple_proxy_resolver_set_ignore_hosts(G_SIMPLE_PROXY_RESOLVER(resolver.get()), m_proxySettings.ignoreHosts.get());
         for (const auto& iter : m_proxySettings.proxyMap)
             g_simple_proxy_resolver_set_uri_proxy(G_SIMPLE_PROXY_RESOLVER(resolver.get()), iter.key.data(), iter.value.data());
+        break;
+    case SoupNetworkProxySettings::Mode::Auto:
+        resolver = webkitAutoconfigProxyResolverNew(m_proxySettings.defaultProxyURL);
         break;
     }
 

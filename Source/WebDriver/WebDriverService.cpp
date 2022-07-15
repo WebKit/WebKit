@@ -405,9 +405,14 @@ static std::optional<Proxy> deserializeProxy(JSON::Object& proxyObject)
     if (proxy.type == "direct" || proxy.type == "autodetect" || proxy.type == "system")
         return proxy;
 
+
     if (proxy.type == "pac") {
-        proxy.autoconfigURL = proxyObject.getString("proxyAutoconfigUrl"_s);
-        if (!proxy.autoconfigURL)
+        auto autoconfigURL = proxyObject.getString("proxyAutoconfigUrl"_s);
+        if (!autoconfigURL)
+            return std::nullopt;
+
+        proxy.autoconfigURL = URL({ }, autoconfigURL);
+        if (!proxy.autoconfigURL->isValid())
             return std::nullopt;
 
         return proxy;
