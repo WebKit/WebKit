@@ -145,7 +145,7 @@ shouldBe("testInitEvent('Storage', '\"a\", true, false, \"b\", \"c\", \"d\", \"e
 shouldBe("testInitEvent('Storage', '\"a\", false, false, \"b\", \"c\", \"d\", \"e\"').cancelable", "false");
 shouldBe("testInitEvent('Storage', '\"a\", false, true, \"b\", \"c\", \"d\", \"e\"').cancelable", "true");
 shouldBe("testInitEvent('Storage', '\"a\", false, false, \"b\", \"c\", \"d\", \"e\"').key", "'b'");
-shouldBe("testInitEvent('Storage', '\"a\", false, false, null, \"c\", \"d\", \"e\"').key", "'null'");
+shouldBe("testInitEvent('Storage', '\"a\", false, false, null, \"c\", \"d\", \"e\"').key", "null");
 shouldBe("testInitEvent('Storage', '\"a\", false, false, \"b\", \"c\", \"d\", \"e\"').oldValue", "'c'");
 shouldBe("testInitEvent('Storage', '\"a\", false, false, \"b\", null, \"d\", \"e\"').oldValue", "null");
 shouldBe("testInitEvent('Storage', '\"a\", false, false, \"b\", \"c\", \"d\", \"e\"').newValue", "'d'");

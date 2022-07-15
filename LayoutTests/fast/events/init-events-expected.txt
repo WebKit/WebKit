@@ -116,7 +116,7 @@ PASS testInitEvent('Storage', '"a", true, false, "b", "c", "d", "e"').bubbles is
 PASS testInitEvent('Storage', '"a", false, false, "b", "c", "d", "e"').cancelable is false
 PASS testInitEvent('Storage', '"a", false, true, "b", "c", "d", "e"').cancelable is true
 PASS testInitEvent('Storage', '"a", false, false, "b", "c", "d", "e"').key is 'b'
-PASS testInitEvent('Storage', '"a", false, false, null, "c", "d", "e"').key is 'null'
+PASS testInitEvent('Storage', '"a", false, false, null, "c", "d", "e"').key is null
 PASS testInitEvent('Storage', '"a", false, false, "b", "c", "d", "e"').oldValue is 'c'
 PASS testInitEvent('Storage', '"a", false, false, "b", null, "d", "e"').oldValue is null
 PASS testInitEvent('Storage', '"a", false, false, "b", "c", "d", "e"').newValue is 'd'

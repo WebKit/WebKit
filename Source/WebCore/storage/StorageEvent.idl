@@ -34,14 +34,14 @@
     readonly attribute USVString url;
     readonly attribute Storage? storageArea;
 
-    undefined initStorageEvent([AtomString] DOMString typeArg,
-                          optional boolean canBubbleArg = false,
-                          optional boolean cancelableArg = false,
-                          optional DOMString keyArg = "undefined",
-                          optional DOMString? oldValueArg = null,
-                          optional DOMString? newValueArg = null,
-                          optional USVString urlArg = "undefined",
-                          optional Storage? storageAreaArg = null);
+    undefined initStorageEvent([AtomString] DOMString type,
+                               optional boolean bubbles = false,
+                               optional boolean cancelable = false,
+                               optional DOMString? key = null,
+                               optional DOMString? oldValue = null,
+                               optional DOMString? newValue = null,
+                               optional USVString url = "",
+                               optional Storage? storageArea = null);
 
     // Needed once we support init<blank>EventNS
     // undefined initStorageEventNS(DOMString namespaceURI, DOMString typeArg, boolean canBubbleArg, boolean cancelableArg, DOMString keyArg, DOMString oldValueArg, DOMString newValueArg, USVString urlArg, Storage? storageAreaArg);
