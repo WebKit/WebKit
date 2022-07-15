@@ -1159,4 +1159,5 @@ typedef (FetchRequest or FetchResponse) FetchObject;
 
     [Conditional=ARKIT_INLINE_PREVIEW_MAC] Promise<sequence<DOMString>> modelInlinePreviewUUIDs();
     [Conditional=ARKIT_INLINE_PREVIEW_MAC] DOMString modelInlinePreviewUUIDForModelElement(HTMLModelElement modelElement);
+    undefined avoidIOSurfaceSizeCheckInWebProcess(HTMLCanvasElement element);
 };

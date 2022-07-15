@@ -83,6 +83,7 @@ class Frame;
 class GCObservation;
 class HTMLAnchorElement;
 class HTMLAttachmentElement;
+class HTMLCanvasElement;
 class HTMLImageElement;
 class HTMLInputElement;
 class HTMLLinkElement;
@@ -1318,6 +1319,8 @@ public:
     void modelInlinePreviewUUIDs(ModelInlinePreviewUUIDsPromise&&) const;
     String modelInlinePreviewUUIDForModelElement(const HTMLModelElement&) const;
 #endif
+
+    void avoidIOSurfaceSizeCheckInWebProcess(HTMLCanvasElement&);
 
 private:
     explicit Internals(Document&);

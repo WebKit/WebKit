@@ -889,6 +889,11 @@ void HTMLCanvasElement::setUsesDisplayListDrawing(bool usesDisplayListDrawing)
     m_usesDisplayListDrawing = usesDisplayListDrawing;
 }
 
+void HTMLCanvasElement::setAvoidIOSurfaceSizeCheckInWebProcessForTesting()
+{
+    m_avoidBackendSizeCheckForTesting = true;
+}
+
 void HTMLCanvasElement::createImageBuffer() const
 {
     ASSERT(!hasCreatedImageBuffer());
@@ -930,8 +935,10 @@ void HTMLCanvasElement::createImageBuffer() const
             return std::pair { m_context->colorSpace(), m_context->pixelFormat() };
         return std::pair { DestinationColorSpace::SRGB(), PixelFormat::BGRA8 };
     }();
-
-    setImageBuffer(ImageBuffer::create(size(), RenderingPurpose::Canvas, 1, colorSpace, pixelFormat, bufferOptions, { hostWindow }));
+    ImageBuffer::CreationContext context = { };
+    context.hostWindow = hostWindow;
+    context.avoidIOSurfaceSizeCheckInWebProcessForTesting = m_avoidBackendSizeCheckForTesting;
+    setImageBuffer(ImageBuffer::create(size(), RenderingPurpose::Canvas, 1, colorSpace, pixelFormat, bufferOptions, context));
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
     if (m_context && m_context->is2d()) {
