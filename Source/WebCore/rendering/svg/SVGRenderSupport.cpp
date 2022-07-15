@@ -31,6 +31,7 @@
 #include "LegacyRenderSVGRoot.h"
 #include "LegacyRenderSVGShape.h"
 #include "LegacyRenderSVGTransformableContainer.h"
+#include "LegacyRenderSVGViewportContainer.h"
 #include "NodeRenderStyle.h"
 #include "RenderChildIterator.h"
 #include "RenderElement.h"
@@ -45,7 +46,6 @@
 #include "RenderSVGRoot.h"
 #include "RenderSVGShape.h"
 #include "RenderSVGText.h"
-#include "RenderSVGViewportContainer.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGGeometryElement.h"
 #include "SVGResources.h"
@@ -207,17 +207,13 @@ static inline void invalidateResourcesOfChildren(RenderElement& renderer)
 static inline bool layoutSizeOfNearestViewportChanged(const RenderElement& renderer)
 {
     const RenderElement* start = &renderer;
-    while (start && !start->isSVGRootOrLegacySVGRoot() && !is<RenderSVGViewportContainer>(*start))
+    while (start && !is<LegacyRenderSVGRoot>(*start) && !is<LegacyRenderSVGViewportContainer>(*start))
         start = start->parent();
 
     ASSERT(start);
-    if (is<RenderSVGViewportContainer>(*start))
-        return downcast<RenderSVGViewportContainer>(*start).isLayoutSizeChanged();
+    if (is<LegacyRenderSVGViewportContainer>(*start))
+        return downcast<LegacyRenderSVGViewportContainer>(*start).isLayoutSizeChanged();
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    if (is<RenderSVGRoot>(*start))
-        return downcast<RenderSVGRoot>(*start).isLayoutSizeChanged();
-#endif
     return downcast<LegacyRenderSVGRoot>(*start).isLayoutSizeChanged();
 }
 
@@ -226,8 +222,8 @@ bool SVGRenderSupport::transformToRootChanged(RenderElement* ancestor)
     while (ancestor && !ancestor->isSVGRootOrLegacySVGRoot()) {
         if (is<LegacyRenderSVGTransformableContainer>(*ancestor))
             return downcast<LegacyRenderSVGTransformableContainer>(*ancestor).didTransformToRootUpdate();
-        if (is<RenderSVGViewportContainer>(*ancestor))
-            return downcast<RenderSVGViewportContainer>(*ancestor).didTransformToRootUpdate();
+        if (is<LegacyRenderSVGViewportContainer>(*ancestor))
+            return downcast<LegacyRenderSVGViewportContainer>(*ancestor).didTransformToRootUpdate();
         ancestor = ancestor->parent();
     }
 

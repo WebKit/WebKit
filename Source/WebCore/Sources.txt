@@ -2516,15 +2516,16 @@ rendering/style/StyleVisualData.cpp
 rendering/style/TextSizeAdjustment.cpp
 rendering/style/WillChangeData.cpp
 rendering/svg/LegacyRenderSVGContainer.cpp
+rendering/svg/LegacyRenderSVGEllipse.cpp
 rendering/svg/LegacyRenderSVGModelObject.cpp
 rendering/svg/LegacyRenderSVGPath.cpp
 rendering/svg/LegacyRenderSVGRect.cpp
 rendering/svg/LegacyRenderSVGRoot.cpp
 rendering/svg/LegacyRenderSVGShape.cpp
 rendering/svg/LegacyRenderSVGTransformableContainer.cpp
+rendering/svg/LegacyRenderSVGViewportContainer.cpp
 rendering/svg/RenderSVGBlock.cpp
 rendering/svg/RenderSVGContainer.cpp
-rendering/svg/LegacyRenderSVGEllipse.cpp
 rendering/svg/RenderSVGEllipse.cpp
 rendering/svg/RenderSVGForeignObject.cpp
 rendering/svg/RenderSVGGradientStop.cpp

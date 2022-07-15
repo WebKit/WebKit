@@ -29,7 +29,6 @@
 #include "Frame.h"
 #include "LegacyRenderSVGRoot.h"
 #include "LengthFunctions.h"
-#include "RenderSVGViewportContainer.h"
 #include "RenderView.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGSVGElement.h"

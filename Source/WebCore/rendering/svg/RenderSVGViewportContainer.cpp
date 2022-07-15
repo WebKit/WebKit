@@ -3,6 +3,7 @@
  * Copyright (C) 2004, 2005, 2007 Rob Buis <buis@kde.org>
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2009 Google, Inc.
+ * Copyright (c) 2020, 2021, 2022 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,8 +24,11 @@
 #include "config.h"
 #include "RenderSVGViewportContainer.h"
 
-#include "GraphicsContext.h"
-#include "RenderView.h"
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+#include "RenderLayer.h"
+#include "RenderSVGModelObjectInlines.h"
+#include "RenderSVGRoot.h"
+#include "SVGContainerLayout.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGSVGElement.h"
 #include <wtf/IsoMallocInlines.h>
@@ -34,76 +38,33 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGViewportContainer);
 
 RenderSVGViewportContainer::RenderSVGViewportContainer(SVGSVGElement& element, RenderStyle&& style)
-    : LegacyRenderSVGContainer(element, WTFMove(style))
-    , m_didTransformToRootUpdate(false)
-    , m_isLayoutSizeChanged(false)
-    , m_needsTransformUpdate(true)
+    : RenderSVGContainer(element, WTFMove(style))
 {
 }
 
 SVGSVGElement& RenderSVGViewportContainer::svgSVGElement() const
 {
-    return downcast<SVGSVGElement>(LegacyRenderSVGContainer::element());
+    return downcast<SVGSVGElement>(RenderSVGContainer::element());
 }
 
-void RenderSVGViewportContainer::determineIfLayoutSizeChanged()
+FloatRect RenderSVGViewportContainer::computeViewport() const
 {
-    m_isLayoutSizeChanged = svgSVGElement().hasRelativeLengths() && selfNeedsLayout();
+    auto& useSVGSVGElement = svgSVGElement();
+
+    SVGLengthContext lengthContext(&useSVGSVGElement);
+    return { useSVGSVGElement.x().value(lengthContext), useSVGSVGElement.y().value(lengthContext),
+        useSVGSVGElement.width().value(lengthContext), useSVGSVGElement.height().value(lengthContext) };
 }
 
-void RenderSVGViewportContainer::applyViewportClip(PaintInfo& paintInfo)
+void RenderSVGViewportContainer::updateLayerTransform()
 {
-    if (SVGRenderSupport::isOverflowHidden(*this))
-        paintInfo.context().clip(m_viewport);
+    RenderSVGContainer::updateLayerTransform();
 }
 
-void RenderSVGViewportContainer::calcViewport()
+void RenderSVGViewportContainer::applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect&, OptionSet<RenderStyle::TransformOperationOption>) const
 {
-    SVGSVGElement& element = svgSVGElement();
-    SVGLengthContext lengthContext(&element);
-    FloatRect newViewport(element.x().value(lengthContext), element.y().value(lengthContext), element.width().value(lengthContext), element.height().value(lengthContext));
-
-    if (m_viewport == newViewport)
-        return;
-
-    m_viewport = newViewport;
-
-    setNeedsBoundariesUpdate();
-    setNeedsTransformUpdate();
-}
-
-bool RenderSVGViewportContainer::calculateLocalTransform() 
-{
-    m_didTransformToRootUpdate = m_needsTransformUpdate || SVGRenderSupport::transformToRootChanged(parent());
-    if (!m_needsTransformUpdate)
-        return false;
-    
-    m_localToParentTransform = AffineTransform::makeTranslation(toFloatSize(m_viewport.location())) * viewportTransform();
-    m_needsTransformUpdate = false;
-    return true;
-}
-
-AffineTransform RenderSVGViewportContainer::viewportTransform() const
-{
-    return svgSVGElement().viewBoxToViewTransform(m_viewport.width(), m_viewport.height());
-}
-
-bool RenderSVGViewportContainer::pointIsInsideViewportClip(const FloatPoint& pointInParent)
-{
-    // Respect the viewport clip (which is in parent coords)
-    if (!SVGRenderSupport::isOverflowHidden(*this))
-        return true;
-    
-    return m_viewport.contains(pointInParent);
-}
-
-void RenderSVGViewportContainer::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-{
-    // An empty viewBox disables rendering.
-    if (svgSVGElement().hasEmptyViewBox())
-        return;
-
-    LegacyRenderSVGContainer::paint(paintInfo, paintOffset);
 }
 
 }
+
+#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

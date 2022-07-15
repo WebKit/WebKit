@@ -31,9 +31,9 @@
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "LegacyRenderSVGRoot.h"
+#include "LegacyRenderSVGViewportContainer.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGRoot.h"
-#include "RenderSVGViewportContainer.h"
 #include "RenderView.h"
 #include "SMILTimeContainer.h"
 #include "SVGAngle.h"
@@ -411,7 +411,9 @@ RenderPtr<RenderElement> SVGSVGElement::createElementRenderer(RenderStyle&& styl
 #endif
         return createRenderer<LegacyRenderSVGRoot>(*this, WTFMove(style));
     }
-    return createRenderer<RenderSVGViewportContainer>(*this, WTFMove(style));
+
+    // FIXME: [LBSE] Enable creation of inner <svg> element renderers.
+    return createRenderer<LegacyRenderSVGViewportContainer>(*this, WTFMove(style));
 }
 
 Node::InsertedIntoAncestorResult SVGSVGElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
@@ -526,7 +528,7 @@ FloatSize SVGSVGElement::currentViewportSize() const
             viewportSize = root.contentBoxRect().size() / root.style().effectiveZoom();
 #endif
         } else
-            viewportSize = downcast<RenderSVGViewportContainer>(*renderer()).viewport().size();
+            viewportSize = downcast<LegacyRenderSVGViewportContainer>(*renderer()).viewport().size();
     }
 
     if (!viewportSize.isEmpty())
