@@ -53,11 +53,17 @@ VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivat
     }
 
     g_signal_connect_swapped(m_stream, "notify::caps", G_CALLBACK(+[](VideoTrackPrivateGStreamer* track) {
+        if (isMainThread())
+            LOG_ERROR("Caps callback received on main thread.");
+        ASSERT(!isMainThread());
         track->m_taskQueue.enqueueTask([track]() {
             track->updateConfigurationFromCaps();
         });
     }), this);
     g_signal_connect_swapped(m_stream, "notify::tags", G_CALLBACK(+[](VideoTrackPrivateGStreamer* track) {
+        if (isMainThread())
+            LOG_ERROR("Tags callback received on main thread.");
+        ASSERT(!isMainThread());
         track->m_taskQueue.enqueueTask([track]() {
             track->updateConfigurationFromTags();
         });
