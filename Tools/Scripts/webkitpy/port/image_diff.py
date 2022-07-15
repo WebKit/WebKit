@@ -90,7 +90,8 @@ class ImageDiffer(object):
             self._process.write(buffer.getvalue())
             return self._read()
         except IOError as exception:
-            return (None, 0, "Failed to compute an image diff: %s" % str(exception))
+            err_str = 'Failed to compute an image diff: %s' % str(exception)
+            return ImageDiffResult(passed=False, diff_image=None, difference=0, tolerance=self._tolerance, fuzzy_data=None, error_string=err_str)
 
     def _start(self, tolerance):
         command = [self._port._path_to_image_diff(), '--difference']
