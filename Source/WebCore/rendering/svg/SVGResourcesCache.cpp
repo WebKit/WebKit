@@ -86,7 +86,7 @@ static bool hasPaintResourceRequiringRemovalOnClientLayoutChange(RenderSVGResour
 
 static bool hasResourcesRequiringRemovalOnClientLayoutChange(SVGResources& resources)
 {
-    return resources.masker() || resources.filter() || hasPaintResourceRequiringRemovalOnClientLayoutChange(resources.fill()) || hasPaintResourceRequiringRemovalOnClientLayoutChange(resources.stroke());
+    return resources.filter() || hasPaintResourceRequiringRemovalOnClientLayoutChange(resources.fill()) || hasPaintResourceRequiringRemovalOnClientLayoutChange(resources.stroke());
 }
 
 void SVGResourcesCache::clientLayoutChanged(RenderElement& renderer)

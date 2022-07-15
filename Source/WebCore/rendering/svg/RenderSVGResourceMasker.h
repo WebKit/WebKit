@@ -32,7 +32,29 @@ class SVGMaskElement;
 
 struct MaskerData {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
+    struct Inputs {
+        bool operator==(const Inputs& other)
+        {
+            return repaintRect == other.repaintRect && scale == other.scale && objectBoundingBox == other.objectBoundingBox;
+        }
+
+        FloatRect repaintRect;
+        FloatSize scale;
+        std::optional<FloatRect> objectBoundingBox;
+    };
+
+    bool invalidate(const Inputs& inputs)
+    {
+        if (this->inputs != inputs) {
+            maskImage = nullptr;
+            this->inputs = inputs;
+        }
+        return !maskImage;
+    }
+
     RefPtr<ImageBuffer> maskImage;
+    Inputs inputs;
 };
 
 class RenderSVGResourceMasker final : public RenderSVGResourceContainer {
@@ -58,11 +80,12 @@ private:
 
     ASCIILiteral renderName() const override { return "RenderSVGResourceMasker"_s; }
 
-    bool drawContentIntoMaskImage(MaskerData*, const DestinationColorSpace&, RenderObject*);
+    MaskerData::Inputs computeInputs(RenderElement&);
+    bool drawContentIntoMaskImage(MaskerData&, const DestinationColorSpace&);
     void calculateMaskContentRepaintRect();
 
     FloatRect m_maskContentBoundaries;
-    HashMap<RenderObject*, std::unique_ptr<MaskerData>> m_masker;
+    HashMap<RenderObject*, std::unique_ptr<MaskerData>> m_maskerMap;
 };
 
 }
