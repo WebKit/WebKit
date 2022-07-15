@@ -57,15 +57,20 @@ public:
 #if HAVE(IOSURFACE)
         IOSurfacePool* surfacePool;
 #endif
+        bool avoidIOSurfaceSizeCheckInWebProcessForTesting = false;
+
         CreationContext(HostWindow* window = nullptr
 #if HAVE(IOSURFACE)
             , IOSurfacePool* pool = nullptr
 #endif
+            , bool avoidCheck = false
         )
             : hostWindow(window)
 #if HAVE(IOSURFACE)
             , surfacePool(pool)
 #endif
+            , avoidIOSurfaceSizeCheckInWebProcessForTesting(avoidCheck)
+
         { }
     };
 
@@ -155,6 +160,7 @@ public:
     AffineTransform baseTransform() const { return m_backendInfo.baseTransform; }
     size_t memoryCost() const { return m_backendInfo.memoryCost; }
     size_t externalMemoryCost() const { return m_backendInfo.externalMemoryCost; }
+    void setBackendInfo(ImageBufferBackend::Info&& parameters) { m_backendInfo = WTFMove(parameters); }
 
     WEBCORE_EXPORT virtual RefPtr<NativeImage> copyNativeImage(BackingStoreCopy = CopyBackingStore) const;
     WEBCORE_EXPORT virtual RefPtr<NativeImage> sinkIntoNativeImage();

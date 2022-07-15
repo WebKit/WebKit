@@ -35,6 +35,7 @@ typedef (
     CanvasRenderingContext2D) RenderingContext;
 
 [
+    ExportMacro=WEBCORE_EXPORT,
     ActiveDOMObject,
     JSCustomMarkFunction,
     JSGenerateToNativeObject,

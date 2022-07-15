@@ -44,10 +44,10 @@ class RemoteRenderingBackend;
 class RemoteImageBufferProxy : public WebCore::ImageBuffer {
 public:
     template<typename BackendType>
-    static RefPtr<RemoteImageBufferProxy> create(const WebCore::FloatSize& size, float resolutionScale, const WebCore::DestinationColorSpace& colorSpace, WebCore::PixelFormat pixelFormat, WebCore::RenderingPurpose purpose, RemoteRenderingBackendProxy& remoteRenderingBackendProxy)
+    static RefPtr<RemoteImageBufferProxy> create(const WebCore::FloatSize& size, float resolutionScale, const WebCore::DestinationColorSpace& colorSpace, WebCore::PixelFormat pixelFormat, WebCore::RenderingPurpose purpose, RemoteRenderingBackendProxy& remoteRenderingBackendProxy, bool avoidIOSurfaceSizeCheckInWebProcess = false)
     {
         auto parameters = WebCore::ImageBufferBackend::Parameters { size, resolutionScale, colorSpace, pixelFormat, purpose };
-        if (BackendType::calculateSafeBackendSize(parameters).isEmpty())
+        if (!avoidIOSurfaceSizeCheckInWebProcess && BackendType::calculateSafeBackendSize(parameters).isEmpty())
             return nullptr;
         auto info = populateBackendInfo<BackendType>(parameters);
         return adoptRef(new RemoteImageBufferProxy(parameters, info, remoteRenderingBackendProxy));

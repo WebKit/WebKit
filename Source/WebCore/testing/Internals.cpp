@@ -6827,4 +6827,17 @@ String Internals::modelInlinePreviewUUIDForModelElement(const HTMLModelElement& 
 
 #endif
 
+void Internals::avoidIOSurfaceSizeCheckInWebProcess(HTMLCanvasElement& element)
+{
+    auto* document = contextDocument();
+    if (!document)
+        return;
+    auto* page = document->page();
+    if (!page)
+        return;
+    page->settings().setMaximumAccelerated2dCanvasSize(UINT_MAX);
+    HTMLCanvasElement::setMaxCanvasAreaForTesting(UINT_MAX);
+    HTMLCanvasElement::setMaxPixelMemoryForTesting(UINT_MAX);
+    element.setAvoidIOSurfaceSizeCheckInWebProcessForTesting();
+}
 } // namespace WebCore
