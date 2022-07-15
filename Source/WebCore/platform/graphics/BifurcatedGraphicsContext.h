@@ -151,6 +151,10 @@ public:
 #endif
 
 private:
+    void verifyStateSynchronization();
+
+    bool m_hasLoggedAboutDesynchronizedState { false };
+
     GraphicsContext& m_primaryContext;
     GraphicsContext& m_secondaryContext;
 };
