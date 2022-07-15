@@ -3248,6 +3248,13 @@
    },
    {
       "emails" : [
+         "james.hilliard1@gmail.com"
+      ],
+      "github" : "jameshilliard",
+      "name" : "James Hilliard"
+   },
+   {
+      "emails" : [
          "koz@chromium.org",
          "koz@google.com"
       ],
