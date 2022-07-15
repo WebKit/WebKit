@@ -580,6 +580,11 @@ String AXFooterRoleDescriptionText()
     return WEB_UI_STRING("footer", "accessibility role description for a footer");
 }
 
+String AXSuggestionRoleDescriptionText()
+{
+    return WEB_UI_STRING("suggestion", "accessibility role description for a suggestion element");
+}
+
 String AXFileUploadButtonText()
 {
     return WEB_UI_STRING("file upload button", "accessibility role description for a file upload button");

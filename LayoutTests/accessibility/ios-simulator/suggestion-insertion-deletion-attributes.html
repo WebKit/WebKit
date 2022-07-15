@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div id="sug1" role="suggestion"><span id="ins1" role="insertion">inserted text</span><span id="del1" role="deletion">deleted text</span></div>
+
+<div id="sug2" role="suggestion"><span id="ins2" role="insertion"><b>inserted</b> text</span><span id="del2" role="deletion">deleted text</span></div>
+
+
+<script>
+
+    if (window.accessibilityController) {
+
+        let output = "This test makes sure that suggestions, insertions, and deletions expose the right attributes.\n";
+
+        var ins1 = accessibilityController.accessibleElementById("ins1").childAtIndex(0);
+        output += expect("ins1.isInsertion", "true");
+        output += expect("ins1.isFirstItemInSuggestion", "true");
+        output += expect("ins1.isLastItemInSuggestion", "false");	
+
+        var del1 = accessibilityController.accessibleElementById("del1").childAtIndex(0);
+        output += expect("del1.isDeletion", "true"); 
+        output += expect("del1.isLastItemInSuggestion", "true");
+        output += expect("del1.isFirstItemInSuggestion", "false");
+		
+        var ins2 = accessibilityController.accessibleElementById("ins2").childAtIndex(0);
+        var ins3 = accessibilityController.accessibleElementById("ins2").childAtIndex(1);
+        var del2 = accessibilityController.accessibleElementById("del2").childAtIndex(0);
+        output += expect("ins2.isInsertion", "true");
+        output += expect("ins2.isFirstItemInSuggestion", "true");
+        output += expect("ins3.isInsertion", "true");
+        output += expect("ins2.isLastItemInSuggestion", "false");
+        output += expect("del2.isLastItemInSuggestion", "true");
+        output += expect("ins3.isFirstItemInSuggestion", "false");
+	
+        debug(output);
+    }
+
+</script>
+
+</body>
+</html>

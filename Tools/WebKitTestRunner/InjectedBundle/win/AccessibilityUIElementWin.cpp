@@ -1039,6 +1039,32 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::domIdentifier() const
     return nullptr;
 }
 
+bool AccessibilityUIElement::isInsertion() const
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElement::isDeletion() const
+{
+    notImplemented();
+    return false;
+}
+
+
+bool AccessibilityUIElement::isFirstItemInSuggestion() const
+{
+    notImplemented();
+    return false;
+}
+
+
+bool AccessibilityUIElement::isLastItemInSuggestion() const
+{
+    notImplemented();
+    return false;
+}
+
 } // namespace  WTF
 
 #endif // ENABLE(ACCESSIBILITY)

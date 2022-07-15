@@ -1,0 +1,19 @@
+This test makes sure that suggestions, insertions, and deletions expose the right attributes.
+PASS: ins1.isInsertion === true
+PASS: ins1.isFirstItemInSuggestion === true
+PASS: ins1.isLastItemInSuggestion === false
+PASS: del1.isDeletion === true
+PASS: del1.isLastItemInSuggestion === true
+PASS: del1.isFirstItemInSuggestion === false
+PASS: ins2.isInsertion === true
+PASS: ins2.isFirstItemInSuggestion === true
+PASS: ins3.isInsertion === true
+PASS: ins2.isLastItemInSuggestion === false
+PASS: del2.isLastItemInSuggestion === true
+PASS: ins3.isFirstItemInSuggestion === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+inserted textdeleted text
+inserted textdeleted text

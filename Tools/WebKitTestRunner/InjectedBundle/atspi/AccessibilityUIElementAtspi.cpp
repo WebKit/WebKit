@@ -1800,6 +1800,26 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::popupValue() const
     return nullptr;
 }
 
+bool AccessibilityUIElement::isInsertion() const
+{
+    return false;
+}
+
+bool AccessibilityUIElement::isDeletion() const
+{
+    return false;
+}
+
+bool AccessibilityUIElement::isFirstItemInSuggestion() const
+{
+    return false;
+}
+
+bool AccessibilityUIElement::isLastItemInSuggestion() const
+{
+    return false;
+}
+
 } // namespace WTR
 
 #endif // USE(ATSPI)

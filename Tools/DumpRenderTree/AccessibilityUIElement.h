@@ -251,6 +251,11 @@ public:
     bool hasContainedByFieldsetTrait();
     AccessibilityUIElement fieldsetAncestorElement();
     JSRetainPtr<JSStringRef> attributedStringForElement();
+    
+    bool isDeletion();
+    bool isInsertion();
+    bool isFirstItemInSuggestion();
+    bool isLastItemInSuggestion();
 #endif
 
     // Table-specific
