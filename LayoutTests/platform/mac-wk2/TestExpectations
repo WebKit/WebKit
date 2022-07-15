@@ -1720,3 +1720,5 @@ webkit.org/b/242212 [ Monterey+ ] media/media-source/media-webm-vorbis-partial.h
 webkit.org/b/227555 http/tests/privateClickMeasurement/attribution-conversion-through-fetch-keepalive.html [ Pass Failure ]
 
 webkit.org/b/242462 [ Monterey Release ] imported/w3c/web-platform-tests/IndexedDB/string-list-ordering.htm [ Pass Crash ]
+
+webkit.org/b/242804 media/track/track-forced-subtitles-in-band.html [ Pass Failure ]
