@@ -75,30 +75,31 @@ class GitHub(Scm):
             assert opened in (True, False, None)
 
             user, _ = self.repository.credentials()
-            heads = [head]
-            if user and head:
-                heads.insert(0, '{}:{}'.format(user, head))
-            for qhead in heads:
-                data = self.repository.request('pulls', params=dict(
-                    state={
-                        None: 'all',
-                        True: 'open',
-                        False: 'closed',
-                    }.get(opened),
-                    base=base,
-                    head=qhead,
-                ))
-                if not data:
+            qhead = ''
+            if head and ':' in head:
+                qhead = head
+            elif user and head:
+                qhead = '{}:{}'.format(user, head)
+
+            data = self.repository.request('pulls', params=dict(
+                state={
+                    None: 'all',
+                    True: 'open',
+                    False: 'closed',
+                }.get(opened),
+                base=base,
+                head=qhead,
+            ))
+            if not data:
+                return
+            for datum in data or []:
+                if base and datum['base']['ref'] != base:
                     continue
-                for datum in data or []:
-                    if base and datum['base']['ref'] != base:
-                        continue
-                    if head and not datum['head']['ref'].endswith(head.split(':')[-1]):
-                        continue
-                    if datum.get('head', {}).get('repo', {}).get('owner', {}).get('login', None) not in (user, None):
-                        continue
-                    yield self.PullRequest(datum)
-                break
+                if qhead and not datum['head']['ref'].endswith(qhead.split(':')[-1]):
+                    continue
+                if datum.get('head', {}).get('repo', {}).get('owner', {}).get('login', None) not in (user, None):
+                    continue
+                yield self.PullRequest(datum)
 
         def create(self, head, title, body=None, commits=None, base=None, draft=None):
             draft = False if draft is None else draft
