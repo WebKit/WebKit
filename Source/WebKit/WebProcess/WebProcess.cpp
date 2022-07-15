@@ -1150,7 +1150,7 @@ static NetworkProcessConnectionInfo getNetworkProcessConnection(IPC::Connection&
         return IPC::Connection::identifierIsValid(connectionInfo.identifier());
     };
 
-    static constexpr unsigned maxFailedAttempts = 10;
+    static constexpr unsigned maxFailedAttempts = 30;
     unsigned failedAttempts = 0;
     while (!requestConnection()) {
         if (++failedAttempts >= maxFailedAttempts)
