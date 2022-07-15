@@ -30,6 +30,7 @@
 #import "TestWKWebView.h"
 #import <WebKit/WKFindConfiguration.h>
 #import <WebKit/WKFindResult.h>
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebView.h>
 #import <wtf/RetainPtr.h>
 
