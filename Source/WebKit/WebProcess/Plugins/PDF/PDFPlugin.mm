@@ -1773,8 +1773,9 @@ void PDFPlugin::createPasswordEntryForm()
     if (!supportsForms())
         return;
 
-    m_passwordField = PDFPluginPasswordField::create(m_pdfLayerController.get(), this);
-    m_passwordField->attach(m_annotationContainer.get());
+    auto passwordField = PDFPluginPasswordField::create(m_pdfLayerController.get(), this);
+    m_passwordField = passwordField.ptr();
+    passwordField->attach(m_annotationContainer.get());
 }
 
 void PDFPlugin::attemptToUnlockPDF(const String& password)
@@ -2439,8 +2440,9 @@ void PDFPlugin::setActiveAnnotation(PDFAnnotation *annotation)
         }
         ALLOW_DEPRECATED_DECLARATIONS_END
 
-        m_activeAnnotation = PDFPluginAnnotation::create(annotation, m_pdfLayerController.get(), this);
-        m_activeAnnotation->attach(m_annotationContainer.get());
+        auto activeAnnotation = PDFPluginAnnotation::create(annotation, m_pdfLayerController.get(), this);
+        m_activeAnnotation = activeAnnotation.get();
+        activeAnnotation->attach(m_annotationContainer.get());
     } else
         m_activeAnnotation = nullptr;
 }
