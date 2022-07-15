@@ -312,6 +312,10 @@ void ResourceUsageThread::platformCollectMemoryData(JSC::VM* vm, ResourceUsageDa
     data.categories[MemoryCategory::GCHeap].dirtySize = currentGCHeapCapacity;
     data.categories[MemoryCategory::GCOwned].dirtySize = currentGCOwnedExtra - currentGCOwnedExternal;
     data.categories[MemoryCategory::GCOwned].externalSize = currentGCOwnedExternal;
+    size_t categoriesTotalSize = 0;
+    for (auto& category : data.categories)
+        categoriesTotalSize += category.totalSize();
+    data.categories[MemoryCategory::Other].dirtySize = data.totalDirtySize - categoriesTotalSize;
 
     data.totalExternalSize = currentGCOwnedExternal;
 
