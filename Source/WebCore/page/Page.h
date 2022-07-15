@@ -972,6 +972,9 @@ public:
 
     WEBCORE_EXPORT void forceRepaintAllFrames();
 
+#if ENABLE(IMAGE_ANALYSIS)
+    WEBCORE_EXPORT void analyzeImagesForFindInPage();
+#endif
 private:
     struct Navigation {
         RegistrableDomain domain;

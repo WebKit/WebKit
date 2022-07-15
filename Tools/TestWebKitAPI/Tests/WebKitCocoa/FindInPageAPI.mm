@@ -33,6 +33,12 @@
 #import <WebKit/WKWebView.h>
 #import <wtf/RetainPtr.h>
 
+#if ENABLE(IMAGE_ANALYSIS)
+#import "ImageAnalysisTestingUtilities.h"
+#import "InstanceMethodSwizzler.h"
+#import <WebKit/_WKInternalDebugFeature.h>
+#import <pal/cocoa/VisionKitCoreSoftLink.h>
+#endif
 
 TEST(WKWebView, FindAPIForwardsNoMatch)
 {
@@ -257,3 +263,60 @@ TEST(WKWebView, FindAPIForwardsCaseSensitive)
     TestWebKitAPI::Util::run(&done);
     done = false;
 }
+#if PLATFORM(MAC)
+#if ENABLE(IMAGE_ANALYSIS)
+static unsigned gDidProcessRequestCount = 0;
+
+static void processRequestWithResults(id, SEL, VKImageAnalyzerRequest *, void (^)(double progress), void (^completion)(VKImageAnalysis *, NSError *))
+{
+    gDidProcessRequestCount++;
+    completion(TestWebKitAPI::createImageAnalysisWithSimpleFixedResults().get(), nil);
+}
+
+static VKImageAnalyzerRequest *makeFakeRequest(id, SEL, CGImageRef image, VKImageOrientation orientation, VKAnalysisTypes requestTypes)
+{
+    return TestWebKitAPI::createRequest(image, orientation, requestTypes).leakRef();
+}
+
+template <typename FunctionType>
+std::pair<std::unique_ptr<InstanceMethodSwizzler>, std::unique_ptr<InstanceMethodSwizzler>> makeImageAnalysisRequestSwizzler(FunctionType function)
+{
+    return std::pair {
+        makeUnique<InstanceMethodSwizzler>(PAL::getVKImageAnalyzerClass(), @selector(processRequest:progressHandler:completionHandler:), reinterpret_cast<IMP>(function)),
+        makeUnique<InstanceMethodSwizzler>(PAL::getVKImageAnalyzerRequestClass(), @selector(initWithCGImage:orientation:requestType:), reinterpret_cast<IMP>(makeFakeRequest))
+    };
+}
+
+static RetainPtr<TestWKWebView> createWebViewWithImageAnalysisDuringFindInPageEnabled()
+{
+    RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    for (_WKInternalDebugFeature *feature in WKPreferences._internalDebugFeatures) {
+        NSString *key = feature.key;
+        if ([key isEqualToString:@"ImageAnalysisDuringFindInPageEnabled"])
+            [[configuration preferences] _setEnabled:YES forInternalDebugFeature:feature];
+    }
+
+    return adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get()]);
+}
+
+TEST(WKWebView, FindAPITextInImage)
+{
+    auto requestSwizzler = makeImageAnalysisRequestSwizzler(processRequestWithResults);
+
+    auto webView = createWebViewWithImageAnalysisDuringFindInPageEnabled();
+    [webView synchronouslyLoadTestPageNamed:@"image"];
+
+    __block bool done;
+    [webView findString:@"text" withConfiguration:adoptNS([WKFindConfiguration new]).get() completionHandler:^(WKFindResult *) {
+        done = true;
+    }];
+
+    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::waitForConditionWithLogging([&] {
+        return gDidProcessRequestCount == 1;
+    }, 1, @"Timed out waiting for image analysis to start.");
+}
+
+#endif // ENABLE(IMAGE_ANALYSIS)
+
+#endif // PLATFORM(MAC)

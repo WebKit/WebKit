@@ -808,6 +808,16 @@ bool Page::findString(const String& target, FindOptions options, DidWrap* didWra
     return false;
 }
 
+#if ENABLE(IMAGE_ANALYSIS)
+void Page::analyzeImagesForFindInPage()
+{
+    if (settings().imageAnalysisDuringFindInPageEnabled()) {
+        if (RefPtr mainDocument = m_mainFrame->document(); mainDocument && !m_imageAnalysisQueue)
+            imageAnalysisQueue().enqueueAllImages(*mainDocument, { }, { });
+    }
+}
+#endif
+
 auto Page::findTextMatches(const String& target, FindOptions options, unsigned limit, bool markMatches) -> MatchingRanges
 {
     MatchingRanges result;

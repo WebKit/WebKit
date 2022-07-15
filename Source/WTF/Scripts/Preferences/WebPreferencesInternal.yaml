@@ -381,6 +381,18 @@ IPCTestingAPIEnabled:
     WebKit:
       default: false
 
+ImageAnalysisDuringFindInPageEnabled:
+  type: bool
+  humanReadableName: "Image Analysis for Find-in-Page"
+  humanReadableDescription: "Trigger image analysis when performing Find-in-Page"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 InlineFormattingContextIntegrationEnabled:
   type: bool
   humanReadableName: "Next-generation inline layout integration (IFC)"
