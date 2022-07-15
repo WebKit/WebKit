@@ -435,12 +435,11 @@ void Connection::invalidate()
 {
     ASSERT(RunLoop::isMain());
 
-    if (!isValid()) {
-        // Someone already called invalidate().
+    if (std::exchange(m_didInvalidationOnMainThread, true))
         return;
-    }
-    
+
     m_isValid = false;
+
     clearAsyncReplyHandlers(*this);
 
     m_connectionQueue->dispatch([protectedThis = Ref { *this }]() mutable {
@@ -909,6 +908,7 @@ void Connection::postConnectionDidCloseOnConnectionWorkQueue()
 void Connection::connectionDidClose()
 {
     // The connection is now invalid.
+    m_isValid = false;
     platformInvalidate();
 
     {
@@ -938,12 +938,8 @@ void Connection::connectionDidClose()
     RunLoop::main().dispatch([protectedThis = Ref { *this }]() mutable {
         // If the connection has been explicitly invalidated before dispatchConnectionDidClose was called,
         // then the connection will be invalid here.
-        if (!protectedThis->isValid())
+        if (std::exchange(protectedThis->m_didInvalidationOnMainThread, true))
             return;
-
-        // Set m_isValid to false before calling didClose, otherwise, sendSync will try to send a message
-        // to the connection and will then wait indefinitely for a reply.
-        protectedThis->m_isValid = false;
 
         protectedThis->m_client.didClose(protectedThis.get());
 
