@@ -608,7 +608,7 @@ class CheckOutSource(git.Git):
     CHECKOUT_DELAY_AND_MAX_RETRIES_PAIR = (0, 2)
     haltOnFailure = False
 
-    def __init__(self, repourl='https://github.com/WebKit/WebKit.git', **kwargs):
+    def __init__(self, repourl=f'{GITHUB_URL}{GITHUB_PROJECTS[0]}.git', **kwargs):
         super(CheckOutSource, self).__init__(repourl=repourl,
                                              retry=self.CHECKOUT_DELAY_AND_MAX_RETRIES_PAIR,
                                              timeout=2 * 60 * 60,
@@ -628,7 +628,16 @@ class CheckOutSource(git.Git):
             return {'step': 'Cleaned and updated working directory'}
 
     def run(self):
+        project = self.getProperty('project', GITHUB_PROJECTS[0])
+        self.repourl = f'{GITHUB_URL}{project}.git'
         self.branch = self.getProperty('github.base.ref', self.branch)
+
+        username, access_token = GitHub.credentials(user=GitHub.user_for_queue(self.getProperty('buildername', '')))
+        self.env = dict(
+            GIT_USER=username,
+            GIT_PASSWORD=access_token,
+        )
+
         return super(CheckOutSource, self).run()
 
 
