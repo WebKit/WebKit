@@ -646,7 +646,7 @@
 (allow ipc-posix-shm-read* ipc-posix-shm-write-data
     (ipc-posix-name-prefix "AudioIO"))
 
-#if HAVE(AUDIO_COMPONENT_SERVER_REGISTRATIONS)
+#if HAVE(AUDIO_COMPONENT_SERVER_REGISTRATIONS) && ENABLE(AUDIO_COMPONENT_SERVER_REGISTRATIONS_IN_GPU_PROCESS)
 (deny mach-lookup (with no-log)
     (global-name "com.apple.audio.AudioComponentRegistrar"))
 #else
