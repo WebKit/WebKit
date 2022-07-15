@@ -469,8 +469,15 @@ void Recorder::strokeRect(const FloatRect& rect, float lineWidth)
 
 void Recorder::strokePath(const Path& path)
 {
-    appendStateChangeItemIfNecessary();
 #if ENABLE(INLINE_PATH_DATA)
+    auto& state = currentState().state;
+    if (state.changes() && state.containsOnlyInlineChanges() && !state.changes().contains(GraphicsContextState::Change::FillBrush) && path.hasInlineData() && path.hasInlineData<LineData>()) {
+        recordStrokeLineWithColorAndThickness(*strokeColor().tryGetAsSRGBABytes(), strokeThickness(), path.inlineData<LineData>());
+        return;
+    }
+
+    appendStateChangeItemIfNecessary();
+
     if (path.hasInlineData()) {
         if (path.hasInlineData<LineData>())
             recordStrokeLine(path.inlineData<LineData>());
@@ -482,6 +489,8 @@ void Recorder::strokePath(const Path& path)
             recordStrokeBezierCurve(path.inlineData<BezierCurveData>());
         return;
     }
+#else
+    appendStateChangeItemIfNecessary();
 #endif
     recordStrokePath(path);
 }

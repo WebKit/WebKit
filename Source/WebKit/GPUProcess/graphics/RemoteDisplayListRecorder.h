@@ -116,6 +116,7 @@ public:
     void strokeRect(const WebCore::FloatRect&, float lineWidth);
 #if ENABLE(INLINE_PATH_DATA)
     void strokeLine(const WebCore::LineData&);
+    void strokeLineWithColorAndThickness(WebCore::DisplayList::SetInlineStrokeColor&&, float, const WebCore::LineData&);
     void strokeArc(const WebCore::ArcData&);
     void strokeQuadCurve(const WebCore::QuadCurveData&);
     void strokeBezierCurve(const WebCore::BezierCurveData&);

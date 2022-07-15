@@ -122,6 +122,7 @@ protected:
     virtual void recordStrokeRect(const FloatRect&, float) = 0;
 #if ENABLE(INLINE_PATH_DATA)
     virtual void recordStrokeLine(const LineData&) = 0;
+    virtual void recordStrokeLineWithColorAndThickness(SRGBA<uint8_t>, float, const LineData&) = 0;
     virtual void recordStrokeArc(const ArcData&) = 0;
     virtual void recordStrokeQuadCurve(const QuadCurveData&) = 0;
     virtual void recordStrokeBezierCurve(const BezierCurveData&) = 0;

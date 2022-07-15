@@ -157,7 +157,7 @@ private:
         Semaphore clientWait;
     };
     std::optional<Semaphores> m_semaphores;
-    unsigned m_maxBatchSize { 40 }; // Number of messages marked as StreamBatched to accumulate before notifying the server.
+    unsigned m_maxBatchSize { 20 }; // Number of messages marked as StreamBatched to accumulate before notifying the server.
     unsigned m_batchSize { 0 };
 
     friend class WebKit::IPCTestingAPI::JSIPCStreamClientConnection;

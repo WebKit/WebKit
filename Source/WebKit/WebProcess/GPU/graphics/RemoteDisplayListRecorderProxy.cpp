@@ -341,6 +341,11 @@ void RemoteDisplayListRecorderProxy::recordStrokeLine(const LineData& data)
     send(Messages::RemoteDisplayListRecorder::StrokeLine(data));
 }
 
+void RemoteDisplayListRecorderProxy::recordStrokeLineWithColorAndThickness(SRGBA<uint8_t> color, float thickness, const LineData& data)
+{
+    send(Messages::RemoteDisplayListRecorder::StrokeLineWithColorAndThickness(color, thickness, data));
+}
+
 void RemoteDisplayListRecorderProxy::recordStrokeArc(const ArcData& data)
 {
     send(Messages::RemoteDisplayListRecorder::StrokeArc(data));

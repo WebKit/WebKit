@@ -102,6 +102,7 @@ private:
     void recordStrokeRect(const FloatRect&, float) final;
 #if ENABLE(INLINE_PATH_DATA)
     void recordStrokeLine(const LineData&) final;
+    void recordStrokeLineWithColorAndThickness(SRGBA<uint8_t>, float, const LineData&) final;
     void recordStrokeArc(const ArcData&) final;
     void recordStrokeQuadCurve(const QuadCurveData&) final;
     void recordStrokeBezierCurve(const BezierCurveData&) final;
