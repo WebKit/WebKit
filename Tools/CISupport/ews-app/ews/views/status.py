@@ -34,8 +34,8 @@ import ews.config as config
 _log = logging.getLogger(__name__)
 
 class Status(View):
-    def _build_status(self, patch, queue):
-        build, _ = StatusBubble().get_latest_build_for_queue(patch, queue)
+    def _build_status(self, change, queue):
+        build, _ = StatusBubble().get_latest_build_for_queue(change, queue)
         if not build:
             return {}
 
@@ -45,26 +45,26 @@ class Status(View):
             'timestamp': build.complete_at,
         }
 
-    def _build_statuses_for_patch(self, patch):
-        if not patch:
+    def _build_statuses_for_change(self, change):
+        if not change:
             return {}
 
         statuses = {}
         for queue in StatusBubble.ALL_QUEUES:
-            status = self._build_status(patch, queue)
+            status = self._build_status(change, queue)
             if status:
                 statuses[queue] = status
 
-        if patch.sent_to_commit_queue:
-            cq_status = self._build_status(patch, 'commit')
+        if change.sent_to_commit_queue:
+            cq_status = self._build_status(change, 'commit')
             if cq_status:
                 statuses['commit'] = cq_status
 
         return statuses
 
-    def get(self, request, patch_id):
-        patch = Change.get_patch(patch_id)
-        if not patch:
-            _log.info('No patch found for id: {}'.format(patch_id))
-        response_data = self._build_statuses_for_patch(patch)
+    def get(self, request, change_id):
+        change = Change.get_change(change_id)
+        if not change:
+            _log.info('No change found for id: {}'.format(change_id))
+        response_data = self._build_statuses_for_change(change)
         return JsonResponse(response_data)

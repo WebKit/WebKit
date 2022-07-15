@@ -76,10 +76,10 @@ window.addEventListener("message", function(e) {
 <div id="bubbleContainer">
   {% if show_failure_to_apply %}
   <a class="status fail" target="_blank"
-      href="/patch/{{ patch_id }}"
-      title="None of the queues could apply the patch"
+      href="/change/{{ change_id }}"
+      title="None of the queues could apply the change"
   >
-    patch does not apply to trunk of repository
+    change does not apply to trunk of repository
   </a>
   {% else %}
   {% for bubble in bubbles %}
@@ -101,7 +101,7 @@ window.addEventListener("message", function(e) {
 
 {% if show_submit_to_ews %}
   <form name="submit_to_ews" method="POST" action="/submit-to-ews/">{% csrf_token %}
-    <input type="hidden" name="patch_id" value="{{ patch_id }}">
+    <input type="hidden" name="change_id" value="{{ change_id }}">
     <input type="hidden" name="next_action" value="return_to_bubbles">
     <input class="status" type="submit" value="Submit for EWS analysis">
   </form>
@@ -109,7 +109,7 @@ window.addEventListener("message", function(e) {
 
 {% if show_retry_button %}
   <form name="retry" method="POST" action="/retry/">{% csrf_token %}
-    <input type="hidden" name="patch_id" value="{{ patch_id }}">
+    <input type="hidden" name="change_id" value="{{ change_id }}">
     <input class="status" type="submit" value="&#8635; Retry failed builds">
   </form>
 {% endif %}

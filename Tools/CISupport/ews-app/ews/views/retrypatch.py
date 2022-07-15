@@ -43,19 +43,19 @@ class RetryPatch(View):
     @xframe_options_exempt
     def post(self, request):
         try:
-            patch_id = request.POST.get('patch_id')
+            change_id = request.POST.get('change_id')
         except (ValueError, TypeError) as e:
-            return HttpResponse('Invalid patch id')
+            return HttpResponse('Invalid change id')
 
-        builds_to_retry = StatusBubble().find_failed_builds_for_patch(patch_id)
-        _log.info('Retrying patch: {}. Failed builds: {}'.format(patch_id, builds_to_retry))
+        builds_to_retry = StatusBubble().find_failed_builds_for_change(change_id)
+        _log.info('Retrying change: {}. Failed builds: {}'.format(change_id, builds_to_retry))
         if not builds_to_retry:
-            return HttpResponse('No recent failed build(s) found for patch {}.'.format(patch_id))
+            return HttpResponse('No recent failed build(s) found for change {}.'.format(change_id))
 
         failed_to_retry_builds = []
         for build in builds_to_retry:
             if build.retried:
-                _log.warn('Build {} for patch {} is already retried.'.format(build.uid, patch_id))
+                _log.warn('Build {} for change {} is already retried.'.format(build.uid, change_id))
                 continue
             Build.set_retried(build.uid, True)
             if not Buildbot.retry_build(build.builder_id, build.number):
@@ -63,8 +63,8 @@ class RetryPatch(View):
                 Build.set_retried(build.uid, False)
 
         if len(failed_to_retry_builds) > 0:
-            message = 'Failed to retry {} build(s) for patch {}.'.format(len(failed_to_retry_builds), patch_id)
+            message = 'Failed to retry {} build(s) for change {}.'.format(len(failed_to_retry_builds), change_id)
             message += ' Please contact admin@webkit.org if the problem persist.'
             _log.warn(message)
             return HttpResponse(message)
-        return redirect('/status-bubble/{}'.format(patch_id))
+        return redirect('/status-bubble/{}'.format(change_id))

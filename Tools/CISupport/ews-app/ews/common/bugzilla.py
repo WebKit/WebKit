@@ -102,7 +102,7 @@ class Bugzilla():
 
     @classmethod
     def _fetch_attachment_json(cls, attachment_id):
-        if not Change.is_valid_patch_id(attachment_id):
+        if not Change.is_valid_change_id(attachment_id):
             _log.warn('Invalid attachment id: "{}", skipping download.'.format(attachment_id))
             return None
 

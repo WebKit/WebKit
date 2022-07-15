@@ -52,9 +52,9 @@ class Build(models.Model):
         return str(self.uid)
 
     @classmethod
-    def save_build(cls, patch_id, hostname, build_id, builder_id, builder_name, builder_display_name, number, result, state_string, started_at, complete_at=None, pr_id=-1, pr_project=''):
-        if not Build.is_valid_result(patch_id, build_id, builder_id, number, result, state_string, started_at, complete_at):
-            _log.warn('Invalid build data for change: {}. Skipped saving build.'.format(patch_id))
+    def save_build(cls, change_id, hostname, build_id, builder_id, builder_name, builder_display_name, number, result, state_string, started_at, complete_at=None, pr_id=-1, pr_project=''):
+        if not Build.is_valid_result(build_id, builder_id, number, result, state_string, started_at, complete_at):
+            _log.warn('Invalid build data for change: {}. Skipped saving build.'.format(change_id))
             return ERR_UNEXPECTED
 
         if state_string is None:
@@ -64,21 +64,21 @@ class Build(models.Model):
         build = Build.get_existing_build(uid)
         if build:
             # If the build data is already present in database, update it, e.g.: build complete event.
-            return Build.update_build(build, patch_id, uid, builder_id, builder_name, builder_display_name, number, result, state_string, started_at, complete_at)
+            return Build.update_build(build, change_id, uid, builder_id, builder_name, builder_display_name, number, result, state_string, started_at, complete_at)
 
-        if not Change.is_existing_patch_id(patch_id):
-            Change.save_patch(patch_id=patch_id, pr_id=pr_id, pr_project=pr_project)
-            _log.info('Received result for unknown patch. Saved patch {} to database'.format(patch_id))
+        if not Change.is_existing_change_id(change_id):
+            Change.save_change(change_id=change_id, pr_id=pr_id, pr_project=pr_project)
+            _log.info('Received result for unknown change. Saved change {} to database'.format(change_id))
 
         # Save the new build data, e.g.: build start event.
-        Build(patch_id, uid, builder_id, builder_name, builder_display_name, number, result, state_string, started_at, complete_at).save()
-        _log.info('Saved build {} in database for patch_id: {}'.format(uid, patch_id))
+        Build(change_id, uid, builder_id, builder_name, builder_display_name, number, result, state_string, started_at, complete_at).save()
+        _log.info('Saved build {} in database for change_id: {}'.format(uid, change_id))
         return SUCCESS
 
     @classmethod
-    def update_build(cls, build, patch_id, uid, builder_id, builder_name, builder_display_name, number, result, state_string, started_at, complete_at):
-        if str(build.patch_id) != str(patch_id):
-            _log.error('existing patch_id {} of type {} does not match with new patch_id {} of type {}. Ignoring new data.'.format(build.patch_id, type(build.patch_id), patch_id, type(patch_id)))
+    def update_build(cls, build, change_id, uid, builder_id, builder_name, builder_display_name, number, result, state_string, started_at, complete_at):
+        if str(build.change_id) != str(change_id):
+            _log.error('existing change_id {} of type {} does not match with new change_id {} of type {}. Ignoring new data.'.format(build.change_id, type(build.change_id), change_id, type(change_id)))
             return ERR_UNEXPECTED
         if build.uid != uid:
             _log.error('uid {} does not match with uid {}. Ignoring new data.'.format(build.uid, uid))
@@ -94,7 +94,7 @@ class Build(models.Model):
         build.started_at = started_at
         build.complete_at = complete_at
         build.save(update_fields=['result', 'state_string', 'started_at', 'complete_at', 'modified'])
-        _log.debug('Updated build {} in database for patch_id: {}'.format(uid, patch_id))
+        _log.debug('Updated build {} in database for change_id: {}'.format(uid, change_id))
         return SUCCESS
 
     @classmethod
@@ -114,7 +114,7 @@ class Build(models.Model):
             return None
 
     @classmethod
-    def is_valid_result(cls, patch_id, build_id, builder_id, number, result, state_string, started_at, complete_at=None):
+    def is_valid_result(cls, build_id, builder_id, number, result, state_string, started_at, complete_at=None):
         if not (util.is_valid_id(build_id) and util.is_valid_id(builder_id) and util.is_valid_id(number)):
             return False
 

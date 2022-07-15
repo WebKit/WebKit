@@ -60,16 +60,16 @@ class Results(View):
         if not self.is_valid_result(data):
             return HttpResponse("Incomplete data.")
 
-        patch_id = data['patch_id']
-        _log.info('Build {} event received, patch_id: {}, type: {} for build_id: {} of type: {}, pr_id: {}, pr_project: {}'.format(data['status'], patch_id, type(patch_id), data['build_id'], type(data['build_id']), data.get('pr_id', -1), data.get('pr_project', '')))
-        if not patch_id:
-            _log.error('patch_id missing: {}'.format(patch_id))
-            return HttpResponse("Invalid patch id: {}.".format(patch_id))
+        change_id = data['patch_id']
+        _log.info('Build {} event received, change_id: {}, type: {} for build_id: {} of type: {}, pr_id: {}, pr_project: {}'.format(data['status'], change_id, type(change_id), data['build_id'], type(data['build_id']), data.get('pr_id', -1), data.get('pr_project', '')))
+        if not change_id:
+            _log.error('change_id missing: {}'.format(change_id))
+            return HttpResponse("Invalid change id: {}.".format(change_id))
 
-        Build.save_build(patch_id=patch_id, hostname=data['hostname'], build_id=data['build_id'], builder_id=data['builder_id'], builder_name=data['builder_name'],
+        Build.save_build(change_id=change_id, hostname=data['hostname'], build_id=data['build_id'], builder_id=data['builder_id'], builder_name=data['builder_name'],
                    builder_display_name=data['builder_display_name'], number=data['number'], result=data['result'],
                    state_string=data['state_string'], started_at=data['started_at'], complete_at=data['complete_at'], pr_id=data.get('pr_id', -1), pr_project=data.get('pr_project', ''))
-        return HttpResponse("Saved data for patch: {}.\n".format(patch_id))
+        return HttpResponse("Saved data for change: {}.\n".format(change_id))
 
     def step_event(self, data):
         _log.info('Step event received')
