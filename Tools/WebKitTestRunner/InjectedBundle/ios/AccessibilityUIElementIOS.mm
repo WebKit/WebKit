@@ -117,6 +117,10 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (NSArray *)accessibilityImageOverlayElements;
 - (NSRange)accessibilityVisibleCharacterRange;
 - (NSString *)_accessibilityWebRoleAsString;
+- (BOOL)accessibilityIsDeletion;
+- (BOOL)accessibilityIsInsertion;
+- (BOOL)accessibilityIsFirstItemInSuggestion;
+- (BOOL)accessibilityIsLastItemInSuggestion;
 
 // TextMarker related
 - (NSArray *)textMarkerRange;
@@ -1480,5 +1484,24 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::supportedActions() const
     return nullptr;
 }
 
-} // namespace WTR
+bool AccessibilityUIElement::isInsertion() const
+{
+    return [m_element accessibilityIsInsertion];
+}
 
+bool AccessibilityUIElement::isDeletion() const
+{
+    return [m_element accessibilityIsDeletion];
+}
+
+bool AccessibilityUIElement::isFirstItemInSuggestion() const
+{
+    return [m_element accessibilityIsFirstItemInSuggestion];
+}
+
+bool AccessibilityUIElement::isLastItemInSuggestion() const
+{
+    return [m_element accessibilityIsLastItemInSuggestion];
+}
+
+} // namespace WTR

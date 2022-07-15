@@ -178,6 +178,7 @@ namespace WebCore {
     String AXDescriptionListTermText();
     String AXDescriptionListDetailText();
     String AXFooterRoleDescriptionText();
+    String AXSuggestionRoleDescriptionText();
     String AXFileUploadButtonText();
     String AXOutputText();
     String AXSearchFieldCancelButtonText();

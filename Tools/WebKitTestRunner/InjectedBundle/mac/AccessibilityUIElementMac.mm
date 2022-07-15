@@ -2397,6 +2397,26 @@ void AccessibilityUIElement::performAction(NSString *actionName) const
     END_AX_OBJC_EXCEPTIONS
 }
 
+bool AccessibilityUIElement::isInsertion() const
+{
+    return false;
+}
+
+bool AccessibilityUIElement::isDeletion() const
+{
+    return false;
+}
+
+bool AccessibilityUIElement::isFirstItemInSuggestion() const
+{
+    return false;
+}
+
+bool AccessibilityUIElement::isLastItemInSuggestion() const
+{
+    return false;
+}
+
 } // namespace WTR
 
 #endif // ENABLE(ACCESSIBILITY)

@@ -1,0 +1,34 @@
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body id="body" role="group">
+
+<div id="item1"><span role="insertion">inserted text</span></div>
+<div id="item2"><span role="deletion">deleted text</span></div>
+<div id="item3"><span role="suggestion"><span role="insertion">hello</span><span role="deletion">hi</span></span></div>
+
+<script>
+    if (window.accessibilityController) {
+        let output = "This verifies that using the insertion and deletion roles adds the attribute to the attributed string.\n";
+		
+        var item1 = accessibilityController.accessibleElementById("item1");
+        var markerRange = item1.textMarkerRangeForElement(item1);
+        output += expect("item1.attributedStringForTextMarkerRangeContainsAttribute('AXIsSuggestedInsertion', markerRange)", "true");
+
+        var item2 = accessibilityController.accessibleElementById("item2");
+        var markerRange = item2.textMarkerRangeForElement(item2);
+        output += expect("item2.attributedStringForTextMarkerRangeContainsAttribute('AXIsSuggestedDeletion', markerRange)", "true");
+
+        var item3 = accessibilityController.accessibleElementById("item3");
+        var markerRange = item3.textMarkerRangeForElement(item3);
+        output += expect("item3.attributedStringForTextMarkerRangeContainsAttribute('AXIsSuggestion', markerRange)", "true");
+        
+        debug(output);
+    }
+</script>
+</body>
+</html>
