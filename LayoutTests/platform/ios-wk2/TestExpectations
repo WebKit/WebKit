@@ -2218,3 +2218,5 @@ imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitm
 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmapRendering-transferFromImageBitmap.html [ ImageOnlyFailure ]
 
 webkit.org/b/242515 [ arm64 ] compositing/reflections/mask-and-reflection.html [ ImageOnlyFailure ]
+
+webkit.org/b/242812 [ Release arm64 ] js/dom/Promise-reject-large-string.html [ Pass Failure ]
