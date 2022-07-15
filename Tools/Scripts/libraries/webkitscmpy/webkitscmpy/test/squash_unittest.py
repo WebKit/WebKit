@@ -79,6 +79,8 @@ class TestSquash(testing.PathTestCase):
                 "Rebased 'eng/squash-branch' on 'main!'",
                 'Running pre-PR checks...',
                 'No pre-PR checks to run',
+                'Checking if PR already exists...',
+                'PR not found.',
                 "Pushing 'eng/squash-branch' to 'fork'...",
                 "Syncing 'main' to remote 'fork'",
                 "Creating pull-request for 'eng/squash-branch'..."
@@ -125,6 +127,8 @@ class TestSquash(testing.PathTestCase):
                 "Rebased 'eng/squash-branch' on 'main!'",
                 'Running pre-PR checks...',
                 'No pre-PR checks to run',
+                'Checking if PR already exists...',
+                'PR not found.',
                 "Pushing 'eng/squash-branch' to 'fork'...",
                 "Syncing 'main' to remote 'fork'",
                 "Creating pull-request for 'eng/squash-branch'..."
@@ -168,6 +172,8 @@ class TestSquash(testing.PathTestCase):
                 "Rebased 'eng/squash-branch' on 'main!'",
                 'Running pre-PR checks...',
                 'No pre-PR checks to run',
+                'Checking if PR already exists...',
+                'PR not found.',
                 "Pushing 'eng/squash-branch' to 'fork'...",
                 "Syncing 'main' to remote 'fork'",
                 "Creating pull-request for 'eng/squash-branch'..."

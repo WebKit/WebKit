@@ -307,7 +307,9 @@ class PullRequest(Command):
 
         existing_pr = None
         if remote_repo.pull_requests:
+            log.info("Checking if PR already exists...")
             existing_pr = cls.find_existing_pull_request(repository, remote_repo)
+            log.info("PR #{} found.".format(existing_pr.number) if existing_pr else "PR not found.")
             if existing_pr and not existing_pr.opened and not args.defaults and (args.defaults is False or Terminal.choose(
                     "'{}' is already associated with '{}', which is closed.\nWould you like to create a new pull-request?".format(
                         repository.branch, existing_pr,
@@ -323,7 +325,7 @@ class PullRequest(Command):
             did_remove = False
             for to_remove in cls.MERGE_LABELS + cls.UNSAFE_MERGE_LABELS + ([cls.BLOCKED_LABEL] if unblock else []):
                 if to_remove in labels:
-                    log.info("Removing '{}' from PR {}...".format(to_remove, existing_pr.number))
+                    log.info("Removing '{}' from PR #{}...".format(to_remove, existing_pr.number))
                     labels.remove(to_remove)
                     did_remove = True
             if did_remove:
