@@ -93,8 +93,7 @@ CheckedUint32 ShareableBitmap::calculateBytesPerRow(WebCore::IntSize size, const
 #if HAVE(IOSURFACE)
     if (bytesPerRow.hasOverflowed())
         return bytesPerRow;
-    size_t alignmentMask = WebCore::IOSurface::bytesPerRowAlignment() - 1;
-    return (bytesPerRow + alignmentMask) & ~alignmentMask;
+    return IOSurface::alignedBytesPerRow(bytesPerRow);
 #else
     return bytesPerRow;
 #endif

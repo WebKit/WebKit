@@ -437,8 +437,6 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     if (m_defaultPageGroup->preferences().useGPUProcessForDOMRenderingEnabled())
         parameters.maximumIOSurfaceSize = WebCore::IOSurface::maximumSize();
 
-    parameters.bytesPerRowIOSurfaceAlignment = WebCore::IOSurface::bytesPerRowAlignment();
-
     parameters.accessibilityPreferences = accessibilityPreferences();
 }
 

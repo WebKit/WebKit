@@ -109,10 +109,10 @@ static NSDictionary *optionsForBiplanarSurface(IntSize size, unsigned pixelForma
     int width = size.width();
     int height = size.height();
 
-    size_t firstPlaneBytesPerRow = IOSurfaceAlignProperty(kIOSurfaceBytesPerRow, width * firstPlaneBytesPerPixel);
+    size_t firstPlaneBytesPerRow = IOSurface::alignedBytesPerRow(width * firstPlaneBytesPerPixel);
     size_t firstPlaneTotalBytes = IOSurfaceAlignProperty(kIOSurfaceAllocSize, height * firstPlaneBytesPerRow);
 
-    size_t secondPlaneBytesPerRow = IOSurfaceAlignProperty(kIOSurfaceBytesPerRow, width * secondPlaneBytesPerPixel);
+    size_t secondPlaneBytesPerRow = IOSurface::alignedBytesPerRow(width * secondPlaneBytesPerPixel);
     size_t secondPlaneTotalBytes = IOSurfaceAlignProperty(kIOSurfaceAllocSize, height * secondPlaneBytesPerRow);
     
     size_t totalBytes = firstPlaneTotalBytes + secondPlaneTotalBytes;
@@ -155,7 +155,7 @@ static NSDictionary *optionsFor32BitSurface(IntSize size, unsigned pixelFormat)
     unsigned bytesPerElement = 4;
     unsigned bytesPerPixel = 4;
 
-    size_t bytesPerRow = IOSurfaceAlignProperty(kIOSurfaceBytesPerRow, width * bytesPerPixel);
+    size_t bytesPerRow = IOSurface::alignedBytesPerRow(width * bytesPerPixel);
     ASSERT(bytesPerRow);
 
     size_t totalBytes = IOSurfaceAlignProperty(kIOSurfaceAllocSize, height * bytesPerRow);
@@ -268,34 +268,11 @@ IntSize IOSurface::maximumSize()
     return size;
 }
 
-static WTF::Atomic<size_t>& surfaceBytesPerRowAlignment()
+size_t IOSurface::alignedBytesPerRow(size_t bytesPerRow)
 {
-    static WTF::Atomic<size_t> alignment = 0;
-    return alignment;
-}
-
-size_t IOSurface::bytesPerRowAlignment()
-{
-    auto alignment = surfaceBytesPerRowAlignment().load();
-    if (!alignment) {
-        surfaceBytesPerRowAlignment().store(IOSurfaceGetPropertyAlignment(kIOSurfaceBytesPerRow));
-        alignment = surfaceBytesPerRowAlignment().load();
-        // A return value for IOSurfaceGetPropertyAlignment(kIOSurfaceBytesPerRow) of 1 is invalid.
-        // See https://developer.apple.com/documentation/iosurface/1419453-iosurfacegetpropertyalignment?language=objc
-        // This likely means that the sandbox is blocking access to the IOSurface IOKit class,
-        // and that IOSurface::bytesPerRowAlignment() has been called before IOSurface::setBytesPerRowAlignment.
-        if (alignment <= 1) {
-            RELEASE_LOG_ERROR(Layers, "Sandbox does not allow IOSurface IOKit access.");
-            // 64 bytes is currently the alignment on all platforms.
-            alignment = 64;
-        }
-    }
-    return alignment;
-}
-
-void IOSurface::setBytesPerRowAlignment(size_t bytesPerRowAlignment)
-{
-    surfaceBytesPerRowAlignment().store(bytesPerRowAlignment);
+    constexpr size_t bytesPerRowAlignment = 64;
+    size_t alignmentMask = bytesPerRowAlignment - 1;
+    return (bytesPerRow + alignmentMask) & ~alignmentMask;
 }
 
 MachSendRight IOSurface::createSendRight() const

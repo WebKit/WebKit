@@ -113,8 +113,7 @@ public:
     WEBCORE_EXPORT static IntSize maximumSize();
     WEBCORE_EXPORT static void setMaximumSize(IntSize);
 
-    WEBCORE_EXPORT static size_t bytesPerRowAlignment();
-    WEBCORE_EXPORT static void setBytesPerRowAlignment(size_t);
+    WEBCORE_EXPORT static size_t alignedBytesPerRow(size_t bytesPerRow);
 
     WEBCORE_EXPORT WTF::MachSendRight createSendRight() const;
 
