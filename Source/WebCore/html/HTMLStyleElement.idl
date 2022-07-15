@@ -25,9 +25,7 @@
     [CEReactions=NotNeeded, Reflect] attribute DOMString media;
     [CEReactions=NotNeeded, Reflect] attribute DOMString type;
 
-    // DOM Level 2 Style
-    readonly attribute StyleSheet sheet;
-
     [Reflect] attribute DOMString nonce;
 };
 
+HTMLStyleElement includes LinkStyle;

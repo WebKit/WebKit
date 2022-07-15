@@ -32,3 +32,6 @@
      attribute [AtomString] DOMString media;
      [Reflect] attribute DOMString title;
 };
+
+SVGStyleElement includes LinkStyle;
+

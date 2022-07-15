@@ -431,7 +431,7 @@ PASS CSS namespace: has no name property
 PASS CSS namespace: operation escape(CSSOMString)
 PASS SVGElement interface: attribute style
 PASS SVGElement interface: svg_element must inherit property "style" with the proper type
-FAIL SVGStyleElement interface: attribute sheet assert_true: The prototype object must have a property "sheet" expected true got false
+PASS SVGStyleElement interface: attribute sheet
 PASS HTMLElement interface: attribute style
 PASS HTMLElement interface: style_element must inherit property "style" with the proper type
 PASS HTMLElement interface: document.createElement("unknownelement") must inherit property "style" with the proper type

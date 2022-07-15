@@ -944,6 +944,7 @@ $(PROJECT_DIR)/css/ElementCSSInlineStyle.idl
 $(PROJECT_DIR)/css/FontFace.idl
 $(PROJECT_DIR)/css/FontFaceSet.idl
 $(PROJECT_DIR)/css/FontFaceSource.idl
+$(PROJECT_DIR)/css/LinkStyle.idl
 $(PROJECT_DIR)/css/MediaList.idl
 $(PROJECT_DIR)/css/MediaQueryList.idl
 $(PROJECT_DIR)/css/MediaQueryListEvent.idl

@@ -816,6 +816,7 @@ set(WebCore_NON_SVG_IDL_FILES
     css/FontFace.idl
     css/FontFaceSet.idl
     css/FontFaceSource.idl
+    css/LinkStyle.idl
     css/MediaList.idl
     css/MediaQueryList.idl
     css/MediaQueryListEvent.idl
