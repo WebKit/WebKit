@@ -209,8 +209,6 @@ http/tests/download/inherited-encoding.html
 http/tests/images/loading-image-border.html
 http/tests/images/loading-image-no-border.html
 
-webkit.org/b/223280 http/tests/media/hls/hls-hdr-switch.html [ Timeout ]
-
 http/tests/media/hls/hls-progress.html [ Pass Crash Failure ]
 
 # webkit.org/b/221685
