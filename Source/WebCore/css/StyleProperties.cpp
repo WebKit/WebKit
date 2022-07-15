@@ -860,8 +860,8 @@ String StyleProperties::getLayeredShorthandValue(const StylePropertyShorthand& s
                 if (nextProperty == CSSPropertyBackgroundRepeatY || nextProperty == CSSPropertyMaskRepeatY) {
                     if (auto yValue = values[j + 1]) {
                         if (is<CSSValueList>(*yValue))
-                            yValue = downcast<CSSValueList>(*yValue).itemWithoutBoundsCheck(i);
-                        if (!is<CSSPrimitiveValue>(*value) || !is<CSSPrimitiveValue>(*yValue))
+                            yValue = downcast<CSSValueList>(*yValue).item(i);
+                        if (!is<CSSPrimitiveValue>(*value) || !yValue || !is<CSSPrimitiveValue>(*yValue))
                             continue;
 
                         auto xId = downcast<CSSPrimitiveValue>(*value).valueID();
@@ -891,12 +891,12 @@ String StyleProperties::getLayeredShorthandValue(const StylePropertyShorthand& s
                         ASSERT(shorthand.properties()[j - 1] == CSSPropertyMaskOrigin);
                         auto originValue = values[j - 1];
                         if (is<CSSValueList>(*originValue))
-                            originValue = downcast<CSSValueList>(*originValue).itemWithoutBoundsCheck(i);
-                        if (!is<CSSPrimitiveValue>(*value) || !is<CSSPrimitiveValue>(*originValue))
+                            originValue = downcast<CSSValueList>(*originValue).item(i);
+                        if (!is<CSSPrimitiveValue>(*value) || (originValue && !is<CSSPrimitiveValue>(*originValue)))
                             return false;
 
                         auto maskId = downcast<CSSPrimitiveValue>(*value).valueID();
-                        auto originId = downcast<CSSPrimitiveValue>(*originValue).valueID();
+                        auto originId = originValue ? downcast<CSSPrimitiveValue>(*originValue).valueID() : CSSValueInitial;
                         return maskId == originId && (!isCSSWideValueKeyword(StringView { getValueName(maskId) }) || value->isImplicitInitialValue());
                     }
                     if (property == CSSPropertyMaskOrigin) {
@@ -906,8 +906,8 @@ String StyleProperties::getLayeredShorthandValue(const StylePropertyShorthand& s
                         ASSERT(shorthand.properties()[j + 1] == CSSPropertyMaskClip);
                         auto clipValue = values[j + 1];
                         if (is<CSSValueList>(*clipValue))
-                            clipValue = downcast<CSSValueList>(*clipValue).itemWithoutBoundsCheck(i);
-                        return value->isImplicitInitialValue() && clipValue->isImplicitInitialValue();
+                            clipValue = downcast<CSSValueList>(*clipValue).item(i);
+                        return value->isImplicitInitialValue() && (!clipValue || clipValue->isImplicitInitialValue());
                     }
                 }
 
@@ -915,6 +915,8 @@ String StyleProperties::getLayeredShorthandValue(const StylePropertyShorthand& s
             };
 
             String valueText;
+            if (!value && shorthand.id() == CSSPropertyMask)
+                value = CSSValuePool::singleton().createImplicitInitialValue();
             if (value && !canOmitValue()) {
                 if (!layerResult.isEmpty())
                     layerResult.append(' ');
