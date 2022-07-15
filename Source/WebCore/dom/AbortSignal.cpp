@@ -104,7 +104,7 @@ void AbortSignal::signalAbort(JSC::JSValue reason)
     Ref protectedThis { *this };
     auto algorithms = std::exchange(m_algorithms, { });
     for (auto& algorithm : algorithms)
-        algorithm();
+        algorithm(reason);
 
     // 5. Fire an event named abort at signal.
     dispatchEvent(Event::create(eventNames().abortEvent, Event::CanBubble::No, Event::IsCancelable::No));
@@ -123,9 +123,9 @@ void AbortSignal::signalFollow(AbortSignal& signal)
 
     ASSERT(!m_followingSignal);
     m_followingSignal = signal;
-    signal.addAlgorithm([weakThis = WeakPtr { this }] {
+    signal.addAlgorithm([weakThis = WeakPtr { this }](JSC::JSValue reason) {
         if (weakThis)
-            weakThis->signalAbort(weakThis->m_followingSignal ? weakThis->m_followingSignal->reason().getValue() : JSC::jsUndefined());
+            weakThis->signalAbort(reason);
     });
 }
 
@@ -140,7 +140,7 @@ bool AbortSignal::whenSignalAborted(AbortSignal& signal, Ref<AbortAlgorithm>&& a
         algorithm->handleEvent();
         return true;
     }
-    signal.addAlgorithm([algorithm = WTFMove(algorithm)]() mutable {
+    signal.addAlgorithm([algorithm = WTFMove(algorithm)](JSC::JSValue) mutable {
         algorithm->handleEvent();
     });
     return false;

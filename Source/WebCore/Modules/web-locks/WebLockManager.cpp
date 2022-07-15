@@ -222,9 +222,9 @@ void WebLockManager::request(const String& name, Options&& options, Ref<WebLockG
     m_releasePromises.add(lockIdentifier, WTFMove(releasePromise));
 
     if (options.signal) {
-        options.signal->addAlgorithm([weakThis = WeakPtr { *this }, lockIdentifier]() mutable {
+        options.signal->addAlgorithm([weakThis = WeakPtr { *this }, lockIdentifier](JSC::JSValue reason) mutable {
             if (weakThis)
-                weakThis->signalToAbortTheRequest(lockIdentifier);
+                weakThis->signalToAbortTheRequest(lockIdentifier, reason);
         });
     }
 
@@ -306,8 +306,8 @@ void WebLockManager::query(Ref<DeferredPromise>&& promise)
     });
 }
 
-// https://wicg.github.io/web-locks/#signal-to-abort-the-request
-void WebLockManager::signalToAbortTheRequest(WebLockIdentifier lockIdentifier)
+// https://w3c.github.io/web-locks/#signal-to-abort-the-request
+void WebLockManager::signalToAbortTheRequest(WebLockIdentifier lockIdentifier, JSC::JSValue reason)
 {
     if (!scriptExecutionContext() || !m_mainThreadBridge)
         return;
@@ -321,7 +321,8 @@ void WebLockManager::signalToAbortTheRequest(WebLockIdentifier lockIdentifier)
         if (wasAborted && weakThis)
             weakThis->m_pendingRequests.remove(lockIdentifier);
     });
-    settleReleasePromise(lockIdentifier, Exception { AbortError, "Lock request was aborted via AbortSignal"_s });
+    if (auto releasePromise = m_releasePromises.take(lockIdentifier))
+        releasePromise->reject<IDLAny>(reason);
 }
 
 void WebLockManager::settleReleasePromise(WebLockIdentifier lockIdentifier, ExceptionOr<JSC::JSValue>&& result)

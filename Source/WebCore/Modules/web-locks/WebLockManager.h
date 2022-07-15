@@ -65,7 +65,7 @@ private:
 
     void didCompleteLockRequest(WebLockIdentifier, bool success);
     void settleReleasePromise(WebLockIdentifier, ExceptionOr<JSC::JSValue>&&);
-    void signalToAbortTheRequest(WebLockIdentifier);
+    void signalToAbortTheRequest(WebLockIdentifier, JSC::JSValue reason);
     void clientIsGoingAway();
 
     // ActiveDOMObject.

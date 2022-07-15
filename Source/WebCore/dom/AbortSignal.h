@@ -63,7 +63,7 @@ public:
     using RefCounted::ref;
     using RefCounted::deref;
 
-    using Algorithm = Function<void()>;
+    using Algorithm = Function<void(JSC::JSValue reason)>;
     void addAlgorithm(Algorithm&& algorithm) { m_algorithms.append(WTFMove(algorithm)); }
 
     bool isFollowingSignal() const { return !!m_followingSignal; }
