@@ -72,7 +72,7 @@
 /LayoutTests/http/tests/websocket/tests/hybi/inspector @dcrousso @patrickangle
 /LayoutTests/inspector @dcrousso @patrickangle
 
-/Source/WebCore/dom @rniwa
+/Source/WebCore/dom @rniwa @cdumez
 /LayoutTests/fast/dom @rniwa
 /LayoutTests/fast/events @rniwa
 
@@ -90,6 +90,26 @@
 /Source/WebCore/Modules/mediacontrols @dcrousso
 /Source/WebCore/Modules/modern-media-controls @dcrousso
 /LayoutTests/media/modern-media-controls @dcrousso
+
+# ================================================================================
+
+/Source/WebCore/Modules/beacon @cdumez
+/Source/WebCore/Modules/entriesapi @cdumez
+/Source/WebCore/Modules/geolocation @cdumez
+/Source/WebCore/Modules/notifications @cdumez
+/Source/WebCore/Modules/web-locks @cdumez
+/Source/WebCore/Modules/webaudio @cdumez
+/Source/WebCore/bindings @cdumez
+/Source/WebCore/html @cdumez
+/Source/WebCore/loader @cdumez
+/Source/WebCore/workers @cdumez
+/Source/WebCore/worklets @cdumez
+/Source/WebCore/xml @cdumez
+/Source/WebCore/page @cdumez
+/Source/WebKit/NetworkProcess @cdumez
+/Source/WebKit/Platform @cdumez
+/Source/WebKit/UIProcess @cdumez
+/Source/WebKit/WebProcess @cdumez
 
 # ================================================================================
 
