@@ -390,12 +390,14 @@ void Daemon::connectionEventHandler(xpc_object_t request)
     if (xpc_get_type(request) != XPC_TYPE_DICTIONARY)
         return;
     
-    if (xpc_dictionary_get_uint64(request, protocolVersionKey) != protocolVersionValue) {
-        NSLog(@"Received request that was not the current protocol version");
-        // FIXME: Cut off this connection
+    auto version = xpc_dictionary_get_uint64(request, protocolVersionKey);
+    if (version != protocolVersionValue) {
+        RELEASE_LOG_ERROR(Push, "Received request with protocol version %llu not matching daemon protocol version %llu", version, protocolVersionValue);
+        if (auto connection = xpc_dictionary_get_remote_connection(request))
+            xpc_connection_cancel(connection);
         return;
     }
-    
+
     auto messageTypeValue = xpc_dictionary_get_uint64(request, protocolMessageTypeKey);
     if (messageTypeValue >= static_cast<uint64_t>(RawXPCMessageType::GetPushTopicsForTesting)) {
         decodeAndHandleRawXPCMessage(static_cast<RawXPCMessageType>(messageTypeValue), request);
