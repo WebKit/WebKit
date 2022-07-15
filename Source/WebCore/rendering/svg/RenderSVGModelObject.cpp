@@ -162,7 +162,7 @@ void RenderSVGModelObject::styleDidChange(StyleDifference diff, const RenderStyl
     if (hasSVGMask && hasLayer() && style().visibility() != Visibility::Visible)
         layer()->setHasVisibleContent();
 
-    SVGResourcesCache::clientStyleChanged(*this, diff, style());
+    SVGResourcesCache::clientStyleChanged(*this, diff, oldStyle, style());
 }
 
 void RenderSVGModelObject::mapAbsoluteToLocalPoint(OptionSet<MapCoordinatesMode> mode, TransformState& transformState) const

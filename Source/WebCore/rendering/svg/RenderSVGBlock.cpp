@@ -102,7 +102,7 @@ void RenderSVGBlock::styleDidChange(StyleDifference diff, const RenderStyle* old
 #endif
         setNeedsBoundariesUpdate();
     RenderBlockFlow::styleDidChange(diff, oldStyle);
-    SVGResourcesCache::clientStyleChanged(*this, diff, style());
+    SVGResourcesCache::clientStyleChanged(*this, diff, oldStyle, style());
 }
 
 void RenderSVGBlock::computeOverflow(LayoutUnit oldClientAfterEdge, bool recomputeFloats)

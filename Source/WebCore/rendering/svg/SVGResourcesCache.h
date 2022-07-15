@@ -53,7 +53,7 @@ public:
     static void clientLayoutChanged(RenderElement&);
 
     // Called from all SVG renderers styleDidChange() methods.
-    static void clientStyleChanged(RenderElement&, StyleDifference, const RenderStyle& newStyle);
+    static void clientStyleChanged(RenderElement&, StyleDifference, const RenderStyle* oldStyle, const RenderStyle& newStyle);
 
     // Called from RenderSVGResourceContainer::willBeDestroyed().
     static void resourceDestroyed(RenderSVGResourceContainer&);

@@ -106,7 +106,7 @@ static inline bool rendererCanHaveResources(RenderObject& renderer)
     return renderer.node() && renderer.node()->isSVGElement() && !renderer.isSVGInlineText();
 }
 
-void SVGResourcesCache::clientStyleChanged(RenderElement& renderer, StyleDifference diff, const RenderStyle& newStyle)
+void SVGResourcesCache::clientStyleChanged(RenderElement& renderer, StyleDifference diff, const RenderStyle* oldStyle, const RenderStyle& newStyle)
 {
     if (diff == StyleDifference::Equal || !renderer.parent())
         return;
@@ -115,11 +115,42 @@ void SVGResourcesCache::clientStyleChanged(RenderElement& renderer, StyleDiffere
     if (renderer.isSVGResourceFilterPrimitive() && (diff == StyleDifference::Repaint || diff == StyleDifference::RepaintIfText))
         return;
 
-    // Dynamic changes of CSS properties like 'clip-path' may require us to recompute the associated resources for a renderer.
-    // FIXME: Avoid passing in a useless StyleDifference, but instead compare oldStyle/newStyle to see which resources changed
-    // to be able to selectively rebuild individual resources, instead of all of them.
-    if (rendererCanHaveResources(renderer)) {
-        auto& cache = resourcesCacheFromRenderer(renderer);
+    auto& cache = resourcesCacheFromRenderer(renderer);
+
+    auto hasStyleDifferencesAffectingResources = [&] {
+        if (!rendererCanHaveResources(renderer))
+            return false;
+
+        if (!oldStyle)
+            return true;
+
+        if (!arePointingToEqualData(oldStyle->clipPath(), newStyle.clipPath()))
+            return true;
+
+        // RenderSVGResourceMarker only supports SVG <mask> references.
+        if (!arePointingToEqualData(oldStyle->maskImage(), newStyle.maskImage()))
+            return true;
+
+        if (oldStyle->filter() != newStyle.filter())
+            return true;
+
+        // -apple-color-filter affects gradients.
+        if (oldStyle->appleColorFilter() != newStyle.appleColorFilter())
+            return true;
+
+        auto& oldSVGStyle = oldStyle->svgStyle();
+        auto& newSVGStyle = newStyle.svgStyle();
+
+        if (oldSVGStyle.fillPaintUri() != newSVGStyle.fillPaintUri())
+            return true;
+
+        if (oldSVGStyle.strokePaintUri() != newSVGStyle.strokePaintUri())
+            return true;
+
+        return false;
+    };
+
+    if (hasStyleDifferencesAffectingResources()) {
         cache.removeResourcesFromRenderer(renderer);
         cache.addResourcesFromRenderer(renderer, newStyle);
     }

@@ -221,7 +221,7 @@ void RenderSVGRoot::layoutChildren()
         // Invalidate resource clients, which may mark some nodes for layout.
         for (auto& resource :  m_resourcesNeedingToInvalidateClients) {
             resource->removeAllClientsFromCache();
-            SVGResourcesCache::clientStyleChanged(*resource, StyleDifference::Layout, resource->style());
+            SVGResourcesCache::clientStyleChanged(*resource, StyleDifference::Layout, nullptr, resource->style());
         }
 
         SetForScope clearLayoutSizeChanged(m_isLayoutSizeChanged, false);
@@ -382,7 +382,7 @@ void RenderSVGRoot::willBeRemovedFromTree(IsInternalMove isInternalMove)
 void RenderSVGRoot::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderReplaced::styleDidChange(diff, oldStyle);
-    SVGResourcesCache::clientStyleChanged(*this, diff, style());
+    SVGResourcesCache::clientStyleChanged(*this, diff, oldStyle, style());
 }
 
 void RenderSVGRoot::updateFromStyle()
