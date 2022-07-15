@@ -56,6 +56,8 @@ AuxiliaryProcess::AuxiliaryProcess()
 
 AuxiliaryProcess::~AuxiliaryProcess()
 {
+    if (m_connection)
+        m_connection->invalidate();
 }
 
 void AuxiliaryProcess::didClose(IPC::Connection&)
