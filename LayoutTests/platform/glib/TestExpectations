@@ -968,7 +968,6 @@ webkit.org/b/235885 webrtc/video-mute.html [ Timeout ]
 webkit.org/b/235885 webrtc/video-replace-track-to-null.html [ Failure ]
 webkit.org/b/235885 webrtc/video-replace-track.html [ Failure ]
 webkit.org/b/235885 webrtc/video-stats.html [ Failure ]
-webkit.org/b/235885 webrtc/video-vp8-videorange.html [ Timeout ]
 webkit.org/b/235885 webrtc/video.html [ Failure ]
 webkit.org/b/235885 webrtc/vp8-then-h264.html [ Failure ]
 webkit.org/b/235885 webrtc/vp9-svc.html [ Failure ]
@@ -1513,6 +1512,7 @@ webkit.org/b/193641 webkit.org/b/235885 webrtc/video-setDirection.html [ Failure
 webkit.org/b/194611 http/wpt/webrtc/getUserMedia-processSwapping.html [ Failure ]
 
 [ Debug ] webrtc/video-h264.html [ Slow ]
+webrtc/vp9-profile2.html [ Slow ]
 
 webkit.org/b/215005 webkit.org/b/218787 webrtc/h264-baseline.html [ Crash Timeout ]
 # h264-high.html is marked as slow in the root expectation
@@ -1522,8 +1522,6 @@ webkit.org/b/215007 [ Debug ] webrtc/h264-high.html [ Slow Failure ]
 webkit.org/b/216538 webrtc/captureCanvas-webrtc-software-h264-baseline.html [ Slow Failure ]
 
 webkit.org/b/216763 webkit.org/b/235885 webrtc/captureCanvas-webrtc-software-h264-high.html [ Crash Failure Timeout ]
-
-webkit.org/b/218221 webrtc/vp9-profile2.html [ Timeout Failure ]
 
 webkit.org/b/224074 webrtc/concurrentVideoPlayback.html [ Timeout Pass ]
 
@@ -2356,7 +2354,6 @@ webkit.org/b/186100 fast/hidpi/filters-turbulence.html [ ImageOnlyFailure ]
 webkit.org/b/187044 webanimations/opacity-animation-yields-compositing-span.html [ Failure ]
 
 webkit.org/b/187064 webrtc/video-addTrack.html [ Failure ]
-webkit.org/b/187064 webkit.org/b/235885 webrtc/video-replace-muted-track.html [ Timeout Failure ]
 webkit.org/b/187064 webkit.org/b/235885 webrtc/video-disabled-black.html [ Crash Timeout ]
 webkit.org/b/187064 webkit.org/b/235885 webrtc/video-remote-mute.html [ Crash Failure ]
 webkit.org/b/187064 webrtc/video-rotation.html [ Failure ]

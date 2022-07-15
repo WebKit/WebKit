@@ -39,6 +39,8 @@ protected:
     bool m_shouldApplyRotation { false };
 
 private:
+    void codecPreferencesChanged(const GRefPtr<GstCaps>&) final;
+
     GRefPtr<GstElement> m_videoConvert;
     GRefPtr<GstElement> m_videoFlip;
 };

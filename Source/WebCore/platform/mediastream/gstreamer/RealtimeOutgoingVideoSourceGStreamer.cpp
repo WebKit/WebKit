@@ -74,6 +74,8 @@ bool RealtimeOutgoingVideoSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
             m_payloader = makeGStreamerElement("rtpvp8pay", nullptr);
         } else if (!strcmp(encodingName, "VP9")) {
             encoderCaps = adoptGRef(gst_caps_new_empty_simple("video/x-vp9"));
+            if (const char* vp9Profile = gst_structure_get_string(structure, "vp9-profile-id"))
+                gst_caps_set_simple(encoderCaps.get(), "profile", G_TYPE_STRING, vp9Profile, nullptr);
             m_payloader = makeGStreamerElement("rtpvp9pay", nullptr);
         } else if (!strcmp(encodingName, "H264")) {
             encoderCaps = adoptGRef(gst_caps_new_empty_simple("video/x-h264"));
@@ -106,9 +108,28 @@ bool RealtimeOutgoingVideoSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
     g_object_set(m_capsFilter.get(), "caps", filteredCaps.get(), nullptr);
 
     gst_bin_add(GST_BIN_CAST(m_bin.get()), m_payloader.get());
-    gst_element_link_many(m_outgoingSource.get(), m_valve.get(), m_videoFlip.get(), m_videoConvert.get(), m_preEncoderQueue.get(),
-        m_encoder.get(), m_payloader.get(), m_postEncoderQueue.get(), nullptr);
+
+    auto encoderSinkPad = adoptGRef(gst_element_get_static_pad(m_encoder.get(), "sink"));
+    if (!gst_pad_is_linked(encoderSinkPad.get()))
+        gst_element_link_many(m_outgoingSource.get(), m_valve.get(), m_videoFlip.get(), m_videoConvert.get(), m_preEncoderQueue.get(), m_encoder.get(), nullptr);
+
+    gst_element_link_many(m_encoder.get(), m_payloader.get(), m_postEncoderQueue.get(), nullptr);
+    gst_element_sync_state_with_parent(m_encoder.get());
+    gst_element_sync_state_with_parent(m_payloader.get());
     return true;
+}
+
+void RealtimeOutgoingVideoSourceGStreamer::codecPreferencesChanged(const GRefPtr<GstCaps>& codecPreferences)
+{
+    gst_element_set_locked_state(m_outgoingSource.get(), TRUE);
+    if (m_payloader) {
+        gst_element_unlink_many(m_encoder.get(), m_payloader.get(), m_postEncoderQueue.get(), nullptr);
+        gst_element_set_state(m_payloader.get(), GST_STATE_NULL);
+        gst_bin_remove(GST_BIN_CAST(m_bin.get()), m_payloader.get());
+        m_payloader.clear();
+    }
+    setPayloadType(codecPreferences);
+    gst_element_set_locked_state(m_outgoingSource.get(), FALSE);
 }
 
 } // namespace WebCore

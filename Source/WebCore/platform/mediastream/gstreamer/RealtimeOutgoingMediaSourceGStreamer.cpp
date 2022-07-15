@@ -54,6 +54,9 @@ RealtimeOutgoingMediaSourceGStreamer::RealtimeOutgoingMediaSourceGStreamer()
 
 RealtimeOutgoingMediaSourceGStreamer::~RealtimeOutgoingMediaSourceGStreamer()
 {
+    if (m_transceiver)
+        g_signal_handlers_disconnect_by_data(m_transceiver.get(), this);
+
     stop();
 
     if (m_webrtcSinkPad) {
@@ -143,9 +146,17 @@ void RealtimeOutgoingMediaSourceGStreamer::link()
 void RealtimeOutgoingMediaSourceGStreamer::setSinkPad(GRefPtr<GstPad>&& pad)
 {
     m_webrtcSinkPad = WTFMove(pad);
-    GRefPtr<GstWebRTCRTPTransceiver> transceiver;
-    g_object_get(m_webrtcSinkPad.get(), "transceiver", &transceiver.outPtr(), nullptr);
-    g_object_get(transceiver.get(), "sender", &m_sender.outPtr(), nullptr);
+
+    if (m_transceiver)
+        g_signal_handlers_disconnect_by_data(m_transceiver.get(), this);
+
+    g_object_get(m_webrtcSinkPad.get(), "transceiver", &m_transceiver.outPtr(), nullptr);
+    g_signal_connect_swapped(m_transceiver.get(), "notify::codec-preferences", G_CALLBACK(+[](RealtimeOutgoingMediaSourceGStreamer* source, GParamSpec*, GstWebRTCRTPTransceiver* transceiver) {
+        GRefPtr<GstCaps> codecPreferences;
+        g_object_get(transceiver, "codec-preferences", &codecPreferences.outPtr(), nullptr);
+        source->codecPreferencesChanged(codecPreferences);
+    }), this);
+    g_object_get(m_transceiver.get(), "sender", &m_sender.outPtr(), nullptr);
 }
 
 } // namespace WebCore

@@ -94,19 +94,31 @@ bool GStreamerRtpTransceiverBackend::stopped() const
     return false;
 }
 
-static inline WARN_UNUSED_RETURN ExceptionOr<GstCaps*> toRtpCodecCapability(const RTCRtpCodecCapability& codec)
+static inline WARN_UNUSED_RETURN ExceptionOr<GstCaps*> toRtpCodecCapability(const RTCRtpCodecCapability& codec, int payloadType)
 {
     if (!codec.mimeType.startsWith("video/"_s) && !codec.mimeType.startsWith("audio/"_s))
         return Exception { InvalidModificationError, "RTCRtpCodecCapability bad mimeType"_s };
 
     auto components = codec.mimeType.split('/');
-    auto* caps = gst_caps_new_simple("application/x-rtp", "media", G_TYPE_STRING, components[0].ascii().data(), "encoding-name", G_TYPE_STRING, components[1].ascii().data(), nullptr);
-    gst_caps_set_simple(caps, "clock-rate", G_TYPE_INT, codec.clockRate, nullptr);
+    const auto mediaType = components[0];
+    const auto codecName = components[1];
+
+    auto* caps = gst_caps_new_simple("application/x-rtp", "media", G_TYPE_STRING, mediaType.ascii().data(), "encoding-name", G_TYPE_STRING, codecName.ascii().data(), "clock-rate", G_TYPE_INT, codec.clockRate, "payload", G_TYPE_INT, payloadType, nullptr);
     if (codec.channels)
         gst_caps_set_simple(caps, "channels", G_TYPE_INT, *codec.channels, nullptr);
 
-    if (!codec.sdpFmtpLine.isEmpty())
-        GST_FIXME("Unprocessed SDP FmtpLine: %s", codec.sdpFmtpLine.utf8().data());
+    if (!codec.sdpFmtpLine.isEmpty()) {
+        // Forward each fmtp attribute as codec-<fmtp-name> in the caps so that the downstream
+        // webrtcvideoencoder can take those into account when configuring the encoder. For instance
+        // VP9 profile 2 requires a 10bit pixel input format, so a conversion might be needed just
+        // before encoding. This is taken care of in the webrtcvideoencoder itself.
+        for (auto& attribute : codec.sdpFmtpLine.split(';')) {
+            auto components = attribute.split('=');
+            auto field = makeString(codecName.convertToASCIILowercase(), '-', components[0]);
+            gst_caps_set_simple(caps, field.ascii().data(), G_TYPE_STRING, components[1].ascii().data(), nullptr);
+        }
+    }
+
     GST_DEBUG("Codec capability: %" GST_PTR_FORMAT, caps);
     return caps;
 }
@@ -114,10 +126,12 @@ static inline WARN_UNUSED_RETURN ExceptionOr<GstCaps*> toRtpCodecCapability(cons
 ExceptionOr<void> GStreamerRtpTransceiverBackend::setCodecPreferences(const Vector<RTCRtpCodecCapability>& codecs)
 {
     auto gstCodecs = adoptGRef(gst_caps_new_empty());
+    int payloadType = 96;
     for (auto& codec : codecs) {
-        auto result = toRtpCodecCapability(codec);
+        auto result = toRtpCodecCapability(codec, payloadType);
         if (result.hasException())
             return result.releaseException();
+        payloadType++;
         gst_caps_append(gstCodecs.get(), result.releaseReturnValue());
     }
     g_object_set(m_rtcTransceiver.get(), "codec-preferences", gstCodecs.get(), nullptr);

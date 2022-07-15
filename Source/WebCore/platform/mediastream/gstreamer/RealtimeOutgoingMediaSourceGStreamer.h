@@ -66,12 +66,15 @@ protected:
     GRefPtr<GstElement> m_postEncoderQueue;
     GRefPtr<GstElement> m_capsFilter;
     GRefPtr<GstCaps> m_allowedCaps;
+    GRefPtr<GstWebRTCRTPTransceiver> m_transceiver;
     GRefPtr<GstWebRTCRTPSender> m_sender;
     GRefPtr<GstPad> m_webrtcSinkPad;
 
 private:
     void sourceMutedChanged();
     void sourceEnabledChanged();
+
+    virtual void codecPreferencesChanged(const GRefPtr<GstCaps>&) { }
 
     // MediaStreamTrackPrivate::Observer API
     void trackMutedChanged(MediaStreamTrackPrivate&) override { sourceMutedChanged(); }

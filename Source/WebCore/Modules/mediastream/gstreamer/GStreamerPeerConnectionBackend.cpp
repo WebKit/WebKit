@@ -93,6 +93,10 @@ static RTCRtpCapabilities gstreamerRtpCapatiblities(const String& kind)
             .clockRate = 90000,
             .channels = std::nullopt,
             .sdpFmtpLine = "profile-id=1"_s });
+        capabilities.codecs.uncheckedAppend({ .mimeType = "video/VP9"_s,
+            .clockRate = 90000,
+            .channels = std::nullopt,
+            .sdpFmtpLine = "profile-id=2"_s });
         capabilities.codecs.uncheckedAppend({ .mimeType = "video/H264"_s,
             .clockRate = 90000,
             .channels = std::nullopt,
