@@ -1776,6 +1776,11 @@ imported/w3c/web-platform-tests/css/css-conditional/css-supports-036.xht [ Image
 imported/w3c/web-platform-tests/css/css-conditional/css-supports-038.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-conditional/css-supports-039.xht [ ImageOnlyFailure ]
 
+# <rdar://97051006>
+[ Debug ] imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/multicol-legend-becomes-floated-crash.html [ Skip ]
+
+webkit.org/b/242786 imported/w3c/web-platform-tests/web-animations/interfaces/Animation/commitStyles-crash.html [ Skip ]
+
 [ Debug ] imported/w3c/web-platform-tests/css/css-conditional/js/CSS-supports-CSSStyleDeclaration.html [ Crash ]
 
 transitions/svg-text-shadow-transition.html [ Failure ]
