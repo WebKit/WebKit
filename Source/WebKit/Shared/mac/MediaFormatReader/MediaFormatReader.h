@@ -83,6 +83,9 @@ private:
     // WrapperClass
     OSStatus copyTrackArray(CFArrayRef*);
     
+    static const void* nextLogIdentifier();
+    static WTFLogChannel& logChannel();
+    static const char* logClassName() { return "MediaFormatReader"; }
     const void* logIdentifier() const { return m_logIdentifier; }
 
     RetainPtr<MTPluginByteSourceRef> m_byteSource WTF_GUARDED_BY_LOCK(m_parseTracksLock);

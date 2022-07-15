@@ -38,6 +38,7 @@
 #include <webm/status.h>
 #include <webm/vp9_header_parser.h>
 #include <wtf/Deque.h>
+#include <wtf/LoggerHelper.h>
 #include <wtf/MediaTime.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
@@ -50,7 +51,9 @@ class WebmParser;
 
 namespace WebCore {
 
-class WebMParser : private webm::Callback {
+class WebMParser
+    : private webm::Callback
+    , private LoggerHelper {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     class Callback {
@@ -78,8 +81,7 @@ public:
     void provideMediaData(MediaSamplesBlock&&);
 
     WEBCORE_EXPORT void setLogger(const Logger&, const void* identifier);
-    const Logger* loggerPtr() const { return m_logger.get(); }
-    const void* logIdentifier() const { return m_logIdentifier; }
+    WTFLogChannel& logChannel() const final;
 
     enum class ErrorCode : int32_t {
         SourceBufferParserWebMErrorCodeStart = 2000,
@@ -178,6 +180,7 @@ public:
     protected:
         RefPtr<SharedBuffer> contiguousCompleteBlockBuffer(size_t offset, size_t length) const;
         webm::Status readFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t* bytesRemaining);
+        WTFLogChannel& logChannel() const { return m_parser.logChannel(); }
         MediaSamplesBlock m_processedMediaSamples;
         bool m_useByteRange { false };
         MediaSamplesBlock::MediaSampleDataType m_completeFrameData;
@@ -267,6 +270,11 @@ private:
     webm::Status OnBlockGroupBegin(const webm::ElementMetadata& , webm::Action*);
     webm::Status OnBlockGroupEnd(const webm::ElementMetadata&, const webm::BlockGroup&);
     webm::Status OnFrame(const webm::FrameMetadata&, webm::Reader*, uint64_t* bytesRemaining) final;
+        
+    const Logger* loggerPtr() const { return m_logger.get(); }
+    const Logger& logger() const final { ASSERT(m_logger); return *m_logger.get(); }
+    const void* logIdentifier() const final { return m_logIdentifier; }
+    const char* logClassName() const final { return "WebMParser"; }
 
     std::unique_ptr<SourceBufferParser::InitializationSegment> m_initializationSegment;
     Vector<std::pair<uint64_t, Ref<SharedBuffer>>> m_keyIds;
@@ -293,7 +301,10 @@ private:
     bool m_createByteRangeSamples { false };
 };
 
-class SourceBufferParserWebM : public SourceBufferParser, WebMParser::Callback {
+class SourceBufferParserWebM
+    : public SourceBufferParser
+    , public WebMParser::Callback
+    , private LoggerHelper {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static bool isWebMFormatReaderAvailable();
@@ -302,7 +313,7 @@ public:
     WEBCORE_EXPORT static RefPtr<SourceBufferParserWebM> create(const ContentType&);
 
     SourceBufferParserWebM();
-    ~SourceBufferParserWebM() = default;
+    ~SourceBufferParserWebM();
 
     static bool isAvailable();
 
@@ -324,8 +335,6 @@ public:
     void setMinimumAudioSampleDuration(float);
     
     WEBCORE_EXPORT void setLogger(const Logger&, const void* identifier) final;
-    const Logger* loggerPtr() const { return m_logger.get(); }
-    const void* logIdentifier() const { return m_logIdentifier; }
 
 private:
     // WebMParser::Callback
@@ -336,6 +345,12 @@ private:
     void parsedTrimmingData(uint64_t, const MediaTime&) final;
 
     void returnSamples(MediaSamplesBlock&&, CMFormatDescriptionRef);
+        
+    const Logger* loggerPtr() const { return m_logger.get(); }
+    const Logger& logger() const final { ASSERT(m_logger); return *m_logger.get(); }
+    const void* logIdentifier() const final { return m_logIdentifier; }
+    const char* logClassName() const final { return "SourceBufferParserWebM"; }
+    WTFLogChannel& logChannel() const final;
 
     DidParseTrimmingDataCallback m_didParseTrimmingDataCallback;
     WebMParser m_parser;

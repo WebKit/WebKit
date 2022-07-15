@@ -42,7 +42,6 @@
 #include "WebMAudioUtilitiesCocoa.h"
 #include <webm/webm_parser.h>
 #include <wtf/Algorithms.h>
-#include <wtf/LoggerHelper.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/StdList.h>
 #include <wtf/darwin/WeakLinking.h>
@@ -232,9 +231,6 @@ template<> struct LogArgument<webm::Id> {
 } // namespace WTF
 
 namespace WebCore {
-
-static WTFLogChannel& logChannel() { return LogMedia; }
-static const char* logClassName() { return "SourceBufferParserWebM"; }
 
 // FIXME: Remove this once kCMVideoCodecType_VP9 is added to CMFormatDescription.h
 constexpr CMVideoCodecType kCMVideoCodecType_VP9 { 'vp09' };
@@ -536,7 +532,10 @@ WebMParser::WebMParser(Callback& callback)
 {
 }
 
-WebMParser::~WebMParser() = default;
+WebMParser::~WebMParser()
+{
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
+}
 
 void WebMParser::resetState()
 {
@@ -554,6 +553,7 @@ void WebMParser::resetState()
 
 void WebMParser::reset()
 {
+    INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     m_reader->reset();
     m_parser->DidSeek();
 }
@@ -607,14 +607,21 @@ ExceptionOr<int> WebMParser::parse(SourceBufferParser::Segment&& segment)
     return m_status.code;
 }
 
-void WebMParser::setLogger(const Logger& logger, const void* logIdentifier)
+void WebMParser::setLogger(const Logger& newLogger, const void* newLogIdentifier)
 {
-    m_logger = &logger;
-    m_logIdentifier = logIdentifier;
+    m_logger = &newLogger;
+    m_logIdentifier = newLogIdentifier;
+    ALWAYS_LOG(LOGIDENTIFIER);
+}
+
+WTFLogChannel& WebMParser::logChannel() const
+{
+    return JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, Media);
 }
 
 void WebMParser::invalidate()
 {
+    INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     m_parser = nullptr;
     m_tracks.clear();
     m_initializationSegment = nullptr;
@@ -1267,6 +1274,11 @@ SourceBufferParserWebM::SourceBufferParserWebM()
 {
 }
 
+SourceBufferParserWebM::~SourceBufferParserWebM()
+{
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
+}
+
 bool SourceBufferParserWebM::isWebMFormatReaderAvailable()
 {
     return PlatformMediaSessionManager::webMFormatReaderEnabled() && canLoadFormatReader() && isWebmParserAvailable();
@@ -1515,13 +1527,23 @@ void SourceBufferParserWebM::invalidate()
     m_parser.invalidate();
 }
 
-void SourceBufferParserWebM::setLogger(const Logger& logger, const void* logIdentifier)
+void SourceBufferParserWebM::setLogger(const Logger& newLogger, const void* newLogIdentifier)
 {
-    m_parser.setLogger(logger, logIdentifier);
+    m_logger = &newLogger;
+    m_logIdentifier = newLogIdentifier;
+    ALWAYS_LOG(LOGIDENTIFIER);
+    
+    m_parser.setLogger(newLogger, newLogIdentifier);
+}
+
+WTFLogChannel& SourceBufferParserWebM::logChannel() const
+{
+    return JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, Media);
 }
 
 void SourceBufferParserWebM::setMinimumAudioSampleDuration(float duration)
 {
+    INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, duration);
     m_minimumAudioSampleDuration = MediaTime::createWithFloat(duration);
 }
 

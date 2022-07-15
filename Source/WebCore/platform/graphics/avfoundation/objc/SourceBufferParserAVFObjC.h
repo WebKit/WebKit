@@ -27,8 +27,10 @@
 
 #if ENABLE(MEDIA_SOURCE)
 
+#include "Logging.h"
 #include "SourceBufferParser.h"
 #include <wtf/Box.h>
+#include <wtf/LoggerHelper.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
@@ -43,7 +45,10 @@ typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
 
 namespace WebCore {
 
-class SourceBufferParserAVFObjC final : public SourceBufferParser, public CanMakeWeakPtr<SourceBufferParserAVFObjC> {
+class SourceBufferParserAVFObjC final
+    : public SourceBufferParser
+    , public CanMakeWeakPtr<SourceBufferParserAVFObjC>
+    , private LoggerHelper {
 public:
     static MediaPlayerEnums::SupportsType isContentTypeSupported(const ContentType&);
 
@@ -73,7 +78,10 @@ public:
 private:
 #if !RELEASE_LOG_DISABLED
     const Logger* loggerPtr() const { return m_logger.get(); }
-    const void* logIdentifier() const { return m_logIdentifier; }
+    const Logger& logger() const final { ASSERT(m_logger); return *m_logger.get(); }
+    const void* logIdentifier() const final { return m_logIdentifier; }
+    const char* logClassName() const final { return "SourceBufferParserAVFObjC"; }
+    WTFLogChannel& logChannel() const final { return LogMedia; }
 #endif
 
     RetainPtr<AVStreamDataParser> m_parser;

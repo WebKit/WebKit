@@ -89,6 +89,9 @@ MediaSourcePrivate::AddStatus MediaSourcePrivateAVFObjC::addSourceBuffer(const C
     auto parser = SourceBufferParser::create(contentType, webMParserEnabled);
     if (!parser)
         return AddStatus::NotSupported;
+#if !RELEASE_LOG_DISABLED
+    parser->setLogger(m_logger, m_logIdentifier);
+#endif
 
     auto newSourceBuffer = SourceBufferPrivateAVFObjC::create(this, parser.releaseNonNull());
 #if ENABLE(ENCRYPTED_MEDIA)

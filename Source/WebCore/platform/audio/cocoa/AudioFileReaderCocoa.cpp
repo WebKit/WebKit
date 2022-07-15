@@ -189,6 +189,7 @@ std::unique_ptr<AudioFileReaderWebMData> AudioFileReader::demuxWebMData(const ui
     MediaTime duration;
     RefPtr<AudioTrackPrivateWebM> track;
     Vector<Ref<MediaSampleAVFObjC>> samples;
+    parser->setLogger(m_logger, m_logIdentifier);
     parser->setDidEncounterErrorDuringParsingCallback([&](uint64_t) {
         error = true;
     });

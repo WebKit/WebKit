@@ -53,19 +53,6 @@ namespace WebKit {
 
 using namespace WebCore;
 
-static const void* nextLogIdentifier()
-{
-    static uint64_t logIdentifier = cryptographicallyRandomNumber();
-    return reinterpret_cast<const void*>(++logIdentifier);
-}
-
-static WTFLogChannel& logChannel()
-{
-    return JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, Media);
-}
-
-static const char* logClassName() { return "MediaFormatReader"; }
-
 class AbortAction {
 public:
     AbortAction(Condition& condition)
@@ -305,6 +292,17 @@ OSStatus MediaFormatReader::copyTrackArray(CFArrayRef* trackArrayCopy)
 const void* MediaFormatReader::nextTrackReaderLogIdentifier(uint64_t trackID) const
 {
     return LoggerHelper::childLogIdentifier(m_logIdentifier, trackID);
+}
+
+const void* MediaFormatReader::nextLogIdentifier()
+{
+    static uint64_t logIdentifier = cryptographicallyRandomNumber();
+    return reinterpret_cast<const void*>(++logIdentifier);
+}
+
+WTFLogChannel& MediaFormatReader::logChannel()
+{
+    return JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, Media);
 }
 
 } // namespace WebKit
