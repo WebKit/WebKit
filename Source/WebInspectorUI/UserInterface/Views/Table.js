@@ -276,6 +276,18 @@ WI.Table = class Table extends WI.View
         this._cachedRows.delete(rowIndex);
     }
 
+    restyleRow(rowIndex)
+    {
+        if (!this._isRowVisible(rowIndex))
+            return;
+
+        let row = this._cachedRows.get(rowIndex);
+        if (!row)
+            return;
+
+        this._styleRow(row);
+    }
+
     reloadVisibleColumnCells(column)
     {
         let columnIndex = this._visibleColumns.indexOf(column);
@@ -837,11 +849,31 @@ WI.Table = class Table extends WI.View
         let row = document.createElement("li");
         row.__index = rowIndex;
         row.__widthGeneration = 0;
-        if (this.isRowSelected(rowIndex))
-            row.classList.add("selected");
+        this._styleRow(row);
+
+        if (this._delegate.tableRowHovered) {
+            this._boundHandleRowMouseEnter ??= this._handleRowMouseEnter.bind(this);
+            this._boundHandleRowMouseLeave ??= this._handleRowMouseLeave.bind(this);
+
+            row.addEventListener("mouseenter", this._boundHandleRowMouseEnter);
+            row.addEventListener("mouseleave", this._boundHandleRowMouseLeave);
+        }
 
         this._cachedRows.set(rowIndex, row);
         return row;
+    }
+
+    _styleRow(row)
+    {
+        let selected = row.classList.contains("selected");
+
+        row.className = "";
+
+        if (selected || this.isRowSelected(row.__index))
+            row.classList.add("selected");
+
+        if (this._delegate.tableRowClassNames)
+            row.classList.add(...this._delegate.tableRowClassNames(this, row.__index));
     }
 
     _populatedCellForColumnAndRow(column, columnIndex, rowIndex)
@@ -1401,6 +1433,18 @@ WI.Table = class Table extends WI.View
                     this.hideColumn(column);
             }, checked);
         }
+    }
+
+    _handleRowMouseEnter(event)
+    {
+        let row = event.target;
+
+        this.delegate.tableRowHovered(this, row.__index);
+    }
+
+    _handleRowMouseLeave(event)
+    {
+        this.delegate.tableRowHovered(this, NaN);
     }
 
     _removeRows(representedObjects)

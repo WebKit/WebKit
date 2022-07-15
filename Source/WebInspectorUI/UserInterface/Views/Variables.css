@@ -35,6 +35,8 @@
     --foreground-lightness: 0%;
 
     --text-color: black;
+    --text-color-transparent: hsla(0, 0%, 0%, 0.4);
+
     --text-color-active: black;
 
     --text-color-secondary: hsl(0, 0%, 50%);
@@ -232,6 +234,7 @@ body.window-inactive {
 
 body:is(.mac-platform.monterey, .mac-platform.big-sur) {
     --text-color: hsl(0, 0%, 15%);
+    --text-color-transparent: hsla(0, 0%, 15%, 0.4);
 
     --background-color-intermediate: hsl(0, 0%, 98.5%);
 
@@ -263,6 +266,8 @@ body:is(.mac-platform.monterey, .mac-platform.big-sur):not(.docked) {
         --foreground-lightness: 100%;
 
         --text-color: hsl(0, 0%, 88%);
+        --text-color-transparent: hsla(0, 0%, 88%, 0.4);
+
         --text-color-active: white;
         --text-color-secondary: hsl(0, 0%, 65%);
 
@@ -396,6 +401,7 @@ body:is(.mac-platform.monterey, .mac-platform.big-sur):not(.docked) {
 
     body:is(.mac-platform.monterey, .mac-platform.big-sur) {
         --text-color: hsl(0, 0%, 85%);
+        --text-color-transparent: hsla(0, 0%, 85%, 0.4);
 
         --background-color: hsl(0, 0%, 20%);
         --background-color-secondary: hsl(0, 0%, 23%);

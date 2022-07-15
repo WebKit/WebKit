@@ -87,6 +87,26 @@
     cursor: pointer;
 }
 
+body.shift-key-pressed .network-table > .table:hover li:not(:hover, .selected, .initiated) .cell {
+    color: var(--text-color-transparent);
+}
+
+body.shift-key-pressed .network-table > .table:hover li:not(:hover, .selected, .initiated) .cell > * {
+    color: var(--text-color);
+    opacity: 0.4;
+}
+
+body.shift-key-pressed .network-table > .table:hover li.initiated .cell.name::after {
+    display: inline-block;
+    float: right;
+    width: 4px;
+    height: 4px;
+    margin-top: 8px;
+    content: "";
+    background-color: var(--glyph-color-active);
+    border-radius: 50%;
+}
+
 .network-table > .table .cell.dom-node.name .icon {
     content: url(../Images/TypeIcons.svg#DOMElement-light);
 }

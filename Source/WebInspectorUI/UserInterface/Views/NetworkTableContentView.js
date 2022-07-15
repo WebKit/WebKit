@@ -42,6 +42,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._showingRepresentedObjectCookie = null;
 
         this._table = null;
+        this._hoveredRowIndex = null;
         this._nameColumnWidthSetting = new WI.Setting("network-table-content-view-name-column-width", WI.Sidebar.AbsoluteMinimumWidth);
 
         this._selectedObject = null;
@@ -274,8 +275,17 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         return {customSaveHandler: () => { this._exportHAR(); }};
     }
 
+    attached()
+    {
+        super.attached();
+
+        WI.notifications.addEventListener(WI.Notification.GlobalModifierKeysDidChange, this._handleGlobalModifierKeysDidChange, this);
+    }
+
     detached()
     {
+        WI.notifications.removeEventListener(WI.Notification.GlobalModifierKeysDidChange, this._handleGlobalModifierKeysDidChange, this);
+
         this._hidePopover();
 
         super.detached();
@@ -426,6 +436,13 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         contextMenu.appendItem(WI.UIString("Export HAR"), () => { this._exportHAR(); }, !this._canExportHAR());
     }
 
+    tableRowHovered(table, rowIndex)
+    {
+        this._hoveredRowIndex = rowIndex;
+
+        this._highlightRelatedResourcesForHoveredResource();
+    }
+
     tableShouldSelectRow(table, cell, column, rowIndex)
     {
         return column === this._nameColumn;
@@ -449,6 +466,12 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             this._showDetailView(this._selectedObject);
         else
             this._hideDetailView();
+    }
+
+    tableRowClassNames(table, rowIndex)
+    {
+        let entry = this._activeCollection.filteredEntries[rowIndex];
+        return entry.rowClassNames;
     }
 
     tablePopulateCell(table, cell, column, rowIndex)
@@ -1533,6 +1556,42 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._updateStatistics();
     }
 
+    _highlightRelatedResourcesForHoveredResource()
+    {
+        let needsRestyle = false;
+
+        if (isNaN(this._hoveredRowIndex) || !WI.modifierKeys.shiftKey) {
+            for (let entry of this._activeCollection.entries) {
+                if (entry.rowClassNames.length)
+                    needsRestyle = true;
+                entry.rowClassNames = [];
+            }
+        } else {
+            let hoveredEntry = this._activeCollection.filteredEntries[this._hoveredRowIndex];
+            let hoveredResource = hoveredEntry?.resource;
+            if (!hoveredResource)
+                return;
+
+            for (let entry of this._activeCollection.entries) {
+                if (!hoveredResource.initiatedResources.includes(entry.resource))
+                    continue;
+
+                if (entry.rowClassNames.includes("initiated"))
+                    continue;
+
+                entry.rowClassNames.push("initiated");
+
+                needsRestyle = true;
+            }
+        }
+
+        if (!needsRestyle)
+            return;
+
+        for (let i = 0; i < this._activeCollection.filteredEntries.length; ++i)
+            this._table.restyleRow(i);
+    }
+
     _hidePopover()
     {
         if (this._waterfallPopover)
@@ -1895,6 +1954,14 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         // FIXME: <https://webkit.org/b/143632> Web Inspector: Resources with the same name in different folders aren't distinguished
         // FIXME: <https://webkit.org/b/176765> Web Inspector: Resource names should be less ambiguous
 
+        let rowClassNames = [];
+
+        if (this._hoveredRowIndex) {
+            let hoveredEntry = this._activeCollection.filteredEntries[this._hoveredRowIndex];
+            if (hoveredEntry?.resource?.initiatedResources.includes(resource))
+                rowClassNames.push("initiated");
+        }
+
         return {
             resource,
             name: WI.displayNameForURL(resource.url, resource.urlComponents),
@@ -1916,6 +1983,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             connectionIdentifier: resource.connectionIdentifier,
             startTime: resource.firstTimestamp,
             currentSession: resource[WI.NetworkTableContentView._currentSessionSymbol] ?? true,
+            rowClassNames,
         };
     }
 
@@ -1926,6 +1994,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             initiatedResourceEntries: [],
             domEventElements: new Map,
             expanded: true,
+            rowClassNames: [],
         };
     }
 
@@ -2543,6 +2612,11 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
     _transitionPageTarget(event)
     {
         this._transitioningPageTarget = true;
+    }
+
+    _handleGlobalModifierKeysDidChange(event)
+    {
+        this._highlightRelatedResourcesForHoveredResource();
     }
 };
 
