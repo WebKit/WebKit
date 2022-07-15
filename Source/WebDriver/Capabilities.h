@@ -55,7 +55,7 @@ enum class UnhandledPromptBehavior {
 
 struct Proxy {
     String type;
-    std::optional<String> autoconfigURL;
+    std::optional<URL> autoconfigURL;
     std::optional<URL> ftpURL;
     std::optional<URL> httpURL;
     std::optional<URL> httpsURL;

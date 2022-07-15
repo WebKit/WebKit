@@ -93,6 +93,7 @@ public:
             Vector<std::pair<String, String>> certificates;
             struct Proxy {
                 String type;
+                std::optional<String> autoconfigURL;
                 std::optional<String> ftpURL;
                 std::optional<String> httpURL;
                 std::optional<String> httpsURL;
