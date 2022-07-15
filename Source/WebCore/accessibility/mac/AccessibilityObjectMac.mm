@@ -316,6 +316,8 @@ String AccessibilityObject::subrolePlatformString() const
         return "AXDescription"_s;
     case AccessibilityRole::WebApplication:
         return "AXWebApplication"_s;
+    case AccessibilityRole::Suggestion:
+        return "AXSuggestion"_s;
         // Default doesn't return anything, so roles defined below can be chosen.
     default:
         break;
@@ -686,6 +688,7 @@ PlatformRoleMap createPlatformRoleMap()
         { AccessibilityRole::Subscript, NSAccessibilityGroupRole },
         { AccessibilityRole::Superscript, NSAccessibilityGroupRole },
         { AccessibilityRole::Model, NSAccessibilityGroupRole },
+        { AccessibilityRole::Suggestion, NSAccessibilityGroupRole },
     };
     PlatformRoleMap roleMap;
     for (auto& role : roles)

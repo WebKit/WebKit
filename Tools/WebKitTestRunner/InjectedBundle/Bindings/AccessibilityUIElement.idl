@@ -115,6 +115,10 @@
     readonly attribute DOMString classList;
     readonly attribute DOMString embeddedImageDescription;
     readonly attribute object imageOverlayElements;
+    readonly attribute boolean isInsertion;
+    readonly attribute boolean isDeletion;
+    readonly attribute boolean isFirstItemInSuggestion;
+    readonly attribute boolean isLastItemInSuggestion;
 
     readonly attribute long x;
     readonly attribute long y;

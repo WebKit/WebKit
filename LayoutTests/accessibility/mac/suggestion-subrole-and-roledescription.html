@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body id="body">
+
+<div id="suggestion1" role="suggestion">This is some test to <span role="insertion">insert</span> and <span role="deletion">delete</span></div>
+
+<div id="ins1" role="insertion">this is inserted text.</div>
+<ins id="ins2">This is also inserted text</ins>
+
+<div id="del1" role="deletion">This is deleted text</div>
+<del id="del2">this is also deleted text</div>
+
+<script>
+    if (window.accessibilityController) {
+        let output = "This tests that suggestion, insertion, and deletion elements have the right subroles.\n";
+
+        var suggestion1 = accessibilityController.accessibleElementById("suggestion1");
+        var ins1 = accessibilityController.accessibleElementById("ins1");
+        var ins2 = accessibilityController.accessibleElementById("ins2");         
+        var del1 = accessibilityController.accessibleElementById("del1");
+        var del2 = accessibilityController.accessibleElementById("del2");
+
+        output += expect("suggestion1.role", "'AXRole: AXGroup'");
+        output += expect("suggestion1.subrole", "'AXSubrole: AXSuggestion'");
+        output += expect("suggestion1.roleDescription", "'AXRoleDescription: suggestion'");
+
+        output += expect("ins1.subrole", "'AXSubrole: AXInsertStyleGroup'");
+        output += expect("ins2.subrole", "'AXSubrole: AXInsertStyleGroup'");
+
+        output += expect("del1.subrole", "'AXSubrole: AXDeleteStyleGroup'");
+        output += expect("del2.subrole", "'AXSubrole: AXDeleteStyleGroup'");
+        
+        debug(output);
+    }
+
+</script>
+
+</body>
+</html>

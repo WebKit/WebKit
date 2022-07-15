@@ -51,6 +51,7 @@
 #import "ContextMenuController.h"
 #import "Editing.h"
 #import "Editor.h"
+#import "ElementInlines.h"
 #import "Font.h"
 #import "FontCascade.h"
 #import "Frame.h"
@@ -860,6 +861,15 @@ static void AXAttributeStringSetStyle(NSMutableAttributedString* attrString, Ren
     for (Node* node = renderer->node(); node; node = node->parentNode()) {
         if (node->hasTagName(HTMLNames::markTag))
             AXAttributeStringSetNumber(attrString, @"AXHighlight", @YES, range);
+        if (auto* element = dynamicDowncast<Element>(*node)) {
+            auto& roleValue = element->attributeWithoutSynchronization(HTMLNames::roleAttr);
+            if (equalLettersIgnoringASCIICase(roleValue, "insertion"_s))
+                AXAttributeStringSetNumber(attrString, @"AXIsSuggestedInsertion", @YES, range);
+            else if (equalLettersIgnoringASCIICase(roleValue, "deletion"_s))
+                AXAttributeStringSetNumber(attrString, @"AXIsSuggestedDeletion", @YES, range);
+            else if (equalLettersIgnoringASCIICase(roleValue, "suggestion"_s))
+                AXAttributeStringSetNumber(attrString, @"AXIsSuggestion", @YES, range);
+        }
     }
 }
 
@@ -993,7 +1003,8 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     NSRange attrStringRange = NSMakeRange([attrString length], text.length());
     
     // append the string from this node
-    [[attrString mutableString] appendString:text.createNSStringWithoutCopying().get()];
+    NSAttributedString *stringToAppend = adoptNS([[NSAttributedString alloc] initWithString:text.createNSStringWithoutCopying().get()]).autorelease();
+    [attrString appendAttributedString:stringToAppend];
     
     // add new attributes and remove irrelevant inherited ones
     // NOTE: color attributes are handled specially because -[NSMutableAttributedString addAttribute: value: range:] does not merge
@@ -4025,6 +4036,11 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         }
     }
 
+    if (backingObject->isTextControl() || backingObject->isStaticText()) {
+        if ([attribute isEqualToString:(NSString *)kAXAttributedStringForRangeParameterizedAttribute])
+            return rangeSet ? [self doAXAttributedStringForRange:range] : nil;
+    }
+
     if (backingObject->isTextControl()) {
         if ([attribute isEqualToString: (NSString *)kAXLineForIndexParameterizedAttribute]) {
             int lineNumber = backingObject->doAXLineForIndex([number intValue]);
@@ -4067,9 +4083,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
         if ([attribute isEqualToString: (NSString*)kAXRTFForRangeParameterizedAttribute])
             return rangeSet ? [self doAXRTFForRange:range] : nil;
-
-        if ([attribute isEqualToString: (NSString*)kAXAttributedStringForRangeParameterizedAttribute])
-            return rangeSet ? [self doAXAttributedStringForRange:range] : nil;
 
         if ([attribute isEqualToString: (NSString*)kAXStyleRangeForIndexParameterizedAttribute]) {
             PlainTextRange textRange = backingObject->doAXStyleRangeForIndex([number intValue]);

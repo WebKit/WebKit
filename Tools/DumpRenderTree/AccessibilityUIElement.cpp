@@ -1640,6 +1640,26 @@ static JSValueRef textMarkerRangeMatchesTextNearMarkersCallback(JSContextRef con
     return result;
 }
 
+static JSValueRef getIsInsertionCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+{
+    return JSValueMakeBoolean(context, toAXElement(thisObject)->isInsertion());
+}
+
+static JSValueRef getIsDeletionCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+{
+    return JSValueMakeBoolean(context, toAXElement(thisObject)->isDeletion());
+}
+
+static JSValueRef getIsFirstItemInSuggestionCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+{
+    return JSValueMakeBoolean(context, toAXElement(thisObject)->isFirstItemInSuggestion());
+}
+
+static JSValueRef getIsLastItemInSuggestionCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+{
+    return JSValueMakeBoolean(context, toAXElement(thisObject)->isLastItemInSuggestion());
+}
+
 #endif // PLATFORM(IOS_FAMILY)
 
 #if PLATFORM(MAC) && !PLATFORM(IOS_FAMILY)
@@ -1999,6 +2019,10 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "hasContainedByFieldsetTrait", hasContainedByFieldsetTraitCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "isSearchField", getIsSearchFieldCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "isTextArea", getIsTextAreaCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "isInsertion", getIsInsertionCallback, 0 , kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "isDeletion", getIsDeletionCallback, 0 , kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "isFirstItemInSuggesiton", getIsFirstItemInSuggestionCallback, 0 , kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "isLastItemInSuggesiton", getIsLastItemInSuggestionCallback, 0 , kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
 #endif // PLATFORM(IOS_FAMILY)
 #if PLATFORM(MAC) && !PLATFORM(IOS_FAMILY)
         { "supportedActions", supportedActionsCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

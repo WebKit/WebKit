@@ -2531,6 +2531,7 @@ static void initializeRoleMap()
         { "spinbutton"_s, AccessibilityRole::SpinButton },
         { "status"_s, AccessibilityRole::ApplicationStatus },
         { "subscript"_s, AccessibilityRole::Subscript },
+        { "suggestion"_s, AccessibilityRole::Suggestion },
         { "superscript"_s, AccessibilityRole::Superscript },
         { "switch"_s, AccessibilityRole::Switch },
         { "tab"_s, AccessibilityRole::Tab },
@@ -2733,6 +2734,9 @@ String AccessibilityObject::roleDescription() const
 
     if (roleValue() == AccessibilityRole::Figure)
         return AXFigureText();
+    
+    if (roleValue() == AccessibilityRole::Suggestion)
+        return AXSuggestionRoleDescriptionText();
 
     return roleDescription;
 }
