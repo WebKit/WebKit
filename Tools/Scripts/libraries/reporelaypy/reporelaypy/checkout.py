@@ -253,7 +253,7 @@ class Checkout(object):
 
     def fetch(self, remote=REMOTE):
         return not run(
-            [self.repository.executable(), 'fetch', remote],
+            [self.repository.executable(), 'fetch', remote, '--prune'],
             cwd=self.repository.root_path,
         ).returncode
 
@@ -270,7 +270,7 @@ class Checkout(object):
         elif not self.repository.prod_branches.match(branch):
             return False
         elif track and branch not in self.repository.branches_for(remote=remote):
-            run([self.repository.executable(), 'fetch'], cwd=self.repository.root_path)
+            run([self.repository.executable(), 'fetch', '--prune'], cwd=self.repository.root_path)
             run(
                 [self.repository.executable(), 'branch', '--track', branch, 'remotes/{}/{}'.format(remote, branch)],
                 cwd=self.repository.root_path,
@@ -303,10 +303,7 @@ class Checkout(object):
 
         print('Forwarding updates from {}'.format(remote))
 
-        run(
-            [self.repository.executable(), 'fetch', remote],
-            cwd=self.repository.root_path,
-        )
+        self.fetch(remote)
         self.repository.pull(remote=remote)
         self.repository.cache.populate(branch=self.repository.default_branch)
 
