@@ -397,6 +397,7 @@ private:
     Client& m_client;
     UniqueID m_uniqueID;
     bool m_isServer;
+    bool m_didInvalidationOnMainThread { false }; // Main thread only.
     std::atomic<bool> m_isValid { true };
 
     bool m_onlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage { false };
