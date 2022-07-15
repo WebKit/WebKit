@@ -495,6 +495,13 @@ void RemoteDisplayListRecorder::strokeLine(const LineData& data)
     handleItem(DisplayList::StrokeLine(data));
 }
 
+void RemoteDisplayListRecorder::strokeLineWithColorAndThickness(WebCore::DisplayList::SetInlineStrokeColor&& item, float thickness, const WebCore::LineData& data)
+{
+    handleItem(WTFMove(item));
+    handleItem(DisplayList::SetStrokeThickness(thickness));
+    handleItem(DisplayList::StrokeLine(data));
+}
+
 void RemoteDisplayListRecorder::strokeArc(const ArcData& data)
 {
     handleItem(DisplayList::StrokeArc(data));

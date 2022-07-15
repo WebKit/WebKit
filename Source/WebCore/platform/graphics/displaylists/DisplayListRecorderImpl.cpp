@@ -330,6 +330,13 @@ void RecorderImpl::recordStrokeLine(const LineData& line)
     append<StrokeLine>(line);
 }
 
+void RecorderImpl::recordStrokeLineWithColorAndThickness(SRGBA<uint8_t> color, float thickness, const LineData& line)
+{
+    append<SetInlineStrokeColor>(color);
+    append<SetStrokeThickness>(thickness);
+    append<StrokeLine>(line);
+}
+
 void RecorderImpl::recordStrokeArc(const ArcData& arc)
 {
     append<StrokeArc>(arc);

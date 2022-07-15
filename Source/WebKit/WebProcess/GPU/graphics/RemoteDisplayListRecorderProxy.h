@@ -117,6 +117,7 @@ private:
     void recordStrokeRect(const WebCore::FloatRect&, float) final;
 #if ENABLE(INLINE_PATH_DATA)
     void recordStrokeLine(const WebCore::LineData&) final;
+    void recordStrokeLineWithColorAndThickness(WebCore::SRGBA<uint8_t>, float, const WebCore::LineData&) final;
     void recordStrokeArc(const WebCore::ArcData&) final;
     void recordStrokeQuadCurve(const WebCore::QuadCurveData&) final;
     void recordStrokeBezierCurve(const WebCore::BezierCurveData&) final;
