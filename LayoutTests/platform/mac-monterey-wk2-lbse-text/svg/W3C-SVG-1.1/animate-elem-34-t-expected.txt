@@ -3,7 +3,7 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (500,100) size 200x200 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGContainer {g} at (-728,-12) size 351x49
+  RenderSVGTransformableContainer {g} at (500,100) size 200x200
 layer at (5,200) size 405x32
   RenderSVGText {text} at (5,200) size 406x32 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 406x32
@@ -21,4 +21,4 @@ layer at (10,304) size 263x46
     RenderSVGInlineText {#text} at (0,0) size 264x46
       chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.7 $"
 layer at (1,1) size 478x358
-  RenderSVGRect {rect} at (-1,-1) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

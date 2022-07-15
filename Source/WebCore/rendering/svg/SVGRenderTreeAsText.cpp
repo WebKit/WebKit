@@ -217,7 +217,7 @@ static void writeSVGStrokePaintingResource(TextStream& ts, const RenderElement& 
     ts << "}]";
 }
 
-static void writeStyle(TextStream& ts, const RenderElement& renderer)
+void writeSVGPaintingFeatures(TextStream& ts, const RenderElement& renderer, OptionSet<RenderAsTextFlag>)
 {
     const RenderStyle& style = renderer.style();
     const SVGRenderStyle& svgStyle = style.svgStyle();
@@ -273,11 +273,11 @@ static TextStream& writePositionAndStyle(TextStream& ts, const RenderElement& re
 
     ts << " " << enclosingIntRect(renderer.absoluteClippedOverflowRectForRepaint());
 
-    writeStyle(ts, renderer);
+    writeSVGPaintingFeatures(ts, renderer, behavior);
     return ts;
 }
 
-static void writeSVGGraphicsElement(TextStream& ts, SVGGraphicsElement& svgElement)
+void writeSVGGraphicsElement(TextStream& ts, const SVGGraphicsElement& svgElement)
 {
     SVGLengthContext lengthContext(&svgElement);
 
@@ -323,15 +323,6 @@ static TextStream& operator<<(TextStream& ts, const LegacyRenderSVGShape& shape)
     writeSVGGraphicsElement(ts, shape.graphicsElement());
     return ts;
 }
-
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-static TextStream& operator<<(TextStream& ts, const RenderSVGShape& shape)
-{
-    writePositionAndStyle(ts, shape);
-    writeSVGGraphicsElement(ts, shape.graphicsElement());
-    return ts;
-}
-#endif
 
 static void writeRenderSVGTextBox(TextStream& ts, const RenderSVGText& text)
 {
@@ -539,17 +530,6 @@ void writeSVGResourceContainer(TextStream& ts, const RenderSVGResourceContainer&
     writeChildren(ts, resource, behavior);
 }
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-void writeSVGContainer(TextStream& ts, const RenderSVGContainer& container, OptionSet<RenderAsTextFlag> behavior)
-{
-    writeStandardPrefix(ts, container, behavior);
-    writePositionAndStyle(ts, container, behavior);
-    ts << "\n";
-    writeResources(ts, container, behavior);
-    writeChildren(ts, container, behavior);
-}
-#endif
-
 void writeSVGContainer(TextStream& ts, const LegacyRenderSVGContainer& container, OptionSet<RenderAsTextFlag> behavior)
 {
     // Currently RenderSVGResourceFilterPrimitive has no meaningful output.
@@ -561,16 +541,6 @@ void writeSVGContainer(TextStream& ts, const LegacyRenderSVGContainer& container
     writeResources(ts, container, behavior);
     writeChildren(ts, container, behavior);
 }
-
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-void write(TextStream& ts, const RenderSVGRoot& root, OptionSet<RenderAsTextFlag> behavior)
-{
-    writeStandardPrefix(ts, root, behavior);
-    writePositionAndStyle(ts, root, behavior);
-    ts << "\n";
-    writeChildren(ts, root, behavior);
-}
-#endif
 
 void write(TextStream& ts, const LegacyRenderSVGRoot& root, OptionSet<RenderAsTextFlag> behavior)
 {
@@ -604,15 +574,6 @@ void writeSVGImage(TextStream& ts, const RenderSVGImage& image, OptionSet<Render
     ts << "\n";
     writeResources(ts, image, behavior);
 }
-
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-void write(TextStream& ts, const RenderSVGShape& shape, OptionSet<RenderAsTextFlag> behavior)
-{
-    writeStandardPrefix(ts, shape, behavior);
-    ts << shape << "\n";
-    writeResources(ts, shape, behavior);
-}
-#endif
 
 void write(TextStream& ts, const LegacyRenderSVGShape& shape, OptionSet<RenderAsTextFlag> behavior)
 {

@@ -277,24 +277,35 @@ std::optional<LayoutRect> RenderLayerModelObject::computeVisibleRectInSVGContain
 
     LayoutRect adjustedRect = rect;
 
-    // FIXME: [LBSE] Upstream RenderSVGForeignObject changes
-    // Move to origin of local coordinate system, if this is the first call to computeVisibleRectInContainer() originating
-    // from a SVG renderer (RenderSVGModelObject / RenderSVGBlock) or if we cross the boundary from HTML -> SVG via RenderSVGForeignObject.
-    // bool moveToOrigin = is<RenderSVGForeignObject>(renderer);
-    bool moveToOrigin = false;
+    LayoutSize locationOffset;
+    if (is<RenderSVGModelObject>(this))
+        locationOffset = downcast<RenderSVGModelObject>(*this).locationOffsetEquivalent();
+    else if (is<RenderSVGBlock>(this))
+        locationOffset = downcast<RenderSVGBlock>(*this).locationOffset();
 
-    /* FIXME: [LBSE] Upstream RenderObject changes
-    if (context.options.contains(RenderObject::VisibleRectContextOption::TranslateToSVGRendererOrigin)) {
-        context.options.remove(RenderObject::VisibleRectContextOption::TranslateToSVGRendererOrigin);
-        moveToOrigin = true;
+    LayoutPoint topLeft = adjustedRect.location();
+    topLeft.move(locationOffset);
+
+    // We are now in our parent container's coordinate space. Apply our transform to obtain a bounding box
+    // in the parent's coordinate space that encloses us.
+    if (hasLayer() && layer()->transform()) {
+        adjustedRect = layer()->transform()->mapRect(adjustedRect);
+        topLeft = adjustedRect.location();
+        topLeft.move(locationOffset);
     }
-    */
 
-    if (moveToOrigin)
-        adjustedRect.moveBy(nominalSVGLayoutLocation());
-
-    if (auto* transform = layer()->transform())
-        adjustedRect = transform->mapRect(adjustedRect);
+    // FIXME: We ignore the lightweight clipping rect that controls use, since if |o| is in mid-layout,
+    // its controlClipRect will be wrong. For overflow clip we use the values cached by the layer.
+    adjustedRect.setLocation(topLeft);
+    if (localContainer->hasNonVisibleOverflow()) {
+        RenderBox& containerBox = downcast<RenderBox>(*localContainer);
+        bool isEmpty = !containerBox.applyCachedClipAndScrollPosition(adjustedRect, container, context);
+        if (isEmpty) {
+            if (context.options.contains(VisibleRectContextOption::UseEdgeInclusiveIntersection))
+                return std::nullopt;
+            return adjustedRect;
+        }
+    }
 
     return localContainer->computeVisibleRectInContainer(adjustedRect, container, context);
 }

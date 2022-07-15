@@ -3,9 +3,9 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (-8,-6) size 403x299 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGContainer {g} at (0,0) size 402x298
+  RenderSVGTransformableContainer {g} at (-9,-7) size 403x299
 layer at (168,-6) size 206x120 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGContainer {g} at (0,0) size 205x120
+  RenderSVGTransformableContainer {g} at (176,0) size 206x120
 layer at (168,-6) size 205x120 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (0,0) size 205x120 contains 1 chunk(s)
     RenderSVGTextPath {textPath} at (0,0) size 205x120
@@ -26,7 +26,7 @@ layer at (168,-6) size 205x120 backgroundClip at (0,0) size 480x360 clip at (0,0
         chunk 1 text run 14 at (354.40,102.88) startOffset 13 endOffset 14 width 20.95: "h"
     RenderSVGInlineText {#text} at (0,0) size 0x0
 layer at (-8,50) size 300x162 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGContainer {g} at (0,0) size 300x162
+  RenderSVGTransformableContainer {g} at (0,56) size 300x162
 layer at (-8,50) size 216x119 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (0,0) size 216x120 contains 1 chunk(s)
     RenderSVGTextPath {textPath} at (0,0) size 216x120
@@ -51,7 +51,7 @@ layer at (-8,50) size 216x119 backgroundClip at (0,0) size 480x360 clip at (0,0)
         chunk 1 text run 11 at (188.87,159.38) startOffset 10 endOffset 11 width 20.95: "h"
     RenderSVGInlineText {#text} at (0,0) size 0x0
 layer at (17,169) size 275x42
-  RenderSVGRect {rect} at (-1,-1) size 276x43 [stroke={[type=SOLID] [color=#000000]}] [x=17.00] [y=169.00] [width=274.00] [height=41.00]
+  RenderSVGRect {rect} at (25,118) size 275x42 [stroke={[type=SOLID] [color=#000000]}] [x=17.00] [y=169.00] [width=274.00] [height=41.00]
 layer at (19,167) size 223x22
   RenderSVGText {text} at (27,116) size 224x24 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 224x23
@@ -61,7 +61,7 @@ layer at (19,189) size 197x22
     RenderSVGInlineText {#text} at (0,0) size 197x23
       chunk 1 text run 1 at (19.00,207.00) startOffset 0 endOffset 23 width 196.64: "the 'textPath' element."
 layer at (118,211) size 276x81
-  RenderSVGContainer {g} at (-1,0) size 277x81
+  RenderSVGTransformableContainer {g} at (126,217) size 276x81
 layer at (212,211) size 181x27
   RenderSVGText {text} at (94,0) size 182x27 contains 1 chunk(s)
     RenderSVGTextPath {textPath} at (0,0) size 182x27
@@ -84,7 +84,7 @@ layer at (212,211) size 181x27
         chunk 1 text run 16 at (386.77,233.00) startOffset 15 endOffset 16 width 13.35: "h"
     RenderSVGInlineText {#text} at (0,0) size 0x0
 layer at (118,250) size 260x42
-  RenderSVGRect {rect} at (-1,-1) size 262x43 [stroke={[type=SOLID] [color=#000000]}] [x=118.00] [y=250.00] [width=260.00] [height=41.00]
+  RenderSVGRect {rect} at (0,38) size 260x42 [stroke={[type=SOLID] [color=#000000]}] [x=118.00] [y=250.00] [width=260.00] [height=41.00]
 layer at (120,249) size 233x22
   RenderSVGText {text} at (2,37) size 234x23 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 234x23
@@ -98,4 +98,4 @@ layer at (10,304) size 263x46
     RenderSVGInlineText {#text} at (0,0) size 264x46
       chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.9 $"
 layer at (1,1) size 478x358
-  RenderSVGRect {rect} at (-1,-1) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

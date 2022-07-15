@@ -3,13 +3,13 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (5,4) size 367x287
-  RenderSVGContainer {g} at (0,0) size 367x286
+  RenderSVGTransformableContainer {g} at (5,3) size 367x287
 layer at (5,4) size 367x45
   RenderSVGText {text} at (0,0) size 367x45 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 367x45
       chunk 1 text run 1 at (5.00,40.00) startOffset 0 endOffset 24 width 366.78: "Test left-to-right text."
 layer at (10,57) size 244x163
-  RenderSVGContainer {g} at (0,0) size 244x163
+  RenderSVGTransformableContainer {g} at (5,53) size 244x163
 layer at (10,57) size 231x23
   RenderSVGText {text} at (0,0) size 232x23 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 232x23
@@ -35,13 +35,13 @@ layer at (10,197) size 233x23
       chunk 1 text run 1 at (75.14,215.00) startOffset 0 endOffset 21 width 149.33 RTL: "\x{5D0}\x{5D9}\x{5DA} \x{5E7}\x{5E2}\x{5DF} \x{5E2}\x{5E1}\x{5DF} \x{5D2}\x{5DC}\x{5D0}\x{5B8}\x{5D6} \x{5D0}\x{5D5}\x{5DF}"
       chunk 1 text run 1 at (224.47,215.00) startOffset 0 endOffset 4 width 18.84: " ..."
 layer at (10,232) size 272x23
-  RenderSVGContainer {g} at (0,0) size 272x23
+  RenderSVGTransformableContainer {g} at (5,228) size 272x23
 layer at (10,232) size 271x23
   RenderSVGText {text} at (0,0) size 272x23 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 272x23
       chunk 1 text run 1 at (10.00,250.00) startOffset 0 endOffset 20 width 271.07: "Chinese:\x{6211}\x{80FD}\x{541E}\x{4E0B}\x{73BB}\x{7483}\x{800C}\x{4E0D}\x{4F24}\x{8EAB}\x{4F53}\x{3002}"
 layer at (10,267) size 271x23
-  RenderSVGContainer {g} at (0,0) size 271x23
+  RenderSVGTransformableContainer {g} at (5,263) size 271x23
 layer at (10,267) size 270x23
   RenderSVGText {text} at (0,0) size 271x23 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 271x23
@@ -51,4 +51,4 @@ layer at (10,304) size 263x46
     RenderSVGInlineText {#text} at (0,0) size 264x46
       chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.7 $"
 layer at (1,1) size 478x358
-  RenderSVGRect {rect} at (-1,-1) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

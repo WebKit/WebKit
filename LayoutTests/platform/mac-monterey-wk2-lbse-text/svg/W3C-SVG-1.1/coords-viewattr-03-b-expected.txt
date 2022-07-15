@@ -7,7 +7,7 @@ layer at (137,10) size 206x23
     RenderSVGInlineText {#text} at (0,0) size 207x23
       chunk 1 (middle anchor) text run 1 at (136.80,28.00) startOffset 0 endOffset 25 width 206.41: "<svg> 'viewBox' attribute"
 layer at (17,143) size 451x162
-  RenderSVGContainer {g} at (0,0) size 450x161
+  RenderSVGTransformableContainer {g} at (16,142) size 451x162
 layer at (17,143) size 136x16
   RenderSVGText {text} at (0,0) size 137x16 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 137x16
@@ -63,4 +63,4 @@ layer at (10,304) size 263x46
     RenderSVGInlineText {#text} at (0,0) size 264x46
       chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.7 $"
 layer at (1,1) size 478x358
-  RenderSVGRect {rect} at (-1,-1) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

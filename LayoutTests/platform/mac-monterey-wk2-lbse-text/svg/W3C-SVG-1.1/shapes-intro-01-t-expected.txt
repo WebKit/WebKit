@@ -3,33 +3,33 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (5,50) size 461x242
-  RenderSVGContainer {g} at (0,-1) size 461x243
+  RenderSVGTransformableContainer {g} at (5,50) size 461x242
 layer at (50,50) size 379x220
-  RenderSVGContainer {g} at (-1,-1) size 381x222
+  RenderSVGTransformableContainer {g} at (45,0) size 379x220
 layer at (50,50) size 35x60
-  RenderSVGRect {rect} at (-1,-1) size 37x62 [stroke={[type=SOLID] [color=#000000]}] [x=50.00] [y=50.00] [width=35.00] [height=60.00]
+  RenderSVGRect {rect} at (0,0) size 35x60 [stroke={[type=SOLID] [color=#000000]}] [x=50.00] [y=50.00] [width=35.00] [height=60.00]
 layer at (50,155) size 35x60
-  RenderSVGRect {rect} at (-1,-1) size 37x62 [stroke={[type=SOLID] [color=#000000]}] [x=50.00] [y=155.00] [width=35.00] [height=60.00]
+  RenderSVGRect {rect} at (0,105) size 35x60 [stroke={[type=SOLID] [color=#000000]}] [x=50.00] [y=155.00] [width=35.00] [height=60.00]
 layer at (130,50) size 35x60
-  RenderSVGRect {rect} at (-1,-1) size 37x62 [stroke={[type=SOLID] [color=#000000]}] [x=130.00] [y=50.00] [width=35.00] [height=60.00]
+  RenderSVGRect {rect} at (80,0) size 35x60 [stroke={[type=SOLID] [color=#000000]}] [x=130.00] [y=50.00] [width=35.00] [height=60.00]
 layer at (130,155) size 35x60
-  RenderSVGRect {rect} at (-1,-1) size 37x62 [stroke={[type=SOLID] [color=#000000]}] [x=130.00] [y=155.00] [width=35.00] [height=60.00]
+  RenderSVGRect {rect} at (80,105) size 35x60 [stroke={[type=SOLID] [color=#000000]}] [x=130.00] [y=155.00] [width=35.00] [height=60.00]
 layer at (210,50) size 60x60
-  RenderSVGRect {rect} at (-1,-1) size 62x62 [stroke={[type=SOLID] [color=#000000]}] [x=210.00] [y=50.00] [width=60.00] [height=60.00]
+  RenderSVGRect {rect} at (160,0) size 60x60 [stroke={[type=SOLID] [color=#000000]}] [x=210.00] [y=50.00] [width=60.00] [height=60.00]
 layer at (210,155) size 60x60
-  RenderSVGRect {rect} at (-1,-1) size 62x62 [stroke={[type=SOLID] [color=#000000]}] [x=210.00] [y=155.00] [width=60.00] [height=60.00]
+  RenderSVGRect {rect} at (160,105) size 60x60 [stroke={[type=SOLID] [color=#000000]}] [x=210.00] [y=155.00] [width=60.00] [height=60.00]
 layer at (315,50) size 35x60
-  RenderSVGRect {rect} at (-1,-1) size 37x62 [stroke={[type=SOLID] [color=#000000]}] [x=315.00] [y=50.00] [width=35.00] [height=60.00]
+  RenderSVGRect {rect} at (265,0) size 35x60 [stroke={[type=SOLID] [color=#000000]}] [x=315.00] [y=50.00] [width=35.00] [height=60.00]
 layer at (315,155) size 35x60
-  RenderSVGRect {rect} at (-1,-1) size 37x62 [stroke={[type=SOLID] [color=#000000]}] [x=315.00] [y=155.00] [width=35.00] [height=60.00]
+  RenderSVGRect {rect} at (265,105) size 35x60 [stroke={[type=SOLID] [color=#000000]}] [x=315.00] [y=155.00] [width=35.00] [height=60.00]
 layer at (394,50) size 35x60
-  RenderSVGRect {rect} at (-1,-1) size 37x62 [stroke={[type=SOLID] [color=#000000]}] [x=394.00] [y=50.00] [width=35.00] [height=60.00]
+  RenderSVGRect {rect} at (344,0) size 35x60 [stroke={[type=SOLID] [color=#000000]}] [x=394.00] [y=50.00] [width=35.00] [height=60.00]
 layer at (394,155) size 35x60
-  RenderSVGRect {rect} at (-1,-1) size 37x62 [stroke={[type=SOLID] [color=#000000]}] [x=394.00] [y=155.00] [width=35.00] [height=60.00]
+  RenderSVGRect {rect} at (344,105) size 35x60 [stroke={[type=SOLID] [color=#000000]}] [x=394.00] [y=155.00] [width=35.00] [height=60.00]
 layer at (235,260) size 10x10
-  RenderSVGRect {rect} at (-1,-1) size 12x12 [stroke={[type=SOLID] [color=#000000]}] [x=235.00] [y=260.00] [width=10.00] [height=10.00]
+  RenderSVGRect {rect} at (185,210) size 10x10 [stroke={[type=SOLID] [color=#000000]}] [x=235.00] [y=260.00] [width=10.00] [height=10.00]
 layer at (5,83) size 461x210
-  RenderSVGContainer {g} at (0,0) size 461x209
+  RenderSVGTransformableContainer {g} at (0,32) size 461x210
 layer at (5,83) size 28x9
   RenderSVGText {text} at (0,0) size 28x9 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 28x9
@@ -67,4 +67,4 @@ layer at (10,304) size 263x46
     RenderSVGInlineText {#text} at (0,0) size 264x46
       chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.9 $"
 layer at (1,1) size 478x358
-  RenderSVGRect {rect} at (-1,-1) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

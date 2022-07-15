@@ -3,11 +3,11 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (22,25) size 408x274
-  RenderSVGContainer {g} at (0,0) size 407x274
+  RenderSVGTransformableContainer {g} at (21,25) size 408x274
 layer at (22,25) size 407x274
-  RenderSVGContainer {g} at (0,0) size 407x274
+  RenderSVGTransformableContainer {g} at (0,0) size 407x274
 layer at (25,25) size 101x75
-  RenderSVGRect {rect} at (0,0) size 100x75 [fill={[type=SOLID] [color=#000000]}] [x=25.00] [y=25.00] [width=100.00] [height=75.00]
+  RenderSVGRect {rect} at (3,0) size 101x75 [fill={[type=SOLID] [color=#000000]}] [x=25.00] [y=25.00] [width=100.00] [height=75.00]
 layer at (33,107) size 84x12
   RenderSVGText {text} at (11,81) size 84x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 84x13
@@ -21,7 +21,7 @@ layer at (36,131) size 77x12
     RenderSVGInlineText {#text} at (0,0) size 78x13
       chunk 1 (middle anchor) text run 1 at (36.48,141.00) startOffset 0 endOffset 12 width 77.04: "numOctaves=2"
 layer at (175,25) size 101x75
-  RenderSVGRect {rect} at (0,0) size 100x75 [fill={[type=SOLID] [color=#000000]}] [x=175.00] [y=25.00] [width=100.00] [height=75.00]
+  RenderSVGRect {rect} at (153,0) size 101x75 [fill={[type=SOLID] [color=#000000]}] [x=175.00] [y=25.00] [width=100.00] [height=75.00]
 layer at (183,107) size 84x12
   RenderSVGText {text} at (161,81) size 84x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 84x13
@@ -35,7 +35,7 @@ layer at (186,131) size 77x12
     RenderSVGInlineText {#text} at (0,0) size 78x13
       chunk 1 (middle anchor) text run 1 at (186.48,141.00) startOffset 0 endOffset 12 width 77.04: "numOctaves=2"
 layer at (325,25) size 101x75
-  RenderSVGRect {rect} at (0,0) size 100x75 [fill={[type=SOLID] [color=#000000]}] [x=325.00] [y=25.00] [width=100.00] [height=75.00]
+  RenderSVGRect {rect} at (303,0) size 101x75 [fill={[type=SOLID] [color=#000000]}] [x=325.00] [y=25.00] [width=100.00] [height=75.00]
 layer at (333,107) size 84x12
   RenderSVGText {text} at (311,81) size 84x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 84x13
@@ -49,7 +49,7 @@ layer at (336,131) size 77x12
     RenderSVGInlineText {#text} at (0,0) size 78x13
       chunk 1 (middle anchor) text run 1 at (336.48,141.00) startOffset 0 endOffset 12 width 77.04: "numOctaves=8"
 layer at (25,180) size 101x75
-  RenderSVGRect {rect} at (0,0) size 100x75 [fill={[type=SOLID] [color=#000000]}] [x=25.00] [y=180.00] [width=100.00] [height=75.00]
+  RenderSVGRect {rect} at (3,155) size 101x75 [fill={[type=SOLID] [color=#000000]}] [x=25.00] [y=180.00] [width=100.00] [height=75.00]
 layer at (30,262) size 90x12
   RenderSVGText {text} at (8,236) size 90x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 90x13
@@ -63,7 +63,7 @@ layer at (36,286) size 77x12
     RenderSVGInlineText {#text} at (0,0) size 78x13
       chunk 1 (middle anchor) text run 1 at (36.48,296.00) startOffset 0 endOffset 12 width 77.04: "numOctaves=4"
 layer at (175,180) size 101x75
-  RenderSVGRect {rect} at (0,0) size 100x75 [fill={[type=SOLID] [color=#000000]}] [x=175.00] [y=180.00] [width=100.00] [height=75.00]
+  RenderSVGRect {rect} at (153,155) size 101x75 [fill={[type=SOLID] [color=#000000]}] [x=175.00] [y=180.00] [width=100.00] [height=75.00]
 layer at (180,262) size 90x12
   RenderSVGText {text} at (158,236) size 90x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 90x13
@@ -77,7 +77,7 @@ layer at (186,286) size 77x12
     RenderSVGInlineText {#text} at (0,0) size 78x13
       chunk 1 (middle anchor) text run 1 at (186.48,296.00) startOffset 0 endOffset 12 width 77.04: "numOctaves=4"
 layer at (325,180) size 101x75
-  RenderSVGRect {rect} at (0,0) size 100x75 [fill={[type=SOLID] [color=#000000]}] [x=325.00] [y=180.00] [width=100.00] [height=75.00]
+  RenderSVGRect {rect} at (303,155) size 101x75 [fill={[type=SOLID] [color=#000000]}] [x=325.00] [y=180.00] [width=100.00] [height=75.00]
 layer at (330,262) size 90x12
   RenderSVGText {text} at (308,236) size 90x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 90x13
@@ -95,4 +95,4 @@ layer at (10,304) size 263x46
     RenderSVGInlineText {#text} at (0,0) size 264x46
       chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.1 $"
 layer at (1,1) size 478x358
-  RenderSVGRect {rect} at (-1,-1) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

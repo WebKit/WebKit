@@ -3,9 +3,9 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,-28) size 331x307 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGContainer {g} at (0,0) size 331x306
+  RenderSVGTransformableContainer {g} at (0,-29) size 331x307
 layer at (70,92) size 147x134
-  RenderSVGContainer {g} at (0,0) size 147x133
+  RenderSVGTransformableContainer {g} at (70,120) size 147x134
 layer at (70,92) size 147x23
   RenderSVGText {text} at (0,0) size 147x23 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 147x23
@@ -19,7 +19,7 @@ layer at (100,202) size 79x23
     RenderSVGInlineText {#text} at (0,0) size 79x23
       chunk 1 text run 1 at (100.00,220.00) startOffset 0 endOffset 10 width 78.87: "Text at 9s"
 layer at (0,-28) size 331x306 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGContainer {g} at (0,0) size 331x306
+  RenderSVGTransformableContainer {g} at (0,0) size 331x306
 layer at (0,-14) size 77x17 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (0,14) size 77x17 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 77x17
@@ -33,7 +33,7 @@ layer at (100,228) size 231x50
     RenderSVGInlineText {#text} at (0,0) size 231x50
       chunk 1 text run 1 at (100.00,270.00) startOffset 0 endOffset 11 width 230.52: "It's alive!"
 layer at (0,-14) size 77x17 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGContainer {g} at (50,90) size 77x17
+  RenderSVGTransformableContainer {g} at (0,14) size 77x17
 layer at (0,-14) size 77x17 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (0,0) size 77x17 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 77x17
@@ -46,4 +46,4 @@ layer at (10,304) size 263x46
     RenderSVGInlineText {#text} at (0,0) size 264x46
       chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.7 $"
 layer at (1,1) size 478x358
-  RenderSVGRect {rect} at (-1,-1) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

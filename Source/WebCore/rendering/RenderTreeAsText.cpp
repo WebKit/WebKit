@@ -65,7 +65,7 @@
 #include "RenderSVGInlineText.h"
 #include "RenderSVGResourceContainer.h"
 #include "RenderSVGRoot.h"
-#include "RenderSVGShape.h"
+#include "RenderSVGShapeInlines.h"
 #include "RenderSVGText.h"
 #include "RenderTableCell.h"
 #include "RenderView.h"
@@ -283,6 +283,10 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
         r = LayoutRect(cell.x(), cell.y() + cell.intrinsicPaddingBefore(), cell.width(), cell.height() - cell.intrinsicPaddingBefore() - cell.intrinsicPaddingAfter());
     } else if (is<RenderBox>(o))
         r = downcast<RenderBox>(o).frameRect();
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    else if (is<RenderSVGModelObject>(o))
+        r = downcast<RenderSVGModelObject>(o).frameRectEquivalent();
+#endif
 
     // FIXME: Temporary in order to ensure compatibility with existing layout test results.
     if (adjustForTableCells)
@@ -291,6 +295,18 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
     // FIXME: Convert layout test results to report sub-pixel values, in the meantime using enclosingIntRect
     // for consistency with old results.
     ts << " " << enclosingIntRect(r);
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (is<RenderSVGModelObject>(o)) {
+        writeSVGPaintingFeatures(ts, downcast<RenderSVGModelObject>(o), behavior);
+
+        if (is<RenderSVGShape>(o))
+            writeSVGGraphicsElement(ts, downcast<RenderSVGShape>(o).graphicsElement());
+
+        writeDebugInfo(ts, o, behavior);
+        return;
+    }
+#endif
 
     if (!is<RenderText>(o)) {
         if (is<RenderFileUploadControl>(o))
@@ -524,17 +540,29 @@ void writeDebugInfo(TextStream& ts, const RenderObject& object, OptionSet<Render
             ts << ")";
     }
 
-    if (behavior.contains(RenderAsTextFlag::ShowOverflow) && is<RenderBox>(object)) {
-        const auto& box = downcast<RenderBox>(object);
-        if (box.hasRenderOverflow()) {
-            LayoutRect layoutOverflow = box.layoutOverflowRect();
-            ts << " (layout overflow " << layoutOverflow.x().toInt() << "," << layoutOverflow.y().toInt() << " " << layoutOverflow.width().toInt() << "x" << layoutOverflow.height().toInt() << ")";
-            
-            if (box.hasVisualOverflow()) {
-                LayoutRect visualOverflow = box.visualOverflowRect();
-                ts << " (visual overflow " << visualOverflow.x().toInt() << "," << visualOverflow.y().toInt() << " " << visualOverflow.width().toInt() << "x" << visualOverflow.height().toInt() << ")";
+    if (behavior.contains(RenderAsTextFlag::ShowOverflow)) {
+        if (is<RenderBox>(object)) {
+            const auto& box = downcast<RenderBox>(object);
+            if (box.hasRenderOverflow()) {
+                LayoutRect layoutOverflow = box.layoutOverflowRect();
+                ts << " (layout overflow " << layoutOverflow.x().toInt() << "," << layoutOverflow.y().toInt() << " " << layoutOverflow.width().toInt() << "x" << layoutOverflow.height().toInt() << ")";
+
+                if (box.hasVisualOverflow()) {
+                    LayoutRect visualOverflow = box.visualOverflowRect();
+                    ts << " (visual overflow " << visualOverflow.x().toInt() << "," << visualOverflow.y().toInt() << " " << visualOverflow.width().toInt() << "x" << visualOverflow.height().toInt() << ")";
+                }
             }
         }
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+        if (is<RenderSVGModelObject>(object)) {
+            if (const auto& renderSVGModelObject = downcast<RenderSVGModelObject>(object); renderSVGModelObject.hasVisualOverflow()) {
+                auto visualOverflow = renderSVGModelObject.visualOverflowRectEquivalent();
+                ts << " (visual overflow " << visualOverflow.x() << "," << visualOverflow.y() << " " << visualOverflow.width() << "x" << visualOverflow.height() << ")";
+            }
+        }
+#endif
+
     }
 }
 
@@ -561,12 +589,7 @@ void write(TextStream& ts, const RenderObject& o, OptionSet<RenderAsTextFlag> be
         ts << "\n";
     };
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    if (is<RenderSVGShape>(o)) {
-        write(ts, downcast<RenderSVGShape>(o), behavior);
-        return;
-    }
-#endif
+
     if (is<LegacyRenderSVGShape>(o)) {
         write(ts, downcast<LegacyRenderSVGShape>(o), behavior);
         return;
@@ -579,22 +602,10 @@ void write(TextStream& ts, const RenderObject& o, OptionSet<RenderAsTextFlag> be
         writeSVGResourceContainer(ts, downcast<RenderSVGResourceContainer>(o), behavior);
         return;
     }
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    if (is<RenderSVGContainer>(o)) {
-        writeSVGContainer(ts, downcast<RenderSVGContainer>(o), behavior);
-        return;
-    }
-#endif
     if (is<LegacyRenderSVGContainer>(o)) {
         writeSVGContainer(ts, downcast<LegacyRenderSVGContainer>(o), behavior);
         return;
     }
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    if (is<RenderSVGRoot>(o)) {
-        write(ts, downcast<RenderSVGRoot>(o), behavior);
-        return;
-    }
-#endif
     if (is<LegacyRenderSVGRoot>(o)) {
         write(ts, downcast<LegacyRenderSVGRoot>(o), behavior);
         return;
@@ -645,6 +656,11 @@ void write(TextStream& ts, const RenderObject& o, OptionSet<RenderAsTextFlag> be
             }
         }
     }
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if  (is<RenderSVGModelObject>(o) || is<RenderSVGRoot>(o))
+        writeResources(ts, o, behavior);
+#endif
 }
 
 enum LayerPaintPhase {

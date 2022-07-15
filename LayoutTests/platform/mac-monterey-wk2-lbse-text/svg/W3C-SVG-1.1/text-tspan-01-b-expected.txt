@@ -3,13 +3,13 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (18,6) size 454x294
-  RenderSVGContainer {g} at (-1,0) size 455x294
+  RenderSVGTransformableContainer {g} at (17,5) size 454x294
 layer at (25,6) size 419x18
   RenderSVGText {text} at (7,0) size 421x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 420x18
       chunk 1 text run 1 at (25.00,20.00) startOffset 0 endOffset 60 width 419.81: "Basics of tspan: changing visual properties and positioning."
 layer at (48,49) size 311x81
-  RenderSVGContainer {g} at (-1,0) size 312x80
+  RenderSVGTransformableContainer {g} at (30,43) size 311x81
 layer at (74,49) size 160x18
   RenderSVGText {text} at (26,0) size 162x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 57x18
@@ -20,7 +20,7 @@ layer at (74,49) size 160x18
     RenderSVGInlineText {#text} at (89,0) size 72x18
       chunk 1 text run 1 at (163.80,63.75) startOffset 0 endOffset 9 width 71.18: "a banana."
 layer at (48,74) size 311x55
-  RenderSVGRect {rect} at (-1,-1) size 312x55 [stroke={[type=SOLID] [color=#000000]}] [x=47.50] [y=74.25] [width=310.50] [height=53.50]
+  RenderSVGRect {rect} at (0,24) size 311x55 [stroke={[type=SOLID] [color=#000000]}] [x=47.50] [y=74.25] [width=310.50] [height=53.50]
 layer at (65,76) size 209x18
   RenderSVGText {text} at (17,27) size 211x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 210x18
@@ -34,7 +34,7 @@ layer at (65,111) size 84x17
     RenderSVGInlineText {#text} at (0,0) size 85x18
       chunk 1 text run 1 at (65.25,125.25) startOffset 0 endOffset 13 width 84.50: "to red, bold."
 layer at (225,129) size 246x105
-  RenderSVGContainer {g} at (-1,0) size 247x105
+  RenderSVGTransformableContainer {g} at (207,123) size 246x105
 layer at (258,129) size 176x43
   RenderSVGText {text} at (32,0) size 177x44 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,10) size 55x18
@@ -46,7 +46,7 @@ layer at (258,129) size 176x43
       RenderSVGInlineText {#text} at (110,25) size 66x18
         chunk 1 text run 1 at (367.78,168.50) startOffset 0 endOffset 9 width 65.83: " a peach!"
 layer at (225,179) size 246x54
-  RenderSVGRect {rect} at (-1,-1) size 247x55 [stroke={[type=SOLID] [color=#000000]}] [x=225.00] [y=179.00] [width=245.50] [height=53.50]
+  RenderSVGRect {rect} at (0,50) size 246x54 [stroke={[type=SOLID] [color=#000000]}] [x=225.00] [y=179.00] [width=245.50] [height=53.50]
 layer at (238,181) size 199x18
   RenderSVGText {text} at (13,52) size 200x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 200x18
@@ -60,7 +60,7 @@ layer at (238,215) size 173x17
     RenderSVGInlineText {#text} at (0,0) size 174x18
       chunk 1 text run 1 at (238.00,229.50) startOffset 0 endOffset 25 width 173.12: "'tspan' lowers \"a peach!\""
 layer at (18,186) size 336x113
-  RenderSVGContainer {g} at (-1,0) size 337x114
+  RenderSVGTransformableContainer {g} at (0,180) size 336x113
 layer at (35,186) size 144x48
   RenderSVGText {text} at (17,0) size 146x49 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 145x18
@@ -83,7 +83,7 @@ layer at (35,186) size 144x48
         chunk 1 text run 1 at (138.13,230.50) startOffset 0 endOffset 2 width 12.45: "y."
     RenderSVGInlineText {#text} at (0,0) size 0x0
 layer at (18,245) size 336x54
-  RenderSVGRect {rect} at (-1,-1) size 337x55 [stroke={[type=SOLID] [color=#000000]}] [x=17.50] [y=244.75] [width=335.50] [height=53.50]
+  RenderSVGRect {rect} at (0,59) size 336x54 [stroke={[type=SOLID] [color=#000000]}] [x=17.50] [y=244.75] [width=335.50] [height=53.50]
 layer at (25,244) size 162x18
   RenderSVGText {text} at (7,58) size 164x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 163x18
@@ -101,4 +101,4 @@ layer at (10,304) size 263x46
     RenderSVGInlineText {#text} at (0,0) size 264x46
       chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.7 $"
 layer at (1,1) size 478x358
-  RenderSVGRect {rect} at (-1,-1) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

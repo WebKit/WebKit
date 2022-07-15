@@ -3,7 +3,7 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (3,1) size 156x46
-  RenderSVGContainer {g} at (0,0) size 156x111
+  RenderSVGTransformableContainer {g} at (3,0) size 156x46
 layer at (14,1) size 108x11
   RenderSVGText {text} at (11,0) size 108x12 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 108x12
@@ -13,9 +13,9 @@ layer at (10,11) size 125x11
     RenderSVGInlineText {#text} at (0,0) size 126x12
       chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 30 width 125.01: "and 'lengthAdjust' attributes."
 layer at (3,23) size 156x24
-  RenderSVGContainer {g} at (0,0) size 156x23
+  RenderSVGTransformableContainer {g} at (0,21) size 156x24
 layer at (3,23) size 156x9
-  RenderSVGContainer {g} at (0,0) size 156x9
+  RenderSVGTransformableContainer {g} at (0,0) size 156x9
 layer at (3,23) size 52x9
   RenderSVGText {text} at (0,0) size 52x9 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 52x9
@@ -25,7 +25,7 @@ layer at (75,23) size 83x9
     RenderSVGInlineText {#text} at (0,0) size 84x9
       chunk 1 text run 1 at (75.00,30.00) startOffset 0 endOffset 25 width 83.16: "this is a line to squeeze"
 layer at (6,33) size 125x14
-  RenderSVGContainer {g} at (0,0) size 125x13
+  RenderSVGTransformableContainer {g} at (3,9) size 125x14
 layer at (6,33) size 49x7
   RenderSVGText {text} at (0,0) size 50x7 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 50x7
@@ -43,9 +43,9 @@ layer at (76,39) size 54x7
     RenderSVGInlineText {#text} at (0,0) size 55x7
       chunk 1 text run 1 at (76.00,44.00) startOffset 0 endOffset 21 width 54.37: "lengthAdjust: default"
 layer at (3,23) size 138x24
-  RenderSVGContainer {g} at (0,22) size 138x23
+  RenderSVGTransformableContainer {g} at (0,21) size 138x24
 layer at (3,23) size 138x9
-  RenderSVGContainer {g} at (0,22) size 138x9
+  RenderSVGTransformableContainer {g} at (0,0) size 138x9
 layer at (3,23) size 64x9
   RenderSVGText {text} at (0,0) size 65x9 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 65x9
@@ -93,7 +93,7 @@ layer at (75,23) size 66x9
       chunk 1 text run 24 at (133.00,30.00) startOffset 23 endOffset 24 width 4.00: "z"
       chunk 1 text run 25 at (136.28,30.00) startOffset 24 endOffset 25 width 4.45: "e"
 layer at (6,33) size 134x14
-  RenderSVGContainer {g} at (0,22) size 134x13
+  RenderSVGTransformableContainer {g} at (3,9) size 134x14
 layer at (6,33) size 62x7
   RenderSVGText {text} at (0,0) size 62x7 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 62x7
@@ -111,9 +111,9 @@ layer at (76,39) size 54x7
     RenderSVGInlineText {#text} at (0,0) size 55x7
       chunk 1 text run 1 at (76.00,44.00) startOffset 0 endOffset 21 width 54.37: "lengthAdjust: default"
 layer at (3,23) size 138x24
-  RenderSVGContainer {g} at (0,44) size 138x23
+  RenderSVGTransformableContainer {g} at (0,21) size 138x24
 layer at (3,23) size 138x9
-  RenderSVGContainer {g} at (0,44) size 138x9
+  RenderSVGTransformableContainer {g} at (0,0) size 138x9
 layer at (3,23) size 64x9
   RenderSVGText {text} at (0,0) size 65x9 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 65x9
@@ -161,7 +161,7 @@ layer at (75,23) size 66x9
       chunk 1 text run 24 at (133.00,30.00) startOffset 23 endOffset 24 width 4.00: "z"
       chunk 1 text run 25 at (136.28,30.00) startOffset 24 endOffset 25 width 4.45: "e"
 layer at (3,33) size 137x14
-  RenderSVGContainer {g} at (0,44) size 137x13
+  RenderSVGTransformableContainer {g} at (0,9) size 137x14
 layer at (3,33) size 62x7
   RenderSVGText {text} at (0,0) size 62x7 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 62x7
@@ -179,9 +179,9 @@ layer at (76,39) size 57x7
     RenderSVGInlineText {#text} at (0,0) size 58x7
       chunk 1 text run 1 at (76.00,44.00) startOffset 0 endOffset 21 width 57.04: "lengthAdjust: spacing"
 layer at (3,23) size 137x24
-  RenderSVGContainer {g} at (0,66) size 137x23
+  RenderSVGTransformableContainer {g} at (0,21) size 137x24
 layer at (3,23) size 137x9
-  RenderSVGContainer {g} at (0,66) size 137x9
+  RenderSVGTransformableContainer {g} at (0,0) size 137x9
 layer at (3,23) size 65x9
   RenderSVGText {text} at (0,0) size 65x9 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 65x9
@@ -191,7 +191,7 @@ layer at (75,23) size 65x9
     RenderSVGInlineText {#text} at (0,0) size 65x9
       chunk 1 text run 1 at (75.00,30.00) startOffset 0 endOffset 25 width 83.16: "this is a line to squeeze"
 layer at (6,33) size 134x14
-  RenderSVGContainer {g} at (0,66) size 134x13
+  RenderSVGTransformableContainer {g} at (3,9) size 134x14
 layer at (6,33) size 62x7
   RenderSVGText {text} at (0,0) size 62x7 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 62x7
@@ -213,4 +213,4 @@ layer at (5,110) size 53x9
     RenderSVGInlineText {#text} at (0,0) size 53x9
       chunk 1 text run 1 at (5.00,117.00) startOffset 0 endOffset 16 width 52.67: "$Revision: 1.7 $"
 layer at (1,1) size 158x118
-  RenderSVGRect {rect} at (-1,-1) size 160x120 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=158.00] [height=118.00]
+  RenderSVGRect {rect} at (1,1) size 158x118 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=158.00] [height=118.00]

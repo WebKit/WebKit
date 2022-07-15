@@ -3,9 +3,9 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (20,28) size 313x268
-  RenderSVGContainer {g} at (0,0) size 313x268
+  RenderSVGTransformableContainer {g} at (20,28) size 313x268
 layer at (20,28) size 313x268
-  RenderSVGContainer {g} at (0,0) size 313x268
+  RenderSVGTransformableContainer {g} at (0,0) size 313x268
 layer at (20,58) size 196x27
   RenderSVGText {text} at (0,29) size 196x29 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 196x28
@@ -19,7 +19,7 @@ layer at (20,220) size 293x27
     RenderSVGInlineText {#text} at (0,0) size 293x28
       chunk 1 text run 1 at (20.00,240.00) startOffset 0 endOffset 19 width 292.84: "A mono (iW) face \x{753B}\x{50CF}"
 layer at (40,28) size 293x188
-  RenderSVGContainer {g} at (0,0) size 293x188
+  RenderSVGTransformableContainer {g} at (20,0) size 293x188
 layer at (40,28) size 189x28
   RenderSVGText {text} at (0,0) size 189x28 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 189x28
@@ -41,4 +41,4 @@ layer at (10,304) size 263x46
     RenderSVGInlineText {#text} at (0,0) size 264x46
       chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.5 $"
 layer at (1,1) size 478x358
-  RenderSVGRect {rect} at (-1,-1) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+  RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

@@ -36,8 +36,7 @@ public:
     bool isSVGTransformableContainer() const final { return true; }
 
 private:
-    // FIXME: Change renderName() for consistency in a follow-up commit
-    // ASCIILiteral renderName() const override { return "RenderSVGTransformableContainer"_s; }
+    ASCIILiteral renderName() const final { return "RenderSVGTransformableContainer"_s; }
 
     void element() const = delete;
     SVGGraphicsElement& graphicsElement() const;
