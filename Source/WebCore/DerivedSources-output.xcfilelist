@@ -1530,6 +1530,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSKeyframeEffect.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSKeyframeEffect.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSKeyframeEffectOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSKeyframeEffectOptions.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSLinkStyle.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSLinkStyle.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSLocation.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSLocation.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSLongRange.cpp
@@ -2882,10 +2884,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRWebGLLayer.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebXRWebGLLayer.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWheelEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWheelEvent.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowEventHandlers.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowEventHandlers.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowEventHandlers+Gamepad.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowEventHandlers+Gamepad.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowEventHandlers.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowEventHandlers.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowLocalStorage.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowLocalStorage.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWindowOrWorkerGlobalScope+Caches.cpp
