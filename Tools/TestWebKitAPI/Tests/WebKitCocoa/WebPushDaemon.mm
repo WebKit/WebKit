@@ -177,38 +177,32 @@ static void cleanUpTestWebPushD(NSURL *tempDir)
 }
 
 template <typename T>
-static void addMessageTypeHeaders(xpc_object_t request, T messageType)
+static void addMessageHeaders(xpc_object_t request, T messageType, uint64_t version)
 {
-    xpc_dictionary_set_uint64(request, "protocol version", 1);
-    xpc_dictionary_set_uint64(request, "message type", static_cast<uint64_t>(messageType));
+    xpc_dictionary_set_uint64(request, WebKit::WebPushD::protocolMessageTypeKey, static_cast<uint64_t>(messageType));
+    xpc_dictionary_set_uint64(request, WebKit::WebPushD::protocolVersionKey, version);
 }
 
-static RetainPtr<xpc_object_t> createMessageDictionary(MessageType messageType, const Vector<uint8_t>& message)
+void sendMessageToDaemon(xpc_connection_t connection, MessageType messageType, const Vector<uint8_t>& message, uint64_t version = WebKit::WebPushD::protocolVersionValue)
 {
-    auto dictionary = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
-    addMessageTypeHeaders(dictionary.get(), messageType);
-    xpc_dictionary_set_data(dictionary.get(), "encoded message", message.data(), message.size());
-    return WTFMove(dictionary);
+    auto request = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
+    addMessageHeaders(request.get(), messageType, version);
+    xpc_dictionary_set_data(request.get(), WebKit::WebPushD::protocolEncodedMessageKey, message.data(), message.size());
+    xpc_connection_send_message(connection, request.get());
 }
 
-// Uses an existing connection to the daemon for a one-off message
-void sendMessageToDaemon(xpc_connection_t connection, MessageType messageType, const Vector<uint8_t>& message)
+xpc_object_t sendMessageToDaemonWithReplySync(xpc_connection_t connection, MessageType messageType, const Vector<uint8_t>& message, uint64_t version = WebKit::WebPushD::protocolVersionValue)
 {
-    auto dictionary = createMessageDictionary(messageType, message);
-    xpc_connection_send_message(connection, dictionary.get());
+    auto request = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
+    addMessageHeaders(request.get(), messageType, version);
+    xpc_dictionary_set_data(request.get(), WebKit::WebPushD::protocolEncodedMessageKey, message.data(), message.size());
+    return xpc_connection_send_message_with_reply_sync(connection, request.get());
 }
 
-// Uses an existing connection to the daemon for a one-off message, waiting for the reply
-void sendMessageToDaemonWaitingForReply(xpc_connection_t connection, MessageType messageType, const Vector<uint8_t>& message)
+xpc_object_t sendRawMessageToDaemonWithReplySync(xpc_connection_t connection, RawXPCMessageType messageType, xpc_object_t request, uint64_t version = WebKit::WebPushD::protocolVersionValue)
 {
-    auto dictionary = createMessageDictionary(messageType, message);
-
-    __block bool done = false;
-    xpc_connection_send_message_with_reply(connection, dictionary.get(), dispatch_get_main_queue(), ^(xpc_object_t request) {
-        done = true;
-    });
-
-    TestWebKitAPI::Util::run(&done);
+    addMessageHeaders(request, messageType, version);
+    return xpc_connection_send_message_with_reply_sync(connection, request);
 }
 
 static Vector<String> toStringVector(xpc_object_t object)
@@ -343,6 +337,10 @@ TEST(WebPushD, BasicCommunication)
     });
     TestWebKitAPI::Util::run(&done);
 
+    // Sending a message with a higher protocol version should cause the connection to be terminated
+    auto reply = sendMessageToDaemonWithReplySync(connection.get(), MessageType::EchoTwice, { }, WebKit::WebPushD::protocolVersionValue + 1);
+    EXPECT_EQ(reply, XPC_ERROR_CONNECTION_INTERRUPTED);
+
     cleanUpTestWebPushD(tempDir);
 }
 
@@ -440,7 +438,7 @@ protected:
         auto encodedMessage = encodeString(WTFMove(message));
 
         auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service");
-        sendMessageToDaemonWaitingForReply(utilityConnection.get(), MessageType::InjectEncryptedPushMessageForTesting, encodedMessage);
+        sendMessageToDaemonWithReplySync(utilityConnection.get(), MessageType::InjectEncryptedPushMessageForTesting, encodedMessage);
 
         // Fetch push messages
         __block bool gotMessages = false;
@@ -460,8 +458,7 @@ protected:
     {
         auto connection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service");
         auto request = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
-        addMessageTypeHeaders(request.get(), RawXPCMessageType::GetPushTopicsForTesting);
-        auto reply = xpc_connection_send_message_with_reply_sync(connection.get(), request.get());
+        auto reply = sendRawMessageToDaemonWithReplySync(connection.get(), RawXPCMessageType::GetPushTopicsForTesting, request.get());
 
         auto enabledTopics = toStringVector(xpc_dictionary_get_value(reply, "enabled"));
         auto ignoredTopics = toStringVector(xpc_dictionary_get_value(reply, "ignored"));
@@ -1276,7 +1273,7 @@ TEST_F(WebPushDTest, GetPushSubscriptionWithMismatchedPublicToken)
 
     // If the public token changes, all subscriptions should be invalidated.
     auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service");
-    sendMessageToDaemonWaitingForReply(utilityConnection.get(), MessageType::SetPublicTokenForTesting, encodeString("foobar"_s));
+    sendMessageToDaemonWithReplySync(utilityConnection.get(), MessageType::SetPublicTokenForTesting, encodeString("foobar"_s));
 
     message = nil;
     gotMessage = false;
