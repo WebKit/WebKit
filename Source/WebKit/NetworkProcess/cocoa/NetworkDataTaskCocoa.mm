@@ -372,14 +372,14 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
         break;
     case WebCore::StoredCredentialsPolicy::DoNotUse:
 #if HAVE(NSURLSESSION_EFFECTIVE_CONFIGURATION_OBJECT)
-        NSURLSessionConfiguration *copiedConfiguration = m_sessionWrapper->session.get().configuration;
-        copiedConfiguration.URLCredentialStorage = nil;
-        auto effectiveConfiguration = adoptNS([[NSURLSessionEffectiveConfiguration alloc] _initWithConfiguration:copiedConfiguration]);
+        RetainPtr<NSURLSessionConfiguration> copiedConfiguration = m_sessionWrapper->session.get().configuration;
+        copiedConfiguration.get().URLCredentialStorage = nil;
+        auto effectiveConfiguration = adoptNS([[NSURLSessionEffectiveConfiguration alloc] _initWithConfiguration:copiedConfiguration.get()]);
         [m_task _adoptEffectiveConfiguration:effectiveConfiguration.get()];
 #else
-        NSURLSessionConfiguration *effectiveConfiguration = m_sessionWrapper->session.get().configuration;
-        effectiveConfiguration.URLCredentialStorage = nil;
-        [m_task _adoptEffectiveConfiguration:effectiveConfiguration];
+        RetainPtr<NSURLSessionConfiguration> effectiveConfiguration = m_sessionWrapper->session.get().configuration;
+        effectiveConfiguration.get().URLCredentialStorage = nil;
+        [m_task _adoptEffectiveConfiguration:effectiveConfiguration.get()];
 #endif
         break;
     };
