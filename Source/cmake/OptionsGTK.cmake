@@ -329,7 +329,7 @@ endif ()
 
 find_package(GIDocgen)
 if (ENABLE_DOCUMENTATION AND NOT GIDocgen_FOUND)
-    message(FATAL_ERROR "gi-docgen is needed for ENABLE_INTROSPECTION.")
+    message(FATAL_ERROR "ENABLE_INTROSPECTION is needed for gi-docgen.")
 endif ()
 
 if (ENABLE_WEB_CRYPTO)
