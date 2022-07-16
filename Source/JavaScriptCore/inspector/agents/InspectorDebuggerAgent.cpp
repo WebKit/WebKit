@@ -1898,23 +1898,4 @@ void InspectorDebuggerAgent::clearAsyncStackTraceData()
     didClearAsyncStackTraceData();
 }
 
-bool InspectorDebuggerAgent::SymbolicBreakpoint::matches(const String& symbol)
-{
-    if (symbol.isEmpty())
-        return false;
-
-    if (knownMatchingSymbols.contains(symbol))
-        return true;
-
-    if (!m_symbolMatchRegex) {
-        auto searchStringType = isRegex ? ContentSearchUtilities::SearchStringType::Regex : ContentSearchUtilities::SearchStringType::ExactString;
-        m_symbolMatchRegex = ContentSearchUtilities::createRegularExpressionForSearchString(this->symbol, caseSensitive, searchStringType);
-    }
-    if (m_symbolMatchRegex->match(symbol) == -1)
-        return false;
-
-    knownMatchingSymbols.add(symbol);
-    return true;
-}
-
 } // namespace Inspector
