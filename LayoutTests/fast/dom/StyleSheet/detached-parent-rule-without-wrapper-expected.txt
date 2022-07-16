@@ -3,10 +3,9 @@ Test that CSS stylesheets lacking wrappers are pruned from detached CSSOM subtre
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS getMatchedCSSRules(document.getElementById("test")).length is 1
+PASS rules.length is 1
 Removing <style>...
 PASS rule.parentRule is null
-PASS getMatchedCSSRules(document.getElementById("test")) is null
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -12,7 +12,6 @@ var propertyInfo = [
     ["find", "function"],
     ["focus", "function"],
     ["getComputedStyle", "function"],
-    ["getMatchedCSSRules", "function"],
     ["getSelection", "function"],
     ["moveBy", "function"],
     ["moveTo", "function"],

@@ -196,7 +196,6 @@ CONSOLE MESSAGE: SecurityError: Blocked a frame with origin "http://127.0.0.1:80
 CONSOLE MESSAGE: SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match.
 CONSOLE MESSAGE: SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match.
 CONSOLE MESSAGE: SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match.
-CONSOLE MESSAGE: SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match.
 This test checks cross-frame access security of getOwnPropertyDescriptor (https://bugs.webkit.org/show_bug.cgi?id=32119).
 
 
@@ -314,7 +313,6 @@ PASS: canGetDescriptor(targetWindow, 'clearTimeout') should be 'false' and is.
 PASS: canGetDescriptor(targetWindow, 'confirm') should be 'false' and is.
 PASS: canGetDescriptor(targetWindow, 'find') should be 'false' and is.
 PASS: canGetDescriptor(targetWindow, 'getComputedStyle') should be 'false' and is.
-PASS: canGetDescriptor(targetWindow, 'getMatchedCSSRules') should be 'false' and is.
 PASS: canGetDescriptor(targetWindow, 'getSelection') should be 'false' and is.
 PASS: canGetDescriptor(targetWindow, 'moveBy') should be 'false' and is.
 PASS: canGetDescriptor(targetWindow, 'moveTo') should be 'false' and is.

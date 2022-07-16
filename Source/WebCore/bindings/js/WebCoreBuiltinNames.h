@@ -498,6 +498,7 @@ namespace WebCore {
     macro(focus) \
     macro(frames) \
     macro(getInternalWritableStream) \
+    macro(getMatchedCSSRules) \
     macro(getTracks) \
     macro(getUserMedia) \
     macro(gpu) \

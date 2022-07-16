@@ -105,7 +105,6 @@ var staticWindowProperties = [
     'frameElement',
     'frames',
     'getComputedStyle',
-    'getMatchedCSSRules',
     'getSelection',
     'history',
     'location',

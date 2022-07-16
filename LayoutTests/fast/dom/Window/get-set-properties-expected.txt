@@ -294,8 +294,6 @@ PASS: canGet('focus') should be 'true' and is.
 PASS: canSet('focus') should be 'true' and is.
 PASS: canGet('getComputedStyle') should be 'true' and is.
 PASS: canSet('getComputedStyle') should be 'true' and is.
-PASS: canGet('getMatchedCSSRules') should be 'true' and is.
-PASS: canSet('getMatchedCSSRules') should be 'true' and is.
 PASS: canGet('getSelection') should be 'true' and is.
 PASS: canSet('getSelection') should be 'true' and is.
 PASS: canGet('moveBy') should be 'true' and is.

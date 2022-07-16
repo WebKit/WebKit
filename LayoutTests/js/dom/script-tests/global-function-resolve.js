@@ -17,7 +17,6 @@ var functionNames = [
     'dispatchEvent',
     'document',
     'getComputedStyle',
-    'getMatchedCSSRules',
     'getSelection',
     'history',
     'innerHeight',

@@ -31,7 +31,6 @@ PASS: self successfully shadowed
 PASS: history was not shadowed
 PASS: getSelection successfully shadowed
 PASS: getComputedStyle successfully shadowed
-PASS: getMatchedCSSRules successfully shadowed
 PASS: atob successfully shadowed
 PASS: btoa successfully shadowed
 PASS: scroll successfully shadowed

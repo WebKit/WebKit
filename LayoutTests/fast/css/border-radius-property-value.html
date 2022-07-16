@@ -14,8 +14,7 @@ if (window.testRunner)
 
 description("Test for Bug: 80736 - CSSStyleDeclaration.getPropertyValue() for 'border-radius' returns null when value is set");
 
-var element = document.getElementById("element-container");
-var style = window.getMatchedCSSRules(element)[0].style;
+var style = document.getElementsByTagName("style")[0].sheet.rules[0].style;
 shouldBe("style.getPropertyValue('border-radius')","'5px'");
 shouldBe("style.getPropertyValue('border-top-left-radius')","'5px'");
 shouldBe("style.getPropertyValue('border-top-right-radius')","'5px'");

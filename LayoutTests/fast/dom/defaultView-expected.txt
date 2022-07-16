@@ -7,5 +7,3 @@ PASS: defaultView is the window object
 PASS: defaultView.document is the document object
 
 PASS: defaultView implements getComputedStyle
-
-PASS: defaultView implements getMatchedCSSRules

@@ -29,7 +29,6 @@ window.onload = function()
     shouldThrowErrorName("window.confirm.call(targetWindow, 'message')", "SecurityError");
     shouldThrowErrorName("window.prompt.call(targetWindow, 'message', 'defaultValue')", "SecurityError");
     shouldThrowErrorName("window.getComputedStyle.call(targetWindow, document.body, '')", "SecurityError");
-    shouldThrowErrorName("window.getMatchedCSSRules.call(targetWindow, document.body, '')", "SecurityError");
     shouldThrowErrorName("window.atob.call(targetWindow, 'string')", "SecurityError");
     shouldThrowErrorName("window.btoa.call(targetWindow, 'string')", "SecurityError");
     shouldThrowErrorName("window.open.call(targetWindow, '')", "SecurityError");

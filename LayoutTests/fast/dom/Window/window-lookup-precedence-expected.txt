@@ -30,8 +30,6 @@ PASS 'function focus() {    [native code]}' is 'function focus() {    [native co
 PASS 'function focus() {    [native code]}' is 'function focus() {    [native code]}'
 PASS 'function getComputedStyle() {    [native code]}' is 'function getComputedStyle() {    [native code]}'
 PASS 'function getComputedStyle() {    [native code]}' is 'function getComputedStyle() {    [native code]}'
-PASS 'function getMatchedCSSRules() {    [native code]}' is 'function getMatchedCSSRules() {    [native code]}'
-PASS 'function getMatchedCSSRules() {    [native code]}' is 'function getMatchedCSSRules() {    [native code]}'
 PASS 'function getSelection() {    [native code]}' is 'function getSelection() {    [native code]}'
 PASS 'function getSelection() {    [native code]}' is 'function getSelection() {    [native code]}'
 PASS 'function moveBy() {    [native code]}' is 'function moveBy() {    [native code]}'

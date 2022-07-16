@@ -60,6 +60,7 @@ public:
 
     Type type() const { return m_type; }
     bool isNormal() const { return m_type == Type::Normal; }
+    bool isUser() const { return m_type == Type::User; }
 
     const String& name() const { return m_name; }
 

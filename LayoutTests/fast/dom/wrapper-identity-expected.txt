@@ -113,7 +113,6 @@ PASS var object = window['focus']; isEqualJS(object, object); is true
 PASS var object = window['frameElement']; isEqualJS(object, object); is true
 PASS var object = window['frames']; isEqualJS(object, object); is true
 PASS var object = window['getComputedStyle']; isEqualJS(object, object); is true
-PASS var object = window['getMatchedCSSRules']; isEqualJS(object, object); is true
 PASS var object = window['getSelection']; isEqualJS(object, object); is true
 PASS var object = window['history']; isEqualJS(object, object); is true
 PASS var object = window['location']; isEqualJS(object, object); is true

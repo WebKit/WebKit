@@ -18,7 +18,6 @@ var windowFunctions = [
     "resizeBy",
     "resizeTo",
     "getComputedStyle",
-    "getMatchedCSSRules",
     "postMessage",
 
     // Functions currently implemented on the Window object itself.  NOTE: these should be moved to the prototype.
