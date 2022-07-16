@@ -4883,7 +4883,7 @@ class ValidateCommitMessage(steps.ShellSequence, ShellMixin, AddToLogMixin):
         'Unreviewed',
         'Versioning.',
     )
-    RE_CHANGELOG = br'^(\+\+\+)\s+(.*ChangeLog.*)'
+    RE_CHANGELOG = r'^(\+\+\+)\s+(.*/ChangeLog.*)'
     BY_RE = re.compile(r'.+\s+by\s+(.+)$')
     SPLIT_RE = re.compile(r'(,\s*)|( and )')
 
@@ -4959,7 +4959,7 @@ class ValidateCommitMessage(steps.ShellSequence, ShellMixin, AddToLogMixin):
         log_text = log_text.rstrip()
         author = self.getProperty('author', '')
 
-        if any(['ChangeLog' in file for file in self._files()]):
+        if any(os.path.basename(file).startswith('ChangeLog') for file in self._files()):
             self.summary = 'ChangeLog modified, WebKit only allows commit messages'
             rc = FAILURE
         elif log_text:

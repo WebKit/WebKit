@@ -5902,10 +5902,36 @@ class TestAddReviewerToCommitMessage(BuildStepMixinAdditions, unittest.TestCase)
 
 
 class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
+    def expectCommonRemoteCommandsWithOutput(self, expected_remote_command_output):
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        timeout=60,
+                        command=['/bin/sh', '-c',
+                                 "git log eng/pull-request-branch ^main | grep -q 'OO*PP*S!' && echo 'Commit message contains (OOPS!)' || test $? -eq 1"])
+            + 0, ExpectShell(workdir='wkdir',
+                             logEnviron=False,
+                             timeout=60,
+                             command=['/bin/sh', '-c',
+                                      "git log eng/pull-request-branch ^main | grep -q '\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\|Unreviewed\\|Versioning.\\)' || echo 'No reviewer information in commit message'"])
+            + 0, ExpectShell(workdir='wkdir',
+                             logEnviron=False,
+                             timeout=60,
+                             command=['/bin/sh', '-c',
+                                      "git log eng/pull-request-branch ^main | grep '\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\)' || true"])
+            + 0
+            + ExpectShell.log('stdio', stdout=expected_remote_command_output),
+        )
+
     def setUp(self):
         self.longMessage = True
         Contributors.load = mock_load_contributors
         return self.setUpBuildStep()
+
+    def setUpCommonProperties(self):
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'main')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
 
     def tearDown(self):
         return self.tearDownBuildStep()
@@ -5935,59 +5961,25 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
     def test_success(self):
         self.setupStep(ValidateCommitMessage())
         ValidateCommitMessage._files = lambda x: ['+++ Tools/CISupport/ews-build/steps.py']
-        self.setProperty('github.number', '1234')
-        self.setProperty('github.base.ref', 'main')
-        self.setProperty('github.head.ref', 'eng/pull-request-branch')
-        self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        logEnviron=False,
-                        timeout=60,
-                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q 'OO*PP*S!' && echo 'Commit message contains (OOPS!)' || test $? -eq 1"])
-            + 0, ExpectShell(workdir='wkdir',
-                logEnviron=False,
-                        timeout=60,
-                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q '\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\|Unreviewed\\|Versioning.\\)' || echo 'No reviewer information in commit message'"])
-            + 0, ExpectShell(workdir='wkdir',
-                        logEnviron=False,
-                        timeout=60,
-                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep '\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\)' || true"])
-            + 0
-            + ExpectShell.log('stdio', stdout='    Reviewed by WebKit Reviewer.\n'),
-        )
+        self.setUpCommonProperties()
+        expected_remote_command_output = '    Reviewed by WebKit Reviewer.\n'
+        self.expectCommonRemoteCommandsWithOutput(expected_remote_command_output)
         self.expectOutcome(result=SUCCESS, state_string='Validated commit message')
         return self.runStep()
 
     def test_success_period(self):
         self.setupStep(ValidateCommitMessage())
         ValidateCommitMessage._files = lambda x: ['+++ Tools/CISupport/ews-build/steps.py']
-        self.setProperty('github.number', '1234')
-        self.setProperty('github.base.ref', 'main')
-        self.setProperty('github.head.ref', 'eng/pull-request-branch')
-        self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        logEnviron=False,
-                        timeout=60,
-                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q 'OO*PP*S!' && echo 'Commit message contains (OOPS!)' || test $? -eq 1"])
-            + 0, ExpectShell(workdir='wkdir',
-                logEnviron=False,
-                        timeout=60,
-                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q '\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\|Unreviewed\\|Versioning.\\)' || echo 'No reviewer information in commit message'"])
-            + 0, ExpectShell(workdir='wkdir',
-                        logEnviron=False,
-                        timeout=60,
-                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep '\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\)' || true"])
-            + 0
-            + ExpectShell.log('stdio', stdout='    Reviewed by Myles C. Maxfield.\n'),
-        )
+        self.setUpCommonProperties()
+        expected_remote_command_output = '    Reviewed by Myles C. Maxfield.\n'
+        self.expectCommonRemoteCommandsWithOutput(expected_remote_command_output)
         self.expectOutcome(result=SUCCESS, state_string='Validated commit message')
         return self.runStep()
 
     def test_failure_oops(self):
         self.setupStep(ValidateCommitMessage())
         ValidateCommitMessage._files = lambda x: ['+++ Tools/CISupport/ews-build/steps.py']
-        self.setProperty('github.number', '1234')
-        self.setProperty('github.base.ref', 'main')
-        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.setUpCommonProperties()
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
@@ -6004,25 +5996,8 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
     def test_failure_no_reviewer(self):
         self.setupStep(ValidateCommitMessage())
         ValidateCommitMessage._files = lambda x: ['+++ Tools/CISupport/ews-build/steps.py']
-        self.setProperty('github.number', '1234')
-        self.setProperty('github.base.ref', 'main')
-        self.setProperty('github.head.ref', 'eng/pull-request-branch')
-        self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        logEnviron=False,
-                        timeout=60,
-                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q 'OO*PP*S!' && echo 'Commit message contains (OOPS!)' || test $? -eq 1"])
-            + 0, ExpectShell(workdir='wkdir',
-                        logEnviron=False,
-                        timeout=60,
-                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q '\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\|Unreviewed\\|Versioning.\\)' || echo 'No reviewer information in commit message'"])
-            + 0, ExpectShell(workdir='wkdir',
-                        logEnviron=False,
-                        timeout=60,
-                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep '\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\)' || true"])
-            + 0
-            + ExpectShell.log('stdio', stdout='No reviewer information in commit message\n'),
-        )
+        self.setUpCommonProperties()
+        self.expectCommonRemoteCommandsWithOutput('No reviewer information in commit message\n')
         self.expectOutcome(result=FAILURE, state_string='No reviewer information in commit message')
         rc = self.runStep()
         self.assertEqual(self.getProperty('comment_text'), 'No reviewer information in commit message, blocking PR #1234')
@@ -6031,76 +6006,40 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
     def test_failure_no_changelog(self):
         self.setupStep(ValidateCommitMessage())
         ValidateCommitMessage._files = lambda x: ['+++ Tools/ChangeLog', '+++ Tools/CISupport/ews-build/steps.py']
-        self.setProperty('github.number', '1234')
-        self.setProperty('github.base.ref', 'main')
-        self.setProperty('github.head.ref', 'eng/pull-request-branch')
-        self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        logEnviron=False,
-                        timeout=60,
-                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q 'OO*PP*S!' && echo 'Commit message contains (OOPS!)' || test $? -eq 1"])
-            + 0, ExpectShell(workdir='wkdir',
-                logEnviron=False,
-                        timeout=60,
-                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q '\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\|Unreviewed\\|Versioning.\\)' || echo 'No reviewer information in commit message'"])
-            + 0, ExpectShell(workdir='wkdir',
-                        logEnviron=False,
-                        timeout=60,
-                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep '\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\)' || true"])
-            + 0
-            + ExpectShell.log('stdio', stdout='    Reviewed by WebKit Reviewer.\n'),
-        )
+        self.setUpCommonProperties()
+        expected_remote_command_output = '    Reviewed by WebKit Reviewer.\n'
+        self.expectCommonRemoteCommandsWithOutput(expected_remote_command_output)
         self.expectOutcome(result=FAILURE, state_string='ChangeLog modified, WebKit only allows commit messages')
+        return self.runStep()
+
+    def test_success_with_changelog_tools(self):
+        self.setupStep(ValidateCommitMessage())
+        ValidateCommitMessage._files = lambda x: [
+            '+++ Tools/Scripts/prepare-ChangeLog',
+            '+++ Tools/Scripts/webkitperl/prepare-ChangeLog_unittest/resources/swift_unittests-expected.txt',
+            '+++ Tools/Scripts/webkitperl/prepare-ChangeLog_unittest/resources/swift_unittests.swift']
+        self.setUpCommonProperties()
+        expected_remote_command_output = '    Reviewed by WebKit Reviewer.\n'
+        self.expectCommonRemoteCommandsWithOutput(expected_remote_command_output)
+        self.expectOutcome(result=SUCCESS, state_string='Validated commit message')
         return self.runStep()
 
     def test_invalid_reviewer(self):
         self.setupStep(ValidateCommitMessage())
         ValidateCommitMessage._files = lambda x: ['+++ Tools/CISupport/ews-build/steps.py']
-        self.setProperty('github.number', '1234')
-        self.setProperty('github.base.ref', 'main')
-        self.setProperty('github.head.ref', 'eng/pull-request-branch')
-        self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        logEnviron=False,
-                        timeout=60,
-                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q 'OO*PP*S!' && echo 'Commit message contains (OOPS!)' || test $? -eq 1"])
-            + 0, ExpectShell(workdir='wkdir',
-                logEnviron=False,
-                        timeout=60,
-                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q '\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\|Unreviewed\\|Versioning.\\)' || echo 'No reviewer information in commit message'"])
-            + 0, ExpectShell(workdir='wkdir',
-                        logEnviron=False,
-                        timeout=60,
-                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep '\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\)' || true"])
-            + 0
-            + ExpectShell.log('stdio', stdout='    Reviewed by WebKit Contributor.\n'),
-        )
+        self.setUpCommonProperties()
+        expected_remote_command_output = '    Reviewed by WebKit Contributor.\n'
+        self.expectCommonRemoteCommandsWithOutput(expected_remote_command_output)
         self.expectOutcome(result=FAILURE, state_string="'WebKit Contributor' is not a reviewer")
         return self.runStep()
 
     def test_self_reviewer(self):
         self.setupStep(ValidateCommitMessage())
         ValidateCommitMessage._files = lambda x: ['+++ Tools/CISupport/ews-build/steps.py']
-        self.setProperty('github.number', '1234')
-        self.setProperty('github.base.ref', 'main')
-        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.setUpCommonProperties()
         self.setProperty('author', 'WebKit Reviewer <reviewer@apple.com>')
-        self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        logEnviron=False,
-                        timeout=60,
-                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q 'OO*PP*S!' && echo 'Commit message contains (OOPS!)' || test $? -eq 1"])
-            + 0, ExpectShell(workdir='wkdir',
-                logEnviron=False,
-                        timeout=60,
-                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep -q '\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\|Unreviewed\\|Versioning.\\)' || echo 'No reviewer information in commit message'"])
-            + 0, ExpectShell(workdir='wkdir',
-                        logEnviron=False,
-                        timeout=60,
-                        command=['/bin/sh', '-c', "git log eng/pull-request-branch ^main | grep '\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\)' || true"])
-            + 0
-            + ExpectShell.log('stdio', stdout='    Reviewed by WebKit Reviewer.\n'),
-        )
+        expected_remote_command_output = '    Reviewed by WebKit Reviewer.\n'
+        self.expectCommonRemoteCommandsWithOutput(expected_remote_command_output)
         self.expectOutcome(result=FAILURE, state_string="'WebKit Reviewer <reviewer@apple.com>' cannot review their own change")
         return self.runStep()
 
