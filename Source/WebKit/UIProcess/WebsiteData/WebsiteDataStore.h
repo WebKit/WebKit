@@ -156,12 +156,11 @@ public:
 
     uint64_t perOriginStorageQuota() const { return m_resolvedConfiguration->perOriginStorageQuota(); }
     uint64_t perThirdPartyOriginStorageQuota() const;
-    const String& cacheStorageDirectory() const { return m_resolvedConfiguration->cacheStorageDirectory(); }
 
 #if PLATFORM(IOS_FAMILY)
-    String cookieStorageDirectory() const;
-    String containerCachesDirectory() const;
-    String containerTemporaryDirectory() const;
+    String resolvedCookieStorageDirectory();
+    String resolvedContainerCachesWebContentDirectory();
+    String resolvedContainerTemporaryDirectory();
     static String defaultContainerTemporaryDirectory();
     static String cacheDirectoryInContainerOrHomeDirectory(const String& subpath);
 #endif
@@ -250,6 +249,7 @@ public:
     void resetCacheMaxAgeCapForPrevalentResources(CompletionHandler<void()>&&);
     void resolveDirectoriesIfNecessary();
     const String& applicationCacheFlatFileSubdirectoryName() const { return m_configuration->applicationCacheFlatFileSubdirectoryName(); }
+    const String& resolvedCacheStorageDirectory() const { return m_resolvedConfiguration->cacheStorageDirectory(); }
     const String& resolvedApplicationCacheDirectory() const { return m_resolvedConfiguration->applicationCacheDirectory(); }
     const String& resolvedLocalStorageDirectory() const { return m_resolvedConfiguration->localStorageDirectory(); }
     const String& resolvedNetworkCacheDirectory() const { return m_resolvedConfiguration->networkCacheDirectory(); }
@@ -261,6 +261,7 @@ public:
     const String& resolvedIndexedDBDatabaseDirectory() const { return m_resolvedConfiguration->indexedDBDatabaseDirectory(); }
     const String& resolvedServiceWorkerRegistrationDirectory() const { return m_resolvedConfiguration->serviceWorkerRegistrationDirectory(); }
     const String& resolvedResourceLoadStatisticsDirectory() const { return m_resolvedConfiguration->resourceLoadStatisticsDirectory(); }
+    const String& resolvedPrivateClickMeasurementStorageDirectory() const { return m_resolvedConfiguration->privateClickMeasurementStorageDirectory(); }
     const String& resolvedHSTSStorageDirectory() const { return m_resolvedConfiguration->hstsStorageDirectory(); }
     const String& resolvedGeneralStorageDirectory() const { return m_resolvedConfiguration->generalStorageDirectory(); }
 #if ENABLE(ARKIT_INLINE_PREVIEW)
@@ -430,7 +431,7 @@ private:
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    String networkingCachesDirectory() const;
+    String resolvedContainerCachesNetworkingDirectory();
     String parentBundleDirectory() const;
 #endif
 
@@ -440,6 +441,12 @@ private:
     Ref<const WebsiteDataStoreConfiguration> m_configuration;
     bool m_hasResolvedDirectories { false };
     const Ref<DeviceIdHashSaltStorage> m_deviceIdHashSaltStorage;
+#if PLATFORM(IOS_FAMILY)
+    String m_resolvedContainerCachesWebContentDirectory;
+    String m_resolvedContainerCachesNetworkingDirectory;
+    String m_resolvedContainerTemporaryDirectory;
+    String m_resolvedCookieStorageDirectory;
+#endif
 
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     bool m_resourceLoadStatisticsDebugMode { false };
