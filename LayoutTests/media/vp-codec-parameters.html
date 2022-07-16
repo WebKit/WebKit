@@ -65,6 +65,12 @@
         consoleWrite('Test valid required and optional parameters:')
         testExpectedVPCodecConfigurationRecord('internals.parseVPCodecParameters("vp09.02.10.10.01.09.16.09.01")', makeVPCodecConfigurationRecord('vp09', 2, 10, 10, 1, 9, 16, 9, 1));
         consoleWrite('');
+        consoleWrite('Test valid legacy parameterless codec types:')
+        testExpectedVPCodecConfigurationRecord('internals.parseVPCodecParameters("vp9")', makeVPCodecConfigurationRecord('vp09', 0, 10, 8, 1, 1, 1, 1, 0));
+        testExpectedVPCodecConfigurationRecord('internals.parseVPCodecParameters("vp8")', makeVPCodecConfigurationRecord('vp08', 0, 10, 8, 1, 1, 1, 1, 0));
+        testExpectedVPCodecConfigurationRecord('internals.parseVPCodecParameters("vp9.0")', makeVPCodecConfigurationRecord('vp09', 0, 10, 8, 1, 1, 1, 1, 0));
+        testExpectedVPCodecConfigurationRecord('internals.parseVPCodecParameters("vp8.0")', makeVPCodecConfigurationRecord('vp08', 0, 10, 8, 1, 1, 1, 1, 0));
+        consoleWrite('');
         consoleWrite('Test invalid codec type');
         testExpected('internals.parseVPCodecParameters("vp10.00.41.08")', null);
         consoleWrite('');

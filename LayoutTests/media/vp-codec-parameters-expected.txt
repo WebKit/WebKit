@@ -18,6 +18,12 @@ EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.09.16.09.01.00") ==
 Test valid required and optional parameters:
 EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.09.16.09.01") === '{ vp09, 2, 10, 10, 1, 9, 16, 9, 1}') OK
 
+Test valid legacy parameterless codec types:
+EXPECTED (internals.parseVPCodecParameters("vp9") === '{ vp09, 0, 10, 8, 1, 1, 1, 1, 0}') OK
+EXPECTED (internals.parseVPCodecParameters("vp8") === '{ vp08, 0, 10, 8, 1, 1, 1, 1, 0}') OK
+EXPECTED (internals.parseVPCodecParameters("vp9.0") === '{ vp09, 0, 10, 8, 1, 1, 1, 1, 0}') OK
+EXPECTED (internals.parseVPCodecParameters("vp8.0") === '{ vp08, 0, 10, 8, 1, 1, 1, 1, 0}') OK
+
 Test invalid codec type
 EXPECTED (internals.parseVPCodecParameters("vp10.00.41.08") == 'null') OK
 

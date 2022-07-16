@@ -1309,7 +1309,12 @@ MediaPlayerEnums::SupportsType SourceBufferParserWebM::isContentTypeSupported(co
 
     for (auto& codec : codecs) {
 #if ENABLE(VP9)
-        if (codec.startsWith("vp09"_s) || codec.startsWith("vp08"_s) || equal(codec, "vp8"_s) || equal(codec, "vp9"_s)) {
+        if (codec.startsWith("vp09"_s)
+            || codec.startsWith("vp08"_s)
+            || equal(codec, "vp8"_s)
+            || equal(codec, "vp9"_s)
+            || equal(codec, "vp8.0"_s)
+            || equal(codec, "vp9.0"_s)) {
 
             if (!isVP9DecoderAvailable())
                 return MediaPlayerEnums::SupportsType::IsNotSupported;

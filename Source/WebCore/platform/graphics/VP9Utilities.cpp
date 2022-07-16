@@ -135,8 +135,14 @@ std::optional<VPCodecConfigurationRecord> parseVPCodecParameters(StringView code
     ++nextElement;
 
     // Support the legacy identifiers (with no parameters) for VP8 and VP9.
-    if ((configuration.codecName == "vp8"_s || configuration.codecName == "vp9"_s) && nextElement == codecSplit.end())
-        return configuration;
+    if (configuration.codecName == "vp8"_s || configuration.codecName == "vp9"_s) {
+        if (nextElement == codecSplit.end())
+            return configuration;
+        
+        auto codecString = codecView.toStringWithoutCopying();
+        if (codecString == "vp8.0"_s || codecString == "vp9.0"_s)
+            return configuration;
+    }
 
     // The format of the 'vp09' codec string is specified in the webm GitHub repo:
     // <https://github.com/webmproject/vp9-dash/blob/master/VPCodecISOMediaFileFormatBinding.md#codecs-parameter-string>
