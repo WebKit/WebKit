@@ -10432,6 +10432,8 @@ void WebPageProxy::writePromisedAttachmentToPasteboard(WebCore::PromisedAttachme
 
 void WebPageProxy::requestAttachmentIcon(const String& identifier, const String& contentType, const String& fileName, const String& title, const FloatSize& requestedSize)
 {
+    MESSAGE_CHECK(m_process, m_preferences->attachmentElementEnabled());
+
     FloatSize size = requestedSize;
     ShareableBitmap::Handle handle;
 #if PLATFORM(MAC)
