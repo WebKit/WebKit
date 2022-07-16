@@ -1540,7 +1540,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (value)
         return value;
 
-    auto* backingObject = self.axBackingObject;
+    Ref<AXCoreObject> backingObject = *self.axBackingObject;
     if (backingObject->supportsCheckedState()) {
         switch (backingObject->checkboxOrRadioValue()) {
         case AccessibilityButtonState::Off:
@@ -1559,7 +1559,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
 
     // If self has the header trait, value should be the heading level.
     if (self.accessibilityTraits & self._axHeaderTrait) {
-        auto* heading = Accessibility::findAncestor(*backingObject, true, [] (const auto& ancestor) {
+        auto* heading = Accessibility::findAncestor(backingObject.get(), true, [] (const auto& ancestor) {
             return ancestor.roleValue() == AccessibilityRole::Heading;
         });
         ASSERT(heading);
@@ -1590,7 +1590,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
         return [NSString stringWithFormat:@"%.2f", backingObject->valueForRange()];
     }
 
-    if (is<AccessibilityAttachment>(backingObject) && downcast<AccessibilityAttachment>(backingObject)->hasProgress())
+    if (is<AccessibilityAttachment>(backingObject.get()) && downcast<AccessibilityAttachment>(backingObject.get()).hasProgress())
         return [NSString stringWithFormat:@"%.2f", backingObject->valueForRange()];
 
     return nil;
