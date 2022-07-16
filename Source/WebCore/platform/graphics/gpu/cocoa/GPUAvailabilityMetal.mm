@@ -45,4 +45,8 @@ bool isGPUAvailable()
 
 } // namespace WebCore
 
+<<<<<<< HEAD
 #endif // HAVE(GPU_AVAILABILITY_CHECK)
+=======
+#endif // PLATFORM(COCOA)
+>>>>>>> 90cd13168bc3 (Cherry-pick 6ed0df1df12a. rdar://problem/96096307)
