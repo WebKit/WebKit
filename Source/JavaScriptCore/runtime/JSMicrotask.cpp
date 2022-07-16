@@ -78,13 +78,13 @@ void JSMicrotask::run(JSGlobalObject* globalObject)
         return;
 
     if (UNLIKELY(globalObject->hasDebugger()))
-        globalObject->debugger()->willRunMicrotask();
+        globalObject->debugger()->willRunMicrotask(globalObject, *this);
 
     profiledCall(globalObject, ProfilingReason::Microtask, m_job.get(), handlerCallData, jsUndefined(), handlerArguments);
     scope.clearException();
 
     if (UNLIKELY(globalObject->hasDebugger()))
-        globalObject->debugger()->didRunMicrotask();
+        globalObject->debugger()->didRunMicrotask(globalObject, *this);
 }
 
 } // namespace JSC

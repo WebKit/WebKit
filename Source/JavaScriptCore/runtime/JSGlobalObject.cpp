@@ -2649,12 +2649,15 @@ void JSGlobalObject::bumpGlobalLexicalBindingEpoch(VM& vm)
 
 void JSGlobalObject::queueMicrotask(Ref<Microtask>&& task)
 {
-    if (globalObjectMethodTable()->queueMicrotaskToEventLoop) {
-        globalObjectMethodTable()->queueMicrotaskToEventLoop(*this, WTFMove(task));
-        return;
-    }
+    auto& taskRef = task.get();
 
-    vm().queueMicrotask(*this, WTFMove(task));
+    if (globalObjectMethodTable()->queueMicrotaskToEventLoop)
+        globalObjectMethodTable()->queueMicrotaskToEventLoop(*this, WTFMove(task));
+    else
+        vm().queueMicrotask(*this, WTFMove(task));
+
+    if (UNLIKELY(m_debugger))
+        m_debugger->didQueueMicrotask(this, taskRef);
 }
 
 void JSGlobalObject::reportUncaughtExceptionAtEventLoop(JSGlobalObject*, Exception* exception)

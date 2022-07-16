@@ -28,6 +28,7 @@
 #include "HeapIterationScope.h"
 #include "JSCInlines.h"
 #include "MarkedSpaceInlines.h"
+#include "Microtask.h"
 #include "VMEntryScope.h"
 #include "VMTrapsInlines.h"
 #include <wtf/HashMap.h>
@@ -1248,17 +1249,24 @@ void Debugger::didReachDebuggerStatement(CallFrame* callFrame)
     updateCallFrame(lexicalGlobalObjectForCallFrame(m_vm, callFrame), callFrame, AttemptPause);
 }
 
-void Debugger::willRunMicrotask()
+void Debugger::didQueueMicrotask(JSGlobalObject* globalObject, const Microtask& microtask)
 {
     dispatchFunctionToObservers([&] (Observer& observer) {
-        observer.willRunMicrotask();
+        observer.didQueueMicrotask(globalObject, microtask);
     });
 }
 
-void Debugger::didRunMicrotask()
+void Debugger::willRunMicrotask(JSGlobalObject* globalObject, const Microtask& microtask)
 {
     dispatchFunctionToObservers([&] (Observer& observer) {
-        observer.didRunMicrotask();
+        observer.willRunMicrotask(globalObject, microtask);
+    });
+}
+
+void Debugger::didRunMicrotask(JSGlobalObject* globalObject, const Microtask& microtask)
+{
+    dispatchFunctionToObservers([&] (Observer& observer) {
+        observer.didRunMicrotask(globalObject, microtask);
     });
 }
 

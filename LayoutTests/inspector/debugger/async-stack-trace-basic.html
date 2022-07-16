@@ -5,9 +5,29 @@
 <script src="resources/async-stack-trace-test.js"></script>
 <script>
 
-function triggerRequestAnimationFrame() {
+function triggerMicrotask(completion) {
+    queueMicrotask(function handleMicrotask() {
+        if (completion)
+            completion();
+        else
+            debugger;
+    });
+}
+
+function triggerNestedMicrotask() {
+    queueMicrotask(function handleMicrotask1() {
+        queueMicrotask(function handleMicrotask2() {
+            debugger;
+        });
+    });
+}
+
+function triggerRequestAnimationFrame(completion) {
     requestAnimationFrame(function handleAnimationFrame() {
-        debugger;
+        if (completion)
+            completion();
+        else
+            debugger;
     });
 }
 
@@ -19,9 +39,12 @@ function triggerNestedRequestAnimationFrame() {
     });
 }
 
-function triggerSetTimeout() {
+function triggerSetTimeout(completion) {
     setTimeout(function handleTimeout() {
-        debugger;
+        if (completion)
+            completion();
+        else
+            debugger;
     });
 }
 
@@ -33,10 +56,13 @@ function triggerNestedSetTimeout() {
     });
 }
 
-function triggerSetInterval() {
+function triggerSetInterval(completion) {
     let timer = setInterval(function handleInterval() {
         clearInterval(timer);
-        debugger;
+        if (completion)
+            completion();
+        else
+            debugger;
     });
 }
 
@@ -50,14 +76,29 @@ function triggerNestedSetInterval() {
     });
 }
 
-function triggerPostMessage() {
+function triggerPostMessage(completion) {
     let frame = document.createElement("iframe");
     frame.srcdoc = `<script>window.parent.postMessage(42, "*");<\/script>`;
     document.body.appendChild(frame);
 
     window.addEventListener("message", function handleMessage() {
         window.removeEventListener("message", handleMessage);
-        debugger;
+        if (completion)
+            completion();
+        else
+            debugger;
+    });
+}
+
+function triggerCombined() {
+    triggerMicrotask(() => {
+        triggerRequestAnimationFrame(() => {
+            triggerSetTimeout(() => {
+                triggerSetInterval(() => {
+                    triggerPostMessage();
+                });
+            });
+        });
     });
 }
 
@@ -66,43 +107,58 @@ function test()
     let suite = InspectorTest.createAsyncSuite("AsyncStackTrace.Basic");
 
     addAsyncStackTraceTestCase(suite, {
+        name: "AsyncStackTrace.Basic.Microtask",
+        expression: `triggerMicrotask()`,
+    });
+
+    addAsyncStackTraceTestCase(suite, {
+        name: "AsyncStackTrace.Basic.NestedMicrotask",
+        expression: `triggerNestedMicrotask()`,
+    });
+
+    addAsyncStackTraceTestCase(suite, {
         name: "AsyncStackTrace.Basic.RequestAnimationFrame",
-        expression: "triggerRequestAnimationFrame()",
+        expression: `triggerRequestAnimationFrame()`,
     });
 
     addAsyncStackTraceTestCase(suite, {
         name: "AsyncStackTrace.Basic.NestedRequestAnimationFrame",
-        expression: "triggerNestedRequestAnimationFrame()",
+        expression: `triggerNestedRequestAnimationFrame()`,
     });
 
     addAsyncStackTraceTestCase(suite, {
         name: "AsyncStackTrace.Basic.SetTimeout",
-        expression: "triggerSetTimeout()",
+        expression: `triggerSetTimeout()`,
     });
 
     addAsyncStackTraceTestCase(suite, {
         name: "AsyncStackTrace.Basic.NestedSetTimeout",
-        expression: "triggerNestedSetTimeout()",
+        expression: `triggerNestedSetTimeout()`,
     });
 
     addAsyncStackTraceTestCase(suite, {
         name: "AsyncStackTrace.Basic.SetInterval",
-        expression: "triggerSetInterval()",
+        expression: `triggerSetInterval()`,
     });
 
     addAsyncStackTraceTestCase(suite, {
         name: "AsyncStackTrace.Basic.NestedSetInterval",
-        expression: "triggerNestedSetInterval()",
+        expression: `triggerNestedSetInterval()`,
     });
 
     addAsyncStackTraceTestCase(suite, {
         name: "AsyncStackTrace.Basic.NestedSetInterval",
-        expression: "triggerNestedSetInterval()",
+        expression: `triggerNestedSetInterval()`,
     });
 
     addAsyncStackTraceTestCase(suite, {
         name: "AsyncStackTrace.Basic.PostMessage",
-        expression: "triggerPostMessage()",
+        expression: `triggerPostMessage()`,
+    });
+
+    addAsyncStackTraceTestCase(suite, {
+        name: "AsyncStackTrace.Basic.Combined",
+        expression: `triggerCombined()`,
     });
 
     suite.runTestCasesAndFinish();

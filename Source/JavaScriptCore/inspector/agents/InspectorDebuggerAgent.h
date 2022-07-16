@@ -101,8 +101,9 @@ public:
     // JSC::Debugger::Observer
     void didParseSource(JSC::SourceID, const JSC::Debugger::Script&) final;
     void failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage) final;
-    void willRunMicrotask() final;
-    void didRunMicrotask() final;
+    void didQueueMicrotask(JSC::JSGlobalObject*, const JSC::Microtask&) final;
+    void willRunMicrotask(JSC::JSGlobalObject*, const JSC::Microtask&) final;
+    void didRunMicrotask(JSC::JSGlobalObject*, const JSC::Microtask&) final;
     void didPause(JSC::JSGlobalObject*, JSC::DebuggerCallFrame&, JSC::JSValue exceptionOrCaughtValue) final;
     void didContinue() final;
     void breakpointActionSound(JSC::BreakpointActionID) final;
@@ -121,6 +122,7 @@ public:
         EventListener,
         PostMessage,
         RequestAnimationFrame,
+        Microtask,
     };
 
     void didScheduleAsyncCall(JSC::JSGlobalObject*, AsyncCallType, int callbackId, bool singleShot);
@@ -165,7 +167,7 @@ protected:
     virtual String sourceMapURLForScript(const JSC::Debugger::Script&);
 
     void didClearGlobalObject();
-    virtual void didClearAsyncStackTraceData() { }
+    virtual void didClearAsyncStackTraceData();
 
 private:
     bool shouldBlackboxURL(const String&) const;
@@ -272,8 +274,11 @@ private:
     RefPtr<JSON::Object> m_preBlackboxPauseData;
 
     HashMap<AsyncCallIdentifier, RefPtr<AsyncStackTrace>> m_pendingAsyncCalls;
-    std::optional<AsyncCallIdentifier> m_currentAsyncCallIdentifier;
+    Vector<AsyncCallIdentifier> m_currentAsyncCallIdentifierStack;
     int m_asyncStackTraceDepth { 0 };
+
+    HashMap<const JSC::Microtask*, int> m_identifierForMicrotask;
+    int m_nextMicrotaskIdentifier { 1 };
 
     RefPtr<JSC::Breakpoint> m_pauseOnAssertionsBreakpoint;
     RefPtr<JSC::Breakpoint> m_pauseOnMicrotasksBreakpoint;

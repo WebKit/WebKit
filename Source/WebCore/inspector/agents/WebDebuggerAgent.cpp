@@ -171,6 +171,8 @@ void WebDebuggerAgent::didDispatchPostMessage(int postMessageIdentifier)
 
 void WebDebuggerAgent::didClearAsyncStackTraceData()
 {
+    InspectorDebuggerAgent::didClearAsyncStackTraceData();
+
     m_registeredEventListeners.clear();
     m_postMessageTasks.clear();
     m_nextEventListenerIdentifier = 1;
