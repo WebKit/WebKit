@@ -673,12 +673,12 @@ WI.DataGridNode = class DataGridNode extends WI.Object
         let insertionIndex = -1;
 
         if (!this.isPlaceholderNode) {
-            var previousGridNode = this.traversePreviousNode(true, true);
-            insertionIndex = this.dataGrid._rows.indexOf(previousGridNode);
-            if (insertionIndex === -1)
+            let previousGridNode = this.traversePreviousNode(true, true);
+            if (previousGridNode) {
+                // If the previousGridNode isn't in the list, we'll increment the not found value of `-1` to `0`.
+                insertionIndex = this.dataGrid._rows.lastIndexOf(previousGridNode) + 1;
+            } else
                 insertionIndex = 0;
-            else
-                insertionIndex++;
         }
 
         if (insertionIndex === -1)
