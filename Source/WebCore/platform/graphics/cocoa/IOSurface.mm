@@ -278,8 +278,8 @@ size_t IOSurface::bytesPerRowAlignment()
 {
     auto alignment = surfaceBytesPerRowAlignment().load();
     if (!alignment) {
-        surfaceBytesPerRowAlignment().store(IOSurfaceGetPropertyAlignment(kIOSurfaceBytesPerRow));
-        alignment = surfaceBytesPerRowAlignment().load();
+        alignment = IOSurfaceGetPropertyAlignment(kIOSurfaceBytesPerRow);
+
         // A return value for IOSurfaceGetPropertyAlignment(kIOSurfaceBytesPerRow) of 1 is invalid.
         // See https://developer.apple.com/documentation/iosurface/1419453-iosurfacegetpropertyalignment?language=objc
         // This likely means that the sandbox is blocking access to the IOSurface IOKit class,
@@ -289,6 +289,8 @@ size_t IOSurface::bytesPerRowAlignment()
             // 64 bytes is currently the alignment on all platforms.
             alignment = 64;
         }
+
+        surfaceBytesPerRowAlignment().store(alignment);
     }
     return alignment;
 }
