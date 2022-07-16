@@ -205,16 +205,12 @@ bool FloatRoundedRect::intersectionIsRectangular(const FloatRect& rect) const
 
 TextStream& operator<<(TextStream& ts, const FloatRoundedRect& roundedRect)
 {
-    ts << roundedRect.rect().x() << " " << roundedRect.rect().y() << " " << roundedRect.rect().width() << " " << roundedRect.rect().height() << "\n";
-
-    TextStream::IndentScope indentScope(ts);
-    ts << indent << "topLeft=" << roundedRect.topLeftCorner().width() << " " << roundedRect.topLeftCorner().height() << "\n";
-    ts << indent << "topRight=" << roundedRect.topRightCorner().width() << " " << roundedRect.topRightCorner().height() << "\n";
-    ts << indent << "bottomLeft=" << roundedRect.bottomLeftCorner().width() << " " << roundedRect.bottomLeftCorner().height() << "\n";
-    ts << indent << "bottomRight=" << roundedRect.bottomRightCorner().width() << " " << roundedRect.bottomRightCorner().height();
+    ts << roundedRect.rect();
+    ts.dumpProperty("top-left", roundedRect.radii().topLeft());
+    ts.dumpProperty("top-right", roundedRect.radii().topRight());
+    ts.dumpProperty("bottom-left", roundedRect.radii().bottomLeft());
+    ts.dumpProperty("bottom-right", roundedRect.radii().bottomRight());
     return ts;
 }
-
-
 
 } // namespace WebCore
