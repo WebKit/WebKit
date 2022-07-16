@@ -32,9 +32,11 @@
 
 use strict;
 use warnings;
+use File::Temp qw(tempfile);
 use File::Spec;
 use FindBin;
 use Getopt::Long qw(:config pass_through);
+use IPC::Open3;
 use JSON::PP;
 use lib $FindBin::Bin;
 use List::Util qw(min max);
@@ -121,7 +123,6 @@ my $coverageDir;
 my %jsonData = ();
 my %reportData = ();
 my @testResults = ();
-my $isTestFailed = 0;
 my $remoteConfigFile;
 my $jsonFileName;
 my $verbose = 0;
@@ -621,7 +622,7 @@ sub testPath {
     return File::Spec->catfile($productDir, $testName);
 }
 
-sub runTest {
+sub startBinaryTest {
     my ($testName, $jsonTestStatusName) = @_;
 
     chdirWebKit();
@@ -647,12 +648,34 @@ sub runTest {
     my $testResult = 0;
     my $lastOptimizeLevel;
 
-    open(TEST, "-|", "@command 2>&1") or die "Failed to run @command";
-    my $testOutput = "";
-    while ( my $line = <TEST> ) {
-        $testOutput .= $line;
-    }
-    $testResult = close(TEST) ? 0 : $?;
+    my $capturedOutputHandle = tempfile("${testName}XXXXXX", SUFFIX => '.tmp', UNLINK => 1);
+    my $fno = fileno($capturedOutputHandle);
+    open(my $emptyInput, '<', '');
+    my $pid = open3($emptyInput, '>&' . $fno, 0, @command);
+    return (
+        'name' => $testName,
+        'pid' => $pid,
+        'killedByUs' => 0,
+        'handler' => \&processBinaryTestResults,
+        'handlerData' => {
+            'capturedOutputHandle' => $capturedOutputHandle,
+            'jsonTestStatusName' => $jsonTestStatusName,
+        },
+        );
+}
+
+sub slurpHandle {
+    my ($handle ) = @_;
+    seek($handle, 0, 0);
+    local $/;  # enable slurp mode, locally.
+    my $contents = <$handle>;
+    return $contents;
+}
+
+sub processBinaryTestResults {
+    my ($testName, $context, $testResult ) = @_;
+    my $jsonTestStatusName = $context->{'jsonTestStatusName'};
+    my $testOutput = slurpHandle($context->{'capturedOutputHandle'});
     $reportData{$testName} = $testResult ? {actual => "FAIL"} : {actual => "PASS"};
 
     my $exitStatus = exitStatus($testResult);
@@ -661,22 +684,13 @@ sub runTest {
     print "$testName completed with rc=$testResult ($exitStatus)\n\n";
 
     if ($testResult) {
-        $isTestFailed = 1;
         push @testResults, $testName;
     }
     if (defined($jsonFileName)) {
         my $testStatus = ($exitStatus == 0)? JSON::PP::true: JSON::PP::false;
         $jsonData{$jsonTestStatusName} = $testStatus;
     }
-
-    if ($testResult && $failFast) {
-        reportTestFailures();
-        writeJsonDataIfApplicable();
-
-        $endTime = time();
-        uploadResults();
-        exit $exitStatus;
-    }
+    return $testResult != 0;
 }
 
 sub reportTestFailures {
@@ -727,31 +741,9 @@ sub processCoverageData
     generateHTMLFromProfdata();
 }
 
-if ($runTestMasm) { runTest("testmasm", "allMasmTestsPassed") }
-if ($runTestAir) { runTest("testair", "allAirTestsPassed") }
-if ($runTestB3) { runTest("testb3", "allB3TestsPassed") }
-if ($runTestDFG) { runTest("testdfg", "allDFGTestsPassed") }
-if ($runTestAPI) { runTest("testapi", "allApiTestsPassed") }
-
-
-# Find JavaScriptCore directory
-chdirWebKit();
-
-runJSCStressTests();
-reportTestFailures();
-if ($coverage) {
-    processCoverageData();
-}
-
-$endTime = time();
-uploadResults();
-
-if ($isTestFailed) {
-  exit(1);
-}
-
-sub runJSCStressTests
+sub startJSCStressTests
 {
+    chdirWebKit();
     my $jscStressResultsDir = $productDir . "/jsc-stress-results";
 
     my $hasTestsToRun = 0;
@@ -939,8 +931,26 @@ sub runJSCStressTests
     }
 
     print "Running: " . join(" ", @jscStressDriverCmd) . "\n";
-    my $result = system(@jscStressDriverCmd);
-    exit exitStatus($result) if $result;
+    open(my $emptyInput, '<', '');
+    my $pid = open3($emptyInput, '>&STDOUT', 0, @jscStressDriverCmd);
+    return (
+        'name' => 'run-jsc-stress-tests',
+        'pid' => $pid,
+        'killedByUs' => 0,
+        'handler' => \&ProcessJSCStressTestsResults,
+        'handlerData' => {
+            'jscStressResultsDir' => $jscStressResultsDir,
+        },
+        );
+}
+
+sub ProcessJSCStressTestsResults {
+    my ($testName, $context, $result ) = @_;
+    if ($result) {
+        return exitStatus($result) if $result;
+    }
+
+    my $jscStressResultsDir = $context->{'jscStressResultsDir'};
 
     my @jscStressPassList = readAllLines($jscStressResultsDir . "/passed");
     foreach my $testSucceeded (@jscStressPassList) {
@@ -952,7 +962,6 @@ sub runJSCStressTests
     my $numJSCStressFailures = @jscStressFailList;
 
     if ($numJSCStressFailures) {
-        $isTestFailed = 1;
         print "\n** The following JSC stress test failures have been introduced:\n";
         foreach my $testFailure (@jscStressFailList) {
             print "\t$testFailure\n";
@@ -993,9 +1002,6 @@ sub runJSCStressTests
     my @jscStressNoResultList = readAllLines($jscStressResultsDir . "/noresult");
     my $numJSCStressNoResultTests = @jscStressNoResultList;
 
-    if ($numJSCStressNoResultTests) {
-        $isTestFailed = 1;
-    }
     foreach my $testNoResult (@jscStressNoResultList) {
             $reportData{$testNoResult} = {actual => "ERROR"};
     }
@@ -1013,8 +1019,7 @@ sub runJSCStressTests
         $jsonData{'flaky'} =  \%jscStressFlakyInfo;
         $jsonData{'stressTestFailures'} = \@jscStressFailList;
     }
-
-    writeJsonDataIfApplicable();
+    return ($numJSCStressFailures > 0) || ($numJSCStressNoResultTests > 0);
 }
 
 sub readAllLines
@@ -1113,3 +1118,69 @@ sub uploadResults
 
     return 1;
 }
+
+my @binaryTests = (
+    [$runTestMasm, "testmasm", "allMasmTestsPassed"],
+    [$runTestAir, "testair", "allAirTestsPassed"],
+    [$runTestB3, "testb3", "allB3TestsPassed"],
+    [$runTestDFG, "testdfg", "allDFGTestsPassed"],
+    [$runTestAPI, "testapi", "allApiTestsPassed"],
+    );
+my %childContexts = ();
+
+for my $row (@binaryTests) {
+    my ($runTest, $name, $jsonTestStatusName) = @$row;
+    next unless $runTest;
+    my %context = startBinaryTest($name, $jsonTestStatusName);
+    $childContexts{$context{'pid'}} = \%context;
+}
+
+my %startJSCStressTestsContext = startJSCStressTests();
+$childContexts{$startJSCStressTestsContext{'pid'}} = \%startJSCStressTestsContext;
+
+for (my $i = 0; $i < scalar keys %childContexts; ++$i) {
+    my $pid = waitpid(-1, 0);
+    my $status = $?;
+    my $context = $childContexts{$pid};
+    if ($context->{'killedByUs'}) {
+        # Don't try to interpret the process status.
+        next;
+    }
+    $context->{'status'} = $status;
+    if ($status != 0 && $failFast) {
+        for my $childPid (keys %childContexts) {
+            next unless $childPid != $pid;
+            0 == $childContexts{$childPid}->{'killedByUs'} || die 'internal error';
+            $childContexts{$childPid}->{'killedByUs'} = 1;
+            kill 'TERM', $childPid
+        }
+    }
+}
+
+my $exitStatus = 0;
+# Sort by name so that the presentation order is stable.
+for my $context (sort {$b->{'name'} cmp $a->{'name'}} values %childContexts) {
+    if ($context->{'killedByUs'}) {
+        # Don't try to process any results in the callback. This preserves the
+        # previous behavior of failFast (i.e. when we were executing the tests
+        # serially).
+        next;
+    }
+    my $cb = $context->{'handler'};
+    my $ret = &$cb($context->{'name'}, $context->{'handlerData'}, $context->{'status'});
+    if ($ret > $exitStatus) {
+        # Binary tests return 1 on failure, JSC stress tests may return > 1.
+        $exitStatus = $ret;
+    }
+}
+
+reportTestFailures();
+writeJsonDataIfApplicable();
+if ($coverage) {
+    processCoverageData();
+}
+
+$endTime = time();
+uploadResults();
+
+exit($exitStatus);
