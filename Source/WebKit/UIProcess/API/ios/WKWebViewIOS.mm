@@ -73,6 +73,11 @@
 #import "WKDataDetectorTypesInternal.h"
 #endif
 
+#if ENABLE(LOCKDOWN_MODE_API)
+#import "_WKSystemPreferencesInternal.h"
+#import <WebCore/LocalizedStrings.h>
+#endif
+
 #if HAVE(UI_EVENT_ATTRIBUTION)
 #import <UIKit/UIEventAttribution.h>
 #endif
@@ -1640,14 +1645,6 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     return false;
 }
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WKWebViewAdditions.mm>)
-#import <WebKitAdditions/WKWebViewAdditions.mm>
-#else
-- (void)_presentCaptivePortalModeAlertIfNeeded
-{
-}
-#endif
-
 - (void)didMoveToWindow
 {
     if (!_overridesInterfaceOrientation)
@@ -2999,6 +2996,50 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 }
 
 #endif // HAVE(UIKIT_RESIZABLE_WINDOWS)
+
+#if ENABLE(LOCKDOWN_MODE_API)
+
+constexpr auto WebKitCaptivePortalModeAlertShownKey = @"WebKitCaptivePortalModeAlertShown";
+
+- (void)_presentCaptivePortalModeAlertOnce
+{
+    // Only present the alert if the app is not Safari
+    // and we've never presented the alert before
+    if (WebCore::IOSApplication::isMobileSafari())
+        return;
+
+    if (![_WKSystemPreferences isCaptivePortalModeEnabled] || [[NSUserDefaults standardUserDefaults] boolForKey:WebKitCaptivePortalModeAlertShownKey])
+        return;
+
+    NSString *appDisplayName = [[NSBundle mainBundle] objectForInfoDictionaryKey:(__bridge NSString *)_kCFBundleDisplayNameKey];
+    if (!appDisplayName)
+        appDisplayName = [[NSBundle mainBundle] objectForInfoDictionaryKey:(__bridge NSString *)kCFBundleNameKey];
+
+    UIAlertController *alert = [UIAlertController
+        alertControllerWithTitle:[NSString stringWithFormat:WEB_UI_NSSTRING(@"Lockdown Mode is Turned On For “%@“", "Lockdown Mode alert title"), appDisplayName]
+        message:WEB_UI_NSSTRING(@"Certain experiences and features may not function as expected. You can turn off Lockdown Mode for this app in Settings.", "Lockdown Mode alert message")
+        preferredStyle:UIAlertControllerStyleAlert];
+
+    [alert addAction:[UIAlertAction actionWithTitle:WEB_UI_NSSTRING(@"OK", "Captive Portal Mode alert OK button") style:UIAlertActionStyleDefault handler:nil]];
+
+    UIViewController *presentationViewController = [UIViewController _viewControllerForFullScreenPresentationFromView:self];
+    [presentationViewController presentViewController:alert animated:YES completion:nil];
+
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:WebKitCaptivePortalModeAlertShownKey];
+}
+
+- (void)_presentCaptivePortalModeAlertIfNeeded
+{
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        [self _presentCaptivePortalModeAlertOnce];
+    });
+}
+#else
+- (void)_presentCaptivePortalModeAlertIfNeeded
+{
+}
+#endif
 
 @end
 

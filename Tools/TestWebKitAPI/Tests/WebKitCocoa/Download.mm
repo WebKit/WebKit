@@ -2675,7 +2675,7 @@ static TestWebKitAPI::HTTPServer simplePDFTestServer()
 TEST(WKDownload, CaptivePortalPDF)
 {
     auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
-    [webViewConfiguration.get().defaultWebpagePreferences _setCaptivePortalModeEnabled:YES];
+    webViewConfiguration.get().defaultWebpagePreferences.lockdownModeEnabled = YES;
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     auto delegate = adoptNS([TestDownloadDelegate new]);
     [webView setNavigationDelegate:delegate.get()];

@@ -50,7 +50,4 @@ class WebPagePreferencesCaptivePortalModeObserver;
 
 @property (class, nonatomic, readonly) WKWebpagePreferences *defaultPreferences;
 
-- (void)_willChangeCaptivePortalMode;
-- (void)_didChangeCaptivePortalMode;
-
 @end

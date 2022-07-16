@@ -396,13 +396,17 @@
 #include <WebCore/GraphicsContextCG.h>
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/WebPageAdditions.cpp>
-#else
+#if ENABLE(LOCKDOWN_MODE_API)
+#import <pal/spi/cg/CoreGraphicsSPI.h>
+#endif
+
 static void adjustCoreGraphicsForCaptivePortal()
 {
-}
+#if ENABLE(LOCKDOWN_MODE_API)
+    CGEnterLockdownModeForPDF();
+    CGEnterLockdownModeForFonts();
 #endif
+}
 
 namespace WebKit {
 using namespace JSC;
