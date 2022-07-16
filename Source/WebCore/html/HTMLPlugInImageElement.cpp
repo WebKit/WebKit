@@ -27,9 +27,11 @@
 #include "ContentSecurityPolicy.h"
 #include "DocumentLoader.h"
 #include "ElementInlines.h"
+#include "EventLoop.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
+#include "GCReachableRef.h"
 #include "HTMLImageLoader.h"
 #include "JSDOMConvertBoolean.h"
 #include "JSDOMConvertInterface.h"
@@ -195,8 +197,8 @@ void HTMLPlugInImageElement::scheduleUpdateForAfterStyleResolution()
 
     m_hasUpdateScheduledForAfterStyleResolution = true;
 
-    Style::deprecatedQueuePostResolutionCallback([protectedThis = Ref { *this }] {
-        protectedThis->updateAfterStyleResolution();
+    document().eventLoop().queueTask(TaskSource::DOMManipulation, [element = GCReachableRef { *this }] {
+        element->updateAfterStyleResolution();
     });
 }
 

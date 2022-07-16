@@ -2,9 +2,11 @@
 <head>
 <script src="../../resources/js-test-pre.js"></script>
 <script> 
-if (window.testRunner) 
+if (window.testRunner)  {
     testRunner.dumpAsText(); 
- 
+    testRunner.waitUntilDone();
+}
+
 window.onload = function() { 
     shouldBeTrue("(self.embedFrame1.document.getElementById('plugin').destroyStream) == undefined");
     shouldBeTrue("(self.embedFrame2.document.getElementById('plugin').destroyStream) == undefined");
@@ -13,6 +15,9 @@ window.onload = function() {
     shouldBeTrue("(self.objectFrame2.document.getElementById('plugin').destroyStream) == undefined");
 
     isSuccessfullyParsed();
+
+    if (window.testRunner)
+        testRunner.notifyDone();
 } 
 </script> 
 </head> 

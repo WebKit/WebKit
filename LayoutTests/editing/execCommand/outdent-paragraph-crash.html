@@ -14,7 +14,7 @@
     onload = async () => {
       visualViewport.onresize = () => {
         document.execCommand('Outdent');
-        setTimeout(function() { document.write("Test passes if it does not crash."); testRunner.notifyDone(); });
+        setTimeout(function() { document.documentElement.innerHTML = "<body>Test passes if it does not crash.</body>"; testRunner.notifyDone(); });
       };
       let blockquote = document.createElement('blockquote');
       document.body.append(blockquote);

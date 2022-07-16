@@ -16,26 +16,33 @@ var test = document.getElementById('test');
 test.focus();
 
 Markup.description('This test ensures WebKit does not ignore the content of hr, datagrid, and object with child nodes.')
+Markup.noAutoDump();
+Markup.waitUntilDone();
 
-var text = 'hello world WebKit';
+(async () => {
+    var text = 'hello world WebKit';
 
-for (var i = 0; i < test.childNodes.length; i++) {
-    var textNode = document.createTextNode(text);
-    test.childNodes[i].appendChild(textNode);
-    window.getSelection().setBaseAndExtent(textNode, 6, textNode, 11);
-    document.execCommand('bold', false, null);
-}
+    for (var i = 0; i < test.childNodes.length; i++) {
+        var textNode = document.createTextNode(text);
+        test.childNodes[i].appendChild(textNode);
+        await new Promise((resolve) => { requestAnimationFrame(() => setTimeout(resolve, 0)); });
+        window.getSelection().setBaseAndExtent(textNode, 6, textNode, 11);
+        document.execCommand('bold', false, null);
+    }
 
-Markup.dump(test, '"world" and only "world" should be bolded in each element below');
+    Markup.dump(test, '"world" and only "world" should be bolded in each element below');
 
-window.getSelection().setPosition(test, 0);
+    window.getSelection().setPosition(test, 0);
 
-for (var i = 0; i < (text.length + 1) * test.childNodes.length - 1; i++)
-    window.getSelection().modify('extend', 'forward', 'character');
+    for (var i = 0; i < (text.length + 1) * test.childNodes.length - 1; i++)
+        window.getSelection().modify('extend', 'forward', 'character');
 
-var range = window.getSelection().getRangeAt(0).cloneContents();
+    var range = window.getSelection().getRangeAt(0).cloneContents();
 
-Markup.dump(range, 'The result below should be identical to the result above');
+    Markup.dump(range, 'The result below should be identical to the result above');
+
+    Markup.notifyDone();
+})();
 
 </script>
 </body>
