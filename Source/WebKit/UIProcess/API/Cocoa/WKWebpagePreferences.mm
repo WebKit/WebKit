@@ -147,7 +147,7 @@ private:
     {
         if (auto object = m_object.get()) {
             [object willChangeValueForKey:@"_captivePortalModeEnabled"];
-            [object _willChangeCaptivePortalMode];
+            [object willChangeValueForKey:@"lockdownModeEnabled"];
         }
     }
 
@@ -155,7 +155,7 @@ private:
     {
         if (auto object = m_object.get()) {
             [object didChangeValueForKey:@"_captivePortalModeEnabled"];
-            [object _didChangeCaptivePortalMode];
+            [object didChangeValueForKey:@"lockdownModeEnabled"];
         }
     }
 
@@ -554,15 +554,26 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
     return WebKit::modalContainerObservationPolicy(_websitePolicies->modalContainerObservationPolicy());
 }
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKWebpagePreferencesAdditions.mm>
+- (BOOL)isLockdownModeEnabled
+{
+#if ENABLE(LOCKDOWN_MODE_API)
+    return _websitePolicies->captivePortalModeEnabled();
 #else
-- (void)_willChangeCaptivePortalMode
-{
-}
-- (void)_didChangeCaptivePortalMode
-{
-}
+    return NO;
 #endif
+}
+
+- (void)setLockdownModeEnabled:(BOOL)lockdownModeEnabled
+{
+#if ENABLE(LOCKDOWN_MODE_API)
+#if PLATFORM(IOS_FAMILY)
+    // On iOS, the web browser entitlement is required to disable lockdown mode.
+    if (!lockdownModeEnabled && !WTF::processHasEntitlement("com.apple.developer.web-browser"_s))
+        [NSException raise:NSInternalInconsistencyException format:@"The 'com.apple.developer.web-browser' restricted entitlement is required to disable lockdown mode"];
+#endif
+
+    _websitePolicies->setCaptivePortalModeEnabled(!!lockdownModeEnabled);
+#endif
+}
 
 @end
