@@ -638,71 +638,76 @@ String WebsiteDataStore::cacheDirectoryInContainerOrHomeDirectory(const String& 
     if (path.isEmpty())
         path = NSHomeDirectory();
 
-    path = path + subpath;
-    path = stringByResolvingSymlinksInPath(path);
-    return path;
-}
-
-String WebsiteDataStore::cookieStorageDirectory() const
-{
-    if (!isPersistent())
-        return { };
-
-    return cacheDirectoryInContainerOrHomeDirectory("/Library/Cookies"_s);
-}
-
-String WebsiteDataStore::containerCachesDirectory() const
-{
-    if (!isPersistent())
-        return { };
-
-    String path = cacheDirectoryInContainerOrHomeDirectory("/Library/Caches/com.apple.WebKit.WebContent/"_s);
-    NSError *error = nil;
-    NSString* nsPath = path;
-    if (![[NSFileManager defaultManager] createDirectoryAtPath:nsPath withIntermediateDirectories:YES attributes:nil error:&error]) {
-        NSLog(@"could not create web content caches directory \"%@\", error %@", nsPath, error);
-        return String();
-    }
-
-    return path;
+    return path + subpath;
 }
 
 String WebsiteDataStore::parentBundleDirectory() const
 {
     if (!isPersistent())
-        return { };
+        return emptyString();
 
     return [[[NSBundle mainBundle] bundlePath] stringByStandardizingPath];
 }
 
-String WebsiteDataStore::networkingCachesDirectory() const
+String WebsiteDataStore::resolvedCookieStorageDirectory()
 {
-    if (!isPersistent())
-        return { };
-
-    String path = cacheDirectoryInContainerOrHomeDirectory("/Library/Caches/com.apple.WebKit.Networking/"_s);
-    NSError *error = nil;
-    NSString* nsPath = path;
-    if (![[NSFileManager defaultManager] createDirectoryAtPath:nsPath withIntermediateDirectories:YES attributes:nil error:&error]) {
-        NSLog(@"could not create networking caches directory \"%@\", error %@", nsPath, error);
-        return String();
+    if (m_resolvedCookieStorageDirectory.isNull()) {
+        if (!isPersistent())
+            m_resolvedCookieStorageDirectory = emptyString();
+        else {
+            auto directory = cacheDirectoryInContainerOrHomeDirectory("/Library/Cookies"_s);
+            m_resolvedCookieStorageDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(directory);
+        }
     }
 
-    return path;
+    return m_resolvedCookieStorageDirectory;
 }
 
-String WebsiteDataStore::containerTemporaryDirectory() const
+String WebsiteDataStore::resolvedContainerCachesNetworkingDirectory()
 {
-    if (!isPersistent())
-        return { };
+    if (m_resolvedContainerCachesNetworkingDirectory.isNull()) {
+        if (!isPersistent())
+            m_resolvedContainerCachesNetworkingDirectory = emptyString();
+        else {
+            auto directory = cacheDirectoryInContainerOrHomeDirectory("/Library/Caches/com.apple.WebKit.Networking/"_s);
+            m_resolvedContainerCachesNetworkingDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(directory);
+        }
+    }
 
-    return defaultContainerTemporaryDirectory();
+    return m_resolvedContainerCachesNetworkingDirectory;
+}
+
+String WebsiteDataStore::resolvedContainerCachesWebContentDirectory()
+{
+    if (m_resolvedContainerCachesWebContentDirectory.isNull()) {
+        if (!isPersistent())
+            m_resolvedContainerCachesWebContentDirectory = emptyString();
+        else {
+            auto directory = cacheDirectoryInContainerOrHomeDirectory("/Library/Caches/com.apple.WebKit.WebContent/"_s);
+            m_resolvedContainerCachesWebContentDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(directory);
+        }
+    }
+
+    return m_resolvedContainerCachesWebContentDirectory;
+}
+
+String WebsiteDataStore::resolvedContainerTemporaryDirectory()
+{
+    if (m_resolvedContainerTemporaryDirectory.isNull()) {
+        if (!isPersistent())
+            m_resolvedContainerTemporaryDirectory = emptyString();
+        else {
+            String directory = defaultContainerTemporaryDirectory();
+            m_resolvedContainerTemporaryDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(directory);
+        }
+    }
+
+    return m_resolvedContainerTemporaryDirectory;
 }
 
 String WebsiteDataStore::defaultContainerTemporaryDirectory()
 {
-    String path = NSTemporaryDirectory();
-    return stringByResolvingSymlinksInPath(path);
+    return NSTemporaryDirectory();
 }
 
 void WebsiteDataStore::setBackupExclusionPeriodForTesting(Seconds period, CompletionHandler<void()>&& completionHandler)
