@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 Google, Inc. All Rights Reserved.
- * Copyright (C) 2015-2021 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2015-2022 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,12 +27,12 @@
 #pragma once
 
 #include "Attribute.h"
+#include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 
 struct DoctypeData {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
     Vector<UChar> publicIdentifier;
     Vector<UChar> systemIdentifier;
     bool hasPublicIdentifier { false };
@@ -53,13 +53,49 @@ public:
         EndOfFile,
     };
 
-    struct Attribute {
-        Vector<UChar, 32> name;
-        Vector<UChar, 64> value;
+    class AttributeList {
+    public:
+        void clear();
+
+        void beginAttribute() { ++m_size; }
+        template<typename CharactersType> void append(CharactersType);
+        void appendNullCharacter();
+        void appendTwoNullCharacters();
+
+        size_t size() const { return m_size; }
+
+        class Iterator {
+        public:
+            Iterator() = default;
+            Iterator(const AttributeList&);
+            Iterator& operator++();
+            const Iterator& operator*() const { return *this; }
+            Span<const UChar> name() const;
+            Span<const UChar> value() const;
+            bool operator!=(std::nullptr_t) const { return m_name.size(); }
+
+        private:
+            static Span<const UChar> nullTerminatedSpan(const UChar*);
+
+            const UChar* m_end { nullptr };
+            Span<const UChar> m_name;
+            Span<const UChar> m_value;
+        };
+
+        Iterator begin() const;
+        std::nullptr_t end() const { return nullptr; }
+
+    private:
+        static size_t countNullCharacters(char character) { return character == nullCharacter; }
+        static size_t countNullCharacters(LChar character) { return character == nullCharacter; }
+        static size_t countNullCharacters(UChar character) { return character == nullCharacter; }
+        template<typename CollectionType> static size_t countNullCharacters(const CollectionType&);
+
+        size_t m_size { 0 };
+        Vector<UChar, 1000> m_characters;
     };
 
-    typedef Vector<Attribute, 10> AttributeList;
-    typedef Vector<UChar, 256> DataVector;
+    using DataVector = Vector<UChar, 256>;
 
     HTMLToken() = default;
 
@@ -104,10 +140,10 @@ public:
 
     void beginAttribute();
     void appendToAttributeName(UChar);
-    void appendToAttributeValue(UChar);
-    void appendToAttributeValue(unsigned index, StringView value);
-    template<typename CharacterType> void appendToAttributeValue(Span<const CharacterType>);
-    void endAttribute();
+    void beginAttributeValue();
+    template<typename CharacterType> void appendToAttributeValue(CharacterType);
+    void endAttributeWithoutValue();
+    void endAttributeWithValue();
 
     void setSelfClosing();
 
@@ -143,13 +179,10 @@ private:
     // For StartTag and EndTag
     bool m_selfClosing;
     AttributeList m_attributes;
-    Attribute* m_currentAttribute;
 
     // For DOCTYPE
     std::unique_ptr<DoctypeData> m_doctypeData;
 };
-
-const HTMLToken::Attribute* findAttribute(const Vector<HTMLToken::Attribute>&, StringView name);
 
 inline void HTMLToken::clear()
 {
@@ -259,10 +292,6 @@ inline void HTMLToken::beginStartTag(LChar character)
     m_selfClosing = false;
     m_attributes.clear();
 
-#if ASSERT_ENABLED
-    m_currentAttribute = nullptr;
-#endif
-
     m_data.append(character);
 }
 
@@ -272,10 +301,6 @@ inline void HTMLToken::beginEndTag(LChar character)
     m_type = Type::EndTag;
     m_selfClosing = false;
     m_attributes.clear();
-
-#if ASSERT_ENABLED
-    m_currentAttribute = nullptr;
-#endif
 
     m_data.append(character);
 }
@@ -287,57 +312,44 @@ inline void HTMLToken::beginEndTag(const Vector<LChar, 32>& characters)
     m_selfClosing = false;
     m_attributes.clear();
 
-#if ASSERT_ENABLED
-    m_currentAttribute = nullptr;
-#endif
-
     m_data.appendVector(characters);
 }
 
 inline void HTMLToken::beginAttribute()
 {
     ASSERT(m_type == Type::StartTag || m_type == Type::EndTag);
-    m_attributes.grow(m_attributes.size() + 1);
-    m_currentAttribute = &m_attributes.last();
+    m_attributes.beginAttribute();
 }
 
-inline void HTMLToken::endAttribute()
+inline void HTMLToken::endAttributeWithoutValue()
 {
-    ASSERT(m_currentAttribute);
-#if ASSERT_ENABLED
-    m_currentAttribute = nullptr;
-#endif
+    ASSERT(m_type == Type::StartTag || m_type == Type::EndTag);
+    m_attributes.appendTwoNullCharacters();
+}
+
+inline void HTMLToken::endAttributeWithValue()
+{
+    ASSERT(m_type == Type::StartTag || m_type == Type::EndTag);
+    m_attributes.appendNullCharacter();
 }
 
 inline void HTMLToken::appendToAttributeName(UChar character)
 {
     ASSERT(character);
     ASSERT(m_type == Type::StartTag || m_type == Type::EndTag);
-    ASSERT(m_currentAttribute);
-    m_currentAttribute->name.append(character);
+    m_attributes.append(character);
 }
 
-inline void HTMLToken::appendToAttributeValue(UChar character)
+inline void HTMLToken::beginAttributeValue()
 {
-    ASSERT(character);
     ASSERT(m_type == Type::StartTag || m_type == Type::EndTag);
-    ASSERT(m_currentAttribute);
-    m_currentAttribute->value.append(character);
+    m_attributes.appendNullCharacter();
 }
 
-template<typename CharacterType>
-inline void HTMLToken::appendToAttributeValue(Span<const CharacterType> characters)
+template<typename CharacterType> inline void HTMLToken::appendToAttributeValue(CharacterType character)
 {
     ASSERT(m_type == Type::StartTag || m_type == Type::EndTag);
-    ASSERT(m_currentAttribute);
-    m_currentAttribute->value.append(characters);
-}
-
-inline void HTMLToken::appendToAttributeValue(unsigned i, StringView value)
-{
-    ASSERT(!value.isEmpty());
-    ASSERT(m_type == Type::StartTag || m_type == Type::EndTag);
-    append(m_attributes[i].value, value);
+    m_attributes.append(character);
 }
 
 inline const HTMLToken::AttributeList& HTMLToken::attributes() const
@@ -432,14 +444,84 @@ inline void HTMLToken::appendToComment(UChar character)
     m_data8BitCheck |= character;
 }
 
-inline const HTMLToken::Attribute* findAttribute(const HTMLToken::AttributeList& attributes, Span<const UChar> name)
+inline void HTMLToken::AttributeList::clear()
 {
-    for (auto& attribute : attributes) {
-        // FIXME: The one caller that uses this probably wants to ignore letter case.
-        if (attribute.name.size() == name.size() && equal(attribute.name.data(), name.data(), name.size()))
-            return &attribute;
+    m_size = 0;
+    m_characters.shrink(0);
+}
+
+inline auto HTMLToken::AttributeList::begin() const -> Iterator
+{
+    return m_characters.isEmpty() ? Iterator { } : Iterator { *this };
+}
+
+template<typename CollectionType> inline size_t HTMLToken::AttributeList::countNullCharacters(const CollectionType& characters)
+{
+    size_t count = 0;
+    for (auto& character : characters)
+        count += countNullCharacters(character);
+    return count;
+}
+
+template<typename CharactersType> inline void HTMLToken::AttributeList::append(CharactersType characters)
+{
+    ASSERT(!countNullCharacters(characters));
+    m_characters.append(characters);
+}
+
+inline void HTMLToken::AttributeList::appendNullCharacter()
+{
+    m_characters.append(nullCharacter);
+}
+
+inline void HTMLToken::AttributeList::appendTwoNullCharacters()
+{
+    static constexpr UChar twoNulls[] = { nullCharacter, nullCharacter };
+    m_characters.append(Span<const UChar> { twoNulls, 2 });
+}
+
+inline Span<const UChar> HTMLToken::AttributeList::Iterator::nullTerminatedSpan(const UChar* characters)
+{
+    auto* end = characters;
+    while (*end != nullCharacter)
+        ++end;
+    return { characters, end };
+}
+
+inline HTMLToken::AttributeList::Iterator::Iterator(const AttributeList& attributes)
+    : m_end { attributes.m_characters.end() }
+    , m_name { nullTerminatedSpan(attributes.m_characters.begin()) }
+    , m_value { nullTerminatedSpan(&*m_name.end() + 1) }
+{
+    ASSERT(attributes.m_characters.last() == nullCharacter);
+    ASSERT(attributes.m_size * 2 == AttributeList::countNullCharacters(attributes.m_characters));
+}
+
+inline auto HTMLToken::AttributeList::Iterator::operator++() -> Iterator&
+{
+    ASSERT(m_name.size());
+    auto* nextName = &*m_value.end() + 1;
+    if (nextName < m_end) {
+        m_name = nullTerminatedSpan(nextName);
+        auto* nextValue = &*m_name.end() + 1;
+        ASSERT(nextValue < m_end);
+        m_value = nullTerminatedSpan(nextValue);
+    } else {
+        m_name = { };
     }
-    return nullptr;
+    return *this;
+}
+
+inline Span<const UChar> HTMLToken::AttributeList::Iterator::name() const
+{
+    ASSERT(m_name.size());
+    return m_name;
+}
+
+inline Span<const UChar> HTMLToken::AttributeList::Iterator::value() const
+{
+    ASSERT(m_name.size());
+    return m_value;
 }
 
 } // namespace WebCore

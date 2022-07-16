@@ -85,34 +85,27 @@ static StringView extractCharset(const String& value)
 
 bool HTMLMetaCharsetParser::processMeta(HTMLToken& token)
 {
-    auto attributes = token.attributes().map([](auto& attribute) {
-        return std::pair { AtomString(attribute.name), AtomString(attribute.value) };
-    });
-
-    m_encoding = encodingFromMetaAttributes(attributes);
+    m_encoding = encodingFromMetaAttributes(AtomHTMLToken { token }.attributes());
     return m_encoding.isValid();
 }
 
-PAL::TextEncoding HTMLMetaCharsetParser::encodingFromMetaAttributes(const AttributeList& attributes)
+PAL::TextEncoding HTMLMetaCharsetParser::encodingFromMetaAttributes(Span<const Attribute> attributes)
 {
     bool gotPragma = false;
     enum { None, Charset, Pragma } mode = None;
     StringView charset;
 
     for (auto& attribute : attributes) {
-        auto& attributeName = attribute.first;
-        auto& attributeValue = attribute.second;
-
-        if (attributeName == http_equivAttr) {
-            if (equalLettersIgnoringASCIICase(attributeValue, "content-type"_s))
+        if (attribute.name() == http_equivAttr) {
+            if (equalLettersIgnoringASCIICase(attribute.value(), "content-type"_s))
                 gotPragma = true;
-        } else if (attributeName == charsetAttr) {
-            charset = attributeValue;
+        } else if (attribute.name() == charsetAttr) {
+            charset = attribute.value();
             mode = Charset;
             // Charset attribute takes precedence
             break;
-        } else if (attributeName == contentAttr) {
-            charset = extractCharset(attributeValue);
+        } else if (attribute.name() == contentAttr) {
+            charset = extractCharset(attribute.value());
             if (charset.length())
                 mode = Pragma;
         }

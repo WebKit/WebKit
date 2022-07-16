@@ -721,16 +721,23 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
     BEGIN_STATE(AttributeNameState)
         if (isTokenizerWhitespace(character))
             ADVANCE_TO(AfterAttributeNameState);
-        if (character == '/')
+        if (character == '/') {
+            m_token.endAttributeWithoutValue();
             ADVANCE_PAST_NON_NEWLINE_TO(SelfClosingStartTagState);
+        }
         if (character == '=')
             ADVANCE_PAST_NON_NEWLINE_TO(BeforeAttributeValueState);
-        if (character == '>')
+        if (character == '>') {
+            m_token.endAttributeWithoutValue();
             return emitAndResumeInDataState(source);
-        if (m_options.usePreHTML5ParserQuirks && character == '<')
+        }
+        if (m_options.usePreHTML5ParserQuirks && character == '<') {
+            m_token.endAttributeWithoutValue();
             return emitAndReconsumeInDataState();
+        }
         if (character == kEndOfFileMarker) {
             parseError();
+            m_token.endAttributeWithoutValue();
             RECONSUME_IN(DataState);
         }
         if (character == '"' || character == '\'' || character == '<' || character == '=')
@@ -742,10 +749,11 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
     BEGIN_STATE(AfterAttributeNameState)
         if (isTokenizerWhitespace(character))
             ADVANCE_TO(AfterAttributeNameState);
-        if (character == '/')
-            ADVANCE_PAST_NON_NEWLINE_TO(SelfClosingStartTagState);
         if (character == '=')
             ADVANCE_PAST_NON_NEWLINE_TO(BeforeAttributeValueState);
+        m_token.endAttributeWithoutValue();
+        if (character == '/')
+            ADVANCE_PAST_NON_NEWLINE_TO(SelfClosingStartTagState);
         if (character == '>')
             return emitAndResumeInDataState(source);
         if (m_options.usePreHTML5ParserQuirks && character == '<')
@@ -764,6 +772,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
     BEGIN_STATE(BeforeAttributeValueState)
         if (isTokenizerWhitespace(character))
             ADVANCE_TO(BeforeAttributeValueState);
+        m_token.beginAttributeValue();
         if (character == '"')
             ADVANCE_PAST_NON_NEWLINE_TO(AttributeValueDoubleQuotedState);
         if (character == '&')
@@ -772,10 +781,12 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
             ADVANCE_PAST_NON_NEWLINE_TO(AttributeValueSingleQuotedState);
         if (character == '>') {
             parseError();
+            m_token.endAttributeWithValue();
             return emitAndResumeInDataState(source);
         }
         if (character == kEndOfFileMarker) {
             parseError();
+            m_token.endAttributeWithValue();
             RECONSUME_IN(DataState);
         }
         if (character == '<' || character == '=' || character == '`')
@@ -786,7 +797,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
 
     BEGIN_STATE(AttributeValueDoubleQuotedState)
         if (character == '"') {
-            m_token.endAttribute();
+            m_token.endAttributeWithValue();
             ADVANCE_PAST_NON_NEWLINE_TO(AfterAttributeValueQuotedState);
         }
         if (character == '&') {
@@ -795,7 +806,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
         }
         if (character == kEndOfFileMarker) {
             parseError();
-            m_token.endAttribute();
+            m_token.endAttributeWithValue();
             RECONSUME_IN(DataState);
         }
         m_token.appendToAttributeValue(character);
@@ -804,7 +815,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
 
     BEGIN_STATE(AttributeValueSingleQuotedState)
         if (character == '\'') {
-            m_token.endAttribute();
+            m_token.endAttributeWithValue();
             ADVANCE_PAST_NON_NEWLINE_TO(AfterAttributeValueQuotedState);
         }
         if (character == '&') {
@@ -813,7 +824,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
         }
         if (character == kEndOfFileMarker) {
             parseError();
-            m_token.endAttribute();
+            m_token.endAttributeWithValue();
             RECONSUME_IN(DataState);
         }
         m_token.appendToAttributeValue(character);
@@ -822,7 +833,7 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
 
     BEGIN_STATE(AttributeValueUnquotedState)
         if (isTokenizerWhitespace(character)) {
-            m_token.endAttribute();
+            m_token.endAttributeWithValue();
             ADVANCE_TO(BeforeAttributeNameState);
         }
         if (character == '&') {
@@ -830,12 +841,12 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
             ADVANCE_PAST_NON_NEWLINE_TO(CharacterReferenceInAttributeValueState);
         }
         if (character == '>') {
-            m_token.endAttribute();
+            m_token.endAttributeWithValue();
             return emitAndResumeInDataState(source);
         }
         if (character == kEndOfFileMarker) {
             parseError();
-            m_token.endAttribute();
+            m_token.endAttributeWithValue();
             RECONSUME_IN(DataState);
         }
         if (character == '"' || character == '\'' || character == '<' || character == '=' || character == '`')

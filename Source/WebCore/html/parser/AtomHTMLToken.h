@@ -207,13 +207,14 @@ inline void AtomHTMLToken::initializeAttributes(const HTMLToken::AttributeList& 
     addedAttributes.reserveInitialCapacity(size);
     m_attributes.reserveInitialCapacity(size);
     for (auto& attribute : attributes) {
-        if (attribute.name.isEmpty())
+        auto name = attribute.name();
+        if (!name.size())
             continue;
 
-        auto qualifiedName = HTMLNameCache::makeAttributeQualifiedName(attribute.name);
+        auto qualifiedName = HTMLNameCache::makeAttributeQualifiedName(name);
 
         if (addedAttributes.add(qualifiedName.localName()).isNewEntry)
-            m_attributes.uncheckedAppend(Attribute(WTFMove(qualifiedName), HTMLNameCache::makeAttributeValue(attribute.value)));
+            m_attributes.uncheckedAppend(Attribute(WTFMove(qualifiedName), HTMLNameCache::makeAttributeValue(attribute.value())));
         else
             m_hasDuplicateAttribute = true;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2014 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2022 Apple Inc. All Rights Reserved.
  * Copyright (C) 2009 Torch Mobile, Inc. http://www.torchmobile.com/
  * Copyright (C) 2010 Google Inc. All Rights Reserved.
  *
@@ -121,15 +121,11 @@ public:
         ASSERT(isMainThread());
         if (m_tagId >= TagId::Unknown)
             return;
-        
-        for (auto& attribute : attributes) {
-            AtomString attributeName(attribute.name);
-            AtomString attributeValue(attribute.value);
-            processAttribute(WTFMove(attributeName), WTFMove(attributeValue), pictureState);
-        }
-        
+
+        for (auto& attribute : attributes)
+            processAttribute(attribute.name(), attribute.value(), pictureState);
+
         if (m_tagId == TagId::Source && !pictureState.isEmpty() && !pictureState.last() && m_mediaMatched && m_typeMatched && !m_srcSetAttribute.isEmpty()) {
-            
             auto sourceSize = SizesAttributeParser(m_sizesAttribute, m_document).length();
             ImageCandidate imageCandidate = bestFitSourceForImageAttributes(m_deviceScaleFactor, AtomString { m_urlToLoad }, m_srcSetAttribute, sourceSize);
             if (!imageCandidate.isEmpty()) {
@@ -197,64 +193,69 @@ private:
             m_charset = attributeValue;
     }
 
-    void processAttribute(AtomString&& attributeName, AtomString&& attributeValue, const Vector<bool>& pictureState)
+    void processAttribute(Span<const UChar> name, Span<const UChar> value, const Vector<bool>& pictureState)
     {
         bool inPicture = !pictureState.isEmpty();
         bool alreadyMatchedSource = inPicture && pictureState.last();
 
         switch (m_tagId) {
-        case TagId::Img:
+        case TagId::Img: {
             if (inPicture && alreadyMatchedSource)
                 break;
+            AtomString attributeName { name };
             if (match(attributeName, srcsetAttr) && m_srcSetAttribute.isNull()) {
-                m_srcSetAttribute = WTFMove(attributeValue);
+                m_srcSetAttribute = AtomString { value };
                 break;
             }
             if (match(attributeName, sizesAttr) && m_sizesAttribute.isNull()) {
-                m_sizesAttribute = WTFMove(attributeValue);
+                m_sizesAttribute = AtomString { value };
                 break;
             }
             if (m_document.settings().lazyImageLoadingEnabled()) {
                 if (match(attributeName, loadingAttr) && m_lazyloadAttribute.isNull()) {
-                    m_lazyloadAttribute = WTFMove(attributeValue);
+                    m_lazyloadAttribute = AtomString { value };
                     break;
                 }
             }
-            processImageAndScriptAttribute(attributeName, attributeValue);
+            processImageAndScriptAttribute(attributeName, String { value });
             break;
-        case TagId::Source:
+        }
+        case TagId::Source: {
             if (inPicture && alreadyMatchedSource)
                 break;
+            AtomString attributeName { name };
             if (match(attributeName, srcsetAttr) && m_srcSetAttribute.isNull()) {
-                m_srcSetAttribute = WTFMove(attributeValue);
+                m_srcSetAttribute = AtomString { value };
                 break;
             }
             if (match(attributeName, sizesAttr) && m_sizesAttribute.isNull()) {
-                m_sizesAttribute = WTFMove(attributeValue);
+                m_sizesAttribute = AtomString { value };
                 break;
             }
             if (match(attributeName, mediaAttr) && m_mediaAttribute.isNull()) {
-                m_mediaAttribute = attributeValue;
-                auto mediaSet = MediaQuerySet::create(attributeValue, MediaQueryParserContext(m_document));
+                m_mediaAttribute = AtomString { value };
+                auto mediaSet = MediaQuerySet::create(m_mediaAttribute, MediaQueryParserContext(m_document));
                 RefPtr documentElement = m_document.documentElement();
                 LOG(MediaQueries, "HTMLPreloadScanner %p processAttribute evaluating media queries", this);
                 m_mediaMatched = MediaQueryEvaluator { m_document.printing() ? "print"_s : "screen"_s, m_document, documentElement ? documentElement->computedStyle() : nullptr }.evaluate(mediaSet.get());
             }
             if (match(attributeName, typeAttr) && m_typeAttribute.isNull()) {
                 // when multiple type attributes present: first value wins, ignore subsequent (to match ImageElement parser and Blink behaviours)
-                m_typeAttribute = WTFMove(attributeValue);
+                m_typeAttribute = AtomString { value };
                 m_typeMatched &= MIMETypeRegistry::isSupportedImageVideoOrSVGMIMEType(m_typeAttribute);
             }
             break;
-        case TagId::Script:
+        }
+        case TagId::Script: {
+            AtomString attributeName { name };
             if (match(attributeName, typeAttr)) {
-                m_moduleScript = equalLettersIgnoringASCIICase(attributeValue, "module"_s) ? PreloadRequest::ModuleScript::Yes : PreloadRequest::ModuleScript::No;
+                m_moduleScript = equalLettersIgnoringASCIICase(value.data(), value.size(), "module"_s) ? PreloadRequest::ModuleScript::Yes : PreloadRequest::ModuleScript::No;
                 break;
             } else if (match(attributeName, nonceAttr)) {
-                m_nonceAttribute = WTFMove(attributeValue);
+                m_nonceAttribute = AtomString { value };
                 break;
             } else if (match(attributeName, referrerpolicyAttr)) {
-                m_referrerPolicy = parseReferrerPolicy(attributeValue, ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString);
+                m_referrerPolicy = parseReferrerPolicy(StringView { value.data(), static_cast<unsigned>(value.size()) }, ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString);
                 break;
             } else if (match(attributeName, nomoduleAttr)) {
                 m_scriptIsNomodule = true;
@@ -263,44 +264,51 @@ private:
                 m_scriptIsAsync = true;
                 break;
             }
-            processImageAndScriptAttribute(attributeName, attributeValue);
+            processImageAndScriptAttribute(attributeName, String { value });
             break;
-        case TagId::Link:
+        }
+        case TagId::Link: {
+            AtomString attributeName { name };
             if (match(attributeName, hrefAttr))
-                setUrlToLoad(attributeValue);
+                setUrlToLoad(String { value });
             else if (match(attributeName, relAttr)) {
-                LinkRelAttribute parsedAttribute { m_document, attributeValue };
+                LinkRelAttribute parsedAttribute { m_document, String { value } };
                 m_linkIsStyleSheet = relAttributeIsStyleSheet(parsedAttribute);
                 m_linkIsPreload = parsedAttribute.isLinkPreload;
             } else if (match(attributeName, mediaAttr))
-                m_mediaAttribute = WTFMove(attributeValue);
+                m_mediaAttribute = AtomString { value };
             else if (match(attributeName, charsetAttr))
-                m_charset = WTFMove(attributeValue);
+                m_charset = String { value };
             else if (match(attributeName, crossoriginAttr))
-                m_crossOriginMode = stripLeadingAndTrailingHTMLSpaces(attributeValue);
+                m_crossOriginMode = stripLeadingAndTrailingHTMLSpaces(String { value });
             else if (match(attributeName, nonceAttr))
-                m_nonceAttribute = WTFMove(attributeValue);
+                m_nonceAttribute = AtomString { value };
             else if (match(attributeName, asAttr))
-                m_asAttribute = WTFMove(attributeValue);
+                m_asAttribute = AtomString { value };
             else if (match(attributeName, typeAttr))
-                m_typeAttribute = WTFMove(attributeValue);
+                m_typeAttribute = AtomString { value };
             else if (match(attributeName, referrerpolicyAttr))
-                m_referrerPolicy = parseReferrerPolicy(attributeValue, ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString);
+                m_referrerPolicy = parseReferrerPolicy(StringView { value.data(), static_cast<unsigned>(value.size()) }, ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString);
             break;
-        case TagId::Input:
+        }
+        case TagId::Input: {
+            AtomString attributeName { name };
             if (match(attributeName, srcAttr))
-                setUrlToLoad(attributeValue);
+                setUrlToLoad(String { value });
             else if (match(attributeName, typeAttr))
-                m_inputIsImage = equalLettersIgnoringASCIICase(attributeValue, "image"_s);
+                m_inputIsImage = equalLettersIgnoringASCIICase(value.data(), value.size(), "image"_s);
             break;
-        case TagId::Meta:
+        }
+        case TagId::Meta: {
+            AtomString attributeName { name };
             if (match(attributeName, contentAttr))
-                m_metaContent = WTFMove(attributeValue);
+                m_metaContent = String { value };
             else if (match(attributeName, nameAttr))
-                m_metaIsViewport = equalLettersIgnoringASCIICase(attributeValue, "viewport"_s);
+                m_metaIsViewport = equalLettersIgnoringASCIICase(value.data(), value.size(), "viewport"_s);
             else if (m_document.settings().disabledAdaptationsMetaTagEnabled() && match(attributeName, nameAttr))
-                m_metaIsDisabledAdaptations = equalLettersIgnoringASCIICase(attributeValue, "disabled-adaptations"_s);
+                m_metaIsDisabledAdaptations = equalLettersIgnoringASCIICase(value.data(), value.size(), "disabled-adaptations"_s);
             break;
+        }
         case TagId::Base:
         case TagId::Style:
         case TagId::Template:
@@ -478,13 +486,18 @@ void TokenPreloadScanner::scan(const HTMLToken& token, Vector<std::unique_ptr<Pr
 void TokenPreloadScanner::updatePredictedBaseURL(const HTMLToken& token, bool shouldRestrictBaseURLSchemes)
 {
     ASSERT(m_predictedBaseElementURL.isEmpty());
-    static constexpr UChar hrefAsUChar[] = { 'h', 'r', 'e', 'f' };
-    auto* hrefAttribute = findAttribute(token.attributes(), hrefAsUChar);
-    if (!hrefAttribute)
+    auto value = [&] {
+        for (auto& attribute : token.attributes()) {
+            if (equalLettersIgnoringASCIICase(attribute.name().data(), attribute.name().size(), "href"_s))
+                return attribute.value();
+        }
+        return Span<const UChar> { };
+    }();
+    if (!value.size())
         return;
-    URL temp { m_documentURL, stripLeadingAndTrailingHTMLSpaces(StringImpl::create8BitIfPossible(hrefAttribute->value)) };
-    if (!shouldRestrictBaseURLSchemes || SecurityPolicy::isBaseURLSchemeAllowed(temp))
-        m_predictedBaseElementURL = WTFMove(temp).isolatedCopy();
+    URL baseURL { m_documentURL, stripLeadingAndTrailingHTMLSpaces(StringImpl::create8BitIfPossible(value.data(), value.size())) };
+    if (!shouldRestrictBaseURLSchemes || SecurityPolicy::isBaseURLSchemeAllowed(baseURL))
+        m_predictedBaseElementURL = WTFMove(baseURL).isolatedCopy();
 }
 
 HTMLPreloadScanner::HTMLPreloadScanner(const HTMLParserOptions& options, const URL& documentURL, float deviceScaleFactor)

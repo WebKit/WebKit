@@ -74,12 +74,12 @@ static bool isCharsetSpecifyingNode(const Node& node)
     const HTMLElement& element = downcast<HTMLElement>(node);
     if (!element.hasTagName(HTMLNames::metaTag))
         return false;
-    HTMLMetaCharsetParser::AttributeList attributes;
+
+    Vector<Attribute> attributes;
     if (element.hasAttributes()) {
-        for (const Attribute& attribute : element.attributesIterator()) {
-            // FIXME: We should deal appropriately with the attribute if they have a namespace.
-            attributes.append({ attribute.name().toAtomString(), attribute.value() });
-        }
+        attributes.reserveInitialCapacity(element.attributeCount());
+        for (auto& attribute : element.attributesIterator())
+            attributes.uncheckedAppend(attribute);
     }
     return HTMLMetaCharsetParser::encodingFromMetaAttributes(attributes).isValid();
 }
