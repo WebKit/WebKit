@@ -3674,3 +3674,5 @@ webkit.org/b/242273 fast/events/ios/dragstart-on-image-by-long-pressing.html [ P
 http/tests/media/media-source/mediasource-rvfc.html [ Timeout ]
 
 webkit.org/b/242825 editing/selection/ios/hide-selection-in-tiny-contenteditable.html [ Pass Failure ]
+
+webkit.org/b/242840 fast/text/international/system-language/han-text-style.html [ Failure ]
