@@ -802,6 +802,7 @@
 		E3A32BC41FC830E2007D7E76 /* JSValueMalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3A32BC21FC830E2007D7E76 /* JSValueMalloc.cpp */; settings = {COMPILER_FLAGS = "-O3"; }; };
 		E3B8E41D24E7CE92003655D8 /* LineBreakIteratorPoolICU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3B8E41C24E7CE92003655D8 /* LineBreakIteratorPoolICU.cpp */; };
 		E3BE09A724A5854D009DF2B4 /* ICUHelpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3BE09A624A58545009DF2B4 /* ICUHelpers.cpp */; };
+		E3DA37E7287AD1A10066808F /* StringCommon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3DA37E6287AD1A10066808F /* StringCommon.cpp */; };
 		E4A0AD391A96245500536DF6 /* WorkQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A0AD371A96245500536DF6 /* WorkQueue.cpp */; };
 		E4A0AD3D1A96253C00536DF6 /* WorkQueueCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A0AD3C1A96253C00536DF6 /* WorkQueueCocoa.cpp */; };
 		EB2C86D9267B275D0052CB9A /* CPUTimePOSIX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EB2C86D8267B275C0052CB9A /* CPUTimePOSIX.cpp */; };
@@ -1682,6 +1683,7 @@
 		E3BE09A624A58545009DF2B4 /* ICUHelpers.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ICUHelpers.cpp; sourceTree = "<group>"; };
 		E3C583C826127ADD00C57568 /* RobinHoodHashMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RobinHoodHashMap.h; sourceTree = "<group>"; };
 		E3CF76902115D6BA0091DE48 /* CompactPointerTuple.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompactPointerTuple.h; sourceTree = "<group>"; };
+		E3DA37E6287AD1A10066808F /* StringCommon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringCommon.cpp; sourceTree = "<group>"; };
 		E3E0F04F26197157004640FC /* FixedVector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FixedVector.h; sourceTree = "<group>"; };
 		E3E158251EADA53C004A079D /* SystemFree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemFree.h; sourceTree = "<group>"; };
 		E3E64F0B22813428001E55B4 /* Nonmovable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Nonmovable.h; sourceTree = "<group>"; };
@@ -2414,6 +2416,7 @@
 				A8A47325151A825B004123FF /* StringBuilder.h */,
 				A8A47325151A825B004123EE /* StringBuilderInternals.h */,
 				E38D6E261F5522E300A75CC4 /* StringBuilderJSON.cpp */,
+				E3DA37E6287AD1A10066808F /* StringCommon.cpp */,
 				430B47871AAAAC1A001223DA /* StringCommon.h */,
 				A8A47326151A825B004123FF /* StringConcatenate.h */,
 				7CD4C26F1E2C82B900929470 /* StringConcatenateNumbers.h */,
@@ -2892,7 +2895,6 @@
 				DD3DC8D127A4BF8E007E5B61 /* CountingLock.h in Headers */,
 				DD3DC92627A4BF8E007E5B61 /* CPUTime.h in Headers */,
 				DDF3071127C086CC006A526F /* CrashReporter.h in Headers */,
-				93853DD328755A6C00FF4E2B /* EscapedFormsForJSON.h in Headers */,
 				DDF306DC27C08654006A526F /* CrashReporterClientSPI.h in Headers */,
 				DD3DC96D27A4BF8E007E5B61 /* CrossThreadCopier.h in Headers */,
 				DD3DC8F127A4BF8E007E5B61 /* CrossThreadQueue.h in Headers */,
@@ -2923,6 +2925,7 @@
 				DD3DC97827A4BF8E007E5B61 /* EnumClassOperatorOverloads.h in Headers */,
 				1CFD5D3D2851AB3E00A0E30B /* EnumeratedArray.h in Headers */,
 				DD3DC88C27A4BF8E007E5B61 /* EnumTraits.h in Headers */,
+				93853DD328755A6C00FF4E2B /* EscapedFormsForJSON.h in Headers */,
 				DD3DC87C27A4BF8E007E5B61 /* Expected.h in Headers */,
 				DD3DC8FB27A4BF8E007E5B61 /* ExperimentalFeatureNames.h in Headers */,
 				DD3DC97327A4BF8E007E5B61 /* ExportMacros.h in Headers */,
@@ -3099,6 +3102,7 @@
 				DD3DC98927A4BF8E007E5B61 /* RandomNumberSeed.h in Headers */,
 				DD3DC92027A4BF8E007E5B61 /* Range.h in Headers */,
 				DD3DC8EB27A4BF8E007E5B61 /* RangeSet.h in Headers */,
+				FE7ACFEF285DC2F9007FC8E9 /* RawHex.h in Headers */,
 				DD3DC8DC27A4BF8E007E5B61 /* RawPointer.h in Headers */,
 				DD3DC99027A4BF8E007E5B61 /* RawPtrTraits.h in Headers */,
 				DD3DC91427A4BF8E007E5B61 /* RawValueTraits.h in Headers */,
@@ -3226,7 +3230,6 @@
 				DD4901E627B4748A00D7E50D /* UniStdExtras.h in Headers */,
 				DD3DC97027A4BF8E007E5B61 /* UnsafePointer.h in Headers */,
 				DD3DC90327A4BF8E007E5B61 /* URL.h in Headers */,
-				FE7ACFEF285DC2F9007FC8E9 /* RawHex.h in Headers */,
 				DD3DC8ED27A4BF8E007E5B61 /* URLHash.h in Headers */,
 				DD3DC99A27A4BF8E007E5B61 /* URLHelpers.h in Headers */,
 				DD3DC8BD27A4BF8E007E5B61 /* URLParser.h in Headers */,
@@ -3696,6 +3699,7 @@
 				E38D6E271F5522E300A75CC4 /* StringBuilderJSON.cpp in Sources */,
 				A5BA15FB182435A600A82E69 /* StringCF.cpp in Sources */,
 				A5BA15F3182433A900A82E69 /* StringCocoa.mm in Sources */,
+				E3DA37E7287AD1A10066808F /* StringCommon.cpp in Sources */,
 				A8A47440151A825B004123FF /* StringImpl.cpp in Sources */,
 				A5BA15FC182435A600A82E69 /* StringImplCF.cpp in Sources */,
 				A5BA15F51824348000A82E69 /* StringImplCocoa.mm in Sources */,

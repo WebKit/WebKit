@@ -250,12 +250,24 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncIncludes(VM& vm, JSGl
         }
     }
 
-    if constexpr (ViewClass::elementSize == 1 && ViewClass::Adaptor::isInteger) {
-        if (index < length) {
-            auto* result = static_cast<typename ViewClass::ElementType*>(memchr(array + index, targetOption.value(), length - index));
-            return JSValue::encode(jsBoolean(!!result));
+    if constexpr (ViewClass::Adaptor::isInteger) {
+        if constexpr (ViewClass::elementSize == 1) {
+            if (index < length) {
+                auto* result = static_cast<typename ViewClass::ElementType*>(memchr(array + index, targetOption.value(), length - index));
+                return JSValue::encode(jsBoolean(!!result));
+            }
+            return JSValue::encode(jsBoolean(false));
         }
-        return JSValue::encode(jsBoolean(false));
+
+#if HAVE(MEMCHR16)
+        if constexpr (ViewClass::elementSize == 2) {
+            if (index < length) {
+                auto* result = bitwise_cast<typename ViewClass::ElementType*>(WTF::memchr16(bitwise_cast<const uint16_t*>(array + index), targetOption.value(), length - index));
+                return JSValue::encode(jsBoolean(!!result));
+            }
+            return JSValue::encode(jsBoolean(false));
+        }
+#endif
     }
 
     for (; index < length; ++index) {
@@ -295,13 +307,26 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncIndexOf(VM& vm, JSGlo
     scope.assertNoExceptionExceptTermination();
     RELEASE_ASSERT(!thisObject->isDetached());
 
-    if constexpr (ViewClass::elementSize == 1 && ViewClass::Adaptor::isInteger) {
-        if (index < length) {
-            auto* result = static_cast<typename ViewClass::ElementType*>(memchr(array + index, targetOption.value(), length - index));
-            if (result)
-                return JSValue::encode(jsNumber(result - array));
+    if constexpr (ViewClass::Adaptor::isInteger) {
+        if constexpr (ViewClass::elementSize == 1) {
+            if (index < length) {
+                auto* result = static_cast<typename ViewClass::ElementType*>(memchr(array + index, targetOption.value(), length - index));
+                if (result)
+                    return JSValue::encode(jsNumber(result - array));
+            }
+            return JSValue::encode(jsNumber(-1));
         }
-        return JSValue::encode(jsNumber(-1));
+
+#if HAVE(MEMCHR16)
+        if constexpr (ViewClass::elementSize == 2) {
+            if (index < length) {
+                auto* result = bitwise_cast<typename ViewClass::ElementType*>(WTF::memchr16(bitwise_cast<const uint16_t*>(array + index), targetOption.value(), length - index));
+                if (result)
+                    return JSValue::encode(jsNumber(result - array));
+            }
+            return JSValue::encode(jsNumber(-1));
+        }
+#endif
     }
 
     for (; index < length; ++index) {

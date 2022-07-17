@@ -437,6 +437,40 @@ ALWAYS_INLINE static size_t findInner(const SearchCharacterType* searchCharacter
     return index + i;
 }
 
+#if HAVE(MEMCHR16)
+WTF_EXPORT_PRIVATE const uint16_t* memchr16AlignedImpl(const uint16_t* pointer, uint16_t character, size_t length);
+
+ALWAYS_INLINE const uint16_t* memchr16(const uint16_t* pointer, uint16_t character, size_t length)
+{
+    // We take `size_t` length instead of `unsigned` because,
+    // 1. It is aligned to memchr.
+    // 2. It allows us to use memchr16 for 4GB~ vectors, which can be used in JSC ArrayBuffer (4GB wasm memory).
+
+    // If the pointer is unaligned to 16bit access, then SIMD implementation does not work. But ARM64 allows unaligned access.
+    // Fallback to a simple implementation. We also use it for smaller memory where length is less than 16.
+    constexpr unsigned memchrThresholdLength = 32;
+    static_assert(!(memchrThresholdLength % 8), "It should be 16byte aligned to make memchr16AlignedImpl simpler");
+
+    // For first check `threshold - (unaligned >> 1)` characters, we use normal loop.
+    // This can (1) align pointer to 16byte size so that SIMD loop gets simpler and (2) handle cases
+    // having a character in the beginning of the string efficiently.
+    uintptr_t unaligned = (reinterpret_cast<uintptr_t>(pointer) & 0xf);
+
+    size_t index = 0;
+    size_t runway = std::min<size_t>(memchrThresholdLength - (unaligned >> 1), length);
+    for (; index < runway; ++index) {
+        if (pointer[index] == character)
+            return pointer + index;
+    }
+    if (runway == length)
+        return nullptr;
+
+    ASSERT(index < length);
+    return memchr16AlignedImpl(pointer + index, character, length - index);
+}
+
+#endif
+
 template<typename CharacterType, std::enable_if_t<std::is_integral_v<CharacterType>>* = nullptr>
 inline size_t find(const CharacterType* characters, unsigned length, CharacterType matchCharacter, unsigned index = 0)
 {
@@ -451,6 +485,18 @@ inline size_t find(const CharacterType* characters, unsigned length, CharacterTy
             return notFound;
         }
     }
+
+#if HAVE(MEMCHR16)
+    if constexpr (sizeof(CharacterType) == 2) {
+        if (index >= length)
+            return notFound;
+        auto* result = reinterpret_cast<const CharacterType*>(memchr16(bitwise_cast<const uint16_t*>(characters + index), matchCharacter, length - index));
+        ASSERT(!result || (result - characters) >= index);
+        if (result)
+            return result - characters;
+        return notFound;
+    }
+#endif
 
     while (index < length) {
         if (characters[index] == matchCharacter)
