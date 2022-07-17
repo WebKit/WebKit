@@ -45,6 +45,7 @@
 #include "RenderFlexibleBox.h"
 #include "RenderSlider.h"
 #include "RenderTheme.h"
+#include "ScriptDisallowedScope.h"
 #include "ShadowPseudoIds.h"
 #include "ShadowRoot.h"
 #include "StepRange.h"
@@ -173,6 +174,7 @@ void RenderSliderContainer::layout()
 Ref<SliderThumbElement> SliderThumbElement::create(Document& document)
 {
     auto element = adoptRef(*new SliderThumbElement(document));
+    ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
     element->setPseudo(ShadowPseudoIds::webkitSliderThumb());
     return element;
 }
@@ -586,6 +588,7 @@ inline SliderContainerElement::SliderContainerElement(Document& document)
 Ref<SliderContainerElement> SliderContainerElement::create(Document& document)
 {
     auto element = adoptRef(*new SliderContainerElement(document));
+    ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
     element->setPseudo(ShadowPseudoIds::webkitSliderContainer());
     return element;
 }

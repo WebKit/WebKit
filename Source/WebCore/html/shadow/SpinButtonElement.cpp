@@ -36,6 +36,7 @@
 #include "Page.h"
 #include "RenderBox.h"
 #include "RenderTheme.h"
+#include "ScriptDisallowedScope.h"
 #include "ScrollbarTheme.h"
 #include "ShadowPseudoIds.h"
 #include "WheelEvent.h"
@@ -62,6 +63,7 @@ inline SpinButtonElement::SpinButtonElement(Document& document, SpinButtonOwner&
 Ref<SpinButtonElement> SpinButtonElement::create(Document& document, SpinButtonOwner& spinButtonOwner)
 {
     auto element = adoptRef(*new SpinButtonElement(document, spinButtonOwner));
+    ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
     element->setPseudo(ShadowPseudoIds::webkitInnerSpinButton());
     return element;
 }

@@ -42,6 +42,7 @@
 #include "RenderTextControl.h"
 #include "RenderView.h"
 #include "ScriptController.h"
+#include "ScriptDisallowedScope.h"
 #include "ShadowPseudoIds.h"
 #include "ShadowRoot.h"
 #include "StyleResolver.h"
@@ -145,6 +146,7 @@ Ref<TextControlInnerTextElement> TextControlInnerTextElement::create(Document& d
 {
     auto result = adoptRef(*new TextControlInnerTextElement(document));
     constexpr bool initialization = true;
+    ScriptDisallowedScope::EventAllowedScope eventAllowedScope { result };
     result->updateInnerTextElementEditabilityImpl(isEditable, initialization);
     return result;
 }
@@ -204,6 +206,7 @@ inline TextControlPlaceholderElement::TextControlPlaceholderElement(Document& do
 Ref<TextControlPlaceholderElement> TextControlPlaceholderElement::create(Document& document)
 {
     auto element = adoptRef(*new TextControlPlaceholderElement(document));
+    ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
     element->setPseudo(ShadowPseudoIds::placeholder());
     return element;
 }
@@ -296,6 +299,7 @@ Ref<SearchFieldCancelButtonElement> SearchFieldCancelButtonElement::create(Docum
 {
     auto element = adoptRef(*new SearchFieldCancelButtonElement(document));
 
+    ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
     element->setPseudo(ShadowPseudoIds::webkitSearchCancelButton());
 #if !PLATFORM(IOS_FAMILY)
     element->setAttributeWithoutSynchronization(aria_labelAttr, AtomString { AXSearchFieldCancelButtonText() });

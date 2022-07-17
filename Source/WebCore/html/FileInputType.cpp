@@ -41,6 +41,7 @@
 #include "LocalizedStrings.h"
 #include "MIMETypeRegistry.h"
 #include "RenderFileUploadControl.h"
+#include "ScriptDisallowedScope.h"
 #include "Settings.h"
 #include "ShadowPseudoIds.h"
 #include "ShadowRoot.h"
@@ -95,6 +96,7 @@ Ref<UploadButtonElement> UploadButtonElement::createForMultiple(Document& docume
 Ref<UploadButtonElement> UploadButtonElement::createInternal(Document& document, const String& value)
 {
     auto button = adoptRef(*new UploadButtonElement(document));
+    ScriptDisallowedScope::EventAllowedScope eventAllowedScope { button };
     button->setType(HTMLNames::buttonTag->localName());
     button->setPseudo(ShadowPseudoIds::fileSelectorButton());
     button->setValue(value);
@@ -264,6 +266,7 @@ void FileInputType::createShadowSubtree()
     ASSERT(element()->shadowRoot());
 
     auto button = element()->multiple() ? UploadButtonElement::createForMultiple(element()->document()) : UploadButtonElement::create(element()->document());
+    ScriptDisallowedScope::EventAllowedScope eventAllowedScope { *element()->userAgentShadowRoot() };
     element()->userAgentShadowRoot()->appendChild(ContainerNode::ChildChange::Source::Parser, button);
     disabledStateChanged();
 }

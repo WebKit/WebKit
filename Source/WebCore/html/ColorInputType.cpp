@@ -49,6 +49,7 @@
 #include "InputTypeNames.h"
 #include "RenderView.h"
 #include "ScopedEventQueue.h"
+#include "ScriptDisallowedScope.h"
 #include "ShadowPseudoIds.h"
 #include "ShadowRoot.h"
 #include "UserGestureIndicator.h"
@@ -145,11 +146,14 @@ void ColorInputType::createShadowSubtree()
 
     Document& document = element()->document();
     auto wrapperElement = HTMLDivElement::create(document);
-    wrapperElement->setPseudo(ShadowPseudoIds::webkitColorSwatchWrapper());
     auto colorSwatch = HTMLDivElement::create(document);
-    colorSwatch->setPseudo(ShadowPseudoIds::webkitColorSwatch());
-    wrapperElement->appendChild(ContainerNode::ChildChange::Source::Parser, colorSwatch);
+
+    ScriptDisallowedScope::EventAllowedScope eventAllowedScope { *element()->userAgentShadowRoot() };
     element()->userAgentShadowRoot()->appendChild(ContainerNode::ChildChange::Source::Parser, wrapperElement);
+
+    wrapperElement->appendChild(ContainerNode::ChildChange::Source::Parser, colorSwatch);
+    wrapperElement->setPseudo(ShadowPseudoIds::webkitColorSwatchWrapper());
+    colorSwatch->setPseudo(ShadowPseudoIds::webkitColorSwatch());
 
     updateColorSwatch();
 }

@@ -38,6 +38,7 @@
 #include "Event.h"
 #include "HTMLNames.h"
 #include "PlatformLocale.h"
+#include "ScriptDisallowedScope.h"
 #include "ShadowPseudoIds.h"
 #include "Text.h"
 #include <wtf/IsoMallocInlines.h>
@@ -172,6 +173,7 @@ void DateTimeEditBuilder::visitLiteral(String&& text)
     ASSERT(text.length());
 
     auto element = HTMLDivElement::create(m_editElement.document());
+    ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
     element->setPseudo(ShadowPseudoIds::webkitDatetimeEditText());
 
     // If the literal begins/ends with a space, the gap between two fields will appear
@@ -236,6 +238,7 @@ DateTimeFieldElement* DateTimeEditElement::focusedFieldElement() const
 Ref<DateTimeEditElement> DateTimeEditElement::create(Document& document, EditControlOwner& editControlOwner)
 {
     auto element = adoptRef(*new DateTimeEditElement(document, editControlOwner));
+    ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
     element->setPseudo(ShadowPseudoIds::webkitDatetimeEdit());
     return element;
 }
@@ -244,8 +247,8 @@ void DateTimeEditElement::layout(const LayoutParameters& layoutParameters)
 {
     if (!firstChild()) {
         auto element = HTMLDivElement::create(document());
-        element->setPseudo(ShadowPseudoIds::webkitDatetimeEditFieldsWrapper());
         appendChild(element);
+        element->setPseudo(ShadowPseudoIds::webkitDatetimeEditFieldsWrapper());
     }
 
     Element& fieldsWrapper = fieldsWrapperElement();

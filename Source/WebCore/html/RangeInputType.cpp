@@ -47,6 +47,7 @@
 #include "PlatformMouseEvent.h"
 #include "RenderSlider.h"
 #include "ScopedEventQueue.h"
+#include "ScriptDisallowedScope.h"
 #include "ShadowPseudoIds.h"
 #include "ShadowRoot.h"
 #include "SliderThumbElement.h"
@@ -259,12 +260,16 @@ void RangeInputType::createShadowSubtree()
     ASSERT(element()->userAgentShadowRoot());
 
     Document& document = element()->document();
+
+    ScriptDisallowedScope::EventAllowedScope eventAllowedScope { *element()->userAgentShadowRoot() };
+
     auto track = HTMLDivElement::create(document);
+    auto container = SliderContainerElement::create(document);
+    element()->userAgentShadowRoot()->appendChild(ContainerNode::ChildChange::Source::Parser, container);
+    container->appendChild(ContainerNode::ChildChange::Source::Parser, track);
+
     track->setPseudo(ShadowPseudoIds::webkitSliderRunnableTrack());
     track->appendChild(ContainerNode::ChildChange::Source::Parser, SliderThumbElement::create(document));
-    auto container = SliderContainerElement::create(document);
-    container->appendChild(ContainerNode::ChildChange::Source::Parser, track);
-    element()->userAgentShadowRoot()->appendChild(ContainerNode::ChildChange::Source::Parser, container);
 }
 
 HTMLElement* RangeInputType::sliderTrackElement() const

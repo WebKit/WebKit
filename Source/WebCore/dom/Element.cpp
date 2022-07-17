@@ -578,6 +578,7 @@ Ref<Node> Element::cloneNodeInternal(Document& targetDocument, CloningOperation 
 Ref<Element> Element::cloneElementWithChildren(Document& targetDocument)
 {
     Ref<Element> clone = cloneElementWithoutChildren(targetDocument);
+    ScriptDisallowedScope::EventAllowedScope eventAllowedScope { clone };
     cloneChildNodes(clone);
     return clone;
 }
