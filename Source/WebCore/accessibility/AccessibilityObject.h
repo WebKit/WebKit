@@ -115,6 +115,9 @@ public:
     bool isAccessibilitySVGElement() const override { return false; }
     bool isAccessibilityTableInstance() const override { return false; }
     bool isAccessibilityTableColumnInstance() const override { return false; }
+    bool isAccessibilityARIAGridInstance() const override { return false; }
+    bool isAccessibilityARIAGridRowInstance() const override { return false; }
+    bool isAccessibilityARIAGridCellInstance() const override { return false; }
     bool isAccessibilityProgressIndicatorInstance() const override { return false; }
     bool isAccessibilityListBoxInstance() const override { return false; }
     bool isAXIsolatedObjectInstance() const override { return false; }

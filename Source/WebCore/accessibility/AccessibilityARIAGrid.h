@@ -45,6 +45,7 @@ public:
     
 private:
     explicit AccessibilityARIAGrid(RenderObject*);
+    bool isAccessibilityARIAGridInstance() const override { return true; }
 
     // ARIA treegrids and grids support selected rows.
     bool supportsSelectedRows() const override { return true; }
@@ -57,3 +58,5 @@ private:
 };
 
 } // namespace WebCore 
+
+SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityARIAGrid, isAccessibilityARIAGridInstance())

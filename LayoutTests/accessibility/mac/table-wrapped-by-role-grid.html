@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<!-- This is an incorrect use of role='grid'. The point of this test is to check that we recover appropriately from the removal or change of the role attribute in such a case. -->
+<div id="table-wrapper" role="grid">
+    <table id="table" role="table">
+        <tr><td>1</td><td>2</td></tr>
+        <tr><td>3</td><td>4</td></tr>
+    </table>
+</div>
+
+<script>
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+        let output = "This tests that we recover appropriately from an ARIA misuse, namely, wrapping a <table> with a <div role='grid'> and then removing the role attribute for the wrapper.\n\n";
+
+        output += "#The wrapper is initially exposed as a table, hiding the actual table and stealing its rows and cells.\n";
+        var wrapper = accessibilityController.accessibleElementById("table-wrapper");
+        output += expect("wrapper.role", "'AXRole: AXTable'");
+        output += expect("wrapper.columnCount", "2");
+        output += expect("wrapper.rowCount", "2");
+        output += expect("wrapper.cellForColumnAndRow(0, 0).role", "'AXRole: AXCell'");
+        output += expect("wrapper.cellForColumnAndRow(0, 1).childAtIndex(0).stringValue", "'AXValue: 3'");
+
+        var table = accessibilityController.accessibleElementById("table");
+        output += expect("table", "null");
+
+        output += "#Remove the role attribute from the wrapper, and the table should become exposed and functional, at the same time that the wrapper is no longer a table.\n";
+        document.getElementById("table-wrapper").removeAttribute("role");
+        setTimeout(async () => {
+            await waitFor(() => {
+                table = accessibilityController.accessibleElementById("table");
+                return table;
+            });
+            output += expect("wrapper.role", "'AXRole: '");
+            output += expect("wrapper.columnCount", "0");
+            output += expect("wrapper.rowCount", "0");
+            output += expect("wrapper.cellForColumnAndRow(0, 0)", "null");
+
+            output += expect("table.role", "'AXRole: AXTable'");
+            output += expect("table.columnCount", "2");
+            output += expect("table.rowCount", "2");
+            output += expect("table.cellForColumnAndRow(0, 0).role", "'AXRole: AXCell'");
+            output += expect("table.cellForColumnAndRow(0, 1).childAtIndex(0).stringValue", "'AXValue: 3'");
+
+            output += "#Set the role attribute for the wrapper to an appropriate role like 'group' and both the wrapper and the table should now be exposed accordingly.\n";
+            document.getElementById("table-wrapper").setAttribute("role", "group");
+            // Refresh the wrapper object because the initial object has become detached after the role changed.
+            await waitFor(() => {
+                wrapper = accessibilityController.accessibleElementById("table-wrapper");
+                return wrapper;
+            });
+            output += expect("wrapper.role", "'AXRole: AXGroup'");
+
+            output += expect("table.role", "'AXRole: AXTable'");
+            output += expect("table.columnCount", "2");
+            output += expect("table.rowCount", "2");
+            output += expect("table.cellForColumnAndRow(0, 0).role", "'AXRole: AXCell'");
+            output += expect("table.cellForColumnAndRow(0, 1).childAtIndex(0).stringValue", "'AXValue: 3'");
+
+            debug(output);
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>

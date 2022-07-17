@@ -39,6 +39,7 @@ public:
 
 private:
     explicit AccessibilityARIAGridCell(RenderObject*);
+    bool isAccessibilityARIAGridCellInstance() const override { return true; }
 
     // Returns the start location and row span of the cell.
     std::pair<unsigned, unsigned> rowIndexRange() const override;
@@ -50,5 +51,7 @@ private:
     unsigned axRowSpanWithRowIndex(unsigned index) const;
     String readOnlyValue() const override;
 }; 
-    
+
 } // namespace WebCore 
+
+SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityARIAGridCell, isAccessibilityARIAGridCellInstance())
