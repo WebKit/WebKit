@@ -77,11 +77,13 @@ public:
     std::optional<LayoutUnit> verticalPadding() const;
     std::optional<LayoutUnit> horizontalPadding() const;
 
-    LayoutUnit borderAndPaddingStart() const { return borderStart() + paddingStart().value_or(0); }
-    LayoutUnit borderAndPaddingEnd() const { return borderEnd() + paddingEnd().value_or(0); }
+    LayoutUnit borderAndPaddingStart() const { return borderStart() + paddingStart().value_or(0_lu); }
+    LayoutUnit borderAndPaddingEnd() const { return borderEnd() + paddingEnd().value_or(0_lu); }
+    LayoutUnit horizontalBorderAndPadding() const { return horizontalBorder() + horizontalPadding().value_or(0_lu); }
+    LayoutUnit verticalBorderAndPadding() const { return verticalBorder() + verticalPadding().value_or(0_lu); }
 
-    LayoutUnit contentBoxTop() const { return paddingBoxTop() + paddingBefore().value_or(0); }
-    LayoutUnit contentBoxLeft() const { return paddingBoxLeft() + paddingStart().value_or(0); }
+    LayoutUnit contentBoxTop() const { return paddingBoxTop() + paddingBefore().value_or(0_lu); }
+    LayoutUnit contentBoxLeft() const { return paddingBoxLeft() + paddingStart().value_or(0_lu); }
     LayoutUnit contentBoxBottom() const { return contentBoxTop() + contentBoxHeight(); }
     LayoutUnit contentBoxRight() const { return contentBoxLeft() + contentBoxWidth(); }
     LayoutUnit contentBoxHeight() const;
@@ -91,16 +93,16 @@ public:
     LayoutUnit paddingBoxLeft() const { return borderStart(); }
     LayoutUnit paddingBoxBottom() const { return paddingBoxTop() + paddingBoxHeight(); }
     LayoutUnit paddingBoxRight() const { return paddingBoxLeft() + paddingBoxWidth(); }
-    LayoutUnit paddingBoxHeight() const { return paddingBefore().value_or(0) + contentBoxHeight() + paddingAfter().value_or(0); }
-    LayoutUnit paddingBoxWidth() const { return paddingStart().value_or(0) + contentBoxWidth() + paddingEnd().value_or(0); }
+    LayoutUnit paddingBoxHeight() const { return paddingBefore().value_or(0_lu) + contentBoxHeight() + paddingAfter().value_or(0_lu); }
+    LayoutUnit paddingBoxWidth() const { return paddingStart().value_or(0_lu) + contentBoxWidth() + paddingEnd().value_or(0_lu); }
 
     LayoutUnit borderBoxHeight() const { return borderBefore() + paddingBoxHeight() + verticalSpaceForScrollbar() + borderAfter(); }
     LayoutUnit borderBoxWidth() const { return borderStart() + paddingBoxWidth() + horizontalSpaceForScrollbar() + borderEnd(); }
     LayoutUnit marginBoxHeight() const { return marginBefore() + borderBoxHeight() + marginAfter(); }
     LayoutUnit marginBoxWidth() const { return marginStart() + borderBoxWidth() + marginEnd(); }
 
-    LayoutUnit verticalMarginBorderAndPadding() const { return marginBefore() + verticalBorder() + verticalPadding().value_or(0) + marginAfter(); }
-    LayoutUnit horizontalMarginBorderAndPadding() const { return marginStart() + horizontalBorder() + horizontalPadding().value_or(0) + marginEnd(); }
+    LayoutUnit verticalMarginBorderAndPadding() const { return marginBefore() + verticalBorder() + verticalPadding().value_or(0_lu) + marginAfter(); }
+    LayoutUnit horizontalMarginBorderAndPadding() const { return marginStart() + horizontalBorder() + horizontalPadding().value_or(0_lu) + marginEnd(); }
 
     LayoutUnit verticalSpaceForScrollbar() const { return m_verticalSpaceForScrollbar; }
     LayoutUnit horizontalSpaceForScrollbar() const { return m_horizontalSpaceForScrollbar; }
@@ -380,7 +382,7 @@ inline std::optional<LayoutUnit> BoxGeometry::verticalPadding() const
     auto paddingBottom = this->paddingAfter();
     if (!paddingTop && !paddingBottom)
         return { };
-    return paddingTop.value_or(0) + paddingBottom.value_or(0);
+    return paddingTop.value_or(0_lu) + paddingBottom.value_or(0_lu);
 }
 
 inline std::optional<LayoutUnit> BoxGeometry::horizontalPadding() const
@@ -389,7 +391,7 @@ inline std::optional<LayoutUnit> BoxGeometry::horizontalPadding() const
     auto paddingRight = this->paddingEnd();
     if (!paddingLeft && !paddingRight)
         return { };
-    return paddingLeft.value_or(0) + paddingRight.value_or(0);
+    return paddingLeft.value_or(0_lu) + paddingRight.value_or(0_lu);
 }
 
 inline LayoutUnit BoxGeometry::borderBefore() const

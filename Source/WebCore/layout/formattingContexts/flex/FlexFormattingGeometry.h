@@ -43,7 +43,7 @@ public:
 
     IntrinsicWidthConstraints intrinsicWidthConstraints(const ContainerBox&) const;
 
-    static bool isMainAxisParallelWithInlineAxes(const ContainerBox& flexBox);
+    static bool isMainAxisParallelWithInlineAxis(const ContainerBox& flexBox);
     static bool isReversedToContentDirection(const ContainerBox& flexBox);
 
 private:

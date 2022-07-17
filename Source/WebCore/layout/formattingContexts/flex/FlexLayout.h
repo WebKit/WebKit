@@ -78,7 +78,19 @@ public:
         };
         HorizontalSpace horizontalSpace;
     };
-    using LogicalFlexItemRects = Vector<FlexRect>;
+    struct FlexItemRect {
+        FlexRect& operator()() { return marginRect; }
+
+        FlexRect marginRect;
+        struct AutoMargin {
+            std::optional<LayoutUnit> left;
+            std::optional<LayoutUnit> right;
+            std::optional<LayoutUnit> top;
+            std::optional<LayoutUnit> bottom;
+        };
+        AutoMargin autoMargin;
+    };
+    using LogicalFlexItemRects = Vector<FlexItemRect>;
     LogicalFlexItemRects layout(const LogicalConstraints&, const LogicalFlexItems&);
 
 private:
@@ -89,6 +101,7 @@ private:
     void computeLogicalHeightForFlexItems(const LogicalFlexItems&, const LineRange&, LayoutUnit availableSpace, LogicalFlexItemRects&);
     void alignFlexItems(const LogicalFlexItems&, const LineRange&, VerticalConstraints, LogicalFlexItemRects&);
     void justifyFlexItems(const LogicalFlexItems&, const LineRange&, LayoutUnit availableSpace, LogicalFlexItemRects&);
+    void distributeMarginAutoInMainAxis(const LogicalFlexItems&, const LineRange&, LayoutUnit availableSpace, LogicalFlexItemRects&);
 
     using WrappingPositions = Vector<size_t>;
     WrappingPositions computeWrappingPositions(const LogicalFlexItems&, LayoutUnit availableSpace) const;

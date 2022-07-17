@@ -173,7 +173,7 @@ void FlexLayout::computeLogicalWidthForShrinkingFlexItems(const LogicalFlexItems
         for (size_t index = 0; index < shrinkingItems.size(); ++index) {
             auto& shirinkingFlex = shrinkingItems[index];
             auto flexedSize = LayoutUnit { shirinkingFlex.flexItem.flexBasis() - (shirinkingFlex.flexShrink * flexShrinkBase) };
-            flexRects[lineRange.begin() + index].setWidth(std::max(shirinkingFlex.flexItem.minimumSize(), flexedSize));
+            flexRects[lineRange.begin() + index]().setWidth(std::max(shirinkingFlex.flexItem.minimumSize(), flexedSize));
         }
     };
     computeLogicalWidth();
@@ -245,11 +245,11 @@ void FlexLayout::computeLogicalWidthForStretchingFlexItems(const LogicalFlexItem
         for (size_t index = 0; index < resolvedItems.size(); ++index) {
             auto& resolvedFlexItem = resolvedItems[index];
             if (resolvedFlexItem.frozenSize) {
-                flexRects[lineRange.begin() + index].setWidth(*resolvedFlexItem.frozenSize);
+                flexRects[lineRange.begin() + index]().setWidth(*resolvedFlexItem.frozenSize);
                 continue;
             }
             auto flexedSize = LayoutUnit { resolvedFlexItem.logicalFlexItem.flexBasis() + (resolvedFlexItem.flexGrow * flexGrowBase) };
-            flexRects[lineRange.begin() + index].setWidth(flexedSize);
+            flexRects[lineRange.begin() + index]().setWidth(flexedSize);
         }
     };
     computeLogicalWidth();
@@ -269,7 +269,7 @@ void FlexLayout::computeLogicalWidthForFlexItems(const LogicalFlexItems& flexIte
         computeLogicalWidthForShrinkingFlexItems(flexItems, lineRange, availableSpace, flexRects);
     else {
         for (size_t index = lineRange.begin(); index < lineRange.end(); ++index)
-            flexRects[index].setWidth(flexItems[index].width());
+            flexRects[index]().setWidth(flexItems[index].width());
     }
 }
 
@@ -280,7 +280,7 @@ void FlexLayout::computeLogicalHeightForFlexItems(const LogicalFlexItems& flexIt
     for (size_t index = lineRange.begin(); index < lineRange.end(); ++index) {
         auto& flexItem = flexItems[index];
         if (!flexItem.isHeightAuto()) {
-            flexRects[index].setHeight(flexItem.height());
+            flexRects[index]().setHeight(flexItem.height());
             continue;
         }
         auto& flexItemAlignSelf = flexItem.style().alignSelf();
@@ -288,19 +288,71 @@ void FlexLayout::computeLogicalHeightForFlexItems(const LogicalFlexItems& flexIt
         switch (alignValue.position()) {
         case ItemPosition::Normal:
         case ItemPosition::Stretch:
-            flexRects[index].setHeight(availableSpace);
+            flexRects[index]().setHeight(availableSpace);
             break;
         case ItemPosition::Center:
         case ItemPosition::Start:
         case ItemPosition::FlexStart:
         case ItemPosition::End:
         case ItemPosition::FlexEnd:
-            flexRects[index].setHeight(flexItem.height());
+            flexRects[index]().setHeight(flexItem.height());
             break;
         default:
             ASSERT_NOT_IMPLEMENTED_YET();
             break;
         }
+    }
+}
+
+void FlexLayout::distributeMarginAutoInMainAxis(const LogicalFlexItems& flexItems, const LineRange& lineRange, LayoutUnit availableSpace, LogicalFlexItemRects& flexRects)
+{
+    if (availableSpace <= 0)
+        return;
+
+    struct AutoMargin {
+        size_t flexIndex { 0 };
+        bool hasAutoMarginLeft { false };
+        bool hasAutoMarginRight { false };
+    };
+    Vector<AutoMargin> boxesWithMarginAuto;
+    boxesWithMarginAuto.reserveInitialCapacity(flexItems.size());
+
+    auto logicalWidth = LayoutUnit { };
+    size_t autoMarginCount = 0;
+    auto flexDirectionIsInlineAxis = FlexFormattingGeometry::isMainAxisParallelWithInlineAxis(flexBox());
+    for (size_t index = lineRange.begin(); index < lineRange.end(); ++index) {
+        auto& flexItem = flexItems[index];
+        auto& flexItemStyle = flexItem.style();
+
+        auto hasAutoMarginLeft = flexDirectionIsInlineAxis ? flexItemStyle.marginStart().isAuto() : flexItemStyle.marginBefore().isAuto();
+        auto hasAutoMarginRight = flexDirectionIsInlineAxis ? flexItemStyle.marginEnd().isAuto() : flexItemStyle.marginAfter().isAuto();
+        if (hasAutoMarginLeft || hasAutoMarginRight) {
+            if (hasAutoMarginLeft)
+                ++autoMarginCount;
+            if (hasAutoMarginRight)
+                ++autoMarginCount;
+            boxesWithMarginAuto.append({ index, hasAutoMarginLeft, hasAutoMarginRight });
+        }
+        logicalWidth += flexRects[index]().width();
+    }
+
+    if (!autoMarginCount) {
+        ASSERT(boxesWithMarginAuto.isEmpty());
+        return;
+    }
+
+    auto extraMargin = std::max(0_lu, availableSpace - logicalWidth) / autoMarginCount;
+    if (!extraMargin)
+        return;
+
+    for (auto autoMargin : boxesWithMarginAuto) {
+        auto& flexRect = flexRects[autoMargin.flexIndex];
+
+        if (autoMargin.hasAutoMarginLeft)
+            flexRect.autoMargin.left = extraMargin;
+        if (autoMargin.hasAutoMarginRight)
+            flexRect.autoMargin.right = extraMargin;
+        flexRect.marginRect.setWidth(flexRect.marginRect.width() + flexRect.autoMargin.left.value_or(0_lu) + flexRect.autoMargin.right.value_or(0_lu));
     }
 }
 
@@ -318,18 +370,18 @@ void FlexLayout::alignFlexItems(const LogicalFlexItems& flexItems, const LineRan
         switch (alignValue.position()) {
         case ItemPosition::Normal:
         case ItemPosition::Stretch:
-            flexRects[index].setTop(lineTop);
+            flexRects[index]().setTop(lineTop);
             break;
         case ItemPosition::Center:
-            flexRects[index].setTop({ lineTop + (availableSpace / 2 -  flexItem.height() / 2) });
+            flexRects[index]().setTop({ lineTop + (availableSpace / 2 -  flexItem.height() / 2) });
             break;
         case ItemPosition::Start:
         case ItemPosition::FlexStart:
-            flexRects[index].setTop(lineTop);
+            flexRects[index]().setTop(lineTop);
             break;
         case ItemPosition::End:
         case ItemPosition::FlexEnd:
-            flexRects[index].setTop({ lineTop + availableSpace - flexItem.height() });
+            flexRects[index]().setTop({ lineTop + availableSpace - flexItem.height() });
             break;
         default:
             ASSERT_NOT_IMPLEMENTED_YET();
@@ -371,7 +423,7 @@ void FlexLayout::justifyFlexItems(const LogicalFlexItems& flexItems, const LineR
 
         auto positionalAlignment = [&] {
             auto positionalAlignmentValue = justifyContent.position();
-            if (!FlexFormattingGeometry::isMainAxisParallelWithInlineAxes(flexBox()) && (positionalAlignmentValue == ContentPosition::Left || positionalAlignmentValue == ContentPosition::Right))
+            if (!FlexFormattingGeometry::isMainAxisParallelWithInlineAxis(flexBox()) && (positionalAlignmentValue == ContentPosition::Left || positionalAlignmentValue == ContentPosition::Right))
                 positionalAlignmentValue = ContentPosition::Start;
             return positionalAlignmentValue;
         };
@@ -427,8 +479,8 @@ void FlexLayout::justifyFlexItems(const LogicalFlexItems& flexItems, const LineR
     auto logicalLeft = initialOffset();
     auto gap = gapBetweenItems();
     for (size_t index = lineRange.begin(); index < lineRange.end(); ++index) {
-        flexRects[index].setLeft(logicalLeft);
-        logicalLeft = flexRects[index].right() + gap;
+        flexRects[index]().setLeft(logicalLeft);
+        logicalLeft = flexRects[index]().right() + gap;
     }
 }
 
@@ -447,6 +499,7 @@ FlexLayout::LogicalFlexItemRects FlexLayout::layout(const LogicalConstraints& co
 
         auto performMainAxisLayout = [&] {
             computeLogicalWidthForFlexItems(flexItems, lineRange, availableLogicalHorizontalSpace, flexRects);
+            distributeMarginAutoInMainAxis(flexItems, lineRange, availableLogicalHorizontalSpace, flexRects);
             justifyFlexItems(flexItems, lineRange, availableLogicalHorizontalSpace, flexRects);
         };
         performMainAxisLayout();

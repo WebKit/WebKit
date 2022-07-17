@@ -39,7 +39,7 @@ FlexFormattingGeometry::FlexFormattingGeometry(const FlexFormattingContext& flex
 {
 }
 
-bool FlexFormattingGeometry::isMainAxisParallelWithInlineAxes(const ContainerBox& flexBox)
+bool FlexFormattingGeometry::isMainAxisParallelWithInlineAxis(const ContainerBox& flexBox)
 {
     ASSERT(flexBox.isFlexBox());
     auto flexDirection = flexBox.style().flexDirection();

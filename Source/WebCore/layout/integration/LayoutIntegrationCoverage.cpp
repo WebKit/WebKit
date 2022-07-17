@@ -728,8 +728,6 @@ bool canUseForFlexLayout(const RenderFlexibleBox& flexBox)
         auto& flexItemStyle = flexItem.style();
         if (!flexItemStyle.isHorizontalWritingMode() || !flexItemStyle.isLeftToRightDirection())
             return false;
-        if (flexItemStyle.marginLeft().isAuto() && flexItemStyle.marginRight().isAuto())
-            return false;
         if (!flexItemStyle.height().isFixed())
             return false;
         if (!flexItemStyle.flexBasis().isAuto() && !flexItemStyle.flexBasis().isFixed())
