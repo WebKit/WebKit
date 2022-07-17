@@ -69,5 +69,5 @@ typedef unsigned long FramesPerSecond;
     undefined updatePlaybackRate(double playbackRate);
     [ImplementedAs=bindingsReverse] undefined reverse();
     undefined persist();
-    undefined commitStyles();
+    [CEReactions] undefined commitStyles();
 };
