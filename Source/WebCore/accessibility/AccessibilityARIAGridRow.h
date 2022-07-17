@@ -46,6 +46,7 @@ public:
     
 private:
     explicit AccessibilityARIAGridRow(RenderObject*);
+    bool isAccessibilityARIAGridRowInstance() const override { return true; }
 
     bool isARIATreeGridRow() const override;
     AccessibilityTable* parentTable() const override;
@@ -54,4 +55,4 @@ private:
 
 } // namespace WebCore 
 
-SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityARIAGridRow, isARIATreeGridRow())
+SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityARIAGridRow, isAccessibilityARIAGridRowInstance())

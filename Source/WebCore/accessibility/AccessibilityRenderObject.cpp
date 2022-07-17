@@ -3188,7 +3188,7 @@ void AccessibilityRenderObject::updateRoleAfterChildrenCreation()
 
     if (role != m_role) {
         if (auto* cache = axObjectCache())
-            cache->handleRoleChange(this);
+            cache->handleRoleChanged(this);
     }
 }
     

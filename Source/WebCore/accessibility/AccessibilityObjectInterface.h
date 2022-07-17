@@ -846,6 +846,9 @@ public:
     virtual bool isAccessibilitySVGElement() const = 0;
     virtual bool isAccessibilityTableInstance() const = 0;
     virtual bool isAccessibilityTableColumnInstance() const = 0;
+    virtual bool isAccessibilityARIAGridInstance() const = 0;
+    virtual bool isAccessibilityARIAGridRowInstance() const = 0;
+    virtual bool isAccessibilityARIAGridCellInstance() const = 0;
     virtual bool isAccessibilityProgressIndicatorInstance() const = 0;
     virtual bool isAccessibilityListBoxInstance() const = 0;
     virtual bool isAXIsolatedObjectInstance() const = 0;

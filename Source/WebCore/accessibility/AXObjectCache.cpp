@@ -577,7 +577,7 @@ static Ref<AccessibilityObject> createFromRenderer(RenderObject* renderer)
     // If the node is aria role="list" or the aria role is empty and its a
     // ul/ol/dl type (it shouldn't be a list if aria says otherwise).
     if (node && ((nodeHasRole(node, "list"_s) || nodeHasRole(node, "directory"_s))
-                      || (nodeHasRole(node, nullAtom()) && (node->hasTagName(ulTag) || node->hasTagName(olTag) || node->hasTagName(dlTag)))))
+        || (nodeHasRole(node, nullAtom()) && (node->hasTagName(ulTag) || node->hasTagName(olTag) || node->hasTagName(dlTag)))))
         return AccessibilityList::create(renderer);
 
     // aria tables
@@ -1876,14 +1876,34 @@ void AXObjectCache::handleActiveDescendantChanged(Element& element)
     }
 }
 
-void AXObjectCache::handleRoleChange(AccessibilityObject* axObject)
+void AXObjectCache::handleRoleChanged(Element* element)
+{
+    auto* object = get(element);
+    if (!object)
+        return;
+
+    if (is<AccessibilityARIAGrid>(object)
+        || is<AccessibilityARIAGridRow>(object)
+        || is<AccessibilityARIAGridCell>(object)) {
+        // These classes instances are created based on the role attribute of the underlying Element.
+        // Thus when the role changes, remove the object and force a ChildrenChanged on the parent so that the object is re-created.
+        auto* parent = object->parentObject();
+        remove(*element);
+        childrenChanged(parent);
+        return;
+    }
+
+    object->updateRole();
+}
+
+void AXObjectCache::handleRoleChanged(AccessibilityObject* axObject)
 {
     stopCachingComputedObjectAttributes();
     if (axObject->hasIgnoredValueChanged())
         childrenChanged(axObject->parentObject());
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-        updateIsolatedTree(axObject, AXObjectCache::AXAriaRoleChanged);
+    updateIsolatedTree(axObject, AXNotification::AXAriaRoleChanged);
 #endif
 }
 
@@ -1930,10 +1950,9 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
     if (relationAttributes().contains(attrName))
         relationsNeedUpdate(true);
 
-    if (attrName == roleAttr) {
-        if (auto* axObject = get(element))
-            axObject->updateRole();
-    } else if (attrName == altAttr || attrName == titleAttr)
+    if (attrName == roleAttr)
+        handleRoleChanged(element);
+    else if (attrName == altAttr || attrName == titleAttr)
         handleTextChanged(getOrCreate(element));
     else if (attrName == disabledAttr)
         postNotification(element, AXObjectCache::AXDisabledStateChanged);

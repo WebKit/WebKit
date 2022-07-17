@@ -1265,6 +1265,7 @@ accessibility/mac/line-index-for-textmarker.html [ Skip ]
 accessibility/mac/mathml-elements.html [ Skip ]
 accessibility/mac/mathml-root.html [ Skip ]
 accessibility/deep-tree.html [ Skip ]
+accessibility/mac/table-wrapped-by-role-grid.html [ Skip ]
 
 # <rdar://problem/61066929> [ Stress GC ] flaky JSC::ExceptionScope::assertNoException crash under WebCore::ReadableStreamDefaultController
 webkit.org/b/211923 imported/w3c/web-platform-tests/fetch/api/basic/stream-safe-creation.any.html [ Pass Crash ]
@@ -1529,7 +1530,6 @@ webkit.org/b/227085 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-t
 # rdar://80331434 ([ Mac WK1 Release ] accessibility/loading-iframe-sends-notification.html is a flaky timeout)
 [ Release ] accessibility/loading-iframe-sends-notification.html [ Pass Timeout ]
 accessibility/native-text-control-attributed-string.html [ Skip ]
-
 webkit.org/b/227516 fast/shadow-dom/style-resolver-sharing.html [ Pass Failure ]
 
 webkit.org/b/228042 [ Release ] media/modern-media-controls/volume-support/volume-support-drag-to-mute.html [ Pass Timeout Failure ]

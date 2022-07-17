@@ -492,6 +492,9 @@ private:
     bool isAccessibilitySVGElement() const override;
     bool isAccessibilityTableInstance() const override;
     bool isAccessibilityTableColumnInstance() const override;
+    bool isAccessibilityARIAGridInstance() const override { return false; }
+    bool isAccessibilityARIAGridRowInstance() const override { return false; }
+    bool isAccessibilityARIAGridCellInstance() const override { return false; }
     bool isAccessibilityProgressIndicatorInstance() const override;
     bool isAccessibilityListBoxInstance() const override;
 

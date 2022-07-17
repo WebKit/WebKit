@@ -53,18 +53,18 @@ Ref<AccessibilityARIAGrid> AccessibilityARIAGrid::create(RenderObject* renderer)
 
 bool AccessibilityARIAGrid::addTableCellChild(AXCoreObject* child, HashSet<AccessibilityObject*>& appendedRows, unsigned& columnCount)
 {
-    if (!child || (!is<AccessibilityTableRow>(*child) && !is<AccessibilityARIAGridRow>(*child)))
+    if (!child || (!is<AccessibilityTableRow>(*child) && !child->isARIATreeGridRow()))
         return false;
-        
+
     auto& row = downcast<AccessibilityTableRow>(*child);
     if (appendedRows.contains(&row))
         return false;
-        
+
     // store the maximum number of columns
     unsigned rowCellCount = row.children().size();
     if (rowCellCount > columnCount)
         columnCount = rowCellCount;
-    
+
     row.setRowIndex((int)m_rows.size());
     m_rows.append(&row);
     addChild(&row);

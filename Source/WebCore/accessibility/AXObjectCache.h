@@ -187,7 +187,7 @@ public:
     void childrenChanged(AccessibilityObject*);
     void checkedStateChanged(Node*);
     void autofillTypeChanged(Node*);
-    void handleRoleChange(AccessibilityObject*);
+    void handleRoleChanged(AccessibilityObject*);
     // Called when a node has just been attached, so we can make sure we have the right subclass of AccessibilityObject.
     void updateCacheAfterNodeIsAttached(Node*);
     void updateLoadingProgress(double);
@@ -483,6 +483,7 @@ private:
 
     void processDeferredChildrenChangedList();
     void handleChildrenChanged(AccessibilityObject&);
+    void handleRoleChanged(Element*);
     void handleMenuOpened(Node*);
     void handleLiveRegionCreated(Node*);
     void handleMenuItemSelected(Node*);
@@ -652,7 +653,7 @@ inline void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityOb
 inline void AXObjectCache::handleActiveDescendantChanged(Element&) { }
 inline void AXObjectCache::handleAriaExpandedChange(Node*) { }
 inline void AXObjectCache::deferModalChange(Element*) { }
-inline void AXObjectCache::handleRoleChange(AccessibilityObject*) { }
+inline void AXObjectCache::handleRoleChanged(AccessibilityObject*) { }
 inline void AXObjectCache::deferAttributeChangeIfNeeded(const QualifiedName&, Element*) { }
 inline void AXObjectCache::handleAttributeChange(Element*, const QualifiedName&) { }
 inline bool AXObjectCache::shouldProcessAttributeChange(const QualifiedName&, Element*) { return false; }
