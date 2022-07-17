@@ -73,7 +73,7 @@ namespace {
 
 constexpr bool verbose = false;
 
-pas_heap_config* selectedHeapConfig;
+const pas_heap_config* selectedHeapConfig;
 void* (*selectedAllocateCommonPrimitive)(size_t size);
 void* (*selectedAllocate)(pas_heap_ref* heapRef);
 void* (*selectedAllocateArray)(pas_heap_ref* heapRef, size_t count, size_t alignment);

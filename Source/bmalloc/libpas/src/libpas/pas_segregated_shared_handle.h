@@ -125,7 +125,7 @@ pas_segregated_shared_handle_as_view_non_null(pas_segregated_shared_handle* hand
 PAS_API pas_segregated_shared_handle* pas_segregated_shared_handle_create(
     pas_segregated_shared_view* view,
     pas_segregated_shared_page_directory* directory,
-    pas_segregated_page_config* page_config);
+    const pas_segregated_page_config* page_config);
 
 /* This uninstalls the handle from the shared_view. */
 PAS_API void pas_segregated_shared_handle_destroy(pas_segregated_shared_handle* handle);

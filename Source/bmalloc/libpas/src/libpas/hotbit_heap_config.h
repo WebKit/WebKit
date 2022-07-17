@@ -78,7 +78,7 @@ PAS_API void hotbit_heap_config_activate(void);
     .marge_bitfit_page_size = PAS_MARGE_PAGE_DEFAULT_SIZE, \
     .pgm_enabled = false)
 
-PAS_API extern pas_heap_config hotbit_heap_config;
+PAS_API extern const pas_heap_config hotbit_heap_config;
 
 PAS_BASIC_HEAP_CONFIG_DECLARATIONS(hotbit, HOTBIT);
 

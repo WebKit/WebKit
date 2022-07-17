@@ -1685,7 +1685,7 @@ pas_local_allocator_try_allocate_slow_impl(pas_local_allocator* allocator,
     for (;;) {
         pas_fast_path_allocation_result fast_result;
         pas_allocation_result result;
-        pas_segregated_page_config* page_config;
+        const pas_segregated_page_config* page_config;
 
         fast_result = pas_local_allocator_try_allocate_out_of_line_cases(
             allocator, size, alignment, config);

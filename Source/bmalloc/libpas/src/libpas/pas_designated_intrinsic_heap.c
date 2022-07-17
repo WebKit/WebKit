@@ -37,7 +37,7 @@
 
 typedef struct {
     pas_segregated_heap* heap;
-    pas_heap_config* config_ptr;
+    const pas_heap_config* config_ptr;
     pas_allocator_index num_allocator_indices;
     pas_allocator_index next_index_to_set;
 } initialize_data;
@@ -129,7 +129,7 @@ static void set_up_range(initialize_data* data,
 }
 
 void pas_designated_intrinsic_heap_initialize(pas_segregated_heap* heap,
-                                              pas_heap_config* config_ptr)
+                                              const pas_heap_config* config_ptr)
 {
     pas_heap_config config;
     initialize_data data;

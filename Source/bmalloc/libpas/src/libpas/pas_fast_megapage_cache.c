@@ -61,7 +61,7 @@ static void table_set_by_index(size_t index, void* arg)
 void* pas_fast_megapage_cache_try_allocate(
     pas_megapage_cache* cache,
     pas_fast_megapage_table* table,
-    pas_page_base_config* config,
+    const pas_page_base_config* config,
     pas_fast_megapage_kind kind,
     bool should_zero,
     pas_heap* heap,

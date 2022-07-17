@@ -34,7 +34,7 @@
 #include "pas_segregated_page_inlines.h"
 
 bool pas_try_deallocate_known_large(void* ptr,
-                                    pas_heap_config* config,
+                                    const pas_heap_config* config,
                                     pas_deallocation_mode deallocation_mode)
 {
     uintptr_t begin;
@@ -63,13 +63,13 @@ bool pas_try_deallocate_known_large(void* ptr,
 }
 
 void pas_deallocate_known_large(void* ptr,
-                                pas_heap_config* config)
+                                const pas_heap_config* config)
 {
     pas_try_deallocate_known_large(ptr, config, pas_deallocate_mode);
 }
 
 bool pas_try_deallocate_slow(uintptr_t begin,
-                             pas_heap_config* config,
+                             const pas_heap_config* config,
                              pas_deallocation_mode deallocation_mode)
 {
     if (!begin)
@@ -79,7 +79,7 @@ bool pas_try_deallocate_slow(uintptr_t begin,
 }
 
 static void deallocate_segregated(uintptr_t begin,
-                                  pas_segregated_page_config* page_config,
+                                  const pas_segregated_page_config* page_config,
                                   pas_segregated_page_role role)
 {
     pas_lock* held_lock;
@@ -90,7 +90,7 @@ static void deallocate_segregated(uintptr_t begin,
 }
 
 bool pas_try_deallocate_slow_no_cache(void* ptr,
-                                      pas_heap_config* config_ptr,
+                                      const pas_heap_config* config_ptr,
                                       pas_deallocation_mode deallocation_mode)
 {
     static const bool verbose = false;

@@ -48,17 +48,17 @@
 unsigned pas_segregated_heap_num_size_lookup_rematerializations;
 
 static void check_size_lookup_recomputation_if_appropriate(pas_segregated_heap* heap,
-                                                           pas_heap_config* config,
+                                                           const pas_heap_config* config,
                                                            unsigned *cached_index,
                                                            const char* where);
 
 static size_t min_align_for_heap(pas_segregated_heap* heap,
-                                 pas_heap_config* config)
+                                 const pas_heap_config* config)
 {
     pas_segregated_page_config_variant segregated_variant;
     pas_bitfit_page_config_variant bitfit_variant;
     for (PAS_EACH_SEGREGATED_PAGE_CONFIG_VARIANT_ASCENDING(segregated_variant)) {
-        pas_segregated_page_config* page_config;
+        const pas_segregated_page_config* page_config;
         page_config =
             pas_heap_config_segregated_page_config_ptr_for_variant(config, segregated_variant);
         if (!pas_segregated_page_config_is_enabled(*page_config, heap->runtime_config))
@@ -68,7 +68,7 @@ static size_t min_align_for_heap(pas_segregated_heap* heap,
     /* If segregated page configs are totally disabled then we want to give the minimum size according
        to bitfit. */
     for (PAS_EACH_BITFIT_PAGE_CONFIG_VARIANT_ASCENDING(bitfit_variant)) {
-        pas_bitfit_page_config* page_config;
+        const pas_bitfit_page_config* page_config;
         page_config =
             pas_heap_config_bitfit_page_config_ptr_for_variant(config, bitfit_variant);
         if (!pas_bitfit_page_config_is_enabled(*page_config, heap->runtime_config))
@@ -81,13 +81,13 @@ static size_t min_align_for_heap(pas_segregated_heap* heap,
 }
 
 static size_t min_object_size_for_heap(pas_segregated_heap* heap,
-                                       pas_heap_config* config)
+                                       const pas_heap_config* config)
 {
     return min_align_for_heap(heap, config);
 }
 
 static size_t max_object_size_for_page_config(pas_heap* parent_heap,
-                                              pas_page_base_config* page_config)
+                                              const pas_page_base_config* page_config)
 {
     static const bool verbose = false;
     
@@ -107,13 +107,13 @@ static size_t max_object_size_for_page_config(pas_heap* parent_heap,
 
 static size_t max_segregated_object_size_for_heap(pas_heap* parent_heap,
                                                   pas_segregated_heap* heap,
-                                                  pas_heap_config* config)
+                                                  const pas_heap_config* config)
 {
     static const bool verbose = false;
     
     pas_segregated_page_config_variant variant;
     for (PAS_EACH_SEGREGATED_PAGE_CONFIG_VARIANT_DESCENDING(variant)) {
-        pas_segregated_page_config* page_config;
+        const pas_segregated_page_config* page_config;
         size_t max_size_per_config;
         size_t result;
         
@@ -134,14 +134,14 @@ static size_t max_segregated_object_size_for_heap(pas_heap* parent_heap,
 
 static size_t max_bitfit_object_size_for_heap(pas_heap* parent_heap,
                                               pas_segregated_heap* heap,
-                                              pas_heap_config* config)
+                                              const pas_heap_config* config)
 {
     static const bool verbose = false;
     
     pas_bitfit_page_config_variant variant;
     
     for (PAS_EACH_BITFIT_PAGE_CONFIG_VARIANT_DESCENDING(variant)) {
-        pas_bitfit_page_config* page_config;
+        const pas_bitfit_page_config* page_config;
         size_t max_size_per_config;
         size_t result;
         
@@ -191,7 +191,7 @@ static size_t max_bitfit_object_size_for_heap(pas_heap* parent_heap,
 
 static size_t max_object_size_for_heap(pas_heap* parent_heap,
                                        pas_segregated_heap* heap,
-                                       pas_heap_config* config)
+                                       const pas_heap_config* config)
 {
     return PAS_MAX(max_segregated_object_size_for_heap(parent_heap, heap, config),
                    max_bitfit_object_size_for_heap(parent_heap, heap, config));
@@ -199,7 +199,7 @@ static size_t max_object_size_for_heap(pas_heap* parent_heap,
 
 void pas_segregated_heap_construct(pas_segregated_heap* segregated_heap,
                                    pas_heap* parent_heap,
-                                   pas_heap_config* config,
+                                   const pas_heap_config* config,
                                    pas_heap_runtime_config* runtime_config)
 {
     /* NOTE: the various primitive and utility heaps are constructed
@@ -229,7 +229,7 @@ void pas_segregated_heap_construct(pas_segregated_heap* segregated_heap,
 }
 
 pas_bitfit_heap* pas_segregated_heap_get_bitfit(pas_segregated_heap* heap,
-                                                pas_heap_config* heap_config,
+                                                const pas_heap_config* heap_config,
                                                 pas_lock_hold_mode heap_lock_hold_mode)
 {
     /* NOTE: This will never get called for utility heaps and we have no good way to assert this:
@@ -253,7 +253,7 @@ pas_bitfit_heap* pas_segregated_heap_get_bitfit(pas_segregated_heap* heap,
 }
 
 size_t pas_segregated_heap_get_cached_index_for_heap_type(pas_segregated_heap* heap,
-                                                          pas_heap_config* config)
+                                                          const pas_heap_config* config)
 {
     return pas_segregated_heap_index_for_size(
         pas_heap_get_type_size(pas_heap_for_segregated_heap(heap)), *config);
@@ -268,7 +268,7 @@ bool pas_segregated_heap_cached_index_is_set(unsigned* cached_index)
 
 size_t pas_segregated_heap_get_cached_index(pas_segregated_heap* heap,
                                             unsigned* cached_index,
-                                            pas_heap_config* config)
+                                            const pas_heap_config* config)
 {
     if (cached_index)
         return *cached_index;
@@ -278,7 +278,7 @@ size_t pas_segregated_heap_get_cached_index(pas_segregated_heap* heap,
 bool pas_segregated_heap_index_is_cached_index_and_cached_index_is_set(pas_segregated_heap* heap,
                                                                        unsigned* cached_index,
                                                                        size_t index,
-                                                                       pas_heap_config* config)
+                                                                       const pas_heap_config* config)
 {
     return pas_segregated_heap_cached_index_is_set(cached_index)
         && index == pas_segregated_heap_get_cached_index(heap, cached_index, config);
@@ -287,7 +287,7 @@ bool pas_segregated_heap_index_is_cached_index_and_cached_index_is_set(pas_segre
 bool pas_segregated_heap_index_is_cached_index_or_cached_index_is_unset(pas_segregated_heap* heap,
                                                                         unsigned* cached_index,
                                                                         size_t index,
-                                                                        pas_heap_config* config)
+                                                                        const pas_heap_config* config)
 {
     return !pas_segregated_heap_cached_index_is_set(cached_index)
         || index == pas_segregated_heap_get_cached_index(heap, cached_index, config);
@@ -296,7 +296,7 @@ bool pas_segregated_heap_index_is_cached_index_or_cached_index_is_unset(pas_segr
 bool pas_segregated_heap_index_is_not_cached_index_and_cached_index_is_set(pas_segregated_heap* heap,
                                                                            unsigned* cached_index,
                                                                            size_t index,
-                                                                           pas_heap_config* config)
+                                                                           const pas_heap_config* config)
 {
     return pas_segregated_heap_cached_index_is_set(cached_index)
         && index != pas_segregated_heap_get_cached_index(heap, cached_index, config);
@@ -305,7 +305,7 @@ bool pas_segregated_heap_index_is_not_cached_index_and_cached_index_is_set(pas_s
 bool pas_segregated_heap_index_is_greater_than_cached_index_and_cached_index_is_set(pas_segregated_heap* heap,
                                                                                     unsigned* cached_index,
                                                                                     size_t index,
-                                                                                    pas_heap_config* config)
+                                                                                    const pas_heap_config* config)
 {
     return pas_segregated_heap_cached_index_is_set(cached_index)
         && index > pas_segregated_heap_get_cached_index(heap, cached_index, config);
@@ -314,7 +314,7 @@ bool pas_segregated_heap_index_is_greater_than_cached_index_and_cached_index_is_
 bool pas_segregated_heap_index_is_greater_equal_cached_index_and_cached_index_is_set(pas_segregated_heap* heap,
                                                                                      unsigned* cached_index,
                                                                                      size_t index,
-                                                                                     pas_heap_config* config)
+                                                                                     const pas_heap_config* config)
 {
     return pas_segregated_heap_cached_index_is_set(cached_index)
         && index >= pas_segregated_heap_get_cached_index(heap, cached_index, config);
@@ -324,7 +324,7 @@ pas_segregated_size_directory* pas_segregated_heap_size_directory_for_index_slow
     pas_segregated_heap* heap,
     size_t index,
     unsigned* cached_index,
-    pas_heap_config* config)
+    const pas_heap_config* config)
 {
     if (pas_segregated_heap_index_is_cached_index_and_cached_index_is_set(heap, cached_index, index, config)) {
         pas_segregated_size_directory* result;
@@ -553,7 +553,7 @@ pas_segregated_size_directory* pas_segregated_heap_medium_size_directory_for_ind
 }
 
 static size_t compute_small_index_upper_bound(pas_segregated_heap* heap,
-                                              pas_heap_config* config)
+                                              const pas_heap_config* config)
 {
     if (heap->small_index_upper_bound) {
         /* This is important: some clients, like the intrinsic_heap, will initialize
@@ -565,7 +565,7 @@ static size_t compute_small_index_upper_bound(pas_segregated_heap* heap,
 }
 
 static void ensure_size_lookup(pas_segregated_heap* heap,
-                               pas_heap_config* config)
+                               const pas_heap_config* config)
 {
     static const bool verbose = false;
     
@@ -646,7 +646,7 @@ PAS_CREATE_MIN_HEAP(size_directory_min_heap, pas_segregated_size_directory*, 200
 /* NOTE: It's possible for this to call set_index_to_small_allocator_index for values of index that previously
    didn't have an allocator_index set. */
 static void recompute_size_lookup(pas_segregated_heap* heap,
-                                  pas_heap_config* config,
+                                  const pas_heap_config* config,
                                   unsigned* cached_index,
                                   void (*set_index_to_small_allocator_index)(
                                       size_t index, pas_allocator_index value, void* arg),
@@ -798,7 +798,7 @@ static void rematerialize_size_lookup_set_medium_directory_tuple(
 }
 
 static void rematerialize_size_lookup_if_necessary(pas_segregated_heap* heap,
-                                                   pas_heap_config* config,
+                                                   const pas_heap_config* config,
                                                    unsigned* cached_index)
 {
     pas_segregated_heap_rare_data* data;
@@ -832,7 +832,7 @@ pas_segregated_heap_ensure_allocator_index(
     pas_segregated_size_directory* directory,
     size_t size,
     pas_size_lookup_mode size_lookup_mode,
-    pas_heap_config* config,
+    const pas_heap_config* config,
     unsigned* cached_index)
 {
     static const bool verbose = false;
@@ -923,7 +923,7 @@ pas_segregated_heap_ensure_allocator_index(
 static size_t compute_ideal_object_size(pas_segregated_heap* heap,
                                         size_t object_size,
                                         size_t alignment,
-                                        pas_segregated_page_config* page_config_ptr)
+                                        const pas_segregated_page_config* page_config_ptr)
 {
     static const bool verbose = false;
     
@@ -1026,7 +1026,7 @@ static bool check_part_of_all_heaps_callback(pas_heap* heap, void* arg)
 }
 
 static bool check_part_of_all_segregated_heaps_callback(
-    pas_segregated_heap* heap, pas_heap_config* config, void* arg)
+    pas_segregated_heap* heap, const pas_heap_config* config, void* arg)
 {
     check_part_of_all_heaps_data* data;
 
@@ -1045,7 +1045,7 @@ static bool check_part_of_all_segregated_heaps_callback(
 static void
 ensure_size_lookup_if_necessary(pas_segregated_heap* heap,
                                 pas_size_lookup_mode size_lookup_mode,
-                                pas_heap_config* config,
+                                const pas_heap_config* config,
                                 unsigned* cached_index,
                                 size_t index)
 {
@@ -1208,7 +1208,7 @@ static bool check_size_lookup_recomputation_dump_directory(pas_segregated_heap* 
 }
 
 static void check_size_lookup_recomputation(pas_segregated_heap* heap,
-                                            pas_heap_config* config,
+                                            const pas_heap_config* config,
                                             unsigned *cached_index,
                                             const char* where)
 {
@@ -1295,7 +1295,7 @@ static void check_size_lookup_recomputation(pas_segregated_heap* heap,
 }
 
 static void check_size_lookup_recomputation_if_appropriate(pas_segregated_heap* heap,
-                                                           pas_heap_config* config,
+                                                           const pas_heap_config* config,
                                                            unsigned *cached_index,
                                                            const char* where)
 {
@@ -1312,7 +1312,7 @@ pas_segregated_heap_ensure_size_directory_for_size(
     size_t size,
     size_t alignment,
     pas_size_lookup_mode size_lookup_mode,
-    pas_heap_config* config,
+    const pas_heap_config* config,
     unsigned* cached_index,
     pas_segregated_size_directory_creation_mode creation_mode)
 {
@@ -1655,7 +1655,7 @@ pas_segregated_heap_ensure_size_directory_for_size(
         size_t medium_install_index;
         size_t medium_install_size;
         double best_bytes_dirtied_per_object;
-        pas_segregated_page_config* best_page_config;
+        const pas_segregated_page_config* best_page_config;
         pas_segregated_page_config_variant variant;
         pas_compact_atomic_segregated_size_directory_ptr* index_to_small_size_directory;
         pas_segregated_size_directory* basic_size_directory_and_head;
@@ -1710,7 +1710,7 @@ pas_segregated_heap_ensure_size_directory_for_size(
         best_page_config = NULL;
         if (object_size <= heap->runtime_config->max_segregated_object_size) {
             for (PAS_EACH_SEGREGATED_PAGE_CONFIG_VARIANT_DESCENDING(variant)) {
-                pas_segregated_page_config* page_config_ptr;
+                const pas_segregated_page_config* page_config_ptr;
                 pas_segregated_page_config page_config;
                 double bytes_dirtied_per_object;
                 unsigned object_size_for_config;

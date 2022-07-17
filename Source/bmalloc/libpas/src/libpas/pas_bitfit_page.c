@@ -36,7 +36,7 @@
 
 void pas_bitfit_page_construct(pas_bitfit_page* page,
                                pas_bitfit_view* view,
-                               pas_bitfit_page_config* config_ptr)
+                               const pas_bitfit_page_config* config_ptr)
 {
     static const bool verbose = false;
     
@@ -120,7 +120,7 @@ void pas_bitfit_page_construct(pas_bitfit_page* page,
     }
 }
 
-pas_bitfit_page_config* pas_bitfit_page_get_config(pas_bitfit_page* page)
+const pas_bitfit_page_config* pas_bitfit_page_get_config(pas_bitfit_page* page)
 {
     return pas_bitfit_page_config_kind_get_config(
         pas_compact_bitfit_directory_ptr_load_non_null(
@@ -189,7 +189,7 @@ bool pas_bitfit_page_for_each_live_object(
     pas_bitfit_page_for_each_live_object_callback callback,
     void* arg)
 {
-    pas_bitfit_page_config* config_ptr;
+    const pas_bitfit_page_config* config_ptr;
     pas_bitfit_page_config config;
     void* boundary;
     pas_bitfit_view* view;
@@ -235,7 +235,7 @@ bool pas_bitfit_page_for_each_live_object(
 }
 
 typedef struct {
-    pas_bitfit_page_config* config;
+    const pas_bitfit_page_config* config;
     uintptr_t boundary;
     pas_page_granule_use_count my_use_counts[PAS_MAX_GRANULES];
 } verify_for_each_object_data;
@@ -263,7 +263,7 @@ void pas_bitfit_page_verify(pas_bitfit_page* page)
     size_t begin;
     size_t end;
     size_t offset;
-    pas_bitfit_page_config* config_ptr;
+    const pas_bitfit_page_config* config_ptr;
     pas_bitfit_page_config config;
     size_t num_live_bits;
     verify_for_each_object_data data;

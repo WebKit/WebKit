@@ -35,7 +35,7 @@
 #include "pas_designated_intrinsic_heap.h"
 #include "pas_heap_config_utils_inlines.h"
 
-pas_heap_config minalign32_heap_config = MINALIGN32_HEAP_CONFIG;
+const pas_heap_config minalign32_heap_config = MINALIGN32_HEAP_CONFIG;
 
 PAS_BASIC_HEAP_CONFIG_DEFINITIONS(
     minalign32, MINALIGN32,

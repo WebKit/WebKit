@@ -196,7 +196,7 @@ pas_segregated_view_get_size_directory(pas_segregated_view view)
 
 PAS_API pas_segregated_page_config_kind
 pas_segregated_view_get_page_config_kind(pas_segregated_view view);
-PAS_API pas_segregated_page_config* pas_segregated_view_get_page_config(pas_segregated_view view);
+PAS_API const pas_segregated_page_config* pas_segregated_view_get_page_config(pas_segregated_view view);
 
 static inline pas_segregated_page_role pas_segregated_view_get_page_role_for_owner(pas_segregated_view view)
 {
@@ -264,15 +264,15 @@ PAS_API bool pas_segregated_view_for_each_live_object(
    "maybe", since those are never in a state where they *cannot* be eligible. This can only be called
    during steady-state (no concurrent allocations or deallocations). */
 PAS_API pas_tri_state pas_segregated_view_should_be_eligible(pas_segregated_view view,
-                                                             pas_segregated_page_config* page_config);
+                                                             const pas_segregated_page_config* page_config);
 
 PAS_API pas_segregated_view pas_segregated_view_for_object(
     uintptr_t begin,
-    pas_heap_config* config);
+    const pas_heap_config* config);
 
 PAS_API pas_heap_summary pas_segregated_view_compute_summary(
     pas_segregated_view view,
-    pas_segregated_page_config* page_config);
+    const pas_segregated_page_config* page_config);
 
 PAS_API bool pas_segregated_view_is_eligible(pas_segregated_view view);
 PAS_API bool pas_segregated_view_is_payload_empty(pas_segregated_view view);

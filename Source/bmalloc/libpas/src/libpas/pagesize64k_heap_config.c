@@ -35,7 +35,7 @@
 #include "pas_designated_intrinsic_heap.h"
 #include "pas_heap_config_utils_inlines.h"
 
-pas_heap_config pagesize64k_heap_config = PAGESIZE64K_HEAP_CONFIG;
+const pas_heap_config pagesize64k_heap_config = PAGESIZE64K_HEAP_CONFIG;
 
 PAS_BASIC_HEAP_CONFIG_DEFINITIONS(
     pagesize64k, PAGESIZE64K,

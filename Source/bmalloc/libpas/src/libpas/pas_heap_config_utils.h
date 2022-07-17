@@ -448,7 +448,7 @@ typedef struct {
         size_t size, \
         pas_alignment alignment, \
         pas_large_heap* large_heap, \
-        pas_heap_config* config); \
+        const pas_heap_config* config); \
     PAS_HEAP_CONFIG_SPECIALIZATION_DECLARATIONS(name ## _heap_config); \
     PAS_BASIC_HEAP_CONFIG_SEGREGATED_HEAP_DECLARATIONS(name, upcase_name)
 

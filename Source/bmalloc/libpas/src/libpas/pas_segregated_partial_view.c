@@ -141,7 +141,7 @@ void pas_segregated_partial_view_set_is_in_use_for_allocation(
 
 bool pas_segregated_partial_view_should_table(
     pas_segregated_partial_view* view,
-    pas_segregated_page_config* page_config)
+    const pas_segregated_page_config* page_config)
 {
     pas_segregated_shared_view* shared_view;
     pas_shared_handle_or_page_boundary shared_handle_or_page_boundary;
@@ -170,7 +170,7 @@ static pas_heap_summary compute_summary(pas_segregated_partial_view* view)
     pas_segregated_size_directory* size_directory;
     pas_segregated_directory* directory;
     pas_segregated_shared_view* shared_view;
-    pas_segregated_page_config* page_config_ptr;
+    const pas_segregated_page_config* page_config_ptr;
     pas_segregated_page_config page_config;
     pas_segregated_page* page;
     unsigned* full_alloc_bits;

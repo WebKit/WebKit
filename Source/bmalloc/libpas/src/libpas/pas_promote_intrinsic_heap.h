@@ -36,7 +36,7 @@ typedef struct pas_heap_config pas_heap_config;
 typedef struct pas_segregated_heap pas_segregated_heap;
 
 PAS_API void pas_promote_intrinsic_heap(pas_segregated_heap* heap,
-                                        pas_heap_config* config);
+                                        const pas_heap_config* config);
 
 PAS_END_EXTERN_C;
 

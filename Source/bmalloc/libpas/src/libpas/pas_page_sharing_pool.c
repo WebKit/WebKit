@@ -839,7 +839,7 @@ void pas_physical_page_sharing_pool_give_back(size_t bytes)
 
 void pas_physical_page_sharing_pool_take_for_page_config(
     size_t bytes,
-    pas_page_base_config* page_config,
+    const pas_page_base_config* page_config,
     pas_lock_hold_mode heap_lock_hold_mode,
     pas_lock** locks_already_held,
     size_t num_locks_already_held)

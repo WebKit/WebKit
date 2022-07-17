@@ -65,10 +65,10 @@ struct pas_page_base_config {
     bool is_enabled;
 
     /* This points to the owning heap config. Currently there is always an owning heap config. */
-    pas_heap_config* heap_config_ptr;
+    const pas_heap_config* heap_config_ptr;
     
     /* This always self-points. It's useful for going from a page_config to a page_config_ptr. */
-    pas_page_base_config* page_config_ptr;
+    const pas_page_base_config* page_config_ptr;
 
     /* What page_kind to put in pages allocated by this config. This happens to tell if the config
        is a segregated or a bitfit config. */
@@ -126,21 +126,21 @@ static PAS_ALWAYS_INLINE bool pas_page_base_config_is_bitfit(pas_page_base_confi
     return config.page_config_kind == pas_page_config_kind_bitfit;
 }
 
-static inline pas_segregated_page_config*
-pas_page_base_config_get_segregated(pas_page_base_config* config)
+static inline const pas_segregated_page_config*
+pas_page_base_config_get_segregated(const pas_page_base_config* config)
 {
     PAS_ASSERT(pas_page_base_config_is_segregated(*config));
-    return (pas_segregated_page_config*)config;
+    return (const pas_segregated_page_config*)config;
 }
 
-static inline pas_bitfit_page_config*
-pas_page_base_config_get_bitfit(pas_page_base_config* config)
+static inline const pas_bitfit_page_config*
+pas_page_base_config_get_bitfit(const pas_page_base_config* config)
 {
     PAS_ASSERT(pas_page_base_config_is_bitfit(*config));
-    return (pas_bitfit_page_config*)config;
+    return (const pas_bitfit_page_config*)config;
 }
 
-PAS_API const char* pas_page_base_config_get_kind_string(pas_page_base_config* config);
+PAS_API const char* pas_page_base_config_get_kind_string(const pas_page_base_config* config);
 
 PAS_END_EXTERN_C;
 

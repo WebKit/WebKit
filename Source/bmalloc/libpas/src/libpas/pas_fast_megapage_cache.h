@@ -48,7 +48,7 @@ typedef struct pas_physical_memory_transaction pas_physical_memory_transaction;
 PAS_API void* pas_fast_megapage_cache_try_allocate(
     pas_megapage_cache* cache,
     pas_fast_megapage_table* table,
-    pas_page_base_config* config,
+    const pas_page_base_config* config,
     pas_fast_megapage_kind kind,
     bool should_zero,
     pas_heap* heap,

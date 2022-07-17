@@ -39,7 +39,7 @@ PAS_API pas_segregated_shared_handle* pas_segregated_shared_view_commit_page(
     pas_segregated_heap* heap,
     pas_segregated_shared_page_directory* directory,
     pas_segregated_partial_view* partial_view,
-    pas_segregated_page_config* page_config);
+    const pas_segregated_page_config* page_config);
 
 /* Must be called holding the commit lock. */
 static PAS_ALWAYS_INLINE pas_segregated_shared_handle*
@@ -61,7 +61,7 @@ pas_segregated_shared_view_commit_page_if_necessary(
     else {
         result = pas_segregated_shared_view_commit_page(
             view, heap, directory, partial_view,
-            (pas_segregated_page_config*)page_config.base.page_config_ptr);
+            (const pas_segregated_page_config*)page_config.base.page_config_ptr);
     }
 
     PAS_TESTING_ASSERT(result->directory == directory);

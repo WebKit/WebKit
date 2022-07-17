@@ -81,7 +81,7 @@ pas_segregated_shared_handle* pas_segregated_shared_view_commit_page(
     pas_segregated_heap* heap,
     pas_segregated_shared_page_directory* shared_page_directory,
     pas_segregated_partial_view* partial_view,
-    pas_segregated_page_config* page_config_ptr)
+    const pas_segregated_page_config* page_config_ptr)
 {
     pas_segregated_directory* directory;
     pas_segregated_shared_handle* handle;
@@ -254,7 +254,7 @@ static bool compute_summary_for_each_live_object_callback(
 }
 
 static pas_heap_summary compute_summary(pas_segregated_shared_view* view,
-                                        pas_segregated_page_config* page_config_ptr)
+                                        const pas_segregated_page_config* page_config_ptr)
 {
     static const bool verbose = false;
     
@@ -359,7 +359,7 @@ static pas_heap_summary compute_summary(pas_segregated_shared_view* view,
 
 pas_heap_summary
 pas_segregated_shared_view_compute_summary(pas_segregated_shared_view* view,
-                                           pas_segregated_page_config* page_config)
+                                           const pas_segregated_page_config* page_config)
 {
     pas_heap_summary result;
 

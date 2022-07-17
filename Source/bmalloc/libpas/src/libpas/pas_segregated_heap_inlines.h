@@ -37,14 +37,14 @@ PAS_API pas_segregated_size_directory* pas_segregated_heap_size_directory_for_in
     pas_segregated_heap* heap,
     size_t index,
     unsigned* cached_index,
-    pas_heap_config* config);
+    const pas_heap_config* config);
 
 static PAS_ALWAYS_INLINE pas_segregated_size_directory*
 pas_segregated_heap_size_directory_for_index(
     pas_segregated_heap* heap,
     size_t index,
     unsigned* cached_index,
-    pas_heap_config* config)
+    const pas_heap_config* config)
 {
     pas_compact_atomic_segregated_size_directory_ptr* index_to_size_directory;
     pas_segregated_size_directory* result;

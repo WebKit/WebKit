@@ -70,7 +70,7 @@ PAS_API void pas_free_granules_decommit_after_locking_range(pas_free_granules* f
                                                             pas_page_base* page,
                                                             pas_deferred_decommit_log* log,
                                                             pas_lock* commit_lock,
-                                                            pas_page_base_config* page_config,
+                                                            const pas_page_base_config* page_config,
                                                             pas_lock_hold_mode heap_lock_hold_mode);
 
 PAS_END_EXTERN_C;

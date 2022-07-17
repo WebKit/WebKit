@@ -40,7 +40,7 @@
 PAS_BEGIN_EXTERN_C;
 
 PAS_API bool pas_bitfit_allocator_commit_view(pas_bitfit_view* view,
-                                              pas_bitfit_page_config* config,
+                                              const pas_bitfit_page_config* config,
                                               pas_lock_hold_mode commit_lock_hold_mode);
 
 PAS_API pas_bitfit_view*
@@ -49,7 +49,7 @@ pas_bitfit_allocator_finish_failing(pas_bitfit_allocator* allocator,
                                     size_t size,
                                     size_t alignment,
                                     size_t largest_available,
-                                    pas_bitfit_page_config* config);
+                                    const pas_bitfit_page_config* config);
 
 static PAS_ALWAYS_INLINE pas_fast_path_allocation_result
 pas_bitfit_allocator_try_allocate(pas_bitfit_allocator* allocator,
@@ -94,7 +94,7 @@ pas_bitfit_allocator_try_allocate(pas_bitfit_allocator* allocator,
             PAS_TESTING_ASSERT(!allocator->view);
             
             view = pas_bitfit_size_class_get_first_free_view(
-                allocator->size_class, (pas_bitfit_page_config*)config.base.page_config_ptr);
+                allocator->size_class, (const pas_bitfit_page_config*)config.base.page_config_ptr);
             if (!view)
                 return pas_fast_path_allocation_result_create_out_of_memory();
             allocator->view = view;
@@ -129,7 +129,7 @@ pas_bitfit_allocator_try_allocate(pas_bitfit_allocator* allocator,
             if (PAS_UNLIKELY(!view->is_owned)) {
                 /* Note that this would have flashed the ownership lock possibly. */
                 if (!pas_bitfit_allocator_commit_view(
-                        view, (pas_bitfit_page_config*)config.base.page_config_ptr,
+                        view, (const pas_bitfit_page_config*)config.base.page_config_ptr,
                         commit_lock_hold_mode)) {
                     if (verbose)
                         pas_log("bitfit is out of memory\n");
@@ -172,7 +172,7 @@ pas_bitfit_allocator_try_allocate(pas_bitfit_allocator* allocator,
             
             view = pas_bitfit_allocator_finish_failing(
                 allocator, view, size, alignment, bitfit_result.u.largest_available,
-                (pas_bitfit_page_config*)config.base.page_config_ptr);
+                (const pas_bitfit_page_config*)config.base.page_config_ptr);
             
             if (view)
                 PAS_TESTING_ASSERT(alignment > pas_page_base_config_min_align(config.base));

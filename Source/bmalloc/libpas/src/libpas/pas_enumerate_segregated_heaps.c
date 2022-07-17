@@ -192,7 +192,7 @@ static bool collect_shared_page_directories_heap_callback(
     void* arg)
 {
     enumeration_context* context;
-    pas_heap_config* config;
+    const pas_heap_config* config;
 
     context = arg;
 
@@ -205,7 +205,7 @@ static bool collect_shared_page_directories_heap_callback(
 }
 
 static void record_page_payload_and_meta(pas_enumerator* enumerator,
-                                         pas_segregated_page_config* page_config,
+                                         const pas_segregated_page_config* page_config,
                                          uintptr_t page_boundary,
                                          pas_segregated_page* page,
                                          uintptr_t payload_begin,
@@ -230,7 +230,7 @@ static void record_page_payload_and_meta(pas_enumerator* enumerator,
 static void record_page_objects(pas_enumerator* enumerator,
                                 enumeration_context* context,
                                 pas_segregated_size_directory* directory,
-                                pas_segregated_page_config* page_config,
+                                const pas_segregated_page_config* page_config,
                                 uintptr_t page_boundary,
                                 pas_segregated_page* page,
                                 pas_local_allocator* allocator,
@@ -316,7 +316,7 @@ static bool enumerate_exclusive_view(pas_enumerator* enumerator,
                                      enumeration_context* context)
 {
     pas_segregated_size_directory* directory;
-    pas_segregated_page_config* page_config;
+    const pas_segregated_page_config* page_config;
     pas_segregated_size_directory_data* data;
     uintptr_t page_boundary;
     pas_segregated_page* page;
@@ -384,7 +384,7 @@ static bool enumerate_shared_view(pas_enumerator* enumerator,
                                   pas_segregated_shared_page_directory* directory,
                                   enumeration_context* context)
 {
-    pas_segregated_page_config* page_config;
+    const pas_segregated_page_config* page_config;
     pas_shared_handle_or_page_boundary shared_handle_or_page_boundary;
     pas_segregated_shared_handle* shared_handle;
     uintptr_t page_boundary;
@@ -454,7 +454,7 @@ static bool enumerate_partial_view(pas_enumerator* enumerator,
                                    enumeration_context* context)
 {
     pas_segregated_size_directory* directory;
-    pas_segregated_page_config* page_config;
+    const pas_segregated_page_config* page_config;
     pas_segregated_shared_view* shared_view;
     pas_shared_handle_or_page_boundary shared_handle_or_page_boundary;
     pas_segregated_shared_handle* shared_handle;
@@ -593,7 +593,7 @@ static bool enumerate_segregated_heap_callback(pas_enumerator* enumerator,
 static PAS_NEVER_INLINE void consider_allocator(pas_enumerator* enumerator, enumeration_context* context, pas_local_allocator* allocator)
 {
     local_allocator_map_add_result add_result;
-    pas_segregated_page_config* page_config;
+    const pas_segregated_page_config* page_config;
     uintptr_t page_boundary;
     local_allocator_node* allocator_node;
     

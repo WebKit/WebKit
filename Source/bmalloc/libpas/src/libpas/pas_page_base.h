@@ -60,7 +60,7 @@ struct pas_page_base {
                           basically any reason. */
 };
 
-PAS_API size_t pas_page_base_header_size(pas_page_base_config* config,
+PAS_API size_t pas_page_base_header_size(const pas_page_base_config* config,
                                          pas_page_kind page_kind);
 
 static inline void pas_page_base_construct(pas_page_base* page_base,
@@ -167,7 +167,7 @@ pas_page_base_for_address_and_page_config(uintptr_t begin,
         page_config);
 }
 
-PAS_API pas_page_base_config* pas_page_base_get_config(pas_page_base* page);
+PAS_API const pas_page_base_config* pas_page_base_get_config(pas_page_base* page);
 
 PAS_API pas_page_granule_use_count*
 pas_page_base_get_granule_use_counts(pas_page_base* page);

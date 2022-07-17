@@ -61,7 +61,7 @@ bool pas_heap_config_kind_for_each(
     return true;    
 }
 
-pas_heap_config* pas_heap_config_kind_for_config_table[pas_heap_config_kind_num_kinds] = {
+const pas_heap_config* pas_heap_config_kind_for_config_table[pas_heap_config_kind_num_kinds] = {
 #define PAS_DEFINE_HEAP_CONFIG_KIND(name, value) \
     (value).config_ptr,
 #include "pas_heap_config_kind.def"

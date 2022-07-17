@@ -272,7 +272,7 @@ void pas_thread_local_cache_destroy(pas_lock_hold_mode heap_lock_hold_mode)
     destroy(thread_local_cache, heap_lock_hold_mode);
 }
 
-pas_thread_local_cache* pas_thread_local_cache_get_slow(pas_heap_config* config,
+pas_thread_local_cache* pas_thread_local_cache_get_slow(const pas_heap_config* config,
                                                         pas_lock_hold_mode heap_lock_hold_mode)
 {
     pas_thread_local_cache* thread_local_cache;
@@ -486,7 +486,7 @@ void pas_thread_local_cache_ensure_committed(pas_thread_local_cache* thread_loca
 pas_local_allocator_result
 pas_thread_local_cache_get_local_allocator_if_can_set_cache_for_possibly_uninitialized_index_slow(
     unsigned allocator_index,
-    pas_heap_config* heap_config)
+    const pas_heap_config* heap_config)
 {
     if (!pas_thread_local_cache_can_set() || pas_debug_heap_is_enabled(heap_config->kind))
         return pas_local_allocator_result_create_failure();

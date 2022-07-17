@@ -181,7 +181,7 @@ pas_segregated_shared_view_bump(
 
 PAS_API pas_heap_summary
 pas_segregated_shared_view_compute_summary(pas_segregated_shared_view* view,
-                                           pas_segregated_page_config* page_config);
+                                           const pas_segregated_page_config* page_config);
 
 PAS_API bool pas_segregated_shared_view_is_empty(pas_segregated_shared_view* view);
 

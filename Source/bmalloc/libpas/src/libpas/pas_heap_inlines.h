@@ -40,7 +40,7 @@ pas_heap_ensure_size_directory_for_size_slow(
     size_t size,
     size_t alignment,
     pas_size_lookup_mode force_size_lookup,
-    pas_heap_config* config,
+    const pas_heap_config* config,
     unsigned* cached_index);
 
 static PAS_ALWAYS_INLINE pas_segregated_size_directory*

@@ -42,7 +42,7 @@ typedef struct pas_physical_memory_transaction pas_physical_memory_transaction;
    base on the allocation. This is guaranteed to returned zeroed memory. */
 PAS_API void* pas_medium_megapage_cache_try_allocate(
     pas_megapage_cache* cache,
-    pas_page_base_config* config,
+    const pas_page_base_config* config,
     bool should_zero,
     pas_heap* heap,
     pas_physical_memory_transaction* transaction);

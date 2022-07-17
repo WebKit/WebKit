@@ -42,7 +42,7 @@
 
 pas_heap* pas_heap_create(pas_heap_ref* heap_ref,
                           pas_heap_ref_kind heap_ref_kind,
-                          pas_heap_config* config,
+                          const pas_heap_config* config,
                           pas_heap_runtime_config* runtime_config)
 {
     static const bool verbose = false;
@@ -77,7 +77,7 @@ pas_heap* pas_heap_create(pas_heap_ref* heap_ref,
 size_t pas_heap_get_type_size(pas_heap* heap)
 {
     pas_heap_config_kind kind;
-    pas_heap_config* config;
+    const pas_heap_config* config;
     if (!heap)
         return 1;
     kind = heap->config_kind;
@@ -201,7 +201,7 @@ pas_heap_ensure_size_directory_for_size_slow(
     size_t size,
     size_t alignment,
     pas_size_lookup_mode force_size_lookup,
-    pas_heap_config* config,
+    const pas_heap_config* config,
     unsigned* cached_index)
 {
     pas_segregated_size_directory* result;

@@ -36,7 +36,7 @@
 
 PAS_BEGIN_EXTERN_C;
 
-pas_heap_config pas_utility_heap_config = PAS_UTILITY_HEAP_CONFIG;
+const pas_heap_config pas_utility_heap_config = PAS_UTILITY_HEAP_CONFIG;
 
 PAS_SEGREGATED_PAGE_CONFIG_SPECIALIZATION_DEFINITIONS(
     pas_utility_heap_page_config, PAS_UTILITY_HEAP_CONFIG.small_segregated_config);

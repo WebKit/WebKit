@@ -296,7 +296,7 @@ pas_segregated_page_bytes_dirtied_per_object(unsigned object_size,
 PAS_API void pas_segregated_page_construct(pas_segregated_page* page,
                                            pas_segregated_view owner,
                                            bool was_stolen,
-                                           pas_segregated_page_config* page_config);
+                                           const pas_segregated_page_config* page_config);
 
 static PAS_ALWAYS_INLINE pas_page_granule_use_count*
 pas_segregated_page_get_granule_use_counts(pas_segregated_page* page,
@@ -443,7 +443,7 @@ PAS_API bool pas_segregated_page_take_physically(
 PAS_API size_t pas_segregated_page_get_num_empty_granules(pas_segregated_page* page);
 PAS_API size_t pas_segregated_page_get_num_committed_granules(pas_segregated_page* page);
 
-PAS_API pas_segregated_page_config* pas_segregated_page_get_config(pas_segregated_page* page);
+PAS_API const pas_segregated_page_config* pas_segregated_page_get_config(pas_segregated_page* page);
 
 PAS_API void pas_segregated_page_add_commit_range(pas_segregated_page* page,
                                                   pas_heap_summary* result,
@@ -451,10 +451,10 @@ PAS_API void pas_segregated_page_add_commit_range(pas_segregated_page* page,
 
 PAS_API pas_segregated_page_and_config
 pas_segregated_page_and_config_for_address_and_heap_config(uintptr_t begin,
-                                                           pas_heap_config* config);
+                                                           const pas_heap_config* config);
 
 static inline pas_segregated_page*
-pas_segregated_page_for_address_and_heap_config(uintptr_t begin, pas_heap_config* config)
+pas_segregated_page_for_address_and_heap_config(uintptr_t begin, const pas_heap_config* config)
 {
     return pas_segregated_page_and_config_for_address_and_heap_config(begin, config).page;
 }

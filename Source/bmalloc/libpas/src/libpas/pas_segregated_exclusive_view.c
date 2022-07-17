@@ -93,7 +93,7 @@ static pas_heap_summary compute_summary_impl(pas_segregated_exclusive_view* view
 {
     pas_segregated_size_directory* size_directory;
     pas_segregated_directory* directory;
-    pas_segregated_page_config* page_config_ptr;
+    const pas_segregated_page_config* page_config_ptr;
     pas_segregated_page_config page_config;
     pas_heap_summary result;
     void* boundary;

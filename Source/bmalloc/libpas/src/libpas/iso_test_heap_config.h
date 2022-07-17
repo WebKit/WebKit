@@ -76,7 +76,7 @@ PAS_BEGIN_EXTERN_C;
     .marge_bitfit_page_size = PAS_MARGE_PAGE_DEFAULT_SIZE, \
     .pgm_enabled = false)
 
-PAS_API extern pas_heap_config iso_test_heap_config;
+PAS_API extern const pas_heap_config iso_test_heap_config;
 
 PAS_BASIC_HEAP_CONFIG_DECLARATIONS(iso_test, ISO_TEST);
 

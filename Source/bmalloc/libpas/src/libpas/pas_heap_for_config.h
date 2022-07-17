@@ -37,7 +37,7 @@ typedef struct pas_allocation_config pas_allocation_config;
 PAS_API extern bool pas_heap_for_config_force_bootstrap;
 
 PAS_API void* pas_heap_for_config_allocate(
-    pas_heap_config* config,
+    const pas_heap_config* config,
     size_t size,
     const char* name);
 
@@ -47,24 +47,24 @@ PAS_API void* pas_heap_for_page_config_kind_allocate(
     const char* name);
 
 PAS_API void* pas_heap_for_page_config_allocate(
-    pas_segregated_page_config* page_config,
+    const pas_segregated_page_config* page_config,
     size_t size,
     const char* name);
 
 PAS_API void* pas_heap_for_config_allocate_with_alignment(
-    pas_heap_config* config,
+    const pas_heap_config* config,
     size_t size,
     size_t alignment,
     const char* name);
 
 PAS_API void* pas_heap_for_page_config_allocate_with_alignment(
-    pas_segregated_page_config* page_config,
+    const pas_segregated_page_config* page_config,
     size_t size,
     size_t alignment,
     const char* name);
 
 PAS_API void* pas_heap_for_config_allocate_with_manual_alignment(
-    pas_heap_config* config,
+    const pas_heap_config* config,
     size_t size,
     size_t alignment,
     const char* name);
@@ -76,13 +76,13 @@ PAS_API void* pas_heap_for_page_config_kind_allocate_with_manual_alignment(
     const char* name);
 
 PAS_API void* pas_heap_for_page_config_allocate_with_manual_alignment(
-    pas_segregated_page_config* page_config,
+    const pas_segregated_page_config* page_config,
     size_t size,
     size_t alignment,
     const char* name);
 
 PAS_API void pas_heap_for_config_deallocate(
-    pas_heap_config* config,
+    const pas_heap_config* config,
     void* ptr,
     size_t size);
 
@@ -92,7 +92,7 @@ PAS_API void pas_heap_for_page_config_kind_deallocate(
     size_t size);
 
 PAS_API void pas_heap_for_page_config_deallocate(
-    pas_segregated_page_config* config,
+    const pas_segregated_page_config* config,
     void* ptr,
     size_t size);
 

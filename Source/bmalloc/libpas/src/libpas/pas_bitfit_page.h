@@ -94,7 +94,7 @@ pas_bitfit_page_get_granule_use_counts(pas_bitfit_page* page,
 
 PAS_API void pas_bitfit_page_construct(pas_bitfit_page* page,
                                        pas_bitfit_view* view,
-                                       pas_bitfit_page_config* config);
+                                       const pas_bitfit_page_config* config);
 
 static PAS_ALWAYS_INLINE uintptr_t
 pas_bitfit_page_offset_to_first_object(pas_bitfit_page_config page_config)
@@ -166,7 +166,7 @@ pas_bitfit_page_for_address_and_page_config(uintptr_t begin,
         pas_page_base_for_address_and_page_config(begin, page_config.base));
 }
 
-PAS_API pas_bitfit_page_config* pas_bitfit_page_get_config(pas_bitfit_page* page);
+PAS_API const pas_bitfit_page_config* pas_bitfit_page_get_config(pas_bitfit_page* page);
 
 PAS_API void pas_bitfit_page_log_bits(
     pas_bitfit_page* page, uintptr_t mark_begin_offset, uintptr_t mark_end_offset);

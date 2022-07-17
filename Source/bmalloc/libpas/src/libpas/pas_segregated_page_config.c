@@ -40,7 +40,7 @@ bool pas_small_segregated_page_config_variant_is_enabled_override =
 bool pas_medium_segregated_page_config_variant_is_enabled_override =
     PAS_USE_MEDIUM_SEGREGATED_OVERRIDE;
 
-void pas_segregated_page_config_validate(pas_segregated_page_config* config)
+void pas_segregated_page_config_validate(const pas_segregated_page_config* config)
 {
     if (!pas_segregated_page_config_do_validate)
         return;

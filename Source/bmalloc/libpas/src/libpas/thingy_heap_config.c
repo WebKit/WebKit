@@ -33,7 +33,7 @@
 
 #include "pas_heap_config_utils_inlines.h"
 
-pas_heap_config thingy_heap_config = THINGY_HEAP_CONFIG;
+const pas_heap_config thingy_heap_config = THINGY_HEAP_CONFIG;
 
 PAS_BASIC_HEAP_CONFIG_DEFINITIONS(
     thingy, THINGY,

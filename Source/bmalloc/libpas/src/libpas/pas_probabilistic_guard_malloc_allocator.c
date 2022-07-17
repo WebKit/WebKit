@@ -58,7 +58,7 @@ static void pas_probabilistic_guard_malloc_debug_info(const void* key, const pas
 #pragma mark ALLOC/DEALLOC
 #endif
 
-pas_allocation_result pas_probabilistic_guard_malloc_allocate(pas_large_heap* large_heap, size_t size, pas_heap_config* heap_config,
+pas_allocation_result pas_probabilistic_guard_malloc_allocate(pas_large_heap* large_heap, size_t size, const pas_heap_config* heap_config,
                                                               pas_physical_memory_transaction* transaction)
 {
     pas_heap_lock_assert_held();

@@ -61,7 +61,7 @@ struct pas_pgm_storage {
  * so just update this variable each time we allocate or deallocate. */
 extern PAS_API bool pas_pgm_can_use;
 
-pas_allocation_result pas_probabilistic_guard_malloc_allocate(pas_large_heap* large_heap, size_t size, pas_heap_config* heap_config, pas_physical_memory_transaction* transaction);
+pas_allocation_result pas_probabilistic_guard_malloc_allocate(pas_large_heap* large_heap, size_t size, const pas_heap_config* heap_config, pas_physical_memory_transaction* transaction);
 void pas_probabilistic_guard_malloc_deallocate(void* memory);
 
 size_t pas_probabilistic_guard_malloc_get_free_virtual_memory(void);

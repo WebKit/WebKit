@@ -79,7 +79,7 @@ PAS_API void pagesize64k_heap_config_activate(void);
     .use_marge_bitfit = false, \
     .pgm_enabled = false)
 
-PAS_API extern pas_heap_config pagesize64k_heap_config;
+PAS_API extern const pas_heap_config pagesize64k_heap_config;
 
 PAS_BASIC_HEAP_CONFIG_DECLARATIONS(pagesize64k, PAGESIZE64K);
 

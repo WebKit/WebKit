@@ -61,7 +61,7 @@ PAS_API void pas_bitfit_size_class_construct(
 
 PAS_API pas_bitfit_view*
 pas_bitfit_size_class_get_first_free_view(pas_bitfit_size_class* size_class,
-                                          pas_bitfit_page_config* page_config);
+                                          const pas_bitfit_page_config* page_config);
 
 PAS_END_EXTERN_C;
 

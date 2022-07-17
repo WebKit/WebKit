@@ -211,7 +211,7 @@ pas_segregated_view_will_start_allocating(pas_segregated_view view,
                 pas_segregated_page_for_boundary_unchecked(exclusive->page_boundary, page_config),
                 ineligible_owning_view,
                 was_stolen,
-                (pas_segregated_page_config*)page_config.base.page_config_ptr);
+                (const pas_segregated_page_config*)page_config.base.page_config_ptr);
 
             pas_lock_lock_conditionally(&exclusive->ownership_lock, heap_lock_hold_mode);
             exclusive->is_owned = true;

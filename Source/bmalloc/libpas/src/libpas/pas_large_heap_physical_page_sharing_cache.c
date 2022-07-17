@@ -41,7 +41,7 @@ pas_enumerable_range_list pas_large_heap_physical_page_sharing_cache_page_list;
 
 typedef struct {
     pas_large_heap_physical_page_sharing_cache* cache;
-    pas_heap_config* config;
+    const pas_heap_config* config;
     bool should_zero;
 } aligned_allocator_data;
 
@@ -161,7 +161,7 @@ pas_large_heap_physical_page_sharing_cache_try_allocate_with_alignment(
     pas_large_heap_physical_page_sharing_cache* cache,
     size_t size,
     pas_alignment alignment,
-    pas_heap_config* heap_config,
+    const pas_heap_config* heap_config,
     bool should_zero)
 {
     static const bool verbose = false;

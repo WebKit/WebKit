@@ -250,7 +250,7 @@ static void report_segregated_directory_contents(
     pas_stream_printf(stream, "\n");
 
     if (directory->directory_kind == pas_segregated_shared_page_directory_kind) {
-        pas_segregated_page_config* page_config;
+        const pas_segregated_page_config* page_config;
         uintptr_t payload_begin;
         uintptr_t payload_end;
 
@@ -567,7 +567,7 @@ void pas_status_reporter_dump_segregated_heap(pas_stream* stream, pas_segregated
 
 void pas_status_reporter_dump_heap(pas_stream* stream, pas_heap* heap)
 {
-    pas_heap_config* config;
+    const pas_heap_config* config;
     pas_heap_summary summary;
 
     config = pas_heap_config_kind_get_config(heap->config_kind);

@@ -32,7 +32,7 @@
 #include "pas_bitfit_page.h"
 #include "pas_segregated_page.h"
 
-size_t pas_page_base_header_size(pas_page_base_config* config,
+size_t pas_page_base_header_size(const pas_page_base_config* config,
                                  pas_page_kind page_kind)
 {
     switch (config->page_config_kind) {
@@ -49,7 +49,7 @@ size_t pas_page_base_header_size(pas_page_base_config* config,
     return 0;
 }
 
-pas_page_base_config* pas_page_base_get_config(pas_page_base* page)
+const pas_page_base_config* pas_page_base_get_config(pas_page_base* page)
 {
     switch (pas_page_base_get_config_kind(page)) {
     case pas_page_config_kind_segregated:
@@ -87,7 +87,7 @@ void pas_page_base_compute_committed_when_owned(pas_page_base* page,
     pas_page_granule_use_count* use_counts;
     uintptr_t num_granules;
     uintptr_t granule_index;
-    pas_page_base_config* config_ptr;
+    const pas_page_base_config* config_ptr;
     pas_page_base_config config;
 
     config_ptr = pas_page_base_get_config(page);
@@ -126,7 +126,7 @@ void pas_page_base_add_free_range(pas_page_base* page,
                                   pas_range range,
                                   pas_free_range_kind kind)
 {
-    pas_page_base_config* page_config_ptr;
+    const pas_page_base_config* page_config_ptr;
     pas_page_base_config page_config;
     size_t* ineligible_for_decommit;
     size_t* eligible_for_decommit;

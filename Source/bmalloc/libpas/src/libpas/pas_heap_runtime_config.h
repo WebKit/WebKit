@@ -39,7 +39,7 @@ typedef struct pas_heap_runtime_config pas_heap_runtime_config;
 typedef struct pas_segregated_page_config pas_segregated_page_config;
 
 typedef size_t (*pas_heap_runtime_config_view_cache_capacity_for_object_size_callback)(
-    size_t object_size, pas_segregated_page_config* page_config);
+    size_t object_size, const pas_segregated_page_config* page_config);
 
 struct pas_heap_runtime_config {
     pas_segregated_heap_lookup_kind lookup_kind : 8;
@@ -62,15 +62,15 @@ struct pas_heap_runtime_config {
 PAS_API uint8_t pas_heap_runtime_config_view_cache_capacity_for_object_size(
     pas_heap_runtime_config* config,
     size_t object_size,
-    pas_segregated_page_config* page_config);
+    const pas_segregated_page_config* page_config);
 
 PAS_API size_t pas_heap_runtime_config_zero_view_cache_capacity(
     size_t object_size,
-    pas_segregated_page_config* page_config);
+    const pas_segregated_page_config* page_config);
 
 PAS_API size_t pas_heap_runtime_config_aggressive_view_cache_capacity(
     size_t object_size,
-    pas_segregated_page_config* page_config);
+    const pas_segregated_page_config* page_config);
 
 PAS_END_EXTERN_C;
 

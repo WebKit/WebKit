@@ -172,8 +172,8 @@ PAS_API pas_segregated_size_directory* pas_segregated_size_directory_create(
     pas_segregated_heap* heap,
     unsigned object_size,
     unsigned alignment,
-    pas_heap_config* heap_config,
-    pas_segregated_page_config* page_config, /* Pass NULL to create a bitfit size directory. */
+    const pas_heap_config* heap_config,
+    const pas_segregated_page_config* page_config, /* Pass NULL to create a bitfit size directory. */
     pas_segregated_size_directory_creation_mode creation_mode);
 
 PAS_API void pas_segregated_size_directory_finish_creation(pas_segregated_size_directory* directory);
@@ -336,7 +336,7 @@ pas_segregated_size_directory_take_last_empty(
 
 PAS_API pas_segregated_size_directory* pas_segregated_size_directory_for_object(
     uintptr_t begin,
-    pas_heap_config* config);
+    const pas_heap_config* config);
 
 /* This assumes that we already have a data. That's a valid assumption if we have exclusives. */
 PAS_API pas_heap_summary pas_segregated_size_directory_compute_summary_for_unowned_exclusive(

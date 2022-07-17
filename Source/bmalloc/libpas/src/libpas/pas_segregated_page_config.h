@@ -333,10 +333,10 @@ pas_segregated_page_config_logging_mode_for_role(pas_segregated_page_config conf
     return pas_segregated_deallocation_no_logging_mode;
 }
 
-PAS_API void pas_segregated_page_config_validate(pas_segregated_page_config*);
+PAS_API void pas_segregated_page_config_validate(const pas_segregated_page_config*);
 
 static inline pas_segregated_page_config_kind pas_segregated_page_config_get_kind(
-    pas_segregated_page_config* page_config)
+    const pas_segregated_page_config* page_config)
 {
     return page_config ? page_config->kind : pas_segregated_page_config_kind_null;
 }

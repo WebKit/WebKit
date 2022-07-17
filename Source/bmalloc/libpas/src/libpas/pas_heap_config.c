@@ -29,7 +29,7 @@
 
 #include "pas_heap_config.h"
 
-bool pas_heap_config_activate(pas_heap_config* config)
+bool pas_heap_config_activate(const pas_heap_config* config)
 {
     pas_heap_lock_assert_held();
     

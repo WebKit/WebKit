@@ -42,7 +42,7 @@ pas_segregated_size_directory_get_allocator_from_tlc(
     pas_segregated_size_directory* directory,
     size_t size,
     pas_size_lookup_mode size_lookup_mode,
-    pas_heap_config* config,
+    const pas_heap_config* config,
     unsigned* cached_index);
 
 PAS_API pas_baseline_allocator*
@@ -54,7 +54,7 @@ pas_segregated_size_directory_select_allocator(
     pas_segregated_size_directory* directory,
     size_t size,
     pas_size_lookup_mode size_lookup_mode,
-    pas_heap_config* config,
+    const pas_heap_config* config,
     unsigned* cached_index)
 {
     if (pas_segregated_size_directory_has_tlc_allocator(directory)
@@ -154,7 +154,7 @@ pas_segregated_size_directory_take_first_eligible_impl(
     static const bool verbose = false;
     
     bool did_find_something;
-    pas_segregated_page_config* page_config_ptr;
+    const pas_segregated_page_config* page_config_ptr;
     pas_segregated_page_config page_config;
     pas_segregated_view view;
 

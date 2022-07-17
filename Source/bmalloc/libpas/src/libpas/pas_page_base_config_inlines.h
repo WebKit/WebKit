@@ -30,7 +30,7 @@
 
 PAS_BEGIN_EXTERN_C;
 
-static inline bool pas_page_base_config_is_utility(pas_page_base_config* config)
+static inline bool pas_page_base_config_is_utility(const pas_page_base_config* config)
 {
     return pas_page_base_config_is_segregated(*config)
         && pas_segregated_page_config_is_utility(*pas_page_base_config_get_segregated(config));

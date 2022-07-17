@@ -254,7 +254,7 @@ static bool for_each_segregated_directory_shared_page_directory_callback(
 }
 
 static bool for_each_segregated_directory_segregated_heap_callback(
-    pas_segregated_heap* heap, pas_heap_config* config, void* arg)
+    pas_segregated_heap* heap, const pas_heap_config* config, void* arg)
 {
     for_each_segregated_directory_data* data;
 
@@ -321,7 +321,7 @@ static bool verify_in_steady_state_segregated_directory_callback(
     pas_segregated_directory* directory, void* arg)
 {
     size_t index;
-    pas_segregated_page_config* page_config;
+    const pas_segregated_page_config* page_config;
     
     PAS_UNUSED_PARAM(arg);
 
@@ -410,7 +410,7 @@ static bool compute_total_non_utility_segregated_summary_directory_callback(
 {
     pas_heap_summary* result;
     size_t index;
-    pas_segregated_page_config* page_config;
+    const pas_segregated_page_config* page_config;
 
     if (!pas_segregated_page_config_kind_is_utility(directory->page_config_kind))
         return true;

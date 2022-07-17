@@ -88,7 +88,7 @@ struct pas_root {
     pas_tiny_large_map_hashtable* tiny_large_map_hashtable_instance;
     pas_tiny_large_map_hashtable_in_flux_stash* tiny_large_map_hashtable_instance_in_flux_stash;
     pas_tiny_large_map_second_level_hashtable_in_flux_stash* tiny_large_map_second_level_hashtable_in_flux_stash_instance;
-    pas_heap_config** heap_configs;
+    const pas_heap_config** heap_configs;
     unsigned num_heap_configs;
     pas_red_black_tree* large_sharing_tree;
     pas_red_black_tree_jettisoned_nodes* large_sharing_tree_jettisoned_nodes;

@@ -49,7 +49,7 @@ void pas_bitfit_allocator_stop(pas_bitfit_allocator* allocator)
 }
 
 bool pas_bitfit_allocator_commit_view(pas_bitfit_view* view,
-                                      pas_bitfit_page_config* config,
+                                      const pas_bitfit_page_config* config,
                                       pas_lock_hold_mode commit_lock_hold_mode)
 {
     static const bool verbose = false;
@@ -222,7 +222,7 @@ pas_bitfit_view* pas_bitfit_allocator_finish_failing(pas_bitfit_allocator* alloc
                                                      size_t size,
                                                      size_t alignment,
                                                      size_t largest_available,
-                                                     pas_bitfit_page_config* config)
+                                                     const pas_bitfit_page_config* config)
 {
     static const bool verbose = false;
     

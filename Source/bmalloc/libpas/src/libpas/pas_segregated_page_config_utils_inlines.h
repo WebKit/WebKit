@@ -70,7 +70,7 @@ typedef struct {
         \
         directory = pas_shared_page_directory_by_size_get( \
             directory_by_size, size_directory->object_size, \
-            (pas_segregated_page_config*)arguments.page_config.base.page_config_ptr); \
+            (const pas_segregated_page_config*)arguments.page_config.base.page_config_ptr); \
         \
         return directory; \
     } \

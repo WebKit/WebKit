@@ -57,7 +57,7 @@ void pas_commit_span_add_to_change(pas_commit_span* span, uintptr_t granule_inde
 void pas_commit_span_add_unchanged(pas_commit_span* span,
                                    pas_page_base* page,
                                    uintptr_t granule_index,
-                                   pas_page_base_config* config,
+                                   const pas_page_base_config* config,
                                    void (*commit_or_decommit)(void* base, size_t size, void* arg),
                                    void* arg)
 {
@@ -95,7 +95,7 @@ static void commit(void* base, size_t size, void* arg)
 void pas_commit_span_add_unchanged_and_commit(pas_commit_span* span,
                                               pas_page_base* page,
                                               uintptr_t granule_index,
-                                              pas_page_base_config* config)
+                                              const pas_page_base_config* config)
 {
     pas_commit_span_add_unchanged(span, page, granule_index, config, commit, span);
 }
@@ -131,7 +131,7 @@ void pas_commit_span_add_unchanged_and_decommit(pas_commit_span* span,
                                                 uintptr_t granule_index,
                                                 pas_deferred_decommit_log* log,
                                                 pas_lock* commit_lock,
-                                                pas_page_base_config* config,
+                                                const pas_page_base_config* config,
                                                 pas_lock_hold_mode heap_lock_hold_mode)
 {
     decommit_data data;

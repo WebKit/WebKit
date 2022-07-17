@@ -38,7 +38,7 @@
 
 PAS_BEGIN_EXTERN_C;
 
-pas_heap_config bmalloc_heap_config = BMALLOC_HEAP_CONFIG;
+const pas_heap_config bmalloc_heap_config = BMALLOC_HEAP_CONFIG;
 
 PAS_BASIC_HEAP_CONFIG_DEFINITIONS(
     bmalloc, BMALLOC,

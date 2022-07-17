@@ -194,7 +194,7 @@ Is an out-of-line direct function call to the specialization of
 `pas_local_allocator_try_allocate_small_segregated_slow`. And this would be a virtual call to the same
 function:
 
-    pas_heap_config* config = ...;
+    const pas_heap_config* config = ...;
     config->specialized_local_allocator_try_allocate_small_segregated_slow(...);
 
 Note that in many cases where you have a `pas_heap_config`, you are in specialized code and the heap config is
@@ -1181,7 +1181,7 @@ The header file usually looks like this:
         .marge_bitfit_page_size = PAS_MARGE_PAGE_DEFAULT_SIZE, \
         .pgm_enabled = false)
     
-    PAS_API extern pas_heap_config iso_heap_config;
+    PAS_API extern const pas_heap_config iso_heap_config;
     
     PAS_BASIC_HEAP_CONFIG_DECLARATIONS(iso, ISO);
 
@@ -1189,7 +1189,7 @@ Note the use of `PAS_BASIC_HEAP_CONFIG`, which creates a config literal that aut
 heap config, segregated page config, and bitfit page config fields based on the arguments you pass to
 `PAS_BASIC_HEAP_CONFIG`. The corresponding `.c` file looks like this:
 
-    pas_heap_config iso_heap_config = ISO_HEAP_CONFIG;
+    const pas_heap_config iso_heap_config = ISO_HEAP_CONFIG;
     
     PAS_BASIC_HEAP_CONFIG_DEFINITIONS(
         iso, ISO,

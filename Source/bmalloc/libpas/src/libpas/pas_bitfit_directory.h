@@ -88,7 +88,7 @@ struct PAS_ALIGNED(sizeof(pas_versioned_field)) pas_bitfit_directory {
 };
 
 PAS_API void pas_bitfit_directory_construct(pas_bitfit_directory* directory,
-                                            pas_bitfit_page_config* config,
+                                            const pas_bitfit_page_config* config,
                                             pas_segregated_heap* heap);
 
 static inline unsigned pas_bitfit_directory_size(pas_bitfit_directory* directory)
@@ -217,7 +217,7 @@ PAS_API pas_bitfit_view_and_index
 pas_bitfit_directory_get_first_free_view(pas_bitfit_directory* directory,
                                          unsigned start_index,
                                          unsigned size,
-                                         pas_bitfit_page_config* page_config);
+                                         const pas_bitfit_page_config* page_config);
 
 PAS_API pas_heap_summary pas_bitfit_directory_compute_summary(pas_bitfit_directory* directory);
 

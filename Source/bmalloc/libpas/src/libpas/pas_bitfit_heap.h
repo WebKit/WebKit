@@ -47,7 +47,7 @@ struct PAS_ALIGNED(sizeof(pas_versioned_field)) pas_bitfit_heap {
 };
 
 PAS_API pas_bitfit_heap* pas_bitfit_heap_create(pas_segregated_heap* heap,
-                                                pas_heap_config* heap_config);
+                                                const pas_heap_config* heap_config);
 
 static inline pas_bitfit_directory* pas_bitfit_heap_get_directory(
     pas_bitfit_heap* heap,
@@ -64,13 +64,13 @@ typedef struct {
 
 PAS_API pas_bitfit_variant_selection
 pas_bitfit_heap_select_variant(size_t object_size,
-                               pas_heap_config* config,
+                               const pas_heap_config* config,
                                pas_heap_runtime_config* runtime_config);
 
 PAS_API void pas_bitfit_heap_construct_and_insert_size_class(pas_bitfit_heap* heap,
                                                              pas_bitfit_size_class* size_class,
                                                              unsigned object_size,
-                                                             pas_heap_config* config,
+                                                             const pas_heap_config* config,
                                                              pas_heap_runtime_config* runtime_config);
 
 PAS_API pas_heap_summary pas_bitfit_heap_compute_summary(pas_bitfit_heap* heap);

@@ -112,7 +112,7 @@ PAS_API void pas_segregated_partial_view_set_is_in_use_for_allocation(
 
 PAS_API bool pas_segregated_partial_view_should_table(
     pas_segregated_partial_view* view,
-    pas_segregated_page_config* page_config);
+    const pas_segregated_page_config* page_config);
 
 PAS_API bool pas_segregated_partial_view_for_each_live_object(
     pas_segregated_partial_view* view,

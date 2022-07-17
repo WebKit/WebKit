@@ -145,11 +145,11 @@ PAS_API extern unsigned pas_segregated_heap_num_size_lookup_rematerializations;
    segregated_heap will assume type_size == 1. */
 PAS_API void pas_segregated_heap_construct(pas_segregated_heap* segregated_heap,
                                            pas_heap* parent_heap,
-                                           pas_heap_config* config,
+                                           const pas_heap_config* config,
                                            pas_heap_runtime_config* runtime_config);
 
 PAS_API pas_bitfit_heap* pas_segregated_heap_get_bitfit(pas_segregated_heap* heap,
-                                                        pas_heap_config* heap_config,
+                                                        const pas_heap_config* heap_config,
                                                         pas_lock_hold_mode heap_lock_hold_mode);
 
 static PAS_ALWAYS_INLINE size_t
@@ -176,33 +176,33 @@ pas_segregated_heap_size_for_index(size_t index, pas_heap_config config)
    2) cached_index is set and matches the index.
    3) cached_index is set and does not match the index. */
 PAS_API size_t pas_segregated_heap_get_cached_index_for_heap_type(pas_segregated_heap* heap,
-                                                                  pas_heap_config* config);
+                                                                  const pas_heap_config* config);
 PAS_API bool pas_segregated_heap_cached_index_is_set(unsigned* cached_index);
 PAS_API size_t pas_segregated_heap_get_cached_index(pas_segregated_heap* heap,
                                                     unsigned* cached_index,
-                                                    pas_heap_config* config);
+                                                    const pas_heap_config* config);
 PAS_API bool pas_segregated_heap_index_is_cached_index_and_cached_index_is_set(pas_segregated_heap* heap,
                                                                                unsigned* cached_index,
                                                                                size_t index,
-                                                                               pas_heap_config* config);
+                                                                               const pas_heap_config* config);
 PAS_API bool pas_segregated_heap_index_is_cached_index_or_cached_index_is_unset(pas_segregated_heap* heap,
                                                                                 unsigned* cached_index,
                                                                                 size_t index,
-                                                                                pas_heap_config* config);
+                                                                                const pas_heap_config* config);
 PAS_API bool pas_segregated_heap_index_is_not_cached_index_and_cached_index_is_set(pas_segregated_heap* heap,
                                                                                    unsigned* cached_index,
                                                                                    size_t index,
-                                                                                   pas_heap_config* config);
+                                                                                   const pas_heap_config* config);
 PAS_API bool pas_segregated_heap_index_is_greater_than_cached_index_and_cached_index_is_set(
     pas_segregated_heap* heap,
     unsigned* cached_index,
     size_t index,
-    pas_heap_config* config);
+    const pas_heap_config* config);
 PAS_API bool pas_segregated_heap_index_is_greater_equal_cached_index_and_cached_index_is_set(
     pas_segregated_heap* heap,
     unsigned* cached_index,
     size_t index,
-    pas_heap_config* config);
+    const pas_heap_config* config);
 
 PAS_API pas_segregated_heap_medium_directory_tuple*
 pas_segregated_heap_medium_directory_tuple_for_index(
@@ -291,7 +291,7 @@ pas_segregated_heap_ensure_allocator_index(
     pas_segregated_size_directory* directory,
     size_t size,
     pas_size_lookup_mode size_lookup_mode,
-    pas_heap_config* config,
+    const pas_heap_config* config,
     unsigned* cached_index);
 
 /* This may return UINT_MAX if it determines that the wasteage from allocating this size with
@@ -319,7 +319,7 @@ pas_segregated_heap_ensure_size_directory_for_size(
     pas_segregated_heap* heap,
     size_t size, size_t alignment,
     pas_size_lookup_mode size_lookup_mode,
-    pas_heap_config* config,
+    const pas_heap_config* config,
     unsigned* cached_index,
     pas_segregated_size_directory_creation_mode creation_mode);
 

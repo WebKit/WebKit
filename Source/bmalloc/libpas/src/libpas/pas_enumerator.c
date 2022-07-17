@@ -76,7 +76,7 @@ pas_enumerator* pas_enumerator_create(pas_root* remote_root_address,
     size_t* compact_heap_size;
     size_t* compact_heap_guard_size;
     pas_enumerator_region* region;
-    pas_heap_config** configs;
+    const pas_heap_config** configs;
     pas_heap_config_kind config_kind;
 
     region = NULL;
@@ -143,14 +143,14 @@ pas_enumerator* pas_enumerator_create(pas_root* remote_root_address,
     configs = reader(
         result,
         result->root->heap_configs,
-        sizeof(pas_heap_config*) * pas_heap_config_kind_num_kinds,
+        sizeof(const pas_heap_config*) * pas_heap_config_kind_num_kinds,
         reader_arg);
     if (!configs)
         goto fail;
     
     for (PAS_EACH_HEAP_CONFIG_KIND(config_kind)) {
-        pas_heap_config* config;
-        pas_heap_config* remote_config;
+        const pas_heap_config* config;
+        const pas_heap_config* remote_config;
 
         if (config_kind == pas_heap_config_kind_null)
             continue;
@@ -159,7 +159,7 @@ pas_enumerator* pas_enumerator_create(pas_root* remote_root_address,
 
         PAS_ASSERT_WITH_DETAIL(config);
 
-        remote_config = reader(result, configs[config->kind], sizeof(pas_heap_config), reader_arg);
+        remote_config = reader(result, (void*)(uintptr_t)configs[config->kind], sizeof(pas_heap_config), reader_arg);
         if (!remote_config)
             goto fail;
 

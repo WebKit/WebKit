@@ -76,7 +76,7 @@ bool pas_compute_summary_live_object_callback_without_physical_sharing(uintptr_t
     return true;
 }
 
-bool (*pas_compute_summary_live_object_callback_for_config(pas_heap_config* config))(
+bool (*pas_compute_summary_live_object_callback_for_config(const pas_heap_config* config))(
     uintptr_t begin,
     uintptr_t end,
     void* arg)
@@ -128,7 +128,7 @@ bool pas_compute_summary_dead_object_callback_without_physical_sharing(pas_large
     return true;
 }
 
-bool (*pas_compute_summary_dead_object_callback_for_config(pas_heap_config* config))(
+bool (*pas_compute_summary_dead_object_callback_for_config(const pas_heap_config* config))(
     pas_large_free free,
     void* arg)
 {

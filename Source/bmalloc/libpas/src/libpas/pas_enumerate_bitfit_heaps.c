@@ -44,7 +44,7 @@ static bool view_callback(pas_enumerator* enumerator,
     
     pas_bitfit_view* view;
     pas_bitfit_directory* directory;
-    pas_bitfit_page_config* page_config;
+    const pas_bitfit_page_config* page_config;
     uintptr_t page_boundary;
     pas_bitfit_page* page;
     pas_page_granule_use_count* use_counts;

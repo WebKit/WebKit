@@ -45,16 +45,16 @@ typedef enum pas_bitfit_page_config_kind pas_bitfit_page_config_kind;
 PAS_API const char* pas_bitfit_page_config_kind_get_string(pas_bitfit_page_config_kind kind);
 
 typedef bool (*pas_bitfit_page_config_kind_callback)(pas_bitfit_page_config_kind kind,
-                                                         pas_bitfit_page_config* config,
+                                                         const pas_bitfit_page_config* config,
                                                          void* arg);
 
 PAS_API bool pas_bitfit_page_config_kind_for_each(
     pas_bitfit_page_config_kind_callback callback,
     void *arg);
 
-PAS_API extern pas_bitfit_page_config* pas_bitfit_page_config_kind_for_config_table[];
+PAS_API extern const pas_bitfit_page_config* pas_bitfit_page_config_kind_for_config_table[];
 
-static inline pas_bitfit_page_config* pas_bitfit_page_config_kind_get_config(
+static inline const pas_bitfit_page_config* pas_bitfit_page_config_kind_get_config(
     pas_bitfit_page_config_kind kind)
 {
     return pas_bitfit_page_config_kind_for_config_table[kind];

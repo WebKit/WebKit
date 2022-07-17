@@ -54,7 +54,7 @@ struct pas_heap {
 
 PAS_API pas_heap* pas_heap_create(pas_heap_ref* heap_ref,
                                   pas_heap_ref_kind heap_ref_kind,
-                                  pas_heap_config* config,
+                                  const pas_heap_config* config,
                                   pas_heap_runtime_config* runtime_config);
 
 /* Returns 1 for NULL heap. */

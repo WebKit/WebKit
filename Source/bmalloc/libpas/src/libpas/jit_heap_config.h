@@ -108,7 +108,7 @@ jit_heap_config_fast_megapage_kind(uintptr_t begin)
 
 static PAS_ALWAYS_INLINE pas_page_base* jit_heap_config_page_header(uintptr_t begin);
 PAS_API pas_aligned_allocation_result jit_aligned_allocator(
-    size_t size, pas_alignment alignment, pas_large_heap* large_heap, pas_heap_config* config);
+    size_t size, pas_alignment alignment, pas_large_heap* large_heap, const pas_heap_config* config);
 PAS_API void* jit_prepare_to_enumerate(pas_enumerator* enumerator);
 PAS_API bool jit_heap_config_for_each_shared_page_directory(
     pas_segregated_heap* heap,
@@ -227,7 +227,7 @@ PAS_HEAP_CONFIG_SPECIALIZATION_DECLARATIONS(jit_heap_config);
         PAS_HEAP_CONFIG_SPECIALIZATIONS(jit_heap_config) \
     })
 
-PAS_API extern pas_heap_config jit_heap_config;
+PAS_API extern const pas_heap_config jit_heap_config;
 
 /* The JIT heap manages memory that is given to it by clients. Clients add memory to the JIT heap
    by freeing it into the fresh memory heap. The JIT heap never allocates pages from the OS by

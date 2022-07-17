@@ -78,7 +78,7 @@ PAS_BEGIN_EXTERN_C;
     .marge_bitfit_page_size = PAS_MARGE_PAGE_DEFAULT_SIZE, \
     .pgm_enabled = false)
 
-extern PAS_API pas_heap_config thingy_heap_config;
+PAS_API extern const pas_heap_config thingy_heap_config;
 
 PAS_BASIC_HEAP_CONFIG_DECLARATIONS(thingy, THINGY);
 

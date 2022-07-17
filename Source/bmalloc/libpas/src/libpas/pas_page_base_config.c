@@ -34,7 +34,7 @@
 
 PAS_BEGIN_EXTERN_C;
 
-const char* pas_page_base_config_get_kind_string(pas_page_base_config* config)
+const char* pas_page_base_config_get_kind_string(const pas_page_base_config* config)
 {
     switch (config->page_config_kind) {
     case pas_page_config_kind_segregated:

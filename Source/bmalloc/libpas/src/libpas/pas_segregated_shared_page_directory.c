@@ -117,7 +117,7 @@ pas_segregated_shared_view* pas_segregated_shared_page_directory_find_first_elig
     static const bool verbose = false;
     
     pas_segregated_directory* directory;
-    pas_segregated_page_config* page_config_ptr;
+    const pas_segregated_page_config* page_config_ptr;
     pas_segregated_page_config page_config;
     pas_segregated_directory_iterate_config config;
     bool did_find_something;
@@ -188,7 +188,7 @@ pas_segregated_shared_view* pas_segregated_shared_page_directory_find_first_elig
 typedef struct {
     pas_deferred_decommit_log* decommit_log;
     pas_lock_hold_mode heap_lock_hold_mode;
-    pas_segregated_page_config* page_config; /* Needs to be a pointer since this activation is
+    const pas_segregated_page_config* page_config; /* Needs to be a pointer since this activation is
                                                 passed to out-of-line code. */
     pas_page_sharing_pool_take_result result;
 } take_last_empty_data;
@@ -565,7 +565,7 @@ pas_segregated_shared_page_directory_take_last_empty(
        including ones that hold the heap lock while doing business. */
 
     pas_segregated_directory* directory;
-    pas_segregated_page_config* page_config_ptr;
+    const pas_segregated_page_config* page_config_ptr;
     bool did_find_something;
     pas_segregated_directory_iterate_config config;
     take_last_empty_data data;

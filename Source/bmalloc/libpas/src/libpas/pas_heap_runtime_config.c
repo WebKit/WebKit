@@ -34,7 +34,7 @@
 uint8_t pas_heap_runtime_config_view_cache_capacity_for_object_size(
     pas_heap_runtime_config* config,
     size_t object_size,
-    pas_segregated_page_config* page_config)
+    const pas_segregated_page_config* page_config)
 {
     size_t result;
 
@@ -45,7 +45,7 @@ uint8_t pas_heap_runtime_config_view_cache_capacity_for_object_size(
 }
 
 size_t pas_heap_runtime_config_zero_view_cache_capacity(
-    size_t object_size, pas_segregated_page_config* page_config)
+    size_t object_size, const pas_segregated_page_config* page_config)
 {
     PAS_UNUSED_PARAM(object_size);
     PAS_UNUSED_PARAM(page_config);
@@ -53,7 +53,7 @@ size_t pas_heap_runtime_config_zero_view_cache_capacity(
 }
 
 size_t pas_heap_runtime_config_aggressive_view_cache_capacity(
-    size_t object_size, pas_segregated_page_config* page_config)
+    size_t object_size, const pas_segregated_page_config* page_config)
 {
     static const size_t cache_size = 1638400;
 

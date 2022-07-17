@@ -40,11 +40,11 @@ pas_heap_config_utils_allocate_aligned(
     size_t size,
     pas_alignment alignment,
     pas_large_heap* large_heap,
-    pas_heap_config* config,
+    const pas_heap_config* config,
     bool should_zero);
 
 PAS_API void* pas_heap_config_utils_prepare_to_enumerate(pas_enumerator* enumerator,
-                                                         pas_heap_config* config);
+                                                         const pas_heap_config* config);
 
 typedef struct {
     bool allocate_page_should_zero;
@@ -291,7 +291,7 @@ typedef struct {
         size_t size, \
         pas_alignment alignment, \
         pas_large_heap* large_heap, \
-        pas_heap_config* config) \
+        const pas_heap_config* config) \
     { \
         return pas_heap_config_utils_allocate_aligned( \
             size, alignment, large_heap, config, \

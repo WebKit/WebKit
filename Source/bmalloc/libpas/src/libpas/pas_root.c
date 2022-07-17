@@ -126,7 +126,7 @@ void pas_root_construct(pas_root* root)
         &pas_tiny_large_map_second_level_hashtable_in_flux_stash_instance;
 
     root->heap_configs = pas_immortal_heap_allocate(
-        sizeof(pas_heap_config*) * pas_heap_config_kind_num_kinds,
+        sizeof(const pas_heap_config*) * pas_heap_config_kind_num_kinds,
         "pas_root/heap_configs",
         pas_object_allocation);
     for (PAS_EACH_HEAP_CONFIG_KIND(config_kind))

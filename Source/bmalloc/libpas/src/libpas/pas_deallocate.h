@@ -41,11 +41,11 @@
 PAS_BEGIN_EXTERN_C;
 
 PAS_API bool pas_try_deallocate_slow(uintptr_t begin,
-                                     pas_heap_config* config,
+                                     const pas_heap_config* config,
                                      pas_deallocation_mode deallocation_mode);
 
 PAS_API bool pas_try_deallocate_slow_no_cache(void* ptr,
-                                              pas_heap_config* config_ptr,
+                                              const pas_heap_config* config_ptr,
                                               pas_deallocation_mode deallocation_mode);
 
 static PAS_ALWAYS_INLINE void
@@ -65,11 +65,11 @@ pas_deallocate_known_segregated(void* ptr,
 }
 
 PAS_API bool pas_try_deallocate_known_large(void* ptr,
-                                            pas_heap_config* config,
+                                            const pas_heap_config* config,
                                             pas_deallocation_mode deallocation_mode);
 
 PAS_API void pas_deallocate_known_large(void* ptr,
-                                        pas_heap_config* config);
+                                        const pas_heap_config* config);
 
 static PAS_ALWAYS_INLINE bool pas_try_deallocate_not_small_exclusive_segregated(
     pas_thread_local_cache* thread_local_cache,

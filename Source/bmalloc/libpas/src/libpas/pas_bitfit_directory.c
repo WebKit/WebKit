@@ -41,7 +41,7 @@
 #include "pas_stream.h"
 
 void pas_bitfit_directory_construct(pas_bitfit_directory* directory,
-                                    pas_bitfit_page_config* config,
+                                    const pas_bitfit_page_config* config,
                                     pas_segregated_heap* heap)
 {
     static const bool verbose = false;
@@ -103,7 +103,7 @@ pas_bitfit_view_and_index
 pas_bitfit_directory_get_first_free_view(pas_bitfit_directory* directory,
                                          unsigned start_index,
                                          unsigned size,
-                                         pas_bitfit_page_config* page_config)
+                                         const pas_bitfit_page_config* page_config)
 {
     static const bool verbose = false;
 
@@ -380,7 +380,7 @@ pas_page_sharing_pool_take_result pas_bitfit_directory_take_last_empty(
     
     pas_versioned_field last_empty_plus_one_value;
     size_t index;
-    pas_bitfit_page_config* page_config;
+    const pas_bitfit_page_config* page_config;
     size_t num_granules;
 
     last_empty_plus_one_value = pas_versioned_field_read(&directory->last_empty_plus_one);

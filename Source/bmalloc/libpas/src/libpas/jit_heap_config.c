@@ -52,7 +52,7 @@ void jit_type_dump(const pas_heap_type* type, pas_stream* stream)
     pas_stream_printf(stream, "JIT");
 }
 
-pas_heap_config jit_heap_config = JIT_HEAP_CONFIG;
+const pas_heap_config jit_heap_config = JIT_HEAP_CONFIG;
 
 pas_simple_large_free_heap jit_fresh_memory_heap = PAS_SIMPLE_LARGE_FREE_HEAP_INITIALIZER;
 
@@ -244,7 +244,7 @@ void jit_medium_destroy_page_header(
 }
 
 pas_aligned_allocation_result jit_aligned_allocator(
-    size_t size, pas_alignment alignment, pas_large_heap* large_heap, pas_heap_config* config)
+    size_t size, pas_alignment alignment, pas_large_heap* large_heap, const pas_heap_config* config)
 {
     pas_aligned_allocation_result result;
     size_t aligned_size;
@@ -276,18 +276,18 @@ pas_aligned_allocation_result jit_aligned_allocator(
 void* jit_prepare_to_enumerate(pas_enumerator* enumerator)
 {
     pas_basic_heap_config_enumerator_data* result;
-    pas_heap_config** configs;
-    pas_heap_config* config;
+    const pas_heap_config** configs;
+    const pas_heap_config* config;
     jit_heap_config_root_data* root_data;
 
-    configs = (pas_heap_config**)pas_enumerator_read(
+    configs = (const pas_heap_config**)pas_enumerator_read(
         enumerator, enumerator->root->heap_configs,
-        sizeof(pas_heap_config*) * pas_heap_config_kind_num_kinds);
+        sizeof(const pas_heap_config*) * pas_heap_config_kind_num_kinds);
     if (!configs)
         return NULL;
     
-    config = (pas_heap_config*)pas_enumerator_read(
-        enumerator, configs[pas_heap_config_kind_jit], sizeof(pas_heap_config));
+    config = (const pas_heap_config*)pas_enumerator_read(
+        enumerator, (void*)(uintptr_t)configs[pas_heap_config_kind_jit], sizeof(pas_heap_config));
     if (!config)
         return NULL;
 

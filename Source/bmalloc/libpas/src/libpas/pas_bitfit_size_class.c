@@ -77,7 +77,7 @@ void pas_bitfit_size_class_construct(pas_bitfit_size_class* size_class,
 
 pas_bitfit_view*
 pas_bitfit_size_class_get_first_free_view(pas_bitfit_size_class* size_class,
-                                          pas_bitfit_page_config* page_config)
+                                          const pas_bitfit_page_config* page_config)
 {
     pas_bitfit_directory* directory;
     pas_versioned_field first_free_for_size;

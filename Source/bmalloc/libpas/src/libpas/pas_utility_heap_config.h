@@ -164,17 +164,17 @@ PAS_API void pas_utility_heap_config_dump_shared_page_directory_arg(
         PAS_HEAP_CONFIG_SPECIALIZATIONS(pas_utility_heap_config) \
     })
 
-PAS_API extern pas_heap_config pas_utility_heap_config;
+PAS_API extern const pas_heap_config pas_utility_heap_config;
 
 PAS_SEGREGATED_PAGE_CONFIG_SPECIALIZATION_DECLARATIONS(pas_utility_heap_page_config);
 PAS_HEAP_CONFIG_SPECIALIZATION_DECLARATIONS(pas_utility_heap_config);
 
-static PAS_ALWAYS_INLINE bool pas_heap_config_is_utility(pas_heap_config* config)
+static PAS_ALWAYS_INLINE bool pas_heap_config_is_utility(const pas_heap_config* config)
 {
     return config == &pas_utility_heap_config;
 }
 
-static PAS_ALWAYS_INLINE pas_lock_hold_mode pas_heap_config_heap_lock_hold_mode(pas_heap_config* config)
+static PAS_ALWAYS_INLINE pas_lock_hold_mode pas_heap_config_heap_lock_hold_mode(const pas_heap_config* config)
 {
     return pas_heap_config_is_utility(config)
         ? pas_lock_is_held

@@ -429,7 +429,7 @@ void pas_segregated_directory_append(
 pas_heap_summary pas_segregated_directory_compute_summary(pas_segregated_directory* directory)
 {
     pas_heap_summary result;
-    pas_segregated_page_config* page_config_ptr;
+    const pas_segregated_page_config* page_config_ptr;
     size_t index;
 
     page_config_ptr = pas_segregated_page_config_kind_get_config(directory->page_config_kind);

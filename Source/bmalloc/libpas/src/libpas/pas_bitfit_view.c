@@ -105,7 +105,7 @@ static pas_heap_summary compute_summary(pas_bitfit_view* view)
 {
     static const bool verbose = false;
     
-    pas_bitfit_page_config* config_ptr;
+    const pas_bitfit_page_config* config_ptr;
     pas_bitfit_page_config config;
     void* boundary;
     pas_bitfit_page* page;
@@ -197,7 +197,7 @@ static bool for_each_live_object(
     pas_bitfit_view_for_each_live_object_callback callback,
     void* arg)
 {
-    pas_bitfit_page_config* config_ptr;
+    const pas_bitfit_page_config* config_ptr;
     pas_bitfit_page_config config;
     void* boundary;
     pas_bitfit_page* page;

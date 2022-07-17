@@ -33,7 +33,7 @@
 
 #include "pas_heap_config_utils_inlines.h"
 
-pas_heap_config iso_test_heap_config = ISO_TEST_HEAP_CONFIG;
+const pas_heap_config iso_test_heap_config = ISO_TEST_HEAP_CONFIG;
 
 PAS_BASIC_HEAP_CONFIG_DEFINITIONS(
     iso_test, ISO_TEST,

@@ -39,12 +39,12 @@ typedef struct pas_segregated_page_config pas_segregated_page_config;
 
 struct pas_segregated_page_and_config {
     pas_segregated_page* page;
-    pas_segregated_page_config* config;
+    const pas_segregated_page_config* config;
 };
 
 static inline pas_segregated_page_and_config
 pas_segregated_page_and_config_create(pas_segregated_page* page,
-                                      pas_segregated_page_config* config)
+                                      const pas_segregated_page_config* config)
 {
     pas_segregated_page_and_config result;
     PAS_ASSERT(!!page == !!config);

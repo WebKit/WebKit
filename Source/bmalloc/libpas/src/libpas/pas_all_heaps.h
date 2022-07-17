@@ -66,7 +66,7 @@ PAS_API bool pas_all_heaps_for_each_heap(pas_all_heaps_for_each_heap_callback ca
                                          void* arg);
 
 typedef bool (*pas_all_heaps_for_each_segregated_heap_callback)(
-    pas_segregated_heap* heap, pas_heap_config* heap_config, void* arg);
+    pas_segregated_heap* heap, const pas_heap_config* heap_config, void* arg);
 
 PAS_API bool pas_all_heaps_for_each_static_segregated_heap_not_part_of_a_heap(
     pas_all_heaps_for_each_segregated_heap_callback callback,

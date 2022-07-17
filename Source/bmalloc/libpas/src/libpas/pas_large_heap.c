@@ -54,7 +54,7 @@ void pas_large_heap_construct(pas_large_heap* heap)
 typedef struct {
     pas_heap_config_aligned_allocator aligned_allocator;
     pas_large_heap* heap;
-    pas_heap_config* config;
+    const pas_heap_config* config;
 } aligned_allocator_data;
 
 static pas_aligned_allocation_result aligned_allocator(size_t size,
@@ -73,7 +73,7 @@ static pas_aligned_allocation_result aligned_allocator(size_t size,
 static void initialize_config(pas_large_free_heap_config* config,
                               aligned_allocator_data* data,
                               pas_large_heap* heap,
-                              pas_heap_config* heap_config)
+                              const pas_heap_config* heap_config)
 {
     if (data) {
         data->aligned_allocator = heap_config->aligned_allocator;
@@ -92,7 +92,7 @@ static void initialize_config(pas_large_free_heap_config* config,
 static pas_allocation_result allocate_impl(pas_large_heap* heap,
                                            size_t* size,
                                            size_t* alignment,
-                                           pas_heap_config* heap_config,
+                                           const pas_heap_config* heap_config,
                                            pas_physical_memory_transaction* transaction)
 {
     static const bool verbose = false;
@@ -156,7 +156,7 @@ pas_allocation_result
 pas_large_heap_try_allocate_and_forget(pas_large_heap* heap,
                                        size_t size,
                                        size_t alignment,
-                                       pas_heap_config* heap_config,
+                                       const pas_heap_config* heap_config,
                                        pas_physical_memory_transaction* transaction)
 {
     return allocate_impl(heap, &size, &alignment, heap_config, transaction);
@@ -166,7 +166,7 @@ pas_allocation_result
 pas_large_heap_try_allocate(pas_large_heap* heap,
                             size_t size,
                             size_t alignment,
-                            pas_heap_config* heap_config,
+                            const pas_heap_config* heap_config,
                             pas_physical_memory_transaction* transaction)
 {
     pas_allocation_result result;
@@ -189,7 +189,7 @@ pas_allocation_result
 pas_large_heap_try_allocate_pgm(pas_large_heap* heap,
                             size_t size,
                             size_t alignment,
-                            pas_heap_config* heap_config,
+                            const pas_heap_config* heap_config,
                             pas_physical_memory_transaction* transaction)
 {
     pas_allocation_result result;
@@ -204,7 +204,7 @@ pas_large_heap_try_allocate_pgm(pas_large_heap* heap,
 }
 
 bool pas_large_heap_try_deallocate(uintptr_t begin,
-                                   pas_heap_config* heap_config)
+                                   const pas_heap_config* heap_config)
 {
     pas_large_map_entry map_entry;
     pas_large_free_heap_config config;
@@ -239,7 +239,7 @@ bool pas_large_heap_try_deallocate(uintptr_t begin,
 
 bool pas_large_heap_try_shrink(uintptr_t begin,
                                size_t new_size,
-                               pas_heap_config* heap_config)
+                               const pas_heap_config* heap_config)
 {
     /* FIXME: This doesn't play nice with enumeration. I think that's fine for now because shrink()
        isn't a real malloc API. But it would be possible to make this work well with enumeration if
@@ -297,7 +297,7 @@ void pas_large_heap_shove_into_free(pas_large_heap* heap,
                                     uintptr_t begin,
                                     uintptr_t end,
                                     pas_zero_mode zero_mode,
-                                    pas_heap_config* heap_config)
+                                    const pas_heap_config* heap_config)
 {
     pas_large_free_heap_config config;
     initialize_config(&config, NULL, heap, heap_config);

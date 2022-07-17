@@ -82,7 +82,7 @@ pas_segregated_page_config_kind pas_segregated_view_get_page_config_kind(pas_seg
     }
 }
 
-pas_segregated_page_config* pas_segregated_view_get_page_config(pas_segregated_view view)
+const pas_segregated_page_config* pas_segregated_view_get_page_config(pas_segregated_view view)
 {
     return pas_segregated_page_config_kind_get_config(
         pas_segregated_view_get_page_config_kind(view));
@@ -431,7 +431,7 @@ bool pas_segregated_view_for_each_live_object(
 }
 
 static pas_tri_state should_be_eligible(pas_segregated_view view,
-                                        pas_segregated_page_config* page_config)
+                                        const pas_segregated_page_config* page_config)
 {
     static const bool verbose = false;
     
@@ -526,7 +526,7 @@ static pas_tri_state should_be_eligible(pas_segregated_view view,
 }
 
 pas_tri_state pas_segregated_view_should_be_eligible(pas_segregated_view view,
-                                                     pas_segregated_page_config* page_config)
+                                                     const pas_segregated_page_config* page_config)
 {
     static const bool verbose = false;
     
@@ -546,11 +546,11 @@ pas_tri_state pas_segregated_view_should_be_eligible(pas_segregated_view view,
 
 pas_segregated_view pas_segregated_view_for_object(
     uintptr_t begin,
-    pas_heap_config* config)
+    const pas_heap_config* config)
 {
     pas_segregated_page* page;
     pas_segregated_view owning_view;
-    pas_segregated_page_config* page_config;
+    const pas_segregated_page_config* page_config;
     pas_segregated_page_and_config page_and_config;
 
     page_and_config = pas_segregated_page_and_config_for_address_and_heap_config(begin, config);
@@ -581,7 +581,7 @@ pas_segregated_view pas_segregated_view_for_object(
 }
 
 pas_heap_summary pas_segregated_view_compute_summary(pas_segregated_view view,
-                                                     pas_segregated_page_config* page_config)
+                                                     const pas_segregated_page_config* page_config)
 {
     switch (pas_segregated_view_get_kind(view)) {
     case pas_segregated_exclusive_view_kind:
