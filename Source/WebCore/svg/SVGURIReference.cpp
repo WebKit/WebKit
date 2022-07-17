@@ -25,8 +25,9 @@
 #include "Document.h"
 #include "Element.h"
 #include "SVGElement.h"
-#include <wtf/URL.h>
+#include "SVGUseElement.h"
 #include "XLinkNames.h"
+#include <wtf/URL.h>
 
 namespace WebCore {
 
@@ -100,6 +101,10 @@ auto SVGURIReference::targetElementFromIRIString(const String& iri, const TreeSc
     // Exit early if the referenced url is external, and we have no externalDocument given.
     if (isExternalURIReference(iri, document))
         return { nullptr, WTFMove(id) };
+
+    RefPtr shadowHost = treeScope.rootNode().shadowHost();
+    if (is<SVGUseElement>(shadowHost))
+        return { shadowHost->treeScope().getElementById(id), WTFMove(id) };
 
     return { treeScope.getElementById(id), WTFMove(id) };
 }
