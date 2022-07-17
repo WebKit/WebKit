@@ -25,12 +25,17 @@
 #     Contributors do not "own" WebKit components. This file is used to
 #     automatically add reviewers to pull requests.
 #
+#     Documentation:
+#       https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+#       https://git-scm.com/docs/gitignore#_pattern_format
+#
 # ================================================================================
 
 /.github @JonWBedard
 /metadata @JonWBedard
 
 # ================================================================================
+# Tools
 
 /Tools @JonWBedard
 
@@ -38,21 +43,25 @@
 
 /Tools/Scripts/libraries @JonWBedard
 /Tools/Scripts/libraries/webkitscmpy @facetothefate @JonWBedard
+
 /Tools/TestWebKitAPI
+/Tools/TestWebKitAPI/WebKitGLib/ @WebKit/glib-reviewers
+/Tools/TestWebKitAPI/WebKitGtk/ @WebKit/glib-reviewers
+/Tools/TestWebKitAPI/WPEQt/ @philn
+
+/Tools/buildstream/ @philn
+/Tools/flatpak/ @philn
+/Tools/gstreamer/ @WebKit/glib-reviewers @philn
+/Tools/jhbuild/ @WebKit/glib-reviewers
 
 # ================================================================================
-
-/Source/WebCore/Modules/mediastream/gstreamer @calvaris @philn
-/Source/WebCore/platform/audio/gstreamer @calvaris @philn
-/Source/WebCore/platform/graphics/gstreamer @ntrrgc @calvaris @philn
-/Source/WebCore/platform/mediastream/gstreamer @calvaris @philn
-
-# ================================================================================
+# bmalloc
 
 /Source/bmalloc @Constellation
 /Tools/TestWebKitAPI/Tests/WTF/bmalloc @Constellation
 
 # ================================================================================
+# JavaScriptCore
 
 /Source/JavaScriptCore @WebKit/jsc-reviewers
 /JSTests @WebKit/jsc-reviewers
@@ -60,6 +69,7 @@
 /Tools/TestWebKitAPI/Tests/JavaScriptCore @WebKit/jsc-reviewers
 
 # ================================================================================
+# Web Inspector
 
 /Source/JavaScriptCore/debugger @dcrousso @patrickangle
 /Source/JavaScriptCore/inspector @dcrousso @patrickangle
@@ -71,6 +81,9 @@
 /LayoutTests/http/tests/inspector @dcrousso @patrickangle
 /LayoutTests/http/tests/websocket/tests/hybi/inspector @dcrousso @patrickangle
 /LayoutTests/inspector @dcrousso @patrickangle
+
+# ================================================================================
+# WebCore
 
 /Source/WebCore/dom @rniwa @cdumez
 /LayoutTests/fast/dom @rniwa
@@ -91,8 +104,6 @@
 /Source/WebCore/Modules/modern-media-controls @dcrousso
 /LayoutTests/media/modern-media-controls @dcrousso
 
-# ================================================================================
-
 /Source/WebCore/Modules/beacon @cdumez
 /Source/WebCore/Modules/entriesapi @cdumez
 /Source/WebCore/Modules/geolocation @cdumez
@@ -106,12 +117,66 @@
 /Source/WebCore/worklets @cdumez
 /Source/WebCore/xml @cdumez
 /Source/WebCore/page @cdumez
+
+Source/WebCore/animation @graouts
+Source/WebCore/Modules/model-element @graouts
+
+/Source/WebCore/crypto/ @zdobersek
+
+# ================================================================================
+# WebKit
+
 /Source/WebKit/NetworkProcess @cdumez
 /Source/WebKit/Platform @cdumez
 /Source/WebKit/UIProcess @cdumez
 /Source/WebKit/WebProcess @cdumez
 
 # ================================================================================
+# WebDriver
 
-Source/WebCore/animation @graouts
-Source/WebCore/Modules/model-element @graouts
+/Source/WebDriver/ @carlosgcampos
+
+# ================================================================================
+# CMake
+
+/Source/cmake/WebKitCompilerFlags.cmake @mcatanzaro
+/Source/cmake/WebKitFeatures.cmake @mcatanzaro
+
+# ================================================================================
+# Linux graphics
+
+CoordinatedGraphics/ @magomez @zdobersek
+cairo/ @magomez @zdobersek
+coordinated/ @magomez @zdobersek
+nicosia/ @magomez @zdobersek
+
+# ================================================================================
+# Linux Multimedia
+
+/Source/WebCore/Modules/mediastream/gstreamer @calvaris @philn
+/Source/WebCore/platform/audio/gstreamer @calvaris @philn
+/Source/WebCore/platform/graphics/gstreamer @ntrrgc @calvaris @philn
+/Source/WebCore/platform/mediastream/gstreamer @calvaris @philn
+gstreamer/ @philn
+
+# ================================================================================
+# WPE WebKit and WebKitGTK
+
+/Source/ThirdParty/xdgmime/ @WebKit/glib-reviewers
+/Source/cmake/OptionsGTK.cmake @WebKit/glib-reviewers
+/Source/cmake/OptionsWPE.cmake @WebKit/glib-reviewers
+
+adwaita/ @WebKit/glib-reviewers
+atspi/ @WebKit/glib-reviewers
+freetype/ @WebKit/glib-reviewers
+glib/ @WebKit/glib-reviewers
+gtk4/ @WebKit/glib-reviewers
+gtk/ @WebKit/glib-reviewers
+harfbuzz/ @WebKit/glib-reviewers
+libwpe/ @WebKit/glib-reviewers @donny-dont @zdobersek
+linux/ @WebKit/glib-reviewers
+soup/ @WebKit/glib-reviewers
+unix/ @WebKit/glib-reviewers
+xdg/ @WebKit/glib-reviewers
+wpe/ @WebKit/glib-reviewers @zdobersek
+**/wpe/qt/ @philn
