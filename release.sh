@@ -40,13 +40,16 @@ if [ "$WEBKIT_RELEASE_TYPE" == "relwithdebuginfo" ]; then
     CONTAINER_NAME=bun-webkit-linux-$BUILDKIT_ARCH-dbg
 fi
 
-docker buildx build -t $CONTAINER_NAME --progress=plain --platform=linux/$BUILDKIT_ARCH --target=artifact --output type=local,dest=$(pwd)/$CONTAINER_NAME .
+mkdir -p $temp
+
+docker buildx build -t $CONTAINER_NAME --progress=plain --platform=linux/$BUILDKIT_ARCH --target=artifact --output type=local,dest=$temp/bun-webkit .
 
 if $? -ne 0; then
     echo "Failed to build container"
     exit 1
 fi
 
+cd $temp
 tar -cf $CONTAINER_NAME.tar bun-webkit && gzip $CONTAINER_NAME.tar >$CONTAINER_NAME.tar.gz
 
 docker rm -v $id

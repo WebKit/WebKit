@@ -105,5 +105,5 @@ RUN --mount=type=tmpfs,target=/webkitbuild \
     cp -r $WEBKIT_OUT_DIR/bmalloc/Headers/bmalloc/ /output/include; echo "";
 
 
-FROM builder-stage
+FROM builder-stage as artifact
 COPY --from=builder-stage /output /
