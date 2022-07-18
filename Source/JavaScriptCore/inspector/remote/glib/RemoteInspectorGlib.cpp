@@ -94,7 +94,7 @@ void RemoteInspector::stopInternal(StopSource)
 
     updateHasActiveDebugSession();
 
-    m_automaticInspectionPaused = false;
+    m_pausedAutomaticInspectionCandidates.clear();
     m_socketConnection = nullptr;
 }
 
@@ -219,12 +219,10 @@ void RemoteInspector::pushListingsSoon()
     });
 }
 
-void RemoteInspector::sendAutomaticInspectionCandidateMessage()
+void RemoteInspector::sendAutomaticInspectionCandidateMessage(TargetID)
 {
     ASSERT(m_enabled);
     ASSERT(m_automaticInspectionEnabled);
-    ASSERT(m_automaticInspectionPaused);
-    ASSERT(m_automaticInspectionCandidateTargetIdentifier);
     ASSERT(m_socketConnection);
     // FIXME: Implement automatic inspection.
 }
