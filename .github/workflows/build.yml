@@ -20,6 +20,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      - name: PATH
+        run: |
+          echo "/usr/local/opt/llvm@13/bin" >> $GITHUB_PATH
       - name: Run
         env:
           LDFLAGS: "-L/usr/local/opt/llvm@13/lib"
@@ -28,7 +31,6 @@ jobs:
           CC: "/opt/homebrew/opt/llvm@13/bin/clang"
           CXX: "/opt/homebrew/opt/llvm@13/bin/clang++"
         run: |
-          echo "/usr/local/opt/llvm@13/bin" >> $GITHUB_PATH
           rm -rf /tmp/webkit-release /tmp/output
           mkdir -p /tmp/webkit-release
           brew install llvm@13 python icu4c ninja
@@ -74,6 +76,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      - name: PATH
+        run: |
+          echo "/usr/local/opt/llvm@13/bin" >> $GITHUB_PATH
       - name: Run
         env:
           LDFLAGS: "-L/usr/local/opt/llvm@13/lib"
@@ -82,7 +87,6 @@ jobs:
           CC: "/opt/homebrew/opt/llvm@13/bin/clang"
           CXX: "/opt/homebrew/opt/llvm@13/bin/clang++"
         run: |
-          echo "/usr/local/opt/llvm@13/bin" >> $GITHUB_PATH
           rm -rf /tmp/webkit-release /tmp/output
           mkdir -p /tmp/webkit-release
           brew install llvm@13 python icu4c ninja
