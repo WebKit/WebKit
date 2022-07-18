@@ -24,7 +24,7 @@ jobs:
         run: |
           rm -rf /tmp/webkit-release /tmp/output
           mkdir -p /tmp/webkit-release
-          brew install llvm@13 python icu4c ninja-build
+          brew install llvm@13 python icu4c ninja
           brew link llvm@13 --force
           ICU_INCLUDE_DIRS="$(HOMEBREW_PREFIX)opt/icu4c/include" \
           cmake \
@@ -45,6 +45,7 @@ jobs:
               cmake --build /tmp/webkit-release --config Release --target jsc
           mkdir -p /tmp/output/lib /tmp/output/include /tmp/output/include/JavaScriptCore /tmp/output/include/wtf /tmp/output/include/bmalloc
           cp /tmp/webkit-release/lib/* /tmp/output/lib
+          cp -r /tmp/webkit-release/cmakeconfig.h /tmp/output/include/cmakeconfig.h
           cp -r /tmp/webkit-release/WTF/Headers/wtf /tmp/output/include
           cp -r /tmp/webkit-release/bmalloc/Headers/bmalloc /tmp/output/include
           cp /tmp/webkit-release/JavaScriptCore/Headers/JavaScriptCore/* /tmp/output/include/JavaScriptCore
