@@ -45,4 +45,4 @@ mkdir -p $temp
 docker buildx build -f Dockerfile -t $CONTAINER_NAME --progress=plain --platform=linux/$BUILDKIT_ARCH --target=artifact --output type=local,dest=$temp/bun-webkit .
 
 cd $temp
-tar -cf $CONTAINER_NAME.tar bun-webkit && gzip $CONTAINER_NAME.tar >$CONTAINER_NAME.tar.gz
+tar -czvf $CONTAINER_NAME.tar.gz bun-webkit
