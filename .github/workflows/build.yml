@@ -23,18 +23,20 @@ jobs:
       - name: PATH
         run: |
           echo "/usr/local/opt/llvm@13/bin" >> $GITHUB_PATH
+          brew install llvm@13 python icu4c ninja
+          brew link llvm@13 --overwrite
       - name: Run
         env:
           LDFLAGS: "-L/usr/local/opt/llvm@13/lib"
           CPPFLAGS: "-I/usr/local/opt/llvm@13/include"
           ICU_INCLUDE_DIRS: /usr/local/opt/icu4c/include
-          CC: "/opt/homebrew/opt/llvm@13/bin/clang"
-          CXX: "/opt/homebrew/opt/llvm@13/bin/clang++"
+          CC: "/usr/local/opt/llvm@13/bin/clang"
+          CXX: "/usr/local/opt/llvm@13/bin/clang++"
+          CMAKE_C_COMPILER: "/usr/local/opt/llvm@13/bin/clang"
+          CMAKE_CXX_COMPILER: "/usr/local/opt/llvm@13/bin/clang++"
         run: |
           rm -rf /tmp/webkit-release /tmp/output
           mkdir -p /tmp/webkit-release
-          brew install llvm@13 python icu4c ninja
-          brew link llvm@13 --overwrite
           cmake \
             -DPORT="JSCOnly" \
             -DENABLE_STATIC_JSC=ON \
@@ -42,6 +44,8 @@ jobs:
             -DCMAKE_BUILD_TYPE=relwithdebuginfo \
             -DUSE_THIN_ARCHIVES=OFF \
             -DENABLE_FTL_JIT=ON \
+            -DCMAKE_C_COMPILER=$CMAKE_C_COMPILER \
+            -DCMAKE_CXX_COMPILER=$CMAKE_CXX_COMPILER \
             -DCMAKE_CFLAGS="-fno-exceptions -fvisibility=hidden -fvisibility-inlines-hidden -O3 -ffat-lto-objects" \
             -DCMAKE_CXXFLAGS="-fno-exceptions -fvisibility=hidden -fvisibility-inlines-hidden -O3 -ffat-lto-objects" \
             -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
@@ -79,18 +83,20 @@ jobs:
       - name: PATH
         run: |
           echo "/usr/local/opt/llvm@13/bin" >> $GITHUB_PATH
+          brew install llvm@13 python icu4c ninja
+          brew link llvm@13 --overwrite
       - name: Run
         env:
           LDFLAGS: "-L/usr/local/opt/llvm@13/lib"
           CPPFLAGS: "-I/usr/local/opt/llvm@13/include"
           ICU_INCLUDE_DIRS: /usr/local/opt/icu4c/include
-          CC: "/opt/homebrew/opt/llvm@13/bin/clang"
-          CXX: "/opt/homebrew/opt/llvm@13/bin/clang++"
+          CC: "/usr/local/opt/llvm@13/bin/clang"
+          CXX: "/usr/local/opt/llvm@13/bin/clang++"
+          CMAKE_C_COMPILER: "/usr/local/opt/llvm@13/bin/clang"
+          CMAKE_CXX_COMPILER: "/usr/local/opt/llvm@13/bin/clang++"
         run: |
           rm -rf /tmp/webkit-release /tmp/output
           mkdir -p /tmp/webkit-release
-          brew install llvm@13 python icu4c ninja
-          brew link llvm@13 --overwrite
           cmake \
             -DPORT="JSCOnly" \
             -DENABLE_STATIC_JSC=ON \
@@ -101,6 +107,8 @@ jobs:
             -DCMAKE_CFLAGS="-fno-exceptions -fvisibility=hidden -fvisibility-inlines-hidden -O3 -ffat-lto-objects -flto" \
             -DCMAKE_CXXFLAGS="-fno-exceptions -fvisibility=hidden -fvisibility-inlines-hidden -O3 -ffat-lto-objects -flto" \
             -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
+            -DCMAKE_C_COMPILER="$CC" \
+            -DCMAKE_CXX_COMPILER="$CXX" \
             -G Ninja \
             -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 \
             -DPTHREAD_JIT_PERMISSIONS_API=1 \
