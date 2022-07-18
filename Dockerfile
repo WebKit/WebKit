@@ -83,7 +83,7 @@ RUN --mount=type=tmpfs,target=/webkitbuild \
     -DCMAKE_C_COMPILER=$(which clang-13) \ 
     /webkit && \
     cd /webkitbuild && \
-    CFLAGS="$CFLAGS -ffat-lto-objects" CXXFLAGS="$CXXFLAGS -ffat-lto-objects" cmake --build /webkitbuild --config $WEBKIT_RELEASE_TYPE --target "jsc" && \
+    CFLAGS="$CFLAGS -flto -ffat-lto-objects" CXXFLAGS="$CXXFLAGS -flto -ffat-lto-objects" cmake --build /webkitbuild --config $WEBKIT_RELEASE_TYPE --target "jsc" && \
     cp -r $WEBKIT_OUT_DIR/lib/*.a /output/lib && \
     cp $WEBKIT_OUT_DIR/*.h /output/include && \
     find $WEBKIT_OUT_DIR/JavaScriptCore/Headers/JavaScriptCore/ -name "*.h" -exec cp {} /output/include/JavaScriptCore/ \; && \
