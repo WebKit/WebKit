@@ -26,7 +26,7 @@
 #import "config.h"
 #import "GPUAvailability.h"
 
-#if PLATFORM(COCOA)
+#if HAVE(GPU_AVAILABILITY_CHECK)
 
 #import <Metal/Metal.h>
 
@@ -45,4 +45,4 @@ bool isGPUAvailable()
 
 } // namespace WebCore
 
-#endif // PLATFORM(COCOA)
+#endif // HAVE(GPU_AVAILABILITY_CHECK)
