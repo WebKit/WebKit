@@ -10,8 +10,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  build_x64:
-    name: ${{ matrix.kind }} ${{ matrix.os }}
+  linux_amd64:
+    name: Linux AMD64
     runs-on: ${{ matrix.os }}
     timeout-minutes: 90
     strategy:
@@ -26,6 +26,7 @@ jobs:
           install: true
       - name: Run
         run: |
+          rm -rf /tmp/bun-webkit
           temp=/tmp bash release.sh
       - uses: actions/upload-artifact@v3
         with:
