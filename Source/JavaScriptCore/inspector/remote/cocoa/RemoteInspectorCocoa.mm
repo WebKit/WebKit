@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2013-2022 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -99,20 +99,21 @@ RemoteInspector& RemoteInspector::singleton()
     static dispatch_once_t once;
     dispatch_once(&once, ^{
         if (canAccessWebInspectorMachPort()) {
-            dispatch_block_t initialize = ^{
-                WTF::initializeMainThread();
-                JSC::initialize();
-                if (RemoteInspector::startEnabled)
-                    shared.get().start();
-            };
+            {
+                Locker locker { shared->m_mutex };
 
+                // Acquire the global automatic inspection state so we can determine if we should actually be pausing
+                // targets to wait for an eventual connection to webinspectord.
+                shared->m_automaticInspectionEnabled = globalAutomaticInspectionState();
+            }
+
+            shared->setPendingMainThreadInitialization(true);
             if ([NSThread isMainThread])
-                initialize();
+                shared->initialize();
             else {
-                // FIXME: This means that we may miss an auto-attach to a JSContext created on a non-main thread.
-                // The main thread initialization is required for certain WTF values that need to be initialized
-                // on the "real" main thread. We should investigate a better way to handle this.
-                dispatch_async(dispatch_get_main_queue(), initialize);
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    shared->initialize();
+                });
             }
         }
     });
@@ -125,49 +126,80 @@ RemoteInspector::RemoteInspector()
 {
 }
 
+void RemoteInspector::initialize()
+{
+    ASSERT(pthread_main_np());
+
+    {
+        Locker locker { m_mutex };
+        if (!m_pendingMainThreadInitialization)
+            return;
+    }
+
+    WTF::initializeMainThread();
+    JSC::initialize();
+
+    if (RemoteInspector::startEnabled)
+        start();
+    else
+        setPendingMainThreadInitialization(false);
+}
+
+void RemoteInspector::setPendingMainThreadInitialization(bool pendingInitialization)
+{
+    Locker locker { m_mutex };
+
+    m_pendingMainThreadInitialization = pendingInitialization;
+    if (!m_pendingMainThreadInitialization && !m_automaticInspectionEnabled)
+        m_pausedAutomaticInspectionCandidates.clear();
+}
+
 void RemoteInspector::updateAutomaticInspectionCandidate(RemoteInspectionTarget* target)
 {
     ASSERT_ARG(target, target);
+
+    // If the inspection candidate is on the main thread we can not pause it while we are still pending initialization,
+    // otherwise initialization may never occur. Take advantage of the fact we have the thread now and initialize.
+    auto singletonShouldImmediatelyInitialize = isMainThread();
+
+    if (singletonShouldImmediatelyInitialize) {
+        Locker locker { m_mutex };
+        singletonShouldImmediatelyInitialize &= m_pendingMainThreadInitialization;
+    }
+
+    // It is safe to not hold a lock for this work because it is only ever done on the main thread and will eventually
+    // acquire a lock itself for `start`ing the singleton.
+    if (singletonShouldImmediatelyInitialize)
+        initialize();
+
+    auto targetIdentifier = target->targetIdentifier();
+
     {
         Locker locker { m_mutex };
 
         if (!updateTargetMap(target))
             return;
 
-        // Don't allow automatic inspection unless it is allowed or we are stopped.
-        if (!m_automaticInspectionEnabled || !m_enabled) {
+        if (!m_automaticInspectionEnabled || (!m_enabled && !m_pendingMainThreadInitialization)) {
             pushListingsSoon();
             return;
         }
 
-        auto targetIdentifier = target->targetIdentifier();
-
-        // FIXME: We should handle multiple debuggables trying to pause at the same time on different threads.
-        // To make this work we will need to change m_automaticInspectionCandidateTargetIdentifier to be a per-thread value.
-        // Multiple attempts on the same thread should not be possible because our nested run loop is in a special RWI mode.
-        if (m_automaticInspectionPaused) {
-            WTFLogAlways("Skipping Automatic Inspection Candidate with pageId(%u) because we are already paused waiting for pageId(%u)", targetIdentifier, m_automaticInspectionCandidateTargetIdentifier);
-            pushListingsSoon();
-            return;
-        }
-
-        m_automaticInspectionPaused = true;
-        m_automaticInspectionCandidateTargetIdentifier = targetIdentifier;
+        m_pausedAutomaticInspectionCandidates.add(targetIdentifier);
 
         // If we are pausing before we have connected to webinspectord the candidate message will be sent as soon as the connection is established.
         if (m_relayConnection) {
             pushListingsNow();
-            sendAutomaticInspectionCandidateMessage();
+            sendAutomaticInspectionCandidateMessage(targetIdentifier);
         }
 
-        // In case debuggers fail to respond, or we cannot connect to webinspectord, automatically continue after a short period of time.
+        // In case debuggers fail to respond, or we cannot connect to webinspectord, automatically continue after a
+        // short period of time.
         int64_t debuggerTimeoutDelay = 10;
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, debuggerTimeoutDelay * NSEC_PER_SEC), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             Locker locker { m_mutex };
-            if (m_automaticInspectionCandidateTargetIdentifier == targetIdentifier) {
-                WTFLogAlways("Skipping Automatic Inspection Candidate with pageId(%u) because we failed to receive a response in time.", m_automaticInspectionCandidateTargetIdentifier);
-                m_automaticInspectionPaused = false;
-            }
+            if (m_pausedAutomaticInspectionCandidates.remove(targetIdentifier))
+                WTFLogAlways("Skipping Automatic Inspection Candidate with pageId(%u) because we failed to receive a response in time.", targetIdentifier);
         });
     }
 
@@ -175,21 +207,18 @@ void RemoteInspector::updateAutomaticInspectionCandidate(RemoteInspectionTarget*
 
     {
         Locker locker { m_mutex };
-
-        ASSERT(m_automaticInspectionCandidateTargetIdentifier);
-        m_automaticInspectionCandidateTargetIdentifier = 0;
+        m_pausedAutomaticInspectionCandidates.remove(targetIdentifier);
     }
 }
 
-void RemoteInspector::sendAutomaticInspectionCandidateMessage()
+void RemoteInspector::sendAutomaticInspectionCandidateMessage(TargetID targetID)
 {
     ASSERT(m_enabled);
     ASSERT(m_automaticInspectionEnabled);
-    ASSERT(m_automaticInspectionPaused);
-    ASSERT(m_automaticInspectionCandidateTargetIdentifier);
     ASSERT(m_relayConnection);
+    ASSERT(m_pausedAutomaticInspectionCandidates.contains(targetID));
 
-    NSDictionary *details = @{WIRTargetIdentifierKey: @(m_automaticInspectionCandidateTargetIdentifier)};
+    NSDictionary *details = @{ WIRTargetIdentifierKey: @(targetID) };
     m_relayConnection->sendMessage(WIRAutomaticInspectionCandidateMessage, details);
 }
 
@@ -242,17 +271,13 @@ void RemoteInspector::start()
 
     m_enabled = true;
 
-    // Load the initial automatic inspection state when first started, so we know it before we have even connected to webinspectord.
-    static dispatch_once_t once;
-    dispatch_once(&once, ^{
-        m_automaticInspectionEnabled = globalAutomaticInspectionState();
-    });
-
     notify_register_dispatch(WIRServiceAvailableNotification, &m_notifyToken, m_xpcQueue, ^(int) {
         RemoteInspector::singleton().setupXPCConnectionIfNeeded();
     });
 
     notify_post(WIRServiceAvailabilityCheckNotification);
+
+    m_pendingMainThreadInitialization = false;
 }
 
 void RemoteInspector::stopInternal(StopSource source)
@@ -270,7 +295,7 @@ void RemoteInspector::stopInternal(StopSource source)
 
     updateHasActiveDebugSession();
 
-    m_automaticInspectionPaused = false;
+    m_pausedAutomaticInspectionCandidates.clear();
 
     if (m_relayConnection) {
         switch (source) {
@@ -311,10 +336,12 @@ void RemoteInspector::setupXPCConnectionIfNeeded()
     m_relayConnection = adoptRef(new RemoteInspectorXPCConnection(connection.get(), m_xpcQueue, this));
     m_relayConnection->sendMessage(@"syn", nil); // Send a simple message to initialize the XPC connection.
 
-    if (m_automaticInspectionCandidateTargetIdentifier) {
+    if (m_pausedAutomaticInspectionCandidates.size()) {
         // We already have a debuggable waiting to be automatically inspected.
         pushListingsNow();
-        sendAutomaticInspectionCandidateMessage();
+
+        for (auto targetID : m_pausedAutomaticInspectionCandidates)
+            sendAutomaticInspectionCandidateMessage(targetID);
     } else
         pushListingsSoon();
 }
@@ -388,7 +415,7 @@ void RemoteInspector::xpcConnectionFailed(RemoteInspectorXPCConnection* relayCon
 
     updateHasActiveDebugSession();
 
-    m_automaticInspectionPaused = false;
+    m_pausedAutomaticInspectionCandidates.clear();
 
     // The XPC connection will close itself.
     m_relayConnection = nullptr;
@@ -571,8 +598,7 @@ void RemoteInspector::receivedSetupMessage(NSDictionary *userInfo)
     auto connectionToTarget = adoptRef(*new RemoteConnectionToTarget(target, connectionIdentifier, sender));
 
     if (is<RemoteInspectionTarget>(target)) {
-        bool isAutomaticInspection = m_automaticInspectionCandidateTargetIdentifier == target->targetIdentifier();
-
+        bool isAutomaticInspection = m_pausedAutomaticInspectionCandidates.contains(target->targetIdentifier());
         if (!connectionToTarget->setup(isAutomaticInspection, automaticallyPause)) {
             connectionToTarget->close();
             return;
@@ -730,8 +756,8 @@ void RemoteInspector::receivedAutomaticInspectionConfigurationMessage(NSDictiona
 
     m_automaticInspectionEnabled = automaticInspectionEnabledNumber.boolValue;
 
-    if (!m_automaticInspectionEnabled && m_automaticInspectionPaused)
-        m_automaticInspectionPaused = false;
+    if (!m_automaticInspectionEnabled)
+        m_pausedAutomaticInspectionCandidates.clear();
 }
 
 void RemoteInspector::receivedAutomaticInspectionRejectMessage(NSDictionary *userInfo)
@@ -743,9 +769,8 @@ void RemoteInspector::receivedAutomaticInspectionRejectMessage(NSDictionary *use
     if (!targetIdentifier)
         return;
 
-    ASSERT(targetIdentifier == m_automaticInspectionCandidateTargetIdentifier);
-    if (targetIdentifier == m_automaticInspectionCandidateTargetIdentifier)
-        m_automaticInspectionPaused = false;
+    ASSERT(m_pausedAutomaticInspectionCandidates.contains(targetIdentifier));
+    m_pausedAutomaticInspectionCandidates.remove(targetIdentifier);
 }
 
 void RemoteInspector::receivedAutomationSessionRequestMessage(NSDictionary *userInfo)
