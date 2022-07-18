@@ -2089,7 +2089,7 @@ public:
     void setCocoaView(WKWebView *);
 #endif
 
-    bool isRunningModalJavaScriptDialog() const { return m_isRunningModalJavaScriptDialog; }
+    bool shouldAvoidSynchronouslyWaitingToPreventDeadlock() const;
 
 #if ENABLE(IMAGE_ANALYSIS) && PLATFORM(MAC)
     WKQuickLookPreviewController *quickLookPreviewController() const { return m_quickLookPreviewController.get(); }

@@ -5015,7 +5015,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     }
 
     bool respondWithLastKnownAutocorrectionContext = ([&] {
-        if (_page->isRunningModalJavaScriptDialog())
+        if (_page->shouldAvoidSynchronouslyWaitingToPreventDeadlock())
             return true;
 
         if (_domPasteRequestHandler)
