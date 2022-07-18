@@ -322,8 +322,8 @@ void BaseDateAndTimeInputType::createShadowSubtree()
         element.userAgentShadowRoot()->appendChild(ContainerNode::ChildChange::Source::Parser, *m_dateTimeEditElement);
     } else {
         auto valueContainer = HTMLDivElement::create(document);
-        valueContainer->setPseudo(ShadowPseudoIds::webkitDateAndTimeValue());
         element.userAgentShadowRoot()->appendChild(ContainerNode::ChildChange::Source::Parser, valueContainer);
+        valueContainer->setPseudo(ShadowPseudoIds::webkitDateAndTimeValue());
     }
     updateInnerTextValue();
 }
