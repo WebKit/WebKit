@@ -10,13 +10,13 @@ on:
   workflow_dispatch:
 
 jobs:
-  macos_amd64:
-    name: macOS AMD64
+  macos:
+    name: macOS Universal
     runs-on: ${{ matrix.os }}
     timeout-minutes: 90
     strategy:
       matrix:
-        os: [macos-10.15]
+        os: [macos-11]
 
     steps:
       - uses: actions/checkout@v3
@@ -25,7 +25,7 @@ jobs:
           rm -rf /tmp/webkit-release /tmp/output
           mkdir -p /tmp/webkit-release
           brew install llvm@13 python icu4c ninja
-          brew link llvm@13 --force
+          brew link llvm@13 --overwrite
           ICU_INCLUDE_DIRS="$(HOMEBREW_PREFIX)opt/icu4c/include" \
           cmake \
             -DPORT="JSCOnly" \
@@ -34,6 +34,7 @@ jobs:
             -DCMAKE_BUILD_TYPE=relwithdebuginfo \
             -DUSE_THIN_ARCHIVES=OFF \
             -DENABLE_FTL_JIT=ON \
+            -DCMAKE_OSX_ARCHITECTURES=arm64;x86_64 \
             -G Ninja \
             -DCMAKE_C_COMPILER=clang-13 -DCMAKE_CXX_COMPILER=clang++-13 -DCMAKE_OSX_DEPLOYMENT_TARGET=10.14 \
             -DPTHREAD_JIT_PERMISSIONS_API=1 \
