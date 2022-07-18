@@ -21,11 +21,11 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     cpio \
     curl \
     file \
+    automake \
     g++ \
     gcc \
     git \
     gnupg2 \
-    libicu66 \ 
     libc++-13-dev \
     libc++abi-13-dev \
     libclang-13-dev \
@@ -59,6 +59,17 @@ WORKDIR /webkit
 RUN mkdir -p /output/lib /output/include /output/include/JavaScriptCore /output/include/wtf /output/include/bmalloc
 
 ARG WEBKIT_RELEASE_TYPE=Release
+
+RUN --mount=type=tmpfs,target=/icu-build \ 
+    cd /icu-build && \
+    curl -o icu4c-66_1-src.tgz -L https://github.com/unicode-org/icu/releases/download/release-66-1/icu4c-66_1-src.tgz  && \
+    tar -xzf icu4c-66_1-src.tgz && \
+    rm icu4c-66_1-src.tgz && \
+    cd icu/source && \
+    ./configure --enable-static --disable-shared && \
+    make -j$(nproc) && \
+    make install && \
+    cp -r lib/* /output/lib
 
 # | Explanation                                                                                    |                                                Flag 
 # -----------------------------------------------------------------------------------------------------------------------------------------------------
