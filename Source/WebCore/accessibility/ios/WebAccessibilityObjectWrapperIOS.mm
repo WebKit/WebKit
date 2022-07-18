@@ -2771,7 +2771,7 @@ static RenderObject* rendererForView(WAKView* view)
     
     return Accessibility::findAncestor(*self.axBackingObject, false, [] (const auto& object) {
         return object.roleValue() == AccessibilityRole::Insertion;
-    });
+    }) != nullptr;
 }
 
 - (BOOL)accessibilityIsDeletion
@@ -2781,7 +2781,7 @@ static RenderObject* rendererForView(WAKView* view)
     
     return Accessibility::findAncestor(*self.axBackingObject, false, [] (const auto& object) {
         return object.roleValue() == AccessibilityRole::Deletion;
-    });
+    }) != nullptr;
 }
 
 - (BOOL)accessibilityIsFirstItemInSuggestion
