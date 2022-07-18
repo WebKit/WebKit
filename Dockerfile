@@ -35,7 +35,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     make \
     ninja-build \
     perl \
-    python2 \
+    python \
     rsync \
     ruby \
     software-properties-common \
