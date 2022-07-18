@@ -4160,6 +4160,10 @@ static void adjustSettingsForCaptivePortal(Settings& settings, const WebPreferen
     settings.setSystemPreviewEnabled(false);
 #endif
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+    DeprecatedGlobalSettings::setAttachmentElementEnabled(false);
+#endif
+
     settings.setAllowedMediaContainerTypes(store.getStringValueForKey(WebPreferencesKey::mediaContainerTypesAllowedInCaptivePortalModeKey()));
     settings.setAllowedMediaCodecTypes(store.getStringValueForKey(WebPreferencesKey::mediaCodecTypesAllowedInCaptivePortalModeKey()));
     settings.setAllowedMediaVideoCodecIDs(store.getStringValueForKey(WebPreferencesKey::mediaVideoCodecIDsAllowedInCaptivePortalModeKey()));
