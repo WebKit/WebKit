@@ -1,6 +1,6 @@
 # BuildKit is required to build this
 # Enable via DOCKER_BUILDKIT=1 
-FROM ubuntu:18.04
+FROM ubuntu:18.04 as builder-stage
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install --no-install-recommends -y wget gnupg2 curl lsb-release wget software-properties-common
@@ -103,3 +103,7 @@ RUN --mount=type=tmpfs,target=/webkitbuild \
     find $WEBKIT_OUT_DIR/JavaScriptCore/PrivateHeaders/JavaScriptCore/ -name "*.h" -exec cp {} /output/include/JavaScriptCore/ \; && \
     cp -r $WEBKIT_OUT_DIR/WTF/Headers/wtf/ /output/include && \
     cp -r $WEBKIT_OUT_DIR/bmalloc/Headers/bmalloc/ /output/include; echo "";
+
+
+FROM builder-stage
+COPY --from=builder-stage /output /
