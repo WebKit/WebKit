@@ -11551,6 +11551,25 @@ void WebPageProxy::setIsWindowResizingEnabled(bool hasResizableWindows)
 
 #endif
 
+bool WebPageProxy::shouldAvoidSynchronouslyWaitingToPreventDeadlock() const
+{
+    if (m_isRunningModalJavaScriptDialog)
+        return true;
+
+#if ENABLE(GPU_PROCESS)
+    if (m_preferences->useGPUProcessForDOMRenderingEnabled()) {
+        auto* gpuProcess = GPUProcessProxy::singletonIfCreated();
+        if (!gpuProcess || !gpuProcess->hasConnection()) {
+            // It's possible that the GPU process hasn't been initialized yet; in this case, we might end up in a deadlock
+            // if a message comes in from the web process to initialize the GPU process while we're synchronously waiting.
+            return true;
+        }
+    }
+#endif // ENABLE(GPU_PROCESS)
+
+    return false;
+}
+
 } // namespace WebKit
 
 #undef WEBPAGEPROXY_RELEASE_LOG
