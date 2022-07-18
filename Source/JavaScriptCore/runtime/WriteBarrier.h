@@ -352,3 +352,21 @@ private:
 };
 
 } // namespace JSC
+
+namespace WTF {
+
+template<typename T> struct VectorTraits<JSC::WriteBarrier<T>> : public SimpleClassVectorTraits {
+    static_assert(std::is_trivially_destructible<JSC::WriteBarrier<T>>::value);
+    static constexpr bool canCopyWithMemcpy = true;
+};
+
+template<> struct VectorTraits<JSC::WriteBarrier<JSC::Unknown>> : public SimpleClassVectorTraits {
+    static_assert(std::is_trivially_destructible<JSC::WriteBarrier<JSC::Unknown>>::value);
+#if USE(JSVALUE32_64)
+    // We can memset only in JSVALUE64 since empty value is zero. On the other hand, JSVALUE32_64's empty value is not zero.
+    static constexpr bool canInitializeWithMemset = false;
+#endif
+    static constexpr bool canCopyWithMemcpy = true;
+};
+
+} // namespace WTF
